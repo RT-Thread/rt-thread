@@ -56,7 +56,8 @@ ErrStatus hwsem_lock_set(hwsem_semaphore_enum semaphore, uint8_t process)
     /* read the control register to confirm the semaphore is locked by target process or not */
     temp_mid = hwsem_master_id_get(semaphore);
     temp_pid = hwsem_process_id_get(semaphore);
-    if((HWSEM_MASTER_ID == temp_mid) && (process == temp_pid)) {
+    if((HWSEM_MASTER_ID == temp_mid) && (process == temp_pid))
+    {
         ret = SUCCESS;
     }
 
@@ -82,7 +83,8 @@ ErrStatus hwsem_lock_release(hwsem_semaphore_enum semaphore, uint8_t process)
     HWSEM_CTL(semaphore) = (uint32_t)(CTL_MID(HWSEM_MASTER_ID) | CTL_PID(process));
 
     lock_state = HWSEM_CTL(semaphore) & HWSEM_CTL_LK;
-    if(0U == lock_state) {
+    if(0U == lock_state)
+    {
         ret = SUCCESS;
     }
 
@@ -101,7 +103,8 @@ ErrStatus hwsem_lock_by_reading(hwsem_semaphore_enum semaphore)
 {
     ErrStatus ret = ERROR;
 
-    if((uint32_t)(HWSEM_LOCK | CTL_MID(HWSEM_MASTER_ID)) == HWSEM_RLK(semaphore)) {
+    if((uint32_t)(HWSEM_LOCK | CTL_MID(HWSEM_MASTER_ID)) == HWSEM_RLK(semaphore))
+    {
         ret = SUCCESS;
     }
 
@@ -121,7 +124,8 @@ ErrStatus hwsem_unlock_all(uint16_t key)
 
     HWSEM_UNLK = UNLK_KEY(key) | UNLK_MID(HWSEM_MASTER_ID);
 
-    if(key == hwsem_key_get()) {
+    if(key == hwsem_key_get())
+    {
         ret = SUCCESS;
     }
     return ret;
@@ -165,7 +169,8 @@ FlagStatus hwsem_lock_status_get(hwsem_semaphore_enum semaphore)
 {
     FlagStatus ret = RESET;
 
-    if(0U != (HWSEM_CTL(semaphore) & HWSEM_LOCK)) {
+    if(0U != (HWSEM_CTL(semaphore) & HWSEM_LOCK))
+    {
         ret = SET;
     }
 
@@ -207,7 +212,8 @@ FlagStatus hwsem_flag_get(hwsem_semaphore_enum semaphore)
 {
     FlagStatus ret = RESET;
 
-    if(RESET != ((HWSEM_STAT >> semaphore) & 0x1U)) {
+    if(RESET != ((HWSEM_STAT >> semaphore) & 0x1U))
+    {
         return SET;
     }
 
@@ -239,7 +245,8 @@ FlagStatus hwsem_interrupt_flag_get(hwsem_semaphore_enum semaphore)
 {
     FlagStatus ret = RESET;
 
-    if(RESET != ((HWSEM_INTF >> semaphore) & 0x1U)) {
+    if(RESET != ((HWSEM_INTF >> semaphore) & 0x1U))
+    {
         ret = SET;
     }
 

@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -42,7 +42,7 @@ OF SUCH DAMAGE.
 
 #define REG16_INT(addr)                  (*(volatile int16_t *)(uint32_t)(addr))
 #define REG32_FLOAT(addr)                (*(volatile float *)(uint32_t)(addr))
-    
+
 /* registers definitions */
 #define FAC_X0BCFG                       REG32((FAC) + 0x00000000U)      /*!< FAC X0 buffer configure register */
 #define FAC_X1BCFG                       REG32((FAC) + 0x00000004U)      /*!< FAC X1 buffer configure register */
@@ -75,14 +75,14 @@ OF SUCH DAMAGE.
 #define FAC_YBCFG_Y_WBEF                 BITS(24,25)                     /*!< watermark for buffer empty flag */
 
 /* FAC_PARACFG */
-#define FAC_PARACFG_IPP                  BITS(0,7)                       /*!< input parameter IPP */        
-#define FAC_PARACFG_IPQ                  BITS(8,15)                      /*!< input parameter IPQ */ 
-#define FAC_PARACFG_IPR                  BITS(16,23)                     /*!< input parameter IPR */            
-#define FAC_PARACFG_FUN                  BITS(24,30)                     /*!< function */ 
-#define FAC_PARACFG_EXE                  BIT(31)                         /*!< execution */ 
+#define FAC_PARACFG_IPP                  BITS(0,7)                       /*!< input parameter IPP */
+#define FAC_PARACFG_IPQ                  BITS(8,15)                      /*!< input parameter IPQ */
+#define FAC_PARACFG_IPR                  BITS(16,23)                     /*!< input parameter IPR */
+#define FAC_PARACFG_FUN                  BITS(24,30)                     /*!< function */
+#define FAC_PARACFG_EXE                  BIT(31)                         /*!< execution */
 
 /* FAC_CTL */
-#define FAC_CTL_RIE                      BIT(0)                          /*!< read interrupt enable */          
+#define FAC_CTL_RIE                      BIT(0)                          /*!< read interrupt enable */
 #define FAC_CTL_WIE                      BIT(1)                          /*!< write interrupt enable */
 #define FAC_CTL_OFEIE                    BIT(2)                          /*!< overflow error interrupt enable */
 #define FAC_CTL_UFEIE                    BIT(3)                          /*!< underflow error interrupt enable */
@@ -95,7 +95,7 @@ OF SUCH DAMAGE.
 #define FAC_CTL_RST                      BIT(16)                         /*!< reset FAC unit */
 
 /* FAC_STAT */
-#define FAC_STAT_YBEF                    BIT(0)                          /*!< Y buffer empty flag */ 
+#define FAC_STAT_YBEF                    BIT(0)                          /*!< Y buffer empty flag */
 #define FAC_STAT_X0BFF                   BIT(1)                          /*!< X0 buffer full flag */
 #define FAC_STAT_OFEF                    BIT(8)                          /*!< overflow error flag */
 #define FAC_STAT_UFEF                    BIT(9)                          /*!< underflow error flag */
@@ -167,14 +167,14 @@ typedef struct
 #define FAC_THRESHOLD_2                  X0BCFG_X0_WBFF(1)               /*!< full/empty flag when buffer less than 2 */
 #define FAC_THRESHOLD_4                  X0BCFG_X0_WBFF(2)               /*!< full/empty flag when buffer less than 4 */
 #define FAC_THRESHOLD_8                  X0BCFG_X0_WBFF(3)               /*!< full/empty flag when buffer less than 8 */
-                                                                  
-/* FAC clip function definitions */                                              
+
+/* FAC clip function definitions */
 #define FAC_CP_DISABLE                   ((uint8_t)0x00U)                /*!< clipping disabled */
 #define FAC_CP_ENABLE                    ((uint8_t)0x01U)                /*!< clipping enabled */
- 
+
 /* FAC function execution definitions */
 #define PARACFG_EXE(regval)              (FAC_PARACFG_EXE & ((uint32_t)(regval) << 31))
-#define FAC_FUNC_START                   PARACFG_EXE(0)                  /*!< start execution function */                
+#define FAC_FUNC_START                   PARACFG_EXE(0)                  /*!< start execution function */
 #define FAC_FUNC_STOP                    PARACFG_EXE(1)                  /*!< stop execution function */
 
 /* FAC DMA mdoe definitions */
@@ -189,7 +189,7 @@ typedef struct
 #define FAC_INT_FLAG_STEF                ((uint8_t)0x04U)                /*!< saturation error interrupt flag */
 #define FAC_INT_FLAG_GSTEF               ((uint8_t)0x05U)                /*!< gain saturation error interrupt flag */
 
-/* FAC flag definitions */  
+/* FAC flag definitions */
 #define FAC_FLAG_YBEF                    FAC_STAT_YBEF                   /*!< Y buffer empty flag */
 #define FAC_FLAG_X0BFF                   FAC_STAT_X0BFF                  /*!< X0 buffer full flag */
 #define FAC_FLAG_OFEF                    FAC_STAT_OFEF                   /*!< overflow error flag */

@@ -279,7 +279,8 @@ void dci_ccir_disable(void)
 */
 void dci_ccir_mode_select(uint32_t ccir_mode)
 {
-    if(CCIR_INTERLACE_MODE == ccir_mode) {
+    if(CCIR_INTERLACE_MODE == ccir_mode)
+    {
         DCI_CTL |= DCI_CTL_CCMOD;
     } else {
         DCI_CTL &= ~DCI_CTL_CCMOD;
@@ -346,7 +347,8 @@ FlagStatus dci_flag_get(uint32_t flag)
 {
     uint32_t stat = 0U;
 
-    if(flag >> 31U) {
+    if(flag >> 31U)
+    {
         /* get flag status from DCI_STAT1 register */
         stat = DCI_STAT1;
     } else {
@@ -354,7 +356,8 @@ FlagStatus dci_flag_get(uint32_t flag)
         stat = DCI_STAT0;
     }
 
-    if(flag & stat) {
+    if(flag & stat)
+    {
         return SET;
     } else {
         return RESET;
@@ -421,7 +424,8 @@ void dci_interrupt_disable(uint32_t interrupt)
 */
 FlagStatus dci_interrupt_flag_get(uint32_t int_flag)
 {
-    if(RESET == (DCI_INTF & int_flag)) {
+    if(RESET == (DCI_INTF & int_flag))
+    {
         return RESET;
     } else {
         return SET;

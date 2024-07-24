@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -90,7 +90,7 @@ OF SUCH DAMAGE.
 #define HAU_STAT_BUSY              BIT(3)                                                /*!< busy bit */
 
 /* constants definitions */
-/* structure for initialization of the hau */ 
+/* structure for initialization of the hau */
 typedef struct
 {
     uint32_t algo;                                                                       /*!< algorithm selection */
@@ -114,7 +114,7 @@ typedef struct
     uint32_t hau_ctxs_bak[54];                                                           /*!< backup of HAU_CTXSx registers */
 }hau_context_parameter_struct;
 
-/* hau_ctl register value */ 
+/* hau_ctl register value */
 #define HAU_ALGO_SHA1                     ((uint32_t)0x00000000U)                        /*!< HAU function is SHA1 */
 #define HAU_ALGO_SHA224                   HAU_CTL_ALGM_1                                 /*!< HAU function is SHA224 */
 #define HAU_ALGO_SHA256                   (HAU_CTL_ALGM_1 | HAU_CTL_ALGM_0)              /*!< HAU function is SHA256 */
@@ -148,7 +148,7 @@ typedef struct
 #define HAU_FLAG_CALCULATION_COMPLETE     HAU_STAT_CCF                                   /*!< digest calculation is completed */
 #define HAU_FLAG_DMA                      HAU_STAT_DMAS                                  /*!< DMA is enabled (DMAE =1) or a transfer is processing */
 #define HAU_FLAG_BUSY                     HAU_STAT_BUSY                                  /*!< data block is in process */
-#define HAU_FLAG_INFIFO_NO_EMPTY          HAU_CTL_DINE                                   /*!< the input FIFO is not empty */                         
+#define HAU_FLAG_INFIFO_NO_EMPTY          HAU_CTL_DINE                                   /*!< the input FIFO is not empty */
 
 #define HAU_INT_FLAG_DATA_INPUT           HAU_STAT_DIF                                   /*!< there is enough space (16 bytes) in the input FIFO */
 #define HAU_INT_FLAG_CALCULATION_COMPLETE HAU_STAT_CCF                                   /*!< digest calculation is completed */

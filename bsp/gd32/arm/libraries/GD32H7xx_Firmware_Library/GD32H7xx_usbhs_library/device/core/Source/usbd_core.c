@@ -95,7 +95,8 @@ uint32_t usbd_ep_setup(usb_core_driver *udev, const usb_desc_ep *ep_desc)
     uint16_t max_len = ep_desc->wMaxPacketSize;
 
     /* set endpoint direction */
-    if(EP_DIR(ep_addr)) {
+    if(EP_DIR(ep_addr))
+    {
         transc = &udev->dev.transc_in[EP_ID(ep_addr)];
 
         transc->ep_addr.dir = 1U;
@@ -129,7 +130,8 @@ uint32_t usbd_ep_clear(usb_core_driver *udev, uint8_t ep_addr)
 {
     usb_transc *transc;
 
-    if(EP_DIR(ep_addr)) {
+    if(EP_DIR(ep_addr))
+    {
         transc = &udev->dev.transc_in[EP_ID(ep_addr)];
     } else {
         transc = &udev->dev.transc_out[ep_addr];
@@ -162,7 +164,8 @@ uint32_t usbd_ep_recev(usb_core_driver *udev, uint8_t ep_addr, uint8_t *pbuf, ui
     transc->xfer_len = len;
     transc->xfer_count = 0U;
 
-    if((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
+    if((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+    {
         transc->dma_addr = (uint32_t)pbuf;
     }
 
@@ -193,7 +196,8 @@ uint32_t usbd_ep_send(usb_core_driver *udev, uint8_t ep_addr, uint8_t *pbuf, uin
     transc->xfer_len = len;
     transc->xfer_count = 0U;
 
-    if((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
+    if((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+    {
         transc->dma_addr = (uint32_t)pbuf;
     }
 
@@ -217,7 +221,8 @@ uint32_t usbd_ep_stall(usb_core_driver *udev, uint8_t ep_addr)
 {
     usb_transc *transc = NULL;
 
-    if(EP_DIR(ep_addr)) {
+    if(EP_DIR(ep_addr))
+    {
         transc = &udev->dev.transc_in[EP_ID(ep_addr)];
     } else {
         transc = &udev->dev.transc_out[ep_addr];
@@ -244,7 +249,8 @@ uint32_t usbd_ep_stall_clear(usb_core_driver *udev, uint8_t ep_addr)
 {
     usb_transc *transc = NULL;
 
-    if(EP_DIR(ep_addr)) {
+    if(EP_DIR(ep_addr))
+    {
         transc = &udev->dev.transc_in[EP_ID(ep_addr)];
     } else {
         transc = &udev->dev.transc_out[ep_addr];
@@ -269,7 +275,8 @@ uint32_t usbd_ep_stall_clear(usb_core_driver *udev, uint8_t ep_addr)
 */
 uint32_t usbd_fifo_flush(usb_core_driver *udev, uint8_t ep_addr)
 {
-    if(EP_DIR(ep_addr)) {
+    if(EP_DIR(ep_addr))
+    {
         (void)usb_txfifo_flush(&udev->regs, EP_ID(ep_addr));
     } else {
         (void)usb_rxfifo_flush(&udev->regs);

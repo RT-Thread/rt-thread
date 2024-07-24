@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -67,7 +67,7 @@ OF SUCH DAMAGE.
 
 /* bits definitions */
 /* GPIO_CTL */
-#define GPIO_CTL_CTL0              BITS(0,1)                       /*!< pin 0 configuration bits */ 
+#define GPIO_CTL_CTL0              BITS(0,1)                       /*!< pin 0 configuration bits */
 #define GPIO_CTL_CTL1              BITS(2,3)                       /*!< pin 1 configuration bits */
 #define GPIO_CTL_CTL2              BITS(4,5)                       /*!< pin 2 configuration bits */
 #define GPIO_CTL_CTL3              BITS(6,7)                       /*!< pin 3 configuration bits */
@@ -236,8 +236,8 @@ OF SUCH DAMAGE.
 #define GPIO_AFSEL0_SEL5           BITS(20,23)                     /*!< pin 5 alternate function selected */
 #define GPIO_AFSEL0_SEL6           BITS(24,27)                     /*!< pin 6 alternate function selected */
 #define GPIO_AFSEL0_SEL7           BITS(28,31)                     /*!< pin 7 alternate function selected */
-                                                                   
-/* GPIO_AFSEL1 */                                                  
+
+/* GPIO_AFSEL1 */
 #define GPIO_AFSEL1_SEL8           BITS(0,3)                       /*!< pin 8 alternate function selected */
 #define GPIO_AFSEL1_SEL9           BITS(4,7)                       /*!< pin 9 alternate function selected */
 #define GPIO_AFSEL1_SEL10          BITS(8,11)                      /*!< pin 10 alternate function selected */
@@ -381,9 +381,9 @@ typedef FlagStatus bit_status;
 /* GPIO alternate function values */
 #define GPIO_AFR_SET(n, af)        ((uint32_t)((uint32_t)(af) << (4U * (n))))
 #define GPIO_AFR_MASK(n)           (0xFU << (4U * (n)))
- 
+
 /* GPIO alternate function */
-#define AF(regval)                 (BITS(0,3) & ((uint32_t)(regval) << 0)) 
+#define AF(regval)                 (BITS(0,3) & ((uint32_t)(regval) << 0))
 #define GPIO_AF_0                  AF(0)                           /*!< alternate function 0 selected */
 #define GPIO_AF_1                  AF(1)                           /*!< alternate function 1 selected */
 #define GPIO_AF_2                  AF(2)                           /*!< alternate function 2 selected */

@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -191,7 +191,7 @@ OF SUCH DAMAGE.
 /* constants definitions */
 /* TLI parameter struct definitions */
 typedef struct
-{   
+{
     uint16_t synpsz_vpsz;                                                   /*!< size of the vertical synchronous pulse */
     uint16_t synpsz_hpsz;                                                   /*!< size of the horizontal synchronous pulse */
     uint16_t backpsz_vbpsz;                                                 /*!< size of the vertical back porch plus synchronous pulse */
@@ -207,7 +207,7 @@ typedef struct
     uint32_t signalpolarity_vs;                                             /*!< vertical pulse polarity selection */
     uint32_t signalpolarity_de;                                             /*!< data enable polarity selection */
     uint32_t signalpolarity_pixelck;                                        /*!< pixel clock polarity selection */
-}tli_parameter_struct; 
+}tli_parameter_struct;
 
 /* TLI layer parameter struct definitions */
 typedef struct
@@ -228,7 +228,7 @@ typedef struct
     uint16_t layer_frame_buf_stride_offset;                                 /*!< frame buffer stride offset */
     uint16_t layer_frame_line_length;                                       /*!< frame line length */
     uint16_t layer_frame_total_line_number;                                 /*!< frame total line number */
-}tli_layer_parameter_struct; 
+}tli_layer_parameter_struct;
 
 /* TLI layer LUT parameter struct definitions */
 typedef struct
@@ -237,10 +237,10 @@ typedef struct
     uint8_t layer_lut_channel_red;                                          /*!< red channel of a LUT entry */
     uint8_t layer_lut_channel_green;                                        /*!< green channel of a LUT entry */
     uint8_t layer_lut_channel_blue;                                         /*!< blue channel of a LUT entry */
-}tli_layer_lut_parameter_struct; 
+}tli_layer_lut_parameter_struct;
 
 /* packeted pixel format */
-typedef enum 
+typedef enum
 {
      LAYER_PPF_ARGB8888,                                                    /*!< layerx pixel format ARGB8888 */
      LAYER_PPF_RGB888,                                                      /*!< layerx pixel format RGB888 */
@@ -312,7 +312,7 @@ typedef enum
 /* initialization functions, TLI enable or disable, TLI reload mode configuration */
 /* deinitialize TLI registers */
 void tli_deinit(void);
-/* initialize the parameters of TLI parameter structure with the default values, it is suggested 
+/* initialize the parameters of TLI parameter structure with the default values, it is suggested
   that call this function after a tli_parameter_struct structure is defined */
 void tli_struct_para_init(tli_parameter_struct *tli_struct);
 /* initialize TLI */
@@ -327,14 +327,14 @@ void tli_disable(void);
 void tli_reload_config(uint8_t reload_mod);
 
 /* TLI layer configuration functions */
-/* initialize the parameters of TLI layer structure with the default values, it is suggested 
+/* initialize the parameters of TLI layer structure with the default values, it is suggested
   that call this function after a tli_layer_parameter_struct structure is defined */
 void tli_layer_struct_para_init(tli_layer_parameter_struct *layer_struct);
 /* initialize TLI layer */
 void tli_layer_init(uint32_t layerx,tli_layer_parameter_struct *layer_struct);
 /* reconfigure window position */
 void tli_layer_window_offset_modify(uint32_t layerx,uint16_t offset_x,uint16_t offset_y);
-/* initialize the parameters of TLI layer LUT structure with the default values, it is suggested 
+/* initialize the parameters of TLI layer LUT structure with the default values, it is suggested
   that call this function after a tli_layer_lut_parameter_struct structure is defined */
 void tli_lut_struct_para_init(tli_layer_lut_parameter_struct *lut_struct);
 /* initialize TLI layer LUT */

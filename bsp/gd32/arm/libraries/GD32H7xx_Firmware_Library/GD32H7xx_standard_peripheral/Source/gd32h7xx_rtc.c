@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -79,7 +79,8 @@ ErrStatus rtc_deinit(void)
         flag_status = RTC_STAT & RTC_STAT_WTWF;
     } while((--time_index > 0U) && ((uint32_t)RESET == flag_status));
 
-    if((uint32_t)RESET == flag_status) {
+    if((uint32_t)RESET == flag_status)
+    {
         error_status = ERROR;
     } else {
         RTC_CTL &= ((uint32_t)~RTC_CTL_WTCS);
@@ -91,7 +92,8 @@ ErrStatus rtc_deinit(void)
         /* enter init mode */
         error_status = rtc_init_mode_enter();
 
-        if(ERROR != error_status) {
+        if(ERROR != error_status)
+        {
             /* before reset RTC_TIME and RTC_DATE, BPSHAD bit in RTC_CTL should be reset as the condition.
                in order to read calendar from shadow register, not the real registers being reset */
             RTC_TIME = RTC_REGISTER_RESET;
@@ -167,7 +169,8 @@ ErrStatus rtc_init(rtc_parameter_struct *rtc_initpara_struct)
     /* 2nd: enter init mode */
     error_status = rtc_init_mode_enter();
 
-    if(ERROR != error_status) {
+    if(ERROR != error_status)
+    {
         RTC_PSC = (uint32_t)(PSC_FACTOR_A(rtc_initpara_struct->factor_asyn) | \
                              PSC_FACTOR_S(rtc_initpara_struct->factor_syn));
 
@@ -203,7 +206,8 @@ ErrStatus rtc_init_mode_enter(void)
     ErrStatus error_status = ERROR;
 
     /* check whether it has been in init mode */
-    if((uint32_t)RESET == (RTC_STAT & RTC_STAT_INITF)) {
+    if((uint32_t)RESET == (RTC_STAT & RTC_STAT_INITF))
+    {
         RTC_STAT |= RTC_STAT_INITM;
 
         /* wait until the INITF flag to be set */
@@ -211,7 +215,8 @@ ErrStatus rtc_init_mode_enter(void)
             flag_status = RTC_STAT & RTC_STAT_INITF;
         } while((--time_index > 0x00U) && ((uint32_t)RESET == flag_status));
 
-        if((uint32_t)RESET != flag_status) {
+        if((uint32_t)RESET != flag_status)
+        {
             error_status = SUCCESS;
         }
     } else {
@@ -244,7 +249,8 @@ ErrStatus rtc_register_sync_wait(void)
     uint32_t flag_status = RESET;
     ErrStatus error_status = ERROR;
 
-    if((uint32_t)RESET == (RTC_CTL & RTC_CTL_BPSHAD)) {
+    if((uint32_t)RESET == (RTC_CTL & RTC_CTL_BPSHAD))
+    {
         /* disable the write protection */
         RTC_WPK = RTC_UNLOCK_KEY1;
         RTC_WPK = RTC_UNLOCK_KEY2;
@@ -257,7 +263,8 @@ ErrStatus rtc_register_sync_wait(void)
             flag_status = RTC_STAT & RTC_STAT_RSYNF;
         } while((--time_index > 0U) && ((uint32_t)RESET == flag_status));
 
-        if((uint32_t)RESET != flag_status) {
+        if((uint32_t)RESET != flag_status)
+        {
             error_status = SUCCESS;
         }
 
@@ -366,7 +373,8 @@ void rtc_alarm_config(uint8_t rtc_alarm, rtc_alarm_struct *rtc_alarm_time)
                   ALRMTD_MN(rtc_alarm_time->alarm_minute) | \
                   ALRMTD_SC(rtc_alarm_time->alarm_second));
 
-    if(RTC_ALARM0 == rtc_alarm) {
+    if(RTC_ALARM0 == rtc_alarm)
+    {
         RTC_ALRM0TD = (uint32_t)reg_alrmtd;
 
     } else {
@@ -411,7 +419,8 @@ void rtc_alarm_subsecond_config(uint8_t rtc_alarm, uint32_t mask_subsecond, uint
     /* 2nd: enter init mode */
     if(ERROR != (rtc_init_mode_enter()))
     {
-        if(RTC_ALARM0 == rtc_alarm) {
+        if(RTC_ALARM0 == rtc_alarm)
+        {
             RTC_ALRM0SS = mask_subsecond | subsecond;
         } else {
             RTC_ALRM1SS = mask_subsecond | subsecond;
@@ -444,7 +453,8 @@ void rtc_alarm_get(uint8_t rtc_alarm, rtc_alarm_struct *rtc_alarm_time)
     uint32_t reg_alrmtd = 0U;
 
     /* get the value of RTC_ALRM0TD register */
-    if(RTC_ALARM0 == rtc_alarm) {
+    if(RTC_ALARM0 == rtc_alarm)
+    {
         reg_alrmtd = RTC_ALRM0TD;
     } else {
         reg_alrmtd = RTC_ALRM1TD;
@@ -467,7 +477,8 @@ void rtc_alarm_get(uint8_t rtc_alarm, rtc_alarm_struct *rtc_alarm_time)
 */
 uint32_t rtc_alarm_subsecond_get(uint8_t rtc_alarm)
 {
-    if(RTC_ALARM0 == rtc_alarm) {
+    if(RTC_ALARM0 == rtc_alarm)
+    {
         return ((uint32_t)(RTC_ALRM0SS & RTC_ALRM0SS_SSC));
     } else {
         return ((uint32_t)(RTC_ALRM1SS & RTC_ALRM1SS_SSC));
@@ -486,7 +497,8 @@ void rtc_alarm_enable(uint8_t rtc_alarm)
     RTC_WPK = RTC_UNLOCK_KEY1;
     RTC_WPK = RTC_UNLOCK_KEY2;
 
-    if(RTC_ALARM0 == rtc_alarm) {
+    if(RTC_ALARM0 == rtc_alarm)
+    {
         RTC_CTL |= RTC_CTL_ALRM0EN;
     } else {
         RTC_CTL |= RTC_CTL_ALRM1EN;
@@ -513,7 +525,8 @@ ErrStatus rtc_alarm_disable(uint8_t rtc_alarm)
     RTC_WPK = RTC_UNLOCK_KEY2;
 
     /* clear the state of alarm */
-    if(RTC_ALARM0 == rtc_alarm) {
+    if(RTC_ALARM0 == rtc_alarm)
+    {
         RTC_CTL &= (uint32_t)(~RTC_CTL_ALRM0EN);
         /* wait until ALRM0WF flag to be set after the alarm is disabled */
         do {
@@ -527,7 +540,8 @@ ErrStatus rtc_alarm_disable(uint8_t rtc_alarm)
         } while((--time_index > 0U) && ((uint32_t)RESET == flag_status));
     }
 
-    if((uint32_t)RESET != flag_status) {
+    if((uint32_t)RESET != flag_status)
+    {
         error_status = SUCCESS;
     }
 
@@ -600,7 +614,8 @@ void rtc_timestamp_internalevent_config(uint32_t mode)
     RTC_WPK = RTC_UNLOCK_KEY1;
     RTC_WPK = RTC_UNLOCK_KEY2;
 
-    if(mode == RTC_ITSEN_ENABLE) {
+    if(mode == RTC_ITSEN_ENABLE)
+    {
         RTC_CTL |= RTC_CTL_ITSEN;
     } else {
         RTC_CTL &= ~(uint32_t)RTC_CTL_ITSEN;
@@ -689,11 +704,13 @@ void rtc_tamper_enable(rtc_tamper_struct *rtc_tamper)
     RTC_TAMP &= (uint32_t)~RTC_TAMP_FLT;
 
     /* the tamper source is voltage level detection */
-    if((uint32_t)(rtc_tamper->tamper_filter) != RTC_FLT_EDGE) {
+    if((uint32_t)(rtc_tamper->tamper_filter) != RTC_FLT_EDGE)
+    {
         RTC_TAMP &= (uint32_t)~(RTC_TAMP_DISPU | RTC_TAMP_PRCH | RTC_TAMP_FREQ | RTC_TAMP_FLT);
 
         /* check if the tamper pin need precharge, if need, then configure the precharge time */
-        if(DISABLE == rtc_tamper->tamper_precharge_enable) {
+        if(DISABLE == rtc_tamper->tamper_precharge_enable)
+        {
             RTC_TAMP |= (uint32_t)RTC_TAMP_DISPU;
         } else {
             RTC_TAMP |= (uint32_t)(rtc_tamper->tamper_precharge_time);
@@ -704,18 +721,21 @@ void rtc_tamper_enable(rtc_tamper_struct *rtc_tamper)
 
         /* configure the tamper trigger */
         RTC_TAMP &= ((uint32_t)~((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS));
-        if(RTC_TAMPER_TRIGGER_LEVEL_LOW != rtc_tamper->tamper_trigger) {
+        if(RTC_TAMPER_TRIGGER_LEVEL_LOW != rtc_tamper->tamper_trigger)
+        {
             RTC_TAMP |= (uint32_t)((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS);
         }
     } else {
         /* configure the tamper trigger */
         RTC_TAMP &= ((uint32_t)~((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS));
-        if(RTC_TAMPER_TRIGGER_EDGE_RISING != rtc_tamper->tamper_trigger) {
+        if(RTC_TAMPER_TRIGGER_EDGE_RISING != rtc_tamper->tamper_trigger)
+        {
             RTC_TAMP |= (uint32_t)((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS);
         }
     }
     RTC_TAMP &= (uint32_t)~RTC_TAMP_TPTS;
-    if(DISABLE != rtc_tamper->tamper_with_timestamp) {
+    if(DISABLE != rtc_tamper->tamper_with_timestamp)
+    {
         /* the tamper event also cause a time-stamp event */
         RTC_TAMP |= (uint32_t)RTC_TAMP_TPTS;
     }
@@ -758,7 +778,8 @@ void rtc_output_pin_select(uint32_t outputpin)
     /* enter init mode */
     error_status = rtc_init_mode_enter();
 
-    if(ERROR != error_status) {
+    if(ERROR != error_status)
+    {
         RTC_CFG &= (uint32_t)(~RTC_CFG_OUT2EN);
         RTC_CFG |= (uint32_t)(outputpin);
         /* exit init mode */
@@ -872,7 +893,8 @@ ErrStatus rtc_second_adjust(uint32_t add, uint32_t minus)
 
     /* check if the function of reference clock detection is disabled */
     temp = RTC_CTL & RTC_CTL_REFEN;
-    if((RESET == flag_status) && (RESET == temp)) {
+    if((RESET == flag_status) && (RESET == temp))
+    {
         RTC_SHIFTCTL = (uint32_t)(add | SHIFTCTL_SFS(minus));
         error_status = rtc_register_sync_wait();
     }
@@ -936,7 +958,8 @@ ErrStatus rtc_refclock_detection_enable(void)
     /* enter init mode */
     error_status = rtc_init_mode_enter();
 
-    if(ERROR != error_status) {
+    if(ERROR != error_status)
+    {
         RTC_CTL |= (uint32_t)RTC_CTL_REFEN;
         /* exit init mode */
         rtc_init_mode_exit();
@@ -965,7 +988,8 @@ ErrStatus rtc_refclock_detection_disable(void)
     /* enter init mode */
     error_status = rtc_init_mode_enter();
 
-    if(ERROR != error_status) {
+    if(ERROR != error_status)
+    {
         RTC_CTL &= (uint32_t)~RTC_CTL_REFEN;
         /* exit init mode */
         rtc_init_mode_exit();
@@ -1017,7 +1041,8 @@ ErrStatus rtc_wakeup_disable(void)
         flag_status = RTC_STAT & RTC_STAT_WTWF;
     } while((--time_index > 0U) && ((uint32_t)RESET == flag_status));
 
-    if((uint32_t)RESET == flag_status) {
+    if((uint32_t)RESET == flag_status)
+    {
         error_status = ERROR;
     } else {
         error_status = SUCCESS;
@@ -1057,7 +1082,8 @@ ErrStatus rtc_wakeup_clock_set(uint8_t wakeup_clock)
         flag_status = RTC_STAT & RTC_STAT_WTWF;
     } while((--time_index > 0U) && ((uint32_t)RESET == flag_status));
 
-    if((uint32_t)RESET == flag_status) {
+    if((uint32_t)RESET == flag_status)
+    {
         error_status = ERROR;
     } else {
         RTC_CTL &= (uint32_t)~ RTC_CTL_WTCS;
@@ -1092,7 +1118,8 @@ ErrStatus rtc_wakeup_timer_set(uint16_t wakeup_timer)
         flag_status = RTC_STAT & RTC_STAT_WTWF;
     } while((--time_index > 0U) && ((uint32_t)RESET == flag_status));
 
-    if((uint32_t)RESET == flag_status) {
+    if((uint32_t)RESET == flag_status)
+    {
         error_status = ERROR;
     } else {
         RTC_WUT = (uint32_t)wakeup_timer;
@@ -1144,7 +1171,8 @@ ErrStatus rtc_smooth_calibration_config(uint32_t window, uint32_t plus, uint32_t
         flag_status = RTC_STAT & RTC_STAT_SCPF;
     } while((--time_index > 0U) && ((uint32_t)RESET != flag_status));
 
-    if((uint32_t)RESET == flag_status) {
+    if((uint32_t)RESET == flag_status)
+    {
         RTC_HRFC = (uint32_t)(window | plus | HRFC_CMSK(minus));
         error_status = SUCCESS;
     }
@@ -1232,7 +1260,8 @@ FlagStatus rtc_flag_get(uint32_t flag)
 {
     FlagStatus flag_state = RESET;
 
-    if((uint32_t)RESET != (RTC_STAT & flag)) {
+    if((uint32_t)RESET != (RTC_STAT & flag))
+    {
         flag_state = SET;
     }
     return flag_state;
@@ -1257,9 +1286,9 @@ void rtc_flag_clear(uint32_t flag)
     /* disable the write protection */
     RTC_WPK = RTC_UNLOCK_KEY1;
     RTC_WPK = RTC_UNLOCK_KEY2;
-    
+
     RTC_STAT &= (uint32_t)(~flag);
-    
+
     /* enable the write protection */
     RTC_WPK = RTC_LOCK_KEY;
 }

@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -45,7 +45,7 @@ static const uint8_t EP0_MAXLEN[4] = {
 };
 
 /* USB endpoint Tx FIFO size */
-uint16_t USBHS_TX_FIFO_SIZE[USBHS_MAX_EP_COUNT] = 
+uint16_t USBHS_TX_FIFO_SIZE[USBHS_MAX_EP_COUNT] =
 {
     (uint16_t)TX0_FIFO_SIZE,
     (uint16_t)TX1_FIFO_SIZE,
@@ -80,9 +80,11 @@ usb_status usb_devcore_init (usb_core_driver *udev)
 
     udev->regs.dr->DCFG &= ~DCFG_DS;
 
-    if (USB_EMBEDDED_PHY_HS == udev->bp.phy_itf) {
+    if (USB_EMBEDDED_PHY_HS == udev->bp.phy_itf)
+    {
         udev->regs.dr->DCFG |= USB_SPEED_INP_HIGH;
-    } else if (USB_EMBEDDED_PHY_FS == udev->bp.phy_itf) {
+    } else if (USB_EMBEDDED_PHY_FS == udev->bp.phy_itf)
+    {
         udev->regs.dr->DCFG |= USB_SPEED_INP_FULL;
     } else {
         /* no operation */
@@ -92,7 +94,8 @@ usb_status usb_devcore_init (usb_core_driver *udev)
     usb_set_rxfifo(&udev->regs, (uint16_t)RX_FIFO_SIZE);
 
     /* set endpoint 0 to 3's TX FIFO length and RAM address */
-    for (i = 0U; i < USBHS_MAX_EP_COUNT; i++) {
+    for (i = 0U; i < USBHS_MAX_EP_COUNT; i++)
+    {
         usb_set_txfifo(&udev->regs, i, USBHS_TX_FIFO_SIZE[i]);
     }
 
@@ -111,8 +114,10 @@ usb_status usb_devcore_init (usb_core_driver *udev)
     udev->regs.dr->DAEPINTEN = 0U;
 
     /* configure all IN/OUT endpoints */
-    for (i = 0U; i < udev->bp.num_ep; i++) {
-        if (udev->regs.er_in[i]->DIEPCTL & DEPCTL_EPEN) {
+    for (i = 0U; i < udev->bp.num_ep; i++)
+    {
+        if (udev->regs.er_in[i]->DIEPCTL & DEPCTL_EPEN)
+        {
             udev->regs.er_in[i]->DIEPCTL |= DEPCTL_EPD | DEPCTL_SNAK;
         } else {
             udev->regs.er_in[i]->DIEPCTL = 0U;
@@ -124,7 +129,8 @@ usb_status usb_devcore_init (usb_core_driver *udev)
         /* clear all pending IN endpoint interrupts */
         udev->regs.er_in[i]->DIEPINTF = 0xFFU;
 
-        if (udev->regs.er_out[i]->DOEPCTL & DEPCTL_EPEN) {
+        if (udev->regs.er_out[i]->DOEPCTL & DEPCTL_EPEN)
+        {
             udev->regs.er_out[i]->DOEPCTL |= DEPCTL_EPD | DEPCTL_SNAK;
         } else {
             udev->regs.er_out[i]->DOEPCTL = 0U;
@@ -142,7 +148,8 @@ usb_status usb_devcore_init (usb_core_driver *udev)
     (void)usb_devint_enable (udev);
 
     /* configure LPM function */
-    if(1U == udev->bp.lpm_enable){
+    if(1U == udev->bp.lpm_enable)
+    {
         udev->dev.pm.lpm_state = LPM_L0;
         udev->regs.gr->GLPMCFG = GLPMCFG_LPMEN | GLPMCFG_ACKLPM | GLPMCFG_BESLEN;
     }
@@ -168,7 +175,8 @@ usb_status usb_devint_enable (usb_core_driver *udev)
     udev->regs.gr->GINTEN = GINTEN_WKUPIE | GINTEN_SPIE;
 
     /* enable device_mode-related interrupts */
-    if ((uint8_t)USB_USE_FIFO == udev->bp.transfer_mode) {
+    if ((uint8_t)USB_USE_FIFO == udev->bp.transfer_mode)
+    {
         udev->regs.gr->GINTEN |= GINTEN_RXFNEIE;
     }
 
@@ -179,7 +187,8 @@ usb_status usb_devint_enable (usb_core_driver *udev)
     udev->regs.gr->GINTEN |= GINTEN_SESIE | GINTEN_OTGIE;
 #endif /* VBUS_SENSING_ENABLED */
 
-    if(1U == udev->bp.lpm_enable){
+    if(1U == udev->bp.lpm_enable)
+    {
         udev->regs.gr->GINTEN |= GINTEN_LPMIE;
     }
 
@@ -204,12 +213,14 @@ usb_status usb_transc0_active (usb_core_driver *udev, usb_transc *transc)
     /* get the endpoint number */
     uint8_t ep_num = transc->ep_addr.num;
 
-    if (ep_num) {
+    if (ep_num)
+    {
         /* not endpoint 0 */
         return USB_FAIL;
     }
 
-    if (transc->ep_addr.dir) {
+    if (transc->ep_addr.dir)
+    {
         reg_addr = &udev->regs.er_in[0]->DIEPCTL;
     } else {
         reg_addr = &udev->regs.er_out[0]->DOEPCTL;
@@ -245,7 +256,8 @@ usb_status usb_transc_active (usb_core_driver *udev, usb_transc *transc)
     uint8_t ep_num = transc->ep_addr.num;
 
     /* enable endpoint interrupt number */
-    if (transc->ep_addr.dir) {
+    if (transc->ep_addr.dir)
+    {
         reg_addr = &udev->regs.er_in[ep_num]->DIEPCTL;
 
         epinten = 1U << ep_num;
@@ -256,11 +268,13 @@ usb_status usb_transc_active (usb_core_driver *udev, usb_transc *transc)
     }
 
     /* if the endpoint is not active, need change the endpoint control register */
-    if (!(*reg_addr & DEPCTL_EPACT)) {
+    if (!(*reg_addr & DEPCTL_EPACT))
+    {
         *reg_addr &= ~(DEPCTL_MPL | DEPCTL_EPTYPE | DIEPCTL_TXFNUM);
 
         /* set endpoint maximum packet length */
-        if (0U == ep_num) {
+        if (0U == ep_num)
+        {
             *reg_addr |= EP0_MAXLEN[enum_speed];
         } else {
             *reg_addr |= transc->max_len;
@@ -271,7 +285,8 @@ usb_status usb_transc_active (usb_core_driver *udev, usb_transc *transc)
     }
 
 #ifdef USB_DEDICATED_EP1_ENABLED
-    if (1U == ep_num) {
+    if (1U == ep_num)
+    {
         udev->regs.dr->DEP1INTEN |= epinten;
     }
     else
@@ -298,7 +313,8 @@ usb_status usb_transc_deactivate(usb_core_driver *udev, usb_transc *transc)
     uint8_t ep_num = transc->ep_addr.num;
 
     /* disable endpoint interrupt number */
-    if (transc->ep_addr.dir) {
+    if (transc->ep_addr.dir)
+    {
         epinten = 1U << ep_num;
 
         udev->regs.er_in[ep_num]->DIEPCTL &= ~DEPCTL_EPACT;
@@ -309,7 +325,8 @@ usb_status usb_transc_deactivate(usb_core_driver *udev, usb_transc *transc)
     }
 
 #ifdef USB_DEDICATED_EP1_ENABLED
-    if (1U == ep_num) {
+    if (1U == ep_num)
+    {
         udev->regs.dr->DEP1INTEN &= ~epinten;
     }
     else
@@ -340,12 +357,14 @@ usb_status usb_transc_inxfer (usb_core_driver *udev, usb_transc *transc)
     eplen &= ~(DEPLEN_TLEN | DEPLEN_PCNT);
 
     /* zero length packet or endpoint 0 */
-    if (0U == transc->xfer_len) {
+    if (0U == transc->xfer_len)
+    {
         /* set transfer packet count to 1 */
         eplen |= 1U << 19U;
     } else {
         /* set transfer packet count */
-        if (0U == ep_num) {
+        if (0U == ep_num)
+        {
             transc->xfer_len = USB_MIN(transc->xfer_len, transc->max_len);
 
             eplen |= 1U << 19U;
@@ -356,22 +375,26 @@ usb_status usb_transc_inxfer (usb_core_driver *udev, usb_transc *transc)
         /* set endpoint transfer length */
         eplen |= transc->xfer_len;
 
-        if ((uint8_t)USB_EPTYPE_ISOC == transc->ep_type) {
+        if ((uint8_t)USB_EPTYPE_ISOC == transc->ep_type)
+        {
             eplen |= DIEPLEN_MCNT & (1U << 29U);
         }
     }
 
     udev->regs.er_in[ep_num]->DIEPLEN = eplen;
 
-    if ((uint8_t)USB_EPTYPE_ISOC == transc->ep_type) {
-        if (((udev->regs.dr->DSTAT & DSTAT_FNRSOF) >> 8U) & 0x01U) {
+    if ((uint8_t)USB_EPTYPE_ISOC == transc->ep_type)
+    {
+        if (((udev->regs.dr->DSTAT & DSTAT_FNRSOF) >> 8U) & 0x01U)
+        {
             epctl |= DEPCTL_SEVNFRM;
         } else {
             epctl |= DEPCTL_SODDFRM;
         }
     }
 
-    if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
+    if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+    {
         udev->regs.er_in[ep_num]->DIEPDMAADDR = transc->dma_addr;
     }
 
@@ -380,10 +403,13 @@ usb_status usb_transc_inxfer (usb_core_driver *udev, usb_transc *transc)
 
     udev->regs.er_in[ep_num]->DIEPCTL = epctl;
 
-    if ((uint8_t)USB_USE_FIFO == udev->bp.transfer_mode) {
-        if (transc->ep_type != (uint8_t)USB_EPTYPE_ISOC) {
+    if ((uint8_t)USB_USE_FIFO == udev->bp.transfer_mode)
+    {
+        if (transc->ep_type != (uint8_t)USB_EPTYPE_ISOC)
+        {
             /* enable the TX FIFO empty interrupt for this endpoint */
-            if (transc->xfer_len > 0U) {
+            if (transc->xfer_len > 0U)
+            {
                 udev->regs.dr->DIEPFEINTEN |= 1U << ep_num;
             }
         } else {
@@ -413,7 +439,8 @@ usb_status usb_transc_outxfer (usb_core_driver *udev, usb_transc *transc)
     eplen &= ~(DEPLEN_TLEN | DEPLEN_PCNT);
 
     /* zero length packet or endpoint 0 */
-    if ((0U == transc->xfer_len) || (0U == ep_num)) {
+    if ((0U == transc->xfer_len) || (0U == ep_num))
+    {
         /* set the transfer length to max packet size */
         eplen |= transc->max_len;
 
@@ -432,12 +459,15 @@ usb_status usb_transc_outxfer (usb_core_driver *udev, usb_transc *transc)
 
     udev->regs.er_out[ep_num]->DOEPLEN = eplen;
 
-    if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
+    if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+    {
         udev->regs.er_out[ep_num]->DOEPDMAADDR = transc->dma_addr;
     }
 
-    if ((uint8_t)USB_EPTYPE_ISOC == transc->ep_type) {
-        if (transc->frame_num) {
+    if ((uint8_t)USB_EPTYPE_ISOC == transc->ep_type)
+    {
+        if (transc->frame_num)
+        {
             epctl |= DEPCTL_SD1PID;
         } else {
             epctl |= DEPCTL_SD0PID;
@@ -465,11 +495,13 @@ usb_status usb_transc_stall (usb_core_driver *udev, usb_transc *transc)
 
     uint8_t ep_num = transc->ep_addr.num;
 
-    if (transc->ep_addr.dir) {
+    if (transc->ep_addr.dir)
+    {
         reg_addr = &(udev->regs.er_in[ep_num]->DIEPCTL);
 
         /* set the endpoint disable bit */
-        if (*reg_addr & DEPCTL_EPEN) {
+        if (*reg_addr & DEPCTL_EPEN)
+        {
             *reg_addr |= DEPCTL_EPD;
         }
     } else {
@@ -496,7 +528,8 @@ usb_status usb_transc_clrstall(usb_core_driver *udev, usb_transc *transc)
 
     uint8_t ep_num = transc->ep_addr.num;
 
-    if (transc->ep_addr.dir) {
+    if (transc->ep_addr.dir)
+    {
         reg_addr = &(udev->regs.er_in[ep_num]->DIEPCTL);
     } else {
         reg_addr = &(udev->regs.er_out[ep_num]->DOEPCTL);
@@ -506,7 +539,8 @@ usb_status usb_transc_clrstall(usb_core_driver *udev, usb_transc *transc)
     *reg_addr &= ~DEPCTL_STALL;
 
     /* reset data PID of the periodic endpoints */
-    if (((uint8_t)USB_EPTYPE_INTR == transc->ep_type) || ((uint8_t)USB_EPTYPE_BULK == transc->ep_type)) {
+    if (((uint8_t)USB_EPTYPE_INTR == transc->ep_type) || ((uint8_t)USB_EPTYPE_BULK == transc->ep_type))
+    {
         *reg_addr |= DEPCTL_SD0PID;
     }
 
@@ -547,7 +581,8 @@ void usb_ctlep_startout (usb_core_driver *udev)
     /* set OUT endpoint 0 receive length to 24 bytes, 1 packet and 3 setup packets */
     udev->regs.er_out[0]->DOEPLEN = DOEP0_TLEN(8U * 3U) | DOEP0_PCNT(1U) | DOEP0_STPCNT(3U);
 
-    if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
+    if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+    {
         udev->regs.er_out[0]->DOEPDMAADDR = (uint32_t)&udev->dev.control.req;
 
         /* endpoint enable */
@@ -563,9 +598,12 @@ void usb_ctlep_startout (usb_core_driver *udev)
 */
 void usb_rwkup_active (usb_core_driver *udev)
 {
-    if (udev->dev.pm.dev_remote_wakeup)  {
-        if (udev->regs.dr->DSTAT & DSTAT_SPST) {
-            if (udev->bp.low_power) {
+    if (udev->dev.pm.dev_remote_wakeup)
+    {
+        if (udev->regs.dr->DSTAT & DSTAT_SPST)
+        {
+            if (udev->bp.low_power)
+            {
                 /* ungate USB core clock */
                 *udev->regs.PWRCLKCTL &= ~(PWRCLKCTL_SHCLK | PWRCLKCTL_SUCLK);
             }
@@ -588,8 +626,10 @@ void usb_rwkup_active (usb_core_driver *udev)
 */
 void usb_clock_active (usb_core_driver *udev)
 {
-    if (udev->bp.low_power) {
-        if (udev->regs.dr->DSTAT & DSTAT_SPST) {
+    if (udev->bp.low_power)
+    {
+        if (udev->regs.dr->DSTAT & DSTAT_SPST)
+        {
             /* un-gate USB Core clock */
             *udev->regs.PWRCLKCTL &= ~(PWRCLKCTL_SHCLK | PWRCLKCTL_SUCLK);
         }
@@ -606,7 +646,8 @@ void usb_dev_suspend (usb_core_driver *udev)
 {
     __IO uint32_t devstat = udev->regs.dr->DSTAT;
 
-    if ((devstat & DSTAT_SPST) && (udev->bp.low_power)) {
+    if ((devstat & DSTAT_SPST) && (udev->bp.low_power))
+    {
         /* switch-off the USB clocks */
         *udev->regs.PWRCLKCTL |= PWRCLKCTL_SHCLK;
 
@@ -628,7 +669,8 @@ void usb_dev_stop (usb_core_driver *udev)
     udev->dev.cur_status = 1U;
 
     /* clear all interrupt flag and enable bits */
-    for (i = 0U; i < udev->bp.num_ep; i++) {
+    for (i = 0U; i < udev->bp.num_ep; i++)
+    {
         udev->regs.er_in[i]->DIEPINTF = 0xFFU;
         udev->regs.er_out[i]->DOEPINTF = 0xFFU;
     }
@@ -655,7 +697,8 @@ bcd_type usbd_bcd_detect (usb_core_driver *udev)
 
     usb_mdelay(1000);
 
-    if (0U == (udev->regs.gr->GCCFG & GCCFG_DCDF)) {
+    if (0U == (udev->regs.gr->GCCFG & GCCFG_DCDF))
+    {
         udev->regs.gr->GCCFG &= ~GCCFG_DCDEN;
 
         return BCD_ERROR;
@@ -666,13 +709,15 @@ bcd_type usbd_bcd_detect (usb_core_driver *udev)
     udev->regs.gr->GCCFG |= GCCFG_PEMEN;
     usb_mdelay(50);
 
-    if (udev->regs.gr->GCCFG & GCCFG_PDF) {
+    if (udev->regs.gr->GCCFG & GCCFG_PDF)
+    {
         udev->regs.gr->GCCFG &= ~GCCFG_PEMEN;
         usb_mdelay(20);
         udev->regs.gr->GCCFG |= GCCFG_SDMEN;
         usb_mdelay(50);
 
-        if (udev->regs.gr->GCCFG & GCCFG_SDF) {
+        if (udev->regs.gr->GCCFG & GCCFG_SDF)
+        {
             udev->regs.gr->GCCFG &= ~GCCFG_SDMEN;
             usb_mdelay(20);
 
@@ -683,7 +728,8 @@ bcd_type usbd_bcd_detect (usb_core_driver *udev)
 
             return BCD_CDP;
         }
-    } else if (udev->regs.gr->GCCFG & GCCFG_PS2F) {
+    } else if (udev->regs.gr->GCCFG & GCCFG_PS2F)
+    {
         udev->regs.gr->GCCFG &= ~GCCFG_PEMEN;
         usb_mdelay(20);
 

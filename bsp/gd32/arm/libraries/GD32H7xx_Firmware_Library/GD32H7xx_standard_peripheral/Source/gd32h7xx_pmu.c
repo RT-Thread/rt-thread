@@ -333,15 +333,18 @@ void pmu_smps_ldo_supply_config(uint32_t smpsmode)
     temp |= smpsmode;
     PMU_CTL2 = temp;
 
-    while(0U == (PMU_CTL3 & PMU_CTL3_VOVRF)) {
+    while(0U == (PMU_CTL3 & PMU_CTL3_VOVRF))
+    {
     }
 
     /* When the SMPS supplies external circuits verify that DVSRF flag is set */
     if((smpsmode == PMU_SMPS_1V8_SUPPLIES_EXT_AND_LDO) ||
             (smpsmode == PMU_SMPS_2V5_SUPPLIES_EXT_AND_LDO)   ||
             (smpsmode == PMU_SMPS_1V8_SUPPLIES_EXT)           ||
-            (smpsmode == PMU_SMPS_2V5_SUPPLIES_EXT)) {
-        while(0U == (PMU_CTL2 & PMU_CTL2_DVSRF)) {
+            (smpsmode == PMU_SMPS_2V5_SUPPLIES_EXT))
+            {
+        while(0U == (PMU_CTL2 & PMU_CTL2_DVSRF))
+        {
         }
     }
 }
@@ -361,7 +364,8 @@ void pmu_to_sleepmode(uint8_t sleepmodecmd)
     SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
 
     /* select WFI or WFE command to enter sleep mode */
-    if(WFI_CMD == sleepmodecmd) {
+    if(WFI_CMD == sleepmodecmd)
+    {
         __WFI();
     } else {
         __WFE();
@@ -387,7 +391,8 @@ void pmu_to_deepsleepmode(uint8_t deepsleepmodecmd)
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
     /* select WFI or WFE command to enter deepsleep mode */
-    if(WFI_CMD == deepsleepmodecmd) {
+    if(WFI_CMD == deepsleepmodecmd)
+    {
         __WFI();
     } else {
         __SEV();
@@ -490,7 +495,8 @@ void pmu_backup_write_disable(void)
 void pmu_backup_voltage_stabilizer_enable(void)
 {
     PMU_CTL1 |= PMU_CTL1_BKPVSEN;
-    while(RESET == (PMU_CTL1 & PMU_CTL1_BKPVSRF)) {
+    while(RESET == (PMU_CTL1 & PMU_CTL1_BKPVSRF))
+    {
     }
 }
 
@@ -556,7 +562,8 @@ void pmu_exit_deepsleep_wait_time_config(uint32_t wait_time)
 */
 FlagStatus pmu_flag_get(uint32_t flag)
 {
-    if(PMU_REG_VAL(flag) & BIT(PMU_BIT_POS(flag))) {
+    if(PMU_REG_VAL(flag) & BIT(PMU_BIT_POS(flag)))
+    {
         return  SET;
     } else {
         return  RESET;
@@ -573,10 +580,12 @@ FlagStatus pmu_flag_get(uint32_t flag)
 */
 void pmu_flag_clear(uint32_t flag_reset)
 {
-    if(PMU_FLAG_WAKEUP == flag_reset) {
+    if(PMU_FLAG_WAKEUP == flag_reset)
+    {
         PMU_CTL0 |= PMU_CTL0_WURST;
     } else {
-        if(PMU_FLAG_STANDBY == flag_reset) {
+        if(PMU_FLAG_STANDBY == flag_reset)
+        {
             PMU_CTL0 |= PMU_CTL0_STBRST;
         }
     }

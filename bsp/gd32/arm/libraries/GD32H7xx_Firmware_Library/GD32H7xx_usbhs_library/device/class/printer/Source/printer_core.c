@@ -255,7 +255,8 @@ static uint8_t printer_req(usb_dev *udev, usb_req *req)
 {
     usb_transc *transc = &udev->dev.transc_in[0];
 
-    switch(req->bRequest) {
+    switch(req->bRequest)
+    {
     case GET_DEVICE_ID:
         transc->xfer_buf = (uint8_t *)PRINTER_DEVICE_ID;
         transc->remain_len = DEVICE_ID_LEN;

@@ -54,17 +54,20 @@ static uint32_t can_dlc_value_compute(uint32_t payload_size);
 */
 void can_deinit(uint32_t can_periph)
 {
-    if(CAN0 == can_periph) {
+    if(CAN0 == can_periph)
+    {
         /* reset CAN0 */
         rcu_periph_reset_enable(RCU_CAN0RST);
         rcu_periph_reset_disable(RCU_CAN0RST);
     }
-    if(CAN1 == can_periph) {
+    if(CAN1 == can_periph)
+    {
         /* reset CAN1 */
         rcu_periph_reset_enable(RCU_CAN1RST);
         rcu_periph_reset_disable(RCU_CAN1RST);
     }
-    if(CAN2 == can_periph) {
+    if(CAN2 == can_periph)
+    {
         /* reset CAN2 */
         rcu_periph_reset_enable(RCU_CAN2RST);
         rcu_periph_reset_disable(RCU_CAN2RST);
@@ -84,10 +87,12 @@ ErrStatus can_software_reset(uint32_t can_periph)
     /* reset internal state machines and CAN registers */
     CAN_CTL0(can_periph) |= CAN_CTL0_SWRST;
     /* wait reset complete */
-    while((CAN_CTL0(can_periph) & CAN_CTL0_SWRST) && (timeout)) {
+    while((CAN_CTL0(can_periph) & CAN_CTL0_SWRST) && (timeout))
+    {
         timeout--;
     }
-    if(CAN_CTL0(can_periph) & CAN_CTL0_SWRST) {
+    if(CAN_CTL0(can_periph) & CAN_CTL0_SWRST)
+    {
         return ERROR;
     }
     return SUCCESS;
@@ -131,16 +136,19 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct *can_parameter_init
     uint32_t *canram = (uint32_t *)(CAN_RAM(can_periph));
 
     /* clear CAN RAM */
-    for(i = 0U; i < CAN_MAX_RAM_SIZE; i++) {
+    for(i = 0U; i < CAN_MAX_RAM_SIZE; i++)
+    {
         canram[i] = 0U;
     }
     /* reset CAN_RFIFOMPFx */
-    for(i = 0U; i < CAN_MAX_MAILBOX_NUM; i++) {
+    for(i = 0U; i < CAN_MAX_MAILBOX_NUM; i++)
+    {
         CAN_RFIFOMPF(can_periph, i) = 0x00000000U;
     }
 
     /* reset internal state machines and CAN registers */
-    if(ERROR == can_software_reset(can_periph)) {
+    if(ERROR == can_software_reset(can_periph))
+    {
         return ERROR;
     }
 
@@ -149,7 +157,8 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct *can_parameter_init
     /* reset CAN_STAT */
     CAN_STAT(can_periph) = (uint32_t)0xFFFFFFFFU;
     CAN_TIMER(can_periph);
-    while(CAN_STAT(can_periph) & CAN_STAT_MS5_RFNE) {
+    while(CAN_STAT(can_periph) & CAN_STAT_MS5_RFNE)
+    {
         CAN_STAT(can_periph) = CAN_STAT_MS5_RFNE;
     }
 
@@ -160,27 +169,33 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct *can_parameter_init
     CAN_BT(can_periph) &= ~(CAN_BT_BAUDPSC | CAN_BT_SJW | CAN_BT_PTS | CAN_BT_PBS1 | CAN_BT_PBS2);
 
     /* set self reception */
-    if((uint8_t)DISABLE == can_parameter_init->self_reception) {
+    if((uint8_t)DISABLE == can_parameter_init->self_reception)
+    {
         CAN_CTL0(can_periph) |= CAN_CTL0_SRDIS;
     }
     /* enable local arbitration priority */
-    if((uint8_t)ENABLE == can_parameter_init->local_priority_enable) {
+    if((uint8_t)ENABLE == can_parameter_init->local_priority_enable)
+    {
         CAN_CTL0(can_periph) |= CAN_CTL0_LAPRIOEN;
     }
     /* set rx private filters and mailbox queue */
-    if((uint8_t)ENABLE == can_parameter_init->rx_private_filter_queue_enable) {
+    if((uint8_t)ENABLE == can_parameter_init->rx_private_filter_queue_enable)
+    {
         CAN_CTL0(can_periph) |= CAN_CTL0_RPFQEN;
     }
     /* configure edge filtering */
-    if((uint32_t)DISABLE == can_parameter_init->edge_filter_enable) {
+    if((uint32_t)DISABLE == can_parameter_init->edge_filter_enable)
+    {
         CAN_CTL2(can_periph) |= CAN_CTL2_EFDIS;
     }
     /* configure protocol exception */
-    if((uint32_t)ENABLE == can_parameter_init->protocol_exception_enable) {
+    if((uint32_t)ENABLE == can_parameter_init->protocol_exception_enable)
+    {
         CAN_CTL2(can_periph) |= CAN_CTL2_PREEN;
     }
     /* set mailbox stop transmission */
-    if((uint8_t)ENABLE == can_parameter_init->mb_tx_abort_enable) {
+    if((uint8_t)ENABLE == can_parameter_init->mb_tx_abort_enable)
+    {
         CAN_CTL0(can_periph) |= CAN_CTL0_MST;
     }
 
@@ -229,7 +244,8 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct *can_parameter_init
 void can_struct_para_init(can_struct_type_enum type, void *p_struct)
 {
     /* get type of the struct */
-    switch(type) {
+    switch(type)
+    {
     /* used for initialize can_parameter_struct */
     case CAN_INIT_STRUCT:
         ((can_parameter_struct *)p_struct)->self_reception = (uint8_t)DISABLE;
@@ -387,15 +403,18 @@ ErrStatus can_operation_mode_enter(uint32_t can_periph, can_operation_modes_enum
     CAN_CTL0(can_periph) &= ~(CAN_CTL0_PNEN | CAN_CTL0_PNMOD);
     timeout = CAN_DELAY;
     /* wait for inactive mode state */
-    while(((CAN_CTL0_NRDY | CAN_CTL0_INAS) != (CAN_CTL0(can_periph) & (CAN_CTL0_NRDY | CAN_CTL0_INAS))) && (timeout)) {
+    while(((CAN_CTL0_NRDY | CAN_CTL0_INAS) != (CAN_CTL0(can_periph) & (CAN_CTL0_NRDY | CAN_CTL0_INAS))) && (timeout))
+    {
         timeout--;
     }
-    if((CAN_CTL0_NRDY | CAN_CTL0_INAS) != (CAN_CTL0(can_periph) & (CAN_CTL0_NRDY | CAN_CTL0_INAS))) {
+    if((CAN_CTL0_NRDY | CAN_CTL0_INAS) != (CAN_CTL0(can_periph) & (CAN_CTL0_NRDY | CAN_CTL0_INAS)))
+    {
         return ERROR;
     }
 
     /* configure the modes */
-    switch(mode) {
+    switch(mode)
+    {
     case CAN_NORMAL_MODE:
         CAN_CTL1(can_periph) &= ~(CAN_CTL1_LSCMOD | CAN_CTL1_MMOD);
         break;
@@ -422,24 +441,30 @@ ErrStatus can_operation_mode_enter(uint32_t can_periph, can_operation_modes_enum
     }
 
     /* exit INACTIVE mode */
-    if(CAN_INACTIVE_MODE != mode) {
+    if(CAN_INACTIVE_MODE != mode)
+    {
         /* exit inactive mode */
         CAN_CTL0(can_periph) &= ~(CAN_CTL0_HALT | CAN_CTL0_INAMOD);
         timeout = CAN_DELAY;
-        while((CAN_CTL0(can_periph) & CAN_CTL0_INAS) && (timeout)) {
+        while((CAN_CTL0(can_periph) & CAN_CTL0_INAS) && (timeout))
+        {
             timeout--;
         }
-        if(CAN_CTL0(can_periph) & CAN_CTL0_INAS) {
+        if(CAN_CTL0(can_periph) & CAN_CTL0_INAS)
+        {
             return ERROR;
         }
     }
 
-    if(CAN_PN_MODE == mode) {
+    if(CAN_PN_MODE == mode)
+    {
         timeout = CAN_DELAY;
-        while((0U == (CAN_CTL0(can_periph) & CAN_CTL0_PNS)) && (timeout)) {
+        while((0U == (CAN_CTL0(can_periph) & CAN_CTL0_PNS)) && (timeout))
+        {
             timeout--;
         }
-        if(0U == (CAN_CTL0(can_periph) & CAN_CTL0_PNS)) {
+        if(0U == (CAN_CTL0(can_periph) & CAN_CTL0_PNS))
+        {
             return ERROR;
         }
     }
@@ -460,19 +485,25 @@ can_operation_modes_enum can_operation_mode_get(uint32_t can_periph)
     reg = CAN_CTL0(can_periph);
     reg &= (CAN_CTL0_NRDY | CAN_CTL0_INAS | CAN_CTL0_PNS | CAN_CTL0_LPS);
 
-    if((CAN_CTL0_NRDY | CAN_CTL0_LPS) == reg) {
+    if((CAN_CTL0_NRDY | CAN_CTL0_LPS) == reg)
+    {
         state = CAN_DISABLE_MODE;
-    } else if((CAN_CTL0_NRDY | CAN_CTL0_INAS) == reg) {
+    } else if((CAN_CTL0_NRDY | CAN_CTL0_INAS) == reg)
+    {
         state = CAN_INACTIVE_MODE;
-    } else if(0U == reg) {
-        if(CAN_CTL1(can_periph)&CAN_CTL1_MMOD) {
+    } else if(0U == reg)
+    {
+        if(CAN_CTL1(can_periph)&CAN_CTL1_MMOD)
+        {
             state = CAN_MONITOR_MODE;
-        } else if(CAN_CTL1(can_periph)&CAN_CTL1_LSCMOD) {
+        } else if(CAN_CTL1(can_periph)&CAN_CTL1_LSCMOD)
+        {
             state = CAN_LOOPBACK_SILENT_MODE;
         } else {
             state = CAN_NORMAL_MODE;
         }
-    } else if(CAN_CTL0_PNS == reg) {
+    } else if(CAN_CTL0_PNS == reg)
+    {
         state = CAN_PN_MODE;
     } else {
         /* should not get here */
@@ -494,10 +525,12 @@ ErrStatus can_inactive_mode_exit(uint32_t can_periph)
     /* exit inactive mode */
     CAN_CTL0(can_periph) &= ~CAN_CTL0_HALT;
     timeout = CAN_DELAY;
-    while((CAN_CTL0(can_periph) & CAN_CTL0_INAS) && (timeout)) {
+    while((CAN_CTL0(can_periph) & CAN_CTL0_INAS) && (timeout))
+    {
         timeout--;
     }
-    if(CAN_CTL0(can_periph) & CAN_CTL0_INAS) {
+    if(CAN_CTL0(can_periph) & CAN_CTL0_INAS)
+    {
         return ERROR;
     } else {
         return SUCCESS;
@@ -517,10 +550,12 @@ ErrStatus can_pn_mode_exit(uint32_t can_periph)
 
     CAN_CTL0(can_periph) &= ~(CAN_CTL0_PNEN | CAN_CTL0_PNMOD);
     timeout = CAN_DELAY;
-    while((CAN_CTL0(can_periph) & CAN_CTL0_PNS) && (timeout)) {
+    while((CAN_CTL0(can_periph) & CAN_CTL0_PNS) && (timeout))
+    {
         timeout--;
     }
-    if(CAN_CTL0(can_periph) & CAN_CTL0_PNS) {
+    if(CAN_CTL0(can_periph) & CAN_CTL0_PNS)
+    {
         return ERROR;
     } else {
         return SUCCESS;
@@ -556,15 +591,18 @@ void can_fd_config(uint32_t can_periph, can_fd_parameter_struct *can_fd_para_ini
     CAN_CTL0(can_periph) |= CAN_CTL0_FDEN;
 
     /* support ISO or non-ISO mode */
-    if((uint32_t)ENABLE == can_fd_para_init->iso_can_fd_enable) {
+    if((uint32_t)ENABLE == can_fd_para_init->iso_can_fd_enable)
+    {
         CAN_CTL2(can_periph) |= CAN_CTL2_ISO;
     }
     /* set TDC parameter */
-    if((uint32_t)ENABLE == can_fd_para_init->tdc_enable) {
+    if((uint32_t)ENABLE == can_fd_para_init->tdc_enable)
+    {
         CAN_FDCTL(can_periph) |= CAN_FDCTL_TDCEN;
     }
     /* set data bit rate */
-    if((uint32_t)ENABLE == can_fd_para_init->bitrate_switch_enable) {
+    if((uint32_t)ENABLE == can_fd_para_init->bitrate_switch_enable)
+    {
         CAN_FDCTL(can_periph) |= CAN_FDCTL_BRSEN;
     }
 
@@ -669,12 +707,14 @@ void can_rx_fifo_config(uint32_t can_periph, can_fifo_parameter_struct *can_fifo
 
     /* clear FIFO status */
     CAN_STAT(can_periph) = (uint32_t)0xFFFFFFFFU;
-    while(CAN_STAT(can_periph) & CAN_STAT_MS5_RFNE) {
+    while(CAN_STAT(can_periph) & CAN_STAT_MS5_RFNE)
+    {
         CAN_STAT(can_periph) = CAN_STAT_MS5_RFNE;
     }
 
     /* set DMA mode */
-    if((uint8_t)ENABLE == can_fifo_para_init->dma_enable) {
+    if((uint8_t)ENABLE == can_fifo_para_init->dma_enable)
+    {
         CAN_CTL0(can_periph) |= CAN_CTL0_DMAEN;
     }
 
@@ -685,8 +725,10 @@ void can_rx_fifo_config(uint32_t can_periph, can_fifo_parameter_struct *can_fifo
     /* configure fifo public fiter */
     CAN_RFIFOPUBF(can_periph) = can_fifo_para_init->fifo_public_filter;
     /* configure fifo private fiter */
-    if(!(CAN_CTL0(can_periph) & CAN_CTL0_RPFQEN)) {
-        for(num = 0U; num < CAN_MAX_MAILBOX_NUM; num++) {
+    if(!(CAN_CTL0(can_periph) & CAN_CTL0_RPFQEN))
+    {
+        for(num = 0U; num < CAN_MAX_MAILBOX_NUM; num++)
+        {
             CAN_RFIFOMPF(can_periph, num) = can_fifo_para_init->fifo_public_filter;
         }
     }
@@ -713,16 +755,20 @@ void can_rx_fifo_filter_table_config(uint32_t can_periph, can_rx_fifo_id_filter_
     num_of_filters = (GET_CTL2_RFFN(CAN_CTL2(can_periph)) + 1U) * 8U;
     id_format = CAN_CTL0(can_periph) & CAN_CTL0_FS;
 
-    switch(id_format) {
+    switch(id_format)
+    {
     case(CAN_FIFO_FILTER_FORMAT_A):
         /* one full id (standard and extended) per id filter table element */
-        for(i = 0U; i < num_of_filters; i++) {
+        for(i = 0U; i < num_of_filters; i++)
+        {
             val = 0U;
 
-            if(CAN_REMOTE_FRAME_ACCEPTED == id_filter_table[i].remote_frame) {
+            if(CAN_REMOTE_FRAME_ACCEPTED == id_filter_table[i].remote_frame)
+            {
                 val |= CAN_FDESX_RTR_A;
             }
-            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[i].extended_frame) {
+            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[i].extended_frame)
+            {
                 val |= CAN_FDESX_IDE_A;
                 val |= (uint32_t)FIFO_FILTER_ID_EXD_A(id_filter_table[i].id);
             } else {
@@ -734,13 +780,16 @@ void can_rx_fifo_filter_table_config(uint32_t can_periph, can_rx_fifo_id_filter_
     case(CAN_FIFO_FILTER_FORMAT_B):
         /* two full standard id or two partial 14-bit (standard and extended) id */
         j = 0U;
-        for(i = 0U; i < num_of_filters; i++) {
+        for(i = 0U; i < num_of_filters; i++)
+        {
             val = 0U;
 
-            if(CAN_REMOTE_FRAME_ACCEPTED == id_filter_table[j].remote_frame) {
+            if(CAN_REMOTE_FRAME_ACCEPTED == id_filter_table[j].remote_frame)
+            {
                 val |= CAN_FDESX_RTR_B0;
             }
-            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame) {
+            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame)
+            {
                 val |= CAN_FDESX_IDE_B0;
                 val |= (uint32_t)FIFO_FILTER_ID_EXD_B0(id_filter_table[j].id);
             } else {
@@ -748,10 +797,12 @@ void can_rx_fifo_filter_table_config(uint32_t can_periph, can_rx_fifo_id_filter_
             }
             j++;
 
-            if(CAN_REMOTE_FRAME_ACCEPTED == id_filter_table[j].remote_frame) {
+            if(CAN_REMOTE_FRAME_ACCEPTED == id_filter_table[j].remote_frame)
+            {
                 val |= CAN_FDESX_RTR_B1;
             }
-            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame) {
+            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame)
+            {
                 val |= CAN_FDESX_IDE_B1;
                 val |= (uint32_t)FIFO_FILTER_ID_EXD_B1(id_filter_table[j].id);
             } else {
@@ -765,27 +816,32 @@ void can_rx_fifo_filter_table_config(uint32_t can_periph, can_rx_fifo_id_filter_
     case(CAN_FIFO_FILTER_FORMAT_C):
         /* four partial 8-bit standard id per id filter table element */
         j = 0U;
-        for(i = 0U; i < num_of_filters; i++) {
+        for(i = 0U; i < num_of_filters; i++)
+        {
             val = 0U;
-            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame) {
+            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame)
+            {
                 val |= (uint32_t)FIFO_FILTER_ID_EXD_C0(id_filter_table[j].id);
             } else {
                 val |= (uint32_t)FIFO_FILTER_ID_STD_C0(id_filter_table[j].id);
             }
             j++;
-            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame) {
+            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame)
+            {
                 val |= (uint32_t)FIFO_FILTER_ID_EXD_C1(id_filter_table[j].id);
             } else {
                 val |= (uint32_t)FIFO_FILTER_ID_STD_C1(id_filter_table[j].id);
             }
             j++;
-            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame) {
+            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame)
+            {
                 val |= (uint32_t)FIFO_FILTER_ID_EXD_C2(id_filter_table[j].id);
             } else {
                 val |= (uint32_t)FIFO_FILTER_ID_STD_C2(id_filter_table[j].id);
             }
             j++;
-            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame) {
+            if(CAN_EXTENDED_FRAME_ACCEPTED == id_filter_table[j].extended_frame)
+            {
                 val |= (uint32_t)FIFO_FILTER_ID_EXD_C3(id_filter_table[j].id);
             } else {
                 val |= (uint32_t)FIFO_FILTER_ID_STD_C3(id_filter_table[j].id);
@@ -825,7 +881,8 @@ void can_rx_fifo_read(uint32_t can_periph, can_rx_fifo_struct *rx_fifo)
     CAN_STAT(can_periph) = CAN_STAT_MS5_RFNE;
 
     /* read FIFO id field */
-    if(rx_fifo->ide) {
+    if(rx_fifo->ide)
+    {
         rx_fifo->id = GET_FDES1_ID_EXD(rx_fifo->id);
     } else {
         rx_fifo->id = GET_FDES1_ID_STD(rx_fifo->id);
@@ -870,7 +927,8 @@ uint32_t *can_ram_address_get(uint32_t can_periph, uint32_t index)
     uint32_t *address;
 
     /* if CAN FD mode is enabled */
-    if(CAN_CTL0(can_periph) & CAN_CTL0_FDEN) {
+    if(CAN_CTL0(can_periph) & CAN_CTL0_FDEN)
+    {
         payload_size = (uint32_t)1U << (GET_FDCTL_MDSZ(CAN_FDCTL(can_periph)) + 3U);
     } else {
         payload_size = 8U;
@@ -920,12 +978,14 @@ void can_mailbox_config(uint32_t can_periph, uint32_t index, can_mailbox_descrip
     mdes[3] = 0U;
 
     /* set RTR bit */
-    if(mdpara->rtr) {
+    if(mdpara->rtr)
+    {
         mdes0 |= CAN_MDES0_RTR;
     }
 
     /* set IDE bit and ID field */
-    if(mdpara->ide) {
+    if(mdpara->ide)
+    {
         mdes0 |= CAN_MDES0_IDE;
         mdes0 |= CAN_MDES0_SRR;
         mdes[1] |= MDES1_ID_EXD(mdpara->id);
@@ -936,28 +996,35 @@ void can_mailbox_config(uint32_t can_periph, uint32_t index, can_mailbox_descrip
     /* set CODE field */
     mdes0 |= MDES0_CODE(mdpara->code);
 
-    if(mdpara->code != CAN_MB_RX_STATUS_EMPTY) {
+    if(mdpara->code != CAN_MB_RX_STATUS_EMPTY)
+    {
         /* copy user's buffer into the mailbox data area */
-        if(mdpara->data_bytes) {
+        if(mdpara->data_bytes)
+        {
             dlc = can_dlc_value_compute(mdpara->data_bytes);
             mdes0 |= MDES0_DLC(dlc);
             length = (uint32_t)1U << (GET_FDCTL_MDSZ(CAN_FDCTL(can_periph)) + 3U);
-            if(mdpara->data_bytes < length) {
+            if(mdpara->data_bytes < length)
+            {
                 length = mdpara->data_bytes;
             }
             can_data_to_big_endian_swap(&mdes[2], mdpara->data, length);
         }
 
         /* prepare mailbox for transmission */
-        if(CAN_MB_TX_STATUS_DATA == mdpara->code) {
+        if(CAN_MB_TX_STATUS_DATA == mdpara->code)
+        {
             /* set ESI bit */
-            if(mdpara->esi) {
+            if(mdpara->esi)
+            {
                 mdes0 |= CAN_MDES0_ESI;
             }
             /* set FDF and BRS bit */
-            if(mdpara->fdf) {
+            if(mdpara->fdf)
+            {
                 mdes0 |= CAN_MDES0_FDF;
-                if(mdpara->brs) {
+                if(mdpara->brs)
+                {
                     mdes0 |= CAN_MDES0_BRS;
                 }
                 mdes0 &= ~CAN_MDES0_RTR;
@@ -1035,10 +1102,12 @@ ErrStatus can_mailbox_receive_data_read(uint32_t can_periph, uint32_t index, can
 
     /* wait mailbox data ready */
     timeout = CAN_DELAY;
-    while((mdes[0] & MDES0_CODE(CAN_MB_RX_STATUS_BUSY)) && (timeout)) {
+    while((mdes[0] & MDES0_CODE(CAN_MB_RX_STATUS_BUSY)) && (timeout))
+    {
         timeout--;
     }
-    if(mdes[0] & MDES0_CODE(CAN_MB_RX_STATUS_BUSY)) {
+    if(mdes[0] & MDES0_CODE(CAN_MB_RX_STATUS_BUSY))
+    {
         return ERROR;
     }
 
@@ -1049,7 +1118,8 @@ ErrStatus can_mailbox_receive_data_read(uint32_t can_periph, uint32_t index, can
     cnt = (mdpara->data_bytes + 3U) / 4U;
     mdaddr = mdpara->data;
     mdes += 2U;
-    for(i = 0U; i < cnt; i++) {
+    for(i = 0U; i < cnt; i++)
+    {
         mdaddr[i] = mdes[i];
     }
 
@@ -1059,14 +1129,16 @@ ErrStatus can_mailbox_receive_data_read(uint32_t can_periph, uint32_t index, can
     CAN_TIMER(can_periph);
 
     /* get mailbox ID */
-    if(mdpara->ide) {
+    if(mdpara->ide)
+    {
         mdpara->id = GET_MDES1_ID_EXD(mdpara->id);
     } else {
         mdpara->id = GET_MDES1_ID_STD(mdpara->id);
     }
 
     /* get mailbox data */
-    if(mdpara->data_bytes) {
+    if(mdpara->data_bytes)
+    {
         can_data_to_little_endian_swap(mdpara->data, mdpara->data, mdpara->data_bytes);
     }
 
@@ -1191,7 +1263,8 @@ can_error_state_enum can_error_state_get(uint32_t can_periph)
     uint32_t reg;
 
     reg = GET_ERR1_ERRSI(CAN_ERR1(can_periph));
-    if(reg >= (uint32_t)CAN_ERROR_STATE_BUS_OFF) {
+    if(reg >= (uint32_t)CAN_ERROR_STATE_BUS_OFF)
+    {
         reg = (uint32_t)CAN_ERROR_STATE_BUS_OFF;
     }
 
@@ -1285,13 +1358,16 @@ void can_pn_mode_filter_config(uint32_t can_periph, can_pn_mode_filter_struct *e
 
     /* set filter identifier 0 */
     reg = 0U;
-    if((uint32_t)SET == expect->ide) {
+    if((uint32_t)SET == expect->ide)
+    {
         reg |= CAN_PN_EID0_EIDE;
     }
-    if((uint32_t)SET == expect->rtr) {
+    if((uint32_t)SET == expect->rtr)
+    {
         reg |= CAN_PN_EID0_ERTR;
     }
-    if(CAN_STANDARD == (expect->id & BIT(31))){
+    if(CAN_STANDARD == (expect->id & BIT(31)))
+    {
         reg |= (uint32_t)PN_EID0_EIDF_ELT_STD(expect->id);
     }else{
         reg |= (uint32_t)PN_EID0_EIDF_ELT_EXD(expect->id);
@@ -1302,17 +1378,21 @@ void can_pn_mode_filter_config(uint32_t can_periph, can_pn_mode_filter_struct *e
     temp = CAN_PN_CTL0(can_periph);
     reg = 0U;
     /* ID field 1 is used when ID filtering type is EXACT or RANGE */
-    if(((temp & CAN_PN_CTL0_IDFT) == CAN_PN_ID_FILTERING_EXACT) || ((temp & CAN_PN_CTL0_IDFT) == CAN_PN_ID_FILTERING_RANGE)) {
-        if(CAN_STANDARD == (filter->id & BIT(31))){
+    if(((temp & CAN_PN_CTL0_IDFT) == CAN_PN_ID_FILTERING_EXACT) || ((temp & CAN_PN_CTL0_IDFT) == CAN_PN_ID_FILTERING_RANGE))
+    {
+        if(CAN_STANDARD == (filter->id & BIT(31)))
+        {
             reg |= (uint32_t)PN_IFEID1_IDEFD_STD(filter->id);
         }else{
             reg |= (uint32_t)PN_IFEID1_IDEFD_EXD(filter->id);
         }
     }
-    if((uint32_t)SET == filter->ide) {
+    if((uint32_t)SET == filter->ide)
+    {
         reg |= CAN_PN_IFEID1_IDEFD;
     }
-    if((uint32_t)SET == filter->rtr) {
+    if((uint32_t)SET == filter->rtr)
+    {
         reg |= CAN_PN_IFEID1_RTRFD;
     }
     /* set filter identifier 1 */
@@ -1320,7 +1400,8 @@ void can_pn_mode_filter_config(uint32_t can_periph, can_pn_mode_filter_struct *e
 
     /* data field is used when frame filtering type is not MATCH or MATCH NMM */
     if(((temp & CAN_PN_CTL0_FFT) == CAN_PN_FRAME_FILTERING_ID_DATA) ||
-            ((temp & CAN_PN_CTL0_FFT) == CAN_PN_FRAME_FILTERING_ID_DATA_NMM)) {
+            ((temp & CAN_PN_CTL0_FFT) == CAN_PN_FRAME_FILTERING_ID_DATA_NMM))
+            {
         /* set filter data payload 0 */
         CAN_PN_EDLC(can_periph) = PN_EDLC_DLCEHT(expect->dlc_high_threshold) | PN_EDLC_DLCELT(expect->dlc_low_threshold);
         CAN_PN_EDL0(can_periph) = ((expect->payload[0] << 24U) & CAN_PN_EDL0_DB0ELT) |
@@ -1334,7 +1415,8 @@ void can_pn_mode_filter_config(uint32_t can_periph, can_pn_mode_filter_struct *e
 
         /* data field 1 is used when data filtering type is EXACT or RANGE */
         if(((temp & CAN_PN_CTL0_DATAFT) == CAN_PN_DATA_FILTERING_EXACT)
-                || ((temp & CAN_PN_CTL0_DATAFT) == CAN_PN_DATA_FILTERING_RANGE)) {
+                || ((temp & CAN_PN_CTL0_DATAFT) == CAN_PN_DATA_FILTERING_RANGE))
+                {
             /* set filter data payload 1 */
             CAN_PN_DF0EDH0(can_periph) = ((filter->payload[0] << 24U) & CAN_PN_DF0EDH0_DB0FD_EHT) |
                                          ((filter->payload[0] << 8U) & CAN_PN_DF0EDH0_DB1FD_EHT) |
@@ -1361,7 +1443,8 @@ int32_t can_pn_mode_num_of_match_get(uint32_t can_periph)
     uint32_t reg = 0U;
 
     reg = CAN_PN_STAT(can_periph);
-    if(0U != (reg & CAN_PN_STAT_MMCNTS)) {
+    if(0U != (reg & CAN_PN_STAT_MMCNTS))
+    {
         ret = (int32_t)(uint32_t)GET_PN_STAT_MMCNT(reg);
     } else {
         ret = -1;
@@ -1386,24 +1469,28 @@ void can_pn_mode_data_read(uint32_t can_periph, uint32_t index, can_mailbox_desc
     mdaddr[0] = pnram[0];
     mdaddr[1] = pnram[1];
     /* get mailbox ID */
-    if(0U != mdpara->ide) {
+    if(0U != mdpara->ide)
+    {
         mdpara->id = GET_MDES1_ID_EXD(mdpara->id);
     } else {
         mdpara->id = GET_MDES1_ID_STD(mdpara->id);
     }
     mdpara->data_bytes = mdpara->dlc;
     /* remote frame */
-    if(0U != (mdaddr[0] & CAN_PN_RWMXCS_RRTR)){
+    if(0U != (mdaddr[0] & CAN_PN_RWMXCS_RRTR))
+    {
         mdpara->data_bytes = 0U;
     }else{
         /* classical frame */
-        if(mdpara->dlc <= 8U) {
+        if(mdpara->dlc <= 8U)
+        {
             mdpara->data_bytes = mdpara->dlc;
         }else{
             mdpara->data_bytes = 8U;
         }
     }
-    if(mdpara->data_bytes) {
+    if(mdpara->data_bytes)
+    {
         can_data_to_little_endian_swap(mdpara->data, &pnram[2], mdpara->data_bytes);
     }
 }
@@ -1567,7 +1654,8 @@ void can_arbitration_delay_bits_config(uint32_t can_periph, uint32_t delay_bits)
 */
 void can_bsp_mode_config(uint32_t can_periph, uint32_t sampling_mode)
 {
-    if(CAN_BSP_MODE_ONE_SAMPLE == sampling_mode) {
+    if(CAN_BSP_MODE_ONE_SAMPLE == sampling_mode)
+    {
         CAN_CTL1(can_periph) &= ~CAN_CTL1_BSPMOD;
     } else {
         CAN_CTL1(can_periph) |= CAN_CTL1_BSPMOD;
@@ -1615,7 +1703,8 @@ void can_bsp_mode_config(uint32_t can_periph, uint32_t sampling_mode)
 */
 FlagStatus can_flag_get(uint32_t can_periph, can_flag_enum flag)
 {
-    if(CAN_REG_VAL(can_periph, flag) & BIT(CAN_BIT_POS(flag))) {
+    if(CAN_REG_VAL(can_periph, flag) & BIT(CAN_BIT_POS(flag)))
+    {
         return SET;
     } else {
         return RESET;
@@ -1644,7 +1733,8 @@ FlagStatus can_flag_get(uint32_t can_periph, can_flag_enum flag)
 */
 void can_flag_clear(uint32_t can_periph, can_flag_enum flag)
 {
-    if(CAN_FLAG_TDC_OUT_OF_RANGE == flag) {
+    if(CAN_FLAG_TDC_OUT_OF_RANGE == flag)
+    {
         CAN_FDCTL(can_periph) |= CAN_FDCTL_TDCS;
     } else {
         CAN_REG_VAL(can_periph, flag) = BIT(CAN_BIT_POS(flag));
@@ -1677,14 +1767,17 @@ ErrStatus can_interrupt_enable(uint32_t can_periph, can_interrupt_enum interrupt
     ErrStatus ret = SUCCESS;
 
     /* enable receive or transmit warning error interrupt should enable error warning in CTL0 register  */
-    if((CAN_INT_RX_WARNING == interrupt) || (CAN_INT_TX_WARNING == interrupt)) {
+    if((CAN_INT_RX_WARNING == interrupt) || (CAN_INT_TX_WARNING == interrupt))
+    {
         mode = can_operation_mode_get(can_periph);
         /* in INACTIVE mode */
-        if(CAN_INACTIVE_MODE == mode){
+        if(CAN_INACTIVE_MODE == mode)
+        {
             CAN_CTL0(can_periph) |= CAN_CTL0_WERREN;
         }else{
             ret = can_operation_mode_enter(can_periph, CAN_INACTIVE_MODE);
-            if(SUCCESS == ret){
+            if(SUCCESS == ret)
+            {
                 CAN_CTL0(can_periph) |= CAN_CTL0_WERREN;
                 ret = can_operation_mode_enter(can_periph, mode);
             }
@@ -1721,14 +1814,17 @@ ErrStatus can_interrupt_disable(uint32_t can_periph, can_interrupt_enum interrup
     ErrStatus ret = SUCCESS;
 
     /* disable receive or transmit warning error interrupt should enable error warning in CTL0 register  */
-    if((0U == (CAN_CTL0(can_periph) & CAN_CTL0_WERREN)) && ((CAN_INT_RX_WARNING == interrupt) || (CAN_INT_TX_WARNING == interrupt))) {
+    if((0U == (CAN_CTL0(can_periph) & CAN_CTL0_WERREN)) && ((CAN_INT_RX_WARNING == interrupt) || (CAN_INT_TX_WARNING == interrupt)))
+    {
         mode = can_operation_mode_get(can_periph);
         /* in INACTIVE mode */
-        if(CAN_INACTIVE_MODE == mode){
+        if(CAN_INACTIVE_MODE == mode)
+        {
             CAN_CTL0(can_periph) |= CAN_CTL0_WERREN;
         }else{
             ret = can_operation_mode_enter(can_periph, CAN_INACTIVE_MODE);
-            if(SUCCESS == ret){
+            if(SUCCESS == ret)
+            {
                 CAN_CTL0(can_periph) |= CAN_CTL0_WERREN;
                 ret = can_operation_mode_enter(can_periph, mode);
             }
@@ -1761,7 +1857,8 @@ ErrStatus can_interrupt_disable(uint32_t can_periph, can_interrupt_enum interrup
 */
 FlagStatus can_interrupt_flag_get(uint32_t can_periph, can_interrupt_flag_enum int_flag)
 {
-    if(CAN_REG_VAL(can_periph, int_flag) & BIT(CAN_BIT_POS(int_flag))) {
+    if(CAN_REG_VAL(can_periph, int_flag) & BIT(CAN_BIT_POS(int_flag)))
+    {
         return SET;
     } else {
         return RESET;
@@ -1805,17 +1902,21 @@ static uint32_t can_payload_size_compute(uint32_t mdes0)
     uint32_t dlc_value = GET_MDES0_DLC(mdes0);
 
     /* remote frame */
-    if(0U != (mdes0 & CAN_MDES0_RTR)){
+    if(0U != (mdes0 & CAN_MDES0_RTR))
+    {
         ret = 0U;
     }else{
         /* FD frame */
-        if(0U != (mdes0 & CAN_MDES0_FDF)){
-            if(dlc_value <= 15U) {
+        if(0U != (mdes0 & CAN_MDES0_FDF))
+        {
+            if(dlc_value <= 15U)
+            {
                 ret = dlc_to_databytes[dlc_value];
             }
         /* classical frame */
         }else{
-            if(dlc_value <= 8U) {
+            if(dlc_value <= 8U)
+            {
                 ret = (uint8_t)dlc_value;
             }else{
                 ret = 8U;
@@ -1842,7 +1943,8 @@ static void can_data_to_little_endian_swap(uint32_t dest[], uint32_t src[], uint
     /* get the word length of the data */
     cnt = (len + 3U) / 4U;
     /* change each word from big endian to little endian */
-    for(i = 0U; i < cnt; i++) {
+    for(i = 0U; i < cnt; i++)
+    {
         temp_src = src[i];
         dest[i] = ((uint32_t)(temp_src >> 24U) & 0x000000FFU) |
                   ((uint32_t)(temp_src >> 8U) & 0x0000FF00U) |
@@ -1851,7 +1953,8 @@ static void can_data_to_little_endian_swap(uint32_t dest[], uint32_t src[], uint
     }
 
     cnt = len % 4U;
-    if(cnt) {
+    if(cnt)
+    {
         dest[i - 1U] &= ((uint32_t)1U << (cnt * 8U)) - 1U;
     }
 }
@@ -1871,7 +1974,8 @@ static void can_data_to_big_endian_swap(uint32_t dest[], uint32_t src[], uint32_
 
     /* get the word length of the data */
     cnt = (len + 3U) / 4U;
-    for(i = 0U; i < cnt; i++) {
+    for(i = 0U; i < cnt; i++)
+    {
         /* change each word from little endian to big endian */
         temp_src = src[i];
         dest[i] = ((uint32_t)(temp_src >> 24U) & 0x000000FFU) |
@@ -1881,7 +1985,8 @@ static void can_data_to_big_endian_swap(uint32_t dest[], uint32_t src[], uint32_
     }
 
     cnt = len % 4U;
-    if(cnt) {
+    if(cnt)
+    {
         dest[i - 1U] &= ~(((uint32_t)1U << ((4U - cnt) * 8U)) - 1U);
     }
 }
@@ -1896,11 +2001,14 @@ static uint32_t can_dlc_value_compute(uint32_t payload_size)
 {
     uint32_t ret = 8U;
 
-    if(payload_size <= 8U) {
+    if(payload_size <= 8U)
+    {
         ret = payload_size;
-    } else if(payload_size <= 24U) {
+    } else if(payload_size <= 24U)
+    {
         ret = (payload_size - 9U) / 4U + 9U;
-    } else if(payload_size <= 64U) {
+    } else if(payload_size <= 64U)
+    {
         ret = (payload_size - 17U) / 16U + 13U;
     } else {
         ret = 8U;

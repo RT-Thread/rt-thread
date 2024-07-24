@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -44,7 +44,8 @@ static void ospi_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct
 */
 void ospi_deinit(uint32_t ospi_periph)
 {
-    switch(ospi_periph){
+    switch(ospi_periph)
+    {
     case OSPI0:
         /* reset OSPI0 */
         rcu_periph_reset_enable(RCU_OSPI0RST);
@@ -98,29 +99,30 @@ void ospi_struct_init(ospi_parameter_struct *ospi_struct)
                 delay_hold_cycle: OSPI_DELAY_HOLD_NONE, OSPI_DELAY_HOLD_QUARTER_CYCLE
     \retval     none
 */
-void ospi_init(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct) 
+void ospi_init(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct)
 {
     uint32_t reg = 0U;
-    
-    /* configure memory type, device size, chip select high time, delay block bypass, free running clock, clock mode */    
+
+    /* configure memory type, device size, chip select high time, delay block bypass, free running clock, clock mode */
     reg = OSPI_DCFG0(ospi_periph);
-    
+
     reg &= ~(OSPI_DCFG0_DTYSEL | OSPI_DCFG0_MESZ | OSPI_DCFG0_CSHC);
-    
+
     reg |= (ospi_struct->memory_type | ospi_struct->device_size | ospi_struct->cs_hightime);
-    
+
     OSPI_DCFG0(ospi_periph) = reg;
-     
+
     /* configure wrap size */
     OSPI_DCFG1(ospi_periph) = (OSPI_DCFG1(ospi_periph) & ~OSPI_DCFG1_WPSZ) | ospi_struct->wrap_size;
-    
+
     /* configure FIFO threshold */
     OSPI_CTL(ospi_periph) = (OSPI_CTL(ospi_periph) & ~OSPI_CTL_FTL) | ospi_struct->fifo_threshold;
-    
+
     /* wait till BUSY flag reset */
-    while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_BUSY)){
+    while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_BUSY))
+    {
     }
-     
+
     /* configure clock prescaler */
     OSPI_DCFG1(ospi_periph) = (OSPI_DCFG1(ospi_periph) & ~OSPI_DCFG1_PSC) | OSPI_PSC(ospi_struct->prescaler);
 
@@ -291,7 +293,7 @@ void ospi_chip_select_high_cycle_config(uint32_t ospi_periph, uint32_t cshc)
 }
 
 /*!
-    \brief      configure OSPI prescaler 
+    \brief      configure OSPI prescaler
     \param[in]  ospi_periph: OSPIx(x=0,1)
     \param[in]  psc: between 0 and 0xFF
     \param[out] none
@@ -314,7 +316,7 @@ void ospi_prescaler_config(uint32_t ospi_periph, uint32_t psc)
 */
 void ospi_dummy_cycles_config(uint32_t ospi_periph, uint32_t dumyc)
 {
-    OSPI_TIMCFG(ospi_periph) &= (uint32_t)(~OSPI_TIMCFG_DUMYC); 
+    OSPI_TIMCFG(ospi_periph) &= (uint32_t)(~OSPI_TIMCFG_DUMYC);
     OSPI_TIMCFG(ospi_periph) |= (uint32_t)dumyc ;
 }
 
@@ -1022,7 +1024,7 @@ void ospi_write_address_size_config(uint32_t ospi_periph, uint32_t addrsz)
     \retval     none
 */
 void ospi_write_alternate_byte_config(uint32_t ospi_periph, uint32_t alte)
-{ 
+{
     OSPI_WALTE(ospi_periph) = (uint32_t)alte;
 }
 
@@ -1040,7 +1042,7 @@ void ospi_write_alternate_byte_config(uint32_t ospi_periph, uint32_t alte)
     \retval     none
 */
 void ospi_write_alternate_byte_mode_config(uint32_t ospi_periph, uint32_t atlemod)
-{ 
+{
     OSPI_WTCFG(ospi_periph) &= (uint32_t)~(OSPI_WTCFG_ALTEMOD);
     OSPI_WTCFG(ospi_periph) |= (uint32_t)atlemod;
 }
@@ -1056,7 +1058,7 @@ void ospi_write_alternate_byte_mode_config(uint32_t ospi_periph, uint32_t atlemo
     \retval     none
 */
 void ospi_write_alternate_byte_dtr_config(uint32_t ospi_periph, uint32_t abdtr)
-{ 
+{
     OSPI_WTCFG(ospi_periph) &= (uint32_t)~(OSPI_WTCFG_ABDTR);
     OSPI_WTCFG(ospi_periph) |= (uint32_t)abdtr;
 }
@@ -1074,7 +1076,7 @@ void ospi_write_alternate_byte_dtr_config(uint32_t ospi_periph, uint32_t abdtr)
     \retval     none
 */
 void ospi_write_alternate_byte_size_config(uint32_t ospi_periph, uint32_t altesz)
-{ 
+{
     OSPI_WTCFG(ospi_periph) &= (uint32_t)~(OSPI_WTCFG_ALTESZ);
     OSPI_WTCFG(ospi_periph) |= (uint32_t)altesz;
 }
@@ -1143,7 +1145,7 @@ void ospi_write_dummy_cycles_config(uint32_t ospi_periph, uint32_t dumyc)
                   memory_type: OSPI_MICRON_MODE, OSPI_MACRONIX_MODE, OSPI_STANDARD_MODE
                                OSPI_MACRONIX_RAM_MODE
                   wrap_size: OSPI_DIRECT, OSPI_WRAP_16BYTES, OSPI_WRAP_32BYTES
-                             OSPI_WRAP_64BYTES, OSPI_WRAP_128BYTES    
+                             OSPI_WRAP_64BYTES, OSPI_WRAP_128BYTES
     \param[in]  cmd_struct: structure that contains the command configuration information
                             and the member values are shown as below:
                   operation_type: OSPI_OPTYPE_COMMON_CFG, OSPI_OPTYPE_READ_CFG
@@ -1177,18 +1179,22 @@ void ospi_write_dummy_cycles_config(uint32_t ospi_periph, uint32_t dumyc)
 void ospi_command_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct, ospi_regular_cmd_struct *cmd_struct)
 {
     if(((cmd_struct->operation_type == OSPI_OPTYPE_WRITE_CFG) || (cmd_struct->operation_type == OSPI_OPTYPE_WRAP_CFG)) ||
-        ((cmd_struct->operation_type == OSPI_OPTYPE_READ_CFG) || (cmd_struct->operation_type == OSPI_OPTYPE_COMMON_CFG))){
+        ((cmd_struct->operation_type == OSPI_OPTYPE_READ_CFG) || (cmd_struct->operation_type == OSPI_OPTYPE_COMMON_CFG)))
+        {
         /* wait till busy flag is reset */
-          while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_BUSY)){
+          while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_BUSY))
+          {
           }
 
         /* configure the registers */
         ospi_config(ospi_periph, ospi_struct, cmd_struct);
 
-        if(cmd_struct->data_mode == OSPI_DATA_NONE){
+        if(cmd_struct->data_mode == OSPI_DATA_NONE)
+        {
             /* when there is no data phase, the transfer start as soon as the configuration is done
             so wait until TC flag is set to go back in idle state */
-          while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_TC)){
+          while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_TC))
+          {
           }
 
             OSPI_STATC(ospi_periph) = OSPI_STATC_TCC;
@@ -1202,9 +1208,9 @@ void ospi_command_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struc
     \param[in]  pdata: pointer to data buffer
     \param[out] none
     \retval     none
-*/ 
+*/
 void ospi_transmit(uint32_t ospi_periph, uint8_t *pdata)
-{ 
+{
     uint32_t txcounter;
     uint32_t address;
     /* configure counters and size */
@@ -1216,7 +1222,8 @@ void ospi_transmit(uint32_t ospi_periph, uint8_t *pdata)
 
     do{
         /* wait till fifo threshold flag is set to send data */
-      while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_FT)){
+      while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_FT))
+      {
       }
         *((__IO uint8_t *)&OSPI_DATA(ospi_periph)) = *(uint8_t *)address;
         address++;
@@ -1224,7 +1231,8 @@ void ospi_transmit(uint32_t ospi_periph, uint8_t *pdata)
     }while(txcounter > 0U);
 
     /* wait till transfer complete flag is set to go back in idle state */
-    while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_TC)){
+    while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_TC))
+    {
     }
 
     /* clear transfer complete flag */
@@ -1253,7 +1261,8 @@ void ospi_receive(uint32_t ospi_periph, uint8_t *pdata)
     OSPI_CTL(ospi_periph) = (OSPI_CTL(ospi_periph) & ~OSPI_CTL_FMOD) | OSPI_INDIRECT_READ;
 
     /* trigger the transfer by re-writing address or instruction register */
-    if((OSPI_TCFG(ospi_periph) & OSPI_TCFG_ADDRMOD) != OSPI_ADDRESS_NONE){
+    if((OSPI_TCFG(ospi_periph) & OSPI_TCFG_ADDRMOD) != OSPI_ADDRESS_NONE)
+    {
         OSPI_ADDR(ospi_periph) = addr_reg;
     }else{
         OSPI_INS(ospi_periph) = ins_reg;
@@ -1261,17 +1270,19 @@ void ospi_receive(uint32_t ospi_periph, uint8_t *pdata)
 
     do{
         /* wait till fifo threshold or transfer complete flags are set to read received data */
-      while(RESET == (OSPI_STAT(ospi_periph) & (OSPI_FLAG_FT | OSPI_FLAG_TC))){
+      while(RESET == (OSPI_STAT(ospi_periph) & (OSPI_FLAG_FT | OSPI_FLAG_TC)))
+      {
       }
-        
+
         *(uint8_t *)address = *((__IO uint8_t *)&OSPI_DATA(ospi_periph));
         address++;
         rxcounter--;
-        
+
     }while(rxcounter > 0U);
 
     /* wait till transfer complete flag is set to go back in idle state */
-    while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_TC)){
+    while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_TC))
+    {
     }
 
     /* clear transfer complete flag */
@@ -1308,28 +1319,32 @@ void ospi_autopolling_mode(uint32_t ospi_periph, ospi_parameter_struct *ospi_str
 {
     uint32_t addr_reg = OSPI_ADDR(ospi_periph);
     uint32_t ins_reg = OSPI_INS(ospi_periph);
- 
-    if(autopl_cfg_struct->automatic_stop == OSPI_AUTOMATIC_STOP_MATCH){
+
+    if(autopl_cfg_struct->automatic_stop == OSPI_AUTOMATIC_STOP_MATCH)
+    {
         /* wait till busy flag is reset */
-      while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_BUSY)){
+      while(RESET != (OSPI_STAT(ospi_periph) & OSPI_FLAG_BUSY))
+      {
       }
 
         /* configure registers */
         OSPI_STATMATCH(ospi_periph) = autopl_cfg_struct->match;
         OSPI_STATMK(ospi_periph) = autopl_cfg_struct->mask;
         OSPI_INTERVAL(ospi_periph) = autopl_cfg_struct->interval;
-        OSPI_CTL(ospi_periph) = (OSPI_CTL(ospi_periph) & (~OSPI_CTL_SPMOD | ~OSPI_CTL_SPS | ~OSPI_CTL_FMOD)) | 
+        OSPI_CTL(ospi_periph) = (OSPI_CTL(ospi_periph) & (~OSPI_CTL_SPMOD | ~OSPI_CTL_SPS | ~OSPI_CTL_FMOD)) |
                                 (autopl_cfg_struct->match_mode | autopl_cfg_struct->automatic_stop | OSPI_STATUS_POLLING);
 
         /* trig the transfer by re-writing address or instruction register */
-        if((OSPI_TCFG(ospi_periph) & OSPI_TCFG_ADDRMOD) != OSPI_ADDRESS_NONE){   
+        if((OSPI_TCFG(ospi_periph) & OSPI_TCFG_ADDRMOD) != OSPI_ADDRESS_NONE)
+        {
             OSPI_ADDR(ospi_periph) = addr_reg;
         }else{
             OSPI_INS(ospi_periph) = ins_reg;
         }
 
         /* wait till status match flag is set to go back in idle state */
-        while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_SM)){
+        while(RESET == (OSPI_STAT(ospi_periph) & OSPI_FLAG_SM))
+        {
         }
 
         /* clear status match flag */
@@ -1386,16 +1401,18 @@ void ospi_autopolling_mode(uint32_t ospi_periph, ospi_parameter_struct *ospi_str
 static void ospi_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct, ospi_regular_cmd_struct* cmd_struct)
 {
     __IO uint32_t *tcfg_reg, *timcfg_reg, *ins_reg, *alte_reg;
-    
+
     /* re-initialize the value of the functional mode */
     OSPI_CTL(ospi_periph) &= ~OSPI_CTL_FMOD;
 
-    if(cmd_struct->operation_type == OSPI_OPTYPE_WRITE_CFG){
+    if(cmd_struct->operation_type == OSPI_OPTYPE_WRITE_CFG)
+    {
         tcfg_reg = &(OSPI_WTCFG(ospi_periph));
         timcfg_reg = &(OSPI_WTIMCFG(ospi_periph));
         ins_reg  = &(OSPI_WINS(ospi_periph));
         alte_reg = &(OSPI_WALTE(ospi_periph));
-    }else if(cmd_struct->operation_type == OSPI_OPTYPE_WRAP_CFG){
+    }else if(cmd_struct->operation_type == OSPI_OPTYPE_WRAP_CFG)
+    {
         tcfg_reg = &(OSPI_WPTCFG(ospi_periph));
         timcfg_reg = &(OSPI_WPTIMCFG(ospi_periph));
         ins_reg  = &(OSPI_WPINS(ospi_periph));
@@ -1407,49 +1424,56 @@ static void ospi_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct
         alte_reg = &(OSPI_ALTE(ospi_periph));
     }
 
-    if(cmd_struct->alter_bytes_mode != OSPI_ALTERNATE_BYTES_NONE){
+    if(cmd_struct->alter_bytes_mode != OSPI_ALTERNATE_BYTES_NONE)
+    {
         /* configure the ALTE register with alternate bytes value */
         *alte_reg = cmd_struct->alter_bytes;
 
         /* configure the TCFG register with alternate bytes communication parameters */
-        *tcfg_reg = (*tcfg_reg & ~(OSPI_TCFG_ALTEMOD | OSPI_TCFG_ABDTR | OSPI_TCFG_ALTESZ)) | 
+        *tcfg_reg = (*tcfg_reg & ~(OSPI_TCFG_ALTEMOD | OSPI_TCFG_ABDTR | OSPI_TCFG_ALTESZ)) |
                     (cmd_struct->alter_bytes_mode | cmd_struct->alter_bytes_dtr_mode | cmd_struct->alter_bytes_size);
     }
-    
+
     /* configure the TIMCFG register with the number of dummy cycles */
     *timcfg_reg = (*timcfg_reg & ~OSPI_TIMCFG_DUMYC) | cmd_struct->dummy_cycles;
- 
-    if(cmd_struct->data_mode != OSPI_DATA_NONE){
-        if(cmd_struct->operation_type == OSPI_OPTYPE_COMMON_CFG){
+
+    if(cmd_struct->data_mode != OSPI_DATA_NONE)
+    {
+        if(cmd_struct->operation_type == OSPI_OPTYPE_COMMON_CFG)
+        {
             /* configure the DTLEN register with the number of data */
             OSPI_DTLEN(ospi_periph) = (cmd_struct->nbdata - 1U);
         }
-    }    
+    }
 
 
-    if(cmd_struct->ins_mode != OSPI_INSTRUCTION_NONE){
-        if(cmd_struct->addr_mode != OSPI_ADDRESS_NONE){
-            if(cmd_struct->data_mode != OSPI_DATA_NONE){
+    if(cmd_struct->ins_mode != OSPI_INSTRUCTION_NONE)
+    {
+        if(cmd_struct->addr_mode != OSPI_ADDRESS_NONE)
+        {
+            if(cmd_struct->data_mode != OSPI_DATA_NONE)
+            {
                 /* command with instruction, address and data */
                 /* configure the TCFG register with all communication parameters */
-                *tcfg_reg &= ~(OSPI_TCFG_IMOD | OSPI_TCFG_INSSZ | 
+                *tcfg_reg &= ~(OSPI_TCFG_IMOD | OSPI_TCFG_INSSZ |
                             OSPI_TCFG_ADDRMOD | OSPI_TCFG_ADDRDTR | OSPI_TCFG_ADDRSZ |
                             OSPI_TCFG_DATAMOD | OSPI_TCFG_DADTR);
-                
+
                 *tcfg_reg = cmd_struct->ins_mode | cmd_struct->ins_size |
                             cmd_struct->addr_mode | cmd_struct->addr_dtr_mode | cmd_struct->addr_size |
                             cmd_struct->data_mode | cmd_struct->data_dtr_mode;
             }else{
                 /* command with instruction and address */
                 /* configure the TCFG register with all communication parameters */
-                *tcfg_reg &= ~(OSPI_TCFG_IMOD | OSPI_TCFG_INSSZ | 
+                *tcfg_reg &= ~(OSPI_TCFG_IMOD | OSPI_TCFG_INSSZ |
                             OSPI_TCFG_ADDRMOD | OSPI_TCFG_ADDRDTR | OSPI_TCFG_ADDRSZ);
 
                 *tcfg_reg = cmd_struct->ins_mode | cmd_struct->ins_size |
                             cmd_struct->addr_mode | cmd_struct->addr_dtr_mode | cmd_struct->addr_size;
 
                 /* the DHQC bit is linked with DDTR bit which should be activated */
-                if((ospi_struct->delay_hold_cycle == OSPI_DELAY_HOLD_QUARTER_CYCLE) ){
+                if((ospi_struct->delay_hold_cycle == OSPI_DELAY_HOLD_QUARTER_CYCLE) )
+                {
                     *tcfg_reg = (*tcfg_reg & ~OSPI_DADTR_MODE_ENABLE) | OSPI_DADTR_MODE_ENABLE;
                 }
             }
@@ -1460,10 +1484,11 @@ static void ospi_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct
             /* configure the ADDR register with the address value */
             OSPI_ADDR(ospi_periph) = cmd_struct->address;
         }else{
-            if(cmd_struct->data_mode != OSPI_DATA_NONE){
+            if(cmd_struct->data_mode != OSPI_DATA_NONE)
+            {
                 /* command with instruction and data */
                 /* configure the TCFG register with all communication parameters */
-                *tcfg_reg &= ~(OSPI_TCFG_IMOD | OSPI_TCFG_INSSZ | 
+                *tcfg_reg &= ~(OSPI_TCFG_IMOD | OSPI_TCFG_INSSZ |
                             OSPI_TCFG_DATAMOD | OSPI_TCFG_DADTR);
 
                 *tcfg_reg = cmd_struct->ins_mode | cmd_struct->ins_size |
@@ -1472,36 +1497,39 @@ static void ospi_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct
                 /* command with only instruction */
                 /* configure the TCFG register with all communication parameters */
                 *tcfg_reg &= ~(OSPI_TCFG_IMOD | OSPI_TCFG_INSSZ);
-                
+
                 *tcfg_reg = cmd_struct->ins_mode | cmd_struct->ins_size;
 
                 /* the DEHQC bit is linked with DDTR bit which should be activated */
-                if((ospi_struct->delay_hold_cycle == OSPI_DELAY_HOLD_QUARTER_CYCLE)){
+                if((ospi_struct->delay_hold_cycle == OSPI_DELAY_HOLD_QUARTER_CYCLE))
+                {
                     *tcfg_reg = (*tcfg_reg & ~OSPI_DADTR_MODE_ENABLE) | OSPI_DADTR_MODE_ENABLE;
                 }
             }
 
             /* configure the INS register with the instruction value */
-            *ins_reg = cmd_struct->instruction;           
+            *ins_reg = cmd_struct->instruction;
         }
     }else{
-        if(cmd_struct->addr_mode != OSPI_ADDRESS_NONE){
-            if(cmd_struct->data_mode != OSPI_DATA_NONE){
+        if(cmd_struct->addr_mode != OSPI_ADDRESS_NONE)
+        {
+            if(cmd_struct->data_mode != OSPI_DATA_NONE)
+            {
                 /* command with address and data */
 
                 /* configure the TCFG register with all communication parameters */
                 *tcfg_reg &= ~(OSPI_TCFG_ADDRMOD | OSPI_TCFG_ADDRDTR | OSPI_TCFG_ADDRSZ |
                                OSPI_TCFG_DATAMOD | OSPI_TCFG_DADTR);
-                
+
                 *tcfg_reg = cmd_struct->addr_mode | cmd_struct->addr_dtr_mode | cmd_struct->addr_size |
-                            cmd_struct->data_mode | cmd_struct->data_dtr_mode;              
+                            cmd_struct->data_mode | cmd_struct->data_dtr_mode;
             }else{
                 /* command with only address */
 
                 /* configure the TCFG register with all communication parameters */
                 *tcfg_reg &= ~(OSPI_TCFG_ADDRMOD | OSPI_TCFG_ADDRDTR | OSPI_TCFG_ADDRSZ);
-                
-                *tcfg_reg = cmd_struct->addr_mode | cmd_struct->addr_dtr_mode | cmd_struct->addr_size;                 
+
+                *tcfg_reg = cmd_struct->addr_mode | cmd_struct->addr_dtr_mode | cmd_struct->addr_size;
             }
 
             /* configure the ADDR register with the instruction value */
@@ -1511,11 +1539,11 @@ static void ospi_config(uint32_t ospi_periph, ospi_parameter_struct *ospi_struct
 }
 
 /*!
-    \brief      enable OSPI interrupt 
+    \brief      enable OSPI interrupt
     \param[in]  ospi_periph: OSPIx(x=0,1)
     \param[in]  interrupt: OSPI interrupt
                 only one parameter can be selected which is shown as below:
-      \arg        OSPI_INT_TERR: transfer error interrupt 
+      \arg        OSPI_INT_TERR: transfer error interrupt
       \arg        OSPI_INT_TC: transfer complete interrupt
       \arg        OSPI_INT_FT: fifo threshold interrupt
       \arg        OSPI_INT_SM: status match interrupt
@@ -1529,11 +1557,11 @@ void ospi_interrupt_enable(uint32_t ospi_periph, uint32_t interrupt)
 }
 
 /*!
-    \brief      disable OSPI interrupt 
+    \brief      disable OSPI interrupt
     \param[in]  ospi_periph: OSPIx(x=0,1)
     \param[in]  interrupt: OSPI interrupt
                 only one parameter can be selected which is shown as below:
-      \arg        OSPI_INT_TERR: transfer error interrupt 
+      \arg        OSPI_INT_TERR: transfer error interrupt
       \arg        OSPI_INT_TC: transfer complete interrupt
       \arg        OSPI_INT_FT: fifo threshold interrupt
       \arg        OSPI_INT_SM: status match interrupt
@@ -1545,7 +1573,7 @@ void ospi_interrupt_disable(uint32_t ospi_periph, uint32_t interrupt)
     OSPI_CTL(ospi_periph) &= ~interrupt;
 }
 
-/*!  
+/*!
     \brief      get OSPI fifo level
     \param[in]  ospi_periph: OSPIx(x=0,1)
     \param[out] none
@@ -1573,7 +1601,8 @@ uint32_t ospi_fifo_level_get(uint32_t ospi_periph)
 */
 FlagStatus ospi_flag_get(uint32_t ospi_periph, uint32_t flag)
 {
-    if(RESET != (OSPI_STAT(ospi_periph) & flag)){
+    if(RESET != (OSPI_STAT(ospi_periph) & flag))
+    {
         return SET;
     }else{
         return RESET;
@@ -1612,12 +1641,13 @@ FlagStatus ospi_interrupt_flag_get(uint32_t ospi_periph, uint32_t int_flag)
 {
     uint32_t ret1 = RESET;
     uint32_t ret2 = RESET;
-    
+
     /* get the status of interrupt enable bit */
     ret1 = (OSPI_REG_VAL(ospi_periph, int_flag) & BIT(OSPI_BIT_POS(int_flag)));
     /* get the status of interrupt flag */
     ret2 = (OSPI_REG_VAL2(ospi_periph, int_flag) & BIT(OSPI_BIT_POS2(int_flag)));
-    if(ret1 && ret2) {
+    if(ret1 && ret2)
+    {
         return SET;
     } else {
         return RESET;

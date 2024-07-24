@@ -45,7 +45,8 @@ OF SUCH DAMAGE.
 */
 void sdio_deinit(uint32_t sdio_periph)
 {
-    switch(sdio_periph) {
+    switch(sdio_periph)
+    {
     /* reset SDIO0 */
     case SDIO0:
         rcu_periph_reset_enable(RCU_SDIO0RST);
@@ -375,7 +376,8 @@ uint32_t sdio_response_get(uint32_t sdio_periph, uint32_t sdio_responsex)
     uint32_t resp_content = 0U;
 
     /* get the content of the last response */
-    switch(sdio_responsex) {
+    switch(sdio_responsex)
+    {
     case SDIO_RESPONSE0:
         resp_content = SDIO_RESP0(sdio_periph);
         break;
@@ -725,7 +727,8 @@ void sdio_idma_disable(uint32_t sdio_periph)
 FlagStatus sdio_flag_get(uint32_t sdio_periph, uint32_t flag)
 {
     FlagStatus temp_flag = RESET;
-    if(RESET != (SDIO_STAT(sdio_periph) & flag)) {
+    if(RESET != (SDIO_STAT(sdio_periph) & flag))
+    {
         temp_flag = SET;
     }
     return temp_flag;
@@ -873,7 +876,8 @@ void sdio_interrupt_disable(uint32_t sdio_periph, uint32_t int_flag)
 FlagStatus sdio_interrupt_flag_get(uint32_t sdio_periph, uint32_t int_flag)
 {
     FlagStatus temp_flag = RESET;
-    if(RESET != (SDIO_STAT(sdio_periph) & int_flag)) {
+    if(RESET != (SDIO_STAT(sdio_periph) & int_flag))
+    {
         temp_flag = SET;
     }
     return temp_flag;

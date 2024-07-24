@@ -1,34 +1,34 @@
 /*!
     \file    gd32h7xx_axiim.h
     \brief   definitions for AXIIM(AXI interconnect matrix)
-    
+
     \version 2024-01-05, V1.2.0, firmware for GD32H7xx
 */
 
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -51,7 +51,7 @@ OF SUCH DAMAGE.
 #define AXI_COMP_ID0                        REG32(AXIIM + 0x00001FF0U)                              /*!< AXI componet ID0 register */
 #define AXI_COMP_ID1                        REG32(AXIIM + 0x00001FF4U)                              /*!< AXI componet ID1 register */
 #define AXI_COMP_ID2                        REG32(AXIIM + 0x00001FF8U)                              /*!< AXI componet ID2 register */
-#define AXI_COMP_ID3                        REG32(AXIIM + 0x00001FFCU)                              /*!< AXI componet ID3 register */  
+#define AXI_COMP_ID3                        REG32(AXIIM + 0x00001FFCU)                              /*!< AXI componet ID3 register */
 
 #define AXI_MPXBM_ISS_CTL(mportx)           REG32(AXIIM + 0x00002008U + 0x00001000U * (mportx))     /*!< AXI master port x bus matrix issuing functionality control register */
 #define AXI_MP0BM_ISS_CTL                   REG32(AXIIM + 0x00002008U)                              /*!< AXI master port 0 bus matrix issuing functionality control register */
@@ -89,7 +89,7 @@ OF SUCH DAMAGE.
 
 /* AXI slave port x = 0 to 5 */
 #define AXI_SPX_RDQOS_CTL(sportx)           REG32(AXIIM + 0x00042100U + 0x00001000U * (sportx))     /*!< AXI slave port x read QOS control register */
-#define AXI_SPX_WRQOS_CTL(sportx)           REG32(AXIIM + 0x00042104U + 0x00001000U * (sportx))     /*!< AXI slave port x write QOS control register */ 
+#define AXI_SPX_WRQOS_CTL(sportx)           REG32(AXIIM + 0x00042104U + 0x00001000U * (sportx))     /*!< AXI slave port x write QOS control register */
 #define AXI_SPX_ISS_CTL(sportx)             REG32(AXIIM + 0x00042108U + 0x00001000U * (sportx))     /*!< AXI slave port x issuing functionality control register */
 
 #define AXI_PERIPH_ID4_JEP106CCODE          BITS(0,3)                                               /*!< JEP106 continuation code */
@@ -106,7 +106,7 @@ OF SUCH DAMAGE.
 
 #define AXI_PERIPH_ID3_CUSTMOD              BITS(0,3)                                               /*!< customer modification[3:0] */
 #define AXI_PERIPH_ID3_CUSTREV              BITS(4,7)                                               /*!< customer version */
-    
+
 #define AXI_COMP_ID0_PREAMB                 BITS(0,7)                                               /*!< preamble bits[7:0] */
 
 #define AXI_COMP_ID1_PREAMB                 BITS(0,3)                                               /*!< preamble bits[11:8] */
@@ -131,15 +131,15 @@ OF SUCH DAMAGE.
 #define AXI_SPX_AHBISS_CTL_WR_AHB_ISSOV     BIT(0)                                                  /*!< converts AHB-Lite write transaction to single beat AXI transaction */
 #define AXI_SPX_AHBISS_CTL_RD_AHB_ISSOV     BIT(1)                                                  /*!< converts AHB-Lite read transaction to single beat AXI transaction */
 
-#define AXI_SPX_RDQOS_CTL_RDQOS             BITS(0,3)                                               /*!< slave port read channel QoS configure bits */    
+#define AXI_SPX_RDQOS_CTL_RDQOS             BITS(0,3)                                               /*!< slave port read channel QoS configure bits */
 
-#define AXI_SPX_WRQOS_CTL_WRQOS             BITS(0,3)                                               /*!< slave port write channel QoS configure bits */    
+#define AXI_SPX_WRQOS_CTL_WRQOS             BITS(0,3)                                               /*!< slave port write channel QoS configure bits */
 
 #define AXI_SPX_ISS_CTL_RD_ISSOV            BIT(0)                                                  /*!< slave port override ASIB read issuing control bit */
 #define AXI_SPX_ISS_CTL_WR_ISSOV            BIT(1)                                                  /*!< slave port override ASIB write issuing control bit */
 
 /* AXI master port select */
-typedef enum 
+typedef enum
 {
     MASTER_PORT0 = 0U,                                   /*!< AXI master port 0 */
     MASTER_PORT1,                                        /*!< AXI master port 1 */
@@ -152,7 +152,7 @@ typedef enum
 } master_port_enum;
 
 /* AXI slave port select */
-typedef enum 
+typedef enum
 {
     SLAVE_PORT0 = 0U,                                    /*!< AXI slave port 0 */
     SLAVE_PORT1,                                         /*!< AXI slave port 1 */

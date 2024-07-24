@@ -154,7 +154,8 @@ FlagStatus cpdm_delayline_length_valid_flag_get(uint32_t cpdm_periph)
     uint32_t reg = 0U;
 
     reg = CPDM_CFG(cpdm_periph);
-    if(reg & CPDM_DLLENF_MASK) {
+    if(reg & CPDM_DLLENF_MASK)
+    {
         return SET;
     } else {
         return RESET;
@@ -214,21 +215,25 @@ void cpdm_clock_output(uint32_t cpdm_periph, cpdm_output_phase_enum output_clock
     reg |= CPDM_MAX_PHASE;
     CPDM_CFG(cpdm_periph) = (uint32_t)reg;
 
-    for(delay_count = 0U; delay_count <= CPDM_MAX_DELAY_STEP_COUNT; delay_count++) {
+    for(delay_count = 0U; delay_count <= CPDM_MAX_DELAY_STEP_COUNT; delay_count++)
+    {
         reg = CPDM_CFG(cpdm_periph);
         reg &= CPDM_DLSTCNT_MASK;
         /* configure delay line step count */
         reg |= delay_count << CPDM_DLSTCNT_OFFSET;
         CPDM_CFG(cpdm_periph) = (uint32_t)reg;
 
-        while(SET == (CPDM_CFG(cpdm_periph) & CPDM_CFG_DLLENF)) {
+        while(SET == (CPDM_CFG(cpdm_periph) & CPDM_CFG_DLLENF))
+        {
         }
-        while(RESET == (CPDM_CFG(cpdm_periph) & CPDM_CFG_DLLENF)) {
+        while(RESET == (CPDM_CFG(cpdm_periph) & CPDM_CFG_DLLENF))
+        {
         }
 
         reg_cfg = CPDM_CFG(cpdm_periph);
         if((((reg_cfg >> CPDM_DLLEN_OFFSET) & CPDM_DLLEN_10_0_MASK) > 0U) &&
-                ((RESET == (reg_cfg & CPDM_DLLEN_11)) || (RESET == (reg_cfg & CPDM_DLLEN_10)))) {
+                ((RESET == (reg_cfg & CPDM_DLLEN_11)) || (RESET == (reg_cfg & CPDM_DLLEN_10))))
+                {
             break;
         }
     }

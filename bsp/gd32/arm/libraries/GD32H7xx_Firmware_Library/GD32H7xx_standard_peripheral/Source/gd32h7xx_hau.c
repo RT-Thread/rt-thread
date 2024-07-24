@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -70,7 +70,8 @@ void hau_init(hau_init_parameter_struct* initpara)
     HAU_CTL |= (initpara->algo | initpara->datatype | initpara->mode);
 
     /* when mode is HMAC, set the key */
-    if(HAU_MODE_HMAC == initpara->mode){
+    if(HAU_MODE_HMAC == initpara->mode)
+    {
         HAU_CTL &= (~(uint32_t)HAU_CTL_KLM);
         HAU_CTL |= initpara->keytype;
     }
@@ -80,9 +81,9 @@ void hau_init(hau_init_parameter_struct* initpara)
 }
 
 /*!
-    \brief      initialize the structure hau_initpara with default value 
+    \brief      initialize the structure hau_initpara with default value
     \param[in]  none
-    \param[out] initpara: HAU init parameter struct 
+    \param[out] initpara: HAU init parameter struct
     \retval     none
 */
 void hau_init_struct_para_init(hau_init_parameter_struct* initpara)
@@ -168,7 +169,7 @@ void hau_digest_read(hau_digest_parameter_struct* digestpara)
 }
 
 /*!
-    \brief      enable digest calculation 
+    \brief      enable digest calculation
     \param[in]  none
     \param[out] none
     \retval     none
@@ -179,7 +180,7 @@ void hau_digest_calculation_enable(void)
 }
 
 /*!
-    \brief      configure single or multiple DMA is used, and digest calculation at the end of a DMA transfer or not 
+    \brief      configure single or multiple DMA is used, and digest calculation at the end of a DMA transfer or not
     \param[in]  multi_single
                 only one parameter can be selected which is shown as below:
       \arg        SINGLE_DMA_AUTO_DIGEST: message padding and message digest calculation at the end of a DMA transfer
@@ -192,7 +193,7 @@ void hau_multiple_single_dma_config(uint32_t multi_single)
     HAU_CTL &= (~(uint32_t)HAU_CTL_MDS);
     HAU_CTL |= multi_single;
 }
-  
+
 /*!
     \brief      enable the HAU DMA interface
     \param[in]  none
@@ -229,7 +230,8 @@ void hau_context_struct_para_init(hau_context_parameter_struct* context)
     context->hau_inten_bak = 0U;
     context->hau_cfg_bak   = 0U;
     context->hau_ctl_bak   = 0U;
-    for(i = 0U; i <= HMAC_CONTEXT_INTERNAL_REG; i++){
+    for(i = 0U; i <= HMAC_CONTEXT_INTERNAL_REG; i++)
+    {
         context->hau_ctxs_bak[i] = 0U;
     }
 }
@@ -251,10 +253,12 @@ void hau_context_save(hau_context_parameter_struct* context_save)
     context_save->hau_cfg_bak   = HAU_CFG;
     context_save->hau_ctl_bak   = HAU_CTL;
 
-    if(0U != (HAU_CTL & HAU_CTL_HMS)){
+    if(0U != (HAU_CTL & HAU_CTL_HMS))
+    {
         i_max = HMAC_CONTEXT_INTERNAL_REG;
     }
-    for(i = 0U; i <= i_max; i++){
+    for(i = 0U; i <= i_max; i++)
+    {
         context_save->hau_ctxs_bak[i] = HAU_CTXS(i);
     }
 }
@@ -278,10 +282,12 @@ void hau_context_restore(hau_context_parameter_struct* context_restore)
     HAU_CTL |= HAU_CTL_START;
 
     /* continue restoring context registers */
-    if(0U != (HAU_CTL & HAU_CTL_HMS)){
+    if(0U != (HAU_CTL & HAU_CTL_HMS))
+    {
         i_max = HMAC_CONTEXT_INTERNAL_REG;
     }
-    for(i = 0U; i <= i_max; i++){
+    for(i = 0U; i <= i_max; i++)
+    {
         HAU_CTXS(i) = context_restore->hau_ctxs_bak[i];
     }
 }
@@ -304,13 +310,15 @@ FlagStatus hau_flag_get(uint32_t flag)
     FlagStatus ret_flag = RESET;
 
     /* check if the flag is in HAU_CTL register */
-    if(RESET != (flag & HAU_FLAG_INFIFO_NO_EMPTY)){ 
+    if(RESET != (flag & HAU_FLAG_INFIFO_NO_EMPTY))
+    {
         ret = HAU_CTL;
     }else{
         ret = HAU_STAT;
     }
 
-    if (RESET != (ret & flag)){
+    if (RESET != (ret & flag))
+    {
         ret_flag = SET;
     }
 
@@ -335,7 +343,7 @@ void hau_flag_clear(uint32_t flag)
     \brief      enable the HAU interrupts
     \param[in]  interrupt: specify the HAU interrupt source to be enabled
                 one or more parameters can be selected which are shown as below:
-      \arg        HAU_INT_DATA_INPUT: a new block can be entered into the IN buffer 
+      \arg        HAU_INT_DATA_INPUT: a new block can be entered into the IN buffer
       \arg        HAU_INT_CALCULATION_COMPLETE: calculation complete
     \param[out] none
     \retval     none
@@ -376,7 +384,8 @@ FlagStatus hau_interrupt_flag_get(uint32_t int_flag)
     /* return the status of the interrupt */
     ret =  HAU_STAT;
 
-    if(RESET != ((HAU_INTEN & ret) & int_flag)){
+    if(RESET != ((HAU_INTEN & ret) & int_flag))
+    {
         flag = SET;
     }
 

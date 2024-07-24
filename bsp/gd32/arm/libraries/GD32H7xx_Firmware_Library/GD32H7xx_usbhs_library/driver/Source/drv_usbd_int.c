@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -74,11 +74,13 @@ uint32_t usbd_int_dedicated_ep1out (usb_core_driver *udev)
     oepintr &= udev->regs.dr->DOEP1INTEN;
 
     /* transfer complete */
-    if (oepintr & DOEPINTF_TF) {
+    if (oepintr & DOEPINTF_TF)
+    {
         /* clear the bit in DOEPINTn for this interrupt */
         udev->regs.er_out[1]->DOEPINTF = DOEPINTF_TF;
 
-        if (USB_USE_DMA == udev->bp.transfer_mode) {
+        if (USB_USE_DMA == udev->bp.transfer_mode)
+        {
             oeplen = udev->regs.er_out[1]->DOEPLEN;
 
             /* ToDo : handle more than one single MPS size packet */
@@ -110,7 +112,8 @@ uint32_t usbd_int_dedicated_ep1in (usb_core_driver *udev)
 
     intr = udev->regs.er_in[1]->DIEPINTF & inten;
 
-    if (intr & DIEPINTF_TF) {
+    if (intr & DIEPINTF_TF)
+    {
         udev->regs.dr->DIEPFEINTEN &= ~(0x1U << 1U);
 
         udev->regs.er_in[1]->DIEPINTF = DIEPINTF_TF;
@@ -119,7 +122,8 @@ uint32_t usbd_int_dedicated_ep1in (usb_core_driver *udev)
         usbd_in_transc (udev, 1U);
     }
 
-    if (intr & DIEPINTF_TXFE) {
+    if (intr & DIEPINTF_TXFE)
+    {
         usbd_emptytxfifo_write(udev, 1U);
 
         udev->regs.er_in[1]->DIEPINTF = DIEPINTF_TXFE;
@@ -138,39 +142,47 @@ uint32_t usbd_int_dedicated_ep1in (usb_core_driver *udev)
 */
 void usbd_isr (usb_core_driver *udev)
 {
-    if (HOST_MODE != (udev->regs.gr->GINTF & GINTF_COPM)) {
+    if (HOST_MODE != (udev->regs.gr->GINTF & GINTF_COPM))
+    {
         uint32_t intr = udev->regs.gr->GINTF;
         intr &= udev->regs.gr->GINTEN;
 
         /* there are no interrupts, avoid spurious interrupt */
-        if (!intr) {
+        if (!intr)
+        {
             return;
         }
 
         /* OUT endpoints interrupts */
-        if (intr & GINTF_OEPIF) {
+        if (intr & GINTF_OEPIF)
+        {
             (void)usbd_int_epout (udev);
         }
 
         /* IN endpoints interrupts */
-        if (intr & GINTF_IEPIF) {
+        if (intr & GINTF_IEPIF)
+        {
             (void)usbd_int_epin (udev);
         }
 
         /* suspend interrupt */
-        if (intr & GINTF_SP) {
+        if (intr & GINTF_SP)
+        {
             (void)usbd_int_suspend (udev);
         }
 
         /* wakeup interrupt */
-        if (intr & GINTF_WKUPIF) {
+        if (intr & GINTF_WKUPIF)
+        {
             (void)usbd_int_wakeup (udev);
         }
 
         /* start of frame interrupt */
-        if (intr & GINTF_SOF) {
-            if (udev->dev.class_core->SOF) {
-                (void)udev->dev.class_core->SOF(udev); 
+        if (intr & GINTF_SOF)
+        {
+            if (udev->dev.class_core->SOF)
+            {
+                (void)udev->dev.class_core->SOF(udev);
             }
 
             /* clear interrupt */
@@ -178,23 +190,28 @@ void usbd_isr (usb_core_driver *udev)
         }
 
         /* receive FIFO not empty interrupt */
-        if (intr & GINTF_RXFNEIF) {
+        if (intr & GINTF_RXFNEIF)
+        {
             (void)usbd_int_rxfifo (udev);
         }
 
         /* USB reset interrupt */
-        if (intr & GINTF_RST) {
+        if (intr & GINTF_RST)
+        {
             (void)usbd_int_reset (udev);
         }
 
         /* enumeration has been done interrupt */
-        if (intr & GINTF_ENUMFIF) {
+        if (intr & GINTF_ENUMFIF)
+        {
             (void)usbd_int_enumfinish (udev);
         }
 
         /* incomplete synchronization IN transfer interrupt*/
-        if (intr & GINTF_ISOINCIF) {
-            if (NULL != udev->dev.class_core->incomplete_isoc_in) {
+        if (intr & GINTF_ISOINCIF)
+        {
+            if (NULL != udev->dev.class_core->incomplete_isoc_in)
+            {
                 (void)udev->dev.class_core->incomplete_isoc_in(udev);
             }
 
@@ -203,8 +220,10 @@ void usbd_isr (usb_core_driver *udev)
         }
 
         /* incomplete synchronization OUT transfer interrupt*/
-        if (intr & GINTF_ISOONCIF) {
-            if (NULL != udev->dev.class_core->incomplete_isoc_out) {
+        if (intr & GINTF_ISOONCIF)
+        {
+            if (NULL != udev->dev.class_core->incomplete_isoc_out)
+            {
                 (void)udev->dev.class_core->incomplete_isoc_out(udev);
             }
 
@@ -213,14 +232,16 @@ void usbd_isr (usb_core_driver *udev)
         }
 
 #if (1U == LPM_ENABLED)
-        if(intr & GINTF_LPMIF) {
+        if(intr & GINTF_LPMIF)
+        {
             /* clear interrupt */
             udev->regs.gr->GINTF = GINTF_LPMIF;
 
             udev->dev.pm.BESL = (udev->regs.gr->GLPMCFG & GLPMCFG_BESL) >> 2U;
             udev->dev.pm.dev_remote_wakeup = (udev->regs.gr->GLPMCFG & GLPMCFG_REW) >> 6U;
 
-            if(LPM_L0 == udev->dev.pm.lpm_state){
+            if(LPM_L0 == udev->dev.pm.lpm_state)
+            {
                 udev->dev.pm.lpm_state = LPM_L1;
                 usbd_int_lpm(udev, LPM_L1_ACTIVE);
             }else{
@@ -233,13 +254,16 @@ void usbd_isr (usb_core_driver *udev)
 #ifdef VBUS_SENSING_ENABLED
 
         /* session request interrupt */
-        if (intr & GINTF_SESIF) {
+        if (intr & GINTF_SESIF)
+        {
             udev->regs.gr->GINTF = GINTF_SESIF;
         }
 
         /* OTG mode interrupt */
-        if (intr & GINTF_OTGIF) {
-            if(udev->regs.gr->GOTGINTF & GOTGINTF_SESEND) {
+        if (intr & GINTF_OTGIF)
+        {
+            if(udev->regs.gr->GOTGINTF & GOTGINTF_SESEND)
+            {
 
             }
 
@@ -261,16 +285,20 @@ static uint32_t usbd_int_epout (usb_core_driver *udev)
     uint32_t epintnum = 0U;
     uint8_t ep_num = 0U;
 
-    for (epintnum = usb_oepintnum_read (udev); epintnum; epintnum >>= 1U) {
-        if (epintnum & 0x01U) {
+    for (epintnum = usb_oepintnum_read (udev); epintnum; epintnum >>= 1U)
+    {
+        if (epintnum & 0x01U)
+        {
             __IO uint32_t oepintr = usb_oepintr_read (udev, ep_num);
 
             /* transfer complete interrupt */
-            if (oepintr & DOEPINTF_TF) {
+            if (oepintr & DOEPINTF_TF)
+            {
                 /* clear the bit in DOEPINTF for this interrupt */
                 udev->regs.er_out[ep_num]->DOEPINTF = DOEPINTF_TF;
 
-                if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
+                if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+                {
                     __IO uint32_t eplen = udev->regs.er_out[ep_num]->DOEPLEN;
 
                     udev->dev.transc_out[ep_num].xfer_count = udev->dev.transc_out[ep_num].max_len - \
@@ -280,22 +308,25 @@ static uint32_t usbd_int_epout (usb_core_driver *udev)
                 /* inform upper layer: data ready */
                 (void)usbd_out_transc (udev, ep_num);
 
-                if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
-                    if ((0U == ep_num) && ((uint8_t)USB_CTL_STATUS_OUT == udev->dev.control.ctl_state)) {
+                if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+                {
+                    if ((0U == ep_num) && ((uint8_t)USB_CTL_STATUS_OUT == udev->dev.control.ctl_state))
+                    {
                         usb_ctlep_startout (udev);
                     }
                 }
             }
 
             /* setup phase finished interrupt (control endpoints) */
-            if (oepintr & DOEPINTF_STPF) {
+            if (oepintr & DOEPINTF_STPF)
+            {
                 /* inform the upper layer that a setup packet is available */
                 (void)usbd_setup_transc (udev);
 
                 udev->regs.er_out[ep_num]->DOEPINTF = DOEPINTF_STPF;
             }
         }
-        
+
         ep_num++;
     }
 
@@ -313,24 +344,30 @@ static uint32_t usbd_int_epin (usb_core_driver *udev)
     uint32_t epintnum = 0U;
     uint8_t ep_num = 0U;
 
-    for (epintnum = usb_iepintnum_read (udev); epintnum; epintnum >>= 1U) {
-        if (epintnum & 0x1U) {
+    for (epintnum = usb_iepintnum_read (udev); epintnum; epintnum >>= 1U)
+    {
+        if (epintnum & 0x1U)
+        {
             __IO uint32_t iepintr = usb_iepintr_read (udev, ep_num);
 
-            if (iepintr & DIEPINTF_TF) {
+            if (iepintr & DIEPINTF_TF)
+            {
                 udev->regs.er_in[ep_num]->DIEPINTF = DIEPINTF_TF;
 
                 /* data transmission is completed */
                 (void)usbd_in_transc (udev, ep_num);
 
-                if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode) {
-                    if ((0U == ep_num) && ((uint8_t)USB_CTL_STATUS_IN == udev->dev.control.ctl_state)) {
+                if ((uint8_t)USB_USE_DMA == udev->bp.transfer_mode)
+                {
+                    if ((0U == ep_num) && ((uint8_t)USB_CTL_STATUS_IN == udev->dev.control.ctl_state))
+                    {
                         usb_ctlep_startout (udev);
                     }
                 }
             }
 
-            if (iepintr & DIEPINTF_TXFE) {
+            if (iepintr & DIEPINTF_TXFE)
+            {
                 usbd_emptytxfifo_write (udev, (uint32_t)ep_num);
 
                 udev->regs.er_in[ep_num]->DIEPINTF = DIEPINTF_TXFE;
@@ -371,12 +408,14 @@ static uint32_t usbd_int_rxfifo (usb_core_driver *udev)
     bcount = (devrxstat & GRSTATRP_BCOUNT) >> 4U;
     data_PID = (uint8_t)((devrxstat & GRSTATRP_DPID) >> 15U);
 
-    switch ((devrxstat & GRSTATRP_RPCKST) >> 17U) {
+    switch ((devrxstat & GRSTATRP_RPCKST) >> 17U)
+    {
         case RSTAT_GOUT_NAK:
             break;
 
         case RSTAT_DATA_UPDT:
-            if (bcount > 0U) {
+            if (bcount > 0U)
+            {
                 (void)usb_rxfifo_read (&udev->regs, transc->xfer_buf, (uint16_t)bcount);
 
                 transc->xfer_buf += bcount;
@@ -393,7 +432,8 @@ static uint32_t usbd_int_rxfifo (usb_core_driver *udev)
             break;
 
         case RSTAT_SETUP_UPDT:
-            if ((0U == transc->ep_addr.num) && (8U == bcount) && (DPID_DATA0 == data_PID)) {
+            if ((0U == transc->ep_addr.num) && (8U == bcount) && (DPID_DATA0 == data_PID))
+            {
                 /* copy the setup packet received in FIFO into the setup buffer in RAM */
                 (void)usb_rxfifo_read (&udev->regs, (uint8_t *)&udev->dev.control.req, (uint16_t)bcount);
 
@@ -427,7 +467,8 @@ static uint32_t usbd_int_reset (usb_core_driver *udev)
     /* flush the TX FIFO */
     (void)usb_txfifo_flush (&udev->regs, 0U);
 
-    for (i = 0U; i < udev->bp.num_ep; i++) {
+    for (i = 0U; i < udev->bp.num_ep; i++)
+    {
         udev->regs.er_in[i]->DIEPINTF = 0xFFU;
         udev->regs.er_out[i]->DOEPINTF = 0xFFU;
     }
@@ -461,14 +502,16 @@ static uint32_t usbd_int_reset (usb_core_driver *udev)
     /* clear USB reset interrupt */
     udev->regs.gr->GINTF = GINTF_RST;
 
-    udev->dev.transc_out[0] = (usb_transc) {
+    udev->dev.transc_out[0] = (usb_transc)
+    {
         .ep_type = USB_EPTYPE_CTRL,
         .max_len = USB_FS_EP0_MAX_LEN
     };
 
     (void)usb_transc_active (udev, &udev->dev.transc_out[0]);
 
-    udev->dev.transc_in[0] = (usb_transc) {
+    udev->dev.transc_in[0] = (usb_transc)
+    {
         .ep_addr = {
             .dir = 1U
         },
@@ -501,7 +544,8 @@ static uint32_t usbd_int_enumfinish (usb_core_driver *udev)
     udev->regs.gr->GUSBCS &= ~GUSBCS_UTT;
 
     /* set USB turn-around time based on device speed and PHY interface */
-    if ((uint8_t)USB_SPEED_HIGH == USB_SPEED[enum_speed]) {
+    if ((uint8_t)USB_SPEED_HIGH == USB_SPEED[enum_speed])
+    {
         udev->bp.core_speed = (uint8_t)USB_SPEED_HIGH;
 
         udev->regs.gr->GUSBCS |= 0x09U << 10U;
@@ -532,7 +576,8 @@ static uint32_t usbd_int_suspend (usb_core_driver *udev)
     udev->dev.backup_status = udev->dev.cur_status;
     udev->dev.cur_status = (uint8_t)USBD_SUSPENDED;
 
-    if (low_power && suspend && is_configured) {
+    if (low_power && suspend && is_configured)
+    {
         /* switch-off the OTG clocks */
         *udev->regs.PWRCLKCTL |= PWRCLKCTL_SUCLK | PWRCLKCTL_SHCLK;
 
@@ -558,13 +603,15 @@ static uint32_t usbd_int_wakeup(usb_core_driver *udev)
     __IO uint8_t remote_wakeup = udev->dev.pm.dev_remote_wakeup;
 
 #if (1U == LPM_ENABLED)
-    if(LPM_L1 == udev->dev.pm.lpm_state){
+    if(LPM_L1 == udev->dev.pm.lpm_state)
+    {
         udev->dev.pm.lpm_state = LPM_L0;
         usbd_int_lpm(udev, LPM_L0_ACTIVE);
     }else
 #endif /* LPM_ENABLED */
     {
-        if(remote_wakeup && low_power){
+        if(remote_wakeup && low_power)
+        {
             /* resume MCU CLK */
 
             /* reset SLEEPDEEP bit of Cortex-M33 system control register */
@@ -573,14 +620,15 @@ static uint32_t usbd_int_wakeup(usb_core_driver *udev)
 
         usb_clock_active(udev);
 
-        if (USBD_SUSPENDED == udev->dev.cur_status) {
+        if (USBD_SUSPENDED == udev->dev.cur_status)
+        {
             /* inform upper layer by the resume event */
             udev->dev.cur_status = udev->dev.backup_status;
         }
-        
+
         udev->dev.cur_status = USBD_CONFIGURED;
     }
-    
+
     /* clear interrupt */
     udev->regs.gr->GINTF = GINTF_WKUPIF;
 
@@ -605,14 +653,16 @@ static uint32_t usbd_int_lpm (usb_core_driver *udev, usb_lpm_type active_type)
     __IO uint8_t suspend = (uint8_t)(udev->regs.dr->DSTAT & DSTAT_SPST);
     __IO uint8_t is_configured = (udev->dev.cur_status == (uint8_t)USBD_CONFIGURED)? 1U : 0U;
 
-    switch(active_type){
+    switch(active_type)
+    {
     case LPM_L0_ACTIVE:
         udev->dev.cur_status = udev->dev.backup_status;
 
         /* switch-on the OTG clocks */
         usb_clock_active(udev);
 
-        if(low_power){
+        if(low_power)
+        {
             /* resume MCU CLK */
 
             /* reset SLEEPDEEP bit of Cortex-M7 system control register */
@@ -630,7 +680,8 @@ static uint32_t usbd_int_lpm (usb_core_driver *udev, usb_lpm_type active_type)
         /* switch-off the OTG clocks */
         *udev->regs.PWRCLKCTL |= PWRCLKCTL_SUCLK | PWRCLKCTL_SHCLK;
 
-        if(low_power){
+        if(low_power)
+        {
             /* enter DEEP_SLEEP mode with LDO in low power mode */
             pmu_to_deepsleepmode(WFI_CMD);
         }
@@ -659,17 +710,20 @@ static uint32_t usbd_emptytxfifo_write (usb_core_driver *udev, uint32_t ep_num)
     len = transc->xfer_len - transc->xfer_count;
 
     /* get the data length to write */
-    if (len > transc->max_len) {
+    if (len > transc->max_len)
+    {
         len = transc->max_len;
     }
 
     word_count = (len + 3U) / 4U;
 
     while (((udev->regs.er_in[ep_num]->DIEPTFSTAT & DIEPTFSTAT_IEPTFS) >= word_count) && \
-              (transc->xfer_count < transc->xfer_len)) {
+              (transc->xfer_count < transc->xfer_len))
+              {
         len = transc->xfer_len - transc->xfer_count;
 
-        if (len > transc->max_len) {
+        if (len > transc->max_len)
+        {
             len = transc->max_len;
         }
 
@@ -682,7 +736,8 @@ static uint32_t usbd_emptytxfifo_write (usb_core_driver *udev, uint32_t ep_num)
         transc->xfer_buf += len;
         transc->xfer_count += len;
 
-        if (transc->xfer_count == transc->xfer_len) {
+        if (transc->xfer_count == transc->xfer_len)
+        {
             /* disable the device endpoint FIFO empty interrupt */
             udev->regs.dr->DIEPFEINTEN &= ~(0x01U << ep_num);
         }

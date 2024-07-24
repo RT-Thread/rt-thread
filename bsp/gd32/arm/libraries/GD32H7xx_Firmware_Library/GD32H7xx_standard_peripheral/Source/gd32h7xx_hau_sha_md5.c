@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -39,7 +39,7 @@ OF SUCH DAMAGE.
 /* HAU SHA/MD5 digest read in HASH mode */
 static void hau_sha_md5_digest_read(uint32_t algo, uint8_t output[]);
 /* HAU digest calculate process in HASH mode */
-static ErrStatus hau_hash_calculate(uint32_t algo, uint8_t input[], uint32_t in_length, uint8_t output[]); 
+static ErrStatus hau_hash_calculate(uint32_t algo, uint8_t input[], uint32_t in_length, uint8_t output[]);
 /* HAU digest calculate process in HMAC mode */
 static ErrStatus hau_hmac_calculate(uint32_t algo, uint8_t key[], uint32_t keysize, uint8_t input[], uint32_t in_length, uint8_t output[]);
 
@@ -130,7 +130,7 @@ ErrStatus hau_hmac_sha_256(uint8_t key[], uint32_t keysize, uint8_t input[], uin
 {
     ErrStatus ret = ERROR;
     ret = hau_hmac_calculate(HAU_ALGO_SHA256, key, keysize, input, in_length, output);
-    return ret; 
+    return ret;
 }
 
 /*!
@@ -177,11 +177,12 @@ ErrStatus hau_hmac_md5(uint8_t key[], uint32_t keysize, uint8_t input[], uint32_
 static void hau_sha_md5_digest_read(uint32_t algo, uint8_t output[])
 {
     hau_digest_parameter_struct digest_para;
-    uint32_t outputaddr = (uint32_t)output;  
-  
-    switch(algo){
-    case HAU_ALGO_SHA1: 
-        /* read the message digest result */       
+    uint32_t outputaddr = (uint32_t)output;
+
+    switch(algo)
+    {
+    case HAU_ALGO_SHA1:
+        /* read the message digest result */
         hau_digest_read(&digest_para);
         /* reverse byte order, copy result to outputaddr */
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[0]);
@@ -195,7 +196,7 @@ static void hau_sha_md5_digest_read(uint32_t algo, uint8_t output[])
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[4]);
         break;
     case HAU_ALGO_SHA224:
-        /* read the message digest result */ 
+        /* read the message digest result */
         hau_digest_read(&digest_para);
         /* reverse byte order, copy result to outputaddr */
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[0]);
@@ -213,7 +214,7 @@ static void hau_sha_md5_digest_read(uint32_t algo, uint8_t output[])
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[6]);
         break;
     case HAU_ALGO_SHA256:
-        /* read the message digest result */ 
+        /* read the message digest result */
         hau_digest_read(&digest_para);
         /* reverse byte order, copy result to outputaddr */
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[0]);
@@ -233,7 +234,7 @@ static void hau_sha_md5_digest_read(uint32_t algo, uint8_t output[])
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[7]);
         break;
     case HAU_ALGO_MD5:
-        /* read the message digest result */ 
+        /* read the message digest result */
         hau_digest_read(&digest_para);
         /* reverse byte order, copy result to outputaddr */
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[0]);
@@ -243,7 +244,7 @@ static void hau_sha_md5_digest_read(uint32_t algo, uint8_t output[])
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[2]);
         outputaddr += 4U;
         *(uint32_t*)(outputaddr)  = __REV(digest_para.out[3]);
-        break;    
+        break;
     default:
         break;
     }
@@ -283,7 +284,8 @@ static ErrStatus hau_hash_calculate(uint32_t algo, uint8_t input[], uint32_t in_
     hau_last_word_validbits_num_config(num_last_valid);
 
     /* write data to the IN FIFO */
-    for(i = 0U; i < in_length; i += 4U){    
+    for(i = 0U; i < in_length; i += 4U)
+    {
         hau_data_write(*(uint32_t*)inputaddr);
         inputaddr += 4U;
     }
@@ -297,7 +299,8 @@ static ErrStatus hau_hash_calculate(uint32_t algo, uint8_t input[], uint32_t in_
         counter++;
     }while((SHAMD5_BSY_TIMEOUT != counter) && (RESET != busystatus));
 
-    if(RESET != busystatus){    
+    if(RESET != busystatus)
+    {
         return ERROR;
     }else{
         /* read the message digest */
@@ -340,7 +343,8 @@ static ErrStatus hau_hmac_calculate(uint32_t algo, uint8_t key[], uint32_t keysi
     init_para.algo = algo;
     init_para.mode = HAU_MODE_HMAC;
     init_para.datatype = HAU_SWAPPING_8BIT;
-    if(keysize > 64U){
+    if(keysize > 64U)
+    {
         init_para.keytype = HAU_KEY_LONGGER_64;
     }else{
         init_para.keytype = HAU_KEY_SHORTER_64;
@@ -351,7 +355,8 @@ static ErrStatus hau_hmac_calculate(uint32_t algo, uint8_t key[], uint32_t keysi
     hau_last_word_validbits_num_config((uint32_t)num_key_valid);
 
     /* write the key */
-    for(i = 0U; i < keysize; i += 4U){   
+    for(i = 0U; i < keysize; i += 4U)
+    {
         hau_data_write(*(uint32_t*)keyaddr);
         keyaddr += 4U;
     }
@@ -365,14 +370,16 @@ static ErrStatus hau_hmac_calculate(uint32_t algo, uint8_t key[], uint32_t keysi
         counter++;
     }while((SHAMD5_BSY_TIMEOUT != counter) && (RESET != busystatus));
 
-    if(RESET != busystatus){
+    if(RESET != busystatus)
+    {
         return ERROR;
     }else{
         /* configure the number of valid bits in last word of the message */
         hau_last_word_validbits_num_config((uint32_t)num_last_valid);
 
         /* write data to the IN FIFO */
-        for(i = 0U; i < in_length; i += 4U){
+        for(i = 0U; i < in_length; i += 4U)
+        {
             hau_data_write(*(uint32_t*)inputaddr);
             inputaddr += 4U;
         }
@@ -387,7 +394,8 @@ static ErrStatus hau_hmac_calculate(uint32_t algo, uint8_t key[], uint32_t keysi
             counter++;
         }while((SHAMD5_BSY_TIMEOUT != counter) && (RESET != busystatus));
 
-        if(RESET != busystatus){
+        if(RESET != busystatus)
+        {
             return ERROR;
         }else{
             /* configure the number of valid bits in last word of the key */
@@ -395,7 +403,8 @@ static ErrStatus hau_hmac_calculate(uint32_t algo, uint8_t key[], uint32_t keysi
 
             /* write the key */
             keyaddr = (uint32_t)key;
-            for(i = 0U; i < keysize; i += 4U){
+            for(i = 0U; i < keysize; i += 4U)
+            {
                 hau_data_write(*(uint32_t*)keyaddr);
                 keyaddr += 4U;
             }
@@ -410,13 +419,14 @@ static ErrStatus hau_hmac_calculate(uint32_t algo, uint8_t key[], uint32_t keysi
                 counter++;
             }while((SHAMD5_BSY_TIMEOUT != counter) && (RESET != busystatus));
 
-            if(RESET != busystatus){
+            if(RESET != busystatus)
+            {
                 return ERROR;
             }else{
                 /* read the message digest */
                 hau_sha_md5_digest_read(algo, output);
             }
-        }  
+        }
     }
     return SUCCESS;
 }

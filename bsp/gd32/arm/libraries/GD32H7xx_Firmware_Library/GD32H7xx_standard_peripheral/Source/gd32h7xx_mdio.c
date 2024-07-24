@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -59,7 +59,7 @@ void mdio_software_reset(void)
 }
 
 /*!
-    \brief      initialize MDIO for communication 
+    \brief      initialize MDIO for communication
     \param[in]  phy_size: PHY bit length
                 only one parameter can be selected which is shown as below:
       \arg        MDIO_PHY_BITS_3: PHY use 3 bits
@@ -84,19 +84,19 @@ void mdio_software_reset(void)
 uint32_t mdio_init(uint32_t phy_size, uint32_t phy_softaddr, uint32_t phy_sel, uint16_t devadd)
 {
     uint32_t phy_addr = 0U, phy_hard = 0U;
-    
+
     /* configure MDIO phy bit length */
     MDIO_CTL &= ~MDIO_CTL_PHYB;
     MDIO_CTL |= phy_size;
-    
+
     /* configure the PHYADR and DEVADD */
     MDIO_CFG &= ~(MDIO_CFG_PHYSW | MDIO_CFG_EPHYSEL | MDIO_CFG_EDEVADD);
     MDIO_CFG |= CFG_PHYSW(phy_softaddr) | CFG_EPHYSEL(phy_sel) | CFG_EDEVADD(devadd);
- 
+
     /* calculate the PHYADR that the device will respond to */
     phy_hard = mdio_phy_pin_read();
     phy_addr = (phy_hard & (~phy_sel)) | (phy_softaddr & phy_sel);
-    
+
     return phy_addr;
 }
 
@@ -128,7 +128,7 @@ void mdio_soft_phyadr_set(uint32_t phy_soft)
 }
 
 /*!
-    \brief      select the expected frame field PHYADR 
+    \brief      select the expected frame field PHYADR
     \param[in]  phy_sel: PHYADR select
                 only one parameter can be selected which is shown as below:
       \arg        MDIO_PHYADR_HARDWARE: sets expected PHYADR = PHYPIN[4:0]
@@ -144,7 +144,7 @@ void mdio_framefield_phyadr_config(uint32_t phy_sel)
 }
 
 /*!
-    \brief      configure the expected frame field DEVADD 
+    \brief      configure the expected frame field DEVADD
     \param[in]  type: device type
                 only one parameter can be selected which is shown as below:
       \arg        DEVADD_PMA_PMD: device type PMA/PMD
@@ -162,7 +162,7 @@ void mdio_framefield_devadd_config(uint16_t type)
 }
 
 /*!
-    \brief      read the hardware PRTADR[4:0] value 
+    \brief      read the hardware PRTADR[4:0] value
     \param[in]  none
     \param[out] none
     \retval     uint32_t: 0x0-0x1F
@@ -173,7 +173,7 @@ uint32_t mdio_phy_pin_read(void)
 }
 
 /*!
-    \brief      configure the expected frame bit timeout 
+    \brief      configure the expected frame bit timeout
     \param[in]  timeout: timeout counter among frame bits (0 - 0xFFFF)
     \param[out] none
     \retval     none
@@ -185,7 +185,7 @@ void mdio_timeout_config(uint16_t timeout)
 }
 
 /*!
-    \brief      enable MDIO frame bit timeout 
+    \brief      enable MDIO frame bit timeout
     \param[in]  none
     \param[out] none
     \retval     none
@@ -196,7 +196,7 @@ void mdio_timeout_enable(void)
 }
 
 /*!
-    \brief      disable MDIO frame bit timeout 
+    \brief      disable MDIO frame bit timeout
     \param[in]  none
     \param[out] none
     \retval     none
@@ -207,7 +207,7 @@ void mdio_timeout_disable(void)
 }
 
 /*!
-    \brief      read the received frame field OP 
+    \brief      read the received frame field OP
     \param[in]  none
     \param[out] none
     \retval     uint16_t: 0x0-0x11
@@ -218,7 +218,7 @@ uint16_t mdio_op_receive(void)
 }
 
 /*!
-    \brief      read the received frame field PHYADR 
+    \brief      read the received frame field PHYADR
     \param[in]  none
     \param[out] none
     \retval     uint16_t: 0x0-0x1F
@@ -229,7 +229,7 @@ uint16_t mdio_phyadr_receive(void)
 }
 
 /*!
-    \brief      read the received frame field DEVADD 
+    \brief      read the received frame field DEVADD
     \param[in]  none
     \param[out] none
     \retval     uint16_t: 0x0-0x1F
@@ -240,7 +240,7 @@ uint16_t mdio_devadd_receive(void)
 }
 
 /*!
-    \brief      read the received frame field TA 
+    \brief      read the received frame field TA
     \param[in]  none
     \param[out] none
     \retval     uint16_t: 0x0-0x11
@@ -251,7 +251,7 @@ uint16_t mdio_ta_receive(void)
 }
 
 /*!
-    \brief      read the received frame field DATA 
+    \brief      read the received frame field DATA
     \param[in]  none
     \param[out] none
     \retval     uint16_t: 0x0-0xFFFF
@@ -262,7 +262,7 @@ uint16_t mdio_data_receive(void)
 }
 
 /*!
-    \brief      read the received frame field ADDRESS 
+    \brief      read the received frame field ADDRESS
     \param[in]  none
     \param[out] none
     \retval     uint16_t: 0x0-0xFFFF
@@ -273,7 +273,7 @@ uint16_t mdio_address_receive(void)
 }
 
 /*!
-    \brief      transmit the frame field DATA 
+    \brief      transmit the frame field DATA
     \param[in]  data: data to put in a read or post read increment address frame for transmission (0x0-0xFFFF)
     \param[out] none
     \retval     none
@@ -284,12 +284,12 @@ void mdio_data_transmit(uint16_t data)
 }
 
 /*!
-    \brief      get the flag status of the frame 
+    \brief      get the flag status of the frame
     \param[in]  flag: MDIO flag
                 only one parameter can be selected which is shown as below:
       \arg        MDIO_FLAG_WRFRM: a write data frame flag status
       \arg        MDIO_FLAG_ADDRFRM: an address frame flag status
-      \arg        MDIO_FLAG_RDINCFRM: a post read increment address frame flag status 
+      \arg        MDIO_FLAG_RDINCFRM: a post read increment address frame flag status
       \arg        MDIO_FLAG_RDFRM: a read data frame flag status
       \arg        MDIO_FLAG_DEVM: a DEVADD match frame flag status
       \arg        MDIO_FLAG_DEVNM: a DEVADD nonmatch frame flag status
@@ -308,7 +308,8 @@ FlagStatus mdio_flag_get(uint32_t flag)
     __IO uint32_t reg = 0U;
 
     reg = MDIO_STAT;
-    if(RESET != (reg & flag)){
+    if(RESET != (reg & flag))
+    {
         return SET;
     }else{
         return RESET;
@@ -321,7 +322,7 @@ FlagStatus mdio_flag_get(uint32_t flag)
                 one or more parameters can be selected which are shown as below:
       \arg        MDIO_FLAG_WRFRM: a write data frame flag status
       \arg        MDIO_FLAG_ADDRFRM: an address frame flag status
-      \arg        MDIO_FLAG_RDINCFRM: a post read increment address frame flag status 
+      \arg        MDIO_FLAG_RDINCFRM: a post read increment address frame flag status
       \arg        MDIO_FLAG_RDFRM: a read data frame flag status
       \arg        MDIO_FLAG_DEVM: a DEVADD match frame flag status
       \arg        MDIO_FLAG_DEVNM: a DEVADD nonmatch frame flag status
@@ -338,15 +339,18 @@ FlagStatus mdio_flag_get(uint32_t flag)
 void mdio_flag_clear(uint32_t flag)
 {
     __IO uint32_t reg = 0U;
-    
+
     reg = MDIO_TDATA;
-    
-    if((MDIO_FLAG_RX_OVERRUN | MDIO_FLAG_RBNE) & flag){
+
+    if((MDIO_FLAG_RX_OVERRUN | MDIO_FLAG_RBNE) & flag)
+    {
         (void)(MDIO_RDATA);
-    }else if(MDIO_FLAG_TX_UNDERRUN & flag){
+    }else if(MDIO_FLAG_TX_UNDERRUN & flag)
+    {
         MDIO_TDATA = reg;
     }else if((MDIO_FLAG_WRFRM | MDIO_FLAG_ADDRFRM | MDIO_FLAG_RDINCFRM | MDIO_FLAG_RDFRM
-            | MDIO_FLAG_DEVM | MDIO_FLAG_DEVNM | MDIO_FLAG_PHYM | MDIO_FLAG_PHYNM | MDIO_FLAG_TIMEOUT) & flag){
+            | MDIO_FLAG_DEVM | MDIO_FLAG_DEVNM | MDIO_FLAG_PHYM | MDIO_FLAG_PHYNM | MDIO_FLAG_TIMEOUT) & flag)
+            {
         (void)(MDIO_STAT);
     } else {
         /* illegal parameters */
@@ -354,7 +358,7 @@ void mdio_flag_clear(uint32_t flag)
 }
 
 /*!
-    \brief      enable MDIO interrupt 
+    \brief      enable MDIO interrupt
     \param[in]  interrupt: MDIO interrupt
                 one or more parameters can be selected which are shown as below:
       \arg        MDIO_INT_WRFRM: a write data frame interrupt
@@ -379,7 +383,7 @@ void mdio_interrupt_enable(uint32_t interrupt)
 }
 
 /*!
-    \brief      disable MDIO interrupt 
+    \brief      disable MDIO interrupt
     \param[in]  interrupt: MDIO interrupt
                 one or more parameters can be selected which are shown as below:
       \arg        MDIO_INT_WRFRM: a write data frame interrupt

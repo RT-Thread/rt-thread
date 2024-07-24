@@ -56,7 +56,8 @@ static void dfu_abort(usb_dev *udev, usb_req *req);
 static void dfu_mode_leave(usb_dev *udev);
 static uint8_t dfu_getstatus_complete(usb_dev *udev);
 
-static void (*dfu_request_process[])(usb_dev *udev, usb_req *req) = {
+static void (*dfu_request_process[])(usb_dev *udev, usb_req *req)=
+{
     [DFU_DETACH]    = dfu_detach,
     [DFU_DNLOAD]    = dfu_dnload,
     [DFU_UPLOAD]    = dfu_upload,
@@ -274,7 +275,8 @@ static uint8_t dfu_deinit(usb_dev *udev, uint8_t config_index)
 */
 static uint8_t dfu_req_handler(usb_dev *udev, usb_req *req)
 {
-    if(req->bRequest < DFU_REQ_MAX) {
+    if(req->bRequest < DFU_REQ_MAX)
+    {
         dfu_request_process[req->bRequest](udev, req);
     } else {
         return USBD_FAIL;
@@ -309,7 +311,8 @@ static void dfu_mode_leave(usb_dev *udev)
 
     dfu->manifest_state = MANIFEST_COMPLETE;
 
-    if(dfu_config_desc.dfu_func.bmAttributes & 0x04U) {
+    if(dfu_config_desc.dfu_func.bmAttributes & 0x04U)
+    {
         dfu->bState = STATE_DFU_MANIFEST_SYNC;
     } else {
         dfu->bState = STATE_DFU_MANIFEST_WAIT_RESET;
@@ -334,18 +337,25 @@ static uint8_t dfu_getstatus_complete(usb_dev *udev)
 
     usbd_dfu_handler *dfu = (usbd_dfu_handler *)udev->dev.class_data[USBD_DFU_INTERFACE];
 
-    if(STATE_DFU_DNBUSY == dfu->bState) {
+    if(STATE_DFU_DNBUSY == dfu->bState)
+    {
         /* decode the special command */
-        if(0U == dfu->block_num) {
-            if(1U == dfu->data_len) {
-                if(GET_COMMANDS == dfu->buf[0]) {
+        if(0U == dfu->block_num)
+        {
+            if(1U == dfu->data_len)
+            {
+                if(GET_COMMANDS == dfu->buf[0])
+                {
                     /* no operation */
                 }
-            } else if(5U == dfu->data_len) {
-                if(SET_ADDRESS_POINTER == dfu->buf[0]) {
+            } else if(5U == dfu->data_len)
+            {
+                if(SET_ADDRESS_POINTER == dfu->buf[0])
+                {
                     /* set flash operation address */
                     dfu->base_addr = *(uint32_t *)(dfu->buf + 1U);
-                } else if(ERASE == dfu->buf[0]) {
+                } else if(ERASE == dfu->buf[0])
+                {
                     dfu->base_addr = *(uint32_t *)(dfu->buf + 1U);
 
                     dfu_mal_erase(dfu->base_addr);
@@ -355,7 +365,8 @@ static uint8_t dfu_getstatus_complete(usb_dev *udev)
             } else {
                 /* no operation */
             }
-        } else if(dfu->block_num > 1U) {   /* regular download command */
+        } else if(dfu->block_num > 1U)
+        {   /* regular download command */
             /* decode the required address */
             addr = (dfu->block_num - 2U) * TRANSFER_SIZE + dfu->base_addr;
 
@@ -372,7 +383,8 @@ static uint8_t dfu_getstatus_complete(usb_dev *udev)
         dfu->bState = STATE_DFU_DNLOAD_SYNC;
 
         return USBD_OK;
-    } else if(STATE_DFU_MANIFEST == dfu->bState) {  /* manifestation in progress */
+    } else if(STATE_DFU_MANIFEST == dfu->bState)
+    {  /* manifestation in progress */
         /* start leaving DFU mode */
         dfu_mode_leave(udev);
     } else {
@@ -393,7 +405,8 @@ static void dfu_detach(usb_dev *udev, usb_req *req)
 {
     usbd_dfu_handler *dfu = (usbd_dfu_handler *)udev->dev.class_data[USBD_DFU_INTERFACE];
 
-    switch(dfu->bState) {
+    switch(dfu->bState)
+    {
     case STATE_DFU_IDLE:
     case STATE_DFU_DNLOAD_SYNC:
     case STATE_DFU_DNLOAD_IDLE:
@@ -412,7 +425,8 @@ static void dfu_detach(usb_dev *udev, usb_req *req)
     }
 
     /* check the detach capability in the DFU functional descriptor */
-    if(dfu_config_desc.dfu_func.wDetachTimeOut & DFU_DETACH_MASK) {
+    if(dfu_config_desc.dfu_func.wDetachTimeOut & DFU_DETACH_MASK)
+    {
         usbd_disconnect(udev);
 
         usbd_connect(udev);
@@ -434,10 +448,12 @@ static void dfu_dnload(usb_dev *udev, usb_req *req)
     usb_transc *transc = &udev->dev.transc_out[0];
     usbd_dfu_handler *dfu = (usbd_dfu_handler *)udev->dev.class_data[USBD_DFU_INTERFACE];
 
-    switch(dfu->bState) {
+    switch(dfu->bState)
+    {
     case STATE_DFU_IDLE:
     case STATE_DFU_DNLOAD_IDLE:
-        if(req->wLength > 0U) {
+        if(req->wLength > 0U)
+        {
             /* update the global length and block number */
             dfu->block_num = req->wValue;
             dfu->data_len = req->wLength;
@@ -472,12 +488,14 @@ static void dfu_upload(usb_dev *udev, usb_req *req)
 
     usb_transc *transc = &udev->dev.transc_in[0];
 
-    if(req->wLength <= 0U) {
+    if(req->wLength <= 0U)
+    {
         dfu->bState = STATE_DFU_IDLE;
         return;
     }
 
-    switch(dfu->bState) {
+    switch(dfu->bState)
+    {
     case STATE_DFU_IDLE:
     case STATE_DFU_UPLOAD_IDLE:
         /* update the global length and block number */
@@ -485,7 +503,8 @@ static void dfu_upload(usb_dev *udev, usb_req *req)
         dfu->data_len = req->wLength;
 
         /* DFU get command */
-        if(0U == dfu->block_num) {
+        if(0U == dfu->block_num)
+        {
             /* update the state machine */
             dfu->bState = (dfu->data_len > 3U) ? STATE_DFU_IDLE : STATE_DFU_UPLOAD_IDLE;
 
@@ -497,7 +516,8 @@ static void dfu_upload(usb_dev *udev, usb_req *req)
             /* send the status data over EP0 */
             transc->xfer_buf = &(dfu->buf[0]);
             transc->remain_len = 3U;
-        } else if(dfu->block_num > 1U) {
+        } else if(dfu->block_num > 1U)
+        {
             dfu->bState = STATE_DFU_UPLOAD_IDLE;
 
             /* change is accelerated */
@@ -534,13 +554,17 @@ static void dfu_getstatus(usb_dev *udev, usb_req *req)
 
     usb_transc *transc = &udev->dev.transc_in[0];
 
-    switch(dfu->bState) {
+    switch(dfu->bState)
+    {
     case STATE_DFU_DNLOAD_SYNC:
-        if(0U != dfu->data_len) {
+        if(0U != dfu->data_len)
+        {
             dfu->bState = STATE_DFU_DNBUSY;
 
-            if(0U == dfu->block_num) {
-                if(ERASE == dfu->buf[0]) {
+            if(0U == dfu->block_num)
+            {
+                if(ERASE == dfu->buf[0])
+                {
                     dfu_mal_getstatus(dfu->base_addr, CMD_ERASE, (uint8_t *)&dfu->bwPollTimeout0);
                 } else {
                     dfu_mal_getstatus(dfu->base_addr, CMD_WRITE, (uint8_t *)&dfu->bwPollTimeout0);
@@ -552,11 +576,13 @@ static void dfu_getstatus(usb_dev *udev, usb_req *req)
         break;
 
     case STATE_DFU_MANIFEST_SYNC:
-        if(MANIFEST_IN_PROGRESS == dfu->manifest_state) {
+        if(MANIFEST_IN_PROGRESS == dfu->manifest_state)
+        {
             dfu->bState = STATE_DFU_MANIFEST;
             dfu->bwPollTimeout0 = 1U;
         } else if((MANIFEST_COMPLETE == dfu->manifest_state) && \
-                  (dfu_config_desc.dfu_func.bmAttributes & 0x04U)) {
+                  (dfu_config_desc.dfu_func.bmAttributes & 0x04U))
+                  {
             dfu->bState = STATE_DFU_IDLE;
             dfu->bwPollTimeout0 = 0U;
         } else {
@@ -583,7 +609,8 @@ static void dfu_clrstatus(usb_dev *udev, usb_req *req)
 {
     usbd_dfu_handler *dfu = (usbd_dfu_handler *)udev->dev.class_data[USBD_DFU_INTERFACE];
 
-    if(STATE_DFU_ERROR == dfu->bState) {
+    if(STATE_DFU_ERROR == dfu->bState)
+    {
         dfu->bStatus = STATUS_OK;
         dfu->bState = STATE_DFU_IDLE;
     } else {
@@ -622,7 +649,8 @@ static void dfu_abort(usb_dev *udev, usb_req *req)
 {
     usbd_dfu_handler *dfu = (usbd_dfu_handler *)udev->dev.class_data[USBD_DFU_INTERFACE];
 
-    switch(dfu->bState) {
+    switch(dfu->bState)
+    {
     case STATE_DFU_IDLE:
     case STATE_DFU_DNLOAD_SYNC:
     case STATE_DFU_DNLOAD_IDLE:

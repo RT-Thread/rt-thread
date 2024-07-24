@@ -232,7 +232,8 @@ usb_class_core usbd_hid_cb = {
 */
 uint8_t hid_itfop_register(usb_dev *udev, mice_fop_handler *hid_fop)
 {
-    if(NULL != hid_fop) {
+    if(NULL != hid_fop)
+    {
         udev->dev.user_data = (void *)hid_fop;
 
         return USBD_OK;
@@ -253,8 +254,10 @@ uint8_t hid_report_send(usb_dev *udev, uint8_t *report, uint16_t len)
 {
     standard_mice_handler *hid = (standard_mice_handler *)udev->dev.class_data[USBD_HID_INTERFACE];
 
-    if(USBD_CONFIGURED == udev->dev.cur_status) {
-        if(1 == hid->prev_transfer_complete) {
+    if(USBD_CONFIGURED == udev->dev.cur_status)
+    {
+        if(1 == hid->prev_transfer_complete)
+        {
             hid->prev_transfer_complete = 0U;
             usbd_ep_send(udev, HID_IN_EP, report, len);
         }
@@ -283,7 +286,8 @@ static uint8_t hid_init(usb_dev *udev, uint8_t config_index)
 
     udev->dev.class_data[USBD_HID_INTERFACE] = (void *)&mice_handler;
 
-    if(NULL != udev->dev.user_data) {
+    if(NULL != udev->dev.user_data)
+    {
         ((mice_fop_handler *)(udev->dev.user_data))->mice_itf_config();
     }
 
@@ -318,7 +322,8 @@ static uint8_t hid_req(usb_dev *udev, usb_req *req)
 
     standard_mice_handler *hid = (standard_mice_handler *)udev->dev.class_data[USBD_HID_INTERFACE];
 
-    switch(req->bRequest) {
+    switch(req->bRequest)
+    {
     case GET_REPORT:
         /* no use for this driver */
         break;
@@ -348,7 +353,8 @@ static uint8_t hid_req(usb_dev *udev, usb_req *req)
         break;
 
     case USB_GET_DESCRIPTOR:
-        if(USB_DESCTYPE_REPORT == (req->wValue >> 8U)) {
+        if(USB_DESCTYPE_REPORT == (req->wValue >> 8U))
+        {
             transc->remain_len = USB_MIN(USB_HID_REPORT_DESC_LEN, req->wLength);
             transc->xfer_buf = (uint8_t *)hid_report_desc;
 
@@ -374,7 +380,8 @@ static uint8_t hid_data_in(usb_dev *udev, uint8_t ep_num)
 {
     standard_mice_handler *hid = (standard_mice_handler *)udev->dev.class_data[USBD_HID_INTERFACE];
 
-    if(0U == hid->data[0]) {
+    if(0U == hid->data[0])
+    {
         hid->prev_transfer_complete = 1U;
     } else {
         hid->data[0] = 0U;

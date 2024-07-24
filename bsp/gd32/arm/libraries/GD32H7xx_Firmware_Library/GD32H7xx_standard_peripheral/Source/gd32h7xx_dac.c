@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -51,7 +51,8 @@ OF SUCH DAMAGE.
 */
 void dac_deinit(uint32_t dac_periph)
 {
-    switch(dac_periph){
+    switch(dac_periph)
+    {
         case DAC0:
             /* reset DAC0 */
             rcu_periph_reset_enable(RCU_DACRST);
@@ -71,9 +72,11 @@ void dac_deinit(uint32_t dac_periph)
 */
 void dac_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DEN0;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DEN1;
     }else{
         /* illegal parameters */
@@ -89,9 +92,11 @@ void dac_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_disable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DEN0);
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DEN1);
     }else{
         /* illegal parameters */
@@ -107,9 +112,11 @@ void dac_disable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_dma_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DDMAEN0;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DDMAEN1;
     }else{
         /* illegal parameters */
@@ -125,9 +132,11 @@ void dac_dma_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_dma_disable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DDMAEN0);
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DDMAEN1);
     }else{
         /* illegal parameters */
@@ -153,11 +162,13 @@ void dac_dma_disable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_mode_config(uint32_t dac_periph, uint32_t dac_out, uint32_t mode)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* configure DAC0 mode */
         DAC_MDCR(dac_periph) &= ~(uint32_t)DAC_MDCR_MODE0;
         DAC_MDCR(dac_periph) |= mode;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* configure DAC1 mode */
         DAC_MDCR(dac_periph) &= ~(uint32_t)DAC_MDCR_MODE1;
         DAC_MDCR(dac_periph) |= (mode << OUT1_REG_OFFSET);
@@ -176,10 +187,12 @@ void dac_mode_config(uint32_t dac_periph, uint32_t dac_out, uint32_t mode)
 uint32_t dac_trimming_value_get(uint32_t dac_periph, uint32_t dac_out)
 {
     uint32_t tmp = 0U;
-    if(DAC_OUT0 == dac_out) {
+    if(DAC_OUT0 == dac_out)
+    {
         /* get the DAC_OUT_0 trimming value */
         tmp = DAC_CALR(dac_periph) & DAC_CALR_OTV0;
-    } else if(DAC_OUT1 == dac_out) {
+    } else if(DAC_OUT1 == dac_out)
+    {
         /* get the DAC_OUT_1 trimming value */
         tmp = (DAC_CALR(dac_periph) & DAC_CALR_OTV1) >> OUT1_REG_OFFSET;
     } else {
@@ -198,16 +211,18 @@ uint32_t dac_trimming_value_get(uint32_t dac_periph, uint32_t dac_out)
 void dac_trimming_value_set(uint32_t dac_periph, uint32_t dac_out, uint32_t trim_value)
 {
     uint32_t tmp = 0U;
-    
+
     /* get the trimming value */
     tmp = DAC_CALR(dac_periph);
 
-    if(DAC_OUT0 == dac_out) {
+    if(DAC_OUT0 == dac_out)
+    {
         /* set the DACx_OUT0 trimming value */
         tmp &= ~(uint32_t)DAC_CALR_OTV0;
         tmp |= (trim_value & DAC_CALR_OTV0);
         DAC_CALR(dac_periph) = tmp;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* set the DACx_OUT1 trimming value */
         tmp &= ~(uint32_t)DAC_CALR_OTV1;
         tmp |= ((trim_value << OUT1_REG_OFFSET) & DAC_CALR_OTV1);
@@ -225,10 +240,12 @@ void dac_trimming_value_set(uint32_t dac_periph, uint32_t dac_out, uint32_t trim
 */
 void dac_trimming_enable(uint32_t dac_periph, uint32_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* enable the DACx_OUT0 trimming */
         DAC_CTL0(dac_periph) |= DAC_CTL0_CALEN0;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* enable the DACx_OUT1 trimming */
         DAC_CTL0(dac_periph) |= DAC_CTL0_CALEN1;
     }else{
@@ -247,10 +264,12 @@ uint16_t dac_output_value_get(uint32_t dac_periph, uint8_t dac_out)
 {
     uint16_t data = 0U;
 
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* store the DACx_OUT0 output value */
         data = (uint16_t)DAC_OUT0_DO(dac_periph);
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* store the DACx_OUT1 output value */
         data = (uint16_t)DAC_OUT1_DO(dac_periph);
     }else{
@@ -276,8 +295,10 @@ uint16_t dac_output_value_get(uint32_t dac_periph, uint8_t dac_out)
 void dac_data_set(uint32_t dac_periph, uint8_t dac_out, uint32_t dac_align, uint16_t data)
 {
     /* DAC_OUT0 data alignment */
-    if(DAC_OUT0 == dac_out){
-        switch(dac_align){
+    if(DAC_OUT0 == dac_out)
+    {
+        switch(dac_align)
+        {
         /* 12-bit right-aligned data */
         case DAC_ALIGN_12B_R:
             DAC_OUT0_R12DH(dac_periph) = data;
@@ -293,9 +314,11 @@ void dac_data_set(uint32_t dac_periph, uint8_t dac_out, uint32_t dac_align, uint
         default:
             break;
         }
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* DAC_OUT1 data alignment */
-        switch(dac_align){
+        switch(dac_align)
+        {
         /* 12-bit right-aligned data */
         case DAC_ALIGN_12B_R:
             DAC_OUT1_R12DH(dac_periph) = data;
@@ -325,9 +348,11 @@ void dac_data_set(uint32_t dac_periph, uint8_t dac_out, uint32_t dac_align, uint
 */
 void dac_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DTEN0;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DTEN1;
     }else{
         /* illegal parameters */
@@ -343,9 +368,11 @@ void dac_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_trigger_disable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTEN0);
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTEN1);
     }else{
         /* illegal parameters */
@@ -365,11 +392,13 @@ void dac_trigger_disable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_trigger_source_config(uint32_t dac_periph, uint8_t dac_out, uint32_t triggersource)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* configure DACx_OUT0 trigger source */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTSEL0);
         DAC_CTL0(dac_periph) |= triggersource;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* configure DACx_OUT1 trigger source */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTSEL1);
         DAC_CTL0(dac_periph) |= (triggersource << OUT1_REG_OFFSET);
@@ -386,9 +415,11 @@ void dac_trigger_source_config(uint32_t dac_periph, uint8_t dac_out, uint32_t tr
 */
 void dac_software_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         DAC_SWT(dac_periph) |= (uint32_t)DAC_SWT_SWTR0;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         DAC_SWT(dac_periph) |= (uint32_t)DAC_SWT_SWTR1;
     }else{
         /* illegal parameters */
@@ -409,11 +440,13 @@ void dac_software_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_wave_mode_config(uint32_t dac_periph, uint8_t dac_out, uint32_t wave_mode)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* configure DACx_OUT0 wave mode */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWM0);
         DAC_CTL0(dac_periph) |= wave_mode;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* configure DACx_OUT1 wave mode */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWM1);
         DAC_CTL0(dac_periph) |= (wave_mode << OUT1_REG_OFFSET);
@@ -445,11 +478,13 @@ void dac_wave_mode_config(uint32_t dac_periph, uint8_t dac_out, uint32_t wave_mo
 */
 void dac_lfsr_noise_config(uint32_t dac_periph, uint8_t dac_out, uint32_t unmask_bits)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* configure DACx_OUT0 LFSR noise mode */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW0);
         DAC_CTL0(dac_periph) |= unmask_bits;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* configure DACx_OUT1 LFSR noise mode */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW1);
         DAC_CTL0(dac_periph) |= (unmask_bits << OUT1_REG_OFFSET);
@@ -481,11 +516,13 @@ void dac_lfsr_noise_config(uint32_t dac_periph, uint8_t dac_out, uint32_t unmask
 */
 void dac_triangle_noise_config(uint32_t dac_periph, uint8_t dac_out, uint32_t amplitude)
 {
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* configure DACx_OUT0 triangle noise mode */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW0);
         DAC_CTL0(dac_periph) |= amplitude;
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* configure DACx_OUT1 triangle noise mode */
         DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW1);
         DAC_CTL0(dac_periph) |= (amplitude << OUT1_REG_OFFSET);
@@ -533,7 +570,7 @@ void dac_concurrent_software_trigger_enable(uint32_t dac_periph)
     uint32_t swt = 0U;
 
     swt = (uint32_t)(DAC_SWT_SWTR0 | DAC_SWT_SWTR1);
-    DAC_SWT(dac_periph) |= (uint32_t)swt; 
+    DAC_SWT(dac_periph) |= (uint32_t)swt;
 }
 
 /*!
@@ -553,7 +590,8 @@ void dac_concurrent_data_set(uint32_t dac_periph, uint32_t dac_align, uint16_t d
 {
     uint32_t data = 0U;
 
-    switch(dac_align){
+    switch(dac_align)
+    {
     /* 12-bit right-aligned data */
     case DAC_ALIGN_12B_R:
         data = (uint32_t)(((uint32_t)data1 << DH_12BIT_OFFSET) | data0);
@@ -588,7 +626,8 @@ void dac_sample_keep_mode_config(uint32_t dac_periph, uint32_t dac_out, uint32_t
 {
     uint32_t tmp = 0U;
 
-    if(DAC_OUT0 == dac_out){
+    if(DAC_OUT0 == dac_out)
+    {
         /* configure DACx_OUT0 Sample & Keep mode */
         DAC_SKSTR0(dac_periph) |= (sample_time & DAC_SKSTR0_TSAMP0);
 
@@ -597,7 +636,8 @@ void dac_sample_keep_mode_config(uint32_t dac_periph, uint32_t dac_out, uint32_t
 
         tmp = (DAC_SKRTR(dac_periph) & ~(uint32_t)DAC_SKRTR_TREF0);
         DAC_SKRTR(dac_periph) = tmp | (refresh_time & DAC_SKRTR_TREF0);
-    }else if(DAC_OUT1 == dac_out){
+    }else if(DAC_OUT1 == dac_out)
+    {
         /* configure DACx_OUT1 Sample & Keep mode */
         DAC_SKSTR1(dac_periph) |= (sample_time & DAC_SKSTR1_TSAMP1);
 
@@ -627,9 +667,11 @@ void dac_sample_keep_mode_config(uint32_t dac_periph, uint32_t dac_out, uint32_t
 */
 FlagStatus dac_flag_get(uint32_t dac_periph, uint32_t flag)
 {
-    if(flag & DAC_STAT_FLAG_MASK0){
+    if(flag & DAC_STAT_FLAG_MASK0)
+    {
         /* check DAC_STAT0 flag */
-        if(RESET != (DAC_STAT0(dac_periph) & flag)){
+        if(RESET != (DAC_STAT0(dac_periph) & flag))
+        {
             return SET;
         }else{
             return RESET;
@@ -652,7 +694,8 @@ FlagStatus dac_flag_get(uint32_t dac_periph, uint32_t flag)
 */
 void dac_flag_clear(uint32_t dac_periph, uint32_t flag)
 {
-    if(flag & DAC_STAT_FLAG_MASK0){
+    if(flag & DAC_STAT_FLAG_MASK0)
+    {
         /* check DAC_STAT0 flag */
         DAC_STAT0(dac_periph) = (uint32_t)(flag & DAC_STAT_FLAG_MASK0);
     }else{
@@ -665,14 +708,15 @@ void dac_flag_clear(uint32_t dac_periph, uint32_t flag)
     \param[in]  dac_periph: DACx(x=0)
     \param[in]  interrupt: the DAC interrupt
                 only one parameter can be selected which is shown as below:
-      \arg        DAC_INT_DDUDR0: DACx_OUT0 DMA underrun interrupt 
-      \arg        DAC_INT_DDUDR1: DACx_OUT1 DMA underrun interrupt 
+      \arg        DAC_INT_DDUDR0: DACx_OUT0 DMA underrun interrupt
+      \arg        DAC_INT_DDUDR1: DACx_OUT1 DMA underrun interrupt
     \param[out] none
     \retval     none
 */
 void dac_interrupt_enable(uint32_t dac_periph, uint32_t interrupt)
 {
-    if(interrupt & DAC_INT_EN_MASK0){
+    if(interrupt & DAC_INT_EN_MASK0)
+    {
         /* enable underrun interrupt */
         DAC_CTL0(dac_periph) |= (uint32_t)(interrupt & DAC_INT_EN_MASK0);
     }else{
@@ -692,7 +736,8 @@ void dac_interrupt_enable(uint32_t dac_periph, uint32_t interrupt)
 */
 void dac_interrupt_disable(uint32_t dac_periph, uint32_t interrupt)
 {
-    if(interrupt & DAC_INT_EN_MASK0){
+    if(interrupt & DAC_INT_EN_MASK0)
+    {
         /* disable underrun interrupt */
         DAC_CTL0(dac_periph) &= (uint32_t)(~(interrupt & DAC_INT_EN_MASK0));
     }else{
@@ -714,7 +759,8 @@ FlagStatus dac_interrupt_flag_get(uint32_t dac_periph, uint32_t int_flag)
 {
     uint32_t reg1 = 0U, reg2 = 0U;
 
-    if(int_flag & DAC_INT_FLAG_MASK0){
+    if(int_flag & DAC_INT_FLAG_MASK0)
+    {
         /* check underrun interrupt int_flag */
         reg1 = DAC_STAT0(dac_periph) & int_flag;
         reg2 = DAC_CTL0(dac_periph) & int_flag;
@@ -723,7 +769,8 @@ FlagStatus dac_interrupt_flag_get(uint32_t dac_periph, uint32_t int_flag)
     }
 
     /*get DAC interrupt flag status */
-    if((RESET != reg1) && (RESET != reg2)){
+    if((RESET != reg1) && (RESET != reg2))
+    {
         return SET;
     }else{
         return RESET;

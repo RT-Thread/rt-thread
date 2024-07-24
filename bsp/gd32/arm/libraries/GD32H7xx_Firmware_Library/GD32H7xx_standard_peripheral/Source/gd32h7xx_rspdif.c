@@ -281,7 +281,8 @@ void rspdif_data_read(rspdif_data_struct *data_struct)
     /* get data format */
     data_struct->format = RSPDIF_CTL & RSPDIF_CTL_RXDF;
 
-    switch(data_struct->format) {
+    switch(data_struct->format)
+    {
     /* data format 0 */
     case RSPDIF_DATAFORMAT_LSB:
         /* the preamble type */
@@ -379,7 +380,8 @@ uint32_t rspdif_channel_status_get(void)
 */
 FlagStatus rspdif_start_block_status_get(void)
 {
-    if(RESET != (RSPDIF_CHSTAT & RSPDIF_CHSTAT_SOB)) {
+    if(RESET != (RSPDIF_CHSTAT & RSPDIF_CHSTAT_SOB))
+    {
         return SET;
     } else {
         return RESET;
@@ -426,7 +428,8 @@ uint32_t rspdif_high_threshold_get(void)
 */
 FlagStatus rspdif_flag_get(uint16_t flag)
 {
-    if(RESET != (RSPDIF_STAT & flag)) {
+    if(RESET != (RSPDIF_STAT & flag))
+    {
         return SET;
     } else {
         return RESET;
@@ -508,7 +511,8 @@ FlagStatus rspdif_interrupt_flag_get(uint16_t int_flag)
     uint32_t reg1 = RSPDIF_STAT;
     uint32_t reg2 = RSPDIF_INTEN;
 
-    switch(int_flag) {
+    switch(int_flag)
+    {
     /* RSPDIF RX buffer is not empty interrupt */
     case RSPDIF_INT_FLAG_RBNE:
         reg1 = reg1 & RSPDIF_STAT_RBNE;
@@ -558,7 +562,8 @@ FlagStatus rspdif_interrupt_flag_get(uint16_t int_flag)
         break;
     }
     /*get RSPDIF interrupt flag status */
-    if((0U != reg1) && (0U != reg2)) {
+    if((0U != reg1) && (0U != reg2))
+    {
         return SET;
     } else {
         return RESET;

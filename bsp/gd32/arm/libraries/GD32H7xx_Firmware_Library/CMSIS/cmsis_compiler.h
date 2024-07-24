@@ -103,7 +103,8 @@
     #define __PACKED_UNION                         union __attribute__((packed))
   #endif
   #ifndef   __UNALIGNED_UINT32        /* deprecated */
-    struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+    struct __attribute__((packed))T_UINT32
+    { uint32_t v; };
     #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
   #endif
   #ifndef   __UNALIGNED_UINT16_WRITE
@@ -236,7 +237,7 @@
     #define __STATIC_FORCEINLINE                   __STATIC_INLINE
   #endif
   #ifndef   __NO_RETURN
-    // NO RETURN is automatically detected hence no warning here
+    /* NO RETURN is automatically detected hence no warning here*/
     #define __NO_RETURN
   #endif
   #ifndef   __USED

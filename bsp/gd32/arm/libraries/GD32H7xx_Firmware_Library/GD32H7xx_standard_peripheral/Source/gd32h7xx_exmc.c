@@ -224,7 +224,8 @@ void exmc_norsram_init(exmc_norsram_parameter_struct *exmc_norsram_init_struct)
                         exmc_norsram_init_struct->cram_page_size);
 
     /* nor flash access enable */
-    if(EXMC_MEMORY_TYPE_NOR == exmc_norsram_init_struct->memory_type) {
+    if(EXMC_MEMORY_TYPE_NOR == exmc_norsram_init_struct->memory_type)
+    {
         snctl |= (uint32_t)EXMC_SNCTL_NREN;
     }
 
@@ -237,7 +238,8 @@ void exmc_norsram_init(exmc_norsram_parameter_struct *exmc_norsram_init_struct)
                         exmc_norsram_init_struct->read_write_timing->syn_data_latency |
                         exmc_norsram_init_struct->read_write_timing->asyn_access_mode);
 
-    if(ENABLE == exmc_norsram_init_struct->extended_mode) {
+    if(ENABLE == exmc_norsram_init_struct->extended_mode)
+    {
         /* for extended mode, configure write timing */
         snwtcfg = (uint32_t)(exmc_norsram_init_struct->write_timing->asyn_address_setuptime |
                              (exmc_norsram_init_struct->write_timing->asyn_address_holdtime << SNTCFG_AHLD_OFFSET) |
@@ -459,7 +461,8 @@ void exmc_sdram_init(exmc_sdram_parameter_struct *exmc_sdram_init_struct)
     uint32_t sdctl0, sdctl1, sdtcfg0, sdtcfg1;
 
     /* configure EXMC_SDCTL0 or EXMC_SDCTL1 */
-    if(EXMC_SDRAM_DEVICE0 == exmc_sdram_init_struct->sdram_device) {
+    if(EXMC_SDRAM_DEVICE0 == exmc_sdram_init_struct->sdram_device)
+    {
         /* configure EXMC_SDCTL0 */
         EXMC_SDCTL(EXMC_SDRAM_DEVICE0)  = (uint32_t)(exmc_sdram_init_struct->column_address_width |
                                           exmc_sdram_init_struct->row_address_width |
@@ -561,7 +564,8 @@ uint32_t exmc_norsram_sdram_remap_get(void)
 */
 void exmc_norsram_consecutive_clock_config(uint32_t clock_mode)
 {
-    if(EXMC_CLOCK_UNCONDITIONALLY == clock_mode) {
+    if(EXMC_CLOCK_UNCONDITIONALLY == clock_mode)
+    {
         EXMC_SNCTL(EXMC_BANK0_NORSRAM_REGION0) |= EXMC_CLOCK_UNCONDITIONALLY;
     } else {
         EXMC_SNCTL(EXMC_BANK0_NORSRAM_REGION0) &= ~EXMC_CLOCK_UNCONDITIONALLY;
@@ -599,7 +603,8 @@ void exmc_norsram_page_size_config(uint32_t exmc_norsram_region, uint32_t page_s
 */
 void exmc_nand_ecc_config(ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         /* enable NAND bank ECC function */
         EXMC_NCTL |= EXMC_NCTL_ECCEN;
     } else {
@@ -722,7 +727,8 @@ void exmc_sdram_autorefresh_number_set(uint32_t exmc_number)
 */
 void exmc_sdram_write_protection_config(uint32_t exmc_sdram_device, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         EXMC_SDCTL(exmc_sdram_device) |= (uint32_t)EXMC_SDCTL_WPEN;
     } else {
         EXMC_SDCTL(exmc_sdram_device) &= ~((uint32_t)EXMC_SDCTL_WPEN);
@@ -741,7 +747,8 @@ uint32_t exmc_sdram_bankstatus_get(uint32_t exmc_sdram_device)
 {
     uint32_t sdstat = 0U;
 
-    if(EXMC_SDRAM_DEVICE0 == exmc_sdram_device) {
+    if(EXMC_SDRAM_DEVICE0 == exmc_sdram_device)
+    {
         sdstat = ((uint32_t)(EXMC_SDSTAT & EXMC_SDSDAT_STA0) >> SDSTAT_STA0_OFFSET);
     } else {
         sdstat = ((uint32_t)(EXMC_SDSTAT & EXMC_SDSDAT_STA1) >> SDSTAT_STA1_OFFSET);
@@ -772,7 +779,8 @@ FlagStatus exmc_flag_get(uint32_t exmc_bank, uint32_t flag)
 {
     uint32_t status = 0x00000000U;
 
-    if(EXMC_BANK2_NAND == exmc_bank) {
+    if(EXMC_BANK2_NAND == exmc_bank)
+    {
         /* NAND bank2 */
         status = EXMC_NINTEN;
     } else {
@@ -780,7 +788,8 @@ FlagStatus exmc_flag_get(uint32_t exmc_bank, uint32_t flag)
         status = EXMC_SDSTAT;
     }
 
-    if((status & flag) != (uint32_t)flag) {
+    if((status & flag) != (uint32_t)flag)
+    {
         /* flag is reset */
         return RESET;
     } else {
@@ -808,7 +817,8 @@ FlagStatus exmc_flag_get(uint32_t exmc_bank, uint32_t flag)
 */
 void exmc_flag_clear(uint32_t exmc_bank, uint32_t flag)
 {
-    if(EXMC_BANK2_NAND == exmc_bank) {
+    if(EXMC_BANK2_NAND == exmc_bank)
+    {
         /* NAND bank2 */
         EXMC_NINTEN &= ~flag;
     } else {
@@ -835,7 +845,8 @@ void exmc_flag_clear(uint32_t exmc_bank, uint32_t flag)
 */
 void exmc_interrupt_enable(uint32_t exmc_bank, uint32_t interrupt)
 {
-    if(EXMC_BANK2_NAND == exmc_bank) {
+    if(EXMC_BANK2_NAND == exmc_bank)
+    {
         /* NAND bank2 */
         EXMC_NINTEN |= interrupt;
     } else {
@@ -862,7 +873,8 @@ void exmc_interrupt_enable(uint32_t exmc_bank, uint32_t interrupt)
 */
 void exmc_interrupt_disable(uint32_t exmc_bank, uint32_t interrupt)
 {
-    if(EXMC_BANK2_NAND == exmc_bank) {
+    if(EXMC_BANK2_NAND == exmc_bank)
+    {
         /* NAND bank2 */
         EXMC_NINTEN &= ~interrupt;
     } else {
@@ -893,7 +905,8 @@ FlagStatus exmc_interrupt_flag_get(uint32_t exmc_bank, uint32_t interrupt)
     uint32_t interrupt_enable = 0x00000000U;
     uint32_t interrupt_status = 0x00000000U;
 
-    if(EXMC_BANK2_NAND == exmc_bank) {
+    if(EXMC_BANK2_NAND == exmc_bank)
+    {
         /* NAND bank2 */
         reg_value = EXMC_NINTEN;
         interrupt_status = (reg_value & (interrupt >> NINTEN_INTEN_INTS_INTERVAL));
@@ -905,7 +918,8 @@ FlagStatus exmc_interrupt_flag_get(uint32_t exmc_bank, uint32_t interrupt)
 
     interrupt_enable = (reg_value & interrupt);
 
-    if((interrupt_enable) && (interrupt_status)) {
+    if((interrupt_enable) && (interrupt_status))
+    {
         /* interrupt flag is set */
         return SET;
     } else {
@@ -932,7 +946,8 @@ FlagStatus exmc_interrupt_flag_get(uint32_t exmc_bank, uint32_t interrupt)
 */
 void exmc_interrupt_flag_clear(uint32_t exmc_bank, uint32_t interrupt)
 {
-    if(EXMC_BANK2_NAND == exmc_bank) {
+    if(EXMC_BANK2_NAND == exmc_bank)
+    {
         /* NAND bank2 */
         EXMC_NINTEN &= ~(interrupt >> NINTEN_INTEN_INTS_INTERVAL);
     } else {

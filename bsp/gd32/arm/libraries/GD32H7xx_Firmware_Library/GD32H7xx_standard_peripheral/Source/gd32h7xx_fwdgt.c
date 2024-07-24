@@ -8,38 +8,38 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
 #include "gd32h7xx_fwdgt.h"
 
 /* write value to FWDGT_CTL_CMD bit field */
-#define CTL_CMD(regval)             (BITS(0,15) & ((uint32_t)(regval) << 0U))  
+#define CTL_CMD(regval)             (BITS(0,15) & ((uint32_t)(regval) << 0U))
 /* write value to FWDGT_RLD_RLD bit field */
-#define RLD_RLD(regval)             (BITS(0,11) & ((uint32_t)(regval) << 0U))  
+#define RLD_RLD(regval)             (BITS(0,11) & ((uint32_t)(regval) << 0U))
 /* write value to FWDGT_WND_WND bit field */
-#define WND_WND(regval)             (BITS(0,11) & ((uint32_t)(regval) << 0U))  
+#define WND_WND(regval)             (BITS(0,11) & ((uint32_t)(regval) << 0U))
 
 /*!
     \brief      enable write access to FWDGT_PSC, FWDGT_RLD and FWDGT_WND
@@ -101,7 +101,8 @@ ErrStatus fwdgt_prescaler_value_config(uint16_t prescaler_value)
         flag_status = FWDGT_STAT & FWDGT_STAT_PUD;
     } while((--timeout > (uint32_t)0x00000000U) && (RESET != flag_status));
 
-    if(RESET != flag_status){
+    if(RESET != flag_status)
+    {
         return ERROR;
     }
 
@@ -130,7 +131,8 @@ ErrStatus fwdgt_reload_value_config(uint16_t reload_value)
         flag_status = FWDGT_STAT & FWDGT_STAT_RUD;
     }while((--timeout > (uint32_t)0x00000000U) && ((uint32_t)RESET != flag_status));
 
-    if ((uint32_t)RESET != flag_status){
+    if ((uint32_t)RESET != flag_status)
+    {
         return ERROR;
     }
 
@@ -158,8 +160,9 @@ ErrStatus fwdgt_window_value_config(uint16_t window_value)
         flag_status = FWDGT_STAT & FWDGT_STAT_WUD;
     }while((--time_index > (uint32_t)0x00000000U) && ((uint32_t)RESET != flag_status));
 
-    if ((uint32_t)RESET != flag_status){
-        return ERROR; 
+    if ((uint32_t)RESET != flag_status)
+    {
+        return ERROR;
     }
 
     FWDGT_WND = WND_WND(window_value);
@@ -205,8 +208,9 @@ ErrStatus fwdgt_config(uint16_t reload_value, uint8_t prescaler_div)
     do{
         flag_status = FWDGT_STAT & FWDGT_STAT_PUD;
     }while((--timeout > (uint32_t)0x00000000U) && ((uint32_t)RESET != flag_status));
-    
-    if ((uint32_t)RESET != flag_status){
+
+    if ((uint32_t)RESET != flag_status)
+    {
         return ERROR;
     }
 
@@ -219,12 +223,13 @@ ErrStatus fwdgt_config(uint16_t reload_value, uint8_t prescaler_div)
         flag_status = FWDGT_STAT & FWDGT_STAT_RUD;
     }while((--timeout > (uint32_t)0x00000000U) && ((uint32_t)RESET != flag_status));
 
-    if ((uint32_t)RESET != flag_status){
+    if ((uint32_t)RESET != flag_status)
+    {
         return ERROR;
     }
 
     FWDGT_RLD = RLD_RLD(reload_value);
-    
+
     /* reload the counter */
     FWDGT_CTL = FWDGT_KEY_RELOAD;
 
@@ -233,7 +238,7 @@ ErrStatus fwdgt_config(uint16_t reload_value, uint8_t prescaler_div)
 
 /*!
     \brief      get flag state of FWDGT
-    \param[in]  flag: flag to get 
+    \param[in]  flag: flag to get
                 only one parameter can be selected which is shown as below:
       \arg        FWDGT_FLAG_PUD: a write operation to FWDGT_PSC register is on going
       \arg        FWDGT_FLAG_RUD: a write operation to FWDGT_RLD register is on going
@@ -243,7 +248,8 @@ ErrStatus fwdgt_config(uint16_t reload_value, uint8_t prescaler_div)
 */
 FlagStatus fwdgt_flag_get(uint16_t flag)
 {
-    if (RESET != (FWDGT_STAT & flag)){
+    if (RESET != (FWDGT_STAT & flag))
+    {
         return SET;
     }
     return RESET;

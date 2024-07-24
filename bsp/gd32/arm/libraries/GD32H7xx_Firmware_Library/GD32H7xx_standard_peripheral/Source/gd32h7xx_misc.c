@@ -66,7 +66,8 @@ void nvic_irq_enable(uint8_t nvic_irq,
     uint32_t temp_priority = 0x00U, temp_pre = 0x00U, temp_sub = 0x00U;
 
     /* use the priority group value to get the temp_pre and the temp_sub */
-    switch((SCB->AIRCR) & (uint32_t)0x700U) {
+    switch((SCB->AIRCR) & (uint32_t)0x700U)
+    {
     case NVIC_PRIGROUP_PRE0_SUB4:
         temp_pre = 0U;
         temp_sub = 0x4U;
@@ -175,7 +176,8 @@ void system_lowpower_reset(uint8_t lowpower_mode)
 */
 void systick_clksource_set(uint32_t systick_clksource)
 {
-    if(SYSTICK_CLKSOURCE_CKSYS == systick_clksource) {
+    if(SYSTICK_CLKSOURCE_CKSYS == systick_clksource)
+    {
         /* set the systick clock source from CK_SYS */
         SysTick->CTRL |= SYSTICK_CLKSOURCE_CKSYS;
     } else {
@@ -212,11 +214,11 @@ void mpu_region_struct_para_init(mpu_region_init_struct *mpu_init_struct)
                   region_number: region number
                                MPU_REGION_NUMBERn (n=0,..,15)
                   region_base_address: region base address
-                  region_size: MPU_REGION_SIZE_32B, MPU_REGION_SIZE_64B, MPU_REGION_SIZE_128B, MPU_REGION_SIZE_256B, MPU_REGION_SIZE_512B, 
-                               MPU_REGION_SIZE_1KB, MPU_REGION_SIZE_2KB, MPU_REGION_SIZE_4KB, MPU_REGION_SIZE_8KB, MPU_REGION_SIZE_16KB, 
+                  region_size: MPU_REGION_SIZE_32B, MPU_REGION_SIZE_64B, MPU_REGION_SIZE_128B, MPU_REGION_SIZE_256B, MPU_REGION_SIZE_512B,
+                               MPU_REGION_SIZE_1KB, MPU_REGION_SIZE_2KB, MPU_REGION_SIZE_4KB, MPU_REGION_SIZE_8KB, MPU_REGION_SIZE_16KB,
                                MPU_REGION_SIZE_32KB, MPU_REGION_SIZE_64KB, MPU_REGION_SIZE_128KB, MPU_REGION_SIZE_256KB, MPU_REGION_SIZE_512KB,
-                               MPU_REGION_SIZE_1MB, MPU_REGION_SIZE_2MB, MPU_REGION_SIZE_4MB, MPU_REGION_SIZE_8MB, MPU_REGION_SIZE_16MB, 
-                               MPU_REGION_SIZE_32MB, MPU_REGION_SIZE_64MB, MPU_REGION_SIZE_128MB, MPU_REGION_SIZE_256MB, MPU_REGION_SIZE_512MB, 
+                               MPU_REGION_SIZE_1MB, MPU_REGION_SIZE_2MB, MPU_REGION_SIZE_4MB, MPU_REGION_SIZE_8MB, MPU_REGION_SIZE_16MB,
+                               MPU_REGION_SIZE_32MB, MPU_REGION_SIZE_64MB, MPU_REGION_SIZE_128MB, MPU_REGION_SIZE_256MB, MPU_REGION_SIZE_512MB,
                                MPU_REGION_SIZE_1GB, MPU_REGION_SIZE_2GB, MPU_REGION_SIZE_4GB
                   subregion_disable: MPU_SUBREGION_ENABLE, MPU_SUBREGION_DISABLE
                   tex_type: MPU_TEX_TYPE0, MPU_TEX_TYPE1, MPU_TEX_TYPE2

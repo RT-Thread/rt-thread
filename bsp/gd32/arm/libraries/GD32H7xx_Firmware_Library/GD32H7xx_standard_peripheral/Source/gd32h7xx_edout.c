@@ -74,10 +74,12 @@ void edout_init(uint32_t pol, uint32_t max_loc, uint32_t cur_loc)
     /* reset the maximum location value */
     EDOUT_LOC &= ~EDOUT_LOC_LOCMAX;
     /* check the maximum location value */
-    if(LOC_LOCMAX_MIN > max_loc) {
+    if(LOC_LOCMAX_MIN > max_loc)
+    {
         max_loc = LOC_LOCMAX_MIN;
     }
-    while(0U != ((max_loc + 1U) % LOC_LOCMAX_STEP)) {
+    while(0U != ((max_loc + 1U) % LOC_LOCMAX_STEP))
+    {
         max_loc++;
     }
     /* set the maximum location value */

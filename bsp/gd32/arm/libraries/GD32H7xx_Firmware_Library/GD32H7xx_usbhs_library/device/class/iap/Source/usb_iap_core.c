@@ -316,7 +316,8 @@ static uint8_t iap_req_handler(usb_dev *udev, usb_req *req)
 
     usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
 
-    switch(req->bRequest) {
+    switch(req->bRequest)
+    {
     case GET_REPORT:
         /* no use for this driver */
         break;
@@ -344,7 +345,8 @@ static uint8_t iap_req_handler(usb_dev *udev, usb_req *req)
         break;
 
     case USB_GET_DESCRIPTOR:
-        if(USB_DESCTYPE_REPORT == (req->wValue >> 8U)) {
+        if(USB_DESCTYPE_REPORT == (req->wValue >> 8U))
+        {
             transc->remain_len = USB_MIN(USB_DESC_LEN_IAP_REPORT, req->wLength);
             transc->xfer_buf = (uint8_t *)iap_report_desc;
         }
@@ -368,8 +370,10 @@ static uint8_t iap_data_out(usb_dev *udev, uint8_t ep_num)
 {
     usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
 
-    if(0x01U == iap->report_buf[0]) {
-        switch(iap->report_buf[1]) {
+    if(0x01U == iap->report_buf[0])
+    {
+        switch(iap->report_buf[1])
+        {
         case IAP_DNLOAD:
             iap_req_dnload(udev);
             break;
@@ -414,8 +418,10 @@ static void iap_req_dnload(usb_dev *udev)
 {
     usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
 
-    if(0U != iap->transfer_times) {
-        if(1U == iap->transfer_times) {
+    if(0U != iap->transfer_times)
+    {
+        if(1U == iap->transfer_times)
+        {
             iap_data_write(&iap->report_buf[2], iap->base_address, iap->file_length % TRANSFER_SIZE);
 
             iap->dev_status[0] = 0x02U;
@@ -455,14 +461,16 @@ static void iap_req_erase(usb_dev *udev)
     iap->file_length |= (uint32_t)iap->report_buf[9] << 16U;
     iap->file_length |= (uint32_t)iap->report_buf[10] << 24U;
 
-    if(0U == (iap->file_length % TRANSFER_SIZE)) {
+    if(0U == (iap->file_length % TRANSFER_SIZE))
+    {
         iap->transfer_times = (uint16_t)(iap->file_length / TRANSFER_SIZE);
     } else {
         iap->transfer_times = (uint16_t)(iap->file_length / TRANSFER_SIZE + 1U);
     }
 
     /* check if the address is in protected area */
-    if(IS_PROTECTED_AREA(iap->base_address)) {
+    if(IS_PROTECTED_AREA(iap->base_address))
+    {
         return;
     }
 
@@ -497,7 +505,8 @@ static void iap_req_optionbyte(usb_dev *udev, uint8_t option_num)
 
     iap->option_byte[0] = 0x02U;
 
-    if(0x01U == option_num) {
+    if(0x01U == option_num)
+    {
         address = OPT_BYTE_ADDR;
     } else {
         return;
@@ -505,7 +514,8 @@ static void iap_req_optionbyte(usb_dev *udev, uint8_t option_num)
 
     opt_count = REPORT_IN_COUNT / 4;
 
-    for(i = 0U; i < opt_count; i++) {
+    for(i = 0U; i < opt_count; i++)
+    {
         ob = REG32(address + 4 * i);
 
         iap->option_byte[1 + 4 * i] = (uint8_t)ob;
