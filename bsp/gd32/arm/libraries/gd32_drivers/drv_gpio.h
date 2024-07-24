@@ -27,11 +27,13 @@ extern "C" {
 #include "gd32f30x_gpio.h"
 #elif defined SOC_SERIES_GD32F4xx
 #include "gd32f4xx_gpio.h"
+#elif defined SOC_SERIES_GD32H7xx
+#include "gd32h7xx_gpio.h"
 #endif
 
 #define __GD32_PORT(port)  GPIO##port
 
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,      \
                                     GPIO##port, GPIO_PIN_##pin, \
                                     EXTI_SOURCE_GPIO##port,     \
