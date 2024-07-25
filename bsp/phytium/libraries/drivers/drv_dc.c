@@ -31,6 +31,8 @@ static  rt_uint16_t _rt_framebuffer[1024 * 768 * 4] __aligned(128);
 
 static struct  rt_device_graphic_info _dc_info;
 
+void rt_hw_dc_register(struct phytium_dc_bus *dc_control_bus, const char *name, rt_uint32_t flag, void *data);
+
 static rt_err_t dc_config(struct phytium_dc_bus *dc_control_bus)
 {
     RT_ASSERT(dc_control_bus);

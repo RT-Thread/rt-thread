@@ -38,8 +38,8 @@ endif
 
 boot:
 	make all
-	cp rtthread_a64.elf /mnt/d/tftboot
-	cp rtthread_a64.bin /mnt/d/tftboot
+	cp rtthread_a64.elf /mnt/d/tftpboot
+	cp rtthread_a64.bin /mnt/d/tftpboot
 
 debug:
 	@$(OD) -D rtthread_a64.elf > rtthread_a64.asm

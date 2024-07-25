@@ -61,7 +61,7 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     }
     else
     {
-        rt_kprintf("Qspi init successfully.\n");
+        LOG_D("Qspi init successfully.\n");
     }
 
     /* Detect connected flash infomation */
@@ -73,7 +73,7 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     }
     else
     {
-        rt_kprintf("Qspi flash detect successfully.\n");
+        LOG_D("Qspi flash detect successfully.\n");
     }
 
 #ifdef USING_QSPI_CHANNEL0
@@ -131,7 +131,7 @@ static rt_err_t phytium_qspi_configure(struct rt_spi_device *device, struct rt_s
     if (RT_EOK != ret)
     {
         qspi_bus->init = RT_FALSE;
-        rt_kprintf("Qspi init failed!!!\n");
+        LOG_E("Qspi init failed!!!\n");
         return -RT_ERROR;
     }
     qspi_bus->init = RT_EOK;
@@ -175,7 +175,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         }
         else
         {
-            rt_kprintf("Write successfully!!!\r\n");
+            LOG_D("Write successfully!!!\r\n");
         }
 
         return RT_EOK;
@@ -188,19 +188,19 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         ret |= FQspiFlashReadDataConfig(&(qspi_bus->fqspi), cmd);
         if (FT_SUCCESS != ret)
         {
-            rt_kprintf("Failed to config read, test result 0x%x.\r\n", ret);
+            LOG_D("Failed to config read, test result 0x%x.\r\n", ret);
             return -RT_ERROR;
         }
         /* read norflash data */
         size_t read_len = FQspiFlashReadData(&(qspi_bus->fqspi), flash_addr, (u8 *)message->recv_buf, len);
         if (read_len != len)
         {
-            rt_kprintf("Failed to read mem, read len = %d.\r\n", read_len);
+            LOG_E("Failed to read mem, read len = %d.\r\n", read_len);
             return -RT_ERROR;
         }
         else
         {
-            rt_kprintf("Read successfully!!!, read_len = %d\r\n", read_len);
+            LOG_D("Read successfully!!!, read_len = %d\r\n", read_len);
         }
         FtDumpHexByte(message->recv_buf, read_len);
 
@@ -241,7 +241,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         return 1;
     }
 
-    rt_kprintf("cmd not found!!!\r\n");
+    LOG_E("cmd not found!!!\r\n");
     return ret;
 }
 
@@ -286,7 +286,7 @@ static int rt_qspi_init(phytium_qspi_bus *phytium_qspi)
 
     if (rt_qspi_bus_register(&phytium_qspi->qspi_bus, phytium_qspi->name, &phytium_qspi_ops) == RT_EOK)
     {
-        rt_kprintf("Qspi bus register successfully!!!\n");
+        LOG_D("Qspi bus register successfully!!!\n");
     }
     else
     {
