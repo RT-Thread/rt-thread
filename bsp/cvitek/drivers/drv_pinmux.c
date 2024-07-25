@@ -479,19 +479,7 @@ const struct fselect pin_selects_array[][8] = {
 
 #endif
 
-#if defined(BSP_USING_IOREMAP)
 static rt_ubase_t pinmux_base = RT_NULL;
-
-rt_ubase_t pinmux_base_ioremap(void)
-{
-    if (pinmux_base == RT_NULL)
-    {
-        pinmux_base = (rt_size_t)DRV_IOREMAP((void*)0x03001000, 0x1000);
-    }
-
-    return pinmux_base;
-}
-#endif
 
 static int8_t pinmux_get_index(uint8_t pin_index, fs_type func_type)
 {
@@ -521,6 +509,11 @@ int pinmux_config(const char *pin_name, fs_type func_type, const char *whitelist
     const struct fmux *p_fmux;
     int index;
     int8_t select;
+
+    if (pinmux_base == RT_NULL)
+    {
+        pinmux_base = (rt_size_t)DRV_IOREMAP((void*)PINMUX_BASE, 0x1000);
+    }
 
     if (whitelist) {
         if (0 != pinmux_check_whitelist(pin_name, whitelist)) {
@@ -554,6 +547,6 @@ int pinmux_config(const char *pin_name, fs_type func_type, const char *whitelist
 
     LOG_I("Pin Name = \"%s\", Func Type = %d, selected Func [%d]\n", pin_name, func_type, select);
     pinmux_array[index].selected = 1;
-    mmio_clrsetbits_32(PINMUX_BASE + p_fmux->addr, p_fmux->mask << p_fmux->offset, select);
+    mmio_clrsetbits_32(pinmux_base + p_fmux->addr, p_fmux->mask << p_fmux->offset, select);
     return RT_EOK;
 }
