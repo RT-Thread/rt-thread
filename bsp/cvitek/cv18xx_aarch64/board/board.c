@@ -79,13 +79,6 @@ void rt_hw_board_init(void)
 #else
 void rt_hw_board_init(void)
 {
-    rt_fdt_commit_memregion_early(&(rt_region_t)
-    {
-        .name  = "memheap",
-        .start = (rt_size_t)rt_kmem_v2p((void *)HEAP_BEGIN),
-        .end   = (rt_size_t)rt_kmem_v2p((void *)HEAP_END),
-    }, RT_TRUE);
-
     rt_hw_common_setup();
 }
 #endif /* RT_USING_OFW */
