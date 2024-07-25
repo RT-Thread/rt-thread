@@ -24,30 +24,74 @@ menu "General Drivers Configuration"
         default y
 
         if BSP_USING_UART
-            config RT_USING_UART0
-            bool "Enable UART 0"
-            default y
+            config BSP_USING_UART0
+                bool "Enable UART 0"
+                default y
+
+                if BSP_USING_UART0
+                    config BSP_UART0_RX_PINNAME
+                        string "uart0 rx pin name"
+                        default "UART0_RX"
+                    config BSP_UART0_TX_PINNAME
+                        string "uart0 tx pin name"
+                        default "UART0_TX"
+                endif
+
+            config BSP_USING_UART1
+                bool "Enable UART 1"
+                default n
+
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_PINNAME
+                        string "uart1 rx pin name"
+                        default ""
+                    config BSP_UART1_TX_PINNAME
+                        string "uart1 tx pin name"
+                        default ""
+                endif
+
+            config BSP_USING_UART2
+                bool "Enable UART 2"
+                default n
+
+                if BSP_USING_UART2
+                    config BSP_UART2_RX_PINNAME
+                        string "uart2 rx pin name"
+                        default ""
+                    config BSP_UART2_TX_PINNAME
+                        string "uart2 tx pin name"
+                        default ""
+                endif
+
+            config BSP_USING_UART3
+                bool "Enable UART 3"
+                default n
+
+                if BSP_USING_UART3
+                    config BSP_UART3_RX_PINNAME
+                        string "uart3 rx pin name"
+                        default ""
+                    config BSP_UART3_TX_PINNAME
+                        string "uart3 tx pin name"
+                        default ""
+                endif
+
+            config BSP_USING_UART4
+                bool "Enable UART 4"
+                default n
+
+                if BSP_USING_UART4
+                    config BSP_UART4_RX_PINNAME
+                        string "uart4 rx pin name"
+                        default ""
+                    config BSP_UART4_TX_PINNAME
+                        string "uart4 tx pin name"
+                        default ""
+                endif
 
             config UART_IRQ_BASE
-            int
-            default 60
-            
-            config RT_USING_UART1
-            bool "Enable UART 1"
-            default n
-
-            config RT_USING_UART2
-            bool "Enable UART 2"
-            default n
-
-            config RT_USING_UART3
-            bool "Enable UART 3"
-            default n
-
-            config RT_USING_UART4
-            bool "Enable UART 4"
-            default n
-
+                int
+                default 60
         endif
         
     config BSP_USING_ADC
