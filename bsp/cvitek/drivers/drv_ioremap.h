@@ -13,7 +13,7 @@
 
 #include <rtconfig.h>
 
-#ifdef RT_USING_SMART
+#ifdef BSP_USING_IOREMAP
 #include <ioremap.h>
 
 #define DRV_IOREMAP(addr, size) rt_ioremap(addr, size)

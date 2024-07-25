@@ -1,5 +1,10 @@
 menu "General Drivers Configuration"
 
+    config BSP_USING_IOREMAP
+        bool "Using ioremap in drivers"
+        default y if RT_USING_SMART || RT_USING_DM
+        default n
+
     menuconfig BSP_USING_UART
         bool "Using UART"
         select RT_USING_SERIAL

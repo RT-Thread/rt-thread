@@ -1,4 +1,10 @@
 menu "General Drivers Configuration"
+
+    config BSP_USING_IOREMAP
+        bool "Using ioremap in drivers"
+        default y if RT_USING_SMART || RT_USING_DM
+        default n
+
     config BSP_SUPPORT_FPU
         bool "Using Float"
         default y
