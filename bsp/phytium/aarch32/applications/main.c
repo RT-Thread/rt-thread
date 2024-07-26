@@ -58,7 +58,7 @@ static void demo_core_thread(void *parameter)
         level = rt_cpus_lock();
         rt_kprintf("Hi, core%d \r\n", rt_hw_cpu_id());
         rt_cpus_unlock(level);
-        rt_thread_mdelay(200000);
+        rt_thread_mdelay(20000);
     }
 }
 
@@ -80,6 +80,7 @@ void demo_core(void)
 
         rt_thread_control(&test_core[i], RT_THREAD_CTRL_BIND_CPU, (void *)cpu_id);
         rt_thread_startup(&test_core[i]);
+        rt_thread_mdelay(500);
     }
 }
 #endif
@@ -91,4 +92,3 @@ int main(void)
 #endif
     return RT_EOK;
 }
-

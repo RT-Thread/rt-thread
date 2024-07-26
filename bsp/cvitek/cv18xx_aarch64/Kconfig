@@ -30,14 +30,20 @@ config SYS_GPIO_IRQ_BASE
     int
     default 86
 
+config SOC_TYPE_SG2002
+    bool
+    default n
+
 choice
     prompt "Board Type"
     default BOARD_TYPE_MILKV_DUO256M
 
     config BOARD_TYPE_MILKV_DUO256M
+        select SOC_TYPE_SG2002
         bool "milkv-duo256m"
 
     config BOARD_TYPE_MILKV_DUO256M_SPINOR
+        select SOC_TYPE_SG2002
         bool "milkv-duo256m-spinor"
         
 endchoice

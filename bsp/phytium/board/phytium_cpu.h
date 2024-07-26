@@ -16,8 +16,11 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <gicv3.h>
 #include "fparameters.h"
 #include "fio.h"
+#include "faarch.h"
+
 #ifdef RT_USING_SMART
 #include"ioremap.h"
 #endif
@@ -43,13 +46,51 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
     return GICV3_DISTRIBUTOR_BASE_ADDR;
 }
 
-#if defined(TARGET_ARMV8_AARCH64)
-
 /* the basic constants and interfaces needed by gic */
-rt_inline rt_uint32_t platform_get_gic_redist_base(void)
+rt_inline uintptr_t platform_get_gic_redist_base(void)
 {
+    uintptr_t redis_base, mpidr_aff, gicr_typer_aff;
+    mpidr_aff = (uintptr_t)(GetAffinity() & 0xfff);
+
+    for (redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
+    {
+#ifdef RT_USING_SMART
+        uintptr_t redis_base_virtual = (uintptr_t)rt_ioremap((void *)redis_base, GICV3_RD_OFFSET);
+        if (redis_base_virtual == 0)
+        {
+            continue;
+        }
+#if defined(TARGET_ARMV8_AARCH64)
+        gicr_typer_aff = GIC_RDIST_TYPER(redis_base_virtual) >> 32;
+#else
+        gicr_typer_aff = GIC_RDIST_TYPER(redis_base_virtual + 0x4);
+#endif
+        if (mpidr_aff == gicr_typer_aff)
+        {
+            return redis_base_virtual;
+        }
+        else
+        {
+            rt_iounmap(redis_base_virtual);
+        }
+#else
+#if defined(TARGET_ARMV8_AARCH64)
+        gicr_typer_aff = GIC_RDIST_TYPER(redis_base) >> 32;
+#else
+        gicr_typer_aff = GIC_RDIST_TYPER(redis_base + 0x4);
+#endif
+        if (mpidr_aff == gicr_typer_aff)
+        {
+            return redis_base;
+        }
+#endif
+    }
+
     return 0;
 }
+
+
+#if defined(TARGET_ARMV8_AARCH64)
 
 rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
 {
