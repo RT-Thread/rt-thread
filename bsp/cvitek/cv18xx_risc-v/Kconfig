@@ -20,6 +20,7 @@ config BSP_USING_CV18XX
     select RT_USING_CACHE
     select ARCH_MM_MMU
     select RT_USING_DEVICE_OPS
+    select ARCH_REMAP_KERNEL if RT_USING_SMART
     default y
 
 config C906_PLIC_PHY_ADDR
