@@ -11,12 +11,14 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_HOOKLIST
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
 
 /* kservice optimization */
 
@@ -51,6 +53,7 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
@@ -456,5 +459,6 @@
 #define __STACKSIZE__ 8192
 #define SOC_TYPE_SG2002
 #define BOARD_TYPE_MILKV_DUO256M
+#define BSP_ROOTFS_TYPE_ROMFS
 
 #endif
