@@ -28,7 +28,7 @@ config C906_PLIC_PHY_ADDR
 
 config IRQ_MAX_NR
     int
-    default 64
+    default 101
 
 config TIMER_CLK_FREQ
     int
