@@ -39,7 +39,7 @@ SDK_ROOT = os.path.abspath('./')
 if os.path.exists(SDK_ROOT + '/packages'):
     libraries_path_prefix = SDK_ROOT + '/packages'
 else:
-    print("Error: Don't have Packages for HAL_Driver, Please Use \"pkgs --Update\" in ENV")
+    print("Error: Packages for HAL_Driver does not exist, pull it in ENV using `pkg --update`.")
 
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
