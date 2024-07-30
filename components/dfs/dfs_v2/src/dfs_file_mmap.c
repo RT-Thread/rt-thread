@@ -128,7 +128,7 @@ static void on_varea_open(struct rt_varea *varea)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
     varea->data = RT_NULL;
-    rt_atomic_add(&(file->ref_count), 1);
+    rt_atomic_add(&(file->open_count), 1);
 }
 
 /* do post close bushiness like def a ref */
@@ -149,13 +149,13 @@ static void on_varea_close(struct rt_varea *varea)
 
         dfs_aspace_unmap(file, varea);
         dfs_file_lock();
-        if (rt_atomic_load(&(file->ref_count)) == 1)
+        if (rt_atomic_load(&(file->open_count)) == 1)
         {
             dfs_file_close(file);
         }
         else
         {
-            rt_atomic_sub(&(file->ref_count), 1);
+            rt_atomic_sub(&(file->open_count), 1);
         }
         dfs_file_unlock();
     }

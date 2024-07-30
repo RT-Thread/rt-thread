@@ -14,6 +14,7 @@
 
 #include <dfs.h>
 #include <dfs_fs.h>
+#include <ref.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -88,7 +89,8 @@ struct dfs_file
     uint16_t mode;
 
     uint32_t flags;
-    rt_atomic_t ref_count;
+    struct rt_ref ref_count;    /* when to release the file struct */
+    rt_atomic_t open_count;     /* when to do real close of the file */
 
     off_t fpos;
     struct rt_mutex pos_lock;

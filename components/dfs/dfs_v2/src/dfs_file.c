@@ -193,7 +193,7 @@ void dfs_file_init(struct dfs_file *file)
         rt_memset(file, 0x00, sizeof(struct dfs_file));
         file->magic = DFS_FD_MAGIC;
         rt_mutex_init(&file->pos_lock, "fpos", RT_IPC_FLAG_PRIO);
-        rt_atomic_store(&(file->ref_count), 1);
+        rt_atomic_store(&(file->open_count), 1);
     }
 }
 
@@ -212,7 +212,7 @@ static void dfs_file_unref(struct dfs_file *file)
     ret = dfs_file_lock();
     if (ret == RT_EOK)
     {
-        if (rt_atomic_load(&(file->ref_count)) == 1)
+        if (rt_atomic_load(&(file->open_count)) == 1)
         {
             /* should release this file */
             if (file->dentry)
@@ -675,9 +675,9 @@ int dfs_file_close(struct dfs_file *file)
     {
         if (dfs_file_lock() == RT_EOK)
         {
-            rt_atomic_t ref_count = rt_atomic_load(&(file->ref_count));
+            rt_atomic_t open_count = rt_atomic_load(&(file->open_count));
 
-            if (ref_count == 1 && file->fops && file->fops->close)
+            if (open_count == 1 && file->fops && file->fops->close)
             {
                 DLOG(msg, "dfs_file", file->dentry->mnt->fs_ops->name, DLOG_MSG, "fops->close(file)");
 #ifdef RT_USING_PAGECACHE

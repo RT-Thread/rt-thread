@@ -2014,7 +2014,7 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
             if (d_s)
             {
                 dst_fdt->fds[i] = d_s;
-                d_s->ref_count++;
+                d_s->open_count++;
             }
         }
         dfs_file_unlock();
