@@ -142,17 +142,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     # set BSP_ROOT in ENV
     Env['BSP_ROOT'] = Dir('#').abspath
     os.environ["BSP_DIR"] = Dir('#').abspath
-    # set PKGS_ROOT in ENV
-    if "PKGS_DIR" in os.environ:
-        pass
-    elif "PKGS_ROOT" in os.environ:
-        os.environ["PKGS_DIR"] = os.environ["PKGS_ROOT"]
-    elif "ENV_ROOT" in os.environ:
-        os.environ["PKGS_DIR"] = os.path.join(os.environ["ENV_ROOT"], "packages")
-    elif sys.platform == "win32":
-        os.environ["PKGS_DIR"] = os.path.join(os.environ["USERPROFILE"], ".env", "packages")
-    else:
-        os.environ["PKGS_DIR"] = os.path.join(os.environ["HOME"], ".env", "packages")
 
     sys.path += os.path.join(Rtt_Root, 'tools')
 
@@ -205,7 +194,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
         try:
             # try to detect toolchains in env
-            envm = utils.ImportModule('env')
+            envm = utils.ImportModule('env_utility')
             # from env import GetSDKPath
             exec_path = envm.GetSDKPath(rtconfig.CC)
             if 'gcc' in rtconfig.CC:
@@ -331,7 +320,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             print('--global-macros arguments are illegal!')
 
     if GetOption('genconfig'):
-        from menukconfig import genconfig
+        from env_utility import genconfig
         genconfig()
         exit(0)
 
@@ -341,23 +330,23 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         exit(0)
 
     if GetOption('menuconfig'):
-        from menukconfig import menuconfig
+        from env_utility import menuconfig
         menuconfig(Rtt_Root)
         exit(0)
 
-    if GetOption('pyconfig-silent'):
-        from menukconfig import guiconfig_silent
-        guiconfig_silent(Rtt_Root)
+    if GetOption('defconfig'):
+        from env_utility import defconfig
+        defconfig(Rtt_Root)
         exit(0)
 
-    elif GetOption('pyconfig'):
-        from menukconfig import guiconfig
+    elif GetOption('guiconfig'):
+        from env_utility import guiconfig
         guiconfig(Rtt_Root)
         exit(0)
 
     configfn = GetOption('useconfig')
     if configfn:
-        from menukconfig import mk_rtconfig
+        from env_utility import mk_rtconfig
         mk_rtconfig(configfn)
         exit(0)
 
