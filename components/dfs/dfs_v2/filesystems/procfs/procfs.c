@@ -31,8 +31,10 @@ static int dfs_procfs_open(struct dfs_file *file)
     struct proc_dentry *entry = (struct proc_dentry *)file->vnode->data;
 
 
-    RT_ASSERT(file->vnode->ref_count > 0);
-    if (file->vnode->ref_count > 1)
+    RT_ASSERT(file->ref_count > 0);
+
+    // this file is opened and in an fdtable
+    if (file->ref_count > 1)
     {
         file->fpos = 0;
         return ret;
@@ -377,7 +379,7 @@ static int dfs_procfs_free_vnode(struct dfs_vnode *vnode)
     return 0;
 }
 
-static const struct dfs_file_ops _dev_fops =
+static const struct dfs_file_ops _procfs_fops =
 {
     .open = dfs_procfs_open,
     .close = dfs_procfs_close,
@@ -394,7 +396,7 @@ static const struct dfs_filesystem_ops _procfs_ops =
 {
     .name = "procfs",
 
-    .default_fops = &_dev_fops,
+    .default_fops = &_procfs_fops,
 
     .mount = dfs_procfs_mount,
     .umount = dfs_procfs_umount,
