@@ -486,7 +486,7 @@ static inline struct mmc_host *mmc_from_priv(void *priv)
 
 #define mmc_dev(x)	((x)->parent)
 #define mmc_classdev(x)	(&(x)->class_dev)
-#define mmc_hostname(x)	(x->name)
+#define mmc_hostname(x)	(x->parent->parent.name)
 
 void mmc_detect_change(struct mmc_host *, unsigned long delay);
 void mmc_request_done(struct mmc_host *, struct rt_mmcsd_req *);

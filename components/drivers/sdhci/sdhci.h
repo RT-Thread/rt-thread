@@ -498,7 +498,7 @@ struct sdhci_host {
 	const struct sdhci_ops *ops;	/* Low level hw interface */
 
 	/* Internal data */
-	struct rt_mmc_host *mmc;	/* MMC structure */
+	struct mmc_host *mmc;	/* MMC structure */
 	struct mmc_host_ops mmc_host_ops;	/* MMC host ops */
 	rt_uint64_t dma_mask;		/* custom DMA mask */
 

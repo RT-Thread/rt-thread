@@ -170,7 +170,7 @@ static int sdhci_set_dma_mask(struct sdhci_host *host)
 
 int sdhci_setup_host(struct sdhci_host *host)
 {
-	struct rt_mmcsd_host *mmc;
+	struct mmc_host *mmc;
 	size_t max_current_caps;
 	unsigned int ocr_avail;
 	unsigned int override_timeout_clk;
@@ -278,8 +278,6 @@ int sdhci_setup_host(struct sdhci_host *host)
 	if ((host->flags & SDHCI_USE_64_BIT_DMA) && !host->v4_mode)
 		host->flags &= ~SDHCI_USE_SDMA;
 
-	//our rtos did not need scatter-gather
-#if 0
 	if (host->flags & SDHCI_USE_ADMA) {
 		rt_uint64_t dma;
 		void *buf;
@@ -319,7 +317,7 @@ int sdhci_setup_host(struct sdhci_host *host)
 			host->adma_addr = dma + host->align_buffer_sz;
 		}
 	}
-#endif
+
 	/*
 	 * If we use DMA, then it's up to the caller to set the DMA
 	 * mask, but PIO does not need the hw shim so we set a new
@@ -2357,36 +2355,6 @@ static void sdhci_initialize_data(struct sdhci_host *host,
 /********************************************************* */
 /*                     timer                               */
 /********************************************************* */
-
-static unsigned int sdhci_target_timeout(struct sdhci_host *host,
-					 struct rt_mmcsd_cmd *cmd,
-					 struct rt_mmcsd_data *data)
-{
-	unsigned int target_timeout;
-
-	/* timeout in us */
-	if (!data) {
-		target_timeout = cmd->busy_timeout * 1000;
-	} else {
-		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
-		if (host->clock && data->timeout_clks) {
-			unsigned long long val;
-
-			/*
-			 * data->timeout_clks is in units of clock cycles.
-			 * host->clock is in Hz.  target_timeout is in us.
-			 * Hence, us = 1000000 * cycles / Hz.  Round up.
-			 */
-			val = 1000000ULL * data->timeout_clks;
-			if (do_div(val, host->clock))
-				target_timeout++;
-			target_timeout += val;
-		}
-	}
-
-	return target_timeout;
-}
-
 static void sdhci_timeout_timer(void* parameter)
 {
 	struct sdhci_host *host = parameter;
@@ -2462,6 +2430,36 @@ static rt_uint8_t sdhci_calc_timeout(struct sdhci_host *host, struct rt_mmcsd_cm
 	}
 
 	return count;
+}
+
+
+static unsigned int sdhci_target_timeout(struct sdhci_host *host,
+					 struct rt_mmcsd_cmd *cmd,
+					 struct rt_mmcsd_data *data)
+{
+	unsigned int target_timeout;
+
+	/* timeout in us */
+	if (!data) {
+		target_timeout = cmd->busy_timeout * 1000;
+	} else {
+		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
+		if (host->clock && data->timeout_clks) {
+			unsigned long long val;
+
+			/*
+			 * data->timeout_clks is in units of clock cycles.
+			 * host->clock is in Hz.  target_timeout is in us.
+			 * Hence, us = 1000000 * cycles / Hz.  Round up.
+			 */
+			val = 1000000ULL * data->timeout_clks;
+			if (do_div(val, host->clock))
+				target_timeout++;
+			target_timeout += val;
+		}
+	}
+
+	return target_timeout;
 }
 
 static void sdhci_timeout_data_timer(void* parameter)
@@ -2861,3 +2859,5 @@ static rt_bool_t sdhci_present_error(struct sdhci_host *host,
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------//
+
+
