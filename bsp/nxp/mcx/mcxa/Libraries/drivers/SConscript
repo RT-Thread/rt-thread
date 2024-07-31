@@ -34,6 +34,9 @@ if  GetDepend('BSP_USING_WDT'):
 if  GetDepend('BSP_USING_PWM'):
     src += ['drv_pwm.c']
 
+if  GetDepend('BSP_USING_FLASH'):
+    src += ['drv_chipflash.c']
+
 path =  [cwd,cwd + '/config']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

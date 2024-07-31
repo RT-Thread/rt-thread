@@ -29,9 +29,7 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_UART0
                     bool "Enable LPUART as UART"
                     default y
-
             endif
-
 
     menuconfig BSP_USING_I2C
         config BSP_USING_I2C
@@ -82,30 +80,33 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_ADC0_CH8
                     bool "Enable ADC0 Channel8"
                     default n
-
         
                 config BSP_USING_ADC0_CH13
                     bool "Enable ADC0 Channel13"
                     default n
 
-
                 config BSP_USING_ADC0_CH26
                     bool "Enable ADC0 Channel26"
                     default n
-
             endif
 
-    config BSP_USING_SDIO
-        bool "Enable SDIO SD Card Interface"
-        select RT_USING_SDIO
-        select RT_USING_DFS
-        select RT_USING_DFS_ELMFAT
-        default y
+    config BSP_USING_FLASH
+        bool "Enable onchip driver"
+        select RT_USING_MTD_NOR
+        default n
 
-    config BSP_USING_RTC
-        bool "Enable RTC"
-        select RT_USING_RTC
-        default y
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_FLASH_LITTLEFS
+                bool "Enable ONCHIP FLASH(littlefs)"
+                select BSP_USING_FLASH
+                select PKG_USING_LITTLEFS
+                default y
+        endif
 
     config BSP_USING_WDT
         bool "Enable WatchDog"
@@ -164,7 +165,6 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
 endmenu
-
 
 menu "Board extended module Drivers"
 
