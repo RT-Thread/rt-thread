@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_AOI_H_
-#define _FSL_AOI_H_
+#ifndef FSL_AOI_H_
+#define FSL_AOI_H_
 
 #include "fsl_common.h"
 
@@ -23,9 +23,9 @@
 #endif
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 #define FSL_AOI_DRIVER_VERSION (MAKE_VERSION(2, 0, 2)) /*!< Version 2.0.2. */
-/*@}*/
+/*! @} */
 
 /*!
  * @brief AOI input configurations.
@@ -109,7 +109,7 @@ void AOI_Init(AOI_Type *base);
  */
 void AOI_Deinit(AOI_Type *base);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name  AOI Get Set Operation
@@ -179,8 +179,8 @@ void AOI_SetEventLogicConfig(AOI_Type *base, aoi_event_t event, const aoi_event_
 }
 #endif /* __cplusplus*/
 
-/*@}*/
+/*! @} */
 
 /*!* @} */
 
-#endif /* _FSL_AOI_H_*/
+#endif /* FSL_AOI_H_*/

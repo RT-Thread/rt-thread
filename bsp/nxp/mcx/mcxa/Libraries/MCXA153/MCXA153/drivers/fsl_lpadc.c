@@ -29,18 +29,18 @@
 #define ADC_CMDL_CHANNEL_MODE(x) \
     (((uint32_t)(((uint32_t)(x)) << ADC_CMDL_CHANNEL_MODE_SHIFT)) & ADC_CMDL_CHANNEL_MODE_MASK)
 
-#define GET_ADC_CFG_TPRICTRL_VALUE(val) (val & 0x3U)
+#define GET_ADC_CFG_TPRICTRL_VALUE(val) (((uint32_t)val) & 0x3U)
 
 #if defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES
-#define GET_ADC_CFG_TRES_VALUE(val) ((val & 0x4U) >> 2U)
+#define GET_ADC_CFG_TRES_VALUE(val) ((((uint32_t)val) & 0x4U) >> 2U)
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES */
 
 #if defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES
-#define GET_ADC_CFG_TCMDRES_VALUE(val) ((val & 0x8U) >> 3U)
+#define GET_ADC_CFG_TCMDRES_VALUE(val) ((((uint32_t)val) & 0x8U) >> 3U)
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES */
 
 #if defined(FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI) && FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI
-#define GET_ADC_CFG_HPT_EXDI_VALUE(val) ((val & 0x10U) >> 4U)
+#define GET_ADC_CFG_HPT_EXDI_VALUE(val) ((((uint32_t)val) & 0x10U) >> 4U)
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI) && FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI */
 
 #if defined(LPADC_RSTS)
@@ -161,7 +161,6 @@ void LPADC_Init(ADC_Type *base, const lpadc_config_t *config)
     (void)CLOCK_EnableClock(s_lpadcClocks[LPADC_GetInstance(base)]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
-
 #if defined(LPADC_RESETS_ARRAY)
     RESET_ReleasePeripheralReset(s_lpadcResets[LPADC_GetInstance(base)]);
 #endif
@@ -220,15 +219,15 @@ void LPADC_Init(ADC_Type *base, const lpadc_config_t *config)
     tmp32 |= ADC_CFG_TPRICTRL(GET_ADC_CFG_TPRICTRL_VALUE(config->triggerPriorityPolicy));
 
 #if (defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES)
-    tmp32 |= ADC_CFG_TRES(GET_ADC_CFG_TRES_VALUE((uint8_t)(config->triggerPriorityPolicy)));
+    tmp32 |= ADC_CFG_TRES(GET_ADC_CFG_TRES_VALUE(config->triggerPriorityPolicy));
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES */
 
 #if (defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES)
-    tmp32 |= ADC_CFG_TCMDRES(GET_ADC_CFG_TCMDRES_VALUE((uint8_t)(config->triggerPriorityPolicy)));
+    tmp32 |= ADC_CFG_TCMDRES(GET_ADC_CFG_TCMDRES_VALUE(config->triggerPriorityPolicy));
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES */
 
 #if (defined(FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI) && FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI)
-    tmp32 |= ADC_CFG_HPT_EXDI(GET_ADC_CFG_HPT_EXDI_VALUE((uint8_t)(config->triggerPriorityPolicy)));
+    tmp32 |= ADC_CFG_HPT_EXDI(GET_ADC_CFG_HPT_EXDI_VALUE(config->triggerPriorityPolicy));
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI) && FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI */
 
     base->CFG = tmp32;
@@ -342,10 +341,11 @@ bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result, uint8_t in
 
     uint32_t tmp32 = 0U;
 
-    while (0U == (ADC_RESFIFO_VALID_MASK & tmp32))
+    tmp32 = base->RESFIFO[index];
+
+    if (ADC_RESFIFO_VALID_MASK != (tmp32 & ADC_RESFIFO_VALID_MASK))
     {
-        /* while loop until FIFO is not empty */
-        tmp32 = base->RESFIFO[index];
+        return false; /* FIFO is empty. Discard any read from RESFIFO. */
     }
 
     result->commandIdSource = (tmp32 & ADC_RESFIFO_CMDSRC_MASK) >> ADC_RESFIFO_CMDSRC_SHIFT;
@@ -354,6 +354,31 @@ bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result, uint8_t in
     result->convValue       = (uint16_t)(tmp32 & ADC_RESFIFO_D_MASK);
 
     return true;
+}
+/*!
+ * brief Get the result in conversion FIFOn using blocking method.
+ *
+ * param base LPADC peripheral base address.
+ * param result Pointer to structure variable that keeps the conversion result in conversion FIFOn.
+ * param index Result FIFO index.
+ */
+void LPADC_GetConvResultBlocking(ADC_Type *base, lpadc_conv_result_t *result, uint8_t index)
+{
+    assert(result != NULL); /* Check if the input pointer is available. */
+
+    uint32_t tmp32 = 0U;
+
+    tmp32 = base->RESFIFO[index];
+
+    while (ADC_RESFIFO_VALID_MASK != (tmp32 & ADC_RESFIFO_VALID_MASK))
+    {
+        tmp32 = base->RESFIFO[index];
+    }
+
+    result->commandIdSource = (tmp32 & ADC_RESFIFO_CMDSRC_MASK) >> ADC_RESFIFO_CMDSRC_SHIFT;
+    result->loopCountIndex  = (tmp32 & ADC_RESFIFO_LOOPCNT_MASK) >> ADC_RESFIFO_LOOPCNT_SHIFT;
+    result->triggerIdSource = (tmp32 & ADC_RESFIFO_TSRC_MASK) >> ADC_RESFIFO_TSRC_SHIFT;
+    result->convValue       = (uint16_t)(tmp32 & ADC_RESFIFO_D_MASK);
 }
 #else
 /*!
@@ -370,10 +395,11 @@ bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result)
 
     uint32_t tmp32 = 0U;
 
-    while (0U == (ADC_RESFIFO_VALID_MASK & tmp32))
+    tmp32 = base->RESFIFO;
+
+    if (ADC_RESFIFO_VALID_MASK != (tmp32 & ADC_RESFIFO_VALID_MASK))
     {
-        /* while loop until FIFO is not empty */
-        tmp32 = base->RESFIFO;
+        return false; /* FIFO is empty. Discard any read from RESFIFO. */
     }
 
     result->commandIdSource = (tmp32 & ADC_RESFIFO_CMDSRC_MASK) >> ADC_RESFIFO_CMDSRC_SHIFT;
@@ -382,6 +408,30 @@ bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result)
     result->convValue       = (uint16_t)(tmp32 & ADC_RESFIFO_D_MASK);
 
     return true;
+}
+/*!
+ * @brief Get the result in conversion FIFO using blocking method.
+ *
+ * @param base LPADC peripheral base address.
+ * @param result Pointer to structure variable that keeps the conversion result in conversion FIFO.
+ */
+void LPADC_GetConvResultBlocking(ADC_Type *base, lpadc_conv_result_t *result)
+{
+    assert(result != NULL); /* Check if the input pointer is available. */
+
+    uint32_t tmp32 = 0U;
+
+    tmp32 = base->RESFIFO;
+
+    while (ADC_RESFIFO_VALID_MASK != (tmp32 & ADC_RESFIFO_VALID_MASK))
+    {
+        tmp32 = base->RESFIFO;
+    }
+
+    result->commandIdSource = (tmp32 & ADC_RESFIFO_CMDSRC_MASK) >> ADC_RESFIFO_CMDSRC_SHIFT;
+    result->loopCountIndex  = (tmp32 & ADC_RESFIFO_LOOPCNT_MASK) >> ADC_RESFIFO_LOOPCNT_SHIFT;
+    result->triggerIdSource = (tmp32 & ADC_RESFIFO_TSRC_MASK) >> ADC_RESFIFO_TSRC_SHIFT;
+    result->convValue       = (uint16_t)(tmp32 & ADC_RESFIFO_D_MASK);
 }
 #endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
 
@@ -453,6 +503,9 @@ void LPADC_GetDefaultConvTriggerConfig(lpadc_conv_trigger_config_t *config)
 /*!
  * brief Configure conversion command.
  *
+ * note The number of compare value register on different chips is different, that is mean in some chips, some
+ * command buffers do not have the compare functionality.
+ *
  * param base LPADC peripheral base address.
  * param commandId ID for command in command buffer. Typically, the available value range is 1 - 15.
  * param config Pointer to configuration structure. See to #lpadc_conv_command_config_t.
@@ -483,7 +536,6 @@ void LPADC_SetConvCommandConfig(ADC_Type *base, uint32_t commandId, const lpadc_
     assert(((config->sampleChannelMode >= kLPADC_SampleChannelDiffBothSideAB) &&
             (((base->VERID) & ADC_VERID_DIFFEN_MASK) != 0U)) ||
            (config->sampleChannelMode < kLPADC_SampleChannelDiffBothSideAB));
-    tmp32 |= ADC_CMDL_CHANNEL_MODE(config->sampleChannelMode);
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CMDL_DIFF) && FSL_FEATURE_LPADC_HAS_CMDL_DIFF */
 
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE
@@ -491,8 +543,7 @@ void LPADC_SetConvCommandConfig(ADC_Type *base, uint32_t commandId, const lpadc_
             (((base->VERID) & ADC_VERID_DIFFEN_MASK) != 0U)) ||
            ((config->sampleChannelMode == kLPADC_SampleChannelDualSingleEndBothSide) &&
             (((base->VERID) & ADC_VERID_NUM_SEC_MASK) != 0U)) ||
-           (config->sampleChannelMode < kLPADC_SampleChannelDiffBothSide));
-    tmp32 |= ADC_CMDL_CTYPE(config->sampleChannelMode);
+           (config->sampleChannelMode < kLPADC_SampleChannelDualSingleEndBothSide));
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE */
 #endif /* !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U)) */
 
@@ -533,13 +584,15 @@ void LPADC_SetConvCommandConfig(ADC_Type *base, uint32_t commandId, const lpadc_
 
     /* Hardware compare settings.
      * Not all Command Buffers have an associated Compare Value register. The compare function is only available on
-     * Command Buffers that have a corresponding Compare Value register.
+     * Command Buffers that have a corresponding Compare Value register. Therefore, assertion judgment needs to be
+     * made before setting the CV register.
      */
-    if (kLPADC_HardwareCompareDisabled != config->hardwareCompareMode)
+
+    if ((kLPADC_HardwareCompareDisabled != config->hardwareCompareMode) && (commandId < ADC_CV_COUNT))
     {
         /* Set CV register. */
-        base->CV[commandId] = ADC_CV_CVH(config->hardwareCompareValueHigh)   /* Compare value high. */
-                              | ADC_CV_CVL(config->hardwareCompareValueLow); /* Compare value low. */
+        base->CV[commandId] = (ADC_CV_CVH(config->hardwareCompareValueHigh)    /* Compare value high. */
+                               | ADC_CV_CVL(config->hardwareCompareValueLow)); /* Compare value low. */
     }
 }
 
@@ -764,8 +817,8 @@ void LPADC_FinishAutoCalibration(ADC_Type *base)
     }
 
 #if defined(FSL_FEATURE_LPADC_HAS_CTRL_CALOFSMODE) && FSL_FEATURE_LPADC_HAS_CTRL_CALOFSMODE
-    GCCa = (base->GCC[0] & ADC_GCC_GAIN_CAL_MASK);
-    GCCb = (base->GCC[1] & ADC_GCC_GAIN_CAL_MASK);
+    GCCa = (int32_t)(base->GCC[0] & ADC_GCC_GAIN_CAL_MASK);
+    GCCb = (int32_t)(base->GCC[1] & ADC_GCC_GAIN_CAL_MASK);
     if (0U != ((base->GCC[0]) & 0x8000U))
     {
         GCCa         = GCCa - 0x10000;

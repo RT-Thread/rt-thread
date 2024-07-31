@@ -283,8 +283,8 @@ status_t CLOCK_SetupFRO16KClocking(uint8_t clk_16k_enable_mask)
     VBAT0->FROCTLA |= VBAT_FROCTLA_FRO_EN_MASK;
     VBAT0->FROLCKA |= VBAT_FROLCKA_LOCK_MASK;
 
-    /* enable clk_16k0 and clk_16k1. */
-    VBAT0->FROCLKE = VBAT_FROCLKE_CLKE(((uint32_t)clk_16k_enable_mask) & VBAT_FROCLKE_CLKE_MASK);
+    /* enable clk_16k output clock to corresponding modules according to the enable_mask. */
+    VBAT0->FROCLKE |= VBAT_FROCLKE_CLKE(((uint32_t)clk_16k_enable_mask));
 
     return kStatus_Success;
 }
@@ -330,6 +330,47 @@ status_t CLOCK_SetupExtClocking(uint32_t iFreq)
 
     /* Select SOSC source (internal crystal oscillator) and Configure SOSC range */
     SCG0->SOSCCFG = SCG_SOSCCFG_EREFS_MASK | SCG_SOSCCFG_RANGE(range);
+
+    /* Unlock SOSCCSR */
+    SCG0->SOSCCSR &= ~SCG_SOSCCSR_LK_MASK;
+
+    /* Enable SOSC clock monitor and Enable SOSC */
+    SCG0->SOSCCSR |= (SCG_SOSCCSR_SOSCCM_MASK | SCG_SOSCCSR_SOSCEN_MASK);
+
+    /* Wait for SOSC clock to be valid. */
+    while ((SCG0->SOSCCSR & SCG_SOSCCSR_SOSCVLD_MASK) == 0U)
+    {
+    }
+
+    s_Ext_Clk_Freq = iFreq;
+
+    return kStatus_Success;
+}
+
+/*!
+ * @brief   Initialize the external reference clock to given frequency.
+ * param   iFreq   : Desired frequency (must be equal to exact rate in Hz)
+ * return  returns success or fail status.
+ */
+status_t CLOCK_SetupExtRefClocking(uint32_t iFreq)
+{
+    
+    if (iFreq > 50000000U)
+    {
+        return kStatus_InvalidArgument;
+    }
+
+    /* If configure register is locked, return error. */
+    if ((SCG0->SOSCCSR & SCG_SOSCCSR_LK_MASK) != 0U)
+    {
+        return kStatus_ReadOnly;
+    }
+
+    /* De-initializes the SCG SOSC */
+    SCG0->SOSCCSR = SCG_SOSCCSR_SOSCERR_MASK;
+
+    /* Select SOSC source (external reference clock)*/
+    SCG0->SOSCCFG &= ~SCG_SOSCCFG_EREFS_MASK;
 
     /* Unlock SOSCCSR */
     SCG0->SOSCCSR &= ~SCG_SOSCCSR_LK_MASK;
@@ -550,9 +591,9 @@ uint32_t CLOCK_GetCoreSysClkFreq(void)
     return CLOCK_GetMainClk() / ((SYSCON->AHBCLKDIV & 0xFFU) + 1U);
 }
 
-/* Get LPI2C Clk */
-/*! brief  Return Frequency of CTimer functional Clock
- *  return Frequency of CTimer functional Clock
+/* Get I3C Clk */
+/*! brief  Return Frequency of I3C Clock
+ *  return Frequency of I3C Clock
  */
 uint32_t CLOCK_GetI3CFClkFreq(void)
 {
@@ -630,8 +671,8 @@ uint32_t CLOCK_GetCTimerClkFreq(uint32_t id)
 }
 
 /* Get LPI2C Clk */
-/*! brief  Return Frequency of CTimer functional Clock
- *  return Frequency of CTimer functional Clock
+/*! brief  Return Frequency of LPI2C functional Clock
+ *  return Frequency of LPI2C functional Clock
  */
 uint32_t CLOCK_GetLpi2cClkFreq(void)
 {

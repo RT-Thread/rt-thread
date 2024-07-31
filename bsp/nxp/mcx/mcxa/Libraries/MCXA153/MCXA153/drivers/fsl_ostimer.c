@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 NXP
+ * Copyright 2018-2021, 2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -375,20 +375,10 @@ void OSTIMER_HandleIRQ(OSTIMER_Type *base, ostimer_callback_t cb)
     }
 }
 
-#if defined(OSTIMER0)
 void OS_EVENT_DriverIRQHandler(void);
 void OS_EVENT_DriverIRQHandler(void)
 {
-    s_ostimerIsr(OSTIMER0, s_ostimerHandle[0]);
+    s_ostimerIsr(s_ostimerBases[0], s_ostimerHandle[0]);
     SDK_ISR_EXIT_BARRIER;
 }
-#endif
 
-#if defined(OSTIMER)
-void OS_EVENT_DriverIRQHandler(void);
-void OS_EVENT_DriverIRQHandler(void)
-{
-    s_ostimerIsr(OSTIMER, s_ostimerHandle[0]);
-    SDK_ISR_EXIT_BARRIER;
-}
-#endif

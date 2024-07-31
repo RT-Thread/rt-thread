@@ -62,6 +62,8 @@
 #define LPSPI0_TRIG_REG           0x5E0U
 #define LPSPI1_TRIG_REG           0x600U
 #define LPUART0_TRIG_REG          0x620U
+#define LPUART1_TRIG_REG          0x640U
+#define LPUART2_TRIG_REG          0x660U
 
 #define PMUX_SHIFT 20U
 
@@ -1300,6 +1302,74 @@ typedef enum _inputmux_connection_t
     kINPUTMUX_Gpio3PinEventTrig0ToLpuart0Trigger      = 32U + (LPUART0_TRIG_REG << PMUX_SHIFT),
     kINPUTMUX_WuuToLpuart0Trigger                     = 34U + (LPUART0_TRIG_REG << PMUX_SHIFT),
     kINPUTMUX_Usb0IppIndUartRxdUsbmuxToLpuart0Trigger = 35U + (LPUART0_TRIG_REG << PMUX_SHIFT),
+
+    /*!< LPUART1 trigger input connections. */
+    kINPUTMUX_ArmTxevToLpuart1Trigger                 = 1U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out0ToLpuart1Trigger                = 2U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out1ToLpuart1Trigger                = 3U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out2ToLpuart1Trigger                = 4U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out3ToLpuart1Trigger                = 5U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Cmp0OutToLpuart1Trigger                 = 6U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Cmp1OutToLpuart1Trigger                 = 7U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer0M2ToLpuart1Trigger               = 9U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer0M3ToLpuart1Trigger               = 10U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer1M2ToLpuart1Trigger               = 11U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer1M3ToLpuart1Trigger               = 12U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer2M2ToLpuart1Trigger               = 13U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer2M3ToLpuart1Trigger               = 14U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Lptmr0ToLpuart1Trigger                  = 15U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn0ToLpuart1Trigger                 = 17U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn1ToLpuart1Trigger                 = 18U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn2ToLpuart1Trigger                 = 19U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn3ToLpuart1Trigger                 = 20U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn4ToLpuart1Trigger                 = 21U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn5ToLpuart1Trigger                 = 22U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn6ToLpuart1Trigger                 = 23U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn7ToLpuart1Trigger                 = 24U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn8ToLpuart1Trigger                 = 25U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn9ToLpuart1Trigger                 = 26U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn10ToLpuart1Trigger                = 27U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn11ToLpuart1Trigger                = 28U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio0PinEventTrig0ToLpuart1Trigger      = 29U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio1PinEventTrig0ToLpuart1Trigger      = 30U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio2PinEventTrig0ToLpuart1Trigger      = 31U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio3PinEventTrig0ToLpuart1Trigger      = 32U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_WuuToLpuart1Trigger                     = 34U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Usb0IppIndUartRxdUsbmuxToLpuart1Trigger = 35U + (LPUART1_TRIG_REG << PMUX_SHIFT),
+
+    /*!< LPUART2 trigger input connections. */
+    kINPUTMUX_ArmTxevToLpuart2Trigger                 = 1U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out0ToLpuart2Trigger                = 2U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out1ToLpuart2Trigger                = 3U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out2ToLpuart2Trigger                = 4U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Aoi0Out3ToLpuart2Trigger                = 5U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Cmp0OutToLpuart2Trigger                 = 6U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Cmp1OutToLpuart2Trigger                 = 7U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer0M2ToLpuart2Trigger               = 9U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer0M3ToLpuart2Trigger               = 10U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer1M2ToLpuart2Trigger               = 11U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer1M3ToLpuart2Trigger               = 12U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer2M2ToLpuart2Trigger               = 13U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Ctimer2M3ToLpuart2Trigger               = 14U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Lptmr0ToLpuart2Trigger                  = 15U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn0ToLpuart2Trigger                 = 17U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn1ToLpuart2Trigger                 = 18U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn2ToLpuart2Trigger                 = 19U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn3ToLpuart2Trigger                 = 20U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn4ToLpuart2Trigger                 = 21U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn5ToLpuart2Trigger                 = 22U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn6ToLpuart2Trigger                 = 23U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn7ToLpuart2Trigger                 = 24U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn8ToLpuart2Trigger                 = 25U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn9ToLpuart2Trigger                 = 26U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn10ToLpuart2Trigger                = 27U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_TrigIn11ToLpuart2Trigger                = 28U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio0PinEventTrig0ToLpuart2Trigger      = 29U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio1PinEventTrig0ToLpuart2Trigger      = 30U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio2PinEventTrig0ToLpuart2Trigger      = 31U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Gpio3PinEventTrig0ToLpuart2Trigger      = 32U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_WuuToLpuart2Trigger                     = 34U + (LPUART2_TRIG_REG << PMUX_SHIFT),
+    kINPUTMUX_Usb0IppIndUartRxdUsbmuxToLpuart2Trigger = 35U + (LPUART2_TRIG_REG << PMUX_SHIFT),
 } inputmux_connection_t;
 
 /*@}*/
