@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 NXP.
+ * Copyright 2019-2024 NXP.
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -115,6 +115,26 @@ void WUU_SetExternalWakeUpPinsConfig(WUU_Type *base, uint8_t pinIndex, const wuu
         edgeReg = *edgeRegBase;
         edgeReg &= WUU_CLEAR_BIT_FIELD_IN_REG(WUU_PE_REG_BIT_FIELD_MASK, offset);
         *edgeRegBase = edgeReg;
+    }
+}
+
+/*!
+ * brief Disable and clear external wakeup pin settings.
+ * 
+ * param base MUU peripheral base address.
+ * param pinIndex The index of the external input pin.
+ */
+void WUU_ClearExternalWakeupPinsConfig(WUU_Type *base, uint8_t pinIndex)
+{
+    if (pinIndex <= 15U)
+    {
+        base->PE1 &= ~(WUU_PE_REG_BIT_FIELD_MASK << (2UL * (uint32_t)pinIndex));
+        base->PDC1 &= ~(WUU_PDC_REG_BIT_FIELD_MASK << (2UL * (uint32_t)pinIndex));
+    }
+    else
+    {
+        base->PE1 &= ~(WUU_PE_REG_BIT_FIELD_MASK << (2UL * (uint32_t)((uint32_t)pinIndex % 16UL)));
+        base->PDC1 &= ~(WUU_PDC_REG_BIT_FIELD_MASK << (2UL * (uint32_t)((uint32_t)pinIndex % 16UL)));
     }
 }
 

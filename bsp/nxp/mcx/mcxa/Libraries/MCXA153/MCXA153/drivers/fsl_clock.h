@@ -696,6 +696,13 @@ status_t CLOCK_SetupFRO16KClocking(uint8_t clk_16k_enable_mask);
  */
 status_t CLOCK_SetupExtClocking(uint32_t iFreq);
 
+/**
+ * @brief   Initialize the external reference clock to given frequency.
+ * @param   iFreq   : Desired frequency (must be equal to exact rate in Hz)
+ * @return  returns success or fail status.
+ */
+status_t CLOCK_SetupExtRefClocking(uint32_t iFreq);
+
 /*! @brief  Return Frequency of selected clock
  *  @return Frequency of selected clock
  */

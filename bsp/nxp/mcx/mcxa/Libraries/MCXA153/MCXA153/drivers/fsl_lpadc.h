@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LPADC_H_
-#define _FSL_LPADC_H_
+#ifndef FSL_LPADC_H_
+#define FSL_LPADC_H_
 
 #include "fsl_common.h"
 
@@ -22,10 +22,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief LPADC driver version 2.7.2. */
-#define FSL_LPADC_DRIVER_VERSION (MAKE_VERSION(2, 7, 2))
-/*@}*/
+/*! @{ */
+/*! @brief LPADC driver version 2.8.4. */
+#define FSL_LPADC_DRIVER_VERSION (MAKE_VERSION(2, 8, 4))
+/*! @} */
 
 #if (defined(FSL_FEATURE_LPADC_OFSTRIM_COUNT) && (FSL_FEATURE_LPADC_OFSTRIM_COUNT == 1))
 #define ADC_OFSTRIM_OFSTRIM_MAX  (ADC_OFSTRIM_OFSTRIM_MASK >> ADC_OFSTRIM_OFSTRIM_SHIFT)
@@ -290,8 +290,8 @@ typedef enum _lpadc_sample_channel_mode
     kLPADC_SampleChannelDiffBothSideBA = 0x3U, /*!< Differential mode, the ADC result is (CHnB-CHnA). */
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CMDL_DIFF) && FSL_FEATURE_LPADC_HAS_CMDL_DIFF */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE
-    kLPADC_SampleChannelDualSingleEndBothSide = 0x02U, /*!< Differential mode, the ADC result is (CHnA-CHnB). */
-    kLPADC_SampleChannelDiffBothSide          = 0x03U, /*!< Dual-Single-Ended Mode. Both A side and B side
+    kLPADC_SampleChannelDiffBothSide          = 0x02U, /*!< Differential mode, the ADC result is (CHnA-CHnB). */
+    kLPADC_SampleChannelDualSingleEndBothSide = 0x03U, /*!< Dual-Single-Ended Mode. Both A side and B side
                                                             channels are converted independently. */
 #endif /* defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE */
 #endif /* !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U)) */
@@ -816,7 +816,7 @@ static inline void LPADC_DoResetConfig(ADC_Type *base)
     base->CTRL &= ~ADC_CTRL_RST_MASK;
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Status
@@ -876,7 +876,7 @@ static inline void LPADC_ClearTriggerStatusFlags(ADC_Type *base, uint32_t mask)
 }
 #endif /* (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && FSL_FEATURE_LPADC_HAS_TSTAT) */
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -976,7 +976,7 @@ static inline void LPADC_EnableFIFOWatermarkDMA(ADC_Type *base, bool enable)
     }
 }
 #endif /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2)) */
-/* @} */
+/*! @} */
 
 /*!
  * @name Trigger and conversion with FIFO.
@@ -997,15 +997,24 @@ static inline uint32_t LPADC_GetConvResultCount(ADC_Type *base, uint8_t index)
 }
 
 /*!
- * brief Get the result in conversion FIFOn.
+ * @brief Get the result in conversion FIFOn.
  *
- * param base LPADC peripheral base address.
- * param result Pointer to structure variable that keeps the conversion result in conversion FIFOn.
- * param index Result FIFO index.
+ * @param base LPADC peripheral base address.
+ * @param result Pointer to structure variable that keeps the conversion result in conversion FIFOn.
+ * @param index Result FIFO index.
  *
- * return Status whether FIFOn entry is valid.
+ * @return Status whether FIFOn entry is valid.
  */
 bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result, uint8_t index);
+
+/*!
+ * @brief Get the result in conversion FIFOn using blocking method.
+ *
+ * @param base LPADC peripheral base address.
+ * @param result Pointer to structure variable that keeps the conversion result in conversion FIFOn.
+ * @param index Result FIFO index.
+ */
+void LPADC_GetConvResultBlocking(ADC_Type *base, lpadc_conv_result_t *result, uint8_t index);
 #else  /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 1)) */
 /*!
  * @brief Get the count of result kept in conversion FIFO.
@@ -1027,6 +1036,14 @@ static inline uint32_t LPADC_GetConvResultCount(ADC_Type *base)
  * @return Status whether FIFO entry is valid.
  */
 bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result);
+
+/*!
+ * @brief Get the result in conversion FIFO using blocking method.
+ *
+ * @param base LPADC peripheral base address.
+ * @param result Pointer to structure variable that keeps the conversion result in conversion FIFO.
+ */
+void LPADC_GetConvResultBlocking(ADC_Type *base, lpadc_conv_result_t *result);
 #endif /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2)) */
 
 /*!
@@ -1094,6 +1111,9 @@ static inline void LPADC_EnableHardwareTriggerCommandSelection(ADC_Type *base, u
 
 /*!
  * @brief Configure conversion command.
+
+ * @note The number of compare value register on different chips is different, that is mean in some chips, some
+ * command buffers do not have the compare functionality.
  *
  * @param base LPADC peripheral base address.
  * @param commandId ID for command in command buffer. Typically, the available value range is 1 - 15.
@@ -1186,8 +1206,6 @@ void LPADC_DoAutoCalibration(ADC_Type *base);
  */
 static inline void LPADC_SetOffsetValue(ADC_Type *base, int16_t value)
 {
-    assert((value >= -512) && (value <= 511));
-
     base->OFSTRIM = ADC_OFSTRIM_OFSTRIM(value);
 }
 
@@ -1224,9 +1242,6 @@ static inline void LPADC_GetOffsetValue(ADC_Type *base, int16_t *pValue)
  */
 static inline void LPADC_SetOffsetValue(ADC_Type *base, int32_t valueA, int32_t valueB)
 {
-    assert((valueA >= -16) && (valueA <= 15));
-    assert((valueB >= -16) && (valueB <= 15));
-
     base->OFSTRIM = ADC_OFSTRIM_OFSTRIM_A(valueA) | ADC_OFSTRIM_OFSTRIM_B(valueB);
 }
 
@@ -1503,7 +1518,7 @@ static inline void LPADC_EnableJustifiedLeft(ADC_Type *base, bool enable)
 }
 #endif /* (defined(FSL_FEATURE_LPADC_HAS_CFG2_JLEFT) && FSL_FEATURE_LPADC_HAS_CFG2_JLEFT) */
 
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -1511,4 +1526,4 @@ static inline void LPADC_EnableJustifiedLeft(ADC_Type *base, bool enable)
 /*!
  * @}
  */
-#endif /* _FSL_LPADC_H_ */
+#endif /* FSL_LPADC_H_ */
