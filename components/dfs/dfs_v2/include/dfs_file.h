@@ -148,6 +148,11 @@ struct dfs_mmap2_args
 void dfs_file_init(struct dfs_file *file);
 void dfs_file_deinit(struct dfs_file *file);
 
+struct dfs_file *dfs_file_create(void);
+
+struct dfs_file *dfs_file_get(struct dfs_file *file);
+struct dfs_file *dfs_file_put(struct dfs_file *file);
+
 int dfs_file_open(struct dfs_file *file, const char *path, int flags, mode_t mode);
 int dfs_file_close(struct dfs_file *file);
 

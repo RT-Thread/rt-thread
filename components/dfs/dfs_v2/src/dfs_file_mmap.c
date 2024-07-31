@@ -106,6 +106,9 @@ static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *ms
         }
 
         page = dfs_aspace_mmap(file, varea, msg->fault_vaddr);
+
+        dfs_file_put(file);
+
         if (page)
         {
             msg->response.status = MM_FAULT_STATUS_OK_MAPPED;
@@ -128,7 +131,6 @@ static void on_varea_open(struct rt_varea *varea)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
     varea->data = RT_NULL;
-    rt_atomic_add(&(file->open_count), 1);
 }
 
 /* do post close bushiness like def a ref */
@@ -148,16 +150,7 @@ static void on_varea_close(struct rt_varea *varea)
         }
 
         dfs_aspace_unmap(file, varea);
-        dfs_file_lock();
-        if (rt_atomic_load(&(file->open_count)) == 1)
-        {
-            dfs_file_close(file);
-        }
-        else
-        {
-            rt_atomic_sub(&(file->open_count), 1);
-        }
-        dfs_file_unlock();
+        dfs_file_put(file);
     }
     else
     {
@@ -169,7 +162,14 @@ static const char *get_name(rt_varea_t varea)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
 
-    return (file && file->dentry) ? file->dentry->pathname : "file-mapper";
+    const char *ret = (file && file->dentry) ? file->dentry->pathname : "file-mapper";
+    
+    if (file)
+    {
+        dfs_file_put(file);
+    }
+
+    return ret;
 }
 
 void page_read(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
@@ -184,6 +184,9 @@ void page_read(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
                varea->start, varea->size, varea->offset, varea->attr, varea->flag);
 
         ret = dfs_aspace_mmap_read(file, varea, msg);
+
+        dfs_file_put(file);
+
         if (ret >= 0)
         {
             msg->response.status = MM_FAULT_STATUS_OK;
@@ -211,6 +214,9 @@ void page_write(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
                varea->start, varea->size, varea->offset, varea->attr, varea->flag);
 
         ret = dfs_aspace_mmap_write(file, varea, msg);
+
+        dfs_file_put(file);
+
         if (ret > 0)
         {
             msg->response.status = MM_FAULT_STATUS_OK;
@@ -241,6 +247,8 @@ static rt_err_t unmap_pages(rt_varea_t varea, void *rm_start, void *rm_end)
             dfs_aspace_page_unmap(file, varea, rm_start);
             rm_start += ARCH_PAGE_SIZE;
         }
+
+        dfs_file_put(file);
 
         return RT_EOK;
     }
@@ -304,6 +312,8 @@ rt_err_t on_varea_split(struct rt_varea *existed, void *unmap_start, rt_size_t u
             LOG_I("file: %s%s", file->dentry->mnt->fullpath, file->dentry->pathname);
         }
 
+        dfs_file_put(file);
+
         rc = unmap_pages(existed, unmap_start, (char *)unmap_start + unmap_len);
         if (!rc)
         {
@@ -338,6 +348,9 @@ rt_err_t on_varea_merge(struct rt_varea *merge_to, struct rt_varea *merge_from)
         }
 
         dfs_aspace_unmap(file, merge_from);
+
+        dfs_file_put(file);
+
         on_varea_close(merge_from);
 
         return RT_EOK;
@@ -363,6 +376,8 @@ void *on_varea_mremap(struct rt_varea *varea, rt_size_t new_size, int flags, voi
     {
         int ret;
         rt_mem_obj_t mem_obj = dfs_get_mem_obj(file);
+
+        dfs_file_put(file);
 
         vaddr = new_address ? new_address : varea->start;
         new_size = (new_size + ARCH_PAGE_SIZE - 1);
@@ -430,6 +445,11 @@ static void *dfs_mem_obj_get_file(rt_mem_obj_t mem_obj)
 {
     struct dfs_mem_obj *dfs_mobj;
     dfs_mobj = rt_container_of(mem_obj, struct dfs_mem_obj, mem_obj);
+
+    if (dfs_mobj->file)
+    {
+        dfs_file_get(dfs_mobj->file);
+    }
     return dfs_mobj->file;
 }
 

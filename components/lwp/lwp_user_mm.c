@@ -560,6 +560,8 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
             mmap2.lwp = lwp;
 
             rc = dfs_file_mmap2(d, &mmap2);
+            dfs_file_put(d);
+
             if (rc == RT_EOK)
             {
                 ret = mmap2.ret;

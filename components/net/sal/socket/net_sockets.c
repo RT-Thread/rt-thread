@@ -59,6 +59,9 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
             /* set socket to the data of dfs_file */
             d->vnode->data = (void *)(size_t)new_socket;
 
+#ifdef RT_USING_DFS_V2
+            dfs_file_put(d);
+#endif
             return fd;
         }
 
@@ -98,6 +101,10 @@ int shutdown(int s, int how)
         rt_set_errno(-EBADF);
         return -1;
     }
+
+#ifdef RT_USING_DFS_V2
+    dfs_file_put(d);
+#endif
 
     if (sal_shutdown(socket, how) == 0)
     {
@@ -234,6 +241,9 @@ int socket(int domain, int type, int protocol)
     d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
     if (!d->vnode)
     {
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(d);
+#endif
         /* release fd */
         fd_release(fd);
         rt_set_errno(-ENOMEM);
@@ -249,9 +259,15 @@ int socket(int domain, int type, int protocol)
 
         /* set socket to the data of dfs_file */
         d->vnode->data = (void *)(size_t)socket;
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(d);
+#endif
     }
     else
     {
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(d);
+#endif
         /* release fd */
         fd_release(fd);
         rt_set_errno(-ENOMEM);
@@ -284,9 +300,16 @@ int closesocket(int s)
 
     if (!d->vnode)
     {
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(d);
+#endif
         rt_set_errno(-EBADF);
         return -1;
     }
+
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(d);
+#endif
 
     if (sal_closesocket(socket) == 0)
     {

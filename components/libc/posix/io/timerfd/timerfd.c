@@ -262,6 +262,9 @@ static int timerfd_do_create(int clockid, int flags)
             rt_set_errno(ENOMEM);
             ret = -1;
         }
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(df);
+#endif
     }
     else
     {
@@ -382,6 +385,10 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
         return -EINVAL;
 
     tfd = df->vnode->data;
+
+#ifdef RT_USING_DFS_V2
+    dfs_file_put(df);
+#endif
 
     rt_atomic_store(&(tfd->ticks), 0);
     rt_atomic_store(&(tfd->timeout_num), 0);
@@ -509,6 +516,10 @@ static int timerfd_do_gettime(int fd, struct itimerspec *cur)
     }
 
     tfd = df->vnode->data;
+
+#ifdef RT_USING_DFS_V2
+    dfs_file_put(df);
+#endif
 
     get_current_time(tfd, &cur_time);
 

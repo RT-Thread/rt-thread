@@ -29,6 +29,10 @@ int dfs_net_getsocket(int fd)
     if (file->vnode->type != FT_SOCKET) socket = -1;
     else socket = (int)(size_t)file->vnode->data;
 
+#ifdef RT_USING_DFS_V2
+    dfs_file_put(file);
+#endif
+
     return socket;
 }
 

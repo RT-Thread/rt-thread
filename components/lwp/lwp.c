@@ -295,9 +295,11 @@ static void lwp_execve_setup_stdio(struct rt_lwp *lwp)
     {
         cons_file = fd_get(cons_fd);
         lwp_fdt->maxfd = 4;
+        dfs_file_get(cons_file);
         fdt_fd_associate_file(lwp_fdt, 0, cons_file);
         fdt_fd_associate_file(lwp_fdt, 1, cons_file);
         fdt_fd_associate_file(lwp_fdt, 2, cons_file);
+        dfs_file_put(cons_file);
     }
 
     close(cons_fd);

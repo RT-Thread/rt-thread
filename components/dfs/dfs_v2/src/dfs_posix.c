@@ -67,6 +67,9 @@ int open(const char *file, int flags, ...)
     }
 
     result = dfs_file_open(df, file, flags, mode);
+
+    dfs_file_put(df);
+
     if (result < 0)
     {
         fd_release(fd);
@@ -100,8 +103,15 @@ int openat(int dirfd, const char *path, int flag, ...)
         if (dirfd != AT_FDCWD)
         {
             d = fd_get(dirfd);
-            if (!d || !d->vnode)
+            if (!d)
             {
+                rt_set_errno(-EBADF);
+                return -1;
+            }
+
+            if (!d->vnode)
+            {
+                dfs_file_put(d);
                 rt_set_errno(-EBADF);
                 return -1;
             }
@@ -109,6 +119,7 @@ int openat(int dirfd, const char *path, int flag, ...)
             fullpath = dfs_dentry_full_path(d->dentry);
             if (!fullpath)
             {
+                dfs_file_put(d);
                 rt_set_errno(-ENOMEM);
                 return -1;
             }
@@ -121,6 +132,8 @@ int openat(int dirfd, const char *path, int flag, ...)
     {
         rt_free(fullpath);
     }
+
+    dfs_file_put(d);
 
     return fd;
 }
@@ -157,14 +170,24 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
         if (__fd != AT_FDCWD)
         {
             d = fd_get(__fd);
-            if (!d || !d->vnode)
+            if (!d)
             {
-                return -EBADF;
+                rt_set_errno(-EBADF);
+                return -1;
+            }
+
+            if (!d->vnode)
+            {
+                dfs_file_put(d);
+                rt_set_errno(-EBADF);
+                return -1;
             }
 
             fullpath = dfs_dentry_full_path(d->dentry);
+            dfs_file_put(d);
+
             if (!fullpath)
-            {
+            {    
                 rt_set_errno(-ENOMEM);
                 return -1;
             }
@@ -269,6 +292,9 @@ int close(int fd)
     }
 
     result = dfs_file_close(file);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);
@@ -317,6 +343,9 @@ ssize_t read(int fd, void *buf, size_t len)
     }
 
     result = dfs_file_read(file, buf, len);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);
@@ -362,6 +391,9 @@ ssize_t write(int fd, const void *buf, size_t len)
     }
 
     result = dfs_file_write(file, buf, len);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);
@@ -397,6 +429,9 @@ off_t lseek(int fd, off_t offset, int whence)
     }
 
     result = dfs_file_lseek(file, offset, whence);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);
@@ -542,6 +577,8 @@ int fstat(int fildes, struct stat *buf)
         ret = file->dentry->mnt->fs_ops->stat(file->dentry, buf);
     }
 
+    dfs_file_put(file);
+
     return ret;
 }
 RTM_EXPORT(fstat);
@@ -571,6 +608,8 @@ int fsync(int fildes)
     }
 
     ret = dfs_file_fsync(file);
+
+    dfs_file_put(file);
 
     return ret;
 }
@@ -604,6 +643,9 @@ int fcntl(int fildes, int cmd, ...)
         va_end(ap);
 
         ret = dfs_file_ioctl(file, cmd, arg);
+
+        dfs_file_put(file);
+
         if (ret < 0)
         {
             ret = dfs_file_fcntl(fildes, cmd, (unsigned long)arg);
@@ -675,12 +717,16 @@ int ftruncate(int fd, off_t length)
 
     if (length < 0)
     {
+        dfs_file_put(file);
         rt_set_errno(-EINVAL);
 
         return -1;
     }
 
     result = dfs_file_ftruncate(file, length);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);
@@ -745,6 +791,7 @@ int fstatfs(int fildes, struct statfs *buf)
 
     /* get the fd */
     file = fd_get(fildes);
+
     if (file == NULL)
     {
         rt_set_errno(-EBADF);
@@ -756,6 +803,8 @@ int fstatfs(int fildes, struct statfs *buf)
     {
         ret = file->dentry->mnt->fs_ops->statfs(file->dentry->mnt, buf);
     }
+
+    dfs_file_put(file);
 
     return ret;
 }
@@ -908,7 +957,14 @@ DIR *opendir(const char *name)
         return RT_NULL;
     }
 
+    if (file == RT_NULL)
+    {
+        rt_set_errno(-RT_ERROR);
+        return RT_NULL;
+    }
+
     result = dfs_file_open(file, name, O_RDONLY | O_DIRECTORY, 0);
+    
     if (result >= 0)
     {
         /* open successfully */
@@ -925,10 +981,13 @@ DIR *opendir(const char *name)
             t->fd = fd;
         }
 
+        dfs_file_put(file);
         return t;
     }
 
+    dfs_file_put(file);
     fd_release(fd);
+    
     rt_set_errno(result);
 
     return NULL;
@@ -967,13 +1026,21 @@ struct dirent *readdir(DIR *d)
         if (!d->num || d->cur >= d->num)
         {
             /* get a new entry */
-            result = dfs_file_getdents(fd_get(d->fd),
+            struct dfs_file *file = fd_get(d->fd);
+            if (file == RT_NULL)
+            {
+                rt_set_errno(-EBADF);
+                return NULL;
+            }
+            result = dfs_file_getdents(file,
                                        (struct dirent *)d->buf,
                                        sizeof(d->buf) - 1);
+
+            dfs_file_put(file);
+
             if (result <= 0)
             {
                 rt_set_errno(result);
-
                 return NULL;
             }
 
@@ -1016,12 +1083,12 @@ long telldir(DIR *d)
     if (file == NULL)
     {
         rt_set_errno(-EBADF);
-
         return 0;
     }
 
     result = file->fpos - d->num + d->cur;
 
+    dfs_file_put(file);
     return result;
 }
 RTM_EXPORT(telldir);
@@ -1047,7 +1114,6 @@ void seekdir(DIR *d, long offset)
     if (file == NULL)
     {
         rt_set_errno(-EBADF);
-
         return;
     }
 
@@ -1056,7 +1122,7 @@ void seekdir(DIR *d, long offset)
         if (file->fpos > offset)
         {
             /* seek to the offset position of directory */
-            if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+            if (dfs_file_lseek(file, 0, SEEK_SET) >= 0)
                 d->num = d->cur = 0;
         }
 
@@ -1068,6 +1134,8 @@ void seekdir(DIR *d, long offset)
             }
         }
     }
+
+    dfs_file_put(file);
 }
 RTM_EXPORT(seekdir);
 
@@ -1081,9 +1149,19 @@ void rewinddir(DIR *d)
 {
     if (d && d->fd > 0)
     {
+        struct dfs_file *file = fd_get(d->fd);
+
+        if (file == NULL)
+        {
+            rt_set_errno(-EBADF);
+            return;
+        }
+
         /* seek to the beginning of directory */
-        if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+        if (dfs_file_lseek(file, 0, SEEK_SET) >= 0)
             d->num = d->cur = 0;
+
+        dfs_file_put(file);
     }
 }
 RTM_EXPORT(rewinddir);
@@ -1115,6 +1193,9 @@ int closedir(DIR *d)
     }
 
     result = dfs_file_close(file);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);
@@ -1367,6 +1448,9 @@ ssize_t pread(int fd, void *buf, size_t len, off_t offset)
     result = dfs_file_pread(file, buf, len, offset);
     /* fpos unlock */
     dfs_file_set_fpos(file, fpos);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);
@@ -1413,6 +1497,9 @@ ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset)
     result = dfs_file_pwrite(file, buf, len, offset);
     /* fpos unlock */
     dfs_file_set_fpos(file, fpos);
+
+    dfs_file_put(file);
+
     if (result < 0)
     {
         rt_set_errno(result);

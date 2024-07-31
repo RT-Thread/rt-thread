@@ -345,6 +345,9 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
                 fd_release(fd);
                 ret = -1;
             }
+            #ifdef RT_USING_DFS_V2
+            dfs_file_put(df);
+            #endif
         }
         else
         {
@@ -361,6 +364,9 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
             sigemptyset(&sfd->sigmask);
             memcpy(&sfd->sigmask, mask, sizeof(sigset_t));
             ret = fd;
+            #ifdef RT_USING_DFS_V2
+            dfs_file_put(df);
+            #endif
         }
         else
         {
