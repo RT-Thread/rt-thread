@@ -1,3 +1,5 @@
+#ifndef __SDHCI_TRANSER_H__
+#define __SDHCI_TRANSER_H__
 #define readb(c)	    u8_read(c)
 #define readw(c)		u16_read(c)
 #define readl(c)		u32_read(c)
@@ -37,7 +39,9 @@ static inline void u16_write(rt_uint16_t value, volatile void *addr)
     *(volatile rt_uint16_t *)addr = value;
 }
 
-static inline rt_uint32_t u32_write(const volatile void *addr)
+static inline rt_uint32_t u32_write(rt_uint16_t value, volatile void *addr)
 {
-    return *(const volatile rt_uint32_t *)addr;
+    *(volatile rt_uint32_t *)addr = value;
 }
+
+#endif

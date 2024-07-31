@@ -1,3 +1,6 @@
+#ifndef __SDHCI_TIME_H__
+#define __SDHCI_TIME_H__
+
 #include <rtthread.h>
 typedef int64_t ktime_t;
 
@@ -13,7 +16,7 @@ int64_t ktime_add_ms(const ktime_t kt, const rt_uint64_t msec)
 
 int64_t ktime_get(void)
 {
-    return jiffies_to_msecs(jiffies) * NSEC_PER_MSEC;
+    return jiffies_to_msecs(rt_tick_get()) * NSEC_PER_MSEC;
 }
 
 unsigned int jiffies_to_msecs(const unsigned long j)
@@ -21,7 +24,7 @@ unsigned int jiffies_to_msecs(const unsigned long j)
     return j * (1000u / RT_TICK_PER_SECOND);
 }
 
-rt_boot_t ktime_after(const ktime_t cmp1, const ktime_t cmp2)
+rt_bool_t ktime_after(const ktime_t cmp1, const ktime_t cmp2)
 {
     return ktime_compare(cmp1, cmp2) > 0;
 }
@@ -35,7 +38,7 @@ int ktime_compare(const ktime_t cmp1, const ktime_t cmp2)
     return 0;
 }
 
-int mod_timer(struct timer_list *timer, unsigned long expires)
+int mod_timer(struct rt_timer *timer, unsigned long expires)
 {
     rt_tick_t tick = rt_tick_get();
 
@@ -45,8 +48,9 @@ int mod_timer(struct timer_list *timer, unsigned long expires)
     }
     tick = expires - tick;
 
-    rt_timer_stop(&timer->tmr);
-    rt_timer_control(&timer->tmr, RT_TIMER_CTRL_SET_TIME, &tick);
+    rt_timer_stop(&timer);
+    rt_timer_control(&timer, RT_TIMER_CTRL_SET_TIME, &tick);
 
-    return rt_timer_start(&timer->tmr);
+    return rt_timer_start(&timer);
 }
+#endif

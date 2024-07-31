@@ -19,10 +19,12 @@
 #include <drivers/mmcsd_cmd.h>
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmcsd_host.h>
+#include <rtdevice.h>
 /*
  * Controller registers
  */
 
+#define MAX_TUNING_LOOP 40
 
 #define SDHCI_DMA_ADDRESS	0x00
 #define SDHCI_ARGUMENT2		SDHCI_DMA_ADDRESS
@@ -339,7 +341,7 @@ struct sdhci_adma2_64_desc {
 	rt_uint16_t	len;
 	rt_uint16_t	addr_lo;
 	rt_uint16_t	addr_hi;
-} rt_aligned(4);
+} ;
 
 #define ADMA2_TRAN_VALID	0x21
 #define ADMA2_NOP_END_VALID	0x3
@@ -502,10 +504,6 @@ struct sdhci_host {
 	struct mmc_host_ops mmc_host_ops;	/* MMC host ops */
 	rt_uint64_t dma_mask;		/* custom DMA mask */
 
-#if IS_ENABLED(CONFIG_LEDS_CLASS)
-	struct led_classdev led;	/* LED control */
-	char led_name[32];
-#endif
     rt_spinlock_t lock;
 	int flags;		/* Host attributes */
 #define SDHCI_USE_SDMA		(1<<0)	/* Host is SDMA capable */
@@ -577,7 +575,7 @@ struct sdhci_host {
 	struct rt_timer timer;	/* Timer for timeouts */
 	struct rt_timer data_timer;	/* Timer for data timeouts */
 
-#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+#ifdef CONFIG_MMC_SDHCI_EXTERNAL_DMA
 	struct dma_chan *rx_chan;
 	struct dma_chan *tx_chan;
 #endif
@@ -799,9 +797,9 @@ void sdhci_reset(struct sdhci_host *host, rt_uint8_t mask);
 void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
 int sdhci_execute_tuning(struct mmc_host *mmc, rt_uint32_t opcode);
 int __sdhci_execute_tuning(struct sdhci_host *host, rt_uint32_t opcode);
-void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
+void sdhci_set_ios(struct mmc_host *mmc, struct rt_mmcsd_io_cfg *ios);
 int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
-				      struct mmc_ios *ios);
+				      struct rt_mmcsd_io_cfg *ios);
 void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable);
 void sdhci_adma_write_desc(struct sdhci_host *host, void **desc,
 			   rt_uint64_t addr, int len, unsigned int cmd);

@@ -1,3 +1,6 @@
+#ifndef __SDHCI_DMA_H__
+#define __SDHCI_DMA_H__
+
 #define dma_map_sg(d, s, n, r) __sdhci_dma_map_sg(d, s, n, r)
 #define dma_unmap_sg(d, s, n, r) __dma_unmap_sg_attrs(d, s, n, r, 0)
 
@@ -40,8 +43,9 @@ void *dma_alloc_coherent(struct rt_device *dev, size_t size,
 }
 
 void dma_free_coherent(struct rt_device *dev, size_t size,
-        void *cpu_addr, dma_addr_t dma_handle)
+        void *cpu_addr, unsigned long dma_handle)
 {
     rt_free(cpu_addr);
 }
 
+#endif

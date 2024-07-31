@@ -6,9 +6,11 @@
  */
 #ifndef LINUX_MMC_HOST_H
 #define LINUX_MMC_HOST_H
-
+#include "sdhci.h"
+#include "mmc.h"
+#include <drivers/mmcsd_core.h>
 struct mmc_clk_phase {
-	bool valid;
+	rt_bool_t valid;
 	rt_uint16_t in_deg;
 	rt_uint16_t out_deg;
 };
@@ -175,8 +177,8 @@ struct mmc_cqe_ops {
 	 * completed or true if a timeout happened in which case indicate if
 	 * recovery is needed.
 	 */
-	bool	(*cqe_timeout)(struct mmc_host *host, struct rt_mmcsd_req *mrq,
-			       bool *recovery_needed);
+	rt_bool_t	(*cqe_timeout)(struct mmc_host *host, struct rt_mmcsd_req *mrq,
+			       rt_bool_t *recovery_needed);
 	/*
 	 * Stop all CQE activity and prepare the CQE and host controller to
 	 * accept recovery commands.
@@ -214,22 +216,8 @@ struct mmc_async_req {
  */
 struct mmc_slot {
 	int cd_irq;
-	bool cd_wake_enabled;
+	rt_bool_t cd_wake_enabled;
 	void *handler_priv;
-};
-
-/**
- * mmc_context_info - synchronization details for mmc context
- * @is_done_rcv		wake up reason was done request
- * @is_new_req		wake up reason was new request
- * @is_waiting_last_req	mmc context waiting for single running request
- * @wait		wait queue
- */
-struct mmc_context_info {
-	bool			is_done_rcv;
-	bool			is_new_req;
-	bool			is_waiting_last_req;
-	wait_queue_head_t	wait;
 };
 
 struct regulator;
@@ -358,7 +346,6 @@ struct mmc_host {
 
 	int			fixed_drv_type;	/* fixed driver type for non-removable media */
 
-	mmc_pm_flag_t		pm_caps;	/* supported pm features */
 
 	/* host specific block data */
 	unsigned int		max_seg_size;	/* see blk_queue_max_segment_size */
@@ -368,12 +355,8 @@ struct mmc_host {
 	unsigned int		max_blk_size;	/* maximum size of one mmc block */
 	unsigned int		max_blk_count;	/* maximum number of blocks in one req */
 	unsigned int		max_busy_timeout; /* max busy timeout in ms */
-
-	/* private data */
-	spinlock_t		lock;		/* lock for claim and bus ops */
-
 	struct rt_mmcsd_io_cfg		ios;		/* current io bus settings */
-
+	unsigned int        retune_period;
 	/* group bitfields together to minimize padding */
 	unsigned int		use_spi_crc:1;
 	unsigned int		claimed:1;	/* host exclusively claimed */
@@ -391,36 +374,17 @@ struct mmc_host {
 
 	int			need_retune;	/* re-tuning is needed */
 	int			hold_retune;	/* hold off re-tuning */
-	unsigned int		retune_period;	/* re-tuning period in secs */
-	struct timer_list	retune_timer;	/* for periodic re-tuning */
-
-	bool			trigger_card_event; /* card_event necessary */
-
+	rt_bool_t			trigger_card_event; /* card_event necessary */
 	struct mmc_card		*card;		/* device attached to this host */
-
-	wait_queue_head_t	wq;
-	struct mmc_ctx		*claimer;	/* context that has host claimed */
-	int			claim_cnt;	/* "claim" nesting count */
-	struct mmc_ctx		default_ctx;	/* default context */
-
-	struct delayed_work	detect;
+		int			claim_cnt;	/* "claim" nesting count */
 	int			detect_change;	/* card detect flag */
-	struct mmc_slot		slot;
-
-	const struct mmc_bus_ops *bus_ops;	/* current bus driver */
-
 	unsigned int		sdio_irqs;
-	struct task_struct	*sdio_irq_thread;
-	struct work_struct	sdio_irq_work;
-	bool			sdio_irq_pending;
-	atomic_t		sdio_irq_thread_abort;
-
-	mmc_pm_flag_t		pm_flags;	/* requested pm features */
+	rt_bool_t			sdio_irq_pending;
 
 	struct led_trigger	*led;		/* activity led */
 
 #ifdef CONFIG_REGULATOR
-	bool			regulator_enabled; /* regulator state */
+	rt_bool_t			regulator_enabled; /* regulator state */
 #endif
 	struct mmc_supply	supply;
 
@@ -444,8 +408,8 @@ struct mmc_host {
 	const struct mmc_cqe_ops *cqe_ops;
 	void			*cqe_private;
 	int			cqe_qdepth;
-	bool			cqe_enabled;
-	bool			cqe_on;
+	rt_bool_t			cqe_enabled;
+	rt_bool_t			cqe_on;
 
 	/* Inline encryption support */
 #ifdef CONFIG_MMC_CRYPTO
@@ -453,22 +417,19 @@ struct mmc_host {
 #endif
 
 	/* Host Software Queue support */
-	bool			hsq_enabled;
+	rt_bool_t			hsq_enabled;
 	int			hsq_depth;
 
 	rt_uint32_t			err_stats[MMC_ERR_MAX];
-	unsigned long		private[] ____cacheline_aligned;
+	unsigned long		private[];
 };
 
 struct device_node;
 
-struct mmc_host *mmc_alloc_host(int extra, struct device *);
-struct mmc_host *devm_mmc_alloc_host(struct device *dev, int extra);
+struct mmc_host *mmc_alloc_host(int extra, struct rt_device *);
 int mmc_add_host(struct mmc_host *);
 void mmc_remove_host(struct mmc_host *);
 void mmc_free_host(struct mmc_host *);
-void mmc_of_parse_clk_phase(struct device *dev,
-			    struct mmc_clk_phase_map *map);
 int mmc_of_parse(struct mmc_host *host);
 int mmc_of_parse_voltage(struct mmc_host *host, rt_uint32_t *mask);
 
@@ -477,10 +438,6 @@ static inline void *mmc_priv(struct mmc_host *host)
 	return (void *)host->private;
 }
 
-static inline struct mmc_host *mmc_from_priv(void *priv)
-{
-	return container_of(priv, struct mmc_host, private);
-}
 
 #define mmc_host_is_spi(host)	((host)->caps & MMC_CAP_SPI)
 
@@ -498,20 +455,10 @@ void mmc_cqe_request_done(struct mmc_host *host, struct rt_mmcsd_req *mrq);
  * May be called from host driver's system/runtime suspend/resume callbacks,
  * to know if SDIO IRQs has been claimed.
  */
-static inline bool sdio_irq_claimed(struct mmc_host *host)
+static inline rt_bool_t sdio_irq_claimed(struct mmc_host *host)
 {
 	return host->sdio_irqs > 0;
 }
-
-static inline void mmc_signal_sdio_irq(struct mmc_host *host)
-{
-	host->ops->enable_sdio_irq(host, 0);
-	host->sdio_irq_pending = true;
-	if (host->sdio_irq_thread)
-		wake_up_process(host->sdio_irq_thread);
-}
-
-void sdio_signal_irq(struct mmc_host *host);
 
 #ifdef CONFIG_REGULATOR
 int mmc_regulator_set_ocr(struct mmc_host *mmc,
@@ -537,35 +484,6 @@ int mmc_regulator_get_supply(struct mmc_host *mmc);
 int mmc_regulator_enable_vqmmc(struct mmc_host *mmc);
 void mmc_regulator_disable_vqmmc(struct mmc_host *mmc);
 
-static inline int mmc_card_is_removable(struct mmc_host *host)
-{
-	return !(host->caps & MMC_CAP_NONREMOVABLE);
-}
-
-static inline int mmc_card_keep_power(struct mmc_host *host)
-{
-	return host->pm_flags & MMC_PM_KEEP_POWER;
-}
-
-static inline int mmc_card_wake_sdio_irq(struct mmc_host *host)
-{
-	return host->pm_flags & MMC_PM_WAKE_SDIO_IRQ;
-}
-
-/* TODO: Move to private header */
-static inline int mmc_card_hs(struct mmc_card *card)
-{
-	return card->host->ios.timing == MMC_TIMING_SD_HS ||
-		card->host->ios.timing == MMC_TIMING_MMC_HS;
-}
-
-/* TODO: Move to private header */
-static inline int mmc_card_uhs(struct mmc_card *card)
-{
-	return card->host->ios.timing >= MMC_TIMING_UHS_SDR12 &&
-		card->host->ios.timing <= MMC_TIMING_UHS_DDR50;
-}
-
 void mmc_retune_timer_stop(struct mmc_host *host);
 
 static inline void mmc_retune_needed(struct mmc_host *host)
@@ -574,17 +492,17 @@ static inline void mmc_retune_needed(struct mmc_host *host)
 		host->need_retune = 1;
 }
 
-static inline bool mmc_can_retune(struct mmc_host *host)
+static inline rt_bool_t mmc_can_retune(struct mmc_host *host)
 {
 	return host->can_retune == 1;
 }
 
-static inline bool mmc_doing_retune(struct mmc_host *host)
+static inline rt_bool_t mmc_doing_retune(struct mmc_host *host)
 {
 	return host->doing_retune == 1;
 }
 
-static inline bool mmc_doing_tune(struct mmc_host *host)
+static inline rt_bool_t mmc_doing_tune(struct mmc_host *host)
 {
 	return host->doing_retune == 1 || host->doing_init_tune == 1;
 }
@@ -600,10 +518,7 @@ static inline void mmc_debugfs_err_stats_inc(struct mmc_host *host,
 	host->err_stats[stat] += 1;
 }
 
-int mmc_sd_switch(struct mmc_card *card, int mode, int group, u8 value, u8 *resp);
-int mmc_send_status(struct mmc_card *card, rt_uint32_t *status);
 int mmc_send_tuning(struct mmc_host *host, rt_uint32_t opcode, int *cmd_error);
 int mmc_send_abort_tuning(struct mmc_host *host, rt_uint32_t opcode);
-int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd);
 
 #endif /* LINUX_MMC_HOST_H */
