@@ -69,25 +69,9 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_ADC
-                config BSP_USING_ADC0_CH0
-                    bool "Enable ADC0 Channel0"
+                config BSP_USING_ADC0
+                    bool "Enable ADC0"
                     default y
-
-                config BSP_USING_ADC0_CH1
-                    bool "Enable ADC0 Channel1"
-                    default n
-
-                config BSP_USING_ADC0_CH8
-                    bool "Enable ADC0 Channel8"
-                    default n
-        
-                config BSP_USING_ADC0_CH13
-                    bool "Enable ADC0 Channel13"
-                    default n
-
-                config BSP_USING_ADC0_CH26
-                    bool "Enable ADC0 Channel26"
-                    default n
             endif
 
     config BSP_USING_FLASH
