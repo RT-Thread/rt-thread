@@ -206,6 +206,8 @@ static int platform_ofw_device_probe(void)
 
     if (ofw_node_root)
     {
+        rt_ofw_node_get(ofw_node_root);
+
         err = platform_ofw_device_probe_once(ofw_node_root);
 
         rt_ofw_node_put(ofw_node_root);
@@ -216,11 +218,13 @@ static int platform_ofw_device_probe(void)
             rt_ofw_node_put(node);
         }
 
+        rt_ofw_node_get(ofw_node_chosen);
         if ((node = rt_ofw_get_child_by_compatible(ofw_node_chosen, "simple-framebuffer")))
         {
             platform_ofw_device_probe_once(node);
             rt_ofw_node_put(node);
         }
+        rt_ofw_node_get(ofw_node_chosen);
     }
     else
     {

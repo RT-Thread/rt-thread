@@ -203,7 +203,7 @@ rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_
 
 rt_inline rt_bool_t rt_atomic_dec_and_test(volatile rt_atomic_t *ptr)
 {
-    return rt_atomic_sub(ptr, 1) == 0;
+    return rt_atomic_sub(ptr, 1) == 1;
 }
 
 rt_inline rt_atomic_t rt_atomic_fetch_add_unless(volatile rt_atomic_t *ptr, rt_atomic_t a, rt_atomic_t u)
