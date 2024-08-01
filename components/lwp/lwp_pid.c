@@ -220,7 +220,6 @@ static void __exit_files(struct rt_lwp *lwp)
         d = lwp->fdt.fds[fd];
         if (d)
         {
-            dfs_file_close(d);
             fdt_fd_release(&lwp->fdt, fd);
         }
         fd--;

@@ -240,20 +240,28 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     return idx;
 }
 
-void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
+rt_err_t fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 {
+    rt_err_t ret = -EBADF;
+
     if (fd < fdt->maxfd)
     {
         struct dfs_file *file = fdt_get_file(fdt, fd);
 
-        fdt->fds[fd] = RT_NULL;
-
         if (file)
         {
-            dfs_file_put(file); /* put fdtable's ref to file */
-            dfs_file_put(file); /* put this function's ref to file */
+            ret = dfs_file_close(file);
+
+            if (ret == 0)
+            {
+                fdt->fds[fd] = RT_NULL;
+                dfs_file_put(file); /* put fdtable's ref to file */
+                dfs_file_put(file); /* put this function's ref to file */
+            }
         }
     }
+
+    return ret;
 }
 
 /**
@@ -317,7 +325,7 @@ int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file
         goto exit;
     }
 
-    dfs_file_get(fdt->fds[fd]);
+    dfs_file_get(file);
     rt_atomic_add(&(file->open_count), 1);
     fdt->fds[fd] = file;
     retfd = fd;
@@ -341,12 +349,12 @@ int fd_new(void)
  *
  * This function will put the file descriptor.
  */
-void fd_release(int fd)
+rt_err_t fd_release(int fd)
 {
     struct dfs_fdtable *fdt;
 
     fdt = dfs_fdtable_get();
-    fdt_fd_release(fdt, fd);
+    return fdt_fd_release(fdt, fd);
 }
 
 struct dfs_file *fd_get(int fd)
@@ -497,11 +505,7 @@ int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
         return -RT_ENOSYS;
     }
 
-    err = dfs_file_close(fdt->fds[fd]);
-    if (!err)
-    {
-        fdt_fd_release(fdt, fd);
-    }
+    err = fdt_fd_release(fdt, fd);
 
     dfs_file_unlock();
 
@@ -638,8 +642,6 @@ int dfs_dup_from(int oldfd, struct dfs_fdtable *fdtab)
         file->data = fdtab->fds[oldfd]->data;
     }
 
-    dfs_file_close(fdtab->fds[oldfd]);
-
 exit:
     fdt_fd_release(fdtab, oldfd);
     dfs_file_unlock();
@@ -704,11 +706,6 @@ rt_err_t sys_dup2(int oldfd, int newfd)
 
     if (fdt->fds[newfd])
     {
-        ret = dfs_file_close(fdt->fds[newfd]);
-        if (ret < 0)
-        {
-            goto exit;
-        }
         fd_release(newfd);
     }
 
