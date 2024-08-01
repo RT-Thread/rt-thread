@@ -5,6 +5,7 @@
 #include <drivers/mmcsd_cmd.h>
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmcsd_host.h>
+#include "head.h"
 #define mmc_dev(x) ((x)->parent)
 
 #define MMC_SEND_TUNING_BLOCK_HS200 SEND_TUNING_BLOCK_HS200
@@ -66,6 +67,9 @@
 #define MMC_BUS_WIDTH_4 MMCSD_BUS_WIDTH_4
 #define MMC_BUS_WIDTH_1 MMCSD_BUS_WIDTH_1
 
+
+struct mmc_host a;
+
 static inline rt_bool_t mmc_op_multi(rt_uint32_t opcode)
 {
 	return opcode == MMC_WRITE_MULTIPLE_BLOCK ||
@@ -78,11 +82,6 @@ static inline rt_bool_t mmc_op_tuning(rt_uint32_t opcode)
 			opcode == MMC_SEND_TUNING_BLOCK_HS200;
 }
 
-static inline int mmc_card_is_removable(struct mmc_host *host)
-{
-    return !(host->caps & MMC_CAP_NONREMOVABLE);
-}
-
 int mmc_gpio_get_cd(struct mmc_host *host)
 {
     return -ENOSYS;
@@ -93,7 +92,7 @@ void mmc_detect_change(struct mmc_host *host, unsigned long delay)
 
 }
 
-int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
+int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct rt_mmcsd_io_cfg *ios)
 {
     return 0;
 }

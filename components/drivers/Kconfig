@@ -30,5 +30,6 @@ rsource "ktime/Kconfig"
 rsource "clk/Kconfig"
 rsource "hwtimer/Kconfig"
 rsource "usb/Kconfig"
+rsource "sdhci/Kconfig"
 
 endmenu

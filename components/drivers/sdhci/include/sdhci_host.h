@@ -6,8 +6,7 @@
  */
 #ifndef LINUX_MMC_HOST_H
 #define LINUX_MMC_HOST_H
-#include "sdhci.h"
-#include "mmc.h"
+#include "head.h"
 #include <drivers/mmcsd_core.h>
 struct mmc_clk_phase {
 	rt_bool_t valid;
@@ -424,6 +423,12 @@ struct mmc_host {
 	unsigned long		private[];
 };
 
+
+static inline int mmc_card_is_removable(struct mmc_host *host)
+{
+    return !(host->caps & MMC_CAP_NONREMOVABLE);
+}
+
 struct device_node;
 
 struct mmc_host *mmc_alloc_host(int extra, struct rt_device *);
@@ -473,11 +478,7 @@ static inline int mmc_regulator_set_ocr(struct mmc_host *mmc,
 	return 0;
 }
 
-static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
-					  struct mmc_ios *ios)
-{
-	return -EINVAL;
-}
+
 #endif
 
 int mmc_regulator_get_supply(struct mmc_host *mmc);
@@ -507,7 +508,7 @@ static inline rt_bool_t mmc_doing_tune(struct mmc_host *host)
 	return host->doing_retune == 1 || host->doing_init_tune == 1;
 }
 
-static inline enum dma_data_direction mmc_get_dma_dir(struct rt_mmcsd_data *data)
+static inline int mmc_get_dma_dir(struct rt_mmcsd_data *data)
 {
 	return data->flags & DATA_DIR_WRITE ? DMA_TO_DEVICE : DMA_FROM_DEVICE;
 }

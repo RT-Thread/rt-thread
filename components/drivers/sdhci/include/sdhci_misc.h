@@ -1,6 +1,8 @@
 #ifndef __SDHCI_MISC_H__
 #define __SDHCI_MISC_H__
 
+#include "head.h"
+
 #define __BF_FIELD_CHECK(...)
 
 #define FIELD_GET(_mask, _reg)                      \
@@ -78,11 +80,6 @@ int regulator_enable(struct regulator *regulator)
 int regulator_get_current_limit(struct regulator *regulator)
 {
     return 0;
-}
-
-void dma_free_coherent(struct rt_device *dev, size_t size,
-        void *cpu_addr, unsigned long dma_handle)
-{
 }
 
 rt_bool_t mmc_can_gpio_cd(struct mmc_host *host)

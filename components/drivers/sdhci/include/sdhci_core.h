@@ -6,7 +6,6 @@
 #define upper_32_bits(n) ((rt_uint32_t)(((n) >> 16) >> 16))
 
 
-struct mmc_data;
 
 enum mmc_blk_status {
 	MMC_BLK_SUCCESS = 0,
@@ -19,9 +18,6 @@ enum mmc_blk_status {
 	MMC_BLK_NOMEDIUM,
 	MMC_BLK_NEW_REQUEST,
 };
-
-
-struct mmc_host;
 
 
 // void mmc_wait_for_req(struct mmc_host *host, struct mmc_request *mrq);

@@ -1,5 +1,5 @@
 #include <rtthread.h>
-#include "sdhci.h"
+#include "head.h"
 
 
 
@@ -54,7 +54,19 @@ void mmc_request_done(struct mmc_host *host, struct rt_mmc_req *mrq)
 //add host in rtt while sdhci complete
 int mmc_add_host(struct mmc_host *mmc)
 {
-        return 0;
+    mmc->rthost.ops = &rt_mmcsd_ops;
+    mmc->rthost.flags = mmc->caps;
+    mmc->rthost.freq_max = mmc->f_max;
+    mmc->rthost.freq_min = mmc->f_min;
+    mmc->rthost.max_dma_segs = mmc->max_segs;
+    mmc->rthost.max_seg_size = mmc->max_seg_size;
+    mmc->rthost.max_blk_size = mmc->max_blk_size;
+    mmc->rthost.max_blk_count = mmc->max_blk_count;
+    mmc->rthost.valid_ocr = VDD_165_195;
+    
+
+    mmcsd_change(&mmc->rthost);
+    return 0;
 }
 
 struct mmc_host *mmc_alloc_host(int extra, struct rt_device *dev)

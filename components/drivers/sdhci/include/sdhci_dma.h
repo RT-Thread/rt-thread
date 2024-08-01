@@ -1,6 +1,7 @@
 #ifndef __SDHCI_DMA_H__
 #define __SDHCI_DMA_H__
 
+
 #define dma_map_sg(d, s, n, r) __sdhci_dma_map_sg(d, s, n, r)
 #define dma_unmap_sg(d, s, n, r) __dma_unmap_sg_attrs(d, s, n, r, 0)
 

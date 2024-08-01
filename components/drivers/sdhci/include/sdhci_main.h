@@ -9,13 +9,7 @@
 #ifndef __SDHCI_HW_H
 #define __SDHCI_HW_H
 
-#include "host.h"
-#include "dma.h"
-#include "mmc.h"
-#include "misc.h"
-#include "transer.h"
-#include "time.h"
-#include "core.h"
+#include "head.h"
 #include <drivers/mmcsd_cmd.h>
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmcsd_host.h>
@@ -827,5 +821,12 @@ void sdhci_abort_tuning(struct sdhci_host *host, rt_uint32_t opcode);
 void sdhci_switch_external_dma(struct sdhci_host *host, rt_bool_t en);
 void sdhci_set_data_timeout_irq(struct sdhci_host *host, rt_bool_t enable);
 void __sdhci_set_timeout(struct sdhci_host *host, struct rt_mmcsd_cmd *cmd);
+static void sdhci_complete_work(struct rt_work *work, void *work_data);
+static void sdhci_timeout_timer(void* parameter);
+static void sdhci_timeout_data_timer(void* parameter);
+static rt_isr_handler_t sdhci_thread_irq(struct rt_work *work, void *work_data);
+static rt_isr_handler_t  sdhci_irq(int irq, void *dev_id);
+static rt_bool_t sdhci_send_command(struct sdhci_host *host, struct rt_mmcsd_cmd *cmd);
+static rt_bool_t sdhci_request_done(struct sdhci_host *host);
 
 #endif /* __SDHCI_HW_H */
