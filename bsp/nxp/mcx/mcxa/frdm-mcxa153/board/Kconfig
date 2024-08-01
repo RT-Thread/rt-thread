@@ -125,28 +125,12 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_PWM
             bool "Enable PWM"
             select RT_USING_PWM
-            default y
+            default N
 
             if BSP_USING_PWM
-                config BSP_USING_CTIMER1_MAT0
-                    bool "Enable CIMER1 Match0 as PWM output"
-                    default y
-
-                config BSP_USING_CTIMER2_MAT0
-                    bool "Enable CIMER2 Match0 as PWM output"
-                    default n
-
-                config BSP_USING_CTIMER2_MAT1
-                    bool "Enable CIMER2 Match1 as PWM output"
-                    default n
-
-                config BSP_USING_CTIMER2_MAT2
-                    bool "Enable CIMER2 Match2 as PWM output"
-                    default n
-
-                config BSP_USING_CTIMER3_MAT2
-                    bool "Enable CIMER3 Match2 as PWM output"
-                    default n
+                config BSP_USING_PWM0
+                    bool "Enable PWM0"
+                    default N
             endif
 endmenu
 
