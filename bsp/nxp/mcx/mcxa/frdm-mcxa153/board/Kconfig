@@ -50,16 +50,13 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_SPI
             bool "Enable SPI"
             select RT_USING_SPI
-            default y
+            select BSP_USING_PIN
+            default n
 
             if BSP_USING_SPI
-                config BSP_USING_SPI3
-                    bool "Enable Flexcomm3 as SPI"
+                config BSP_USING_SPI0
+                    bool "Enable SPI0"
                     default n
-
-                config BSP_USING_SPI8
-                    bool "Enable Flexcomm8 as High Speed SPI"
-                    default y
             endif
 
     menuconfig BSP_USING_ADC
