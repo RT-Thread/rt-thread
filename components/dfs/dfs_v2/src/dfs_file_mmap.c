@@ -131,6 +131,7 @@ static void on_varea_open(struct rt_varea *varea)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
     varea->data = RT_NULL;
+    dfs_file_put(file);
 }
 
 /* do post close bushiness like def a ref */
@@ -393,6 +394,10 @@ void *on_varea_mremap(struct rt_varea *varea, rt_size_t new_size, int flags, voi
             LOG_I("old: %p size: %p new: %p size: %p", varea->start, varea->size, vaddr, new_size);
         }
     }
+    else if (file)
+    {
+        dfs_file_put(file);
+    }
 
     return vaddr;
 }
@@ -431,7 +436,7 @@ static rt_mem_obj_t dfs_get_mem_obj(struct dfs_file *file)
         dfs_mobj = rt_malloc(sizeof(*dfs_mobj));
         if (dfs_mobj)
         {
-            dfs_mobj->file = file;
+            dfs_mobj->file = dfs_file_get(file);
             mobj = &dfs_mobj->mem_obj;
             memcpy(mobj, &_mem_obj, sizeof(*mobj));
             file->mmap_context = mobj;

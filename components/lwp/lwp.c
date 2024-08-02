@@ -291,14 +291,16 @@ static void lwp_execve_setup_stdio(struct rt_lwp *lwp)
 
     /* init 4 fds */
     lwp_fdt->fds = rt_calloc(4, sizeof(void *));
+    rt_memset(lwp_fdt->fds, 0, 4 * sizeof(void *));
+
     if (lwp_fdt->fds)
     {
         cons_file = fd_get(cons_fd);
         lwp_fdt->maxfd = 4;
 
-        fdt_fd_associate_file(lwp_fdt, 0, cons_file);
-        fdt_fd_associate_file(lwp_fdt, 1, cons_file);
-        fdt_fd_associate_file(lwp_fdt, 2, cons_file);
+        fdt_fd_associate_file(lwp_fdt, 0, cons_file, RT_FALSE);
+        fdt_fd_associate_file(lwp_fdt, 1, cons_file, RT_FALSE);
+        fdt_fd_associate_file(lwp_fdt, 2, cons_file, RT_FALSE);
         dfs_file_put(cons_file);
     }
 

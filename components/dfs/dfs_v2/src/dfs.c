@@ -219,15 +219,14 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
 
         if (file)
         {
-            rt_atomic_add(&file->open_count, 1);
+            fdt_fd_associate_file(fdt, idx, file, RT_FALSE);
+            dfs_file_put(file);
             LOG_D("allocate a new fd @ %d", idx);
         }
         else
         {
             idx = -1;
         }
-
-        fdt->fds[idx] = file;
     }
     else
     {
@@ -296,7 +295,7 @@ struct dfs_file *fdt_get_file(struct dfs_fdtable *fdt, int fd)
     return f;
 }
 
-int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file)
+int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file, rt_bool_t replace)
 {
     int retfd = -1;
 
@@ -322,7 +321,15 @@ int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file
 
     if (fdt->fds[fd])
     {
-        goto exit;
+        if (replace == RT_FALSE)
+        {
+            goto exit;
+        }
+        else
+        {
+            dfs_file_close(fdt->fds[fd]);
+            dfs_file_put(fdt->fds[fd]);
+        }
     }
 
     dfs_file_get(file);
@@ -536,10 +543,7 @@ int dfs_dup(int oldfd, int startfd)
     newfd = _fdt_slot_alloc(fdt, startfd);
     if (newfd >= 0)
     {
-        dfs_file_get(fdt->fds[oldfd]);
-        rt_atomic_add(&(fdt->fds[oldfd]->open_count), 1);
-
-        fdt->fds[newfd] = fdt->fds[oldfd];
+        newfd = fdt_fd_associate_file(fdt, newfd, fdt->fds[oldfd], RT_FALSE);
     }
 exit:
     dfs_file_unlock();
@@ -584,10 +588,7 @@ int dfs_dup_to(int oldfd, struct dfs_fdtable *fdtab)
     newfd = _fdt_slot_alloc(fdtab, DFS_STDIO_OFFSET);
     if (newfd >= 0)
     {
-        dfs_file_get(fdt->fds[oldfd]);
-        rt_atomic_add(&(fdtab->fds[oldfd]->open_count), 1);
-
-        fdtab->fds[newfd] = fdt->fds[oldfd];
+        newfd = fdt_fd_associate_file(fdtab, newfd, fdt->fds[oldfd], RT_FALSE);
     }
 exit:
     dfs_file_unlock();
@@ -667,7 +668,6 @@ int sys_dup(int oldfd)
 rt_err_t sys_dup2(int oldfd, int newfd)
 {
     struct dfs_fdtable *fdt = NULL;
-    int ret = 0;
     int retfd = -1;
 
     if (dfs_file_lock() != RT_EOK)
@@ -704,16 +704,8 @@ rt_err_t sys_dup2(int oldfd, int newfd)
         goto exit;
     }
 
-    if (fdt->fds[newfd])
-    {
-        fd_release(newfd);
-    }
+    retfd = fdt_fd_associate_file(fdt, newfd, fdt->fds[oldfd], RT_TRUE);
 
-    dfs_file_get(fdt->fds[oldfd]);
-    rt_atomic_add(&(fdt->fds[oldfd]->open_count), 1);
-    fdt->fds[newfd] = fdt->fds[oldfd];
-
-    retfd = newfd;
 exit:
     dfs_file_unlock();
     return retfd;

@@ -239,6 +239,14 @@ static void _dfs_file_release(struct rt_ref *ref)
 
     RT_ASSERT(rt_atomic_load(&file->open_count) == 0);
 
+    if (file->fops && file->fops->close)
+    {
+        if (file->fops->close(file) != RT_EOK)
+        {
+            LOG_E("file %p close error", file);
+        }
+    }
+
     rt_mutex_detach(&file->pos_lock);
 
     if (file->dentry)
@@ -714,11 +722,9 @@ int dfs_file_close(struct dfs_file *file)
 #ifdef RT_USING_PAGECACHE
             if (file->vnode->aspace)
             {
-                dfs_aspace_flush(file->vnode->aspace);
+                ret = dfs_aspace_flush(file->vnode->aspace);
             }
 #endif
-            ret = file->fops->close(file);
-
             if (ret == 0) /* close file sucessfully */
             {
                 DLOG(msg, "dfs_file", "dfs_file", DLOG_MSG, "dfs_file_put(file)");

@@ -281,19 +281,8 @@ RTM_EXPORT(creat);
 int close(int fd)
 {
     int result;
-    struct dfs_file *file;
 
-    file = fd_get(fd);
-    if (file == NULL)
-    {
-        rt_set_errno(-EBADF);
-
-        return -1;
-    }
-
-    result = dfs_file_close(file);
-
-    dfs_file_put(file);
+    result = fd_release(fd);
 
     if (result < 0)
     {
@@ -301,8 +290,6 @@ int close(int fd)
 
         return -1;
     }
-
-    fd_release(fd);
 
     return 0;
 }
@@ -971,7 +958,6 @@ DIR *opendir(const char *name)
         t = (DIR *) rt_malloc(sizeof(DIR));
         if (t == NULL)
         {
-            dfs_file_close(file);
             fd_release(fd);
         }
         else
@@ -1177,7 +1163,6 @@ RTM_EXPORT(rewinddir);
 int closedir(DIR *d)
 {
     int result;
-    struct dfs_file *file;
 
     if (d == NULL)
     {
@@ -1185,16 +1170,7 @@ int closedir(DIR *d)
         return -1;
     }
 
-    file = fd_get(d->fd);
-    if (file == NULL)
-    {
-        rt_set_errno(-EBADF);
-        return -1;
-    }
-
-    result = dfs_file_close(file);
-
-    dfs_file_put(file);
+    result = fd_release(d->fd);
 
     if (result < 0)
     {
@@ -1204,7 +1180,6 @@ int closedir(DIR *d)
     }
     else
     {
-        fd_release(d->fd);
         rt_free(d);
     }
 
