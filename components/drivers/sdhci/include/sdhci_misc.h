@@ -1,10 +1,10 @@
 #ifndef __SDHCI_MISC_H__
 #define __SDHCI_MISC_H__
 
-#include "head.h"
+#include "sdhci_host.h"
 
 #define __BF_FIELD_CHECK(...)
-
+#define __bf_shf(x) (__builtin_ffsll(x) - 1)
 #define FIELD_GET(_mask, _reg)                      \
     ({                              \
         __BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET: ");   \
@@ -37,12 +37,6 @@
 
 #define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 
-
-unsigned long nsecs_to_jiffies(rt_uint64_t n)
-{
-    return 0;
-}
-
 #define do_div(n,base) ({                   \
     uint32_t __base = (base);               \
     uint32_t __rem;                     \
@@ -53,37 +47,15 @@ unsigned long nsecs_to_jiffies(rt_uint64_t n)
 
 # define fallthrough                    do {} while (0)
 
-void usleep_range(unsigned long min, unsigned long max)
-{
-    rt_int32_t msecs;
 
-    msecs = (min + max)/2000;
-    if (msecs)
-        rt_thread_mdelay(msecs);
-    else
-        rt_hw_us_delay((min + max)/2);
-}
+
+struct regulator {
+    const char *supply_name;
+};
 
 int regulator_is_supported_voltage(struct regulator *regulator,
-				   int min_uV, int max_uV)
-{
-	return 0;
-}
-
-int regulator_enable(struct regulator *regulator)
-{
-	return 0;
-
-}
-
-
-int regulator_get_current_limit(struct regulator *regulator)
-{
-    return 0;
-}
-
-rt_bool_t mmc_can_gpio_cd(struct mmc_host *host)
-{
-    return RT_FALSE;
-}
+				   int min_uV, int max_uV);
+int regulator_enable(struct regulator *regulator);
+int regulator_get_current_limit(struct regulator *regulator);
+rt_bool_t mmc_can_gpio_cd(struct mmc_host *host);
 #endif

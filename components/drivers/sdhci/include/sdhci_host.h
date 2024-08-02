@@ -4,10 +4,92 @@
  *
  *  Host driver specific definitions.
  */
-#ifndef LINUX_MMC_HOST_H
-#define LINUX_MMC_HOST_H
-#include "head.h"
+#ifndef __SDHCI_MMC_H__
+#define __SDHCI_MMC_H__
+
 #include <drivers/mmcsd_core.h>
+#include <rtthread.h>
+#include <drivers/mmcsd_cmd.h>
+#include <drivers/mmcsd_core.h>
+#include <drivers/mmcsd_host.h>
+#include "sdhci_dma.h"
+
+#define mmc_dev(x) ((x)->parent)
+
+#define MMC_SEND_TUNING_BLOCK_HS200 SEND_TUNING_BLOCK_HS200
+#define MMC_SEND_TUNING_BLOCK SEND_TUNING_BLOCK
+#define MMC_STOP_TRANSMISSION STOP_TRANSMISSION
+#define MMC_BUS_TEST_R           14   /* adtc                    R1  */
+#define MMC_WRITE_MULTIPLE_BLOCK WRITE_MULTIPLE_BLOCK
+#define MMC_READ_MULTIPLE_BLOCK READ_MULTIPLE_BLOCK
+
+#define MMC_TIMING_UHS_DDR50 MMCSD_TIMING_UHS_DDR50
+#define MMC_TIMING_UHS_SDR50 MMCSD_TIMING_UHS_SDR50
+#define MMC_TIMING_MMC_HS200 MMCSD_TIMING_MMC_HS200
+#define MMC_TIMING_MMC_HS400 MMCSD_TIMING_MMC_HS400
+#define MMC_TIMING_UHS_SDR104 MMCSD_TIMING_UHS_SDR104
+#define MMC_TIMING_UHS_SDR25 MMCSD_TIMING_UHS_SDR25
+#define MMC_TIMING_MMC_DDR52 MMCSD_TIMING_MMC_DDR52
+#define MMC_TIMING_UHS_SDR12 MMCSD_TIMING_UHS_SDR12
+#define MMC_TIMING_SD_HS MMCSD_TIMING_SD_HS
+#define  MMC_TIMING_MMC_HS  MMCSD_TIMING_MMC_HS
+
+#define MMC_POWER_OFF       MMCSD_POWER_OFF
+#define MMC_POWER_UP        MMCSD_POWER_UP
+#define MMC_POWER_ON        MMCSD_POWER_ON
+#define MMC_POWER_UNDEFINED 3
+
+#define MMC_SET_DRIVER_TYPE_B   0
+#define MMC_SET_DRIVER_TYPE_A   1
+#define MMC_SET_DRIVER_TYPE_C   2
+#define MMC_SET_DRIVER_TYPE_D   3
+
+#define MMC_SIGNAL_VOLTAGE_330  0
+#define MMC_SIGNAL_VOLTAGE_180  1
+#define MMC_SIGNAL_VOLTAGE_120  2
+
+#define MMC_RSP_PRESENT (1 << 16)
+#define MMC_RSP_136 (1 << 17)       /* 136 bit response */
+#define MMC_RSP_CRC (1 << 18)       /* expect valid crc */
+#define MMC_RSP_BUSY    (1 << 19)       /* card may send busy */
+#define MMC_RSP_OPCODE  (1 << 20)       /* response contains opcode */
+
+/*
+ * These are the native response types, and correspond to valid bit
+ * patterns of the above flags.  One additional valid pattern
+ * is all zeros, which means we don't expect a response.
+ */
+#define MMC_RSP_NONE    (0)
+#define MMC_RSP_R1  (MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+#define MMC_RSP_R1B (MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE|MMC_RSP_BUSY)
+#define MMC_RSP_R2  (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC)
+#define MMC_RSP_R3  (MMC_RSP_PRESENT)
+#define MMC_RSP_R4  (MMC_RSP_PRESENT)
+#define MMC_RSP_R5  (MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+#define MMC_RSP_R6  (MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+#define MMC_RSP_R7  (MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+
+#define MMC_CMD_ADTC CMD_ADTC
+
+#define MMC_BUS_WIDTH_8 MMCSD_BUS_WIDTH_8
+#define MMC_BUS_WIDTH_4 MMCSD_BUS_WIDTH_4
+#define MMC_BUS_WIDTH_1 MMCSD_BUS_WIDTH_1
+
+#define MMC_PM_KEEP_POWER   (1 << 0)    /* preserve card power during suspend */
+#define MMC_PM_WAKE_SDIO_IRQ    (1 << 1)    /* wake up host system on SDIO IRQ assertion */
+enum mmc_blk_status {
+	MMC_BLK_SUCCESS = 0,
+	MMC_BLK_PARTIAL,
+	MMC_BLK_CMD_ERR,
+	MMC_BLK_RETRY,
+	MMC_BLK_ABORT,
+	MMC_BLK_DATA_ERR,
+	MMC_BLK_ECC_ERR,
+	MMC_BLK_NOMEDIUM,
+	MMC_BLK_NEW_REQUEST,
+};
+
+/************************************************************************************************ */
 struct mmc_clk_phase {
 	rt_bool_t valid;
 	rt_uint16_t in_deg;
@@ -40,166 +122,86 @@ enum mmc_err_stat {
 	MMC_ERR_MAX,
 };
 
-struct mmc_host_ops {
-	/*
-	 * It is optional for the host to implement pre_req and post_req in
-	 * order to support double buffering of requests (prepare one
-	 * request while another request is active).
-	 * pre_req() must always be followed by a post_req().
-	 * To undo a call made to pre_req(), call post_req() with
-	 * a nonzero err condition.
-	 */
-	void	(*post_req)(struct mmc_host *host, struct rt_mmcsd_req *req,
-			    int err);
-	void	(*pre_req)(struct mmc_host *host, struct rt_mmcsd_req *req);
-	void	(*request)(struct mmc_host *host, struct rt_mmcsd_req *req);
-	/* Submit one request to host in atomic context. */
-	int	(*request_atomic)(struct mmc_host *host,
-				  struct rt_mmcsd_req *req);
+struct mmc_host_ops
+{
+    /*
+     * It is optional for the host to implement pre_req and post_req in
+     * order to support double buffering of requests (prepare one
+     * request while another request is active).
+     * pre_req() must always be followed by a post_req().
+     * To undo a call made to pre_req(), call post_req() with
+     * a nonzero err condition.
+     */
+    void    (*post_req)(struct mmc_host *host, struct rt_mmcsd_req *req,
+                int err);
+    void    (*pre_req)(struct mmc_host *host, struct rt_mmcsd_req *req);
+    void    (*request)(struct mmc_host *host, struct rt_mmcsd_req *req);
 
-	/*
-	 * Avoid calling the next three functions too often or in a "fast
-	 * path", since underlaying controller might implement them in an
-	 * expensive and/or slow way. Also note that these functions might
-	 * sleep, so don't call them in the atomic contexts!
-	 */
+    /*
+     * Avoid calling the next three functions too often or in a "fast
+     * path", since underlaying controller might implement them in an
+     * expensive and/or slow way. Also note that these functions might
+     * sleep, so don't call them in the atomic contexts!
+     */
 
-	/*
-	 * Notes to the set_ios callback:
-	 * ios->clock might be 0. For some controllers, setting 0Hz
-	 * as any other frequency works. However, some controllers
-	 * explicitly need to disable the clock. Otherwise e.g. voltage
-	 * switching might fail because the SDCLK is not really quiet.
-	 */
-	void	(*set_ios)(struct mmc_host *host, struct mmc_ios *ios);
+    /*
+     * Notes to the set_ios callback:
+     * ios->clock might be 0. For some controllers, setting 0Hz
+     * as any other frequency works. However, some controllers
+     * explicitly need to disable the clock. Otherwise e.g. voltage
+     * switching might fail because the SDCLK is not really quiet.
+     */
+    void    (*set_ios)(struct mmc_host *host, struct rt_mmcsd_io_cfg *ios);
 
-	/*
-	 * Return values for the get_ro callback should be:
-	 *   0 for a read/write card
-	 *   1 for a read-only card
-	 *   -ENOSYS when not supported (equal to NULL callback)
-	 *   or a negative errno value when something bad happened
-	 */
-	int	(*get_ro)(struct mmc_host *host);
+    /*
+     * Return values for the get_ro callback should be:
+     *   0 for a read/write card
+     *   1 for a read-only card
+     *   -ENOSYS when not supported (equal to NULL callback)
+     *   or a negative errno value when something bad happened
+     */
+    int (*get_ro)(struct mmc_host *host);
 
-	/*
-	 * Return values for the get_cd callback should be:
-	 *   0 for a absent card
-	 *   1 for a present card
-	 *   -ENOSYS when not supported (equal to NULL callback)
-	 *   or a negative errno value when something bad happened
-	 */
-	int	(*get_cd)(struct mmc_host *host);
+    /*
+     * Return values for the get_cd callback should be:
+     *   0 for a absent card
+     *   1 for a present card
+     *   -ENOSYS when not supported (equal to NULL callback)
+     *   or a negative errno value when something bad happened
+     */
+    int (*get_cd)(struct mmc_host *host);
 
-	void	(*enable_sdio_irq)(struct mmc_host *host, int enable);
-	/* Mandatory callback when using MMC_CAP2_SDIO_IRQ_NOTHREAD. */
-	void	(*ack_sdio_irq)(struct mmc_host *host);
+    void    (*enable_sdio_irq)(struct mmc_host *host, int enable);
+    /* Mandatory callback when using MMC_CAP2_SDIO_IRQ_NOTHREAD. */
+    void    (*ack_sdio_irq)(struct mmc_host *host);
 
-	/* optional callback for HC quirks */
-	void	(*init_card)(struct mmc_host *host, struct mmc_card *card);
+    int (*start_signal_voltage_switch)(struct mmc_host *host, struct rt_mmcsd_io_cfg *ios);
 
-	int	(*start_signal_voltage_switch)(struct mmc_host *host, struct mmc_ios *ios);
+    /* Check if the card is pulling dat[0:3] low */
+    int (*card_busy)(struct mmc_host *host);
 
-	/* Check if the card is pulling dat[0] low */
-	int	(*card_busy)(struct mmc_host *host);
+    /* The tuning command opcode value is different for SD and eMMC cards */
+    int (*execute_tuning)(struct mmc_host *host, unsigned opcode);
 
-	/* The tuning command opcode value is different for SD and eMMC cards */
-	int	(*execute_tuning)(struct mmc_host *host, rt_uint32_t opcode);
+    /* Prepare HS400 target operating frequency depending host driver */
+    int (*prepare_hs400_tuning)(struct mmc_host *host, struct rt_mmcsd_io_cfg *ios);
 
-	/* Prepare HS400 target operating frequency depending host driver */
-	int	(*prepare_hs400_tuning)(struct mmc_host *host, struct mmc_ios *ios);
+    /* Prepare switch to DDR during the HS400 init sequence */
+    int (*hs400_prepare_ddr)(struct mmc_host *host);
 
-	/* Execute HS400 tuning depending host driver */
-	int	(*execute_hs400_tuning)(struct mmc_host *host, struct mmc_card *card);
+    /* Prepare for switching from HS400 to HS200 */
+    void    (*hs400_downgrade)(struct mmc_host *host);
 
-	/* Optional callback to prepare for SD high-speed tuning */
-	int	(*prepare_sd_hs_tuning)(struct mmc_host *host, struct mmc_card *card);
+    /* Complete selection of HS400 */
+    void    (*hs400_complete)(struct mmc_host *host);
 
-	/* Optional callback to execute SD high-speed tuning */
-	int	(*execute_sd_hs_tuning)(struct mmc_host *host, struct mmc_card *card);
+    /* Prepare enhanced strobe depending host driver */
+    void    (*hs400_enhanced_strobe)(struct mmc_host *host,
+                     struct rt_mmcsd_io_cfg *ios);
 
-	/* Prepare switch to DDR during the HS400 init sequence */
-	int	(*hs400_prepare_ddr)(struct mmc_host *host);
-
-	/* Prepare for switching from HS400 to HS200 */
-	void	(*hs400_downgrade)(struct mmc_host *host);
-
-	/* Complete selection of HS400 */
-	void	(*hs400_complete)(struct mmc_host *host);
-
-	/* Prepare enhanced strobe depending host driver */
-	void	(*hs400_enhanced_strobe)(struct mmc_host *host,
-					 struct mmc_ios *ios);
-	int	(*select_drive_strength)(struct mmc_card *card,
-					 unsigned int max_dtr, int host_drv,
-					 int card_drv, int *drv_type);
-	/* Reset the eMMC card via RST_n */
-	void	(*card_hw_reset)(struct mmc_host *host);
-	void	(*card_event)(struct mmc_host *host);
-
-	/*
-	 * Optional callback to support controllers with HW issues for multiple
-	 * I/O. Returns the number of supported blocks for the request.
-	 */
-	int	(*multi_io_quirk)(struct mmc_card *card,
-				  unsigned int direction, int blk_size);
-
-	/* Initialize an SD express card, mandatory for MMC_CAP2_SD_EXP. */
-	int	(*init_sd_express)(struct mmc_host *host, struct mmc_ios *ios);
-};
-
-struct mmc_cqe_ops {
-	/* Allocate resources, and make the CQE operational */
-	int	(*cqe_enable)(struct mmc_host *host, struct mmc_card *card);
-	/* Free resources, and make the CQE non-operational */
-	void	(*cqe_disable)(struct mmc_host *host);
-	/*
-	 * Issue a read, write or DCMD request to the CQE. Also deal with the
-	 * effect of ->cqe_off().
-	 */
-	int	(*cqe_request)(struct mmc_host *host, struct rt_mmcsd_req *mrq);
-	/* Free resources (e.g. DMA mapping) associated with the request */
-	void	(*cqe_post_req)(struct mmc_host *host, struct rt_mmcsd_req *mrq);
-	/*
-	 * Prepare the CQE and host controller to accept non-CQ commands. There
-	 * is no corresponding ->cqe_on(), instead ->cqe_request() is required
-	 * to deal with that.
-	 */
-	void	(*cqe_off)(struct mmc_host *host);
-	/*
-	 * Wait for all CQE tasks to complete. Return an error if recovery
-	 * becomes necessary.
-	 */
-	int	(*cqe_wait_for_idle)(struct mmc_host *host);
-	/*
-	 * Notify CQE that a request has timed out. Return false if the request
-	 * completed or true if a timeout happened in which case indicate if
-	 * recovery is needed.
-	 */
-	rt_bool_t	(*cqe_timeout)(struct mmc_host *host, struct rt_mmcsd_req *mrq,
-			       rt_bool_t *recovery_needed);
-	/*
-	 * Stop all CQE activity and prepare the CQE and host controller to
-	 * accept recovery commands.
-	 */
-	void	(*cqe_recovery_start)(struct mmc_host *host);
-	/*
-	 * Clear the queue and call mmc_cqe_request_done() on all requests.
-	 * Requests that errored will have the error set on the rt_mmcsd_req
-	 * (data->error or cmd->error for DCMD).  Requests that did not error
-	 * will have zero data bytes transferred.
-	 */
-	void	(*cqe_recovery_finish)(struct mmc_host *host);
-};
-
-struct mmc_async_req {
-	/* active mmc request */
-	struct rt_mmcsd_req	*mrq;
-	/*
-	 * Check error status of completed mmc request.
-	 * Returns 0 if success otherwise non zero.
-	 */
-	enum mmc_blk_status (*err_check)(struct mmc_card *, struct mmc_async_req *);
+    /* Reset the eMMC card via RST_n */
+    void    (*hw_reset)(struct mmc_host *host);
+    void    (*card_event)(struct mmc_host *host);
 };
 
 /**
@@ -403,8 +405,7 @@ struct mmc_host {
 	int			dsr_req;	/* DSR value is valid */
 	rt_uint32_t			dsr;	/* optional driver stage (DSR) value */
 
-	/* Command Queue Engine (CQE) support */
-	const struct mmc_cqe_ops *cqe_ops;
+
 	void			*cqe_private;
 	int			cqe_qdepth;
 	rt_bool_t			cqe_enabled;
@@ -420,6 +421,7 @@ struct mmc_host {
 	int			hsq_depth;
 
 	rt_uint32_t			err_stats[MMC_ERR_MAX];
+	rt_uint32_t pm_caps;
 	unsigned long		private[];
 };
 
@@ -469,7 +471,7 @@ static inline rt_bool_t sdio_irq_claimed(struct mmc_host *host)
 int mmc_regulator_set_ocr(struct mmc_host *mmc,
 			struct regulator *supply,
 			unsigned short vdd_bit);
-int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios);
+int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct rt_mmcsd_io_cfg *ios);
 #else
 static inline int mmc_regulator_set_ocr(struct mmc_host *mmc,
 				 struct regulator *supply,
@@ -519,7 +521,26 @@ static inline void mmc_debugfs_err_stats_inc(struct mmc_host *host,
 	host->err_stats[stat] += 1;
 }
 
+static inline rt_bool_t mmc_op_multi(rt_uint32_t opcode)
+{
+	return opcode == MMC_WRITE_MULTIPLE_BLOCK ||
+	       opcode == MMC_READ_MULTIPLE_BLOCK;
+}
+
+static inline rt_bool_t mmc_op_tuning(rt_uint32_t opcode)
+{
+	return opcode == MMC_SEND_TUNING_BLOCK ||
+			opcode == MMC_SEND_TUNING_BLOCK_HS200;
+}
+
+int mmc_gpio_get_cd(struct mmc_host *host);
+void mmc_detect_change(struct mmc_host *host, unsigned long delay);
+int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct rt_mmcsd_io_cfg *ios);
+rt_bool_t mmc_can_gpio_ro(struct mmc_host *host);
+int mmc_gpio_get_ro(struct mmc_host *host);
+
 int mmc_send_tuning(struct mmc_host *host, rt_uint32_t opcode, int *cmd_error);
 int mmc_send_abort_tuning(struct mmc_host *host, rt_uint32_t opcode);
+int mmc_abort_tuning(struct mmc_host *host, rt_uint32_t opcode);
 
-#endif /* LINUX_MMC_HOST_H */
+#endif

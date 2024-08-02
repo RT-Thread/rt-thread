@@ -9,7 +9,14 @@
 #ifndef __SDHCI_HW_H
 #define __SDHCI_HW_H
 
-#include "head.h"
+#include "sdhci_host.h"
+#include "sdhci_misc.h"
+#include "sdhci_time.h"
+#include "sdhci_dma.h"
+#include "transer.h"
+
+
+
 #include <drivers/mmcsd_cmd.h>
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmcsd_host.h>
@@ -17,6 +24,9 @@
 /*
  * Controller registers
  */
+
+#define lower_32_bits(n) ((rt_uint32_t)((n) & 0xffffffff))
+#define upper_32_bits(n) ((rt_uint32_t)(((n) >> 16) >> 16))
 
 #define MAX_TUNING_LOOP 40
 
@@ -204,12 +214,12 @@
 #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
 
 #define SDHCI_CAPABILITIES	0x40
-#define  SDHCI_TIMEOUT_CLK_MASK		GENMASK(5, 0)
+#define  SDHCI_TIMEOUT_CLK_MASK		RT_GENMASK(5, 0)
 #define  SDHCI_TIMEOUT_CLK_SHIFT 0
 #define  SDHCI_TIMEOUT_CLK_UNIT	0x00000080
-#define  SDHCI_CLOCK_BASE_MASK		GENMASK(13, 8)
+#define  SDHCI_CLOCK_BASE_MASK		RT_GENMASK(13, 8)
 #define  SDHCI_CLOCK_BASE_SHIFT	8
-#define  SDHCI_CLOCK_V3_BASE_MASK	GENMASK(15, 8)
+#define  SDHCI_CLOCK_V3_BASE_MASK	RT_GENMASK(15, 8)
 #define  SDHCI_MAX_BLOCK_MASK	0x00030000
 #define  SDHCI_MAX_BLOCK_SHIFT  16
 #define  SDHCI_CAN_DO_8BIT	0x00040000
@@ -231,18 +241,18 @@
 #define  SDHCI_DRIVER_TYPE_A	0x00000010
 #define  SDHCI_DRIVER_TYPE_C	0x00000020
 #define  SDHCI_DRIVER_TYPE_D	0x00000040
-#define  SDHCI_RETUNING_TIMER_COUNT_MASK	GENMASK(11, 8)
+#define  SDHCI_RETUNING_TIMER_COUNT_MASK	RT_GENMASK(11, 8)
 #define  SDHCI_USE_SDR50_TUNING			0x00002000
-#define  SDHCI_RETUNING_MODE_MASK		GENMASK(15, 14)
-#define  SDHCI_CLOCK_MUL_MASK			GENMASK(23, 16)
+#define  SDHCI_RETUNING_MODE_MASK		RT_GENMASK(15, 14)
+#define  SDHCI_CLOCK_MUL_MASK			RT_GENMASK(23, 16)
 #define  SDHCI_CAN_DO_ADMA3	0x08000000
 #define  SDHCI_SUPPORT_HS400	0x80000000 /* Non-standard */
 
 #define SDHCI_MAX_CURRENT		0x48
-#define  SDHCI_MAX_CURRENT_LIMIT	GENMASK(7, 0)
-#define  SDHCI_MAX_CURRENT_330_MASK	GENMASK(7, 0)
-#define  SDHCI_MAX_CURRENT_300_MASK	GENMASK(15, 8)
-#define  SDHCI_MAX_CURRENT_180_MASK	GENMASK(23, 16)
+#define  SDHCI_MAX_CURRENT_LIMIT	RT_GENMASK(7, 0)
+#define  SDHCI_MAX_CURRENT_330_MASK	RT_GENMASK(7, 0)
+#define  SDHCI_MAX_CURRENT_300_MASK	RT_GENMASK(15, 8)
+#define  SDHCI_MAX_CURRENT_180_MASK	RT_GENMASK(23, 16)
 #define   SDHCI_MAX_CURRENT_MULTIPLIER	4
 
 /* 4C-4F reserved for more max current */
@@ -266,9 +276,11 @@
 #define SDHCI_PRESET_FOR_SDR104        0x6C
 #define SDHCI_PRESET_FOR_DDR50 0x6E
 #define SDHCI_PRESET_FOR_HS400 0x74 /* Non-standard */
-#define SDHCI_PRESET_DRV_MASK		GENMASK(15, 14)
+#define SDHCI_PRESET_DRV_MASK		RT_GENMASK(15, 14)
+#define BIT(nr)         ((1) << (nr))
+
 #define SDHCI_PRESET_CLKGEN_SEL		BIT(10)
-#define SDHCI_PRESET_SDCLK_FREQ_MASK	GENMASK(9, 0)
+#define SDHCI_PRESET_SDCLK_FREQ_MASK	RT_GENMASK(9, 0)
 
 #define SDHCI_SLOT_INT_STATUS	0xFC
 
@@ -295,6 +307,7 @@
  * Host SDMA buffer boundary. Valid values from 4K to 512K in powers of 2.
  */
 #define SDHCI_DEFAULT_BOUNDARY_SIZE  (512 * 1024)
+#define ilog2(v) __rt_ffs(v)
 #define SDHCI_DEFAULT_BOUNDARY_ARG   (ilog2(SDHCI_DEFAULT_BOUNDARY_SIZE) - 12)
 
 /* ADMA2 32-bit DMA descriptor size */
@@ -824,8 +837,8 @@ void __sdhci_set_timeout(struct sdhci_host *host, struct rt_mmcsd_cmd *cmd);
 static void sdhci_complete_work(struct rt_work *work, void *work_data);
 static void sdhci_timeout_timer(void* parameter);
 static void sdhci_timeout_data_timer(void* parameter);
-static rt_isr_handler_t sdhci_thread_irq(struct rt_work *work, void *work_data);
-static rt_isr_handler_t  sdhci_irq(int irq, void *dev_id);
+static void sdhci_thread_irq(struct rt_work *work, void *work_data);
+static void  sdhci_irq(int irq, void *dev_id);
 static rt_bool_t sdhci_send_command(struct sdhci_host *host, struct rt_mmcsd_cmd *cmd);
 static rt_bool_t sdhci_request_done(struct sdhci_host *host);
 
