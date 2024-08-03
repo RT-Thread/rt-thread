@@ -44,17 +44,17 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_GateGPIO1);
     CLOCK_EnableClock(kCLOCK_GateGPIO2);
     CLOCK_EnableClock(kCLOCK_GateGPIO3);
-	
-	CLOCK_SetClockDiv(kCLOCK_DivCTIMER1, 1u);
+
+    CLOCK_SetClockDiv(kCLOCK_DivCTIMER1, 1u);
     CLOCK_AttachClk(kFRO_HF_to_CTIMER1);
 
     RESET_ReleasePeripheralReset(kLPUART0_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPUART1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPUART2_RST_SHIFT_RSTn);
-	
-	RESET_ReleasePeripheralReset(kCTIMER1_RST_SHIFT_RSTn);
-	RESET_ReleasePeripheralReset(kLPSPI0_RST_SHIFT_RSTn);
-	
+
+    RESET_ReleasePeripheralReset(kCTIMER1_RST_SHIFT_RSTn);
+    RESET_ReleasePeripheralReset(kLPSPI0_RST_SHIFT_RSTn);
+
     RESET_ReleasePeripheralReset(kPORT0_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kPORT1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kPORT2_RST_SHIFT_RSTn);
@@ -114,10 +114,10 @@ void BOARD_InitPins(void)
                                                     kPORT_UnlockRegister};
     /* PORT0_3 (pin 52) is configured as LPUART0_TXD */
     PORT_SetPinConfig(PORT0, 3U, &port0_3_pin52_config);
-	
+
 #ifdef BSP_USING_PWM0
-	ctimer_config_t config;
-	CTIMER_Init(CTIMER1, &config);
+    ctimer_config_t config;
+    CTIMER_Init(CTIMER1, &config);
     const port_pin_config_t port1_4_pin62_config = {/* Internal pull-up/down resistor is disabled */
                                                     kPORT_PullDisable,
                                                     /* Low internal pull resistor value is selected. */

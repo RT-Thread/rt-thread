@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -119,7 +119,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     transfer.rxData   = (uint8_t *)(message->recv_buf);
     transfer.txData   = (uint8_t *)(message->send_buf);
 
-    //  if(message->length < MAX_DMA_TRANSFER_SIZE)
+    /*  if(message->length < MAX_DMA_TRANSFER_SIZE)*/
     if (0)
     {
         LPSPI_MasterTransferBlocking(spi->LPSPIx, &transfer);
