@@ -59,7 +59,7 @@ def GetSDKPath(name):
                     package = json.load(f)
 
                     if package['name'] == name:
-                        return os.path.join(GetPkgPath(), package['name'] + '-' + item['ver'])
+                        return os.path.join(env, 'tools', 'packages', package['name'] + '-' + item['ver'])
 
     # not found named package
     return None
