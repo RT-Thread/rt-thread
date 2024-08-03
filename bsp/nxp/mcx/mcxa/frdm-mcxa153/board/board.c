@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  * Copyright (c) 2019-2020, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -37,8 +37,8 @@ void SysTick_Handler(void)
 void rt_hw_board_init()
 {
     BOARD_InitBootPins();
-	
-	edma_config_t userConfig = {0};
+
+    edma_config_t userConfig = {0};
     EDMA_GetDefaultConfig(&userConfig);
     EDMA_Init(DMA0, &userConfig);
 

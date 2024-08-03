@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,20 +18,20 @@ typedef struct
 {
     struct rt_device_pwm pwm_device;
     CTIMER_Type *ct_instance;
-	uint32_t timerClock;
-	const ctimer_match_t pwmPeriodChannel;
+    uint32_t timerClock;
+    const ctimer_match_t pwmPeriodChannel;
     ctimer_match_t matchChannel;
-	char *name;
+    char *name;
 } mcx_pwm_obj_t;
 
-static mcx_pwm_obj_t mcx_pwm_list[]= 
+static mcx_pwm_obj_t mcx_pwm_list[]=
 {
 #ifdef BSP_USING_PWM0
     {
         .ct_instance = CTIMER1,
         .timerClock = 0,
-		.pwmPeriodChannel = kCTIMER_Match_3,
-		.matchChannel = kCTIMER_Match_2,
+        .pwmPeriodChannel = kCTIMER_Match_3,
+        .matchChannel = kCTIMER_Match_2,
         .name = "pwm0",
     }
 #endif
@@ -54,9 +54,9 @@ status_t CTIMER_GetPwmPeriodValue(uint32_t pwmFreqHz, uint8_t dutyCyclePercent, 
 static rt_err_t mcx_drv_pwm_set(mcx_pwm_obj_t *pwm, struct rt_pwm_configuration *configuration)
 {
     CTIMER_Type *ct = pwm->ct_instance;
-	uint32_t pwmFreqHz = 1000000000 / configuration->period;
-	uint8_t dutyCyclePercent = configuration->pulse * 100 / configuration->period; 
-	CTIMER_GetPwmPeriodValue(pwmFreqHz, dutyCyclePercent, pwm->timerClock);
+    uint32_t pwmFreqHz = 1000000000 / configuration->period;
+    uint8_t dutyCyclePercent = configuration->pulse * 100 / configuration->period;
+    CTIMER_GetPwmPeriodValue(pwmFreqHz, dutyCyclePercent, pwm->timerClock);
     CTIMER_SetupPwmPeriod(ct, kCTIMER_Match_3, kCTIMER_Match_2, g_pwmPeriod, g_pulsePeriod, false);
     return 0;
 }
@@ -108,13 +108,13 @@ int mcx_pwm_init(void)
 {
     rt_err_t ret;
     char name_buf[8];
-	
-	ctimer_config_t config;
-	CTIMER_GetDefaultConfig(&config);
+
+    ctimer_config_t config;
+    CTIMER_GetDefaultConfig(&config);
     for (uint8_t i = 0; i < ARRAY_SIZE(mcx_pwm_list); i++)
     {
         mcx_pwm_list[i].timerClock = CLOCK_GetCTimerClkFreq(1U) / (config.prescale + 1);
-		CTIMER_Init(mcx_pwm_list[i].ct_instance, &config);
+        CTIMER_Init(mcx_pwm_list[i].ct_instance, &config);
         ret = rt_device_pwm_register(&mcx_pwm_list[i].pwm_device, mcx_pwm_list[i].name, &mcx_pwm_ops, &mcx_pwm_list[i]);
         if (ret != RT_EOK)
         {
