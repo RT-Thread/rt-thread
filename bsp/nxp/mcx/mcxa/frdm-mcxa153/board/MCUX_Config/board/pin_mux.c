@@ -21,9 +21,10 @@ processor_version: 0.14.3
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
-
+#include <rtthread.h>
 #include "fsl_common.h"
 #include "fsl_port.h"
+#include "fsl_ctimer.h"
 #include "pin_mux.h"
 
 

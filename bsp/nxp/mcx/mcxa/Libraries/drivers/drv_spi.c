@@ -13,7 +13,7 @@
 #include "fsl_lpspi.h"
 #include "fsl_lpspi_edma.h"
 
-#define DMA_MAX_TRANSFER_COUNT (32767)
+#define DMA_MAX_TRANSFER_SIZE (32767)
 
 enum
 {
@@ -127,14 +127,14 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     else
     {
         uint32_t block, remain;
-        block = message->length / DMA_MAX_TRANSFER_COUNT;
-        remain = message->length % DMA_MAX_TRANSFER_COUNT;
+        block = message->length / DMA_MAX_TRANSFER_SIZE;
+        remain = message->length % DMA_MAX_TRANSFER_SIZE;
 
         for (i = 0; i < block; i++)
         {
-            transfer.dataSize = DMA_MAX_TRANSFER_COUNT;
-            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_COUNT);
-            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_COUNT);
+            transfer.dataSize = DMA_MAX_TRANSFER_SIZE;
+            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_SIZE);
+            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_SIZE);
 
             LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
             rt_sem_take(spi->sem, RT_WAITING_FOREVER);
@@ -143,8 +143,8 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         if (remain)
         {
             transfer.dataSize = remain;
-            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_COUNT);
-            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_COUNT);
+            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_SIZE);
+            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_SIZE);
 
             LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
             rt_sem_take(spi->sem, RT_WAITING_FOREVER);
