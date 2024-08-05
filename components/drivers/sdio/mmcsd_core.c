@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,7 +34,6 @@
 #endif
 #endif
 
-//static struct rt_semaphore mmcsd_sem;
 static struct rt_thread mmcsd_detect_thread;
 static rt_uint8_t mmcsd_stack[RT_MMCSD_STACK_SIZE];
 static struct rt_mailbox  mmcsd_detect_mb;
@@ -109,7 +108,7 @@ rt_int32_t mmcsd_go_idle(struct rt_mmcsd_host *host)
     rt_int32_t err;
     struct rt_mmcsd_cmd cmd;
 
-    if (!controller_is_spi(host))
+    if (controller_is_spi(host))
     {
         mmcsd_set_chip_select(host, MMCSD_CS_HIGH);
         rt_thread_mdelay(1);
@@ -125,7 +124,7 @@ rt_int32_t mmcsd_go_idle(struct rt_mmcsd_host *host)
 
     rt_thread_mdelay(1);
 
-    if (!controller_is_spi(host))
+    if (controller_is_spi(host))
     {
         mmcsd_set_chip_select(host, MMCSD_CS_IGNORE);
         rt_thread_mdelay(1);
@@ -755,7 +754,6 @@ int rt_mmcsd_core_init(void)
 {
     rt_err_t ret;
 
-    /* initialize detect SD cart thread */
     /* initialize mailbox and create detect SD card thread */
     ret = rt_mb_init(&mmcsd_detect_mb, "mmcsdmb",
                      &mmcsd_detect_mb_pool[0], sizeof(mmcsd_detect_mb_pool) / sizeof(mmcsd_detect_mb_pool[0]),
@@ -772,8 +770,6 @@ int rt_mmcsd_core_init(void)
     {
         rt_thread_startup(&mmcsd_detect_thread);
     }
-
-    rt_sdio_init();
 
     return 0;
 }
