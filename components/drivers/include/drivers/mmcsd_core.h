@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -172,50 +172,6 @@ struct rt_mmcsd_req
 #define R5_OUT_OF_RANGE     (1 << 8)
 #define R5_STATUS(x)        (x & 0xCB00)
 #define R5_IO_CURRENT_STATE(x)  ((x & 0x3000) >> 12)
-
-
-
-/**
- * fls - find last (most-significant) bit set
- * @x: the word to search
- *
- * This is defined the same way as ffs.
- * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
- */
-
-rt_inline rt_uint32_t __rt_fls(rt_uint32_t val)
-{
-    rt_uint32_t  bit = 32;
-
-    if (!val)
-        return 0;
-    if (!(val & 0xffff0000u))
-    {
-        val <<= 16;
-        bit -= 16;
-    }
-    if (!(val & 0xff000000u))
-    {
-        val <<= 8;
-        bit -= 8;
-    }
-    if (!(val & 0xf0000000u))
-    {
-        val <<= 4;
-        bit -= 4;
-    }
-    if (!(val & 0xc0000000u))
-    {
-        val <<= 2;
-        bit -= 2;
-    }
-    if (!(val & 0x80000000u))
-    {
-        bit -= 1;
-    }
-
-    return bit;
-}
 
 #define MMCSD_HOST_PLUGED       0
 #define MMCSD_HOST_UNPLUGED     1
