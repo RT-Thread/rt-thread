@@ -24,7 +24,7 @@
 #include <rtdbg.h>
 
 #ifndef RT_MMCSD_STACK_SIZE
-#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_STACK_SIZE 2048
 #endif
 #ifndef RT_MMCSD_THREAD_PREORITY
 #if (RT_THREAD_PRIORITY_MAX == 32)
