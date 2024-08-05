@@ -648,27 +648,27 @@ __STATIC_INLINE void SetStrt(void)
     __ASM("BX       lr");
 }
 #elif defined(__GNUC__)
-void SetStrt(void)
+__STATIC_INLINE void SetStrt(void)
 {
-    asm("MOV        R0, PC");
-    asm("LDR        R1, [R0,#16]");
-    asm("LDR        R1, [R0,#32]");
-    asm("LDR        R0, =0x40022010");
-    asm("LDR        R1, =0x60");
-    asm("STR        R1,[R0]");
-    asm("NOP");
-    asm("NOP");
-    asm("NOP");
-    asm("NOP");
-    asm("NOP");
-    asm("NOP");
-    asm("FLAGLABLE");
-    asm("LDR        R1, =0x4002200C");
-    asm("LDR        R2, [R1]");
-    asm("AND        R2, #0x01");
-    asm("CMP        R2, #0x00");
-    asm("BNE        FLAGLABLE");
-    asm("BX         lr");
+    __asm("MOV        R0, PC");
+    __asm("LDR        R1, [R0,#16]");
+    __asm("LDR        R1, [R0,#32]");
+    __asm("LDR        R0, =0x40022010");
+    __asm("LDR        R1, =0x60");
+    __asm("STR        R1,[R0]");
+    __asm("NOP");
+    __asm("NOP");
+    __asm("NOP");
+    __asm("NOP");
+    __asm("NOP");
+    __asm("NOP");
+    __asm("FLAGLABLE:");
+    __asm("LDR        R1, =0x4002200C");
+    __asm("LDR        R2, [R1]");
+    __asm("AND        R2, #0x01");
+    __asm("CMP        R2, #0x00");
+    __asm("BNE        FLAGLABLE");
+    __asm("BX         lr");
 }
 
 #endif
