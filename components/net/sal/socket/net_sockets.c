@@ -238,22 +238,24 @@ int socket(int domain, int type, int protocol)
     d->fops = dfs_net_get_fops();
 #endif
 
-    d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
-    if (!d->vnode)
-    {
-#ifdef RT_USING_DFS_V2
-        dfs_file_put(d);
-#endif
-        /* release fd */
-        fd_release(fd);
-        rt_set_errno(-ENOMEM);
-        return -1;
-    }
-
     /* create socket  and then put it to the dfs_file */
     socket = sal_socket(domain, type, protocol);
+
     if (socket >= 0)
     {
+        d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
+
+        if (!d->vnode)
+        {
+#ifdef RT_USING_DFS_V2
+            dfs_file_put(d);
+#endif
+            /* release fd */
+            fd_release(fd);
+            rt_set_errno(-ENOMEM);
+            return -1;
+        }
+
         dfs_vnode_init(d->vnode, FT_SOCKET, dfs_net_get_fops());
         d->flags = O_RDWR; /* set flags as read and write */
 

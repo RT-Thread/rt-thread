@@ -67,7 +67,7 @@ static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos);
 static void dfs_page_ref(struct dfs_page *page);
 static int dfs_page_inactive(struct dfs_page *page);
 static int dfs_page_remove(struct dfs_page *page);
-static void dfs_page_release(struct dfs_page *page);
+static void dfs_page_unref(struct dfs_page *page);
 static int dfs_page_dirty(struct dfs_page *page);
 
 static int dfs_aspace_release(struct dfs_aspace *aspace);
@@ -86,39 +86,38 @@ static int dfs_aspace_gc(struct dfs_aspace *aspace, int count)
 {
     int cnt = count;
 
-    if (aspace)
+    RT_ASSERT(aspace);
+
+    dfs_aspace_lock(aspace);
+
+    if (aspace->pages_count > 0)
     {
-        dfs_aspace_lock(aspace);
+        struct dfs_page *page = RT_NULL;
+        rt_list_t *node = aspace->list_inactive.next;
 
-        if (aspace->pages_count > 0)
+        while (cnt && node != &aspace->list_active)
         {
-            struct dfs_page *page = RT_NULL;
-            rt_list_t *node = aspace->list_inactive.next;
-
-            while (cnt && node != &aspace->list_active)
+            page = rt_list_entry(node, struct dfs_page, space_node);
+            node = node->next;
+            if (dfs_page_remove(page) == 0)
             {
-                page = rt_list_entry(node, struct dfs_page, space_node);
-                node = node->next;
-                if (dfs_page_remove(page) == 0)
-                {
-                    cnt --;
-                }
-            }
-
-            node = aspace->list_active.next;
-            while (cnt && node != &aspace->list_inactive)
-            {
-                page = rt_list_entry(node, struct dfs_page, space_node);
-                node = node->next;
-                if (dfs_page_remove(page) == 0)
-                {
-                    cnt --;
-                }
+                cnt --;
             }
         }
 
-        dfs_aspace_unlock(aspace);
+        node = aspace->list_active.next;
+        while (cnt && node != &aspace->list_inactive)
+        {
+            page = rt_list_entry(node, struct dfs_page, space_node);
+            node = node->next;
+            if (dfs_page_remove(page) == 0)
+            {
+                cnt --;
+            }
+        }
     }
+
+    dfs_aspace_unlock(aspace);
 
     return count - cnt;
 }
@@ -284,7 +283,7 @@ static void dfs_pcache_thread(void *parameter)
                                 }
                             }
                         }
-                        dfs_page_release(page);
+                        dfs_page_unref(page);
                         dfs_aspace_unlock(aspace);
                     }
                     else
@@ -381,12 +380,10 @@ static struct dfs_aspace *dfs_aspace_hash_lookup(struct dfs_dentry *dentry, cons
     dfs_pcache_lock();
     rt_list_for_each_entry(aspace, &__pcache.head[dfs_aspace_hash(dentry->mnt, dentry->pathname)], hash_node)
     {
-
         if (aspace->mnt == dentry->mnt
             && aspace->ops == ops
             && !strcmp(aspace->pathname, dentry->pathname))
         {
-            rt_atomic_add(&aspace->ref_count, 1);
             dfs_pcache_unlock();
             return aspace;
         }
@@ -403,7 +400,6 @@ static void dfs_aspace_insert(struct dfs_aspace *aspace)
     val = dfs_aspace_hash(aspace->mnt, aspace->pathname);
 
     dfs_pcache_lock();
-    rt_atomic_add(&aspace->ref_count, 1);
     rt_list_insert_after(&__pcache.head[val], &aspace->hash_node);
     rt_list_insert_before(&__pcache.list_inactive, &aspace->cache_node);
     dfs_pcache_unlock();
@@ -463,7 +459,6 @@ static struct dfs_aspace *_dfs_aspace_create(struct dfs_dentry *dentry,
         aspace->avl_page = 0;
 
         rt_mutex_init(&aspace->lock, rt_thread_self()->parent.name, RT_IPC_FLAG_PRIO);
-        rt_atomic_store(&aspace->ref_count, 1);
 
         aspace->pages_count = 0;
         aspace->vnode = vnode;
@@ -510,92 +505,88 @@ struct dfs_aspace *dfs_aspace_create(struct dfs_dentry *dentry,
 
 int dfs_aspace_destroy(struct dfs_aspace *aspace)
 {
-    int ret = -EINVAL;
+    int ret = 0;
 
-    if (aspace)
+    RT_ASSERT(aspace);
+
+    dfs_pcache_lock();
+    dfs_aspace_lock(aspace);
+    dfs_aspace_flush(aspace);
+    dfs_aspace_gc(aspace, aspace->pages_count);
+    RT_ASSERT(aspace->pages_count == 0);
+    if (dfs_aspace_release(aspace) != 0)
     {
-        dfs_pcache_lock();
-        dfs_aspace_lock(aspace);
-        rt_atomic_sub(&aspace->ref_count, 1);
-        RT_ASSERT(rt_atomic_load(&aspace->ref_count) > 0);
-        dfs_aspace_inactive(aspace);
-        aspace->vnode = RT_NULL;
-        if (dfs_aspace_release(aspace) != 0)
-        {
-            dfs_aspace_unlock(aspace);
-        }
-        dfs_pcache_unlock();
+        dfs_aspace_unlock(aspace);
     }
+    dfs_pcache_unlock();
 
     return ret;
 }
 
 static int dfs_aspace_release(struct dfs_aspace *aspace)
 {
-    int ret = -1;
+    int ret = 0;
 
-    if (aspace)
+    RT_ASSERT(aspace);
+
+    dfs_pcache_lock();
+    dfs_aspace_lock(aspace);
+
+    if (aspace->pages_count == 0)
     {
-        dfs_pcache_lock();
-        dfs_aspace_lock(aspace);
-
-        if (rt_atomic_load(&aspace->ref_count) == 1 && aspace->pages_count == 0)
+        dfs_aspace_remove(aspace);
+        if (aspace->fullpath)
         {
-            dfs_aspace_remove(aspace);
-            if (aspace->fullpath)
-            {
-                rt_free(aspace->fullpath);
-            }
-            if (aspace->pathname)
-            {
-                rt_free(aspace->pathname);
-            }
-            rt_mutex_detach(&aspace->lock);
-            rt_free(aspace);
-            ret = 0;
+            rt_free(aspace->fullpath);
         }
-        else
+        if (aspace->pathname)
         {
-            dfs_aspace_unlock(aspace);
+            rt_free(aspace->pathname);
         }
-        dfs_pcache_unlock();
+        rt_mutex_detach(&aspace->lock);
+        rt_free(aspace);
     }
+    else
+    {
+        dfs_aspace_unlock(aspace);
+    }
+    dfs_pcache_unlock();
 
     return ret;
 }
 
 static int _dfs_aspace_dump(struct dfs_aspace *aspace, int is_dirty)
 {
-    if (aspace)
-    {
-        rt_list_t *next;
-        struct dfs_page *page;
+    RT_ASSERT(aspace);
 
-        dfs_aspace_lock(aspace);
-        if (aspace->pages_count > 0)
+    rt_list_t *next;
+    struct dfs_page *page;
+
+    dfs_aspace_lock(aspace);
+    if (aspace->pages_count > 0)
+    {
+        rt_list_for_each(next, &aspace->list_inactive)
         {
-            rt_list_for_each(next, &aspace->list_inactive)
+            if (next != &aspace->list_active)
             {
-                if (next != &aspace->list_active)
+                page = rt_list_entry(next, struct dfs_page, space_node);
+                if (is_dirty && page->is_dirty)
                 {
-                    page = rt_list_entry(next, struct dfs_page, space_node);
-                    if (is_dirty && page->is_dirty)
-                    {
-                        rt_kprintf("    pages >> fpos: %d index :%d is_dirty: %d\n", page->fpos, page->fpos / ARCH_PAGE_SIZE, page->is_dirty);
-                    }
-                    else if (is_dirty == 0)
-                    {
-                        rt_kprintf("    pages >> fpos: %d index :%d is_dirty: %d\n", page->fpos, page->fpos / ARCH_PAGE_SIZE, page->is_dirty);
-                    }
+                    rt_kprintf("    pages >> fpos: %d index :%d is_dirty: %d\n", page->fpos, page->fpos / ARCH_PAGE_SIZE, page->is_dirty);
+                }
+                else if (is_dirty == 0)
+                {
+                    rt_kprintf("    pages >> fpos: %d index :%d is_dirty: %d\n", page->fpos, page->fpos / ARCH_PAGE_SIZE, page->is_dirty);
                 }
             }
         }
-        else
-        {
-            rt_kprintf("    pages >> empty\n");
-        }
-        dfs_aspace_unlock(aspace);
     }
+    else
+    {
+        rt_kprintf("    pages >> empty\n");
+    }
+    dfs_aspace_unlock(aspace);
+
     return 0;
 }
 
@@ -724,7 +715,7 @@ static void dfs_page_ref(struct dfs_page *page)
     rt_atomic_add(&(page->ref_count), 1);
 }
 
-static void dfs_page_release(struct dfs_page *page)
+static void dfs_page_unref(struct dfs_page *page)
 {
     struct dfs_aspace *aspace = page->aspace;
 
@@ -873,7 +864,7 @@ static int dfs_page_remove(struct dfs_page *page)
 
         rt_atomic_sub(&(__pcache.pages_count), 1);
 
-        dfs_page_release(page);
+        dfs_page_unref(page);
         ret = 0;
     }
 
@@ -1032,7 +1023,7 @@ static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos)
                 }
                 else
                 {
-                    dfs_page_release(page);
+                    dfs_page_unref(page);
                 }
             }
             else
@@ -1044,7 +1035,7 @@ static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos)
             page = dfs_page_search(aspace, fpos);
             if (page)
             {
-                dfs_page_release(page);
+                dfs_page_unref(page);
             }
             count --;
 
@@ -1116,11 +1107,11 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
                 }
                 else
                 {
-                    dfs_page_release(page);
+                    dfs_page_unref(page);
                     dfs_aspace_unlock(aspace);
                     break;
                 }
-                dfs_page_release(page);
+                dfs_page_unref(page);
                 dfs_aspace_unlock(aspace);
             }
             else
@@ -1189,7 +1180,7 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
                     dfs_page_dirty(page);
                 }
 
-                dfs_page_release(page);
+                dfs_page_unref(page);
                 dfs_aspace_unlock(aspace);
             }
             else
@@ -1204,71 +1195,70 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
 
 int dfs_aspace_flush(struct dfs_aspace *aspace)
 {
-    if (aspace)
+    RT_ASSERT(aspace);
+
+    rt_list_t *next;
+    struct dfs_page *page;
+
+    dfs_aspace_lock(aspace);
+
+    if (aspace->pages_count > 0 && aspace->vnode)
     {
-        rt_list_t *next;
-        struct dfs_page *page;
-
-        dfs_aspace_lock(aspace);
-
-        if (aspace->pages_count > 0 && aspace->vnode)
+        rt_list_for_each(next, &aspace->list_dirty)
         {
-            rt_list_for_each(next, &aspace->list_dirty)
+            page = rt_list_entry(next, struct dfs_page, dirty_node);
+            if (page->is_dirty == 1 && aspace->vnode)
             {
-                page = rt_list_entry(next, struct dfs_page, dirty_node);
-                if (page->is_dirty == 1 && aspace->vnode)
+                if (aspace->vnode->size < page->fpos + page->size)
                 {
-                    if (aspace->vnode->size < page->fpos + page->size)
-                    {
-                        page->len = aspace->vnode->size - page->fpos;
-                    }
-                    else
-                    {
-                        page->len = page->size;
-                    }
-
-                    if (aspace->ops->write)
-                    {
-                        aspace->ops->write(page);
-                    }
-
-                    page->is_dirty = 0;
+                    page->len = aspace->vnode->size - page->fpos;
                 }
-                RT_ASSERT(page->is_dirty == 0);
-            }
-        }
+                else
+                {
+                    page->len = page->size;
+                }
 
-        dfs_aspace_unlock(aspace);
+                if (aspace->ops->write)
+                {
+                    aspace->ops->write(page);
+                }
+
+                page->is_dirty = 0;
+            }
+            RT_ASSERT(page->is_dirty == 0);
+        }
     }
+
+    dfs_aspace_unlock(aspace);
+
     return 0;
 }
 
 int dfs_aspace_clean(struct dfs_aspace *aspace)
 {
-    if (aspace)
+    RT_ASSERT(aspace);
+
+    dfs_aspace_lock(aspace);
+
+    if (aspace->pages_count > 0)
     {
-        dfs_aspace_lock(aspace);
+        rt_list_t *next = aspace->list_active.next;
+        struct dfs_page *page;
 
-        if (aspace->pages_count > 0)
+        while (next && next != &aspace->list_active)
         {
-            rt_list_t *next = aspace->list_active.next;
-            struct dfs_page *page;
-
-            while (next && next != &aspace->list_active)
+            if (next == &aspace->list_inactive)
             {
-                if (next == &aspace->list_inactive)
-                {
-                    next = next->next;
-                    continue;
-                }
-                page = rt_list_entry(next, struct dfs_page, space_node);
                 next = next->next;
-                dfs_page_remove(page);
+                continue;
             }
+            page = rt_list_entry(next, struct dfs_page, space_node);
+            next = next->next;
+            dfs_page_remove(page);
         }
-
-        dfs_aspace_unlock(aspace);
     }
+
+    dfs_aspace_unlock(aspace);
 
     return 0;
 }
@@ -1312,18 +1302,18 @@ void *dfs_aspace_mmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr
                 map->vaddr = vaddr;
                 dfs_aspace_lock(aspace);
                 rt_list_insert_after(&page->mmap_head, &map->mmap_node);
-                dfs_page_release(page);
+                dfs_page_unref(page);
                 dfs_aspace_unlock(aspace);
             }
             else
             {
-                dfs_page_release(page);
+                dfs_page_unref(page);
                 rt_free(map);
             }
         }
         else
         {
-            dfs_page_release(page);
+            dfs_page_unref(page);
         }
     }
 
@@ -1437,7 +1427,7 @@ int dfs_aspace_page_unmap(struct dfs_file *file, struct rt_varea *varea, void *v
                 }
             }
 
-            dfs_page_release(page);
+            dfs_page_unref(page);
         }
 
         dfs_aspace_unlock(aspace);
@@ -1459,7 +1449,7 @@ int dfs_aspace_page_dirty(struct dfs_file *file, struct rt_varea *varea, void *v
         if (page)
         {
             dfs_page_dirty(page);
-            dfs_page_release(page);
+            dfs_page_unref(page);
         }
 
         dfs_aspace_unlock(aspace);

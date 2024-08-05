@@ -53,37 +53,31 @@ int dfs_vnode_destroy(struct dfs_vnode* vnode)
     rt_err_t ret = RT_EOK;
 
     RT_ASSERT(vnode);
+    RT_ASSERT(rt_atomic_dec_and_test(&vnode->ref_count));
 
     ret = dfs_file_lock();
     if (ret == RT_EOK)
     {
-        if (rt_atomic_load(&(vnode->ref_count)) == 1)
-        {
-            LOG_I("free a vnode: %p", vnode);
+        LOG_I("free a vnode: %p", vnode);
 #ifdef RT_USING_PAGECACHE
-            if (vnode->aspace)
-            {
-                dfs_aspace_destroy(vnode->aspace);
-            }
+        if (vnode->aspace)
+        {
+            dfs_aspace_destroy(vnode->aspace);
+        }
 #endif
-            if (vnode->mnt)
-            {
-                DLOG(msg, "vnode", vnode->mnt->fs_ops->name, DLOG_MSG, "fs_ops->free_vnode");
-                vnode->mnt->fs_ops->free_vnode(vnode);
-            }
-            else
-            {
-                DLOG(msg, "vnode", "vnode", DLOG_MSG, "destroy vnode(mnt=NULL)");
-            }
-
-            dfs_file_unlock();
-
-            rt_free(vnode);
+        if (vnode->mnt)
+        {
+            DLOG(msg, "vnode", vnode->mnt->fs_ops->name, DLOG_MSG, "fs_ops->free_vnode");
+            vnode->mnt->fs_ops->free_vnode(vnode);
         }
         else
         {
-            dfs_file_unlock();
+            DLOG(msg, "vnode", "vnode", DLOG_MSG, "destroy vnode(mnt=NULL)");
         }
+
+        dfs_file_unlock();
+
+        rt_free(vnode);
     }
 
     return 0;
@@ -106,19 +100,20 @@ void dfs_vnode_unref(struct dfs_vnode *vnode)
 
     RT_ASSERT(vnode);
 
-    ret = dfs_file_lock();
-    if (ret == RT_EOK)
+    DLOG(note, "vnode", "vnode ref_count=%d", rt_atomic_load(&(vnode->ref_count)));
+
+    if (rt_atomic_dec_and_test(&vnode->ref_count))
     {
-        rt_atomic_sub(&(vnode->ref_count), 1);
-        DLOG(note, "vnode", "vnode ref_count=%d", rt_atomic_load(&(vnode->ref_count)));
+        ret = dfs_file_lock();
+
+        if (ret == RT_EOK)
+        {
 #ifdef RT_USING_PAGECACHE
-        if (vnode->aspace)
-        {
-            dfs_aspace_destroy(vnode->aspace);
-        }
+            if (vnode->aspace)
+            {
+                dfs_aspace_destroy(vnode->aspace);
+            }
 #endif
-        if (rt_atomic_load(&(vnode->ref_count)) == 0)
-        {
             LOG_I("free a vnode: %p", vnode);
             DLOG(msg, "vnode", "vnode", DLOG_MSG, "free vnode, ref_count=0");
 
@@ -131,11 +126,6 @@ void dfs_vnode_unref(struct dfs_vnode *vnode)
             dfs_file_unlock();
 
             rt_free(vnode);
-        }
-        else
-        {
-            dfs_file_unlock();
-            DLOG(note, "vnode", "vnode ref_count=%d", rt_atomic_load(&(vnode->ref_count)));
         }
     }
 

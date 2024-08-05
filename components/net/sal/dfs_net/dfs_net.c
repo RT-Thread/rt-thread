@@ -93,7 +93,7 @@ static int dfs_net_close(struct dfs_file* file)
     int socket;
     int ret = 0;
 
-    if (file->vnode->ref_count == 1)
+    if (file->vnode && file->vnode->ref_count == 1)
     {
         socket = (int)(size_t)file->vnode->data;
         ret = sal_closesocket(socket);

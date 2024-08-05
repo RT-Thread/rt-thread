@@ -470,7 +470,7 @@ int dfs_fdtable_dup(struct dfs_fdtable *fdt_dst, struct dfs_fdtable *fdt_src, in
         fdt_dst->fds[newfd]->flags = fdt_src->fds[fd_src]->flags;
         fdt_dst->fds[newfd]->fops = fdt_src->fds[fd_src]->fops;
         fdt_dst->fds[newfd]->dentry = dfs_dentry_ref(fdt_src->fds[fd_src]->dentry);
-        fdt_dst->fds[newfd]->vnode = fdt_src->fds[fd_src]->vnode;
+        fdt_dst->fds[newfd]->vnode = dfs_vnode_ref(fdt_src->fds[fd_src]->vnode);
         fdt_dst->fds[newfd]->mmap_context = RT_NULL;
         fdt_dst->fds[newfd]->data = fdt_src->fds[fd_src]->data;
 
@@ -638,7 +638,7 @@ int dfs_dup_from(int oldfd, struct dfs_fdtable *fdtab)
         file->flags = fdtab->fds[oldfd]->flags;
         file->fops = fdtab->fds[oldfd]->fops;
         file->dentry = dfs_dentry_ref(fdtab->fds[oldfd]->dentry);
-        file->vnode = fdtab->fds[oldfd]->vnode;
+        file->vnode = dfs_vnode_ref(fdtab->fds[oldfd]->vnode);
         file->mmap_context = RT_NULL;
         file->data = fdtab->fds[oldfd]->data;
     }

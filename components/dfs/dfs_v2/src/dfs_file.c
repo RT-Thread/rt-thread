@@ -86,7 +86,11 @@ static int _try_readlink(const char *path, struct dfs_mnt *mnt, char *link)
             }
         }
     }
-    dfs_dentry_unref(dentry);
+
+    if (dentry)
+    {
+        dfs_dentry_unref(dentry);
+    }
 
     return ret;
 }
@@ -256,7 +260,7 @@ static void _dfs_file_release(struct rt_ref *ref)
 
     if (file->vnode)
     {
-        dfs_vnode_unref(file->vnode);
+        //dfs_vnode_unref(file->vnode);
     }
 
     if (file->mmap_context)
@@ -720,7 +724,7 @@ int dfs_file_close(struct dfs_file *file)
         {
             DLOG(msg, "dfs_file", file->dentry->mnt->fs_ops->name, DLOG_MSG, "fops->close(file)");
 #ifdef RT_USING_PAGECACHE
-            if (file->vnode->aspace)
+            if (file->vnode && file->vnode->aspace)
             {
                 ret = dfs_aspace_flush(file->vnode->aspace);
             }
@@ -1268,6 +1272,8 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
     {
         ret = -EBADF;
     }
+
+    dfs_file_put(file);
 
     return ret;
 }
