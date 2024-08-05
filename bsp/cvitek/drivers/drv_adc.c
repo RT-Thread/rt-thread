@@ -68,10 +68,18 @@ struct cvi_adc_dev
 
 static struct cvi_adc_dev adc_dev_config[] =
 {
+#ifdef BSP_USING_ADC_ACTIVE
     {
         .name = "adc1",
         .base = SARADC_BASE
     },
+#endif /* BSP_USING_ADC_ACTIVE */
+#ifdef BSP_USING_ADC_NODIE
+    {
+        .name = "adc2",
+        .base = RTC_ADC_BASE
+    },
+#endif /* BSP_USING_ADC_NODIE */
 };
 
 static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
@@ -151,8 +159,6 @@ static const struct rt_adc_ops _adc_ops =
  * cv180xb supports
  * - adc1 & adc2 for active domain
  * - adc3 for no-die domain
- *
- * FIXME: currnet adc driver only support adc1 in active domain
  */
 #ifdef BSP_USING_ADC_ACTIVE
 static const char *pinname_whitelist_adc1_active[] = {
@@ -169,12 +175,15 @@ static const char *pinname_whitelist_adc3_active[] = {
 
 #ifdef BSP_USING_ADC_NODIE
 static const char *pinname_whitelist_adc1_nodie[] = {
+    "PWR_GPIO2",
     NULL,
 };
 static const char *pinname_whitelist_adc2_nodie[] = {
+    "PWR_GPIO1",
     NULL,
 };
 static const char *pinname_whitelist_adc3_nodie[] = {
+    "PWR_VBAT_DET",
     NULL,
 };
 #endif
@@ -185,8 +194,6 @@ static const char *pinname_whitelist_adc3_nodie[] = {
  * sg2002 supports
  * - adc1 for active domain
  * - adc1/adc2/adc3 for no-die domain
- *
- * FIXME: currnet adc driver only support adc1 in active domain
  */
 
 #ifdef BSP_USING_ADC_ACTIVE
@@ -204,12 +211,15 @@ static const char *pinname_whitelist_adc3_active[] = {
 
 #ifdef BSP_USING_ADC_NODIE
 static const char *pinname_whitelist_adc1_nodie[] = {
+    "PWR_GPIO2",
     NULL,
 };
 static const char *pinname_whitelist_adc2_nodie[] = {
+    "PWR_GPIO1",
     NULL,
 };
 static const char *pinname_whitelist_adc3_nodie[] = {
+    "PWR_VBAT_DET",
     NULL,
 };
 #endif
