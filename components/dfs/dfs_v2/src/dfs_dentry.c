@@ -87,19 +87,9 @@ struct dfs_dentry *dfs_dentry_create_rela(struct dfs_mnt *mnt, char *rela_path)
 
 struct dfs_dentry * dfs_dentry_ref(struct dfs_dentry *dentry)
 {
-    if (dentry)
-    {
-        int ret = dfs_file_lock();
-        if (ret == RT_EOK)
-        {
-            rt_atomic_add(&(dentry->ref_count), 1);
-            if (dentry->vnode)
-            {
-                rt_atomic_add(&(dentry->vnode->ref_count), 1);
-            }
-            dfs_file_unlock();
-        }
-    }
+    RT_ASSERT(dentry);
+
+    rt_atomic_add(&(dentry->ref_count), 1);
 
     return dentry;
 }
@@ -108,53 +98,48 @@ struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
 {
     rt_err_t ret = RT_EOK;
 
-    if (dentry)
+    RT_ASSERT(dentry);
+
+    ret = dfs_file_lock();
+    if (ret == RT_EOK)
     {
-        ret = dfs_file_lock();
-        if (ret == RT_EOK)
+        if (dentry->flags & DENTRY_IS_ALLOCED)
         {
-            if (dentry->flags & DENTRY_IS_ALLOCED)
+            rt_atomic_sub(&(dentry->ref_count), 1);
+        }
+
+        if (rt_atomic_load(&(dentry->ref_count)) == 0)
+        {
+            DLOG(msg, "dentry", "dentry", DLOG_MSG, "free dentry, ref_count=0");
+            if (dentry->flags & DENTRY_IS_ADDHASH)
             {
-                rt_atomic_sub(&(dentry->ref_count), 1);
+                rt_list_remove(&dentry->hashlist);
             }
 
-            if (rt_atomic_load(&(dentry->ref_count)) == 0)
+            /* release vnode */
+            if (dentry->vnode)
             {
-                DLOG(msg, "dentry", "dentry", DLOG_MSG, "free dentry, ref_count=0");
-                if (dentry->flags & DENTRY_IS_ADDHASH)
-                {
-                    rt_list_remove(&dentry->hashlist);
-                }
-
-                /* release vnode */
-                if (dentry->vnode)
-                {
-                    dfs_vnode_unref(dentry->vnode);
-                }
-
-                /* release mnt */
-                DLOG(msg, "dentry", "mnt", DLOG_MSG, "dfs_mnt_unref(dentry->mnt)");
-                if (dentry->mnt)
-                {
-                    dfs_mnt_unref(dentry->mnt);
-                }
-
-                dfs_file_unlock();
-
-                LOG_I("free a dentry: %p", dentry);
-                rt_free(dentry->pathname);
-                rt_free(dentry);
-                dentry = RT_NULL;
+                dfs_vnode_unref(dentry->vnode);
             }
-            else
+
+            /* release mnt */
+            DLOG(msg, "dentry", "mnt", DLOG_MSG, "dfs_mnt_unref(dentry->mnt)");
+            if (dentry->mnt)
             {
-                if (dentry->vnode)
-                {
-                    rt_atomic_sub(&(dentry->vnode->ref_count), 1);
-                }
-                dfs_file_unlock();
-                DLOG(note, "dentry", "dentry ref_count=%d", rt_atomic_load(&(dentry->ref_count)));
+                dfs_mnt_unref(dentry->mnt);
             }
+
+            dfs_file_unlock();
+
+            LOG_I("free a dentry: %p", dentry);
+            rt_free(dentry->pathname);
+            rt_free(dentry);
+            dentry = RT_NULL;
+        }
+        else
+        {
+            dfs_file_unlock();
+            DLOG(note, "dentry", "dentry ref_count=%d", rt_atomic_load(&(dentry->ref_count)));
         }
     }
 
