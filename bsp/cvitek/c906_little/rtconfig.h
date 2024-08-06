@@ -330,7 +330,7 @@
 /* end of General Drivers Configuration */
 #define BSP_USING_C906_LITTLE
 #define PLIC_PHY_ADDR 0x70000000
-#define IRQ_MAX_NR 128
+#define IRQ_MAX_NR 61
 #define TIMER_CLK_FREQ 25000000
 #define GPIO_IRQ_BASE 41
 #define SYS_GPIO_IRQ_BASE 47

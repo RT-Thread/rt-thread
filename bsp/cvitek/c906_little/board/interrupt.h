@@ -11,12 +11,11 @@
 #ifndef __INTERRUPT_H__
 #define __INTERRUPT_H__
 
+#include <rtconfig.h>
+
 #define NR_CPUS       1
 
 #define IRQ_OFFSET          16
-#ifndef IRQ_MAX_NR
-#define IRQ_MAX_NR          207
-#endif
 #define INTERRUPTS_MAX      (IRQ_OFFSET + IRQ_MAX_NR)
 
 #define PLIC_BASE               0x70000000

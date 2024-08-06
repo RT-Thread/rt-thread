@@ -24,7 +24,7 @@ config PLIC_PHY_ADDR
 
 config IRQ_MAX_NR
     int 
-    default 128
+    default 61
 
 config TIMER_CLK_FREQ
     int
