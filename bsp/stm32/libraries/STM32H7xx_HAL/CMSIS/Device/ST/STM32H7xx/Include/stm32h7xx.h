@@ -8,21 +8,20 @@
   *          is using in the C source code, usually in main.c. This file contains:
   *           - Configuration section that allows to select:
   *              - The STM32H7xx device used in the target application
-  *              - To use or not the peripheral’s drivers in application code(i.e.
-  *                code will be based on direct access to peripheral’s registers
+  *              - To use or not the peripheral's drivers in application code(i.e.
+  *                code will be based on direct access to peripheral's registers
   *                rather than drivers API), this option is controlled by
   *                "#define USE_HAL_DRIVER"
   *
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -59,7 +58,7 @@
   */
 
 #if !defined (STM32H743xx) && !defined (STM32H753xx)  && !defined (STM32H750xx) && !defined (STM32H742xx) && \
-    !defined (STM32H745xx) && !defined (STM32H755xx)  && !defined (STM32H747xx) && !defined (STM32H757xx) && \
+    !defined (STM32H745xx) && !defined (STM32H745xG)  && !defined (STM32H755xx)  && !defined (STM32H747xx) && !defined (STM32H747xG)&& !defined (STM32H757xx) && \
     !defined (STM32H7A3xx) && !defined (STM32H7A3xxQ) && !defined (STM32H7B3xx) && !defined (STM32H7B3xxQ) && !defined (STM32H7B0xx)  && !defined (STM32H7B0xxQ) && \
     !defined (STM32H735xx) && !defined (STM32H733xx)  && !defined (STM32H730xx) && !defined (STM32H730xxQ)  && !defined (STM32H725xx) && !defined (STM32H723xx)
   /* #define STM32H742xx */   /*!< STM32H742VI, STM32H742ZI, STM32H742AI, STM32H742II, STM32H742BI, STM32H742XI Devices */
@@ -67,8 +66,10 @@
   /* #define STM32H753xx */   /*!< STM32H753VI, STM32H753ZI, STM32H753AI, STM32H753II, STM32H753BI, STM32H753XI Devices */
   /* #define STM32H750xx */   /*!< STM32H750V, STM32H750I, STM32H750X Devices */
   /* #define STM32H747xx */   /*!< STM32H747ZI, STM32H747AI, STM32H747II, STM32H747BI, STM32H747XI Devices */
+  /* #define STM32H747xG */   /*!< STM32H747AG, STM32H747IG, STM32H747BG, STM32H747XG */
   /* #define STM32H757xx */   /*!< STM32H757ZI, STM32H757AI, STM32H757II, STM32H757BI, STM32H757XI Devices */
   /* #define STM32H745xx */   /*!< STM32H745ZI, STM32H745II, STM32H745BI, STM32H745XI Devices  */
+  /* #define STM32H745xG */   /*!< STM32H745ZG, STM32H745IG, STM32H745BG, STM32H745XG Devices  */
   /* #define STM32H755xx */   /*!< STM32H755ZI, STM32H755II, STM32H755BI, STM32H755XI Devices  */
   /* #define STM32H7B0xx */   /*!< STM32H7B0ABIxQ, STM32H7B0IBTx, STM32H7B0RBTx, STM32H7B0VBTx, STM32H7B0ZBTx, STM32H7B0IBKxQ */
   /* #define STM32H7A3xx */   /*!< STM32H7A3IIK6, STM32H7A3IIT6, STM32H7A3NIH6, STM32H7A3RIT6, STM32H7A3VIH6, STM32H7A3VIT6, STM32H7A3ZIT6 */
@@ -101,11 +102,11 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number V1.10.0
+  * @brief CMSIS Device version number V1.10.4
   */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION_MAIN   (0x01) /*!< [31:24] main version */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION_SUB1   (0x0A) /*!< [23:16] sub1 version */
-#define __STM32H7xx_CMSIS_DEVICE_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
+#define __STM32H7xx_CMSIS_DEVICE_VERSION_SUB2   (0x04) /*!< [15:8]  sub2 version */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION        ((__STM32H7xx_CMSIS_DEVICE_VERSION_MAIN     << 24)\
                                       |(__STM32H7xx_CMSIS_DEVICE_VERSION_SUB1 << 16)\
@@ -130,10 +131,14 @@
   #include "stm32h742xx.h"
 #elif defined(STM32H745xx)
   #include "stm32h745xx.h"
+#elif defined(STM32H745xG)
+  #include "stm32h745xg.h"
 #elif defined(STM32H755xx)
   #include "stm32h755xx.h"
 #elif defined(STM32H747xx)
   #include "stm32h747xx.h"
+#elif defined(STM32H747xG)
+  #include "stm32h747xg.h"
 #elif defined(STM32H757xx)
   #include "stm32h757xx.h"
 #elif defined(STM32H7B0xx)
@@ -214,6 +219,60 @@ typedef enum
 
 #define POSITION_VAL(VAL)     (__CLZ(__RBIT(VAL)))
 
+/* Use of CMSIS compiler intrinsics for register exclusive access */
+/* Atomic 32-bit register access macro to set one or several bits */
+#define ATOMIC_SET_BIT(REG, BIT)                             \
+  do {                                                       \
+    uint32_t val;                                            \
+    do {                                                     \
+      val = __LDREXW((__IO uint32_t *)&(REG)) | (BIT);       \
+    } while ((__STREXW(val,(__IO uint32_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 32-bit register access macro to clear one or several bits */
+#define ATOMIC_CLEAR_BIT(REG, BIT)                           \
+  do {                                                       \
+    uint32_t val;                                            \
+    do {                                                     \
+      val = __LDREXW((__IO uint32_t *)&(REG)) & ~(BIT);      \
+    } while ((__STREXW(val,(__IO uint32_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 32-bit register access macro to clear and set one or several bits */
+#define ATOMIC_MODIFY_REG(REG, CLEARMSK, SETMASK)                          \
+  do {                                                                     \
+    uint32_t val;                                                          \
+    do {                                                                   \
+      val = (__LDREXW((__IO uint32_t *)&(REG)) & ~(CLEARMSK)) | (SETMASK); \
+    } while ((__STREXW(val,(__IO uint32_t *)&(REG))) != 0U);               \
+  } while(0)
+
+/* Atomic 16-bit register access macro to set one or several bits */
+#define ATOMIC_SETH_BIT(REG, BIT)                            \
+  do {                                                       \
+    uint16_t val;                                            \
+    do {                                                     \
+      val = __LDREXH((__IO uint16_t *)&(REG)) | (BIT);       \
+    } while ((__STREXH(val,(__IO uint16_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 16-bit register access macro to clear one or several bits */
+#define ATOMIC_CLEARH_BIT(REG, BIT)                          \
+  do {                                                       \
+    uint16_t val;                                            \
+    do {                                                     \
+      val = __LDREXH((__IO uint16_t *)&(REG)) & ~(BIT);      \
+    } while ((__STREXH(val,(__IO uint16_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 16-bit register access macro to clear and set one or several bits */
+#define ATOMIC_MODIFYH_REG(REG, CLEARMSK, SETMASK)                         \
+  do {                                                                     \
+    uint16_t val;                                                          \
+    do {                                                                   \
+      val = (__LDREXH((__IO uint16_t *)&(REG)) & ~(CLEARMSK)) | (SETMASK); \
+    } while ((__STREXH(val,(__IO uint16_t *)&(REG))) != 0U);               \
+  } while(0)
 
 /**
   * @}
@@ -240,4 +299,3 @@ typedef enum
 
 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -37,8 +36,32 @@ extern "C" {
   */
 
 /* Exported types ------------------------------------------------------------*/
+/** @defgroup SPIEx_Exported_Types SPIEx Exported Types
+  * @{
+  */
+
+/**
+  * @}
+  */
+
 /* Exported constants --------------------------------------------------------*/
+/** @defgroup SPIEx_Exported_Constants SPIEx Exported Constants
+  * @{
+  */
+
+/**
+  * @}
+  */
+
 /* Exported macros -----------------------------------------------------------*/
+/** @defgroup SPIEx_Exported_Macros SPIEx Extended Exported Macros
+  * @{
+  */
+
+/**
+  * @}
+  */
+
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup SPIEx_Exported_Functions
   * @{
@@ -49,9 +72,13 @@ extern "C" {
 /** @addtogroup SPIEx_Exported_Functions_Group1
   * @{
   */
-HAL_StatusTypeDef HAL_SPIEx_FlushRxFifo(SPI_HandleTypeDef *hspi);
+HAL_StatusTypeDef HAL_SPIEx_FlushRxFifo(const SPI_HandleTypeDef *hspi);
 HAL_StatusTypeDef HAL_SPIEx_EnableLockConfiguration(SPI_HandleTypeDef *hspi);
-HAL_StatusTypeDef HAL_SPIEx_ConfigureUnderrun(SPI_HandleTypeDef *hspi, uint32_t UnderrunDetection, uint32_t UnderrunBehaviour);
+HAL_StatusTypeDef HAL_SPIEx_ConfigureUnderrun(SPI_HandleTypeDef *hspi, uint32_t UnderrunDetection,
+                                              uint32_t UnderrunBehaviour);
+/**
+  * @}
+  */
 /**
   * @}
   */
@@ -64,14 +91,9 @@ HAL_StatusTypeDef HAL_SPIEx_ConfigureUnderrun(SPI_HandleTypeDef *hspi, uint32_t 
   * @}
   */
 
-/**
-  * @}
-  */
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* STM32H7xx_HAL_SPI_EX_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

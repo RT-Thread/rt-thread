@@ -8,6 +8,17 @@
   *           + Initialization and de-initialization functions
   *           + IO operation functions
   *           + Peripheral State and errors functions
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -78,18 +89,6 @@
       (@) You can refer to the DMA HAL driver header file for more useful macros.
 
   @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -107,6 +106,9 @@
 #ifdef HAL_DMA_MODULE_ENABLED
 
 /* Private types -------------------------------------------------------------*/
+/** @addtogroup DMA_Private_Types
+  * @{
+  */
 typedef struct
 {
   __IO uint32_t ISR;   /*!< DMA interrupt status register */
@@ -119,6 +121,9 @@ typedef struct
   __IO uint32_t ISR;   /*!< BDMA interrupt status register */
   __IO uint32_t IFCR;  /*!< BDMA interrupt flag clear register */
 } BDMA_Base_Registers;
+/**
+  * @}
+  */
 
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
@@ -244,11 +249,11 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
       assert_param(IS_DMA_PERIPHERAL_BURST(hdma->Init.PeriphBurst));
     }
 
-    /* Allocate lock resource */
-    __HAL_UNLOCK(hdma);
-
     /* Change DMA peripheral state */
     hdma->State = HAL_DMA_STATE_BUSY;
+
+    /* Allocate lock resource */
+    __HAL_UNLOCK(hdma);
 
     /* Disable the peripheral */
     __HAL_DMA_DISABLE(hdma);
@@ -358,11 +363,11 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
       assert_param(IS_BDMA_REQUEST(hdma->Init.Request));
     }
 
-    /* Allocate lock resource */
-    __HAL_UNLOCK(hdma);
-
     /* Change DMA peripheral state */
     hdma->State = HAL_DMA_STATE_BUSY;
+
+    /* Allocate lock resource */
+    __HAL_UNLOCK(hdma);
 
     /* Get the CR register value */
     registerValue = ((BDMA_Channel_TypeDef *)hdma->Instance)->CCR;
@@ -652,11 +657,11 @@ HAL_StatusTypeDef HAL_DMA_Start(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, ui
   }
   else
   {
-    /* Process unlocked */
-    __HAL_UNLOCK(hdma);
-
     /* Set the error code to busy */
     hdma->ErrorCode = HAL_DMA_ERROR_BUSY;
+
+    /* Process unlocked */
+    __HAL_UNLOCK(hdma);
 
     /* Return error status */
     status = HAL_ERROR;
@@ -748,11 +753,11 @@ HAL_StatusTypeDef HAL_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t SrcAddress,
   }
   else
   {
-    /* Process unlocked */
-    __HAL_UNLOCK(hdma);
-
     /* Set the error code to busy */
     hdma->ErrorCode = HAL_DMA_ERROR_BUSY;
+
+    /* Process unlocked */
+    __HAL_UNLOCK(hdma);
 
     /* Return error status */
     status = HAL_ERROR;
@@ -835,11 +840,11 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
         /* Update error code */
         hdma->ErrorCode = HAL_DMA_ERROR_TIMEOUT;
 
-        /* Process Unlocked */
-        __HAL_UNLOCK(hdma);
-
         /* Change the DMA state */
         hdma->State = HAL_DMA_STATE_ERROR;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hdma);
 
         return HAL_ERROR;
       }
@@ -873,11 +878,11 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
       }
     }
 
-    /* Process Unlocked */
-    __HAL_UNLOCK(hdma);
-
     /* Change the DMA state */
     hdma->State = HAL_DMA_STATE_READY;
+
+    /* Process Unlocked */
+    __HAL_UNLOCK(hdma);
   }
 
   return HAL_OK;
@@ -945,11 +950,11 @@ HAL_StatusTypeDef HAL_DMA_Abort_IT(DMA_HandleTypeDef *hdma)
         }
       }
 
-      /* Process Unlocked */
-      __HAL_UNLOCK(hdma);
-
       /* Change the DMA state */
       hdma->State = HAL_DMA_STATE_READY;
+
+      /* Process Unlocked */
+      __HAL_UNLOCK(hdma);
 
       /* Call User Abort callback */
       if(hdma->XferAbortCallback != NULL)
@@ -1173,10 +1178,10 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
       (*ifcr_reg) = (BDMA_FLAG_TC0 << (hdma->StreamIndex & 0x1FU));
     }
 
+    hdma->State = HAL_DMA_STATE_READY;
+
     /* Process Unlocked */
     __HAL_UNLOCK(hdma);
-
-    hdma->State = HAL_DMA_STATE_READY;
   }
   else /*CompleteLevel = HAL_DMA_HALF_TRANSFER*/
   {
@@ -1324,11 +1329,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
           /* Clear all interrupt flags at correct offset within the register */
           regs_dma->IFCR = 0x3FUL << (hdma->StreamIndex & 0x1FU);
 
-          /* Process Unlocked */
-          __HAL_UNLOCK(hdma);
-
           /* Change the DMA state */
           hdma->State = HAL_DMA_STATE_READY;
+
+          /* Process Unlocked */
+          __HAL_UNLOCK(hdma);
 
           if(hdma->XferAbortCallback != NULL)
           {
@@ -1366,11 +1371,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
             /* Disable the transfer complete interrupt */
             ((DMA_Stream_TypeDef   *)hdma->Instance)->CR  &= ~(DMA_IT_TC);
 
-            /* Process Unlocked */
-            __HAL_UNLOCK(hdma);
-
             /* Change the DMA state */
             hdma->State = HAL_DMA_STATE_READY;
+
+            /* Process Unlocked */
+            __HAL_UNLOCK(hdma);
           }
 
           if(hdma->XferCpltCallback != NULL)
@@ -1401,9 +1406,6 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
         }
         while((((DMA_Stream_TypeDef   *)hdma->Instance)->CR & DMA_SxCR_EN) != 0U);
 
-        /* Process Unlocked */
-        __HAL_UNLOCK(hdma);
-
         if((((DMA_Stream_TypeDef   *)hdma->Instance)->CR & DMA_SxCR_EN) != 0U)
         {
           /* Change the DMA state to error if DMA disable fails */
@@ -1414,6 +1416,9 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
           /* Change the DMA state to Ready if DMA disable success */
           hdma->State = HAL_DMA_STATE_READY;
         }
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hdma);
       }
 
       if(hdma->XferErrorCallback != NULL)
@@ -1509,11 +1514,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
           /* Disable the transfer complete and error interrupt, if the DMA mode is not CIRCULAR */
           __HAL_DMA_DISABLE_IT(hdma, DMA_IT_TE | DMA_IT_TC);
 
-          /* Process Unlocked */
-          __HAL_UNLOCK(hdma);
-
           /* Change the DMA state */
           hdma->State = HAL_DMA_STATE_READY;
+
+          /* Process Unlocked */
+          __HAL_UNLOCK(hdma);
         }
 
         if(hdma->XferCpltCallback != NULL)
@@ -1537,11 +1542,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
       /* Update error code */
       hdma->ErrorCode = HAL_DMA_ERROR_TE;
 
-      /* Process Unlocked */
-      __HAL_UNLOCK(hdma);
-
       /* Change the DMA state */
       hdma->State = HAL_DMA_STATE_READY;
+
+      /* Process Unlocked */
+      __HAL_UNLOCK(hdma);
 
       if (hdma->XferErrorCallback != NULL)
       {
@@ -1613,6 +1618,7 @@ HAL_StatusTypeDef HAL_DMA_RegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_Call
       break;
 
     default:
+      status =  HAL_ERROR;
       break;
     }
   }
@@ -2054,4 +2060,3 @@ static void DMA_CalcDMAMUXRequestGenBaseAndMask(DMA_HandleTypeDef *hdma)
   * @}
   */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

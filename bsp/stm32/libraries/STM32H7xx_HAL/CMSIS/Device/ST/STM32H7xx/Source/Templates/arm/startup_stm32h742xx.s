@@ -1,4 +1,4 @@
-;******************** (C) COPYRIGHT 2019 STMicroelectronics ********************
+;********************************************************************************
 ;* File Name          : startup_stm32h742xx.s
 ;* @author  MCD Application Team
 ;* Description        : STM32H7xx devices vector table for MDK-ARM toolchain. 
@@ -17,12 +17,11 @@
 ;* Copyright (c) 2019 STMicroelectronics.
 ;* All rights reserved.
 ;*
-;* This software component is licensed by ST under BSD 3-Clause license,
-;* the "License"; You may not use this file except in compliance with the
-;* License. You may obtain a copy of the License at:
-;*                        opensource.org/licenses/BSD-3-Clause
+;* This software is licensed under terms that can be found in the LICENSE file
+;* in the root directory of this software component.
+;* If no LICENSE file comes with this software, it is provided AS-IS.
 ;*
-;******************************************************************************
+;*******************************************************************************
 
 ; Amount of memory (in bytes) allocated for Stack
 ; Tailor this value to your application needs
@@ -602,4 +601,3 @@ __user_initial_stackheap
 
                  END
 
-;************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE*****

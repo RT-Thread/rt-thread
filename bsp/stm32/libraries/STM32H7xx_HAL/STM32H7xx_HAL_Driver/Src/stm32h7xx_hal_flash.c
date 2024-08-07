@@ -74,14 +74,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
-  *
+  * This software is licensed under terms that can be found in the LICENSE file in
+  * the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   ******************************************************************************
   */
 
@@ -110,7 +108,13 @@
   */
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/** @addtogroup FLASH_Private_Variables
+  * @{
+  */
 FLASH_ProcessTypeDef pFlash;
+/**
+  * @}
+  */
 /* Private function prototypes -----------------------------------------------*/
 /* Exported functions ---------------------------------------------------------*/
 
@@ -119,8 +123,8 @@ FLASH_ProcessTypeDef pFlash;
   */
 
 /** @defgroup FLASH_Exported_Functions_Group1 Programming operation functions
- *  @brief   Programming operation functions
- *
+  *  @brief   Programming operation functions
+  *
 @verbatim
  ===============================================================================
                   ##### Programming operation functions #####
@@ -169,6 +173,8 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress,
 #endif /* FLASH_OPTCR_PG_OTP */
   {
     bank = FLASH_BANK_1;
+    /* Prevent unused argument(s) compilation warning */
+    UNUSED(TypeProgram);
   }
 #if defined (DUAL_BANK)
   else if(IS_FLASH_PROGRAM_ADDRESS_BANK2(FlashAddress))
@@ -335,6 +341,8 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t FlashAddre
 #endif /* FLASH_OPTCR_PG_OTP */
   {
     bank = FLASH_BANK_1;
+    /* Prevent unused argument(s) compilation warning */
+    UNUSED(TypeProgram);
   }
 #if defined (DUAL_BANK)
   else if(IS_FLASH_PROGRAM_ADDRESS_BANK2(FlashAddress))
@@ -651,6 +659,38 @@ void HAL_FLASH_IRQHandler(void)
     HAL_FLASH_OperationErrorCallback(temp);
   }
 
+#if (USE_FLASH_ECC == 1U)
+  /* Check FLASH Bank1 ECC single correction error flag */
+  errorflag = FLASH->SR1 & FLASH_FLAG_SNECCERR_BANK1;
+
+  if(errorflag != 0U)
+  {
+    /* Save the error code */
+    pFlash.ErrorCode |= errorflag;
+
+    /* Call User callback */
+    HAL_FLASHEx_EccCorrectionCallback();
+
+    /* Clear FLASH Bank1 ECC single correction error flag in order to allow new ECC error record */
+    __HAL_FLASH_CLEAR_FLAG_BANK1(errorflag);
+  }
+
+  /* Check FLASH Bank1 ECC double detection error flag */
+  errorflag = FLASH->SR1 & FLASH_FLAG_DBECCERR_BANK1;
+
+  if(errorflag != 0U)
+  {
+    /* Save the error code */
+    pFlash.ErrorCode |= errorflag;
+
+    /* Call User callback */
+    HAL_FLASHEx_EccDetectionCallback();
+
+    /* Clear FLASH Bank1 ECC double detection error flag in order to allow new ECC error record */
+    __HAL_FLASH_CLEAR_FLAG_BANK1(errorflag);
+  }
+#endif /* USE_FLASH_ECC */
+
 #if defined (DUAL_BANK)
   /* Check FLASH Bank2 operation error flags */
 #if defined (FLASH_SR_OPERR)
@@ -694,6 +734,39 @@ void HAL_FLASH_IRQHandler(void)
     /* FLASH error interrupt user callback */
     HAL_FLASH_OperationErrorCallback(temp);
   }
+
+#if (USE_FLASH_ECC == 1U)
+  /* Check FLASH Bank2 ECC single correction error flag */
+  errorflag = FLASH->SR2 & FLASH_FLAG_SNECCERR_BANK2;
+
+  if(errorflag != 0U)
+  {
+    /* Save the error code */
+    pFlash.ErrorCode |= (errorflag | 0x80000000U);
+
+    /* Call User callback */
+    HAL_FLASHEx_EccCorrectionCallback();
+
+    /* Clear FLASH Bank2 ECC single correction error flag in order to allow new ECC error record */
+    __HAL_FLASH_CLEAR_FLAG_BANK2(errorflag);
+  }
+
+  /* Check FLASH Bank2 ECC double detection error flag */
+  errorflag = FLASH->SR2 & FLASH_FLAG_DBECCERR_BANK2;
+
+  if(errorflag != 0U)
+  {
+    /* Save the error code */
+    pFlash.ErrorCode |= (errorflag | 0x80000000U);
+
+    /* Call User callback */
+    HAL_FLASHEx_EccDetectionCallback();
+
+    /* Clear FLASH Bank2 ECC double detection error flag in order to allow new ECC error record */
+    __HAL_FLASH_CLEAR_FLAG_BANK2(errorflag);
+  }
+
+#endif /* USE_FLASH_ECC */
 #endif /* DUAL_BANK */
 
   if(pFlash.ProcedureOnGoing == FLASH_PROC_NONE)
@@ -767,8 +840,8 @@ __weak void HAL_FLASH_OperationErrorCallback(uint32_t ReturnValue)
   */
 
 /** @defgroup FLASH_Exported_Functions_Group2 Peripheral Control functions
- *  @brief   Management functions
- *
+  *  @brief   Management functions
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
@@ -928,8 +1001,8 @@ HAL_StatusTypeDef HAL_FLASH_OB_Launch(void)
   */
 
 /** @defgroup FLASH_Exported_Functions_Group3 Peripheral State and Errors functions
- *  @brief   Peripheral Errors functions
- *
+  *  @brief   Peripheral Errors functions
+  *
 @verbatim
  ===============================================================================
                 ##### Peripheral Errors functions #####
@@ -967,7 +1040,7 @@ HAL_StatusTypeDef HAL_FLASH_OB_Launch(void)
   *            @arg HAL_FLASH_ERROR_SNECC_BANK2: SNECC Error on Bank 2
   *            @arg HAL_FLASH_ERROR_DBECC_BANK2: Double Detection ECC on Bank 2
   *            @arg HAL_FLASH_ERROR_CRCRD_BANK2: CRC Read Error on Bank 2
-*/
+  */
 
 uint32_t HAL_FLASH_GetError(void)
 {
@@ -1001,7 +1074,7 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout, uint32_t Bank)
      flag will be set */
 
   uint32_t bsyflag = FLASH_FLAG_QW_BANK1;
-  uint32_t errorflag = FLASH->SR1 & FLASH_FLAG_ALL_ERRORS_BANK1;
+  uint32_t errorflag = 0;
   uint32_t tickstart = HAL_GetTick();
 
   assert_param(IS_FLASH_BANK_EXCLUSIVE(Bank));
@@ -1010,8 +1083,6 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout, uint32_t Bank)
 
   if (Bank == FLASH_BANK_2)
   {
-    /* Get Error Flags */
-    errorflag = (FLASH->SR2 & FLASH_FLAG_ALL_ERRORS_BANK2) | 0x80000000U;
     /* Select bsyflag depending on Bank */
     bsyflag = FLASH_FLAG_QW_BANK2;
   }
@@ -1027,6 +1098,18 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout, uint32_t Bank)
       }
     }
   }
+
+  /* Get Error Flags */
+  if (Bank == FLASH_BANK_1)
+  {
+    errorflag = FLASH->SR1 & FLASH_FLAG_ALL_ERRORS_BANK1;
+  }
+#if defined (DUAL_BANK)
+  else
+  {
+    errorflag = (FLASH->SR2 & FLASH_FLAG_ALL_ERRORS_BANK2) | 0x80000000U;
+  }
+#endif /* DUAL_BANK */
 
   /* In case of error reported in Flash SR1 or SR2 register */
   if((errorflag & 0x7FFFFFFFU) != 0U)
@@ -1184,4 +1267,4 @@ HAL_StatusTypeDef FLASH_CRC_WaitForLastOperation(uint32_t Timeout, uint32_t Bank
   * @}
   */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

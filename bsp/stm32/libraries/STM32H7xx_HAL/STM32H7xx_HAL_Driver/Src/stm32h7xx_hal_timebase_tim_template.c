@@ -9,6 +9,17 @@
   *           + Initializes the TIM peripheral generate a Period elapsed Event each 1ms
   *           + HAL_IncTick is called inside HAL_TIM_PeriodElapsedCallback ie each 1ms
   *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
  @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -20,17 +31,6 @@
        HAL_TIM_MODULE_ENABLED define in stm32h7xx_hal_conf.h
 
   @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
   ******************************************************************************
   */
 
@@ -61,20 +61,7 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
   uint32_t              uwTimclock, uwAPB1Prescaler;
   uint32_t              uwPrescalerValue;
   uint32_t              pFLatency;
-
-    /*Configure the TIM6 IRQ priority */
-  if (TickPriority < (1UL << __NVIC_PRIO_BITS))
-  {
-  HAL_NVIC_SetPriority(TIM6_DAC_IRQn, TickPriority ,0U);
-
-  /* Enable the TIM6 global Interrupt */
-  HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
-    uwTickPrio = TickPriority;
-  }
-  else
-  {
-    return HAL_ERROR;
-  }
+  HAL_StatusTypeDef     status;
 
   /* Enable TIM6 clock */
   __HAL_RCC_TIM6_CLK_ENABLE();
@@ -109,16 +96,33 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
   */
   TimHandle.Init.Period = (1000000U / 1000U) - 1U;
   TimHandle.Init.Prescaler = uwPrescalerValue;
-  TimHandle.Init.ClockDivision = 0;
+  TimHandle.Init.ClockDivision = 0U;
   TimHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
-  if(HAL_TIM_Base_Init(&TimHandle) == HAL_OK)
+  status = HAL_TIM_Base_Init(&TimHandle);
+  if (status == HAL_OK)
   {
     /* Start the TIM time Base generation in interrupt mode */
-    return HAL_TIM_Base_Start_IT(&TimHandle);
-  }
+    status = HAL_TIM_Base_Start_IT(&TimHandle);
+    if (status == HAL_OK)
+    {
+	  /* Enable the TIM6 global Interrupt */
+      HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+   
+      if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+      {
+        /* Enable the TIM6 global Interrupt */
+        HAL_NVIC_SetPriority(TIM6_DAC_IRQn, TickPriority, 0);
+        uwTickPrio = TickPriority;
+      }
+      else
+      {
+        status = HAL_ERROR;
+      }
+   }
+}
 
   /* Return function status */
-  return HAL_ERROR;
+  return status;
 }
 
 /**
@@ -171,4 +175,4 @@ void TIM6_DAC_IRQHandler(void)
   HAL_TIM_IRQHandler(&TimHandle);
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

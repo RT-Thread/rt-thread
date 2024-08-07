@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -126,7 +125,7 @@ typedef enum
   IRDA_CLOCKSOURCE_D2PCLK1    = 0x11U,    /*!< Domain2 PCLK1 clock source */
   IRDA_CLOCKSOURCE_D2PCLK2    = 0x12U,    /*!< Domain2 PCLK2 clock source */
   IRDA_CLOCKSOURCE_PLL2Q      = 0x14U,    /*!< PLL2Q clock source         */
-  IRDA_CLOCKSOURCE_PLL3Q      = 0x18U,    /*!< PCLK2 clock source         */
+  IRDA_CLOCKSOURCE_PLL3Q      = 0x18U,    /*!< PLL3Q clock source         */
   IRDA_CLOCKSOURCE_HSI        = 0x02U,    /*!< HSI clock source           */
   IRDA_CLOCKSOURCE_CSI        = 0x08U,    /*!< CSI clock source           */
   IRDA_CLOCKSOURCE_LSE        = 0x10U,    /*!< LSE clock source           */
@@ -146,7 +145,7 @@ typedef struct
 
   IRDA_InitTypeDef         Init;             /*!< IRDA communication parameters      */
 
-  uint8_t                  *pTxBuffPtr;      /*!< Pointer to IRDA Tx transfer Buffer */
+  const uint8_t            *pTxBuffPtr;      /*!< Pointer to IRDA Tx transfer Buffer */
 
   uint16_t                 TxXferSize;       /*!< IRDA Tx Transfer size              */
 
@@ -830,11 +829,11 @@ HAL_StatusTypeDef HAL_IRDA_UnRegisterCallback(IRDA_HandleTypeDef *hirda, HAL_IRD
   */
 
 /* IO operation functions *****************************************************/
-HAL_StatusTypeDef HAL_IRDA_Transmit(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_IRDA_Transmit(IRDA_HandleTypeDef *hirda, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
 HAL_StatusTypeDef HAL_IRDA_Receive(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_IRDA_Transmit_IT(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_IRDA_Transmit_IT(IRDA_HandleTypeDef *hirda, const uint8_t *pData, uint16_t Size);
 HAL_StatusTypeDef HAL_IRDA_Receive_IT(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_IRDA_Transmit_DMA(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_IRDA_Transmit_DMA(IRDA_HandleTypeDef *hirda, const uint8_t *pData, uint16_t Size);
 HAL_StatusTypeDef HAL_IRDA_Receive_DMA(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size);
 HAL_StatusTypeDef HAL_IRDA_DMAPause(IRDA_HandleTypeDef *hirda);
 HAL_StatusTypeDef HAL_IRDA_DMAResume(IRDA_HandleTypeDef *hirda);
@@ -868,8 +867,8 @@ void HAL_IRDA_AbortReceiveCpltCallback(IRDA_HandleTypeDef *hirda);
   */
 
 /* Peripheral State and Error functions ***************************************/
-HAL_IRDA_StateTypeDef HAL_IRDA_GetState(IRDA_HandleTypeDef *hirda);
-uint32_t              HAL_IRDA_GetError(IRDA_HandleTypeDef *hirda);
+HAL_IRDA_StateTypeDef HAL_IRDA_GetState(const IRDA_HandleTypeDef *hirda);
+uint32_t              HAL_IRDA_GetError(const IRDA_HandleTypeDef *hirda);
 
 /**
   * @}
@@ -893,4 +892,3 @@ uint32_t              HAL_IRDA_GetError(IRDA_HandleTypeDef *hirda);
 
 #endif /* STM32H7xx_HAL_IRDA_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

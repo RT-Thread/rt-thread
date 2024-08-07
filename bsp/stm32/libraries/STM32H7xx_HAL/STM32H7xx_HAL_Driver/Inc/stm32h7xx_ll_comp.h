@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -53,6 +52,12 @@ extern "C" {
   */
 
 /* Private macros ------------------------------------------------------------*/
+/** @defgroup COMP_LL_Private_Macros COMP Private Macros
+  * @{
+  */
+/**
+  * @}
+  */
 /* Exported types ------------------------------------------------------------*/
 #if defined(USE_FULL_LL_DRIVER)
 /** @defgroup COMP_LL_ES_INIT COMP Exported Init structure
@@ -814,6 +819,91 @@ __STATIC_INLINE uint32_t LL_COMP_ReadOutputLevel(COMP_TypeDef *COMPx)
   * @}
   */
 
+/** @defgroup COMP_LL_EF_FLAG_Management Comparator flag Management
+  * @{
+  */
+
+/**
+  * @brief  Get comparator output trigger flag (latched)
+  * @rmtoll SR       C1IF           LL_COMP_IsActiveFlag_OutputTrig
+  * @param  COMPx Comparator instance
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_COMP_IsActiveFlag_OutputTrig(COMP_TypeDef *COMPx)
+{
+   if (COMPx == COMP1)
+  {
+    return ((READ_BIT(COMP12->SR, COMP_SR_C1IF) == (COMP_SR_C1IF)) ? 1UL : 0UL);
+  }
+  else
+  {
+    return ((READ_BIT(COMP12->SR, COMP_SR_C2IF) == (COMP_SR_C2IF)) ? 1UL : 0UL);
+  }
+}
+
+/**
+  * @brief  Clear comparator comparator output trigger flag (latched)
+  * @rmtoll ICFR     CC1IF          LL_COMP_ClearFlag_OutputTrig
+  * @param  COMPx Comparator instance
+  * @retval None
+  */
+__STATIC_INLINE void LL_COMP_ClearFlag_OutputTrig(COMP_TypeDef *COMPx)
+{
+  if (COMPx == COMP1)
+  {
+    SET_BIT(COMP12->ICFR, COMP_ICFR_C1IF);
+  }
+  else
+  {
+    SET_BIT(COMP12->ICFR, COMP_ICFR_C2IF);
+  }
+}
+
+/**
+  * @}
+  */
+
+/** @defgroup COMP_LL_EF_IT_Management Comparartor IT management
+  * @{
+  */
+
+/**
+  * @brief  Enable comparator output trigger interrupt
+  * @rmtoll ICFR     ITEN           LL_COMP_EnableIT_OutputTrig
+  * @param  COMPx Comparator instance
+  * @retval None
+  */
+__STATIC_INLINE void LL_COMP_EnableIT_OutputTrig(COMP_TypeDef *COMPx)
+{
+  SET_BIT(COMPx->CFGR, COMP_CFGRx_ITEN);
+}
+
+/**
+  * @brief  Disable comparator output trigger interrupt
+  * @rmtoll ICFR     ITEN           LL_COMP_DisableIT_OutputTrig
+  * @param  COMPx Comparator instance
+  * @retval None
+  */
+__STATIC_INLINE void LL_COMP_DisableIT_OutputTrig(COMP_TypeDef *COMPx)
+{
+  CLEAR_BIT(COMPx->CFGR, COMP_CFGRx_ITEN);
+}
+
+/**
+  * @brief  Get comparator output trigger interrupt state
+  * @rmtoll ICFR     ITEN           LL_COMP_IsEnabledIT_OutputTrig
+  * @param  COMPx Comparator instance
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_COMP_IsEnabledIT_OutputTrig(COMP_TypeDef *COMPx)
+{
+  return ((READ_BIT(COMPx->CFGR, COMP_CFGRx_ITEN) == (COMP_CFGRx_ITEN)) ? 1UL : 0UL);
+}
+
+/**
+  * @}
+  */
+  
 #if defined(USE_FULL_LL_DRIVER)
 /** @defgroup COMP_LL_EF_Init Initialization and de-initialization functions
   * @{
@@ -848,4 +938,4 @@ void        LL_COMP_StructInit(LL_COMP_InitTypeDef *COMP_InitStruct);
 
 #endif /* __STM32H7xx_LL_COMP_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
