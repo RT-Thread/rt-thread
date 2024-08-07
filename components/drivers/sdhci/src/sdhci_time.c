@@ -47,7 +47,7 @@ unsigned long nsecs_to_jiffies(rt_uint64_t n)
     return 0;
 }
 
-int mod_timer(struct rt_timer timer, unsigned long expires)
+int mod_timer(struct rt_timer *timer, unsigned long expires)
 {
     rt_tick_t tick = rt_tick_get();
 
@@ -57,8 +57,8 @@ int mod_timer(struct rt_timer timer, unsigned long expires)
     }
     tick = expires - tick;
 
-    rt_timer_stop(&timer);
-    rt_timer_control(&timer, RT_TIMER_CTRL_SET_TIME, &tick);
+    rt_timer_stop(timer);
+    rt_timer_control(timer, RT_TIMER_CTRL_SET_TIME, &tick);
 
-    return rt_timer_start(&timer);
+    return rt_timer_start(timer);
 }

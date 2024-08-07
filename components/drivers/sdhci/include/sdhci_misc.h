@@ -49,13 +49,9 @@
 
 
 
-struct regulator {
-    const char *supply_name;
-};
 
 int regulator_is_supported_voltage(struct regulator *regulator,
 				   int min_uV, int max_uV);
 int regulator_enable(struct regulator *regulator);
-int regulator_get_current_limit(struct regulator *regulator);
 rt_bool_t mmc_can_gpio_cd(struct mmc_host *host);
 #endif

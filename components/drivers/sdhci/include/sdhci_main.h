@@ -14,6 +14,8 @@
 #include "sdhci_time.h"
 #include "sdhci_dma.h"
 #include "transer.h"
+#include "sdhci-irq.h"
+#include "sdhci_voltage.h"
 
 
 
@@ -372,8 +374,6 @@ struct sdhci_adma2_64_desc {
  */
 #define MMC_CMD_TRANSFER_TIME	(10 * NSEC_PER_MSEC) /* max 10 ms */
 
-#define sdhci_err_stats_inc(host, err_name) \
-	mmc_debugfs_err_stats_inc((host)->mmc, MMC_ERR_##err_name)
 
 enum sdhci_cookie {
 	COOKIE_UNMAPPED,
@@ -840,6 +840,7 @@ static void sdhci_timeout_data_timer(void* parameter);
 static void sdhci_thread_irq(struct rt_work *work, void *work_data);
 static void  sdhci_irq(int irq, void *dev_id);
 static rt_bool_t sdhci_send_command(struct sdhci_host *host, struct rt_mmcsd_cmd *cmd);
+
 static rt_bool_t sdhci_request_done(struct sdhci_host *host);
 
 #endif /* __SDHCI_HW_H */

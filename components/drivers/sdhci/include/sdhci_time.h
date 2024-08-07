@@ -18,5 +18,5 @@ int ktime_compare(const ktime_t cmp1, const ktime_t cmp2);
 int64_t ktime_get(void);
 rt_bool_t ktime_after(const ktime_t cmp1, const ktime_t cmp2);
 unsigned long nsecs_to_jiffies(rt_uint64_t n);
-int mod_timer(struct rt_timer timer, unsigned long expires);
+int mod_timer(struct rt_timer *timer, unsigned long expires);
 #endif

@@ -1,18 +1,14 @@
 from building import *
-cwd  = GetCurrentDir()
-objs = []
-list = os.listdir(cwd)
 
-
-src     = Glob('*.c')
+cwd     = GetCurrentDir()
+src     = []
 CPPPATH = [cwd + '/include']
+src += Glob('*.c')
+src += Glob('src/*.c')
+src += Glob('sdhci-platform/*.c')
 
-group   = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SDHCI'], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [], CPPPATH = CPPPATH)
 
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
-group += objs
+objs = [group]
 
-Return('group')
+Return('objs')

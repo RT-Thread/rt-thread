@@ -39,7 +39,7 @@ static inline void u16_write(rt_uint16_t value, volatile void *addr)
     *(volatile rt_uint16_t *)addr = value;
 }
 
-static inline void u32_write(rt_uint16_t value, volatile void *addr)
+static inline void u32_write(rt_uint32_t value, volatile void *addr)
 {
     *(volatile rt_uint32_t *)addr = value;
 }
