@@ -201,6 +201,14 @@ void dfs_file_deinit(struct dfs_file *file)
 {
     RT_ASSERT(file);
 
+    if (file->fops && file->fops->close)
+    {
+        if (file->fops->close(file) != RT_EOK)
+        {
+            LOG_E("file %p close error", file);
+        }
+    }
+
     rt_mutex_detach(&file->pos_lock);
 
     if (file->dentry)
@@ -210,7 +218,7 @@ void dfs_file_deinit(struct dfs_file *file)
 
     if (file->vnode)
     {
-        dfs_vnode_unref(file->vnode);
+        //dfs_vnode_unref(file->vnode);
     }
 
     if (file->mmap_context)

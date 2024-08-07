@@ -90,7 +90,10 @@ struct dfs_dentry * dfs_dentry_ref(struct dfs_dentry *dentry)
     RT_ASSERT(dentry);
 
     rt_atomic_add(&(dentry->ref_count), 1);
-
+    if (dentry->vnode)
+    {
+        rt_atomic_add(&(dentry->vnode->ref_count), 1);  // TODO: dont add vnode's ref
+    }
     return dentry;
 }
 
@@ -98,17 +101,12 @@ struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
 {
     rt_err_t ret = RT_EOK;
 
-    RT_ASSERT(dentry);
+    RT_ASSERT(dentry && (dentry->flags & DENTRY_IS_ALLOCED));
 
     ret = dfs_file_lock();
     if (ret == RT_EOK)
     {
-        if (dentry->flags & DENTRY_IS_ALLOCED)
-        {
-            rt_atomic_sub(&(dentry->ref_count), 1);
-        }
-
-        if (rt_atomic_load(&(dentry->ref_count)) == 0)
+        if (rt_atomic_dec_and_test(&(dentry->ref_count)))
         {
             DLOG(msg, "dentry", "dentry", DLOG_MSG, "free dentry, ref_count=0");
             if (dentry->flags & DENTRY_IS_ADDHASH)

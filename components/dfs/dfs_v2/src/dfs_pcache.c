@@ -721,9 +721,7 @@ static void dfs_page_unref(struct dfs_page *page)
 
     dfs_aspace_lock(aspace);
 
-    rt_atomic_sub(&(page->ref_count), 1);
-
-    if (rt_atomic_load(&(page->ref_count)) == 0)
+    if (rt_atomic_dec_and_test(&(page->ref_count)))
     {
         dfs_page_unmap(page);
 
