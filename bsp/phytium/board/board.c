@@ -51,6 +51,7 @@ extern FIOPadCtrl iopad_ctrl;
 /* mmu config */
 extern struct mem_desc platform_mem_desc[];
 extern const rt_uint32_t platform_mem_desc_size;
+rt_uint64_t rt_cpu_mpidr_table[RT_CPUS_NR];
 
 void idle_wfi(void)
 {
