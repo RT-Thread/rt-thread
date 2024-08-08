@@ -49,6 +49,10 @@ src += ['MCXA153/drivers/fsl_waketimer.c']
 src += ['MCXA153/drivers/fsl_wuu.c']
 src += ['MCXA153/drivers/fsl_wwdt.c']
 
+if GetDepend('BSP_USING_SPI'):
+    src += ['MCXA153/drivers/fsl_lpspi.c']
+    src += ['MCXA153/drivers/fsl_lpspi_edma.c']
+
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
 Return('group')

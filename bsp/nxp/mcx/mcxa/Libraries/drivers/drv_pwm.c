@@ -36,6 +36,7 @@ static mcx_pwm_obj_t mcx_pwm_list[]=
     }
 #endif
 };
+
 volatile uint32_t g_pwmPeriod   = 0U;
 volatile uint32_t g_pulsePeriod = 0U;
 

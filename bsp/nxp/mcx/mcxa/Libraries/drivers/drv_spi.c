@@ -9,7 +9,6 @@
  */
 #include "rtdevice.h"
 #include "drv_spi.h"
-#include "fsl_common.h"
 #include "fsl_lpspi.h"
 #include "fsl_lpspi_edma.h"
 
@@ -42,7 +41,6 @@ struct lpc_spi
     rt_sem_t                    sem;
     char                        *name;
 };
-
 
 static struct lpc_spi lpc_obj[] =
 {
@@ -83,12 +81,10 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     return ret;
 }
 
-
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
 {
     return RT_EOK;
 }
-
 
 static void LPSPI_MasterUserCallback(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, status_t status, void *userData)
 {
@@ -106,7 +102,6 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     RT_ASSERT(device->bus != RT_NULL);
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
 
-
     struct lpc_spi *spi = (struct lpc_spi *)(device->bus->parent.user_data);
     struct lpc_sw_spi_cs *cs = device->parent.user_data;
 
@@ -120,37 +115,29 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     transfer.txData   = (uint8_t *)(message->send_buf);
 
     /*  if(message->length < MAX_DMA_TRANSFER_SIZE)*/
-    if (0)
+    uint32_t block, remain;
+    block = message->length / DMA_MAX_TRANSFER_SIZE;
+    remain = message->length % DMA_MAX_TRANSFER_SIZE;
+
+    for (i = 0; i < block; i++)
     {
-        LPSPI_MasterTransferBlocking(spi->LPSPIx, &transfer);
-    }
-    else
-    {
-        uint32_t block, remain;
-        block = message->length / DMA_MAX_TRANSFER_SIZE;
-        remain = message->length % DMA_MAX_TRANSFER_SIZE;
+        transfer.dataSize = DMA_MAX_TRANSFER_SIZE;
+        if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_SIZE);
+        if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_SIZE);
 
-        for (i = 0; i < block; i++)
-        {
-            transfer.dataSize = DMA_MAX_TRANSFER_SIZE;
-            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_SIZE);
-            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_SIZE);
-
-            LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
-            rt_sem_take(spi->sem, RT_WAITING_FOREVER);
-        }
-
-        if (remain)
-        {
-            transfer.dataSize = remain;
-            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_SIZE);
-            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_SIZE);
-
-            LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
-            rt_sem_take(spi->sem, RT_WAITING_FOREVER);
-        }
+        LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
+        rt_sem_take(spi->sem, RT_WAITING_FOREVER);
     }
 
+    if (remain)
+    {
+        transfer.dataSize = remain;
+        if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_SIZE);
+        if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_SIZE);
+
+        LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
+        rt_sem_take(spi->sem, RT_WAITING_FOREVER);
+    }
 
     if (message->cs_release)
     {
@@ -160,15 +147,11 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     return message->length;
 }
 
-
-
 static struct rt_spi_ops lpc_spi_ops =
 {
     .configure = spi_configure,
     .xfer      = spixfer
 };
-
-
 
 int rt_hw_spi_init(void)
 {
