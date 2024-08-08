@@ -27,7 +27,6 @@ processor_version: 0.14.3
 #include "fsl_ctimer.h"
 #include "pin_mux.h"
 
-
 void BOARD_InitBootPins(void)
 {
     BOARD_InitPins();
