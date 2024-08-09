@@ -717,17 +717,34 @@ rt_err_t sys_dup2(int oldfd, int newfd)
         goto exit;
     }
 
-    if (fdt->fds[newfd])
+    struct dfs_file *tmp = fdt->fds[newfd];
+    fdt->fds[newfd] = fdt->fds[oldfd];
+
+    if (tmp)
     {
-        ret = dfs_file_close(fdt->fds[newfd]);
+        ret = dfs_file_close(tmp);
         if (ret < 0)
         {
             goto exit;
         }
-        fd_release(newfd);
+
+        if (tmp && tmp->ref_count == 1)
+        {
+            rt_mutex_detach(&tmp->pos_lock);
+
+            if (tmp->mmap_context)
+            {
+                rt_free(tmp->mmap_context);
+            }
+
+            rt_free(tmp);
+        }
+        else
+        {
+            rt_atomic_sub(&(tmp->ref_count), 1);
+        }
     }
 
-    fdt->fds[newfd] = fdt->fds[oldfd];
     /* inc ref_count */
     rt_atomic_add(&(fdt->fds[newfd]->ref_count), 1);
     retfd = newfd;
