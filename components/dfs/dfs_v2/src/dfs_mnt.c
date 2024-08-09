@@ -233,11 +233,10 @@ struct dfs_mnt *dfs_mnt_lookup(const char *fullpath)
 
 struct dfs_mnt* dfs_mnt_ref(struct dfs_mnt* mnt)
 {
-    if (mnt)
-    {
-        rt_atomic_add(&(mnt->ref_count), 1);
-        DLOG(note, "mnt", "mnt(%s),ref_count=%d", mnt->fs_ops->name, rt_atomic_load(&(mnt->ref_count)));
-    }
+    RT_ASSERT(mnt);
+
+    rt_atomic_add(&(mnt->ref_count), 1);
+    DLOG(note, "mnt", "mnt(%s),ref_count=%d", mnt->fs_ops->name, rt_atomic_load(&(mnt->ref_count)));
 
     return mnt;
 }
@@ -248,9 +247,7 @@ int dfs_mnt_unref(struct dfs_mnt* mnt)
 
     if (mnt)
     {
-        rt_atomic_sub(&(mnt->ref_count), 1);
-
-        if (rt_atomic_load(&(mnt->ref_count)) == 0)
+        if (rt_atomic_dec_and_test(&(mnt->ref_count)))
         {
             dfs_lock();
 

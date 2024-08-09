@@ -1999,6 +1999,8 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
     dst_fdt = &dst->fdt;
     /* init fds */
     dst_fdt->fds = rt_calloc(src_fdt->maxfd, sizeof(void *));
+    rt_memset(dst_fdt->fds, 0, src_fdt->maxfd * sizeof(void *));
+
     if (dst_fdt->fds)
     {
         struct dfs_file *d_s;
@@ -2013,8 +2015,8 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
             d_s = fdt_get_file(src_fdt, i);
             if (d_s)
             {
-                dst_fdt->fds[i] = d_s;
-                d_s->ref_count++;
+                fdt_fd_associate_file(dst_fdt, i, d_s, RT_FALSE);
+                dfs_file_put(d_s);
             }
         }
         dfs_file_unlock();
@@ -4417,11 +4419,20 @@ sysret_t sys_fchdir(int fd)
     char *kpath;
 
     d = fd_get(fd);
-    if (!d || !d->vnode)
+    if (!d)
     {
         return -EBADF;
     }
+    
+    if (!d->vnode)
+    {
+        dfs_file_put(d);
+        return -EBADF;
+    }
+
     kpath = dfs_dentry_full_path(d->dentry);
+    dfs_file_put(d);
+
     if (!kpath)
     {
         return -EACCES;
@@ -4546,7 +4557,16 @@ sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
         return -ENOMEM;
     }
     file = fd_get(fd);
+
+    if (!file)
+    {
+        return -EBADF;
+    }
+
     ret = dfs_file_getdents(file, rtt_dirp, rtt_nbytes);
+
+    dfs_file_put(file);
+
     if (ret > 0)
     {
         size_t i = 0;

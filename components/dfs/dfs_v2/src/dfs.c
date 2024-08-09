@@ -215,22 +215,16 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     }
     else if (!fdt->fds[idx])
     {
-        struct dfs_file *file;
-
-        file = (struct dfs_file *)rt_calloc(1, sizeof(struct dfs_file));
+        struct dfs_file *file = dfs_file_create();
 
         if (file)
         {
-            file->magic = DFS_FD_MAGIC;
-            file->ref_count = 1;
-            rt_mutex_init(&file->pos_lock, "fpos", RT_IPC_FLAG_PRIO);
-            fdt->fds[idx] = file;
-
+            fdt_fd_associate_file(fdt, idx, file, RT_FALSE);
+            dfs_file_put(file);
             LOG_D("allocate a new fd @ %d", idx);
         }
         else
         {
-            fdt->fds[idx] = RT_NULL;
             idx = -1;
         }
     }
@@ -245,32 +239,28 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     return idx;
 }
 
-void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
+rt_err_t fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 {
+    rt_err_t ret = -EBADF;
+
     if (fd < fdt->maxfd)
     {
-        struct dfs_file *file;
+        struct dfs_file *file = fdt_get_file(fdt, fd);
 
-        file = fdt_get_file(fdt, fd);
-
-        if (file && file->ref_count == 1)
+        if (file)
         {
-            rt_mutex_detach(&file->pos_lock);
+            ret = dfs_file_close(file);
 
-            if (file->mmap_context)
+            if (ret == 0)
             {
-                rt_free(file->mmap_context);
+                fdt->fds[fd] = RT_NULL;
+                dfs_file_put(file); /* put fdtable's ref to file */
+                dfs_file_put(file); /* put this function's ref to file */
             }
-
-            rt_free(file);
         }
-        else
-        {
-            rt_atomic_sub(&(file->ref_count), 1);
-        }
-
-        fdt->fds[fd] = RT_NULL;
     }
+
+    return ret;
 }
 
 /**
@@ -300,10 +290,12 @@ struct dfs_file *fdt_get_file(struct dfs_fdtable *fdt, int fd)
         return NULL;
     }
 
+    dfs_file_get(f);
+
     return f;
 }
 
-int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file)
+int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file, rt_bool_t replace)
 {
     int retfd = -1;
 
@@ -329,11 +321,19 @@ int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file
 
     if (fdt->fds[fd])
     {
-        goto exit;
+        if (replace == RT_FALSE)
+        {
+            goto exit;
+        }
+        else
+        {
+            dfs_file_close(fdt->fds[fd]);
+            dfs_file_put(fdt->fds[fd]);
+        }
     }
 
-    /* inc ref_count */
-    rt_atomic_add(&(file->ref_count), 1);
+    dfs_file_get(file);
+    rt_atomic_add(&(file->open_count), 1);
     fdt->fds[fd] = file;
     retfd = fd;
 
@@ -356,12 +356,12 @@ int fd_new(void)
  *
  * This function will put the file descriptor.
  */
-void fd_release(int fd)
+rt_err_t fd_release(int fd)
 {
     struct dfs_fdtable *fdt;
 
     fdt = dfs_fdtable_get();
-    fdt_fd_release(fdt, fd);
+    return fdt_fd_release(fdt, fd);
 }
 
 struct dfs_file *fd_get(int fd)
@@ -470,7 +470,7 @@ int dfs_fdtable_dup(struct dfs_fdtable *fdt_dst, struct dfs_fdtable *fdt_src, in
         fdt_dst->fds[newfd]->flags = fdt_src->fds[fd_src]->flags;
         fdt_dst->fds[newfd]->fops = fdt_src->fds[fd_src]->fops;
         fdt_dst->fds[newfd]->dentry = dfs_dentry_ref(fdt_src->fds[fd_src]->dentry);
-        fdt_dst->fds[newfd]->vnode = fdt_src->fds[fd_src]->vnode;
+        fdt_dst->fds[newfd]->vnode = dfs_vnode_ref(fdt_src->fds[fd_src]->vnode);
         fdt_dst->fds[newfd]->mmap_context = RT_NULL;
         fdt_dst->fds[newfd]->data = fdt_src->fds[fd_src]->data;
 
@@ -512,11 +512,7 @@ int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
         return -RT_ENOSYS;
     }
 
-    err = dfs_file_close(fdt->fds[fd]);
-    if (!err)
-    {
-        fdt_fd_release(fdt, fd);
-    }
+    err = fdt_fd_release(fdt, fd);
 
     dfs_file_unlock();
 
@@ -547,10 +543,7 @@ int dfs_dup(int oldfd, int startfd)
     newfd = _fdt_slot_alloc(fdt, startfd);
     if (newfd >= 0)
     {
-        fdt->fds[newfd] = fdt->fds[oldfd];
-
-        /* inc ref_count */
-        rt_atomic_add(&(fdt->fds[newfd]->ref_count), 1);
+        newfd = fdt_fd_associate_file(fdt, newfd, fdt->fds[oldfd], RT_FALSE);
     }
 exit:
     dfs_file_unlock();
@@ -595,10 +588,7 @@ int dfs_dup_to(int oldfd, struct dfs_fdtable *fdtab)
     newfd = _fdt_slot_alloc(fdtab, DFS_STDIO_OFFSET);
     if (newfd >= 0)
     {
-        fdtab->fds[newfd] = fdt->fds[oldfd];
-
-        /* inc ref_count */
-        rt_atomic_add(&(fdtab->fds[newfd]->ref_count), 1);
+        newfd = fdt_fd_associate_file(fdtab, newfd, fdt->fds[oldfd], RT_FALSE);
     }
 exit:
     dfs_file_unlock();
@@ -648,12 +638,10 @@ int dfs_dup_from(int oldfd, struct dfs_fdtable *fdtab)
         file->flags = fdtab->fds[oldfd]->flags;
         file->fops = fdtab->fds[oldfd]->fops;
         file->dentry = dfs_dentry_ref(fdtab->fds[oldfd]->dentry);
-        file->vnode = fdtab->fds[oldfd]->vnode;
+        file->vnode = dfs_vnode_ref(fdtab->fds[oldfd]->vnode);
         file->mmap_context = RT_NULL;
         file->data = fdtab->fds[oldfd]->data;
     }
-
-    dfs_file_close(fdtab->fds[oldfd]);
 
 exit:
     fdt_fd_release(fdtab, oldfd);
@@ -680,7 +668,6 @@ int sys_dup(int oldfd)
 rt_err_t sys_dup2(int oldfd, int newfd)
 {
     struct dfs_fdtable *fdt = NULL;
-    int ret = 0;
     int retfd = -1;
 
     if (dfs_file_lock() != RT_EOK)
@@ -717,20 +704,8 @@ rt_err_t sys_dup2(int oldfd, int newfd)
         goto exit;
     }
 
-    if (fdt->fds[newfd])
-    {
-        ret = dfs_file_close(fdt->fds[newfd]);
-        if (ret < 0)
-        {
-            goto exit;
-        }
-        fd_release(newfd);
-    }
+    retfd = fdt_fd_associate_file(fdt, newfd, fdt->fds[oldfd], RT_TRUE);
 
-    fdt->fds[newfd] = fdt->fds[oldfd];
-    /* inc ref_count */
-    rt_atomic_add(&(fdt->fds[newfd]->ref_count), 1);
-    retfd = newfd;
 exit:
     dfs_file_unlock();
     return retfd;
@@ -938,7 +913,7 @@ int list_fd(void)
             else if (file->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
             else if (file->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%3d ", file->ref_count);
+            rt_kprintf("%3d ", file->open_count);
             rt_kprintf("%04x  ", file->magic);
 
             if (file->dentry)
@@ -974,14 +949,14 @@ int dfs_fd_dump(int argc, char** argv)
             char* fullpath = dfs_dentry_full_path(file->dentry);
             if (fullpath)
             {
-                printf("[%d] - %s, ref_count %zd\n", index,
-                    fullpath, (size_t)rt_atomic_load(&(file->ref_count)));
+                printf("[%d] - %s, open_count %zd\n", index,
+                    fullpath, (size_t)rt_atomic_load(&(file->open_count)));
                 rt_free(fullpath);
             }
             else
             {
-                printf("[%d] - %s, ref_count %zd\n", index,
-                    file->dentry->pathname, (size_t)rt_atomic_load(&(file->ref_count)));
+                printf("[%d] - %s, open_count %zd\n", index,
+                    file->dentry->pathname, (size_t)rt_atomic_load(&(file->open_count)));
             }
         }
     }
