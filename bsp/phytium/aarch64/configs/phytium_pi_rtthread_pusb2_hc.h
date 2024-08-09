@@ -5,7 +5,7 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -14,11 +14,11 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 4096
-#define SYSTEM_THREAD_STACK_SIZE 4096
+#define IDLE_THREAD_STACK_SIZE 8192
+#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_TIMER_THREAD_STACK_SIZE 8192
 
 /* kservice optimization */
 
@@ -26,6 +26,7 @@
 
 /* klibc optimization */
 
+#define RT_KLIBC_USING_PRINTF_LONGLONG
 /* end of klibc optimization */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
@@ -40,12 +41,11 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
-#define RT_USING_MESSAGEQUEUE_PRIORITY
 /* end of Inter-Thread communication */
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
+#define RT_PAGE_MAX_ORDER 16
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -56,20 +56,31 @@
 #define RT_USING_DEVICE
 #define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 256
+#define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50200
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+
+/* AArch64 Architecture Configuration */
+
+#define ARCH_TEXT_OFFSET 0x80000
+#define ARCH_RAM_OFFSET 0x80000000
+#define ARCH_SECONDARY_CPU_STACK_SIZE 4096
+#define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_HEAP_SIZE 0x4000000
+#define ARCH_INIT_PAGE_SIZE 0x200000
+/* end of AArch64 Architecture Configuration */
+#define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
+#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
 #define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define ARCH_ARM_CORTEX_A
-#define RT_USING_GIC_V3
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -119,7 +130,6 @@
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_RAMFS
-#define RT_USING_DFS_MQUEUE
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -128,12 +138,12 @@
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
-#define RT_SYSTEM_WORKQUEUE_STACKSIZE 4096
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 8192
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 1024
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
@@ -144,9 +154,9 @@
 #define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 4096
+#define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 4096
+#define RT_MMCSD_STACK_SIZE 8192
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
@@ -155,7 +165,7 @@
 #define RT_USING_KTIME
 #define RT_USING_CHERRYUSB
 #define RT_CHERRYUSB_HOST
-#define RT_CHERRYUSB_HOST_XHCI
+#define RT_CHERRYUSB_HOST_PUSB2
 #define RT_CHERRYUSB_HOST_HID
 #define RT_CHERRYUSB_HOST_MSC
 /* end of Device Drivers */
@@ -178,20 +188,13 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
-#define RT_USING_POSIX_POLL
-#define RT_USING_POSIX_SELECT
 #define RT_USING_POSIX_TERMIOS
-#define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
 #define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
-#define RT_USING_POSIX_PIPE
-#define RT_USING_POSIX_PIPE_SIZE 512
-#define RT_USING_POSIX_MESSAGE_QUEUE
-#define RT_USING_POSIX_MESSAGE_SEMAPHORE
 
 /* Socket is in the 'Network' category */
 
@@ -268,9 +271,6 @@
 
 #define RT_USING_RYM
 #define YMODEM_USING_FILE_TRANSFER
-#define RT_USING_UTEST
-#define UTEST_THR_STACK_SIZE 4096
-#define UTEST_THR_PRIORITY 20
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -412,6 +412,9 @@
 
 /* samples: kernel and components samples */
 
+#define PKG_USING_KERNEL_SAMPLES
+#define PKG_USING_KERNEL_SAMPLES_LATEST_VERSION
+#define PKG_USING_KERNEL_SAMPLES_EN
 /* end of samples: kernel and components samples */
 
 /* entertainment: terminal games and other interesting software packages */
@@ -475,11 +478,7 @@
 #define RT_USING_UART0
 #define RT_USING_UART1
 #define BSP_USING_SPI
-#define RT_USING_SPIM2
-#define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_CAN0
-#define RT_USING_CAN1
+#define RT_USING_SPIM0
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
@@ -487,15 +486,14 @@
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO0
 #define RT_USING_MIO1
+#define RT_USING_MIO2
+#define RT_USING_MIO10
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define USING_SDIF0
-#define USE_SDIF0_EMMC
 #define USING_SDIF1
 #define USE_SDIF1_TF
 #define BSP_USING_DC
@@ -506,19 +504,20 @@
 /* Board extended module Drivers */
 
 /* end of Hardware Drivers */
-#define PHYTIUM_ARCH_AARCH32
+#define BSP_USING_GIC
+#define BSP_USING_GICV3
+#define PHYTIUM_ARCH_AARCH64
+#define ARM_SPI_BIND_CPU_ID 2
 
 /* Standalone Setting */
 
-#define TARGET_ARMV8_AARCH32
-#define USE_AARCH64_L1_TO_AARCH32
+#define TARGET_ARMV8_AARCH64
 
 /* Soc configuration */
 
-#define TARGET_E2000D
-#define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "d"
-#define SOC_CORE_NUM 2
+#define TARGET_PHYTIUMPI
+#define SOC_NAME "phytiumpi"
+#define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -529,8 +528,8 @@
 
 /* Board Configuration */
 
-#define E2000D_DEMO_BOARD
-#define BOARD_NAME "demo"
+#define BOARD_NAME "firefly"
+#define FIREFLY_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 
@@ -540,9 +539,7 @@
 /* Sdk common configuration */
 
 #define ELOG_LINE_BUF_SIZE 0x100
-#define LOG_ERROR
-#define USE_DEFAULT_INTERRUPT_CONFIG
-#define INTERRUPT_ROLE_MASTER
+#define LOG_DEBUG
 /* end of Sdk common configuration */
 /* end of Standalone Setting */
 

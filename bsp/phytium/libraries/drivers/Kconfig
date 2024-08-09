@@ -273,29 +273,6 @@ menu "On-chip Peripheral Drivers"
                 bool "using dc channel_1"
                 default n
         endif
-
-
-    menuconfig BSP_USING_XHCI
-        bool "Enable USB3.0(XHCI)"
-            default n
-            select PKG_USING_CHERRYUSB
-
-        if BSP_USING_XHCI
-            config RT_USING_XHCI0
-                bool "Enable xhci0"
-                default y if BSP_USING_XHCI
-        endif
-
-    menuconfig BSP_USING_PUSB2
-        bool "Enable USB2.0(PUSB2)"
-            default n
-            select PKG_USING_CHERRYUSB
-
-        if BSP_USING_PUSB2
-           config RT_USING_PUSB20
-                bool "Enable pusb20"
-                default y if BSP_USING_PUSB2
-        endif
 endmenu
 
 menu "Board extended module Drivers"

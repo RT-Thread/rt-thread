@@ -36,6 +36,14 @@ ifdef CONFIG_PHYTIUM_RTT_TEST
 RTCONFIG := $(RTCONFIG)_test
 endif
 
+ifdef CONFIG_RT_CHERRYUSB_HOST_PUSB2
+RTCONFIG := $(RTCONFIG)_pusb2_hc
+endif
+
+ifdef CONFIG_RT_CHERRYUSB_DEVICE_PUSB2
+RTCONFIG := $(RTCONFIG)_pusb2_dc
+endif
+
 boot:
 	make all
 	cp rtthread_a64.elf /mnt/d/tftpboot
@@ -44,7 +52,7 @@ boot:
 debug:
 	@$(OD) -D rtthread_a64.elf > rtthread_a64.asm
 	@$(OD) -S rtthread_a64.elf > rtthread_a64.dis
-	
+
 all:
 	@echo "Build started..."
 	scons -j1024
@@ -114,6 +122,12 @@ load_phytium_pi_rtthread:
 	@echo "Load configs from ./configs/phytium_pi_rtthread"
 	@cp ./configs/phytium_pi_rtthread ./.config -f
 	@cp ./configs/phytium_pi_rtthread.h ./rtconfig.h -f
+	scons -c
+
+load_phytium_pi_rtthread_pusb2_hc:
+	@echo "Load configs from ./configs/phytium_pi_rtthread_pusb2_hc"
+	@cp ./configs/phytium_pi_rtthread_pusb2_hc ./.config -f
+	@cp ./configs/phytium_pi_rtthread_pusb2_hc.h ./rtconfig.h -f
 	scons -c
 
 load_phytium_pi_rtsmart:

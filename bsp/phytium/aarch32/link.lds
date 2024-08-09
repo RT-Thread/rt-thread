@@ -46,6 +46,13 @@ SECTIONS
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
+
+        /* section information for usb usbh_class_info */
+        . = ALIGN(4);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        . = ALIGN(4);
+        __usbh_class_info_end__ = .;
     } =0
     __text_end = .;
 
