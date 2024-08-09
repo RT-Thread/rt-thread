@@ -78,14 +78,19 @@ typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
+#if defined(RT_USING_STDC_ATOMIC) && __STDC_VERSION__ < 201112L
+#undef RT_USING_STDC_ATOMIC
+#warning Not using C11 or beyond! Maybe you should change the -std option on your compiler
+#endif
+
 #ifdef __cplusplus
     typedef rt_base_t rt_atomic_t;
 #else
-    #if defined(RT_USING_HW_ATOMIC)
-        typedef rt_base_t rt_atomic_t;
-    #elif defined(RT_USING_STDC_ATOMIC)
+    #if defined(RT_USING_STDC_ATOMIC)
         #include <stdatomic.h>
-        typedef atomic_intptr_t rt_atomic_t;
+        typedef _Atomic(rt_base_t) rt_atomic_t;
+    #elif defined(RT_USING_HW_ATOMIC)
+        typedef rt_base_t rt_atomic_t;
     #else
         typedef rt_base_t rt_atomic_t;
     #endif /* RT_USING_STDC_ATOMIC */
