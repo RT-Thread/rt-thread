@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -461,7 +461,7 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
 
         err = -RT_ETIMEOUT;
 
-        rt_thread_mdelay(10); //delay 10ms
+        rt_thread_mdelay(10); /*delay 10ms*/
     }
 
     if (rocr && !controller_is_spi(host))
@@ -586,23 +586,23 @@ static int mmc_select_timing(struct rt_mmcsd_card *card)
 
     if (card->flags & CARD_FLAG_HS400)
     {
-        LOG_I("emmc: switch to HS400 mode\n");
+        LOG_I("emmc: switch to HS400 mode");
         ret = mmc_select_hs400(card);
     }
     else if (card->flags & CARD_FLAG_HS200)
     {
-        LOG_I("emmc: switch to HS200 mode\n");
+        LOG_I("emmc: switch to HS200 mode");
         ret = mmc_select_hs200(card);
     }
     else if (card->flags & CARD_FLAG_HIGHSPEED_DDR)
     {
-        LOG_I("emmc: switch to HIGH Speed DDR mode\n");
+        LOG_I("emmc: switch to HIGH Speed DDR mode");
         mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_DDR52);
         mmcsd_set_clock(card->host, card->hs_max_data_rate);
     }
     else
     {
-        LOG_I("emmc: switch to HIGH Speed mode\n");
+        LOG_I("emmc: switch to HIGH Speed mode");
         mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_HS);
         mmcsd_set_clock(card->host, card->hs_max_data_rate);
     }

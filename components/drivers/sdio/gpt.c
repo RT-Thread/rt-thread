@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -251,7 +251,8 @@ static int is_gpt_valid(struct rt_mmcsd_card *card, size_t lba, gpt_header **gpt
         goto fail;
     }
     /* Check that sizeof_partition_entry has the correct value */
-    if ((uint32_t)((*gpt)->sizeof_partition_entry) != sizeof(gpt_entry)) {
+    if ((uint32_t)((*gpt)->sizeof_partition_entry) != sizeof(gpt_entry))
+    {
         LOG_E("GUID Partition Entry Size check failed.");
         goto fail;
     }

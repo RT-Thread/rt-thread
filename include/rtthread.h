@@ -786,6 +786,7 @@ rt_device_t rt_console_get_device(void);
 #endif /* RT_USING_THREADSAFE_PRINTF */
 #endif /* defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE) */
 
+int __rt_fls(int val);
 int __rt_ffs(int value);
 
 void rt_show_version(void);

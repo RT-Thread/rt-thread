@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author        Notes
  * 2011-07-25     weety         first version
  * 2024-05-26     HPMicro       add UHS-I support
+ * 2024-08-05     wdfk-prog     Resolves cid,csd,scr, add CSD Version 3.0 support
  */
 
 #include <drivers/mmcsd_core.h>
@@ -19,6 +20,35 @@
 #define DBG_LVL               DBG_INFO
 #endif /* RT_SDIO_DEBUG */
 #include <rtdbg.h>
+
+typedef struct
+{
+    uint8_t mid;
+    char *name;
+}card_brands_t;
+
+/*
+Manufacturer lID (MlD) are assigned by the SD Assoication (SD-3c LLC),. They consider this infomation confidential so an oficial list is not
+published.
+The following list was complled by reading the ClD on numerous SD cards. Many card brands are produced by OEM supliers, and the MID
+and OEMlD may refiect this, or in some cases they appear to show the producer of the card controller.
+*/
+static const card_brands_t card_brands[] =
+{
+    {0x01, "Panasonic"},
+    {0x02, "Toshiba"},
+    {0x03, "SanDisk"},
+    {0x1B, "ProGrade, Samsung"},
+    {0x1D, "AData"},
+    {0x27, "AgfaPhoto, Delkin, Integral, Lexar, Patriot, PNY, Polaroid, Sony, Verbatim"},
+    {0x28, "Lexar, PNY, ProGrade"},
+    {0x31, "Silicon Power"},
+    {0x41, "Kingston"},
+    {0x74, "Transcend"},
+    {0x76, "Patriot"},
+    {0x82, "Gobe, Sony"},
+    {0x9c, "Angelbird, Hoodman"},
+};
 
 static const rt_uint32_t tran_unit[] =
 {
@@ -60,16 +90,52 @@ rt_inline rt_uint32_t GET_BITS(rt_uint32_t *resp,
         return __res & __mask;
 }
 
+static char *mmcsd_get_card_brand(rt_uint8_t mid)
+{
+    char *brand = "Unknown";
+    for (int i = 0; i < sizeof(card_brands) / sizeof(card_brands_t); i++)
+    {
+        if (card_brands[i].mid == mid)
+        {
+            brand = card_brands[i].name;
+            break;
+        }
+    }
+    return brand;
+}
+
+static void mmcsd_parse_cid(struct rt_mmcsd_card *card)
+{
+    struct rt_mmcsd_cid cid = {0};
+    rt_uint32_t *resp = card->resp_cid;
+
+    cid.mid = GET_BITS(resp, 120, 8);
+    cid.oid[0] = GET_BITS(resp, 112, 8);
+    cid.oid[1] = GET_BITS(resp, 104, 8);
+    cid.pnm[0] = GET_BITS(resp, 96, 8);
+    cid.pnm[1] = GET_BITS(resp, 88, 8);
+    cid.pnm[2] = GET_BITS(resp, 80, 8);
+    cid.pnm[3] = GET_BITS(resp, 72, 8);
+    cid.pnm[4] = GET_BITS(resp, 64, 8);
+    cid.prv = GET_BITS(resp, 56, 8);
+    cid.psn = GET_BITS(resp, 24, 32);
+    cid.mdt = GET_BITS(resp, 8, 12);
+    LOG_I("SD card MID: %s, OID: %s, PNM: %s, PRV: %d.%d, PSN: 0x%08x, MDT: %dmonth %dyear",
+          mmcsd_get_card_brand(cid.mid), cid.oid, cid.pnm,
+          cid.prv >> 4, cid.prv & 0x0F, cid.psn, cid.mdt & 0x0F, (cid.mdt >> 4) + 2000);
+}
+
 static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
 {
     struct rt_mmcsd_csd *csd = &card->csd;
     rt_uint32_t *resp = card->resp_csd;
 
+    const char *name[] = {"SDSC", "SDHC or SDXC", "SDUC", "RESERVED"};
     csd->csd_structure = GET_BITS(resp, 126, 2);
 
     switch (csd->csd_structure)
     {
-    case 0:
+    case 0:    /* CSD Version 1.0 */
         csd->taac = GET_BITS(resp, 112, 8);
         csd->nsac = GET_BITS(resp, 104, 8);
         csd->tran_speed = GET_BITS(resp, 96, 8);
@@ -96,7 +162,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
 
         break;
     case 1:
-        card->flags |= CARD_FLAG_SDHC;
+        card->flags |= (CARD_FLAG_SDHC | CARD_FLAG_SDXC);
 
         /*This field is fixed to 0Eh, which indicates 1 ms.
           The host should not use TAAC, NSAC, and R2W_FACTOR
@@ -124,14 +190,45 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
         card->tacc_clks = 0;
         card->tacc_ns = 0;
         card->max_data_rate = tran_unit[csd->tran_speed&0x07] * tran_value[(csd->tran_speed&0x78)>>3];
+        break;
+    case 2:     /* CSD Version 3.0 */
+        /*This field is expanded to 28 bits and can indicate up to 128 TBytes.*/
+        card->flags |= (CARD_FLAG_SDUC | CARD_FLAG_SDHC| CARD_FLAG_SDXC);
 
+        /*This field is fixed to 0Eh, which indicates 1 ms.
+          The host should not use TAAC, NSAC, and R2W_FACTOR
+          to calculate timeout and should uses fixed timeout
+          values for read and write operations*/
+        csd->taac = GET_BITS(resp, 112, 8);
+        csd->nsac = GET_BITS(resp, 104, 8);
+        csd->tran_speed = GET_BITS(resp, 96, 8);
+        csd->card_cmd_class = GET_BITS(resp, 84, 12);
+        csd->rd_blk_len = GET_BITS(resp, 80, 4);
+        csd->rd_blk_part = GET_BITS(resp, 79, 1);
+        csd->wr_blk_misalign = GET_BITS(resp, 78, 1);
+        csd->rd_blk_misalign = GET_BITS(resp, 77, 1);
+        csd->dsr_imp = GET_BITS(resp, 76, 1);
+        csd->c_size = GET_BITS(resp, 48, 22);
+
+        csd->r2w_factor = GET_BITS(resp, 26, 3);
+        csd->wr_blk_len = GET_BITS(resp, 22, 4);
+        csd->wr_blk_partial = GET_BITS(resp, 21, 1);
+        csd->csd_crc = GET_BITS(resp, 1, 7);
+
+        card->card_blksize = 512;
+        card->card_capacity = (csd->c_size + 1) * 512;  /* unit:KB */
+        card->card_sec_cnt = card->card_capacity * 2;
+        card->tacc_clks = 0;
+        card->tacc_ns = 0;
+        card->max_data_rate = tran_unit[csd->tran_speed&0x07] * tran_value[(csd->tran_speed&0x78)>>3];
         break;
     default:
-        LOG_E("unrecognised CSD structure version %d!", csd->csd_structure);
-
+        LOG_W("unrecognised CSD structure version %d!", csd->csd_structure);
         return -RT_ERROR;
     }
-    LOG_I("SD card capacity %d KB.", card->card_capacity);
+
+    LOG_I("SD card version %s,class %d, capacity %d KB.",
+          name[csd->csd_structure], __rt_fls(csd->card_cmd_class) - 1, card->card_capacity);
 
     return 0;
 }
@@ -143,8 +240,16 @@ static rt_int32_t mmcsd_parse_scr(struct rt_mmcsd_card *card)
 
     resp[3] = card->resp_scr[1];
     resp[2] = card->resp_scr[0];
-    scr->sd_version = GET_BITS(resp, 56, 4);
+    rt_uint8_t sd_spec = GET_BITS(resp, 56, 4);
+    rt_uint8_t sd_spec3 = GET_BITS(resp, 47, 1);
+    rt_uint8_t sd_spec4 = GET_BITS(resp, 42, 1);
+    rt_uint8_t sd_specx = GET_BITS(resp, 38, 4);
+
     scr->sd_bus_widths = GET_BITS(resp, 48, 4);
+
+    scr->sd_version = sd_spec + sd_spec3 + sd_spec4 + sd_specx;
+    scr->sd_version = (sd_specx != 0 && sd_spec4 == 0) ? scr->sd_version + 1 : scr->sd_version;
+    LOG_I("SD spec version %d", scr->sd_version);
 
     return 0;
 }
@@ -274,7 +379,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     card->max_data_rate = 50000000;
     if (switch_func_timing == SD_SWITCH_FUNC_TIMING_SDR104)
     {
-        LOG_I("sd: switch to SDR104 mode\n");
+        LOG_I("sd: switch to SDR104 mode");
         mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_SDR104);
         mmcsd_set_clock(card->host, 208000000);
         err = mmcsd_excute_tuning(card);
@@ -282,7 +387,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     }
     else if (switch_func_timing == SD_SWITCH_FUNC_TIMING_SDR50)
     {
-        LOG_I("sd: switch to SDR50 mode\n");
+        LOG_I("sd: switch to SDR50 mode");
         mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_SDR50);
         mmcsd_set_clock(card->host, 100000000);
         err = mmcsd_excute_tuning(card);
@@ -290,13 +395,13 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     }
     else if (switch_func_timing == SD_SWITCH_FUNC_TIMING_DDR50)
     {
-        LOG_I("sd: switch to DDR50 mode\n");
+        LOG_I("sd: switch to DDR50 mode");
         mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_DDR50);
         mmcsd_set_clock(card->host, 50000000);
     }
     else
     {
-        LOG_I("sd: switch to High Speed / SDR25 mode \n");
+        LOG_I("sd: switch to High Speed / SDR25 mode");
         mmcsd_set_timing(card->host, MMCSD_TIMING_SD_HS);
         mmcsd_set_clock(card->host, 50000000);
     }
@@ -381,7 +486,6 @@ rt_err_t mmcsd_send_app_cmd(struct rt_mmcsd_host *host,
         rt_memset(cmd->resp, 0, sizeof(cmd->resp));
 
         req.cmd = cmd;
-        //cmd->data = NULL;
 
         mmcsd_send_request(host, &req);
 
@@ -470,7 +574,7 @@ rt_err_t mmcsd_send_app_op_cond(struct rt_mmcsd_host *host,
 
         err = -RT_ETIMEOUT;
 
-        rt_thread_mdelay(10); //delay 10ms
+        rt_thread_mdelay(10); /*delay 10ms*/
     }
 
     if (rocr && !controller_is_spi(host))
@@ -595,7 +699,7 @@ static rt_err_t mmcsd_read_sd_status(struct rt_mmcsd_card *card, rt_uint32_t *sd
     req.cmd = &cmd;
     req.data = &data;
 
-    cmd.cmd_code = SEND_STATUS;
+    cmd.cmd_code = SD_APP_SD_STATUS;
     cmd.arg = 0;
     cmd.flags = RESP_SPI_R1 | RESP_R1 | CMD_ADTC;
 
@@ -714,6 +818,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     card->card_type = CARD_TYPE_SD;
     card->host = host;
     rt_memcpy(card->resp_cid, resp, sizeof(card->resp_cid));
+    mmcsd_parse_cid(card);
 
     /*
      * For native busses:  get card RCA and quit open drain mode.
@@ -768,11 +873,10 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     }
 
     /* Read and decode SD Status and check whether UHS mode is supported */
-    union rt_sd_status sd_status;
-    err = mmcsd_read_sd_status(card, sd_status.status_words);
+    err = mmcsd_read_sd_status(card, card->sd_status.status_words);
     if (err)
         goto err1;
-    if ((sd_status.uhs_speed_grade > 0) && (ocr & VDD_165_195))
+    if ((card->sd_status.uhs_speed_grade > 0) && (ocr & VDD_165_195))
     {
         /* Assume the card supports all UHS-I modes because we cannot find any mainstreaming card
          * that can support only part of the following modes.

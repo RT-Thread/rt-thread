@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1403,9 +1403,3 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 
     return 0;
 }
-
-void rt_sdio_init(void)
-{
-
-}
-

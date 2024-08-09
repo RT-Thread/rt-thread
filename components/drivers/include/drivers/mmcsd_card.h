@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  * 2011-07-25     weety         first version
  * 2024-05-24     HPMicro       add HS400 support
  * 2024-05-26     HPMicro       add UHS-I support for SD card
+ * 2024-08-05     wdfk-prog     add SD Specifications Physical Layer Specification Version 9.10
  */
 
 #ifndef __MMCSD_CARD_H__
@@ -25,7 +26,7 @@ extern "C" {
 struct rt_mmcsd_cid {
     rt_uint8_t  mid;       /* ManufacturerID */
     rt_uint8_t  prv;       /* Product Revision */
-    rt_uint16_t oid;       /* OEM/Application ID */
+    rt_uint8_t  oid[2];       /* OEM/Application ID */
     rt_uint32_t psn;       /* Product Serial Number */
     rt_uint8_t  pnm[5];    /* Product Name */
     rt_uint8_t  reserved1;/* reserved */
@@ -91,8 +92,22 @@ struct rt_sdio_cccr {
 union rt_sd_status {
     rt_uint32_t status_words[16];
     struct {
-        rt_uint32_t reserved[12];
-        rt_uint64_t : 8;
+        rt_uint8_t  reserved[39];
+
+        rt_uint64_t fule_support: 1;
+        rt_uint64_t discard_support: 1;
+        rt_uint64_t boot_partition_support: 1;
+        rt_uint64_t wp_upc_support: 1;
+        rt_uint64_t : 12;
+        rt_uint64_t performance_enhance : 8;
+        rt_uint64_t app_perf_class : 4;
+        rt_uint64_t : 6;
+        rt_uint64_t sus_addr : 20;
+
+        rt_uint16_t vsc_au_size : 10;
+        rt_uint16_t : 6;
+
+        rt_uint64_t vsc_speed_class : 8;
         rt_uint64_t uhs_au_size: 4;
         rt_uint64_t uhs_speed_grade: 4;
         rt_uint64_t erase_offset: 2;
@@ -106,7 +121,8 @@ union rt_sd_status {
         rt_uint32_t size_of_protected_area;
 
         rt_uint32_t sd_card_type: 16;
-        rt_uint32_t : 6;
+        rt_uint32_t secure_cmd_status : 3;
+        rt_uint32_t : 3;
         rt_uint32_t : 7;
         rt_uint32_t secured_mode: 1;
         rt_uint32_t data_bus_width: 2;
@@ -204,6 +220,7 @@ struct rt_mmcsd_card {
 #define CARD_FLAG_HIGHSPEED  (1 << 0)   /* SDIO bus speed 50MHz */
 #define CARD_FLAG_SDHC       (1 << 1)   /* SDHC card */
 #define CARD_FLAG_SDXC       (1 << 2)   /* SDXC card */
+#define CARD_FLAG_SDUC       (1 << 9)   /* SD Ultra Capacity */
 #define CARD_FLAG_HIGHSPEED_DDR  (1 << 3)   /* HIGH SPEED DDR */
 #define CARD_FLAG_HS200      (1 << 4)   /* BUS SPEED 200MHz */
 #define CARD_FLAG_HS400      (1 << 5)   /* BUS SPEED 400MHz */
@@ -212,6 +229,7 @@ struct rt_mmcsd_card {
 #define CARD_FLAG_DDR50      (1 << 8)   /* DDR50, works on 1.8V only */
     struct rt_sd_scr    scr;
     struct rt_mmcsd_csd csd;
+    union rt_sd_status sd_status;
     rt_uint32_t     hs_max_data_rate;  /* max data transfer rate in high speed mode */
 
     rt_uint8_t      sdio_function_num;  /* total number of SDIO functions */

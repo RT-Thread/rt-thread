@@ -1025,6 +1025,50 @@ rt_weak void rt_free_align(void *ptr)
 RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
 
+/**
+ * fls - find last (most-significant) bit set
+ * @x: the word to search
+ *
+ * This is defined the same way as ffs.
+ * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+ */
+
+int __rt_fls(int val)
+{
+    int bit = 32;
+
+    if (!val)
+    {
+        return 0;
+    }
+    if (!(val & 0xffff0000u))
+    {
+        val <<= 16;
+        bit -= 16;
+    }
+    if (!(val & 0xff000000u))
+    {
+        val <<= 8;
+        bit -= 8;
+    }
+    if (!(val & 0xf0000000u))
+    {
+        val <<= 4;
+        bit -= 4;
+    }
+    if (!(val & 0xc0000000u))
+    {
+        val <<= 2;
+        bit -= 2;
+    }
+    if (!(val & 0x80000000u))
+    {
+        bit -= 1;
+    }
+
+    return bit;
+}
+
 #ifndef RT_USING_CPU_FFS
 #ifdef RT_USING_TINY_FFS
 const rt_uint8_t __lowest_bit_bitmap[] =
