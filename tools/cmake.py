@@ -172,32 +172,125 @@ def GenerateCFiles(env, project, project_name):
             cm_file.write("\t-D" + i + "\n")
         cm_file.write(")\n\n")
 
-        cm_file.write("SET(PROJECT_SOURCES\n")
+        libgroups = []
+        interfacelibgroups = []
         for group in project:
+            if group['name'] == 'Applications':
+                continue
+
+            # When a group is provided without sources, add it to the <INTERFACE> library list
+            if len(group['src']) == 0:
+                interfacelibgroups.append(group)
+            else:
+                libgroups.append(group)
+
+        cm_file.write("# Library source files\n")
+        for group in project:
+            cm_file.write("SET(RT_{:s}_SOURCES\n".format(group['name'].upper()))
             for f in group['src']:
                 # use relative path
                 path = _make_path_relative(os.getcwd(), os.path.normpath(f.rfile().abspath))
                 cm_file.write( "\t" + path.replace("\\", "/") + "\n" )
+            cm_file.write(")\n\n")
+
+        cm_file.write("# Library search paths\n")
+        for group in libgroups + interfacelibgroups:
+            if not 'LIBPATH' in group.keys():
+                continue
+
+            if len(group['LIBPATH']) == 0:
+                continue
+
+            cm_file.write("SET(RT_{:s}_LINK_DIRS\n".format(group['name'].upper()))
+            for f in group['LIBPATH']:
+                cm_file.write("\t"+ f.replace("\\", "/") + "\n" )
+            cm_file.write(")\n\n")
+
+        cm_file.write("# Library local macro definitions\n")
+        for group in libgroups:
+            if not 'LOCAL_CPPDEFINES' in group.keys():
+                continue
+
+            if len(group['LOCAL_CPPDEFINES']) == 0:
+                continue
+
+            cm_file.write("SET(RT_{:s}_DEFINES\n".format(group['name'].upper()))
+            for f in group['LOCAL_CPPDEFINES']:
+                cm_file.write("\t"+ f.replace("\\", "/") + "\n" )
+            cm_file.write(")\n\n")
+
+        cm_file.write("# Library dependencies\n")
+        for group in libgroups + interfacelibgroups:
+            if not 'LIBS' in group.keys():
+                continue
+
+            if len(group['LIBS']) == 0:
+                continue
+
+            cm_file.write("SET(RT_{:s}_LIBS\n".format(group['name'].upper()))
+            for f in group['LIBS']:
+                cm_file.write("\t"+ "{}\n".format(f.replace("\\", "/")))
+            cm_file.write(")\n\n")
+
+        cm_file.write("# Libraries\n")
+        for group in libgroups:
+            cm_file.write("ADD_LIBRARY(rtt_{:s} OBJECT ${{RT_{:s}_SOURCES}})\n"
+                          .format(group['name'], group['name'].upper()))
+
+        cm_file.write("\n")
+
+        cm_file.write("# Interface libraries\n")
+        for group in interfacelibgroups:
+            cm_file.write("ADD_LIBRARY(rtt_{:s} INTERFACE)\n".format(group['name']))
+
+        cm_file.write("\n")
+
+        cm_file.write("# Private macros\n")
+        for group in libgroups:
+            if not 'LOCAL_CPPDEFINES' in group.keys():
+                continue
+
+            if len(group['LOCAL_CPPDEFINES']) == 0:
+                continue
+
+            cm_file.write("TARGET_COMPILE_DEFINITIONS(rtt_{:s} PRIVATE ${{RT_{:s}_DEFINES}})\n"
+              .format(group['name'], group['name'].upper()))
+
+        cm_file.write("\n")
+
+        cm_file.write("# Interface library search paths\n")
+        if rtconfig.PLATFORM in ['gcc']:
+            for group in libgroups:
+                if not 'LIBPATH' in group.keys():
+                    continue
+
+                if len(group['LIBPATH']) == 0:
+                    continue
+
+                cm_file.write("TARGET_LINK_DIRECTORIES(rtt_{:s} INTERFACE ${{RT_{:s}_LINK_DIRS}})\n"
+                              .format(group['name'], group['name'].upper()))
+
+            for group in libgroups:
+                if not 'LIBS' in group.keys():
+                    continue
+
+                if len(group['LIBS']) == 0:
+                    continue
+
+                cm_file.write("TARGET_LINK_LIBRARIES(rtt_{:s} INTERFACE ${{RT_{:s}_LIBS}})\n"
+                              .format(group['name'], group['name'].upper()))
+
+        cm_file.write("\n")
+
+        cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${RT_APPLICATIONS_SOURCES})\n")
+
+        cm_file.write("TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME}.elf\n")
+        for group in libgroups + interfacelibgroups:
+            cm_file.write("\trtt_{:s}\n".format(group['name']))
         cm_file.write(")\n\n")
 
-        if rtconfig.PLATFORM in ['gcc']:
-            cm_file.write("LINK_DIRECTORIES(\n")
-            for group in project:
-                if 'LIBPATH' in group.keys():
-                    for f in group['LIBPATH']:
-                        cm_file.write( "\t"+ f.replace("\\", "/") + "\n" )
-            cm_file.write(")\n\n")
-
-            cm_file.write("LINK_LIBRARIES(\n")
-            for group in project:
-                if 'LIBS' in group.keys():
-                    for f in group['LIBS']:
-                        cm_file.write( "\t"+ "{}\n".format(f.replace("\\", "/")))
-            cm_file.write(")\n\n")
-
-        cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES})\n")
         cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME}.elf POST_BUILD \n" + POST_ACTION + '\n)\n')
-            
+
         # auto inclue `custom.cmake` for user custom settings
         custom_cmake = \
             '''
