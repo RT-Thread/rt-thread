@@ -26,7 +26,7 @@
 /* 33 general register */
 #define CTX_GENERAL_REG_NR  33
 
-#ifdef ENABLE_FPU
+#ifdef ARCH_RISCV_FPU
 /* 32 fpu register */
 #define CTX_FPU_REG_NR  32
 #else

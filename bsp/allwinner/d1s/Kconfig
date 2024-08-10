@@ -21,6 +21,7 @@ config BOARD_allwinnerd1s
 
 config ENABLE_FPU
     bool "Enable FPU"
+    select ARCH_RISCV_FPU_D
     default y
 
 config RT_USING_USERSPACE_32BIT_LIMIT

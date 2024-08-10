@@ -65,6 +65,8 @@
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
 #define ARCH_RISCV
+#define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
 #define ARCH_USING_RISCV_COMMON64
 
@@ -354,10 +356,6 @@
 /* STM32 HAL & SDK Drivers */
 
 /* end of STM32 HAL & SDK Drivers */
-
-/* Infineon HAL Packages */
-
-/* end of Infineon HAL Packages */
 
 /* Kendryte SDK */
 
