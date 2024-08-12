@@ -29,10 +29,30 @@
  *
  */
 typedef enum plb_chn {
-    plb_chn0 = 0,
-    plb_chn1 = 1,
-    plb_chn2 = 2,
-    plb_chn3 = 3,
+#ifdef PLB_TYPE_B_0
+    plb_chn0 = PLB_TYPE_B_0,
+#endif
+#ifdef PLB_TYPE_B_1
+    plb_chn1 = PLB_TYPE_B_1,
+#endif
+#ifdef PLB_TYPE_B_2
+    plb_chn2 = PLB_TYPE_B_2,
+#endif
+#ifdef PLB_TYPE_B_3
+    plb_chn3 = PLB_TYPE_B_3,
+#endif
+#ifdef PLB_TYPE_B_4
+    plb_chn4 = PLB_TYPE_B_4,
+#endif
+#ifdef PLB_TYPE_B_5
+    plb_chn5 = PLB_TYPE_B_5,
+#endif
+#ifdef PLB_TYPE_B_6
+    plb_chn6 = PLB_TYPE_B_6,
+#endif
+#ifdef PLB_TYPE_B_7
+    plb_chn7 = PLB_TYPE_B_7,
+#endif
 } plb_chn_t;
 
 /**
@@ -40,10 +60,30 @@ typedef enum plb_chn {
  *
  */
 typedef enum plb_type_a_lut_num {
+#ifdef PLB_TYPE_A_0
     plb_type_a_table0 = PLB_TYPE_A_0,
+#endif
+#ifdef PLB_TYPE_A_1
     plb_type_a_table1 = PLB_TYPE_A_1,
+#endif
+#ifdef PLB_TYPE_A_2
     plb_type_a_table2 = PLB_TYPE_A_2,
+#endif
+#ifdef PLB_TYPE_A_3
     plb_type_a_table3 = PLB_TYPE_A_3,
+#endif
+#ifdef PLB_TYPE_A_4
+    plb_type_a_table4 = PLB_TYPE_A_4,
+#endif
+#ifdef PLB_TYPE_A_5
+    plb_type_a_table5 = PLB_TYPE_A_5,
+#endif
+#ifdef PLB_TYPE_A_6
+    plb_type_a_table6 = PLB_TYPE_A_6,
+#endif
+#ifdef PLB_TYPE_A_7
+    plb_type_a_table7 = PLB_TYPE_A_7,
+#endif
 } plb_type_a_lut_num_t;
 
 /**

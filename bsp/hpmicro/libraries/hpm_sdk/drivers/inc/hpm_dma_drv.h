@@ -497,7 +497,7 @@ static inline uint32_t dma_check_transfer_status(DMA_Type *ptr, uint8_t ch_index
  */
 static inline void dma_clear_transfer_status(DMA_Type *ptr, uint8_t ch_index)
 {
-    ptr->INTSTATUS &= ~((1 << (DMA_STATUS_TC_SHIFT + ch_index)) | (1 << (DMA_STATUS_ERROR_SHIFT + ch_index)) | (1 << (DMA_STATUS_ABORT_SHIFT + ch_index)));
+    ptr->INTSTATUS = ((1 << (DMA_STATUS_TC_SHIFT + ch_index)) | (1 << (DMA_STATUS_ERROR_SHIFT + ch_index)) | (1 << (DMA_STATUS_ABORT_SHIFT + ch_index)));
 }
 
 /**

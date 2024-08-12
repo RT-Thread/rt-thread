@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -157,101 +157,6 @@ void i2c3_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_I2C3, i2c3_isr);
 #endif
 
-static hpm_stat_t i2c_transfer(I2C_Type *ptr, const uint16_t device_address,
-                                    uint8_t *buf, const uint32_t size,  uint16_t flags)
-{
-    uint32_t ctrl = 0;
-    uint32_t retry = 0;
-    uint32_t left = 0;
-    if (((size == 0) || (size > I2C_SOC_TRANSFER_COUNT_MAX))) {
-        return status_invalid_argument;
-    }
-    /* W1C, clear CMPL bit to avoid blocking the transmission */
-    ptr->STATUS = I2C_STATUS_CMPL_MASK;
-    ptr->CMD = I2C_CMD_CLEAR_FIFO;
-    ptr->ADDR = I2C_ADDR_ADDR_SET(device_address);
-
-    if (flags & RT_I2C_RD) {
-        ctrl |= I2C_CTRL_DIR_SET(I2C_DIR_MASTER_READ);
-    } else {
-        ctrl |= I2C_CTRL_DIR_SET(I2C_DIR_MASTER_WRITE);/* is write flag */
-    }
-    /* no start signal send*/
-    if (flags & RT_I2C_NO_START) {
-        ctrl |= I2C_CTRL_PHASE_START_SET(false) | I2C_CTRL_PHASE_STOP_SET(true) \
-               | I2C_CTRL_PHASE_ADDR_SET(true);
-    } else if (flags & RT_I2C_NO_STOP) { /* no end signal send*/
-        ctrl |= I2C_CTRL_PHASE_START_SET(true) | I2C_CTRL_PHASE_STOP_SET(false) \
-               | I2C_CTRL_PHASE_ADDR_SET(true);
-    } else {
-        ctrl |= I2C_CTRL_PHASE_START_SET(true) | I2C_CTRL_PHASE_STOP_SET(true) \
-               | I2C_CTRL_PHASE_ADDR_SET(true);
-    }
-    ptr->CTRL = ctrl | I2C_CTRL_PHASE_DATA_SET(true) \
-                | I2C_CTRL_DATACNT_HIGH_SET(I2C_DATACNT_MAP(size) >> 8U) \
-                | I2C_CTRL_DATACNT_SET(I2C_DATACNT_MAP(size));
-    /* disable auto ack */
-    ptr->INTEN |= I2C_EVENT_BYTE_RECEIVED;
-    ptr->CMD = I2C_CMD_ISSUE_DATA_TRANSMISSION;
-    retry = 0;
-    left = size;
-    if (flags & RT_I2C_RD) {
-        while (left) {
-            if (!(ptr->STATUS & I2C_STATUS_FIFOEMPTY_MASK)) {
-                *(buf++) = ptr->DATA;
-                left--;
-                if (left == 0) {
-                    ptr->CMD = I2C_CMD_NACK;
-                } else {
-                    /* ACK is sent when reading */
-                    if (!(flags & RT_I2C_NO_READ_ACK)) {
-                        ptr->CMD = I2C_CMD_ACK;
-                    }
-                }
-                retry = 0;
-            } else {
-                if (retry > HPM_I2C_DRV_DEFAULT_RETRY_COUNT) {
-                    break;
-                }
-                retry++;
-            }
-        }
-        if (retry > HPM_I2C_DRV_DEFAULT_RETRY_COUNT) {
-            return status_timeout;
-        }
-    } else {
-        while (left) {
-            if (!(ptr->STATUS & I2C_STATUS_FIFOFULL_MASK)) {
-                ptr->DATA = *(buf++);
-                left--;
-                retry = 0;
-            } else {
-                if (retry > HPM_I2C_DRV_DEFAULT_RETRY_COUNT) {
-                    break;
-                }
-                retry++;
-            }
-        }
-        if (retry > HPM_I2C_DRV_DEFAULT_RETRY_COUNT) {
-            return status_timeout;
-        }
-    }
-    retry = 0;
-    while (!(ptr->STATUS & I2C_STATUS_CMPL_MASK)) {
-        if (retry > HPM_I2C_DRV_DEFAULT_RETRY_COUNT) {
-            break;
-        }
-        retry++;
-    };
-    if (retry > HPM_I2C_DRV_DEFAULT_RETRY_COUNT) {
-        return status_timeout;
-    }
-
-    if (i2c_get_data_count(ptr) && (size)) {
-        return status_i2c_transmit_not_completed;
-    }
-}
-
 static hpm_stat_t i2c_tx_trigger_dma(DMA_Type *dma_ptr, uint8_t ch_num, I2C_Type *i2c_ptr, uint32_t src, uint32_t size)
 {
     dma_handshake_config_t config;
@@ -398,7 +303,7 @@ static rt_ssize_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct 
                     }
                     else
                     {
-                        i2c_transfer(i2c_info->base, msg->addr, dummy_buf, transfer_len, msg->flags);
+                        i2c_master_transfer(i2c_info->base, msg->addr, dummy_buf, transfer_len, msg->flags);
                     }
                     dummy_buf += transfer_len;
                     remaining_size -= transfer_len;
@@ -451,7 +356,7 @@ static rt_ssize_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct 
                     }
                     else
                     {
-                        i2c_transfer(i2c_info->base, msg->addr, dummy_buf, transfer_len, msg->flags);
+                        i2c_master_transfer(i2c_info->base, msg->addr, dummy_buf, transfer_len, msg->flags);
                     }
                     dummy_buf += transfer_len;
                     remaining_size -= transfer_len;

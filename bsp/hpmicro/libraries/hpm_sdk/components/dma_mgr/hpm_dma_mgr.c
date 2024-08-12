@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -354,6 +354,10 @@ void dma_mgr_get_default_chn_config(dma_mgr_chn_conf_t *config)
     config->en_infiniteloop = false;
     config->handshake_opt = DMA_MGR_HANDSHAKE_OPT_ONE_BURST;
     config->burst_opt = DMA_MGR_SRC_BURST_OPT_STANDAND_SIZE;
+    config->en_src_burst_in_fixed_trans = false;
+    config->en_dst_burst_in_fixed_trans = false;
+    config->swap_mode = DMA_MGR_SWAP_MODE_TABLE;
+    config->swap_table = 0;
 }
 
 hpm_stat_t dma_mgr_setup_channel(const dma_resource_t *resource, dma_mgr_chn_conf_t *config)
@@ -382,14 +386,22 @@ hpm_stat_t dma_mgr_setup_channel(const dma_resource_t *resource, dma_mgr_chn_con
         dma_config.size_in_byte = config->size_in_byte;
         dma_config.linked_ptr = config->linked_ptr;
         dma_config.interrupt_mask = config->interrupt_mask;
-#ifdef DMA_MGR_HAS_INFINITE_LOOP
+#if defined(DMA_MGR_HAS_INFINITE_LOOP) && DMA_MGR_HAS_INFINITE_LOOP
         dma_config.en_infiniteloop = config->en_infiniteloop;
 #endif
-#ifdef DMA_MGR_HAS_HANDSHAKE_OPT
+#if defined(DMA_MGR_HAS_HANDSHAKE_OPT) && DMA_MGR_HAS_HANDSHAKE_OPT
         dma_config.handshake_opt = config->handshake_opt;
 #endif
-#ifdef DMA_MGR_HAS_BURST_OPT
+#if defined(DMA_MGR_HAS_BURST_OPT) && DMA_MGR_HAS_BURST_OPT
         dma_config.burst_opt = config->burst_opt;
+#endif
+#if defined(DMA_MGR_HAS_BURST_IN_FIXED_TRANS) && DMA_MGR_HAS_BURST_IN_FIXED_TRANS
+        dma_config.en_src_burst_in_fixed_trans = config->en_src_burst_in_fixed_trans;
+        dma_config.en_dst_burst_in_fixed_trans = config->en_dst_burst_in_fixed_trans;
+#endif
+#if defined(DMA_MGR_HAS_BYTE_ORDER_SWAP) && DMA_MGR_HAS_BYTE_ORDER_SWAP
+        dma_config.swap_mode = config->swap_mode;
+        dma_config.swap_table = config->swap_table;
 #endif
         status = dma_setup_channel(resource->base, resource->channel, &dma_config, false);
     }
@@ -419,14 +431,22 @@ hpm_stat_t dma_mgr_config_linked_descriptor(const dma_resource_t *resource, dma_
         dma_config.size_in_byte = config->size_in_byte;
         dma_config.linked_ptr = config->linked_ptr;
         dma_config.interrupt_mask = config->interrupt_mask;
-#ifdef DMA_MGR_HAS_INFINITE_LOOP
+#if defined(DMA_MGR_HAS_INFINITE_LOOP) && DMA_MGR_HAS_INFINITE_LOOP
         dma_config.en_infiniteloop = config->en_infiniteloop;
 #endif
-#ifdef DMA_MGR_HAS_HANDSHAKE_OPT
+#if defined(DMA_MGR_HAS_HANDSHAKE_OPT) && DMA_MGR_HAS_HANDSHAKE_OPT
         dma_config.handshake_opt = config->handshake_opt;
 #endif
-#ifdef DMA_MGR_HAS_BURST_OPT
+#if defined(DMA_MGR_HAS_BURST_OPT) && DMA_MGR_HAS_BURST_OPT
         dma_config.burst_opt = config->burst_opt;
+#endif
+#if defined(DMA_MGR_HAS_BURST_IN_FIXED_TRANS) && DMA_MGR_HAS_BURST_IN_FIXED_TRANS
+        dma_config.en_src_burst_in_fixed_trans = config->en_src_burst_in_fixed_trans;
+        dma_config.en_dst_burst_in_fixed_trans = config->en_dst_burst_in_fixed_trans;
+#endif
+#if defined(DMA_MGR_HAS_BYTE_ORDER_SWAP) && DMA_MGR_HAS_BYTE_ORDER_SWAP
+        dma_config.swap_mode = config->swap_mode;
+        dma_config.swap_table = config->swap_table;
 #endif
         status = dma_config_linked_descriptor(resource->base, (dma_linked_descriptor_t *)descriptor, resource->channel, &dma_config);
     }
@@ -696,7 +716,7 @@ hpm_stat_t dma_mgr_set_chn_infinite_loop_mode(const dma_resource_t *resource, bo
     if (chn_ctx == NULL) {
         status = status_invalid_argument;
     } else {
-#ifdef DMA_MGR_HAS_INFINITE_LOOP
+#if defined(DMA_MGR_HAS_INFINITE_LOOP) && DMA_MGR_HAS_INFINITE_LOOP
         dma_set_infinite_loop_mode(resource->base, resource->channel, infinite_loop);
         status = status_success;
 #else
@@ -716,7 +736,7 @@ hpm_stat_t dma_mgr_set_chn_src_busrt_option(const dma_resource_t *resource, uint
     if (chn_ctx == NULL) {
         status = status_invalid_argument;
     } else {
-#ifdef DMA_MGR_HAS_BURST_OPT
+#if defined(DMA_MGR_HAS_HANDSHAKE_OPT) && DMA_MGR_HAS_HANDSHAKE_OPT
         dma_set_src_busrt_option(resource->base, resource->channel, burst_opt);
         status = status_success;
 #else
@@ -736,7 +756,7 @@ hpm_stat_t dma_mgr_set_chn_handshake_option(const dma_resource_t *resource, uint
     if (chn_ctx == NULL) {
         status = status_invalid_argument;
     } else {
-#ifdef DMA_MGR_HAS_HANDSHAKE_OPT
+#if defined(DMA_MGR_HAS_HANDSHAKE_OPT) && DMA_MGR_HAS_HANDSHAKE_OPT
         dma_set_handshake_option(resource->base, resource->channel, handshake_opt);
         status = status_success;
 #else
@@ -775,4 +795,84 @@ hpm_stat_t dma_mgr_check_chn_transfer_status(const dma_resource_t *resource, uin
         stat = status_success;
     }
     return stat;
+}
+
+hpm_stat_t dma_mgr_set_source_burst_in_fixed_transize_enable(const dma_resource_t *resource, bool enable)
+{
+    hpm_stat_t status;
+
+    dma_chn_context_t *chn_ctx = dma_mgr_search_chn_context(resource);
+
+    if (chn_ctx == NULL) {
+        status = status_invalid_argument;
+    } else {
+#if defined(DMA_MGR_HAS_BURST_IN_FIXED_TRANS) && DMA_MGR_HAS_BURST_IN_FIXED_TRANS
+        dma_set_source_burst_in_fixed_transize_enable(resource->base, resource->channel, enable);
+        status = status_success;
+#else
+        (void)enable;
+        status = status_fail;
+#endif
+    }
+    return status;
+}
+
+hpm_stat_t dma_mgr_set_destination_burst_in_fix_transize_enable(const dma_resource_t *resource, bool enable)
+{
+    hpm_stat_t status;
+
+    dma_chn_context_t *chn_ctx = dma_mgr_search_chn_context(resource);
+
+    if (chn_ctx == NULL) {
+        status = status_invalid_argument;
+    } else {
+#if defined(DMA_MGR_HAS_BURST_IN_FIXED_TRANS) && DMA_MGR_HAS_BURST_IN_FIXED_TRANS
+        dma_set_destination_burst_in_fixed_transize_enable(resource->base, resource->channel, enable);
+        status = status_success;
+#else
+        (void)enable;
+        status = status_fail;
+#endif
+    }
+    return status;
+}
+
+hpm_stat_t dma_mgr_set_swap_mode(const dma_resource_t *resource, uint8_t swap_mode)
+{
+    hpm_stat_t status;
+
+    dma_chn_context_t *chn_ctx = dma_mgr_search_chn_context(resource);
+
+    if (chn_ctx == NULL) {
+        status = status_invalid_argument;
+    } else {
+#if defined(DMA_MGR_HAS_BYTE_ORDER_SWAP) && DMA_MGR_HAS_BYTE_ORDER_SWAP
+        dma_set_swap_mode(resource->base, resource->channel, swap_mode);
+        status = status_success;
+#else
+        (void)swap_mode;
+        status = status_fail;
+#endif
+    }
+    return status;
+}
+
+hpm_stat_t dma_mgr_set_swap_table(const dma_resource_t *resource, uint32_t swap_table)
+{
+    hpm_stat_t status;
+
+    dma_chn_context_t *chn_ctx = dma_mgr_search_chn_context(resource);
+
+    if (chn_ctx == NULL) {
+        status = status_invalid_argument;
+    } else {
+#if defined(DMA_MGR_HAS_BYTE_ORDER_SWAP) && DMA_MGR_HAS_BYTE_ORDER_SWAP
+        dma_set_swap_table(resource->base, resource->channel, swap_table);
+        status = status_success;
+#else
+        (void)swap_table;
+        status = status_fail;
+#endif
+    }
+    return status;
 }

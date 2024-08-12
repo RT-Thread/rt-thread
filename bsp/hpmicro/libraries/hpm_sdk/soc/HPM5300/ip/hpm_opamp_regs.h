@@ -1,0 +1,258 @@
+/*
+ * Copyright (c) 2021-2024 HPMicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
+
+
+#ifndef HPM_OPAMP_H
+#define HPM_OPAMP_H
+
+typedef struct {
+    __RW uint32_t CTRL0;                       /* 0x0: control reg */
+    __RW uint32_t STATUS;                      /* 0x4: status reg */
+    __RW uint32_t CTRL1;                       /* 0x8: control reg1 */
+    __R  uint8_t  RESERVED0[4];                /* 0xC - 0xF: Reserved */
+    struct {
+        __RW uint32_t CFG0;                    /* 0x10:  */
+        __RW uint32_t CFG1;                    /* 0x14:  */
+        __RW uint32_t CFG2;                    /* 0x18:  */
+    } CFG[10];
+} OPAMP_Type;
+
+
+/* Bitfield definition for register: CTRL0 */
+/*
+ * EN_LV (RW)
+ *
+ */
+#define OPAMP_CTRL0_EN_LV_MASK (0x4000000UL)
+#define OPAMP_CTRL0_EN_LV_SHIFT (26U)
+#define OPAMP_CTRL0_EN_LV_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_EN_LV_SHIFT) & OPAMP_CTRL0_EN_LV_MASK)
+#define OPAMP_CTRL0_EN_LV_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_EN_LV_MASK) >> OPAMP_CTRL0_EN_LV_SHIFT)
+
+/*
+ * VIM_SEL (RW)
+ *
+ */
+#define OPAMP_CTRL0_VIM_SEL_MASK (0x70000UL)
+#define OPAMP_CTRL0_VIM_SEL_SHIFT (16U)
+#define OPAMP_CTRL0_VIM_SEL_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_VIM_SEL_SHIFT) & OPAMP_CTRL0_VIM_SEL_MASK)
+#define OPAMP_CTRL0_VIM_SEL_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_VIM_SEL_MASK) >> OPAMP_CTRL0_VIM_SEL_SHIFT)
+
+/*
+ * MODE (RW)
+ *
+ */
+#define OPAMP_CTRL0_MODE_MASK (0xF800U)
+#define OPAMP_CTRL0_MODE_SHIFT (11U)
+#define OPAMP_CTRL0_MODE_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_MODE_SHIFT) & OPAMP_CTRL0_MODE_MASK)
+#define OPAMP_CTRL0_MODE_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_MODE_MASK) >> OPAMP_CTRL0_MODE_SHIFT)
+
+/*
+ * GAIN_SEL (RW)
+ *
+ */
+#define OPAMP_CTRL0_GAIN_SEL_MASK (0x700U)
+#define OPAMP_CTRL0_GAIN_SEL_SHIFT (8U)
+#define OPAMP_CTRL0_GAIN_SEL_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_GAIN_SEL_SHIFT) & OPAMP_CTRL0_GAIN_SEL_MASK)
+#define OPAMP_CTRL0_GAIN_SEL_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_GAIN_SEL_MASK) >> OPAMP_CTRL0_GAIN_SEL_SHIFT)
+
+/*
+ * DISABLE_PM_CAP (RW)
+ *
+ */
+#define OPAMP_CTRL0_DISABLE_PM_CAP_MASK (0x80U)
+#define OPAMP_CTRL0_DISABLE_PM_CAP_SHIFT (7U)
+#define OPAMP_CTRL0_DISABLE_PM_CAP_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_DISABLE_PM_CAP_SHIFT) & OPAMP_CTRL0_DISABLE_PM_CAP_MASK)
+#define OPAMP_CTRL0_DISABLE_PM_CAP_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_DISABLE_PM_CAP_MASK) >> OPAMP_CTRL0_DISABLE_PM_CAP_SHIFT)
+
+/*
+ * MILLER_SEL (RW)
+ *
+ */
+#define OPAMP_CTRL0_MILLER_SEL_MASK (0x70U)
+#define OPAMP_CTRL0_MILLER_SEL_SHIFT (4U)
+#define OPAMP_CTRL0_MILLER_SEL_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_MILLER_SEL_SHIFT) & OPAMP_CTRL0_MILLER_SEL_MASK)
+#define OPAMP_CTRL0_MILLER_SEL_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_MILLER_SEL_MASK) >> OPAMP_CTRL0_MILLER_SEL_SHIFT)
+
+/*
+ * VBYPASS (RW)
+ *
+ */
+#define OPAMP_CTRL0_VBYPASS_MASK (0x8U)
+#define OPAMP_CTRL0_VBYPASS_SHIFT (3U)
+#define OPAMP_CTRL0_VBYPASS_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_VBYPASS_SHIFT) & OPAMP_CTRL0_VBYPASS_MASK)
+#define OPAMP_CTRL0_VBYPASS_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_VBYPASS_MASK) >> OPAMP_CTRL0_VBYPASS_SHIFT)
+
+/*
+ * VIP_SEL (RW)
+ *
+ */
+#define OPAMP_CTRL0_VIP_SEL_MASK (0x7U)
+#define OPAMP_CTRL0_VIP_SEL_SHIFT (0U)
+#define OPAMP_CTRL0_VIP_SEL_SET(x) (((uint32_t)(x) << OPAMP_CTRL0_VIP_SEL_SHIFT) & OPAMP_CTRL0_VIP_SEL_MASK)
+#define OPAMP_CTRL0_VIP_SEL_GET(x) (((uint32_t)(x) & OPAMP_CTRL0_VIP_SEL_MASK) >> OPAMP_CTRL0_VIP_SEL_SHIFT)
+
+/* Bitfield definition for register: STATUS */
+/*
+ * TRIG_CONFLICT (RWC)
+ *
+ * if more than one hardware trigger is set, will put all trigger input here;
+ * write any value to clear
+ */
+#define OPAMP_STATUS_TRIG_CONFLICT_MASK (0xFF00000UL)
+#define OPAMP_STATUS_TRIG_CONFLICT_SHIFT (20U)
+#define OPAMP_STATUS_TRIG_CONFLICT_SET(x) (((uint32_t)(x) << OPAMP_STATUS_TRIG_CONFLICT_SHIFT) & OPAMP_STATUS_TRIG_CONFLICT_MASK)
+#define OPAMP_STATUS_TRIG_CONFLICT_GET(x) (((uint32_t)(x) & OPAMP_STATUS_TRIG_CONFLICT_MASK) >> OPAMP_STATUS_TRIG_CONFLICT_SHIFT)
+
+/*
+ * PRESET_ACT (RO)
+ *
+ * 1 for preset active; one of cur_preset is selected for OPAMP;
+ * 0 for no preset, OPAMP use cfg0 parameters
+ */
+#define OPAMP_STATUS_PRESET_ACT_MASK (0x80000UL)
+#define OPAMP_STATUS_PRESET_ACT_SHIFT (19U)
+#define OPAMP_STATUS_PRESET_ACT_GET(x) (((uint32_t)(x) & OPAMP_STATUS_PRESET_ACT_MASK) >> OPAMP_STATUS_PRESET_ACT_SHIFT)
+
+/*
+ * CUR_PRESET (RO)
+ *
+ * current selected preset
+ */
+#define OPAMP_STATUS_CUR_PRESET_MASK (0x70000UL)
+#define OPAMP_STATUS_CUR_PRESET_SHIFT (16U)
+#define OPAMP_STATUS_CUR_PRESET_GET(x) (((uint32_t)(x) & OPAMP_STATUS_CUR_PRESET_MASK) >> OPAMP_STATUS_CUR_PRESET_SHIFT)
+
+/* Bitfield definition for register: CTRL1 */
+/*
+ * SW_PRESET (RW)
+ *
+ * set to use preset defined by sw_sel.
+ * NOTE: when set, the hardware trigger will not be used
+ */
+#define OPAMP_CTRL1_SW_PRESET_MASK (0x80000000UL)
+#define OPAMP_CTRL1_SW_PRESET_SHIFT (31U)
+#define OPAMP_CTRL1_SW_PRESET_SET(x) (((uint32_t)(x) << OPAMP_CTRL1_SW_PRESET_SHIFT) & OPAMP_CTRL1_SW_PRESET_MASK)
+#define OPAMP_CTRL1_SW_PRESET_GET(x) (((uint32_t)(x) & OPAMP_CTRL1_SW_PRESET_MASK) >> OPAMP_CTRL1_SW_PRESET_SHIFT)
+
+/*
+ * SW_SEL (RW)
+ *
+ */
+#define OPAMP_CTRL1_SW_SEL_MASK (0x7U)
+#define OPAMP_CTRL1_SW_SEL_SHIFT (0U)
+#define OPAMP_CTRL1_SW_SEL_SET(x) (((uint32_t)(x) << OPAMP_CTRL1_SW_SEL_SHIFT) & OPAMP_CTRL1_SW_SEL_MASK)
+#define OPAMP_CTRL1_SW_SEL_GET(x) (((uint32_t)(x) & OPAMP_CTRL1_SW_SEL_MASK) >> OPAMP_CTRL1_SW_SEL_SHIFT)
+
+/* Bitfield definition for register of struct array CFG: CFG0 */
+/*
+ * DISABLE_PM_CAP (RW)
+ *
+ */
+#define OPAMP_CFG_CFG0_DISABLE_PM_CAP_MASK (0x8000000UL)
+#define OPAMP_CFG_CFG0_DISABLE_PM_CAP_SHIFT (27U)
+#define OPAMP_CFG_CFG0_DISABLE_PM_CAP_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG0_DISABLE_PM_CAP_SHIFT) & OPAMP_CFG_CFG0_DISABLE_PM_CAP_MASK)
+#define OPAMP_CFG_CFG0_DISABLE_PM_CAP_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG0_DISABLE_PM_CAP_MASK) >> OPAMP_CFG_CFG0_DISABLE_PM_CAP_SHIFT)
+
+/*
+ * MILLER_SEL (RW)
+ *
+ */
+#define OPAMP_CFG_CFG0_MILLER_SEL_MASK (0x7000000UL)
+#define OPAMP_CFG_CFG0_MILLER_SEL_SHIFT (24U)
+#define OPAMP_CFG_CFG0_MILLER_SEL_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG0_MILLER_SEL_SHIFT) & OPAMP_CFG_CFG0_MILLER_SEL_MASK)
+#define OPAMP_CFG_CFG0_MILLER_SEL_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG0_MILLER_SEL_MASK) >> OPAMP_CFG_CFG0_MILLER_SEL_SHIFT)
+
+/*
+ * VIM_SEL (RW)
+ *
+ */
+#define OPAMP_CFG_CFG0_VIM_SEL_MASK (0x700U)
+#define OPAMP_CFG_CFG0_VIM_SEL_SHIFT (8U)
+#define OPAMP_CFG_CFG0_VIM_SEL_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG0_VIM_SEL_SHIFT) & OPAMP_CFG_CFG0_VIM_SEL_MASK)
+#define OPAMP_CFG_CFG0_VIM_SEL_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG0_VIM_SEL_MASK) >> OPAMP_CFG_CFG0_VIM_SEL_SHIFT)
+
+/*
+ * VIP_SEL (RW)
+ *
+ */
+#define OPAMP_CFG_CFG0_VIP_SEL_MASK (0x7U)
+#define OPAMP_CFG_CFG0_VIP_SEL_SHIFT (0U)
+#define OPAMP_CFG_CFG0_VIP_SEL_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG0_VIP_SEL_SHIFT) & OPAMP_CFG_CFG0_VIP_SEL_MASK)
+#define OPAMP_CFG_CFG0_VIP_SEL_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG0_VIP_SEL_MASK) >> OPAMP_CFG_CFG0_VIP_SEL_SHIFT)
+
+/* Bitfield definition for register of struct array CFG: CFG1 */
+/*
+ * HW_TRIG_EN (RW)
+ *
+ * set to enable hardware trigger from moto system.
+ * NOTE: when sw_preset is enabled, this bit will not take effert
+ */
+#define OPAMP_CFG_CFG1_HW_TRIG_EN_MASK (0x80000000UL)
+#define OPAMP_CFG_CFG1_HW_TRIG_EN_SHIFT (31U)
+#define OPAMP_CFG_CFG1_HW_TRIG_EN_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG1_HW_TRIG_EN_SHIFT) & OPAMP_CFG_CFG1_HW_TRIG_EN_MASK)
+#define OPAMP_CFG_CFG1_HW_TRIG_EN_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG1_HW_TRIG_EN_MASK) >> OPAMP_CFG_CFG1_HW_TRIG_EN_SHIFT)
+
+/*
+ * EN_LV (RW)
+ *
+ */
+#define OPAMP_CFG_CFG1_EN_LV_MASK (0x40000000UL)
+#define OPAMP_CFG_CFG1_EN_LV_SHIFT (30U)
+#define OPAMP_CFG_CFG1_EN_LV_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG1_EN_LV_SHIFT) & OPAMP_CFG_CFG1_EN_LV_MASK)
+#define OPAMP_CFG_CFG1_EN_LV_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG1_EN_LV_MASK) >> OPAMP_CFG_CFG1_EN_LV_SHIFT)
+
+/*
+ * VBYPASS_LV (RW)
+ *
+ */
+#define OPAMP_CFG_CFG1_VBYPASS_LV_MASK (0x20000000UL)
+#define OPAMP_CFG_CFG1_VBYPASS_LV_SHIFT (29U)
+#define OPAMP_CFG_CFG1_VBYPASS_LV_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG1_VBYPASS_LV_SHIFT) & OPAMP_CFG_CFG1_VBYPASS_LV_MASK)
+#define OPAMP_CFG_CFG1_VBYPASS_LV_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG1_VBYPASS_LV_MASK) >> OPAMP_CFG_CFG1_VBYPASS_LV_SHIFT)
+
+/*
+ * MODE (RW)
+ *
+ */
+#define OPAMP_CFG_CFG1_MODE_MASK (0xF8U)
+#define OPAMP_CFG_CFG1_MODE_SHIFT (3U)
+#define OPAMP_CFG_CFG1_MODE_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG1_MODE_SHIFT) & OPAMP_CFG_CFG1_MODE_MASK)
+#define OPAMP_CFG_CFG1_MODE_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG1_MODE_MASK) >> OPAMP_CFG_CFG1_MODE_SHIFT)
+
+/*
+ * GAIN_SEL (RW)
+ *
+ */
+#define OPAMP_CFG_CFG1_GAIN_SEL_MASK (0x7U)
+#define OPAMP_CFG_CFG1_GAIN_SEL_SHIFT (0U)
+#define OPAMP_CFG_CFG1_GAIN_SEL_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG1_GAIN_SEL_SHIFT) & OPAMP_CFG_CFG1_GAIN_SEL_MASK)
+#define OPAMP_CFG_CFG1_GAIN_SEL_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG1_GAIN_SEL_MASK) >> OPAMP_CFG_CFG1_GAIN_SEL_SHIFT)
+
+/* Bitfield definition for register of struct array CFG: CFG2 */
+/*
+ * CHANNEL (RW)
+ *
+ */
+#define OPAMP_CFG_CFG2_CHANNEL_MASK (0x7000000UL)
+#define OPAMP_CFG_CFG2_CHANNEL_SHIFT (24U)
+#define OPAMP_CFG_CFG2_CHANNEL_SET(x) (((uint32_t)(x) << OPAMP_CFG_CFG2_CHANNEL_SHIFT) & OPAMP_CFG_CFG2_CHANNEL_MASK)
+#define OPAMP_CFG_CFG2_CHANNEL_GET(x) (((uint32_t)(x) & OPAMP_CFG_CFG2_CHANNEL_MASK) >> OPAMP_CFG_CFG2_CHANNEL_SHIFT)
+
+
+
+/* CFG register group index macro definition */
+#define OPAMP_CFG_PRESET0 (0UL)
+#define OPAMP_CFG_PRESET1 (1UL)
+#define OPAMP_CFG_PRESET2 (2UL)
+#define OPAMP_CFG_PRESET3 (4UL)
+#define OPAMP_CFG_PRESET4 (5UL)
+#define OPAMP_CFG_PRESET5 (6UL)
+#define OPAMP_CFG_PRESET6 (8UL)
+#define OPAMP_CFG_PRESET7 (9UL)
+
+
+#endif /* HPM_OPAMP_H */

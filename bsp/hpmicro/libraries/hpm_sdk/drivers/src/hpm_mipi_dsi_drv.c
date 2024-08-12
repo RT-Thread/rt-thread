@@ -128,7 +128,7 @@ static void mipi_dsi_config_format(MIPI_DSI_Type *ptr, mipi_dsi_pixel_format_t f
         val = MIPI_DSI_DPI_COLOR_CODING_DPI_COLOR_CODING_SET(0x04);
         break;
     case MIPI_DSI_FMT_RGB565:
-        val = MIPI_DSI_DPI_COLOR_CODING_DPI_COLOR_CODING_SET(0x04);
+        val = MIPI_DSI_DPI_COLOR_CODING_DPI_COLOR_CODING_SET(0x00);
         break;
     }
 

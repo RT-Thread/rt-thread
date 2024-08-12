@@ -13,11 +13,11 @@
 #if defined(CONFIG_TOUCH_FT5406) && (CONFIG_TOUCH_FT5406 == 1)
 #include "hpm_ft5406.h"
 #define HPM_TOUCH_MAX_POINTS (FT5406_MAX_TOUCH_POINTS)
-#elif defined(CONFIG_TOUCH_GT911) && (CONFIG_TOUCH_GT911 == 1)
-#include "hpm_gt911.h"
-#define HPM_TOUCH_MAX_POINTS (GT911_MAX_TOUCH_POINTS)
+#elif defined(CONFIG_TOUCH_GT9XX) && (CONFIG_TOUCH_GT9XX == 1)
+#include "hpm_gt9xx.h"
+#define HPM_TOUCH_MAX_POINTS (GT9XX_MAX_TOUCH_POINTS)
 #else
-#error "unknown touch type, either have CONFIG_FT5406 or CONFIG_GT911 defined"
+#error "unknown touch type, either have CONFIG_FT5406 or CONFIG_GT9XX defined"
 #endif
 
 enum {
@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 hpm_stat_t touch_init(I2C_Type *i2c_ptr);
-
+hpm_stat_t touch_config(bool exchange_xy, bool reverse_x, bool reverse_y);
 hpm_stat_t touch_get_data(touch_point_t *points, uint8_t *num_of_points);
 
 #ifdef __cplusplus

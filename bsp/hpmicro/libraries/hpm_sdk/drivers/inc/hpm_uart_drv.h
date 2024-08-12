@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 HPMicro
+ * Copyright (c) 2021-2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -456,6 +456,7 @@ static inline uint8_t uart_get_irq_id(UART_Type *ptr)
 /**
  * @brief Determine whether UART RX Line is idle
  * @param [in] ptr UART base address
+ * @retval false if uart RX line is not idle
  */
 static inline bool uart_is_rxline_idle(UART_Type *ptr)
 {
@@ -506,6 +507,7 @@ hpm_stat_t uart_init_rxline_idle_detection(UART_Type *ptr, uart_rxline_idle_conf
 /**
  * @brief Determine whether UART TX Line is idle
  * @param [in] ptr UART base address
+ * @retval false if uart TX line is not idle
  */
 static inline bool uart_is_txline_idle(UART_Type *ptr)
 {
@@ -524,6 +526,7 @@ static inline void uart_clear_txline_idle_flag(UART_Type *ptr)
 /**
  * @brief Determine whether UART RX Line is idle
  * @param [in] ptr UART base address
+ * @retval false if uart RX line is not idle
  */
 static inline bool uart_is_rxline_idle(UART_Type *ptr)
 {
@@ -578,7 +581,7 @@ hpm_stat_t uart_init_txline_idle_detection(UART_Type *ptr, uart_rxline_idle_conf
  * @param [in] ptr UART base address
  * @retval current status
  */
-static inline uint8_t uart_get_status(UART_Type *ptr)
+static inline uint32_t uart_get_status(UART_Type *ptr)
 {
     return ptr->LSR;
 }
@@ -631,6 +634,15 @@ hpm_stat_t uart_send_byte(UART_Type *ptr, uint8_t c);
  * @retval status_success only if it succeeds
  */
 hpm_stat_t uart_receive_byte(UART_Type *ptr, uint8_t *c);
+
+/**
+ * @brief Try to receive one byte without checking data ready status
+ *
+ * @param [in] ptr UART base address
+ * @param c Pointer to buffer to save the byte received on UART
+ * @retval status_success only if it succeeds
+ */
+hpm_stat_t uart_try_receive_byte(UART_Type *ptr, uint8_t *c);
 
 /**
  * @brief Set uart signal output level
@@ -824,7 +836,78 @@ static inline void uart_disable_address_match(UART_Type *ptr)
     ptr->ADDR_CFG &= ~(UART_ADDR_CFG_A0_EN_MASK | UART_ADDR_CFG_A1_EN_MASK);
 }
 
+/**
+ * @brief Determine whether address match for 9bit mode
+ * @param [in] ptr UART base address
+ * @retval false if uart address is not match
+ */
+static inline bool uart_is_addr_match(UART_Type *ptr)
+{
+    return ((ptr->IIR2 & UART_IIR2_ADDR_MATCH_MASK) != 0U) ? true : false;
+}
+
+/**
+ * @brief Clear UART address match Flag
+ * @param [in] ptr UART base address
+ */
+static inline void uart_clear_addr_match_flag(UART_Type *ptr)
+{
+    ptr->IIR2 = UART_IIR2_ADDR_MATCH_MASK; /* Write-1-Clear Logic */
+}
+
+/**
+ * @brief Determine whether address match and rx idle for 9bit mode
+ * @param [in] ptr UART base address
+ * @retval false if uart address is not match and not rx idle
+ */
+static inline bool uart_is_addr_match_and_rxidle(UART_Type *ptr)
+{
+    return ((ptr->IIR2 & UART_IIR2_ADDR_MATCH_IDLE_MASK) != 0U) ? true : false;
+}
+
+/**
+ * @brief Clear UART address match and rxidle Flag
+ * @param [in] ptr UART base address
+ */
+static inline void uart_clear_addr_match_and_rxidle_flag(UART_Type *ptr)
+{
+    ptr->IIR2 = UART_IIR2_ADDR_MATCH_IDLE_MASK; /* Write-1-Clear Logic */
+}
+
+/**
+ * @brief Determine whether data lost for 9bit mode
+ * @param [in] ptr UART base address
+ * @retval false if uart data is not lost
+ */
+static inline bool uart_is_data_lost(UART_Type *ptr)
+{
+    return ((ptr->IIR2 & UART_IIR2_DATA_LOST_MASK) != 0U) ? true : false;
+}
+
+/**
+ * @brief Clear UART data lost Flag
+ * @param [in] ptr UART base address
+ */
+static inline void uart_clear_data_lost_flag(UART_Type *ptr)
+{
+    ptr->IIR2 = UART_IIR2_DATA_LOST_MASK; /* Write-1-Clear Logic */
+}
 #endif
+
+/**
+ * @brief   Write RTS level for uart modem mode
+ *
+ * @param [in] ptr UART base address
+ * @param high RTS set to high when it is set to true
+ */
+static inline void uart_modem_write_rts_pin(UART_Type *ptr, uint8_t high)
+{
+    if (high == true) {
+        ptr->MCR &= ~UART_MCR_RTS_MASK;
+    } else {
+        ptr->MCR |= UART_MCR_RTS_MASK;
+    }
+}
 
 #ifdef __cplusplus
 }

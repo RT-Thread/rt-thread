@@ -57,7 +57,7 @@ static inline void mbx_set_bus_access_response(MBX_Type *ptr, mbx_bus_access_res
  * @param[in] ptr MBX base address
  * @param[in] mask Mask of interrupts to be enabled
  */
-static inline void mbx_enable_intr(MBX_Type *ptr, uint8_t mask)
+static inline void mbx_enable_intr(MBX_Type *ptr, uint32_t mask)
 {
     ptr->CR |= mask;
 }
@@ -68,7 +68,7 @@ static inline void mbx_enable_intr(MBX_Type *ptr, uint8_t mask)
  * @param[in] ptr MBX base address
  * @param[in] mask Mask of interrupts to be disabled
  */
-static inline void mbx_disable_intr(MBX_Type *ptr, uint8_t mask)
+static inline void mbx_disable_intr(MBX_Type *ptr, uint32_t mask)
 {
     ptr->CR &= ~mask;
 }
