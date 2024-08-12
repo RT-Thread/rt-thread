@@ -341,6 +341,7 @@ jobs:
                 - "hpmicro/hpm5300evk"
                 - "hpmicro/hpm5301evklite"
                 - "hpmicro/hpm6800evk"
+                - "hpmicro/hpm6e00evk"
          -  RTT_BSP: "llvm-arm" 
             RTT_TOOL_CHAIN: "llvm-arm"
             SUB_RTT_BSP:  
