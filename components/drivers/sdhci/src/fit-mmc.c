@@ -99,7 +99,7 @@ int mmc_add_host(struct mmc_host *mmc)
     mmc->rthost.ops = &rt_mmcsd_ops;
     mmc->rthost.flags = mmc->caps;
     mmc->rthost.freq_max = mmc->f_max;
-    mmc->rthost.freq_min = mmc->f_min;
+    mmc->rthost.freq_min = 400000;
     mmc->rthost.max_dma_segs = mmc->max_segs;
     mmc->rthost.max_seg_size = mmc->max_seg_size;
     mmc->rthost.max_blk_size = mmc->max_blk_size;

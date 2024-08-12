@@ -14,7 +14,6 @@
 #include "sdhci_time.h"
 #include "sdhci_dma.h"
 #include "transer.h"
-#include "sdhci-irq.h"
 #include "sdhci_voltage.h"
 
 

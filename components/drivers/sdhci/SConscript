@@ -3,9 +3,9 @@ from building import *
 cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd + '/include']
-src += Glob('*.c')
-src += Glob('src/*.c')
-src += Glob('sdhci-platform/*.c')
+# src += Glob('*.c')
+# src += Glob('src/*.c')
+# src += Glob('sdhci-platform/*.c')
 
 group = DefineGroup('Drivers', src, depend = [], CPPPATH = CPPPATH)
 
