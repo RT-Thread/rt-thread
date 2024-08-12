@@ -49,3 +49,8 @@ hpm_stat_t touch_init(I2C_Type *i2c_ptr)
 #endif
     return stat;
 }
+
+hpm_stat_t touch_config(bool exchange_xy, bool reverse_x, bool reverse_y)
+{
+    return status_fail;
+}

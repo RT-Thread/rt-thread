@@ -59,7 +59,7 @@ hpm_library = 'hpm_sdk'
 rtconfig.BSP_LIBRARY_TYPE = hpm_library
 
 # include soc
-objs.extend(SConscript(os.path.join(libraries_path_prefix, hpm_library,'soc', rtconfig.CHIP_NAME, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, hpm_library,'soc', rtconfig.SOC_FAMILY, rtconfig.CHIP_NAME, 'SConscript')))
 
 # include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, hpm_library, 'SConscript')))

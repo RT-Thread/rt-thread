@@ -39,6 +39,7 @@ enum {
     status_can_tx_fifo_full = MAKE_STATUS(status_group_can, 6),         /**< CAN TX fifo full */
     status_can_filter_index_invalid = MAKE_STATUS(status_group_can, 7), /**< CAN filter index is invalid */
     status_can_filter_num_invalid = MAKE_STATUS(status_group_can, 8),   /**< CAN filter number is invalid */
+    status_can_invalid_bit_timing = MAKE_STATUS(status_group_can, 9),   /**< Invalid CAN bit timing parameter */
 };
 
 /**
@@ -56,10 +57,10 @@ enum {
 /**
  * @brief CAN Secondary Transmit buffer Status
  */
-#define CAN_STB_IS_EMPTY (0U)                               /**< CAN Sencondary Transmit buffer is empty */
-#define CAN_STB_LESS_EQUAL_HALF_FULL (1U)                   /**< CAN Sencondary Transmit buffer <= 1/2 * FULL */
-#define CAN_STB_MORE_THAN_HALF_FULL (2U)                    /**< CAN Sencondary Transmit buffer > 1/2 * FULL */
-#define CAN_STB_IS_FULL (3U)                                /**< CAN Sencondary Transmit buffer is full */
+#define CAN_STB_IS_EMPTY (0U)                               /**< CAN Secondary Transmit buffer is empty */
+#define CAN_STB_LESS_EQUAL_HALF_FULL (1U)                   /**< CAN Secondary Transmit buffer <= 1/2 * FULL */
+#define CAN_STB_MORE_THAN_HALF_FULL (2U)                    /**< CAN Secondary Transmit buffer > 1/2 * FULL */
+#define CAN_STB_IS_FULL (3U)                                /**< CAN Secondary Transmit buffer is full */
 
 /**
  * @brief CAN Receive Buffer States
@@ -73,14 +74,14 @@ enum {
  * @brief CAN Error interrupts/flags
  *
  */
-#define CAN_ERROR_WARNING_LIMIT_FLAG            (CAN_ERRINT_EWARN_MASK)     /**< CAN Error Limit reached */
-#define CAN_ERROR_PASSIVE_MODE_ACTIVE_FLAG      (CAN_ERRINT_EPASS_MASK)     /**< CAN Passive mode active */
-#define CAN_ERROR_PASSIVE_INT_ENABLE            (CAN_ERRINT_EPIE_MASK)      /**< CAN Passive Interrupt Enable */
-#define CAN_ERROR_PASSIVE_INT_FLAG              (CAN_ERRINT_EPIF_MASK)      /**< CAN Passive Interrupt Flag */
-#define CAN_ERROR_ARBITRAITION_LOST_INT_ENABLE  (CAN_ERRINT_ALIE_MASK)      /**< CAN Abitration Lost Interrupt Enable */
-#define CAN_ERROR_ARBITRAITION_LOST_INT_FLAG    (CAN_ERRINT_ALIE_MASK)      /**< CAN arbitration Lost Interrupt Flag */
-#define CAN_ERROR_BUS_ERROR_INT_ENABLE          (CAN_ERRINT_BEIE_MASK)      /**< CAN BUS error Interrupt Enable */
-#define CAN_ERROR_BUS_ERROR_INT_FLAG            (CAN_ERRINT_BEIF_MASK)      /**< CAN BUS error Interrupt flag */
+#define CAN_ERROR_WARNING_LIMIT_FLAG           (CAN_ERRINT_EWARN_MASK)     /**< CAN Error Limit reached */
+#define CAN_ERROR_PASSIVE_MODE_ACTIVE_FLAG     (CAN_ERRINT_EPASS_MASK)     /**< CAN Passive mode active */
+#define CAN_ERROR_PASSIVE_INT_ENABLE           (CAN_ERRINT_EPIE_MASK)      /**< CAN Passive Interrupt Enable */
+#define CAN_ERROR_PASSIVE_INT_FLAG             (CAN_ERRINT_EPIF_MASK)      /**< CAN Passive Interrupt Flag */
+#define CAN_ERROR_ARBITRATION_LOST_INT_ENABLE  (CAN_ERRINT_ALIE_MASK)      /**< CAN Arbitration Lost Interrupt Enable */
+#define CAN_ERROR_ARBITRATION_LOST_INT_FLAG    (CAN_ERRINT_ALIE_MASK)      /**< CAN arbitration Lost Interrupt Flag */
+#define CAN_ERROR_BUS_ERROR_INT_ENABLE         (CAN_ERRINT_BEIE_MASK)      /**< CAN BUS error Interrupt Enable */
+#define CAN_ERROR_BUS_ERROR_INT_FLAG           (CAN_ERRINT_BEIF_MASK)      /**< CAN BUS error Interrupt flag */
 
 /**
  * @brief CAN Error Kinds
@@ -110,7 +111,7 @@ typedef enum _can_mode {
  */
 typedef enum _can_bit_timing_option {
     can_bit_timing_can2_0,          /**< CAN 2.0 bit timing option */
-    can_bit_timing_canfd_norminal,  /**< CANFD norminal timing option */
+    can_bit_timing_canfd_nominal,  /**< CANFD nominal timing option */
     can_bit_timing_canfd_data,      /**< CANFD data timing option */
 } can_bit_timing_option_t;
 
@@ -245,7 +246,7 @@ typedef struct {
     bool enable_self_ack;                       /**< CAN self-ack flag */
     bool disable_ptb_retransmission;            /**< disable re-transmission for primary transmit buffer */
     bool disable_stb_retransmission;            /**< disable re-transmission for secondary transmit buffer */
-    bool enable_tdc;                            /**< Enable transmittor delay compensation */
+    bool enable_tdc;                            /**< Enable transmitter delay compensation */
 
     uint8_t filter_list_num;                    /**< element number of CAN filters in filter list */
     can_filter_config_t *filter_list;           /**< CAN filter list pointer */
@@ -277,6 +278,15 @@ static inline void can_reset(CAN_Type *base, bool enable)
     } else {
         base->CMD_STA_CMD_CTRL &= ~CAN_CMD_STA_CMD_CTRL_RESET_MASK;
     }
+}
+
+/**
+ * @brief Force CAN controller to Bus-off mode
+ * @param [in] base CAN base address
+ */
+static inline void can_force_bus_off(CAN_Type *base)
+{
+    base->CMD_STA_CMD_CTRL = CAN_CMD_STA_CMD_CTRL_BUSOFF_MASK;
 }
 
 /**
@@ -811,10 +821,8 @@ hpm_stat_t can_get_default_config(can_config_t *config);
  */
 hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq);
 
-
 /**
  * @brief De-initialize the CAN controller
- *
  * @param [in] base CAN base address
  */
 void can_deinit(CAN_Type *base);
@@ -920,7 +928,7 @@ hpm_stat_t can_send_high_priority_message_nonblocking(CAN_Type *base, const can_
  * @param [in] base CAN base address
  * @param [out] message CAN message buffer
  *
- * @retval status_success API exection is successful
+ * @retval status_success API execution is successful
  * @retval status_invalid_argument Invalid parameters
  * @retval status_can_bit_error CAN bit error happened during receiving message
  * @retval status_can_form_error  CAN form error happened during receiving message
@@ -940,7 +948,7 @@ hpm_stat_t can_receive_message_blocking(CAN_Type *base, can_receive_buf_t *messa
  * @param [in] base CAN base address
  * @param [out] message CAN message buffer
  *
- * @retval status_success API exection is successful
+ * @retval status_success API execution is successful
  * @retval status_invalid_argument Invalid parameters
  * @retval status_can_bit_error CAN bit error happened during receiving message
  * @retval status_can_form_error  CAN form error happened during receiving message

@@ -9,7 +9,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -102,9 +101,6 @@
 #define RT_CHERRYUSB_HOST_EHCI_HPM
 #define RT_CHERRYUSB_HOST_CDC_ACM
 #define RT_CHERRYUSB_HOST_HID
-#define RT_CHERRYUSB_HOST_TEMPLATE
-#define TEST_USBH_CDC_ACM 1
-#define TEST_USBH_HID 1
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -312,6 +308,10 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
+
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
@@ -405,6 +405,8 @@
 #define BSP_USING_UART
 #define BSP_USING_UART0
 #define BSP_USING_RTC
+#define BSP_USING_USB
+#define BSP_USING_USB_DEVICE
 /* end of On-chip Peripheral Drivers */
 /* end of Hardware Drivers Config */
 

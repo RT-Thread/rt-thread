@@ -19,7 +19,9 @@ void cam_get_default_config(CAM_Type *ptr, cam_config_t *config, display_pixel_f
     config->pixclk_sampling_falling = false;
     config->hsync_active_low = false;
     config->vsync_active_low = false;
+#if defined(HPM_IP_FEATURE_CAM_INV_DEN) && (HPM_IP_FEATURE_CAM_INV_DEN == 1)
     config->de_active_low = false;
+#endif
     config->color_ext = false;
     config->data_pack_msb = false;
     config->data_store_mode = CAM_DATA_STORE_MODE_NORMAL;
@@ -99,14 +101,18 @@ hpm_stat_t cam_init(CAM_Type *ptr, cam_config_t *config)
     /*
      * In DVP mode, de_active_low and hsync_active_low are same.
      */
+#if defined(HPM_IP_FEATURE_CAM_INV_DEN) && (HPM_IP_FEATURE_CAM_INV_DEN == 1)
     if (config->sensor_bitwidth != CAM_SENSOR_BITWIDTH_24BITS) {
         config->de_active_low = config->hsync_active_low;
     }
+#endif
 
     ptr->CR1 = CAM_CR1_INV_PIXCLK_SET(config->pixclk_sampling_falling)
         | CAM_CR1_INV_HSYNC_SET(config->hsync_active_low)
         | CAM_CR1_INV_VSYNC_SET(config->vsync_active_low)
+#if defined(HPM_IP_FEATURE_CAM_INV_DEN) && (HPM_IP_FEATURE_CAM_INV_DEN == 1)
         | CAM_CR1_INV_DEN_SET(config->de_active_low)
+#endif
         | CAM_CR1_RESTART_BUSPTR_MASK
         | CAM_CR1_COLOR_EXT_SET(config->color_ext)
         | CAM_CR1_PACK_DIR_SET(config->data_pack_msb)

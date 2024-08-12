@@ -29,7 +29,7 @@ if GetDepend('BSP_USING_ETH'):
 if GetDepend('BSP_USING_SDXC'):
     src += ['drv_sdio.c']
 
-if GetDepend('BSP_USING_PWM'):
+if GetDepend('BSP_USING_PWM') or GetDepend('BSP_USING_PWMV2'):
     src += ['drv_pwm.c']
 
 if GetDepend('BSP_USING_GPTMR'):

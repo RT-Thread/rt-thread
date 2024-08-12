@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -213,6 +213,7 @@ hpm_stat_t sdp_aes_set_key(SDP_Type *base,
 }
 
 #if defined(SDP_HAS_SM4_SUPPORT) && (SDP_HAS_SM4_SUPPORT == 1)
+
 hpm_stat_t sdp_sm4_set_key(SDP_Type *base,
                            sdp_sm4_ctx_t *sm4_ctx,
                            const uint8_t *key,
@@ -231,6 +232,7 @@ hpm_stat_t sdp_sm4_set_key(SDP_Type *base,
 
     return status;
 }
+
 #endif
 
 hpm_stat_t sdp_aes_crypt_ecb(SDP_Type *base,
@@ -265,18 +267,18 @@ hpm_stat_t sdp_aes_crypt_ecb(SDP_Type *base,
     if (aes_ctx->crypto_algo == sdp_crypto_alg_aes) {
         if (aes_ctx->key_bits == sdp_aes_keybits_128) {
             base->MODCTRL =
-                SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES128) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
-                    SDP_MODCTRL_AESDIR_SET(op);
+            SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES128) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
+            SDP_MODCTRL_AESDIR_SET(op);
         } else {
             base->MODCTRL =
-                SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES256) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
-                    SDP_MODCTRL_AESDIR_SET(op);
+            SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES256) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
+            SDP_MODCTRL_AESDIR_SET(op);
         }
     }
 #if defined(SDP_HAS_SM4_SUPPORT) && (SDP_HAS_SM4_SUPPORT == 1)
     else if (aes_ctx->crypto_algo == sdp_crypto_alg_sm4) {
         base->MODCTRL = SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_SM4) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
-            SDP_MODCTRL_AESDIR_SET(op);
+                        SDP_MODCTRL_AESDIR_SET(op);
     }
 #endif
     else {
@@ -329,18 +331,18 @@ hpm_stat_t sdp_aes_crypt_cbc(SDP_Type *base,
     if (aes_ctx->crypto_algo == sdp_crypto_alg_aes) {
         if (aes_ctx->key_bits == sdp_aes_keybits_128) {
             base->MODCTRL =
-                SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES128) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
-                    SDP_MODCTRL_AESDIR_SET(op) | SDP_MODCTRL_AESMOD_SET(1);
+            SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES128) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
+            SDP_MODCTRL_AESDIR_SET(op) | SDP_MODCTRL_AESMOD_SET(1);
         } else {
             base->MODCTRL =
-                SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES256) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
-                    SDP_MODCTRL_AESDIR_SET(op) | SDP_MODCTRL_AESMOD_SET(1);
+            SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_AES256) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
+            SDP_MODCTRL_AESDIR_SET(op) | SDP_MODCTRL_AESMOD_SET(1);
         }
     }
 #if defined(SDP_HAS_SM4_SUPPORT) && (SDP_HAS_SM4_SUPPORT == 1)
     else if (aes_ctx->crypto_algo == sdp_crypto_alg_sm4) {
         base->MODCTRL = SDP_MODCTRL_AESALG_SET(SDP_CRYPTO_ALG_IDX_SM4) | SDP_MODCTRL_AESKS_SET(aes_ctx->key_idx) |
-            SDP_MODCTRL_AESDIR_SET(op) | SDP_MODCTRL_AESMOD_SET(1);
+                        SDP_MODCTRL_AESDIR_SET(op) | SDP_MODCTRL_AESMOD_SET(1);
     }
 #endif
     else {
@@ -390,7 +392,7 @@ hpm_stat_t sdp_aes_crypt_ctr(SDP_Type *base,
 
     do {
         HPM_BREAK_IF(
-            (base == NULL) || (aes_ctx == NULL) || (nonce_counter == NULL) || (input == NULL) || (output == NULL));
+        (base == NULL) || (aes_ctx == NULL) || (nonce_counter == NULL) || (input == NULL) || (output == NULL));
 
         uint32_t calc_len;
         uint8_t *cipher_nonce = (uint8_t *) &aes_ctx->buf3;
@@ -947,7 +949,7 @@ hpm_stat_t sdp_memset(SDP_Type *base, sdp_dma_ctx_t *sdp_ctx, void *dst, uint8_t
     hpm_stat_t status;
 
     uint32_t
-        pattern_32 = (pattern) | ((uint32_t) pattern << 8) | ((uint32_t) pattern << 16) | ((uint32_t) pattern << 24);
+    pattern_32 = (pattern) | ((uint32_t) pattern << 8) | ((uint32_t) pattern << 16) | ((uint32_t) pattern << 24);
 
     base->SDPCR = SDP_SDPCR_CONFEN_MASK;
 #if defined(SDP_REGISTER_DESCRIPTOR_COUNT) && SDP_REGISTER_DESCRIPTOR_COUNT
@@ -975,6 +977,105 @@ hpm_stat_t sdp_memset(SDP_Type *base, sdp_dma_ctx_t *sdp_ctx, void *dst, uint8_t
     base->PKTCNT = 1;
 
     status = sdp_wait_done(base);
+
+    return status;
+}
+
+hpm_stat_t sdp_trigger_action(SDP_Type *base, const sdp_action_t *action, const sdp_pkt_struct_t *cmd_pkt)
+{
+    hpm_stat_t status = status_invalid_argument;
+
+    do {
+        if ((action == NULL) || (cmd_pkt == NULL) || (action->op == sdp_op_invalid)) {
+            break;
+        }
+
+        bool has_cipher = false;
+        bool hash_hash = false;
+        uint32_t sdp_cr = action->op;
+        uint32_t sdp_mode_ctrl = 0;
+        switch (action->op) {
+        case sdp_op_cipher_only:
+            has_cipher = true;
+            break;
+        case sdp_op_hash_only:
+            hash_hash = true;
+            break;
+        case sdp_op_cipher_hash:
+            has_cipher = true;
+            hash_hash = true;
+            break;
+        case sdp_op_copy_hash:
+            hash_hash = true;
+            break;
+        default:
+            break;
+        }
+
+        if (has_cipher) {
+            sdp_mode_ctrl |= SDP_MODCTRL_AESDIR_SET(action->crypto_op) | SDP_MODCTRL_AESMOD_SET(action->crypto_mode) |
+                             SDP_MODCTRL_AESKS_SET(action->key_index);
+            uint32_t crypto_alg_idx = SDP_CRYPTO_ALG_IDX_AES128;
+#if defined(SDP_HAS_SM4_SUPPORT) && (SDP_HAS_SM4_SUPPORT == 1)
+            if (action->crypto_alg == sdp_crypto_alg_sm4) {
+                crypto_alg_idx = SDP_CRYPTO_ALG_IDX_SM4;
+            } else
+#endif
+            {
+                if (action->key_bits == 256) {
+                    crypto_alg_idx = SDP_CRYPTO_ALG_IDX_AES256;
+                }
+            }
+            sdp_mode_ctrl |= SDP_MODCTRL_AESALG_SET(crypto_alg_idx);
+            sdp_mode_ctrl |= SDP_MODCTRL_KEYSWP_SET(action->key_swap_mode);
+        }
+        if (hash_hash) {
+            sdp_mode_ctrl |= SDP_MODCTRL_HASALG_SET(action->hash_alg) | SDP_MODCTRL_HASCHK_SET(action->hash_check);
+        }
+        if (has_cipher && hash_hash) {
+            sdp_mode_ctrl |= SDP_MODCTRL_HASOUT_SET(action->hash_mode);
+        }
+
+        sdp_mode_ctrl |= SDP_MODCTRL_DINSWP_SET(action->input_swap_mode);
+        sdp_mode_ctrl |= SDP_MODCTRL_DOUTSWP_SET(action->output_swap_mode);
+
+        base->SDPCR = (base->SDPCR & ~(SDP_SDPCR_CONFEN_MASK | SDP_SDPCR_HASHEN_MASK | SDP_SDPCR_CIPHEN_MASK |
+                                       SDP_SDPCR_MCPEN_MASK)) | sdp_cr;
+        base->MODCTRL = sdp_mode_ctrl;
+
+        sdp_clear_status(HPM_SDP, ~0UL);
+        base->CMDPTR = (uint32_t) cmd_pkt;
+
+        /* Calculate the count of command packet in the command packet linked list */
+        uint32_t pkt_cnt = 0;
+        sdp_pkt_struct_t *pkt_list = (sdp_pkt_struct_t *) cmd_pkt;
+        while (pkt_list != NULL) {
+            if (pkt_list->pkt_ctrl.DCRSEMA != 0) {
+                ++pkt_cnt;
+                if (pkt_list->pkt_ctrl.CHAIN != 0) {
+                    pkt_list = pkt_list->next_cmd;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+#if defined(SDP_REGISTER_DESCRIPTOR_COUNT) && (SDP_REGISTER_DESCRIPTOR_COUNT == 1)
+        if (pkt_cnt == 1) {
+            base->SDPCR |= HPM_BITSMASK(1, 8);
+            base->CMDPTR = 0;
+            base->PKTCTL = cmd_pkt->pkt_ctrl.PKT_CTRL;
+            base->PKTSRC = cmd_pkt->src_addr;
+            base->PKTDST = cmd_pkt->dst_addr;
+            base->PKTBUF = cmd_pkt->buf_size;
+        }
+#endif
+
+        base->PKTCNT = pkt_cnt; /* Start Action */
+
+        status = status_success;
+    } while (false);
 
     return status;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -136,6 +136,18 @@ static inline void pllctlv2_set_pll_step_time(PLLCTLV2_Type *ptr, uint8_t pll, u
  * @param [in] div_value divider value, divider factor is 1 + div_value / 5
  */
 void pllctlv2_set_postdiv(PLLCTLV2_Type *ptr, uint8_t pll,  uint8_t div_index, uint8_t div_value);
+
+/**
+ * @brief Set the PLL via the low-level MFI, MFD and MFN
+ *        PLL frequency = REF CLOCK * (mfi + 1.0 * mfn / mfd)
+ * @param [in] ptr  PLLCTLV2 base
+ * @param [in] pll  PLL index
+ * @param [in] mfi  MFI value
+ * @param [in] mfn  MFN value
+ * @retval status_invalid_argument some parameters are invalid
+ * @retval status_success operation is successful
+ */
+hpm_stat_t pllctlv2_set_pll_with_mfi_mfn(PLLCTLV2_Type *ptr, uint8_t pll,  uint32_t mfi, uint32_t mfn);
 
 /**
  * @brief Initialize PLL to specified frequency

@@ -14,7 +14,7 @@
 /**
  * @brief PWM driver APIs
  * @defgroup pwm_interface PWM driver APIs
- * @ingroup io_interfaces
+ * @ingroup motor_interfaces
  * @{
  *
  */
@@ -94,6 +94,7 @@ typedef enum pwm_fault_source {
     pwm_fault_source_internal_3 = PWM_GCR_FAULTI3EN_MASK, /**< FAULTI3 */
     pwm_fault_source_external_0 = PWM_GCR_FAULTE0EN_MASK, /**< EXFAULTI0 */
     pwm_fault_source_external_1 = PWM_GCR_FAULTE1EN_MASK, /**< EXFAULTI1 */
+    pwm_fault_source_debug = PWM_GCR_DEBUGFAULT_MASK,   /**< Debug fault */
 } pwm_fault_source_t;
 
 /**
@@ -217,7 +218,9 @@ static inline void pwm_deinit(PWM_Type *pwm_x)
     pwm_x->FRCMD = 0;
     pwm_x->GCR = 0;
     pwm_x->SHCR = 0;
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
     pwm_x->HRPWM_CFG = 0;
+#endif
     for (uint8_t i = 0; i < PWM_SOC_OUTPUT_TO_PWM_MAX_COUNT; i++) {
         pwm_x->PWMCFG[i] = 0;
     }
@@ -1000,6 +1003,22 @@ hpm_stat_t pwm_update_raw_cmp_edge_aligned(PWM_Type *pwm_x, uint8_t cmp_index,
 hpm_stat_t pwm_update_raw_cmp_central_aligned(PWM_Type *pwm_x, uint8_t cmp1_index,
                                        uint8_t cmp2_index, uint32_t target_cmp1, uint32_t target_cmp2);
 #if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+
+/**
+ * @brief recovery hrpwm output
+ *
+ * @param pwm_x @ref PWM_Type PWM base address
+ */
+static inline void pwm_recovery_hrpwm_output(PWM_Type *pwm_x)
+{
+    pwm_x->HRPWM_CFG |= PWM_HRPWM_CFG_CAL_SW_EN_MASK;
+    pwm_x->ANA_CFG0 |= PWM_ANA_CFG0_CAL_SW_TRIG_H_MASK;
+    pwm_x->ANA_CFG0 &= ~PWM_ANA_CFG0_CAL_SW_TRIG_H_MASK;
+    pwm_x->ANA_CFG0 |= PWM_ANA_CFG0_CAL_SW_TRIG_H_MASK;
+    pwm_x->ANA_CFG0 &= ~PWM_ANA_CFG0_CAL_SW_TRIG_H_MASK;
+    pwm_x->HRPWM_CFG &= ~PWM_HRPWM_CFG_CAL_SW_EN_MASK;
+}
+
 /**
  * @brief Enable high-precision pwm
  *
