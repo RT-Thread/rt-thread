@@ -134,6 +134,11 @@ typedef enum rdc_input_acc_chn {
     rdc_acc_chn_q = 1
 } rdc_input_acc_chn_t;
 
+typedef enum rdc_input_max_min_value_source {
+    rdc_value_at_adc = 0,
+    rdc_value_at_iir = 1
+} rdc_input_max_min_value_source_t;
+
 /**
  * @brief Rdc status flags
  *
@@ -188,7 +193,11 @@ typedef struct rdc_output_cfg {
  */
 typedef struct rdc_input_cfg {
     rdc_rectify_signal_t rectify_signal_sel;    /**< Select reference point of rectify signal */
-    uint8_t acc_cycle_len;  /**< Accumulate time, support on the fly change */
+#if defined(HPM_IP_FEATURE_RDC_IIR) && (HPM_IP_FEATURE_RDC_IIR)
+    bool acc_fast;          /**< every adc value can be as one accumulate value,  */
+    rdc_input_max_min_value_source_t max_min_value_position;    /**< max min value position */
+#endif
+    uint8_t acc_cycle_len;  /**< Accumulate time, support on the fly change, Only acc_fast is zero, this bit is available */
     rdc_acc_stamp_time_t acc_stamp; /**< Time stamp selection for accumulation */
     uint32_t acc_input_chn_i;   /**< Input channel selection for i_channel */
     uint32_t acc_input_port_i;  /**< Input port selection for i_channel */
@@ -205,6 +214,10 @@ typedef struct rdc_acc_cfg {
         uint16_t continue_edge_num: 3;  /**< Filtering val: 1 - 8 */
         uint16_t edge_distance: 6;  /**< Minimum distance between two edges 0-63 */
     };
+#if defined(HPM_IP_FEATURE_RDC_IIR) && (HPM_IP_FEATURE_RDC_IIR)
+    bool enable_i_thrs_data_for_acc;  /**< enable thrs data for accumulate */
+    bool enable_q_thrs_data_for_acc;  /**< enable thrs data for accumulate */
+#endif
     uint8_t right_shift_without_sign;   /**< Right shift without sign bit */
     bool error_data_remove; /**< Toxic accumulation data be removed */
     uint32_t exc_carrier_period;    /**< The num in clock cycle for period of excitation 0-NULL others-cycles */
@@ -213,6 +226,19 @@ typedef struct rdc_acc_cfg {
     uint32_t amp_max;   /**< The maximum of acc amplitude */
     uint32_t amp_min;   /**< The minimum of acc amplitude */
 } rdc_acc_cfg_t;
+
+#if defined(HPM_IP_FEATURE_RDC_IIR) && (HPM_IP_FEATURE_RDC_IIR)
+/**
+ * @brief IIR Filter Configuration
+ *
+ */
+typedef struct rdc_iir_cfg {
+    float b;    /**< IIR parameter for b branch */
+    float a1;   /**< IIR parameter a1 for a1 branch*/
+    float a2;   /**< IIR parameter a1 for a2 branch*/
+    bool enable_lowpass;    /**< IIR in lowpass mode */
+} rdc_iir_cfg_t;
+#endif
 
 /** @} */
 
@@ -268,6 +294,69 @@ static inline void rdc_acc_disable(RDC_Type *ptr)
 {
     ptr->RDC_CTL &= ~RDC_RDC_CTL_ACC_EN_MASK;
 }
+
+#if defined(HPM_IP_FEATURE_RDC_IIR) && (HPM_IP_FEATURE_RDC_IIR)
+/**
+ * @brief Enable IIR for adc input
+ *
+ * @param ptr @ref RDC_Type base
+ */
+static inline void rdc_irr_enable(RDC_Type *ptr)
+{
+    ptr->RDC_CTL |= RDC_RDC_CTL_IIR_EN_MASK;
+}
+
+/**
+ * @brief Disable IIR for adc input
+ *
+ * @param ptr @ref RDC_Type base
+ */
+static inline void rdc_irr_disable(RDC_Type *ptr)
+{
+    ptr->RDC_CTL &= ~RDC_RDC_CTL_IIR_EN_MASK;
+}
+
+/**
+ * @brief enable i thrs data for accumulate
+ *
+ * @param ptr @ref RDC_Type base
+ */
+static inline void rdc_enable_i_channel_thrs_data_for_acc(RDC_Type *ptr)
+{
+    ptr->THRS_I |= RDC_THRS_I_THRS4ACC_MASK;
+}
+
+/**
+ * @brief disable i thrs data for accumulate
+ *
+ * @param ptr @ref RDC_Type base
+ */
+static inline void rdc_disable_i_channel_thrs_data_for_acc(RDC_Type *ptr)
+{
+    ptr->THRS_I &= ~RDC_THRS_I_THRS4ACC_MASK;
+}
+
+/**
+ * @brief enable q thrs data for accumulate
+ *
+ * @param ptr @ref RDC_Type base
+ */
+static inline void rdc_enable_q_channel_thrs_data_for_acc(RDC_Type *ptr)
+{
+    ptr->THRS_Q |= RDC_THRS_Q_THRS4ACC_MASK;
+}
+
+/**
+ * @brief disable q thrs data for accumulate
+ *
+ * @param ptr @ref RDC_Type base
+ */
+static inline void rdc_disable_q_channel_thrs_data_for_acc(RDC_Type *ptr)
+{
+    ptr->THRS_Q &= ~RDC_THRS_Q_THRS4ACC_MASK;
+}
+
+#endif
 
 /**
  * @brief Get the accumulate value

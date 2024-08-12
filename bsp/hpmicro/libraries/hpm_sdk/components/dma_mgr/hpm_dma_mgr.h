@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -19,10 +19,20 @@
 #include "hpm_soc_feature.h"
 
 #ifdef HPMSOC_HAS_HPMSDK_DMAV2
-#define DMA_MGR_HAS_INFINITE_LOOP (1U)
-#define DMA_MGR_HAS_HALF_TC_INT (1U)
-#define DMA_MGR_HAS_HANDSHAKE_OPT (1U)
-#define DMA_MGR_HAS_BURST_OPT (1U)
+#define DMA_MGR_HAS_INFINITE_LOOP        (1U)
+#define DMA_MGR_HAS_HALF_TC_INT          (1U)
+#define DMA_MGR_HAS_HANDSHAKE_OPT        (1U)
+#define DMA_MGR_HAS_BURST_OPT            (1U)
+#if defined(HPM_IP_FEATURE_DMAV2_BURST_IN_FIXED_TRANS) && (HPM_IP_FEATURE_DMAV2_BURST_IN_FIXED_TRANS == 1)
+#define DMA_MGR_HAS_BURST_IN_FIXED_TRANS HPM_IP_FEATURE_DMAV2_BURST_IN_FIXED_TRANS
+#else
+#define DMA_MGR_HAS_BURST_IN_FIXED_TRANS 0
+#endif
+#if defined(HPM_IP_FEATURE_DMAV2_BYTE_ORDER_SWAP) && (HPM_IP_FEATURE_DMAV2_BYTE_ORDER_SWAP == 1)
+#define DMA_MGR_HAS_BYTE_ORDER_SWAP HPM_IP_FEATURE_DMAV2_BYTE_ORDER_SWAP
+#else
+#define DMA_MGR_HAS_BYTE_ORDER_SWAP 0
+#endif
 #endif
 
 #define DMA_MGR_CHANNEL_PRIORITY_LOW  DMA_CHANNEL_PRIORITY_LOW
@@ -52,7 +62,7 @@
 #define DMA_MGR_ADDRESS_CONTROL_DECREMENT DMA_ADDRESS_CONTROL_DECREMENT
 #define DMA_MGR_ADDRESS_CONTROL_FIXED     DMA_ADDRESS_CONTROL_FIXED
 
-#ifdef DMA_MGR_HAS_BURST_OPT
+#if defined(DMA_MGR_HAS_BURST_OPT) && DMA_MGR_HAS_BURST_OPT
 #define DMA_MGR_SRC_BURST_OPT_STANDAND_SIZE DMA_SRC_BURST_OPT_STANDAND_SIZE
 #define DMA_MGR_SRC_BURST_OPT_CUSTOM_SIZE   DMA_SRC_BURST_OPT_CUSTOM_SIZE
 #else
@@ -60,7 +70,7 @@
 #define DMA_MGR_SRC_BURST_OPT_CUSTOM_SIZE   0
 #endif
 
-#ifdef DMA_MGR_HAS_HANDSHAKE_OPT
+#if defined(DMA_MGR_HAS_HANDSHAKE_OPT) && DMA_MGR_HAS_HANDSHAKE_OPT
 #define DMA_MGR_HANDSHAKE_OPT_ONE_BURST    DMA_HANDSHAKE_OPT_ONE_BURST
 #define DMA_MGR_HANDSHAKE_OPT_ALL_TRANSIZE DMA_HANDSHAKE_OPT_ALL_TRANSIZE
 #else
@@ -72,21 +82,33 @@
 #define DMA_MGR_CHANNEL_STATUS_ERROR   DMA_CHANNEL_STATUS_ERROR
 #define DMA_MGR_CHANNEL_STATUS_ABORT   DMA_CHANNEL_STATUS_ABORT
 #define DMA_MGR_CHANNEL_STATUS_TC      DMA_CHANNEL_STATUS_TC
-#ifdef DMA_MGR_HAS_HALF_TC_INT
+#if defined(DMA_MGR_HAS_HALF_TC_INT) && DMA_MGR_HAS_HALF_TC_INT
 #define DMA_MGR_CHANNEL_STATUS_HALF_TC DMA_CHANNEL_STATUS_HALF_TC
 #else
 #define DMA_MGR_CHANNEL_STATUS_HALF_TC 0
 #endif
-#define DMA_MGR_INTERRUPT_MASK_NONE           DMA_INTERRUPT_MASK_NONE
-#define DMA_MGR_INTERRUPT_MASK_ERROR          DMA_INTERRUPT_MASK_ERROR
-#define DMA_MGR_INTERRUPT_MASK_ABORT          DMA_INTERRUPT_MASK_ABORT
-#define DMA_MGR_INTERRUPT_MASK_TC             DMA_INTERRUPT_MASK_TERMINAL_COUNT
-#ifdef DMA_MGR_HAS_HALF_TC_INT
-#define DMA_MGR_INTERRUPT_MASK_HALF_TC        DMA_INTERRUPT_MASK_HALF_TC
+#define DMA_MGR_INTERRUPT_MASK_NONE  DMA_INTERRUPT_MASK_NONE
+#define DMA_MGR_INTERRUPT_MASK_ERROR DMA_INTERRUPT_MASK_ERROR
+#define DMA_MGR_INTERRUPT_MASK_ABORT DMA_INTERRUPT_MASK_ABORT
+#define DMA_MGR_INTERRUPT_MASK_TC    DMA_INTERRUPT_MASK_TERMINAL_COUNT
+#if defined(DMA_MGR_HAS_HALF_TC_INT) && DMA_MGR_HAS_HALF_TC_INT
+#define DMA_MGR_INTERRUPT_MASK_HALF_TC DMA_INTERRUPT_MASK_HALF_TC
 #else
-#define DMA_MGR_INTERRUPT_MASK_HALF_TC        0
+#define DMA_MGR_INTERRUPT_MASK_HALF_TC 0
 #endif
-#define DMA_MGR_INTERRUPT_MASK_ALL            DMA_INTERRUPT_MASK_ALL
+#define DMA_MGR_INTERRUPT_MASK_ALL DMA_INTERRUPT_MASK_ALL
+
+#if defined(DMA_MGR_HAS_BYTE_ORDER_SWAP) && DMA_MGR_HAS_BYTE_ORDER_SWAP
+#define DMA_MGR_SWAP_MODE_TABLE     DMA_SWAP_MODE_TABLE
+#define DMA_MGR_SWAP_MODE_BYTE      DMA_SWAP_MODE_BYTE
+#define DMA_MGR_SWAP_MODE_HALF_WORD DMA_SWAP_MODE_HALF_WORD
+#define DMA_MGR_SWAP_MODE_WORD      DMA_SWAP_MODE_WORD
+#else
+#define DMA_MGR_SWAP_MODE_TABLE     0
+#define DMA_MGR_SWAP_MODE_BYTE      0
+#define DMA_MGR_SWAP_MODE_HALF_WORD 0
+#define DMA_MGR_SWAP_MODE_WORD      0
+#endif
 
 #ifdef __cplusplus
 
@@ -137,6 +159,10 @@ typedef struct hpm_dma_mgr_chn_conf {
     bool en_infiniteloop;             /**< Infinite loop transfer enable. Attention: only DMAV2 support */
     uint8_t handshake_opt;            /**< Handshake transfer option. Attention: only DMAV2 support */
     uint8_t burst_opt;                /**< Burst size option. Attention: only DMAV2 support  */
+    bool en_src_burst_in_fixed_trans; /**< Source address burst in fix transfer size enable, discard src_addr_ctrl setting. Attention: only DMAV2 support */
+    bool en_dst_burst_in_fixed_trans; /**< Destination address burst in fix transfer size enable, discard dst_addr_ctrl setting. Attention: only DMAV2 support */
+    uint8_t swap_mode;                /**< Swap Mode. Attention: only DMAV2 support */
+    uint32_t swap_table;              /**< Swap Table. Attention: only DMAV2 support */
 } dma_mgr_chn_conf_t;
 
 typedef struct hpm_dma_mgr_linked_descriptor {
@@ -549,6 +575,46 @@ hpm_stat_t dma_mgr_abort_chn_transfer(const dma_resource_t *resource);
  * @retval status_invalid_argument if any parameters are invalid
  */
 hpm_stat_t dma_mgr_check_chn_transfer_status(const dma_resource_t *resource, uint32_t *status);
+
+/**
+ * @brief   Set DMA channel source burst in fixed transfer size enable or disable
+ *
+ * @param [in] resource DMA resource
+ * @param[in] enable false - disable; true - enable
+ *
+ */
+hpm_stat_t dma_mgr_set_source_burst_in_fixed_transize_enable(const dma_resource_t *resource, bool enable);
+
+/**
+ * @brief   Set DMA channel destination burst in fixed transfer size enable or disable
+ *
+ * @param [in] resource DMA resource
+ * @param[in] enable false - disable; true - enable
+ *
+ */
+hpm_stat_t dma_mgr_set_destination_burst_in_fix_transize_enable(const dma_resource_t *resource, bool enable);
+
+/**
+ * @brief   Set DMA channel swap mode
+ *
+ * @param [in] resource DMA resource
+ * @param[in] swap_mode swap mode
+ *  @arg @ref DMA_MGR_SWAP_MODE_TABLE
+ *  @arg @ref DMA_MGR_SWAP_MODE_BYTE
+ *  @arg @ref DMA_MGR_SWAP_MODE_HALF_WORD
+ *  @arg @ref DMA_MGR_SWAP_MODE_WORD
+ *
+ */
+hpm_stat_t dma_mgr_set_swap_mode(const dma_resource_t *resource, uint8_t swap_mode);
+
+/**
+ * @brief   Set DMA channel swap table
+ *
+ * @param [in] resource DMA resource
+ * @param[in] swap_table swap table
+ *
+ */
+hpm_stat_t dma_mgr_set_swap_table(const dma_resource_t *resource, uint32_t swap_table);
 
 #ifdef __cplusplus
 }

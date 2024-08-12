@@ -1,6 +1,259 @@
 # Change Log
 
-## [1.5.0] - 2024-02-29:
+## [1.6.0] - 2024-06-28:
+
+Main changes since 1.5.0
+Tested Segger Embedded Studio Version: 8.10d
+Tested IAR Embedded Workbench for RISC-V Version: 3.30.1
+
+### Known Issue:
+  - some IAR projects does not work properly when optimization level is increased
+
+### Changed:
+  - soc: reorganize the directory structure
+  - soc: hpm6750: declare get_frequency_for_source API for clock drver header file
+  - soc: update soc cmakelists to add b ext info
+  - soc: hpm6750: add feature for ioc pad ctrl setting issue
+  - soc: toolchains: gcc: correct LMA for NOLOAD sections
+  - soc: move eh_frame into separate section
+  - boards: hpm6750xxxx apply workaround for E00029.
+  - boards: change hpm5301evklite adc16 channel
+  - boards: board.h: adc16: add marco BOARD_APP_ADC16_HW_TRIG_SRC_CLK_NAME
+  - boards: adjust function position of adc pin initialization
+  - boards: hpm6300evk and hpm6e00evk: sdram use px07 as femc dqs pin
+  - boards: hpm6e00evk: rename init_sdram_pins to init_femc_pins
+  - boards: hpm6e00evk: change board i2c instance to I2C0
+  - drivers: can/mcan add parameter check for low-level bit timing.
+  - drivers: enet: add bitfield ENET0_RMII_TXCLK_SEL for hpm6300
+  - drivers: i2c: add DATACNT high byte process
+  - drivers: pwm: update HRPWM process
+  - drivers: spi: optimize reading speed for spi_read_data API
+  - drivers: spi: add set/get data phase format APIs for spi master
+  - drivers: spi: delete the spi startand operation APIs
+  - drivers: adc16: remove an unused member conv_duration from adc16_config_t
+  - drivers: enet: update for enet_interrupt_enable_t
+  - drivers: mcan reduce unnecessary register access in mcan_read_rxfifo.
+  - drivers: mtg: add calculate function param clock
+  - drivers: mtg: add several calculate functions
+  - drivers: mcan lookeup the mcan msg ram base via mcan_soc_msg_buf variable if the MSG_BUF is in AHB RAM.
+  - drivers: adc16: disable improvement logic of adc16 for continuous sampling maximum voltage
+  - drivers: mcan improve transmitter delay compensation setting logic.
+  - drivers: femc: rename data_width_in_byte to cmd_data_width
+  - drivers: femc: update ns2cycle() to align up
+  - drivers: common: add packed attribute
+  - drivers: femc: delete duplicate config
+  - drivers: mtg: change the default parameters to the low order filter
+  - drivers: adc16: add API adc16_set_seq_hw_trigger_enable()
+  - drivers: spi : convert enumeration return in that gets parameters APIs
+  - drivers: pwm: add fault recovery code.
+  - driver: pwm: change pwm trig time
+  - components: enet_phy: dp83867/rtl8211: move the macro definition RGMII to board-level CMakeLists.txt
+  - components: eeprom_emulation: Add ATTR_RAMFUNC for all function
+  - components: eeprom_emulation: add power-off protection mechanism.
+  - components: dma_mgr: add burst in fixed transfer size and swap feature
+  - components: spi: add full_duplex and half_duplex operating APIs
+  - components: spi: support 1 to 32 bits width transfer for nonblocking APIs
+  - components: usb: device: support iso transfer mult feature
+  - middleware: hpm_sdmmc add emmc sleep & wakeup function.
+  - middleware: tinyusb: ehci: support chain transfer
+  - middleware: threadx: add low power support
+  - middleware: cherryusb: update for advance descriptor
+  - middleware: hpm_sdmmc:  optimized to support multiple cards
+  - middleware: cherryusb/tinyusb/usbx: enable suspend isr
+  - middleware: FreeRTOS: update to 202210.01 lts
+  - middleware: cherryusb: update to v1.3.0
+  - middleware: freertos: modify missed timer count num
+  - middleware: freertos: update IAR port file
+  - middleware: freertos: delete fence operations
+  - middleware: freertos: make the calculation more simple.
+  - middleware: hpm_sdmmc add cache control macro.
+  - middleware: hpm_sdmmc: improve the logic for detecting CMD23 support.
+  - middleware: freertos: add tickless stop mode support
+  - middleware: freertos: add user custom process function call
+  - middleware: hpm_mcl_v2: add hpm smc control.
+  - middleware: freertos: place xPortxxx to isr_vector section
+  - middleware: hpm_math: add dsp support for zcc
+  - middleware: microros: add zcc support
+  - middleware: rtos: asm adjustment for zcc toolchain
+  - middleware: hpm_mcl_v2: add pwm dead area compensation.
+  - middleware: hpm_mcl_v2: add dq axis decoupling function
+  - middleware: cherryusb: add macro USBH_USE_CUSTOM_ISR/USBD_USE_CUSTOM_ISR
+  - middleware: lvgl: upgrade to v9
+  - middleware: lvgl: rewrite the scissor.
+  - middleware: lvgl: upgrade allocate algorithm for draw_buf.
+  - samples: rdc: remove unused dac driver in sample
+  - samples: lwip/netxduo/modbus: add conditional compile for reference clock setting in RMII mode
+  - samples: audio_codec: common: change FIL_SEARCH_NUM from 10 to 20
+  - samples: dhyrstone: surpress build warnings
+  - samples: dhrystone Optimize performance.
+  - samples: coremark Optimize performance.
+  - samples: drivers: spi: interrupt: transmission optimization. The transmission will start after the configuration is completed.
+  - samples: adapt spi components to drive and move to the samples dir for spi sdcard samples
+  - samples: cherryusb: device: change descriptor string to HPMicro
+  - samples: cherryusb: device: use advanced descriptor to support high/full speed
+  - samples: rename jpeg to image
+  - samples: drivers: sdxc: sd_fatfs: add card hotplug support
+  - samples: cherryusb: host: usbnet:  replace block to noblock for read terminal char
+  - samples: cherryusb: host: usbnet: decrease lwip MEM_SIZE
+  - samples: cherryusb: move host hid info print code to thread
+  - samples: audio_codec: refactoring code
+  - samples: spi: dma: SPI master transmission optimization
+  - samples: mtg: make the open_loop_trajectory sample more readable
+  - samples: drivers: adc16: add some misc optimization
+  - samples: drivers: adc16: add pwmv2 support
+  - samples: motor_ctrl: bldc_foc_hw: remove hardware control
+  - samples: drivers: mcan add tips for the usage of tdc.
+  - samples: vglite: update rtos config file to fit gptmr tickless mode
+  - samples: lwip/modus/netxduo: add a function call to get the enet default interrupt config
+  - samples: sdm: using pwm to provide clock for sdm sensor.
+  - samples: spi_components: half_duplex: updated to support 1 to 32bits width transfer
+  - samples: spi_components: full_duplex: updated to support 1 to 32bits width transfer
+  - samples: add freertos tickless stop mode sample
+  - samples: benchmark: update compile options for zcc
+  - samples: drivers: adc16: optimize the process logic of sequence and preemption
+  - samples: drivers: sei: device: tamagawa: update eeprom cmd
+  - samples: adc12: optimization for trigger mux and trigger frequency settings
+  - samples: sei: device: tamagawa: support EEPROM protocol
+  - samples: mcl: add pwm dead area compensation.
+  - samples: motor_ctrl: add dq axis decoupling function
+  - samples: cherryusb: move dual_port samples to dual_port folder
+  - samples: cherryusb: adapter to cherryusb v1.3.0
+  - samples: drivers: adc12/adc16/dac: support abort feature in interactive terminal
+  - samples: lwip: lwip_iperf: support abort feature to reselect the test mode
+  - samples: lwip: common: multiple: add definitions of remote ip addresses for iperf
+  - samples: motor_ctrl: bldc_lvlg_foc: add lvgl v8.3.5 for this demo
+  - samples: tinyusb: uac2: support full speed
+  - samples: power_mode_switch: update readme
+  - samples: cherryusb: uac2: change default samplerate order
+  - samples: bldc_foc: update bldc_foc_angle_align() for hardware loop
+  - cmake: toolchain: add ar option to remove timestamp
+  - cmake: toolchain: suppress output while querying spec
+  - cmake: lld: update link option for zcc
+  - cmake/scripts/soc: support b ext convertion to tools
+  - cmake: sdk_app_src_glob: modify to recursive
+
+### Fixed:
+  - soc: update USE_NONVECTOR_MODE defined used
+  - soc: initialize .fast_ram.* section
+  - soc: iar linker: fix safe stack init
+  - soc: add missing ptmr clock
+  - soc: hpm6880: fix get_frequency_for_i2s error
+  - soc: hpm6880: Modify the value of SPI_SOC_FIFO_DEPTH from 4 to 8. for hpm_soc_feature.h
+  - soc: toolchain: iar fix iar ram_stress issue in ram_debug build.
+  - boards: hpm5301evklite: fixed can't output work for gptmr samples such as pwm_generate
+  - drivers: enet: fix the clearing of DMA PBL setting
+  - drivers: dma: fix dma_clear_transfer_status() API
+  - drivers: sdxc Fix timeout calculation issue and DMA enabling logic.
+  - drivers: adc16: fix the logic of adc16_set_pmt_queue_enable() when the parameter enable is false
+  - drivers: mbox: fix error that BEIE can't be operated by interface
+  - drivers: spi: fixed assignment value error for  spi_set_clock_phase and spi_set_clock_polarity APIs
+  - drivers: lcdc: fix ST and DMA_ST clear api.
+  - drivers: mipi_dsi: fix MIPI_DSI_FMT_RGB565 config.
+  - drivers: spi: fixed assignment error issue for enable/disable address phase APIs
+  - drivers: i2c: fix return value type of i2c_get_data_count()
+  - components: usb device/enet_phy: fix unwanted files in localize folder
+  - components: panle: fix panel timing.
+  - components: eeprom_emulation: demo flash crashed.
+  - middleware: cherryusb: ehci: delete timeout clear before give sem
+  - middleware: uC/OS-III: modify fpu context save&restore
+  - middleware: cherryusb: fix freertos enter/exit critical
+  - middleware: audio_codec: fix hpm_wav_decode() single channel pbuf data
+  - middleware: mclv2: fix andes toolchain compiler error.
+  - middleware: cherryusb: fix ehci_qh_pool init miss busid for v1.3.0
+  - middleware: lwip: apps: lwiperf: fix the bug of failing to restart iperf in TCP/UDP server mode
+  - middleware: tinyusb: fix _usbd_dev.speed error to support full speed
+  - middleware: hpm_mcl_v2: fix uncontrolled after large changes in motor speed.
+  - samples: dhyrstone: fix build issue for release type using nds toolchain
+  - samples: lwip: lwip_tcpclient: fix TCP commnuication error after DHCP enabled
+  - samples: lwip: lwip_tcpclient_freertos_socket: fix connection error before IP assigned from DHCP
+  - samples: correct cmsis_os2/mem_pool project name
+  - samples: multicore: common Fix SDP memcpy blocking issue in ram_build.
+  - samples: lwip: lwip_tcpecho_xxx_rtthread_nano: fix failing to get IP by DHCP serivice
+  - samples: spi_sdcard: fixed the place section name error issue
+  - samples: cherryusb: audio: fix wm8960 codec volume max value
+  - samples: img: jpeg_decode: fix decode when only one qtab exist.
+  - samples: tflm: mlperf: remove unnecessary codes.
+  - samples: fix cherryusb mic no sound error
+  - samples: spi_components: polling: fixed doesn't work for polling samples
+  - samples: tamagawa: fix delay times is zero.
+  - samples: bldc_foc: fix hardware_foc position loop error
+  - cmake: link ndsgcc itf for application
+  - cmake: localize_sdk: use utf-8 as default encoding
+  - cmake: ide: keep preprocessing definition
+
+### Added:
+  - soc: add zcc toolchain support
+  - soc: clock_driver Add clock_set_wdg_source API.
+  - soc: gcc linker: add fast_ram.init section size overflow check
+  - soc: add FreeRTOS vector mode support
+  - soc/board: add HPM6E80 support
+  - drivers: common: add macros for .fast_ram.*
+  - drivers: enet: add an API enet_get_default_interrupt_config
+  - drivers: enet: add MII mode support
+  - drivers: common add api for converting tick to us or ms.
+  - drivers: pllctlv2 add new API to configure PLL.
+  - drivers: uart: add uart_modem_write_rts_pin API
+  - drivers: uart: add get/clear addr match flags APIs such as addr_match, addr_match_idle, data_lost
+  - drivers: add lobs drivers
+  - drivers: usb: add some APIs for low power future usage drivers: spi: add spi_slave_set_user_status API
+  - drivers: usb: add suspend/resume APIs
+  - drivers: usb: add enter/exit lower power suspend APIs
+  - drivers: spi: add read SPI RX/TX FIFO size APIs
+  - drivers: usb: add usb_set_port_test_mode() API
+  - drivers: sdp add new apis.
+  - drivers: mcan add new api for canceling pending transmission.
+  - drivers: mtg: add get&clear event irq interface
+  - drivers: qeiv2: add oneshot mode
+  - drivers: add clc driver
+  - drivers: add vsc driver
+  - drivers: spi: add get/set shift direction APIs
+  - drivers: uart: add an new API uart_try_receive_byte()
+  - drivers: pixelmux: add api that set mipi dsi date type.
+  - drivers: gptmr: add monitor function APIs
+  - drivers: gptmr: add opmode APIs
+  - drivers: gptmr: add qeimode APIs
+  - components: add i2s_over_spi
+  - components: codec: add wm8978
+  - components: enet_phy: add jl1111 driver
+  - components: add ppi components
+  - components: touch: add gt9271 driver.
+  - components: debug_console: add a new API console_try_receive_byte()
+  - middleware: add lodepng
+  - middleware: add minimp3
+  - samples: cherryusb: device: add WinUSB 1.0 and WinUSB 2.0 samples
+  - samples: lwip: add LPI interrupt mask setting
+  - samples: add i2s_emulation sample
+  - samples: lvgl_audio_player: support mp3 decoder
+  - samples: uart: add uart_rx_line_status sample
+  - samples: add half_duplex samples for spi_components
+  - samples: add full_duplex samples for spi_components
+  - samples: drivers: sdxc: emmc add new sameple for eMMC sleep & awake.
+  - samples: drivers: add lobs sample
+  - samples: drivers: spi: sd/sd_fatfs: support DMA transfer
+  - samples: threadx: add low power mode sample
+  - samples: image: add png encoder sample
+  - samples: image: add png decoder sample
+  - samples: audio_codec: add decoder_mp3 sample
+  - samples: ppi: add parallel adc sample
+  - samples: ppi: add async_sram sample
+  - samples: qeov2: add wave_out sample
+  - samples: qeov2: add abz_out sample
+  - samples: pwm: add async fault demo
+  - samples: motor_ctrl: add hardware foc
+  - samples: drivers: pwmv2: add pwmv2 pair waveform
+  - samples: dmav2: add dmav2_fixed_burst_swap sample
+  - samples: qeiv2: add oneshot mode sample
+  - samples: add smix_dao sample.
+  - samples: add ecat_io sample.
+  - samples: cherryusb: add one host and one device dual port sample
+  - samples: add pwm/hrpwm fault mode
+  - samples: lwip: add lwip_iperf_multi_ports
+  - samples: drivers: tsw: add a tsn_switch sample
+  - cmake: add symbol HPM_BUILD_TYPE to specify build type
+  - docs: add generated cmake_intro.rst
+  - docs: getting started: add zcc support related information
+
+## [1.5.0] - 2024-03-29:
 
 Main changes since 1.4.0
 

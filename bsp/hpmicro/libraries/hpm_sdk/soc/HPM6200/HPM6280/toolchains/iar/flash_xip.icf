@@ -1,0 +1,125 @@
+/*
+ * Copyright (c) 2024 HPMicro
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+define exported symbol _link_file_version_2 = 1;
+
+define memory with size = 4G;
+
+/* Sizes */
+if (isdefinedsymbol(CSTACK_SIZE)) {
+  define symbol __size_cstack__        = CSTACK_SIZE;
+} else {
+  define symbol __size_cstack__        = 0x4000;
+}
+
+if (isdefinedsymbol(HEAP_SIZE)) {
+  define symbol __size_heap__          = HEAP_SIZE;
+} else {
+  define symbol __size_heap__          = 0x4000;
+}
+
+if (isdefinedsymbol(_flash_size)) {
+  define symbol __size_flash__          = _flash_size;
+} else {
+  define symbol __size_flash__          = 8M;
+}
+
+/* Regions */
+define region NOR_CFG_OPTION = mem:[ from 0x80000400 size 0x0C00 ];
+define region BOOT_HEADER = mem:[ from 0x80001000 size 0x90 ];
+define region XPI0 = mem:[from 0x80003000 size (__size_flash__ - 0x3000) ];   /* XPI0 */
+define region ILM = mem:[from 0x00000000 size 128k];        /* ILM */
+define region DLM = mem:[from 0x00080000 size 128k];        /* DLM */
+define region NONCACHEABLE_RAM = mem:[from 0x01080000 size 128k];    /* AXI SRAM */
+define region AXI_SRAM = mem:[from 0x010A0000 size 112k];
+define region SHARE_RAM = mem:[from 0x010BC000 size 16k];
+define region AHB_SRAM = mem:[from 0xF0300000 size 32k];
+
+/* Blocks */
+define block vectors with fixed order                       { section .vector_table, section .isr_vector };
+define block vectors_s with fixed order                     { section .vector_s_table, section .isr_s_vector };
+
+define block HEAP  with size = __size_heap__,  alignment = 8 { };
+define block CSTACK with size = __size_cstack__, alignment = 16 { };
+define block RW_DATA with static base GPREL { rw data };
+
+define block boot_header with fixed order                    { section .boot_header, section .fw_info_table, section .dc_info };
+define block cherryusb_usbh_class_info                       { section .usbh_class_info };
+define block framebuffer                                     { section .framebuffer };
+
+define block rtthread_FSymTab                                { section FSymTab };
+define block rtthread_VSymTab                                { section VSymTab };
+define block rtthread_rti_fn with alphabetical order         { section .rti_fn* };
+define block rtthread_RTMSymTab                              { section RTMSymTab };
+
+/* Symbols */
+define exported symbol __nor_cfg_option_load_addr__ = start(NOR_CFG_OPTION);
+define exported symbol __boot_header_load_addr__ = start(BOOT_HEADER);
+define exported symbol __app_load_addr__ = start(XPI0);
+define exported symbol __app_offset__ = __app_load_addr__ - __boot_header_load_addr__;
+define exported symbol __boot_header_length__ = size(BOOT_HEADER);
+define exported symbol __fw_size__ = 0x1000;
+
+define exported symbol __noncacheable_start__ = start(NONCACHEABLE_RAM);
+define exported symbol __noncacheable_end__ = end(NONCACHEABLE_RAM) + 1;
+define exported symbol __share_mem_start__ = start(SHARE_RAM);
+define exported symbol __share_mem_end__ = end(SHARE_RAM) + 1;
+
+/* Initialization */
+do not initialize                           { section .noncacheable, section .fast_ram };
+do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
+do not initialize                           { section .no_init, section .no_init.*, section .*.no_init, section .*.no_init.* };   // Legacy sections, kept for backwards compatibility
+do not initialize                           { section .noinit, section .noinit.*, section .*.noinit, section .*.noinit.* };       // Legacy sections, used by some SDKs/HALs
+do not initialize                           { section .backup_sram};
+
+initialize by copy with packing=auto        { section .noncacheable.init, section .fast_ram.init };
+initialize by copy with packing=auto        { section .fast, section .fast.*, section .*.fast, section .*.fast.* };               // "RAM Code" sections
+initialize by copy with packing=none        { section .vector_table };
+initialize by copy with packing=none        { section .isr_vector };
+initialize by copy with packing=none        { section .vector_s_table };
+initialize by copy with packing=none        { section .isr_s_vector };
+initialize by copy with packing=auto        { section .usbh_class_info };
+initialize by copy                          { readwrite };
+
+/* Placement */
+place in NOR_CFG_OPTION                     { section .nor_cfg_option };
+place in BOOT_HEADER                        { block boot_header };
+place at start of XPI0                      { symbol _start };
+place in XPI0                               { block rtthread_FSymTab,
+                                              block rtthread_VSymTab,
+                                              block rtthread_rti_fn,
+                                              block rtthread_RTMSymTab,
+                                              readonly
+                                            };
+place at start of ILM                       { block vectors, block vectors_s };
+place in ILM                                {
+                                              section .fast, section .fast.*,                       // "ramfunc" section
+                                            };
+place in AXI_SRAM                           { block cherryusb_usbh_class_info };
+place in AXI_SRAM                           { block framebuffer };
+place in AXI_SRAM                           {
+                                              block RW_DATA
+                                            };
+place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss };  // Noncacheable
+place in SHARE_RAM                          { section .sh_mem};                                     // Share memory
+place in AHB_SRAM                           { section .ahb_sram};                                   // AHB SRAM memory
+place in DLM                                { section .fast_ram.init, section .fast_ram, section .fast_ram.bss};   // Fast access memory
+place in DLM                                { block HEAP };                                         // Heap reserved block
+place at end of DLM                         { block CSTACK };                                       // Stack reserved block
+
+/* Keep */
+keep                                        {
+                                              section .nor_cfg_option,
+                                              section .boot_header,
+                                              section .fw_info_table,
+                                              section .dc_info
+                                            };
+keep                                        { section .usbh_class_info,
+                                              section FSymTab,
+                                              section VSymTab,
+                                              section .rti_fn*,
+                                              section RTMSymTab
+                                            };
+keep symbol __iar_cstart_init_gp;

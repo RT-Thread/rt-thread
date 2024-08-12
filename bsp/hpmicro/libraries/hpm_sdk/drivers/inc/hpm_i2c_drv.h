@@ -163,10 +163,14 @@ static inline void i2c_clear_fifo(I2C_Type *ptr)
  * @param [in] ptr I2C base address
  * @retval data count value in byte
  */
-static inline uint8_t i2c_get_data_count(I2C_Type *ptr)
+static inline uint16_t i2c_get_data_count(I2C_Type *ptr)
 {
     uint32_t i2c_ctrl = ptr->CTRL;
+#ifdef I2C_CTRL_DATACNT_HIGH_MASK
     return (I2C_CTRL_DATACNT_HIGH_GET(i2c_ctrl) << 8U) + I2C_CTRL_DATACNT_GET(i2c_ctrl);
+#else
+    return I2C_CTRL_DATACNT_GET(i2c_ctrl);
+#endif
 }
 
 /**

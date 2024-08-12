@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -57,7 +57,7 @@ static int enet_dma_init(ENET_Type *ptr, enet_desc_t *desc, uint32_t intr, uint8
     ptr->DMA_BUS_MODE |= ENET_DMA_BUS_MODE_PBLX8_MASK;
 
     /* set programmable burst length */
-    ptr->DMA_BUS_MODE &= ~ENET_DMA_BUS_MODE_PBL_SHIFT;
+    ptr->DMA_BUS_MODE &= ~ENET_DMA_BUS_MODE_PBL_MASK;
     ptr->DMA_BUS_MODE |= ENET_DMA_BUS_MODE_PBL_SET(pbl);
 
     /* disable separate pbl */
@@ -119,7 +119,13 @@ static int enet_mac_init(ENET_Type *ptr, enet_mac_config_t *config, enet_inf_typ
         ptr->MACCFG &= ~ENET_MACCFG_PS_MASK;
     } else if (inf_type == enet_inf_rmii) {
         ptr->MACCFG |= ENET_MACCFG_PS_MASK | ENET_MACCFG_FES_MASK;
-    } else {
+    }
+#if defined(HPM_IP_FEATURE_ENET_HAS_MII_MODE) && HPM_IP_FEATURE_ENET_HAS_MII_MODE
+    else if (inf_type == enet_inf_mii) {
+        ptr->MACCFG |= ENET_MACCFG_PS_MASK | ENET_MACCFG_FES_MASK;
+    }
+#endif
+    else {
         return status_invalid_argument;
     }
 
@@ -399,6 +405,20 @@ void enet_get_default_tx_control_config(ENET_Type *ptr, enet_tx_control_config_t
     config->saic        = enet_saic_disable;
 }
 
+void enet_get_default_interrupt_config(ENET_Type *ptr, enet_int_config_t *config)
+{
+    (void) ptr;
+
+    config->int_enable = enet_normal_int_sum_en    /* Enable normal interrupt summary */
+                       | enet_receive_int_en;      /* Enable receive interrupt */
+
+    config->int_mask = enet_rgsmii_int_mask        /* Disable RGSMII interrupt */
+                     | enet_lpi_int_mask;          /* Disable LPI interrupt */
+
+    config->mmc_intr_mask_rx = 0x03ffffff;         /* Disable all mmc rx interrupt events */
+    config->mmc_intr_mask_tx = 0x03ffffff;         /* Disable all mmc tx interrupt events */
+}
+
 uint32_t enet_prepare_tx_desc_with_ts_record(ENET_Type *ptr,
                                              enet_tx_desc_t **parent_tx_desc_list_cur,
                                              enet_tx_control_config_t *config,
@@ -442,7 +462,7 @@ uint32_t enet_prepare_tx_desc_with_ts_record(ENET_Type *ptr,
         /* set the frame size */
         dma_tx_desc->tdes1_bm.tbs1 = (frame_length & ENET_DMATxDesc_TBS1);
         /* set own bit of the Tx descriptor status: gives the buffer back to Ethernet DMA */
-        dma_tx_desc->tdes0_bm.own = 1;
+        dma_tx_desc->tdes0 |= 1 << 31;
         ptr->DMA_TX_POLL_DEMAND = 1;
 
         if (dma_tx_desc->tdes0_bm.ttse == true) {
@@ -504,7 +524,7 @@ uint32_t enet_prepare_tx_desc_with_ts_record(ENET_Type *ptr,
                 dma_tx_desc->tdes1_bm.tbs1 = (size & ENET_DMATxDesc_TBS1);
 
                 /* set own bit of the Tx descriptor status: gives the buffer back to Ethernet DMA */
-                dma_tx_desc->tdes0_bm.own = 1;
+                dma_tx_desc->tdes0 |= 1 << 31;
                 ptr->DMA_TX_POLL_DEMAND = 1;
             }
         }
@@ -551,7 +571,7 @@ uint32_t enet_prepare_tx_desc(ENET_Type *ptr, enet_tx_desc_t **parent_tx_desc_li
         /* set the frame size */
         dma_tx_desc->tdes1_bm.tbs1 = (frame_length & ENET_DMATxDesc_TBS1);
         /* set own bit of the Tx descriptor status: gives the buffer back to Ethernet DMA */
-        dma_tx_desc->tdes0_bm.own = 1;
+        dma_tx_desc->tdes0 |= 1 << 31;
         ptr->DMA_TX_POLL_DEMAND = 1;
 
         dma_tx_desc = (enet_tx_desc_t *)(dma_tx_desc->tdes3_bm.next_desc);
@@ -583,7 +603,7 @@ uint32_t enet_prepare_tx_desc(ENET_Type *ptr, enet_tx_desc_t **parent_tx_desc_li
                 dma_tx_desc->tdes1_bm.tbs1 = (size & ENET_DMATxDesc_TBS1);
 
                 /* set own bit of the Tx descriptor status: gives the buffer back to Ethernet DMA */
-                dma_tx_desc->tdes0_bm.own = 1;
+                dma_tx_desc->tdes0 |= 1 << 31;
                 ptr->DMA_TX_POLL_DEMAND = 1;
             }
 
@@ -632,7 +652,7 @@ uint32_t enet_prepare_transmission_descriptors(ENET_Type *ptr, enet_tx_desc_t **
         /* set the frame size */
         dma_tx_desc->tdes1_bm.tbs1 = (frame_length & ENET_DMATxDesc_TBS1);
         /* set own bit of the Tx descriptor status: gives the buffer back to Ethernet DMA */
-        dma_tx_desc->tdes0_bm.own = 1;
+        dma_tx_desc->tdes0 |= 1 << 31;
         ptr->DMA_TX_POLL_DEMAND = 1;
 
         dma_tx_desc = (enet_tx_desc_t *)(dma_tx_desc->tdes3_bm.next_desc);
@@ -657,7 +677,7 @@ uint32_t enet_prepare_transmission_descriptors(ENET_Type *ptr, enet_tx_desc_t **
                 dma_tx_desc->tdes1_bm.tbs1 = (size & ENET_DMATxDesc_TBS1);
 
                 /* set own bit of the Tx descriptor status: gives the buffer back to Ethernet DMA */
-                dma_tx_desc->tdes0_bm.own = 1;
+                dma_tx_desc->tdes0 |= 1 << 31;
                 ptr->DMA_TX_POLL_DEMAND = 1;
             }
 

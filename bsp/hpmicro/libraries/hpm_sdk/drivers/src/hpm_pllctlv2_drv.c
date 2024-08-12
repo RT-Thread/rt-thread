@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -17,6 +17,24 @@
 
 #define PLLCTLV2_PLL_FREQ_MIN (PLLCTLV2_PLL_MFI_MIN * PLLCTLV2_PLL_XTAL_FREQ)
 #define PLLCTLV2_PLL_FREQ_MAX ((PLLCTLV2_PLL_MFI_MAX + 1U) * PLLCTLV2_PLL_XTAL_FREQ)
+
+hpm_stat_t pllctlv2_set_pll_with_mfi_mfn(PLLCTLV2_Type *ptr, uint8_t pll, uint32_t mfi, uint32_t mfn)
+{
+    hpm_stat_t status;
+    if ((ptr == NULL) || (mfi < PLLCTLV2_PLL_MFI_MIN) || (mfi > PLLCTLV2_PLL_MFI_MAX) ||
+        (pll >= PLLCTL_SOC_PLL_MAX_COUNT)) {
+        status = status_invalid_argument;
+    } else {
+        if (PLLCTLV2_PLL_MFI_MFI_GET(ptr->PLL[pll].MFI) == mfi) {
+            ptr->PLL[pll].MFI = mfi - 1U;
+        }
+        ptr->PLL[pll].MFI = mfi;
+        ptr->PLL[pll].MFN = mfn;
+
+        status = status_success;
+    }
+    return status;
+}
 
 hpm_stat_t pllctlv2_init_pll_with_freq(PLLCTLV2_Type *ptr, uint8_t pll, uint32_t freq_in_hz)
 {

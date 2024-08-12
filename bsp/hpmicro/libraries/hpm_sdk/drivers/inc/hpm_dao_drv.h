@@ -44,7 +44,7 @@ typedef struct dao_config {
     bool enable_mono_output;
     uint8_t default_output_level;
     uint8_t channel_count;
-#if defined(DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG) && (DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG == 1)
+#if defined(HPM_IP_FEATURE_DAO_DATA_FORMAT_CONFIG) && (HPM_IP_FEATURE_DAO_DATA_FORMAT_CONFIG == 1)
     bool enable_tdm_mode;
     bool frame_start_at_rising_edge;
     uint8_t protocol;
