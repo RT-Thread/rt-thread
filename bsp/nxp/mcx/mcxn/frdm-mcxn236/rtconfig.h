@@ -97,6 +97,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CAN
 #define RT_USING_WDT
 #define RT_USING_PIN
 #define RT_USING_HWTIMER
@@ -352,6 +353,8 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_PIN
+#define BSP_USING_CAN
+#define BSP_USING_CAN1
 #define BSP_USING_UART
 #define BSP_USING_UART4
 #define BSP_USING_UART5
