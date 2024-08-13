@@ -57,7 +57,7 @@ FINSH_FUNCTION_EXPORT(libc_lseek, lseek test for libc);
 
 void sleep(int tick)
 {
-    rt_thread_sleep(tick);
+    rt_thread_delay(tick);
 }
 
 int libc_fseek(void)

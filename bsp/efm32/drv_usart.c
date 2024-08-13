@@ -633,7 +633,7 @@ static rt_ssize_t rt_usart_write (
         //      {
         //          while(usart->state & USART_STATE_TX_BUSY)
         //          {
-        //              rt_thread_sleep(USART_WAIT_TIME_TX);
+        //              rt_thread_delay(USART_WAIT_TIME_TX);
         //          }
         //      }
             }
@@ -699,7 +699,7 @@ static rt_ssize_t rt_usart_write (
 //      {
 //          while(usart->state & USART_STATE_TX_BUSY)
 //          {
-//              rt_thread_sleep(USART_WAIT_TIME_TX);
+//              rt_thread_delay(USART_WAIT_TIME_TX);
 //          }
 //      }
         write_size = size;
