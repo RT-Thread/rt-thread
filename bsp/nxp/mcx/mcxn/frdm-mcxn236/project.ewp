@@ -358,27 +358,27 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\Libraries\CMSIS\Core\Include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
+          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\Libraries\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
+          <state>$PROJ_DIR$\..\Libraries\CMSIS\Core\Include</state>
+          <state>$PROJ_DIR$\.</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1473,27 +1473,27 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\Libraries\CMSIS\Core\Include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
+          <state>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\Libraries\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
+          <state>$PROJ_DIR$\..\Libraries\CMSIS\Core\Include</state>
+          <state>$PROJ_DIR$\.</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2233,6 +2233,12 @@
   <group>
     <name>Applications</name>
     <file>
+      <name>$PROJ_DIR$\applications\uart_sample.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\applications\wdt_sample.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\applications\main.c</name>
     </file>
   </group>
@@ -2325,6 +2331,9 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\serial\serial.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\watchdog\watchdog.c</name>
+    </file>
   </group>
   <group>
     <name>Drivers</name>
@@ -2343,20 +2352,23 @@
     <file>
       <name>$PROJ_DIR$\..\Libraries\drivers\drv_uart.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\drivers\drv_wdt.c</name>
+    </file>
   </group>
   <group>
     <name>Finsh</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\msh_parse.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\shell.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\shell.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\msh_parse.c</name>
     </file>
   </group>
   <group>
@@ -2437,133 +2449,136 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_i2c_master.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_mrt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_irtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi_edma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_cdog.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_spc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c_edma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpuart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_ewm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpadc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd_edma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan_edma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart_edma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\system_MCXN236.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_common.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_cmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_edma_soc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpflexcomm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_common_arm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lptmr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_vref.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\iar\startup_MCXN236.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c_edma.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_reset.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_eim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_freqme.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_erm.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_edma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_ctimer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_cache_lpcac.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_gpio.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi_edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lptmr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_common_arm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpuart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_wwdt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_cache_lpcac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_ewm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\system_MCXN236.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpadc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_reset.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c_edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_irtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd_edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_ctimer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c_edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_freqme.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_spc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\iar\startup_MCXN236.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpflexcomm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_erm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_common.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_evtg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan_edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_mrt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_vref.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_cmc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_eim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_edma_soc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_i2c_master.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart_edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\MCXN236\MCXN236\drivers\fsl_cdog.c</name>
     </file>
   </group>
   <group>
@@ -2572,10 +2587,10 @@
   <group>
     <name>Utilities</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\ulog.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\backend\console_be.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\backend\console_be.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\ulog.c</name>
     </file>
   </group>
 </project>
