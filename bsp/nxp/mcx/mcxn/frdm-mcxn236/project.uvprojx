@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
-              <Define>RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, DEBUG, __RTTHREAD__, CPU_MCXN236VDF, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, CPU_MCXN236VDF, DEBUG, RT_USING_ARMLIBC, RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\MCXN236\MCXN236\drivers;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\libc\posix\ipc;..\Libraries\drivers\config;board;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\poll;..\Libraries\drivers;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\drivers\include;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\components\libc\compilers\common\include;..\Libraries\MCXN236\MCXN236;applications;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\finsh;.;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\finsh;.;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;applications;board\MCUX_Config\board;..\Libraries\MCXN236\MCXN236;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN236\MCXN236\drivers;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\compilers\common\extension;..\Libraries\drivers;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\libcpu\arm\cortex-m33;board;..\..\..\..\..\libcpu\arm\common;..\Libraries\drivers\config</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,16 +384,6 @@
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
-            <File>
-              <FileName>uart_sample.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\uart_sample.c</FilePath>
-            </File>
-            <File>
-              <FileName>wdt_sample.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\wdt_sample.c</FilePath>
-            </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
@@ -449,6 +439,62 @@
         <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
+            <File>
+              <FileName>can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\can\can.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
+                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
+                  <PublicsOnly>0</PublicsOnly>
+                  <StopOnExitCode>3</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
@@ -1254,6 +1300,11 @@
               <FilePath>board\board.c</FilePath>
             </File>
             <File>
+              <FileName>drv_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\drv_can.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_pin.c</FilePath>
@@ -1274,6 +1325,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+            <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
@@ -1282,16 +1343,6 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2240,14 +2291,84 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fsl_gpio.c</FileName>
+              <FileName>fsl_flexio_spi_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_gpio.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi_edma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_cache_lpcac.c</FileName>
+              <FileName>fsl_mrt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_cache_lpcac.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_mrt.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_cdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_cdog.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_i3c_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio_uart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_MCXN236.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\system_MCXN236.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_common_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_common_arm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_freqme.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_freqme.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpflexcomm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpflexcomm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lptmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lptmr.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_ctimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_ctimer.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_i3c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_irtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_irtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpi2c_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio_i2c_master.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_i2c_master.c</FilePath>
             </File>
             <File>
               <FileName>startup_MCXN236.S</FileName>
@@ -2260,44 +2381,24 @@
               <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_ewm.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio_uart.c</FileName>
+              <FileName>fsl_edma_soc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_edma_soc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_lpflexcomm.c</FileName>
+              <FileName>fsl_flexcan.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpflexcomm.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio_spi_edma.c</FileName>
+              <FileName>fsl_evtg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi_edma.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_evtg.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio.c</FileName>
+              <FileName>fsl_flexio_mculcd_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_freqme.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_freqme.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_mculcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_spc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_spc.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd_edma.c</FilePath>
             </File>
             <File>
               <FileName>fsl_clock.c</FileName>
@@ -2305,59 +2406,9 @@
               <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_clock.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_reset.c</FileName>
+              <FileName>fsl_cache_lpcac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_reset.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_edma_soc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_edma_soc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpi2c_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_cdog.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_i3c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpuart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpuart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_vref.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_vref.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpspi_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_cache_lpcac.c</FilePath>
             </File>
             <File>
               <FileName>fsl_eim.c</FileName>
@@ -2370,29 +2421,9 @@
               <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_erm.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexcan_edma.c</FileName>
+              <FileName>fsl_flexio_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_i2c_master.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_i2c_master.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_uart_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_MCXN236.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\system_MCXN236.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart.c</FilePath>
             </File>
             <File>
               <FileName>fsl_wwdt.c</FileName>
@@ -2400,19 +2431,24 @@
               <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_wwdt.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_common_arm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_common_arm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_i3c_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c_edma.c</FilePath>
-            </File>
-            <File>
               <FileName>fsl_lpadc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpadc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_vref.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_vref.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpspi_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexcan_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan_edma.c</FilePath>
             </File>
             <File>
               <FileName>fsl_lpi2c.c</FileName>
@@ -2420,44 +2456,59 @@
               <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio_mculcd_edma.c</FileName>
+              <FileName>fsl_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd_edma.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_crc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_ctimer.c</FileName>
+              <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_ctimer.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpuart.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_lptmr.c</FileName>
+              <FileName>fsl_flexio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lptmr.c</FilePath>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_spc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_spc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_reset.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_reset.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio_mculcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd.c</FilePath>
             </File>
             <File>
               <FileName>fsl_cmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_cmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_evtg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_evtg.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexcan.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_mrt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_mrt.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_irtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN236\MCXN236\drivers\fsl_irtc.c</FilePath>
             </File>
           </Files>
         </Group>
