@@ -10,8 +10,8 @@
  * 2022-05-11     Stanley Lwin add finsh voltage conversion command
  */
 
-#ifndef __ADC_H__
-#define __ADC_H__
+#ifndef __DEV_ADC_H__
+#define __DEV_ADC_H__
 
 #include <rtthread.h>
 
@@ -49,4 +49,4 @@ rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_int8_t channel);
 rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel);
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel);
 
-#endif /* __ADC_H__ */
+#endif /* __DEV_ADC_H__ */

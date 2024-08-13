@@ -10,8 +10,8 @@
  * 2022-09-01     liYony       fix api rt_spi_sendrecv16 about MSB and LSB bug
  */
 
-#ifndef __SPI_H__
-#define __SPI_H__
+#ifndef __DEV_SPI_H__
+#define __DEV_SPI_H__
 
 #include <stdlib.h>
 #include <rtthread.h>
@@ -370,4 +370,4 @@ rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
 }
 #endif
 
-#endif
+#endif /* __DEV_SPI_H__ */
