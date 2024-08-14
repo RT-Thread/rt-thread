@@ -901,12 +901,14 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* hpcd)
 
 static uint32_t FSMC_Initialized = 0;
 
-static void HAL_FSMC_MspInit(void){
+static void HAL_FSMC_MspInit(void)
+{
   /* USER CODE BEGIN FSMC_MspInit 0 */
 
   /* USER CODE END FSMC_MspInit 0 */
   GPIO_InitTypeDef GPIO_InitStruct ={0};
-  if (FSMC_Initialized) {
+  if (FSMC_Initialized)
+  {
     return;
   }
   FSMC_Initialized = 1;
@@ -997,7 +999,8 @@ static void HAL_FSMC_MspInit(void){
   /* USER CODE END FSMC_MspInit 1 */
 }
 
-void HAL_SRAM_MspInit(SRAM_HandleTypeDef* hsram){
+void HAL_SRAM_MspInit(SRAM_HandleTypeDef* hsram)
+{
   /* USER CODE BEGIN SRAM_MspInit 0 */
 
   /* USER CODE END SRAM_MspInit 0 */
@@ -1009,11 +1012,13 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef* hsram){
 
 static uint32_t FSMC_DeInitialized = 0;
 
-static void HAL_FSMC_MspDeInit(void){
+static void HAL_FSMC_MspDeInit(void)
+{
   /* USER CODE BEGIN FSMC_MspDeInit 0 */
 
   /* USER CODE END FSMC_MspDeInit 0 */
-  if (FSMC_DeInitialized) {
+  if (FSMC_DeInitialized)
+  {
     return;
   }
   FSMC_DeInitialized = 1;
@@ -1083,7 +1088,8 @@ static void HAL_FSMC_MspDeInit(void){
   /* USER CODE END FSMC_MspDeInit 1 */
 }
 
-void HAL_SRAM_MspDeInit(SRAM_HandleTypeDef* hsram){
+void HAL_SRAM_MspDeInit(SRAM_HandleTypeDef* hsram)
+{
   /* USER CODE BEGIN SRAM_MspDeInit 0 */
 
   /* USER CODE END SRAM_MspDeInit 0 */
