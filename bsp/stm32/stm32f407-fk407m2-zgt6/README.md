@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 FANKE F407M2-ZGT6 开发板的 BSP (板级支持包) 说明。
+本文档为 FANKE FK407M2-ZGT6 开发板的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-FK750M1-VBT6 是 FANKE 推出的一款基于 ARM Cortex-M4 内核的核心板，最高频率为168Mhz，具有512KB ROM、192KB RAM。
+FANKE FK407M2-ZGT6 是反客科技推出的一款基于 ARM Cortex-M4 内核的核心板，最高频率为168Mhz，具有1MB ROM、192KB RAM。
 
 开发板外观如下图所示：
 
@@ -22,14 +22,14 @@ FK750M1-VBT6 是 FANKE 推出的一款基于 ARM Cortex-M4 内核的核心板，
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32F407ZGT6，主频 168MHz，512KB FLASH ，192KB RAM
+- MCU：STM32F407ZGT6，主频 168MHz，1MB FLASH ，192KB RAM
 - 常用外设
   - LED：2个，电源LED（白色，电源指示），用户LED（蓝色，PC13）
   - 按键：2个，KEY（PA0），RST（nRST）
 - 常用接口：USB 接口（Type-C）、TF 卡接口（自弹式 Micro SD卡接口）、LCD 接口（FPC 0.5间距）等
 - 调试接口：SWD+串口
 
-开发板更多详细信息请参考【厂商名】 [xxx开发板介绍](https://xxx)。
+开发板更多详细信息请参考【反客科技】 [FK407M2-ZGT6](https://pan.baidu.com/s/1nwMv30JHbXJthb48gnnWaw?pwd=6666)。
 
 ## 外设支持
 
@@ -100,8 +100,8 @@ FK750M1-VBT6 是 FANKE 推出的一款基于 ARM Cortex-M4 内核的核心板，
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     5.0.0 build Mar 22 2023 00:10:44
- 2006 - 2022 Copyright by RT-Thread team
+ / | \     5.2.0 build Aug 6 2024 23:15:43
+ 2006 - 2024 Copyright by RT-Thread team
 msh />
 ```
 ### 进阶使用
