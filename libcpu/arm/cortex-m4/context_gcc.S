@@ -10,6 +10,7 @@
  * 2013-06-18     aozima       add restore MSP feature.
  * 2013-06-23     aozima       support lazy stack optimized.
  * 2018-07-24     aozima       enhancement hard fault exception handler.
+ * 2024-08-13     Evlers       allows rewrite to interrupt enable/disable api to support independent interrupts management
  */
 
 /**
@@ -32,6 +33,7 @@
  * rt_base_t rt_hw_interrupt_disable();
  */
 .global rt_hw_interrupt_disable
+.weak rt_hw_interrupt_disable
 .type rt_hw_interrupt_disable, %function
 rt_hw_interrupt_disable:
     MRS     r0, PRIMASK
@@ -42,6 +44,7 @@ rt_hw_interrupt_disable:
  * void rt_hw_interrupt_enable(rt_base_t level);
  */
 .global rt_hw_interrupt_enable
+.weak rt_hw_interrupt_enable
 .type rt_hw_interrupt_enable, %function
 rt_hw_interrupt_enable:
     MSR     PRIMASK, r0
@@ -207,6 +210,10 @@ rt_hw_context_switch_to:
     /* enable interrupts at processor level */
     CPSIE   F
     CPSIE   I
+
+    /* clear the BASEPRI register to disable masking priority */
+    MOV     r0, #0x00
+    MSR     BASEPRI, r0
 
     /* ensure PendSV exception taken place before subsequent operation */
     DSB
