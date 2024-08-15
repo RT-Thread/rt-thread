@@ -1227,6 +1227,7 @@ void *sys_mmap2(void *addr, size_t length, int prot,
             flags |= MAP_PRIVATE | MAP_ANONYMOUS;
         }
         rc = (sysret_t)lwp_mmap2(lwp_self(), addr, length, prot, flags, fd, pgoffset);
+        if (rc < 0) return (char *)rc;
     }
 
     return (char *)rc + offset;
