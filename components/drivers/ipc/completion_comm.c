@@ -36,6 +36,28 @@ rt_err_t rt_completion_wakeup(struct rt_completion *completion)
 }
 
 /**
+ * @brief This is same as rt_completion_wait(), except that this API is NOT
+ *        ISR-safe (you can NOT call completion_done() on isr routine).
+ *
+ * @param completion is a pointer to a completion object.
+ *
+ * @param timeout is a timeout period (unit: OS ticks). If the completion is unavailable, the thread will wait for
+ *                the completion done up to the amount of time specified by the argument.
+ *                NOTE: Generally, we use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *                completion is unavailable, the thread will be waitting forever.
+ *
+ * @return Return the operation status. ONLY when the return value is RT_EOK, the operation is successful.
+ *         If the return value is any other values, it means that the completion wait failed.
+ *
+ * @warning This function can ONLY be called in the thread context. It MUST NOT be called in interrupt context.
+ */
+rt_err_t rt_completion_wait_noisr(struct rt_completion *completion,
+                                  rt_int32_t            timeout)
+{
+    return rt_completion_wait_flags_noisr(completion, timeout, RT_UNINTERRUPTIBLE);
+}
+
+/**
  * @brief This function will wait for a completion, if the completion is unavailable, the thread shall wait for
  *        the completion up to a specified time.
  *
