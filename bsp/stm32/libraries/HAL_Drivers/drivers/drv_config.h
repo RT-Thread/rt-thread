@@ -7,6 +7,7 @@
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2024-08-15     Macro			    Porting for stm32h5xx
  */
 
 #ifndef __DRV_CONFIG_H__
@@ -149,7 +150,9 @@ extern "C" {
 #include "u5/pwm_config.h"
 #include "u5/usbd_config.h"
 #elif defined(SOC_SERIES_STM32H5)
+#include "h5/dma_config.h"
 #include "h5/uart_config.h"
+#include "h5/spi_config.h"
 #include "h5/pwm_config.h"
 #include "h5/adc_config.h"
 #elif  defined(SOC_SERIES_STM32MP1)

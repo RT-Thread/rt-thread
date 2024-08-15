@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-06-01     KyleChan     first version
+ * 2024-08-15     Macro        add stm32h5
  */
 
 #include "board.h"
@@ -516,7 +517,7 @@ static void uart_isr(struct rt_serial_device *serial)
         }
 #if !defined(SOC_SERIES_STM32L4) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32F7) && !defined(SOC_SERIES_STM32F0) \
     && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0) && !defined(SOC_SERIES_STM32H7) \
-    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB)
+    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB) && !defined(SOC_SERIES_STM32H5)
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBD);
@@ -1130,7 +1131,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         SET_BIT(RCC->AHBENR, dma_config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHBENR, dma_config->dma_rcc);
 #elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) \
-    || defined(SOC_SERIES_STM32G4)|| defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32WB)
+    || defined(SOC_SERIES_STM32G4)|| defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H5)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
@@ -1140,7 +1141,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, dma_config->dma_rcc);
 #endif
 
-#if defined(DMAMUX1) && (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB))
+#if defined(DMAMUX1) && (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H5))
         /* enable DMAMUX clock for L4+ and G4 */
         __HAL_RCC_DMAMUX1_CLK_ENABLE();
 #elif defined(SOC_SERIES_STM32MP1)
@@ -1165,27 +1166,49 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Channel             = dma_config->channel;
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)\
-    || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
+    || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H5)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Request             = dma_config->request;
 #endif
+#if defined(SOC_SERIES_STM32H5)
+    DMA_Handle->Init.BlkHWRequest = DMA_BREQ_SINGLE_BURST;
+#else
     DMA_Handle->Init.PeriphInc           = DMA_PINC_DISABLE;
     DMA_Handle->Init.MemInc              = DMA_MINC_ENABLE;
     DMA_Handle->Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     DMA_Handle->Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-
+#endif
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
         DMA_Handle->Init.Direction           = DMA_PERIPH_TO_MEMORY;
+        #if defined(SOC_SERIES_STM32H5)
+        DMA_Handle->Init.SrcInc              = DMA_SINC_FIXED;
+        DMA_Handle->Init.DestInc             = DMA_DINC_INCREMENTED;
+        DMA_Handle->Init.Mode                = DMA_PFCTRL;
+        #elif
         DMA_Handle->Init.Mode                = DMA_CIRCULAR;
+        #endif
     }
     else if (RT_DEVICE_FLAG_DMA_TX == flag)
     {
         DMA_Handle->Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        #if defined(SOC_SERIES_STM32H5)
+        DMA_Handle->Init.SrcInc              = DMA_SINC_INCREMENTED;
+        DMA_Handle->Init.DestInc             = DMA_DINC_FIXED;
+        #endif
         DMA_Handle->Init.Mode                = DMA_NORMAL;
     }
-
+#if defined(SOC_SERIES_STM32H5)
+    DMA_Handle->Init.SrcDataWidth            = DMA_SRC_DATAWIDTH_BYTE;
+    DMA_Handle->Init.DestDataWidth           = DMA_DEST_DATAWIDTH_BYTE;
+    DMA_Handle->Init.SrcBurstLength          = 1;
+    DMA_Handle->Init.DestBurstLength         = 1;
+    DMA_Handle->Init.TransferAllocatedPort   = DMA_SRC_ALLOCATED_PORT0|DMA_DEST_ALLOCATED_PORT1;
+    DMA_Handle->Init.TransferEventMode       = DMA_TCEM_BLOCK_TRANSFER;
+    DMA_Handle->Init.Priority                = DMA_LOW_PRIORITY_MID_WEIGHT;
+#else
     DMA_Handle->Init.Priority            = DMA_PRIORITY_MEDIUM;
+#endif
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
     DMA_Handle->Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
 #endif
