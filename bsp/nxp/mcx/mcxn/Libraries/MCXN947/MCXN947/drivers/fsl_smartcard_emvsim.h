@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_SMARTCARD_EMVSIM_H_
-#define _FSL_SMARTCARD_EMVSIM_H_
+#ifndef FSL_SMARTCARD_EMVSIM_H_
+#define FSL_SMARTCARD_EMVSIM_H_
 
 #include "fsl_smartcard.h"
 
@@ -171,7 +171,7 @@ status_t SMARTCARD_EMVSIM_Control(EMVSIM_Type *base,
  * @param context A pointer to a smart card driver context structure.
  */
 void SMARTCARD_EMVSIM_IRQHandler(EMVSIM_Type *base, smartcard_context_t *context);
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -179,4 +179,4 @@ void SMARTCARD_EMVSIM_IRQHandler(EMVSIM_Type *base, smartcard_context_t *context
 
 /*! @}*/
 
-#endif /* _FSL_SMARTCARD_EMVSIM_H_*/
+#endif /* FSL_SMARTCARD_EMVSIM_H_*/

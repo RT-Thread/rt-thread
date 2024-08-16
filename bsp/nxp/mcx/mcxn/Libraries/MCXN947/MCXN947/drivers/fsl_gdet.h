@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_GDET_H_
-#define _FSL_GDET_H_
+#ifndef FSL_GDET_H_
+#define FSL_GDET_H_
 
 #include "fsl_common.h"
 
@@ -21,7 +21,7 @@
  *******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief Defines GDET driver version 2.0.0.
  *
  * Change log:
@@ -29,7 +29,7 @@
  *   - initial version
  */
 #define FSL_GDET_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
-/*@}*/
+/*! @} */
 
 /*!
  * @brief GDET Core Voltage.
@@ -37,12 +37,12 @@
  * These constants are used to define core voltage argument to be used with
  * GDET_ReconfigureVoltageMode().
  */
-typedef enum _gdet_core_voltage
-{
-    kGDET_MidVoltage       = 0U, /*!< Mid Voltage (1.0V) */
-    kGDET_NormalVoltage    = 1U, /*!< Normal Voltage (1.1V) */
-    kGDET_OverDriveVoltage = 2U, /*!< Over Drive Voltage (1.2V) */
-} gdet_core_voltage_t;
+
+typedef uint32_t gdet_core_voltage_t;
+#define kGDET_MidVoltage       ((gdet_core_voltage_t)0x0u) /*!< Mid Voltage (1.0V) */
+#define kGDET_NormalVoltage    ((gdet_core_voltage_t)0x1u) /*!< Normal Voltage (1.1V) */
+#define kGDET_OverDriveVoltage ((gdet_core_voltage_t)0x2u) /*!< Over Drive Voltage (1.2V) */
+
 /*******************************************************************************
  * API
  *******************************************************************************/
@@ -109,8 +109,8 @@ status_t GDET_ReconfigureVoltageMode(GDET_Type *base, gdet_core_voltage_t voltag
 
 #if defined(__cplusplus)
 }
-#endif /* __cplusplus */
+#endif   /* __cplusplus */
 
 /*! @}*/ /* end of group gdet */
 
-#endif /* _FSL_GDET_H_ */
+#endif   /* FSL_GDET_H_ */

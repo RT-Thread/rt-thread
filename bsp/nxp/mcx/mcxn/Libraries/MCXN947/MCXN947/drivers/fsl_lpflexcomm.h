@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LP_FLEXCOMM_H_
-#define _FSL_LP_FLEXCOMM_H_
+#ifndef FSL_LP_FLEXCOMM_H_
+#define FSL_LP_FLEXCOMM_H_
 
 #include "fsl_common.h"
 
@@ -15,10 +15,10 @@
  */
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief FlexCOMM driver version. */
-#define FSL_LP_FLEXCOMM_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
-/*@}*/
+#define FSL_LP_FLEXCOMM_DRIVER_VERSION (MAKE_VERSION(2, 2, 1))
+/*! @} */
 
 /*! @brief LP_FLEXCOMM peripheral modes. */
 typedef enum
@@ -60,6 +60,9 @@ extern "C" {
 /*! @brief Returns instance number for LP_FLEXCOMM module with given base address. */
 uint32_t LP_FLEXCOMM_GetInstance(void *base);
 
+/*! @brief Returns for LP_FLEXCOMM base address. */
+uint32_t LP_FLEXCOMM_GetBaseAddress(uint32_t instance);
+
 /*! brief Returns for LP_FLEXCOMM interrupt source,see #_lpflexcomm_interrupt_flag. */
 uint32_t LP_FLEXCOMM_GetInterruptStatus(uint32_t instance);
 
@@ -80,6 +83,6 @@ void LP_FLEXCOMM_SetIRQHandler(uint32_t instance,
 }
 #endif
 
-/*@}*/
+/*! @} */
 
-#endif /* _FSL_LP_FLEXCOMM_H_*/
+#endif /* FSL_LP_FLEXCOMM_H_*/

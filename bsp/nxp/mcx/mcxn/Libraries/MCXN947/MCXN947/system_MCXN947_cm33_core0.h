@@ -8,9 +8,9 @@
 **                          Keil ARM C/C++ Compiler
 **                          MCUXpresso Compiler
 **
-**     Reference manual:    MCX N1xNxxx Reference Manual
-**     Version:             rev. 1.0, 2022-10-01
-**     Build:               b230131
+**     Reference manual:    MCXNx4x Reference Manual
+**     Version:             rev. 2.0, 2023-02-01
+**     Build:               b231219
 **
 **     Abstract:
 **         Provides a system configuration function and a global variable that
@@ -19,8 +19,6 @@
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
 **     Copyright 2016-2023 NXP
-**     All rights reserved.
-**
 **     SPDX-License-Identifier: BSD-3-Clause
 **
 **     http:                 www.nxp.com
@@ -28,15 +26,17 @@
 **
 **     Revisions:
 **     - rev. 1.0 (2022-10-01)
-**         Initial version based on SPEC1.14
+**         Initial version
+**     - rev. 2.0 (2023-02-01)
+**         Initial version based on Rev. 2 Draft B
 **
 ** ###################################################################
 */
 
 /*!
  * @file MCXN947_cm33_core0
- * @version 1.0
- * @date 2022-10-01
+ * @version 2.0
+ * @date 2023-02-01
  * @brief Device specific configuration file for MCXN947_cm33_core0 (header file)
  *
  * Provides a system configuration function and a global variable that contains
@@ -45,7 +45,7 @@
  */
 
 #ifndef _SYSTEM_MCXN947_cm33_core0_H_
-#define _SYSTEM_MCXN947_cm33_core0_H_ /**< Symbol preventing repeated inclusion */
+#define _SYSTEM_MCXN947_cm33_core0_H_            /**< Symbol preventing repeated inclusion */
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,9 +53,12 @@ extern "C" {
 
 #include <stdint.h>
 
-#define DEFAULT_SYSTEM_CLOCK 48000000u  /* Default System clock value */
-#define CLK_FRO_12MHZ        12000000u  /* FRO 12  MHz (fro_12m)  */
-#define CLK_FRO_144MHZ       144000000u /* FRO 144 MHz (fro_144m) */
+
+                #define DEFAULT_SYSTEM_CLOCK           48000000u           /* Default System clock value */
+#define CLK_FRO_12MHZ                  12000000u           /* FRO 12  MHz (fro_12m)  */
+#define CLK_FRO_144MHZ                144000000u           /* FRO 144 MHz (fro_144m) */
+
+
 
 /**
  * @brief System clock frequency (core clock)
@@ -75,7 +78,7 @@ extern uint32_t SystemCoreClock;
  * microcontroller device. For systems with variable clock speed it also updates
  * the variable SystemCoreClock. SystemInit is called from startup_device file.
  */
-void SystemInit(void);
+void SystemInit (void);
 
 /**
  * @brief Updates the SystemCoreClock variable.
@@ -84,7 +87,7 @@ void SystemInit(void);
  * execution. SystemCoreClockUpdate() evaluates the clock register settings and calculates
  * the current core clock.
  */
-void SystemCoreClockUpdate(void);
+void SystemCoreClockUpdate (void);
 
 /**
  * @brief SystemInit function hook.
@@ -96,10 +99,10 @@ void SystemCoreClockUpdate(void);
  * NOTE: No global r/w variables can be used in this hook function because the
  * initialization of these variables happens after this function.
  */
-void SystemInitHook(void);
+void SystemInitHook (void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _SYSTEM_MCXN947_cm33_core0_H_ */
+#endif  /* _SYSTEM_MCXN947_cm33_core0_H_ */

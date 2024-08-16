@@ -10,6 +10,11 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
+/*! @brief Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.nboot"
+#endif
+
 #define BOOTLOADER_API_TREE_POINTER ((bootloader_tree_t *)0x1303fc00U)
 
 /**

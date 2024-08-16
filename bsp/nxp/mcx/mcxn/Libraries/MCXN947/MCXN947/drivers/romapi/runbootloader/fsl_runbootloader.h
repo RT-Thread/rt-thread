@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_RUN_BOOTLOADER_H_
-#define _FSL_RUN_BOOTLOADER_H_
+#ifndef FSL_RUN_BOOTLOADER_H_
+#define FSL_RUN_BOOTLOADER_H_
 
 #include "fsl_common.h"
 
@@ -18,15 +18,15 @@
  ******************************************************************************/
 
 /*   API prototype fields definition.
-| 31 : 24   |    23 : 20        |     19 : 16        |  15 : 12             |  11 : 8     |  7 ï¼š 0  |
-    |     Tag   |   Boot mode       | bootloader periphal|  Instance            |  Image Index| Reserved  |
-|           |                   |                    |  Used For Boot mode 0|             |           |
-|           | 0: Passive mode   | 0 - Auto detection |                      |             |           |
-|           | 1: ISP mode       | 1 - USB-HID        |                      |             |           |
-|           |                   | 2 - UART           |                      |             |           |
-|           |                   | 3 - SPI            |                      |             |           |
-|           |                   | 4 - I2C            |                      |             |           |
-|           |                   | 5 - CAN            |                      |             |           |
+| 31 : 24  	|    23 : 20    	|     19 : 16        |  15 : 12             |  11 : 8     |  7 ： 0  |
+    |     Tag  	|   Boot mode   	| bootloader periphal|  Instance            |  Image Index| Reserved  |
+|           | 			    	|					 |  Used For Boot mode 0|             |           |
+|			| 0: Passive mode   | 0 - Auto detection |            		    |             |           |
+|			| 1: ISP mode   	| 1 - USB-HID        |            		    |             |           |
+|			|					| 2 - UART           |            		    |             |           |
+|			|					| 3 - SPI            |            		    |             |           |
+|			|					| 4 - I2C            |            		    |             |           |
+|			|					| 5 - CAN		     |            		    |             |           |
 */
 
 typedef struct
@@ -69,4 +69,4 @@ void bootloader_user_entry(void *arg);
  * @}
  */
 
-#endif /* _FSL_RUN_BOOTLOADER_H_ */
+#endif /* FSL_RUN_BOOTLOADER_H_ */

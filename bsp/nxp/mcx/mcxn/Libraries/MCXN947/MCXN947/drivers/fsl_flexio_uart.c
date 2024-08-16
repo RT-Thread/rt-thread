@@ -1007,3 +1007,17 @@ void FLEXIO_UART_TransferHandleIRQ(void *uartType, void *uartHandle)
         }
     }
 }
+
+/*!
+ * brief Flush tx/rx shifters.
+ *
+ * param base Pointer to the FLEXIO_UART_Type structure.
+ */
+void FLEXIO_UART_FlushShifters(FLEXIO_UART_Type *base)
+{
+    /* Disable then re-enable to flush the tx shifter. */
+    base->flexioBase->SHIFTCTL[base->shifterIndex[0]] &= ~FLEXIO_SHIFTCTL_SMOD_MASK;
+    base->flexioBase->SHIFTCTL[base->shifterIndex[0]] |= FLEXIO_SHIFTCTL_SMOD(kFLEXIO_ShifterModeTransmit);
+    /* Read to flush the rx shifter. */
+    (void)base->flexioBase->SHIFTBUF[base->shifterIndex[1]];
+}

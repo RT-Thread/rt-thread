@@ -32,12 +32,20 @@ typedef union pvoid_to_u32
 /*! @brief check whether lpflexcomm supports peripheral type */
 static bool LP_FLEXCOMM_PeripheralIsPresent(LP_FLEXCOMM_Type *base, LP_FLEXCOMM_PERIPH_T periph);
 
+/*! @brief Changes LP_FLEXCOMM mode. */
+static status_t LP_FLEXCOMM_SetPeriph(uint32_t instance, LP_FLEXCOMM_PERIPH_T periph, int lock);
+
+/*! @brief Common LPFLEXCOMM IRQhandle. */
+static void LP_FLEXCOMM_CommonIRQHandler(uint32_t instance);
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
 /*! @brief Array to map LP_FLEXCOMM instance number to base address. */
 static const uint32_t s_lpflexcommBaseAddrs[] = LP_FLEXCOMM_BASE_ADDRS;
+
+/*! @brief Array to map LP_FLEXCOMM instance PTRS. */
+static LP_FLEXCOMM_Type *const s_lpflexcommBase[] = LP_FLEXCOMM_BASE_PTRS;
 
 /*! @brief Pointers to real IRQ handlers installed by drivers for each instance. */
 static lpflexcomm_irq_handler_t s_lpflexcommIrqHandler[LP_FLEXCOMM_PERIPH_LPI2C + 1][ARRAY_SIZE(s_lpflexcommBaseAddrs)];
@@ -57,7 +65,6 @@ static const clock_ip_name_t s_lpflexcommClocks[] = LP_FLEXCOMM_CLOCKS;
 /*! @brief Pointers to LP_FLEXCOMM resets for each instance. */
 static const reset_ip_name_t s_lpflexcommResets[] = LP_FLEXCOMM_RSTS;
 #endif
-
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -83,10 +90,20 @@ static bool LP_FLEXCOMM_PeripheralIsPresent(LP_FLEXCOMM_Type *base, LP_FLEXCOMM_
     }
 }
 
+/*! @brief Returns for LP_FLEXCOMM base address. */
+uint32_t LP_FLEXCOMM_GetBaseAddress(uint32_t instance)
+{
+    if(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBaseAddrs))
+    {
+        return s_lpflexcommBaseAddrs[instance];
+    }
+    return 0U;
+}
+
 /*! brief Returns for LP_FLEXCOMM interrupt source,see #_lpflexcomm_interrupt_flag. */
 uint32_t LP_FLEXCOMM_GetInterruptStatus(uint32_t instance)
 {
-    LP_FLEXCOMM_Type *base = (LP_FLEXCOMM_Type *)s_lpflexcommBaseAddrs[instance];
+    LP_FLEXCOMM_Type *base = s_lpflexcommBase[instance];
     return base->ISTAT;
 }
 
@@ -114,8 +131,7 @@ uint32_t LP_FLEXCOMM_GetInstance(void *base)
 static status_t LP_FLEXCOMM_SetPeriph(uint32_t instance, LP_FLEXCOMM_PERIPH_T periph, int lock)
 {
     assert(periph <= LP_FLEXCOMM_PERIPH_LPI2CAndLPUART);
-    assert(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBaseAddrs));
-    LP_FLEXCOMM_Type *base = (LP_FLEXCOMM_Type *)s_lpflexcommBaseAddrs[instance];
+    LP_FLEXCOMM_Type *base = s_lpflexcommBase[instance];
 
     /* Check whether peripheral type is present */
     if (!LP_FLEXCOMM_PeripheralIsPresent(base, periph))
@@ -146,15 +162,15 @@ static status_t LP_FLEXCOMM_SetPeriph(uint32_t instance, LP_FLEXCOMM_PERIPH_T pe
 /*! brief Initializes LP_FLEXCOMM and selects peripheral mode according to the second parameter. */
 status_t LP_FLEXCOMM_Init(uint32_t instance, LP_FLEXCOMM_PERIPH_T periph)
 {
-    assert(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBaseAddrs));
+    assert(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBase));
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Enable the peripheral clock */
     CLOCK_EnableClock(s_lpflexcommClocks[instance]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 #if !(defined(FSL_FEATURE_LP_FLEXCOMM_HAS_NO_RESET) && FSL_FEATURE_LP_FLEXCOMM_HAS_NO_RESET)
-    /* Reset the LP_FLEXCOMM module */
-    RESET_PeripheralReset(s_lpflexcommResets[instance]);
+    /* Reset the LP_FLEXCOMM module before configuring it.*/
+    RESET_ClearPeripheralReset(s_lpflexcommResets[instance]);
 #endif
     /* Set the LP_FLEXCOMM to given peripheral */
     return LP_FLEXCOMM_SetPeriph(instance, periph, 0);
@@ -163,11 +179,12 @@ status_t LP_FLEXCOMM_Init(uint32_t instance, LP_FLEXCOMM_PERIPH_T periph)
 /*! brief Deinitializes LP_FLEXCOMM. */
 void LP_FLEXCOMM_Deinit(uint32_t instance)
 {
-    assert(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBaseAddrs));
+    assert(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBase));
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Disable the peripheral clock */
     CLOCK_DisableClock(s_lpflexcommClocks[instance]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    RESET_SetPeripheralReset(s_lpflexcommResets[instance]);
 }
 
 /*! brief Sets IRQ handler for given LP_FLEXCOMM module. It is used by drivers register IRQ handler according to
@@ -177,7 +194,7 @@ void LP_FLEXCOMM_SetIRQHandler(uint32_t instance,
                                void *lpflexcommHandle,
                                LP_FLEXCOMM_PERIPH_T periph)
 {
-    assert(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBaseAddrs));
+    assert(instance < (uint32_t)ARRAY_SIZE(s_lpflexcommBase));
     /* Clear handler first to avoid execution of the handler with wrong handle */
     s_lpflexcommIrqHandler[periph][instance] = NULL;
     s_lpflexcommHandle[periph][instance]     = lpflexcommHandle;

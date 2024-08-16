@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_TSI_V6_H_
-#define _FSL_TSI_V6_H_
+#ifndef FSL_TSI_V6_H_
+#define FSL_TSI_V6_H_
 
 #include "fsl_common.h"
 
@@ -1112,4 +1112,4 @@ static inline void TSI_ClearUsedTxChannel(TSI_Type *base, tsi_mutual_tx_channel_
 
 /*! @}*/
 
-#endif /* _FSL_TSI_V6_H_ */
+#endif /* FSL_TSI_V6_H_ */
