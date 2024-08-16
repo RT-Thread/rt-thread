@@ -33,7 +33,6 @@ enum
 #endif
 };
 
-
 struct lpc_spi
 {
     struct rt_spi_bus           parent;
@@ -54,7 +53,6 @@ struct lpc_spi
     rt_sem_t                    sem;
     char                        *name;
 };
-
 
 static struct lpc_spi lpc_obj[] =
 {
@@ -116,29 +114,16 @@ static struct lpc_spi lpc_obj[] =
 #endif /* BSP_USING_SPI7 */
 };
 
-
-struct lpc_sw_spi_cs
-{
-    rt_uint32_t pin;
-};
-
-
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin)
 {
-    rt_err_t ret = RT_EOK;
+    struct rt_spi_device *spi_device = rt_malloc(sizeof(struct rt_spi_device));
+    if (!spi_device)
+    {
+        return -RT_ENOMEM;
+    }
 
-    struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
-    struct lpc_sw_spi_cs *cs_pin = (struct lpc_sw_spi_cs *)rt_malloc(sizeof(struct lpc_sw_spi_cs));
-
-    cs_pin->pin = pin;
-    rt_pin_mode(pin, PIN_MODE_OUTPUT);
-    rt_pin_write(pin, PIN_HIGH);
-
-    ret = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
-
-    return ret;
+    return rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, pin, RT_NULL);
 }
-
 
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
 {
@@ -148,7 +133,6 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
 //    ret = lpc_spi_init(spi->SPIx, cfg);
     return ret;
 }
-
 
 static void LPSPI_MasterUserCallback(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, status_t status, void *userData)
 {
@@ -167,12 +151,11 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
 
 
-    struct lpc_spi *spi = (struct lpc_spi *)(device->bus->parent.user_data);
-    struct lpc_sw_spi_cs *cs = device->parent.user_data;
+    struct lpc_spi *spi = device->bus->parent.user_data;
 
     if (message->cs_take)
     {
-        rt_pin_write(cs->pin, PIN_LOW);
+        rt_pin_write(device->cs_pin, PIN_LOW);
     }
 
     transfer.dataSize = message->length;
@@ -193,8 +176,8 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         for (i = 0; i < block; i++)
         {
             transfer.dataSize = DMA_MAX_TRANSFER_COUNT;
-            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_COUNT);
-            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_COUNT);
+            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i *DMA_MAX_TRANSFER_COUNT);
+            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i *DMA_MAX_TRANSFER_COUNT);
 
             LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
             rt_sem_take(spi->sem, RT_WAITING_FOREVER);
@@ -203,32 +186,27 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         if (remain)
         {
             transfer.dataSize = remain;
-            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i * DMA_MAX_TRANSFER_COUNT);
-            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i * DMA_MAX_TRANSFER_COUNT);
+            if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i *DMA_MAX_TRANSFER_COUNT);
+            if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i *DMA_MAX_TRANSFER_COUNT);
 
             LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
             rt_sem_take(spi->sem, RT_WAITING_FOREVER);
         }
     }
 
-
     if (message->cs_release)
     {
-        rt_pin_write(cs->pin, PIN_HIGH);
+        rt_pin_write(device->cs_pin, PIN_HIGH);
     }
 
     return message->length;
 }
-
-
 
 static struct rt_spi_ops lpc_spi_ops =
 {
     .configure = spi_configure,
     .xfer      = spixfer
 };
-
-
 
 int rt_hw_spi_init(void)
 {
