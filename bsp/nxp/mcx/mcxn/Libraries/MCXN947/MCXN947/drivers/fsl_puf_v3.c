@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NXP
+ * Copyright 2020,2023 NXP
  * All rights reserved.
  *
  *
@@ -134,6 +134,10 @@ status_t PUF_Init(PUF_Type *base, puf_config_t *conf)
 
     /* Enable PUF clock */
     CLOCK_EnableClock(kCLOCK_Puf);
+
+    /* Clear the PUF peripheral reset */
+    RESET_ClearPeripheralReset(kPUF_RST_SHIFT_RSTn);
+
     /* Reset PUF */
 #if defined(FSL_FEATURE_PUF_HAS_RESET) && FSL_FEATURE_PUF_HAS_RESET
     RESET_PeripheralReset(kPUF_RST_SHIFT_RSTn);
@@ -193,7 +197,7 @@ void PUF_Deinit(PUF_Type *base, puf_config_t *conf)
  *
  * @param base PUF peripheral base address
  * @param[out] activationCode Word aligned address of the resulting activation code.
- * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be 996 bytes.
+ * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE bytes.
  * @param score Value of the PUF Score that was obtained during the enroll operation.
  * @return Status of enroll operation.
  */
@@ -203,7 +207,7 @@ status_t PUF_Enroll(PUF_Type *base, uint8_t *activationCode, size_t activationCo
     uint32_t *activationCodeAligned = NULL;
     register uint32_t temp32        = 0;
 
-    /* check that activation code buffer size is at least 996 bytes */
+    /* check that activation code buffer size is at least FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE bytes */
     if (activationCodeSize < PUF_ACTIVATION_CODE_SIZE)
     {
         return kStatus_InvalidArgument;
@@ -267,7 +271,7 @@ status_t PUF_Enroll(PUF_Type *base, uint8_t *activationCode, size_t activationCo
  *
  * @param base PUF peripheral base address
  * @param[in] activationCode Word aligned address of the input activation code.
- * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be 996 bytes.
+ * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE bytes.
  * @param score Value of the PUF Score that was obtained during the start operation.
  * return Status of start operation.
  */
@@ -277,13 +281,13 @@ status_t PUF_Start(PUF_Type *base, const uint8_t *activationCode, size_t activat
     const uint32_t *activationCodeAligned = NULL;
     register uint32_t temp32              = 0;
 
-    /* check that activation code size is at least 996 bytes */
+    /* check that activation code size is at least FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE bytes */
     if (activationCodeSize < PUF_ACTIVATION_CODE_SIZE)
     {
         return kStatus_InvalidArgument;
     }
 
-    /* Set activationCodeSize to 996 bytes */
+    /* Set activationCodeSize to FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE bytes */
     activationCodeSize = PUF_ACTIVATION_CODE_SIZE;
 
     /* only work with aligned activationCode */
@@ -964,10 +968,10 @@ status_t PUF_SetLock(PUF_Type *base, puf_sec_level_t securityLevel)
     sec_lock_option = SEC_LOCK_PATTERN | securityLevel;
 
     /* Apply setings */
-    PUF_CTRL->SEC_LOCK = sec_lock_option;
+    base->SEC_LOCK = sec_lock_option;
 
     /* Check if the security level is same as the level written */
-    if (securityLevel != PUF_CTRL->SEC_LOCK)
+    if (securityLevel != base->SEC_LOCK)
     {
         return kStatus_Fail;
     }
@@ -988,7 +992,7 @@ status_t PUF_SetLock(PUF_Type *base, puf_sec_level_t securityLevel)
  * @param appCtxMask Value of the Application defined context mask.
  * @return Status of the test operation.
  */
-status_t PUF_SetCtxMask(PUF_CTRL_Type *base, uint32_t appCtxMask)
+status_t PUF_SetCtxMask(PUF_Type *base, uint32_t appCtxMask)
 {
     base->APP_CTX_MASK = appCtxMask;
 

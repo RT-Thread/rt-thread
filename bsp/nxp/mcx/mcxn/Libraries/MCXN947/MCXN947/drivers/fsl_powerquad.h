@@ -1,12 +1,12 @@
 /*
- * Copyright 2018-2022 NXP
+ * Copyright 2018-2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_POWERQUAD_H_
-#define _FSL_POWERQUAD_H_
+#ifndef FSL_POWERQUAD_H_
+#define FSL_POWERQUAD_H_
 
 #if defined(__CC_ARM)
 
@@ -29,9 +29,9 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-#define FSL_POWERQUAD_DRIVER_VERSION (MAKE_VERSION(2, 1, 0)) /*!< Version. */
-/*@}*/
+/*! @{ */
+#define FSL_POWERQUAD_DRIVER_VERSION (MAKE_VERSION(2, 2, 0)) /*!< Version. */
+/*! @} */
 
 /* For backword compatibility. */
 #define PQ_VectorBiqaudDf2F32             PQ_VectorBiquadDf2F32
@@ -2465,11 +2465,13 @@ void PQ_VectorBiquadCascadeDf2Fixed16(int16_t *pSrc, int16_t *pDst, int32_t leng
 /*!
  * @brief Processing function for the fixed inverse trigonometric.
  *
+ * Get the inverse tangent, the behavior is like c function atan.
+ *
  * @param base  POWERQUAD peripheral base address
  * @param x value of opposite
  * @param y value of adjacent
  * @param iteration iteration times
- * @return The return value is in the range of -2^27 to 2^27, which means -pi to pi.
+ * @return The return value is in the range of -2^26 to 2^26, which means -pi/2 to pi/2.
  * @note The sum of x and y should not exceed the range of int32_t.
  * @note Larger input number gets higher output accuracy, for example the arctan(0.5),
  * the result of PQ_ArctanFixed(POWERQUAD, 100000, 200000, kPQ_Iteration_24) is more
@@ -2484,13 +2486,31 @@ int32_t PQ_ArctanFixed(POWERQUAD_Type *base, int32_t x, int32_t y, pq_cordic_ite
  * @param x value of opposite
  * @param y value of adjacent
  * @param iteration iteration times
- * @return The return value is in the range of -2^27 to 2^27, which means -1 to 1.
+ * @return The return value is radians, 2^27 means pi. The range is -1.118 to 1.118 radians.
  * @note The sum of x and y should not exceed the range of int32_t.
  * @note Larger input number gets higher output accuracy, for example the arctanh(0.5),
  * the result of PQ_ArctanhFixed(POWERQUAD, 100000, 200000, kPQ_Iteration_24) is more
  * accurate than PQ_ArctanhFixed(POWERQUAD, 1, 2, kPQ_Iteration_24).
  */
 int32_t PQ_ArctanhFixed(POWERQUAD_Type *base, int32_t x, int32_t y, pq_cordic_iter_t iteration);
+
+/*!
+ * @brief Processing function for the fixed inverse trigonometric.
+ *
+ * Get the inverse tangent, it calculates the angle in radians for the quadrant.
+ * The behavior is like c function atan2.
+ *
+ * @param base  POWERQUAD peripheral base address
+ * @param x value of opposite
+ * @param y value of adjacent
+ * @param iteration iteration times
+ * @return The return value is in the range of -2^27 to 2^27, which means -pi to pi.
+ * @note The sum of x and y should not exceed the range of int32_t.
+ * @note Larger input number gets higher output accuracy, for example the arctan(0.5),
+ * the result of PQ_Arctan2Fixed(POWERQUAD, 100000, 200000, kPQ_Iteration_24) is more
+ * accurate than PQ_Arctan2Fixed(POWERQUAD, 1, 2, kPQ_Iteration_24).
+ */
+int32_t PQ_Arctan2Fixed(POWERQUAD_Type *base, int32_t x, int32_t y, pq_cordic_iter_t iteration);
 
 /*!
  * @brief Processing function for the fixed biquad.
@@ -2774,7 +2794,7 @@ void PQ_MatrixTranspose(POWERQUAD_Type *base, uint32_t length, void *pData, void
  */
 void PQ_MatrixScale(POWERQUAD_Type *base, uint32_t length, float misc, const void *pData, void *pResult);
 
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -2782,4 +2802,4 @@ void PQ_MatrixScale(POWERQUAD_Type *base, uint32_t length, float misc, const voi
 
 /*! @}*/
 
-#endif /* _FSL_POWERQUAD_H_ */
+#endif /* FSL_POWERQUAD_H_ */

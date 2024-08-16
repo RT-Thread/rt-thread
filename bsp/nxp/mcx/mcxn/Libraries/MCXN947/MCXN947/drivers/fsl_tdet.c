@@ -193,6 +193,7 @@ void TDET_Deinit(DIGTMP_Type *base)
  *     defaultConfig->updateMode = kTDET_StatusLockWithTamper
  *     defaultConfig->clockSourceActiveTamper0 = kTDET_ClockType1Hz
  *     defaultConfig->clockSourceActiveTamper1 = kTDET_ClockType1Hz
+ *     defaultConfig->disablePrescalerAfterTamper = false
  *     defaultConfig->prescaler = 0
  * endcode
  * param base TDET peripheral base address
@@ -209,6 +210,7 @@ void TDET_GetDefaultConfig(DIGTMP_Type *base, tdet_config_t *defaultConfig)
         kTDET_StatusLockWithTamper, /* updateMode */
         kTDET_ClockType1Hz,         /* clockSourceActiveTamper0 */
         kTDET_ClockType1Hz,         /* clockSourceActiveTamper1 */
+        false,                      /* disable prescaler on tamper event */
         0,                          /* prescaler */
     };
 
@@ -239,6 +241,7 @@ status_t TDET_SetConfig(DIGTMP_Type *base, const tdet_config_t *config)
         tmpCR |= DIGTMP_CR_UM(config->updateMode);
         tmpCR |= DIGTMP_CR_ATCS0(config->clockSourceActiveTamper0);
         tmpCR |= DIGTMP_CR_ATCS1(config->clockSourceActiveTamper1);
+        tmpCR |= DIGTMP_CR_DISTAM(config->disablePrescalerAfterTamper);
         tmpCR |= DIGTMP_CR_DPR(config->prescaler);
         /* write the computed value to the CR register */
         base->CR = tmpCR;
@@ -377,7 +380,7 @@ void TDET_PinGetDefaultConfig(DIGTMP_Type *base, tdet_pin_config_t *pinConfig)
  * param base TDET peripheral base address
  * param pinConfig Pointer to structure with tamper pin and glitch filter configuration parameters
  * param pinSelect Bit mask for tamper pins to be configured. The passed value is combination of
- *                  enum _tdet_tamper_pin (tdet_tamper_pin_t) values (OR'ed).
+ *                  enum _tdet_external_tamper_pin (tdet_external_tamper_pin_t) values (OR'ed).
  * return kStatus_Fail when writing to TDET Pin Direction, Pin Polarity or Glitch Filter Register(s) is not allowed
  * return kStatus_Success when operation completes successfully
  */

@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2022 NXP
+ * Copyright 2016-2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LPADC_H_
-#define _FSL_LPADC_H_
+#ifndef FSL_LPADC_H_
+#define FSL_LPADC_H_
 
 #include "fsl_common.h"
 
@@ -22,10 +22,21 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief LPADC driver version 2.6.0. */
-#define FSL_LPADC_DRIVER_VERSION (MAKE_VERSION(2, 6, 0))
-/*@}*/
+/*! @{ */
+/*! @brief LPADC driver version 2.8.4. */
+#define FSL_LPADC_DRIVER_VERSION (MAKE_VERSION(2, 8, 4))
+/*! @} */
+
+#if (defined(FSL_FEATURE_LPADC_OFSTRIM_COUNT) && (FSL_FEATURE_LPADC_OFSTRIM_COUNT == 1))
+#define ADC_OFSTRIM_OFSTRIM_MAX  (ADC_OFSTRIM_OFSTRIM_MASK >> ADC_OFSTRIM_OFSTRIM_SHIFT)
+#define ADC_OFSTRIM_OFSTRIM_SIGN ((ADC_OFSTRIM_OFSTRIM_MAX + 1U) >> 1U)
+
+#elif (defined(FSL_FEATURE_LPADC_OFSTRIM_COUNT) && (FSL_FEATURE_LPADC_OFSTRIM_COUNT == 2))
+#define ADC_OFSTRIM_OFSTRIM_A_MAX  (ADC_OFSTRIM_OFSTRIM_A_MASK >> ADC_OFSTRIM_OFSTRIM_A_SHIFT)
+#define ADC_OFSTRIM_OFSTRIM_B_MAX  (ADC_OFSTRIM_OFSTRIM_B_MASK >> ADC_OFSTRIM_OFSTRIM_B_SHIFT)
+#define ADC_OFSTRIM_OFSTRIM_A_SIGN ((ADC_OFSTRIM_OFSTRIM_A_MAX + 1U) >> 1U)
+#define ADC_OFSTRIM_OFSTRIM_B_SIGN ((ADC_OFSTRIM_OFSTRIM_B_MAX + 1U) >> 1U)
+#endif /* defined(FSL_FEATURE_LPADC_OFSTRIM_COUNT) */
 
 /*!
  * @brief Define the MACRO function to get command status from status value.
@@ -41,7 +52,39 @@
  */
 #define LPADC_GET_ACTIVE_TRIGGER_STATUE(statusVal) ((statusVal & ADC_STAT_TRGACT_MASK) >> ADC_STAT_TRGACT_SHIFT)
 
-#if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2))
+/* Map macros to the unified name. */
+#if !defined(ADC_STAT_FOF0_MASK)
+#ifdef ADC_STAT_FOF_MASK
+#define ADC_STAT_FOF0_MASK ADC_STAT_FOF_MASK
+#else
+#error "ADC_STAT_FOF0_MASK not defined"
+#endif /* ifdef(ADC_STAT_FOF_MASK) */
+#endif /* !defined(ADC_STAT_FOF0_MASK) */
+
+#if !defined(ADC_STAT_RDY0_MASK)
+#ifdef ADC_STAT_RDY_MASK
+#define ADC_STAT_RDY0_MASK ADC_STAT_RDY_MASK
+#else
+#error "ADC_STAT_RDY0_MASK not defined"
+#endif /* ifdef ADC_STAT_RDY_MASK */
+#endif /* !defined(ADC_STAT_RDY0_MASK) */
+
+#if !defined(ADC_IE_FOFIE0_MASK)
+#ifdef ADC_IE_FOFIE_MASK
+#define ADC_IE_FOFIE0_MASK ADC_IE_FOFIE_MASK
+#else
+#error "ADC_IE_FOFIE0_MASK not defined"
+#endif /* ifdef ADC_IE_FOFIE_MASK */
+#endif /* !defined(ADC_IE_FOFIE0_MASK) */
+
+#if !defined(ADC_IE_FWMIE0_MASK)
+#ifdef ADC_IE_FWMIE_MASK
+#define ADC_IE_FWMIE0_MASK ADC_IE_FWMIE_MASK
+#else
+#error "ADC_IE_FWMIE0_MASK not defined"
+#endif /* ifdef ADC_IE_FWMIE_MASK */
+#endif /* !defined(ADC_IE_FWMIE0_MASK) */
+
 /*!
  * @brief Define hardware flags of the module.
  */
@@ -51,14 +94,45 @@ enum _lpadc_status_flags
                                                                FIFO 0 than it can hold. */
     kLPADC_ResultFIFO0ReadyFlag = ADC_STAT_RDY0_MASK,    /*!< Indicates when the number of valid datawords in the result
                                                                FIFO 0 is greater than the setting watermark level. */
+
+#if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2U))
     kLPADC_ResultFIFO1OverflowFlag = ADC_STAT_FOF1_MASK, /*!< Indicates that more data has been written to the Result
                                                               FIFO 1 than it can hold. */
     kLPADC_ResultFIFO1ReadyFlag = ADC_STAT_RDY1_MASK,    /*!< Indicates when the number of valid datawords in the result
                                                               FIFO 1 is greater than the setting watermark level. */
+#endif /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2U)) */
+
+#if (defined(FSL_FEATURE_LPADC_HAS_STAT_TEXC_INT) && (FSL_FEATURE_LPADC_HAS_STAT_TEXC_INT == 1U))
+    kLPADC_TriggerExceptionFlag = ADC_STAT_TEXC_INT_MASK, /*!< Indicates that a trigger exception event has occurred. */
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_STAT_TEXC_INT) && (FSL_FEATURE_LPADC_HAS_STAT_TEXC_INT == 1U)) */
+
+#if (defined(FSL_FEATURE_LPADC_HAS_STAT_TCOMP_INT) && (FSL_FEATURE_LPADC_HAS_STAT_TCOMP_INT == 1U))
+    kLPADC_TriggerCompletionFlag = ADC_STAT_TCOMP_INT_MASK, /*!< Indicates that a trigger completion event has occurred.
+                                                             */
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_STAT_TCOMP_INT) && (FSL_FEATURE_LPADC_HAS_STAT_TCOMP_INT == 1U)) */
+
+#if (defined(FSL_FEATURE_LPADC_HAS_STAT_CAL_RDY) && (FSL_FEATURE_LPADC_HAS_STAT_CAL_RDY == 1U))
+    kLPADC_CalibrationReadyFlag = ADC_STAT_CAL_RDY_MASK, /*!< Indicates that the calibration process is done. */
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_STAT_CAL_RDY) && (FSL_FEATURE_LPADC_HAS_STAT_CAL_RDY == 1U)) */
+
+#if (defined(FSL_FEATURE_LPADC_HAS_STAT_ADC_ACTIVE) && (FSL_FEATURE_LPADC_HAS_STAT_ADC_ACTIVE == 1U))
+    kLPADC_ActiveFlag = ADC_STAT_ADC_ACTIVE_MASK, /*!< Indicates that the ADC is in active state. */
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_STAT_ADC_ACTIVE) && (FSL_FEATURE_LPADC_HAS_STAT_ADC_ACTIVE == 1U)) */
+
+    kLPADC_ResultFIFOOverflowFlag = kLPADC_ResultFIFO0OverflowFlag, /*!< To compilitable with old version, do not
+                                                                        recommend using this, please use @ref
+                                                                        kLPADC_ResultFIFO0OverflowFlag as instead. */
+
+    kLPADC_ResultFIFOReadyFlag = kLPADC_ResultFIFO0ReadyFlag,       /*!< To compilitable with old version, do not
+                                                                        recommend using this, please use @ref
+                                                                        kLPADC_ResultFIFO0ReadyFlag as instead. */
 };
 
 /*!
  * @brief Define interrupt switchers of the module.
+ *
+ * Note: LPADC of different chips supports different number of trigger sources,
+ * please check the Reference Manual for details.
  */
 enum _lpadc_interrupt_enable
 {
@@ -66,13 +140,30 @@ enum _lpadc_interrupt_enable
                                                                          requests when FOF0 flag is asserted. */
     kLPADC_FIFO0WatermarkInterruptEnable = ADC_IE_FWMIE0_MASK,      /*!< Configures ADC to generate watermark interrupt
                                                                          requests when RDY0 flag is asserted. */
+    kLPADC_ResultFIFOOverflowInterruptEnable = kLPADC_ResultFIFO0OverflowInterruptEnable, /*!< To compilitable with old
+                                                                            version, do not recommend using this,
+                                                                            please use
+                                                                            #kLPADC_ResultFIFO0OverflowInterruptEnable
+                                                                            as instead. */
+    kLPADC_FIFOWatermarkInterruptEnable = kLPADC_FIFO0WatermarkInterruptEnable, /*!< To compilitable with old version,
+                                                                                   do not recommend using this, please
+                                                                                   use
+                                                                                   #kLPADC_FIFO0WatermarkInterruptEnable
+                                                                                   as instead. */
+
+#if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2U))
     kLPADC_ResultFIFO1OverflowInterruptEnable = ADC_IE_FOFIE1_MASK, /*!< Configures ADC to generate overflow interrupt
                                                                          requests when FOF1 flag is asserted. */
     kLPADC_FIFO1WatermarkInterruptEnable = ADC_IE_FWMIE1_MASK,      /*!< Configures ADC to generate watermark interrupt
                                                                          requests when RDY1 flag is asserted. */
-#if (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && FSL_FEATURE_LPADC_HAS_TSTAT)
+#endif /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2U)) */
+
+#if (defined(FSL_FEATURE_LPADC_HAS_IE_TEXC_IE) && (FSL_FEATURE_LPADC_HAS_IE_TEXC_IE == 1U))
     kLPADC_TriggerExceptionInterruptEnable = ADC_IE_TEXC_IE_MASK, /*!< Configures ADC to generate trigger exception
                                                                       interrupt. */
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_IE_TEXC_IE) && (FSL_FEATURE_LPADC_HAS_IE_TEXC_IE == 1U)) */
+
+#if (defined(FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE) && (FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE == 1U))
     kLPADC_Trigger0CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 0UL),   /*!< Configures ADC to generate interrupt
                                                                                 when trigger 0 completion. */
     kLPADC_Trigger1CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 1UL),   /*!< Configures ADC to generate interrupt
@@ -105,35 +196,15 @@ enum _lpadc_interrupt_enable
                                                                               when trigger 14 completion. */
     kLPADC_Trigger15CompletionInterruptEnable = ADC_IE_TCOMP_IE(1UL << 15UL), /*!< Configures ADC to generate interrupt
                                                                               when trigger 15 completion. */
-#endif                                                                        /* FSL_FEATURE_LPADC_HAS_TSTAT */
-};
-#else
-/*!
- * @brief Define hardware flags of the module.
- */
-enum _lpadc_status_flags
-{
-    kLPADC_ResultFIFOOverflowFlag = ADC_STAT_FOF_MASK, /*!< Indicates that more data has been written to the Result FIFO
-                                                            than it can hold. */
-    kLPADC_ResultFIFOReadyFlag = ADC_STAT_RDY_MASK, /*!< Indicates when the number of valid datawords in the result FIFO
-                                                         is greater than the setting watermark level. */
+#endif /* #if (defined(FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE) && (FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE == 1U)) */
 };
 
-/*!
- * @brief Define interrupt switchers of the module.
- */
-enum _lpadc_interrupt_enable
-{
-    kLPADC_ResultFIFOOverflowInterruptEnable = ADC_IE_FOFIE_MASK, /*!< Configures ADC to generate overflow interrupt
-                                                                       requests when FOF flag is asserted. */
-    kLPADC_FIFOWatermarkInterruptEnable = ADC_IE_FWMIE_MASK,      /*!< Configures ADC to generate watermark interrupt
-                                                                       requests when RDY flag is asserted. */
-};
-#endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
-
-#if (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && FSL_FEATURE_LPADC_HAS_TSTAT)
+#if (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && (FSL_FEATURE_LPADC_HAS_TSTAT))
 /*!
  * @brief The enumerator of lpadc trigger status flags, including interrupted flags and completed flags.
+ *
+ * Note: LPADC of different chips supports different number of trigger sources,
+ * please check the Reference Manual for details.
  */
 enum _lpadc_trigger_status_flags
 {
@@ -154,40 +225,40 @@ enum _lpadc_trigger_status_flags
     kLPADC_Trigger14InterruptedFlag = 1UL << 14UL, /*!< Trigger 14 is interrupted by a high priority exception. */
     kLPADC_Trigger15InterruptedFlag = 1UL << 15UL, /*!< Trigger 15 is interrupted by a high priority exception. */
 
-    kLPADC_Trigger0CompletedFlag = 1UL << 16UL,  /*!< Trigger 0 is completed and
-                                                     trigger 0 has enabled completion interrupts. */
-    kLPADC_Trigger1CompletedFlag = 1UL << 17UL,  /*!< Trigger 1 is completed and
-                                                     trigger 1 has enabled completion interrupts. */
-    kLPADC_Trigger2CompletedFlag = 1UL << 18UL,  /*!< Trigger 2 is completed and
-                                                     trigger 2 has enabled completion interrupts. */
-    kLPADC_Trigger3CompletedFlag = 1UL << 19UL,  /*!< Trigger 3 is completed and
-                                                     trigger 3 has enabled completion interrupts. */
-    kLPADC_Trigger4CompletedFlag = 1UL << 20UL,  /*!< Trigger 4 is completed and
-                                                     trigger 4 has enabled completion interrupts. */
-    kLPADC_Trigger5CompletedFlag = 1UL << 21UL,  /*!< Trigger 5 is completed and
-                                                     trigger 5 has enabled completion interrupts. */
-    kLPADC_Trigger6CompletedFlag = 1UL << 22UL,  /*!< Trigger 6 is completed and
-                                                     trigger 6 has enabled completion interrupts. */
-    kLPADC_Trigger7CompletedFlag = 1UL << 23UL,  /*!< Trigger 7 is completed and
-                                                     trigger 7 has enabled completion interrupts. */
-    kLPADC_Trigger8CompletedFlag = 1UL << 24UL,  /*!< Trigger 8 is completed and
-                                                     trigger 8 has enabled completion interrupts. */
-    kLPADC_Trigger9CompletedFlag = 1UL << 25UL,  /*!< Trigger 9 is completed and
-                                                     trigger 9 has enabled completion interrupts. */
-    kLPADC_Trigger10CompletedFlag = 1UL << 26UL, /*!< Trigger 10 is completed and
-                                                    trigger 10 has enabled completion interrupts. */
-    kLPADC_Trigger11CompletedFlag = 1UL << 27UL, /*!< Trigger 11 is completed and
-                                                    trigger 11 has enabled completion interrupts. */
-    kLPADC_Trigger12CompletedFlag = 1UL << 28UL, /*!< Trigger 12 is completed and
-                                                    trigger 12 has enabled completion interrupts. */
-    kLPADC_Trigger13CompletedFlag = 1UL << 29UL, /*!< Trigger 13 is completed and
-                                                    trigger 13 has enabled completion interrupts. */
-    kLPADC_Trigger14CompletedFlag = 1UL << 30UL, /*!< Trigger 14 is completed and
-                                                    trigger 14 has enabled completion interrupts. */
-    kLPADC_Trigger15CompletedFlag = 1UL << 31UL, /*!< Trigger 15 is completed and
-                                                    trigger 15 has enabled completion interrupts. */
+    kLPADC_Trigger0CompletedFlag = 1UL << 16UL,    /*!< Trigger 0 is completed and
+                                                       trigger 0 has enabled completion interrupts. */
+    kLPADC_Trigger1CompletedFlag = 1UL << 17UL,    /*!< Trigger 1 is completed and
+                                                       trigger 1 has enabled completion interrupts. */
+    kLPADC_Trigger2CompletedFlag = 1UL << 18UL,    /*!< Trigger 2 is completed and
+                                                       trigger 2 has enabled completion interrupts. */
+    kLPADC_Trigger3CompletedFlag = 1UL << 19UL,    /*!< Trigger 3 is completed and
+                                                       trigger 3 has enabled completion interrupts. */
+    kLPADC_Trigger4CompletedFlag = 1UL << 20UL,    /*!< Trigger 4 is completed and
+                                                       trigger 4 has enabled completion interrupts. */
+    kLPADC_Trigger5CompletedFlag = 1UL << 21UL,    /*!< Trigger 5 is completed and
+                                                       trigger 5 has enabled completion interrupts. */
+    kLPADC_Trigger6CompletedFlag = 1UL << 22UL,    /*!< Trigger 6 is completed and
+                                                       trigger 6 has enabled completion interrupts. */
+    kLPADC_Trigger7CompletedFlag = 1UL << 23UL,    /*!< Trigger 7 is completed and
+                                                       trigger 7 has enabled completion interrupts. */
+    kLPADC_Trigger8CompletedFlag = 1UL << 24UL,    /*!< Trigger 8 is completed and
+                                                       trigger 8 has enabled completion interrupts. */
+    kLPADC_Trigger9CompletedFlag = 1UL << 25UL,    /*!< Trigger 9 is completed and
+                                                       trigger 9 has enabled completion interrupts. */
+    kLPADC_Trigger10CompletedFlag = 1UL << 26UL,   /*!< Trigger 10 is completed and
+                                                      trigger 10 has enabled completion interrupts. */
+    kLPADC_Trigger11CompletedFlag = 1UL << 27UL,   /*!< Trigger 11 is completed and
+                                                      trigger 11 has enabled completion interrupts. */
+    kLPADC_Trigger12CompletedFlag = 1UL << 28UL,   /*!< Trigger 12 is completed and
+                                                      trigger 12 has enabled completion interrupts. */
+    kLPADC_Trigger13CompletedFlag = 1UL << 29UL,   /*!< Trigger 13 is completed and
+                                                      trigger 13 has enabled completion interrupts. */
+    kLPADC_Trigger14CompletedFlag = 1UL << 30UL,   /*!< Trigger 14 is completed and
+                                                      trigger 14 has enabled completion interrupts. */
+    kLPADC_Trigger15CompletedFlag = 1UL << 31UL,   /*!< Trigger 15 is completed and
+                                                      trigger 15 has enabled completion interrupts. */
 };
-#endif /* FSL_FEATURE_LPADC_HAS_TSTAT */
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && (FSL_FEATURE_LPADC_HAS_TSTAT)) */
 
 /*!
  * @brief Define enumeration of sample scale mode.
@@ -199,8 +270,8 @@ enum _lpadc_trigger_status_flags
  */
 typedef enum _lpadc_sample_scale_mode
 {
-    kLPADC_SamplePartScale =
-        0U, /*!< Use divided input voltage signal. (For scale select,please refer to the reference manual). */
+    kLPADC_SamplePartScale = 0U, /*!< Use divided input voltage signal.
+                                    (For scale select,please refer to the reference manual). */
     kLPADC_SampleFullScale = 1U, /*!< Full scale (Factor of 1). */
 } lpadc_sample_scale_mode_t;
 
@@ -211,16 +282,19 @@ typedef enum _lpadc_sample_scale_mode
  */
 typedef enum _lpadc_sample_channel_mode
 {
-    kLPADC_SampleChannelSingleEndSideA = 0U, /*!< Single end mode, using side A. */
-    kLPADC_SampleChannelSingleEndSideB = 1U, /*!< Single end mode, using side B. */
+    kLPADC_SampleChannelSingleEndSideA = 0x0U, /*!< Single-end mode, only A-side channel is converted. */
+#if !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U))
+    kLPADC_SampleChannelSingleEndSideB = 0x1U, /*!< Single-end mode, only B-side channel is converted. */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_DIFF) && FSL_FEATURE_LPADC_HAS_CMDL_DIFF
-    kLPADC_SampleChannelDiffBothSideAB = 2U, /*!< Differential mode, using A as plus side and B as minus side. */
-    kLPADC_SampleChannelDiffBothSideBA = 3U, /*!< Differential mode, using B as plus side and A as minus side. */
-#elif defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE
-    kLPADC_SampleChannelDiffBothSide = 2U, /*!< Differential mode, using A and B. */
-    kLPADC_SampleChannelDualSingleEndBothSide =
-        3U, /*!< Dual-Single-Ended Mode. Both A side and B side channels are converted independently. */
-#endif
+    kLPADC_SampleChannelDiffBothSideAB = 0x2U, /*!< Differential mode, the ADC result is (CHnA-CHnB). */
+    kLPADC_SampleChannelDiffBothSideBA = 0x3U, /*!< Differential mode, the ADC result is (CHnB-CHnA). */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CMDL_DIFF) && FSL_FEATURE_LPADC_HAS_CMDL_DIFF */
+#if defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE
+    kLPADC_SampleChannelDiffBothSide          = 0x02U, /*!< Differential mode, the ADC result is (CHnA-CHnB). */
+    kLPADC_SampleChannelDualSingleEndBothSide = 0x03U, /*!< Dual-Single-Ended Mode. Both A side and B side
+                                                            channels are converted independently. */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CMDL_CTYPE) && FSL_FEATURE_LPADC_HAS_CMDL_CTYPE */
+#endif /* !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U)) */
 } lpadc_sample_channel_mode_t;
 
 /*!
@@ -228,6 +302,9 @@ typedef enum _lpadc_sample_channel_mode
  *
  * It Selects how many ADC conversions are averaged to create the ADC result. An internal storage buffer is used to
  * capture temporary results while the averaging iterations are executed.
+ *
+ * @note Some enumerator values are not available on some devices, mainly depends on the size of AVGS field in CMDH
+ * register.
  */
 typedef enum _lpadc_hardware_average_mode
 {
@@ -240,11 +317,12 @@ typedef enum _lpadc_hardware_average_mode
     kLPADC_HardwareAverageCount64  = 6U, /*!< 64 conversions averaged. */
     kLPADC_HardwareAverageCount128 = 7U, /*!< 128 conversions averaged. */
 #if (defined(FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH) && \
-     (FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH == 4))
+     (FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH == 4U))
     kLPADC_HardwareAverageCount256  = 8U,  /*!< 256 conversions averaged. */
     kLPADC_HardwareAverageCount512  = 9U,  /*!< 512 conversions averaged. */
     kLPADC_HardwareAverageCount1024 = 10U, /*!< 1024 conversions averaged. */
-#endif                                     /* FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH */
+#endif                                     /*  (defined(FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH) && \
+                                               (FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH == 4U))*/
 } lpadc_hardware_average_mode_t;
 
 /*!
@@ -294,13 +372,15 @@ typedef enum _lpadc_conversion_resolution_mode
     kLPADC_ConversionResolutionHigh = 1U,     /*!< High resolution. Single-ended 16-bit conversion; Differential 16-bit
                                                    conversion with 2's complement output. */
 } lpadc_conversion_resolution_mode_t;
-#endif /* FSL_FEATURE_LPADC_HAS_CMDL_MODE */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CMDL_MODE) && FSL_FEATURE_LPADC_HAS_CMDL_MODE */
 
 #if defined(FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS) && FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS
 /*!
  * @brief Define enumeration of conversion averages mode.
  *
  * Configure the converion average number for auto-calibration.
+ * @note Some enumerator values are not available on some devices, mainly depends on the size of CAL_AVGS field in CTRL
+ * register.
  */
 typedef enum _lpadc_conversion_average_mode
 {
@@ -313,13 +393,14 @@ typedef enum _lpadc_conversion_average_mode
     kLPADC_ConversionAverage64  = 6U, /*!< 64 conversions averaged. */
     kLPADC_ConversionAverage128 = 7U, /*!< 128 conversions averaged. */
 #if (defined(FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH) && \
-     (FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH == 4))
+     (FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH == 4U))
     kLPADC_ConversionAverage256  = 8U,  /*!< 256 conversions averaged. */
     kLPADC_ConversionAverage512  = 9U,  /*!< 512 conversions averaged. */
     kLPADC_ConversionAverage1024 = 10U, /*!< 1024 conversions averaged. */
-#endif                                  /* FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH */
+#endif                                  /*  (defined(FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH) && \
+                                            (FSL_FEATURE_LPADC_CONVERSIONS_AVERAGED_BITFIELD_WIDTH == 4U))*/
 } lpadc_conversion_average_mode_t;
-#endif /* FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS) && FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS */
 
 /*!
  * @brief Define enumeration of reference voltage source.
@@ -357,28 +438,110 @@ typedef enum _lpadc_offset_calibration_mode
     kLPADC_OffsetCalibration12bitMode = 0U, /*!< 12 bit offset calibration mode. */
     kLPADC_OffsetCalibration16bitMode = 1U, /*!< 16 bit offset calibration mode. */
 } lpadc_offset_calibration_mode_t;
-#endif /* FSL_FEATURE_LPADC_HAS_CTRL_CALOFSMODE */
+#endif                                      /* FSL_FEATURE_LPADC_HAS_CTRL_CALOFSMODE */
 
 /*!
  * @brief Define enumeration of trigger priority policy.
  *
  * This selection controls how higher priority triggers are handled.
+ * @note \b kLPADC_TriggerPriorityPreemptSubsequently is not available on some devices, mainly depends on the size of
+ * TPRICTRL field in CFG register.
  */
 typedef enum _lpadc_trigger_priority_policy
 {
-    kLPADC_TriggerPriorityPreemptImmediately = 0U, /*!< If a higher priority trigger is detected during command
+    kLPADC_ConvPreemptImmediatelyNotAutoResumed = 0x0U, /*!< If a higher priority trigger is detected during command
                                                         processing, the current conversion is aborted and the new
-                                                        command specified by the trigger is started. */
-    kLPADC_TriggerPriorityPreemptSoftly = 1U, /*!< If a higher priority trigger is received during command processing,
-                                                    the current conversion is completed (including averaging iterations
-                                                    and compare function if enabled) and stored to the result FIFO
-                                                    before the higher priority trigger/command is initiated. */
-#if defined(FSL_FEATURE_LPADC_HAS_CFG_SUBSEQUENT_PRIORITY) && FSL_FEATURE_LPADC_HAS_CFG_SUBSEQUENT_PRIORITY
-    kLPADC_TriggerPriorityPreemptSubsequently = 2U, /*!< If a higher priority trigger is received during command
-                                                    processing, the current command will be completed (averaging,
-                                                    looping, compare) before servicing the higher priority trigger. */
-#endif                                              /* FSL_FEATURE_LPADC_HAS_CFG_SUBSEQUENT_PRIORITY */
+                                                        command specified by the trigger is started, when higher
+                                                        priority conversion finishes, the preempted conversion is not
+                                                        automatically resumed or restarted. */
+    kLPADC_ConvPreemptSoftlyNotAutoResumed = 0x1U,      /*!< If a higher priority trigger is received during command
+                                                    processing, the current conversion is completed (including averaging
+                                                    iterations and compare function if enabled) and stored to the result
+                                                    FIFO before the higher priority trigger/command is initiated, when
+                                                    higher priority conversion finishes, the preempted conversion is not
+                                                    resumed or restarted. */
+
+#if defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES
+    kLPADC_ConvPreemptImmediatelyAutoRestarted = 0x4U, /*!< If a higher priority trigger is detected during command
+                                                       processing, the current conversion is aborted and the new
+                                                       command specified by the trigger is started, when higher
+                                                       priority conversion finishes, the preempted conversion will
+                                                       automatically be restarted. */
+    kLPADC_ConvPreemptSoftlyAutoRestarted = 0x5U,      /*!< If a higher priority trigger is received during command
+                                                       processing, the current conversion is completed (including averaging
+                                                       iterations and compare function if enabled) and stored to the result
+                                                       FIFO before the higher priority trigger/command is initiated, when
+                                                       higher priority conversion finishes, the preempted conversion will
+                                                       automatically be restarted. */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES */
+
+#if defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES
+    kLPADC_ConvPreemptImmediatelyAutoResumed = 0xCU, /*!< If a higher priority trigger is detected during command
+                                                     processing, the current conversion is aborted and the new
+                                                     command specified by the trigger is started, when higher
+                                                     priority conversion finishes, the preempted conversion will
+                                                     automatically be resumed. */
+    kLPADC_ConvPreemptSoftlyAutoResumed = 0xDU,      /*!< If a higher priority trigger is received during command
+                                                      processing, the current conversion is completed (including averaging
+                                                      iterations and compare function if enabled) and stored to the result
+                                                      FIFO before the higher priority trigger/command is initiated, when
+                                                      higher priority conversion finishes, the preempted conversion will
+                                                      be automatically be resumed. */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES */
+
+    kLPADC_TriggerPriorityPreemptImmediately =
+        kLPADC_ConvPreemptImmediatelyNotAutoResumed, /*!< Legacy support is not recommended as it only ensures
+                                                        compatibility with older versions. */
+    kLPADC_TriggerPriorityPreemptSoftly =
+        kLPADC_ConvPreemptSoftlyNotAutoResumed, /*!< Legacy support is not recommended as it only ensures compatibility
+                                                   with older versions. */
+
+#if (defined(FSL_FEATURE_LPADC_CFG_TPRICTRL_BITFIELD_WIDTH) && (FSL_FEATURE_LPADC_CFG_TPRICTRL_BITFIELD_WIDTH == 2U))
+    kLPADC_ConvPreemptSubsequentlyNotAutoResumed = 0x2U, /*!< If a higher priority trigger is received during command
+                                                 processing, the current command will be completed (averaging,
+                                                 looping, compare) before servicing the higher priority trigger, when
+                                                 higher priority conversion finishes, the preempted conversion will
+                                                 not automatically be restarted or resumed. */
+
+#if defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES
+    kLPADC_ConvPreemptSubsequentlyAutoRestarted = 0x6U, /*!< If a higher priority trigger is received during command
+                                                processing, the current command will be completed (averaging,
+                                                looping, compare) before servicing the higher priority trigger, when
+                                                higher priority conversion finishes, the preempted conversion will
+                                                be automatically restarted. */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TRES) && FSL_FEATURE_LPADC_HAS_CFG_TRES */
+
+#if defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES
+    kLPADC_ConvPreemptSubsequentlyAutoResumed = 0xEU, /*!< If a higher priority trigger is received during command
+                                              processing, the current command will be completed (averaging,
+                                              looping, compare) before servicing the higher priority trigger, when
+                                              higher priority conversion finishes, the preempted conversion will
+                                              be automatically resumed. */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_TCMDRES) && FSL_FEATURE_LPADC_HAS_CFG_TCMDRES */
+
+    kLPADC_TriggerPriorityPreemptSubsequently =
+        kLPADC_ConvPreemptSubsequentlyNotAutoResumed, /*!< Legacy support is not recommended as it only ensures
+                                                         compatibility with older versions. */
+#endif /* #if (defined(FSL_FEATURE_LPADC_CFG_TPRICTRL_BITFIELD_WIDTH) && \
+          (FSL_FEATURE_LPADC_CFG_TPRICTRL_BITFIELD_WIDTH == 2U)) */
+
+#if defined(FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI) && FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI
+    kLPADC_TriggerPriorityExceptionDisabled = 0x10U, /*!<  High priority trigger exception disabled. */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI) && FSL_FEATURE_LPADC_HAS_CFG_HPT_EXDI */
 } lpadc_trigger_priority_policy_t;
+
+#if ((defined(FSL_FEATURE_LPADC_HAS_CTRL_CALHS)) && FSL_FEATURE_LPADC_HAS_CTRL_CALHS)
+/*!
+ * @brief Define enumeration of tune value.
+ */
+typedef enum _lpadc_tune_value
+{
+    kLPADC_TuneValue0 = 0U, /*!< Tune value 0. */
+    kLPADC_TuneValue1 = 1U, /*!< Tune value 1. */
+    kLPADC_TuneValue2 = 2U, /*!< Tune value 2. */
+    kLPADC_TuneValue3 = 3U, /*!< Tune value 3. */
+} lpadc_tune_value_t;
+#endif                      /* ((defined(FSL_FEATURE_LPADC_HAS_CTRL_CALHS)) && FSL_FEATURE_LPADC_HAS_CTRL_CALHS) */
 
 /*!
  * @brief LPADC global configuration.
@@ -388,9 +551,9 @@ typedef enum _lpadc_trigger_priority_policy
 typedef struct
 {
 #if defined(FSL_FEATURE_LPADC_HAS_CFG_ADCKEN) && FSL_FEATURE_LPADC_HAS_CFG_ADCKEN
-    bool enableInternalClock; /*!< Enables the internally generated clock source. The clock source is used in clock
-                                   selection logic at the chip level and is optionally used for the ADC clock source. */
-#endif                        /* FSL_FEATURE_LPADC_HAS_CFG_ADCKEN */
+    bool enableInternalClock;   /*!< Enables the internally generated clock source. The clock source is used in clock
+                                     selection logic at the chip level and is optionally used for the ADC clock source. */
+#endif                          /* FSL_FEATURE_LPADC_HAS_CFG_ADCKEN */
 #if defined(FSL_FEATURE_LPADC_HAS_CFG_VREF1RNG) && FSL_FEATURE_LPADC_HAS_CFG_VREF1RNG
     bool enableVref1LowVoltage; /*!< If voltage reference option1 input is below 1.8V, it should be "true".
                                      If voltage reference option1 input is above 1.8V, it should be "false". */
@@ -412,9 +575,9 @@ typedef struct
     lpadc_reference_voltage_source_t referenceVoltageSource; /*!< Selects the voltage reference high used for
                                                                   conversions.*/
 
-#if defined(FSL_FEATURE_LPADC_HAS_CFG_PWRSEL) && (FSL_FEATURE_LPADC_HAS_CFG_PWRSEL)
-    lpadc_power_level_mode_t powerLevelMode;               /*!< Power Configuration Selection. */
-#endif                                                     /* FSL_FEATURE_LPADC_HAS_CFG_PWRSEL */
+#if defined(FSL_FEATURE_LPADC_HAS_CFG_PWRSEL) && (FSL_FEATURE_LPADC_HAS_CFG_PWRSEL == 1U)
+    lpadc_power_level_mode_t powerLevelMode; /*!< Power Configuration Selection. */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_PWRSEL) && (FSL_FEATURE_LPADC_HAS_CFG_PWRSEL == 1U) */
     lpadc_trigger_priority_policy_t triggerPriorityPolicy; /*!< Control how higher priority triggers are handled, see to
                                                                 lpadc_trigger_priority_policy_t. */
     bool enableConvPause; /*!< Enables the ADC pausing function. When enabled, a programmable delay is inserted during
@@ -437,7 +600,10 @@ typedef struct
     uint32_t FIFOWatermark; /*!< FIFOWatermark is a programmable threshold setting. When the number of datawords stored
                                  in the ADC Result FIFO is greater than the value in this field, the ready flag would be
                                  asserted to indicate stored data has reached the programmable threshold. */
-#endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
+#endif                       /* FSL_FEATURE_LPADC_FIFO_COUNT */
+#if (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && (FSL_FEATURE_LPADC_HAS_TSTAT))
+
+#endif /* FSL_FEATURE_LPADC_HAS_TSTAT */
 } lpadc_config_t;
 
 /*!
@@ -446,15 +612,15 @@ typedef struct
 typedef struct
 {
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_CSCALE) && FSL_FEATURE_LPADC_HAS_CMDL_CSCALE
-    lpadc_sample_scale_mode_t sampleScaleMode; /*!< Sample scale mode. */
-#endif                                         /* FSL_FEATURE_LPADC_HAS_CMDL_CSCALE */
+    lpadc_sample_scale_mode_t sampleScaleMode;     /*!< Sample scale mode. */
+#endif                                             /* FSL_FEATURE_LPADC_HAS_CMDL_CSCALE */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_ALTB_CSCALE) && FSL_FEATURE_LPADC_HAS_CMDL_ALTB_CSCALE
     lpadc_sample_scale_mode_t channelBScaleMode;   /*!< Alternate channe B Scale mode. */
 #endif                                             /* FSL_FEATURE_LPADC_HAS_CMDL_ALTB_CSCALE */
     lpadc_sample_channel_mode_t sampleChannelMode; /*!< Channel sample mode. */
     uint32_t channelNumber;                        /*!< Channel number, select the channel or channel pair. */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_ALTB_ADCH) && FSL_FEATURE_LPADC_HAS_CMDL_ALTB_ADCH
-    uint32_t channelBNumber; /*!< Alternate Channel B number, select the channel. */
+    uint32_t channelBNumber;                       /*!< Alternate Channel B number, select the channel. */
 #endif
     uint32_t chainedNextCommandNumber; /*!< Selects the next command to be executed after this command completes.
                                             1-15 is available, 0 is to terminate the chain after this command. */
@@ -479,8 +645,8 @@ typedef struct
                                  executing this command. */
 #endif                      /* FSL_FEATURE_LPADC_HAS_CMDH_WAIT_TRIG */
 #if defined(FSL_FEATURE_LPADC_HAS_CMDL_ALTBEN) && FSL_FEATURE_LPADC_HAS_CMDL_ALTBEN
-    bool enableChannelB; /*! Enable alternate Channel B */
-#endif                   /* FSL_FEATURE_LPADC_HAS_CMDL_ALTBEN */
+    bool enableChannelB;    /*! Enable alternate Channel B */
+#endif                      /* FSL_FEATURE_LPADC_HAS_CMDL_ALTBEN */
 } lpadc_conv_command_config_t;
 
 /*!
@@ -515,6 +681,27 @@ typedef struct
     uint32_t triggerIdSource; /*!< Indicate the trigger source that initiated a conversion and generated this result. */
     uint16_t convValue;       /*!< Data result. */
 } lpadc_conv_result_t;
+
+#if defined(FSL_FEATURE_LPADC_HAS_CTRL_CALOFS) && FSL_FEATURE_LPADC_HAS_CTRL_CALOFS
+/*!
+ * @brief A structure of calibration value.
+ */
+typedef struct _lpadc_calibration_value
+{
+    /* gain calibration result. */
+    uint16_t gainCalibrationResultA;
+#if !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U))
+    uint16_t gainCalibrationResultB;
+#endif /* !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U)) */
+#if (defined(FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ) && FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ)
+    /* general calibration value. */
+    uint16_t generalCalibrationValueA[33U];
+#if !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U))
+    uint16_t generalCalibrationValueB[33U];
+#endif /* !(defined(FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS) && (FSL_FEATURE_LPADC_HAS_B_SIDE_CHANNELS == 0U)) */
+#endif /* FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ */
+} lpadc_calibration_value_t;
+#endif /* FSL_FEATURE_LPADC_HAS_CTRL_CALOFS */
 
 #if defined(__cplusplus)
 extern "C" {
@@ -601,6 +788,10 @@ static inline void LPADC_DoResetFIFO1(ADC_Type *base)
     base->CTRL |= ADC_CTRL_RSTFIFO1_MASK;
 }
 #else
+
+#if defined(ADC_CTRL_RSTFIFO0_MASK)
+#define ADC_CTRL_RSTFIFO_MASK ADC_CTRL_RSTFIFO0_MASK
+#endif /* defined(ADC_CTRL_RSTFIFO0_MASK) */
 /*!
  * @brief Do reset the conversion FIFO.
  *
@@ -625,7 +816,7 @@ static inline void LPADC_DoResetConfig(ADC_Type *base)
     base->CTRL &= ~ADC_CTRL_RST_MASK;
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Status
@@ -678,11 +869,14 @@ static inline uint32_t LPADC_GetTriggerStatusFlags(ADC_Type *base)
  */
 static inline void LPADC_ClearTriggerStatusFlags(ADC_Type *base, uint32_t mask)
 {
+    /* This assert used to avoid user use doesn't supported trigger sources. */
+    assert(((mask & 0xFFFFU) == (mask & ADC_TSTAT_TEXC_NUM_MASK)) &&
+           ((mask & 0xFFFF0000U) == (mask & ADC_TSTAT_TCOMP_FLAG_MASK)));
     base->TSTAT = mask;
 }
-#endif /* FSL_FEATURE_LPADC_HAS_TSTAT */
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_TSTAT) && FSL_FEATURE_LPADC_HAS_TSTAT) */
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -697,6 +891,10 @@ static inline void LPADC_ClearTriggerStatusFlags(ADC_Type *base, uint32_t mask)
  */
 static inline void LPADC_EnableInterrupts(ADC_Type *base, uint32_t mask)
 {
+#if (defined(FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE) && (FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE == 1U))
+    /* This assert used to avoid user use doesn't supported trigger sources. */
+    assert((mask <= 0xFFFFU) || ((mask & 0xFFFF0000U) == (mask & ADC_IE_TCOMP_IE_MASK)));
+#endif /* #if (defined(FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE) && (FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE == 1U)) */
     base->IE |= mask;
 }
 
@@ -708,6 +906,10 @@ static inline void LPADC_EnableInterrupts(ADC_Type *base, uint32_t mask)
  */
 static inline void LPADC_DisableInterrupts(ADC_Type *base, uint32_t mask)
 {
+#if (defined(FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE) && (FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE == 1U))
+    /* This assert used to avoid user use doesn't supported trigger sources. */
+    assert((mask <= 0xFFFFU) || ((mask & 0xFFFF0000U) == (mask & ADC_IE_TCOMP_IE_MASK)));
+#endif /* #if (defined(FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE) && (FSL_FEATURE_LPADC_HAS_IE_TCOMP_IE == 1U)) */
     base->IE &= ~mask;
 }
 
@@ -753,6 +955,9 @@ static inline void LPADC_EnableFIFO1WatermarkDMA(ADC_Type *base, bool enable)
     }
 }
 #else
+#if defined(ADC_DE_FWMDE0_MASK)
+#define ADC_DE_FWMDE_MASK ADC_DE_FWMDE0_MASK
+#endif /* defined(ADC_DE_FWMDE0_MASK) */
 /*!
  * @brief Switch on/off the DMA trigger for FIFO watermark event.
  *
@@ -770,8 +975,8 @@ static inline void LPADC_EnableFIFOWatermarkDMA(ADC_Type *base, bool enable)
         base->DE &= ~ADC_DE_FWMDE_MASK;
     }
 }
-#endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
-       /* @} */
+#endif /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2)) */
+/*! @} */
 
 /*!
  * @name Trigger and conversion with FIFO.
@@ -792,16 +997,25 @@ static inline uint32_t LPADC_GetConvResultCount(ADC_Type *base, uint8_t index)
 }
 
 /*!
- * brief Get the result in conversion FIFOn.
+ * @brief Get the result in conversion FIFOn.
  *
- * param base LPADC peripheral base address.
- * param result Pointer to structure variable that keeps the conversion result in conversion FIFOn.
- * param index Result FIFO index.
+ * @param base LPADC peripheral base address.
+ * @param result Pointer to structure variable that keeps the conversion result in conversion FIFOn.
+ * @param index Result FIFO index.
  *
- * return Status whether FIFOn entry is valid.
+ * @return Status whether FIFOn entry is valid.
  */
 bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result, uint8_t index);
-#else
+
+/*!
+ * @brief Get the result in conversion FIFOn using blocking method.
+ *
+ * @param base LPADC peripheral base address.
+ * @param result Pointer to structure variable that keeps the conversion result in conversion FIFOn.
+ * @param index Result FIFO index.
+ */
+void LPADC_GetConvResultBlocking(ADC_Type *base, lpadc_conv_result_t *result, uint8_t index);
+#else  /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 1)) */
 /*!
  * @brief Get the count of result kept in conversion FIFO.
  *
@@ -822,7 +1036,15 @@ static inline uint32_t LPADC_GetConvResultCount(ADC_Type *base)
  * @return Status whether FIFO entry is valid.
  */
 bool LPADC_GetConvResult(ADC_Type *base, lpadc_conv_result_t *result);
-#endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
+
+/*!
+ * @brief Get the result in conversion FIFO using blocking method.
+ *
+ * @param base LPADC peripheral base address.
+ * @param result Pointer to structure variable that keeps the conversion result in conversion FIFO.
+ */
+void LPADC_GetConvResultBlocking(ADC_Type *base, lpadc_conv_result_t *result);
+#endif /* (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2)) */
 
 /*!
  * @brief Configure the conversion trigger source.
@@ -840,10 +1062,12 @@ void LPADC_SetConvTriggerConfig(ADC_Type *base, uint32_t triggerId, const lpadc_
  *
  * This function initializes the trigger's configuration structure with an available settings. The default values are:
  * @code
- *   config->commandIdSource       = 0U;
- *   config->loopCountIndex        = 0U;
- *   config->triggerIdSource       = 0U;
- *   config->enableHardwareTrigger = false;
+ *   config->targetCommandId        = 0U;
+ *   config->delayPower             = 0U;
+ *   config->priority               = 0U;
+ *   config->channelAFIFOSelect     = 0U;
+ *   config->channelBFIFOSelect     = 0U;
+ *   config->enableHardwareTrigger  = false;
  * @endcode
  * @param config Pointer to configuration structure.
  */
@@ -883,10 +1107,13 @@ static inline void LPADC_EnableHardwareTriggerCommandSelection(ADC_Type *base, u
         base->TCTRL[triggerId] &= ~ADC_TCTRL_CMD_SEL_MASK;
     }
 }
-#endif /* FSL_FEATURE_LPADC_HAS_TCTRL_CMD_SEL*/
+#endif /* defined(FSL_FEATURE_LPADC_HAS_TCTRL_CMD_SEL) && FSL_FEATURE_LPADC_HAS_TCTRL_CMD_SEL*/
 
 /*!
  * @brief Configure conversion command.
+
+ * @note The number of compare value register on different chips is different, that is mean in some chips, some
+ * command buffers do not have the compare functionality.
  *
  * @param base LPADC peripheral base address.
  * @param commandId ID for command in command buffer. Typically, the available value range is 1 - 15.
@@ -902,9 +1129,10 @@ void LPADC_SetConvCommandConfig(ADC_Type *base, uint32_t commandId, const lpadc_
  * @code
  *   config->sampleScaleMode            = kLPADC_SampleFullScale;
  *   config->channelBScaleMode          = kLPADC_SampleFullScale;
- *   config->channelSampleMode          = kLPADC_SampleChannelSingleEndSideA;
+ *   config->sampleChannelMode          = kLPADC_SampleChannelSingleEndSideA;
  *   config->channelNumber              = 0U;
- *   config->chainedNextCmdNumber       = 0U;
+ *   config->channelBNumber             = 0U;
+ *   config->chainedNextCommandNumber   = 0U;
  *   config->enableAutoChannelIncrement = false;
  *   config->loopCount                  = 0U;
  *   config->hardwareAverageMode        = kLPADC_HardwareAverageCount1;
@@ -960,11 +1188,48 @@ static inline void LPADC_SetOffsetValue(ADC_Type *base, uint32_t value)
  * @param base  LPADC peripheral base address.
  */
 void LPADC_DoAutoCalibration(ADC_Type *base);
-#endif /* FSL_FEATURE_LPADC_HAS_OFSTRIM */
-#endif /* FSL_FEATURE_LPADC_HAS_CFG_CALOFS */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_OFSTRIM) && FSL_FEATURE_LPADC_HAS_OFSTRIM */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CFG_CALOFS) && FSL_FEATURE_LPADC_HAS_CFG_CALOFS */
 
 #if defined(FSL_FEATURE_LPADC_HAS_CTRL_CALOFS) && FSL_FEATURE_LPADC_HAS_CTRL_CALOFS
 #if defined(FSL_FEATURE_LPADC_HAS_OFSTRIM) && FSL_FEATURE_LPADC_HAS_OFSTRIM
+#if defined(FSL_FEATURE_LPADC_OFSTRIM_COUNT) && (FSL_FEATURE_LPADC_OFSTRIM_COUNT == 1U)
+/*!
+ * @brief Set trim value for offset.
+ *
+ * @note For 16-bit conversions, each increment is 1/2 LSB resulting in a programmable offset range of -256 LSB to 255.5
+ * LSB; For 12-bit conversions, each increment is 1/32 LSB resulting in a programmable offset range of -16 LSB to
+ * 15.96875 LSB.
+ *
+ * @param base LPADC peripheral base address.
+ * @param value Offset trim value, is a 10-bit signed value between -512 and 511.
+ */
+static inline void LPADC_SetOffsetValue(ADC_Type *base, int16_t value)
+{
+    base->OFSTRIM = ADC_OFSTRIM_OFSTRIM(value);
+}
+
+/*!
+ * @brief Get trim value of offset.
+ *
+ * @param base LPADC peripheral base address.
+ * @param pValue Pointer to the variable in type of int16_t to store offset value.
+ */
+static inline void LPADC_GetOffsetValue(ADC_Type *base, int16_t *pValue)
+{
+    assert(pValue != NULL);
+
+    uint16_t ofstrim = (uint16_t)((base->OFSTRIM & (ADC_OFSTRIM_OFSTRIM_MASK)) >> ADC_OFSTRIM_OFSTRIM_SHIFT);
+
+    if ((ofstrim & ADC_OFSTRIM_OFSTRIM_SIGN) != 0U)
+    {
+        /* If the sign bit is set, then set the other MSB. */
+        ofstrim |= (uint16_t)(~ADC_OFSTRIM_OFSTRIM_MAX);
+    }
+
+    *pValue = (int16_t)ofstrim;
+}
+#elif (defined(FSL_FEATURE_LPADC_OFSTRIM_COUNT) && (FSL_FEATURE_LPADC_OFSTRIM_COUNT == 2U))
 /*!
  * @brief Set proper offset value to trim ADC.
  *
@@ -975,11 +1240,42 @@ void LPADC_DoAutoCalibration(ADC_Type *base);
  * @param valueB Setting offset value B.
  * @note In normal adc sequence, the values are automatically calculated by LPADC_EnableOffsetCalibration.
  */
-static inline void LPADC_SetOffsetValue(ADC_Type *base, uint32_t valueA, uint32_t valueB)
+static inline void LPADC_SetOffsetValue(ADC_Type *base, int32_t valueA, int32_t valueB)
 {
     base->OFSTRIM = ADC_OFSTRIM_OFSTRIM_A(valueA) | ADC_OFSTRIM_OFSTRIM_B(valueB);
 }
-#else
+
+/*!
+ * @brief Get trim value of offset.
+ *
+ * @param base LPADC peripheral base address.
+ * @param pValueA Pointer to the variable in type of int32_t to store offset A value.
+ * @param pValueB Pointer to the variable in type of int32_t to store offset B value.
+ */
+static inline void LPADC_GetOffsetValue(ADC_Type *base, int32_t *pValueA, int32_t *pValueB)
+{
+    assert(pValueA != NULL);
+    assert(pValueB != NULL);
+
+    uint32_t ofstrimA = (base->OFSTRIM & (ADC_OFSTRIM_OFSTRIM_A_MASK)) >> ADC_OFSTRIM_OFSTRIM_A_SHIFT;
+    uint32_t ofstrimB = (base->OFSTRIM & (ADC_OFSTRIM_OFSTRIM_B_MASK)) >> ADC_OFSTRIM_OFSTRIM_B_SHIFT;
+
+    if ((ofstrimA & ADC_OFSTRIM_OFSTRIM_A_SIGN) != 0U)
+    {
+        /* If the sign bit is set, then set the other MSB. */
+        ofstrimA |= (~ADC_OFSTRIM_OFSTRIM_A_MAX);
+    }
+    if ((ofstrimB & ADC_OFSTRIM_OFSTRIM_B_SIGN) != 0U)
+    {
+        /* If the sign bit is set, then set the other MSB. */
+        ofstrimB |= (~ADC_OFSTRIM_OFSTRIM_B_MAX);
+    }
+
+    *pValueA = (int32_t)ofstrimA;
+    *pValueB = (int32_t)ofstrimB;
+}
+#endif /* defined(FSL_FEATURE_LPADC_OFSTRIM_COUNT) */
+#else  /* !(defined(FSL_FEATURE_LPADC_HAS_OFSTRIM) && FSL_FEATURE_LPADC_HAS_OFSTRIM) */
 /*!
  * @brief Set proper offset value to trim 12 bit ADC conversion.
  *
@@ -1040,7 +1336,7 @@ static inline void LPADC_SetOffsetCalibrationMode(ADC_Type *base, lpadc_offset_c
     base->CTRL = (base->CTRL & ~ADC_CTRL_CALOFSMODE_MASK) | ADC_CTRL_CALOFSMODE(mode);
 }
 
-#endif /* FSL_FEATURE_LPADC_HAS_CTRL_CALOFSMODE */
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CTRL_CALOFSMODE) && FSL_FEATURE_LPADC_HAS_CTRL_CALOFSMODE */
 
 /*!
  * @brief Do offset calibration.
@@ -1051,15 +1347,178 @@ void LPADC_DoOffsetCalibration(ADC_Type *base);
 
 #if defined(FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ) && FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ
 /*!
- * brief Do auto calibration.
+ * @brief Do auto calibration.
  *
- * param base  LPADC peripheral base address.
+ * @param base  LPADC peripheral base address.
  */
 void LPADC_DoAutoCalibration(ADC_Type *base);
-#endif /* FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ */
-#endif /* FSL_FEATURE_LPADC_HAS_CTRL_CALOFS */
 
-/* @} */
+/*!
+ * @brief Prepare auto calibration, LPADC_FinishAutoCalibration has to be called before using the LPADC.
+ * LPADC_DoAutoCalibration has been split in two API to avoid to be stuck too long in the function.
+ *
+ * @param base  LPADC peripheral base address.
+ */
+void LPADC_PrepareAutoCalibration(ADC_Type *base);
+
+/*!
+ * @brief Finish auto calibration start with LPADC_PrepareAutoCalibration.
+ *
+ * @param base  LPADC peripheral base address.
+ */
+void LPADC_FinishAutoCalibration(ADC_Type *base);
+
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ) && FSL_FEATURE_LPADC_HAS_CTRL_CAL_REQ */
+
+/*!
+ * @brief Get calibration value into the memory which is defined by invoker.
+ *
+ * @note Please note the ADC will be disabled temporary.
+ * @note This function should be used after finish calibration.
+ *
+ * @param base LPADC peripheral base address.
+ * @param ptrCalibrationValue Pointer to @ref lpadc_calibration_value_t structure, this memory block should be always
+ * powered on even in low power modes.
+ */
+void LPADC_GetCalibrationValue(ADC_Type *base, lpadc_calibration_value_t *ptrCalibrationValue);
+
+/*!
+ * @brief Set calibration value into ADC calibration registers.
+ *
+ * @note Please note the ADC will be disabled temporary.
+ *
+ * @param base LPADC peripheral base address.
+ * @param ptrCalibrationValue Pointer to @ref lpadc_calibration_value_t structure which contains ADC's calibration
+ * value.
+ */
+void LPADC_SetCalibrationValue(ADC_Type *base, const lpadc_calibration_value_t *ptrCalibrationValue);
+
+#endif /* defined(FSL_FEATURE_LPADC_HAS_CTRL_CALOFS) && FSL_FEATURE_LPADC_HAS_CTRL_CALOFS */
+
+#if ((defined(FSL_FEATURE_LPADC_HAS_CTRL_CALHS)) && FSL_FEATURE_LPADC_HAS_CTRL_CALHS)
+/*!
+ * @brief Request high speed mode trim calculation.
+ *
+ * @param base LPADC peripheral base address.
+ */
+static inline void LPADC_RequestHighSpeedModeTrim(ADC_Type *base)
+{
+    base->CTRL |= ADC_CTRL_CALHS_MASK;
+}
+
+/*!
+ * @brief Get high speed mode trim value, the result is a 5-bit signed value between -16 and 15.
+ *
+ * @note The high speed mode trim value is used to minimize offset for high speed conversion.
+ *
+ * @param base LPADC peripheral base address.
+ * @return The calculated high speed mode trim value.
+ */
+static inline int8_t LPADC_GetHighSpeedTrimValue(ADC_Type *base)
+{
+    return (int8_t)(base->HSTRIM);
+}
+
+/*!
+ * @brief Set high speed mode trim value.
+ *
+ * @note If is possible to set the trim value manually, but it is recommended to use the LPADC_RequestHighSpeedModeTrim.
+ *
+ * @param base LPADC peripheral base address.
+ * @param trimValue The trim value to be set.
+ */
+static inline void LPADC_SetHighSpeedTrimValue(ADC_Type *base, int8_t trimValue)
+{
+    base->HSTRIM = ADC_HSTRIM_HSTRIM(trimValue);
+}
+
+/*!
+ * @brief Enable/disable high speed conversion mode, if enabled conversions complete 2 or 3 ADCK cycles sooner compared
+ * to conversion cycle counts when high speed mode is disabled.
+ *
+ * @param base LPADC peripheral base address.
+ * @param enable Used to enable/disable high speed conversion mode:
+ *     - \b true Enable high speed conversion mode;
+ *     - \b false Disable high speed conversion mode.
+ */
+static inline void LPADC_EnableHighSpeedConversionMode(ADC_Type *base, bool enable)
+{
+    if (enable)
+    {
+        base->CFG2 |= ADC_CFG2_HS_MASK;
+    }
+    else
+    {
+        base->CFG2 &= ~ADC_CFG2_HS_MASK;
+    }
+}
+
+/*!
+ * @brief Enable/disable an additional ADCK cycle to conversion.
+ *
+ * @param base LPADC peripheral base address.
+ * @param enable Used to enable/disable an additional ADCK cycle to conversion:
+ *          - \b true Enable an additional ADCK cycle to conversion;
+ *          - \b false Disable an additional ADCK cycle to conversion.
+ */
+static inline void LPADC_EnableExtraCycle(ADC_Type *base, bool enable)
+{
+    if (enable)
+    {
+        base->CFG2 |= ADC_CFG2_HSEXTRA_MASK;
+    }
+    else
+    {
+        base->CFG2 &= ~ADC_CFG2_HSEXTRA_MASK;
+    }
+}
+
+/*!
+ * @brief Set tune value which provides some variability in how many cycles are needed to complete a conversion.
+ *
+ * @param base LPADC peripheral base address.
+ * @param tuneValue The tune value to be set, please refer to @ref lpadc_tune_value_t.
+ */
+static inline void LPADC_SetTuneValue(ADC_Type *base, lpadc_tune_value_t tuneValue)
+{
+    base->CFG2 = (base->CFG2 & ~ADC_CFG2_TUNE_MASK) | ADC_CFG2_TUNE(tuneValue);
+}
+
+/*!
+ * @brief Get tune value which provides some variability in how many cycles are needed to complete a conversion.
+ *
+ * @param base LPADC peripheral base address.
+ * @return The tune value, please refer to @ref lpadc_tune_value_t.
+ */
+static inline lpadc_tune_value_t LPADC_GetTuneValue(ADC_Type *base)
+{
+    return (lpadc_tune_value_t)((base->CFG2 & ADC_CFG2_TUNE_MASK) >> ADC_CFG2_TUNE_SHIFT);
+}
+#endif /* ((defined(FSL_FEATURE_LPADC_HAS_CTRL_CALHS)) && FSL_FEATURE_LPADC_HAS_CTRL_CALHS) */
+
+#if (defined(FSL_FEATURE_LPADC_HAS_CFG2_JLEFT) && FSL_FEATURE_LPADC_HAS_CFG2_JLEFT)
+/*!
+ * @brief Enable/disable left-justify format in 12-bit single-end mode.
+ *
+ * @param base LPADC peripheral base address.
+ * @param enable Used to enable/disable left-justify format in 12-bit single-end mode:
+ *          - \b true Enable left-justify format in 12-bit single-end mode;
+ *          - \b false Disable left-justify format in 12-bit single-end mode.
+ */
+static inline void LPADC_EnableJustifiedLeft(ADC_Type *base, bool enable)
+{
+    if (enable)
+    {
+        base->CFG2 |= ADC_CFG2_JLEFT_MASK;
+    }
+    else
+    {
+        base->CFG2 &= ~ADC_CFG2_JLEFT_MASK;
+    }
+}
+#endif /* (defined(FSL_FEATURE_LPADC_HAS_CFG2_JLEFT) && FSL_FEATURE_LPADC_HAS_CFG2_JLEFT) */
+
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -1067,4 +1526,4 @@ void LPADC_DoAutoCalibration(ADC_Type *base);
 /*!
  * @}
  */
-#endif /* _FSL_LPADC_H_ */
+#endif /* FSL_LPADC_H_ */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2022 NXP
+ * Copyright 2018-2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -872,7 +872,6 @@ int32_t PQ_ArctanFixed(POWERQUAD_Type *base, int32_t x, int32_t y, pq_cordic_ite
     base->CORDIC_Z = 0U;
     base->CONTROL  = (CP_CORDIC << 4U) | CORDIC_ARCTAN | CORDIC_ITER(iteration);
 
-    PQ_WaitDone(base);
     return (int32_t)base->CORDIC_Z;
 }
 
@@ -883,6 +882,26 @@ int32_t PQ_ArctanhFixed(POWERQUAD_Type *base, int32_t x, int32_t y, pq_cordic_it
     base->CORDIC_Z = 0U;
     base->CONTROL  = (CP_CORDIC << 4U) | CORDIC_ARCTANH | CORDIC_ITER(iteration);
 
-    PQ_WaitDone(base);
     return (int32_t)base->CORDIC_Z;
+}
+
+int32_t PQ_Arctan2Fixed(POWERQUAD_Type *base, int32_t x, int32_t y, pq_cordic_iter_t iteration)
+{
+    int32_t result;
+
+    result = PQ_ArctanFixed(base, x, y, iteration);
+
+    if (x < 0)
+    {
+        if (y < 0)
+        {
+            result -= 0x08000000;
+        }
+        else
+        {
+            result += 0x08000000;
+        }
+    }
+
+    return result;
 }

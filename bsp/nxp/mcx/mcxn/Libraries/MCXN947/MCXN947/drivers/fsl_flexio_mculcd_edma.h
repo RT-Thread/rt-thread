@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2020 NXP
+ * Copyright 2016-2020,2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_FLEXIO_MCULCD_EDMA_H_
-#define _FSL_FLEXIO_MCULCD_EDMA_H_
+#ifndef FSL_FLEXIO_MCULCD_EDMA_H_
+#define FSL_FLEXIO_MCULCD_EDMA_H_
 
 #include "fsl_edma.h"
 #include "fsl_flexio_mculcd.h"
@@ -21,10 +21,10 @@
  * Definitions
  ******************************************************************************/
 
-/*@{*/
+/*! @{ */
 /*! @brief FlexIO MCULCD EDMA driver version. */
-#define FSL_FLEXIO_MCULCD_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 4))
-/*@}*/
+#define FSL_FLEXIO_MCULCD_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 5))
+/*! @} */
 
 /*! @brief  typedef for flexio_mculcd_edma_handle_t in advance. */
 typedef struct _flexio_mculcd_edma_handle flexio_mculcd_edma_handle_t;
@@ -119,27 +119,6 @@ status_t FLEXIO_MCULCD_TransferCreateHandleEDMA(FLEXIO_MCULCD_Type *base,
 status_t FLEXIO_MCULCD_TransferEDMA(FLEXIO_MCULCD_Type *base,
                                     flexio_mculcd_edma_handle_t *handle,
                                     flexio_mculcd_transfer_t *xfer);
-/*!
- * brief Performs a non-blocking FlexIO MCULCD data write using eDMA.
- *
- * This function returns immediately after transfer initiates. To check whether
- * the transfer is completed, user could:
- * 1. Use the transfer completed callback;
- * 2. Polling function ref FLEXIO_MCULCD_GetTransferCountEDMA
- *
- * param base pointer to FLEXIO_MCULCD_Type structure.
- * param handle pointer to flexio_mculcd_edma_handle_t structure to store the
- * transfer state.
- * param data Pointer to data.
- * param size Size(in bytes) of the data
- * retval kStatus_Success Successfully start a transfer.
- * retval kStatus_InvalidArgument Input argument is invalid.
- * retval kStatus_FLEXIO_MCULCD_Busy FlexIO MCULCD is not idle, it is running another
- * transfer.
- */
-status_t FLEXIO_MCULCD_WriteDataEDMA(FLEXIO_MCULCD_Type *base,
-                                    flexio_mculcd_edma_handle_t *handle,
-                                    const void *data, size_t size);
 
 /*!
  * @brief Aborts a FlexIO MCULCD transfer using eDMA.
@@ -171,4 +150,4 @@ status_t FLEXIO_MCULCD_TransferGetCountEDMA(FLEXIO_MCULCD_Type *base,
 /*!
  * @}
  */
-#endif /* _FSL_FLEXIO_MCULCD_EDMA_H_ */
+#endif /* FSL_FLEXIO_MCULCD_EDMA_H_ */

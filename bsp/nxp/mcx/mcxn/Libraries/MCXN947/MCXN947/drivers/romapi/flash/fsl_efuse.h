@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef _FSL_EFUSE_H_
-#define _FSL_EFUSE_H_
+#ifndef FSL_EFUSE_H_
+#define FSL_EFUSE_H_
 
 #include "fsl_flash.h"
 
@@ -101,12 +101,12 @@ status_t EFUSE_Read(uint32_t addr, uint32_t *data);
  */
 status_t EFUSE_Program(uint32_t addr, uint32_t data);
 
-/*@}*/
+/*! @} */
 
 #ifdef __cplusplus
 }
 #endif
 
-/*@}*/
+/*! @} */
 
-#endif /*! _FSL_EFUSE_H_ */
+#endif /*! FSL_EFUSE_H_ */

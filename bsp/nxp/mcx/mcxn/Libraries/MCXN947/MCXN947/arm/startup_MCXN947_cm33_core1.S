@@ -2,15 +2,13 @@
 /*  @file:    startup_MCXN947_cm33_core1.s                                   */
 /*  @purpose: CMSIS Cortex-M33 Core Device Startup File                      */
 /*            MCXN947_cm33_core1                                             */
-/*  @version: 1.0                                                            */
-/*  @date:    2022-10-1                                                      */
-/*  @build:   b230131                                                        */
+/*  @version: 2.0                                                            */
+/*  @date:    2023-2-1                                                       */
+/*  @build:   b240410                                                        */
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
 /* Copyright 1997-2016 Freescale Semiconductor, Inc.                         */
-/* Copyright 2016-2023 NXP                                                   */
-/* All rights reserved.                                                      */
-/*                                                                           */
+/* Copyright 2016-2024 NXP                                                   */
 /* SPDX-License-Identifier: BSD-3-Clause                                     */
 /*****************************************************************************/
 /* Version: GCC for ARM Embedded Processors                                  */
@@ -165,14 +163,14 @@ __Vectors:
     .long   FLEXPWM1_SUBMODULE1_IRQHandler                  /* FlexPWM1 Submodule 1 capture/compare/reload interrupt*/
     .long   FLEXPWM1_SUBMODULE2_IRQHandler                  /* FlexPWM1 Submodule 2 capture/compare/reload interrupt*/
     .long   FLEXPWM1_SUBMODULE3_IRQHandler                  /* FlexPWM1 Submodule 3 capture/compare/reload interrupt*/
-    .long   ENC0_COMPARE_IRQHandler                         /* ENC0_Compare interrupt*/
-    .long   ENC0_HOME_IRQHandler                            /* ENC0_Home interrupt*/
-    .long   ENC0_WDG_SAB_IRQHandler                         /* ENC0_WDG_IRQ/SAB interrupt*/
-    .long   ENC0_IDX_IRQHandler                             /* ENC0_IDX interrupt*/
-    .long   ENC1_COMPARE_IRQHandler                         /* ENC1_Compare interrupt*/
-    .long   ENC1_HOME_IRQHandler                            /* ENC1_Home interrupt*/
-    .long   ENC1_WDG_SAB_IRQHandler                         /* ENC1_WDG_IRQ/SAB interrupt*/
-    .long   ENC1_IDX_IRQHandler                             /* ENC1_IDX interrupt*/
+    .long   QDC0_COMPARE_IRQHandler                         /* QDC0_Compare interrupt*/
+    .long   QDC0_HOME_IRQHandler                            /* QDC0_Home interrupt*/
+    .long   QDC0_WDG_SAB_IRQHandler                         /* QDC0_WDG_IRQ/SAB interrupt*/
+    .long   QDC0_IDX_IRQHandler                             /* QDC0_IDX interrupt*/
+    .long   QDC1_COMPARE_IRQHandler                         /* QDC1_Compare interrupt*/
+    .long   QDC1_HOME_IRQHandler                            /* QDC1_Home interrupt*/
+    .long   QDC1_WDG_SAB_IRQHandler                         /* QDC1_WDG_IRQ/SAB interrupt*/
+    .long   QDC1_IDX_IRQHandler                             /* QDC1_IDX interrupt*/
     .long   ITRC0_IRQHandler                                /* Intrusion and Tamper Response Controller interrupt*/
     .long   BSP32_IRQHandler                                /* CoolFlux BSP32 interrupt*/
     .long   ELS_ERR_IRQHandler                              /* ELS error interrupt*/
@@ -191,8 +189,8 @@ __Vectors:
     .long   WUU_IRQHandler                                  /* Wake Up Unit interrupt*/
     .long   PORT_EFT_IRQHandler                             /* PORT0~5 EFT interrupt*/
     .long   ETB0_IRQHandler                                 /* ETB counter expires interrupt*/
-    .long   SM3_IRQHandler                                  /* Secure Generic Interface (SGI) SAFO interrupt */
-    .long   TRNG0_IRQHandler                                /* True Random Number Generator interrupt*/
+    .long   Reserved166_IRQHandler                          /* Reserved interrupt*/
+    .long   Reserved167_IRQHandler                          /* Reserved interrupt*/
     .long   WWDT0_IRQHandler                                /* Windowed Watchdog Timer 0 interrupt*/
     .long   WWDT1_IRQHandler                                /* Windowed Watchdog Timer 1 interrupt*/
     .long   CMC0_IRQHandler                                 /* Core Mode Controller interrupt*/
@@ -1391,75 +1389,75 @@ FLEXPWM1_SUBMODULE3_IRQHandler:
 
     .align 1
     .thumb_func
-    .weak ENC0_COMPARE_IRQHandler
-    .type ENC0_COMPARE_IRQHandler, %function
-ENC0_COMPARE_IRQHandler:
-    ldr   r0,=ENC0_COMPARE_DriverIRQHandler
+    .weak QDC0_COMPARE_IRQHandler
+    .type QDC0_COMPARE_IRQHandler, %function
+QDC0_COMPARE_IRQHandler:
+    ldr   r0,=QDC0_COMPARE_DriverIRQHandler
     bx    r0
-    .size ENC0_COMPARE_IRQHandler, . - ENC0_COMPARE_IRQHandler
+    .size QDC0_COMPARE_IRQHandler, . - QDC0_COMPARE_IRQHandler
 
     .align 1
     .thumb_func
-    .weak ENC0_HOME_IRQHandler
-    .type ENC0_HOME_IRQHandler, %function
-ENC0_HOME_IRQHandler:
-    ldr   r0,=ENC0_HOME_DriverIRQHandler
+    .weak QDC0_HOME_IRQHandler
+    .type QDC0_HOME_IRQHandler, %function
+QDC0_HOME_IRQHandler:
+    ldr   r0,=QDC0_HOME_DriverIRQHandler
     bx    r0
-    .size ENC0_HOME_IRQHandler, . - ENC0_HOME_IRQHandler
+    .size QDC0_HOME_IRQHandler, . - QDC0_HOME_IRQHandler
 
     .align 1
     .thumb_func
-    .weak ENC0_WDG_SAB_IRQHandler
-    .type ENC0_WDG_SAB_IRQHandler, %function
-ENC0_WDG_SAB_IRQHandler:
-    ldr   r0,=ENC0_WDG_SAB_DriverIRQHandler
+    .weak QDC0_WDG_SAB_IRQHandler
+    .type QDC0_WDG_SAB_IRQHandler, %function
+QDC0_WDG_SAB_IRQHandler:
+    ldr   r0,=QDC0_WDG_SAB_DriverIRQHandler
     bx    r0
-    .size ENC0_WDG_SAB_IRQHandler, . - ENC0_WDG_SAB_IRQHandler
+    .size QDC0_WDG_SAB_IRQHandler, . - QDC0_WDG_SAB_IRQHandler
 
     .align 1
     .thumb_func
-    .weak ENC0_IDX_IRQHandler
-    .type ENC0_IDX_IRQHandler, %function
-ENC0_IDX_IRQHandler:
-    ldr   r0,=ENC0_IDX_DriverIRQHandler
+    .weak QDC0_IDX_IRQHandler
+    .type QDC0_IDX_IRQHandler, %function
+QDC0_IDX_IRQHandler:
+    ldr   r0,=QDC0_IDX_DriverIRQHandler
     bx    r0
-    .size ENC0_IDX_IRQHandler, . - ENC0_IDX_IRQHandler
+    .size QDC0_IDX_IRQHandler, . - QDC0_IDX_IRQHandler
 
     .align 1
     .thumb_func
-    .weak ENC1_COMPARE_IRQHandler
-    .type ENC1_COMPARE_IRQHandler, %function
-ENC1_COMPARE_IRQHandler:
-    ldr   r0,=ENC1_COMPARE_DriverIRQHandler
+    .weak QDC1_COMPARE_IRQHandler
+    .type QDC1_COMPARE_IRQHandler, %function
+QDC1_COMPARE_IRQHandler:
+    ldr   r0,=QDC1_COMPARE_DriverIRQHandler
     bx    r0
-    .size ENC1_COMPARE_IRQHandler, . - ENC1_COMPARE_IRQHandler
+    .size QDC1_COMPARE_IRQHandler, . - QDC1_COMPARE_IRQHandler
 
     .align 1
     .thumb_func
-    .weak ENC1_HOME_IRQHandler
-    .type ENC1_HOME_IRQHandler, %function
-ENC1_HOME_IRQHandler:
-    ldr   r0,=ENC1_HOME_DriverIRQHandler
+    .weak QDC1_HOME_IRQHandler
+    .type QDC1_HOME_IRQHandler, %function
+QDC1_HOME_IRQHandler:
+    ldr   r0,=QDC1_HOME_DriverIRQHandler
     bx    r0
-    .size ENC1_HOME_IRQHandler, . - ENC1_HOME_IRQHandler
+    .size QDC1_HOME_IRQHandler, . - QDC1_HOME_IRQHandler
 
     .align 1
     .thumb_func
-    .weak ENC1_WDG_SAB_IRQHandler
-    .type ENC1_WDG_SAB_IRQHandler, %function
-ENC1_WDG_SAB_IRQHandler:
-    ldr   r0,=ENC1_WDG_SAB_DriverIRQHandler
+    .weak QDC1_WDG_SAB_IRQHandler
+    .type QDC1_WDG_SAB_IRQHandler, %function
+QDC1_WDG_SAB_IRQHandler:
+    ldr   r0,=QDC1_WDG_SAB_DriverIRQHandler
     bx    r0
-    .size ENC1_WDG_SAB_IRQHandler, . - ENC1_WDG_SAB_IRQHandler
+    .size QDC1_WDG_SAB_IRQHandler, . - QDC1_WDG_SAB_IRQHandler
 
     .align 1
     .thumb_func
-    .weak ENC1_IDX_IRQHandler
-    .type ENC1_IDX_IRQHandler, %function
-ENC1_IDX_IRQHandler:
-    ldr   r0,=ENC1_IDX_DriverIRQHandler
+    .weak QDC1_IDX_IRQHandler
+    .type QDC1_IDX_IRQHandler, %function
+QDC1_IDX_IRQHandler:
+    ldr   r0,=QDC1_IDX_DriverIRQHandler
     bx    r0
-    .size ENC1_IDX_IRQHandler, . - ENC1_IDX_IRQHandler
+    .size QDC1_IDX_IRQHandler, . - QDC1_IDX_IRQHandler
 
     .align 1
     .thumb_func
@@ -1625,21 +1623,21 @@ ETB0_IRQHandler:
 
     .align 1
     .thumb_func
-    .weak SM3_IRQHandler
-    .type SM3_IRQHandler, %function
-SM3_IRQHandler:
-    ldr   r0,=SM3_DriverIRQHandler
+    .weak Reserved166_IRQHandler
+    .type Reserved166_IRQHandler, %function
+Reserved166_IRQHandler:
+    ldr   r0,=Reserved166_DriverIRQHandler
     bx    r0
-    .size SM3_IRQHandler, . - SM3_IRQHandler
+    .size Reserved166_IRQHandler, . - Reserved166_IRQHandler
 
     .align 1
     .thumb_func
-    .weak TRNG0_IRQHandler
-    .type TRNG0_IRQHandler, %function
-TRNG0_IRQHandler:
-    ldr   r0,=TRNG0_DriverIRQHandler
+    .weak Reserved167_IRQHandler
+    .type Reserved167_IRQHandler, %function
+Reserved167_IRQHandler:
+    ldr   r0,=Reserved167_DriverIRQHandler
     bx    r0
-    .size TRNG0_IRQHandler, . - TRNG0_IRQHandler
+    .size Reserved167_IRQHandler, . - Reserved167_IRQHandler
 
     .align 1
     .thumb_func
@@ -1816,14 +1814,14 @@ CTI0_IRQHandler:
     def_irq_handler    FLEXPWM1_SUBMODULE1_DriverIRQHandler
     def_irq_handler    FLEXPWM1_SUBMODULE2_DriverIRQHandler
     def_irq_handler    FLEXPWM1_SUBMODULE3_DriverIRQHandler
-    def_irq_handler    ENC0_COMPARE_DriverIRQHandler
-    def_irq_handler    ENC0_HOME_DriverIRQHandler
-    def_irq_handler    ENC0_WDG_SAB_DriverIRQHandler
-    def_irq_handler    ENC0_IDX_DriverIRQHandler
-    def_irq_handler    ENC1_COMPARE_DriverIRQHandler
-    def_irq_handler    ENC1_HOME_DriverIRQHandler
-    def_irq_handler    ENC1_WDG_SAB_DriverIRQHandler
-    def_irq_handler    ENC1_IDX_DriverIRQHandler
+    def_irq_handler    QDC0_COMPARE_DriverIRQHandler
+    def_irq_handler    QDC0_HOME_DriverIRQHandler
+    def_irq_handler    QDC0_WDG_SAB_DriverIRQHandler
+    def_irq_handler    QDC0_IDX_DriverIRQHandler
+    def_irq_handler    QDC1_COMPARE_DriverIRQHandler
+    def_irq_handler    QDC1_HOME_DriverIRQHandler
+    def_irq_handler    QDC1_WDG_SAB_DriverIRQHandler
+    def_irq_handler    QDC1_IDX_DriverIRQHandler
     def_irq_handler    ITRC0_DriverIRQHandler
     def_irq_handler    BSP32_DriverIRQHandler
     def_irq_handler    ELS_ERR_DriverIRQHandler
@@ -1842,8 +1840,8 @@ CTI0_IRQHandler:
     def_irq_handler    WUU_DriverIRQHandler
     def_irq_handler    PORT_EFT_DriverIRQHandler
     def_irq_handler    ETB0_DriverIRQHandler
-    def_irq_handler    SM3_DriverIRQHandler
-    def_irq_handler    TRNG0_DriverIRQHandler
+    def_irq_handler    Reserved166_DriverIRQHandler
+    def_irq_handler    Reserved167_DriverIRQHandler
     def_irq_handler    WWDT0_DriverIRQHandler
     def_irq_handler    WWDT1_DriverIRQHandler
     def_irq_handler    CMC0_DriverIRQHandler

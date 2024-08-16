@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_FREQME_
-#define _FSL_FREQME_
+#ifndef FSL_FREQME_H_
+#define FSL_FREQME_H_
 
 #include "fsl_common.h"
 
@@ -19,10 +19,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief FREQME driver version 2.0.0. */
-#define FSL_FREQME_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
-/*@}*/
+/*! @{ */
+/*! @brief FREQME driver version 2.1.2. */
+#define FSL_FREQME_DRIVER_VERSION (MAKE_VERSION(2, 1, 2))
+/*! @} */
 
 /*!
  * @brief The enumeration of interrupt status flags.
@@ -51,10 +51,10 @@ enum _freqme_interrupt_status_flags
  */
 enum _freqme_interrupt_enable
 {
-    kFREQME_UnderflowInterruptEnable = FREQME_CTRL_W_LT_MIN_INT_EN_MASK,   /*!< Enable interrupt when the result is
-                                                                                     less than minimum value. */
-    kFREQME_OverflowInterruptEnable = FREQME_CTRL_W_GT_MAX_INT_EN_MASK,    /*!< Enable interrupt when the result is
-                                                                                     greater than maximum value. */
+    kFREQME_UnderflowInterruptEnable = FREQME_CTRL_W_LT_MIN_INT_EN_MASK, /*!< Enable interrupt when the result is
+                                                                                   less than minimum value. */
+    kFREQME_OverflowInterruptEnable = FREQME_CTRL_W_GT_MAX_INT_EN_MASK,  /*!< Enable interrupt when the result is
+                                                                                   greater than maximum value. */
     kFREQME_ReadyInterruptEnable = FREQME_CTRL_W_RESULT_READY_INT_EN_MASK, /*!< Enable interrupt when a
                                                                                  measurement completes and the result
                                                                                  is ready. */
@@ -223,8 +223,8 @@ static inline void FREQME_SetOperateMode(FREQME_Type *base, freqme_operate_mode_
     uint32_t tmp32;
 
     tmp32 = base->CTRLSTAT;
-    tmp32 &= ~(FREQME_CTRLSTAT_LT_MIN_STAT_MASK | FREQME_CTRLSTAT_PULSE_MODE_MASK | FREQME_CTRLSTAT_GT_MAX_STAT_MASK |
-               FREQME_CTRLSTAT_RESULT_READY_STAT_MASK);
+    tmp32 &= ~(FREQME_CTRLSTAT_LT_MIN_STAT_MASK | FREQME_CTRLSTAT_PULSE_MODE_MASK |
+               FREQME_CTRLSTAT_GT_MAX_STAT_MASK | FREQME_CTRLSTAT_RESULT_READY_STAT_MASK);
     if (operateMode == kFREOME_PulseWidthMeasurementMode)
     {
         tmp32 |= FREQME_CTRL_W_PULSE_MODE_MASK;
@@ -243,6 +243,7 @@ static inline void FREQME_SetOperateMode(FREQME_Type *base, freqme_operate_mode_
 static inline bool FREQME_CheckOperateMode(FREQME_Type *base)
 {
     return (bool)((base->CTRLSTAT & FREQME_CTRLSTAT_PULSE_MODE_MASK) != 0UL);
+
 }
 
 /*!
@@ -275,7 +276,7 @@ static inline void FREQME_SetMaxExpectedValue(FREQME_Type *base, uint32_t maxVal
  */
 
 /*!
- * @brief Calculate the frequency of selected target clockã€‚
+ * @brief Calculate the frequency of selected target clock。
  *
  * @note The formula: Ftarget = (RESULT - 2) * Freference / 2 ^ REF_SCALE.
  *
@@ -317,8 +318,8 @@ static inline void FREQME_SetPulsePolarity(FREQME_Type *base, freqme_pulse_polar
     uint32_t tmp32;
 
     tmp32 = base->CTRLSTAT;
-    tmp32 &= ~(FREQME_CTRLSTAT_LT_MIN_STAT_MASK | FREQME_CTRLSTAT_PULSE_POL_MASK | FREQME_CTRLSTAT_GT_MAX_STAT_MASK |
-               FREQME_CTRLSTAT_RESULT_READY_STAT_MASK);
+    tmp32 &= ~(FREQME_CTRLSTAT_LT_MIN_STAT_MASK | FREQME_CTRLSTAT_PULSE_POL_MASK |
+               FREQME_CTRLSTAT_GT_MAX_STAT_MASK | FREQME_CTRLSTAT_RESULT_READY_STAT_MASK);
 
     if (pulsePolarity != kFREQME_PulseHighPeriod)
     {
@@ -437,4 +438,4 @@ static inline void FREQME_DisableInterrupts(FREQME_Type *base, uint32_t masks)
 /*!
  * @}
  */
-#endif /* __FSL_FREQME_H__ */
+#endif /* FSL_FREQME_H_ */

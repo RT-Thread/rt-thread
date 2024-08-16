@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_SBLOADER_V3_H_
-#define _FSL_SBLOADER_V3_H_
+#ifndef FSL_SBLOADER_V3_H_
+#define FSL_SBLOADER_V3_H_
 
 #include <stdint.h>
 
@@ -268,4 +268,4 @@ struct _ldr_Context_v3
 
 /*! @} */
 
-#endif /* _FSL_SBLOADER_V3_H_ */
+#endif /* FSL_SBLOADER_V3_H_ */

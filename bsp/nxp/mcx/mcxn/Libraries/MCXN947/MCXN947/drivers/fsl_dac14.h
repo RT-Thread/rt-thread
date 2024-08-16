@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_DAC14_H_
-#define _FSL_DAC14_H_
+#ifndef FSL_DAC14_H_
+#define FSL_DAC14_H_
 
 #include "fsl_common.h"
 
@@ -22,10 +22,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief DAC14 driver version 2.0.0. */
 #define FSL_DAC14_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
-/*@}*/
+/*! @} */
 
 /*!
  * @brief DAC14 interrupts enumeration.
@@ -209,7 +209,7 @@ static inline void DAC14_AbortPeriodTriggerConvSequence(HPDAC_Type *base)
 {
     base->GCR &= ~HPDAC_GCR_PTGEN_MASK;
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name DAC Control Interface
@@ -233,7 +233,7 @@ static inline void DAC14_Enable(HPDAC_Type *base, bool enable)
         base->GCR &= ~HPDAC_GCR_DACEN_MASK;
     }
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name Swing Back Mode Control Interface
@@ -256,7 +256,7 @@ static inline void DAC14_EnableSwingBackMode(HPDAC_Type *base, bool enable)
         base->GCR &= ~HPDAC_GCR_SWMD_MASK;
     }
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name FIFO Mode Control Interface
@@ -279,7 +279,7 @@ static inline void DAC14_EnableFIFOMode(HPDAC_Type *base, bool enable)
         base->GCR &= ~HPDAC_GCR_FIFOEN_MASK;
     }
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -306,7 +306,7 @@ static inline void DAC14_DisableInterrupts(HPDAC_Type *base, uint32_t mask)
 {
     base->IER &= ~mask;
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name DMA Control Interface
@@ -330,7 +330,7 @@ static inline void DAC14_EnableDMA(HPDAC_Type *base, uint32_t mask, bool enable)
         base->DER &= ~mask;
     }
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name Status
@@ -357,7 +357,7 @@ static inline void DAC14_ClearStatusFlags(HPDAC_Type *base, uint32_t flags)
 {
     base->FSR = flags;
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name Functional Feature
@@ -407,7 +407,7 @@ static inline void DAC14_DoSoftwareTrigger(HPDAC_Type *base)
 {
     base->TCR = HPDAC_TCR_SWTRG_MASK;
 }
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -416,4 +416,4 @@ static inline void DAC14_DoSoftwareTrigger(HPDAC_Type *base)
 /*!
  * @}
  */
-#endif /* _FSL_DAC14_H_ */
+#endif /* FSL_DAC14_H_ */

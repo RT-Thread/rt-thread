@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_SYSPM_H_
-#define _FSL_SYSPM_H_
+#ifndef FSL_SYSPM_H_
+#define FSL_SYSPM_H_
 
 #include "fsl_common.h"
 
@@ -19,11 +19,11 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief SYSPM driver version */
 #define FSL_SYSPM_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
 
-/*@}*/
+/*! @} */
 /*! @brief syspm select control monitor */
 typedef enum _syspm_monitor
 {
@@ -162,4 +162,4 @@ uint64_t SYSPM_GetEventCounter(SYSPM_Type *base, syspm_monitor_t monitor, syspm_
 
 /*! @}*/
 
-#endif /* _FSL_SYSPM_H_*/
+#endif /* FSL_SYSPM_H_*/
