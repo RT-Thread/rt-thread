@@ -404,17 +404,15 @@ void sdhci_reset(struct sdhci_host *host, rt_uint8_t mask)
             sdhci_runtime_pm_bus_off(host);
     }
 
-    /* Wait max 100 ms */
-    timeout = ktime_add_ms(ktime_get(), 100);
-
-    /* hw clears the bit when it's done */
+    timeout = rt_tick_from_millisecond(150);
     while (1)
-    {
-        rt_bool_t timedout = ktime_after(ktime_get(), timeout);
+        {
+            timeout = timeout - rt_tick_get();
+
 
         if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
             break;
-        if (timedout)
+        if (timeout < 0)
         {
             rt_kprintf("%s: Reset 0x%x never completed.\n",
                        mmc_hostname(host->mmc), (int)mask);
@@ -914,8 +912,7 @@ int sdhci_start_signal_voltage_switch(struct mmc_host        *mmc,
             }
         }
         /* Wait for 5ms */
-        usleep_range(5000, 5500);
-
+		rt_thread_mdelay(5);
         /* 3.3V regulator output should be stable within 5 ms */
         ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
         if (!(ctrl & SDHCI_CTRL_VDD_180))
@@ -1184,13 +1181,13 @@ static void sdhci_calc_sw_timeout(struct sdhci_host   *host,
     rt_uint64_t             transfer_time;
 
     target_timeout  = sdhci_target_timeout(host, cmd, data);
-    target_timeout *= NSEC_PER_USEC;
+    target_timeout *= 1000L;
 
     if (data)
     {
         blksz         = data->blksize;
         freq          = mmc->actual_clock ?: host->clock;
-        transfer_time = (rt_uint64_t)blksz * NSEC_PER_SEC * (8 / bus_width);
+        transfer_time = (rt_uint64_t)blksz * 1000000000L * (8 / bus_width);
         do_div(transfer_time, freq);
         /* multiply by '2' to account for any unknowns */
         transfer_time = transfer_time * 2;
@@ -1237,9 +1234,33 @@ static void sdhci_mod_timer(struct sdhci_host *host, struct rt_mmcsd_req *mrq,
                             unsigned long timeout)
 {
     if (sdhci_data_line_cmd(mrq->cmd))
-        mod_timer(&host->data_timer, timeout);
-    else
-        mod_timer(&host->timer, timeout);
+	{
+        rt_tick_t tick = rt_tick_get();
+
+		if (timeout < tick)
+		{
+			timeout = tick;
+		}
+		tick = timeout - tick;
+
+		rt_timer_stop(&host->data_timer);
+		rt_timer_control(&host->data_timer, RT_TIMER_CTRL_SET_TIME, &tick);
+		rt_timer_start(&host->data_timer);
+	}
+	else
+	{
+		rt_tick_t tick = rt_tick_get();
+
+		if (timeout < tick)
+		{
+			timeout = tick;
+		}
+		tick = timeout - tick;
+
+		rt_timer_stop(&host->timer);
+		rt_timer_control(&host->timer, RT_TIMER_CTRL_SET_TIME, &tick);
+		rt_timer_start(&host->timer);
+	}
 }
 
 static void __sdhci_finish_mrq(struct sdhci_host *host, struct rt_mmcsd_req *mrq)
@@ -1456,7 +1477,7 @@ static rt_bool_t sdhci_send_command(struct sdhci_host *host, struct rt_mmcsd_cmd
 
     timeout = rt_tick_get();
     if (host->data_timeout)
-        timeout += nsecs_to_jiffies(host->data_timeout);
+        timeout += rt_tick_from_millisecond(host->data_timeout*1000);
     else if (!cmd->data && cmd->busy_timeout > 9000)
         timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * RT_TICK_PER_SECOND + RT_TICK_PER_SECOND;
     else
@@ -1991,7 +2012,7 @@ static rt_bool_t sdhci_send_command_retry(struct sdhci_host   *host,
 
         rt_spin_unlock_irqrestore(&host->lock, flags);
 
-        usleep_range(1000, 1250);
+        rt_thread_mdelay(1);
 
         present = host->mmc->ops->get_cd(host->mmc);
 
@@ -2670,21 +2691,21 @@ clock_set:
 
 void sdhci_enable_clk(struct sdhci_host *host, rt_uint16_t clk)
 {
-    ktime_t timeout;
+    long timeout;
 
     clk |= SDHCI_CLOCK_INT_EN;
     sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
 
     /* Wait max 150 ms */
-    timeout = ktime_add_ms(ktime_get(), 150);
+    timeout = rt_tick_from_millisecond(150);
     while (1)
     {
-        rt_bool_t timedout = ktime_after(ktime_get(), timeout);
+        timeout = timeout - rt_tick_get();
 
         clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
         if (clk & SDHCI_CLOCK_INT_STABLE)
             break;
-        if (timedout)
+        if (timeout < 0)
         {
             rt_kprintf("%s: Internal clock never stabilised.\n",
                        mmc_hostname(host->mmc));
@@ -2701,15 +2722,15 @@ void sdhci_enable_clk(struct sdhci_host *host, rt_uint16_t clk)
         sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
 
         /* Wait max 150 ms */
-        timeout = ktime_add_ms(ktime_get(), 150);
+        timeout = rt_tick_from_millisecond(150);
         while (1)
         {
-            rt_bool_t timedout = ktime_after(ktime_get(), timeout);
+            timeout = timeout - rt_tick_get();
 
             clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
             if (clk & SDHCI_CLOCK_INT_STABLE)
                 break;
-            if (timedout)
+            if (timeout < 0)
             {
                 rt_kprintf("%s: PLL clock never stabilised.\n",
                            mmc_hostname(host->mmc));
@@ -3336,7 +3357,7 @@ static void sdhci_reinit(struct sdhci_host *host)
      * rescan to check.
      */
     if (cd != (host->ier & (SDHCI_INT_CARD_REMOVE | SDHCI_INT_CARD_INSERT)))
-        mmc_detect_change(host->mmc, nsecs_to_jiffies(200));
+        mmc_detect_change(host->mmc, rt_tick_from_millisecond(200));
 }
 
 int __sdhci_add_host(struct sdhci_host *host)

@@ -12,7 +12,6 @@
 
 #include "sdhci_host.h"
 #include "sdhci_misc.h"
-#include "sdhci_time.h"
 #include "sdhci_dma.h"
 #include "sdhci-platform.h"
 #include <drivers/mmcsd_cmd.h>
@@ -361,7 +360,7 @@ struct sdhci_adma2_64_desc
  * command and response, and the time between response and start of data is
  * not known, set the command transfer time to 10ms.
  */
-#define MMC_CMD_TRANSFER_TIME (10 * NSEC_PER_MSEC) /* max 10 ms */
+#define MMC_CMD_TRANSFER_TIME (10 * 1000000L) /* max 10 ms */
 
 
 enum sdhci_cookie
@@ -544,7 +543,6 @@ struct sdhci_host
     struct rt_mmcsd_data *data;                      /* Current data request */
     unsigned int          data_early : 1;            /* Data finished before cmd */
 
-    /* struct sg_mapping_iter sg_miter;    /* SG state for PIO */
     unsigned int blocks;                /* remaining PIO blocks */
 
     int sg_count;                       /* Mapped sg entries */
