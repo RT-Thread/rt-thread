@@ -1,13 +1,18 @@
 from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_SDHCI']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/include']
+
 src = []
-cwd     = GetCurrentDir()
-CPPPATH = [cwd + '/include',cwd + '/sdhci-platform']
 src += Glob('*.c')
 src += Glob('src/*.c')
 src += Glob('sdhci-platform/*.c')
 
-group = DefineGroup('Drivers', src, depend = ['RT_USING_SDHCI'], CPPPATH = CPPPATH)
+group = DefineGroup('sdhci-drivers', src, depend = [''], CPPPATH = CPPPATH)
 
-objs = [group]
-
-Return('objs')
+Return('group')

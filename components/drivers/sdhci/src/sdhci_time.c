@@ -1,4 +1,13 @@
-#include "sdhci_time.h"
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author        Notes
+ * 2024-08-16     zhujiale     first version
+ */
+#include "sdhci_main.h"
 #include <rtthread.h>
 
 

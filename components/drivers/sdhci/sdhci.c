@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2020-09-27     zhujiale     first version
+ * 2024-08-16     zhujiale     first version
  */
 
 #include <rtthread.h>
@@ -3466,5 +3466,9 @@ void sdhci_set_ios(struct mmc_host *mmc, struct rt_mmcsd_io_cfg *ios)
 	} else
 		sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
 }
+void sdhci_free_host(struct sdhci_host *host)
+{
+	sdhci_cleanup_host(host);
+	rt_free(host);
 
-
+}

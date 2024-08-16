@@ -1,5 +1,14 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author        Notes
+ * 2024-08-16     zhujiale     first version
+ */
 #include <rtthread.h>
-#include "sdhci_host.h"
+#include "sdhci_main.h"
 #include <rtdbg.h>
 #include <mmu.h>
 #include <drivers/core/dm.h>
@@ -281,6 +290,12 @@ int mmc_of_parse(struct mmc_host *host)
     }
 
     return 0;
+}
+
+
+void mmc_free_host(struct mmc_host *host)
+{
+    
 }
 
 rt_bool_t mmc_can_gpio_cd(struct mmc_host *host)
