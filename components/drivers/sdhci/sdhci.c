@@ -505,7 +505,7 @@ static inline void sdhci_set_block_info(struct sdhci_host    *host,
 {
     /* Set the DMA boundary value and block size */
     sdhci_writew(host,
-                 SDHCI_MAKE_BLKSZ(host->sdma_boundary, data->blksize),
+                 SDHCI_MAKE_BLKSZ(7, data->blksize),
                  SDHCI_BLOCK_SIZE);
     /*
 	 * For Version 4.10 onwards, if v4 mode is enabled, 32-bit Block Count
@@ -1365,8 +1365,8 @@ static void sdhci_set_transfer_mode(struct sdhci_host   *host,
     }
 
 
-    // if (!(host->quirks2 & SDHCI_QUIRK2_SUPPORT_SINGLE))
-    // 	mode = SDHCI_TRNS_BLK_CNT_EN;
+    if (!(host->quirks2 & SDHCI_QUIRK2_SUPPORT_SINGLE))
+    	mode = SDHCI_TRNS_BLK_CNT_EN;
 
     if (mmc_op_multi(cmd->cmd_code) || data->blks > 1)
     {
@@ -1730,13 +1730,6 @@ static void sdhci_finish_command(struct sdhci_host *host)
             cmd->resp[0] = sdhci_readl(host, SDHCI_RESPONSE);
         }
     }
-#if 0
-	if (cmd->mrq->cap_cmd_during_tfr && cmd == cmd->mrq->cmd)
-
-
-		mmc_command_done(host->mmc, cmd->mrq);
-#endif
-
     /*
 	 * The host can send and interrupt when the busy state has
 	 * ended, allowing us to wait without wasting CPU cycles.
@@ -1919,16 +1912,7 @@ static void sdhci_irq(int irq, void *dev_id)
         if (intmask & SDHCI_INT_BUS_POWER)
             rt_kprintf("%s: Card is consuming too much power!\n",
                        mmc_hostname(host->mmc));
-#if 0
-		if (intmask & SDHCI_INT_RETUNE)
-			mmc_retune_needed(host->mmc);
 
-		if ((intmask & SDHCI_INT_CARD_INT) &&
-		    (host->ier & SDHCI_INT_CARD_INT)) {
-			sdhci_enable_sdio_irq_nolock(host, RT_FALSE);
-			sdio_signal_irq(host->mmc);
-		}
-#endif
         intmask &= ~(SDHCI_INT_CARD_INSERT | SDHCI_INT_CARD_REMOVE | SDHCI_INT_CMD_MASK | SDHCI_INT_DATA_MASK | SDHCI_INT_ERROR | SDHCI_INT_BUS_POWER | SDHCI_INT_RETUNE | SDHCI_INT_CARD_INT);
 
         if (intmask)
@@ -2396,7 +2380,6 @@ void sdhci_abort_tuning(struct sdhci_host *host, rt_uint32_t opcode)
 
     sdhci_end_tuning(host);
 
-    // mmc_send_abort_tuning(host->mmc, opcode);
 }
 
 void sdhci_send_tuning(struct sdhci_host *host, rt_uint32_t opcode)
@@ -2447,9 +2430,6 @@ void sdhci_send_tuning(struct sdhci_host *host, rt_uint32_t opcode)
 
     rt_spin_unlock_irqrestore(&host->lock, flags);
 
-    // /* Wait for Buffer Read Ready interrupt */
-    // wait_event_timeout(host->buf_ready_int, (host->tuning_done == 1),
-    // 		   msecs_to_jiffies(50));
 }
 
 void sdhci_reset_tuning(struct sdhci_host *host)
@@ -2536,7 +2516,6 @@ static const struct mmc_host_ops sdhci_ops = {
     .card_busy                   = sdhci_card_busy,
 };
 
-//------------------------------------------------------------------------------------------------------------------------------------//
 
 
 void sdhci_remove_host(struct sdhci_host *host, int dead)
@@ -2876,7 +2855,6 @@ int sdhci_setup_host(struct sdhci_host *host)
 	 */
     if (!mmc->supply.vqmmc)
     {
-        // ret = mmc_regulator_get_supply(mmc);
         if (ret)
             return ret;
         enable_vqmmc = RT_TRUE;
@@ -3076,7 +3054,6 @@ int sdhci_setup_host(struct sdhci_host *host)
     {
         if (enable_vqmmc)
         {
-            // ret = regulator_enable(mmc->supply.vqmmc);
             host->sdhci_core_to_disable_vqmmc = !ret;
         }
 
@@ -3174,8 +3151,8 @@ int sdhci_setup_host(struct sdhci_host *host)
 	 * value.
 	 */
     max_current_caps = sdhci_readl(host, SDHCI_MAX_CURRENT);
-#if 0
-	if (!max_current_caps && !IS_ERR(mmc->supply.vmmc)) {
+
+	if (!max_current_caps && mmc->supply.vmmc) {
 		int curr = regulator_get_current_limit(mmc->supply.vmmc);
 		if (curr > 0) {
 
@@ -3190,8 +3167,8 @@ int sdhci_setup_host(struct sdhci_host *host)
 				FIELD_PREP(SDHCI_MAX_CURRENT_180_MASK, curr);
 		}
 	}
-#endif
-    if (host->caps & SDHCI_CAN_VDD_330)
+    
+	if (host->caps & SDHCI_CAN_VDD_330)
     {
         ocr_avail |= MMC_VDD_32_33 | MMC_VDD_33_34;
 
@@ -3403,7 +3380,6 @@ unirq:
     sdhci_reset_for_all(host);
     sdhci_writel(host, 0, SDHCI_INT_ENABLE);
     sdhci_writel(host, 0, SDHCI_SIGNAL_ENABLE);
-    // free_irq(host->irq, host);
 
     return ret;
 }

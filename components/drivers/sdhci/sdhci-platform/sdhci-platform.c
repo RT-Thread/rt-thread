@@ -35,8 +35,6 @@ void sdhci_get_property(struct rt_platform_device *pdev)
     if (rt_dm_dev_prop_read_bool(dev, "no-1-8-v"))
         host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
 
-    // sdhci_get_compatibility(pdev);
-
     rt_dm_dev_prop_read_u32(dev, "clock-frequency", &pltfm_host->clock);
 
     if (rt_dm_dev_prop_read_bool(dev, "keep-power-in-suspend"))
