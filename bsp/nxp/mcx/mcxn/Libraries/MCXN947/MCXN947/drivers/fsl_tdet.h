@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_TDET_H_
-#define _FSL_TDET_H_
+#ifndef FSL_TDET_H_
+#define FSL_TDET_H_
 
 #include "fsl_common.h"
 
@@ -21,15 +21,17 @@
  *******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief Defines TDET driver version 2.0.0.
+/*! @{ */
+/*! @brief Defines TDET driver version 2.1.0.
  *
  * Change log:
+ * - Version 2.1.0
+ *   - Added setting of disabling prescaler on tamper event into TDET_SetConfig() and TDET_GetDefaultConfig functions.
  * - Version 2.0.0
- *   - initial version
+ *   - Initial version
  */
-#define FSL_TDET_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
-/*@}*/
+#define FSL_TDET_DRIVER_VERSION (MAKE_VERSION(2, 1, 0))
+/*! @} */
 
 /*!
  * @brief TDET Update Mode.
@@ -71,8 +73,13 @@ typedef struct _tdet_config
     enum _tdet_active_tamper_clock
         clockSourceActiveTamper0; /*!< Selects clock source for Active Tamper Shift Register 0 */
     enum _tdet_active_tamper_clock
-        clockSourceActiveTamper1; /*!< Selects clock source for Active Tamper Shift Register 1 */
-    uint32_t prescaler;           /*!< Initial value for the TDET prescaler 15-bit value. */
+        clockSourceActiveTamper1;     /*!< Selects clock source for Active Tamper Shift Register 1 */
+    bool disablePrescalerAfterTamper; /*!< Allows the 32-KHz clock and prescaler to be automatically disabled after
+                                         tamper detection and until the system acknowledges the tamper. Disabling the
+                                         prescaler after detecting a tamper event conserves power and freezes the state
+                                         of the active tamper outputs and glitch filters. To ensure a clean transition,
+                                         the prescaler is disabled at the end of a 1 Hz period.  */
+    uint32_t prescaler;               /*!< Initial value for the TDET prescaler 15-bit value. */
 } tdet_config_t;
 
 /*!
@@ -591,4 +598,4 @@ void TDET_LockRegisters(DIGTMP_Type *base, uint32_t mask);
 
 /*! @}*/ /* end of group tdet */
 
-#endif /* _FSL_TDET_H_ */
+#endif /* FSL_TDET_H_ */

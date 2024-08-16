@@ -7,14 +7,17 @@
 
 #include "fsl_opamp.h"
 
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
 /* Component ID definition, used by tools. */
 #ifndef FSL_COMPONENT_ID
 #define FSL_COMPONENT_ID "platform.drivers.opamp"
 #endif
 
-/*******************************************************************************
- * Definitions
- ******************************************************************************/
+#if defined(OPAMP_RSTS)
+#define OPAMP_RESETS_ARRAY OPAMP_RSTS
+#endif
 
 /*******************************************************************************
  * Prototypes
@@ -30,6 +33,11 @@ static OPAMP_Type *const s_opampBases[] = OPAMP_BASE_PTRS;
 /*! @brief Pointers to OPAMP clocks for each instance. */
 static const clock_ip_name_t s_opampClocks[] = OPAMP_CLOCKS;
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(OPAMP_RESETS_ARRAY)
+/* Reset array */
+static const reset_ip_name_t s_opampResets[] = OPAMP_RESETS_ARRAY;
+#endif
 
 /*******************************************************************************
  * Code
@@ -69,6 +77,10 @@ void OPAMP_Init(OPAMP_Type *base, const opamp_config_t *config)
     /* Enable the clock. */
     CLOCK_EnableClock(s_opampClocks[OPAMP_GetInstance(base)]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(OPAMP_RESETS_ARRAY)
+    RESET_ReleasePeripheralReset(s_opampResets[OPAMP_GetInstance(base)]);
+#endif
 
     tmp32 = OPAMP_OPAMP_CTR_EN(config->enable) | OPAMP_OPAMP_CTR_MODE(config->mode) |
             OPAMP_OPAMP_CTR_BIASC(config->trimOption) | OPAMP_OPAMP_CTR_INTREF(config->intRefVoltage) |

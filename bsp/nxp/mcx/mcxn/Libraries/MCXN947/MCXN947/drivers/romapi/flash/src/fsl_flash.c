@@ -43,7 +43,7 @@ typedef union StandardVersion
         uint8_t major;  /*!< major version [23:16] */
         char name;      /*!< name [31:24] */
     };
-    uint32_t version; /*!< combined version numbers */
+    uint32_t version;   /*!< combined version numbers */
 } standard_version_t;
 
 /*! @brief Interface for the flash driver.*/
@@ -368,7 +368,7 @@ status_t FFR_GetCustomerInfieldData(flash_config_t *config, uint8_t *pData, uint
 }
 
 /*!
- * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 ï¿½C
+ * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 �C
  * 0x3e600), and the API should be called after the FLASH_Init and FFR_Init.
  */
 status_t FFR_GetCustKeystoreData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len)
@@ -477,10 +477,10 @@ status_t FLEXSPI_NorFlash_CommandXfer(uint32_t instance, flexspi_xfer_t *xfer)
 /*!
  * @brief Configure FlexSPI Lookup table
  */
-status_t FLEXSPI_NorFlash_UpdateLut(uint32_t instance, uint32_t seqIndex, const uint32_t *lutBase, uint32_t numberOfSeq)
+status_t FLEXSPI_NorFlash_UpdateLut(uint32_t instance, uint32_t seqIndex, const uint32_t *lutBase, uint32_t seqNumber)
 {
     assert(BOOTLOADER_API_TREE_POINTER);
-    return BOOTLOADER_API_TREE_POINTER->flexspiNorDriver->update_lut(instance, seqIndex, lutBase, numberOfSeq);
+    return BOOTLOADER_API_TREE_POINTER->flexspiNorDriver->update_lut(instance, seqIndex, lutBase, seqNumber);
 }
 
 /*!
@@ -538,5 +538,31 @@ status_t EFUSE_Read(uint32_t addr, uint32_t *data)
 status_t EFUSE_Program(uint32_t addr, uint32_t data)
 {
     assert(BOOTLOADER_API_TREE_POINTER);
-    return BOOTLOADER_API_TREE_POINTER->efuseDriver->program(addr, data);
+    status_t status;
+    bool is_hvd_enabled = false;
+
+    /* Workaround for ROM Errata ERR052108 */
+    /* Disable SYS_HVD */
+    if (0U != (SPC0->ACTIVE_CFG & SPC_ACTIVE_CFG_SYS_HVDE_MASK))
+    {
+        is_hvd_enabled = true;
+        SPC0->ACTIVE_CFG &= ~SPC_ACTIVE_CFG_SYS_HVDE_MASK;
+    }
+
+    /* Call ROM API to program efuse */
+    status = BOOTLOADER_API_TREE_POINTER->efuseDriver->program(addr, data);
+
+    /* Bring VDD_SYS back to 1.8v */
+    SPC0->ACTIVE_CFG &= ~SPC_ACTIVE_CFG_SYSLDO_VDD_LVL_MASK;
+
+    /* Wait for voltage to settle */
+    SDK_DelayAtLeastUs(5000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+
+    /* Enable SYS_HVD back */
+    if (is_hvd_enabled)
+    {
+        SPC0->ACTIVE_CFG |= SPC_ACTIVE_CFG_SYS_HVDE_MASK;
+    }
+
+    return status;
 }
