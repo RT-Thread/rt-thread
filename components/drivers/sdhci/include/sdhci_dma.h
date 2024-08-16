@@ -25,7 +25,7 @@ struct dma_chan
 int dma_set_mask_and_coherent(struct rt_device *dev, rt_uint64_t mask);
 unsigned long virt_to_phys(volatile void *address);
 void *dma_alloc_coherent(struct rt_device *dev, size_t size,
-        rt_uint64_t *dma_handle, unsigned gfp);
+        rt_uint64_t *dma_handle);
 void dma_free_coherent(struct rt_device *dev, size_t size,
         void *cpu_addr, unsigned long dma_handle);
 

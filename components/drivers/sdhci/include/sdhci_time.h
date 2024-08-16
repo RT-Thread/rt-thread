@@ -3,7 +3,6 @@
 
 #include <rtthread.h>
 #include <sys/time.h>
-#include "head.h"
 typedef int64_t ktime_t;
 
 #define NSEC_PER_USEC   1000L

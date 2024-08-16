@@ -12,16 +12,17 @@ unsigned long virt_to_phys(volatile void *address)
     return (unsigned long)((rt_uint64_t)address + PV_OFFSET);
 }
 void *dma_alloc_coherent(struct rt_device *dev, size_t size,
-        rt_uint64_t *dma_handle, unsigned gfp)
+        rt_uint64_t *dma_handle)
 {
-    
     void *v;
 
     v = rt_malloc_align(size, 2048);
+    rt_kprintf("v = %p \n",v);
     if (v)
     {
         *dma_handle = virt_to_phys(v);
         v = rt_ioremap((void *)*dma_handle, size);
+        rt_kprintf("v = %p *dma_handle = %p \n",v,*dma_handle);
     }
 
     return v;

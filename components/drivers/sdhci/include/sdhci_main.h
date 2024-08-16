@@ -498,7 +498,6 @@ struct sdhci_host {
 
 	int irq;		/* Device IRQ */
 	void  *ioaddr;	/* Mapped address */
-	rt_uint32_t mapbase;	/* physical address base */
 	char *bounce_buffer;	/* For packing SDMA reads/writes */
 	rt_uint64_t bounce_addr;
 	unsigned int bounce_buffer_size;
@@ -581,11 +580,6 @@ struct sdhci_host {
 	struct rt_timer timer;	/* Timer for timeouts */
 	struct rt_timer data_timer;	/* Timer for data timeouts */
 
-#ifdef CONFIG_MMC_SDHCI_EXTERNAL_DMA
-	struct dma_chan *rx_chan;
-	struct dma_chan *tx_chan;
-#endif
-
 	rt_uint32_t caps;		/* CAPABILITY_0 */
 	rt_uint32_t caps1;		/* CAPABILITY_1 */
 	rt_bool_t read_caps;		/* Capability flags have been read */
@@ -624,8 +618,6 @@ struct sdhci_host {
 	rt_uint32_t			sdma_boundary;
 
 	/* Host ADMA table count */
-	rt_uint32_t			adma_table_cnt;
-
 	rt_uint64_t			data_timeout;
 
 	unsigned long private[];
@@ -810,13 +802,6 @@ void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable);
 void sdhci_adma_write_desc(struct sdhci_host *host, void **desc,
 			   rt_uint64_t addr, int len, unsigned int cmd);
 
-#ifdef CONFIG_PM
-int sdhci_suspend_host(struct sdhci_host *host);
-int sdhci_resume_host(struct sdhci_host *host);
-int sdhci_runtime_suspend_host(struct sdhci_host *host);
-int sdhci_runtime_resume_host(struct sdhci_host *host, int soft_reset);
-#endif
-
 void sdhci_cqe_enable(struct mmc_host *mmc);
 void sdhci_cqe_disable(struct mmc_host *mmc, rt_bool_t recovery);
 rt_bool_t sdhci_cqe_irq(struct sdhci_host *host, rt_uint32_t intmask, int *cmd_error,
@@ -833,13 +818,5 @@ void sdhci_abort_tuning(struct sdhci_host *host, rt_uint32_t opcode);
 void sdhci_switch_external_dma(struct sdhci_host *host, rt_bool_t en);
 void sdhci_set_data_timeout_irq(struct sdhci_host *host, rt_bool_t enable);
 void __sdhci_set_timeout(struct sdhci_host *host, struct rt_mmcsd_cmd *cmd);
-static void sdhci_complete_work(struct rt_work *work, void *work_data);
-static void sdhci_timeout_timer(void* parameter);
-static void sdhci_timeout_data_timer(void* parameter);
-static void sdhci_thread_irq(struct rt_work *work, void *work_data);
-static void  sdhci_irq(int irq, void *dev_id);
-static rt_bool_t sdhci_send_command(struct sdhci_host *host, struct rt_mmcsd_cmd *cmd);
-
-static rt_bool_t sdhci_request_done(struct sdhci_host *host);
 
 #endif /* __SDHCI_HW_H */
