@@ -15,11 +15,11 @@ void usleep_range(unsigned long min, unsigned long max)
 {
     rt_int32_t msecs;
 
-    msecs = (min + max)/2000;
+    msecs = (min + max) / 2000;
     if (msecs)
         rt_thread_mdelay(msecs);
     else
-        rt_hw_us_delay((min + max)/2);
+        rt_hw_us_delay((min + max) / 2);
 }
 
 unsigned int jiffies_to_msecs(const unsigned long j)

@@ -14,11 +14,10 @@
 #include <drivers/core/dm.h>
 
 
-
 static void plat_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
-    struct mmc_host *mmc= (struct mmc_host *)host;
-    rt_uint32_t flags = req->cmd->flags;
+    struct mmc_host *mmc   = (struct mmc_host *)host;
+    rt_uint32_t      flags = req->cmd->flags;
 
     switch (flags & RESP_MASK)
     {
@@ -50,24 +49,26 @@ static void plat_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
         flags |= MMC_RSP_R7;
         break;
     }
-   if(req->data)
+    if (req->data)
     {
-        if(rt_kmem_v2p(req->data->buf) > 0xffffffff){
+        if (rt_kmem_v2p(req->data->buf) > 0xffffffff)
+        {
             void *dma_buffer = rt_malloc(ARCH_PAGE_SIZE);
-            void *req_buf = NULL;
-        
-            if(req->data->blks*req->data->blksize > ARCH_PAGE_SIZE)
+            void *req_buf    = NULL;
+
+            if (req->data->blks * req->data->blksize > ARCH_PAGE_SIZE)
             {
-                dma_buffer = rt_realloc(dma_buffer,req->data->blks*req->data->blksize);
+                dma_buffer = rt_realloc(dma_buffer, req->data->blks * req->data->blksize);
             }
 
-            if(req->data->flags & DATA_DIR_WRITE)
+            if (req->data->flags & DATA_DIR_WRITE)
             {
-                rt_memcpy(dma_buffer,req->data->buf,req->data->blks*req->data->blksize);
+                rt_memcpy(dma_buffer, req->data->buf, req->data->blks * req->data->blksize);
                 req->data->buf = dma_buffer;
-            }else if(req->data->flags & DATA_DIR_READ)
+            }
+            else if (req->data->flags & DATA_DIR_READ)
             {
-                req_buf = req->data->buf;
+                req_buf        = req->data->buf;
                 req->data->buf = dma_buffer;
             }
             req->cmd->flags |= flags;
@@ -75,20 +76,23 @@ static void plat_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 
             rt_sem_take(&host->sem_ack, RT_WAITING_FOREVER);
 
-            if(req->data->flags & DATA_DIR_READ){
-
-                rt_memcpy(req_buf,dma_buffer,req->data->blksize*req->data->blks);
+            if (req->data->flags & DATA_DIR_READ)
+            {
+                rt_memcpy(req_buf, dma_buffer, req->data->blksize * req->data->blks);
                 req->data->buf = req_buf;
-
             }
 
             rt_free(dma_buffer);
             rt_sem_release(&host->sem_ack);
-        }else{
+        }
+        else
+        {
             req->cmd->flags |= flags;
             mmc->ops->request(mmc, req);
         }
-    }else{
+    }
+    else
+    {
         req->cmd->flags |= flags;
         mmc->ops->request(mmc, req);
     }
@@ -99,8 +103,8 @@ static void plat_set_ioconfig(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg
     struct mmc_host *mmc = (struct mmc_host *)host;
 
     LOG_D("clock:%d,width:%d,power:%d,vdd:%d,timing:%d\n",
-             iocfg->clock, iocfg->bus_width,
-             iocfg->power_mode, iocfg->vdd, iocfg->timing);
+          iocfg->clock, iocfg->bus_width,
+          iocfg->power_mode, iocfg->vdd, iocfg->timing);
 
     mmc->ops->set_ios(mmc, iocfg);
 }
@@ -123,20 +127,17 @@ static void plat_enable_sdio_irq(struct rt_mmcsd_host *host, rt_int32_t en)
 {
     struct mmc_host *mmc = (struct mmc_host *)host;
 
-    return mmc->ops->enable_sdio_irq(mmc,en);
-    
+    return mmc->ops->enable_sdio_irq(mmc, en);
 }
 
 
-
 static const struct rt_mmcsd_host_ops rt_mmcsd_ops = {
-    .request = plat_request,
-    .set_iocfg = plat_set_ioconfig,
+    .request         = plat_request,
+    .set_iocfg       = plat_set_ioconfig,
     .get_card_status = plat_get_card_status,
     .enable_sdio_irq = plat_enable_sdio_irq,
-    .execute_tuning = plat_execute_tuning,
+    .execute_tuning  = plat_execute_tuning,
 };
-
 
 
 void mmc_request_done(struct mmc_host *host, struct rt_mmcsd_req *mrq)
@@ -147,16 +148,16 @@ void mmc_request_done(struct mmc_host *host, struct rt_mmcsd_req *mrq)
 //add host in rtt while sdhci complete
 int mmc_add_host(struct mmc_host *mmc)
 {
-    mmc->rthost.ops = &rt_mmcsd_ops;
-    mmc->rthost.flags = mmc->caps;
-    mmc->rthost.freq_max = mmc->f_max;
-    mmc->rthost.freq_min = 400000;
-    mmc->rthost.max_dma_segs = mmc->max_segs;
-    mmc->rthost.max_seg_size = mmc->max_seg_size;
-    mmc->rthost.max_blk_size = mmc->max_blk_size;
+    mmc->rthost.ops           = &rt_mmcsd_ops;
+    mmc->rthost.flags         = mmc->caps;
+    mmc->rthost.freq_max      = mmc->f_max;
+    mmc->rthost.freq_min      = 400000;
+    mmc->rthost.max_dma_segs  = mmc->max_segs;
+    mmc->rthost.max_seg_size  = mmc->max_seg_size;
+    mmc->rthost.max_blk_size  = mmc->max_blk_size;
     mmc->rthost.max_blk_count = mmc->max_blk_count;
-    mmc->rthost.valid_ocr = VDD_165_195;
-    
+    mmc->rthost.valid_ocr     = VDD_165_195;
+
 
     mmcsd_change(&mmc->rthost);
     return 0;
@@ -195,7 +196,6 @@ int mmc_gpio_get_cd(struct mmc_host *host)
 
 void mmc_detect_change(struct mmc_host *host, unsigned long delay)
 {
-
 }
 
 
@@ -221,7 +221,7 @@ int mmc_send_abort_tuning(struct mmc_host *host, rt_uint32_t opcode)
 int mmc_of_parse(struct mmc_host *host)
 {
     struct rt_device *dev = host->parent;
-    rt_uint32_t bus_width;
+    rt_uint32_t       bus_width;
 
     if (!dev || !dev->ofw_node)
         return 0;
@@ -295,7 +295,6 @@ int mmc_of_parse(struct mmc_host *host)
 
 void mmc_free_host(struct mmc_host *host)
 {
-    
 }
 
 rt_bool_t mmc_can_gpio_cd(struct mmc_host *host)
