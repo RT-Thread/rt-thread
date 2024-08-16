@@ -406,8 +406,8 @@ void sdhci_reset(struct sdhci_host *host, rt_uint8_t mask)
 
     timeout = rt_tick_from_millisecond(150);
     while (1)
-        {
-            timeout = timeout - rt_tick_get();
+    {
+        timeout = timeout - rt_tick_get();
 
 
         if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
@@ -912,7 +912,7 @@ int sdhci_start_signal_voltage_switch(struct mmc_host        *mmc,
             }
         }
         /* Wait for 5ms */
-		rt_thread_mdelay(5);
+        rt_thread_mdelay(5);
         /* 3.3V regulator output should be stable within 5 ms */
         ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
         if (!(ctrl & SDHCI_CTRL_VDD_180))
@@ -1234,33 +1234,33 @@ static void sdhci_mod_timer(struct sdhci_host *host, struct rt_mmcsd_req *mrq,
                             unsigned long timeout)
 {
     if (sdhci_data_line_cmd(mrq->cmd))
-	{
+    {
         rt_tick_t tick = rt_tick_get();
 
-		if (timeout < tick)
-		{
-			timeout = tick;
-		}
-		tick = timeout - tick;
+        if (timeout < tick)
+        {
+            timeout = tick;
+        }
+        tick = timeout - tick;
 
-		rt_timer_stop(&host->data_timer);
-		rt_timer_control(&host->data_timer, RT_TIMER_CTRL_SET_TIME, &tick);
-		rt_timer_start(&host->data_timer);
-	}
-	else
-	{
-		rt_tick_t tick = rt_tick_get();
+        rt_timer_stop(&host->data_timer);
+        rt_timer_control(&host->data_timer, RT_TIMER_CTRL_SET_TIME, &tick);
+        rt_timer_start(&host->data_timer);
+    }
+    else
+    {
+        rt_tick_t tick = rt_tick_get();
 
-		if (timeout < tick)
-		{
-			timeout = tick;
-		}
-		tick = timeout - tick;
+        if (timeout < tick)
+        {
+            timeout = tick;
+        }
+        tick = timeout - tick;
 
-		rt_timer_stop(&host->timer);
-		rt_timer_control(&host->timer, RT_TIMER_CTRL_SET_TIME, &tick);
-		rt_timer_start(&host->timer);
-	}
+        rt_timer_stop(&host->timer);
+        rt_timer_control(&host->timer, RT_TIMER_CTRL_SET_TIME, &tick);
+        rt_timer_start(&host->timer);
+    }
 }
 
 static void __sdhci_finish_mrq(struct sdhci_host *host, struct rt_mmcsd_req *mrq)
@@ -1477,7 +1477,7 @@ static rt_bool_t sdhci_send_command(struct sdhci_host *host, struct rt_mmcsd_cmd
 
     timeout = rt_tick_get();
     if (host->data_timeout)
-        timeout += rt_tick_from_millisecond(host->data_timeout*1000);
+        timeout += rt_tick_from_millisecond(host->data_timeout * 1000);
     else if (!cmd->data && cmd->busy_timeout > 9000)
         timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * RT_TICK_PER_SECOND + RT_TICK_PER_SECOND;
     else
@@ -2400,7 +2400,6 @@ void sdhci_abort_tuning(struct sdhci_host *host, rt_uint32_t opcode)
     sdhci_reset_for(host, TUNING_ABORT);
 
     sdhci_end_tuning(host);
-
 }
 
 void sdhci_send_tuning(struct sdhci_host *host, rt_uint32_t opcode)
@@ -2450,7 +2449,6 @@ void sdhci_send_tuning(struct sdhci_host *host, rt_uint32_t opcode)
     host->tuning_done = 0;
 
     rt_spin_unlock_irqrestore(&host->lock, flags);
-
 }
 
 void sdhci_reset_tuning(struct sdhci_host *host)
@@ -2536,7 +2534,6 @@ static const struct mmc_host_ops sdhci_ops = {
     .card_event                  = sdhci_card_event,
     .card_busy                   = sdhci_card_busy,
 };
-
 
 
 void sdhci_remove_host(struct sdhci_host *host, int dead)
@@ -3178,16 +3175,13 @@ int sdhci_setup_host(struct sdhci_host *host)
         int curr = regulator_get_current_limit(mmc->supply.vmmc);
         if (curr > 0)
         {
-
             /* convert to SDHCI_MAX_CURRENT format */
-            curr = curr/1000;  /* convert to mA */
-            curr = curr/SDHCI_MAX_CURRENT_MULTIPLIER;
+            curr = curr / 1000; /* convert to mA */
+            curr = curr / SDHCI_MAX_CURRENT_MULTIPLIER;
 
             curr = min_t(rt_uint32_t, curr, SDHCI_MAX_CURRENT_LIMIT);
             max_current_caps =
-                FIELD_PREP(SDHCI_MAX_CURRENT_330_MASK, curr) |
-                FIELD_PREP(SDHCI_MAX_CURRENT_300_MASK, curr) |
-                FIELD_PREP(SDHCI_MAX_CURRENT_180_MASK, curr);
+                FIELD_PREP(SDHCI_MAX_CURRENT_330_MASK, curr) | FIELD_PREP(SDHCI_MAX_CURRENT_300_MASK, curr) | FIELD_PREP(SDHCI_MAX_CURRENT_180_MASK, curr);
         }
     }
 
