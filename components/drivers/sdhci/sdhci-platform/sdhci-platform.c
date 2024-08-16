@@ -97,7 +97,7 @@ int sdhci_pltfm_init_and_add_host(struct rt_platform_device     *pdev,
 
     host = sdhci_pltfm_init(pdev, pdata, priv_size);
     if (!host)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     sdhci_get_property(pdev);
 
