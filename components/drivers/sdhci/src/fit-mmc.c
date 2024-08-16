@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2024-08-16     zhujiale     first version
  */
 #include <rtthread.h>
-#include "sdhci_main.h"
+#include "sdhci.h"
 #include <rtdbg.h>
 #include <mmu.h>
 #include <drivers/core/dm.h>
@@ -145,7 +145,7 @@ void mmc_request_done(struct mmc_host *host, struct rt_mmcsd_req *mrq)
     mmcsd_req_complete(&host->rthost);
 }
 
-//add host in rtt while sdhci complete
+/*add host in rtt while sdhci complete*/
 int mmc_add_host(struct mmc_host *mmc)
 {
     mmc->rthost.ops           = &rt_mmcsd_ops;

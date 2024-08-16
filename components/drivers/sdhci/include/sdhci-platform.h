@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 #include <drivers/ofw.h>
 #include <drivers/platform.h>
 #include <drivers/clk.h>
-#include "sdhci_main.h"
+#include "sdhci.h"
 
 struct sdhci_pltfm_data
 {

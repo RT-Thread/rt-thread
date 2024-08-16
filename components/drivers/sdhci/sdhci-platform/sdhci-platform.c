@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -103,7 +103,7 @@ int sdhci_pltfm_init_and_add_host(struct rt_platform_device     *pdev,
 
     ret = sdhci_add_host(host);
     if (ret)
-    	sdhci_pltfm_free(pdev);
+        sdhci_pltfm_free(pdev);
 
     return ret;
 }
@@ -117,9 +117,9 @@ void sdhci_pltfm_free(struct rt_platform_device *pdev)
 
 void sdhci_pltfm_remove(struct rt_platform_device *pdev)
 {
-	struct sdhci_host *host = pdev->priv;
-	int dead = (readl(host->ioaddr + SDHCI_INT_STATUS) == 0xffffffff);
+    struct sdhci_host *host = pdev->priv;
+    int dead = (readl(host->ioaddr + SDHCI_INT_STATUS) == 0xffffffff);
 
-	sdhci_remove_host(host, dead);
-	sdhci_pltfm_free(pdev);
+    sdhci_remove_host(host, dead);
+    sdhci_pltfm_free(pdev);
 }
