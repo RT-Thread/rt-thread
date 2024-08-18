@@ -29,11 +29,11 @@
 #define I2C3_BASE                0x4030000
 #define I2C4_BASE                0x4040000
 
-#define I2C0_IRQ           (I2C_IRQ_BASE + 0)
-#define I2C1_IRQ           (I2C_IRQ_BASE + 1)
-#define I2C2_IRQ           (I2C_IRQ_BASE + 2)
-#define I2C3_IRQ           (I2C_IRQ_BASE + 3)
-#define I2C4_IRQ           (I2C_IRQ_BASE + 4)
+#define I2C0_IRQ           (BSP_I2C_IRQ_BASE + 0)
+#define I2C1_IRQ           (BSP_I2C_IRQ_BASE + 1)
+#define I2C2_IRQ           (BSP_I2C_IRQ_BASE + 2)
+#define I2C3_IRQ           (BSP_I2C_IRQ_BASE + 3)
+#define I2C4_IRQ           (BSP_I2C_IRQ_BASE + 4)
 
 
 #if !defined(IC_CLK)

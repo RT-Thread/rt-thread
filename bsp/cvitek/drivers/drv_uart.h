@@ -26,11 +26,11 @@
 #define UART3_BASE          0x04170000
 #define UART4_BASE          0x041C0000
 
-#define UART0_IRQ           (UART_IRQ_BASE + 0)
-#define UART1_IRQ           (UART_IRQ_BASE + 1)
-#define UART2_IRQ           (UART_IRQ_BASE + 2)
-#define UART3_IRQ           (UART_IRQ_BASE + 3)
-#define UART4_IRQ           (UART_IRQ_BASE + 4)
+#define UART0_IRQ           (BSP_UART_IRQ_BASE + 0)
+#define UART1_IRQ           (BSP_UART_IRQ_BASE + 1)
+#define UART2_IRQ           (BSP_UART_IRQ_BASE + 2)
+#define UART3_IRQ           (BSP_UART_IRQ_BASE + 3)
+#define UART4_IRQ           (BSP_UART_IRQ_BASE + 4)
 
 /*
  * The Synopsys DesignWare 8250 has an extra feature whereby it detects if the
