@@ -1,5 +1,17 @@
 /*
- * Copyright (C) 2019-2020 AlibabaGroup Holding Limited
+ * Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 /******************************************************************************
  * @file     phy.h
@@ -359,40 +371,10 @@ int32_t eth_phy_update_link(eth_phy_handle_t handle);
 int32_t genphy_config(eth_phy_dev_t *phy_dev);
 int32_t genphy_update_link(eth_phy_dev_t *phy_dev);
 
-/*
- * ffs: find first bit set. This is defined the same way as
- * the libc and compiler builtin ffs routines, therefore
- * differs in spirit from the above ffz (man ffs).
- */
+int32_t cvi_eth_phy_power_control(eth_phy_handle_t handle, eth_power_state_t state);
 
-// static inline int32_t ffs(int32_t x)
-// {
-//  int32_t r = 1;
+eth_phy_handle_t cvi_eth_phy_init(csi_eth_phy_read_t  fn_read, csi_eth_phy_write_t fn_write);
 
-//  if (!x)
-//      return 0;
-//  if (!(x & 0xffff)) {
-//      x >>= 16;
-//      r += 16;
-//  }
-//  if (!(x & 0xff)) {
-//      x >>= 8;
-//      r += 8;
-//  }
-//  if (!(x & 0xf)) {
-//      x >>= 4;
-//      r += 4;
-//  }
-//  if (!(x & 3)) {
-//      x >>= 2;
-//      r += 2;
-//  }
-//  if (!(x & 1)) {
-//      x >>= 1;
-//      r += 1;
-//  }
-//  return r;
-// }
 
 #ifdef __cplusplus
 }
