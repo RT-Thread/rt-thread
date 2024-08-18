@@ -22,11 +22,11 @@ config SOC_CV18XX_AARCH64
     select ARCH_MM_MMU
     default y
 
-config GPIO_IRQ_BASE
+config BSP_GPIO_IRQ_BASE
     int
     default 76
 
-config SYS_GPIO_IRQ_BASE
+config BSP_SYS_GPIO_IRQ_BASE
     int
     default 86
 

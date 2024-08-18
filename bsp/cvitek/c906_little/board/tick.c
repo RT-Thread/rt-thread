@@ -17,7 +17,7 @@
 static volatile rt_uint64_t time_elapsed = 0;
 static volatile unsigned long tick_cycles = 0;
 
-#define CLINT_BASE (PLIC_PHY_ADDR + 0x4000000UL)
+#define CLINT_BASE (BSP_PLIC_PHY_ADDR + 0x4000000UL)
 
 static volatile rt_uint32_t *mtimecmp_l = (volatile rt_uint32_t *)(CLINT_BASE + 0x4000UL);
 static volatile rt_uint32_t *mtimecmp_h = (volatile rt_uint32_t *)(CLINT_BASE + 0x4004UL);
@@ -50,7 +50,7 @@ int rt_hw_tick_init(void)
     /* Clear the Machine-Timer bit in MIE */
     clear_csr(mie, MIP_MTIP);
 
-    tick_cycles = TIMER_CLK_FREQ / RT_TICK_PER_SECOND;
+    tick_cycles = BSP_TIMER_CLK_FREQ / RT_TICK_PER_SECOND;
 
     set_ticks(get_ticks() + tick_cycles);
 
@@ -74,7 +74,7 @@ void rt_hw_us_delay(rt_uint32_t us)
     unsigned long run_time;
 
     start_time = get_ticks();
-    end_time = start_time + us * (TIMER_CLK_FREQ / 1000000);
+    end_time = start_time + us * (BSP_TIMER_CLK_FREQ / 1000000);
     do{
         run_time = get_ticks();
     } while(run_time < end_time);
