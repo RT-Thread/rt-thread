@@ -810,7 +810,7 @@ void rt_slab_free(rt_slab_t m, void *ptr)
     {
         struct rt_slab_zone **pz;
 
-        LOG_D("free zone 0x%x",
+        LOG_D("free zone 0x%x, zoneindex %d",
               (rt_ubase_t)z, z->z_zoneindex);
 
         /* remove zone from zone array list */
