@@ -9,8 +9,8 @@
  * 2021-04-20     RiceChen      added bus clock command
  */
 
-#ifndef __I2C_DEV_H__
-#define __I2C_DEV_H__
+#ifndef __DEV_I2C_DEV_H__
+#define __DEV_I2C_DEV_H__
 
 #include <rtthread.h>
 

@@ -10,10 +10,10 @@
  *
  */
 
-#ifndef __AUDIO_H__
-#define __AUDIO_H__
+#ifndef __DEV_AUDIO_H__
+#define __DEV_AUDIO_H__
 
-#include "audio_pipe.h"
+#include "dev_audio_pipe.h"
 
 /* AUDIO command */
 #define _AUDIO_CTL(a) (RT_DEVICE_CTRL_BASE(Sound) + a)

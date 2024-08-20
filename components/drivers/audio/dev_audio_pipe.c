@@ -10,7 +10,7 @@
 
 #include <rthw.h>
 #include <rtdevice.h>
-#include "audio_pipe.h"
+#include "dev_audio_pipe.h"
 
 static void _rt_pipe_resume_writer(struct rt_audio_pipe *pipe)
 {

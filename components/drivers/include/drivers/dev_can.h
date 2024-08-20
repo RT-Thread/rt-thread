@@ -10,8 +10,8 @@
  * 2022-05-08     hpmicro           add CANFD support, fixed typos
  */
 
-#ifndef CAN_H_
-#define CAN_H_
+#ifndef __DEV_CAN_H_
+#define __DEV_CAN_H_
 
 #include <rtthread.h>
 

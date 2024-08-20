@@ -11,8 +11,8 @@
  * 2022-04-05     tyx          add timestamp function
  */
 
-#ifndef __RTC_H__
-#define __RTC_H__
+#ifndef __DEV_RTC_H__
+#define __DEV_RTC_H__
 
 #include <rtdef.h>
 #include <sys/time.h>

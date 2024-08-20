@@ -9,8 +9,8 @@
  * 2021-04-20     RiceChen      added support for bus control api
  */
 
-#ifndef __I2C_H__
-#define __I2C_H__
+#ifndef __DEV_I2C_H__
+#define __DEV_I2C_H__
 
 #include <rtthread.h>
 

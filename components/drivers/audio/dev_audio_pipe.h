@@ -6,8 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  */
-#ifndef __AUDIO_PIPE_H__
-#define __AUDIO_PIPE_H__
+#ifndef __DEV_AUDIO_PIPE_H__
+#define __DEV_AUDIO_PIPE_H__
 
 /**
  * Pipe Device

@@ -59,7 +59,7 @@ extern "C" {
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
-#include "drivers/rtc.h"
+#include "drivers/dev_rtc.h"
 #ifdef RT_USING_ALARM
 #include "drivers/alarm.h"
 #endif
@@ -94,8 +94,8 @@ extern "C" {
 #endif /* RT_USING_SERIAL */
 
 #ifdef RT_USING_I2C
-#include "drivers/i2c.h"
-#include "drivers/i2c_dev.h"
+#include "drivers/dev_i2c.h"
+#include "drivers/dev_i2c_dev.h"
 
 #ifdef RT_USING_I2C_BITOPS
 #include "drivers/i2c-bit-ops.h"
@@ -123,7 +123,7 @@ extern "C" {
 #endif /* RT_USING_WDT */
 
 #ifdef RT_USING_PIN
-#include "drivers/pin.h"
+#include "drivers/dev_pin.h"
 #endif /* RT_USING_PIN */
 
 #ifdef RT_USING_SENSOR
@@ -135,7 +135,7 @@ extern "C" {
 #endif /* RT_USING_SENSOR */
 
 #ifdef RT_USING_CAN
-#include "drivers/can.h"
+#include "drivers/dev_can.h"
 #endif /* RT_USING_CAN */
 
 #ifdef RT_USING_HWTIMER
@@ -143,7 +143,7 @@ extern "C" {
 #endif /* RT_USING_HWTIMER */
 
 #ifdef RT_USING_AUDIO
-#include "drivers/audio.h"
+#include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
 
 #ifdef RT_USING_CPUTIME

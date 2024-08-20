@@ -8,8 +8,8 @@
  * 2022-11-26     GuEe-GUI     first version
  */
 
-#ifndef __I2C_DM_H__
-#define __I2C_DM_H__
+#ifndef __DEV_I2C_DM_H__
+#define __DEV_I2C_DM_H__
 
 #include <rthw.h>
 #include <rtthread.h>

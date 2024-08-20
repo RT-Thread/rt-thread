@@ -8,8 +8,8 @@
  * 2022-11-26     GuEe-GUI     first version
  */
 
-#ifndef __PIN_DM_H__
-#define __PIN_DM_H__
+#ifndef __DEV_PIN_DM_H__
+#define __DEV_PIN_DM_H__
 
 #include <rthw.h>
 #include <rtthread.h>
