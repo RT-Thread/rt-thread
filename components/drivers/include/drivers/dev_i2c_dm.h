@@ -48,4 +48,4 @@ rt_inline rt_err_t i2c_timings_ofw_parse(struct rt_ofw_node *dev_np, struct i2c_
 
 void i2c_bus_scan_clients(struct rt_i2c_bus_device *bus);
 
-#endif /* __I2C_DM_H__ */
+#endif /* __DEV_I2C_DM_H__ */

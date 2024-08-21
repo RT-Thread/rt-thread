@@ -79,4 +79,4 @@ rt_err_t rt_soft_rtc_set_source(const char *name);
 }
 #endif
 
-#endif /* __RTC_H__ */
+#endif /* __DEV_RTC_H__ */

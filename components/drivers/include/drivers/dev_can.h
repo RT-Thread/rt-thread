@@ -360,5 +360,5 @@ rt_err_t rt_hw_can_register(struct rt_can_device    *can,
                             const struct rt_can_ops *ops,
                             void                    *data);
 void rt_hw_can_isr(struct rt_can_device *can, int event);
-#endif /*_CAN_H*/
+#endif /*_DEV_CAN_H*/
 
