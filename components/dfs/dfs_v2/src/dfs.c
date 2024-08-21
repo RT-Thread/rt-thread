@@ -673,7 +673,7 @@ int sys_dup(int oldfd)
     int newfd = dfs_dup(oldfd, (dfs_fdtable_get() == &_fdtab) ? DFS_STDIO_OFFSET : 0);
     if(newfd < 0)
     {
-        err = GET_ERRNO();
+        err = rt_get_errno();
     }
 
 #ifdef RT_USING_SMART
