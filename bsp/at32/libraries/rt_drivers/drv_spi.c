@@ -571,7 +571,7 @@ static void at32_spi_dma_init(struct at32_spi *instance)
     }
 }
 
-void dma_isr(struct dma_config *dma_instance)
+static void dma_isr(struct dma_config *dma_instance)
 {
     volatile rt_uint32_t reg_sts = 0, index = 0;
 
