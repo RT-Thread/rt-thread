@@ -5001,7 +5001,7 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
         if (err > 0)
         {
             buf[bufsz > err ? err : bufsz] = '\0';
-            rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz - 1);
+            rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz);
         }
         else
         {
