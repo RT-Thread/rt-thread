@@ -54,6 +54,8 @@ void BOARD_InitPins(void)
     RESET_ReleasePeripheralReset(kCTIMER1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPSPI0_RST_SHIFT_RSTn);
 
+    RESET_ReleasePeripheralReset(kLPI2C0_RST_SHIFT_RSTn);
+
     RESET_ReleasePeripheralReset(kPORT0_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kPORT1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kPORT2_RST_SHIFT_RSTn);
@@ -243,5 +245,57 @@ void BOARD_InitPins(void)
                                                     kPORT_UnlockRegister};
     /* PORT1_3 (pin 59) is configured as LPSPI0_PCS0 */
     PORT_SetPinConfig(PORT1, 3U, &port1_3_pin59_config);
+#endif
+
+#ifdef BSP_USING_I2C0
+    const port_pin_config_t port3_27_pin34_config = {/* Internal pull-up resistor is enabled */
+                                                     kPORT_PullUp,
+                                                     /* Low internal pull resistor value is selected. */
+                                                     kPORT_LowPullResistor,
+                                                     /* Fast slew rate is configured */
+                                                     kPORT_FastSlewRate,
+                                                     /* Passive input filter is disabled */
+                                                     kPORT_PassiveFilterDisable,
+                                                     /* Open drain output is enabled */
+                                                     kPORT_OpenDrainEnable,
+                                                     /* Low drive strength is configured */
+                                                     kPORT_LowDriveStrength,
+                                                     /* Normal drive strength is configured */
+                                                     kPORT_NormalDriveStrength,
+                                                     /* Pin is configured as LPI2C0_SCL */
+                                                     kPORT_MuxAlt2,
+                                                     /* Digital input enabled */
+                                                     kPORT_InputBufferEnable,
+                                                     /* Digital input is not inverted */
+                                                     kPORT_InputNormal,
+                                                     /* Pin Control Register fields [15:0] are not locked */
+                                                     kPORT_UnlockRegister};
+    /* PORT3_27 (pin 34) is configured as LPI2C0_SCL */
+    PORT_SetPinConfig(PORT3, 27U, &port3_27_pin34_config);
+
+    const port_pin_config_t port3_28_pin33_config = {/* Internal pull-up resistor is enabled */
+                                                     kPORT_PullUp,
+                                                     /* Low internal pull resistor value is selected. */
+                                                     kPORT_LowPullResistor,
+                                                     /* Fast slew rate is configured */
+                                                     kPORT_FastSlewRate,
+                                                     /* Passive input filter is disabled */
+                                                     kPORT_PassiveFilterDisable,
+                                                     /* Open drain output is enabled */
+                                                     kPORT_OpenDrainEnable,
+                                                     /* Low drive strength is configured */
+                                                     kPORT_LowDriveStrength,
+                                                     /* Normal drive strength is configured */
+                                                     kPORT_NormalDriveStrength,
+                                                     /* Pin is configured as LPI2C0_SDA */
+                                                     kPORT_MuxAlt2,
+                                                     /* Digital input enabled */
+                                                     kPORT_InputBufferEnable,
+                                                     /* Digital input is not inverted */
+                                                     kPORT_InputNormal,
+                                                     /* Pin Control Register fields [15:0] are not locked */
+                                                     kPORT_UnlockRegister};
+    /* PORT3_28 (pin 33) is configured as LPI2C0_SDA */
+    PORT_SetPinConfig(PORT3, 28U, &port3_28_pin33_config);
 #endif
 }
