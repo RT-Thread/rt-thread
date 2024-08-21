@@ -673,7 +673,7 @@ int sys_dup(int oldfd)
 #ifdef RT_USING_SMART
     return (sysret_t)newfd;
 #else
-    return newfd;
+return newfd;
 #endif
 }
 
