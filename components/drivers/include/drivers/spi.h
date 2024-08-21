@@ -15,7 +15,7 @@
 
 #include <stdlib.h>
 #include <rtthread.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 
 #ifdef __cplusplus
 extern "C"{
