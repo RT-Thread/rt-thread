@@ -5000,6 +5000,7 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
         err = dfs_file_readlink(copy_path, link_fn, DFS_PATH_MAX);
         if (err > 0)
         {
+            buf[bufsz > err ? err : bufsz] = '\0';
             rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz - 1);
         }
         else
@@ -5825,7 +5826,7 @@ sysret_t sys_umount2(char *__special_file, int __flags)
 sysret_t sys_link(const char *existing, const char *new)
 {
     int ret = -1;
-
+    int err = 0;
 #ifdef RT_USING_DFS_V2
 #ifdef ARCH_MM_MMU
     int len = 0;
@@ -5872,6 +5873,10 @@ sysret_t sys_link(const char *existing, const char *new)
     }
 
     ret = dfs_file_link(kexisting, knew);
+    if(ret  < 0)
+    {
+        err = GET_ERRNO();
+    }
 
     kmem_put(knew);
     kmem_put(kexisting);
@@ -5880,9 +5885,10 @@ sysret_t sys_link(const char *existing, const char *new)
 #endif
 #else
     SET_ERRNO(EFAULT);
+    err = GET_ERRNO();
 #endif
 
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return (err < 0 ? err : ret);
 }
 
 sysret_t sys_symlink(const char *existing, const char *new)
