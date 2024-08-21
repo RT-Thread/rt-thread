@@ -1337,7 +1337,7 @@ void i2c_err_isr(struct at32_i2c_handle *handle)
     i2c_interrupt_enable(handle->i2c_x, I2C_ERR_INT, FALSE);
 }
 
-void dma_isr(struct at32_i2c_handle *handle)
+static void dma_isr(struct at32_i2c_handle *handle)
 {
     volatile rt_uint32_t reg_sts = 0, index = 0;
     struct dma_config *dma = RT_NULL;
