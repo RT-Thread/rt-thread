@@ -461,7 +461,7 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
 /* syscall: "lseek" ret: "off_t" args: "int" "off_t" "int" */
 size_t sys_lseek(int fd, size_t offset, int whence)
 {
-    size_t ret = lseek(fd, offset, whence);
+    ssize_t ret = lseek(fd, offset, whence);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
