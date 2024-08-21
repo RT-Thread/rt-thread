@@ -5888,28 +5888,31 @@ sysret_t sys_link(const char *existing, const char *new)
 sysret_t sys_symlink(const char *existing, const char *new)
 {
     int ret = -1;
-
+    int err = 0 ;
 #ifdef ARCH_MM_MMU
-    int err;
 
-    err = lwp_user_strlen(existing);
-    if (err <= 0)
+    ret = lwp_user_strlen(existing);
+    if (ret <= 0)
     {
         return -EFAULT;
     }
 
-    err = lwp_user_strlen(new);
-    if (err <= 0)
+    ret = lwp_user_strlen(new);
+    if (ret <= 0)
     {
         return -EFAULT;
     }
 #endif
 #ifdef RT_USING_DFS_V2
     ret = dfs_file_symlink(existing, new);
+    if(ret < 0)
+    {
+        err = GET_ERRNO();
+    }
 #else
     SET_ERRNO(EFAULT);
 #endif
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return (err < 0 ? err : ret);
 }
 
 sysret_t sys_eventfd2(unsigned int count, int flags)
