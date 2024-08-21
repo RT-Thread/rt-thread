@@ -88,6 +88,12 @@ int lwp_tid_get(void)
         current_tid = tid;
     }
     lwp_mutex_release_safe(&tid_lock);
+
+    if (tid <= 0)
+    {
+        LOG_W("resource TID exhausted.");
+    }
+
     return tid;
 }
 
