@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_INPUTMUX_H_
-#define _FSL_INPUTMUX_H_
+#ifndef FSL_INPUTMUX_H_
+#define FSL_INPUTMUX_H_
 
 #include "fsl_inputmux_connections.h"
 #include "fsl_common.h"
@@ -25,10 +25,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief Group interrupt driver version for SDK */
 #define FSL_INPUTMUX_DRIVER_VERSION (MAKE_VERSION(2, 0, 7))
-/*@}*/
+/*! @} */
 
 /*******************************************************************************
  * API
@@ -98,6 +98,6 @@ void INPUTMUX_Deinit(INPUTMUX_Type *base);
 }
 #endif
 
-/*@}*/
+/*! @} */
 
-#endif /* _FSL_INPUTMUX_H_ */
+#endif /* FSL_INPUTMUX_H_ */

@@ -398,11 +398,11 @@ static void sdif_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
         return;
     }
 
-    memset(req_cmd, 0, sizeof(*req_cmd));
+    rt_memset(req_cmd, 0, sizeof(FSdifCmdData));
 
     if (req->data)
     {
-        memset(req_data, 0, sizeof(*req_data));
+        rt_memset(req_data, 0, sizeof(FSdifData));
         req_cmd->data_p = req_data;
     }
     else

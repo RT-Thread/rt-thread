@@ -482,6 +482,7 @@ void spi_i2s_dma_receiver_enable(spi_type* spi_x, confirm_state new_state);
 void spi_i2s_data_transmit(spi_type* spi_x, uint16_t tx_data);
 uint16_t spi_i2s_data_receive(spi_type* spi_x);
 flag_status spi_i2s_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag);
+flag_status spi_i2s_interrupt_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag);
 void spi_i2s_flag_clear(spi_type* spi_x, uint32_t spi_i2s_flag);
 
 /**

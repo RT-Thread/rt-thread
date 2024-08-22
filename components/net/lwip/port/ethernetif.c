@@ -421,6 +421,11 @@ static int netdev_add(struct netif *lwip_netif)
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;
 
+#ifdef NETDEV_USING_LINK_STATUS_CALLBACK
+    extern void netdev_status_change(struct netdev *netdev, enum netdev_cb_type type);
+    netdev_set_status_callback(netdev, netdev_status_change);
+#endif
+
     return result;
 }
 

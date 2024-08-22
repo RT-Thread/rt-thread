@@ -38,7 +38,8 @@ int usbh_cdc_ecm_get_connect_status(struct usbh_cdc_ecm *cdc_ecm_class);
 void usbh_cdc_ecm_run(struct usbh_cdc_ecm *cdc_ecm_class);
 void usbh_cdc_ecm_stop(struct usbh_cdc_ecm *cdc_ecm_class);
 
-int usbh_cdc_ecm_eth_output(uint8_t *buf, uint32_t buflen);
+uint8_t *usbh_cdc_ecm_get_eth_txbuf(void);
+int usbh_cdc_ecm_eth_output(uint32_t buflen);
 void usbh_cdc_ecm_eth_input(uint8_t *buf, uint32_t buflen);
 void usbh_cdc_ecm_rx_thread(void *argument);
 

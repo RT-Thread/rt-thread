@@ -13,10 +13,11 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
-#include "dfs_pcache.h"
-#include "dfs_dentry.h"
-#include "dfs_mnt.h"
-#include "mm_page.h"
+#include <dfs_pcache.h>
+#include <dfs_dentry.h>
+#include <dfs_mnt.h>
+#include <mm_page.h>
+#include <mm_private.h>
 #include <mmu.h>
 #include <tlb.h>
 
@@ -1380,7 +1381,8 @@ int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea)
 
                                 rt_varea_unmap_page(map_varea, vaddr);
 
-                                if (varea->attr == MMU_MAP_U_RWCB && page->fpos < page->aspace->vnode->size)
+                                if (!rt_varea_is_private_locked(varea) &&
+                                    page->fpos < page->aspace->vnode->size)
                                 {
                                     dfs_page_dirty(page);
                                 }
@@ -1425,7 +1427,7 @@ int dfs_aspace_page_unmap(struct dfs_file *file, struct rt_varea *varea, void *v
 
                 if (map && varea->aspace == map->aspace && vaddr == map->vaddr)
                 {
-                    if (varea->attr == MMU_MAP_U_RWCB)
+                    if (!rt_varea_is_private_locked(varea))
                     {
                         dfs_page_dirty(page);
                     }

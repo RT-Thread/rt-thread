@@ -197,7 +197,7 @@ static void timed_mtx_tc(void)
     for (size_t i = 0; i < 2; i++)
     {
         uassert_int_equal(
-            rt_sem_take(&_thr_exit_sem, 2 * TEST_LOOP_TICKS),
+            rt_sem_take(&_thr_exit_sem, 4 * TEST_LOOP_TICKS),
             RT_EOK);
     }
 

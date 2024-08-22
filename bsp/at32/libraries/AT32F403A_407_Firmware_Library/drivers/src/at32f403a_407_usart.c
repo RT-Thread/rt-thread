@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_usart.c
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    contains all the functions for the usart firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -86,11 +84,14 @@ void usart_reset(usart_type* usart_x)
     crm_periph_reset(CRM_UART7_PERIPH_RESET, TRUE);
     crm_periph_reset(CRM_UART7_PERIPH_RESET, FALSE);
   }
+#if defined (AT32F403ARx) || defined (AT32F403AVx) || defined (AT32F407Rx) || \
+    defined (AT32F407Vx)
   else if(usart_x == UART8)
   {
     crm_periph_reset(CRM_UART8_PERIPH_RESET, TRUE);
     crm_periph_reset(CRM_UART8_PERIPH_RESET, FALSE);
   }
+#endif
 }
 
 /**
@@ -103,6 +104,9 @@ void usart_reset(usart_type* usart_x)
   *         this parameter can be one of the following values:
   *         - USART_DATA_8BITS
   *         - USART_DATA_9BITS.
+  *         note:
+  *         - when parity check is disabled, the data bit width is the actual data bit number.
+  *         - when parity check is enabled, the data bit width is the actual data bit number minus 1, and the MSB bit is replaced with the parity bit.
   * @param  stop_bit: stop bits transmitted
   *         this parameter can be one of the following values:
   *         - USART_STOP_1_BIT
@@ -116,7 +120,12 @@ void usart_init(usart_type* usart_x, uint32_t baud_rate, usart_data_bit_num_type
   crm_clocks_freq_type clocks_freq;
   uint32_t apb_clock, temp_val;
   crm_clocks_freq_get(&clocks_freq);
-  if((usart_x == USART1) || (usart_x == USART6) ||  (usart_x == UART7) || (usart_x == UART8))
+  if((usart_x == USART1) || (usart_x == USART6) || (usart_x == UART7)
+#if defined (AT32F403ARx) || defined (AT32F403AVx) || defined (AT32F407Rx) || \
+    defined (AT32F407Vx)
+    || (usart_x == UART8)
+#endif
+  )
   {
     apb_clock = clocks_freq.apb2_freq;
   }
@@ -584,6 +593,79 @@ flag_status usart_flag_get(usart_type* usart_x, uint32_t flag)
 }
 
 /**
+  * @brief  check whether the specified usart interrupt flag is set or not.
+  * @param  usart_x: select the usart or the uart peripheral.
+  *         this parameter can be one of the following values:
+  *         USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - USART_CTSCF_FLAG: cts change flag (not available for UART4,UART5)
+  *         - USART_BFF_FLAG:   break frame flag
+  *         - USART_TDBE_FLAG:  transmit data buffer empty flag
+  *         - USART_TDC_FLAG:   transmit data complete flag
+  *         - USART_RDBF_FLAG:  receive data buffer full flag
+  *         - USART_IDLEF_FLAG: idle flag
+  *         - USART_ROERR_FLAG: receiver overflow error flag
+  *         - USART_NERR_FLAG:  noise error flag
+  *         - USART_FERR_FLAG:  framing error flag
+  *         - USART_PERR_FLAG:  parity error flag
+  * @retval the new state of usart_flag (SET or RESET).
+  */
+flag_status usart_interrupt_flag_get(usart_type* usart_x, uint32_t flag)
+{
+  flag_status int_status = RESET;
+
+  switch(flag)
+  {
+    case USART_CTSCF_FLAG:
+      int_status = (flag_status)usart_x->ctrl3_bit.ctscfien;
+      break;
+    case USART_BFF_FLAG:
+      int_status = (flag_status)usart_x->ctrl2_bit.bfien;
+      break;
+    case USART_TDBE_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.tdbeien;
+      break;
+    case USART_TDC_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.tdcien;
+      break;
+    case USART_RDBF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.rdbfien;
+      break;
+    case USART_ROERR_FLAG:
+      int_status = (flag_status)(usart_x->ctrl1_bit.rdbfien || usart_x->ctrl3_bit.errien);
+      break;
+    case USART_IDLEF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.idleien;
+      break;
+    case USART_NERR_FLAG:
+    case USART_FERR_FLAG:
+      int_status = (flag_status)usart_x->ctrl3_bit.errien;
+      break;
+    case USART_PERR_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.perrien;
+      break;
+    default:
+      int_status = RESET;
+      break;
+  }
+
+  if(int_status != SET)
+  {
+    return RESET;
+  }
+
+  if(usart_x->sts & flag)
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  clear the usart's pending flags.
   * @param  usart_x: select the usart or the uart peripheral.
   *         this parameter can be one of the following values:
@@ -594,6 +676,11 @@ flag_status usart_flag_get(usart_type* usart_x, uint32_t flag)
   *         - USART_BFF_FLAG:
   *         - USART_TDC_FLAG:
   *         - USART_RDBF_FLAG:
+  *         - USART_PERR_FLAG:
+  *         - USART_FERR_FLAG:
+  *         - USART_NERR_FLAG:
+  *         - USART_ROERR_FLAG:
+  *         - USART_IDLEF_FLAG:
   * @note
   *         - USART_PERR_FLAG, USART_FERR_FLAG, USART_NERR_FLAG, USART_ROERR_FLAG and USART_IDLEF_FLAG are cleared by software
   *           sequence: a read operation to usart sts register (usart_flag_get())
@@ -606,7 +693,15 @@ flag_status usart_flag_get(usart_type* usart_x, uint32_t flag)
   */
 void usart_flag_clear(usart_type* usart_x, uint32_t flag)
 {
-  usart_x->sts = ~flag;
+  if(flag & (USART_PERR_FLAG | USART_FERR_FLAG | USART_NERR_FLAG | USART_ROERR_FLAG | USART_IDLEF_FLAG))
+  {
+    UNUSED(usart_x->sts);
+    UNUSED(usart_x->dt);
+  }
+  else
+  {
+    usart_x->sts = ~flag;
+  }
 }
 
 /**

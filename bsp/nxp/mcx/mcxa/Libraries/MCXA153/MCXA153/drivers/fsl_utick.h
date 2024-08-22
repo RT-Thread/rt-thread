@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_UTICK_H_
-#define _FSL_UTICK_H_
+#ifndef FSL_UTICK_H_
+#define FSL_UTICK_H_
 
 #include "fsl_common.h"
 /*!
@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief UTICK driver version 2.0.5. */
 #define FSL_UTICK_DRIVER_VERSION (MAKE_VERSION(2, 0, 5))
-/*@}*/
+/*! @} */
 
 /*! @brief UTICK timer operational mode. */
 typedef enum _utick_mode
@@ -107,7 +107,7 @@ void UTICK_SetTick(UTICK_Type *base, utick_mode_t mode, uint32_t count, utick_ca
  */
 void UTICK_HandleIRQ(UTICK_Type *base, utick_callback_t cb);
 
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -115,4 +115,4 @@ void UTICK_HandleIRQ(UTICK_Type *base, utick_callback_t cb);
 
 /*! @}*/
 
-#endif /* _FSL_UTICK_H_ */
+#endif /* FSL_UTICK_H_ */

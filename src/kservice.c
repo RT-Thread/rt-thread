@@ -594,7 +594,7 @@ static void (*rt_realloc_exit_hook)(void **ptr, rt_size_t size);
 static void (*rt_free_hook)(void **ptr);
 
 /**
- * @addtogroup Hook
+ * @ingroup Hook
  * @{
  */
 

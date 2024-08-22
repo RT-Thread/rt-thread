@@ -18,23 +18,23 @@ config BSP_USING_C906_LITTLE
     select RT_USING_USER_MAIN
     default y
 
-config PLIC_PHY_ADDR
+config BSP_PLIC_PHY_ADDR
     hex
     default 0x70000000
 
 config IRQ_MAX_NR
     int 
-    default 128
+    default 61
 
-config TIMER_CLK_FREQ
+config BSP_TIMER_CLK_FREQ
     int
     default 25000000
 
-config GPIO_IRQ_BASE
+config BSP_GPIO_IRQ_BASE
     int
     default 41
 
-config SYS_GPIO_IRQ_BASE
+config BSP_SYS_GPIO_IRQ_BASE
     int
     default 47
 

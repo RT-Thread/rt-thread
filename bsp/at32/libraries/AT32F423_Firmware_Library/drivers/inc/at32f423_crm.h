@@ -384,7 +384,7 @@ typedef enum
   CRM_USB_DIV_7                          = 0x04, /*!< pllclk div7 to usbclk */
   CRM_USB_DIV_6                          = 0x05, /*!< pllclk div6 to usbclk */
   CRM_USB_DIV_9                          = 0x06, /*!< pllclk div9 to usbclk */
-  CRM_USB_DIV_8                          = 0x07, /*!< pllclk div8 to usbclk */
+  CRM_USB_DIV_8                          = 0x07  /*!< pllclk div8 to usbclk */
 } crm_usb_div_type;
 
 /**
@@ -1183,6 +1183,7 @@ void crm_reset(void);
 void crm_lext_bypass(confirm_state new_state);
 void crm_hext_bypass(confirm_state new_state);
 flag_status crm_flag_get(uint32_t flag);
+flag_status crm_interrupt_flag_get(uint32_t flag);
 error_status crm_hext_stable_wait(void);
 void crm_hick_clock_trimming_set(uint8_t trim_value);
 void crm_hick_clock_calibration_set(uint8_t cali_value);

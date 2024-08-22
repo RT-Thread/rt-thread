@@ -929,6 +929,102 @@ void can_interrupt_enable(can_type* can_x, uint32_t can_int, confirm_state new_s
 }
 
 /**
+  * @brief  get interrupt flag of the specified can peripheral.
+  * @param  can_x: select the can peripheral.
+  *         this parameter can be one of the following values:
+  *         CAN1,CAN2.
+  * @param  can_flag: select the flag.
+  *         this parameter can be one of the following flags:
+  *         - CAN_EAF_FLAG
+  *         - CAN_EPF_FLAG
+  *         - CAN_BOF_FLAG
+  *         - CAN_ETR_FLAG
+  *         - CAN_EOIF_FLAG
+  *         - CAN_TM0TCF_FLAG
+  *         - CAN_TM1TCF_FLAG
+  *         - CAN_TM2TCF_FLAG
+  *         - CAN_RF0MN_FLAG
+  *         - CAN_RF0FF_FLAG
+  *         - CAN_RF0OF_FLAG
+  *         - CAN_RF1MN_FLAG
+  *         - CAN_RF1FF_FLAG
+  *         - CAN_RF1OF_FLAG
+  *         - CAN_QDZIF_FLAG
+  *         - CAN_EDZC_FLAG
+  *         - CAN_TMEF_FLAG
+  *         note:the state of CAN_EDZC_FLAG need to check dzc and edzif bit
+  *         note:the state of CAN_TMEF_FLAG need to check rqc0,rqc1 and rqc2 bit
+  * @retval status of can_flag, the returned value can be:SET or RESET.
+  */
+flag_status can_interrupt_flag_get(can_type* can_x, uint32_t can_flag)
+{
+  flag_status bit_status = RESET;
+  flag_status int_status = RESET;
+
+  switch(can_flag)
+  {
+    case CAN_EAF_FLAG:
+      int_status = (flag_status)(can_x->inten_bit.eoien && can_x->inten_bit.eaien);
+      break;
+    case CAN_EPF_FLAG:
+      int_status = (flag_status)(can_x->inten_bit.eoien && can_x->inten_bit.epien);
+      break;
+    case CAN_BOF_FLAG:
+      int_status = (flag_status)(can_x->inten_bit.eoien && can_x->inten_bit.boien);
+      break;
+    case CAN_ETR_FLAG:
+      int_status = (flag_status)(can_x->inten_bit.eoien && can_x->inten_bit.etrien);
+      break;
+    case CAN_EOIF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.eoien;
+      break;
+    case CAN_TM0TCF_FLAG:
+    case CAN_TM1TCF_FLAG:
+    case CAN_TM2TCF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.tcien;
+      break;
+    case CAN_RF0MN_FLAG:
+      int_status = (flag_status)can_x->inten_bit.rf0mien;
+      break;
+    case CAN_RF0FF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.rf0fien;
+      break;
+    case CAN_RF0OF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.rf0oien;
+      break;
+    case CAN_RF1MN_FLAG:
+      int_status = (flag_status)can_x->inten_bit.rf1mien;
+      break;
+    case CAN_RF1FF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.rf1fien;
+      break;
+    case CAN_RF1OF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.rf1oien;
+      break;
+    case CAN_QDZIF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.qdzien;
+      break;
+    case CAN_EDZC_FLAG:
+      int_status = (flag_status)can_x->inten_bit.edzien;
+      break;
+    case CAN_TMEF_FLAG:
+      int_status = (flag_status)can_x->inten_bit.tcien;
+      break;
+    default:
+      int_status = RESET;
+      break;
+  }
+
+  if(int_status != SET)
+  {
+    return RESET;
+  }
+  bit_status = can_flag_get(can_x, can_flag);
+
+  return bit_status;
+}
+
+/**
   * @brief  get flag of the specified can peripheral.
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:

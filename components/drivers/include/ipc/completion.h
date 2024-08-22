@@ -14,9 +14,9 @@
 #include <rtconfig.h>
 
 /**
- * Completion - A tiny & rapid IPC primitive for resource-constrained scenarios
+ * RT-Completion - A Tiny(resource-constrained) & Rapid(lockless) IPC Primitive
  *
- * It's an IPC using one CPU word with the encoding:
+ * It's an IPC using one pointer word with the encoding:
  *
  * BIT      | MAX-1 ----------------- 1 |       0        |
  * CONTENT  |   suspended_thread & ~1   | completed flag |
@@ -33,8 +33,12 @@ struct rt_completion
 void rt_completion_init(struct rt_completion *completion);
 rt_err_t rt_completion_wait(struct rt_completion *completion,
                             rt_int32_t            timeout);
+rt_err_t rt_completion_wait_noisr(struct rt_completion *completion,
+                                  rt_int32_t            timeout);
 rt_err_t rt_completion_wait_flags(struct rt_completion *completion,
                                   rt_int32_t timeout, int suspend_flag);
+rt_err_t rt_completion_wait_flags_noisr(struct rt_completion *completion,
+                                        rt_int32_t timeout, int suspend_flag);
 void rt_completion_done(struct rt_completion *completion);
 rt_err_t rt_completion_wakeup(struct rt_completion *completion);
 rt_err_t rt_completion_wakeup_by_errno(struct rt_completion *completion, rt_err_t error);

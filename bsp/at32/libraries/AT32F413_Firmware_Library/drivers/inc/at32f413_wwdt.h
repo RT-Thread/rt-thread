@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_wwdt.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 wwdt header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -136,6 +134,7 @@ void wwdt_flag_clear(void);
 void wwdt_enable(uint8_t wwdt_cnt);
 void wwdt_interrupt_enable(void);
 flag_status wwdt_flag_get(void);
+flag_status wwdt_interrupt_flag_get(void);
 void wwdt_counter_set(uint8_t wwdt_cnt);
 void wwdt_window_counter_set(uint8_t window_cnt);
 

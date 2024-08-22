@@ -41,6 +41,7 @@ AT32F425-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | UART      | 支持     | USART1/2/3                 |
 | GPIO      | 支持     | PA0...PF7                  |
 | IIC       | 支持     | GPIO模拟I2C                |
+| HWIIC     | 支持     | I2C1/2                     |
 | SPI       | 支持     | SPI1/2                     |
 | ADC       | 支持     | ADC1                       |
 | PWM       | 支持     | TMR1/2                     |

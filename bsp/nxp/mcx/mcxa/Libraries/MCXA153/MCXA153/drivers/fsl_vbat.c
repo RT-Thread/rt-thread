@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -78,7 +78,7 @@ status_t VBAT_SetCrystalOsc32kModeAndLoadCapacitance(VBAT_Type *base,
 
     if (operateMode == kVBAT_Osc32kEnabledToLowPowerBackupMode)
     {
-        if ((extalCap & 0x1U) != 0U)
+        if (((uint8_t)extalCap & 0x1U) != 0U)
         {
             return kStatus_VBAT_WrongCapacitanceValue;
         }
@@ -91,11 +91,11 @@ status_t VBAT_SetCrystalOsc32kModeAndLoadCapacitance(VBAT_Type *base,
         base->OSCCTLA = ((base->OSCCTLA & ~(VBAT_OSCCTLA_EXTAL_CAP_SEL_MASK | VBAT_OSCCTLA_XTAL_CAP_SEL_MASK)) |
                          (VBAT_OSCCTLA_XTAL_CAP_SEL(xtalCap) | VBAT_OSCCTLA_EXTAL_CAP_SEL(extalCap)));
         base->OSCCTLB = ((base->OSCCTLB & ~(VBAT_OSCCTLA_EXTAL_CAP_SEL_MASK | VBAT_OSCCTLA_XTAL_CAP_SEL_MASK)) |
-                         VBAT_OSCCTLA_XTAL_CAP_SEL(~xtalCap) | VBAT_OSCCTLA_EXTAL_CAP_SEL(~extalCap));
+                         VBAT_OSCCTLA_XTAL_CAP_SEL(~(uint32_t)xtalCap) | VBAT_OSCCTLA_EXTAL_CAP_SEL(~(uint32_t)extalCap));
     }
 
     base->OSCCTLA = (((base->OSCCTLA & ~VBAT_OSCCTLA_MODE_EN_MASK)) | VBAT_OSCCTLA_MODE_EN(operateMode));
-    base->OSCCTLB = ((base->OSCCTLB & ~VBAT_OSCCTLA_MODE_EN_MASK) | VBAT_OSCCTLA_MODE_EN((uint8_t)~operateMode));
+    base->OSCCTLB = ((base->OSCCTLB & ~VBAT_OSCCTLA_MODE_EN_MASK) | VBAT_OSCCTLA_MODE_EN(~(uint32_t)operateMode));
 
     return kStatus_Success;
 }

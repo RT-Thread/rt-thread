@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_crm.c
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    contains all the functions for the crm firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -61,12 +59,12 @@ void crm_reset(void)
   /* wait sclk switch status */
   while(CRM->cfg_bit.sclksts != CRM_SCLK_HICK);
 
+  /* reset hexten, hextbyps, cfden and pllen bits */
+  CRM->ctrl &= ~(0x010D0000U);
+
   /* reset cfg register, include sclk switch, ahbdiv, apb1div, apb2div, adcdiv,
      clkout pllrcs, pllhextdiv, pllmult, usbdiv and pllrange bits */
   CRM->cfg = 0;
-
-  /* reset hexten, hextbyps, cfden and pllen bits */
-  CRM->ctrl &= ~(0x010D0000U);
 
   /* reset clkout[3], usbbufs, hickdiv, clkoutdiv */
   CRM->misc1 = 0;
@@ -130,6 +128,64 @@ flag_status crm_flag_get(uint32_t flag)
   {
     status = SET;
   }
+  return status;
+}
+
+/**
+  * @brief  get crm interrupt flag status
+  * @param  flag
+  *         this parameter can be one of the following values:
+  *         - CRM_LICK_READY_INT_FLAG
+  *         - CRM_LEXT_READY_INT_FLAG
+  *         - CRM_HICK_READY_INT_FLAG
+  *         - CRM_HEXT_READY_INT_FLAG
+  *         - CRM_PLL_READY_INT_FLAG
+  *         - CRM_CLOCK_FAILURE_INT_FLAG
+  * @retval flag_status (SET or RESET)
+  */
+flag_status crm_interrupt_flag_get(uint32_t flag)
+{
+  flag_status status = RESET;
+  switch(flag)
+  {
+    case CRM_LICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.lickstblf && CRM->clkint_bit.lickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_LEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.lextstblf && CRM->clkint_bit.lextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.hickstblf && CRM->clkint_bit.hickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.hextstblf && CRM->clkint_bit.hextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_PLL_READY_INT_FLAG:
+      if(CRM->clkint_bit.pllstblf && CRM->clkint_bit.pllstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_CLOCK_FAILURE_INT_FLAG:
+      if(CRM->clkint_bit.cfdf && CRM->ctrl_bit.cfden)
+      {
+        status = SET;
+      }
+      break;
+  }
+
   return status;
 }
 
@@ -348,6 +404,7 @@ void crm_flag_clear(uint32_t flag)
     case CRM_LOWPOWER_RESET_FLAG:
     case CRM_ALL_RESET_FLAG:
       CRM->ctrlsts_bit.rstfc = TRUE;
+      while(CRM->ctrlsts_bit.rstfc == TRUE);
       break;
     case CRM_LICK_READY_INT_FLAG:
       CRM->clkint_bit.lickstblfc = TRUE;
@@ -418,6 +475,7 @@ void crm_ahb_div_set(crm_ahb_div_type value)
 
 /**
   * @brief  set crm apb1 division
+  * @note   the maximum frequency of APB1/APB2 clock is 120 MHz
   * @param  value
   *         this parameter can be one of the following values:
   *         - CRM_APB1_DIV_1
@@ -434,6 +492,7 @@ void crm_apb1_div_set(crm_apb1_div_type value)
 
 /**
   * @brief  set crm apb2 division
+  * @note   the maximum frequency of APB1/APB2 clock is 120 MHz
   * @param  value
   *         this parameter can be one of the following values:
   *         - CRM_APB2_DIV_1
@@ -525,6 +584,7 @@ void crm_pll_config(crm_pll_clock_source_type clock_source, crm_pll_mult_type mu
   if(clock_source == CRM_PLL_SOURCE_HICK)
   {
     CRM->cfg_bit.pllrcs = FALSE;
+    CRM->misc1_bit.hickdiv = CRM_HICK48_NODIV;
   }
   else
   {
@@ -559,6 +619,7 @@ void crm_pll_config(crm_pll_clock_source_type clock_source, crm_pll_mult_type mu
 void crm_sysclk_switch(crm_sclk_type value)
 {
   CRM->cfg_bit.sclksel = value;
+  DUMMY_NOP();
 }
 
 /**

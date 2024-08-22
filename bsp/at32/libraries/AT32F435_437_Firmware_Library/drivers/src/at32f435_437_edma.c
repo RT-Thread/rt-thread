@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_edma.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the edma firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -533,6 +531,43 @@ flag_status edma_flag_get(uint32_t edma_flag)
 }
 
 /**
+  * @brief  get the edma interrupt flag.
+  * @param  edma_flag:
+  *         this parameter can be one of the following values:
+  *         - EDMA_FERR1_FLAG   - EDMA_DMERR1_FLAG  - EDMA_DTERR1_FLAG  - EDMA_HDT1_FLAG   - EDMA_FDT1_FLAG
+  *         - EDMA_FERR2_FLAG   - EDMA_DMERR2_FLAG  - EDMA_DTERR2_FLAG  - EDMA_HDT2_FLAG   - EDMA_FDT2_FLAG
+  *         - EDMA_FERR3_FLAG   - EDMA_DMERR3_FLAG  - EDMA_DTERR3_FLAG  - EDMA_HDT3_FLAG   - EDMA_FDT3_FLAG
+  *         - EDMA_FERR4_FLAG   - EDMA_DMERR4_FLAG  - EDMA_DTERR4_FLAG  - EDMA_HDT4_FLAG   - EDMA_FDT4_FLAG
+  *         - EDMA_FERR5_FLAG   - EDMA_DMERR5_FLAG  - EDMA_DTERR5_FLAG  - EDMA_HDT5_FLAG   - EDMA_FDT5_FLAG
+  *         - EDMA_FERR6_FLAG   - EDMA_DMERR6_FLAG  - EDMA_DTERR6_FLAG  - EDMA_HDT6_FLAG   - EDMA_FDT6_FLAG
+  *         - EDMA_FERR7_FLAG   - EDMA_DMERR7_FLAG  - EDMA_DTERR7_FLAG  - EDMA_HDT7_FLAG   - EDMA_FDT7_FLAG
+  *         - EDMA_FERR8_FLAG   - EDMA_DMERR8_FLAG  - EDMA_DTERR8_FLAG  - EDMA_HDT8_FLAG   - EDMA_FDT8_FLAG
+  * @retval the new state of edma flag (SET or RESET).
+  */
+flag_status edma_interrupt_flag_get(uint32_t edma_flag)
+{
+  uint32_t status;
+
+  if(edma_flag > ((uint32_t)0x20000000))
+  {
+    status = EDMA->sts2;
+  }
+  else
+  {
+    status = EDMA->sts1;
+  }
+
+  if((status & edma_flag) != ((uint32_t)RESET))
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  clear the edma flag.
   * @param  edma_flag:
   *         this parameter can be one of the following values:
@@ -753,7 +788,7 @@ void edmamux_sync_config(edmamux_channel_type *edmamux_channelx, edmamux_sync_in
 {
   edmamux_channelx->muxctrl_bit.syncsel = edmamux_sync_init_struct->sync_signal_sel;
   edmamux_channelx->muxctrl_bit.syncpol = edmamux_sync_init_struct->sync_polarity;
-  edmamux_channelx->muxctrl_bit.reqcnt  = edmamux_sync_init_struct->sync_request_number;
+  edmamux_channelx->muxctrl_bit.reqcnt  = edmamux_sync_init_struct->sync_request_number - 1;
   edmamux_channelx->muxctrl_bit.evtgen  = edmamux_sync_init_struct->sync_event_enable;
   edmamux_channelx->muxctrl_bit.syncen  = edmamux_sync_init_struct->sync_enable;
 }
@@ -780,7 +815,7 @@ void edmamux_generator_config(edmamux_generator_type *edmamux_gen_x, edmamux_gen
 {
   edmamux_gen_x->gctrl_bit.sigsel  = edmamux_gen_init_struct->gen_signal_sel;
   edmamux_gen_x->gctrl_bit.gpol    = edmamux_gen_init_struct->gen_polarity;
-  edmamux_gen_x->gctrl_bit.greqcnt = edmamux_gen_init_struct->gen_request_number;
+  edmamux_gen_x->gctrl_bit.greqcnt = edmamux_gen_init_struct->gen_request_number - 1;
   edmamux_gen_x->gctrl_bit.gen     = edmamux_gen_init_struct->gen_enable;
 }
 
@@ -861,6 +896,63 @@ flag_status edmamux_sync_flag_get(uint32_t flag)
 }
 
 /**
+  * @brief  edmamux sync interrupt flag get.
+  * @param  flag
+  *         this parameter can be any combination of the following values:
+  *         - EDMAMUX_SYNC_OV1_FLAG
+  *         - EDMAMUX_SYNC_OV2_FLAG
+  *         - EDMAMUX_SYNC_OV3_FLAG
+  *         - EDMAMUX_SYNC_OV4_FLAG
+  *         - EDMAMUX_SYNC_OV5_FLAG
+  *         - EDMAMUX_SYNC_OV6_FLAG
+  *         - EDMAMUX_SYNC_OV7_FLAG
+  *         - EDMAMUX_SYNC_OV8_FLAG
+  * @retval state of edmamux sync flag.
+  */
+flag_status edmamux_sync_interrupt_flag_get(uint32_t flag)
+{
+  uint32_t int_stat = 0;
+
+  if(flag == EDMAMUX_SYNC_OV1_FLAG)
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL1->muxctrl_bit.syncovien;
+  }
+  else if(flag == EDMAMUX_SYNC_OV2_FLAG)
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL2->muxctrl_bit.syncovien;
+  }
+  else if(flag == EDMAMUX_SYNC_OV3_FLAG)
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL3->muxctrl_bit.syncovien;
+  }
+  else if(flag == EDMAMUX_SYNC_OV4_FLAG)
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL4->muxctrl_bit.syncovien;
+  }
+  else if(flag == EDMAMUX_SYNC_OV5_FLAG)
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL5->muxctrl_bit.syncovien;
+  }
+  else if(flag == EDMAMUX_SYNC_OV6_FLAG)
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL6->muxctrl_bit.syncovien;
+  }
+  else if(flag == EDMAMUX_SYNC_OV7_FLAG)
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL7->muxctrl_bit.syncovien;
+  }
+  else
+  {
+    int_stat = (uint32_t)EDMAMUX_CHANNEL8->muxctrl_bit.syncovien;
+  }
+
+  if((int_stat != RESET) && ((EDMA->muxsyncsts & flag) != RESET))
+    return SET;
+  else
+    return RESET;
+}
+
+/**
   * @brief  edmamux sync flag clear.
   * @param  flag
   *         this parameter can be any combination of the following values:
@@ -899,6 +991,43 @@ flag_status edmamux_generator_flag_get(uint32_t flag)
   {
     return RESET;
   }
+}
+
+/**
+  * @brief  edmamux request generator interrupt flag get.
+  * @param  flag
+  *         this parameter can be any combination of the following values:
+  *         - EDMAMUX_GEN_TRIG_OV1_FLAG
+  *         - EDMAMUX_GEN_TRIG_OV2_FLAG
+  *         - EDMAMUX_GEN_TRIG_OV3_FLAG
+  *         - EDMAMUX_GEN_TRIG_OV4_FLAG
+  * @retval state of edmamux sync flag.
+  */
+flag_status edmamux_generator_interrupt_flag_get(uint32_t flag)
+{
+  uint32_t int_stat = 0;
+
+  if(flag == EDMAMUX_GEN_TRIG_OV1_FLAG)
+  {
+    int_stat = EDMAMUX_GENERATOR1->gctrl_bit.trgovien;
+  }
+  else if(flag == EDMAMUX_GEN_TRIG_OV2_FLAG)
+  {
+    int_stat = EDMAMUX_GENERATOR2->gctrl_bit.trgovien;
+  }
+  else if(flag == EDMAMUX_GEN_TRIG_OV3_FLAG)
+  {
+    int_stat = EDMAMUX_GENERATOR3->gctrl_bit.trgovien;
+  }
+  else
+  {
+    int_stat = EDMAMUX_GENERATOR4->gctrl_bit.trgovien;
+  }
+
+  if((int_stat != RESET) && ((EDMA->muxgsts & flag) != RESET))
+    return SET;
+  else
+    return RESET;
 }
 
 /**

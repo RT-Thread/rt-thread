@@ -90,8 +90,13 @@ static int usbh_ch34x_get_baudrate_div(uint32_t baudrate, uint8_t *factor, uint8
 
 static int usbh_ch34x_get_version(struct usbh_ch34x *ch34x_class)
 {
-    struct usb_setup_packet *setup = ch34x_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
+
+    if (!ch34x_class || !ch34x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ch34x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = CH34X_READ_VERSION;
@@ -110,7 +115,12 @@ static int usbh_ch34x_get_version(struct usbh_ch34x *ch34x_class)
 
 static int usbh_ch34x_flow_ctrl(struct usbh_ch34x *ch34x_class)
 {
-    struct usb_setup_packet *setup = ch34x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!ch34x_class || !ch34x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ch34x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = CH34X_WRITE_REG;
@@ -123,11 +133,16 @@ static int usbh_ch34x_flow_ctrl(struct usbh_ch34x *ch34x_class)
 
 int usbh_ch34x_set_line_coding(struct usbh_ch34x *ch34x_class, struct cdc_line_coding *line_coding)
 {
-    struct usb_setup_packet *setup = ch34x_class->hport->setup;
+    struct usb_setup_packet *setup;
     uint16_t reg_value = 0;
     uint16_t value = 0;
     uint8_t factor = 0;
     uint8_t divisor = 0;
+
+    if (!ch34x_class || !ch34x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ch34x_class->hport->setup;
 
     memcpy((uint8_t *)&ch34x_class->line_coding, line_coding, sizeof(struct cdc_line_coding));
 
@@ -197,7 +212,12 @@ int usbh_ch34x_get_line_coding(struct usbh_ch34x *ch34x_class, struct cdc_line_c
 
 int usbh_ch34x_set_line_state(struct usbh_ch34x *ch34x_class, bool dtr, bool rts)
 {
-    struct usb_setup_packet *setup = ch34x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!ch34x_class || !ch34x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ch34x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = CH34X_MODEM_CTRL;

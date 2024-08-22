@@ -116,15 +116,23 @@ void LPCMP_Init(LPCMP_Type *base, const lpcmp_config_t *config)
 
     /* Configure. */
     LPCMP_Enable(base, false);
+
+#if !(defined(FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) && FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN)
     /* CCR0 register. */
-    if (config->enableStopMode)
+#if defined(FSL_FEATURE_LPCMP_INSTANCE_SUPPORT_CCR0_CMP_STOP_ENn)
+    if (1U == FSL_FEATURE_LPCMP_INSTANCE_SUPPORT_CCR0_CMP_STOP_ENn(base))
+#endif /* FSL_FEATURE_LPCMP_INSTANCE_SUPPORT_CCR0_CMP_STOP_ENn */
     {
-        base->CCR0 |= LPCMP_CCR0_CMP_STOP_EN_MASK;
+        if (config->enableStopMode)
+        {
+            base->CCR0 |= LPCMP_CCR0_CMP_STOP_EN_MASK;
+        }
+        else
+        {
+            base->CCR0 &= ~LPCMP_CCR0_CMP_STOP_EN_MASK;
+        }
     }
-    else
-    {
-        base->CCR0 &= ~LPCMP_CCR0_CMP_STOP_EN_MASK;
-    }
+#endif /* !(defined(FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) && FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) */
 
     /* CCR1 register. */
     tmp32 = (base->CCR1 & (~(LPCMP_CCR1_COUT_PEN_MASK | LPCMP_CCR1_COUT_SEL_MASK | LPCMP_CCR1_COUT_INV_MASK
@@ -202,8 +210,9 @@ void LPCMP_GetDefaultConfig(lpcmp_config_t *config)
 {
     /* Initializes the configure structure to zero. */
     (void)memset(config, 0, sizeof(*config));
-
-    config->enableStopMode      = false;
+#if !(defined(FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) && FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN)
+    config->enableStopMode = false;
+#endif /* !(defined(FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) && FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) */
     config->enableOutputPin     = false;
     config->useUnfilteredOutput = false;
     config->enableInvertOutput  = false;

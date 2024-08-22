@@ -2,18 +2,19 @@
 ** ###################################################################
 **     Processors:          MCXA153VFM
 **                          MCXA153VFT
+**                          MCXA153VLF
 **                          MCXA153VLH
 **
 **     Compiler:            GNU C Compiler
 **     Reference manual:    MCXA1 User manual
 **     Version:             rev. 1.0, 2022-03-29
-**     Build:               b230411
+**     Build:               b240403
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2023 NXP
+**     Copyright 2016-2024 NXP
 **     SPDX-License-Identifier: BSD-3-Clause
 **
 **     http:                 www.nxp.com

@@ -401,9 +401,9 @@ static rt_err_t fdt_scan_initrd(rt_uint64_t *ranges, const char *name, const cha
             int s_len, e_len;
             const fdt32_t *start = RT_NULL, *end = RT_NULL;
 
-            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%d-start", oem, name);
+            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%s-start", oem, name);
             start = fdt_getprop(_fdt, offset, tmp_name, &s_len);
-            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%d-end", oem, name);
+            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%s-end", oem, name);
             end = fdt_getprop(_fdt, offset, tmp_name, &e_len);
 
             if (start && end)

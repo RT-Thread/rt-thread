@@ -595,6 +595,85 @@ flag_status i2c_flag_get(i2c_type *i2c_x, uint32_t flag)
 }
 
 /**
+  * @brief  get interrupt flag status
+  * @param  i2c_x: to select the i2c peripheral.
+  *         this parameter can be one of the following values:
+  *         I2C1, I2C2.
+  * @param  flag
+  *         this parameter can be one of the following values:
+  *         - I2C_STARTF_FLAG: start condition generation complete flag.
+  *         - I2C_ADDR7F_FLAG: 0~7 bit address match flag.
+  *         - I2C_TDC_FLAG: transmit data complete flag.
+  *         - I2C_ADDRHF_FLAG: master 9~8 bit address header match flag.
+  *         - I2C_STOPF_FLAG: stop condition generation complete flag.
+  *         - I2C_RDBF_FLAG: receive data buffer full flag.
+  *         - I2C_TDBE_FLAG: transmit data buffer empty flag.
+  *         - I2C_BUSERR_FLAG: bus error flag.
+  *         - I2C_ARLOST_FLAG: arbitration lost flag.
+  *         - I2C_ACKFAIL_FLAG: acknowledge failure flag.
+  *         - I2C_OUF_FLAG: overflow or underflow flag.
+  *         - I2C_PECERR_FLAG: pec receive error flag.
+  *         - I2C_TMOUT_FLAG: smbus timeout flag.
+  *         - I2C_ALERTF_FLAG: smbus alert flag.
+  * @retval flag_status (SET or RESET)
+  */
+flag_status i2c_interrupt_flag_get(i2c_type *i2c_x, uint32_t flag)
+{
+  __IO uint32_t reg = 0, value = 0, iten = 0;
+
+  switch(flag)
+  {
+    case I2C_STARTF_FLAG:
+    case I2C_ADDR7F_FLAG:
+    case I2C_TDC_FLAG:
+    case I2C_ADDRHF_FLAG:
+    case I2C_STOPF_FLAG:
+      iten = i2c_x->ctrl2_bit.evtien;
+      break;
+    case I2C_RDBF_FLAG:
+    case I2C_TDBE_FLAG:
+      iten = i2c_x->ctrl2_bit.dataien && i2c_x->ctrl2_bit.evtien;
+      break;
+    case I2C_BUSERR_FLAG:
+    case I2C_ARLOST_FLAG:
+    case I2C_ACKFAIL_FLAG:
+    case I2C_OUF_FLAG:
+    case I2C_PECERR_FLAG:
+    case I2C_TMOUT_FLAG:
+    case I2C_ALERTF_FLAG:
+      iten = i2c_x->ctrl2_bit.errien;
+      break;
+
+    default:
+      break;
+  }
+
+  reg = flag >> 28;
+
+  flag &= (uint32_t)0x00FFFFFF;
+
+  if(reg == 0)
+  {
+    value = i2c_x->sts1;
+  }
+  else
+  {
+    flag = (uint32_t)(flag >> 16);
+
+    value = i2c_x->sts2;
+  }
+
+  if(((value & flag) != (uint32_t)RESET) && (iten))
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  clear flag status
   * @param  i2c_x: to select the i2c peripheral.
   *         this parameter can be one of the following values:

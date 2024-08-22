@@ -52,7 +52,7 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -g3'
+        CFLAGS += ' -Os -g3'
         AFLAGS += ' -g3'
     else:
         CFLAGS += ' -O2'

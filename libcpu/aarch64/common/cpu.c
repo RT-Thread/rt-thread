@@ -20,7 +20,6 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-
 #ifdef RT_USING_SMP
 
 #define REPORT_ERR(retval) LOG_E("got error code %d in %s(), %s:%d", (retval), __func__, __FILE__, __LINE__)

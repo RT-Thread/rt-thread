@@ -44,6 +44,9 @@ if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
         src += ['drv_soft_i2c.c']
 
+if GetDepend(['BSP_USING_HARD_I2C']):
+    src += Glob('drv_hard_i2c.c')
+
 if GetDepend(['BSP_USING_ADC']):
     src += Glob('drv_adc.c')
 

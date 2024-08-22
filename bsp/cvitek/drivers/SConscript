@@ -5,6 +5,7 @@ src     = Split('''
     drv_uart.c
     drv_por.c
     drv_gpio.c
+    drv_pinmux.c
 ''')
 CPPDEFINES = []
 
@@ -30,15 +31,21 @@ if GetDepend('BSP_USING_WDT'):
 
 if GetDepend(['BSP_USING_SPI']):
     src += ['drv_spi.c']
+    src += ['libraries/spi/dw_spi.c']
+    CPPPATH += [cwd + r'/libraries/spi']
 
 if GetDepend('BSP_USING_PWM'):
     src += ['drv_pwm.c']
     CPPPATH += [cwd + r'/libraries/cv180x/pwm']
 
-if GetDepend('BSP_USING_SDH'):
-    src += ['drv_sdhci.c', 'port/mnt.c']
-    CPPPATH += [cwd + r'/libraries/sdif']
+if GetDepend('BSP_ROOTFS_TYPE_CROMFS'):
+    src += ['port/mnt_cromfs.c']
+elif GetDepend('BSP_ROOTFS_TYPE_ROMFS'):
+    src += ['port/mnt_romfs.c']
 
+if GetDepend('BSP_USING_SDH'):
+    src += ['drv_sdhci.c']
+    CPPPATH += [cwd + r'/libraries/sdif']
 
 if GetDepend('BSP_USING_ETH'):
     src += Split('''

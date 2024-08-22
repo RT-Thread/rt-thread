@@ -629,7 +629,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
             accel_debug("Accel: Offset %+d %+d %+d\n", *(rt_int16_t *)&cmd[1], \
                 *(rt_int16_t *)&cmd[3], *(rt_int16_t *)&cmd[5]);
 #endif
-            rt_thread_sleep(1);
+            rt_thread_delay(1);
         }
     }
     else
@@ -695,7 +695,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
             {
                 max.z = sum.z;
             }
-            rt_thread_sleep(1);
+            rt_thread_delay(1);
         } while (accelInTime);
 
         accel_debug("Accel: Min %+d %+d %+d, max %+d %+d %+d\n",

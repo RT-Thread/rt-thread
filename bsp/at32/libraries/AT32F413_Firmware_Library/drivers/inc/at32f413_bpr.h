@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_bpr.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 bpr header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -118,9 +116,7 @@ typedef enum
   BPR_RTC_OUTPUT_CLOCK_CAL_BEFORE        = 0x080, /*!< output clock before calibration */
   BPR_RTC_OUTPUT_ALARM                   = 0x100, /*!< output alarm event with pluse mode */
   BPR_RTC_OUTPUT_SECOND                  = 0x300, /*!< output second event with pluse mode */
-  BPR_RTC_OUTPUT_CLOCK_CAL_AFTER         = 0x480, /*!< output clock after calibration */
-  BPR_RTC_OUTPUT_ALARM_TOGGLE            = 0x900, /*!< output alarm event with toggle mode */
-  BPR_RTC_OUTPUT_SECOND_TOGGLE           = 0xB00  /*!< output second event with toggle mode */
+  BPR_RTC_OUTPUT_CLOCK_CAL_AFTER         = 0x480  /*!< output clock after calibration */
 } bpr_rtc_output_type;
 
 /**
@@ -761,6 +757,7 @@ typedef struct
 
 void bpr_reset(void);
 flag_status bpr_flag_get(uint32_t flag);
+flag_status bpr_interrupt_flag_get(uint32_t flag);
 void bpr_flag_clear(uint32_t flag);
 void bpr_interrupt_enable(confirm_state new_state);
 uint16_t bpr_data_read(bpr_data_type bpr_data);

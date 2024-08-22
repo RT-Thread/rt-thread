@@ -242,7 +242,8 @@ void tmr_cnt_dir_set(tmr_type *tmr_x, tmr_count_mode_type tmr_cnt_dir)
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR9, TMR10, TMR11, TMR12, TMR13, TMR14
-  * @param  tmr_rpr_value (0x0000~0xFFFF)
+  * @param  tmr_rpr_value for TMR1(0x0000~0xFFFF)
+  *         for TMR9, TMR10, TMR11, TMR12, TMR13, TMR14(0x00~0xFF)
   * @retval none
   */
 void tmr_repetition_counter_set(tmr_type *tmr_x, uint16_t tmr_rpr_value)
@@ -286,8 +287,7 @@ uint32_t tmr_counter_value_get(tmr_type *tmr_x)
   *         this parameter can be one of the following values:
   *         TMR1, TMR2, TMR3, TMR4, TMR6, TMR7,
   *         TMR9, TMR10, TMR11, TMR12, TMR13, TMR14
-  * @param  tmr_div_value (for 16 bit tmr 0x0000~0xFFFF,
-  *                        for 32 bit tmr 0x0000_0000~0xFFFF_FFFF)
+  * @param  tmr_div_value (0x0000~0xFFFF)
   * @retval none
   */
 void tmr_div_value_set(tmr_type *tmr_x, uint32_t tmr_div_value)
@@ -1384,6 +1384,40 @@ void tmr_interrupt_enable(tmr_type *tmr_x, uint32_t tmr_interrupt, confirm_state
 }
 
 /**
+  * @brief  get tmr interrupt flag
+  * @param  tmr_x: select the tmr peripheral.
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR2, TMR3, TMR4, TMR6, TMR7,
+  *         TMR9, TMR10, TMR11, TMR12, TMR13, TMR14
+  * @param  tmr_flag
+  *         this parameter can be one of the following values:
+  *         - TMR_OVF_FLAG
+  *         - TMR_C1_FLAG
+  *         - TMR_C2_FLAG
+  *         - TMR_C3_FLAG
+  *         - TMR_C4_FLAG
+  *         - TMR_HALL_FLAG
+  *         - TMR_TRIGGER_FLAG
+  *         - TMR_BRK_FLAG
+  * @retval state of tmr interrupt flag
+  */
+flag_status tmr_interrupt_flag_get(tmr_type *tmr_x, uint32_t tmr_flag)
+{
+  flag_status status = RESET;
+
+  if((tmr_x->ists & tmr_flag) && (tmr_x->iden & tmr_flag))
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+
+  return status;
+}
+
+/**
   * @brief  get tmr flag
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
@@ -1642,7 +1676,7 @@ void tmr_external_clock_mode2_config(tmr_type *tmr_x, tmr_external_signal_divide
   * @brief  config tmr encoder mode
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
-  *         TMR1, TMR2, TMR3, TMR4
+  *         TMR1, TMR2, TMR3, TMR4, TMR9, TMR12
   * @param  encoder_mode
   *         this parameter can be one of the following values:
   *         - TMR_ENCODER_MODE_A
@@ -1776,7 +1810,7 @@ void tmr_dma_control_config(tmr_type *tmr_x, tmr_dma_transfer_length_type dma_le
 }
 
 /**
-  * @brief  config tmr break mode and dead-time
+  * @brief  config tmr brake mode and dead-time
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR9, TMR10, TMR11, TMR12, TMR13, TMR14
@@ -1793,6 +1827,19 @@ void tmr_brkdt_config(tmr_type *tmr_x, tmr_brkdt_config_type *brkdt_struct)
   tmr_x->brk_bit.brkv = brkdt_struct->brk_polarity;
   tmr_x->brk_bit.aoen = brkdt_struct->auto_output_enable;
   tmr_x->brk_bit.wpc = brkdt_struct->wp_level;
+}
+
+/**
+  * @brief  set tmr break input filter value
+  * @param  tmr_x: select the tmr peripheral.
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR9, TMR10, TMR11, TMR12, TMR13, TMR14
+  * @param  filter_value (0x0~0xf)
+  * @retval none
+  */
+void tmr_brk_filter_value_set(tmr_type *tmr_x, uint8_t filter_value)
+{
+  tmr_x->brk_bit.bkf = filter_value;
 }
 
 /**

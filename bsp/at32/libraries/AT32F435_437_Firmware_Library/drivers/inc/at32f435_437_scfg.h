@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_scfg.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 system config header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -57,9 +55,9 @@ extern "C" {
 typedef enum
 {
   SCFG_XMC_SWAP_NONE                     = 0x00, /* no swap */
-  SCFG_XMC_SWAP_MODE1                    = 0x01, /* sdram nor psram sram nand2 swap */
-  SCFG_XMC_SWAP_MODE2                    = 0x02, /* nand3 qspi2 swap */
-  SCFG_XMC_SWAP_MODE3                    = 0x03  /* sdram nor psram sram nand2 nand3 qspi2 swap */
+  SCFG_XMC_SWAP_MODE1                    = 0x01, /* sdram 0x60000000 and 0x70000000, nor psram sram nand2 0xC00000000 and 0xD0000000 */
+  SCFG_XMC_SWAP_MODE2                    = 0x02, /* qspi2 0x80000000, nand3 0xB0000000 */
+  SCFG_XMC_SWAP_MODE3                    = 0x03  /* sdram 0x60000000 and 0x70000000, nor psram sram nand2 0xC00000000 and 0xD0000000, qspi2 0x80000000, nand3 0xB0000000 */
 } scfg_xmc_swap_type;
 
 /**
@@ -67,9 +65,7 @@ typedef enum
   */
 typedef enum
 {
-  SCFG_IR_SOURCE_TMR10                   = 0x00, /* infrared signal source select tmr10 */
-  SCFG_IR_SOURCE_USART1                  = 0x01, /* infrared signal source select usart1 */
-  SCFG_IR_SOURCE_USART2                  = 0x02  /* infrared signal source select usart2 */
+  SCFG_IR_SOURCE_TMR10                   = 0x00  /* infrared signal source select tmr10 */
 } scfg_ir_source_type;
 
 /**

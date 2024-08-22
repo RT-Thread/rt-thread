@@ -16,7 +16,7 @@
 #endif
 
 #if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7) || \
-    defined(SOC_HPM5000) || defined(SOC_HPM6000) || defined(BSP_USING_BL61X)
+    defined(SOC_HPM5000) || defined(SOC_HPM6000) || defined(SOC_HPM6E00) || defined(BSP_USING_BL61X)
 #ifndef RT_USING_CACHE
 #error usbh msc must enable RT_USING_CACHE in this chip
 #endif

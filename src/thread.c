@@ -1018,6 +1018,15 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     if (!error)
     {
         error = rt_sched_unlock_n_resched(slvl);
+
+        /**
+         * RT_ESCHEDLOCKED indicates that the current thread is in a critical section,
+         * rather than 'thread' can't be resumed. Therefore, we can ignore this error.
+         */
+        if (error == -RT_ESCHEDLOCKED)
+        {
+            error = RT_EOK;
+        }
     }
     else
     {

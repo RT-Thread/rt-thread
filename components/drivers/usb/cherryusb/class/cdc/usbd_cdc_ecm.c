@@ -167,7 +167,7 @@ void usbd_cdc_ecm_start_read_next(void)
 {
     g_cdc_ecm_rx_data_length = 0;
     g_cdc_ecm_rx_data_buffer = NULL;
-    usbd_ep_start_read(0, cdc_ecm_ep_data[CDC_ECM_OUT_EP_IDX].ep_addr, g_cdc_ecm_rx_buffer, usbd_get_ep_mps(busid, cdc_ecm_ep_data[CDC_ECM_OUT_EP_IDX].ep_addr));
+    usbd_ep_start_read(0, cdc_ecm_ep_data[CDC_ECM_OUT_EP_IDX].ep_addr, g_cdc_ecm_rx_buffer, usbd_get_ep_mps(0, cdc_ecm_ep_data[CDC_ECM_OUT_EP_IDX].ep_addr));
 }
 
 #ifdef CONFIG_USBDEV_CDC_ECM_USING_LWIP
@@ -183,7 +183,7 @@ struct pbuf *usbd_cdc_ecm_eth_rx(void)
         usbd_cdc_ecm_start_read_next();
         return NULL;
     }
-    memcpy(p->payload, (uint8_t *)g_cdc_ecm_rx_buffer, g_cdc_ecm_rx_data_length);
+    usb_memcpy(p->payload, (uint8_t *)g_cdc_ecm_rx_buffer, g_cdc_ecm_rx_data_length);
     p->len = g_cdc_ecm_rx_data_length;
 
     USB_LOG_DBG("rxlen:%d\r\n", g_cdc_ecm_rx_data_length);
@@ -206,13 +206,11 @@ int usbd_cdc_ecm_eth_tx(struct pbuf *p)
 
     buffer = g_cdc_ecm_tx_buffer;
     for (q = p; q != NULL; q = q->next) {
-        memcpy(buffer, q->payload, q->len);
+        usb_memcpy(buffer, q->payload, q->len);
         buffer += q->len;
     }
 
-    g_cdc_ecm_tx_data_length = p->tot_len;
-
-    return usbd_cdc_ecm_start_write(g_cdc_ecm_tx_buffer, g_cdc_ecm_tx_data_length);
+    return usbd_cdc_ecm_start_write(g_cdc_ecm_tx_buffer, p->tot_len);
 }
 #endif
 

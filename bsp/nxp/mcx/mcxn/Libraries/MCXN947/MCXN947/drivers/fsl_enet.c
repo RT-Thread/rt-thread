@@ -1,9 +1,10 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <math.h>
 #include "fsl_enet.h"
 
 /*******************************************************************************
@@ -41,7 +42,7 @@
 #define ENET_HEAD_AVBTYPE_OFFSET (16)
 
 /*! @brief Binary rollover mode count convert */
-#define ENET_BINARY_ROLLOVER_SCALE(x) (uint32_t)((uint64_t)(x)*46566U / 100000U)
+#define ENET_BINARY_ROLLOVER_SCALE(x) (uint32_t)((uint64_t)(x) * 46566U / 100000U)
 
 /*******************************************************************************
  * Prototypes
@@ -302,7 +303,8 @@ static void ENET_SetMacControl(ENET_Type *base, const enet_config_t *config, uin
     /* Set the speed and duplex. */
     reg = ENET_MAC_CONFIGURATION_ECRSFD_MASK | ENET_MAC_CONFIGURATION_PS_MASK |
           ENET_MAC_CONFIGURATION_DM(config->miiDuplex) | ENET_MAC_CONFIGURATION_FES(config->miiSpeed) |
-          ENET_MAC_CONFIGURATION_S2KP(!((config->specialControl & (uint16_t)kENET_8023AS2KPacket) == 0U));
+          ENET_MAC_CONFIGURATION_S2KP((config->specialControl & (uint16_t)kENET_8023AS2KPacket) != 0U) |
+          ENET_MAC_CONFIGURATION_IPC((config->specialControl & (uint16_t)kENET_RxChecksumOffloadEnable) != 0U);
     if (config->miiDuplex == kENET_MiiHalfDuplex)
     {
         reg |= ENET_MAC_CONFIGURATION_IPG(ENET_HALFDUPLEX_DEFAULTIPG);
@@ -751,7 +753,7 @@ void ENET_EnableInterrupts(ENET_Type *base, uint32_t mask)
             base->DMA_CH[index].DMA_CHX_INT_EN = interrupt;
         }
     }
-    interrupt = interrupt >> ENET_MACINT_ENUM_OFFSET;
+    interrupt = mask >> ENET_MACINT_ENUM_OFFSET;
     if (interrupt != 0U)
     {
         /* MAC interrupt */
@@ -829,7 +831,7 @@ void ENET_DisableInterrupts(ENET_Type *base, uint32_t mask)
             base->DMA_CH[index].DMA_CHX_INT_EN &= ~interrupt;
         }
     }
-    interrupt = interrupt >> ENET_MACINT_ENUM_OFFSET;
+    interrupt = mask >> ENET_MACINT_ENUM_OFFSET;
     if (interrupt != 0U)
     {
         /* MAC interrupt */
@@ -867,6 +869,8 @@ void ENET_CreateHandler(ENET_Type *base,
     uint8_t count                    = 0;
     uint8_t rxIntEnable              = 0;
     enet_buffer_config_t *buffConfig = bufferConfig;
+    uint32_t txFifoSize;
+    uint32_t pbl;
 
     /* Store transfer parameters in handle pointer. */
     (void)memset(handle, 0, sizeof(enet_handle_t));
@@ -901,10 +905,24 @@ void ENET_CreateHandler(ENET_Type *base,
 
         /* Check if the Rx interrrupt is enabled. */
         rxIntEnable |= (uint8_t)(uint32_t)(base->DMA_CH[count].DMA_CHX_INT_EN & ENET_DMA_CH_DMA_CHX_INT_EN_RIE_MASK);
+
+        /* Calculate the reserved space for Tx in certain cases. */
+        if (0U != (base->MTL_QUEUE[count].MTL_TXQX_OP_MODE & ENET_MTL_QUEUE_MTL_TXQX_OP_MODE_TSF_MASK))
+        {
+            pbl = (base->DMA_CH[count].DMA_CHX_TX_CTRL & ENET_DMA_CH_DMA_CHX_TX_CTRL_TxPBL_MASK) >>
+                  ENET_DMA_CH_DMA_CHX_TX_CTRL_TxPBL_SHIFT;
+            pbl = ((base->DMA_CH[count].DMA_CHX_CTRL & ENET_DMA_CH_DMA_CHX_CTRL_PBLx8_MASK) != 0U) ? (8U * pbl) : pbl;
+            txFifoSize                     = (uint32_t)pow((double)2,
+                                                           (double)(uint32_t)(((base->MAC_HW_FEAT[1] & ENET_MAC_HW_FEAT_TXFIFOSIZE_MASK) >>
+                                                           ENET_MAC_HW_FEAT_TXFIFOSIZE_SHIFT) +
+                                                          7U));
+            handle->txLenLimitation[count] = txFifoSize - (pbl + 6U) * (32U / 8U);
+        }
+
         buffConfig++;
     }
 
-    handle->rxintEnable = (rxIntEnable != 0U) ? true : false;
+    handle->rxintEnable = (rxIntEnable != 0U);
 
     /* Save the handle pointer in the global variables. */
     s_ENETHandle[ENET_GetInstance(base)] = handle;
@@ -1133,6 +1151,127 @@ void ENET_EnterPowerDown(ENET_Type *base, uint32_t *wakeFilter)
 
     /* Enable the MAC Rx. */
     base->MAC_CONFIGURATION |= ENET_MAC_CONFIGURATION_RE_MASK;
+}
+
+/*!
+ * brief Set VLAN control.
+ *
+ * param base  ENET peripheral base address.
+ * param control  VLAN control configuration.
+ */
+status_t ENET_SetVlanCtrl(ENET_Type *base, enet_vlan_ctrl_t *control)
+{
+    uint32_t vl = (((uint32_t)control->rxVlanTag.pcp) << 13U) | (((uint32_t)control->rxVlanTag.dei) << 12U) |
+                  (uint32_t)control->rxVlanTag.vid;
+    uint32_t vlanCtrl;
+
+    if ((control->innerVlanFilterMatch) && (!control->doubleVlanEnable))
+    {
+        return kStatus_Fail;
+    }
+
+    vlanCtrl = ENET_MAC_VLAN_TAG_CTRL_VL(vl) | ENET_MAC_VLAN_TAG_CTRL_ETV(control->vidComparison) |
+               ENET_MAC_VLAN_TAG_CTRL_VTIM(control->vlanInverseMatch) |
+               ENET_MAC_VLAN_TAG_CTRL_ESVL(control->svlanEnable) |
+               ENET_MAC_VLAN_TAG_CTRL_DOVLTC(control->disableVlanTypeCheck) |
+               ENET_MAC_VLAN_TAG_CTRL_EVLS(control->rxOuterVlanStrip) |
+               ENET_MAC_VLAN_TAG_CTRL_EIVLS(control->rxInnerVlanStrip) |
+               ENET_MAC_VLAN_TAG_CTRL_EDVLP(control->doubleVlanEnable) |
+               ENET_MAC_VLAN_TAG_CTRL_ERIVLT(control->innerVlanFilterMatch) |
+               ENET_MAC_VLAN_TAG_CTRL_EVLRXS(control->outerTagInRxStatus) |
+               ENET_MAC_VLAN_TAG_CTRL_EIVLRXS(control->innerTagInRxStatus);
+
+    if (control->rxVlanTag.tpid == kENET_StanSvlan)
+    {
+        vlanCtrl |= ENET_MAC_VLAN_TAG_CTRL_ERSVLM_MASK;
+    }
+    base->MAC_VLAN_TAG_CTRL = vlanCtrl;
+
+    return kStatus_Success;
+}
+
+/*!
+ * brief Set Tx outer VLAN configuration.
+ *
+ * param base  ENET peripheral base address.
+ * param config  Tx VLAN operation configuration.
+ * param channel  The channel to apply this configuration.
+ */
+status_t ENET_SetTxOuterVlan(ENET_Type *base, enet_vlan_tx_config_t *config, enet_vlan_tx_channel_t channel)
+{
+    uint32_t vlt =
+        (((uint32_t)config->tag.pcp) << 13U) | (((uint32_t)config->tag.dei) << 12U) | (uint32_t)config->tag.vid;
+    uint32_t vlanConfig = ENET_MAC_VLAN_INCL_VLTI(config->txDescVlan) | ENET_MAC_VLAN_INCL_CSVL(config->tag.tpid) |
+                          ENET_MAC_VLAN_INCL_VLC(config->ops) | ENET_MAC_VLAN_INCL_VLT(vlt);
+
+    if ((config->tag.tpid == kENET_StanSvlan) && ((base->MAC_VLAN_TAG_CTRL & ENET_MAC_VLAN_TAG_CTRL_ESVL_MASK) == 0U))
+    {
+        return kStatus_Fail;
+    }
+
+    if (config->ops != kENET_NoOps)
+    {
+        vlanConfig |= ENET_MAC_VLAN_INCL_VLP(1);
+    }
+
+    if (channel != kENET_VlanTagAllChannels)
+    {
+        while ((base->MAC_VLAN_INCL & ENET_MAC_VLAN_INCL_BUSY_MASK) != 0U)
+        {
+        }
+
+        /* Clear and status ans reset the power down. */
+        base->MAC_VLAN_INCL |=
+            ENET_MAC_VLAN_INCL_CBTI_MASK | ENET_MAC_VLAN_INCL_RDWR_MASK | ENET_MAC_VLAN_INCL_ADDR(channel) | vlanConfig;
+
+        while ((base->MAC_VLAN_INCL & ENET_MAC_VLAN_INCL_BUSY_MASK) != 0U)
+        {
+        }
+
+        /* Clear set channel bits. */
+        base->MAC_VLAN_INCL &= ~(ENET_MAC_VLAN_INCL_RDWR_MASK | ENET_MAC_VLAN_INCL_CBTI_MASK);
+    }
+    else
+    {
+        base->MAC_VLAN_INCL = vlanConfig;
+    }
+
+    return kStatus_Success;
+}
+
+/*!
+ * brief Set Tx inner VLAN configuration.
+ *
+ * param base  ENET peripheral base address.
+ * param config  Tx VLAN operation configuration.
+ */
+status_t ENET_SetTxInnerVlan(ENET_Type *base, enet_vlan_tx_config_t *config)
+{
+    uint32_t vlt =
+        (((uint32_t)config->tag.pcp) << 13U) | (((uint32_t)config->tag.dei) << 12U) | (uint32_t)config->tag.vid;
+    uint32_t vlanConfig = ENET_MAC_INNER_VLAN_INCL_VLTI(config->txDescVlan) |
+                          ENET_MAC_INNER_VLAN_INCL_CSVL(config->tag.tpid) | ENET_MAC_INNER_VLAN_INCL_VLC(config->ops) |
+                          ENET_MAC_INNER_VLAN_INCL_VLT(vlt);
+
+    /* S-VLAN should be enabled first. */
+    if ((config->tag.tpid == kENET_StanSvlan) && ((base->MAC_VLAN_TAG_CTRL & ENET_MAC_VLAN_TAG_CTRL_ESVL_MASK) == 0U))
+    {
+        return kStatus_Fail;
+    }
+
+    /* Double VLAN should be enabled first for inner VLAN. */
+    if ((base->MAC_VLAN_TAG_CTRL & ENET_MAC_VLAN_TAG_CTRL_EDVLP_MASK) == 0U)
+    {
+        return kStatus_Fail;
+    }
+
+    if (config->ops != kENET_NoOps)
+    {
+        vlanConfig |= ENET_MAC_INNER_VLAN_INCL_VLP(1);
+    }
+    base->MAC_INNER_VLAN_INCL = vlanConfig;
+
+    return kStatus_Success;
 }
 
 /*!
@@ -1551,7 +1690,6 @@ void ENET_RxBufferFreeAll(ENET_Type *base, enet_handle_t *handle)
 
 static inline void ENET_GetRxFrameErr(enet_rx_bd_struct_t *rxDesc, enet_rx_frame_error_t *rxFrameError)
 {
-    uint32_t rdes3 = rxDesc->rdes3;
     union _frame_error
     {
         uint32_t data;
@@ -1559,9 +1697,8 @@ static inline void ENET_GetRxFrameErr(enet_rx_bd_struct_t *rxDesc, enet_rx_frame
     };
     union _frame_error error;
 
-    (void)memset((void *)&error.frameError, 0, sizeof(enet_rx_frame_error_t));
-
-    error.data = ENET_FRAME_RX_ERROR_BITS(rdes3);
+    error.data    = ENET_FRAME_RX_ERROR_BITS(rxDesc->rdes3);
+    *rxFrameError = error.frameError;
 }
 
 static void ENET_DropFrame(ENET_Type *base, enet_handle_t *handle, uint8_t channel)
@@ -1573,23 +1710,29 @@ static void ENET_DropFrame(ENET_Type *base, enet_handle_t *handle, uint8_t chann
     bool tsAvailable   = false;
     uint32_t buff1Addr = 0;
     uint32_t buff2Addr = 0;
+    uint32_t rdes1;
 #endif /* ENET_PTP1588FEATURE_REQUIRED */
+    uint32_t rdes3;
 
     /* Not check DMA ownership here, assume there's at least one valid frame left in BD ring */
     do
     {
         /* Update the BD to idle status. */
         rxDesc = &rxBdRing->rxBdBase[rxBdRing->rxGenIdx];
+#ifdef ENET_PTP1588FEATURE_REQUIRED
+        rdes1 = rxDesc->rdes1;
+#endif
+        rdes3 = rxDesc->rdes3;
         ENET_UpdateRxDescriptor(rxDesc, NULL, NULL, handle->rxintEnable, handle->doubleBuffEnable);
         rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
 
         /* Find the last buffer descriptor for the frame. */
-        if ((rxDesc->rdes3 & ENET_RXDESCRIP_WR_LD_MASK) != 0U)
+        if ((rdes3 & ENET_RXDESCRIP_WR_LD_MASK) != 0U)
         {
 #ifdef ENET_PTP1588FEATURE_REQUIRED
-            if ((rxDesc->rdes3 & ENET_RXDESCRIP_WR_RS1V_MASK) != 0U)
+            if ((rdes3 & ENET_RXDESCRIP_WR_RS1V_MASK) != 0U)
             {
-                if ((rxDesc->rdes1 & ENET_RXDESCRIP_WR_PTPTSA_MASK) != 0U)
+                if ((rdes1 & ENET_RXDESCRIP_WR_PTPTSA_MASK) != 0U)
                 {
                     tsAvailable = true;
                 }
@@ -1631,10 +1774,7 @@ static void ENET_DropFrame(ENET_Type *base, enet_handle_t *handle, uint8_t chann
  * this function, driver will allocate new buffers for the BDs whose buffers have been taken by application.
  * note This function will drop current frame and update related BDs as available for DMA if new buffers allocating
  * fails. Application must provide a memory pool including at least BD number + 1 buffers(+2 if enable double buffer)
- * to make this function work normally. If user calls this function in Rx interrupt handler, be careful that this
- * function makes Rx BD ready with allocating new buffer(normal) or updating current BD(out of memory). If there's
- * always new Rx frame input, Rx interrupt will be triggered forever. Application need to disable Rx interrupt according
- * to specific design in this case.
+ * to make this function work normally.
  *
  * param base   ENET peripheral base address.
  * param handle The ENET handler pointer. This is the same handler pointer used in the ENET_Init.
@@ -1739,17 +1879,16 @@ status_t ENET_GetRxFrame(ENET_Type *base, enet_handle_t *handle, enet_rx_frame_s
 
             if (rxFrame->totLen - offset > (uint16_t)rxBdRing->rxBuffSizeAlign)
             {
+                /* Here must be double buffer. */
+                assert(handle->doubleBuffEnable);
+
                 buff1Len = (uint16_t)rxBdRing->rxBuffSizeAlign;
-                if (handle->doubleBuffEnable)
-                {
-                    buff2Len = rxFrame->totLen - offset - (uint16_t)rxBdRing->rxBuffSizeAlign - ENET_FCS_LEN;
-                }
+                buff2Len = rxFrame->totLen - offset - (uint16_t)rxBdRing->rxBuffSizeAlign;
             }
             else
             {
-                buff1Len = rxFrame->totLen - offset - ENET_FCS_LEN;
+                buff1Len = rxFrame->totLen - offset;
             }
-            rxFrame->totLen -= ENET_FCS_LEN;
         }
         else
         {
@@ -1896,7 +2035,7 @@ status_t ENET_GetRxFrame(ENET_Type *base, enet_handle_t *handle, enet_rx_frame_s
             /* Free the incomplete frame buffers. */
             while (index-- != 0U)
             {
-                handle->rxBuffFree(base, &rxFrame->rxBuffArray[index].buffer, handle->userData, channel);
+                handle->rxBuffFree(base, rxFrame->rxBuffArray[index].buffer, handle->userData, channel);
             }
 
             /* Update all left BDs of this frame from current index. */
@@ -1906,6 +2045,27 @@ status_t ENET_GetRxFrame(ENET_Type *base, enet_handle_t *handle, enet_rx_frame_s
             break;
         }
     } while (!isLastBuff);
+
+    /* Remove 4 bytes FCS. */
+    if (result == kStatus_Success)
+    {
+        /* Find the last 4 bytes in the linked buffers and remove these FCS data. */
+        buff1Len = rxFrame->rxBuffArray[--index].length;
+        if (buff1Len > ENET_FCS_LEN)
+        {
+            rxFrame->rxBuffArray[index].length -= ENET_FCS_LEN;
+        }
+        else
+        {
+            rxFrame->rxBuffArray[index].length = 0;
+            handle->rxBuffFree(base, rxFrame->rxBuffArray[index].buffer, handle->userData, channel);
+            if (buff1Len < ENET_FCS_LEN)
+            {
+                rxFrame->rxBuffArray[--index].length -= (ENET_FCS_LEN - buff1Len);
+            }
+        }
+        rxFrame->totLen -= ENET_FCS_LEN;
+    }
 
     return result;
 }
@@ -1973,6 +2133,58 @@ void ENET_SetupTxDescriptor(enet_tx_bd_struct_t *txDesc,
 
     control = ENET_TXDESCRIP_RD_SLOT(slotNum) | ENET_TXDESCRIP_RD_FL(framelen) | ENET_TXDESCRIP_RD_LDFD(flag) |
               ENET_TXDESCRIP_RD_OWN_MASK;
+
+    txDesc->tdes3 = control;
+}
+
+/*!
+ * brief Configure a given Tx descriptor.
+ *  This function is a low level functional API to setup or prepare
+ *  a given Tx descriptor.
+ *
+ * param txDesc  The given Tx descriptor.
+ * param config The Tx descriptor configuration.
+ *
+ * note This must be called after all the ENET initilization.
+ * And should be called when the ENET receive/transmit is required.
+ * Transmit buffers are 'zero-copy' buffers, so the buffer must remain in
+ * memory until the packet has been fully transmitted. The buffers
+ * should be free or requeued in the transmit interrupt irq handler.
+ */
+static void ENET_ConfigTxDescriptor(enet_tx_bd_struct_t *txDesc, enet_tx_bd_config_struct_t *config)
+{
+    uint32_t control                = ENET_TXDESCRIP_RD_BL1(config->bytes1) | ENET_TXDESCRIP_RD_BL2(config->bytes2);
+    enet_tx_offload_t txOffloadMode = kENET_TxOffloadDisable;
+
+    if ((config->flag == kENET_FirstFlagOnly) || (config->flag == kENET_FirstLastFlag))
+    {
+        if (config->tsEnable)
+        {
+            control |= ENET_TXDESCRIP_RD_TTSE_MASK;
+        }
+        else
+        {
+            control &= ~ENET_TXDESCRIP_RD_TTSE_MASK;
+        }
+        txOffloadMode = config->txOffloadOps;
+    }
+
+    if (config->intEnable)
+    {
+        control |= ENET_TXDESCRIP_RD_IOC_MASK;
+    }
+    else
+    {
+        control &= ~ENET_TXDESCRIP_RD_IOC_MASK;
+    }
+
+    /* Preare the descriptor for transmit. */
+    txDesc->tdes0 = (uint32_t)(uint32_t *)config->buffer1;
+    txDesc->tdes1 = (uint32_t)(uint32_t *)config->buffer2;
+    txDesc->tdes2 = control;
+
+    control = ENET_TXDESCRIP_RD_SLOT(config->slotNum) | ENET_TXDESCRIP_RD_FL(config->framelen) |
+              ENET_TXDESCRIP_RD_CIC(txOffloadMode) | ENET_TXDESCRIP_RD_LDFD(config->flag) | ENET_TXDESCRIP_RD_OWN_MASK;
 
     txDesc->tdes3 = control;
 }
@@ -2090,6 +2302,15 @@ status_t ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, enet_tx_frame_st
         return kStatus_ENET_TxFrameOverLen;
     }
 
+    /* Check Tx FIFO whether can store enough frame data. */
+    if (0U != handle->txLenLimitation[channel])
+    {
+        if (frameLen > handle->txLenLimitation[channel])
+        {
+            return kStatus_ENET_TxFrameOverLen;
+        }
+    }
+
     /* Check whether the available BD number is enough for Tx data buffer. */
     if (txFrame->txBuffNum > (((uint32_t)txBdRing->txRingLen - (uint32_t)txBdRing->txDescUsed) * 2U))
     {
@@ -2116,22 +2337,32 @@ status_t ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, enet_tx_frame_st
             descFlag = (leftBuffNum > 2U) ? kENET_MiddleFlag : kENET_LastFlagOnly;
         }
 
+        enet_tx_bd_config_struct_t txDescConfig = {0};
+
+        txDescConfig.framelen     = frameLen;
+        txDescConfig.intEnable    = (bool)txFrame->txConfig.intEnable;
+        txDescConfig.tsEnable     = (bool)txFrame->txConfig.tsEnable;
+        txDescConfig.txOffloadOps = txFrame->txConfig.txOffloadOps;
+        txDescConfig.flag         = descFlag;
+        txDescConfig.slotNum      = txFrame->txConfig.slotNum;
+
         /* Fill the descriptor. */
+        txDescConfig.buffer1 = txBuff[index].buffer;
+        txDescConfig.bytes1  = txBuff[index].length;
         if (leftBuffNum < 2U)
         {
-            ENET_SetupTxDescriptor(txDesc, txBuff[index].buffer, txBuff[index].length, NULL, 0, frameLen,
-                                   (bool)txFrame->txConfig.intEnable, (bool)txFrame->txConfig.tsEnable, descFlag,
-                                   txFrame->txConfig.slotNum);
+            txDescConfig.buffer2 = NULL;
+            txDescConfig.bytes2  = 0;
             leftBuffNum--;
         }
         else
         {
-            ENET_SetupTxDescriptor(txDesc, txBuff[index].buffer, txBuff[index].length, txBuff[index + 1U].buffer,
-                                   txBuff[index + 1U].length, frameLen, (bool)txFrame->txConfig.intEnable,
-                                   (bool)txFrame->txConfig.tsEnable, descFlag, txFrame->txConfig.slotNum);
+            txDescConfig.buffer2 = txBuff[index + 1U].buffer;
+            txDescConfig.bytes2  = txBuff[index + 1U].length;
             index += 2U;
             leftBuffNum -= 2U;
         }
+        ENET_ConfigTxDescriptor(txDesc, &txDescConfig);
 
         /* Increase the index. */
         txBdRing->txGenIdx = ENET_IncreaseIndex(txBdRing->txGenIdx, txBdRing->txRingLen);

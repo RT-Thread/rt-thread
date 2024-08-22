@@ -281,7 +281,7 @@ static void sensor_polling(int argc, char **argv)
     MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
 #endif
 
-static void sensor(int argc, char **argv)
+static int sensor(int argc, char **argv)
 {
     static rt_device_t dev = RT_NULL;
     struct rt_sensor_data data;
@@ -310,7 +310,7 @@ static void sensor(int argc, char **argv)
         if (dev == RT_NULL)
         {
             LOG_W("Please probe sensor device first!");
-            return ;
+            return -RT_ERROR;
         }
         rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
         switch (info.vendor)
@@ -431,7 +431,7 @@ static void sensor(int argc, char **argv)
         if (dev == RT_NULL)
         {
             LOG_W("Please probe sensor device first!");
-            return ;
+            return -RT_ERROR;
         }
         if (argc == 3)
         {
@@ -469,12 +469,12 @@ static void sensor(int argc, char **argv)
             if (dev == RT_NULL)
             {
                 LOG_E("Can't find device:%s", argv[2]);
-                return;
+                return -RT_ERROR;
             }
             if (rt_device_open(dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
             {
                 LOG_E("open device failed!");
-                return;
+                return -RT_ERROR;
             }
             rt_device_control(dev, RT_SENSOR_CTRL_GET_ID, &reg);
             LOG_I("device id: 0x%x!", reg);
@@ -483,7 +483,7 @@ static void sensor(int argc, char **argv)
         else if (dev == RT_NULL)
         {
             LOG_W("Please probe sensor first!");
-            return ;
+            return -RT_ERROR;
         }
         else if (!strcmp(argv[1], "sr"))
         {
@@ -510,6 +510,8 @@ static void sensor(int argc, char **argv)
     {
         LOG_W("Unknown command, please enter 'sensor' get help information!");
     }
+
+    return RT_EOK;
 }
 #ifdef RT_USING_FINSH
     MSH_CMD_EXPORT(sensor, sensor test function);

@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LPI2C_EDMA_H_
-#define _FSL_LPI2C_EDMA_H_
+#ifndef FSL_LPI2C_EDMA_H_
+#define FSL_LPI2C_EDMA_H_
 
 #include "fsl_lpi2c.h"
 #include "fsl_edma.h"
@@ -15,11 +15,13 @@
  * Definitions
  ******************************************************************************/
 
-/*! @name Driver version */
-/*@{*/
+/*!
+ * @name Driver version
+ * @{
+ */
 /*! @brief LPI2C EDMA driver version. */
-#define FSL_LPI2C_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 4, 1))
-/*@}*/
+#define FSL_LPI2C_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 4, 2))
+/*! @} */
 
 /*!
  * @addtogroup lpi2c_master_edma_driver
@@ -27,6 +29,7 @@
  */
 
 /* Forward declaration of the transfer descriptor and handle typedefs. */
+/*! @brief LPI2C master EDMA handle of the transfer. */
 typedef struct _lpi2c_master_edma_handle lpi2c_master_edma_handle_t;
 
 /*!
@@ -79,8 +82,10 @@ extern "C" {
  * @{
  */
 
-/*! @name Master DMA */
-/*@{*/
+/*!
+ * @name Master DMA
+ * @{
+ */
 
 /*!
  * @brief Create a new handle for the LPI2C master DMA APIs.
@@ -147,7 +152,7 @@ status_t LPI2C_MasterTransferGetCountEDMA(LPI2C_Type *base, lpi2c_master_edma_ha
  */
 status_t LPI2C_MasterTransferAbortEDMA(LPI2C_Type *base, lpi2c_master_edma_handle_t *handle);
 
-/*@}*/
+/*! @} */
 
 /*! @} */
 
@@ -155,4 +160,4 @@ status_t LPI2C_MasterTransferAbortEDMA(LPI2C_Type *base, lpi2c_master_edma_handl
 }
 #endif
 
-#endif /* _FSL_LPI2C_EDMA_H_ */
+#endif /* FSL_LPI2C_EDMA_H_ */

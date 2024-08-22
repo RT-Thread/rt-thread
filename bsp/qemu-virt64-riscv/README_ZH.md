@@ -4,7 +4,7 @@
 
 ## 1. 简介
 
-RISC-V是一种开放和免费的指令集体系结构(ISA)。本工程是在QEMU的RISCV64 VIRT版本上进行的一份移植。
+RISC-V是一种开放和免费的指令集体系结构(ISA)。本工程是在QEMU的RISCV64 VIRT版本上进行的一份移植。本工程支持玄铁团队联合中科院软件所共同推出的全球首款rv64ilp32产品级开源工具链。
 
 ## 2. 编译说明
 
@@ -133,8 +133,59 @@ msh />
 | PLIC | 支持 | - |
 | CLIC | 支持 | - |
 
-## 5. 联系人信息
+## 5.如何使用rv64ilp32工具链
+
+1. 工具链地址：https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/tags
+
+2. 使用方法：
+
+   - 配置工具链路径
+
+   - 修改ABI参数为：-mabi=ilp32d
+
+   - 使用menuconfig使能下述选项:
+
+     ```shell
+     RT_USING_RV64ILP32
+     ```
+
+   - 使用menuconfig失能下述选项:
+
+     ```shell
+     RT_USING_POSIX_PIPE
+     RT_USING_POSIX_FS
+     RT_USING_DFS
+     ```
+
+3.  使用传统64位工具链与使用新32位工具链编译相同工程的固件大小对比：
+
+   传统64位工具链固件大小：
+
+   ```bash
+   Memory region         Used Size  Region Size  %age Used
+               SRAM:      225856 B        16 MB      1.35%
+   riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
+   riscv64-unknown-elf-size rtthread.elf
+      text    data     bss     dec     hex filename
+    150907    3664   71268  225839   3722f rtthread.elf
+   ```
+
+   新32位工具链固件大小：
+
+   ```bash
+   Memory region         Used Size  Region Size  %age Used
+               SRAM:      209376 B        16 MB      1.25%
+   riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
+   riscv64-unknown-elf-size rtthread.elf
+      text    data     bss     dec     hex filename
+    138739    1356   69276  209371   331db rtthread.elf
+   ```
+
+## 6. 联系人信息
 
 维护人：[bernard][1]
 
 [1]: https://github.com/BernardXiong
+
+
+

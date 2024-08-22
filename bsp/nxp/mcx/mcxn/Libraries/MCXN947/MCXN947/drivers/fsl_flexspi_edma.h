@@ -1,12 +1,12 @@
 /*
- * Copyright 2021-2022 NXP
+ * Copyright 2021-2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_FLEXSPI_EDMA_H_
-#define _FSL_FLEXSPI_EDMA_H_
+#ifndef FSL_FLEXSPI_EDMA_H_
+#define FSL_FLEXSPI_EDMA_H_
 
 #include "fsl_flexspi.h"
 #include "fsl_edma.h"
@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief FLEXSPI EDMA driver. */
-#define FSL_FLEXSPI_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
-/*@}*/
+#define FSL_FLEXSPI_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
+/*! @} */
 
 typedef struct _flexspi_edma_handle flexspi_edma_handle_t;
 
@@ -135,12 +135,12 @@ void FLEXSPI_TransferAbortEDMA(FLEXSPI_Type *base, flexspi_edma_handle_t *handle
  */
 status_t FLEXSPI_TransferGetTransferCountEDMA(FLEXSPI_Type *base, flexspi_edma_handle_t *handle, size_t *count);
 
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
 #endif
 
-/* @} */
+/*! @} */
 
-#endif /* _FSL_FLEXSPI_EDMA_H_ */
+#endif /* FSL_FLEXSPI_EDMA_H_ */

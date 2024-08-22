@@ -14,10 +14,9 @@
 #define DEV_FORMAT "/dev/asix"
 
 static struct usbh_asix g_asix_class;
-#define CONFIG_USBHOST_ASIX_ETH_MAX_SIZE (1514U + 8)
 
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_asix_rx_buffer[CONFIG_USBHOST_ASIX_ETH_MAX_SIZE];
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_asix_tx_buffer[CONFIG_USBHOST_ASIX_ETH_MAX_SIZE];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_asix_rx_buffer[CONFIG_USBHOST_ASIX_ETH_MAX_TX_SIZE];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_asix_tx_buffer[CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE];
 static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_asix_inttx_buffer[16];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_asix_buf[32];
 
@@ -56,8 +55,13 @@ static int usbh_asix_read_cmd(struct usbh_asix *asix_class,
                               void *data,
                               uint16_t size)
 {
-    struct usb_setup_packet *setup = asix_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
+
+    if (!asix_class || !asix_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = asix_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = cmd;
@@ -81,7 +85,12 @@ static int usbh_asix_write_cmd(struct usbh_asix *asix_class,
                                void *data,
                                uint16_t size)
 {
-    struct usb_setup_packet *setup = asix_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!asix_class || !asix_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = asix_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = cmd;
@@ -263,6 +272,15 @@ static int usbh_asix_write_gpio(struct usbh_asix *asix_class, uint16_t value, in
 static void usbh_asix_set_multicast(struct usbh_asix *asix_class)
 {
     uint16_t rx_ctl = AX_DEFAULT_RX_CTL | AX_RX_CTL_AM;
+#if CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE == 4096
+    rx_ctl |= AX_RX_CTL_MFB_4096;
+#elif CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE == 8192
+    rx_ctl |= AX_RX_CTL_MFB_8192;
+#elif CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE == 16384
+    rx_ctl |= AX_RX_CTL_MFB_16384;
+#else
+    rx_ctl |= AX_RX_CTL_MFB_2048;
+#endif
     const uint8_t multi_filter[] = { 0x00, 0x00, 0x20, 0x80, 0x00, 0x00, 0x00, 0x40 };
 
     usbh_asix_write_cmd(asix_class, AX_CMD_WRITE_MULTI_FILTER, 0, 0, (uint8_t *)multi_filter, AX_MCAST_FILTER_SIZE);
@@ -589,7 +607,7 @@ static int usbh_asix_connect(struct usbh_hubport *hport, uint8_t intf)
 
     USB_LOG_INFO("Init %s done\r\n", asix_class->name);
 
-    memcpy(hport->config.intf[intf].devname, DEV_FORMAT, CONFIG_USBHOST_DEV_NAMELEN);
+    strncpy(hport->config.intf[intf].devname, DEV_FORMAT, CONFIG_USBHOST_DEV_NAMELEN);
 
     USB_LOG_INFO("Register ASIX Class:%s\r\n", hport->config.intf[intf].devname);
     usbh_asix_run(asix_class);
@@ -655,6 +673,12 @@ void usbh_asix_rx_thread(void *argument)
     int ret;
     uint16_t len;
     uint16_t len_crc;
+    uint32_t data_offset;
+#if CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE <= (16 * 1024)
+    uint32_t transfer_size = CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE;
+#else
+    uint32_t transfer_size = (16 * 1024);
+#endif
 
     USB_LOG_INFO("Create asix rx thread\r\n");
     // clang-format off
@@ -671,11 +695,12 @@ find_class:
             usb_osal_msleep(100);
             goto find_class;
         }
+        usb_osal_msleep(128);
     }
 
     g_asix_rx_length = 0;
     while (1) {
-        usbh_bulk_urb_fill(&g_asix_class.bulkin_urb, g_asix_class.hport, g_asix_class.bulkin, &g_asix_rx_buffer[g_asix_rx_length], CONFIG_USBHOST_ASIX_ETH_MAX_SIZE, USB_OSAL_WAITING_FOREVER, NULL, NULL);
+        usbh_bulk_urb_fill(&g_asix_class.bulkin_urb, g_asix_class.hport, g_asix_class.bulkin, &g_asix_rx_buffer[g_asix_rx_length], transfer_size, USB_OSAL_WAITING_FOREVER, NULL, NULL);
         ret = usbh_submit_urb(&g_asix_class.bulkin_urb);
         if (ret < 0) {
             goto find_class;
@@ -683,24 +708,43 @@ find_class:
 
         g_asix_rx_length += g_asix_class.bulkin_urb.actual_length;
 
-        if (g_asix_rx_length % USB_GET_MAXPACKETSIZE(g_asix_class.bulkin->wMaxPacketSize)) {
-            len = ((uint16_t)g_asix_rx_buffer[0] | ((uint16_t)(g_asix_rx_buffer[1]) << 8)) & 0x7ff;
-            len_crc = g_asix_rx_buffer[2] | ((uint16_t)(g_asix_rx_buffer[3]) << 8);
-
-            if (len != (~len_crc & 0x7ff)) {
-                USB_LOG_ERR("asix rx header error\r\n");
-                continue;
-            }
-
+        /* A transfer is complete because last packet is a short packet.
+         * Short packet is not zero, match g_asix_rx_length % USB_GET_MAXPACKETSIZE(g_asix_class.bulkin->wMaxPacketSize).
+         * Short packet is zero, check if g_asix_class.bulkin_urb.actual_length < transfer_size, for example transfer is complete with size is 1024 < 2048.
+        */
+        if (g_asix_rx_length % USB_GET_MAXPACKETSIZE(g_asix_class.bulkin->wMaxPacketSize) ||
+            (g_asix_class.bulkin_urb.actual_length < transfer_size)) {
             USB_LOG_DBG("rxlen:%d\r\n", g_asix_rx_length);
 
-            uint8_t *buf = (uint8_t *)&g_asix_rx_buffer[4];
-            usbh_asix_eth_input(buf, len);
-            g_asix_rx_length = 0;
+            data_offset = 0;
+            while (g_asix_rx_length > 0) {
+                len = ((uint16_t)g_asix_rx_buffer[data_offset + 0] | ((uint16_t)(g_asix_rx_buffer[data_offset + 1]) << 8)) & 0x7ff;
+                len_crc = g_asix_rx_buffer[data_offset + 2] | ((uint16_t)(g_asix_rx_buffer[data_offset + 3]) << 8);
+
+                if (len != (~len_crc & 0x7ff)) {
+                    USB_LOG_ERR("rx header error\r\n");
+                    g_asix_rx_length = 0;
+                    continue;
+                }
+
+                uint8_t *buf = (uint8_t *)&g_asix_rx_buffer[data_offset + 4];
+                usbh_asix_eth_input(buf, len);
+                g_asix_rx_length -= (len + 4);
+                data_offset += (len + 4);
+
+                if (g_asix_rx_length < 4) {
+                    g_asix_rx_length = 0;
+                }
+            }
         } else {
-            if (g_asix_rx_length > CONFIG_USBHOST_ASIX_ETH_MAX_SIZE) {
-                USB_LOG_ERR("Rx packet is overflow\r\n");
-                g_asix_rx_length = 0;
+#if CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE <= (16 * 1024)
+            if (g_asix_rx_length == CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE) {
+#else
+            if ((g_asix_rx_length + (16 * 1024)) > CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE) {
+#endif
+                USB_LOG_ERR("Rx packet is overflow, please ruduce tcp window size or increase CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE\r\n");
+                while (1) {
+                }
             }
         }
     }
@@ -711,17 +755,18 @@ delete:
     // clang-format on
 }
 
-int usbh_asix_eth_output(uint8_t *buf, uint32_t buflen)
+uint8_t *usbh_asix_get_eth_txbuf(void)
+{
+    return &g_asix_tx_buffer[4];
+}
+
+int usbh_asix_eth_output(uint32_t buflen)
 {
     uint16_t actual_len;
-    uint8_t *buffer;
 
     if (g_asix_class.connect_status == false) {
         return -USB_ERR_NOTCONN;
     }
-
-    buffer = &g_asix_tx_buffer[4];
-    memcpy(buffer, buf, buflen);
 
     g_asix_tx_buffer[0] = buflen & 0xff;
     g_asix_tx_buffer[1] = (buflen >> 8) & 0xff;

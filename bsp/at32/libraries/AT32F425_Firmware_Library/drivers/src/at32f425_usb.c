@@ -97,7 +97,7 @@ void usb_global_init(otg_global_type *usbx)
   */
 otg_global_type *usb_global_select_core(uint8_t usb_id)
 {
-  /* use otg1 */
+  UNUSED(usb_id);
   return OTG1_GLOBAL;
 
 }
@@ -438,6 +438,7 @@ void usb_read_packet(otg_global_type *usbx, uint8_t *pusr_buf, uint16_t num, uin
   uint32_t n_index;
   uint32_t nhbytes = (nbytes + 3) / 4;
   uint32_t *pbuf = (uint32_t *)pusr_buf;
+  UNUSED(num);
   for(n_index = 0; n_index < nhbytes; n_index ++)
   {
 #if defined (__ICCARM__) && (__VER__ < 7000000)

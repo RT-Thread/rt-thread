@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,7 @@
 #include "stack.h"
 #include <sbi.h>
 #include <encoding.h>
+#include "regtypes.h"
 
 #define K_SSTATUS_DEFAULT (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
 
@@ -35,7 +36,7 @@ volatile rt_ubase_t rt_interrupt_to_thread = 0;
  */
 volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
-void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
+void *_rt_hw_stack_init(rt_uintreg_t *sp, rt_uintreg_t ra, rt_uintreg_t sstatus)
 {
     (*--sp) = 0;                                /* tp */
     (*--sp) = ra;                               /* ra */
@@ -80,17 +81,17 @@ rt_uint8_t *rt_hw_stack_init(void *tentry,
                              rt_uint8_t *stack_addr,
                              void *texit)
 {
-    rt_ubase_t *sp = (rt_ubase_t *)stack_addr;
+    rt_uintreg_t *sp = (rt_uintreg_t *)stack_addr;
     // we use a strict alignment requirement for Q extension
-    sp = (rt_ubase_t *)RT_ALIGN_DOWN((rt_ubase_t)sp, 16);
+    sp = (rt_uintreg_t *)RT_ALIGN_DOWN((rt_uintreg_t)sp, 16);
 
-    (*--sp) = (rt_ubase_t)tentry;
-    (*--sp) = (rt_ubase_t)parameter;
-    (*--sp) = (rt_ubase_t)texit;
+    (*--sp) = (rt_uintreg_t)tentry;
+    (*--sp) = (rt_uintreg_t)parameter;
+    (*--sp) = (rt_uintreg_t)texit;
 
     /* compatible to RESTORE_CONTEXT */
     extern void _rt_thread_entry(void);
-    return (rt_uint8_t *)_rt_hw_stack_init(sp, (rt_ubase_t)_rt_thread_entry, K_SSTATUS_DEFAULT);
+    return (rt_uint8_t *)_rt_hw_stack_init(sp, (rt_uintreg_t)_rt_thread_entry, K_SSTATUS_DEFAULT);
 }
 
 /*

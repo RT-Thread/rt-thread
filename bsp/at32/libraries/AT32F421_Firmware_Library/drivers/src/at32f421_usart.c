@@ -71,6 +71,9 @@ void usart_reset(usart_type* usart_x)
   *         this parameter can be one of the following values:
   *         - USART_DATA_8BITS
   *         - USART_DATA_9BITS.
+  *         note:
+  *         - when parity check is disabled, the data bit width is the actual data bit number.
+  *         - when parity check is enabled, the data bit width is the actual data bit number minus 1, and the MSB bit is replaced with the parity bit.
   * @param  stop_bit: stop bits transmitted
   *         this parameter can be one of the following values:
   *         - USART_STOP_1_BIT
@@ -549,6 +552,79 @@ void usart_transmit_receive_pin_swap(usart_type* usart_x, confirm_state new_stat
   */
 flag_status usart_flag_get(usart_type* usart_x, uint32_t flag)
 {
+  if(usart_x->sts & flag)
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
+  * @brief  check whether the specified usart interrupt flag is set or not.
+  * @param  usart_x: select the usart or the uart peripheral.
+  *         this parameter can be one of the following values:
+  *         USART1 or USART2.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - USART_CTSCF_FLAG: cts change flag (not available for UART4,UART5)
+  *         - USART_BFF_FLAG:   break frame flag
+  *         - USART_TDBE_FLAG:  transmit data buffer empty flag
+  *         - USART_TDC_FLAG:   transmit data complete flag
+  *         - USART_RDBF_FLAG:  receive data buffer full flag
+  *         - USART_IDLEF_FLAG: idle flag
+  *         - USART_ROERR_FLAG: receiver overflow error flag
+  *         - USART_NERR_FLAG:  noise error flag
+  *         - USART_FERR_FLAG:  framing error flag
+  *         - USART_PERR_FLAG:  parity error flag
+  * @retval the new state of usart_flag (SET or RESET).
+  */
+flag_status usart_interrupt_flag_get(usart_type* usart_x, uint32_t flag)
+{
+  flag_status int_status = RESET;
+
+  switch(flag)
+  {
+    case USART_CTSCF_FLAG:
+      int_status = (flag_status)usart_x->ctrl3_bit.ctscfien;
+      break;
+    case USART_BFF_FLAG:
+      int_status = (flag_status)usart_x->ctrl2_bit.bfien;
+      break;
+    case USART_TDBE_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.tdbeien;
+      break;
+    case USART_TDC_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.tdcien;
+      break;
+    case USART_RDBF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.rdbfien;
+      break;
+    case USART_ROERR_FLAG:
+      int_status = (flag_status)(usart_x->ctrl1_bit.rdbfien || usart_x->ctrl3_bit.errien);
+      break;
+    case USART_IDLEF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.idleien;
+      break;
+    case USART_NERR_FLAG:
+    case USART_FERR_FLAG:
+      int_status = (flag_status)usart_x->ctrl3_bit.errien;
+      break;
+    case USART_PERR_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.perrien;
+      break;
+    default:
+      int_status = RESET;
+      break;
+  }
+
+  if(int_status != SET)
+  {
+    return RESET;
+  }
+
   if(usart_x->sts & flag)
   {
     return SET;

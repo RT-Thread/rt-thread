@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2022 NXP
+ * Copyright 2016-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LPUART_H_
-#define _FSL_LPUART_H_
+#ifndef FSL_LPUART_H_
+#define FSL_LPUART_H_
 
 #include "fsl_common.h"
 
@@ -20,10 +20,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief LPUART driver version. */
-#define FSL_LPUART_DRIVER_VERSION (MAKE_VERSION(2, 7, 4))
-/*@}*/
+#define FSL_LPUART_DRIVER_VERSION (MAKE_VERSION(2, 8, 2))
+/*! @} */
 
 /*! @brief Retry times for waiting flag. */
 #ifndef UART_RETRY_TIMES
@@ -124,7 +124,7 @@ typedef enum _lpuart_idle_config
 enum _lpuart_interrupt_enable
 {
 #if defined(FSL_FEATURE_LPUART_HAS_LIN_BREAK_DETECT) && FSL_FEATURE_LPUART_HAS_LIN_BREAK_DETECT
-    kLPUART_LinBreakInterruptEnable = (LPUART_BAUD_LBKDIE_MASK >> 8U), /*!< LIN break detect. bit 7 */
+    kLPUART_LinBreakInterruptEnable = (LPUART_BAUD_LBKDIE_MASK >> 8U),              /*!< LIN break detect. bit 7 */
 #endif
     kLPUART_RxActiveEdgeInterruptEnable         = (LPUART_BAUD_RXEDGIE_MASK >> 8U), /*!< Receive Active Edge. bit 6 */
     kLPUART_TxDataRegEmptyInterruptEnable       = (LPUART_CTRL_TIE_MASK),  /*!< Transmit data register empty. bit 23 */
@@ -136,8 +136,8 @@ enum _lpuart_interrupt_enable
     kLPUART_FramingErrorInterruptEnable         = (LPUART_CTRL_FEIE_MASK), /*!< Framing error flag. bit 25 */
     kLPUART_ParityErrorInterruptEnable          = (LPUART_CTRL_PEIE_MASK), /*!< Parity error flag. bit 24 */
 #if defined(FSL_FEATURE_LPUART_HAS_ADDRESS_MATCHING) && FSL_FEATURE_LPUART_HAS_ADDRESS_MATCHING
-    kLPUART_Match1InterruptEnable = (LPUART_CTRL_MA1IE_MASK), /*!< Parity error flag. bit 15 */
-    kLPUART_Match2InterruptEnable = (LPUART_CTRL_MA2IE_MASK), /*!< Parity error flag. bit 14 */
+    kLPUART_Match1InterruptEnable = (LPUART_CTRL_MA1IE_MASK),              /*!< Parity error flag. bit 15 */
+    kLPUART_Match2InterruptEnable = (LPUART_CTRL_MA2IE_MASK),              /*!< Parity error flag. bit 14 */
 #endif
 #if defined(FSL_FEATURE_LPUART_HAS_FIFO) && FSL_FEATURE_LPUART_HAS_FIFO
     kLPUART_TxFifoOverflowInterruptEnable  = (LPUART_FIFO_TXOFE_MASK), /*!< Transmit FIFO Overflow. bit 9 */
@@ -171,7 +171,7 @@ enum _lpuart_flags
     kLPUART_TxDataRegEmptyFlag =
         (LPUART_STAT_TDRE_MASK), /*!< Transmit data register empty flag, sets when transmit buffer is empty. bit 23 */
     kLPUART_TransmissionCompleteFlag =
-        (LPUART_STAT_TC_MASK), /*!< Transmission complete flag, sets when transmission activity complete. bit 22 */
+        (LPUART_STAT_TC_MASK),   /*!< Transmission complete flag, sets when transmission activity complete. bit 22 */
     kLPUART_RxDataRegFullFlag = (LPUART_STAT_RDRF_MASK), /*!< Receive data register full flag, sets when the receive
                                                             data buffer is full. bit 21 */
     kLPUART_IdleLineFlag  = (LPUART_STAT_IDLE_MASK), /*!< Idle line detect flag, sets when idle line detected. bit 20 */
@@ -183,8 +183,8 @@ enum _lpuart_flags
         (LPUART_STAT_FE_MASK), /*!< Frame error flag, sets if logic 0 was detected where stop bit expected. bit 17 */
     kLPUART_ParityErrorFlag = (LPUART_STAT_PF_MASK), /*!< If parity enabled, sets upon parity error detection. bit 16 */
 #if defined(FSL_FEATURE_LPUART_HAS_LIN_BREAK_DETECT) && FSL_FEATURE_LPUART_HAS_LIN_BREAK_DETECT
-    kLPUART_LinBreakFlag = (LPUART_STAT_LBKDIF_MASK), /*!< LIN break detect interrupt flag, sets when LIN break
-                                                         char detected and LIN circuit enabled. bit 31 */
+    kLPUART_LinBreakFlag = (LPUART_STAT_LBKDIF_MASK),      /*!< LIN break detect interrupt flag, sets when LIN break
+                                                              char detected and LIN circuit enabled. bit 31 */
 #endif
     kLPUART_RxActiveEdgeFlag = (LPUART_STAT_RXEDGIF_MASK), /*!< Receive pin active edge interrupt flag, sets when active
                                                               edge detected. bit 30 */
@@ -202,9 +202,9 @@ enum _lpuart_flags
     kLPUART_RxFifoEmptyFlag =
         (LPUART_FIFO_RXEMPT_MASK >> 16), /*!< RXEMPT bit, sets if receive buffer is empty. bit 6 */
     kLPUART_TxFifoOverflowFlag =
-        (LPUART_FIFO_TXOF_MASK >> 16), /*!< TXOF bit, sets if transmit buffer overflow occurred. bit 1 */
+        (LPUART_FIFO_TXOF_MASK >> 16),   /*!< TXOF bit, sets if transmit buffer overflow occurred. bit 1 */
     kLPUART_RxFifoUnderflowFlag =
-        (LPUART_FIFO_RXUF_MASK >> 16), /*!< RXUF bit, sets if receive buffer underflow occurred. bit 0 */
+        (LPUART_FIFO_RXUF_MASK >> 16),   /*!< RXUF bit, sets if receive buffer underflow occurred. bit 0 */
 #endif
 
     kLPUART_AllClearFlags = kLPUART_RxActiveEdgeFlag | kLPUART_IdleLineFlag | kLPUART_RxOverrunFlag |
@@ -239,10 +239,10 @@ enum _lpuart_flags
 /*! @brief LPUART configuration structure. */
 typedef struct _lpuart_config
 {
-    uint32_t baudRate_Bps;            /*!< LPUART baud rate  */
-    lpuart_parity_mode_t parityMode;  /*!< Parity mode, disabled (default), even, odd */
-    lpuart_data_bits_t dataBitsCount; /*!< Data bits count, eight (default), seven */
-    bool isMsb;                       /*!< Data bits order, LSB (default), MSB */
+    uint32_t baudRate_Bps;                /*!< LPUART baud rate  */
+    lpuart_parity_mode_t parityMode;      /*!< Parity mode, disabled (default), even, odd */
+    lpuart_data_bits_t dataBitsCount;     /*!< Data bits count, eight (default), seven */
+    bool isMsb;                           /*!< Data bits order, LSB (default), MSB */
 #if defined(FSL_FEATURE_LPUART_HAS_STOP_BIT_CONFIG_SUPPORT) && FSL_FEATURE_LPUART_HAS_STOP_BIT_CONFIG_SUPPORT
     lpuart_stop_bit_count_t stopBitCount; /*!< Number of stop bits, 1 stop bit (default) or 2 stop bits  */
 #endif
@@ -256,10 +256,10 @@ typedef struct _lpuart_config
     lpuart_transmit_cts_source_t txCtsSource; /*!< TX CTS source */
     lpuart_transmit_cts_config_t txCtsConfig; /*!< TX CTS configure */
 #endif
-    lpuart_idle_type_select_t rxIdleType; /*!< RX IDLE type. */
-    lpuart_idle_config_t rxIdleConfig;    /*!< RX IDLE configuration. */
-    bool enableTx;                        /*!< Enable TX */
-    bool enableRx;                        /*!< Enable RX */
+    lpuart_idle_type_select_t rxIdleType;     /*!< RX IDLE type. */
+    lpuart_idle_config_t rxIdleConfig;        /*!< RX IDLE configuration. */
+    bool enableTx;                            /*!< Enable TX */
+    bool enableRx;                            /*!< Enable RX */
 } lpuart_config_t;
 
 /*! @brief LPUART transfer structure. */
@@ -271,11 +271,13 @@ typedef struct _lpuart_transfer
      */
     union
     {
-        uint8_t *data;         /*!< The buffer of data to be transfer.*/
-        uint8_t *rxData;       /*!< The buffer to receive data. */
-        const uint8_t *txData; /*!< The buffer of data to be sent. */
+        uint8_t *data;            /*!< The buffer of data to be transfer.*/
+        uint8_t *rxData;          /*!< The buffer to receive data. */
+        uint16_t *rxData16;       /*!< The buffer to receive data. */
+        const uint8_t *txData;    /*!< The buffer of data to be sent. */
+        const uint16_t *txData16; /*!< The buffer of data to be sent. */
     };
-    size_t dataSize; /*!< The byte count to be transfer. */
+    size_t dataSize;              /*!< The byte count to be transfer. */
 } lpuart_transfer_t;
 
 /* Forward declaration of the handle typedef. */
@@ -287,27 +289,40 @@ typedef void (*lpuart_transfer_callback_t)(LPUART_Type *base, lpuart_handle_t *h
 /*! @brief LPUART handle structure. */
 struct _lpuart_handle
 {
-    const uint8_t *volatile txData; /*!< Address of remaining data to send. */
-    volatile size_t txDataSize;     /*!< Size of the remaining data to send. */
-    size_t txDataSizeAll;           /*!< Size of the data to send out. */
-    uint8_t *volatile rxData;       /*!< Address of remaining data to receive. */
-    volatile size_t rxDataSize;     /*!< Size of the remaining data to receive. */
-    size_t rxDataSizeAll;           /*!< Size of the data to receive. */
+    union
+    {
+        const uint8_t *volatile txData;    /*!< Address of remaining data to send. */
+        const uint16_t *volatile txData16; /*!< Address of remaining data to send. */
+    };
+    volatile size_t txDataSize;            /*!< Size of the remaining data to send. */
+    size_t txDataSizeAll;                  /*!< Size of the data to send out. */
+    union
+    {
+        uint8_t *volatile rxData;    /*!< Address of remaining data to receive. */
+        uint16_t *volatile rxData16; /*!< Address of remaining data to receive. */
+    };
+    volatile size_t rxDataSize;      /*!< Size of the remaining data to receive. */
+    size_t rxDataSizeAll;            /*!< Size of the data to receive. */
 
-    uint8_t *rxRingBuffer;              /*!< Start address of the receiver ring buffer. */
-    size_t rxRingBufferSize;            /*!< Size of the ring buffer. */
-    volatile uint16_t rxRingBufferHead; /*!< Index for the driver to store received data into ring buffer. */
-    volatile uint16_t rxRingBufferTail; /*!< Index for the user to get data from the ring buffer. */
+    union
+    {
+        uint8_t *rxRingBuffer;           /*!< Start address of the receiver ring buffer. */
+        uint16_t *rxRingBuffer16;        /*!< Start address of the receiver ring buffer. */
+    };
+    size_t rxRingBufferSize;             /*!< Size of the ring buffer. */
+    volatile uint16_t rxRingBufferHead;  /*!< Index for the driver to store received data into ring buffer. */
+    volatile uint16_t rxRingBufferTail;  /*!< Index for the user to get data from the ring buffer. */
 
     lpuart_transfer_callback_t callback; /*!< Callback function. */
     void *userData;                      /*!< LPUART callback function parameter.*/
 
-    volatile uint8_t txState; /*!< TX transfer state. */
-    volatile uint8_t rxState; /*!< RX transfer state. */
+    volatile uint8_t txState;            /*!< TX transfer state. */
+    volatile uint8_t rxState;            /*!< RX transfer state. */
 
 #if defined(FSL_FEATURE_LPUART_HAS_7BIT_DATA_SUPPORT) && FSL_FEATURE_LPUART_HAS_7BIT_DATA_SUPPORT
     bool isSevenDataBits; /*!< Seven data bits flag. */
 #endif
+    bool is16bitData;     /*!< 16bit data bits flag, only used for 9bit or 10bit data */
 };
 
 /* Typedef for interrupt handler. */
@@ -357,7 +372,7 @@ static inline void LPUART_SoftwareReset(LPUART_Type *base)
     base->GLOBAL |= LPUART_GLOBAL_RST_MASK;
     base->GLOBAL &= ~LPUART_GLOBAL_RST_MASK;
 }
-/* @} */
+/*! @} */
 #endif /*FSL_FEATURE_LPUART_HAS_GLOBAL*/
 
 /*!
@@ -420,7 +435,7 @@ void LPUART_Deinit(LPUART_Type *base);
  * @param config Pointer to a configuration structure.
  */
 void LPUART_GetDefaultConfig(lpuart_config_t *config);
-/* @} */
+/*! @} */
 
 /*!
  * @name Module configuration
@@ -531,7 +546,20 @@ static inline void LPUART_SetTxFifoWatermark(LPUART_Type *base, uint8_t water)
     base->WATER = (base->WATER & ~LPUART_WATER_TXWATER_MASK) | LPUART_WATER_TXWATER(water);
 }
 #endif
-/* @} */
+
+/*!
+ * @brief Sets the LPUART using 16bit transmit, only for 9bit or 10bit mode.
+ *
+ * This function Enable 16bit Data transmit in lpuart_handle_t.
+ *
+ * @param handle LPUART handle pointer.
+ * @param enable true to enable, false to disable.
+ */
+static inline void LPUART_TransferEnable16Bit(lpuart_handle_t *handle, bool enable)
+{
+    handle->is16bitData = enable;
+}
+/*! @} */
 
 /*!
  * @name Status
@@ -577,7 +605,7 @@ uint32_t LPUART_GetStatusFlags(LPUART_Type *base);
  * @retval kStatus_Success Status in the mask are cleared.
  */
 status_t LPUART_ClearStatusFlags(LPUART_Type *base, uint32_t mask);
-/* @} */
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -635,7 +663,7 @@ void LPUART_DisableInterrupts(LPUART_Type *base, uint32_t mask);
  * @return LPUART interrupt flags which are logical OR of the enumerators in @ref _lpuart_interrupt_enable.
  */
 uint32_t LPUART_GetEnabledInterrupts(LPUART_Type *base);
-/* @} */
+/*! @} */
 
 #if defined(FSL_FEATURE_LPUART_HAS_DMA_ENABLE) && FSL_FEATURE_LPUART_HAS_DMA_ENABLE
 /*!
@@ -694,7 +722,7 @@ static inline void LPUART_EnableRxDMA(LPUART_Type *base, bool enable)
         base->BAUD &= ~LPUART_BAUD_RDMAE_MASK;
     }
 }
-/* @} */
+/*! @} */
 #endif /* FSL_FEATURE_LPUART_HAS_DMA_ENABLE */
 
 /*!
@@ -849,6 +877,20 @@ void LPUART_SendAddress(LPUART_Type *base, uint8_t address);
 status_t LPUART_WriteBlocking(LPUART_Type *base, const uint8_t *data, size_t length);
 
 /*!
+ * @brief Writes to the transmitter register using a blocking method in 9bit or 10bit mode.
+ *
+ * @note This function only support 9bit or 10bit transfer.
+ *       Please make sure only 10bit of data is valid and other bits are 0.
+ *
+ * @param base LPUART peripheral base address.
+ * @param data Start address of the data to write.
+ * @param length Size of the data to write.
+ * @retval kStatus_LPUART_Timeout Transmission timed out and was aborted.
+ * @retval kStatus_Success Successfully wrote all data.
+ */
+status_t LPUART_WriteBlocking16bit(LPUART_Type *base, const uint16_t *data, size_t length);
+
+/*!
  * @brief Reads the receiver data register using a blocking method.
  *
  * This function polls the receiver register, waits for the receiver register full or receiver FIFO
@@ -866,7 +908,24 @@ status_t LPUART_WriteBlocking(LPUART_Type *base, const uint8_t *data, size_t len
  */
 status_t LPUART_ReadBlocking(LPUART_Type *base, uint8_t *data, size_t length);
 
-/* @} */
+/*!
+ * @brief Reads the receiver data register in 9bit or 10bit mode.
+ *
+ * @note This function only support 9bit or 10bit transfer.
+ *
+ * @param base LPUART peripheral base address.
+ * @param data Start address of the buffer to store the received data by 16bit, only 10bit is valid.
+ * @param length Size of the buffer.
+ * @retval kStatus_LPUART_RxHardwareOverrun Receiver overrun happened while receiving data.
+ * @retval kStatus_LPUART_NoiseError Noise error happened while receiving data.
+ * @retval kStatus_LPUART_FramingError Framing error happened while receiving data.
+ * @retval kStatus_LPUART_ParityError Parity error happened while receiving data.
+ * @retval kStatus_LPUART_Timeout Transmission timed out and was aborted.
+ * @retval kStatus_Success Successfully received all data.
+ */
+status_t LPUART_ReadBlocking16bit(LPUART_Type *base, uint16_t *data, size_t length);
+
+/*! @} */
 
 /*!
  * @name Transactional
@@ -1058,7 +1117,7 @@ void LPUART_TransferHandleIRQ(LPUART_Type *base, void *irqHandle);
  */
 void LPUART_TransferHandleErrorIRQ(LPUART_Type *base, void *irqHandle);
 
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -1066,4 +1125,4 @@ void LPUART_TransferHandleErrorIRQ(LPUART_Type *base, void *irqHandle);
 
 /*! @}*/
 
-#endif /* _FSL_LPUART_H_ */
+#endif /* FSL_LPUART_H_ */

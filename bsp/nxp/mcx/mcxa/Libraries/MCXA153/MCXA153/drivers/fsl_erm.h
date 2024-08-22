@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_ERM_H_
-#define _FSL_ERM_H_
+#ifndef FSL_ERM_H_
+#define FSL_ERM_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief Driver version. */
 #define FSL_ERM_DRIVER_VERSION (MAKE_VERSION(2U, 0U, 1U))
-/*@}*/
+/*! @} */
 
 /*!
  * @brief ERM interrupt configuration structure, default settings all disabled, _erm_interrupt_enable.
@@ -78,7 +78,7 @@ void ERM_Init(ERM_Type *base);
  */
 void ERM_Deinit(ERM_Type *base);
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Interrupt
@@ -177,7 +177,7 @@ static inline void ERM_ClearInterruptStatus(ERM_Type *base, erm_memory_channel_t
 #endif
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name functional

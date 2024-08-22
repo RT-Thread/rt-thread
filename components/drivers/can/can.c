@@ -43,9 +43,9 @@ static rt_err_t rt_can_init(struct rt_device *dev)
 /*
  * can interrupt routines
  */
-rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, int msgs)
+rt_inline rt_ssize_t _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, rt_ssize_t msgs)
 {
-    int size;
+    rt_ssize_t size;
     struct rt_can_rx_fifo *rx_fifo;
     RT_ASSERT(can != RT_NULL);
     size = msgs;
@@ -54,7 +54,7 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
     RT_ASSERT(rx_fifo != RT_NULL);
 
     /* read from software FIFO */
-    while (msgs)
+    while (msgs / sizeof(struct rt_can_msg) > 0)
     {
         rt_base_t level;
 #ifdef RT_CAN_USING_HDR

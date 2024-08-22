@@ -105,6 +105,16 @@ flag_status wwdt_flag_get(void)
 }
 
 /**
+  * @brief  wwdt reload counter interrupt flag get
+  * @param  none
+  * @retval state of reload counter interrupt flag
+  */
+flag_status wwdt_interrupt_flag_get(void)
+{
+  return (flag_status)(WWDT->sts_bit.rldf && WWDT->cfg_bit.rldien);
+}
+
+/**
   * @brief  wwdt counter value set
   * @param  wwdt_cnt (0x40~0x7f)
   * @retval none

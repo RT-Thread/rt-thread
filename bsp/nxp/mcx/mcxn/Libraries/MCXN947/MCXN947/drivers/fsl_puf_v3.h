@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 NXP
+ * Copyright 2017-2018,2023 NXP
  * All rights reserved.
  *
  *
@@ -22,17 +22,21 @@
  * @{
  */
 /*! @name Driver version */
-/*@{*/
-/*! @brief PUFv3 driver version. Version 2.0.0.
+/*! @{ */
+/*! @brief PUFv3 driver version. Version 2.0.2.
  *
- * Current version: 2.0.0
+ * Current version: 2.0.2
  *
  * Change log:
+ * - 2.0.2
+ *   - Fix MISRA issue in driver.
+ * - 2.0.1
+ *   - Fix PUF initialization issue and update driver to reflect SoC header changes.
  * - 2.0.0
  *   - Initial version.
  */
-#define FSL_PUF_V3_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
-/*@}*/
+#define FSL_PUF_V3_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
+/*! @} */
 
 #define kPUF_EndianLittle (0x0u)
 #define kPUF_EndianBig    (0x1u)
@@ -81,7 +85,7 @@ typedef struct
     uint32_t userCtx1;
 } puf_key_ctx_t;
 
-#define PUF_ACTIVATION_CODE_SIZE              1000u
+#define PUF_ACTIVATION_CODE_SIZE              (size_t)(FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE)
 #define PUF_GET_KEY_CODE_SIZE_FOR_KEY_SIZE(x) ((0x34u + (x)) + 0x10u * ((x) / 0x32u))
 #define SEC_LOCK_PATTERN                      0xAC50u
 
@@ -145,7 +149,7 @@ void PUF_Deinit(PUF_Type *base, puf_config_t *conf);
  *
  * @param base PUF peripheral base address
  * @param[out] activationCode Word aligned address of the resulting activation code.
- * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be 996 bytes.
+ * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE bytes.
  * @param score Value of the PUF Score that was obtained during the enroll operation.
  * @return Status of enroll operation.
  */
@@ -160,7 +164,7 @@ status_t PUF_Enroll(PUF_Type *base, uint8_t *activationCode, size_t activationCo
  *
  * @param base PUF peripheral base address
  * @param[in] activationCode Word aligned address of the input activation code.
- * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be 996 bytes.
+ * @param activationCodeSize Size of the activationCode buffer in bytes. Shall be FSL_FEATURE_PUF_ACTIVATION_CODE_SIZE bytes.
  * @param score Value of the PUF Score that was obtained during the start operation.
  * return Status of start operation.
  */
@@ -281,7 +285,7 @@ status_t PUF_Test(PUF_Type *base, uint8_t *score);
  * @param mask Mask of parameters which should be blocked until power-cycle.
  * @return Status of the test operation.
  */
-static inline void PUF_BlockCommand(PUF_CTRL_Type *base, uint32_t mask)
+static inline void PUF_BlockCommand(PUF_Type *base, uint32_t mask)
 {
     base->CONFIG |= mask;
 }
@@ -312,7 +316,7 @@ status_t PUF_SetLock(PUF_Type *base, puf_sec_level_t securityLevel);
  * @param appCtxMask Value of the Application defined context mask.
  * @return Status of the test operation.
  */
-status_t PUF_SetCtxMask(PUF_CTRL_Type *base, uint32_t appCtxMask);
+status_t PUF_SetCtxMask(PUF_Type *base, uint32_t appCtxMask);
 
 #if defined(__cplusplus)
 }

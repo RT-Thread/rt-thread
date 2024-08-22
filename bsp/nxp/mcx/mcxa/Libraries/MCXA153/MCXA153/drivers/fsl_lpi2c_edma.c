@@ -30,8 +30,8 @@
 #define FSL_COMPONENT_ID "platform.drivers.lpi2c_edma"
 #endif
 
-/* @brief Mask to align an address to 32 bytes. */
-#define ALIGN_32_MASK (0x1fU)
+/* @brief Mask to align an address to edma_tcd_t size. */
+#define ALIGN_TCD_SIZE_MASK (sizeof(edma_tcd_t) - 1U)
 
 /* ! @brief LPI2C master fifo commands. */
 enum _lpi2c_master_fifo_cmd
@@ -313,7 +313,7 @@ status_t LPI2C_MasterTransferEDMA(LPI2C_Type *base,
     }
 
     /* Get a 32-byte aligned TCD pointer. */
-    edma_tcd_t *tcd = (edma_tcd_t *)((uint32_t)(&handle->tcds[1]) & (~ALIGN_32_MASK));
+    edma_tcd_t *tcd = (edma_tcd_t *)((uint32_t)(&handle->tcds[1]) & (~ALIGN_TCD_SIZE_MASK));
 
     bool hasSendData    = (transfer->direction == kLPI2C_Write) && (transfer->dataSize != 0U);
     bool hasReceiveData = (transfer->direction == kLPI2C_Read) && (transfer->dataSize != 0U);
@@ -339,10 +339,17 @@ status_t LPI2C_MasterTransferEDMA(LPI2C_Type *base,
 
         if (commandCount != 0U)
         {
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+            /* Create a software TCD, which will be chained after the commands. */
+            EDMA_TcdResetExt(handle->tx->base, tcd);
+            EDMA_TcdSetTransferConfigExt(handle->tx->base, tcd, &transferConfig, NULL);
+            EDMA_TcdEnableInterruptsExt(handle->tx->base, tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#else
             /* Create a software TCD, which will be chained after the commands. */
             EDMA_TcdReset(tcd);
             EDMA_TcdSetTransferConfig(tcd, &transferConfig, NULL);
             EDMA_TcdEnableInterrupts(tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#endif
             linkTcd = tcd;
         }
         else
@@ -380,9 +387,15 @@ status_t LPI2C_MasterTransferEDMA(LPI2C_Type *base,
                enabling rx dma and disabling tx dma, which will be chained onto the commands transfer,
                and create another software TCD of transfering data and chain it onto the last TCD.
                Notice that in this situation assume tx/rx uses same channel */
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+            EDMA_TcdResetExt(handle->rx->base, tcd);
+            EDMA_TcdSetTransferConfigExt(handle->rx->base, tcd, &transferConfig, NULL);
+            EDMA_TcdEnableInterruptsExt(handle->rx->base, tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#else
             EDMA_TcdReset(tcd);
             EDMA_TcdSetTransferConfig(tcd, &transferConfig, NULL);
             EDMA_TcdEnableInterrupts(tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#endif
 
             transferConfig.srcAddr          = (uint32_t)&lpi2c_edma_RecSetting;
             transferConfig.destAddr         = (uint32_t) & (base->MDER);
@@ -393,10 +406,14 @@ status_t LPI2C_MasterTransferEDMA(LPI2C_Type *base,
             transferConfig.minorLoopBytes   = sizeof(uint8_t);
             transferConfig.majorLoopCounts  = 1;
 
-            edma_tcd_t *tcdSetRxClearTxDMA = (edma_tcd_t *)((uint32_t)(&handle->tcds[2]) & (~ALIGN_32_MASK));
-
+            edma_tcd_t *tcdSetRxClearTxDMA = (edma_tcd_t *)((uint32_t)(&handle->tcds[2]) & (~ALIGN_TCD_SIZE_MASK));
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+            EDMA_TcdResetExt(handle->rx->base, tcdSetRxClearTxDMA);
+            EDMA_TcdSetTransferConfigExt(handle->rx->base, tcdSetRxClearTxDMA, &transferConfig, tcd);
+#else
             EDMA_TcdReset(tcdSetRxClearTxDMA);
             EDMA_TcdSetTransferConfig(tcdSetRxClearTxDMA, &transferConfig, tcd);
+#endif
             linkTcd = tcdSetRxClearTxDMA;
         }
     }

@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -290,7 +289,7 @@ typedef  void (*pJPEG_DataReadyCallbackTypeDef)(JPEG_HandleTypeDef *hjpeg, uint8
   * @brief JPEG Flags definition
   * @{
   */
-#define JPEG_FLAG_IFTF     ((uint32_t)JPEG_SR_IFTF)   /*!< Input FIFO is not full and is bellow its threshold flag */
+#define JPEG_FLAG_IFTF     ((uint32_t)JPEG_SR_IFTF)   /*!< Input FIFO is not full and is below its threshold flag */
 #define JPEG_FLAG_IFNFF    ((uint32_t)JPEG_SR_IFNFF)  /*!< Input FIFO Not Full Flag, a data can be written */
 #define JPEG_FLAG_OFTF     ((uint32_t)JPEG_SR_OFTF)   /*!< Output FIFO is not empty and has reach its threshold */
 #define JPEG_FLAG_OFNEF    ((uint32_t)JPEG_SR_OFNEF)  /*!< Output FIFO is not empty, a data is available  */
@@ -358,7 +357,7 @@ typedef  void (*pJPEG_DataReadyCallbackTypeDef)(JPEG_HandleTypeDef *hjpeg, uint8
   * @param  __HANDLE__ specifies the JPEG handle.
   * @param  __FLAG__  specifies the flag to check
   *         This parameter can be one of the following values:
-  *         @arg JPEG_FLAG_IFTF  : The input FIFO is not full and is bellow its threshold flag
+  *         @arg JPEG_FLAG_IFTF  : The input FIFO is not full and is below its threshold flag
   *         @arg JPEG_FLAG_IFNFF : The input FIFO Not Full Flag, a data can be written
   *         @arg JPEG_FLAG_OFTF  : The output FIFO is not empty and has reach its threshold
   *         @arg JPEG_FLAG_OFNEF : The output FIFO is not empty, a data is available
@@ -652,4 +651,3 @@ uint32_t               HAL_JPEG_GetError(JPEG_HandleTypeDef *hjpeg);
 
 #endif /* STM32H7xx_HAL_JPEG_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2020, 2023 NXP
+ * Copyright 2016-2020, 2023-2024 NXP
  * All rights reserved.
  *
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_LPCMP_H_
-#define _FSL_LPCMP_H_
+#ifndef FSL_LPCMP_H_
+#define FSL_LPCMP_H_
 
 #include "fsl_common.h"
 
@@ -22,8 +22,8 @@
  ******************************************************************************/
 /*! @name Driver version */
 /*! @{ */
-/*! @brief LPCMP driver version 2.1.1. */
-#define FSL_LPCMP_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
+/*! @brief LPCMP driver version 2.1.3. */
+#define FSL_LPCMP_DRIVER_VERSION (MAKE_VERSION(2, 1, 3))
 /*! @} */
 
 #define LPCMP_CCR1_COUTA_CFG_MASK  (LPCMP_CCR1_COUTA_OWEN_MASK | LPCMP_CCR1_COUTA_OW_MASK)
@@ -196,7 +196,10 @@ typedef struct _lpcmp_dac_config
  */
 typedef struct _lpcmp_config
 {
-    bool enableStopMode;      /*!< Decide whether to enable the comparator when in STOP modes. */
+#if !(defined(FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) && FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN)
+    bool enableStopMode; /*!< Decide whether to enable the comparator when in STOP modes. */
+#endif /* !(defined(FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) && FSL_FEATURE_LPCMP_HAS_NO_CCR0_CMP_STOP_EN) */
+
     bool enableOutputPin;     /*!< Decide whether to enable the comparator is available in selected pin. */
     bool useUnfilteredOutput; /*!< Decide whether to use unfiltered output. */
     bool enableInvertOutput;  /*!< Decide whether to inverts the comparator output. */
@@ -235,9 +238,12 @@ typedef struct _lpcmp_roundrobin_config
     uint8_t sampleTimeThreshhold; /*!< Specify that for one channel, when (sampleTimeThreshhold + 1) sample results are
                                        "1",the final result is "1", otherwise the final result is "0", note that the
                                        sampleTimeThreshhold must not be larger than channelSampleNumbers. */
-    lpcmp_roundrobin_clock_source_t roundrobinClockSource;    /*!< Decide which clock source to choose in round robin mode. */
-    lpcmp_roundrobin_trigger_source_t roundrobinTriggerSource;  /*!< Decide which trigger source to choose in round robin mode. */
-    lpcmp_roundrobin_fixedmuxport_t fixedMuxPort;           /*!< Decide which mux port to choose as fixed channel in round robin mode. */
+    lpcmp_roundrobin_clock_source_t roundrobinClockSource;     /*!< Decide which clock source to
+                                                        choose in round robin mode. */
+    lpcmp_roundrobin_trigger_source_t roundrobinTriggerSource; /*!< Decide which trigger source to
+                                                        choose in round robin mode. */
+    lpcmp_roundrobin_fixedmuxport_t fixedMuxPort;              /*!< Decide which mux port to choose as
+                                                        fixed channel in round robin mode. */
     uint8_t fixedChannel;       /*!< Indicate which channel of the fixed mux port is used in round robin mode. */
     uint8_t checkerChannelMask; /*!< Indicate which channel of the non-fixed mux port to check its voltage value in
                                      round robin mode, for example, if checkerChannelMask set to 0x11U means select
@@ -576,4 +582,4 @@ static inline uint8_t LPCMP_GetInputChangedFlags(LPCMP_Type *base)
 
 /*! @} */
 
-#endif /* _FSL_LPCMP_H_ */
+#endif /* FSL_LPCMP_H_ */

@@ -1,11 +1,11 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_CMC_H_
-#define _FSL_CMC_H_
+#ifndef FSL_CMC_H_
+#define FSL_CMC_H_
 #include "fsl_common.h"
 
 /*!
@@ -17,8 +17,8 @@
  ******************************************************************************/
 /*! @name Driver version */
 /*@{*/
-/*! @brief CMC driver version 2.0.0. */
-#define FSL_CMC_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
+/*! @brief CMC driver version 2.2.2. */
+#define FSL_CMC_DRIVER_VERSION (MAKE_VERSION(2, 2, 2))
 /* @} */
 
 /*!
@@ -34,6 +34,8 @@ enum _cmc_power_mode_protection
 
 /*!
  * @brief Wake up sources from the previous low power mode entry.
+ *
+ * @note #kCMC_WakeupFromUsbFs, #kCMC_WakeupFromITRC, #kCMC_WakeupFromCpu1 are not supported in MCXA family.
  */
 enum _cmc_wakeup_sources
 {
@@ -59,14 +61,25 @@ enum _cmc_system_reset_interrupt_enable
                                                                                     Reset interrupt enable. */
     kCMC_WindowedWatchdog0ResetInterruptEnable = CMC_SRIE_WWDT0_MASK,          /*!< Windowed Watchdog 0 reset
                                                                                  interrupt enable. */
-    kCMC_SoftwareResetInterruptEnable          = CMC_SRIE_SW_MASK,             /*!< Software Reset interrupt enable. */
-    kCMC_LockupResetInterruptEnable            = CMC_SRIE_LOCKUP_MASK,         /*!< Lockup Reset interrupt enable. */
-    kCMC_Cpu1ResetInterruptEnable              = CMC_SRIE_CPU1_MASK,           /*!< CPU1 Reset interrupt enable. */
-    kCMC_VBATResetInterruptEnable              = CMC_SRIE_VBAT_MASK,           /*!< VBAT reset interrupt enable. */
+    kCMC_SoftwareResetInterruptEnable = CMC_SRIE_SW_MASK,                      /*!< Software Reset interrupt enable. */
+    kCMC_LockupResetInterruptEnable   = CMC_SRIE_LOCKUP_MASK,                  /*!< Lockup Reset interrupt enable. */
+#if defined(CMC_SRIE_CPU1_MASK)
+    kCMC_Cpu1ResetInterruptEnable = CMC_SRIE_CPU1_MASK,                        /*!< CPU1 Reset interrupt enable. */
+#endif                                                                         /* CMC_SRIE_CPU1_MASK */
+#if defined(CMC_SRIE_ADVC_MASK)
+    kCMC_AdvcResetInterruptEnable = CMC_SRIE_ADVC_MASK,                        /*!< ADVC Reset interrupt enable. */
+#endif                                                                         /* CMC_SRIE_ADVC_MASK */
+#if defined(CMC_SRIE_VBAT_MASK)
+    kCMC_VBATResetInterruptEnable = CMC_SRIE_VBAT_MASK,                        /*!< VBAT reset interrupt enable. */
+#endif                                                                         /* CMC_SRIE_VBAT_MASK */
+#if defined(CMC_SRIE_WWDT1_MASK)
     kCMC_WindowedWatchdog1ResetInterruptEnable = CMC_SRIE_WWDT1_MASK,          /*!< Windowed Watchdog 1 reset
                                                                                      interrupt enable. */
+#endif                                                                         /* CMC_SRIE_WWDT1_MASK */
     kCMC_CodeWatchDog0ResetInterruptEnable = CMC_SRIE_CDOG0_MASK, /*!< Code watchdog 0 reset interrupt enable. */
+#if defined(CMC_SRIE_CDOG1_MASK)
     kCMC_CodeWatchDog1ResetInterruptEnable = CMC_SRIE_CDOG1_MASK, /*!< Code watchdog 1 reset interrupt enable. */
+#endif                                                            /* CMC_SRIE_CDOG1_MASK */
 };
 
 /*!
@@ -81,13 +94,25 @@ enum _cmc_system_reset_interrupt_flag
     kCMC_WindowedWatchdog0ResetInterruptFlag = CMC_SRIF_WWDT0_MASK,  /*!< Windowned Watchdog 0 Reset interrupt flag. */
     kCMC_SoftwareResetInterruptFlag          = CMC_SRIF_SW_MASK,     /*!< Software Reset interrupt flag. */
     kCMC_LockupResetInterruptFlag            = CMC_SRIF_LOCKUP_MASK, /*!< Lock up Reset interrupt flag. */
-    kCMC_Cpu1ResetInterruptFlag              = CMC_SRIF_CPU1_MASK,   /*!< CPU1 Reset interrupt flag. */
-    kCMC_VbatResetInterruptFlag              = CMC_SRIF_VBAT_MASK,   /*!< VBAT system reset interrupt flag. */
+#if defined(CMC_SRIF_CPU1_MASK)
+    kCMC_Cpu1ResetInterruptFlag = CMC_SRIF_CPU1_MASK,                /*!< CPU1 Reset interrupt flag. */
+#endif                                                               /* CMC_SRIF_CPU1_MASK */
+#if defined(CMC_SRIF_ADVC_MASK)
+    kCMC_AdvcResetInterruptFlag = CMC_SRIF_ADVC_MASK,                /*!< ADVC Reset interrupt flag. */
+#endif                                                               /* CMC_SRIF_ADVC_MASK */
+#if defined(CMC_SRIF_VBAT_MASK)
+    kCMC_VbatResetInterruptFlag = CMC_SRIF_VBAT_MASK,                /*!< VBAT system reset interrupt flag. */
+#endif                                                               /* CMC_SRIF_VBAT_MASK */
+#if defined(CMC_SRIF_WWDT1_MASK)
     kCMC_WindowedWatchdog1ResetInterruptFlag = CMC_SRIF_WWDT1_MASK,  /*!< Windowned Watchdog 1 Reset interrupt flag. */
-    kCMC_CodeWatchdog0ResetInterruptFlag     = CMC_SRIF_CDOG0_MASK,  /*!< Code watchdog0 reset interrupt flag. */
-    kCMC_CodeWatchdog1ResetInterruptFlag     = CMC_SRIF_CDOG1_MASK,  /*!< Code watchdog1 reset interrupt flag. */
+#endif                                                               /* CMC_SRIF_WWDT1_MASK */
+    kCMC_CodeWatchdog0ResetInterruptFlag = CMC_SRIF_CDOG0_MASK,      /*!< Code watchdog0 reset interrupt flag. */
+#if defined(CMC_SRIF_CDOG1_MASK)
+    kCMC_CodeWatchdog1ResetInterruptFlag = CMC_SRIF_CDOG1_MASK,      /*!< Code watchdog1 reset interrupt flag. */
+#endif                                                               /* CMC_SRIF_CDOG1_MASK */
 };
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG) && FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG)
 /*!
  * @brief CMC System SRAM arrays low power mode enable enumeration.
  */
@@ -114,7 +139,13 @@ enum _cmc_system_sram_arrays
     kCMC_PQ                  = 1UL << 27UL, /*!< Used to control PQ. */
     kCMC_CAN0_CAN1_ENET_USB1 = 1UL << 28UL, /*!< Used to control CAN0, CAN1, ENET, USB1. */
     kCMC_FlexSPI             = 1UL << 29UL, /*!< Used to control FlexSPI. */
+
+    kCMC_AllSramArrays = (kCMC_RAMX0 | kCMC_RAMX1 | kCMC_RAMX2 | kCMC_RAMB | kCMC_RAMC0 | kCMC_RAMC1 | kCMC_RAMD0 |
+                          kCMC_RAMD1 | kCMC_RAME0 | kCMC_RAME1 | kCMC_RAMF0 | kCMC_RAMF1 | kCMC_RAMG0_RAMG1 |
+                          kCMC_RAMG2_RAMG3 | kCMC_RAMH0_RAMH1 | kCMC_LPCAC | kCMC_DMA0_DMA1_PKC | kCMC_USB0 | kCMC_PQ |
+                          kCMC_CAN0_CAN1_ENET_USB1 | kCMC_FlexSPI), /*!< Mask of all System SRAM arrays. */
 };
+#endif                                                              /* FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG */
 
 /*!
  * @brief System reset sources enumeration.
@@ -137,14 +168,29 @@ enum _cmc_system_reset_sources
     kCMC_WindowedWatchdog0Reset = CMC_SRS_WWDT0_MASK, /*!< The reset caused by the Windowed WatchDog 0 timeout. */
     kCMC_SoftwareReset          = CMC_SRS_SW_MASK,    /*!< The reset caused by a software reset request. */
     kCMC_LockUoReset = CMC_SRS_LOCKUP_MASK, /*!< The reset caused by the ARM core indication of a LOCKUP event. */
-    kCMC_Cpu1Reset   = CMC_SRS_CPU1_MASK,   /*!< The reset caused by a CPU1 system reset. */
-    kCMC_VbatReset   = CMC_SRS_VBAT_MASK,   /*!< The reset caused by a VBAT POR. */
+#if defined(CMC_SRS_CPU1_MASK)
+    kCMC_Cpu1Reset = CMC_SRS_CPU1_MASK,     /*!< The reset caused by a CPU1 system reset. */
+#endif                                      /* CMC_SRS_CPU1_MASK */
+#if defined(CMC_SRS_ADVC_MASK)
+    kCMC_AdvcReset = CMC_SRS_ADVC_MASK,     /*!< The reset caused by ADVC critical reset.  */
+#endif                                      /* CMC_SRS_ADVC_MASK */
+#if defined(CMC_SRS_VBAT_MASK)
+    kCMC_VbatReset = CMC_SRS_VBAT_MASK,     /*!< The reset caused by a VBAT POR. */
+#endif                                      /* CMC_SRS_VBAT_MASK */
+#if defined(CMC_SRS_WWDT1_MASK)
     kCMC_WindowedWatchdog1Reset = CMC_SRS_WWDT1_MASK,  /*!< The reset caused by the Windowed WatchDog 1 timeout. */
-    kCMC_CodeWatchDog0Reset     = CMC_SRS_CDOG0_MASK,  /*!< The reset caused by the code watchdog0 fault. */
-    kCMC_CodeWatchDog1Reset     = CMC_SRS_CDOG1_MASK,  /*!< The reset caused by the code watchdog1 fault. */
-    kCMC_JTAGSystemReset        = CMC_SRS_JTAG_MASK,   /*!< The reset caused by a JTAG system reset request. */
+#endif                                                 /* CMC_SRS_WWDT1_MASK */
+    kCMC_CodeWatchDog0Reset = CMC_SRS_CDOG0_MASK,      /*!< The reset caused by the code watchdog0 fault. */
+#if defined(CMC_SRS_CDOG1_MASK)
+    kCMC_CodeWatchDog1Reset = CMC_SRS_CDOG1_MASK,      /*!< The reset caused by the code watchdog1 fault. */
+#endif                                                 /* CMC_SRS_CDOG1_MASK */
+    kCMC_JTAGSystemReset = CMC_SRS_JTAG_MASK,          /*!< The reset caused by a JTAG system reset request. */
+#if defined(CMC_SRS_SECVIO_MASK)
     kCMC_SecurityViolationReset = CMC_SRS_SECVIO_MASK, /*!< The reset caused by a Security Violation logic. */
-    kCMC_TapmerReset            = CMC_SRS_TAMPER_MASK, /*!< The reset caused by the tamper detection logic. */
+#endif                                                 /* CMC_SRS_SECVIO_MASK */
+#if defined(CMC_SRS_TAMPER_MASK)
+    kCMC_TapmerReset = CMC_SRS_TAMPER_MASK,            /*!< The reset caused by the tamper detection logic. */
+#endif                                                 /* CMC_SRS_TAMPER_MASK */
 };
 
 /*!
@@ -197,7 +243,9 @@ typedef struct _cmc_power_domain_config
 {
     cmc_clock_mode_t clock_mode;      /*!< Clock mode for each power domain. */
     cmc_low_power_mode_t main_domain; /*!< The low power mode of the MAIN power domain. */
+#if (CMC_PMCTRL_COUNT > 1U)
     cmc_low_power_mode_t wake_domain; /*!< The low power mode of the WAKE power domain. */
+#endif                                /* (CMC_PMCTRL_COUNT > 1U) */
 } cmc_power_domain_config_t;
 
 /*******************************************************************************
@@ -335,8 +383,9 @@ static inline void CMC_ClearStickySystemResetStatus(CMC_Type *base, uint32_t mas
     base->SSRS = mask;
 }
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_RSTCNT_REG) && FSL_FEATURE_MCX_CMC_HAS_RSTCNT_REG)
 /*!
- * @brief Gets the number of reset sequences completed since the last WAKE Cold Reset.
+ * @brief Gets the number of reset sequences completed since the last Cold Reset.
  *
  * @param base CMC peripheral base address.
  * @return The number of reset sequences.
@@ -345,6 +394,7 @@ static inline uint8_t CMC_GetResetCount(CMC_Type *base)
 {
     return (uint8_t)(base->RSTCNT & CMC_RSTCNT_COUNT_MASK);
 }
+#endif /* FSL_FEATURE_MCX_CMC_HAS_RSTCNT_REG */
 
 /* @} */
 
@@ -422,6 +472,7 @@ static inline cmc_low_power_mode_t CMC_GetMAINPowerMode(CMC_Type *base)
     return (cmc_low_power_mode_t)(uint32_t)(base->PMCTRL[0] & CMC_PMCTRL_LPMODE_MASK);
 }
 
+#if (CMC_PMCTRL_COUNT > 1U)
 /*!
  * @brief Configure entry into low power mode for the WAKE Power domain.
  *
@@ -451,6 +502,7 @@ static inline cmc_low_power_mode_t CMC_GetWAKEPowerMode(CMC_Type *base)
 {
     return (cmc_low_power_mode_t)(uint32_t)(base->PMCTRL[1] & CMC_PMCTRL_LPMODE_MASK);
 }
+#endif /* CMC_PMCTRL_COUNT > 1U */
 
 /* @} */
 
@@ -626,6 +678,7 @@ static inline void CMC_ForceBootConfiguration(CMC_Type *base, bool assert)
  * @{
  */
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_BSR_REG) && FSL_FEATURE_MCX_CMC_HAS_BSR_REG)
 /*!
  * @brief Gets the status information written by the BootROM.
  *
@@ -649,7 +702,9 @@ static inline void CMC_SetBootRomStatus(CMC_Type *base, uint32_t statValue)
 {
     base->BSR = CMC_BSR_STAT(statValue);
 }
+#endif /* FSL_FEATURE_MCX_CMC_HAS_BSR_REG */
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_BLR_REG) && FSL_FEATURE_MCX_CMC_HAS_BLR_REG)
 /*!
  * @brief Check if BootROM status and lock registers is writtable.
  *
@@ -682,9 +737,11 @@ static inline void CMC_UnlockBootRomStatusWritten(CMC_Type *base)
 {
     base->BLR = CMC_BLR_LOCK(0x2U);
 }
+#endif /* FSL_FEATURE_MCX_CMC_HAS_BLR_REG */
 
 /* @} */
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG) && FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG)
 /*!
  * @name System SRAM Configuration.
  * @{
@@ -693,9 +750,11 @@ static inline void CMC_UnlockBootRomStatusWritten(CMC_Type *base)
 /*!
  * @brief Power off the selected system SRAM always.
  *
- * This function power off the selected system SRAM always. The SRAM arrays should
+ * @note This function power off the selected system SRAM always. The SRAM arrays should
  * not be accessed while they are shut down. SRAM array contents are not retained
  * if they are powered off.
+ *
+ * @note Once invoked, the previous settings will be overwritten.
  *
  * @param base CMC peripheral base address.
  * @param mask Bitmap of the SRAM arrays to be powered off all modes.
@@ -706,6 +765,8 @@ void CMC_PowerOffSRAMAllMode(CMC_Type *base, uint32_t mask);
 
 /*!
  * @brief Power on SRAM during all mode.
+ *
+ * @note Once invoked, the previous settings will be overwritten.
  *
  * @param base CMC peripheral base address.
  * @param mask Bitmap of the SRAM arrays to be powered on all modes.
@@ -747,11 +808,27 @@ static inline void CMC_PowerOnSRAMLowPowerOnly(CMC_Type *base, uint32_t mask)
 }
 
 /* @} */
+#endif /* FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG */
 
 /*!
  * @name Flash Low Power Mode configuration.
  * @{
  */
+
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE) && FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE)
+/*!
+ * @brief Configs the low power mode of the on-chip flash memory.
+ *
+ * This function configs the low power mode of the on-chip flash memory.
+ *
+ * @param base CMC peripheral base address.
+ * @param doze true: Flash is disabled while core is sleeping
+ *             false: No effect.
+ * @param disable true: Flash memory is placed in low power state.
+ *                false: No effect.
+ */
+void CMC_ConfigFlashMode(CMC_Type *base, bool doze, bool disable);
+#else
 /*!
  * @brief Configs the low power mode of the on-chip flash memory.
  *
@@ -766,7 +843,7 @@ static inline void CMC_PowerOnSRAMLowPowerOnly(CMC_Type *base, uint32_t mask)
  *                false: No effect.
  */
 void CMC_ConfigFlashMode(CMC_Type *base, bool wake, bool doze, bool disable);
-
+#endif /* FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE */
 /* @} */
 
 /*!
@@ -849,4 +926,4 @@ void CMC_EnterLowPowerMode(CMC_Type *base, const cmc_power_domain_config_t *conf
 #endif /* __cplusplus */
 
 /*! @}*/
-#endif /* _FSL_CMC_H_ */
+#endif /* FSL_CMC_H_ */

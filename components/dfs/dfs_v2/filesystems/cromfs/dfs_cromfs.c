@@ -786,18 +786,18 @@ static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, o
     rt_err_t result = RT_EOK;
     file_info *fi = NULL;
     cromfs_info *ci = NULL;
-    uint32_t length = 0;
+    ssize_t length = 0;
 
     ci = (cromfs_info *)file->dentry->mnt->data;
     fi = (file_info *)file->vnode->data;
 
-    if (count < file->vnode->size - *pos)
+    if ((off_t)count < (off_t)file->vnode->size - *pos)
     {
         length = count;
     }
     else
     {
-        length = file->vnode->size - *pos;
+        length = (off_t)file->vnode->size - *pos;
     }
 
     if (length > 0)

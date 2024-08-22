@@ -48,6 +48,9 @@ rt_hw_interrupt_enable:
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
     la t0, __rt_rvstack
+#ifdef SOC_RISCV_FAMILY_CH32
+    addi t0, t0, -512 // for ch32
+#endif /* SOC_RISCV_FAMILY_CH32 */
     csrw mscratch,t0
 
     LOAD sp, (a0)

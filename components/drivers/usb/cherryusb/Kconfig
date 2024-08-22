@@ -36,12 +36,16 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_at"
             config RT_CHERRYUSB_DEVICE_DWC2_GD
                 bool "dwc2_gd"
+            config RT_CHERRYUSB_DEVICE_DWC2_HC
+                bool "dwc2_hc"
             config RT_CHERRYUSB_DEVICE_DWC2_CUSTOM
                 bool "dwc2_custom"
-            config RT_CHERRYUSB_DEVICE_MUSB_STANDARD
-                bool "musb_standard"
+            config RT_CHERRYUSB_DEVICE_MUSB_ES
+                bool "musb_es"
             config RT_CHERRYUSB_DEVICE_MUSB_SUNXI
                 bool "musb_sunxi"
+            config RT_CHERRYUSB_DEVICE_MUSB_BK
+                bool "musb_bk"
             config RT_CHERRYUSB_DEVICE_MUSB_CUSTOM
                 bool "musb_custom"
             config RT_CHERRYUSB_DEVICE_BL
@@ -103,7 +107,7 @@ if RT_USING_CHERRYUSB
 
         choice
             prompt "Select usb device template"
-            default RT_CHERRYUSB_DEVICE_TEMPLATE
+            default RT_CHERRYUSB_DEVICE_TEMPLATE_NONE
             config RT_CHERRYUSB_DEVICE_TEMPLATE_NONE
                 bool "none (Implement it yourself)"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
@@ -170,10 +174,12 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_esp"
             config RT_CHERRYUSB_HOST_DWC2_CUSTOM
                 bool "dwc2_custom"
-            config RT_CHERRYUSB_HOST_MUSB_STANDARD
-                bool "musb_standard"
+            config RT_CHERRYUSB_HOST_MUSB_ES
+                bool "musb_es"
             config RT_CHERRYUSB_HOST_MUSB_SUNXI
                 bool "musb_sunxi"
+            config RT_CHERRYUSB_HOST_MUSB_BK
+                bool "musb_bk"
             config RT_CHERRYUSB_HOST_MUSB_CUSTOM
                 bool "musb_custom"
             config RT_CHERRYUSB_HOST_PUSB2
@@ -242,7 +248,7 @@ if RT_USING_CHERRYUSB
             prompt "Enable usb asix driver"
             select RT_USING_LWIP
             select RT_USING_LWIP212
-            select CONFIG_USBHOST_PLATFORM_CDC_ASIX
+            select CONFIG_USBHOST_PLATFORM_ASIX
             default n
 
         config RT_CHERRYUSB_HOST_RTL8152
@@ -250,7 +256,7 @@ if RT_USING_CHERRYUSB
             prompt "Enable usb rtl8152 driver"
             select RT_USING_LWIP
             select RT_USING_LWIP212
-            select CONFIG_USBHOST_PLATFORM_CDC_RTL8152
+            select CONFIG_USBHOST_PLATFORM_RTL8152
             default n
 
         config RT_CHERRYUSB_HOST_FTDI
@@ -285,7 +291,7 @@ if RT_USING_CHERRYUSB
         config CONFIG_USBHOST_PLATFORM_ASIX
             bool
 
-        config CONFIG_USBHOST_PLATFORM_RTL152
+        config CONFIG_USBHOST_PLATFORM_RTL8152
             bool
 
         config CHERRYUSB_HOST_TEMPLATE

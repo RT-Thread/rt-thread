@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_acc.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 acc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -181,6 +179,7 @@ uint16_t acc_read_c1(void);
 uint16_t acc_read_c2(void);
 uint16_t acc_read_c3(void);
 flag_status acc_flag_get(uint16_t acc_flag);
+flag_status acc_interrupt_flag_get(uint16_t acc_flag);
 void acc_flag_clear(uint16_t acc_flag);
 
 /**

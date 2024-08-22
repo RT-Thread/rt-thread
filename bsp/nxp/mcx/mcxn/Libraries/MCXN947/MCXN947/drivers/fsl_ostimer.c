@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 NXP
+ * Copyright 2018-2021, 2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -14,6 +14,10 @@
 /* Component ID definition, used by tools. */
 #ifndef FSL_COMPONENT_ID
 #define FSL_COMPONENT_ID "platform.drivers.ostimer"
+#endif
+
+#if defined(OSTIMER_RSTS)
+#define OSTIMER_RESETS_ARRAY OSTIMER_RSTS
 #endif
 
 /* Typedef for interrupt handler. */
@@ -60,6 +64,11 @@ static const clock_ip_name_t s_ostimerClock[] = OSTIMER_CLOCKS;
 static ostimer_isr_t s_ostimerIsr = (ostimer_isr_t)DefaultISR;
 #else
 static ostimer_isr_t s_ostimerIsr;
+#endif
+
+#if defined(OSTIMER_RESETS_ARRAY)
+/* Reset array */
+static const reset_ip_name_t s_ostimerResets[] = OSTIMER_RESETS_ARRAY;
 #endif
 
 /*******************************************************************************
@@ -177,6 +186,10 @@ void OSTIMER_Init(OSTIMER_Type *base)
     CLOCK_EnableClock(kCLOCK_Sysctl);
 #endif /* FSL_FEATURE_SYSCTRL_HAS_CODE_GRAY. */
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(OSTIMER_RESETS_ARRAY)
+    RESET_ReleasePeripheralReset(s_ostimerResets[OSTIMER_GetInstance(base)]);
+#endif
 }
 
 /*!
@@ -362,20 +375,10 @@ void OSTIMER_HandleIRQ(OSTIMER_Type *base, ostimer_callback_t cb)
     }
 }
 
-#if defined(OSTIMER0)
 void OS_EVENT_DriverIRQHandler(void);
 void OS_EVENT_DriverIRQHandler(void)
 {
-    s_ostimerIsr(OSTIMER0, s_ostimerHandle[0]);
+    s_ostimerIsr(s_ostimerBases[0], s_ostimerHandle[0]);
     SDK_ISR_EXIT_BARRIER;
 }
-#endif
 
-#if defined(OSTIMER)
-void OS_EVENT_DriverIRQHandler(void);
-void OS_EVENT_DriverIRQHandler(void)
-{
-    s_ostimerIsr(OSTIMER, s_ostimerHandle[0]);
-    SDK_ISR_EXIT_BARRIER;
-}
-#endif

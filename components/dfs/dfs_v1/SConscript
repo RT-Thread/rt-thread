@@ -1,4 +1,6 @@
 from building import *
+from gcc import *
+import rtconfig
 import os
 
 # The set of source files associated with this SConscript file.
@@ -6,6 +8,7 @@ src     = []
 cwd     = GetCurrentDir()
 CPPPATH = [cwd + "/include"]
 group   = []
+LOCAL_CFLAGS = ''
 
 if GetDepend('RT_USING_DFS') and not GetDepend('RT_USING_DFS_V2'):
     src = ['src/dfs.c', 'src/dfs_file.c', 'src/dfs_fs.c']
@@ -13,7 +16,12 @@ if GetDepend('RT_USING_DFS') and not GetDepend('RT_USING_DFS_V2'):
     if GetDepend('DFS_USING_POSIX'):
         src += ['src/dfs_posix.c']
 
-    group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
+    if rtconfig.PLATFORM in GetGCCLikePLATFORM():
+        LOCAL_CFLAGS += ' -std=c99'
+    elif rtconfig.PLATFORM in ['armcc']:
+        LOCAL_CFLAGS += ' --c99'
+
+    group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
 
     # search in the file system implementation
     list = os.listdir(cwd)
