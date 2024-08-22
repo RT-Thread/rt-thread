@@ -403,6 +403,18 @@ sysret_t sys_setpgid(pid_t pid, pid_t pgid)
         if (group == RT_NULL)
         {
             group = lwp_pgrp_create(process);
+            lwp_pgrp_move(group, process);
+            session = lwp_session_find(sid);
+            if (session == RT_NULL)
+            {
+                LOG_E("the session of sid: %d cannot be found", sid);
+                err = -EPERM;
+                goto exit;
+            }
+            else
+            {
+                lwp_session_insert(session, group);
+            }
         }
         else
         {

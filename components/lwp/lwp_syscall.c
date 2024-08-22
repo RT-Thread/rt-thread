@@ -1229,7 +1229,7 @@ void *sys_mmap2(void *addr, size_t length, int prot,
         rc = (sysret_t)lwp_mmap2(lwp_self(), addr, length, prot, flags, fd, pgoffset);
     }
 
-    return (char *)rc + offset;
+    return rc < 0 ? (char *)rc : (char *)rc + offset;
 }
 
 sysret_t sys_munmap(void *addr, size_t length)
