@@ -1,12 +1,14 @@
-import rtconfig
 from building import *
 import os
 
-cwd  = GetCurrentDir()
-path = [cwd]
-src  = Glob('*.c')
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = path)
+if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
+    src += ['arduino_main.cpp']
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
 for item in list:
