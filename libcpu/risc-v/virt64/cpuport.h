@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,6 +17,8 @@
 #ifdef ARCH_CPU_64BIT
 #define STORE                   sd
 #define LOAD                    ld
+#define FSTORE                  fsd
+#define FLOAD                   fld
 #define REGBYTES                8
 #else
 // error here, not portable

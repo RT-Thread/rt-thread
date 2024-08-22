@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_ITRC_H_
-#define _FSL_ITRC_H_
+#ifndef FSL_ITRC_H_
+#define FSL_ITRC_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,12 @@
  *******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief Defines ITRC driver version 2.2.0.
+/*! @{ */
+/*! @brief Defines ITRC driver version 2.3.0.
  *
  * Change log:
+ * - Version 2.3.0
+ *   - Update names of kITRC_SwEvent1/2 to kITRC_SwEvent0/1 to align with RM
  * - Version 2.2.0
  *   - Update driver to new version and input events
  * - Version 2.1.0
@@ -32,8 +34,8 @@
  * - Version 2.0.0
  *   - initial version
  */
-#define FSL_ITRC_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
-/*@}*/
+#define FSL_ITRC_DRIVER_VERSION (MAKE_VERSION(2, 3, 0))
+/*! @} */
 
 typedef enum _itrc_input_signals
 {
@@ -59,8 +61,8 @@ typedef enum _itrc_input_signals
 #if defined(ITRC_OUTX_SEL_OUTX_SELY_OUT_SEL_IN13_SELn_MASK)
     kITRC_Freqme = 13u,
 #endif /* ITRC_OUTX_SEL_OUTX_SELY_OUT_SEL_IN13_SELn_MASK */
-    kITRC_SwEvent1 = 14u,
-    kITRC_SwEvent2 = 15u,
+    kITRC_SwEvent0 = 14u,
+    kITRC_SwEvent1 = 15u,
 #if defined(ITRC_OUTX_SEL_1_OUTX_SELY_OUT_SEL_1_IN16_SELn_MASK)
     kITRC_VddSysLow = 16u,
 #endif /* ITRC_OUTX_SEL_1_OUTX_SELY_OUT_SEL_1_IN16_SELn_MASK */
@@ -317,4 +319,4 @@ void ITRC_Deinit(ITRC_Type *base);
 
 /*! @}*/ /* end of group itrc */
 
-#endif /* _FSL_ITRC_H_ */
+#endif /* FSL_ITRC_H_ */

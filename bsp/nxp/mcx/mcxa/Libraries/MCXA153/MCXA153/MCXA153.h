@@ -2,6 +2,7 @@
 ** ###################################################################
 **     Processors:          MCXA153VFM
 **                          MCXA153VFT
+**                          MCXA153VLF
 **                          MCXA153VLH
 **
 **     Compilers:           GNU C Compiler
@@ -11,13 +12,13 @@
 **
 **     Reference manual:    MCXA1 User manual
 **     Version:             rev. 1.0, 2022-03-29
-**     Build:               b230822
+**     Build:               b240403
 **
 **     Abstract:
 **         CMSIS Peripheral Access Layer for MCXA153
 **
 **     Copyright 1997-2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2023 NXP
+**     Copyright 2016-2024 NXP
 **     SPDX-License-Identifier: BSD-3-Clause
 **
 **     http:                 www.nxp.com
@@ -39,8 +40,8 @@
  * CMSIS Peripheral Access Layer for MCXA153
  */
 
-#ifndef _MCXA153_H_
-#define _MCXA153_H_                              /**< Symbol preventing repeated inclusion */
+#if !defined(MCXA153_H_)
+#define MCXA153_H_                               /**< Symbol preventing repeated inclusion */
 
 /** Memory map major version (memory maps with equal major version number are
  * compatible) */
@@ -975,6 +976,11 @@ typedef struct {
 #define ADC_TCTRL_TDLY_SHIFT                     (16U)
 /*! TDLY - Trigger Delay Select */
 #define ADC_TCTRL_TDLY(x)                        (((uint32_t)(((uint32_t)(x)) << ADC_TCTRL_TDLY_SHIFT)) & ADC_TCTRL_TDLY_MASK)
+
+#define ADC_TCTRL_TSYNC_MASK                     (0x800000U)
+#define ADC_TCTRL_TSYNC_SHIFT                    (23U)
+/*! TSYNC - Trigger Synchronous Select */
+#define ADC_TCTRL_TSYNC(x)                       (((uint32_t)(((uint32_t)(x)) << ADC_TCTRL_TSYNC_SHIFT)) & ADC_TCTRL_TSYNC_MASK)
 
 #define ADC_TCTRL_TCMD_MASK                      (0x7000000U)
 #define ADC_TCTRL_TCMD_SHIFT                     (24U)
@@ -2229,8 +2235,7 @@ typedef struct {
   __IO uint32_t FM[1];                             /**< Force Mode, array offset: 0xB0, array step: 0x4 */
        uint8_t RESERVED_4[44];
   __IO uint32_t FLASHCR;                           /**< Flash Control, offset: 0xE0 */
-       uint8_t RESERVED_5[40];
-  __IO uint32_t BLR;                               /**< BootROM Lock Register, offset: 0x10C */
+       uint8_t RESERVED_5[44];
   __IO uint32_t CORECTL;                           /**< Core Control, offset: 0x110 */
        uint8_t RESERVED_6[12];
   __IO uint32_t DBGCTL;                            /**< Debug Control, offset: 0x120 */
@@ -2834,18 +2839,6 @@ typedef struct {
  *  0b1..Flash memory is not disabled during flash memory accesses
  */
 #define CMC_FLASHCR_FLASHWAKE(x)                 (((uint32_t)(((uint32_t)(x)) << CMC_FLASHCR_FLASHWAKE_SHIFT)) & CMC_FLASHCR_FLASHWAKE_MASK)
-/*! @} */
-
-/*! @name BLR - BootROM Lock Register */
-/*! @{ */
-
-#define CMC_BLR_LOCK_MASK                        (0x7U)
-#define CMC_BLR_LOCK_SHIFT                       (0U)
-/*! LOCK - Lock
- *  0b010..BootROM Status and Lock Registers can be written
- *  0b101..BootROM Status and Lock Registers cannot be written
- */
-#define CMC_BLR_LOCK(x)                          (((uint32_t)(((uint32_t)(x)) << CMC_BLR_LOCK_SHIFT)) & CMC_BLR_LOCK_MASK)
 /*! @} */
 
 /*! @name CORECTL - Core Control */
@@ -3842,9 +3835,9 @@ typedef struct {
 
 #define DEBUGMAILBOX_CSW_DBG_OR_ERR_MASK         (0x4U)
 #define DEBUGMAILBOX_CSW_DBG_OR_ERR_SHIFT        (2U)
-/*! DBG_OR_ERR - DBG_MAILBOX Overrun Error
- *  0b0..No DBG_MAILBOX Overrun error
- *  0b1..DBG_MAILBOX overrun error. A DBG_MAILBOX overrun occurred.
+/*! DBG_OR_ERR - DBGMB Overrun Error
+ *  0b0..No DBGMB Overrun error
+ *  0b1..DBGMB overrun error. A DBGMB overrun occurred.
  */
 #define DEBUGMAILBOX_CSW_DBG_OR_ERR(x)           (((uint32_t)(((uint32_t)(x)) << DEBUGMAILBOX_CSW_DBG_OR_ERR_SHIFT)) & DEBUGMAILBOX_CSW_DBG_OR_ERR_MASK)
 
@@ -9682,20 +9675,20 @@ typedef struct {
   __I  uint32_t VERID;                             /**< Version ID, offset: 0x0 */
   __I  uint32_t PARAM;                             /**< Parameter, offset: 0x4 */
        uint8_t RESERVED_0[56];
-  __IO uint32_t PDOR;                              /**< Port Data Output Register, offset: 0x40 */
-  __O  uint32_t PSOR;                              /**< Port Set Output Register, offset: 0x44 */
-  __O  uint32_t PCOR;                              /**< Port Clear Output Register, offset: 0x48 */
-  __O  uint32_t PTOR;                              /**< Port Toggle Output Register, offset: 0x4C */
-  __I  uint32_t PDIR;                              /**< Port Data Input Register, offset: 0x50 */
-  __IO uint32_t PDDR;                              /**< Port Data Direction Register, offset: 0x54 */
-  __IO uint32_t PIDR;                              /**< Port Input Disable Register, offset: 0x58 */
+  __IO uint32_t PDOR;                              /**< Port Data Output, offset: 0x40 */
+  __O  uint32_t PSOR;                              /**< Port Set Output, offset: 0x44 */
+  __O  uint32_t PCOR;                              /**< Port Clear Output, offset: 0x48 */
+  __O  uint32_t PTOR;                              /**< Port Toggle Output, offset: 0x4C */
+  __I  uint32_t PDIR;                              /**< Port Data Input, offset: 0x50 */
+  __IO uint32_t PDDR;                              /**< Port Data Direction, offset: 0x54 */
+  __IO uint32_t PIDR;                              /**< Port Input Disable, offset: 0x58 */
        uint8_t RESERVED_1[4];
-  __IO uint8_t PDR[32];                            /**< Pin Data Register a, array offset: 0x60, array step: 0x1 */
-  __IO uint32_t ICR[32];                           /**< Interrupt Control Register 0..Interrupt Control Register 31, array offset: 0x80, array step: 0x4 */
-  __O  uint32_t GICLR;                             /**< Global Interrupt Control Low Register, offset: 0x100 */
-  __O  uint32_t GICHR;                             /**< Global Interrupt Control High Register, offset: 0x104 */
+  __IO uint8_t PDR[32];                            /**< Pin Data, array offset: 0x60, array step: 0x1 */
+  __IO uint32_t ICR[32];                           /**< Interrupt Control 0..Interrupt Control 31, array offset: 0x80, array step: 0x4 */
+  __O  uint32_t GICLR;                             /**< Global Interrupt Control Low, offset: 0x100 */
+  __O  uint32_t GICHR;                             /**< Global Interrupt Control High, offset: 0x104 */
        uint8_t RESERVED_2[24];
-  __IO uint32_t ISFR[1];                           /**< Interrupt Status Flag Register, array offset: 0x120, array step: 0x4 */
+  __IO uint32_t ISFR[1];                           /**< Interrupt Status Flag, array offset: 0x120, array step: 0x4 */
 } GPIO_Type;
 
 /* ----------------------------------------------------------------------------
@@ -9713,8 +9706,8 @@ typedef struct {
 #define GPIO_VERID_FEATURE_MASK                  (0xFFFFU)
 #define GPIO_VERID_FEATURE_SHIFT                 (0U)
 /*! FEATURE - Feature Specification Number
- *  0b0000000000000000..Basic implementation.
- *  0b0000000000000001..Protection registers implemented.
+ *  0b0000000000000000..Basic implementation
+ *  0b0000000000000001..Protection registers implemented
  */
 #define GPIO_VERID_FEATURE(x)                    (((uint32_t)(((uint32_t)(x)) << GPIO_VERID_FEATURE_SHIFT)) & GPIO_VERID_FEATURE_MASK)
 
@@ -9738,1834 +9731,1834 @@ typedef struct {
 #define GPIO_PARAM_IRQNUM(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_PARAM_IRQNUM_SHIFT)) & GPIO_PARAM_IRQNUM_MASK)
 /*! @} */
 
-/*! @name PDOR - Port Data Output Register */
+/*! @name PDOR - Port Data Output */
 /*! @{ */
 
 #define GPIO_PDOR_PDO0_MASK                      (0x1U)
 #define GPIO_PDOR_PDO0_SHIFT                     (0U)
 /*! PDO0 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO0(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO0_SHIFT)) & GPIO_PDOR_PDO0_MASK)
 
 #define GPIO_PDOR_PDO1_MASK                      (0x2U)
 #define GPIO_PDOR_PDO1_SHIFT                     (1U)
 /*! PDO1 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO1(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO1_SHIFT)) & GPIO_PDOR_PDO1_MASK)
 
 #define GPIO_PDOR_PDO2_MASK                      (0x4U)
 #define GPIO_PDOR_PDO2_SHIFT                     (2U)
 /*! PDO2 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO2(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO2_SHIFT)) & GPIO_PDOR_PDO2_MASK)
 
 #define GPIO_PDOR_PDO3_MASK                      (0x8U)
 #define GPIO_PDOR_PDO3_SHIFT                     (3U)
 /*! PDO3 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO3(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO3_SHIFT)) & GPIO_PDOR_PDO3_MASK)
 
 #define GPIO_PDOR_PDO4_MASK                      (0x10U)
 #define GPIO_PDOR_PDO4_SHIFT                     (4U)
 /*! PDO4 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO4(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO4_SHIFT)) & GPIO_PDOR_PDO4_MASK)
 
 #define GPIO_PDOR_PDO5_MASK                      (0x20U)
 #define GPIO_PDOR_PDO5_SHIFT                     (5U)
 /*! PDO5 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO5(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO5_SHIFT)) & GPIO_PDOR_PDO5_MASK)
 
 #define GPIO_PDOR_PDO6_MASK                      (0x40U)
 #define GPIO_PDOR_PDO6_SHIFT                     (6U)
 /*! PDO6 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO6(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO6_SHIFT)) & GPIO_PDOR_PDO6_MASK)
 
 #define GPIO_PDOR_PDO7_MASK                      (0x80U)
 #define GPIO_PDOR_PDO7_SHIFT                     (7U)
 /*! PDO7 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO7(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO7_SHIFT)) & GPIO_PDOR_PDO7_MASK)
 
 #define GPIO_PDOR_PDO8_MASK                      (0x100U)
 #define GPIO_PDOR_PDO8_SHIFT                     (8U)
 /*! PDO8 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO8(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO8_SHIFT)) & GPIO_PDOR_PDO8_MASK)
 
 #define GPIO_PDOR_PDO9_MASK                      (0x200U)
 #define GPIO_PDOR_PDO9_SHIFT                     (9U)
 /*! PDO9 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO9(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO9_SHIFT)) & GPIO_PDOR_PDO9_MASK)
 
 #define GPIO_PDOR_PDO10_MASK                     (0x400U)
 #define GPIO_PDOR_PDO10_SHIFT                    (10U)
 /*! PDO10 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO10(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO10_SHIFT)) & GPIO_PDOR_PDO10_MASK)
 
 #define GPIO_PDOR_PDO11_MASK                     (0x800U)
 #define GPIO_PDOR_PDO11_SHIFT                    (11U)
 /*! PDO11 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO11(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO11_SHIFT)) & GPIO_PDOR_PDO11_MASK)
 
 #define GPIO_PDOR_PDO12_MASK                     (0x1000U)
 #define GPIO_PDOR_PDO12_SHIFT                    (12U)
 /*! PDO12 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO12(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO12_SHIFT)) & GPIO_PDOR_PDO12_MASK)
 
 #define GPIO_PDOR_PDO13_MASK                     (0x2000U)
 #define GPIO_PDOR_PDO13_SHIFT                    (13U)
 /*! PDO13 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO13(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO13_SHIFT)) & GPIO_PDOR_PDO13_MASK)
 
 #define GPIO_PDOR_PDO14_MASK                     (0x4000U)
 #define GPIO_PDOR_PDO14_SHIFT                    (14U)
 /*! PDO14 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO14(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO14_SHIFT)) & GPIO_PDOR_PDO14_MASK)
 
 #define GPIO_PDOR_PDO15_MASK                     (0x8000U)
 #define GPIO_PDOR_PDO15_SHIFT                    (15U)
 /*! PDO15 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO15(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO15_SHIFT)) & GPIO_PDOR_PDO15_MASK)
 
 #define GPIO_PDOR_PDO16_MASK                     (0x10000U)
 #define GPIO_PDOR_PDO16_SHIFT                    (16U)
 /*! PDO16 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO16(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO16_SHIFT)) & GPIO_PDOR_PDO16_MASK)
 
 #define GPIO_PDOR_PDO17_MASK                     (0x20000U)
 #define GPIO_PDOR_PDO17_SHIFT                    (17U)
 /*! PDO17 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO17(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO17_SHIFT)) & GPIO_PDOR_PDO17_MASK)
 
 #define GPIO_PDOR_PDO18_MASK                     (0x40000U)
 #define GPIO_PDOR_PDO18_SHIFT                    (18U)
 /*! PDO18 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO18(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO18_SHIFT)) & GPIO_PDOR_PDO18_MASK)
 
 #define GPIO_PDOR_PDO19_MASK                     (0x80000U)
 #define GPIO_PDOR_PDO19_SHIFT                    (19U)
 /*! PDO19 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO19(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO19_SHIFT)) & GPIO_PDOR_PDO19_MASK)
 
 #define GPIO_PDOR_PDO20_MASK                     (0x100000U)
 #define GPIO_PDOR_PDO20_SHIFT                    (20U)
 /*! PDO20 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO20(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO20_SHIFT)) & GPIO_PDOR_PDO20_MASK)
 
 #define GPIO_PDOR_PDO21_MASK                     (0x200000U)
 #define GPIO_PDOR_PDO21_SHIFT                    (21U)
 /*! PDO21 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO21(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO21_SHIFT)) & GPIO_PDOR_PDO21_MASK)
 
 #define GPIO_PDOR_PDO22_MASK                     (0x400000U)
 #define GPIO_PDOR_PDO22_SHIFT                    (22U)
 /*! PDO22 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO22(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO22_SHIFT)) & GPIO_PDOR_PDO22_MASK)
 
 #define GPIO_PDOR_PDO23_MASK                     (0x800000U)
 #define GPIO_PDOR_PDO23_SHIFT                    (23U)
 /*! PDO23 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO23(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO23_SHIFT)) & GPIO_PDOR_PDO23_MASK)
 
 #define GPIO_PDOR_PDO24_MASK                     (0x1000000U)
 #define GPIO_PDOR_PDO24_SHIFT                    (24U)
 /*! PDO24 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO24(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO24_SHIFT)) & GPIO_PDOR_PDO24_MASK)
 
 #define GPIO_PDOR_PDO25_MASK                     (0x2000000U)
 #define GPIO_PDOR_PDO25_SHIFT                    (25U)
 /*! PDO25 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO25(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO25_SHIFT)) & GPIO_PDOR_PDO25_MASK)
 
 #define GPIO_PDOR_PDO26_MASK                     (0x4000000U)
 #define GPIO_PDOR_PDO26_SHIFT                    (26U)
 /*! PDO26 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO26(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO26_SHIFT)) & GPIO_PDOR_PDO26_MASK)
 
 #define GPIO_PDOR_PDO27_MASK                     (0x8000000U)
 #define GPIO_PDOR_PDO27_SHIFT                    (27U)
 /*! PDO27 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO27(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO27_SHIFT)) & GPIO_PDOR_PDO27_MASK)
 
 #define GPIO_PDOR_PDO28_MASK                     (0x10000000U)
 #define GPIO_PDOR_PDO28_SHIFT                    (28U)
 /*! PDO28 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO28(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO28_SHIFT)) & GPIO_PDOR_PDO28_MASK)
 
 #define GPIO_PDOR_PDO29_MASK                     (0x20000000U)
 #define GPIO_PDOR_PDO29_SHIFT                    (29U)
 /*! PDO29 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO29(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO29_SHIFT)) & GPIO_PDOR_PDO29_MASK)
 
 #define GPIO_PDOR_PDO30_MASK                     (0x40000000U)
 #define GPIO_PDOR_PDO30_SHIFT                    (30U)
 /*! PDO30 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO30(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO30_SHIFT)) & GPIO_PDOR_PDO30_MASK)
 
 #define GPIO_PDOR_PDO31_MASK                     (0x80000000U)
 #define GPIO_PDOR_PDO31_SHIFT                    (31U)
 /*! PDO31 - Port Data Output
- *  0b0..Logic level 0 is driven on pin, if the pin is configured for general-purpose output.
- *  0b1..Logic level 1 is driven on pin, if the pin is configured for general-purpose output.
+ *  0b0..Logic level 0
+ *  0b1..Logic level 1
  */
 #define GPIO_PDOR_PDO31(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDOR_PDO31_SHIFT)) & GPIO_PDOR_PDO31_MASK)
 /*! @} */
 
-/*! @name PSOR - Port Set Output Register */
+/*! @name PSOR - Port Set Output */
 /*! @{ */
 
 #define GPIO_PSOR_PTSO0_MASK                     (0x1U)
 #define GPIO_PSOR_PTSO0_SHIFT                    (0U)
 /*! PTSO0 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO0(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO0_SHIFT)) & GPIO_PSOR_PTSO0_MASK)
 
 #define GPIO_PSOR_PTSO1_MASK                     (0x2U)
 #define GPIO_PSOR_PTSO1_SHIFT                    (1U)
 /*! PTSO1 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO1(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO1_SHIFT)) & GPIO_PSOR_PTSO1_MASK)
 
 #define GPIO_PSOR_PTSO2_MASK                     (0x4U)
 #define GPIO_PSOR_PTSO2_SHIFT                    (2U)
 /*! PTSO2 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO2(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO2_SHIFT)) & GPIO_PSOR_PTSO2_MASK)
 
 #define GPIO_PSOR_PTSO3_MASK                     (0x8U)
 #define GPIO_PSOR_PTSO3_SHIFT                    (3U)
 /*! PTSO3 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO3(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO3_SHIFT)) & GPIO_PSOR_PTSO3_MASK)
 
 #define GPIO_PSOR_PTSO4_MASK                     (0x10U)
 #define GPIO_PSOR_PTSO4_SHIFT                    (4U)
 /*! PTSO4 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO4(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO4_SHIFT)) & GPIO_PSOR_PTSO4_MASK)
 
 #define GPIO_PSOR_PTSO5_MASK                     (0x20U)
 #define GPIO_PSOR_PTSO5_SHIFT                    (5U)
 /*! PTSO5 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO5(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO5_SHIFT)) & GPIO_PSOR_PTSO5_MASK)
 
 #define GPIO_PSOR_PTSO6_MASK                     (0x40U)
 #define GPIO_PSOR_PTSO6_SHIFT                    (6U)
 /*! PTSO6 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO6(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO6_SHIFT)) & GPIO_PSOR_PTSO6_MASK)
 
 #define GPIO_PSOR_PTSO7_MASK                     (0x80U)
 #define GPIO_PSOR_PTSO7_SHIFT                    (7U)
 /*! PTSO7 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO7(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO7_SHIFT)) & GPIO_PSOR_PTSO7_MASK)
 
 #define GPIO_PSOR_PTSO8_MASK                     (0x100U)
 #define GPIO_PSOR_PTSO8_SHIFT                    (8U)
 /*! PTSO8 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO8(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO8_SHIFT)) & GPIO_PSOR_PTSO8_MASK)
 
 #define GPIO_PSOR_PTSO9_MASK                     (0x200U)
 #define GPIO_PSOR_PTSO9_SHIFT                    (9U)
 /*! PTSO9 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO9(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO9_SHIFT)) & GPIO_PSOR_PTSO9_MASK)
 
 #define GPIO_PSOR_PTSO10_MASK                    (0x400U)
 #define GPIO_PSOR_PTSO10_SHIFT                   (10U)
 /*! PTSO10 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO10(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO10_SHIFT)) & GPIO_PSOR_PTSO10_MASK)
 
 #define GPIO_PSOR_PTSO11_MASK                    (0x800U)
 #define GPIO_PSOR_PTSO11_SHIFT                   (11U)
 /*! PTSO11 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO11(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO11_SHIFT)) & GPIO_PSOR_PTSO11_MASK)
 
 #define GPIO_PSOR_PTSO12_MASK                    (0x1000U)
 #define GPIO_PSOR_PTSO12_SHIFT                   (12U)
 /*! PTSO12 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO12(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO12_SHIFT)) & GPIO_PSOR_PTSO12_MASK)
 
 #define GPIO_PSOR_PTSO13_MASK                    (0x2000U)
 #define GPIO_PSOR_PTSO13_SHIFT                   (13U)
 /*! PTSO13 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO13(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO13_SHIFT)) & GPIO_PSOR_PTSO13_MASK)
 
 #define GPIO_PSOR_PTSO14_MASK                    (0x4000U)
 #define GPIO_PSOR_PTSO14_SHIFT                   (14U)
 /*! PTSO14 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO14(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO14_SHIFT)) & GPIO_PSOR_PTSO14_MASK)
 
 #define GPIO_PSOR_PTSO15_MASK                    (0x8000U)
 #define GPIO_PSOR_PTSO15_SHIFT                   (15U)
 /*! PTSO15 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO15(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO15_SHIFT)) & GPIO_PSOR_PTSO15_MASK)
 
 #define GPIO_PSOR_PTSO16_MASK                    (0x10000U)
 #define GPIO_PSOR_PTSO16_SHIFT                   (16U)
 /*! PTSO16 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO16(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO16_SHIFT)) & GPIO_PSOR_PTSO16_MASK)
 
 #define GPIO_PSOR_PTSO17_MASK                    (0x20000U)
 #define GPIO_PSOR_PTSO17_SHIFT                   (17U)
 /*! PTSO17 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO17(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO17_SHIFT)) & GPIO_PSOR_PTSO17_MASK)
 
 #define GPIO_PSOR_PTSO18_MASK                    (0x40000U)
 #define GPIO_PSOR_PTSO18_SHIFT                   (18U)
 /*! PTSO18 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO18(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO18_SHIFT)) & GPIO_PSOR_PTSO18_MASK)
 
 #define GPIO_PSOR_PTSO19_MASK                    (0x80000U)
 #define GPIO_PSOR_PTSO19_SHIFT                   (19U)
 /*! PTSO19 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO19(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO19_SHIFT)) & GPIO_PSOR_PTSO19_MASK)
 
 #define GPIO_PSOR_PTSO20_MASK                    (0x100000U)
 #define GPIO_PSOR_PTSO20_SHIFT                   (20U)
 /*! PTSO20 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO20(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO20_SHIFT)) & GPIO_PSOR_PTSO20_MASK)
 
 #define GPIO_PSOR_PTSO21_MASK                    (0x200000U)
 #define GPIO_PSOR_PTSO21_SHIFT                   (21U)
 /*! PTSO21 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO21(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO21_SHIFT)) & GPIO_PSOR_PTSO21_MASK)
 
 #define GPIO_PSOR_PTSO22_MASK                    (0x400000U)
 #define GPIO_PSOR_PTSO22_SHIFT                   (22U)
 /*! PTSO22 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO22(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO22_SHIFT)) & GPIO_PSOR_PTSO22_MASK)
 
 #define GPIO_PSOR_PTSO23_MASK                    (0x800000U)
 #define GPIO_PSOR_PTSO23_SHIFT                   (23U)
 /*! PTSO23 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO23(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO23_SHIFT)) & GPIO_PSOR_PTSO23_MASK)
 
 #define GPIO_PSOR_PTSO24_MASK                    (0x1000000U)
 #define GPIO_PSOR_PTSO24_SHIFT                   (24U)
 /*! PTSO24 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO24(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO24_SHIFT)) & GPIO_PSOR_PTSO24_MASK)
 
 #define GPIO_PSOR_PTSO25_MASK                    (0x2000000U)
 #define GPIO_PSOR_PTSO25_SHIFT                   (25U)
 /*! PTSO25 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO25(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO25_SHIFT)) & GPIO_PSOR_PTSO25_MASK)
 
 #define GPIO_PSOR_PTSO26_MASK                    (0x4000000U)
 #define GPIO_PSOR_PTSO26_SHIFT                   (26U)
 /*! PTSO26 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO26(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO26_SHIFT)) & GPIO_PSOR_PTSO26_MASK)
 
 #define GPIO_PSOR_PTSO27_MASK                    (0x8000000U)
 #define GPIO_PSOR_PTSO27_SHIFT                   (27U)
 /*! PTSO27 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO27(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO27_SHIFT)) & GPIO_PSOR_PTSO27_MASK)
 
 #define GPIO_PSOR_PTSO28_MASK                    (0x10000000U)
 #define GPIO_PSOR_PTSO28_SHIFT                   (28U)
 /*! PTSO28 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO28(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO28_SHIFT)) & GPIO_PSOR_PTSO28_MASK)
 
 #define GPIO_PSOR_PTSO29_MASK                    (0x20000000U)
 #define GPIO_PSOR_PTSO29_SHIFT                   (29U)
 /*! PTSO29 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO29(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO29_SHIFT)) & GPIO_PSOR_PTSO29_MASK)
 
 #define GPIO_PSOR_PTSO30_MASK                    (0x40000000U)
 #define GPIO_PSOR_PTSO30_SHIFT                   (30U)
 /*! PTSO30 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO30(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO30_SHIFT)) & GPIO_PSOR_PTSO30_MASK)
 
 #define GPIO_PSOR_PTSO31_MASK                    (0x80000000U)
 #define GPIO_PSOR_PTSO31_SHIFT                   (31U)
 /*! PTSO31 - Port Set Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to logic 1.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 1
  */
 #define GPIO_PSOR_PTSO31(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PSOR_PTSO31_SHIFT)) & GPIO_PSOR_PTSO31_MASK)
 /*! @} */
 
-/*! @name PCOR - Port Clear Output Register */
+/*! @name PCOR - Port Clear Output */
 /*! @{ */
 
 #define GPIO_PCOR_PTCO0_MASK                     (0x1U)
 #define GPIO_PCOR_PTCO0_SHIFT                    (0U)
 /*! PTCO0 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO0(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO0_SHIFT)) & GPIO_PCOR_PTCO0_MASK)
 
 #define GPIO_PCOR_PTCO1_MASK                     (0x2U)
 #define GPIO_PCOR_PTCO1_SHIFT                    (1U)
 /*! PTCO1 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO1(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO1_SHIFT)) & GPIO_PCOR_PTCO1_MASK)
 
 #define GPIO_PCOR_PTCO2_MASK                     (0x4U)
 #define GPIO_PCOR_PTCO2_SHIFT                    (2U)
 /*! PTCO2 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO2(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO2_SHIFT)) & GPIO_PCOR_PTCO2_MASK)
 
 #define GPIO_PCOR_PTCO3_MASK                     (0x8U)
 #define GPIO_PCOR_PTCO3_SHIFT                    (3U)
 /*! PTCO3 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO3(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO3_SHIFT)) & GPIO_PCOR_PTCO3_MASK)
 
 #define GPIO_PCOR_PTCO4_MASK                     (0x10U)
 #define GPIO_PCOR_PTCO4_SHIFT                    (4U)
 /*! PTCO4 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO4(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO4_SHIFT)) & GPIO_PCOR_PTCO4_MASK)
 
 #define GPIO_PCOR_PTCO5_MASK                     (0x20U)
 #define GPIO_PCOR_PTCO5_SHIFT                    (5U)
 /*! PTCO5 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO5(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO5_SHIFT)) & GPIO_PCOR_PTCO5_MASK)
 
 #define GPIO_PCOR_PTCO6_MASK                     (0x40U)
 #define GPIO_PCOR_PTCO6_SHIFT                    (6U)
 /*! PTCO6 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO6(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO6_SHIFT)) & GPIO_PCOR_PTCO6_MASK)
 
 #define GPIO_PCOR_PTCO7_MASK                     (0x80U)
 #define GPIO_PCOR_PTCO7_SHIFT                    (7U)
 /*! PTCO7 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO7(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO7_SHIFT)) & GPIO_PCOR_PTCO7_MASK)
 
 #define GPIO_PCOR_PTCO8_MASK                     (0x100U)
 #define GPIO_PCOR_PTCO8_SHIFT                    (8U)
 /*! PTCO8 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO8(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO8_SHIFT)) & GPIO_PCOR_PTCO8_MASK)
 
 #define GPIO_PCOR_PTCO9_MASK                     (0x200U)
 #define GPIO_PCOR_PTCO9_SHIFT                    (9U)
 /*! PTCO9 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO9(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO9_SHIFT)) & GPIO_PCOR_PTCO9_MASK)
 
 #define GPIO_PCOR_PTCO10_MASK                    (0x400U)
 #define GPIO_PCOR_PTCO10_SHIFT                   (10U)
 /*! PTCO10 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO10(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO10_SHIFT)) & GPIO_PCOR_PTCO10_MASK)
 
 #define GPIO_PCOR_PTCO11_MASK                    (0x800U)
 #define GPIO_PCOR_PTCO11_SHIFT                   (11U)
 /*! PTCO11 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO11(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO11_SHIFT)) & GPIO_PCOR_PTCO11_MASK)
 
 #define GPIO_PCOR_PTCO12_MASK                    (0x1000U)
 #define GPIO_PCOR_PTCO12_SHIFT                   (12U)
 /*! PTCO12 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO12(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO12_SHIFT)) & GPIO_PCOR_PTCO12_MASK)
 
 #define GPIO_PCOR_PTCO13_MASK                    (0x2000U)
 #define GPIO_PCOR_PTCO13_SHIFT                   (13U)
 /*! PTCO13 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO13(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO13_SHIFT)) & GPIO_PCOR_PTCO13_MASK)
 
 #define GPIO_PCOR_PTCO14_MASK                    (0x4000U)
 #define GPIO_PCOR_PTCO14_SHIFT                   (14U)
 /*! PTCO14 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO14(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO14_SHIFT)) & GPIO_PCOR_PTCO14_MASK)
 
 #define GPIO_PCOR_PTCO15_MASK                    (0x8000U)
 #define GPIO_PCOR_PTCO15_SHIFT                   (15U)
 /*! PTCO15 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO15(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO15_SHIFT)) & GPIO_PCOR_PTCO15_MASK)
 
 #define GPIO_PCOR_PTCO16_MASK                    (0x10000U)
 #define GPIO_PCOR_PTCO16_SHIFT                   (16U)
 /*! PTCO16 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO16(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO16_SHIFT)) & GPIO_PCOR_PTCO16_MASK)
 
 #define GPIO_PCOR_PTCO17_MASK                    (0x20000U)
 #define GPIO_PCOR_PTCO17_SHIFT                   (17U)
 /*! PTCO17 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO17(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO17_SHIFT)) & GPIO_PCOR_PTCO17_MASK)
 
 #define GPIO_PCOR_PTCO18_MASK                    (0x40000U)
 #define GPIO_PCOR_PTCO18_SHIFT                   (18U)
 /*! PTCO18 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO18(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO18_SHIFT)) & GPIO_PCOR_PTCO18_MASK)
 
 #define GPIO_PCOR_PTCO19_MASK                    (0x80000U)
 #define GPIO_PCOR_PTCO19_SHIFT                   (19U)
 /*! PTCO19 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO19(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO19_SHIFT)) & GPIO_PCOR_PTCO19_MASK)
 
 #define GPIO_PCOR_PTCO20_MASK                    (0x100000U)
 #define GPIO_PCOR_PTCO20_SHIFT                   (20U)
 /*! PTCO20 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO20(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO20_SHIFT)) & GPIO_PCOR_PTCO20_MASK)
 
 #define GPIO_PCOR_PTCO21_MASK                    (0x200000U)
 #define GPIO_PCOR_PTCO21_SHIFT                   (21U)
 /*! PTCO21 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO21(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO21_SHIFT)) & GPIO_PCOR_PTCO21_MASK)
 
 #define GPIO_PCOR_PTCO22_MASK                    (0x400000U)
 #define GPIO_PCOR_PTCO22_SHIFT                   (22U)
 /*! PTCO22 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO22(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO22_SHIFT)) & GPIO_PCOR_PTCO22_MASK)
 
 #define GPIO_PCOR_PTCO23_MASK                    (0x800000U)
 #define GPIO_PCOR_PTCO23_SHIFT                   (23U)
 /*! PTCO23 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO23(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO23_SHIFT)) & GPIO_PCOR_PTCO23_MASK)
 
 #define GPIO_PCOR_PTCO24_MASK                    (0x1000000U)
 #define GPIO_PCOR_PTCO24_SHIFT                   (24U)
 /*! PTCO24 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO24(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO24_SHIFT)) & GPIO_PCOR_PTCO24_MASK)
 
 #define GPIO_PCOR_PTCO25_MASK                    (0x2000000U)
 #define GPIO_PCOR_PTCO25_SHIFT                   (25U)
 /*! PTCO25 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO25(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO25_SHIFT)) & GPIO_PCOR_PTCO25_MASK)
 
 #define GPIO_PCOR_PTCO26_MASK                    (0x4000000U)
 #define GPIO_PCOR_PTCO26_SHIFT                   (26U)
 /*! PTCO26 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO26(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO26_SHIFT)) & GPIO_PCOR_PTCO26_MASK)
 
 #define GPIO_PCOR_PTCO27_MASK                    (0x8000000U)
 #define GPIO_PCOR_PTCO27_SHIFT                   (27U)
 /*! PTCO27 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO27(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO27_SHIFT)) & GPIO_PCOR_PTCO27_MASK)
 
 #define GPIO_PCOR_PTCO28_MASK                    (0x10000000U)
 #define GPIO_PCOR_PTCO28_SHIFT                   (28U)
 /*! PTCO28 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO28(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO28_SHIFT)) & GPIO_PCOR_PTCO28_MASK)
 
 #define GPIO_PCOR_PTCO29_MASK                    (0x20000000U)
 #define GPIO_PCOR_PTCO29_SHIFT                   (29U)
 /*! PTCO29 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO29(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO29_SHIFT)) & GPIO_PCOR_PTCO29_MASK)
 
 #define GPIO_PCOR_PTCO30_MASK                    (0x40000000U)
 #define GPIO_PCOR_PTCO30_SHIFT                   (30U)
 /*! PTCO30 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO30(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO30_SHIFT)) & GPIO_PCOR_PTCO30_MASK)
 
 #define GPIO_PCOR_PTCO31_MASK                    (0x80000000U)
 #define GPIO_PCOR_PTCO31_SHIFT                   (31U)
 /*! PTCO31 - Port Clear Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is cleared to logic 0.
+ *  0b0..No change
+ *  0b1..Corresponding field in PDOR becomes 0
  */
 #define GPIO_PCOR_PTCO31(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PCOR_PTCO31_SHIFT)) & GPIO_PCOR_PTCO31_MASK)
 /*! @} */
 
-/*! @name PTOR - Port Toggle Output Register */
+/*! @name PTOR - Port Toggle Output */
 /*! @{ */
 
 #define GPIO_PTOR_PTTO0_MASK                     (0x1U)
 #define GPIO_PTOR_PTTO0_SHIFT                    (0U)
 /*! PTTO0 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO0(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO0_SHIFT)) & GPIO_PTOR_PTTO0_MASK)
 
 #define GPIO_PTOR_PTTO1_MASK                     (0x2U)
 #define GPIO_PTOR_PTTO1_SHIFT                    (1U)
 /*! PTTO1 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO1(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO1_SHIFT)) & GPIO_PTOR_PTTO1_MASK)
 
 #define GPIO_PTOR_PTTO2_MASK                     (0x4U)
 #define GPIO_PTOR_PTTO2_SHIFT                    (2U)
 /*! PTTO2 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO2(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO2_SHIFT)) & GPIO_PTOR_PTTO2_MASK)
 
 #define GPIO_PTOR_PTTO3_MASK                     (0x8U)
 #define GPIO_PTOR_PTTO3_SHIFT                    (3U)
 /*! PTTO3 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO3(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO3_SHIFT)) & GPIO_PTOR_PTTO3_MASK)
 
 #define GPIO_PTOR_PTTO4_MASK                     (0x10U)
 #define GPIO_PTOR_PTTO4_SHIFT                    (4U)
 /*! PTTO4 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO4(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO4_SHIFT)) & GPIO_PTOR_PTTO4_MASK)
 
 #define GPIO_PTOR_PTTO5_MASK                     (0x20U)
 #define GPIO_PTOR_PTTO5_SHIFT                    (5U)
 /*! PTTO5 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO5(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO5_SHIFT)) & GPIO_PTOR_PTTO5_MASK)
 
 #define GPIO_PTOR_PTTO6_MASK                     (0x40U)
 #define GPIO_PTOR_PTTO6_SHIFT                    (6U)
 /*! PTTO6 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO6(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO6_SHIFT)) & GPIO_PTOR_PTTO6_MASK)
 
 #define GPIO_PTOR_PTTO7_MASK                     (0x80U)
 #define GPIO_PTOR_PTTO7_SHIFT                    (7U)
 /*! PTTO7 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO7(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO7_SHIFT)) & GPIO_PTOR_PTTO7_MASK)
 
 #define GPIO_PTOR_PTTO8_MASK                     (0x100U)
 #define GPIO_PTOR_PTTO8_SHIFT                    (8U)
 /*! PTTO8 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO8(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO8_SHIFT)) & GPIO_PTOR_PTTO8_MASK)
 
 #define GPIO_PTOR_PTTO9_MASK                     (0x200U)
 #define GPIO_PTOR_PTTO9_SHIFT                    (9U)
 /*! PTTO9 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO9(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO9_SHIFT)) & GPIO_PTOR_PTTO9_MASK)
 
 #define GPIO_PTOR_PTTO10_MASK                    (0x400U)
 #define GPIO_PTOR_PTTO10_SHIFT                   (10U)
 /*! PTTO10 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO10(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO10_SHIFT)) & GPIO_PTOR_PTTO10_MASK)
 
 #define GPIO_PTOR_PTTO11_MASK                    (0x800U)
 #define GPIO_PTOR_PTTO11_SHIFT                   (11U)
 /*! PTTO11 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO11(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO11_SHIFT)) & GPIO_PTOR_PTTO11_MASK)
 
 #define GPIO_PTOR_PTTO12_MASK                    (0x1000U)
 #define GPIO_PTOR_PTTO12_SHIFT                   (12U)
 /*! PTTO12 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO12(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO12_SHIFT)) & GPIO_PTOR_PTTO12_MASK)
 
 #define GPIO_PTOR_PTTO13_MASK                    (0x2000U)
 #define GPIO_PTOR_PTTO13_SHIFT                   (13U)
 /*! PTTO13 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO13(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO13_SHIFT)) & GPIO_PTOR_PTTO13_MASK)
 
 #define GPIO_PTOR_PTTO14_MASK                    (0x4000U)
 #define GPIO_PTOR_PTTO14_SHIFT                   (14U)
 /*! PTTO14 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO14(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO14_SHIFT)) & GPIO_PTOR_PTTO14_MASK)
 
 #define GPIO_PTOR_PTTO15_MASK                    (0x8000U)
 #define GPIO_PTOR_PTTO15_SHIFT                   (15U)
 /*! PTTO15 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO15(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO15_SHIFT)) & GPIO_PTOR_PTTO15_MASK)
 
 #define GPIO_PTOR_PTTO16_MASK                    (0x10000U)
 #define GPIO_PTOR_PTTO16_SHIFT                   (16U)
 /*! PTTO16 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO16(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO16_SHIFT)) & GPIO_PTOR_PTTO16_MASK)
 
 #define GPIO_PTOR_PTTO17_MASK                    (0x20000U)
 #define GPIO_PTOR_PTTO17_SHIFT                   (17U)
 /*! PTTO17 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO17(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO17_SHIFT)) & GPIO_PTOR_PTTO17_MASK)
 
 #define GPIO_PTOR_PTTO18_MASK                    (0x40000U)
 #define GPIO_PTOR_PTTO18_SHIFT                   (18U)
 /*! PTTO18 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO18(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO18_SHIFT)) & GPIO_PTOR_PTTO18_MASK)
 
 #define GPIO_PTOR_PTTO19_MASK                    (0x80000U)
 #define GPIO_PTOR_PTTO19_SHIFT                   (19U)
 /*! PTTO19 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO19(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO19_SHIFT)) & GPIO_PTOR_PTTO19_MASK)
 
 #define GPIO_PTOR_PTTO20_MASK                    (0x100000U)
 #define GPIO_PTOR_PTTO20_SHIFT                   (20U)
 /*! PTTO20 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO20(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO20_SHIFT)) & GPIO_PTOR_PTTO20_MASK)
 
 #define GPIO_PTOR_PTTO21_MASK                    (0x200000U)
 #define GPIO_PTOR_PTTO21_SHIFT                   (21U)
 /*! PTTO21 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO21(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO21_SHIFT)) & GPIO_PTOR_PTTO21_MASK)
 
 #define GPIO_PTOR_PTTO22_MASK                    (0x400000U)
 #define GPIO_PTOR_PTTO22_SHIFT                   (22U)
 /*! PTTO22 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO22(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO22_SHIFT)) & GPIO_PTOR_PTTO22_MASK)
 
 #define GPIO_PTOR_PTTO23_MASK                    (0x800000U)
 #define GPIO_PTOR_PTTO23_SHIFT                   (23U)
 /*! PTTO23 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO23(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO23_SHIFT)) & GPIO_PTOR_PTTO23_MASK)
 
 #define GPIO_PTOR_PTTO24_MASK                    (0x1000000U)
 #define GPIO_PTOR_PTTO24_SHIFT                   (24U)
 /*! PTTO24 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO24(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO24_SHIFT)) & GPIO_PTOR_PTTO24_MASK)
 
 #define GPIO_PTOR_PTTO25_MASK                    (0x2000000U)
 #define GPIO_PTOR_PTTO25_SHIFT                   (25U)
 /*! PTTO25 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO25(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO25_SHIFT)) & GPIO_PTOR_PTTO25_MASK)
 
 #define GPIO_PTOR_PTTO26_MASK                    (0x4000000U)
 #define GPIO_PTOR_PTTO26_SHIFT                   (26U)
 /*! PTTO26 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO26(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO26_SHIFT)) & GPIO_PTOR_PTTO26_MASK)
 
 #define GPIO_PTOR_PTTO27_MASK                    (0x8000000U)
 #define GPIO_PTOR_PTTO27_SHIFT                   (27U)
 /*! PTTO27 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO27(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO27_SHIFT)) & GPIO_PTOR_PTTO27_MASK)
 
 #define GPIO_PTOR_PTTO28_MASK                    (0x10000000U)
 #define GPIO_PTOR_PTTO28_SHIFT                   (28U)
 /*! PTTO28 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO28(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO28_SHIFT)) & GPIO_PTOR_PTTO28_MASK)
 
 #define GPIO_PTOR_PTTO29_MASK                    (0x20000000U)
 #define GPIO_PTOR_PTTO29_SHIFT                   (29U)
 /*! PTTO29 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO29(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO29_SHIFT)) & GPIO_PTOR_PTTO29_MASK)
 
 #define GPIO_PTOR_PTTO30_MASK                    (0x40000000U)
 #define GPIO_PTOR_PTTO30_SHIFT                   (30U)
 /*! PTTO30 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO30(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO30_SHIFT)) & GPIO_PTOR_PTTO30_MASK)
 
 #define GPIO_PTOR_PTTO31_MASK                    (0x80000000U)
 #define GPIO_PTOR_PTTO31_SHIFT                   (31U)
 /*! PTTO31 - Port Toggle Output
- *  0b0..Corresponding field of PDOR[PDOn] does not change.
- *  0b1..Corresponding field of PDOR[PDOn] is set to the inverse of its current logic state.
+ *  0b0..No change
+ *  0b1..Set to the inverse of its current logic state
  */
 #define GPIO_PTOR_PTTO31(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_PTOR_PTTO31_SHIFT)) & GPIO_PTOR_PTTO31_MASK)
 /*! @} */
 
-/*! @name PDIR - Port Data Input Register */
+/*! @name PDIR - Port Data Input */
 /*! @{ */
 
 #define GPIO_PDIR_PDI0_MASK                      (0x1U)
 #define GPIO_PDIR_PDI0_SHIFT                     (0U)
 /*! PDI0 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI0(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI0_SHIFT)) & GPIO_PDIR_PDI0_MASK)
 
 #define GPIO_PDIR_PDI1_MASK                      (0x2U)
 #define GPIO_PDIR_PDI1_SHIFT                     (1U)
 /*! PDI1 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI1(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI1_SHIFT)) & GPIO_PDIR_PDI1_MASK)
 
 #define GPIO_PDIR_PDI2_MASK                      (0x4U)
 #define GPIO_PDIR_PDI2_SHIFT                     (2U)
 /*! PDI2 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI2(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI2_SHIFT)) & GPIO_PDIR_PDI2_MASK)
 
 #define GPIO_PDIR_PDI3_MASK                      (0x8U)
 #define GPIO_PDIR_PDI3_SHIFT                     (3U)
 /*! PDI3 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI3(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI3_SHIFT)) & GPIO_PDIR_PDI3_MASK)
 
 #define GPIO_PDIR_PDI4_MASK                      (0x10U)
 #define GPIO_PDIR_PDI4_SHIFT                     (4U)
 /*! PDI4 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI4(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI4_SHIFT)) & GPIO_PDIR_PDI4_MASK)
 
 #define GPIO_PDIR_PDI5_MASK                      (0x20U)
 #define GPIO_PDIR_PDI5_SHIFT                     (5U)
 /*! PDI5 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI5(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI5_SHIFT)) & GPIO_PDIR_PDI5_MASK)
 
 #define GPIO_PDIR_PDI6_MASK                      (0x40U)
 #define GPIO_PDIR_PDI6_SHIFT                     (6U)
 /*! PDI6 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI6(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI6_SHIFT)) & GPIO_PDIR_PDI6_MASK)
 
 #define GPIO_PDIR_PDI7_MASK                      (0x80U)
 #define GPIO_PDIR_PDI7_SHIFT                     (7U)
 /*! PDI7 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI7(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI7_SHIFT)) & GPIO_PDIR_PDI7_MASK)
 
 #define GPIO_PDIR_PDI8_MASK                      (0x100U)
 #define GPIO_PDIR_PDI8_SHIFT                     (8U)
 /*! PDI8 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI8(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI8_SHIFT)) & GPIO_PDIR_PDI8_MASK)
 
 #define GPIO_PDIR_PDI9_MASK                      (0x200U)
 #define GPIO_PDIR_PDI9_SHIFT                     (9U)
 /*! PDI9 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI9(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI9_SHIFT)) & GPIO_PDIR_PDI9_MASK)
 
 #define GPIO_PDIR_PDI10_MASK                     (0x400U)
 #define GPIO_PDIR_PDI10_SHIFT                    (10U)
 /*! PDI10 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI10(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI10_SHIFT)) & GPIO_PDIR_PDI10_MASK)
 
 #define GPIO_PDIR_PDI11_MASK                     (0x800U)
 #define GPIO_PDIR_PDI11_SHIFT                    (11U)
 /*! PDI11 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI11(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI11_SHIFT)) & GPIO_PDIR_PDI11_MASK)
 
 #define GPIO_PDIR_PDI12_MASK                     (0x1000U)
 #define GPIO_PDIR_PDI12_SHIFT                    (12U)
 /*! PDI12 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI12(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI12_SHIFT)) & GPIO_PDIR_PDI12_MASK)
 
 #define GPIO_PDIR_PDI13_MASK                     (0x2000U)
 #define GPIO_PDIR_PDI13_SHIFT                    (13U)
 /*! PDI13 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI13(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI13_SHIFT)) & GPIO_PDIR_PDI13_MASK)
 
 #define GPIO_PDIR_PDI14_MASK                     (0x4000U)
 #define GPIO_PDIR_PDI14_SHIFT                    (14U)
 /*! PDI14 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI14(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI14_SHIFT)) & GPIO_PDIR_PDI14_MASK)
 
 #define GPIO_PDIR_PDI15_MASK                     (0x8000U)
 #define GPIO_PDIR_PDI15_SHIFT                    (15U)
 /*! PDI15 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI15(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI15_SHIFT)) & GPIO_PDIR_PDI15_MASK)
 
 #define GPIO_PDIR_PDI16_MASK                     (0x10000U)
 #define GPIO_PDIR_PDI16_SHIFT                    (16U)
 /*! PDI16 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI16(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI16_SHIFT)) & GPIO_PDIR_PDI16_MASK)
 
 #define GPIO_PDIR_PDI17_MASK                     (0x20000U)
 #define GPIO_PDIR_PDI17_SHIFT                    (17U)
 /*! PDI17 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI17(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI17_SHIFT)) & GPIO_PDIR_PDI17_MASK)
 
 #define GPIO_PDIR_PDI18_MASK                     (0x40000U)
 #define GPIO_PDIR_PDI18_SHIFT                    (18U)
 /*! PDI18 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI18(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI18_SHIFT)) & GPIO_PDIR_PDI18_MASK)
 
 #define GPIO_PDIR_PDI19_MASK                     (0x80000U)
 #define GPIO_PDIR_PDI19_SHIFT                    (19U)
 /*! PDI19 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI19(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI19_SHIFT)) & GPIO_PDIR_PDI19_MASK)
 
 #define GPIO_PDIR_PDI20_MASK                     (0x100000U)
 #define GPIO_PDIR_PDI20_SHIFT                    (20U)
 /*! PDI20 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI20(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI20_SHIFT)) & GPIO_PDIR_PDI20_MASK)
 
 #define GPIO_PDIR_PDI21_MASK                     (0x200000U)
 #define GPIO_PDIR_PDI21_SHIFT                    (21U)
 /*! PDI21 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI21(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI21_SHIFT)) & GPIO_PDIR_PDI21_MASK)
 
 #define GPIO_PDIR_PDI22_MASK                     (0x400000U)
 #define GPIO_PDIR_PDI22_SHIFT                    (22U)
 /*! PDI22 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI22(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI22_SHIFT)) & GPIO_PDIR_PDI22_MASK)
 
 #define GPIO_PDIR_PDI23_MASK                     (0x800000U)
 #define GPIO_PDIR_PDI23_SHIFT                    (23U)
 /*! PDI23 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI23(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI23_SHIFT)) & GPIO_PDIR_PDI23_MASK)
 
 #define GPIO_PDIR_PDI24_MASK                     (0x1000000U)
 #define GPIO_PDIR_PDI24_SHIFT                    (24U)
 /*! PDI24 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI24(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI24_SHIFT)) & GPIO_PDIR_PDI24_MASK)
 
 #define GPIO_PDIR_PDI25_MASK                     (0x2000000U)
 #define GPIO_PDIR_PDI25_SHIFT                    (25U)
 /*! PDI25 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI25(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI25_SHIFT)) & GPIO_PDIR_PDI25_MASK)
 
 #define GPIO_PDIR_PDI26_MASK                     (0x4000000U)
 #define GPIO_PDIR_PDI26_SHIFT                    (26U)
 /*! PDI26 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI26(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI26_SHIFT)) & GPIO_PDIR_PDI26_MASK)
 
 #define GPIO_PDIR_PDI27_MASK                     (0x8000000U)
 #define GPIO_PDIR_PDI27_SHIFT                    (27U)
 /*! PDI27 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI27(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI27_SHIFT)) & GPIO_PDIR_PDI27_MASK)
 
 #define GPIO_PDIR_PDI28_MASK                     (0x10000000U)
 #define GPIO_PDIR_PDI28_SHIFT                    (28U)
 /*! PDI28 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI28(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI28_SHIFT)) & GPIO_PDIR_PDI28_MASK)
 
 #define GPIO_PDIR_PDI29_MASK                     (0x20000000U)
 #define GPIO_PDIR_PDI29_SHIFT                    (29U)
 /*! PDI29 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI29(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI29_SHIFT)) & GPIO_PDIR_PDI29_MASK)
 
 #define GPIO_PDIR_PDI30_MASK                     (0x40000000U)
 #define GPIO_PDIR_PDI30_SHIFT                    (30U)
 /*! PDI30 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI30(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI30_SHIFT)) & GPIO_PDIR_PDI30_MASK)
 
 #define GPIO_PDIR_PDI31_MASK                     (0x80000000U)
 #define GPIO_PDIR_PDI31_SHIFT                    (31U)
 /*! PDI31 - Port Data Input
- *  0b0..Pin logic level is logic 0 or is not configured for use by digital function.
- *  0b1..Pin logic level is logic 1.
+ *  0b0..Logic 0
+ *  0b1..Logic 1
  */
 #define GPIO_PDIR_PDI31(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDIR_PDI31_SHIFT)) & GPIO_PDIR_PDI31_MASK)
 /*! @} */
 
-/*! @name PDDR - Port Data Direction Register */
+/*! @name PDDR - Port Data Direction */
 /*! @{ */
 
 #define GPIO_PDDR_PDD0_MASK                      (0x1U)
 #define GPIO_PDDR_PDD0_SHIFT                     (0U)
 /*! PDD0 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD0(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD0_SHIFT)) & GPIO_PDDR_PDD0_MASK)
 
 #define GPIO_PDDR_PDD1_MASK                      (0x2U)
 #define GPIO_PDDR_PDD1_SHIFT                     (1U)
 /*! PDD1 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD1(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD1_SHIFT)) & GPIO_PDDR_PDD1_MASK)
 
 #define GPIO_PDDR_PDD2_MASK                      (0x4U)
 #define GPIO_PDDR_PDD2_SHIFT                     (2U)
 /*! PDD2 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD2(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD2_SHIFT)) & GPIO_PDDR_PDD2_MASK)
 
 #define GPIO_PDDR_PDD3_MASK                      (0x8U)
 #define GPIO_PDDR_PDD3_SHIFT                     (3U)
 /*! PDD3 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD3(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD3_SHIFT)) & GPIO_PDDR_PDD3_MASK)
 
 #define GPIO_PDDR_PDD4_MASK                      (0x10U)
 #define GPIO_PDDR_PDD4_SHIFT                     (4U)
 /*! PDD4 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD4(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD4_SHIFT)) & GPIO_PDDR_PDD4_MASK)
 
 #define GPIO_PDDR_PDD5_MASK                      (0x20U)
 #define GPIO_PDDR_PDD5_SHIFT                     (5U)
 /*! PDD5 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD5(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD5_SHIFT)) & GPIO_PDDR_PDD5_MASK)
 
 #define GPIO_PDDR_PDD6_MASK                      (0x40U)
 #define GPIO_PDDR_PDD6_SHIFT                     (6U)
 /*! PDD6 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD6(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD6_SHIFT)) & GPIO_PDDR_PDD6_MASK)
 
 #define GPIO_PDDR_PDD7_MASK                      (0x80U)
 #define GPIO_PDDR_PDD7_SHIFT                     (7U)
 /*! PDD7 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD7(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD7_SHIFT)) & GPIO_PDDR_PDD7_MASK)
 
 #define GPIO_PDDR_PDD8_MASK                      (0x100U)
 #define GPIO_PDDR_PDD8_SHIFT                     (8U)
 /*! PDD8 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD8(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD8_SHIFT)) & GPIO_PDDR_PDD8_MASK)
 
 #define GPIO_PDDR_PDD9_MASK                      (0x200U)
 #define GPIO_PDDR_PDD9_SHIFT                     (9U)
 /*! PDD9 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD9(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD9_SHIFT)) & GPIO_PDDR_PDD9_MASK)
 
 #define GPIO_PDDR_PDD10_MASK                     (0x400U)
 #define GPIO_PDDR_PDD10_SHIFT                    (10U)
 /*! PDD10 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD10(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD10_SHIFT)) & GPIO_PDDR_PDD10_MASK)
 
 #define GPIO_PDDR_PDD11_MASK                     (0x800U)
 #define GPIO_PDDR_PDD11_SHIFT                    (11U)
 /*! PDD11 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD11(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD11_SHIFT)) & GPIO_PDDR_PDD11_MASK)
 
 #define GPIO_PDDR_PDD12_MASK                     (0x1000U)
 #define GPIO_PDDR_PDD12_SHIFT                    (12U)
 /*! PDD12 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD12(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD12_SHIFT)) & GPIO_PDDR_PDD12_MASK)
 
 #define GPIO_PDDR_PDD13_MASK                     (0x2000U)
 #define GPIO_PDDR_PDD13_SHIFT                    (13U)
 /*! PDD13 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD13(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD13_SHIFT)) & GPIO_PDDR_PDD13_MASK)
 
 #define GPIO_PDDR_PDD14_MASK                     (0x4000U)
 #define GPIO_PDDR_PDD14_SHIFT                    (14U)
 /*! PDD14 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD14(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD14_SHIFT)) & GPIO_PDDR_PDD14_MASK)
 
 #define GPIO_PDDR_PDD15_MASK                     (0x8000U)
 #define GPIO_PDDR_PDD15_SHIFT                    (15U)
 /*! PDD15 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD15(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD15_SHIFT)) & GPIO_PDDR_PDD15_MASK)
 
 #define GPIO_PDDR_PDD16_MASK                     (0x10000U)
 #define GPIO_PDDR_PDD16_SHIFT                    (16U)
 /*! PDD16 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD16(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD16_SHIFT)) & GPIO_PDDR_PDD16_MASK)
 
 #define GPIO_PDDR_PDD17_MASK                     (0x20000U)
 #define GPIO_PDDR_PDD17_SHIFT                    (17U)
 /*! PDD17 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD17(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD17_SHIFT)) & GPIO_PDDR_PDD17_MASK)
 
 #define GPIO_PDDR_PDD18_MASK                     (0x40000U)
 #define GPIO_PDDR_PDD18_SHIFT                    (18U)
 /*! PDD18 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD18(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD18_SHIFT)) & GPIO_PDDR_PDD18_MASK)
 
 #define GPIO_PDDR_PDD19_MASK                     (0x80000U)
 #define GPIO_PDDR_PDD19_SHIFT                    (19U)
 /*! PDD19 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD19(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD19_SHIFT)) & GPIO_PDDR_PDD19_MASK)
 
 #define GPIO_PDDR_PDD20_MASK                     (0x100000U)
 #define GPIO_PDDR_PDD20_SHIFT                    (20U)
 /*! PDD20 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD20(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD20_SHIFT)) & GPIO_PDDR_PDD20_MASK)
 
 #define GPIO_PDDR_PDD21_MASK                     (0x200000U)
 #define GPIO_PDDR_PDD21_SHIFT                    (21U)
 /*! PDD21 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD21(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD21_SHIFT)) & GPIO_PDDR_PDD21_MASK)
 
 #define GPIO_PDDR_PDD22_MASK                     (0x400000U)
 #define GPIO_PDDR_PDD22_SHIFT                    (22U)
 /*! PDD22 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD22(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD22_SHIFT)) & GPIO_PDDR_PDD22_MASK)
 
 #define GPIO_PDDR_PDD23_MASK                     (0x800000U)
 #define GPIO_PDDR_PDD23_SHIFT                    (23U)
 /*! PDD23 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD23(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD23_SHIFT)) & GPIO_PDDR_PDD23_MASK)
 
 #define GPIO_PDDR_PDD24_MASK                     (0x1000000U)
 #define GPIO_PDDR_PDD24_SHIFT                    (24U)
 /*! PDD24 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD24(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD24_SHIFT)) & GPIO_PDDR_PDD24_MASK)
 
 #define GPIO_PDDR_PDD25_MASK                     (0x2000000U)
 #define GPIO_PDDR_PDD25_SHIFT                    (25U)
 /*! PDD25 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD25(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD25_SHIFT)) & GPIO_PDDR_PDD25_MASK)
 
 #define GPIO_PDDR_PDD26_MASK                     (0x4000000U)
 #define GPIO_PDDR_PDD26_SHIFT                    (26U)
 /*! PDD26 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD26(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD26_SHIFT)) & GPIO_PDDR_PDD26_MASK)
 
 #define GPIO_PDDR_PDD27_MASK                     (0x8000000U)
 #define GPIO_PDDR_PDD27_SHIFT                    (27U)
 /*! PDD27 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD27(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD27_SHIFT)) & GPIO_PDDR_PDD27_MASK)
 
 #define GPIO_PDDR_PDD28_MASK                     (0x10000000U)
 #define GPIO_PDDR_PDD28_SHIFT                    (28U)
 /*! PDD28 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD28(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD28_SHIFT)) & GPIO_PDDR_PDD28_MASK)
 
 #define GPIO_PDDR_PDD29_MASK                     (0x20000000U)
 #define GPIO_PDDR_PDD29_SHIFT                    (29U)
 /*! PDD29 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD29(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD29_SHIFT)) & GPIO_PDDR_PDD29_MASK)
 
 #define GPIO_PDDR_PDD30_MASK                     (0x40000000U)
 #define GPIO_PDDR_PDD30_SHIFT                    (30U)
 /*! PDD30 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD30(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD30_SHIFT)) & GPIO_PDDR_PDD30_MASK)
 
 #define GPIO_PDDR_PDD31_MASK                     (0x80000000U)
 #define GPIO_PDDR_PDD31_SHIFT                    (31U)
 /*! PDD31 - Port Data Direction
- *  0b0..Pin is configured as general-purpose input for the GPIO function.
- *  0b1..Pin is configured as general-purpose output for the GPIO function.
+ *  0b0..Input
+ *  0b1..Output
  */
 #define GPIO_PDDR_PDD31(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PDDR_PDD31_SHIFT)) & GPIO_PDDR_PDD31_MASK)
 /*! @} */
 
-/*! @name PIDR - Port Input Disable Register */
+/*! @name PIDR - Port Input Disable */
 /*! @{ */
 
 #define GPIO_PIDR_PID0_MASK                      (0x1U)
 #define GPIO_PIDR_PID0_SHIFT                     (0U)
 /*! PID0 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID0(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID0_SHIFT)) & GPIO_PIDR_PID0_MASK)
 
 #define GPIO_PIDR_PID1_MASK                      (0x2U)
 #define GPIO_PIDR_PID1_SHIFT                     (1U)
 /*! PID1 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID1(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID1_SHIFT)) & GPIO_PIDR_PID1_MASK)
 
 #define GPIO_PIDR_PID2_MASK                      (0x4U)
 #define GPIO_PIDR_PID2_SHIFT                     (2U)
 /*! PID2 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID2(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID2_SHIFT)) & GPIO_PIDR_PID2_MASK)
 
 #define GPIO_PIDR_PID3_MASK                      (0x8U)
 #define GPIO_PIDR_PID3_SHIFT                     (3U)
 /*! PID3 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID3(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID3_SHIFT)) & GPIO_PIDR_PID3_MASK)
 
 #define GPIO_PIDR_PID4_MASK                      (0x10U)
 #define GPIO_PIDR_PID4_SHIFT                     (4U)
 /*! PID4 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID4(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID4_SHIFT)) & GPIO_PIDR_PID4_MASK)
 
 #define GPIO_PIDR_PID5_MASK                      (0x20U)
 #define GPIO_PIDR_PID5_SHIFT                     (5U)
 /*! PID5 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID5(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID5_SHIFT)) & GPIO_PIDR_PID5_MASK)
 
 #define GPIO_PIDR_PID6_MASK                      (0x40U)
 #define GPIO_PIDR_PID6_SHIFT                     (6U)
 /*! PID6 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID6(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID6_SHIFT)) & GPIO_PIDR_PID6_MASK)
 
 #define GPIO_PIDR_PID7_MASK                      (0x80U)
 #define GPIO_PIDR_PID7_SHIFT                     (7U)
 /*! PID7 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID7(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID7_SHIFT)) & GPIO_PIDR_PID7_MASK)
 
 #define GPIO_PIDR_PID8_MASK                      (0x100U)
 #define GPIO_PIDR_PID8_SHIFT                     (8U)
 /*! PID8 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID8(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID8_SHIFT)) & GPIO_PIDR_PID8_MASK)
 
 #define GPIO_PIDR_PID9_MASK                      (0x200U)
 #define GPIO_PIDR_PID9_SHIFT                     (9U)
 /*! PID9 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID9(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID9_SHIFT)) & GPIO_PIDR_PID9_MASK)
 
 #define GPIO_PIDR_PID10_MASK                     (0x400U)
 #define GPIO_PIDR_PID10_SHIFT                    (10U)
 /*! PID10 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID10(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID10_SHIFT)) & GPIO_PIDR_PID10_MASK)
 
 #define GPIO_PIDR_PID11_MASK                     (0x800U)
 #define GPIO_PIDR_PID11_SHIFT                    (11U)
 /*! PID11 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID11(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID11_SHIFT)) & GPIO_PIDR_PID11_MASK)
 
 #define GPIO_PIDR_PID12_MASK                     (0x1000U)
 #define GPIO_PIDR_PID12_SHIFT                    (12U)
 /*! PID12 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID12(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID12_SHIFT)) & GPIO_PIDR_PID12_MASK)
 
 #define GPIO_PIDR_PID13_MASK                     (0x2000U)
 #define GPIO_PIDR_PID13_SHIFT                    (13U)
 /*! PID13 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID13(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID13_SHIFT)) & GPIO_PIDR_PID13_MASK)
 
 #define GPIO_PIDR_PID14_MASK                     (0x4000U)
 #define GPIO_PIDR_PID14_SHIFT                    (14U)
 /*! PID14 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID14(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID14_SHIFT)) & GPIO_PIDR_PID14_MASK)
 
 #define GPIO_PIDR_PID15_MASK                     (0x8000U)
 #define GPIO_PIDR_PID15_SHIFT                    (15U)
 /*! PID15 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID15(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID15_SHIFT)) & GPIO_PIDR_PID15_MASK)
 
 #define GPIO_PIDR_PID16_MASK                     (0x10000U)
 #define GPIO_PIDR_PID16_SHIFT                    (16U)
 /*! PID16 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID16(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID16_SHIFT)) & GPIO_PIDR_PID16_MASK)
 
 #define GPIO_PIDR_PID17_MASK                     (0x20000U)
 #define GPIO_PIDR_PID17_SHIFT                    (17U)
 /*! PID17 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID17(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID17_SHIFT)) & GPIO_PIDR_PID17_MASK)
 
 #define GPIO_PIDR_PID18_MASK                     (0x40000U)
 #define GPIO_PIDR_PID18_SHIFT                    (18U)
 /*! PID18 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID18(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID18_SHIFT)) & GPIO_PIDR_PID18_MASK)
 
 #define GPIO_PIDR_PID19_MASK                     (0x80000U)
 #define GPIO_PIDR_PID19_SHIFT                    (19U)
 /*! PID19 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID19(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID19_SHIFT)) & GPIO_PIDR_PID19_MASK)
 
 #define GPIO_PIDR_PID20_MASK                     (0x100000U)
 #define GPIO_PIDR_PID20_SHIFT                    (20U)
 /*! PID20 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID20(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID20_SHIFT)) & GPIO_PIDR_PID20_MASK)
 
 #define GPIO_PIDR_PID21_MASK                     (0x200000U)
 #define GPIO_PIDR_PID21_SHIFT                    (21U)
 /*! PID21 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID21(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID21_SHIFT)) & GPIO_PIDR_PID21_MASK)
 
 #define GPIO_PIDR_PID22_MASK                     (0x400000U)
 #define GPIO_PIDR_PID22_SHIFT                    (22U)
 /*! PID22 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID22(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID22_SHIFT)) & GPIO_PIDR_PID22_MASK)
 
 #define GPIO_PIDR_PID23_MASK                     (0x800000U)
 #define GPIO_PIDR_PID23_SHIFT                    (23U)
 /*! PID23 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID23(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID23_SHIFT)) & GPIO_PIDR_PID23_MASK)
 
 #define GPIO_PIDR_PID24_MASK                     (0x1000000U)
 #define GPIO_PIDR_PID24_SHIFT                    (24U)
 /*! PID24 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID24(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID24_SHIFT)) & GPIO_PIDR_PID24_MASK)
 
 #define GPIO_PIDR_PID25_MASK                     (0x2000000U)
 #define GPIO_PIDR_PID25_SHIFT                    (25U)
 /*! PID25 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID25(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID25_SHIFT)) & GPIO_PIDR_PID25_MASK)
 
 #define GPIO_PIDR_PID26_MASK                     (0x4000000U)
 #define GPIO_PIDR_PID26_SHIFT                    (26U)
 /*! PID26 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID26(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID26_SHIFT)) & GPIO_PIDR_PID26_MASK)
 
 #define GPIO_PIDR_PID27_MASK                     (0x8000000U)
 #define GPIO_PIDR_PID27_SHIFT                    (27U)
 /*! PID27 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID27(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID27_SHIFT)) & GPIO_PIDR_PID27_MASK)
 
 #define GPIO_PIDR_PID28_MASK                     (0x10000000U)
 #define GPIO_PIDR_PID28_SHIFT                    (28U)
 /*! PID28 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID28(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID28_SHIFT)) & GPIO_PIDR_PID28_MASK)
 
 #define GPIO_PIDR_PID29_MASK                     (0x20000000U)
 #define GPIO_PIDR_PID29_SHIFT                    (29U)
 /*! PID29 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID29(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID29_SHIFT)) & GPIO_PIDR_PID29_MASK)
 
 #define GPIO_PIDR_PID30_MASK                     (0x40000000U)
 #define GPIO_PIDR_PID30_SHIFT                    (30U)
 /*! PID30 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID30(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID30_SHIFT)) & GPIO_PIDR_PID30_MASK)
 
 #define GPIO_PIDR_PID31_MASK                     (0x80000000U)
 #define GPIO_PIDR_PID31_SHIFT                    (31U)
 /*! PID31 - Port Input Disable
- *  0b0..Pin is configured for general-purpose input provided, the pin is configured for any digital function.
- *  0b1..Pin is disabled for general-purpose input.
+ *  0b0..Configured for general-purpose input
+ *  0b1..Disabled for general-purpose input
  */
 #define GPIO_PIDR_PID31(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_PIDR_PID31_SHIFT)) & GPIO_PIDR_PID31_MASK)
 /*! @} */
 
-/*! @name PDR - Pin Data Register a */
+/*! @name PDR - Pin Data */
 /*! @{ */
 
 #define GPIO_PDR_PD_MASK                         (0x1U)
 #define GPIO_PDR_PD_SHIFT                        (0U)
-/*! PD - Pin Data (input and output)
- *  0b0..Pin logic level is logic zero or not configured for use by digital function.
- *  0b1..Pin logic level is logic one.
+/*! PD - Pin Data (I/O)
+ *  0b0..Logic zero
+ *  0b1..Logic one
  */
 #define GPIO_PDR_PD(x)                           (((uint8_t)(((uint8_t)(x)) << GPIO_PDR_PD_SHIFT)) & GPIO_PDR_PD_MASK)
 /*! @} */
@@ -11573,41 +11566,40 @@ typedef struct {
 /* The count of GPIO_PDR */
 #define GPIO_PDR_COUNT                           (32U)
 
-/*! @name ICR - Interrupt Control Register 0..Interrupt Control Register 31 */
+/*! @name ICR - Interrupt Control 0..Interrupt Control 31 */
 /*! @{ */
 
 #define GPIO_ICR_IRQC_MASK                       (0xF0000U)
 #define GPIO_ICR_IRQC_SHIFT                      (16U)
 /*! IRQC - Interrupt Configuration
- *  0b0000..Interrupt Status Flag (ISF) is disabled.
- *  0b0001..ISF flag and DMA request on rising edge.
- *  0b0010..ISF flag and DMA request on falling edge.
- *  0b0011..ISF flag and DMA request on either edge.
- *  0b0100..Reserved.
- *  0b0101..ISF flag sets on rising edge.
- *  0b0110..ISF flag sets on falling edge.
- *  0b0111..ISF flag sets on either edge.
- *  0b1000..ISF flag and Interrupt when logic 0.
- *  0b1001..ISF flag and Interrupt on rising-edge.
- *  0b1010..ISF flag and Interrupt on falling-edge.
- *  0b1011..ISF flag and Interrupt on either edge.
- *  0b1100..ISF flag and Interrupt when logic 1.
- *  0b1101..Enable active high trigger output, ISF flag on rising edge. Pin state is ORed with other enabled
- *          triggers to generate the output trigger, for use by other peripherals.
- *  0b1110..Enable active low trigger output, ISF flag on falling edge. Pin state is inverted and ORed with other
- *          enabled triggers to generate the output trigger, for use by other peripherals.
- *  0b1111..Reserved.
+ *  0b0000..ISF is disabled
+ *  0b0001..ISF and DMA request on rising edge
+ *  0b0010..ISF and DMA request on falling edge
+ *  0b0011..ISF and DMA request on either edge
+ *  0b0100..Reserved
+ *  0b0101..ISF sets on rising edge
+ *  0b0110..ISF sets on falling edge
+ *  0b0111..ISF sets on either edge
+ *  0b1000..ISF and interrupt when logic 0
+ *  0b1001..ISF and interrupt on rising edge
+ *  0b1010..ISF and interrupt on falling edge
+ *  0b1011..ISF and Interrupt on either edge
+ *  0b1100..ISF and interrupt when logic 1
+ *  0b1101..Enable active-high trigger output; ISF on rising edge (pin state is ORed with other enabled triggers
+ *          to generate the output trigger for use by other peripherals)
+ *  0b1110..Enable active-low trigger output; ISF on falling edge (pin state is inverted and ORed with other
+ *          enabled triggers to generate the output trigger for use by other peripherals)
+ *  0b1111..Reserved
  */
 #define GPIO_ICR_IRQC(x)                         (((uint32_t)(((uint32_t)(x)) << GPIO_ICR_IRQC_SHIFT)) & GPIO_ICR_IRQC_MASK)
 
 #define GPIO_ICR_ISF_MASK                        (0x1000000U)
 #define GPIO_ICR_ISF_SHIFT                       (24U)
 /*! ISF - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected.
- *  0b1..Configured interrupt is detected. If the pin is configured to generate a DMA request, then the
- *       corresponding flag will be cleared automatically at the completion of the requested DMA transfer. Otherwise, the
- *       flag remains set until a logic 1 is written to the flag. If the pin is configured for a level sensitive
- *       interrupt and the pin remains asserted, then the flag is set again immediately after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ICR_ISF(x)                          (((uint32_t)(((uint32_t)(x)) << GPIO_ICR_ISF_SHIFT)) & GPIO_ICR_ISF_MASK)
 /*! @} */
@@ -11615,134 +11607,134 @@ typedef struct {
 /* The count of GPIO_ICR */
 #define GPIO_ICR_COUNT                           (32U)
 
-/*! @name GICLR - Global Interrupt Control Low Register */
+/*! @name GICLR - Global Interrupt Control Low */
 /*! @{ */
 
 #define GPIO_GICLR_GIWE0_MASK                    (0x1U)
 #define GPIO_GICLR_GIWE0_SHIFT                   (0U)
 /*! GIWE0 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE0(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE0_SHIFT)) & GPIO_GICLR_GIWE0_MASK)
 
 #define GPIO_GICLR_GIWE1_MASK                    (0x2U)
 #define GPIO_GICLR_GIWE1_SHIFT                   (1U)
 /*! GIWE1 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE1(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE1_SHIFT)) & GPIO_GICLR_GIWE1_MASK)
 
 #define GPIO_GICLR_GIWE2_MASK                    (0x4U)
 #define GPIO_GICLR_GIWE2_SHIFT                   (2U)
 /*! GIWE2 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE2(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE2_SHIFT)) & GPIO_GICLR_GIWE2_MASK)
 
 #define GPIO_GICLR_GIWE3_MASK                    (0x8U)
 #define GPIO_GICLR_GIWE3_SHIFT                   (3U)
 /*! GIWE3 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE3(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE3_SHIFT)) & GPIO_GICLR_GIWE3_MASK)
 
 #define GPIO_GICLR_GIWE4_MASK                    (0x10U)
 #define GPIO_GICLR_GIWE4_SHIFT                   (4U)
 /*! GIWE4 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE4(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE4_SHIFT)) & GPIO_GICLR_GIWE4_MASK)
 
 #define GPIO_GICLR_GIWE5_MASK                    (0x20U)
 #define GPIO_GICLR_GIWE5_SHIFT                   (5U)
 /*! GIWE5 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE5(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE5_SHIFT)) & GPIO_GICLR_GIWE5_MASK)
 
 #define GPIO_GICLR_GIWE6_MASK                    (0x40U)
 #define GPIO_GICLR_GIWE6_SHIFT                   (6U)
 /*! GIWE6 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE6(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE6_SHIFT)) & GPIO_GICLR_GIWE6_MASK)
 
 #define GPIO_GICLR_GIWE7_MASK                    (0x80U)
 #define GPIO_GICLR_GIWE7_SHIFT                   (7U)
 /*! GIWE7 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE7(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE7_SHIFT)) & GPIO_GICLR_GIWE7_MASK)
 
 #define GPIO_GICLR_GIWE8_MASK                    (0x100U)
 #define GPIO_GICLR_GIWE8_SHIFT                   (8U)
 /*! GIWE8 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE8(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE8_SHIFT)) & GPIO_GICLR_GIWE8_MASK)
 
 #define GPIO_GICLR_GIWE9_MASK                    (0x200U)
 #define GPIO_GICLR_GIWE9_SHIFT                   (9U)
 /*! GIWE9 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE9(x)                      (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE9_SHIFT)) & GPIO_GICLR_GIWE9_MASK)
 
 #define GPIO_GICLR_GIWE10_MASK                   (0x400U)
 #define GPIO_GICLR_GIWE10_SHIFT                  (10U)
 /*! GIWE10 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE10(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE10_SHIFT)) & GPIO_GICLR_GIWE10_MASK)
 
 #define GPIO_GICLR_GIWE11_MASK                   (0x800U)
 #define GPIO_GICLR_GIWE11_SHIFT                  (11U)
 /*! GIWE11 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE11(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE11_SHIFT)) & GPIO_GICLR_GIWE11_MASK)
 
 #define GPIO_GICLR_GIWE12_MASK                   (0x1000U)
 #define GPIO_GICLR_GIWE12_SHIFT                  (12U)
 /*! GIWE12 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE12(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE12_SHIFT)) & GPIO_GICLR_GIWE12_MASK)
 
 #define GPIO_GICLR_GIWE13_MASK                   (0x2000U)
 #define GPIO_GICLR_GIWE13_SHIFT                  (13U)
 /*! GIWE13 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE13(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE13_SHIFT)) & GPIO_GICLR_GIWE13_MASK)
 
 #define GPIO_GICLR_GIWE14_MASK                   (0x4000U)
 #define GPIO_GICLR_GIWE14_SHIFT                  (14U)
 /*! GIWE14 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE14(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE14_SHIFT)) & GPIO_GICLR_GIWE14_MASK)
 
 #define GPIO_GICLR_GIWE15_MASK                   (0x8000U)
 #define GPIO_GICLR_GIWE15_SHIFT                  (15U)
 /*! GIWE15 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated
+ *  0b1..Updated
  */
 #define GPIO_GICLR_GIWE15(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWE15_SHIFT)) & GPIO_GICLR_GIWE15_MASK)
 
@@ -11752,134 +11744,134 @@ typedef struct {
 #define GPIO_GICLR_GIWD(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_GICLR_GIWD_SHIFT)) & GPIO_GICLR_GIWD_MASK)
 /*! @} */
 
-/*! @name GICHR - Global Interrupt Control High Register */
+/*! @name GICHR - Global Interrupt Control High */
 /*! @{ */
 
 #define GPIO_GICHR_GIWE16_MASK                   (0x1U)
 #define GPIO_GICHR_GIWE16_SHIFT                  (0U)
 /*! GIWE16 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE16(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE16_SHIFT)) & GPIO_GICHR_GIWE16_MASK)
 
 #define GPIO_GICHR_GIWE17_MASK                   (0x2U)
 #define GPIO_GICHR_GIWE17_SHIFT                  (1U)
 /*! GIWE17 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE17(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE17_SHIFT)) & GPIO_GICHR_GIWE17_MASK)
 
 #define GPIO_GICHR_GIWE18_MASK                   (0x4U)
 #define GPIO_GICHR_GIWE18_SHIFT                  (2U)
 /*! GIWE18 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE18(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE18_SHIFT)) & GPIO_GICHR_GIWE18_MASK)
 
 #define GPIO_GICHR_GIWE19_MASK                   (0x8U)
 #define GPIO_GICHR_GIWE19_SHIFT                  (3U)
 /*! GIWE19 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE19(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE19_SHIFT)) & GPIO_GICHR_GIWE19_MASK)
 
 #define GPIO_GICHR_GIWE20_MASK                   (0x10U)
 #define GPIO_GICHR_GIWE20_SHIFT                  (4U)
 /*! GIWE20 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE20(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE20_SHIFT)) & GPIO_GICHR_GIWE20_MASK)
 
 #define GPIO_GICHR_GIWE21_MASK                   (0x20U)
 #define GPIO_GICHR_GIWE21_SHIFT                  (5U)
 /*! GIWE21 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE21(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE21_SHIFT)) & GPIO_GICHR_GIWE21_MASK)
 
 #define GPIO_GICHR_GIWE22_MASK                   (0x40U)
 #define GPIO_GICHR_GIWE22_SHIFT                  (6U)
 /*! GIWE22 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE22(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE22_SHIFT)) & GPIO_GICHR_GIWE22_MASK)
 
 #define GPIO_GICHR_GIWE23_MASK                   (0x80U)
 #define GPIO_GICHR_GIWE23_SHIFT                  (7U)
 /*! GIWE23 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE23(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE23_SHIFT)) & GPIO_GICHR_GIWE23_MASK)
 
 #define GPIO_GICHR_GIWE24_MASK                   (0x100U)
 #define GPIO_GICHR_GIWE24_SHIFT                  (8U)
 /*! GIWE24 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE24(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE24_SHIFT)) & GPIO_GICHR_GIWE24_MASK)
 
 #define GPIO_GICHR_GIWE25_MASK                   (0x200U)
 #define GPIO_GICHR_GIWE25_SHIFT                  (9U)
 /*! GIWE25 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE25(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE25_SHIFT)) & GPIO_GICHR_GIWE25_MASK)
 
 #define GPIO_GICHR_GIWE26_MASK                   (0x400U)
 #define GPIO_GICHR_GIWE26_SHIFT                  (10U)
 /*! GIWE26 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE26(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE26_SHIFT)) & GPIO_GICHR_GIWE26_MASK)
 
 #define GPIO_GICHR_GIWE27_MASK                   (0x800U)
 #define GPIO_GICHR_GIWE27_SHIFT                  (11U)
 /*! GIWE27 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE27(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE27_SHIFT)) & GPIO_GICHR_GIWE27_MASK)
 
 #define GPIO_GICHR_GIWE28_MASK                   (0x1000U)
 #define GPIO_GICHR_GIWE28_SHIFT                  (12U)
 /*! GIWE28 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE28(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE28_SHIFT)) & GPIO_GICHR_GIWE28_MASK)
 
 #define GPIO_GICHR_GIWE29_MASK                   (0x2000U)
 #define GPIO_GICHR_GIWE29_SHIFT                  (13U)
 /*! GIWE29 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE29(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE29_SHIFT)) & GPIO_GICHR_GIWE29_MASK)
 
 #define GPIO_GICHR_GIWE30_MASK                   (0x4000U)
 #define GPIO_GICHR_GIWE30_SHIFT                  (14U)
 /*! GIWE30 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE30(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE30_SHIFT)) & GPIO_GICHR_GIWE30_MASK)
 
 #define GPIO_GICHR_GIWE31_MASK                   (0x8000U)
 #define GPIO_GICHR_GIWE31_SHIFT                  (15U)
 /*! GIWE31 - Global Interrupt Write Enable
- *  0b0..Upper 16-bit of corresponding Interrupt Control Register is not updated with the value in GIWD.
- *  0b1..Upper 16-bit of corresponding Interrupt Control Register is updated with the value in GIWD.
+ *  0b0..Not updated.
+ *  0b1..Updated
  */
 #define GPIO_GICHR_GIWE31(x)                     (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWE31_SHIFT)) & GPIO_GICHR_GIWE31_MASK)
 
@@ -11889,390 +11881,326 @@ typedef struct {
 #define GPIO_GICHR_GIWD(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_GICHR_GIWD_SHIFT)) & GPIO_GICHR_GIWD_MASK)
 /*! @} */
 
-/*! @name ISFR - Interrupt Status Flag Register */
+/*! @name ISFR - Interrupt Status Flag */
 /*! @{ */
 
 #define GPIO_ISFR_ISF0_MASK                      (0x1U)
 #define GPIO_ISFR_ISF0_SHIFT                     (0U)
 /*! ISF0 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF0(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF0_SHIFT)) & GPIO_ISFR_ISF0_MASK)
 
 #define GPIO_ISFR_ISF1_MASK                      (0x2U)
 #define GPIO_ISFR_ISF1_SHIFT                     (1U)
 /*! ISF1 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF1(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF1_SHIFT)) & GPIO_ISFR_ISF1_MASK)
 
 #define GPIO_ISFR_ISF2_MASK                      (0x4U)
 #define GPIO_ISFR_ISF2_SHIFT                     (2U)
 /*! ISF2 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF2(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF2_SHIFT)) & GPIO_ISFR_ISF2_MASK)
 
 #define GPIO_ISFR_ISF3_MASK                      (0x8U)
 #define GPIO_ISFR_ISF3_SHIFT                     (3U)
 /*! ISF3 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF3(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF3_SHIFT)) & GPIO_ISFR_ISF3_MASK)
 
 #define GPIO_ISFR_ISF4_MASK                      (0x10U)
 #define GPIO_ISFR_ISF4_SHIFT                     (4U)
 /*! ISF4 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF4(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF4_SHIFT)) & GPIO_ISFR_ISF4_MASK)
 
 #define GPIO_ISFR_ISF5_MASK                      (0x20U)
 #define GPIO_ISFR_ISF5_SHIFT                     (5U)
 /*! ISF5 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF5(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF5_SHIFT)) & GPIO_ISFR_ISF5_MASK)
 
 #define GPIO_ISFR_ISF6_MASK                      (0x40U)
 #define GPIO_ISFR_ISF6_SHIFT                     (6U)
 /*! ISF6 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF6(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF6_SHIFT)) & GPIO_ISFR_ISF6_MASK)
 
 #define GPIO_ISFR_ISF7_MASK                      (0x80U)
 #define GPIO_ISFR_ISF7_SHIFT                     (7U)
 /*! ISF7 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF7(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF7_SHIFT)) & GPIO_ISFR_ISF7_MASK)
 
 #define GPIO_ISFR_ISF8_MASK                      (0x100U)
 #define GPIO_ISFR_ISF8_SHIFT                     (8U)
 /*! ISF8 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF8(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF8_SHIFT)) & GPIO_ISFR_ISF8_MASK)
 
 #define GPIO_ISFR_ISF9_MASK                      (0x200U)
 #define GPIO_ISFR_ISF9_SHIFT                     (9U)
 /*! ISF9 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF9(x)                        (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF9_SHIFT)) & GPIO_ISFR_ISF9_MASK)
 
 #define GPIO_ISFR_ISF10_MASK                     (0x400U)
 #define GPIO_ISFR_ISF10_SHIFT                    (10U)
 /*! ISF10 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF10(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF10_SHIFT)) & GPIO_ISFR_ISF10_MASK)
 
 #define GPIO_ISFR_ISF11_MASK                     (0x800U)
 #define GPIO_ISFR_ISF11_SHIFT                    (11U)
 /*! ISF11 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF11(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF11_SHIFT)) & GPIO_ISFR_ISF11_MASK)
 
 #define GPIO_ISFR_ISF12_MASK                     (0x1000U)
 #define GPIO_ISFR_ISF12_SHIFT                    (12U)
 /*! ISF12 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF12(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF12_SHIFT)) & GPIO_ISFR_ISF12_MASK)
 
 #define GPIO_ISFR_ISF13_MASK                     (0x2000U)
 #define GPIO_ISFR_ISF13_SHIFT                    (13U)
 /*! ISF13 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF13(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF13_SHIFT)) & GPIO_ISFR_ISF13_MASK)
 
 #define GPIO_ISFR_ISF14_MASK                     (0x4000U)
 #define GPIO_ISFR_ISF14_SHIFT                    (14U)
 /*! ISF14 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF14(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF14_SHIFT)) & GPIO_ISFR_ISF14_MASK)
 
 #define GPIO_ISFR_ISF15_MASK                     (0x8000U)
 #define GPIO_ISFR_ISF15_SHIFT                    (15U)
 /*! ISF15 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF15(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF15_SHIFT)) & GPIO_ISFR_ISF15_MASK)
 
 #define GPIO_ISFR_ISF16_MASK                     (0x10000U)
 #define GPIO_ISFR_ISF16_SHIFT                    (16U)
 /*! ISF16 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF16(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF16_SHIFT)) & GPIO_ISFR_ISF16_MASK)
 
 #define GPIO_ISFR_ISF17_MASK                     (0x20000U)
 #define GPIO_ISFR_ISF17_SHIFT                    (17U)
 /*! ISF17 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF17(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF17_SHIFT)) & GPIO_ISFR_ISF17_MASK)
 
 #define GPIO_ISFR_ISF18_MASK                     (0x40000U)
 #define GPIO_ISFR_ISF18_SHIFT                    (18U)
 /*! ISF18 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF18(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF18_SHIFT)) & GPIO_ISFR_ISF18_MASK)
 
 #define GPIO_ISFR_ISF19_MASK                     (0x80000U)
 #define GPIO_ISFR_ISF19_SHIFT                    (19U)
 /*! ISF19 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF19(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF19_SHIFT)) & GPIO_ISFR_ISF19_MASK)
 
 #define GPIO_ISFR_ISF20_MASK                     (0x100000U)
 #define GPIO_ISFR_ISF20_SHIFT                    (20U)
 /*! ISF20 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF20(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF20_SHIFT)) & GPIO_ISFR_ISF20_MASK)
 
 #define GPIO_ISFR_ISF21_MASK                     (0x200000U)
 #define GPIO_ISFR_ISF21_SHIFT                    (21U)
 /*! ISF21 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF21(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF21_SHIFT)) & GPIO_ISFR_ISF21_MASK)
 
 #define GPIO_ISFR_ISF22_MASK                     (0x400000U)
 #define GPIO_ISFR_ISF22_SHIFT                    (22U)
 /*! ISF22 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF22(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF22_SHIFT)) & GPIO_ISFR_ISF22_MASK)
 
 #define GPIO_ISFR_ISF23_MASK                     (0x800000U)
 #define GPIO_ISFR_ISF23_SHIFT                    (23U)
 /*! ISF23 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF23(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF23_SHIFT)) & GPIO_ISFR_ISF23_MASK)
 
 #define GPIO_ISFR_ISF24_MASK                     (0x1000000U)
 #define GPIO_ISFR_ISF24_SHIFT                    (24U)
 /*! ISF24 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF24(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF24_SHIFT)) & GPIO_ISFR_ISF24_MASK)
 
 #define GPIO_ISFR_ISF25_MASK                     (0x2000000U)
 #define GPIO_ISFR_ISF25_SHIFT                    (25U)
 /*! ISF25 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF25(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF25_SHIFT)) & GPIO_ISFR_ISF25_MASK)
 
 #define GPIO_ISFR_ISF26_MASK                     (0x4000000U)
 #define GPIO_ISFR_ISF26_SHIFT                    (26U)
 /*! ISF26 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF26(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF26_SHIFT)) & GPIO_ISFR_ISF26_MASK)
 
 #define GPIO_ISFR_ISF27_MASK                     (0x8000000U)
 #define GPIO_ISFR_ISF27_SHIFT                    (27U)
 /*! ISF27 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF27(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF27_SHIFT)) & GPIO_ISFR_ISF27_MASK)
 
 #define GPIO_ISFR_ISF28_MASK                     (0x10000000U)
 #define GPIO_ISFR_ISF28_SHIFT                    (28U)
 /*! ISF28 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF28(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF28_SHIFT)) & GPIO_ISFR_ISF28_MASK)
 
 #define GPIO_ISFR_ISF29_MASK                     (0x20000000U)
 #define GPIO_ISFR_ISF29_SHIFT                    (29U)
 /*! ISF29 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF29(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF29_SHIFT)) & GPIO_ISFR_ISF29_MASK)
 
 #define GPIO_ISFR_ISF30_MASK                     (0x40000000U)
 #define GPIO_ISFR_ISF30_SHIFT                    (30U)
 /*! ISF30 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF30(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF30_SHIFT)) & GPIO_ISFR_ISF30_MASK)
 
 #define GPIO_ISFR_ISF31_MASK                     (0x80000000U)
 #define GPIO_ISFR_ISF31_SHIFT                    (31U)
 /*! ISF31 - Interrupt Status Flag
- *  0b0..Configured interrupt is not detected on the pin of the same number.
- *  0b1..Configured interrupt is detected on the pin of the same number. If the pin is configured to generate a
- *       DMA request, then the corresponding flag will be cleared automatically at the completion of the requested
- *       DMA transfer. Otherwise, the flag remains set until a logic 1 is written to the flag. If the pin is
- *       configured for a level sensitive interrupt and the pin remains asserted, then the flag is set again immediately
- *       after it is cleared.
+ *  0b0..Not detected
+ *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define GPIO_ISFR_ISF31(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_ISFR_ISF31_SHIFT)) & GPIO_ISFR_ISF31_MASK)
 /*! @} */
@@ -12346,8 +12274,8 @@ typedef struct {
   __I  uint32_t SRDATAH;                           /**< Target Read Data Halfword, offset: 0x48 */
        uint8_t RESERVED_2[8];
   union {                                          /* offset: 0x54 */
-    __IO uint32_t SWDATAB1;                          /**< Target Write Data Byte, offset: 0x54 */
-    __IO uint32_t SWDATAH1;                          /**< Target Write Data Halfword, offset: 0x54 */
+    __O  uint32_t SWDATAB1;                          /**< Target Write Data Byte, offset: 0x54 */
+    __O  uint32_t SWDATAH1;                          /**< Target Write Data Halfword, offset: 0x54 */
   };
        uint8_t RESERVED_3[4];
   __I  uint32_t SCAPABILITIES2;                    /**< Target Capabilities 2, offset: 0x5C */
@@ -12593,7 +12521,7 @@ typedef struct {
 #define I3C_SSTATUS_STREQWR_MASK                 (0x10U)
 #define I3C_SSTATUS_STREQWR_SHIFT                (4U)
 /*! STREQWR - Status Request Write
- *  0b1..REQ in process is SDR write data from the controller to this bus target (or all I3C targets), but not in ENTDAA mode.
+ *  0b1..REQ in process is SDR write data from the controller to this bus target (or all targets), but not in ENTDAA mode.
  *  0b0..REQ in process is not SDR write data from the controller.
  */
 #define I3C_SSTATUS_STREQWR(x)                   (((uint32_t)(((uint32_t)(x)) << I3C_SSTATUS_STREQWR_SHIFT)) & I3C_SSTATUS_STREQWR_MASK)
@@ -12609,7 +12537,7 @@ typedef struct {
 #define I3C_SSTATUS_STHDR_MASK                   (0x40U)
 #define I3C_SSTATUS_STHDR_SHIFT                  (6U)
 /*! STHDR - Status High Data Rate
- *  0b1..The I3C bus is in HDR-DDR mode , regardless of whether HDR mode is supported by this module or not, and
+ *  0b1..The I3C bus is in HDR-DDR mode, regardless of whether HDR mode is supported by this module or not, and
  *       regardless of whether the message is to this module or to some other module.
  *  0b0..I3C bus not in HDR-DDR mode
  */
@@ -12810,7 +12738,7 @@ typedef struct {
 
 #define I3C_SINTSET_MATCHED_MASK                 (0x200U)
 #define I3C_SINTSET_MATCHED_SHIFT                (9U)
-/*! MATCHED - Match interrupt enable
+/*! MATCHED - Match Interrupt Enable
  *  0b1..Enable match interrupt
  *  0b0..Disable match interrupt
  */
@@ -12850,7 +12778,7 @@ typedef struct {
 
 #define I3C_SINTSET_CCC_MASK                     (0x4000U)
 #define I3C_SINTSET_CCC_SHIFT                    (14U)
-/*! CCC - CCC (that was not handled by I3C module) Interrupt Enable
+/*! CCC - Common Command Code (CCC) Interrupt Enable
  *  0b1..Enable CCC interrupt
  *  0b0..Disable CCC interrupt
  */
@@ -13300,11 +13228,6 @@ typedef struct {
 #define I3C_SWDATAB1_DATA_SHIFT                  (0U)
 /*! DATA - Data */
 #define I3C_SWDATAB1_DATA(x)                     (((uint32_t)(((uint32_t)(x)) << I3C_SWDATAB1_DATA_SHIFT)) & I3C_SWDATAB1_DATA_MASK)
-
-#define I3C_SWDATAB1_IGNORED_MASK                (0xFFFFFF00U)
-#define I3C_SWDATAB1_IGNORED_SHIFT               (8U)
-/*! IGNORED - Ignored field */
-#define I3C_SWDATAB1_IGNORED(x)                  (((uint32_t)(((uint32_t)(x)) << I3C_SWDATAB1_IGNORED_SHIFT)) & I3C_SWDATAB1_IGNORED_MASK)
 /*! @} */
 
 /*! @name SWDATAH1 - Target Write Data Halfword */
@@ -13314,11 +13237,6 @@ typedef struct {
 #define I3C_SWDATAH1_DATA_SHIFT                  (0U)
 /*! DATA - Data */
 #define I3C_SWDATAH1_DATA(x)                     (((uint32_t)(((uint32_t)(x)) << I3C_SWDATAH1_DATA_SHIFT)) & I3C_SWDATAH1_DATA_MASK)
-
-#define I3C_SWDATAH1_IGNORED_MASK                (0xFFFF0000U)
-#define I3C_SWDATAH1_IGNORED_SHIFT               (16U)
-/*! IGNORED - Ignored field */
-#define I3C_SWDATAH1_IGNORED(x)                  (((uint32_t)(((uint32_t)(x)) << I3C_SWDATAH1_IGNORED_SHIFT)) & I3C_SWDATAH1_IGNORED_MASK)
 /*! @} */
 
 /*! @name SCAPABILITIES2 - Target Capabilities 2 */
@@ -13927,12 +13845,12 @@ typedef struct {
 
 #define I3C_MINTSET_RXPEND_MASK                  (0x800U)
 #define I3C_MINTSET_RXPEND_SHIFT                 (11U)
-/*! RXPEND - Rx Pending Interrupt Enable */
+/*! RXPEND - Receive Pending Interrupt Enable */
 #define I3C_MINTSET_RXPEND(x)                    (((uint32_t)(((uint32_t)(x)) << I3C_MINTSET_RXPEND_SHIFT)) & I3C_MINTSET_RXPEND_MASK)
 
 #define I3C_MINTSET_TXNOTFULL_MASK               (0x1000U)
 #define I3C_MINTSET_TXNOTFULL_SHIFT              (12U)
-/*! TXNOTFULL - TX buffer/FIFO is not full interrupt enable
+/*! TXNOTFULL - Transmit Buffer/FIFO is not full interrupt enable
  *  0b1..Enable
  *  0b0..Disable
  */
@@ -18932,7 +18850,7 @@ typedef struct {
 #define LPSPI_SR_TDF_SHIFT                       (0U)
 /*! TDF - Transmit Data Flag
  *  0b0..Transmit data not requested
- *  0b1..Transmit data is requested
+ *  0b1..Transmit data requested
  */
 #define LPSPI_SR_TDF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_TDF_SHIFT)) & LPSPI_SR_TDF_MASK)
 
@@ -18940,7 +18858,7 @@ typedef struct {
 #define LPSPI_SR_RDF_SHIFT                       (1U)
 /*! RDF - Receive Data Flag
  *  0b0..Receive data not ready
- *  0b1..Receive data is ready
+ *  0b1..Receive data ready
  */
 #define LPSPI_SR_RDF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_RDF_SHIFT)) & LPSPI_SR_RDF_MASK)
 
@@ -18949,6 +18867,8 @@ typedef struct {
 /*! WCF - Word Complete Flag
  *  0b0..Not complete
  *  0b1..Complete
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPSPI_SR_WCF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_WCF_SHIFT)) & LPSPI_SR_WCF_MASK)
 
@@ -18957,6 +18877,8 @@ typedef struct {
 /*! FCF - Frame Complete Flag
  *  0b0..Not complete
  *  0b1..Complete
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPSPI_SR_FCF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_FCF_SHIFT)) & LPSPI_SR_FCF_MASK)
 
@@ -18965,6 +18887,8 @@ typedef struct {
 /*! TCF - Transfer Complete Flag
  *  0b0..Not complete
  *  0b1..Complete
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPSPI_SR_TCF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_TCF_SHIFT)) & LPSPI_SR_TCF_MASK)
 
@@ -18973,6 +18897,8 @@ typedef struct {
 /*! TEF - Transmit Error Flag
  *  0b0..No underrun
  *  0b1..Underrun
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPSPI_SR_TEF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_TEF_SHIFT)) & LPSPI_SR_TEF_MASK)
 
@@ -18981,6 +18907,8 @@ typedef struct {
 /*! REF - Receive Error Flag
  *  0b0..No overflow
  *  0b1..Overflow
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPSPI_SR_REF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_REF_SHIFT)) & LPSPI_SR_REF_MASK)
 
@@ -18989,6 +18917,8 @@ typedef struct {
 /*! DMF - Data Match Flag
  *  0b0..No match
  *  0b1..Match
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPSPI_SR_DMF(x)                          (((uint32_t)(((uint32_t)(x)) << LPSPI_SR_DMF_SHIFT)) & LPSPI_SR_DMF_MASK)
 
@@ -19194,7 +19124,10 @@ typedef struct {
 
 #define LPSPI_CFGR1_PCSPOL_MASK                  (0xF00U)
 #define LPSPI_CFGR1_PCSPOL_SHIFT                 (8U)
-/*! PCSPOL - Peripheral Chip Select Polarity */
+/*! PCSPOL - Peripheral Chip Select Polarity
+ *  0b0000..Active low
+ *  0b0001..Active high
+ */
 #define LPSPI_CFGR1_PCSPOL(x)                    (((uint32_t)(((uint32_t)(x)) << LPSPI_CFGR1_PCSPOL_SHIFT)) & LPSPI_CFGR1_PCSPOL_MASK)
 
 #define LPSPI_CFGR1_MATCFG_MASK                  (0x70000U)
@@ -19214,26 +19147,26 @@ typedef struct {
 #define LPSPI_CFGR1_PINCFG_MASK                  (0x3000000U)
 #define LPSPI_CFGR1_PINCFG_SHIFT                 (24U)
 /*! PINCFG - Pin Configuration
- *  0b00..SIN is used for input data; SOUT is used for output data.
- *  0b01..SIN is used for both input and output data. Only half-duplex serial transfers are supported.
- *  0b10..SOUT is used for both input and output data. Only half-duplex serial transfers are supported.
- *  0b11..SOUT is used for input data; SIN is used for output data.
+ *  0b00..SIN is used for input data; SOUT is used for output data
+ *  0b01..SIN is used for both input and output data; only half-duplex serial transfers are supported
+ *  0b10..SOUT is used for both input and output data; only half-duplex serial transfers are supported
+ *  0b11..SOUT is used for input data; SIN is used for output data
  */
 #define LPSPI_CFGR1_PINCFG(x)                    (((uint32_t)(((uint32_t)(x)) << LPSPI_CFGR1_PINCFG_SHIFT)) & LPSPI_CFGR1_PINCFG_MASK)
 
 #define LPSPI_CFGR1_OUTCFG_MASK                  (0x4000000U)
 #define LPSPI_CFGR1_OUTCFG_SHIFT                 (26U)
 /*! OUTCFG - Output Configuration
- *  0b0..Output data retains last value.
- *  0b1..Output data is 3-stated.
+ *  0b0..Retain last value
+ *  0b1..3-stated
  */
 #define LPSPI_CFGR1_OUTCFG(x)                    (((uint32_t)(((uint32_t)(x)) << LPSPI_CFGR1_OUTCFG_SHIFT)) & LPSPI_CFGR1_OUTCFG_MASK)
 
 #define LPSPI_CFGR1_PCSCFG_MASK                  (0x8000000U)
 #define LPSPI_CFGR1_PCSCFG_SHIFT                 (27U)
 /*! PCSCFG - Peripheral Chip Select Configuration
- *  0b0..PCS[3:2] are configured for chip select function
- *  0b1..PCS[3:2] are configured for half-duplex 4-bit transfers (PCS[3:2] = DATA[3:2])
+ *  0b0..PCS[3:2] configured for chip select function
+ *  0b1..PCS[3:2] configured for half-duplex 4-bit transfers (PCS[3:2] = DATA[3:2])
  */
 #define LPSPI_CFGR1_PCSCFG(x)                    (((uint32_t)(((uint32_t)(x)) << LPSPI_CFGR1_PCSCFG_SHIFT)) & LPSPI_CFGR1_PCSCFG_MASK)
 /*! @} */
@@ -19295,7 +19228,7 @@ typedef struct {
 
 #define LPSPI_CCR1_PCSPCS_MASK                   (0xFF0000U)
 #define LPSPI_CCR1_PCSPCS_SHIFT                  (16U)
-/*! PCSPCS - PCS to PCS delay */
+/*! PCSPCS - PCS to PCS Delay */
 #define LPSPI_CCR1_PCSPCS(x)                     (((uint32_t)(((uint32_t)(x)) << LPSPI_CCR1_PCSPCS_SHIFT)) & LPSPI_CCR1_PCSPCS_MASK)
 
 #define LPSPI_CCR1_SCKSCK_MASK                   (0xFF000000U)
@@ -19362,7 +19295,7 @@ typedef struct {
 #define LPSPI_TCR_RXMSK_SHIFT                    (19U)
 /*! RXMSK - Receive Data Mask
  *  0b0..Normal transfer
- *  0b1..Receive data is masked
+ *  0b1..Mask receive data
  */
 #define LPSPI_TCR_RXMSK(x)                       (((uint32_t)(((uint32_t)(x)) << LPSPI_TCR_RXMSK_SHIFT)) & LPSPI_TCR_RXMSK_MASK)
 
@@ -19377,24 +19310,24 @@ typedef struct {
 #define LPSPI_TCR_CONT_MASK                      (0x200000U)
 #define LPSPI_TCR_CONT_SHIFT                     (21U)
 /*! CONT - Continuous Transfer
- *  0b0..Continuous transfer is disabled
- *  0b1..Continuous transfer is enabled
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPSPI_TCR_CONT(x)                        (((uint32_t)(((uint32_t)(x)) << LPSPI_TCR_CONT_SHIFT)) & LPSPI_TCR_CONT_MASK)
 
 #define LPSPI_TCR_BYSW_MASK                      (0x400000U)
 #define LPSPI_TCR_BYSW_SHIFT                     (22U)
 /*! BYSW - Byte Swap
- *  0b0..Disabled
- *  0b1..Enabled
+ *  0b0..Disable byte swap
+ *  0b1..Enable byte swap
  */
 #define LPSPI_TCR_BYSW(x)                        (((uint32_t)(((uint32_t)(x)) << LPSPI_TCR_BYSW_SHIFT)) & LPSPI_TCR_BYSW_MASK)
 
 #define LPSPI_TCR_LSBF_MASK                      (0x800000U)
 #define LPSPI_TCR_LSBF_SHIFT                     (23U)
 /*! LSBF - LSB First
- *  0b0..Data is transferred MSB first
- *  0b1..Data is transferred LSB first
+ *  0b0..MSB first
+ *  0b1..LSB first
  */
 #define LPSPI_TCR_LSBF(x)                        (((uint32_t)(((uint32_t)(x)) << LPSPI_TCR_LSBF_SHIFT)) & LPSPI_TCR_LSBF_MASK)
 
@@ -19453,7 +19386,7 @@ typedef struct {
 
 #define LPSPI_RSR_SOF_MASK                       (0x1U)
 #define LPSPI_RSR_SOF_SHIFT                      (0U)
-/*! SOF - Start Of Frame
+/*! SOF - Start of Frame
  *  0b0..Subsequent data word
  *  0b1..First data word
  */
@@ -19558,7 +19491,7 @@ typedef struct {
 /** LPTMR - Register Layout Typedef */
 typedef struct {
   __IO uint32_t CSR;                               /**< Control Status, offset: 0x0 */
-  __IO uint32_t PSR;                               /**< Prescale and Glitch Filter, offset: 0x4 */
+  __IO uint32_t PSR;                               /**< Prescaler and Glitch Filter, offset: 0x4 */
   __IO uint32_t CMR;                               /**< Compare, offset: 0x8 */
   __IO uint32_t CNR;                               /**< Counter, offset: 0xC */
 } LPTMR_Type;
@@ -19586,8 +19519,8 @@ typedef struct {
 #define LPTMR_CSR_TMS_MASK                       (0x2U)
 #define LPTMR_CSR_TMS_SHIFT                      (1U)
 /*! TMS - Timer Mode Select
- *  0b0..Time Counter mode
- *  0b1..Pulse Counter mode
+ *  0b0..Time Counter
+ *  0b1..Pulse Counter
  */
 #define LPTMR_CSR_TMS(x)                         (((uint32_t)(((uint32_t)(x)) << LPTMR_CSR_TMS_SHIFT)) & LPTMR_CSR_TMS_MASK)
 
@@ -19630,6 +19563,8 @@ typedef struct {
 /*! TCF - Timer Compare Flag
  *  0b0..CNR != (CMR + 1)
  *  0b1..CNR = (CMR + 1)
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPTMR_CSR_TCF(x)                         (((uint32_t)(((uint32_t)(x)) << LPTMR_CSR_TCF_SHIFT)) & LPTMR_CSR_TCF_MASK)
 
@@ -19642,12 +19577,12 @@ typedef struct {
 #define LPTMR_CSR_TDRE(x)                        (((uint32_t)(((uint32_t)(x)) << LPTMR_CSR_TDRE_SHIFT)) & LPTMR_CSR_TDRE_MASK)
 /*! @} */
 
-/*! @name PSR - Prescale and Glitch Filter */
+/*! @name PSR - Prescaler and Glitch Filter */
 /*! @{ */
 
 #define LPTMR_PSR_PCS_MASK                       (0x3U)
 #define LPTMR_PSR_PCS_SHIFT                      (0U)
-/*! PCS - Prescaler/Glitch Filter Clock Select
+/*! PCS - Prescaler and Glitch Filter Clock Select
  *  0b00..Clock 0
  *  0b01..Clock 1
  *  0b10..Clock 2
@@ -19657,31 +19592,31 @@ typedef struct {
 
 #define LPTMR_PSR_PBYP_MASK                      (0x4U)
 #define LPTMR_PSR_PBYP_SHIFT                     (2U)
-/*! PBYP - Prescaler/Glitch Filter Bypass
- *  0b0..Prescaler/glitch filter enable
- *  0b1..Prescaler/glitch filter bypass
+/*! PBYP - Prescaler and Glitch Filter Bypass
+ *  0b0..Prescaler and glitch filter enable
+ *  0b1..Prescaler and glitch filter bypass
  */
 #define LPTMR_PSR_PBYP(x)                        (((uint32_t)(((uint32_t)(x)) << LPTMR_PSR_PBYP_SHIFT)) & LPTMR_PSR_PBYP_MASK)
 
 #define LPTMR_PSR_PRESCALE_MASK                  (0x78U)
 #define LPTMR_PSR_PRESCALE_SHIFT                 (3U)
-/*! PRESCALE - Prescale/Glitch Filter Value
- *  0b0000..Prescaler divides the prescaler clock by 2; glitch filter does not support this configuration.
- *  0b0001..Prescaler divides the prescaler clock by 4; glitch filter recognizes change on input pin after 2 rising clock edges.
- *  0b0010..Prescaler divides the prescaler clock by 8; glitch filter recognizes change on input pin after 4 rising clock edges.
- *  0b0011..Prescaler divides the prescaler clock by 16; glitch filter recognizes change on input pin after 8 rising clock edges.
- *  0b0100..Prescaler divides the prescaler clock by 32; glitch filter recognizes change on input pin after 16 rising clock edges.
- *  0b0101..Prescaler divides the prescaler clock by 64; glitch filter recognizes change on input pin after 32 rising clock edges.
- *  0b0110..Prescaler divides the prescaler clock by 128; glitch filter recognizes change on input pin after 64 rising clock edges.
- *  0b0111..Prescaler divides the prescaler clock by 256; glitch filter recognizes change on input pin after 128 rising clock edges.
- *  0b1000..Prescaler divides the prescaler clock by 512; glitch filter recognizes change on input pin after 256 rising clock edges.
- *  0b1001..Prescaler divides the prescaler clock by 1024; glitch filter recognizes change on input pin after 512 rising clock edges.
- *  0b1010..Prescaler divides the prescaler clock by 2048; glitch filter recognizes change on input pin after 1024 rising clock edges.
- *  0b1011..Prescaler divides the prescaler clock by 4096; glitch filter recognizes change on input pin after 2048 rising clock edges.
- *  0b1100..Prescaler divides the prescaler clock by 8192; glitch filter recognizes change on input pin after 4096 rising clock edges.
- *  0b1101..Prescaler divides the prescaler clock by 16,384; glitch filter recognizes change on input pin after 8192 rising clock edges.
- *  0b1110..Prescaler divides the prescaler clock by 32,768; glitch filter recognizes change on input pin after 16,384 rising clock edges.
- *  0b1111..Prescaler divides the prescaler clock by 65,536; glitch filter recognizes change on input pin after 32,768 rising clock edges.
+/*! PRESCALE - Prescaler and Glitch Filter Value
+ *  0b0000..Prescaler divides the prescaler clock by 2; glitch filter does not support this configuration
+ *  0b0001..Prescaler divides the prescaler clock by 4; glitch filter recognizes change on input pin after two rising clock edges
+ *  0b0010..Prescaler divides the prescaler clock by 8; glitch filter recognizes change on input pin after four rising clock edges
+ *  0b0011..Prescaler divides the prescaler clock by 16; glitch filter recognizes change on input pin after eight rising clock edges
+ *  0b0100..Prescaler divides the prescaler clock by 32; glitch filter recognizes change on input pin after 16 rising clock edges
+ *  0b0101..Prescaler divides the prescaler clock by 64; glitch filter recognizes change on input pin after 32 rising clock edges
+ *  0b0110..Prescaler divides the prescaler clock by 128; glitch filter recognizes change on input pin after 64 rising clock edges
+ *  0b0111..Prescaler divides the prescaler clock by 256; glitch filter recognizes change on input pin after 128 rising clock edges
+ *  0b1000..Prescaler divides the prescaler clock by 512; glitch filter recognizes change on input pin after 256 rising clock edges
+ *  0b1001..Prescaler divides the prescaler clock by 1024; glitch filter recognizes change on input pin after 512 rising clock edges
+ *  0b1010..Prescaler divides the prescaler clock by 2048; glitch filter recognizes change on input pin after 1024 rising clock edges
+ *  0b1011..Prescaler divides the prescaler clock by 4096; glitch filter recognizes change on input pin after 2048 rising clock edges
+ *  0b1100..Prescaler divides the prescaler clock by 8192; glitch filter recognizes change on input pin after 4096 rising clock edges
+ *  0b1101..Prescaler divides the prescaler clock by 16,384; glitch filter recognizes change on input pin after 8192 rising clock edges
+ *  0b1110..Prescaler divides the prescaler clock by 32,768; glitch filter recognizes change on input pin after 16,384 rising clock edges
+ *  0b1111..Prescaler divides the prescaler clock by 65,536; glitch filter recognizes change on input pin after 32,768 rising clock edges
  */
 #define LPTMR_PSR_PRESCALE(x)                    (((uint32_t)(((uint32_t)(x)) << LPTMR_PSR_PRESCALE_SHIFT)) & LPTMR_PSR_PRESCALE_MASK)
 /*! @} */
@@ -19843,72 +19778,72 @@ typedef struct {
 #define LPUART_BAUD_RXEDGIE_MASK                 (0x4000U)
 #define LPUART_BAUD_RXEDGIE_SHIFT                (14U)
 /*! RXEDGIE - RX Input Active Edge Interrupt Enable
- *  0b0..Disables hardware interrupts from STAT[RXEDGIF]
- *  0b1..Requests hardware interrupts when STAT[RXEDGIF] is 1
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_BAUD_RXEDGIE(x)                   (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_RXEDGIE_SHIFT)) & LPUART_BAUD_RXEDGIE_MASK)
 
 #define LPUART_BAUD_LBKDIE_MASK                  (0x8000U)
 #define LPUART_BAUD_LBKDIE_SHIFT                 (15U)
 /*! LBKDIE - LIN Break Detect Interrupt Enable
- *  0b0..Disables hardware interrupts from STAT[LBKDIF] (uses polling)
- *  0b1..Requests hardware interrupt when STAT[LBKDIF] is 1
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_BAUD_LBKDIE(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_LBKDIE_SHIFT)) & LPUART_BAUD_LBKDIE_MASK)
 
 #define LPUART_BAUD_RESYNCDIS_MASK               (0x10000U)
 #define LPUART_BAUD_RESYNCDIS_SHIFT              (16U)
 /*! RESYNCDIS - Resynchronization Disable
- *  0b0..Enables resynchronization
- *  0b1..Disables resynchronization
+ *  0b0..Enable
+ *  0b1..Disable
  */
 #define LPUART_BAUD_RESYNCDIS(x)                 (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_RESYNCDIS_SHIFT)) & LPUART_BAUD_RESYNCDIS_MASK)
 
 #define LPUART_BAUD_BOTHEDGE_MASK                (0x20000U)
 #define LPUART_BAUD_BOTHEDGE_SHIFT               (17U)
 /*! BOTHEDGE - Both Edge Sampling
- *  0b0..Receiver samples input data using the rising edge of the baud rate clock
- *  0b1..Receiver samples input data using the rising and falling edges of the baud rate clock
+ *  0b0..Rising edge
+ *  0b1..Both rising and falling edges
  */
 #define LPUART_BAUD_BOTHEDGE(x)                  (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_BOTHEDGE_SHIFT)) & LPUART_BAUD_BOTHEDGE_MASK)
 
 #define LPUART_BAUD_MATCFG_MASK                  (0xC0000U)
 #define LPUART_BAUD_MATCFG_SHIFT                 (18U)
 /*! MATCFG - Match Configuration
- *  0b00..Address match wakeup
- *  0b01..Idle match wakeup
+ *  0b00..Address match wake-up
+ *  0b01..Idle match wake-up
  *  0b10..Match on and match off
- *  0b11..Enables RWU on data match and match on/off for the transmitter CTS input
+ *  0b11..Enables RWU on data match and match on or off for the transmitter CTS input
  */
 #define LPUART_BAUD_MATCFG(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_MATCFG_SHIFT)) & LPUART_BAUD_MATCFG_MASK)
 
 #define LPUART_BAUD_RIDMAE_MASK                  (0x100000U)
 #define LPUART_BAUD_RIDMAE_SHIFT                 (20U)
 /*! RIDMAE - Receiver Idle DMA Enable
- *  0b0..DMA request disabled
- *  0b1..DMA request enabled
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_BAUD_RIDMAE(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_RIDMAE_SHIFT)) & LPUART_BAUD_RIDMAE_MASK)
 
 #define LPUART_BAUD_RDMAE_MASK                   (0x200000U)
 #define LPUART_BAUD_RDMAE_SHIFT                  (21U)
 /*! RDMAE - Receiver Full DMA Enable
- *  0b0..Disables DMA request
- *  0b1..Enables DMA request
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_BAUD_RDMAE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_RDMAE_SHIFT)) & LPUART_BAUD_RDMAE_MASK)
 
 #define LPUART_BAUD_TDMAE_MASK                   (0x800000U)
 #define LPUART_BAUD_TDMAE_SHIFT                  (23U)
 /*! TDMAE - Transmitter DMA Enable
- *  0b0..Disables DMA request
- *  0b1..Enables DMA request
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_BAUD_TDMAE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_TDMAE_SHIFT)) & LPUART_BAUD_TDMAE_MASK)
 
 #define LPUART_BAUD_OSR_MASK                     (0x1F000000U)
 #define LPUART_BAUD_OSR_SHIFT                    (24U)
-/*! OSR - Oversampling Ratio (OSR)
+/*! OSR - Oversampling Ratio
  *  0b00000..Results in an OSR of 16
  *  0b00001..Reserved
  *  0b00010..Reserved
@@ -19955,16 +19890,16 @@ typedef struct {
 #define LPUART_BAUD_MAEN2_MASK                   (0x40000000U)
 #define LPUART_BAUD_MAEN2_SHIFT                  (30U)
 /*! MAEN2 - Match Address Mode Enable 2
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_BAUD_MAEN2(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_MAEN2_SHIFT)) & LPUART_BAUD_MAEN2_MASK)
 
 #define LPUART_BAUD_MAEN1_MASK                   (0x80000000U)
 #define LPUART_BAUD_MAEN1_SHIFT                  (31U)
 /*! MAEN1 - Match Address Mode Enable 1
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_BAUD_MAEN1(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_BAUD_MAEN1_SHIFT)) & LPUART_BAUD_MAEN1_MASK)
 /*! @} */
@@ -19975,16 +19910,16 @@ typedef struct {
 #define LPUART_STAT_LBKFE_MASK                   (0x1U)
 #define LPUART_STAT_LBKFE_SHIFT                  (0U)
 /*! LBKFE - LIN Break Flag Enable
- *  0b0..Disables LIN break detect
- *  0b1..Enables LIN break detect
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_STAT_LBKFE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_LBKFE_SHIFT)) & LPUART_STAT_LBKFE_MASK)
 
 #define LPUART_STAT_AME_MASK                     (0x2U)
 #define LPUART_STAT_AME_SHIFT                    (1U)
 /*! AME - Address Mark Enable
- *  0b0..Address mark in character is MSB
- *  0b1..Address mark in character is the last bit before the stop bit (or parity bit when enabled)
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_STAT_AME(x)                       (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_AME_SHIFT)) & LPUART_STAT_AME_MASK)
 
@@ -19993,6 +19928,8 @@ typedef struct {
 /*! MA2F - Match 2 Flag
  *  0b0..Not equal to MA2
  *  0b1..Equal to MA2
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_MA2F(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_MA2F_SHIFT)) & LPUART_STAT_MA2F_MASK)
 
@@ -20001,30 +19938,38 @@ typedef struct {
 /*! MA1F - Match 1 Flag
  *  0b0..Not equal to MA1
  *  0b1..Equal to MA1
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_MA1F(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_MA1F_SHIFT)) & LPUART_STAT_MA1F_MASK)
 
 #define LPUART_STAT_PF_MASK                      (0x10000U)
 #define LPUART_STAT_PF_SHIFT                     (16U)
-/*! PF - Parity Error Flag (PF)
+/*! PF - Parity Error Flag
  *  0b0..No parity error detected
  *  0b1..Parity error detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_PF(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_PF_SHIFT)) & LPUART_STAT_PF_MASK)
 
 #define LPUART_STAT_FE_MASK                      (0x20000U)
 #define LPUART_STAT_FE_SHIFT                     (17U)
-/*! FE - Framing Error Flag (FE)
+/*! FE - Framing Error Flag
  *  0b0..No framing error detected (this does not guarantee that the framing is correct)
  *  0b1..Framing error detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_FE(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_FE_SHIFT)) & LPUART_STAT_FE_MASK)
 
 #define LPUART_STAT_NF_MASK                      (0x40000U)
 #define LPUART_STAT_NF_SHIFT                     (18U)
-/*! NF - Noise Flag (NF)
+/*! NF - Noise Flag
  *  0b0..No noise detected
  *  0b1..Noise detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_NF(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_NF_SHIFT)) & LPUART_STAT_NF_MASK)
 
@@ -20032,15 +19977,19 @@ typedef struct {
 #define LPUART_STAT_OR_SHIFT                     (19U)
 /*! OR - Receiver Overrun Flag
  *  0b0..No overrun
- *  0b1..Receive overrun (new LPUART data lost)
+ *  0b1..Receive overrun (new LPUART data is lost)
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_OR(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_OR_SHIFT)) & LPUART_STAT_OR_MASK)
 
 #define LPUART_STAT_IDLE_MASK                    (0x100000U)
 #define LPUART_STAT_IDLE_SHIFT                   (20U)
 /*! IDLE - Idle Line Flag
- *  0b0..No idle line detected
- *  0b1..Idle line detected
+ *  0b0..Idle line detected
+ *  0b1..Idle line not detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_IDLE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_IDLE_SHIFT)) & LPUART_STAT_IDLE_MASK)
 
@@ -20055,8 +20004,8 @@ typedef struct {
 #define LPUART_STAT_TC_MASK                      (0x400000U)
 #define LPUART_STAT_TC_SHIFT                     (22U)
 /*! TC - Transmission Complete Flag
- *  0b0..Transmitter active (sending data, a preamble, or a break)
- *  0b1..Transmitter idle (transmission activity complete)
+ *  0b0..Transmitter active
+ *  0b1..Transmitter idle
  */
 #define LPUART_STAT_TC(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_TC_SHIFT)) & LPUART_STAT_TC_MASK)
 
@@ -20079,8 +20028,8 @@ typedef struct {
 #define LPUART_STAT_LBKDE_MASK                   (0x2000000U)
 #define LPUART_STAT_LBKDE_SHIFT                  (25U)
 /*! LBKDE - LIN Break Detection Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_STAT_LBKDE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_LBKDE_SHIFT)) & LPUART_STAT_LBKDE_MASK)
 
@@ -20121,6 +20070,8 @@ typedef struct {
 /*! RXEDGIF - RXD Pin Active Edge Interrupt Flag
  *  0b0..Not occurred
  *  0b1..Occurred
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_RXEDGIF(x)                   (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_RXEDGIF_SHIFT)) & LPUART_STAT_RXEDGIF_MASK)
 
@@ -20129,6 +20080,8 @@ typedef struct {
 /*! LBKDIF - LIN Break Detect Interrupt Flag
  *  0b0..Not detected
  *  0b1..Detected
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_STAT_LBKDIF(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_STAT_LBKDIF_SHIFT)) & LPUART_STAT_LBKDIF_MASK)
 /*! @} */
@@ -20147,8 +20100,8 @@ typedef struct {
 #define LPUART_CTRL_PE_MASK                      (0x2U)
 #define LPUART_CTRL_PE_SHIFT                     (1U)
 /*! PE - Parity Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_PE(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_PE_SHIFT)) & LPUART_CTRL_PE_MASK)
 
@@ -20162,17 +20115,17 @@ typedef struct {
 
 #define LPUART_CTRL_WAKE_MASK                    (0x8U)
 #define LPUART_CTRL_WAKE_SHIFT                   (3U)
-/*! WAKE - Receiver Wakeup Method Select
- *  0b0..Configures CTRL[RWU] for idle-line wakeup
- *  0b1..Configures CTRL[RWU] with address-mark wakeup
+/*! WAKE - Receiver Wake-Up Method Select
+ *  0b0..Idle
+ *  0b1..Mark
  */
 #define LPUART_CTRL_WAKE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_WAKE_SHIFT)) & LPUART_CTRL_WAKE_MASK)
 
 #define LPUART_CTRL_M_MASK                       (0x10U)
 #define LPUART_CTRL_M_SHIFT                      (4U)
 /*! M - 9-Bit Or 8-Bit Mode Select
- *  0b0..8-bit data characters
- *  0b1..9-bit data characters
+ *  0b0..8-bit
+ *  0b1..9-bit
  */
 #define LPUART_CTRL_M(x)                         (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_M_SHIFT)) & LPUART_CTRL_M_MASK)
 
@@ -20186,9 +20139,9 @@ typedef struct {
 
 #define LPUART_CTRL_DOZEEN_MASK                  (0x40U)
 #define LPUART_CTRL_DOZEEN_SHIFT                 (6U)
-/*! DOZEEN - Enables LPUART in Doze mode.
- *  0b0..Enables
- *  0b1..Disables
+/*! DOZEEN - Doze Mode
+ *  0b0..Enable
+ *  0b1..Disable
  */
 #define LPUART_CTRL_DOZEEN(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_DOZEEN_SHIFT)) & LPUART_CTRL_DOZEEN_MASK)
 
@@ -20217,24 +20170,24 @@ typedef struct {
 #define LPUART_CTRL_M7_MASK                      (0x800U)
 #define LPUART_CTRL_M7_SHIFT                     (11U)
 /*! M7 - 7-Bit Mode Select
- *  0b0..8-bit to 10-bit data characters
- *  0b1..7-bit data characters
+ *  0b0..8-bit to 10-bit
+ *  0b1..7-bit
  */
 #define LPUART_CTRL_M7(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_M7_SHIFT)) & LPUART_CTRL_M7_MASK)
 
 #define LPUART_CTRL_MA2IE_MASK                   (0x4000U)
 #define LPUART_CTRL_MA2IE_SHIFT                  (14U)
 /*! MA2IE - Match 2 (MA2F) Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_MA2IE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_MA2IE_SHIFT)) & LPUART_CTRL_MA2IE_MASK)
 
 #define LPUART_CTRL_MA1IE_MASK                   (0x8000U)
 #define LPUART_CTRL_MA1IE_SHIFT                  (15U)
 /*! MA1IE - Match 1 (MA1F) Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_MA1IE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_MA1IE_SHIFT)) & LPUART_CTRL_MA1IE_MASK)
 
@@ -20248,89 +20201,89 @@ typedef struct {
 
 #define LPUART_CTRL_RWU_MASK                     (0x20000U)
 #define LPUART_CTRL_RWU_SHIFT                    (17U)
-/*! RWU - Receiver Wakeup Control
+/*! RWU - Receiver Wake-Up Control
  *  0b0..Normal receiver operation
- *  0b1..LPUART receiver in standby, waiting for a wakeup condition
+ *  0b1..LPUART receiver in standby, waiting for a wake-up condition
  */
 #define LPUART_CTRL_RWU(x)                       (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_RWU_SHIFT)) & LPUART_CTRL_RWU_MASK)
 
 #define LPUART_CTRL_RE_MASK                      (0x40000U)
 #define LPUART_CTRL_RE_SHIFT                     (18U)
 /*! RE - Receiver Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_RE(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_RE_SHIFT)) & LPUART_CTRL_RE_MASK)
 
 #define LPUART_CTRL_TE_MASK                      (0x80000U)
 #define LPUART_CTRL_TE_SHIFT                     (19U)
 /*! TE - Transmitter Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_TE(x)                        (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_TE_SHIFT)) & LPUART_CTRL_TE_MASK)
 
 #define LPUART_CTRL_ILIE_MASK                    (0x100000U)
 #define LPUART_CTRL_ILIE_SHIFT                   (20U)
 /*! ILIE - Idle Line Interrupt Enable
- *  0b0..Disables hardware interrupts from STAT[IDLE]; use polling
- *  0b1..Enables hardware interrupts when STAT[IDLE] = 1
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_ILIE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_ILIE_SHIFT)) & LPUART_CTRL_ILIE_MASK)
 
 #define LPUART_CTRL_RIE_MASK                     (0x200000U)
 #define LPUART_CTRL_RIE_SHIFT                    (21U)
 /*! RIE - Receiver Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_RIE(x)                       (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_RIE_SHIFT)) & LPUART_CTRL_RIE_MASK)
 
 #define LPUART_CTRL_TCIE_MASK                    (0x400000U)
 #define LPUART_CTRL_TCIE_SHIFT                   (22U)
 /*! TCIE - Transmission Complete Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_TCIE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_TCIE_SHIFT)) & LPUART_CTRL_TCIE_MASK)
 
 #define LPUART_CTRL_TIE_MASK                     (0x800000U)
 #define LPUART_CTRL_TIE_SHIFT                    (23U)
 /*! TIE - Transmit Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_TIE(x)                       (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_TIE_SHIFT)) & LPUART_CTRL_TIE_MASK)
 
 #define LPUART_CTRL_PEIE_MASK                    (0x1000000U)
 #define LPUART_CTRL_PEIE_SHIFT                   (24U)
 /*! PEIE - Parity Error Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_PEIE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_PEIE_SHIFT)) & LPUART_CTRL_PEIE_MASK)
 
 #define LPUART_CTRL_FEIE_MASK                    (0x2000000U)
 #define LPUART_CTRL_FEIE_SHIFT                   (25U)
 /*! FEIE - Framing Error Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_FEIE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_FEIE_SHIFT)) & LPUART_CTRL_FEIE_MASK)
 
 #define LPUART_CTRL_NEIE_MASK                    (0x4000000U)
 #define LPUART_CTRL_NEIE_SHIFT                   (26U)
 /*! NEIE - Noise Error Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_NEIE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_NEIE_SHIFT)) & LPUART_CTRL_NEIE_MASK)
 
 #define LPUART_CTRL_ORIE_MASK                    (0x8000000U)
 #define LPUART_CTRL_ORIE_SHIFT                   (27U)
 /*! ORIE - Overrun Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_CTRL_ORIE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_ORIE_SHIFT)) & LPUART_CTRL_ORIE_MASK)
 
@@ -20345,8 +20298,8 @@ typedef struct {
 #define LPUART_CTRL_TXDIR_MASK                   (0x20000000U)
 #define LPUART_CTRL_TXDIR_SHIFT                  (29U)
 /*! TXDIR - TXD Pin Direction in Single-Wire Mode
- *  0b0..TXD pin is an input in Single-Wire mode
- *  0b1..TXD pin is an output in Single-Wire mode
+ *  0b0..Input
+ *  0b1..Output
  */
 #define LPUART_CTRL_TXDIR(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_CTRL_TXDIR_SHIFT)) & LPUART_CTRL_TXDIR_MASK)
 
@@ -20366,75 +20319,75 @@ typedef struct {
 
 #define LPUART_DATA_R0T0_MASK                    (0x1U)
 #define LPUART_DATA_R0T0_SHIFT                   (0U)
-/*! R0T0 - Read Receive FIFO Bit 0 Or Write Transmit FIFO Bit 0 */
+/*! R0T0 - Read receive FIFO bit 0 or write transmit FIFO bit 0 */
 #define LPUART_DATA_R0T0(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R0T0_SHIFT)) & LPUART_DATA_R0T0_MASK)
 
 #define LPUART_DATA_R1T1_MASK                    (0x2U)
 #define LPUART_DATA_R1T1_SHIFT                   (1U)
-/*! R1T1 - Read Receive FIFO Bit 1 Or Write Transmit FIFO Bit 1 */
+/*! R1T1 - Read receive FIFO bit 1 or write transmit FIFO bit 1 */
 #define LPUART_DATA_R1T1(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R1T1_SHIFT)) & LPUART_DATA_R1T1_MASK)
 
 #define LPUART_DATA_R2T2_MASK                    (0x4U)
 #define LPUART_DATA_R2T2_SHIFT                   (2U)
-/*! R2T2 - Read Receive FIFO Bit 2 Or Write Transmit FIFO Bit 2 */
+/*! R2T2 - Read receive FIFO bit 2 or write transmit FIFO bit 2 */
 #define LPUART_DATA_R2T2(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R2T2_SHIFT)) & LPUART_DATA_R2T2_MASK)
 
 #define LPUART_DATA_R3T3_MASK                    (0x8U)
 #define LPUART_DATA_R3T3_SHIFT                   (3U)
-/*! R3T3 - Read Receive FIFO Bit 3 Or Write Transmit FIFO Bit 3 */
+/*! R3T3 - Read receive FIFO bit 3 or write transmit FIFO bit 3 */
 #define LPUART_DATA_R3T3(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R3T3_SHIFT)) & LPUART_DATA_R3T3_MASK)
 
 #define LPUART_DATA_R4T4_MASK                    (0x10U)
 #define LPUART_DATA_R4T4_SHIFT                   (4U)
-/*! R4T4 - Read Receive FIFO Bit 4 Or Write Transmit FIFO Bit 4 */
+/*! R4T4 - Read receive FIFO bit 4 or write transmit FIFO bit 4 */
 #define LPUART_DATA_R4T4(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R4T4_SHIFT)) & LPUART_DATA_R4T4_MASK)
 
 #define LPUART_DATA_R5T5_MASK                    (0x20U)
 #define LPUART_DATA_R5T5_SHIFT                   (5U)
-/*! R5T5 - Read Receive FIFO Bit 5 Or Write Transmit FIFO Bit 5 */
+/*! R5T5 - Read receive FIFO bit 5 or write transmit FIFO bit 5 */
 #define LPUART_DATA_R5T5(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R5T5_SHIFT)) & LPUART_DATA_R5T5_MASK)
 
 #define LPUART_DATA_R6T6_MASK                    (0x40U)
 #define LPUART_DATA_R6T6_SHIFT                   (6U)
-/*! R6T6 - Read Receive FIFO Bit 6 Or Write Transmit FIFO Bit 6 */
+/*! R6T6 - Read receive FIFO bit 6 or write transmit FIFO bit 6 */
 #define LPUART_DATA_R6T6(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R6T6_SHIFT)) & LPUART_DATA_R6T6_MASK)
 
 #define LPUART_DATA_R7T7_MASK                    (0x80U)
 #define LPUART_DATA_R7T7_SHIFT                   (7U)
-/*! R7T7 - Read Receive FIFO Bit 7 Or Write Transmit FIFO Bit 7 */
+/*! R7T7 - Read receive FIFO bit 7 or write transmit FIFO bit 7 */
 #define LPUART_DATA_R7T7(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R7T7_SHIFT)) & LPUART_DATA_R7T7_MASK)
 
 #define LPUART_DATA_R8T8_MASK                    (0x100U)
 #define LPUART_DATA_R8T8_SHIFT                   (8U)
-/*! R8T8 - Read Receive FIFO Bit 8 Or Write Transmit FIFO Bit 8 */
+/*! R8T8 - Read receive FIFO bit 8 or write transmit FIFO bit 8 */
 #define LPUART_DATA_R8T8(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R8T8_SHIFT)) & LPUART_DATA_R8T8_MASK)
 
 #define LPUART_DATA_R9T9_MASK                    (0x200U)
 #define LPUART_DATA_R9T9_SHIFT                   (9U)
-/*! R9T9 - Read Receive FIFO Bit 9 Or Write Transmit FIFO Bit 9 */
+/*! R9T9 - Read receive FIFO bit 9 or write transmit FIFO bit 9 */
 #define LPUART_DATA_R9T9(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_R9T9_SHIFT)) & LPUART_DATA_R9T9_MASK)
 
 #define LPUART_DATA_LINBRK_MASK                  (0x400U)
 #define LPUART_DATA_LINBRK_SHIFT                 (10U)
 /*! LINBRK - LIN Break
- *  0b0..LIN break not detected or LIN break detect circuitry disabled
- *  0b1..LIN break detected
+ *  0b0..Not detected
+ *  0b1..Detected
  */
 #define LPUART_DATA_LINBRK(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_LINBRK_SHIFT)) & LPUART_DATA_LINBRK_MASK)
 
 #define LPUART_DATA_IDLINE_MASK                  (0x800U)
 #define LPUART_DATA_IDLINE_SHIFT                 (11U)
 /*! IDLINE - Idle Line
- *  0b0..Received was not idle
- *  0b1..Receiver was idle
+ *  0b0..Not idle
+ *  0b1..Idle
  */
 #define LPUART_DATA_IDLINE(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_IDLINE_SHIFT)) & LPUART_DATA_IDLINE_MASK)
 
 #define LPUART_DATA_RXEMPT_MASK                  (0x1000U)
 #define LPUART_DATA_RXEMPT_SHIFT                 (12U)
 /*! RXEMPT - Receive Buffer Empty
- *  0b0..Contains valid data
- *  0b1..Contains invalid data and is empty
+ *  0b0..Valid data
+ *  0b1..Invalid data and empty
  */
 #define LPUART_DATA_RXEMPT(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_DATA_RXEMPT_SHIFT)) & LPUART_DATA_RXEMPT_MASK)
 
@@ -20483,32 +20436,32 @@ typedef struct {
 #define LPUART_MODIR_TXCTSE_MASK                 (0x1U)
 #define LPUART_MODIR_TXCTSE_SHIFT                (0U)
 /*! TXCTSE - Transmitter CTS Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_MODIR_TXCTSE(x)                   (((uint32_t)(((uint32_t)(x)) << LPUART_MODIR_TXCTSE_SHIFT)) & LPUART_MODIR_TXCTSE_MASK)
 
 #define LPUART_MODIR_TXRTSE_MASK                 (0x2U)
 #define LPUART_MODIR_TXRTSE_SHIFT                (1U)
 /*! TXRTSE - Transmitter RTS Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_MODIR_TXRTSE(x)                   (((uint32_t)(((uint32_t)(x)) << LPUART_MODIR_TXRTSE_SHIFT)) & LPUART_MODIR_TXRTSE_MASK)
 
 #define LPUART_MODIR_TXRTSPOL_MASK               (0x4U)
 #define LPUART_MODIR_TXRTSPOL_SHIFT              (2U)
 /*! TXRTSPOL - Transmitter RTS Polarity
- *  0b0..Transmitter RTS is active low
- *  0b1..Transmitter RTS is active high
+ *  0b0..Active low
+ *  0b1..Active high
  */
 #define LPUART_MODIR_TXRTSPOL(x)                 (((uint32_t)(((uint32_t)(x)) << LPUART_MODIR_TXRTSPOL_SHIFT)) & LPUART_MODIR_TXRTSPOL_MASK)
 
 #define LPUART_MODIR_RXRTSE_MASK                 (0x8U)
 #define LPUART_MODIR_RXRTSE_SHIFT                (3U)
 /*! RXRTSE - Receiver RTS Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_MODIR_RXRTSE(x)                   (((uint32_t)(((uint32_t)(x)) << LPUART_MODIR_RXRTSE_SHIFT)) & LPUART_MODIR_RXRTSE_MASK)
 
@@ -20546,8 +20499,8 @@ typedef struct {
 #define LPUART_MODIR_IREN_MASK                   (0x40000U)
 #define LPUART_MODIR_IREN_SHIFT                  (18U)
 /*! IREN - IR Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_MODIR_IREN(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_MODIR_IREN_SHIFT)) & LPUART_MODIR_IREN_MASK)
 /*! @} */
@@ -20558,74 +20511,74 @@ typedef struct {
 #define LPUART_FIFO_RXFIFOSIZE_MASK              (0x7U)
 #define LPUART_FIFO_RXFIFOSIZE_SHIFT             (0U)
 /*! RXFIFOSIZE - Receive FIFO Buffer Depth
- *  0b000..Receive FIFO buffer depth = 1 dataword
- *  0b001..Receive FIFO buffer depth = 4 datawords
- *  0b010..Receive FIFO buffer depth = 8 datawords
- *  0b011..Receive FIFO buffer depth = 16 datawords
- *  0b100..Receive FIFO buffer depth = 32 datawords
- *  0b101..Receive FIFO buffer depth = 64 datawords
- *  0b110..Receive FIFO buffer depth = 128 datawords
- *  0b111..Receive FIFO buffer depth = 256 datawords
+ *  0b000..1
+ *  0b001..4
+ *  0b010..8
+ *  0b011..16
+ *  0b100..32
+ *  0b101..64
+ *  0b110..128
+ *  0b111..256
  */
 #define LPUART_FIFO_RXFIFOSIZE(x)                (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_RXFIFOSIZE_SHIFT)) & LPUART_FIFO_RXFIFOSIZE_MASK)
 
 #define LPUART_FIFO_RXFE_MASK                    (0x8U)
 #define LPUART_FIFO_RXFE_SHIFT                   (3U)
 /*! RXFE - Receive FIFO Enable
- *  0b0..Disables; buffer depth is 1
- *  0b1..Enables; FIFO[RXFIFOSIZE] indicates the buffer depth
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_FIFO_RXFE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_RXFE_SHIFT)) & LPUART_FIFO_RXFE_MASK)
 
 #define LPUART_FIFO_TXFIFOSIZE_MASK              (0x70U)
 #define LPUART_FIFO_TXFIFOSIZE_SHIFT             (4U)
 /*! TXFIFOSIZE - Transmit FIFO Buffer Depth
- *  0b000..Transmit FIFO buffer depth = 1 dataword
- *  0b001..Transmit FIFO buffer depth = 4 datawords
- *  0b010..Transmit FIFO buffer depth = 8 datawords
- *  0b011..Transmit FIFO buffer depth = 16 datawords
- *  0b100..Transmit FIFO buffer depth = 32 datawords
- *  0b101..Transmit FIFO buffer depth = 64 datawords
- *  0b110..Transmit FIFO buffer depth = 128 datawords
- *  0b111..Transmit FIFO buffer depth = 256 datawords
+ *  0b000..1
+ *  0b001..4
+ *  0b010..8
+ *  0b011..16
+ *  0b100..32
+ *  0b101..64
+ *  0b110..128
+ *  0b111..256
  */
 #define LPUART_FIFO_TXFIFOSIZE(x)                (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_TXFIFOSIZE_SHIFT)) & LPUART_FIFO_TXFIFOSIZE_MASK)
 
 #define LPUART_FIFO_TXFE_MASK                    (0x80U)
 #define LPUART_FIFO_TXFE_SHIFT                   (7U)
 /*! TXFE - Transmit FIFO Enable
- *  0b0..Disables; buffer depth is 1
- *  0b1..Enables; FIFO[TXFIFOSIZE] indicates the buffer depth
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_FIFO_TXFE(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_TXFE_SHIFT)) & LPUART_FIFO_TXFE_MASK)
 
 #define LPUART_FIFO_RXUFE_MASK                   (0x100U)
 #define LPUART_FIFO_RXUFE_SHIFT                  (8U)
 /*! RXUFE - Receive FIFO Underflow Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_FIFO_RXUFE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_RXUFE_SHIFT)) & LPUART_FIFO_RXUFE_MASK)
 
 #define LPUART_FIFO_TXOFE_MASK                   (0x200U)
 #define LPUART_FIFO_TXOFE_SHIFT                  (9U)
 /*! TXOFE - Transmit FIFO Overflow Interrupt Enable
- *  0b0..Disables
- *  0b1..Enables
+ *  0b0..Disable
+ *  0b1..Enable
  */
 #define LPUART_FIFO_TXOFE(x)                     (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_TXOFE_SHIFT)) & LPUART_FIFO_TXOFE_MASK)
 
 #define LPUART_FIFO_RXIDEN_MASK                  (0x1C00U)
 #define LPUART_FIFO_RXIDEN_SHIFT                 (10U)
 /*! RXIDEN - Receiver Idle Empty Enable
- *  0b000..Disables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle
- *  0b001..Enables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for one character
- *  0b010..Enables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for two characters
- *  0b011..Enables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for four characters
- *  0b100..Enables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for eight characters
- *  0b101..Enables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for 16 characters
- *  0b110..Enables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for 32 characters
- *  0b111..Enables STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for 64 characters
+ *  0b000..Disable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle
+ *  0b001..Enable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for one character
+ *  0b010..Enable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for two characters
+ *  0b011..Enable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for four characters
+ *  0b100..Enable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for eight characters
+ *  0b101..Enable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for 16 characters
+ *  0b110..Enable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for 32 characters
+ *  0b111..Enable STAT[RDRF] to become 1 because of partially filled FIFO when the receiver is idle for 64 characters
  */
 #define LPUART_FIFO_RXIDEN(x)                    (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_RXIDEN_SHIFT)) & LPUART_FIFO_RXIDEN_MASK)
 
@@ -20633,7 +20586,7 @@ typedef struct {
 #define LPUART_FIFO_RXFLUSH_SHIFT                (14U)
 /*! RXFLUSH - Receive FIFO Flush
  *  0b0..No effect
- *  0b1..All data is flushed out
+ *  0b1..All data flushed out
  */
 #define LPUART_FIFO_RXFLUSH(x)                   (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_RXFLUSH_SHIFT)) & LPUART_FIFO_RXFLUSH_MASK)
 
@@ -20641,7 +20594,7 @@ typedef struct {
 #define LPUART_FIFO_TXFLUSH_SHIFT                (15U)
 /*! TXFLUSH - Transmit FIFO Flush
  *  0b0..No effect
- *  0b1..All data is flushed out
+ *  0b1..All data flushed out
  */
 #define LPUART_FIFO_TXFLUSH(x)                   (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_TXFLUSH_SHIFT)) & LPUART_FIFO_TXFLUSH_MASK)
 
@@ -20650,6 +20603,8 @@ typedef struct {
 /*! RXUF - Receiver FIFO Underflow Flag
  *  0b0..No underflow
  *  0b1..Underflow
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_FIFO_RXUF(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_RXUF_SHIFT)) & LPUART_FIFO_RXUF_MASK)
 
@@ -20658,6 +20613,8 @@ typedef struct {
 /*! TXOF - Transmitter FIFO Overflow Flag
  *  0b0..No overflow
  *  0b1..Overflow
+ *  0b0..No effect
+ *  0b1..Clear the flag
  */
 #define LPUART_FIFO_TXOF(x)                      (((uint32_t)(((uint32_t)(x)) << LPUART_FIFO_TXOF_SHIFT)) & LPUART_FIFO_TXOF_MASK)
 
@@ -20741,2044 +20698,6 @@ typedef struct {
 /*!
  * @}
  */ /* end of group LPUART_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- MBC Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup MBC_Peripheral_Access_Layer MBC Peripheral Access Layer
- * @{
- */
-
-/** MBC - Register Layout Typedef */
-typedef struct {
-  __IO uint32_t MBC0_MEM_GLBCFG[4];                /**< MBC Global Configuration Register, array offset: 0x0, array step: 0x4 */
-  __IO uint32_t MBC0_NSE_BLK_INDEX;                /**< MBC NonSecure Enable Block Index, offset: 0x10 */
-  __O  uint32_t MBC0_NSE_BLK_SET;                  /**< MBC NonSecure Enable Block Set, offset: 0x14 */
-  __O  uint32_t MBC0_NSE_BLK_CLR;                  /**< MBC NonSecure Enable Block Clear, offset: 0x18 */
-  __O  uint32_t MBC0_NSE_BLK_CLR_ALL;              /**< MBC NonSecure Enable Block Clear All, offset: 0x1C */
-  __IO uint32_t MBC0_MEMN_GLBAC[8];                /**< MBC Global Access Control, array offset: 0x20, array step: 0x4 */
-  struct {                                         /* offset: 0x40, array step: 0x18C */
-    __IO uint32_t MBC0_DOM_MEM0_BLK_CFG_W0;          /**< MBC Memory Block Configuration Word, array offset: 0x40, array step: 0x18C */
-    __IO uint32_t MBC0_DOM_MEM0_BLK_CFG_W1;          /**< MBC Memory Block Configuration Word, array offset: 0x44, array step: 0x18C */
-         uint8_t RESERVED_0[248];
-    __IO uint32_t MBC0_DOM_MEM0_BLK_NSE_W0;          /**< MBC Memory Block NonSecure Enable Word, array offset: 0x140, array step: 0x18C */
-         uint8_t RESERVED_1[60];
-    __IO uint32_t MBC0_DOM_MEM1_BLK_CFG_W0;          /**< MBC Memory Block Configuration Word, array offset: 0x180, array step: 0x18C */
-         uint8_t RESERVED_2[28];
-    __IO uint32_t MBC0_DOM_MEM1_BLK_NSE_W0;          /**< MBC Memory Block NonSecure Enable Word, array offset: 0x1A0, array step: 0x18C */
-         uint8_t RESERVED_3[4];
-    __IO uint32_t MBC0_DOM_MEM2_BLK_CFG_W0;          /**< MBC Memory Block Configuration Word, array offset: 0x1A8, array step: 0x18C */
-         uint8_t RESERVED_4[28];
-    __IO uint32_t MBC0_DOM_MEM2_BLK_NSE_W0;          /**< MBC Memory Block NonSecure Enable Word, array offset: 0x1C8, array step: 0x18C */
-  } MBC_DOM0[1];
-} MBC_Type;
-
-/* ----------------------------------------------------------------------------
-   -- MBC Register Masks
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup MBC_Register_Masks MBC Register Masks
- * @{
- */
-
-/*! @name MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG - MBC Global Configuration Register */
-/*! @{ */
-
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_NBLKS_MASK (0x3FFU)
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_NBLKS_SHIFT (0U)
-/*! NBLKS - Number of blocks in this memory */
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_NBLKS(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_NBLKS_SHIFT)) & MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_NBLKS_MASK)
-
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_SIZE_LOG2_MASK (0x1F0000U)
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_SIZE_LOG2_SHIFT (16U)
-/*! SIZE_LOG2 - Log2 size per block */
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_SIZE_LOG2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_SIZE_LOG2_SHIFT)) & MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_SIZE_LOG2_MASK)
-
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_CLRE_MASK (0xC0000000U)
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_CLRE_SHIFT (30U)
-/*! CLRE - Clear Error */
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_CLRE(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_CLRE_SHIFT)) & MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_CLRE_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG */
-#define MBC_MBC_MEM_GLBCFG0_MBC0_MEM_GLBCFG_COUNT (4U)
-
-/*! @name MBC0_NSE_BLK_INDEX - MBC NonSecure Enable Block Index */
-/*! @{ */
-
-#define MBC_MBC0_NSE_BLK_INDEX_WNDX_MASK         (0x3CU)
-#define MBC_MBC0_NSE_BLK_INDEX_WNDX_SHIFT        (2U)
-/*! WNDX - Word index into the block NSE bitmap. It selects the BLK_NSE_Wn register, where WNDX determines the value of n. */
-#define MBC_MBC0_NSE_BLK_INDEX_WNDX(x)           (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_INDEX_WNDX_SHIFT)) & MBC_MBC0_NSE_BLK_INDEX_WNDX_MASK)
-
-#define MBC_MBC0_NSE_BLK_INDEX_MEM_SEL_MASK      (0xF00U)
-#define MBC_MBC0_NSE_BLK_INDEX_MEM_SEL_SHIFT     (8U)
-/*! MEM_SEL - Memory Select */
-#define MBC_MBC0_NSE_BLK_INDEX_MEM_SEL(x)        (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_INDEX_MEM_SEL_SHIFT)) & MBC_MBC0_NSE_BLK_INDEX_MEM_SEL_MASK)
-
-#define MBC_MBC0_NSE_BLK_INDEX_DID_SEL0_MASK     (0x10000U)
-#define MBC_MBC0_NSE_BLK_INDEX_DID_SEL0_SHIFT    (16U)
-/*! DID_SEL0 - DID Select
- *  0b0..No effect.
- *  0b1..Selects NSE bits for this domain.
- */
-#define MBC_MBC0_NSE_BLK_INDEX_DID_SEL0(x)       (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_INDEX_DID_SEL0_SHIFT)) & MBC_MBC0_NSE_BLK_INDEX_DID_SEL0_MASK)
-
-#define MBC_MBC0_NSE_BLK_INDEX_AI_MASK           (0x80000000U)
-#define MBC_MBC0_NSE_BLK_INDEX_AI_SHIFT          (31U)
-/*! AI - Auto Increment
- *  0b0..No effect.
- *  0b1..Add 1 to the WNDX field after the register write.
- */
-#define MBC_MBC0_NSE_BLK_INDEX_AI(x)             (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_INDEX_AI_SHIFT)) & MBC_MBC0_NSE_BLK_INDEX_AI_MASK)
-/*! @} */
-
-/*! @name MBC0_NSE_BLK_SET - MBC NonSecure Enable Block Set */
-/*! @{ */
-
-#define MBC_MBC0_NSE_BLK_SET_W1SET_MASK          (0xFFFFFFFFU)
-#define MBC_MBC0_NSE_BLK_SET_W1SET_SHIFT         (0U)
-/*! W1SET - Write-1 Set */
-#define MBC_MBC0_NSE_BLK_SET_W1SET(x)            (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_SET_W1SET_SHIFT)) & MBC_MBC0_NSE_BLK_SET_W1SET_MASK)
-/*! @} */
-
-/*! @name MBC0_NSE_BLK_CLR - MBC NonSecure Enable Block Clear */
-/*! @{ */
-
-#define MBC_MBC0_NSE_BLK_CLR_W1CLR_MASK          (0xFFFFFFFFU)
-#define MBC_MBC0_NSE_BLK_CLR_W1CLR_SHIFT         (0U)
-/*! W1CLR - Write-1 Clear */
-#define MBC_MBC0_NSE_BLK_CLR_W1CLR(x)            (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_CLR_W1CLR_SHIFT)) & MBC_MBC0_NSE_BLK_CLR_W1CLR_MASK)
-/*! @} */
-
-/*! @name MBC0_NSE_BLK_CLR_ALL - MBC NonSecure Enable Block Clear All */
-/*! @{ */
-
-#define MBC_MBC0_NSE_BLK_CLR_ALL_MEMSEL_MASK     (0xF00U)
-#define MBC_MBC0_NSE_BLK_CLR_ALL_MEMSEL_SHIFT    (8U)
-/*! MEMSEL - Memory Select */
-#define MBC_MBC0_NSE_BLK_CLR_ALL_MEMSEL(x)       (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_CLR_ALL_MEMSEL_SHIFT)) & MBC_MBC0_NSE_BLK_CLR_ALL_MEMSEL_MASK)
-
-#define MBC_MBC0_NSE_BLK_CLR_ALL_DID_SEL0_MASK   (0x10000U)
-#define MBC_MBC0_NSE_BLK_CLR_ALL_DID_SEL0_SHIFT  (16U)
-/*! DID_SEL0 - DID Select
- *  0b0..No effect.
- *  0b1..Clear all NSE bits for this domain.
- */
-#define MBC_MBC0_NSE_BLK_CLR_ALL_DID_SEL0(x)     (((uint32_t)(((uint32_t)(x)) << MBC_MBC0_NSE_BLK_CLR_ALL_DID_SEL0_SHIFT)) & MBC_MBC0_NSE_BLK_CLR_ALL_DID_SEL0_MASK)
-/*! @} */
-
-/*! @name MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC - MBC Global Access Control */
-/*! @{ */
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUX_MASK (0x1U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUX_SHIFT (0U)
-/*! NUX - NonsecureUser Execute
- *  0b0..Execute access is not allowed in Nonsecure User mode.
- *  0b1..Execute access is allowed in Nonsecure User mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUX(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUX_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUX_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUW_MASK (0x2U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUW_SHIFT (1U)
-/*! NUW - NonsecureUser Write
- *  0b0..Write access is not allowed in Nonsecure User mode.
- *  0b1..Write access is allowed in Nonsecure User mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUW(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUW_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUW_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUR_MASK (0x4U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUR_SHIFT (2U)
-/*! NUR - NonsecureUser Read
- *  0b0..Read access is not allowed in Nonsecure User mode.
- *  0b1..Read access is allowed in Nonsecure User mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUR(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUR_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NUR_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPX_MASK (0x10U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPX_SHIFT (4U)
-/*! NPX - NonsecurePriv Execute
- *  0b0..Execute access is not allowed in Nonsecure Privilege mode.
- *  0b1..Execute access is allowed in Nonsecure Privilege mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPX(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPX_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPX_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPW_MASK (0x20U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPW_SHIFT (5U)
-/*! NPW - NonsecurePriv Write
- *  0b0..Write access is not allowed in Nonsecure Privilege mode.
- *  0b1..Write access is allowed in Nonsecure Privilege mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPW(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPW_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPW_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPR_MASK (0x40U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPR_SHIFT (6U)
-/*! NPR - NonsecurePriv Read
- *  0b0..Read access is not allowed in Nonsecure Privilege mode.
- *  0b1..Read access is allowed in Nonsecure Privilege mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPR(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPR_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_NPR_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUX_MASK (0x100U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUX_SHIFT (8U)
-/*! SUX - SecureUser Execute
- *  0b0..Execute access is not allowed in Secure User mode.
- *  0b1..Execute access is allowed in Secure User mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUX(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUX_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUX_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUW_MASK (0x200U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUW_SHIFT (9U)
-/*! SUW - SecureUser Write
- *  0b0..Write access is not allowed in Secure User mode.
- *  0b1..Write access is allowed in Secure User mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUW(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUW_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUW_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUR_MASK (0x400U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUR_SHIFT (10U)
-/*! SUR - SecureUser Read
- *  0b0..Read access is not allowed in Secure User mode.
- *  0b1..Read access is allowed in Secure User mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUR(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUR_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SUR_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPX_MASK (0x1000U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPX_SHIFT (12U)
-/*! SPX - SecurePriv Execute
- *  0b0..Execute access is not allowed in Secure Privilege mode.
- *  0b1..Execute access is allowed in Secure Privilege mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPX(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPX_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPX_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPW_MASK (0x2000U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPW_SHIFT (13U)
-/*! SPW - SecurePriv Write
- *  0b0..Write access is not allowed in Secure Privilege mode.
- *  0b1..Write access is allowed in Secure Privilege mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPW(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPW_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPW_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPR_MASK (0x4000U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPR_SHIFT (14U)
-/*! SPR - SecurePriv Read
- *  0b0..Read access is not allowed in Secure Privilege mode.
- *  0b1..Read access is allowed in Secure Privilege mode.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPR(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPR_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_SPR_MASK)
-
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_LK_MASK (0x80000000U)
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_LK_SHIFT (31U)
-/*! LK - LOCK
- *  0b0..This register is not locked and can be altered.
- *  0b1..This register is locked and cannot be altered.
- */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_LK(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_LK_SHIFT)) & MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_LK_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC */
-#define MBC_MBC_MEMN_GLBAC0_MBC0_MEMN_GLBAC_COUNT (8U)
-
-/*! @name MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0 - MBC Memory Block Configuration Word */
-/*! @{ */
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL0_MASK (0x7U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL0_SHIFT (0U)
-/*! MBACSEL0 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE0_MASK (0x8U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE0_SHIFT (3U)
-/*! NSE0 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL1_MASK (0x70U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL1_SHIFT (4U)
-/*! MBACSEL1 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE1_MASK (0x80U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE1_SHIFT (7U)
-/*! NSE1 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL2_MASK (0x700U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL2_SHIFT (8U)
-/*! MBACSEL2 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE2_MASK (0x800U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE2_SHIFT (11U)
-/*! NSE2 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL3_MASK (0x7000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL3_SHIFT (12U)
-/*! MBACSEL3 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE3_MASK (0x8000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE3_SHIFT (15U)
-/*! NSE3 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL4_MASK (0x70000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL4_SHIFT (16U)
-/*! MBACSEL4 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE4_MASK (0x80000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE4_SHIFT (19U)
-/*! NSE4 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL5_MASK (0x700000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL5_SHIFT (20U)
-/*! MBACSEL5 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE5_MASK (0x800000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE5_SHIFT (23U)
-/*! NSE5 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL6_MASK (0x7000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL6_SHIFT (24U)
-/*! MBACSEL6 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE6_MASK (0x8000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE6_SHIFT (27U)
-/*! NSE6 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL7_MASK (0x70000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL7_SHIFT (28U)
-/*! MBACSEL7 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_MBACSEL7_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE7_MASK (0x80000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE7_SHIFT (31U)
-/*! NSE7 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_NSE7_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0 */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W0_COUNT (1U)
-
-/*! @name MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1 - MBC Memory Block Configuration Word */
-/*! @{ */
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL0_MASK (0x7U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL0_SHIFT (0U)
-/*! MBACSEL0 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE0_MASK (0x8U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE0_SHIFT (3U)
-/*! NSE0 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL1_MASK (0x70U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL1_SHIFT (4U)
-/*! MBACSEL1 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE1_MASK (0x80U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE1_SHIFT (7U)
-/*! NSE1 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL2_MASK (0x700U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL2_SHIFT (8U)
-/*! MBACSEL2 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE2_MASK (0x800U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE2_SHIFT (11U)
-/*! NSE2 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL3_MASK (0x7000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL3_SHIFT (12U)
-/*! MBACSEL3 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE3_MASK (0x8000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE3_SHIFT (15U)
-/*! NSE3 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL4_MASK (0x70000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL4_SHIFT (16U)
-/*! MBACSEL4 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE4_MASK (0x80000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE4_SHIFT (19U)
-/*! NSE4 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL5_MASK (0x700000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL5_SHIFT (20U)
-/*! MBACSEL5 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE5_MASK (0x800000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE5_SHIFT (23U)
-/*! NSE5 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL6_MASK (0x7000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL6_SHIFT (24U)
-/*! MBACSEL6 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE6_MASK (0x8000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE6_SHIFT (27U)
-/*! NSE6 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL7_MASK (0x70000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL7_SHIFT (28U)
-/*! MBACSEL7 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_MBACSEL7_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE7_MASK (0x80000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE7_SHIFT (31U)
-/*! NSE7 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_NSE7_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1 */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_CFG_W1_COUNT (1U)
-
-/*! @name MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0 - MBC Memory Block NonSecure Enable Word */
-/*! @{ */
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT0_MASK (0x1U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT0_SHIFT (0U)
-/*! BIT0 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT1_MASK (0x2U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT1_SHIFT (1U)
-/*! BIT1 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT2_MASK (0x4U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT2_SHIFT (2U)
-/*! BIT2 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT3_MASK (0x8U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT3_SHIFT (3U)
-/*! BIT3 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT4_MASK (0x10U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT4_SHIFT (4U)
-/*! BIT4 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT5_MASK (0x20U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT5_SHIFT (5U)
-/*! BIT5 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT6_MASK (0x40U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT6_SHIFT (6U)
-/*! BIT6 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT7_MASK (0x80U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT7_SHIFT (7U)
-/*! BIT7 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT7_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT8_MASK (0x100U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT8_SHIFT (8U)
-/*! BIT8 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT8(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT8_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT8_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT9_MASK (0x200U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT9_SHIFT (9U)
-/*! BIT9 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT9(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT9_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT9_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT10_MASK (0x400U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT10_SHIFT (10U)
-/*! BIT10 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT10(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT10_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT10_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT11_MASK (0x800U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT11_SHIFT (11U)
-/*! BIT11 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT11(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT11_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT11_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT12_MASK (0x1000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT12_SHIFT (12U)
-/*! BIT12 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT12(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT12_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT12_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT13_MASK (0x2000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT13_SHIFT (13U)
-/*! BIT13 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT13(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT13_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT13_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT14_MASK (0x4000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT14_SHIFT (14U)
-/*! BIT14 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT14(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT14_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT14_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT15_MASK (0x8000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT15_SHIFT (15U)
-/*! BIT15 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT15(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT15_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT15_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT16_MASK (0x10000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT16_SHIFT (16U)
-/*! BIT16 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT16(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT16_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT16_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT17_MASK (0x20000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT17_SHIFT (17U)
-/*! BIT17 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT17(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT17_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT17_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT18_MASK (0x40000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT18_SHIFT (18U)
-/*! BIT18 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT18(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT18_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT18_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT19_MASK (0x80000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT19_SHIFT (19U)
-/*! BIT19 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT19(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT19_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT19_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT20_MASK (0x100000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT20_SHIFT (20U)
-/*! BIT20 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT20(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT20_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT20_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT21_MASK (0x200000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT21_SHIFT (21U)
-/*! BIT21 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT21(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT21_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT21_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT22_MASK (0x400000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT22_SHIFT (22U)
-/*! BIT22 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT22(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT22_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT22_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT23_MASK (0x800000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT23_SHIFT (23U)
-/*! BIT23 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT23(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT23_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT23_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT24_MASK (0x1000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT24_SHIFT (24U)
-/*! BIT24 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT24(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT24_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT24_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT25_MASK (0x2000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT25_SHIFT (25U)
-/*! BIT25 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT25(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT25_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT25_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT26_MASK (0x4000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT26_SHIFT (26U)
-/*! BIT26 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT26(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT26_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT26_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT27_MASK (0x8000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT27_SHIFT (27U)
-/*! BIT27 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT27(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT27_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT27_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT28_MASK (0x10000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT28_SHIFT (28U)
-/*! BIT28 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT28(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT28_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT28_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT29_MASK (0x20000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT29_SHIFT (29U)
-/*! BIT29 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT29(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT29_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT29_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT30_MASK (0x40000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT30_SHIFT (30U)
-/*! BIT30 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT30(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT30_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT30_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT31_MASK (0x80000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT31_SHIFT (31U)
-/*! BIT31 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT31(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT31_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_BIT31_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0 */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM0_BLK_NSE_W0_COUNT (1U)
-
-/*! @name MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0 - MBC Memory Block Configuration Word */
-/*! @{ */
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL0_MASK (0x7U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL0_SHIFT (0U)
-/*! MBACSEL0 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE0_MASK (0x8U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE0_SHIFT (3U)
-/*! NSE0 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL1_MASK (0x70U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL1_SHIFT (4U)
-/*! MBACSEL1 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE1_MASK (0x80U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE1_SHIFT (7U)
-/*! NSE1 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL2_MASK (0x700U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL2_SHIFT (8U)
-/*! MBACSEL2 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE2_MASK (0x800U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE2_SHIFT (11U)
-/*! NSE2 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL3_MASK (0x7000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL3_SHIFT (12U)
-/*! MBACSEL3 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE3_MASK (0x8000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE3_SHIFT (15U)
-/*! NSE3 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL4_MASK (0x70000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL4_SHIFT (16U)
-/*! MBACSEL4 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE4_MASK (0x80000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE4_SHIFT (19U)
-/*! NSE4 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL5_MASK (0x700000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL5_SHIFT (20U)
-/*! MBACSEL5 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE5_MASK (0x800000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE5_SHIFT (23U)
-/*! NSE5 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL6_MASK (0x7000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL6_SHIFT (24U)
-/*! MBACSEL6 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE6_MASK (0x8000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE6_SHIFT (27U)
-/*! NSE6 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL7_MASK (0x70000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL7_SHIFT (28U)
-/*! MBACSEL7 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_MBACSEL7_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE7_MASK (0x80000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE7_SHIFT (31U)
-/*! NSE7 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_NSE7_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0 */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_CFG_W0_COUNT (1U)
-
-/*! @name MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0 - MBC Memory Block NonSecure Enable Word */
-/*! @{ */
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT0_MASK (0x1U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT0_SHIFT (0U)
-/*! BIT0 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT1_MASK (0x2U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT1_SHIFT (1U)
-/*! BIT1 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT2_MASK (0x4U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT2_SHIFT (2U)
-/*! BIT2 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT3_MASK (0x8U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT3_SHIFT (3U)
-/*! BIT3 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT4_MASK (0x10U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT4_SHIFT (4U)
-/*! BIT4 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT5_MASK (0x20U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT5_SHIFT (5U)
-/*! BIT5 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT6_MASK (0x40U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT6_SHIFT (6U)
-/*! BIT6 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT7_MASK (0x80U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT7_SHIFT (7U)
-/*! BIT7 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT7_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT8_MASK (0x100U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT8_SHIFT (8U)
-/*! BIT8 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT8(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT8_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT8_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT9_MASK (0x200U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT9_SHIFT (9U)
-/*! BIT9 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT9(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT9_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT9_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT10_MASK (0x400U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT10_SHIFT (10U)
-/*! BIT10 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT10(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT10_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT10_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT11_MASK (0x800U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT11_SHIFT (11U)
-/*! BIT11 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT11(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT11_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT11_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT12_MASK (0x1000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT12_SHIFT (12U)
-/*! BIT12 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT12(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT12_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT12_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT13_MASK (0x2000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT13_SHIFT (13U)
-/*! BIT13 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT13(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT13_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT13_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT14_MASK (0x4000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT14_SHIFT (14U)
-/*! BIT14 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT14(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT14_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT14_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT15_MASK (0x8000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT15_SHIFT (15U)
-/*! BIT15 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT15(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT15_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT15_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT16_MASK (0x10000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT16_SHIFT (16U)
-/*! BIT16 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT16(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT16_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT16_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT17_MASK (0x20000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT17_SHIFT (17U)
-/*! BIT17 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT17(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT17_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT17_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT18_MASK (0x40000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT18_SHIFT (18U)
-/*! BIT18 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT18(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT18_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT18_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT19_MASK (0x80000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT19_SHIFT (19U)
-/*! BIT19 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT19(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT19_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT19_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT20_MASK (0x100000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT20_SHIFT (20U)
-/*! BIT20 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT20(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT20_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT20_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT21_MASK (0x200000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT21_SHIFT (21U)
-/*! BIT21 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT21(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT21_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT21_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT22_MASK (0x400000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT22_SHIFT (22U)
-/*! BIT22 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT22(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT22_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT22_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT23_MASK (0x800000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT23_SHIFT (23U)
-/*! BIT23 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT23(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT23_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT23_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT24_MASK (0x1000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT24_SHIFT (24U)
-/*! BIT24 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT24(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT24_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT24_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT25_MASK (0x2000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT25_SHIFT (25U)
-/*! BIT25 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT25(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT25_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT25_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT26_MASK (0x4000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT26_SHIFT (26U)
-/*! BIT26 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT26(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT26_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT26_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT27_MASK (0x8000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT27_SHIFT (27U)
-/*! BIT27 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT27(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT27_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT27_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT28_MASK (0x10000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT28_SHIFT (28U)
-/*! BIT28 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT28(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT28_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT28_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT29_MASK (0x20000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT29_SHIFT (29U)
-/*! BIT29 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT29(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT29_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT29_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT30_MASK (0x40000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT30_SHIFT (30U)
-/*! BIT30 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT30(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT30_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT30_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT31_MASK (0x80000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT31_SHIFT (31U)
-/*! BIT31 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT31(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT31_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_BIT31_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0 */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM1_BLK_NSE_W0_COUNT (1U)
-
-/*! @name MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0 - MBC Memory Block Configuration Word */
-/*! @{ */
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL0_MASK (0x7U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL0_SHIFT (0U)
-/*! MBACSEL0 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE0_MASK (0x8U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE0_SHIFT (3U)
-/*! NSE0 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL1_MASK (0x70U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL1_SHIFT (4U)
-/*! MBACSEL1 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE1_MASK (0x80U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE1_SHIFT (7U)
-/*! NSE1 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL2_MASK (0x700U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL2_SHIFT (8U)
-/*! MBACSEL2 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE2_MASK (0x800U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE2_SHIFT (11U)
-/*! NSE2 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL3_MASK (0x7000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL3_SHIFT (12U)
-/*! MBACSEL3 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE3_MASK (0x8000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE3_SHIFT (15U)
-/*! NSE3 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL4_MASK (0x70000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL4_SHIFT (16U)
-/*! MBACSEL4 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE4_MASK (0x80000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE4_SHIFT (19U)
-/*! NSE4 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL5_MASK (0x700000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL5_SHIFT (20U)
-/*! MBACSEL5 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE5_MASK (0x800000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE5_SHIFT (23U)
-/*! NSE5 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL6_MASK (0x7000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL6_SHIFT (24U)
-/*! MBACSEL6 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE6_MASK (0x8000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE6_SHIFT (27U)
-/*! NSE6 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL7_MASK (0x70000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL7_SHIFT (28U)
-/*! MBACSEL7 - Memory Block Access Control Select for block B
- *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
- *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
- *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
- *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
- *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
- *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
- *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
- *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_MBACSEL7_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE7_MASK (0x80000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE7_SHIFT (31U)
-/*! NSE7 - NonSecure Enable for block B
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_NSE7_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0 */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_CFG_W0_COUNT (1U)
-
-/*! @name MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0 - MBC Memory Block NonSecure Enable Word */
-/*! @{ */
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT0_MASK (0x1U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT0_SHIFT (0U)
-/*! BIT0 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT0(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT0_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT0_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT1_MASK (0x2U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT1_SHIFT (1U)
-/*! BIT1 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT1(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT1_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT1_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT2_MASK (0x4U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT2_SHIFT (2U)
-/*! BIT2 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT2(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT2_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT2_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT3_MASK (0x8U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT3_SHIFT (3U)
-/*! BIT3 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT3(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT3_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT3_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT4_MASK (0x10U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT4_SHIFT (4U)
-/*! BIT4 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT4(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT4_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT4_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT5_MASK (0x20U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT5_SHIFT (5U)
-/*! BIT5 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT5(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT5_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT5_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT6_MASK (0x40U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT6_SHIFT (6U)
-/*! BIT6 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT6(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT6_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT6_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT7_MASK (0x80U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT7_SHIFT (7U)
-/*! BIT7 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT7(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT7_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT7_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT8_MASK (0x100U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT8_SHIFT (8U)
-/*! BIT8 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT8(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT8_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT8_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT9_MASK (0x200U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT9_SHIFT (9U)
-/*! BIT9 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT9(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT9_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT9_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT10_MASK (0x400U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT10_SHIFT (10U)
-/*! BIT10 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT10(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT10_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT10_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT11_MASK (0x800U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT11_SHIFT (11U)
-/*! BIT11 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT11(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT11_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT11_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT12_MASK (0x1000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT12_SHIFT (12U)
-/*! BIT12 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT12(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT12_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT12_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT13_MASK (0x2000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT13_SHIFT (13U)
-/*! BIT13 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT13(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT13_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT13_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT14_MASK (0x4000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT14_SHIFT (14U)
-/*! BIT14 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT14(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT14_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT14_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT15_MASK (0x8000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT15_SHIFT (15U)
-/*! BIT15 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT15(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT15_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT15_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT16_MASK (0x10000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT16_SHIFT (16U)
-/*! BIT16 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT16(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT16_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT16_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT17_MASK (0x20000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT17_SHIFT (17U)
-/*! BIT17 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT17(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT17_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT17_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT18_MASK (0x40000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT18_SHIFT (18U)
-/*! BIT18 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT18(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT18_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT18_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT19_MASK (0x80000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT19_SHIFT (19U)
-/*! BIT19 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT19(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT19_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT19_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT20_MASK (0x100000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT20_SHIFT (20U)
-/*! BIT20 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT20(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT20_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT20_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT21_MASK (0x200000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT21_SHIFT (21U)
-/*! BIT21 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT21(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT21_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT21_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT22_MASK (0x400000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT22_SHIFT (22U)
-/*! BIT22 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT22(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT22_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT22_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT23_MASK (0x800000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT23_SHIFT (23U)
-/*! BIT23 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT23(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT23_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT23_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT24_MASK (0x1000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT24_SHIFT (24U)
-/*! BIT24 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT24(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT24_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT24_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT25_MASK (0x2000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT25_SHIFT (25U)
-/*! BIT25 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT25(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT25_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT25_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT26_MASK (0x4000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT26_SHIFT (26U)
-/*! BIT26 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT26(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT26_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT26_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT27_MASK (0x8000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT27_SHIFT (27U)
-/*! BIT27 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT27(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT27_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT27_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT28_MASK (0x10000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT28_SHIFT (28U)
-/*! BIT28 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT28(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT28_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT28_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT29_MASK (0x20000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT29_SHIFT (29U)
-/*! BIT29 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT29(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT29_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT29_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT30_MASK (0x40000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT30_SHIFT (30U)
-/*! BIT30 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT30(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT30_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT30_MASK)
-
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT31_MASK (0x80000000U)
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT31_SHIFT (31U)
-/*! BIT31 - Bit b NonSecure Enable [b = 0 - 31]
- *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
- *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
- *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
- *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
- */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT31(x) (((uint32_t)(((uint32_t)(x)) << MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT31_SHIFT)) & MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_BIT31_MASK)
-/*! @} */
-
-/* The count of MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0 */
-#define MBC_MBC_DOM0_MBC0_DOM_MEM2_BLK_NSE_W0_COUNT (1U)
-
-
-/*!
- * @}
- */ /* end of group MBC_Register_Masks */
-
-
-/* MBC - Peripheral instance base addresses */
-/** Peripheral MBC0 base address */
-#define MBC0_BASE                                (0x4008E000u)
-/** Peripheral MBC0 base pointer */
-#define MBC0                                     ((MBC_Type *)MBC0_BASE)
-/** Array initializer of MBC peripheral base addresses */
-#define MBC_BASE_ADDRS                           { MBC0_BASE }
-/** Array initializer of MBC peripheral base pointers */
-#define MBC_BASE_PTRS                            { MBC0 }
-
-/*!
- * @}
- */ /* end of group MBC_Peripheral_Access_Layer */
 
 
 /* ----------------------------------------------------------------------------
@@ -26895,10 +24814,10 @@ typedef struct {
 #define SCG_SOSCCFG_RANGE_MASK                   (0x30U)
 #define SCG_SOSCCFG_RANGE_SHIFT                  (4U)
 /*! RANGE - SOSC Range Select
- *  0b00..Frequency range select of 16-20 MHz.
- *  0b01..Frequency range select of 20-30 MHz.
- *  0b10..Frequency range select of 30-50 MHz.
- *  0b11..Frequency range select of 50-66 MHz.
+ *  0b00..Frequency range select of 8-16 MHz.
+ *  0b01..Frequency range select of 16-25 MHz.
+ *  0b10..Frequency range select of 25-40 MHz.
+ *  0b11..Frequency range select of 40-50 MHz.
  */
 #define SCG_SOSCCFG_RANGE(x)                     (((uint32_t)(((uint32_t)(x)) << SCG_SOSCCFG_RANGE_SHIFT)) & SCG_SOSCCFG_RANGE_MASK)
 /*! @} */
@@ -27178,7 +25097,7 @@ typedef struct {
 #define SCG_FIRCTCFG_TRIMSRC_MASK                (0x3U)
 #define SCG_FIRCTCFG_TRIMSRC_SHIFT               (0U)
 /*! TRIMSRC - Trim Source
- *  0b00..USB0 Start of Frame (1 kHz). This option does not use TRIMDIV .
+ *  0b00..USB0 Start of Frame (1 KHz). This option does not use TRIMDIV .
  *  0b01..Reserved
  *  0b10..SOSC. This option requires that SOSC be divided using the TRIMDIV field to get a frequency of 1 MHz.
  *  0b11..Reserved
@@ -27329,8 +25248,7 @@ typedef struct {
   __IO uint32_t VD_SYS_CFG;                        /**< System Voltage Detect Configuration, offset: 0x138 */
        uint8_t RESERVED_8[4];
   __IO uint32_t EVD_CFG;                           /**< External Voltage Domain Configuration, offset: 0x140 */
-  __IO uint32_t GLITCH_DETECT_SC;                  /**< Glitch Detect Status Control, offset: 0x144 */
-       uint8_t RESERVED_9[440];
+       uint8_t RESERVED_9[444];
        uint32_t CORELDO_CFG;                       /**< LDO_CORE Configuration, offset: 0x300 */
 } SPC_Type;
 
@@ -27588,14 +25506,6 @@ typedef struct {
  */
 #define SPC_ACTIVE_CFG_CORELDO_VDD_LVL(x)        (((uint32_t)(((uint32_t)(x)) << SPC_ACTIVE_CFG_CORELDO_VDD_LVL_SHIFT)) & SPC_ACTIVE_CFG_CORELDO_VDD_LVL_MASK)
 
-#define SPC_ACTIVE_CFG_GLITCH_DETECT_DISABLE_MASK (0x1000U)
-#define SPC_ACTIVE_CFG_GLITCH_DETECT_DISABLE_SHIFT (12U)
-/*! GLITCH_DETECT_DISABLE - Glitch Detect Disable
- *  0b0..Low Voltage Glitch Detect enabled
- *  0b1..Low Voltage Glitch Detect disabled
- */
-#define SPC_ACTIVE_CFG_GLITCH_DETECT_DISABLE(x)  (((uint32_t)(((uint32_t)(x)) << SPC_ACTIVE_CFG_GLITCH_DETECT_DISABLE_SHIFT)) & SPC_ACTIVE_CFG_GLITCH_DETECT_DISABLE_MASK)
-
 #define SPC_ACTIVE_CFG_BGMODE_MASK               (0x300000U)
 #define SPC_ACTIVE_CFG_BGMODE_SHIFT              (20U)
 /*! BGMODE - Bandgap Mode
@@ -27669,14 +25579,6 @@ typedef struct {
  *  *..
  */
 #define SPC_LP_CFG_CORELDO_VDD_LVL(x)            (((uint32_t)(((uint32_t)(x)) << SPC_LP_CFG_CORELDO_VDD_LVL_SHIFT)) & SPC_LP_CFG_CORELDO_VDD_LVL_MASK)
-
-#define SPC_LP_CFG_GLITCH_DETECT_DISABLE_MASK    (0x1000U)
-#define SPC_LP_CFG_GLITCH_DETECT_DISABLE_SHIFT   (12U)
-/*! GLITCH_DETECT_DISABLE - Glitch Detect Disable
- *  0b0..Enable
- *  0b1..Disable
- */
-#define SPC_LP_CFG_GLITCH_DETECT_DISABLE(x)      (((uint32_t)(((uint32_t)(x)) << SPC_LP_CFG_GLITCH_DETECT_DISABLE_SHIFT)) & SPC_LP_CFG_GLITCH_DETECT_DISABLE_MASK)
 
 #define SPC_LP_CFG_SRAMLDO_DPD_ON_MASK           (0x80000U)
 #define SPC_LP_CFG_SRAMLDO_DPD_ON_SHIFT          (19U)
@@ -27889,54 +25791,6 @@ typedef struct {
 #define SPC_EVD_CFG_EVDSTAT(x)                   (((uint32_t)(((uint32_t)(x)) << SPC_EVD_CFG_EVDSTAT_SHIFT)) & SPC_EVD_CFG_EVDSTAT_MASK)
 /*! @} */
 
-/*! @name GLITCH_DETECT_SC - Glitch Detect Status Control */
-/*! @{ */
-
-#define SPC_GLITCH_DETECT_SC_CNT_SELECT_MASK     (0x3U)
-#define SPC_GLITCH_DETECT_SC_CNT_SELECT_SHIFT    (0U)
-/*! CNT_SELECT - Counter Select
- *  0b00..0
- *  0b01..1
- *  0b10..2
- *  0b11..3
- */
-#define SPC_GLITCH_DETECT_SC_CNT_SELECT(x)       (((uint32_t)(((uint32_t)(x)) << SPC_GLITCH_DETECT_SC_CNT_SELECT_SHIFT)) & SPC_GLITCH_DETECT_SC_CNT_SELECT_MASK)
-
-#define SPC_GLITCH_DETECT_SC_TIMEOUT_MASK        (0x3CU)
-#define SPC_GLITCH_DETECT_SC_TIMEOUT_SHIFT       (2U)
-/*! TIMEOUT - Timeout */
-#define SPC_GLITCH_DETECT_SC_TIMEOUT(x)          (((uint32_t)(((uint32_t)(x)) << SPC_GLITCH_DETECT_SC_TIMEOUT_SHIFT)) & SPC_GLITCH_DETECT_SC_TIMEOUT_MASK)
-
-#define SPC_GLITCH_DETECT_SC_RE_MASK             (0x40U)
-#define SPC_GLITCH_DETECT_SC_RE_SHIFT            (6U)
-/*! RE - Glitch Detect Reset Enable
- *  0b0..GLITCH_DETECT_FLAG[CNT_SELECT] does not generate POR/LVD reset
- *  0b1..GLITCH_DETECT_FLAG[CNT_SELECT] does generate POR/LVD reset
- */
-#define SPC_GLITCH_DETECT_SC_RE(x)               (((uint32_t)(((uint32_t)(x)) << SPC_GLITCH_DETECT_SC_RE_SHIFT)) & SPC_GLITCH_DETECT_SC_RE_MASK)
-
-#define SPC_GLITCH_DETECT_SC_IE_MASK             (0x80U)
-#define SPC_GLITCH_DETECT_SC_IE_SHIFT            (7U)
-/*! IE - Glitch Detect Interrupt Enable
- *  0b0..GLITCH_DETECT_FLAG[CNT_SELECT] does not generate hardware interrupt (user polling)
- *  0b1..GLITCH_DETECT_FLAG[CNT_SELECT] does generate hardware interrupt
- */
-#define SPC_GLITCH_DETECT_SC_IE(x)               (((uint32_t)(((uint32_t)(x)) << SPC_GLITCH_DETECT_SC_IE_SHIFT)) & SPC_GLITCH_DETECT_SC_IE_MASK)
-
-#define SPC_GLITCH_DETECT_SC_GLITCH_DETECT_FLAG_MASK (0xF00U)
-#define SPC_GLITCH_DETECT_SC_GLITCH_DETECT_FLAG_SHIFT (8U)
-/*! GLITCH_DETECT_FLAG - GLITCH_DETECT_FLAG */
-#define SPC_GLITCH_DETECT_SC_GLITCH_DETECT_FLAG(x) (((uint32_t)(((uint32_t)(x)) << SPC_GLITCH_DETECT_SC_GLITCH_DETECT_FLAG_SHIFT)) & SPC_GLITCH_DETECT_SC_GLITCH_DETECT_FLAG_MASK)
-
-#define SPC_GLITCH_DETECT_SC_LOCK_MASK           (0x10000U)
-#define SPC_GLITCH_DETECT_SC_LOCK_SHIFT          (16U)
-/*! LOCK - Glitch Detect Reset Enable Lock Bit
- *  0b0..Writes to RE are allowed.
- *  0b1..Writes to RE are ignored.
- */
-#define SPC_GLITCH_DETECT_SC_LOCK(x)             (((uint32_t)(((uint32_t)(x)) << SPC_GLITCH_DETECT_SC_LOCK_SHIFT)) & SPC_GLITCH_DETECT_SC_LOCK_MASK)
-/*! @} */
-
 
 /*!
  * @}
@@ -28037,29 +25891,29 @@ typedef struct {
 /*! @name REMAP - AHB Matrix Remap Control */
 /*! @{ */
 
-#define SYSCON_REMAP_REMAP_CPU0_SBUS_MASK        (0x3U)
-#define SYSCON_REMAP_REMAP_CPU0_SBUS_SHIFT       (0U)
-/*! REMAP_CPU0_SBUS - RAMX0 address remap for CPU System bus
+#define SYSCON_REMAP_CPU0_SBUS_MASK              (0x3U)
+#define SYSCON_REMAP_CPU0_SBUS_SHIFT             (0U)
+/*! CPU0_SBUS - RAMX0 address remap for CPU System bus
  *  0b00..RAMX0: 0x04000000 - 0x04001fff
  *  0b01..RAMX0: 0x20006000 - 0x20007fff
  */
-#define SYSCON_REMAP_REMAP_CPU0_SBUS(x)          (((uint32_t)(((uint32_t)(x)) << SYSCON_REMAP_REMAP_CPU0_SBUS_SHIFT)) & SYSCON_REMAP_REMAP_CPU0_SBUS_MASK)
+#define SYSCON_REMAP_CPU0_SBUS(x)                (((uint32_t)(((uint32_t)(x)) << SYSCON_REMAP_CPU0_SBUS_SHIFT)) & SYSCON_REMAP_CPU0_SBUS_MASK)
 
-#define SYSCON_REMAP_REMAP_DMA_MASK              (0xCU)
-#define SYSCON_REMAP_REMAP_DMA_SHIFT             (2U)
-/*! REMAP_DMA - RAMX0 address remap for DMA
+#define SYSCON_REMAP_DMA0_MASK                   (0xCU)
+#define SYSCON_REMAP_DMA0_SHIFT                  (2U)
+/*! DMA0 - RAMX0 address remap for DMA0
  *  0b00..RAMX0: 0x04000000 - 0x04001fff
- *  0b01..RAMX0: 0x20006000 - 0x20007fff
+ *  0b01..RAMX0: same alias space as CPU0_SBUS
  */
-#define SYSCON_REMAP_REMAP_DMA(x)                (((uint32_t)(((uint32_t)(x)) << SYSCON_REMAP_REMAP_DMA_SHIFT)) & SYSCON_REMAP_REMAP_DMA_MASK)
+#define SYSCON_REMAP_DMA0(x)                     (((uint32_t)(((uint32_t)(x)) << SYSCON_REMAP_DMA0_SHIFT)) & SYSCON_REMAP_DMA0_MASK)
 
-#define SYSCON_REMAP_REMAP_USB_MASK              (0x30U)
-#define SYSCON_REMAP_REMAP_USB_SHIFT             (4U)
-/*! REMAP_USB - RAMX0 address remap for USB
+#define SYSCON_REMAP_USB0_MASK                   (0x30U)
+#define SYSCON_REMAP_USB0_SHIFT                  (4U)
+/*! USB0 - RAMX0 address remap for USB0
  *  0b00..RAMX0: 0x04000000 - 0x04001fff
- *  0b01..RAMX0: 0x20006000 - 0x20007fff
+ *  0b01..RAMX0: same alias space as CPU0_SBUS
  */
-#define SYSCON_REMAP_REMAP_USB(x)                (((uint32_t)(((uint32_t)(x)) << SYSCON_REMAP_REMAP_USB_SHIFT)) & SYSCON_REMAP_REMAP_USB_MASK)
+#define SYSCON_REMAP_USB0(x)                     (((uint32_t)(((uint32_t)(x)) << SYSCON_REMAP_USB0_SHIFT)) & SYSCON_REMAP_USB0_MASK)
 
 #define SYSCON_REMAP_LOCK_MASK                   (0x80000000U)
 #define SYSCON_REMAP_LOCK_SHIFT                  (31U)
@@ -28074,25 +25928,25 @@ typedef struct {
 /*! @name AHBMATPRIO - AHB Matrix Priority Control */
 /*! @{ */
 
-#define SYSCON_AHBMATPRIO_PRI_CPU0_CBUS_MASK     (0x3U)
-#define SYSCON_AHBMATPRIO_PRI_CPU0_CBUS_SHIFT    (0U)
-/*! PRI_CPU0_CBUS - CPU0 C-AHB bus master priority level
+#define SYSCON_AHBMATPRIO_CPU0_CBUS_MASK         (0x3U)
+#define SYSCON_AHBMATPRIO_CPU0_CBUS_SHIFT        (0U)
+/*! CPU0_CBUS - CPU0 C-AHB bus master priority level
  *  0b00..level 0
  *  0b01..level 1
  *  0b10..level 2
  *  0b11..level 3
  */
-#define SYSCON_AHBMATPRIO_PRI_CPU0_CBUS(x)       (((uint32_t)(((uint32_t)(x)) << SYSCON_AHBMATPRIO_PRI_CPU0_CBUS_SHIFT)) & SYSCON_AHBMATPRIO_PRI_CPU0_CBUS_MASK)
+#define SYSCON_AHBMATPRIO_CPU0_CBUS(x)           (((uint32_t)(((uint32_t)(x)) << SYSCON_AHBMATPRIO_CPU0_CBUS_SHIFT)) & SYSCON_AHBMATPRIO_CPU0_CBUS_MASK)
 
-#define SYSCON_AHBMATPRIO_PRI_CPU0_SBUS_MASK     (0xCU)
-#define SYSCON_AHBMATPRIO_PRI_CPU0_SBUS_SHIFT    (2U)
-/*! PRI_CPU0_SBUS - CPU0 S-AHB bus master priority level
+#define SYSCON_AHBMATPRIO_CPU0_SBUS_MASK         (0xCU)
+#define SYSCON_AHBMATPRIO_CPU0_SBUS_SHIFT        (2U)
+/*! CPU0_SBUS - CPU0 S-AHB bus master priority level
  *  0b00..level 0
  *  0b01..level 1
  *  0b10..level 2
  *  0b11..level 3
  */
-#define SYSCON_AHBMATPRIO_PRI_CPU0_SBUS(x)       (((uint32_t)(((uint32_t)(x)) << SYSCON_AHBMATPRIO_PRI_CPU0_SBUS_SHIFT)) & SYSCON_AHBMATPRIO_PRI_CPU0_SBUS_MASK)
+#define SYSCON_AHBMATPRIO_CPU0_SBUS(x)           (((uint32_t)(((uint32_t)(x)) << SYSCON_AHBMATPRIO_CPU0_SBUS_SHIFT)) & SYSCON_AHBMATPRIO_CPU0_SBUS_MASK)
 
 #define SYSCON_AHBMATPRIO_DMA0_MASK              (0x300U)
 #define SYSCON_AHBMATPRIO_DMA0_SHIFT             (8U)
@@ -28104,15 +25958,15 @@ typedef struct {
  */
 #define SYSCON_AHBMATPRIO_DMA0(x)                (((uint32_t)(((uint32_t)(x)) << SYSCON_AHBMATPRIO_DMA0_SHIFT)) & SYSCON_AHBMATPRIO_DMA0_MASK)
 
-#define SYSCON_AHBMATPRIO_PRI_USB_FS_ENET_MASK   (0x3000000U)
-#define SYSCON_AHBMATPRIO_PRI_USB_FS_ENET_SHIFT  (24U)
-/*! PRI_USB_FS_ENET - USB-FS bus master priority level
+#define SYSCON_AHBMATPRIO_USB_FS_ENET_MASK       (0x3000000U)
+#define SYSCON_AHBMATPRIO_USB_FS_ENET_SHIFT      (24U)
+/*! USB_FS_ENET - USB-FS bus master priority level
  *  0b00..level 0
  *  0b01..level 1
  *  0b10..level 2
  *  0b11..level 3
  */
-#define SYSCON_AHBMATPRIO_PRI_USB_FS_ENET(x)     (((uint32_t)(((uint32_t)(x)) << SYSCON_AHBMATPRIO_PRI_USB_FS_ENET_SHIFT)) & SYSCON_AHBMATPRIO_PRI_USB_FS_ENET_MASK)
+#define SYSCON_AHBMATPRIO_USB_FS_ENET(x)         (((uint32_t)(((uint32_t)(x)) << SYSCON_AHBMATPRIO_USB_FS_ENET_SHIFT)) & SYSCON_AHBMATPRIO_USB_FS_ENET_MASK)
 /*! @} */
 
 /*! @name CPU0NSTCKCAL - Non-Secure CPU0 System Tick Calibration */
@@ -28731,6 +26585,1891 @@ typedef struct {
 /*!
  * @}
  */ /* end of group SYSCON_Peripheral_Access_Layer */
+
+
+/* ----------------------------------------------------------------------------
+   -- TRDC Peripheral Access Layer
+   ---------------------------------------------------------------------------- */
+
+/*!
+ * @addtogroup TRDC_Peripheral_Access_Layer TRDC Peripheral Access Layer
+ * @{
+ */
+
+/** TRDC - Register Layout Typedef */
+typedef struct {
+  struct {                                         /* offset: 0x0, array step: 0x1CC */
+    __IO uint32_t MBC_MEM_GLBCFG[4];                 /**< MBC Global Configuration Register, array offset: 0x0, array step: index*0x1CC, index2*0x4 */
+    __IO uint32_t MBC_NSE_BLK_INDEX;                 /**< MBC NonSecure Enable Block Index, array offset: 0x10, array step: 0x1CC */
+    __O  uint32_t MBC_NSE_BLK_SET;                   /**< MBC NonSecure Enable Block Set, array offset: 0x14, array step: 0x1CC */
+    __O  uint32_t MBC_NSE_BLK_CLR;                   /**< MBC NonSecure Enable Block Clear, array offset: 0x18, array step: 0x1CC */
+    __O  uint32_t MBC_NSE_BLK_CLR_ALL;               /**< MBC NonSecure Enable Block Clear All, array offset: 0x1C, array step: 0x1CC */
+    __IO uint32_t MBC_MEMN_GLBAC[8];                 /**< MBC Global Access Control, array offset: 0x20, array step: index*0x1CC, index2*0x4 */
+    __IO uint32_t MBC_DOM0_MEM0_BLK_CFG_W[2];        /**< MBC Memory Block Configuration Word, array offset: 0x40, array step: index*0x1CC, index2*0x4 */
+         uint8_t RESERVED_0[248];
+    __IO uint32_t MBC_DOM0_MEM0_BLK_NSE_W[1];        /**< MBC Memory Block NonSecure Enable Word, array offset: 0x140, array step: index*0x1CC, index2*0x4 */
+         uint8_t RESERVED_1[60];
+    __IO uint32_t MBC_DOM0_MEM1_BLK_CFG_W[1];        /**< MBC Memory Block Configuration Word, array offset: 0x180, array step: index*0x1CC, index2*0x4 */
+         uint8_t RESERVED_2[28];
+    __IO uint32_t MBC_DOM0_MEM1_BLK_NSE_W[1];        /**< MBC Memory Block NonSecure Enable Word, array offset: 0x1A0, array step: index*0x1CC, index2*0x4 */
+         uint8_t RESERVED_3[4];
+    __IO uint32_t MBC_DOM0_MEM2_BLK_CFG_W[1];        /**< MBC Memory Block Configuration Word, array offset: 0x1A8, array step: index*0x1CC, index2*0x4 */
+         uint8_t RESERVED_4[28];
+    __IO uint32_t MBC_DOM0_MEM2_BLK_NSE_W[1];        /**< MBC Memory Block NonSecure Enable Word, array offset: 0x1C8, array step: index*0x1CC, index2*0x4 */
+  } MBC_INDEX[1];
+} TRDC_Type;
+
+/* ----------------------------------------------------------------------------
+   -- TRDC Register Masks
+   ---------------------------------------------------------------------------- */
+
+/*!
+ * @addtogroup TRDC_Register_Masks TRDC Register Masks
+ * @{
+ */
+
+/*! @name MBC_INDEX_MBC_MEM_GLBCFG - MBC Global Configuration Register */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_NBLKS_MASK (0x3FFU)
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_NBLKS_SHIFT (0U)
+/*! NBLKS - Number of blocks in this memory */
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_NBLKS(x)   (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEM_GLBCFG_NBLKS_SHIFT)) & TRDC_MBC_INDEX_MBC_MEM_GLBCFG_NBLKS_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_SIZE_LOG2_MASK (0x1F0000U)
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_SIZE_LOG2_SHIFT (16U)
+/*! SIZE_LOG2 - Log2 size per block */
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_SIZE_LOG2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEM_GLBCFG_SIZE_LOG2_SHIFT)) & TRDC_MBC_INDEX_MBC_MEM_GLBCFG_SIZE_LOG2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_CLRE_MASK  (0xC0000000U)
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_CLRE_SHIFT (30U)
+/*! CLRE - Clear Error */
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_CLRE(x)    (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEM_GLBCFG_CLRE_SHIFT)) & TRDC_MBC_INDEX_MBC_MEM_GLBCFG_CLRE_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_MEM_GLBCFG */
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_COUNT      (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_MEM_GLBCFG */
+#define TRDC_MBC_INDEX_MBC_MEM_GLBCFG_COUNT2     (4U)
+
+/*! @name MBC_INDEX_MBC_NSE_BLK_INDEX - MBC NonSecure Enable Block Index */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_WNDX_MASK (0x3CU)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_WNDX_SHIFT (2U)
+/*! WNDX - Word index into the block NSE bitmap. It selects the BLK_NSE_Wn register, where WNDX determines the value of n. */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_WNDX(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_WNDX_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_WNDX_MASK)
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_MEM_SEL_MASK (0xF00U)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_MEM_SEL_SHIFT (8U)
+/*! MEM_SEL - Memory Select */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_MEM_SEL(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_MEM_SEL_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_MEM_SEL_MASK)
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_DID_SEL0_MASK (0x10000U)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_DID_SEL0_SHIFT (16U)
+/*! DID_SEL0 - DID Select
+ *  0b0..No effect.
+ *  0b1..Selects NSE bits for this domain.
+ */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_DID_SEL0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_DID_SEL0_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_DID_SEL0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_AI_MASK (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_AI_SHIFT (31U)
+/*! AI - Auto Increment
+ *  0b0..No effect.
+ *  0b1..Add 1 to the WNDX field after the register write.
+ */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_AI(x)   (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_AI_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_AI_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_INDEX_COUNT   (1U)
+
+/*! @name MBC_INDEX_MBC_NSE_BLK_SET - MBC NonSecure Enable Block Set */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_SET_W1SET_MASK (0xFFFFFFFFU)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_SET_W1SET_SHIFT (0U)
+/*! W1SET - Write-1 Set */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_SET_W1SET(x)  (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_SET_W1SET_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_SET_W1SET_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_NSE_BLK_SET */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_SET_COUNT     (1U)
+
+/*! @name MBC_INDEX_MBC_NSE_BLK_CLR - MBC NonSecure Enable Block Clear */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_W1CLR_MASK (0xFFFFFFFFU)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_W1CLR_SHIFT (0U)
+/*! W1CLR - Write-1 Clear */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_W1CLR(x)  (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_W1CLR_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_W1CLR_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_NSE_BLK_CLR */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_COUNT     (1U)
+
+/*! @name MBC_INDEX_MBC_NSE_BLK_CLR_ALL - MBC NonSecure Enable Block Clear All */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_MEMSEL_MASK (0xF00U)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_MEMSEL_SHIFT (8U)
+/*! MEMSEL - Memory Select */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_MEMSEL(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_MEMSEL_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_MEMSEL_MASK)
+
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_DID_SEL0_MASK (0x10000U)
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_DID_SEL0_SHIFT (16U)
+/*! DID_SEL0 - DID Select
+ *  0b0..No effect.
+ *  0b1..Clear all NSE bits for this domain.
+ */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_DID_SEL0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_DID_SEL0_SHIFT)) & TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_DID_SEL0_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL */
+#define TRDC_MBC_INDEX_MBC_NSE_BLK_CLR_ALL_COUNT (1U)
+
+/*! @name MBC_INDEX_MBC_MEMN_GLBAC - MBC Global Access Control */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUX_MASK   (0x1U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUX_SHIFT  (0U)
+/*! NUX - NonsecureUser Execute
+ *  0b0..Execute access is not allowed in Nonsecure User mode.
+ *  0b1..Execute access is allowed in Nonsecure User mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUX(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUX_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUX_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUW_MASK   (0x2U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUW_SHIFT  (1U)
+/*! NUW - NonsecureUser Write
+ *  0b0..Write access is not allowed in Nonsecure User mode.
+ *  0b1..Write access is allowed in Nonsecure User mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUW(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUW_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUW_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUR_MASK   (0x4U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUR_SHIFT  (2U)
+/*! NUR - NonsecureUser Read
+ *  0b0..Read access is not allowed in Nonsecure User mode.
+ *  0b1..Read access is allowed in Nonsecure User mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUR(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUR_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NUR_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPX_MASK   (0x10U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPX_SHIFT  (4U)
+/*! NPX - NonsecurePriv Execute
+ *  0b0..Execute access is not allowed in Nonsecure Privilege mode.
+ *  0b1..Execute access is allowed in Nonsecure Privilege mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPX(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPX_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPX_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPW_MASK   (0x20U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPW_SHIFT  (5U)
+/*! NPW - NonsecurePriv Write
+ *  0b0..Write access is not allowed in Nonsecure Privilege mode.
+ *  0b1..Write access is allowed in Nonsecure Privilege mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPW(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPW_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPW_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPR_MASK   (0x40U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPR_SHIFT  (6U)
+/*! NPR - NonsecurePriv Read
+ *  0b0..Read access is not allowed in Nonsecure Privilege mode.
+ *  0b1..Read access is allowed in Nonsecure Privilege mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPR(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPR_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_NPR_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUX_MASK   (0x100U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUX_SHIFT  (8U)
+/*! SUX - SecureUser Execute
+ *  0b0..Execute access is not allowed in Secure User mode.
+ *  0b1..Execute access is allowed in Secure User mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUX(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUX_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUX_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUW_MASK   (0x200U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUW_SHIFT  (9U)
+/*! SUW - SecureUser Write
+ *  0b0..Write access is not allowed in Secure User mode.
+ *  0b1..Write access is allowed in Secure User mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUW(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUW_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUW_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUR_MASK   (0x400U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUR_SHIFT  (10U)
+/*! SUR - SecureUser Read
+ *  0b0..Read access is not allowed in Secure User mode.
+ *  0b1..Read access is allowed in Secure User mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUR(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUR_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SUR_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPX_MASK   (0x1000U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPX_SHIFT  (12U)
+/*! SPX - SecurePriv Execute
+ *  0b0..Execute access is not allowed in Secure Privilege mode.
+ *  0b1..Execute access is allowed in Secure Privilege mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPX(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPX_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPX_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPW_MASK   (0x2000U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPW_SHIFT  (13U)
+/*! SPW - SecurePriv Write
+ *  0b0..Write access is not allowed in Secure Privilege mode.
+ *  0b1..Write access is allowed in Secure Privilege mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPW(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPW_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPW_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPR_MASK   (0x4000U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPR_SHIFT  (14U)
+/*! SPR - SecurePriv Read
+ *  0b0..Read access is not allowed in Secure Privilege mode.
+ *  0b1..Read access is allowed in Secure Privilege mode.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPR(x)     (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPR_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_SPR_MASK)
+
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_LK_MASK    (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_LK_SHIFT   (31U)
+/*! LK - LOCK
+ *  0b0..This register is not locked and can be altered.
+ *  0b1..This register is locked and cannot be altered.
+ */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_LK(x)      (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_MEMN_GLBAC_LK_SHIFT)) & TRDC_MBC_INDEX_MBC_MEMN_GLBAC_LK_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_MEMN_GLBAC */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_COUNT      (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_MEMN_GLBAC */
+#define TRDC_MBC_INDEX_MBC_MEMN_GLBAC_COUNT2     (8U)
+
+/*! @name MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W - MBC Memory Block Configuration Word */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL0_MASK (0x7U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL0_SHIFT (0U)
+/*! MBACSEL0 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE0_MASK (0x8U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE0_SHIFT (3U)
+/*! NSE0 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL1_MASK (0x70U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL1_SHIFT (4U)
+/*! MBACSEL1 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE1_MASK (0x80U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE1_SHIFT (7U)
+/*! NSE1 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL2_MASK (0x700U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL2_SHIFT (8U)
+/*! MBACSEL2 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE2_MASK (0x800U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE2_SHIFT (11U)
+/*! NSE2 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL3_MASK (0x7000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL3_SHIFT (12U)
+/*! MBACSEL3 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE3_MASK (0x8000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE3_SHIFT (15U)
+/*! NSE3 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL4_MASK (0x70000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL4_SHIFT (16U)
+/*! MBACSEL4 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE4_MASK (0x80000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE4_SHIFT (19U)
+/*! NSE4 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL5_MASK (0x700000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL5_SHIFT (20U)
+/*! MBACSEL5 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE5_MASK (0x800000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE5_SHIFT (23U)
+/*! NSE5 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL6_MASK (0x7000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL6_SHIFT (24U)
+/*! MBACSEL6 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE6_MASK (0x8000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE6_SHIFT (27U)
+/*! NSE6 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL7_MASK (0x70000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL7_SHIFT (28U)
+/*! MBACSEL7 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_MBACSEL7_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE7_MASK (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE7_SHIFT (31U)
+/*! NSE7 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_NSE7_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_COUNT (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_CFG_W_MBC_DOM0_MEM0_BLK_CFG_W_COUNT2 (2U)
+
+/*! @name MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W - MBC Memory Block NonSecure Enable Word */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT0_MASK (0x1U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT0_SHIFT (0U)
+/*! BIT0 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT1_MASK (0x2U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT1_SHIFT (1U)
+/*! BIT1 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT2_MASK (0x4U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT2_SHIFT (2U)
+/*! BIT2 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT3_MASK (0x8U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT3_SHIFT (3U)
+/*! BIT3 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT4_MASK (0x10U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT4_SHIFT (4U)
+/*! BIT4 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT5_MASK (0x20U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT5_SHIFT (5U)
+/*! BIT5 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT6_MASK (0x40U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT6_SHIFT (6U)
+/*! BIT6 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT7_MASK (0x80U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT7_SHIFT (7U)
+/*! BIT7 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT7_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT8_MASK (0x100U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT8_SHIFT (8U)
+/*! BIT8 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT8(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT8_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT8_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT9_MASK (0x200U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT9_SHIFT (9U)
+/*! BIT9 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT9(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT9_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT9_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT10_MASK (0x400U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT10_SHIFT (10U)
+/*! BIT10 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT10(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT10_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT10_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT11_MASK (0x800U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT11_SHIFT (11U)
+/*! BIT11 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT11(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT11_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT11_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT12_MASK (0x1000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT12_SHIFT (12U)
+/*! BIT12 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT12(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT12_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT12_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT13_MASK (0x2000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT13_SHIFT (13U)
+/*! BIT13 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT13(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT13_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT13_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT14_MASK (0x4000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT14_SHIFT (14U)
+/*! BIT14 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT14(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT14_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT14_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT15_MASK (0x8000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT15_SHIFT (15U)
+/*! BIT15 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT15(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT15_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT15_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT16_MASK (0x10000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT16_SHIFT (16U)
+/*! BIT16 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT16(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT16_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT16_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT17_MASK (0x20000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT17_SHIFT (17U)
+/*! BIT17 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT17(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT17_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT17_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT18_MASK (0x40000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT18_SHIFT (18U)
+/*! BIT18 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT18(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT18_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT18_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT19_MASK (0x80000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT19_SHIFT (19U)
+/*! BIT19 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT19(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT19_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT19_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT20_MASK (0x100000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT20_SHIFT (20U)
+/*! BIT20 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT20(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT20_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT20_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT21_MASK (0x200000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT21_SHIFT (21U)
+/*! BIT21 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT21(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT21_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT21_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT22_MASK (0x400000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT22_SHIFT (22U)
+/*! BIT22 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT22(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT22_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT22_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT23_MASK (0x800000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT23_SHIFT (23U)
+/*! BIT23 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT23(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT23_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT23_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT24_MASK (0x1000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT24_SHIFT (24U)
+/*! BIT24 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT24(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT24_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT24_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT25_MASK (0x2000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT25_SHIFT (25U)
+/*! BIT25 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT25(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT25_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT25_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT26_MASK (0x4000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT26_SHIFT (26U)
+/*! BIT26 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT26(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT26_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT26_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT27_MASK (0x8000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT27_SHIFT (27U)
+/*! BIT27 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT27(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT27_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT27_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT28_MASK (0x10000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT28_SHIFT (28U)
+/*! BIT28 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT28(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT28_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT28_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT29_MASK (0x20000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT29_SHIFT (29U)
+/*! BIT29 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT29(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT29_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT29_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT30_MASK (0x40000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT30_SHIFT (30U)
+/*! BIT30 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT30(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT30_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT30_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT31_MASK (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT31_SHIFT (31U)
+/*! BIT31 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT31(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT31_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_BIT31_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_COUNT (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM0_BLK_NSE_W_MBC_DOM0_MEM0_BLK_NSE_W_COUNT2 (1U)
+
+/*! @name MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W - MBC Memory Block Configuration Word */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL0_MASK (0x7U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL0_SHIFT (0U)
+/*! MBACSEL0 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE0_MASK (0x8U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE0_SHIFT (3U)
+/*! NSE0 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL1_MASK (0x70U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL1_SHIFT (4U)
+/*! MBACSEL1 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE1_MASK (0x80U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE1_SHIFT (7U)
+/*! NSE1 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL2_MASK (0x700U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL2_SHIFT (8U)
+/*! MBACSEL2 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE2_MASK (0x800U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE2_SHIFT (11U)
+/*! NSE2 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL3_MASK (0x7000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL3_SHIFT (12U)
+/*! MBACSEL3 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE3_MASK (0x8000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE3_SHIFT (15U)
+/*! NSE3 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL4_MASK (0x70000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL4_SHIFT (16U)
+/*! MBACSEL4 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE4_MASK (0x80000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE4_SHIFT (19U)
+/*! NSE4 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL5_MASK (0x700000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL5_SHIFT (20U)
+/*! MBACSEL5 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE5_MASK (0x800000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE5_SHIFT (23U)
+/*! NSE5 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL6_MASK (0x7000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL6_SHIFT (24U)
+/*! MBACSEL6 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE6_MASK (0x8000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE6_SHIFT (27U)
+/*! NSE6 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL7_MASK (0x70000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL7_SHIFT (28U)
+/*! MBACSEL7 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_MBACSEL7_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE7_MASK (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE7_SHIFT (31U)
+/*! NSE7 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_NSE7_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_COUNT (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_CFG_W_MBC_DOM0_MEM1_BLK_CFG_W_COUNT2 (1U)
+
+/*! @name MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W - MBC Memory Block NonSecure Enable Word */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT0_MASK (0x1U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT0_SHIFT (0U)
+/*! BIT0 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT1_MASK (0x2U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT1_SHIFT (1U)
+/*! BIT1 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT2_MASK (0x4U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT2_SHIFT (2U)
+/*! BIT2 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT3_MASK (0x8U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT3_SHIFT (3U)
+/*! BIT3 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT4_MASK (0x10U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT4_SHIFT (4U)
+/*! BIT4 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT5_MASK (0x20U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT5_SHIFT (5U)
+/*! BIT5 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT6_MASK (0x40U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT6_SHIFT (6U)
+/*! BIT6 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT7_MASK (0x80U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT7_SHIFT (7U)
+/*! BIT7 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT7_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT8_MASK (0x100U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT8_SHIFT (8U)
+/*! BIT8 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT8(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT8_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT8_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT9_MASK (0x200U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT9_SHIFT (9U)
+/*! BIT9 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT9(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT9_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT9_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT10_MASK (0x400U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT10_SHIFT (10U)
+/*! BIT10 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT10(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT10_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT10_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT11_MASK (0x800U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT11_SHIFT (11U)
+/*! BIT11 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT11(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT11_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT11_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT12_MASK (0x1000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT12_SHIFT (12U)
+/*! BIT12 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT12(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT12_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT12_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT13_MASK (0x2000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT13_SHIFT (13U)
+/*! BIT13 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT13(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT13_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT13_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT14_MASK (0x4000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT14_SHIFT (14U)
+/*! BIT14 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT14(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT14_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT14_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT15_MASK (0x8000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT15_SHIFT (15U)
+/*! BIT15 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT15(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT15_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT15_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT16_MASK (0x10000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT16_SHIFT (16U)
+/*! BIT16 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT16(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT16_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT16_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT17_MASK (0x20000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT17_SHIFT (17U)
+/*! BIT17 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT17(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT17_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT17_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT18_MASK (0x40000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT18_SHIFT (18U)
+/*! BIT18 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT18(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT18_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT18_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT19_MASK (0x80000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT19_SHIFT (19U)
+/*! BIT19 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT19(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT19_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT19_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT20_MASK (0x100000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT20_SHIFT (20U)
+/*! BIT20 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT20(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT20_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT20_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT21_MASK (0x200000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT21_SHIFT (21U)
+/*! BIT21 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT21(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT21_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT21_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT22_MASK (0x400000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT22_SHIFT (22U)
+/*! BIT22 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT22(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT22_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT22_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT23_MASK (0x800000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT23_SHIFT (23U)
+/*! BIT23 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT23(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT23_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT23_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT24_MASK (0x1000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT24_SHIFT (24U)
+/*! BIT24 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT24(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT24_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT24_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT25_MASK (0x2000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT25_SHIFT (25U)
+/*! BIT25 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT25(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT25_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT25_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT26_MASK (0x4000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT26_SHIFT (26U)
+/*! BIT26 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT26(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT26_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT26_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT27_MASK (0x8000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT27_SHIFT (27U)
+/*! BIT27 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT27(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT27_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT27_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT28_MASK (0x10000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT28_SHIFT (28U)
+/*! BIT28 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT28(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT28_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT28_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT29_MASK (0x20000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT29_SHIFT (29U)
+/*! BIT29 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT29(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT29_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT29_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT30_MASK (0x40000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT30_SHIFT (30U)
+/*! BIT30 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT30(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT30_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT30_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT31_MASK (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT31_SHIFT (31U)
+/*! BIT31 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT31(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT31_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_BIT31_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_COUNT (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM1_BLK_NSE_W_MBC_DOM0_MEM1_BLK_NSE_W_COUNT2 (1U)
+
+/*! @name MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W - MBC Memory Block Configuration Word */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL0_MASK (0x7U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL0_SHIFT (0U)
+/*! MBACSEL0 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE0_MASK (0x8U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE0_SHIFT (3U)
+/*! NSE0 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL1_MASK (0x70U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL1_SHIFT (4U)
+/*! MBACSEL1 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE1_MASK (0x80U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE1_SHIFT (7U)
+/*! NSE1 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL2_MASK (0x700U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL2_SHIFT (8U)
+/*! MBACSEL2 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE2_MASK (0x800U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE2_SHIFT (11U)
+/*! NSE2 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL3_MASK (0x7000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL3_SHIFT (12U)
+/*! MBACSEL3 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE3_MASK (0x8000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE3_SHIFT (15U)
+/*! NSE3 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL4_MASK (0x70000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL4_SHIFT (16U)
+/*! MBACSEL4 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE4_MASK (0x80000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE4_SHIFT (19U)
+/*! NSE4 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL5_MASK (0x700000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL5_SHIFT (20U)
+/*! MBACSEL5 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE5_MASK (0x800000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE5_SHIFT (23U)
+/*! NSE5 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL6_MASK (0x7000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL6_SHIFT (24U)
+/*! MBACSEL6 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE6_MASK (0x8000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE6_SHIFT (27U)
+/*! NSE6 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL7_MASK (0x70000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL7_SHIFT (28U)
+/*! MBACSEL7 - Memory Block Access Control Select for block B
+ *  0b000..select MBC_MEMN_GLBAC0 access control policy for block B
+ *  0b001..select MBC_MEMN_GLBAC1 access control policy for block B
+ *  0b010..select MBC_MEMN_GLBAC2 access control policy for block B
+ *  0b011..select MBC_MEMN_GLBAC3 access control policy for block B
+ *  0b100..select MBC_MEMN_GLBAC4 access control policy for block B
+ *  0b101..select MBC_MEMN_GLBAC5 access control policy for block B
+ *  0b110..select MBC_MEMN_GLBAC6 access control policy for block B
+ *  0b111..select MBC_MEMN_GLBAC7 access control policy for block B
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_MBACSEL7_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE7_MASK (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE7_SHIFT (31U)
+/*! NSE7 - NonSecure Enable for block B
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in this register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in this register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_NSE7_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_COUNT (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_CFG_W_MBC_DOM0_MEM2_BLK_CFG_W_COUNT2 (1U)
+
+/*! @name MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W - MBC Memory Block NonSecure Enable Word */
+/*! @{ */
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT0_MASK (0x1U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT0_SHIFT (0U)
+/*! BIT0 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT0(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT0_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT0_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT1_MASK (0x2U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT1_SHIFT (1U)
+/*! BIT1 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT1(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT1_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT1_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT2_MASK (0x4U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT2_SHIFT (2U)
+/*! BIT2 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT2(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT2_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT2_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT3_MASK (0x8U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT3_SHIFT (3U)
+/*! BIT3 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT3(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT3_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT3_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT4_MASK (0x10U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT4_SHIFT (4U)
+/*! BIT4 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT4(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT4_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT4_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT5_MASK (0x20U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT5_SHIFT (5U)
+/*! BIT5 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT5(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT5_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT5_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT6_MASK (0x40U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT6_SHIFT (6U)
+/*! BIT6 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT6(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT6_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT6_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT7_MASK (0x80U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT7_SHIFT (7U)
+/*! BIT7 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT7(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT7_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT7_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT8_MASK (0x100U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT8_SHIFT (8U)
+/*! BIT8 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT8(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT8_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT8_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT9_MASK (0x200U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT9_SHIFT (9U)
+/*! BIT9 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT9(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT9_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT9_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT10_MASK (0x400U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT10_SHIFT (10U)
+/*! BIT10 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT10(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT10_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT10_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT11_MASK (0x800U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT11_SHIFT (11U)
+/*! BIT11 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT11(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT11_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT11_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT12_MASK (0x1000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT12_SHIFT (12U)
+/*! BIT12 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT12(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT12_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT12_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT13_MASK (0x2000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT13_SHIFT (13U)
+/*! BIT13 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT13(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT13_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT13_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT14_MASK (0x4000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT14_SHIFT (14U)
+/*! BIT14 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT14(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT14_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT14_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT15_MASK (0x8000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT15_SHIFT (15U)
+/*! BIT15 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT15(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT15_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT15_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT16_MASK (0x10000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT16_SHIFT (16U)
+/*! BIT16 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT16(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT16_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT16_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT17_MASK (0x20000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT17_SHIFT (17U)
+/*! BIT17 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT17(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT17_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT17_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT18_MASK (0x40000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT18_SHIFT (18U)
+/*! BIT18 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT18(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT18_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT18_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT19_MASK (0x80000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT19_SHIFT (19U)
+/*! BIT19 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT19(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT19_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT19_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT20_MASK (0x100000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT20_SHIFT (20U)
+/*! BIT20 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT20(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT20_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT20_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT21_MASK (0x200000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT21_SHIFT (21U)
+/*! BIT21 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT21(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT21_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT21_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT22_MASK (0x400000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT22_SHIFT (22U)
+/*! BIT22 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT22(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT22_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT22_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT23_MASK (0x800000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT23_SHIFT (23U)
+/*! BIT23 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT23(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT23_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT23_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT24_MASK (0x1000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT24_SHIFT (24U)
+/*! BIT24 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT24(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT24_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT24_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT25_MASK (0x2000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT25_SHIFT (25U)
+/*! BIT25 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT25(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT25_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT25_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT26_MASK (0x4000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT26_SHIFT (26U)
+/*! BIT26 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT26(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT26_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT26_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT27_MASK (0x8000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT27_SHIFT (27U)
+/*! BIT27 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT27(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT27_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT27_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT28_MASK (0x10000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT28_SHIFT (28U)
+/*! BIT28 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT28(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT28_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT28_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT29_MASK (0x20000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT29_SHIFT (29U)
+/*! BIT29 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT29(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT29_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT29_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT30_MASK (0x40000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT30_SHIFT (30U)
+/*! BIT30 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT30(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT30_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT30_MASK)
+
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT31_MASK (0x80000000U)
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT31_SHIFT (31U)
+/*! BIT31 - Bit b NonSecure Enable [b = 0 - 31]
+ *  0b0..Secure accesses to block B are based on corresponding MBACSEL field in register
+ *       (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]), nonsecure accesses to block B are not allowed.
+ *  0b1..Secure accesses to block B are not allowed, nonsecure accesses to block B are based on corresponding
+ *       MBACSEL field in register (MBCm_DOMd_MEMs_BLK_CFG_Ww[MBACSEL]).
+ */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT31(x) (((uint32_t)(((uint32_t)(x)) << TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT31_SHIFT)) & TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_BIT31_MASK)
+/*! @} */
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_COUNT (1U)
+
+/* The count of TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W */
+#define TRDC_MBC_INDEX_MBC_INDEX_DOM0_MEM2_BLK_NSE_W_MBC_DOM0_MEM2_BLK_NSE_W_COUNT2 (1U)
+
+
+/*!
+ * @}
+ */ /* end of group TRDC_Register_Masks */
+
+
+/* TRDC - Peripheral instance base addresses */
+/** Peripheral MBC0 base address */
+#define MBC0_BASE                                (0x4008E000u)
+/** Peripheral MBC0 base pointer */
+#define MBC0                                     ((TRDC_Type *)MBC0_BASE)
+/** Array initializer of TRDC peripheral base addresses */
+#define TRDC_BASE_ADDRS                          { MBC0_BASE }
+/** Array initializer of TRDC peripheral base pointers */
+#define TRDC_BASE_PTRS                           { MBC0 }
+#define MBC0_MEMORY_CFG_WORD_COUNT {1,2,4,1}
+#define MBC1_MEMORY_CFG_WORD_COUNT {1,1,1,1}
+#define MBC2_MEMORY_CFG_WORD_COUNT {9,6,1,1}
+#define MBC3_MEMORY_CFG_WORD_COUNT {3,0,0,0}
+#define MBC_MEMORY_CFG_WORD_COUNT {MBC0_MEMORY_CFG_WORD_COUNT , MBC1_MEMORY_CFG_WORD_COUNT, MBC2_MEMORY_CFG_WORD_COUNT, MBC3_MEMORY_CFG_WORD_COUNT}
+#define MBC0_MEMORY_NSE_WORD_COUNT {1,1,1,1}
+#define MBC1_MEMORY_NSE_WORD_COUNT {1,1,1,1}
+#define MBC2_MEMORY_NSE_WORD_COUNT {3,2,1,1}
+#define MBC3_MEMORY_NSE_WORD_COUNT {1,0,0,0}
+#define MBC_MEMORY_NSE_WORD_COUNT {MBC0_MEMORY_NSE_WORD_COUNT , MBC1_MEMORY_NSE_WORD_COUNT, MBC2_MEMORY_NSE_WORD_COUNT, MBC3_MEMORY_NSE_WORD_COUNT}
+
+
+/*!
+ * @}
+ */ /* end of group TRDC_Peripheral_Access_Layer */
 
 
 /* ----------------------------------------------------------------------------
@@ -31710,7 +31449,7 @@ typedef struct {
 #define WUU_FMC_FILTM1_MASK                      (0x1U)
 #define WUU_FMC_FILTM1_SHIFT                     (0U)
 /*! FILTM1 - Filter Mode for FILTn
- *  0b0..Active only during Deep Sleep 1/Deep Power Down mode
+ *  0b0..Active only during Power Down/Deep Power Down mode
  *  0b1..Active during all power modes
  */
 #define WUU_FMC_FILTM1(x)                        (((uint32_t)(((uint32_t)(x)) << WUU_FMC_FILTM1_SHIFT)) & WUU_FMC_FILTM1_MASK)
@@ -31718,7 +31457,7 @@ typedef struct {
 #define WUU_FMC_FILTM2_MASK                      (0x2U)
 #define WUU_FMC_FILTM2_SHIFT                     (1U)
 /*! FILTM2 - Filter Mode for FILTn
- *  0b0..Active only during Deep Sleep 1/Deep Power Down mode
+ *  0b0..Active only during Power Down/Deep Power Down mode
  *  0b1..Active during all power modes
  */
 #define WUU_FMC_FILTM2(x)                        (((uint32_t)(((uint32_t)(x)) << WUU_FMC_FILTM2_SHIFT)) & WUU_FMC_FILTM2_MASK)
@@ -31978,5 +31717,5 @@ typedef struct {
  */ /* end of group SDK_Compatibility_Symbols */
 
 
-#endif  /* _MCXA153_H_ */
+#endif  /* MCXA153_H_ */
 

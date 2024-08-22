@@ -28,6 +28,10 @@
     defined(FSL_FEATURE_SOC_PORT_COUNT)
 static PORT_Type *const s_portBases[] = PORT_BASE_PTRS;
 static GPIO_Type *const s_gpioBases[] = GPIO_BASE_PTRS;
+#else
+#if defined(GPIO_RESETS_ARRAY)
+static GPIO_Type *const s_gpioBases[] = GPIO_BASE_PTRS;
+#endif
 #endif
 
 #if defined(FSL_FEATURE_SOC_FGPIO_COUNT) && FSL_FEATURE_SOC_FGPIO_COUNT

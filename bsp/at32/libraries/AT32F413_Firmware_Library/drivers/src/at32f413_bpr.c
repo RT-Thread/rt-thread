@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_bpr.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the bpr firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -69,6 +67,26 @@ flag_status bpr_flag_get(uint32_t flag)
   else
   {
     return (flag_status)(BPR->ctrlsts_bit.tpef);
+  }
+}
+
+/**
+  * @brief  bpr interrupt flag get
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - BPR_TAMPER_INTERRUPT_FLAG: tamper interrupt flag
+  *         - BPR_TAMPER_EVENT_FLAG:   tamper event flag
+  * @retval state of tamper event flag
+  */
+flag_status bpr_interrupt_flag_get(uint32_t flag)
+{
+  if(flag == BPR_TAMPER_INTERRUPT_FLAG)
+  {
+    return (flag_status)(BPR->ctrlsts_bit.tpif && BPR->ctrlsts_bit.tpien);
+  }
+  else
+  {
+    return (flag_status)(BPR->ctrlsts_bit.tpef && BPR->ctrlsts_bit.tpien);
   }
 }
 
@@ -144,8 +162,6 @@ void bpr_data_write(bpr_data_type bpr_data, uint16_t data_value)
   *         - BPR_RTC_OUTPUT_ALARM: output alarm event with pluse mode.
   *         - BPR_RTC_OUTPUT_SECOND: output second event with pluse mode.
   *         - BPR_RTC_OUTPUT_CLOCK_CAL_AFTER: output clock after calibration.
-  *         - BPR_RTC_OUTPUT_ALARM_TOGGLE: output alarm event with toggle mode.
-  *         - BPR_RTC_OUTPUT_SECOND_TOGGLE: output second event with toggle mode.
   * @retval none
   */
 void bpr_rtc_output_select(bpr_rtc_output_type output_source)

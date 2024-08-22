@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2021, 2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -17,12 +17,57 @@
 #define FSL_COMPONENT_ID "platform.drivers.inputmux"
 #endif
 
+#if defined(INPUTMUX_RSTS)
+#define INPUTMUX_RESETS_ARRAY INPUTMUX_RSTS
+#endif
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+#if defined(INPUTMUX_RESETS_ARRAY)
+/*!
+ * @brief Get instance number for INPUTMUX module.
+ *
+ * @param base INPUTMUX peripheral base address
+ */
+static uint32_t INPUTMUX_GetInstance(INPUTMUX_Type *base);
+#endif
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+#if defined(INPUTMUX_RESETS_ARRAY)
+/*! @brief Pointers to INPUTMUX bases for each instance. */
+static INPUTMUX_Type *const s_inputmuxBases[] = INPUTMUX_BASE_PTRS;
+
+/* Reset array */
+static const reset_ip_name_t s_inputmuxResets[] = INPUTMUX_RESETS_ARRAY;
+#endif
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
+#if defined(INPUTMUX_RESETS_ARRAY)
+static uint32_t INPUTMUX_GetInstance(INPUTMUX_Type *base)
+{
+    uint32_t instance;
+
+    /* Find the instance index from base address mappings. */
+    for (instance = 0; instance < ARRAY_SIZE(s_inputmuxBases); instance++)
+    {
+        if (s_inputmuxBases[instance] == base)
+        {
+            break;
+        }
+    }
+
+    assert(instance < ARRAY_SIZE(s_inputmuxBases));
+
+    return instance;
+}
+#endif
 
 /*!
- * brief    Initialize INPUTMUX peripheral.
+ * brief	Initialize INPUTMUX peripheral.
 
  * This function enables the INPUTMUX clock.
  *
@@ -42,16 +87,26 @@ void INPUTMUX_Init(INPUTMUX_Type *base)
     CLOCK_EnableClock(kCLOCK_InputMux);
 #endif /* FSL_FEATURE_INPUTMUX_HAS_NO_INPUTMUX_CLOCK_SOURCE */
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(INPUTMUX_RESETS_ARRAY)
+    RESET_ReleasePeripheralReset(s_inputmuxResets[INPUTMUX_GetInstance(base)]);
+#endif
 }
 
 /*!
  * brief Attaches a signal
  *
- * This function gates the INPUTPMUX clock.
+ * This function attaches multiplexed signals from INPUTMUX to target signals.
+ * For example, to attach GPIO PORT0 Pin 5 to PINT peripheral, do the following:
+ * code
+ *      INPUTMUX_AttachSignal(INPUTMUX, 2, kINPUTMUX_GpioPort0Pin5ToPintsel);
+ * endcode
+ * In this example, INTMUX has 8 registers for PINT, PINT_SEL0~PINT_SEL7.
+ * With parameter p index specified as 2, this function configures register PINT_SEL2.
  *
  * param base Base address of the INPUTMUX peripheral.
- * param index Destination peripheral to attach the signal to.
- * param connection Selects connection.
+ * param index The serial number of destination register in the group of INPUTMUX registers with same name.
+ * param connection Applies signal from source signals collection to target signal.
  *
  * retval None.
  */
@@ -116,7 +171,7 @@ void INPUTMUX_EnableSignal(INPUTMUX_Type *base, inputmux_signal_t signal, bool e
 #endif
 
 /*!
- * brief    Deinitialize INPUTMUX peripheral.
+ * brief	Deinitialize INPUTMUX peripheral.
 
  * This function disables the INPUTMUX clock.
  *

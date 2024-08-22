@@ -736,7 +736,7 @@ void dhcpd_start(const char *netif_name)
         DEBUG_PRINTF("ip_start: [%s]\r\n", str_tmp);
         sprintf(p, "%d", DHCPD_CLIENT_IP_MAX);
         ip4addr_aton(str_tmp, &ip_end);
-        DEBUG_PRINTF("ip_start: [%s]\r\n", str_tmp);
+        DEBUG_PRINTF("ip_end: [%s]\r\n", str_tmp);
 
         res = dhcp_server_start(netif, &ip_start, &ip_end);
         if (res != 0)

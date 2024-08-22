@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
+ * Copyright 2016-2019,2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -460,8 +460,12 @@ status_t FLEXIO_MCULCD_TransferEDMA(FLEXIO_MCULCD_Type *base,
         /* Setup DMA to transfer data.  */
         /* Assert the nCS. */
         FLEXIO_MCULCD_StartTransfer(base);
-        /* Send the command. */
-        FLEXIO_MCULCD_WriteCommandBlocking(base, xfer->command);
+
+        if (!xfer->dataOnly)
+        {
+            /* Send the command. */
+            FLEXIO_MCULCD_WriteCommandBlocking(base, xfer->command);
+        }
 
         /* Setup the DMA configuration. */
         FLEXIO_MCULCD_EDMAConfig(base, handle);
@@ -489,102 +493,6 @@ status_t FLEXIO_MCULCD_TransferEDMA(FLEXIO_MCULCD_Type *base,
             FLEXIO_MCULCD_EnableTxDMA(base, true);
             EDMA_StartTransfer(handle->txDmaHandle);
         }
-    }
-
-    return kStatus_Success;
-}
-
-/*!
- * brief Performs a non-blocking FlexIO MCULCD data write using eDMA.
- *
- * This function returns immediately after transfer initiates. To check whether
- * the transfer is completed, user could:
- * 1. Use the transfer completed callback;
- * 2. Polling function ref FLEXIO_MCULCD_GetTransferCountEDMA
- *
- * param base pointer to FLEXIO_MCULCD_Type structure.
- * param handle pointer to flexio_mculcd_edma_handle_t structure to store the
- * transfer state.
- * param data Pointer to data.
- * param size Size(in bytes) of the data
- * retval kStatus_Success Successfully start a transfer.
- * retval kStatus_InvalidArgument Input argument is invalid.
- * retval kStatus_FLEXIO_MCULCD_Busy FlexIO MCULCD is not idle, it is running another
- * transfer.
- */
-status_t FLEXIO_MCULCD_WriteDataEDMA(FLEXIO_MCULCD_Type *base,
-                                    flexio_mculcd_edma_handle_t *handle,
-                                    const void *data, size_t size)
-{
-    assert(NULL != handle);
-    assert(NULL != data);
-
-    /*
-     * The data transfer mechanism:
-     *
-     * Read:
-     * Assume the data length is Lr = (n1 * minorLoopBytes + n2), where
-     * n2 < minorLoopBytes.
-     * If (n1 <= 1), then all data are sent using blocking method.
-     * If (n1 > 1), then the beginning ((n1-1) * minorLoopBytes) are read
-     * using DMA, the left (minorLoopBytes + n2) are read using blocking method.
-     *
-     * Write:
-     * Assume the data length is Lw = (n1 * minorLoopBytes + n2), where
-     * n2 < minorLoopBytes.
-     * If (n1 = 0), then all data are sent using blocking method.
-     * If (n1 >= 1), then the beginning (n1 * minorLoopBytes) are sent
-     * using DMA, the left n2 are sent using blocking method.
-     */
-
-    /* Check if the device is busy. */
-    if ((uint32_t)kFLEXIO_MCULCD_StateIdle != handle->state)
-    {
-        return kStatus_FLEXIO_MCULCD_Busy;
-    }
-
-    /* Set the state in handle. */
-    handle->minorLoopBytes = handle->txShifterNum * 4UL;
-    handle->state = (uint32_t)kFLEXIO_MCULCD_StateWriteArray;
-
-    /*
-     * For TX, if data is less than one minor loop, then use polling method.
-     * For RX, if data is less than two minor loop, then use polling method.
-     */
-    if (size < handle->minorLoopBytes)
-    {
-        FLEXIO_MCULCD_WriteDataArrayBlocking(base, data, size);
-
-        handle->state = (uint32_t)kFLEXIO_MCULCD_StateIdle;
-
-        /* Callback to inform upper layer. */
-        if (NULL != handle->completionCallback)
-        {
-            handle->completionCallback(base, handle, kStatus_FLEXIO_MCULCD_Idle, handle->userData);
-        }
-    }
-    else
-    {
-        handle->dataCount           = size;
-        handle->remainingCount      = size;
-        handle->dataAddrOrSameValue = (uint32_t)data;
-
-        /* Setup DMA to transfer data.  */
-        /* Assert the nCS. */
-        FLEXIO_MCULCD_StartTransfer(base);
-
-        /* Setup the DMA configuration. */
-        FLEXIO_MCULCD_EDMAConfig(base, handle);
-
-        /* Start the transfer. */
-        /* For 6800, de-assert the RDWR pin. */
-        if (kFLEXIO_MCULCD_6800 == base->busType)
-        {
-            base->setRDWRPin(false);
-        }
-        FLEXIO_MCULCD_SetMultiBeatsWriteConfig(base);
-        FLEXIO_MCULCD_EnableTxDMA(base, true);
-        EDMA_StartTransfer(handle->txDmaHandle);
     }
 
     return kStatus_Success;

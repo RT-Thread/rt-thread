@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_crm.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 crm header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -1088,6 +1086,7 @@ void crm_reset(void);
 void crm_lext_bypass(confirm_state new_state);
 void crm_hext_bypass(confirm_state new_state);
 flag_status crm_flag_get(uint32_t flag);
+flag_status crm_interrupt_flag_get(uint32_t flag);
 error_status crm_hext_stable_wait(void);
 void crm_hick_clock_trimming_set(uint8_t trim_value);
 void crm_hick_clock_calibration_set(uint8_t cali_value);

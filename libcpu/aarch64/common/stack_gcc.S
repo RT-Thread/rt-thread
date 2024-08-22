@@ -21,6 +21,7 @@
 .section .text
 
 START_POINT(_thread_start)
+    mov     x0, x21
     blr     x19
     mov     x29, #0
     blr     x20

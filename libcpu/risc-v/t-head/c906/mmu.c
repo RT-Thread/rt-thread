@@ -43,6 +43,7 @@ static void *current_mmu_table = RT_NULL;
 volatile __attribute__((aligned(4 * 1024)))
 rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
+#ifdef ARCH_USING_ASID
 static rt_uint8_t ASID_BITS = 0;
 static rt_uint32_t next_asid;
 static rt_uint64_t global_asid_generation;
@@ -108,6 +109,24 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
     asm volatile("sfence.vma x0,%0"::"r"(asid):"memory");
 }
+
+#define ASID_INIT() _asid_init()
+
+#else /* ARCH_USING_ASID */
+
+#define ASID_INIT()
+
+void rt_hw_aspace_switch(rt_aspace_t aspace)
+{
+    uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
+    current_mmu_table = aspace->page_table;
+
+    write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
+                        ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
+    rt_hw_tlb_invalidate_all_local();
+}
+
+#endif /* ARCH_USING_ASID */
 
 void *rt_hw_mmu_tbl_get()
 {
@@ -552,7 +571,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
         mdesc++;
     }
 
-    _asid_init();
+    ASID_INIT();
 
     rt_hw_aspace_switch(&rt_kernel_space);
     rt_page_cleanup();
@@ -601,13 +620,15 @@ void rt_hw_mem_setup_early(void)
             LOG_E("%s: not aligned virtual address. pv_offset %p", __func__, pv_off);
             RT_ASSERT(0);
         }
+
         /**
          * identical mapping,
          * PC are still at lower region before relocating to high memory
          */
         for (size_t i = 0; i < __SIZE(PPN0_BIT); i++)
         {
-            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V);
+            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_CACHE |
+                                        PTE_SHARE | PTE_BUF | PTE_A | PTE_D);
             ps += L1_PAGE_SIZE;
         }
 
@@ -621,7 +642,8 @@ void rt_hw_mem_setup_early(void)
         rt_size_t ve_idx = GET_L1(vs + 0x80000000);
         for (size_t i = vs_idx; i < ve_idx; i++)
         {
-            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V);
+            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_CACHE |
+                                        PTE_SHARE | PTE_BUF | PTE_A | PTE_D);
             ps += L1_PAGE_SIZE;
         }
 

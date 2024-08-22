@@ -47,6 +47,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f429-st-disco](stm32f429-st-disco)                       | ST 官方 STM32F429-discovery 开发板      |
 | [stm32f446-st-nucleo](stm32f446-st-nucleo)                     | ST 官方 STM32F446-nucleo 开发板         |
 | [stm32f469-st-disco](stm32f469-st-disco)                       | ST 官方 STM32F469-discovery 开发板      |
+| [stm32f407-fk407m2-zgt6](stm32f407-fk407m2-zgt6)                       | 反客科技 FK407M2-ZGT6 开发板      |
 | **F7 系列**                                                      |                                    |
 | [stm32f746-st-disco](stm32f746-st-disco)                       | ST 官方 STM32F746-discovery 开发板      |
 | [stm32f767-atk-apollo](stm32f767-atk-apollo)                   | 正点原子 F767 阿波罗开发板                   |

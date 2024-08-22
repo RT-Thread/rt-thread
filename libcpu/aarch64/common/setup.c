@@ -208,11 +208,12 @@ void rt_hw_common_setup(void)
     rt_region_t init_page_region = { 0 };
     rt_region_t platform_mem_region = { 0 };
     static struct mem_desc platform_mem_desc;
+    const rt_ubase_t pv_off = PV_OFFSET;
 
     system_vectors_init();
 
 #ifdef RT_USING_SMART
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, pv_off);
 #else
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffd0000000, 0x10000000, MMUTable, 0);
 #endif
@@ -234,13 +235,13 @@ void rt_hw_common_setup(void)
     rt_memblock_reserve_memory("init-page", init_page_start, init_page_end, MEMBLOCK_NONE);
     rt_memblock_reserve_memory("fdt", fdt_start, fdt_end, MEMBLOCK_NONE);
 
-    rt_memmove((void *)(fdt_start - PV_OFFSET), (void *)(fdt_ptr - PV_OFFSET), fdt_size);
-    fdt_ptr = (void *)fdt_start;
+    rt_memmove((void *)(fdt_start - pv_off), (void *)(fdt_ptr - pv_off), fdt_size);
+    fdt_ptr = (void *)fdt_start - pv_off;
 
-    rt_system_heap_init((void *)(heap_start - PV_OFFSET), (void *)(heap_end - PV_OFFSET));
+    rt_system_heap_init((void *)(heap_start - pv_off), (void *)(heap_end - pv_off));
 
-    init_page_region.start = init_page_start - PV_OFFSET;
-    init_page_region.end = init_page_end - PV_OFFSET;
+    init_page_region.start = init_page_start - pv_off;
+    init_page_region.end = init_page_end - pv_off;
     rt_page_init(init_page_region);
 
     /* create MMU mapping of kernel memory */
@@ -248,8 +249,8 @@ void rt_hw_common_setup(void)
     platform_mem_region.end   = RT_ALIGN(platform_mem_region.end, ARCH_PAGE_SIZE);
 
     platform_mem_desc.paddr_start = platform_mem_region.start;
-    platform_mem_desc.vaddr_start = platform_mem_region.start - PV_OFFSET;
-    platform_mem_desc.vaddr_end = platform_mem_region.end - PV_OFFSET - 1;
+    platform_mem_desc.vaddr_start = platform_mem_region.start - pv_off;
+    platform_mem_desc.vaddr_end = platform_mem_region.end - pv_off - 1;
     platform_mem_desc.attr = NORMAL_MEM;
 
     rt_hw_mmu_setup(&rt_kernel_space, &platform_mem_desc, 1);

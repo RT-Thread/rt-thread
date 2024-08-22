@@ -314,7 +314,7 @@ error_status ertc_date_set(uint8_t year, uint8_t month, uint8_t date, uint8_t we
     return ERROR;
   }
 
-  /* Set the ertc_DR register */
+  /* set the ertc_date register */
   ERTC->date = reg.date;
 
   /* exit init mode */
@@ -1217,6 +1217,45 @@ flag_status ertc_flag_get(uint32_t flag)
 }
 
 /**
+  * @brief  get interrupt flag status.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - ERTC_ALAF_FLAG: alarm clock a flag.
+  *         - ERTC_TSF_FLAG: timestamp flag.
+  *         - ERTC_TP1F_FLAG: tamper detection 1 flag.
+  * @retval the new state of flag (SET or RESET).
+  */
+flag_status ertc_interrupt_flag_get(uint32_t flag)
+{
+  __IO uint32_t iten = 0;
+
+  switch(flag)
+  {
+    case ERTC_ALAF_FLAG:
+      iten = ERTC->ctrl_bit.alaien;
+      break;
+    case ERTC_TSF_FLAG:
+      iten = ERTC->ctrl_bit.tsien;
+      break;
+    case ERTC_TP1F_FLAG:
+      iten = ERTC->tamp_bit.tpien;
+      break;
+
+    default:
+      break;
+  }
+
+  if(((ERTC->sts & flag) != (uint32_t)RESET) && (iten))
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  clear flag status
   * @param  flag: specifies the flag to clear.
   *         this parameter can be any combination of the following values:
@@ -1255,13 +1294,7 @@ void ertc_bpr_data_write(ertc_dt_type dt, uint32_t data)
 
   reg = ERTC_BASE + 0x50 + (dt * 4);
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   *(__IO uint32_t *)reg = data;
-
-  /* enable write protection */
-  ertc_write_protect_enable();
 }
 
 /**

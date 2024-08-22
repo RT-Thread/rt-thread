@@ -190,13 +190,13 @@ typedef struct
     struct
     {
       __IO uint32_t wtcyc                : 3; /* [2:0] */
-      __IO uint32_t hfcyc_en             : 1; /* [3] */
+      __IO uint32_t reserved1            : 1; /* [3] */
       __IO uint32_t pft_en               : 1; /* [4] */
       __IO uint32_t pft_enf              : 1; /* [5] */
       __IO uint32_t pft_en2              : 1; /* [6] */
       __IO uint32_t pft_enf2             : 1; /* [7] */
       __IO uint32_t pft_lat_dis          : 1; /* [8] */
-      __IO uint32_t reserved1            : 23;/* [31:9] */
+      __IO uint32_t reserved2            : 23;/* [31:9] */
     } psr_bit;
   };
 

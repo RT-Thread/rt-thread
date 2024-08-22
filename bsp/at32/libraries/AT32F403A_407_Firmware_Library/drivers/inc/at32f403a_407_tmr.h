@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_tmr.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 tmr header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -238,7 +236,7 @@ typedef enum
 {
   TMR_CC_CHANNEL_MAPPED_DIRECT           = 0x01, /*!< channel is configured as input, mapped direct */
   TMR_CC_CHANNEL_MAPPED_INDIRECT         = 0x02, /*!< channel is configured as input, mapped indirect */
-  TMR_CC_CHANNEL_MAPPED_STI              = 0x03  /*!< channel is configured as input, mapped trc */
+  TMR_CC_CHANNEL_MAPPED_STI              = 0x03  /*!< channel is configured as input, mapped sti */
 } tmr_input_direction_mapped_type;
 
 /**
@@ -888,7 +886,7 @@ void tmr_input_channel_filter_set(tmr_type *tmr_x, tmr_channel_select_type tmr_c
                                   uint16_t filter_value);
 void tmr_pwm_input_config(tmr_type *tmr_x, tmr_input_config_type *input_struct, \
                           tmr_channel_input_divider_type divider_factor);
-void tmr_channel1_input_select(tmr_type *tmr_x, tmr_channel1_input_connected_type ti1_connect);
+void tmr_channel1_input_select(tmr_type *tmr_x, tmr_channel1_input_connected_type ch1_connect);
 void tmr_input_channel_divider_set(tmr_type *tmr_x, tmr_channel_select_type tmr_channel, \
                                    tmr_channel_input_divider_type divider_factor);
 void tmr_primary_mode_select(tmr_type *tmr_x, tmr_primary_select_type primary_mode);
@@ -900,6 +898,7 @@ void tmr_trigger_input_select(tmr_type *tmr_x, sub_tmr_input_sel_type trigger_se
 void tmr_sub_sync_mode_set(tmr_type *tmr_x, confirm_state new_state);
 void tmr_dma_request_enable(tmr_type *tmr_x, tmr_dma_request_type dma_request, confirm_state new_state);
 void tmr_interrupt_enable(tmr_type *tmr_x, uint32_t tmr_interrupt, confirm_state new_state);
+flag_status tmr_interrupt_flag_get(tmr_type *tmr_x, uint32_t tmr_flag);
 flag_status tmr_flag_get(tmr_type *tmr_x, uint32_t tmr_flag);
 void tmr_flag_clear(tmr_type *tmr_x, uint32_t tmr_flag);
 void tmr_event_sw_trigger(tmr_type *tmr_x, tmr_event_trigger_type tmr_event);

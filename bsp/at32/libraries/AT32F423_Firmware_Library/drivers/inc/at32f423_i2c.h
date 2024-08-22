@@ -155,12 +155,12 @@ typedef enum
 {
   I2C_ADDR2_NOMASK                       = 0x00, /*!< compare bit      [7:1] */
   I2C_ADDR2_MASK01                       = 0x01, /*!< only compare bit [7:2] */
-  I2C_ADDR2_MASK02                       = 0x02, /*!< only compare bit [7:2] */
-  I2C_ADDR2_MASK03                       = 0x03, /*!< only compare bit [7:3] */
-  I2C_ADDR2_MASK04                       = 0x04, /*!< only compare bit [7:4] */
-  I2C_ADDR2_MASK05                       = 0x05, /*!< only compare bit [7:5] */
-  I2C_ADDR2_MASK06                       = 0x06, /*!< only compare bit [7:6] */
-  I2C_ADDR2_MASK07                       = 0x07  /*!< only compare bit [7] */
+  I2C_ADDR2_MASK02                       = 0x02, /*!< only compare bit [7:3] */
+  I2C_ADDR2_MASK03                       = 0x03, /*!< only compare bit [7:4] */
+  I2C_ADDR2_MASK04                       = 0x04, /*!< only compare bit [7:5] */
+  I2C_ADDR2_MASK05                       = 0x05, /*!< only compare bit [7:6] */
+  I2C_ADDR2_MASK06                       = 0x06, /*!< only compare bit [7] */
+  I2C_ADDR2_MASK07                       = 0x07  /*!< response all addresses other than those reserved for i2c */
 } i2c_addr2_mask_type;
 
 /**
@@ -457,6 +457,7 @@ void i2c_stop_generate(i2c_type *i2c_x);
 void i2c_data_send(i2c_type *i2c_x, uint8_t data);
 uint8_t i2c_data_receive(i2c_type *i2c_x);
 flag_status i2c_flag_get(i2c_type *i2c_x, uint32_t flag);
+flag_status i2c_interrupt_flag_get(i2c_type *i2c_x, uint32_t flag);
 void i2c_flag_clear(i2c_type *i2c_x, uint32_t flag);
 void i2c_wakeup_enable(i2c_type *i2c_x, confirm_state new_state);
 void i2c_analog_filter_enable(i2c_type *i2c_x, confirm_state new_state);

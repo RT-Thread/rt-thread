@@ -16,5 +16,6 @@ void at32_msp_spi_init(void *instance);
 void at32_msp_tmr_init(void *instance);
 void at32_msp_adc_init(void *instance);
 void at32_msp_hwtmr_init(void *instance);
+void at32_msp_i2c_init(void *instance);
 
 #endif /* __AT32_MSP_H__ */

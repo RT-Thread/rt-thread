@@ -19,9 +19,9 @@
 #include <asm-fpu.h>
 #include <armv8.h>
 
-.macro RESTORE_CONTEXT_SWITCH
+.macro RESTORE_CONTEXT_SWITCH using_sp
     /* Set the SP to point to the stack of the task being restored. */
-    mov     sp, x0
+    mov     sp, \using_sp
 
 #ifdef RT_USING_SMART
     bl      rt_thread_self
@@ -34,8 +34,6 @@
 .endm
 
 .macro RESTORE_IRQ_CONTEXT
-    /* Set the SP to point to the stack of the task being restored. */
-    MOV     SP, X0
 #ifdef RT_USING_SMART
     BL      rt_thread_self
     MOV     X19, X0

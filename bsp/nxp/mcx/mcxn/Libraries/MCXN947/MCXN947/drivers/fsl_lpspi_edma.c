@@ -181,26 +181,20 @@ static void LPSPI_PrepareTransferEDMA(LPSPI_Type *base)
 }
 
 /*!
- * brief LPSPI master transfer data using eDMA.
+ * brief LPSPI master config transfer parameter using eDMA.
  *
- * This function transfers data using eDMA. This is a non-blocking function, which returns right away. When all data
- * is transferred, the callback function is called.
- *
- * Note:
- * The transfer data size should be an integer multiple of bytesPerFrame if bytesPerFrame is less than or equal to 4.
- * For bytesPerFrame greater than 4:
- * The transfer data size should be equal to bytesPerFrame if the bytesPerFrame is not an integer multiple of 4.
- * Otherwise, the transfer data size can be an integer multiple of bytesPerFrame.
+ * This function is preparing to transfers data using eDMA.
  *
  * param base LPSPI peripheral base address.
  * param handle pointer to lpspi_master_edma_handle_t structure which stores the transfer state.
- * param transfer pointer to lpspi_transfer_t structure.
- * return status of status_t.
+ * param configFlags transfer configuration flags. ref _lpspi_transfer_config_flag_for_master.
+ * return Indicates whether LPSPI master transfer was successful or not.
+ * retval kStatus_Success          Execution successfully.
+ * retval kStatus_LPSPI_Busy       The LPSPI device is busy.
  */
-status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, lpspi_transfer_t *transfer)
+status_t LPSPI_MasterTransferPrepareEDMALite(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, uint32_t configFlags)
 {
     assert(handle != NULL);
-    assert(transfer != NULL);
 
     /* Check that we're not busy.*/
     if (handle->state == (uint8_t)kLPSPI_Busy)
@@ -210,41 +204,17 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
 
     /* Disable module before configuration */
     LPSPI_Enable(base, false);
-    /* Check arguements */
-    if (!LPSPI_CheckTransferArgument(base, transfer, true))
-    {
-        return kStatus_InvalidArgument;
-    }
 
     LPSPI_PrepareTransferEDMA(base);
 
-    /* Variables */
-    bool isThereExtraTxBytes = false;
-    bool isByteSwap          = ((transfer->configFlags & (uint32_t)kLPSPI_MasterByteSwap) != 0U);
-    bool isPcsContinuous     = ((transfer->configFlags & (uint32_t)kLPSPI_MasterPcsContinuous) != 0U);
-    uint32_t instance        = LPSPI_GetInstance(base);
-    uint8_t dummyData        = g_lpspiDummyData[instance];
-    uint8_t bytesLastWrite   = 0;
+    bool isByteSwap      = ((configFlags & (uint32_t)kLPSPI_MasterByteSwap) != 0U);
+    bool isPcsContinuous = ((configFlags & (uint32_t)kLPSPI_MasterPcsContinuous) != 0U);
+    uint32_t instance    = LPSPI_GetInstance(base);
+    uint8_t dummyData    = g_lpspiDummyData[instance];
     /*Used for byte swap*/
-    uint32_t addrOffset    = 0;
-    uint32_t rxAddr        = LPSPI_GetRxRegisterAddress(base);
-    uint32_t txAddr        = LPSPI_GetTxRegisterAddress(base);
-    uint32_t whichPcs      = (transfer->configFlags & LPSPI_MASTER_PCS_MASK) >> LPSPI_MASTER_PCS_SHIFT;
-    uint32_t width          = (transfer->configFlags & LPSPI_MASTER_WIDTH_MASK) >> LPSPI_MASTER_WIDTH_SHIFT;
+    uint32_t whichPcs      = (configFlags & LPSPI_MASTER_PCS_MASK) >> LPSPI_MASTER_PCS_SHIFT;
     uint32_t bytesPerFrame = ((base->TCR & LPSPI_TCR_FRAMESZ_MASK) >> LPSPI_TCR_FRAMESZ_SHIFT) / 8U + 1U;
-    edma_transfer_config_t transferConfigRx = {0};
-    edma_transfer_config_t transferConfigTx = {0};
-    edma_tcd_t *softwareTCD_pcsContinuous   = (edma_tcd_t *)((uint32_t)(&handle->lpspiSoftwareTCD[2]) & (~0x1FU));
-    edma_tcd_t *softwareTCD_extraBytes      = (edma_tcd_t *)((uint32_t)(&handle->lpspiSoftwareTCD[1]) & (~0x1FU));
 
-    handle->state                  = (uint8_t)kLPSPI_Busy;
-    handle->txData                 = transfer->txData;
-    handle->rxData                 = transfer->rxData;
-    handle->txRemainingByteCount   = transfer->dataSize;
-    handle->rxRemainingByteCount   = transfer->dataSize;
-    handle->totalByteCount         = transfer->dataSize;
-    handle->writeRegRemainingTimes = (transfer->dataSize / bytesPerFrame) * ((bytesPerFrame + 3U) / 4U);
-    handle->readRegRemainingTimes  = handle->writeRegRemainingTimes;
     handle->txBuffIfNull =
         ((uint32_t)dummyData) | ((uint32_t)dummyData << 8) | ((uint32_t)dummyData << 16) | ((uint32_t)dummyData << 24);
     /*The TX and RX FIFO sizes are always the same*/
@@ -265,16 +235,13 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
     /* For DMA transfer , we'd better not masked the transmit data and receive data in TCR since the transfer flow is
      * hard to controlled by software. */
     base->TCR = (base->TCR & ~(LPSPI_TCR_CONT_MASK | LPSPI_TCR_CONTC_MASK | LPSPI_TCR_BYSW_MASK | LPSPI_TCR_PCS_MASK)) |
-                LPSPI_TCR_CONT(isPcsContinuous) | LPSPI_TCR_BYSW(isByteSwap) | LPSPI_TCR_PCS(whichPcs) |
-                LPSPI_TCR_WIDTH(width);
-
+                LPSPI_TCR_CONT(isPcsContinuous) | LPSPI_TCR_BYSW(isByteSwap) | LPSPI_TCR_PCS(whichPcs);
     /*Calculate the bytes for write/read the TX/RX register each time*/
     if (bytesPerFrame <= 4U)
     {
         handle->bytesEachWrite = (uint8_t)bytesPerFrame;
         handle->bytesEachRead  = (uint8_t)bytesPerFrame;
-
-        handle->bytesLastRead = (uint8_t)bytesPerFrame;
+        handle->bytesLastRead  = (uint8_t)bytesPerFrame;
     }
     else
     {
@@ -282,7 +249,77 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
         handle->bytesEachRead  = 4U;
 
         handle->bytesLastRead = 4U;
+    }
+    return kStatus_Success;
+}
 
+/*!
+ * brief LPSPI master transfer data using eDMA without configs.
+ *
+ * This function transfers data using eDMA. This is a non-blocking function, which returns right away. When all data
+ * is transferred, the callback function is called.
+ *
+ * Note:
+ * This API is only for transfer through DMA without configuration.
+ * Before calling this API, you must call LPSPI_MasterTransferPrepareEDMALite to configure it once.
+ * The transfer data size should be an integer multiple of bytesPerFrame if bytesPerFrame is less than or equal to 4.
+ * For bytesPerFrame greater than 4:
+ * The transfer data size should be equal to bytesPerFrame if the bytesPerFrame is not an integer multiple of 4.
+ * Otherwise, the transfer data size can be an integer multiple of bytesPerFrame.
+ *
+ * param base LPSPI peripheral base address.
+ * param handle pointer to lpspi_master_edma_handle_t structure which stores the transfer state.
+ * param transfer pointer to lpspi_transfer_t structure, config field is not working.
+ * return Indicates whether LPSPI master transfer was successful or not.
+ * retval kStatus_Success          Execution successfully.
+ * retval kStatus_LPSPI_Busy       The LPSPI device is busy.
+ * retval kStatus_InvalidArgument  The transfer structure is invalid.
+ */
+status_t LPSPI_MasterTransferEDMALite(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, lpspi_transfer_t *transfer)
+{
+    assert(handle != NULL);
+    assert(transfer != NULL);
+
+    /* Check that we're not busy.*/
+    if (handle->state == (uint8_t)kLPSPI_Busy)
+    {
+        return kStatus_LPSPI_Busy;
+    }
+
+    /* Check arguements */
+    if (!LPSPI_CheckTransferArgument(base, transfer, true))
+    {
+        return kStatus_InvalidArgument;
+    }
+
+    /* Variables */
+    bool isThereExtraTxBytes = false;
+    uint8_t bytesLastWrite   = 0;
+    uint32_t instance        = LPSPI_GetInstance(base);
+    /*Used for byte swap*/
+    uint32_t addrOffset    = 0;
+    uint32_t rxAddr        = LPSPI_GetRxRegisterAddress(base);
+    uint32_t txAddr        = LPSPI_GetTxRegisterAddress(base);
+    uint32_t bytesPerFrame = ((base->TCR & LPSPI_TCR_FRAMESZ_MASK) >> LPSPI_TCR_FRAMESZ_SHIFT) / 8U + 1U;
+    edma_transfer_config_t transferConfigRx = {0};
+    edma_transfer_config_t transferConfigTx = {0};
+    edma_tcd_t *softwareTCD_pcsContinuous   = (edma_tcd_t *)((uint32_t)(&handle->lpspiSoftwareTCD[2]) & (~0x1FU));
+    edma_tcd_t *softwareTCD_extraBytes      = (edma_tcd_t *)((uint32_t)(&handle->lpspiSoftwareTCD[1]) & (~0x1FU));
+
+    handle->state                  = (uint8_t)kLPSPI_Busy;
+    handle->txData                 = transfer->txData;
+    handle->rxData                 = transfer->rxData;
+    handle->txRemainingByteCount   = transfer->dataSize;
+    handle->rxRemainingByteCount   = transfer->dataSize;
+    handle->totalByteCount         = transfer->dataSize;
+    handle->writeRegRemainingTimes = (transfer->dataSize / bytesPerFrame) * ((bytesPerFrame + 3U) / 4U);
+    handle->readRegRemainingTimes  = handle->writeRegRemainingTimes;
+
+    handle->isThereExtraRxBytes = false;
+
+    /*Calculate the bytes for write/read the TX/RX register each time*/
+    if (bytesPerFrame > 4U)
+    {
         if ((transfer->dataSize % 4U) != 0U)
         {
             bytesLastWrite        = (uint8_t)(transfer->dataSize % 4U);
@@ -412,8 +449,20 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
         transferConfigTx.destAddr        = (uint32_t)txAddr + addrOffset;
         transferConfigTx.majorLoopCounts = 1;
 
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+        EDMA_TcdResetExt(handle->edmaRxRegToRxDataHandle->base, softwareTCD_extraBytes);
+        if (handle->isPcsContinuous)
+        {
+            EDMA_TcdSetTransferConfigExt(handle->edmaRxRegToRxDataHandle->base, softwareTCD_extraBytes,
+                                         &transferConfigTx, softwareTCD_pcsContinuous);
+        }
+        else
+        {
+            EDMA_TcdSetTransferConfigExt(handle->edmaRxRegToRxDataHandle->base, softwareTCD_extraBytes,
+                                         &transferConfigTx, NULL);
+        }
+#else
         EDMA_TcdReset(softwareTCD_extraBytes);
-
         if (handle->isPcsContinuous)
         {
             EDMA_TcdSetTransferConfig(softwareTCD_extraBytes, &transferConfigTx, softwareTCD_pcsContinuous);
@@ -422,6 +471,7 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
         {
             EDMA_TcdSetTransferConfig(softwareTCD_extraBytes, &transferConfigTx, NULL);
         }
+#endif
     }
 
     if (handle->isPcsContinuous)
@@ -439,8 +489,14 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
         transferConfigTx.minorLoopBytes   = 4;
         transferConfigTx.majorLoopCounts  = 1;
 
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+        EDMA_TcdResetExt(handle->edmaRxRegToRxDataHandle->base, softwareTCD_pcsContinuous);
+        EDMA_TcdSetTransferConfigExt(handle->edmaRxRegToRxDataHandle->base, softwareTCD_pcsContinuous,
+                                     &transferConfigTx, NULL);
+#else
         EDMA_TcdReset(softwareTCD_pcsContinuous);
         EDMA_TcdSetTransferConfig(softwareTCD_pcsContinuous, &transferConfigTx, NULL);
+#endif
     }
 
     if (handle->txData != NULL)
@@ -517,6 +573,34 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
     LPSPI_EnableDMA(base, (uint32_t)kLPSPI_RxDmaEnable | (uint32_t)kLPSPI_TxDmaEnable);
 
     return kStatus_Success;
+}
+
+/*!
+ * brief LPSPI master transfer data using eDMA.
+ *
+ * This function transfers data using eDMA. This is a non-blocking function, which returns right away. When all data
+ * is transferred, the callback function is called.
+ *
+ * Note:
+ * The transfer data size should be an integer multiple of bytesPerFrame if bytesPerFrame is less than or equal to 4.
+ * For bytesPerFrame greater than 4:
+ * The transfer data size should be equal to bytesPerFrame if the bytesPerFrame is not an integer multiple of 4.
+ * Otherwise, the transfer data size can be an integer multiple of bytesPerFrame.
+ *
+ * param base LPSPI peripheral base address.
+ * param handle pointer to lpspi_master_edma_handle_t structure which stores the transfer state.
+ * param transfer pointer to lpspi_transfer_t structure.
+ * return status of status_t.
+ */
+status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, lpspi_transfer_t *transfer)
+{
+    status_t status = kStatus_Fail;
+    status          = LPSPI_MasterTransferPrepareEDMALite(base, handle, transfer->configFlags);
+    if (kStatus_Success != status)
+    {
+        return status;
+    }
+    return LPSPI_MasterTransferEDMALite(base, handle, transfer);
 }
 
 static void EDMA_LpspiMasterCallback(edma_handle_t *edmaHandle,
@@ -715,7 +799,6 @@ status_t LPSPI_SlaveTransferEDMA(LPSPI_Type *base, lpspi_slave_edma_handle_t *ha
     uint32_t rxAddr        = LPSPI_GetRxRegisterAddress(base);
     uint32_t txAddr        = LPSPI_GetTxRegisterAddress(base);
     uint32_t whichPcs      = (transfer->configFlags & LPSPI_MASTER_PCS_MASK) >> LPSPI_MASTER_PCS_SHIFT;
-    uint32_t width          = (transfer->configFlags & LPSPI_SLAVE_WIDTH_MASK) >> LPSPI_SLAVE_WIDTH_SHIFT;
     uint32_t bytesPerFrame = ((base->TCR & LPSPI_TCR_FRAMESZ_MASK) >> LPSPI_TCR_FRAMESZ_SHIFT) / 8U + 1U;
     edma_transfer_config_t transferConfigRx = {0};
     edma_transfer_config_t transferConfigTx = {0};
@@ -750,8 +833,7 @@ status_t LPSPI_SlaveTransferEDMA(LPSPI_Type *base, lpspi_slave_edma_handle_t *ha
        any time since we use rx dma transfer finish cllback to indicate transfer finish. */
     base->TCR =
         (base->TCR & ~(LPSPI_TCR_CONT_MASK | LPSPI_TCR_CONTC_MASK | LPSPI_TCR_BYSW_MASK | LPSPI_TCR_TXMSK_MASK)) |
-        LPSPI_TCR_TXMSK(transfer->txData == NULL) | LPSPI_TCR_BYSW(isByteSwap) | LPSPI_TCR_PCS(whichPcs) |
-        LPSPI_TCR_WIDTH(width);
+        LPSPI_TCR_TXMSK(transfer->txData == NULL) | LPSPI_TCR_BYSW(isByteSwap) | LPSPI_TCR_PCS(whichPcs);
 
     /*Calculate the bytes for write/read the TX/RX register each time*/
     if (bytesPerFrame <= 4U)
@@ -890,8 +972,14 @@ status_t LPSPI_SlaveTransferEDMA(LPSPI_Type *base, lpspi_slave_edma_handle_t *ha
             transferConfigTx.destAddr        = (uint32_t)txAddr + addrOffset;
             transferConfigTx.majorLoopCounts = 1;
 
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+            EDMA_TcdResetExt(handle->edmaTxDataToTxRegHandle->base, softwareTCD_extraBytes);
+            EDMA_TcdSetTransferConfigExt(handle->edmaTxDataToTxRegHandle->base, softwareTCD_extraBytes,
+                                         &transferConfigTx, NULL);
+#else
             EDMA_TcdReset(softwareTCD_extraBytes);
             EDMA_TcdSetTransferConfig(softwareTCD_extraBytes, &transferConfigTx, NULL);
+#endif
         }
 
         transferConfigTx.srcAddr         = (uint32_t)(handle->txData);

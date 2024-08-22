@@ -224,6 +224,23 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_LPTIM
+        bool "Enable lptimer"
+        default n
+        select RT_USING_LPTIMER
+        select RT_USING_HWTIMER
+        if BSP_USING_LPTIM
+            config BSP_USING_LPTIM1
+                bool "Enable LPTIM1"
+                default n
+            config BSP_USING_LPTIM2
+                bool "Enable LPTIM2"
+                default n
+            config BSP_USING_LPTIM3
+                bool "Enable LPTIM3"
+                default n
+        endif
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         default n

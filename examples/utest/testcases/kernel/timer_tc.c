@@ -22,6 +22,9 @@
         }                                                   \
     } while (0)
 
+/* notify user that the test is not corrupted */
+#define PRINT_PROGRESS(id) LOG_I("Testing on %d", id)
+
 static rt_uint8_t timer_flag_oneshot[] = {
     RT_TIMER_FLAG_ONE_SHOT,
     RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
@@ -649,6 +652,8 @@ static void test_timer_stress(void)
 {
     rt_tick_t start;
     rt_ubase_t iters = 0;
+    rt_ubase_t cur_tick;
+    rt_ubase_t next_print_time;
 
     LOG_I("timer stress test begin, it will take %d seconds", 3*TEST_TIME_S);
 
@@ -665,8 +670,9 @@ static void test_timer_stress(void)
         }
 
         start = rt_tick_get();
-
-        while (rt_tick_get() - start <= TEST_TIME_S * RT_TICK_PER_SECOND)
+        cur_tick = rt_tick_get();
+        next_print_time = cur_tick + RT_TICK_PER_SECOND;
+        while (cur_tick - start <= TEST_TIME_S * RT_TICK_PER_SECOND)
         {
             for (int j = 0; j < STRESS_TIMERS; j++)
             {
@@ -680,6 +686,12 @@ static void test_timer_stress(void)
                 }
             }
             iters ++;
+            cur_tick = rt_tick_get();
+            if (cur_tick > next_print_time)
+            {
+                PRINT_PROGRESS(next_print_time);
+                next_print_time = cur_tick + RT_TICK_PER_SECOND;
+            }
         }
 
         for (int j = 0; j < STRESS_TIMERS; j++)
@@ -710,16 +722,25 @@ static rt_err_t utest_tc_cleanup(void)
 static void testcase(void)
 {
     UTEST_UNIT_RUN(test_static_timer);
+    PRINT_PROGRESS(__LINE__);
     UTEST_UNIT_RUN(test_static_timer_control);
+    PRINT_PROGRESS(__LINE__);
     UTEST_UNIT_RUN(test_static_timer_start_twice);
+    PRINT_PROGRESS(__LINE__);
     UTEST_UNIT_RUN(test_static_timer_op_in_callback);
+    PRINT_PROGRESS(__LINE__);
 #ifdef RT_USING_HEAP
     UTEST_UNIT_RUN(test_dynamic_timer);
+    PRINT_PROGRESS(__LINE__);
     UTEST_UNIT_RUN(test_dynamic_timer_control);
+    PRINT_PROGRESS(__LINE__);
     UTEST_UNIT_RUN(test_dynamic_timer_start_twice);
+    PRINT_PROGRESS(__LINE__);
     UTEST_UNIT_RUN(test_dynamic_timer_op_in_callback);
+    PRINT_PROGRESS(__LINE__);
 #endif /* RT_USING_HEAP */
     UTEST_UNIT_RUN(test_timer_stress);
+    PRINT_PROGRESS(__LINE__);
 }
 UTEST_TC_EXPORT(testcase, "testcases.kernel.timer_tc", utest_tc_init, utest_tc_cleanup, 1000);
 

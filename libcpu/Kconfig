@@ -263,12 +263,25 @@ config ARCH_RISCV64
     bool
 
 if ARCH_RISCV64
-    config ARCH_REMAP_KERNEL
+    config ARCH_USING_RISCV_COMMON64
         bool
-        depends on RT_USING_SMART
+        depends on ARCH_RISCV64
+        select RT_USING_CPUTIME
         help
-            Remapping kernel image to high virtual address region
+            Using the common64 implementation under ./libcpu/risc-v
 endif
+
+config ARCH_REMAP_KERNEL
+    bool
+    depends on RT_USING_SMART
+    help
+        Remapping kernel image to high virtual address region
+
+config ARCH_USING_ASID
+    bool
+    depends on RT_USING_SMART
+    help
+        Using ASID support from architecture
 
 config ARCH_IA32
     bool

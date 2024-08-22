@@ -8,13 +8,16 @@
  * 2018/10/01     Bernard      The first version
  * 2018/12/27     Jesven       Add SMP support
  * 2020/6/12      Xim          Port to QEMU and remove SMP support
+ * 2024-06-30     Shell        Support of kernel remapping
  */
 
 #include <encoding.h>
 #include <cpuport.h>
 
-boot_hartid: .int
-    .global         boot_hartid
+    .data
+    .global boot_hartid    /* global varible rt_boot_hartid in .data section */
+boot_hartid:
+    .word 0xdeadbeef
 
     .global         _start
     .section ".start", "ax"
@@ -72,8 +75,6 @@ _start:
     li x31,0
 
     /* set to disable FPU */
-    li t0, SSTATUS_FS
-    csrc sstatus, t0
     li t0, SSTATUS_SUM
     csrs sstatus, t0
 
@@ -86,8 +87,45 @@ _start:
     la   sp, __stack_start__
     li   t0, __STACKSIZE__
     add  sp, sp, t0
-    csrw sscratch, sp
 
+    /**
+     * sscratch is always zero on kernel mode
+     */
+    csrw sscratch, zero
     call init_bss
-    call sbi_init
-    j primary_cpu_entry
+#ifdef ARCH_MM_MMU
+    call    rt_hw_mem_setup_early
+    call    rt_kmem_pvoff
+    /* a0 := pvoff  */
+    beq     a0, zero, 1f
+
+    /* relocate pc */
+    la      x1, _after_pc_relocation
+    sub     x1, x1, a0
+    ret
+_after_pc_relocation:
+    /* relocate gp */
+    sub     gp, gp, a0
+
+    /* relocate context: sp */
+    la      sp, __stack_start__
+    li      t0, __STACKSIZE__
+    add     sp, sp, t0
+
+    /* reset s0-fp */
+    mv      s0, zero
+
+    /* relocate stvec */
+    la      t0, trap_entry
+    csrw    stvec, t0
+1:
+#endif
+    call    sbi_init
+    call    primary_cpu_entry
+
+_never_return_here:
+    j       .
+
+.global _start_link_addr
+_start_link_addr:
+    .dword __text_start

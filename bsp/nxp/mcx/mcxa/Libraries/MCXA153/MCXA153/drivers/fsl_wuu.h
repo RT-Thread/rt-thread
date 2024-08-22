@@ -1,11 +1,11 @@
 /*
- * Copyright 2019-2023 NXP.
+ * Copyright 2019-2024 NXP.
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_WUU_H_
-#define _FSL_WUU_H_
+#ifndef FSL_WUU_H_
+#define FSL_WUU_H_
 
 #include "fsl_common.h"
 
@@ -17,10 +17,10 @@
  *******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief Defines WUU driver version 2.3.0. */
-#define FSL_WUU_DRIVER_VERSION (MAKE_VERSION(2, 3, 0))
-/*@}*/
+/*! @{ */
+/*! @brief Defines WUU driver version 2.4.0. */
+#define FSL_WUU_DRIVER_VERSION (MAKE_VERSION(2, 4, 0))
+/*! @} */
 
 /*!
  * @brief External WakeUp pin edge detection enumeration.
@@ -136,6 +136,14 @@ extern "C" {
 void WUU_SetExternalWakeUpPinsConfig(WUU_Type *base, uint8_t pinIndex, const wuu_external_wakeup_pin_config_t *config);
 
 /*!
+ * @brief Disable and clear external wakeup pin settings.
+ * 
+ * @param base MUU peripheral base address.
+ * @param pinIndex The index of the external input pin.
+ */
+void WUU_ClearExternalWakeupPinsConfig(WUU_Type *base, uint8_t pinIndex);
+
+/*!
  * @brief Gets External Wakeup pin flags.
  *
  * This function return the external wakeup pin flags.
@@ -160,7 +168,7 @@ static inline void WUU_ClearExternalWakeUpPinsFlag(WUU_Type *base, uint32_t mask
 {
     base->PF = mask;
 }
-/* @} */
+/*! @} */
 
 /*!
  * @name Internal Wakeup Module control APIs.
@@ -215,7 +223,7 @@ static inline bool WUU_GetInternalWakeupModuleFlag(WUU_Type *base, uint32_t modu
 }
 #endif /* FSL_FEATURE_WUU_HAS_MF */
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Pin Filter Control APIs
@@ -275,7 +283,7 @@ bool WUU_GetExternalWakeupPinFlag(WUU_Type *base, uint32_t pinIndex);
  * param pinIndex A pin index, which starts from 0.
  */
 void WUU_ClearExternalWakeupPinFlag(WUU_Type *base, uint32_t pinIndex);
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -283,4 +291,4 @@ void WUU_ClearExternalWakeupPinFlag(WUU_Type *base, uint32_t pinIndex);
 
 /*! @} */
 
-#endif /*_FSL_WUU_H_*/
+#endif /*FSL_WUU_H_*/

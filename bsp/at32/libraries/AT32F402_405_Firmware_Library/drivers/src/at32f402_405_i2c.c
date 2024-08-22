@@ -120,12 +120,12 @@ void i2c_own_address1_set(i2c_type *i2c_x, i2c_address_mode_type mode, uint16_t 
   *         this parameter can be one of the following values:
   *         - I2C_ADDR2_NOMASK: compare bit      [7:1].
   *         - I2C_ADDR2_MASK01: only compare bit [7:2].
-  *         - I2C_ADDR2_MASK02: only compare bit [7:2].
-  *         - I2C_ADDR2_MASK03: only compare bit [7:3].
-  *         - I2C_ADDR2_MASK04: only compare bit [7:4].
-  *         - I2C_ADDR2_MASK05: only compare bit [7:5].
-  *         - I2C_ADDR2_MASK06: only compare bit [7:6].
-  *         - I2C_ADDR2_MASK07: only compare bit [7].
+  *         - I2C_ADDR2_MASK02: only compare bit [7:3].
+  *         - I2C_ADDR2_MASK03: only compare bit [7:4].
+  *         - I2C_ADDR2_MASK04: only compare bit [7:5].
+  *         - I2C_ADDR2_MASK05: only compare bit [7:6].
+  *         - I2C_ADDR2_MASK06: only compare bit [7].
+  *         - I2C_ADDR2_MASK07: response all addresses other than those reserved for i2c.
   * @retval none
   */
 void i2c_own_address2_set(i2c_type *i2c_x, uint8_t address, i2c_addr2_mask_type mask)
@@ -697,6 +697,77 @@ uint8_t i2c_data_receive(i2c_type *i2c_x)
 flag_status i2c_flag_get(i2c_type *i2c_x, uint32_t flag)
 {
   if((i2c_x->sts & flag) != RESET)
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
+  * @brief  get interrupt flag status.
+  * @param  i2c_x: to select the i2c peripheral.
+  *         this parameter can be one of the following values:
+  *         I2C1, I2C2, I2C3.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - I2C_TDBE_FLAG: transmit data buffer empty flag.
+  *         - I2C_TDIS_FLAG: send interrupt status.
+  *         - I2C_RDBF_FLAG: receive data buffer full flag.
+  *         - I2C_ADDRF_FLAG: 0~7 bit address match flag.
+  *         - I2C_ACKFAIL_FLAG: acknowledge failure flag.
+  *         - I2C_STOPF_FLAG: stop condition generation complete flag.
+  *         - I2C_TDC_FLAG: transmit data complete flag.
+  *         - I2C_TCRLD_FLAG: transmission is complete, waiting to load data.
+  *         - I2C_BUSERR_FLAG: bus error flag.
+  *         - I2C_ARLOST_FLAG: arbitration lost flag.
+  *         - I2C_OUF_FLAG: overflow or underflow flag.
+  *         - I2C_PECERR_FLAG: pec receive error flag.
+  *         - I2C_TMOUT_FLAG: smbus timeout flag.
+  *         - I2C_ALERTF_FLAG: smbus alert flag.
+  * @retval the new state of flag (SET or RESET).
+  */
+flag_status i2c_interrupt_flag_get(i2c_type *i2c_x, uint32_t flag)
+{
+  __IO uint32_t iten = 0;
+
+  switch(flag)
+  {
+    case I2C_TDIS_FLAG:
+      iten = i2c_x->ctrl1_bit.tdien;
+      break;
+    case I2C_RDBF_FLAG:
+      iten = i2c_x->ctrl1_bit.rdien;
+      break;
+    case I2C_ADDRF_FLAG:
+      iten = i2c_x->ctrl1_bit.addrien;
+      break;
+    case I2C_ACKFAIL_FLAG:
+      iten = i2c_x->ctrl1_bit.ackfailien;
+      break;
+    case I2C_STOPF_FLAG:
+      iten = i2c_x->ctrl1_bit.stopien;
+      break;
+    case I2C_TDC_FLAG:
+    case I2C_TCRLD_FLAG:
+      iten = i2c_x->ctrl1_bit.tdcien;
+      break;
+    case I2C_BUSERR_FLAG:
+    case I2C_ARLOST_FLAG:
+    case I2C_OUF_FLAG:
+    case I2C_PECERR_FLAG:
+    case I2C_TMOUT_FLAG:
+    case I2C_ALERTF_FLAG:
+      iten = i2c_x->ctrl1_bit.errien;
+      break;
+
+    default:
+      break;
+  }
+
+  if(((i2c_x->sts & flag) != RESET) && (iten))
   {
     return SET;
   }

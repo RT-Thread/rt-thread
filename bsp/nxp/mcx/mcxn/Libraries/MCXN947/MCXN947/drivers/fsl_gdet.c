@@ -141,7 +141,7 @@ status_t GDET_ReconfigureVoltageMode(GDET_Type *base, gdet_core_voltage_t voltag
     uint32_t tmp0   = 0;
     status_t status = kStatus_Fail;
 
-    if (voltage != (kGDET_MidVoltage || kGDET_NormalVoltage || kGDET_OverDriveVoltage))
+    if ((voltage != kGDET_MidVoltage) && (voltage != kGDET_NormalVoltage) && (voltage != kGDET_OverDriveVoltage))
     {
         return kStatus_InvalidArgument;
     }

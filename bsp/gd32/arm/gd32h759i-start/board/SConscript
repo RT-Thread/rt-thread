@@ -1,0 +1,28 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/GD32H7xx_Firmware_Library/CMSIS/GD/GD32H7xx/Source/GCC/startup_gd32h7xx.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/GD32H7xx_Firmware_Library/CMSIS/GD/GD32H7xx/Source/ARM/startup_gd32h7xx.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/GD32H7xx_Firmware_Library/CMSIS/GD/GD32H7xx/Source/IAR/startup_gd32h7xx.s']
+
+CPPDEFINES = ['GD32H7XX']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

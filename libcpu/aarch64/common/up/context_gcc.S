@@ -44,7 +44,7 @@ rt_thread_switch_interrupt_flag:
 rt_hw_context_switch_to:
     clrex
     ldr     x0, [x0]
-    RESTORE_CONTEXT_SWITCH
+    RESTORE_CONTEXT_SWITCH x0
 
 /*
  * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
@@ -55,23 +55,23 @@ rt_hw_context_switch_to:
 .globl rt_hw_context_switch
 rt_hw_context_switch:
     clrex
-    SAVE_CONTEXT_SWITCH
+    SAVE_CONTEXT_SWITCH x19, x20
 
     mov    x2, sp
     str    x2, [x0]            // store sp in preempted tasks TCB
     ldr    x0, [x1]            // get new task stack pointer
 
-    RESTORE_CONTEXT_SWITCH
+    RESTORE_CONTEXT_SWITCH x0
 
-/*
- * void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread);
- */
 .globl rt_thread_switch_interrupt_flag
 .globl rt_interrupt_from_thread
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
+
+/*
+ * void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread);
+ */
 rt_hw_context_switch_interrupt:
-    clrex
     ldr     x6, =rt_thread_switch_interrupt_flag
     ldr     x7, [x6]
     cmp     x7, #1
@@ -95,3 +95,23 @@ _reswitch:
     ldr     x6, =rt_interrupt_to_thread     // set rt_interrupt_to_thread
     str     x1, [x6]
     ret
+
+.globl rt_hw_context_switch_interrupt_do
+
+/**
+ * rt_hw_context_switch_interrupt_do(void)
+ */
+rt_hw_context_switch_interrupt_do:
+    clrex
+    SAVE_CONTEXT_SWITCH_FAST
+
+    ldr     x3,  =rt_interrupt_from_thread
+    ldr     x4,  [x3]
+    mov     x0,  sp
+    str     x0,  [x4]       // store sp in preempted tasks's tcb
+
+    ldr     x3,  =rt_interrupt_to_thread
+    ldr     x4,  [x3]
+    ldr     x0,  [x4]       // get new task's stack pointer
+
+    RESTORE_CONTEXT_SWITCH x0

@@ -91,8 +91,9 @@ void SystemInit (void)
   /* reset pllms pllns pllfr pllrcs bits */
   CRM->pllcfg = 0x00033002U;
 
-  /* reset clkout_sel, clkoutdiv, pllclk_to_adc, hick_to_sclk, hick_to_usb, hickdiv */
-  CRM->misc1 = 0x000F0000U;
+  /* reset clkout_sel, clkoutdiv, pllclk_to_adc, hick_to_usb */
+  CRM->misc1 &= 0x00005000U;
+  CRM->misc1 |= 0x000F0000U;
 
   /* disable all interrupts enable and clear pending bits  */
   CRM->clkint = 0x009F0000U;
@@ -118,7 +119,7 @@ void SystemInit (void)
 void system_core_clock_update(void)
 {
   uint32_t pll_ns = 0, pll_ms = 0, pll_fr = 0, pll_clock_source = 0, pllrcsfreq = 0;
-  uint32_t temp = 0, div_value = 0;
+  uint32_t temp = 0, div_value = 0, psc = 0;
   crm_sclk_type sclk_source;
 
   static const uint8_t sys_ahb_div_table[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
@@ -134,9 +135,14 @@ void system_core_clock_update(void)
         system_core_clock = HICK_VALUE * 6;
       else
         system_core_clock = HICK_VALUE;
+
+      psc = CRM->misc2_bit.hick_to_sclk_div;
+      system_core_clock = system_core_clock >> psc;
       break;
     case CRM_SCLK_HEXT:
       system_core_clock = HEXT_VALUE;
+      psc = CRM->misc2_bit.hext_to_sclk_div;
+      system_core_clock = system_core_clock >> psc;
       break;
     case CRM_SCLK_PLL:
       /* get pll clock source */
@@ -172,6 +178,18 @@ void system_core_clock_update(void)
   /* ahbclk frequency */
   system_core_clock = system_core_clock >> div_value;
 }
+
+/**
+  * @brief  take some delay for waiting power stable, delay is about 60ms with frequency 8MHz.
+  * @param  none
+  * @retval none
+  */
+void wait_for_power_stable(void)
+{
+  volatile uint32_t delay = 0;
+  for(delay = 0; delay < 50000; delay++);
+}
+
 /**
   * @}
   */

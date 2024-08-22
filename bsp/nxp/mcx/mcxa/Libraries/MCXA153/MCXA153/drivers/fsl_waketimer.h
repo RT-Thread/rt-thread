@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_WAKETIMER_H_
-#define _FSL_WAKETIMER_H_
+#ifndef FSL_WAKETIMER_H_
+#define FSL_WAKETIMER_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief WAKETIMER driver version. */
 #define FSL_WAKETIMER_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
-/*@}*/
+/*! @} */
 
 /*!
  * @brief WAKETIMER status flags.
@@ -209,4 +209,4 @@ uint32_t WAKETIMER_GetCurrentTimerValue(WAKETIMER_Type *base);
 
 /*! @}*/
 
-#endif /* _FSL_WAKETIMER_H_ */
+#endif /* FSL_WAKETIMER_H_ */

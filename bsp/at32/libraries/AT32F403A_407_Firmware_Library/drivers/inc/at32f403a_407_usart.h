@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_usart.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 usart header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -323,7 +321,10 @@ typedef struct
 #define UART5                            ((usart_type *) UART5_BASE)
 #define USART6                           ((usart_type *) USART6_BASE)
 #define UART7                            ((usart_type *) UART7_BASE)
+#if defined (AT32F403ARx) || defined (AT32F403AVx) || defined (AT32F407Rx) || \
+    defined (AT32F407Vx)
 #define UART8                            ((usart_type *) UART8_BASE)
+#endif
 
 /** @defgroup USART_exported_functions
   * @{
@@ -357,6 +358,7 @@ void usart_irda_mode_enable(usart_type* usart_x, confirm_state new_state);
 void usart_irda_low_power_enable(usart_type* usart_x, confirm_state new_state);
 void usart_hardware_flow_control_set(usart_type* usart_x,usart_hardware_flow_control_type flow_state);
 flag_status usart_flag_get(usart_type* usart_x, uint32_t flag);
+flag_status usart_interrupt_flag_get(usart_type* usart_x, uint32_t flag);
 void usart_flag_clear(usart_type* usart_x, uint32_t flag);
 
 /**

@@ -79,15 +79,48 @@ void rt_hw_board_init(void)
 #else
 void rt_hw_board_init(void)
 {
-    rt_fdt_commit_memregion_early(&(rt_region_t)
-    {
-        .name  = "memheap",
-        .start = (rt_size_t)rt_kmem_v2p((void *)HEAP_BEGIN),
-        .end   = (rt_size_t)rt_kmem_v2p((void *)HEAP_END),
-    }, RT_TRUE);
-
     rt_hw_common_setup();
 }
+
+/*
+ * FIXME: This is a temporary workaround.
+ * When aarch bsp enables the device tree, the current u-boot will
+ * pass in bootargs, which contains "root=/dev/mmcblk0p2 rootwait rw",
+ * which means that the kernel is required to wait until the rootfs
+ * in /dev/mmcblk0p2 loaded successfully. However, the current aarch64 bsp
+ * default does not implement sdmmc device mounting, causing the kernel file
+ * system mounting module (rootfs_mnt_init() of components/drivers/core/mnt.c)
+ * to enter an infinite loop waiting.
+ * Solution: At present, we do not plan to modify the startup parameters
+ * of u-boot. The temporary solution adopted is to create a pseudo
+ * /dev/mmcblk0p2 device during the board initialization process, and
+ * then cancel the pseudo device after mnt is completed. This allows the
+ * kernel boot to be completed successfully.
+ */
+static struct rt_device *pseudo_mmcblk;
+
+static int pseudo_mmcblk_setup(void)
+{
+    pseudo_mmcblk = rt_calloc(1, sizeof(*pseudo_mmcblk));
+
+    RT_ASSERT(pseudo_mmcblk != RT_NULL);
+
+    pseudo_mmcblk->type = RT_Device_Class_Graphic;
+
+    return (int)rt_device_register(pseudo_mmcblk, "/dev/mmcblk0p2", RT_DEVICE_FLAG_DEACTIVATE);
+}
+INIT_BOARD_EXPORT(pseudo_mmcblk_setup);
+
+static int pseudo_mmcblk_remove(void)
+{
+    if (pseudo_mmcblk)
+    {
+        return (int)rt_device_unregister(pseudo_mmcblk);
+    }
+
+    return 0;
+}
+INIT_FS_EXPORT(pseudo_mmcblk_remove);
 #endif /* RT_USING_OFW */
 
 static rt_ubase_t pinmux_base = RT_NULL;

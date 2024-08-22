@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -45,39 +44,45 @@
 /** @addtogroup BDMA_LL_Private_Macros
   * @{
   */
-#define IS_LL_BDMA_DIRECTION(__VALUE__)          (((__VALUE__) == LL_BDMA_DIRECTION_PERIPH_TO_MEMORY) || \
-                                                  ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_PERIPH) || \
-                                                  ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_MEMORY))
+#define IS_LL_BDMA_DIRECTION(__VALUE__)                      (((__VALUE__) == LL_BDMA_DIRECTION_PERIPH_TO_MEMORY) || \
+                                                              ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_PERIPH) || \
+                                                              ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_MEMORY))
 
-#define IS_LL_BDMA_MODE(__VALUE__)               (((__VALUE__) == LL_BDMA_MODE_NORMAL) || \
-                                                  ((__VALUE__) == LL_BDMA_MODE_CIRCULAR))
+#define IS_LL_BDMA_MODE(__VALUE__)                           (((__VALUE__) == LL_BDMA_MODE_NORMAL) || \
+                                                              ((__VALUE__) == LL_BDMA_MODE_CIRCULAR))
 
-#define IS_LL_BDMA_PERIPHINCMODE(__VALUE__)      (((__VALUE__) == LL_BDMA_PERIPH_INCREMENT) || \
-                                                  ((__VALUE__) == LL_BDMA_PERIPH_NOINCREMENT))
+#define IS_LL_BDMA_PERIPHINCMODE(__VALUE__)                  (((__VALUE__) == LL_BDMA_PERIPH_INCREMENT) || \
+                                                              ((__VALUE__) == LL_BDMA_PERIPH_NOINCREMENT))
 
-#define IS_LL_BDMA_MEMORYINCMODE(__VALUE__)      (((__VALUE__) == LL_BDMA_MEMORY_INCREMENT) || \
-                                                  ((__VALUE__) == LL_BDMA_MEMORY_NOINCREMENT))
+#define IS_LL_BDMA_MEMORYINCMODE(__VALUE__)                  (((__VALUE__) == LL_BDMA_MEMORY_INCREMENT) || \
+                                                              ((__VALUE__) == LL_BDMA_MEMORY_NOINCREMENT))
 
-#define IS_LL_BDMA_PERIPHDATASIZE(__VALUE__)     (((__VALUE__) == LL_BDMA_PDATAALIGN_BYTE)      || \
-                                                  ((__VALUE__) == LL_BDMA_PDATAALIGN_HALFWORD)  || \
-                                                  ((__VALUE__) == LL_BDMA_PDATAALIGN_WORD))
+#define IS_LL_BDMA_PERIPHDATASIZE(__VALUE__)                 (((__VALUE__) == LL_BDMA_PDATAALIGN_BYTE)      || \
+                                                              ((__VALUE__) == LL_BDMA_PDATAALIGN_HALFWORD)  || \
+                                                              ((__VALUE__) == LL_BDMA_PDATAALIGN_WORD))
 
-#define IS_LL_BDMA_MEMORYDATASIZE(__VALUE__)     (((__VALUE__) == LL_BDMA_MDATAALIGN_BYTE)      || \
-                                                  ((__VALUE__) == LL_BDMA_MDATAALIGN_HALFWORD)  || \
-                                                  ((__VALUE__) == LL_BDMA_MDATAALIGN_WORD))
+#define IS_LL_BDMA_MEMORYDATASIZE(__VALUE__)                 (((__VALUE__) == LL_BDMA_MDATAALIGN_BYTE)      || \
+                                                              ((__VALUE__) == LL_BDMA_MDATAALIGN_HALFWORD)  || \
+                                                              ((__VALUE__) == LL_BDMA_MDATAALIGN_WORD))
 
-#define IS_LL_BDMA_NBDATA(__VALUE__)             ((__VALUE__)  <= 0x0000FFFFU)
+#define IS_LL_BDMA_NBDATA(__VALUE__)                        ((__VALUE__)  <= 0x0000FFFFU)
 
 #if defined(ADC3)
-#define IS_LL_BDMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= LL_DMAMUX2_REQ_ADC3)
+#define IS_LL_BDMA_PERIPHREQUEST(__VALUE__)                 ((__VALUE__) <= LL_DMAMUX2_REQ_ADC3)
 #else
-#define IS_LL_BDMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= LL_DMAMUX2_REQ_DFSDM2_FLT0)
+#define IS_LL_BDMA_PERIPHREQUEST(__VALUE__)                 ((__VALUE__) <= LL_DMAMUX2_REQ_DFSDM2_FLT0)
 #endif /* ADC3 */
 
-#define IS_LL_BDMA_PRIORITY(__VALUE__)           (((__VALUE__) == LL_BDMA_PRIORITY_LOW)    || \
-                                                  ((__VALUE__) == LL_BDMA_PRIORITY_MEDIUM) || \
-                                                  ((__VALUE__) == LL_BDMA_PRIORITY_HIGH)   || \
-                                                  ((__VALUE__) == LL_BDMA_PRIORITY_VERYHIGH))
+#define IS_LL_BDMA_PRIORITY(__VALUE__)                       (((__VALUE__) == LL_BDMA_PRIORITY_LOW)    || \
+                                                              ((__VALUE__) == LL_BDMA_PRIORITY_MEDIUM) || \
+                                                              ((__VALUE__) == LL_BDMA_PRIORITY_HIGH)   || \
+                                                              ((__VALUE__) == LL_BDMA_PRIORITY_VERYHIGH))
+
+#define IS_LL_BDMA_DOUBLEBUFFER_MODE(__VALUE__)              (((__VALUE__) == LL_BDMA_DOUBLEBUFFER_MODE_DISABLE) || \
+                                                              ((__VALUE__) == LL_BDMA_DOUBLEBUFFER_MODE_ENABLE))
+
+#define IS_LL_BDMA_DOUBLEBUFFER_TARGETMEM(__VALUE__)         (((__VALUE__) == LL_BDMA_CURRENTTARGETMEM0)    || \
+                                                              ((__VALUE__) == LL_BDMA_CURRENTTARGETMEM1))
 
 #define IS_LL_BDMA_ALL_CHANNEL_INSTANCE(INSTANCE, CHANNEL)  ((((INSTANCE) == BDMA) && \
                                                              (((CHANNEL) == LL_BDMA_CHANNEL_0) || \
@@ -254,26 +259,33 @@ uint32_t LL_BDMA_Init(BDMA_TypeDef *BDMAx, uint32_t Channel, LL_BDMA_InitTypeDef
   assert_param(IS_LL_BDMA_NBDATA(BDMA_InitStruct->NbData));
   assert_param(IS_LL_BDMA_PERIPHREQUEST(BDMA_InitStruct->PeriphRequest));
   assert_param(IS_LL_BDMA_PRIORITY(BDMA_InitStruct->Priority));
+  assert_param(IS_LL_BDMA_DOUBLEBUFFER_MODE(BDMA_InitStruct->DoubleBufferMode));
+  assert_param(IS_LL_BDMA_DOUBLEBUFFER_TARGETMEM(BDMA_InitStruct->TargetMemInDoubleBufferMode));
 
   /*---------------------------- DMAx CCR Configuration ------------------------
    * Configure DMAx_Channely: data transfer direction, data transfer mode,
    *                          peripheral and memory increment mode,
    *                          data size alignment and  priority level with parameters :
-   * - Direction:      BDMA_CCR_DIR and BDMA_CCR_MEM2MEM bits
-   * - Mode:           BDMA_CCR_CIRC bit
-   * - PeriphOrM2MSrcIncMode:  BDMA_CCR_PINC bit
-   * - MemoryOrM2MDstIncMode:  BDMA_CCR_MINC bit
-   * - PeriphOrM2MSrcDataSize: BDMA_CCR_PSIZE[1:0] bits
-   * - MemoryOrM2MDstDataSize: BDMA_CCR_MSIZE[1:0] bits
-   * - Priority:               BDMA_CCR_PL[1:0] bits
+   * - Direction:                   BDMA_CCR_DIR and BDMA_CCR_MEM2MEM bits
+   * - Mode:                        BDMA_CCR_CIRC bit
+   * - PeriphOrM2MSrcIncMode:       BDMA_CCR_PINC bit
+   * - MemoryOrM2MDstIncMode:       BDMA_CCR_MINC bit
+   * - PeriphOrM2MSrcDataSize:      BDMA_CCR_PSIZE[1:0] bits
+   * - MemoryOrM2MDstDataSize:      BDMA_CCR_MSIZE[1:0] bits
+   * - Priority:                    BDMA_CCR_PL[1:0] bits
+   * - DoubleBufferMode:            BDMA_CCR_DBM bit
+   * - TargetMemInDoubleBufferMode: BDMA_CCR_CT bit
    */
-  LL_BDMA_ConfigTransfer(BDMAx, Channel, BDMA_InitStruct->Direction              | \
+  LL_BDMA_ConfigTransfer(BDMAx, Channel,
+                         BDMA_InitStruct->Direction              | \
                          BDMA_InitStruct->Mode                   | \
                          BDMA_InitStruct->PeriphOrM2MSrcIncMode  | \
                          BDMA_InitStruct->MemoryOrM2MDstIncMode  | \
                          BDMA_InitStruct->PeriphOrM2MSrcDataSize | \
                          BDMA_InitStruct->MemoryOrM2MDstDataSize | \
-                         BDMA_InitStruct->Priority);
+                         BDMA_InitStruct->Priority               | \
+                         BDMA_InitStruct->DoubleBufferMode       | \
+                         BDMA_InitStruct->TargetMemInDoubleBufferMode);
 
   /*-------------------------- DMAx CMAR Configuration -------------------------
    * Configure the memory or destination base address with parameter :
@@ -310,17 +322,19 @@ uint32_t LL_BDMA_Init(BDMA_TypeDef *BDMAx, uint32_t Channel, LL_BDMA_InitTypeDef
 void LL_BDMA_StructInit(LL_BDMA_InitTypeDef *BDMA_InitStruct)
 {
   /* Set BDMA_InitStruct fields to default values */
-  BDMA_InitStruct->PeriphOrM2MSrcAddress  = 0x00000000U;
-  BDMA_InitStruct->MemoryOrM2MDstAddress  = 0x00000000U;
-  BDMA_InitStruct->Direction              = LL_BDMA_DIRECTION_PERIPH_TO_MEMORY;
-  BDMA_InitStruct->Mode                   = LL_BDMA_MODE_NORMAL;
-  BDMA_InitStruct->PeriphOrM2MSrcIncMode  = LL_BDMA_PERIPH_NOINCREMENT;
-  BDMA_InitStruct->MemoryOrM2MDstIncMode  = LL_BDMA_MEMORY_NOINCREMENT;
-  BDMA_InitStruct->PeriphOrM2MSrcDataSize = LL_BDMA_PDATAALIGN_BYTE;
-  BDMA_InitStruct->MemoryOrM2MDstDataSize = LL_BDMA_MDATAALIGN_BYTE;
-  BDMA_InitStruct->NbData                 = 0x00000000U;
-  BDMA_InitStruct->PeriphRequest          = LL_DMAMUX2_REQ_MEM2MEM;
-  BDMA_InitStruct->Priority               = LL_BDMA_PRIORITY_LOW;
+  BDMA_InitStruct->PeriphOrM2MSrcAddress       = 0x00000000U;
+  BDMA_InitStruct->MemoryOrM2MDstAddress       = 0x00000000U;
+  BDMA_InitStruct->Direction                   = LL_BDMA_DIRECTION_PERIPH_TO_MEMORY;
+  BDMA_InitStruct->Mode                        = LL_BDMA_MODE_NORMAL;
+  BDMA_InitStruct->PeriphOrM2MSrcIncMode       = LL_BDMA_PERIPH_NOINCREMENT;
+  BDMA_InitStruct->MemoryOrM2MDstIncMode       = LL_BDMA_MEMORY_NOINCREMENT;
+  BDMA_InitStruct->PeriphOrM2MSrcDataSize      = LL_BDMA_PDATAALIGN_BYTE;
+  BDMA_InitStruct->MemoryOrM2MDstDataSize      = LL_BDMA_MDATAALIGN_BYTE;
+  BDMA_InitStruct->NbData                      = 0x00000000U;
+  BDMA_InitStruct->PeriphRequest               = LL_DMAMUX2_REQ_MEM2MEM;
+  BDMA_InitStruct->Priority                    = LL_BDMA_PRIORITY_LOW;
+  BDMA_InitStruct->DoubleBufferMode            = LL_BDMA_DOUBLEBUFFER_MODE_DISABLE;
+  BDMA_InitStruct->TargetMemInDoubleBufferMode = LL_BDMA_CURRENTTARGETMEM0;
 }
 
 /**
@@ -343,4 +357,3 @@ void LL_BDMA_StructInit(LL_BDMA_InitTypeDef *BDMA_InitStruct)
 
 #endif /* USE_FULL_LL_DRIVER */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_wwdt.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the wwdt firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -104,6 +102,16 @@ void wwdt_interrupt_enable(void)
 flag_status wwdt_flag_get(void)
 {
   return (flag_status)WWDT->sts_bit.rldf;
+}
+
+/**
+  * @brief  wwdt reload counter interrupt flag get
+  * @param  none
+  * @retval state of reload counter interrupt flag
+  */
+flag_status wwdt_interrupt_flag_get(void)
+{
+  return (flag_status)(WWDT->sts_bit.rldf && WWDT->cfg_bit.rldien);
 }
 
 /**

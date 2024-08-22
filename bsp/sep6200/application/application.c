@@ -22,7 +22,7 @@
 void rt_init_thread_entry(void *parameter)
 {
   while(1){
-    rt_thread_sleep(200);
+    rt_thread_delay(200);
     rt_hw_console_output("init thread\n");
   }
 }
@@ -30,7 +30,7 @@ void rt_init_thread_entry(void *parameter)
 void rt_test1_thread_entry(void *parameter)
 {
   while(1){
-    rt_thread_sleep(800);
+    rt_thread_delay(800);
     rt_hw_console_output("test1 thread\n");
   }
 }
@@ -38,7 +38,7 @@ void rt_test1_thread_entry(void *parameter)
 void rt_test2_thread_entry(void *parameter)
 {
   while(1){
-    rt_thread_sleep(300);
+    rt_thread_delay(300);
     rt_hw_console_output("test2 thread\n");
   }
 }

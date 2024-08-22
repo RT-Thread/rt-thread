@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_xmc.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 xmc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -534,7 +532,7 @@ void xmc_norsram_default_para_init(xmc_norsram_init_type* xmc_nor_sram_init_stru
 void xmc_norsram_timing_default_para_init(xmc_norsram_timing_init_type* xmc_rw_timing_struct,
                                           xmc_norsram_timing_init_type* xmc_w_timing_struct);
 void xmc_nor_sram_enable(xmc_nor_sram_subbank_type xmc_subbank, confirm_state new_state);
-void xmc_ext_timing_config(xmc_nor_sram_subbank_type xmc_sub_bank, uint16_t w2w_timing, uint16_t r2r_timing);
+void xmc_ext_timing_config(volatile xmc_nor_sram_subbank_type xmc_sub_bank, uint16_t w2w_timing, uint16_t r2r_timing);
 void xmc_nand_reset(xmc_class_bank_type xmc_bank);
 void xmc_nand_init(xmc_nand_init_type* xmc_nand_init_struct);
 void xmc_nand_timing_config(xmc_nand_timinginit_type* xmc_common_spacetiming_struct,
@@ -547,6 +545,7 @@ void xmc_nand_ecc_enable(xmc_class_bank_type xmc_bank, confirm_state new_state);
 uint32_t xmc_ecc_get(xmc_class_bank_type xmc_bank);
 void xmc_interrupt_enable(xmc_class_bank_type xmc_bank, xmc_interrupt_sources_type xmc_int, confirm_state new_state);
 flag_status xmc_flag_status_get(xmc_class_bank_type xmc_bank, xmc_interrupt_flag_type xmc_flag);
+flag_status xmc_interrupt_flag_status_get(xmc_class_bank_type xmc_bank, xmc_interrupt_flag_type xmc_flag);
 void xmc_flag_clear(xmc_class_bank_type xmc_bank, xmc_interrupt_flag_type xmc_flag);
 
 /**

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2022 NXP
+ * Copyright 2016-2022, 2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -118,7 +118,7 @@ static flexspi_isr_t s_flexspiIsr;
 static void FLEXSPI_Memset(void *src, uint8_t value, size_t length)
 {
     assert(src != NULL);
-    uint8_t *p = src;
+    uint8_t *p = (uint8_t *)src;
 
     for (uint32_t i = 0U; i < length; i++)
     {
@@ -192,6 +192,9 @@ static uint32_t FLEXSPI_CalculateDll(FLEXSPI_Type *base, flexspi_device_config_t
             /* DLLEN = 1, SLVDLYTARGET = 0xF, */
             flexspiDllValue = FLEXSPI_DLLCR_DLLEN(1) | FLEXSPI_DLLCR_SLVDLYTARGET(0x0F);
 #endif
+#if (defined(FSL_FEATURE_FLEXSPI_HAS_REFPHASEGAP) && FSL_FEATURE_FLEXSPI_HAS_REFPHASEGAP)
+            flexspiDllValue |= FLEXSPI_DLLCR_REFPHASEGAP(2U);
+#endif /* FSL_FEATURE_FLEXSPI_HAS_REFPHASEGAP */
         }
         else
         {
@@ -235,10 +238,6 @@ status_t FLEXSPI_CheckAndClearError(FLEXSPI_Type *base, uint32_t status)
 
         /* Clear the flags. */
         FLEXSPI_ClearInterruptStatusFlags(base, status);
-
-        /* Reset fifos. These flags clear automatically. */
-        base->IPTXFCR |= FLEXSPI_IPTXFCR_CLRIPTXF_MASK;
-        base->IPRXFCR |= FLEXSPI_IPRXFCR_CLRIPRXF_MASK;
     }
 
     return result;
@@ -712,7 +711,7 @@ status_t FLEXSPI_WriteBlocking(FLEXSPI_Type *base, uint8_t *buffer, size_t size)
         }
 
         /* Push a watermark level data into IP TX FIFO. */
-        base->INTR |= (uint32_t)kFLEXSPI_IpTxFifoWatermarkEmptyFlag;
+        base->INTR = (uint32_t)kFLEXSPI_IpTxFifoWatermarkEmptyFlag;
     }
 
     return result;
@@ -819,7 +818,7 @@ status_t FLEXSPI_ReadBlocking(FLEXSPI_Type *base, uint8_t *buffer, size_t size)
         }
 
         /* Pop out a watermark level datas from IP RX FIFO. */
-        base->INTR |= (uint32_t)kFLEXSPI_IpRxFifoWatermarkAvailableFlag;
+        base->INTR = (uint32_t)kFLEXSPI_IpRxFifoWatermarkAvailableFlag;
     }
 
     return result;
@@ -843,8 +842,8 @@ status_t FLEXSPI_TransferBlocking(FLEXSPI_Type *base, flexspi_transfer_t *xfer)
     base->FLSHCR2[xfer->port] |= FLEXSPI_FLSHCR2_CLRINSTRPTR_MASK;
 
     /* Clear former pending status before start this transfer. */
-    base->INTR |= FLEXSPI_INTR_AHBCMDERR_MASK | FLEXSPI_INTR_IPCMDERR_MASK | FLEXSPI_INTR_AHBCMDGE_MASK |
-                  FLEXSPI_INTR_IPCMDGE_MASK;
+    base->INTR = FLEXSPI_INTR_AHBCMDERR_MASK | FLEXSPI_INTR_IPCMDERR_MASK | FLEXSPI_INTR_AHBCMDGE_MASK |
+                 FLEXSPI_INTR_IPCMDGE_MASK | FLEXSPI_INTR_IPCMDDONE_MASK;
 
     /* Configure base address. */
     base->IPCR0 = xfer->deviceAddress;
@@ -880,12 +879,13 @@ status_t FLEXSPI_TransferBlocking(FLEXSPI_Type *base, flexspi_transfer_t *xfer)
         /* Empty else. */
     }
 
-    /* Wait for bus to be idle before changing flash configuration. */
-    while (!FLEXSPI_GetBusIdleStatus(base))
+    /* Wait until the IP command execution finishes */
+    while (0UL == (base->INTR & FLEXSPI_INTR_IPCMDDONE_MASK))
     {
     }
 
-    if (xfer->cmdType == kFLEXSPI_Command)
+    /* Unless there is an error status already set, capture the latest one */
+    if (result == kStatus_Success)
     {
         result = FLEXSPI_CheckAndClearError(base, base->INTR);
     }
@@ -966,8 +966,8 @@ status_t FLEXSPI_TransferNonBlocking(FLEXSPI_Type *base, flexspi_handle_t *handl
         base->FLSHCR2[xfer->port] |= FLEXSPI_FLSHCR2_CLRINSTRPTR_MASK;
 
         /* Clear former pending status before start this transfer. */
-        base->INTR |= FLEXSPI_INTR_AHBCMDERR_MASK | FLEXSPI_INTR_IPCMDERR_MASK | FLEXSPI_INTR_AHBCMDGE_MASK |
-                      FLEXSPI_INTR_IPCMDGE_MASK;
+        base->INTR = FLEXSPI_INTR_AHBCMDERR_MASK | FLEXSPI_INTR_IPCMDERR_MASK | FLEXSPI_INTR_AHBCMDGE_MASK |
+                     FLEXSPI_INTR_IPCMDGE_MASK | FLEXSPI_INTR_IPCMDDONE_MASK;
 
         /* Configure base address. */
         base->IPCR0 = xfer->deviceAddress;
@@ -1067,7 +1067,7 @@ void FLEXSPI_TransferHandleIRQ(FLEXSPI_Type *base, flexspi_handle_t *handle)
     uint32_t intEnableStatus;
     uint32_t txWatermark;
     uint32_t rxWatermark;
-    uint8_t i = 0;
+    uint32_t i = 0;
 
     status          = base->INTR;
     intEnableStatus = base->INTEN;
@@ -1130,12 +1130,12 @@ void FLEXSPI_TransferHandleIRQ(FLEXSPI_Type *base, flexspi_handle_t *handle)
                     handle->dataSize = 0;
                 }
                 /* Pop out a watermark level data from IP RX FIFO. */
-                base->INTR |= (uint32_t)kFLEXSPI_IpRxFifoWatermarkAvailableFlag;
+                base->INTR = (uint32_t)kFLEXSPI_IpRxFifoWatermarkAvailableFlag;
             }
 
             if (0U != (status & (uint32_t)kFLEXSPI_IpCommandExecutionDoneFlag))
             {
-                base->INTR |= (uint32_t)kFLEXSPI_IpCommandExecutionDoneFlag;
+                base->INTR = (uint32_t)kFLEXSPI_IpCommandExecutionDoneFlag;
 
                 FLEXSPI_TransferAbort(base, handle);
 
@@ -1192,7 +1192,7 @@ void FLEXSPI_TransferHandleIRQ(FLEXSPI_Type *base, flexspi_handle_t *handle)
                     }
 
                     /* Push a watermark level data into IP TX FIFO. */
-                    base->INTR |= (uint32_t)kFLEXSPI_IpTxFifoWatermarkEmptyFlag;
+                    base->INTR = (uint32_t)kFLEXSPI_IpTxFifoWatermarkEmptyFlag;
                 }
             }
             else
@@ -1230,6 +1230,14 @@ void FLEXSPI1_DriverIRQHandler(void);
 void FLEXSPI1_DriverIRQHandler(void)
 {
     s_flexspiIsr(FLEXSPI1, s_flexspiHandle[1]);
+    SDK_ISR_EXIT_BARRIER;
+}
+#endif
+#if defined(FLEXSPI2)
+void FLEXSPI2_DriverIRQHandler(void);
+void FLEXSPI2_DriverIRQHandler(void)
+{
+    s_flexspiIsr(FLEXSPI2, s_flexspiHandle[2]);
     SDK_ISR_EXIT_BARRIER;
 }
 #endif

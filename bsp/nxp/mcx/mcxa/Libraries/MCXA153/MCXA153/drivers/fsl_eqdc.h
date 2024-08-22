@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_EQDC_H_
-#define _FSL_EQDC_H_
+#ifndef FSL_EQDC_H_
+#define FSL_EQDC_H_
 
 #include "fsl_common.h"
 
@@ -17,7 +17,7 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define FSL_EQDC_DRIVER_VERSION (MAKE_VERSION(2, 2, 2))
+#define FSL_EQDC_DRIVER_VERSION (MAKE_VERSION(2, 3, 0))
 
 /*! @brief W1C bits in EQDC CTRL registers. */
 #define EQDC_CTRL_W1C_FLAGS (EQDC_CTRL_HIRQ_MASK | EQDC_CTRL_XIRQ_MASK | EQDC_CTRL_WDIRQ_MASK)
@@ -31,9 +31,14 @@
 #define EQDC_CTRL_INT_EN (EQDC_CTRL_HIE_MASK | EQDC_CTRL_XIE_MASK | EQDC_CTRL_WDIE_MASK)
 
 /*! @brief Interrupt enable bits in EQDC INTCTRL registers. */
+#if (defined(FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT) && FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT)
+#define EQDC_INTCTRL_INT_EN                                                                                \
+    (EQDC_INTCTRL_SABIE_MASK | EQDC_INTCTRL_DIRIE_MASK | EQDC_INTCTRL_RUIE_MASK | EQDC_INTCTRL_ROIE_MASK)
+#else
 #define EQDC_INTCTRL_INT_EN                                                                                \
     (EQDC_INTCTRL_SABIE_MASK | EQDC_INTCTRL_DIRIE_MASK | EQDC_INTCTRL_RUIE_MASK | EQDC_INTCTRL_ROIE_MASK | \
      EQDC_INTCTRL_CMP0IE_MASK | EQDC_INTCTRL_CMP1IE_MASK | EQDC_INTCTRL_CMP2IE_MASK | EQDC_INTCTRL_CMP3IE_MASK)
+#endif
 
 /*! @brief Interrupt flag bits in EQDC CTRL registers. */
 #define EQDC_CTRL_INT_FLAGS (EQDC_CTRL_HIRQ_MASK | EQDC_CTRL_XIRQ_MASK | EQDC_CTRL_WDIRQ_MASK)
@@ -43,10 +48,12 @@
     (EQDC_INTCTRL_SABIRQ_MASK | EQDC_INTCTRL_DIRIRQ_MASK | EQDC_INTCTRL_RUIRQ_MASK | EQDC_INTCTRL_ROIRQ_MASK | \
      EQDC_INTCTRL_CMP0IRQ_MASK | EQDC_INTCTRL_CMP1IRQ_MASK | EQDC_INTCTRL_CMP2IRQ_MASK | EQDC_INTCTRL_CMP3IRQ_MASK)
 
+#if !(defined(FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT) && FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT)
 #define kEQDC_PositionCompare0InerruptEnable kEQDC_PositionCompare0InterruptEnable
 #define kEQDC_PositionCompare1InerruptEnable kEQDC_PositionCompare1InterruptEnable
 #define kEQDC_PositionCompare2InerruptEnable kEQDC_PositionCompare2InterruptEnable
 #define kEQDC_PositionCompare3InerruptEnable kEQDC_PositionCompare3InterruptEnable
+#endif
 
 /*!
  * @brief EQDC status flags, these flags indicate the counter's events.
@@ -134,6 +141,7 @@ enum _eqdc_interrupt_enable
     kEQDC_PositionRollUnderInterruptEnable = (uint32_t)EQDC_INTCTRL_RUIE_MASK
                                              << 16U, /*!< Roll-under interrupt enable. */
 
+#if !(defined(FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT) && FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT)
     kEQDC_PositionCompare0InterruptEnable = (uint32_t)EQDC_INTCTRL_CMP0IE_MASK
                                            << 16U, /*!< Position compare 0 interrupt enable. */
     kEQDC_PositionCompare1InterruptEnable = (uint32_t)EQDC_INTCTRL_CMP1IE_MASK
@@ -142,13 +150,21 @@ enum _eqdc_interrupt_enable
                                            << 16U, /*!< Position compare 2 interrupt enable. */
     kEQDC_PositionCompare3InterruptEnable = (uint32_t)EQDC_INTCTRL_CMP3IE_MASK
                                            << 16U, /*!< Position compare 3 interrupt enable. */
+#endif
 
+#if (defined(FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT) && FSL_FEATURE_EQDC_HAS_NO_COMPARE_INTERRUPT)
+    kEQDC_AllInterruptEnable = kEQDC_HomeEnableTransitionInterruptEnable | kEQDC_IndexPresetPulseInterruptEnable |
+                               kEQDC_WatchdogTimeoutInterruptEnable | kEQDC_SimultPhaseChangeInterruptEnable |
+                               kEQDC_CountDirectionChangeInterruptEnable | kEQDC_PositionRollOverInterruptEnable |
+                               kEQDC_PositionRollUnderInterruptEnable
+#else
     kEQDC_AllInterruptEnable = kEQDC_HomeEnableTransitionInterruptEnable | kEQDC_IndexPresetPulseInterruptEnable |
                                kEQDC_WatchdogTimeoutInterruptEnable | kEQDC_SimultPhaseChangeInterruptEnable |
                                kEQDC_CountDirectionChangeInterruptEnable | kEQDC_PositionRollOverInterruptEnable |
                                kEQDC_PositionRollUnderInterruptEnable | kEQDC_PositionCompare0InterruptEnable |
                                kEQDC_PositionCompare1InterruptEnable | kEQDC_PositionCompare2InterruptEnable |
                                kEQDC_PositionCompare3InterruptEnable
+#endif
 };
 
 /*!
@@ -464,7 +480,7 @@ void EQDC_Init(EQDC_Type *base, const eqdc_config_t *psConfig);
     psConfig->filterSampleCount                   = kEQDC_Filter3Samples;
     psConfig->filterSamplePeriod                  = 0U;
     psConfig->outputPulseMode                     = kEQDC_OutputPulseOnCounterEqualCompare;
-    psConfig->positionCompareValue[0]             = 0xFFFFFFFFU;
+    psConfig->positionCompareValue[0]  	          = 0xFFFFFFFFU;
     psConfig->positionCompareValue[1]             = 0xFFFFFFFFU;
     psConfig->positionCompareValue[2]             = 0xFFFFFFFFU;
     psConfig->positionCompareValue[3]             = 0xFFFFFFFFU;
@@ -1192,4 +1208,4 @@ static inline uint16_t EQDC_GetHoldPositionDifferencePeriod(EQDC_Type *base)
 /*!
  * @}
  */
-#endif /* _FSL_EQDC_H_ */
+#endif /* FSL_EQDC_H_ */

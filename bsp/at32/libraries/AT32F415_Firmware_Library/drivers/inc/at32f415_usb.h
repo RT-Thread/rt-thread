@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_usb.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f415 usb header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -707,6 +705,7 @@ typedef struct
       __IO uint32_t nptxfspcavail            : 16; /* [15:0] */
       __IO uint32_t nptxqspcavail            : 8; /* [23:16] */
       __IO uint32_t nptxqtop                 : 7; /* [30:24] */
+      __IO uint32_t reserved1                : 1; /* [31]    */
     } gnptxsts_bit;
   };
 

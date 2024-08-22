@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_EIM_H_
-#define _FSL_EIM_H_
+#ifndef FSL_EIM_H_
+#define FSL_EIM_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief Driver version. */
 #define FSL_ERM_DRIVER_VERSION (MAKE_VERSION(2U, 0U, 1U))
-/*@}*/
+/*! @} */
 
 /*******************************************************************************
  * APIs
@@ -47,7 +47,7 @@ void EIM_Init(EIM_Type *base);
  */
 void EIM_Deinit(EIM_Type *base);
 
-/* @} */
+/*! @} */
 
 /*!
  * @name functional

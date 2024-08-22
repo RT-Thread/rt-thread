@@ -93,8 +93,8 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     /*Set the baudrate*/
     FCanBaudrateConfig arb_segment_config;
     FCanBaudrateConfig data_segment_config;
-    memset(&arb_segment_config, 0, sizeof(arb_segment_config));
-    memset(&data_segment_config, 0, sizeof(data_segment_config));
+    rt_memset(&arb_segment_config, 0, sizeof(arb_segment_config));
+    rt_memset(&data_segment_config, 0, sizeof(data_segment_config));
 #if defined(RT_CAN_USING_CANFD)
     FCanFdEnable(&(drv_can->can_handle), TRUE);
     arb_segment_config.auto_calc = TRUE;
@@ -243,8 +243,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 FCanBaudrateConfig arb_segment_config;
                 FCanBaudrateConfig data_segment_config;
-                memset(&arb_segment_config, 0, sizeof(arb_segment_config));
-                memset(&data_segment_config, 0, sizeof(data_segment_config));
+                rt_memset(&arb_segment_config, 0, sizeof(arb_segment_config));
+                rt_memset(&data_segment_config, 0, sizeof(data_segment_config));
                 drv_can->device.config.baud_rate = argval;
                 FCanEnable(&(drv_can->can_handle), RT_FALSE);
                 arb_segment_config.auto_calc = TRUE;
@@ -276,8 +276,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 FCanBaudrateConfig arb_segment_config;
                 FCanBaudrateConfig data_segment_config;
-                memset(&arb_segment_config, 0, sizeof(arb_segment_config));
-                memset(&data_segment_config, 0, sizeof(data_segment_config));
+                rt_memset(&arb_segment_config, 0, sizeof(arb_segment_config));
+                rt_memset(&data_segment_config, 0, sizeof(data_segment_config));
                 drv_can->device.config.baud_rate = argval;
                 FCanEnable(&(drv_can->can_handle), RT_FALSE);
                 arb_segment_config.auto_calc = TRUE;

@@ -10,67 +10,61 @@
 #ifndef __ARM64_INC_CONTEXT_H__
 #define __ARM64_INC_CONTEXT_H__
 
-.macro SAVE_CONTEXT_SWITCH
+#include "armv8.h"
+
+.macro SAVE_CONTEXT_SWITCH, tmpx, tmp2x
     /* Save the entire context. */
     SAVE_FPU sp
-    stp     x0, x1, [sp, #-0x10]!
-    stp     x2, x3, [sp, #-0x10]!
-    stp     x4, x5, [sp, #-0x10]!
-    stp     x6, x7, [sp, #-0x10]!
-    stp     x8, x9, [sp, #-0x10]!
-    stp     x10, x11, [sp, #-0x10]!
-    stp     x12, x13, [sp, #-0x10]!
-    stp     x14, x15, [sp, #-0x10]!
-    stp     x16, x17, [sp, #-0x10]!
-    stp     x18, x19, [sp, #-0x10]!
-    stp     x20, x21, [sp, #-0x10]!
-    stp     x22, x23, [sp, #-0x10]!
-    stp     x24, x25, [sp, #-0x10]!
-    stp     x26, x27, [sp, #-0x10]!
-    stp     x28, x29, [sp, #-0x10]!
-    mrs     x28, fpcr
-    mrs     x29, fpsr
-    stp     x28, x29, [sp, #-0x10]!
-    mrs     x29, sp_el0
-    stp     x29, x30, [sp, #-0x10]!
+
+    stp     x19, x20, [sp, #-0x10]!
+    stp     x21, x22, [sp, #-0x10]!
+    stp     x23, x24, [sp, #-0x10]!
+    stp     x25, x26, [sp, #-0x10]!
+    stp     x27, x28, [sp, #-0x10]!
+
+    mrs     \tmpx, sp_el0
+    stp     x29, \tmpx, [sp, #-0x10]!
+
+    mrs     \tmpx, fpcr
+    mrs     \tmp2x, fpsr
+    stp     \tmpx, \tmp2x, [sp, #-0x10]!
+
+    mov     \tmpx, #((3 << 6) | 0x5)    /* el1h, disable interrupt */
+    stp     x30, \tmpx, [sp, #-0x10]!
+
+.endm
+
+.macro SAVE_CONTEXT_SWITCH_FAST
+    /* Save the entire context. */
+    add     sp, sp, #-1 * CONTEXT_FPU_SIZE
+
+    add     sp, sp, #-7 * 16
 
     mov     x19, #((3 << 6) | 0x4 | 0x1)  /* el1h, disable interrupt */
-    mov     x18, x30
+    stp     lr, x19, [sp, #-0x10]!
 
-    stp     x18, x19, [sp, #-0x10]!
 .endm
 
 .macro _RESTORE_CONTEXT_SWITCH
-    ldp     x2, x3, [sp], #0x10  /* SPSR and ELR. */
+    ldp     x30, x19, [sp], #0x10  /* SPSR and ELR. */
+    msr     elr_el1, x30
+    msr     spsr_el1, x19
 
-    tst     x3, #0x1f
-    msr     spsr_el1, x3
-    msr     elr_el1, x2
 
-    ldp     x29, x30, [sp], #0x10
-    msr     sp_el0, x29
-    ldp     x28, x29, [sp], #0x10
-    msr     fpcr, x28
-    msr     fpsr, x29
-    ldp     x28, x29, [sp], #0x10
-    ldp     x26, x27, [sp], #0x10
-    ldp     x24, x25, [sp], #0x10
-    ldp     x22, x23, [sp], #0x10
-    ldp     x20, x21, [sp], #0x10
-    ldp     x18, x19, [sp], #0x10
-    ldp     x16, x17, [sp], #0x10
-    ldp     x14, x15, [sp], #0x10
-    ldp     x12, x13, [sp], #0x10
-    ldp     x10, x11, [sp], #0x10
-    ldp     x8, x9, [sp], #0x10
-    ldp     x6, x7, [sp], #0x10
-    ldp     x4, x5, [sp], #0x10
-    ldp     x2, x3, [sp], #0x10
-    ldp     x0, x1, [sp], #0x10
+    /* restore NEON */
+    ldp     x19, x20, [sp], #0x10
+    msr     fpcr, x19
+    msr     fpsr, x20
+
+    ldp     x29, x19, [sp], #0x10
+    msr     sp_el0, x19
+    ldp     x27, x28, [sp], #0x10
+    ldp     x25, x26, [sp], #0x10
+    ldp     x23, x24, [sp], #0x10
+    ldp     x21, x22, [sp], #0x10
+    ldp     x19, x20, [sp], #0x10
+
     RESTORE_FPU sp
-#ifdef RT_USING_SMART
-    beq     arch_ret_to_user
-#endif
     eret
 .endm
 

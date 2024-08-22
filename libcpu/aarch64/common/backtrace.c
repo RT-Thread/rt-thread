@@ -85,11 +85,12 @@ rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace
     if (fp && !((long)fp & 0x7))
     {
 #ifdef RT_USING_SMART
+#define IN_USER_SPACE(addr) ((rt_ubase_t)(addr) >= USER_VADDR_START && (rt_ubase_t)(addr) < USER_VADDR_TOP)
         if (thread && thread->lwp && rt_scheduler_is_available())
         {
             rt_lwp_t lwp = thread->lwp;
             void *this_lwp = lwp_self();
-            if (this_lwp == lwp && rt_kmem_v2p(fp) != ARCH_MAP_FAILED)
+            if ((!IN_USER_SPACE(fp) || this_lwp == lwp) && rt_kmem_v2p(fp) != ARCH_MAP_FAILED)
             {
                 rc = _bt_kaddr(fp, frame);
             }
@@ -129,8 +130,8 @@ rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_fr
     }
     else
     {
-        frame->pc = ARCH_CONTEXT_FETCH(thread->sp, 3);
-        frame->fp = ARCH_CONTEXT_FETCH(thread->sp, 7);
+        frame->pc = ARCH_CONTEXT_FETCH(thread->sp, 0);
+        frame->fp = ARCH_CONTEXT_FETCH(thread->sp, 4);
         rc = RT_EOK;
     }
     return rc;

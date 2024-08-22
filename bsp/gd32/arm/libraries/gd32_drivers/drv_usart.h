@@ -33,12 +33,12 @@ struct gd32_uart
     rcu_periph_enum tx_gpio_clk;    //Todo: 5bits
     rcu_periph_enum rx_gpio_clk;    //Todo: 5bits
     uint32_t tx_port;               //Todo: 4bits
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx
     uint16_t tx_af;                 //Todo: 4bits
 #endif
     uint16_t tx_pin;                //Todo: 4bits
     uint32_t rx_port;               //Todo: 4bits
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx
     uint16_t rx_af;                 //Todo: 4bits
 #endif
     uint16_t rx_pin;                //Todo: 4bits

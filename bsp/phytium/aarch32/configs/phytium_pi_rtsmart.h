@@ -11,7 +11,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -21,6 +20,7 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_USING_CPU_USAGE_TRACER
 
 /* kservice optimization */
 
@@ -34,6 +34,7 @@
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
 #define RT_DEBUGING_CRITICAL
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -138,6 +139,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -164,13 +166,8 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
-#define RT_USING_DEV_BUS
 #define RT_USING_PIN
 #define RT_USING_KTIME
-
-/* Using USB */
-
-/* end of Using USB */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -309,6 +306,10 @@
 /* Memory management */
 
 /* end of Memory management */
+
+/* Using USB legacy version */
+
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
@@ -513,8 +514,8 @@
 #define RT_USING_MIO1
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define USING_SDIF1
-#define USE_SDIF1_TF
+#define USING_SDIF0
+#define USE_SDIF0_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
 /* end of On-chip Peripheral Drivers */
@@ -559,10 +560,6 @@
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER
 /* end of Sdk common configuration */
-
-/* Image information configuration */
-
-/* end of Image information configuration */
 /* end of Standalone Setting */
 
 #endif

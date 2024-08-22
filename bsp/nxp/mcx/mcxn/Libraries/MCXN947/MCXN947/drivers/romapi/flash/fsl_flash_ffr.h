@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef _FSL_FLASH_FFR_H_
-#define _FSL_FLASH_FFR_H_
+#ifndef FSL_FLASH_FFR_H_
+#define FSL_FLASH_FFR_H_
 
 #include "fsl_flash.h"
 
@@ -522,7 +522,7 @@ status_t FFR_CustFactoryPageWrite(flash_config_t *config, uint8_t *page_data, bo
 status_t FFR_GetCustomerData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len);
 
 /*!
- * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 ï¿½C
+ * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 �C
  * 0x3e600), and the API should be called after the FLASH_Init and FFR_Init.
  *
  * @param config A pointer to the storage for the driver runtime state.
@@ -580,12 +580,12 @@ status_t FFR_CustKeystoreWrite(flash_config_t *config, ffr_key_store_t *pKeyStor
  */
 status_t FFR_GetUUID(flash_config_t *config, uint8_t *uuid);
 
-/*@}*/
+/*! @} */
 
 #ifdef __cplusplus
 }
 #endif
 
-/*@}*/
+/*! @} */
 
-#endif /*! _FSL_FLASH_FFR_H_ */
+#endif /*! FSL_FLASH_FFR_H_ */

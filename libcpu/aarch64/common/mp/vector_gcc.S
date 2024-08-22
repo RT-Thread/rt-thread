@@ -15,9 +15,13 @@
 #include "../include/vector_gcc.h"
 #include "context_gcc.h"
 
+.section .text
+
 .globl vector_fiq
 vector_fiq:
     b       .
+
+.globl rt_hw_irq_exit
 
 START_POINT(vector_irq)
     SAVE_IRQ_CONTEXT
@@ -42,7 +46,7 @@ START_POINT(vector_irq)
     ldp     x0, x1, [sp], #0x10
     bl      rt_scheduler_do_irq_switch
 
-    mov     x0, sp
+rt_hw_irq_exit:
     RESTORE_IRQ_CONTEXT
 
 START_POINT_END(vector_irq)

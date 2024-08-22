@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_wdt.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the wdt firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer

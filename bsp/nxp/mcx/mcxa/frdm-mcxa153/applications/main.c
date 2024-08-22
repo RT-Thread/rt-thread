@@ -11,7 +11,6 @@
  * 2020-09-21     supperthomas fix the main.c
  *
  */
-
 #include <rtdevice.h>
 #include "drv_pin.h"
 
@@ -30,8 +29,7 @@ int main(void)
 #endif
 
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
-    rt_kprintf("MCXA153 HelloWorld\r\n");
-
+    rt_kprintf("MCXA153 HelloWorld\n");
 
     while (1)
     {
@@ -41,5 +39,3 @@ int main(void)
         rt_thread_mdelay(500);               /* Delay 500mS */
     }
 }
-
-// end file

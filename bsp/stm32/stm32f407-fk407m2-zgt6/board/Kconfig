@@ -1,0 +1,376 @@
+menu "Hardware Drivers Config"
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_COM1
+        bool "Enable COM1 (uart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
+
+    config BSP_USING_COM2
+        bool "Enable COM2 (uart2)"
+        depends on (!BSP_USING_ETH && !BSP_USING_PWM)
+        select BSP_USING_UART
+        select BSP_USING_UART2
+        default n
+
+    config BSP_USING_COM3
+        bool "Enable COM3 (uart3)"
+        select BSP_USING_UART
+        select BSP_USING_UART3
+        default n
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART1_TX_USING_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART2_TX_USING_DMA
+                bool "Enable UART2 TX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART3_TX_USING_DMA
+                bool "Enable UART3 TX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_UART5_RX_USING_DMA
+                bool "Enable UART5 RX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART5_TX_USING_DMA
+                bool "Enable UART5 TX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART6_TX_USING_DMA
+                bool "Enable UART6 TX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM11
+                bool "Enable TIM11"
+                default n
+
+            config BSP_USING_TIM13
+                bool "Enable TIM13"
+                default n
+
+            config BSP_USING_TIM14
+                bool "Enable TIM14"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output PWM"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH4
+                    bool "Enable PWM2 channel4"
+                    default n
+            endif
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable soft SPI BUS"
+        default n
+        select RT_USING_SPI
+        select RT_USING_SPI_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_SOFT_SPI
+            menuconfig BSP_USING_SOFT_SPI1
+                bool "Enable soft SPI1 BUS (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI1
+                    config BSP_S_SPI1_SCK_PIN
+                        int "soft spi1 sck pin number"
+                        range 1 176
+                        default 16
+                    config BSP_S_SPI1_MISO_PIN
+                        int "soft spi1 miso pin number"
+                        range 1 176
+                        default 18
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "soft spi1 mosi pin number"
+                        range 1 176
+                        default 91
+                endif
+
+            menuconfig BSP_USING_SOFT_SPI2
+                bool "Enable soft SPI2 BUS (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI2
+                    config BSP_S_SPI2_SCK_PIN
+                        int "soft spi2 sck pin number"
+                        range 1 176
+                        default 19
+                    config BSP_S_SPI2_MISO_PIN
+                        int "soft spi2 miso pin number"
+                        range 1 176
+                        default 20
+                    config BSP_S_SPI2_MOSI_PIN
+                        int "soft spi2 mosi pin number"
+                        range 1 176
+                        default 21
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable soft I2C BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+        	bool "Enable I2C1 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C1
+                        config BSP_I2C1_SCL_PIN
+                            int "i2c1 scl pin number"
+                            range 0 143
+                            default 24
+                        config BSP_I2C1_SDA_PIN
+                            int "I2C1 sda pin number"
+                            range 0 143
+                            default 25
+                endif
+
+            menuconfig BSP_USING_I2C2
+        	bool "Enable I2C2 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C2
+                        config BSP_I2C2_SCL_PIN
+                            int "i2c2 scl pin number"
+                            range 0 143
+                            default 16
+                        config BSP_I2C2_SDA_PIN
+                            int "I2C2 sda pin number"
+                            range 0 143
+                            default 91
+                endif
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    config SDIO_MAX_FREQ
+        int "sdio max freq"
+        range 0 24000000
+        depends on BSP_USING_SDIO
+        default 1000000
+
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
+
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
+        default n
+        select RT_USING_PULSE_ENCODER
+        if BSP_USING_PULSE_ENCODER
+            config BSP_USING_PULSE_ENCODER4
+                bool "Enable Pulse Encoder4"
+                default n
+
+        endif
+
+    config BSP_USING_EXT_FMC_IO
+        bool
+        default n
+
+    config BSP_USING_FMC
+        bool
+        default n
+ source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

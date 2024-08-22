@@ -165,9 +165,19 @@ void LPTMR_GetDefaultConfig(lptmr_config_t *config)
 #if !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT) && \
       FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT)
     config->prescalerClockSource = kLPTMR_PrescalerClock_1;
-#else
+#elif !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_0_SUPPORT) && \
+      FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_0_SUPPORT)
     config->prescalerClockSource = kLPTMR_PrescalerClock_0;
-#endif /* FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT */
+#elif !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_2_SUPPORT) && \
+      FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_2_SUPPORT)
+    config->prescalerClockSource = kLPTMR_PrescalerClock_2;
+#elif !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_3_SUPPORT) && \
+      FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_3_SUPPORT)
+    config->prescalerClockSource = kLPTMR_PrescalerClock_3;
+#else
+#error No valid source
+#endif
+
     /* Divide the prescaler clock by 2 */
     config->value = kLPTMR_Prescale_Glitch_0;
 }

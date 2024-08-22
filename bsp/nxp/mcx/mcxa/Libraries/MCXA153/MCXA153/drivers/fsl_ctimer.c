@@ -575,3 +575,30 @@ void CTIMER4_DriverIRQHandler(void)
     SDK_ISR_EXIT_BARRIER;
 }
 #endif
+
+#if defined(CTIMER5)
+void CTIMER5_DriverIRQHandler(void);
+void CTIMER5_DriverIRQHandler(void)
+{
+    CTIMER_GenericIRQHandler(5);
+    SDK_ISR_EXIT_BARRIER;
+}
+#endif
+
+#if defined(CTIMER6)
+void CTIMER6_DriverIRQHandler(void);
+void CTIMER6_DriverIRQHandler(void)
+{
+    CTIMER_GenericIRQHandler(6);
+    SDK_ISR_EXIT_BARRIER;
+}
+#endif
+
+#if defined(CTIMER7)
+void CTIMER7_DriverIRQHandler(void);
+void CTIMER7_DriverIRQHandler(void)
+{
+    CTIMER_GenericIRQHandler(7);
+    SDK_ISR_EXIT_BARRIER;
+}
+#endif

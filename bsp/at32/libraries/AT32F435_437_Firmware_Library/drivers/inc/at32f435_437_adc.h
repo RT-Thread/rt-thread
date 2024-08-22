@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_adc.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 adc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -912,6 +910,7 @@ uint16_t adc_ordinary_conversion_data_get(adc_type *adc_x);
 uint32_t adc_combine_ordinary_conversion_data_get(void);
 uint16_t adc_preempt_conversion_data_get(adc_type *adc_x, adc_preempt_channel_type adc_preempt_channel);
 flag_status adc_flag_get(adc_type *adc_x, uint8_t adc_flag);
+flag_status adc_interrupt_flag_get(adc_type *adc_x, uint8_t adc_flag);
 void adc_flag_clear(adc_type *adc_x, uint32_t adc_flag);
 void adc_ordinary_oversample_enable(adc_type *adc_x, confirm_state new_state);
 void adc_preempt_oversample_enable(adc_type *adc_x, confirm_state new_state);

@@ -36,6 +36,9 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend('BSP_USING_USBD'):
         src += ['drv_usbd.c']
 
+    if GetDepend('BSP_USING_ETH'):
+        src += ['drv_eth.c']
+        
     if GetDepend('BSP_USING_IWDT'):
         src += ['drv_iwdt.c']
 

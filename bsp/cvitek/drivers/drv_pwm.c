@@ -10,6 +10,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_pwm.h"
+#include "drv_pinmux.h"
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -134,10 +135,194 @@ static struct cvi_pwm_dev cvi_pwm[] =
 #endif
 };
 
+
+#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+
+#ifdef BSP_USING_PWM0
+static const char *pinname_whitelist_pwm0[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm1[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm2[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm3[] = {
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_PWM1
+static const char *pinname_whitelist_pwm4[] = {
+    "SD1_D3",
+    "UART0_TX",
+    NULL,
+};
+static const char *pinname_whitelist_pwm5[] = {
+    "SD1_D2",
+    "UART0_RX",
+    NULL,
+};
+static const char *pinname_whitelist_pwm6[] = {
+    "SD1_D1",
+    NULL,
+};
+static const char *pinname_whitelist_pwm7[] = {
+    "SD1_D0",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_PWM2
+static const char *pinname_whitelist_pwm8[] = {
+    "SD1_CMD",
+    NULL,
+};
+static const char *pinname_whitelist_pwm9[] = {
+    "SD1_CLK",
+    NULL,
+};
+static const char *pinname_whitelist_pwm10[] = {
+    "SD1_GPIO1",
+    NULL,
+};
+static const char *pinname_whitelist_pwm11[] = {
+    "SD1_GPIO0",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_PWM3
+static const char *pinname_whitelist_pwm12[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm13[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm14[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm15[] = {
+    NULL,
+};
+#endif
+
+#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+
+#ifdef BSP_USING_PWM0
+static const char *pinname_whitelist_pwm0[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm1[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm2[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm3[] = {
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_PWM1
+static const char *pinname_whitelist_pwm4[] = {
+    "SD1_D3",
+    "UART0_TX",
+    NULL,
+};
+static const char *pinname_whitelist_pwm5[] = {
+    "SD1_D2",
+    "UART0_RX",
+    NULL,
+};
+static const char *pinname_whitelist_pwm6[] = {
+    "JTAG_CPU_TCK",
+    "SD1_D1",
+    NULL,
+};
+static const char *pinname_whitelist_pwm7[] = {
+    "JTAG_CPU_TMS",
+    "SD1_D0",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_PWM2
+static const char *pinname_whitelist_pwm8[] = {
+    "SD1_CMD",
+    NULL,
+};
+static const char *pinname_whitelist_pwm9[] = {
+    "SD1_CLK",
+    NULL,
+};
+static const char *pinname_whitelist_pwm10[] = {
+    "PAD_MIPI_TXM1",
+    NULL,
+};
+static const char *pinname_whitelist_pwm11[] = {
+    "PAD_MIPI_TXP1",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_PWM3
+static const char *pinname_whitelist_pwm12[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm13[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm14[] = {
+    NULL,
+};
+static const char *pinname_whitelist_pwm15[] = {
+    NULL,
+};
+#endif
+
+#else
+    #error "Unsupported board type!"
+#endif
+
+static void rt_hw_pwm_pinmux_config()
+{
+#ifdef BSP_USING_PWM0
+    pinmux_config(BSP_PWM0_0_PINNAME, PWM_0, pinname_whitelist_pwm0);
+    pinmux_config(BSP_PWM0_1_PINNAME, PWM_1, pinname_whitelist_pwm1);
+    pinmux_config(BSP_PWM0_2_PINNAME, PWM_2, pinname_whitelist_pwm2);
+    pinmux_config(BSP_PWM0_3_PINNAME, PWM_3, pinname_whitelist_pwm3);
+#endif /* BSP_USING_PWM0 */
+
+#ifdef BSP_USING_PWM1
+    pinmux_config(BSP_PWM1_4_PINNAME, PWM_4, pinname_whitelist_pwm4);
+    pinmux_config(BSP_PWM1_5_PINNAME, PWM_5, pinname_whitelist_pwm5);
+    pinmux_config(BSP_PWM1_6_PINNAME, PWM_6, pinname_whitelist_pwm6);
+    pinmux_config(BSP_PWM1_7_PINNAME, PWM_7, pinname_whitelist_pwm7);
+#endif /* BSP_USING_PWM1 */
+
+#ifdef BSP_USING_PWM2
+    pinmux_config(BSP_PWM2_8_PINNAME, PWM_8, pinname_whitelist_pwm8);
+    pinmux_config(BSP_PWM2_9_PINNAME, PWM_9, pinname_whitelist_pwm9);
+    pinmux_config(BSP_PWM2_10_PINNAME, PWM_10, pinname_whitelist_pwm10);
+    pinmux_config(BSP_PWM2_11_PINNAME, PWM_11, pinname_whitelist_pwm11);
+#endif /* BSP_USING_PWM2 */
+
+#ifdef BSP_USING_PWM3
+    pinmux_config(BSP_PWM3_12_PINNAME, PWM_12, pinname_whitelist_pwm12);
+    pinmux_config(BSP_PWM3_13_PINNAME, PWM_13, pinname_whitelist_pwm13);
+    pinmux_config(BSP_PWM3_14_PINNAME, PWM_14, pinname_whitelist_pwm14);
+    pinmux_config(BSP_PWM3_15_PINNAME, PWM_15, pinname_whitelist_pwm15);
+#endif /* BSP_USING_PWM3 */
+}
+
 int rt_hw_pwm_init(void)
 {
     int result = RT_EOK;
     uint8_t i;
+
+    rt_hw_pwm_pinmux_config();
 
     for (i = 0; i < sizeof(cvi_pwm) / sizeof(cvi_pwm[0]); i++)
     {
@@ -150,4 +335,4 @@ int rt_hw_pwm_init(void)
     }
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_hw_pwm_init);
+INIT_DEVICE_EXPORT(rt_hw_pwm_init);

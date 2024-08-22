@@ -16,13 +16,13 @@
 #include "stackframe.h"
 
 .macro PUSH_8 reg
-    addi    sp, sp, -8
+    addi    sp, sp, -REGBYTES
     STORE   \reg, (sp)
 .endm
 
 .macro POP_8 reg
     LOAD    \reg, (sp)
-    addi    sp, sp, 8
+    addi    sp, sp, REGBYTES
 .endm
 
 .macro RESERVE_CONTEXT
@@ -44,11 +44,11 @@
     li      s10, (SSTATUS_SPP)
     or      s11, s11, s10
     PUSH_8  s11
-    addi    sp, sp, -8
+    addi    sp, sp, -REGBYTES
 .endm
 
 .macro RESTORE_CONTEXT
-    addi    sp, sp, 8
+    addi    sp, sp, REGBYTES
     POP_8   s11
     csrw    sstatus, s11
     POP_8   s11

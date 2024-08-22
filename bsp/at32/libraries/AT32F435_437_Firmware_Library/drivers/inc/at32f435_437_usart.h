@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_usart.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 usart header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -352,7 +350,10 @@ typedef struct
 #define UART5                            ((usart_type *) UART5_BASE)
 #define USART6                           ((usart_type *) USART6_BASE)
 #define UART7                            ((usart_type *) UART7_BASE)
+#if defined (AT32F435Zx) || defined (AT32F435Vx) || defined (AT32F435Rx) || \
+    defined (AT32F437Zx) || defined (AT32F437Vx) || defined (AT32F437Rx)
 #define UART8                            ((usart_type *) UART8_BASE)
+#endif
 
 /** @defgroup USART_exported_functions
   * @{
@@ -386,6 +387,7 @@ void usart_irda_mode_enable(usart_type* usart_x, confirm_state new_state);
 void usart_irda_low_power_enable(usart_type* usart_x, confirm_state new_state);
 void usart_hardware_flow_control_set(usart_type* usart_x,usart_hardware_flow_control_type flow_state);
 flag_status usart_flag_get(usart_type* usart_x, uint32_t flag);
+flag_status usart_interrupt_flag_get(usart_type* usart_x, uint32_t flag);
 void usart_flag_clear(usart_type* usart_x, uint32_t flag);
 void usart_rs485_delay_time_config(usart_type* usart_x, uint8_t start_delay_time, uint8_t complete_delay_time);
 void usart_transmit_receive_pin_swap(usart_type* usart_x, confirm_state new_state);
