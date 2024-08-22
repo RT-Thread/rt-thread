@@ -1832,6 +1832,7 @@ long _sys_clone(void *arg[])
     rt_thread_t thread = RT_NULL;
     rt_thread_t self = RT_NULL;
     int tid = 0;
+    rt_err_t err;
 
     unsigned long flags = 0;
     void *user_stack = RT_NULL;
@@ -1935,6 +1936,9 @@ long _sys_clone(void *arg[])
     rt_thread_startup(thread);
     return (long)tid;
 fail:
+    err = GET_ERRNO();
+    RT_ASSERT(err < 0);
+
     lwp_tid_put(tid);
     if (thread)
     {
@@ -1944,7 +1948,7 @@ fail:
     {
         lwp_ref_dec(lwp);
     }
-    return GET_ERRNO();
+    return (long)err;
 }
 
 rt_weak long sys_clone(void *arg[])
