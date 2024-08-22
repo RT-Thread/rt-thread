@@ -10,7 +10,7 @@
 
 #include <dt-bindings/pin/pin.h>
 
-#include "pin_dm.h"
+#include "dev_pin_dm.h"
 
 static const char * const gpio_suffixes[] =
 {

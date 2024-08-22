@@ -18,4 +18,4 @@
 rt_err_t pin_pic_handle_isr(struct rt_device_pin *gpio, rt_base_t pin);
 rt_err_t pin_pic_init(struct rt_device_pin *gpio);
 
-#endif /* __PIN_DM_H__ */
+#endif /* __DEV_PIN_DM_H__ */

@@ -10,8 +10,8 @@
  * 2020-10-15     zhangsz           add alarm flags hour minute second.
  */
 
-#ifndef __ALARM_H__
-#define __ALARM_H__
+#ifndef __DEV_ALARM_H__
+#define __DEV_ALARM_H__
 
 #include <sys/time.h>
 #include <rtdef.h>
@@ -72,4 +72,4 @@ rt_err_t rt_alarm_start(rt_alarm_t alarm);
 rt_err_t rt_alarm_stop(rt_alarm_t alarm);
 int rt_alarm_system_init(void);
 
-#endif /* __ALARM_H__ */
+#endif /* __DEV_ALARM_H__ */

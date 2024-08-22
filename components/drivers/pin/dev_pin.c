@@ -10,7 +10,7 @@
  * 2022-04-29     WangQiang    add pin operate command in MSH
  */
 
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 
 static struct rt_device_pin _hw_pin;
 static rt_ssize_t _pin_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)

@@ -8,13 +8,13 @@ if not GetDepend(['RT_USING_PIN']):
 cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
 
-src = ['pin.c']
+src = ['dev_pin.c']
 
 if GetDepend(['RT_USING_DM']):
-    src += ['pin_dm.c']
+    src += ['dev_pin_dm.c']
 
 if GetDepend(['RT_USING_OFW']):
-    src += ['pin_ofw.c']
+    src += ['dev_pin_ofw.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 

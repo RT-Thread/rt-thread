@@ -8,7 +8,7 @@
  * 2022-11-26     GuEe-GUI     first version
  */
 
-#include "pin_dm.h"
+#include "dev_pin_dm.h"
 
 static void pin_dm_irq_mask(struct rt_pic_irq *pirq)
 {

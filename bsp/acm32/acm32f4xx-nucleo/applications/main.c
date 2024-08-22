@@ -11,7 +11,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "board.h"
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 
 #define LED_PIN_NUM    83     /* PF3 */
 
