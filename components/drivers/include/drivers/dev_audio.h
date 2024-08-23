@@ -10,10 +10,10 @@
  *
  */
 
-#ifndef __AUDIO_H__
-#define __AUDIO_H__
+#ifndef __DEV_AUDIO_H__
+#define __DEV_AUDIO_H__
 
-#include "audio_pipe.h"
+#include "dev_audio_pipe.h"
 
 /* AUDIO command */
 #define _AUDIO_CTL(a) (RT_DEVICE_CTRL_BASE(Sound) + a)
@@ -173,4 +173,4 @@ void        rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt
 
 #define CODEC_VOLUME_MAX            (63)
 
-#endif /* __AUDIO_H__ */
+#endif /* __DEV_AUDIO_H__ */

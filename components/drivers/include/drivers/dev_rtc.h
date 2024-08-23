@@ -11,8 +11,8 @@
  * 2022-04-05     tyx          add timestamp function
  */
 
-#ifndef __RTC_H__
-#define __RTC_H__
+#ifndef __DEV_RTC_H__
+#define __DEV_RTC_H__
 
 #include <rtdef.h>
 #include <sys/time.h>
@@ -79,4 +79,4 @@ rt_err_t rt_soft_rtc_set_source(const char *name);
 }
 #endif
 
-#endif /* __RTC_H__ */
+#endif /* __DEV_RTC_H__ */

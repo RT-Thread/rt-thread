@@ -9,7 +9,7 @@
  */
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "board.h"
 
 void main(void)

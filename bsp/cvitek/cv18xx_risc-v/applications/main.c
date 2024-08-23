@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <stdio.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 
 #if defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
 #define LED_PIN     "E02" /* Onboard LED pins */

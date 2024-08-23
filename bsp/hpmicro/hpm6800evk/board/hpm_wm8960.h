@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "rtt_board.h"
-#include "drivers/i2c.h"
+#include "drivers/dev_i2c.h"
 #include "hpm_wm8960_regs.h"
 
 #define WM8960_I2C_ADDR 0x1A

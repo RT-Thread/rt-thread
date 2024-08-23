@@ -12,7 +12,7 @@
 #define __SENSOR_H__
 
 #include <rtthread.h>
-#include "pin.h"
+#include "dev_pin.h"
 
 #ifdef __cplusplus
 extern "C" {

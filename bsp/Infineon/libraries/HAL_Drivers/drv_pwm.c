@@ -11,7 +11,7 @@
 
 #ifdef RT_USING_PWM
 
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 #include "drv_gpio.h"
 
 //#define DRV_DEBUG

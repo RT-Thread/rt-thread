@@ -9,8 +9,8 @@
  * 2022-09-24     yuqi         add phase and dead time configuration
  */
 
-#ifndef __DRV_PWM_H_INCLUDE__
-#define __DRV_PWM_H_INCLUDE__
+#ifndef __DEV_PWM_H__
+#define __DEV_PWM_H__
 
 #include <rtthread.h>
 
@@ -63,4 +63,4 @@ rt_err_t rt_pwm_set_pulse(struct rt_device_pwm *device, int channel, rt_uint32_t
 rt_err_t rt_pwm_set_dead_time(struct rt_device_pwm *device, int channel, rt_uint32_t dead_time);
 rt_err_t rt_pwm_set_phase(struct rt_device_pwm *device, int channel, rt_uint32_t phase);
 
-#endif /* __DRV_PWM_H_INCLUDE__ */
+#endif /* __DEV_PWM_H__ */

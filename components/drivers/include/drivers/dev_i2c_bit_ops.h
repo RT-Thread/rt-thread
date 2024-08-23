@@ -8,8 +8,8 @@
  * 2012-04-25     weety         first version
  */
 
-#ifndef __I2C_BIT_OPS_H__
-#define __I2C_BIT_OPS_H__
+#ifndef __DEV_I2C_BIT_OPS_H__
+#define __DEV_I2C_BIT_OPS_H__
 
 #ifdef __cplusplus
 extern "C" {
