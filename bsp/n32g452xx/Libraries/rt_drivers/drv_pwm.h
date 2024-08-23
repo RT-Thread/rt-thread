@@ -12,7 +12,7 @@
 #define __PWM_CONFIG_H__
 
 #include <rtthread.h>
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 
 #ifdef __cplusplus
 extern "C" {

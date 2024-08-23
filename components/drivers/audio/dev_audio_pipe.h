@@ -6,8 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  */
-#ifndef __AUDIO_PIPE_H__
-#define __AUDIO_PIPE_H__
+#ifndef __DEV_AUDIO_PIPE_H__
+#define __DEV_AUDIO_PIPE_H__
 
 /**
  * Pipe Device
@@ -72,4 +72,4 @@ rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
 void rt_audio_pipe_destroy(struct rt_audio_pipe *pipe);
 #endif /* RT_USING_HEAP */
 
-#endif /* __AUDIO_PIPE_H__ */
+#endif /* __DEV_AUDIO_PIPE_H__ */

@@ -9,8 +9,8 @@
  * 2021-04-20     RiceChen      added support for bus control api
  */
 
-#ifndef __I2C_H__
-#define __I2C_H__
+#ifndef __DEV_I2C_H__
+#define __DEV_I2C_H__
 
 #include <rtthread.h>
 
@@ -25,6 +25,22 @@ extern "C" {
 #define RT_I2C_IGNORE_NACK      (1u << 5)
 #define RT_I2C_NO_READ_ACK      (1u << 6)  /* when I2C reading, we do not ACK */
 #define RT_I2C_NO_STOP          (1u << 7)
+
+#define RT_I2C_DEV_CTRL_10BIT        (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x01)
+#define RT_I2C_DEV_CTRL_ADDR         (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x02)
+#define RT_I2C_DEV_CTRL_TIMEOUT      (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x03)
+#define RT_I2C_DEV_CTRL_RW           (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x04)
+#define RT_I2C_DEV_CTRL_CLK          (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x05)
+#define RT_I2C_DEV_CTRL_UNLOCK       (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x06)
+#define RT_I2C_DEV_CTRL_GET_STATE    (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x07)
+#define RT_I2C_DEV_CTRL_GET_MODE     (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x08)
+#define RT_I2C_DEV_CTRL_GET_ERROR    (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x09)
+
+struct rt_i2c_priv_data
+{
+    struct rt_i2c_msg  *msgs;
+    rt_size_t  number;
+};
 
 struct rt_i2c_msg
 {
@@ -98,6 +114,9 @@ rt_err_t rt_i2c_device_register(struct rt_i2c_client *client);
 
 #define RT_I2C_DRIVER_EXPORT(driver)  RT_DRIVER_EXPORT(driver, i2c, BUILIN)
 #endif /* RT_USING_DM */
+
+rt_err_t rt_i2c_bus_device_device_init(struct rt_i2c_bus_device *bus,
+                                       const char               *name);
 
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name);

@@ -8,7 +8,7 @@
 
 #include <rtthread.h>
 #include "rtdevice.h"
-#include "drivers/can.h"
+#include "drivers/dev_can.h"
 
 #ifdef BSP_USING_CAN0
 #define CAN_DEV_NAME "can0" /* CAN 设备名称 */

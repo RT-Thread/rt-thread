@@ -15,7 +15,7 @@
 #else
     #include <drivers/serial.h>
 #endif
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "ch56x_sys.h"
 #include "ch56x_uart.h"
 #include "isr_sp.h"

@@ -9,8 +9,8 @@
  * 2017-10-20      ZYH          add mode open drain and input pull down
  */
 
-#ifndef PIN_H__
-#define PIN_H__
+#ifndef DEV_PIN_H__
+#define DEV_PIN_H__
 
 #include <rtthread.h>
 

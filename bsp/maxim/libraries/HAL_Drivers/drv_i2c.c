@@ -10,7 +10,7 @@
  */
 
 #include "drv_i2c.h"
-#include "i2c.h"
+#include "drivers/dev_i2c.h"
 #include <rtdevice.h>
 #include <rtthread.h>
 #include "board.h"

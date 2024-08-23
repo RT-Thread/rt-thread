@@ -11,7 +11,7 @@
 #include "ch32v20x.h"
 #include <rtthread.h>
 #include <rthw.h>
-#include "drivers/pin.h"
+#include "drivers/dev_pin.h"
 #include <board.h>
 
 #define LED0 rt_pin_get("PA.0")

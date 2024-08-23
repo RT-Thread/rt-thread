@@ -10,7 +10,7 @@
 
 #include <rtdevice.h>
 
-#define DBG_TAG "i2c.dm"
+#define DBG_TAG "dev.i2c.dm"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 

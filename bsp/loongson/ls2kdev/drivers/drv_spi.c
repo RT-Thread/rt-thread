@@ -23,7 +23,7 @@
 
 #ifdef RT_USING_SPI
 #ifdef RT_USING_SPI_GPIOCS
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #endif
 
 static void spi_init(uint8_t spre_spr, uint8_t copl, uint8_t cpha)

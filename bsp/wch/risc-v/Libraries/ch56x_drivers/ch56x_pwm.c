@@ -8,8 +8,8 @@
  * 2022-08-04     Emuzit            first version
  */
 #include <rthw.h>
-#include <drivers/rt_drv_pwm.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pwm.h>
+#include <drivers/dev_pin.h>
 #include "ch56x_pwm.h"
 #include "ch56x_sys.h"
 
