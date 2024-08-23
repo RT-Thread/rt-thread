@@ -115,6 +115,7 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
     rt_base_t base;
     struct hw_uart_device *uart;
     int clock_divisor;
+    int last_ier_state;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
@@ -122,6 +123,7 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
 
     while (!(dw8250_read32(base, UART_LSR) & UART_LSR_TEMT));
 
+    last_ier_state = dw8250_read32(base, UART_IER);
     dw8250_write32(base, UART_IER, 0);
     dw8250_write32(base, UART_MCR, UART_MCRVAL);
     dw8250_write32(base, UART_FCR, UART_FCR_DEFVAL);
@@ -131,6 +133,8 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
 
     clock_divisor = DIV_ROUND_CLOSEST(UART_INPUT_CLK, 16 * serial->config.baud_rate);
     dw8250_uart_setbrg(base, clock_divisor);
+
+    dw8250_write32(base, UART_IER, last_ier_state);
 
     return RT_EOK;
 }
