@@ -10,7 +10,7 @@
  */
 
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 #include <rthw.h>
 #include "drv_spi.h"
 #include "ls1c_public.h"
