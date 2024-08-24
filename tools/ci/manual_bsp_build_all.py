@@ -19,12 +19,19 @@ import os
 import sys
 import shutil
 import multiprocessing
+from multiprocessing import Process
 
 #help说明
 def usage():
     print('%s all     -- build all GCC bsp' % os.path.basename(sys.argv[0]))
     print('%s clean   -- clean all bsp' % os.path.basename(sys.argv[0]))
     print('%s update  -- update all prject files' % os.path.basename(sys.argv[0]))
+
+def add_summary(text):
+    """
+    add summary to github action.
+    """
+    os.system(f'echo "{text}" >> $GITHUB_STEP_SUMMARY ;')
 
 def run_cmd(cmd, output_info=True):
     """
@@ -35,7 +42,7 @@ def run_cmd(cmd, output_info=True):
 
     output_str_list = []
     res = 0
-
+    
     if output_info:
         res = os.system(cmd + " > output.txt 2>&1")
     else:
@@ -102,6 +109,8 @@ def build_bsp(bsp, scons_args=''):
                 file.write(f'===================={bsp}====================\n')
                 for line in result_log:
                     file.write(line)
+            print(f"::error::build {bsp} failed")
+            add_summary(f"- ❌ build {bsp} failed.")
             success = False
     else:
         # 如果没有Kconfig直接执行scons
@@ -166,12 +175,17 @@ def update_all_project_files(sconstruct_paths):
             sys.exit(-1)
 
 #找到带有Sconstruct的文件夹
-def find_sconstruct_paths(project_dir, exclude_paths):
+def find_sconstruct_paths(project_dir, exclude_paths, include_paths):
     sconstruct_paths = []
     for root, dirs, files in os.walk(project_dir):
-        if all(exclude_path not in root for exclude_path in exclude_paths):
-            if 'SConstruct' in files:
-                sconstruct_paths.append(root)
+        if include_paths:
+            if any(include_path in root for include_path in include_paths) and all(exclude_path not in root for exclude_path in exclude_paths):
+                if 'SConstruct' in files:
+                    sconstruct_paths.append(root)
+        else:
+            if all(exclude_path not in root for exclude_path in exclude_paths):
+                if 'SConstruct' in files:
+                    sconstruct_paths.append(root)           
     return sconstruct_paths
     
 #检查EXE命令是否存在，判断环境
@@ -195,12 +209,11 @@ bsp_root = os.path.join(rtt_root, 'bsp')
 
 #需要排除的文件夹名字
 exclude_paths = ['templates', 'doc', 'libraries', 'Libraries', 'template']
-sconstruct_paths = find_sconstruct_paths(bsp_root, exclude_paths)
+include_paths = []#['nrf5x','qemu-vexpress-a9']
+
+sconstruct_paths = find_sconstruct_paths(bsp_root, exclude_paths,include_paths)
 
 # get command options
-
-
-
 command = ''
 command_clean_flag = False
 
@@ -239,7 +252,8 @@ else:
     print("未找到包含 'SConstruct' 文件的路径")
 
 #遍历所有的sconstruct_paths  路径中的文件夹
-for project_dir in sconstruct_paths:
+
+def bsp_scons_worker(project_dir):
     print('=========project_dir===='+ project_dir)
 #判断有没有SConstruct 文件，
     if os.path.isfile(os.path.join(project_dir, 'SConstruct')):
@@ -256,8 +270,6 @@ for project_dir in sconstruct_paths:
         print('==project_dir=======new_project_dir='+ new_project_dir)
         #开始编译bsp
         build_bsp(new_project_dir)
-    if command_clean_flag:
-        continue
 
 # 发现有keil相关的，执行keil相关的命令，先检查一下UV4.exe命令有没有，然后执行UV4.exe
     if check_command_availability('UV4.exe') :
@@ -294,6 +306,16 @@ for project_dir in sconstruct_paths:
                 os.chdir(f'{rtt_root}')
             else:
                 print('iarbuild is not available, please check your iar installation')
+
+processes = []
+for project_dir in sconstruct_paths:
+    p = Process(target=bsp_scons_worker, args=(project_dir,))
+    p.start()
+    processes.append(p)
+
+for p in processes:
+    p.join()  # 等待所有进程完成
+
 print('finished!')
 
 # 将failed_bsp_list.txt的内容追加到failed_bsp.log文件中
