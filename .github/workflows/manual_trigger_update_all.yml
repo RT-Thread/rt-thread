@@ -138,18 +138,19 @@ jobs:
           python tools/ci/manual_bsp_build_all.py update
 
       - name: Commit changes
-        run: |
-          git config user.name "supperthomas"
-          git config user.email "78900636@qq.com"
-          git add . -u
-          git commit -m "[action] Create PR for update all bsp"
-          git push origin HEAD:development
-      
+        uses: devops-infra/action-commit-push@master
+        with:
+          github_token: "${{ secrets.RTTHREAD_GITHUB_TOKEN }}"
+          commit_prefix: "[AUTO]"
+          commit_message: "Updated dependencies"
+          force: false
+          target_branch: updated_deps
+        
       - name: Create Pull Request 
         uses: devops-infra/action-pull-request@master
         with:
           github_token: ${{ secrets.RTTHREAD_GITHUB_TOKEN }}
           title: "[action] Automated PR for updates"
           body: "This PR was created automatically by GitHub Actions."
-          source_branch: development
+          source_branch: updated_deps
           target_branch: master
