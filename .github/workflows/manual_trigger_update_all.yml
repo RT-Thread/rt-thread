@@ -148,7 +148,7 @@ jobs:
       - name: Create Pull Request 
         uses: devops-infra/action-pull-request@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.RTTHREAD_GITHUB_TOKEN }}
           title: "[action] Automated PR for updates"
           body: "This PR was created automatically by GitHub Actions."
           source_branch: development
