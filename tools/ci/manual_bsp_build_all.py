@@ -309,12 +309,13 @@ def bsp_scons_worker(project_dir):
 
 processes = []
 for project_dir in sconstruct_paths:
-    p = Process(target=bsp_scons_worker, args=(project_dir,))
-    p.start()
-    processes.append(p)
+    bsp_scons_worker(project_dir)
+    #p = Process(target=bsp_scons_worker, args=(project_dir,))
+    #p.start()
+    #processes.append(p)
 
-for p in processes:
-    p.join()  # 等待所有进程完成
+#for p in processes:
+#    p.join()  # 等待所有进程完成
 
 print('finished!')
 
