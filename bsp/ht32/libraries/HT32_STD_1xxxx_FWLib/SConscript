@@ -35,7 +35,17 @@ path = [
     cwd + '/library/Device/Holtek/HT32F1xxxx/Include'
 ]
 
-CPPDEFINES = ['USE_HT32_DRIVER']
+CPPDEFINES = [
+    'USE_HT32F12365_66', 
+    'USE_MEM_HT32F12366', 
+    ('__CLK_TCK','RT_TICK_PER_SECOND'), 
+    '__STDC_LIMIT_MACROS', 
+    '__RTTHREAD__', 
+    'RT_USING_LIBC', 
+    'RT_USING_ARMLIBC', 
+    'USE_HT32_DRIVER'
+]
+
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
