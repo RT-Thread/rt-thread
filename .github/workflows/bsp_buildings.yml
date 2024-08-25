@@ -143,6 +143,7 @@ jobs:
                 - "stm32/stm32f401-weact-blackpill"
                 - "stm32/stm32f405-smdz-breadfruit"
                 - "stm32/stm32f407-armfly-v5"
+                - "stm32/stm32f407-fk407m2-zgt6"
                 - "stm32/stm32f407-lckfb-skystar"
                 - "stm32/stm32f407-atk-explorer"
                 - "stm32/stm32f407-robomaster-c"
@@ -468,3 +469,10 @@ jobs:
         run: |
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py
+
+      - name: Post failure comment
+        if: failure()
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.RTTHREAD_GITHUB_TOKEN }}" \
+          -d '{"body":"@${{ github.actor }}, Thank you for your contribution, but there was an error with the action. Could you please help check the BSP compilation issue? Thank you."}' \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"

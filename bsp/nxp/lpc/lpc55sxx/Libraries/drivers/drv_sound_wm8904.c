@@ -9,8 +9,8 @@
  */
 
 #include <rtthread.h>
-#include <drivers/audio.h>
-#include <drivers/i2c.h>
+#include <drivers/dev_audio.h>
+#include <drivers/dev_i2c.h>
 #include "drv_sound_wm8904.h"
 
 /**

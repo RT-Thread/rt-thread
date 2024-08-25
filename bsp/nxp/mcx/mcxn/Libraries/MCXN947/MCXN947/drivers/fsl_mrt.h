@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_MRT_H_
-#define _FSL_MRT_H_
+#ifndef FSL_MRT_H_
+#define FSL_MRT_H_
 
 #include "fsl_common.h"
 
@@ -22,9 +22,9 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 #define FSL_MRT_DRIVER_VERSION (MAKE_VERSION(2, 0, 3)) /*!< Version 2.0.3 */
-/*@}*/
+/*! @} */
 
 /*! @brief List of MRT channels */
 typedef enum _mrt_chnl
@@ -363,4 +363,4 @@ static inline void MRT_ReleaseChannel(MRT_Type *base, mrt_chnl_t channel)
 
 /*! @}*/
 
-#endif /* _FSL_MRT_H_ */
+#endif /* FSL_MRT_H_ */

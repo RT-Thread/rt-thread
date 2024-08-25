@@ -227,7 +227,7 @@ status_t PDM_SetSampleRateConfig(PDM_Type *base, uint32_t sourceClock_HZ, uint32
     uint32_t regDiv       = 0U;
 
     /* get divider */
-    osr          = 16U - osr;
+    osr          = (PDM_CTRL_2_CICOSR_MASK >> PDM_CTRL_2_CICOSR_SHIFT) + 1U - osr;
     pdmClockRate = sampleRate_HZ * osr * 8U;
     regDiv       = sourceClock_HZ / pdmClockRate;
 
@@ -262,7 +262,8 @@ status_t PDM_SetSampleRate(
     PDM_Type *base, uint32_t enableChannelMask, pdm_df_quality_mode_t qualityMode, uint8_t osr, uint32_t clkDiv)
 {
 #if !(defined FSL_FEATURE_PDM_HAS_NO_MINIMUM_CLKDIV && FSL_FEATURE_PDM_HAS_NO_MINIMUM_CLKDIV)
-    uint8_t realOsr = 16U - (osr & (PDM_CTRL_2_CICOSR_MASK >> PDM_CTRL_2_CICOSR_SHIFT));
+    uint8_t realOsr = (PDM_CTRL_2_CICOSR_MASK >> PDM_CTRL_2_CICOSR_SHIFT) + 1U -
+                      (osr & (PDM_CTRL_2_CICOSR_MASK >> PDM_CTRL_2_CICOSR_SHIFT));
 #endif
     uint32_t regDiv = clkDiv >> 1U;
 
@@ -336,11 +337,15 @@ void PDM_Init(PDM_Type *base, const pdm_config_t *config)
     base->CTRL_1 |= PDM_CTRL_1_SRES_MASK;
 
     /* Set the configure settings */
-    base->CTRL_1 = (base->CTRL_1 & (~PDM_CTRL_1_DOZEN_MASK)) | PDM_CTRL_1_DOZEN(config->enableDoze);
-
+#if !(defined(FSL_FEATURE_PDM_HAS_NO_DOZEN) && FSL_FEATURE_PDM_HAS_NO_DOZEN)
+    PDM_EnableDoze(base, config->enableDoze);
+#endif
     base->CTRL_2 = (base->CTRL_2 & (~(PDM_CTRL_2_CICOSR_MASK | PDM_CTRL_2_QSEL_MASK))) |
                    PDM_CTRL_2_CICOSR(config->cicOverSampleRate) | PDM_CTRL_2_QSEL(config->qualityMode);
 
+#if defined(FSL_FEATURE_PDM_HAS_DECIMATION_FILTER_BYPASS) && FSL_FEATURE_PDM_HAS_DECIMATION_FILTER_BYPASS
+    base->CTRL_2 = (base->CTRL_2 & ~PDM_CTRL_2_DEC_BYPASS_MASK) | PDM_CTRL_2_DEC_BYPASS(config->enableFilterBypass);
+#endif
     /* Set the watermark */
     base->FIFO_CTRL = PDM_FIFO_CTRL_FIFOWMK(config->fifoWatermark);
 }
@@ -356,6 +361,7 @@ void PDM_Init(PDM_Type *base, const pdm_config_t *config)
 void PDM_Deinit(PDM_Type *base)
 {
     /* disable PDM interface */
+    PDM_DisableInterrupts(base, (uint32_t)kPDM_FIFOInterruptEnable | (uint32_t)kPDM_ErrorInterruptEnable);
     PDM_Enable(base, false);
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)

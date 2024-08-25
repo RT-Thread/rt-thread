@@ -44,6 +44,12 @@ typedef union lpuart_to_lpflexcomm_edma
 static LPUART_Type *const s_lpuartBases[] = LPUART_BASE_PTRS;
 
 /* Array of LPUART handle. */
+#if (defined(LPUART20))
+#define LPUART_HANDLE_ARRAY_SIZE 21
+#else /* LPUART20 */
+#if (defined(LPUART13))
+#define LPUART_HANDLE_ARRAY_SIZE 14
+#else /* LPUART13 */
 #if (defined(LPUART12))
 #define LPUART_HANDLE_ARRAY_SIZE 13
 #else /* LPUART12 */
@@ -97,6 +103,8 @@ static LPUART_Type *const s_lpuartBases[] = LPUART_BASE_PTRS;
 #endif /* LPUART 10 */
 #endif /* LPUART 11 */
 #endif /* LPUART 12 */
+#endif /* LPUART 13 */
+#endif /* LPUART 20 */
 
 /*<! Private handle only used for internally. */
 static lpuart_edma_private_handle_t s_lpuartEdmaPrivateHandle[LPUART_HANDLE_ARRAY_SIZE];
@@ -484,7 +492,7 @@ status_t LPUART_TransferGetSendCountEDMA(LPUART_Type *base, lpuart_edma_handle_t
  * note This function is used as default IRQ handler by double weak mechanism.
  * If user's specific IRQ handler is implemented, make sure this function is invoked in the handler.
  *
- * param base LPUART peripheral base address.
+ * param instance LPUART peripheral index.
  * param lpuartEdmaHandle LPUART handle pointer.
  */
 void LPUART_TransferEdmaHandleIRQ(uint32_t instance, void *lpuartEdmaHandle)

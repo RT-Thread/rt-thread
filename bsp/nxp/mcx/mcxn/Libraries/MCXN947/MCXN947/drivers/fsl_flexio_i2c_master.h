@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_FLEXIO_I2C_MASTER_H_
-#define _FSL_FLEXIO_I2C_MASTER_H_
+#ifndef FSL_FLEXIO_I2C_MASTER_H_
+#define FSL_FLEXIO_I2C_MASTER_H_
 
 #include "fsl_common.h"
 #include "fsl_flexio.h"
@@ -21,9 +21,9 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 #define FSL_FLEXIO_I2C_MASTER_DRIVER_VERSION (MAKE_VERSION(2, 5, 0))
-/*@}*/
+/*! @} */
 
 /*! @brief Retry times for waiting flag. */
 #ifndef I2C_RETRY_TIMES
@@ -207,7 +207,7 @@ static inline void FLEXIO_I2C_MasterEnable(FLEXIO_I2C_Type *base, bool enable)
     }
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Status
@@ -235,7 +235,7 @@ uint32_t FLEXIO_I2C_MasterGetStatusFlags(FLEXIO_I2C_Type *base);
 
 void FLEXIO_I2C_MasterClearStatusFlags(FLEXIO_I2C_Type *base, uint32_t mask);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -260,7 +260,7 @@ void FLEXIO_I2C_MasterEnableInterrupts(FLEXIO_I2C_Type *base, uint32_t mask);
  */
 void FLEXIO_I2C_MasterDisableInterrupts(FLEXIO_I2C_Type *base, uint32_t mask);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Bus Operations
@@ -402,7 +402,7 @@ status_t FLEXIO_I2C_MasterReadBlocking(FLEXIO_I2C_Type *base, uint8_t *rxBuff, u
  * @return status of status_t.
  */
 status_t FLEXIO_I2C_MasterTransferBlocking(FLEXIO_I2C_Type *base, flexio_i2c_master_transfer_t *xfer);
-/*@}*/
+/*! @} */
 
 /*Transactional APIs*/
 
@@ -475,11 +475,11 @@ void FLEXIO_I2C_MasterTransferAbort(FLEXIO_I2C_Type *base, flexio_i2c_master_han
  */
 void FLEXIO_I2C_MasterTransferHandleIRQ(void *i2cType, void *i2cHandle);
 
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
 #endif /*_cplusplus*/
-/*@}*/
+/*! @} */
 
-#endif /*_FSL_FLEXIO_I2C_MASTER_H_*/
+#endif /*FSL_FLEXIO_I2C_MASTER_H_*/

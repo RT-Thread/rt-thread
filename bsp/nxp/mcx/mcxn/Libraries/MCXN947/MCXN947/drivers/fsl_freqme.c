@@ -15,6 +15,10 @@
 #define FSL_COMPONENT_ID "platform.drivers.lpc_freqme"
 #endif
 
+#if defined(FREQME_RSTS_N)
+#define FREQME_RESETS_ARRAY FREQME_RSTS_N
+#endif
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -31,6 +35,10 @@ static FREQME_Type *const s_freqmeBases[] = FREQME_BASE_PTRS;
 static const clock_ip_name_t s_freqmeClocks[] = FREQME_CLOCKS;
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
+#if defined(FREQME_RESETS_ARRAY)
+/* Reset array */
+static const reset_ip_name_t s_freqmeResets[] = FREQME_RESETS_ARRAY;
+#endif
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -69,12 +77,16 @@ void FREQME_Init(FREQME_Type *base, const freq_measure_config_t *config)
     CLOCK_EnableClock(s_freqmeClocks[FREQME_GetInstance(base)]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
+#if defined(FREQME_RESETS_ARRAY)
+    RESET_ReleasePeripheralReset(s_freqmeResets[FREQME_GetInstance(base)]);
+#endif
+
     if (config->startMeasurement)
     {
         tmp32 |= FREQME_CTRL_W_MEASURE_IN_PROGRESS_MASK;
     }
-    tmp32 |=
-        FREQME_CTRL_W_CONTINUOUS_MODE_EN(config->enableContinuousMode) | FREQME_CTRL_W_PULSE_MODE(config->operateMode);
+    tmp32 |= FREQME_CTRL_W_CONTINUOUS_MODE_EN(config->enableContinuousMode) |
+             FREQME_CTRL_W_PULSE_MODE(config->operateMode);
     if (config->operateMode == kFREQME_FreqMeasurementMode)
     {
         tmp32 |= FREQME_CTRL_W_REF_SCALE(config->operateModeAttribute.refClkScaleFactor);

@@ -1229,7 +1229,12 @@ status_t FLEXIO_SPI_MasterTransferNonBlocking(FLEXIO_SPI_Type *base,
 
     /* Enable transmit and receive interrupt to handle rx. */
     FLEXIO_SPI_EnableInterrupts(base, (uint32_t)kFLEXIO_SPI_RxFullInterruptEnable);
-
+    
+    if ((xfer->flags & (uint8_t)kFLEXIO_SPI_csContinuous) != 0U)
+    {
+        FLEXIO_SPI_EnableInterrupts(base, (uint32_t)kFLEXIO_SPI_TxEmptyInterruptEnable);
+    }
+    
     return kStatus_Success;
 }
 
@@ -1307,8 +1312,15 @@ void FLEXIO_SPI_MasterTransferHandleIRQ(void *spiType, void *spiHandle)
     base   = (FLEXIO_SPI_Type *)spiType;
     status = FLEXIO_SPI_GetStatusFlags(base);
 
+    /* Receive interrupt. */
+    if ((status & (uint32_t)kFLEXIO_SPI_RxBufferFullFlag) == 0U)
+    {
+        FLEXIO_SPI_TransferSendTransaction(base, handle);
+        return;
+    }
+
     /* Handle rx. */
-    if (((status & (uint32_t)kFLEXIO_SPI_RxBufferFullFlag) != 0U) && (handle->rxRemainingBytes != 0U))
+    if (handle->rxRemainingBytes != 0U)
     {
         FLEXIO_SPI_TransferReceiveTransaction(base, handle);
     }

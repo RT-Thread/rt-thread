@@ -15,7 +15,7 @@
 #ifdef BSP_USING_PWM
 #include "drv_config.h"
 #include "drv_tim.h"
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.pwm"

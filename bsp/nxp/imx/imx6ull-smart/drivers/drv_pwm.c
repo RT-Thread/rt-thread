@@ -22,7 +22,7 @@
 #include "fsl_pwm.h"
 #include "drv_pwm.h"
 #include <drv_common.h>
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 
 #define PWM_SRC_CLK_FREQ              CLOCK_GetFreq(kCLOCK_IpgClk)
 /* PWMPR register value of 0xffff has the same effect as 0xfffe */

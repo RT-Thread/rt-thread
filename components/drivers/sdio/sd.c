@@ -788,7 +788,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
         goto err1;
 
     /* set bus speed */
-    max_data_rate = (unsigned int)-1;
+    max_data_rate = 0U;
     if (max_data_rate < card->hs_max_data_rate)
     {
         max_data_rate = card->hs_max_data_rate;

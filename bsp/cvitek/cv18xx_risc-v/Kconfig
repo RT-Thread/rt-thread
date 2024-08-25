@@ -31,15 +31,11 @@ config IRQ_MAX_NR
     int
     default 101
 
-config TIMER_CLK_FREQ
-    int
-    default 25000000
-
-config GPIO_IRQ_BASE
+config BSP_GPIO_IRQ_BASE
     int
     default 60
 
-config SYS_GPIO_IRQ_BASE
+config BSP_SYS_GPIO_IRQ_BASE
     int
     default 70
 

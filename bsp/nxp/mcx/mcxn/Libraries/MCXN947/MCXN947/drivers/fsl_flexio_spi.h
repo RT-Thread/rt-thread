@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_FLEXIO_SPI_H_
-#define _FSL_FLEXIO_SPI_H_
+#ifndef FSL_FLEXIO_SPI_H_
+#define FSL_FLEXIO_SPI_H_
 
 #include "fsl_common.h"
 #include "fsl_flexio.h"
@@ -22,14 +22,14 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief FlexIO SPI driver version. */
-#define FSL_FLEXIO_SPI_DRIVER_VERSION (MAKE_VERSION(2, 3, 0))
-/*@}*/
+#define FSL_FLEXIO_SPI_DRIVER_VERSION (MAKE_VERSION(2, 3, 4))
+/*! @} */
 
 #ifndef FLEXIO_SPI_DUMMYDATA
 /*! @brief FlexIO SPI dummy transfer data, the data is sent while txData is NULL. */
-#define FLEXIO_SPI_DUMMYDATA (0xFFFFFFFFU)
+#define FLEXIO_SPI_DUMMYDATA (0x00U)
 #endif
 
 /*! @brief Retry times for waiting flag. */
@@ -152,7 +152,7 @@ typedef struct _flexio_spi_slave_config
 /*! @brief Define FlexIO SPI transfer structure. */
 typedef struct _flexio_spi_transfer
 {
-    uint8_t *txData; /*!< Send buffer. */
+    const uint8_t *txData; /*!< Send buffer. */
     uint8_t *rxData; /*!< Receive buffer. */
     size_t dataSize; /*!< Transfer bytes. */
     uint8_t flags;   /*!< FlexIO SPI control flag, MSB first  or LSB first. */
@@ -179,7 +179,7 @@ typedef void (*flexio_spi_slave_transfer_callback_t)(FLEXIO_SPI_Type *base,
 /*! @brief Define FlexIO SPI handle structure. */
 struct _flexio_spi_master_handle
 {
-    uint8_t *txData;                                /*!< Transfer buffer. */
+    const uint8_t *txData;                          /*!< Transfer buffer. */
     uint8_t *rxData;                                /*!< Receive buffer. */
     size_t transferSize;                            /*!< Total bytes to be transferred. */
     volatile size_t txRemainingBytes;               /*!< Send data remaining in bytes. */
@@ -323,7 +323,7 @@ void FLEXIO_SPI_SlaveDeinit(FLEXIO_SPI_Type *base);
 */
 void FLEXIO_SPI_SlaveGetDefaultConfig(flexio_spi_slave_config_t *slaveConfig);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Status
@@ -353,7 +353,7 @@ uint32_t FLEXIO_SPI_GetStatusFlags(FLEXIO_SPI_Type *base);
 
 void FLEXIO_SPI_ClearStatusFlags(FLEXIO_SPI_Type *base, uint32_t mask);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -384,7 +384,7 @@ void FLEXIO_SPI_EnableInterrupts(FLEXIO_SPI_Type *base, uint32_t mask);
  */
 void FLEXIO_SPI_DisableInterrupts(FLEXIO_SPI_Type *base, uint32_t mask);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name DMA Control
@@ -447,7 +447,7 @@ static inline uint32_t FLEXIO_SPI_GetRxDataRegisterAddress(FLEXIO_SPI_Type *base
     }
 }
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Bus Operations
@@ -548,7 +548,6 @@ status_t FLEXIO_SPI_WriteBlocking(FLEXIO_SPI_Type *base,
  * @param direction Shift direction of MSB first or LSB first.
  * @param buffer The buffer to store the received bytes.
  * @param size The number of data bytes to be received.
- * @param direction Shift direction of MSB first or LSB first.
  * @retval kStatus_Success Successfully create the handle.
  * @retval kStatus_FLEXIO_SPI_Timeout The transfer timed out and was aborted.
  */
@@ -575,7 +574,7 @@ status_t FLEXIO_SPI_MasterTransferBlocking(FLEXIO_SPI_Type *base, flexio_spi_tra
  * @param base Pointer to the FLEXIO_SPI_Type structure.
  */
 void FLEXIO_SPI_FlushShifters(FLEXIO_SPI_Type *base);
-/*@}*/
+/*! @} */
 
 /*Transactional APIs*/
 
@@ -709,11 +708,11 @@ static inline status_t FLEXIO_SPI_SlaveTransferGetCount(FLEXIO_SPI_Type *base,
  */
 void FLEXIO_SPI_SlaveTransferHandleIRQ(void *spiType, void *spiHandle);
 
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
 #endif /*_cplusplus*/
-/*@}*/
+/*! @} */
 
-#endif /*_FSL_FLEXIO_SPI_H_*/
+#endif /*FSL_FLEXIO_SPI_H_*/

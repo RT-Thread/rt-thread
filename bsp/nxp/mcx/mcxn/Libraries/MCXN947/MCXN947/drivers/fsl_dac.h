@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_DAC_H_
-#define _FSL_DAC_H_
+#ifndef FSL_DAC_H_
+#define FSL_DAC_H_
 
 #include "fsl_common.h"
 
@@ -23,10 +23,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief DAC driver version 2.1.1. */
-#define FSL_DAC_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
-/*@}*/
+/*! @{ */
+/*! @brief DAC driver version 2.1.2. */
+#define FSL_DAC_DRIVER_VERSION (MAKE_VERSION(2, 1, 2))
+/*! @} */
 
 /*!
  * @brief DAC reset control.
@@ -293,7 +293,7 @@ static inline void DAC_Enable(LPDAC_Type *base, bool enable)
     }
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -322,7 +322,7 @@ static inline void DAC_DisableInterrupts(LPDAC_Type *base, uint32_t mask)
     base->IER &= ~mask;
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name DMA control
@@ -348,7 +348,7 @@ static inline void DAC_EnableDMA(LPDAC_Type *base, uint32_t mask, bool enable)
     }
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Status flags
@@ -377,7 +377,7 @@ static inline void DAC_ClearStatusFlags(LPDAC_Type *base, uint32_t flags)
     base->FSR = flags;
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Functional feature
@@ -430,7 +430,7 @@ static inline void DAC_DoSoftwareTriggerFIFO(LPDAC_Type *base)
     base->TCR = LPDAC_TCR_SWTRG_MASK;
 }
 
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -439,4 +439,4 @@ static inline void DAC_DoSoftwareTriggerFIFO(LPDAC_Type *base)
 /*!
  * @}
  */
-#endif /* _FSL_DAC12_H_ */
+#endif /* FSL_DAC12_H_ */

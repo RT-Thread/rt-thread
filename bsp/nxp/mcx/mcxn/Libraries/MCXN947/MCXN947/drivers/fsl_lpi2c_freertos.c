@@ -15,7 +15,7 @@
 static void LPI2C_RTOS_Callback(LPI2C_Type *base, lpi2c_master_handle_t *drv_handle, status_t status, void *userData)
 {
     lpi2c_rtos_handle_t *handle = (lpi2c_rtos_handle_t *)userData;
-    BaseType_t reschedule;
+    BaseType_t reschedule = pdFALSE;
     handle->async_status = status;
     (void)xSemaphoreGiveFromISR(handle->semaphore, &reschedule);
     portYIELD_FROM_ISR(reschedule);

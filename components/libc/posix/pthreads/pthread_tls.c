@@ -54,7 +54,7 @@ int pthread_setspecific(pthread_key_t key, const void *value)
     /* check tls area */
     if (ptd->tls == NULL)
     {
-        ptd->tls = (void**)rt_malloc(sizeof(void*) * PTHREAD_KEY_MAX);
+        ptd->tls = (void**)rt_calloc(PTHREAD_KEY_MAX, sizeof(void*));
     }
 
     if ((key < PTHREAD_KEY_MAX) && _thread_keys[key].is_used)

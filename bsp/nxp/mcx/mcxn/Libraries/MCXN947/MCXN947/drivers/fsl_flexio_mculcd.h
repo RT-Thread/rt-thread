@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2021, 2022 NXP
+ * Copyright 2016-2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_FLEXIO_MCULCD_H_
-#define _FSL_FLEXIO_MCULCD_H_
+#ifndef FSL_FLEXIO_MCULCD_H_
+#define FSL_FLEXIO_MCULCD_H_
 
 #include "fsl_common.h"
 #include "fsl_flexio.h"
@@ -22,10 +22,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief FlexIO MCULCD driver version. */
-#define FSL_FLEXIO_MCULCD_DRIVER_VERSION (MAKE_VERSION(2, 0, 7))
-/*@}*/
+#define FSL_FLEXIO_MCULCD_DRIVER_VERSION (MAKE_VERSION(2, 1, 0))
+/*! @} */
 
 #ifndef FLEXIO_MCULCD_WAIT_COMPLETE_TIME
 /*!
@@ -129,7 +129,7 @@ typedef struct _flexio_mculcd_config
     bool enableFastAccess; /*!< Enable/disable fast access to FlexIO registers,
                            fast access requires the FlexIO clock to be at least
                            twice the frequency of the bus clock. */
-    uint32_t baudRate_Bps; /*!< Baud rate in Bps. */
+    uint32_t baudRate_Bps; /*!< Baud rate in bit-per-second for all data lines combined. */
 } flexio_mculcd_config_t;
 
 /*! @brief Transfer mode.*/
@@ -144,11 +144,12 @@ typedef enum _flexio_mculcd_transfer_mode
 typedef struct _flexio_mculcd_transfer
 {
     uint32_t command;                   /*!< Command to send. */
-    flexio_mculcd_transfer_mode_t mode; /*!< Transfer mode. */
     uint32_t dataAddrOrSameValue;       /*!< When sending the same value for many times,
                                            this is the value to send. When writing or reading array,
                                            this is the address of the data array. */
     size_t dataSize;                    /*!< How many bytes to transfer. */
+    flexio_mculcd_transfer_mode_t mode; /*!< Transfer mode. */
+    bool dataOnly;                      /*!< Send data only when tx without the command. */
 } flexio_mculcd_transfer_t;
 
 /*! @brief typedef for flexio_mculcd_handle_t in advance. */
@@ -229,7 +230,7 @@ void FLEXIO_MCULCD_Deinit(FLEXIO_MCULCD_Type *base);
  */
 void FLEXIO_MCULCD_GetDefaultConfig(flexio_mculcd_config_t *config);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Status
@@ -257,7 +258,7 @@ uint32_t FLEXIO_MCULCD_GetStatusFlags(FLEXIO_MCULCD_Type *base);
  */
 void FLEXIO_MCULCD_ClearStatusFlags(FLEXIO_MCULCD_Type *base, uint32_t mask);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Interrupts
@@ -286,7 +287,7 @@ void FLEXIO_MCULCD_EnableInterrupts(FLEXIO_MCULCD_Type *base, uint32_t mask);
  */
 void FLEXIO_MCULCD_DisableInterrupts(FLEXIO_MCULCD_Type *base, uint32_t mask);
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name DMA Control
@@ -343,7 +344,7 @@ static inline uint32_t FLEXIO_MCULCD_GetRxDataRegisterAddress(FLEXIO_MCULCD_Type
     return (uint32_t) & (base->flexioBase->SHIFTBUF[base->rxShifterStartIndex]);
 }
 
-/*@}*/
+/*! @} */
 
 /*!
  * @name Bus Operations
@@ -354,7 +355,7 @@ static inline uint32_t FLEXIO_MCULCD_GetRxDataRegisterAddress(FLEXIO_MCULCD_Type
  * @brief Set desired baud rate.
  *
  * @param base Pointer to the FLEXIO_MCULCD_Type structure.
- * @param baudRate_Bps Desired baud rate.
+ * @param baudRate_Bps Desired baud rate in bit-per-second for all data lines combined.
  * @param srcClock_Hz FLEXIO clock frequency in Hz.
  * @retval kStatus_Success Set successfully.
  * @retval kStatus_InvalidArgument Could not set the baud rate.
@@ -602,7 +603,7 @@ void FLEXIO_MCULCD_WriteSameValueBlocking(FLEXIO_MCULCD_Type *base, uint32_t sam
  * @param xfer pointer to flexio_mculcd_transfer_t structure.
  */
 void FLEXIO_MCULCD_TransferBlocking(FLEXIO_MCULCD_Type *base, flexio_mculcd_transfer_t *xfer);
-/*@}*/
+/*! @} */
 
 /*!
  * @name Transactional
@@ -675,11 +676,11 @@ status_t FLEXIO_MCULCD_TransferGetCount(FLEXIO_MCULCD_Type *base, flexio_mculcd_
  */
 void FLEXIO_MCULCD_TransferHandleIRQ(void *base, void *handle);
 
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
 #endif /*_cplusplus*/
-/*@}*/
+/*! @} */
 
-#endif /*_FSL_FLEXIO_MCULCD_H_*/
+#endif /*FSL_FLEXIO_MCULCD_H_*/

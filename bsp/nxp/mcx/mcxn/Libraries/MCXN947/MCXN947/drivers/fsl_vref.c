@@ -46,8 +46,18 @@ static uint32_t VREF_GetInstance(VREF_Type *base)
     uint32_t instance;
 
     /* Find the instance index from base address mappings. */
+    /*
+     * $Branch Coverage Justification$
+     * (instance >= ARRAY_SIZE(s_vrefBases)) not covered. The peripheral base
+     * address is always valid and checked by assert.
+     */
     for (instance = 0; instance < ARRAY_SIZE(s_vrefBases); instance++)
     {
+        /*
+         * $Branch Coverage Justification$
+         * (s_vrefBases[instance] != base) not covered. The peripheral base
+         * address is always valid and checked by assert.
+         */
         if (s_vrefBases[instance] == base)
         {
             break;
@@ -122,13 +132,9 @@ void VREF_Init(VREF_Type *base, const vref_config_t *config)
         {
             tmp32 |= VREF_CSR_BUF21EN_MASK;
         }
-        else if (config->bufferMode == kVREF_ModeHighPowerBuffer)
-        {
-            tmp32 |= (VREF_CSR_BUF21EN_MASK | VREF_CSR_HI_PWR_LV_MASK);
-        }
         else
         {
-            /* Add comments to prevent the case of MISRA C-2012 ruel 15.7. */
+            tmp32 |= (VREF_CSR_BUF21EN_MASK | VREF_CSR_HI_PWR_LV_MASK);
         }
 
         base->CSR |= tmp32;
@@ -215,6 +221,12 @@ void VREF_SetVrefTrimVal(VREF_Type *base, uint8_t trimValue)
     }
     else
     {
+        /*Wait internal HC voltage reference stable*/
+        /*
+         * $Branch Coverage Justification$
+         * while ((base->CSR & VREF_CSR_VREFST_MASK) != 0U) not covered. Test unfeasible,
+         * the internal HC voltage stable state is too short not to catch.
+         */
         while ((base->CSR & VREF_CSR_VREFST_MASK) == 0U)
         {
         }
@@ -249,6 +261,12 @@ void VREF_SetTrim21Val(VREF_Type *base, uint8_t trim21Value)
     }
     else
     {
+        /*Wait internal HC voltage reference stable*/
+        /*
+         * $Branch Coverage Justification$
+         * while ((base->CSR & VREF_CSR_VREFST_MASK) != 0U) not covered. Test unfeasible,
+         * the internal HC voltage stable state is too short not to catch.
+         */
         while ((base->CSR & VREF_CSR_VREFST_MASK) == 0U)
         {
         }

@@ -14,7 +14,7 @@
 
 #ifdef BSP_USING_PDM
 #include "board.h"
-#include "drivers/audio.h"
+#include "drivers/dev_audio.h"
 #include "hpm_i2s_drv.h"
 #include "hpm_pdm_drv.h"
 #include "drv_pdm.h"

@@ -17,7 +17,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <exception.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "ls2k1000.h"
 #include "interrupt.h"
 

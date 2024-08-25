@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -107,6 +107,7 @@ void CMC_ConfigResetPin(CMC_Type *base, const cmc_reset_pin_config_t *config)
     base->RPC = reg;
 }
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG) && FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG)
 /*!
  * brief Power off the selected system SRAM always.
  *
@@ -119,10 +120,11 @@ void CMC_ConfigResetPin(CMC_Type *base, const cmc_reset_pin_config_t *config)
  */
 void CMC_PowerOffSRAMAllMode(CMC_Type *base, uint32_t mask)
 {
-    uint32_t reg = base->SRAMDIS[0];
+    uint32_t reg       = base->SRAMDIS[0];
+    uint32_t maskToSet = mask & ((uint32_t)kCMC_AllSramArrays);
 
-    reg &= ~CMC_SRAMDIS_DIS_MASK;
-    reg |= CMC_SRAMDIS_DIS(mask);
+    reg &= ~((uint32_t)kCMC_AllSramArrays);
+    reg |= CMC_SRAMDIS_DIS(maskToSet);
     base->SRAMDIS[0] = reg;
 }
 
@@ -137,13 +139,36 @@ void CMC_PowerOffSRAMAllMode(CMC_Type *base, uint32_t mask)
  */
 void CMC_PowerOffSRAMLowPowerOnly(CMC_Type *base, uint32_t mask)
 {
-    uint32_t reg = base->SRAMRET[0];
+    uint32_t reg       = base->SRAMRET[0];
+    uint32_t maskToSet = mask & ((uint32_t)kCMC_AllSramArrays);
 
-    reg &= ~CMC_SRAMRET_RET_MASK;
-    reg |= CMC_SRAMRET_RET(mask);
+    reg &= ~((uint32_t)kCMC_AllSramArrays);
+    reg |= CMC_SRAMRET_RET(maskToSet);
     base->SRAMRET[0] = reg;
 }
+#endif /* FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG */
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE) && FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE)
+/*!
+ * brief Configs the low power mode of the on-chip flash memory.
+ *
+ * This function configs the low power mode of the on-chip flash memory.
+ *
+ * param base CMC peripheral base address.
+ * param doze true: Flash is disabled while core is sleeping
+ *             false: No effect.
+ * param disable true: Flash memory is placed in low power state.
+ *                false: No effect.
+ */
+void CMC_ConfigFlashMode(CMC_Type *base, bool doze, bool disable)
+{
+    uint32_t reg = 0UL;
+
+    reg |= (disable ? CMC_FLASHCR_FLASHDIS(1U) : CMC_FLASHCR_FLASHDIS(0U)) |
+           (doze ? CMC_FLASHCR_FLASHDOZE(1U) : CMC_FLASHCR_FLASHDOZE(0U));
+    base->FLASHCR = reg;
+}
+#else
 /*!
  * brief Configs the low power mode of the on-chip flash memory.
  *
@@ -169,6 +194,7 @@ void CMC_ConfigFlashMode(CMC_Type *base, bool wake, bool doze, bool disable)
            (wake ? CMC_FLASHCR_FLASHWAKE(1U) : CMC_FLASHCR_FLASHWAKE(0U));
     base->FLASHCR = reg;
 }
+#endif /* FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE */
 
 /*!
  * brief Prepares to enter stop modes.
@@ -233,8 +259,11 @@ void CMC_GlobalEnterLowPowerMode(CMC_Type *base, cmc_low_power_mode_t lowPowerMo
 void CMC_EnterLowPowerMode(CMC_Type *base, const cmc_power_domain_config_t *config)
 {
     assert(config != NULL);
+
+#if (CMC_PMCTRL_COUNT > 1U)
     /* The WAKE domain must never be configured to a lower power mode compared with main power mode. */
     assert(config->wake_domain <= config->main_domain);
+#endif /* (CMC_PMCTRL_COUNT > 1U) */
 
     if (config->clock_mode < kCMC_GateAllSystemClocksEnterLowPowerMode)
     {
@@ -243,7 +272,9 @@ void CMC_EnterLowPowerMode(CMC_Type *base, const cmc_power_domain_config_t *conf
         CMC_SetClockMode(base, config->clock_mode);
 
         CMC_SetMAINPowerMode(base, kCMC_ActiveOrSleepMode);
+#if (CMC_PMCTRL_COUNT > 1U)
         CMC_SetWAKEPowerMode(base, kCMC_ActiveOrSleepMode);
+#endif /* (CMC_PMCTRL_COUNT > 1U) */
 
         /* Before executing WFI instruction read back the last register to
          * ensure all registers writes have completed. */
@@ -258,16 +289,22 @@ void CMC_EnterLowPowerMode(CMC_Type *base, const cmc_power_domain_config_t *conf
         /* Note: unlock the register if this API will be reinvoked later. */
         CMC_SetClockMode(base, kCMC_GateAllSystemClocksEnterLowPowerMode);
         CMC_SetMAINPowerMode(base, config->main_domain);
+#if (CMC_PMCTRL_COUNT > 1U)
         CMC_SetWAKEPowerMode(base, config->wake_domain);
+#endif  /* (CMC_PMCTRL_COUNT > 1U) */
 
         /* Before execute WFI instruction read back the last register to
          * ensure all registers writes have completed. */
+#if (CMC_PMCTRL_COUNT > 1U)
         if ((CMC_GetWAKEPowerMode(base) == config->wake_domain) && (CMC_GetMAINPowerMode(base) == config->main_domain))
         {
+#endif /* (CMC_PMCTRL_COUNT > 1U) */
             SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
             __DSB();
             __WFI();
             __ISB();
+#if (CMC_PMCTRL_COUNT > 1U)
         }
+#endif /* (CMC_PMCTRL_COUNT > 1U) */
     }
 }

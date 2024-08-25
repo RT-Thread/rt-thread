@@ -24,6 +24,14 @@
 static const IRQn_Type s_CdogIrqs[] = CDOG_IRQS;
 #endif /* CDOG_IRQS */
 
+#ifdef CDOG_CLOCKS
+static const clock_ip_name_t s_CdogClocks[] = CDOG_CLOCKS;
+#endif /* CDOG_CLOCKS */
+
+#ifdef CDOG_BASE_PTRS
+static const CDOG_Type* s_cdogBases[] = CDOG_BASE_PTRS;
+#endif /* CDOG_BASE_PTRS */
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -31,50 +39,24 @@ static const IRQn_Type s_CdogIrqs[] = CDOG_IRQS;
 /*******************************************************************************
  * Code
  ******************************************************************************/
-#if defined(CDOG)
-/*!
- * Weak implementation of CDOG IRQ, should be re-defined by user when using CDOG IRQ
- */
-__WEAK void CDOG_DriverIRQHandler(void)
-{
-    /*    NVIC_DisableIRQ(CDOG_IRQn);
-     *    CDOG_Stop(CDOG, s_start);
-     *    CDOG->FLAGS = 0x0U;
-     *    CDOG_Start(CDOG, 0xFFFFFFU, s_start);
-     *    NVIC_EnableIRQ(CDOG_IRQn);
-     */
-}
-#endif
 
-#if defined(CDOG0)
-/*!
- * Weak implementation of CDOG0 IRQ, should be re-defined by user when using CDOG IRQ
- */
-__WEAK void CDOG0_DriverIRQHandler(void)
+static uint32_t CDOG_GetInstance(CDOG_Type *base)
 {
-    /*    NVIC_DisableIRQ(CDOG0_IRQn);
-     *    CDOG_Stop(CDOG0, s_start);
-     *    CDOG0->FLAGS = 0x0U;
-     *    CDOG_Start(CDOG0, 0xFFFFFFU, s_start);
-     *    NVIC_EnableIRQ(CDOG0_IRQn);
-     */
-}
-#endif
-
-#if defined(CDOG1)
-/*!
- * Weak implementation of CDOG1 IRQ, should be re-defined by user when using CDOG IRQ
- */
-__WEAK void CDOG1_DriverIRQHandler(void)
-{
-    /*    NVIC_DisableIRQ(CDOG1_IRQn);
-     *    CDOG_Stop(CDOG1, s_start);
-     *    CDOG1->FLAGS = 0x0U;
-     *    CDOG_Start(CDOG1, 0xFFFFFFU, s_start);
-     *    NVIC_EnableIRQ(CDOG1_IRQn);
-     */
-}
-#endif
+    uint32_t instance;
+ 
+    /* Find the instance index from base address mappings. */
+    for (instance = 0; instance < ARRAY_SIZE(s_cdogBases); instance++)
+    {
+        if (s_cdogBases[instance] == base)
+        {
+            break;
+        }
+    }
+ 
+    assert(instance < ARRAY_SIZE(s_cdogBases));
+ 
+    return instance;
+} 
 
 /*!
  * brief Sets the default configuration of CDOG
@@ -256,7 +238,13 @@ void CDOG_Sub256(CDOG_Type *base)
  */
 void CDOG_Check(CDOG_Type *base, uint32_t check)
 {
+#if defined(FLS_FEATURE_CDOG_USE_RESTART)
     base->RESTART = check;
+#else
+    base->STOP = check;
+    base->RELOAD = base->RELOAD;
+    base->START= check;
+#endif
 }
 
 /*!
@@ -295,7 +283,7 @@ status_t CDOG_Init(CDOG_Type *base, cdog_config_t *conf)
     /* Ungate clock to CDOG engine and reset it */
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 #ifdef CDOG_CLOCKS
-    CLOCK_EnableClock(kCLOCK_Cdog);
+    CLOCK_EnableClock(s_CdogClocks[CDOG_GetInstance(base)]);
 #endif /* CDOG_CLOCKS */
 #endif /* !FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
@@ -322,6 +310,25 @@ status_t CDOG_Init(CDOG_Type *base, cdog_config_t *conf)
     }
     else
     {
+/* load default values for CDOG->CONTROL before flags clear */
+#if defined(FSL_FEATURE_CDOG_NEED_LOAD_DEFAULT_CONF) && (FSL_FEATURE_CDOG_NEED_LOAD_DEFAULT_CONF > 0)
+        cdog_config_t default_conf;
+
+        /* Initialize CDOG */
+        CDOG_GetDefaultConfig(&default_conf);
+
+        /* Write default value to CDOG->CONTROL*/
+        base->CONTROL = 
+            CDOG_CONTROL_TIMEOUT_CTRL(default_conf.timeout) |       /* Action if the timeout event is triggered  */
+            CDOG_CONTROL_MISCOMPARE_CTRL(default_conf.miscompare) | /* Action if the miscompare error event is triggered  */
+            CDOG_CONTROL_SEQUENCE_CTRL(default_conf.sequence) |     /* Action if the sequence error event is triggered  */
+            CDOG_CONTROL_STATE_CTRL(default_conf.state) |           /* Action if the state error event is triggered  */
+            CDOG_CONTROL_ADDRESS_CTRL(default_conf.address) |       /* Action if the address error event is triggered */
+            CDOG_CONTROL_IRQ_PAUSE(default_conf.irq_pause) |        /* Pause running during interrupts setup */
+            CDOG_CONTROL_DEBUG_HALT_CTRL(default_conf.debug_halt) | /* Halt CDOG timer during debug */
+            CDOG_CONTROL_LOCK_CTRL(default_conf.lock) | RESERVED_CTRL_MASK; /* Lock control register, RESERVED */
+#endif /* FSL_FEATURE_CDOG_NEED_LOAD_DEFAULT_CONF */
+
         base->FLAGS = CDOG_FLAGS_TO_FLAG(0U) | CDOG_FLAGS_MISCOM_FLAG(0U) | CDOG_FLAGS_SEQ_FLAG(0U) |
                       CDOG_FLAGS_CNT_FLAG(0U) | CDOG_FLAGS_STATE_FLAG(0U) | CDOG_FLAGS_ADDR_FLAG(0U) |
                       CDOG_FLAGS_POR_FLAG(0U);
@@ -338,11 +345,8 @@ status_t CDOG_Init(CDOG_Type *base, cdog_config_t *conf)
         CDOG_CONTROL_LOCK_CTRL(conf->lock) | RESERVED_CTRL_MASK; /* Lock control register, RESERVED */
 
 #if defined(CDOG_IRQS)
-    /* Enable peripheral IRQs, if defined in array */
-    for (uint32_t i = 0; i < ARRAY_SIZE(s_CdogIrqs); i++)
-    {
-        NVIC_EnableIRQ(s_CdogIrqs[i]);
-    }
+    /* Enable peripheral IRQ */
+    NVIC_EnableIRQ(s_CdogIrqs[CDOG_GetInstance(base)]);
 #endif /* CDOG_IRQS */
 
     return kStatus_Success;
@@ -358,11 +362,8 @@ status_t CDOG_Init(CDOG_Type *base, cdog_config_t *conf)
 void CDOG_Deinit(CDOG_Type *base)
 {
 #if defined(CDOG_IRQS)
-    /* Enable peripheral IRQs, if defined in array */
-    for (uint32_t i = 0; i < ARRAY_SIZE(s_CdogIrqs); i++)
-    {
-        NVIC_DisableIRQ(s_CdogIrqs[i]);
-    }
+    /* Disable peripheral IRQ */
+    NVIC_DisableIRQ(s_CdogIrqs[CDOG_GetInstance(base)]);
 #endif /* CDOG_IRQS */
 
 #if !(defined(FSL_FEATURE_CDOG_HAS_NO_RESET) && FSL_FEATURE_CDOG_HAS_NO_RESET)
@@ -371,7 +372,7 @@ void CDOG_Deinit(CDOG_Type *base)
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 #ifdef CDOG_CLOCKS
-    CLOCK_DisableClock(kCLOCK_Cdog);
+    CLOCK_DisableClock(s_CdogClocks[CDOG_GetInstance(base)]);
 #endif /* CDOG_CLOCKS */
 #endif /* !FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 }
