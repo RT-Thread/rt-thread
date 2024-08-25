@@ -19,7 +19,18 @@ import subprocess
 #pip install pandas
 #pip install tabulate
 
-
+# 添加每个工具链的下载地址
+download_urls = {
+    'arm-none-eabi-gcc': 'https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2',
+    'mips-sde-elf-gcc': 'https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz',
+    'riscv64-unknown-elf-gcc': 'https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz',
+    'riscv32-unknown-elf-gcc': 'https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz',
+    'llvm-arm': 'https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz',
+    'riscv-none-embed-gcc': 'https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz',
+    'riscv32-esp-elf-gcc': 'https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz',
+    'clang': 'https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz',
+    # 添加其他工具链的下载地址
+}
 # 产生toolchain.yml文件
 def generate_toolchain_yaml(input_file, output_file, header_comment):
     with open(input_file, 'r', encoding='utf-8') as file:
@@ -32,13 +43,21 @@ def generate_toolchain_yaml(input_file, output_file, header_comment):
             if gcc not in toolchain_data:
                 toolchain_data[gcc] = {'bsp': []}
             toolchain_data[gcc]['bsp'].append(folder)
-    
+
+
+    # 添加每个工具链的个数
+    for gcc, details in toolchain_data.items():
+        details['count'] = len(details['bsp'])
+        download_url = download_urls.get(gcc)
+        if download_url:
+            details['download_url'] = download_url
+
     with open(output_file, 'w', encoding='utf-8') as file:
         file.write(f"# {header_comment}\n")
         yaml.dump(toolchain_data, file, default_flow_style=False, allow_unicode=True)
 
 
-# 这个脚本主要用来生成一个bsp相关的信息的文件放到bsp根目录下面
+# 这个函数通过检查文件是否存在来检查bsp的支持情况
 def check_files(root_dir, file_list):
     data = []
     folders_checked = set()
@@ -113,7 +132,6 @@ def output_to_yaml(dataframe, output_file, header_comment):
         file.write(f"# {header_comment}\n")
         yaml.dump(yaml_data, file, default_flow_style=False, allow_unicode=True)
 
-# 示例用法:
 # Find the rt-thread root directory
 rtt_root = os.getcwd()
 while not os.path.exists(os.path.join(rtt_root, 'LICENSE')):
