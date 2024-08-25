@@ -14,7 +14,7 @@
 #include <board.h>
 
 #ifdef RT_USING_PWM
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 
 #define DBG_TAG               "drv.pwm"
 #define DBG_LVL               DBG_INFO

@@ -40,6 +40,10 @@
 /*< Default is resutl type is final checksum */
 #endif /* CRC_DRIVER_USE_CRC16_CCIT_FALSE_AS_DEFAULT */
 
+#if defined(CRC_RSTS)
+#define CRC_RESETS_ARRAY CRC_RSTS
+#endif
+
 /*! @brief CRC type of transpose of read write data */
 typedef enum _crc_transpose_type
 {
@@ -66,8 +70,48 @@ typedef struct _crc_module_config
 } crc_module_config_t;
 
 /*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+#if defined(CRC_RESETS_ARRAY)
+/*!
+ * @brief Get instance number for CRC module.
+ *
+ * @param base CRC peripheral base address
+ */
+static uint32_t CRC_GetInstance(CRC_Type *base);
+#endif
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+#if defined(CRC_RESETS_ARRAY)
+static CRC_Type *const s_crcBases[] = CRC_BASE_PTRS;
+
+/* Reset array */
+static const reset_ip_name_t s_crcResets[] = CRC_RESETS_ARRAY;
+#endif
+
+/*******************************************************************************
  * Code
  ******************************************************************************/
+#if defined(CRC_RESETS_ARRAY)
+static uint32_t CRC_GetInstance(CRC_Type *base)
+{
+    uint32_t instance;
+
+    /* Find the instance index from base address mappings. */
+    for (instance = 0; instance < ARRAY_SIZE(s_crcBases); instance++)
+    {
+        if (s_crcBases[instance] == base)
+        {
+            break;
+        }
+    }
+
+    assert(instance < ARRAY_SIZE(s_crcBases));
+
+    return instance;
+}
+#endif
 
 /*!
  * @brief Returns transpose type for CRC protocol reflect in parameter.
@@ -191,6 +235,11 @@ void CRC_Init(CRC_Type *base, const crc_config_t *config)
     /* ungate clock */
     CLOCK_EnableClock(kCLOCK_Crc0);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(CRC_RESETS_ARRAY)
+    RESET_ReleasePeripheralReset(s_crcResets[CRC_GetInstance(base)]);
+#endif
+
     /* configure CRC module and write the seed */
     if (config->crcResult == kCrcFinalChecksum)
     {

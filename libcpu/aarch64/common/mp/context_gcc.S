@@ -35,13 +35,17 @@
 rt_hw_context_switch_to:
     ldr     x0, [x0]
     mov     sp, x0
-    mov     x0, x1
+
+    /* reserved to_thread */
+    mov     x19, x1
+
+    mov     x0, x19
     bl      rt_cpus_lock_status_restore
 #ifdef RT_USING_SMART
-    bl      rt_thread_self
+    mov     x0, x19
     bl      lwp_user_setting_restore
 #endif
-    b       rt_hw_context_switch_exit
+    b       _context_switch_exit
 
 .globl rt_hw_context_switch
 
@@ -53,7 +57,7 @@ to, struct rt_thread *to_thread);
  * X2 --> to_thread
  */
 rt_hw_context_switch:
-    SAVE_CONTEXT_SWITCH
+    SAVE_CONTEXT_SWITCH x19, x20
     mov     x3, sp
     str     x3, [x0]            // store sp in preempted tasks TCB
     ldr     x0, [x1]            // get new task stack pointer
@@ -68,10 +72,15 @@ rt_hw_context_switch:
     mov     x0, x19
     bl      lwp_user_setting_restore
 #endif
-    b       rt_hw_context_switch_exit
+    b       _context_switch_exit
 
+.globl rt_hw_irq_exit
 .globl rt_hw_context_switch_interrupt
 
+#define EXP_FRAME   x19
+#define FROM_SPP    x20
+#define TO_SPP      x21
+#define TO_TCB      x22
 /*
  * void rt_hw_context_switch_interrupt(context, from sp, to sp, tp tcb)
  * X0 :interrupt context
@@ -80,30 +89,45 @@ rt_hw_context_switch:
  * X3 :to_thread's tcb
  */
 rt_hw_context_switch_interrupt:
-    stp     x0, x1, [sp, #-0x10]!
-    stp     x2, x3, [sp, #-0x10]!
+#ifdef RT_USING_DEBUG
+    /* debug frame for backtrace */
     stp     x29, x30, [sp, #-0x10]!
-#ifdef RT_USING_SMART
-    bl      rt_thread_self
-    bl      lwp_user_setting_save
-#endif
-    ldp     x29, x30, [sp], #0x10
-    ldp     x2, x3, [sp], #0x10
-    ldp     x0, x1, [sp], #0x10
-    str     x0, [x1]
-    ldr     x0, [x2]
-    mov     sp, x0
-    mov     x0, x3
-    mov     x19, x0
-    bl      rt_cpus_lock_status_restore
-    mov     x0, x19
-#ifdef RT_USING_SMART
-    bl      lwp_user_setting_restore
-#endif
-    b       rt_hw_context_switch_exit
+#endif /* RT_USING_DEBUG */
 
-.global rt_hw_context_switch_exit
-rt_hw_context_switch_exit:
-    clrex
+    /* we can discard all the previous ABI here */
+    mov     EXP_FRAME, x0
+    mov     FROM_SPP, x1
+    mov     TO_SPP, x2
+    mov     TO_TCB, x3
+
+#ifdef RT_USING_SMART
+    GET_THREAD_SELF x0
+    bl      lwp_user_setting_save
+#endif /* RT_USING_SMART */
+
+    /* reset SP of from-thread */
+    mov     sp, EXP_FRAME
+
+    /* push context for swtich */
+    adr     lr, rt_hw_irq_exit
+    SAVE_CONTEXT_SWITCH_FAST
+
+    /* save SP of from-thread */
     mov     x0, sp
+    str     x0, [FROM_SPP]
+
+    /* setup SP to to-thread's */
+    ldr     x0, [TO_SPP]
+    mov     sp, x0
+
+    mov     x0, TO_TCB
+    bl      rt_cpus_lock_status_restore
+#ifdef RT_USING_SMART
+    mov     x0, TO_TCB
+    bl      lwp_user_setting_restore
+#endif /* RT_USING_SMART */
+    b       _context_switch_exit
+
+_context_switch_exit:
+    clrex
     RESTORE_CONTEXT_SWITCH

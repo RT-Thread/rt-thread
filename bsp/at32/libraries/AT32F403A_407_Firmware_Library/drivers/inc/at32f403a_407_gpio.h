@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_gpio.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 gpio header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -215,8 +213,8 @@ extern "C" {
 #define SPI3_GMUX_0010                   IOMUX_MAKE_VALUE(0x28, 24, 4, 0x02) /*!< spi3_cs/i2s3_ws(pa15), spi3_sck/i2s3_ck(pb3),  spi3_miso(pb4),  spi3_mosi/i2s3_sd(pb5),  i2s3_mck(pb10) */
 #define SPI3_GMUX_0011                   IOMUX_MAKE_VALUE(0x28, 24, 4, 0x03) /*!< spi3_cs/i2s3_ws(pa4),  spi3_sck/i2s3_ck(pc10), spi3_miso(pc11), spi3_mosi/i2s3_sd(pc12), i2s3_mck(pb10) */
 #define SPI4_GMUX_0001                   IOMUX_MAKE_VALUE(0x28, 28, 4, 0x01) /*!< spi4_cs/i2s4_ws(pe12), spi4_sck/i2s4_ck(pe11), spi4_miso(pe13), spi4_mosi/i2s4_sd(pe14), i2s4_mck(pc8) */
-#define SPI4_GMUX_0010                   IOMUX_MAKE_VALUE(0x28, 28, 4, 0x02) /*!< spi4_cs/i2s4_ws(pb6),  spi4_sck/i2s4_ck(pb7),  spi4_miso(pb8),  spi4_mosi/i2s4_sd(pb8),  i2s4_mck(pc8) */
-#define SPI4_GMUX_0011                   IOMUX_MAKE_VALUE(0x28, 28, 4, 0x03) /*!< spi4_cs/i2s4_ws(pb6),  spi4_sck/i2s4_ck(pb7),  spi4_miso(pb8),  spi4_mosi/i2s4_sd(pb8),  i2s4_mck(pa10) */
+#define SPI4_GMUX_0010                   IOMUX_MAKE_VALUE(0x28, 28, 4, 0x02) /*!< spi4_cs/i2s4_ws(pb6),  spi4_sck/i2s4_ck(pb7),  spi4_miso(pb8),  spi4_mosi/i2s4_sd(pb9),  i2s4_mck(pc8) */
+#define SPI4_GMUX_0011                   IOMUX_MAKE_VALUE(0x28, 28, 4, 0x03) /*!< spi4_cs/i2s4_ws(pb6),  spi4_sck/i2s4_ck(pb7),  spi4_miso(pb8),  spi4_mosi/i2s4_sd(pb9),  i2s4_mck(pa10) */
 
 /**
   * @}
@@ -914,7 +912,7 @@ uint16_t gpio_output_data_read(gpio_type *gpio_x);
 void gpio_bits_set(gpio_type *gpio_x, uint16_t pins);
 void gpio_bits_reset(gpio_type *gpio_x, uint16_t pins);
 void gpio_bits_write(gpio_type *gpio_x, uint16_t pins, confirm_state bit_state);
-void gpio_port_wirte(gpio_type *gpio_x, uint16_t port_value);
+void gpio_port_write(gpio_type *gpio_x, uint16_t port_value);
 void gpio_pin_wp_config(gpio_type *gpio_x, uint16_t pins);
 void gpio_pins_huge_driven_config(gpio_type *gpio_x, uint16_t pins, confirm_state new_state);
 void gpio_event_output_config(gpio_port_source_type gpio_port_source, gpio_pins_source_type gpio_pin_source);

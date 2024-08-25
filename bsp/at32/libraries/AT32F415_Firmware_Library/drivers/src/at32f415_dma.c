@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_dma.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the dma firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -271,6 +269,52 @@ void dma_flexible_config(dma_type* dma_x, uint8_t flex_channelx, dma_flexible_re
       dma_x->src_sel1_bit.ch7_src = flexible_request;
     }
   }
+}
+
+/**
+  * @brief  get dma interrupt flag
+  * @param  dmax_flag
+  *         this parameter can be one of the following values:
+  *         - DMA1_FDT1_FLAG        - DMA1_HDT1_FLAG        - DMA1_DTERR1_FLAG
+  *         - DMA1_FDT2_FLAG        - DMA1_HDT2_FLAG        - DMA1_DTERR2_FLAG
+  *         - DMA1_FDT3_FLAG        - DMA1_HDT3_FLAG        - DMA1_DTERR3_FLAG
+  *         - DMA1_FDT4_FLAG        - DMA1_HDT4_FLAG        - DMA1_DTERR4_FLAG
+  *         - DMA1_FDT5_FLAG        - DMA1_HDT5_FLAG        - DMA1_DTERR5_FLAG
+  *         - DMA1_FDT6_FLAG        - DMA1_HDT6_FLAG        - DMA1_DTERR6_FLAG
+  *         - DMA1_FDT7_FLAG        - DMA1_HDT7_FLAG        - DMA1_DTERR7_FLAG
+  *         - DMA2_FDT1_FLAG        - DMA2_HDT1_FLAG        - DMA2_DTERR1_FLAG
+  *         - DMA2_FDT2_FLAG        - DMA2_HDT2_FLAG        - DMA2_DTERR2_FLAG
+  *         - DMA2_FDT3_FLAG        - DMA2_HDT3_FLAG        - DMA2_DTERR3_FLAG
+  *         - DMA2_FDT4_FLAG        - DMA2_HDT4_FLAG        - DMA2_DTERR4_FLAG
+  *         - DMA2_FDT5_FLAG        - DMA2_HDT5_FLAG        - DMA2_DTERR5_FLAG
+  *         - DMA2_FDT6_FLAG        - DMA2_HDT6_FLAG        - DMA2_DTERR6_FLAG
+  *         - DMA2_FDT7_FLAG        - DMA2_HDT7_FLAG        - DMA2_DTERR7_FLAG
+  * @retval state of dma flag
+  */
+flag_status dma_interrupt_flag_get(uint32_t dmax_flag)
+{
+  flag_status status = RESET;
+  uint32_t temp = 0;
+
+  if(dmax_flag > 0x10000000)
+  {
+    temp = DMA2->sts;
+  }
+  else
+  {
+    temp = DMA1->sts;
+  }
+
+  if ((temp & dmax_flag) != (uint16_t)RESET)
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+
+  return status;
 }
 
 /**

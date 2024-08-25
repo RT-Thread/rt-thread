@@ -160,7 +160,6 @@ void tmr_input_default_para_init(tmr_input_config_type *tmr_input_struct)
   */
 void tmr_brkdt_default_para_init(tmr_brkdt_config_type *tmr_brkdt_struct)
 {
-  tmr_brkdt_struct->brk_filter_value = 0x0;
   tmr_brkdt_struct->deadtime = 0x0;
   tmr_brkdt_struct->brk_polarity = TMR_BRK_INPUT_ACTIVE_LOW;
   tmr_brkdt_struct->wp_level = TMR_WP_OFF;
@@ -1347,6 +1346,40 @@ void tmr_interrupt_enable(tmr_type *tmr_x, uint32_t tmr_interrupt, confirm_state
 }
 
 /**
+  * @brief  get tmr interrupt flag
+  * @param  tmr_x: select the tmr peripheral.
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR2, TMR3, TMR4, TMR6, TMR7, TMR9, TMR10,
+  *         TMR11, TMR13, TMR14
+  * @param  tmr_flag
+  *         this parameter can be one of the following values:
+  *         - TMR_OVF_FLAG
+  *         - TMR_C1_FLAG
+  *         - TMR_C2_FLAG
+  *         - TMR_C3_FLAG
+  *         - TMR_C4_FLAG
+  *         - TMR_HALL_FLAG
+  *         - TMR_TRIGGER_FLAG
+  *         - TMR_BRK_FLAG
+  * @retval state of tmr interrupt flag
+  */
+flag_status tmr_interrupt_flag_get(tmr_type *tmr_x, uint32_t tmr_flag)
+{
+  flag_status status = RESET;
+
+  if((tmr_x->ists & tmr_flag) && (tmr_x->iden & tmr_flag))
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+
+  return status;
+}
+
+/**
   * @brief  get tmr flag
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
@@ -1766,7 +1799,6 @@ void tmr_dma_control_config(tmr_type *tmr_x, tmr_dma_transfer_length_type dma_le
   */
 void tmr_brkdt_config(tmr_type *tmr_x, tmr_brkdt_config_type *brkdt_struct)
 {
-  tmr_x->brk_bit.bkf = brkdt_struct->brk_filter_value;
   tmr_x->brk_bit.brken = brkdt_struct->brk_enable;
   tmr_x->brk_bit.dtc = brkdt_struct->deadtime;
   tmr_x->brk_bit.fcsodis = brkdt_struct->fcsodis_state;
@@ -1774,6 +1806,19 @@ void tmr_brkdt_config(tmr_type *tmr_x, tmr_brkdt_config_type *brkdt_struct)
   tmr_x->brk_bit.brkv = brkdt_struct->brk_polarity;
   tmr_x->brk_bit.aoen = brkdt_struct->auto_output_enable;
   tmr_x->brk_bit.wpc = brkdt_struct->wp_level;
+}
+
+/**
+  * @brief  set tmr break input filter value
+  * @param  tmr_x: select the tmr peripheral.
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR9, TMR10, TMR11, TMR13, TRM14
+  * @param  filter_value (0x0~0xf)
+  * @retval none
+  */
+void tmr_brk_filter_value_set(tmr_type *tmr_x, uint8_t filter_value)
+{
+  tmr_x->brk_bit.bkf = filter_value;
 }
 
 /**

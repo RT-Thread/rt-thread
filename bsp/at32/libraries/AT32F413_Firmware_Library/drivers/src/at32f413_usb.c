@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_usb.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains the functions for the usb firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -127,6 +125,7 @@ void usb_usbbufs_enable(usbd_type *usbx, confirm_state state)
     g_usb_packet_address = USB_PACKET_BUFFER_ADDRESS;
     CRM->misc1_bit.usbbufs = FALSE;
   }
+  UNUSED(usbx);
 }
 
 /**
@@ -245,6 +244,7 @@ void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
       USB_SET_TXSTS(ept_info->eptn, USB_TX_DISABLE);
     }
   }
+  UNUSED(usbx);
 }
 
 
@@ -304,6 +304,7 @@ void usb_ept_close(usbd_type *usbx, usb_ept_info *ept_info)
       USB_SET_RXSTS(ept_info->eptn, USB_RX_DISABLE);
     }
   }
+  UNUSED(usbx);
 }
 
 /**
@@ -418,6 +419,7 @@ void usb_ept_stall(usbd_type *usbx, usb_ept_info *ept_info)
   {
     USB_SET_RXSTS(ept_info->eptn, USB_RX_STALL)
   }
+  UNUSED(usbx);
 }
 
 /**
@@ -515,6 +517,40 @@ flag_status usb_flag_get(usbd_type *usbx, uint16_t flag)
   else
   {
     status = SET;
+  }
+  return status;
+}
+
+/**
+  * @brief  get interrupt flag of usb.
+  * @param  usbx: select the usb peripheral
+  * @param  flag: select the usb flag
+  *         this parameter can be one of the following values:
+  *         - USB_LSOF_FLAG
+  *         - USB_SOF_FLAG
+  *         - USB_RST_FLAG
+  *         - USB_SP_FLAG
+  *         - USB_WK_FLAG
+  *         - USB_BE_FLAG
+  *         - USB_UCFOR_FLAG
+  *         - USB_TC_FLAG
+  * @retval none
+  */
+flag_status usb_interrupt_flag_get(usbd_type *usbx, uint16_t flag)
+{
+  flag_status status = RESET;
+
+  if(flag == USB_TC_FLAG)
+  {
+    if(usbx->intsts & USB_TC_FLAG)
+      status = SET;
+  }
+  else
+  {
+    if((usbx->intsts & flag) && (usbx->ctrl & flag))
+    {
+      status = SET;
+    }
   }
   return status;
 }

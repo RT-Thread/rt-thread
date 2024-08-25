@@ -1,23 +1,17 @@
-///*
-// * Copyright (c) 2006-2024, RT-Thread Development Team
-// *
-// * SPDX-License-Identifier: Apache-2.0
-// *
-// * Change Logs:
-// * Date           Author       Notes
-// * 2024-02-06     yandld       The first version for MCX
-// */
-
-#include <rtthread.h>
+/*
+ * Copyright (c) 2006-2024, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2024-02-06     yandld       The first version for MCX
+ */
+#include <rtdevice.h>
 #include "drv_uart.h"
-
 #include "fsl_lpuart.h"
-#include "fsl_common.h"
 
 #ifdef RT_USING_SERIAL
-
-
-#include <rtdevice.h>
 
 struct mcx_uart
 {
@@ -33,7 +27,6 @@ struct mcx_uart
 
 static void uart_isr(struct rt_serial_device *serial);
 
-
 #if defined(BSP_USING_UART0)
 struct rt_serial_device serial0;
 
@@ -42,8 +35,6 @@ void LPUART0_IRQHandler(void)
     uart_isr(&serial0);
 }
 #endif
-
-
 
 static const struct mcx_uart uarts[] =
 {
@@ -60,7 +51,6 @@ static const struct mcx_uart uarts[] =
     },
 #endif
 };
-
 
 static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -117,7 +107,6 @@ static rt_err_t mcx_control(struct rt_serial_device *serial, int cmd, void *arg)
         EnableIRQ(uart->irqn);
         break;
     }
-
 
     return RT_EOK;
 }
@@ -194,7 +183,5 @@ int rt_hw_uart_init(void)
 
     return 0;
 }
-
 INIT_BOARD_EXPORT(rt_hw_uart_init);
-
 #endif /*BSP_USING_SERIAL */

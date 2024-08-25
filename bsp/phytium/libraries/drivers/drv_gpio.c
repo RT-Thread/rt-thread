@@ -22,8 +22,6 @@
     #include "ioremap.h"
 #endif
 
-#include <string.h>
-
 #if defined(TARGET_E2000)
     #include "fparameters.h"
 #endif
@@ -37,12 +35,6 @@
 #include "fgpio.h"
 #include "drv_gpio.h"
 /**************************** Type Definitions *******************************/
-typedef void (*FGpioOpsIrqHandler)(s32 vector, void *param);
-typedef struct
-{
-    FGpioOpsIrqHandler irq_handler;
-    void *irq_args;
-} FGpioOpsPinConfig;
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
@@ -78,7 +70,7 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
     }
 
     FGpioConfig input_cfg = *FGpioLookupConfig(index);
-    memset(&instance[index], 0, sizeof(FGpio));
+    rt_memset(&instance[index], 0, sizeof(FGpio));
 #ifdef RT_USING_SMART
     input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
 #endif
@@ -108,7 +100,6 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
 void drv_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     FGpio *instance = (FGpio *)device->user_data;
-    FError err = FGPIO_SUCCESS;
     u32 index = (u32)pin;
 
     FGpioSetOutputValue(&instance[index], (value == PIN_HIGH) ? FGPIO_PIN_HIGH : FGPIO_PIN_LOW);
@@ -117,7 +108,6 @@ void drv_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 rt_ssize_t drv_pin_read(struct rt_device *device, rt_base_t pin)
 {
     FGpio *instance = (FGpio *)device->user_data;
-    FError err = FGPIO_SUCCESS;
     u32 index = (u32)pin;
 
     return FGpioGetInputValue(&instance[index]) == FGPIO_PIN_HIGH ? PIN_HIGH : PIN_LOW;
@@ -127,9 +117,13 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
                             rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     FGpio *instance = (FGpio *)device->user_data;
-    FError err = FGPIO_SUCCESS;
     u32 index = (u32)pin;
     rt_base_t level;
+
+#ifdef RT_USING_SMART
+    FGpioIntrMap *map = &fgpio_intr_map[instance[index].config.ctrl];
+    map->base_addr = (uintptr)rt_ioremap((void *)map->base_addr, 0x1000);
+#endif
 
     level = rt_hw_interrupt_disable();
 
@@ -154,7 +148,7 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
             break;
     }
 
-    FGpioRegisterInterruptCB(&instance[index], hdr, args); /* register intr callback */
+    FGpioRegisterInterruptCB(&instance[index], (FGpioInterruptCallback)hdr, args); /* register intr callback */
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -163,7 +157,6 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
 rt_err_t drv_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     FGpio *instance = (FGpio *)device->user_data;
-    FError err = FGPIO_SUCCESS;
     u32 index = (u32)pin;
     FGpioIntrMap *map = &fgpio_intr_map[instance[index].config.ctrl];
     rt_base_t level;
@@ -182,7 +175,6 @@ rt_err_t drv_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 rt_err_t drv_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     FGpio *instance = (FGpio *)device->user_data;
-    FError err = FGPIO_SUCCESS;
     u32 index = (u32)pin;
 
     FGpioSetInterruptMask(&instance[index], enabled);

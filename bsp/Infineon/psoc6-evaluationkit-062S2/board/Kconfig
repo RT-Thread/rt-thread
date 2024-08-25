@@ -15,6 +15,31 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART6
         default y
         
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_UART6
+        select BSP_USING_GPIO
+        select BSP_USING_PWM
+        select BSP_USING_PWM0
+        select BSP_USING_PWM0_CH2
+        select BSP_USING_PWM0_CH3
+        select BSP_USING_PWM0_CH4
+        select BSP_USING_PWM0_CH7
+        select BSP_USING_PWM0_CH2_PORT11_COMPL
+        select BSP_USING_PWM0_CH3_PORT11
+        select BSP_USING_PWM0_CH4_PORT5_COMPL
+        select BSP_USING_PWM0_CH7_PORT5_COMPL
+        select BSP_USING_HW_I2C
+        select BSP_USING_HW_I2C4
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_SPI
+        default n
+        
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -65,41 +90,74 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable PWM0 channel0"
                     default n
                     if BSP_USING_PWM0_CH0
-                        config BSP_USING_PWM0_PORT0
-                        bool "Enable PWM0-PORT0 output pwm"
+                        config BSP_USING_PWM0_CH0_PORT0
+                        bool "Enable PWM0-CH0-PORT0 output pwm"
                         default n
                     endif
+
+                menuconfig BSP_USING_PWM0_CH2
+                    bool "Enable PWM0 channel2"
+                    default n
+                    if BSP_USING_PWM0_CH2
+                        config BSP_USING_PWM0_CH2_PORT11_COMPL
+                        bool "Enable PWM0-CH2-PORT11-COMPL output pwm (Arduino PWM)"
+                        default n
+                    endif
+
+                menuconfig BSP_USING_PWM0_CH3
+                    bool "Enable PWM0 channel3"
+                    default n
+                    if BSP_USING_PWM0_CH3
+                        config BSP_USING_PWM0_CH3_PORT11
+                        bool "Enable PWM0-CH3-PORT11 output pwm (Arduino PWM)"
+                        default n
+                    endif
+
+                menuconfig BSP_USING_PWM0_CH4
+                    bool "Enable PWM0 channel4"
+                    default n
+                    if BSP_USING_PWM0_CH4
+                        config BSP_USING_PWM0_CH4_PORT5_COMPL
+                        bool "Enable PWM0-CH4-PORT5-CPMPL output pwm (Arduino PWM)"
+                        default n
+                    endif
+
                 menuconfig BSP_USING_PWM0_CH7
                     bool "Enable PWM0 channel7"
                     default n
                     if BSP_USING_PWM0_CH7
-                        config BSP_USING_PWM0_PORT2
-                        bool "Enable PWM0-PORT2 output pwm"
+                        config BSP_USING_PWM0_CH7_PORT2
+                        bool "Enable PWM0-CH7-PORT2 output pwm"
                         default n
                     endif
                     if BSP_USING_PWM0_CH7
-                        config BSP_USING_PWM0_PORT5
-                        bool "Enable PWM0-PORT5 output pwm"
+                        config BSP_USING_PWM0_CH7_PORT5
+                        bool "Enable PWM0-CH7-PORT5 output pwm"
                         default n
                     endif
                     if BSP_USING_PWM0_CH7
-                        config BSP_USING_PWM0_PORT7
-                        bool "Enable PWM0-PORT7 output pwm"
+                        config BSP_USING_PWM0_CH7_PORT5_COMPL
+                        bool "Enable PWM0-CH7-PORT5-COMPL output pwm (Arduino PWM)"
                         default n
                     endif
                     if BSP_USING_PWM0_CH7
-                        config BSP_USING_PWM0_PORT9
-                        bool "Enable PWM0-PORT9 output pwm"
+                        config BSP_USING_PWM0_CH7_PORT7
+                        bool "Enable PWM0-CH7-PORT7 output pwm"
                         default n
                     endif
                     if BSP_USING_PWM0_CH7
-                        config BSP_USING_PWM0_PORT10
-                        bool "Enable PWM0-PORT10 output pwm"
+                        config BSP_USING_PWM0_CH7_PORT9
+                        bool "Enable PWM0-CH7-PORT9 output pwm"
                         default n
                     endif
                     if BSP_USING_PWM0_CH7
-                        config BSP_USING_PWM0_PORT12
-                        bool "Enable PWM0-PORT12 output pwm"
+                        config BSP_USING_PWM0_CH7_PORT10
+                        bool "Enable PWM0-CH7-PORT10 output pwm"
+                        default n
+                    endif
+                    if BSP_USING_PWM0_CH7
+                        config BSP_USING_PWM0_CH7_PORT12
+                        bool "Enable PWM0-CH7-PORT12 output pwm"
                         default n
                     endif
             endif
@@ -368,7 +426,7 @@ menu "Board extended module Drivers"
             select BSP_USING_PWM
             select BSP_USING_PWM0
             select BSP_USING_PWM0_CH0
-            select BSP_USING_PWM0_PORT0
+            select BSP_USING_PWM0_CH0_PORT0
             default n
     endif
 

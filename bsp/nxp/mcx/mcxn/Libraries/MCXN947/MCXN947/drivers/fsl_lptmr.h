@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * Copyright 2016-2017, 2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LPTMR_H_
-#define _FSL_LPTMR_H_
+#ifndef FSL_LPTMR_H_
+#define FSL_LPTMR_H_
 
 #include "fsl_common.h"
 
@@ -20,9 +20,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-#define FSL_LPTMR_DRIVER_VERSION (MAKE_VERSION(2, 1, 1)) /*!< Version 2.1.1 */
-/*@}*/
+/*! @{ */
+/*! Driver Version */
+#define FSL_LPTMR_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
+/*! @} */
 
 /*! @brief LPTMR pin selection used in pulse counter mode.*/
 typedef enum _lptmr_pin_select
@@ -74,12 +75,21 @@ typedef enum _lptmr_prescaler_glitch_value
  */
 typedef enum _lptmr_prescaler_clock_select
 {
+#if !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_0_SUPPORT) && \
+      FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_0_SUPPORT)
     kLPTMR_PrescalerClock_0 = 0x0U, /*!< Prescaler/glitch filter clock 0 selected. */
+#endif
+
 #if !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT) && \
       FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT)
     kLPTMR_PrescalerClock_1 = 0x1U, /*!< Prescaler/glitch filter clock 1 selected. */
 #endif                              /* FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT */
+
+#if !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_2_SUPPORT) && \
+      FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_2_SUPPORT)
     kLPTMR_PrescalerClock_2 = 0x2U, /*!< Prescaler/glitch filter clock 2 selected. */
+#endif
+
 #if !(defined(FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_3_SUPPORT) && \
       FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_3_SUPPORT)
     kLPTMR_PrescalerClock_3 = 0x3U, /*!< Prescaler/glitch filter clock 3 selected. */
@@ -371,4 +381,4 @@ static inline void LPTMR_StopTimer(LPTMR_Type *base)
 
 /*! @}*/
 
-#endif /* _FSL_LPTMR_H_ */
+#endif /* FSL_LPTMR_H_ */

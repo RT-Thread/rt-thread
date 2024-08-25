@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_dma.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the dma firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -242,6 +240,48 @@ flag_status dma_flag_get(uint32_t dmax_flag)
 }
 
 /**
+  * @brief  dma interrupt flag get.
+  * @param  dma_flag
+  *         - DMA1_FDT1_FLAG        - DMA1_HDT1_FLAG        - DMA1_DTERR1_FLAG
+  *         - DMA1_FDT2_FLAG        - DMA1_HDT2_FLAG        - DMA1_DTERR2_FLAG
+  *         - DMA1_FDT3_FLAG        - DMA1_HDT3_FLAG        - DMA1_DTERR3_FLAG
+  *         - DMA1_FDT4_FLAG        - DMA1_HDT4_FLAG        - DMA1_DTERR4_FLAG
+  *         - DMA1_FDT5_FLAG        - DMA1_HDT5_FLAG        - DMA1_DTERR5_FLAG
+  *         - DMA1_FDT6_FLAG        - DMA1_HDT6_FLAG        - DMA1_DTERR6_FLAG
+  *         - DMA1_FDT7_FLAG        - DMA1_HDT7_FLAG        - DMA1_DTERR7_FLAG
+  *         - DMA2_FDT1_FLAG        - DMA2_HDT1_FLAG        - DMA2_DTERR1_FLAG
+  *         - DMA2_FDT2_FLAG        - DMA2_HDT2_FLAG        - DMA2_DTERR2_FLAG
+  *         - DMA2_FDT3_FLAG        - DMA2_HDT3_FLAG        - DMA2_DTERR3_FLAG
+  *         - DMA2_FDT4_FLAG        - DMA2_HDT4_FLAG        - DMA2_DTERR4_FLAG
+  *         - DMA2_FDT5_FLAG        - DMA2_HDT5_FLAG        - DMA2_DTERR5_FLAG
+  *         - DMA2_FDT6_FLAG        - DMA2_HDT6_FLAG        - DMA2_DTERR6_FLAG
+  *         - DMA2_FDT7_FLAG        - DMA2_HDT7_FLAG        - DMA2_DTERR7_FLAG
+  * @retval state of dma flag.
+  */
+flag_status dma_interrupt_flag_get(uint32_t dmax_flag)
+{
+  uint32_t temp = 0;
+
+  if(dmax_flag > 0x10000000)
+  {
+    temp = DMA2->sts;
+  }
+  else
+  {
+    temp = DMA1->sts;
+  }
+
+  if((temp & dmax_flag) != RESET)
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  dma flag clear.
   * @param  dma_flag
   *         this parameter can be one of the following values:
@@ -363,9 +403,9 @@ void dma_init(dma_channel_type *dmax_channely, dma_init_type *dma_init_struct)
   *         - DMAMUX_DMAREQ_ID_USART6_TX    - DMAMUX_DMAREQ_ID_UART7_RX     - DMAMUX_DMAREQ_ID_UART7_TX     - DMAMUX_DMAREQ_ID_UART8_RX
   *         - DMAMUX_DMAREQ_ID_UART8_TX     - DMAMUX_DMAREQ_ID_SDIO1        - DMAMUX_DMAREQ_ID_SDIO2        - DMAMUX_DMAREQ_ID_QSPI1
   *         - DMAMUX_DMAREQ_ID_QSPI2        - DMAMUX_DMAREQ_ID_TMR1_CH1     - DMAMUX_DMAREQ_ID_TMR1_CH2     - DMAMUX_DMAREQ_ID_TMR1_CH3
-  *         - DMAMUX_DMAREQ_ID_TMR1_CH4     - DMAMUX_DMAREQ_ID_TMR1_OVERFLOW- DMAMUX_DMAREQ_ID_TMR1_TRIG    - DMAMUX_DMAREQ_ID_TMR1_COM
+  *         - DMAMUX_DMAREQ_ID_TMR1_CH4     - DMAMUX_DMAREQ_ID_TMR1_OVERFLOW- DMAMUX_DMAREQ_ID_TMR1_TRIG    - DMAMUX_DMAREQ_ID_TMR1_HALL
   *         - DMAMUX_DMAREQ_ID_TMR8_CH1     - DMAMUX_DMAREQ_ID_TMR8_CH2     - DMAMUX_DMAREQ_ID_TMR8_CH3     - DMAMUX_DMAREQ_ID_TMR8_CH4
-  *         - DMAMUX_DMAREQ_ID_TMR8_UP      - DMAMUX_DMAREQ_ID_TMR8_TRIG    - DMAMUX_DMAREQ_ID_TMR8_COM     - DMAMUX_DMAREQ_ID_TMR2_CH1
+  *         - DMAMUX_DMAREQ_ID_TMR8_OVERFLOW- DMAMUX_DMAREQ_ID_TMR8_TRIG    - DMAMUX_DMAREQ_ID_TMR8_HALL    - DMAMUX_DMAREQ_ID_TMR2_CH1
   *         - DMAMUX_DMAREQ_ID_TMR2_CH2     - DMAMUX_DMAREQ_ID_TMR2_CH3     - DMAMUX_DMAREQ_ID_TMR2_CH4     - DMAMUX_DMAREQ_ID_TMR2_OVERFLOW
   *         - DMAMUX_DMAREQ_ID_TMR2_TRIG    - DMAMUX_DMAREQ_ID_TMR3_CH1     - DMAMUX_DMAREQ_ID_TMR3_CH2     - DMAMUX_DMAREQ_ID_TMR3_CH3
   *         - DMAMUX_DMAREQ_ID_TMR3_CH4     - DMAMUX_DMAREQ_ID_TMR3_OVERFLOW- DMAMUX_DMAREQ_ID_TMR3_TRIG    - DMAMUX_DMAREQ_ID_TMR4_CH1
@@ -426,9 +466,9 @@ void dmamux_enable(dma_type *dma_x, confirm_state new_state)
   *         - DMAMUX_DMAREQ_ID_USART6_TX    - DMAMUX_DMAREQ_ID_UART7_RX     - DMAMUX_DMAREQ_ID_UART7_TX     - DMAMUX_DMAREQ_ID_UART8_RX
   *         - DMAMUX_DMAREQ_ID_UART8_TX     - DMAMUX_DMAREQ_ID_SDIO1        - DMAMUX_DMAREQ_ID_SDIO2        - DMAMUX_DMAREQ_ID_QSPI1
   *         - DMAMUX_DMAREQ_ID_QSPI2        - DMAMUX_DMAREQ_ID_TMR1_CH1     - DMAMUX_DMAREQ_ID_TMR1_CH2     - DMAMUX_DMAREQ_ID_TMR1_CH3
-  *         - DMAMUX_DMAREQ_ID_TMR1_CH4     - DMAMUX_DMAREQ_ID_TMR1_OVERFLOW- DMAMUX_DMAREQ_ID_TMR1_TRIG    - DMAMUX_DMAREQ_ID_TMR1_COM
+  *         - DMAMUX_DMAREQ_ID_TMR1_CH4     - DMAMUX_DMAREQ_ID_TMR1_OVERFLOW- DMAMUX_DMAREQ_ID_TMR1_TRIG    - DMAMUX_DMAREQ_ID_TMR1_HALL
   *         - DMAMUX_DMAREQ_ID_TMR8_CH1     - DMAMUX_DMAREQ_ID_TMR8_CH2     - DMAMUX_DMAREQ_ID_TMR8_CH3     - DMAMUX_DMAREQ_ID_TMR8_CH4
-  *         - DMAMUX_DMAREQ_ID_TMR8_UP      - DMAMUX_DMAREQ_ID_TMR8_TRIG    - DMAMUX_DMAREQ_ID_TMR8_COM     - DMAMUX_DMAREQ_ID_TMR2_CH1
+  *         - DMAMUX_DMAREQ_ID_TMR8_OVERFLOW- DMAMUX_DMAREQ_ID_TMR8_TRIG    - DMAMUX_DMAREQ_ID_TMR8_HALL    - DMAMUX_DMAREQ_ID_TMR2_CH1
   *         - DMAMUX_DMAREQ_ID_TMR2_CH2     - DMAMUX_DMAREQ_ID_TMR2_CH3     - DMAMUX_DMAREQ_ID_TMR2_CH4     - DMAMUX_DMAREQ_ID_TMR2_OVERFLOW
   *         - DMAMUX_DMAREQ_ID_TMR2_TRIG    - DMAMUX_DMAREQ_ID_TMR3_CH1     - DMAMUX_DMAREQ_ID_TMR3_CH2     - DMAMUX_DMAREQ_ID_TMR3_CH3
   *         - DMAMUX_DMAREQ_ID_TMR3_CH4     - DMAMUX_DMAREQ_ID_TMR3_OVERFLOW- DMAMUX_DMAREQ_ID_TMR3_TRIG    - DMAMUX_DMAREQ_ID_TMR4_CH1
@@ -483,7 +523,7 @@ void dmamux_sync_config(dmamux_channel_type *dmamux_channelx, dmamux_sync_init_t
 {
   dmamux_channelx->muxctrl_bit.syncsel = dmamux_sync_init_struct->sync_signal_sel;
   dmamux_channelx->muxctrl_bit.syncpol = dmamux_sync_init_struct->sync_polarity;
-  dmamux_channelx->muxctrl_bit.reqcnt  = dmamux_sync_init_struct->sync_request_number;
+  dmamux_channelx->muxctrl_bit.reqcnt  = dmamux_sync_init_struct->sync_request_number - 1;
   dmamux_channelx->muxctrl_bit.evtgen  = dmamux_sync_init_struct->sync_event_enable;
   dmamux_channelx->muxctrl_bit.syncen  = dmamux_sync_init_struct->sync_enable;
 }
@@ -520,7 +560,7 @@ void dmamux_generator_config(dmamux_generator_type *dmamux_gen_x, dmamux_gen_ini
 {
   dmamux_gen_x->gctrl_bit.sigsel  = dmamux_gen_init_struct->gen_signal_sel;
   dmamux_gen_x->gctrl_bit.gpol    = dmamux_gen_init_struct->gen_polarity;
-  dmamux_gen_x->gctrl_bit.greqcnt = dmamux_gen_init_struct->gen_request_number;
+  dmamux_gen_x->gctrl_bit.greqcnt = dmamux_gen_init_struct->gen_request_number - 1;
   dmamux_gen_x->gctrl_bit.gen     = dmamux_gen_init_struct->gen_enable;
 }
 
@@ -611,6 +651,78 @@ flag_status dmamux_sync_flag_get(dma_type *dma_x, uint32_t flag)
 }
 
 /**
+  * @brief  dmamux sync interrupt flag get.
+  * @param  dma_x : pointer to a dma_type structure, can be DMA1 or DMA2.
+  * @param  flag
+  *         this parameter can be any combination of the following values:
+  *         - DMAMUX_SYNC_OV1_FLAG
+  *         - DMAMUX_SYNC_OV2_FLAG
+  *         - DMAMUX_SYNC_OV3_FLAG
+  *         - DMAMUX_SYNC_OV4_FLAG
+  *         - DMAMUX_SYNC_OV5_FLAG
+  *         - DMAMUX_SYNC_OV6_FLAG
+  *         - DMAMUX_SYNC_OV7_FLAG
+  * @retval state of dmamux sync flag.
+  */
+flag_status dmamux_sync_interrupt_flag_get(dma_type *dma_x, uint32_t flag)
+{
+
+  flag_status bitstatus = RESET;
+  uint32_t sync_int_temp = flag;
+  uint32_t index = 0;
+  uint32_t tmpreg = 0, enablestatus = 0;
+  uint32_t regoffset = 0x4;
+
+  while((sync_int_temp & 0x00000001) == RESET)
+  {
+    sync_int_temp = sync_int_temp >> 1;
+    index++;
+  }
+
+  if(dma_x == DMA1)
+  {
+    tmpreg = *(uint32_t*)(DMA1MUX_BASE + (index * regoffset));
+  }
+  else
+  {
+    tmpreg = *(uint32_t*)(DMA2MUX_BASE + (index * regoffset));
+  }
+
+  if((tmpreg & (uint32_t)0x00000100) != (uint32_t)RESET)
+  {
+    enablestatus = SET;
+  }
+  else
+  {
+    enablestatus = RESET;
+  }
+
+  if(dma_x == DMA1)
+  {
+    if(((DMA1->muxsyncsts & flag) != (uint32_t)RESET) && (enablestatus != RESET))
+    {
+      bitstatus = SET;
+    }
+    else
+    {
+      bitstatus = RESET;
+    }
+  }
+  else
+  {
+    if(((DMA2->muxsyncsts & flag) != (uint32_t)RESET) && (enablestatus != RESET))
+    {
+      bitstatus = SET;
+    }
+    else
+    {
+      bitstatus = RESET;
+    }
+  }
+  return bitstatus;
+}
+
+/**
   * @brief  dmamux sync flag clear.
   * @param  dma_x : pointer to a dma_type structure, can be DMA1 or DMA2.
   * @param  flag
@@ -650,6 +762,70 @@ flag_status dmamux_generator_flag_get(dma_type *dma_x, uint32_t flag)
   {
     return RESET;
   }
+}
+
+/**
+  * @brief  dmamux request generator interrupt flag get.
+  * @param  dma_x : pointer to a dma_type structure, can be DMA1 or DMA2.
+  * @param  flag
+  *         this parameter can be any combination of the following values:
+  *         - DMAMUX_GEN_TRIG_OV1_FLAG
+  *         - DMAMUX_GEN_TRIG_OV2_FLAG
+  *         - DMAMUX_GEN_TRIG_OV3_FLAG
+  *         - DMAMUX_GEN_TRIG_OV4_FLAG
+  * @retval state of dmamux sync flag.
+  */
+flag_status dmamux_generator_interrupt_flag_get(dma_type *dma_x, uint32_t flag)
+{
+  flag_status bitstatus = RESET;
+  uint32_t sync_int_temp = flag;
+  uint32_t index = 0;
+  uint32_t tmpreg = 0, enablestatus = 0;
+  uint32_t regoffset = 0x4;
+
+  while((sync_int_temp & 0x00000001) == RESET)
+  {
+    sync_int_temp = sync_int_temp >> 1;
+    index++;
+  }
+
+  if(dma_x == DMA1)
+    tmpreg = *(uint32_t*)(DMA1MUX_GENERATOR1_BASE + (index * regoffset));
+  else
+    tmpreg = *(uint32_t*)(DMA2MUX_GENERATOR1_BASE + (index * regoffset));
+
+  if((tmpreg & (uint32_t)0x00000100) != (uint32_t)RESET)
+  {
+    enablestatus = SET;
+  }
+  else
+  {
+    enablestatus = RESET;
+  }
+  if(dma_x == DMA1)
+  {
+    if(((DMA1->muxgsts & flag) != (uint32_t)RESET) && (enablestatus != RESET))
+    {
+      bitstatus = SET;
+    }
+    else
+    {
+      bitstatus = RESET;
+    }
+  }
+  else
+  {
+    if(((DMA2->muxgsts & flag) != (uint32_t)RESET) && (enablestatus != RESET))
+    {
+      bitstatus = SET;
+    }
+    else
+    {
+      bitstatus = RESET;
+    }
+  }
+
+  return bitstatus;
 }
 
 /**

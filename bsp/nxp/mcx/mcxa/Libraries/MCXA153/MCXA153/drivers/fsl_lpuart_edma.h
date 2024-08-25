@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LPUART_EDMA_H_
-#define _FSL_LPUART_EDMA_H_
+#ifndef FSL_LPUART_EDMA_H_
+#define FSL_LPUART_EDMA_H_
 
 #include "fsl_lpuart.h"
 #include "fsl_edma.h"
@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief LPUART EDMA driver version. */
 #define FSL_LPUART_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 6, 0))
-/*@}*/
+/*! @} */
 
 /* Forward declaration of the handle typedef. */
 typedef struct _lpuart_edma_handle lpuart_edma_handle_t;
@@ -178,7 +178,7 @@ status_t LPUART_TransferGetReceiveCountEDMA(LPUART_Type *base, lpuart_edma_handl
  */
 void LPUART_TransferEdmaHandleIRQ(LPUART_Type *base, void *lpuartEdmaHandle);
 
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -186,4 +186,4 @@ void LPUART_TransferEdmaHandleIRQ(LPUART_Type *base, void *lpuartEdmaHandle);
 
 /*! @}*/
 
-#endif /* _FSL_LPUART_EDMA_H_ */
+#endif /* FSL_LPUART_EDMA_H_ */

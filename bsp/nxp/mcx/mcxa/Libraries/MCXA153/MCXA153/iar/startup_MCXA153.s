@@ -4,11 +4,11 @@
 ;            MCXA153
 ;  @version: 1.0
 ;  @date:    2022-3-29
-;  @build:   b230804
+;  @build:   b240401
 ; -------------------------------------------------------------------------
 ;
 ; Copyright 1997-2016 Freescale Semiconductor, Inc.
-; Copyright 2016-2023 NXP
+; Copyright 2016-2024 NXP
 ; SPDX-License-Identifier: BSD-3-Clause
 ;
 ; The modules in this file are included in the libraries, and may be replaced

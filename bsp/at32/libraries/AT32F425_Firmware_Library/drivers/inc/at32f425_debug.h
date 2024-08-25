@@ -128,6 +128,26 @@ typedef struct
     } ctrl_bit;
   };
 
+  /**
+    * @brief debug reserved1 register, offset:0x08~0x1C
+    */
+  __IO uint32_t reserved1[6];
+
+  /**
+    * @brief debug ser id register, offset:0x20
+    */
+  union
+  {
+    __IO uint32_t ser_id;
+    struct
+    {
+      __IO uint32_t rev_id               : 3;/* [2:0] */
+      __IO uint32_t reserved1            : 5;/* [7:3] */
+      __IO uint32_t ser_id               : 8;/* [15:8] */
+      __IO uint32_t reserved2            : 16;/* [31:16] */
+    } ser_id_bit;
+  };
+
 } debug_type;
 
 /**

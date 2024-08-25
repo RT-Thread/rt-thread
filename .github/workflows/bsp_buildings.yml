@@ -143,6 +143,7 @@ jobs:
                 - "stm32/stm32f401-weact-blackpill"
                 - "stm32/stm32f405-smdz-breadfruit"
                 - "stm32/stm32f407-armfly-v5"
+                - "stm32/stm32f407-fk407m2-zgt6"
                 - "stm32/stm32f407-lckfb-skystar"
                 - "stm32/stm32f407-atk-explorer"
                 - "stm32/stm32f407-robomaster-c"
@@ -248,6 +249,7 @@ jobs:
                 - "gd32/arm/gd32407v-lckfb"
                 - "gd32/arm/gd32450z-eval" 
                 - "gd32/arm/gd32470z-lckfb"
+                - "gd32/arm/gd32h759i-start"
                 - "n32/n32g43xcl-stb"
                 - "n32/n32g45xcl-stb"
                 - "n32/n32g45xml-stb"
@@ -369,9 +371,9 @@ jobs:
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
-          python -c "import tools.menukconfig; tools.menukconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
+          echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
 
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
@@ -467,3 +469,10 @@ jobs:
         run: |
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py
+
+      - name: Post failure comment
+        if: failure()
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.RTTHREAD_GITHUB_TOKEN }}" \
+          -d '{"body":"@${{ github.actor }}, Thank you for your contribution, but there was an error with the action. Could you please help check the BSP compilation issue? Thank you."}' \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"

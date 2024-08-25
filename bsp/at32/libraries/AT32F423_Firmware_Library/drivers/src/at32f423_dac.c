@@ -415,6 +415,34 @@ flag_status dac_udr_flag_get(dac_select_type dac_select)
 }
 
 /**
+  * @brief  get flag of the dac udr interrupt flag.
+  * @param  dac_select
+  *         this parameter can be one of the following values:
+  *         - DAC1_SELECT
+  *         - DAC2_SELECT
+  * @retval the new state of dac udr flag status(SET or RESET).
+  */
+flag_status dac_udr_interrupt_flag_get(dac_select_type dac_select)
+{
+  flag_status status = RESET;
+
+  switch(dac_select)
+  {
+    case DAC1_SELECT:
+      if((DAC->sts_bit.d1dmaudrf && DAC->ctrl_bit.d1dmaudrien) != 0)
+        status = SET;
+      break;
+    case DAC2_SELECT:
+      if((DAC->sts_bit.d2dmaudrf && DAC->ctrl_bit.d2dmaudrien) != 0)
+        status = SET;
+      break;
+    default:
+      break;
+  }
+  return status;
+}
+
+/**
   * @brief  clear the dac udr flag.
   * @param  dac_select
   *         this parameter can be one of the following values:

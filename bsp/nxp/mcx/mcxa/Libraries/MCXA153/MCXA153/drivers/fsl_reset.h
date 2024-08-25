@@ -119,7 +119,7 @@ typedef enum _SYSCON_RSTn
     } /* Reset bits for LPUART peripheral */
 #define LPSPI_RSTS                                     \
     {                                                  \
-        kLPSPI0_RST_SHIFT_RSTn, kLPSPI0_RST_SHIFT_RSTn \
+        kLPSPI0_RST_SHIFT_RSTn, kLPSPI1_RST_SHIFT_RSTn \
     } /* Reset bits for LPSPI peripheral */
 #define LPI2C_RSTS             \
     {                          \

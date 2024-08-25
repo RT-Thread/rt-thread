@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_GPIO_H_
-#define _FSL_GPIO_H_
+#ifndef FSL_GPIO_H_
+#define FSL_GPIO_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief GPIO driver version. */
 #define FSL_GPIO_DRIVER_VERSION (MAKE_VERSION(2, 7, 3))
-/*@}*/
+/*! @} */
 
 #if defined(FSL_FEATURE_GPIO_REGISTERS_WIDTH) && (FSL_FEATURE_GPIO_REGISTERS_WIDTH == 8U)
 #define GPIO_FIT_REG(value) \
@@ -147,7 +147,7 @@ extern "C" {
  */
 
 /*! @name GPIO Configuration */
-/*@{*/
+/*! @{ */
 
 /*!
  * @brief Initializes a GPIO pin used by the board.
@@ -312,10 +312,10 @@ static inline void GPIO_PortInputDisable(GPIO_Type *base, uint32_t mask)
 }
 #endif /* FSL_FEATURE_GPIO_HAS_PORT_INPUT_CONTROL */
 
-/*@}*/
+/*! @} */
 
 /*! @name GPIO Output Operations */
-/*@{*/
+/*! @{ */
 
 /*!
  * @brief Sets the output level of the multiple GPIO pins to the logic 1 or 0.
@@ -394,10 +394,10 @@ static inline void GPIO_PortToggle(GPIO_Type *base, uint32_t mask)
 #endif
 }
 
-/*@}*/
+/*! @} */
 
 /*! @name GPIO Input Operations */
-/*@{*/
+/*! @{ */
 
 /*!
  * @brief Reads the current input value of the GPIO port.
@@ -413,10 +413,10 @@ static inline uint32_t GPIO_PinRead(GPIO_Type *base, uint32_t pin)
     return (((uint32_t)(base->PDIR) >> pin) & 0x01UL);
 }
 
-/*@}*/
+/*! @} */
 
 /*! @name GPIO Interrupt */
-/*@{*/
+/*! @{ */
 #if !(defined(FSL_FEATURE_PORT_HAS_NO_INTERRUPT) && FSL_FEATURE_PORT_HAS_NO_INTERRUPT) && \
     defined(FSL_FEATURE_SOC_PORT_COUNT)
 /*!
@@ -604,7 +604,7 @@ static inline void GPIO_SetMultipleInterruptPinsConfig(GPIO_Type *base, uint32_t
 void GPIO_CheckAttributeBytes(GPIO_Type *base, gpio_checker_attribute_t attribute);
 #endif
 
-/*@}*/
+/*! @} */
 /*! @} */
 
 /*!
@@ -623,7 +623,7 @@ void GPIO_CheckAttributeBytes(GPIO_Type *base, gpio_checker_attribute_t attribut
 #if defined(FSL_FEATURE_SOC_FGPIO_COUNT) && FSL_FEATURE_SOC_FGPIO_COUNT
 
 /*! @name FGPIO Configuration */
-/*@{*/
+/*! @{ */
 
 #if defined(FSL_FEATURE_PCC_HAS_FGPIO_CLOCK_GATE_CONTROL) && FSL_FEATURE_PCC_HAS_FGPIO_CLOCK_GATE_CONTROL
 /*!
@@ -664,10 +664,10 @@ void FGPIO_PortInit(FGPIO_Type *base);
  */
 void FGPIO_PinInit(FGPIO_Type *base, uint32_t pin, const gpio_pin_config_t *config);
 
-/*@}*/
+/*! @} */
 
 /*! @name FGPIO Output Operations */
-/*@{*/
+/*! @{ */
 
 /*!
  * @brief Sets the output level of the multiple FGPIO pins to the logic 1 or 0.
@@ -722,10 +722,10 @@ static inline void FGPIO_PortToggle(FGPIO_Type *base, uint32_t mask)
 {
     base->PTOR = mask;
 }
-/*@}*/
+/*! @} */
 
 /*! @name FGPIO Input Operations */
-/*@{*/
+/*! @{ */
 
 /*!
  * @brief Reads the current input value of the FGPIO port.
@@ -740,10 +740,10 @@ static inline uint32_t FGPIO_PinRead(FGPIO_Type *base, uint32_t pin)
 {
     return (((base->PDIR) >> pin) & 0x01U);
 }
-/*@}*/
+/*! @} */
 
 /*! @name FGPIO Interrupt */
-/*@{*/
+/*! @{ */
 #if !(defined(FSL_FEATURE_PORT_HAS_NO_INTERRUPT) && FSL_FEATURE_PORT_HAS_NO_INTERRUPT) && \
     defined(FSL_FEATURE_SOC_PORT_COUNT)
 
@@ -784,7 +784,7 @@ void FGPIO_PortClearInterruptFlags(FGPIO_Type *base, uint32_t mask);
 void FGPIO_CheckAttributeBytes(FGPIO_Type *base, gpio_checker_attribute_t attribute);
 #endif /* FSL_FEATURE_FGPIO_HAS_ATTRIBUTE_CHECKER */
 
-/*@}*/
+/*! @} */
 
 #endif /* FSL_FEATURE_SOC_FGPIO_COUNT */
 
@@ -796,4 +796,4 @@ void FGPIO_CheckAttributeBytes(FGPIO_Type *base, gpio_checker_attribute_t attrib
  * @}
  */
 
-#endif /* _FSL_GPIO_H_*/
+#endif /* FSL_GPIO_H_*/

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_FREQME_
-#define _FSL_FREQME_
+#ifndef FSL_FREQME_H_
+#define FSL_FREQME_H_
 
 #include "fsl_common.h"
 
@@ -19,10 +19,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief FREQME driver version 2.1.2. */
 #define FSL_FREQME_DRIVER_VERSION (MAKE_VERSION(2, 1, 2))
-/*@}*/
+/*! @} */
 
 /*!
  * @brief The enumeration of interrupt status flags.
@@ -438,4 +438,4 @@ static inline void FREQME_DisableInterrupts(FREQME_Type *base, uint32_t masks)
 /*!
  * @}
  */
-#endif /* __FSL_FREQME_H__ */
+#endif /* FSL_FREQME_H_ */

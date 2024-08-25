@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_rtc.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 rtc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -238,6 +236,7 @@ uint32_t rtc_divider_get(void);
 void rtc_alarm_set(uint32_t alarm_value);
 void rtc_interrupt_enable(uint16_t source, confirm_state new_state);
 flag_status rtc_flag_get(uint16_t flag);
+flag_status rtc_interrupt_flag_get(uint16_t flag);
 void rtc_flag_clear(uint16_t flag);
 void rtc_wait_config_finish(void);
 void rtc_wait_update_finish(void);

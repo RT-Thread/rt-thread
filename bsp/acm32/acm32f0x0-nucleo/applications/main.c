@@ -9,7 +9,7 @@
  * 2021-10-17     AisinoChip   remove unused header file
  */
 #include "board.h"
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 
 #define LED_PIN_NUM    1     /* PA1 */
 

@@ -910,11 +910,11 @@ int sal_sendmsg(int socket, const struct msghdr *message, int flags)
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, sendmsg);
 
 #ifdef SAL_USING_TLS
-    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, sendmsg))
+    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, send))
     {
         int ret;
 
-        if ((ret = proto_tls->ops->sendmsg(sock->user_data_tls, message, flags)) < 0)
+        if ((ret = proto_tls->ops->send(sock->user_data_tls, message, flags)) < 0)
         {
             return -1;
         }
@@ -943,11 +943,11 @@ int sal_recvmsg(int socket, struct msghdr *message, int flags)
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, recvmsg);
 
 #ifdef SAL_USING_TLS
-    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, recvmsg))
+    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, recv))
     {
         int ret;
 
-        if ((ret = proto_tls->ops->recvmsg(sock->user_data_tls, message, flags)) < 0)
+        if ((ret = proto_tls->ops->recv(sock->user_data_tls, message, flags)) < 0)
         {
             return -1;
         }

@@ -26,7 +26,7 @@
 #include "hpm_dma_mgr.h"
 
 #include "drv_i2s.h"
-#include "drivers/audio.h"
+#include "drivers/dev_audio.h"
 
 static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size);
 

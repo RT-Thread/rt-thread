@@ -16,12 +16,12 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-/* Used for 32byte aligned */
-#define STCD_ADDR(address) (edma_tcd_t *)(((uint32_t)(address) + 32UL) & ~0x1FU)
+/* Used for edma_tcd_t size aligned */
+#define STCD_ADDR(address) (edma_tcd_t *)(((uint32_t)(address) + sizeof(edma_tcd_t)) & ~(sizeof(edma_tcd_t) - 1U))
 
 static I2S_Type *const s_saiBases[] = I2S_BASE_PTRS;
 /* Only support 2 and 4 channel */
-#define SAI_CHANNEL_MAP_MODULO(channel) (channel == 2U ? kEDMA_Modulo8bytes : kEDMA_Modulo16bytes)
+#define SAI_CHANNEL_MAP_MODULO(channel) ((channel) == 2U ? kEDMA_Modulo8bytes : kEDMA_Modulo16bytes)
 
 /*<! Structure definition for uart_edma_private_handle_t. The structure is private. */
 typedef struct sai_edma_private_handle
@@ -192,9 +192,10 @@ void SAI_TransferTxCreateHandleEDMA(
     (void)memset(handle, 0, sizeof(*handle));
 
     /* Set sai base to handle */
-    handle->dmaHandle = txDmaHandle;
-    handle->callback  = callback;
-    handle->userData  = userData;
+    handle->dmaHandle      = txDmaHandle;
+    handle->callback       = callback;
+    handle->userData       = userData;
+    handle->interleaveType = kSAI_EDMAInterleavePerChannelSample;
 
     /* Set SAI state to idle */
     handle->state = (uint32_t)kSAI_Idle;
@@ -233,9 +234,10 @@ void SAI_TransferRxCreateHandleEDMA(
     (void)memset(handle, 0, sizeof(*handle));
 
     /* Set sai base to handle */
-    handle->dmaHandle = rxDmaHandle;
-    handle->callback  = callback;
-    handle->userData  = userData;
+    handle->dmaHandle      = rxDmaHandle;
+    handle->callback       = callback;
+    handle->userData       = userData;
+    handle->interleaveType = kSAI_EDMAInterleavePerChannelSample;
 
     /* Set SAI state to idle */
     handle->state = (uint32_t)kSAI_Idle;
@@ -251,53 +253,18 @@ void SAI_TransferRxCreateHandleEDMA(
 }
 
 /*!
- * brief Configures the SAI Tx audio format.
+ * brief Initializes the SAI interleave type.
  *
- * deprecated Do not use this function.  It has been superceded by ref SAI_TransferTxSetConfigEDMA
+ * This function initializes the SAI DMA handle member interleaveType, it shall be called only when application would
+ * like to use type kSAI_EDMAInterleavePerChannelBlock, since the default interleaveType is
+ * kSAI_EDMAInterleavePerChannelSample always
  *
- * The audio format can be changed at run-time. This function configures the sample rate and audio data
- * format to be transferred. This function also sets the eDMA parameter according to formatting requirements.
- *
- * param base SAI base pointer.
  * param handle SAI eDMA handle pointer.
- * param format Pointer to SAI audio data format structure.
- * param mclkSourceClockHz SAI master clock source frequency in Hz.
- * param bclkSourceClockHz SAI bit clock source frequency in Hz. If bit clock source is master
- * clock, this value should equals to masterClockHz in format.
- * retval kStatus_Success Audio format set successfully.
- * retval kStatus_InvalidArgument The input argument is invalid.
+ * param interleaveType SAI interleave type.
  */
-void SAI_TransferTxSetFormatEDMA(I2S_Type *base,
-                                 sai_edma_handle_t *handle,
-                                 sai_transfer_format_t *format,
-                                 uint32_t mclkSourceClockHz,
-                                 uint32_t bclkSourceClockHz)
+void SAI_TransferSetInterleaveType(sai_edma_handle_t *handle, sai_edma_interleave_t interleaveType)
 {
-    assert((handle != NULL) && (format != NULL));
-
-    /* Configure the audio format to SAI registers */
-    SAI_TxSetFormat(base, format, mclkSourceClockHz, bclkSourceClockHz);
-
-    /* Get the transfer size from format, this should be used in EDMA configuration */
-    if (format->bitWidth == 24U)
-    {
-        handle->bytesPerFrame = 4U;
-    }
-    else
-    {
-        handle->bytesPerFrame = (uint8_t)(format->bitWidth / 8U);
-    }
-
-    /* Update the data channel SAI used */
-    handle->channel = format->channel;
-
-    /* Clear the channel enable bits until do a send/receive */
-    base->TCR3 &= ~I2S_TCR3_TCE_MASK;
-#if defined(FSL_FEATURE_SAI_HAS_FIFO) && (FSL_FEATURE_SAI_HAS_FIFO)
-    handle->count = (uint8_t)((uint32_t)FSL_FEATURE_SAI_FIFO_COUNTn(base) - format->watermark);
-#else
-    handle->count = 1U;
-#endif /* FSL_FEATURE_SAI_HAS_FIFO */
+    handle->interleaveType = interleaveType;
 }
 
 /*!
@@ -352,56 +319,6 @@ void SAI_TransferTxSetConfigEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_
     base->TCR3 &= ~I2S_TCR3_TCE_MASK;
 #if defined(FSL_FEATURE_SAI_HAS_FIFO) && (FSL_FEATURE_SAI_HAS_FIFO)
     handle->count = (uint8_t)((uint32_t)FSL_FEATURE_SAI_FIFO_COUNTn(base) - saiConfig->fifo.fifoWatermark);
-#else
-    handle->count = 1U;
-#endif /* FSL_FEATURE_SAI_HAS_FIFO */
-}
-
-/*!
- * brief Configures the SAI Rx audio format.
- *
- * deprecated Do not use this function.  It has been superceded by ref SAI_TransferRxSetConfigEDMA
- *
- * The audio format can be changed at run-time. This function configures the sample rate and audio data
- * format to be transferred. This function also sets the eDMA parameter according to formatting requirements.
- *
- * param base SAI base pointer.
- * param handle SAI eDMA handle pointer.
- * param format Pointer to SAI audio data format structure.
- * param mclkSourceClockHz SAI master clock source frequency in Hz.
- * param bclkSourceClockHz SAI bit clock source frequency in Hz. If a bit clock source is the master
- * clock, this value should equal to masterClockHz in format.
- * retval kStatus_Success Audio format set successfully.
- * retval kStatus_InvalidArgument The input argument is invalid.
- */
-void SAI_TransferRxSetFormatEDMA(I2S_Type *base,
-                                 sai_edma_handle_t *handle,
-                                 sai_transfer_format_t *format,
-                                 uint32_t mclkSourceClockHz,
-                                 uint32_t bclkSourceClockHz)
-{
-    assert((handle != NULL) && (format != NULL));
-
-    /* Configure the audio format to SAI registers */
-    SAI_RxSetFormat(base, format, mclkSourceClockHz, bclkSourceClockHz);
-
-    /* Get the transfer size from format, this should be used in EDMA configuration */
-    if (format->bitWidth == 24U)
-    {
-        handle->bytesPerFrame = 4U;
-    }
-    else
-    {
-        handle->bytesPerFrame = (uint8_t)(format->bitWidth / 8U);
-    }
-
-    /* Update the data channel SAI used */
-    handle->channel = format->channel;
-
-    /* Clear the channel enable bits until do a send/receive */
-    base->RCR3 &= ~I2S_RCR3_RCE_MASK;
-#if defined(FSL_FEATURE_SAI_HAS_FIFO) && (FSL_FEATURE_SAI_HAS_FIFO)
-    handle->count = format->watermark;
 #else
     handle->count = 1U;
 #endif /* FSL_FEATURE_SAI_HAS_FIFO */
@@ -470,6 +387,18 @@ void SAI_TransferRxSetConfigEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_
  * note This interface returns immediately after the transfer initiates. Call
  * SAI_GetTransferStatus to poll the transfer status and check whether the SAI transfer is finished.
  *
+ * In classic I2S mode configuration.
+ * 1. The data source sent should be formatted as below if handle->interleaveType =
+ *    kSAI_EDMAInterleavePerChannelSample :
+ *    --------------------------------------------------------------------------------------------------
+ *    |LEFT CHANNEL | RIGHT CHANNEL | LEFT CHANNEL | RIGHT CHANNEL | LEFT CHANNEL | RIGHT CHANNEL | ...|
+ *    --------------------------------------------------------------------------------------------------
+ * 2. The data source sent should be formatted as below if handle->interleaveType =
+ *    kSAI_EDMAInterleavePerChannelBlock :
+ *    -------------------------------------------------------------------------------------------------------
+ *    |LEFT CHANNEL | LEFT CHANNEL | LEFT CHANNEL | ...| RIGHT CHANNEL | RIGHT CHANNEL | RIGHT CHANNEL | ...|
+ *    -------------------------------------------------------------------------------------------------------
+ *
  * This function support multi channel transfer,
  * 1. for the sai IP support fifo combine mode, application should enable the fifo combine mode, no limitation
  *    on channel numbers
@@ -487,9 +416,14 @@ status_t SAI_TransferSendEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_tra
 {
     assert((handle != NULL) && (xfer != NULL));
 
-    edma_transfer_config_t config = {0};
-    uint32_t destAddr             = SAI_TxGetDataRegisterAddress(base, handle->channel);
-    uint32_t destOffset           = 0U;
+    edma_transfer_config_t config          = {0};
+    uint32_t destAddr                      = SAI_TxGetDataRegisterAddress(base, handle->channel);
+    uint32_t destOffset                    = 0U;
+    uint32_t srcOffset                     = xfer->dataSize / 2U;
+    edma_tcd_t *currentTCD                 = STCD_ADDR(handle->tcd);
+    edma_minor_offset_config_t minorOffset = {.enableSrcMinorOffset  = true,
+                                              .enableDestMinorOffset = false,
+                                              .minorOffset = 0xFFFFFU - 2U * srcOffset + 1U + handle->bytesPerFrame};
 
     /* Check if input parameter invalid */
     if ((xfer->data == NULL) || (xfer->dataSize == 0U))
@@ -518,11 +452,31 @@ status_t SAI_TransferSendEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_tra
     }
 #endif
 
-    /* Prepare edma configure */
-    EDMA_PrepareTransferConfig(&config, xfer->data, (uint32_t)handle->bytesPerFrame, (int16_t)handle->bytesPerFrame,
-                               (uint32_t *)destAddr, (uint32_t)handle->bytesPerFrame, (int16_t)destOffset,
-                               (uint32_t)handle->count * handle->bytesPerFrame, xfer->dataSize);
-
+    if (handle->interleaveType == kSAI_EDMAInterleavePerChannelSample)
+    {
+        /* Prepare edma configure */
+        EDMA_PrepareTransferConfig(&config, xfer->data, (uint32_t)handle->bytesPerFrame, (int16_t)handle->bytesPerFrame,
+                                   (uint32_t *)destAddr, (uint32_t)handle->bytesPerFrame, (int16_t)destOffset,
+                                   (uint32_t)handle->count * handle->bytesPerFrame, xfer->dataSize);
+    }
+    else
+    {
+        EDMA_PrepareTransferConfig(&config, xfer->data, (uint32_t)handle->bytesPerFrame, (int16_t)srcOffset,
+                                   (uint32_t *)destAddr, (uint32_t)handle->bytesPerFrame, (int16_t)destOffset,
+                                   (uint32_t)2U * handle->bytesPerFrame, xfer->dataSize);
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+        EDMA_TcdSetTransferConfigExt(handle->dmaHandle->base, currentTCD, &config, NULL);
+        EDMA_TcdSetMinorOffsetConfigExt(handle->dmaHandle->base, currentTCD, &minorOffset);
+        EDMA_TcdEnableInterruptsExt(handle->dmaHandle->base, currentTCD, (uint32_t)kEDMA_MajorInterruptEnable);
+        EDMA_TcdEnableAutoStopRequestExt(handle->dmaHandle->base, currentTCD, true);
+#else
+        EDMA_TcdSetTransferConfig(currentTCD, &config, NULL);
+        EDMA_TcdSetMinorOffsetConfig(currentTCD, &minorOffset);
+        EDMA_TcdEnableInterrupts(currentTCD, (uint32_t)kEDMA_MajorInterruptEnable);
+        EDMA_TcdEnableAutoStopRequest(currentTCD, true);
+#endif
+        EDMA_InstallTCD(handle->dmaHandle->base, handle->dmaHandle->channel, currentTCD);
+    }
     /* Store the initially configured eDMA minor byte transfer count into the SAI handle */
     handle->nbytes = handle->count * handle->bytesPerFrame;
 
@@ -564,6 +518,18 @@ status_t SAI_TransferSendEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_tra
  * note This interface returns immediately after the transfer initiates. Call
  * the SAI_GetReceiveRemainingBytes to poll the transfer status and check whether the SAI transfer is finished.
  *
+ * In classic I2S mode configuration.
+ * 1. The output data will be formatted as below if handle->interleaveType =
+ *    kSAI_EDMAInterleavePerChannelSample :
+ *    --------------------------------------------------------------------------------------------------
+ *    |LEFT CHANNEL | RIGHT CHANNEL | LEFT CHANNEL | RIGHT CHANNEL | LEFT CHANNEL | RIGHT CHANNEL | ...|
+ *    --------------------------------------------------------------------------------------------------
+ * 2. The output data will be formatted as below if handle->interleaveType =
+ *    kSAI_EDMAInterleavePerChannelBlock :
+ *    -------------------------------------------------------------------------------------------------------
+ *    |LEFT CHANNEL | LEFT CHANNEL | LEFT CHANNEL | ...| RIGHT CHANNEL | RIGHT CHANNEL | RIGHT CHANNEL | ...|
+ *    -------------------------------------------------------------------------------------------------------
+ *
  * This function support multi channel transfer,
  * 1. for the sai IP support fifo combine mode, application should enable the fifo combine mode, no limitation
  *    on channel numbers
@@ -581,9 +547,15 @@ status_t SAI_TransferReceiveEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_
 {
     assert((handle != NULL) && (xfer != NULL));
 
-    edma_transfer_config_t config = {0};
-    uint32_t srcAddr              = SAI_RxGetDataRegisterAddress(base, handle->channel);
-    uint32_t srcOffset            = 0U;
+    edma_transfer_config_t config          = {0};
+    uint32_t srcAddr                       = SAI_RxGetDataRegisterAddress(base, handle->channel);
+    uint32_t srcOffset                     = 0U;
+    uint32_t destOffset                    = xfer->dataSize / 2U;
+    edma_tcd_t *currentTCD                 = STCD_ADDR(handle->tcd);
+    edma_minor_offset_config_t minorOffset = {
+        .enableSrcMinorOffset  = false,
+        .enableDestMinorOffset = true,
+        .minorOffset           = 0xFFFFFU - 2U * destOffset + 1U + (uint32_t)handle->bytesPerFrame};
 
     /* Check if input parameter invalid */
     if ((xfer->data == NULL) || (xfer->dataSize == 0U))
@@ -612,10 +584,32 @@ status_t SAI_TransferReceiveEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_
     }
 #endif
 
-    /* Prepare edma configure */
-    EDMA_PrepareTransferConfig(&config, (uint32_t *)srcAddr, (uint32_t)handle->bytesPerFrame, (int16_t)srcOffset,
-                               xfer->data, (uint32_t)handle->bytesPerFrame, (int16_t)handle->bytesPerFrame,
-                               (uint32_t)handle->count * handle->bytesPerFrame, xfer->dataSize);
+    if (handle->interleaveType == kSAI_EDMAInterleavePerChannelSample)
+    {
+        /* Prepare edma configure */
+        EDMA_PrepareTransferConfig(&config, (uint32_t *)srcAddr, (uint32_t)handle->bytesPerFrame, (int16_t)srcOffset,
+                                   xfer->data, (uint32_t)handle->bytesPerFrame, (int16_t)handle->bytesPerFrame,
+                                   (uint32_t)handle->count * handle->bytesPerFrame, xfer->dataSize);
+    }
+    else
+    {
+        EDMA_PrepareTransferConfig(&config, (uint32_t *)srcAddr, (uint32_t)handle->bytesPerFrame, (int16_t)srcOffset,
+                                   xfer->data, (uint32_t)handle->bytesPerFrame, (int16_t)destOffset,
+                                   (uint32_t)2U * handle->bytesPerFrame, xfer->dataSize);
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+        EDMA_TcdSetTransferConfigExt(handle->dmaHandle->base, currentTCD, &config, NULL);
+        EDMA_TcdSetMinorOffsetConfigExt(handle->dmaHandle->base, currentTCD, &minorOffset);
+        EDMA_TcdEnableInterruptsExt(handle->dmaHandle->base, currentTCD, (uint32_t)kEDMA_MajorInterruptEnable);
+        EDMA_TcdEnableAutoStopRequestExt(handle->dmaHandle->base, currentTCD, true);
+#else
+        EDMA_TcdSetTransferConfig(currentTCD, &config, NULL);
+        EDMA_TcdSetMinorOffsetConfig(currentTCD, &minorOffset);
+        EDMA_TcdEnableInterrupts(currentTCD, (uint32_t)kEDMA_MajorInterruptEnable);
+        EDMA_TcdEnableAutoStopRequest(currentTCD, true);
+#endif
+        EDMA_InstallTCD(handle->dmaHandle->base, handle->dmaHandle->channel, currentTCD);
+    }
+
     /* Store the initially configured eDMA minor byte transfer count into the SAI handle */
     handle->nbytes = handle->count * handle->bytesPerFrame;
 
@@ -703,6 +697,23 @@ status_t SAI_TransferSendLoopEDMA(I2S_Type *base,
                              handle->bytesPerFrame, (uint32_t)handle->count * handle->bytesPerFrame, transfer->dataSize,
                              kEDMA_MemoryToPeripheral);
 
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+        if (i == (loopTransferCount - 1U))
+        {
+            EDMA_TcdSetTransferConfigExt(handle->dmaHandle->base, &currentTCD[tcdIndex], &config, &currentTCD[0U]);
+            EDMA_TcdEnableInterruptsExt(handle->dmaHandle->base, &currentTCD[tcdIndex],
+                                        (uint32_t)kEDMA_MajorInterruptEnable);
+            handle->state = (uint32_t)kSAI_BusyLoopTransfer;
+            break;
+        }
+        else
+        {
+            EDMA_TcdSetTransferConfigExt(handle->dmaHandle->base, &currentTCD[tcdIndex], &config,
+                                         &currentTCD[tcdIndex + 1U]);
+            EDMA_TcdEnableInterruptsExt(handle->dmaHandle->base, &currentTCD[tcdIndex],
+                                        (uint32_t)kEDMA_MajorInterruptEnable);
+        }
+#else
         if (i == (loopTransferCount - 1U))
         {
             EDMA_TcdSetTransferConfig(&currentTCD[tcdIndex], &config, &currentTCD[0U]);
@@ -715,6 +726,7 @@ status_t SAI_TransferSendLoopEDMA(I2S_Type *base,
             EDMA_TcdSetTransferConfig(&currentTCD[tcdIndex], &config, &currentTCD[tcdIndex + 1U]);
             EDMA_TcdEnableInterrupts(&currentTCD[tcdIndex], (uint32_t)kEDMA_MajorInterruptEnable);
         }
+#endif
 
         tcdIndex = tcdIndex + 1U;
     }
@@ -787,6 +799,23 @@ status_t SAI_TransferReceiveLoopEDMA(I2S_Type *base,
                              (uint32_t)handle->count * handle->bytesPerFrame, transfer->dataSize,
                              kEDMA_PeripheralToMemory);
 
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+        if (i == (loopTransferCount - 1U))
+        {
+            EDMA_TcdSetTransferConfigExt(handle->dmaHandle->base, &currentTCD[tcdIndex], &config, &currentTCD[0U]);
+            EDMA_TcdEnableInterruptsExt(handle->dmaHandle->base, &currentTCD[tcdIndex],
+                                        (uint32_t)kEDMA_MajorInterruptEnable);
+            handle->state = (uint32_t)kSAI_BusyLoopTransfer;
+            break;
+        }
+        else
+        {
+            EDMA_TcdSetTransferConfigExt(handle->dmaHandle->base, &currentTCD[tcdIndex], &config,
+                                         &currentTCD[tcdIndex + 1U]);
+            EDMA_TcdEnableInterruptsExt(handle->dmaHandle->base, &currentTCD[tcdIndex],
+                                        (uint32_t)kEDMA_MajorInterruptEnable);
+        }
+#else
         if (i == (loopTransferCount - 1U))
         {
             EDMA_TcdSetTransferConfig(&currentTCD[tcdIndex], &config, &currentTCD[0U]);
@@ -799,6 +828,7 @@ status_t SAI_TransferReceiveLoopEDMA(I2S_Type *base,
             EDMA_TcdSetTransferConfig(&currentTCD[tcdIndex], &config, &currentTCD[tcdIndex + 1U]);
             EDMA_TcdEnableInterrupts(&currentTCD[tcdIndex], (uint32_t)kEDMA_MajorInterruptEnable);
         }
+#endif
 
         tcdIndex = tcdIndex + 1U;
     }

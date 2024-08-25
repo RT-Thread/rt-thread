@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 NXP.
+ * Copyright 2019-2024 NXP.
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -119,6 +119,26 @@ void WUU_SetExternalWakeUpPinsConfig(WUU_Type *base, uint8_t pinIndex, const wuu
 }
 
 /*!
+ * brief Disable and clear external wakeup pin settings.
+ * 
+ * param base MUU peripheral base address.
+ * param pinIndex The index of the external input pin.
+ */
+void WUU_ClearExternalWakeupPinsConfig(WUU_Type *base, uint8_t pinIndex)
+{
+    if (pinIndex <= 15U)
+    {
+        base->PE1 &= ~(WUU_PE_REG_BIT_FIELD_MASK << (2UL * (uint32_t)pinIndex));
+        base->PDC1 &= ~(WUU_PDC_REG_BIT_FIELD_MASK << (2UL * (uint32_t)pinIndex));
+    }
+    else
+    {
+        base->PE1 &= ~(WUU_PE_REG_BIT_FIELD_MASK << (2UL * (uint32_t)((uint32_t)pinIndex % 16UL)));
+        base->PDC1 &= ~(WUU_PDC_REG_BIT_FIELD_MASK << (2UL * (uint32_t)((uint32_t)pinIndex % 16UL)));
+    }
+}
+
+/*!
  * brief Config Internal modules' event as the wake up soures.
  *
  * This function configs the internal modules event as the wake up sources.
@@ -136,6 +156,29 @@ void WUU_SetInternalWakeUpModulesConfig(WUU_Type *base, uint8_t moduleIndex, wuu
             break;
         case kWUU_InternalModuleDMATrigger:
             base->DE |= WUU_SET_BIT_FIELD_IN_REG(WUU_DE_REG_WUME_FIELD_MASK, moduleIndex);
+            break;
+        default:
+            assert(false);
+            break;
+    }
+}
+
+/*!
+ * brief Disable an on-chip internal modules' event as the wakeup sources.
+ * 
+ * param base WUU peripheral base address.
+ * param moduleIndex The selected internal module. See the Reference Manual for the details.
+ * param event The event(interrupt or DMA/trigger) of the internal module to disable.
+ */
+void WUU_ClearInternalWakeUpModulesConfig(WUU_Type *base, uint8_t moduleIndex, wuu_internal_wakeup_module_event_t event)
+{
+    switch(event)
+    {
+        case kWUU_InternalModuleInterrupt:
+            base->ME &= ~WUU_SET_BIT_FIELD_IN_REG(WUU_ME_REG_WUME_FIELD_MASK, moduleIndex);
+            break;
+        case kWUU_InternalModuleDMATrigger:
+            base->DE &= ~WUU_SET_BIT_FIELD_IN_REG(WUU_DE_REG_WUME_FIELD_MASK, moduleIndex);
             break;
         default:
             assert(false);

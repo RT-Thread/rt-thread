@@ -8,7 +8,7 @@
  * 2021-03-15   picospuch     Porting for maxiam32660
  */
 
-#include "rtc.h"
+#include "drivers/dev_rtc.h"
 #include "board.h"
 #include <sys/time.h>
 

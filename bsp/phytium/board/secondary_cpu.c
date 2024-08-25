@@ -46,21 +46,10 @@ rt_uint64_t rt_cpu_mpidr_early[] =
     [0] = 0x80000200,
     [1] = 0x80000201,
 #elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-    [0] = 0x80000000,
-    [1] = 0x80000100,
-    [2] = 0x80000200,
-    [3] = 0x80000201,
-#elif defined(TARGET_F2000_4) || defined(TARGET_D2000)
-    [0] = 0x80000000,
-    [1] = 0x80000001,
-    [2] = 0x80000100,
-    [3] = 0x80000101,
-#if defined(TARGET_D2000)
-    [4] = 0x80000200,
-    [5] = 0x80000201,
-    [6] = 0x80000300,
-    [7] = 0x80000301,
-#endif
+    [0] = 0x80000200,
+    [1] = 0x80000201,
+    [2] = 0x80000000,
+    [3] = 0x80000100,
 #endif
 
 };
@@ -117,22 +106,22 @@ void rt_hw_secondary_cpu_bsp_start(void)
 #else
     rt_uint32_t mmutable_p;
     mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
-    rt_hw_mmu_switch(mmutable_p) ;
+    rt_hw_mmu_switch((void*)mmutable_p) ;
 #endif
 
     /* vector init */
     rt_hw_vector_init();
+
     /* interrupt init */
 #if defined(TARGET_ARMV8_AARCH64)
     arm_gic_cpu_init(0, 0);
-
+    arm_gic_redist_address_set(0, platform_get_gic_redist_base(), rt_hw_cpu_id());
     phytium_aarch64_arm_gic_redist_init();
-    rt_kprintf("arm_gic_redist_init is over rt_hw_cpu_id() is %d \r\n", rt_hw_cpu_id());
 #else
     arm_gic_cpu_init(0);
+    arm_gic_redist_address_set(0, platform_get_gic_redist_base(), rt_hw_cpu_id());
     arm_gic_redist_init(0);
 #endif
-
 
     /* gtimer init */
 #if defined(TARGET_ARMV8_AARCH64)
@@ -143,7 +132,6 @@ void rt_hw_secondary_cpu_bsp_start(void)
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
 
     /* start scheduler */
-
     rt_kprintf("\rcall cpu %d on success\n", rt_hw_cpu_id());
     rt_hw_secondary_cpu_idle_exec();
     rt_system_scheduler_start();

@@ -115,6 +115,7 @@ typedef struct
       __IO uint32_t reserved1            : 29;/* [31:3] */
     } ctrl_bit;
   };
+
   /**
     * @brief debug apb1 frz register, offset:0x08
     */
@@ -147,8 +148,9 @@ typedef struct
       __IO uint32_t reserved5            : 3;/* [31:29] */
     } apb1_frz_bit;
   };
+
   /**
-    * @brief debug apb2 frz register, offset:0x0c
+    * @brief debug apb2 frz register, offset:0x0C
     */
   union
   {
@@ -165,6 +167,26 @@ typedef struct
       __IO uint32_t tmr11_pause          : 1;/* [18] */
       __IO uint32_t reserved5            : 13;/* [31:19] */
     } apb2_frz_bit;
+  };
+
+  /**
+    * @brief debug reserved1 register, offset:0x10~0x1C
+    */
+  __IO uint32_t reserved1[4];
+
+  /**
+    * @brief debug ser id register, offset:0x20
+    */
+  union
+  {
+    __IO uint32_t ser_id;
+    struct
+    {
+      __IO uint32_t rev_id               : 3;/* [2:0] */
+      __IO uint32_t reserved1            : 5;/* [7:3] */
+      __IO uint32_t ser_id               : 8;/* [15:8] */
+      __IO uint32_t reserved2            : 16;/* [31:16] */
+    } ser_id_bit;
   };
 
 } debug_type;

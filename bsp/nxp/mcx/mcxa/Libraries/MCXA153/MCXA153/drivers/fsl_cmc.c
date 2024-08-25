@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 ~ 2023 NXP
+ * Copyright 2022-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -18,14 +18,7 @@
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-#if (defined(FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG) && FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG)
-#define CMC_SRAMDIS_RESERVED_MASK                                                                                   \
-    (~(kCMC_RAMX0 | kCMC_RAMX1 | kCMC_RAMX2 | kCMC_RAMB | kCMC_RAMC0 | kCMC_RAMC1 | kCMC_RAMD0 | kCMC_RAMD1 |       \
-       kCMC_RAME0 | kCMC_RAME1 | kCMC_RAMF0 | kCMC_RAMF1 | kCMC_RAMG0_RAMG1 | kCMC_RAMG2_RAMG3 | kCMC_RAMH0_RAMH1 | \
-       kCMC_LPCAC | kCMC_DMA0_DMA1_PKC | kCMC_USB0 | kCMC_PQ | kCMC_CAN0_CAN1_ENET_USB1 | kCMC_FlexSPI))
 
-#define CMC_SRAMRET_RESERVED_MASK (CMC_SRAMDIS_RESERVED_MASK)
-#endif /* FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG */
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -127,10 +120,11 @@ void CMC_ConfigResetPin(CMC_Type *base, const cmc_reset_pin_config_t *config)
  */
 void CMC_PowerOffSRAMAllMode(CMC_Type *base, uint32_t mask)
 {
-    uint32_t reg = base->SRAMDIS[0];
+    uint32_t reg       = base->SRAMDIS[0];
+    uint32_t maskToSet = mask & ((uint32_t)kCMC_AllSramArrays);
 
-    reg &= ~(CMC_SRAMDIS_DIS_MASK | CMC_SRAMDIS_RESERVED_MASK);
-    reg |= CMC_SRAMDIS_DIS(mask);
+    reg &= ~((uint32_t)kCMC_AllSramArrays);
+    reg |= CMC_SRAMDIS_DIS(maskToSet);
     base->SRAMDIS[0] = reg;
 }
 
@@ -145,14 +139,36 @@ void CMC_PowerOffSRAMAllMode(CMC_Type *base, uint32_t mask)
  */
 void CMC_PowerOffSRAMLowPowerOnly(CMC_Type *base, uint32_t mask)
 {
-    uint32_t reg = base->SRAMRET[0];
+    uint32_t reg       = base->SRAMRET[0];
+    uint32_t maskToSet = mask & ((uint32_t)kCMC_AllSramArrays);
 
-    reg &= ~(CMC_SRAMRET_RET_MASK | CMC_SRAMRET_RESERVED_MASK);
-    reg |= CMC_SRAMRET_RET(mask);
+    reg &= ~((uint32_t)kCMC_AllSramArrays);
+    reg |= CMC_SRAMRET_RET(maskToSet);
     base->SRAMRET[0] = reg;
 }
 #endif /* FSL_FEATURE_MCX_CMC_HAS_SRAM_DIS_REG */
 
+#if (defined(FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE) && FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE)
+/*!
+ * brief Configs the low power mode of the on-chip flash memory.
+ *
+ * This function configs the low power mode of the on-chip flash memory.
+ *
+ * param base CMC peripheral base address.
+ * param doze true: Flash is disabled while core is sleeping
+ *             false: No effect.
+ * param disable true: Flash memory is placed in low power state.
+ *                false: No effect.
+ */
+void CMC_ConfigFlashMode(CMC_Type *base, bool doze, bool disable)
+{
+    uint32_t reg = 0UL;
+
+    reg |= (disable ? CMC_FLASHCR_FLASHDIS(1U) : CMC_FLASHCR_FLASHDIS(0U)) |
+           (doze ? CMC_FLASHCR_FLASHDOZE(1U) : CMC_FLASHCR_FLASHDOZE(0U));
+    base->FLASHCR = reg;
+}
+#else
 /*!
  * brief Configs the low power mode of the on-chip flash memory.
  *
@@ -178,6 +194,7 @@ void CMC_ConfigFlashMode(CMC_Type *base, bool wake, bool doze, bool disable)
            (wake ? CMC_FLASHCR_FLASHWAKE(1U) : CMC_FLASHCR_FLASHWAKE(0U));
     base->FLASHCR = reg;
 }
+#endif /* FSL_FEATURE_MCX_CMC_HAS_NO_FLASHCR_WAKE */
 
 /*!
  * brief Prepares to enter stop modes.
@@ -274,7 +291,7 @@ void CMC_EnterLowPowerMode(CMC_Type *base, const cmc_power_domain_config_t *conf
         CMC_SetMAINPowerMode(base, config->main_domain);
 #if (CMC_PMCTRL_COUNT > 1U)
         CMC_SetWAKEPowerMode(base, config->wake_domain);
-#endif /* (CMC_PMCTRL_COUNT > 1U) */
+#endif  /* (CMC_PMCTRL_COUNT > 1U) */
 
         /* Before execute WFI instruction read back the last register to
          * ensure all registers writes have completed. */

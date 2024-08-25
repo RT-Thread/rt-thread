@@ -55,6 +55,11 @@ extern "C" {
 #define UART1_TX_DMA_CLOCK              CRM_DMA1_PERIPH_CLOCK
 #define UART1_TX_DMA_CHANNEL            DMA1_CHANNEL4
 #define UART1_TX_DMA_IRQ                DMA1_Channel4_IRQn
+#elif defined(BSP_I2C2_TX_USING_DMA) && !defined(I2C2_TX_DMA_CHANNEL)
+#define I2C2_TX_DMA_IRQHandler          DMA1_Channel4_IRQHandler
+#define I2C2_TX_DMA_CLOCK               CRM_DMA1_PERIPH_CLOCK
+#define I2C2_TX_DMA_CHANNEL             DMA1_CHANNEL4
+#define I2C2_TX_DMA_IRQ                 DMA1_Channel4_IRQn
 #endif
 
 /* DMA1 channel5 */
@@ -68,6 +73,11 @@ extern "C" {
 #define UART1_RX_DMA_CLOCK              CRM_DMA1_PERIPH_CLOCK
 #define UART1_RX_DMA_CHANNEL            DMA1_CHANNEL5
 #define UART1_RX_DMA_IRQ                DMA1_Channel5_IRQn
+#elif defined(BSP_I2C2_RX_USING_DMA) && !defined(I2C2_RX_DMA_CHANNEL)
+#define I2C2_RX_DMA_IRQHandler          DMA1_Channel5_IRQHandler
+#define I2C2_RX_DMA_CLOCK               CRM_DMA1_PERIPH_CLOCK
+#define I2C2_RX_DMA_CHANNEL             DMA1_CHANNEL5
+#define I2C2_RX_DMA_IRQ                 DMA1_Channel5_IRQn
 #endif
 
 /* DMA1 channel6 */
@@ -76,6 +86,11 @@ extern "C" {
 #define UART2_RX_DMA_CLOCK              CRM_DMA1_PERIPH_CLOCK
 #define UART2_RX_DMA_CHANNEL            DMA1_CHANNEL6
 #define UART2_RX_DMA_IRQ                DMA1_Channel6_IRQn
+#elif defined(BSP_I2C1_TX_USING_DMA) && !defined(I2C1_TX_DMA_CHANNEL)
+#define I2C1_TX_DMA_IRQHandler          DMA1_Channel6_IRQHandler
+#define I2C1_TX_DMA_CLOCK               CRM_DMA1_PERIPH_CLOCK
+#define I2C1_TX_DMA_CHANNEL             DMA1_CHANNEL6
+#define I2C1_TX_DMA_IRQ                 DMA1_Channel6_IRQn
 #endif
 
 /* DMA1 channel7 */
@@ -84,6 +99,11 @@ extern "C" {
 #define UART2_TX_DMA_CLOCK              CRM_DMA1_PERIPH_CLOCK
 #define UART2_TX_DMA_CHANNEL            DMA1_CHANNEL7
 #define UART2_TX_DMA_IRQ                DMA1_Channel7_IRQn
+#elif defined(BSP_I2C1_RX_USING_DMA) && !defined(I2C1_RX_DMA_CHANNEL)
+#define I2C1_RX_DMA_IRQHandler          DMA1_Channel7_IRQHandler
+#define I2C1_RX_DMA_CLOCK               CRM_DMA1_PERIPH_CLOCK
+#define I2C1_RX_DMA_CHANNEL             DMA1_CHANNEL7
+#define I2C1_RX_DMA_IRQ                 DMA1_Channel7_IRQn
 #endif
 
 /* DMA2 channel3 */

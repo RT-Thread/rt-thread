@@ -14,6 +14,7 @@
 #include "mmio.h"
 
 #define SARADC_BASE                         0x030F0000
+#define RTC_ADC_BASE                        0x0502C000
 #define SARADC_CH_MAX                       3
 
 #define SARADC_CTRL_OFFSET                  0x04

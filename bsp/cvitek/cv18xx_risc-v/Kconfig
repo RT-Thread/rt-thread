@@ -20,6 +20,7 @@ config BSP_USING_CV18XX
     select RT_USING_CACHE
     select ARCH_MM_MMU
     select RT_USING_DEVICE_OPS
+    select ARCH_REMAP_KERNEL if RT_USING_SMART
     default y
 
 config C906_PLIC_PHY_ADDR
@@ -28,17 +29,13 @@ config C906_PLIC_PHY_ADDR
 
 config IRQ_MAX_NR
     int
-    default 64
+    default 101
 
-config TIMER_CLK_FREQ
-    int
-    default 25000000
-
-config GPIO_IRQ_BASE
+config BSP_GPIO_IRQ_BASE
     int
     default 60
 
-config SYS_GPIO_IRQ_BASE
+config BSP_SYS_GPIO_IRQ_BASE
     int
     default 70
 
@@ -74,4 +71,19 @@ choice
         select SOC_TYPE_SG2002
         bool "milkv-duo256m-spinor"
 
+endchoice
+
+choice BSP_ROOTFS_TYPE
+    prompt "rootfs type"
+    default BSP_ROOTFS_TYPE_ROMFS
+
+    config BSP_ROOTFS_TYPE_ROMFS
+        bool "ROMFS"
+        select RT_USING_DFS_ROMFS
+
+    config BSP_ROOTFS_TYPE_CROMFS
+        bool "CROMFS"
+        select RT_USING_DFS_CROMFS
+        select PKG_USING_ZLIB
+        select PKG_USING_ZLIB_LATEST_VERSION
 endchoice

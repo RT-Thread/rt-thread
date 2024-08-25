@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_spi.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the spi firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -560,6 +558,69 @@ flag_status spi_i2s_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
 }
 
 /**
+  * @brief  get interrupt flag of the specified spi/i2s peripheral.
+  * @param  spi_x: select the spi/i2s peripheral.
+  *         this parameter can be one of the following values:
+  *         SPI1, SPI2
+  * @param  spi_i2s_flag: select the spi/i2s flag
+  *         this parameter can be one of the following values:
+  *         - SPI_I2S_RDBF_FLAG
+  *         - SPI_I2S_TDBE_FLAG
+  *         - I2S_TUERR_FLAG  (this flag only use in i2s mode)
+  *         - SPI_CCERR_FLAG  (this flag only use in spi mode)
+  *         - SPI_MMERR_FLAG  (this flag only use in spi mode)
+  *         - SPI_I2S_ROERR_FLAG
+  * @retval the new state of spi/i2s flag
+  */
+flag_status spi_i2s_interrupt_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
+{
+  flag_status status = RESET;
+
+  switch(spi_i2s_flag)
+  {
+    case SPI_I2S_RDBF_FLAG:
+      if(spi_x->sts_bit.rdbf && spi_x->ctrl2_bit.rdbfie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_I2S_TDBE_FLAG:
+      if(spi_x->sts_bit.tdbe && spi_x->ctrl2_bit.tdbeie)
+      {
+        status = SET;
+      }
+      break;
+    case I2S_TUERR_FLAG:
+      if(spi_x->sts_bit.tuerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_CCERR_FLAG:
+      if(spi_x->sts_bit.ccerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_MMERR_FLAG:
+      if(spi_x->sts_bit.mmerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_I2S_ROERR_FLAG:
+      if(spi_x->sts_bit.roerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    default:
+      break;
+  };
+  return status;
+}
+
+/**
   * @brief  clear flag of the specified spi/i2s peripheral.
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
@@ -579,23 +640,21 @@ flag_status spi_i2s_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
   */
 void spi_i2s_flag_clear(spi_type* spi_x, uint32_t spi_i2s_flag)
 {
-  volatile uint32_t temp = 0;
-  temp = temp;
   if(spi_i2s_flag == SPI_CCERR_FLAG)
     spi_x->sts = ~SPI_CCERR_FLAG;
   else if(spi_i2s_flag == SPI_I2S_RDBF_FLAG)
-    temp = REG32(&spi_x->dt);
+    UNUSED(spi_x->dt);
   else if(spi_i2s_flag == I2S_TUERR_FLAG)
-    temp = REG32(&spi_x->sts);
+    UNUSED(spi_x->sts);
   else if(spi_i2s_flag == SPI_MMERR_FLAG)
   {
-    temp = REG32(&spi_x->sts);
+    UNUSED(spi_x->sts);
     spi_x->ctrl1 = spi_x->ctrl1;
   }
   else if(spi_i2s_flag == SPI_I2S_ROERR_FLAG)
   {
-    temp = REG32(&spi_x->dt);
-    temp = REG32(&spi_x->sts);
+    UNUSED(spi_x->dt);
+    UNUSED(spi_x->sts);
   }
 }
 

@@ -12,7 +12,7 @@
 #include <board.h>
 
 #include "drv_config.h"
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 #include <pwm_tmr_config.h>
 
 #if defined(BSP_USING_PWM)

@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -102,7 +101,7 @@ typedef struct __I2S_HandleTypeDef
 
   I2S_InitTypeDef            Init;                 /*!< I2S communication parameters */
 
-  uint16_t                   *pTxBuffPtr;          /*!< Pointer to I2S Tx transfer buffer */
+  const uint16_t             *pTxBuffPtr;          /*!< Pointer to I2S Tx transfer buffer */
 
   __IO uint16_t              TxXferSize;           /*!< I2S Tx transfer size */
 
@@ -122,7 +121,7 @@ typedef struct __I2S_HandleTypeDef
   void (*RxISR)(struct __I2S_HandleTypeDef *hi2s); /*!< function pointer on Rx ISR */
 
   void (*TxISR)(struct __I2S_HandleTypeDef *hi2s); /*!< function pointer on Tx ISR */
-  
+
   DMA_HandleTypeDef          *hdmatx;              /*!< I2S Tx DMA handle parameters */
 
   DMA_HandleTypeDef          *hdmarx;              /*!< I2S Rx DMA handle parameters */
@@ -324,12 +323,12 @@ typedef  void (*pI2S_CallbackTypeDef)(I2S_HandleTypeDef *hi2s); /*!< pointer to 
 /** @defgroup I2S_Flags_Definition I2S Flags Definition
   * @{
   */
-#define I2S_FLAG_RXP                     SPI_SR_RXP       /* I2S status flag : Rx-Packet available flag                 */
-#define I2S_FLAG_TXP                     SPI_SR_TXP       /* I2S status flag : Tx-Packet space available flag           */
-#define I2S_FLAG_DXP                     SPI_SR_DXP       /* I2S status flag : Dx-Packet space available flag           */
-#define I2S_FLAG_UDR                     SPI_SR_UDR       /* I2S Error flag  : Underrun flag                            */
-#define I2S_FLAG_OVR                     SPI_SR_OVR       /* I2S Error flag  : Overrun flag                             */
-#define I2S_FLAG_FRE                     SPI_SR_TIFRE     /* I2S Error flag  : TI mode frame format error flag          */
+#define I2S_FLAG_RXP                     SPI_SR_RXP       /* I2S status flag : Rx-Packet available flag              */
+#define I2S_FLAG_TXP                     SPI_SR_TXP       /* I2S status flag : Tx-Packet space available flag        */
+#define I2S_FLAG_DXP                     SPI_SR_DXP       /* I2S status flag : Dx-Packet space available flag        */
+#define I2S_FLAG_UDR                     SPI_SR_UDR       /* I2S Error flag  : Underrun flag                         */
+#define I2S_FLAG_OVR                     SPI_SR_OVR       /* I2S Error flag  : Overrun flag                          */
+#define I2S_FLAG_FRE                     SPI_SR_TIFRE     /* I2S Error flag  : TI mode frame format error flag       */
 
 #define I2S_FLAG_MASK                    (SPI_SR_RXP | SPI_SR_TXP | SPI_SR_DXP |SPI_SR_UDR | SPI_SR_OVR | SPI_SR_TIFRE)
 /**
@@ -357,7 +356,7 @@ typedef  void (*pI2S_CallbackTypeDef)(I2S_HandleTypeDef *hi2s); /*!< pointer to 
                                                                   } while(0)
 #else
 #define __HAL_I2S_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_I2S_STATE_RESET)
-#endif
+#endif /* USE_HAL_I2S_REGISTER_CALLBACKS */
 
 /** @brief  Enable the specified SPI peripheral (in I2S mode).
   * @param  __HANDLE__ specifies the I2S Handle.
@@ -415,7 +414,8 @@ typedef  void (*pI2S_CallbackTypeDef)(I2S_HandleTypeDef *hi2s); /*!< pointer to 
   *            @arg I2S_IT_ERR : Error interrupt enable
   * @retval The new state of __IT__ (TRUE or FALSE).
   */
-#define __HAL_I2S_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->IER & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
+#define __HAL_I2S_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->IER\
+                                                              & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /** @brief  Check whether the specified I2S flag is set or not.
   * @param  __HANDLE__ specifies the I2S Handle.
@@ -469,7 +469,8 @@ void HAL_I2S_MspDeInit(I2S_HandleTypeDef *hi2s);
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_I2S_REGISTER_CALLBACKS == 1UL)
-HAL_StatusTypeDef HAL_I2S_RegisterCallback(I2S_HandleTypeDef *hi2s, HAL_I2S_CallbackIDTypeDef CallbackID, pI2S_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_I2S_RegisterCallback(I2S_HandleTypeDef *hi2s, HAL_I2S_CallbackIDTypeDef CallbackID,
+                                           pI2S_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_I2S_UnRegisterCallback(I2S_HandleTypeDef *hi2s, HAL_I2S_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_I2S_REGISTER_CALLBACKS */
 /**
@@ -481,24 +482,24 @@ HAL_StatusTypeDef HAL_I2S_UnRegisterCallback(I2S_HandleTypeDef *hi2s, HAL_I2S_Ca
   */
 /* I/O operation functions  ***************************************************/
 /* Blocking mode: Polling */
-HAL_StatusTypeDef HAL_I2S_Transmit(I2S_HandleTypeDef *hi2s, uint16_t *pData, uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_I2S_Transmit(I2S_HandleTypeDef *hi2s, const uint16_t *pData, uint16_t Size, uint32_t Timeout);
 HAL_StatusTypeDef HAL_I2S_Receive(I2S_HandleTypeDef *hi2s, uint16_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_I2SEx_TransmitReceive(I2S_HandleTypeDef *hi2s, uint16_t *pTxData, uint16_t *pRxData,
+HAL_StatusTypeDef HAL_I2SEx_TransmitReceive(I2S_HandleTypeDef *hi2s, const uint16_t *pTxData, uint16_t *pRxData,
                                             uint16_t Size, uint32_t Timeout);
 
 /* Non-Blocking mode: Interrupt */
-HAL_StatusTypeDef HAL_I2S_Transmit_IT(I2S_HandleTypeDef *hi2s, uint16_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_I2S_Transmit_IT(I2S_HandleTypeDef *hi2s, const uint16_t *pData, uint16_t Size);
 HAL_StatusTypeDef HAL_I2S_Receive_IT(I2S_HandleTypeDef *hi2s, uint16_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_I2SEx_TransmitReceive_IT(I2S_HandleTypeDef *hi2s, uint16_t *pTxData, uint16_t *pRxData,
+HAL_StatusTypeDef HAL_I2SEx_TransmitReceive_IT(I2S_HandleTypeDef *hi2s, const uint16_t *pTxData, uint16_t *pRxData,
                                                uint16_t Size);
 
 void HAL_I2S_IRQHandler(I2S_HandleTypeDef *hi2s);
 
 /* Non-Blocking mode: DMA */
-HAL_StatusTypeDef HAL_I2S_Transmit_DMA(I2S_HandleTypeDef *hi2s, uint16_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_I2S_Transmit_DMA(I2S_HandleTypeDef *hi2s, const uint16_t *pData, uint16_t Size);
 HAL_StatusTypeDef HAL_I2S_Receive_DMA(I2S_HandleTypeDef *hi2s, uint16_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_I2SEx_TransmitReceive_DMA(I2S_HandleTypeDef *hi2s, uint16_t *pTxData, uint16_t *pRxData,
-                                               uint16_t Size);
+HAL_StatusTypeDef HAL_I2SEx_TransmitReceive_DMA(I2S_HandleTypeDef *hi2s, const uint16_t *pTxData, uint16_t *pRxData,
+                                                uint16_t Size);
 
 HAL_StatusTypeDef HAL_I2S_DMAPause(I2S_HandleTypeDef *hi2s);
 HAL_StatusTypeDef HAL_I2S_DMAResume(I2S_HandleTypeDef *hi2s);
@@ -520,8 +521,8 @@ void HAL_I2S_ErrorCallback(I2S_HandleTypeDef *hi2s);
   * @{
   */
 /* Peripheral Control and State functions  ************************************/
-HAL_I2S_StateTypeDef HAL_I2S_GetState(I2S_HandleTypeDef *hi2s);
-uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
+HAL_I2S_StateTypeDef HAL_I2S_GetState(const I2S_HandleTypeDef *hi2s);
+uint32_t HAL_I2S_GetError(const I2S_HandleTypeDef *hi2s);
 /**
   * @}
   */
@@ -537,6 +538,15 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
   * @{
   */
 
+/**
+  * @}
+  */
+
+/* Private Functions ---------------------------------------------------------*/
+/** @defgroup I2S_Private_Functions I2S Private Functions
+  * @{
+  */
+/* Private functions are defined in stm32h7xx_hal_i2S.c file */
 /**
   * @}
   */
@@ -557,7 +567,9 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
   *            @arg I2S_FLAG_FRE : TI mode frame format error flag
   * @retval SET or RESET.
   */
-#define I2S_CHECK_FLAG(__SR__, __FLAG__)         ((((__SR__) & ((__FLAG__) & I2S_FLAG_MASK)) == ((__FLAG__) & I2S_FLAG_MASK)) ? SET : RESET)
+#define I2S_CHECK_FLAG(__SR__, __FLAG__)         ((((__SR__)\
+                                                    & ((__FLAG__) & I2S_FLAG_MASK)) == ((__FLAG__) & I2S_FLAG_MASK))\
+                                                  ? SET : RESET)
 
 /** @brief  Check whether the specified SPI Interrupt is set or not.
   * @param  __IER__  copy of I2S IER register.
@@ -571,7 +583,8 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
   *            @arg I2S_IT_ERR : Error interrupt enable
   * @retval SET or RESET.
   */
-#define I2S_CHECK_IT_SOURCE(__IER__, __INTERRUPT__)      ((((__IER__) & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
+#define I2S_CHECK_IT_SOURCE(__IER__, __INTERRUPT__)      ((((__IER__)\
+                                                            & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /** @brief  Checks if I2S Mode parameter is in allowed range.
   * @param  __MODE__ specifies the I2S Mode.
@@ -592,9 +605,9 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
 #define IS_I2S_SLAVE(__MODE__)                      (((__MODE__) == I2S_MODE_SLAVE_TX)                  || \
                                                      ((__MODE__) == I2S_MODE_SLAVE_RX)                  || \
                                                      ((__MODE__) == I2S_MODE_SLAVE_FULLDUPLEX))
-                                                     
+
 #define IS_I2S_FULLDUPLEX(__MODE__)                 (((__MODE__) == I2S_MODE_MASTER_FULLDUPLEX)         || \
-                                                     ((__MODE__) == I2S_MODE_SLAVE_FULLDUPLEX))                                                  
+                                                     ((__MODE__) == I2S_MODE_SLAVE_FULLDUPLEX))
 
 #define IS_I2S_STANDARD(__STANDARD__)               (((__STANDARD__) == I2S_STANDARD_PHILIPS)            || \
                                                      ((__STANDARD__) == I2S_STANDARD_MSB)                || \
@@ -612,7 +625,7 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
 
 #define IS_I2S_AUDIO_FREQ(__FREQ__)                ((((__FREQ__) >= I2S_AUDIOFREQ_8K)                    && \
                                                      ((__FREQ__) <= I2S_AUDIOFREQ_192K))                 || \
-                                                     ((__FREQ__) == I2S_AUDIOFREQ_DEFAULT))
+                                                    ((__FREQ__) == I2S_AUDIOFREQ_DEFAULT))
 
 #define IS_I2S_CPOL(__CPOL__)                       (((__CPOL__) == I2S_CPOL_LOW)                        || \
                                                      ((__CPOL__) == I2S_CPOL_HIGH))
@@ -648,4 +661,3 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
 
 #endif /* STM32H7xx_HAL_I2S_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

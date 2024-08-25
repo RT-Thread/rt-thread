@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_cmp.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the gpio firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -95,7 +93,7 @@ void cmp_init(cmp_sel_type cmp_sel, cmp_init_type* cmp_init_struct)
 void cmp_default_para_init(cmp_init_type *cmp_init_struct)
 {
   /* reset cmp init structure parameters values */
-  cmp_init_struct->cmp_non_inverting = CMP_NON_INVERTING_PA1;
+  cmp_init_struct->cmp_non_inverting = CMP_NON_INVERTING_PA1_PA3;
   cmp_init_struct->cmp_inverting = CMP_INVERTING_1_4VREFINT;
   cmp_init_struct->cmp_speed = CMP_SPEED_FAST;
   cmp_init_struct->cmp_output = CMP_OUTPUT_NONE;
@@ -171,6 +169,16 @@ void cmp_write_protect_enable(cmp_sel_type cmp_sel)
   {
     CMP->ctrlsts1_bit.cmp2wp = TRUE;
   }
+}
+
+/**
+  * @brief  enable or disable double comparator mode
+  * @param  new_state (TRUE or FALSE)
+  * @retval none
+  */
+void cmp_double_mode_enable(confirm_state new_state)
+{
+  CMP->ctrlsts1_bit.dcmpen = new_state;
 }
 
 /**

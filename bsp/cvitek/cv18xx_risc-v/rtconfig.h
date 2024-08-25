@@ -11,12 +11,14 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_HOOKLIST
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
 
 /* kservice optimization */
 
@@ -51,6 +53,7 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
@@ -439,34 +442,22 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-/* end of Network Utilities */
-
-/* RT-Thread Smart */
-
-/* end of RT-Thread Smart */
-/* end of Privated Packages of RealThread */
-
 /* General Drivers Configuration */
 
 #define BSP_USING_UART
 #define BSP_USING_UART0
 #define BSP_UART0_RX_PINNAME "UART0_RX"
 #define BSP_UART0_TX_PINNAME "UART0_TX"
-#define UART_IRQ_BASE 44
+#define BSP_UART_IRQ_BASE 44
 /* end of General Drivers Configuration */
 #define BSP_USING_CV18XX
 #define C906_PLIC_PHY_ADDR 0x70000000
-#define IRQ_MAX_NR 64
-#define TIMER_CLK_FREQ 25000000
-#define GPIO_IRQ_BASE 60
-#define SYS_GPIO_IRQ_BASE 70
+#define IRQ_MAX_NR 101
+#define BSP_GPIO_IRQ_BASE 60
+#define BSP_SYS_GPIO_IRQ_BASE 70
 #define __STACKSIZE__ 8192
 #define SOC_TYPE_SG2002
 #define BOARD_TYPE_MILKV_DUO256M
+#define BSP_ROOTFS_TYPE_ROMFS
 
 #endif

@@ -15,7 +15,7 @@
 
 #include "ch32v10x.h"
 #include <rthw.h>
-#include "drivers/pin.h"
+#include "drivers/dev_pin.h"
 #define CH32V10X_PIN_NUMBERS   64
 
 /* board configuration */

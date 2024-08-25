@@ -8,9 +8,18 @@
 
 #include "fsl_dac.h"
 
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
 /* Component ID definition, used by tools. */
 #ifndef FSL_COMPONENT_ID
 #define FSL_COMPONENT_ID "platform.drivers.dac_1"
+#endif
+
+#if defined(DAC_RSTS)
+#define DAC_RESETS_ARRAY DAC_RSTS
+#elif defined(DAC_RSTS_N)
+#define DAC_RESETS_ARRAY DAC_RSTS_N
 #endif
 
 /*******************************************************************************
@@ -33,6 +42,11 @@ static LPDAC_Type *const s_dacBases[] = LPDAC_BASE_PTRS;
 /*! @brief Pointers to DAC clocks for each instance. */
 static const clock_ip_name_t s_dacClocks[] = LPDAC_CLOCKS;
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(DAC_RESETS_ARRAY)
+/* Reset array */
+static const reset_ip_name_t s_dacResets[] = DAC_RESETS_ARRAY;
+#endif
 
 /*******************************************************************************
  * Code
@@ -73,6 +87,10 @@ void DAC_Init(LPDAC_Type *base, const dac_config_t *config)
     /* Enable the clock. */
     CLOCK_EnableClock(s_dacClocks[DAC_GetInstance(base)]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(DAC_RESETS_ARRAY)
+    RESET_ReleasePeripheralReset(s_dacResets[DAC_GetInstance(base)]);
+#endif
 
     /* Reset the logic. */
     DAC_SetReset(base, kDAC_ResetLogic);

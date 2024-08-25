@@ -461,8 +461,7 @@ typedef enum
   CRM_CLKOUT_ADC                         = 0x11, /*!< output adcclk to clkout pin */
   CRM_CLKOUT_HICK                        = 0x12, /*!< output high speed internal clock to clkout pin */
   CRM_CLKOUT_LICK                        = 0x13, /*!< output low speed internal clock to clkout pin */
-  CRM_CLKOUT_LEXT                        = 0x14, /*!< output low speed external crystal to clkout pin */
-  CRM_CLKOUT_USBHS                       = 0x15  /*!< output usbhsclk to clkout pin */
+  CRM_CLKOUT_LEXT                        = 0x14  /*!< output low speed external crystal to clkout pin */
 } crm_clkout_select_type;
 
 /**
@@ -1179,6 +1178,7 @@ void crm_reset(void);
 void crm_lext_bypass(confirm_state new_state);
 void crm_hext_bypass(confirm_state new_state);
 flag_status crm_flag_get(uint32_t flag);
+flag_status crm_interrupt_flag_get(uint32_t flag);
 error_status crm_hext_stable_wait(void);
 void crm_hick_clock_trimming_set(uint8_t trim_value);
 void crm_hick_clock_calibration_set(uint8_t cali_value);

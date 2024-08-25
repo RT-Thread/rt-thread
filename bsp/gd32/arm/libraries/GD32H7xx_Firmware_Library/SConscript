@@ -1,0 +1,69 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+
+src = Split('''
+CMSIS/GD/GD32H7xx/Source/system_gd32h7xx.c
+GD32H7xx_standard_peripheral/Source/gd32h7xx_gpio.c
+GD32H7xx_standard_peripheral/Source/gd32h7xx_rcu.c
+GD32H7xx_standard_peripheral/Source/gd32h7xx_exti.c
+GD32H7xx_standard_peripheral/Source/gd32h7xx_misc.c
+GD32H7xx_standard_peripheral/Source/gd32h7xx_syscfg.c
+GD32H7xx_standard_peripheral/Source/gd32h7xx_pmu.c
+''')
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_usart.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_i2c.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_spi.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_can.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_enet.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_adc.c']
+
+if GetDepend(['RT_USING_DAC']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_dac.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_rtc.c']
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_pmu.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_wwdgt.c']
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_fwdgt.c']
+
+if GetDepend(['RT_USING_SDIO']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_sdio.c']
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_dma.c']
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_fmc.c']
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_exmc.c']
+
+if GetDepend(['BSP_USING_TLI']):
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_tli.c']
+    src += ['GD32H7xx_standard_peripheral/Source/gd32h7xx_ipa.c']
+
+path = [
+    cwd + '/CMSIS/GD/GD32H7xx/Include',
+    cwd + '/CMSIS',
+    cwd + '/GD32H7xx_standard_peripheral/Include',]
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

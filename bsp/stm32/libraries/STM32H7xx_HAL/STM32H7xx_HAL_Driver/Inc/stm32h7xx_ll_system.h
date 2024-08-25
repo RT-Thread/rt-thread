@@ -3,6 +3,18 @@
   * @file    stm32h7xx_ll_system.h
   * @author  MCD Application Team
   * @brief   Header file of SYSTEM LL module.
+  *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   @verbatim
   ==============================================================================
                      ##### How to use this driver #####
@@ -15,17 +27,6 @@
       (+) Access to SYSCFG registers
 
   @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
   ******************************************************************************
   */
 
@@ -541,8 +542,8 @@ __STATIC_INLINE void LL_SYSCFG_DisableAnalogBooster(void)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C1
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C2 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C3
-  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C4(*)
-  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C5(*)
+  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C4 (*)
+  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C5 (*)
   *
   *         (*) value not defined in all devices
   * @retval None
@@ -2439,4 +2440,3 @@ __STATIC_INLINE uint32_t LL_ART_GetBaseAddress(void)
 
 #endif /* __STM32H7xx_LL_SYSTEM_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

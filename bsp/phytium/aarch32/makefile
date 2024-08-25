@@ -37,8 +37,8 @@ endif
 
 boot:
 	make all
-	cp rtthread_a32.elf /mnt/d/tftboot
-	cp rtthread_a32.bin /mnt/d/tftboot
+	cp rtthread_a32.elf /mnt/d/tftpboot
+	cp rtthread_a32.bin /mnt/d/tftpboot
 
 debug:
 	@$(OD) -D rtthread_a32.elf > rtthread_a32.asm

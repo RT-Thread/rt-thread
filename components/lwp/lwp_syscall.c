@@ -461,7 +461,7 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
 /* syscall: "lseek" ret: "off_t" args: "int" "off_t" "int" */
 size_t sys_lseek(int fd, size_t offset, int whence)
 {
-    size_t ret = lseek(fd, offset, whence);
+    ssize_t ret = lseek(fd, offset, whence);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -1229,7 +1229,7 @@ void *sys_mmap2(void *addr, size_t length, int prot,
         rc = (sysret_t)lwp_mmap2(lwp_self(), addr, length, prot, flags, fd, pgoffset);
     }
 
-    return (char *)rc + offset;
+    return rc < 0 ? (char *)rc : (char *)rc + offset;
 }
 
 sysret_t sys_munmap(void *addr, size_t length)
@@ -1832,6 +1832,7 @@ long _sys_clone(void *arg[])
     rt_thread_t thread = RT_NULL;
     rt_thread_t self = RT_NULL;
     int tid = 0;
+    rt_err_t err;
 
     unsigned long flags = 0;
     void *user_stack = RT_NULL;
@@ -1935,6 +1936,9 @@ long _sys_clone(void *arg[])
     rt_thread_startup(thread);
     return (long)tid;
 fail:
+    err = GET_ERRNO();
+    RT_ASSERT(err < 0);
+
     lwp_tid_put(tid);
     if (thread)
     {
@@ -1944,7 +1948,7 @@ fail:
     {
         lwp_ref_dec(lwp);
     }
-    return GET_ERRNO();
+    return (long)err;
 }
 
 rt_weak long sys_clone(void *arg[])
@@ -5784,13 +5788,30 @@ sysret_t sys_mount(char *source, char *target,
     {
         copy_source = NULL;
     }
-    ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
 
-    if (ret < 0)
+    struct stat buf;
+
+    if (copy_source && stat(copy_source, &buf) && S_ISBLK(buf.st_mode))
     {
-        ret = -rt_get_errno();
+        char *dev_fullpath = dfs_normalize_path(RT_NULL, copy_source);
+        rt_free(copy_source);
+        RT_ASSERT(rt_strncmp(dev_fullpath, "/dev/", sizeof("/dev/") - 1) == 0);
+        ret = dfs_mount(dev_fullpath + sizeof("/dev/") - 1, copy_target, copy_filesystemtype, 0, tmp);
+        if (ret < 0)
+        {
+            ret = -rt_get_errno();
+        }
+        rt_free(dev_fullpath);
     }
-    rt_free(copy_source);
+    else
+    {
+        ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
+        if (ret < 0)
+        {
+            ret = -rt_get_errno();
+        }
+        rt_free(copy_source);
+    }
 
     return ret;
 }

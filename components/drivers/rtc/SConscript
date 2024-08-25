@@ -7,11 +7,11 @@ CPPPATH = [cwd + '/../include']
 group = []
 
 if GetDepend(['RT_USING_RTC']):
-    src = src + ['rtc.c']
+    src = src + ['dev_rtc.c']
     if GetDepend(['RT_USING_ALARM']):
-        src = src + ['alarm.c']
+        src = src + ['dev_alarm.c']
     if GetDepend(['RT_USING_SOFT_RTC']):
-        src = src + ['soft_rtc.c']
+        src = src + ['dev_soft_rtc.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_RTC'], CPPPATH = CPPPATH)
 

@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_pwc.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 pwc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -60,7 +58,7 @@ extern "C" {
 /**
   * @brief pwc wakeup pin num definition
   */
-#define PWC_WAKEUP_PIN_1                 ((uint32_t)0x00000100) /*!< standby wake-up pin1 */
+#define PWC_WAKEUP_PIN_1                 ((uint32_t)0x00000100) /*!< standby wake-up pin1(pa0) */
 
 /** @defgroup PWC_exported_types
   * @{
@@ -99,15 +97,6 @@ typedef enum
 } pwc_deep_sleep_enter_type;
 
 /**
-  * @brief pwc regulator type
-  */
-typedef enum
-{
-  PWC_REGULATOR_ON                       = 0x00, /*!< voltage regulator state on when deepsleep mode */
-  PWC_REGULATOR_LOW_POWER                = 0x01  /*!< voltage regulator state low power when deepsleep mode */
-} pwc_regulator_type;
-
-/**
   * @brief type define pwc register all
   */
 typedef struct
@@ -120,14 +109,14 @@ typedef struct
     __IO uint32_t ctrl;
     struct
     {
-      __IO uint32_t vrsel                : 1; /* [0] */
+      __IO uint32_t reserved1            : 1; /* [0] */
       __IO uint32_t lpsel                : 1; /* [1] */
       __IO uint32_t clswef               : 1; /* [2] */
       __IO uint32_t clsef                : 1; /* [3] */
       __IO uint32_t pvmen                : 1; /* [4] */
       __IO uint32_t pvmsel               : 3; /* [7:5] */
       __IO uint32_t bpwen                : 1; /* [8] */
-      __IO uint32_t reserved1            : 23;/* [31:9] */
+      __IO uint32_t reserved2            : 23;/* [31:9] */
     } ctrl_bit;
   };
 
@@ -169,7 +158,6 @@ void pwc_flag_clear(uint32_t pwc_flag);
 flag_status pwc_flag_get(uint32_t pwc_flag);
 void pwc_sleep_mode_enter(pwc_sleep_enter_type pwc_sleep_enter);
 void pwc_deep_sleep_mode_enter(pwc_deep_sleep_enter_type pwc_deep_sleep_enter);
-void pwc_voltage_regulate_set(pwc_regulator_type pwc_regulator);
 void pwc_standby_mode_enter(void);
 
 /**

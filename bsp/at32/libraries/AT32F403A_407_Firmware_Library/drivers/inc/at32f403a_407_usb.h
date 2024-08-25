@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_usb.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 usb header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -195,7 +193,6 @@ typedef enum
 #ifndef USB_EPT_MAX_NUM
 #define USB_EPT_MAX_NUM                   8  /*!< usb device support endpoint number */
 #endif
-
 /**
   * @brief endpoint transfer type define
   */
@@ -692,6 +689,7 @@ void usb_remote_wkup_clear(usbd_type *usbx);
 uint16_t usb_buffer_malloc(uint16_t maxpacket);
 void usb_buffer_free(void);
 flag_status usb_flag_get(usbd_type *usbx, uint16_t flag);
+flag_status usb_interrupt_flag_get(usbd_type *usbx, uint16_t flag);
 void usb_flag_clear(usbd_type *usbx, uint16_t flag);
 
 

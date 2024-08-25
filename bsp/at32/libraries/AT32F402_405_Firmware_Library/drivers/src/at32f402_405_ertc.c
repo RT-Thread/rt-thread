@@ -1483,6 +1483,55 @@ flag_status ertc_flag_get(uint32_t flag)
 }
 
 /**
+  * @brief  get interrupt flag status.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - ERTC_ALAF_FLAG: alarm clock a flag.
+  *         - ERTC_ALBF_FLAG: alarm clock b flag.
+  *         - ERTC_WATF_FLAG: wakeup timer flag.
+  *         - ERTC_TSF_FLAG: timestamp flag.
+  *         - ERTC_TP1F_FLAG: tamper detection 1 flag.
+  *         - ERTC_TP2F_FLAG: tamper detection 2 flag.
+  * @retval the new state of flag (SET or RESET).
+  */
+flag_status ertc_interrupt_flag_get(uint32_t flag)
+{
+  __IO uint32_t iten = 0;
+
+  switch(flag)
+  {
+    case ERTC_ALAF_FLAG:
+      iten = ERTC->ctrl_bit.alaien;
+      break;
+    case ERTC_ALBF_FLAG:
+      iten = ERTC->ctrl_bit.albien;
+      break;
+    case ERTC_WATF_FLAG:
+      iten = ERTC->ctrl_bit.watien;
+      break;
+    case ERTC_TSF_FLAG:
+      iten = ERTC->ctrl_bit.tsien;
+      break;
+    case ERTC_TP1F_FLAG:
+    case ERTC_TP2F_FLAG:
+      iten = ERTC->tamp_bit.tpien;
+      break;
+
+    default:
+      break;
+  }
+
+  if(((ERTC->sts & flag) != (uint32_t)RESET) && (iten))
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  clear flag status
   * @param  flag: specifies the flag to clear.
   *         this parameter can be any combination of the following values:

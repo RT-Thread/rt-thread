@@ -608,6 +608,88 @@ flag_status usart_flag_get(usart_type* usart_x, uint32_t flag)
 }
 
 /**
+  * @brief  check whether the specified usart interrupt flag is set or not.
+  * @param  usart_x: select the usart or the uart peripheral.
+  *         this parameter can be one of the following values:
+  *         USART1, USART2, USART3, USART4, USART5, USART6, UART7 or UART8.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - USART_RTODF_FLAG:  receiver time out detection flag
+  *         - USART_CMDF_FLAG:   character match detection flag
+  *         - USART_CTSCF_FLAG:  cts change flag
+  *         - USART_BFF_FLAG:    break frame flag
+  *         - USART_TDBE_FLAG:   transmit data buffer empty flag
+  *         - USART_TDC_FLAG:    transmit data complete flag
+  *         - USART_RDBF_FLAG:   receive data buffer full flag
+  *         - USART_IDLEF_FLAG:  idle flag
+  *         - USART_ROERR_FLAG:  receiver overflow error flag
+  *         - USART_NERR_FLAG:   noise error flag
+  *         - USART_FERR_FLAG:   framing error flag
+  *         - USART_PERR_FLAG:   parity error flag
+  * @retval the new state of usart_flag (SET or RESET).
+  */
+flag_status usart_interrupt_flag_get(usart_type* usart_x, uint32_t flag)
+{
+  flag_status int_status = RESET;
+
+  switch(flag)
+  {
+    case USART_CTSCF_FLAG:
+      int_status = (flag_status)usart_x->ctrl3_bit.ctscfien;
+      break;
+    case USART_BFF_FLAG:
+      int_status = (flag_status)usart_x->ctrl2_bit.bfien;
+      break;
+    case USART_TDBE_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.tdbeien;
+      break;
+    case USART_TDC_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.tdcien;
+      break;
+    case USART_RDBF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.rdbfien;
+      break;
+    case USART_ROERR_FLAG:
+      int_status = (flag_status)(usart_x->ctrl1_bit.rdbfien || usart_x->ctrl3_bit.errien);
+      break;
+    case USART_IDLEF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.idleien;
+      break;
+    case USART_NERR_FLAG:
+    case USART_FERR_FLAG:
+      int_status = (flag_status)usart_x->ctrl3_bit.errien;
+      break;
+    case USART_PERR_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.perrien;
+      break;
+    case USART_RTODF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.retodie;
+      break;
+    case USART_CMDF_FLAG:
+      int_status = (flag_status)usart_x->ctrl1_bit.cmdie;
+      break;
+    default:
+      int_status = RESET;
+      break;
+  }
+
+  if(int_status != SET)
+  {
+    return RESET;
+  }
+
+  if(usart_x->sts & flag)
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+
+/**
   * @brief  clear the usart's pending flags.
   * @param  usart_x: select the usart or the uart peripheral.
   *         this parameter can be one of the following values:
@@ -700,17 +782,17 @@ void usart_id_bit_num_set(usart_type* usart_x, usart_identification_bit_num_type
 }
 
 /**
-  * @brief  enable or disable the usart's de polarity reverse.
+  * @brief  set the usart's de polarity.
   * @param  usart_x: select the usart or the uart peripheral.
   *         this parameter can be one of the following values:
   *         USART1, USART2, USART3
-  * @param  new_state: new state of the irda mode.
-  *         this parameter can be: TRUE or FALSE.
+  * @param  de_polarity: the usart de polarity selection.
+  *         this parameter can be: USART_DE_POLARITY_HIGH or USART_DE_POLARITY_LOW.
   * @retval none
   */
-void usart_de_polarity_reverse(usart_type* usart_x, confirm_state new_state)
+void usart_de_polarity_set(usart_type* usart_x, usart_de_polarity_type de_polarity)
 {
-  usart_x->ctrl3_bit.dep = new_state;
+  usart_x->ctrl3_bit.dep = (uint8_t)de_polarity;
 }
 
 /**

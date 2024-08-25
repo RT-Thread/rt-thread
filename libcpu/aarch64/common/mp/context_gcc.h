@@ -20,16 +20,10 @@
 #include <armv8.h>
 
 .macro RESTORE_CONTEXT_SWITCH
-    /* Set the SP to point to the stack of the task being restored. */
-    mov     sp, x0
-
     _RESTORE_CONTEXT_SWITCH
 .endm
 
 .macro RESTORE_IRQ_CONTEXT
-    /* Set the SP to point to the stack of the task being restored. */
-    mov     sp, x0
-
     ldp     x2, x3, [sp], #0x10  /* SPSR and ELR. */
 
     tst     x3, #0x1f

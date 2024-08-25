@@ -41,9 +41,6 @@ enum _lpi2c_transfer_states
     kWaitForCompletionState,
 };
 
-/*! @brief Typedef for interrupt handler. */
-typedef void (*lpi2c_isr_t)(LPI2C_Type *base, void *handle);
-
 /*!
  * @brief Used for conversion from `lpflexcomm_irq_handler_t` to `lpi2c_master_isr_t`
  */
@@ -126,7 +123,6 @@ void LPI2C_MasterCreateEDMAHandle(LPI2C_Type *base,
 
     /* Look up instance number */
     uint32_t instance = LPI2C_GetInstance(base);
-    lpi2c_to_lpflexcomm_edma_t handler;
 
     /* Clear out the handle. */
     (void)memset(handle, 0, sizeof(*handle));
@@ -139,9 +135,21 @@ void LPI2C_MasterCreateEDMAHandle(LPI2C_Type *base,
     handle->rx                 = rxDmaHandle;
     handle->tx                 = (FSL_FEATURE_LPI2C_HAS_SEPARATE_DMA_RX_TX_REQn(base) > 0) ? txDmaHandle : rxDmaHandle;
 
-    handler.lpi2c_master_handler = LPI2C_MasterTransferEdmaHandleIRQ;
+    if (LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
+        lpi2c_to_lpflexcomm_edma_t handler;
+        handler.lpi2c_master_handler = LPI2C_MasterTransferEdmaHandleIRQ;
 
-    LP_FLEXCOMM_SetIRQHandler(instance, handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPI2C);
+        LP_FLEXCOMM_SetIRQHandler(instance, handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPI2C);
+    }
+    else
+    {
+        /* Save the handle in global variables to support the double weak mechanism. */
+        s_lpi2cMasterHandle[instance] = handle;
+
+        /* Set LPI2C_MasterTransferEdmaHandleIRQ as LPI2C DMA IRQ handler */
+        s_lpi2cMasterIsr = LPI2C_MasterTransferEdmaHandleIRQ;
+    }
 
     /* Enable interrupt in NVIC. */
     (void)EnableIRQ(kLpi2cIrqs[instance]);
@@ -330,10 +338,17 @@ status_t LPI2C_MasterTransferEDMA(LPI2C_Type *base,
 
         if (commandCount != 0U)
         {
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+            /* Create a software TCD, which will be chained after the commands. */
+            EDMA_TcdResetExt(handle->tx->base, tcd);
+            EDMA_TcdSetTransferConfigExt(handle->tx->base, tcd, &transferConfig, NULL);
+            EDMA_TcdEnableInterruptsExt(handle->tx->base, tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#else
             /* Create a software TCD, which will be chained after the commands. */
             EDMA_TcdReset(tcd);
             EDMA_TcdSetTransferConfig(tcd, &transferConfig, NULL);
             EDMA_TcdEnableInterrupts(tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#endif
             linkTcd = tcd;
         }
         else
@@ -371,9 +386,15 @@ status_t LPI2C_MasterTransferEDMA(LPI2C_Type *base,
                enabling rx dma and disabling tx dma, which will be chained onto the commands transfer,
                and create another software TCD of transfering data and chain it onto the last TCD.
                Notice that in this situation assume tx/rx uses same channel */
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+            EDMA_TcdResetExt(handle->rx->base, tcd);
+            EDMA_TcdSetTransferConfigExt(handle->rx->base, tcd, &transferConfig, NULL);
+            EDMA_TcdEnableInterruptsExt(handle->rx->base, tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#else
             EDMA_TcdReset(tcd);
             EDMA_TcdSetTransferConfig(tcd, &transferConfig, NULL);
             EDMA_TcdEnableInterrupts(tcd, (uint32_t)kEDMA_MajorInterruptEnable);
+#endif
 
             transferConfig.srcAddr          = (uint32_t)&lpi2c_edma_RecSetting;
             transferConfig.destAddr         = (uint32_t) & (base->MDER);
@@ -386,8 +407,13 @@ status_t LPI2C_MasterTransferEDMA(LPI2C_Type *base,
 
             edma_tcd_t *tcdSetRxClearTxDMA = (edma_tcd_t *)((uint32_t)(&handle->tcds[2]) & (~ALIGN_32_MASK));
 
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+            EDMA_TcdResetExt(handle->rx->base, tcdSetRxClearTxDMA);
+            EDMA_TcdSetTransferConfigExt(handle->rx->base, tcdSetRxClearTxDMA, &transferConfig, tcd);
+#else
             EDMA_TcdReset(tcdSetRxClearTxDMA);
             EDMA_TcdSetTransferConfig(tcdSetRxClearTxDMA, &transferConfig, tcd);
+#endif
             linkTcd = tcdSetRxClearTxDMA;
         }
     }

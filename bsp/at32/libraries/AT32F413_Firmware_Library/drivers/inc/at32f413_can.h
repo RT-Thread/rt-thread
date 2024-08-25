@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_can.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 can header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -352,7 +350,7 @@ typedef struct
   */
 typedef struct
 {
-  uint16_t baudrate_div;                  /*!< baudrate division,this parameter can be 0x001~0x400.*/
+  uint16_t baudrate_div;                  /*!< baudrate division,this parameter can be 0x001~0x1000.*/
 
   can_rsaw_type rsaw_size;                /*!< resynchronization adjust width */
 
@@ -936,7 +934,10 @@ typedef struct
   */
 
 #define CAN1                             ((can_type *) CAN1_BASE)
+#if defined (AT32F413TBU7) || defined (AT32F413Rx) || defined (AT32F413Cx) || \
+    defined (AT32F413Kx)
 #define CAN2                             ((can_type *) CAN2_BASE)
+#endif
 
 /** @defgroup CAN_exported_functions
   * @{
@@ -964,6 +965,7 @@ can_error_record_type can_error_type_record_get(can_type* can_x);
 uint8_t can_receive_error_counter_get(can_type* can_x);
 uint8_t can_transmit_error_counter_get(can_type* can_x);
 void can_interrupt_enable(can_type* can_x, uint32_t can_int, confirm_state new_state);
+flag_status can_interrupt_flag_get(can_type* can_x, uint32_t can_flag);
 flag_status can_flag_get(can_type* can_x, uint32_t can_flag);
 void can_flag_clear(can_type* can_x, uint32_t can_flag);
 

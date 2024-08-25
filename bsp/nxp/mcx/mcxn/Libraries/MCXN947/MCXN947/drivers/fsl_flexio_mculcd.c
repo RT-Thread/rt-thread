@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2021, 2022 NXP
+ * Copyright 2016-2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -117,7 +117,7 @@ void FLEXIO_MCULCD_GetDefaultConfig(flexio_mculcd_config_t *config)
  * brief Set desired baud rate.
  *
  * param base Pointer to the FLEXIO_MCULCD_Type structure.
- * param baudRate_Bps Desired baud rate.
+ * param baudRate_Bps Desired baud rate in bit-per-second for all data lines combined.
  * param srcClock_Hz FLEXIO clock frequency in Hz.
  * retval kStatus_Success Set successfully.
  * retval kStatus_InvalidArgument Could not set the baud rate.
@@ -125,12 +125,13 @@ void FLEXIO_MCULCD_GetDefaultConfig(flexio_mculcd_config_t *config)
 status_t FLEXIO_MCULCD_SetBaudRate(FLEXIO_MCULCD_Type *base, uint32_t baudRate_Bps, uint32_t srcClock_Hz)
 {
     uint32_t baudRateDiv;
+    uint32_t baudRatePerDataLine;
     uint32_t timerCompare;
     status_t status;
-    uint8_t  baudRatio;
 
-    baudRatio = (FLEXIO_MCULCD_DATA_BUS_WIDTH == 16) ? 2 : 1;
-    baudRateDiv = (srcClock_Hz + 1) / (baudRate_Bps * baudRatio);
+    baudRatePerDataLine = baudRate_Bps / (uint32_t)FLEXIO_MCULCD_DATA_BUS_WIDTH;
+
+    baudRateDiv = (srcClock_Hz + baudRatePerDataLine) / (baudRatePerDataLine * 2U);
 
     if ((0U == baudRateDiv) || (baudRateDiv > (FLEXIO_BAUDRATE_DIV_MASK + 1U)))
     {
@@ -138,6 +139,8 @@ status_t FLEXIO_MCULCD_SetBaudRate(FLEXIO_MCULCD_Type *base, uint32_t baudRate_B
     }
     else
     {
+        baudRateDiv--;
+
         timerCompare = base->flexioBase->TIMCMP[base->timerIndex];
 
         timerCompare = (timerCompare & ~FLEXIO_BAUDRATE_DIV_MASK) | baudRateDiv;
@@ -296,7 +299,7 @@ uint32_t FLEXIO_MCULCD_ReadData(FLEXIO_MCULCD_Type *base)
 }
 
 /*!
- * brief Configures the FLEXIO MCULCD to multiple beats write mode.
+ * brief Configures the FLEXIO MCULCD to single beats write mode.
  *
  * At the begining multiple beats write operation, the FLEXIO MCULCD is configured to
  * multiple beats write mode using this function. After write operation, the configuration
@@ -315,7 +318,7 @@ void FLEXIO_MCULCD_SetSingleBeatWriteConfig(FLEXIO_MCULCD_Type *base)
      */
 
     uint32_t timerCompare;
-    uint32_t tempValue;
+    uint32_t timerControl;
 
     /* Enable the TX Shifter output. */
     base->flexioBase->SHIFTCFG[base->txShifterStartIndex] =
@@ -343,27 +346,23 @@ void FLEXIO_MCULCD_SetSingleBeatWriteConfig(FLEXIO_MCULCD_Type *base)
         FLEXIO_TIMCFG_TIMENA(kFLEXIO_TimerEnableOnTriggerHigh) | FLEXIO_TIMCFG_TSTOP(kFLEXIO_TimerStopBitDisabled) |
         FLEXIO_TIMCFG_TSTART(kFLEXIO_TimerStartBitDisabled);
 
-    /* FlexIO bug workaround, see RM register description. */
+    /* When initially configure the timer pin as output, the pin may be driven low causing glitch on bus.
+       Configure the pin as bidirection output first then perform a subsequent write to change to output to avoid the
+       issue. */
+    timerControl = FLEXIO_TIMCTL_TRGSEL(FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(base->txShifterStartIndex)) |
+                   FLEXIO_TIMCTL_TRGPOL(kFLEXIO_TimerTriggerPolarityActiveLow) |
+                   FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) |
+                   FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData) |
+                   FLEXIO_TIMCTL_PINSEL(base->ENWRPinIndex) | FLEXIO_TIMCTL_PINPOL(kFLEXIO_PinActiveLow) |
+                   FLEXIO_TIMCTL_TIMOD(kFLEXIO_TimerModeDual8BitBaudBit);
 
-    tempValue =
-    base->flexioBase->TIMCTL[base->timerIndex] =
-        FLEXIO_TIMCTL_TRGSEL(FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(base->txShifterStartIndex)) |
-        FLEXIO_TIMCTL_TRGPOL(kFLEXIO_TimerTriggerPolarityActiveLow) |
-        FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) | FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData) |
-        FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) | FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput) |
-        FLEXIO_TIMCTL_PINSEL(base->ENWRPinIndex) | FLEXIO_TIMCTL_PINPOL(kFLEXIO_PinActiveLow) |
-        FLEXIO_TIMCTL_TIMOD(kFLEXIO_TimerModeDual8BitBaudBit);
-
-    base->flexioBase->TIMCTL[base->timerIndex] = tempValue;
-
-    tempValue &= ~(FLEXIO_TIMCTL_PINCFG_MASK);
-    tempValue |= FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput);
-
-    base->flexioBase->TIMCTL[base->timerIndex] = tempValue;
+    base->flexioBase->TIMCTL[base->timerIndex] = timerControl;
+    timerControl = (timerControl & ~FLEXIO_TIMCTL_PINCFG_MASK) | FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput);
+    base->flexioBase->TIMCTL[base->timerIndex] = timerControl;
 }
 
 /*!
- * brief Clear the FLEXIO MCULCD multiple beats write mode configuration.
+ * brief Clear the FLEXIO MCULCD single beats write mode configuration.
  *
  * Clear the write configuration set by ref FLEXIO_MCULCD_SetSingleBeatWriteConfig.
  *
@@ -374,12 +373,10 @@ void FLEXIO_MCULCD_SetSingleBeatWriteConfig(FLEXIO_MCULCD_Type *base)
 void FLEXIO_MCULCD_ClearSingleBeatWriteConfig(FLEXIO_MCULCD_Type *base)
 {
     /* Disable the timer. */
-    uint32_t tempValue = base->flexioBase->TIMCTL[base->timerIndex];
-
-    tempValue &= ~(FLEXIO_TIMCTL_PINCFG_MASK);
-    tempValue |= FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData);
-
-    base->flexioBase->TIMCTL[base->timerIndex] = tempValue;
+    /* Set to bidirection output first then set to disable to avoid glitch on bus. */
+    base->flexioBase->TIMCTL[base->timerIndex] =
+        (base->flexioBase->TIMCTL[base->timerIndex] & ~FLEXIO_TIMCTL_PINCFG_MASK) |
+        FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData);
     base->flexioBase->TIMCTL[base->timerIndex] = 0U;
     base->flexioBase->TIMCFG[base->timerIndex] = 0U;
     /* Clear the timer flag. */
@@ -392,7 +389,7 @@ void FLEXIO_MCULCD_ClearSingleBeatWriteConfig(FLEXIO_MCULCD_Type *base)
 }
 
 /*!
- * brief Configures the FLEXIO MCULCD to multiple beats read mode.
+ * brief Configures the FLEXIO MCULCD to single beats read mode.
  *
  * At the begining or multiple beats read operation, the FLEXIO MCULCD is configured
  * to multiple beats read mode using this function. After read operation, the configuration
@@ -461,7 +458,7 @@ void FLEXIO_MCULCD_SetSingleBeatReadConfig(FLEXIO_MCULCD_Type *base)
 }
 
 /*!
- * brief Clear the FLEXIO MCULCD multiple beats read mode configuration.
+ * brief Clear the FLEXIO MCULCD single beats read mode configuration.
  *
  * Clear the read configuration set by ref FLEXIO_MCULCD_SetSingleBeatReadConfig.
  *
@@ -472,6 +469,10 @@ void FLEXIO_MCULCD_SetSingleBeatReadConfig(FLEXIO_MCULCD_Type *base)
 void FLEXIO_MCULCD_ClearSingleBeatReadConfig(FLEXIO_MCULCD_Type *base)
 {
     /* Disable the timer. */
+    /* Set to bidirection output first then set to disable to avoid glitch on bus. */
+    base->flexioBase->TIMCTL[base->timerIndex] =
+        (base->flexioBase->TIMCTL[base->timerIndex] & ~FLEXIO_TIMCTL_PINCFG_MASK) |
+        FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData);
     base->flexioBase->TIMCTL[base->timerIndex] = 0U;
     base->flexioBase->TIMCFG[base->timerIndex] = 0U;
     /* Clear the timer flag. */
@@ -503,6 +504,7 @@ void FLEXIO_MCULCD_SetMultiBeatsWriteConfig(FLEXIO_MCULCD_Type *base)
      */
 
     uint32_t timerCompare;
+    uint32_t timerControl;
     uint8_t beats;
     uint8_t i;
 
@@ -548,12 +550,19 @@ void FLEXIO_MCULCD_SetMultiBeatsWriteConfig(FLEXIO_MCULCD_Type *base)
         FLEXIO_TIMCFG_TIMENA(kFLEXIO_TimerEnableOnTriggerHigh) | FLEXIO_TIMCFG_TSTOP(kFLEXIO_TimerStopBitDisabled) |
         FLEXIO_TIMCFG_TSTART(kFLEXIO_TimerStartBitDisabled);
 
-    base->flexioBase->TIMCTL[base->timerIndex] =
-        FLEXIO_TIMCTL_TRGSEL(FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(base->txShifterEndIndex)) |
-        FLEXIO_TIMCTL_TRGPOL(kFLEXIO_TimerTriggerPolarityActiveLow) |
-        FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) | FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput) |
-        FLEXIO_TIMCTL_PINSEL(base->ENWRPinIndex) | FLEXIO_TIMCTL_PINPOL(kFLEXIO_PinActiveLow) |
-        FLEXIO_TIMCTL_TIMOD(kFLEXIO_TimerModeDual8BitBaudBit);
+    /* When initially configure the timer pin as output, the pin may be driven low causing glitch on bus.
+       Configure the pin as bidirection output first then perform a subsequent write to change to output to avoid the
+       issue. */
+    timerControl = FLEXIO_TIMCTL_TRGSEL(FLEXIO_TIMER_TRIGGER_SEL_SHIFTnSTAT(base->txShifterEndIndex)) |
+                   FLEXIO_TIMCTL_TRGPOL(kFLEXIO_TimerTriggerPolarityActiveLow) |
+                   FLEXIO_TIMCTL_TRGSRC(kFLEXIO_TimerTriggerSourceInternal) |
+                   FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData) |
+                   FLEXIO_TIMCTL_PINSEL(base->ENWRPinIndex) | FLEXIO_TIMCTL_PINPOL(kFLEXIO_PinActiveLow) |
+                   FLEXIO_TIMCTL_TIMOD(kFLEXIO_TimerModeDual8BitBaudBit);
+
+    base->flexioBase->TIMCTL[base->timerIndex] = timerControl;
+    timerControl = (timerControl & ~FLEXIO_TIMCTL_PINCFG_MASK) | FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigOutput);
+    base->flexioBase->TIMCTL[base->timerIndex] = timerControl;
 }
 
 /*!
@@ -571,6 +580,10 @@ void FLEXIO_MCULCD_ClearMultiBeatsWriteConfig(FLEXIO_MCULCD_Type *base)
     uint32_t statusFlags = 0U;
 
     /* Disable the timer. */
+    /* Set to bidirection output first then set to disable to avoid glitch on bus. */
+    base->flexioBase->TIMCTL[base->timerIndex] =
+        (base->flexioBase->TIMCTL[base->timerIndex] & ~FLEXIO_TIMCTL_PINCFG_MASK) |
+        FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData);
     base->flexioBase->TIMCTL[base->timerIndex] = 0U;
     base->flexioBase->TIMCFG[base->timerIndex] = 0U;
     /* Clear the timer flag. */
@@ -688,6 +701,10 @@ void FLEXIO_MCULCD_ClearMultiBeatsReadConfig(FLEXIO_MCULCD_Type *base)
     uint32_t statusFlags = 0U;
 
     /* Disable the timer. */
+    /* Set to bidirection output first then set to disable to avoid glitch on bus. */
+    base->flexioBase->TIMCTL[base->timerIndex] =
+        (base->flexioBase->TIMCTL[base->timerIndex] & ~FLEXIO_TIMCTL_PINCFG_MASK) |
+        FLEXIO_TIMCTL_PINCFG(kFLEXIO_PinConfigBidirectionOutputData);
     base->flexioBase->TIMCTL[base->timerIndex] = 0U;
     base->flexioBase->TIMCFG[base->timerIndex] = 0U;
     /* Clear the timer flag. */
@@ -975,7 +992,10 @@ void FLEXIO_MCULCD_TransferBlocking(FLEXIO_MCULCD_Type *base, flexio_mculcd_tran
 {
     FLEXIO_MCULCD_StartTransfer(base);
 
-    FLEXIO_MCULCD_WriteCommandBlocking(base, xfer->command);
+    if (!xfer->dataOnly)
+    {
+        FLEXIO_MCULCD_WriteCommandBlocking(base, xfer->command);
+    }
 
     if (xfer->dataSize > 0U)
     {
@@ -1076,8 +1096,11 @@ status_t FLEXIO_MCULCD_TransferNonBlocking(FLEXIO_MCULCD_Type *base,
     /* Assert the nCS. */
     FLEXIO_MCULCD_StartTransfer(base);
 
-    /* Send the command. */
-    FLEXIO_MCULCD_WriteCommandBlocking(base, xfer->command);
+    if (!xfer->dataOnly)
+    {
+        /* Send the command. */
+        FLEXIO_MCULCD_WriteCommandBlocking(base, xfer->command);
+    }
 
     /* If transfer count is 0 (only to send command), return directly. */
     if (0U == xfer->dataSize)

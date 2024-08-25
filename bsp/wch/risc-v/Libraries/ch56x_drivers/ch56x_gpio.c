@@ -8,7 +8,7 @@
  * 2022-07-15     Emuzit            first version
  */
 #include <rthw.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "ch56x_gpio.h"
 #include "isr_sp.h"
 

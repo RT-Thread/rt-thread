@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_adc.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f415 adc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -571,6 +569,7 @@ flag_status adc_preempt_software_trigger_status_get(adc_type *adc_x);
 uint16_t adc_ordinary_conversion_data_get(adc_type *adc_x);
 uint16_t adc_preempt_conversion_data_get(adc_type *adc_x, adc_preempt_channel_type adc_preempt_channel);
 flag_status adc_flag_get(adc_type *adc_x, uint8_t adc_flag);
+flag_status adc_interrupt_flag_get(adc_type *adc_x, uint8_t adc_flag);
 void adc_flag_clear(adc_type *adc_x, uint32_t adc_flag);
 
 /**
