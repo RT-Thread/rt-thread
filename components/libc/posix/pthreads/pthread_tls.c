@@ -55,6 +55,8 @@ int pthread_setspecific(pthread_key_t key, const void *value)
     if (ptd->tls == NULL)
     {
         ptd->tls = (void**)rt_malloc(sizeof(void*) * PTHREAD_KEY_MAX);
+
+        rt_memset(ptd->tls, 0, sizeof(void*) * PTHREAD_KEY_MAX);
     }
 
     if ((key < PTHREAD_KEY_MAX) && _thread_keys[key].is_used)
