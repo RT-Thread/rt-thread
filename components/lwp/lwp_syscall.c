@@ -4478,8 +4478,9 @@ sysret_t sys_mkdir(const char *path, mode_t mode)
 
 sysret_t sys_rmdir(const char *path)
 {
-#ifdef ARCH_MM_MMU
     int err = 0;
+    int ret = 0;
+#ifdef ARCH_MM_MMU
     int len = 0;
     char *kpath = RT_NULL;
 
@@ -4501,14 +4502,22 @@ sysret_t sys_rmdir(const char *path)
         return -EINVAL;
     }
 
-    err = rmdir(kpath);
+    ret = rmdir(kpath);
+    if(ret < 0)
+    {
+        err = GET_ERRNO();
+    }
 
     kmem_put(kpath);
 
-    return (err < 0 ? GET_ERRNO() : err);
+    return (err < 0 ? err : ret);
 #else
-    int ret = rmdir(path);
-    return (ret < 0 ? GET_ERRNO() : ret);
+    ret = rmdir(path);
+    if(ret < 0)
+    {
+        err = GET_ERRNO();
+    }
+    return (err < 0 ? err : ret);
 #endif
 }
 
