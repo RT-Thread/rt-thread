@@ -1567,6 +1567,10 @@ int dfs_file_symlink(const char *target, const char *linkpath)
                 rt_free(parent);
             }
         }
+        else
+        {
+            rt_set_errno(-EPERM);
+        }
 
         if (fullpath != linkpath)
             rt_free(fullpath);
