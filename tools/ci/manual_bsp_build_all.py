@@ -20,6 +20,7 @@ import sys
 import shutil
 import multiprocessing
 from multiprocessing import Process
+import yaml
 
 #help说明
 def usage():
@@ -175,19 +176,28 @@ def update_all_project_files(sconstruct_paths):
             sys.exit(-1)
 
 #找到带有Sconstruct的文件夹
+
 def find_sconstruct_paths(project_dir, exclude_paths, include_paths):
     sconstruct_paths = []
+    bsp_detail_path = os.path.join(rtt_root, 'tools', 'ci', 'bsp_detail.yml')
+    if os.path.exists(bsp_detail_path):
+        with open(bsp_detail_path, 'r') as file:
+            bsp_detail = yaml.safe_load(file)
     for root, dirs, files in os.walk(project_dir):
         if include_paths:
             if any(include_path in root for include_path in include_paths) and all(exclude_path not in root for exclude_path in exclude_paths):
                 if 'SConstruct' in files:
-                    sconstruct_paths.append(root)
+                    bsp_name = os.path.relpath(root, bsp_root)
+                    if bsp_name in bsp_detail and bsp_detail[bsp_name].get('gcc') == 'arm-none-eabi-gcc':
+                        sconstruct_paths.append(root)
         else:
             if all(exclude_path not in root for exclude_path in exclude_paths):
                 if 'SConstruct' in files:
-                    sconstruct_paths.append(root)           
+                    bsp_name = os.path.relpath(root, bsp_root)
+                    if bsp_name in bsp_detail and bsp_detail[bsp_name].get('gcc') == 'arm-none-eabi-gcc':
+                        sconstruct_paths.append(root)
     return sconstruct_paths
-    
+
 #检查EXE命令是否存在，判断环境
 def check_command_availability(cmd):
     """
@@ -209,7 +219,7 @@ bsp_root = os.path.join(rtt_root, 'bsp')
 
 #需要排除的文件夹名字
 exclude_paths = ['templates', 'doc', 'libraries', 'Libraries', 'template']
-include_paths = []#['nrf5x','qemu-vexpress-a9']
+include_paths = []#['nrf5x','qemu-vexpress-a9', 'ESP32_C3','simulator']
 
 sconstruct_paths = find_sconstruct_paths(bsp_root, exclude_paths,include_paths)
 
@@ -320,8 +330,9 @@ for project_dir in sconstruct_paths:
 print('finished!')
 
 # 将failed_bsp_list.txt的内容追加到failed_bsp.log文件中
-with open(os.path.join(rtt_root, 'failed_bsp_list.txt'), 'r') as file:
-    failed_bsp_list = file.read()
-
-with open(os.path.join(rtt_root, 'failed_bsp.log'), 'a') as file:
-    file.write(failed_bsp_list)
+if os.path.exists(os.path.join(rtt_root, 'failed_bsp_list.txt')):
+    with open(os.path.join(rtt_root, 'failed_bsp_list.txt'), 'r') as file:
+        failed_bsp_list = file.read()
+if os.path.exists(os.path.join(rtt_root, 'failed_bsp.log')):
+    with open(os.path.join(rtt_root, 'failed_bsp.log'), 'a') as file:
+        file.write(failed_bsp_list)
