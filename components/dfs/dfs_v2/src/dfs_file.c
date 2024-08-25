@@ -1379,6 +1379,7 @@ int dfs_file_link(const char *oldname, const char *newname)
 
     if (dfs_file_isdir(oldname) == 0)
     {
+        rt_set_errno(-EPERM);
         return ret;
     }
 
