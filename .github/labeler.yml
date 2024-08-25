@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2006-2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-08-26     supperthomas the first version
+#
+
+# glob 代表文件夹
+# ref https://github.com/actions/labeler
+
+BSP:
+- changed-files:
+  - any-glob-to-any-file: bsp/**
+
+'BSP: STM32':
+- changed-files:
+  - any-glob-to-any-file: bsp/stm32/**
+
+'BSP: NXP':
+- changed-files:
+  - any-glob-to-any-file: bsp/nxp/**
+
+'BSP: Cvitek':
+- changed-files:
+  - any-glob-to-any-file: bsp/cvitek/**
+
+'BSP: GD32':
+- changed-files:
+  - any-glob-to-any-file: bsp/gd32/**
+
+action:
+- changed-files:
+  - any-glob-to-any-file: .github/**
+  - any-glob-to-any-file: tools/ci/**
+
+Doc:
+- changed-files:
+  - any-glob-to-any-file: documentation/**

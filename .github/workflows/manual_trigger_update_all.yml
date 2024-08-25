@@ -41,7 +41,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: ${{ github.event.inputs.bsp_options }}
+    name: update and create pull request
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
