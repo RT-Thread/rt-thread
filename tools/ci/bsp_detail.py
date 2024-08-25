@@ -18,6 +18,7 @@ from datetime import datetime
 import subprocess
 #pip install pandas
 #pip install tabulate
+#pip install pyyaml
 
 # 添加每个工具链的下载地址
 download_urls = {
@@ -61,7 +62,10 @@ def generate_toolchain_yaml(input_file, output_file, header_comment):
 def check_files(root_dir, file_list):
     data = []
     folders_checked = set()
+
     for projects in sconstruct_paths:
+        found_arch = False  # Flag to track if ARCH has been found
+        found_cpu = False  # Flag to track if ARCH has been found
         if projects not in folders_checked:
             #file_dict = {file: True if os.path.isfile(os.path.join(projects, file)) else '' for file in file_list}
             file_dict = {}
@@ -86,6 +90,19 @@ def check_files(root_dir, file_list):
                 print(f"Reading {rtconfig_path}")
                 with open(rtconfig_path, 'r') as f:
                     for line in f:
+                        if not found_arch and line.strip().startswith('ARCH'):
+                            arch_value = line.split('=')[1].strip().strip("'\"")
+                            file_dict['arch'] = f"{arch_value}"
+                            print(f"Found ARCH: {arch_value} in {rtconfig_path}")
+                            found_arch = True  # Set the flag to True
+
+                        # 解析CPU属性
+                        if not found_cpu and line.strip().startswith('CPU'):
+                            cpu_value = line.split('=')[1].strip().strip("'\"")
+                            file_dict['cpu'] = f"{cpu_value}"
+                            print(f"Found CPU: {cpu_value} in {rtconfig_path}")
+                            found_cpu = True
+
                         if line.strip().startswith('PREFIX'):
                             prefix_value = line.split('=')[1].strip().strip("'\"")
                             # 只提取实际的编译器前缀
@@ -96,7 +113,6 @@ def check_files(root_dir, file_list):
                             break
                     else:
                         print(f"No PREFIX found in {rtconfig_path}")
-
 
             # 去掉路径中的 '/workspaces/rt-thread/bsp/' 部分
             projects2 = projects.replace(root_dir + '/', '')
