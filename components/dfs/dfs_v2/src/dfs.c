@@ -679,7 +679,7 @@ int sys_dup(int oldfd)
 #ifdef RT_USING_SMART
     return err < 0 ? err : newfd;
 #else
-    return err < 0?err : newfd;
+    return err < 0 ? err : newfd;
 #endif
 }
 
