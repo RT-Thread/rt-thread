@@ -5,7 +5,7 @@
 #
 # Change Logs:
 # Date           Author       Notes
-# 2024-08-24     supperthomas the first version
+# 2024-08-25     supperthomas the first version
 #
 
 aarch64-none-elf-gcc:
@@ -17,9 +17,11 @@ aarch64-none-elf-gcc:
   - raspberry-pi/raspi4-64
   - rockchip/rk3568
   - zynqmp-a53-dfzu2eg
+  count: 7
 arc-elf32-gcc:
   bsp:
   - synopsys/boards
+  count: 1
 arm-none-eabi-gcc:
   bsp:
   - CME_M7
@@ -320,33 +322,43 @@ arm-none-eabi-gcc:
   - yichip/yc3121-pos
   - yichip/yc3122-pos
   - zynqmp-r5-axu4ev
+  count: 298
+  download_url: https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
 avr32-gcc:
   bsp:
   - avr32/at32uc3a0256
   - avr32/at32uc3b0256
+  count: 2
 csky-abiv2-elf-gcc:
   bsp:
   - ck802
   - essemi/es32vf2264
+  count: 2
 gcc:
   bsp:
   - simulator
+  count: 1
 i386-unknown-elf-gcc:
   bsp:
   - x86
+  count: 1
 m32c-elf-gcc:
   bsp:
   - m16c62p
   - upd70f3454
+  count: 2
 mips-sde-elf-gcc:
   bsp:
   - loongson/ls1bdev
   - loongson/ls1cdev
   - loongson/ls2kdev
   - mipssim
+  count: 4
+  download_url: https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz
 powerpc-eabi-gcc:
   bsp:
   - taihu
+  count: 1
 riscv-none-embed-gcc:
   bsp:
   - gd32/risc-v/gd32vf103r-start
@@ -360,13 +372,18 @@ riscv-none-embed-gcc:
   - wch/risc-v/ch32v307v-r1
   - wch/risc-v/ch569w-evt
   - wch/risc-v/yd-ch32v307vct6
+  count: 11
+  download_url: https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
 riscv-nuclei-elf-gcc:
   bsp:
   - nuclei/gd32vf103_rvstar
   - nuclei/nuclei_fpga_eval
+  count: 2
 riscv32-esp-elf-gcc:
   bsp:
   - ESP32_C3
+  count: 1
+  download_url: https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
 riscv32-unknown-elf-gcc:
   bsp:
   - core-v-mcu/core-v-cv32e40p
@@ -378,6 +395,8 @@ riscv32-unknown-elf-gcc:
   - hpmicro/hpm6750evk2
   - hpmicro/hpm6750evkmini
   - hpmicro/hpm6800evk
+  count: 9
+  download_url: https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
 riscv64-unknown-elf-gcc:
   bsp:
   - bluetrum/ab32vg1-ab-prougen
@@ -391,14 +410,19 @@ riscv64-unknown-elf-gcc:
   - qemu-virt64-riscv
   - sparkfun-redv
   - thead-smart
+  count: 11
+  download_url: https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
 riscv64-unknown-linux-musl-gcc:
   bsp:
   - allwinner/d1
   - allwinner/d1s
   - bouffalo_lab/bl808/d0
+  count: 3
 sparc-gaisler-elf-gcc:
   bsp:
   - bm3803
+  count: 1
 unicore32-linux-gcc:
   bsp:
   - sep6200
+  count: 1
