@@ -1,0 +1,3 @@
+config SOC_MCX
+    bool
+    select ARCH_ARM_CORTEX_M0
