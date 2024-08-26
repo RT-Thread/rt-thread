@@ -75,7 +75,7 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
     flexcan_mb_transfer_t rxXfer;
 
     can = (struct imxrt_can *)userData;
-    
+
     switch (status)
     {
         case kStatus_FLEXCAN_RxIdle:
@@ -107,7 +107,7 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     config.baudRate = cfg->baud_rate;
     config.enableIndividMask = true;    /* one filter per MB */
     config.disableSelfReception = true;
-    
+
     switch (cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
@@ -328,7 +328,7 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
 
     can = (struct imxrt_can *)can_dev->parent.user_data;
     msg = (struct rt_can_msg *) buf;
-    
+
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(msg != RT_NULL);
 
