@@ -255,7 +255,7 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
 src += Glob('platform/rtthread/usb_msh.c')
 src += Glob('platform/rtthread/usb_check.c')
 
-group = DefineGroup('CherryUSB', src, depend = ['RT_USING_CHERRYUSB'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('CherryUSB', src, depend = ['RT_USING_CHERRYUSB'], LIBS = LIBS, LIBPATH=LIBPATH, CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
 
