@@ -277,6 +277,11 @@ void usb_dc_low_level_deinit(void)
     sys_drv_dev_clk_pwr_up(CLK_PWR_ID_USB_1, CLK_PWR_CTRL_PWR_DOWN);
 }
 
+void usbd_musb_delay_ms(uint8_t ms)
+{
+    /* implement later */
+}
+
 extern void USBH_IRQHandler(uint8_t busid);
 
 void USBH_IRQ(void)

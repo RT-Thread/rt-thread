@@ -558,26 +558,24 @@ struct usb_hid_kbd_report
 };
 
 /* Keyboard output report (1 byte) (HID B.1),
- * see USBHID_KBDOUT_* definitions
+ * see HID_KBD_OUTPUT_* definitions
  */
 
 /* Mouse input report (HID B.2) */
 struct usb_hid_mouse_report
 {
   uint8_t buttons;   /* See HID_MOUSE_INPUT_BUTTON_* definitions */
-  uint8_t xdisp;     /* X displacement */
-  uint8_t ydisp;     /* y displacement */
+  int8_t xdisp;     /* X displacement */
+  int8_t ydisp;     /* y displacement */
                      /* Device specific additional bytes may follow */
-#ifdef CONFIG_INPUT_MOUSE_WHEEL
   uint8_t wdisp;     /* Wheel displacement */
-#endif
 };
 
 /* Joystick input report (1 bytes) (HID D.1) */
 struct usb_hid_js_report
 {
-  uint8_t xpos;      /* X position */
-  uint8_t ypos;      /* X position */
+  int8_t xpos;      /* X position */
+  int8_t ypos;      /* X position */
   uint8_t buttons;   /* See USBHID_JSIN_* definitions */
   uint8_t throttle;  /* Throttle */
 };

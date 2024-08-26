@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "usbd_core.h"
-#include "usbd_cdc.h"
+#include "usbd_cdc_acm.h"
 
 const char *stop_name[] = { "1", "1.5", "2" };
 const char *parity_name[] = { "N", "O", "E", "M", "S" };
@@ -85,6 +85,8 @@ static int cdc_acm_class_interface_request_handler(uint8_t busid, struct usb_set
 
 struct usbd_interface *usbd_cdc_acm_init_intf(uint8_t busid, struct usbd_interface *intf)
 {
+    (void)busid;
+
     intf->class_interface_handler = cdc_acm_class_interface_request_handler;
     intf->class_endpoint_handler = NULL;
     intf->vendor_handler = NULL;
@@ -95,10 +97,16 @@ struct usbd_interface *usbd_cdc_acm_init_intf(uint8_t busid, struct usbd_interfa
 
 __WEAK void usbd_cdc_acm_set_line_coding(uint8_t busid, uint8_t intf, struct cdc_line_coding *line_coding)
 {
+    (void)busid;
+    (void)intf;
+    (void)line_coding;
 }
 
 __WEAK void usbd_cdc_acm_get_line_coding(uint8_t busid, uint8_t intf, struct cdc_line_coding *line_coding)
 {
+    (void)busid;
+    (void)intf;
+
     line_coding->dwDTERate = 2000000;
     line_coding->bDataBits = 8;
     line_coding->bParityType = 0;
@@ -107,12 +115,20 @@ __WEAK void usbd_cdc_acm_get_line_coding(uint8_t busid, uint8_t intf, struct cdc
 
 __WEAK void usbd_cdc_acm_set_dtr(uint8_t busid, uint8_t intf, bool dtr)
 {
+    (void)busid;
+    (void)intf;
+    (void)dtr;
 }
 
 __WEAK void usbd_cdc_acm_set_rts(uint8_t busid, uint8_t intf, bool rts)
 {
+    (void)busid;
+    (void)intf;
+    (void)rts;
 }
 
 __WEAK void usbd_cdc_acm_send_break(uint8_t busid, uint8_t intf)
 {
+    (void)busid;
+    (void)intf;
 }

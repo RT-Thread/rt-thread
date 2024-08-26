@@ -9,6 +9,8 @@
 #include "usb_scsi.h"
 #if defined(CONFIG_USBDEV_MSC_THREAD)
 #include "usb_osal.h"
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+#include "chry_ringbuffer.h"
 #endif
 
 #define MSD_OUT_EP_IDX 0
@@ -49,6 +51,10 @@ USB_NOCACHE_RAM_SECTION struct usbd_msc_priv {
 #if defined(CONFIG_USBDEV_MSC_THREAD)
     usb_osal_mq_t usbd_msc_mq;
     usb_osal_thread_t usbd_msc_thread;
+    uint32_t nbytes;
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+    chry_ringbuffer_t msc_rb;
+    uint8_t msc_rb_pool[2];
     uint32_t nbytes;
 #endif
 } g_usbd_msc[CONFIG_USBDEV_MAX_BUS];
@@ -94,9 +100,11 @@ static int msc_storage_class_interface_request_handler(uint8_t busid, struct usb
 
 void msc_storage_notify_handler(uint8_t busid, uint8_t event, void *arg)
 {
+    (void)arg;
+
     switch (event) {
         case USBD_EVENT_INIT:
-#ifdef CONFIG_USBDEV_MSC_THREAD
+#if defined(CONFIG_USBDEV_MSC_THREAD)
             g_usbd_msc[busid].usbd_msc_mq = usb_osal_mq_create(1);
             if (g_usbd_msc[busid].usbd_msc_mq == NULL) {
                 USB_LOG_ERR("No memory to alloc for g_usbd_msc[busid].usbd_msc_mq\r\n");
@@ -105,10 +113,12 @@ void msc_storage_notify_handler(uint8_t busid, uint8_t event, void *arg)
             if (g_usbd_msc[busid].usbd_msc_thread == NULL) {
                 USB_LOG_ERR("No memory to alloc for g_usbd_msc[busid].usbd_msc_thread\r\n");
             }
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+            chry_ringbuffer_init(&g_usbd_msc[busid].msc_rb, g_usbd_msc[busid].msc_rb_pool, sizeof(g_usbd_msc[busid].msc_rb_pool));
 #endif
             break;
         case USBD_EVENT_DEINIT:
-#ifdef CONFIG_USBDEV_MSC_THREAD
+#if defined(CONFIG_USBDEV_MSC_THREAD)
             if (g_usbd_msc[busid].usbd_msc_mq) {
                 usb_osal_mq_delete(g_usbd_msc[busid].usbd_msc_mq);
             }
@@ -500,6 +510,9 @@ static bool SCSI_readCapacity10(uint8_t busid, uint8_t **data, uint32_t *len)
 
 static bool SCSI_read10(uint8_t busid, uint8_t **data, uint32_t *len)
 {
+    (void)data;
+    (void)len;
+
     if (((g_usbd_msc[busid].cbw.bmFlags & 0x80U) != 0x80U) || (g_usbd_msc[busid].cbw.dDataLength == 0U)) {
         SCSI_SetSenseData(busid, SCSI_KCQIR_INVALIDCOMMAND);
         return false;
@@ -522,8 +535,10 @@ static bool SCSI_read10(uint8_t busid, uint8_t **data, uint32_t *len)
         return false;
     }
     g_usbd_msc[busid].stage = MSC_DATA_IN;
-#ifdef CONFIG_USBDEV_MSC_THREAD
+#if defined(CONFIG_USBDEV_MSC_THREAD)
     usb_osal_mq_send(g_usbd_msc[busid].usbd_msc_mq, MSC_DATA_IN);
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+    chry_ringbuffer_write_byte(&g_usbd_msc[busid].msc_rb, MSC_DATA_IN);
     return true;
 #else
     return SCSI_processRead(busid);
@@ -532,6 +547,9 @@ static bool SCSI_read10(uint8_t busid, uint8_t **data, uint32_t *len)
 
 static bool SCSI_read12(uint8_t busid, uint8_t **data, uint32_t *len)
 {
+    (void)data;
+    (void)len;
+
     if (((g_usbd_msc[busid].cbw.bmFlags & 0x80U) != 0x80U) || (g_usbd_msc[busid].cbw.dDataLength == 0U)) {
         SCSI_SetSenseData(busid, SCSI_KCQIR_INVALIDCOMMAND);
         return false;
@@ -554,8 +572,10 @@ static bool SCSI_read12(uint8_t busid, uint8_t **data, uint32_t *len)
         return false;
     }
     g_usbd_msc[busid].stage = MSC_DATA_IN;
-#ifdef CONFIG_USBDEV_MSC_THREAD
+#if defined(CONFIG_USBDEV_MSC_THREAD)
     usb_osal_mq_send(g_usbd_msc[busid].usbd_msc_mq, MSC_DATA_IN);
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+    chry_ringbuffer_write_byte(&g_usbd_msc[busid].msc_rb, MSC_DATA_IN);
     return true;
 #else
     return SCSI_processRead(busid);
@@ -565,6 +585,10 @@ static bool SCSI_read12(uint8_t busid, uint8_t **data, uint32_t *len)
 static bool SCSI_write10(uint8_t busid, uint8_t **data, uint32_t *len)
 {
     uint32_t data_len = 0;
+
+    (void)data;
+    (void)len;
+
     if (((g_usbd_msc[busid].cbw.bmFlags & 0x80U) != 0x00U) || (g_usbd_msc[busid].cbw.dDataLength == 0U)) {
         SCSI_SetSenseData(busid, SCSI_KCQIR_INVALIDCOMMAND);
         return false;
@@ -594,6 +618,10 @@ static bool SCSI_write10(uint8_t busid, uint8_t **data, uint32_t *len)
 static bool SCSI_write12(uint8_t busid, uint8_t **data, uint32_t *len)
 {
     uint32_t data_len = 0;
+
+    (void)data;
+    (void)len;
+
     if (((g_usbd_msc[busid].cbw.bmFlags & 0x80U) != 0x00U) || (g_usbd_msc[busid].cbw.dDataLength == 0U)) {
         SCSI_SetSenseData(busid, SCSI_KCQIR_INVALIDCOMMAND);
         return false;
@@ -803,6 +831,8 @@ static bool SCSI_CBWDecode(uint8_t busid, uint32_t nbytes)
 
 void mass_storage_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
+    (void)ep;
+
     switch (g_usbd_msc[busid].stage) {
         case MSC_READ_CBW:
             if (SCSI_CBWDecode(busid, nbytes) == false) {
@@ -815,9 +845,12 @@ void mass_storage_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
             switch (g_usbd_msc[busid].cbw.CB[0]) {
                 case SCSI_CMD_WRITE10:
                 case SCSI_CMD_WRITE12:
-#ifdef CONFIG_USBDEV_MSC_THREAD
+#if defined(CONFIG_USBDEV_MSC_THREAD)
                     g_usbd_msc[busid].nbytes = nbytes;
                     usb_osal_mq_send(g_usbd_msc[busid].usbd_msc_mq, MSC_DATA_OUT);
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+                    g_usbd_msc[busid].nbytes = nbytes;
+                    chry_ringbuffer_write_byte(&g_usbd_msc[busid].msc_rb, MSC_DATA_OUT);
 #else
                     if (SCSI_processWrite(busid, nbytes) == false) {
                         usbd_msc_send_csw(busid, CSW_STATUS_CMD_FAILED); /* send fail status to host,and the host will retry*/
@@ -835,13 +868,18 @@ void mass_storage_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 
 void mass_storage_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
+    (void)ep;
+    (void)nbytes;
+
     switch (g_usbd_msc[busid].stage) {
         case MSC_DATA_IN:
             switch (g_usbd_msc[busid].cbw.CB[0]) {
                 case SCSI_CMD_READ10:
                 case SCSI_CMD_READ12:
-#ifdef CONFIG_USBDEV_MSC_THREAD
+#if defined(CONFIG_USBDEV_MSC_THREAD)
                     usb_osal_mq_send(g_usbd_msc[busid].usbd_msc_mq, MSC_DATA_IN);
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+                    chry_ringbuffer_write_byte(&g_usbd_msc[busid].msc_rb, MSC_DATA_IN);
 #else
                     if (SCSI_processRead(busid) == false) {
                         usbd_msc_send_csw(busid, CSW_STATUS_CMD_FAILED); /* send fail status to host,and the host will retry*/
@@ -870,7 +908,7 @@ void mass_storage_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
     }
 }
 
-#ifdef CONFIG_USBDEV_MSC_THREAD
+#if defined(CONFIG_USBDEV_MSC_THREAD)
 static void usbdev_msc_thread(void *argument)
 {
     uintptr_t event;
@@ -882,7 +920,26 @@ static void usbdev_msc_thread(void *argument)
         if (ret < 0) {
             continue;
         }
-        USB_LOG_DBG("%d\r\n", event);
+        USB_LOG_DBG("event:%d\r\n", event);
+        if (event == MSC_DATA_OUT) {
+            if (SCSI_processWrite(busid, g_usbd_msc[busid].nbytes) == false) {
+                usbd_msc_send_csw(busid, CSW_STATUS_CMD_FAILED); /* send fail status to host,and the host will retry*/
+            }
+        } else if (event == MSC_DATA_IN) {
+            if (SCSI_processRead(busid) == false) {
+                usbd_msc_send_csw(busid, CSW_STATUS_CMD_FAILED); /* send fail status to host,and the host will retry*/
+            }
+        } else {
+        }
+    }
+}
+#elif defined(CONFIG_USBDEV_MSC_POLLING)
+void usbd_msc_polling(uint8_t busid)
+{
+    uint8_t event;
+
+    if (chry_ringbuffer_read_byte(&g_usbd_msc[busid].msc_rb, &event)) {
+        USB_LOG_DBG("event:%d\r\n", event);
         if (event == MSC_DATA_OUT) {
             if (SCSI_processWrite(busid, g_usbd_msc[busid].nbytes) == false) {
                 usbd_msc_send_csw(busid, CSW_STATUS_CMD_FAILED); /* send fail status to host,and the host will retry*/
@@ -932,7 +989,7 @@ void usbd_msc_set_readonly(uint8_t busid, bool readonly)
     g_usbd_msc[busid].readonly = readonly;
 }
 
-bool usbd_msc_set_popup(uint8_t busid)
+bool usbd_msc_get_popup(uint8_t busid)
 {
     return g_usbd_msc[busid].popup;
 }

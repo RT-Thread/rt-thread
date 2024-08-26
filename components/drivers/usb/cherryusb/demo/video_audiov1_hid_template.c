@@ -416,7 +416,7 @@ struct audio_entity_info audio_entity_table[] = {
       .ep = AUDIO_OUT_EP },
 };
 
-void composite_init(uint8_t busid, uint32_t reg_base)
+void composite_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, video_audio_hid_descriptor);
     usbd_add_interface(busid, usbd_video_init_intf(busid, &intf0, INTERVAL, MAX_FRAME_SIZE, MAX_PAYLOAD_SIZE));

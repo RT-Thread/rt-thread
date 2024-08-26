@@ -192,7 +192,7 @@ static struct usbd_endpoint video_in_ep = {
 struct usbd_interface intf0;
 struct usbd_interface intf1;
 
-void video_init(uint8_t busid, uint32_t reg_base)
+void video_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, video_descriptor);
     usbd_add_interface(busid, usbd_video_init_intf(busid, &intf0, INTERVAL, MAX_FRAME_SIZE, MAX_PAYLOAD_SIZE));

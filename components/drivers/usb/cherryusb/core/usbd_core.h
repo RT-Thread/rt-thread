@@ -23,6 +23,7 @@ extern "C" {
 #include "usb_log.h"
 #include "usb_dc.h"
 #include "usb_memcpy.h"
+#include "usb_version.h"
 
 enum usbd_event_type {
     /* USB DCD IRQ */
@@ -71,13 +72,13 @@ struct usb_descriptor {
     const char *(*string_descriptor_callback)(uint8_t speed, uint8_t index);
     const struct usb_msosv1_descriptor *msosv1_descriptor;
     const struct usb_msosv2_descriptor *msosv2_descriptor;
-    const struct usb_webusb_url_ex_descriptor *webusb_url_descriptor;
+    const struct usb_webusb_descriptor *webusb_url_descriptor;
     const struct usb_bos_descriptor *bos_descriptor;
 };
 
 struct usbd_bus {
     uint8_t busid;
-    uint32_t reg_base;
+    uintptr_t reg_base;
 };
 
 extern struct usbd_bus g_usbdev_bus[];
@@ -93,6 +94,7 @@ void usbd_desc_register(uint8_t busid, const uint8_t *desc);
 void usbd_msosv1_desc_register(uint8_t busid, struct usb_msosv1_descriptor *desc);
 void usbd_msosv2_desc_register(uint8_t busid, struct usb_msosv2_descriptor *desc);
 void usbd_bos_desc_register(uint8_t busid, struct usb_bos_descriptor *desc);
+void usbd_webusb_desc_register(uint8_t busid, struct usb_webusb_descriptor *desc);
 #endif
 
 void usbd_add_interface(uint8_t busid, struct usbd_interface *intf);
@@ -101,8 +103,10 @@ void usbd_add_endpoint(uint8_t busid, struct usbd_endpoint *ep);
 uint16_t usbd_get_ep_mps(uint8_t busid, uint8_t ep);
 uint8_t usbd_get_ep_mult(uint8_t busid, uint8_t ep);
 bool usb_device_is_configured(uint8_t busid);
+bool usb_device_is_suspend(uint8_t busid);
+int usbd_send_remote_wakeup(uint8_t busid);
 
-int usbd_initialize(uint8_t busid, uint32_t reg_base, void (*event_handler)(uint8_t busid, uint8_t event));
+int usbd_initialize(uint8_t busid, uintptr_t reg_base, void (*event_handler)(uint8_t busid, uint8_t event));
 int usbd_deinitialize(uint8_t busid);
 
 #ifdef __cplusplus

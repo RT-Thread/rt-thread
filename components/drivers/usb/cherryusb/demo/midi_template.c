@@ -202,7 +202,7 @@ struct usbd_endpoint midi_in_ep = {
     .ep_cb = usbd_midi_bulk_in
 };
 
-void midi_init(uint8_t busid, uint32_t reg_base)
+void midi_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, midi_descriptor);
     usbd_add_interface(busid, &intf0);
