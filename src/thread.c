@@ -334,6 +334,9 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
     RT_ASSERT(stack_start != RT_NULL);
     RT_ASSERT(tick != 0);
 
+    /* clean memory data of thread */
+    rt_memset(thread, 0x0, sizeof(struct rt_thread));
+
     /* initialize thread object */
     rt_object_init((rt_object_t)thread, RT_Object_Class_Thread, name);
 
