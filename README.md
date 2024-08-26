@@ -11,6 +11,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RT-Thread/rt-thread?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/pulls)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/RT-Thread/rt-thread/pulls)
+[![RT-Thread BSP Static Build Check](https://github.com/RT-Thread/rt-thread/actions/workflows/bsp_buildings.yml/badge.svg)](https://github.com/RT-Thread/rt-thread/actions/workflows/bsp_buildings.yml)
 
 # RT-Thread
 
