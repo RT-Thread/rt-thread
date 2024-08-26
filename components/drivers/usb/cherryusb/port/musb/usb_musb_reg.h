@@ -3882,5 +3882,6 @@ struct musb_fifo_cfg {
 uint8_t usbd_get_musb_fifo_cfg(struct musb_fifo_cfg **cfg);
 uint8_t usbh_get_musb_fifo_cfg(struct musb_fifo_cfg **cfg);
 uint32_t usb_get_musb_ram_size(void);
+void usbd_musb_delay_ms(uint8_t ms);
 
 #endif

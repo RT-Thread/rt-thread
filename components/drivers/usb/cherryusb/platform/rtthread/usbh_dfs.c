@@ -36,17 +36,6 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
         bflb_l1c_dcache_invalidate_range(addr, size);
     }
 }
-#elif defined(SOC_HPM5000) || defined(SOC_HPM6000)
-#include "hpm_l1c_drv.h"
-
-void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
-{
-    if (ops == RT_HW_CACHE_FLUSH) {
-        l1c_dc_flush((uint32_t)addr, size);
-    } else {
-        l1c_dc_invalidate((uint32_t)addr, size);
-    }
-}
 #endif
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t msc_sector[512];

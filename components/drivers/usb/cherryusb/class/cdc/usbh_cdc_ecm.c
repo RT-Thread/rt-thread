@@ -236,6 +236,7 @@ void usbh_cdc_ecm_rx_thread(void *argument)
     uint32_t g_cdc_ecm_rx_length;
     int ret;
 
+    (void)argument;
     USB_LOG_INFO("Create cdc ecm rx thread\r\n");
     // clang-format off
 find_class:
@@ -306,10 +307,12 @@ int usbh_cdc_ecm_eth_output(uint32_t buflen)
 
 __WEAK void usbh_cdc_ecm_run(struct usbh_cdc_ecm *cdc_ecm_class)
 {
+    (void)cdc_ecm_class;
 }
 
 __WEAK void usbh_cdc_ecm_stop(struct usbh_cdc_ecm *cdc_ecm_class)
 {
+    (void)cdc_ecm_class;
 }
 
 const struct usbh_class_driver cdc_ecm_class_driver = {

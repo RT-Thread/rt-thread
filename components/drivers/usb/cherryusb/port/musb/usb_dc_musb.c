@@ -273,7 +273,7 @@ int usb_dc_init(uint8_t busid)
     }
 
     /* Enable USB interrupts */
-    HWREGB(USB_BASE + MUSB_IE_OFFSET) = USB_IE_RESET;
+    HWREGB(USB_BASE + MUSB_IE_OFFSET) = USB_IE_RESET | USB_IE_SUSPND | USB_IE_RESUME;
     HWREGH(USB_BASE + MUSB_TXIE_OFFSET) = USB_TXIE_EP0;
     HWREGH(USB_BASE + MUSB_RXIE_OFFSET) = 0;
 
@@ -293,6 +293,14 @@ int usbd_set_address(uint8_t busid, const uint8_t addr)
     }
 
     g_musb_udc.dev_addr = addr;
+    return 0;
+}
+
+int usbd_set_remote_wakeup(uint8_t busid)
+{
+    HWREGB(USB_BASE + MUSB_POWER_OFFSET) |= USB_POWER_RESUME;
+    usbd_musb_delay_ms(10);
+    HWREGB(USB_BASE + MUSB_POWER_OFFSET) &= ~USB_POWER_RESUME;
     return 0;
 }
 
@@ -501,6 +509,26 @@ int usbd_ep_clear_stall(uint8_t busid, const uint8_t ep)
 
 int usbd_ep_is_stalled(uint8_t busid, const uint8_t ep, uint8_t *stalled)
 {
+    uint8_t ep_idx = USB_EP_GET_IDX(ep);
+    uint8_t old_ep_idx;
+
+    old_ep_idx = musb_get_active_ep();
+    musb_set_active_ep(ep_idx);
+
+    if (USB_EP_DIR_IS_OUT(ep)) {
+        if(HWREGB(USB_BASE + MUSB_IND_RXCSRL_OFFSET) & USB_RXCSRL1_STALL) {
+            *stalled = 1;
+        } else {
+            *stalled = 0;
+        }
+    } else {
+        if(HWREGB(USB_BASE + MUSB_IND_TXCSRL_OFFSET) & USB_TXCSRL1_STALL) {
+            *stalled = 1;
+        } else {
+            *stalled = 0;
+        }
+    }
+    musb_set_active_ep(old_ep_idx);
     return 0;
 }
 
@@ -706,9 +734,11 @@ void USBD_IRQHandler(uint8_t busid)
     }
 
     if (is & USB_IS_RESUME) {
+        usbd_event_resume_handler(0);
     }
 
     if (is & USB_IS_SUSPEND) {
+        usbd_event_suspend_handler(0);
     }
 
     txis &= HWREGH(USB_BASE + MUSB_TXIE_OFFSET);

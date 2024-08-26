@@ -456,20 +456,26 @@ static int usbh_audio_ctrl_disconnect(struct usbh_hubport *hport, uint8_t intf)
 
 static int usbh_audio_data_connect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 static int usbh_audio_data_disconnect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 __WEAK void usbh_audio_run(struct usbh_audio *audio_class)
 {
+    (void)audio_class;
 }
 
 __WEAK void usbh_audio_stop(struct usbh_audio *audio_class)
 {
+    (void)audio_class;
 }
 
 const struct usbh_class_driver audio_ctrl_class_driver = {

@@ -62,7 +62,7 @@ static int audio_class_interface_request_handler(uint8_t busid, struct usb_setup
                 setup->bRequest);
 
     uint8_t entity_id;
-    uint8_t ep;
+    uint8_t ep = 0;
     uint8_t subtype = 0x01;
     uint8_t control_selector;
     uint8_t ch;
@@ -287,7 +287,7 @@ static void audio_notify_handler(uint8_t busid, uint8_t event, void *arg)
     }
 }
 
-struct usbd_interface *usbd_audio_init_intf(uint8_t busid, 
+struct usbd_interface *usbd_audio_init_intf(uint8_t busid,
                                             struct usbd_interface *intf,
                                             uint16_t uac_version,
                                             struct audio_entity_info *table,
@@ -314,31 +314,56 @@ struct usbd_interface *usbd_audio_init_intf(uint8_t busid,
 
 __WEAK void usbd_audio_set_volume(uint8_t busid, uint8_t ep, uint8_t ch, int volume)
 {
+    (void)busid;
+    (void)ep;
+    (void)ch;
+    (void)volume;
 }
 
 __WEAK int usbd_audio_get_volume(uint8_t busid, uint8_t ep, uint8_t ch)
 {
+    (void)busid;
+    (void)ep;
+    (void)ch;
+
     return 0;
 }
 
 __WEAK void usbd_audio_set_mute(uint8_t busid, uint8_t ep, uint8_t ch, bool mute)
 {
+    (void)busid;
+    (void)ep;
+    (void)ch;
+    (void)mute;
 }
 
 __WEAK bool usbd_audio_get_mute(uint8_t busid, uint8_t ep, uint8_t ch)
 {
+    (void)busid;
+    (void)ep;
+    (void)ch;
+
     return 0;
 }
 
 __WEAK void usbd_audio_set_sampling_freq(uint8_t busid, uint8_t ep, uint32_t sampling_freq)
 {
+    (void)busid;
+    (void)ep;
+    (void)sampling_freq;
 }
 
 __WEAK uint32_t usbd_audio_get_sampling_freq(uint8_t busid, uint8_t ep)
 {
+    (void)busid;
+    (void)ep;
+
     return 0;
 }
 
 __WEAK void usbd_audio_get_sampling_freq_table(uint8_t busid, uint8_t ep, uint8_t **sampling_freq_table)
 {
+    (void)busid;
+    (void)ep;
+    (void)sampling_freq_table;
 }
