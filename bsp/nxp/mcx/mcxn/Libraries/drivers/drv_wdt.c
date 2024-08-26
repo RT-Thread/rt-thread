@@ -31,15 +31,15 @@ static struct mcx_wdt wdt_dev;
 static rt_err_t wdt_init(rt_watchdog_t *wdt)
 {
     uint32_t wdtFreq;
-    
+
     wwdt_config_t config;
-    
+
     /* The WDT divides the input frequency into it by 4 */
     wdtFreq = WDT_CLK_FREQ / 4;
 
     /* Enable FRO 1M clock for WWDT module. */
     SYSCON->CLOCK_CTRL |= SYSCON_CLOCK_CTRL_FRO1MHZ_CLK_ENA_MASK;
-    
+
     WWDT_GetDefaultConfig(&config);
 
     config.timeoutValue = wdtFreq * 1;
@@ -47,15 +47,15 @@ static rt_err_t wdt_init(rt_watchdog_t *wdt)
 
     /* Configure WWDT to reset on timeout */
     config.enableWatchdogReset = true;
-    
+
     /* Setup watchdog clock frequency(Hz). */
     config.clockFreq_Hz = WDT_CLK_FREQ;
-    
+
     CLOCK_EnableClock(wdt_dev.clock_ip_name);
     CLOCK_SetClkDiv(kCLOCK_DivWdt0Clk, 1U);
-    
+
     WWDT_Init(wdt_dev.wdt_base, &config);
-    
+
     return RT_EOK;
 }
 
@@ -66,15 +66,15 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         case RT_DEVICE_CTRL_WDT_START:
             WWDT_Enable(wdt_dev.wdt_base);
             return RT_EOK;
-        
+
         case RT_DEVICE_CTRL_WDT_STOP:
             WWDT_Disable(wdt_dev.wdt_base);
             return RT_EOK;
-        
+
         case RT_DEVICE_CTRL_WDT_KEEPALIVE:
             WWDT_Refresh(wdt_dev.wdt_base);
             return RT_EOK;
-        
+
         case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
             if (arg != RT_NULL)
             {
@@ -84,7 +84,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
                 return RT_EOK;
             }
             return -RT_ERROR;
-        
+
         default:
             return -RT_ERROR;
     }
@@ -101,15 +101,15 @@ int rt_hw_wdt_init(void)
     wdt_dev.wdt_base = WWDT0;
     wdt_dev.clock_src = kCLOCK_Clk1M;
     wdt_dev.clock_ip_name = kCLOCK_Wwdt0;
-    
+
     wdt_dev.watchdog.ops = &wdt_ops;
-    
+
     if (rt_hw_watchdog_register(&wdt_dev.watchdog, "wdt", RT_DEVICE_FLAG_DEACTIVATE, RT_NULL) != RT_EOK)
     {
         rt_kprintf("wdt register failed\n");
         return -RT_ERROR;
     }
-    
+
     return RT_EOK;
 }
 
