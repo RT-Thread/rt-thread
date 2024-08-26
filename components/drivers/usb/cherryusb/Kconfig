@@ -48,6 +48,10 @@ if RT_USING_CHERRYUSB
                 bool "musb_bk"
             config RT_CHERRYUSB_DEVICE_MUSB_CUSTOM
                 bool "musb_custom"
+            config RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX
+                bool "chipidea_mcx"
+            config RT_CHERRYUSB_DEVICE_CHIPIDEA_CUSTOM
+                bool "chipidea_custom"
             config RT_CHERRYUSB_DEVICE_BL
                 bool "bouffalo"
             config RT_CHERRYUSB_DEVICE_CH32
@@ -162,10 +166,12 @@ if RT_USING_CHERRYUSB
                 bool "ehci_hpm"
             config RT_CHERRYUSB_HOST_EHCI_AIC
                 bool "ehci_aic"
-            config RT_CHERRYUSB_HOST_EHCI_NUVOTON_NUC980
-                bool "ehci_nuvoton_nuc980"
-            config RT_CHERRYUSB_HOST_EHCI_NUVOTON_MA35D0
-                bool "ehci_nuvoton_ma35d0"
+            config RT_CHERRYUSB_HOST_EHCI_MCX
+                bool "ehci_mcx"
+            config RT_CHERRYUSB_HOST_EHCI_NUC980
+                bool "ehci_nuc980"
+            config RT_CHERRYUSB_HOST_EHCI_MA35D0
+                bool "ehci_ma35d0"
             config RT_CHERRYUSB_HOST_EHCI_CUSTOM
                 bool "ehci_custom"
             config RT_CHERRYUSB_HOST_DWC2_ST
@@ -294,7 +300,7 @@ if RT_USING_CHERRYUSB
         config CONFIG_USBHOST_PLATFORM_RTL8152
             bool
 
-        config CHERRYUSB_HOST_TEMPLATE
+        config RT_CHERRYUSB_HOST_TEMPLATE
             bool
             prompt "Use usb host template"
             default n

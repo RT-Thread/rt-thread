@@ -24,6 +24,8 @@ static int usbd_video_control_request_handler(uint8_t busid, struct usb_setup_pa
 {
     uint8_t control_selector = (uint8_t)(setup->wValue >> 8);
 
+    (void)busid;
+
     switch (control_selector) {
         case VIDEO_VC_VIDEO_POWER_MODE_CONTROL:
             switch (setup->bRequest) {

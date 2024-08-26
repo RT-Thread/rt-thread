@@ -23,7 +23,9 @@ int usbd_msc_sector_read(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *b
 int usbd_msc_sector_write(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *buffer, uint32_t length);
 
 void usbd_msc_set_readonly(uint8_t busid, bool readonly);
-bool usbd_msc_set_popup(uint8_t busid);
+bool usbd_msc_get_popup(uint8_t busid);
+
+void usbd_msc_polling(uint8_t busid);
 
 #ifdef __cplusplus
 }

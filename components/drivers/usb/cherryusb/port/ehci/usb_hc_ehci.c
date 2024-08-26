@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#include "usb_ehci_priv.h"
+#include "usb_hc_ehci.h"
 #ifdef CONFIG_USB_EHCI_WITH_OHCI
-#include "usb_ohci_priv.h"
+#include "usb_hc_ohci.h"
 #endif
 
 #define EHCI_TUNE_CERR    3 /* 0-3 qtd retries; 0 == don't stop */
@@ -167,6 +167,7 @@ static void ehci_qh_fill(struct ehci_qh_hw *qh,
     switch (speed) {
         case USB_SPEED_LOW:
             epchar |= QH_EPCHAR_EPS_LOW;
+            __attribute__((fallthrough));
         case USB_SPEED_FULL:
             if (ep_type == USB_ENDPOINT_TYPE_CONTROL) {
                 epchar |= QH_EPCHAR_C; /* for TT */
@@ -379,7 +380,7 @@ static struct ehci_qh_hw *ehci_bulk_urb_init(struct usbh_bus *bus, struct usbh_u
                  urb->hport->parent->hub_addr,
                  urb->hport->port);
 
-    while (buflen >= 0) {
+    while (1) {
         qtd = &qh->qtd_pool[qtd_num];
 
         if (buflen > 0x4000) {
@@ -480,7 +481,7 @@ static struct ehci_qh_hw *ehci_intr_urb_init(struct usbh_bus *bus, struct usbh_u
                  urb->hport->parent->hub_addr,
                  urb->hport->port);
 
-    while (buflen >= 0) {
+    while (1) {
         qtd = &qh->qtd_pool[qtd_num];
 
         if (buflen > 0x4000) {
@@ -583,6 +584,8 @@ static void ehci_qh_scan_qtds(struct usbh_bus *bus, struct ehci_qh_hw *qhead, st
 {
     struct ehci_qtd_hw *qtd;
 
+    (void)bus;
+
     ehci_qh_remove(qhead, qh);
 
     qtd = EHCI_ADDR2QTD(qh->first_qtd);
@@ -655,6 +658,8 @@ static void ehci_kill_qh(struct usbh_bus *bus, struct ehci_qh_hw *qhead, struct 
 {
     struct ehci_qtd_hw *qtd;
 
+    (void)bus;
+
     ehci_qh_remove(qhead, qh);
 
     qtd = EHCI_ADDR2QTD(qh->first_qtd);
@@ -697,14 +702,17 @@ static int usbh_reset_port(struct usbh_bus *bus, const uint8_t port)
 
 __WEAK void usb_hc_low_level_init(struct usbh_bus *bus)
 {
+    (void)bus;
 }
 
 __WEAK void usb_hc_low_level2_init(struct usbh_bus *bus)
 {
+    (void)bus;
 }
 
 __WEAK void usb_hc_low_level_deinit(struct usbh_bus *bus)
 {
+    (void)bus;
 }
 
 int usb_hc_init(struct usbh_bus *bus)
@@ -777,6 +785,8 @@ int usb_hc_init(struct usbh_bus *bus)
                  g_ehci_hcd[bus->hcd.hcd_id].n_cc,
                  g_ehci_hcd[bus->hcd.hcd_id].n_pcc);
 
+    EHCI_HCOR->usbcmd &= ~EHCI_USBCMD_RUN;
+    usb_osal_msleep(2);
     EHCI_HCOR->usbcmd |= EHCI_USBCMD_HCRESET;
     while (EHCI_HCOR->usbcmd & EHCI_USBCMD_HCRESET) {
         usb_osal_msleep(1);
@@ -830,6 +840,7 @@ int usb_hc_init(struct usbh_bus *bus)
         for (uint8_t port = 0; port < g_ehci_hcd[bus->hcd.hcd_id].n_ports; port++) {
             regval = EHCI_HCOR->portsc[port];
             regval |= EHCI_PORTSC_PP;
+            regval &= ~(EHCI_PORTSC_CSC | EHCI_PORTSC_PEC | EHCI_PORTSC_OCC);
             EHCI_HCOR->portsc[port] = regval;
         }
     }
@@ -872,7 +883,7 @@ int usb_hc_deinit(struct usbh_bus *bus)
     regval &= ~EHCI_USBCMD_RUN;
     EHCI_HCOR->usbcmd = regval;
 
-    while ((EHCI_HCOR->usbsts & (EHCI_USBSTS_PSS | EHCI_USBSTS_ASS))) {
+    while ((EHCI_HCOR->usbsts & (EHCI_USBSTS_PSS | EHCI_USBSTS_ASS)) || ((EHCI_HCOR->usbsts & EHCI_USBSTS_HALTED) == 0)) {
         usb_osal_msleep(1);
         timeout++;
         if (timeout > 100) {
@@ -893,6 +904,7 @@ int usb_hc_deinit(struct usbh_bus *bus)
 #endif
 
     EHCI_HCOR->usbsts = EHCI_HCOR->usbsts;
+    EHCI_HCOR->usbcmd |= EHCI_USBCMD_HCRESET;
 
     for (uint8_t index = 0; index < CONFIG_USB_EHCI_QH_NUM; index++) {
         qh = &ehci_qh_pool[bus->hcd.hcd_id][index];
@@ -1098,7 +1110,7 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
                 if (temp & EHCI_PORTSC_RESET) {
                     status |= (1 << HUB_PORT_FEATURE_RESET);
                 }
-                if (temp & EHCI_PORTSC_PP) {
+                if (temp & EHCI_PORTSC_PP || !(EHCI_HCCR->hcsparams & EHCI_HCSPARAMS_PPC)) {
                     status |= (1 << HUB_PORT_FEATURE_POWER);
                 }
                 memcpy(buf, &status, 4);
@@ -1341,6 +1353,11 @@ void USBH_IRQHandler(uint8_t busid)
             if (portsc & EHCI_PORTSC_CSC) {
                 if ((portsc & EHCI_PORTSC_CCS) == EHCI_PORTSC_CCS) {
                 } else {
+#if defined(CONFIG_USB_EHCI_NXP)
+                    /* kUSB_ControllerEhci0 and kUSB_ControllerEhci1*/
+                    extern void USB_EhcihostPhyDisconnectDetectCmd(uint8_t controllerId, uint8_t enable);
+                    USB_EhcihostPhyDisconnectDetectCmd(2 + busid, 0);
+#endif
                     for (uint8_t index = 0; index < CONFIG_USB_EHCI_QH_NUM; index++) {
                         g_ehci_hcd[bus->hcd.hcd_id].ehci_qh_used[index] = false;
                     }

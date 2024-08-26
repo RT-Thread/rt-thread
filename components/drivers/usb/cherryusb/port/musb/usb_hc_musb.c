@@ -475,10 +475,12 @@ static void musb_pipe_free(struct musb_pipe *pipe)
 
 __WEAK void usb_hc_low_level_init(struct usbh_bus *bus)
 {
+    (void)bus;
 }
 
 __WEAK void usb_hc_low_level_deinit(struct usbh_bus *bus)
 {
+    (void)bus;
 }
 
 int usb_hc_init(struct usbh_bus *bus)
@@ -653,6 +655,7 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
                     }
                 }
 
+                status |= (1 << HUB_PORT_FEATURE_POWER);
                 memcpy(buf, &status, 4);
                 break;
             default:

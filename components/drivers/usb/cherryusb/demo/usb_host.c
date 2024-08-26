@@ -120,7 +120,7 @@ void usbh_hid_callback(void *arg, int nbytes)
     struct usbh_hid *hid_class = (struct usbh_hid *)arg;
 
     if (nbytes > 0) {
-        for (size_t i = 0; i < nbytes; i++) {
+        for (int i = 0; i < nbytes; i++) {
             USB_LOG_RAW("0x%02x ", hid_buffer[i]);
         }
         USB_LOG_RAW("nbytes:%d\r\n", nbytes);
