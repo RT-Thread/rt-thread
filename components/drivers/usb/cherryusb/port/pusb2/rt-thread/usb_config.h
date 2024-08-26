@@ -13,9 +13,6 @@
 
 #include "rtconfig.h"
 
-#define CHERRYUSB_VERSION     0x010400
-#define CHERRYUSB_VERSION_STR "v1.4.0"
-
 /* ================ USB common Configuration ================ */
 
 #define CONFIG_USB_PRINTF(...) rt_kprintf(__VA_ARGS__)
