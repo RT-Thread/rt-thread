@@ -24,7 +24,8 @@
 支持开发板以及集成 SoC 芯片信息如下
 
 - milk-v duo: [https://milkv.io/duo](https://milkv.io/duo)，SoC 采用 CV1800B。
-- milk-v duo256m: [https://milkv.io/duo256m](https://milkv.io/docs/duo/getting-started/duo256m)，SoC 采用 SG2002。
+- milk-v duo256m: [https://milkv.io/duo256m](https://milkv.io/docs/duo/getting-started/duo256m)，SoC 采用 SG2002（原 CV181xC）。
+- milk-v duos: [https://milkv.io/duos](https://milkv.io/docs/duo/getting-started/duos)，SoC 采用 SG2000（原 CV181xH）。
 
 Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如下：
 
@@ -109,6 +110,7 @@ Board Type (milkv-duo)  --->
     ( ) milkv-duo-spinor
     (X) milkv-duo256m
     ( ) milkv-duo256m-spinor
+    ( ) milkv-duos
 ```
 
 2. 编译

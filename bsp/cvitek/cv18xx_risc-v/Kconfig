@@ -48,6 +48,10 @@ config SOC_TYPE_CV180X
     bool
     default n
 
+config SOC_TYPE_SG2000
+    bool
+    default n
+
 config SOC_TYPE_SG2002
     bool
     default n
@@ -71,6 +75,10 @@ choice
     config BOARD_TYPE_MILKV_DUO256M_SPINOR
         select SOC_TYPE_SG2002
         bool "milkv-duo256m-spinor"
+
+    config BOARD_TYPE_MILKV_DUOS
+        select SOC_TYPE_SG2000
+        bool "milkv-duos"
 
 endchoice
 
