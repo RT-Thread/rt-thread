@@ -357,6 +357,71 @@ static const char *pinname_whitelist_uart4_tx[] = {
 };
 #endif
 
+#elif defined(BOARD_TYPE_MILKV_DUOS)
+
+#ifdef BSP_USING_UART0
+static const char *pinname_whitelist_uart0_rx[] = {
+    "UART0_RX",
+    NULL,
+};
+static const char *pinname_whitelist_uart0_tx[] = {
+    "UART0_TX",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART1
+static const char *pinname_whitelist_uart1_rx[] = {
+    "JTAG_CPU_TCK",
+    "UART0_RX",
+    NULL,
+};
+static const char *pinname_whitelist_uart1_tx[] = {
+    "JTAG_CPU_TMS",
+    "UART0_TX",
+    "IIC0_SCL",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART2
+static const char *pinname_whitelist_uart2_rx[] = {
+    "VIVO_D9",
+    "VIVO_D5",
+    "VIVO_CLK",
+    "PWR_GPIO1",
+    NULL,
+};
+static const char *pinname_whitelist_uart2_tx[] = {
+    "VIVO_D10",
+    "VIVO_D6",
+    "VIVO_D2",
+    "IIC0_SCL",
+    "PWR_GPIO0",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART3
+static const char *pinname_whitelist_uart3_rx[] = {
+    "ADC2",
+    NULL,
+};
+static const char *pinname_whitelist_uart3_tx[] = {
+    "ADC3",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART4
+static const char *pinname_whitelist_uart4_rx[] = {
+    NULL,
+};
+static const char *pinname_whitelist_uart4_tx[] = {
+    NULL,
+};
+#endif
+
 #else
     #error "Unsupported board type!"
 #endif
