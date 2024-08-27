@@ -16,6 +16,8 @@
 #define LED_PIN     "E02" /* Onboard LED pins */
 #elif defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
 #define LED_PIN     "C24" /* Onboard LED pins */
+#elif defined(BOARD_TYPE_MILKV_DUOS)
+#define LED_PIN     "A29" /* Onboard LED pins */
 #endif
 
 int main(void)

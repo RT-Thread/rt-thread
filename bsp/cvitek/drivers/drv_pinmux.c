@@ -230,7 +230,7 @@ const struct fselect pin_selects_array[][8] = {
 /* PAD_AUD_AOUTR    */ {FS_NONE,             FS_NONE,            FS_NONE,           {XGPIOC_24, 3},   {IIS1_DI, 4},   {IIS2_DO, 5},     {IIS1_DO, 6},           FS_NONE},
 };
 
-#elif defined(SOC_TYPE_SG2002)
+#elif defined(SOC_TYPE_SG2002) || defined(SOC_TYPE_SG2000)
 
 struct fmux pinmux_array[] = {
     FS_PINMUX(CAM_MCLK0),
