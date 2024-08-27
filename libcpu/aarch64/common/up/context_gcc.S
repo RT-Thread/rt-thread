@@ -45,6 +45,7 @@ rt_hw_context_switch_to:
     clrex
     ldr     x0, [x0]
     RESTORE_CONTEXT_SWITCH x0
+    NEVER_RETURN
 
 /*
  * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
@@ -62,6 +63,7 @@ rt_hw_context_switch:
     ldr    x0, [x1]            // get new task stack pointer
 
     RESTORE_CONTEXT_SWITCH x0
+    NEVER_RETURN
 
 .globl rt_thread_switch_interrupt_flag
 .globl rt_interrupt_from_thread
@@ -115,3 +117,4 @@ rt_hw_context_switch_interrupt_do:
     ldr     x0,  [x4]       // get new task's stack pointer
 
     RESTORE_CONTEXT_SWITCH x0
+    NEVER_RETURN

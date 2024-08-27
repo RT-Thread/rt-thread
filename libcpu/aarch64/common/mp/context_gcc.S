@@ -129,5 +129,7 @@ rt_hw_context_switch_interrupt:
     b       _context_switch_exit
 
 _context_switch_exit:
+    .local _context_switch_exit
+
     clrex
     RESTORE_CONTEXT_SWITCH
