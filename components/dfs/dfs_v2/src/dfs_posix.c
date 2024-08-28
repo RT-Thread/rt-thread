@@ -399,7 +399,7 @@ off_t lseek(int fd, off_t offset, int whence)
     result = dfs_file_lseek(file, offset, whence);
     if (result < 0)
     {
-        rt_set_errno(result);
+        rt_set_errno(-EPERM);
 
         return -1;
     }
@@ -827,7 +827,7 @@ int rmdir(const char *pathname)
 
     if (!pathname)
     {
-        rt_set_errno(-RT_ERROR);
+        rt_set_errno(-EPERM);
         return -1;
     }
 
@@ -852,7 +852,7 @@ int rmdir(const char *pathname)
 
         if (dirent)
         {
-            rt_set_errno(-RT_ERROR);
+            rt_set_errno(-EPERM);
             return -1;
         }
     }
@@ -861,7 +861,7 @@ int rmdir(const char *pathname)
     {
         if (S_ISLNK(stat.st_mode))
         {
-            rt_set_errno(-RT_ERROR);
+            rt_set_errno(-EPERM);
             return -1;
         }
     }

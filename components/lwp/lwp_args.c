@@ -633,10 +633,10 @@ quit:
     return error;
 }
 
-char** lwp_get_command_line_args(struct rt_lwp *lwp)
+char **lwp_get_command_line_args(struct rt_lwp *lwp)
 {
     size_t argc = 0;
-    char** argv = NULL;
+    char **argv = NULL;
     int ret;
     size_t i;
     size_t len;
@@ -648,7 +648,7 @@ char** lwp_get_command_line_args(struct rt_lwp *lwp)
         {
             return RT_NULL;
         }
-        argv = (char**)rt_malloc((argc + 1) * sizeof(char*));
+        argv = (char**)rt_calloc((argc + 1), sizeof(char*));
 
         if (argv)
         {
@@ -658,25 +658,23 @@ char** lwp_get_command_line_args(struct rt_lwp *lwp)
                 ret = lwp_data_get(lwp, &argvp, &((char **)lwp->args)[1 + i], sizeof(argvp));
                 if (ret == 0)
                 {
-                    lwp_free_command_line_args(argv);
-                    return RT_NULL;
+                    goto error_exit;
                 }
-                len = lwp_user_strlen_ext(lwp, argvp);
 
-                if (len > 0)
+                len = lwp_user_strlen_ext(lwp, argvp);
+                if (len >= 0)
                 {
                     argv[i] = (char*)rt_malloc(len + 1);
                     ret = lwp_data_get(lwp, argv[i], argvp, len);
-                    if (ret == 0)
+                    if (ret != len)
                     {
-                        lwp_free_command_line_args(argv);
-                        return RT_NULL;
+                        goto error_exit;
                     }
                     argv[i][len] = '\0';
                 }
                 else
                 {
-                    argv[i] = NULL;
+                    goto error_exit;
                 }
             }
             argv[argc] = NULL;
@@ -684,6 +682,9 @@ char** lwp_get_command_line_args(struct rt_lwp *lwp)
     }
 
     return argv;
+error_exit:
+    lwp_free_command_line_args(argv);
+    return RT_NULL;
 }
 
 void lwp_print_envp(struct rt_lwp *lwp)

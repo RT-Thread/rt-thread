@@ -89,7 +89,7 @@ menu "General Drivers Configuration"
                         default ""
                 endif
 
-            config UART_IRQ_BASE
+            config BSP_UART_IRQ_BASE
                 int
                 default 60
         endif

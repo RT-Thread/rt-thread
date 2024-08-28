@@ -64,3 +64,33 @@ hpm_stat_t gptmr_channel_config(GPTMR_Type *ptr,
     ptr->CHANNEL[ch_index].CR = v;
     return status_success;
 }
+
+#if defined(HPM_IP_FEATURE_GPTMR_MONITOR) && (HPM_IP_FEATURE_GPTMR_MONITOR  == 1)
+void gptmr_channel_get_default_monitor_config(GPTMR_Type *ptr, gptmr_channel_monitor_config_t *config)
+{
+    (void) ptr;
+    config->max_value = 0;
+    config->min_value = 0;
+    config->monitor_type = monitor_signal_high_level_time;
+}
+
+hpm_stat_t gptmr_channel_monitor_config(GPTMR_Type *ptr, uint8_t ch_index, gptmr_channel_monitor_config_t *config, bool enable)
+{
+    if ((ptr == NULL) || (config->max_value < config->min_value)) {
+        return status_invalid_argument;
+    }
+    gptmr_channel_set_monitor_type(ptr, ch_index, config->monitor_type);
+    gptmr_update_cmp(ptr, ch_index, 0, config->min_value + 1);
+    gptmr_update_cmp(ptr, ch_index, 1, config->max_value + 1);
+    gptmr_channel_config_update_reload(ptr, ch_index, 0xFFFFFFFF);
+    gptmr_channel_set_capmode(ptr, ch_index, gptmr_work_mode_measure_width);
+    if (enable == true) {
+        gptmr_channel_reset_count(ptr, ch_index);
+        gptmr_channel_enable_monitor(ptr, ch_index);
+    } else {
+        gptmr_channel_disable_monitor(ptr, ch_index);
+    }
+    return status_success;
+}
+
+#endif

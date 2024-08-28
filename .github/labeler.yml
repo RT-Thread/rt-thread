@@ -1,0 +1,111 @@
+#
+# Copyright (c) 2006-2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-08-26     supperthomas the first version
+#
+
+# glob 代表文件夹
+# ref https://github.com/actions/labeler
+
+BSP:
+- changed-files:
+  - any-glob-to-any-file: bsp/**
+
+'BSP: STM32':
+- changed-files:
+  - any-glob-to-any-file: bsp/stm32/**
+
+'BSP: NXP':
+- changed-files:
+  - any-glob-to-any-file: bsp/nxp/**
+
+'BSP: GD32':
+- changed-files:
+  - any-glob-to-any-file: bsp/gd32/**
+
+'BSP: AT32':
+- changed-files:
+  - any-glob-to-any-file: bsp/at32/**
+
+'BSP: Infineon':
+- changed-files:
+  - any-glob-to-any-file: bsp/Infineon/**
+
+'BSP: Renesas':
+- changed-files:
+  - any-glob-to-any-file: bsp/renesas/**
+
+'BSP: Phytium':
+- changed-files:
+  - any-glob-to-any-file: bsp/phytium/**
+
+'BSP: Cvitek':
+- changed-files:
+  - any-glob-to-any-file: bsp/cvitek/**
+
+'BSP: WCH':
+- changed-files:
+  - any-glob-to-any-file: bsp/wch/**
+
+testcase:
+- changed-files:
+  - any-glob-to-any-file: examples/**
+
+tools:
+- changed-files:
+  - any-glob-to-any-file: tools/**
+
+Kernel:
+- changed-files:
+  - any-glob-to-any-file: src/**
+
+action:
+- changed-files:
+  - any-glob-to-any-file: .github/**
+  - any-glob-to-any-file: tools/ci/**
+
+Component:
+- changed-files:
+  - any-glob-to-any-file: components/**
+
+'component: lwp':
+- changed-files:
+  - any-glob-to-any-file: components/lwp**
+
+'component: dfsv1':
+- changed-files:
+  - any-glob-to-any-file: components/dfs_v1**
+
+'component: dfsv2':
+- changed-files:
+  - any-glob-to-any-file: components/dfs_v2**
+
+libcpu:
+- changed-files:
+  - any-glob-to-any-file: libcpu/**
+
+'Arch: ARM/AArch64':
+- changed-files:
+  - any-glob-to-any-file: libcpu/aarch64/**
+
+'Arch: RISC-V':
+- changed-files:
+  - any-glob-to-any-file: libcpu/risc-v/**
+  - any-glob-to-any-file: BSP/wch/**
+  - any-glob-to-any-file: BSP/k210/**
+  - any-glob-to-any-file: BSP/cvitek/**
+  - any-glob-to-any-file: BSP/hpmicro/**
+  - any-glob-to-any-file: BSP/ESP32_C3/**
+  - any-glob-to-any-file: BSP/core-v-mcu/**
+  - any-glob-to-any-file: BSP/gd32/risc-v/**
+  - any-glob-to-any-file: BSP/allwinner/d1/**
+  - any-glob-to-any-file: BSP/allwinner/d1s/**
+  - any-glob-to-any-file: BSP/qemu-virt64-riscv/**
+
+Doc:
+- changed-files:
+  - any-glob-to-any-file: documentation/**

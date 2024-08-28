@@ -10,7 +10,7 @@
  */
 
 #include <rtthread.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "ls1c_gpio.h"
 #include "ls1c.h"
 #include <rthw.h>

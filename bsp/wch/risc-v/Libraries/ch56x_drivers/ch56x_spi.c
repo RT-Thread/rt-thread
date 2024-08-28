@@ -9,7 +9,7 @@
  */
 #include <rthw.h>
 #include <drivers/spi.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "ch56x_spi.h"
 #include "ch56x_sys.h"
 

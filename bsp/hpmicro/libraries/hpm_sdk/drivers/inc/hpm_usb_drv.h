@@ -40,7 +40,7 @@ typedef enum {
     usb_dir_out     = 0,
     usb_dir_in      = 1,
     usb_dir_in_mask = 0x80
-} usb_dir_t;
+} usb_dir_t;    /**< usb_dir_t */
 
 /**
  * @brief USB transfer types
@@ -50,7 +50,7 @@ typedef enum {
     usb_xfer_isochronous,
     usb_xfer_bulk,
     usb_xfer_interrupt
-} usb_xfer_type_t;
+} usb_xfer_type_t;    /**< usb_xfer_type_t */
 
 /**
  * @brief USB controller work modes
@@ -59,7 +59,7 @@ typedef enum {
     usb_ctrl_mode_otg    = 0,
     usb_ctrl_mode_device = 2,
     usb_ctrl_mode_host   = 3
-} usb_controller_mode_t;
+} usb_controller_mode_t;    /**< usb_controller_mode_t */
 
 /**
  * @brief USB line state
@@ -68,7 +68,7 @@ typedef enum {
     usb_line_state0 = 0,
     usb_line_state1 = 1,
     usb_line_state2 = 2
-} usb_line_state_t;
+} usb_line_state_t;    /**< usb_line_state_t */
 
 /**
  * @brief USB transceiver
@@ -76,7 +76,30 @@ typedef enum {
 typedef enum {
     usb_tran_parallel = 0,
     usb_tran_serial = 1
-} usb_transceiver_t;
+} usb_transceiver_t;    /**< usb_transceiver_t */
+
+/**
+ * @brief USB test modes
+ */
+typedef enum {
+    usb_test_mode_disable = 0,
+    usb_test_j_state,
+    usb_test_k_state,
+    usb_test_se0_nak,
+    usb_test_packet,
+    usb_test_force_hs,
+    usb_test_force_fs,
+    usb_test_force_ls,
+} usb_test_mode_t;    /**< usb_test_mode_t */
+
+/**
+ * @brief USB vbus wakeup source
+ */
+typedef enum {
+    usb_vbus_wakeup_vbus_valid = 0,
+    usb_vbus_wakeup_session_valid,
+} usb_vbus_wakeup_source_t;    /**< usb_vbus_wakeup_source_t */
+
 /*---------------------------------------------------------------------
  * Structure Declarations
  *---------------------------------------------------------------------
@@ -167,6 +190,68 @@ static inline void usb_clear_status_flags(USB_Type *ptr, uint32_t mask)
 }
 
 /**
+ * @brief Enable otg vbus wakeup
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_otg_enable_vbus_wakeup(USB_Type *ptr)
+{
+    ptr->OTG_CTRL0 |=  USB_OTG_CTRL0_OTG_VBUS_WAKEUP_EN_MASK;
+}
+
+/**
+ * @brief Disbable otg vbus wakeup
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_otg_disable_vbus_wakeup(USB_Type *ptr)
+{
+    ptr->OTG_CTRL0 &=  ~USB_OTG_CTRL0_OTG_VBUS_WAKEUP_EN_MASK;
+}
+
+/**
+ * @brief Set otg vbus wakeup source
+ *
+ * @param[in] ptr A USB peripheral base address
+ * @param[in] src wakeup source, @ref usb_vbus_wakeup_source_t
+ */
+static inline void usb_otg_set_vbus_wakeup_source(USB_Type *ptr, usb_vbus_wakeup_source_t src)
+{
+    ptr->OTG_CTRL0 = (ptr->OTG_CTRL0 & ~USB_OTG_CTRL0_OTG_VBUS_SOURCE_SEL_MASK) | USB_OTG_CTRL0_OTG_VBUS_SOURCE_SEL_SET(src);
+}
+
+/**
+ * @brief Enable otg wakeup interrupt
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_otg_enable_wakeup_int(USB_Type *ptr)
+{
+    ptr->OTG_CTRL0 |=  USB_OTG_CTRL0_OTG_WAKEUP_INT_ENABLE_MASK;
+}
+
+/**
+ * @brief Disable otg wakeup interrupt
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_otg_disable_wakeup_int(USB_Type *ptr)
+{
+    ptr->OTG_CTRL0 &= ~USB_OTG_CTRL0_OTG_WAKEUP_INT_ENABLE_MASK;
+}
+
+/**
+ * @brief Get otg wakeup status flags
+ *
+ * @param[in] ptr A USB peripheral base address
+ * @retval The USB otg wakeup interrupt status flag
+ */
+static inline bool usb_get_otg_wakeup_int_flag(USB_Type *ptr)
+{
+    return (USB_TOP_STATUS_WAKEUP_INT_STATUS_GET(ptr->TOP_STATUS) != 0) ? true : false;
+}
+
+/**
  * @brief Get USB suspend status
  *
  * @param[in] ptr A USB peripheral base address
@@ -208,6 +293,126 @@ static inline bool usb_get_port_ccs(USB_Type *ptr)
 static inline uint8_t usb_get_port_speed(USB_Type *ptr)
 {
     return USB_PORTSC1_PSPD_GET(ptr->PORTSC1);
+}
+
+/**
+ * @brief Set port test control mode
+ *
+ * @param[in] ptr A USB peripheral base address
+ * @param[in] test_mode usb test mode, @ref usb_test_mode_t
+ */
+static inline void usb_set_port_test_mode(USB_Type *ptr, usb_test_mode_t test_mode)
+{
+    ptr->PORTSC1 = (ptr->PORTSC1 & ~USB_PORTSC1_PTC_MASK) | USB_PORTSC1_PTC_SET(test_mode);
+}
+
+/**
+ * @brief USB set port suspend
+ *
+ * @param[in] ptr A USB peripheral base address
+ * @param[in] suspend true - suspend, false - not suspend
+ */
+static inline void usb_set_port_suspend(USB_Type *ptr, bool suspend)
+{
+    ptr->PORTSC1 = (ptr->PORTSC1 & ~USB_PORTSC1_SUSP_MASK) | USB_PORTSC1_SUSP_SET(suspend);
+}
+
+/**
+ * @brief USB force port resume
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_force_port_resume(USB_Type *ptr)
+{
+    ptr->PORTSC1 |= USB_PORTSC1_FPR_MASK;
+}
+
+/**
+ * @brief USB phy enter low power suspend
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_phy_enter_low_power_suspend(USB_Type *ptr)
+{
+    ptr->PORTSC1 |= USB_PORTSC1_PHCD_MASK;
+}
+
+/**
+ * @brief USB phy exit low power suspend
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_phy_exit_low_power_suspend(USB_Type *ptr)
+{
+    ptr->PORTSC1 &= ~USB_PORTSC1_PHCD_MASK;
+    /* otg utmi clock detection */
+    ptr->PHY_STATUS |= USB_PHY_STATUS_UTMI_CLK_VALID_MASK;                 /* write 1 to clear valid status */
+    while (USB_PHY_STATUS_UTMI_CLK_VALID_GET(ptr->PHY_STATUS) == 0) {      /* get utmi clock status */
+        ;
+    }
+}
+
+/**
+ * @brief Get phy session valid flag
+ *
+ * @param[in] ptr A USB peripheral base address
+ * @retval The phy session valid flag
+ */
+static inline bool usb_phy_get_session_valid_flag(USB_Type *ptr)
+{
+    return (USB_PHY_STATUS_UTMI_SESS_VALID_GET(ptr->PHY_STATUS) != 0) ? true : false;
+}
+
+/**
+ * @brief enable otgsc session valid change interrupt
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_otgsc_enable_session_valid_chg_int(USB_Type *ptr)
+{
+    ptr->OTGSC |= USB_OTGSC_ASVIE_MASK;
+}
+
+/**
+ * @brief disable otgsc session valid change interrupt
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_otgsc_disable_session_valid_chg_int(USB_Type *ptr)
+{
+    ptr->OTGSC &= ~USB_OTGSC_ASVIE_MASK;
+}
+
+/**
+ * @brief get otgsc session valid change flag
+ *
+ * @param[in] ptr A USB peripheral base address
+ * @retval The otgsc session valid flag
+ */
+static inline bool usb_otgsc_get_session_valid_chg_flag(USB_Type *ptr)
+{
+    return (USB_OTGSC_ASVIS_SET(ptr->OTGSC) != 0) ? true : false;
+}
+
+/**
+ * @brief clear otgsc session valid change flag
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_otgsc_clear_session_valid_chg_flag(USB_Type *ptr)
+{
+    ptr->OTGSC |= USB_OTGSC_ASVIS_MASK;
+}
+
+/**
+ * @brief Get otgsc session valid flag
+ *
+ * @param[in] ptr A USB peripheral base address
+ * @retval The otgsc session valid flag
+ */
+static inline bool usb_otgsc_get_session_valid_flag(USB_Type *ptr)
+{
+    return (USB_OTGSC_ASV_GET(ptr->OTGSC) != 0) ? true : false;
 }
 
 /**
@@ -267,6 +472,16 @@ static inline void usb_phy_disable_dp_dm_pulldown(USB_Type *ptr)
 static inline void usb_phy_enable_dp_dm_pulldown(USB_Type *ptr)
 {
     ptr->PHY_CTRL0 &= ~0x001000E0u;
+}
+
+/**
+ * @brief Set phyctrl1 not utmi suspend
+ *
+ * @param[in] ptr A USB peripheral base address
+ */
+static inline void usb_phyctrl1_set_not_utmi_suspend(USB_Type *ptr)
+{
+    ptr->PHY_CTRL1 |= USB_PHY_CTRL1_UTMI_OTG_SUSPENDM_MASK;
 }
 
 /*---------------------------------------------------------------------

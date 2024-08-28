@@ -1,0 +1,2606 @@
+# 
+# Copyright (c) 2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-08-25     supperthomas the first version
+#
+
+CME_M7:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+ESP32_C3:
+  .config: true
+  README.md: true
+  README_ZH.md: true
+  gcc: riscv32-esp-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+Infineon/psoc6-cy8ckit-062-BLE:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Infineon/psoc6-cy8ckit-062-WIFI-BT:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Infineon/psoc6-cy8ckit-062S2-43012:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Infineon/psoc6-cy8ckit-062s4:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Infineon/psoc6-cy8cproto-062S3-4343W:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Infineon/psoc6-evaluationkit-062S2:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Infineon/xmc7200-kit_xmc7200_evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Vango/v85xx:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+Vango/v85xxp:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+acm32/acm32f0x0-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+acm32/acm32f4xx-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+airm2m/air105:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+airm2m/air32f103:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+allwinner/d1:
+  .config: true
+  README.md: true
+  gcc: riscv64-unknown-linux-musl-gcc
+  menuconfig: true
+  rtconfig.h: true
+allwinner/d1s:
+  .config: true
+  README.md: true
+  gcc: riscv64-unknown-linux-musl-gcc
+  menuconfig: true
+  rtconfig.h: true
+allwinner_tina:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+amebaz:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32e103ze-evalboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32e103ze-tinyboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f030r8-miniboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f051r8-evalboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f072vb-miniboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f091vc-miniboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f103vb-miniboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f103xe-minibroard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f107vc-evalboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f407ig-minibroard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32f407zg-evalboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apm32/apm32s103vb-miniboard:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+apollo2:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+asm9260t:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32a403a-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32a423-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f402-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f403a-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f405-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f407-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f413-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f415-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f421-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f423-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f425-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f435-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at32/at32f437-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+at91/at91sam9260:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+at91/at91sam9g45:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+avr32/at32uc3a0256:
+  .config: true
+  README.md: true
+  gcc: avr32-gcc
+  menuconfig: true
+  rtconfig.h: true
+avr32/at32uc3b0256:
+  .config: true
+  README.md: true
+  gcc: avr32-gcc
+  menuconfig: true
+  rtconfig.h: true
+beaglebone:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  menuconfig: true
+  rtconfig.h: true
+bluetrum/ab32vg1-ab-prougen:
+  .config: true
+  README.md: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+bm3803:
+  .config: true
+  README.md: true
+  gcc: sparc-gaisler-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+bouffalo_lab/bl60x:
+  .config: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+bouffalo_lab/bl61x:
+  .config: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+bouffalo_lab/bl70x:
+  .config: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+bouffalo_lab/bl808/d0:
+  .config: true
+  gcc: riscv64-unknown-linux-musl-gcc
+  menuconfig: true
+  rtconfig.h: true
+bouffalo_lab/bl808/lp:
+  .config: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+bouffalo_lab/bl808/m0:
+  .config: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+ck802:
+  .config: true
+  README.md: true
+  gcc: csky-abiv2-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+core-v-mcu/core-v-cv32e40p:
+  .config: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+cvitek/c906_little:
+  .config: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+cvitek/cv18xx_aarch64:
+  .config: true
+  README.md: true
+  gcc: aarch64-none-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+cvitek/cv18xx_risc-v:
+  .config: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+dm365:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+efm32:
+  gcc: arm-none-eabi-gcc
+  rtconfig.h: true
+essemi/es32f0654:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+essemi/es32f365x:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+essemi/es32f369x:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+essemi/es32vf2264:
+  .config: true
+  README.md: true
+  gcc: csky-abiv2-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+fm33lc026:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+frdm-k64f:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+ft2004:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+ft32/ft32f072xb-starter:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+fujitsu/mb9x/mb9bf500r:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+fujitsu/mb9x/mb9bf506r:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+fujitsu/mb9x/mb9bf568r:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+fujitsu/mb9x/mb9bf618s:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32103c-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32105c-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32105r-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32107c-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32205r-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32207i-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32303c-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32303e-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32305r-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32307e-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32407v-lckfb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32407v-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32450z-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32470z-lckfb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/arm/gd32h759i-start:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+gd32/risc-v/gd32vf103r-start:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+gd32/risc-v/gd32vf103v-eval:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+hc32/ev_hc32f448_lqfp80:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hc32/ev_hc32f460_lqfp100_v2:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hc32/ev_hc32f472_lqfp100:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hc32/ev_hc32f4a0_lqfp176:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hc32/lckfb-hc32f4a0-lqfp100:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hc32l136:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hc32l196:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hifive1:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+hk32/hk32f030c8-mini:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm5300evk:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm5301evklite:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm6200evk:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm6300evk:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm6750evk:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm6750evk2:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm6750evkmini:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+hpmicro/hpm6800evk:
+  .config: true
+  README.md: true
+  gcc: riscv32-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+ht32/ht32f12366:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+ht32/ht32f52352:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+juicevm:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+k210:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+lm3s8962:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk3: true
+  menuconfig: true
+  rtconfig.h: true
+lm3s9b9x:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk3: true
+  menuconfig: true
+  rtconfig.h: true
+lm4f232:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+loongson/ls1bdev:
+  .config: true
+  gcc: mips-sde-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+loongson/ls1cdev:
+  .config: true
+  README.md: true
+  gcc: mips-sde-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+loongson/ls2kdev:
+  .config: true
+  README.md: true
+  gcc: mips-sde-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+m16c62p:
+  gcc: m32c-elf-gcc
+  iar: true
+  rtconfig.h: true
+maxim/max32660-evsys:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+microchip/samc21:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+microchip/samd51-adafruit-metro-m4:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+microchip/samd51-seeed-wio-terminal:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+microchip/same54:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+microchip/same70:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+microchip/saml10:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+mini2440:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk3: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+mini4020:
+  gcc: arm-none-eabi-gcc
+  mdk3: true
+  rtconfig.h: true
+mipssim:
+  .config: true
+  README.md: true
+  gcc: mips-sde-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+mm32/mm32f3270-100ask-pitaya:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+mm32f103x:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+mm32f327x:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+mm32l07x:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+mm32l3xx:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+msp432e401y-LaunchPad:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32g43xcl-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32g457qel-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32g45xcl-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32g45xml-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32g45xrl-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32g45xvl-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32g4frml-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32l40xcl-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32l436-evb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32l43xml-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32l43xrl-stb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32wb45xl-evb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32g452xx/n32g452xx-mini-system:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nrf5x/nrf51822:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nrf5x/nrf52832:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nrf5x/nrf52833:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nrf5x/nrf52840:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nrf5x/nrf5340:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nuclei/gd32vf103_rvstar:
+  .config: true
+  README.md: true
+  gcc: riscv-nuclei-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+nuclei/nuclei_fpga_eval:
+  .config: true
+  README.md: true
+  gcc: riscv-nuclei-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+nuvoton/ma35-rtp:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+nuvoton/nk-980iot:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+nuvoton/nk-n9h30:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+nuvoton/nk-rtu980:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+nuvoton/numaker-hmi-ma35d1:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+nuvoton/numaker-iot-m467:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+nuvoton/numaker-iot-m487:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+nuvoton/numaker-iot-ma35d1:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+nuvoton/numaker-m032ki:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+nuvoton/numaker-m2354:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+nuvoton/numaker-m467hj:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+nuvoton/numaker-pfm-m487:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+nv32f100x:
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  rtconfig.h: true
+nxp/imx/imx6sx/cortex-a9:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imx6ul:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imx6ull-smart:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1021-nxp-evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1052-atk-commander:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1052-fire-pro:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1052-nxp-evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1052-seeed-ArchMix:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1060-nxp-evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1061-forlinx-OK1061-S:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1064-nxp-evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/imx/imxrt/imxrt1170-nxp-evk/m7:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc1114:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc176x:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc178x:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc2148:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk3: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc2478:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc408x:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc43xx/M0:
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  rtconfig.h: true
+nxp/lpc/lpc43xx/M4:
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  rtconfig.h: true
+nxp/lpc/lpc5410x:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc54114-lite:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc54608-LPCXpresso:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc55sxx/Libraries/template/lpc55s6xxxx:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc55sxx/lpc55s06_nxp_evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc55sxx/lpc55s16_nxp_evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc55sxx/lpc55s28_nxp_evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc55sxx/lpc55s36_nxp_evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc55sxx/lpc55s69_nxp_evk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/lpc/lpc824:
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  rtconfig.h: true
+nxp/mcx/mcxa/frdm-mcxa153:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/mcx/mcxn/frdm-mcxn236:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+nxp/mcx/mcxn/frdm-mcxn947:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+phytium/aarch32:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+phytium/aarch64:
+  .config: true
+  README.md: true
+  gcc: aarch64-none-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+qemu-vexpress-a9:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+qemu-virt64-aarch64:
+  .config: true
+  README.md: true
+  gcc: aarch64-none-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+qemu-virt64-riscv:
+  .config: true
+  README.md: true
+  README_ZH.md: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+raspberry-pi/raspi2:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+raspberry-pi/raspi3-32:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+raspberry-pi/raspi3-64:
+  .config: true
+  README.md: true
+  gcc: aarch64-none-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+raspberry-pi/raspi4-32:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+raspberry-pi/raspi4-64:
+  .config: true
+  README.md: true
+  gcc: aarch64-none-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+raspberry-pico:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+renesas/ebf_qi_min_6m5:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/libraries/bsp-template:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra2l1-cpk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra4m2-eco:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra6m3-ek:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra6m3-hmi-board:
+  .config: true
+  README.md: true
+  README_ZH.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra6m4-cpk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra6m4-iot:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra8d1-ek:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra8d1-vision-board:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/ra8m1-ek:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/rzt2m_rsk:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  menuconfig: true
+  rtconfig.h: true
+rm48x50:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+rockchip/rk2108:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+rockchip/rk3568:
+  .config: true
+  README.md: true
+  gcc: aarch64-none-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+rv32m1_vega/ri5cy:
+  .config: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+sam7x:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+samd21:
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  rtconfig.h: true
+sep6200:
+  gcc: unicore32-linux-gcc
+  rtconfig.h: true
+simulator:
+  .config: true
+  gcc: gcc
+  menuconfig: true
+  rtconfig.h: true
+smartfusion2:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+sparkfun-redv:
+  .config: true
+  README.md: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f072-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f091-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-100ask-mini:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-100ask-pro:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-atk-nano:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-atk-warshipv3:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-blue-pill:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-dofly-M3S:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-dofly-lyc8:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-fire-arbitrary:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-gizwits-gokitv21:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-hw100k-ibox:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-onenet-nbiot:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-yf-ufun:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f103-ys-f1pro:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f107-uc-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f207-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f302-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f334-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f401-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f401-weact-blackpill:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f405-smdz-breadfruit:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f405zg-mini-template:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f407-armfly-v5:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f407-atk-explorer:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f407-fk407m2-zgt6:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f407-lckfb-skystar:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f407-robomaster-c:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f407-rt-spark:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f407-st-discovery:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f410-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f411-atk-nano:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f411-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f411-weact-blackpill:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f412-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f413-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f427-robomaster-a:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f429-armfly-v6:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f429-atk-apollo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f429-fire-challenger:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f429-st-disco:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f446-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f469-st-disco:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f723-st-disco:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f746-st-disco:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f746-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f767-atk-apollo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f767-fire-challenger-v1:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f767-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32f769-st-disco:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32g070-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32g071-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32g431-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32g474-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32g491-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h503-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h563-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h743-armfly-v7:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h743-atk-apollo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h743-openmv-h7plus:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h743-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h747-st-discovery:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h750-armfly-h7-tool:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h750-artpi:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h750-fk750m1-vbt6:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h750-weact-ministm32h7xx:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32h7s7-st-disco:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l010-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l053-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l412-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l431-BearPi:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l431-tencentos-tiny-EVB_MX+:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l432-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l433-ali-startkit:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l433-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l452-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l475-atk-pandora:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l475-st-discovery:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l476-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l496-ali-developer:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l496-st-discovery:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l496-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l4r5-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l4r9-st-eval:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l4r9-st-sensortile-box:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32l552-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32mp157a-st-discovery:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32mp157a-st-ev1:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32u575-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32u585-iot02a:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32wb55-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32wl55-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32wle5-yizhilian-lm401:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+stm32/stm32wle5-yizhilian-lm402:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+synopsys/boards:
+  .config: true
+  README.md: true
+  gcc: arc-elf32-gcc
+  menuconfig: true
+  rtconfig.h: true
+synwit/swm320-mini:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+synwit/swm341-mini:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+tae32f5300:
+  .config: true
+  README.md: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+taihu:
+  gcc: powerpc-eabi-gcc
+  rtconfig.h: true
+thead-smart:
+  .config: true
+  README.md: true
+  gcc: riscv64-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+ti/c28x/tms320f28379d:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true
+tkm32F499:
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+tm4c123bsp:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+tm4c129x:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+upd70f3454:
+  gcc: m32c-elf-gcc
+  iar: true
+  rtconfig.h: true
+w60x:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+wch/arm/ch32f103c8-core:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+wch/arm/ch32f203r-evt:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+wch/arm/ch579m:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+wch/risc-v/ch32v103r-evt:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+wch/risc-v/ch32v208w-r0:
+  .config: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+wch/risc-v/ch32v307v-r1:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+wch/risc-v/ch569w-evt:
+  .config: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+wch/risc-v/yd-ch32v307vct6:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
+x86:
+  .config: true
+  README.md: true
+  gcc: i386-unknown-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+xplorer4330/M0:
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  rtconfig.h: true
+xplorer4330/M4:
+  .config: true
+  gcc: arm-none-eabi-gcc
+  mdk4: true
+  menuconfig: true
+  rtconfig.h: true
+yichip/yc3121-pos:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+yichip/yc3122-pos:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+zynqmp-a53-dfzu2eg:
+  .config: true
+  README.md: true
+  gcc: aarch64-none-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
+zynqmp-r5-axu4ev:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  menuconfig: true
+  rtconfig.h: true

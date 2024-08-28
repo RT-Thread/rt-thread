@@ -79,6 +79,10 @@ static int cdc_ecm_class_interface_request_handler(uint8_t busid, struct usb_set
                 "bRequest 0x%02x\r\n",
                 setup->bRequest);
 
+    (void)busid;
+    (void)data;
+    (void)len;
+
     g_cmd_intf = LO_BYTE(setup->wIndex);
 
     switch (setup->bRequest) {
@@ -105,6 +109,9 @@ static int cdc_ecm_class_interface_request_handler(uint8_t busid, struct usb_set
 
 void cdc_ecm_notify_handler(uint8_t busid, uint8_t event, void *arg)
 {
+    (void)busid;
+    (void)arg;
+
     switch (event) {
         case USBD_EVENT_RESET:
             g_current_net_status = 0;
@@ -123,19 +130,23 @@ void cdc_ecm_notify_handler(uint8_t busid, uint8_t event, void *arg)
 
 void cdc_ecm_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
+    (void)busid;
+
     g_cdc_ecm_rx_data_length += nbytes;
 
-    if (nbytes < usbd_get_ep_mps(busid, ep)) {
+    if (nbytes < usbd_get_ep_mps(0, ep)) {
         g_cdc_ecm_rx_data_buffer = g_cdc_ecm_rx_buffer;
         usbd_cdc_ecm_data_recv_done(g_cdc_ecm_rx_buffer, g_cdc_ecm_rx_data_length);
     } else {
-        usbd_ep_start_read(0, ep, &g_cdc_ecm_rx_buffer[g_cdc_ecm_rx_data_length], usbd_get_ep_mps(busid, ep));
+        usbd_ep_start_read(0, ep, &g_cdc_ecm_rx_buffer[g_cdc_ecm_rx_data_length], usbd_get_ep_mps(0, ep));
     }
 }
 
 void cdc_ecm_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    if ((nbytes % usbd_get_ep_mps(busid, ep)) == 0 && nbytes) {
+    (void)busid;
+
+    if ((nbytes % usbd_get_ep_mps(0, ep)) == 0 && nbytes) {
         /* send zlp */
         usbd_ep_start_write(0, ep, NULL, 0);
     } else {
@@ -145,6 +156,10 @@ void cdc_ecm_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 
 void cdc_ecm_int_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
+    (void)busid;
+    (void)ep;
+    (void)nbytes;
+
     if (g_current_net_status == 1) {
         g_current_net_status = 2;
         usbd_cdc_ecm_send_notify(CDC_ECM_NOTIFY_CODE_NETWORK_CONNECTION, CDC_ECM_NET_CONNECTED, g_connect_speed_table);
@@ -242,4 +257,6 @@ void usbd_cdc_ecm_set_connect_speed(uint32_t speed[2])
 
 __WEAK void usbd_cdc_ecm_data_recv_done(uint8_t *buf, uint32_t len)
 {
+    (void)buf;
+    (void)len;
 }

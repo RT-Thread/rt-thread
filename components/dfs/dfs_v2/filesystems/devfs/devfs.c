@@ -265,7 +265,7 @@ static int dfs_devfs_flush(struct dfs_file *file)
 
 static off_t dfs_devfs_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
-    off_t ret = 0;
+    off_t ret = -EPERM;
     rt_device_t device;
 
     RT_ASSERT(file != RT_NULL);

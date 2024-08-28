@@ -347,7 +347,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
         else if (arg_val == RT_DEVICE_CAN_INT_ERR)
         {
             uint8_t irq_txrx_mask = CAN_EVENT_ERROR;
-            uint8_t irq_error_mask = CAN_ERROR_ARBITRAITION_LOST_INT_ENABLE | CAN_ERROR_PASSIVE_INT_ENABLE | CAN_ERROR_BUS_ERROR_INT_ENABLE;
+            uint8_t irq_error_mask = CAN_ERROR_ARBITRATION_LOST_INT_ENABLE | CAN_ERROR_PASSIVE_INT_ENABLE | CAN_ERROR_BUS_ERROR_INT_ENABLE;
             drv_can->can_config.irq_txrx_enable_mask &= (uint8_t)~irq_txrx_mask;
             drv_can->can_config.irq_error_enable_mask &= (uint8_t)~irq_error_mask;
             can_disable_tx_rx_irq(drv_can->can_base, irq_txrx_mask);
@@ -377,7 +377,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
         else if (arg_val == RT_DEVICE_CAN_INT_ERR)
         {
             uint8_t irq_txrx_mask = CAN_EVENT_ERROR;
-            uint8_t irq_error_mask = CAN_ERROR_ARBITRAITION_LOST_INT_ENABLE | CAN_ERROR_PASSIVE_INT_ENABLE | CAN_ERROR_BUS_ERROR_INT_ENABLE;
+            uint8_t irq_error_mask = CAN_ERROR_ARBITRATION_LOST_INT_ENABLE | CAN_ERROR_PASSIVE_INT_ENABLE | CAN_ERROR_BUS_ERROR_INT_ENABLE;
             drv_can->can_config.irq_txrx_enable_mask |= irq_txrx_mask;
             drv_can->can_config.irq_error_enable_mask |= irq_error_mask;
             can_enable_tx_rx_irq(drv_can->can_base, irq_txrx_mask);

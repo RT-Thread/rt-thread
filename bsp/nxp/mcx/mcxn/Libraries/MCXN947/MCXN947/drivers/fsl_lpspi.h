@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_LPSPI_H_
-#define _FSL_LPSPI_H_
+#ifndef FSL_LPSPI_H_
+#define FSL_LPSPI_H_
 
 #include "fsl_common.h"
 #include "fsl_lpflexcomm.h"
@@ -21,10 +21,10 @@
  *********************************************************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief LPSPI driver version. */
-#define FSL_LPSPI_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
-/*@}*/
+#define FSL_LPSPI_DRIVER_VERSION (MAKE_VERSION(2, 2, 6))
+/*! @} */
 
 #ifndef LPSPI_DUMMY_DATA
 /*! @brief LPSPI dummy data if no Tx data.*/
@@ -180,10 +180,11 @@ typedef enum _lpspi_data_out_config
     kLpspiDataOutTristate = 1U  /*!< Data out is tristated when chip select is de-asserted */
 } lpspi_data_out_config_t;
 
+/*! @brief LPSPI cs function configuration. */
 typedef enum _lpspi_pcs_function_config
 {
-    kLPSPI_PcsAsCs = 0U,
-    kLPSPI_PcsAsData = 1U,
+    kLPSPI_PcsAsCs = 0U,        /*!< PCS pin select as cs function */
+    kLPSPI_PcsAsData = 1U,      /*!< PCS pin select as date function */
 } lpspi_pcs_function_config_t;
 
 /*! @brief LPSPI transfer width configuration. */
@@ -206,7 +207,7 @@ typedef enum _lpspi_delay_type
 #define LPSPI_MASTER_PCS_MASK  (0xF0U) /*!< LPSPI master PCS shift macro , internal used. */
 
 #define LPSPI_MASTER_WIDTH_SHIFT (16U)      /*!< LPSPI master width shift macro, internal used */
-#define LPSPI_MASTER_WIDTH_MASK  (0x30000U) /*!< LPSPI master width shift macro, internal used */
+#define LPSPI_MASTER_WIDTH_MASK  (0x30000U) /*!< LPSPI master width shift mask, internal used */
 
 /*! @brief Use this enumeration for LPSPI master transfer configFlags. */
 enum _lpspi_transfer_config_flag_for_master
@@ -219,7 +220,7 @@ enum _lpspi_transfer_config_flag_for_master
     kLPSPI_MasterWidth1 = 0U << LPSPI_MASTER_WIDTH_SHIFT, /*!< LPSPI master transfer 1bit */
     kLPSPI_MasterWidth2 = 1U << LPSPI_MASTER_WIDTH_SHIFT, /*!< LPSPI master transfer 2bit */
     kLPSPI_MasterWidth4 = 2U << LPSPI_MASTER_WIDTH_SHIFT, /*!< LPSPI master transfer 4bit */
-
+    
     kLPSPI_MasterPcsContinuous = 1U << 20, /*!< Is PCS signal continuous */
 
     kLPSPI_MasterByteSwap =
@@ -240,9 +241,6 @@ enum _lpspi_transfer_config_flag_for_master
 #define LPSPI_SLAVE_PCS_SHIFT (4U)    /*!< LPSPI slave PCS shift macro , internal used. */
 #define LPSPI_SLAVE_PCS_MASK  (0xF0U) /*!< LPSPI slave PCS shift macro , internal used. */
 
-#define LPSPI_SLAVE_WIDTH_SHIFT (16U)      /*!< LPSPI slave width shift macro, internal used */
-#define LPSPI_SLAVE_WIDTH_MASK  (0x30000U) /*!< LPSPI slave width shift macro, internal used */
-
 /*! @brief Use this enumeration for LPSPI slave transfer configFlags. */
 enum _lpspi_transfer_config_flag_for_slave
 {
@@ -250,10 +248,6 @@ enum _lpspi_transfer_config_flag_for_slave
     kLPSPI_SlavePcs1 = 1U << LPSPI_SLAVE_PCS_SHIFT, /*!< LPSPI slave transfer use PCS1 signal */
     kLPSPI_SlavePcs2 = 2U << LPSPI_SLAVE_PCS_SHIFT, /*!< LPSPI slave transfer use PCS2 signal */
     kLPSPI_SlavePcs3 = 3U << LPSPI_SLAVE_PCS_SHIFT, /*!< LPSPI slave transfer use PCS3 signal */
-
-    kLPSPI_SlaveWidth1 = 0U << LPSPI_SLAVE_WIDTH_SHIFT, /*!< LPSPI slave transfer 1bit */
-    kLPSPI_SlaveWidth2 = 1U << LPSPI_SLAVE_WIDTH_SHIFT, /*!< LPSPI slave transfer 2bit */
-    kLPSPI_SlaveWidth4 = 2U << LPSPI_SLAVE_WIDTH_SHIFT, /*!< LPSPI slave transfer 4bit */
 
     kLPSPI_SlaveByteSwap =
         1U << 22 /*!< Is slave swap the byte.
@@ -299,8 +293,8 @@ typedef struct _lpspi_master_config
 
     lpspi_pin_config_t pinCfg; /*!< Configures which pins are used for input and output data
                                 *during single bit transfers.*/
-
-    lpspi_pcs_function_config_t pcsFunc;
+    
+    lpspi_pcs_function_config_t pcsFunc; /*!< Configures cs pins function.*/
 
     lpspi_data_out_config_t dataOutConfig; /*!< Configures if the output data is tristated
                                             * between accesses (LPSPI_PCS is negated). */
@@ -321,8 +315,6 @@ typedef struct _lpspi_slave_config
 
     lpspi_pin_config_t pinCfg; /*!< Configures which pins are used for input and output data
                                 *during single bit transfers.*/
-
-    lpspi_pcs_function_config_t pcsFunc;
 
     lpspi_data_out_config_t dataOutConfig; /*!< Configures if the output data is tristated
                                             * between accesses (LPSPI_PCS is negated). */
@@ -367,7 +359,7 @@ typedef void (*lpspi_slave_transfer_callback_t)(LPSPI_Type *base,
 /*! @brief LPSPI master/slave transfer structure.*/
 typedef struct _lpspi_transfer
 {
-    uint8_t *txData;          /*!< Send buffer. */
+    const uint8_t *txData;    /*!< Send buffer. */
     uint8_t *rxData;          /*!< Receive buffer. */
     volatile size_t dataSize; /*!< Transfer bytes. */
 
@@ -393,7 +385,7 @@ struct _lpspi_master_handle
     volatile uint8_t bytesEachWrite; /*!< Bytes for each write TDR. */
     volatile uint8_t bytesEachRead;  /*!< Bytes for each read RDR. */
 
-    uint8_t *volatile txData;             /*!< Send buffer. */
+    const uint8_t *volatile txData;            /*!< Send buffer. */
     uint8_t *volatile rxData;             /*!< Receive buffer. */
     volatile size_t txRemainingByteCount; /*!< Number of bytes remaining to send.*/
     volatile size_t rxRemainingByteCount; /*!< Number of bytes remaining to receive.*/
@@ -423,7 +415,7 @@ struct _lpspi_slave_handle
     volatile uint8_t bytesEachWrite; /*!< Bytes for each write TDR. */
     volatile uint8_t bytesEachRead;  /*!< Bytes for each read RDR. */
 
-    uint8_t *volatile txData; /*!< Send buffer. */
+    const uint8_t *volatile txData;           /*!< Send buffer. */
     uint8_t *volatile rxData; /*!< Receive buffer. */
 
     volatile size_t txRemainingByteCount; /*!< Number of bytes remaining to send.*/
@@ -1165,7 +1157,7 @@ void LPSPI_SlaveTransferAbort(LPSPI_Type *base, lpspi_slave_handle_t *handle);
  *
  * This function processes the LPSPI transmit and receives an IRQ.
  *
- * @param base LPSPI instance.
+ * @param instance LPSPI instance index.
  * @param handle pointer to lpspi_slave_handle_t structure which stores the transfer state.
  */
 void LPSPI_SlaveTransferHandleIRQ(uint32_t instance, lpspi_slave_handle_t *handle);
@@ -1180,4 +1172,4 @@ void LPSPI_SlaveTransferHandleIRQ(uint32_t instance, lpspi_slave_handle_t *handl
 
 /*! @}*/
 
-#endif /*_FSL_LPSPI_H_*/
+#endif /*FSL_LPSPI_H_*/

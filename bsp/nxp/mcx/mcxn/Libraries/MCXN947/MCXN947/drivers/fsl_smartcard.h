@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_SMARTCARD_H_
-#define _FSL_SMARTCARD_H_
+#ifndef FSL_SMARTCARD_H_
+#define FSL_SMARTCARD_H_
 
 #include "fsl_common.h"
 
@@ -21,11 +21,11 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief Smart card driver version 2.2.2.
+/*! @{ */
+/*! @brief Smart card driver version 2.3.0.
  */
-#define FSL_SMARTCARD_DRIVER_VERSION (MAKE_VERSION(2, 2, 2))
-/*@}*/
+#define FSL_SMARTCARD_DRIVER_VERSION (MAKE_VERSION(2, 3, 0))
+/*! @} */
 
 /*! @brief Smart card global define which specify number of clock cycles until initial 'TS' character has to be received
  */
@@ -271,4 +271,4 @@ typedef struct _smartcard_context
 } smartcard_context_t;
 
 /*! @}*/
-#endif /* _FSL_SMARTCARD_H_*/
+#endif /* FSL_SMARTCARD_H_*/

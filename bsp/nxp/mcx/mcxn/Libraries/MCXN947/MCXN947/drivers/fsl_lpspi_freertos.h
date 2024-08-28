@@ -25,8 +25,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief LPSPI FreeRTOS driver version 2.1.0. */
-#define FSL_LPSPI_FREERTOS_DRIVER_VERSION (MAKE_VERSION(1, 0, 0))
+/*! @brief LPSPI FreeRTOS driver version 2.0.0. */
+#define FSL_LPSPI_FREERTOS_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
 /*@}*/
 
 /*! @brief LPSPI FreeRTOS handle */

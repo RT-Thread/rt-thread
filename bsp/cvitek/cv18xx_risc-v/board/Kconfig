@@ -71,7 +71,7 @@ menu "General Drivers Configuration"
                         default ""
                 endif
 
-            config UART_IRQ_BASE
+            config BSP_UART_IRQ_BASE
                 int
                 default 44
         endif
@@ -149,7 +149,7 @@ menu "General Drivers Configuration"
                         default ""
                 endif
 
-            config I2C_IRQ_BASE
+            config BSP_I2C_IRQ_BASE
                 int
                 default 49
         endif
@@ -293,6 +293,48 @@ menu "General Drivers Configuration"
             config BSP_USING_WDT2
                 bool "Enable WDT2"
                 default n
+        endif
+
+    menuconfig BSP_USING_TIMER
+        bool "Enable TIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIMER
+            config BSP_USING_TIMER0
+                bool "Enable TIMER0"
+                default n
+
+            config BSP_USING_TIMER1
+                bool "Enable TIMER1"
+                default n
+
+            config BSP_USING_TIMER2
+                bool "Enable TIMER2"
+                default n
+
+            config BSP_USING_TIMER3
+                bool "Enable TIMER3"
+                default n
+
+            config BSP_USING_TIMER4
+                bool "Enable TIMER4"
+                default n
+
+            config BSP_USING_TIMER5
+                bool "Enable TIMER5"
+                default n
+
+            config BSP_USING_TIMER6
+                bool "Enable TIMER6"
+                default n
+
+            config BSP_USING_TIMER7
+                bool "Enable TIMER7"
+                default n
+
+            config BSP_TIMER_IRQ_BASE
+                int
+                default 79
         endif
 
     menuconfig BSP_USING_PWM

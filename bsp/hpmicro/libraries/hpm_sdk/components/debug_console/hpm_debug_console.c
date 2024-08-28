@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -36,6 +36,15 @@ uint8_t console_receive_byte(void)
     uint8_t c;
     while (status_success != uart_receive_byte(g_console_uart, &c)) {
     };
+    return c;
+}
+
+uint8_t console_try_receive_byte(void)
+{
+    uint8_t c = 0;
+
+    uart_try_receive_byte(g_console_uart, &c);
+
     return c;
 }
 

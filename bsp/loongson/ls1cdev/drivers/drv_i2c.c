@@ -9,8 +9,8 @@
  */
 
 #include <rtthread.h>
-#include <drivers/i2c.h>
-#include <drivers/i2c-bit-ops.h>
+#include <drivers/dev_i2c.h>
+#include <drivers/dev_i2c_bit_ops.h>
 #include "drv_i2c.h"
 #include "../libraries/ls1c_gpio.h"
 #include "../libraries/ls1c_delay.h"

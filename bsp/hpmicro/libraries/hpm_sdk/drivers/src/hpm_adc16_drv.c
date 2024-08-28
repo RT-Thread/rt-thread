@@ -13,7 +13,6 @@ void adc16_get_default_config(adc16_config_t *config)
     config->res                = adc16_res_16_bits;
     config->conv_mode          = adc16_conv_mode_oneshot;
     config->adc_clk_div        = adc16_clock_divider_1;
-    config->conv_duration      = 0;
     config->wait_dis           = true;
     config->sel_sync_ahb       = true;
     config->port3_realtime     = false;
@@ -65,7 +64,7 @@ static hpm_stat_t adc16_do_calibration(ADC16_Type *ptr)
                        | ADC16_ADC16_CONFIG0_CAL_AVG_CFG_SET(5);
 
     /* Enable ahb_en */
-    ptr->ADC_CFG0 |= ADC16_ADC_CFG0_ADC_AHB_EN_MASK;
+    ptr->ADC_CFG0 |= ADC16_ADC_CFG0_ADC_AHB_EN_MASK | (1 << 2);
 
     /* Disable ADC config clock */
     ptr->ANA_CTRL0 &= ~ADC16_ANA_CTRL0_ADC_CLK_ON_MASK;
@@ -169,7 +168,6 @@ hpm_stat_t adc16_init(ADC16_Type *ptr, adc16_config_t *config)
     /* Set the duration of the conversion */
     ptr->ADC_CFG0 = ADC16_ADC_CFG0_SEL_SYNC_AHB_SET(config->sel_sync_ahb)
                   | ADC16_ADC_CFG0_ADC_AHB_EN_SET(config->adc_ahb_en)
-                  | ADC16_ADC_CFG0_CONVERT_DURATION_SET(config->conv_duration)
                   | ADC16_ADC_CFG0_PORT3_REALTIME_SET(config->port3_realtime);
 
     /* Set wait_dis */
@@ -407,8 +405,9 @@ hpm_stat_t adc16_set_pmt_queue_enable(ADC16_Type *ptr, uint8_t trig_ch, bool ena
         return status_invalid_argument;
     }
 
-#if ADC_SOC_PREEMPT_ENABLE_CTRL_SUPPORT == 1
+#if defined(ADC_SOC_PREEMPT_ENABLE_CTRL_SUPPORT) && ADC_SOC_PREEMPT_ENABLE_CTRL_SUPPORT
     /* Set queue enable control */
+    ptr->CONFIG[trig_ch] &= ~ADC16_CONFIG_QUEUE_EN_MASK;
     ptr->CONFIG[trig_ch] |= ADC16_CONFIG_QUEUE_EN_SET(enable);
     return status_success;
 #else

@@ -10,7 +10,7 @@
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_ftdi_buf[64];
 
-#define CONFIG_USBHOST_MAX_FTDI_CLASS 4
+#define CONFIG_USBHOST_MAX_FTDI_CLASS 1
 
 static struct usbh_ftdi g_ftdi_class[CONFIG_USBHOST_MAX_FTDI_CLASS];
 static uint32_t g_devinuse = 0;
@@ -57,7 +57,7 @@ static void usbh_ftdi_caculate_baudrate(uint32_t *itdf_divisor, uint32_t actual_
         }
         int divisor = FTDI_USB_CLK / baudrate;
         int frac_bits = 0;
-        for (int i = 0; i < sizeof(frac) / sizeof(frac[0]); i++) {
+        for (uint8_t i = 0; i < sizeof(frac) / sizeof(frac[0]); i++) {
             if ((divisor & 0xF) == frac[i]) {
                 frac_bits = i;
                 break;
@@ -370,10 +370,12 @@ int usbh_ftdi_bulk_out_transfer(struct usbh_ftdi *ftdi_class, uint8_t *buffer, u
 
 __WEAK void usbh_ftdi_run(struct usbh_ftdi *ftdi_class)
 {
+    (void)ftdi_class;
 }
 
 __WEAK void usbh_ftdi_stop(struct usbh_ftdi *ftdi_class)
 {
+    (void)ftdi_class;
 }
 
 static const uint16_t ftdi_id_table[][2] = {

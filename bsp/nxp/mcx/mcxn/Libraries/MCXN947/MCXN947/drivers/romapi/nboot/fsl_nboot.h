@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_NBOOT_H_
-#define _FSL_NBOOT_H_
+#ifndef FSL_NBOOT_H_
+#define FSL_NBOOT_H_
 
 #include "fsl_common.h"
 
@@ -343,4 +343,4 @@ nboot_status_protected_t NBOOT_ImgAuthenticateCmac(nboot_context_t *context,
  * @}
  */
 
-#endif /* _FSL_NBOOT_H_ */
+#endif /* FSL_NBOOT_H_ */

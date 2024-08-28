@@ -55,9 +55,7 @@ static void usbh_hub_class_free(struct usbh_hub *hub_class)
     }
     memset(hub_class, 0, sizeof(struct usbh_hub));
 }
-#endif
 
-#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int _usbh_hub_get_hub_descriptor(struct usbh_hub *hub, uint8_t *buffer)
 {
     struct usb_setup_packet *setup;
@@ -67,15 +65,7 @@ static int _usbh_hub_get_hub_descriptor(struct usbh_hub *hub, uint8_t *buffer)
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = USB_REQUEST_GET_DESCRIPTOR;
-
-    /* TODO: hub descriptor has some difference between USB 2.0 and USB 3.x,
-       and we havn't handle the difference here */
-    if ((hub->parent->speed == USB_SPEED_SUPER) ||
-        (hub->parent->speed == USB_SPEED_SUPER_PLUS)) {
-        setup->wValue = HUB_DESCRIPTOR_TYPE_HUB3 << 8;
-    } else {
-        setup->wValue = HUB_DESCRIPTOR_TYPE_HUB << 8;
-    }
+    setup->wValue = HUB_DESCRIPTOR_TYPE_HUB << 8;
 
     setup->wIndex = 0;
     setup->wLength = USB_SIZEOF_HUB_DESC;
@@ -87,8 +77,8 @@ static int _usbh_hub_get_hub_descriptor(struct usbh_hub *hub, uint8_t *buffer)
     memcpy(buffer, g_hub_buf[hub->bus->busid], USB_SIZEOF_HUB_DESC);
     return ret;
 }
-#if 0
-static int _usbh_hub_get_status(struct usbh_hub *hub, uint8_t *buffer)
+
+static int _usbh_hub_get_hub_ss_descriptor(struct usbh_hub *hub, uint8_t *buffer)
 {
     struct usb_setup_packet *setup;
     int ret;
@@ -96,19 +86,19 @@ static int _usbh_hub_get_status(struct usbh_hub *hub, uint8_t *buffer)
     setup = hub->parent->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_DEVICE;
-    setup->bRequest = HUB_REQUEST_GET_STATUS;
-    setup->wValue = 0;
+    setup->bRequest = USB_REQUEST_GET_DESCRIPTOR;
+    setup->wValue = HUB_DESCRIPTOR_TYPE_HUB3 << 8;
+
     setup->wIndex = 0;
-    setup->wLength = 2;
+    setup->wLength = USB_SIZEOF_HUB_SS_DESC;
 
     ret = usbh_control_transfer(hub->parent, setup, g_hub_buf[hub->bus->busid]);
     if (ret < 0) {
         return ret;
     }
-    memcpy(buffer, g_hub_buf[hub->bus->busid], 2);
+    memcpy(buffer, g_hub_buf[hub->bus->busid], USB_SIZEOF_HUB_SS_DESC);
     return ret;
 }
-#endif
 #endif
 
 static int _usbh_hub_get_portstatus(struct usbh_hub *hub, uint8_t port, struct hub_port_status *port_status)
@@ -180,6 +170,8 @@ static int _usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
 #if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int parse_hub_descriptor(struct usb_hub_descriptor *desc, uint16_t length)
 {
+    (void)length;
+
     if (desc->bLength != USB_SIZEOF_HUB_DESC) {
         USB_LOG_ERR("invalid device bLength 0x%02x\r\n", desc->bLength);
         return -1;
@@ -196,6 +188,29 @@ static int parse_hub_descriptor(struct usb_hub_descriptor *desc, uint16_t length
         USB_LOG_RAW("bHubContrCurrent: 0x%02x    \r\n", desc->bHubContrCurrent);
         USB_LOG_RAW("DeviceRemovable: 0x%02x     \r\n", desc->DeviceRemovable);
         USB_LOG_RAW("PortPwrCtrlMask: 0x%02x     \r\n", desc->PortPwrCtrlMask);
+    }
+    return 0;
+}
+
+static int parse_hub_ss_descriptor(struct usb_hub_ss_descriptor *desc, uint16_t length)
+{
+    (void)length;
+
+    if (desc->bLength < USB_SIZEOF_HUB_SS_DESC) {
+        USB_LOG_ERR("invalid device bLength 0x%02x\r\n", desc->bLength);
+        return -1;
+    } else if (desc->bDescriptorType != HUB_DESCRIPTOR_TYPE_HUB3) {
+        USB_LOG_ERR("unexpected descriptor 0x%02x\r\n", desc->bDescriptorType);
+        return -2;
+    } else {
+        USB_LOG_RAW("SuperSpeed Hub Descriptor:\r\n");
+        USB_LOG_RAW("bLength: 0x%02x             \r\n", desc->bLength);
+        USB_LOG_RAW("bDescriptorType: 0x%02x     \r\n", desc->bDescriptorType);
+        USB_LOG_RAW("bNbrPorts: 0x%02x           \r\n", desc->bNbrPorts);
+        USB_LOG_RAW("wHubCharacteristics: 0x%04x \r\n", desc->wHubCharacteristics);
+        USB_LOG_RAW("bPwrOn2PwrGood: 0x%02x      \r\n", desc->bPwrOn2PwrGood);
+        USB_LOG_RAW("bHubContrCurrent: 0x%02x    \r\n", desc->bHubContrCurrent);
+        USB_LOG_RAW("DeviceRemovable: 0x%02x     \r\n", desc->DeviceRemovable);
     }
     return 0;
 }
@@ -311,20 +326,63 @@ static int usbh_hub_connect(struct usbh_hubport *hport, uint8_t intf)
     hub->hub_addr = hport->dev_addr;
     hub->parent = hport;
     hub->bus = hport->bus;
+    hub->speed = hport->speed;
 
+    hport->self = hub;
     hport->config.intf[intf].priv = hub;
 
-    ret = _usbh_hub_get_hub_descriptor(hub, (uint8_t *)&hub->hub_desc);
-    if (ret < 0) {
-        return ret;
+    if (hport->depth > HUB_MAX_DEPTH) {
+        USB_LOG_ERR("Hub depth(%d) is overflow\r\n", hport->depth);
+        return -USB_ERR_INVAL;
     }
 
-    parse_hub_descriptor(&hub->hub_desc, USB_SIZEOF_HUB_DESC);
+    /*
+	 * Super-Speed hubs need to know their depth to be able to
+	 * parse the bits of the route-string that correspond to
+	 * their downstream port number.
+	 *
+	 */
+    if ((hport->depth != 0) && (hport->speed == USB_SPEED_SUPER)) {
+        ret = usbh_hub_set_depth(hub, hport->depth - 1);
+        if (ret < 0) {
+            USB_LOG_ERR("Unable to set hub depth \r\n");
+            return ret;
+        }
+    }
 
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    /* Get hub descriptor. */
+    if (hport->speed == USB_SPEED_SUPER) {
+        ret = _usbh_hub_get_hub_ss_descriptor(hub, (uint8_t *)&hub->hub_ss_desc);
+        if (ret < 0) {
+            return ret;
+        }
+
+        parse_hub_ss_descriptor(&hub->hub_ss_desc, USB_SIZEOF_HUB_SS_DESC);
+        hub->nports = hub->hub_ss_desc.bNbrPorts;
+        hub->powerdelay = hub->hub_ss_desc.bPwrOn2PwrGood * 2;
+        hub->tt_think = 0U;
+    } else {
+        ret = _usbh_hub_get_hub_descriptor(hub, (uint8_t *)&hub->hub_desc);
+        if (ret < 0) {
+            return ret;
+        }
+
+        parse_hub_descriptor(&hub->hub_desc, USB_SIZEOF_HUB_DESC);
+        hub->nports = hub->hub_desc.bNbrPorts;
+        hub->powerdelay = hub->hub_desc.bPwrOn2PwrGood * 2;
+        hub->tt_think = ((hub->hub_desc.wHubCharacteristics & HUB_CHAR_TTTT_MASK) >> 5);
+    }
+
+    for (uint8_t port = 0; port < hub->nports; port++) {
         hub->child[port].port = port + 1;
         hub->child[port].parent = hub;
         hub->child[port].bus = hport->bus;
+    }
+
+    if (hport->device_desc.bDeviceProtocol == HUB_PROTOCOL_MTT) {
+        hub->ismtt = 1;
+    } else {
+        hub->ismtt = 0;
     }
 
     ep_desc = &hport->config.intf[intf].altsetting[0].ep[0].ep_desc;
@@ -334,28 +392,16 @@ static int usbh_hub_connect(struct usbh_hubport *hport, uint8_t intf)
         return -1;
     }
 
-    if (hport->speed == USB_SPEED_SUPER) {
-        uint16_t depth = 0;
-        struct usbh_hubport *parent = hport->parent->parent;
-        while (parent) {
-            depth++;
-            parent = parent->parent->parent;
-        }
-
-        ret = usbh_hub_set_depth(hub, depth);
-        if (ret < 0) {
-            return ret;
-        }
-    }
-
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    for (uint8_t port = 0; port < hub->nports; port++) {
         ret = usbh_hub_set_feature(hub, port + 1, HUB_PORT_FEATURE_POWER);
         if (ret < 0) {
             return ret;
         }
     }
 
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    usb_osal_msleep(hub->powerdelay);
+
+    for (uint8_t port = 0; port < hub->nports; port++) {
         ret = usbh_hub_get_portstatus(hub, port + 1, &port_status);
         USB_LOG_INFO("port %u, status:0x%02x, change:0x%02x\r\n", port + 1, port_status.wPortStatus, port_status.wPortChange);
         if (ret < 0) {
@@ -395,7 +441,7 @@ static int usbh_hub_disconnect(struct usbh_hubport *hport, uint8_t intf)
             usb_osal_timer_delete(hub->int_timer);
         }
 
-        for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+        for (uint8_t port = 0; port < hub->nports; port++) {
             child = &hub->child[port];
             usbh_hubport_release(child);
             child->parent = NULL;
@@ -415,7 +461,7 @@ static void usbh_hub_events(struct usbh_hub *hub)
 {
     struct usbh_hubport *child;
     struct hub_port_status port_status;
-    uint8_t portchange_index;
+    uint16_t portchange_index;
     uint16_t portstatus;
     uint16_t portchange;
     uint16_t mask;
@@ -429,11 +475,10 @@ static void usbh_hub_events(struct usbh_hub *hub)
     }
 
     flags = usb_osal_enter_critical_section();
-    portchange_index = hub->int_buffer[0];
-    hub->int_buffer[0] &= ~portchange_index;
+    memcpy(&portchange_index, hub->int_buffer, 2);
     usb_osal_leave_critical_section(flags);
 
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    for (uint8_t port = 0; port < hub->nports; port++) {
         USB_LOG_DBG("Port change:0x%02x\r\n", portchange_index);
 
         if (!(portchange_index & (1 << (port + 1)))) {
@@ -539,12 +584,23 @@ static void usbh_hub_events(struct usbh_hub *hub)
                         }
                     }
 
-                    if (portstatus & HUB_PORT_STATUS_HIGH_SPEED) {
-                        speed = USB_SPEED_HIGH;
-                    } else if (portstatus & HUB_PORT_STATUS_LOW_SPEED) {
-                        speed = USB_SPEED_LOW;
+                    /*
+                    * Figure out device speed.  This is a bit tricky because
+                    * HUB_PORT_STATUS_POWER_SS and HUB_PORT_STATUS_LOW_SPEED share the same bit.
+                    */
+                    if (portstatus & HUB_PORT_STATUS_POWER) {
+                        if (portstatus & HUB_PORT_STATUS_HIGH_SPEED) {
+                            speed = USB_SPEED_HIGH;
+                        } else if (portstatus & HUB_PORT_STATUS_LOW_SPEED) {
+                            speed = USB_SPEED_LOW;
+                        } else {
+                            speed = USB_SPEED_FULL;
+                        }
+                    } else if (portstatus & HUB_PORT_STATUS_POWER_SS) {
+                        speed = USB_SPEED_SUPER;
                     } else {
-                        speed = USB_SPEED_FULL;
+                        USB_LOG_WRN("Port %u does not enable power\r\n", port + 1);
+                        continue;
                     }
 
                     child = &hub->child[port];
@@ -553,6 +609,7 @@ static void usbh_hub_events(struct usbh_hub *hub)
 
                     memset(child, 0, sizeof(struct usbh_hubport));
                     child->parent = hub;
+                    child->depth = (hub->parent ? hub->parent->depth : 0) + 1;
                     child->connected = true;
                     child->port = port + 1;
                     child->speed = speed;
@@ -624,7 +681,7 @@ int usbh_hub_initialize(struct usbh_bus *bus)
     hub->is_roothub = true;
     hub->parent = NULL;
     hub->hub_addr = 1;
-    hub->hub_desc.bNbrPorts = CONFIG_USBHOST_MAX_RHPORTS;
+    hub->nports = CONFIG_USBHOST_MAX_RHPORTS;
     hub->int_buffer = bus->hcd.roothub_intbuf;
     hub->bus = bus;
 
@@ -652,7 +709,7 @@ int usbh_hub_deinitialize(struct usbh_bus *bus)
     flags = usb_osal_enter_critical_section();
 
     hub = &bus->hcd.roothub;
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    for (uint8_t port = 0; port < hub->nports; port++) {
         hport = &hub->child[port];
 
         usbh_hubport_release(hport);

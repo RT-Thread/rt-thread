@@ -7,6 +7,7 @@ import sys
 # toolchains options
 ARCH='risc-v'
 CPU='hpmicro'
+SOC_FAMILY='HPM6800'
 CHIP_NAME='HPM6880'
 
 CROSS_TOOL='gcc'

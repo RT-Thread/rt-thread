@@ -567,7 +567,7 @@ static inline uint32_t sdxc_get_interrupt_status(SDXC_Type *base)
 
 /**
  * @brief Check whether SD card is inserted
- * @retval SD Card instertion status
+ * @retval SD Card insertion status
  *  @arg true SD Card is inserted
  *  @arg false SD card is not inserted
  */
@@ -646,7 +646,7 @@ static inline uint8_t sdxc_get_adma_error_status(SDXC_Type *base)
 }
 
 /**
- * @brief Configure SDXC data timeout interal
+ * @brief Configure SDXC data timeout internal
  * @param [in] base SDXC base address
  * @param [in] timeout SDXC data timeout option
  */
@@ -729,7 +729,7 @@ static inline void sdxc_enable_high_speed(SDXC_Type *base, bool enable)
  * @brief Control the SDXC power pin
  *
  * @param [in] base SDXC base address
- * @param [in] enable Flas to control the SDXC power pin
+ * @param [in] enable Flag to control the SDXC power pin
  */
 static inline void sdxc_enable_power(SDXC_Type *base, bool enable)
 {
@@ -1015,7 +1015,7 @@ static inline void sdxc_set_center_phase_code(SDXC_Type *base, uint32_t value)
 /**
  * @brief Enable SDXC enhanced strobe
  * @param [in] base SDXC base address
- * @param [in] enable flag to enable/disable SSDXC enhanced strobe
+ * @param [in] enable flag to enable/disable SDXC enhanced strobe
  */
 static inline void sdxc_enable_enhanced_strobe(SDXC_Type *base, bool enable)
 {
@@ -1092,7 +1092,7 @@ hpm_stat_t sdxc_set_adma_table_config(SDXC_Type *base,
  * @brief Set ADMA2 descriptor
  * @param [in] adma_tbl ADMA2 table
  * @param [in] adma_table_words ADMA2 table size in words
- * @param [in] data_buf pointer to the Data to be trnasferred
+ * @param [in] data_buf pointer to the Data to be transferred
  * @param [in] data_bytes Data size for transfer
  * @param [in] flags Flags for ADMA2 descriptor
  * @retval API execution status

@@ -1,12 +1,12 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_VBAT_H_
-#define _FSL_VBAT_H_
+#ifndef FSL_VBAT_H_
+#define FSL_VBAT_H_
 
 #include "fsl_common.h"
 
@@ -21,9 +21,15 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief VBAT driver version 2.0.0. */
-#define FSL_VBAT_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
+/*! @brief VBAT driver version 2.3.1. */
+#define FSL_VBAT_DRIVER_VERSION (MAKE_VERSION(2, 3, 1))
 /*@}*/
+
+#if !defined(VBAT_LDORAMC_RET_MASK)
+#define VBAT_LDORAMC_RET_MASK   (0xF00U)
+#define VBAT_LDORAMC_RET_SHIFT  (8U) 
+#define VBAT_LDORAMC_RET(x)     (((uint32_t)(((uint32_t)(x)) << VBAT_LDORAMC_RET_SHIFT)) & VBAT_LDORAMC_RET_MASK)
+#endif 
 
 /*!
  * @brief The enumeration of VBAT module status.
@@ -35,8 +41,13 @@ enum
     kStatus_VBAT_BandgapNotEnabled     = MAKE_STATUS(kStatusGroup_VBAT, 1), /*!< Bandgap not enabled. */
     kStatus_VBAT_WrongCapacitanceValue = MAKE_STATUS(kStatusGroup_VBAT, 2), /*!< Wrong capacitance for
                                                                                 selected oscillator mode. */
+    kStatus_VBAT_ClockMonitorLocked = MAKE_STATUS(kStatusGroup_VBAT, 3),    /*!< Clock monitor locked. */
+    kStatus_VBAT_OSC32KNotReady     = MAKE_STATUS(kStatusGroup_VBAT, 4),    /*!< OSC32K not ready. */
+    kStatus_VBAT_LDONotReady        = MAKE_STATUS(kStatusGroup_VBAT, 5),    /*!< LDO not ready. */
+    kStatus_VBAT_TamperLocked       = MAKE_STATUS(kStatusGroup_VBAT, 6),    /*!< Tamper locked. */
 };
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_STATUS_REG) && FSL_FEATURE_MCX_VBAT_HAS_STATUS_REG)
 /*!
  * @brief The enumeration of VBAT status flags.
  *
@@ -50,7 +61,20 @@ enum _vbat_status_flag
     kVBAT_StatusFlagBandgapTimer1 = VBAT_STATUSA_TIMER1_FLAG_MASK, /*!< Bandgap Timer1 period reached. */
     kVBAT_StatusFlagLdoReady      = VBAT_STATUSA_LDO_RDY_MASK,     /*!< LDO is enabled and ready. */
     kVBAT_StatusFlagOsc32kReady   = VBAT_STATUSA_OSC_RDY_MASK,     /*!< OSC32k is enabled and clock is ready. */
-    kVBAT_StatusFlagConfigDetect  = VBAT_STATUSA_CONFIG_DET_MASK,  /*!< Configuration error detected. */
+#if defined(VBAT_STATUSA_CLOCK_DET_MASK)
+    kVBAT_StatusFlagClockDetect = VBAT_STATUSA_CLOCK_DET_MASK,   /*!< The clock monitor has detected an error. */
+#endif                                                           /* VBAT_STATUSA_CLOCK_DET_MASK */
+    kVBAT_StatusFlagConfigDetect = VBAT_STATUSA_CONFIG_DET_MASK, /*!< Configuration error detected. */
+#if defined(VBAT_STATUSA_VOLT_DET_MASK)
+    kVBAT_StatusFlagVoltageDetect = VBAT_STATUSA_VOLT_DET_MASK, /*!< Voltage monitor has detected
+                                                                    an error with VBAT supply. */
+#endif                                                          /* VBAT_STATUSA_VOLT_DET_MASK */
+#if defined(VBAT_STATUSA_TEMP_DET_MASK)
+    kVBAT_StatusFlagTemperatureDetect = VBAT_STATUSA_TEMP_DET_MASK, /*!< Temperature monitor has detected an error. */
+#endif                                                              /* VBAT_STATUSA_TEMP_DET_MASK */
+#if defined(VBAT_STATUSA_SEC0_DET_MASK)
+    kVBAT_StatusFlagSec0Detect = VBAT_STATUSA_SEC0_DET_MASK,       /*!< Security input 0 has detected an error. */
+#endif                                                             /* VBAT_STATUSA_SEC0_DET_MASK */
     kVBAT_StatusFlagInterrupt0Detect = VBAT_STATUSA_IRQ0_DET_MASK, /*!< Interrupt 0 asserted. */
     kVBAT_StatusFlagInterrupt1Detect = VBAT_STATUSA_IRQ1_DET_MASK, /*!< Interrupt 1 asserted. */
     kVBAT_StatusFlagInterrupt2Detect = VBAT_STATUSA_IRQ2_DET_MASK, /*!< Interrupt 2 asserted. */
@@ -73,8 +97,21 @@ enum _vbat_interrupt_enable
                                                                            Timer1 period reached. */
     kVBAT_InterruptEnableLdoReady    = VBAT_IRQENA_LDO_RDY_MASK,       /*!< Enable LDO ready interrupt. */
     kVBAT_InterruptEnableOsc32kReady = VBAT_IRQENA_OSC_RDY_MASK,       /*!< Enable OSC32K ready interrupt. */
+#if defined(VBAT_IRQENA_CLOCK_DET_MASK)
+    kVBAT_InterruptEnableClockDetect = VBAT_IRQENA_CLOCK_DET_MASK, /*!< Enable clock monitor detect interrupt. */
+#endif                                                             /* VBAT_IRQENA_CLOCK_DET_MASK */
     kVBAT_InterruptEnableConfigDetect =
-        VBAT_IRQENA_CONFIG_DET_MASK,                             /*!< Enable configuration error detected interrupt. */
+        VBAT_IRQENA_CONFIG_DET_MASK, /*!< Enable configuration error detected interrupt. */
+#if defined(VBAT_IRQENA_VOLT_DET_MASK)
+    kVBAT_InterruptEnableVoltageDetect = VBAT_IRQENA_VOLT_DET_MASK, /*!< Enable voltage monitor detect interrupt. */
+#endif                                                              /* VBAT_IRQENA_VOLT_DET_MASK */
+#if defined(VBAT_IRQENA_TEMP_DET_MASK)
+    kVBAT_InterruptEnableTemperatureDetect = VBAT_IRQENA_TEMP_DET_MASK, /*!< Enable temperature monitor detect
+                                                                            interrupt. */
+#endif                                                                  /* VBAT_IRQENA_TEMP_DET_MASK */
+#if defined(VBAT_IRQENA_SEC0_DET_MASK)
+    kVBAT_InterruptEnableSec0Detect = VBAT_IRQENA_SEC0_DET_MASK, /*!< Enable security input 0 detect interrupt. */
+#endif                                                           /* VBAT_IRQENA_SEC0_DET_MASK */
     kVBAT_InterruptEnableInterrupt0 = VBAT_IRQENA_IRQ0_DET_MASK, /*!< Enable the interrupt0. */
     kVBAT_InterruptEnableInterrupt1 = VBAT_IRQENA_IRQ1_DET_MASK, /*!< Enable the interrupt1. */
     kVBAT_InterruptEnableInterrupt2 = VBAT_IRQENA_IRQ2_DET_MASK, /*!< Enable the interrupt2. */
@@ -103,8 +140,24 @@ enum _vbat_wakeup_enable
                                                                         timer1 period reached. */
     kVBAT_WakeupEnableLdoReady    = VBAT_WAKENA_LDO_RDY_MASK,       /*!< Enable wakeup when LDO ready. */
     kVBAT_WakeupEnableOsc32kReady = VBAT_WAKENA_OSC_RDY_MASK,       /*!< Enable wakeup when OSC32k ready. */
-    kVBAT_WakeupEnableConfigDetect = VBAT_WAKENA_CONFIG_DET_MASK,   /*!< Enable wakeup when
-                                                                        configuration error detected. */
+#if defined(VBAT_WAKENA_CLOCK_DET_MASK)
+    kVBAT_WakeupEnableClockDetect =
+        VBAT_WAKENA_CLOCK_DET_MASK, /*!< Enable wakeup when clock monitor detect an error. */
+#endif                              /* VBAT_WAKENA_CLOCK_DET_MASK */
+    kVBAT_WakeupEnableConfigDetect = VBAT_WAKENA_CONFIG_DET_MASK, /*!< Enable wakeup when
+                                                                      configuration error detected. */
+#if defined(VBAT_WAKENA_VOLT_DET_MASK)
+    kVBAT_WakeupEnableVoltageDetect = VBAT_WAKENA_VOLT_DET_MASK, /*!< Enable wakeup when voltage monitor detect an
+                                                                     error. */
+#endif                                                           /* VBAT_WAKENA_VOLT_DET_MASK */
+#if defined(VBAT_WAKENA_TEMP_DET_MASK)
+    kVBAT_WakeupEnableTemperatureDetect = VBAT_WAKENA_TEMP_DET_MASK, /*!< Enable wakeup when temperature monitor
+                                                                         detect an error. */
+#endif                                                               /* VBAT_WAKENA_TEMP_DET_MASK */
+#if defined(VBAT_WAKENA_SEC0_DET_MASK)
+    kVBAT_WakeupEnableSec0Detect = VBAT_WAKENA_SEC0_DET_MASK, /*!< Enable wakeup when security input 0 detect an
+                                                                  error. */
+#endif                                                        /* VBAT_WAKENA_SEC0_DET_MASK */
     kVBAT_WakeupEnableInterrupt0 = VBAT_WAKENA_IRQ0_DET_MASK, /*!< Enable wakeup when interrupt0 asserted. */
     kVBAT_WakeupEnableInterrupt1 = VBAT_WAKENA_IRQ1_DET_MASK, /*!< Enable wakeup when interrupt1 asserted. */
     kVBAT_WakeupEnableInterrupt2 = VBAT_WAKENA_IRQ2_DET_MASK, /*!< Enable wakeup when interrupt2 asserted. */
@@ -113,9 +166,48 @@ enum _vbat_wakeup_enable
     kVBAT_AllWakeupsEnable = (VBAT_WAKENA_POR_DET_MASK | VBAT_WAKENA_WAKEUP_FLAG_MASK | VBAT_WAKENA_TIMER0_FLAG_MASK |
                               VBAT_WAKENA_TIMER1_FLAG_MASK | VBAT_WAKENA_LDO_RDY_MASK | VBAT_WAKENA_OSC_RDY_MASK |
                               VBAT_WAKENA_CONFIG_DET_MASK | VBAT_WAKENA_IRQ0_DET_MASK | VBAT_WAKENA_IRQ1_DET_MASK |
-                              VBAT_WAKENA_IRQ2_DET_MASK | VBAT_WAKENA_IRQ3_DET_MASK), /*!< Enable all wakeup. */
-};
+                              VBAT_WAKENA_IRQ2_DET_MASK | VBAT_WAKENA_IRQ3_DET_MASK
 
+#if defined(VBAT_WAKENA_CLOCK_DET_MASK)
+                              | VBAT_WAKENA_CLOCK_DET_MASK
+
+#endif /* VBAT_WAKENA_CLOCK_DET_MASK */
+#if defined(VBAT_WAKENA_VOLT_DET_MASK)
+                              | VBAT_WAKENA_VOLT_DET_MASK
+
+#endif /* VBAT_WAKENA_VOLT_DET_MASK */
+#if defined(VBAT_WAKENA_TEMP_DET_MASK)
+                              | VBAT_WAKENA_TEMP_DET_MASK
+
+#endif /* VBAT_WAKENA_TEMP_DET_MASK */
+#if defined(VBAT_WAKENA_SEC0_DET_MASK)
+                              | VBAT_WAKENA_SEC0_DET_MASK
+
+#endif                           /* VBAT_WAKENA_SEC0_DET_MASK */
+                              ), /*!< Enable all wakeup. */
+};
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_STATUS_REG */
+
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG) && FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG)
+/*!
+ * @brief The enumeration of VBAT tamper enable.
+ */
+enum _vbat_tamper_enable
+{
+    kVBAT_TamperEnablePOR         = VBAT_TAMPERA_POR_DET_MASK, /*!< Enable tamper if POR asserted in STATUS register. */
+    kVBAT_TamperEnableClockDetect = VBAT_TAMPERA_CLOCK_DET_MASK, /*!< Enable tamper if clock monitor detect an error. */
+    kVBAT_TamperEnableConfigDetect =
+        VBAT_TAMPERA_CONFIG_DET_MASK,                             /*!< Enable tamper if configuration error detected. */
+    kVBAT_TamperEnableVoltageDetect = VBAT_TAMPERA_VOLT_DET_MASK, /*!< Enable tamper if voltage monitor detect an
+                                                                      error. */
+    kVBAT_TamperEnableTemperatureDetect = VBAT_TAMPERA_TEMP_DET_MASK, /*!< Enable tamper if temperature monitor
+                                                                          detect an error. */
+    kVBAT_TamperEnableSec0Detect = VBAT_TAMPERA_SEC0_DET_MASK,        /*!< Enable tamper if security input 0 detect an
+                                                                          error. */
+};
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG */
+
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER) && FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER)
 /*!
  * @brief The enumeration of bandgap timer id, VBAT support two bandgap timers.
  *
@@ -126,6 +218,7 @@ enum _vbat_bandgap_timer_id
     kVBAT_BandgapTimer0 = 1U << 0U, /*!< Bandgap Timer0. */
     kVBAT_BandgapTimer1 = 1U << 1U, /*!< Bandgap Timer1. */
 };
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER */
 
 /*!
  * @brief The enumeration of connections for OSC32K/FRO32K output clock to other modules.
@@ -134,12 +227,17 @@ enum _vbat_bandgap_timer_id
  */
 enum _vbat_clock_enable
 {
-    kVBAT_EnableClockToVddBat  = 1U << 0U, /*!< Enable OSC32K/FRO32K to VDD_BAT power domain. */
-    kVBAT_EnableClockToVddSys  = 1U << 1U, /*!< Enable OSC32K/FRO32K to VDD_SYS power domain. */
-    kVBAT_EnableClockToVddWake = 1U << 2U, /*!< Enable OSC32K/FRO32K to VDD_WAKE power domain. */
-    kVBAT_EnableClockToVddMain = 1U << 3U, /*!< Enable OSC32K/FRO32K to VDD_MAIN power domain. */
+    kVBAT_EnableClockToDomain0 = 1U << 0U, /*!< Enable clock to power domain0. */
+    kVBAT_EnableClockToDomain1 = 1U << 1U, /*!< Enable clock to power domain1. */
+    kVBAT_EnableClockToDomain2 = 1U << 2U, /*!< Enable clock to power domain2. */
+    kVBAT_EnableClockToDomain3 = 1U << 3U, /*!< Enable clock to power domain3. */
 };
+#define kVBAT_EnableClockToVddBat   kVBAT_EnableClockToDomain0
+#define kVBAT_EnableClockToVddSys   kVBAT_EnableClockToDomain1
+#define kVBAT_EnableClockToVddWake  kVBAT_EnableClockToDomain2
+#define kVBAT_EnableClockToVddMain  kVBAT_EnableClockToDomain3
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_LDOCTL_REG) && FSL_FEATURE_MCX_VBAT_HAS_LDOCTL_REG)
 /*!
  * @brief The enumeration of SRAM arrays that controlled by VBAT.
  * @anchor vbat_ram_array_t
@@ -151,6 +249,7 @@ enum _vbat_ram_array
     kVBAT_SramArray2 = 1U << 2U, /*!< Specify SRAM array2 that controlled by VBAT. */
     kVBAT_SramArray3 = 1U << 3U, /*!< Specify SRAM array3 that controlled by VBAT. */
 };
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_LDOCTL_REG */
 
 /*!
  * @brief The enumeration of bandgap refresh period.
@@ -163,6 +262,7 @@ typedef enum _vbat_bandgap_refresh_period
     kVBAT_BandgapRefresh62P5ms   = 3U, /*!< Bandgap refresh every 62.5ms. */
 } vbat_bandgap_refresh_period_t;
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER) && FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER)
 /*!
  * @brief The enumeration of bandgap timer0 timeout period.
  */
@@ -175,7 +275,9 @@ typedef enum _vbat_bandgap_timer0_timeout_period
     kVBAT_BangapTimer0Timeout62P5ms  = 4U, /*!< Bandgap timer0 timerout every 62.5ms. */
     kVBAT_BangapTimer0Timeout31P25ms = 5U, /*!< Bandgap timer0 timerout every 31.25ms. */
 } vbat_bandgap_timer0_timeout_period_t;
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER */
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_OSCCTL_REG) && FSL_FEATURE_MCX_VBAT_HAS_OSCCTL_REG)
 /*!
  * @brief The enumeration of osc32k operate mode, including Bypass mode, low power switched mode and so on.
  */
@@ -225,7 +327,9 @@ typedef enum _vbat_osc32k_start_up_time
     kVBAT_Osc32kStartUpTime0P125Sec,  /*!< Configure the start-up time as 0.125 seconds. */
     kVBAT_Osc32kStartUpTime0P5MSec,   /*!< Configure the start-up time as 0.5 milliseconds. */
 } vbat_osc32k_start_up_time_t;
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_OSCCTL_REG */
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_SWICTL_REG) && FSL_FEATURE_MCX_VBAT_HAS_SWICTL_REG)
 /*!
  * @brief The enumeration of VBAT module supplies.
  */
@@ -234,6 +338,29 @@ typedef enum _vbat_internal_module_supply
     kVBAT_ModuleSuppliedByVddBat = 0U, /*!< VDD_BAT supplies VBAT modules. */
     kVBAT_ModuleSuppliedByVddSys = 1U, /*!< VDD_SYS supplies VBAT modules. */
 } vbat_internal_module_supply_t;
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_SWICTL_REG */
+
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG) && FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG)
+/*!
+ * @brief The enumeration of VBAT clock monitor divide trim value
+ */
+typedef enum _vbat_clock_monitor_divide_trim
+{
+    kVBAT_ClockMonitorOperateAt1kHz = 0U, /*!< Clock monitor operates at 1 kHz. */
+    kVBAT_ClockMonitorOperateAt64Hz = 1U, /*!< Clock monitor operates at 64 Hz. */
+} vbat_clock_monitor_divide_trim_t;
+
+/*!
+ * @brief The enumeration of VBAT clock monitor frequency trim value used to adjust the clock monitor assert.
+ */
+typedef enum _vbat_clock_monitor_freq_trim
+{
+    kVBAT_ClockMonitorAssert2Cycle = 0U, /*!< Clock monitor assert 2 cycles after expected edge. */
+    kVBAT_ClockMonitorAssert4Cycle = 1U, /*!< Clock monitor assert 4 cycles after expected edge. */
+    kVBAT_ClockMonitorAssert6Cycle = 2U, /*!< Clock monitor assert 8 cycles after expected edge. */
+    kVBAT_ClockMonitorAssert8Cycle = 3U, /*!< Clock monitor assert 8 cycles after expected edge. */
+} vbat_clock_monitor_freq_trim_t;
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG */
 
 /*!
  * @brief The structure of internal 16kHz free running oscillator attributes.
@@ -243,6 +370,33 @@ typedef struct _vbat_fro16k_config
     bool enableFRO16k;              /*!< Enable/disable internal 16kHz free running oscillator. */
     uint8_t enabledConnectionsMask; /*!< The mask of connected modules to enable FRO16k clock output.  */
 } vbat_fro16k_config_t;
+
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG) && FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG)
+/*!
+ * @brief The structure of internal clock monitor, including divide trim and frequency trim.
+ */
+typedef struct _vbat_clock_monitor_config
+{
+    vbat_clock_monitor_divide_trim_t divideTrim : 1U; /* !< Divide trim value, please
+                                                    refer to @ref vbat_clock_monitor_divide_trim_t */
+    vbat_clock_monitor_freq_trim_t freqTrim : 2U;     /*!< Frequency trim value used to adjust the clock monitor
+                                                     assert, please refer to @ref vbat_clock_monitor_freq_trim_t. */
+    bool lock : 1U;                                   /*!< Lock the clock monitor control after enabled. */
+} vbat_clock_monitor_config_t;
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG */
+
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG) && FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG)
+/*!
+ * @brief The structure of Tamper configuration.
+ */
+typedef struct _vbat_tamper_config
+{
+    bool enableVoltageDetect : 1U;     /*!< Enable/disable voltage detection. */
+    bool enableTemperatureDetect : 1U; /*!< Enable/disable temperature detection. */
+    bool lock : 1U;                    /*!< Lock the tamper control after enabled. */
+} vbat_tamper_config_t;
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG */
+
 /*******************************************************************************
  * API
  ******************************************************************************/
@@ -277,12 +431,16 @@ static inline void VBAT_EnableFRO16k(VBAT_Type *base, bool enable)
     if (enable)
     {
         base->FROCTLA |= VBAT_FROCTLA_FRO_EN_MASK;
+#if (defined(VBAT_FROCTLB_INVERSE_MASK))
         base->FROCTLB &= ~VBAT_FROCTLB_INVERSE_MASK;
+#endif /* VBAT_FROCTLB_INVERSE_MASK */
     }
     else
     {
         base->FROCTLA &= ~VBAT_FROCTLA_FRO_EN_MASK;
+#if (defined(VBAT_FROCTLB_INVERSE_MASK))
         base->FROCTLB |= VBAT_FROCTLB_INVERSE_MASK;
+#endif /* VBAT_FROCTLB_INVERSE_MASK */
     }
 }
 
@@ -333,7 +491,9 @@ static inline void VBAT_GateFRO16k(VBAT_Type *base, uint8_t connectionsMask)
 static inline void VBAT_LockFRO16kSettings(VBAT_Type *base)
 {
     base->FROLCKA |= VBAT_FROLCKA_LOCK_MASK;
+#if (defined(VBAT_FROLCKB_LOCK_MASK))
     base->FROLCKB &= ~VBAT_FROLCKB_LOCK_MASK;
+#endif /* VBAT_FROLCKB_LOCK_MASK */
 }
 
 /*!
@@ -350,6 +510,7 @@ static inline bool VBAT_CheckFRO16kSettingsLocked(VBAT_Type *base)
 
 /*! @} */
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_OSCCTL_REG) && FSL_FEATURE_MCX_VBAT_HAS_OSCCTL_REG)
 /*!
  * @name OSC32K Control Interfaces
  * @{
@@ -372,7 +533,7 @@ static inline void VBAT_EnableCrystalOsc32k(VBAT_Type *base, bool enable)
 
         /* Polling status register to check clock is ready. */
         while ((base->STATUSA & VBAT_STATUSA_OSC_RDY_MASK) == 0UL)
-            ;
+        {}
     }
     else
     {
@@ -406,6 +567,7 @@ static inline void VBAT_BypassCrystalOsc32k(VBAT_Type *base, bool enableBypass)
     }
 }
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT) && FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT) 
 /*!
  * @brief Adjust 32k crystal oscillator amplifier gain.
  *
@@ -420,6 +582,20 @@ static inline void VBAT_AdjustCrystalOsc32kAmplifierGain(VBAT_Type *base, uint8_
     base->OSCCTLB = ((base->OSCCTLB & ~(VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK | VBAT_OSCCTLA_FINE_AMP_GAIN_MASK)) |
                      (VBAT_OSCCTLA_COARSE_AMP_GAIN(~coarse) | VBAT_OSCCTLA_FINE_AMP_GAIN(~fine)));
 }
+#else
+/*!
+ * @brief Adjust 32k crystal oscillator amplifier gain.
+ *
+ * @param base VBAT peripheral base address.
+ * @param coarse Specify amplifier coarse trim value.
+ */
+static inline void VBAT_AdjustCrystalOsc32kAmplifierGain(VBAT_Type *base, uint8_t coarse)
+{
+    base->OSCCTLA = (base->OSCCTLA & ~VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK) | (VBAT_OSCCTLA_COARSE_AMP_GAIN(coarse));
+    base->OSCCTLB = (base->OSCCTLB & ~VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK) | (VBAT_OSCCTLA_COARSE_AMP_GAIN(~(uint32_t)coarse));        
+}
+
+#endif /*  */
 
 /*!
  * @brief Set 32k crystal oscillator mode and load capacitance for the XTAL/EXTAL pin.
@@ -447,7 +623,7 @@ status_t VBAT_SetCrystalOsc32kModeAndLoadCapacitance(VBAT_Type *base,
 static inline void VBAT_TrimCrystalOsc32kStartupTime(VBAT_Type *base, vbat_osc32k_start_up_time_t startupTime)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~(VBAT_OSCCFGA_INIT_TRIM_MASK)) | VBAT_OSCCFGA_INIT_TRIM(startupTime));
-    base->OSCCFGB = ((base->OSCCFGB & ~(VBAT_OSCCFGA_INIT_TRIM_MASK)) | VBAT_OSCCFGA_INIT_TRIM(~startupTime));
+    base->OSCCFGB = ((base->OSCCFGB & ~(VBAT_OSCCFGA_INIT_TRIM_MASK)) | VBAT_OSCCFGA_INIT_TRIM(~((uint32_t)startupTime)));
 }
 
 /*!
@@ -459,7 +635,7 @@ static inline void VBAT_TrimCrystalOsc32kStartupTime(VBAT_Type *base, vbat_osc32
 static inline void VBAT_SetOsc32kSwitchModeComparatorTrimValue(VBAT_Type *base, uint8_t comparatorTrimValue)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~VBAT_OSCCFGA_CMP_TRIM_MASK) | VBAT_OSCCFGA_CMP_TRIM(comparatorTrimValue));
-    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CMP_TRIM_MASK) | VBAT_OSCCFGA_CMP_TRIM(~comparatorTrimValue));
+    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CMP_TRIM_MASK) | VBAT_OSCCFGA_CMP_TRIM(~((uint32_t)comparatorTrimValue)));
 }
 
 /*!
@@ -471,7 +647,7 @@ static inline void VBAT_SetOsc32kSwitchModeComparatorTrimValue(VBAT_Type *base, 
 static inline void VBAT_SetOsc32kSwitchModeDelayTrimValue(VBAT_Type *base, uint8_t delayTrimValue)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~VBAT_OSCCFGA_DLY_TRIM_MASK) | VBAT_OSCCFGA_DLY_TRIM(delayTrimValue));
-    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_DLY_TRIM_MASK) | VBAT_OSCCFGA_DLY_TRIM(~delayTrimValue));
+    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_DLY_TRIM_MASK) | VBAT_OSCCFGA_DLY_TRIM(~((uint32_t)delayTrimValue)));
 }
 
 /*!
@@ -483,7 +659,7 @@ static inline void VBAT_SetOsc32kSwitchModeDelayTrimValue(VBAT_Type *base, uint8
 static inline void VBAT_SetOsc32kSwitchModeCapacitorTrimValue(VBAT_Type *base, uint8_t capacitorTrimValue)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~VBAT_OSCCFGA_CAP_TRIM_MASK) | VBAT_OSCCFGA_CAP_TRIM(capacitorTrimValue));
-    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CAP_TRIM_MASK) | VBAT_OSCCFGA_CAP_TRIM(~capacitorTrimValue));
+    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CAP_TRIM_MASK) | VBAT_OSCCFGA_CAP_TRIM(~((uint32_t)capacitorTrimValue)));
 }
 
 /*!
@@ -542,7 +718,9 @@ static inline void VBAT_GateOsc32k(VBAT_Type *base, uint8_t connectionsMask)
 }
 
 /*! @} */
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_OSCCTL_REG */
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_LDOCTL_REG) && FSL_FEATURE_MCX_VBAT_HAS_LDOCTL_REG)
 /*!
  * @name RAM_LDO Control Interfaces
  * @{
@@ -678,7 +856,7 @@ static inline void VBAT_SwitchSRAMPowerBySocSupply(VBAT_Type *base)
  */
 static inline void VBAT_PowerOffSRAMsInLowPowerModes(VBAT_Type *base, uint8_t sramMask)
 {
-    base->LDORAMC |= VBAT_LDORAMC_RET(sramMask);
+    base->LDORAMC |= (uint32_t)VBAT_LDORAMC_RET(sramMask);
 }
 
 /*!
@@ -689,7 +867,7 @@ static inline void VBAT_PowerOffSRAMsInLowPowerModes(VBAT_Type *base, uint8_t sr
  */
 static inline void VBAT_RetainSRAMsInLowPowerModes(VBAT_Type *base, uint8_t sramMask)
 {
-    base->LDORAMC &= ~VBAT_LDORAMC_RET(sramMask);
+    base->LDORAMC &= ~(uint32_t)VBAT_LDORAMC_RET(sramMask);
 }
 
 /*!
@@ -713,7 +891,9 @@ static inline void VBAT_EnableSRAMIsolation(VBAT_Type *base, bool enable)
 }
 
 /*! @} */
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_RAM_LDO */
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER) && FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER)
 /*! @name Bandgap Timer Control Interfaces
  * @{
  */
@@ -756,7 +936,9 @@ void VBAT_SetBandgapTimer0TimeoutValue(VBAT_Type *base, vbat_bandgap_timer0_time
 void VBAT_SetBandgapTimer1TimeoutValue(VBAT_Type *base, uint32_t timeoutPeriod);
 
 /*! @} */
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_BANDGAP_TIMER */
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_SWICTL_REG) && FSL_FEATURE_MCX_VBAT_HAS_SWICTL_REG)
 /*! @name Switch Control Interfaces
  * @{
  */
@@ -790,7 +972,7 @@ static inline void VBAT_SwitchVBATModuleSupplyActiveMode(VBAT_Type *base, vbat_i
  */
 static inline vbat_internal_module_supply_t VBAT_GetVBATModuleSupply(VBAT_Type *base)
 {
-    return (base->SWICTLA & VBAT_SWICTLA_SWI_EN_MASK);
+    return (vbat_internal_module_supply_t)(uint8_t)(base->SWICTLA & VBAT_SWICTLA_SWI_EN_MASK);
 }
 
 /*!
@@ -854,7 +1036,234 @@ static inline bool VBAT_CheckSwitchControlLocked(VBAT_Type *base)
 }
 
 /*! @} */
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_SWICTL_REG */
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG) && FSL_FEATURE_MCX_VBAT_HAS_CLKMON_REG)
+/*!
+ * @name Clock Monitor Interfaces
+ * @{
+ */
+
+/*!
+ * @brief Initialize the VBAT clock monitor, enable clock monitor and set the clock monitor configuration.
+ *
+ * @note Both FRO16K and OSC32K should be enabled and stable before invoking this function.
+ *
+ * @param base VBAT peripheral base address.
+ * @param config Pointer to @ref vbat_clock_monitor_config_t structure.
+ *
+ * @retval kStatus_Success Clock monitor is initialized successfully.
+ * @retval kStatus_VBAT_Fro16kNotEnabled FRO16K is not enabled.
+ * @retval kStatus_VBAT_Osc32kNotReady OSC32K is not ready.
+ * @retval kStatus_VBAT_ClockMonitorLocked Clock monitor is locked.
+ */
+status_t VBAT_InitClockMonitor(VBAT_Type *base, const vbat_clock_monitor_config_t *config);
+
+/*!
+ * @brief Deinitialize the VBAT clock monitor.
+ *
+ * @param base VBAT peripheral base address.
+ *
+ * @retval kStatus_Success Clock monitor is de-initialized successfully.
+ * @retval kStatus_VBAT_ClockMonitorLocked Control of Clock monitor is locked.
+ */
+status_t VBAT_DeinitMonitor(VBAT_Type *base);
+
+/*!
+ * @brief Enable/disable clock monitor.
+ *
+ * @param base VBAT peripheral base address.
+ * @param enable Switcher to enable/disable clock monitor:
+ *         - true: enable clock monitor;
+ *        - false: disable clock monitor.
+ */
+static inline void VBAT_EnableClockMonitor(VBAT_Type *base, bool enable)
+{
+    if (enable)
+    {
+        base->MONCTLA |= VBAT_MONCTLA_MON_EN_MASK;
+        base->MONCTLB &= ~VBAT_MONCTLA_MON_EN_MASK;
+    }
+    else
+    {
+        base->MONCTLA &= ~VBAT_MONCTLA_MON_EN_MASK;
+        base->MONCTLB |= VBAT_MONCTLA_MON_EN_MASK;
+    }
+}
+
+/*!
+ * @brief Set clock monitor's divide trim, avaiable value is #kVBAT_ClockMonitorOperateAt1kHz and
+ * #kVBAT_ClockMonitorOperateAt64Hz
+ *
+ * @param base VBAT peripheral base address.
+ * @param divideTrim Specify divide trim value, please refer to @ref vbat_clock_monitor_divide_trim_t.
+ */
+static inline void VBAT_SetClockMonitorDivideTrim(VBAT_Type *base, vbat_clock_monitor_divide_trim_t divideTrim)
+{
+    base->MONCFGA = (base->MONCFGA & ~VBAT_MONCFGA_DIVIDE_TRIM_MASK) | VBAT_MONCFGA_DIVIDE_TRIM(divideTrim);
+    base->MONCFGB = (base->MONCFGB & ~VBAT_MONCFGA_DIVIDE_TRIM_MASK) | VBAT_MONCFGA_DIVIDE_TRIM(~divideTrim);
+}
+
+/*!
+ * @brief Set clock monitor's frequency trim, avaiable value is #kVBAT_ClockMonitorAssert2Cycle,
+ * #kVBAT_ClockMonitorAssert4Cycle, #kVBAT_ClockMonitorAssert6Cycle and #kVBAT_ClockMonitorAssert8Cycle.
+ *
+ * @param base VBAT peripheral base address.
+ * @param freqTrim Specify frequency trim value, please refer to @ref vbat_clock_monitor_freq_trim_t.
+ */
+static inline void VBAT_SetClockMonitorFrequencyTrim(VBAT_Type *base, vbat_clock_monitor_freq_trim_t freqTrim)
+{
+    base->MONCFGA = (base->MONCFGA & ~VBAT_MONCFGA_FREQ_TRIM_MASK) | VBAT_MONCFGA_FREQ_TRIM(freqTrim);
+    base->MONCFGB = (base->MONCFGB & ~VBAT_MONCFGA_FREQ_TRIM_MASK) | VBAT_MONCFGA_FREQ_TRIM(~freqTrim);
+}
+
+/*!
+ * @brief Lock clock monitor enable/disable control.
+ *
+ * @note If locked, it is not allowed to change clock monitor enable/disable control.
+ *
+ * @param base VBAT peripheral base address.
+ */
+static inline void VBAT_LockClockMonitorControl(VBAT_Type *base)
+{
+    base->MONLCKA |= VBAT_MONLCKA_LOCK_MASK;
+    base->MONLCKB &= ~VBAT_MONLCKA_LOCK_MASK;
+}
+
+/*!
+ * @brief Unlock clock monitor enable/disable control.
+ *
+ * @param base VBTA peripheral base address.
+ */
+static inline void VBAT_UnlockClockMonitorControl(VBAT_Type *base)
+{
+    base->MONLCKA &= ~VBAT_MONLCKA_LOCK_MASK;
+    base->MONLCKB |= VBAT_MONLCKA_LOCK_MASK;
+}
+
+/*!
+ * @brief Check if clock monitor enable/disable control is locked.
+ *
+ * @note If locked, it is not allowed to change clock monitor enable/disable control.
+ *
+ * @param base VBAT peripheral base address.
+ *
+ * @retval false clock monitor enable/disable control is not locked.
+ * @retval true  clock monitor enable/disable control is locked, any writes to related registers are blocked.
+ */
+static inline bool VBAT_CheckClockMonitorControlLocked(VBAT_Type *base)
+{
+    return ((base->MONLCKA & VBAT_MONLCKA_LOCK_MASK) != 0UL);
+}
+
+/*! @} */
+#endif /* FSL_FEATURE_VBAT_HAS_CLOCK_MONITOR */
+
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG) && FSL_FEATURE_MCX_VBAT_HAS_TAMPER_REG)
+/*! @name Tamper Control Interfaces
+ *
+ */
+
+/*!
+ * @brief Initialize tamper control.
+ *
+ * @note Both FRO16K and bandgap should be enabled before calling this function.
+ *
+ * @param base VBAT peripheral base address.
+ * @param config Pointer to @ref vbat_tamper_config_t structure.
+ *
+ * @retval kStatus_Success Tamper is initialized successfully.
+ * @retval kStatus_VBAT_TamperLocked Tamper control is locked.
+ * @retval kStatus_VBAT_BandgapNotEnabled Bandgap is not enabled.
+ * @retval kStatus_VBAT_Fro16kNotEnabled FRO 16K is not enabled.
+ */
+status_t VBAT_InitTamper(VBAT_Type *base, const vbat_tamper_config_t *config);
+
+/*!
+ * @brief De-initialize tamper control.
+ *
+ * @param base VBAT peripheral base address.
+ *
+ * @retval kStatus_Success Tamper is de-initialized successfully.
+ * @retval kStatus_VBAT_TamperLocked Tamper control is locked.
+ */
+status_t VBAT_DeinitTamper(VBAT_Type *base);
+
+/*!
+ * @brief Enable tampers for VBAT.
+ *
+ * @param base VBAT peripheral base address.
+ * @param tamperEnableMask Mask of tamper to be enabled, should be the OR'ed value of @ref _vbat_tamper_enable.
+ */
+static inline void VBAT_EnableTamper(VBAT_Type *base, uint32_t tamperEnableMask)
+{
+    base->TAMPERA |= tamperEnableMask;
+    base->TAMPERB &= ~tamperEnableMask;
+}
+
+/*!
+ * @brief Disable tampers for VBAT.
+ *
+ * @param base VBAT peripheral base address.
+ * @param tamperEnableMask Mask of tamper to be disabled, should be the OR'ed value of @ref _vbat_tamper_enable.
+ */
+static inline void VBAT_DisableTamper(VBAT_Type *base, uint32_t tamperEnableMask)
+{
+    base->TAMPERA &= ~tamperEnableMask;
+    base->TAMPERB |= tamperEnableMask;
+}
+
+/*!
+ * @brief Get tamper enable information.
+ *
+ * @param base VBAT peripheral base address.
+ *
+ * @return Mask of tamper enable information, should be the OR'ed value of @ref _vbat_tamper_enable.
+ */
+static inline uint32_t VBAT_GetTamperEnableInfo(VBAT_Type *base)
+{
+    return base->TAMPERA;
+}
+
+/*!
+ * @brief Lock tamper control, if locked, it is not allowed to change tamper control.
+ *
+ * @param base VBAT peripheral base address.
+ */
+static inline void VBAT_LockTamperControl(VBAT_Type *base)
+{
+    base->TAMLCKA |= VBAT_TAMLCKA_LOCK_MASK;
+    base->TAMLCKB &= ~VBAT_TAMLCKA_LOCK_MASK;
+}
+
+/*!
+ * @brief Unlock tamper control.
+ *
+ * @param base VBAT peripheral base address.
+ */
+static inline void VBAT_UnlockTamperControl(VBAT_Type *base)
+{
+    base->TAMLCKA &= ~VBAT_TAMLCKA_LOCK_MASK;
+    base->TAMLCKB |= VBAT_TAMLCKA_LOCK_MASK;
+}
+
+/*!
+ * @brief Check if tamper control is locked.
+ *
+ * @param base VBAT peripheral base address.
+ *
+ * @retval false Tamper control is not locked.
+ * @retval true  Tamper control is locked, any writes to related registers are blocked.
+ */
+static inline bool VBAT_CheckTamperControlLocked(VBAT_Type *base)
+{
+    return ((base->TAMLCKA & VBAT_TAMLCKA_LOCK_MASK) != 0UL);
+}
+
+/*! @} */
+#endif /* FSL_FEATURE_VBAT_HAS_TAMPER */
+
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_STATUS_REG) && FSL_FEATURE_MCX_VBAT_HAS_STATUS_REG)
 /*! @name Status, Interrupt, Wakeup Control Interfaces
  * @{
  */
@@ -965,6 +1374,7 @@ static inline void VBAT_SetWakeupPinDefaultState(VBAT_Type *base, bool assert)
 }
 
 /*! @} */
+#endif /* FSL_FEATURE_MCX_VBAT_HAS_STATUS_REG */
 
 #if defined(__cplusplus)
 }
@@ -973,4 +1383,4 @@ static inline void VBAT_SetWakeupPinDefaultState(VBAT_Type *base, bool assert)
 /*!
  * @}
  */
-#endif /* __FSL_VBAT_H__ */
+#endif /* FSL_VBAT_H__ */

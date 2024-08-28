@@ -183,16 +183,7 @@ src += Glob(cwd+'/port/lwip_port/*.c')
 path += [cwd + '/port/lwip_port']
 
 ## cherryusb port
-if GetDepend(['BSP_USING_XHCI']):
-    src += Glob(cwd +'/port/cherryusb_port/drv_xhci.c')
-    path += [cwd + '/port/cherryusb_port']
-
-if GetDepend(['BSP_USING_PUSB2']):
-    if GetDepend(['PKG_CHERRYUSB_HOST_PUSB2']):
-        src += Glob(cwd +'/port/cherryusb_port/drv_pusb2_hc.c')
-    if GetDepend(['PKG_CHERRYUSB_DEVICE_PUSB2']):
-        src += Glob(cwd +'/port/cherryusb_port/drv_pusb2_dc.c')
-    path += [cwd + '/port/cherryusb_port']
+src += Glob(cwd + '/port/cherryusb_port/*.c')
 
 # phytium ports rt-thread examples
 PORT_DRV_DIR = cwd + '/examples'

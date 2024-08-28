@@ -1,4 +1,4 @@
-# Copyright 2021-2023 HPMicro
+# Copyright 2021-2024 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 import os
@@ -7,6 +7,7 @@ import sys
 # toolchains options
 ARCH='risc-v'
 CPU='hpmicro'
+SOC_FAMILY='HPM6700'
 CHIP_NAME='HPM6750'
 
 CROSS_TOOL='gcc'

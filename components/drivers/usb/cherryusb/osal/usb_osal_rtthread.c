@@ -129,7 +129,7 @@ struct usb_osal_timer *usb_osal_timer_create(const char *name, uint32_t timeout_
     timer = rt_malloc(sizeof(struct usb_osal_timer));
     memset(timer, 0, sizeof(struct usb_osal_timer));
 
-    timer->timer = (void *)rt_timer_create("usb_tim", handler, argument, timeout_ms, is_period ? (RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER) : (RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER));
+    timer->timer = (void *)rt_timer_create(name, handler, argument, timeout_ms, is_period ? (RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER) : (RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER));
     if (timer->timer == NULL) {
         return NULL;
     }
@@ -166,4 +166,14 @@ void usb_osal_leave_critical_section(size_t flag)
 void usb_osal_msleep(uint32_t delay)
 {
     rt_thread_mdelay(delay);
+}
+
+void *usb_osal_malloc(size_t size)
+{
+    return rt_malloc(size);
+}
+
+void usb_osal_free(void *ptr)
+{
+    rt_free(ptr);
 }

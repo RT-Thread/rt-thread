@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef _FSL_FLEXSPI_NOR_FLASH_H__
-#define _FSL_FLEXSPI_NOR_FLASH_H__
+#ifndef FSL_FLEXSPI_NOR_FLASH_H__
+#define FSL_FLEXSPI_NOR_FLASH_H__
 
 #include "fsl_common.h"
 /*!
@@ -298,7 +298,7 @@ enum
     kFLEXSPIMiscOffset_UseValidTimeForAllFreq   = 7U, /*!< Bit for DLLCR settings under all modes */
 };
 
-/*@}*/
+/*! @} */
 
 /*! @brief Manufacturer ID */
 enum
@@ -718,4 +718,4 @@ void FLEXSPI_NorFlash_ConfigClock(uint32_t instance, uint32_t freqOption, uint32
 }
 #endif
 
-#endif /*! _FSL_FLEXSPI_NOR_FLASH_H__ */
+#endif /*! FSL_FLEXSPI_NOR_FLASH_H__ */

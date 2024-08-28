@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#include "usb_ohci_priv.h"
-#include "usb_ehci_priv.h"
+#include "usb_hc_ohci.h"
+#include "usb_hc_ehci.h"
 
 int ohci_init(struct usbh_bus *bus)
 {

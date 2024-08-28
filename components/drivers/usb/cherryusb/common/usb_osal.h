@@ -58,4 +58,7 @@ void usb_osal_leave_critical_section(size_t flag);
 
 void usb_osal_msleep(uint32_t delay);
 
+void *usb_osal_malloc(size_t size);
+void usb_osal_free(void *ptr);
+
 #endif /* USB_OSAL_H */

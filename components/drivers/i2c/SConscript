@@ -3,16 +3,16 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split("""
-i2c_core.c
-i2c_dev.c
+dev_i2c_core.c
+dev_i2c_dev.c
 """)
 
 if GetDepend('RT_USING_I2C_BITOPS'):
-    src = src + ['i2c-bit-ops.c']
+    src = src + ['dev_i2c_bit_ops.c']
 if GetDepend('RT_USING_SOFT_I2C'):
-    src = src + ['soft_i2c.c']
+    src = src + ['dev_soft_i2c.c']
 if GetDepend(['RT_USING_DM']):
-    src += ['i2c_bus.c', 'i2c_dm.c']
+    src += ['dev_i2c_bus.c', 'dev_i2c_dm.c']
 
 # The set of source files associated with this SConscript file.
 path = [cwd + '/../include']

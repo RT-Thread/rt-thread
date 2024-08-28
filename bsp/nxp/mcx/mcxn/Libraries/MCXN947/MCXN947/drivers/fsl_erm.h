@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_ERM_H_
-#define _FSL_ERM_H_
+#ifndef FSL_ERM_H_
+#define FSL_ERM_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief Driver version. */
-#define FSL_ERM_DRIVER_VERSION (MAKE_VERSION(2U, 0U, 0U))
-/*@}*/
+#define FSL_ERM_DRIVER_VERSION (MAKE_VERSION(2U, 0U, 1U))
+/*! @} */
 
 /*!
  * @brief ERM interrupt configuration structure, default settings all disabled, _erm_interrupt_enable.
@@ -78,7 +78,7 @@ void ERM_Init(ERM_Type *base);
  */
 void ERM_Deinit(ERM_Type *base);
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Interrupt
@@ -101,12 +101,14 @@ static inline void ERM_EnableInterrupts(ERM_Type *base, erm_memory_channel_t cha
         base->CR0 =
             (temp & ~(0x0CUL << ((0x07U - (uint32_t)channel) * 4U))) | (mask << ((0x07U - (uint32_t)channel) * 4U));
     }
+#ifdef ERM_CR1_ESCIE8_MASK
     else
     {
         temp      = base->CR1;
         base->CR1 = (temp & ~(0x0CUL << ((0x07U + 0x08U - (uint32_t)channel) * 4U))) |
                     (mask << ((0x07U + 0x08U - (uint32_t)channel) * 4U));
     }
+#endif
 }
 
 /*!
@@ -123,10 +125,12 @@ static inline void ERM_DisableInterrupts(ERM_Type *base, erm_memory_channel_t ch
     {
         base->CR0 &= ~(mask << ((0x07U - (uint32_t)channel) * 4U));
     }
+#ifdef ERM_CR1_ESCIE8_MASK
     else
     {
         base->CR1 &= ~(mask << ((0x07U + 0x08U - (uint32_t)channel) * 4U));
     }
+#endif
 }
 
 /*!
@@ -141,10 +145,16 @@ static inline uint32_t ERM_GetInterruptStatus(ERM_Type *base, erm_memory_channel
     {
         return ((base->SR0 & (uint32_t)kERM_AllIntsFlag) >> (0x07U - (uint32_t)channel) * 4U);
     }
+#ifdef ERM_SR1_SBC8_MASK
     else
     {
         return ((base->SR1 & (uint32_t)kERM_AllIntsFlag) >> ((0x07U + 0x08U - (uint32_t)channel) * 4U));
     }
+#else
+    {
+        return 0;
+    }
+#endif
 }
 
 /*!
@@ -159,13 +169,15 @@ static inline void ERM_ClearInterruptStatus(ERM_Type *base, erm_memory_channel_t
     {
         base->SR0 = mask << ((0x07U - (uint32_t)channel) * 4U);
     }
+#ifdef ERM_SR1_SBC8_MASK
     else
     {
         base->SR1 = mask << ((0x07U + 0x08U - (uint32_t)channel) * 4U);
     }
+#endif
 }
 
-/* @} */
+/*! @} */
 
 /*!
  * @name functional

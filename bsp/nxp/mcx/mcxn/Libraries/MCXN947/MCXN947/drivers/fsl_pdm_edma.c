@@ -15,8 +15,8 @@
 /*******************************************************************************
  * Definitations
  ******************************************************************************/
-/* Used for 32byte aligned */
-#define STCD_ADDR(address) (edma_tcd_t *)(((uint32_t)(address) + 32) & ~0x1FU)
+/* Used for edma_tcd_t size aligned */
+#define STCD_ADDR(address) (edma_tcd_t *)(((uint32_t)(address) + sizeof(edma_tcd_t)) & ~(sizeof(edma_tcd_t) - 1U))
 
 /*<! Structure definition for pdm_edma_private_handle_t. The structure is private. */
 typedef struct _pdm_edma_private_handle
@@ -94,10 +94,14 @@ static void PDM_EDMACallback(edma_handle_t *handle, void *userData, bool done, u
         (void)memset(&pdmHandle->tcd[pdmHandle->tcdDriver], 0, sizeof(edma_tcd_t));
         pdmHandle->tcdDriver = (pdmHandle->tcdDriver + 1U) % pdmHandle->tcdNum;
     }
-
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+    pdmHandle->receivedBytes +=
+        EDMA_TCD_BITER((&pdmHandle->tcd[pdmHandle->tcdDriver]), EDMA_TCD_TYPE(handle->base)) *
+        (EDMA_TCD_NBYTES((&pdmHandle->tcd[pdmHandle->tcdDriver]), EDMA_TCD_TYPE(handle->base)) & 0x3FFU);
+#else
     pdmHandle->receivedBytes +=
         pdmHandle->tcd[pdmHandle->tcdDriver].BITER * (pdmHandle->tcd[pdmHandle->tcdDriver].NBYTES & 0x3FFU);
-
+#endif
     /* If finished a block, call the callback function */
     if (pdmHandle->callback != NULL)
     {
@@ -215,6 +219,8 @@ void PDM_TransferSetChannelConfigEDMA(PDM_Type *base,
  *
  * note This interface returns immediately after the transfer initiates. Call
  * the PDM_GetReceiveRemainingBytes to poll the transfer status and check whether the PDM transfer is finished.
+ *
+ * Mcaro MCUX_SDK_PDM_EDMA_PDM_ENABLE_INTERNAL can control whether PDM is enabled internally or externally.
  *
  * 1. Scatter gather case:
  * This functio support dynamic scatter gather and staic scatter gather,
@@ -345,7 +351,25 @@ status_t PDM_TransferReceiveEDMA(PDM_Type *base, pdm_edma_handle_t *handle, pdm_
                                        FSL_FEATURE_PDM_FIFO_WIDTH, (int16_t)destOffset,
                                        mappedChannel * (uint32_t)FSL_FEATURE_PDM_FIFO_WIDTH, currentTransfer->dataSize);
         }
+#if defined FSL_EDMA_DRIVER_EDMA4 && FSL_EDMA_DRIVER_EDMA4
+        EDMA_TcdSetTransferConfigExt(handle->dmaHandle->base, (edma_tcd_t *)&handle->tcd[handle->tcdUser], &config,
+                                     (edma_tcd_t *)&handle->tcd[nextTcdIndex]);
 
+        if (mappedChannel > 1U)
+        {
+            EDMA_TcdSetMinorOffsetConfigExt(handle->dmaHandle->base, (edma_tcd_t *)&handle->tcd[handle->tcdUser],
+                                            &minorOffset);
+
+            if (handle->interleaveType == kPDM_EDMAMultiChannelInterleavePerChannelBlock)
+            {
+                EDMA_TcdSetModuloExt(handle->dmaHandle->base, (edma_tcd_t *)&handle->tcd[handle->tcdUser], modulo,
+                                     kEDMA_ModuloDisable);
+            }
+        }
+
+        EDMA_TcdEnableInterruptsExt(handle->dmaHandle->base, (edma_tcd_t *)&handle->tcd[handle->tcdUser],
+                                    (uint32_t)kEDMA_MajorInterruptEnable);
+#else
         EDMA_TcdSetTransferConfig((edma_tcd_t *)&handle->tcd[handle->tcdUser], &config,
                                   (edma_tcd_t *)&handle->tcd[nextTcdIndex]);
 
@@ -360,6 +384,7 @@ status_t PDM_TransferReceiveEDMA(PDM_Type *base, pdm_edma_handle_t *handle, pdm_
         }
 
         EDMA_TcdEnableInterrupts((edma_tcd_t *)&handle->tcd[handle->tcdUser], (uint32_t)kEDMA_MajorInterruptEnable);
+#endif
 
         handle->tcdUser = nextTcdIndex;
 
@@ -380,8 +405,10 @@ status_t PDM_TransferReceiveEDMA(PDM_Type *base, pdm_edma_handle_t *handle, pdm_
 
         /* Enable DMA enable bit */
         PDM_EnableDMA(base, true);
+#if defined(MCUX_SDK_PDM_EDMA_PDM_ENABLE_INTERNAL) && MCUX_SDK_PDM_EDMA_PDM_ENABLE_INTERNAL
         /* enable PDM */
         PDM_Enable(base, true);
+#endif
 
         handle->state = (uint32_t)kPDM_Busy;
     }

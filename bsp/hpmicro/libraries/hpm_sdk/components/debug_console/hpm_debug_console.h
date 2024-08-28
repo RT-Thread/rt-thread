@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -26,7 +26,7 @@ extern "C" {
 hpm_stat_t console_init(console_config_t *cfg);
 
 uint8_t console_receive_byte(void);
-
+uint8_t console_try_receive_byte(void);
 void console_send_byte(uint8_t c);
 
 #if defined(__cplusplus)

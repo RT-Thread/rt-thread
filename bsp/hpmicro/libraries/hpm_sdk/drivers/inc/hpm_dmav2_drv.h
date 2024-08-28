@@ -70,6 +70,11 @@
 #define DMA_HANDSHAKE_OPT_ONE_BURST             (0U)
 #define DMA_HANDSHAKE_OPT_ALL_TRANSIZE          (1U)
 
+#define DMA_SWAP_MODE_TABLE                     (0U)
+#define DMA_SWAP_MODE_BYTE                      (1U)
+#define DMA_SWAP_MODE_HALF_WORD                 (2U)
+#define DMA_SWAP_MODE_WORD                      (3U)
+
 #define DMA_INTERRUPT_MASK_NONE                 (0U)
 #define DMA_INTERRUPT_MASK_ERROR  DMAV2_CHCTRL_CTRL_INTERRMASK_MASK
 #define DMA_INTERRUPT_MASK_ABORT  DMAV2_CHCTRL_CTRL_INTABTMASK_MASK
@@ -106,9 +111,9 @@ typedef struct dma_linked_descriptor {
     uint32_t src_addr;          /**< Source address */
     uint32_t req_ctrl;          /**< Request select */
     uint32_t dst_addr;          /**< Destination address */
-    uint32_t reserved0;         /**< not used on dmav2 */
+    uint32_t swap_table;        /**< Swap table */
     uint32_t linked_ptr;        /**< Linked descriptor address */
-    uint32_t reserved1;         /**< not used on dmav2 */
+    uint32_t reserved0;         /**< not used on dmav2 */
 } dma_linked_descriptor_t;
 
 /* @brief Channel config */
@@ -129,6 +134,14 @@ typedef struct dma_channel_config {
     bool en_infiniteloop;           /**< Infinite loop transfer enable. Attention: only DMAV2 support */
     uint8_t handshake_opt;          /**< Handshake transfer option. Attention: only DMAV2 support */
     uint8_t burst_opt;              /**< Burst size option. Attention: only DMAV2 support */
+#if defined(HPM_IP_FEATURE_DMAV2_BURST_IN_FIXED_TRANS) && (HPM_IP_FEATURE_DMAV2_BURST_IN_FIXED_TRANS == 1)
+    bool en_src_burst_in_fixed_trans;          /**< Source burst in fix transfer size enable, discard src_addr_ctrl setting. Attention: only DMAV2 support */
+    bool en_dst_burst_in_fixed_trans;          /**< Destination burst in fix transfer size enable, discard dst_addr_ctrl setting. Attention: only DMAV2 support */
+#endif
+#if defined(HPM_IP_FEATURE_DMAV2_BYTE_ORDER_SWAP) && (HPM_IP_FEATURE_DMAV2_BYTE_ORDER_SWAP == 1)
+    uint8_t swap_mode;              /**< Swap Mode. Attention: only DMAV2 support */
+    uint32_t swap_table;            /**< Swap Table. Attention: only DMAV2 support */
+#endif
 } dma_channel_config_t;
 
 /* @brief Channel config */
@@ -466,6 +479,66 @@ static inline void dma_set_handshake_option(DMAV2_Type *ptr, uint32_t ch_index, 
 {
     ptr->CHCTRL[ch_index].CTRL = (ptr->CHCTRL[ch_index].CTRL & ~DMAV2_CHCTRL_CTRL_HANDSHAKEOPT_MASK) | DMAV2_CHCTRL_CTRL_HANDSHAKEOPT_SET(handshake_opt);
 }
+
+#if defined(HPM_IP_FEATURE_DMAV2_BURST_IN_FIXED_TRANS) && (HPM_IP_FEATURE_DMAV2_BURST_IN_FIXED_TRANS == 1)
+/**
+ * @brief   Set DMA channel source burst in fixed transfer size enable or disable
+ *
+ * @param[in] ptr DMA base address
+ * @param[in] ch_index Index of the channel
+ * @param[in] enable false - disable; true - enable
+ *
+ */
+static inline void dma_set_source_burst_in_fixed_transize_enable(DMAV2_Type *ptr, uint32_t ch_index, bool enable)
+{
+    ptr->CHCTRL[ch_index].CTRL = (ptr->CHCTRL[ch_index].CTRL & ~DMAV2_CHCTRL_CTRL_SRC_FIXBURST_MASK) | DMAV2_CHCTRL_CTRL_SRC_FIXBURST_SET(enable);
+}
+
+/**
+ * @brief   Set DMA channel destination burst in fixed transfer size enable or disable
+ *
+ * @param[in] ptr DMA base address
+ * @param[in] ch_index Index of the channel
+ * @param[in] enable false - disable; true - enable
+ *
+ */
+static inline void dma_set_destination_burst_in_fixed_transize_enable(DMAV2_Type *ptr, uint32_t ch_index, bool enable)
+{
+    ptr->CHCTRL[ch_index].CTRL = (ptr->CHCTRL[ch_index].CTRL & ~DMAV2_CHCTRL_CTRL_DST_FIXBURST_MASK) | DMAV2_CHCTRL_CTRL_DST_FIXBURST_SET(enable);
+}
+#endif
+
+#if defined(HPM_IP_FEATURE_DMAV2_BYTE_ORDER_SWAP) && (HPM_IP_FEATURE_DMAV2_BYTE_ORDER_SWAP == 1)
+/**
+ * @brief   Set DMA channel swap mode
+ *
+ * @param[in] ptr DMA base address
+ * @param[in] ch_index Index of the channel
+ * @param[in] swap_mode swap mode
+ *  @arg @ref DMA_SWAP_MODE_TABLE
+ *  @arg @ref DMA_SWAP_MODE_BYTE
+ *  @arg @ref DMA_SWAP_MODE_HALF_WORD
+ *  @arg @ref DMA_SWAP_MODE_WORD
+ *
+ */
+static inline void dma_set_swap_mode(DMAV2_Type *ptr, uint32_t ch_index, uint8_t swap_mode)
+{
+    ptr->CHCTRL[ch_index].CTRL = (ptr->CHCTRL[ch_index].CTRL & ~DMAV2_CHCTRL_CTRL_SWAP_CTL_MASK) | DMAV2_CHCTRL_CTRL_SWAP_CTL_SET(swap_mode);
+}
+
+/**
+ * @brief   Set DMA channel swap table
+ *
+ * @param[in] ptr DMA base address
+ * @param[in] ch_index Index of the channel
+ * @param[in] swap_table swap table
+ *
+ */
+static inline void dma_set_swap_table(DMAV2_Type *ptr, uint32_t ch_index, uint32_t swap_table)
+{
+    ptr->CHCTRL[ch_index].SWAPTABLE = swap_table;
+}
+#endif
 
 /**
  * @brief   Abort channel transfer with mask

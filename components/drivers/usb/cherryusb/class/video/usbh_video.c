@@ -495,20 +495,26 @@ static int usbh_video_ctrl_disconnect(struct usbh_hubport *hport, uint8_t intf)
 
 static int usbh_video_streaming_connect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 static int usbh_video_streaming_disconnect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 __WEAK void usbh_video_run(struct usbh_video *video_class)
 {
+    (void)video_class;
 }
 
 __WEAK void usbh_video_stop(struct usbh_video *video_class)
 {
+    (void)video_class;
 }
 
 const struct usbh_class_driver video_ctrl_class_driver = {

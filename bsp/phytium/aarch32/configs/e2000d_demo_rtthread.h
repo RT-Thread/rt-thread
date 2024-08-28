@@ -153,6 +153,11 @@
 #define RT_USING_QSPI
 #define RT_USING_PIN
 #define RT_USING_KTIME
+#define RT_USING_CHERRYUSB
+#define RT_CHERRYUSB_HOST
+#define RT_CHERRYUSB_HOST_XHCI
+#define RT_CHERRYUSB_HOST_HID
+#define RT_CHERRYUSB_HOST_MSC
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -372,6 +377,10 @@
 /* STM32 HAL & SDK Drivers */
 
 /* end of STM32 HAL & SDK Drivers */
+
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
 
 /* Kendryte SDK */
 

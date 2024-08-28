@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_PLU_H_
-#define _FSL_PLU_H_
+#ifndef FSL_PLU_H_
+#define FSL_PLU_H_
 
 #include "fsl_common.h"
 
@@ -19,9 +19,9 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 #define FSL_PLU_DRIVER_VERSION (MAKE_VERSION(2, 2, 1)) /*!< Version 2.2.1 */
-                                                       /*@}*/
+                                                       /*! @} */
 
 /*! @brief Index of LUT */
 typedef enum _plu_lut_index
@@ -371,4 +371,4 @@ void PLU_ClearLatchedInterrupt(PLU_Type *base);
 
 /*! @}*/
 
-#endif /* _FSL_PLU_H_ */
+#endif /* FSL_PLU_H_ */

@@ -13,8 +13,10 @@
  *  USBx->GCCFG |= USB_OTG_GCCFG_NOVBUSSENS;
  *  USBx->GCCFG &= ~USB_OTG_GCCFG_VBUSBSEN;
  *  USBx->GCCFG &= ~USB_OTG_GCCFG_VBUSASEN;
- * 
+ *
 */
+
+extern void HAL_Delay(uint32_t Delay);
 
 #if defined(STM32F722xx) || defined(STM32F723xx) || defined(STM32F730xx) || defined(STM32F732xx) || defined(STM32F733xx)
 /**
@@ -200,4 +202,9 @@ uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base)
     return ((1 << 16) | (1 << 21));
 #endif
 #endif
+}
+
+void usbd_dwc2_delay_ms(uint8_t ms)
+{
+    HAL_Delay(ms);
 }

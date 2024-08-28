@@ -6,10 +6,10 @@
  * Date           Author       Notes
  * 2015-01-20     Bernard      the first version
  * 2017-10-20      ZYH         add mode open drain and input pull down
- * 2020-06-01     Du Huanpeng  GPIO driver based on <components/drivers/include/drivers/pin.h>
+ * 2020-06-01     Du Huanpeng  GPIO driver based on <components/drivers/include/drivers/dev_pin.h>
  */
 #include <rtthread.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include <ls2k1000.h>
 #include "drv_gpio.h"
 

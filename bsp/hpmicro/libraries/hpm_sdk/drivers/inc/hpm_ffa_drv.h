@@ -9,6 +9,7 @@
 
 #include "hpm_common.h"
 #include "hpm_ffa_regs.h"
+#include "hpm_soc_ip_feature.h"
 
 /**
  * @brief FFA driver APIs
@@ -36,6 +37,10 @@
 #define FFA_DATA_TYPE_REAL_Q15      (1U)    /* !< FFA Data type: Real Q15 */
 #define FFA_DATA_TYPE_COMPLEX_Q31   (2U)    /* !< FFA Data type: Complex Q31 */
 #define FFA_DATA_TYPE_COMPLEX_Q15   (3U)    /* !< FFA Data type: Complex Q15 */
+#if defined(HPM_IP_FEATURE_FFA_FP32) && HPM_IP_FEATURE_FFA_FP32
+#define FFA_DATA_TYPE_COMPLEX_FP32  (4U)    /* !< FFA Data type: Complex Q15 */
+#define FFA_DATA_TYPE_REAL_FP32     (5U)    /* !< FFA Data type: Complex Q15 */
+#endif
 
 /**
  * @brief FFA Q31 data type definition
@@ -100,6 +105,14 @@ enum {
     status_ffa_read_error = MAKE_STATUS(status_group_ffa, 4),           /*!< FFA read error */
 };
 
+#if defined(HPM_IP_FEATURE_FFA_FP32) && HPM_IP_FEATURE_FFA_FP32
+typedef enum {
+    input_data = 0,
+    output_data = 1,
+    coeff_data = 2
+} ffa_fp32_status_source_t;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -156,6 +169,55 @@ static inline void ffa_disable_interrupt(FFA_Type *ptr, uint32_t mask)
 {
     ptr->INT_EN &= ~mask;
 }
+
+#if defined(HPM_IP_FEATURE_FFA_FP32) && HPM_IP_FEATURE_FFA_FP32
+
+static inline void ffa_enable_fp32_interrupt(FFA_Type *ptr, uint32_t mask)
+{
+    ptr->FP_CTRL |= mask;
+}
+
+static inline void ffa_disable_fp32_interrupt(FFA_Type *ptr, uint32_t mask)
+{
+    ptr->FP_CTRL &= ~mask;
+}
+
+static inline void ffa_set_fp_status_source(FFA_Type *ptr, ffa_fp32_status_source_t source)
+{
+    ptr->FP_CTRL = FFA_FP_CTRL_EXP_ST_SEL_SET(source);
+}
+
+static inline void ffa_enable_fp_bias(FFA_Type *ptr)
+{
+    ptr->FP_CTRL |= FFA_FP_CTRL_OPT_BIAS_EXP_MASK;
+}
+
+static inline void ffa_disable_fp_bias(FFA_Type *ptr)
+{
+    ptr->FP_CTRL &= ~FFA_FP_CTRL_OPT_BIAS_EXP_MASK;
+}
+
+static inline void ffa_set_coef_max_index(FFA_Type *ptr, uint8_t max)
+{
+    ptr->FP_CTRL = (ptr->FP_CTRL & ~FFA_FP_CTRL_COEF_MAX_MASK) | FFA_FP_CTRL_COEF_MAX_SET(max);
+}
+
+static inline void ffa_set_output_max_index(FFA_Type *ptr, uint8_t max)
+{
+    ptr->FP_CTRL = (ptr->FP_CTRL & ~FFA_FP_CTRL_OUT_MAX_MASK) | FFA_FP_CTRL_OUT_MAX_SET(max);
+}
+
+static inline void ffa_set_input_max_index(FFA_Type *ptr, uint8_t max)
+{
+    ptr->FP_CTRL = (ptr->FP_CTRL & ~FFA_FP_CTRL_IN_MAX_MASK) | FFA_FP_CTRL_IN_MAX_SET(max);
+}
+
+static inline uint32_t ffa_get_fp_status(FFA_Type *ptr)
+{
+    return ptr->FP_ST;
+}
+
+#endif
 
 /**
  * @brief Start an FFT operation

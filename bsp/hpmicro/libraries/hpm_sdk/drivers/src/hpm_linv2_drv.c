@@ -59,7 +59,7 @@ hpm_stat_t lin_slave_configure_timing(LINV2_Type *ptr, uint32_t src_freq_in_hz)
     }
 
     /** src = 20MHz, prescaler = 1, bt_div = 250 */
-    /* TODO： set wakeup_len */
+    /* TODO: set wakeup_len */
     ptr->TIMING_CONTROL = LINV2_TIMING_CONTROL_BT_DIV_SET(bt_div)
                         | LINV2_TIMING_CONTROL_PRESCL_SET(prescaler);
 
