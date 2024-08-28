@@ -769,7 +769,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
         rt_ubase_t value;
 
         /* get value */
-        value = (rt_ubase_t)arg;
+        value = (rt_uintptr_t)arg;
         level = rt_spin_lock_irqsave(&(sem->spinlock));
 
         /* resume all waiting thread */
@@ -787,7 +787,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
         rt_ubase_t max_value;
         rt_bool_t need_schedule = RT_FALSE;
 
-        max_value = (rt_uint16_t)((rt_ubase_t)arg);
+        max_value = (rt_uint16_t)((rt_uintptr_t)arg);
         if (max_value > RT_SEM_VALUE_MAX || max_value < 1)
         {
             return -RT_EINVAL;

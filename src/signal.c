@@ -72,9 +72,9 @@ static void _signal_entry(void *parameter)
     RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL;
 
 #ifdef RT_USING_SMP
-    rt_hw_context_switch_to((rt_base_t)&parameter, tid);
+    rt_hw_context_switch_to((rt_uintptr_t)&parameter, tid);
 #else
-    rt_hw_context_switch_to((rt_ubase_t)&(tid->sp));
+    rt_hw_context_switch_to((rt_uintptr_t)&(tid->sp));
 #endif /* RT_USING_SMP */
 }
 

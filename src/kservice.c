@@ -93,8 +93,8 @@ rt_weak void rt_hw_cpu_shutdown(void)
 
 #ifdef __GNUC__
     #define RT_HW_BACKTRACE_FRAME_GET_SELF(frame) do {          \
-        (frame)->fp = (rt_base_t)__builtin_frame_address(0U);   \
-        (frame)->pc = ({__label__ pc; pc: (rt_base_t)&&pc;});   \
+        (frame)->fp = (rt_uintptr_t)__builtin_frame_address(0U);   \
+        (frame)->pc = ({__label__ pc; pc: (rt_uintptr_t)&&pc;});   \
     } while (0)
 
 #else
@@ -545,7 +545,7 @@ rt_err_t rt_backtrace_thread(rt_thread_t thread)
 
 static void cmd_backtrace(int argc, char** argv)
 {
-    rt_ubase_t pid;
+    rt_uintptr_t pid;
     char *end_ptr;
 
     if (argc != 2)
@@ -778,8 +778,8 @@ rt_inline void _slab_info(rt_size_t *total,
  */
 void rt_system_heap_init_generic(void *begin_addr, void *end_addr)
 {
-    rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
-    rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
+    rt_uintptr_t begin_align = RT_ALIGN((rt_uintptr_t)begin_addr, RT_ALIGN_SIZE);
+    rt_uintptr_t end_align   = RT_ALIGN_DOWN((rt_uintptr_t)end_addr, RT_ALIGN_SIZE);
 
     RT_ASSERT(end_align > begin_align);
 
@@ -988,17 +988,17 @@ rt_weak void *rt_malloc_align(rt_size_t size, rt_size_t align)
     if (ptr != RT_NULL)
     {
         /* the allocated memory block is aligned */
-        if (((rt_ubase_t)ptr & (align - 1)) == 0)
+        if (((rt_uintptr_t)ptr & (align - 1)) == 0)
         {
-            align_ptr = (void *)((rt_ubase_t)ptr + align);
+            align_ptr = (void *)((rt_uintptr_t)ptr + align);
         }
         else
         {
-            align_ptr = (void *)(((rt_ubase_t)ptr + (align - 1)) & ~(align - 1));
+            align_ptr = (void *)(((rt_uintptr_t)ptr + (align - 1)) & ~(align - 1));
         }
 
         /* set the pointer before alignment pointer to the real pointer */
-        *((rt_ubase_t *)((rt_ubase_t)align_ptr - sizeof(void *))) = (rt_ubase_t)ptr;
+        *((rt_uintptr_t *)((rt_uintptr_t)align_ptr - sizeof(void *))) = (rt_uintptr_t)ptr;
 
         ptr = align_ptr;
     }
@@ -1019,7 +1019,7 @@ rt_weak void rt_free_align(void *ptr)
 
     /* NULL check */
     if (ptr == RT_NULL) return;
-    real_ptr = (void *) * (rt_ubase_t *)((rt_ubase_t)ptr - sizeof(void *));
+    real_ptr = (void *) * (rt_uintptr_t *)((rt_uintptr_t)ptr - sizeof(void *));
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);

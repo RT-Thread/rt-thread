@@ -15,7 +15,6 @@
 
 #include <rthw.h>
 #include "stack.h"
-#include "regtypes.h"
 
 enum
 {
@@ -42,6 +41,6 @@ int rt_hw_plic_irq_disable(int irq_number);
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, const char *name);
-void handle_trap(rt_uintreg_t xcause, rt_uintreg_t xtval, rt_uintreg_t xepc, struct rt_hw_stack_frame *sp);
+void handle_trap(rt_ubase_t xcause, rt_ubase_t xtval, rt_ubase_t xepc, struct rt_hw_stack_frame *sp);
 
 #endif
