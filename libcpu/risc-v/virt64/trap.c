@@ -61,7 +61,7 @@ void dump_regs(struct rt_hw_stack_frame *regs)
     rt_kprintf("\t%s\n", (regs->sstatus & SSTATUS_SPP) ? "Last Privilege is Supervisor Mode" : "Last Privilege is User Mode");
     rt_kprintf("\t%s\n", (regs->sstatus & SSTATUS_SUM) ? "Permit to Access User Page" : "Not Permit to Access User Page");
     rt_kprintf("\t%s\n", (regs->sstatus & (1 << 19)) ? "Permit to Read Executable-only Page" : "Not Permit to Read Executable-only Page");
-    rt_uintreg_t satp_v = read_csr(satp);
+    rt_ubase_t satp_v = read_csr(satp);
     rt_kprintf("satp = 0x%p\n", satp_v);
     rt_kprintf("\tCurrent Page Table(Physical) = 0x%p\n", __MASKVALUE(satp_v, __MASK(44)) << PAGE_OFFSET_BIT);
     rt_kprintf("\tCurrent ASID = 0x%p\n", __MASKVALUE(satp_v >> 44, __MASK(16)) << PAGE_OFFSET_BIT);
@@ -150,9 +150,9 @@ static const char *get_exception_msg(int id)
 
 #ifdef RT_USING_SMART
 #include "lwp.h"
-void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
+void handle_user(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc, struct rt_hw_stack_frame *sp)
 {
-    rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
+    rt_ubase_t id = __MASKVALUE(scause, __MASK(63UL));
     struct rt_lwp *lwp;
 
     /* user page fault */
@@ -275,9 +275,9 @@ static int illegal_inst_recoverable(rt_ubase_t stval, struct rt_hw_stack_frame *
 #endif
 
 static void handle_nested_trap_panic(
-    rt_size_t cause,
-    rt_size_t tval,
-    rt_size_t epc,
+    rt_ubase_t cause,
+    rt_ubase_t tval,
+    rt_ubase_t epc,
     struct rt_hw_stack_frame *eframe)
 {
     LOG_E("\n-------- [SEVER ERROR] --------");
@@ -291,10 +291,10 @@ static void handle_nested_trap_panic(
 #define PAGE_FAULT (id == EP_LOAD_PAGE_FAULT || id == EP_STORE_PAGE_FAULT)
 
 /* Trap entry */
-void handle_trap(rt_uintreg_t scause, rt_uintreg_t stval, rt_uintreg_t sepc, struct rt_hw_stack_frame *sp)
+void handle_trap(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc, struct rt_hw_stack_frame *sp)
 {
     ENTER_TRAP;
-    rt_uintreg_t id = __MASKVALUE(scause, __MASK(63UL));
+    rt_ubase_t id = __MASKVALUE(scause, __MASK(63UL));
     const char *msg;
 
     /* supervisor external interrupt */
@@ -316,7 +316,7 @@ void handle_trap(rt_uintreg_t scause, rt_uintreg_t stval, rt_uintreg_t sepc, str
     {
         // trap cannot nested when handling another trap / interrupt
         CHECK_NESTED_PANIC(scause, stval, sepc, sp);
-        rt_uintreg_t id = __MASKVALUE(scause, __MASK(63UL));
+        rt_ubase_t id = __MASKVALUE(scause, __MASK(63UL));
         const char *msg;
 
         if (scause >> 63)
