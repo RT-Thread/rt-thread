@@ -262,7 +262,7 @@ ptsno_t ptyfs_register_pts(rt_device_t ptmx, rt_device_t pts)
             pts_file = rt_calloc(1, sizeof(struct ptyfs_file));
             if (pts_file)
             {
-                snprintf(pts_file->basename, DIRENT_NAME_MAX, "%lu", rc);
+                snprintf(pts_file->basename, DIRENT_NAME_MAX, "%lu", (unsigned long)rc);
                 ptyfile_init(pts_file, sb, 0, PTYFS_TYPE_FILE_SLAVE,
                              PTS_DEFAULT_FILE_MODE, pts);
                 ptyfile_add_to_root(sb, pts_file);
@@ -296,7 +296,7 @@ rt_err_t ptyfs_unregister_pts(rt_device_t ptmx, ptsno_t ptsno)
     else
     {
         /* get path and findout device */
-        snprintf(path_buf, sizeof(path_buf), "%lu", ptsno);
+        snprintf(path_buf, sizeof(path_buf), "%lu", (unsigned long)ptsno);
         pts_file = ptyfile_lookup(sb, path_buf);
         if (pts_file)
         {
