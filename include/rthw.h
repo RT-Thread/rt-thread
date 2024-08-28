@@ -172,8 +172,8 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
  * Hardware Layer Backtrace Service
  */
 struct rt_hw_backtrace_frame {
-    rt_base_t fp;
-    rt_base_t pc;
+    rt_uintptr_t fp;
+    rt_uintptr_t pc;
 };
 
 rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame);
