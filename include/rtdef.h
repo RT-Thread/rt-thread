@@ -1059,16 +1059,20 @@ struct rt_mutex
 {
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
+    /* not used in RT_MUTEX_NO_PI mutex */
     rt_uint8_t           ceiling_priority;              /**< the priority ceiling of mutexe */
     rt_uint8_t           priority;                      /**< the maximal priority for pending thread */
+
     rt_uint8_t           hold;                          /**< numbers of thread hold the mutex */
-    rt_uint8_t           reserved;                      /**< reserved field */
+    rt_uint8_t           flag;                          /**< flag of mutex */
 
     struct rt_thread    *owner;                         /**< current owner of mutex */
     rt_list_t            taken_list;                    /**< the object list taken by thread */
     struct rt_spinlock   spinlock;
 };
 typedef struct rt_mutex *rt_mutex_t;
+
+#define RT_MUTEX_NO_PI 0x02
 #endif /* RT_USING_MUTEX */
 
 /**@}*/
