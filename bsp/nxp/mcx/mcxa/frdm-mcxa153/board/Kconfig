@@ -54,6 +54,10 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_SPI0
                     bool "Enable SPI0"
                     default n
+					
+				config BSP_USING_SPI1
+                    bool "Enable SPI1"
+                    default n
             endif
 
     menuconfig BSP_USING_ADC
