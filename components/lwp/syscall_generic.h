@@ -16,7 +16,8 @@
 #include <errno.h>
 #include <stdlib.h>
 
-typedef long sysret_t;
+/* signed ARCH related types */
+typedef rt_base_t sysret_t;
 
 struct rt_syscall_def
 {
