@@ -873,7 +873,7 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
     LOG_D("thread:%s priority -> %d", thread->parent.name, priority);
 
     /* change priority of the thread */
-    ret = rt_sched_thread_change_priority(thread, priority);
+    ret = rt_sched_thread_change_curr_priority(thread, priority);
 
     while ((ret == RT_EOK) && rt_sched_thread_is_suspended(thread))
     {
@@ -904,7 +904,7 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
                 {
                     thread = pending_mutex->owner;
 
-                    ret = rt_sched_thread_change_priority(thread, mutex_priority);
+                    ret = rt_sched_thread_change_curr_priority(thread, mutex_priority);
                 }
                 else
                 {
@@ -931,7 +931,7 @@ static rt_bool_t _check_and_update_prio(rt_thread_t thread, rt_mutex_t mutex)
         /* get the highest priority in the taken list of thread */
         priority = _thread_get_mutex_priority(thread);
 
-        rt_sched_thread_change_priority(thread, priority);
+        rt_sched_thread_change_curr_priority(thread, priority);
 
         /**
          * notify a pending reschedule. Since scheduler is locked, we will not
