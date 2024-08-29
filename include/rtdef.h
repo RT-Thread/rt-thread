@@ -672,6 +672,10 @@ typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
 
+#ifndef RT_IPI_FUNC
+#define RT_IPI_FUNC                     2
+#endif
+
 #define _SCHEDULER_CONTEXT(fileds) fileds
 
 /**
