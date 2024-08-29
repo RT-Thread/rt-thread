@@ -50,7 +50,7 @@ static struct rt_thread idle_thread[_CPUS_NR];
 rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 
-#ifdef RT_USING_SMP
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
 #ifndef SYSTEM_THREAD_STACK_SIZE
 #define SYSTEM_THREAD_STACK_SIZE IDLE_THREAD_STACK_SIZE
 #endif
@@ -148,7 +148,7 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
     level = rt_spin_lock_irqsave(&_defunct_spinlock);
     rt_list_insert_after(&_rt_thread_defunct, &RT_THREAD_LIST_NODE(thread));
     rt_spin_unlock_irqrestore(&_defunct_spinlock, level);
-#ifdef RT_USING_SMP
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
     rt_sem_release(&system_sem);
 #endif
 }
@@ -286,7 +286,7 @@ static void idle_thread_entry(void *parameter)
         }
 #endif /* RT_USING_IDLE_HOOK */
 
-#ifndef RT_USING_SMP
+#if !defined(RT_USING_SMP) && !defined(RT_USING_SMART)
         rt_defunct_execute();
 #endif /* RT_USING_SMP */
 
@@ -297,7 +297,7 @@ static void idle_thread_entry(void *parameter)
     }
 }
 
-#ifdef RT_USING_SMP
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
 static void rt_thread_system_entry(void *parameter)
 {
     RT_UNUSED(parameter);
@@ -355,7 +355,7 @@ void rt_thread_idle_init(void)
         rt_thread_startup(&idle_thread[i]);
     }
 
-#ifdef RT_USING_SMP
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
     RT_ASSERT(RT_THREAD_PRIORITY_MAX > 2);
 
     rt_spin_lock_init(&_defunct_spinlock);
