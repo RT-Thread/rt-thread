@@ -53,7 +53,7 @@ void BOARD_InitPins(void)
 
     RESET_ReleasePeripheralReset(kCTIMER1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPSPI0_RST_SHIFT_RSTn);
-	RESET_ReleasePeripheralReset(kLPSPI1_RST_SHIFT_RSTn);
+    RESET_ReleasePeripheralReset(kLPSPI1_RST_SHIFT_RSTn);
 
     RESET_ReleasePeripheralReset(kLPI2C0_RST_SHIFT_RSTn);
 
@@ -249,7 +249,7 @@ void BOARD_InitPins(void)
 #endif
 
 #ifdef BSP_USING_SPI1
-	const port_pin_config_t port2_12_pin22_config = {/* Internal pull-up/down resistor is disabled */
+    const port_pin_config_t port2_12_pin22_config = {/* Internal pull-up/down resistor is disabled */
                                                      kPORT_PullDisable,
                                                      /* Low internal pull resistor value is selected. */
                                                      kPORT_LowPullResistor,
