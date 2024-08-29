@@ -16,7 +16,6 @@ struct smp_event
 struct smp_call
 {
     struct rt_spinlock lock;
-    struct rt_list_node node;
     struct smp_event event;
 
 };
