@@ -17,9 +17,9 @@
 #endif
 static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
 static struct rt_spinlock _defunct_spinlock;
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
 static struct rt_thread rt_system_thread;
 rt_align(RT_ALIGN_SIZE) static rt_uint8_t rt_system_stack[SYSTEM_THREAD_STACK_SIZE];
-#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
 static struct rt_semaphore system_sem;
 #endif
 
