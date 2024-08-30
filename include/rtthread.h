@@ -644,6 +644,7 @@ rt_ssize_t rt_mq_recv_prio(rt_mq_t mq,
 void rt_thread_defunct_init(void);
 void rt_thread_defunct_enqueue(rt_thread_t thread);
 rt_thread_t rt_thread_defunct_dequeue(void);
+void rt_defunct_execute(void);
 
 /*
  * spinlock

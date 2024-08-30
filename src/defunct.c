@@ -19,7 +19,9 @@ static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
 static struct rt_spinlock _defunct_spinlock;
 static struct rt_thread rt_system_thread;
 rt_align(RT_ALIGN_SIZE) static rt_uint8_t rt_system_stack[SYSTEM_THREAD_STACK_SIZE];
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
 static struct rt_semaphore system_sem;
+#endif
 
 /**
  * @brief Enqueue a thread to defunct queue.
@@ -34,8 +36,9 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
     level = rt_spin_lock_irqsave(&_defunct_spinlock);
     rt_list_insert_after(&_rt_thread_defunct, &RT_THREAD_LIST_NODE(thread));
     rt_spin_unlock_irqrestore(&_defunct_spinlock, level);
-
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
     rt_sem_release(&system_sem);
+#endif
 }
 
 /**
@@ -48,7 +51,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
     rt_list_t  *l      = &_rt_thread_defunct;
 
     level = rt_spin_lock_irqsave(&_defunct_spinlock);
-    if (l->next != l)
+    if (!rt_list_isempty(l))
     {
         thread = RT_THREAD_LIST_NODE_ENTRY(l->next);
         rt_list_remove(&RT_THREAD_LIST_NODE(thread));
@@ -61,7 +64,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
 /**
  * @brief This function will perform system background job when system idle.
  */
-static void rt_defunct_execute(void)
+void rt_defunct_execute(void)
 {
     /* Loop until there is no dead thread. So one call to rt_defunct_execute
      * will do all the cleanups. */
@@ -133,6 +136,7 @@ static void rt_defunct_execute(void)
     }
 }
 
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
 static void rt_thread_system_entry(void *parameter)
 {
     RT_UNUSED(parameter);
@@ -148,6 +152,7 @@ static void rt_thread_system_entry(void *parameter)
         rt_defunct_execute();
     }
 }
+#endif
 
 void rt_thread_defunct_init(void)
 {
@@ -155,6 +160,7 @@ void rt_thread_defunct_init(void)
 
     rt_spin_lock_init(&_defunct_spinlock);
 
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
     rt_sem_init(&system_sem, "defunct", 0, RT_IPC_FLAG_FIFO);
 
     /* create defunct thread */
@@ -168,4 +174,5 @@ void rt_thread_defunct_init(void)
                    32);
     /* startup */
     rt_thread_startup(&rt_system_thread);
+#endif
 }

@@ -152,6 +152,10 @@ static void idle_thread_entry(void *parameter)
         }
 #endif /* RT_USING_IDLE_HOOK */
 
+#if !defined(RT_USING_SMP) && !defined(RT_USING_SMART)
+    rt_defunct_execute();
+#endif
+
 #ifdef RT_USING_PM
         void rt_system_power_manager(void);
         rt_system_power_manager();
