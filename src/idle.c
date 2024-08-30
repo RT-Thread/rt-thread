@@ -175,7 +175,9 @@ void rt_thread_idle_init(void)
     char idle_thread_name[RT_NAME_MAX];
 #endif /* RT_NAME_MAX > 0 */
 
+#ifdef RT_USING_IDLE_HOOK
     rt_spin_lock_init(&_hook_spinlock);
+#endif
 
     for (i = 0; i < _CPUS_NR; i++)
     {
