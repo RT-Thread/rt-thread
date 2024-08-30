@@ -1192,10 +1192,10 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     else if (RT_DEVICE_FLAG_DMA_TX == flag)
     {
         DMA_Handle->Init.Direction           = DMA_MEMORY_TO_PERIPH;
-        #if defined(SOC_SERIES_STM32H5)
+#if defined(SOC_SERIES_STM32H5)
         DMA_Handle->Init.SrcInc              = DMA_SINC_INCREMENTED;
         DMA_Handle->Init.DestInc             = DMA_DINC_FIXED;
-        #endif
+#endif
         DMA_Handle->Init.Mode                = DMA_NORMAL;
     }
 #if defined(SOC_SERIES_STM32H5)
