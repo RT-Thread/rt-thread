@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#define usleep rt_thread_sleep
+#define usleep rt_thread_delay
 
 static void *test_thread(void *v_param) {
     return NULL;
