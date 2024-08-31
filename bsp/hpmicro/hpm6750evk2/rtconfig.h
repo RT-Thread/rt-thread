@@ -5,7 +5,7 @@
 
 #define RT_NAME_MAX 8
 #define RT_CPUS_NR 1
-#define RT_ALIGN_SIZE 8
+#define RT_ALIGN_SIZE 64
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
@@ -49,6 +49,7 @@
 #define RT_VER_NUM 0x50200
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+#define RT_USING_CACHE
 
 /* RT-Thread Components */
 
@@ -81,6 +82,22 @@
 #define RT_USING_DFS_V1
 #define DFS_FILESYSTEMS_MAX 4
 #define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
+/* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 /* end of DFS: device virtual file system */
 
@@ -101,6 +118,10 @@
 #define RT_CHERRYUSB_HOST_EHCI_HPM
 #define RT_CHERRYUSB_HOST_CDC_ACM
 #define RT_CHERRYUSB_HOST_HID
+#define RT_CHERRYUSB_HOST_MSC
+#define RT_CHERRYUSB_HOST_CDC_RNDIS
+#define CONFIG_USBHOST_PLATFORM_CDC_RNDIS
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1600
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -179,8 +200,9 @@
 #define RT_LWIP_TCP_WND 8196
 #define RT_LWIP_TCPTHREAD_PRIORITY 10
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
-#define RT_LWIP_TCPTHREAD_STACKSIZE 1024
+#define RT_LWIP_TCPTHREAD_STACKSIZE 2048
 #define LWIP_NO_RX_THREAD
+#define LWIP_NO_TX_THREAD
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
 #define RT_LWIP_ETHTHREAD_STACKSIZE 1024
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
@@ -240,11 +262,6 @@
 
 /* end of CYW43439 WiFi */
 /* end of Wi-Fi */
-#define PKG_USING_NETUTILS
-#define PKG_NETUTILS_IPERF
-#define IPERF_THREAD_STACK_SIZE 2048
-#define PKG_USING_NETUTILS_LATEST_VERSION
-#define PKG_NETUTILS_VER_NUM 0x99999
 
 /* IoT Cloud */
 
@@ -406,7 +423,7 @@
 #define BSP_USING_UART0
 #define BSP_USING_RTC
 #define BSP_USING_USB
-#define BSP_USING_USB_DEVICE
+#define BSP_USING_USB_HOST
 /* end of On-chip Peripheral Drivers */
 /* end of Hardware Drivers Config */
 
