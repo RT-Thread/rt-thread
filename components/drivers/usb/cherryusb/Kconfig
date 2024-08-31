@@ -209,6 +209,7 @@ if RT_USING_CHERRYUSB
             prompt "Enable usb msc driver"
             default n
             select RT_USING_DFS
+            select RT_USING_DFS_ELMFAT
 
         config RT_CHERRYUSB_HOST_CDC_ECM
             bool
@@ -299,6 +300,11 @@ if RT_USING_CHERRYUSB
 
         config CONFIG_USBHOST_PLATFORM_RTL8152
             bool
+
+        config RT_LWIP_PBUF_POOL_BUFSIZE
+            int "The size of each pbuf in the pbuf pool"
+            range 1500 2000
+            default 1600
 
         config RT_CHERRYUSB_HOST_TEMPLATE
             bool
