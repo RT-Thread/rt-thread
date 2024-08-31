@@ -15,13 +15,13 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.6.1/bin'
+    if os.getenv('RTT_THEAD_TOOLCHAIN'):
+        EXEC_PATH = os.getenv('RTT_THEAD_TOOLCHAIN')
+    else:
+        EXEC_PATH   = r'/opt/toolchain_gcc_t-head_linux/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
-
-if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 
