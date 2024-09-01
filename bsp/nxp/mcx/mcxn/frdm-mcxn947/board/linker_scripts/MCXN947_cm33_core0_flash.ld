@@ -120,6 +120,13 @@ SECTIONS
     __rt_init_start = .;
     KEEP(*(SORT(.rti_fn*)))
     __rt_init_end = .;
+
+    /* section information for usbh class */
+    . = ALIGN(8);
+    __usbh_class_info_start__ = .;
+    KEEP(*(.usbh_class_info))
+    __usbh_class_info_end__ = .;
+
   } > m_text
 
   .ARM.extab :
