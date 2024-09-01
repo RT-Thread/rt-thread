@@ -161,7 +161,7 @@ menu "On-chip Peripheral Drivers"
        default n
 
        select RT_USING_ETH
-       if BSP_USING_ETH          
+       if BSP_USING_ETH
                config BSP_USING_ETH0
                bool "Enable ETH0"
                default y
@@ -170,7 +170,7 @@ menu "On-chip Peripheral Drivers"
                config BSP_USING_ETH1
                bool "Enable ETH1"
                default n
-               select BSP_USING_ENET_PHY_RTL8201           
+               select BSP_USING_ENET_PHY_RTL8201
        endif
 
     menuconfig BSP_USING_SDXC
@@ -361,12 +361,25 @@ menu "On-chip Peripheral Drivers"
        default n
        if BSP_USING_USB
             config BSP_USING_USB_DEVICE
-                bool "Enable USB Device"
+                bool "Enable USB Device, default is msc ramdisk"
                 default n
+                select RT_USING_CHERRYUSB
+                select RT_CHERRYUSB_DEVICE
+                select RT_CHERRYUSB_DEVICE_SPEED_HS
+                select RT_CHERRYUSB_DEVICE_HPM
+                select RT_CHERRYUSB_DEVICE_MSC
+                select RT_CHERRYUSB_DEVICE_TEMPLATE_MSC
             config BSP_USING_USB_HOST
                 bool "Enable USB Host"
-                select RT_USING_CACHE
                 default n
+                select RT_USING_CACHE
+                select RT_USING_CHERRYUSB
+                select RT_CHERRYUSB_HOST
+                select RT_CHERRYUSB_HOST_EHCI_HPM
+                select RT_CHERRYUSB_HOST_CDC_ACM
+                select RT_CHERRYUSB_HOST_HID
+                select RT_CHERRYUSB_HOST_MSC
+                select RT_CHERRYUSB_HOST_CDC_RNDIS
        endif
 
 
