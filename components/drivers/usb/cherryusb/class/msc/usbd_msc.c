@@ -537,6 +537,7 @@ static bool SCSI_read10(uint8_t busid, uint8_t **data, uint32_t *len)
     g_usbd_msc[busid].stage = MSC_DATA_IN;
 #if defined(CONFIG_USBDEV_MSC_THREAD)
     usb_osal_mq_send(g_usbd_msc[busid].usbd_msc_mq, MSC_DATA_IN);
+    return true;
 #elif defined(CONFIG_USBDEV_MSC_POLLING)
     chry_ringbuffer_write_byte(&g_usbd_msc[busid].msc_rb, MSC_DATA_IN);
     return true;
@@ -574,6 +575,7 @@ static bool SCSI_read12(uint8_t busid, uint8_t **data, uint32_t *len)
     g_usbd_msc[busid].stage = MSC_DATA_IN;
 #if defined(CONFIG_USBDEV_MSC_THREAD)
     usb_osal_mq_send(g_usbd_msc[busid].usbd_msc_mq, MSC_DATA_IN);
+    return true;
 #elif defined(CONFIG_USBDEV_MSC_POLLING)
     chry_ringbuffer_write_byte(&g_usbd_msc[busid].msc_rb, MSC_DATA_IN);
     return true;
