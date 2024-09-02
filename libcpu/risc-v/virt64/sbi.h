@@ -141,7 +141,7 @@ struct sbi_ret
     long value;
 };
 
-static __inline struct sbi_ret
+rt_inline struct sbi_ret
 sbi_call(uint64_t arg7, uint64_t arg6, uint64_t arg0, uint64_t arg1,
          uint64_t arg2, uint64_t arg3, uint64_t arg4)
 {

@@ -26,7 +26,7 @@
 #include "riscv_mmu.h"
 #include "stack.h"
 
-typedef rt_size_t (*syscallfunc_t)(rt_size_t, rt_size_t, rt_size_t, rt_size_t, rt_size_t, rt_size_t, rt_size_t);
+typedef rt_ubase_t (*syscallfunc_t)(rt_ubase_t, rt_ubase_t, rt_ubase_t, rt_ubase_t, rt_ubase_t, rt_ubase_t, rt_ubase_t);
 
 void syscall_handler(struct rt_hw_stack_frame *regs)
 {
