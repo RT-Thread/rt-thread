@@ -11,6 +11,15 @@
 #ifndef RISCV_CSR_ENCODING_H
 #define RISCV_CSR_ENCODING_H
 
+#include <rtconfig.h>
+
+#ifdef ARCH_RISCV_VECTOR
+#include "vector_encoding.h"
+
+#else
+#define SSTATUS_VS          0   /* fallback */
+#endif /* ARCH_RISCV_VECTOR */
+
 #define MSTATUS_UIE         0x00000001
 #define MSTATUS_SIE         0x00000002
 #define MSTATUS_HIE         0x00000004
@@ -23,7 +32,6 @@
 #define MSTATUS_HPP         0x00000600
 #define MSTATUS_MPP         0x00001800
 #define MSTATUS_FS          0x00006000
-#define MSTATUS_VS          0x00000600
 #define MSTATUS_XS          0x00018000
 #define MSTATUS_MPRV        0x00020000
 #define MSTATUS_PUM         0x00040000
@@ -41,10 +49,6 @@
 #define SSTATUS_FS_INITIAL  0x00002000
 #define SSTATUS_FS_CLEAN    0x00004000
 #define SSTATUS_FS_DIRTY    0x00006000
-#define SSTATUS_VS          0x00000600 /* Vector Status */
-#define SSTATUS_VS_INITIAL  0x00000200
-#define SSTATUS_VS_CLEAN    0x00000400
-#define SSTATUS_VS_DIRTY    0x00000600
 #define SSTATUS_XS          0x00018000
 #define SSTATUS_SUM         0x00040000
 #define SSTATUS32_SD        0x80000000

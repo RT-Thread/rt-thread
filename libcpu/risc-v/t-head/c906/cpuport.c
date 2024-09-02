@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,9 +14,15 @@
 #include <rtthread.h>
 
 #include "cpuport.h"
-#include "sbi.h"
 #include "stack.h"
+#include <sbi.h>
+#include <encoding.h>
 
+#ifdef ARCH_RISCV_FPU
+    #define K_SSTATUS_DEFAULT (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
+#else
+    #define K_SSTATUS_DEFAULT (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM)
+#endif
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
 #endif
@@ -25,22 +31,42 @@
  * @brief from thread used interrupt context switch
  *
  */
-volatile rt_ubase_t  rt_interrupt_from_thread = 0;
+volatile rt_ubase_t rt_interrupt_from_thread = 0;
 /**
  * @brief to thread used interrupt context switch
  *
  */
-volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
+volatile rt_ubase_t rt_interrupt_to_thread = 0;
 /**
  * @brief flag to indicate context switch in interrupt or not
  *
  */
 volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
+void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
+{
+    rt_hw_switch_frame_t frame = (rt_hw_switch_frame_t)
+        ((rt_ubase_t)sp - sizeof(struct rt_hw_switch_frame));
+
+    rt_memset(frame, 0, sizeof(struct rt_hw_switch_frame));
+
+    frame->regs[RT_HW_SWITCH_CONTEXT_RA] = ra;
+    frame->regs[RT_HW_SWITCH_CONTEXT_SSTATUS] = sstatus;
+
+    return (void *)frame;
+}
+
+int rt_hw_cpu_id(void)
+{
+    return 0;
+}
 
 /**
- * This function will initialize thread stack
+ * This function will initialize thread stack, we assuming
+ * when scheduler restore this new thread, context will restore
+ * an entry to user first application
  *
+ * s0-s11, ra, sstatus, a0
  * @param tentry the entry of thread
  * @param parameter the parameter of entry
  * @param stack_addr the beginning stack address
@@ -48,41 +74,23 @@ volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
  *
  * @return stack address
  */
-rt_uint8_t *rt_hw_stack_init(void       *tentry,
-                             void       *parameter,
+rt_uint8_t *rt_hw_stack_init(void *tentry,
+                             void *parameter,
                              rt_uint8_t *stack_addr,
-                             void       *texit)
+                             void *texit)
 {
-    struct rt_hw_stack_frame *frame;
-    rt_uint8_t         *stk;
-    int                i;
-    extern int __global_pointer$;
+    rt_ubase_t *sp = (rt_ubase_t *)stack_addr;
+    // we use a strict alignment requirement for Q extension
+    sp = (rt_ubase_t *)RT_ALIGN_DOWN((rt_ubase_t)sp, 16);
 
-    stk  = stack_addr + sizeof(rt_ubase_t);
-    stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_ubase_t)stk, REGBYTES);
-    stk -= sizeof(struct rt_hw_stack_frame);
+    (*--sp) = (rt_ubase_t)tentry;
+    (*--sp) = (rt_ubase_t)parameter;
+    (*--sp) = (rt_ubase_t)texit;
+    --sp;   /* alignment */
 
-    frame = (struct rt_hw_stack_frame *)stk;
-
-    for (i = 0; i < sizeof(struct rt_hw_stack_frame) / sizeof(rt_ubase_t); i++)
-    {
-        ((rt_ubase_t *)frame)[i] = 0xdeadbeef;
-    }
-
-    frame->ra      = (rt_ubase_t)texit;
-    frame->gp      = (rt_ubase_t)&__global_pointer$;
-    frame->a0      = (rt_ubase_t)parameter;
-    frame->epc     = (rt_ubase_t)tentry;
-    frame->user_sp_exc_stack = (rt_ubase_t)(((rt_ubase_t)stk) + sizeof(struct rt_hw_stack_frame));
-
-    /* force to supervisor mode(SPP=1) and set SPIE and SUM to 1 */
-#ifdef ARCH_RISCV_FPU
-    frame->sstatus = 0x00046120;    /* enable FPU */
-#else
-    frame->sstatus = 0x00040120;
-#endif
-
-    return stk;
+    /* compatible to RESTORE_CONTEXT */
+    extern void _rt_thread_entry(void);
+    return (rt_uint8_t *)_rt_hw_stack_init(sp, (rt_ubase_t)_rt_thread_entry, K_SSTATUS_DEFAULT);
 }
 
 /*
@@ -101,7 +109,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
     rt_interrupt_to_thread = to;
     rt_thread_switch_interrupt_flag = 1;
 
-    return ;
+    return;
 }
 #endif /* end of RT_USING_SMP */
 
@@ -112,16 +120,14 @@ void rt_hw_cpu_shutdown(void)
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();
-    sbi_shutdown();
-    while (1);
-}
 
-int rt_hw_cpu_id(void)
-{
-    return 0;   /* d1 has one core */
+    sbi_shutdown();
+
+    while (1)
+        ;
 }
 
 void rt_hw_set_process_id(int pid)
 {
-    //TODO
+    // TODO
 }

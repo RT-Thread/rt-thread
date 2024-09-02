@@ -1,7 +1,24 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 // See LICENSE for license details.
 
 #ifndef RISCV_CSR_ENCODING_H
 #define RISCV_CSR_ENCODING_H
+
+#include <rtconfig.h>
+
+#ifdef ARCH_RISCV_VECTOR
+#include "vector_encoding.h"
+
+#else
+#define SSTATUS_VS          0   /* fallback */
+#endif /* ARCH_RISCV_VECTOR */
 
 #define MSTATUS_UIE         0x00000001
 #define MSTATUS_SIE         0x00000002

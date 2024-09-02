@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018/10/28     Bernard      The unify RISC-V porting code.
  * 2021-02-11     lizhirui     add gp support
+ * 2021-11-19     JasonHu      add fpu support
  */
 
 #include <rthw.h>
@@ -17,7 +18,14 @@
 #include <sbi.h>
 #include <encoding.h>
 
-#define K_SSTATUS_DEFAULT (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
+#ifdef ARCH_RISCV_FPU
+    #define K_SSTATUS_DEFAULT (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
+#else
+    #define K_SSTATUS_DEFAULT (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM)
+#endif
+#ifdef RT_USING_SMART
+#include <lwp_arch.h>
+#endif
 
 /**
  * @brief from thread used interrupt context switch
@@ -37,24 +45,15 @@ volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
 void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
 {
-    (*--sp) = 0;                                /* tp */
-    (*--sp) = ra;                               /* ra */
-    (*--sp) = 0;                                /* s0(fp) */
-    (*--sp) = 0;                                /* s1 */
-    (*--sp) = 0;                                /* s2 */
-    (*--sp) = 0;                                /* s3 */
-    (*--sp) = 0;                                /* s4 */
-    (*--sp) = 0;                                /* s5 */
-    (*--sp) = 0;                                /* s6 */
-    (*--sp) = 0;                                /* s7 */
-    (*--sp) = 0;                                /* s8 */
-    (*--sp) = 0;                                /* s9 */
-    (*--sp) = 0;                                /* s10 */
-    (*--sp) = 0;                                /* s11 */
-    (*--sp) = sstatus;                          /* sstatus */
-    --sp; /* align to 16bytes */
+    rt_hw_switch_frame_t frame = (rt_hw_switch_frame_t)
+        ((rt_ubase_t)sp - sizeof(struct rt_hw_switch_frame));
 
-    return (void *)sp;
+    rt_memset(frame, 0, sizeof(struct rt_hw_switch_frame));
+
+    frame->regs[RT_HW_SWITCH_CONTEXT_RA] = ra;
+    frame->regs[RT_HW_SWITCH_CONTEXT_SSTATUS] = sstatus;
+
+    return (void *)frame;
 }
 
 int rt_hw_cpu_id(void)
@@ -87,6 +86,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry,
     (*--sp) = (rt_ubase_t)tentry;
     (*--sp) = (rt_ubase_t)parameter;
     (*--sp) = (rt_ubase_t)texit;
+    --sp;   /* alignment */
 
     /* compatible to RESTORE_CONTEXT */
     extern void _rt_thread_entry(void);
