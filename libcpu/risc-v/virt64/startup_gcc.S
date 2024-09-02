@@ -8,6 +8,7 @@
  * 2018/10/01     Bernard      The first version
  * 2018/12/27     Jesven       Add SMP support
  * 2020/6/12      Xim          Port to QEMU and remove SMP support
+ * 2024-06-30     Shell        Support of kernel remapping
  */
 
 #include <encoding.h>
@@ -15,7 +16,7 @@
 
     .data
     .global boot_hartid    /* global varible rt_boot_hartid in .data section */
-boot_hartid:                          
+boot_hartid:
     .word 0xdeadbeef
 
     .global         _start
