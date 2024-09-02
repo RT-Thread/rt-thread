@@ -82,6 +82,8 @@ jobs:
                 - "at32/at32f425-start"
                 - "at32/at32f435-start"
                 - "at32/at32f437-start"
+                - "at32/at32m412-start"
+                - "at32/at32m416-start"
                 - "yichip/yc3122-pos"
                 - "hc32/ev_hc32f4a0_lqfp176"
                 - "hc32/ev_hc32f448_lqfp80"

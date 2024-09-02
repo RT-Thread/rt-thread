@@ -9,6 +9,7 @@
  * 2023-01-31     shelton      add support f421/f425
  * 2023-04-08     shelton      add support f423
  * 2024-04-12     shelton      add support a403a and a423
+ * 2024-08-30     shelton      add support m412 and m416
  */
 
 #ifndef __DRV_DMA_H__
@@ -40,7 +41,8 @@ struct dma_config {
 #endif
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
-    defined (SOC_SERIES_AT32F405) || defined (SOC_SERIES_AT32A423)
+    defined (SOC_SERIES_AT32F405) || defined (SOC_SERIES_AT32A423) || \
+    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
     dmamux_channel_type *dmamux_channel;
     rt_uint32_t request_id;
 #endif
