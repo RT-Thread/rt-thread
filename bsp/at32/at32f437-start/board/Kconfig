@@ -81,6 +81,12 @@ menu "On-chip Peripheral Drivers"
 
                 config PHY_USING_DP83848
                     bool "PHY USING DP83848"
+
+                config PHY_USING_LAN8720
+                    bool "PHY USING LAN8720"
+
+                config PHY_USING_YT8512
+                    bool "PHY USING YT8512"
             endchoice
         endif
 
