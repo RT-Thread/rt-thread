@@ -8,33 +8,70 @@
  * 2021-02-02     lizhirui     first version
  * 2021-02-11     lizhirui     fixed gp save/store bug
  * 2021-11-18     JasonHu      add fpu registers save/restore
- * 2022/10/22     WangXiaoyao  Support kernel mode RVV;
+ * 2022-10-22     Shell        Support kernel mode RVV
  */
 
 #ifndef __STACKFRAME_H__
 #define __STACKFRAME_H__
 
-#include "cpuport.h"
+#include <rtconfig.h>
 #include "encoding.h"
 #include "ext_context.h"
+
+/* bytes of register width */
+#ifdef ARCH_CPU_64BIT
+#define STORE                   sd
+#define LOAD                    ld
+#define FSTORE                  fsd
+#define FLOAD                   fld
+#define REGBYTES                8
+#else
+// error here, not portable
+#error "Not supported XLEN"
+#endif
+
+/* 33 general register + 1 padding */
+#define CTX_GENERAL_REG_NR  34
+
+/* all context registers */
+#define CTX_REG_NR  (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + CTX_VECTOR_REG_NR)
 
 #define BYTES(idx)          ((idx) * REGBYTES)
 #define FRAME_OFF_SSTATUS   BYTES(2)
 #define FRAME_OFF_SP        BYTES(32)
 #define FRAME_OFF_GP        BYTES(3)
 
+/* switch frame */
+#define RT_HW_SWITCH_CONTEXT_SSTATUS    0
+#define RT_HW_SWITCH_CONTEXT_S11        1
+#define RT_HW_SWITCH_CONTEXT_S10        2
+#define RT_HW_SWITCH_CONTEXT_S9         3
+#define RT_HW_SWITCH_CONTEXT_S8         4
+#define RT_HW_SWITCH_CONTEXT_S7         5
+#define RT_HW_SWITCH_CONTEXT_S6         6
+#define RT_HW_SWITCH_CONTEXT_S5         7
+#define RT_HW_SWITCH_CONTEXT_S4         8
+#define RT_HW_SWITCH_CONTEXT_S3         9
+#define RT_HW_SWITCH_CONTEXT_S2         10
+#define RT_HW_SWITCH_CONTEXT_S1         11
+#define RT_HW_SWITCH_CONTEXT_S0         12
+#define RT_HW_SWITCH_CONTEXT_RA         13
+#define RT_HW_SWITCH_CONTEXT_TP         14
+#define RT_HW_SWITCH_CONTEXT_ALIGNMENT  15  // Padding for alignment
+#define RT_HW_SWITCH_CONTEXT_SIZE       16  // Total size of the structure
+
 #ifdef __ASSEMBLY__
 
 .macro SAVE_ALL
 
-#ifdef ENABLE_FPU
+#ifdef ARCH_RISCV_FPU
     /* reserve float registers */
     addi sp, sp, -CTX_FPU_REG_NR * REGBYTES
-#endif /* ENABLE_FPU */
-#ifdef ENABLE_VECTOR
+#endif /* ARCH_RISCV_FPU */
+#ifdef ARCH_RISCV_VECTOR
     /* reserve float registers */
     addi sp, sp, -CTX_VECTOR_REG_NR * REGBYTES
-#endif /* ENABLE_VECTOR */
+#endif /* ARCH_RISCV_VECTOR */
 
     /* save general registers */
     addi sp, sp, -CTX_GENERAL_REG_NR * REGBYTES
@@ -78,7 +115,7 @@
     csrr t0, sscratch
     STORE t0, 32 * REGBYTES(sp)
 
-#ifdef ENABLE_FPU
+#ifdef ARCH_RISCV_FPU
     /* backup sp and adjust sp to save float registers */
     mv t1, sp
     addi t1, t1, CTX_GENERAL_REG_NR * REGBYTES
@@ -125,9 +162,9 @@
     li t0, SSTATUS_FS_CLEAN
     csrs sstatus, t0
 
-#endif /* ENABLE_FPU */
+#endif /* ARCH_RISCV_FPU */
 
-#ifdef ENABLE_VECTOR
+#ifdef ARCH_RISCV_VECTOR
     csrr    t0, sstatus
     andi    t0, t0, SSTATUS_VS
     beqz    t0, 0f
@@ -137,7 +174,7 @@
 
     SAVE_VECTOR t1
 0:
-#endif /* ENABLE_VECTOR */
+#endif /* ARCH_RISCV_VECTOR */
 .endm
 
 /**
@@ -146,7 +183,7 @@
  */
 .macro RESTORE_ALL
 
-#ifdef ENABLE_VECTOR
+#ifdef ARCH_RISCV_VECTOR
     // skip on close
     ld      t0, 2 * REGBYTES(sp)
     // cannot use vector on initial
@@ -158,9 +195,9 @@
 
     RESTORE_VECTOR t1
 0:
-#endif /* ENABLE_VECTOR */
+#endif /* ARCH_RISCV_VECTOR */
 
-#ifdef ENABLE_FPU
+#ifdef ARCH_RISCV_FPU
     /* restore float register  */
     addi t2, sp, CTX_GENERAL_REG_NR * REGBYTES
 
@@ -206,7 +243,7 @@
     li t0, SSTATUS_FS_CLEAN
     csrs sstatus, t0
 
-#endif /* ENABLE_FPU */
+#endif /* ARCH_RISCV_FPU */
 
     /* restore general register */
     addi t0, sp, CTX_REG_NR * REGBYTES

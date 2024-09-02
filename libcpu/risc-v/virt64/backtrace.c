@@ -15,6 +15,7 @@
 #include <rtthread.h>
 #include <mm_aspace.h>
 #include "riscv_mmu.h"
+#include "stack.h"
 
 #define WORD                            sizeof(rt_base_t)
 #define ARCH_CONTEXT_FETCH(pctx, id)    (*(((unsigned long *)pctx) + (id)))
@@ -117,8 +118,9 @@ rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_fr
     }
     else
     {
-        frame->pc = ARCH_CONTEXT_FETCH(thread->sp, 13);
-        frame->fp = ARCH_CONTEXT_FETCH(thread->sp, 12);
+        rt_hw_switch_frame_t sframe = thread->sp;
+        frame->pc = sframe->regs[RT_HW_SWITCH_CONTEXT_RA];
+        frame->fp = sframe->regs[RT_HW_SWITCH_CONTEXT_S0];;
         rc = RT_EOK;
     }
     return rc;

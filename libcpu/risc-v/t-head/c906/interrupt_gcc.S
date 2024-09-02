@@ -9,103 +9,81 @@
  * 2018/12/27     Jesven       Add SMP schedule
  * 2021/02/02     lizhirui     Add userspace support
  * 2021/12/24     JasonHu      Add user setting save/restore
+ * 2022/10/22     Shell        Support kernel mode RVV;
+ *                             Rewrite trap handling routine
  */
 
 #include "cpuport.h"
 #include "encoding.h"
 #include "stackframe.h"
 
-  .section      .text.entry
-  .align 2
-  .global trap_entry
-  .extern __stack_cpu0
-  .extern get_current_thread_kernel_stack_top
+    .align 2
+    .global trap_entry
+    .global debug_check_sp
 trap_entry:
-    //backup sp
-    csrrw sp, sscratch, sp
-    //load interrupt stack
-    la sp, __stack_cpu0
-    //backup context
+    // distingush exception from kernel or user
+    csrrw   sp, sscratch, sp
+    bnez    sp, _save_context
+
+    // BE REALLY careful with sscratch,
+    // if it's wrong, we could looping here forever
+    // or accessing random memory and seeing things totally
+    // messy after a long time and don't even know why
+_from_kernel:
+    csrr    sp, sscratch
+    j _save_context
+
+_save_context:
     SAVE_ALL
-    
+    // clear sscratch to say 'now in kernel mode'
+    csrw    sscratch, zero
+
     RESTORE_SYS_GP
 
+    // now we are ready to enter interrupt / excepiton handler
+_distinguish_syscall:
+    csrr    t0, scause
 #ifdef RT_USING_SMART
-    //check syscall
-    csrr t0, scause
-    li t1, 8//environment call from u-mode
-    beq t0, t1, syscall_entry
+    // TODO swap 8 with config macro name
+    li      t1, 8
+    beq     t0, t1, syscall_entry
+    // syscall never return here
 #endif
 
-    csrr a0, scause
-    csrrc a1, stval, zero
-    csrr  a2, sepc
-    mv    a3, sp
+_handle_interrupt_and_exception:
+    mv      a0, t0
+    csrrc   a1, stval, zero
+    csrr    a2, sepc
+    // sp as exception frame pointer
+    mv      a3, sp
+    call    handle_trap
 
-    /* scause, stval, sepc, sp */
-    call  handle_trap
+_interrupt_exit:
+    la      s0, rt_thread_switch_interrupt_flag
+    lw      s2, 0(s0)
+    beqz    s2, _resume_execution
+    sw      zero, 0(s0)
 
-    /* need to switch new thread */
-    la    s0, rt_thread_switch_interrupt_flag
-    lw    s2, 0(s0)
-    beqz  s2, spurious_interrupt
-    sw    zero, 0(s0)
+_context_switch:
+    la      t0, rt_interrupt_from_thread
+    LOAD    a0, 0(t0)
+    la      t0, rt_interrupt_to_thread
+    LOAD    a1, 0(t0)
+    csrr    t0, sstatus
+    andi    t0, t0, ~SSTATUS_SPIE
+    csrw    sstatus, t0
+    jal     rt_hw_context_switch
 
-.global rt_hw_context_switch_interrupt_do
-rt_hw_context_switch_interrupt_do:
-
+_resume_execution:
 #ifdef RT_USING_SMART
-//swap to thread kernel stack
-    csrr t0, sstatus
-    andi t0, t0, 0x100
-    beqz t0, __restore_sp_from_tcb_interrupt
+    LOAD    t0, FRAME_OFF_SSTATUS(sp)
+    andi    t0, t0, SSTATUS_SPP
+    beqz    t0, arch_ret_to_user
 #endif
 
-__restore_sp_from_sscratch_interrupt:
-    csrr t0, sscratch
-    j __move_stack_context_interrupt
-
-#ifdef RT_USING_SMART
-__restore_sp_from_tcb_interrupt:
-    la    s0, rt_interrupt_from_thread
-    LOAD  a0, 0(s0)
-    jal rt_thread_sp_to_thread
-    jal get_thread_kernel_stack_top
-    mv t0, a0
-#endif
-
-__move_stack_context_interrupt:
-    mv t1, sp//src
-    mv sp, t0//switch stack
-    addi sp, sp, -CTX_REG_NR * REGBYTES
-    //copy context
-    li s0, CTX_REG_NR//cnt
-    mv t2, sp//dst
-
-copy_context_loop_interrupt:
-    LOAD t0, 0(t1)
-    STORE t0, 0(t2)
-    addi s0, s0, -1
-    addi t1, t1, 8
-    addi t2, t2, 8
-    bnez s0, copy_context_loop_interrupt
-
-    la    s0, rt_interrupt_from_thread
-    LOAD  s1, 0(s0)
-    STORE sp, 0(s1)
-
-    la    s0, rt_interrupt_to_thread
-    LOAD  s1, 0(s0)
-    LOAD  sp, 0(s1)
-
-    #ifdef RT_USING_SMART
-        mv a0, s1
-        jal rt_thread_sp_to_thread
-        jal lwp_aspace_switch
-    #endif
-
-spurious_interrupt:
+_resume_kernel:
     RESTORE_ALL
+    csrw    sscratch, zero
     sret
 
 .global rt_hw_interrupt_enable

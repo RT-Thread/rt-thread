@@ -12,44 +12,7 @@
 #define CPUPORT_H__
 
 #include <rtconfig.h>
-
-/* bytes of register width  */
-#ifdef ARCH_CPU_64BIT
-#define STORE                   sd
-#define LOAD                    ld
-#define FSTORE                  fsd
-#define FLOAD                   fld
-#define REGBYTES                8
-#else
-// error here, not portable
-#error "Not supported XLEN"
-#endif
-
-/* 33 general register + 1 padding */
-#define CTX_GENERAL_REG_NR  34
-
-#ifdef ENABLE_FPU
-/* 32 fpu register */
-#define CTX_FPU_REG_NR  32
-#else
-#define CTX_FPU_REG_NR  0
-#endif
-
-#ifdef ENABLE_VECTOR
-
-#if defined(ARCH_VECTOR_VLEN_128)
-#define CTX_VECTOR_REGS 64
-#elif defined(ARCH_VECTOR_VLEN_256)
-#define CTX_VECTOR_REGS 128
-#endif
-
-#define CTX_VECTOR_REG_NR  (CTX_VECTOR_REGS + 4)
-#else
-#define CTX_VECTOR_REG_NR  0
-#endif
-
-/* all context registers */
-#define CTX_REG_NR  (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + CTX_VECTOR_REG_NR)
+#include <opcode.h>
 
 #ifdef RT_USING_SMP
 typedef union {
@@ -63,20 +26,23 @@ typedef union {
 
 #ifndef __ASSEMBLY__
 #include <rtdef.h>
+
 rt_inline void rt_hw_dsb(void)
 {
-    asm volatile("fence":::"memory");
+    __asm__ volatile("fence":::"memory");
 }
 
 rt_inline void rt_hw_dmb(void)
 {
-    asm volatile("fence":::"memory");
+    __asm__ volatile("fence":::"memory");
 }
 
 rt_inline void rt_hw_isb(void)
 {
-    asm volatile(".long 0x0000100F":::"memory");
+    __asm__ volatile(OPC_FENCE_I:::"memory");
 }
+
+int rt_hw_cpu_id(void);
 
 #endif
 

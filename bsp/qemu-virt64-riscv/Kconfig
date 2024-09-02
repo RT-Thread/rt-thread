@@ -28,6 +28,7 @@ config ENABLE_FPU
 
 config ENABLE_VECTOR
     bool "Using RISC-V Vector Extension"
+    select ARCH_RISCV_VECTOR
     default n
 
 if ENABLE_VECTOR
