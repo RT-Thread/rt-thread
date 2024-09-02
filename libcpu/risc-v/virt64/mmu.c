@@ -43,6 +43,16 @@ static void *current_mmu_table = RT_NULL;
 volatile __attribute__((aligned(4 * 1024)))
 rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
+#ifdef ARCH_USING_ASID
+void rt_hw_aspace_switch(rt_aspace_t aspace)
+{
+    uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
+    current_mmu_table = aspace->page_table;
+
+    rt_hw_asid_switch_pgtbl(aspace, page_table);
+}
+
+#else /* !ARCH_USING_ASID */
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
     uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
@@ -52,6 +62,11 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
     rt_hw_tlb_invalidate_all_local();
 }
+
+void rt_hw_asid_init(void)
+{
+}
+#endif /* ARCH_USING_ASID */
 
 void *rt_hw_mmu_tbl_get()
 {
@@ -246,8 +261,7 @@ void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size)
         MM_PGTBL_UNLOCK(aspace);
 
         // when unmapped == 0, region not exist in pgtbl
-        if (!unmapped || unmapped > size)
-            break;
+        if (!unmapped || unmapped > size) break;
 
         size -= unmapped;
         v_addr += unmapped;
@@ -260,7 +274,8 @@ static inline void _init_region(void *vaddr, size_t size)
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
-    LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start, rt_mpr_start);
+    LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start,
+          rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)
@@ -270,11 +285,11 @@ static inline void _init_region(void *vaddr, size_t size)
 #endif
 
 #if defined(RT_USING_SMART) && defined(ARCH_REMAP_KERNEL)
-#define KERN_SPACE_START    ((void *)KERNEL_VADDR_START)
-#define KERN_SPACE_SIZE     (0xfffffffffffff000UL - KERNEL_VADDR_START + 0x1000)
+#define KERN_SPACE_START ((void *)KERNEL_VADDR_START)
+#define KERN_SPACE_SIZE  (0xfffffffffffff000UL - KERNEL_VADDR_START + 0x1000)
 #else
-#define KERN_SPACE_START    ((void *)0x1000)
-#define KERN_SPACE_SIZE     ((size_t)USER_VADDR_START - 0x1000)
+#define KERN_SPACE_START ((void *)0x1000)
+#define KERN_SPACE_SIZE  ((size_t)USER_VADDR_START - 0x1000)
 #endif
 
 int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_ubase_t size,
@@ -393,6 +408,7 @@ void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr)
     }
     else
     {
+        LOG_D("%s: failed at %p", __func__, vaddr);
         paddr = (uintptr_t)ARCH_MAP_FAILED;
     }
     return (void *)paddr;
@@ -467,25 +483,25 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
         size_t attr;
         switch (mdesc->attr)
         {
-        case NORMAL_MEM:
-            attr = MMU_MAP_K_RWCB;
-            break;
-        case NORMAL_NOCACHE_MEM:
-            attr = MMU_MAP_K_RWCB;
-            break;
-        case DEVICE_MEM:
-            attr = MMU_MAP_K_DEVICE;
-            break;
-        default:
-            attr = MMU_MAP_K_DEVICE;
+            case NORMAL_MEM:
+                attr = MMU_MAP_K_RWCB;
+                break;
+            case NORMAL_NOCACHE_MEM:
+                attr = MMU_MAP_K_RWCB;
+                break;
+            case DEVICE_MEM:
+                attr = MMU_MAP_K_DEVICE;
+                break;
+            default:
+                attr = MMU_MAP_K_DEVICE;
         }
 
-        struct rt_mm_va_hint hint = {.flags = MMF_MAP_FIXED,
-                                    .limit_start = aspace->start,
-                                    .limit_range_size = aspace->size,
-                                    .map_size = mdesc->vaddr_end -
-                                                mdesc->vaddr_start + 1,
-                                    .prefer = (void *)mdesc->vaddr_start};
+        struct rt_mm_va_hint hint = {
+            .flags = MMF_MAP_FIXED,
+            .limit_start = aspace->start,
+            .limit_range_size = aspace->size,
+            .map_size = mdesc->vaddr_end - mdesc->vaddr_start + 1,
+            .prefer = (void *)mdesc->vaddr_start};
 
         if (mdesc->paddr_start == (rt_uintptr_t)ARCH_MAP_FAILED)
             mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
@@ -494,6 +510,8 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
         mdesc++;
     }
+
+    rt_hw_asid_init();
 
     rt_hw_aspace_switch(&rt_kernel_space);
     rt_page_cleanup();
@@ -520,16 +538,18 @@ void rt_hw_mem_setup_early(void)
     {
         if (pv_off & (1ul << (ARCH_INDEX_WIDTH * 2 + ARCH_PAGE_SHIFT)))
         {
-            LOG_E("%s: not aligned virtual address. pv_offset %p", __func__, pv_off);
+            LOG_E("%s: not aligned virtual address. pv_offset %p", __func__,
+                  pv_off);
             RT_ASSERT(0);
         }
+
         /**
          * identical mapping,
          * PC are still at lower region before relocating to high memory
          */
         for (size_t i = 0; i < __SIZE(PPN0_BIT); i++)
         {
-            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V);
+            early_pgtbl[i] = COMBINEPTE(ps, MMU_MAP_EARLY);
             ps += L1_PAGE_SIZE;
         }
 
@@ -543,7 +563,7 @@ void rt_hw_mem_setup_early(void)
         rt_ubase_t ve_idx = GET_L1(vs + 0x80000000);
         for (size_t i = vs_idx; i < ve_idx; i++)
         {
-            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V);
+            early_pgtbl[i] = COMBINEPTE(ps, MMU_MAP_EARLY);
             ps += L1_PAGE_SIZE;
         }
 

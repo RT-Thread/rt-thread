@@ -11,10 +11,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <riscv.h>
 #include <stdint.h>
-#include <stdlib.h>
+#include <riscv.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "riscv_mmu.h"
 

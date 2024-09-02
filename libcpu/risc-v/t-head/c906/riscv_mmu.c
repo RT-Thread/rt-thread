@@ -20,10 +20,10 @@
 
 void mmu_enable_user_page_access(void)
 {
-    set_csr(sstatus,SSTATUS_SUM);
+    set_csr(sstatus, SSTATUS_SUM);
 }
 
 void mmu_disable_user_page_access(void)
 {
-    clear_csr(sstatus,SSTATUS_SUM);
+    clear_csr(sstatus, SSTATUS_SUM);
 }
