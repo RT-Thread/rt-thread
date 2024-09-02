@@ -8,8 +8,8 @@
  * 2018-08-06     tyx          the first version
  */
 
-#ifndef __WLAN_CFG_H__
-#define __WLAN_CFG_H__
+#ifndef __DEV_WLAN_CFG_H__
+#define __DEV_WLAN_CFG_H__
 
 #include <wlan_dev.h>
 

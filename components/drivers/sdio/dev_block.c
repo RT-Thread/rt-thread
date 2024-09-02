@@ -12,8 +12,8 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
-#include <drivers/mmcsd_core.h>
-#include <drivers/gpt.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_gpt.h>
 
 #define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG

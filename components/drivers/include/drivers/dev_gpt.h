@@ -7,8 +7,8 @@
  * Date           Author        Notes
  * 2022-05-05     linzhenxing     first version
  */
-#ifndef __GPT_H
-#define __GPT_H
+#ifndef __DEV_GPT_H__
+#define __DEV_GPT_H__
 
 #include <rtthread.h>
 #include <stdint.h>
@@ -129,4 +129,4 @@ typedef struct _legacy_mbr
 int check_gpt(struct rt_mmcsd_card *card);
 int gpt_get_partition_param(struct rt_mmcsd_card *card, struct dfs_partition *part, uint32_t pindex);
 void gpt_free(void);
-#endif /*__GPT_H*/
+#endif /*__DEV_GPT_H*/

@@ -9,7 +9,7 @@
  * 2014-03-04     Bernard      code cleanup
  */
 
-#include <drivers/watchdog.h>
+#include <drivers/dev_watchdog.h>
 
 /* RT-Thread Device Interface */
 

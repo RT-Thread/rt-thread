@@ -8,8 +8,8 @@
  * 2022-11-16     GuEe-GUI     first version
  */
 
-#ifndef __SERIAL_DM_H__
-#define __SERIAL_DM_H__
+#ifndef __DEV_SERIAL_DM_H__
+#define __DEV_SERIAL_DM_H__
 
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -26,4 +26,4 @@ struct serial_configure serial_cfg_from_args(char *str);
          (arg = strtok_r(arg, ",", &context)) && arg < context_end;     \
          arg = RT_NULL)
 
-#endif /* __SERIAL_DM_H__ */
+#endif /* __DEV_SERIAL_DM_H__ */

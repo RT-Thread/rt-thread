@@ -8,8 +8,8 @@
  * 2018-08-19     tyx          the first version
  */
 
-#ifndef __WLAN_WORKQUEUE_H__
-#define __WLAN_WORKQUEUE_H__
+#ifndef __DEV_WLAN_WORKQUEUE_H__
+#define __DEV_WLAN_WORKQUEUE_H__
 
 #include <ipc/workqueue.h>
 

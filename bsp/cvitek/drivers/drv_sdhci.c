@@ -21,8 +21,8 @@
 #define DBG_LEVEL   DBG_INFO
 #include <rtdbg.h>
 
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
 
 #include "drv_sdhci.h"
 

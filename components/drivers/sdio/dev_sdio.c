@@ -10,9 +10,9 @@
  * 2024-07-05     Evlers        fix a bug that read members in non-existent functions
  */
 
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
-#include <drivers/sd.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
+#include <drivers/dev_sd.h>
 
 #define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG

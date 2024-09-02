@@ -9,8 +9,8 @@
  * 2024-05-25     HPMicro      add HS400 support
  */
 
-#include <drivers/mmcsd_core.h>
-#include <drivers/mmc.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_mmc.h>
 
 #define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG

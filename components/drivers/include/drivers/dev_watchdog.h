@@ -8,8 +8,8 @@
  * 2012-09-12     heyuanjie87  first version.
  */
 
-#ifndef  __WATCHDOG_H__
-#define  __WATCHDOG_H__
+#ifndef  __DEV_WATCHDOG_H__
+#define  __DEV_WATCHDOG_H__
 
 #include <rtthread.h>
 
@@ -39,4 +39,4 @@ rt_err_t rt_hw_watchdog_register(rt_watchdog_t *wdt,
                                  rt_uint32_t    flag,
                                  void          *data);
 
-#endif /* __WATCHDOG_H__ */
+#endif /* __DEV_WATCHDOG_H__ */

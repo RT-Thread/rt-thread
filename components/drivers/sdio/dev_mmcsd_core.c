@@ -9,10 +9,10 @@
  */
 
 #include <rtthread.h>
-#include <drivers/mmcsd_core.h>
-#include <drivers/sd.h>
-#include <drivers/mmc.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sd.h>
+#include <drivers/dev_mmc.h>
+#include <drivers/dev_sdio.h>
 #include <string.h>
 
 #define DBG_TAG               "SDIO"

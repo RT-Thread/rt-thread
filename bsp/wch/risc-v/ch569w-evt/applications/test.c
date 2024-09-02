@@ -13,7 +13,7 @@
  */
 #include <rtthread.h>
 #include <drivers/dev_pin.h>
-#include <drivers/watchdog.h>
+#include <drivers/dev_watchdog.h>
 #include <drivers/hwtimer.h>
 #include <drivers/spi.h>
 #include <drivers/dev_pwm.h>

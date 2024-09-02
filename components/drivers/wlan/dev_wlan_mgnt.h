@@ -8,8 +8,8 @@
  * 2018-08-06     tyx          the first version
  */
 
-#ifndef __WLAN_MGNT_H__
-#define __WLAN_MGNT_H__
+#ifndef __DEV_WLAN_MGNT_H__
+#define __DEV_WLAN_MGNT_H__
 
 #include <wlan_dev.h>
 

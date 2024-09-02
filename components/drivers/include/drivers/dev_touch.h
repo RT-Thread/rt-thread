@@ -8,8 +8,8 @@
  * 2019-05-20     tyustli      the first version
  */
 
-#ifndef __TOUCH_H__
-#define __TOUCH_H__
+#ifndef __DEV_TOUCH_H__
+#define __DEV_TOUCH_H__
 
 #include <rtthread.h>
 #include "dev_pin.h"
@@ -110,4 +110,4 @@ void rt_hw_touch_isr(rt_touch_t touch);
 }
 #endif
 
-#endif /* __TOUCH_H__ */
+#endif /* __DEV_TOUCH_H__ */

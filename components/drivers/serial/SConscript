@@ -9,15 +9,15 @@ if not GetDepend(['RT_USING_SERIAL']):
     Return('group')
 
 if GetDepend(['RT_USING_SMART']):
-    src += Glob('serial_tty.c')
+    src += Glob('dev_serial_tty.c')
 
 if GetDepend(['RT_USING_SERIAL_V2']):
-    src += ['serial_v2.c']
+    src += ['dev_serial_v2.c']
 else:
-    src += ['serial.c']
+    src += ['dev_serial.c']
 
 if GetDepend(['RT_USING_DM']):
-    src += ['serial_dm.c']
+    src += ['dev_serial_dm.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 

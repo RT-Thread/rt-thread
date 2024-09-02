@@ -11,8 +11,8 @@
  *                             the size of ring buffer.
  */
 
-#ifndef __SERIAL_H__
-#define __SERIAL_H__
+#ifndef __DEV_SERIAL_H__
+#define __DEV_SERIAL_H__
 
 #include <rtthread.h>
 

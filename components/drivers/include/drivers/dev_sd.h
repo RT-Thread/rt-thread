@@ -9,8 +9,8 @@
  * 2024-05-26     HPMicro       Add UHS-I support
  */
 
-#ifndef __SD_H__
-#define __SD_H__
+#ifndef __DEV_SD_H__
+#define __DEV_SD_H__
 
 #include <rtthread.h>
 #include <drivers/mmcsd_host.h>

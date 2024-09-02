@@ -9,8 +9,8 @@
  */
 #include <rtthread.h>
 #include <dfs_fs.h>
-#include <drivers/gpt.h>
-#include <drivers/mmcsd_core.h>
+#include <drivers/dev_gpt.h>
+#include <drivers/dev_mmcsd_core.h>
 
 #define DBG_TAG               "GPT"
 #ifdef RT_SDIO_DEBUG

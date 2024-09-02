@@ -9,7 +9,7 @@
  */
 
 #include <rtatomic.h>
-#include <drivers/serial_dm.h>
+#include <drivers/dev_serial_dm.h>
 
 static int uid_min = -1;
 static volatile rt_atomic_t uid = 0;

@@ -10,7 +10,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <wlan_workqueue.h>
+#include <dev_wlan_workqueue.h>
 #include <ipc/workqueue.h>
 
 #define DBG_TAG "WLAN.work"

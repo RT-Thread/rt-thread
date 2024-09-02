@@ -11,9 +11,9 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <wlan_mgnt.h>
-#include <wlan_cfg.h>
-#include <wlan_prot.h>
+#include <dev_wlan_mgnt.h>
+#include <dev_wlan_cfg.h>
+#include <dev_wlan_prot.h>
 
 #define DBG_TAG "WLAN.cmd"
 #ifdef RT_WLAN_MGNT_DEBUG

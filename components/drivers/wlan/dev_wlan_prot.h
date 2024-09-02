@@ -8,8 +8,8 @@
  * 2018-08-14     tyx          the first version
  */
 
-#ifndef __WLAN_PROT_H__
-#define __WLAN_PROT_H__
+#ifndef __DEV_WLAN_PROT_H__
+#define __DEV_WLAN_PROT_H__
 
 #ifdef __cplusplus
 extern "C" {

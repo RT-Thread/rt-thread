@@ -14,7 +14,7 @@
 #include "ft_debug.h"
 #include "ft_types.h"
 #include "ft_generic_timer.h"
-#include <drivers/mmcsd_core.h>
+#include <drivers/dev_mmcsd_core.h>
 #include "interrupt.h"
 #include "rtconfig.h"
 #include "ft_cache.h"

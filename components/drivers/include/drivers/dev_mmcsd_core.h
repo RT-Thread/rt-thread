@@ -8,8 +8,8 @@
  * 2011-07-25     weety     first version
  */
 
-#ifndef __CORE_H__
-#define __CORE_H__
+#ifndef __DEV_CORE_H__
+#define __DEV_CORE_H__
 
 #include <rtthread.h>
 #include <drivers/mmcsd_host.h>

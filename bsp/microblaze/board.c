@@ -30,7 +30,7 @@
 #include "xintc_l.h"
 
 #ifdef RT_USING_UART1
-#include "serial.h"
+#include "dev_serial.h"
 #endif
 
 #define  TIMER_CNTR_0		0

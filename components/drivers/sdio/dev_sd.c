@@ -9,8 +9,8 @@
  * 2024-05-26     HPMicro       add UHS-I support
  */
 
-#include <drivers/mmcsd_core.h>
-#include <drivers/sd.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sd.h>
 
 #define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG

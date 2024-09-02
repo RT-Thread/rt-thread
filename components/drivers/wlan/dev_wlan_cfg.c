@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include <wlan_cfg.h>
+#include <dev_wlan_cfg.h>
 
 #define DBG_TAG "WLAN.cfg"
 #ifdef RT_WLAN_CFG_DEBUG

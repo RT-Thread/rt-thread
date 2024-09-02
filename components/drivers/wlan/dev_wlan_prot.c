@@ -11,7 +11,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <wlan_dev.h>
-#include <wlan_prot.h>
+#include <dev_wlan_prot.h>
 
 #define DBG_TAG "WLAN.prot"
 #ifdef RT_WLAN_PROT_DEBUG

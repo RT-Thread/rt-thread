@@ -11,8 +11,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <wlan_dev.h>
-#include <wlan_prot.h>
-#include <wlan_workqueue.h>
+#include <dev_wlan_prot.h>
+#include <dev_wlan_workqueue.h>
 
 #if defined(RT_WLAN_PROT_ENABLE) && defined(RT_WLAN_PROT_LWIP_ENABLE)
 

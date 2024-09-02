@@ -9,8 +9,8 @@
  * 2024-05-25     HPMicro       add strobe support
  */
 
-#ifndef __MMC_H__
-#define __MMC_H__
+#ifndef __DEV_MMC_H__
+#define __DEV_MMC_H__
 
 #include <rtthread.h>
 #include <drivers/mmcsd_host.h>
