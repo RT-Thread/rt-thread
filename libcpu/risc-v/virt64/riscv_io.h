@@ -10,7 +10,7 @@
 #ifndef __RISCV_IO_H__
 #define __RISCV_IO_H__
 
-static inline uint32_t  __raw_hartid(void)
+static inline uint32_t __raw_hartid(void)
 {
     extern int boot_hartid;
     return boot_hartid;
@@ -18,31 +18,23 @@ static inline uint32_t  __raw_hartid(void)
 
 static inline void __raw_writeb(rt_uint8_t val, volatile void *addr)
 {
-    asm volatile("sb %0, 0(%1)"
-                 :
-                 : "r"(val), "r"(addr));
+    asm volatile("sb %0, 0(%1)" : : "r"(val), "r"(addr));
 }
 
 static inline void __raw_writew(rt_uint16_t val, volatile void *addr)
 {
-    asm volatile("sh %0, 0(%1)"
-                 :
-                 : "r"(val), "r"(addr));
+    asm volatile("sh %0, 0(%1)" : : "r"(val), "r"(addr));
 }
 
 static inline void __raw_writel(rt_uint32_t val, volatile void *addr)
 {
-    asm volatile("sw %0, 0(%1)"
-                 :
-                 : "r"(val), "r"(addr));
+    asm volatile("sw %0, 0(%1)" : : "r"(val), "r"(addr));
 }
 
 #if __riscv_xlen != 32
 static inline void __raw_writeq(rt_uint64_t val, volatile void *addr)
 {
-    asm volatile("sd %0, 0(%1)"
-                 :
-                 : "r"(val), "r"(addr));
+    asm volatile("sd %0, 0(%1)" : : "r"(val), "r"(addr));
 }
 #endif
 
@@ -50,9 +42,7 @@ static inline rt_uint8_t __raw_readb(const volatile void *addr)
 {
     rt_uint8_t val;
 
-    asm volatile("lb %0, 0(%1)"
-                 : "=r"(val)
-                 : "r"(addr));
+    asm volatile("lb %0, 0(%1)" : "=r"(val) : "r"(addr));
     return val;
 }
 
@@ -60,9 +50,7 @@ static inline rt_uint16_t __raw_readw(const volatile void *addr)
 {
     rt_uint16_t val;
 
-    asm volatile("lh %0, 0(%1)"
-                 : "=r"(val)
-                 : "r"(addr));
+    asm volatile("lh %0, 0(%1)" : "=r"(val) : "r"(addr));
     return val;
 }
 
@@ -70,9 +58,7 @@ static inline rt_uint32_t __raw_readl(const volatile void *addr)
 {
     rt_uint32_t val;
 
-    asm volatile("lw %0, 0(%1)"
-                 : "=r"(val)
-                 : "r"(addr));
+    asm volatile("lw %0, 0(%1)" : "=r"(val) : "r"(addr));
     return val;
 }
 
@@ -81,9 +67,7 @@ static inline rt_uint64_t __raw_readq(const volatile void *addr)
 {
     rt_uint64_t val;
 
-    asm volatile("ld %0, 0(%1)"
-                 : "=r"(val)
-                 : "r"(addr));
+    asm volatile("ld %0, 0(%1)" : "=r"(val) : "r"(addr));
     return val;
 }
 #endif

@@ -11,7 +11,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "rt_interrupt.h"
+#include "interrupt.h"
 #include "riscv.h"
 #include "plic.h"
 
