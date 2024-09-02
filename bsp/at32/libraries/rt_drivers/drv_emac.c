@@ -496,12 +496,12 @@ rt_err_t emac_txpkt_chainmode(rt_uint32_t frame_length)
     if((dma_tx_desc_to_set->status & EMAC_DMATXDESC_OWN) != (u32)RESET)
     {
         /* return error: own bit set */
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if(frame_length == 0)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if(frame_length > EMAC_MAX_PACKET_LENGTH)
@@ -650,7 +650,7 @@ rt_err_t emac_rxpkt_chainmode(void)
     if((dma_rx_desc_to_get->status & EMAC_DMARXDESC_OWN) != (u32)RESET)
     {
         /* return error: own bit set */
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if((dma_rx_desc_to_get->status & EMAC_DMARXDESC_LS) != (u32)RESET)
     {
@@ -681,7 +681,7 @@ rt_err_t emac_rxpkt_chainmode(void)
         dma_rx_desc_to_get = (emac_dma_desc_type*) (dma_rx_desc_to_get->buf2nextdescaddr);
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /**
