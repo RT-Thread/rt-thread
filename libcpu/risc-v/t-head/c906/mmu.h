@@ -30,7 +30,7 @@ struct mem_desc
 {
     rt_size_t vaddr_start;
     rt_size_t vaddr_end;
-    rt_size_t paddr_start;
+    rt_ubase_t paddr_start;
     rt_size_t attr;
     struct rt_varea varea;
 };
@@ -43,8 +43,8 @@ struct mem_desc
 #define GET_PPN(pte)                                                           \
     (__PARTBIT(pte, PTE_PPN_SHIFT, PHYSICAL_ADDRESS_WIDTH_BITS - PTE_PPN_SHIFT))
 #define GET_PADDR(pte)            (GET_PPN(pte) << PAGE_OFFSET_BIT)
-#define VPN_TO_PPN(vaddr, pv_off) (((rt_size_t)(vaddr)) + (pv_off))
-#define PPN_TO_VPN(paddr, pv_off) (((rt_size_t)(paddr)) - (pv_off))
+#define VPN_TO_PPN(vaddr, pv_off) (((rt_uintptr_t)(vaddr)) + (pv_off))
+#define PPN_TO_VPN(paddr, pv_off) (((rt_uintptr_t)(paddr)) - (pv_off))
 #define COMBINEVADDR(l1_off, l2_off, l3_off)                                   \
     (((l1_off) << VPN2_SHIFT) | ((l2_off) << VPN1_SHIFT) |                     \
      ((l3_off) << VPN0_SHIFT))
@@ -57,11 +57,11 @@ struct mem_desc
 #define MMU_MAP_ERROR_CONFLICT   -4
 
 void *rt_hw_mmu_tbl_get(void);
-int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_size_t size,
-                       rt_size_t *vtable, rt_size_t pv_off);
+int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_ubase_t size,
+                       rt_ubase_t *vtable, rt_ubase_t pv_off);
 void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr);
-void rt_hw_mmu_kernel_map_init(rt_aspace_t aspace, rt_size_t vaddr_start,
-                               rt_size_t size);
+void rt_hw_mmu_kernel_map_init(rt_aspace_t aspace, rt_ubase_t vaddr_start,
+                               rt_ubase_t size);
 void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
                     size_t attr);
 void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size);
