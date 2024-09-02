@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,64 +8,64 @@
  * 2018/10/28     Bernard      The unify RISC-V porting implementation
  * 2018/12/27     Jesven       Add SMP support
  * 2021/02/02     lizhirui     Add userspace support
- * 2022/10/22     WangXiaoyao  Support User mode RVV;
+ * 2022/10/22     Shell        Support User mode RVV;
  *                             Trimming process switch context
  */
 
 #include "cpuport.h"
 #include "stackframe.h"
+#define _REG_IDX(name) RT_HW_SWITCH_CONTEXT_##name
+#define REG_IDX(name) _REG_IDX(name)
 
-.macro PUSH_REG reg
-    addi    sp, sp, -REGBYTES
-    STORE   \reg, (sp)
+.macro SAVE_REG reg, index
+    STORE \reg, \index*REGBYTES(sp)
 .endm
 
-.macro POP_REG reg
-    LOAD    \reg, (sp)
-    addi    sp, sp, REGBYTES
+.macro LOAD_REG reg, index
+    LOAD \reg, \index*REGBYTES(sp)
 .endm
 
 .macro RESERVE_CONTEXT
-    PUSH_REG  tp
-    PUSH_REG  ra
-    PUSH_REG  s0
-    PUSH_REG  s1
-    PUSH_REG  s2
-    PUSH_REG  s3
-    PUSH_REG  s4
-    PUSH_REG  s5
-    PUSH_REG  s6
-    PUSH_REG  s7
-    PUSH_REG  s8
-    PUSH_REG  s9
-    PUSH_REG  s10
-    PUSH_REG  s11
-    csrr    s11, sstatus
-    li      s10, (SSTATUS_SPP)
-    or      s11, s11, s10
-    PUSH_REG  s11
-    addi    sp, sp, -REGBYTES
+    addi        sp, sp, -(RT_HW_SWITCH_CONTEXT_SIZE * REGBYTES)
+    SAVE_REG    tp, REG_IDX(TP)
+    SAVE_REG    ra, REG_IDX(RA)
+    SAVE_REG    s0, REG_IDX(S0)
+    SAVE_REG    s1, REG_IDX(S1)
+    SAVE_REG    s2, REG_IDX(S2)
+    SAVE_REG    s3, REG_IDX(S3)
+    SAVE_REG    s4, REG_IDX(S4)
+    SAVE_REG    s5, REG_IDX(S5)
+    SAVE_REG    s6, REG_IDX(S6)
+    SAVE_REG    s7, REG_IDX(S7)
+    SAVE_REG    s8, REG_IDX(S8)
+    SAVE_REG    s9, REG_IDX(S9)
+    SAVE_REG    s10, REG_IDX(S10)
+    SAVE_REG    s11, REG_IDX(S11)
+    csrr        s11, sstatus
+    li          s10, (SSTATUS_SPP)
+    or          s11, s11, s10
+    SAVE_REG    s11, REG_IDX(SSTATUS)
 .endm
 
 .macro RESTORE_CONTEXT
-    addi    sp, sp, REGBYTES
-    POP_REG   s11
-    csrw    sstatus, s11
-    POP_REG   s11
-    POP_REG   s10
-    POP_REG   s9
-    POP_REG   s8
-    POP_REG   s7
-    POP_REG   s6
-    POP_REG   s5
-    POP_REG   s4
-    POP_REG   s3
-    POP_REG   s2
-    POP_REG   s1
-    POP_REG   s0
-    POP_REG   ra
-    POP_REG   tp
-    csrw    sepc, ra
+    LOAD_REG    s11, REG_IDX(SSTATUS)
+    csrw        sstatus, s11
+    LOAD_REG    s11, REG_IDX(S11)
+    LOAD_REG    s10, REG_IDX(S10)
+    LOAD_REG    s9, REG_IDX(S9)
+    LOAD_REG    s8, REG_IDX(S8)
+    LOAD_REG    s7, REG_IDX(S7)
+    LOAD_REG    s6, REG_IDX(S6)
+    LOAD_REG    s5, REG_IDX(S5)
+    LOAD_REG    s4, REG_IDX(S4)
+    LOAD_REG    s3, REG_IDX(S3)
+    LOAD_REG    s2, REG_IDX(S2)
+    LOAD_REG    s1, REG_IDX(S1)
+    LOAD_REG    s0, REG_IDX(S0)
+    LOAD_REG    ra, REG_IDX(RA)
+    LOAD_REG    tp, REG_IDX(TP)
+    addi        sp, sp, RT_HW_SWITCH_CONTEXT_SIZE * REGBYTES
+    csrw        sepc, ra
 .endm
 
 /*
@@ -113,33 +113,3 @@ rt_hw_context_switch:
 
     RESTORE_CONTEXT
     sret
-
-#ifdef ENABLE_VECTOR
-/**
- * @param a0 pointer to frame bottom
- */
-.global rt_hw_vector_ctx_save
-rt_hw_vector_ctx_save:
-    SAVE_VECTOR a0
-    ret
-
-/**
- * @param a0 pointer to frame bottom
- */
-.global rt_hw_vector_ctx_restore
-rt_hw_vector_ctx_restore:
-    RESTORE_VECTOR a0
-    ret
-
-.global rt_hw_disable_vector
-rt_hw_disable_vector:
-    li t0, SSTATUS_VS
-    csrc sstatus, t0
-    ret
-
-.global rt_hw_enable_vector
-rt_hw_enable_vector:
-    li t0, SSTATUS_VS
-    csrs sstatus, t0
-    ret
-#endif /* ENABLE_VECTOR */

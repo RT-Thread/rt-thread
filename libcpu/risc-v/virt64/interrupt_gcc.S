@@ -9,7 +9,7 @@
  * 2018/12/27     Jesven       Add SMP schedule
  * 2021/02/02     lizhirui     Add userspace support
  * 2021/12/24     JasonHu      Add user setting save/restore
- * 2022/10/22     WangXiaoyao  Support kernel mode RVV;
+ * 2022/10/22     Shell        Support kernel mode RVV;
  *                             Rewrite trap handling routine
  */
 
@@ -69,6 +69,9 @@ _context_switch:
     LOAD    a0, 0(t0)
     la      t0, rt_interrupt_to_thread
     LOAD    a1, 0(t0)
+    csrr    t0, sstatus
+    andi    t0, t0, ~SSTATUS_SPIE
+    csrw    sstatus, t0
     jal     rt_hw_context_switch
 
 _resume_execution:
