@@ -106,7 +106,7 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
         : "=&r" (oldval), "=&r" (tmp), "+Q" (*ptr)
         : "Kr" (*old), "r" (new), "r" (old)
         : "memory");
-    
+
     return tmp;
 }
 
