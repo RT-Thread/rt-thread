@@ -91,22 +91,22 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
 {
     rt_atomic_t tmp, oldval;
     __asm__ volatile (
-        "   prfm    pstl1strm, %2\n"  
-        "1: ldxr    %0, %2\n"         
-        "   eor     %1, %0, %3\n"     
-        "   cbnz    %1, 2f\n"    
-        "   stlxr   %w1, %4, %2\n"  
-        "   cbnz    %w1, 1b\n"  
-        "   dmb     ish\n"      
-        "   mov     %w1, #1\n"  
+        "   prfm    pstl1strm, %2\n"
+        "1: ldxr    %0, %2\n"
+        "   eor     %1, %0, %3\n"
+        "   cbnz    %1, 2f\n"
+        "   stlxr   %w1, %4, %2\n"
+        "   cbnz    %w1, 1b\n"
+        "   dmb     ish\n"
+        "   mov     %w1, #1\n"
         "   b       3f\n"
         "2: str     %0, [%5]\n"
-        "   mov     %w1, #0\n"  
+        "   mov     %w1, #0\n"
         "3:"
         : "=&r" (oldval), "=&r" (tmp), "+Q" (*ptr)
         : "Kr" (*old), "r" (new), "r" (old)
         : "memory");
-        
+    
     return tmp;
 }
 
