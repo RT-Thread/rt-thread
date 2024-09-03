@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-08-25     RT-Thread    First version for MCXC444
+ * 2024-09-03     yandld       Updated to support multiple UARTs
  */
 
 #include <rtthread.h>
@@ -18,7 +19,6 @@
 
 #ifdef RT_USING_SERIAL
 
-/* MCXC444 UART driver */
 struct mcxc444_uart
 {
     LPUART_Type *uart_base;
@@ -29,22 +29,27 @@ struct mcxc444_uart
 
 static void uart_isr(struct rt_serial_device *serial);
 
-#if defined(BSP_USING_UART0)
-struct rt_serial_device serial0;
+#define UART_DEVICE(uart_base, irq_name, device_name) \
+    {                                                 \
+        uart_base,                                    \
+        irq_name,                                     \
+        RT_NULL,                                      \
+        device_name,                                  \
+    }
 
-void LPUART0_IRQHandler(void)
-{
-    uart_isr(&serial0);
-}
-
-static const struct mcxc444_uart uart0 =
-{
-    LPUART0,
-    LPUART0_IRQn,
-    &serial0,
-    "uart0",
-};
+static const struct mcxc444_uart uarts[] = {
+#ifdef BSP_USING_UART0
+    UART_DEVICE(LPUART0, LPUART0_IRQn, "uart0"),
 #endif
+#ifdef BSP_USING_UART1
+    UART_DEVICE(LPUART1, LPUART1_IRQn, "uart1"),
+#endif
+
+};
+
+#define UART_COUNT (sizeof(uarts) / sizeof(uarts[0]))
+
+static struct rt_serial_device serial_devices[UART_COUNT];
 
 static rt_err_t mcxc444_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -92,7 +97,15 @@ static rt_err_t mcxc444_configure(struct rt_serial_device *serial, struct serial
         return RT_ERROR;
     }
 
-    CLOCK_SetLpuart0Clock(0x1U);
+    if (uart->uart_base == LPUART0)
+    {
+        CLOCK_SetLpuart0Clock(0x1U);
+    }
+    else if (uart->uart_base == LPUART1)
+    {
+        CLOCK_SetLpuart1Clock(0x1U);
+    }
+
     LPUART_Init(uart->uart_base, &config, CLOCK_GetFreq(kCLOCK_McgIrc48MClk));
 
     return RT_EOK;
@@ -145,16 +158,21 @@ static int mcxc444_getc(struct rt_serial_device *serial)
 
 static void uart_isr(struct rt_serial_device *serial)
 {
+    uint32_t status;
+
     struct mcxc444_uart *uart = (struct mcxc444_uart *)serial->parent.user_data;
 
-    rt_interrupt_enter();
+    status = LPUART_GetStatusFlags(uart->uart_base);
 
-    if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxDataRegFullFlag)
+    if (status & kLPUART_RxDataRegFullFlag)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
-    rt_interrupt_leave();
+    if (status & kLPUART_RxOverrunFlag)
+    {
+        LPUART_ClearStatusFlags(uart->uart_base, kLPUART_RxOverrunFlag);
+    }
 }
 
 static const struct rt_uart_ops mcxc444_uart_ops =
@@ -165,18 +183,33 @@ static const struct rt_uart_ops mcxc444_uart_ops =
     mcxc444_getc,
 };
 
+#ifdef BSP_USING_UART0
+void LPUART0_IRQHandler(void)
+{
+    uart_isr(&serial_devices[0]);
+}
+#endif
+
+#ifdef BSP_USING_UART1
+void LPUART1_IRQHandler(void)
+{
+    uart_isr(&serial_devices[1]);
+}
+#endif
+
 int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-#ifdef BSP_USING_UART0
-    serial0.ops = &mcxc444_uart_ops;
-    serial0.config = config;
+    for (rt_size_t i = 0; i < UART_COUNT; i++)
+    {
+        serial_devices[i].ops = &mcxc444_uart_ops;
+        serial_devices[i].config = config;
 
-    rt_hw_serial_register(&serial0, uart0.device_name,
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          (void *)&uart0);
-#endif
+        rt_hw_serial_register(&serial_devices[i], uarts[i].device_name,
+                              RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                              (void *)&uarts[i]);
+    }
 
     return 0;
 }
