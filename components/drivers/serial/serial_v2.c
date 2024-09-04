@@ -188,7 +188,7 @@ static int serial_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
             mask |= POLLIN;
         rt_hw_interrupt_enable(level);
     }
-    // mask|=POLLOUT;
+    /* mask|=POLLOUT; */
    return mask;
 }
 
@@ -500,6 +500,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 {
     struct rt_serial_device *serial;
     struct rt_serial_tx_fifo *tx_fifo;
+    rt_base_t level;
     rt_ssize_t send_size;
     rt_err_t ret;
 
@@ -518,12 +519,16 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 
     /* When serial transmit in tx_blocking mode,
      * if the activated mode is RT_TRUE, it will return directly */
+    level = rt_hw_interrupt_disable();
     if (tx_fifo->activated == RT_TRUE)
     {
+        rt_hw_interrupt_enable(level);
         return 0;
     }
 
     tx_fifo->activated = RT_TRUE;
+    rt_hw_interrupt_enable(level);
+
 
     /* clear tx_cpt flag */
     rt_completion_wait(&tx_fifo->tx_cpt, 0);
@@ -542,7 +547,10 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
     }
 
     /* Inactive tx mode flag */
+    level = rt_hw_interrupt_disable();
     tx_fifo->activated = RT_FALSE;
+    rt_hw_interrupt_enable(level);
+
     return send_size;
 }
 
@@ -579,8 +587,15 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
     }
     /* When serial transmit in tx_blocking mode,
      * if the activated mode is RT_TRUE, it will return directly */
-    if (tx_fifo->activated == RT_TRUE)  return 0;
+    level = rt_hw_interrupt_disable();
+    if (tx_fifo->activated == RT_TRUE)
+    {
+        rt_hw_interrupt_enable(level);
+        return 0;
+    }
     tx_fifo->activated = RT_TRUE;
+    rt_hw_interrupt_enable(level);
+
 
     rt_int32_t tx_timeout = tx_fifo->tx_timeout;
     rt_tick_t now_tick = 0;
@@ -625,8 +640,11 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
             }
         }
     }
+
     /* Finally Inactivate the tx->fifo */
+    level = rt_hw_interrupt_disable();
     tx_fifo->activated = RT_FALSE;
+    rt_hw_interrupt_enable(level);
 
     return send_size;
 }
@@ -809,6 +827,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
     dev->write = _serial_fifo_tx_nonblocking;
 #endif
 
+    rt_completion_init(&tx_fifo->tx_cpt);
     dev->open_flag |= RT_SERIAL_TX_NON_BLOCKING;
 
     /* Call the control() API to configure the serial device by RT_SERIAL_TX_NON_BLOCKING*/
@@ -1296,26 +1315,15 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             {
                 struct rt_serial_tx_fifo* tx_fifo;
                 rt_base_t level;
-
                 tx_fifo = (struct rt_serial_tx_fifo*)serial->serial_tx;
-                if(serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
+                level = rt_hw_interrupt_disable();
+                if(tx_fifo->activated != RT_FALSE)
                 {
-                    level = rt_hw_interrupt_disable();
-                    if(tx_fifo->activated != RT_FALSE)
-                    {
-                        rt_hw_interrupt_enable(level);
-                        rt_completion_wait(&tx_fifo->tx_cpt, RT_WAITING_FOREVER);
-                        break;
-                    }
                     rt_hw_interrupt_enable(level);
+                    rt_completion_wait(&tx_fifo->tx_cpt, RT_WAITING_FOREVER);
+                    break;
                 }
-                else
-                {
-                    while(tx_fifo->activated == RT_TRUE)
-                    {
-                        // rt_thread_mdelay(1);
-                    }
-                }
+                rt_hw_interrupt_enable(level);
             }
             break;
 
@@ -1746,11 +1754,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
              * then the transmit completion callback is triggered*/
             if (tx_length == 0)
             {
-                /* Maybe some datas left in the buffer still need to be sent in block mode */
-                if (serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
-                {
-                    rt_completion_done(&tx_fifo->tx_cpt);
-                }
+                rt_completion_done(&tx_fifo->tx_cpt);
 
                 /* Trigger the transmit completion callback */
                 if (serial->parent.tx_complete != RT_NULL)
@@ -1790,10 +1794,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 
             if (tx_length == 0)
             {
-                if (serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
-                {
-                    rt_completion_done(&tx_fifo->tx_cpt);
-                }
+                rt_completion_done(&tx_fifo->tx_cpt);
 
                 /* Trigger the transmit completion callback */
                 if (serial->parent.tx_complete != RT_NULL)
