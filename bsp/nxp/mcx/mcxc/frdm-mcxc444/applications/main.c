@@ -19,7 +19,7 @@
 #define LED_PIN         ((4*32)+31)
 #define BUTTON_PIN      ((2*32)+3)
 
-static void sw_pin_cb(void *args);
+static void sw2_pin_cb(void *args);
 
 int main(void)
 {
@@ -36,10 +36,10 @@ int main(void)
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
 
     rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP);
-    rt_pin_attach_irq(BUTTON_PIN, PIN_IRQ_MODE_FALLING, sw_pin_cb, RT_NULL);
+    rt_pin_attach_irq(BUTTON_PIN, PIN_IRQ_MODE_FALLING, sw2_pin_cb, RT_NULL);
     rt_pin_irq_enable(BUTTON_PIN, 1);
 
-    rt_kprintf("MCXC444 HelloWorld\r\n");
+    rt_kprintf("NXP MCXC444\r\n");
 
     while (1)
     {
@@ -50,9 +50,9 @@ int main(void)
     }
 }
 
-static void sw_pin_cb(void *args)
+static void sw2_pin_cb(void *args)
 {
-    rt_kprintf("sw pressed\r\n");
+    rt_kprintf("sw2 pressed\r\n");
 }
 
 // end file

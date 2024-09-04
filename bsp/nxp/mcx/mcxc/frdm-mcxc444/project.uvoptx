@@ -119,28 +119,8 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>ARMRTXEVENTFLAGS</Key>
-          <Name>-L70 -Z18 -C0 -M0 -T1</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>DLGTARM</Key>
-          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>ARMDBGFLAGS</Key>
-          <Name></Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>DLGUARM</Key>
-          <Name></Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"" -O206 -S0 -C0 -P00000000 -N00("ARM CoreSight SW-DP") -D00(0BC11477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD1FFFE000 -FC800 -FN1 -FF0MK_P256_48MHZ_MCXC444.FLM -FS00 -FL040000 -FP0($$Device:MCXC444VLH$devices\MCXC444\arm\MK_P256_48MHZ_MCXC444.FLM)</Name>
+          <Name>-X"" -O206 -S0 -C0 -P00000000 -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD1FFFE000 -FC800 -FN1 -FF0MK_P256_48MHZ_MCXC444.FLM -FS00 -FL040000 -FP0($$Device:MCXC444VLH$devices\MCXC444\arm\MK_P256_48MHZ_MCXC444.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -165,7 +145,7 @@
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
         <aPa>0</aPa>
-        <viewmode>1</viewmode>
+        <viewmode>0</viewmode>
         <vrSel>0</vrSel>
         <aSym>0</aSym>
         <aTbox>0</aTbox>
@@ -964,20 +944,20 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_common.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_common.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_dac.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_dac.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
       <FileNumber>60</FileNumber>
-      <FileType>1</FileType>
+      <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_ftfx_flexnvm.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_ftfx_flexnvm.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\arm\startup_MCXC444.s</PathWithFileName>
+      <FilenameWithoutPath>startup_MCXC444.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -988,8 +968,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart_dma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_uart_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1000,8 +980,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_cmp.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_cmp.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai_dma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_sai_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1024,8 +1004,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c_dma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_i2c_dma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_slcd.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_slcd.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1036,8 +1016,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_dac.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_dac.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_pit.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_pit.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1048,38 +1028,14 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_i2c.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_lpuart_dma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lpuart_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
       <FileNumber>67</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai_dma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_sai_dma.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>68</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_dma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_dma.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>69</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1091,13 +1047,37 @@
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
+      <FileNumber>68</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_cmp.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_cmp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>69</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_spi.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_spi.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
       <FileNumber>70</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_lpuart_dma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_lpuart_dma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c_dma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_i2c_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1120,8 +1100,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_smc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_smc.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1132,146 +1112,14 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\system_MCXC444.c</PathWithFileName>
-      <FilenameWithoutPath>system_MCXC444.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_common.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_common.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
       <FileNumber>74</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_pit.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_pit.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>75</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_uart.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>76</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_slcd.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_slcd.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>77</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_sai.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>78</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_clock.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_clock.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>79</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart_dma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_uart_dma.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>80</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_common_arm.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_common_arm.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>81</FileNumber>
-      <FileType>2</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\arm\startup_MCXC444.s</PathWithFileName>
-      <FilenameWithoutPath>startup_MCXC444.s</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>82</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_sim.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_sim.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>83</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_adc16.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_adc16.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>84</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_rtc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_rtc.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>85</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1283,7 +1131,91 @@
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
-      <FileNumber>86</FileNumber>
+      <FileNumber>75</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_ftfx_flexnvm.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_ftfx_flexnvm.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>76</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_common_arm.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_common_arm.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>77</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_smc.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_smc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>78</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_dma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_dma.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>79</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_rtc.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_rtc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>80</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_sim.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_sim.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>81</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_sai.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>82</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1295,13 +1227,61 @@
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
+      <FileNumber>83</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_uart.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>84</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_adc16.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_adc16.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>85</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_i2c.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>86</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_clock.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_clock.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
       <FileNumber>87</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXC444\MCXC444\drivers\fsl_spi.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_spi.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXC444\MCXC444\system_MCXC444.c</PathWithFileName>
+      <FilenameWithoutPath>system_MCXC444.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
