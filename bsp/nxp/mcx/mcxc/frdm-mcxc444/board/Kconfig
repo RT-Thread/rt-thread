@@ -39,10 +39,10 @@ menu "On-chip Peripheral Drivers"
 
             if BSP_USING_I2C
                 config BSP_USING_I2C0
-                    bool "Enable Flexcomm0 I2C"
+                    bool "Enable I2C0"
                     default y
                 config BSP_USING_I2C1
-                    bool "Enable Flexcomm1 I2C"
+                    bool "Enable I2C1"
                     default y
             endif
 
