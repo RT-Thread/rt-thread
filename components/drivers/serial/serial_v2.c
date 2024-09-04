@@ -585,7 +585,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
     rt_int32_t tx_timeout = tx_fifo->tx_timeout;
     rt_tick_t now_tick = 0;
     rt_tick_t begin_tick = rt_tick_get();
-    
+
     while (send_size != size)
     {
         /* Copy one piece of data into the ringbuffer at a time
