@@ -15,56 +15,56 @@
 #include "cpuport.h"
 #include "stackframe.h"
 
-.macro PUSH_8 reg
+.macro PUSH_REG reg
     addi    sp, sp, -REGBYTES
     STORE   \reg, (sp)
 .endm
 
-.macro POP_8 reg
+.macro POP_REG reg
     LOAD    \reg, (sp)
     addi    sp, sp, REGBYTES
 .endm
 
 .macro RESERVE_CONTEXT
-    PUSH_8  tp
-    PUSH_8  ra
-    PUSH_8  s0
-    PUSH_8  s1
-    PUSH_8  s2
-    PUSH_8  s3
-    PUSH_8  s4
-    PUSH_8  s5
-    PUSH_8  s6
-    PUSH_8  s7
-    PUSH_8  s8
-    PUSH_8  s9
-    PUSH_8  s10
-    PUSH_8  s11
+    PUSH_REG  tp
+    PUSH_REG  ra
+    PUSH_REG  s0
+    PUSH_REG  s1
+    PUSH_REG  s2
+    PUSH_REG  s3
+    PUSH_REG  s4
+    PUSH_REG  s5
+    PUSH_REG  s6
+    PUSH_REG  s7
+    PUSH_REG  s8
+    PUSH_REG  s9
+    PUSH_REG  s10
+    PUSH_REG  s11
     csrr    s11, sstatus
     li      s10, (SSTATUS_SPP)
     or      s11, s11, s10
-    PUSH_8  s11
+    PUSH_REG  s11
     addi    sp, sp, -REGBYTES
 .endm
 
 .macro RESTORE_CONTEXT
     addi    sp, sp, REGBYTES
-    POP_8   s11
+    POP_REG   s11
     csrw    sstatus, s11
-    POP_8   s11
-    POP_8   s10
-    POP_8   s9
-    POP_8   s8
-    POP_8   s7
-    POP_8   s6
-    POP_8   s5
-    POP_8   s4
-    POP_8   s3
-    POP_8   s2
-    POP_8   s1
-    POP_8   s0
-    POP_8   ra
-    POP_8   tp
+    POP_REG   s11
+    POP_REG   s10
+    POP_REG   s9
+    POP_REG   s8
+    POP_REG   s7
+    POP_REG   s6
+    POP_REG   s5
+    POP_REG   s4
+    POP_REG   s3
+    POP_REG   s2
+    POP_REG   s1
+    POP_REG   s0
+    POP_REG   ra
+    POP_REG   tp
     csrw    sepc, ra
 .endm
 

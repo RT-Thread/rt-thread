@@ -54,3 +54,7 @@ cmake-build-debug
 # vDSO
 vdso_sys.os
 vdso.lds
+
+# cherryusb libraries
+!components/drivers/usb/cherryusb/port/pusb2/*.a
+!components/drivers/usb/cherryusb/port/xhci/phytium/*.a

@@ -77,4 +77,8 @@ config UTEST_SCHEDULER_TC
     bool "scheduler test"
     default n
 
+if RT_USING_SMP
+rsource "smp/Kconfig"
+endif
+
 endmenu

@@ -429,7 +429,7 @@ void rt_object_detach(rt_object_t object)
     rt_list_remove(&(object->list));
     rt_spin_unlock_irqrestore(&(information->spinlock), level);
 
-    object->type = 0;
+    object->type = RT_Object_Class_Null;
 }
 
 #ifdef RT_USING_HEAP

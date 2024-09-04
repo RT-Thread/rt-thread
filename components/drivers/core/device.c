@@ -163,7 +163,7 @@ void rt_device_destroy(rt_device_t dev)
 {
     /* parameter check */
     RT_ASSERT(dev != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
+    RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Null);
     RT_ASSERT(rt_object_is_systemobject(&dev->parent) == RT_FALSE);
 
     rt_object_detach(&(dev->parent));

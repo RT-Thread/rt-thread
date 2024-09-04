@@ -84,7 +84,7 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
             LIBS = ['libpusb2_dc_a32_softfp_neon.a']
 
     if GetDepend(['RT_CHERRYUSB_DEVICE_CDC_ACM']):
-        src += Glob('class/cdc/usbd_cdc.c')
+        src += Glob('class/cdc/usbd_cdc_acm.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_HID']):
         src += Glob('class/hid/usbd_hid.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MSC']):
@@ -255,7 +255,7 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
 src += Glob('platform/rtthread/usb_msh.c')
 src += Glob('platform/rtthread/usb_check.c')
 
-group = DefineGroup('CherryUSB', src, depend = ['RT_USING_CHERRYUSB'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('CherryUSB', src, depend = ['RT_USING_CHERRYUSB'], LIBS = LIBS, LIBPATH=LIBPATH, CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
 

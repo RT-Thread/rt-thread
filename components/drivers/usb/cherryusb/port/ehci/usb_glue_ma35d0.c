@@ -57,7 +57,7 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
         SYS->MISCFCR0 &= ~SYS_MISCFCR0_UHOVRCURH_Msk;
         while (1) {
             rt_thread_mdelay(1);
-            if ((SYS->USBPMISCR & SYS_USBPMISCR_PHY0HSTCKSTB_Msk) &&)
+            if (SYS->USBPMISCR & SYS_USBPMISCR_PHY0HSTCKSTB_Msk)
                 break; /* both USB PHY0 and PHY1 clock 60MHz UTMI clock stable */
 
             timeout--;
@@ -88,7 +88,7 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
         SYS->MISCFCR0 &= ~SYS_MISCFCR0_UHOVRCURH_Msk;
         while (1) {
             rt_thread_mdelay(1);
-            if ((SYS->USBPMISCR & SYS_USBPMISCR_PHY1HSTCKSTB_Msk))
+            if (SYS->USBPMISCR & SYS_USBPMISCR_PHY1HSTCKSTB_Msk)
                 break; /* both USB PHY0 and PHY1 clock 60MHz UTMI clock stable */
 
             timeout--;

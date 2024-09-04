@@ -181,7 +181,7 @@ void rt_system_scheduler_start(void)
 
     /* switch to new thread */
 
-    rt_hw_context_switch_to((rt_ubase_t)&to_thread->sp);
+    rt_hw_context_switch_to((rt_uintptr_t)&to_thread->sp);
 
     /* never come back */
 }
@@ -275,8 +275,8 @@ void rt_schedule(void)
 
                     RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (from_thread));
 
-                    rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
-                            (rt_ubase_t)&to_thread->sp);
+                    rt_hw_context_switch((rt_uintptr_t)&from_thread->sp,
+                            (rt_uintptr_t)&to_thread->sp);
 
                     /* enable interrupt */
                     rt_hw_interrupt_enable(level);
@@ -306,8 +306,8 @@ void rt_schedule(void)
                 {
                     LOG_D("switch in interrupt");
 
-                    rt_hw_context_switch_interrupt((rt_ubase_t)&from_thread->sp,
-                            (rt_ubase_t)&to_thread->sp, from_thread, to_thread);
+                    rt_hw_context_switch_interrupt((rt_uintptr_t)&from_thread->sp,
+                            (rt_uintptr_t)&to_thread->sp, from_thread, to_thread);
                 }
             }
             else

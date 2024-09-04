@@ -22,22 +22,17 @@ void BOARD_InitBootPins(void)
 
 void BOARD_InitPins(void)
 {
-    /* Port A Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortA);
+    CLOCK_EnableClock(kCLOCK_PortB);
+    CLOCK_EnableClock(kCLOCK_PortC);
+    CLOCK_EnableClock(kCLOCK_PortD);
+    CLOCK_EnableClock(kCLOCK_PortE);
+    
+    PORT_SetPinMux(PORTA, 1U, kPORT_MuxAlt2);   /* LPUART0_RX */
+    PORT_SetPinMux(PORTA, 2U, kPORT_MuxAlt2);   /* LPUART0_TX */
+    
+    PORT_SetPinMux(PORTE, 0U, kPORT_MuxAlt3);   /* LPUART1_TX */
+    PORT_SetPinMux(PORTE, 1U, kPORT_MuxAlt3);   /* LPUART1_RX */
 
-    /* PORTA1 (pin 23) is configured as LPUART0_RX */
-    PORT_SetPinMux(PORTA, 1U, kPORT_MuxAlt2);
-
-    /* PORTA2 (pin 24) is configured as LPUART0_TX */
-    PORT_SetPinMux(PORTA, 2U, kPORT_MuxAlt2);
-
-    SIM->SOPT5 = ((SIM->SOPT5 &
-                   /* Mask bits to zero which are setting */
-                   (~(SIM_SOPT5_LPUART0TXSRC_MASK | SIM_SOPT5_LPUART0RXSRC_MASK)))
-
-                  /* LPUART0 Transmit Data Source Select: LPUART0_TX pin. */
-                  | SIM_SOPT5_LPUART0TXSRC(SOPT5_LPUART0TXSRC_LPUART_TX)
-
-                  /* LPUART0 Receive Data Source Select: LPUART_RX pin. */
-                  | SIM_SOPT5_LPUART0RXSRC(SOPT5_LPUART0RXSRC_LPUART_RX));
+    SIM->SOPT5 = 0;
 }
