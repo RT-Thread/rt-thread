@@ -46,7 +46,7 @@ jobs:
           cd build
           cmake ..
           make
-          sudo make install
+          sudo make install FILESDIR=/usr/local/share/Cppcheck CFGDIR=/usr/share/Cppcheck/cfg
           cppcheck --version
           cd ../../
           git remote -v
