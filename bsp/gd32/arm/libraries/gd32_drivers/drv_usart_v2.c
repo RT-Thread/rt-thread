@@ -247,7 +247,7 @@ static void dma_recv_isr (struct rt_serial_device *serial)
     }
     else
     {
-        recv_len = serial->config.rx_bufsz + uart->dma.last_index - counter;
+        recv_len = serial->config.dma_ping_bufsz + uart->dma.last_index - counter;
     }
     uart->dma.last_index = counter;
     rt_hw_interrupt_enable(level);
@@ -272,8 +272,8 @@ static void usart_isr (struct rt_serial_device *serial)
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        rt_ringbuffer_putchar(&(rx_fifo->rb), usart_data_receive(uart->periph));
-
+        char chr = usart_data_receive(uart->periph);
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 
         /* Clear RXNE interrupt flag */
@@ -281,12 +281,8 @@ static void usart_isr (struct rt_serial_device *serial)
     }
     else if (usart_interrupt_flag_get(uart->periph, USART_INT_FLAG_TBE) != RESET)
     {
-        struct rt_serial_tx_fifo *tx_fifo;
-        tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
-        RT_ASSERT(tx_fifo != RT_NULL);
-
         rt_uint8_t put_char = 0;
-        if (rt_ringbuffer_getchar(&(tx_fifo->rb), &put_char))
+        if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, &put_char) == RT_EOK)
         {
             usart_data_transmit(uart->periph, put_char);
         }
@@ -709,7 +705,7 @@ static rt_err_t gd32_uart_configure (struct rt_serial_device *serial, struct ser
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
 #ifdef RT_SERIAL_USING_DMA
-    uart->dma.last_index = serial->config.rx_bufsz;
+    uart->dma.last_index = serial->config.dma_ping_bufsz;
 #endif
 
     gd32_uart_gpio_init(uart);
@@ -818,7 +814,6 @@ static void _uart_dma_transmit (struct gd32_uart *uart, rt_uint8_t *buffer, rt_u
 static void gd32_dma_config (struct rt_serial_device *serial, rt_ubase_t flag)
 {
     struct gd32_uart *uart;
-    struct rt_serial_rx_fifo *rx_fifo;
     dma_single_data_parameter_struct dma_init_struct = { 0 };
 
     RT_ASSERT(serial != RT_NULL);
@@ -862,9 +857,11 @@ static void gd32_dma_config (struct rt_serial_device *serial, rt_ubase_t flag)
     /* enable rx dma */
     if (flag == RT_DEVICE_FLAG_DMA_RX)
     {
-        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+        rt_uint8_t *ptr = NULL;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, &ptr);
+
         /* start dma transfer */
-        _uart_dma_receive(uart, rx_fifo->buffer, serial->config.rx_bufsz);
+        _uart_dma_receive(uart, ptr, serial->config.dma_ping_bufsz);
     }
 }
 
@@ -1055,6 +1052,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART0_INDEX].serial.config.rx_bufsz = BSP_UART0_RX_BUFSIZE;
     uart_obj[UART0_INDEX].serial.config.tx_bufsz = BSP_UART0_TX_BUFSIZE;
 #ifdef BSP_UART0_RX_USING_DMA
+    uart_obj[UART0_INDEX].serial.config.dma_ping_bufsz = BSP_UART0_DMA_PING_BUFSIZE;
     uart_obj[UART0_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART0_TX_USING_DMA
@@ -1068,6 +1066,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART1_INDEX].serial.config.rx_bufsz = BSP_UART1_RX_BUFSIZE;
     uart_obj[UART1_INDEX].serial.config.tx_bufsz = BSP_UART1_TX_BUFSIZE;
 #ifdef BSP_UART1_RX_USING_DMA
+    uart_obj[UART1_INDEX].serial.config.dma_ping_bufsz = BSP_UART1_DMA_PING_BUFSIZE;
     uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART1_TX_USING_DMA
@@ -1081,6 +1080,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART2_INDEX].serial.config.rx_bufsz = BSP_UART2_RX_BUFSIZE;
     uart_obj[UART2_INDEX].serial.config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
 #ifdef BSP_UART2_RX_USING_DMA
+    uart_obj[UART2_INDEX].serial.config.dma_ping_bufsz = BSP_UART2_DMA_PING_BUFSIZE;
     uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART2_TX_USING_DMA
@@ -1094,6 +1094,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART3_INDEX].serial.config.rx_bufsz = BSP_UART3_RX_BUFSIZE;
     uart_obj[UART3_INDEX].serial.config.tx_bufsz = BSP_UART3_TX_BUFSIZE;
 #ifdef BSP_UART3_RX_USING_DMA
+    uart_obj[UART3_INDEX].serial.config.dma_ping_bufsz = BSP_UART3_DMA_PING_BUFSIZE;
     uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART3_TX_USING_DMA
@@ -1107,6 +1108,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART4_INDEX].serial.config.rx_bufsz = BSP_UART4_RX_BUFSIZE;
     uart_obj[UART4_INDEX].serial.config.tx_bufsz = BSP_UART4_TX_BUFSIZE;
 #ifdef BSP_UART4_RX_USING_DMA
+    uart_obj[UART4_INDEX].serial.config.dma_ping_bufsz = BSP_UART4_DMA_PING_BUFSIZE;
     uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART4_TX_USING_DMA
@@ -1120,6 +1122,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART5_INDEX].serial.config.rx_bufsz = BSP_UART5_RX_BUFSIZE;
     uart_obj[UART5_INDEX].serial.config.tx_bufsz = BSP_UART5_TX_BUFSIZE;
 #ifdef BSP_UART5_RX_USING_DMA
+    uart_obj[UART5_INDEX].serial.config.dma_ping_bufsz = BSP_UART5_DMA_PING_BUFSIZE;
     uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART5_TX_USING_DMA
@@ -1133,6 +1136,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART6_INDEX].serial.config.rx_bufsz = BSP_UART6_RX_BUFSIZE;
     uart_obj[UART6_INDEX].serial.config.tx_bufsz = BSP_UART6_TX_BUFSIZE;
 #ifdef BSP_UART6_RX_USING_DMA
+    uart_obj[UART6_INDEX].serial.config.dma_ping_bufsz = BSP_UART6_DMA_PING_BUFSIZE;
     uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART6_TX_USING_DMA
@@ -1146,6 +1150,7 @@ static void gd32_uart_get_config (void)
     uart_obj[UART7_INDEX].serial.config.rx_bufsz = BSP_UART7_RX_BUFSIZE;
     uart_obj[UART7_INDEX].serial.config.tx_bufsz = BSP_UART7_TX_BUFSIZE;
 #ifdef BSP_UART7_RX_USING_DMA
+    uart_obj[UART7_INDEX].serial.config.dma_ping_bufsz = BSP_UART7_DMA_PING_BUFSIZE;
     uart_obj[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_UART7_TX_USING_DMA

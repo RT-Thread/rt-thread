@@ -134,7 +134,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
 
     RT_ASSERT(uart != RT_NULL);
 
-    if(!(UART_FR(uart->hw_base) & UARTFR_RXFE) && (UART_IMSC(uart->hw_base) & UARTIMSC_RXIM))
+    if((UART_FR(uart->hw_base) & UARTFR_RXFF) && (UART_IMSC(uart->hw_base) & UARTIMSC_RXIM))
     {
 
         struct rt_serial_rx_fifo *rx_fifo;
@@ -143,10 +143,32 @@ static void rt_hw_uart_isr(int irqno, void *param)
 
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        char rec_ch = UART_DR(uart->hw_base) & 0xff;
+        char rec_ch;
+        while (!(UART_FR(uart->hw_base) & UARTFR_RXFE))
+        {
+            rec_ch = UART_DR(uart->hw_base) & 0xff;
+            rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &rec_ch);
 
-        rt_ringbuffer_putchar(&(rx_fifo->rb),rec_ch);
+        }
+        rt_hw_serial_isr(serial,RT_SERIAL_EVENT_RX_IND);
 
+    }
+    else if(UART_IMSC(uart->hw_base) & UARTIMSC_RTIM)
+    {
+        struct rt_serial_rx_fifo *rx_fifo;
+
+        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+
+        RT_ASSERT(rx_fifo != RT_NULL);
+
+        char rec_ch;
+
+        while (!(UART_FR(uart->hw_base) & UARTFR_RXFE))
+        {
+            rec_ch = UART_DR(uart->hw_base) & 0xff;
+            rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &rec_ch);
+
+        }
         rt_hw_serial_isr(serial,RT_SERIAL_EVENT_RX_IND);
     }
     else if((UART_IMSC(uart->hw_base) & UARTIMSC_TXIM))
@@ -188,6 +210,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
             {
                 /* disable rx irq */
                 UART_IMSC(uart->hw_base) &= ~UARTIMSC_RXIM;
+                UART_IMSC(uart->hw_base) &= ~UARTIMSC_RTIM;
             }
             else if (ctrl_arg == RT_DEVICE_FLAG_INT_TX)
             {
@@ -201,6 +224,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
             {
                 /* enable rx irq */
                 UART_IMSC(uart->hw_base) |= UARTIMSC_RXIM;
+                UART_IMSC(uart->hw_base) |= UARTIMSC_RTIM;
                 rt_hw_interrupt_umask(uart->irqno);
 
             } else if (ctrl_arg == RT_DEVICE_FLAG_INT_TX)
@@ -256,7 +280,6 @@ static rt_ssize_t uart_transmit(struct rt_serial_device *serial,
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
     RT_ASSERT(size);
-    uint32_t fifo_size = 0, tx_size = 0;
     struct hw_uart_device *uart = (struct hw_uart_device *)serial->parent.user_data;
     struct rt_serial_tx_fifo *tx_fifo;
     tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
@@ -342,7 +365,12 @@ int rt_hw_uart_init(void)
         rt_hw_interrupt_install(_uart_device[i].irqno, rt_hw_uart_isr, _uart_device[i].serial, _uart_device[i].device_name);
         /* enable Rx and Tx of UART */
         UART_CR(_uart_device[i].hw_base) = (1 << 0) | (1 << 8) | (1 << 9);
+
         UART_LCR_H(_uart_device[i].hw_base) =(1 << 4);
+
+        UART_IFLS(_uart_device[i].hw_base) =0;
+        UART_IFLS(_uart_device[i].hw_base) =(1 << 3);
+
     }
 
     return err;

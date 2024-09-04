@@ -29,7 +29,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_UART0
                 bool "Enable UART0"
-                default y
+                default n
 
             config BSP_UART0_RX_USING_DMA
                 bool "Enable UART0 RX DMA"
@@ -55,9 +55,15 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART0 && RT_USING_SERIAL_V2
                 default 0
 
+            config BSP_UART0_DMA_PING_BUFSIZE
+                int "Set UART0 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART0_RX_USING_DMA
+                default 32
+                
             config BSP_USING_UART1
                 bool "Enable UART1"
-                default n
+                default y
 
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
@@ -82,6 +88,12 @@ menu "On-chip Peripheral Drivers"
                 range 0 65535
                 depends on BSP_USING_UART1 && RT_USING_SERIAL_V2
                 default 0
+
+            config BSP_UART1_DMA_PING_BUFSIZE
+                int "Set UART1 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
+                default 32
 
             config BSP_USING_UART2
                 bool "Enable UART2"
@@ -111,6 +123,12 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2 && RT_USING_SERIAL_V2
                 default 0
 
+            config BSP_UART2_DMA_PING_BUFSIZE
+                int "Set UART2 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART2_RX_USING_DMA
+                default 32
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -138,6 +156,12 @@ menu "On-chip Peripheral Drivers"
                 range 0 65535
                 depends on BSP_USING_UART3 && RT_USING_SERIAL_V2
                 default 0
+
+            config BSP_UART3_DMA_PING_BUFSIZE
+                int "Set UART3 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART3_RX_USING_DMA
+                default 32
 
             config BSP_USING_UART4
                 bool "Enable UART4"
@@ -167,6 +191,12 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART4 && RT_USING_SERIAL_V2
                 default 0
 
+            config BSP_UART4_DMA_PING_BUFSIZE
+                int "Set UART4 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART4_RX_USING_DMA
+                default 32
+
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
@@ -194,6 +224,12 @@ menu "On-chip Peripheral Drivers"
                 range 0 65535
                 depends on BSP_USING_UART5 && RT_USING_SERIAL_V2
                 default 0
+
+            config BSP_UART5_DMA_PING_BUFSIZE
+                int "Set UART5 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART5_RX_USING_DMA
+                default 32
 
             config BSP_USING_UART6
                 bool "Enable UART6"
@@ -223,6 +259,12 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART6 && RT_USING_SERIAL_V2
                 default 0
 
+            config BSP_UART6_DMA_PING_BUFSIZE
+                int "Set UART6 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART6_RX_USING_DMA
+                default 32
+
             config BSP_USING_UART7
                 bool "Enable UART7"
                 default n
@@ -250,6 +292,12 @@ menu "On-chip Peripheral Drivers"
                 range 0 65535
                 depends on BSP_USING_UART7 && RT_USING_SERIAL_V2
                 default 0
+
+            config BSP_UART7_DMA_PING_BUFSIZE
+                int "Set UART7 RX DMA ping-pong buffer size"
+                range 32 65535
+                depends on RT_USING_SERIAL_V2 && BSP_UART7_RX_USING_DMA
+                default 32
         endif
 
     menuconfig BSP_USING_SPI

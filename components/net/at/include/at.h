@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025 RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -90,7 +90,10 @@ struct at_server
     char send_buffer[AT_SERVER_SEND_BUFF_LEN];
     char recv_buffer[AT_SERVER_RECV_BUFF_LEN];
     rt_size_t cur_recv_len;
+
+#if (!defined(RT_USING_SERIAL_V2))
     rt_sem_t rx_notice;
+#endif
 
     rt_thread_t parser;
     void (*parser_entry)(struct at_server *server);
@@ -165,7 +168,11 @@ struct at_client
     rt_size_t recv_line_len;
     /* The maximum supported receive data length */
     rt_size_t recv_bufsz;
+
+#if (!defined(RT_USING_SERIAL_V2))
     rt_sem_t rx_notice;
+#endif
+
     rt_mutex_t lock;
 
     at_response_t resp;

@@ -24,7 +24,7 @@ menu "Onboard Peripheral Drivers"
                         int "Set UART0 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
-                        default 10240
+                        default 1024
 
                     config BSP_UART0_TX_BUFSIZE
                         int "Set UART0 TX buffer size"
@@ -41,7 +41,7 @@ menu "Onboard Peripheral Drivers"
                         int "Set UART1 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
-                        default 10240
+                        default 1024
 
                     config BSP_UART1_TX_BUFSIZE
                         int "Set UART1 TX buffer size"
@@ -58,7 +58,7 @@ menu "Onboard Peripheral Drivers"
                         int "Set UART2 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
-                        default 10240
+                        default 1024
 
                     config BSP_UART2_TX_BUFSIZE
                         int "Set UART2 TX buffer size"
@@ -75,7 +75,7 @@ menu "Onboard Peripheral Drivers"
                         int "Set UART3 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
-                        default 10240
+                        default 1024
 
                     config BSP_UART3_TX_BUFSIZE
                         int "Set UART3 TX buffer size"
