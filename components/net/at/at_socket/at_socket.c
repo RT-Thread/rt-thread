@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -463,9 +463,13 @@ int at_socket(int domain, int type, int protocol)
     enum at_socket_type socket_type;
 
     /* check socket family protocol */
-    RT_ASSERT(domain == AF_AT || domain == AF_INET);
+    if(domain != AF_INET && domain != AF_AT)
+    {
+        rt_set_errno(EAFNOSUPPORT);
+        return -1;
+    }
 
-    //TODO check protocol
+    /*TODO check protocol*/
 
     switch(type)
     {
@@ -479,6 +483,7 @@ int at_socket(int domain, int type, int protocol)
 
     default :
         LOG_E("Don't support socket type (%d)!", type);
+        rt_set_errno(EPROTOTYPE);
         return -1;
     }
 
@@ -486,6 +491,8 @@ int at_socket(int domain, int type, int protocol)
     sock = alloc_socket(socket_type);
     if (sock == RT_NULL)
     {
+        LOG_E("Failed to allocate socket");
+        rt_set_errno(EIO);
         return -1;
     }
     sock->type = socket_type;
@@ -498,6 +505,7 @@ int at_socket(int domain, int type, int protocol)
     sock->ops->at_set_event_cb(AT_SOCKET_EVT_CONNECTED, at_connect_notice_cb);
 #endif
 
+    rt_set_errno(ERROR_BASE_NO);
     return sock->socket;
 }
 
@@ -558,6 +566,7 @@ int at_closesocket(int socket)
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
@@ -571,11 +580,13 @@ int at_closesocket(int socket)
         if (sock->ops->at_closesocket(sock) != 0)
         {
             free_socket(sock);
+            rt_set_errno(EIO);
             return -1;
         }
     }
 
     free_socket(sock);
+    rt_set_errno(ERROR_BASE_NO);
     return 0;
 }
 
@@ -587,6 +598,7 @@ int at_shutdown(int socket, int how)
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
@@ -600,11 +612,13 @@ int at_shutdown(int socket, int how)
         if (sock->ops->at_closesocket(sock) != 0)
         {
             free_socket(sock);
+            rt_set_errno(EIO);
             return -1;
         }
     }
 
     free_socket(sock);
+    rt_set_errno(ERROR_BASE_NO);
     return 0;
 }
 
@@ -654,9 +668,16 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
     ip_addr_t input_ipaddr, local_ipaddr;
     uint16_t port = 0;
 
+    if (name == NULL || namelen == 0)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
@@ -677,6 +698,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         /* close old socket */
         if (at_closesocket(socket) < 0)
         {
+            rt_set_errno(EIO);
             return -1;
         }
 
@@ -684,6 +706,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         new_device = at_device_get_by_ipaddr(&input_ipaddr);
         if (new_device == RT_NULL)
         {
+            rt_set_errno(EHOSTUNREACH);
             return -1;
         }
 
@@ -691,6 +714,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         new_sock = alloc_socket_by_device(new_device, type);
         if (new_sock == RT_NULL)
         {
+            rt_set_errno(EIO);
             return -1;
         }
         new_sock->type = type;
@@ -702,6 +726,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
     sock->listen.port = port;
 #endif
 
+    rt_set_errno(ERROR_BASE_NO);
     return 0;
 }
 
@@ -836,18 +861,21 @@ int at_listen(int socket, int backlog)
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
     if (sock->state != AT_SOCKET_OPEN)
     {
         LOG_E("Socket(%d) connect state is %d.", sock->socket, sock->state);
+        rt_set_errno(ENETUNREACH);
         result = -1;
         goto __exit;
     }
 
     if (sock->ops->at_listen(sock, backlog) < 0)
     {
+        rt_set_errno(EIO);
         result = -1;
         goto __exit;
     }
@@ -856,10 +884,13 @@ int at_listen(int socket, int backlog)
     sock->state = AT_SOCKET_LISTEN;
 
 __exit:
-
     if (result < 0)
     {
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+    }
+    else
+    {
+        rt_set_errno(ERROR_BASE_NO);
     }
 
     return result;
@@ -874,15 +905,23 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
     char ipstr[16] = { 0 };
     int result = 0;
 
+    if (name == RT_NULL || namelen == 0)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
     if (sock->state != AT_SOCKET_OPEN)
     {
         LOG_E("Socket(%d) connect state is %d.", sock->socket, sock->state);
+        rt_set_errno(EPERM);
         result = -1;
         goto __exit;
     }
@@ -893,6 +932,7 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 
     if (sock->ops->at_connect(sock, ipstr, remote_port, sock->type, RT_TRUE) < 0)
     {
+        rt_set_errno(EIO);
         result = -1;
         goto __exit;
     }
@@ -900,13 +940,13 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
     sock->state = AT_SOCKET_CONNECT;
 
 __exit:
-
     if (result < 0)
     {
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
     else
     {
+        rt_set_errno(ERROR_BASE_NO);
         at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
     }
 
@@ -927,20 +967,22 @@ int at_accept(int socket, struct sockaddr *name, socklen_t *namelen)
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
     if (sock->state != AT_SOCKET_LISTEN)
     {
         LOG_E("Socket(%d) connect state is %d.", sock->socket, sock->state);
+        rt_set_errno(EIO);
         result = -1;
         goto __exit;
     }
 
     /* wait the receive semaphore, waiting for info */
-    if (rt_sem_take(sock->recv_notice, RT_WAITING_FOREVER) < 0)
+    if (rt_sem_take(sock->recv_notice, RT_WAITING_FOREVER) != RT_EOK)
     {
-        errno = EAGAIN;
+        rt_set_errno(EAGAIN);
         result = -1;
         goto __exit;
     }
@@ -964,6 +1006,10 @@ __exit:
     {
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
+    else
+    {
+        rt_set_errno(ERROR_BASE_NO);
+    }
 
     return new_sock->socket;
 }
@@ -978,12 +1024,14 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
     if (mem == RT_NULL || len == 0)
     {
         /* if the requested number of bytes to receive from a stream socket was 0. */
-        return 0;
+        rt_set_errno(EFAULT);
+        return -1;
     }
 
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
@@ -1000,8 +1048,9 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         if (sock->ops->at_connect(sock, ipstr, remote_port, sock->type, RT_TRUE) < 0)
         {
             at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+            rt_set_errno(EIO);
             /* socket shutdown */
-            return 0;
+            return -1;
         }
         sock->state = AT_SOCKET_CONNECT;
     }
@@ -1011,6 +1060,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         if (sock->state == AT_SOCKET_CLOSED)
         {
             /* socket passively closed, receive function return 0 */
+            rt_set_errno(ECONNRESET);
             result = 0;
             break;
         }
@@ -1026,14 +1076,13 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             {
                 at_do_event_clean(sock, AT_EVENT_RECV);
             }
-            errno = 0;
             result = recv_len;
             break;
         }
 
         if (flags & MSG_DONTWAIT)
         {
-            errno = EAGAIN;
+            rt_set_errno(EAGAIN);
             result = -1;
             break;
         }
@@ -1050,7 +1099,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         if (rt_sem_take(sock->recv_notice, timeout) != RT_EOK)
         {
             LOG_D("AT socket (%d) receive timeout (%d)!", socket, timeout);
-            errno = EAGAIN;
+            rt_set_errno(EAGAIN);
             result = -1;
             break;
         }
@@ -1059,6 +1108,10 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
     if (result <= 0)
     {
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+    }
+    else
+    {
+        rt_set_errno(ERROR_BASE_NO);
     }
 
     return result;
@@ -1077,32 +1130,31 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
     if (data == RT_NULL || size == 0)
     {
         LOG_E("AT sendto input data or size error!");
+        rt_set_errno(EFAULT);
         return -1;
     }
 
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
     switch (sock->type)
     {
     case AT_SOCKET_TCP:
-        if (sock->state == AT_SOCKET_CLOSED)
-        {
-            result = 0;
-            goto __exit;
-        }
-        else if (sock->state != AT_SOCKET_CONNECT && sock->state != AT_SOCKET_OPEN)
+        if (sock->state != AT_SOCKET_CONNECT && sock->state != AT_SOCKET_OPEN)
         {
             LOG_E("send data error, current socket (%d) state (%d) is error.", socket, sock->state);
+            rt_set_errno(ENETUNREACH);
             result = -1;
             goto __exit;
         }
 
         if ((len = sock->ops->at_send(sock, (const char *) data, size, sock->type)) < 0)
         {
+            rt_set_errno(EIO);
             result = -1;
             goto __exit;
         }
@@ -1120,6 +1172,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
 
             if (sock->ops->at_connect(sock, ipstr, remote_port, sock->type, RT_TRUE) < 0)
             {
+                rt_set_errno(EIO);
                 result = -1;
                 goto __exit;
             }
@@ -1128,6 +1181,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
 
         if ((len = sock->ops->at_send(sock, (char *) data, size, sock->type)) < 0)
         {
+            rt_set_errno(EIO);
             result = -1;
             goto __exit;
         }
@@ -1135,6 +1189,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
 
     default:
         LOG_E("Socket (%d) type %d is not support.", socket, sock->type);
+        rt_set_errno(EPERM);
         result = -1;
         goto __exit;
     }
@@ -1147,6 +1202,7 @@ __exit:
     }
     else
     {
+        rt_set_errno(ERROR_BASE_NO);
         result = len;
     }
 
@@ -1166,12 +1222,14 @@ int at_getsockopt(int socket, int level, int optname, void *optval, socklen_t *o
     if (optval == RT_NULL || optlen == RT_NULL)
     {
         LOG_E("AT getsocketopt input option value or option length error!");
+        rt_set_errno(EFAULT);
         return -1;
     }
 
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
@@ -1194,15 +1252,18 @@ int at_getsockopt(int socket, int level, int optname, void *optval, socklen_t *o
 
         default:
             LOG_E("AT socket (%d) not support option name : %d.", socket, optname);
+            rt_set_errno(EPERM);
             return -1;
         }
         break;
 
     default:
         LOG_E("AT socket (%d) not support option level : %d.", socket, level);
+        rt_set_errno(EPERM);
         return -1;
     }
 
+    rt_set_errno(ERROR_BASE_NO);
     return 0;
 }
 
@@ -1213,12 +1274,14 @@ int at_setsockopt(int socket, int level, int optname, const void *optval, sockle
     if (optval == RT_NULL)
     {
         LOG_E("AT setsockopt input option value error!");
+        rt_set_errno(EFAULT);
         return -1;
     }
 
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
+        rt_set_errno(ENXIO);
         return -1;
     }
 
@@ -1239,6 +1302,7 @@ int at_setsockopt(int socket, int level, int optname, const void *optval, sockle
 
         default:
             LOG_E("AT socket (%d) not support option name : %d.", socket, optname);
+            rt_set_errno(EPERM);
             return -1;
         }
         break;
@@ -1251,9 +1315,11 @@ int at_setsockopt(int socket, int level, int optname, const void *optval, sockle
         break;
     default:
         LOG_E("AT socket (%d) not support option level : %d.", socket, level);
+        rt_set_errno(EPERM);
         return -1;
     }
 
+    rt_set_errno(ERROR_BASE_NO);
     return 0;
 }
 
