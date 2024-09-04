@@ -2,9 +2,11 @@
 #include <rtdevice.h>
 #include "utest.h"
 
-#define SERIAL_UART_NAME "uart2"
+#define TC_UART_DEVICE_NAME "uart2"
 #define UART_SEND_TIMES 400
 #define UART_TEST_NUMBER 6
+
+#define DBG_LVL    DBG_LOG
 
 #ifdef UTEST_SERIAL_TC
 
@@ -12,7 +14,7 @@ static rt_bool_t block_write(rt_device_t uart_dev)
 {
     rt_size_t i, wr_sz, index, write_num_array[UART_TEST_NUMBER], total_write_num[UART_TEST_NUMBER];
     rt_tick_t tick1, tick2, tick_array[UART_TEST_NUMBER];
-    rt_uint8_t uart_write_buffer[1024];
+    char uart_write_buffer[1024];
 
     for (i = 0; i < 1024; i++)
         uart_write_buffer[i] = '0' + (i % 49);
@@ -89,7 +91,7 @@ static rt_bool_t block_write(rt_device_t uart_dev)
 static void uart_test_blocking_tx(void)
 {
     rt_device_t uart_dev;
-    uart_dev = rt_device_find(SERIAL_UART_NAME);
+    uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
     uassert_not_null(uart_dev);
 
     uassert_true (block_write(uart_dev));
@@ -102,10 +104,8 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    rt_device_t uart_dev;
-    uart_dev = rt_device_find(SERIAL_UART_NAME);
-    while(rt_device_close(uart_dev) != -RT_ERROR);
-    rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
+    rt_device_t uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;
 }
 

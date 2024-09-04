@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-06-16     KyleChan     the first version
+ *
  */
 
 #include <rtthread.h>
@@ -22,8 +22,8 @@
 #ifdef UTEST_SERIAL_TC
 
 static struct rt_serial_device *serial;
-static rt_uint8_t               uart_over_flag;
-static rt_bool_t                uart_result = RT_TRUE;
+static rt_uint8_t               uart_over_flag = RT_FALSE;
+static rt_bool_t                uart_result    = RT_TRUE;
 
 static rt_err_t uart_find(void)
 {
@@ -38,13 +38,14 @@ static rt_err_t uart_find(void)
     return RT_EOK;
 }
 
+
 static void uart_send_entry(void *parameter)
 {
-    rt_uint8_t *uart_write_buffer;
     rt_uint16_t send_len;
+    rt_uint8_t *uart_write_buffer = RT_NULL;
+    rt_uint32_t i                 = 0;
+    send_len                      = *(rt_uint16_t *)parameter;
 
-    rt_uint32_t i = 0;
-    send_len      = *(rt_uint16_t *)parameter;
     /* assign send buffer */
     uart_write_buffer = (rt_uint8_t *)rt_malloc(send_len);
     if (uart_write_buffer == RT_NULL)
@@ -71,55 +72,33 @@ static void uart_send_entry(void *parameter)
 static void uart_rec_entry(void *parameter)
 {
     rt_uint16_t rev_len;
-
-    rev_len = *(rt_uint16_t *)parameter;
     rt_uint8_t *ch;
-    ch = (rt_uint8_t *)rt_calloc(1, sizeof(rt_uint8_t) * (rev_len + 1));
     rt_int32_t  cnt, i;
-    rt_uint8_t  last_old_data;
-    rt_bool_t   fisrt_flag         = RT_TRUE;
-    rt_uint32_t all_receive_length = 0;
-
+    rev_len = *(rt_uint16_t *)parameter;
+    ch      = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (rev_len + 1));
 
     while (1)
     {
-        cnt = rt_device_read(&serial->parent, 0, (void *)ch, rev_len);
-        if (cnt == 0)
+        cnt = rt_device_read(&serial->parent, 0, (void *)ch, BSP_UART2_RX_BUFSIZE);
+        if (cnt != BSP_UART2_RX_BUFSIZE)
         {
-            continue;
+            uart_result = RT_FALSE;
+            rt_free(ch);
+            return;
         }
 
-        if (fisrt_flag != RT_TRUE)
+        for (i = cnt - 1; i >= 0; i--)
         {
-            if ((rt_uint8_t)(last_old_data + 1) != ch[0])
+            if (ch[i] != ((rev_len - (cnt - i)) % 256))
             {
-                LOG_E("_Read Different data -> former data: %x, current data: %x.", last_old_data, ch[0]);
+                LOG_E("Read Different data2 -> former data: %x, current data: %x.", ch[i], (rev_len - (cnt - i)) % 256);
                 uart_result = RT_FALSE;
                 rt_free(ch);
                 return;
             }
         }
-        else
-        {
-            fisrt_flag = RT_FALSE;
-        }
 
-        for (i = 0; i < cnt - 1; i++)
-        {
-            if ((rt_uint8_t)(ch[i] + 1) != ch[i + 1])
-            {
-                LOG_E("Read Different data -> former data: %x, current data: %x.", ch[i], ch[i + 1]);
-
-                uart_result = RT_FALSE;
-                rt_free(ch);
-                return;
-            }
-        }
-        all_receive_length += cnt;
-        if (all_receive_length >= rev_len)
-            break;
-        else
-            last_old_data = ch[cnt - 1];
+        break;
     }
     rt_free(ch);
     uart_over_flag = RT_TRUE;
@@ -154,11 +133,13 @@ static rt_err_t uart_api(rt_uint16_t length)
         return -RT_ERROR;
     }
 
-    thread_send = rt_thread_create("uart_send", uart_send_entry, &length, 1024, RT_THREAD_PRIORITY_MAX - 4, 10);
-    thread_recv = rt_thread_create("uart_recv", uart_rec_entry, &length, 1024, RT_THREAD_PRIORITY_MAX - 5, 10);
+    thread_send = rt_thread_create("uart_send", uart_send_entry, &length, 2048, RT_THREAD_PRIORITY_MAX - 4, 10);
+    thread_recv = rt_thread_create("uart_recv", uart_rec_entry, &length, 2048, RT_THREAD_PRIORITY_MAX - 5, 10);
+
     if ((thread_send != RT_NULL) && (thread_recv != RT_NULL))
     {
         rt_thread_startup(thread_send);
+        rt_thread_mdelay(length / 8 + 10);
         rt_thread_startup(thread_recv);
     }
     else
@@ -182,11 +163,8 @@ static rt_err_t uart_api(rt_uint16_t length)
         /* waiting for test over */
         rt_thread_mdelay(5);
     }
-
 __exit:
-    rt_thread_mdelay(10);
     rt_device_close(&serial->parent);
-    uart_over_flag = RT_FALSE;
     return result;
 }
 
@@ -219,9 +197,9 @@ static void tc_uart_api(void)
 
     while (TC_UART_SEND_TIMES - times)
     {
-        num = (rand() % 1000) + 1;
-        if (uart_api(num) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", num, ++times);
+        num = (rand() % BSP_UART2_RX_BUFSIZE) + 1;
+        if (uart_api(num + BSP_UART2_RX_BUFSIZE) == RT_EOK)
+            LOG_I("data_lens [%3d], it is correct to read and write data. [%d] times testing.", num, ++times);
         else
         {
             LOG_E("uart test error");
@@ -253,6 +231,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(tc_uart_api);
 }
 
-UTEST_TC_EXPORT(testcase, "testcases.drivers.uart_rxb_txb", utest_tc_init, utest_tc_cleanup, 30);
+UTEST_TC_EXPORT(testcase, "testcases.drivers.uart_overflow_rxb_txb", utest_tc_init, utest_tc_cleanup, 30);
 
 #endif /* TC_UART_USING_TC */

@@ -492,7 +492,7 @@ static void hc32_uart_rx_irq_handler(struct hc32_uart *uart)
     struct rt_serial_rx_fifo *rx_fifo;
     rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
     RT_ASSERT(rx_fifo != RT_NULL);
-    rt_ringbuffer_putchar(&(rx_fifo->rb), (rt_uint8_t)USART_ReadData(uart->config->Instance));
+    rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)USART_ReadData(uart->config->Instance));
     rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_IND);
 }
 

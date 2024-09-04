@@ -272,7 +272,7 @@ static void usart_isr (struct rt_serial_device *serial)
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        rt_ringbuffer_putchar(&(rx_fifo->rb), usart_data_receive(uart->periph));
+        rt_ringbuffer_putchar_force(&rx_fifo->rb, usart_data_receive(uart->periph));
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 

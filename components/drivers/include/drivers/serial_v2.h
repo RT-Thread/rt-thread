@@ -70,7 +70,12 @@
 #define RT_SERIAL_EVENT_TX_DONE         0x02    /* Tx complete   */
 #define RT_SERIAL_EVENT_RX_DMADONE      0x03    /* Rx DMA transfer done */
 #define RT_SERIAL_EVENT_TX_DMADONE      0x04    /* Tx DMA transfer done */
-#define RT_SERIAL_EVENT_RX_TIMEOUT      0x05    /* Rx timeout    */
+
+#define RT_SERIAL_CTRL_RX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x01)    /* Rx timeout. Call before rt_device_read */
+#define RT_SERIAL_CTRL_TX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x02)    /* Tx timeout. Call before rt_device_write */
+#define RT_SERIAL_CTRL_RX_FLUSH             (RT_DEVICE_CTRL_MASK + 0x03)    /* Clear rx buffer. Discard all data */
+#define RT_SERIAL_CTRL_TX_FLUSH             (RT_DEVICE_CTRL_MASK + 0x04)    /* Clear tx buffer. Blocking and wait for the send buffer data to be sent. */
+#define RT_SERIAL_CTRL_GET_RX_DATA_LEN      (RT_DEVICE_CTRL_MASK + 0x05)    /* Get buf data length. */
 
 #define RT_SERIAL_ERR_OVERRUN           0x01
 #define RT_SERIAL_ERR_FRAMING           0x02
@@ -130,12 +135,14 @@ struct serial_configure
  * Serial Receive FIFO mode
  */
 struct rt_serial_rx_fifo
-{
+{    
     struct rt_ringbuffer rb;
 
     struct rt_completion rx_cpt;
 
     rt_uint16_t rx_cpt_index;
+
+    rt_int32_t rx_timeout;
 
     /* software fifo */
     rt_uint8_t buffer[];
@@ -149,6 +156,8 @@ struct rt_serial_tx_fifo
     struct rt_ringbuffer rb;
 
     rt_size_t put_size;
+
+    rt_int32_t tx_timeout;
 
     rt_bool_t activated;
 
