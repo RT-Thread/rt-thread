@@ -53,6 +53,7 @@ extern "C" {
 #define RT_SENSOR_CLASS_IAQ            (19) /* IAQ sensor.       */
 #define RT_SENSOR_CLASS_ETOH           (20) /* EtOH sensor.      */
 #define RT_SENSOR_CLASS_BP             (21) /* Blood Pressure    */
+#define RT_SENSOR_CLASS_POWER          (22) /* Power sensor      */
 
 /* Sensor vendor types */
 
@@ -95,6 +96,7 @@ extern "C" {
 #define  RT_SENSOR_UNIT_DD             (17) /* Coordinates             unit: DD         */
 #define  RT_SENSOR_UNIT_MGM3           (18) /* Concentration           unit: mg/m3      */
 #define  RT_SENSOR_UNIT_MMHG           (19) /* Blood Pressure          unit: mmHg       */
+#define  RT_SENSOR_UNIT_POWER          (20) /* Power                   unit: ma,mv,mw   */
 /* Sensor communication interface types */
 
 #define  RT_SENSOR_INTF_I2C            (1 << 0)
@@ -207,6 +209,13 @@ struct coordinates
     double latitude;
 };
 
+struct power_monitor
+{
+    float ma;
+    float mv;
+    float mw;
+};
+
 struct rt_sensor_data
 {
     rt_uint32_t         timestamp;          /* The timestamp when the data was received */
@@ -233,6 +242,7 @@ struct rt_sensor_data
         rt_uint32_t          iaq;           /* IAQ sensor.          unit: 1 */
         rt_uint32_t          etoh;          /* EtOH sensor.         unit: ppm */
         struct sensor_bp     bp;            /* BloodPressure.       unit: mmHg        */
+        struct power_monitor power;         /* Power sensor.        unit: ma,mv,mw    */
     } data;
 };
 
