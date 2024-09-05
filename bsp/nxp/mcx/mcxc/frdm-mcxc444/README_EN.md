@@ -17,7 +17,7 @@ The common on-board resources for this board are listed below:
 
 ![board_block_diagram](figures/board_block_diagram.png)
 
-For more details on the development board, please refer to [NXP official website](https://www.nxp.com/design/design-center/development-boards/general-purpose-mcus/frdm-development-board-for-mcx-n94-n54-mcus:FRDM-MCXN947)。
+For more details on the development board, please refer to [NXP official website](https://www.nxp.com/products/processors-and-microcontrollers/arm-microcontrollers/general-purpose-mcus/mcx-arm-cortex-m/mcx-c-series-microcontrollers:MCX-C-SERIES)。
 
 ## Preparation
 
