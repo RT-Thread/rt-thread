@@ -114,7 +114,7 @@ void plic_complete(int irq)
 
 void plic_set_ie(rt_uint32_t word_index, rt_uint32_t val)
 {
-    volatile void *plic_ie = (void *)(rt_size_t)(plic_base + PLIC_ENABLE_BASE + 0x80 + word_index * 4);
+    volatile void *plic_ie = (void *)(rt_ubase_t)(plic_base + PLIC_ENABLE_BASE + 0x80 + word_index * 4);
     writel(val, plic_ie);
 }
 

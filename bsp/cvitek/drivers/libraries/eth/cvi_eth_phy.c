@@ -1,6 +1,18 @@
 /*
-* Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
-*/
+ * Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include <rtthread.h>
 
 #include "cvi_eth_phy.h"
@@ -86,6 +98,51 @@ static int32_t eth_read_phy_id(eth_phy_priv_t *priv, uint8_t phy_addr, uint32_t 
     }
 
     return 0;
+}
+
+/*
+ * ffs: find first bit set. This is defined the same way as
+ * the libc and compiler builtin ffs routines, therefore
+ * differs in spirit from the above ffz (man ffs).
+ */
+static inline int32_t ffs(int32_t x)
+{
+    int32_t r = 1;
+
+    if (!x)
+        return 0;
+
+    if (!(x & 0xffff))
+    {
+        x >>= 16;
+        r += 16;
+    }
+
+    if (!(x & 0xff))
+    {
+        x >>= 8;
+        r += 8;
+    }
+
+    if (!(x & 0xf))
+    {
+        x >>= 4;
+        r += 4;
+    }
+
+    if (!(x & 3))
+    {
+        x >>= 2;
+        r += 2;
+    }
+
+    if (!(x & 1))
+    {
+        x >>= 1;
+        r += 1;
+    }
+
+    return r;
 }
 
 static eth_phy_dev_t * eth_get_phy_by_mask(eth_phy_priv_t *priv, uint32_t phy_mask, phy_if_mode_t interface)
@@ -283,33 +340,9 @@ int32_t genphy_update_link(eth_phy_dev_t *phy_dev)
 
     if ((phy_dev->priv->link_info.autoneg == CSI_ETH_AUTONEG_ENABLE) &&
         !(mii_reg & CVI_BMSR_ANEGCOMPLETE)) {
-        int i = 0;
 
-        rt_kprintf("%s waiting for PHY auto negotiation to complete...\n",
-            phy_dev->name);
-        while (!(mii_reg & CVI_BMSR_ANEGCOMPLETE)) {
-            /*
-             * Timeout reached ?
-             */
-            if (i > CVI_PHY_ANEG_TIMEOUT) {
-                rt_kprintf("TIMEOUT!\n");
-                phy_dev->link_state = ETH_LINK_DOWN;
-                return -1;
-            }
-
-            // if ((i++ % 1000) == 0)
-            //  rt_kprintf(".");
-            i ++;
-
-            rt_hw_us_delay(1000);   /* 1 ms */
-
-            ret = eth_phy_read(phy_dev->priv, phy_addr, CVI_MII_BMSR, &mii_reg);
-            if (ret != 0) {
-                return ret;
-            }
-        }
-        rt_kprintf("auto negotiation Done!\n");
-        phy_dev->link_state = ETH_LINK_UP;
+        phy_dev->link_state = ETH_LINK_DOWN;
+        return -1;
     } else {
 
         /* Read the link a second time to clear the latched state */
@@ -590,7 +623,7 @@ eth_phy_handle_t cvi_eth_phy_init(csi_eth_phy_read_t  fn_read, csi_eth_phy_write
     phy_dev = eth_connect_phy(priv, phy_mask, interface);
     if (phy_dev == NULL) {
         rt_kprintf("No phy device found!\n");
-        return;
+        return NULL;
     }
     rt_kprintf("connect phy id: 0x%X\n", phy_dev->phy_id);
 

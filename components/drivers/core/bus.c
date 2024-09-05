@@ -360,9 +360,9 @@ rt_err_t rt_bus_remove_device(rt_device_t dev)
     }
     else if (drv)
     {
-        if (drv->shutdown)
+        if (drv->remove)
         {
-            err = drv->shutdown(dev);
+            err = drv->remove(dev);
         }
 
         /* device and driver are in the same bus */

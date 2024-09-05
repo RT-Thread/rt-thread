@@ -9,9 +9,6 @@
  */
 
 #include <rtthread.h>
-#include <stdio.h>
-#include <rtdevice.h>
-#include "drv_gpio.h"
 
 int main(void)
 {

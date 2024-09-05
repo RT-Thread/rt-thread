@@ -67,7 +67,7 @@ rt_inline rt_err_t _bt_uaddr(rt_lwp_t lwp, rt_ubase_t *fp, struct rt_hw_backtrac
 rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
     rt_err_t rc = -RT_ERROR;
-    rt_ubase_t *fp = (rt_ubase_t *)frame->fp;
+    rt_uintptr_t *fp = (rt_uintptr_t *)frame->fp;
 
     if (fp && !((long)fp & 0x7))
     {

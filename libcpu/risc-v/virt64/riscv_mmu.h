@@ -88,7 +88,7 @@
 #define ARCH_INDEX_SIZE         (1ul << ARCH_INDEX_WIDTH)
 #define ARCH_INDEX_MASK         (ARCH_INDEX_SIZE - 1)
 
-#define ARCH_MAP_FAILED         ((void *)0x8000000000000000)
+#define ARCH_MAP_FAILED         ((void *)-1)
 
 void mmu_set_pagetable(rt_ubase_t addr);
 void mmu_enable_user_page_access(void);

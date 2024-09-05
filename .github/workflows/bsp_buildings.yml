@@ -49,7 +49,7 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:
                 - "raspberry-pico"
-         -  RTT_BSP: "others_at32_hc32"
+         -  RTT_BSP: "others_at32_hc32_ht32"
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
@@ -82,6 +82,8 @@ jobs:
                 - "at32/at32f425-start"
                 - "at32/at32f435-start"
                 - "at32/at32f437-start"
+                - "at32/at32m412-start"
+                - "at32/at32m416-start"
                 - "yichip/yc3122-pos"
                 - "hc32/ev_hc32f4a0_lqfp176"
                 - "hc32/ev_hc32f448_lqfp80"
@@ -96,6 +98,8 @@ jobs:
                 - "acm32/acm32f0x0-nucleo"
                 - "acm32/acm32f4xx-nucleo"
                 - "rm48x50"
+                - "ht32/ht32f52352"
+                - "ht32/ht32f12366"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 

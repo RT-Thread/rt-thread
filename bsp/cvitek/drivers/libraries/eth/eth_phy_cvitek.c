@@ -1,17 +1,25 @@
 /*
-* Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
-*/
+ * Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <stdbool.h>
 
-// #include <mmio.h>
-
 #include "cvi_eth_phy.h"
 #include "mii.h"
-
-
 
 // #define CVI_ETH_PHY_LOOPBACK
 #define LOOPBACK_XMII2MAC       0x8000
@@ -334,14 +342,9 @@ int32_t cv181x_start(eth_phy_handle_t handle)
     assert(handle);
 
     eth_phy_dev_t *dev = (eth_phy_dev_t *)handle;
-    int32_t ret;
 
     /* Read the Status (2x to make sure link is right) */
-    ret = genphy_update_link(dev);
-
-    if (ret) {
-        return ret;
-    }
+    genphy_update_link(dev);
 
     return cv181x_parse_status(dev);
 }
