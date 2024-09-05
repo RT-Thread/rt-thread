@@ -1047,7 +1047,6 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         if (sock->state == AT_SOCKET_CLOSED)
         {
             /* socket passively closed, receive function return 0 */
-            rt_set_errno(ECONNRESET);
             result = 0;
             break;
         }
@@ -1127,7 +1126,13 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
     switch (sock->type)
     {
     case AT_SOCKET_TCP:
-        if (sock->state != AT_SOCKET_CONNECT && sock->state != AT_SOCKET_OPEN)
+        if (sock->state == AT_SOCKET_CLOSED)
+        {
+            /* socket passively closed, transmit function return 0 */
+            result = 0;
+            goto __exit;
+        }
+        else if (sock->state != AT_SOCKET_CONNECT && sock->state != AT_SOCKET_OPEN)
         {
             LOG_E("send data error, current socket (%d) state (%d) is error.", socket, sock->state);
             rt_set_errno(ENETUNREACH);
