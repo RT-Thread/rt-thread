@@ -505,7 +505,7 @@ int at_socket(int domain, int type, int protocol)
     sock->ops->at_set_event_cb(AT_SOCKET_EVT_CONNECTED, at_connect_notice_cb);
 #endif
 
-    rt_set_errno(ERROR_BASE_NO);
+    rt_set_errno(0);
     return sock->socket;
 }
 
@@ -586,7 +586,7 @@ int at_closesocket(int socket)
     }
 
     free_socket(sock);
-    rt_set_errno(ERROR_BASE_NO);
+    rt_set_errno(0);
     return 0;
 }
 
@@ -618,7 +618,7 @@ int at_shutdown(int socket, int how)
     }
 
     free_socket(sock);
-    rt_set_errno(ERROR_BASE_NO);
+    rt_set_errno(0);
     return 0;
 }
 
@@ -726,7 +726,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
     sock->listen.port = port;
 #endif
 
-    rt_set_errno(ERROR_BASE_NO);
+    rt_set_errno(0);
     return 0;
 }
 
@@ -890,7 +890,7 @@ __exit:
     }
     else
     {
-        rt_set_errno(ERROR_BASE_NO);
+        rt_set_errno(0);
     }
 
     return result;
@@ -946,7 +946,7 @@ __exit:
     }
     else
     {
-        rt_set_errno(ERROR_BASE_NO);
+        rt_set_errno(0);
         at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
     }
 
@@ -1008,7 +1008,7 @@ __exit:
     }
     else
     {
-        rt_set_errno(ERROR_BASE_NO);
+        rt_set_errno(0);
     }
 
     return new_sock->socket;
@@ -1111,7 +1111,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
     }
     else
     {
-        rt_set_errno(ERROR_BASE_NO);
+        rt_set_errno(0);
     }
 
     return result;
@@ -1202,7 +1202,7 @@ __exit:
     }
     else
     {
-        rt_set_errno(ERROR_BASE_NO);
+        rt_set_errno(0);
         result = len;
     }
 
@@ -1263,7 +1263,7 @@ int at_getsockopt(int socket, int level, int optname, void *optval, socklen_t *o
         return -1;
     }
 
-    rt_set_errno(ERROR_BASE_NO);
+    rt_set_errno(0);
     return 0;
 }
 
@@ -1319,7 +1319,7 @@ int at_setsockopt(int socket, int level, int optname, const void *optval, sockle
         return -1;
     }
 
-    rt_set_errno(ERROR_BASE_NO);
+    rt_set_errno(0);
     return 0;
 }
 
