@@ -56,6 +56,8 @@ typedef enum {
 static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz);
 #endif
 
+static rt_mutex_t at_slock = RT_NULL;
+
 /* the global of sockets list */
 static rt_slist_t _socket_list = RT_SLIST_OBJECT_INIT(_socket_list);
 
@@ -317,37 +319,67 @@ static void at_do_event_clean(struct at_socket *sock, at_event_t event)
     }
 }
 
-static int alloc_empty_socket(rt_slist_t *l)
+static int free_socket(struct at_socket *sock)
 {
-    rt_base_t level;
-    rt_slist_t *node = RT_NULL;
-    rt_slist_t *pre_node = &_socket_list;
-    struct at_socket *at_sock = RT_NULL;
-    int idx = 0;
-
-    level = rt_hw_interrupt_disable();
-
-    rt_slist_init(l);
-
-    rt_slist_for_each(node, &_socket_list)
+    if (at_slock == RT_NULL)
     {
-        at_sock = rt_slist_entry(node, struct at_socket, list);
-        if(at_sock && at_sock->socket != idx)
-            break;
-        idx++;
-        pre_node = node;
+        /* create AT socket lock */
+        at_slock = rt_mutex_create("at_slock", RT_IPC_FLAG_PRIO);
+        if (at_slock == RT_NULL)
+        {
+            LOG_E("No memory for socket allocation lock!");
+            return RT_NULL;
+        }
     }
 
-    rt_slist_insert(pre_node, l);
+    rt_mutex_take(at_slock, RT_WAITING_FOREVER);
+    if (sock->recv_notice)
+    {
+        rt_sem_delete(sock->recv_notice);
+    }
 
-    rt_hw_interrupt_enable(level);
+    if (sock->recv_lock)
+    {
+        rt_mutex_delete(sock->recv_lock);
+    }
 
-    return idx;
+    if (!rt_slist_isempty(&sock->recvpkt_list))
+    {
+        at_recvpkt_all_delete(&sock->recvpkt_list);
+    }
+
+    /* delect socket from socket list */
+    {
+        rt_base_t level;
+        rt_slist_t *node = RT_NULL;
+        struct at_socket *at_sock = RT_NULL;
+
+        level = rt_hw_interrupt_disable();
+
+        rt_slist_for_each(node, &_socket_list)
+        {
+            at_sock = rt_slist_entry(node, struct at_socket, list);
+            if (at_sock && sock->socket == at_sock->socket)
+            {
+                if (at_sock->magic == AT_SOCKET_MAGIC)
+                {
+                    rt_slist_remove(&_socket_list, &at_sock->list);
+                    break;
+                }
+            }
+        }
+
+        rt_hw_interrupt_enable(level);
+    }
+
+    rt_memset(sock, RT_NULL, sizeof(struct at_socket));
+    rt_mutex_release(at_slock);
+    return 0;
 }
 
 static struct at_socket *alloc_socket_by_device(struct at_device *device, enum at_socket_type type)
 {
-    static rt_mutex_t at_slock = RT_NULL;
+    rt_base_t level;
     struct at_socket *sock = RT_NULL;
     char name[RT_NAME_MAX] = {0};
     int idx = 0;
@@ -372,18 +404,19 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
     }
     else
     {
-        for (idx = 0; idx < device->class->socket_num && device->sockets[idx].magic; idx++);
+        for (idx = 0; idx < device->class->socket_num && device->sockets[idx].magic == AT_SOCKET_MAGIC; idx++);
     }
 
     /* can't find an empty protocol family entry */
     if (idx < 0 || idx >= device->class->socket_num)
     {
+        LOG_E("can't find an empty protocol family entry.");
         goto __err;
     }
 
     sock = &(device->sockets[idx]);
     /* the socket descriptor is the number of sockte lists */
-    sock->socket = alloc_empty_socket(&(sock->list));
+    sock->socket = idx;
     /* the socket operations is the specify operations of the device */
     sock->ops = device->class->socket_ops;
     /* the user-data is the at device socket descriptor */
@@ -394,6 +427,12 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
     sock->rcvevent = RT_NULL;
     sock->sendevent = RT_NULL;
     sock->errevent = RT_NULL;
+
+    rt_slist_init(&(sock->list));
+    level = rt_hw_interrupt_disable();
+    rt_slist_insert(&_socket_list, &(sock->list));
+    rt_hw_interrupt_enable(level);
+
     rt_slist_init(&sock->recvpkt_list);
 #ifdef SAL_USING_POSIX
     rt_wqueue_init(&sock->wait_head);
@@ -412,7 +451,6 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
     if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_PRIO)) == RT_NULL)
     {
         LOG_E("No memory for socket receive mutex create.");
-        rt_sem_delete(sock->recv_notice);
         goto __err;
     }
 
@@ -421,6 +459,10 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
 
 __err:
     rt_mutex_release(at_slock);
+    if(sock != RT_NULL)
+    {
+        free_socket(sock);
+    }
     return RT_NULL;
 }
 
@@ -506,52 +548,6 @@ int at_socket(int domain, int type, int protocol)
 #endif
 
     return sock->socket;
-}
-
-static int free_socket(struct at_socket *sock)
-{
-    if (sock->recv_notice)
-    {
-        rt_sem_delete(sock->recv_notice);
-    }
-
-    if (sock->recv_lock)
-    {
-        rt_mutex_delete(sock->recv_lock);
-    }
-
-    if (!rt_slist_isempty(&sock->recvpkt_list))
-    {
-        at_recvpkt_all_delete(&sock->recvpkt_list);
-    }
-
-    /* delect socket from socket list */
-    {
-        rt_base_t level;
-        rt_slist_t *node = RT_NULL;
-        struct at_socket *at_sock = RT_NULL;
-
-        level = rt_hw_interrupt_disable();
-
-        rt_slist_for_each(node, &_socket_list)
-        {
-            at_sock = rt_slist_entry(node, struct at_socket, list);
-            if (at_sock && sock->socket == at_sock->socket)
-            {
-                if (at_sock->magic == AT_SOCKET_MAGIC)
-                {
-                    rt_slist_remove(&_socket_list, &at_sock->list);
-                    break;
-                }
-            }
-        }
-
-        rt_hw_interrupt_enable(level);
-    }
-
-    rt_memset(sock, 0x00, sizeof(struct at_socket));
-
-    return 0;
 }
 
 int at_closesocket(int socket)
@@ -695,6 +691,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         /* close old socket */
         if (at_closesocket(socket) < 0)
         {
+            free_socket(sock);
             rt_set_errno(EIO);
             return -1;
         }
@@ -826,7 +823,7 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
     }
     rt_mutex_release(sock->recv_lock);
 
-    rt_sem_release(sock->recv_notice);
+    rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, (void*)1);
 
     at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
 }
@@ -845,7 +842,7 @@ static void at_closed_notice_cb(struct at_socket *sock, at_socket_evt_t event, c
     at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
 
     sock->state = AT_SOCKET_CLOSED;
-    rt_sem_release(sock->recv_notice);
+    rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, (void*)1);
 }
 
 #ifdef AT_USING_SOCKET_SERVER
@@ -1023,23 +1020,45 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
     }
 
     /* if the socket type is UDP, need to connect socket first */
-    if (from && sock->type == AT_SOCKET_UDP && sock->state == AT_SOCKET_OPEN)
+    if (sock->type == AT_SOCKET_UDP)
     {
-        ip_addr_t remote_addr;
-        uint16_t remote_port = 0;
-        char ipstr[16] = { 0 };
-
-        socketaddr_to_ipaddr_port(from, &remote_addr, &remote_port);
-        ipaddr_to_ipstr(from, ipstr);
-
-        if (sock->ops->at_connect(sock, ipstr, remote_port, sock->type, RT_TRUE) < 0)
+        if (from == RT_NULL || fromlen == 0)
         {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
-            rt_set_errno(EIO);
-            /* socket shutdown */
+            rt_set_errno(EFAULT);
             return -1;
         }
-        sock->state = AT_SOCKET_CONNECT;
+
+        if(sock->state == AT_SOCKET_CONNECT && rt_memcmp(&sock->last_udp_adr, from, sizeof(struct sockaddr)) != 0)
+        {
+            if (sock->ops->at_closesocket(sock) != 0)
+            {
+                free_socket(sock);
+                rt_set_errno(EIO);
+                goto __exit;
+            }
+            sock->state = AT_SOCKET_OPEN;
+        }
+
+        if (sock->state == AT_SOCKET_OPEN)
+        {
+            ip_addr_t remote_addr;
+            uint16_t remote_port = 0;
+            char ipstr[16] = { 0 };
+
+            socketaddr_to_ipaddr_port(from, &remote_addr, &remote_port);
+            ipaddr_to_ipstr(from, ipstr);
+
+            if (sock->ops->at_connect(sock, ipstr, remote_port, sock->type, RT_TRUE) < 0)
+            {
+                at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+                rt_set_errno(EIO);
+                /* socket shutdown */
+                goto __exit;
+            }
+
+            rt_memcpy(&sock->last_udp_adr, from, sizeof(struct sockaddr));
+            sock->state = AT_SOCKET_CONNECT;
+        }
     }
 
     while (1)
@@ -1048,10 +1067,9 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         {
             /* socket passively closed, receive function return 0 */
             result = 0;
-            break;
+            goto __exit;
         }
 
-        rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, RT_NULL);
         /* receive packet list last transmission of remaining data */
         rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
         recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len);
@@ -1063,14 +1081,14 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
                 at_do_event_clean(sock, AT_EVENT_RECV);
             }
             result = recv_len;
-            break;
+            goto __exit;
         }
 
         if (flags & MSG_DONTWAIT)
         {
             rt_set_errno(EAGAIN);
             result = -1;
-            break;
+            goto __exit;
         }
 
         /* set AT socket receive timeout */
@@ -1087,10 +1105,11 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             LOG_D("AT socket (%d) receive timeout (%d)!", socket, timeout);
             rt_set_errno(EAGAIN);
             result = -1;
-            break;
+            goto __exit;
         }
     }
 
+__exit:
     if (result <= 0)
     {
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
@@ -1132,7 +1151,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
             result = 0;
             goto __exit;
         }
-        else if (sock->state != AT_SOCKET_CONNECT && sock->state != AT_SOCKET_OPEN)
+        else if (sock->state != AT_SOCKET_CONNECT)
         {
             LOG_E("send data error, current socket (%d) state (%d) is error.", socket, sock->state);
             rt_set_errno(ENETUNREACH);
@@ -1149,7 +1168,26 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
         break;
 
     case AT_SOCKET_UDP:
-        if (to && sock->state == AT_SOCKET_OPEN)
+        if (to == RT_NULL || tolen == 0)
+        {
+            rt_set_errno(EFAULT);
+            result = -1;
+            goto __exit;
+        }
+
+        /* Inconsistent with the last UDP sending address, reconnect to a new address */
+        if(sock->state == AT_SOCKET_CONNECT && rt_memcmp(&sock->last_udp_adr, to, sizeof(struct sockaddr)) != 0)
+        {
+            if (sock->ops->at_closesocket(sock) != 0)
+            {
+                free_socket(sock);
+                rt_set_errno(EIO);
+                goto __exit;
+            }
+            sock->state = AT_SOCKET_OPEN;
+        }
+
+        if (sock->state == AT_SOCKET_OPEN)
         {
             ip_addr_t remote_addr;
             uint16_t remote_port = 0;
@@ -1164,6 +1202,8 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
                 result = -1;
                 goto __exit;
             }
+
+            rt_memcpy(&sock->last_udp_adr, to, sizeof(struct sockaddr));
             sock->state = AT_SOCKET_CONNECT;
         }
 
@@ -1183,7 +1223,6 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
     }
 
 __exit:
-
     if (result < 0)
     {
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
@@ -1345,39 +1384,45 @@ static uint32_t ipstr_to_u32(char *ipstr)
     return *(uint32_t *) ipBytes;
 }
 
-struct hostent *at_gethostbyname(const char *name)
+static int gethostbyname_by_device(const char *name, ip_addr_t *addr)
 {
-    struct at_device *device = RT_NULL;
-    ip_addr_t addr = {0};
-    char ipstr[16] = { 0 };
-    /* buffer variables for at_gethostbyname() */
-    static struct hostent s_hostent;
-    static char *s_aliases;
-    static ip_addr_t s_hostent_addr;
-    static ip_addr_t *s_phostent_addr[2];
-    static char s_hostname[DNS_MAX_NAME_LENGTH + 1];
-    size_t idx = 0;
+    static rt_mutex_t at_dlock = RT_NULL;
 
-    if (name == RT_NULL)
-    {
-        LOG_E("AT gethostbyname input name error!");
-        return RT_NULL;
-    }
+    struct at_device *device = RT_NULL;
+    char ipstr[16] = { 0 };
+    size_t idx = 0;
 
     device = at_device_get_first_initialized();
     if (device == RT_NULL)
     {
-        return RT_NULL;
+        return -1;
+    }
+
+    if (!netdev_is_link_up(device->netdev))
+    {
+        return -1;
     }
 
     for (idx = 0; idx < strlen(name) && !isalpha(name[idx]); idx++);
 
     if (idx < strlen(name))
     {
+        if (at_dlock == RT_NULL)
+        {
+            at_dlock = rt_mutex_create("at_dlock", RT_IPC_FLAG_PRIO);
+            if (at_dlock == RT_NULL)
+            {
+                return -1;
+            }
+        }
+
+        rt_mutex_take(at_dlock, RT_WAITING_FOREVER);
         if (device->class->socket_ops->at_domain_resolve(name, ipstr) < 0)
         {
-            return RT_NULL;
+            rt_mutex_release(at_dlock);
+            return -2;
         }
+        rt_mutex_release(at_dlock);
     }
     else
     {
@@ -1385,22 +1430,58 @@ struct hostent *at_gethostbyname(const char *name)
     }
 
 #if NETDEV_IPV4 && NETDEV_IPV6
-    addr.u_addr.ip4.addr = ipstr_to_u32(ipstr);
     addr.type = IPADDR_TYPE_V4;
+    if (inet_aton(ipstr, addr) == 0)
+    {
+        return -1;
+    }
 #elif NETDEV_IPV4
-    addr.addr = ipstr_to_u32(ipstr);
+    if (inet_aton(ipstr, addr) == 0)
+    {
+        return -1;
+    }
 #elif NETDEV_IPV6
 #error "not support IPV6."
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
+
+    return 0;
+}
+
+struct hostent *at_gethostbyname(const char *name)
+{
+    ip_addr_t addr = {0};
+    /* buffer variables for at_gethostbyname() */
+    static struct hostent s_hostent;
+    static char *s_aliases;
+    static ip_addr_t s_hostent_addr;
+    static ip_addr_t *s_phostent_addr[2];
+    static char s_hostname[DNS_MAX_NAME_LENGTH + 1];
+
+    if (name == RT_NULL)
+    {
+        LOG_E("AT gethostbyname input name error!");
+        return RT_NULL;
+    }
+
+    if (strlen(name) > DNS_MAX_NAME_LENGTH)
+    {
+        return RT_NULL;
+    }
+
+    if (gethostbyname_by_device(name, &addr) != 0)
+    {
+        return RT_NULL;
+    }
 
     /* fill hostent structure */
     s_hostent_addr = addr;
     s_phostent_addr[0] = &s_hostent_addr;
     s_phostent_addr[1] = RT_NULL;
-    strncpy(s_hostname, name, DNS_MAX_NAME_LENGTH);
-    s_hostname[DNS_MAX_NAME_LENGTH] = 0;
-    s_hostent.h_name = s_hostname;
+    strncpy(s_hostname, name, strlen(name));
+    s_hostname[strlen(name)] = 0;
     s_aliases = RT_NULL;
+
+    s_hostent.h_name = s_hostname;
     s_hostent.h_aliases = &s_aliases;
     s_hostent.h_addrtype = AF_AT;
     s_hostent.h_length = sizeof(ip_addr_t);
@@ -1409,29 +1490,95 @@ struct hostent *at_gethostbyname(const char *name)
     return &s_hostent;
 }
 
+int at_gethostbyname_r(const char *name, struct hostent *ret, char *buf, size_t buflen, struct hostent **result, int *h_errnop)
+{
+    struct gethostbyname_r_helper
+    {
+        ip_addr_t *addr_list[2];
+        ip_addr_t addr;
+        char *aliases;
+    };
+
+    char *hostname = RT_NULL;
+    int lh_errno = 0;
+    int err = 0;
+    size_t namelen = 0;
+    struct gethostbyname_r_helper *h = RT_NULL;
+
+    if (h_errnop == RT_NULL)
+    {
+        h_errnop = &lh_errno;
+    }
+
+    if ((name == RT_NULL) || (ret == RT_NULL) || (buf == RT_NULL))
+    {
+        *h_errnop = EINVAL;
+        return -1;
+    }
+
+    if (result == RT_NULL)
+    {
+        *h_errnop = EINVAL;
+        return -1;
+    }
+
+    *result = RT_NULL;
+
+    namelen = strlen(name);
+    if (buflen < (sizeof(struct gethostbyname_r_helper) + (namelen + 1)))
+    {
+        *h_errnop = ERANGE;
+        return -1;
+    }
+
+    h = (struct gethostbyname_r_helper *)buf;
+    hostname = ((char *)h) + sizeof(struct gethostbyname_r_helper);
+
+    err = gethostbyname_by_device(name, &h->addr);
+    if (err != 0)
+    {
+        if (err == -2)
+        {
+            *h_errnop = HOST_NOT_FOUND;
+        }
+
+        *h_errnop = NO_DATA;
+        return -1;
+    }
+
+    rt_memcpy(hostname, name, namelen);
+    hostname[namelen] = 0;
+
+    h->addr_list[0] = &h->addr;
+    h->addr_list[1] = NULL;
+    h->aliases = NULL;
+
+    ret->h_name = hostname;
+    ret->h_aliases = &h->aliases;
+    ret->h_addrtype = AF_INET;
+    ret->h_length = sizeof(ip_addr_t);
+    ret->h_addr_list = (char **)&h->addr_list;
+
+    *result = ret;
+    return 0;
+}
+
 int at_getaddrinfo(const char *nodename, const char *servname,
                     const struct addrinfo *hints, struct addrinfo **res)
 {
     int port_nr = 0;
-    ip_addr_t addr;
+    ip_addr_t addr = {0};
     struct addrinfo *ai;
     struct sockaddr_storage *sa;
     size_t total_size = 0;
     size_t namelen = 0;
     int ai_family = 0;
-    struct at_device *device = RT_NULL;
 
     if (res == RT_NULL)
     {
         return EAI_FAIL;
     }
     *res = RT_NULL;
-
-    device = at_device_get_first_initialized();
-    if (device == RT_NULL)
-    {
-        return EAI_FAIL;
-    }
 
     if ((nodename == RT_NULL) && (servname == RT_NULL))
     {
@@ -1445,6 +1592,10 @@ int at_getaddrinfo(const char *nodename, const char *servname,
         {
             return EAI_FAMILY;
         }
+    }
+    else
+    {
+        ai_family = AF_UNSPEC;
     }
 
     if (servname != RT_NULL)
@@ -1462,74 +1613,63 @@ int at_getaddrinfo(const char *nodename, const char *servname,
         /* service location specified, try to resolve */
         if ((hints != RT_NULL) && (hints->ai_flags & AI_NUMERICHOST))
         {
+            if (ai_family == AF_AT || ai_family == AF_INET)
+            {
+                return EAI_NONAME;
+            }
+
             /* no DNS lookup, just parse for an address string */
             if (!inet_aton(nodename, &addr))
             {
                 return EAI_NONAME;
             }
 
-            if (ai_family == AF_AT || ai_family == AF_INET)
-            {
-                return EAI_NONAME;
-            }
         }
         else
         {
-            char ip_str[16] = { 0 };
-            size_t idx = 0;
-
-            for (idx = 0; idx < strlen(nodename) && !isalpha(nodename[idx]); idx++);
-
-            if(idx < strlen(nodename))
+            int err = 0;
+            err = gethostbyname_by_device(nodename, &addr);
+            if (err != 0)
             {
-                if (device->class->socket_ops->at_domain_resolve((char *) nodename, ip_str) != 0)
+                if (err == -2)
                 {
-                    return EAI_FAIL;
+                    return HOST_NOT_FOUND;
                 }
-            }
-            else
-            {
-                strncpy(ip_str, nodename, strlen(nodename));
-            }
 
-        #if NETDEV_IPV4 && NETDEV_IPV6
-            addr.type = IPADDR_TYPE_V4;
-            if ((addr.u_addr.ip4.addr = ipstr_to_u32(ip_str)) == 0)
-            {
-                return EAI_FAIL;
+                return NO_DATA;
             }
-        #elif NETDEV_IPV4
-            addr.addr = ipstr_to_u32(ip_str);
-        #elif NETDEV_IPV6
-        #error "not support IPV6."
-        #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
         }
     }
     else
     {
-        /* to do service location specified, use loopback address */
+        /* service location specified, use loopback address */
+        inet_aton("127.0.0.1", &addr);
     }
 
     total_size = sizeof(struct addrinfo) + sizeof(struct sockaddr_storage);
     if (nodename != RT_NULL)
     {
         namelen = strlen(nodename);
-        if (namelen > DNS_MAX_NAME_LENGTH)
+        if (namelen == 0 || namelen > DNS_MAX_NAME_LENGTH)
         {
             /* invalid name length */
             return EAI_FAIL;
         }
-        RT_ASSERT(total_size + namelen + 1 > total_size);
+
         total_size += namelen + 1;
     }
     /* If this fails, please report to lwip-devel! :-) */
-    RT_ASSERT(total_size <= sizeof(struct addrinfo) + sizeof(struct sockaddr_storage) + DNS_MAX_NAME_LENGTH + 1);
+    if (total_size > sizeof(struct addrinfo) + sizeof(struct sockaddr_storage) + DNS_MAX_NAME_LENGTH + 1)
+    {
+        return EAI_FAIL;
+    }
+
     ai = (struct addrinfo *) rt_malloc(total_size);
     if (ai == RT_NULL)
     {
         return EAI_MEMORY;
     }
-    rt_memset(ai, 0, total_size);
+    rt_memset(ai, RT_NULL, total_size);
     /* cast through void* to get rid of alignment warnings */
     sa = (struct sockaddr_storage *) (void *) ((uint8_t *) ai + sizeof(struct addrinfo));
     struct sockaddr_in *sa4 = (struct sockaddr_in *) sa;
