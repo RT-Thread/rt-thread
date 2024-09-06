@@ -99,7 +99,7 @@ static const struct sal_socket_ops at_socket_ops =
 static const struct sal_netdb_ops at_netdb_ops =
 {
     at_gethostbyname,
-    NULL,
+    at_gethostbyname_r,
     at_getaddrinfo,
     at_freeaddrinfo,
 };
