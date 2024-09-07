@@ -12,7 +12,7 @@
 #include <rtdevice.h>
 #include "dev_audio_pipe.h"
 
-static void _rt_pipe_resume_writer(struct rt_audio_pipe *pipe)
+static void _rt_audio_pipe_resume_writer(struct rt_audio_pipe *pipe)
 {
     if (!rt_list_isempty(&pipe->suspended_write_list))
     {
@@ -30,7 +30,7 @@ static void _rt_pipe_resume_writer(struct rt_audio_pipe *pipe)
     }
 }
 
-static rt_ssize_t rt_pipe_read(rt_device_t dev,
+static rt_ssize_t rt_audio_pipe_read(rt_device_t dev,
                               rt_off_t    pos,
                               void       *buffer,
                               rt_size_t   size)
@@ -50,7 +50,7 @@ static rt_ssize_t rt_pipe_read(rt_device_t dev,
 
         /* if the ringbuffer is empty, there won't be any writer waiting */
         if (read_nbytes)
-            _rt_pipe_resume_writer(pipe);
+            _rt_audio_pipe_resume_writer(pipe);
 
         rt_hw_interrupt_enable(level);
 
@@ -78,7 +78,7 @@ static rt_ssize_t rt_pipe_read(rt_device_t dev,
         }
         else
         {
-            _rt_pipe_resume_writer(pipe);
+            _rt_audio_pipe_resume_writer(pipe);
             rt_hw_interrupt_enable(level);
             break;
         }
@@ -88,7 +88,7 @@ static rt_ssize_t rt_pipe_read(rt_device_t dev,
     return read_nbytes;
 }
 
-static void _rt_pipe_resume_reader(struct rt_audio_pipe *pipe)
+static void _rt_audio_pipe_resume_reader(struct rt_audio_pipe *pipe)
 {
     if (pipe->parent.rx_indicate)
         pipe->parent.rx_indicate(&pipe->parent,
@@ -110,7 +110,7 @@ static void _rt_pipe_resume_reader(struct rt_audio_pipe *pipe)
     }
 }
 
-static rt_ssize_t rt_pipe_write(rt_device_t dev,
+static rt_ssize_t rt_audio_pipe_write(rt_device_t dev,
                                rt_off_t    pos,
                                const void *buffer,
                                rt_size_t   size)
@@ -135,7 +135,7 @@ static rt_ssize_t rt_pipe_write(rt_device_t dev,
             write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer),
                                              (const rt_uint8_t *)buffer, size);
 
-        _rt_pipe_resume_reader(pipe);
+        _rt_audio_pipe_resume_reader(pipe);
 
         rt_hw_interrupt_enable(level);
 
@@ -164,7 +164,7 @@ static rt_ssize_t rt_pipe_write(rt_device_t dev,
         }
         else
         {
-            _rt_pipe_resume_reader(pipe);
+            _rt_audio_pipe_resume_reader(pipe);
             rt_hw_interrupt_enable(level);
             break;
         }
@@ -174,7 +174,7 @@ static rt_ssize_t rt_pipe_write(rt_device_t dev,
     return write_nbytes;
 }
 
-static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t rt_audio_pipe_control(rt_device_t dev, int cmd, void *args)
 {
     struct rt_audio_pipe *pipe;
 
@@ -191,9 +191,9 @@ const static struct rt_device_ops audio_pipe_ops =
     RT_NULL,
     RT_NULL,
     RT_NULL,
-    rt_pipe_read,
-    rt_pipe_write,
-    rt_pipe_control
+    rt_audio_pipe_read,
+    rt_audio_pipe_write,
+    rt_audio_pipe_control
 };
 #endif
 
@@ -235,9 +235,9 @@ rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
     pipe->parent.init    = RT_NULL;
     pipe->parent.open    = RT_NULL;
     pipe->parent.close   = RT_NULL;
-    pipe->parent.read    = rt_pipe_read;
-    pipe->parent.write   = rt_pipe_write;
-    pipe->parent.control = rt_pipe_control;
+    pipe->parent.read    = rt_audio_pipe_read;
+    pipe->parent.write   = rt_audio_pipe_write;
+    pipe->parent.control = rt_audio_pipe_control;
 #endif
 
     return rt_device_register(&(pipe->parent), name, RT_DEVICE_FLAG_RDWR);
