@@ -58,7 +58,6 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50200
-#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -163,6 +162,7 @@
 #define RT_USING_QSPI
 #define RT_USING_PIN
 #define RT_USING_KTIME
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -479,7 +479,6 @@
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM6
 #define BSP_USING_I2C

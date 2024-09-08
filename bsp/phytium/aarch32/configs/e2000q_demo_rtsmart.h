@@ -168,6 +168,7 @@
 #define RT_USING_QSPI
 #define RT_USING_PIN
 #define RT_USING_KTIME
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -509,7 +510,6 @@
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM2
 #define BSP_USING_I2C
