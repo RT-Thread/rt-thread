@@ -418,8 +418,14 @@ static int sensor(int argc, char **argv)
         case RT_SENSOR_UNIT_MMHG:
             rt_kprintf("unit      :mmHg\n");
             break;
-        case RT_SENSOR_UNIT_POWER:
-            rt_kprintf("unit      :ma,mv,mw\n");
+        case RT_SENSOR_UNIT_MV:
+            rt_kprintf("unit      :mV\n");
+            break;
+        case RT_SENSOR_UNIT_MA:
+            rt_kprintf("unit      :mA\n");
+            break;
+        case RT_SENSOR_UNIT_MW:
+            rt_kprintf("unit      :mV\n");
             break;
         }
         rt_kprintf("range_max :%d\n", info.range_max);

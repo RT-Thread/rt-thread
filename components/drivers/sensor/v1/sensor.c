@@ -41,7 +41,9 @@ static char *const sensor_name_str[] =
     "iaq_",      /* IAQ sensor        */
     "etoh_",     /* EtOH sensor       */
     "bp_"  ,     /* Blood Pressure    */
-    "power_"     /* Power sensor      */
+    "volt_",     /* Voltage sensor    */
+    "curr_",     /* Current sensor    */
+    "pow_"       /* Power sensor      */
 };
 
 /* Sensor interrupt correlation function */
