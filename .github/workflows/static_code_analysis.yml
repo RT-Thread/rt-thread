@@ -42,12 +42,10 @@ jobs:
           latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
           echo "Latest release tag: $latest_tag"
           git checkout $latest_tag
-          mkdir build
-          cd build
-          cmake ..
-          make
-          sudo make install FILESDIR=/usr/local/share/Cppcheck CFGDIR=/usr/share/Cppcheck/cfg
+          make FILESDIR=/usr/local/share/Cppcheck -j2
+          sudo make install FILESDIR=/usr/local/share/Cppcheck 
           cppcheck --version
+          cppcheck .
           cd ../../
           git remote -v
           git fetch origin
