@@ -1384,7 +1384,16 @@ static uint32_t ipstr_to_u32(char *ipstr)
     return *(uint32_t *) ipBytes;
 }
 
-static int gethostbyname_by_device(const char *name, ip_addr_t *addr)
+/**
+ * @brief resolves a domain name via AT device and returns its IP address.
+ * @note function uses static global mutex internally, which will cause multiple AT devices to block and wait while performing DNS resolution.
+ * @param name Pointer to a string containing the domain name.
+ * @param addr Pointer to a structure where the IP address information is stored.
+ * @return int Returns 0 on success or -1/-2 on failure
+ *          -1: domain failed
+ *          -2: HOST_NOT_FOUND
+ */
+static int _gethostbyname_by_device(const char *name, ip_addr_t *addr)
 {
     static rt_mutex_t at_dlock = RT_NULL;
 
@@ -1468,7 +1477,7 @@ struct hostent *at_gethostbyname(const char *name)
         return RT_NULL;
     }
 
-    if (gethostbyname_by_device(name, &addr) != 0)
+    if (_gethostbyname_by_device(name, &addr) != 0)
     {
         return RT_NULL;
     }
@@ -1501,7 +1510,7 @@ int at_gethostbyname_r(const char *name, struct hostent *ret, char *buf, size_t 
 
     char *hostname = RT_NULL;
     int lh_errno = 0;
-    int err = 0;
+    int domain_err = 0;
     size_t namelen = 0;
     struct gethostbyname_r_helper *h = RT_NULL;
 
@@ -1534,10 +1543,10 @@ int at_gethostbyname_r(const char *name, struct hostent *ret, char *buf, size_t 
     h = (struct gethostbyname_r_helper *)buf;
     hostname = ((char *)h) + sizeof(struct gethostbyname_r_helper);
 
-    err = gethostbyname_by_device(name, &h->addr);
-    if (err != 0)
+    domain_err = _gethostbyname_by_device(name, &h->addr);
+    if (domain_err != 0)
     {
-        if (err == -2)
+        if (domain_err == -2)
         {
             *h_errnop = HOST_NOT_FOUND;
         }
@@ -1627,11 +1636,11 @@ int at_getaddrinfo(const char *nodename, const char *servname,
         }
         else
         {
-            int err = 0;
-            err = gethostbyname_by_device(nodename, &addr);
-            if (err != 0)
+            int domain_err = 0;
+            domain_err = _gethostbyname_by_device(nodename, &addr);
+            if (domain_err != 0)
             {
-                if (err == -2)
+                if (domain_err == -2)
                 {
                     return HOST_NOT_FOUND;
                 }
