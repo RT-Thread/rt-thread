@@ -302,7 +302,7 @@ static int sensor(int argc, char **argv)
         rt_kprintf("         sodr <var>            Set output date rate to var\n");
         rt_kprintf("         read [num]            Read [num] times sensor\n");
         rt_kprintf("                               num default 5\n");
-        return ;
+        return -RT_EINVAL;
     }
     else if (!strcmp(argv[1], "info"))
     {
@@ -417,6 +417,15 @@ static int sensor(int argc, char **argv)
             break;
         case RT_SENSOR_UNIT_MMHG:
             rt_kprintf("unit      :mmHg\n");
+            break;
+        case RT_SENSOR_UNIT_MV:
+            rt_kprintf("unit      :mV\n");
+            break;
+        case RT_SENSOR_UNIT_MA:
+            rt_kprintf("unit      :mA\n");
+            break;
+        case RT_SENSOR_UNIT_MW:
+            rt_kprintf("unit      :mW\n");
             break;
         }
         rt_kprintf("range_max :%d\n", info.range_max);
