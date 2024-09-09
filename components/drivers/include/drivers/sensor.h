@@ -213,12 +213,6 @@ struct coordinates
     double latitude;
 };
 
-struct power_monitor
-{
-    float ma;
-    float mv;
-    float mw;
-};
 
 struct rt_sensor_data
 {
@@ -246,7 +240,9 @@ struct rt_sensor_data
         rt_uint32_t          iaq;           /* IAQ sensor.          unit: 1 */
         rt_uint32_t          etoh;          /* EtOH sensor.         unit: ppm */
         struct sensor_bp     bp;            /* BloodPressure.       unit: mmHg        */
-        struct power_monitor power;         /* Power sensor.        unit: ma,mv,mw    */
+        float                mv;            /* Voltage sensor.      unit: mV          */
+        float                ma;            /* Current sensor.      unit: mA          */
+        float                mw;            /* Power sensor.        unit: mW          */
     } data;
 };
 
