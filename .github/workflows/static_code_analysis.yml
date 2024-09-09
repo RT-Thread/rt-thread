@@ -23,7 +23,7 @@ jobs:
   scancode_job:
     runs-on: ubuntu-latest
     name: Static code analysis
-    #if: github.repository_owner == 'RT-Thread'
+    if: github.repository_owner == 'RT-Thread'
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -45,7 +45,6 @@ jobs:
           make FILESDIR=/usr/local/share/Cppcheck -j2
           sudo make install FILESDIR=/usr/local/share/Cppcheck 
           cppcheck --version
-          cppcheck .
           cd ../../
           git remote -v
           git fetch origin
