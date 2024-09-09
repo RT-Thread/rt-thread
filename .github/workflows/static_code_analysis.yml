@@ -36,6 +36,10 @@ jobs:
         run: |
           sudo apt-get update
           pip install click PyYaml
+          git remote -v
+          git fetch origin
+          ls
+          git branch -a
           git clone https://github.com/danmar/cppcheck.git
           cd cppcheck
           git fetch --tags
@@ -46,8 +50,4 @@ jobs:
           sudo make install FILESDIR=/usr/local/share/Cppcheck 
           cppcheck --version
           cd ../../
-          git remote -v
-          git fetch origin
-          ls
-          git branch -a
           python tools/ci/cpp_check.py check
