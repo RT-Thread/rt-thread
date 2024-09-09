@@ -43,7 +43,9 @@ static char *const sensor_name_str[] =
     "bp_"  ,     /* Blood Pressure    */
     "volt_",     /* Voltage sensor    */
     "curr_",     /* Current sensor    */
-    "pow_"       /* Power sensor      */
+    "volt_",     /* voltage sensor    */
+    "curr_",     /* current sensor    */
+    "pow_"       /* power sensor      */
 };
 
 /* Sensor interrupt correlation function */
