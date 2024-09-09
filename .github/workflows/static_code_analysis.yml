@@ -49,5 +49,5 @@ jobs:
           make FILESDIR=/usr/local/share/Cppcheck -j2
           sudo make install FILESDIR=/usr/local/share/Cppcheck 
           cppcheck --version
-          cd ../../
+          cd ..
           python tools/ci/cpp_check.py check
