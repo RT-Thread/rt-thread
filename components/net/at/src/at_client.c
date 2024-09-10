@@ -465,7 +465,7 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
     rt_device_control(client->device, RT_SERIAL_CTRL_RX_TIMEOUT, (void*)RT_WAITING_FOREVER);
 #endif
 
-    return RT_EOK;
+    return result;
 }
 
 /**
@@ -882,8 +882,7 @@ static int at_client_para_init(at_client_t client)
                                      (void (*)(void *parameter))client_parser,
                                      client,
                                      1024 + 512,
-                                    /*  RT_THREAD_PRIORITY_MAX / 3 - 1,*/
-                                     8,
+                                     RT_THREAD_PRIORITY_MAX / 3 - 1,
                                      5);
     if (client->parser == RT_NULL)
     {
