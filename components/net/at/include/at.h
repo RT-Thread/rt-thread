@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+/* * Copyright (c) 2006-2024 RT-Thread Development Team
+
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,6 +14,7 @@
 
 #include <stddef.h>
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -164,7 +165,11 @@ struct at_client
     rt_size_t recv_line_len;
     /* The maximum supported receive data length */
     rt_size_t recv_bufsz;
+
+#if (!defined(RT_USING_SERIAL_V2) || RT_VER_NUM < 0x50200)
     rt_sem_t rx_notice;
+#endif
+
     rt_mutex_t lock;
 
     at_response_t resp;
