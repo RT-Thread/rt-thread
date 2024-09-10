@@ -139,7 +139,7 @@ static rt_err_t uart_api(rt_uint16_t length)
     if ((thread_send != RT_NULL) && (thread_recv != RT_NULL))
     {
         rt_thread_startup(thread_send);
-        rt_thread_mdelay(length / 8 + 10);
+        rt_thread_mdelay(length / 11 + 10);
         rt_thread_startup(thread_recv);
     }
     else

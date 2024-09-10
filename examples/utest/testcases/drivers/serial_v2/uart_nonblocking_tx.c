@@ -24,7 +24,6 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
     rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_NON_BLOCKING | RT_DEVICE_FLAG_RX_NON_BLOCKING);
 
     LOG_D("\nNONBLOCKING WRITE BEGIN\n");
-    rt_thread_mdelay(2000);
 
     index = 0;
     tmp   = 0;
@@ -86,7 +85,6 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
     tick_array[index]        = tick2 - tick1;
     write_num_array[index++] = wr_sz;
 
-    rt_thread_mdelay(1000);
     LOG_D("\nNONBLOCKING_TX END\n");
     for (i = 0; i < index; i++)
     {

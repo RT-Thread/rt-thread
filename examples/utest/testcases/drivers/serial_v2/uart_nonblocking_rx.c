@@ -24,7 +24,6 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 256);
     rt_device_write(uart_dev, 0, uart_read_buffer, 256);
     total_length += recv_length;
-    rt_thread_mdelay(1000);
 
     rt_sprintf(log_buffer, "\nnonblock : %d bytes read, total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
@@ -34,7 +33,6 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 256);
     rt_device_write(uart_dev, 0, uart_read_buffer, 256);
     total_length += recv_length;
-    rt_thread_mdelay(1000);
 
     rt_sprintf(log_buffer, "\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
@@ -44,7 +42,6 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 256);
     rt_device_write(uart_dev, 0, uart_read_buffer, 256);
     total_length += recv_length;
-    rt_thread_mdelay(1000);
 
     rt_sprintf(log_buffer, "\nnonblock : %d bytes read, total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
@@ -54,7 +51,6 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 128);
     rt_device_write(uart_dev, 0, uart_read_buffer, 128);
     total_length += recv_length;
-    rt_thread_mdelay(1000);
 
     rt_sprintf(log_buffer, "\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
@@ -64,7 +60,6 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 128);
     rt_device_write(uart_dev, 0, uart_read_buffer, 128);
     total_length += recv_length;
-    rt_thread_mdelay(1000);
 
     rt_sprintf(log_buffer, "\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));

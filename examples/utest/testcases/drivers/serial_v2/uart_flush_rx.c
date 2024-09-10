@@ -39,7 +39,7 @@ static rt_err_t uart_find(void)
 static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
 {
     rt_device_write(&serial->parent, 0, ch, size);
-    rt_thread_mdelay(1);
+    rt_thread_mdelay(size / 11);
     if (1 != rt_device_read(&serial->parent, 0, ch, 1))
     {
         return -RT_ERROR;

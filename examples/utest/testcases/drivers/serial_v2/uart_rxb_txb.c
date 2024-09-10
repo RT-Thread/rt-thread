@@ -184,7 +184,7 @@ static rt_err_t uart_api(rt_uint16_t length)
     }
 
 __exit:
-    rt_thread_mdelay(10);
+    rt_thread_mdelay(5);
     rt_device_close(&serial->parent);
     uart_over_flag = RT_FALSE;
     return result;

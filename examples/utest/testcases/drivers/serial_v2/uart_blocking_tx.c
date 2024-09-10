@@ -24,7 +24,6 @@ static rt_bool_t block_write(rt_device_t uart_dev)
     rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_BLOCKING);
 
     LOG_D("\nBLOCKING WRITE BEGIN\n");
-    rt_thread_mdelay(2000);
 
     index = 0;
     wr_sz = 0;
@@ -77,7 +76,6 @@ static rt_bool_t block_write(rt_device_t uart_dev)
     tick_array[index] = tick2 - tick1;
     write_num_array[index++] = wr_sz;
 
-    rt_thread_mdelay(1000);
     LOG_D("\nBLOCKING_TX END\n");
     for(i = 0; i < index; i++)
     {

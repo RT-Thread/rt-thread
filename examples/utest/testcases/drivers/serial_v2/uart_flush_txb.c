@@ -81,7 +81,6 @@ static rt_bool_t uart_api()
         }
     }
 
-
     for (i = 0; i < TC_UART_SEND_TIMES; i++)
     {
         rt_device_write(&serial->parent, 0, ch, 256 + 256 * (rand() % 5) + 1);
@@ -106,7 +105,6 @@ static rt_bool_t uart_api()
             goto __exit;
         }
     }
-
 
 __exit:
     rt_free(ch);

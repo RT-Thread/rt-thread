@@ -241,7 +241,7 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
         rt_thread_mdelay(5);
     }
 __exit:
-    rt_thread_mdelay(10);
+    rt_thread_mdelay(5);
     if (tx_sem)
         rt_sem_delete(tx_sem);
 
