@@ -4,4 +4,24 @@ config UTEST_SERIAL_TC
     bool "Serial testcase"
     default n
 
+if UTEST_SERIAL_TC
+
+    config RT_SERIAL_TC_DEVICE_NAME
+        string "the device name for serial test"
+        default "uart2"
+
+    config RT_SERIAL_TC_RXBUF_SIZE
+        int "the rx buffer size for serial test"
+        default 128
+
+    config RT_SERIAL_TC_TXBUF_SIZE
+        int "the tx buffer size for serial test"
+        default 128
+
+    config TC_UART_SEND_TIMES
+        int "the number of iterations for the test routine."
+        default 100
+
+endif
+
 endmenu

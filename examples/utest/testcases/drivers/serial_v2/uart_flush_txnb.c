@@ -15,21 +15,17 @@
 
 #define DBG_LVL DBG_LOG
 
-#define TC_UART_DEVICE_NAME "uart2"
-
 #ifdef UTEST_SERIAL_TC
-
-#define TC_UART_SEND_TIMES 100
 
 static struct rt_serial_device *serial;
 
 static rt_err_t uart_find(void)
 {
-    serial = (struct rt_serial_device *)rt_device_find(TC_UART_DEVICE_NAME);
+    serial = (struct rt_serial_device *)rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
 
     if (serial == RT_NULL)
     {
-        LOG_E("find %s device failed!\n", TC_UART_DEVICE_NAME);
+        LOG_E("find %s device failed!\n", RT_SERIAL_TC_DEVICE_NAME);
         return -RT_ERROR;
     }
 
@@ -50,7 +46,7 @@ static rt_bool_t uart_api()
     /* Reinitialize */
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     config.baud_rate               = BAUD_RATE_115200;
-    config.rx_bufsz                = BSP_UART2_RX_BUFSIZE;
+    config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
     config.tx_bufsz                = 256;
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
@@ -124,7 +120,7 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    rt_device_t uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;
 }

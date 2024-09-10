@@ -2,7 +2,6 @@
 #include <rtdevice.h>
 #include "utest.h"
 
-#define TC_UART_DEVICE_NAME "uart2"
 #define DBG_LVL             DBG_LOG
 #ifdef UTEST_SERIAL_TC
 
@@ -64,7 +63,7 @@ static rt_bool_t block_read(rt_device_t uart_dev)
 static void uart_test_blocking_rx(void)
 {
     rt_device_t uart_dev;
-    uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     uassert_not_null(uart_dev);
 
     uassert_true(block_read(uart_dev));
@@ -77,7 +76,7 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    rt_device_t uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;
 }

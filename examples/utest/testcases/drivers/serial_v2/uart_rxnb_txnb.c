@@ -15,10 +15,6 @@
 
 #define DBG_LVL    DBG_LOG
 
-#define TC_UART_DEVICE_NAME "uart2"
-#define TC_UART_SEND_TIMES 100
-
-
 #ifdef UTEST_SERIAL_TC
 
 static struct rt_serial_device *serial;
@@ -29,11 +25,11 @@ static rt_bool_t uart_result = RT_TRUE;
 
 static rt_err_t uart_find(void)
 {
-    serial = (struct rt_serial_device *)rt_device_find(TC_UART_DEVICE_NAME);
+    serial = (struct rt_serial_device *)rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
 
     if (serial == RT_NULL)
     {
-        LOG_E("find %s device failed!\n", TC_UART_DEVICE_NAME);
+        LOG_E("find %s device failed!\n", RT_SERIAL_TC_DEVICE_NAME);
         return -RT_ERROR;
     }
 
@@ -185,8 +181,8 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
     /* reinitialize */
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     config.baud_rate = BAUD_RATE_115200;
-    config.rx_bufsz = BSP_UART2_RX_BUFSIZE;
-    config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
+    config.rx_bufsz = RT_SERIAL_TC_RXBUF_SIZE;
+    config.tx_bufsz = RT_SERIAL_TC_TXBUF_SIZE;
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING);
@@ -260,8 +256,8 @@ static void tc_uart_api(void)
     rt_uint32_t i     = 0;
     for (i = 1; i < 10; i++)
     {
-        if (uart_api(BSP_UART2_TX_BUFSIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", BSP_UART2_TX_BUFSIZE * i + i % 2, ++times);
+        if (uart_api(RT_SERIAL_TC_TXBUF_SIZE * i + i % 2) == RT_EOK)
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_TXBUF_SIZE * i + i % 2, ++times);
         else
         {
             LOG_E("uart test error");
@@ -271,8 +267,8 @@ static void tc_uart_api(void)
 
     for (i = 1; i < 10; i++)
     {
-        if (uart_api(BSP_UART2_RX_BUFSIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", BSP_UART2_RX_BUFSIZE * i + i % 2, ++times);
+        if (uart_api(RT_SERIAL_TC_RXBUF_SIZE * i + i % 2) == RT_EOK)
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_RXBUF_SIZE * i + i % 2, ++times);
         else
         {
             LOG_E("uart test error");
@@ -307,7 +303,7 @@ static rt_err_t utest_tc_cleanup(void)
     tx_sem = RT_NULL;
     uart_result = RT_TRUE;
     uart_over_flag = RT_FALSE;
-    rt_device_t uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;
 }

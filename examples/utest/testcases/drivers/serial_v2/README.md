@@ -85,20 +85,18 @@
 
 ### 4.2 测试条件
 
-默认测试串口为`**uart2**`请根据需要修改宏定义
-
 **短接串口的发送TX引脚和接收RX引脚，完成自发自收的回路**。
 
 大致的测试思路:
 
 >发送测试流程 :
 >>1. 先关闭串口,再以需要测试的模式打开.
->>2. 然后依次发送 UART_SEND_TIMES(默认为100) * (1000以内的随机数)个数据.
+>>2. 然后依次发送 UART_SEND_TIMES * （1000以内的随机数）个数据.
 >>3. 打印记录的数据,通过LOG日志的时钟周期来反应发送效率, 通过成功发送的数据量来反应是否产生丢包问题.
 >
 >接收测试流程 : 
 >>1. 先关闭串口,再以需要测试的模式打开.
->>2. 然后以此接收 同发送测试流程一致的（1000以内随机数）个数据
+>>2. 然后以此接收 同发送测试流程一致的 UART_SEND_TIMES *（1000以内随机数）个数据
 >>3. 接收的同时记录成功接收的数据数量
 >>4. 打印记录的数据, 通过现实成功接收的数据量与串口发送的数据量做对比,来验证是否出现丢包问题
 
@@ -110,7 +108,11 @@
 RT-Thread Utestcases  --->
     [*] RT-Thread Utestcases  --->
            Utest Serial Testcase --->
-                [*] Serial testcase
+                [*] Serial testcase --->
+                	the device name for serial test: uart2	(选择测试的串口)
+                	(128)the rx buffer size for serial test	(测试串口rx缓冲区大小)
+                	(128)the tx buffer size for serial test	(测试串口tx缓冲区大小)
+                	(100)the number of iterations for the test routine.	(测试例程的迭代次数)
 ```
 
 ## 6、使用

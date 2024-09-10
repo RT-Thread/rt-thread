@@ -2,8 +2,7 @@
 #include <rtdevice.h>
 #include "utest.h"
 
-#define TC_UART_DEVICE_NAME "uart2"
-#define UART_SEND_TIMES  400
+#define UART_SEND_TIMES  100
 #define UART_TEST_NUMBER 6
 
 #define DBG_LVL DBG_LOG
@@ -20,7 +19,7 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
 
     /* make sure device is closed and reopen it */
     while (rt_device_close(uart_dev) != -RT_ERROR);
-    uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_NON_BLOCKING | RT_DEVICE_FLAG_RX_NON_BLOCKING);
 
     LOG_D("\nNONBLOCKING WRITE BEGIN\n");
@@ -98,7 +97,7 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
 static void uart_test_nonblocking_tx(void)
 {
     rt_device_t uart_dev;
-    uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     uassert_not_null(uart_dev);
 
     uassert_true(nonblock_write(uart_dev));
@@ -111,7 +110,7 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    rt_device_t uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;
 }

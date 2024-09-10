@@ -15,8 +15,6 @@
 
 /* #define DBG_LVL DBG_LOG*/
 
-#define TC_UART_DEVICE_NAME "uart2"
-
 #ifdef UTEST_SERIAL_TC
 
 static struct rt_serial_device *serial;
@@ -27,11 +25,11 @@ static rt_uint8_t               uart_over_flag  = RT_FALSE;
 
 static rt_err_t uart_find(void)
 {
-    serial = (struct rt_serial_device *)rt_device_find(TC_UART_DEVICE_NAME);
+    serial = (struct rt_serial_device *)rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
 
     if (serial == RT_NULL)
     {
-        LOG_E("find %s device failed!\n", TC_UART_DEVICE_NAME);
+        LOG_E("find %s device failed!\n", RT_SERIAL_TC_DEVICE_NAME);
         return -RT_ERROR;
     }
 
@@ -45,7 +43,7 @@ static void uart_send_entry(void *parameter)
     rt_uint32_t i                 = 0;
 
     /* assign send buffer */
-    uart_write_buffer = (rt_uint8_t *)rt_malloc(BSP_UART2_RX_BUFSIZE);
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_RXBUF_SIZE);
     if (uart_write_buffer == RT_NULL)
     {
         LOG_E("Without spare memory for uart dma!");
@@ -53,7 +51,7 @@ static void uart_send_entry(void *parameter)
         return;
     }
 
-    for (i = 0; i < BSP_UART2_RX_BUFSIZE; i++)
+    for (i = 0; i < RT_SERIAL_TC_RXBUF_SIZE; i++)
     {
         uart_write_buffer[i] = (rt_uint8_t)i;
     }
@@ -63,7 +61,7 @@ static void uart_send_entry(void *parameter)
         if (uart_write_flag == RT_FALSE)
             break;
 
-        rt_device_write(&serial->parent, 0, uart_write_buffer, BSP_UART2_RX_BUFSIZE / 3);
+        rt_device_write(&serial->parent, 0, uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE / 3);
         rt_thread_mdelay(40);
     }
 
@@ -75,7 +73,7 @@ static void uart_rec_entry(void *parameter)
     rt_uint8_t *ch;
     rt_uint32_t old_tick;
     rt_uint32_t i;
-    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (BSP_UART2_RX_BUFSIZE * 10 + 1));
+    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_RXBUF_SIZE * 10 + 1));
 
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_TIMEOUT, (void *)100);
 
@@ -84,7 +82,7 @@ static void uart_rec_entry(void *parameter)
     {
         rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
         old_tick          = rt_tick_get();
-        uint32_t recv_len = rt_device_read(&serial->parent, 0, (void *)ch, BSP_UART2_RX_BUFSIZE);
+        uint32_t recv_len = rt_device_read(&serial->parent, 0, (void *)ch, RT_SERIAL_TC_RXBUF_SIZE);
         if (rt_tick_get() - old_tick > 100 + 2 || rt_tick_get() - old_tick < 100 - 2)
         {
             rt_kprintf("%d recv_len: %d\r\n", rt_tick_get() - old_tick, recv_len);
@@ -102,7 +100,7 @@ static void uart_rec_entry(void *parameter)
     for (i = 0; i < 10; i++)
     {
         old_tick = rt_tick_get();
-        rt_device_write(&serial->parent, 0, ch, BSP_UART2_RX_BUFSIZE * 10);
+        rt_device_write(&serial->parent, 0, ch, RT_SERIAL_TC_RXBUF_SIZE * 10);
         if (rt_tick_get() - old_tick > 10 + 2 || rt_tick_get() - old_tick < 10 - 2)
         {
             uart_result = RT_FALSE;
@@ -132,8 +130,8 @@ static rt_bool_t uart_api()
     /* Reinitialize */
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     config.baud_rate               = BAUD_RATE_115200;
-    config.rx_bufsz                = BSP_UART2_RX_BUFSIZE;
-    config.tx_bufsz                = 64;
+    config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
+    config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE;
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
@@ -193,7 +191,7 @@ static rt_err_t utest_tc_cleanup(void)
     uart_result          = RT_TRUE;
     uart_write_flag      = RT_TRUE;
     uart_over_flag       = RT_FALSE;
-    rt_device_t uart_dev = rt_device_find(TC_UART_DEVICE_NAME);
+    rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;
 }
