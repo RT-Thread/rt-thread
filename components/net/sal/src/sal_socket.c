@@ -1469,6 +1469,16 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             ifconf_tmp->ifc_ifcu.ifcu_buf =  ifconf_tmp->ifc_ifcu.ifcu_buf - sizeof(struct sal_ifreq) * count_size;
             return 0;
         }
+        case SIOCGIFINDEX:
+        {
+            netdev = netdev_get_by_name(ifr->ifr_ifrn.ifrn_name);
+            if (netdev)
+            {
+                ifr->ifr_ifru.ifru_ivalue = netdev->ifindex;
+                return 0;
+            }
+            return -ENODEV;
+        }
         default:
             break;
         }
