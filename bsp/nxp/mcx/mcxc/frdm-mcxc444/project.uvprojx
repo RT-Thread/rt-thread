@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
-              <Define>DEBUG, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC, CPU_MCXC444VLH, __STDC_LIMIT_MACROS</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, CPU_MCXC444VLH, DEBUG, __RTTHREAD__, RT_USING_LIBC, RT_USING_ARMLIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\components\drivers\spi;applications;..\..\..\..\..\components\finsh;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\Libraries\drivers\config;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include;..\Libraries\drivers;..\..\..\..\..\libcpu\arm\common;..\Libraries\MCXC444\MCXC444;..\..\..\..\..\components\drivers\include;..\Libraries\MCXC444\MCXC444\drivers;..\..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\Libraries\CMSIS\Core\Include;board;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\finsh;..\Libraries\drivers\config;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;.;..\Libraries\drivers;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\..\..\include;..\..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\Libraries\MCXC444\MCXC444\drivers;..\..\..\..\..\components\libc\posix\io\epoll;applications;..\Libraries\MCXC444\MCXC444;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -2546,114 +2546,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_ftfx_flexnvm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_ftfx_flexnvm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_cmp.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpuart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_lpuart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_i2c_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c_dma.c</FilePath>
-            </File>
-            <File>
               <FileName>fsl_dac.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_dac.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_sai_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cop.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_cop.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpuart_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_lpuart_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_tpm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_tpm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_smc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_smc.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_MCXC444.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\system_MCXC444.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_pit.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_pit.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_slcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_slcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_sai.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_uart_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_common_arm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_common_arm.c</FilePath>
             </File>
             <File>
               <FileName>startup_MCXC444.s</FileName>
@@ -2661,19 +2556,69 @@
               <FilePath>..\Libraries\MCXC444\MCXC444\arm\startup_MCXC444.s</FilePath>
             </File>
             <File>
-              <FileName>fsl_sim.c</FileName>
+              <FileName>fsl_uart_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_sim.c</FilePath>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart_dma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_adc16.c</FileName>
+              <FileName>fsl_sai_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_adc16.c</FilePath>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai_dma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_rtc.c</FileName>
+              <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_rtc.c</FilePath>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_lpuart.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_slcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_slcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_pit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_pit.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpuart_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_lpuart_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_cop.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_cop.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_cmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_i2c_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_tpm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_tpm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_common.c</FilePath>
             </File>
             <File>
               <FileName>fsl_ftfx_controller.c</FileName>
@@ -2681,14 +2626,69 @@
               <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_ftfx_controller.c</FilePath>
             </File>
             <File>
+              <FileName>fsl_ftfx_flexnvm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_ftfx_flexnvm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_common_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_common_arm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_smc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_smc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_sim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_sim.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_sai.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_sai.c</FilePath>
+            </File>
+            <File>
               <FileName>fsl_pmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_pmc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_spi.c</FileName>
+              <FileName>fsl_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_spi.c</FilePath>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_adc16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_adc16.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\drivers\fsl_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_MCXC444.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXC444\MCXC444\system_MCXC444.c</FilePath>
             </File>
           </Files>
         </Group>

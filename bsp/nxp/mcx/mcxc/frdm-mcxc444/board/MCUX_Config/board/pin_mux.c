@@ -27,12 +27,14 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_PortC);
     CLOCK_EnableClock(kCLOCK_PortD);
     CLOCK_EnableClock(kCLOCK_PortE);
-    
-    PORT_SetPinMux(PORTA, 1U, kPORT_MuxAlt2);   /* LPUART0_RX */
-    PORT_SetPinMux(PORTA, 2U, kPORT_MuxAlt2);   /* LPUART0_TX */
-    
-    PORT_SetPinMux(PORTE, 0U, kPORT_MuxAlt3);   /* LPUART1_TX */
-    PORT_SetPinMux(PORTE, 1U, kPORT_MuxAlt3);   /* LPUART1_RX */
+
+    PORT_SetPinMux(PORTA, 4, kPORT_MuxAsGpio);   /* NMI */
+
+    PORT_SetPinMux(PORTA, 1, kPORT_MuxAlt2);   /* LPUART0_RX */
+    PORT_SetPinMux(PORTA, 2, kPORT_MuxAlt2);   /* LPUART0_TX */
+
+    PORT_SetPinMux(PORTE, 0, kPORT_MuxAlt3);   /* LPUART1_TX */
+    PORT_SetPinMux(PORTE, 1, kPORT_MuxAlt3);   /* LPUART1_RX */
 
     SIM->SOPT5 = 0;
 }
