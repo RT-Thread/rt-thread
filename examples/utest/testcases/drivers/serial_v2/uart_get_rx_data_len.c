@@ -19,6 +19,8 @@
 
 #ifdef UTEST_SERIAL_TC
 
+#define TC_UART_SEND_TIMES 100
+
 static struct rt_serial_device *serial;
 static rt_uint8_t               uart_over_flag = RT_FALSE;
 
@@ -34,6 +36,42 @@ static rt_err_t uart_find(void)
 
     return RT_EOK;
 }
+
+static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
+{
+    rt_uint32_t old_tick;
+    rt_ssize_t  send_len;
+    rt_ssize_t  buf_data_len;
+
+    send_len = rt_device_write(&serial->parent, 0, ch, size);
+
+    if (size > BSP_UART2_RX_BUFSIZE)
+    {
+        size = BSP_UART2_RX_BUFSIZE;
+    }
+
+    rt_thread_delay(5);
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
+    if (size != buf_data_len)
+    {
+        return -RT_ERROR;
+    }
+
+
+    if (size != rt_device_read(&serial->parent, 0, ch, size))
+    {
+        return -RT_ERROR;
+    }
+
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
+    if (0 != buf_data_len)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
 static rt_bool_t uart_api()
 {
     rt_err_t result = RT_EOK;
@@ -59,83 +97,24 @@ static rt_bool_t uart_api()
     }
 
     rt_uint8_t *ch;
-    rt_uint32_t old_tick;
-    rt_ssize_t  send_len;
-    rt_ssize_t  buf_data_len;
-    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (BSP_UART2_TX_BUFSIZE * 2 + 1));
+    rt_uint32_t i;
+    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (BSP_UART2_TX_BUFSIZE * 5 + 1));
 
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
-    if (0 != buf_data_len)
+    for (i = 0; i < TC_UART_SEND_TIMES; i++)
     {
-        result = -RT_ERROR;
-        goto __exit;
+        if (RT_EOK != test_item(ch, BSP_UART2_RX_BUFSIZE + BSP_UART2_RX_BUFSIZE * (rand() % 5)))
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
+
+        if (RT_EOK != test_item(ch, rand() % (BSP_UART2_RX_BUFSIZE * 5)))
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
     }
 
-    send_len = rt_device_write(&serial->parent, 0, ch, 30);
-    rt_thread_delay(100);
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
-    if (30 != buf_data_len)
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    if (30 != rt_device_read(&serial->parent, 0, ch, 30))
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
-    if (0 != buf_data_len)
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    send_len = rt_device_write(&serial->parent, 0, ch, BSP_UART2_RX_BUFSIZE * 2);
-    rt_thread_delay(100);
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
-    if (BSP_UART2_RX_BUFSIZE != buf_data_len)
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    if (BSP_UART2_RX_BUFSIZE != rt_device_read(&serial->parent, 0, ch, BSP_UART2_RX_BUFSIZE))
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
-    if (0 != buf_data_len)
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    send_len = rt_device_write(&serial->parent, 0, ch, BSP_UART2_RX_BUFSIZE + 20);
-    rt_thread_delay(100);
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
-    if (BSP_UART2_RX_BUFSIZE != buf_data_len)
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    if (BSP_UART2_RX_BUFSIZE != rt_device_read(&serial->parent, 0, ch, BSP_UART2_RX_BUFSIZE))
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
-    if (0 != buf_data_len)
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
 
 __exit:
     rt_free(ch);

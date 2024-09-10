@@ -19,6 +19,8 @@
 
 #ifdef UTEST_SERIAL_TC
 
+#define TC_UART_SEND_TIMES 100
+
 static struct rt_serial_device *serial;
 
 static rt_err_t uart_find(void)
@@ -34,6 +36,23 @@ static rt_err_t uart_find(void)
     return RT_EOK;
 }
 
+static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
+{
+    rt_device_write(&serial->parent, 0, ch, size);
+    rt_thread_mdelay(1);
+    if (1 != rt_device_read(&serial->parent, 0, ch, 1))
+    {
+        return -RT_ERROR;
+    }
+
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
+    if (0 != rt_device_read(&serial->parent, 0, ch, 1))
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
 
 static rt_bool_t uart_api()
 {
@@ -60,52 +79,22 @@ static rt_bool_t uart_api()
     }
 
     rt_uint8_t *ch;
-    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (BSP_UART2_TX_BUFSIZE * 2 + 1));
+    rt_uint32_t i;
+    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (BSP_UART2_TX_BUFSIZE * 5 + 1));
 
-    rt_device_write(&serial->parent, 0, ch, BSP_UART2_TX_BUFSIZE / 2);
-    rt_thread_mdelay(100);
-    if (1 != rt_device_read(&serial->parent, 0, ch, 1))
+    for (i = 0; i < TC_UART_SEND_TIMES; i++)
     {
-        result = -RT_ERROR;
-        goto __exit;
-    }
+        if (RT_EOK != test_item(ch, BSP_UART2_RX_BUFSIZE + BSP_UART2_RX_BUFSIZE * (rand() % 5)))
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
 
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
-    if (0 != rt_device_read(&serial->parent, 0, ch, 1))
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    rt_device_write(&serial->parent, 0, ch, BSP_UART2_TX_BUFSIZE);
-    rt_thread_mdelay(100);
-    if (1 != rt_device_read(&serial->parent, 0, ch, 1))
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
-    if (0 != rt_device_read(&serial->parent, 0, ch, 1))
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-
-    rt_device_write(&serial->parent, 0, ch, BSP_UART2_TX_BUFSIZE * 2);
-    rt_thread_mdelay(100);
-    if (1 != rt_device_read(&serial->parent, 0, ch, 1))
-    {
-        result = -RT_ERROR;
-        goto __exit;
-    }
-
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
-    if (0 != rt_device_read(&serial->parent, 0, ch, 1))
-    {
-        result = -RT_ERROR;
-        goto __exit;
+        if (RT_EOK != test_item(ch, rand() % (BSP_UART2_RX_BUFSIZE * 5)))
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
     }
 
 __exit:

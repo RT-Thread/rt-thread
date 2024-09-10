@@ -19,6 +19,8 @@
 
 #ifdef UTEST_SERIAL_TC
 
+#define TC_UART_SEND_TIMES 100
+
 static struct rt_serial_device *serial;
 
 static rt_err_t uart_find(void)
@@ -61,28 +63,50 @@ static rt_bool_t uart_api()
 
     rt_uint8_t *ch;
     rt_uint32_t old_tick;
+    rt_uint32_t i;
     ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (256 * 5 + 10));
 
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_TIMEOUT, (void *)1);
-    rt_device_write(&serial->parent, 0, ch, 256 * 5);
 
-    old_tick = rt_tick_get();
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
-    if (rt_tick_get() - old_tick < 2)
+    for (i = 0; i < TC_UART_SEND_TIMES; i++)
     {
-        result = -RT_ERROR;
-        goto __exit;
+        rt_device_write(&serial->parent, 0, ch, 256 + 256 * (rand() % 5));
+
+        old_tick = rt_tick_get();
+        rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
+        if (rt_tick_get() - old_tick < 2)
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
     }
 
-    rt_device_write(&serial->parent, 0, ch, 256 * 5 + 1);
 
-    old_tick = rt_tick_get();
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
-    if (rt_tick_get() - old_tick < 2)
+    for (i = 0; i < TC_UART_SEND_TIMES; i++)
     {
-        result = -RT_ERROR;
-        goto __exit;
+        rt_device_write(&serial->parent, 0, ch, 256 + 256 * (rand() % 5) + 1);
+
+        old_tick = rt_tick_get();
+        rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
+        if (rt_tick_get() - old_tick < 2)
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
     }
+
+    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    {
+        rt_device_write(&serial->parent, 0, ch, 256 + rand() % (256 * 4));
+        old_tick = rt_tick_get();
+        rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
+        if (rt_tick_get() - old_tick < 2)
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
+    }
+
 
 __exit:
     rt_free(ch);
