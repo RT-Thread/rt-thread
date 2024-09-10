@@ -2880,23 +2880,12 @@ sysret_t sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namele
     lwp_get_from_user(&family, (void *)name, 2);
     if (family == AF_UNIX)
     {
-        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
-        {
-            return -EFAULT;
-        }
-
         lwp_get_from_user(&un_addr, (void *)name, sizeof(struct sockaddr_un));
         ret = bind(socket, (struct sockaddr *)&un_addr, namelen);
     }
     else if (family == AF_NETLINK)
     {
-        if (!lwp_user_accessable((void *)name, namelen))
-        {
-            return -EFAULT;
-        }
-
         lwp_get_from_user(&sa, (void *)name, namelen);
-
         ret = bind(socket, &sa, namelen);
     }
     else
