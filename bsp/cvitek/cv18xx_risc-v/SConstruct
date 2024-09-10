@@ -21,8 +21,6 @@ env['ASCOM'] = env['ASPPCOM']
 
 Export('RTT_ROOT')
 Export('rtconfig')
-rtconfig.CPU='virt64'
-rtconfig.ARCH='risc-v'
 
 SDK_ROOT = os.path.abspath('./')
 
