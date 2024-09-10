@@ -386,6 +386,11 @@ const char *rt_ofw_bootargs_select(const char *key, int index)
                 {
                     *(char *)ch++ = '\0';
                 }
+                if (*ch == '\0')
+                {
+                    /* space in the end */
+                    --bootargs_nr;
+                }
                 --ch;
             }
 
