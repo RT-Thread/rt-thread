@@ -83,6 +83,15 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     case RT_SENSOR_CLASS_BP:
         LOG_I("num:%3d, bp.sbp:%5d mmHg, bp.dbp:%5d mmHg, timestamp:%5d", num, sensor_data->data.bp.sbp, sensor_data->data.bp.dbp, sensor_data->timestamp);
         break;
+    case RT_SENSOR_CLASS_VOLTAGE:
+        LOG_I("num:%3d, voltage:%5d mV, timestamp:%5d", num, sensor_data->data.mv, sensor_data->timestamp);
+        break;
+    case RT_SENSOR_CLASS_CURRENT:
+        LOG_I("num:%3d, current:%5d mA, timestamp:%5d", num, sensor_data->data.ma, sensor_data->timestamp);
+        break;
+    case RT_SENSOR_CLASS_POWER:
+        LOG_I("num:%3d, power:%5d mW, timestamp:%5d", num, sensor_data->data.mv, sensor_data->timestamp);
+        break;
     default:
         break;
     }
