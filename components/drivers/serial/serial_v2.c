@@ -1292,15 +1292,17 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 
         /* Discard all data */
         case RT_SERIAL_CTRL_RX_FLUSH:
-            if(!(serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+            if(serial->config.rx_bufsz == 0)
+            {
+                while (serial->ops->getc(serial) != -1)
+                {
+                }
+            }
+            else
             {
                 struct rt_serial_rx_fifo* rx_fifo;
                 rt_base_t level;
                 rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
-
-                while (serial->ops->getc(serial) != -1)
-                {
-                }
 
                 level = rt_hw_interrupt_disable();
                 rx_fifo->rx_cpt_index = 0;
@@ -1311,7 +1313,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 
         /* Blocking and wait for the send buffer data to be sent. */
         case RT_SERIAL_CTRL_TX_FLUSH:
-            if(!(serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+            if(serial->config.tx_bufsz != 0)
             {
                 struct rt_serial_tx_fifo* tx_fifo;
                 rt_base_t level;
@@ -1334,9 +1336,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 break;
             }
 
-            if(serial->parent.open_flag & RT_DEVICE_FLAG_STREAM)
+            if(serial->config.rx_bufsz == 0)
             {
-                LOG_W("RT_SERIAL_CTRL_RX_FLUSH not support stream mode.");
+                LOG_W("RT_SERIAL_CTRL_GET_RX_DATA_LEN not support poll mode.");
                 *(rt_ssize_t*)args = -1;
                 break;
             }
