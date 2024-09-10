@@ -103,14 +103,14 @@ static struct rt_object *ofw_parse_object(struct rt_ofw_node *np, const char *ce
         {
             item = &ofw_obj_cmp_list[i];
 
-            if (!rt_strcmp(item->cells_name, cells_name))
-            {
-                ret_obj = obj;
-                break;
-            }
-
             if (!rt_strncmp(item->obj_name, obj->name, RT_NAME_MAX))
             {
+                if (!rt_strcmp(item->cells_name, cells_name))
+                {
+                    ret_obj = obj;
+                    break;
+                }
+
                 obj = (struct rt_object *)((rt_ubase_t)obj + item->obj_size);
                 break;
             }
@@ -134,7 +134,7 @@ struct rt_object *rt_ofw_parse_object(struct rt_ofw_node *np, const char *obj_na
     if (np && (test_obj = rt_ofw_data(np)) && cells_name)
     {
         /* The composite object is rare, so we try to find this object as much as possible at once. */
-        if (obj_name && rt_strcmp(test_obj->name, obj_name))
+        if (obj_name && !rt_strcmp(test_obj->name, obj_name))
         {
             obj = test_obj;
         }
