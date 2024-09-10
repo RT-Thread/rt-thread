@@ -684,7 +684,8 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 
     addr_un = (struct sockaddr_un *)name;
 
-    if ((addr_un->sa_family != AF_UNIX) && (addr_un->sa_family != AF_NETLINK))
+#define IS_INET_ADDR_FAMILY(_af) ((_af) == AF_INET) || ((_af) == AF_INET6)
+    if (IS_INET_ADDR_FAMILY(name->sa_family))
     {
         /* bind network interface by ip address */
         sal_sockaddr_to_ipaddr(name, &input_ipaddr);
