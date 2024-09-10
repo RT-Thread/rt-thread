@@ -90,7 +90,10 @@ struct at_server
     char send_buffer[AT_SERVER_SEND_BUFF_LEN];
     char recv_buffer[AT_SERVER_RECV_BUFF_LEN];
     rt_size_t cur_recv_len;
+
+#if (!defined(RT_USING_SERIAL_V2) || RT_VER_NUM < 0x50200)
     rt_sem_t rx_notice;
+#endif
 
     rt_thread_t parser;
     void (*parser_entry)(struct at_server *server);
