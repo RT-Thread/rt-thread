@@ -636,7 +636,14 @@ void rt_ofw_node_dump_dts(struct rt_ofw_node *np, rt_bool_t sibling_too)
             struct fdt_info *header = (struct fdt_info *)np->name;
             struct fdt_reserve_entry *rsvmap = header->rsvmap;
 
-            rt_kprintf("/dts-v%x/;\n\n", fdt_version(header->fdt));
+            /*
+             * Shall be present to identify the file as a version 1 DTS
+             * (dts files without this tag will be treated by dtc
+             * as being in the obsolete version 0, which uses
+             * a different format for integers in addition to
+             * other small but incompatible changes).
+             */
+            rt_kprintf("/dts-v1/;\n\n");
 
             for (int i = header->rsvmap_nr - 1; i >= 0; --i)
             {
