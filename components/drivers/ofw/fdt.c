@@ -793,6 +793,55 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
     return err;
 }
 
+rt_err_t rt_fdt_bootargs_select(const char *key, int index, const char **out_result)
+{
+    rt_err_t err;
+
+    if (key && index >= 0 && out_result)
+    {
+        int offset = fdt_path_offset(_fdt, "/chosen");
+
+        if (offset >= 0)
+        {
+            int len, key_len = rt_strlen(key);
+            const char *bootargs = fdt_getprop(_fdt, offset, "bootargs", &len), *end;
+
+            end = bootargs + len;
+            err = -RT_EEMPTY;
+
+            for (int i = 0; bootargs < end; ++i)
+            {
+                bootargs = rt_strstr(bootargs, key);
+
+                if (!bootargs)
+                {
+                    break;
+                }
+
+                bootargs += key_len;
+
+                if (i == index)
+                {
+                    *out_result = bootargs;
+
+                    err = -RT_EOK;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            err = -RT_ERROR;
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
+}
+
 static void system_node_init_flag(struct rt_ofw_node *np)
 {
     if (np)
