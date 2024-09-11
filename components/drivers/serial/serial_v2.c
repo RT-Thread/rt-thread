@@ -1575,7 +1575,12 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
             else
             {
-                ret = _serial_get_unread_bytes_count(serial, (rt_ssize_t*)args);
+                rt_ssize_t unread_bytes = 0;
+                ret = _serial_get_unread_bytes_count(serial, &unread_bytes);
+                if (ret == RT_EOK)
+                    *(rt_size_t *)args = (rt_size_t)unread_bytes;
+                else
+                    *(rt_size_t *)args = 0;
             }
             break;
 #endif /* RT_USING_POSIX_STDIO */
