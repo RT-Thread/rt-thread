@@ -191,7 +191,7 @@ static void tc_uart_api(void)
         }
     }
 
-    while (TC_UART_SEND_TIMES - times)
+    while (RT_SERIAL_TC_SEND_ITERATIONS - times)
     {
         num = (rand() % RT_SERIAL_TC_RXBUF_SIZE) + 1;
         if (uart_api(num + RT_SERIAL_TC_RXBUF_SIZE) == RT_EOK)

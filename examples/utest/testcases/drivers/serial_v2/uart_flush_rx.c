@@ -78,7 +78,7 @@ static rt_bool_t uart_api()
     rt_uint32_t i;
     ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
 
-    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         if (RT_EOK != test_item(ch, RT_SERIAL_TC_RXBUF_SIZE + RT_SERIAL_TC_RXBUF_SIZE * (rand() % 5)))
         {

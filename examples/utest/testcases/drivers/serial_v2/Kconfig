@@ -18,7 +18,7 @@ if UTEST_SERIAL_TC
         int "the tx buffer size for serial test"
         default 128
 
-    config TC_UART_SEND_TIMES
+    config RT_SERIAL_TC_SEND_ITERATIONS
         int "the number of iterations for the test routine."
         default 100
 

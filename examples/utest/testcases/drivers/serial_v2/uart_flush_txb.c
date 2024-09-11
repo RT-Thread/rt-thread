@@ -64,7 +64,7 @@ static rt_bool_t uart_api()
 
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_TIMEOUT, (void *)1);
 
-    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         rt_device_write(&serial->parent, 0, ch, 256 + 256 * (rand() % 5));
 
@@ -77,7 +77,7 @@ static rt_bool_t uart_api()
         }
     }
 
-    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         rt_device_write(&serial->parent, 0, ch, 256 + 256 * (rand() % 5) + 1);
 
@@ -90,7 +90,7 @@ static rt_bool_t uart_api()
         }
     }
 
-    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         rt_device_write(&serial->parent, 0, ch, 256 + rand() % (256 * 4));
         old_tick = rt_tick_get();

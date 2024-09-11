@@ -62,7 +62,7 @@ static rt_bool_t uart_api()
     rt_uint32_t i;
     ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (256 * 5 + 10));
 
-    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         rt_device_write(&serial->parent, 0, ch, 256 + 256 * (rand() % 5));
 
@@ -76,7 +76,7 @@ static rt_bool_t uart_api()
     }
 
 
-    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         rt_device_write(&serial->parent, 0, ch, 256 + 256 * (rand() % 5) + 1);
 
@@ -89,7 +89,7 @@ static rt_bool_t uart_api()
         }
     }
 
-    for (i = 0; i < TC_UART_SEND_TIMES; i++)
+    for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         rt_device_write(&serial->parent, 0, ch, 256 + rand() % (256 * 4));
         old_tick = rt_tick_get();
