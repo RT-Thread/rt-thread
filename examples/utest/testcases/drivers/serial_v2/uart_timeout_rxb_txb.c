@@ -71,7 +71,9 @@ static void uart_send_entry(void *parameter)
 static void uart_rec_entry(void *parameter)
 {
     rt_uint8_t *ch;
-    rt_uint32_t old_tick;
+    rt_tick_t   old_tick;
+    rt_tick_t   tick_diff;
+    rt_ssize_t  recv_len;
     rt_uint32_t i;
     ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_RXBUF_SIZE * 10 + 1));
 
@@ -81,16 +83,19 @@ static void uart_rec_entry(void *parameter)
     for (i = 0; i < 10; i++)
     {
         rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
-        old_tick          = rt_tick_get();
-        uint32_t recv_len = rt_device_read(&serial->parent, 0, (void *)ch, RT_SERIAL_TC_RXBUF_SIZE);
-        if (rt_tick_get() - old_tick > 100 + 2 || rt_tick_get() - old_tick < 100 - 2)
+        old_tick  = rt_tick_get();
+        recv_len  = rt_device_read(&serial->parent, 0, (void *)ch, RT_SERIAL_TC_RXBUF_SIZE);
+        tick_diff = rt_tick_get() - old_tick;
+        if (tick_diff > 100 + 1 || tick_diff < 100)
         {
-            rt_kprintf("%d recv_len: %d\r\n", rt_tick_get() - old_tick, recv_len);
+            LOG_E("timeout_test: recv_size [%d], RX block time [%d], expect_time [100 - 101]", recv_len, tick_diff);
             uart_write_flag = RT_FALSE;
             uart_result     = RT_FALSE;
             rt_free(ch);
             return;
         }
+
+        LOG_I("timeout_test: RX block time [%d], expect_time [100 - 101]", tick_diff);
     }
     uart_write_flag = RT_FALSE;
 
@@ -99,15 +104,18 @@ static void uart_rec_entry(void *parameter)
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_TIMEOUT, (void *)10);
     for (i = 0; i < 10; i++)
     {
-        old_tick = rt_tick_get();
-        rt_device_write(&serial->parent, 0, ch, RT_SERIAL_TC_RXBUF_SIZE * 10);
-        if (rt_tick_get() - old_tick > 10 + 2 || rt_tick_get() - old_tick < 10 - 2)
+        old_tick  = rt_tick_get();
+        recv_len  = rt_device_write(&serial->parent, 0, ch, RT_SERIAL_TC_RXBUF_SIZE * 10);
+        tick_diff = rt_tick_get() - old_tick;
+        if (tick_diff > 10 + 1 || tick_diff < 10)
         {
+            LOG_E("timeout_test: recv_size [%d], TX block time [%d], expect_time [10 - 11]", recv_len, tick_diff);
             uart_result = RT_FALSE;
             rt_free(ch);
             return;
         }
 
+        LOG_I("timeout_test: TX block time [%d], expect_time [10 - 11]", tick_diff);
         rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
     }
 
