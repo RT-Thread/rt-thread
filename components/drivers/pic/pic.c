@@ -177,14 +177,23 @@ static void config_pirq(struct rt_pic *pic, struct rt_pic_irq *pirq, int irq, in
 {
     rt_ubase_t level = rt_spin_lock_irqsave(&pirq->rw_lock);
 
+    if (pirq->irq < 0)
+    {
+        rt_list_init(&pirq->list);
+        rt_list_init(&pirq->children_nodes);
+        rt_list_init(&pirq->isr.list);
+    }
+    else if (pirq->pic != pic)
+    {
+        RT_ASSERT(rt_list_isempty(&pirq->list) == RT_TRUE);
+        RT_ASSERT(rt_list_isempty(&pirq->children_nodes) == RT_TRUE);
+        RT_ASSERT(rt_list_isempty(&pirq->isr.list) == RT_TRUE);
+    }
+
     pirq->irq = irq;
     pirq->hwirq = hwirq;
 
     pirq->pic = pic;
-
-    rt_list_init(&pirq->list);
-    rt_list_init(&pirq->children_nodes);
-    rt_list_init(&pirq->isr.list);
 
     rt_spin_unlock_irqrestore(&pirq->rw_lock, level);
 }
