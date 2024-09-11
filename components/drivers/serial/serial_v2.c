@@ -1364,8 +1364,8 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             _serial_tx_flush(serial);
             break;
 
-        /* Get buf data length. */
-        case RT_SERIAL_CTRL_GET_RX_DATA_LEN:
+        /* get unread bytes count. */
+        case RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT:
             if (args == RT_NULL)
             {
                 ret = -RT_EINVAL;

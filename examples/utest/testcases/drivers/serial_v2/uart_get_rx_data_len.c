@@ -47,7 +47,7 @@ static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
     }
 
     rt_thread_delay(5);
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT, (void *)&buf_data_len);
     if (size != buf_data_len)
     {
         return -RT_ERROR;
@@ -59,7 +59,7 @@ static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
         return -RT_ERROR;
     }
 
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_RX_DATA_LEN, (void *)&buf_data_len);
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT, (void *)&buf_data_len);
     if (0 != buf_data_len)
     {
         return -RT_ERROR;
