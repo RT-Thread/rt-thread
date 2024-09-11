@@ -173,6 +173,30 @@ rt_err_t rt_pic_linear_irq(struct rt_pic *pic, rt_size_t irq_nr)
     return err;
 }
 
+rt_err_t rt_pic_cancel_irq(struct rt_pic *pic)
+{
+    rt_err_t err = RT_EOK;
+
+    if (pic && pic->pirqs)
+    {
+        rt_ubase_t level = rt_spin_lock_irqsave(&_pic_lock);
+
+        /*
+         * This is only to make system runtime safely,
+         * we don't recommend PICs to unregister.
+         */
+        rt_list_remove(&pic->list);
+
+        rt_spin_unlock_irqrestore(&_pic_lock, level);
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
+}
+
 static void config_pirq(struct rt_pic *pic, struct rt_pic_irq *pirq, int irq, int hwirq)
 {
     rt_ubase_t level = rt_spin_lock_irqsave(&pirq->rw_lock);
