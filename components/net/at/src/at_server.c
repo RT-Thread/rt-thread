@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -430,7 +430,7 @@ static rt_err_t at_server_getchar(at_server_t server, char *ch, rt_int32_t timeo
     result = rt_device_read(server->device, 0, ch, 1);
     if(result <= 0)
     {
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     rt_device_control(server->device, RT_SERIAL_CTRL_RX_TIMEOUT, (void*)RT_WAITING_FOREVER);
 #endif

@@ -460,7 +460,7 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
     result = rt_device_read(client->device, 0, ch, 1);
     if(result <= 0)
     {
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     rt_device_control(client->device, RT_SERIAL_CTRL_RX_TIMEOUT, (void*)RT_WAITING_FOREVER);
 #endif
