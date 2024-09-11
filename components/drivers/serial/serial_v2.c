@@ -450,7 +450,14 @@ static rt_ssize_t _serial_fifo_rx(struct rt_device        *dev,
 
             /* When recv_size is less than size, rx_cpt_index is updated to the size
             * and rt_current_thread is suspend until rx_cpt_index is equal to 0 */
-            rx_fifo->rx_cpt_index = size - recv_size >= rx_bufsz_third ? rx_bufsz_third : size - recv_size;
+            if (size - recv_size >= rx_bufsz_third)
+            {
+                rx_fifo->rx_cpt_index = rx_bufsz_third;
+            }
+            else
+            {
+                rx_fifo->rx_cpt_index = size - recv_size;
+            }
             rt_completion_wait(&rx_fifo->rx_cpt, 0);
             rt_hw_interrupt_enable(level);
 
@@ -529,7 +536,6 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
     tx_fifo->activated = RT_TRUE;
     rt_hw_interrupt_enable(level);
 
-
     /* clear tx_cpt flag */
     rt_completion_wait(&tx_fifo->tx_cpt, 0);
 
@@ -541,9 +547,16 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 
     /* Waiting for the transmission to complete */
     ret = rt_completion_wait(&tx_fifo->tx_cpt, tx_fifo->tx_timeout);
-    if(RT_EOK != ret)
+    if(ret != RT_EOK)
     {
-        return -RT_ETIMEOUT == ret ? -RT_ETIMEOUT : 0;
+        if (ret == -RT_ETIMEOUT)
+        {
+            return ret;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     /* Inactive tx mode flag */
