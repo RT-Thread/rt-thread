@@ -14,8 +14,8 @@
 #include "rtdevice.h"
 #include <rthw.h>
 #include <string.h>
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
 #include "drv_common.h"
 
 #define SDCARD_INSTANCE_TYPE                   sdio_type

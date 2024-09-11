@@ -12,7 +12,7 @@
 #include <rtthread.h>
 #include "application.h"
 #include "board.h"
-#include "serial.h"
+#include "drivers/dev_serial.h"
 #include "finsh.h"
 
 extern "asm" int rtt_heap_start;

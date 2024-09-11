@@ -8,7 +8,7 @@
  * 2022-07-20     Emuzit            first version
  */
 #include <rthw.h>
-#include <drivers/watchdog.h>
+#include "drivers/dev_watchdog.h"
 #include "ch56x_sys.h"
 
 #define WDOG_HICOUNT_MAX    0xfff  // enough to hold (4095 * 120M/524288) >> 8

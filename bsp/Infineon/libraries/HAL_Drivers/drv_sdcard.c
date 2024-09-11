@@ -79,8 +79,8 @@ static const struct _cy_sdio_pin_and_name_config _sdcard_config =
 };
 
 #include <dfs_fs.h>
-#include <drivers/mmcsd_core.h>
-#include <drivers/gpt.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_gpt.h>
 struct rthw_sdio
 {
     struct rt_device parent;

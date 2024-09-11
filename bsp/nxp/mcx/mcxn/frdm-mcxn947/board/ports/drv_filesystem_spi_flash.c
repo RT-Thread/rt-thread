@@ -13,7 +13,7 @@
 
 #if defined(BSP_USING_SPI7) && defined(RT_USING_SFUD) && defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
 #include <dfs_elm.h>
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash_sfud.h"
 #include "dfs_fs.h"
 #include "dfs.h"
 #include "dfs_file.h"
