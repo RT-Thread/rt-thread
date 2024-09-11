@@ -503,6 +503,8 @@ rt_err_t rt_pic_do_traps(void)
     rt_err_t err = -RT_ERROR;
     struct irq_traps *traps;
 
+    rt_interrupt_enter();
+
     rt_list_for_each_entry(traps, &_traps_nodes, list)
     {
         if (traps->handler(traps->data))
@@ -512,6 +514,8 @@ rt_err_t rt_pic_do_traps(void)
             break;
         }
     }
+
+    rt_interrupt_leave();
 
     return err;
 }
