@@ -548,11 +548,17 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
         rt_list_for_each_entry(child, &pirq->children_nodes, list)
         {
-            rt_pic_irq_ack(child->irq);
+            if (child->pic->ops->irq_ack)
+            {
+                child->pic->ops->irq_ack(child);
+            }
 
             err = rt_pic_handle_isr(child);
 
-            rt_pic_irq_eoi(child->irq);
+            if (child->pic->ops->irq_eoi)
+            {
+                child->pic->ops->irq_eoi(child);
+            }
         }
     }
 
