@@ -33,6 +33,7 @@ class CPPCheck:
                     '-I thread/components/finsh',
                     # it's okay because CI will do the real compilation to check this
                     '--suppress=syntaxError',
+                    '--check-level=exhaustive',
                     '--enable=warning',
                     'performance',
                     'portability',
