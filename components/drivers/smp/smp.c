@@ -61,7 +61,7 @@ void rt_smp_call_ipi_handler(int vector, void *param)
  *             else it will call function on specified CPU and return immediately
  * @param cond the condition function pointer,if you set it then it will call function only when cond return true
  */
-void rt_smp_call_func_cond(int cpu_mask, smp_call_func_back func, void *data, rt_uint8_t flag, smp_cond cond)
+void rt_smp_call_func_cond(int cpu_mask, rt_smp_call_func_back func, void *data, rt_uint8_t flag, rt_smp_cond cond)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
     struct rt_smp_event event;
@@ -116,21 +116,21 @@ void rt_smp_call_func_cond(int cpu_mask, smp_call_func_back func, void *data, rt
     }
 }
 
-void rt_smp_call_each_cpu(smp_call_func_back func, void *data, rt_uint8_t flag)
+void rt_smp_call_each_cpu(rt_smp_call_func_back func, void *data, rt_uint8_t flag)
 {
     rt_smp_call_func_cond(RT_ALL_CPU, func, data, flag, RT_NULL);
 }
 
-void rt_smp_call_each_cpu_cond(smp_call_func_back func, void *data, rt_uint8_t flag, smp_cond cond_func)
+void rt_smp_call_each_cpu_cond(rt_smp_call_func_back func, void *data, rt_uint8_t flag, rt_smp_cond cond_func)
 {
     rt_smp_call_func_cond(RT_ALL_CPU, func, data, flag, cond_func);
 }
-void rt_smp_call_any_cpu(int cpu_mask, smp_call_func_back func, void *data, rt_uint8_t flag)
+void rt_smp_call_any_cpu(int cpu_mask, rt_smp_call_func_back func, void *data, rt_uint8_t flag)
 {
     rt_smp_call_func_cond(cpu_mask, func, data, flag, RT_NULL);
 }
 
-void rt_smp_call_any_cpu_cond(int cpu_mask, smp_call_func_back func, void *data, rt_uint8_t flag, smp_cond cond_func)
+void rt_smp_call_any_cpu_cond(int cpu_mask, rt_smp_call_func_back func, void *data, rt_uint8_t flag, rt_smp_cond cond_func)
 {
     rt_smp_call_func_cond(cpu_mask, func, data, flag, cond_func);
 }
