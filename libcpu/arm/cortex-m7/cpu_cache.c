@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -36,7 +36,7 @@ rt_base_t rt_hw_cpu_icache_status(void)
 
 void rt_hw_cpu_icache_ops(int ops, void* addr, int size)
 {
-    rt_uint32_t address = (rt_uint32_t)addr & (rt_uint32_t) ~(L1CACHE_LINESIZE_BYTE - 1);
+    rt_uint32_t address = RT_ALIGN_DOWN((rt_uint32_t)addr, L1CACHE_LINESIZE_BYTE);
     rt_int32_t size_byte = size + address - (rt_uint32_t)addr;
     rt_uint32_t linesize = 32U;
     if (ops & RT_HW_CACHE_INVALIDATE)
@@ -70,7 +70,7 @@ rt_base_t rt_hw_cpu_dcache_status(void)
 
 void rt_hw_cpu_dcache_ops(int ops, void* addr, int size)
 {
-    rt_uint32_t startAddr = (rt_uint32_t)addr & (rt_uint32_t)~(L1CACHE_LINESIZE_BYTE - 1);
+    rt_uint32_t startAddr = RT_ALIGN_DOWN((rt_uint32_t)addr, L1CACHE_LINESIZE_BYTE);
     rt_uint32_t size_byte = size + (rt_uint32_t)addr - startAddr;
     rt_uint32_t clean_invalid = RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE;
 
