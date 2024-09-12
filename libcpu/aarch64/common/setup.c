@@ -306,10 +306,10 @@ void rt_hw_common_setup(void)
     /* Install the IPI handle */
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
     rt_hw_ipi_handler_install(RT_STOP_IPI, rt_scheduler_ipi_handler);
-    rt_hw_ipi_handler_install(RT_IPI_FUNC, rt_smp_call_ipi_handler);
+    rt_hw_ipi_handler_install(RT_FUNC_IPI, rt_smp_call_ipi_handler);
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
     rt_hw_interrupt_umask(RT_STOP_IPI);
-    rt_hw_interrupt_umask(RT_IPI_FUNC);
+    rt_hw_interrupt_umask(RT_FUNC_IPI);
 #endif
 }
 

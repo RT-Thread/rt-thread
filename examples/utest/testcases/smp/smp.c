@@ -26,10 +26,9 @@ void test1()
         cpu_mask = rand() % 0xf;
         if (cpu_mask == 0)
             pass--;
-        rt_call_each_cpu(test_call, &cpu_mask, SMP_CALL_NO_WAIT);
+        rt_call_any_cpu(cpu_mask,test_call, &cpu_mask, SMP_CALL_WAIT_ALL);
         if (i % 20 == 0)
             rt_kprintf("#");
-        rt_thread_mdelay(1);
     }
     rt_kprintf("\n");
     uassert_true(pass_count == pass);
@@ -57,6 +56,8 @@ void test2(void)
 
 static rt_err_t utest_tc_init(void)
 {
+    pass_count = 0;
+    pass       = 1000;
     rt_spin_lock_init(&lock);
     return RT_EOK;
 }

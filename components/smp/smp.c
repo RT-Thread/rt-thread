@@ -107,7 +107,7 @@ void rt_smp_call_func_cond(int cpu_mask, smp_call_func_back func, void *data,rt_
             tmp_id++;
             tmp_mask = tmp_mask >> 1;
         }
-        rt_hw_ipi_send(RT_IPI_FUNC, cpu_mask);
+        rt_hw_ipi_send(RT_FUNC_IPI, cpu_mask);
     }
 
     if(need_wait)
@@ -143,4 +143,3 @@ void smp_init(void)
         rt_spin_lock_init(&global_work[i].lock);
     }
 }
-
