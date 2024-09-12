@@ -111,8 +111,6 @@ struct netdev
 extern struct netdev *netdev_list;
 /* The default network interface device */
 extern struct netdev *netdev_default;
-/* The local virtual network device */
-extern struct netdev *netdev_lo;
 /* The network interface device ping response object */
 struct netdev_ping_resp
 {
