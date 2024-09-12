@@ -26,7 +26,7 @@ void test1()
         cpu_mask = rand() % 0xf;
         if (cpu_mask == 0)
             pass--;
-        rt_call_any_cpu(cpu_mask,test_call, &cpu_mask, SMP_CALL_WAIT_ALL);
+        rt_smp_call_any_cpu(cpu_mask,test_call, &cpu_mask, SMP_CALL_WAIT_ALL);
         if (i % 20 == 0)
             rt_kprintf("#");
     }
@@ -46,11 +46,11 @@ void test_call2(void *data)
 void test2(void)
 {
     int data = 0;
-    rt_call_each_cpu(test_call2, &data, SMP_CALL_WAIT_ALL);
+    rt_smp_call_each_cpu(test_call2, &data, SMP_CALL_WAIT_ALL);
     uassert_true(data == RT_CPUS_NR);
     rt_thread_mdelay(10);
     data = 0;
-    rt_call_each_cpu(test_call2, &data, SMP_CALL_NO_WAIT);
+    rt_smp_call_each_cpu(test_call2, &data, SMP_CALL_NO_WAIT);
     uassert_true(data != RT_CPUS_NR);
 }
 

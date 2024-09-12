@@ -302,7 +302,7 @@ void rt_hw_common_setup(void)
     rt_thread_idle_sethook(rt_hw_idle_wfi);
 
 #ifdef RT_USING_SMP
-    smp_init();
+    rt_smp_init();
     /* Install the IPI handle */
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
     rt_hw_ipi_handler_install(RT_STOP_IPI, rt_scheduler_ipi_handler);
