@@ -75,6 +75,8 @@ class CPPCheck:
             logging.info(result.stdout.decode())
             logging.info(result.stderr.decode())
             if result.stderr:
+                add_summary("The following errors are for reference only. If they are not actual issues, please ignore them and do not make unnecessary modifications.")
+                add_summary("以下错误仅供参考，如果发现没有问题，请直接忽略，不需要强行修改")
                 add_summary(f"- :rotating_light: {result.stderr.decode()}")
                 check_result = False
         return check_result
