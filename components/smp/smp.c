@@ -26,7 +26,7 @@ rt_err_t smp_call_handler(struct smp_event *event)
         break;
     default:
         LOG_E("error event id\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }
