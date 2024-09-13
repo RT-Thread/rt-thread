@@ -2,11 +2,11 @@
 #include "utest.h"
 #include "utest_assert.h"
 #include "smp.h"
-int                pass_count = 0;
-int                pass       = 1000;
-struct rt_spinlock lock;
+static int                pass_count = 0;
+static int                pass       = 1000;
+static struct rt_spinlock lock;
 
-void test_call(void *data)
+static void test_call(void *data)
 {
     rt_spin_lock(&lock);
     int *i   = (int *)data;
@@ -18,7 +18,7 @@ void test_call(void *data)
 }
 
 
-void test1()
+static void test1()
 {
     int cpu_mask = 0xf;
     for (int i = 0; i < 1000; i++)
@@ -34,7 +34,7 @@ void test1()
     uassert_true(pass_count == pass);
 }
 
-void test_call2(void *data)
+static void test_call2(void *data)
 {
     rt_spin_lock(&lock);
     int a = 100000;
@@ -43,7 +43,7 @@ void test_call2(void *data)
     (*i)++;
     rt_spin_unlock(&lock);
 }
-void test2(void)
+static void test2(void)
 {
     int data = 0;
     rt_smp_call_each_cpu(test_call2, &data, SMP_CALL_WAIT_ALL);
