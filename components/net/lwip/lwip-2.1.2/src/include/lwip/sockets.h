@@ -495,6 +495,18 @@ typedef struct fd_set
 /* poll-related defines and types */
 /* @todo: find a better way to guard the definition of these defines and types if already defined */
 #if !defined(POLLIN) && !defined(POLLOUT)
+#ifdef RT_USING_MUSLLIBC
+#define POLLIN     0x001   /**< There is data to read. */
+#define POLLPRI    0x002   /**< There is urgent data to read. */
+#define POLLOUT    0x004   /**< Writing is now possible. */
+#define POLLERR    0x008   /**< Error condition. */
+#define POLLHUP    0x010   /**< Hang up. */
+#define POLLNVAL   0x020   /**< Invalid polling request. */
+#define POLLRDNORM 0x040   /**< Normal data may be read. */
+#define POLLRDBAND 0x080   /**< Priority data may be read. */
+#define POLLWRNORM 0x100   /**< Writing normal data is possible. */
+#define POLLWRBAND 0x200   /**< Writing priority data is possible. */
+#else
 #define POLLIN     0x1
 #define POLLOUT    0x2
 #define POLLERR    0x4
@@ -506,6 +518,7 @@ typedef struct fd_set
 #define POLLWRNORM 0x80
 #define POLLWRBAND 0x100
 #define POLLHUP    0x200
+#endif /* RT_USING_MUSLLIBC */
 typedef unsigned int nfds_t;
 struct pollfd
 {
