@@ -198,6 +198,18 @@ void lwp_cleanup(struct rt_thread *tid);
                 case INTF_SO_NO_CHECK:
                     *optname = IMPL_SO_NO_CHECK;
                     break;
+                case INTF_SO_BINDTODEVICE:
+                    *optname = IMPL_SO_BINDTODEVICE;
+                    break;
+                case INTF_SO_TIMESTAMPNS:
+                    *optname = IMPL_SO_TIMESTAMPNS;
+                    break;
+                case INTF_SO_TIMESTAMPING:
+                    *optname = IMPL_SO_TIMESTAMPING;
+                    break;
+                case INTF_SO_SELECT_ERR_QUEUE:
+                    *optname = IMPL_SO_SELECT_ERR_QUEUE;
+                    break;
 
                 /*
                 * SO_DONTLINGER (*level = ((int)(~SO_LINGER))),
@@ -3126,6 +3138,11 @@ static int netflags_muslc_2_lwip(int flags)
     {
         flgs |= MSG_MORE;
     }
+    if (flags & MSG_ERRQUEUE)
+    {
+        flgs |= MSG_ERRQUEUE;
+    }
+
     return flgs;
 }
 
