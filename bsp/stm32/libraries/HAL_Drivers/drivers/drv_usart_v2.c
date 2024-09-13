@@ -446,7 +446,7 @@ static void uart_isr(struct rt_serial_device *serial)
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        rt_ringbuffer_putchar(&(rx_fifo->rb), UART_GET_RDR(&uart->handle, stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity)));
+        rt_ringbuffer_putchar_force(&rx_fifo->rb, UART_GET_RDR(&uart->handle, stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity)));
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
@@ -459,7 +459,7 @@ static void uart_isr(struct rt_serial_device *serial)
         RT_ASSERT(tx_fifo != RT_NULL);
 
         rt_uint8_t put_char = 0;
-        if (rt_ringbuffer_getchar(&(tx_fifo->rb), &put_char))
+        if (rt_ringbuffer_getchar(&tx_fifo->rb, &put_char))
         {
             UART_SET_TDR(&uart->handle, put_char);
         }
