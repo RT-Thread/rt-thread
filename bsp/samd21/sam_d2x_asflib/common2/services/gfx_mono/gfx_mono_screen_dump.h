@@ -46,7 +46,7 @@
 #ifndef GFX_MONO_SCREEN_DUMP_H_INCLUDED
 #define GFX_MONO_SCREEN_DUMP_H_INCLUDED
 
-#include <serial.h>
+#include <drivers/dev_serial.h>
 #include <gfx_mono.h>
 
 #ifdef __cplusplus

@@ -8,7 +8,7 @@
  * 2022-07-30     Emuzit            first version
  */
 #include <rthw.h>
-#include <drivers/spi.h>
+#include "drivers/dev_spi.h"
 #include <drivers/dev_pin.h>
 #include "ch56x_spi.h"
 #include "ch56x_sys.h"

@@ -14,7 +14,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-//#include <drivers/spi.h>
+//#include "drivers/dev_spi.h"
 #include "board.h"
 
 #define SPI0_BASE_ADDR     (PER_BASE + BCM283X_SPI0_BASE)

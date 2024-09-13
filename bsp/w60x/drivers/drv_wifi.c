@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include <wlan_dev.h>
+#include <dev_wlan.h>
 #include "wm_type_def.h"
 #include "wm_wifi.h"
 #include "drv_wifi.h"
