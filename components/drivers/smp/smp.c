@@ -14,9 +14,10 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-struct rt_smp_call rt_smp_work[RT_CPUS_NR];
-rt_atomic_t        rt_smp_wait;
-rt_err_t           smp_call_handler(struct rt_smp_event *event)
+static struct rt_smp_call rt_smp_work[RT_CPUS_NR];
+static rt_atomic_t        rt_smp_wait;
+
+static rt_err_t smp_call_handler(struct rt_smp_event *event)
 {
     switch (event->event_id)
     {
