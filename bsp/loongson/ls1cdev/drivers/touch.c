@@ -11,7 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <stdbool.h>
-#include <drivers/spi.h>
+#include "drivers/dev_spi.h"
 #include "ls1c.h"
 #include "ls1c_gpio.h"
 #include "ls1c_spi.h"

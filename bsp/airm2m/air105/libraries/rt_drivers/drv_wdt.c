@@ -9,7 +9,7 @@
  */
 
 #include "board.h"
-#include <drivers/watchdog.h>
+#include "drivers/dev_watchdog.h"
 
 #ifdef RT_USING_WDT
 

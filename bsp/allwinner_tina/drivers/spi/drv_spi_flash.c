@@ -28,8 +28,8 @@
 #endif
 
 #if defined(TINA_USING_SPI_FLASH) && defined(RT_USING_SFUD)
-#include "spi_flash.h"
-#include <spi_flash_sfud.h>
+#include "dev_spi_flash.h"
+#include <dev_spi_flash_sfud.h>
 rt_spi_flash_device_t spi_device;
 int rt_hw_spi_flash_with_sfud_init(void)
 {
