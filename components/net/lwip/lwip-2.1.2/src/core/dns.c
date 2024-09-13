@@ -99,6 +99,10 @@
 
 #include <rtthread.h>
 
+#ifdef RT_USING_NETDEV
+#include "netdev.h"
+#endif
+
 /** Random generator function to create random TXIDs and source ports for queries */
 #ifndef DNS_RAND_TXID
 #if ((LWIP_DNS_SECURE & LWIP_DNS_SECURE_RAND_XID) != 0)
@@ -300,7 +304,9 @@ static u8_t                   dns_last_pcb_idx;
 static u8_t                   dns_seqno;
 static struct dns_table_entry dns_table[DNS_TABLE_SIZE];
 static struct dns_req_entry   dns_requests[DNS_MAX_REQUESTS];
+#ifndef RT_USING_NETDEV
 static ip_addr_t              dns_servers[DNS_MAX_SERVERS];
+#endif
 
 #if LWIP_IPV4
 const ip_addr_t dns_mquery_v4group = DNS_MQUERY_IPV4_GROUP_INIT;
@@ -364,21 +370,25 @@ dns_setserver(u8_t numdns, const ip_addr_t *dnsserver)
 {
   if (numdns < DNS_MAX_SERVERS) {
     if (dnsserver != NULL) {
-      dns_servers[numdns] = (*dnsserver);
-
 #ifdef RT_USING_NETDEV
-      extern struct netif *netif_list;
-      extern struct netdev *netdev_get_by_name(const char *name);
-      extern void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
       struct netif *netif = NULL;
 
       /* set network interface device DNS server address */
       for (netif = netif_list; netif != NULL; netif = netif->next) {
-          netdev_low_level_set_dns_server(netdev_get_by_name(netif->name), numdns, dnsserver);
+          netdev_set_dns_server(netdev_get_by_name(netif->name), numdns, dnsserver);
       }
+#else
+      dns_servers[numdns] = (*dnsserver);
 #endif /* RT_USING_NETDEV */
     } else {
+#ifdef RT_USING_NETDEV
+      struct netif *netif = NULL;
+      for (netif = netif_list; netif != NULL; netif = netif->next) {
+          netdev_set_dns_server(netdev_get_by_name(netif->name), numdns, IP_ADDR_ANY);
+      }
+#else
       dns_servers[numdns] = *IP_ADDR_ANY;
+#endif
     }
   }
 }
@@ -395,7 +405,11 @@ const ip_addr_t *
 dns_getserver(u8_t numdns)
 {
   if (numdns < DNS_MAX_SERVERS) {
+#ifdef RT_USING_NETDEV
+    return &netdev_default->dns_servers[numdns];
+#else
     return &dns_servers[numdns];
+#endif
   } else {
     return IP_ADDR_ANY;
   }
@@ -770,11 +784,19 @@ dns_send(u8_t idx)
   u8_t n;
   u8_t pcb_idx;
   struct dns_table_entry *entry = &dns_table[idx];
+  const ip_addr_t *dns_addr;
 
   LWIP_DEBUGF(DNS_DEBUG, ("dns_send: dns_servers[%"U16_F"] \"%s\": request\n",
                           (u16_t)(entry->server_idx), entry->name));
   LWIP_ASSERT("dns server out of array", entry->server_idx < DNS_MAX_SERVERS);
-  if (ip_addr_isany_val(dns_servers[entry->server_idx])
+
+#ifdef RT_USING_NETDEV
+  dns_addr = &netdev_default->dns_servers[entry->server_idx];
+#else
+  dns_addr = &dns_servers[entry->server_idx];
+#endif
+
+  if (ip_addr_isany(dns_addr)
 #if LWIP_DNS_SUPPORT_MDNS_QUERIES
       && !entry->is_mdns
 #endif
@@ -859,7 +881,11 @@ dns_send(u8_t idx)
 #endif /* LWIP_DNS_SUPPORT_MDNS_QUERIES */
     {
       dst_port = DNS_SERVER_PORT;
-      dst = &dns_servers[entry->server_idx];
+      dst = dns_addr;
+#ifdef RT_USING_NETDEV
+      /* set netif index for this pcb, specify the network interface corresponding to the DNS server */
+      dns_pcbs[pcb_idx]->netif_idx = netif_get_index((struct netif *)netdev_default->user_data);
+#endif
     }
     err = udp_sendto(dns_pcbs[pcb_idx], p, dst, dst_port);
 
@@ -1040,8 +1066,15 @@ dns_backupserver_available(struct dns_table_entry *pentry)
   u8_t ret = 0;
 
   if (pentry) {
-    if ((pentry->server_idx + 1 < DNS_MAX_SERVERS) && !ip_addr_isany_val(dns_servers[pentry->server_idx + 1])) {
-      ret = 1;
+    if ((pentry->server_idx + 1 < DNS_MAX_SERVERS)) {
+#ifdef RT_USING_NETDEV
+      const ip_addr_t *dns_addr = &netdev_default->dns_servers[pentry->server_idx + 1];
+#else
+      const ip_addr_t *dns_addr = &dns_servers[pentry->server_idx + 1];
+#endif
+      if (!ip_addr_isany(dns_addr)) {
+        ret = 1;
+      }
     }
   }
 
@@ -1230,9 +1263,14 @@ dns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, 
         if (!entry->is_mdns)
 #endif /* LWIP_DNS_SUPPORT_MDNS_QUERIES */
         {
+#ifdef RT_USING_NETDEV
+          const ip_addr_t *dns_addr = &netdev_default->dns_servers[entry->server_idx];
+#else
+          const ip_addr_t *dns_addr = &dns_servers[entry->server_idx];
+#endif
           /* Check whether response comes from the same network address to which the
              question was sent. (RFC 5452) */
-          if (!ip_addr_cmp(addr, &dns_servers[entry->server_idx])) {
+          if (!ip_addr_cmp(addr, dns_addr)) {
             goto ignore_packet; /* ignore this packet */
           }
         }
@@ -1631,8 +1669,13 @@ dns_gethostbyname_addrtype(const char *hostname, ip_addr_t *addr, dns_found_call
   if (!is_mdns)
 #endif /* LWIP_DNS_SUPPORT_MDNS_QUERIES */
   {
+#ifdef RT_USING_NETDEV
+    const ip_addr_t *dns_addr = &netdev_default->dns_servers[0];
+#else
+    const ip_addr_t *dns_addr = &dns_servers[0];
+#endif
     /* prevent calling found callback if no server is set, return error instead */
-    if (ip_addr_isany_val(dns_servers[0])) {
+    if (ip_addr_isany(dns_addr)) {
       return ERR_VAL;
     }
   }
