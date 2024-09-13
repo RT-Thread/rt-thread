@@ -35,7 +35,7 @@ void rt_smp_call_ipi_handler(int vector, void *param)
     int err;
     int cur_cpu = rt_hw_cpu_id();
     rt_spin_lock(&rt_smp_work[cur_cpu].lock);
-    
+
     if (rt_smp_work[cur_cpu].event.event_id)
     {
         err = smp_call_handler(&rt_smp_work[cur_cpu].event);
