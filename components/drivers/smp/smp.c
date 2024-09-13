@@ -71,6 +71,7 @@ void rt_smp_call_func_cond(int cpu_mask, rt_smp_call_func_back func, void *data,
     int                 cpuid   = 1 << cur_cpu;
     int                 tmp_id = 0, cpu_nr = 0;
     int                 tmp_mask;
+    int                 irq_flag;
 
     if (flag == SMP_CALL_WAIT_ALL)
     {
@@ -101,9 +102,9 @@ void rt_smp_call_func_cond(int cpu_mask, rt_smp_call_func_back func, void *data,
                 event.func     = func;
                 event.data     = data;
                 event.cpu_mask = cpu_mask;
-                rt_spin_lock(&rt_smp_work[tmp_id].lock);
+                irq_flag       = rt_spin_lock_irqsave(&rt_smp_work[tmp_id].lock);
                 rt_smp_work[tmp_id].event = event;
-                rt_spin_unlock(&rt_smp_work[tmp_id].lock);
+                rt_spin_unlock_irqrestore(&rt_smp_work[tmp_id].lock,irq_flag);
             }
             tmp_id++;
             tmp_mask = tmp_mask >> 1;
