@@ -79,7 +79,11 @@ START_POINT(vector_exception)
     bl      rt_hw_trap_exception
     RESTORE_USER_CTX EFRAMEX, x0
 
+    /* do exception switch for IRQ/exception handlers */
+    EXCEPTION_SWITCH sp, x0
+
     RESTORE_IRQ_CONTEXT
+    eret
 START_POINT_END(vector_exception)
 
 START_POINT(vector_serror)
@@ -123,4 +127,8 @@ START_POINT_END(vector_irq)
 rt_hw_irq_exit:
     .globl rt_hw_irq_exit
 
+    /* do exception switch for IRQ/exception handlers */
+    EXCEPTION_SWITCH sp, x0
+
     RESTORE_IRQ_CONTEXT
+    eret
