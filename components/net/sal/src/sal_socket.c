@@ -444,11 +444,6 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     struct netdev *netdev = RT_NULL;
     rt_bool_t flag = RT_FALSE;
 
-    if (family == AF_UNIX)
-    {
-        netdv_def = netdev_lo;
-    }
-
     if (family < 0 || family > AF_MAX)
     {
         return -1;
