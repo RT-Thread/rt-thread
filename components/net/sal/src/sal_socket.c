@@ -1166,12 +1166,9 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, ioctlsocket);
-
     struct sal_ifreq *ifr = (struct sal_ifreq *)arg;
 
-    if((sock->domain == AF_INET)&&(sock->netdev)&&(ifr != RT_NULL))
+    if (ifr != RT_NULL)
     {
         switch (cmd)
         {
@@ -1473,6 +1470,10 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             break;
         }
     }
+
+    /* check the network interface socket opreation */
+    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, ioctlsocket);
+
     return pf->skt_ops->ioctlsocket((int)(size_t)sock->user_data, cmd, arg);
 }
 
