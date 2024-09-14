@@ -394,6 +394,44 @@ int netdev_family_get(struct netdev *netdev)
 
 #endif /* RT_USING_SAL */
 
+#if defined(SAL_USING_AF_NETLINK)
+int netdev_getnetdev(struct msg_buf *msg, int (*cb)(struct msg_buf *m_buf, struct netdev *nd, int nd_num, int index, int ipvx))
+{
+    struct netdev *cur_nd_list = netdev_list;
+    struct netdev *nd_node;
+    int nd_num = 0;
+    int err = 0;
+
+    if (cur_nd_list == RT_NULL)
+        return 0;
+
+    rt_spin_lock(&_spinlock);
+    nd_num = rt_slist_len(&cur_nd_list->list) + 1;
+    rt_spin_unlock(&_spinlock);
+
+    err = cb(msg, cur_nd_list, nd_num, nd.ifindex, ROUTE_IPV4_TRUE);
+    if (err < 0)
+        return err;
+
+
+    rt_spin_lock(&_spinlock);
+    rt_slist_for_each_entry(nd_node, &(cur_nd_list->list), list)
+    {
+        rt_spin_unlock(&_spinlock);
+        err = cb(msg, nd_node, nd_num, nd.ifindex, ROUTE_IPV4_TRUE);
+        if (err < 0)
+        {
+            return err;
+        }
+
+        rt_spin_lock(&_spinlock);
+    }
+    rt_spin_unlock(&_spinlock);
+
+    return 0;
+}
+#endif
+
 /**
  * This function will set default network interface device.
  *
