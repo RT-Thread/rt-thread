@@ -210,10 +210,6 @@ if RT_USING_LWIP
         int "Enable netif link status callback"
         default 1
 
-    config RT_LWIP_NETIF_NAMESIZE
-        int "netif name length"
-        default 6
-
     config SO_REUSE
         int "Enable SO_REUSEADDR option"
         default 1
