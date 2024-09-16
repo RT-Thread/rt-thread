@@ -54,6 +54,12 @@
 
 #define rt_offsetof(s, field)   ((rt_size_t)&((s *)0)->field)
 
+#define rt_err_ptr(err)         ((void *)(rt_base_t)(err))
+#define rt_ptr_err(ptr)         ((rt_err_t)(rt_base_t)(ptr))
+#define rt_is_err_value(ptr)    ((rt_ubase_t)(void *)(ptr) >= (rt_ubase_t)-4095)
+#define rt_is_err(ptr)          rt_is_err_value(ptr)
+#define rt_is_err_or_null(ptr)  (!(ptr) || rt_is_err_value((rt_ubase_t)(ptr)))
+
 #define rt_upper_32_bits(n)     ((rt_uint32_t)(((n) >> 16) >> 16))
 #define rt_lower_32_bits(n)     ((rt_uint32_t)((n) & 0xffffffff))
 #define rt_upper_16_bits(n)     ((rt_uint16_t)((n) >> 16))

@@ -256,7 +256,7 @@ Enomem:
     goto Done;
 }
 
-ssize_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence)
+off_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence)
 {
     struct dfs_seq_file *seq = file->data;
     off_t retval = -EINVAL;

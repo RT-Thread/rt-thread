@@ -12,7 +12,7 @@
 
 #ifdef BSP_USING_SOFT_SPI
 #include <rtdevice.h>
-#include <spi-bit-ops.h>
+#include <dev_spi_bit_ops.h>
 
 /* pico soft spi config */
 struct pico_soft_spi_config

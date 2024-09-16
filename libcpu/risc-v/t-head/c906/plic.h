@@ -12,7 +12,7 @@
 #ifndef __RISCV64_PLIC_H__
 #define __RISCV64_PLIC_H__
 
-#include <rt_interrupt.h>
+#include <interrupt.h>
 
 #ifndef C906_PLIC_PHY_ADDR
 #define C906_PLIC_PHY_ADDR              (0x10000000)
