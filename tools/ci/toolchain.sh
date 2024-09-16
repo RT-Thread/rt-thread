@@ -85,8 +85,3 @@ if [[ $# -eq 1 ]]; then
 else
 	show_help  
 fi
-
-
-
-
-
