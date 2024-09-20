@@ -14,7 +14,7 @@
 /**
  * @brief binary opcode pseudo operations
  * Used to bypass toolchain restriction on extension ISA
- * 
+ *
  * WARNING: Xuantie ISAs are not compatible to each other in opcode.
  * It's painful to port this file, and should be really careful.
  */
@@ -23,9 +23,9 @@
  * @brief RISC-V instruction formats
  */
 
-/** 
+/**
  * R type: .insn r opcode6, func3, func7, rd, rs1, rs2
- * 
+ *
  * +-------+-----+-----+-------+----+---------+
  * | func7 | rs2 | rs1 | func3 | rd | opcode6 |
  * +-------+-----+-----+-------+----+---------+
