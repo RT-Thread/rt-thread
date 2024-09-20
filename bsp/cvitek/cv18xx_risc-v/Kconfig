@@ -58,27 +58,27 @@ config SOC_TYPE_SG2002
 
 choice
     prompt "Board Type"
-    default BOARD_TYPE_MILKV_DUO256M
+    default BOARD_TYPE_MILKV_DUO256M_SD
 
-    config BOARD_TYPE_MILKV_DUO
+    config BOARD_TYPE_MILKV_DUO_SD
         select SOC_TYPE_CV180X
-        bool "milkv-duo"
+        bool "milkv-duo-sd"
 
     config BOARD_TYPE_MILKV_DUO_SPINOR
         select SOC_TYPE_CV180X
         bool "milkv-duo-spinor"
 
-    config BOARD_TYPE_MILKV_DUO256M
+    config BOARD_TYPE_MILKV_DUO256M_SD
         select SOC_TYPE_SG2002
-        bool "milkv-duo256m"
+        bool "milkv-duo256m-sd"
 
     config BOARD_TYPE_MILKV_DUO256M_SPINOR
         select SOC_TYPE_SG2002
         bool "milkv-duo256m-spinor"
 
-    config BOARD_TYPE_MILKV_DUOS
+    config BOARD_TYPE_MILKV_DUOS_SD
         select SOC_TYPE_SG2000
-        bool "milkv-duos"
+        bool "milkv-duos-sd"
 
 endchoice
 

@@ -1,0 +1,8 @@
+<physical_partition type="spinand">
+    <partition label="fip" size_in_kb="2560" file="fip.bin"/>
+    <partition label="BOOT" size_in_kb="6144" file="boot.spinand"/>
+    <partition label="ENV" size_in_kb="128" file="" />
+    <partition label="ENV_BAK" size_in_kb="128" file="" />
+    <partition label="ROOTFS" size_in_kb="40960" file="rootfs.spinand" />
+    <partition label="SYSTEM" size_in_kb="81152" file="system.spinand" mountpoint="/mnt/system" type="ubifs" />
+</physical_partition>

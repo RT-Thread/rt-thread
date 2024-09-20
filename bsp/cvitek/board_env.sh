@@ -1,44 +1,28 @@
 #!/bin/bash
 
-function get_board_type()
+function check_board()
 {
-	BOARD_CONFIG=("CONFIG_BOARD_TYPE_MILKV_DUO" "CONFIG_BOARD_TYPE_MILKV_DUO_SPINOR" "CONFIG_BOARD_TYPE_MILKV_DUO_SPINAND" "CONFIG_BOARD_TYPE_MILKV_DUO256M" "CONFIG_BOARD_TYPE_MILKV_DUO256M_SPINOR" "CONFIG_BOARD_TYPE_MILKV_DUO256M_SPINAND" "CONFIG_BOARD_TYPE_MILKV_DUOS")
-	BOARD_VALUE=("milkv-duo" "milkv-duo-spinor" "milkv-duo-spinand" "milkv-duo256m" "milkv-duo256m-spinor" "milkv-duo256m-spinand" "milkv-duos-sd")
-	STORAGE_VAUE=("sd" "spinor" "spinand" "sd" "spinor" "spinand" "sd")
+	local config_file=$1/.config
 
-	for ((i=0;i<${#BOARD_CONFIG[@]};i++))
-	do
-		config_value=$(grep -w "${BOARD_CONFIG[i]}" ${PROJECT_PATH}/.config | cut -d= -f2)
-		if [ "$config_value" == "y" ]; then
-			BOARD_TYPE=${BOARD_VALUE[i]}
-			STORAGE_TYPE=${STORAGE_VAUE[i]}
-			break
-		fi
-	done
-    export BOARD_TYPE=${BOARD_TYPE}
-    export STORAGE_TYPE=${STORAGE_TYPE}
-}
+	board_type=$(grep -E '^CONFIG_BOARD_TYPE_.*=y' "$config_file" | sed 's/CONFIG_BOARD_TYPE_//;s/=y$//')
 
-function check_bootloader()
-{
-	restult=$(curl -m 10 -s http://www.ip-api.com/json)
-	COUNTRY=$(echo $restult | sed 's/.*"country":"\([^"]*\)".*/\1/')
-	echo "Country: $COUNTRY"
-
-	if [ "$COUNTRY" == "China" ]; then
-		BOOTLOADER_URL=https://gitee.com/flyingcys/cvitek_bootloader
-	else
-		BOOTLOADER_URL=https://github.com/flyingcys/cvitek_bootloader
+	if [ -z "$board_type" ]; then
+		echo "No board type found in the config file."
+		return 1
 	fi
 
-	if [ ! -d cvitek_bootloader ]; then
-	echo "cvitek_bootloader not exist, clone it from ${BOOTLOADER_URL}"
-	git clone ${BOOTLOADER_URL}
+	BOARD_TYPE=$(echo "$board_type" | tr '[:upper:]' '[:lower:]')
+	STORAGE_TYPE="${BOARD_TYPE##*_}"
 
-	if [ $? -ne 0 ]; then
-    	echo "Failed to clone ${BOOTLOADER_URL} !"
-      	exit 1
-    fi
-fi
+	soc_type=$(grep -E '^CONFIG_SOC_TYPE_.*=y' "$config_file" | sed 's/CONFIG_SOC_TYPE_//;s/=y$//')
+	if [ -z "$soc_type" ]; then
+		echo "No soc type found in the config file."
+		return 1
+	fi
+
+	SOC_TYPE=$(echo "$soc_type" | tr '[:upper:]' '[:lower:]')
+
+	export BOARD_TYPE STORAGE_TYPE SOC_TYPE
+	
+	return 0
 }
-

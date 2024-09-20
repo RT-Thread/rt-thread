@@ -60,6 +60,7 @@
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
+#define ARCH_USING_NEW_CTX_SWITCH
 
 /* RT-Thread Components */
 
@@ -335,6 +336,6 @@
 #define BSP_GPIO_IRQ_BASE 41
 #define BSP_SYS_GPIO_IRQ_BASE 47
 #define SOC_TYPE_SG2002
-#define BOARD_TYPE_MILKV_DUO256M
+#define BOARD_TYPE_MILKV_DUO256M_SD
 
 #endif

@@ -68,6 +68,7 @@
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
+#define ARCH_USING_NEW_CTX_SWITCH
 #define ARCH_USING_RISCV_COMMON64
 
 /* RT-Thread Components */
@@ -357,6 +358,10 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
+
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
@@ -455,7 +460,7 @@
 #define BSP_SYS_GPIO_IRQ_BASE 70
 #define __STACKSIZE__ 8192
 #define SOC_TYPE_SG2002
-#define BOARD_TYPE_MILKV_DUO256M
+#define BOARD_TYPE_MILKV_DUO256M_SD
 #define BSP_ROOTFS_TYPE_ROMFS
 
 #endif

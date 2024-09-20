@@ -136,7 +136,7 @@ static struct cvi_pwm_dev cvi_pwm[] =
 };
 
 
-#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO_SD) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
 
 #ifdef BSP_USING_PWM0
 static const char *pinname_whitelist_pwm0[] = {
@@ -208,7 +208,7 @@ static const char *pinname_whitelist_pwm15[] = {
 };
 #endif
 
-#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#elif defined(BOARD_TYPE_MILKV_DUO256M_SD) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
 
 #ifdef BSP_USING_PWM0
 static const char *pinname_whitelist_pwm0[] = {
