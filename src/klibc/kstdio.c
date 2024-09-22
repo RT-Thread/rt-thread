@@ -287,7 +287,7 @@ static char *print_number(char *buf,
     return buf;
 }
 
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
+#if defined(__GNUC__) && (__GNUC__ >= 7) && !defined(__ARMCC_VERSION) /* GCC */
 #pragma GCC diagnostic push
 /* ignore warning: this statement may fall through */
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
