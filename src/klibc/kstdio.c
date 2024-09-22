@@ -287,11 +287,12 @@ static char *print_number(char *buf,
     return buf;
 }
 
-#if defined(__GNUC__) && (__GNUC__ >= 7) && !defined(__ARMCC_VERSION) /* GCC */
+#if (defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */) && (__GNUC__ >= 7)
+/* Disable "-Wimplicit-fallthrough" below GNUC V7 */
 #pragma GCC diagnostic push
 /* ignore warning: this statement may fall through */
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#endif /* defined(__GNUC__) && !defined(__ARMCC_VERSION) */
+#endif /* (defined(__GNUC__) && !defined(__ARMCC_VERSION)) && (__GNUC__ >= 7 */
 /**
  * @brief  This function will fill a formatted string to buffer.
  *
@@ -617,9 +618,9 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
     return str - buf;
 }
 RTM_EXPORT(rt_vsnprintf);
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
+#if (defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */) && (__GNUC__ >= 7)
 #pragma GCC diagnostic pop /* ignored "-Wimplicit-fallthrough" */
-#endif /* defined(__GNUC__) && !defined(__ARMCC_VERSION) */
+#endif /* (defined(__GNUC__) && !defined(__ARMCC_VERSION)) && (__GNUC__ >= 7 */
 
 /**
  * @brief  This function will fill a formatted string to buffer.
