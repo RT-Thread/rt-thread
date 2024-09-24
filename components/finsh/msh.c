@@ -755,10 +755,10 @@ void msh_auto_complete_path(char *path)
                     }
                     else if (S_ISLNK(buffer.st_mode))
                     {
-                        DIR *dir = opendir(path);
-                        if (dir)
+                        DIR *link_dir = opendir(path);
+                        if (link_dir)
                         {
-                            closedir(dir);
+                            closedir(link_dir);
                             strcat(path, "/");
                         }
                     }
