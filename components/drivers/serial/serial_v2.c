@@ -1330,30 +1330,84 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         break;
 
     /* Call before rt_device_read */
-    case RT_SERIAL_CTRL_RX_TIMEOUT:
+    case RT_SERIAL_CTRL_SET_RX_TIMEOUT:
         if (args == RT_NULL)
         {
             ret = -RT_EINVAL;
         }
         else
         {
+            if (serial->config.rx_bufsz == 0)
+            {
+                ret = -RT_EPERM;
+            }
+
             struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
             rx_fifo                           = (struct rt_serial_rx_fifo *)serial->serial_rx;
-            rx_fifo->rx_timeout               = (rt_int32_t)args;
+            RT_ASSERT(rx_fifo != RT_NULL);
+
+            rx_fifo->rx_timeout = (rt_int32_t)args;
         }
         break;
 
     /* Call before rt_device_write */
-    case RT_SERIAL_CTRL_TX_TIMEOUT:
+    case RT_SERIAL_CTRL_SET_TX_TIMEOUT:
         if (args == RT_NULL)
         {
             ret = -RT_EINVAL;
         }
         else
         {
+            if (serial->config.tx_bufsz == 0)
+            {
+                ret = -RT_EPERM;
+            }
+
             struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
             tx_fifo                           = (struct rt_serial_tx_fifo *)serial->serial_tx;
-            tx_fifo->tx_timeout               = (rt_int32_t)args;
+            RT_ASSERT(tx_fifo != RT_NULL);
+
+            tx_fifo->tx_timeout = (rt_int32_t)args;
+        }
+        break;
+
+    case RT_SERIAL_CTRL_GET_RX_TIMEOUT:
+        if (args == RT_NULL)
+        {
+            ret = -RT_EINVAL;
+        }
+        else
+        {
+            if (serial->config.rx_bufsz == 0)
+            {
+                ret = -RT_EPERM;
+            }
+
+            struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
+            rx_fifo                           = (struct rt_serial_rx_fifo *)serial->serial_rx;
+            RT_ASSERT(rx_fifo != RT_NULL);
+
+            *(rt_int32_t *)args = rx_fifo->rx_timeout;
+        }
+        break;
+
+    case RT_SERIAL_CTRL_GET_TX_TIMEOUT:
+        if (args == RT_NULL)
+        {
+            ret = -RT_EINVAL;
+        }
+        else
+        {
+            if (serial->config.tx_bufsz == 0)
+            {
+                ret = -RT_EPERM;
+            }
+
+            struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
+            tx_fifo                           = (struct rt_serial_tx_fifo *)serial->serial_tx;
+            RT_ASSERT(tx_fifo != RT_NULL);
+
+            *(rt_int32_t *)args = tx_fifo->tx_timeout;
         }
         break;
 

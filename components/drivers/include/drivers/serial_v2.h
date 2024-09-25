@@ -71,11 +71,13 @@
 #define RT_SERIAL_EVENT_RX_DMADONE      0x03    /* Rx DMA transfer done */
 #define RT_SERIAL_EVENT_TX_DMADONE      0x04    /* Tx DMA transfer done */
 
-#define RT_SERIAL_CTRL_RX_TIMEOUT               (RT_DEVICE_CTRL_MASK + 0x01)    /* Rx timeout. Call before rt_device_read. not supported in poll mode */
-#define RT_SERIAL_CTRL_TX_TIMEOUT               (RT_DEVICE_CTRL_MASK + 0x02)    /* Tx timeout. Call before rt_device_write. not supported in poll mode */
-#define RT_SERIAL_CTRL_RX_FLUSH                 (RT_DEVICE_CTRL_MASK + 0x03)    /* Clear rx buffer. Discard all data */
-#define RT_SERIAL_CTRL_TX_FLUSH                 (RT_DEVICE_CTRL_MASK + 0x04)    /* Clear tx buffer. Blocking and wait for the send buffer data to be sent. not supported in poll mode */
-#define RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT   (RT_DEVICE_CTRL_MASK + 0x05)    /* get unread bytes count. not supported in poll mode */
+#define RT_SERIAL_CTRL_SET_RX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x01)    /* set Rx timeout. Call before rt_device_read. not supported in poll mode */
+#define RT_SERIAL_CTRL_SET_TX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x02)    /* set Tx timeout. Call before rt_device_write. not supported in poll mode */
+#define RT_SERIAL_CTRL_GET_RX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x03)    /* get Rx timeout. not supported in poll mode */
+#define RT_SERIAL_CTRL_GET_TX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x04)    /* get Tx timeout. not supported in poll mode */
+#define RT_SERIAL_CTRL_RX_FLUSH                 (RT_DEVICE_CTRL_MASK + 0x05)    /* Clear rx buffer. Discard all data */
+#define RT_SERIAL_CTRL_TX_FLUSH                 (RT_DEVICE_CTRL_MASK + 0x06)    /* Clear tx buffer. Blocking and wait for the send buffer data to be sent. not supported in poll mode */
+#define RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT   (RT_DEVICE_CTRL_MASK + 0x07)    /* get unread bytes count. not supported in poll mode */
 
 #define RT_SERIAL_ERR_OVERRUN           0x01
 #define RT_SERIAL_ERR_FRAMING           0x02
