@@ -57,14 +57,14 @@ void _thread_start(void);
 rt_inline struct rt_thread *rt_hw_thread_self(void)
 {
     struct rt_thread *thread;
-    __asm__ volatile ("mrs %0, tpidr_el1":"=r"(thread));
+    __asm__ volatile ("mrs %0, " RT_STRINGIFY(ARM64_THREAD_REG) :"=r"(thread));
 
     return thread;
 }
 
 rt_inline void rt_hw_thread_set_self(struct rt_thread *thread)
 {
-    __asm__ volatile ("msr tpidr_el1, %0"::"r"(thread));
+    __asm__ volatile ("msr " RT_STRINGIFY(ARM64_THREAD_REG) ", %0"::"r"(thread));
 }
 
 #endif /* ARCH_USING_HW_THREAD_SELF */
