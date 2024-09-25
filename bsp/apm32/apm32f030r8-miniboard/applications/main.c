@@ -21,7 +21,7 @@ int main(void)
     /* set LED2 pin mode to output */
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
 
-    while (count++)
+    while (count++< 10)
     {
         rt_pin_write(LED2_PIN, PIN_HIGH);
         rt_thread_mdelay(500);
