@@ -80,7 +80,9 @@ struct rt_adc_ops
     rt_uint8_t (*get_resolution)(struct rt_adc_device *device);
     rt_int16_t (*get_vref) (struct rt_adc_device *device);
 };
-
+/**
+ * @brief adc device
+ */
 struct rt_adc_device
 {
     struct rt_device parent;
