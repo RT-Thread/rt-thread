@@ -2,6 +2,7 @@
 build/
 packages/
 install/
+opensbi/
 
 rtthread.*
 
