@@ -68,6 +68,8 @@
 #include "rtsched.h"
 #include "rttypes.h"
 
+#include "klibc/kerrno.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
