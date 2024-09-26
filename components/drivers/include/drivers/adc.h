@@ -145,4 +145,6 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel);
  */
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel);
 
+/*! @}*/
+
 #endif /* __ADC_H__ */
