@@ -1,5 +1,4 @@
 import os
-from SCons.Script import ARGUMENTS
 
 # toolchains options
 ARCH        ='risc-v'
@@ -52,9 +51,4 @@ if PLATFORM == 'gcc':
 
     CXXFLAGS = CFLAGS
 
-all = ARGUMENTS.get('all', 0)
-
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-
-if all:
-    POST_ACTION += fr'bash mkfm.sh {EXEC_PATH}/{PREFIX} \n'
