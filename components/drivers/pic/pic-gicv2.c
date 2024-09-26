@@ -128,6 +128,8 @@ static void gicv2_cpu_init(struct gicv2 *gic)
 
 #ifdef ARCH_SUPPORT_HYP
     _gicv2_eoi_mode_ns = RT_TRUE;
+#else
+    _gicv2_eoi_mode_ns = !!rt_ofw_bootargs_select("pic.gicv2_eoimode", 0);
 #endif
 
     if (_gicv2_eoi_mode_ns)

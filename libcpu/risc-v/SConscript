@@ -5,7 +5,7 @@ from building import *
 
 Import('rtconfig')
 
-common64_arch = ['virt64', 'c906']
+common64_arch = ['virt64', 'c906', 'c908']
 cwd   = GetCurrentDir()
 group = []
 list  = os.listdir(cwd)
@@ -17,7 +17,7 @@ else :
     group += SConscript(os.path.join('common', 'SConscript'))
 
 # cpu porting code files
-if  rtconfig.CPU == "c906":
+if 'VENDOR' in vars(rtconfig) and rtconfig.VENDOR != '':
     group = group + SConscript(os.path.join(rtconfig.VENDOR, rtconfig.CPU, 'SConscript'))
 elif rtconfig.CPU in list:
     group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
