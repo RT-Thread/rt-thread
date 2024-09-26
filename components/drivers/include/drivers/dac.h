@@ -128,4 +128,6 @@ rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel);
  */
 rt_err_t rt_dac_disable(rt_dac_device_t dev, rt_uint32_t channel);
 
+/*! @}*/
+
 #endif /* __dac_H__ */
