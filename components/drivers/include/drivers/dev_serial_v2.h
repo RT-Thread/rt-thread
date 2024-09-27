@@ -93,7 +93,7 @@
  *     if (!serial)
  *     {
  *         rt_kprintf("find %s failed!\n", uart_name);
- *         return RT_ERROR;
+ *         return -RT_ERROR;
  *     }
  *
  *     rt_mq_init(&rx_mq, "rx_mq",
