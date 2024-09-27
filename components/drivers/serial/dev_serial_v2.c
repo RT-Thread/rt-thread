@@ -295,6 +295,31 @@ static rt_ssize_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
     return write_size;
 }
 
+static void _serial_half_duplex_tx_on(struct rt_serial_device *serial)
+{
+    RT_ASSERT(serial != RT_NULL);
+
+    if (serial->config.duplex_pin != PIN_NONE)
+    {
+        if (serial->config.duplex == RT_SERIAL_HALF_DUPLEX_TX_HIGH)
+            rt_pin_write(serial->config.duplex_pin, PIN_HIGH);
+        else
+            rt_pin_write(serial->config.duplex_pin, PIN_LOW);
+    }
+}
+
+static void _serial_half_duplex_tx_off(struct rt_serial_device *serial)
+{
+    RT_ASSERT(serial != RT_NULL);
+
+    if (serial->config.duplex_pin != PIN_NONE)
+    {
+        if (serial->config.duplex == RT_SERIAL_HALF_DUPLEX_TX_HIGH)
+            rt_pin_write(serial->config.duplex_pin, PIN_LOW);
+        else
+            rt_pin_write(serial->config.duplex_pin, PIN_HIGH);
+    }
+}
 
 /**
   * @brief Serial polling receive data routine, This function will receive data
@@ -368,6 +393,7 @@ rt_ssize_t _serial_poll_tx(struct rt_device           *dev,
     putc_buffer = (rt_uint8_t *)buffer;
     putc_size = size;
 
+    _serial_half_duplex_tx_on(serial);
     while (size)
     {
         if (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM)
@@ -382,6 +408,7 @@ rt_ssize_t _serial_poll_tx(struct rt_device           *dev,
         ++ putc_buffer;
         -- size;
     }
+    _serial_half_duplex_tx_off(serial);
 
      return putc_size - size;
 }
@@ -485,6 +512,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
     if (tx_fifo->activated == RT_TRUE)  return 0;
 
     tx_fifo->activated = RT_TRUE;
+    _serial_half_duplex_tx_on(serial);
     /* Call the transmit interface for transmission */
     rst = serial->ops->transmit(serial,
                                 (rt_uint8_t *)buffer,
@@ -492,6 +520,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
                                 RT_SERIAL_TX_BLOCKING);
     /* Waiting for the transmission to complete */
     rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
+    _serial_half_duplex_tx_off(serial);
     /* Inactive tx mode flag */
     tx_fifo->activated = RT_FALSE;
     return rst;
@@ -535,6 +564,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
     if (tx_fifo->activated == RT_TRUE)  return 0;
     tx_fifo->activated = RT_TRUE;
 
+    _serial_half_duplex_tx_on(serial);
     while (size)
     {
         /* Copy one piece of data into the ringbuffer at a time
@@ -554,6 +584,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
         /* Waiting for the transmission to complete */
         rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
     }
+    _serial_half_duplex_tx_off(serial);
     /* Finally Inactivate the tx->fifo */
     tx_fifo->activated = RT_FALSE;
 
@@ -601,6 +632,7 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device        *dev,
         rt_uint8_t *put_ptr = RT_NULL;
         /* Get the linear length buffer from rinbuffer */
         tx_fifo->put_size = rt_serial_get_linear_buffer(&(tx_fifo->rb), &put_ptr);
+        _serial_half_duplex_tx_on(serial);
         /* Call the transmit interface for transmission */
         serial->ops->transmit(serial,
                               put_ptr,
@@ -1158,6 +1190,11 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 /* set serial configure */
                 serial->config = *pconfig;
                 serial->ops->configure(serial, (struct serial_configure *) args);
+                if (serial->config.duplex_pin != PIN_NONE)
+                {
+                    rt_pin_mode(serial->config.duplex_pin, PIN_MODE_OUTPUT);
+                }
+                _serial_half_duplex_tx_off(serial);
             }
             break;
         case RT_DEVICE_CTRL_NOTIFY_SET:
@@ -1631,6 +1668,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                                     put_ptr,
                                     tx_fifo->put_size,
                                     RT_SERIAL_TX_NON_BLOCKING);
+            }
+            else
+            {
+                _serial_half_duplex_tx_off(serial);
             }
 
             break;

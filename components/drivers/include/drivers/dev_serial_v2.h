@@ -12,6 +12,7 @@
 #define __DEV_SERIAL_V2_H__
 
 #include <rtthread.h>
+#include <drivers/dev_pin.h>
 
 
 /**
@@ -204,6 +205,10 @@
 #define RT_SERIAL_FLOWCONTROL_CTSRTS    1
 #define RT_SERIAL_FLOWCONTROL_NONE      0
 
+#define RT_SERIAL_FULL_DUPLEX           0
+#define RT_SERIAL_HALF_DUPLEX_TX_HIGH   1
+#define RT_SERIAL_HALF_DUPLEX_TX_LOW    2
+
 /* Default config for serial_configure structure */
 #define RT_SERIAL_CONFIG_DEFAULT                      \
 {                                                     \
@@ -216,7 +221,9 @@
     RT_SERIAL_RX_MINBUFSZ,      /* rxBuf size */      \
     RT_SERIAL_TX_MINBUFSZ,      /* txBuf size */      \
     RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
-    0                                                 \
+    RT_SERIAL_FULL_DUPLEX,      /* Full duplex */     \
+    0,                                                \
+    PIN_NONE,                                         \
 }
 
 /**
@@ -238,7 +245,10 @@ struct serial_configure
     rt_uint32_t rx_bufsz                :16;
     rt_uint32_t tx_bufsz                :16;
     rt_uint32_t flowcontrol             :1;
-    rt_uint32_t reserved                :5;
+    rt_uint32_t duplex                  :2;
+    rt_uint32_t reserved                :3;
+
+    rt_base_t duplex_pin;
 };
 
 /**
