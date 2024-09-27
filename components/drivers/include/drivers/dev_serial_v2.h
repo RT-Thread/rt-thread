@@ -113,7 +113,7 @@
  *     }
  *     else
  *     {
- *         ret = RT_ERROR;
+ *         ret = -RT_ERROR;
  *     }
  *
  *     return ret;
