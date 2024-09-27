@@ -270,7 +270,19 @@ jobs:
        #  - {RTT_BSP_NAME: "yichip_yc3121-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3121-pos"}  #编译问题
         # - {RTT_BSP_NAME: "yichip_yc3122-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3122-pos"}  #编译问题
           - {RTT_BSP_NAME: "zynqmp-r5-axu4ev", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "zynqmp-r5-axu4ev"}
-  
+          - {RTT_BSP_NAME: "nuvoton_numaker-pfm-m487", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-pfm-m487"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-hmi-ma35d1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-hmi-ma35d1"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-iot-m487", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-iot-m487"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-m032ki", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-m032ki"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-iot-m467", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-iot-m467"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-m467hj", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-m467hj"}
+          - {RTT_BSP_NAME: "nuvoton_nk-n9h30", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/nk-n9h30"}
+          - {RTT_BSP_NAME: "nuvoton_nk-rtu980", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/nk-rtu980"}
+          - {RTT_BSP_NAME: "nuvoton_ma35-rtp", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/ma35-rtp"}
+          - {RTT_BSP_NAME: "nuvoton_nk-980iot", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/nk-980iot"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-iot-ma35d1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-iot-ma35d1"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-m2354 ", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-m2354"}
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
