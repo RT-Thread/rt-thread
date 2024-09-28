@@ -68,6 +68,8 @@ Create a CubeMX project based on the target chip. The default CubeMX project is 
 
 Change the chip model to STM32F103C8Tx in the CubeMX project. 
 
+Note:The version of CubeMX used in this article is 6.12.0
+
 #### 3.2.1 Generate CubeMX project 
 
 Configure the system clock, peripheral pins, etc. The steps are shown in the figure below: 
