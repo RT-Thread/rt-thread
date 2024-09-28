@@ -666,7 +666,7 @@ FlagStatus I2C_GetFlagStatus(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
     __IO uint32_t i2creg = 0, i2cxbase = 0;
     ((void)i2creg);
     ((void)i2cxbase);
-    
+
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
     assert_param(IS_I2C_GET_FLAG(I2C_FLAG));
@@ -733,25 +733,25 @@ void I2C_ClearFlag(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
     assert_param(IS_I2C_CLEAR_FLAG(I2C_FLAG));
 
     if((I2C_FLAG & I2C_FLAG_RX_UNDER)   == I2C_FLAG_RX_UNDER)
-    {I2Cx->IC_CLR_RX_UNDER;}
+    {((void)I2Cx->IC_CLR_RX_UNDER);}
     if((I2C_FLAG & I2C_FLAG_RX_OVER)    == I2C_FLAG_RX_OVER)
-    {I2Cx->IC_CLR_RX_OVER;}
+    {((void)I2Cx->IC_CLR_RX_OVER);}
     if((I2C_FLAG & I2C_FLAG_TX_OVER)    == I2C_FLAG_TX_OVER)
-    {I2Cx->IC_CLR_TX_OVER;}
+    {((void)I2Cx->IC_CLR_TX_OVER);}
     if((I2C_FLAG & I2C_FLAG_RD_REQ)     == I2C_FLAG_RD_REQ)
-    {I2Cx->IC_CLR_RD_REQ;}
+    {((void)I2Cx->IC_CLR_RD_REQ);}
     if((I2C_FLAG & I2C_FLAG_TX_ABRT)    == I2C_FLAG_TX_ABRT)
-    {I2Cx->IC_CLR_TX_ABRT;}
+    {((void)I2Cx->IC_CLR_TX_ABRT);}
     if((I2C_FLAG & I2C_FLAG_RX_DONE)    == I2C_FLAG_RX_DONE)
-    {I2Cx->IC_CLR_RX_DONE;}
+    {((void)I2Cx->IC_CLR_RX_DONE);}
     if((I2C_FLAG & I2C_FLAG_ACTIVITY)   == I2C_FLAG_ACTIVITY)
-    {I2Cx->IC_CLR_ACTIVITY;}
+    {((void)I2Cx->IC_CLR_ACTIVITY);}
     if((I2C_FLAG & I2C_FLAG_STOP_DET)   == I2C_FLAG_STOP_DET)
-    {I2Cx->IC_CLR_STOP_DET;}
+    {((void)I2Cx->IC_CLR_STOP_DET);}
     if((I2C_FLAG & I2C_FLAG_START_DET)  == I2C_FLAG_START_DET)
-    {I2Cx->IC_CLR_START_DET;}
+    {((void)I2Cx->IC_CLR_START_DET);}
     if((I2C_FLAG & I2C_FLAG_GEN_CALL)   == I2C_FLAG_GEN_CALL)
-    {I2Cx->IC_CLR_GEN_CALL;}
+    {((void)I2Cx->IC_CLR_GEN_CALL);}
 }
 
 /**
@@ -824,25 +824,25 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
     /* Clear the selected I2C flag */
 
     if((I2C_IT & I2C_IT_RX_UNDER)   == I2C_FLAG_RX_UNDER)
-    {I2Cx->IC_CLR_RX_UNDER;}
+    {((void)I2Cx->IC_CLR_RX_UNDER);}
     if((I2C_IT & I2C_IT_RX_OVER)    == I2C_FLAG_RX_OVER)
-    {I2Cx->IC_CLR_RX_OVER;}
+    {((void)I2Cx->IC_CLR_RX_OVER);}
     if((I2C_IT & I2C_IT_TX_OVER)    == I2C_FLAG_TX_OVER)
-    {I2Cx->IC_CLR_TX_OVER;}
+    {((void)I2Cx->IC_CLR_TX_OVER);}
     if((I2C_IT & I2C_IT_RD_REQ)     == I2C_FLAG_RD_REQ)
-    {I2Cx->IC_CLR_RD_REQ;}
+    {((void)I2Cx->IC_CLR_RD_REQ);}
     if((I2C_IT & I2C_IT_TX_ABRT)    == I2C_FLAG_TX_ABRT)
-    {I2Cx->IC_CLR_TX_ABRT;}
+    {((void)I2Cx->IC_CLR_TX_ABRT);}
     if((I2C_IT & I2C_IT_RX_DONE)    == I2C_FLAG_RX_DONE)
-    {I2Cx->IC_CLR_RX_DONE;}
+    {((void)I2Cx->IC_CLR_RX_DONE);}
     if((I2C_IT & I2C_IT_ACTIVITY)   == I2C_FLAG_ACTIVITY)
-    {I2Cx->IC_CLR_ACTIVITY;}
+    {((void)I2Cx->IC_CLR_ACTIVITY);}
     if((I2C_IT & I2C_IT_STOP_DET)   == I2C_FLAG_STOP_DET)
-    {I2Cx->IC_CLR_STOP_DET;}
+    {((void)I2Cx->IC_CLR_STOP_DET);}
     if((I2C_IT & I2C_IT_START_DET)  == I2C_FLAG_START_DET)
-    {I2Cx->IC_CLR_START_DET;}
+    {((void)I2Cx->IC_CLR_START_DET);}
     if((I2C_IT & I2C_IT_GEN_CALL)   == I2C_FLAG_GEN_CALL)
-    {I2Cx->IC_CLR_GEN_CALL;}
+    {((void)I2Cx->IC_CLR_GEN_CALL);}
 
 }
 
