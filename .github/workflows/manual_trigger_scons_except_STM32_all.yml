@@ -95,7 +95,7 @@ jobs:
          #- {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}   #GCC link文件没支持好
           - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
           - {RTT_BSP_NAME: "essemi_es32vf2264", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32vf2264"}
-         #- {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}   #GCC
+          - {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}
           - {RTT_BSP_NAME: "frdm-k64f", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "frdm-k64f"}
          #- {RTT_BSP_NAME: "ft2004", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ft2004"}   #编译错误
           - {RTT_BSP_NAME: "ft32_ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ft32/ft32f072xb-starter"}

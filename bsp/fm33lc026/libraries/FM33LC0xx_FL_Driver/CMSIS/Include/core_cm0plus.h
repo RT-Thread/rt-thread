@@ -95,7 +95,8 @@
   #define __WEAK                    __attribute__((weak))
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wpacked"
-  struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  struct __attribute__((packed))T_UINT32 
+  { uint32_t v; };
   #pragma clang diagnostic pop
   #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
 
@@ -106,7 +107,8 @@
   #define __NO_RETURN               __attribute__((noreturn))
   #define __USED                    __attribute__((used))
   #define __WEAK                    __attribute__((weak))
-  struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  struct __attribute__((packed))T_UINT32 
+  { uint32_t v; };
   #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
 
 #elif defined ( __ICCARM__ )                                          /* IAR Compiler */
@@ -116,7 +118,7 @@
   #define __NO_RETURN               __noreturn
   #define __USED
   #define __WEAK                    __weak
-//  struct __packed T_UINT32 { uint32_t v; };
+/*  struct __packed T_UINT32 { uint32_t v; };*/
   #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
 
 #elif defined ( __TI_ARM__ )                                          /* TI ARM Compiler */
@@ -126,7 +128,8 @@
   #define __NO_RETURN               __attribute__((noreturn))
   #define __USED                    __attribute__((used))
   #define __WEAK                    __attribute__((weak))
-  struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  struct __attribute__((packed))T_UINT32 
+  { uint32_t v; };
   #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
 
 #elif defined ( __TASKING__ )                                         /* TASKING Compiler */
@@ -195,8 +198,8 @@
 
 #endif
 
-#include "core_cminstr.h"                /* Core Instruction Access */
-#include "core_cmfunc.h"                 /* Core Function Access */
+#include "core_cmInstr.h"                /* Core Instruction Access */
+#include "core_cmFunc.h"                 /* Core Function Access */
 
 #ifdef __cplusplus
 }
