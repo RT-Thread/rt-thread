@@ -17,7 +17,7 @@ config RT_USING_RTC
                 default 10
 
             config RT_ALARM_PRIORITY
-                int "priority for internal thread"
+                int "priority for alarm thread"
                 default 5
         endif
 
