@@ -29,6 +29,12 @@ void _Error_Handler(char *s, int num);
 
 #define DMA_NOT_AVAILABLE ((DMA_INSTANCE_TYPE *)0xFFFFFFFFU)
 
+/**
+ * This function is mainly used for SysTick initialization
+ *
+ */
+void rt_hw_systick_init(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -100,6 +100,7 @@ jobs:
                 - "rm48x50"
                 - "ht32/ht32f52352"
                 - "ht32/ht32f12366"
+                - "airm2m/air105"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
