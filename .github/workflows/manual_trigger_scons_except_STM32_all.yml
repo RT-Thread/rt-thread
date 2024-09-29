@@ -185,7 +185,7 @@ jobs:
           - {RTT_BSP_NAME: "mm32_mm32f3270-100ask-pitaya", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32/mm32f3270-100ask-pitaya"}
           - {RTT_BSP_NAME: "mm32f103x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f103x"}
          #- {RTT_BSP_NAME: "mm32f327x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f327x"}  #编译问题
-         #- {RTT_BSP_NAME: "mm32l07x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l07x"}   #编译问题
+          - {RTT_BSP_NAME: "mm32l07x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l07x"}
           - {RTT_BSP_NAME: "mm32l3xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l3xx"}
           - {RTT_BSP_NAME: "n32_n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g43xcl-stb"}
           - {RTT_BSP_NAME: "n32_n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g457qel-stb"}
