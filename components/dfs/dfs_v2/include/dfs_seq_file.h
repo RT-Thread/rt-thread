@@ -56,7 +56,7 @@ static inline void dfs_seq_setwidth(struct dfs_seq_file *seq, size_t size)
 
 int dfs_seq_open(struct dfs_file *file, const struct dfs_seq_ops *ops);
 ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, off_t *pos);
-ssize_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence);
+off_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence);
 int dfs_seq_release(struct dfs_file *file);
 int dfs_seq_write(struct dfs_seq_file *seq, const void *data, size_t len);
 

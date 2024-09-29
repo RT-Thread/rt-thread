@@ -16,8 +16,14 @@ if GetDepend(['RT_PIC_ARM_GIC']) or GetDepend(['RT_PIC_ARM_GIC_V3']):
 if GetDepend(['RT_PIC_ARM_GIC']):
     src += ['pic-gicv2.c']
 
+if GetDepend(['RT_PIC_ARM_GIC_V2M']):
+    src += ['pic-gicv2m.c']
+
 if GetDepend(['RT_PIC_ARM_GIC_V3']):
     src += ['pic-gicv3.c']
+
+if GetDepend(['RT_PIC_ARM_GIC_V3_ITS']):
+    src += ['pic-gicv3-its.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
