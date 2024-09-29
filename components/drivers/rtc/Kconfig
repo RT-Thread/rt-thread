@@ -13,7 +13,7 @@ config RT_USING_RTC
                 default 2048
 
             config RT_ALARM_TIMESLICE
-                int "timeslice for internal thread"
+                int "timeslice for alarm thread"
                 default 10
 
             config RT_ALARM_PRIORITY
