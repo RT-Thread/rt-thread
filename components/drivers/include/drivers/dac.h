@@ -110,6 +110,7 @@ rt_err_t rt_hw_dac_register(rt_dac_device_t dac,const char *name, const struct r
  * @brief set the value of DAC
  * @param dev DAC device
  * @param channel DAC channel
+ * @param value the value of DAC
  * @return rt_err_t  error code
  */
 rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value);
@@ -117,6 +118,7 @@ rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t valu
 /**
  * @brief enable the DAC channel
  * @param dev DAC device
+ * @param channel DAC channel
  * @return rt_err_t  error code
  */
 rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel);
@@ -124,6 +126,7 @@ rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel);
 /**
  * @brief disable the DAC channel
  * @param dev DAC device
+ * @param channel DAC channel
  * @return rt_err_t  error code
  */
 rt_err_t rt_dac_disable(rt_dac_device_t dev, rt_uint32_t channel);
