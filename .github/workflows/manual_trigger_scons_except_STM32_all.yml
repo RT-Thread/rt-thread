@@ -91,8 +91,8 @@ jobs:
           - {RTT_BSP_NAME: "dm365", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "dm365"}
           - {RTT_BSP_NAME: "efm32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "efm32"}
           - {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C3"} 
-         #- {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}   #GCC link文件没支持好
-         #- {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}   #GCC link文件没支持好
+          - {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}
+          - {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}
           - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
           - {RTT_BSP_NAME: "essemi_es32vf2264", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32vf2264"}
          #- {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}   #GCC
