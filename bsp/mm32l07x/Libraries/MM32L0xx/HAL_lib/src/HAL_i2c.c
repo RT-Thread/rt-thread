@@ -68,7 +68,7 @@
 #define IC_TAR_ENDUAL_Set         ((uint16_t)0x1000)
 #define IC_TAR_ENDUAL_Reset       ((uint16_t)0xEFFF)
 
-/* I2C SPECIAL��GC_OR_START bits mask */
+/* I2C SPECIAL GC_OR_START bits mask */
 #define IC_TAR_GC_Set            ((uint16_t)0x0800)
 #define IC_TAR_GC_Reset          ((uint16_t)0xF7FF)
 
