@@ -9,7 +9,7 @@ config RT_USING_RTC
 
         if RT_USING_ALARM
             config RT_ALARM_STACK_SIZE
-                int "stack size for internal thread"
+                int "stack size for alarm thread"
                 default 2048
 
             config RT_ALARM_TIMESLICE
