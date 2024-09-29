@@ -7,6 +7,20 @@ config RT_USING_RTC
             bool "Using RTC alarm"
             default n
 
+        if RT_USING_ALARM
+            config RT_ALARM_STACK_SIZE
+                int "stack size for internal thread"
+                default 2048
+
+            config RT_ALARM_TIMESLICE
+                int "timeslice for internal thread"
+                default 10
+
+            config RT_ALARM_PRIORITY
+                int "priority for internal thread"
+                default 5
+        endif
+
         config RT_USING_SOFT_RTC
             bool "Using software simulation RTC device"
             default n
