@@ -28,10 +28,10 @@
 #define RT_ALARM_STACK_SIZE       2048
 #endif
 #ifndef RT_ALARM_TIMESLICE
-#define RT_ALARM_TIMESLICE        10
+#define RT_ALARM_TIMESLICE        5
 #endif
 #ifndef RT_ALARM_PRIORITY
-#define RT_ALARM_PRIORITY         5
+#define RT_ALARM_PRIORITY         10
 #endif
 static struct rt_alarm_container _container;
 
@@ -800,8 +800,8 @@ int rt_alarm_system_init(void)
     tid = rt_thread_create("alarmsvc",
                            rt_alarmsvc_thread_init, RT_NULL,
                            RT_ALARM_STACK_SIZE,
-                           RT_ALARM_TIMESLICE,
-                           RT_ALARM_PRIORITY);
+                           RT_ALARM_PRIORITY,
+                           RT_ALARM_TIMESLICE);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
 
