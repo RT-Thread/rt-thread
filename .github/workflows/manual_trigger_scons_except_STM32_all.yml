@@ -139,7 +139,7 @@ jobs:
           - {RTT_BSP_NAME: "imxrt_imxrt1060-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1060-nxp-evk"}
           - {RTT_BSP_NAME: "imxrt_imxrt1061-forlinx-OK1061-S", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1061-forlinx-OK1061-S"}
           - {RTT_BSP_NAME: "imxrt_imxrt1064-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1064-nxp-evk"}
-         #- {RTT_BSP_NAME: "imxrt_imxrt1170-nxp-evk_m7", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1170-nxp-evk/m7"} #GCC 编译有问题
+          - {RTT_BSP_NAME: "imxrt_imxrt1170-nxp-evk_m7", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1170-nxp-evk/m7"}
           - {RTT_BSP_NAME: "Infineon_psoc6-cy8ckit-062-BLE", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8ckit-062-BLE"}
           - {RTT_BSP_NAME: "Infineon_psoc6-cy8ckit-062-WIFI-BT", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8ckit-062-WIFI-BT"}
           - {RTT_BSP_NAME: "Infineon_psoc6-cy8ckit-062S2-43012", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8ckit-062S2-43012"}
@@ -165,13 +165,13 @@ jobs:
          #- {RTT_BSP_NAME: "lpc43xx_M4", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc43xx/M4"}  #编译问题
           - {RTT_BSP_NAME: "lpc5410x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc5410x"}
           - {RTT_BSP_NAME: "lpc54114-lite", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc54114-lite"}
-         #- {RTT_BSP_NAME: "lpc54608-LPCXpresso", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc54608-LPCXpresso"}  #编译问题
+          - {RTT_BSP_NAME: "lpc54608-LPCXpresso", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc54608-LPCXpresso"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s06_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s06_nxp_evk"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s16_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s16_nxp_evk"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s28_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s28_nxp_evk"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s36_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s36_nxp_evk"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s69_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s69_nxp_evk"}
-         #- {RTT_BSP_NAME: "lpc824", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc824"}  #编译问题
+         #- {RTT_BSP_NAME: "lpc824", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc824"}  #GCC不支持
          #- {RTT_BSP_NAME: "m16c62p", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "m16c62p"}  #编译问题
           - {RTT_BSP_NAME: "maxim_max32660-evsys", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "maxim/max32660-evsys"}
          #- {RTT_BSP_NAME: "microblaze", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microblaze"}  #编译问题
@@ -255,7 +255,7 @@ jobs:
          #- {RTT_BSP_NAME: "upd70f3454", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "upd70f3454"}  #GCC还没支持
           - {RTT_BSP_NAME: "Vango_v85xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Vango/v85xx"}
           - {RTT_BSP_NAME: "Vango_v85xxp", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Vango/v85xxp"}
-         #- {RTT_BSP_NAME: "w60x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "w60x"}   #menuconfig有问题 
+          - {RTT_BSP_NAME: "w60x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "w60x"}
           - {RTT_BSP_NAME: "wch_arm_ch32f103c8-core", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f103c8-core"}
           - {RTT_BSP_NAME: "wch_arm_ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f203r-evt"}
          #- {RTT_BSP_NAME: "wch_arm_ch579m", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch579m"}  #编译错误
