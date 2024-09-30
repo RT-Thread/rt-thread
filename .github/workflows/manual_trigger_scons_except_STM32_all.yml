@@ -255,7 +255,7 @@ jobs:
          #- {RTT_BSP_NAME: "upd70f3454", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "upd70f3454"}  #GCC还没支持
           - {RTT_BSP_NAME: "Vango_v85xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Vango/v85xx"}
           - {RTT_BSP_NAME: "Vango_v85xxp", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Vango/v85xxp"}
-         #- {RTT_BSP_NAME: "w60x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "w60x"}   #menuconfig有问题 
+          - {RTT_BSP_NAME: "w60x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "w60x"}
           - {RTT_BSP_NAME: "wch_arm_ch32f103c8-core", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f103c8-core"}
           - {RTT_BSP_NAME: "wch_arm_ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f203r-evt"}
          #- {RTT_BSP_NAME: "wch_arm_ch579m", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch579m"}  #编译错误
