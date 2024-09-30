@@ -45,4 +45,6 @@ typedef enum
 rt_err_t rt_ofw_get_mac_addr(struct rt_ofw_node *np, rt_uint8_t *addr);
 rt_err_t rt_ofw_get_mac_addr_by_name(struct rt_ofw_node *np, const char *name, rt_uint8_t *addr);
 rt_err_t rt_ofw_get_interface(struct rt_ofw_node *np, rt_phy_interface *interface);
+
 #endif
+

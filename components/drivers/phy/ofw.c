@@ -8,7 +8,10 @@
  * 2024-09-25     zhujiale    the first version
  */
 #include <rtthread.h>
-#include "ofw.h"
+#include <drivers/phy.h>
+#define DBG_TAG "rtdm.phy"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 static const char* const rt_phy_modes[] =
 {
@@ -99,4 +102,71 @@ rt_err_t rt_ofw_get_mac_addr(struct rt_ofw_node *np, rt_uint8_t *addr)
         return RT_EOK;
 
     return -RT_ERROR;
+}
+
+rt_err_t rt_ofw_get_phyid(struct rt_ofw_node *np,rt_uint16_t *vendor,rt_uint16_t *device)
+{
+    const char *phy_id,*end;
+    rt_ssize_t len;
+
+    phy_id = rt_ofw_prop_read_raw(np,"compatible",&len);
+    if (!phy_id)
+        return -RT_ERROR;
+
+    end = phy_id + len;
+    while (phy_id < end)
+    {
+        len = strlen(phy_id);
+
+        if (len >= strlen("ethernet-phy-idVVVV.DDDD"))
+        {
+            char *s = strstr(phy_id, "ethernet-phy-id");
+
+            /*
+             * check if the string is something like
+             * ethernet-phy-idVVVV.DDDD
+             */
+            if (s && s[19] == '.')
+            {
+                s += strlen("ethernet-phy-id");
+                rt_memcpy(vendor,s,16);
+                s += 5;
+                rt_memcpy(device,s,16);
+
+                return 0;
+            }
+        }
+        phy_id += (len + 1);
+    }
+    return -RT_ERROR;
+
+}
+struct rt_phy_device *rt_ofw_create_phy(struct mii_bus *bus,struct rt_ofw_node *np,int phyaddr)
+{
+    struct rt_phy_device *dev = RT_NULL;
+    struct rt_ofw_node *phy_node;
+    rt_uint16_t vendor, device;
+    int ret;
+    rt_uint32_t id = 0xffff;
+
+    phy_node = rt_ofw_parse_phandle(np, "phy-handle", 0);
+    if (!phy_node)
+    {
+        LOG_D("Failed to find phy-handle");
+        return RT_NULL;
+    }
+
+    ret = rt_ofw_get_phyid(np, &vendor, &device);
+    if (ret)
+    {
+        LOG_D("Failed to read eth PHY id, err: %d\n", ret);
+        return RT_NULL;
+    }
+    id =  vendor << 16 | device;
+    dev = rt_phy_device_create(bus, phyaddr, id, RT_FALSE);
+
+    if(dev)
+        dev->node = phy_node;
+
+    return dev;
 }
