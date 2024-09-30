@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,47 +19,47 @@
  *
  * <b>Example</b>
  * @code {.c}
- * 
+ *
  * #include <rtthread.h>
  * #include <rtdevice.h>
  * #include <stdlib.h>
- * #define DAC_DEV_NAME        "dac1" 
- * #define DAC_DEV_CHANNEL     1      
- * #define REFER_VOLTAGE       330    
- * #define CONVERT_BITS        (1 << 12)  
- * 
+ * #define DAC_DEV_NAME        "dac1"
+ * #define DAC_DEV_CHANNEL     1
+ * #define REFER_VOLTAGE       330
+ * #define CONVERT_BITS        (1 << 12)
+ *
  * static int dac_vol_sample(int argc, char *argv[])
  * {
  *     rt_dac_device_t dac_dev;
  *     rt_uint32_t value, vol;
  *     rt_err_t ret = RT_EOK;
- * 
+ *
  *     dac_dev = (rt_dac_device_t)rt_device_find(DAC_DEV_NAME);
  *     if (dac_dev == RT_NULL)
  *     {
  *         rt_kprintf("dac sample run failed! can't find %s device!\n", DAC_DEV_NAME);
- *         return RT_ERROR;
+ *         return -RT_ERROR;
  *     }
- * 
+ *
  *     ret = rt_dac_enable(dac_dev, DAC_DEV_CHANNEL);
- * 
+ *
  *     value = atoi(argv[1]);
  *     rt_dac_write(dac_dev, DAC_DEV_NAME, DAC_DEV_CHANNEL, value);
  *     rt_kprintf("the value is :%d \n", value);
- * 
+ *
  *     vol = value * REFER_VOLTAGE / CONVERT_BITS;
  *     rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
- * 
+ *
  *     rt_thread_mdelay(500);
- * 
+ *
  *     ret = rt_dac_disable(dac_dev, DAC_DEV_CHANNEL);
- * 
+ *
  *     return ret;
  * }
  * MSH_CMD_EXPORT(dac_vol_sample, dac voltage convert sample);
- * 
+ *
  * @endcode
- * 
+ *
  * @ingroup Drivers
  */
 
@@ -80,7 +80,7 @@ struct rt_dac_ops
 };
 /**
  * @brief DAC device structure
- * 
+ *
  */
 struct rt_dac_device
 {
@@ -110,6 +110,7 @@ rt_err_t rt_hw_dac_register(rt_dac_device_t dac,const char *name, const struct r
  * @brief set the value of DAC
  * @param dev DAC device
  * @param channel DAC channel
+ * @param value the value of DAC
  * @return rt_err_t  error code
  */
 rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value);
@@ -117,6 +118,7 @@ rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t valu
 /**
  * @brief enable the DAC channel
  * @param dev DAC device
+ * @param channel DAC channel
  * @return rt_err_t  error code
  */
 rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel);
@@ -124,6 +126,7 @@ rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel);
 /**
  * @brief disable the DAC channel
  * @param dev DAC device
+ * @param channel DAC channel
  * @return rt_err_t  error code
  */
 rt_err_t rt_dac_disable(rt_dac_device_t dev, rt_uint32_t channel);
