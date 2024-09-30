@@ -6,103 +6,115 @@
 - 2. USB 主机 (PUSB2), 可以识别 U 盘/鼠标/键盘等设备
 - 3. USB 从机 (PUSB2), 可以将开发板作为一个 USB 设备（U 盘）运行，连接 Windows/Ubuntu 等主机进行识别和访问
 
-> 目前只在 AARCH64 RT-Thread 模式下测试过
+> Note: 目前 CherryUSB 没有适配 RT-Smart, 只能在 RT-Thread 模式下使用
 
-## 通过 Package 使用 CherryUSB
+> Note: CherryUSB 不支持同时使用不同类型的控制器，PUSB2 和 XHCI 只能选择一种工作
 
-- 进入 bsp 目录下的 aarch64 或者 aarch32 目录，然后 scons --menuconfig 进入 Kconfig 配置界面，选择 `Enable usb host mode` -> `XHCI`，最后选中需要的主机侧设备驱动
+## 使用 USB 3.0 控制器 (XHCI)
 
-![](../figures/cherryusb.png)
+> Note: 飞腾派上只有CPU 正面侧靠网口的插槽是 USB 3.0 XHCI 接口，飞腾派中只引出了 USB 3.0 0 号控制器
 
-- 保存配置后，更新 Packages 
+> Note: 飞腾派上 USB 3.0 控制器引脚和 PWM 及 GPIO 有复用关系，不能同时使用，具体的可以查阅数据手册
 
-```
-source ~/.env/env.sh
-pkgs --update
-```
+- 如果是在 E2000 D/Q Demo 板上，如下图所示连接 USB 设备
 
-- 对于 XHCI, 相关的配置包括
+![](./figs/e2000_demo_usb3.png)
 
-![](../figures/cherryusb_xhci.png)
+- 如果是在飞腾派上，如下图所示连接 USB 设备
 
-```
-#define PKG_USING_CHERRYUSB
-#define PKG_CHERRYUSB_HOST
-#define PKG_CHERRYUSB_HOST_XHCI
-#define PKG_CHERRYUSB_HOST_HID
-#define PKG_CHERRYUSB_HOST_MSC
-#define PKG_CHERRYUSB_HOST_TEMPLATE
-#define PKG_USING_CHERRYUSB_LATEST_VERSION
-```
+![](./figs/phytiumpi_usb3.png)
 
-- 对于 PUSB2，相关的配置包括
 
-![](../figures/pusb2_cherryusb.png)
-
-- 主机模式
+- 加载默认配置 `make load_phytium_pi_rtthread`，或者使能下面的配置，USB 3.0 控制器可以识别键盘鼠标、U盘和外扩HUB
 
 ```
-#define PKG_USING_CHERRYUSB
-#define PKG_CHERRYUSB_HOST
-#define PKG_CHERRYUSB_HOST_PUSB2
-#define PKG_CHERRYUSB_HOST_HID
-#define PKG_CHERRYUSB_HOST_MSC
-#define PKG_CHERRYUSB_HOST_TEMPLATE
+RT_USING_CHERRYUSB
+RT_CHERRYUSB_HOST
+RT_CHERRYUSB_HOST_XHCI
+RT_CHERRYUSB_HOST_HID
+RT_CHERRYUSB_HOST_MSC
 ```
 
-- 从机模式
+- 编译镜像后加载到开发板中启动，然后输入下面的命令启动 CherryUSB
 
 ```
-#define PKG_USING_CHERRYUSB
-#define PKG_CHERRYUSB_DEVICE
-#define PKG_CHERRYUSB_DEVICE_FS
-#define PKG_CHERRYUSB_DEVICE_PUSB2
-#define PKG_CHERRYUSB_DEVICE_MSC
-#define PKG_CHERRYUSB_DEVICE_MSC_STORAGE_TEMPLATE
-#define PKG_USING_CHERRYUSB_LATEST_VERSION
+usb_host_init 0
 ```
 
-- 更新成功后会出现目录 aarch64/packages/CherryUSB-latest
+> 如果需要使用 1 号控制器，输入 `usb_host_init 1`
 
-- 随后进行编译即可
-
-## 测试 CherryUSB 功能
-
-### USB3 (XHCI)
-
-> CherryUSB 更新比较频繁，稳定使用 XHCI 功能可以使用最后一次变更功能的 commit 号
+- 之后输入命令可以看到挂载的设备，可以看到 0 号 bus 和 1 号 bus 上通过 Hub 挂载了若干设备
 
 ```
-cd packages
-rm ./CherryUSB-latest/ -rf
-git clone https://github.com/cherry-embedded/CherryUSB.git ./CherryUSB-latest
-cd ./CherryUSB-latest
-git checkout aeffaea016f74cb5d6301b5ca5088c03e3dbe3a6
+lsusb -t
 ```
 
-- 将 U 盘插入到 USB3 0 号控制器，然后输入命令 `usbh_initialize` 开始枚举设备
-- 枚举完成后输入 `lsusb -t` 查看识别到的设备
+![](./figs/e2000_demo_devices.png)
 
-![](../figures/xhci_0.png)
+- 具体的 USB 设备使用可以参考 CherryUSB 使用说明，以及 [Phytium FreeRTOS SDK 的使用键盘、鼠标和U盘](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk/blob/master/example/peripheral/usb/xhci_platform)，以及[在 LVGL 中使用鼠标键盘](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk/tree/master/example/peripheral/media/lvgl_indev)
 
-- 参考 CherryUSB 中的 demo 使用 USB 设备
 
-### USB2 (PUSB2 主机模式)
+## 使用 USB 2.0 控制器（PUSB2 Device 模式）
 
-> PUSB2 驱动欢迎联系 `opensource_embedded@phytium.com.cn` 获取
+> Note: 固件会配置 USB 2.0 控制器的的工作模式，默认地，E2000 D/Q Demo 板工作为 Device 模式，飞腾派工作为 Host 模式，本例程不支持切换工作模式，修改默认工作模式需要联系 FAE 更换固件或修改电路
 
-- 将 U 盘插入到 USB2 0 号控制器，然后输入命令 `usbh_initialize` 开始枚举设备
-- 枚举完成后输入 `lsusb -t` 查看识别到的设备
+- 如图所示将 E2000 D/Q Demo 板的 USB_OTG 接口和一台 Windows PC 连接
 
-![](../figures/pusb2_hid.png)
+> E2000 D/Q Demo 板只引出 USB 2.0 0 号控制器，使用其它控制器需要修改代码
 
-- 参考 CherryUSB 中的 demo 使用 USB 设备
+![](./figs/e2000d_demo_usb2.png)
 
-### USB2 (PUSB2 从机模式)
+- 使能下面的配置，USB 2.0 控制器会模拟出一个 MSC 设备（U 盘）给连接的上位机识别
 
-> PUSB2 驱动欢迎联系 `opensource_embedded@phytium.com.cn` 获取
+> U 盘的存储空间用开发板的内存空间实现，所以掉电之后 U 盘中的数据就没有了，如果有需要持久保存数据的需要，可以修改例程用 SD 卡或者 Flash 存储空间实现 U 盘
 
-- 通过 USB 线连接开发板和主机 （Windows 主机），然后输入命令 `msc_storage_init` 创建一个 USB 设备，等待连接的主机完成识别
-> 在 RT-Thread 中，可以将 SD/eMMC 介质映射成一个 U 盘给上位机访问，上位机格式化 U 盘文件系统，可以将数据保存在 SD/eMMC 介质中
+```
+RT_USING_CHERRYUSB
+RT_CHERRYUSB_DEVICE
+RT_CHERRYUSB_DEVICE_SPEED_HS
+RT_CHERRYUSB_DEVICE_PUSB2
+RT_CHERRYUSB_DEVICE_MSC
+RT_CHERRYUSB_DEVICE_TEMPLATE_MSC
+```
 
-![](../figures/cherryusb_device.png)
+- 编译镜像后加载到开发板中启动，然后输入下面的命令启动 CherryUSB
+
+```
+usb_device_init
+```
+
+- 之后会在 PC 端识别出一个 U 盘，之后可以对 U 盘进行读写
+
+![](./figs/msc_device.png)
+
+![](./figs/msc_rw.png)
+
+> 如果需要修改 U 盘的容量，可以在 msc_ram_template.c 中指定 BLOCK_COUNT 的值
+
+## 使用 USB 2.0 控制器 （PUSB2 Host 模式）
+
+> Note: USB 2.0 控制器 Host 模式硬件上不支持使用 Hub 扩展插槽
+
+- 如图所示，在飞腾派引出的三个 USB 2.0 插槽上接上鼠标、键盘和 U 盘，注意 CPU 正面侧靠网口的插槽是 USB 3.0 XHCI 接口，其余 USB 接口是 USB 2.0 接口
+
+![](./figs/phytiumpi_usb2.jpg)
+
+- 加载配置 `make load_phytium_pi_rtthread_pusb2_hc` ，或者使能下面的配置，USB 2.0 控制器作为 Host 工作，能够识别 HID 和 MSC 设备
+
+```
+RT_USING_CHERRYUSB
+RT_CHERRYUSB_HOST
+RT_CHERRYUSB_HOST_PUSB2
+RT_CHERRYUSB_HOST_HID
+RT_CHERRYUSB_HOST_MSC
+```
+
+- 编译镜像后加载到开发板中启动，随后输入命令，初始化三个 USB 2.0 控制器，初始化完成后可以看到枚举到的三个设备，两个 HID 设备对应鼠标和键盘，一个 MSC 设备对应 U 盘，由于 U 盘没有文件系统，udisk 尝试挂载 U 盘失败
+
+```
+usb_host_init 0
+usb_host_init 1
+usb_host_init 2
+```
+
+![](./figs/usb2_host_init.png)

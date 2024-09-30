@@ -1,0 +1,95 @@
+/*
+ * Copyright (c) 2024 HPMicro
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+define exported symbol _link_file_version_2 = 1;
+
+define memory with size = 4G;
+
+/* Sizes */
+if (isdefinedsymbol(CSTACK_SIZE)) {
+  define symbol __size_cstack__        = CSTACK_SIZE;
+} else {
+  define symbol __size_cstack__        = 0x4000;
+}
+
+if (isdefinedsymbol(HEAP_SIZE)) {
+  define symbol __size_heap__          = HEAP_SIZE;
+} else {
+  define symbol __size_heap__          = 0x4000;
+}
+
+/* Regions */
+define region ILM = mem:[from 0x00040000 size 256k];        /* ILM */
+define region DLM = mem:[from 0x00240000 size 256k];        /* DLM */
+define region NONCACHEABLE_RAM = mem:[from 0x01280000 size 64k];    /* AXI SRAM1 */
+define region AXI_SRAM = mem:[from 0x012C0000 size 176k];
+define region SHARE_RAM = mem:[from 0x012FC000 size 16k];
+
+/* Blocks */
+define block vectors with fixed order                       { section .vector_table, section .isr_vector };
+define block vectors_s with fixed order                     { section .vector_s_table, section .isr_s_vector };
+define block HEAP  with size = __size_heap__,  alignment = 8 { };
+define block CSTACK with size = __size_cstack__, alignment = 16 { };
+define block RW_DATA with static base GPREL { rw data };
+
+define block cherryusb_usbh_class_info                       { section .usbh_class_info };
+define block framebuffer                                     { section .framebuffer };
+
+define block rtthread_FSymTab                                { section FSymTab };
+define block rtthread_VSymTab                                { section VSymTab };
+define block rtthread_rti_fn with alphabetical order         { section .rti_fn* };
+define block rtthread_RTMSymTab                              { section RTMSymTab };
+
+/* Symbols */
+define exported symbol __noncacheable_start__ = start(NONCACHEABLE_RAM);
+define exported symbol __noncacheable_end__ = end(NONCACHEABLE_RAM) + 1;
+define exported symbol __share_mem_start__ = start(SHARE_RAM);
+define exported symbol __share_mem_end__ = end(SHARE_RAM) + 1;
+
+/* Initialization */
+do not initialize                           { section .noncacheable, section .fast_ram };
+do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
+do not initialize                           { section .no_init, section .no_init.*, section .*.no_init, section .*.no_init.* };   // Legacy sections, kept for backwards compatibility
+do not initialize                           { section .noinit, section .noinit.*, section .*.noinit, section .*.noinit.* };       // Legacy sections, used by some SDKs/HALs
+
+initialize by copy with packing=auto        { section .noncacheable.init, section .fast_ram.init };
+initialize by copy with packing=auto        { section .fast, section .fast.*, section .*.fast, section .*.fast.* };               // "RAM Code" sections
+initialize by copy with packing=none        { section .vector_table };
+initialize by copy with packing=none        { section .isr_vector };
+initialize by copy with packing=none        { section .vector_s_table };
+initialize by copy with packing=none        { section .isr_s_vector };
+initialize by copy with packing=auto        { section .usbh_class_info };
+initialize by copy                          { readwrite };
+
+/* Placement */
+place at start of ILM                       { symbol _start };
+place in ILM                                { block vectors, block vectors_s };                     // Vector table section
+place in ILM                                { section .fast, section .fast.* };                     // "ramfunc" section
+place in ILM                                {
+                                              block rtthread_FSymTab,
+                                              block rtthread_VSymTab,
+                                              block rtthread_rti_fn,
+                                              block rtthread_RTMSymTab,
+                                              readonly
+                                            };
+place in AXI_SRAM                           { block cherryusb_usbh_class_info };
+place in AXI_SRAM                           { block framebuffer };
+place in AXI_SRAM                           {
+                                              block RW_DATA
+                                            };
+place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss };  // Noncacheable
+place in SHARE_RAM                          { section .sh_mem};                                     // Share memory
+place in DLM                                { section .fast_ram.init, section .fast_ram, section .fast_ram.bss};   // Fast access memory
+place in DLM                                { block HEAP };                                         // Heap reserved block
+place at end of DLM                         { block CSTACK };                                       // Stack reserved block
+
+/* Keep */
+keep                                        { section .usbh_class_info,
+                                              section FSymTab,
+                                              section VSymTab,
+                                              section .rti_fn*,
+                                              section RTMSymTab
+                                            };
+keep symbol __iar_cstart_init_gp;

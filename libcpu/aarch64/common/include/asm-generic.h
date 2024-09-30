@@ -23,6 +23,14 @@
     .cfi_endproc;               \
     .size name, .-name;
 
+#define TRACE_SYMBOL(name)
+
+.macro NEVER_RETURN
+#ifdef RT_USING_DEBUG
+    b       .
+#endif /* RT_USING_DEBUG */
+.endm
+
 .macro GET_THREAD_SELF, dst:req
 #ifdef ARCH_USING_HW_THREAD_SELF
     mrs     x0, tpidr_el1

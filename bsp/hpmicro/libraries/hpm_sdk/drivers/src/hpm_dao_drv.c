@@ -13,7 +13,7 @@ void dao_get_default_config(DAO_Type *ptr, dao_config_t *config)
     config->enable_mono_output = false;
     config->default_output_level = DAO_DEFAULT_OUTPUT_ALL_LOW;
     config->channel_count = 2;
-#if defined(DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG) && (DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG == 1)
+#if defined(HPM_IP_FEATURE_DAO_DATA_FORMAT_CONFIG) && (HPM_IP_FEATURE_DAO_DATA_FORMAT_CONFIG == 1)
     config->enable_tdm_mode = false;
     config->frame_start_at_rising_edge = false;
     config->protocol = I2S_PROTOCOL_MSB_JUSTIFIED;
@@ -35,7 +35,7 @@ hpm_stat_t dao_init(DAO_Type *ptr, dao_config_t *config)
         | DAO_CTRL_REMAP_MASK
         | DAO_CTRL_FALSE_LEVEL_SET(config->default_output_level);
 
-#if defined(DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG) && (DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG == 1)
+#if defined(HPM_IP_FEATURE_DAO_DATA_FORMAT_CONFIG) && (HPM_IP_FEATURE_DAO_DATA_FORMAT_CONFIG == 1)
     ptr->RX_CFGR = DAO_RX_CFGR_FRAME_EDGE_SET(config->frame_start_at_rising_edge)
                 | DAO_RX_CFGR_CH_MAX_SET(config->channel_count)
                 | DAO_RX_CFGR_TDM_EN_SET(config->enable_tdm_mode)

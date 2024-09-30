@@ -6,21 +6,22 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-05-16     shelton      first version
+ * 2024-09-24     shelton      update driver
  */
 
 #include "drv_common.h"
 
 #ifdef RT_USING_PWM
 #include "drv_pwm.h"
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 
 //#define DRV_DEBUG
 #define LOG_TAG                         "drv.pwm"
 #include <drv_log.h>
 
 #define MAX_PERIOD                      65535
-
-struct rt_device_pwm pwm_device;
+#define MIN_PERIOD                      3
+#define MIN_PULSE                       2
 
 struct at32_pwm
 {
@@ -154,6 +155,54 @@ static void tmr_pclk_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
     }
 }
 
+static rt_err_t at32_hw_pwm_init(struct at32_pwm *instance)
+{
+    tmr_output_config_type tmr_oc_config_struct;
+    tmr_type *tmr_x = instance->tmr_x;
+
+    at32_msp_tmr_init(tmr_x);
+
+    tmr_base_init(tmr_x, 0, 0);
+    tmr_clock_source_div_set(tmr_x, TMR_CLOCK_DIV1);
+
+    /* pwm mode configuration */
+    tmr_output_default_para_init(&tmr_oc_config_struct);
+    /* config pwm mode */
+    tmr_oc_config_struct.oc_mode = TMR_OUTPUT_CONTROL_PWM_MODE_A;
+
+    /* config tmr pwm output */
+    if(instance->channel & 0x01)
+    {
+        tmr_output_channel_config(tmr_x, TMR_SELECT_CHANNEL_1, &tmr_oc_config_struct);
+        tmr_output_channel_buffer_enable(tmr_x, TMR_SELECT_CHANNEL_1, TRUE);
+    }
+
+    if(instance->channel & 0x02)
+    {
+        tmr_output_channel_config(tmr_x, TMR_SELECT_CHANNEL_2, &tmr_oc_config_struct);
+        tmr_output_channel_buffer_enable(tmr_x, TMR_SELECT_CHANNEL_2, TRUE);
+    }
+
+    if(instance->channel & 0x04)
+    {
+        tmr_output_channel_config(tmr_x, TMR_SELECT_CHANNEL_3, &tmr_oc_config_struct);
+        tmr_output_channel_buffer_enable(tmr_x, TMR_SELECT_CHANNEL_3, TRUE);
+    }
+
+    if(instance->channel & 0x08)
+    {
+        tmr_output_channel_config(tmr_x, TMR_SELECT_CHANNEL_4, &tmr_oc_config_struct);
+        tmr_output_channel_buffer_enable(tmr_x, TMR_SELECT_CHANNEL_4, TRUE);
+    }
+
+    /* enable output */
+    tmr_output_enable(tmr_x, TRUE);
+    /* enable overflow request */
+    tmr_overflow_request_source_set(tmr_x, TRUE);
+
+    return RT_EOK;
+}
+
 static rt_err_t drv_pwm_enable(tmr_type* tmr_x, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
     /* get the value of channel */
@@ -243,10 +292,9 @@ static rt_err_t drv_pwm_enable(tmr_type* tmr_x, struct rt_pwm_configuration *con
 static rt_err_t drv_pwm_get(tmr_type* tmr_x, struct rt_pwm_configuration *configuration)
 {
     crm_clocks_freq_type clocks_struct;
-    rt_uint32_t pr, div, c1dt, c2dt, c3dt, c4dt;
+    rt_uint32_t pr, div, c1dt, c2dt, c3dt, c4dt, tmr_clock;
     rt_uint32_t pclk1_doubler = 0, pclk2_doubler = 0;
     rt_uint32_t channel = configuration->channel;
-    rt_uint64_t tmr_clock;
 
     pr = tmr_x->pr;
     div = tmr_x->div;
@@ -256,7 +304,6 @@ static rt_err_t drv_pwm_get(tmr_type* tmr_x, struct rt_pwm_configuration *config
     c4dt = tmr_x->c4dt;
 
     tmr_pclk_get(&pclk1_doubler, &pclk2_doubler);
-
     crm_clocks_freq_get(&clocks_struct);
 
     if(
@@ -303,17 +350,11 @@ static rt_err_t drv_pwm_get(tmr_type* tmr_x, struct rt_pwm_configuration *config
 static rt_err_t drv_pwm_set(tmr_type* tmr_x, struct rt_pwm_configuration *configuration)
 {
     crm_clocks_freq_type clocks_struct;
-    tmr_output_config_type tmr_oc_config_struct;
     tmr_channel_select_type channel_select;
-    rt_uint32_t period, pulse, channel, tmr_clock;
+    rt_uint32_t period, pulse, channel, psc, tmr_clock;
     rt_uint32_t pclk1_doubler = 0, pclk2_doubler = 0;
-    rt_uint64_t psc;
-
-    /* init timer pin and enable clock */
-    at32_msp_tmr_init(tmr_x);
 
     tmr_pclk_get(&pclk1_doubler, &pclk2_doubler);
-
     crm_clocks_freq_get(&clocks_struct);
 
     if(
@@ -347,33 +388,28 @@ static rt_err_t drv_pwm_set(tmr_type* tmr_x, struct rt_pwm_configuration *config
     period = (unsigned long long)configuration->period * tmr_clock / 1000ULL;;
     psc = period / MAX_PERIOD + 1;
     period = period / psc;
+    tmr_div_value_set(tmr_x, psc - 1);
+
+    if(period < MIN_PERIOD)
+    {
+        period = MIN_PERIOD;
+    }
+
+    tmr_period_value_set(tmr_x, period - 1);
+
     /* calculate pulse width */
     pulse = (unsigned long long)configuration->pulse * tmr_clock / psc / 1000ULL;
+    if(pulse < MIN_PULSE)
+    {
+        pulse = MIN_PULSE;
+    }
+    else if(pulse >= period)
+    {
+        pulse = period + 1;
+    }
+
     /* get channel parameter */
     channel = configuration->channel;
-
-    /* tmr base init */
-    tmr_base_init(tmr_x, period - 1, psc - 1);
-    tmr_clock_source_div_set(tmr_x, TMR_CLOCK_DIV1);
-
-    /* pwm mode configuration */
-    tmr_output_default_para_init(&tmr_oc_config_struct);
-    /* config pwm mode */
-    tmr_oc_config_struct.oc_mode = TMR_OUTPUT_CONTROL_PWM_MODE_A;
-
-    if (!configuration->complementary)
-    {
-        tmr_oc_config_struct.oc_idle_state = FALSE;
-        tmr_oc_config_struct.oc_output_state = FALSE;
-        tmr_oc_config_struct.oc_polarity = TMR_OUTPUT_ACTIVE_HIGH;
-    }
-    else
-    {
-        tmr_oc_config_struct.occ_idle_state = FALSE;
-        tmr_oc_config_struct.occ_output_state = FALSE;
-        tmr_oc_config_struct.occ_polarity = TMR_OUTPUT_ACTIVE_HIGH;
-    }
-
     if(channel == 1)
     {
         channel_select = TMR_SELECT_CHANNEL_1;
@@ -391,14 +427,140 @@ static rt_err_t drv_pwm_set(tmr_type* tmr_x, struct rt_pwm_configuration *config
         channel_select = TMR_SELECT_CHANNEL_4;
     }
 
-    /* config tmr pwm output */
-    tmr_output_channel_config(tmr_x, channel_select, &tmr_oc_config_struct);
-    tmr_output_channel_buffer_enable(tmr_x, channel_select, TRUE);
     tmr_channel_value_set(tmr_x, channel_select, pulse);
-    /* enable tmr period buffer */
-    tmr_period_buffer_enable(tmr_x, TRUE);
-    /* enable output */
-    tmr_output_enable(tmr_x, TRUE);
+
+    /* if you want the pwm setting to take effect immediately,
+    please uncommon the following code, but it will cause the last pwm cycle not complete. */
+    //tmr_counter_value_set(tmr_x, 0);
+    //tmr_x->swevt_bit.ovfswtr = TRUE;
+
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_set_period(tmr_type* tmr_x, struct rt_pwm_configuration *configuration)
+{
+    crm_clocks_freq_type clocks_struct;
+    rt_uint32_t period, psc, tmr_clock;
+    rt_uint32_t pclk1_doubler = 0, pclk2_doubler = 0;
+
+    tmr_pclk_get(&pclk1_doubler, &pclk2_doubler);
+    crm_clocks_freq_get(&clocks_struct);
+
+    if(
+#if defined (TMR1)
+    (tmr_x == TMR1)
+#endif
+#if defined (TMR8)
+    || (tmr_x == TMR8)
+#endif
+#if defined (TMR9)
+    || (tmr_x == TMR9)
+#endif
+#if defined (TMR10)
+    || (tmr_x == TMR10)
+#endif
+#if defined (TMR11)
+    || (tmr_x == TMR11)
+#endif
+    )
+    {
+        tmr_clock = clocks_struct.apb2_freq * pclk2_doubler;
+    }
+    else
+    {
+        tmr_clock = clocks_struct.apb1_freq * pclk1_doubler;
+    }
+
+    /* convert nanosecond to frequency and duty cycle. */
+    tmr_clock /= 1000000UL;
+    /* calculate pwm period */
+    period = (unsigned long long)configuration->period * tmr_clock / 1000ULL;;
+    psc = period / MAX_PERIOD + 1;
+    period = period / psc;
+    tmr_div_value_set(tmr_x, psc - 1);
+
+    if(period < MIN_PERIOD)
+    {
+        period = MIN_PERIOD;
+    }
+
+    tmr_period_value_set(tmr_x, period - 1);
+
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_set_pulse(tmr_type* tmr_x, struct rt_pwm_configuration *configuration)
+{
+    crm_clocks_freq_type clocks_struct;
+    tmr_channel_select_type channel_select;
+    rt_uint32_t period, pulse, channel, psc, tmr_clock;
+    rt_uint32_t pclk1_doubler = 0, pclk2_doubler = 0;
+
+    tmr_pclk_get(&pclk1_doubler, &pclk2_doubler);
+    crm_clocks_freq_get(&clocks_struct);
+
+    if(
+#if defined (TMR1)
+    (tmr_x == TMR1)
+#endif
+#if defined (TMR8)
+    || (tmr_x == TMR8)
+#endif
+#if defined (TMR9)
+    || (tmr_x == TMR9)
+#endif
+#if defined (TMR10)
+    || (tmr_x == TMR10)
+#endif
+#if defined (TMR11)
+    || (tmr_x == TMR11)
+#endif
+    )
+    {
+        tmr_clock = clocks_struct.apb2_freq * pclk2_doubler;
+    }
+    else
+    {
+        tmr_clock = clocks_struct.apb1_freq * pclk1_doubler;
+    }
+
+    /* convert nanosecond to frequency and duty cycle. */
+    tmr_clock /= 1000000UL;
+    /* calculate pwm period */
+    period = (unsigned long long)configuration->period * tmr_clock / 1000ULL;;
+    psc = period / MAX_PERIOD + 1;
+
+    /* calculate pulse width */
+    pulse = (unsigned long long)configuration->pulse * tmr_clock / psc / 1000ULL;
+    if(pulse < MIN_PULSE)
+    {
+        pulse = MIN_PULSE;
+    }
+    else if(pulse >= period)
+    {
+        pulse = period + 1;
+    }
+
+    /* get channel parameter */
+    channel = configuration->channel;
+    if(channel == 1)
+    {
+        channel_select = TMR_SELECT_CHANNEL_1;
+    }
+    else if(channel == 2)
+    {
+        channel_select = TMR_SELECT_CHANNEL_2;
+    }
+    else if(channel == 3)
+    {
+        channel_select = TMR_SELECT_CHANNEL_3;
+    }
+    else if(channel == 4)
+    {
+        channel_select = TMR_SELECT_CHANNEL_4;
+    }
+
+    tmr_channel_value_set(tmr_x, channel_select, pulse);
 
     return RT_EOK;
 }
@@ -410,16 +572,16 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 
     switch (cmd)
     {
-    case PWMN_CMD_ENABLE:
-        configuration->complementary = RT_TRUE;
     case PWM_CMD_ENABLE:
         return drv_pwm_enable(tmr_x, configuration, RT_TRUE);
-    case PWMN_CMD_DISABLE:
-        configuration->complementary = RT_FALSE;
     case PWM_CMD_DISABLE:
         return drv_pwm_enable(tmr_x, configuration, RT_FALSE);
     case PWM_CMD_SET:
         return drv_pwm_set(tmr_x, configuration);
+    case PWM_CMD_SET_PERIOD:
+        return drv_pwm_set_period(tmr_x, configuration);
+    case PWM_CMD_SET_PULSE:
+        return drv_pwm_set_pulse(tmr_x, configuration);
     case PWM_CMD_GET:
         return drv_pwm_get(tmr_x, configuration);
     default:
@@ -430,118 +592,118 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 static void pwm_get_channel(void)
 {
 #ifdef BSP_USING_PWM1_CH1
-    at32_pwm_obj[PWM1_INDEX].channel = 1;
+    at32_pwm_obj[PWM1_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM1_CH2
-    at32_pwm_obj[PWM1_INDEX].channel = 2;
+    at32_pwm_obj[PWM1_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM1_CH3
-    at32_pwm_obj[PWM1_INDEX].channel = 3;
+    at32_pwm_obj[PWM1_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM1_CH4
-    at32_pwm_obj[PWM1_INDEX].channel = 4;
+    at32_pwm_obj[PWM1_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM2_CH1
-    at32_pwm_obj[PWM2_INDEX].channel = 1;
+    at32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM2_CH2
-    at32_pwm_obj[PWM2_INDEX].channel = 2;
+    at32_pwm_obj[PWM2_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM2_CH3
-    at32_pwm_obj[PWM2_INDEX].channel = 3;
+    at32_pwm_obj[PWM2_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM2_CH4
-    at32_pwm_obj[PWM2_INDEX].channel = 4;
+    at32_pwm_obj[PWM2_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM3_CH1
-    at32_pwm_obj[PWM3_INDEX].channel = 1;
+    at32_pwm_obj[PWM3_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM3_CH2
-    at32_pwm_obj[PWM3_INDEX].channel = 2;
+    at32_pwm_obj[PWM3_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM3_CH3
-    at32_pwm_obj[PWM3_INDEX].channel = 3;
+    at32_pwm_obj[PWM3_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM3_CH4
-    at32_pwm_obj[PWM3_INDEX].channel = 4;
+    at32_pwm_obj[PWM3_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM4_CH1
-    at32_pwm_obj[PWM4_INDEX].channel = 1;
+    at32_pwm_obj[PWM4_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM4_CH2
-    at32_pwm_obj[PWM4_INDEX].channel = 2;
+    at32_pwm_obj[PWM4_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM4_CH3
-    at32_pwm_obj[PWM4_INDEX].channel = 3;
+    at32_pwm_obj[PWM4_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM4_CH4
-    at32_pwm_obj[PWM4_INDEX].channel = 4;
+    at32_pwm_obj[PWM4_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM5_CH1
-    at32_pwm_obj[PWM5_INDEX].channel = 1;
+    at32_pwm_obj[PWM5_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM5_CH2
-    at32_pwm_obj[PWM5_INDEX].channel = 2;
+    at32_pwm_obj[PWM5_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM5_CH3
-    at32_pwm_obj[PWM5_INDEX].channel = 3;
+    at32_pwm_obj[PWM5_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM5_CH4
-    at32_pwm_obj[PWM5_INDEX].channel = 4;
+    at32_pwm_obj[PWM5_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM6_CH1
-    at32_pwm_obj[PWM6_INDEX].channel = 1;
+    at32_pwm_obj[PWM6_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM6_CH2
-    at32_pwm_obj[PWM6_INDEX].channel = 2;
+    at32_pwm_obj[PWM6_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM6_CH3
-    at32_pwm_obj[PWM6_INDEX].channel = 3;
+    at32_pwm_obj[PWM6_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM6_CH4
-    at32_pwm_obj[PWM6_INDEX].channel = 4;
+    at32_pwm_obj[PWM6_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM7_CH1
-    at32_pwm_obj[PWM7_INDEX].channel = 1;
+    at32_pwm_obj[PWM7_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM7_CH2
-    at32_pwm_obj[PWM7_INDEX].channel = 2;
+    at32_pwm_obj[PWM7_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM7_CH3
-    at32_pwm_obj[PWM7_INDEX].channel = 3;
+    at32_pwm_obj[PWM7_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM7_CH4
-    at32_pwm_obj[PWM7_INDEX].channel = 4;
+    at32_pwm_obj[PWM7_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM8_CH1
-    at32_pwm_obj[PWM8_INDEX].channel = 1;
+    at32_pwm_obj[PWM8_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM8_CH2
-    at32_pwm_obj[PWM8_INDEX].channel = 2;
+    at32_pwm_obj[PWM8_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM8_CH3
-    at32_pwm_obj[PWM8_INDEX].channel = 3;
+    at32_pwm_obj[PWM8_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM8_CH4
-    at32_pwm_obj[PWM8_INDEX].channel = 4;
+    at32_pwm_obj[PWM8_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM9_CH1
-    at32_pwm_obj[PWM9_INDEX].channel = 1;
+    at32_pwm_obj[PWM9_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM9_CH2
-    at32_pwm_obj[PWM9_INDEX].channel = 2;
+    at32_pwm_obj[PWM9_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM9_CH3
-    at32_pwm_obj[PWM9_INDEX].channel = 3;
+    at32_pwm_obj[PWM9_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM9_CH4
-    at32_pwm_obj[PWM9_INDEX].channel = 4;
+    at32_pwm_obj[PWM9_INDEX].channel |= 1 << 3;
 #endif
 #ifdef BSP_USING_PWM12_CH1
-    at32_pwm_obj[PWM12_INDEX].channel = 1;
+    at32_pwm_obj[PWM12_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM12_CH2
-    at32_pwm_obj[PWM12_INDEX].channel = 2;
+    at32_pwm_obj[PWM12_INDEX].channel |= 1 << 1;
 #endif
 }
 
@@ -554,17 +716,26 @@ static int rt_hw_pwm_init(void)
 
     for(i = 0; i < sizeof(at32_pwm_obj) / sizeof(at32_pwm_obj[0]); i++)
     {
-        if(rt_device_pwm_register(&at32_pwm_obj[i].pwm_device, at32_pwm_obj[i].name, &drv_ops, at32_pwm_obj[i].tmr_x) == RT_EOK)
+        if(at32_hw_pwm_init(&at32_pwm_obj[i]) != RT_EOK)
         {
-          LOG_D("%s register success", at32_pwm_obj[i].name);
+            LOG_E("%s init failed", at32_pwm_obj[i].name);
+            result = -RT_ERROR;
+            goto __exit;
         }
         else
         {
-          LOG_D("%s register failed", at32_pwm_obj[i].name);
-          result = -RT_ERROR;
+            if(rt_device_pwm_register(&at32_pwm_obj[i].pwm_device, at32_pwm_obj[i].name, &drv_ops, at32_pwm_obj[i].tmr_x) == RT_EOK)
+            {
+                LOG_D("%s register success", at32_pwm_obj[i].name);
+            }
+            else
+            {
+                LOG_D("%s register failed", at32_pwm_obj[i].name);
+                result = -RT_ERROR;
+            }
         }
     }
-
+__exit:
     return result;
 }
 

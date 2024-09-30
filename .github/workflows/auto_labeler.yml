@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2006-2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-08-26     supperthomas the first version
+#
+
+#这个action用来自动给pull request 添加标签
+#当一个pull request被打开时，这个action会自动给这个pull request添加标签
+
+name: "Pull Request Labeler"
+on:
+- pull_request_target
+
+jobs:
+  labeler:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/labeler@v5

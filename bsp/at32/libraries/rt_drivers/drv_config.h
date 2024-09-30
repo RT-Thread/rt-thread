@@ -11,6 +11,7 @@
  * 2023-10-18     shelton      add support f402/f405
  * 2024-04-12     shelton      add support a403a and a423
  * 2024-07-31     shelton      add support hwi2c driver
+ * 2024-08-30     shelton      add support m412 and m416
  */
 
 #ifndef __DRV_CONFIG_H__
@@ -87,6 +88,13 @@ extern "C" {
 #include "f435_437/spi_config.h"
 #include "f435_437/usb_config.h"
 #include "f435_437/dac_config.h"
+#elif defined(SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
+#include "m412_416/can_config.h"
+#include "m412_416/dma_config.h"
+#include "m412_416/uart_config.h"
+#include "m412_416/i2c_config.h"
+#include "m412_416/spi_config.h"
+#include "m412_416/dac_config.h"
 #endif
 
 #ifdef __cplusplus

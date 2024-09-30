@@ -118,7 +118,6 @@ typedef struct {
     uint8_t res;
     uint8_t conv_mode;
     uint32_t adc_clk_div;
-    uint16_t conv_duration;
     bool port3_realtime;
     bool wait_dis;
     bool sel_sync_ahb;
@@ -344,13 +343,39 @@ hpm_stat_t adc16_set_pmt_config(ADC16_Type *ptr, adc16_pmt_config_t *config);
  *
  * @param[in] ptr An ADC16 peripheral base address.
  * @param[in] trig_ch An ADC16 peripheral trigger channel.
- * @param[in] enable A enable control
- * @return A result of setting queue enable in preemption
+ * @param[in] enable Set true to enable and false to disable.
+ * @return A result of setting queue enable in preemption.
  * @retval status_success Get the result of an ADC16 conversion in oneshot mode successfully.
  * @retval status_invalid_argument Get the result of an ADC16 conversion in oneshot mode unsuccessfully due to passing invalid arguments.
  */
 hpm_stat_t adc16_set_pmt_queue_enable(ADC16_Type *ptr, uint8_t trig_ch, bool enable);
 
+/** @} */
+
+/**
+ * @name Enablement Control
+ * @{
+ */
+/**
+ * @brief Enable the hw trigger control for the sequence mode.
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ *
+ */
+static inline void adc16_seq_enable_hw_trigger(ADC16_Type *ptr)
+{
+    ptr->SEQ_CFG0 |= ADC16_SEQ_CFG0_HW_TRIG_EN_MASK;
+}
+/**
+ * @brief Disable the hw trigger control for the sequence mode.
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ *
+ */
+static inline void adc16_seq_disable_hw_trigger(ADC16_Type *ptr)
+{
+    ptr->SEQ_CFG0 &= ~ADC16_SEQ_CFG0_HW_TRIG_EN_MASK;
+}
 /** @} */
 
 /**
@@ -556,7 +581,6 @@ hpm_stat_t adc16_trigger_seq_by_sw(ADC16_Type *ptr);
  */
 hpm_stat_t adc16_trigger_pmt_by_sw(ADC16_Type *ptr, uint8_t trig_ch);
 
-
 /**
  * @brief Get the result in oneshot mode.
  *
@@ -602,10 +626,12 @@ void adc16_disable_temp_sensor(ADC16_Type *ptr);
  *
  * @param[in] ptr An ADC16 peripheral base address.
  */
+#if defined(HPM_IP_FEATURE_ADC16_HAS_MOT_EN) && HPM_IP_FEATURE_ADC16_HAS_MOT_EN
 static inline void adc16_enable_motor(ADC16_Type *ptr)
 {
     ptr->ANA_CTRL0 |= ADC16_ANA_CTRL0_MOTO_EN_MASK;
 }
+#endif
 
 /** @} */
 

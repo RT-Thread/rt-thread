@@ -26,6 +26,7 @@ static struct usbh_rndis g_rndis_class;
 
 static int usbh_rndis_get_notification(struct usbh_rndis *rndis_class)
 {
+    (void)rndis_class;
     // int ret;
     // struct usbh_urb *urb = &rndis_class->intin_urb;
 
@@ -460,6 +461,8 @@ void usbh_rndis_rx_thread(void *argument)
     uint32_t transfer_size = (16 * 1024);
 #endif
 
+    (void)argument;
+
     USB_LOG_INFO("Create rndis rx thread\r\n");
     // clang-format off
 find_class:
@@ -531,7 +534,7 @@ find_class:
 #else
             if ((g_rndis_rx_length + (16 * 1024)) > CONFIG_USBHOST_RNDIS_ETH_MAX_RX_SIZE) {
 #endif
-                USB_LOG_ERR("Rx packet is overflow, please ruduce tcp window size or increase CONFIG_USBHOST_RNDIS_ETH_MAX_RX_SIZE\r\n");
+                USB_LOG_ERR("Rx packet is overflow, please reduce tcp window size or increase CONFIG_USBHOST_RNDIS_ETH_MAX_RX_SIZE\r\n");
                 while (1) {
                 }
             }
@@ -581,10 +584,12 @@ int usbh_rndis_eth_output(uint32_t buflen)
 
 __WEAK void usbh_rndis_run(struct usbh_rndis *rndis_class)
 {
+    (void)rndis_class;
 }
 
 __WEAK void usbh_rndis_stop(struct usbh_rndis *rndis_class)
 {
+    (void)rndis_class;
 }
 
 static const struct usbh_class_driver rndis_class_driver = {

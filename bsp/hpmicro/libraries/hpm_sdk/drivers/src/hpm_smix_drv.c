@@ -7,6 +7,35 @@
 
 #include "hpm_smix_drv.h"
 
+static uint8_t smix_get_fir_shift(smix_mixer_rate_convert_t rate)
+{
+    uint8_t shift = 0;
+
+    switch (rate) {
+    case smix_mixer_no_rate_convert:
+    case smix_mixer_upper_2x_sample:
+    case smix_mixer_upper_3x_sample:
+        shift = 0;
+        break;
+    case smix_mixer_upper_4x_sample:
+    case smix_mixer_upper_6x_sample:
+        shift = 1;
+        break;
+    case smix_mixer_upper_8x_sample:
+    case smix_mixer_upper_12x_sample:
+        shift = 2;
+        break;
+    case smix_mixer_lower_2x_sample:
+        shift = 7;
+        break;
+    default:
+        shift = 0;
+        break;
+    }
+
+    return shift;
+}
+
 void smix_get_dma_default_ch_config(SMIX_Type *ptr, smix_dma_ch_config_t *config)
 {
     (void) ptr;
@@ -59,7 +88,6 @@ void smix_get_mixer_source_ch_default_config(SMIX_Type *ptr, smix_mixer_source_c
     config->fifo_thr = 4; /* Must be greater than or equal to 4 */
     config->calsat_int_en = false;
     config->dn_int_en = false;
-    config->fir_shift = 0;
     config->auto_deactivate_en = true;
     config->fadeout_int_en = false;
 
@@ -122,7 +150,7 @@ hpm_stat_t smix_mixer_config_source_ch(SMIX_Type *ptr, uint8_t ch, smix_mixer_so
     ptr->SOURCE_CH[ch].CTRL = SMIX_SOURCE_CH_CTRL_THRSH_SET(src->fifo_thr)
                         | SMIX_SOURCE_CH_CTRL_CALSAT_INT_EN_SET(src->calsat_int_en)
                         | SMIX_SOURCE_CH_CTRL_DN_INT_EN_SET(src->dn_int_en)
-                        | SMIX_SOURCE_CH_CTRL_SHFT_CTRL_SET(src->fir_shift)
+                        | SMIX_SOURCE_CH_CTRL_SHFT_CTRL_SET(smix_get_fir_shift(src->convert_rate))
                         | SMIX_SOURCE_CH_CTRL_AUTODEACTAFTERFADEOUT_EN_SET(src->auto_deactivate_en)
                         | SMIX_SOURCE_CH_CTRL_FADEOUT_DONE_IE_SET(src->fadeout_int_en)
                         | SMIX_SOURCE_CH_CTRL_RATECONV_SET(src->convert_rate);

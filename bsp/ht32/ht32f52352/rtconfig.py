@@ -48,7 +48,7 @@ if PLATFORM == 'gcc':
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
-
+    CFLAGS += ' -D USE_HT32F52342_52'
     CPATH = ''
     LPATH = ''
 

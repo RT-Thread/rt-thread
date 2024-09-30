@@ -67,7 +67,7 @@ scons --menuconfig
 ```
 选择如下：
 ```
-RISCV qemu virt64 configs  ---> 
+RISCV qemu virt64 configs  --->
     [*] RT-Thread run in riscv smode
 ```
 保存后，重新`scons`编译即可。
@@ -143,19 +143,9 @@ msh />
 
    - 修改ABI参数为：-mabi=ilp32d
 
-   - 使用menuconfig使能下述选项:
+   - 然后执行常规编译
 
-     ```shell
-     RT_USING_RV64ILP32
-     ```
-
-   - 使用menuconfig失能下述选项:
-
-     ```shell
-     RT_USING_POSIX_PIPE
-     RT_USING_POSIX_FS
-     RT_USING_DFS
-     ```
+   - 使用 [脚本](./qemu-rv64ilp32-nographic.sh) 启动 QEMU (INFO: QEMU 二进制同样在工具链目录)
 
 3.  使用传统64位工具链与使用新32位工具链编译相同工程的固件大小对比：
 

@@ -127,14 +127,53 @@ typedef struct {
     uint32_t trans_bytes;           /**< Total size to be transferred in byte */
 } smix_dma_ch_config_t;
 
-
+/* gain bit[14:0] */
+/* low 12 bits is fraction */
+/* high 3 bits: 1 - right shift 2; 2 - right shift 4 */
 typedef enum {
-    smix_mixer_gain_decrease_12db = 0x400,
-    smix_mixer_gain_decrease_6db = 0x800,
+    smix_mixer_gain_decrease_20db = 0x199,
+    smix_mixer_gain_decrease_19db = 0x1cb,
+    smix_mixer_gain_decrease_18db = 0x203,
+    smix_mixer_gain_decrease_17db = 0x242,
+    smix_mixer_gain_decrease_16db = 0x289,
+    smix_mixer_gain_decrease_15db = 0x2d8,
+    smix_mixer_gain_decrease_14db = 0x331,
+    smix_mixer_gain_decrease_13db = 0x395,
+    smix_mixer_gain_decrease_12db = 0x404,
+    smix_mixer_gain_decrease_11db = 0x482,
+    smix_mixer_gain_decrease_10db = 0x50f,
+    smix_mixer_gain_decrease_9db = 0x5ad,
+    smix_mixer_gain_decrease_8db = 0x65e,
+    smix_mixer_gain_decrease_7db = 0x725,
+    smix_mixer_gain_decrease_6db = 0x804,
+    smix_mixer_gain_decrease_5db = 0x8ff,
+    smix_mixer_gain_decrease_4db = 0xa18,
+    smix_mixer_gain_decrease_3db = 0xb53,
+    smix_mixer_gain_decrease_2db = 0xcb5,
+    smix_mixer_gain_decrease_1db = 0xe42,
     smix_mixer_gain_0db = 0xfff,
-    smix_mixer_gain_increase_6db = 0x1800,
-    smix_mixer_gain_increase_12db = 0x1fff,
+    smix_mixer_gain_increase_1db = 0x147c,
+    smix_mixer_gain_increase_2db = 0x1509,
+    smix_mixer_gain_increase_3db = 0x15a6,
+    smix_mixer_gain_increase_4db = 0x1657,
+    smix_mixer_gain_increase_5db = 0x171c,
+    smix_mixer_gain_increase_6db = 0x17fa,
+    smix_mixer_gain_increase_7db = 0x18f4,
+    smix_mixer_gain_increase_8db = 0x1a0c,
+    smix_mixer_gain_increase_9db = 0x1b45,
+    smix_mixer_gain_increase_10db = 0x1ca5,
+    smix_mixer_gain_increase_11db = 0x1e31,
+    smix_mixer_gain_increase_12db = 0x1fed,
+    smix_mixer_gain_increase_13db = 0x2477,
+    smix_mixer_gain_increase_14db = 0x2503,
+    smix_mixer_gain_increase_15db = 0x259f,
+    smix_mixer_gain_increase_16db = 0x264f,
+    smix_mixer_gain_increase_17db = 0x2714,
+    smix_mixer_gain_increase_18db = 0x27f1,
+    smix_mixer_gain_increase_19db = 0x28e9,
+    smix_mixer_gain_increase_20db = 0x2a00
 } smix_mixer_gain_t;
+
 
 typedef enum {
     smix_mixer_no_rate_convert,
@@ -174,7 +213,6 @@ typedef struct {
     uint8_t fifo_thr;
     bool calsat_int_en;
     bool dn_int_en;
-    uint8_t fir_shift;
     bool auto_deactivate_en;
     bool fadeout_int_en;
     uint8_t convert_rate;
@@ -503,6 +541,30 @@ hpm_stat_t smix_mixer_config_source_ch(SMIX_Type *ptr, uint8_t ch, smix_mixer_so
  * @retval status_success if no error occurs
  */
 hpm_stat_t smix_mixer_config_dst_ch(SMIX_Type *ptr, uint8_t ch, smix_mixer_dst_config_t *dst);
+
+/**
+ * @brief smix mixer config source channel gain
+ *
+ * @param [in] ptr SMIX base address
+ * @param [in] ch_index source channel
+ * @param [in] gain smix_mixer_gain_t
+ */
+static inline void smix_set_source_gain(SMIX_Type *ptr, uint8_t ch_index, smix_mixer_gain_t gain)
+{
+    ptr->SOURCE_CH[ch_index].GAIN = SMIX_SOURCE_CH_GAIN_VAL_SET(gain);
+}
+
+/**
+ * @brief smix mixer config dst channel gain
+ *
+ * @param [in] ptr SMIX base address
+ * @param [in] ch_index dst channel
+ * @param [in] gain smix_mixer_gain_t
+ */
+static inline void smix_set_dst_gain(SMIX_Type *ptr, uint8_t ch_index, smix_mixer_gain_t gain)
+{
+    ptr->DST_CH[ch_index].GAIN = SMIX_DST_CH_GAIN_VAL_SET(gain);
+}
 
 #ifdef __cplusplus
 }

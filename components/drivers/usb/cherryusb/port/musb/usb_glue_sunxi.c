@@ -57,3 +57,8 @@ uint32_t usb_get_musb_ram_size(void)
 {
     return 8192;
 }
+
+void usbd_musb_delay_ms(uint8_t ms)
+{
+    /* implement later */
+}

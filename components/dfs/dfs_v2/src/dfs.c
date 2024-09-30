@@ -537,6 +537,7 @@ int dfs_dup(int oldfd, int startfd)
     fdt = dfs_fdtable_get();
     if ((oldfd < 0) || (oldfd >= fdt->maxfd))
     {
+        rt_set_errno(-EBADF);
         goto exit;
     }
     if (!fdt->fds[oldfd])
@@ -668,12 +669,17 @@ sysret_t sys_dup(int oldfd)
 int sys_dup(int oldfd)
 #endif
 {
+    int err = 0;
     int newfd = dfs_dup(oldfd, (dfs_fdtable_get() == &_fdtab) ? DFS_STDIO_OFFSET : 0);
+    if(newfd < 0)
+    {
+        err = rt_get_errno();
+    }
 
 #ifdef RT_USING_SMART
-    return (sysret_t)newfd;
+    return err < 0 ? err : newfd;
 #else
-    return newfd;
+    return err < 0 ? err : newfd;
 #endif
 }
 

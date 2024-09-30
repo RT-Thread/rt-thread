@@ -67,32 +67,68 @@ system_vectors:
     b vector_serror
 
 #include "include/vector_gcc.h"
+#define EFRAMEX x19
 
 START_POINT(vector_exception)
     SAVE_IRQ_CONTEXT
-    stp     x0, x1, [sp, #-0x10]!
-#ifdef RT_USING_SMART
-    SAVE_USER_CTX
-#endif
+    mov     EFRAMEX, sp
 
+    SAVE_USER_CTX EFRAMEX, x0
+
+    mov     x0, EFRAMEX
     bl      rt_hw_trap_exception
-#ifdef RT_USING_SMART
-    ldp     x0, x1, [sp]
-    RESTORE_USER_CTX x0
-#endif
+    RESTORE_USER_CTX EFRAMEX, x0
 
-    ldp     x0, x1, [sp], #0x10
-    RESTORE_IRQ_CONTEXT_WITHOUT_MMU_SWITCH
+    /* do exception switch for IRQ/exception handlers */
+    EXCEPTION_SWITCH sp, x0
+
+    RESTORE_IRQ_CONTEXT
+    eret
 START_POINT_END(vector_exception)
 
 START_POINT(vector_serror)
     SAVE_IRQ_CONTEXT
+    mov     EFRAMEX, sp
 
-#ifdef RT_USING_SMART
-    SAVE_USER_CTX
-#endif
+    SAVE_USER_CTX EFRAMEX, x0
 
-    stp     x0, x1, [sp, #-0x10]!
+    mov     x0, EFRAMEX
     bl      rt_hw_trap_serror
-    b       .
+
+    RESTORE_USER_CTX EFRAMEX, x0
+
+    NEVER_RETURN
 START_POINT_END(vector_serror)
+
+START_POINT(vector_irq)
+    SAVE_IRQ_CONTEXT
+    mov     EFRAMEX, sp
+
+    /* trace IRQ level */
+    bl      rt_interrupt_enter
+
+    SAVE_USER_CTX EFRAMEX, x0
+
+    /* handline IRQ */
+    mov     x0, EFRAMEX
+    bl      rt_hw_trap_irq
+
+    RESTORE_USER_CTX EFRAMEX, x0
+
+    /* restore IRQ level */
+    bl      rt_interrupt_leave
+
+    mov     x0, EFRAMEX
+    bl      rt_hw_vector_irq_sched
+
+    b       rt_hw_irq_exit
+START_POINT_END(vector_irq)
+
+rt_hw_irq_exit:
+    .globl rt_hw_irq_exit
+
+    /* do exception switch for IRQ/exception handlers */
+    EXCEPTION_SWITCH sp, x0
+
+    RESTORE_IRQ_CONTEXT
+    eret

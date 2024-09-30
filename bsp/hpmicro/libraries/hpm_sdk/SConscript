@@ -5,7 +5,7 @@ from building import *
 cwd = GetCurrentDir()
 
 # Update include path
-path = [ cwd + '/arch', cwd + "/drivers/inc", cwd + '/soc/ip']
+path = [ cwd + '/arch', cwd + "/drivers/inc", cwd + '/soc/' + rtconfig.SOC_FAMILY + '/' + '/ip']
 
 # The set of source files associated with this SConscript file.
 src = []
@@ -13,11 +13,14 @@ src = []
 CPPDEFINES=[]
 
 src += ['drivers/src/hpm_pmp_drv.c']
-src += ['drivers/src/hpm_pllctl_drv.c']
-src += ['drivers/src/hpm_pllctlv2_drv.c']
 src += ['drivers/src/hpm_pcfg_drv.c']
 
-if rtconfig.CHIP_NAME == "HPM6750" or rtconfig.CHIP_NAME == "HPM6360" or rtconfig.CHIP_NAME == "HPM6280":
+if rtconfig.SOC_FAMILY == "HPM6700":
+    src += ['drivers/src/hpm_pllctl_drv.c']
+else:
+    src += ['drivers/src/hpm_pllctlv2_drv.c']
+
+if rtconfig.SOC_FAMILY == "HPM6700" or rtconfig.SOC_FAMILY == "HPM6300" or rtconfig.SOC_FAMILY == "HPM6200":
     src += ['drivers/src/hpm_dma_drv.c']
 else:
     src += ['drivers/src/hpm_dmav2_drv.c']
@@ -77,7 +80,10 @@ if GetDepend(['BSP_USING_FEMC']):
 if GetDepend(['BSP_USING_PWM']):
     src += ['drivers/src/hpm_pwm_drv.c']
 
-if GetDepend(['BSP_USING_USB']) or GetDepend(['RT_USING_CHERRYUSB']):
+if GetDepend(['BSP_USING_PWMV2']):
+    src += ['drivers/src/hpm_pwmv2_drv.c']
+
+if GetDepend(['BSP_USING_USB']):
     src += ['drivers/src/hpm_usb_drv.c']
 
 if GetDepend(['BSP_USING_I2S']):
@@ -110,6 +116,13 @@ if GetDepend(['BSP_USING_MIPI_CSI']):
 if GetDepend(['BSP_USING_MIPI_DSI']):
     src += ['drivers/src/hpm_mipi_dsi_drv.c']
     src += ['drivers/src/hpm_mipi_dsi_phy_drv.c']
+
+if GetDepend(['BSP_USING_LVB']):
+    src += ['drivers/src/hpm_lvb_drv.c']
+
+if GetDepend(['BSP_USING_LCB']):
+    src += ['drivers/src/hpm_lcb_drv.c']
+
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 
 Return ('group')

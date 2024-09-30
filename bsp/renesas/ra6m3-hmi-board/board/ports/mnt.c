@@ -102,7 +102,7 @@ static void sd_mount(void)
 }
 
 #else
-#include <spi_msd.h>
+#include <dev_spi_msd.h>
 #include "drv_sci.h"
 int sd_mount(void)
 {

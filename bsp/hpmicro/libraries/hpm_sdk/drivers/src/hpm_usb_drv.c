@@ -68,6 +68,8 @@ void usb_phy_init(USB_Type *ptr)
         (void)ptr->PHY_CTRL1;                                         /* used for delay */
     }
 
+    ptr->OTG_CTRL0 &= ~USB_OTG_CTRL0_OTG_WKDPDMCHG_EN_MASK;           /* Disable dp/dm wakeup */
+
     ptr->OTG_CTRL0 &= ~USB_OTG_CTRL0_OTG_UTMI_RESET_SW_MASK;          /* clear otg_utmi_reset_sw for naneng usbphy */
 
     /* otg utmi clock detection */
@@ -221,7 +223,7 @@ uint8_t usb_dcd_edpt_get_type(USB_Type *ptr, uint8_t ep_addr)
     uint8_t const dir = (ep_addr & 0x80) >> 7;
     uint32_t temp =  ptr->ENDPTCTRL[epnum];
 
-    return dir ?  USB_ENDPTCTRL_TXT_GET(temp) : USB_ENDPTCTRL_RXT_GET(temp);
+    return dir ? USB_ENDPTCTRL_TXT_GET(temp) : USB_ENDPTCTRL_RXT_GET(temp);
 }
 
 void usb_dcd_edpt_xfer(USB_Type *ptr, uint8_t ep_idx)

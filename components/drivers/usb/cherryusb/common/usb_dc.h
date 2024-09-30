@@ -34,6 +34,13 @@ int usb_dc_deinit(uint8_t busid);
 int usbd_set_address(uint8_t busid, const uint8_t addr);
 
 /**
+ * @brief Set remote wakeup feature
+ *
+ * @return On success will return 0, and others indicate fail.
+ */
+int usbd_set_remote_wakeup(uint8_t busid);
+
+/**
  * @brief Get USB device speed
  *
  * @param[in] busid bus index

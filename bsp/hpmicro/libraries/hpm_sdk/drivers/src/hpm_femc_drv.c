@@ -110,18 +110,20 @@ void femc_get_typical_sdram_config(FEMC_Type *ptr, femc_sdram_config_t *config)
     config->prescaler = HPM_FEMC_DRV_DEFAULT_PRESCALER;
     config->burst_len_in_byte = 8;
     config->auto_refresh_count_in_one_burst = 1;
-    config->precharge_to_act_in_ns = 20;
-    config->act_to_rw_in_ns = 20;
-    config->refresh_recover_in_ns = 70;
+    config->precharge_to_act_in_ns = 18;
+    config->act_to_rw_in_ns = 18;
+    config->refresh_recover_in_ns = 60;
     config->write_recover_in_ns = 12;
     config->cke_off_in_ns = 42;
     config->act_to_precharge_in_ns = 42;
 
-    config->self_refresh_recover_in_ns = 70;
+    config->self_refresh_recover_in_ns = 72;
     config->refresh_to_refresh_in_ns = 60;
     config->act_to_act_in_ns = 12;
     config->idle_timeout_in_ns = 6;
     config->cs_mux_pin = FEMC_IO_MUX_NOT_USED;
+
+    config->cmd_data_width = 4;
 }
 
 void femc_init(FEMC_Type *ptr, femc_config_t *config)
@@ -266,51 +268,23 @@ hpm_stat_t femc_config_sdram(FEMC_Type *ptr, uint32_t clk_in_hz, femc_sdram_conf
                   | FEMC_SDRCTRL3_RT_SET(refresh_cycle)
                   | FEMC_SDRCTRL3_UT_SET(refresh_cycle)
                   | FEMC_SDRCTRL3_REBL_SET(config->auto_refresh_count_in_one_burst - 1);
-    /*
-     *
-     * DATSZ[2:0]: Data size in byte
-     *     0b - 4
-     *     1b - 1
-     *     2b - 2
-     *     3b - 3
-     *   > 3b - 4
-     */
-    ptr->DATSZ = FEMC_DATSZ_DATSZ_SET((config->data_width_in_byte & (0x3UL)));
-    ptr->BYTEMSK = 0;
-
-    cmd.opcode = FEMC_CMD_SDRAM_PRECHARGE_ALL;
-    cmd.data = 0;
-    err = femc_issue_ip_cmd(ptr, config->base_address, &cmd);
-    if (status_success != err) {
-        return err;
-    }
-
-    cmd.opcode = FEMC_CMD_SDRAM_AUTO_REFRESH;
-    err = femc_issue_ip_cmd(ptr, config->base_address, &cmd);
-    if (status_success != err) {
-        return err;
-    }
-    err = femc_issue_ip_cmd(ptr, config->base_address, &cmd);
-    if (status_success != err) {
-        return err;
-    }
-
-    /*
-     *
-     * DATSZ[2:0]: Data size in byte
-     *     0b - 4
-     *     1b - 1
-     *     2b - 2
-     *     3b - 3
-     *   > 3b - 4
-     */
-    ptr->DATSZ = FEMC_DATSZ_DATSZ_SET((config->data_width_in_byte & (0x3UL)));
-    ptr->BYTEMSK = 0;
 
     /*
      * config delay cell
      */
     femc_config_delay_cell(ptr, !config->delay_cell_disable, config->delay_cell_value);
+
+    /*
+     *
+     * DATSZ[2:0]: Data size in byte
+     *     0b - 4
+     *     1b - 1
+     *     2b - 2
+     *     3b - 3
+     *   > 3b - 4
+     */
+    ptr->DATSZ = FEMC_DATSZ_DATSZ_SET((config->cmd_data_width & (0x3UL)));
+    ptr->BYTEMSK = 0;
 
     cmd.opcode = FEMC_CMD_SDRAM_PRECHARGE_ALL;
     cmd.data = 0;

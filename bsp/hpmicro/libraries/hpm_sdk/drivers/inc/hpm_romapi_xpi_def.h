@@ -59,7 +59,7 @@ typedef enum {
 } xpi_xfer_channel_t;
 
 /**
- * @brief XPI Channel defitions
+ * @brief XPI Channel definitions
  */
 typedef enum {
     xpi_channel_a1,        /**< Port:  Channel A1 */

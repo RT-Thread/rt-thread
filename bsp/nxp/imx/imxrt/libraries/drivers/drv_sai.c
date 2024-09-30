@@ -17,7 +17,7 @@
 #include <drv_log.h>
 
 #include <rtdevice.h>
-#include "drivers/audio.h"
+#include "drivers/dev_audio.h"
 #include "bsp_wm8960.h"
 #include "drv_i2c.h"
 #include "drv_sai.h"

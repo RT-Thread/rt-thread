@@ -15,7 +15,7 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 512
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
@@ -97,6 +97,8 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CAN
+#define RT_USING_WDT
 #define RT_USING_PIN
 #define RT_USING_HWTIMER
 /* end of Device Drivers */
@@ -351,10 +353,13 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_PIN
+#define BSP_USING_CAN
+#define BSP_USING_CAN1
 #define BSP_USING_UART
 #define BSP_USING_UART4
 #define BSP_USING_UART5
 #define BSP_USING_UART2
+#define BSP_USING_WDT
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

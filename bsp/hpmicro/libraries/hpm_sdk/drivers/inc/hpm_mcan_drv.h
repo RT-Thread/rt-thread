@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 HPMicro
+ * Copyright (c) 2023-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -26,19 +26,20 @@ extern "C" {
 
 enum {
     status_mcan_filter_index_out_of_range = MAKE_STATUS(status_group_mcan, 0),
-    status_mcan_rxfifo_empty,
-    status_mcan_rxfifo_full,
-    status_mcan_txbuf_full,
-    status_mcan_txfifo_full,
-    status_mcan_rxfifo0_busy,
-    status_mcan_rxfifo1_busy,
-    status_mcan_txbuf_index_out_of_range,
-    status_mcan_rxbuf_index_out_of_range,
-    status_mcan_rxbuf_empty,
-    status_mcan_tx_evt_fifo_empty,
-    status_mcan_timestamp_not_exist,
-    status_mcan_ram_out_of_range,
-    status_mcan_timeout,
+    status_mcan_rxfifo_empty = MAKE_STATUS(status_group_mcan, 1),
+    status_mcan_rxfifo_full = MAKE_STATUS(status_group_mcan, 2),
+    status_mcan_txbuf_full = MAKE_STATUS(status_group_mcan, 3),
+    status_mcan_txfifo_full = MAKE_STATUS(status_group_mcan, 4),
+    status_mcan_rxfifo0_busy = MAKE_STATUS(status_group_mcan, 5),
+    status_mcan_rxfifo1_busy = MAKE_STATUS(status_group_mcan, 6),
+    status_mcan_txbuf_index_out_of_range = MAKE_STATUS(status_group_mcan, 7),
+    status_mcan_rxbuf_index_out_of_range = MAKE_STATUS(status_group_mcan, 8),
+    status_mcan_rxbuf_empty = MAKE_STATUS(status_group_mcan, 9),
+    status_mcan_tx_evt_fifo_empty = MAKE_STATUS(status_group_mcan, 10),
+    status_mcan_timestamp_not_exist = MAKE_STATUS(status_group_mcan, 11),
+    status_mcan_ram_out_of_range = MAKE_STATUS(status_group_mcan, 12),
+    status_mcan_timeout = MAKE_STATUS(status_group_mcan, 13),
+    status_mcan_invalid_bit_timing = MAKE_STATUS(status_group_mcan, 14),
 };
 
 /**
@@ -647,6 +648,15 @@ typedef struct mcan_timeout_config_struct {
 } mcan_timeout_config_t;
 
 /**
+ * @brief MCAN Transmitter Delay Compensation Configuration
+ */
+typedef struct mcan_tdc_config_t {
+    uint8_t ssp_offset;                 /*!< SSP offset */
+    uint8_t filter_window_length;       /*!< Filter Window Length */
+} mcan_tdc_config_t;
+
+
+/**
  * @brief MCAN Configuration Structure
  */
 typedef struct mcan_config_struct {
@@ -678,7 +688,7 @@ typedef struct mcan_config_struct {
     bool enable_tdc;                                /*!< Enable transmitter delay compensation */
     bool enable_restricted_operation_mode;          /*!< Enable Restricted Operation Mode: Receive only */
     bool disable_auto_retransmission;               /*!< Disable auto retransmission */
-    uint8_t padding[2];
+    mcan_tdc_config_t tdc_config;                   /*!< Transmitter Delay Compensation Configuration */
     mcan_internal_timestamp_config_t timestamp_cfg; /*!< Internal Timestamp Configuration */
     mcan_tsu_config_t tsu_config;                   /*!< TSU configuration */
     mcan_ram_config_t ram_config;                   /*!< MCAN RAM configuration */
@@ -733,15 +743,6 @@ typedef struct mcan_protocol_status {
     bool in_warning_state;                      /*!< Node is in warning state */
     bool in_error_passive_state;                /*!< Node is in error passive state */
 } mcan_protocol_status_t;
-
-/**
- * @brief MCAN Transmitter Delay Compensation Configuration
- */
-typedef struct mcan_tdc_config_t {
-    uint8_t ssp_offset;                 /*!< SSP offset */
-    uint8_t filter_window_length;       /*!< Filter Window Length */
-} mcan_tdc_config_t;
-
 
 /**
  * @brief MCAN Message Storage Indicator Types
@@ -987,7 +988,7 @@ static inline void mcan_enable_write_to_prot_config_registers(MCAN_Type *ptr)
 }
 
 /**
- * @brief Disalbe Write Access to Protected Configuration Registers
+ * @brief Disable Write Access to Protected Configuration Registers
  * @param [in] ptr MCAN base
  */
 static inline void mcan_disable_write_to_prot_config_registers(MCAN_Type *ptr)
@@ -1340,6 +1341,27 @@ static inline void mcan_send_add_request(MCAN_Type *ptr, uint32_t index)
 }
 
 /**
+ * @brief Request several transmission via specified TXBUF/FIFO Bit masks
+ *        MCAN IP will transmit data in the buffer if corresponding bit in index_bitmask is asserted
+ * @param [in] ptr MCAN Base
+ * @param [in] index_bitmask TXFIFO/BUF bit masks
+ */
+static inline void mcan_send_add_multiple_requests(MCAN_Type *ptr, uint32_t index_bitmask)
+{
+    ptr->TXBAR = index_bitmask;
+}
+
+/**
+ * @brief Cancel the TXBUF Send request
+ * @param [in] ptr MCAN Base
+ * @param [in] index TXBUF index
+ */
+static inline void mcan_cancel_tx_buf_send_request(MCAN_Type *ptr, uint32_t index)
+{
+    ptr->TXBCR = (1UL << index);
+}
+
+/**
  * @brief Check whether the Transmission completed via specified TXBUF/TXFIFO
  * @param [in] ptr MCAN base
  * @param [in] index TXBUF Index
@@ -1686,6 +1708,18 @@ hpm_stat_t mcan_read_tx_evt_fifo(MCAN_Type *ptr, mcan_tx_event_fifo_elem_t *tx_e
 hpm_stat_t mcan_transmit_blocking(MCAN_Type *ptr, mcan_tx_frame_t *tx_frame);
 
 /**
+ * @brief Request TXFIFO and fill data into TXFIFO
+ * @note This API can be used to prepare the data for several CAN frames prior to transmission.
+ *       After this operation, software can call `mcan_send_add_request(ptr, *fifo_index)` API to trigger a transmission
+ *       or call `mcan_send_add_requests(ptr, fifo_index_masks)` to trigger several transmissions
+ * @param [in] ptr MCAN base
+ * @param [in] tx_frame CAN Transmit Message buffer
+ * @param [out] fifo_index The index of the element in FIFO assigned to the tx_frame
+ * @return status_success if no errors reported
+ */
+hpm_stat_t mcan_request_and_fill_txfifo(MCAN_Type *ptr, mcan_tx_frame_t *tx_frame, uint32_t *fifo_index);
+
+/**
  * @brief Transmit CAN message via TX FIFO in non-blocking way
  * @param [in] ptr MCAN base
  * @param [in] tx_frame CAN Transmit Message buffer
@@ -1723,7 +1757,7 @@ hpm_stat_t mcan_receive_from_buf_blocking(MCAN_Type *ptr, uint32_t index, mcan_r
 hpm_stat_t mcan_receive_from_fifo_blocking(MCAN_Type *ptr, uint32_t fifo_index, mcan_rx_message_t *rx_frame);
 
 /**
- * @brief Get Timstamp from MCAN TX Event
+ * @brief Get Timestamp from MCAN TX Event
  * @param [in] ptr MCAN base
  * @param [in] tx_evt TX Event Element
  * @param [out] timestamp Timestamp value
@@ -1736,7 +1770,7 @@ hpm_stat_t mcan_get_timestamp_from_tx_event(MCAN_Type *ptr,
                                             mcan_timestamp_value_t *timestamp);
 
 /**
- * @brief Get Timstamp from MCAN RX frame
+ * @brief Get Timestamp from MCAN RX frame
  * @param [in] ptr MCAN base
  * @param [in] rx_msg Received message
  * @param [out] timestamp Timestamp value

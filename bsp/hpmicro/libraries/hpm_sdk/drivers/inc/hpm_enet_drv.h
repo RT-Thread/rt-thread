@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -59,7 +59,8 @@
 typedef enum {
     enet_normal_int_sum_en   = ENET_DMA_INTR_EN_NIE_MASK,
     enet_aboarmal_int_sum_en = ENET_DMA_INTR_EN_AIE_MASK,
-    enet_receive_int_en      = ENET_DMA_INTR_EN_RIE_MASK
+    enet_receive_int_en      = ENET_DMA_INTR_EN_RIE_MASK,
+    enet_transmit_int_en     = ENET_DMA_INTR_EN_TIE_MASK
 } enet_interrupt_enable_t;
 
 /** @brief interrupt mask type */
@@ -153,6 +154,7 @@ typedef enum {
 
 /** @brief enet interface selections */
 typedef enum {
+    enet_inf_mii  = 0,
     enet_inf_rmii = 4,
     enet_inf_rgmii = 1
 } enet_inf_type_t;
@@ -232,7 +234,7 @@ typedef enum {
     enet_pps_ctrl_bin_4096hz_digital_2048hz,
     enet_pps_ctrl_bin_8192hz_digital_4096hz,
     enet_pps_ctrl_bin_16384hz_digital_8192hz,
-    enet_pps_ctrl_bin_32867hz_digital_16384hz
+    enet_pps_ctrl_bin_32768hz_digital_16384hz
 } enet_pps_ctrl_t;
 
 /** @brief PPS0 commands */
@@ -544,6 +546,14 @@ extern "C" {
  * @param[in] config A pointer to a control config structure for tranmission
  */
 void enet_get_default_tx_control_config(ENET_Type *ptr, enet_tx_control_config_t *config);
+
+/**
+ * @brief Get a default interrupt config
+ *
+ * @param[in] ptr An Ethernet peripheral base address
+ * @param[in] config A pointer to a interrupt config structure
+ */
+void enet_get_default_interrupt_config(ENET_Type *ptr, enet_int_config_t *config);
 
 /**
  * @brief Get interrupt status

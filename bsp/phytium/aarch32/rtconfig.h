@@ -5,7 +5,7 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -59,7 +59,6 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50200
-#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_CACHE
@@ -153,6 +152,12 @@
 #define RT_USING_QSPI
 #define RT_USING_PIN
 #define RT_USING_KTIME
+#define RT_USING_CHERRYUSB
+#define RT_CHERRYUSB_HOST
+#define RT_CHERRYUSB_HOST_XHCI
+#define RT_CHERRYUSB_HOST_HID
+#define RT_CHERRYUSB_HOST_MSC
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -476,12 +481,12 @@
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
-#define RT_USING_MIO15
+#define RT_USING_MIO0
+#define RT_USING_MIO1
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
 #define USING_SDIF0
@@ -505,10 +510,10 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000Q
+#define TARGET_E2000D
 #define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "q"
-#define SOC_CORE_NUM 4
+#define TARGET_TYPE_NAME "d"
+#define SOC_CORE_NUM 2
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -519,8 +524,8 @@
 
 /* Board Configuration */
 
+#define E2000D_DEMO_BOARD
 #define BOARD_NAME "demo"
-#define E2000Q_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 

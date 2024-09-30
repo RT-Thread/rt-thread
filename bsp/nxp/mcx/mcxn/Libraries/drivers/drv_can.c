@@ -15,7 +15,7 @@
 #include "fsl_common.h"
 #include "fsl_flexcan.h"
 
-#define TX_MB_IDX       (7)
+#define TX_MB_IDX       (6)
 #define RX_MB_COUNT     (1)
 static flexcan_frame_t frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
 static rt_uint32_t filter_mask = 0;
@@ -25,6 +25,9 @@ enum
 {
 #ifdef BSP_USING_CAN0
     CAN0_INDEX,
+#endif
+#ifdef BSP_USING_CAN1
+    CAN1_INDEX,
 #endif
 };
 
@@ -52,6 +55,16 @@ struct imxrt_can flexcans[] =
         .clock_attach_id = kFRO_HF_to_FLEXCAN0,
     },
 #endif
+#ifdef BSP_USING_CAN1
+    {
+        .name = "can1",
+        .base = CAN1,
+        .instance = 1,
+        .irqn = CAN1_IRQn,
+        .clock_div_name = kCLOCK_DivFlexcan1Clk,
+        .clock_attach_id = kFRO_HF_to_FLEXCAN1,
+    },
+#endif
 };
 
 
@@ -62,33 +75,21 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
     flexcan_mb_transfer_t rxXfer;
 
     can = (struct imxrt_can *)userData;
+
     switch (status)
     {
-    case kStatus_FLEXCAN_RxIdle:
-        rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_RX_IND | result << 8);
-        rxXfer.frame = &frame[result - 1];
-        rxXfer.mbIdx = result;
-        FLEXCAN_TransferReceiveNonBlocking(can->base, &can->handle, &rxXfer);
-        break;
+        case kStatus_FLEXCAN_RxIdle:
+            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_RX_IND | result << 8);
+            rxXfer.frame = &frame[result - 1];
+            rxXfer.mbIdx = result;
+            FLEXCAN_TransferReceiveNonBlocking(can->base, &can->handle, &rxXfer);
+            break;
 
-//    case kStatus_FLEXCAN_TxIdle:
-//        rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | (63 - result) << 8);
-//        break;
-
-//    case kStatus_FLEXCAN_WakeUp:
-
-//    case kStatus_FLEXCAN_ErrorStatus:
-//        if ((result >= 47) && (result <= 63))
-//        {
-//            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_FAIL | (63 - result) << 8);
-//        }
-//        break;
-
-//    case kStatus_FLEXCAN_TxSwitchToRx:
-//        break;
-
-    default:
-        break;
+        case kStatus_FLEXCAN_TxIdle:
+            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | result << 8);
+            break;
+        default:
+            break;
     }
 }
 
@@ -105,6 +106,8 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     FLEXCAN_GetDefaultConfig(&config);
     config.baudRate = cfg->baud_rate;
     config.enableIndividMask = true;    /* one filter per MB */
+    config.disableSelfReception = true;
+
     switch (cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
@@ -129,7 +132,7 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     }
     else
     {
-        rt_kprintf("No found Improved Timing Configuration. Just used default configuration\n");
+        //rt_kprintf("No found Improved Timing Configuration. Just used default configuration\n");
     }
 
     FLEXCAN_Init(can->base, &config, CLOCK_GetFlexcanClkFreq(can->instance));
@@ -279,8 +282,20 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
         break;
 
     case RT_CAN_CMD_SET_BAUD:
-        res = -RT_ERROR;
-        break;
+        {
+            struct can_configure *cfg = (struct can_configure *)arg;
+            if (cfg != RT_NULL)
+            {
+                can->can_dev.config = *cfg;
+                can_cfg(can_dev, cfg);
+                res = RT_EOK;
+            }
+            else
+            {
+                res = -RT_ERROR;
+            }
+            break;
+        }
     case RT_CAN_CMD_SET_MODE:
         res = -RT_ERROR;
         break;
@@ -300,18 +315,24 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     return res;
 }
 
-
 static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
     struct rt_can_msg *msg;
     status_t ret;
     flexcan_frame_t frame;
+    flexcan_mb_transfer_t txXfer;
+
+    RT_ASSERT(can_dev != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
 
     can = (struct imxrt_can *)can_dev->parent.user_data;
     msg = (struct rt_can_msg *) buf;
 
-    FLEXCAN_SetTxMbConfig(can->base, TX_MB_IDX, true);
+    RT_ASSERT(can != RT_NULL);
+    RT_ASSERT(msg != RT_NULL);
+
+    FLEXCAN_SetTxMbConfig(can->base, boxno, true);
 
     if (RT_CAN_STDID == msg->ide)
     {
@@ -343,7 +364,10 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
     frame.dataByte6 = msg->data[6];
     frame.dataByte7 = msg->data[7];
 
-    ret = FLEXCAN_TransferSendBlocking(can->base, TX_MB_IDX, &frame);
+    txXfer.mbIdx = boxno;
+    txXfer.frame = &frame;
+
+    ret = FLEXCAN_TransferSendNonBlocking(can->base, &can->handle, &txXfer);
     switch (ret)
     {
     case kStatus_Success:
@@ -360,15 +384,17 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
     return (rt_ssize_t)ret;
 }
 
-
 static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
     struct rt_can_msg *pmsg;
     rt_uint8_t index;
 
+    RT_ASSERT(can_dev != RT_NULL);
+
     can = (struct imxrt_can *)can_dev->parent.user_data;
     pmsg = (struct rt_can_msg *) buf;
+    RT_ASSERT(can != RT_NULL);
 
     index = boxno - 1;
 
@@ -404,6 +430,7 @@ static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t
 
     return 0;
 }
+
 
 
 static struct rt_can_ops imxrt_can_ops =

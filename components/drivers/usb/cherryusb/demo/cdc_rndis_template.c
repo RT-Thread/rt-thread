@@ -304,7 +304,7 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
 struct usbd_interface intf0;
 struct usbd_interface intf1;
 
-void cdc_rndis_init(uint8_t busid, uint32_t reg_base)
+void cdc_rndis_init(uint8_t busid, uintptr_t reg_base)
 {
 #ifdef RT_USING_LWIP
     rt_usbd_rndis_init();

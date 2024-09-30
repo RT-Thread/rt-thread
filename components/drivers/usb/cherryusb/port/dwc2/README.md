@@ -1,5 +1,7 @@
 # Note
 
+If you are using more than one port, all ip parameters must be the same(like fifo num, endpoint num, dma support and so on), otherwise give up using multi ports.
+
 ## Support Chip List
 
 ## STM32

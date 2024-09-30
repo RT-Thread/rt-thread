@@ -769,7 +769,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
         rt_ubase_t value;
 
         /* get value */
-        value = (rt_ubase_t)arg;
+        value = (rt_uintptr_t)arg;
         level = rt_spin_lock_irqsave(&(sem->spinlock));
 
         /* resume all waiting thread */
@@ -787,7 +787,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
         rt_ubase_t max_value;
         rt_bool_t need_schedule = RT_FALSE;
 
-        max_value = (rt_uint16_t)((rt_ubase_t)arg);
+        max_value = (rt_uint16_t)((rt_uintptr_t)arg);
         if (max_value > RT_SEM_VALUE_MAX || max_value < 1)
         {
             return -RT_EINVAL;
@@ -945,28 +945,30 @@ static rt_bool_t _check_and_update_prio(rt_thread_t thread, rt_mutex_t mutex)
 static void _mutex_before_delete_detach(rt_mutex_t mutex)
 {
     rt_sched_lock_level_t slvl;
-    rt_bool_t need_schedule;
+    rt_bool_t need_schedule = RT_FALSE;
 
     rt_spin_lock(&(mutex->spinlock));
     /* wakeup all suspended threads */
     rt_susp_list_resume_all(&(mutex->parent.suspend_thread), RT_ERROR);
+
+    rt_sched_lock(&slvl);
+
     /* remove mutex from thread's taken list */
     rt_list_remove(&mutex->taken_list);
 
     /* whether change the thread priority */
     if (mutex->owner)
     {
-        rt_sched_lock(&slvl);
         need_schedule = _check_and_update_prio(mutex->owner, mutex);
+    }
 
-        if (need_schedule)
-        {
-            rt_sched_unlock_n_resched(slvl);
-        }
-        else
-        {
-            rt_sched_unlock(slvl);
-        }
+    if (need_schedule)
+    {
+        rt_sched_unlock_n_resched(slvl);
+    }
+    else
+    {
+        rt_sched_unlock(slvl);
     }
 
     /* unlock and do necessary reschedule if required */
@@ -1349,7 +1351,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
     if (mutex->owner == thread)
     {
-        if(mutex->hold < RT_MUTEX_HOLD_MAX)
+        if (mutex->hold < RT_MUTEX_HOLD_MAX)
         {
             /* it's the same thread */
             mutex->hold ++;
@@ -1448,13 +1450,13 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                 rt_spin_lock(&(mutex->spinlock));
 
-                if (thread->error == RT_EOK)
+                if (mutex->owner == thread)
                 {
                     /**
                      * get mutex successfully
                      * Note: assert to avoid an unexpected resume
                      */
-                    RT_ASSERT(mutex->owner == thread);
+                    RT_ASSERT(thread->error == RT_EOK);
                 }
                 else
                 {
@@ -1465,6 +1467,12 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                     /* get value first before calling to other APIs */
                     ret = thread->error;
+
+                    /* unexpected resume */
+                    if (ret == RT_EOK)
+                    {
+                        ret = -RT_EINTR;
+                    }
 
                     rt_sched_lock(&slvl);
 
@@ -1617,10 +1625,10 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     /* if no hold */
     if (mutex->hold == 0)
     {
+        rt_sched_lock(&slvl);
+
         /* remove mutex from thread's taken list */
         rt_list_remove(&mutex->taken_list);
-
-        rt_sched_lock(&slvl);
 
         /* whether change the thread priority */
         need_schedule = _check_and_update_prio(thread, mutex);

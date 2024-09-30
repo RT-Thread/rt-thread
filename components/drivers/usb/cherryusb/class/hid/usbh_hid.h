@@ -16,6 +16,9 @@ struct usbh_hid {
     struct usbh_urb intout_urb;             /* INTR OUT urb */
 
     uint8_t report_desc[256];
+    uint16_t report_size;
+
+    uint8_t protocol;
     uint8_t intf; /* interface number */
     uint8_t minor;
 

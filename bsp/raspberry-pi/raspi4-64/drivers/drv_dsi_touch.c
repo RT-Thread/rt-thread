@@ -9,7 +9,7 @@
  */
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <drivers/touch.h>
+#include "drivers/dev_touch.h"
 #include <ioremap.h>
 #include <mmu.h>
 

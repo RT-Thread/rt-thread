@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -138,6 +138,8 @@ struct at_socket
     uint16_t sendevent;
     /* error happened for this socket, set by event_callback() */
     uint16_t errevent;
+    /* Last UDP connect address */
+    struct sockaddr last_udp_adr;
 
 #ifdef SAL_USING_POSIX
     rt_wqueue_t wait_head;
@@ -166,6 +168,7 @@ int at_recv(int socket, void *mem, size_t len, int flags);
 int at_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlen);
 int at_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen);
 struct hostent *at_gethostbyname(const char *name);
+int at_gethostbyname_r(const char *name, struct hostent *ret, char *buf, size_t buflen, struct hostent **result, int *h_errnop);
 int at_getaddrinfo(const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res);
 void at_freeaddrinfo(struct addrinfo *ai);
 

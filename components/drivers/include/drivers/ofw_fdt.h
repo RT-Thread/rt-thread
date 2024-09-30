@@ -70,6 +70,7 @@ rt_err_t rt_fdt_boot_dump(void);
 void rt_fdt_earlycon_output(const char *str);
 void rt_fdt_earlycon_kick(int why);
 rt_err_t rt_fdt_scan_chosen_stdout(void);
+rt_err_t rt_fdt_bootargs_select(const char *key, int index, const char **out_result);
 rt_err_t rt_fdt_unflatten(void);
 
 struct rt_ofw_node *rt_fdt_unflatten_single(void *fdt);

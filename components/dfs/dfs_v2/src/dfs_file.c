@@ -1379,6 +1379,7 @@ int dfs_file_link(const char *oldname, const char *newname)
 
     if (dfs_file_isdir(oldname) == 0)
     {
+        rt_set_errno(-EPERM);
         return ret;
     }
 
@@ -1566,6 +1567,10 @@ int dfs_file_symlink(const char *target, const char *linkpath)
 
                 rt_free(parent);
             }
+        }
+        else
+        {
+            rt_set_errno(-EPERM);
         }
 
         if (fullpath != linkpath)

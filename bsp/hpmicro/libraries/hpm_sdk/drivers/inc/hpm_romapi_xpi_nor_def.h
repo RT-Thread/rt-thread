@@ -205,7 +205,7 @@ enum {
 };
 
 /**
- * @brief Device Mode confiuration structure
+ * @brief Device Mode configuration structure
  */
 typedef struct {
     uint8_t cfg_cmd_type;       /**< Configuration command type */
