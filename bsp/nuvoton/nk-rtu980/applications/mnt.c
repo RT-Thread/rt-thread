@@ -53,11 +53,19 @@ unsigned long rwflag;
 const void   *data;
 */
 
-const struct dfs_mount_tbl mount_table[] =
-{
-    { RAMDISK_UDC, "/mnt/ram_usbd", "elm", 0, RT_NULL },
-    {0},
-};
+#if defined(PKG_USING_RAMDISK)
+    const struct dfs_mount_tbl mount_table[] =
+    {
+        { RAMDISK_UDC, "/mnt/ram_usbd", "elm", 0, RT_NULL },
+        {0},
+    };
+#else
+    const struct dfs_mount_tbl mount_table[] =
+    {
+        {0},
+    };
+#endif
+
 #endif
 
 
@@ -155,7 +163,7 @@ int filesystem_init(void)
 {
     rt_err_t result = RT_EOK;
 
-    // ramdisk as root
+    /* ramdisk as root */
     if (!rt_device_find(RAMDISK_NAME))
     {
         LOG_E("cannot find %s device", RAMDISK_NAME);

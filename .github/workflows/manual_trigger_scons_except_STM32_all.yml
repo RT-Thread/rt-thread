@@ -91,8 +91,8 @@ jobs:
           - {RTT_BSP_NAME: "dm365", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "dm365"}
           - {RTT_BSP_NAME: "efm32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "efm32"}
           - {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C3"} 
-         #- {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}   #GCC link文件没支持好
-         #- {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}   #GCC link文件没支持好
+          - {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}
+          - {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}
           - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
           - {RTT_BSP_NAME: "essemi_es32vf2264", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32vf2264"}
          #- {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}   #GCC
@@ -185,7 +185,7 @@ jobs:
           - {RTT_BSP_NAME: "mm32_mm32f3270-100ask-pitaya", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32/mm32f3270-100ask-pitaya"}
           - {RTT_BSP_NAME: "mm32f103x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f103x"}
          #- {RTT_BSP_NAME: "mm32f327x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f327x"}  #编译问题
-         #- {RTT_BSP_NAME: "mm32l07x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l07x"}   #编译问题
+          - {RTT_BSP_NAME: "mm32l07x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l07x"}
           - {RTT_BSP_NAME: "mm32l3xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l3xx"}
           - {RTT_BSP_NAME: "n32_n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g43xcl-stb"}
           - {RTT_BSP_NAME: "n32_n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g457qel-stb"}
@@ -270,7 +270,19 @@ jobs:
        #  - {RTT_BSP_NAME: "yichip_yc3121-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3121-pos"}  #编译问题
         # - {RTT_BSP_NAME: "yichip_yc3122-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3122-pos"}  #编译问题
           - {RTT_BSP_NAME: "zynqmp-r5-axu4ev", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "zynqmp-r5-axu4ev"}
-  
+          - {RTT_BSP_NAME: "nuvoton_numaker-pfm-m487", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-pfm-m487"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-hmi-ma35d1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-hmi-ma35d1"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-iot-m487", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-iot-m487"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-m032ki", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-m032ki"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-iot-m467", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-iot-m467"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-m467hj", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-m467hj"}
+          - {RTT_BSP_NAME: "nuvoton_nk-n9h30", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/nk-n9h30"}
+          - {RTT_BSP_NAME: "nuvoton_nk-rtu980", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/nk-rtu980"}
+          - {RTT_BSP_NAME: "nuvoton_ma35-rtp", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/ma35-rtp"}
+          - {RTT_BSP_NAME: "nuvoton_nk-980iot", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/nk-980iot"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-iot-ma35d1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-iot-ma35d1"}
+          - {RTT_BSP_NAME: "nuvoton_numaker-m2354 ", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-m2354"}
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
