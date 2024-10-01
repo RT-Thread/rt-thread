@@ -116,6 +116,12 @@ config RT_TICK_PER_SECOND
     help
         System's tick frequency, Hz.
 
+config RT_TICK_USING_64BIT
+    bool "Using 64-bit systick"
+    default n
+    help
+        Using long long as tick unit, this is useful when the tick frequency is very high.
+
 config RT_USING_HOOK
     bool "Enable system hook"
     default y
