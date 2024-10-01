@@ -106,7 +106,11 @@ extern "C" {
 #define RT_UINT64_MAX                   0xFFFFFFFFFFFFFFFFULL /**< Maximum number of UINT64 */
 #endif /* RT_USING_LIBC */
 
+#ifdef RT_TICK_USING_64BIT
+#define RT_TICK_MAX                     RT_UINT64_MAX   /**< Maximum number of tick */
+#else
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maximum number of tick */
+#endif /* RT_TICK_USING_64BIT */
 
 /* maximum value of ipc type */
 #define RT_SEM_VALUE_MAX                RT_UINT16_MAX   /**< Maximum number of semaphore .value */
