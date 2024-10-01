@@ -68,6 +68,7 @@
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
+#define ARCH_USING_NEW_CTX_SWITCH
 #define ARCH_USING_RISCV_COMMON64
 
 /* RT-Thread Components */
@@ -357,6 +358,10 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
+
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
@@ -447,6 +452,8 @@
 #define BSP_UART0_RX_PINNAME "UART0_RX"
 #define BSP_UART0_TX_PINNAME "UART0_TX"
 #define BSP_UART_IRQ_BASE 44
+#define BSP_USING_SDH
+#define BSP_USING_ETH
 /* end of General Drivers Configuration */
 #define BSP_USING_CV18XX
 #define C906_PLIC_PHY_ADDR 0x70000000
