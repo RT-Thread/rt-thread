@@ -383,9 +383,9 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-i386-unknown-elf"
             SUB_RTT_BSP:  
                 - "x86"
-          - RTT_BSP: "xuantie-900"
-            RTT_TOOL_CHAIN: "sourcery-Xuantie-900-gcc-elf"
-            SUB_RTT_BSP:
+         - RTT_BSP: "xuantie-900"
+           RTT_TOOL_CHAIN: "sourcery-Xuantie-900-gcc-elf"
+           SUB_RTT_BSP:
                 - "cvitek/c906_little"
     steps:
       - uses: actions/checkout@v4
