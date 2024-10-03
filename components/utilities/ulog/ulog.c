@@ -108,6 +108,7 @@ struct rt_ulog
 #endif /* ULOG_USING_FILTER */
 };
 
+#ifdef ULOG_OUTPUT_LEVEL
 /* level output info */
 static const char * const level_output_info[] =
 {
@@ -120,6 +121,7 @@ static const char * const level_output_info[] =
     "I/",
     "D/",
 };
+#endif /* ULOG_OUTPUT_LEVEL */
 
 #ifdef ULOG_USING_COLOR
 /* color output info */
