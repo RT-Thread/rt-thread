@@ -184,7 +184,19 @@ rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
                                         rt_base_t             cs_pin,
                                         void                 *user_data);
 
-/* re-configure SPI bus */
+/**
+ * @brief  Reconfigure the SPI bus for the specified device.
+ * @param  device: Pointer to the SPI device attached to the SPI bus.
+ * @retval RT_EOK if the SPI device was successfully released and the bus was configured.
+ *         RT_EBUSY if the SPI bus is currently in use; the new configuration will take effect once the device releases the bus.
+ *         Other return values indicate failure to configure the SPI bus due to various reasons.
+ * @note   If the configuration of the SPI device has been updated and requires bus re-initialization,
+ *         call this function directly. This function will reconfigure the SPI bus for the specified device.
+ *         If this is the first time to initialize the SPI device, please call rt_spi_configure or rt_qspi_configure.
+ *         This function is used to reconfigure the SPI bus when the SPI device is already in use.
+ *         For further details, refer to:
+ *         https://github.com/RT-Thread/rt-thread/pull/8528
+ */
 rt_err_t rt_spi_bus_configure(struct rt_spi_device *device);
 
 /**
@@ -223,7 +235,14 @@ rt_err_t rt_spi_take(struct rt_spi_device *device);
  */
 rt_err_t rt_spi_release(struct rt_spi_device *device);
 
-/* set configuration on SPI device */
+/**
+ * @brief  This function can set configuration on SPI device.
+ * @param  device: the SPI device attached to SPI bus
+ * @param  cfg: the configuration pointer.
+ * @retval RT_EOK on release SPI device successfully.
+ *         RT_EBUSY is not an error condition and the configuration will take effect once the device has the bus
+ *         others on taken SPI bus failed.
+ */
 rt_err_t rt_spi_configure(struct rt_spi_device        *device,
                           struct rt_spi_configuration *cfg);
 
