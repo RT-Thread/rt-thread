@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -108,8 +108,8 @@ rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
             }
             else
             {
-                /* RT_EBUSY is not an error condition and 
-                 * the configuration will take effect once the device has the bus 
+                /* RT_EBUSY is not an error condition and
+                 * the configuration will take effect once the device has the bus
                  */
                 return -RT_EBUSY;
             }
@@ -131,14 +131,24 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
+    rt_err_t result = -RT_ERROR;
 
-    /* reset the CS pin */
-    if (device->cs_pin != PIN_NONE)
+    result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+    if (result == RT_EOK)
     {
-        if (cfg->mode & RT_SPI_CS_HIGH)
-            rt_pin_write(device->cs_pin, PIN_LOW);
-        else
-            rt_pin_write(device->cs_pin, PIN_HIGH);
+        /* reset the CS pin */
+        if (device->cs_pin != PIN_NONE)
+        {
+            if (cfg->mode & RT_SPI_CS_HIGH)
+                rt_pin_write(device->cs_pin, PIN_LOW);
+            else
+                rt_pin_write(device->cs_pin, PIN_HIGH);
+        }
+        rt_mutex_release(&(device->bus->lock));
+    }
+    else
+    {
+        return result;
     }
 
     /* If the configurations are the same, we don't need to set again. */
