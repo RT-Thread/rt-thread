@@ -14,6 +14,67 @@
 
 #include <rtthread.h>
 
+/**
+ * @addtogroup  Drivers          RTTHREAD Driver
+ * @defgroup    Pin              Pin
+ *
+ * @brief       Pin driver api
+ * 
+ * <b>Example</b>
+ * @code {.c}
+ * #include <rtthread.h>
+ * #include <rtdevice.h>
+ * 
+ * 
+ * #ifndef BEEP_PIN_NUM
+ *     #define BEEP_PIN_NUM            35  // PB0
+ * #endif
+ * #ifndef KEY0_PIN_NUM
+ *     #define KEY0_PIN_NUM            55  // PD8
+ * #endif
+ * #ifndef KEY1_PIN_NUM
+ *     #define KEY1_PIN_NUM            56  // PD9
+ * #endif
+ * 
+ * void beep_on(void *args)
+ * {
+ *     rt_kprintf("turn on beep!\n");
+ * 
+ *     rt_pin_write(BEEP_PIN_NUM, PIN_HIGH);
+ * }
+ * 
+ * void beep_off(void *args)
+ * {
+ *     rt_kprintf("turn off beep!\n");
+ * 
+ *     rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+ * }
+ * 
+ * static void pin_beep_sample(void)
+ * {
+ *     rt_pin_mode(BEEP_PIN_NUM, PIN_MODE_OUTPUT);
+ *     rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
+ * 
+ *     rt_pin_mode(KEY0_PIN_NUM, PIN_MODE_INPUT_PULLUP);
+ *     rt_pin_attach_irq(KEY0_PIN_NUM, PIN_IRQ_MODE_FALLING, beep_on, RT_NULL);
+ *     rt_pin_irq_enable(KEY0_PIN_NUM, PIN_IRQ_ENABLE);
+ * 
+ * 
+ *     rt_pin_mode(KEY1_PIN_NUM, PIN_MODE_INPUT_PULLUP);
+ *     rt_pin_attach_irq(KEY1_PIN_NUM, PIN_IRQ_MODE_FALLING, beep_off, RT_NULL);
+ *     rt_pin_irq_enable(KEY1_PIN_NUM, PIN_IRQ_ENABLE);
+ * }
+ * 
+ * MSH_CMD_EXPORT(pin_beep_sample, pin beep sample);
+ * @endcode
+ * 
+ * @ingroup     Drivers
+ */
+
+/*!
+ * @addtogroup Pin
+ * @{
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,7 +91,9 @@ struct rt_pin_irqchip
 };
 #endif /* RT_USING_DM */
 
-/* pin device and operations for RT-Thread */
+/**
+ * @brief pin device structure
+ */
 struct rt_device_pin
 {
     struct rt_device parent;
@@ -95,18 +158,27 @@ enum
 
 #define PIN_IRQ_PIN_NONE                PIN_NONE
 
+/**
+ * @brief pin mode structure
+ */
 struct rt_device_pin_mode
 {
     rt_base_t pin;
     rt_uint8_t mode; /* e.g. PIN_MODE_OUTPUT */
 };
 
+/**
+ * @brief pin value structure
+ */
 struct rt_device_pin_value
 {
     rt_base_t pin;
     rt_uint8_t value; /* PIN_LOW or PIN_HIGH */
 };
 
+/**
+ * @brief pin irq structure
+ */
 struct rt_pin_irq_hdr
 {
     rt_base_t        pin;
@@ -116,6 +188,9 @@ struct rt_pin_irq_hdr
 };
 
 #ifdef RT_USING_PINCTRL
+/**
+ * @brief pin control configure structure
+ */
 struct rt_pin_ctrl_conf_params
 {
     const char *propname;
@@ -124,6 +199,9 @@ struct rt_pin_ctrl_conf_params
 };
 #endif /* RT_USING_PINCTRL */
 
+/**
+ * @brief pin device operations
+ */
 struct rt_pin_ops
 {
     void (*pin_mode)(struct rt_device *device, rt_base_t pin, rt_uint8_t mode);
@@ -143,14 +221,67 @@ struct rt_pin_ops
 #endif /* RT_USING_PINCTRL */
 };
 
+/**
+ * @brief register a pin device
+ * @param name the name of pin device
+ * @param ops the operations of pin device
+ * @param user_data the user data of pin device
+ * @return int error code
+ */
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data);
+
+/**
+ * @brief set pin mode
+ * @param pin the pin number
+ * @param mode the pin mode
+ */
 void rt_pin_mode(rt_base_t pin, rt_uint8_t mode);
+
+/**
+ * @brief write pin value
+ * @param pin the pin number
+ * @param value the pin value
+ */
 void rt_pin_write(rt_base_t pin, rt_ssize_t value);
+
+/**
+ * @brief read pin value
+ * @param pin the pin number
+ * @return rt_ssize_t the pin value
+ */
 rt_ssize_t rt_pin_read(rt_base_t pin);
+
+/**
+ * @brief get pin number by name
+ * @param name the pin name
+ * @return rt_base_t the pin number
+ */
 rt_base_t rt_pin_get(const char *name);
+
+/**
+ * @brief bind the pin interrupt callback function
+ * @param pin the pin number
+ * @param mode the irq mode
+ * @param hdr the irq callback function
+ * @param args the argument of the callback function
+ * @return rt_err_t error code
+ */
 rt_err_t rt_pin_attach_irq(rt_base_t pin, rt_uint8_t mode,
                            void (*hdr)(void *args), void  *args);
+
+/**
+ * @brief detach the pin interrupt callback function
+ * @param pin the pin number
+ * @return rt_err_t error code
+ */
 rt_err_t rt_pin_detach_irq(rt_base_t pin);
+
+/**
+ * @brief enable or disable the pin interrupt
+ * @param pin the pin number
+ * @param enabled PIN_IRQ_ENABLE or PIN_IRQ_DISABLE
+ * @return rt_err_t error code
+ */
 rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint8_t enabled);
 
 #ifdef RT_USING_DM
@@ -174,5 +305,7 @@ rt_err_t rt_pin_ctrl_confs_apply_by_name(struct rt_device *device, const char *n
 #ifdef __cplusplus
 }
 #endif
+
+/*! @}*/
 
 #endif
