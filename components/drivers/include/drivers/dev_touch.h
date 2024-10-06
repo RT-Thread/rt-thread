@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,112 @@
 
 #include <rtthread.h>
 #include "dev_pin.h"
+/**
+ * @addtogroup  Drivers          RTTHREAD Driver
+ * @defgroup    Touch            Touch
+ *
+ * @brief       Touch driver api
+ *
+ * <b>Example</b>
+ * @code {.c}
+ * #include <rtthread.h>
+ * #include "rtdevice.h"
+ *
+ * static rt_thread_t  gt9147_thread = RT_NULL;
+ * static rt_sem_t     gt9147_sem = RT_NULL;
+ * static rt_device_t  dev = RT_NULL;
+ * static struct       rt_touch_data *read_data;
+ *
+ * // 读取数据线程入口函数
+ * static void gt9147_entry(void *parameter)
+ * {
+ *     struct rt_touch_data *read_data;
+ *     read_data = (struct rt_touch_data *)rt_malloc(sizeof(struct rt_touch_data) * 5);
+ *
+ *     while (1)
+ *     {
+ *         // 请求信号量
+ *         rt_sem_take(gt9147_sem, RT_WAITING_FOREVER);
+ *         // 读取五个点的触摸信息
+ *         if (rt_device_read(dev, 0, read_data, 5) == 5)
+ *         {
+ *             for (rt_uint8_t i = 0; i < 5; i++)
+ *             {
+ *                 if (read_data[i].event == RT_TOUCH_EVENT_DOWN || read_data[i].event == RT_TOUCH_EVENT_MOVE)
+ *                 {
+ *                     rt_kprintf("%d %d %d %d %d\n",
+ *                                 read_data[i].track_id,
+ *                                 read_data[i].x_coordinate,
+ *                                 read_data[i].y_coordinate,
+ *                                 read_data[i].timestamp,
+ *                                 read_data[i].width);
+ *                 }
+ *             }
+ *         }
+ *         // 打开中断
+ *         rt_device_control(dev, RT_TOUCH_CTRL_ENABLE_INT, RT_NULL);
+ *     }
+ * }
+ *
+ * // 接收回调函数
+ * static rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
+ * {
+ *     // 关闭中断
+ *     rt_device_control(dev, RT_TOUCH_CTRL_DISABLE_INT, RT_NULL);
+ *     // 释放信号量
+ *     rt_sem_release(gt9147_sem);
+ *     return 0;
+ * }
+ *
+ * static int gt9147_sample(void)
+ * {
+ *     // 查找 Touch 设备
+ *     dev = rt_device_find("touch");
+ *
+ *     if (dev == RT_NULL)
+ *     {
+ *         rt_kprintf("can't find device:%s\n", "touch");
+ *         return -1;
+ *     }
+ *     // 以中断的方式打开设备
+ *     if (rt_device_open(dev, RT_DEVICE_FLAG_INT_RX) != RT_EOK)
+ *     {
+ *         rt_kprintf("open device failed!");
+ *         return -1;
+ *     }
+ *     // 设置接收回调
+ *     rt_device_set_rx_indicate(dev, rx_callback);
+ *     // 创建信号量
+ *     gt9147_sem = rt_sem_create("dsem", 0, RT_IPC_FLAG_PRIO);
+ *
+ *     if (gt9147_sem == RT_NULL)
+ *     {
+ *         rt_kprintf("create dynamic semaphore failed.\n");
+ *         return -1;
+ *     }
+ *     // 创建读取数据线程
+ *     gt9147_thread = rt_thread_create("thread1",
+ *                                      gt9147_entry,
+ *                                      RT_NULL,
+ *                                      THREAD_STACK_SIZE,
+ *                                      THREAD_PRIORITY,
+ *                                      THREAD_TIMESLICE);
+ *     // 启动线程
+ *     if (gt9147_thread != RT_NULL)
+ *         rt_thread_startup(gt9147_thread);
+ *
+ *     return 0;
+ * }
+ * MSH_CMD_EXPORT(gt9147_sample, gt9147 sample);
+ * @endcode
+ *
+ * @ingroup     Drivers
+ */
 
+/*!
+ * @addtogroup Touch
+ * @{
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,6 +158,9 @@ extern "C" {
 #define RT_TOUCH_EVENT_DOWN              (2)   /* Touch down event */
 #define RT_TOUCH_EVENT_MOVE              (3)   /* Touch move event */
 
+/**
+ * @brief Touch information
+*/
 struct rt_touch_info
 {
     rt_uint8_t     type;                       /* The touch type */
@@ -62,6 +170,9 @@ struct rt_touch_info
     rt_int32_t     range_y;                    /* Y coordinate range */
 };
 
+/**
+ * @brief Touch configuration
+*/
 struct rt_touch_config
 {
 #ifdef RT_TOUCH_PIN_IRQ
@@ -72,6 +183,9 @@ struct rt_touch_config
 };
 
 typedef struct rt_touch_device *rt_touch_t;
+/**
+ * @brief Touch device
+*/
 struct rt_touch_device
 {
     struct rt_device            parent;        /* The standard device */
@@ -82,6 +196,9 @@ struct rt_touch_device
     rt_err_t (*irq_handle)(rt_touch_t touch);  /* Called when an interrupt is generated, registered by the driver */
 };
 
+/**
+ * @brief Touch data
+*/
 struct rt_touch_data
 {
     rt_uint8_t          event;                 /* The touch event of the data */
@@ -92,22 +209,40 @@ struct rt_touch_data
     rt_tick_t           timestamp;             /* The timestamp when the data was received */
 };
 
+/**
+ * @brief Touch device operations
+*/
 struct rt_touch_ops
 {
     rt_size_t (*touch_readpoint)(struct rt_touch_device *touch, void *buf, rt_size_t touch_num);
     rt_err_t (*touch_control)(struct rt_touch_device *touch, int cmd, void *arg);
 };
 
+/**
+ * @brief register a touch device
+ * @param touch the touch device
+ * @param name the name of touch device
+ * @param flag the flag of touch device
+ * @param data the user data of touch device
+ * @return rt_err_t error code
+ */
 int rt_hw_touch_register(rt_touch_t    touch,
                          const char    *name,
                          rt_uint32_t   flag,
                          void          *data);
 
-/* if you doesn't use pin device. you must call this function in your touch irq callback */
+/**
+ * @brief Touch irq handle
+ * @param touch the touch device
+ *
+ * @note If you doesn't use pin device. you must call this function in your touch irq callback
+ */
 void rt_hw_touch_isr(rt_touch_t touch);
 
 #ifdef __cplusplus
 }
 #endif
+
+/*! @}*/
 
 #endif /* __DEV_TOUCH_H__ */
