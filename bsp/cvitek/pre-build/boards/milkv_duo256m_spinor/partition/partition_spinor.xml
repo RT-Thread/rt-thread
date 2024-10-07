@@ -1,0 +1,9 @@
+<physical_partition type="spinor">
+    <partition label="fip" size_in_kb="1024" readonly="false" file="fip.bin"/>
+    <partition label="BOOT" size_in_kb="3072" readonly="false" file="boot.spinor"/>
+    <partition label="ENV" size_in_kb="64" file="" />
+    <partition label="ENV_BAK" size_in_kb="64" file="" />
+    <partition label="ROOTFS" size_in_kb="10240" readonly="false" file="rootfs.spinor" />
+    <partition label="DATA"  size_in_kb="512" readonly="false" file="data.spinor" mountpoint="/mnt/data" type="jffs2" />
+</physical_partition>
+

@@ -1,0 +1,7 @@
+<physical_partition type="spinor">
+    <partition label="fip" size_in_kb="640" readonly="false" file="fip.bin"/>
+    <partition label="BOOT" size_in_kb="4096" readonly="false" file="boot.spinor"/>
+    <partition label="ENV" size_in_kb="64" file="" />
+    <partition label="ROOTFS" size_in_kb="27968" readonly="true" file="rootfs.spinor" />
+</physical_partition>
+
