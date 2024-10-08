@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2024-10-8     wumingzi      first implementation
+ * 2024-10-08     wumingzi      first implementation
  */
 
 #include <rtthread.h>
