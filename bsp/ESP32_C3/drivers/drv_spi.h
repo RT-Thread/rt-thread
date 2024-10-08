@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,12 +14,12 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <board.h>
-#include "/home/lzx/myrtt/rt-thread/bsp/ESP32_C3/packages/ESP-IDF-latest/components/driver/include/driver/spi_common.h"
+#include "driver/spi_common.h" /*bsp/ESP32_C3/packages/ESP-IDF-latest/components/driver/include/driver/spi_common.h*/
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* gd32 spi dirver class */
+/* esp32 spi dirver class */
 struct esp32_spi
 {
     char *bus_name;
