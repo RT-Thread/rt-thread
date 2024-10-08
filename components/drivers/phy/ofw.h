@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2024 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2024-09-25     zhujiale    the first version
+ */
 #ifndef __NET_OFW_H__
 #define __NET_OFW_H__
 #include <rtthread.h>
