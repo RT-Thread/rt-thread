@@ -101,9 +101,9 @@ static void soft_time_setup(uint32_t wanted_sec, uint32_t hz, soft_time_handle_t
 static void soft_time_feed_dog(soft_time_handle_t *const soft_time);
 
 #if defined(RT_USING_PM)
-    static int wdt_pm_suspend(const struct rt_device *device, rt_uint8_t mode);
+    static rt_err_t wdt_pm_suspend(const struct rt_device *device, rt_uint8_t mode);
     static void wdt_pm_resume(const struct rt_device *device, rt_uint8_t mode);
-    static int wdt_pm_frequency_change(const struct rt_device *device, rt_uint8_t mode);
+    static rt_err_t wdt_pm_frequency_change(const struct rt_device *device, rt_uint8_t mode);
     static void soft_time_freqeucy_change(uint32_t new_hz, soft_time_handle_t *const soft_time);
 #endif
 
@@ -132,7 +132,7 @@ static struct rt_device_pm_ops device_pm_ops =
 #if defined(RT_USING_PM)
 
 /* device pm suspend() entry. */
-static int wdt_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
+static rt_err_t wdt_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
 {
     switch (mode)
     {
@@ -184,7 +184,7 @@ static void wdt_pm_resume(const struct rt_device *device, rt_uint8_t mode)
 
 
 /* device pm frequency_change() entry. */
-static int wdt_pm_frequency_change(const struct rt_device *device, rt_uint8_t mode)
+static rt_err_t wdt_pm_frequency_change(const struct rt_device *device, rt_uint8_t mode)
 {
     uint32_t clk, new_hz;
 

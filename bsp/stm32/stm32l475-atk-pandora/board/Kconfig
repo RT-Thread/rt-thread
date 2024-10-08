@@ -46,14 +46,32 @@ menu "Onboard Peripheral Drivers"
             select BSP_USING_SPI3
             select BSP_SPI3_TX_USING_DMA
             select BSP_USING_PWM4_CH2
-            select PKG_USING_ARDUINO_ADAFRUIT_ST7735
             depends on !BSP_USING_SPI_LCD
             default n
 
-        config BSP_USING_ARDUINO_ST7789_DEMO
-            bool "Enable Arduino LCD (ST7789) library demo"
-            depends on BSP_USING_ARDUINO_ST7789
-            default n
+        if BSP_USING_ARDUINO_ST7789
+            choice
+                prompt "Arduino GUI Framework"
+
+                config BSP_USING_ARDUINO_ST7789_ADAFRUIT_GFX
+                    bool "Adafruit GFX"
+                    select PKG_USING_ARDUINO_ADAFRUIT_ST7735
+
+                config BSP_USING_ARDUINO_ST7789_TFT_ESPI
+                    bool "TFT eSPI"
+                    select PKG_USING_ARDUINO_TFT_ESPI
+            endchoice
+
+            config BSP_USING_ARDUINO_ST7789_ADAFRUIT_GFX_DEMO
+                bool "Enable ST7789 Adafruit demo"
+                depends on BSP_USING_ARDUINO_ST7789_ADAFRUIT_GFX
+                default n
+
+            config BSP_USING_ARDUINO_ST7789_TFT_ESPI_DEMO
+                bool "Enable ST7789 TFT eSPI demo"
+                depends on BSP_USING_ARDUINO_ST7789_TFT_ESPI
+                default n
+        endif
 
         config BSP_USING_ARDUINO_AHT10
             bool "Enable Arduino AHT10 sensor library"

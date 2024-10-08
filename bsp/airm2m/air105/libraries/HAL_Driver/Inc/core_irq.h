@@ -21,14 +21,14 @@
 
 #ifndef __CORE_IRQ_H__
 #define __CORE_IRQ_H__
-
+#include <stdint.h>
 /**
  * @brief 设置中断回调函数
  *
  * @param Irq 中断号 0~IRQ_LINE_MAX
  * @param Handler 中断回调函数，如 void Irq_Handler(uint32_t IrqLine, void *pData); 可以多个中断号对应1个中断函数，回调时传入中断号和用户数据
  */
-void ISR_SetHandler(int32_t Irq, void *Handler);
+void ISR_SetHandler(int32_t Irq, void *Handler, void *pData);
 /**
  * @brief 设置中断优先级
  *

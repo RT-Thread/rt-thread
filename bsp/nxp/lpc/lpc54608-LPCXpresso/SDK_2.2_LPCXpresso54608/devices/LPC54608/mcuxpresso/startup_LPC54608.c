@@ -466,11 +466,19 @@ void Reset_Handler(void) {
     // Reenable interrupts
     __asm volatile ("cpsie i");
 
-#if defined (__REDLIB__)
+#if defined(__REDLIB__)
     // Call the Redlib library, which in turn calls main()
     __main();
+#elif defined(__GNUC__)
+    extern void entry(void);
+    entry();
+#elif defined(__ICCARM__)
+    extern void __low_level_init(void);
+    __low_level_init();
 #else
+    /* Jump to main. */
     main();
+
 #endif
 
     //

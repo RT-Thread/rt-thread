@@ -28,6 +28,7 @@ struct nu_spi
     struct rt_spi_bus dev;
     char *name;
     SPI_T *spi_base;
+    uint32_t rstidx;
     uint32_t dummy;
 #if defined(BSP_USING_SPI_PDMA)
     int16_t pdma_perp_tx;
@@ -48,4 +49,4 @@ void nu_spi_transfer(struct nu_spi *spi_bus, uint8_t *tx, uint8_t *rx, int lengt
     rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus);
 #endif
 
-#endif // __DRV_SPI_H___
+#endif /* __DRV_SPI_H___ */

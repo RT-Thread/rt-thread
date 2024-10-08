@@ -117,16 +117,12 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-void rt_hw_cpu_reset(void)
+int reboot(int argc, char **argv)
 {
     SYS_UnlockReg();
 
     SYS->IPRST0 |= SYS_IPRST0_CHIPRST_Msk;
-}
 
-int reboot(int argc, char **argv)
-{
-    rt_hw_cpu_reset();
     return 0;
 }
 MSH_CMD_EXPORT(reboot, Reboot System);

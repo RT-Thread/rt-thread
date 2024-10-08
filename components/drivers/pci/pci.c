@@ -712,6 +712,20 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
     return err;
 }
 
+struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device* pdev,rt_ubase_t flags,int index)
+{
+    for (int i = 0; i < RT_PCI_BAR_NR_MAX; i++)
+    {
+        if (pdev->resource[i].flags == flags)
+        {
+            index--;
+            if (index == 0)
+                return &pdev->resource[i];
+        }
+    }
+    return RT_NULL;
+}
+
 void rt_pci_enum_device(struct rt_pci_bus *bus,
         rt_bool_t (callback(struct rt_pci_device *, void *)), void *data)
 {

@@ -26,7 +26,7 @@
     #define MY_DISP_VER_RES    240
 #endif
 
-#if (PKG_LVGL_VER_NUM >= 0x0803FF)
+#if (PKG_LVGL_VER_NUM >= 0x090000)
     #define LV_DISP_TYPE    lv_display_t
     #define lv_COLOR_TYPE   uint8_t
 #else
@@ -101,7 +101,7 @@ void lv_port_disp_init(void)
      * Register the display in LVGL
      *----------------------------------*/
 
-#if (PKG_LVGL_VER_NUM >= 0x0803FF)
+#if (PKG_LVGL_VER_NUM >= 0x090000)
 
     lv_display_t *display = lv_display_create(MY_DISP_HOR_RES, MY_DISP_VER_RES);
     lv_display_set_buffers(display, buf_1, NULL, sizeof(buf_1), LV_DISPLAY_RENDER_MODE_PARTIAL);  /*Initialize the display buffer.*/

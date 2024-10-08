@@ -18,10 +18,23 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
     /* reset the CS pin */
     if (device->parent.cs_pin != PIN_NONE)
     {
-        if (cfg->parent.mode & RT_SPI_CS_HIGH)
-            rt_pin_write(device->parent.cs_pin, PIN_LOW);
+        rt_err_t result = rt_mutex_take(&(device->parent.bus->lock), RT_WAITING_FOREVER);
+        if (result == RT_EOK)
+        {
+            if (cfg->parent.mode & RT_SPI_CS_HIGH)
+            {
+                rt_pin_write(device->parent.cs_pin, PIN_LOW);
+            }
+            else
+            {
+                rt_pin_write(device->parent.cs_pin, PIN_HIGH);
+            }
+            rt_mutex_release(&(device->parent.bus->lock));
+        }
         else
-            rt_pin_write(device->parent.cs_pin, PIN_HIGH);
+        {
+            return result;
+        }
     }
 
     /* If the configurations are the same, we don't need to set again. */

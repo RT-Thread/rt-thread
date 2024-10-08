@@ -203,15 +203,10 @@ void rt_hw_board_init(void)
 
     NVIC_SystemLPConfig(NVIC_LP_SLEEPDEEP, ENABLE);
     rt_thread_idle_sethook(_idle_hook_callback);
-    rt_thread_inited_sethook(_thread_inited_hook);
+    RT_OBJECT_HOOKLIST_DECLARE(_thread_inited_hook,_thread_inited_hook);
 }
 
 #include <wm_watchdog.h>
-void rt_hw_cpu_reset(void)
-{
-    extern void tls_sys_reset(void);
-    tls_sys_reset();
-}
 
 /**
  * The time delay function.
@@ -253,7 +248,8 @@ void rt_hw_us_delay(rt_uint32_t us)
 #include <finsh.h>
 static void reboot(uint8_t argc, char **argv)
 {
-    rt_hw_cpu_reset();
+    extern void tls_sys_reset(void);
+    tls_sys_reset();
 }
 MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
