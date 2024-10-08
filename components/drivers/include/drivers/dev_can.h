@@ -152,7 +152,7 @@ enum CANBAUD
  *     if (!can_dev)
  *     {
  *         rt_kprintf("find %s failed!\n", can_name);
- *         return RT_ERROR;
+ *         return -RT_ERROR;
  *     }
  *
  *     // 初始化 CAN 接收信号量

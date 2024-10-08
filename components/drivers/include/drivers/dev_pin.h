@@ -105,14 +105,14 @@ struct rt_device_pin
 
 #define PIN_NONE                (-1)
 
-#define PIN_LOW                 0x00
-#define PIN_HIGH                0x01
+#define PIN_LOW                 0x00 /*!< low level */
+#define PIN_HIGH                0x01 /*!< high level */
 
-#define PIN_MODE_OUTPUT         0x00
-#define PIN_MODE_INPUT          0x01
-#define PIN_MODE_INPUT_PULLUP   0x02
-#define PIN_MODE_INPUT_PULLDOWN 0x03
-#define PIN_MODE_OUTPUT_OD      0x04
+#define PIN_MODE_OUTPUT         0x00 /*!< output mode */
+#define PIN_MODE_INPUT          0x01 /*!< input mode */
+#define PIN_MODE_INPUT_PULLUP   0x02 /*!< input mode with pull-up */
+#define PIN_MODE_INPUT_PULLDOWN 0x03 /*!< input mode with pull-down */
+#define PIN_MODE_OUTPUT_OD      0x04 /*!< output mode with open-drain */
 
 #ifdef RT_USING_PINCTRL
 enum
@@ -147,16 +147,16 @@ enum
 };
 #endif /* RT_USING_PINCTRL */
 
-#define PIN_IRQ_MODE_RISING             0x00
-#define PIN_IRQ_MODE_FALLING            0x01
-#define PIN_IRQ_MODE_RISING_FALLING     0x02
-#define PIN_IRQ_MODE_HIGH_LEVEL         0x03
-#define PIN_IRQ_MODE_LOW_LEVEL          0x04
+#define PIN_IRQ_MODE_RISING             0x00 /*!< rising edge trigger */
+#define PIN_IRQ_MODE_FALLING            0x01 /*!< falling edge trigger */
+#define PIN_IRQ_MODE_RISING_FALLING     0x02 /*!< rising and falling edge trigger */
+#define PIN_IRQ_MODE_HIGH_LEVEL         0x03 /*!< high level trigger */
+#define PIN_IRQ_MODE_LOW_LEVEL          0x04 /*!< low level trigger */
 
-#define PIN_IRQ_DISABLE                 0x00
-#define PIN_IRQ_ENABLE                  0x01
+#define PIN_IRQ_DISABLE                 0x00 /*!< disable irq */
+#define PIN_IRQ_ENABLE                  0x01 /*!< enable irq */
 
-#define PIN_IRQ_PIN_NONE                PIN_NONE
+#define PIN_IRQ_PIN_NONE                PIN_NONE /*!< no pin irq */
 
 /**
  * @brief pin mode structure

@@ -180,13 +180,13 @@
 extern "C" {
 #endif
 
-#define RT_I2C_WR                0x0000
-#define RT_I2C_RD               (1u << 0)
-#define RT_I2C_ADDR_10BIT       (1u << 2)  /* this is a ten bit chip address */
-#define RT_I2C_NO_START         (1u << 4)
-#define RT_I2C_IGNORE_NACK      (1u << 5)
+#define RT_I2C_WR                0x0000    /*!< i2c wirte flag */
+#define RT_I2C_RD               (1u << 0)  /*!< i2c read flag  */
+#define RT_I2C_ADDR_10BIT       (1u << 2)  /*!< this is a ten bit chip address */
+#define RT_I2C_NO_START         (1u << 4)  /*!< do not generate START condition */
+#define RT_I2C_IGNORE_NACK      (1u << 5)  /*!< ignore NACK from slave */
 #define RT_I2C_NO_READ_ACK      (1u << 6)  /* when I2C reading, we do not ACK */
-#define RT_I2C_NO_STOP          (1u << 7)
+#define RT_I2C_NO_STOP          (1u << 7)  /*!< do not generate STOP condition */
 
 #define RT_I2C_DEV_CTRL_10BIT        (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x01)
 #define RT_I2C_DEV_CTRL_ADDR         (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x02)
@@ -323,7 +323,7 @@ rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
 struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name);
 
 /**
- * @brief I2C Transfer
+ * @brief I2C data transmission.
  *
  * @param bus the I2C bus device
  * @param msgs the I2C message list

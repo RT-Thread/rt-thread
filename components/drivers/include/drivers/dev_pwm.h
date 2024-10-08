@@ -42,7 +42,7 @@
  *     if (pwm_dev == RT_NULL)
  *     {
  *         rt_kprintf("pwm sample run failed! can't find %s device!\n", PWM_DEV_NAME);
- *         return RT_ERROR;
+ *         return -RT_ERROR;
  *     }
  *
  *     // 设置PWM周期和脉冲宽度默认值

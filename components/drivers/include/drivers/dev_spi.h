@@ -106,26 +106,26 @@ extern "C"{
  *  - For CPHA=1, data are captured on clock's rising edge and data are propagated
  *    on a falling edge.
  */
-#define RT_SPI_CPHA     (1<<0)                             /* bit[0]:CPHA, clock phase */
-#define RT_SPI_CPOL     (1<<1)                             /* bit[1]:CPOL, clock polarity */
+#define RT_SPI_CPHA     (1<<0)                             /*!< bit[0]:CPHA, clock phase */
+#define RT_SPI_CPOL     (1<<1)                             /*!< bit[1]:CPOL, clock polarity */
 
-#define RT_SPI_LSB      (0<<2)                             /* bit[2]: 0-LSB */
-#define RT_SPI_MSB      (1<<2)                             /* bit[2]: 1-MSB */
+#define RT_SPI_LSB      (0<<2)                             /*!< bit[2]: 0-LSB */
+#define RT_SPI_MSB      (1<<2)                             /*!< bit[2]: 1-MSB */
 
-#define RT_SPI_MASTER   (0<<3)                             /* SPI master device */
-#define RT_SPI_SLAVE    (1<<3)                             /* SPI slave device */
+#define RT_SPI_MASTER   (0<<3)                             /*!< SPI master device */
+#define RT_SPI_SLAVE    (1<<3)                             /*!< SPI slave device */
 
-#define RT_SPI_CS_HIGH  (1<<4)                             /* Chipselect active high */
-#define RT_SPI_NO_CS    (1<<5)                             /* No chipselect */
-#define RT_SPI_3WIRE    (1<<6)                             /* SI/SO pin shared */
-#define RT_SPI_READY    (1<<7)                             /* Slave pulls low to pause */
+#define RT_SPI_CS_HIGH  (1<<4)                             /*!< Chipselect active high */
+#define RT_SPI_NO_CS    (1<<5)                             /*!< No chipselect */
+#define RT_SPI_3WIRE    (1<<6)                             /*!< SI/SO pin shared */
+#define RT_SPI_READY    (1<<7)                             /*!< Slave pulls low to pause */
 
 #define RT_SPI_MODE_MASK    (RT_SPI_CPHA | RT_SPI_CPOL | RT_SPI_MSB | RT_SPI_SLAVE | RT_SPI_CS_HIGH | RT_SPI_NO_CS | RT_SPI_3WIRE | RT_SPI_READY)
 
-#define RT_SPI_MODE_0       (0 | 0)                        /* CPOL = 0, CPHA = 0 */
-#define RT_SPI_MODE_1       (0 | RT_SPI_CPHA)              /* CPOL = 0, CPHA = 1 */
-#define RT_SPI_MODE_2       (RT_SPI_CPOL | 0)              /* CPOL = 1, CPHA = 0 */
-#define RT_SPI_MODE_3       (RT_SPI_CPOL | RT_SPI_CPHA)    /* CPOL = 1, CPHA = 1 */
+#define RT_SPI_MODE_0       (0 | 0)                        /*!< CPOL = 0, CPHA = 0 */
+#define RT_SPI_MODE_1       (0 | RT_SPI_CPHA)              /*!< CPOL = 0, CPHA = 1 */
+#define RT_SPI_MODE_2       (RT_SPI_CPOL | 0)              /*!< CPOL = 1, CPHA = 0 */
+#define RT_SPI_MODE_3       (RT_SPI_CPOL | RT_SPI_CPHA)    /*!< CPOL = 1, CPHA = 1 */
 
 #define RT_SPI_BUS_MODE_SPI         (1<<0)
 #define RT_SPI_BUS_MODE_QSPI        (1<<1)
