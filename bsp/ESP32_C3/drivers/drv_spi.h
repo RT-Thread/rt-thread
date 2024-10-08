@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-20     BruceOu      first implementation
+ * 2024-10-8     wumingzi      first implementation
  */
 
 #ifndef __DRV_SPI_H__
