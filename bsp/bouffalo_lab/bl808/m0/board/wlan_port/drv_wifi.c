@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include <wlan_dev.h>
+#include "dev_wlan.h"
 
 #define DBG_TAG     "drv.wifi"
 #define DBG_LVL     DBG_LOG
@@ -303,7 +303,7 @@ static rt_err_t drv_wlan_softap(struct rt_wlan_device *wlan, struct rt_ap_info *
     }
 
     if (ret < 0)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     return RT_EOK;
 }

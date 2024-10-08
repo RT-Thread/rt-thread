@@ -1351,7 +1351,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
     if (mutex->owner == thread)
     {
-        if(mutex->hold < RT_MUTEX_HOLD_MAX)
+        if (mutex->hold < RT_MUTEX_HOLD_MAX)
         {
             /* it's the same thread */
             mutex->hold ++;
@@ -1450,13 +1450,13 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                 rt_spin_lock(&(mutex->spinlock));
 
-                if (thread->error == RT_EOK)
+                if (mutex->owner == thread)
                 {
                     /**
                      * get mutex successfully
                      * Note: assert to avoid an unexpected resume
                      */
-                    RT_ASSERT(mutex->owner == thread);
+                    RT_ASSERT(thread->error == RT_EOK);
                 }
                 else
                 {
@@ -1467,6 +1467,12 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                     /* get value first before calling to other APIs */
                     ret = thread->error;
+
+                    /* unexpected resume */
+                    if (ret == RT_EOK)
+                    {
+                        ret = -RT_EINTR;
+                    }
 
                     rt_sched_lock(&slvl);
 

@@ -117,13 +117,6 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-void rt_hw_cpu_reset(void)
-{
-    SYS_UnlockReg();
-
-    SYS->IPRST0 |= SYS_IPRST0_CHIPRST_Msk;
-}
-
 #ifdef RT_USING_CPU_FFS
 int __rt_ffs(int value)
 {
@@ -136,7 +129,9 @@ int __rt_ffs(int value)
 #include <finsh.h>
 static void reboot(uint8_t argc, char **argv)
 {
-    rt_hw_cpu_reset();
+    SYS_UnlockReg();
+
+    SYS->IPRST0 |= SYS_IPRST0_CHIPRST_Msk;
 }
 MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */

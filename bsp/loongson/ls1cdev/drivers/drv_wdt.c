@@ -13,7 +13,7 @@
 
 #ifdef  RT_USING_WDT
 
-#include <drivers/watchdog.h>
+#include "drivers/dev_watchdog.h"
 #include "drv_wdt.h"
 
 #include "ls1c_wdog.h"

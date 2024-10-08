@@ -68,6 +68,8 @@
 #include "rtsched.h"
 #include "rttypes.h"
 
+#include "klibc/kerrno.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -84,11 +86,10 @@ extern "C" {
 #define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
-#define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)
+#define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000U) + (minor * 100U) + revise)
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                RT_VERSION_CHECK(RT_VERSION_MAJOR, RT_VERSION_MINOR, RT_VERSION_PATCH)
-
 
 /**@}*/
 
@@ -99,10 +100,10 @@ extern "C" {
 #define RT_UINT32_MAX                   UINT32_MAX      /**< Maximum number of UINT32 */
 #define RT_UINT64_MAX                   UINT64_MAX      /**< Maximum number of UINT64 */
 #else
-#define RT_UINT8_MAX                    0xff            /**< Maximum number of UINT8 */
-#define RT_UINT16_MAX                   0xffff          /**< Maximum number of UINT16 */
-#define RT_UINT32_MAX                   0xffffffff      /**< Maximum number of UINT32 */
-#define RT_UINT64_MAX                   0xffffffffffffffff
+#define RT_UINT8_MAX                    0xFFU                 /**< Maximum number of UINT8 */
+#define RT_UINT16_MAX                   0xFFFFU               /**< Maximum number of UINT16 */
+#define RT_UINT32_MAX                   0xFFFFFFFFUL          /**< Maximum number of UINT32 */
+#define RT_UINT64_MAX                   0xFFFFFFFFFFFFFFFFULL /**< Maximum number of UINT64 */
 #endif /* RT_USING_LIBC */
 
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maximum number of tick */
@@ -237,58 +238,6 @@ typedef int (*init_fn_t)(void);
 #ifndef RT_KERNEL_REALLOC
 #define RT_KERNEL_REALLOC(ptr, size)    rt_realloc(ptr, size)
 #endif /* RT_KERNEL_REALLOC */
-
-/**
- * @addtogroup Error
- */
-
-/**@{*/
-
-/* RT-Thread error code definitions */
-#if defined(RT_USING_LIBC) && !defined(RT_USING_NANO)
-/* POSIX error code compatible */
-#define RT_EOK                          0               /**< There is no error */
-#define RT_ERROR                        255             /**< A generic/unknown error happens */
-#define RT_ETIMEOUT                     ETIMEDOUT       /**< Timed out */
-#define RT_EFULL                        ENOSPC          /**< The resource is full */
-#define RT_EEMPTY                       ENODATA         /**< The resource is empty */
-#define RT_ENOMEM                       ENOMEM          /**< No memory */
-#define RT_ENOSYS                       ENOSYS          /**< Function not implemented */
-#define RT_EBUSY                        EBUSY           /**< Busy */
-#define RT_EIO                          EIO             /**< IO error */
-#define RT_EINTR                        EINTR           /**< Interrupted system call */
-#define RT_EINVAL                       EINVAL          /**< Invalid argument */
-#define RT_ENOENT                       ENOENT          /**< No entry */
-#define RT_ENOSPC                       ENOSPC          /**< No space left */
-#define RT_EPERM                        EPERM           /**< Operation not permitted */
-#define RT_EFAULT                       EFAULT          /**< Bad address */
-#define RT_ENOBUFS                      ENOBUFS         /**< No buffer space is available */
-#define RT_ESCHEDISR                    253             /**< scheduler failure in isr context */
-#define RT_ESCHEDLOCKED                 252             /**< scheduler failure in critical region */
-#define RT_ETRAP                        254             /**< Trap event */
-#else
-#define RT_EOK                          0               /**< There is no error */
-#define RT_ERROR                        1               /**< A generic/unknown error happens */
-#define RT_ETIMEOUT                     2               /**< Timed out */
-#define RT_EFULL                        3               /**< The resource is full */
-#define RT_EEMPTY                       4               /**< The resource is empty */
-#define RT_ENOMEM                       5               /**< No memory */
-#define RT_ENOSYS                       6               /**< Function not implemented */
-#define RT_EBUSY                        7               /**< Busy */
-#define RT_EIO                          8               /**< IO error */
-#define RT_EINTR                        9               /**< Interrupted system call */
-#define RT_EINVAL                       10              /**< Invalid argument */
-#define RT_ENOENT                       11              /**< No entry */
-#define RT_ENOSPC                       12              /**< No space left */
-#define RT_EPERM                        13              /**< Operation not permitted */
-#define RT_ETRAP                        14              /**< Trap event */
-#define RT_EFAULT                       15              /**< Bad address */
-#define RT_ENOBUFS                      16              /**< No buffer space is available */
-#define RT_ESCHEDISR                    17              /**< scheduler failure in isr context */
-#define RT_ESCHEDLOCKED                 18              /**< scheduler failure in critical region */
-#endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
-
-/**@}*/
 
 /**
  * @ingroup BasicDef
@@ -724,6 +673,12 @@ typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
 #ifndef RT_STOP_IPI
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
+
+#ifndef RT_FUNC_IPI
+#define RT_FUNC_IPI                     2
+#endif
+
+#define RT_MAX_IPI                      3
 
 #define _SCHEDULER_CONTEXT(fileds) fileds
 

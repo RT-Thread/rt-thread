@@ -103,14 +103,14 @@ static struct rt_object *ofw_parse_object(struct rt_ofw_node *np, const char *ce
         {
             item = &ofw_obj_cmp_list[i];
 
-            if (!rt_strcmp(item->cells_name, cells_name))
-            {
-                ret_obj = obj;
-                break;
-            }
-
             if (!rt_strncmp(item->obj_name, obj->name, RT_NAME_MAX))
             {
+                if (!rt_strcmp(item->cells_name, cells_name))
+                {
+                    ret_obj = obj;
+                    break;
+                }
+
                 obj = (struct rt_object *)((rt_ubase_t)obj + item->obj_size);
                 break;
             }
@@ -134,7 +134,7 @@ struct rt_object *rt_ofw_parse_object(struct rt_ofw_node *np, const char *obj_na
     if (np && (test_obj = rt_ofw_data(np)) && cells_name)
     {
         /* The composite object is rare, so we try to find this object as much as possible at once. */
-        if (obj_name && rt_strcmp(test_obj->name, obj_name))
+        if (obj_name && !rt_strcmp(test_obj->name, obj_name))
         {
             obj = test_obj;
         }
@@ -386,6 +386,11 @@ const char *rt_ofw_bootargs_select(const char *key, int index)
                 {
                     *(char *)ch++ = '\0';
                 }
+                if (*ch == '\0')
+                {
+                    /* space in the end */
+                    --bootargs_nr;
+                }
                 --ch;
             }
 
@@ -636,7 +641,14 @@ void rt_ofw_node_dump_dts(struct rt_ofw_node *np, rt_bool_t sibling_too)
             struct fdt_info *header = (struct fdt_info *)np->name;
             struct fdt_reserve_entry *rsvmap = header->rsvmap;
 
-            rt_kprintf("/dts-v%x/;\n\n", fdt_version(header->fdt));
+            /*
+             * Shall be present to identify the file as a version 1 DTS
+             * (dts files without this tag will be treated by dtc
+             * as being in the obsolete version 0, which uses
+             * a different format for integers in addition to
+             * other small but incompatible changes).
+             */
+            rt_kprintf("/dts-v1/;\n\n");
 
             for (int i = header->rsvmap_nr - 1; i >= 0; --i)
             {

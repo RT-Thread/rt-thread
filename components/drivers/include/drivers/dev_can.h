@@ -63,9 +63,16 @@ enum CANBAUD
 #define RT_CAN_MODE_PRIV                0x01
 #define RT_CAN_MODE_NOPRIV              0x00
 
-/** @defgroup CAN_receive_FIFO_number CAN Receive FIFO Number
-  * @{
-  */
+/**
+ * @addtogroup  Drivers          RTTHREAD Driver
+ * @defgroup    CAN_Device          CAN Driver
+ * @ingroup     Drivers
+ */
+
+/*!
+ * @addtogroup CAN_Device
+ * @{
+ */
 #define CAN_RX_FIFO0                (0x00000000U)  /*!< CAN receive FIFO 0 */
 #define CAN_RX_FIFO1                (0x00000001U)  /*!< CAN receive FIFO 1 */
 
@@ -360,5 +367,8 @@ rt_err_t rt_hw_can_register(struct rt_can_device    *can,
                             const struct rt_can_ops *ops,
                             void                    *data);
 void rt_hw_can_isr(struct rt_can_device *can, int event);
-#endif /*__DEV_CAN_H*/
 
+/*! @}
+*/
+
+#endif /*__DEV_CAN_H*/

@@ -13,7 +13,7 @@
 
 #include <rthw.h>
 #include <rtdevice.h>
-#include <spi-bit-ops.h>
+#include <dev_spi_bit_ops.h>
 
 /* stm32 soft spi config */
 struct stm32_soft_spi_config

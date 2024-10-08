@@ -266,20 +266,25 @@ static void gicv3_dist_init(void)
         HWREG64(base + GICD_IROUTERnE + i * 8) = affinity;
     }
 
-    if (GICD_TYPER_NUM_LPIS(_gic.gicd_typer))
+    if (GICD_TYPER_NUM_LPIS(_gic.gicd_typer) > 1)
     {
         /* Max LPI = 8192 + Math.pow(2, num_LPIs + 1) - 1 */
-        rt_size_t num_lpis = (1 << (GICD_TYPER_NUM_LPIS(_gic.gicd_typer) + 1)) + 1;
+        rt_size_t num_lpis = 1UL << (GICD_TYPER_NUM_LPIS(_gic.gicd_typer) + 1);
 
-        _gic.lpi_nr = rt_min_t(int, num_lpis, 1 << GICD_TYPER_ID_BITS(_gic.gicd_typer));
+        _gic.lpi_nr = rt_min_t(int, num_lpis, 1UL << GICD_TYPER_ID_BITS(_gic.gicd_typer));
     }
     else
     {
-        _gic.lpi_nr = 1 << GICD_TYPER_ID_BITS(_gic.gicd_typer);
+        _gic.lpi_nr = 1UL << GICD_TYPER_ID_BITS(_gic.gicd_typer);
     }
 
     /* SPI + eSPI + LPIs */
-    _gic.irq_nr = _gic.line_nr - 32 + _gic.espi_nr + _gic.lpi_nr;
+    _gic.irq_nr = _gic.line_nr - 32 + _gic.espi_nr;
+#ifdef RT_PIC_ARM_GIC_V3_ITS
+    /* ITS will allocate  the same number of lpi PIRQs */
+    _gic.lpi_nr = rt_min_t(rt_size_t, RT_PIC_ARM_GIC_V3_ITS_IRQ_MAX, _gic.lpi_nr);
+    _gic.irq_nr += _gic.lpi_nr;
+#endif
 }
 
 static void gicv3_redist_enable(rt_bool_t enable)
@@ -389,6 +394,8 @@ static void gicv3_cpu_init(void)
     int cpu_id = rt_hw_cpu_id();
 #ifdef ARCH_SUPPORT_HYP
     _gicv3_eoi_mode_ns = RT_TRUE;
+#else
+    _gicv3_eoi_mode_ns = !!rt_ofw_bootargs_select("pic.gicv3_eoimode", 0);
 #endif
 
     base = gicv3_percpu_redist_sgi_base();
@@ -700,6 +707,7 @@ static int gicv3_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
     if (pirq && hwirq >= GIC_SGI_NR)
     {
         pirq->mode = mode;
+        pirq->priority = GICD_INT_DEF_PRI;
 
         switch (gicv3_hwirq_type(hwirq))
         {
@@ -708,7 +716,6 @@ static int gicv3_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
             break;
         case SPI_TYPE:
         case ESPI_TYPE:
-            pirq->priority = GICD_INT_DEF_PRI;
             RT_IRQ_AFFINITY_SET(pirq->affinity, _init_cpu_id);
         default:
             break;
@@ -823,7 +830,18 @@ static rt_bool_t gicv3_handler(void *data)
         }
         else
         {
-            pirq = rt_pic_find_irq(&gic->parent, hwirq - GIC_SGI_NR);
+            int irq_index;
+
+            if (hwirq < 8192)
+            {
+                irq_index = hwirq - GIC_SGI_NR;
+            }
+            else
+            {
+                irq_index = gic->irq_nr - gic->lpi_nr + hwirq - 8192;
+            }
+
+            pirq = rt_pic_find_irq(&gic->parent, irq_index);
         }
 
         gicv3_irq_ack(pirq);

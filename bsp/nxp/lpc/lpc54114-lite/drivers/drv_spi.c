@@ -128,7 +128,7 @@ static rt_err_t configure(struct rt_spi_device *device, struct rt_spi_configurat
     return ret;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     spi_transfer_t transfer = {0};
 
