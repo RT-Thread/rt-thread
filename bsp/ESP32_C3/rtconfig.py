@@ -10,7 +10,7 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc': 
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/riscv32-esp-elf/bin'
+    EXEC_PATH   = r'~/.espressif/tools/riscv32-esp-elf/esp-2022r1-11.2.0/riscv32-esp-elf/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
