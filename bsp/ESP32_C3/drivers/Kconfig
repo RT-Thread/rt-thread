@@ -47,6 +47,11 @@ menu "Onboard Peripheral Drivers"
         default 20 if BSP_BOARD_LUATOS_ESP32C3
         depends on BSP_USING_UART
 
+    config RT_BSP_SPI_CS_PIN
+        int "SPI GPIO PIN SET"
+        default 10 if BSP_BOARD_LUATOS_ESP32C3
+        depends on BSP_USING_SPI2
+
 endmenu
 
 
@@ -70,7 +75,17 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_I2C0
                 bool "Enable I2C0"
                 default n
-        endif   
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+        endif 
     
     config BSP_USING_WIFI
         bool "Enable WIFI"
@@ -138,5 +153,3 @@ config BSP_ENABLE_GDBSTUB
     default n
 
 endmenu
-
-
