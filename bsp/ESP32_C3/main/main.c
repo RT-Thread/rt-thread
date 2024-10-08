@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 RT-Thread Development Team
+ * Copyright (c) 2021-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,7 +10,6 @@
  * 2023-10-20     WCX1024979076 add wifi application
  */
 
-#include "rttypes.h"
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
@@ -23,7 +22,7 @@ int main(void)
 #ifdef BSP_USING_BLE
     extern void app_main(void);
     esp_timer_init();
-    app_main(); /*该函数为nimble样例程序入口*/
+    app_main(); //该函数为nimble样例程序入口
 #endif /* BSP_USING_BLE */
 
 #ifdef RT_USING_WIFI
