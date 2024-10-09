@@ -111,6 +111,7 @@ rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
                 /* RT_EBUSY is not an error condition and
                  * the configuration will take effect once the device has the bus
                  */
+                rt_mutex_release(&(device->bus->lock));
                 return -RT_EBUSY;
             }
 
