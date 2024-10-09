@@ -35,27 +35,27 @@ void dump_regs(struct rt_hw_stack_frame *regs)
     rt_kprintf("--------------Dump Registers-----------------\n");
 
     rt_kprintf("Function Registers:\n");
-    rt_kprintf("\tra(x1) = 0x%p\tuser_sp = 0x%p\n", regs->ra,
+    rt_kprintf("\tra(x1) = %p\tuser_sp = %p\n", regs->ra,
                regs->user_sp_exc_stack);
-    rt_kprintf("\tgp(x3) = 0x%p\ttp(x4) = 0x%p\n", regs->gp, regs->tp);
+    rt_kprintf("\tgp(x3) = %p\ttp(x4) = %p\n", regs->gp, regs->tp);
     rt_kprintf("Temporary Registers:\n");
-    rt_kprintf("\tt0(x5) = 0x%p\tt1(x6) = 0x%p\n", regs->t0, regs->t1);
-    rt_kprintf("\tt2(x7) = 0x%p\n", regs->t2);
-    rt_kprintf("\tt3(x28) = 0x%p\tt4(x29) = 0x%p\n", regs->t3, regs->t4);
-    rt_kprintf("\tt5(x30) = 0x%p\tt6(x31) = 0x%p\n", regs->t5, regs->t6);
+    rt_kprintf("\tt0(x5) = %p\tt1(x6) = %p\n", regs->t0, regs->t1);
+    rt_kprintf("\tt2(x7) = %p\n", regs->t2);
+    rt_kprintf("\tt3(x28) = %p\tt4(x29) = %p\n", regs->t3, regs->t4);
+    rt_kprintf("\tt5(x30) = %p\tt6(x31) = %p\n", regs->t5, regs->t6);
     rt_kprintf("Saved Registers:\n");
-    rt_kprintf("\ts0/fp(x8) = 0x%p\ts1(x9) = 0x%p\n", regs->s0_fp, regs->s1);
-    rt_kprintf("\ts2(x18) = 0x%p\ts3(x19) = 0x%p\n", regs->s2, regs->s3);
-    rt_kprintf("\ts4(x20) = 0x%p\ts5(x21) = 0x%p\n", regs->s4, regs->s5);
-    rt_kprintf("\ts6(x22) = 0x%p\ts7(x23) = 0x%p\n", regs->s6, regs->s7);
-    rt_kprintf("\ts8(x24) = 0x%p\ts9(x25) = 0x%p\n", regs->s8, regs->s9);
-    rt_kprintf("\ts10(x26) = 0x%p\ts11(x27) = 0x%p\n", regs->s10, regs->s11);
+    rt_kprintf("\ts0/fp(x8) = %p\ts1(x9) = %p\n", regs->s0_fp, regs->s1);
+    rt_kprintf("\ts2(x18) = %p\ts3(x19) = %p\n", regs->s2, regs->s3);
+    rt_kprintf("\ts4(x20) = %p\ts5(x21) = %p\n", regs->s4, regs->s5);
+    rt_kprintf("\ts6(x22) = %p\ts7(x23) = %p\n", regs->s6, regs->s7);
+    rt_kprintf("\ts8(x24) = %p\ts9(x25) = %p\n", regs->s8, regs->s9);
+    rt_kprintf("\ts10(x26) = %p\ts11(x27) = %p\n", regs->s10, regs->s11);
     rt_kprintf("Function Arguments Registers:\n");
-    rt_kprintf("\ta0(x10) = 0x%p\ta1(x11) = 0x%p\n", regs->a0, regs->a1);
-    rt_kprintf("\ta2(x12) = 0x%p\ta3(x13) = 0x%p\n", regs->a2, regs->a3);
-    rt_kprintf("\ta4(x14) = 0x%p\ta5(x15) = 0x%p\n", regs->a4, regs->a5);
-    rt_kprintf("\ta6(x16) = 0x%p\ta7(x17) = 0x%p\n", regs->a6, regs->a7);
-    rt_kprintf("sstatus = 0x%p\n", regs->sstatus);
+    rt_kprintf("\ta0(x10) = %p\ta1(x11) = %p\n", regs->a0, regs->a1);
+    rt_kprintf("\ta2(x12) = %p\ta3(x13) = %p\n", regs->a2, regs->a3);
+    rt_kprintf("\ta4(x14) = %p\ta5(x15) = %p\n", regs->a4, regs->a5);
+    rt_kprintf("\ta6(x16) = %p\ta7(x17) = %p\n", regs->a6, regs->a7);
+    rt_kprintf("sstatus = %p\n", regs->sstatus);
     rt_kprintf("\t%s\n", (regs->sstatus & SSTATUS_SIE)
                              ? "Supervisor Interrupt Enabled"
                              : "Supervisor Interrupt Disabled");
@@ -72,10 +72,10 @@ void dump_regs(struct rt_hw_stack_frame *regs)
                              ? "Permit to Read Executable-only Page"
                              : "Not Permit to Read Executable-only Page");
     rt_ubase_t satp_v = read_csr(satp);
-    rt_kprintf("satp = 0x%p\n", satp_v);
-    rt_kprintf("\tCurrent Page Table(Physical) = 0x%p\n",
+    rt_kprintf("satp = %p\n", satp_v);
+    rt_kprintf("\tCurrent Page Table(Physical) = %p\n",
                __MASKVALUE(satp_v, __MASK(44)) << PAGE_OFFSET_BIT);
-    rt_kprintf("\tCurrent ASID = 0x%p\n", __MASKVALUE(satp_v >> 44, __MASK(16))
+    rt_kprintf("\tCurrent ASID = %p\n", __MASKVALUE(satp_v >> 44, __MASK(16))
                                               << PAGE_OFFSET_BIT);
     const char *mode_str = "Unknown Address Translation/Protection Mode";
 
@@ -224,7 +224,7 @@ void handle_user(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
         __asm__ volatile("csrw sstatus, %0" ::"r"(saved_stat));
     }
     LOG_E("[FATAL ERROR] Exception %ld:%s\n", id, get_exception_msg(id));
-    LOG_E("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
+    LOG_E("scause:%p,stval:%p,sepc:%p\n", scause, stval, sepc);
     dump_regs(sp);
 
     rt_thread_t cur_thr = rt_thread_self();
@@ -283,7 +283,7 @@ static void handle_nested_trap_panic(rt_ubase_t cause, rt_ubase_t tval,
 {
     LOG_E("\n-------- [SEVER ERROR] --------");
     LOG_E("Nested trap detected");
-    LOG_E("scause:0x%p,stval:0x%p,sepc:0x%p\n", cause, tval, epc);
+    LOG_E("scause:%p,stval:%p,sepc:%p\n", cause, tval, epc);
     dump_regs(eframe);
     rt_hw_cpu_shutdown();
 }
@@ -356,7 +356,7 @@ void handle_trap(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
         // trap cannot nested when handling another trap / interrupt
         CHECK_NESTED_PANIC(scause, stval, sepc, sp);
 
-        rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
+        rt_kprintf("scause:%p,stval:%p,sepc:%p\n", scause, stval, sepc);
         dump_regs(sp);
 
         rt_thread_t cur_thr = rt_thread_self();
