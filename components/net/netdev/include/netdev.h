@@ -101,6 +101,8 @@ struct netdev
     netdev_callback_fn status_callback;                /* network interface device flags change callback */
     netdev_callback_fn addr_callback;                  /* network interface device address information change callback */
 
+    int ifindex;                                       /* network interface device ifindex */
+
 #ifdef RT_USING_SAL
     void *sal_user_data;                               /* user-specific data for SAL */
 #endif /* RT_USING_SAL */
@@ -151,6 +153,7 @@ int netdev_unregister(struct netdev *netdev);
 struct netdev *netdev_get_first_by_flags(uint16_t flags);
 struct netdev *netdev_get_by_ipaddr(ip_addr_t *ip_addr);
 struct netdev *netdev_get_by_name(const char *name);
+struct netdev *netdev_get_by_ifindex(int ifindex);
 #ifdef RT_USING_SAL
 struct netdev *netdev_get_by_family(int family);
 int netdev_family_get(struct netdev *netdev);
