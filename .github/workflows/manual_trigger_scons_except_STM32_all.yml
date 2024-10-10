@@ -155,7 +155,7 @@ jobs:
           - {RTT_BSP_NAME: "loongson_ls1bdev", RTT_TOOL_CHAIN: "sourcery-mips", RTT_BSP: "loongson/ls1bdev"}
           - {RTT_BSP_NAME: "loongson_ls1cdev", RTT_TOOL_CHAIN: "sourcery-mips", RTT_BSP: "loongson/ls1cdev"}
           - {RTT_BSP_NAME: "loongson_ls2kdev", RTT_TOOL_CHAIN: "sourcery-mips", RTT_BSP: "loongson/ls2kdev"}
-          - {RTT_BSP_NAME: "lpc1114", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc1114"}
+         #- {RTT_BSP_NAME: "lpc1114", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc1114"}  # 资源不足
           - {RTT_BSP_NAME: "lpc176x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc176x"}
           - {RTT_BSP_NAME: "lpc178x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc178x"}
           - {RTT_BSP_NAME: "lpc2148", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc2148"}
@@ -171,7 +171,7 @@ jobs:
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s28_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s28_nxp_evk"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s36_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s36_nxp_evk"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s69_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s69_nxp_evk"}
-         #- {RTT_BSP_NAME: "lpc824", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc824"}  #GCC不支持
+         #- {RTT_BSP_NAME: "lpc824", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc824"}  # 资源不足
          #- {RTT_BSP_NAME: "m16c62p", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "m16c62p"}  #编译问题
           - {RTT_BSP_NAME: "maxim_max32660-evsys", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "maxim/max32660-evsys"}
          #- {RTT_BSP_NAME: "microblaze", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microblaze"}  #编译问题
