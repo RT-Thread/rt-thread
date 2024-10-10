@@ -31,7 +31,7 @@
 //#define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO        8
 #define RT_TIMER_THREAD_STACK_SIZE  512
-#define RT_TIMER_TICK_PER_SECOND    1000
+#define RT_TICK_PER_SECOND    1000
 
 /* SECTION: IPC */
 /* Using Semaphore */

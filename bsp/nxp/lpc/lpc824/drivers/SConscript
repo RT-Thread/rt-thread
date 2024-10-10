@@ -7,7 +7,7 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 # add the general drivers.
 src = Split("""
 board.c
-usart.c
+drv_usart.c
 """)
 
 CPPPATH = [cwd]

@@ -20,8 +20,8 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 #pragma section="HEAP"
 #define HEAP_BEGIN    (__segment_end("HEAP"))
 #else
-extern int __bss_end;
-#define HEAP_BEGIN    (&__bss_end)
+extern int __bss_end__;
+#define HEAP_BEGIN    (&__bss_end__)
 #endif
 
 #define LPC824_SRAM_SIZE         8
