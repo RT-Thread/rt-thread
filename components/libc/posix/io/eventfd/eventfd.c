@@ -317,6 +317,11 @@ static int do_eventfd(unsigned int count, int flags)
         file = fd_get(fd);
 
         status = rt_eventfd_create(file, count, flags);
+
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(file);
+#endif
+
         if (status < 0)
         {
             fd_release(fd);

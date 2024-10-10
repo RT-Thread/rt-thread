@@ -412,7 +412,11 @@ static void *_ipc_msg_get_file(int fd)
         return RT_NULL;
 
     if (!d->vnode)
+    {
+        dfs_file_put(d);
         return RT_NULL;
+    }
+        
 
     return (void *)d;
 }
@@ -432,6 +436,8 @@ static int _ipc_msg_fd_new(void *file)
     }
 
     df = (struct dfs_file *)file;
+
+    dfs_file_get(df);
 
     fd = fd_new();
     if (fd < 0)
@@ -464,6 +470,9 @@ static int _ipc_msg_fd_new(void *file)
     if (d->vnode)
         d->vnode->ref_count++;
 #endif
+
+    dfs_file_put(d);
+    dfs_file_put(df);
 
     return fd;
 }
@@ -1002,6 +1011,8 @@ static void _chfd_free(int fd, int fdt_type)
     {
         return;
     }
+
+    dfs_file_put(d);
     lwp_fd_release(fdt_type, fd);
 }
 
@@ -1091,6 +1102,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
     if (!d->vnode)
     {
+        dfs_file_put(d);
         _chfd_free(fd, fdt_type);
         fd = -1;
         goto quit;
@@ -1113,6 +1125,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
         _chfd_free(fd, fdt_type);
         fd = -1;
     }
+    dfs_file_put(d);
 quit:
     return fd;
 }
@@ -1127,6 +1140,7 @@ static rt_channel_t fd_2_channel(int fdt_type, int fd)
         rt_channel_t ch;
 
         ch = (rt_channel_t)d->vnode->data;
+        dfs_file_put(d);
         if (ch)
         {
             return ch;
@@ -1150,9 +1164,11 @@ rt_err_t lwp_channel_close(int fdt_type, int fd)
     vnode = d->vnode;
     if (!vnode)
     {
+        dfs_file_put(d);
         return -RT_EIO;
     }
 
+    dfs_file_put(d);
     ch = fd_2_channel(fdt_type, fd);
     if (!ch)
     {
