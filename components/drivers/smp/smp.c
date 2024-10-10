@@ -33,18 +33,14 @@ static rt_err_t smp_call_handler(struct rt_smp_event *event)
 }
 void rt_smp_call_ipi_handler(int vector, void *param)
 {
-    int err;
     int cur_cpu = rt_hw_cpu_id();
-    rt_spin_lock(&rt_smp_work[cur_cpu].lock);
 
+    rt_spin_lock(&rt_smp_work[cur_cpu].lock);
     if (rt_smp_work[cur_cpu].event.event_id)
     {
-        err = smp_call_handler(&rt_smp_work[cur_cpu].event);
-        if (err)
+        if (smp_call_handler(&rt_smp_work[cur_cpu].event) != RT_EOK)
         {
             LOG_E("Have no event\n");
-            rt_memset(&rt_smp_work[cur_cpu].event, 0, sizeof(struct rt_smp_event));
-            rt_spin_unlock(&rt_smp_work[cur_cpu].lock);
         }
         rt_memset(&rt_smp_work[cur_cpu].event, 0, sizeof(struct rt_smp_event));
     }
