@@ -46,7 +46,7 @@ SECTIONS
         . = ALIGN(4);
 
         . = ALIGN(4);
-        _etext = .;
+        __etext = .;
     } > CODE = 0
 
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
@@ -61,12 +61,13 @@ SECTIONS
     __exidx_end = .;
 
     /* .data section which is used for initialized data */
+    
 
     .data : AT (_sidata)
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
-        _sdata = . ;
+        __data_start__ = . ;
 
         *(.data)
         *(.data.*)
@@ -74,7 +75,7 @@ SECTIONS
 
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
-        _edata = . ;
+        __data_end__ = . ;
     } >DATA
 
     .stack : 

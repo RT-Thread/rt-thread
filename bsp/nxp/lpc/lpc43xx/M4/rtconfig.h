@@ -39,8 +39,8 @@
 #define RT_TIMER_THREAD_PRIO    4
 // <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
 #define RT_TIMER_THREAD_STACK_SIZE  512
-// <integer name="RT_TIMER_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
-#define RT_TIMER_TICK_PER_SECOND    100
+// <integer name="RT_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
+#define RT_TICK_PER_SECOND    100
 // </section>
 
 // <section name="IPC" description="Inter-Thread communication" default="always" >
