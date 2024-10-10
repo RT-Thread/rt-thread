@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-11-10     SummerGift   first version
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2024-08-15     Macro        add stm32h5
  */
 
 #ifndef __DRV_DMA_H_
@@ -39,7 +40,8 @@ struct dma_config {
 #endif
 
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL)  || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4)\
-    || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32L5)
+    || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32L5)\
+    || defined(SOC_SERIES_STM32H5)
     rt_uint32_t request;
 #endif
 };

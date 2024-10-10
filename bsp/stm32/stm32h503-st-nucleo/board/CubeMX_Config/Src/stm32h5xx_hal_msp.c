@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include <drv_common.h>
 /* USER CODE END Includes */
+DMA_HandleTypeDef handle_GPDMA1_Channel0;
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
