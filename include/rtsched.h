@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023-2024 RT-Thread Development Team
+ * Copyright (c) 2023-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2024-01-19     Shell        Seperate schduling statements from rt_thread_t
+ * 2024-01-19     Shell        Separate scheduling statements from rt_thread_t
  *                             to rt_sched_thread_ctx. Add definitions of scheduler.
  */
 #ifndef __RT_SCHED_H__
@@ -21,8 +21,6 @@ extern "C" {
 struct rt_thread;
 
 typedef rt_uint8_t rt_sched_thread_status_t;
-
-#ifdef RT_USING_SCHED_THREAD_CTX
 
 /**
  * Scheduler private status binding on thread. Caller should never accessing
@@ -84,43 +82,6 @@ struct rt_sched_thread_ctx
         rt_list_entry((node), struct rt_sched_thread_ctx, thread_list_node), \
         struct rt_thread, sched_thread_ctx)
 #define RT_THREAD_LIST_NODE(thread) (RT_SCHED_CTX(thread).thread_list_node)
-
-#else /* !defined(RT_USING_SCHED_THREAD_CTX) */
-
-#if RT_THREAD_PRIORITY_MAX > 32
-#define _RT_SCHED_THREAD_CTX_PRIO_EXT                 \
-    rt_uint8_t number;    /**< priority low number */ \
-    rt_uint8_t high_mask; /**< priority high mask */
-
-#else /* ! RT_THREAD_PRIORITY_MAX > 32 */
-
-#define _RT_SCHED_THREAD_CTX_PRIO_EXT
-#endif /* RT_THREAD_PRIORITY_MAX > 32 */
-
-#define RT_SCHED_THREAD_CTX                                                    \
-    rt_list_t tlist;                    /**< node in thread list */            \
-    rt_uint8_t stat;                    /**< thread status */                  \
-    rt_uint8_t sched_flag_locked:1;                                            \
-            /**< calling thread have the scheduler locked */                   \
-    rt_uint8_t sched_flag_ttmr_set:1;   /**< thread timer is start */          \
-    rt_tick_t init_tick;                /**< thread's initialized tick */      \
-    rt_tick_t remaining_tick;           /**< remaining tick */                 \
-    rt_uint8_t current_priority;        /**< current priority */               \
-    rt_uint8_t init_priority;           /**< initialized priority */           \
-    _RT_SCHED_THREAD_CTX_PRIO_EXT                                              \
-    rt_uint32_t number_mask;            /**< priority number mask */
-
-#define RT_SCHED_PRIV(thread) (*thread)
-#define RT_SCHED_CTX(thread) (*thread)
-
-/**
- * Convert a list node in container RT_SCHED_CTX(thread)->thread_list_node
- * to a thread pointer.
- */
-#define RT_THREAD_LIST_NODE_ENTRY(node) rt_list_entry((node), struct rt_thread, tlist)
-#define RT_THREAD_LIST_NODE(thread) (RT_SCHED_CTX(thread).tlist)
-
-#endif /* RT_USING_SCHED_THREAD_CTX */
 
 /**
  * System Scheduler Locking
