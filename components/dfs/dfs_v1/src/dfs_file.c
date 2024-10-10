@@ -846,7 +846,7 @@ void cat(const char *filename)
         {
             buffer[length] = '\0';
             rt_device_t out_device = rt_console_get_device();
-            rt_device_write(out_device, 0, (void *)buffer, sizeof(buffer));
+            rt_device_write(out_device, 0, (void *)buffer, length);
         }
     } while (length > 0);
     rt_kprintf("\n");
