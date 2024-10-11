@@ -32,7 +32,7 @@ void rt_hw_asid_init(void)
     rt_uint64_t satp_reg = read_csr(satp);
     satp_reg |= (((rt_uint64_t)0xffff) << PPN_BITS);
     write_csr(satp, satp_reg);
-    asm volatile("sfence.vma x0, x0");
+    __asm__ volatile("sfence.vma x0, x0");
     unsigned short valid_asid_bit = ((read_csr(satp) >> PPN_BITS) & 0xffff);
 
     // The maximal value of ASIDLEN, is 9 for Sv32 or 16 for Sv39, Sv48, and Sv57
