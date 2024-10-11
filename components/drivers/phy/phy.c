@@ -241,7 +241,7 @@ struct rt_phy_device *rt_phy_device_create(struct mii_bus *bus, int addr,
 
     if(rt_phy_device_register(dev))
     {
-        LOG_D("register phy device filed";)
+        LOG_D("register phy device filed")
     }
 
     if (addr >= 0 && addr < RT_PHY_MAX && phy_id != RT_PHY_FIXED_ID &&
