@@ -994,9 +994,39 @@ rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
 }
 RTM_EXPORT(rt_thread_suspend_with_flag);
 
+/**
+ * @brief   This function will suspend the specified thread.
+ *
+ * @note    Usually users use this function to suspend current thread itself.
+ *
+ * @param   thread the thread to be suspended. If it's RT_NULL, the function will suspend the self thread.
+ *
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
+ */
 rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
-    return rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
+    rt_base_t stat;
+    rt_thread_t t = thread;
+    if (t == RT_NULL)
+    {
+        t = rt_thread_self();
+    }
+
+    if (t != rt_thread_idle_gethandler()) /* The idle thread cannot be suspended */
+    {
+        stat = rt_thread_suspend_with_flag(t, RT_UNINTERRUPTIBLE);
+        /* After suspending self thread, call rt_schedule() */
+        if ( thread == RT_NULL )
+        {
+            rt_schedule();
+        }
+    }
+    else
+    {
+        stat = RT_ERROR;
+    }
+    return stat;
 }
 RTM_EXPORT(rt_thread_suspend);
 
