@@ -395,6 +395,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     rt_base_t level;
     rt_int32_t irqindex = -1;
     GPIO_InitTypeDef GPIO_InitStruct;
+    HAL_GPIO_Init(PIN_STPORT(pin), &GPIO_InitStruct);
 
     if (PIN_PORT(pin) >= PIN_STPORT_MAX)
     {
@@ -437,7 +438,6 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
             break;
         }
-        HAL_GPIO_Init(PIN_STPORT(pin), &GPIO_InitStruct);
 
         HAL_NVIC_SetPriority(irqmap->irqno, 5, 0);
         HAL_NVIC_EnableIRQ(irqmap->irqno);
