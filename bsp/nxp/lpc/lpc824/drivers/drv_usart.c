@@ -65,21 +65,21 @@ void uart_irq_handler(struct lpc8xx_uart* uart)
 }
 
 #ifdef BSP_USING_UART0
-void UART0_IRQHandler(void)
+void USART0_IRQHandler(void)
 {
     uart_irq_handler(&uart0_device);
 }
 #endif
 
 #ifdef BSP_USING_UART1
-void UART1_IRQHandler(void)
+void USART1_IRQHandler(void)
 {
     uart_irq_handler(&uart1_device);
 }
 #endif
 
 #ifdef BSP_USING_UART2
-void UART2_IRQHandler(void)
+void USART2_IRQHandler(void)
 {
     uart_irq_handler(&uart2_device);
 }

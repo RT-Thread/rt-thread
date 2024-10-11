@@ -16,4 +16,4 @@ config SOC_LPC1114
     select RT_USING_USER_MAIN
     default y
 
-#source "$(BSP_DIR)/drivers/Kconfig"
+source "$(BSP_DIR)/driver/Kconfig"
