@@ -4,27 +4,29 @@ import os
 ARCH        ='arm'
 CPU         ='cortex-m0'
 CROSS_TOOL  ='gcc'
-
-if os.getenv('RTT_ROOT'):
-    RTT_ROOT = os.getenv('RTT_ROOT')
-else:
-    RTT_ROOT = '../..'
+BOARD_NAME = 'lpc1114'
 
 if os.getenv('RTT_CC'):
-    CROSS_TOOL = os.getenv('RTT_CC')
+	CROSS_TOOL = os.getenv('RTT_CC')
 
+# cross_tool provides the cross compiler
+# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/usr/bin'
-else:
-    print ('Please make sure your toolchains is GNU GCC!')
-    exit(0)
+    EXEC_PATH   = r'C:\Users\XXYYZZ'
+elif CROSS_TOOL == 'keil':
+    PLATFORM 	= 'armcc'
+    EXEC_PATH 	= 'C:/keil_v5'
+elif CROSS_TOOL == 'iar':
+    PLATFORM  = 'iccarm'
+    EXEC_PATH    = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'release'
-# BUILD = 'debug'
+BUILD = 'debug' 
+# BUILD = 'release' 
+
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -54,5 +56,5 @@ if PLATFORM == 'gcc':
 
     CXXFLAGS = CFLAGS
 
-DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
+DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtthread.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
