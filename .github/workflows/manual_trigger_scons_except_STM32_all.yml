@@ -172,6 +172,10 @@ jobs:
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s36_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s36_nxp_evk"}
           - {RTT_BSP_NAME: "lpc55sxx_lpc55s69_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s69_nxp_evk"}
          #- {RTT_BSP_NAME: "lpc824", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc824"}  # 资源不足
+          - {RTT_BSP_NAME: "frdm-mcxa153", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mcx/mcxa/frdm-mcxa153"}
+          - {RTT_BSP_NAME: "frdm-mcxc444", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mcx/mcxc/frdm-mcxc444"}
+          - {RTT_BSP_NAME: "frdm-mcxn236", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mcx/mcxn/frdm-mcxn236"}
+          - {RTT_BSP_NAME: "frdm-mcxn947", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mcx/mcxa/frdm-mcxn947"}
          #- {RTT_BSP_NAME: "m16c62p", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "m16c62p"}  #编译问题
           - {RTT_BSP_NAME: "maxim_max32660-evsys", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "maxim/max32660-evsys"}
          #- {RTT_BSP_NAME: "microblaze", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microblaze"}  #编译问题
