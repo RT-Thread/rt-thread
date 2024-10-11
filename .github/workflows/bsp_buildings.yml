@@ -210,7 +210,7 @@ jobs:
                 - "nxp/lpc/lpc55sxx/lpc55s36_nxp_evk"
                 - "nxp/lpc/lpc178x"
                 - "nxp/lpc/lpc408x"
-                #- "nxp/lpc/lpc1114"
+                - "nxp/lpc/lpc1114"
                 - "nxp/lpc/lpc2148"
                 - "nxp/lpc/lpc2478"
                 - "nxp/lpc/lpc5410x"
