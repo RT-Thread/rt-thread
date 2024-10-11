@@ -113,6 +113,8 @@ extern "C" {
 #define RT_MUTEX_VALUE_MAX              RT_UINT16_MAX   /**< Maximum number of mutex .value */
 #define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maximum number of mutex .hold */
 #define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maximum number of mailbox .entry */
+#define RT_MQ_MSG_SIZE_MAX              RT_UINT16_MAX   /**< Maximum number of message queue .msg_size */
+#define RT_MQ_MAX_MSGS_MAX              RT_UINT16_MAX   /**< Maximum number of message queue .max_msgs */
 #define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maximum number of message queue .entry */
 
 /* Common Utilities */
