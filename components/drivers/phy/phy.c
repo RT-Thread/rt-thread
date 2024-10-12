@@ -15,7 +15,6 @@
 #define DBG_TAG "rtdm.phy"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
-#include <net/ethernet.h>
 
 #ifdef RT_USING_PHY
 
