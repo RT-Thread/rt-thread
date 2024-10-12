@@ -12,7 +12,6 @@
 #ifndef __NET_PHY_H__
 #define __NET_PHY_H__
 #include <rtthread.h>
-#include <drivers/core/dm.h>
 #include <drivers/core/driver.h>
 
 #ifdef RT_USING_PHY_V2
