@@ -7,7 +7,7 @@ if GetDepend('RT_USING_OFW') == False:
     SrcRemove(src, ['ofw.c'])
 
 if GetDepend('RT_USING_PHY_V2') == False:
-    SrcRemove(src, ['general.c','mdio.c'])
+    SrcRemove(src, ['general.c','mdio.c','ofw.c'])
 
 if GetDepend('RT_USING_PHY_V2') == False:
     if GetDepend('RT_USING_PHY') == False:
