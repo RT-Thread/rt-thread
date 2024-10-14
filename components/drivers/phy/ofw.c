@@ -118,7 +118,7 @@ rt_err_t rt_ofw_get_phyid(struct rt_ofw_node *np,rt_uint32_t *id)
     ret = sscanf(phy_id,"ethernet-phy-id%4x.%4x",&upper, &lower);
     if(ret != 2)
         return -RT_ERROR;
-    
+
     *id = ((upper & 0xffff) << 16) | (lower & 0xffff);
     return RT_EOK;
 
@@ -145,7 +145,7 @@ struct rt_phy_device *rt_ofw_create_phy(struct mii_bus *bus,struct rt_ofw_node *
     }
 
     LOG_D("Found a PHY id: 0x%x\n", id);
-    
+
     dev = rt_phy_device_create(bus, phyaddr, id, RT_FALSE);
 
     if(dev)
