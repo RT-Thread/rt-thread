@@ -980,6 +980,23 @@ static void _mutex_before_delete_detach(rt_mutex_t mutex)
  * @{
  */
 
+static void _mutex_init(rt_mutex_t mutex)
+{
+    /* initialize ipc object */
+    _ipc_object_init(&(mutex->parent));
+
+    mutex->owner    = RT_NULL;
+    mutex->priority = 0xFF;
+    mutex->hold     = 0;
+    mutex->ceiling_priority = 0xFF;
+    mutex->ctrl_flags = 0;
+    rt_list_init(&(mutex->taken_list));
+
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
+    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
+    rt_spin_lock_init(&(mutex->spinlock));
+}
+
 /**
  * @brief    Initialize a static mutex object.
  *
@@ -1015,18 +1032,7 @@ rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
     /* initialize object */
     rt_object_init(&(mutex->parent.parent), RT_Object_Class_Mutex, name);
 
-    /* initialize ipc object */
-    _ipc_object_init(&(mutex->parent));
-
-    mutex->owner    = RT_NULL;
-    mutex->priority = 0xFF;
-    mutex->hold     = 0;
-    mutex->ceiling_priority = 0xFF;
-    rt_list_init(&(mutex->taken_list));
-
-    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
-    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
-    rt_spin_lock_init(&(mutex->spinlock));
+    _mutex_init(mutex);
 
     return RT_EOK;
 }
@@ -1244,18 +1250,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
     if (mutex == RT_NULL)
         return mutex;
 
-    /* initialize ipc object */
-    _ipc_object_init(&(mutex->parent));
-
-    mutex->owner    = RT_NULL;
-    mutex->priority = 0xFF;
-    mutex->hold     = 0;
-    mutex->ceiling_priority = 0xFF;
-    rt_list_init(&(mutex->taken_list));
-
-    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
-    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
-    rt_spin_lock_init(&(mutex->spinlock));
+    _mutex_init(mutex);
 
     return mutex;
 }
@@ -1351,7 +1346,8 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
     if (mutex->owner == thread)
     {
-        if (mutex->hold < RT_MUTEX_HOLD_MAX)
+        if (!(mutex->ctrl_flags & RT_MUTEX_CTRL_NESTED_FREE) &&
+            mutex->hold < RT_MUTEX_HOLD_MAX)
         {
             /* it's the same thread */
             mutex->hold ++;
@@ -1730,13 +1726,21 @@ RTM_EXPORT(rt_mutex_release);
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it means that this function failed to execute.
  */
-rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
+rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_mutex_ctrl_cmd_t cmd, void *arg)
 {
-    RT_UNUSED(mutex);
-    RT_UNUSED(cmd);
-    RT_UNUSED(arg);
+    rt_err_t error = RT_EOK;
 
-    return -RT_EINVAL;
+    switch (cmd)
+    {
+        case RT_MUTEX_CTRL_NESTED_FREE:
+            mutex->ctrl_flags |= RT_MUTEX_CTRL_NESTED_FREE;
+            break;
+        default:
+            error = RT_EINVAL;
+            break;
+    }
+
+    return -error;
 }
 RTM_EXPORT(rt_mutex_control);
 
