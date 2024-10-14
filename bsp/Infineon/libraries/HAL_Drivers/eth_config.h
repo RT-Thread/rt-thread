@@ -3,7 +3,7 @@
 
 #include "cy_ethif.h"
 #include "cy_ephy.h"
-//#include "cy_ecm.h"
+/*#include "cy_ecm.h"*/
 
 #define CY_GIG_ETH_TYPE                        ETH1
 #define CY_GIG_ETH_INSTANCE_NUM                (1)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,7 +24,7 @@
 #define SLEEP_ETHERNET_PHY_STATUS                 (500) /* Sleep time in milliseconds. */
 
 #define Eth_Mempool_Num 40
-#define MAX_ADDR_LEN	6
+#define MAX_ADDR_LEN    6
 
 /********************************************************/
 /******************EMAC configuration********************/
@@ -159,7 +159,6 @@ struct rt_ifx_eth
 
 typedef struct rt_ifx_eth* rt_ifx_eth_t;
 
-
 static cy_stc_ethif_wrapper_config_t stcWrapperConfig;
 uint8_t *pRx_Q_buff_pool[CY_ETH_DEFINE_TOTAL_BD_PER_RXQUEUE];
 
@@ -172,7 +171,6 @@ static rt_uint8_t mempool_index = 0;
 static rt_mailbox_t recv_frame_buffer_addr_mb = RT_NULL;
 
 /************************END********************************/
-
 
 /************************START********************************/
 
@@ -294,7 +292,6 @@ static const cy_stc_sysint_t irq_cfg_ethx_q0 = {.intrSrc  = ((NvicMux3_IRQn << 1
 static const cy_stc_sysint_t irq_cfg_ethx_q1 = {.intrSrc  = ((NvicMux3_IRQn << 16) | ETH_INTR_SRC_Q1), .intrPriority=3UL};
 static const cy_stc_sysint_t irq_cfg_ethx_q2 = {.intrSrc  = ((NvicMux3_IRQn << 16) | ETH_INTR_SRC_Q2), .intrPriority=3UL};
 
-
 /************************END********************************/
 
 /** Interrupt handlers for Ethernet 1     */
@@ -308,7 +305,6 @@ static void Cy_Ethx_InterruptHandler (void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 
 void cy_process_ethernet_data_cb( ETH_Type *eth_type, uint8_t *rx_buffer, uint32_t length )
 {
@@ -329,11 +325,11 @@ void cy_process_ethernet_data_cb( ETH_Type *eth_type, uint8_t *rx_buffer, uint32
 
 void cy_notify_ethernet_rx_data_cb(ETH_Type *base, uint8_t **u8RxBuffer, uint32_t *u32Length)
 {
-		*u8RxBuffer = eth_mempool[mempool_index++];
-		if(mempool_index >= Eth_Mempool_Num)
-		{
-				mempool_index = 0;
-		}
+        *u8RxBuffer = eth_mempool[mempool_index++];
+        if(mempool_index >= Eth_Mempool_Num)
+        {
+                mempool_index = 0;
+        }
     *u32Length = CY_ETH_SIZE_MAX_FRAME;
 }
 
@@ -352,22 +348,22 @@ struct pbuf *rt_ifx_eth_rx(rt_device_t dev)
     {
         LOG_I("Recv_Recv_Buffer_Adder_MB err = %d", result);
     }
-		
+
     recv_frame = pbuf_alloc(PBUF_RAW, length, PBUF_POOL);
     if(recv_frame != RT_NULL)
     {
         if(rx_buffer != RT_NULL)
-				{
-					for(temp = recv_frame; temp != RT_NULL; temp = temp->next)
-					{
-							payloadlength = temp->len;
-							rt_memcpy((uint8_t *)((uint8_t *)temp->payload), (uint8_t *)((uint8_t *)rx_buffer + bufferoffset), (payloadlength < length ? payloadlength : length));
-							bufferoffset = bufferoffset + payloadlength;
-							length = length - payloadlength;
-					}
-				}
+                {
+                    for(temp = recv_frame; temp != RT_NULL; temp = temp->next)
+                    {
+                            payloadlength = temp->len;
+                            rt_memcpy((uint8_t *)((uint8_t *)temp->payload), (uint8_t *)((uint8_t *)rx_buffer + bufferoffset), (payloadlength < length ? payloadlength : length));
+                            bufferoffset = bufferoffset + payloadlength;
+                            length = length - payloadlength;
+                    }
+                }
     }
-    
+
     return recv_frame;
 }
 
@@ -378,8 +374,8 @@ rt_err_t rt_ifx_eth_tx(rt_device_t dev, struct pbuf *p)
     rt_uint32_t framelen = 0;
     rt_uint8_t data_buffer[CY_ETH_SIZE_MAX_FRAME];
     rt_ifx_eth_t ifx_device = (rt_ifx_eth_t)dev;
-    
-    if (p->tot_len > (u16_t)CY_ETH_SIZE_MAX_FRAME) 
+
+    if (p->tot_len > (u16_t)CY_ETH_SIZE_MAX_FRAME)
     {
       return RT_ERROR;
     }
@@ -425,7 +421,7 @@ static rt_ssize_t rt_ifx_eth_write(rt_device_t dev, rt_off_t pos, const void *bu
 
 static rt_err_t rt_ifx_eth_control(rt_device_t dev, int cmd, void *args)
 {
-		rt_ifx_eth_t eth_device = (rt_ifx_eth_t)dev;
+    rt_ifx_eth_t eth_device = (rt_ifx_eth_t)dev;
     switch (cmd)
     {
     case NIOCTL_GADDR:
@@ -451,7 +447,7 @@ static void phy_monitor_thread_entry(void *parameter)
 {
     static rt_uint32_t phy_status = 0;
     rt_uint32_t phy_status_now = 0;
-    
+
     while (1)
     {
         phy_status_now = Cy_EPHY_GetLinkStatus(&ifx_eth_device.phy_obj);
@@ -542,7 +538,6 @@ static void eth_clock_config(cy_en_ethif_speed_sel_t speed_sel, cy_ecm_phy_speed
 
     return;
 }
-
 
 /* 读取PHY芯片函数 */
 void phyRead(uint32_t phyId, uint32_t regAddress, uint32_t *value)
@@ -653,7 +648,7 @@ static void init_phy_DP83867IR (ETH_Type *reg_base, cy_ecm_phy_config_t *ecm_phy
             ecm_phy_config->phy_speed = (cy_ecm_phy_speed_t)phyConfig.speed;
             ecm_phy_config->mode = (cy_ecm_duplex_t)phyConfig.duplex;
         }
-        
+
         speed_sel = ecm_config_to_speed_sel(ecm_phy_config);
 
         /* Update the configuration based on user input */
@@ -714,9 +709,9 @@ cy_rslt_t cy_eth_driver_initialization(ETH_Type *reg_base, cy_ecm_phy_config_t *
     Cy_SysInt_Init(&irq_cfg_ethx_q0, Cy_Ethx_InterruptHandler);
     Cy_SysInt_Init(&irq_cfg_ethx_q1, Cy_Ethx_InterruptHandler);
     Cy_SysInt_Init(&irq_cfg_ethx_q2, Cy_Ethx_InterruptHandler);
-	
+
     cy_ecm_log_msg( CYLF_MIDDLEWARE, CY_LOG_DEBUG, "ETH_REG_BASE=[%p] reg_base = [%p] \n", ETH_REG_BASE, reg_base );
-		
+
     /* rx Q0 buffer pool */
     stcENETConfig.pRxQbuffPool[0] = (cy_ethif_buffpool_t *)&pRx_Q_buff_pool;
     stcENETConfig.pRxQbuffPool[1] = NULL;
@@ -799,7 +794,7 @@ static rt_err_t rt_ifx_eth_init(rt_device_t dev)
                 ,phy_interface_type.mode);
 
     cy_eth_driver_initialization(ifx_eth_device.eth_base_type, &phy_interface_type, &(ifx_eth_device.phy_obj));
- 
+
     return state;
 }
 
@@ -816,7 +811,7 @@ static int rt_hw_ifx_eth_init(void)
     for(rt_uint8_t i = 0; i < CY_ETH_DEFINE_TOTAL_BD_PER_RXQUEUE; i++)
     {
         pRx_Q_buff_pool[i] = rt_malloc(sizeof(uint8) * CY_ETH_SIZE_MAX_FRAME);
-    }    
+    }
 
     ifx_eth_device.dev_addr[0] = 0x00;
     ifx_eth_device.dev_addr[1] = 0x03;
@@ -848,7 +843,7 @@ static int rt_hw_ifx_eth_init(void)
     {
         LOG_D("emac device init success");
     }
-    
+
     rt_thread_t tid;
     tid = rt_thread_create("phy",
                            phy_monitor_thread_entry,
@@ -866,7 +861,7 @@ static int rt_hw_ifx_eth_init(void)
         result = -RT_ERROR;
         return result;
     }
-		
-		return result;
+
+        return result;
 }
 INIT_DEVICE_EXPORT(rt_hw_ifx_eth_init);
