@@ -445,13 +445,19 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg);
  */
 
 #ifdef RT_USING_MUTEX
+
+#define RT_MTX_CTRL_FLAG_DEFAULT    0x0     /* create a mutex with default behavior */
+#define RT_MTX_CTRL_FLAG_RESERVED   0x01    /* RESERVED for legacy IPC flag */
+RT_STATIC_ASSERT(ident_to_ipc_flag, RT_MTX_CTRL_FLAG_RESERVED == RT_IPC_FLAG_PRIO);
+#define RT_MTX_CTRL_FLAG_NO_RECUR   0x02    /* create a mutex without recursive taken */
+
 /*
  * mutex interface
  */
-rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag);
+rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t ctrl_flag);
 rt_err_t rt_mutex_detach(rt_mutex_t mutex);
 #ifdef RT_USING_HEAP
-rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag);
+rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t ctrl_flag);
 rt_err_t rt_mutex_delete(rt_mutex_t mutex);
 #endif /* RT_USING_HEAP */
 void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread);
