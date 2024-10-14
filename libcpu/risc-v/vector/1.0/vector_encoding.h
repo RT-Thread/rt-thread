@@ -22,7 +22,7 @@
 #ifdef __ASSEMBLY__
 
 /**
- * assembler names used for vset{i}vli vtypei immediate 
+ * assembler names used for vset{i}vli vtypei immediate
  */
 
 #define VEC_IMM_SEW_8      e8
