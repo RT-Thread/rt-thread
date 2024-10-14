@@ -107,6 +107,6 @@
     VEC_CONFIG_SET_VL_VTYPE(t3, t0)
 .endm
 
-#endif 
+#endif
 
 #endif /* __RVV_CONTEXT_H__ */
