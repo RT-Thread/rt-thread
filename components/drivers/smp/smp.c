@@ -16,6 +16,7 @@
 
 static struct rt_smp_call rt_smp_work[RT_CPUS_NR];
 static rt_atomic_t        rt_smp_wait;
+static struct rt_spinlock        rt_smp_work_lock;
 
 static rt_err_t smp_call_handler(struct rt_smp_event *event)
 {
@@ -67,8 +68,8 @@ void rt_smp_call_func_cond(int cpu_mask, rt_smp_call_func_back func, void *data,
     int                 cpuid   = 1 << cur_cpu;
     int                 tmp_id = 0, cpu_nr = 0;
     int                 tmp_mask;
-    int                 irq_flag;
-
+    rt_spin_lock(&rt_smp_work_lock);
+    
     if (flag == SMP_CALL_WAIT_ALL)
     {
         need_wait = RT_TRUE;
@@ -98,9 +99,9 @@ void rt_smp_call_func_cond(int cpu_mask, rt_smp_call_func_back func, void *data,
                 event.func     = func;
                 event.data     = data;
                 event.cpu_mask = cpu_mask;
-                irq_flag       = rt_spin_lock_irqsave(&rt_smp_work[tmp_id].lock);
+                rt_spin_lock(&rt_smp_work[tmp_id].lock);
                 rt_smp_work[tmp_id].event = event;
-                rt_spin_unlock_irqrestore(&rt_smp_work[tmp_id].lock,irq_flag);
+                rt_spin_unlock(&rt_smp_work[tmp_id].lock);
             }
             tmp_id++;
             tmp_mask = tmp_mask >> 1;
@@ -112,6 +113,7 @@ void rt_smp_call_func_cond(int cpu_mask, rt_smp_call_func_back func, void *data,
     {
         while (rt_atomic_load(&rt_smp_wait) != cpu_nr);
     }
+    rt_spin_unlock(&rt_smp_work_lock);
 }
 
 void rt_smp_call_each_cpu(rt_smp_call_func_back func, void *data, rt_uint8_t flag)
@@ -140,4 +142,5 @@ void rt_smp_init(void)
         rt_memset(&rt_smp_work[i], 0, sizeof(struct rt_smp_call));
         rt_spin_lock_init(&rt_smp_work[i].lock);
     }
+    rt_spin_lock_init(&rt_smp_work_lock);
 }
