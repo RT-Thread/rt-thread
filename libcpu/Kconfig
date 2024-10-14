@@ -248,6 +248,18 @@ config ARCH_RISCV_FPU
 config ARCH_RISCV_VECTOR
     bool
 
+    if ARCH_RISCV_VECTOR
+        choice
+            prompt "RISCV Vector Vlen"
+            default ARCH_VECTOR_VLEN_128
+
+            config ARCH_VECTOR_VLEN_128
+                bool "128"
+            config ARCH_VECTOR_VLEN_256
+                bool "256"
+        endchoice
+    endif
+
 config ARCH_RISCV_FPU_S
     select ARCH_RISCV_FPU
     bool
