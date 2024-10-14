@@ -377,7 +377,7 @@ rt_err_t rt_ifx_eth_tx(rt_device_t dev, struct pbuf *p)
 
     if (p->tot_len > (u16_t)CY_ETH_SIZE_MAX_FRAME)
     {
-      return RT_ERROR;
+        return RT_ERROR;
     }
     for(q = p; q != NULL; q = q->next)
     {
