@@ -536,7 +536,6 @@ static rt_bool_t phy_match(rt_driver_t drv, rt_device_t dev)
 {
     struct rt_phy_device *pdev = rt_container_of(dev, struct rt_phy_device, parent);
     struct rt_phy_driver *pdrv = rt_container_of(drv, struct rt_phy_driver, parent);
-    rt_kprintf("pdrv->uid = %x pdrv->mask = %x pdev->phy_id = %x pdrv->mask = %x\n",pdrv->uid,pdrv->mask,pdev->phy_id,pdrv->mask);
     if ((pdrv->uid & pdrv->mask) == (pdev->phy_id & pdrv->mask))
         return RT_TRUE;
 
