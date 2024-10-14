@@ -126,7 +126,7 @@ void rt_phy_mmd_start_indirect(struct rt_phy_device *phydev, int devad, int regn
 
 rt_err_t rt_phy_device_register(struct rt_phy_device *pdev);
 rt_err_t rt_phy_driver_register(struct rt_phy_driver *pdrv);
-rt_err_t rt_ofw_get_phyid(struct rt_ofw_node *np, rt_uint16_t *vendor, rt_uint16_t *device);
+rt_err_t rt_ofw_get_phyid(struct rt_ofw_node *np,rt_uint32_t *id);
 
 struct rt_phy_device *rt_phy_device_create(struct mii_bus *bus, int addr, rt_uint32_t phy_id, rt_bool_t is_c45);
 struct rt_phy_device *rt_phy_find_by_mask(struct mii_bus *bus, unsigned int phy_mask);
