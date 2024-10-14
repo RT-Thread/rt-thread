@@ -224,11 +224,6 @@ menuconfig RT_USING_DEBUG
             bool "Enable debugging of components automatic initialization"
             default n
 
-        config RT_DEBUGING_PAGE_LEAK
-            bool "Enable page leaking tracer"
-            depends on ARCH_MM_MMU
-            default n
-
         config RT_DEBUGING_SPINLOCK
             bool "Enable spinlock debugging"
             depends on RT_USING_SMP

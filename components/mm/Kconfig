@@ -35,12 +35,18 @@ config RT_INIT_MEMORY_REGIONS
         memory into different types of regions. This variable specifies
         the maximum number of regions supported by the system.
 
-config RT_DEBUGGING_ALIASING
-    bool "Using aliasing paging debugger"
-    default n
+menu "Debugging"
+    config RT_DEBUGGING_ALIASING
+        bool "Using aliasing paging debugger"
+        default n
 
-config RT_DEBUGGING_PAGE_POISON
-    bool "Using page poisoner to detect illegal usage"
-    default n
+    config RT_DEBUGING_PAGE_LEAK
+        bool "Using page leaking tracer"
+        default n
+
+    config RT_DEBUGGING_PAGE_POISON
+        bool "Using page poisoner to detect illegal usage"
+        default n
+endmenu
 
 endmenu
