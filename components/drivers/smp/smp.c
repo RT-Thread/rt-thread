@@ -69,7 +69,7 @@ void rt_smp_call_func_cond(int cpu_mask, rt_smp_call_func_back func, void *data,
     int                 tmp_id = 0, cpu_nr = 0;
     int                 tmp_mask;
     rt_spin_lock(&rt_smp_work_lock);
-    
+
     if (flag == SMP_CALL_WAIT_ALL)
     {
         need_wait = RT_TRUE;
