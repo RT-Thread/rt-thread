@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 
 #ifdef BSP_USING_SDCARD
 
-//#define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define LOG_TAG             "drv.sdio"
 #include <drv_log.h>
 
@@ -79,8 +79,8 @@ static const struct _cy_sdio_pin_and_name_config _sdcard_config =
 };
 
 #include <dfs_fs.h>
-#include <drivers/mmcsd_core.h>
-#include <drivers/gpt.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_gpt.h>
 struct rthw_sdio
 {
     struct rt_device parent;

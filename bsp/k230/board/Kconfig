@@ -1,0 +1,38 @@
+menu "Drivers Configuration"
+
+    menuconfig BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        default n
+
+        if BSP_USING_SDIO
+            config BSP_USING_SDIO0
+                bool "Enable SDIO0"
+                default n
+
+                if BSP_USING_SDIO0
+                    config BSP_SDIO0_EMMC
+                    bool "Enable eMMC"
+                    default y
+
+                    config BSP_SDIO0_1V8
+                    bool "Enable 1.8V"
+                    default y
+                endif
+
+            config BSP_USING_SDIO1
+                bool "Enable SDIO1"
+                default y
+
+            config BSP_SD_SDIO_DEV
+                int "SDIO device SdCard on"
+                range 0 1
+                default 1
+
+            config BSP_SD_MNT_DEVNAME
+                string "The name of the SD-BlkDev to be mounted"
+                default "sd13"
+        endif
+
+
+endmenu

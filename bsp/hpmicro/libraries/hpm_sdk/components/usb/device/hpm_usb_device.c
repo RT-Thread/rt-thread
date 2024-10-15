@@ -207,8 +207,11 @@ bool usb_device_edpt_open(usb_device_handle_t *handle, usb_endpoint_config_t *co
     memset(p_qhd, 0, sizeof(dcd_qhd_t));
 
     p_qhd->zero_length_termination = 1;
-    p_qhd->max_packet_size         = config->max_packet_size;
+    p_qhd->max_packet_size         = config->max_packet_size & 0x7FFu;
     p_qhd->qtd_overlay.next        = USB_SOC_DCD_QTD_NEXT_INVALID;
+    if (config->xfer == usb_xfer_isochronous) {
+        p_qhd->iso_mult = ((config->max_packet_size >> 11u) & 0x3u) + 1u;
+    }
 
     usb_dcd_edpt_open(handle->regs, config);
 
@@ -274,9 +277,6 @@ bool usb_device_edpt_xfer(usb_device_handle_t *handle, uint8_t ep_addr, uint8_t 
 
     p_qhd->qtd_overlay.next = core_local_mem_to_sys_address(0, (uint32_t) first_p_qtd); /* link qtd to qhd */
 
-    if (usb_dcd_edpt_get_type(handle->regs, ep_addr) == usb_xfer_isochronous) {
-        p_qhd->iso_mult = 1;
-    }
     usb_dcd_edpt_xfer(handle->regs, ep_idx);
 
     return true;

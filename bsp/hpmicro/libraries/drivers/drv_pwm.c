@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -8,16 +8,24 @@
  * 2022-05-09   HPMicro     First version
  * 2023-04-12   HPMicro     Adapt hpm_sdk v1.0.0
  * 2023-05-13   HPMicro     Fix compiling error on HPM6360/HPM6200
+ * 2023-06-10	HPMicro     Add PWMv2 support
  */
 
 #include <rtthread.h>
 
-#ifdef BSP_USING_PWM
+#if defined(BSP_USING_PWM) || defined(BSP_USING_PWMV2)
+#if defined(BSP_USING_PWMV2)
+#define HPMSOC_HAS_HPMSDK_PWMV2
+#endif
 #include <rthw.h>
 #include <rtdevice.h>
 #include "board.h"
 #include "drv_gpio.h"
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+#include "hpm_pwmv2_drv.h"
+#else
 #include "hpm_pwm_drv.h"
+#endif
 #include "hpm_clock_drv.h"
 
 #ifdef HPM_PWM3
@@ -30,8 +38,11 @@
 #define PWM_INSTANCE_NUM 1
 #endif
 
-
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+static PWMV2_Type * pwm_base_tbl[PWM_INSTANCE_NUM] = {
+#else
 static PWM_Type * pwm_base_tbl[PWM_INSTANCE_NUM] = {
+#endif
     HPM_PWM0,
 #ifdef HPM_PWM1
     HPM_PWM1,
@@ -44,37 +55,103 @@ static PWM_Type * pwm_base_tbl[PWM_INSTANCE_NUM] = {
 #endif
     };
 
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+
+#ifdef PWMV2_CNT_3
+#define PWMV2_CNT_NUM 4
+#elif PWMV2_CNT_2
+#define PWMV2_CNT_NUM 3
+#elif PWMV2_CNT_1
+#define PWMV2_CNT_NUM 2
+#else
+#define PWMV2_CNT_NUM 1
+#endif
+
+static pwm_counter_t pwmv2_counter_tbl[PWMV2_CNT_NUM * 2] = {
+    pwm_counter_0,
+    pwm_counter_0,
+#ifdef PWMV2_CNT_1
+    pwm_counter_1,
+    pwm_counter_1,
+#endif
+#ifdef PWMV2_CNT_2
+    pwm_counter_2,
+    pwm_counter_2,
+#endif
+#ifdef PWMV2_CNT_3
+    pwm_counter_3,
+    pwm_counter_3,
+#endif
+};
+#endif
+
 rt_err_t hpm_generate_central_aligned_waveform(uint8_t pwm_index, uint8_t channel, uint32_t period, uint32_t pulse)
 {
-    uint32_t duty;
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+    PWMV2_Type * pwm_base;
+    pwm_counter_t pwm_counter;
+#else
+    PWM_Type * pwm_base;
     pwm_cmp_config_t cmp_config[2] = {0};
     pwm_config_t pwm_config = {0};
+#endif
+    uint32_t duty;
     uint32_t reload = 0;
     uint32_t freq;
-    PWM_Type * pwm_name_index;
-    pwm_name_index = pwm_base_tbl[pwm_index];
+    pwm_base = pwm_base_tbl[pwm_index];
 
-    init_pwm_pins(pwm_name_index);
-    freq = board_init_pwm_clock(pwm_name_index);
+    init_pwm_pins(pwm_base);
+    freq = board_init_pwm_clock(pwm_base);
     if(period != 0) {
         reload = (uint64_t)freq * period / 1000000000;
     } else {
         reload = 0;
     }
+    duty = (uint64_t)freq * pulse / 1000000000;
 
-    pwm_stop_counter(pwm_name_index);
-    pwm_get_default_pwm_config(pwm_name_index, &pwm_config);
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+
+    pwm_counter = pwmv2_counter_tbl[channel];
+
+    pwmv2_disable_counter(pwm_base, pwm_counter);
+    pwmv2_reset_counter(pwm_base, pwm_counter);
+    pwmv2_shadow_register_unlock(pwm_base);
+
+    pwmv2_set_shadow_val(pwm_base, channel / 2, reload, 0, false);  /**< cnt use 0-3 shadow */
+    pwmv2_set_shadow_val(pwm_base, channel * 2 + 4, reload + 1, 0, false);
+    pwmv2_set_shadow_val(pwm_base, channel * 2 + 5, reload, 0, false);
+
+    pwmv2_counter_select_data_offset_from_shadow_value(pwm_base, pwm_counter, channel / 2);
+    pwmv2_counter_burst_disable(pwm_base, pwm_counter);
+    pwmv2_set_reload_update_time(pwm_base, pwm_counter, pwm_reload_update_on_reload);
+
+    pwmv2_select_cmp_source(pwm_base, channel * 2, cmp_value_from_shadow_val, channel * 2 + 4);
+    pwmv2_select_cmp_source(pwm_base, channel * 2 + 1, cmp_value_from_shadow_val, channel * 2 + 5);
+
+    pwmv2_shadow_register_lock(pwm_base);
+    pwmv2_disable_four_cmp(pwm_base, channel);
+    pwmv2_channel_enable_output(pwm_base, channel);
+    pwmv2_enable_counter(pwm_base, pwm_counter);
+    pwmv2_start_pwm_output(pwm_base, pwm_counter);
+
+    pwmv2_shadow_register_unlock(pwm_base);
+    pwmv2_set_shadow_val(pwm_base, channel * 2, (reload - duty) >> 1, 0, false);
+    pwmv2_set_shadow_val(pwm_base, channel * 2, (reload + duty) >> 1, 0, false);
+    pwmv2_shadow_register_lock(pwm_base);
+#else
+
+    pwm_stop_counter(pwm_base);
+    pwm_get_default_pwm_config(pwm_base, &pwm_config);
 
     /*
      * reload and start counter
      */
-    pwm_set_reload(pwm_name_index, 0, reload);
-    pwm_set_start_count(pwm_name_index, 0, 0);
+    pwm_set_reload(pwm_base, 0, reload);
+    pwm_set_start_count(pwm_base, 0, 0);
 
     /*
      * config cmp1 and cmp2
      */
-    duty = (uint64_t)freq * pulse / 1000000000;
 
     cmp_config[0].mode = pwm_cmp_mode_output_compare;
     cmp_config[0].cmp = (reload - duty) >> 1;
@@ -91,45 +168,68 @@ rt_err_t hpm_generate_central_aligned_waveform(uint8_t pwm_index, uint8_t channe
     /*
      * config pwm
      */
-    if (status_success != pwm_setup_waveform(pwm_name_index, channel, &pwm_config, channel * 2, cmp_config, 2)) {
+    if (status_success != pwm_setup_waveform(pwm_base, channel, &pwm_config, channel * 2, cmp_config, 2)) {
         return -RT_ERROR;
     }
-    pwm_start_counter(pwm_name_index);
-    pwm_issue_shadow_register_lock_event(pwm_name_index);
+    pwm_start_counter(pwm_base);
+    pwm_issue_shadow_register_lock_event(pwm_base);
 
+#endif
     return RT_EOK;
 
 }
 
 rt_err_t hpm_set_central_aligned_waveform(uint8_t pwm_index, uint8_t channel, uint32_t period, uint32_t pulse)
 {
-    uint32_t duty;
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+    PWMV2_Type * pwm_base;
+#else
+    PWM_Type * pwm_base;
     pwm_config_t pwm_config = {0};
+#endif
+
+    uint32_t duty;
     uint32_t reload = 0;
     uint32_t freq;
-    PWM_Type * pwm_name_index;
-    pwm_name_index = pwm_base_tbl[pwm_index];
 
-    freq = board_init_pwm_clock(pwm_name_index);
+    pwm_base = pwm_base_tbl[pwm_index];
+    freq = board_init_pwm_clock(pwm_base);
     if(period != 0) {
         reload = (uint64_t)freq * period / 1000000000;
     } else {
         reload = 0;
     }
-
-    pwm_get_default_pwm_config(pwm_name_index, &pwm_config);
-    pwm_set_reload(pwm_name_index, 0, reload);
     duty = (uint64_t)freq * pulse / 1000000000;
-    pwm_update_raw_cmp_central_aligned(pwm_name_index, channel * 2, channel * 2 + 1, (reload - duty) >> 1, (reload + duty) >> 1);
-    pwm_issue_shadow_register_lock_event(pwm_name_index);
+
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+    pwmv2_shadow_register_unlock(pwm_base);
+    pwmv2_set_shadow_val(pwm_base, channel / 2, reload, 0, false);  /**< cnt use 0-3 shadow */
+    pwmv2_set_shadow_val(pwm_base, channel * 2 + 4, (reload - duty) >> 1, 0, false);
+    pwmv2_set_shadow_val(pwm_base, channel * 2 + 5, (reload + duty) >> 1, 0, false);
+    pwmv2_shadow_register_lock(pwm_base);
+#else
+    pwm_get_default_pwm_config(pwm_base, &pwm_config);
+    pwm_set_reload(pwm_base, 0, reload);
+    pwm_update_raw_cmp_central_aligned(pwm_base, channel * 2, channel * 2 + 1, (reload - duty) >> 1, (reload + duty) >> 1);
+    pwm_issue_shadow_register_lock_event(pwm_base);
+#endif
 
     return RT_EOK;
 }
 
 rt_err_t hpm_disable_pwm(uint8_t pwm_index, uint8_t channel)
 {
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+    PWMV2_Type * pwm_base;
 
+    pwm_base = pwm_base_tbl[pwm_index];
+    pwmv2_shadow_register_unlock(pwm_base);
+    pwmv2_set_shadow_val(pwm_base, channel * 2 + 4, 0, 0, false);
+    pwmv2_set_shadow_val(pwm_base, channel * 2 + 5, 0, 0, false);
+    pwmv2_shadow_register_lock(pwm_base);
+#else
     pwm_disable_output(pwm_base_tbl[pwm_index], channel);
+#endif
     return RT_EOK;
 
 }

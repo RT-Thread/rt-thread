@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-03-28     Shell        Move vector handling codes from context_gcc.S
+ * 2024-04-08     Shell        Optimizing exception switch between u-space/kernel,
  */
 
 #ifndef __ARM64_INC_VECTOR_H__
@@ -45,8 +46,6 @@
     mrs     x2, elr_el1
 
     stp     x2, x3, [sp, #-0x10]!
-
-    mov     x0, sp   /* Move SP into X0 for saving. */
 .endm
 
 #ifdef RT_USING_SMP
@@ -55,19 +54,17 @@
 #include "../up/context_gcc.h"
 #endif
 
-.macro RESTORE_IRQ_CONTEXT_WITHOUT_MMU_SWITCH
-    /* the SP is already ok */
-    ldp     x2, x3, [sp], #0x10  /* SPSR and ELR. */
-
-    tst     x3, #0x1f
-    msr     spsr_el1, x3
+.macro RESTORE_IRQ_CONTEXT_NO_SPEL0
+    ldp     x2, x3, [sp], #0x10
     msr     elr_el1, x2
+    msr     spsr_el1, x3
 
     ldp     x29, x30, [sp], #0x10
-    msr     sp_el0, x29
+
     ldp     x28, x29, [sp], #0x10
     msr     fpcr, x28
     msr     fpsr, x29
+
     ldp     x28, x29, [sp], #0x10
     ldp     x26, x27, [sp], #0x10
     ldp     x24, x25, [sp], #0x10
@@ -83,32 +80,49 @@
     ldp     x4, x5, [sp], #0x10
     ldp     x2, x3, [sp], #0x10
     ldp     x0, x1, [sp], #0x10
+
     RESTORE_FPU sp
+.endm
+
+.macro EXCEPTION_SWITCH, eframex, tmpx
 #ifdef RT_USING_SMART
-    beq     arch_ret_to_user
-#endif
-    eret
+    /**
+     * test the spsr for execution level 0
+     * That is { PSTATE.[NZCV] := SPSR_EL1 & M.EL0t }
+     */
+    ldr     \tmpx, [\eframex, #CONTEXT_OFFSET_SPSR_EL1]
+    and     \tmpx, \tmpx, 0x1f
+    cbz     \tmpx, 1f
+    b       2f
+1:
+    b       arch_ret_to_user
+2:
+#endif /* RT_USING_SMART */
 .endm
 
-.macro SAVE_USER_CTX
-    mrs     x1, spsr_el1
-    and     x1, x1, 0xf
-    cmp     x1, xzr
-
-    bne     1f
+.macro SAVE_USER_CTX, eframex, tmpx
+#ifdef RT_USING_SMART
+    mrs     \tmpx, spsr_el1
+    and     \tmpx, \tmpx, 0xf
+    cbz     \tmpx, 1f
+    b       2f
+1:
+    mov     x0, \eframex
     bl      lwp_uthread_ctx_save
-    ldp     x0, x1, [sp]
-1:
+2:
+#endif /* RT_USING_SMART */
 .endm
 
-.macro RESTORE_USER_CTX, ctx
-    ldr     x1, [\ctx, #CONTEXT_OFFSET_SPSR_EL1]
-    and     x1, x1, 0x1f
-    cmp     x1, xzr
-
-    bne     1f
-    bl      lwp_uthread_ctx_restore
+.macro RESTORE_USER_CTX, eframex, tmpx
+#ifdef RT_USING_SMART
+    ldr     \tmpx, [\eframex, #CONTEXT_OFFSET_SPSR_EL1]
+    and     \tmpx, \tmpx, 0x1f
+    cbz     \tmpx, 1f
+    b       2f
 1:
+    bl      lwp_uthread_ctx_restore
+2:
+#endif /* RT_USING_SMART */
 .endm
 
 #endif /* __ARM64_INC_VECTOR_H__ */

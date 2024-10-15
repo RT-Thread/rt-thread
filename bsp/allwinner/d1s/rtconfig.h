@@ -323,10 +323,6 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
-/* Infineon HAL Packages */
-
-/* end of Infineon HAL Packages */
-
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
@@ -409,18 +405,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-/* end of Network Utilities */
-
-/* RT-Thread Smart */
-
-/* end of RT-Thread Smart */
-/* end of Privated Packages of RealThread */
 #define BOARD_allwinnerd1s
 #define __STACKSIZE__ 16384
 

@@ -115,6 +115,7 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
     rt_base_t base;
     struct hw_uart_device *uart;
     int clock_divisor;
+    int last_ier_state;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
@@ -122,6 +123,7 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
 
     while (!(dw8250_read32(base, UART_LSR) & UART_LSR_TEMT));
 
+    last_ier_state = dw8250_read32(base, UART_IER);
     dw8250_write32(base, UART_IER, 0);
     dw8250_write32(base, UART_MCR, UART_MCRVAL);
     dw8250_write32(base, UART_FCR, UART_FCR_DEFVAL);
@@ -131,6 +133,8 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
 
     clock_divisor = DIV_ROUND_CLOSEST(UART_INPUT_CLK, 16 * serial->config.baud_rate);
     dw8250_uart_setbrg(base, clock_divisor);
+
+    dw8250_write32(base, UART_IER, last_ier_state);
 
     return RT_EOK;
 }
@@ -344,6 +348,71 @@ static const char *pinname_whitelist_uart3_rx[] = {
 };
 static const char *pinname_whitelist_uart3_tx[] = {
     "SD1_D2",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART4
+static const char *pinname_whitelist_uart4_rx[] = {
+    NULL,
+};
+static const char *pinname_whitelist_uart4_tx[] = {
+    NULL,
+};
+#endif
+
+#elif defined(BOARD_TYPE_MILKV_DUOS)
+
+#ifdef BSP_USING_UART0
+static const char *pinname_whitelist_uart0_rx[] = {
+    "UART0_RX",
+    NULL,
+};
+static const char *pinname_whitelist_uart0_tx[] = {
+    "UART0_TX",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART1
+static const char *pinname_whitelist_uart1_rx[] = {
+    "JTAG_CPU_TCK",
+    "UART0_RX",
+    NULL,
+};
+static const char *pinname_whitelist_uart1_tx[] = {
+    "JTAG_CPU_TMS",
+    "UART0_TX",
+    "IIC0_SCL",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART2
+static const char *pinname_whitelist_uart2_rx[] = {
+    "VIVO_D9",
+    "VIVO_D5",
+    "VIVO_CLK",
+    "PWR_GPIO1",
+    NULL,
+};
+static const char *pinname_whitelist_uart2_tx[] = {
+    "VIVO_D10",
+    "VIVO_D6",
+    "VIVO_D2",
+    "IIC0_SCL",
+    "PWR_GPIO0",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_UART3
+static const char *pinname_whitelist_uart3_rx[] = {
+    "ADC2",
+    NULL,
+};
+static const char *pinname_whitelist_uart3_tx[] = {
+    "ADC3",
     NULL,
 };
 #endif

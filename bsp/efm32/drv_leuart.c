@@ -437,7 +437,7 @@ static rt_ssize_t rt_leuart_write (
 //      {
 //          while(leuart->state & LEUART_STATE_TX_BUSY)
 //          {
-//              rt_thread_sleep(LEUART_WAIT_TIME_TX);
+//              rt_thread_delay(LEUART_WAIT_TIME_TX);
 //          }
 //      }
 // TODO: This function blocks the process

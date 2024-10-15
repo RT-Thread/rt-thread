@@ -1,10 +1,23 @@
 /*
-* Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
-*/
+ * Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include <rtthread.h>
 
 #include "dw_eth_mac.h"
 #include "cache.h"
+#include "string.h"
 
 #define roundup(x, y) (                 \
 {                           \
@@ -91,7 +104,7 @@ static void tx_descs_init(eth_mac_handle_t handle)
     desc_p->dmamac_next = (unsigned long)&desc_table_p[0];
 
     /* Flush all Tx buffer descriptors at once */
-    rt_hw_cpu_dcache_clean((unsigned long)priv->tx_mac_descrtable, sizeof(priv->tx_mac_descrtable));
+    rt_hw_cpu_dcache_clean((void *)priv->tx_mac_descrtable, sizeof(priv->tx_mac_descrtable));
 
     dma_reg->txdesclistaddr = (unsigned long)&desc_table_p[0];
 
@@ -114,7 +127,7 @@ static void rx_descs_init(eth_mac_handle_t handle)
      * Otherwise there's a chance to get some of them flushed in RAM when
      * GMAC is already pushing data to RAM via DMA. This way incoming from
      * GMAC data will be corrupted. */
-    rt_hw_cpu_dcache_clean((unsigned long)rxbuffs, CVI_RX_TOTAL_BUFSIZE);
+    rt_hw_cpu_dcache_clean((void *)rxbuffs, CVI_RX_TOTAL_BUFSIZE);
 
     for (idx = 0; idx < CVI_CONFIG_RX_DESCR_NUM; idx++) {
         desc_p = &desc_table_p[idx];
@@ -132,7 +145,7 @@ static void rx_descs_init(eth_mac_handle_t handle)
     desc_p->dmamac_next = (unsigned long)&desc_table_p[0];
 
     /* Flush all Rx buffer descriptors at once */
-    rt_hw_cpu_dcache_clean((unsigned long)priv->rx_mac_descrtable, sizeof(priv->rx_mac_descrtable));
+    rt_hw_cpu_dcache_clean((void *)priv->rx_mac_descrtable, sizeof(priv->rx_mac_descrtable));
 
     dma_reg->rxdesclistaddr = (unsigned long)&desc_table_p[0];
 
@@ -238,8 +251,8 @@ static int32_t designware_eth_enable(eth_mac_handle_t handle, int32_t control)
     struct dw_gmac_mac_regs *mac_reg = mac_dev->priv->mac_regs_p;
     eth_link_state_t link_state = mac_dev->phy_dev->link_state;
 
-    if (link_state == ETH_LINK_DOWN)
-        return -1;
+    // if (link_state == ETH_LINK_DOWN)
+    //     return -1;
 
     switch (control) {
     case CSI_ETH_MAC_CONTROL_TX:
@@ -320,7 +333,7 @@ static int32_t designware_eth_send(eth_mac_handle_t handle, const uint8_t *frame
 
     /* Check if the descriptor is owned by CPU */
     while (1) {
-        rt_hw_cpu_dcache_invalidate(desc_start, desc_end - desc_start);
+        rt_hw_cpu_dcache_invalidate((void *)desc_start, desc_end - desc_start);
         if (!(desc_p->txrx_status & CVI_DESC_TXSTS_OWNBYDMA)) {
             break;
         }
@@ -335,7 +348,7 @@ static int32_t designware_eth_send(eth_mac_handle_t handle, const uint8_t *frame
     memcpy((void *)data_start, frame, length);
 
     /* Flush data to be sent */
-    rt_hw_cpu_dcache_clean(data_start, data_end - data_start);
+    rt_hw_cpu_dcache_clean((void *)data_start, data_end - data_start);
 
 #if defined(CONFIG_DW_ALTDESCRIPTOR)
     desc_p->txrx_status |= CVI_DESC_TXSTS_TXFIRST | CVI_DESC_TXSTS_TXLAST;
@@ -355,7 +368,7 @@ static int32_t designware_eth_send(eth_mac_handle_t handle, const uint8_t *frame
 #endif
 
     /* Flush modified buffer descriptor */
-    rt_hw_cpu_dcache_clean(desc_start, desc_end - desc_start);
+    rt_hw_cpu_dcache_clean((void *)desc_start, desc_end - desc_start);
 
     /* Test the wrap-around condition. */
     if (++desc_num >= CVI_CONFIG_TX_DESCR_NUM)
@@ -383,7 +396,7 @@ static int32_t designware_eth_recv(eth_mac_handle_t handle, uint8_t **packetp)
     uint64_t data_end;
 
     /* Invalidate entire buffer descriptor */
-    rt_hw_cpu_dcache_invalidate(desc_start, desc_end - desc_start);
+    rt_hw_cpu_dcache_invalidate((void *)desc_start, desc_end - desc_start);
     status = desc_p->txrx_status;
     /* Check  if the owner is the CPU */
     if (!(status & CVI_DESC_RXSTS_OWNBYDMA)) {
@@ -391,7 +404,7 @@ static int32_t designware_eth_recv(eth_mac_handle_t handle, uint8_t **packetp)
              CVI_DESC_RXSTS_FRMLENSHFT;
         /* Invalidate received data */
         data_end = data_start + roundup(length, DW_GMAC_DMA_ALIGN);
-        rt_hw_cpu_dcache_invalidate(data_start, data_end - data_start);
+        rt_hw_cpu_dcache_invalidate((void *)data_start, data_end - data_start);
         *packetp = (uint8_t *)((uint64_t)desc_p->dmamac_addr);
     }
 
@@ -415,7 +428,7 @@ static int32_t designware_free_pkt(eth_mac_handle_t handle)
     desc_p->txrx_status |= CVI_DESC_RXSTS_OWNBYDMA;
 
     /* Flush only status field - others weren't changed */
-    rt_hw_cpu_dcache_clean(desc_start, desc_end - desc_start);
+    rt_hw_cpu_dcache_clean((void *)desc_start, desc_end - desc_start);
 
     /* Test the wrap-around condition. */
     if (++desc_num >= CVI_CONFIG_RX_DESCR_NUM)
@@ -619,10 +632,9 @@ int32_t cvi_eth_mac_set_macaddr(eth_mac_handle_t handle, const eth_mac_addr_t *m
   \param[in]   handle  ethernet handle
   \param[in]   frame  Pointer to frame buffer with data to send
   \param[in]   len    Frame buffer length in bytes
-  \param[in]   flags  Frame transmit flags (see CSI_ETH_MAC_TX_FRAME_...)
   \return      error code
 */
-int32_t cvi_eth_mac_send_frame(eth_mac_handle_t handle, const uint8_t *frame, uint32_t len, uint32_t flags)
+int32_t cvi_eth_mac_send_frame(eth_mac_handle_t handle, const uint8_t *frame, uint32_t len)
 {
     RT_ASSERT(handle);
     RT_ASSERT(frame);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -270,6 +270,16 @@ hpm_stat_t uart_receive_byte(UART_Type *ptr, uint8_t *byte)
 
     *byte = ptr->RBR & UART_RBR_RBR_MASK;
     return status_success;
+}
+
+hpm_stat_t uart_try_receive_byte(UART_Type *ptr, uint8_t *byte)
+{
+    if (!(ptr->LSR & UART_LSR_DR_MASK)) {
+        return status_fail;
+    } else {
+        *byte = ptr->RBR & UART_RBR_RBR_MASK;
+        return status_success;
+    }
 }
 
 void uart_set_signal_level(UART_Type *ptr, uart_signal_t signal, uart_signal_level_t level)

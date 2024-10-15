@@ -14,7 +14,7 @@
 #include <rtdevice.h>
 
 #ifdef RT_USING_ALARM
-#include <alarm.h>
+#include "drivers/dev_alarm.h"
 #endif
 
 struct rt_rtc_device

@@ -15,7 +15,7 @@
 #include "board.h"      // CPU_CLOCK
 #include "drv_uart.h"
 
-#ifdef RT_USING_SERIAL
+#ifdef BSP_USING_SERIAL
 
 #define UART_BASE       0x40008000              // UART (only one)
 #define UART_IRQ        21
@@ -174,4 +174,4 @@ int rt_hw_uart_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_uart_init);
 
-#endif /* RT_USING_SERIAL */
+#endif /* BSP_USING_SERIAL */

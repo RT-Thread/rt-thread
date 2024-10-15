@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_EWM_H_
-#define _FSL_EWM_H_
+#ifndef FSL_EWM_H_
+#define FSL_EWM_H_
 
 #include "fsl_common.h"
 
@@ -20,10 +20,10 @@
  *******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief EWM driver version 2.0.3. */
 #define FSL_EWM_DRIVER_VERSION (MAKE_VERSION(2, 0, 3))
-/*@}*/
+/*! @} */
 
 /*! @brief Describes EWM clock source. */
 #if defined(FSL_FEATURE_EWM_HAS_CLOCK_SELECT) && FSL_FEATURE_EWM_HAS_CLOCK_SELECT
@@ -141,7 +141,7 @@ void EWM_Deinit(EWM_Type *base);
  */
 void EWM_GetDefaultConfig(ewm_config_t *config);
 
-/* @} */
+/*! @} */
 
 /*!
  * @name EWM functional Operation
@@ -207,7 +207,7 @@ static inline uint32_t EWM_GetStatusFlags(EWM_Type *base)
  */
 void EWM_Refresh(EWM_Type *base);
 
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -215,4 +215,4 @@ void EWM_Refresh(EWM_Type *base);
 
 /*! @}*/
 
-#endif /* _FSL_EWM_H_ */
+#endif /* FSL_EWM_H_ */

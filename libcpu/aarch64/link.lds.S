@@ -81,6 +81,13 @@ SECTIONS
         PROVIDE(__rt_ofw_data_end = .);
         . = ALIGN(16);
 
+        /* section information for usb usbh_class_info */
+        . = ALIGN(4);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        . = ALIGN(4);
+        __usbh_class_info_end__ = .;
+
         PROVIDE(__text_end = .);
     }
 

@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_CDOG_H_
-#define _FSL_CDOG_H_
+#ifndef FSL_CDOG_H_
+#define FSL_CDOG_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,13 @@
  *******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-/*! @brief Defines CDOG driver version 2.1.2.
+/*! @{ */
+/*! @brief Defines CDOG driver version 2.1.3.
  *
  * Change log:
+ * - Version 2.1.3
+ *   - Re-design multiple instance IRQs and Clocks
+ *   - Add fix for RESTART command errata
  * - Version 2.1.2
  *   - Support multiple IRQs
  *   - Fix default CONTROL values
@@ -39,8 +42,8 @@
  * - Version 2.0.0
  *   - initial version
  */
-#define FSL_CDOG_DRIVER_VERSION (MAKE_VERSION(2, 1, 2))
-/*@}*/
+#define FSL_CDOG_DRIVER_VERSION (MAKE_VERSION(2, 1, 3))
+/*! @} */
 
 typedef struct
 {
@@ -139,17 +142,6 @@ typedef uint32_t secure_counter_t;
 /*******************************************************************************
  * API
  *******************************************************************************/
-#if defined(CDOG)
-extern void CDOG_DriverIRQHandler(void);
-#endif
-
-#if defined(CDOG0)
-extern void CDOG0_DriverIRQHandler(void);
-#endif
-
-#if defined(CDOG1)
-extern void CDOG1_DriverIRQHandler(void);
-#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -334,4 +326,4 @@ uint32_t CDOG_ReadPersistent(CDOG_Type *base);
 
 /*! @}*/ /* end of group cdog */
 
-#endif /* _FSL_CDOG_H_ */
+#endif /* FSL_CDOG_H_ */

@@ -11,6 +11,7 @@
 #include "hpm_common.h"
 #include "hpm_sei_regs.h"
 #include "hpm_soc_feature.h"
+#include "hpm_soc_ip_feature.h"
 
 /**
  * @brief sei arming action
@@ -103,7 +104,7 @@ typedef enum {
  */
 typedef enum {
     sei_irq_stall_event = SEI_CTRL_IRQ_INT_FLAG_STALL_MASK,
-    sei_irq_execpt_event = SEI_CTRL_IRQ_INT_FLAG_EXECPT_MASK,
+    sei_irq_execpt_event = SEI_CTRL_IRQ_INT_FLAG_EXCEPT_MASK,
     sei_irq_wdog_event = SEI_CTRL_IRQ_INT_FLAG_WDOG_MASK,
     sei_irq_instr_ptr0_start_event = SEI_CTRL_IRQ_INT_FLAG_PTR0_ST_MASK,
     sei_irq_instr_ptr1_start_event = SEI_CTRL_IRQ_INT_FLAG_PTR1_ST_MASK,
@@ -135,6 +136,12 @@ typedef enum {
  */
 #define SEI_SELECT_CMD true      /**< select cmd */
 #define SEI_SELECT_DATA false    /**< select data */
+
+/**
+ * @brief sei const data register index
+ */
+#define SEI_DATA_CONST_0      (30UL)
+#define SEI_DATA_CONST_1      (31UL)
 
 /**
  * @brief sei instruction operation command
@@ -262,6 +269,10 @@ typedef struct {
     bool trig_period_sync_enable;
     uint8_t trig_period_sync_select;
     uint32_t trig_period_time;
+#if defined(HPM_IP_FEATURE_SEI_TIMEOUT_REWIND_FEATURE) && HPM_IP_FEATURE_SEI_TIMEOUT_REWIND_FEATURE
+    uint8_t rewind_enable;
+    uint8_t rewind_select;
+#endif
 } sei_trigger_input_config_t;      /**< trigger input config struct */
 
 /**

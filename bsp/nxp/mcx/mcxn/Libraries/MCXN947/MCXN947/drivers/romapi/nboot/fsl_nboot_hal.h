@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_NBOOT_HAL_H_
-#define _FSL_NBOOT_HAL_H_
+#ifndef FSL_NBOOT_HAL_H_
+#define FSL_NBOOT_HAL_H_
 
 #include "fsl_nboot.h"
 
@@ -228,4 +228,4 @@ typedef enum _nboot_hash_algo_t
 
 /*! @} */
 
-#endif /*_FSL_NBOOT_HAL_H_ */
+#endif /*FSL_NBOOT_HAL_H_ */

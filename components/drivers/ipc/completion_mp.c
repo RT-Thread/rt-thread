@@ -65,11 +65,10 @@ void rt_completion_init(struct rt_completion *completion)
 RTM_EXPORT(rt_completion_init);
 
 /**
- * @brief This function will wait for a completion, if the completion is unavailable, the thread shall wait for
- *        the completion up to a specified time.
+ * @brief This is same as rt_completion_wait_flags(), except that this API is NOT
+ *        ISR-safe (you can NOT call completion_done() on isr routine).
  *
  * @param completion is a pointer to a completion object.
- *
  * @param timeout is a timeout period (unit: OS ticks). If the completion is unavailable, the thread will wait for
  *                the completion done up to the amount of time specified by the argument.
  *                NOTE: Generally, we use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
@@ -81,8 +80,8 @@ RTM_EXPORT(rt_completion_init);
  *
  * @warning This function can ONLY be called in the thread context. It MUST NOT be called in interrupt context.
  */
-rt_err_t rt_completion_wait_flags(struct rt_completion *completion,
-                                  rt_int32_t timeout, int suspend_flag)
+rt_err_t rt_completion_wait_flags_noisr(struct rt_completion *completion,
+                                        rt_int32_t timeout, int suspend_flag)
 {
     rt_err_t result = -RT_ERROR;
     rt_thread_t thread;
@@ -157,6 +156,33 @@ rt_err_t rt_completion_wait_flags(struct rt_completion *completion,
     } while (1);
 
     return result;
+}
+
+/**
+ * @brief This function will wait for a completion, if the completion is unavailable, the thread shall wait for
+ *        the completion up to a specified time.
+ *
+ * @param completion is a pointer to a completion object.
+ * @param timeout is a timeout period (unit: OS ticks). If the completion is unavailable, the thread will wait for
+ *                the completion done up to the amount of time specified by the argument.
+ *                NOTE: Generally, we use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *                completion is unavailable, the thread will be waitting forever.
+ * @param suspend_flag suspend flags. See rt_thread_suspend_with_flag()
+ *
+ * @return Return the operation status. ONLY when the return value is RT_EOK, the operation is successful.
+ *         If the return value is any other values, it means that the completion wait failed.
+ *
+ * @warning This function can ONLY be called in the thread context. It MUST NOT be called in interrupt context.
+ */
+rt_err_t rt_completion_wait_flags(struct rt_completion *completion,
+                                  rt_int32_t timeout, int suspend_flag)
+{
+    rt_err_t error;
+    rt_ubase_t level;
+    level = rt_hw_local_irq_disable();
+    error = rt_completion_wait_flags_noisr(completion, timeout, suspend_flag);
+    rt_hw_local_irq_enable(level);
+    return error;
 }
 
 static rt_base_t _wait_until_update(struct rt_completion *completion, rt_base_t expected)

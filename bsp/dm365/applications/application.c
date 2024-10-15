@@ -22,7 +22,7 @@
 #endif
 
 #ifdef RT_USING_SDIO
-#include <drivers/mmcsd_core.h>
+#include <drivers/dev_mmcsd_core.h>
 #endif
 
 int main(void)

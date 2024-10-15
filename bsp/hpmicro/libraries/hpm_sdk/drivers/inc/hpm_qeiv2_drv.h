@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 HPMicro
+ * Copyright (c) 2023-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,6 +9,7 @@
 #define HPM_QEIV2_DRV_H
 
 #include "hpm_common.h"
+#include "hpm_soc_ip_feature.h"
 #include "hpm_qeiv2_regs.h"
 /**
  * @brief QEIV2 driver APIs
@@ -1039,6 +1040,190 @@ static inline void qeiv2_set_cycle1_num(QEIV2_Type *qeiv2_x, uint32_t cycle_num)
     qeiv2_x->CYCLE1_NUM = QEIV2_CYCLE1_NUM_CYCLE1_NUM_SET(cycle_num);
 }
 
+#if defined(HPM_IP_FEATURE_QEIV2_ONESHOT_MODE) && HPM_IP_FEATURE_QEIV2_ONESHOT_MODE
+/**
+ * @brief disable cycle0 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_cycle0_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_CYCLE0_ONESHOT_MASK;
+}
+
+/**
+ * @brief enable cycle0 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_cycle0_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_CYCLE0_ONESHOT_MASK;
+}
+
+/**
+ * @brief disable cycle1 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_cycle1_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_CYCLE1_ONESHOT_MASK;
+}
+
+/**
+ * @brief enable cycle1 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_cycle1_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_CYCLE1_ONESHOT_MASK;
+}
+
+/**
+ * @brief disable pulse0 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_pulse0_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_PULSE0_ONESHOT_MASK;
+}
+
+/**
+ * @brief enable pulse0 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_pulse0_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_PULSE0_ONESHOT_MASK;
+}
+
+/**
+ * @brief disable pulse1 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_pulse1_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_PULSE1_ONESHOT_MASK;
+}
+
+/**
+ * @brief enable pulse1 oneshot mode
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_pulse1_oneshot_mode(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_PULSE1_ONESHOT_MASK;
+}
+#endif
+
+#if defined(HPM_IP_FEATURE_QEIV2_SW_RESTART_TRG) && HPM_IP_FEATURE_QEIV2_SW_RESTART_TRG
+/**
+ * @brief disable trigger cycle0
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_trig_cycle0(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_TRIG_CYCLE0_EN_MASK;
+}
+
+/**
+ * @brief enable trigger cycle0
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_trig_cycle0(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_TRIG_CYCLE0_EN_MASK;
+}
+
+/**
+ * @brief disable trigger cycle1
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_trig_cycle1(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_TRIG_CYCLE1_EN_MASK;
+}
+
+/**
+ * @brief enable trigger cycle1
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_trig_cycle1(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_TRIG_CYCLE1_EN_MASK;
+}
+
+/**
+ * @brief disable trigger pulse0
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_trig_pulse0(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_TRIG_PULSE0_EN_MASK;
+}
+
+/**
+ * @brief enable trigger pulse0
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_trig_pulse0(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_TRIG_PULSE0_EN_MASK;
+}
+
+/**
+ * @brief disable trigger pulse1
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_disable_trig_pulse1(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG &= ~QEIV2_QEI_CFG_TRIG_PULSE1_EN_MASK;
+}
+
+/**
+ * @brief enable trigger pulse1
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_enable_trig_pulse1(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_TRIG_PULSE1_EN_MASK;
+}
+
+/**
+ * @brief software restart cycle0
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_sw_restart_cycle0(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_SW_PULSE0_RESTART_MASK;
+}
+
+/**
+ * @brief software restart cycle1
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_sw_restart_cycle1(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_SW_PULSE1_RESTART_MASK;
+}
+
+/**
+ * @brief software restart pulse0
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_sw_restart_pulse0(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_SW_CYCLE0_RESTART_MASK;
+}
+
+/**
+ * @brief software restart pulse1
+ * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
+ */
+static inline void qeiv2_sw_restart_pulse1(QEIV2_Type *qeiv2_x)
+{
+    qeiv2_x->QEI_CFG |= QEIV2_QEI_CFG_SW_CYCLE1_RESTART_MASK;
+}
+#endif
+
 /**
  * @brief get pulse1 snap0 value
  *
@@ -1318,17 +1503,6 @@ static inline void qeiv2_update_position(QEIV2_Type *qeiv2_x, bool inc, bool dec
 static inline uint32_t qeiv2_get_angle(QEIV2_Type *qeiv2_x)
 {
     return qeiv2_x->ANGLE;
-}
-
-/**
- * @brief set angle adjust value
- *
- * @param[in] qeiv2_x QEIV2 base address, HPM_QEIV2x(x=0...n)
- * @param[in] angle_adj angle adjust value
- */
-static inline void qeiv2_set_angle_adjust_value(QEIV2_Type *qeiv2_x, int32_t angle_adj)
-{
-    qeiv2_x->ANGLE_ADJ = QEIV2_ANGLE_ADJ_ANGLE_ADJ_SET(angle_adj);
 }
 
 /**

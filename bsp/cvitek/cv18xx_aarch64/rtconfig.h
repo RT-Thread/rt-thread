@@ -407,8 +407,8 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_CV18XX_AARCH64
-#define GPIO_IRQ_BASE 76
-#define SYS_GPIO_IRQ_BASE 86
+#define BSP_GPIO_IRQ_BASE 76
+#define BSP_SYS_GPIO_IRQ_BASE 86
 #define SOC_TYPE_SG2002
 #define BOARD_TYPE_MILKV_DUO256M
 
@@ -421,7 +421,7 @@
 #define BSP_USING_UART0
 #define BSP_UART0_RX_PINNAME "UART0_RX"
 #define BSP_UART0_TX_PINNAME "UART0_TX"
-#define UART_IRQ_BASE 60
+#define BSP_UART_IRQ_BASE 60
 /* end of General Drivers Configuration */
 
 #endif

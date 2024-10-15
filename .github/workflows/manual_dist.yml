@@ -6,6 +6,7 @@
 # Change Logs:
 # Date           Author       Notes
 # 2023-07-01     Supperthomas the first version
+# 2024-09-06     Supperthomas add debug for action and add cppcheck for project
 #
 name:  manual_scons_dist_trigger_only_one
 
@@ -68,6 +69,7 @@ jobs:
           git config --global http.postBuffer 524288000
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
+          sudo apt-get -qq install cppcheck
 
       - name: Install Arm ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-arm' && success() }}
@@ -144,22 +146,22 @@ jobs:
           RTT_BSP: ${{ github.event.inputs.bsp_options }}
           RTT_TOOL_CHAIN: ${{ github.event.inputs.bsp_tool_chain}}
         run: |
-          # source ~/.env/env.sh
+          source ~/.env/env.sh
           echo $RTT_BSP
           ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
           config=${{ github.event.inputs.bsp_config}}
           echo "$config"
           echo "$config" >> bsp/$RTT_BSP/.config
+          insert_code="env.Tool('compilation_db')\nenv.CompilationDatabase()\n"
+          sed -i "/DoBuilding(TARGET, objs)/i $insert_code" bsp/$RTT_BSP/SConstruct
           scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           cat bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP -j$(nproc) 
-          mkdir -p ${{ github.workspace }}/$RTT_BSP 
-          cp -r bsp/$RTT_BSP ${{ github.workspace }}/$RTT_BSP/
-          scons --dist -C bsp/$RTT_BSP
-          cp bsp/$RTT_BSP/dist/project.zip ${{ github.workspace }}/$RTT_BSP/
-          ls bsp/$RTT_BSP/dist
+          ls bsp/$RTT_BSP
+          cppcheck --project=bsp/$RTT_BSP/compile_commands.json 
           pwd
+
       - uses: actions/upload-artifact@v3
         if:  ${{ github.event.inputs.dist_flag }} 
         with:

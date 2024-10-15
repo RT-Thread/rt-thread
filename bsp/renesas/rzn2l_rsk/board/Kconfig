@@ -1,0 +1,201 @@
+menu "Hardware Drivers Config"
+
+    config SOC_R9A07G084
+        bool
+        select SOC_SERIES_R9A07G0
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        default y
+
+    menu "Onboard Peripheral Drivers"
+
+        config BSP_USING_ETHERCAT_EOE
+            bool "Enable EtherCAT EOE example"
+            select BSP_USING_ETH
+            default n
+            if BSP_USING_ETHERCAT_EOE
+                config RT_LWIP_IPADDR
+                    string "set static ip address for eoe slaver"
+                    default "192.168.10.100"
+                config RT_LWIP_GWADDR
+                    string "set static gateway address for eoe slaver"
+                    default "192.168.10.1"
+                config RT_LWIP_MSKADDR
+                    string "set static mask address for eoe slaver"
+                    default "255.255.255.0"
+            endif
+
+    endmenu
+
+    menu "On-chip Peripheral Drivers"
+
+        rsource "../../libraries/HAL_Drivers/Kconfig"
+
+        menuconfig BSP_USING_UART
+            bool "Enable UART"
+            default y
+            select RT_USING_SERIAL
+            select RT_USING_SERIAL_V2
+            if BSP_USING_UART
+
+                menuconfig BSP_USING_UART0
+                    bool "Enable UART0"
+                    default n
+                    if BSP_USING_UART0
+                        config BSP_UART0_RX_USING_DMA
+                            bool "Enable UART0 RX DMA"
+                            depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART0_TX_USING_DMA
+                            bool "Enable UART0 TX DMA"
+                            depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART0_RX_BUFSIZE
+                            int "Set UART0 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART0_TX_BUFSIZE
+                            int "Set UART0 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+            endif
+
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            default n
+            select RT_USING_ADC
+            if BSP_USING_ADC
+                config BSP_USING_ADC1
+                    bool "Enable ADC1"
+                    default n
+            endif
+
+        menuconfig BSP_USING_CANFD
+            bool "Enable CANFD"
+            default n
+            select RT_USING_CAN
+            select RT_CAN_USING_CANFD
+            if BSP_USING_CANFD
+                config BSP_USING_CANFD0
+                    bool "Enable CANFD0"
+                    default n
+            endif
+
+        menuconfig BSP_USING_I2C
+            bool "Enable I2C BUS"
+            default n
+            select RT_USING_I2C
+            select RT_USING_I2C_BITOPS
+            select RT_USING_PIN
+            if BSP_USING_I2C
+                config BSP_USING_HW_I2C
+                    bool "Enable Hardware I2C BUS"
+                    default n
+                if BSP_USING_HW_I2C
+                    config BSP_USING_HW_I2C0
+                        bool "Enable Hardware I2C0 BUS"
+                        default n
+                endif
+                if BSP_USING_HW_I2C
+                    config BSP_USING_HW_I2C1
+                        bool "Enable Hardware I2C1 BUS"
+                        default n
+                endif
+            if !BSP_USING_HW_I2C
+                    menuconfig BSP_USING_I2C1
+                        bool "Enable I2C1 BUS (software simulation)"
+                        default y
+                        if BSP_USING_I2C1
+                            config BSP_I2C1_SCL_PIN
+                                hex "i2c1 scl pin number"
+                                range 0x0000 0x0B0F
+                                default 0x0B03
+                            config BSP_I2C1_SDA_PIN
+                                hex "I2C1 sda pin number"
+                                range 0x0000 0x0B0F
+                                default 0x050E
+                    endif
+                endif
+            endif
+
+        menuconfig BSP_USING_SPI
+            bool "Enable SPI BUS"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SPI 
+                config BSP_USING_SPI0
+                    bool "Enable SPI0 BUS"
+                    default n
+                config BSP_USING_SPI1
+                    bool "Enable SPI1 BUS"
+                    default n
+                config BSP_USING_SPI2
+                    bool "Enable SPI2 BUS"
+                    default n
+            endif
+
+        menuconfig BSP_USING_TIM
+	        bool "Enable timer"
+	        default n
+	        select RT_USING_HWTIMER
+	        if BSP_USING_TIM
+	            config BSP_USING_TIM0
+	                bool "Enable TIM0"
+	                default n
+	            config BSP_USING_TIM1
+	                bool "Enable TIM1"
+	                default n
+	        endif
+
+        config BSP_USING_ETH
+            bool "Enable Ethernet"
+            select RT_USING_SAL
+            select RT_USING_LWIP
+            select RT_USING_NETDEV
+            default n
+
+    endmenu
+    
+    menu "Board extended module Drivers"
+         menuconfig BSP_USING_RW007
+                bool "Enable RW007"
+                default n
+                select PKG_USING_RW007
+                select BSP_USING_SPI
+                select BSP_USING_SPI2
+                select RT_USING_MEMPOOL
+                select RW007_NOT_USE_EXAMPLE_DRIVERS
+
+            if BSP_USING_RW007
+                config RA_RW007_SPI_BUS_NAME
+                    string "RW007 BUS NAME"
+                    default "spi2"
+
+                config RA_RW007_CS_PIN
+                    hex "(HEX)CS pin index"
+                    default 0x1207
+
+                config RA_RW007_BOOT0_PIN
+                    hex "(HEX)BOOT0 pin index (same as spi clk pin)"
+                    default 0x1204
+
+                config RA_RW007_BOOT1_PIN
+                    hex "(HEX)BOOT1 pin index (same as spi cs pin)"
+                    default 0x1207
+
+                config RA_RW007_INT_BUSY_PIN
+                    hex "(HEX)INT/BUSY pin index"
+                    default 0x1102
+
+                config RA_RW007_RST_PIN
+                    hex "(HEX)RESET pin index"
+                    default 0x1706
+            endif
+    endmenu
+endmenu

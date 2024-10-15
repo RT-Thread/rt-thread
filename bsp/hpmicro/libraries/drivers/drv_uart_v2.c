@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,6 +9,7 @@
  * 2022-07-28   HPMicro     Fix compiling warning if RT_SERIAL_USING_DMA was not defined
  * 2022-08-08   HPMicro     Integrate DMA Manager and support dynamic DMA resource assignment'
  * 2023-03-07   HPMicro     Fix the issue that the data_width was not initialized before setup dma handshake
+ * 2024-06-10   HPMicro     Fix memory leakage issue
  *
  */
 #include <rtthread.h>
@@ -34,6 +35,7 @@ typedef struct dma_channel {
     void (*tranfer_done)(struct rt_serial_device *serial);
     void (*tranfer_abort)(struct rt_serial_device *serial);
     void (*tranfer_error)(struct rt_serial_device *serial);
+    void *ringbuf_ptr;
 } hpm_dma_channel_handle_t;
 
 //static struct dma_channel dma_channels[DMA_SOC_CHANNEL_NUM];
@@ -596,6 +598,10 @@ static void uart_rx_done(struct rt_serial_device *serial)
             uint32_t aligned_size = aligned_end - aligned_start;
             l1c_dc_invalidate(aligned_start, aligned_size);
     }
+    /* if open uart again after closing uart, an idle interrupt may be triggered, but uart initialization is not performed at this time, and the program exits if the rxfifo is empty. */
+    if (rx_fifo == RT_NULL) {
+        return;
+    }
     rt_ringbuffer_put(&(rx_fifo->rb), uart->rx_idle_tmp_buffer, uart_recv_data_count);
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE);
 #else
@@ -903,9 +909,17 @@ static rt_err_t hpm_uart_control(struct rt_serial_device *serial, int cmd, void 
             else if (ctrl_arg == RT_DEVICE_FLAG_DMA_TX) {
                 dma_mgr_disable_chn_irq(&uart->tx_chn_ctx.resource, DMA_INTERRUPT_MASK_ALL);
                 dma_abort_channel(uart->tx_chn_ctx.resource.base, uart->tx_chn_ctx.resource.channel);
+                if (uart->tx_chn_ctx.ringbuf_ptr != RT_NULL) {
+                    rt_free(uart->tx_chn_ctx.ringbuf_ptr);
+                    uart->tx_chn_ctx.ringbuf_ptr = RT_NULL;
+                }
             } else if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX) {
                 dma_mgr_disable_chn_irq(&uart->rx_chn_ctx.resource, DMA_INTERRUPT_MASK_ALL);
                 dma_abort_channel(uart->rx_chn_ctx.resource.base, uart->rx_chn_ctx.resource.channel);
+                if (uart->rx_chn_ctx.ringbuf_ptr != RT_NULL) {
+                    rt_free(uart->rx_chn_ctx.ringbuf_ptr);
+                    uart->rx_chn_ctx.ringbuf_ptr = RT_NULL;
+                }
             }
 #endif
             break;
@@ -932,6 +946,10 @@ static rt_err_t hpm_uart_control(struct rt_serial_device *serial, int cmd, void 
                     RT_ASSERT(rx_fifo != RT_NULL);
                     tmp_buffer = rt_malloc(serial->config.rx_bufsz + HPM_L1C_CACHELINE_SIZE);
                     RT_ASSERT(tmp_buffer != RT_NULL);
+                    if (uart->rx_chn_ctx.ringbuf_ptr != RT_NULL) {
+                        rt_free(uart->rx_chn_ctx.ringbuf_ptr);
+                    }
+                    uart->rx_chn_ctx.ringbuf_ptr = (void *)tmp_buffer;
                     tmp_buffer += (HPM_L1C_CACHELINE_SIZE - ((rt_ubase_t) tmp_buffer % HPM_L1C_CACHELINE_SIZE));
                     rt_ringbuffer_init(&rx_fifo->rb, tmp_buffer, serial->config.rx_bufsz);
                     rt_ringbuffer_reset(&rx_fifo->rb);
@@ -947,7 +965,11 @@ static rt_err_t hpm_uart_control(struct rt_serial_device *serial, int cmd, void 
                     RT_ASSERT(tx_fifo != RT_NULL);
                     tmp_buffer = rt_malloc(serial->config.tx_bufsz + HPM_L1C_CACHELINE_SIZE);
                     RT_ASSERT(tmp_buffer != RT_NULL);
-                    tmp_buffer+= (HPM_L1C_CACHELINE_SIZE - ((rt_ubase_t) tmp_buffer % HPM_L1C_CACHELINE_SIZE));
+                    if (uart->tx_chn_ctx.ringbuf_ptr != RT_NULL) {
+                        rt_free(uart->tx_chn_ctx.ringbuf_ptr);
+                    }
+                    uart->tx_chn_ctx.ringbuf_ptr = (void *)tmp_buffer;
+                    tmp_buffer += (HPM_L1C_CACHELINE_SIZE - ((rt_ubase_t) tmp_buffer % HPM_L1C_CACHELINE_SIZE));
                     rt_ringbuffer_init(&tx_fifo->rb, tmp_buffer, serial->config.tx_bufsz);
                     rt_ringbuffer_reset(&tx_fifo->rb);
                     tx_fifo->activated = RT_FALSE;

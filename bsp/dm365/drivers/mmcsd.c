@@ -11,7 +11,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <string.h>
-#include <drivers/mmcsd_core.h>
+#include <drivers/dev_mmcsd_core.h>
 #include <dm36x.h>
 #include "mmcsd.h"
 #include "edma.h"

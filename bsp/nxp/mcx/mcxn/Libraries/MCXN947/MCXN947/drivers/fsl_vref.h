@@ -1,12 +1,12 @@
 /*
- * Copyright 2019-2022 NXP
+ * Copyright 2019-2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_VREF_H_
-#define _FSL_VREF_H_
+#ifndef FSL_VREF_H_
+#define FSL_VREF_H_
 
 #include "fsl_common.h"
 
@@ -20,16 +20,16 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-#define FSL_VREF_DRIVER_VERSION (MAKE_VERSION(2, 1, 0)) /*!< Version 2.1.0. */
-/*@}*/
+/*! @{ */
+#define FSL_VREF_DRIVER_VERSION (MAKE_VERSION(2, 2, 2)) /*!< Version 2.2.2. */
+/*! @} */
 
 /*! @brief VREF buffer modes. */
 typedef enum _vref_buffer_mode
 {
     kVREF_ModeBandgapOnly     = 0U, /*!< Bandgap enabled/standby. */
-    kVREF_ModeLowPowerBuffer  = 1U, /*!< High-power buffer mode enabled */
-    kVREF_ModeHighPowerBuffer = 2U, /*!< Low-power buffer mode enabled */
+    kVREF_ModeLowPowerBuffer  = 1U, /*!< Low-power buffer mode enabled */
+    kVREF_ModeHighPowerBuffer = 2U, /*!< High-power buffer mode enabled */
 } vref_buffer_mode_t;
 
 /*! @brief The description structure for the VREF module. */
@@ -110,7 +110,7 @@ void VREF_Deinit(VREF_Type *base);
  */
 void VREF_GetDefaultConfig(vref_config_t *config);
 
-/* @} */
+/*! @} */
 
 /*!
  * @name Trim functions
@@ -161,7 +161,7 @@ uint8_t VREF_GetVrefTrimVal(VREF_Type *base);
  */
 uint8_t VREF_GetTrim21Val(VREF_Type *base);
 
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -169,4 +169,4 @@ uint8_t VREF_GetTrim21Val(VREF_Type *base);
 
 /*! @}*/
 
-#endif /* _FSL_VREF_H_ */
+#endif /* FSL_VREF_H_ */

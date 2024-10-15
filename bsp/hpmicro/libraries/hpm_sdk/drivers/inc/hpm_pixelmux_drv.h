@@ -76,6 +76,16 @@ typedef enum {
 } pixelmux_mipi_dsi0_select_t;
 
 /**
+ * @brief mipi dsi pixel data type
+ */
+typedef enum {
+    pixelmux_mipi_dsi_data_type_rgb565 = 0,
+    pixelmux_mipi_dsi_data_type_rgb666 = 3,
+    pixelmux_mipi_dsi_data_type_rgb666_packed = 4,
+    pixelmux_mipi_dsi_data_type_rgb888 = 5,
+} pixelmux_mipi_dsi_data_type_t;
+
+/**
  * @brief cam1 pixel data source
  */
 typedef enum {
@@ -225,6 +235,20 @@ void pixelmux_mipi_dsi0_data_source_enable(pixelmux_mipi_dsi0_select_t src);
  * @brief disable mipi dsi0 pixel data source
  */
 void pixelmux_mipi_dsi0_data_source_disable(void);
+
+/**
+ * @brief set data type for mipi dsi1
+ *
+ * @param[in] type mipi dsi data type
+ */
+void pixelmux_mipi_dsi1_set_data_type(pixelmux_mipi_dsi_data_type_t type);
+
+/**
+ * @brief set data type for mipi dsi0
+ *
+ * @param[in] type mipi dsi data type
+ */
+void pixelmux_mipi_dsi0_set_data_type(pixelmux_mipi_dsi_data_type_t type);
 
 /**
  * @brief select pixel data source and enable for camera1

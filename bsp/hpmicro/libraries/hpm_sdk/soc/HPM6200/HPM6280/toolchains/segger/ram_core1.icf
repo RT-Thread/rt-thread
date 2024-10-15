@@ -1,0 +1,112 @@
+/*
+ * Copyright (c) 2021-2023 HPMicro
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+
+define memory with size = 4G;
+
+/* Regions */
+define region ILM   = [from 0x00020000 size 128k];        /* ILM */
+define region DLM   = [from 0x000A0000 size 96k];         /* DLM */
+define region NONCACHEABLE_RAM = [from 0x000B8000 size 32k];    /* AXI SRAM1 */
+define region SHARE_RAM = [from 0x010BC000 size 16k];
+
+/* Blocks */
+define block vectors with fixed order       { section .vector_table, section .isr_vector };
+define block vectors_s with fixed order     { section .vector_s_table, section .isr_s_vector };
+define block ctors                          { section .ctors,     section .ctors.*, block with         alphabetical order { init_array } };
+define block dtors                          { section .dtors,     section .dtors.*, block with reverse alphabetical order { fini_array } };
+define block eh_frame                       { section .eh_frame,  section .eh_frame.* };
+define block tbss                           { section .tbss,      section .tbss.*  };
+define block tdata                          { section .tdata,     section .tdata.* };
+define block tls   with fixed order         { block tbss, block tdata };
+define block tdata_load                     { copy of block tdata };
+define block cherryusb_usbh_class_info      { section .usbh_class_info };
+define block framebuffer                    { section .framebuffer };
+define block heap  with size = __HEAPSIZE__,  alignment = 8, /* fill =0x00, */ readwrite access { };
+define block stack with size = __STACKSIZE__, alignment = 16, /* fill =0xCD, */ readwrite access { };
+define block rtthread_FSymTab                                { section FSymTab };
+define block rtthread_VSymTab                                { section VSymTab };
+define block rtthread_rti_fn with alphabetical order         { section .rti_fn* };
+define block rtthread_RTMSymTab                              { section RTMSymTab };
+
+/* Symbols */
+define exported symbol __noncacheable_start__ = start of region NONCACHEABLE_RAM;
+define exported symbol __noncacheable_end__ = end of region NONCACHEABLE_RAM + 1;
+define exported symbol __share_mem_start__ = start of region SHARE_RAM;
+define exported symbol __share_mem_end__ = end of region SHARE_RAM + 1;
+
+define exported symbol _stack = end of block stack + 1;
+define exported symbol _stack_safe = end of block stack + 1;
+define exported symbol __usbh_class_info_start__ = start of block cherryusb_usbh_class_info;
+define exported symbol __usbh_class_info_end__ = end of block cherryusb_usbh_class_info + 1;
+
+define exported symbol __fsymtab_start = start of block rtthread_FSymTab;
+define exported symbol __fsymtab_end = end of block rtthread_FSymTab + 1;
+
+define exported symbol __vsymtab_start = start of block rtthread_VSymTab;
+define exported symbol __vsymtab_end = end of block rtthread_VSymTab + 1;
+
+define exported symbol __rt_init_start = start of block rtthread_rti_fn;
+define exported symbol __rt_init_end = end of block rtthread_rti_fn + 1;
+
+define exported symbol __rtmsymtab_start = start of block rtthread_RTMSymTab;
+define exported symbol __rtmsymtab_end = end of block rtthread_RTMSymTab + 1;
+
+/* Initialization */
+do not initialize                           { section .noncacheable, section .fast_ram };
+do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
+do not initialize                           { section .no_init, section .no_init.*, section .*.no_init, section .*.no_init.* };   // Legacy sections, kept for backwards compatibility
+do not initialize                           { section .noinit, section .noinit.*, section .*.noinit, section .*.noinit.* };       // Legacy sections, used by some SDKs/HALs
+
+initialize by copy with packing=auto        { section .noncacheable.init, section .fast_ram.init };
+initialize by copy with packing=none        { section .data, section .data.*, section .*.data, section .*.data.* };               // Static data sections
+initialize by copy with packing=auto        { section .sdata, section .sdata.* };
+initialize by copy with packing=auto        { section .fast, section .fast.*, section .*.fast, section .*.fast.* };               // "RAM Code" sections
+
+initialize by calling __SEGGER_init_heap    { block heap  };                                        // Init the heap if there is one
+initialize by calling __SEGGER_init_ctors   { block ctors };                                        // Call constructors for global objects which need to be constructed before reaching main (if any). Make sure this is done after setting up heap.
+
+/* Placement */
+place at start of ILM                       { symbol _start };
+place in ILM                                { block vectors, block vectors_s };                                      // Vector table section
+place in ILM                                { section .fast, section .fast.* };                     // "ramfunc" section
+place in ILM with minimum size order        {
+                                              block tdata_load,                                     // Thread-local-storage load image
+                                              block ctors,                                          // Constructors block
+                                              block dtors,                                          // Destructors block
+                                              block eh_frame,                                       // Exception frames placed directly into flash overriding default placement (sections writable)
+                                              block rtthread_FSymTab,
+                                              block rtthread_VSymTab,
+                                              block rtthread_rti_fn,
+                                              block rtthread_RTMSymTab,
+                                              readonly,                                             // Catch-all for readonly data (e.g. .rodata, .srodata)
+                                              readexec                                              // Catch-all for (readonly) executable code (e.g. .text)
+                                            };
+
+//
+// The GNU compiler creates these exception-related sections as writeable.
+// Override the section header flag and make them readonly so they can be
+// placed into flash.
+//
+define access readonly { section .gcc_except_table, section .gcc_except_table.* };
+define access readonly { section .eh_frame, section .eh_frame.* };
+define access readonly { section .sdata.DW.* };
+
+place in DLM                                { block cherryusb_usbh_class_info };
+place in DLM                                { block framebuffer };
+place in DLM                                {
+                                              block tls,                                            // Thread-local-storage block
+                                              readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
+                                              zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
+                                            };
+
+place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss };  // Noncacheable
+place in SHARE_RAM                          { section .sh_mem};                                     // Share memory
+place in DLM                                { section .fast_ram.init, section .fast_ram, section .fast_ram.bss};   // Fast access memory
+place in DLM                                { block heap };                                         // Heap reserved block
+place at end of DLM                         { block stack };                                        // Stack reserved block
+
+/* Keep */
+keep { section .usbh_class_info, section FSymTab, section VSymTab, section .rti_fn*, section RTMSymTab };

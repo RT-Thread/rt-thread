@@ -5,7 +5,7 @@
 
 #include <dfs_fs.h>
 
-#include <spi_msd.h>
+#include <dev_spi_msd.h>
 #include "drv_sci.h"
 
 #define DBG_TAG "app.filesystem"

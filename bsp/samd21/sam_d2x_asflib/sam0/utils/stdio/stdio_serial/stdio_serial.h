@@ -66,7 +66,7 @@ extern "C" {
  * @{
  */
 
-#include <serial.h>
+#include <drivers/dev_serial.h>
 #include <stdio.h>
 #include <compiler.h>
 

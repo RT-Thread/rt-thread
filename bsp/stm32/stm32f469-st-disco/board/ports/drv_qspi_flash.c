@@ -17,8 +17,8 @@
 
 #ifdef BSP_USING_QSPI_FLASH
 
-#include "spi_flash.h"
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash.h"
+#include "dev_spi_flash_sfud.h"
 
 char n25qxxa_read_status_register2(struct rt_qspi_device *device)
 {

@@ -92,6 +92,20 @@ void pixelmux_mipi_dsi0_data_source_disable(void)
     HPM_PIXEL_MUX->PIXMUX &= ~PIXELMUX_PIXMUX_DSI0_EN_MASK;
 }
 
+void pixelmux_mipi_dsi1_set_data_type(pixelmux_mipi_dsi_data_type_t type)
+{
+
+    HPM_PIXEL_MUX->DSI_SETTING[1] = PIXELMUX_DSI_SETTING_DSI_DATA_ENABLE_SET(0x01u<<type) |
+                                    PIXELMUX_DSI_SETTING_DSI_DATA_TYPE_SET(type);
+}
+
+void pixelmux_mipi_dsi0_set_data_type(pixelmux_mipi_dsi_data_type_t type)
+{
+
+    HPM_PIXEL_MUX->DSI_SETTING[0] = PIXELMUX_DSI_SETTING_DSI_DATA_ENABLE_SET(0x01u<<type) |
+                                    PIXELMUX_DSI_SETTING_DSI_DATA_TYPE_SET(type);
+}
+
 void pixelmux_cam1_data_source_enable(pixelmux_cam1_select_t src)
 {
     uint32_t reg_val = (HPM_PIXEL_MUX->PIXMUX & ~PIXELMUX_PIXMUX_CAM1_SEL_MASK) |

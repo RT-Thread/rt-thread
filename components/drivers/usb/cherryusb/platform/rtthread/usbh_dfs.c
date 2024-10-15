@@ -9,7 +9,7 @@
 #include "rtthread.h"
 #include <dfs_fs.h>
 
-#define DEV_FORMAT "/sd%c"
+#define DEV_FORMAT "/dev/sd%c"
 
 #ifndef CONFIG_USB_DFS_MOUNT_POINT
 #define CONFIG_USB_DFS_MOUNT_POINT "/"
@@ -36,17 +36,6 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
         bflb_l1c_dcache_invalidate_range(addr, size);
     }
 }
-#elif defined(SOC_HPM5000) || defined(SOC_HPM6000)
-#include "hpm_l1c_drv.h"
-
-void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
-{
-    if (ops == RT_HW_CACHE_FLUSH) {
-        l1c_dc_flush((uint32_t)addr, size);
-    } else {
-        l1c_dc_invalidate((uint32_t)addr, size);
-    }
-}
 #endif
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t msc_sector[512];
@@ -57,7 +46,7 @@ static rt_err_t rt_udisk_init(rt_device_t dev)
 }
 
 static ssize_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void *buffer,
-                                rt_size_t size)
+                             rt_size_t size)
 {
     struct usbh_msc *msc_class = (struct usbh_msc *)dev->user_data;
     int ret;
@@ -96,7 +85,7 @@ static ssize_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void *buffer,
 }
 
 static ssize_t rt_udisk_write(rt_device_t dev, rt_off_t pos, const void *buffer,
-                                 rt_size_t size)
+                              rt_size_t size)
 {
     struct usbh_msc *msc_class = (struct usbh_msc *)dev->user_data;
     int ret;
@@ -186,15 +175,17 @@ int udisk_init(struct usbh_msc *msc_class)
     ret = usbh_msc_scsi_read10(msc_class, 0, msc_sector, 1);
     if (ret != RT_EOK) {
         rt_kprintf("usb mass_storage read failed\n");
+        rt_free(dev);
         return ret;
     }
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < 4; i++) {
         /* Get the first partition */
         ret = dfs_filesystem_get_partition(&part0, msc_sector, i);
         if (ret == RT_EOK) {
             rt_kprintf("Found partition %d: type = %d, offet=0x%x, size=0x%x\n",
                        i, part0.type, part0.offset, part0.size);
+            break;
         } else {
             break;
         }
@@ -230,6 +221,8 @@ void usbh_msc_run(struct usbh_msc *msc_class)
 
 void usbh_msc_stop(struct usbh_msc *msc_class)
 {
+    struct rt_device *dev;
+
     char name[CONFIG_USBHOST_DEV_NAMELEN];
     char mount_point[CONFIG_USBHOST_DEV_NAMELEN];
 
@@ -237,5 +230,9 @@ void usbh_msc_stop(struct usbh_msc *msc_class)
     snprintf(mount_point, CONFIG_USBHOST_DEV_NAMELEN, CONFIG_USB_DFS_MOUNT_POINT, msc_class->sdchar);
 
     dfs_unmount(mount_point);
-    rt_device_unregister(rt_device_find(name));
+    dev = rt_device_find(name);
+    if (dev) {
+        rt_device_unregister(dev);
+        rt_free(dev);
+    }
 }

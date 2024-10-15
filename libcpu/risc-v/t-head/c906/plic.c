@@ -15,7 +15,7 @@
 #include <rtdbg.h>
 
 #include "plic.h"
-#include "rt_interrupt.h"
+#include "interrupt.h"
 #include "io.h"
 #include "encoding.h"
 #include "ioremap.h"

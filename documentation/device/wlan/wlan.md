@@ -208,9 +208,9 @@ The following code will show a WiFi sync scan, and then print the results on the
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <wlan_mgnt.h>
-#include <wlan_prot.h>
-#include <wlan_cfg.h>
+#include <dev_wlan_mgnt.h>
+#include <dev_wlan_prot.h>
+#include <dev_wlan_cfg.h>
 
 void wifi_scan(void)
 {
@@ -251,9 +251,9 @@ After connecting to WIFI, wait for a while and then execute `rt_wlan_disconnect`
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <wlan_mgnt.h>
-#include <wlan_prot.h>
-#include <wlan_cfg.h>
+#include <dev_wlan_mgnt.h>
+#include <dev_wlan_prot.h>
+#include <dev_wlan_cfg.h>
 
 #define WLAN_SSID               "SSID-A"
 #define WLAN_PASSWORD           "12345678"
@@ -372,9 +372,9 @@ First enable the automatic reconnection function, use the command line to connec
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <wlan_mgnt.h>
-#include <wlan_prot.h>
-#include <wlan_cfg.h>
+#include <dev_wlan_mgnt.h>
+#include <dev_wlan_prot.h>
+#include <dev_wlan_cfg.h>
 
 static void
 wifi_ready_callback(int event, struct rt_wlan_buff *buff, void *parameter)

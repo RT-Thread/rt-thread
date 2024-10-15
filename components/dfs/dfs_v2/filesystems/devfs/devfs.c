@@ -265,7 +265,7 @@ static int dfs_devfs_flush(struct dfs_file *file)
 
 static off_t dfs_devfs_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
-    off_t ret = 0;
+    off_t ret = -EPERM;
     rt_device_t device;
 
     RT_ASSERT(file != RT_NULL);
@@ -408,16 +408,16 @@ mode_t dfs_devfs_device_to_mode(struct rt_device *device)
     switch (device->type)
     {
     case RT_Device_Class_Char:
-        mode = S_IFCHR | 0777;
+        mode = S_IFCHR | 0666;
         break;
     case RT_Device_Class_Block:
-        mode = S_IFBLK | 0777;
+        mode = S_IFBLK | 0666;
         break;
     case RT_Device_Class_Pipe:
-        mode = S_IFIFO | 0777;
+        mode = S_IFIFO | 0666;
         break;
     default:
-        mode = S_IFCHR | 0777;
+        mode = S_IFCHR | 0666;
         break;
     }
 

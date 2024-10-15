@@ -394,7 +394,6 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     const struct pin_irq_map *irqmap;
     rt_base_t level;
     rt_int32_t irqindex = -1;
-    GPIO_InitTypeDef GPIO_InitStruct;
 
     if (PIN_PORT(pin) >= PIN_STPORT_MAX)
     {
@@ -403,6 +402,8 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     if (enabled == PIN_IRQ_ENABLE)
     {
+        GPIO_InitTypeDef GPIO_InitStruct = {0};
+
         irqindex = bit2bitno(PIN_STPIN(pin));
         if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
         {

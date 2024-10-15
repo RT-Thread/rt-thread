@@ -349,10 +349,12 @@ int usbh_ch34x_bulk_out_transfer(struct usbh_ch34x *ch34x_class, uint8_t *buffer
 
 __WEAK void usbh_ch34x_run(struct usbh_ch34x *ch34x_class)
 {
+    (void)ch34x_class;
 }
 
 __WEAK void usbh_ch34x_stop(struct usbh_ch34x *ch34x_class)
 {
+    (void)ch34x_class;
 }
 
 static const uint16_t ch34x_id_table[][2] = {

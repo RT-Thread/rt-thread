@@ -15,7 +15,7 @@
 #include <board.h>
 #include <rtdbg.h>
 #include <rtdevice.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 
 /* acm32 config class */
 struct acm32_soft_i2c_config

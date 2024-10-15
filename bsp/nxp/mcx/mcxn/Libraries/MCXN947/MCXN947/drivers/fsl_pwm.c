@@ -25,6 +25,14 @@
  */
 static uint32_t PWM_GetInstance(PWM_Type *base);
 
+#if defined(PWM_RSTS)
+#define PWM_RESETS_ARRAY PWM_RSTS
+#elif defined(FLEXPWM_RSTS)
+#define PWM_RESETS_ARRAY FLEXPWM_RSTS
+#elif defined(FLEXPWM_RSTS_N)
+#define PWM_RESETS_ARRAY FLEXPWM_RSTS_N
+#endif
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -35,6 +43,11 @@ static PWM_Type *const s_pwmBases[] = PWM_BASE_PTRS;
 /*! @brief Pointers to PWM clocks for each PWM submodule. */
 static const clock_ip_name_t s_pwmClocks[][FSL_FEATURE_PWM_SUBMODULE_COUNT] = PWM_CLOCKS;
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(PWM_RESETS_ARRAY)
+/* Reset array */
+static const reset_ip_name_t s_pwmResets[] = PWM_RESETS_ARRAY;
+#endif
 
 /*! @brief Temporary PWM duty cycle. */
 static uint8_t s_pwmGetPwmDutyCycle[FSL_FEATURE_PWM_SUBMODULE_COUNT][PWM_SUBMODULE_CHANNEL] = {{0}};
@@ -81,6 +94,165 @@ static uint32_t PWM_GetInstance(PWM_Type *base)
 }
 
 /*!
+ * brief Set register about period on one PWM submodule.
+ *
+ * param base        PWM peripheral base address
+ * param subModule   PWM submodule to configure
+ * param mode        PWM operation mode, options available in enumeration ::pwm_mode_t
+ * param pulseCnt    PWM period, value should be between 0 to 65535
+ */
+static void PWM_SetPeriodRegister(PWM_Type *base, pwm_submodule_t subModule, pwm_mode_t mode, uint16_t pulseCnt)
+{
+    uint16_t modulo = 0;
+
+    switch (mode)
+    {
+        case kPWM_SignedCenterAligned:
+            /* Setup the PWM period for a signed center aligned signal */
+            modulo = (pulseCnt >> 1U);
+            /* Indicates the start of the PWM period */
+            base->SM[subModule].INIT = PWM_GetComplementU16(modulo);
+            /* Indicates the center value */
+            base->SM[subModule].VAL0 = 0;
+            /* Indicates the end of the PWM period */
+            /* The change during the end to start of the PWM period requires a count time */
+            base->SM[subModule].VAL1 = modulo - 1U;
+            break;
+        case kPWM_CenterAligned:
+            /* Setup the PWM period for an unsigned center aligned signal */
+            /* Indicates the start of the PWM period */
+            base->SM[subModule].INIT = 0;
+            /* Indicates the center value */
+            base->SM[subModule].VAL0 = (pulseCnt / 2U);
+            /* Indicates the end of the PWM period */
+            /* The change during the end to start of the PWM period requires a count time */
+            base->SM[subModule].VAL1 = pulseCnt - 1U;
+            break;
+        case kPWM_SignedEdgeAligned:
+            /* Setup the PWM period for a signed edge aligned signal */
+            modulo = (pulseCnt >> 1U);
+            /* Indicates the start of the PWM period */
+            base->SM[subModule].INIT = PWM_GetComplementU16(modulo);
+            /* Indicates the center value */
+            base->SM[subModule].VAL0 = 0;
+            /* Indicates the end of the PWM period */
+            /* The change during the end to start of the PWM period requires a count time */
+            base->SM[subModule].VAL1 = modulo - 1U;
+            break;
+        case kPWM_EdgeAligned:
+            /* Setup the PWM period for a unsigned edge aligned signal */
+            /* Indicates the start of the PWM period */
+            base->SM[subModule].INIT = 0;
+            /* Indicates the center value */
+            base->SM[subModule].VAL0 = (pulseCnt / 2U);
+            /* Indicates the end of the PWM period */
+            /* The change during the end to start of the PWM period requires a count time */
+            base->SM[subModule].VAL1 = pulseCnt - 1U;
+            break;
+        default:
+            assert(false);
+            break;
+    }
+}
+
+/*!
+ * brief Set register about dutycycle on one PWM submodule.
+ *
+ * param base        PWM peripheral base address
+ * param subModule   PWM submodule to configure
+ * param pwmSignal   Signal (PWM A or PWM B) to update
+ * param mode        PWM operation mode, options available in enumeration ::pwm_mode_t
+ * param pulseCnt    PWM period, value should be between 0 to 65535
+ * param dutyCycle         New PWM pulse width, value should be between 0 to 65535
+ */
+static void PWM_SetDutycycleRegister(PWM_Type *base,
+                                     pwm_submodule_t subModule,
+                                     pwm_channels_t pwmSignal,
+                                     pwm_mode_t mode,
+                                     uint16_t pulseCnt,
+                                     uint16_t pwmHighPulse)
+{
+    uint16_t modulo = 0;
+
+    switch (mode)
+    {
+        case kPWM_SignedCenterAligned:
+            /* Setup the PWM dutycycle for a signed center aligned signal */
+            if (pwmSignal == kPWM_PwmA)
+            {
+                base->SM[subModule].VAL2 = PWM_GetComplementU16(pwmHighPulse / 2U);
+                base->SM[subModule].VAL3 = (pwmHighPulse / 2U);
+            }
+            else if (pwmSignal == kPWM_PwmB)
+            {
+                base->SM[subModule].VAL4 = PWM_GetComplementU16(pwmHighPulse / 2U);
+                base->SM[subModule].VAL5 = (pwmHighPulse / 2U);
+            }
+            else
+            {
+                ; /* Intentional empty */
+            }
+            break;
+        case kPWM_CenterAligned:
+            /* Setup the PWM dutycycle for an unsigned center aligned signal */
+            if (pwmSignal == kPWM_PwmA)
+            {
+                base->SM[subModule].VAL2 = ((pulseCnt - pwmHighPulse) / 2U);
+                base->SM[subModule].VAL3 = ((pulseCnt + pwmHighPulse) / 2U);
+            }
+            else if (pwmSignal == kPWM_PwmB)
+            {
+                base->SM[subModule].VAL4 = ((pulseCnt - pwmHighPulse) / 2U);
+                base->SM[subModule].VAL5 = ((pulseCnt + pwmHighPulse) / 2U);
+            }
+            else
+            {
+                ; /* Intentional empty */
+            }
+            break;
+        case kPWM_SignedEdgeAligned:
+            modulo = (pulseCnt >> 1U);
+
+            /* Setup the PWM dutycycle for a signed edge aligned signal */
+            if (pwmSignal == kPWM_PwmA)
+            {
+                base->SM[subModule].VAL2 = PWM_GetComplementU16(modulo);
+                base->SM[subModule].VAL3 = PWM_GetComplementU16(modulo) + pwmHighPulse;
+            }
+            else if (pwmSignal == kPWM_PwmB)
+            {
+                base->SM[subModule].VAL4 = PWM_GetComplementU16(modulo);
+                base->SM[subModule].VAL5 = PWM_GetComplementU16(modulo) + pwmHighPulse;
+            }
+            else
+            {
+                ; /* Intentional empty */
+            }
+            break;
+        case kPWM_EdgeAligned:
+            /* Setup the PWM dutycycle for a unsigned edge aligned signal */
+            if (pwmSignal == kPWM_PwmA)
+            {
+                base->SM[subModule].VAL2 = 0;
+                base->SM[subModule].VAL3 = pwmHighPulse;
+            }
+            else if (pwmSignal == kPWM_PwmB)
+            {
+                base->SM[subModule].VAL4 = 0;
+                base->SM[subModule].VAL5 = pwmHighPulse;
+            }
+            else
+            {
+                ; /* Intentional empty */
+            }
+            break;
+        default:
+            assert(false);
+            break;
+    }
+}
+
+/*!
  * brief Ungates the PWM submodule clock and configures the peripheral for basic operation.
  *
  * note This API should be called at the beginning of the application using the PWM driver.
@@ -113,6 +285,10 @@ status_t PWM_Init(PWM_Type *base, pwm_submodule_t subModule, const pwm_config_t 
     /* Ungate the PWM submodule clock*/
     CLOCK_EnableClock(s_pwmClocks[PWM_GetInstance(base)][subModule]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(PWM_RESETS_ARRAY)
+    RESET_ReleasePeripheralReset(s_pwmResets[PWM_GetInstance(base)]);
+#endif
 
     /* Clear the fault status flags */
     base->FSTS |= PWM_FSTS_FFLAG_MASK;
@@ -184,7 +360,12 @@ status_t PWM_Init(PWM_Type *base, pwm_submodule_t subModule, const pwm_config_t 
     base->SM[subModule].CTRL = reg;
 
     /* Set PWM output normal */
+#if defined(PWM_MASK_UPDATE_MASK)
+    base->MASK &= (uint16_t)(~(uint16_t)(PWM_MASK_MASKX_MASK | PWM_MASK_MASKA_MASK | PWM_MASK_MASKB_MASK |
+                                         PWM_MASK_UPDATE_MASK_MASK));
+#else
     base->MASK &= ~(uint16_t)(PWM_MASK_MASKX_MASK | PWM_MASK_MASKA_MASK | PWM_MASK_MASKB_MASK);
+#endif
 
     base->DTSRCSEL = 0U;
 
@@ -280,7 +461,9 @@ void PWM_GetDefaultConfig(pwm_config_t *config)
  *                    Array size should not be more than 2 as each submodule has 2 pins to output PWM
  * param mode        PWM operation mode, options available in enumeration ::pwm_mode_t
  * param pwmFreq_Hz  PWM signal frequency in Hz
- * param srcClock_Hz PWM main counter clock in Hz.
+ * param srcClock_Hz PWM source clock of correspond submodule in Hz. If source clock of submodule1,2,3 is from
+ *                   submodule0 AUX_CLK, its source clock is submodule0 source clock divided with submodule0
+ *                   prescaler value instead of submodule0 source clock.
  *
  * return Returns kStatusFail if there was error setting up the signal; kStatusSuccess otherwise
  */
@@ -299,7 +482,6 @@ status_t PWM_SetupPwm(PWM_Type *base,
 
     uint32_t pwmClock;
     uint16_t pulseCnt = 0, pwmHighPulse = 0;
-    uint16_t modulo = 0;
     uint8_t i, polarityShift = 0, outputEnableShift = 0;
 
     for (i = 0; i < numOfChnls; i++)
@@ -322,114 +504,15 @@ status_t PWM_SetupPwm(PWM_Type *base,
         pwmHighPulse = (pulseCnt * chnlParams->dutyCyclePercent) / 100U;
 
         /* Setup the different match registers to generate the PWM signal */
-        switch (mode)
+        if (i == 0U)
         {
-            case kPWM_SignedCenterAligned:
-                /* Setup the PWM period for a signed center aligned signal */
-                if (i == 0U)
-                {
-                    modulo = (pulseCnt >> 1U);
-                    /* Indicates the start of the PWM period */
-                    base->SM[subModule].INIT = PWM_GetComplementU16(modulo);
-                    /* Indicates the center value */
-                    base->SM[subModule].VAL0 = 0;
-                    /* Indicates the end of the PWM period */
-                    /* The change during the end to start of the PWM period requires a count time */
-                    base->SM[subModule].VAL1 = modulo - 1U;
-                }
-
-                /* Setup the PWM dutycycle */
-                if (chnlParams->pwmChannel == kPWM_PwmA)
-                {
-                    base->SM[subModule].VAL2 = PWM_GetComplementU16(pwmHighPulse / 2U);
-                    base->SM[subModule].VAL3 = (pwmHighPulse / 2U);
-                }
-                else
-                {
-                    base->SM[subModule].VAL4 = PWM_GetComplementU16(pwmHighPulse / 2U);
-                    base->SM[subModule].VAL5 = (pwmHighPulse / 2U);
-                }
-                break;
-            case kPWM_CenterAligned:
-                /* Setup the PWM period for an unsigned center aligned signal */
-                /* Indicates the start of the PWM period */
-                if (i == 0U)
-                {
-                    base->SM[subModule].INIT = 0;
-                    /* Indicates the center value */
-                    base->SM[subModule].VAL0 = (pulseCnt / 2U);
-                    /* Indicates the end of the PWM period */
-                    /* The change during the end to start of the PWM period requires a count time */
-                    base->SM[subModule].VAL1 = pulseCnt - 1U;
-                }
-
-                /* Setup the PWM dutycycle */
-                if (chnlParams->pwmChannel == kPWM_PwmA)
-                {
-                    base->SM[subModule].VAL2 = ((pulseCnt - pwmHighPulse) / 2U);
-                    base->SM[subModule].VAL3 = ((pulseCnt + pwmHighPulse) / 2U);
-                }
-                else
-                {
-                    base->SM[subModule].VAL4 = ((pulseCnt - pwmHighPulse) / 2U);
-                    base->SM[subModule].VAL5 = ((pulseCnt + pwmHighPulse) / 2U);
-                }
-                break;
-            case kPWM_SignedEdgeAligned:
-                /* Setup the PWM period for a signed edge aligned signal */
-                if (i == 0U)
-                {
-                    modulo = (pulseCnt >> 1U);
-                    /* Indicates the start of the PWM period */
-                    base->SM[subModule].INIT = PWM_GetComplementU16(modulo);
-                    /* Indicates the center value */
-                    base->SM[subModule].VAL0 = 0;
-                    /* Indicates the end of the PWM period */
-                    /* The change during the end to start of the PWM period requires a count time */
-                    base->SM[subModule].VAL1 = modulo - 1U;
-                }
-
-                /* Setup the PWM dutycycle */
-                if (chnlParams->pwmChannel == kPWM_PwmA)
-                {
-                    base->SM[subModule].VAL2 = PWM_GetComplementU16(modulo);
-                    base->SM[subModule].VAL3 = PWM_GetComplementU16(modulo) + pwmHighPulse;
-                }
-                else
-                {
-                    base->SM[subModule].VAL4 = PWM_GetComplementU16(modulo);
-                    base->SM[subModule].VAL5 = PWM_GetComplementU16(modulo) + pwmHighPulse;
-                }
-                break;
-            case kPWM_EdgeAligned:
-                /* Setup the PWM period for a unsigned edge aligned signal */
-                /* Indicates the start of the PWM period */
-                if (i == 0U)
-                {
-                    base->SM[subModule].INIT = 0;
-                    /* Indicates the center value */
-                    base->SM[subModule].VAL0 = (pulseCnt / 2U);
-                    /* Indicates the end of the PWM period */
-                    /* The change during the end to start of the PWM period requires a count time */
-                    base->SM[subModule].VAL1 = pulseCnt - 1U;
-                }
-
-                /* Setup the PWM dutycycle */
-                if (chnlParams->pwmChannel == kPWM_PwmA)
-                {
-                    base->SM[subModule].VAL2 = 0;
-                    base->SM[subModule].VAL3 = pwmHighPulse;
-                }
-                else
-                {
-                    base->SM[subModule].VAL4 = 0;
-                    base->SM[subModule].VAL5 = pwmHighPulse;
-                }
-                break;
-            default:
-                assert(false);
-                break;
+            /* Update register about period */
+            PWM_SetPeriodRegister(base, subModule, mode, pulseCnt);
         }
+
+        /* Update register about dutycycle */
+        PWM_SetDutycycleRegister(base, subModule, chnlParams->pwmChannel, mode, pulseCnt, pwmHighPulse);
+
         /* Setup register shift values based on the channel being configured.
          * Also setup the deadtime value
          */
@@ -636,96 +719,94 @@ void PWM_UpdatePwmDutycycleHighAccuracy(
             pulseCnt = modulo * 2U;
             /* Calculate pulse width */
             pwmHighPulse = (pulseCnt * dutyCycle) / 65535U;
-
-            /* Setup the PWM dutycycle */
-            if (pwmSignal == kPWM_PwmA)
-            {
-                base->SM[subModule].VAL2 = PWM_GetComplementU16(pwmHighPulse / 2U);
-                base->SM[subModule].VAL3 = (pwmHighPulse / 2U);
-            }
-            else if (pwmSignal == kPWM_PwmB)
-            {
-                base->SM[subModule].VAL4 = PWM_GetComplementU16(pwmHighPulse / 2U);
-                base->SM[subModule].VAL5 = (pwmHighPulse / 2U);
-            }
-            else
-            {
-                assert(false);
-            }
             break;
         case kPWM_CenterAligned:
             pulseCnt = base->SM[subModule].VAL1 + 1U;
             /* Calculate pulse width */
             pwmHighPulse = (pulseCnt * dutyCycle) / 65535U;
-
-            /* Setup the PWM dutycycle */
-            if (pwmSignal == kPWM_PwmA)
-            {
-                base->SM[subModule].VAL2 = ((pulseCnt - pwmHighPulse) / 2U);
-                base->SM[subModule].VAL3 = ((pulseCnt + pwmHighPulse) / 2U);
-            }
-            else if (pwmSignal == kPWM_PwmB)
-            {
-                base->SM[subModule].VAL4 = ((pulseCnt - pwmHighPulse) / 2U);
-                base->SM[subModule].VAL5 = ((pulseCnt + pwmHighPulse) / 2U);
-            }
-            else
-            {
-                assert(false);
-            }
             break;
         case kPWM_SignedEdgeAligned:
             modulo   = base->SM[subModule].VAL1 + 1U;
             pulseCnt = modulo * 2U;
             /* Calculate pulse width */
             pwmHighPulse = (pulseCnt * dutyCycle) / 65535U;
-
-            /* Setup the PWM dutycycle */
-            if (pwmSignal == kPWM_PwmA)
-            {
-                base->SM[subModule].VAL2 = PWM_GetComplementU16(modulo);
-                base->SM[subModule].VAL3 = PWM_GetComplementU16(modulo) + pwmHighPulse;
-            }
-            else if (pwmSignal == kPWM_PwmB)
-            {
-                base->SM[subModule].VAL4 = PWM_GetComplementU16(modulo);
-                base->SM[subModule].VAL5 = PWM_GetComplementU16(modulo) + pwmHighPulse;
-            }
-            else
-            {
-                assert(false);
-            }
             break;
         case kPWM_EdgeAligned:
             pulseCnt = base->SM[subModule].VAL1 + 1U;
             /* Calculate pulse width */
             pwmHighPulse = (pulseCnt * dutyCycle) / 65535U;
-
-            /* Setup the PWM dutycycle */
-            if (pwmSignal == kPWM_PwmA)
-            {
-                base->SM[subModule].VAL2 = 0;
-                base->SM[subModule].VAL3 = pwmHighPulse;
-            }
-            else if (pwmSignal == kPWM_PwmB)
-            {
-                base->SM[subModule].VAL4 = 0;
-                base->SM[subModule].VAL5 = pwmHighPulse;
-            }
-            else
-            {
-                assert(false);
-            }
             break;
         default:
             assert(false);
             break;
     }
+
+    /* Update register about dutycycle */
+    if (kPWM_PwmA == pwmSignal)
+    {
+        PWM_SetDutycycleRegister(base, subModule, kPWM_PwmA, currPwmMode, pulseCnt, pwmHighPulse);
+    }
+    else if (kPWM_PwmB == pwmSignal)
+    {
+        PWM_SetDutycycleRegister(base, subModule, kPWM_PwmB, currPwmMode, pulseCnt, pwmHighPulse);
+    }
+    else
+    {
+        ; /* Intentional empty */
+    }
+
     if (kPWM_PwmX != pwmSignal)
     {
         /* Get the pwm duty cycle */
-        s_pwmGetPwmDutyCycle[subModule][pwmSignal] = (uint8_t)(dutyCycle / 65535U);
+        s_pwmGetPwmDutyCycle[subModule][pwmSignal] = (uint8_t)(dutyCycle * 100U / 65535U);
     }
+}
+
+/*!
+ * brief Update the PWM signal's period and dutycycle for a PWM submodule.
+ *
+ * The function updates PWM signal period generated by a specific submodule according to the parameters
+ * passed in by the user. This function can also set dutycycle weather you want to keep original dutycycle
+ * or update new dutycycle. Call this function in local sync control mode because PWM period is depended by
+ * INIT and VAL1 register of each submodule. In master sync initialization control mode, call this function
+ * to update INIT and VAL1 register of all submodule because PWM period is depended by INIT and VAL1 register
+ * in submodule0. If the dead time insertion logic is enabled, the pulse period is reduced by the dead time
+ * period specified by the user. PWM signal will not be generated if its period is less than dead time duration.
+ *
+ * param base        PWM peripheral base address
+ * param subModule   PWM submodule to configure
+ * param pwmSignal   Signal (PWM A or PWM B) to update
+ * param currPwmMode The current PWM mode set during PWM setup, options available in enumeration ::pwm_mode_t
+ * param pulseCnt    New PWM period, value should be between 0 to 65535
+ *                    0=minimum PWM period...
+ *                    65535=maximum PWM period
+ * param dutyCycle   New PWM pulse width of channel, value should be between 0 to 65535
+ *                    0=inactive signal(0% duty cycle)...
+ *                    65535=active signal (100% duty cycle)
+ *                    You can keep original dutycycle or update new dutycycle
+ */
+void PWM_UpdatePwmPeriodAndDutycycle(PWM_Type *base,
+                                     pwm_submodule_t subModule,
+                                     pwm_channels_t pwmSignal,
+                                     pwm_mode_t currPwmMode,
+                                     uint16_t pulseCnt,
+                                     uint16_t dutyCycle)
+{
+    uint16_t pwmHighPulse = 0;
+
+    assert(pwmSignal != kPWM_PwmX);
+
+    /* Calculate pulse width */
+    pwmHighPulse = (pulseCnt * dutyCycle) / 65535U;
+
+    /* Update register about period */
+    PWM_SetPeriodRegister(base, subModule, currPwmMode, pulseCnt);
+
+    /* Update register about dutycycle */
+    PWM_SetDutycycleRegister(base, subModule, pwmSignal, currPwmMode, pulseCnt, pwmHighPulse);
+
+    /* Get the pwm duty cycle */
+    s_pwmGetPwmDutyCycle[subModule][pwmSignal] = (uint8_t)((dutyCycle * 100U) / 65535U);
 }
 
 /*!
@@ -747,6 +828,7 @@ void PWM_SetupInputCapture(PWM_Type *base,
     uint16_t reg = 0;
     switch (pwmChannel)
     {
+#if defined(FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELA) && FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELA
         case kPWM_PwmA:
             /* Setup the capture paramters for PWM A pin */
             reg = (PWM_CAPTCTRLA_INP_SELA(inputCaptureParams->captureInputSel) |
@@ -768,6 +850,8 @@ void PWM_SetupInputCapture(PWM_Type *base,
             /* Setup PWM A pin for input capture */
             base->OUTEN &= ~((uint16_t)1U << (PWM_OUTEN_PWMA_EN_SHIFT + (uint16_t)subModule));
             break;
+#endif /* FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELA */
+#if defined(FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELB) && FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELB
         case kPWM_PwmB:
             /* Setup the capture paramters for PWM B pin */
             reg = (PWM_CAPTCTRLB_INP_SELB(inputCaptureParams->captureInputSel) |
@@ -789,6 +873,8 @@ void PWM_SetupInputCapture(PWM_Type *base,
             /* Setup PWM B pin for input capture */
             base->OUTEN &= ~((uint16_t)1U << (PWM_OUTEN_PWMB_EN_SHIFT + (uint16_t)subModule));
             break;
+#endif /* FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELB */
+#if defined(FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELX) && FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELX
         case kPWM_PwmX:
             reg = (PWM_CAPTCTRLX_INP_SELX(inputCaptureParams->captureInputSel) |
                    PWM_CAPTCTRLX_EDGX0(inputCaptureParams->edge0) | PWM_CAPTCTRLX_EDGX1(inputCaptureParams->edge1) |
@@ -809,6 +895,7 @@ void PWM_SetupInputCapture(PWM_Type *base,
             /* Setup PWM X pin for input capture */
             base->OUTEN &= ~((uint16_t)1U << (PWM_OUTEN_PWMX_EN_SHIFT + (uint16_t)subModule));
             break;
+#endif /* FSL_FEATURE_PWM_HAS_CAPTURE_ON_CHANNELX */
         default:
             assert(false);
             break;
@@ -1213,7 +1300,9 @@ void PWM_SetClockMode(PWM_Type *base, pwm_submodule_t subModule, pwm_clock_presc
  */
 void PWM_SetPwmForceOutputToZero(PWM_Type *base, pwm_submodule_t subModule, pwm_channels_t pwmChannel, bool forcetozero)
 {
+#if !defined(PWM_MASK_UPDATE_MASK)
     uint16_t reg = base->SM[subModule].CTRL2;
+#endif
     uint16_t mask;
 
     if (kPWM_PwmA == pwmChannel)
@@ -1240,12 +1329,17 @@ void PWM_SetPwmForceOutputToZero(PWM_Type *base, pwm_submodule_t subModule, pwm_
         base->MASK &= ~mask;
     }
 
+#if defined(PWM_MASK_UPDATE_MASK)
+    /* Update output mask bits immediately with UPDATE_MASK bit */
+    base->MASK |= PWM_MASK_UPDATE_MASK(0x01UL << (uint8_t)subModule);
+#else
     /* Select local force signal */
     base->SM[subModule].CTRL2 &= ~(uint16_t)PWM_CTRL2_FORCE_SEL_MASK;
     /* Issue a local Force trigger event */
     base->SM[subModule].CTRL2 |= PWM_CTRL2_FORCE_MASK;
     /* Restore the source of FORCE OUTPUT signal */
     base->SM[subModule].CTRL2 = reg;
+#endif
 }
 
 /*!
@@ -1326,3 +1420,72 @@ void PWM_SetChannelOutput(PWM_Type *base,
     /* Restore the source of FORCE OUTPUT signal */
     base->SM[subModule].CTRL2 = reg;
 }
+
+#if defined(FSL_FEATURE_PWM_HAS_PHASE_DELAY) && FSL_FEATURE_PWM_HAS_PHASE_DELAY
+/*!
+ * brief This function set the phase delay from the master sync signal of submodule 0.
+ *
+ * param base               PWM peripheral base address
+ * param subModule          PWM submodule to configure
+ * param pwmChannel         PWM channel to configure
+ * param delayCycles        Number of cycles delayed from submodule 0.
+ *
+ * return kStatus_Fail if the number of delay cycles is set larger than the period defined in submodule 0;
+ *        kStatus_Success if set phase delay success
+ */
+status_t PWM_SetPhaseDelay(PWM_Type *base, pwm_channels_t pwmChannel, pwm_submodule_t subModule, uint16_t delayCycles)
+{
+    assert(subModule != kPWM_Module_0);
+    uint16_t reg = base->SM[subModule].CTRL2;
+
+    /* Clear LDOK bit if it is set */
+    if (0U != (base->MCTRL & PWM_MCTRL_LDOK(1UL << (uint8_t)subModule)))
+    {
+        base->MCTRL |= PWM_MCTRL_CLDOK(1UL << (uint8_t)subModule);
+    }
+
+    if (base->SM[kPWM_Module_0].VAL1 < delayCycles)
+    {
+        return kStatus_Fail;
+    }
+    else
+    {
+        /*
+         * ERR051989: When the value of the phase delay register SMxPHASEDLY is reduced from a
+         * non-zero value to 0 and submodule x reload source is from submodule0, the submodule
+         * x may output an unexpected wide PWM pulse. The workaround is set SMxPHASEDLY=1,
+         * SMxINIT=SM0INIT-1, SMxVALy=SM0VALy-1 (x=1,2,3, y=0,1,2,3,4,5).
+         */
+#if defined(FSL_FEATURE_PWM_HAS_ERRATA_51989) && FSL_FEATURE_PWM_HAS_ERRATA_51989
+        if (delayCycles == 0 &&
+            ((base->SM[subModule].CTRL2 & PWM_CTRL2_RELOAD_SEL_MASK) >> PWM_CTRL2_RELOAD_SEL_SHIFT) == 1U)
+        {
+            base->SM[subModule].PHASEDLY = 1U;
+            base->SM[subModule].INIT     = base->SM[0].INIT - 1U;
+            base->SM[subModule].VAL0     = base->SM[0].VAL0 - 1U;
+            base->SM[subModule].VAL1     = base->SM[0].VAL1 - 1U;
+            base->SM[subModule].VAL2     = base->SM[0].VAL2 - 1U;
+            base->SM[subModule].VAL3     = base->SM[0].VAL3 - 1U;
+            base->SM[subModule].VAL4     = base->SM[0].VAL4 - 1U;
+            base->SM[subModule].VAL5     = base->SM[0].VAL5 - 1U;
+        }
+        else
+        {
+            base->SM[subModule].PHASEDLY = delayCycles;
+        }
+#else
+        base->SM[subModule].PHASEDLY = delayCycles;
+#endif
+    }
+
+    /* Select the master sync signal as the source for initialization */
+    reg = (reg & ~(uint16_t)PWM_CTRL2_INIT_SEL_MASK) | PWM_CTRL2_INIT_SEL(2);
+    /* Set Load mode to make Buffered registers take effect immediately when LDOK bit set */
+    base->SM[subModule].CTRL |= PWM_CTRL_LDMOD_MASK;
+    /* Set LDOK bit to load buffer registers */
+    base->MCTRL |= PWM_MCTRL_LDOK(1UL << (uint8_t)subModule);
+    /* Restore the source of phase delay register intialization */
+    base->SM[subModule].CTRL2 = reg;
+    return kStatus_Success;
+}
+#endif /* FSL_FEATURE_PWM_HAS_PHASE_DELAY */

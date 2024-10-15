@@ -18,7 +18,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#define usleep rt_thread_sleep
+#define usleep rt_thread_delay
 
 /* Our event variable using a condition variable contruct. */
 typedef struct {

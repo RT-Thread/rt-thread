@@ -13,7 +13,7 @@
 #include <rtdbg.h>
 
 #ifdef BSP_USING_DAO
-#include "drivers/audio.h"
+#include "drivers/dev_audio.h"
 #include "hpm_i2s_drv.h"
 #include "hpm_dao_drv.h"
 #include "board.h"

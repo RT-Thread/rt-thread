@@ -957,7 +957,9 @@ void USDHC_GetCapability(USDHC_Type *base, usdhc_capability_t *capability)
         (htCapability & (USDHC_HOST_CTRL_CAP_ADMAS_MASK | USDHC_HOST_CTRL_CAP_HSS_MASK | USDHC_HOST_CTRL_CAP_DMAS_MASK |
                          USDHC_HOST_CTRL_CAP_SRS_MASK | USDHC_HOST_CTRL_CAP_VS33_MASK));
     capability->flags |= htCapability & USDHC_HOST_CTRL_CAP_VS30_MASK;
+#if !(defined(FSL_FEATURE_USDHC_HAS_NO_VS18) && FSL_FEATURE_USDHC_HAS_NO_VS18)
     capability->flags |= htCapability & USDHC_HOST_CTRL_CAP_VS18_MASK;
+#endif
     capability->flags |= htCapability & USDHC_HOST_CTRL_CAP_DDR50_SUPPORT_MASK;
 #if defined(FSL_FEATURE_USDHC_HAS_SDR104_MODE) && FSL_FEATURE_USDHC_HAS_SDR104_MODE
     capability->flags |= USDHC_HOST_CTRL_CAP_SDR104_SUPPORT_MASK;
@@ -2148,6 +2150,24 @@ void USDHC_EnableAutoTuningForCmdAndData(USDHC_Type *base)
 
     base->VEND_SPEC2 |= USDHC_VEND_SPEC2_TUNING_CMD_EN_MASK;
 
+#if defined(USDHC_VEND_SPEC2_TUNING_BIT_EN_MASK) && USDHC_VEND_SPEC2_TUNING_BIT_EN_MASK
+    base->VEND_SPEC2 &= ~USDHC_VEND_SPEC2_TUNING_BIT_EN_MASK;
+    /* 1bit data width */
+    if (busWidth == 0UL)
+    {
+        base->VEND_SPEC2 |= USDHC_VEND_SPEC2_TUNING_BIT_EN(2U);
+    }
+    /* 4bit data width */
+    else if (busWidth == 1UL)
+    {
+        base->VEND_SPEC2 |= USDHC_VEND_SPEC2_TUNING_BIT_EN(0U);
+    }
+    /* 8bit data width */
+    else
+    {
+        base->VEND_SPEC2 |= USDHC_VEND_SPEC2_TUNING_BIT_EN(1U);
+    }
+#else
     /* 1bit data width */
     if (busWidth == 0UL)
     {
@@ -2166,6 +2186,7 @@ void USDHC_EnableAutoTuningForCmdAndData(USDHC_Type *base)
         base->VEND_SPEC2 |= USDHC_VEND_SPEC2_TUNING_8bit_EN_MASK;
         base->VEND_SPEC2 &= ~USDHC_VEND_SPEC2_TUNING_1bit_EN_MASK;
     }
+#endif
 }
 #endif /* FSL_FEATURE_USDHC_HAS_SDR50_MODE */
 

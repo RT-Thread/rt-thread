@@ -68,7 +68,7 @@ def build_bsp(bsp, scons_args=''):
         nproc = multiprocessing.cpu_count()
         os.chdir(rtt_root)
         cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}'
-        __, res = run_cmd(cmd, output_info=False)
+        __, res = run_cmd(cmd, output_info=True)
 
         if res != 0:
             success = False
@@ -90,7 +90,6 @@ def append_file(source_file, destination_file):
         with open(destination_file, 'a') as destination:
             for line in source:
                 destination.write(line)
-
 
 def check_scons_args(file_path):
     args = []

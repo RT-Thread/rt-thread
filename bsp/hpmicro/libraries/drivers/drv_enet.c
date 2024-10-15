@@ -208,9 +208,14 @@ static rt_err_t hpm_enet_init(enet_device *init)
         enet_rgmii_set_clock_delay(init->instance, init->tx_delay, init->rx_delay);
    }
 #endif
+    /* Get the default interrupt config */
+    enet_get_default_interrupt_config(init->instance, &init->int_config);
 
     /* Initialize eth controller */
-   enet_controller_init(init->instance, init->media_interface, &init->desc, &init->mac_config, &init->int_config);
+    enet_controller_init(init->instance, init->media_interface, &init->desc, &init->mac_config, &init->int_config);
+
+    /* Disable LPI interrupt */
+    enet_disable_lpi_interrupt(init->instance);
 
 #if __USE_ENET_PTP
    /* initialize PTP Clock */
@@ -581,12 +586,6 @@ int rt_hw_eth_init(void)
         s_geths[i]->enet_dev->ptp_config    = *s_geths[i]->ptp_config;
         s_geths[i]->enet_dev->ptp_timestamp = *s_geths[i]->ptp_timestamp;
 #endif
-        /* Set the interrupt enable mask */
-        s_geths[i]->enet_dev->int_config.int_enable = enet_normal_int_sum_en   /* Enable normal interrupt summary */
-                                                    | enet_receive_int_en;  /* Enable receive interrupt */
-        /* Set the interrupt disable mask */
-
-        s_geths[i]->enet_dev->int_config.int_mask = enet_rgsmii_int_mask;
 
         /* Set the irq number */
         s_geths[i]->enet_dev->irq_number = s_geths[i]->irq_num;

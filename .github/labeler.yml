@@ -1,0 +1,263 @@
+#
+# Copyright (c) 2006-2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-08-26     supperthomas the first version
+#
+
+# glob 代表文件夹
+# ref https://github.com/actions/labeler
+
+BSP:
+- changed-files:
+  - any-glob-to-any-file: bsp/**
+
+'BSP: STM32':
+- changed-files:
+  - any-glob-to-any-file: bsp/stm32/**
+
+'BSP: NXP':
+- changed-files:
+  - any-glob-to-any-file: bsp/nxp/**
+
+'BSP: GD32':
+- changed-files:
+  - any-glob-to-any-file: bsp/gd32/**
+
+'BSP: AT32':
+- changed-files:
+  - any-glob-to-any-file: bsp/at32/**
+
+'BSP: Infineon':
+- changed-files:
+  - any-glob-to-any-file: bsp/Infineon/**
+
+'BSP: Renesas':
+- changed-files:
+  - any-glob-to-any-file: bsp/renesas/**
+
+'BSP: Phytium':
+- changed-files:
+  - any-glob-to-any-file: bsp/phytium/**
+
+'BSP: Cvitek':
+- changed-files:
+  - any-glob-to-any-file: bsp/cvitek/**
+
+'BSP: WCH':
+- changed-files:
+  - any-glob-to-any-file: bsp/wch/**
+
+testcase:
+- changed-files:
+  - any-glob-to-any-file: examples/**
+
+tools:
+- changed-files:
+  - any-glob-to-any-file: tools/**
+
+Kernel:
+- changed-files:
+  - any-glob-to-any-file: src/**
+
+action:
+- changed-files:
+  - any-glob-to-any-file: .github/**
+  - any-glob-to-any-file: tools/ci/**
+
+Component:
+- changed-files:
+  - any-glob-to-any-file: components/**
+
+RT-Smart:
+- changed-files:
+  - any-glob-to-any-file: components/lwp/**
+
+'component: lwp':
+- changed-files:
+  - any-glob-to-any-file: components/lwp/**
+
+'component: dfsv1':
+- changed-files:
+  - any-glob-to-any-file: components/dfs_v1/**
+
+'component: dfsv2':
+- changed-files:
+  - any-glob-to-any-file: components/dfs_v2/**
+
+'component: net':
+- changed-files:
+  - any-glob-to-any-file: components/net/**
+
+'component: net/at':
+- changed-files:
+  - any-glob-to-any-file: components/net/at/**
+
+'component: net/lwip':
+- changed-files:
+  - any-glob-to-any-file: components/net/lwip/**
+
+'component: net/netdev':
+- changed-files:
+  - any-glob-to-any-file: components/net/netdev/**
+
+'component: net/sal':
+- changed-files:
+  - any-glob-to-any-file: components/net/sal/**
+
+'component: drivers':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/**
+
+'component: drivers/audio':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/audio/**
+
+'component: drivers/can':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/can/**
+
+'component: drivers/clk':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/clk/**
+
+'component: drivers/core':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/core/**
+
+'component: drivers/cputime':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/cputime/**
+
+'component: drivers/graphic':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/graphic/**
+
+'component: drivers/hwcrypto':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/hwcrypto/**
+
+'component: drivers/hwtimer':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/hwtimer/**
+
+'component: drivers/i2c':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/i2c/**
+
+'component: drivers/ipc':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/ipc/**
+
+'component: drivers/ktime':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/ktime/**
+
+'component: drivers/misc':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/misc/**
+
+'component: drivers/mtd':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/mtd/**
+
+'component: drivers/ofw':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/ofw/**
+
+'component: drivers/pci':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/pci/**
+
+'component: drivers/phy':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/phy/**
+
+'component: drivers/pic':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/pic/**
+
+'component: drivers/pinctrl':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/pinctrl/**
+
+'component: drivers/pm':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/pm/**
+
+'component: drivers/rtc':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/rtc/**
+
+'component: drivers/sdio':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/sdio/**
+
+'component: drivers/sensor_v1':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/sensor/v1/**
+
+'component: drivers/sensor_v2':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/sensor/v2/**
+
+'component: drivers/serial':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/serial/**
+
+'component: drivers/spi':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/spi/**
+
+'component: drivers/touch':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/touch/**
+
+'component: drivers/usb':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/usb/**
+
+'component: drivers/virtio':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/virtio/**
+
+'component: drivers/watchdog':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/watchdog/**
+
+'component: drivers/wlan':
+- changed-files:
+  - any-glob-to-any-file: components/drivers/wlan/**
+
+'component: finsh':
+- changed-files:
+  - any-glob-to-any-file: components/finsh/**
+
+libcpu:
+- changed-files:
+  - any-glob-to-any-file: libcpu/**
+
+'Arch: ARM/AArch64':
+- changed-files:
+  - any-glob-to-any-file: libcpu/aarch64/**
+
+'Arch: RISC-V':
+- changed-files:
+  - any-glob-to-any-file: libcpu/risc-v/**
+  - any-glob-to-any-file: BSP/wch/**
+  - any-glob-to-any-file: BSP/k210/**
+  - any-glob-to-any-file: BSP/cvitek/**
+  - any-glob-to-any-file: BSP/hpmicro/**
+  - any-glob-to-any-file: BSP/ESP32_C3/**
+  - any-glob-to-any-file: BSP/core-v-mcu/**
+  - any-glob-to-any-file: BSP/gd32/risc-v/**
+  - any-glob-to-any-file: BSP/allwinner/d1/**
+  - any-glob-to-any-file: BSP/allwinner/d1s/**
+  - any-glob-to-any-file: BSP/qemu-virt64-riscv/**
+
+Doc:
+- changed-files:
+  - any-glob-to-any-file: documentation/**

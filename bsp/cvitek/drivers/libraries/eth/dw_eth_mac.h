@@ -1,7 +1,18 @@
 /*
-* Copyright (C) Cvitek Co., Ltd. 2019-2022. All rights reserved.
-*/
-
+ * Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef _DW_GMAC_182x_H_
 #define _DW_GMAC_182x_H_
 
@@ -327,6 +338,84 @@ static inline void *memalign(uint32_t align, uint32_t size, void **mem_unalign)
     }
     return mem;
 }
+/**
+  \brief       Write Ethernet PHY Register through Management Interface.
+  \param[in]   handle  ethernet handle
+  \param[in]   phy_addr  5-bit device address
+  \param[in]   reg_addr  5-bit register address
+  \param[in]   data      16-bit data to write
+  \return      error code
+*/
+int32_t dw_eth_mac_phy_write(eth_mac_handle_t handle, uint8_t phy_addr, uint8_t reg_addr, uint16_t data);
+
+/**
+  \brief       Control Ethernet Interface.
+  \param[in]   handle  ethernet handle
+  \param[in]   control  Operation
+  \param[in]   arg      Argument of operation (optional)
+  \return      error code
+*/
+int32_t cvi_eth_mac_control(eth_mac_handle_t handle, uint32_t control, uint32_t arg);
+/**
+  \brief       Get Ethernet MAC Address.
+  \param[in]   handle  ethernet handle
+  \param[in]   mac  Pointer to address
+  \return      error code
+*/
+int32_t cvi_eth_mac_get_macaddr(eth_mac_handle_t handle, eth_mac_addr_t *mac);
+
+/**
+  \brief       Set Ethernet MAC Address.
+  \param[in]   handle  ethernet handle
+  \param[in]   mac  Pointer to address
+  \return      error code
+*/
+int32_t cvi_eth_mac_set_macaddr(eth_mac_handle_t handle, const eth_mac_addr_t *mac);
+
+/**
+  \brief       Connect phy device to mac device.
+  \param[in]   handle_mac  mac handle
+  \param[in]   handle_phy  phy handle
+*/
+void dw_eth_mac_connect_phy(eth_mac_handle_t handle_mac, eth_phy_handle_t handle_phy);
+
+/**
+  \brief       Read Ethernet PHY Register through Management Interface.
+  \param[in]   handle  ethernet handle
+  \param[in]   phy_addr  5-bit device address
+  \param[in]   reg_addr  5-bit register address
+  \param[out]  data      Pointer where the result is written to
+  \return      error code
+*/
+int32_t dw_eth_mac_phy_read(eth_mac_handle_t handle, uint8_t phy_addr, uint8_t reg_addr, uint16_t *data);
+
+/**
+  \brief       Send Ethernet frame.
+  \param[in]   handle  ethernet handle
+  \param[in]   frame  Pointer to frame buffer with data to send
+  \param[in]   len    Frame buffer length in bytes
+  \return      error code
+*/
+int32_t cvi_eth_mac_send_frame(eth_mac_handle_t handle, const uint8_t *frame, uint32_t len);
+
+/**
+  \brief       Read data of received Ethernet frame.
+  \param[in]   handle  ethernet handle
+  \param[in]   frame  Pointer to frame buffer for data to read into
+  \param[in]   len    Frame buffer length in bytes
+  \return      number of data bytes read or execution status
+                 - value >= 0: number of data bytes read
+                 - value < 0: error occurred, value is execution status as defined with execution_status
+*/
+int32_t cvi_eth_mac_read_frame(eth_mac_handle_t handle, uint8_t *frame, uint32_t len);
+
+/**
+  \brief       This function is used to initialize Ethernet device and register an event callback.
+  \param[in]   idx device id
+  \param[in]   cb  callback to handle ethernet event
+  \return      return ethernet handle if success
+ */
+eth_mac_handle_t cvi_eth_mac_init(unsigned int *base);
 
 #ifdef __cplusplus
 }

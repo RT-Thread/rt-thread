@@ -41,13 +41,22 @@ def GetPkgPath():
     else:
         return None
 
-
-def GetSDKPath(name):
+def GetSDKPackagePath():
     env = GetEnvPath()
 
     if env:
-        # read packages.json under env/tools/packages
-        with open(os.path.join(env, 'tools', 'packages', 'pkgs.json'), 'r', encoding='utf-8') as f:
+        return os.path.join(env, "tools", "scripts", "packages")
+
+    return None
+
+# get SDK path based on name
+# for example, GetSDKPath('arm-none-eabi') = '.env/tools/scripts/packages/arm-none-eabi-gcc-v10.3'
+def GetSDKPath(name):
+    sdk_pkgs = GetSDKPackagePath()
+
+    if sdk_pkgs:
+        # read packages.json under env/tools/scripts/packages
+        with open(os.path.join(sdk_pkgs, 'pkgs.json'), 'r', encoding='utf-8') as f:
             # packages_json = f.read()
             packages = json.load(f)
 
@@ -59,11 +68,10 @@ def GetSDKPath(name):
                     package = json.load(f)
 
                     if package['name'] == name:
-                        return os.path.join(env, 'tools', 'packages', package['name'] + '-' + item['ver'])
+                        return os.path.join(sdk_pkgs, package['name'] + '-' + item['ver'])
 
     # not found named package
     return None
-
 
 def help_info():
     print(

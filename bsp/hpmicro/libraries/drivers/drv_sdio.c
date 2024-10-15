@@ -13,6 +13,7 @@
  * 2024-05-23   HPMicro     Fixed unaligned transfer issue in the SDIO case
  * 2024-05-25   HPMicro     Added HS200 & HS400 support, optimize the cache-management policy for read
  * 2024-05-26   HPMicro     Added UHS-I support, added DDR50 and High Speed DDR mode support
+ * 2024-06-19   HPMicro     Added timeout check for SDXC transfer
  */
 #include <rtthread.h>
 
@@ -336,11 +337,17 @@ static hpm_stat_t hpm_sdmmc_transfer(SDXC_Type *base, sdxc_adma_config_t *dma_co
     }
     /* Wait until idle */
     volatile uint32_t interrupt_status = sdxc_get_interrupt_status(base);
+    volatile rt_base_t start_tick = rt_tick_get();
     while (!IS_HPM_BITMASK_SET(interrupt_status, SDXC_INT_STAT_CMD_COMPLETE_MASK))
     {
         interrupt_status = sdxc_get_interrupt_status(base);
         status = sdxc_parse_interrupt_status(base);
         HPM_BREAK_IF(status != status_success);
+        rt_base_t current_tick = rt_tick_get();
+        if ((current_tick - start_tick) > RT_TICK_PER_SECOND)
+        {
+            return -RT_ETIMEOUT;
+        }
     }
     sdxc_clear_interrupt_status(base, SDXC_INT_STAT_CMD_COMPLETE_MASK);
     if (status == status_success)
@@ -350,11 +357,17 @@ static hpm_stat_t hpm_sdmmc_transfer(SDXC_Type *base, sdxc_adma_config_t *dma_co
     if ((status == status_success) && (data != RT_NULL))
     {
         interrupt_status = sdxc_get_interrupt_status(base);
+        start_tick = rt_tick_get();
         while (!IS_HPM_BITMASK_SET(interrupt_status, SDXC_INT_STAT_XFER_COMPLETE_MASK | SDXC_STS_ERROR))
         {
             interrupt_status = sdxc_get_interrupt_status(base);
             status = sdxc_parse_interrupt_status(base);
             HPM_BREAK_IF(status != status_success);
+            rt_base_t current_tick = rt_tick_get();
+            if ((current_tick - start_tick) > RT_TICK_PER_SECOND)
+            {
+                return -RT_ETIMEOUT;
+            }
         }
     }
 

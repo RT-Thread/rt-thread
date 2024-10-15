@@ -8,7 +8,7 @@
 #include <aic_hal.h>
 #include <hal_syscfg.h>
 #include "usbh_core.h"
-#include "usb_ehci_priv.h"
+#include "usb_hc_ehci.h"
 
 extern void USBH_IRQHandler(uint8_t busid);
 

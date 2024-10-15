@@ -1,11 +1,11 @@
 /*
- * Copyright 2021-2022 NXP
+ * Copyright 2021-2022, 2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_OPAMP_H_
-#define _FSL_OPAMP_H_
+#ifndef FSL_OPAMP_H_
+#define FSL_OPAMP_H_
 
 #include "fsl_common.h"
 
@@ -19,10 +19,10 @@
  *******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief OPAMP driver version. */
-#define FSL_OPAMP_DRIVER_VERSION (MAKE_VERSION(2, 1, 1))
-/*@}*/
+#define FSL_OPAMP_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
+/*! @} */
 
 /*!
  * @brief The enumeration of OPAMP mode, including low noise mode and high speed mode.
@@ -138,31 +138,31 @@ typedef struct _opamp_config
     opamp_negative_gain_t negGain; /*!< Negative part programmable gain, please refer
                                        to @ref opamp_negative_gain_t. */
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_OUTSW) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_OUTSW
-    bool enableOutputSwitch; /*!< OPAMP out to negative gain resistor ladder switch.*/
-#endif                       /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_OUTSW */
+    bool enableOutputSwitch;       /*!< OPAMP out to negative gain resistor ladder switch.*/
+#endif                             /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_OUTSW */
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW1) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW1
-    bool enablePosADCSw1; /*!< Positive part reference voltage switch to ADC channel or not.
-                             - \b true Positive part reference voltage switch to ADC channel.
-                             - \b false Positive part reference voltage do not switch to ADC channel. */
+    bool enablePosADCSw1;          /*!< Positive part reference voltage switch to ADC channel or not.
+                                      - \b true Positive part reference voltage switch to ADC channel.
+                                      - \b false Positive part reference voltage do not switch to ADC channel. */
 #else
     bool enablePosADCSw; /*!< Positive part reference voltage switch to ADC channel or not.
                              - \b true Positive part reference voltage switch to ADC channel.
                              - \b false Positive part reference voltage do not switch to ADC channel. */
-#endif /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW1 */
+#endif                             /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW1 */
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW2) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW2
-    bool enablePosADCSw2; /*!< Positive part reference voltage switch to ADC channel or not.
-                             - \b true Positive part reference voltage switch to ADC channel.
-                             - \b false Positive part reference voltage do not switch to ADC channel. */
-#endif                    /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW2 */
+    bool enablePosADCSw2;          /*!< Positive part reference voltage switch to ADC channel or not.
+                                      - \b true Positive part reference voltage switch to ADC channel.
+                                      - \b false Positive part reference voltage do not switch to ADC channel. */
+#endif                             /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_ADCSW2 */
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_BUFEN) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_BUFEN
-    bool enableRefBuffer; /*!< Reference buffer enable.*/
-#endif                    /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_BUFEN */
+    bool enableRefBuffer;          /*!< Reference buffer enable.*/
+#endif                             /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_BUFEN */
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_INPSEL) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_INPSEL
     opamp_positive_input_channel_selection_t PosInputChannelSelection; /*!< Positive Input Channel Selection*/
 #endif                                                                 /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_INPSEL */
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_TRIGMD) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_TRIGMD
-    bool enableTriggerMode; /*!< Trigger Mode Enable.*/
-#endif                      /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_TRIGMD */
+    bool enableTriggerMode;                                            /*!< Trigger Mode Enable.*/
+#endif                                                                 /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_TRIGMD */
 } opamp_config_t;
 
 /*******************************************************************************
@@ -211,7 +211,34 @@ void OPAMP_Deinit(OPAMP_Type *base);
  */
 void OPAMP_GetDefaultConfig(opamp_config_t *config);
 
-/* @} */
+/*! @} */
+
+/*!
+ * @name Positive port gain and negative gain configuration.
+ * @{
+ */
+/*!
+ * @brief Configure OPAMP positive port gain.
+ *
+ * @param base OPAMP peripheral base address.
+ * @param option OPAMP positive port gain.
+ */
+static inline void OPAMP_DoPosGainConfig(OPAMP_Type *base, opamp_positive_gain_t option)
+{
+    base->OPAMP_CTR = (((base->OPAMP_CTR) & (~OPAMP_OPAMP_CTR_PGAIN_MASK)) | OPAMP_OPAMP_CTR_PGAIN(option));
+}
+
+/*!
+ * @brief Configure OPAMP negative port gain.
+ *
+ * @param base OPAMP peripheral base address.
+ * @param option OPAMP negative port gain.
+ */
+static inline void OPAMP_DoNegGainConfig(OPAMP_Type *base, opamp_negative_gain_t option)
+{
+    base->OPAMP_CTR = (((base->OPAMP_CTR) & (~OPAMP_OPAMP_CTR_NGAIN_MASK)) | OPAMP_OPAMP_CTR_NGAIN(option));
+}
+/*! @} */
 
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_BUFEN) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_BUFEN
 /*!
@@ -236,7 +263,7 @@ static inline void OPAMP_EnableRefBuffer(OPAMP_Type *base, bool enable)
         base->OPAMP_CTR &= ~(uint32_t)OPAMP_OPAMP_CTR_BUFEN_MASK;
     }
 }
-/* @} */
+/*! @} */
 #endif /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_BUFEN */
 
 #if defined(FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_TRIGMD) && FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_TRIGMD
@@ -262,7 +289,7 @@ static inline void OPAMP_EnableTriggerMode(OPAMP_Type *base, bool enable)
         base->OPAMP_CTR &= ~(uint32_t)OPAMP_OPAMP_CTR_TRIGMD_MASK;
     }
 }
-/* @} */
+/*! @} */
 #endif /* FSL_FEATURE_OPAMP_HAS_OPAMP_CTR_TRIGMD */
 
 #if defined(__cplusplus)
@@ -271,4 +298,4 @@ static inline void OPAMP_EnableTriggerMode(OPAMP_Type *base, bool enable)
 
 /*! @} */
 
-#endif /* _FSL_OPAMP_H_ */
+#endif /* FSL_OPAMP_H_ */

@@ -300,7 +300,7 @@ void init_cycfg_pins(void)
     Cy_GPIO_Pin_Init(CYBSP_SWDCK_PORT, CYBSP_SWDCK_PIN, &CYBSP_SWDCK_config);
     Cy_GPIO_Pin_Init(CYBSP_CINA_PORT, CYBSP_CINA_PIN, &CYBSP_CINA_config);
     Cy_GPIO_Pin_Init(CYBSP_CINB_PORT, CYBSP_CINB_PIN, &CYBSP_CINB_config);
-    Cy_GPIO_Pin_Init(CYBSP_CSD_BTN0_PORT, CYBSP_CSD_BTN0_PIN, &CYBSP_CSD_BTN0_config);
+    //Cy_GPIO_Pin_Init(CYBSP_CSD_BTN0_PORT, CYBSP_CSD_BTN0_PIN, &CYBSP_CSD_BTN0_config);
 }
 
 void reserve_cycfg_pins(void)
@@ -312,7 +312,7 @@ void reserve_cycfg_pins(void)
     cyhal_hwmgr_reserve(&CYBSP_CINB_obj);
     cyhal_hwmgr_reserve(&CYBSP_LED_RGB_BLUE_obj);
     cyhal_hwmgr_reserve(&CYBSP_CMOD_obj);
-    cyhal_hwmgr_reserve(&CYBSP_CSD_BTN0_obj);
+    //cyhal_hwmgr_reserve(&CYBSP_CSD_BTN0_obj);
     cyhal_hwmgr_reserve(&CYBSP_A8_obj);
     cyhal_hwmgr_reserve(&CYBSP_A9_obj);
     cyhal_hwmgr_reserve(&CYBSP_A10_obj);

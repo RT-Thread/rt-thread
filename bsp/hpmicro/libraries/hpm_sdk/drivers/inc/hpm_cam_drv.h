@@ -11,6 +11,7 @@
 #include "hpm_common.h"
 #include "hpm_display_common.h"
 #include "hpm_cam_regs.h"
+#include "hpm_soc_feature.h"
 
 /**
  * @brief CAM driver APIs
@@ -80,7 +81,9 @@ typedef struct {
     uint32_t width;
     uint32_t height;
     bool pixclk_sampling_falling;
+#if defined(HPM_IP_FEATURE_CAM_INV_DEN) && (HPM_IP_FEATURE_CAM_INV_DEN == 1)
     bool de_active_low; /* de_active_low must is same with hsync_active_low when dvp be used */
+#endif
     bool hsync_active_low;
     bool vsync_active_low;
     bool color_ext;

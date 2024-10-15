@@ -65,6 +65,9 @@ if GetDepend(['BSP_USING_WDT']):
 if GetDepend(['BSP_USING_CAN']):
     src += ['drv_can.c']
 
+if GetDepend(['BSP_USING_CAN_V2']):
+    src += ['drv_can_v2.c']
+
 if GetDepend(['BSP_USING_SDIO']):
     src += ['drv_sdio.c']
 
