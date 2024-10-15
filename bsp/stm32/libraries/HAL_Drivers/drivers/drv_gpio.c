@@ -402,6 +402,8 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     if (enabled == PIN_IRQ_ENABLE)
     {
+        GPIO_InitTypeDef GPIO_InitStruct = {0};
+
         irqindex = bit2bitno(PIN_STPIN(pin));
         if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
         {
@@ -417,7 +419,6 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         }
 
         irqmap = &pin_irq_map[irqindex];
-        GPIO_InitTypeDef GPIO_InitStruct;
 
         /* Configure GPIO_InitStructure */
         GPIO_InitStruct.Pin = PIN_STPIN(pin);
