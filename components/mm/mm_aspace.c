@@ -660,7 +660,7 @@ static inline int _not_in_range(rt_size_t flags, void *start, rt_size_t length,
 static inline int _check_addr_overflow(rt_size_t flags, void *start, rt_size_t length,
                                 void *limit_start, rt_size_t limit_size)
 {
-    rt_bool_t isfixednotset = (flags & MMF_MAP_FIXED) == RT_NULL; 
+    rt_bool_t isfixednotset = (flags & MMF_MAP_FIXED) == RT_NULL;
     if(isfixednotset && start != RT_NULL)
         return (_IS_OVERFLOW(start, length) && _IS_OVERSIZE(start, length, limit_start, limit_size));
     return RT_EOK;
