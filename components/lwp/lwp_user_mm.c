@@ -581,6 +581,14 @@ int lwp_munmap(struct rt_lwp *lwp, void *addr, size_t length)
     int ret;
 
     RT_ASSERT(lwp);
+    long offset = 0;
+    if ((rt_base_t)addr & ARCH_PAGE_MASK)
+    {
+        offset = (char *)addr - (char *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+        length += offset;
+        addr = (void *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+
+    }
     ret = rt_aspace_unmap_range(lwp->aspace, addr, length);
     return lwp_errno_to_posix(ret);
 }
