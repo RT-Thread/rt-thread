@@ -31,6 +31,7 @@
 #include <stdint.h>
 
 #define ALIGNED(addr) (!((rt_size_t)(addr) & ARCH_PAGE_MASK))
+#define RESET_POINTER(ptr) ((ptr) = RT_NULL)
 
 static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
                         void *limit_start, rt_size_t limit_size,
@@ -656,6 +657,15 @@ static inline int _not_in_range(rt_size_t flags, void *start, rt_size_t length,
     return rc;
 }
 
+static inline int _check_addr_overflow(rt_size_t flags, void *start, rt_size_t length,
+                                void *limit_start, rt_size_t limit_size)
+{
+    rt_bool_t isfixednotset = (flags & MMF_MAP_FIXED) == RT_NULL; 
+    if(isfixednotset && start != RT_NULL)
+        return (_IS_OVERFLOW(start, length) && _IS_OVERSIZE(start, length, limit_start, limit_size));
+    return RT_EOK;
+}
+
 static inline int _not_align(void *start, rt_size_t length, rt_size_t mask)
 {
     return (start != RT_NULL) &&
@@ -684,15 +694,21 @@ int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
         LOG_I("%s(%p, %p, %lx, %lx, %lx, %p, %lx): Invalid input",
             __func__, aspace, addr, length, attr, flags, mem_obj, offset);
     }
-    else if (_not_in_range(flags, *addr, length, aspace->start, aspace->size))
-    {
-        err = -RT_EINVAL;
-        LOG_I("%s(addr:%p, len:%lx): out of range", __func__, *addr, length);
-    }
     else if (_not_support(flags))
     {
         LOG_I("%s: no support flags 0x%lx", __func__, flags);
         err = -RT_ENOSYS;
+    }
+    else if (_check_addr_overflow(flags, *addr, length, aspace->start, aspace->size)) /* 处理离谱的地址 如-1等等 */
+    {
+        RT_ASSERT((length & ARCH_PAGE_MASK) == 0);
+        RESET_POINTER(*addr);
+        err = _mm_aspace_map(aspace, &varea, addr, length, attr, flags, mem_obj, offset);
+    }
+    else if (_not_in_range(flags, *addr, length, aspace->start, aspace->size))
+    {
+        err = -RT_EINVAL;
+        LOG_I("%s(addr:%p, len:%lx): out of range", __func__, *addr, length);
     }
     else
     {
