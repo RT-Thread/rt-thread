@@ -17,7 +17,7 @@
 
 #include <MK64F12.h>
 
-#include <drivers/serial.h>
+#include <drivers/dev_serial.h>
 
 void rt_hw_uart_init(void);
 

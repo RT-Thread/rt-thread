@@ -680,6 +680,7 @@ void usbh_asix_rx_thread(void *argument)
     uint32_t transfer_size = (16 * 1024);
 #endif
 
+    (void)argument;
     USB_LOG_INFO("Create asix rx thread\r\n");
     // clang-format off
 find_class:
@@ -742,7 +743,7 @@ find_class:
 #else
             if ((g_asix_rx_length + (16 * 1024)) > CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE) {
 #endif
-                USB_LOG_ERR("Rx packet is overflow, please ruduce tcp window size or increase CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE\r\n");
+                USB_LOG_ERR("Rx packet is overflow, please reduce tcp window size or increase CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE\r\n");
                 while (1) {
                 }
             }
@@ -791,10 +792,12 @@ int usbh_asix_eth_output(uint32_t buflen)
 
 __WEAK void usbh_asix_run(struct usbh_asix *asix_class)
 {
+    (void)asix_class;
 }
 
 __WEAK void usbh_asix_stop(struct usbh_asix *asix_class)
 {
+    (void)asix_class;
 }
 
 static const uint16_t asix_id_table[][2] = {

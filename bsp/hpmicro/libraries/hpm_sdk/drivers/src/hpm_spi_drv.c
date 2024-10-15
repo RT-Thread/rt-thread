@@ -144,11 +144,11 @@ hpm_stat_t spi_write_data(SPI_Type *ptr, uint8_t data_len_in_bytes, uint8_t *buf
 
 hpm_stat_t spi_read_data(SPI_Type *ptr, uint8_t data_len_in_bytes, uint8_t *buff, uint32_t count)
 {
-    uint32_t status;
     uint32_t transferred = 0;
     uint32_t retry = 0;
     uint32_t temp;
-
+    uint8_t rx_valid_size = 0;
+    uint8_t j = 0;
     /* check parameter validity */
     if (buff == NULL || count == 0) {
         return status_invalid_argument;
@@ -160,15 +160,16 @@ hpm_stat_t spi_read_data(SPI_Type *ptr, uint8_t data_len_in_bytes, uint8_t *buff
 
     /* data transfer */
     while (transferred < count) {
-        status = ptr->STATUS;
-        if (!(status & SPI_STATUS_RXEMPTY_MASK)) {
-            /* read data from the txfifo */
-            temp = ptr->DATA;
-            for (uint8_t i = 0; i < data_len_in_bytes; i++) {
-                *(buff++) = (uint8_t)(temp >> (i * 8));
+        rx_valid_size = spi_get_rx_fifo_valid_data_size(ptr);
+        if (rx_valid_size > 0) {
+            for (j = 0; j < rx_valid_size; j++) {
+                temp = ptr->DATA;
+                for (uint8_t i = 0; i < data_len_in_bytes; i++) {
+                    *(buff++) = (uint8_t)(temp >> (i * 8));
+                }
             }
             /* transfer count increment */
-            transferred++;
+            transferred += rx_valid_size;
             retry = 0;
         } else {
             if (retry > HPM_SPI_DRV_DEFAULT_RETRY_COUNT) {
@@ -621,3 +622,4 @@ uint8_t spi_directio_read(SPI_Type *ptr, spi_directio_pin_t pin)
     return io_sta;
 }
 #endif
+

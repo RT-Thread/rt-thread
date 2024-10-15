@@ -444,11 +444,6 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     struct netdev *netdev = RT_NULL;
     rt_bool_t flag = RT_FALSE;
 
-    if (family == AF_UNIX)
-    {
-        netdv_def = netdev_lo;
-    }
-
     if (family < 0 || family > AF_MAX)
     {
         return -1;
@@ -684,7 +679,8 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 
     addr_un = (struct sockaddr_un *)name;
 
-    if ((addr_un->sa_family != AF_UNIX) && (addr_un->sa_family != AF_NETLINK))
+#define IS_INET_ADDR_FAMILY(_af) ((_af) == AF_INET) || ((_af) == AF_INET6)
+    if (IS_INET_ADDR_FAMILY(name->sa_family))
     {
         /* bind network interface by ip address */
         sal_sockaddr_to_ipaddr(name, &input_ipaddr);
@@ -1171,12 +1167,9 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, ioctlsocket);
-
     struct sal_ifreq *ifr = (struct sal_ifreq *)arg;
 
-    if((sock->domain == AF_INET)&&(sock->netdev)&&(ifr != RT_NULL))
+    if (ifr != RT_NULL)
     {
         switch (cmd)
         {
@@ -1474,10 +1467,24 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             ifconf_tmp->ifc_ifcu.ifcu_buf =  ifconf_tmp->ifc_ifcu.ifcu_buf - sizeof(struct sal_ifreq) * count_size;
             return 0;
         }
+        case SIOCGIFINDEX:
+        {
+            netdev = netdev_get_by_name(ifr->ifr_ifrn.ifrn_name);
+            if (netdev)
+            {
+                ifr->ifr_ifru.ifru_ivalue = netdev->ifindex;
+                return 0;
+            }
+            return -ENODEV;
+        }
         default:
             break;
         }
     }
+
+    /* check the network interface socket opreation */
+    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, ioctlsocket);
+
     return pf->skt_ops->ioctlsocket((int)(size_t)sock->user_data, cmd, arg);
 }
 

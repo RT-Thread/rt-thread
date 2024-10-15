@@ -10,15 +10,15 @@
 
 #include <rtthread.h>
 
+#ifdef SAL_USING_POSIX
+#include <poll.h>
+#endif
+
 #include <lwip/sockets.h>
 #include <lwip/netdb.h>
 #include <lwip/api.h>
 #include <lwip/init.h>
 #include <lwip/netif.h>
-
-#ifdef SAL_USING_POSIX
-#include <poll.h>
-#endif
 
 #include <sal_low_lvl.h>
 #include <af_inet.h>

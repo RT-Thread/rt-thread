@@ -12,7 +12,7 @@
  *  usbx->gccfg_bit.pwrdown = TRUE;
  *  usbx->gccfg_bit.avalidsesen = TRUE;
  *  usbx->gccfg_bit.bvalidsesen = TRUE;
- * 
+ *
 */
 
 uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base)
@@ -49,4 +49,9 @@ uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base)
     return ((1 << 16) | (1 << 21));
 #endif
 #endif
+}
+
+void usbd_dwc2_delay_ms(uint8_t ms)
+{
+    /* implement later */
 }

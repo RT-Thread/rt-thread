@@ -33,8 +33,6 @@ extern "C" {
  */
 
 typedef int                             rt_bool_t;      /**< boolean type */
-typedef signed long                     rt_base_t;      /**< Nbit CPU related data type */
-typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
 
 #ifndef RT_USING_ARCH_DATA_TYPE
 #ifdef RT_USING_LIBC
@@ -63,12 +61,24 @@ typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned inte
 #endif /* RT_USING_LIBC */
 #endif /* RT_USING_ARCH_DATA_TYPE */
 
+#ifdef ARCH_CPU_64BIT
+typedef rt_int64_t                      rt_base_t;      /**< Nbit CPU related data type */
+typedef rt_uint64_t                     rt_ubase_t;     /**< Nbit unsigned CPU related data type */
+#else
+typedef rt_int32_t                      rt_base_t;      /**< Nbit CPU related data type */
+typedef rt_uint32_t                     rt_ubase_t;     /**< Nbit unsigned CPU related data type */
+#endif
+
 #if defined(RT_USING_LIBC) && !defined(RT_USING_NANO)
 typedef size_t                          rt_size_t;      /**< Type for size number */
 typedef ssize_t                         rt_ssize_t;     /**< Used for a count of bytes or an error indication */
+typedef intptr_t                        rt_intptr_t;    /**< Type for signed pointer length integer */
+typedef uintptr_t                       rt_uintptr_t;   /**< Type for unsigned pointer length integer */
 #else
 typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
 typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
+typedef rt_ubase_t                      rt_intptr_t;    /**< Type for signed pointer length integer */
+typedef rt_base_t                       rt_uintptr_t;   /**< Type for unsigned pointer length integer */
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */

@@ -12,7 +12,7 @@
 #define __SENSOR_H__
 
 #include <rtthread.h>
-#include "pin.h"
+#include "dev_pin.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,6 +53,9 @@ extern "C" {
 #define RT_SENSOR_CLASS_IAQ            (19) /* IAQ sensor.       */
 #define RT_SENSOR_CLASS_ETOH           (20) /* EtOH sensor.      */
 #define RT_SENSOR_CLASS_BP             (21) /* Blood Pressure    */
+#define RT_SENSOR_CLASS_VOLTAGE        (22) /* Voltage sensor    */
+#define RT_SENSOR_CLASS_CURRENT        (23) /* Current sensor    */
+#define RT_SENSOR_CLASS_POWER          (24) /* Power sensor      */
 
 /* Sensor vendor types */
 
@@ -95,6 +98,9 @@ extern "C" {
 #define  RT_SENSOR_UNIT_DD             (17) /* Coordinates             unit: DD         */
 #define  RT_SENSOR_UNIT_MGM3           (18) /* Concentration           unit: mg/m3      */
 #define  RT_SENSOR_UNIT_MMHG           (19) /* Blood Pressure          unit: mmHg       */
+#define  RT_SENSOR_UNIT_MV             (20) /* Voltage                 unit: mV         */
+#define  RT_SENSOR_UNIT_MA             (21) /* Current                 unit: mA         */
+#define  RT_SENSOR_UNIT_MW             (22) /* Power                   unit: mW         */
 /* Sensor communication interface types */
 
 #define  RT_SENSOR_INTF_I2C            (1 << 0)
@@ -230,9 +236,12 @@ struct rt_sensor_data
         rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
         rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
         rt_uint32_t          spo2;          /* SpO2 sensor.         unit: permillage  */
-        rt_uint32_t          iaq;           /* IAQ sensor.          unit: 1 */
-        rt_uint32_t          etoh;          /* EtOH sensor.         unit: ppm */
+        rt_uint32_t          iaq;           /* IAQ sensor.          unit: 1           */
+        rt_uint32_t          etoh;          /* EtOH sensor.         unit: ppm         */
         struct sensor_bp     bp;            /* BloodPressure.       unit: mmHg        */
+        float                mv;            /* Voltage sensor.      unit: mv          */
+        float                ma;            /* Current sensor.      unit: ma          */
+        float                mw;            /* Power sensor.        unit: mw          */
     } data;
 };
 

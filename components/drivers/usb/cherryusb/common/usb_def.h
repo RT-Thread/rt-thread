@@ -614,7 +614,7 @@ struct usb_webusb_url_descriptor {
     char URL[];
 } __PACKED;
 
-struct usb_webusb_url_ex_descriptor {
+struct usb_webusb_descriptor {
     uint8_t vendor_code;
     const uint8_t *string;
     uint32_t string_len;

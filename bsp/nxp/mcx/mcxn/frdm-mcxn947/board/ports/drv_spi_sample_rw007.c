@@ -6,6 +6,8 @@
 #include <board.h>
 #include <spi_wifi_rw007.h>
 
+#define BOARD_RW007_DEVICE_NAME "rw007"
+
 extern void spi_wifi_isr(int vector);
 
 static void rw007_gpio_init(void)
@@ -17,11 +19,11 @@ static void rw007_gpio_init(void)
     /* Reset rw007 and config mode */
     rt_pin_write(BOARD_RW007_RST_PIN, PIN_LOW);
 
-    rt_thread_delay(rt_tick_from_millisecond(1));
+    rt_thread_delay(rt_tick_from_millisecond(100));
     rt_pin_write(BOARD_RW007_RST_PIN, PIN_HIGH);
 
     /* Wait rw007 ready(exit busy stat) */
-    while (!(BOARD_RW007_INT_BUSY_PIN))
+    while (!rt_pin_read(BOARD_RW007_INT_BUSY_PIN))
     {
         rt_thread_delay(5);
     }
@@ -30,15 +32,18 @@ static void rw007_gpio_init(void)
     rt_pin_mode(BOARD_RW007_INT_BUSY_PIN, PIN_MODE_INPUT_PULLUP);
 }
 
-extern rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin);
-
 int wifi_spi_device_init(void)
 {
+    int ret = 0;
     char sn_version[32];
-    uint32_t cs_pin = BOARD_RW007_CS_PIN;
+
+    struct rt_spi_device *spi_device = rt_malloc(sizeof(struct rt_spi_device));
+    if (!spi_device) return -1;
 
     rw007_gpio_init();
-    rt_hw_spi_device_attach(BOARD_RW007_SPI_BUS_NAME, "rw007", cs_pin);
+    ret = rt_spi_bus_attach_device_cspin(spi_device, BOARD_RW007_DEVICE_NAME, BOARD_RW007_SPI_BUS_NAME, BOARD_RW007_CS_PIN, RT_NULL);
+    if (ret != RT_EOK) return -2;
+
     rt_hw_wifi_init("rw007");
 
     rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION);

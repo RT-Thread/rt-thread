@@ -10,7 +10,7 @@
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cp210x_buf[64];
 
-#define CONFIG_USBHOST_MAX_CP210X_CLASS 4
+#define CONFIG_USBHOST_MAX_CP210X_CLASS 1
 
 static struct usbh_cp210x g_cp210x_class[CONFIG_USBHOST_MAX_CP210X_CLASS];
 static uint32_t g_devinuse = 0;
@@ -298,10 +298,12 @@ int usbh_cp210x_bulk_out_transfer(struct usbh_cp210x *cp210x_class, uint8_t *buf
 
 __WEAK void usbh_cp210x_run(struct usbh_cp210x *cp210x_class)
 {
+    (void)cp210x_class;
 }
 
 __WEAK void usbh_cp210x_stop(struct usbh_cp210x *cp210x_class)
 {
+    (void)cp210x_class;
 }
 
 static const uint16_t cp210x_id_table[][2] = {

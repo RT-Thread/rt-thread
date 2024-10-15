@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_PDM_H_
-#define _FSL_PDM_H_
+#ifndef FSL_PDM_H_
+#define FSL_PDM_H_
 
 #include "fsl_common.h"
 
@@ -21,9 +21,9 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-#define FSL_PDM_DRIVER_VERSION (MAKE_VERSION(2, 8, 0)) /*!< Version 2.8.0 */
-/*@}*/
+/*! @{ */
+#define FSL_PDM_DRIVER_VERSION (MAKE_VERSION(2, 9, 1)) /*!< Version 2.9.1 */
+/*! @} */
 
 /*! @brief PDM XFER QUEUE SIZE */
 #define PDM_XFER_QUEUE_SIZE (4U)
@@ -31,9 +31,9 @@
 /*! @brief PDM return status*/
 enum
 {
-    kStatus_PDM_Busy = MAKE_STATUS(kStatusGroup_PDM, 0), /*!< PDM is busy. */
+    kStatus_PDM_Busy = MAKE_STATUS(kStatusGroup_PDM, 0),                 /*!< PDM is busy. */
 #if (defined(FSL_FEATURE_PDM_HAS_STATUS_LOW_FREQ) && (FSL_FEATURE_PDM_HAS_STATUS_LOW_FREQ == 1U))
-    kStatus_PDM_CLK_LOW = MAKE_STATUS(kStatusGroup_PDM, 1), /*!< PDM clock frequency low */
+    kStatus_PDM_CLK_LOW = MAKE_STATUS(kStatusGroup_PDM, 1),              /*!< PDM clock frequency low */
 #endif
     kStatus_PDM_FIFO_ERROR           = MAKE_STATUS(kStatusGroup_PDM, 2), /*!< PDM FIFO underrun or overflow */
     kStatus_PDM_QueueFull            = MAKE_STATUS(kStatusGroup_PDM, 3), /*!< PDM FIFO underrun or overflow */
@@ -41,8 +41,8 @@ enum
     kStatus_PDM_Output_ERROR         = MAKE_STATUS(kStatusGroup_PDM, 5), /*!< PDM is output error */
     kStatus_PDM_ChannelConfig_Failed = MAKE_STATUS(kStatusGroup_PDM, 6), /*!< PDM channel config failed */
 #if !(defined(FSL_FEATURE_PDM_HAS_NO_HWVAD) && FSL_FEATURE_PDM_HAS_NO_HWVAD)
-    kStatus_PDM_HWVAD_VoiceDetected = MAKE_STATUS(kStatusGroup_PDM, 7), /*!< PDM hwvad voice detected */
-    kStatus_PDM_HWVAD_Error         = MAKE_STATUS(kStatusGroup_PDM, 8), /*!< PDM hwvad error */
+    kStatus_PDM_HWVAD_VoiceDetected = MAKE_STATUS(kStatusGroup_PDM, 7),  /*!< PDM hwvad voice detected */
+    kStatus_PDM_HWVAD_Error         = MAKE_STATUS(kStatusGroup_PDM, 8),  /*!< PDM hwvad error */
 #endif
 };
 
@@ -58,10 +58,10 @@ enum _pdm_internal_status
 {
     kPDM_StatusDfBusyFlag = (int)PDM_STAT_BSY_FIL_MASK, /*!< Decimation filter is busy processing data */
 #if !(defined(FSL_FEATURE_PDM_HAS_NO_FIR_RDY) && FSL_FEATURE_PDM_HAS_NO_FIR_RDY)
-    kPDM_StatusFIRFilterReady = PDM_STAT_FIR_RDY_MASK, /*!< FIR filter data is ready */
+    kPDM_StatusFIRFilterReady = PDM_STAT_FIR_RDY_MASK,  /*!< FIR filter data is ready */
 #endif
 #if (defined(FSL_FEATURE_PDM_HAS_STATUS_LOW_FREQ) && (FSL_FEATURE_PDM_HAS_STATUS_LOW_FREQ == 1U))
-    kPDM_StatusFrequencyLow = PDM_STAT_LOWFREQF_MASK, /*!< Mic app clock frequency not high enough */
+    kPDM_StatusFrequencyLow = PDM_STAT_LOWFREQF_MASK,     /*!< Mic app clock frequency not high enough */
 #endif
     kPDM_StatusCh0FifoDataAvaliable = PDM_STAT_CH0F_MASK, /*!< channel 0 fifo data reached watermark level */
     kPDM_StatusCh1FifoDataAvaliable = PDM_STAT_CH1F_MASK, /*!< channel 1 fifo data reached watermark level */
@@ -135,15 +135,15 @@ enum _pdm_range_status
     kPDM_RangeStatusUnderFlowCh6 = PDM_RANGE_STAT_RANGEUNF6_MASK, /*!< channel6 range status underflow */
     kPDM_RangeStatusUnderFlowCh7 = PDM_RANGE_STAT_RANGEUNF7_MASK, /*!< channel7 range status underflow */
 #endif
-    kPDM_RangeStatusOverFlowCh0 = PDM_RANGE_STAT_RANGEOVF0_MASK, /*!< channel0 range status overflow */
-    kPDM_RangeStatusOverFlowCh1 = PDM_RANGE_STAT_RANGEOVF1_MASK, /*!< channel1 range status overflow */
-    kPDM_RangeStatusOverFlowCh2 = PDM_RANGE_STAT_RANGEOVF2_MASK, /*!< channel2 range status overflow */
-    kPDM_RangeStatusOverFlowCh3 = PDM_RANGE_STAT_RANGEOVF3_MASK, /*!< channel3 range status overflow */
+    kPDM_RangeStatusOverFlowCh0 = PDM_RANGE_STAT_RANGEOVF0_MASK,  /*!< channel0 range status overflow */
+    kPDM_RangeStatusOverFlowCh1 = PDM_RANGE_STAT_RANGEOVF1_MASK,  /*!< channel1 range status overflow */
+    kPDM_RangeStatusOverFlowCh2 = PDM_RANGE_STAT_RANGEOVF2_MASK,  /*!< channel2 range status overflow */
+    kPDM_RangeStatusOverFlowCh3 = PDM_RANGE_STAT_RANGEOVF3_MASK,  /*!< channel3 range status overflow */
 #if !defined(FSL_FEATURE_PDM_CHANNEL_NUM) || (FSL_FEATURE_PDM_CHANNEL_NUM == 8U)
-    kPDM_RangeStatusOverFlowCh4 = PDM_RANGE_STAT_RANGEOVF4_MASK, /*!< channel4 range status overflow */
-    kPDM_RangeStatusOverFlowCh5 = PDM_RANGE_STAT_RANGEOVF5_MASK, /*!< channel5 range status overflow */
-    kPDM_RangeStatusOverFlowCh6 = PDM_RANGE_STAT_RANGEOVF6_MASK, /*!< channel6 range status overflow */
-    kPDM_RangeStatusOverFlowCh7 = PDM_RANGE_STAT_RANGEOVF7_MASK, /*!< channel7 range status overflow */
+    kPDM_RangeStatusOverFlowCh4 = PDM_RANGE_STAT_RANGEOVF4_MASK,  /*!< channel4 range status overflow */
+    kPDM_RangeStatusOverFlowCh5 = PDM_RANGE_STAT_RANGEOVF5_MASK,  /*!< channel5 range status overflow */
+    kPDM_RangeStatusOverFlowCh6 = PDM_RANGE_STAT_RANGEOVF6_MASK,  /*!< channel6 range status overflow */
+    kPDM_RangeStatusOverFlowCh7 = PDM_RANGE_STAT_RANGEOVF7_MASK,  /*!< channel7 range status overflow */
 #endif
 };
 #else
@@ -160,15 +160,15 @@ enum _pdm_output_status
     kPDM_OutputStatusUnderFlowCh6 = PDM_OUT_STAT_OUTUNF6_MASK, /*!< channel6 output status underflow */
     kPDM_OutputStatusUnderFlowCh7 = PDM_OUT_STAT_OUTUNF7_MASK, /*!< channel7 output status underflow */
 #endif
-    kPDM_OutputStatusOverFlowCh0 = PDM_OUT_STAT_OUTOVF0_MASK,  /*!< channel0 output status overflow */
-    kPDM_OutputStatusOverFlowCh1 = PDM_OUT_STAT_OUTOVF1_MASK,  /*!< channel1 output status overflow */
-    kPDM_OutputStatusOverFlowCh2 = PDM_OUT_STAT_OUTOVF2_MASK,  /*!< channel2 output status overflow */
-    kPDM_OutputStatusOverFlowCh3 = PDM_OUT_STAT_OUTOVF3_MASK,  /*!< channel3 output status overflow */
+    kPDM_OutputStatusOverFlowCh0  = PDM_OUT_STAT_OUTOVF0_MASK, /*!< channel0 output status overflow */
+    kPDM_OutputStatusOverFlowCh1  = PDM_OUT_STAT_OUTOVF1_MASK, /*!< channel1 output status overflow */
+    kPDM_OutputStatusOverFlowCh2  = PDM_OUT_STAT_OUTOVF2_MASK, /*!< channel2 output status overflow */
+    kPDM_OutputStatusOverFlowCh3  = PDM_OUT_STAT_OUTOVF3_MASK, /*!< channel3 output status overflow */
 #if !defined(FSL_FEATURE_PDM_CHANNEL_NUM) || (FSL_FEATURE_PDM_CHANNEL_NUM == 8U)
-    kPDM_OutputStatusOverFlowCh4 = PDM_OUT_STAT_OUTOVF4_MASK,  /*!< channel4 output status overflow */
-    kPDM_OutputStatusOverFlowCh5 = PDM_OUT_STAT_OUTOVF5_MASK,  /*!< channel5 output status overflow */
-    kPDM_OutputStatusOverFlowCh6 = PDM_OUT_STAT_OUTOVF6_MASK,  /*!< channel6 output status overflow */
-    kPDM_OutputStatusOverFlowCh7 = PDM_OUT_STAT_OUTOVF7_MASK,  /*!< channel7 output status overflow */
+    kPDM_OutputStatusOverFlowCh4  = PDM_OUT_STAT_OUTOVF4_MASK, /*!< channel4 output status overflow */
+    kPDM_OutputStatusOverFlowCh5  = PDM_OUT_STAT_OUTOVF5_MASK, /*!< channel5 output status overflow */
+    kPDM_OutputStatusOverFlowCh6  = PDM_OUT_STAT_OUTOVF6_MASK, /*!< channel6 output status overflow */
+    kPDM_OutputStatusOverFlowCh7  = PDM_OUT_STAT_OUTOVF7_MASK, /*!< channel7 output status overflow */
 #endif
 };
 #endif
@@ -186,10 +186,10 @@ typedef enum _pdm_dc_remover
 /*! @brief PDM DC remover configurations */
 typedef enum _pdm_dc_remover
 {
-    kPDM_DcRemoverCutOff21Hz = 0U,  /*!< DC remover cut off 21HZ */
-    kPDM_DcRemoverCutOff83Hz = 1U,  /*!< DC remover cut off 83HZ */
+    kPDM_DcRemoverCutOff21Hz  = 0U, /*!< DC remover cut off 21HZ */
+    kPDM_DcRemoverCutOff83Hz  = 1U, /*!< DC remover cut off 83HZ */
     kPDM_DcRemoverCutOff152Hz = 2U, /*!< DC remover cut off 152HZ */
-    kPDM_DcRemoverBypass = 3U,      /*!< DC remover bypass */
+    kPDM_DcRemoverBypass      = 3U, /*!< DC remover bypass */
 } pdm_dc_remover_t;
 #endif
 
@@ -241,7 +241,7 @@ enum _pdm_data_width
     kPDM_DataWwidth24 = 3U, /*!< PDM data width 24bit */
     kPDM_DataWwidth32 = 4U, /*!< PDM data width 32bit */
 #else
-    kPDM_DataWdith16 = 2U, /*!< PDM data width 16bit */
+    kPDM_DataWdith16 = 2U,          /*!< PDM data width 16bit */
 #endif
 };
 
@@ -264,6 +264,9 @@ typedef struct _pdm_config
 {
     bool
         enableDoze; /*!< This module will enter disable/low leakage mode if DOZEN is active with ipg_doze is asserted */
+#if defined(FSL_FEATURE_PDM_HAS_DECIMATION_FILTER_BYPASS) && FSL_FEATURE_PDM_HAS_DECIMATION_FILTER_BYPASS
+    bool enableFilterBypass;           /*!< Switchable bypass path for the decimation filter */
+#endif
     uint8_t fifoWatermark;             /*!< Watermark value for FIFO */
     pdm_df_quality_mode_t qualityMode; /*!< Quality mode */
     uint8_t cicOverSampleRate;         /*!< CIC filter over sampling rate */
@@ -303,9 +306,9 @@ typedef enum _pdm_hwvad_filter_status
 /*! @brief PDM voice activity detector user configuration structure */
 typedef struct _pdm_hwvad_config
 {
-    uint8_t channel;           /*!< Which channel uses voice activity detector */
-    uint8_t initializeTime;    /*!< Number of frames or samples to initialize voice activity detector. */
-    uint8_t cicOverSampleRate; /*!< CIC filter over sampling rate */
+    uint8_t channel;                   /*!< Which channel uses voice activity detector */
+    uint8_t initializeTime;            /*!< Number of frames or samples to initialize voice activity detector. */
+    uint8_t cicOverSampleRate;         /*!< CIC filter over sampling rate */
 
     uint8_t inputGain;                 /*!< Voice activity detector input gain */
     uint32_t frameTime;                /*!< Voice activity frame time */
@@ -371,19 +374,19 @@ typedef struct _pdm_hwvad_notification
 /*! @brief PDM handle structure */
 struct _pdm_handle
 {
-    uint32_t state;                   /*!< Transfer status */
-    pdm_transfer_callback_t callback; /*!< Callback function called at transfer event*/
-    void *userData;                   /*!< Callback parameter passed to callback function*/
+    uint32_t state;                               /*!< Transfer status */
+    pdm_transfer_callback_t callback;             /*!< Callback function called at transfer event*/
+    void *userData;                               /*!< Callback parameter passed to callback function*/
 
     pdm_transfer_t pdmQueue[PDM_XFER_QUEUE_SIZE]; /*!< Transfer queue storing queued transfer */
     size_t transferSize[PDM_XFER_QUEUE_SIZE];     /*!< Data bytes need to transfer */
     volatile uint8_t queueUser;                   /*!< Index for user to queue transfer */
     volatile uint8_t queueDriver;                 /*!< Index for driver to get the transfer data and size */
 
-    uint32_t format;      /*!< data format */
-    uint8_t watermark;    /*!< Watermark value */
-    uint8_t startChannel; /*!< end channel */
-    uint8_t channelNums;  /*!< Enabled channel number */
+    uint32_t format;                              /*!< data format */
+    uint8_t watermark;                            /*!< Watermark value */
+    uint8_t startChannel;                         /*!< end channel */
+    uint8_t channelNums;                          /*!< Enabled channel number */
 };
 
 /*******************************************************************************
@@ -453,6 +456,7 @@ static inline void PDM_Enable(PDM_Type *base, bool enable)
     }
 }
 
+#if !(defined(FSL_FEATURE_PDM_HAS_NO_DOZEN) && FSL_FEATURE_PDM_HAS_NO_DOZEN)
 /*!
  * @brief Enables/disables DOZE.
  *
@@ -471,7 +475,7 @@ static inline void PDM_EnableDoze(PDM_Type *base, bool enable)
         base->CTRL_1 &= ~PDM_CTRL_1_DOZEN_MASK;
     }
 }
-
+#endif
 /*!
  * @brief Enables/disables debug mode for PDM.
  * The PDM interface cannot enter debug mode once in Disable/Low Leakage or Low Power mode.
@@ -1210,4 +1214,4 @@ void PDM_TransferHandleIRQ(PDM_Type *base, pdm_handle_t *handle);
 
 /*! @} */
 
-#endif /* _FSL_PDM_H_ */
+#endif /* FSL_PDM_H_ */

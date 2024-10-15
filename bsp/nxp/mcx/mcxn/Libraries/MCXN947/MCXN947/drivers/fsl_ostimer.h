@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_OSTIMER_H_
-#define _FSL_OSTIMER_H_
+#ifndef FSL_OSTIMER_H_
+#define FSL_OSTIMER_H_
 
 #include "fsl_common.h"
 
@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief OSTIMER driver version. */
-#define FSL_OSTIMER_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
-/*@}*/
+#define FSL_OSTIMER_DRIVER_VERSION (MAKE_VERSION(2, 2, 2))
+/*! @} */
 
 /*!
  * @brief OSTIMER status flags.
@@ -149,7 +149,7 @@ status_t OSTIMER_SetMatchValue(OSTIMER_Type *base, uint64_t count, ostimer_callb
  * value to gray code.
  *
  * @param base   OSTIMER peripheral base address.
- * @param count  OSTIMER timer match value (Value is gray-code format).
+ * @param value  OSTIMER timer match value (Value is gray-code format).
  */
 static inline void OSTIMER_SetMatchRegister(OSTIMER_Type *base, uint64_t value)
 {
@@ -262,7 +262,7 @@ uint64_t OSTIMER_GetCaptureValue(OSTIMER_Type *base);
  * @return       none
  */
 void OSTIMER_HandleIRQ(OSTIMER_Type *base, ostimer_callback_t cb);
-/* @} */
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -270,4 +270,4 @@ void OSTIMER_HandleIRQ(OSTIMER_Type *base, ostimer_callback_t cb);
 
 /*! @}*/
 
-#endif /* _FSL_OSTIMER_H_ */
+#endif /* FSL_OSTIMER_H_ */

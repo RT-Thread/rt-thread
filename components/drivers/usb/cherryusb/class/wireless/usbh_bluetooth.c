@@ -365,14 +365,18 @@ delete :
 
 __WEAK void usbh_bluetooth_hci_read_callback(uint8_t *data, uint32_t len)
 {
+    (void)data;
+    (void)len;
 }
 
 __WEAK void usbh_bluetooth_run(struct usbh_bluetooth *bluetooth_class)
 {
+    (void)bluetooth_class;
 }
 
 __WEAK void usbh_bluetooth_stop(struct usbh_bluetooth *bluetooth_class)
 {
+    (void)bluetooth_class;
 }
 
 static const struct usbh_class_driver bluetooth_class_driver = {

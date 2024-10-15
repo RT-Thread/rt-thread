@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_EVTG_H_
-#define _FSL_EVTG_H_
+#ifndef FSL_EVTG_H_
+#define FSL_EVTG_H_
 
 #include "fsl_common.h"
 
@@ -20,10 +20,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief EVTG driver version. */
 #define FSL_EVTG_DRIVER_VERSION (MAKE_VERSION(2, 0, 1)) /*!< Version 2.0.1. */
-/*@}*/
+/*! @} */
 
 /*! @brief EVTG instance index. */
 typedef enum _evtg_index
@@ -247,7 +247,7 @@ static inline void EVTG_ForceFlipflopInitOutput(EVTG_Type *base,
                                                 evtg_index_t evtgIndex,
                                                 evtg_flipflop_init_output_t flipflopInitOutputValue)
 {
-    base->EVTG_INST[(uint8_t)evtgIndex].EVTG_CTRL &= (~EVTG_EVTG_INST_EVTG_CTRL_FF_INIT_MASK);
+    base->EVTG_INST[(uint8_t)evtgIndex].EVTG_CTRL &= (~(uint16_t)EVTG_EVTG_INST_EVTG_CTRL_FF_INIT_MASK);
     base->EVTG_INST[(uint8_t)evtgIndex].EVTG_CTRL |=
         EVTG_EVTG_INST_EVTG_CTRL_FF_INIT((uint16_t)flipflopInitOutputValue);
     /* INIT_EN bit should be set after FF_INIT is set. */
@@ -284,20 +284,20 @@ static inline void EVTG_SetProductTermInput(EVTG_Type *base,
         if ((productTerm == kEVTG_ProductTerm0) || (productTerm == kEVTG_ProductTerm1))
         {
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI0_BFT01 &=
-                (~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                (uint16_t)(~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI0_BFT01 |=
-                (((uint16_t)(((uint16_t)(input))
-                             << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U)))) &
-                 (3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                ((((uint16_t)(input)) << ((3U - ((uint8_t)inputIndex)) * 2U +
+                                          (((3U - (uint8_t)productTerm) % 2U) * 8U))) &
+                 (uint16_t)(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
         }
         else
         {
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI0_BFT23 &=
-                (~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                (uint16_t)(~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI0_BFT23 |=
-                (((uint16_t)(((uint16_t)(input))
-                             << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U)))) &
-                 (3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                ((((uint16_t)(input)) << ((3U - ((uint8_t)inputIndex)) * 2U +
+                                          (((3U - (uint8_t)productTerm) % 2U) * 8U))) &
+                 (uint16_t)(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
         }
     }
     else if (kEVTG_AOI1 == aoiIndex)
@@ -305,20 +305,20 @@ static inline void EVTG_SetProductTermInput(EVTG_Type *base,
         if ((productTerm == kEVTG_ProductTerm0) || (productTerm == kEVTG_ProductTerm1))
         {
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI1_BFT01 &=
-                (~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                (uint16_t)(~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI1_BFT01 |=
-                (((uint16_t)(((uint16_t)(input))
-                             << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U)))) &
-                 (3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                ((((uint16_t)(input)) << ((3U - ((uint8_t)inputIndex)) * 2U +
+                                          (((3U - (uint8_t)productTerm) % 2U) * 8U))) &
+                 (uint16_t)(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
         }
         else
         {
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI1_BFT23 &=
-                (~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                (uint16_t)(~(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
             base->EVTG_INST[(uint8_t)evtgIndex].EVTG_AOI1_BFT23 |=
-                (((uint16_t)(((uint16_t)(input))
-                             << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U)))) &
-                 (3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
+                ((((uint16_t)(input)) << ((3U - ((uint8_t)inputIndex)) * 2U +
+                                          (((3U - (uint8_t)productTerm) % 2U) * 8U))) &
+                 (uint16_t)(3UL << ((3U - ((uint8_t)inputIndex)) * 2U + (((3U - (uint8_t)productTerm) % 2U) * 8U))));
         }
     }
     else
@@ -352,4 +352,4 @@ void EVTG_ConfigAOIProductTerm(EVTG_Type *base,
 
 /*! @} */
 
-#endif /* _FSL_EVTG_H_ */
+#endif /* FSL_EVTG_H_ */

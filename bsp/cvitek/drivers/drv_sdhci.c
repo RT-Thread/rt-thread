@@ -21,8 +21,8 @@
 #define DBG_LEVEL   DBG_INFO
 #include <rtdbg.h>
 
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
 
 #include "drv_sdhci.h"
 
@@ -403,7 +403,6 @@ static void sdhci_cmd_irq(struct rthw_sdhci *sdhci, uint32_t intmask)
 
     if (intmask & SDIF_INT_RESPONSE)
     {
-        sdhci->cmd_error = RT_EOK;
         if (sdhci->response_type == RESP_R2)
         {
             /* CRC is stripped so we need to do some shifting. */
@@ -419,6 +418,8 @@ static void sdhci_cmd_irq(struct rthw_sdhci *sdhci, uint32_t intmask)
             sdhci->response[0] = mmio_read_32(BASE + SDIF_RESPONSE_01);
             LOG_D("sdhci->response: [%08x]", sdhci->response[0]);
         }
+
+        rt_sem_release(sdhci->sem_cmd);
     }
 }
 
@@ -486,7 +487,6 @@ static void sdhci_transfer_handle_irq(int irqno, void *param)
         if (intmask & SDIF_INT_CMD_MASK)
         {
             sdhci_cmd_irq(sdhci, intmask & SDIF_INT_CMD_MASK);
-            rt_sem_release(sdhci->sem_cmd);
         }
 
         if (intmask & SDIF_INT_DMA_END)

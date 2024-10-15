@@ -153,7 +153,7 @@ static inline void lcdc_disable_interrupt(LCDC_Type *ptr, uint32_t interrupt_mas
  */
 static inline void lcdc_clear_status(LCDC_Type *ptr, uint32_t mask)
 {
-    ptr->ST |= mask;
+    ptr->ST = mask;
 }
 
 /**
@@ -203,7 +203,7 @@ static inline bool lcdc_check_dma_status(LCDC_Type *ptr, uint32_t mask)
  */
 static inline void lcdc_clear_dma_status(LCDC_Type *ptr, uint32_t mask)
 {
-    ptr->DMA_ST |= mask;
+    ptr->DMA_ST = mask;
 }
 
 /**

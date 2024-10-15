@@ -88,6 +88,18 @@ extern "C" {
 #define fencei() __asm volatile("fence.i")
 
 /**
+ * @brief execute fence rw
+ *
+ */
+#define fencerw() __asm volatile("fence rw, rw")
+
+/**
+ * @brief execute fence iorw
+ *
+ */
+#define fenceiorw() __asm volatile("fence iorw, iorw")
+
+/**
  * @brief enable fpu
  */
 #define enable_fpu() read_set_csr(CSR_MSTATUS, CSR_MSTATUS_FS_MASK)

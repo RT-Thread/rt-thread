@@ -22,28 +22,25 @@
 
 .section .text
 
+vector_fiq:
     .align  8
     .globl vector_fiq
-vector_fiq:
+
     SAVE_IRQ_CONTEXT
     bl      rt_hw_trap_fiq
-    RESTORE_IRQ_CONTEXT
 
-.globl      rt_interrupt_enter
-.globl      rt_interrupt_leave
+    b       rt_hw_irq_exit
+
 .globl      rt_thread_switch_interrupt_flag
-.globl      rt_interrupt_from_thread
-.globl      rt_interrupt_to_thread
 .globl      rt_hw_context_switch_interrupt_do
 
+/**
+ * void rt_hw_vector_irq_sched(void *eframe)
+ * @brief do IRQ scheduling
+ */
+rt_hw_vector_irq_sched:
+    .globl rt_hw_vector_irq_sched
     .align  8
-    .globl vector_irq
-vector_irq:
-    SAVE_IRQ_CONTEXT
-
-    bl      rt_interrupt_enter
-    bl      rt_hw_trap_irq
-    bl      rt_interrupt_leave
 
     /**
      * if rt_thread_switch_interrupt_flag set, jump to
@@ -52,12 +49,13 @@ vector_irq:
     ldr     x1, =rt_thread_switch_interrupt_flag
     ldr     x2, [x1]
     cmp     x2, #1
-    b.ne    vector_irq_exit
+    bne     1f
 
-    mov     x2,  #0         // clear flag
+    /* clear flag */
+    mov     x2,  #0
     str     x2,  [x1]
 
     bl      rt_hw_context_switch_interrupt_do
 
-vector_irq_exit:
-    RESTORE_IRQ_CONTEXT_WITHOUT_MMU_SWITCH
+1:
+    b       rt_hw_irq_exit

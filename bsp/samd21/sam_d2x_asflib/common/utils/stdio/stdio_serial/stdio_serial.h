@@ -67,7 +67,7 @@
 #ifndef SAMD20
 # include "sysclk.h"
 #endif
-#include "serial.h"
+#include "drivers/dev_serial.h"
 
 #if (XMEGA || MEGA_RF) && defined(__GNUC__)
 	extern int _write (char c, int *f);

@@ -244,13 +244,13 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
 
 #ifndef RT_USING_HW_STACK_GUARD
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
-    if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
+    if (*((rt_uint8_t *)((rt_uintptr_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
 #else
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
 #endif /* ARCH_CPU_STACK_GROWS_UPWARD */
-        (rt_ubase_t)thread->sp <= (rt_ubase_t)thread->stack_addr ||
-        (rt_ubase_t)thread->sp >
-        (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
+        (rt_uintptr_t)thread->sp <= (rt_uintptr_t)thread->stack_addr ||
+        (rt_uintptr_t)thread->sp >
+        (rt_uintptr_t)thread->stack_addr + (rt_uintptr_t)thread->stack_size)
     {
         rt_base_t dummy = 1;
 
@@ -261,9 +261,9 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
 #endif /* RT_USING_HW_STACK_GUARD */
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
 #ifndef RT_USING_HW_STACK_GUARD
-    else if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
+    else if ((rt_uintptr_t)thread->sp > ((rt_uintptr_t)thread->stack_addr + thread->stack_size))
 #else
-    if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
+    if ((rt_uintptr_t)thread->sp > ((rt_uintptr_t)thread->stack_addr + thread->stack_size))
 #endif
     {
         LOG_W("warning: %s stack is close to the top of stack address.\n",
@@ -271,9 +271,9 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
     }
 #else
 #ifndef RT_USING_HW_STACK_GUARD
-    else if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
+    else if ((rt_uintptr_t)thread->sp <= ((rt_uintptr_t)thread->stack_addr + 32))
 #else
-    if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
+    if ((rt_uintptr_t)thread->sp <= ((rt_uintptr_t)thread->stack_addr + 32))
 #endif
     {
         LOG_W("warning: %s stack is close to end of stack address.\n",

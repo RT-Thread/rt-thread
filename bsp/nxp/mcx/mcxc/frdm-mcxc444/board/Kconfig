@@ -1,0 +1,99 @@
+menu "Hardware Drivers Config"
+
+config SOC_MCXC444
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        select RT_USING_DMA
+        default n
+
+    config BSP_USING_PIN
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+        endif
+
+    menuconfig BSP_USING_I2C
+        config BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default y
+
+            if BSP_USING_I2C
+                config BSP_USING_I2C0
+                    bool "Enable I2C0"
+                    default y
+                config BSP_USING_I2C1
+                    bool "Enable I2C1"
+                    default y
+            endif
+
+    menuconfig BSP_USING_SPI
+        config BSP_USING_SPI
+            bool "Enable SPI"
+            select RT_USING_SPI
+            select BSP_USING_PIN
+            default y
+
+            if BSP_USING_SPI
+                config BSP_USING_SPI0
+                    bool "Enable SPI0"
+                    default n
+            endif
+
+            if BSP_USING_SPI
+                config BSP_USING_SPI1
+                    bool "Enable SPI1"
+                    default n
+            endif
+        
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default y
+
+    config BSP_USING_WDT
+        bool "Enable WatchDog"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_HWTIMER
+        config BSP_USING_HWTIMER
+            bool "Enable Timer"
+            select RT_USING_HWTIMER
+            default y
+
+    menuconfig BSP_USING_PWM
+        config BSP_USING_PWM
+            bool "Enable PWM"
+            select RT_USING_PWM
+            default y
+
+            if BSP_USING_PWM
+                config BSP_USING_LEDG_PWM
+                    bool "Enable on-board green LED as PWM output (pwm0, channel 3)"
+                    default y
+            endif
+
+endmenu
+
+
+endmenu

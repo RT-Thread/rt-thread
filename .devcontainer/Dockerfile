@@ -34,7 +34,7 @@ RUN git clone https://github.com/RT-Thread/packages.git /root/.env/packages/pack
 
 ENV PATH="/root/.env/tools/scripts:$PATH"
 
-RUN pip install requests psutil -qq
+RUN pip install requests psutil kconfiglib tqdm -qq
 
 ENV RTT_EXEC_PATH=/usr/bin
 

@@ -87,6 +87,31 @@ static LPI2C_Type *const kLpi2cBases[] = LPI2C_BASE_PTRS;
 transactional APIs. */
 IRQn_Type const kLpi2cIrqs[] = LPI2C_IRQS;
 
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+/*! @brief Array to map LPI2C instance number to clock gate enum. */
+static clock_ip_name_t const kLpi2cClocks[] = LPI2C_CLOCKS;
+
+#if defined(LPI2C_PERIPH_CLOCKS)
+/*! @brief Array to map LPI2C instance number to pheripheral clock gate enum. */
+static const clock_ip_name_t kLpi2cPeriphClocks[] = LPI2C_PERIPH_CLOCKS;
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+/*! @brief Pointer to master IRQ handler for each instance, used internally for LPI2C master interrupt and EDMA
+transactional APIs. */
+lpi2c_master_isr_t s_lpi2cMasterIsr;
+
+/*! @brief Pointer to slave IRQ handler for each instance. */
+static lpi2c_slave_isr_t s_lpi2cSlaveIsr;
+
+/*! @brief Pointers to master handles for each instance, used internally for LPI2C master interrupt and EDMA
+transactional APIs. */
+void *s_lpi2cMasterHandle[ARRAY_SIZE(kLpi2cBases)];
+
+/*! @brief Pointers to slave handles for each instance. */
+static lpi2c_slave_handle_t *s_lpi2cSlaveHandle[ARRAY_SIZE(kLpi2cBases)];
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -343,16 +368,36 @@ void LPI2C_MasterInit(LPI2C_Type *base, const lpi2c_master_config_t *masterConfi
     uint32_t cycles;
     uint32_t cfgr2;
     uint32_t value;
-
-#if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
-    /* initialize flexcomm to LPI2C mode */
-    status_t status = LP_FLEXCOMM_Init(LPI2C_GetInstance(base), LP_FLEXCOMM_PERIPH_LPI2C);
-    if (kStatus_Success != status)
+    uint32_t instance = LPI2C_GetInstance(base);
+    
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
     {
-        assert(false);
-    }
+      
+#if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
+        /* initialize flexcomm to LPI2C mode */
+        status_t status = LP_FLEXCOMM_Init(instance, LP_FLEXCOMM_PERIPH_LPI2C);
+        if (kStatus_Success != status)
+        {
+            assert(false);
+        }
 #endif /* LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER */
+        
+    }
+    else
+    {
+     
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+        /* Ungate the clock. */
+        (void)CLOCK_EnableClock(kLpi2cClocks[instance]);
+#if defined(LPI2C_PERIPH_CLOCKS)
+        /* Ungate the functional clock in initialize function. */
+        CLOCK_EnableClock(kLpi2cPeriphClocks[instance]);
+#endif
 
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+        
+    }
+    
     /* Reset peripheral before configuring it. */
     LPI2C_MasterReset(base);
 
@@ -438,12 +483,28 @@ void LPI2C_MasterInit(LPI2C_Type *base, const lpi2c_master_config_t *masterConfi
  */
 void LPI2C_MasterDeinit(LPI2C_Type *base)
 {
+    uint32_t instance = LPI2C_GetInstance(base); 
+    
     /* Restore to reset state. */
     LPI2C_MasterReset(base);
-
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
 #if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
-    LP_FLEXCOMM_Deinit(LPI2C_GetInstance(base));
+        LP_FLEXCOMM_Deinit(instance);
 #endif
+    }
+    else
+    {
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+        /* Gate clock. */
+        (void)CLOCK_DisableClock(kLpi2cClocks[instance]);
+#if defined(LPI2C_PERIPH_CLOCKS)
+        /* Gate the functional clock. */
+        CLOCK_DisableClock(kLpi2cPeriphClocks[instance]);
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    }
 }
 
 /*!
@@ -957,6 +1018,15 @@ status_t LPI2C_MasterTransferBlocking(LPI2C_Type *base, lpi2c_master_transfer_t 
                 }
             }
         }
+
+        /* Transmit fail */
+        if (kStatus_Success != result)
+        {
+            if ((transfer->flags & (uint32_t)kLPI2C_TransferNoStopFlag) == 0U)
+            {
+                (void)LPI2C_MasterStop(base);
+            }
+        }
     }
 
     return result;
@@ -987,10 +1057,7 @@ void LPI2C_MasterTransferCreateHandle(LPI2C_Type *base,
     uint32_t instance;
 
     assert(NULL != handle);
-
-    lpi2c_to_lpflexcomm_t handler;
-    (void)memset(&handler, 0, sizeof(handler));
-
+    
     /* Clear out the handle. */
     (void)memset(handle, 0, sizeof(*handle));
 
@@ -1001,9 +1068,23 @@ void LPI2C_MasterTransferCreateHandle(LPI2C_Type *base,
     handle->completionCallback = callback;
     handle->userData           = userData;
 
-    /* Save the handle in global variables to support the double weak mechanism. */
-    handler.lpi2c_master_handler = LPI2C_MasterTransferHandleIRQ;
-    LP_FLEXCOMM_SetIRQHandler(LPI2C_GetInstance(base), handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPI2C);
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
+        lpi2c_to_lpflexcomm_t handler;
+        (void)memset(&handler, 0, sizeof(handler));
+
+        /* Save the handle in global variables to support the double weak mechanism. */
+        handler.lpi2c_master_handler = LPI2C_MasterTransferHandleIRQ;
+        LP_FLEXCOMM_SetIRQHandler(LPI2C_GetInstance(base), handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPI2C);
+    }
+    else
+    {
+         /* Save this handle for IRQ use. */
+        s_lpi2cMasterHandle[instance] = handle;
+
+        /* Set irq handler. */
+        s_lpi2cMasterIsr = LPI2C_MasterTransferHandleIRQ;
+    }
 
     /* Clear internal IRQ enables and enable NVIC IRQ. */
     LPI2C_MasterDisableInterrupts(base, (uint32_t)kLPI2C_MasterIrqFlags);
@@ -1598,15 +1679,35 @@ void LPI2C_SlaveInit(LPI2C_Type *base, const lpi2c_slave_config_t *slaveConfig, 
 {
     uint32_t tmpReg;
     uint32_t tmpCycle;
+    uint32_t instance = LPI2C_GetInstance(base);
 
-#if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
-    /* initialize flexcomm to LPI2C mode */
-    status_t status = LP_FLEXCOMM_Init(LPI2C_GetInstance(base), LP_FLEXCOMM_PERIPH_LPI2C);
-    if (kStatus_Success != status)
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
     {
-        assert(false);
-    }
+      
+#if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
+        /* initialize flexcomm to LPI2C mode */
+        status_t status = LP_FLEXCOMM_Init(instance, LP_FLEXCOMM_PERIPH_LPI2C);
+        if (kStatus_Success != status)
+        {
+            assert(false);
+        }
 #endif /* LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER */
+        
+    }
+    else
+    {
+      
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+        /* Ungate the clock. */
+        (void)CLOCK_EnableClock(kLpi2cClocks[instance]);
+#if defined(LPI2C_PERIPH_CLOCKS)
+        /* Ungate the functional clock in initialize function. */
+        CLOCK_EnableClock(kLpi2cPeriphClocks[instance]);
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+      
+    }
 
     /* Restore to reset conditions. */
     LPI2C_SlaveReset(base);
@@ -1664,11 +1765,28 @@ void LPI2C_SlaveInit(LPI2C_Type *base, const lpi2c_slave_config_t *slaveConfig, 
  */
 void LPI2C_SlaveDeinit(LPI2C_Type *base)
 {
-    LPI2C_SlaveReset(base);
+    uint32_t instance = LPI2C_GetInstance(base); 
 
+    /* Restore to reset state. */
+    LPI2C_SlaveReset(base);
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
 #if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
-    LP_FLEXCOMM_Deinit(LPI2C_GetInstance(base));
+        LP_FLEXCOMM_Deinit(instance);
 #endif
+    }
+    else
+    {
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+        /* Gate clock. */
+        (void)CLOCK_DisableClock(kLpi2cClocks[instance]);
+#if defined(LPI2C_PERIPH_CLOCKS)
+        /* Gate the functional clock. */
+        CLOCK_DisableClock(kLpi2cPeriphClocks[instance]);
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    }
 }
 
 /*!
@@ -1908,10 +2026,7 @@ void LPI2C_SlaveTransferCreateHandle(LPI2C_Type *base,
     uint32_t instance;
 
     assert(NULL != handle);
-
-    lpi2c_to_lpflexcomm_t handler;
-    (void)memset(&handler, 0, sizeof(handler));
-
+    
     /* Clear out the handle. */
     (void)memset(handle, 0, sizeof(*handle));
 
@@ -1922,9 +2037,23 @@ void LPI2C_SlaveTransferCreateHandle(LPI2C_Type *base,
     handle->callback = callback;
     handle->userData = userData;
 
-    /* Save the handle in global variables to support the double weak mechanism. */
-    handler.lpi2c_slave_handler = LPI2C_SlaveTransferHandleIRQ;
-    LP_FLEXCOMM_SetIRQHandler(LPI2C_GetInstance(base), handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPI2C);
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
+        lpi2c_to_lpflexcomm_t handler;
+        (void)memset(&handler, 0, sizeof(handler));
+
+        /* Save the handle in global variables to support the double weak mechanism. */
+        handler.lpi2c_slave_handler = LPI2C_SlaveTransferHandleIRQ;
+        LP_FLEXCOMM_SetIRQHandler(LPI2C_GetInstance(base), handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPI2C);
+    }
+    else
+    {        
+        /* Save this handle for IRQ use. */
+        s_lpi2cSlaveHandle[instance] = handle;
+
+        /* Set irq handler. */
+        s_lpi2cSlaveIsr = LPI2C_SlaveTransferHandleIRQ;
+    }
 
     /* Clear internal IRQ enables and enable NVIC IRQ. */
     LPI2C_SlaveDisableInterrupts(base, (uint32_t)kLPI2C_SlaveIrqFlags);
@@ -2076,7 +2205,7 @@ void LPI2C_SlaveTransferAbort(LPI2C_Type *base, lpi2c_slave_handle_t *handle)
  * note This function does not need to be called unless you are reimplementing the
  *  non blocking API's interrupt handler routines to add special functionality.
  * param instance The LPI2C instance.
- * param handle Pointer to #lpi2c_slave_handle_t structure which stores the transfer state.
+ * param lpi2cSlaveHandle Pointer to #lpi2c_slave_handle_t structure which stores the transfer state.
  */
 void LPI2C_SlaveTransferHandleIRQ(uint32_t instance, void *lpi2cSlaveHandle)
 {
@@ -2221,7 +2350,7 @@ void LPI2C_SlaveTransferHandleIRQ(uint32_t instance, void *lpi2cSlaveHandle)
                     *xfer->data++ = (uint8_t)base->SRDR;
                     --xfer->dataSize;
                     ++handle->transferredCount;
-                    if (0U != (base->SCFGR1 & LPI2C_SCFGR1_ACKSTALL_MASK))
+					if (0U != (base->SCFGR1 & LPI2C_SCFGR1_ACKSTALL_MASK))
                     {
                         if (((0U == (handle->eventMask & (uint32_t)kLPI2C_SlaveTransmitAckEvent)) ||
                              (NULL == handle->callback)))
@@ -2246,3 +2375,43 @@ void LPI2C_SlaveTransferHandleIRQ(uint32_t instance, void *lpi2cSlaveHandle)
         }
     }
 }
+
+#if !(defined(FSL_FEATURE_I2C_HAS_NO_IRQ) && FSL_FEATURE_I2C_HAS_NO_IRQ)
+/*!
+ * @brief Shared IRQ handler that can call both master and slave ISRs.
+ *
+ * The master and slave ISRs are called through function pointers in order to decouple
+ * this code from the ISR functions. Without this, the linker would always pull in both
+ * ISRs and every function they call, even if only the functional API was used.
+ *
+ * @param base The LPI2C peripheral base address.
+ * @param instance The LPI2C peripheral instance number.
+ */
+void LPI2C_CommonIRQHandler(LPI2C_Type *base, uint32_t instance);
+void LPI2C_CommonIRQHandler(LPI2C_Type *base, uint32_t instance)
+{
+    /* Check for master IRQ. */
+    if ((0U != (base->MCR & LPI2C_MCR_MEN_MASK)) && (NULL != s_lpi2cMasterIsr))
+    {
+        /* Master mode. */
+        s_lpi2cMasterIsr(instance, s_lpi2cMasterHandle[instance]);
+    }
+
+    /* Check for slave IRQ. */
+    if ((0U != (base->SCR & LPI2C_SCR_SEN_MASK)) && (NULL != s_lpi2cSlaveIsr))
+    {
+        /* Slave mode. */
+        s_lpi2cSlaveIsr(instance, s_lpi2cSlaveHandle[instance]);
+    }
+    SDK_ISR_EXIT_BARRIER;
+}
+#endif
+
+#if defined(LPI2C15)
+/* Implementation of LPI2C15 handler named in startup code. */
+void LPI2C15_DriverIRQHandler(void);
+void LPI2C15_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(LPI2C15, 15U);
+}
+#endif

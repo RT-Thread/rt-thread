@@ -15,6 +15,8 @@ path += [cwd + '/class/vendor/net']
 path += [cwd + '/class/vendor/serial']
 src = []
 
+LIBS    = []
+LIBPATH = []
 CPPDEFINES = []
 
 # USB DEVICE
@@ -56,6 +58,9 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('port/musb/usb_glue_bk.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_CUSTOM']):
         src += Glob('port/musb/usb_dc_musb.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX']):
+        src += Glob('port/chipidea/usb_dc_chipidea.c')
+        src += Glob('port/chipidea/usb_glue_mcx.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_BL']):
         src += Glob('port/bouffalolab/usb_dc_bl.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_HPM']):
@@ -68,9 +73,18 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
             src += Glob('port/ch32/usb_dc_usbhs.c')
         else:
             src += Glob('port/ch32/usb_dc_usbfs.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_PUSB2']):
+        path += [cwd + '/port/xhci/rt-thread']
+        src += Glob('port/pusb2/rt-thread/usb_dc_glue_phytium.c')
+        if GetDepend(['ARCH_ARMV8']):
+            LIBPATH = [cwd + '/port/pusb2']
+            LIBS = ['libpusb2_dc_a64.a']
+        if GetDepend(['ARCH_ARM_CORTEX_A']):
+            LIBPATH = [cwd + '/port/pusb2']
+            LIBS = ['libpusb2_dc_a32_softfp_neon.a']
 
     if GetDepend(['RT_CHERRYUSB_DEVICE_CDC_ACM']):
-        src += Glob('class/cdc/usbd_cdc.c')
+        src += Glob('class/cdc/usbd_cdc_acm.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_HID']):
         src += Glob('class/hid/usbd_hid.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MSC']):
@@ -140,10 +154,14 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('port/ehci/usb_hc_ehci.c')
         src += Glob('port/ehci/usb_glue_aic.c')
         src += Glob('port/ohci/usb_hc_ohci.c')
-    if GetDepend(['RT_CHERRYUSB_HOST_EHCI_NUVOTON_NUC980']):
+    if GetDepend(['RT_CHERRYUSB_HOST_EHCI_MCX']):
+        path += [cwd + '/port/chipidea']
+        src += Glob('port/ehci/usb_hc_ehci.c')
+        src += Glob('port/ehci/usb_glue_mcx.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_EHCI_NUC980']):
         src += Glob('port/ehci/usb_hc_ehci.c')
         src += Glob('port/ehci/usb_glue_nuc980.c')
-    if GetDepend(['RT_CHERRYUSB_HOST_EHCI_NUVOTON_MA35D0']):
+    if GetDepend(['RT_CHERRYUSB_HOST_EHCI_MA35D0']):
         src += Glob('port/ehci/usb_hc_ehci.c')
         src += Glob('port/ehci/usb_glue_ma35d0.c')
     if GetDepend(['RT_CHERRYUSB_HOST_EHCI_CUSTOM']):
@@ -169,6 +187,26 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('port/musb/usb_glue_bk.c')
     if GetDepend(['RT_CHERRYUSB_HOST_MUSB_CUSTOM']):
         src += Glob('port/musb/usb_hc_musb.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_PUSB2']):
+        path += [cwd + '/port/pusb2/rt-thread']
+        src += Glob('port/pusb2/rt-thread/usb_hc_glue_phytium.c')
+        if GetDepend(['ARCH_ARMV8']):
+            LIBPATH = [cwd + '/port/pusb2']
+            LIBS = ['libpusb2_hc_a64.a']
+        if GetDepend(['ARCH_ARM_CORTEX_A']):
+            LIBPATH = [cwd + '/port/pusb2']
+            LIBS = ['libpusb2_hc_a32_softfp_neon.a']
+
+    if GetDepend(['RT_CHERRYUSB_HOST_XHCI']):
+        path += [cwd + '/port/xhci/phytium/rt-thread']
+        src += Glob('port/xhci/phytium/rt-thread/usb_glue_phytium_plat.c')
+        src += Glob('port/xhci/phytium/rt-thread/usb_glue_phytium.c')
+        if GetDepend(['ARCH_ARMV8']):
+            LIBPATH = [cwd + '/port/xhci/phytium']
+            LIBS = ['libxhci_a64.a']
+        if GetDepend(['ARCH_ARM_CORTEX_A']):
+            LIBPATH = [cwd + '/port/xhci/phytium']
+            LIBS = ['libxhci_a32_softfp_neon.a']
 
     if GetDepend(['RT_CHERRYUSB_HOST_CDC_ACM']):
         src += Glob('class/cdc/usbh_cdc_acm.c')
@@ -217,7 +255,7 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
 src += Glob('platform/rtthread/usb_msh.c')
 src += Glob('platform/rtthread/usb_check.c')
 
-group = DefineGroup('CherryUSB', src, depend = ['RT_USING_CHERRYUSB'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('CherryUSB', src, depend = ['RT_USING_CHERRYUSB'], LIBS = LIBS, LIBPATH=LIBPATH, CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
 

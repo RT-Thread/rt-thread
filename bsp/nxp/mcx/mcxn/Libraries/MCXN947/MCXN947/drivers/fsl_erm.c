@@ -65,9 +65,13 @@ void ERM_Init(ERM_Type *base)
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
     base->CR0 = 0x00U;
+#ifdef ERM_CR1_ENCIE8_MASK
     base->CR1 = 0x00U;
+#endif
     base->SR0 = 0xFFFFFFFFU;
+#ifdef ERM_SR1_SBC8_MASK
     base->SR1 = 0xFFFFFFFFU;
+#endif
 }
 
 /*!
@@ -86,66 +90,41 @@ uint32_t ERM_GetMemoryErrorAddr(ERM_Type *base, erm_memory_channel_t channel)
 {
     uint32_t absoluteErrorAddress = 0x00U;
 
-    switch (channel)
+    switch ((uint8_t)channel)
     {
-        case kERM_MemoryChannelRAMX:
-            /* Total RAMX size: 96KB
-                     RAMX0: 32KB(0x04000000 ~ 0x04007FFF)
-                     RAMX1: 32KB(0x04008000 ~ 0x0400FFFF)
-                     RAMX2: 32KB(0x04100000 ~ 0x04017FFF)
-             */
+        case 0U:
             absoluteErrorAddress = base->EAR0;
             break;
-
-        case kERM_MemoryChannelRAMA:
-            /* Total RAMA size: 32KB
-                     RAMA0: 8KB(0x20000000 ~ 0x20001FFF)
-                     RAMA1: 8KB(0x20002000 ~ 0x20003FFF)
-                     RAMA2: 8KB(0x20004000 ~ 0x20005FFF)
-                     RAMA3: 8KB(0x20006000 ~ 0x20007FFF)
-             */
+#ifdef ERM_EAR1_EAR_MASK
+        case 1U:
             absoluteErrorAddress = base->EAR1;
             break;
-
-        case kERM_MemoryChannelRAMB:
-            /* Total RAMB size: 32KB
-                     RAMB0: 32KB(0x20008000 ~ 0x2000FFFF)
-             */
+#endif
+#ifdef ERM_EAR2_EAR_MASK
+        case 2U:
             absoluteErrorAddress = base->EAR2;
             break;
-
-        case kERM_MemoryChannelRAMC:
-            /* Total RAMC size: 64KB
-                     RAMC0: 32KB(0x20010000 ~ 0x20017FFF)
-                     RAMC0: 32KB(0x20018000 ~ 0x2001FFFF)
-             */
+#endif
+#ifdef ERM_EAR3_EAR_MASK
+        case 3U:
             absoluteErrorAddress = base->EAR3;
             break;
-
-        case kERM_MemoryChannelRAMD:
-            /* Total RAMD size: 64KB
-                     RAMD0: 32KB(0x20020000 ~ 0x20027FFF)
-                     RAMD0: 32KB(0x20028000 ~ 0x2002FFFF)
-             */
+#endif
+#ifdef ERM_EAR4_EAR_MASK
+        case 4U:
             absoluteErrorAddress = base->EAR4;
             break;
-
-        case kERM_MemoryChannelRAME:
-            /* Total RAME size: 64KB
-                     RAME0: 32KB(0x20030000 ~ 0x20037FFF)
-                     RAME0: 32KB(0x20038000 ~ 0x2003FFFF)
-             */
+#endif
+#ifdef ERM_EAR5_EAR_MASK
+        case 5U:
             absoluteErrorAddress = base->EAR5;
             break;
-
-        case kERM_MemoryChannelRAMF:
-            /* Total RAMF size: 64KB
-                     RAMF0: 32KB(0x20040000 ~ 0x20047FFF)
-                     RAMF0: 32KB(0x20048000 ~ 0x2004FFFF)
-             */
+#endif
+#ifdef ERM_EAR6_EAR_MASK
+        case 6U:
             absoluteErrorAddress = base->EAR6;
             break;
-
+#endif
         default:
             assert(NULL);
             break;
@@ -158,48 +137,56 @@ uint32_t ERM_GetSyndrome(ERM_Type *base, erm_memory_channel_t channel)
 {
     uint32_t syndrome = 0x00U;
 
-    switch (channel)
+    switch ((uint8_t)channel)
     {
-        case kERM_MemoryChannelRAMX:
+        case 0U:
             syndrome = (base->SYN0 & ERM_SYN0_SYNDROME_MASK) >> ERM_SYN0_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMA:
+#ifdef ERM_SYN1_SYNDROME_MASK
+        case 1U:
             syndrome = (base->SYN1 & ERM_SYN1_SYNDROME_MASK) >> ERM_SYN1_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMB:
+#endif
+#ifdef ERM_SYN2_SYNDROME_MASK
+        case 2U:
             syndrome = (base->SYN2 & ERM_SYN2_SYNDROME_MASK) >> ERM_SYN2_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMC:
+#endif
+#ifdef ERM_SYN3_SYNDROME_MASK
+        case 3U:
             syndrome = (base->SYN3 & ERM_SYN3_SYNDROME_MASK) >> ERM_SYN3_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMD:
+#endif
+#ifdef ERM_SYN4_SYNDROME_MASK
+        case 4U:
             syndrome = (base->SYN4 & ERM_SYN4_SYNDROME_MASK) >> ERM_SYN4_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAME:
+#endif
+#ifdef ERM_SYN5_SYNDROME_MASK
+        case 5U:
             syndrome = (base->SYN5 & ERM_SYN5_SYNDROME_MASK) >> ERM_SYN5_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMF:
+#endif
+#ifdef ERM_SYN6_SYNDROME_MASK
+        case 6U:
             syndrome = (base->SYN6 & ERM_SYN6_SYNDROME_MASK) >> ERM_SYN6_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelLPCACRAM:
-            assert(NULL);
+#endif
+#ifdef ERM_SYN7_SYNDROME_MASK
+        case 7U:
+            syndrome = (base->SYN7 & ERM_SYN6_SYNDROME_MASK) >> ERM_SYN7_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelPKCRAM:
+#endif
+#ifdef ERM_SYN8_SYNDROME_MASK
+        case 8U:
             syndrome = (base->SYN8 & ERM_SYN8_SYNDROME_MASK) >> ERM_SYN8_SYNDROME_SHIFT;
             break;
-
-        case kERM_MemoryChannelFLASH:
-            assert(NULL);
+#endif
+#ifdef ERM_SYN9_SYNDROME_MASK
+        case 8U:
+            syndrome = (base->SYN9 & ERM_SYN9_SYNDROME_MASK) >> ERM_SYN9_SYNDROME_SHIFT;
             break;
-
+#endif
         default:
             assert(NULL);
             break;
@@ -212,48 +199,56 @@ uint32_t ERM_GetErrorCount(ERM_Type *base, erm_memory_channel_t channel)
 {
     uint32_t count = 0x00U;
 
-    switch (channel)
+    switch ((uint8_t)channel)
     {
-        case kERM_MemoryChannelRAMX:
+        case 0U:
             count = (base->CORR_ERR_CNT0 & ERM_CORR_ERR_CNT0_COUNT_MASK) >> ERM_CORR_ERR_CNT0_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMA:
+#ifdef ERM_CORR_ERR_CNT1_COUNT_MASK
+        case 1U:
             count = (base->CORR_ERR_CNT1 & ERM_CORR_ERR_CNT1_COUNT_MASK) >> ERM_CORR_ERR_CNT1_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMB:
+#endif
+#ifdef ERM_CORR_ERR_CNT2_COUNT_MASK
+        case 2U:
             count = (base->CORR_ERR_CNT2 & ERM_CORR_ERR_CNT2_COUNT_MASK) >> ERM_CORR_ERR_CNT2_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMC:
+#endif
+#ifdef ERM_CORR_ERR_CNT3_COUNT_MASK
+        case 3U:
             count = (base->CORR_ERR_CNT3 & ERM_CORR_ERR_CNT3_COUNT_MASK) >> ERM_CORR_ERR_CNT3_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMD:
+#endif
+#ifdef ERM_CORR_ERR_CNT4_COUNT_MASK
+        case 4U:
             count = (base->CORR_ERR_CNT4 & ERM_CORR_ERR_CNT4_COUNT_MASK) >> ERM_CORR_ERR_CNT4_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAME:
+#endif
+#ifdef ERM_CORR_ERR_CNT5_COUNT_MASK
+        case 5U:
             count = (base->CORR_ERR_CNT5 & ERM_CORR_ERR_CNT5_COUNT_MASK) >> ERM_CORR_ERR_CNT5_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelRAMF:
+#endif
+#ifdef ERM_CORR_ERR_CNT6_COUNT_MASK
+        case 6U:
             count = (base->CORR_ERR_CNT6 & ERM_CORR_ERR_CNT6_COUNT_MASK) >> ERM_CORR_ERR_CNT6_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelLPCACRAM:
+#endif
+#ifdef ERM_CORR_ERR_CNT7_COUNT_MASK
+        case 7U:
             count = (base->CORR_ERR_CNT7 & ERM_CORR_ERR_CNT7_COUNT_MASK) >> ERM_CORR_ERR_CNT7_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelPKCRAM:
+#endif
+#ifdef ERM_CORR_ERR_CNT8_COUNT_MASK
+        case 8U:
             count = (base->CORR_ERR_CNT8 & ERM_CORR_ERR_CNT8_COUNT_MASK) >> ERM_CORR_ERR_CNT8_COUNT_SHIFT;
             break;
-
-        case kERM_MemoryChannelFLASH:
+#endif
+#ifdef ERM_CORR_ERR_CNT9_COUNT_MASK
+        case 9U:
             count = (base->CORR_ERR_CNT9 & ERM_CORR_ERR_CNT9_COUNT_MASK) >> ERM_CORR_ERR_CNT9_COUNT_SHIFT;
             break;
-
+#endif
         default:
             assert(NULL);
             break;
@@ -264,48 +259,57 @@ uint32_t ERM_GetErrorCount(ERM_Type *base, erm_memory_channel_t channel)
 
 void ERM_ResetErrorCount(ERM_Type *base, erm_memory_channel_t channel)
 {
-    switch (channel)
+    switch ((uint8_t)channel)
     {
-        case kERM_MemoryChannelRAMX:
+        case 0U:
             base->CORR_ERR_CNT0 = 0x00U;
             break;
 
-        case kERM_MemoryChannelRAMA:
+#ifdef ERM_CORR_ERR_CNT1_COUNT_MASK
+        case 1U:
             base->CORR_ERR_CNT1 = 0x00U;
             break;
-
-        case kERM_MemoryChannelRAMB:
+#endif
+#ifdef ERM_CORR_ERR_CNT2_COUNT_MASK
+        case 2U:
             base->CORR_ERR_CNT2 = 0x00U;
             break;
-
-        case kERM_MemoryChannelRAMC:
+#endif
+#ifdef ERM_CORR_ERR_CNT3_COUNT_MASK
+        case 3U:
             base->CORR_ERR_CNT3 = 0x00U;
             break;
-
-        case kERM_MemoryChannelRAMD:
+#endif
+#ifdef ERM_CORR_ERR_CNT4_COUNT_MASK
+        case 4U:
             base->CORR_ERR_CNT4 = 0x00U;
             break;
-
-        case kERM_MemoryChannelRAME:
+#endif
+#ifdef ERM_CORR_ERR_CNT5_COUNT_MASK
+        case 5U:
             base->CORR_ERR_CNT5 = 0x00U;
             break;
-
-        case kERM_MemoryChannelRAMF:
+#endif
+#ifdef ERM_CORR_ERR_CNT6_COUNT_MASK
+        case 6U:
             base->CORR_ERR_CNT6 = 0x00U;
             break;
-
-        case kERM_MemoryChannelLPCACRAM:
+#endif
+#ifdef ERM_CORR_ERR_CNT6_COUNT_MASK
+        case 7U:
             base->CORR_ERR_CNT7 = 0x00U;
             break;
-
-        case kERM_MemoryChannelPKCRAM:
+#endif
+#ifdef ERM_CORR_ERR_CNT8_COUNT_MASK
+        case 8U:
             base->CORR_ERR_CNT8 = 0x00U;
             break;
-
-        case kERM_MemoryChannelFLASH:
+#endif
+#ifdef ERM_CORR_ERR_CNT9_COUNT_MASK
+        case 9U:
             base->CORR_ERR_CNT9 = 0x00U;
             break;
-
+#endif
         default:
             assert(NULL);
             break;

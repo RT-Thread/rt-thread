@@ -21,6 +21,7 @@
 #include "usb_osal.h"
 #include "usbh_hub.h"
 #include "usb_memcpy.h"
+#include "usb_version.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -101,6 +102,9 @@ struct usbh_hubport {
     uint8_t port;     /* Hub port index */
     uint8_t dev_addr; /* device address */
     uint8_t speed;    /* device speed */
+    uint8_t depth;    /* distance from root hub */
+    uint8_t route;    /* route string */
+    uint8_t slot_id;  /* slot id */
     struct usb_device_descriptor device_desc;
     struct usbh_configuration config;
     const char *iManufacturer;
@@ -109,6 +113,7 @@ struct usbh_hubport {
     uint8_t *raw_config_desc;
     struct usb_setup_packet *setup;
     struct usbh_hub *parent;
+    struct usbh_hub *self; /* if this hubport is a hub */
     struct usbh_bus *bus;
     struct usb_endpoint_descriptor ep0;
     struct usbh_urb ep0_urb;
@@ -120,7 +125,13 @@ struct usbh_hub {
     bool is_roothub;
     uint8_t index;
     uint8_t hub_addr;
-    struct usb_hub_descriptor hub_desc;
+    uint8_t speed;
+    uint8_t nports;
+    uint8_t powerdelay;
+    uint8_t tt_think;
+    bool ismtt;
+    struct usb_hub_descriptor hub_desc; /* USB 2.0 only */
+    struct usb_hub_ss_descriptor hub_ss_desc; /* USB 3.0 only */
     struct usbh_hubport child[CONFIG_USBHOST_MAX_EHPORTS];
     struct usbh_hubport *parent;
     struct usbh_bus *bus;
@@ -143,9 +154,9 @@ struct usbh_devaddr_map {
 };
 
 struct usbh_hcd {
-    uint32_t reg_base;
+    uintptr_t reg_base;
     uint8_t hcd_id;
-    uint8_t roothub_intbuf[1];
+    uint8_t roothub_intbuf[2]; /* at most 15 roothub ports */
     struct usbh_hub roothub;
 };
 
@@ -261,7 +272,7 @@ int usbh_get_string_desc(struct usbh_hubport *hport, uint8_t index, uint8_t *out
  */
 int usbh_set_interface(struct usbh_hubport *hport, uint8_t intf, uint8_t altsetting);
 
-int usbh_initialize(uint8_t busid, uint32_t reg_base);
+int usbh_initialize(uint8_t busid, uintptr_t reg_base);
 int usbh_deinitialize(uint8_t busid);
 void *usbh_find_class_instance(const char *devname);
 

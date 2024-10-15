@@ -486,7 +486,7 @@ int usbh_enumerate(struct usbh_hubport *hport)
         goto errout;
     }
     USB_LOG_INFO("The device has %d interfaces\r\n", ((struct usb_configuration_descriptor *)ep0_request_buffer[hport->bus->busid])->bNumInterfaces);
-    hport->raw_config_desc = usb_malloc(wTotalLength);
+    hport->raw_config_desc = usb_osal_malloc(wTotalLength);
     if (hport->raw_config_desc == NULL) {
         ret = -USB_ERR_NOMEM;
         USB_LOG_ERR("No memory to alloc for raw_config_desc\r\n");
@@ -549,7 +549,7 @@ int usbh_enumerate(struct usbh_hubport *hport)
     setup->wLength = 16;
 
     ret = usbh_control_transfer(hport, setup, ep0_request_buffer[hport->bus->busid]);
-    if (ret < 0 && (ret != -EPERM)) {
+    if (ret < 0 && (ret != -USB_ERR_STALL)) {
         USB_LOG_ERR("Failed to get msosv1 compat id,errorcode:%d\r\n", ret);
         goto errout;
     }
@@ -576,7 +576,7 @@ int usbh_enumerate(struct usbh_hubport *hport)
 
 errout:
     if (hport->raw_config_desc) {
-        usb_free(hport->raw_config_desc);
+        usb_osal_free(hport->raw_config_desc);
         hport->raw_config_desc = NULL;
     }
     return ret;
@@ -600,7 +600,7 @@ void usbh_hubport_release(struct usbh_hubport *hport)
     }
 }
 
-static void usbh_bus_init(struct usbh_bus *bus, uint8_t busid, uint32_t reg_base)
+static void usbh_bus_init(struct usbh_bus *bus, uint8_t busid, uintptr_t reg_base)
 {
     memset(bus, 0, sizeof(struct usbh_bus));
     bus->busid = busid;
@@ -613,7 +613,7 @@ static void usbh_bus_init(struct usbh_bus *bus, uint8_t busid, uint32_t reg_base
     usb_slist_add_tail(&g_bus_head, &bus->list);
 }
 
-int usbh_initialize(uint8_t busid, uint32_t reg_base)
+int usbh_initialize(uint8_t busid, uintptr_t reg_base)
 {
     struct usbh_bus *bus;
 
@@ -731,7 +731,7 @@ static void *usbh_list_all_interface_name(struct usbh_hub *hub, const char *devn
     struct usbh_hub *hub_next;
     void *priv;
 
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    for (uint8_t port = 0; port < hub->nports; port++) {
         hport = &hub->child[port];
         if (hport->connected) {
             for (uint8_t itf = 0; itf < hport->config.config_desc.bNumInterfaces; itf++) {
@@ -760,8 +760,9 @@ static void usbh_list_all_interface_driver(struct usbh_hub *hub)
 {
     struct usbh_hubport *hport;
     struct usbh_hub *hub_next;
+    const char *speed_table[] = { "error-speed", "low-speed", "full-speed", "high-speed", "wireless-speed", "super-speed", "superplus-speed" };
 
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    for (uint8_t port = 0; port < hub->nports; port++) {
         hport = &hub->child[port];
         if (hport->connected) {
             for (uint8_t itf = 0; itf < hport->config.config_desc.bNumInterfaces; itf++) {
@@ -770,11 +771,12 @@ static void usbh_list_all_interface_driver(struct usbh_hub *hub)
                         USB_LOG_RAW("\t");
                     }
 
-                    USB_LOG_RAW("|__Port %u, dev addr:0x%02x, If %u, ClassDriver=%s\r\n",
+                    USB_LOG_RAW("|__Port %u, dev addr:0x%02x, If %u, ClassDriver=%s, %s\r\n",
                                 hport->port,
                                 hport->dev_addr,
                                 itf,
-                                hport->config.intf[itf].class_driver->driver_name);
+                                hport->config.intf[itf].class_driver->driver_name,
+                                speed_table[hport->speed]);
 
                     if (strcmp(hport->config.intf[itf].class_driver->driver_name, "hub") == 0) {
                         hub_next = hport->config.intf[itf].priv;
@@ -794,7 +796,7 @@ static void usbh_list_all_interface_desc(struct usbh_bus *bus, struct usbh_hub *
     struct usbh_hubport *hport;
     struct usbh_hub *hub_next;
 
-    for (uint8_t port = 0; port < hub->hub_desc.bNbrPorts; port++) {
+    for (uint8_t port = 0; port < hub->nports; port++) {
         hport = &hub->child[port];
         if (hport->connected) {
             USB_LOG_RAW("\r\nBus %u, Hub %u, Port %u, dev addr:0x%02x, VID:PID 0x%04x:0x%04x\r\n",
@@ -888,7 +890,7 @@ int lsusb(int argc, char **argv)
             USB_LOG_RAW("/: Bus %u, Hub %u, ports=%u, is roothub\r\n",
                         bus->busid,
                         hub->index,
-                        hub->hub_desc.bNbrPorts);
+                        hub->nports);
             usbh_list_all_interface_driver(hub);
         }
     }

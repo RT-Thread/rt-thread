@@ -113,7 +113,7 @@ void rt_hw_board_init()
 #endif
 
 #ifdef RT_USING_HEAP
-    rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
+    rt_kprintf("sram heap, begin: %p, end: %p\n", HEAP_BEGIN, HEAP_END);
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)(HEAP_END));
 #endif
 }

@@ -9,6 +9,7 @@
 #define HPM_GPTMR_DRV_H
 #include "hpm_common.h"
 #include "hpm_gptmr_regs.h"
+#include "hpm_soc_feature.h"
 
 /**
  * @brief GPTMR driver APIs
@@ -85,6 +86,17 @@ typedef enum gptmr_counter_type {
 } gptmr_counter_type_t;
 
 /**
+ * @brief GPTMR counter mode
+ */
+
+#if defined(HPM_IP_FEATURE_GPTMR_CNT_MODE) && (HPM_IP_FEATURE_GPTMR_CNT_MODE  == 1)
+typedef enum gptmr_counter_mode {
+    gptmr_counter_mode_internal = 0,
+    gptmr_counter_mode_external,
+} gptmr_counter_mode_t;
+#endif
+
+/**
  * @brief GPTMR channel config
  */
 typedef struct gptmr_channel_config {
@@ -99,6 +111,19 @@ typedef struct gptmr_channel_config {
     bool enable_software_sync;
     bool debug_mode;
 } gptmr_channel_config_t;
+
+#if defined(HPM_IP_FEATURE_GPTMR_MONITOR) && (HPM_IP_FEATURE_GPTMR_MONITOR  == 1)
+typedef enum gptmr_channel_monitor_type {
+    monitor_signal_period = 0,
+    monitor_signal_high_level_time,
+} gptmr_channel_monitor_type_t;
+
+typedef struct gptmr_channel_monitor_config {
+    gptmr_channel_monitor_type_t monitor_type;
+    uint32_t max_value;   /**< The unit is the gptmr clock source period */
+    uint32_t min_value;   /**< The unit is the gptmr clock source period */
+} gptmr_channel_monitor_config_t;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -346,7 +371,7 @@ static inline void gptmr_channel_set_capmode(GPTMR_Type *ptr, uint8_t ch_index, 
  */
 static inline gptmr_work_mode_t gptmr_channel_get_capmode(GPTMR_Type *ptr, uint8_t ch_index)
 {
-    return GPTMR_CHANNEL_CR_CAPMODE_GET(ptr->CHANNEL[ch_index].CR);
+    return (gptmr_work_mode_t)GPTMR_CHANNEL_CR_CAPMODE_GET(ptr->CHANNEL[ch_index].CR);
 }
 
 /**
@@ -401,7 +426,7 @@ static inline void gptmr_channel_config_update_reload(GPTMR_Type *ptr, uint8_t c
  */
 static inline gptmr_dma_request_event_t gptmr_channel_get_dma_request_event(GPTMR_Type *ptr, uint8_t ch_index)
 {
-    return GPTMR_CHANNEL_CR_DMASEL_GET(ptr->CHANNEL[ch_index].CR);
+    return (gptmr_dma_request_event_t)GPTMR_CHANNEL_CR_DMASEL_GET(ptr->CHANNEL[ch_index].CR);
 }
 
 /**
@@ -428,6 +453,148 @@ hpm_stat_t gptmr_channel_config(GPTMR_Type *ptr,
  * @param [out] config gptmr_channel_config_t
  */
 void gptmr_channel_get_default_config(GPTMR_Type *ptr, gptmr_channel_config_t *config);
+
+
+#if defined(HPM_IP_FEATURE_GPTMR_CNT_MODE) && (HPM_IP_FEATURE_GPTMR_CNT_MODE  == 1)
+/**
+ * @brief gptmr set counter mode.
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ * @param [in] mode gptmr_counter_mode_t, gptmr_counter_mode_external for gptmr enable external counting mode
+ */
+static inline void gptmr_channel_set_counter_mode(GPTMR_Type *ptr, uint8_t ch_index, gptmr_counter_mode_t mode)
+{
+    ptr->CHANNEL[ch_index].CR = (ptr->CHANNEL[ch_index].CR & ~GPTMR_CHANNEL_CR_CNT_MODE_MASK) | GPTMR_CHANNEL_CR_CNT_MODE_SET(mode);
+}
+
+/**
+ * @brief gptmr channel get external trigger input counting mode.
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ * @retval gptmr_counter_mode_external for external counting mode, gptmr_counter_mode_internal for internal counting mode
+ */
+static inline gptmr_counter_mode_t gptmr_channel_get_counter_mode(GPTMR_Type *ptr, uint8_t ch_index)
+{
+    return ((ptr->CHANNEL[ch_index].CR & GPTMR_CHANNEL_CR_CNT_MODE_MASK) ==
+            GPTMR_CHANNEL_CR_CNT_MODE_MASK) ?
+            gptmr_counter_mode_external : gptmr_counter_mode_internal;
+}
+
+#endif
+
+#if defined(HPM_IP_FEATURE_GPTMR_OP_MODE) && (HPM_IP_FEATURE_GPTMR_OP_MODE  == 1)
+/**
+ * @brief gptmr channel enable opmode, it's one-shot mode, timer will stopped at reload point.
+ *
+ * @note  reload irq will be always set at one-shot mode at end
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ */
+static inline void gptmr_channel_enable_opmode(GPTMR_Type *ptr, uint8_t ch_index)
+{
+    ptr->CHANNEL[ch_index].CR |= GPTMR_CHANNEL_CR_OPMODE_MASK;
+}
+
+/**
+ * @brief gptmr channel disable opmode, it's round mode.
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ */
+static inline void gptmr_channel_disable_opmode(GPTMR_Type *ptr, uint8_t ch_index)
+{
+    ptr->CHANNEL[ch_index].CR &= ~GPTMR_CHANNEL_CR_OPMODE_MASK;
+}
+
+/**
+ * @brief gptmr channel get opmode.
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ * @retval bool true for opmode, false for normal mode
+ */
+static inline bool gptmr_channel_is_opmode(GPTMR_Type *ptr, uint8_t ch_index)
+{
+    return ((ptr->CHANNEL[ch_index].CR & GPTMR_CHANNEL_CR_OPMODE_MASK) == GPTMR_CHANNEL_CR_OPMODE_MASK) ? true : false;
+}
+#endif
+
+#if defined(HPM_IP_FEATURE_GPTMR_MONITOR) && (HPM_IP_FEATURE_GPTMR_MONITOR  == 1)
+/**
+ * @brief gptmr channel enable monitor, set to monitor input signal period or high level time.
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ */
+static inline void gptmr_channel_enable_monitor(GPTMR_Type *ptr, uint8_t ch_index)
+{
+    ptr->CHANNEL[ch_index].CR |= GPTMR_CHANNEL_CR_MONITOR_EN_MASK;
+}
+
+/**
+ * @brief gptmr channel disable monitor
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ */
+static inline void gptmr_channel_disable_monitor(GPTMR_Type *ptr, uint8_t ch_index)
+{
+    ptr->CHANNEL[ch_index].CR &= ~GPTMR_CHANNEL_CR_MONITOR_EN_MASK;
+}
+
+/**
+ * @brief gptmr channel set to monitor input signal period or high level time.
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ * @param [in] type gptmr_channel_monitor_type_t
+ */
+static inline void gptmr_channel_set_monitor_type(GPTMR_Type *ptr, uint8_t ch_index, gptmr_channel_monitor_type_t type)
+{
+    ptr->CHANNEL[ch_index].CR = (ptr->CHANNEL[ch_index].CR & ~GPTMR_CHANNEL_CR_MONITOR_SEL_MASK) | GPTMR_CHANNEL_CR_MONITOR_SEL_SET(type);
+}
+
+/**
+ * @brief gptmr channel get to monitor input signal period or high level time.
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ * @retval gptmr_channel_monitor_type_t monitor_signal_high_level_time or monitor_signal_period
+ */
+static inline gptmr_channel_monitor_type_t gptmr_channel_get_monitor_type(GPTMR_Type *ptr, uint8_t ch_index)
+{
+    return (gptmr_channel_monitor_type_t)GPTMR_CHANNEL_CR_MONITOR_SEL_GET(ptr->CHANNEL[ch_index].CR);
+}
+/**
+ * @brief gptmr channel get default monitor config
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [out] config gptmr_channel_monitor_config_t
+ */
+void gptmr_channel_get_default_monitor_config(GPTMR_Type *ptr, gptmr_channel_monitor_config_t *config);
+
+/**
+ * @brief gptmr channel monitor config
+ *
+ * @param [in] ptr GPTMR base address
+ * @param [in] ch_index channel index
+ * @param [in] config gptmr_channel_monitor_config_t
+ * @param [in] enable
+ *  @arg true: enable monitor and reset reload count
+ *  @arg false: disable monitor
+ *
+ * @retval hpm_stat_t status_invalid_argument or status_success
+ */
+
+hpm_stat_t gptmr_channel_monitor_config(GPTMR_Type *ptr, uint8_t ch_index,
+                                        gptmr_channel_monitor_config_t *config,
+                                        bool enable);
+
+#endif
+
 
 /**
  * @}

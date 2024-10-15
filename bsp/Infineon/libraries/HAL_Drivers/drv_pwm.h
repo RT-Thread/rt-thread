@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,7 +29,34 @@ extern "C"
         .channel = 0,               \
         .gpio = GET_PIN(0, 0),      \
     }
-#endif /* PWM0_CH7_PORT2_CONFIG */
+#endif /* PWM0_CH0_PORT2_CONFIG */
+
+#ifndef PWM0_CH2_PORT11_COMPL_CONFIG
+#define PWM0_CH2_PORT11_COMPL_CONFIG \
+    {                                \
+        .name = "pwm0",              \
+        .channel = 2,                \
+        .gpio = GET_PIN(11, 3),      \
+    }
+#endif /*PWM0_CH2_PORT11_COMPL_CONFIG*/
+
+#ifndef PWM0_CH3_PORT11_CONFIG
+#define PWM0_CH3_PORT11_CONFIG      \
+    {                               \
+        .name = "pwm0",             \
+        .channel = 3,               \
+        .gpio = GET_PIN(11, 4),     \
+    }
+#endif /*PWM0_CH3_PORT11_CONFIG*/
+
+#ifndef PWM0_CH4_PORT5_COMPL_CONFIG
+#define PWM0_CH4_PORT5_COMPL_CONFIG \
+    {                               \
+        .name = "pwm0",             \
+        .channel = 4,               \
+        .gpio = GET_PIN(5, 1),      \
+    }
+#endif /*PWM0_CH4_PORT5_COMPL_CONFIG*/
 
 #ifndef PWM0_CH7_PORT2_CONFIG
 #define PWM0_CH7_PORT2_CONFIG       \
@@ -48,6 +75,15 @@ extern "C"
         .gpio = GET_PIN(5, 6),      \
     }
 #endif /* PWM0_CH7_PORT5_CONFIG */
+
+#ifndef PWM0_CH7_PORT5_COMPL_CONFIG
+#define PWM0_CH7_PORT5_COMPL_CONFIG \
+    {                               \
+        .name = "pwm0",             \
+        .channel = 7,               \
+        .gpio = GET_PIN(5, 7),      \
+    }
+#endif /*PWM0_CH7_PORT5_COMPL_CONFIG*/
 
 #ifndef PWM0_CH7_PORT7_CONFIG
 #define PWM0_CH7_PORT7_CONFIG       \

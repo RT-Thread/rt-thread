@@ -8,10 +8,7 @@
  * 2024-03-10     Meco Man     the first version
  */
 
-#include <rtdef.h>
-#include <rtcompiler.h>
-#include <rtklibc.h>
-#include <rtm.h>
+#include <rtthread.h>
 #ifdef RT_KLIBC_USING_STDLIB
 #include <string.h>
 #endif /* RT_KLIBC_USING_STDLIB */

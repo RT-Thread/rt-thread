@@ -12,7 +12,7 @@
 #define DRV_SOFT_SPI_H_
 
 #include <rtdevice.h>
-#include <spi-bit-ops.h>
+#include <dev_spi_bit_ops.h>
 
 /* lpc soft spi config */
 struct lpc_soft_spi_config

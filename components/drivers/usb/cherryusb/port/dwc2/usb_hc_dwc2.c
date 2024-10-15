@@ -114,12 +114,22 @@ static inline void dwc2_set_mode(struct usbh_bus *bus, uint8_t mode)
     } else if (mode == USB_OTG_MODE_DEVICE) {
         USB_OTG_GLB->GUSBCFG |= USB_OTG_GUSBCFG_FDMOD;
     }
+
+    usb_osal_msleep(50);
 }
 
 static inline int dwc2_flush_rxfifo(struct usbh_bus *bus)
 {
-    volatile uint32_t count = 0;
+    volatile uint32_t count = 0U;
 
+    /* Wait for AHB master IDLE state. */
+    do {
+        if (++count > 200000U) {
+            return -1;
+        }
+    } while ((USB_OTG_GLB->GRSTCTL & USB_OTG_GRSTCTL_AHBIDL) == 0U);
+
+    count = 0;
     USB_OTG_GLB->GRSTCTL = USB_OTG_GRSTCTL_RXFFLSH;
 
     do {
@@ -135,6 +145,14 @@ static inline int dwc2_flush_txfifo(struct usbh_bus *bus, uint32_t num)
 {
     volatile uint32_t count = 0U;
 
+    /* Wait for AHB master IDLE state. */
+    do {
+        if (++count > 200000U) {
+            return -1;
+        }
+    } while ((USB_OTG_GLB->GRSTCTL & USB_OTG_GRSTCTL_AHBIDL) == 0U);
+
+    count = 0;
     USB_OTG_GLB->GRSTCTL = (USB_OTG_GRSTCTL_TXFFLSH | (num << 6));
 
     do {
@@ -424,10 +442,12 @@ static void dwc2_iso_urb_init(struct usbh_bus *bus, uint8_t chidx, struct usbh_u
 
 __WEAK void usb_hc_low_level_init(struct usbh_bus *bus)
 {
+    (void)bus;
 }
 
 __WEAK void usb_hc_low_level_deinit(struct usbh_bus *bus)
 {
+    (void)bus;
 }
 
 int usb_hc_init(struct usbh_bus *bus)
@@ -627,6 +647,7 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
                     case HUB_PORT_FEATURE_C_SUSPEND:
                         break;
                     case HUB_PORT_FEATURE_POWER:
+                        dwc2_drivebus(bus, 0);
                         break;
                     case HUB_PORT_FEATURE_C_CONNECTION:
                         g_dwc2_hcd[bus->hcd.hcd_id].port_csc = 0;
@@ -652,7 +673,7 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
                     case HUB_PORT_FEATURE_SUSPEND:
                         break;
                     case HUB_PORT_FEATURE_POWER:
-                        USB_OTG_HPRT &= ~USB_OTG_HPRT_PPWR;
+                        dwc2_drivebus(bus, 1);
                         break;
                     case HUB_PORT_FEATURE_RESET:
                         usbh_reset_port(bus, port);

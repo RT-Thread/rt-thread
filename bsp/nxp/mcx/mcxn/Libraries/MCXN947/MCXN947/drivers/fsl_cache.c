@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2021, 2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -205,7 +205,7 @@ void CACHE64_InvalidateCache(CACHE64_CTRL_Type *base)
  * brief Invalidates cache by range.
  *
  * param address The physical address of cache.
- * param size_byte size of the memory to be invalidated.
+ * param size_byte size of the memory to be invalidated, should be larger than 0.
  * note Address and size should be aligned to "L1CODCACHE_LINESIZE_BYTE".
  * The startAddr here will be forced to align to CACHE64_LINESIZE_BYTE if
  * startAddr is not aligned. For the size_byte, application should make sure the
@@ -213,36 +213,39 @@ void CACHE64_InvalidateCache(CACHE64_CTRL_Type *base)
  */
 void CACHE64_InvalidateCacheByRange(uint32_t address, uint32_t size_byte)
 {
-    uint32_t endAddr = address + size_byte - 0x01U;
-    uint32_t pccReg  = 0;
-    /* Align address to cache line size. */
-    uint32_t startAddr = address & ~((uint32_t)CACHE64_LINESIZE_BYTE - 1U);
-    uint32_t instance  = CACHE64_GetInstanceByAddr(address);
-    uint32_t endLim;
-    CACHE64_CTRL_Type *base;
-
-    if (instance >= ARRAY_SIZE(s_cache64ctrlBases))
+    if (size_byte > 0UL)
     {
-        return;
-    }
-    base    = s_cache64ctrlBases[instance];
-    endLim  = s_cache64PhymemBases[instance] + s_cache64PhymemSizes[instance] - 0x01U;
-    endAddr = endAddr > endLim ? endLim : endAddr;
+        uint32_t endAddr = address + size_byte - 0x01U;
+        uint32_t pccReg  = 0;
+        /* Align address to cache line size. */
+        uint32_t startAddr = address & ~((uint32_t)CACHE64_LINESIZE_BYTE - 1U);
+        uint32_t instance  = CACHE64_GetInstanceByAddr(address);
+        uint32_t endLim;
+        CACHE64_CTRL_Type *base;
 
-    /* Set the invalidate by line command and use the physical address. */
-    pccReg = (base->CLCR & ~CACHE64_CTRL_CLCR_LCMD_MASK) | CACHE64_CTRL_CLCR_LCMD(1) | CACHE64_CTRL_CLCR_LADSEL_MASK;
-    base->CLCR = pccReg;
-
-    while (startAddr < endAddr)
-    {
-        /* Set the address and initiate the command. */
-        base->CSAR = (startAddr & CACHE64_CTRL_CSAR_PHYADDR_MASK) | CACHE64_CTRL_CSAR_LGO_MASK;
-
-        /* Wait until the cache command completes. */
-        while ((base->CSAR & CACHE64_CTRL_CSAR_LGO_MASK) != 0x00U)
+        if (instance >= ARRAY_SIZE(s_cache64ctrlBases))
         {
+            return;
         }
-        startAddr += (uint32_t)CACHE64_LINESIZE_BYTE;
+        base    = s_cache64ctrlBases[instance];
+        endLim  = s_cache64PhymemBases[instance] + s_cache64PhymemSizes[instance] - 0x01U;
+        endAddr = endAddr > endLim ? endLim : endAddr;
+
+        /* Set the invalidate by line command and use the physical address. */
+        pccReg = (base->CLCR & ~CACHE64_CTRL_CLCR_LCMD_MASK) | CACHE64_CTRL_CLCR_LCMD(1) | CACHE64_CTRL_CLCR_LADSEL_MASK;
+        base->CLCR = pccReg;
+
+        while (startAddr < endAddr)
+        {
+            /* Set the address and initiate the command. */
+            base->CSAR = (startAddr & CACHE64_CTRL_CSAR_PHYADDR_MASK) | CACHE64_CTRL_CSAR_LGO_MASK;
+
+            /* Wait until the cache command completes. */
+            while ((base->CSAR & CACHE64_CTRL_CSAR_LGO_MASK) != 0x00U)
+            {
+            }
+            startAddr += (uint32_t)CACHE64_LINESIZE_BYTE;
+        }
     }
 }
 
@@ -268,7 +271,7 @@ void CACHE64_CleanCache(CACHE64_CTRL_Type *base)
  * brief Cleans cache by range.
  *
  * param address The physical address of cache.
- * param size_byte size of the memory to be cleaned.
+ * param size_byte size of the memory to be cleaned, should be larger than 0.
  * note Address and size should be aligned to "CACHE64_LINESIZE_BYTE".
  * The startAddr here will be forced to align to CACHE64_LINESIZE_BYTE if
  * startAddr is not aligned. For the size_byte, application should make sure the
@@ -276,36 +279,39 @@ void CACHE64_CleanCache(CACHE64_CTRL_Type *base)
  */
 void CACHE64_CleanCacheByRange(uint32_t address, uint32_t size_byte)
 {
-    uint32_t endAddr = address + size_byte - 0x01U;
-    uint32_t pccReg  = 0;
-    /* Align address to cache line size. */
-    uint32_t startAddr = address & ~((uint32_t)CACHE64_LINESIZE_BYTE - 1U);
-    uint32_t instance  = CACHE64_GetInstanceByAddr(address);
-    uint32_t endLim;
-    CACHE64_CTRL_Type *base;
-
-    if (instance >= ARRAY_SIZE(s_cache64ctrlBases))
+    if (size_byte > 0UL)
     {
-        return;
-    }
-    base    = s_cache64ctrlBases[instance];
-    endLim  = s_cache64PhymemBases[instance] + s_cache64PhymemSizes[instance] - 0x01U;
-    endAddr = endAddr > endLim ? endLim : endAddr;
+        uint32_t endAddr = address + size_byte - 0x01U;
+        uint32_t pccReg  = 0;
+        /* Align address to cache line size. */
+        uint32_t startAddr = address & ~((uint32_t)CACHE64_LINESIZE_BYTE - 1U);
+        uint32_t instance  = CACHE64_GetInstanceByAddr(address);
+        uint32_t endLim;
+        CACHE64_CTRL_Type *base;
 
-    /* Set the push by line command. */
-    pccReg = (base->CLCR & ~CACHE64_CTRL_CLCR_LCMD_MASK) | CACHE64_CTRL_CLCR_LCMD(2) | CACHE64_CTRL_CLCR_LADSEL_MASK;
-    base->CLCR = pccReg;
-
-    while (startAddr < endAddr)
-    {
-        /* Set the address and initiate the command. */
-        base->CSAR = (startAddr & CACHE64_CTRL_CSAR_PHYADDR_MASK) | CACHE64_CTRL_CSAR_LGO_MASK;
-
-        /* Wait until the cache command completes. */
-        while ((base->CSAR & CACHE64_CTRL_CSAR_LGO_MASK) != 0x00U)
+        if (instance >= ARRAY_SIZE(s_cache64ctrlBases))
         {
+            return;
         }
-        startAddr += (uint32_t)CACHE64_LINESIZE_BYTE;
+        base    = s_cache64ctrlBases[instance];
+        endLim  = s_cache64PhymemBases[instance] + s_cache64PhymemSizes[instance] - 0x01U;
+        endAddr = endAddr > endLim ? endLim : endAddr;
+
+        /* Set the push by line command. */
+        pccReg = (base->CLCR & ~CACHE64_CTRL_CLCR_LCMD_MASK) | CACHE64_CTRL_CLCR_LCMD(2) | CACHE64_CTRL_CLCR_LADSEL_MASK;
+        base->CLCR = pccReg;
+
+        while (startAddr < endAddr)
+        {
+            /* Set the address and initiate the command. */
+            base->CSAR = (startAddr & CACHE64_CTRL_CSAR_PHYADDR_MASK) | CACHE64_CTRL_CSAR_LGO_MASK;
+
+            /* Wait until the cache command completes. */
+            while ((base->CSAR & CACHE64_CTRL_CSAR_LGO_MASK) != 0x00U)
+            {
+            }
+            startAddr += (uint32_t)CACHE64_LINESIZE_BYTE;
+        }
     }
 }
 
@@ -333,7 +339,7 @@ void CACHE64_CleanInvalidateCache(CACHE64_CTRL_Type *base)
  * brief Cleans and invalidate cache by range.
  *
  * param address The physical address of cache.
- * param size_byte size of the memory to be Cleaned and Invalidated.
+ * param size_byte size of the memory to be Cleaned and Invalidated, should be larger than 0.
  * note Address and size should be aligned to "CACHE64_LINESIZE_BYTE".
  * The startAddr here will be forced to align to CACHE64_LINESIZE_BYTE if
  * startAddr is not aligned. For the size_byte, application should make sure the
@@ -341,36 +347,39 @@ void CACHE64_CleanInvalidateCache(CACHE64_CTRL_Type *base)
  */
 void CACHE64_CleanInvalidateCacheByRange(uint32_t address, uint32_t size_byte)
 {
-    uint32_t endAddr = address + size_byte - 0x01U;
-    uint32_t pccReg  = 0;
-    /* Align address to cache line size. */
-    uint32_t startAddr = address & ~((uint32_t)CACHE64_LINESIZE_BYTE - 1U);
-    uint32_t instance  = CACHE64_GetInstanceByAddr(address);
-    uint32_t endLim;
-    CACHE64_CTRL_Type *base;
-
-    if (instance >= ARRAY_SIZE(s_cache64ctrlBases))
+    if (size_byte > 0UL)
     {
-        return;
-    }
-    base    = s_cache64ctrlBases[instance];
-    endLim  = s_cache64PhymemBases[instance] + s_cache64PhymemSizes[instance] - 0x01U;
-    endAddr = endAddr > endLim ? endLim : endAddr;
+        uint32_t endAddr = address + size_byte - 0x01U;
+        uint32_t pccReg  = 0;
+        /* Align address to cache line size. */
+        uint32_t startAddr = address & ~((uint32_t)CACHE64_LINESIZE_BYTE - 1U);
+        uint32_t instance  = CACHE64_GetInstanceByAddr(address);
+        uint32_t endLim;
+        CACHE64_CTRL_Type *base;
 
-    /* Set the push by line command. */
-    pccReg = (base->CLCR & ~CACHE64_CTRL_CLCR_LCMD_MASK) | CACHE64_CTRL_CLCR_LCMD(3) | CACHE64_CTRL_CLCR_LADSEL_MASK;
-    base->CLCR = pccReg;
-
-    while (startAddr < endAddr)
-    {
-        /* Set the address and initiate the command. */
-        base->CSAR = (startAddr & CACHE64_CTRL_CSAR_PHYADDR_MASK) | CACHE64_CTRL_CSAR_LGO_MASK;
-
-        /* Wait until the cache command completes. */
-        while ((base->CSAR & CACHE64_CTRL_CSAR_LGO_MASK) != 0x00U)
+        if (instance >= ARRAY_SIZE(s_cache64ctrlBases))
         {
+            return;
         }
-        startAddr += (uint32_t)CACHE64_LINESIZE_BYTE;
+        base    = s_cache64ctrlBases[instance];
+        endLim  = s_cache64PhymemBases[instance] + s_cache64PhymemSizes[instance] - 0x01U;
+        endAddr = endAddr > endLim ? endLim : endAddr;
+
+        /* Set the push by line command. */
+        pccReg = (base->CLCR & ~CACHE64_CTRL_CLCR_LCMD_MASK) | CACHE64_CTRL_CLCR_LCMD(3) | CACHE64_CTRL_CLCR_LADSEL_MASK;
+        base->CLCR = pccReg;
+
+        while (startAddr < endAddr)
+        {
+            /* Set the address and initiate the command. */
+            base->CSAR = (startAddr & CACHE64_CTRL_CSAR_PHYADDR_MASK) | CACHE64_CTRL_CSAR_LGO_MASK;
+
+            /* Wait until the cache command completes. */
+            while ((base->CSAR & CACHE64_CTRL_CSAR_LGO_MASK) != 0x00U)
+            {
+            }
+            startAddr += (uint32_t)CACHE64_LINESIZE_BYTE;
+        }
     }
 }
 
