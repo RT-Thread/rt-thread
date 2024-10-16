@@ -801,7 +801,7 @@ RTM_EXPORT(rt_timespec_to_tick);
 struct timer_obj
 {
     struct rt_ktime_hrtimer hrtimer;
-    void (*sigev_notify_func)(union sigval val);
+    void (*sigev_notify_function)(union sigval val);
     union sigval val;
     struct timespec interval;              /* Reload value */
     struct timespec value;                 /* Reload value */
@@ -903,7 +903,7 @@ static void rtthread_timer_wrapper(void *timerobj)
     }
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
-    void *ptid = &timer->sigev_notify_func;
+    void *ptid = &timer->sigev_notify_function;
     int tid = *(int *)ptid;
     struct lwp_timer_event_param *data = rt_container_of(timer->work, struct lwp_timer_event_param, work);
     data->signo = timer->sigev_signo;
@@ -922,9 +922,9 @@ static void rtthread_timer_wrapper(void *timerobj)
     if (rt_work_submit(timer->work, 0))
         RT_ASSERT(0);
 #else
-    if(timer->sigev_notify_func != RT_NULL)
+    if(timer->sigev_notify_function != RT_NULL)
     {
-        (timer->sigev_notify_func)(timer->val);
+        (timer->sigev_notify_function)(timer->val);
     }
 #endif /* RT_USING_SMART */
 }
@@ -1012,7 +1012,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 
     timer->work = work;
 #endif /* RT_USING_SMART */
-    timer->sigev_notify_func = evp->sigev_notify_function;
+    timer->sigev_notify_function = evp->sigev_notify_function;
     timer->val = evp->sigev_value;
     timer->interval.tv_sec = 0;
     timer->interval.tv_nsec = 0;
