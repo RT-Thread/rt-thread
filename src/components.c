@@ -270,6 +270,9 @@ int rtthread_startup(void)
     /* idle thread initialization */
     rt_thread_idle_init();
 
+    /* defunct thread initialization */
+    rt_thread_defunct_init();
+
 #ifdef RT_USING_SMP
     rt_hw_spin_lock(&_cpus_lock);
 #endif /* RT_USING_SMP */
