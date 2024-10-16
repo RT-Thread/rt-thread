@@ -609,7 +609,7 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
             }
         }
         else
-        {   
+        {
             rc = -RT_EINVAL;
             ret = (void *)lwp_errno_to_posix(rc);
         }
