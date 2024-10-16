@@ -8,11 +8,11 @@
  * 2017-07-28     Tanek        the first version
  */
 #include <rtthread.h>
-#include "usart.h"
+#include "drv_usart.h"
 
 #include "peri_driver.h"
 
-#ifdef RT_USING_UART
+#ifdef BSP_USING_UART
 
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
@@ -30,15 +30,15 @@ struct lpc8xx_uart
     rt_uint8_t rx_buffer[UART_RX_BUFSZ];
 
 };
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
 struct lpc8xx_uart uart0_device;
 #endif
 
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
 struct lpc8xx_uart uart1_device;
 #endif
 
-#ifdef RT_USING_UART2
+#ifdef BSP_USING_UART2
 struct lpc8xx_uart uart2_device;
 #endif
 
@@ -64,22 +64,22 @@ void uart_irq_handler(struct lpc8xx_uart* uart)
     rt_interrupt_leave();
 }
 
-#ifdef RT_USING_UART0
-void UART0_IRQHandler(void)
+#ifdef BSP_USING_UART0
+void USART0_IRQHandler(void)
 {
     uart_irq_handler(&uart0_device);
 }
 #endif
 
-#ifdef RT_USING_UART1
-void UART1_IRQHandler(void)
+#ifdef BSP_USING_UART1
+void USART1_IRQHandler(void)
 {
     uart_irq_handler(&uart1_device);
 }
 #endif
 
-#ifdef RT_USING_UART2
-void UART2_IRQHandler(void)
+#ifdef BSP_USING_UART2
+void USART2_IRQHandler(void)
 {
     uart_irq_handler(&uart2_device);
 }
@@ -92,7 +92,7 @@ static void uart1_io_init(LPC_USART_T * uart_base)
 
     Chip_Clock_SetUARTClockDiv(1);
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     if (uart_base == LPC_USART0)
     {
         Chip_SWM_MovablePinAssign(SWM_U0_TXD_O, 4);
@@ -101,7 +101,7 @@ static void uart1_io_init(LPC_USART_T * uart_base)
     else
 #endif
 
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
     if (uart_base == LPC_USART1)
     {
         Chip_SWM_MovablePinAssign(SWM_U1_TXD_O, 4);
@@ -110,7 +110,7 @@ static void uart1_io_init(LPC_USART_T * uart_base)
     else
 #endif
 
-#ifdef RT_USING_UART2
+#ifdef BSP_USING_UART2
     if (uart_base == LPC_USART2)
     {
         Chip_SWM_MovablePinAssign(SWM_U2_TXD_O, 4);
@@ -190,7 +190,7 @@ static rt_ssize_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_s
 
     rt_size_t length;
     struct lpc8xx_uart* uart;
-    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(dev != RT_NULL);
     uart = (struct lpc8xx_uart *)dev;
 
 
@@ -209,7 +209,7 @@ static rt_ssize_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffe
 {
     char *ptr = (char*) buffer;
     struct lpc8xx_uart* uart;
-    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(dev != RT_NULL);
     uart = (struct lpc8xx_uart *)dev;
 
     if (dev->open_flag & RT_DEVICE_FLAG_STREAM)
@@ -247,7 +247,7 @@ static rt_ssize_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffe
 
 int rt_hw_usart_init(void)
 {
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     {
         struct lpc8xx_uart* uart;
 
@@ -274,7 +274,7 @@ int rt_hw_usart_init(void)
     }
 #endif
 
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
     {
         struct lpc8xx_uart* uart;
 
@@ -301,7 +301,7 @@ int rt_hw_usart_init(void)
     }
 #endif
 
-#ifdef RT_USING_UART2
+#ifdef BSP_USING_UART2
     {
         struct lpc8xx_uart* uart;
 
@@ -310,7 +310,7 @@ int rt_hw_usart_init(void)
 
         /* device initialization */
         uart->parent.type = RT_Device_Class_Char;
-        uart->uart_base = LPC_USART1;
+        uart->uart_base = LPC_USART2;
         uart->uart_irq = UART2_IRQn;
         rt_ringbuffer_init(&(uart->rx_rb), uart->rx_buffer, sizeof(uart->rx_buffer));
 
@@ -325,9 +325,9 @@ int rt_hw_usart_init(void)
 
         rt_device_register(&uart->parent, "uart2", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
     }
-#endif /* RT_USING_UART2 */
+#endif /* BSP_USING_UART2 */
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_usart_init);
 
-#endif /*RT_USING_UART*/
+#endif /*BSP_USING_UART*/

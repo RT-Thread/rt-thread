@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +14,7 @@
 #include <drivers/dev_pwm.h>
 #include "drv_gpio.h"
 
-//#define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define LOG_TAG "drv.pwm"
 #include <drv_log.h>
 
@@ -89,12 +89,12 @@ static rt_err_t drv_pwm_enable(cyhal_pwm_t *htim, struct rt_pwm_configuration *c
     {
         if (!enable)
         {
-						htim->tcpwm.resource.channel_num = channel;
+                        htim->tcpwm.resource.channel_num = channel;
             cyhal_pwm_stop(htim);
         }
         else
         {
-						htim->tcpwm.resource.channel_num = channel;
+                        htim->tcpwm.resource.channel_num = channel;
             cyhal_pwm_start(htim);
         }
     }

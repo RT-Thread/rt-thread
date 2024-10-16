@@ -106,6 +106,13 @@ rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
                     LOG_E("SPI device %s configuration failed", device->parent.parent.name);
                 }
             }
+            else
+            {
+                /* RT_EBUSY is not an error condition and
+                 * the configuration will take effect once the device has the bus
+                 */
+                result = -RT_EBUSY;
+            }
 
             /* release lock */
             rt_mutex_release(&(device->bus->lock));
@@ -128,10 +135,23 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
     /* reset the CS pin */
     if (device->cs_pin != PIN_NONE)
     {
-        if (cfg->mode & RT_SPI_CS_HIGH)
-            rt_pin_write(device->cs_pin, PIN_LOW);
+        rt_err_t result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+        if (result == RT_EOK)
+        {
+            if (cfg->mode & RT_SPI_CS_HIGH)
+            {
+                rt_pin_write(device->cs_pin, PIN_LOW);
+            }
+            else
+            {
+                rt_pin_write(device->cs_pin, PIN_HIGH);
+            }
+            rt_mutex_release(&(device->bus->lock));
+        }
         else
-            rt_pin_write(device->cs_pin, PIN_HIGH);
+        {
+            return result;
+        }
     }
 
     /* If the configurations are the same, we don't need to set again. */
