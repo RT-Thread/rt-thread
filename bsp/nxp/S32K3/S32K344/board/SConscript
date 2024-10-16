@@ -1,0 +1,29 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+chip_lib_path = SDK_LIB + '/s32k344'
+
+# add general drivers
+src = Split('''
+board.c
+Siul2_Port_Ip_Cfg.c
+Tspc_Port_Ip_Cfg.c
+''')
+src += Glob(chip_lib_path + '/generate/src/*.c')
+
+path =  [cwd]
+path += [chip_lib_path + '/generate/include']
+path += [chip_lib_path + '/Startup_Code/include']
+
+startup_path_prefix = chip_lib_path + '/Startup_Code/src'
+if rtconfig.PLATFORM in ['gcc']:
+    src += Glob(startup_path_prefix + '/*.c')
+    src += Glob(startup_path_prefix + '/*.s')
+
+CPPDEFINES = ['I_CACHE_ENABLE', 'D_CACHE_ENABLE', 'ENABLE_FPU', 'MPU_ENABLE']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')
