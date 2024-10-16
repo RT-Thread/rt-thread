@@ -77,7 +77,6 @@ struct dfs_aspace
     rt_bool_t is_active;
 
     struct rt_mutex lock;
-    rt_atomic_t ref_count;
 
     struct dfs_vnode *vnode;
     const struct dfs_aspace_ops *ops;

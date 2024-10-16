@@ -29,6 +29,10 @@ int dfs_net_getsocket(int fd)
     if (file->vnode->type != FT_SOCKET) socket = -1;
     else socket = (int)(size_t)file->vnode->data;
 
+#ifdef RT_USING_DFS_V2
+    dfs_file_put(file);
+#endif
+
     return socket;
 }
 
@@ -89,7 +93,7 @@ static int dfs_net_close(struct dfs_file* file)
     int socket;
     int ret = 0;
 
-    if (file->vnode->ref_count == 1)
+    if (file->vnode && file->vnode->ref_count == 1)
     {
         socket = (int)(size_t)file->vnode->data;
         ret = sal_closesocket(socket);
