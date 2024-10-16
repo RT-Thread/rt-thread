@@ -22,7 +22,7 @@ In order to make it easier for users to learn USB basics, enumeration, driver lo
 In order to facilitate the use of the USB interface and to take into account the fact that users have learned about uart and dma, the following advantages have been designed for the data sending and receiving class of interface:
 
 - Equivalent to using uart tx dma/uart rx dma
-- There is no limit to the length of send and receive, the user does not need to care about the USB packetization process (the porting driver does the packetization process)
+- There is no limit to the length of send and receive, the user does not need to care about the USB packetization process (the porting driver does it)
 
 ### Easy to bring out USB performance
 
@@ -32,7 +32,7 @@ Taking into account USB performance issues and trying to achieve the theoretical
 - Memory zero copy
 - If IP has DMA then uses DMA mode (DMA with hardware packetization)
 - Unlimited length make it easier to interface with hardware DMA and take advantage of DMA
-- Subcontracting function is handled in interrupt
+- Packetization is handled in interrupt
 
 ## Directory Structure
 
@@ -75,13 +75,13 @@ CherryUSB Device Stack resource usage (GCC 10.2 with -O2):
 
 |   file        |  FLASH (Byte)  |  No Cache RAM (Byte)      |  RAM (Byte)   |  Heap (Byte)     |
 |:-------------:|:--------------:|:-------------------------:|:-------------:|:----------------:|
-|usbd_core.c    |  3516          | 512(default) + 320        | 0             | 0                |
-|usbd_cdc.c     |  392           | 0                         | 0             | 0                |
-|usbd_msc.c     |  2839          | 128 + 512(default)        | 16            | 0                |
-|usbd_hid.c     |  364           | 0                         | 0             | 0                |
-|usbd_audio.c   |  1455          | 0                         | 0             | 0                |
-|usbd_video.c   |  2494          | 0                         | 84            | 0                |
-|usbd_rndis.c   |  2109          | 3340                      | 76            | 0                |
+|usbd_core.c    |  ~4400          | 512(default) + 320        | 0             | 0                |
+|usbd_cdc_acm.c |  ~400           | 0                         | 0             | 0                |
+|usbd_msc.c     |  ~3800          | 128 + 512(default)        | 16            | 0                |
+|usbd_hid.c     |  ~360           | 0                         | 0             | 0                |
+|usbd_audio.c   |  ~1500          | 0                         | 0             | 0                |
+|usbd_video.c   |  ~2600          | 0                         | 84            | 0                |
+|usbd_rndis.c   |  ~2100          | 2 * 1580(default)+156+8     | 76            | 0                |
 
 ## Host Stack Overview
 
@@ -111,16 +111,17 @@ CherryUSB Host Stack resource usage (GCC 10.2 with -O2):
 
 |   file        |  FLASH (Byte)  |  No Cache RAM (Byte)            |  RAM (Byte)                 |  Heap (Byte) |
 |:-------------:|:--------------:|:-------------------------------:|:---------------------------:|:------------:|
-|usbh_core.c    |  ~7700          | 512 + 8 * (1+x) *n              | 28                          | raw_config_desc |
-|usbh_hub.c     |  ~5600          | 32 + 4* (1+x) | 12 + sizeof(struct usbh_hub) * (1+x)          | 0            |
-|usbh_cdc_acm.c |  ~1200          | 7             | 4  + sizeof(struct usbh_cdc_acm) * x          | 0            |
-|usbh_msc.c     |  ~2500          | 32            | 4  + sizeof(struct usbh_msc) * x              | 0            |
-|usbh_hid.c     |  ~1000          | 128           | 4  + sizeof(struct usbh_hid) * x              | 0            |
-|usbh_video.c   |  ~3700          | 128           | 4  + sizeof(struct usbh_video) * x            | 0            |
-|usbh_audio.c   |  ~3100          | 128           | 4  + sizeof(struct usbh_audio) * x            | 0            |
-|usbh_rndis.c   |  ~3900          | 4096 + 2 * 2048(default)| sizeof(struct usbh_rndis) * 1       | 0            |
-|usbh_cdc_ecm.c |  ~2500          | 2 * 1514              | sizeof(struct usbh_cdc_ecm) * 1       | 0            |
-|usbh_bluetooth.c |  ~2300        | 2 * 2048(default)   | sizeof(struct usbh_bluetooth) * 1       | 0            |
+|usbh_core.c    |  ~9000          | 512 + 8 * (1+x) *n              | 28                          | raw_config_desc |
+|usbh_hub.c     |  ~6000          | 32 + 4 * (1+x) | 12 + sizeof(struct usbh_hub) * (1+x)          | 0            |
+|usbh_cdc_acm.c |  ~900           | 7             | 4  + sizeof(struct usbh_cdc_acm) * x          | 0            |
+|usbh_msc.c     |  ~2700          | 64            | 4  + sizeof(struct usbh_msc) * x              | 0            |
+|usbh_hid.c     |  ~1400          | 256           | 4  + sizeof(struct usbh_hid) * x              | 0            |
+|usbh_video.c   |  ~3800          | 128           | 4  + sizeof(struct usbh_video) * x            | 0            |
+|usbh_audio.c   |  ~4100          | 128           | 4  + sizeof(struct usbh_audio) * x            | 0            |
+|usbh_rndis.c   |  ~4200          | 512 + 2 * 2048(default)| sizeof(struct usbh_rndis) * 1       | 0            |
+|usbh_cdc_ecm.c |  ~2200          | 2 * 1514 + 16           | sizeof(struct usbh_cdc_ecm) * 1     | 0            |
+|usbh_cdc_ncm.c |  ~3300          | 2 * 2048(default) + 16 + 32   | sizeof(struct usbh_cdc_ncm) * 1  | 0         |
+|usbh_bluetooth.c |  ~1000        | 2 * 2048(default)   | sizeof(struct usbh_bluetooth) * 1       | 0            |
 
 Among them, `sizeof(struct usbh_hub)` and `sizeof(struct usbh_hubport)` are affected by the following macros：
 
@@ -184,7 +185,7 @@ USB basic concepts and how the CherryUSB Device stack is implemented, see [Cherr
 |Phytium        |  e2000 | pusb2/xhci |[phytium_repo](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk)|>=1.4.0  | Long-term |
 |Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Long-term |
 |Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)|<= latest | Long-term |
-|NXP            |  mcx | chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Long-term |
+|NXP            |  mcx | kinetis/chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Long-term |
 |AllwinnerTech  |  F1C100S/F1C200S | musb |[cherryusb_rtt_f1c100s](https://github.com/CherryUSB/cherryusb_rtt_f1c100s)|<= latest | the same with musb |
 |Bekencorp      |  bk7256/bk7258 | musb |[bk_idk](https://github.com/CherryUSB/bk_idk)| v0.7.0 | the same with musb |
 |Sophgo         |  cv18xx | dwc2 |[cvi_alios_open](https://github.com/CherryUSB/cvi_alios_open)| v0.7.0 | TBD |
@@ -211,4 +212,4 @@ CherryUSB discord: https://discord.com/invite/wFfvrSAey8.
 
 Thanks to the following companies for their support (in no particular order).
 
-<img src="docs/assets/bouffalolab.jpg"  width="100" height="100"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="100" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="100" /> <img src="docs/assets/rtthread.jpg"  width="100" height="100" /> <img src="docs/assets/sophgo.jpg"  width="100" height="100" /> <img src="docs/assets/phytium.jpg"  width="100" height="100" /> <img src="docs/assets/thead.jpg"  width="100" height="100" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="100" /> <img src="docs/assets/artinchip.jpg"  width="100" height="100" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="100" />
+<img src="docs/assets/bouffalolab.jpg"  width="100" height="80"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="80" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="80" /> <img src="docs/assets/rtthread.jpg"  width="100" height="80" /> <img src="docs/assets/sophgo.jpg"  width="100" height="80" /> <img src="docs/assets/phytium.jpg"  width="100" height="80" /> <img src="docs/assets/thead.jpg"  width="100" height="80" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="80" /> <img src="docs/assets/artinchip.jpg"  width="100" height="80" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="80" /> <img src="docs/assets/nxp.png"  width="100" height="80" /> <img src="docs/assets/espressif.png"  width="100" height="80" />

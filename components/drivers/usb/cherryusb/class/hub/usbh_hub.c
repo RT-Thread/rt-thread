@@ -33,11 +33,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_hub *usbh_hub_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_EXTHUBS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_hub_class[devno], 0, sizeof(struct usbh_hub));
             g_hub_class[devno].index = EXTHUB_FIRST_INDEX + devno;
             return &g_hub_class[devno];
@@ -48,10 +48,10 @@ static struct usbh_hub *usbh_hub_class_alloc(void)
 
 static void usbh_hub_class_free(struct usbh_hub *hub_class)
 {
-    int devno = hub_class->index - EXTHUB_FIRST_INDEX;
+    uint8_t devno = hub_class->index - EXTHUB_FIRST_INDEX;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(hub_class, 0, sizeof(struct usbh_hub));
 }
