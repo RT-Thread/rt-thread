@@ -1,0 +1,19 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+
+src = Glob('src/*.c')
+
+path = [cwd + '/include',
+        cwd + '/../BaseNXP_TS_T40D34M50I0R0/header',
+        cwd + '/../BaseNXP_TS_T40D34M50I0R0/include',
+        cwd + '/../Platform_TS_T40D34M50I0R0/include']
+
+CPPDEFINES = []
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
