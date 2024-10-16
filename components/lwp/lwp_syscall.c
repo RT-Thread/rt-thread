@@ -5810,13 +5810,13 @@ sysret_t sys_mount(char *source, char *target,
     if (copy_source && stat(copy_source, &buf) && S_ISBLK(buf.st_mode))
     {
         char *dev_fullpath = dfs_normalize_path(RT_NULL, copy_source);
-        rt_free(copy_source);
         RT_ASSERT(rt_strncmp(dev_fullpath, "/dev/", sizeof("/dev/") - 1) == 0);
         ret = dfs_mount(dev_fullpath + sizeof("/dev/") - 1, copy_target, copy_filesystemtype, 0, tmp);
         if (ret < 0)
         {
             ret = -rt_get_errno();
         }
+        rt_free(copy_source);
         rt_free(dev_fullpath);
     }
     else
