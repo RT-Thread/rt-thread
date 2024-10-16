@@ -16,7 +16,6 @@
 
 #include <rtconfig.h>
 #include "encoding.h"
-#include "ext_context.h"
 
 /* bytes of register width */
 #ifdef ARCH_CPU_64BIT
@@ -29,6 +28,8 @@
 // error here, not portable
 #error "Not supported XLEN"
 #endif
+
+#include "ext_context.h"
 
 /* 33 general register + 1 padding */
 #define CTX_GENERAL_REG_NR  34
