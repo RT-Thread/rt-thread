@@ -699,8 +699,10 @@ int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
         LOG_I("%s: no support flags 0x%lx", __func__, flags);
         err = -RT_ENOSYS;
     }
-    else if (_check_addr_overflow(flags, *addr, length, aspace->start, aspace->size)) /* 处理离谱的地址 如-1等等 */
+    else if (_check_addr_overflow(flags, *addr, length, aspace->start, aspace->size))
     {
+        // When the address like -1, it serves as a placeholder indicating that the system should assign a suitable valid address.
+        // The system will not use -1 as an actual memory address.
         RT_ASSERT((length & ARCH_PAGE_MASK) == 0);
         RESET_POINTER(*addr);
         err = _mm_aspace_map(aspace, &varea, addr, length, attr, flags, mem_obj, offset);

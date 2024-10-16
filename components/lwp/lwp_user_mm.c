@@ -504,6 +504,38 @@ void *lwp_user_memory_remap_to_kernel(rt_lwp_t lwp, void *uaddr, size_t length)
     return kaddr;
 }
 
+static int _validate_mmap_flags(void *addr, int flags, int fd) {
+    rt_err_t rc = RT_EOK;
+    if (!flags) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: flags cannot be 0. At least MAP_PRIVATE or MAP_SHARED is required.");
+        goto err;
+    }
+
+    if ((flags & MAP_PRIVATE) && (flags & MAP_SHARED)) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_PRIVATE and MAP_SHARED cannot be used together.");
+        goto err;
+    }
+    if ((flags & MAP_ANON) && !(flags & (MAP_PRIVATE | MAP_SHARED))) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_ANON must be used with MAP_PRIVATE or MAP_SHARED.");
+        goto err;
+    }
+    if ((flags & MAP_FIXED) && (addr == NULL)) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_FIXED requires a valid non-null address.");
+        goto err;
+    }
+    if ((flags & MAP_ANON) && (fd != -1)) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_ANON requires fd to be -1.\n");
+        goto err;
+    }
+err:
+    return rc;
+}
+
 void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
                 int flags, int fd, off_t pgoffset)
 {
@@ -515,6 +547,13 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
     rt_mem_obj_t mem_obj;
     void *ret = 0;
     LOG_D("%s(addr=0x%lx,length=%ld,fd=%d)", __func__, addr, length, fd);
+
+    rc = _validate_mmap_flags(addr, flags, fd);
+    if(rc != RT_EOK)
+    {
+        ret = (void *)lwp_errno_to_posix(rc);
+        return ret;
+    }
 
     if (fd == -1)
     {
@@ -568,6 +607,11 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
             {
                 ret = (void *)lwp_errno_to_posix(rc);
             }
+        }
+        else
+        {
+            rc = -RT_EINVAL;
+            ret = (void *)lwp_errno_to_posix(rc);
         }
     }
 
