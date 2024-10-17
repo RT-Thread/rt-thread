@@ -26,7 +26,7 @@
  * 1 location each for Bulk/Control endpoint for handling NAK/NYET scenario
  */
 #ifndef CONFIG_USB_DWC2_RX_FIFO_SIZE
-#define CONFIG_USB_DWC2_RX_FIFO_SIZE ((1012 - CONFIG_USB_DWC2_NPTX_FIFO_SIZE - CONFIG_USB_DWC2_PTX_FIFO_SIZE) / 4)
+#define CONFIG_USB_DWC2_RX_FIFO_SIZE ((1012 - CONFIG_USB_DWC2_NPTX_FIFO_SIZE - CONFIG_USB_DWC2_PTX_FIFO_SIZE))
 #endif
 
 #define USB_OTG_GLB     ((DWC2_GlobalTypeDef *)(bus->hcd.reg_base))
@@ -498,9 +498,6 @@ int usb_hc_init(struct usbh_bus *bus)
     /* Restart the Phy Clock */
     USB_OTG_PCGCCTL = 0U;
 
-    dwc2_drivebus(bus, 1);
-    usb_osal_msleep(200);
-
     /* Set default Max speed support */
     USB_OTG_HOST->HCFG &= ~(USB_OTG_HCFG_FSLSS);
 
@@ -524,12 +521,16 @@ int usb_hc_init(struct usbh_bus *bus)
     ret = dwc2_flush_txfifo(bus, 0x10U);
     ret = dwc2_flush_rxfifo(bus);
 
+    USB_OTG_GLB->GAHBCFG &= ~USB_OTG_GAHBCFG_HBSTLEN;
     USB_OTG_GLB->GAHBCFG |= USB_OTG_GAHBCFG_HBSTLEN_4;
     USB_OTG_GLB->GAHBCFG |= USB_OTG_GAHBCFG_DMAEN;
 
     /* Enable interrupts matching to the Host mode ONLY */
     USB_OTG_GLB->GINTMSK |= (USB_OTG_GINTMSK_PRTIM | USB_OTG_GINTMSK_HCIM |
                              USB_OTG_GINTSTS_DISCINT);
+
+    dwc2_drivebus(bus, 1);
+    usb_osal_msleep(200);
 
     USB_OTG_GLB->GAHBCFG |= USB_OTG_GAHBCFG_GINT;
 
@@ -769,8 +770,8 @@ int usbh_submit_urb(struct usbh_urb *urb)
         }
     } else {
         /* Check if intr and iso pipe tx fifo is overflow */
-        if (((USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) == USB_ENDPOINT_TYPE_ISOCHRONOUS) ||
-             (USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) == USB_ENDPOINT_TYPE_INTERRUPT)) &&
+        if (((USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes) == USB_ENDPOINT_TYPE_ISOCHRONOUS) ||
+             (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes) == USB_ENDPOINT_TYPE_INTERRUPT)) &&
             USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) > (CONFIG_USB_DWC2_PTX_FIFO_SIZE * 4)) {
             return -USB_ERR_RANGE;
         } else {
@@ -895,6 +896,7 @@ static void dwc2_inchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
     //printf("s1:%08x\r\n", chan_intstatus);
 
     if (chan_intstatus & USB_OTG_HCINT_CHH) {
+        USB_OTG_HC(ch_num)->HCINT = chan_intstatus;
         if (chan_intstatus & USB_OTG_HCINT_XFRC) {
             urb->errorcode = 0;
 
@@ -948,7 +950,6 @@ static void dwc2_inchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
             urb->errorcode = -USB_ERR_IO;
             dwc2_urb_waitup(urb);
         }
-        USB_OTG_HC(ch_num)->HCINT = chan_intstatus;
     }
 }
 
@@ -965,6 +966,7 @@ static void dwc2_outchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
     //printf("s2:%08x\r\n", chan_intstatus);
 
     if (chan_intstatus & USB_OTG_HCINT_CHH) {
+        USB_OTG_HC(ch_num)->HCINT = chan_intstatus;
         if (chan_intstatus & USB_OTG_HCINT_XFRC) {
             urb->errorcode = 0;
 
@@ -1029,7 +1031,6 @@ static void dwc2_outchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
             urb->errorcode = -USB_ERR_IO;
             dwc2_urb_waitup(urb);
         }
-        USB_OTG_HC(ch_num)->HCINT = chan_intstatus;
     }
 }
 

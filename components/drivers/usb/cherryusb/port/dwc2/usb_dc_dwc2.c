@@ -51,8 +51,6 @@
 #endif
 // clang-format on
 
-//#define CONFIG_USB_DWC2_DMA_ENABLE
-
 #ifndef CONFIG_USB_DWC2_RXALL_FIFO_SIZE
 #define CONFIG_USB_DWC2_RXALL_FIFO_SIZE (1024 / 4)
 #endif
@@ -62,7 +60,7 @@
 #endif
 
 #ifndef CONFIG_USB_DWC2_TX1_FIFO_SIZE
-#define CONFIG_USB_DWC2_TX1_FIFO_SIZE (512 / 4)
+#define CONFIG_USB_DWC2_TX1_FIFO_SIZE (1024 / 4)
 #endif
 
 #ifndef CONFIG_USB_DWC2_TX2_FIFO_SIZE
@@ -119,7 +117,7 @@ USB_NOCACHE_RAM_SECTION struct dwc2_udc {
     __attribute__((aligned(32))) struct usb_setup_packet setup;
     struct dwc2_ep_state in_ep[CONFIG_USBDEV_EP_NUM];  /*!< IN endpoint parameters*/
     struct dwc2_ep_state out_ep[CONFIG_USBDEV_EP_NUM]; /*!< OUT endpoint parameters */
-} g_dwc2_udc[CONFIG_USBHOST_MAX_BUS];
+} g_dwc2_udc[CONFIG_USBDEV_MAX_BUS];
 
 static inline int dwc2_reset(uint8_t busid)
 {
@@ -386,6 +384,17 @@ static void dwc2_tx_fifo_empty_procecss(uint8_t busid, uint8_t ep_idx)
         if (len > g_dwc2_udc[busid].in_ep[ep_idx].ep_mps) {
             len = g_dwc2_udc[busid].in_ep[ep_idx].ep_mps;
         }
+        if (g_dwc2_udc[busid].in_ep[ep_idx].ep_type == USB_ENDPOINT_TYPE_ISOCHRONOUS) {
+            if ((USB_OTG_DEV->DSTS & (1U << 8)) == 0U) {
+                USB_OTG_INEP(ep_idx)->DIEPCTL &= ~USB_OTG_DIEPCTL_SD0PID_SEVNFRM;
+                USB_OTG_INEP(ep_idx)->DIEPCTL |= USB_OTG_DIEPCTL_SODDFRM;
+            } else {
+                USB_OTG_INEP(ep_idx)->DIEPCTL &= ~USB_OTG_DIEPCTL_SODDFRM;
+                USB_OTG_INEP(ep_idx)->DIEPCTL |= USB_OTG_DIEPCTL_SD0PID_SEVNFRM;
+            }
+            USB_OTG_INEP(ep_idx)->DIEPTSIZ &= ~(USB_OTG_DIEPTSIZ_MULCNT);
+            USB_OTG_INEP(ep_idx)->DIEPTSIZ |= (USB_OTG_DIEPTSIZ_MULCNT & (1U << 29));
+        }
 
         dwc2_ep_write(busid, ep_idx, g_dwc2_udc[busid].in_ep[ep_idx].xfer_buf, len);
         g_dwc2_udc[busid].in_ep[ep_idx].xfer_buf += len;
@@ -577,8 +586,7 @@ int usb_dc_init(uint8_t busid)
     /* Enable interrupts matching to the Device mode ONLY */
     USB_OTG_GLB->GINTMSK = USB_OTG_GINTMSK_USBRST | USB_OTG_GINTMSK_ENUMDNEM |
                            USB_OTG_GINTMSK_OEPINT | USB_OTG_GINTMSK_IEPINT |
-                           USB_OTG_GINTMSK_USBSUSPM | USB_OTG_GINTMSK_WUIM |
-                           USB_OTG_GINTMSK_IISOIXFRM | USB_OTG_GINTMSK_PXFRM_IISOOXFRM;
+                           USB_OTG_GINTMSK_USBSUSPM | USB_OTG_GINTMSK_WUIM;
 
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
     if (((USB_OTG_GLB->GHWCFG2 & (0x3U << 3)) >> 3) != 2) {
@@ -588,6 +596,7 @@ int usb_dc_init(uint8_t busid)
     }
 
     USB_OTG_DEV->DCFG &= ~USB_OTG_DCFG_DESCDMA;
+    USB_OTG_GLB->GAHBCFG &= ~USB_OTG_GAHBCFG_HBSTLEN;
     USB_OTG_GLB->GAHBCFG |= (USB_OTG_GAHBCFG_DMAEN | USB_OTG_GAHBCFG_HBSTLEN_4);
 #else
     USB_OTG_GLB->GINTMSK |= USB_OTG_GINTMSK_RXFLVLM;
@@ -859,13 +868,13 @@ int usbd_ep_is_stalled(uint8_t busid, const uint8_t ep, uint8_t *stalled)
     uint8_t ep_idx = USB_EP_GET_IDX(ep);
 
     if (USB_EP_DIR_IS_OUT(ep)) {
-        if(USB_OTG_OUTEP(ep_idx)->DOEPCTL & USB_OTG_DOEPCTL_STALL) {
+        if (USB_OTG_OUTEP(ep_idx)->DOEPCTL & USB_OTG_DOEPCTL_STALL) {
             *stalled = 1;
         } else {
             *stalled = 0;
         }
     } else {
-        if(USB_OTG_INEP(ep_idx)->DIEPCTL & USB_OTG_DIEPCTL_STALL) {
+        if (USB_OTG_INEP(ep_idx)->DIEPCTL & USB_OTG_DIEPCTL_STALL) {
             *stalled = 1;
         } else {
             *stalled = 0;
@@ -1111,7 +1120,7 @@ void USBD_IRQHandler(uint8_t busid)
             }
         }
         if (gint_status & USB_OTG_GINTSTS_USBRST) {
-            USB_OTG_GLB->GINTSTS |= USB_OTG_GINTSTS_USBRST;
+            USB_OTG_GLB->GINTSTS = USB_OTG_GINTSTS_USBRST;
             USB_OTG_DEV->DCTL &= ~USB_OTG_DCTL_RWUSIG;
 
             dwc2_flush_txfifo(busid, 0x10U);
@@ -1158,58 +1167,22 @@ void USBD_IRQHandler(uint8_t busid)
             USB_OTG_DEV->DCTL |= USB_OTG_DCTL_CGINAK;
         }
         if (gint_status & USB_OTG_GINTSTS_PXFR_INCOMPISOOUT) {
-            daintmask = USB_OTG_DEV->DAINTMSK;
-            daintmask >>= 16;
-
-            for (ep_idx = 1; ep_idx < CONFIG_USBDEV_EP_NUM; ep_idx++) {
-                if ((BIT(ep_idx) & ~daintmask) || (g_dwc2_udc[busid].out_ep[ep_idx].ep_type != USB_ENDPOINT_TYPE_ISOCHRONOUS))
-                    continue;
-                if (!(USB_OTG_OUTEP(ep_idx)->DOEPCTL & USB_OTG_DOEPCTL_USBAEP))
-                    continue;
-
-                if ((USB_OTG_DEV->DSTS & (1U << 8)) != 0U) {
-                    USB_OTG_OUTEP(ep_idx)->DOEPCTL |= USB_OTG_DOEPCTL_SD0PID_SEVNFRM;
-                    USB_OTG_OUTEP(ep_idx)->DOEPCTL &= ~USB_OTG_DOEPCTL_SODDFRM;
-                } else {
-                    USB_OTG_OUTEP(ep_idx)->DOEPCTL &= ~USB_OTG_DOEPCTL_SD0PID_SEVNFRM;
-                    USB_OTG_OUTEP(ep_idx)->DOEPCTL |= USB_OTG_DOEPCTL_SODDFRM;
-                }
-            }
-
             USB_OTG_GLB->GINTSTS |= USB_OTG_GINTSTS_PXFR_INCOMPISOOUT;
         }
 
         if (gint_status & USB_OTG_GINTSTS_IISOIXFR) {
-            daintmask = USB_OTG_DEV->DAINTMSK;
-            daintmask >>= 16;
-
-            for (ep_idx = 1; ep_idx < CONFIG_USBDEV_EP_NUM; ep_idx++) {
-                if (((BIT(ep_idx) & ~daintmask)) || (g_dwc2_udc[busid].in_ep[ep_idx].ep_type != USB_ENDPOINT_TYPE_ISOCHRONOUS))
-                    continue;
-
-                if (!(USB_OTG_INEP(ep_idx)->DIEPCTL & USB_OTG_DIEPCTL_USBAEP))
-                    continue;
-
-                if ((USB_OTG_DEV->DSTS & (1U << 8)) != 0U) {
-                    USB_OTG_INEP(ep_idx)->DIEPCTL |= USB_OTG_DIEPCTL_SD0PID_SEVNFRM;
-                    USB_OTG_INEP(ep_idx)->DIEPCTL &= ~USB_OTG_DIEPCTL_SODDFRM;
-                } else {
-                    USB_OTG_INEP(ep_idx)->DIEPCTL &= ~USB_OTG_DIEPCTL_SD0PID_SEVNFRM;
-                    USB_OTG_INEP(ep_idx)->DIEPCTL |= USB_OTG_DIEPCTL_SODDFRM;
-                }
-            }
             USB_OTG_GLB->GINTSTS |= USB_OTG_GINTSTS_IISOIXFR;
         }
 
         if (gint_status & USB_OTG_GINTSTS_SOF) {
-            USB_OTG_GLB->GINTSTS |= USB_OTG_GINTSTS_SOF;
+            USB_OTG_GLB->GINTSTS = USB_OTG_GINTSTS_SOF;
         }
         if (gint_status & USB_OTG_GINTSTS_USBSUSP) {
-            USB_OTG_GLB->GINTSTS |= USB_OTG_GINTSTS_USBSUSP;
+            USB_OTG_GLB->GINTSTS = USB_OTG_GINTSTS_USBSUSP;
             usbd_event_suspend_handler(busid);
         }
         if (gint_status & USB_OTG_GINTSTS_WKUINT) {
-            USB_OTG_GLB->GINTSTS |= USB_OTG_GINTSTS_WKUINT;
+            USB_OTG_GLB->GINTSTS = USB_OTG_GINTSTS_WKUINT;
             usbd_event_resume_handler(busid);
         }
         if (gint_status & USB_OTG_GINTSTS_OTGINT) {

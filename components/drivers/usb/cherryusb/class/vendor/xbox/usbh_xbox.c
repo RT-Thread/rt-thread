@@ -15,11 +15,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_xbox *usbh_xbox_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_XBOX_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_xbox_class[devno], 0, sizeof(struct usbh_xbox));
             g_xbox_class[devno].minor = devno;
             return &g_xbox_class[devno];
@@ -30,10 +30,10 @@ static struct usbh_xbox *usbh_xbox_class_alloc(void)
 
 static void usbh_xbox_class_free(struct usbh_xbox *xbox_class)
 {
-    int devno = xbox_class->minor;
+    uint8_t devno = xbox_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(xbox_class, 0, sizeof(struct usbh_xbox));
 }

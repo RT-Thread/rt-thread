@@ -95,7 +95,7 @@ const uint8_t msc_bootuf2_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
