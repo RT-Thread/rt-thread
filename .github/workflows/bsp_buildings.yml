@@ -383,6 +383,10 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-i386-unknown-elf"
             SUB_RTT_BSP:  
                 - "x86"
+          - RTT_BSP: "xuantie-900"
+            RTT_TOOL_CHAIN: "sourcery-Xuantie-900-gcc-elf"
+            SUB_RTT_BSP:
+                - "cvitek/c906_little"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -484,6 +488,14 @@ jobs:
           sudo tar -jxvf i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
           /opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin/i386-unknown-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+
+      - name: Install Xuantie-900-gcc-elf Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-Xuantie-900-gcc-elf' && success() }}
+        run: |
+          wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz
+          sudo tar -zxvf Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz -C /opt
+          /opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin" >> $GITHUB_ENV
 
       - name: Bsp Scons Compile
         if: ${{ success() }}
