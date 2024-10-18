@@ -188,10 +188,6 @@ int fputc(int ch, FILE *f)
 }
 #endif
 
-void _ttywrch(int c)
-{
-}
-
 
 int __backspace(void)
 {
