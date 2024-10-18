@@ -60,7 +60,7 @@ if PLATFORM == 'gcc':
     CXXFLAGS = CFLAGS 
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-    POST_ACTION += 'python ./makesoc.py'
+    #POST_ACTION += 'python ./makesoc.py'
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
@@ -92,7 +92,7 @@ elif PLATFORM == 'armcc':
     CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-    POST_ACTION += 'python ./makesoc.py'
+   # POST_ACTION += 'python ./makesoc.py'
 elif PLATFORM == 'armclang':
     # toolchains
     CC = 'armclang'
@@ -126,7 +126,7 @@ elif PLATFORM == 'armclang':
     CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-    POST_ACTION += 'python ./makesoc.py'
+    #POST_ACTION += 'python ./makesoc.py'
 elif PLATFORM == 'iccarm':
     # toolchains
     CC = 'iccarm'
@@ -174,8 +174,8 @@ elif PLATFORM == 'iccarm':
     CXXFLAGS = CFLAGS
     
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
-    POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
-    POST_ACTION += 'python ./makesoc.py'
+    #POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+    #POST_ACTION += 'python ./makesoc.py'
 def dist_handle(BSP_ROOT, dist_dir):
     import sys
     cwd_path = os.getcwd()
