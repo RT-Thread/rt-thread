@@ -120,7 +120,7 @@ jobs:
           - {RTT_BSP_NAME: "gd32_risc-v_gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32/risc-v/gd32vf103v-eval"}
           - {RTT_BSP_NAME: "hc32_ev_hc32f460_lqfp100_v2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f460_lqfp100_v2"}
           - {RTT_BSP_NAME: "hc32_ev_hc32f4a0_lqfp176", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f4a0_lqfp176"}
-         #- {RTT_BSP_NAME: "hc32l136", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l136"}  #编译错误
+          - {RTT_BSP_NAME: "hc32l136", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l136"}
           - {RTT_BSP_NAME: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l196"}
           - {RTT_BSP_NAME: "hifive1", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "hifive1"} 
          #- {RTT_BSP_NAME: "hk32_hk32f030c8-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hk32/hk32f030c8-mini"}  #scons dist有问题
