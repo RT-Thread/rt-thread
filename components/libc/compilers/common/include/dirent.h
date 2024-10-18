@@ -65,6 +65,17 @@ struct dirent
 };
 #endif
 
+#ifdef RT_USING_MUSLLIBC
+typedef uint64_t ino_t;
+#endif
+struct libc_dirent {
+    ino_t d_ino;
+    off_t d_off;
+    unsigned short d_reclen;
+    unsigned char d_type;
+    char d_name[DIRENT_NAME_MAX];
+};
+
 int            closedir(DIR *);
 DIR           *opendir(const char *);
 struct dirent *readdir(DIR *);
