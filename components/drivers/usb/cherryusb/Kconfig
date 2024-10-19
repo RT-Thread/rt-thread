@@ -48,6 +48,10 @@ if RT_USING_CHERRYUSB
                 bool "musb_bk"
             config RT_CHERRYUSB_DEVICE_MUSB_CUSTOM
                 bool "musb_custom"
+            config RT_CHERRYUSB_DEVICE_KINETIS_MCX
+                bool "kinetis_mcx"
+            config RT_CHERRYUSB_DEVICE_KINETIS_CUSTOM
+                bool "kinetis_custom"
             config RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX
                 bool "chipidea_mcx"
             config RT_CHERRYUSB_DEVICE_CHIPIDEA_CUSTOM
@@ -192,6 +196,10 @@ if RT_USING_CHERRYUSB
                 bool "pusb2"
             config RT_CHERRYUSB_HOST_XHCI
                 bool "xhci"
+            config RT_CHERRYUSB_HOST_KINETIS_MCX
+                bool "kinetis_mcx"
+            config RT_CHERRYUSB_HOST_KINETIS_CUSTOM
+                bool "kinetis_custom"
         endchoice
 
         config RT_CHERRYUSB_HOST_CDC_ACM
