@@ -106,6 +106,8 @@ jobs:
                 - "essemi/es32f0654"
                 - "essemi/es32f365x"
                 - "hc32l136"
+                - "yichip/yc3121-pos"
+                - "fm33lc026"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 

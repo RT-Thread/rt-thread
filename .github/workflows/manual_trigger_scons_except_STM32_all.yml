@@ -95,7 +95,7 @@ jobs:
           - {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}
           - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
           - {RTT_BSP_NAME: "essemi_es32vf2264", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32vf2264"}
-         #- {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}   #GCC
+          - {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}
           - {RTT_BSP_NAME: "frdm-k64f", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "frdm-k64f"}
          #- {RTT_BSP_NAME: "ft2004", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ft2004"}   #编译错误
           - {RTT_BSP_NAME: "ft32_ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ft32/ft32f072xb-starter"}
@@ -271,8 +271,8 @@ jobs:
          #- {RTT_BSP_NAME: "x86", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "x86"}   #menuconfig有问题，toolchain也不支持
          #- {RTT_BSP_NAME: "xplorer4330_M0", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "xplorer4330/M0"} #编译问题
           - {RTT_BSP_NAME: "xplorer4330_M4", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "xplorer4330/M4"}
-       #  - {RTT_BSP_NAME: "yichip_yc3121-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3121-pos"}  #编译问题
-        # - {RTT_BSP_NAME: "yichip_yc3122-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3122-pos"}  #编译问题
+          - {RTT_BSP_NAME: "yichip_yc3121-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3121-pos"}
+          - {RTT_BSP_NAME: "yichip_yc3122-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3122-pos"}
           - {RTT_BSP_NAME: "zynqmp-r5-axu4ev", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "zynqmp-r5-axu4ev"}
           - {RTT_BSP_NAME: "nuvoton_numaker-pfm-m487", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-pfm-m487"}
           - {RTT_BSP_NAME: "nuvoton_numaker-hmi-ma35d1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuvoton/numaker-hmi-ma35d1"}
