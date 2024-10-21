@@ -89,19 +89,22 @@ static rt_err_t utest_tc_init(void)
     rt_free(pseed);
 
     rt_sem_init(&_thr_exit_sem, "test", 0, RT_IPC_FLAG_PRIO);
-    rt_mutex_init(&_racing_lock, "ipc", RT_IPC_FLAG_PRIO);
     return RT_EOK;
 }
 
 static rt_err_t utest_tc_cleanup(void)
 {
     rt_sem_detach(&_thr_exit_sem);
-    rt_mutex_detach(&_racing_lock);
     return RT_EOK;
 }
 
 static void testcase(void)
 {
+    rt_mutex_init(&_racing_lock, "ipc", RT_IPC_FLAG_PRIO);
     UTEST_UNIT_RUN(mutex_stress_tc);
+    rt_mutex_detach(&_racing_lock);
+    rt_mutex_init(&_racing_lock, "ipc", RT_MUTEX_NO_PI);
+    UTEST_UNIT_RUN(mutex_stress_tc);
+    rt_mutex_detach(&_racing_lock);
 }
 UTEST_TC_EXPORT(testcase, "testcases.kernel.scheduler.mutex", utest_tc_init, utest_tc_cleanup, TEST_SECONDS);
