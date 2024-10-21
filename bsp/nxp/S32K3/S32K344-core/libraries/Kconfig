@@ -1,0 +1,7 @@
+config SOC_FAMILY_S32K3
+    bool
+
+config SOC_SERIES_S32K344
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select SOC_FAMILY_S32K3

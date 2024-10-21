@@ -1,0 +1,14 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+import os
+cwd = GetCurrentDir()
+group = []
+src = []
+path = [cwd]
+
+src += ['drv_uart.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')
