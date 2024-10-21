@@ -463,7 +463,12 @@ rt_err_t rt_mutex_trytake(rt_mutex_t mutex);
 rt_err_t rt_mutex_take_interruptible(rt_mutex_t mutex, rt_int32_t time);
 rt_err_t rt_mutex_take_killable(rt_mutex_t mutex, rt_int32_t time);
 rt_err_t rt_mutex_release(rt_mutex_t mutex);
-rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg);
+
+typedef enum rt_mutex_ctrl_cmd
+{
+    RT_MUTEX_CTRL_NESTED_FREE = 1,
+} rt_mutex_ctrl_cmd_t;
+rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_mutex_ctrl_cmd_t cmd, void *arg);
 
 rt_inline rt_thread_t rt_mutex_get_owner(rt_mutex_t mutex)
 {
