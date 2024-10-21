@@ -24,7 +24,8 @@
 *
 ******************************************************************************
 * REVISION HISTORY
-*
+* 24-09-12 Evlers <1425295900@qq.com>
+*   add support for independent dns services for multiple network devices
 * 03-01-01 Marc Boucher <marc@mbsi.ca>
 *   Ported to lwIP.
 * 97-11-05 Guy Lancaster <lancasterg@acm.org>, Global Election Systems Inc.
@@ -134,6 +135,9 @@
 #if PPP_IPV6_SUPPORT
 #include "netif/ppp/ipv6cp.h"
 #endif /* PPP_IPV6_SUPPORT */
+#ifdef RT_USING_NETDEV
+#include "netdev.h"
+#endif /* RT_USING_NETDEV */
 
 /*************************/
 /*** LOCAL DEFINITIONS ***/
@@ -1109,9 +1113,20 @@ int sdns(ppp_pcb *pcb, u32_t ns1, u32_t ns2) {
   LWIP_UNUSED_ARG(pcb);
 
   ip_addr_set_ip4_u32_val(ns, ns1);
+#ifdef RT_USING_NETDEV
+  /* Here we only need to set the dns server of the corresponding network device,
+   * but do not need to configure all network cards.
+   */
+  netdev_set_dns_server(netdev_get_by_name(pcb->netif->name), 0, &ns);
+#else
   dns_setserver(0, &ns);
+#endif
   ip_addr_set_ip4_u32_val(ns, ns2);
+#ifdef RT_USING_NETDEV
+  netdev_set_dns_server(netdev_get_by_name(pcb->netif->name), 1, &ns);
+#else
   dns_setserver(1, &ns);
+#endif
   return 1;
 }
 
@@ -1127,12 +1142,20 @@ int cdns(ppp_pcb *pcb, u32_t ns1, u32_t ns2) {
   nsa = dns_getserver(0);
   ip_addr_set_ip4_u32_val(nsb, ns1);
   if (ip_addr_cmp(nsa, &nsb)) {
+#ifdef RT_USING_NETDEV
+    netdev_set_dns_server(netdev_get_by_name(pcb->netif->name), 0, IP_ADDR_ANY);
+#else
     dns_setserver(0, IP_ADDR_ANY);
+#endif
   }
   nsa = dns_getserver(1);
   ip_addr_set_ip4_u32_val(nsb, ns2);
   if (ip_addr_cmp(nsa, &nsb)) {
+#ifdef RT_USING_NETDEV
+    netdev_set_dns_server(netdev_get_by_name(pcb->netif->name), 1, IP_ADDR_ANY);
+#else
     dns_setserver(1, IP_ADDR_ANY);
+#endif
   }
   return 1;
 }
