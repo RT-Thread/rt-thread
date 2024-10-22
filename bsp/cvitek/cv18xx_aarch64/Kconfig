@@ -36,11 +36,11 @@ config SOC_TYPE_SG2002
 
 choice
     prompt "Board Type"
-    default BOARD_TYPE_MILKV_DUO256M
+    default BOARD_TYPE_MILKV_DUO256M_SD
 
-    config BOARD_TYPE_MILKV_DUO256M
+    config BOARD_TYPE_MILKV_DUO256M_SD
         select SOC_TYPE_SG2002
-        bool "milkv-duo256m"
+        bool "milkv-duo256m-sd"
 
     config BOARD_TYPE_MILKV_DUO256M_SPINOR
         select SOC_TYPE_SG2002
