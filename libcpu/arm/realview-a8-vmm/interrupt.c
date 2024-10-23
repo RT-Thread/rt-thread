@@ -16,7 +16,7 @@
 
 #define MAX_HANDLERS                NR_IRQS_PBA8
 
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
