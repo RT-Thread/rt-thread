@@ -30,12 +30,16 @@ config BOARD_fpgac908
     select ARCH_REMAP_KERNEL if RT_USING_SMART
     default y
 
+config ARCH_RISCV_VECTOR
+    bool "Enable RISCV Vector"
+    default n
+
 config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
 
 config C908_PLIC_PHY_ADDR
-    int "PLIC base address"
+    hex "PLIC base address"
     default 0xF00000000
 
 config BSP_ROOTFS_TYPE_CROMFS
