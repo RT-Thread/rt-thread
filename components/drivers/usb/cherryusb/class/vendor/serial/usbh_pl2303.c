@@ -25,11 +25,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_pl2303 *usbh_pl2303_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_PL2303_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_pl2303_class[devno], 0, sizeof(struct usbh_pl2303));
             g_pl2303_class[devno].minor = devno;
             return &g_pl2303_class[devno];
@@ -40,10 +40,10 @@ static struct usbh_pl2303 *usbh_pl2303_class_alloc(void)
 
 static void usbh_pl2303_class_free(struct usbh_pl2303 *pl2303_class)
 {
-    int devno = pl2303_class->minor;
+    uint8_t devno = pl2303_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(pl2303_class, 0, sizeof(struct usbh_pl2303));
 }

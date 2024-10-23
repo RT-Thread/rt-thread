@@ -20,18 +20,18 @@
 #define INTF_DESC_bInterfaceNumber  2 /** Interface number offset */
 #define INTF_DESC_bAlternateSetting 3 /** Alternate setting offset */
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_hid_buf[CONFIG_USBHOST_MAX_HID_CLASS][USB_ALIGN_UP(256, CONFIG_USB_ALIGN_SIZE)];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_hid_buf[CONFIG_USBHOST_MAX_HID_CLASS][USB_ALIGN_UP(64, CONFIG_USB_ALIGN_SIZE)];
 
 static struct usbh_hid g_hid_class[CONFIG_USBHOST_MAX_HID_CLASS];
 static uint32_t g_devinuse = 0;
 
 static struct usbh_hid *usbh_hid_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_HID_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_hid_class[devno], 0, sizeof(struct usbh_hid));
             g_hid_class[devno].minor = devno;
             return &g_hid_class[devno];
@@ -42,18 +42,17 @@ static struct usbh_hid *usbh_hid_class_alloc(void)
 
 static void usbh_hid_class_free(struct usbh_hid *hid_class)
 {
-    int devno = hid_class->minor;
+    uint8_t devno = hid_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(hid_class, 0, sizeof(struct usbh_hid));
 }
 
-static int usbh_hid_get_report_descriptor(struct usbh_hid *hid_class, uint8_t *buffer)
+int usbh_hid_get_report_descriptor(struct usbh_hid *hid_class, uint8_t *buffer, uint32_t buflen)
 {
     struct usb_setup_packet *setup;
-    int ret;
 
     if (!hid_class || !hid_class->hport) {
         return -USB_ERR_INVAL;
@@ -64,14 +63,9 @@ static int usbh_hid_get_report_descriptor(struct usbh_hid *hid_class, uint8_t *b
     setup->bRequest = USB_REQUEST_GET_DESCRIPTOR;
     setup->wValue = HID_DESCRIPTOR_TYPE_HID_REPORT << 8;
     setup->wIndex = hid_class->intf;
-    setup->wLength = hid_class->report_size;
+    setup->wLength = buflen;
 
-    ret = usbh_control_transfer(hid_class->hport, setup, g_hid_buf[hid_class->minor]);
-    if (ret < 0) {
-        return ret;
-    }
-    memcpy(buffer, g_hid_buf[hid_class->minor], ret - 8);
-    return ret;
+    return usbh_control_transfer(hid_class->hport, setup, buffer);
 }
 
 int usbh_hid_set_idle(struct usbh_hid *hid_class, uint8_t report_id, uint8_t duration)
@@ -109,7 +103,7 @@ int usbh_hid_get_idle(struct usbh_hid *hid_class, uint8_t *buffer)
     setup->wLength = 1;
 
     ret = usbh_control_transfer(hid_class->hport, setup, g_hid_buf[hid_class->minor]);
-    if (ret < 0) {
+    if (ret < 8) {
         return ret;
     }
     memcpy(buffer, g_hid_buf[hid_class->minor], ret - 8);
@@ -169,7 +163,7 @@ int usbh_hid_get_report(struct usbh_hid *hid_class, uint8_t report_type, uint8_t
     setup->wLength = buflen;
 
     ret = usbh_control_transfer(hid_class->hport, setup, g_hid_buf[hid_class->minor]);
-    if (ret < 0) {
+    if (ret < 8) {
         return ret;
     }
     memcpy(buffer, g_hid_buf[hid_class->minor], ret - 8);
@@ -215,11 +209,6 @@ int usbh_hid_connect(struct usbh_hubport *hport, uint8_t intf)
                     }
 
                     hid_class->report_size = desc->subdesc[0].wDescriptorLength;
-
-                    if (hid_class->report_size > sizeof(g_hid_buf[hid_class->minor])) {
-                        USB_LOG_ERR("HID report descriptor too large\r\n");
-                        return -USB_ERR_INVAL;
-                    }
                     found = true;
                     goto found;
                 }
@@ -247,7 +236,8 @@ found:
         USB_LOG_WRN("Do not support set idle\r\n");
     }
 
-    ret = usbh_hid_get_report_descriptor(hid_class, hid_class->report_desc);
+    /* We read report desc but do nothing (because of too much memory usage for parsing report desc, parsed by users) */
+    ret = usbh_hid_get_report_descriptor(hid_class, g_hid_buf[hid_class->minor], MIN(sizeof(g_hid_buf[hid_class->minor]), hid_class->report_size));
     if (ret < 0) {
         return ret;
     }
