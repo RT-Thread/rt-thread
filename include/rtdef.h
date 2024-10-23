@@ -1390,6 +1390,9 @@ struct rt_device
     rt_uint16_t               open_flag;                /**< device open flag */
 
     rt_uint8_t                ref_count;                /**< reference count */
+#ifdef RT_USING_DM
+    rt_uint8_t                master_id;                /**< 0 - 255 */
+#endif
     rt_uint8_t                device_id;                /**< 0 - 255 */
 
     /* device call back */
