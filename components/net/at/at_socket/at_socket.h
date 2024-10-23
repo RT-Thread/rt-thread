@@ -44,6 +44,7 @@ enum at_socket_state
     AT_SOCKET_OPEN,
     AT_SOCKET_LISTEN,
     AT_SOCKET_CONNECT,
+    AT_SOCKET_DISCONNECT,
     AT_SOCKET_CLOSED
 };
 

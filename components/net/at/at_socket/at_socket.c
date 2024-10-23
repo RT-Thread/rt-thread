@@ -807,7 +807,7 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
     RT_ASSERT(event == AT_SOCKET_EVT_RECV);
 
     /* check the socket object status */
-    if (sock->magic != AT_SOCKET_MAGIC || sock->state == AT_SOCKET_CLOSED)
+    if (sock->magic != AT_SOCKET_MAGIC || sock->state >= AT_SOCKET_DISCONNECT)
     {
         rt_free((void *)buff);
         return;
@@ -841,7 +841,7 @@ static void at_closed_notice_cb(struct at_socket *sock, at_socket_evt_t event, c
     at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
     at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
 
-    sock->state = AT_SOCKET_CLOSED;
+    sock->state = AT_SOCKET_DISCONNECT;
     rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, (void*)1);
 }
 
@@ -1063,7 +1063,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
     while (1)
     {
-        if (sock->state == AT_SOCKET_CLOSED)
+        if (sock->state >= AT_SOCKET_DISCONNECT)
         {
             /* socket passively closed, receive function return 0 */
             result = 0;
@@ -1145,7 +1145,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
     switch (sock->type)
     {
     case AT_SOCKET_TCP:
-        if (sock->state == AT_SOCKET_CLOSED)
+        if (sock->state >= AT_SOCKET_DISCONNECT)
         {
             /* socket passively closed, transmit function return 0 */
             result = 0;
