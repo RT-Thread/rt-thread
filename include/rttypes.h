@@ -81,9 +81,14 @@ typedef rt_ubase_t                      rt_intptr_t;    /**< Type for signed poi
 typedef rt_base_t                       rt_uintptr_t;   /**< Type for unsigned pointer length integer */
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
+#ifdef RT_TICK_USING_64BIT
+typedef rt_uint64_t                     rt_tick_t;      /**< Type for tick count */
+#else
+typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
+#endif /* RT_TICK_USING_64BIT */
+
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
-typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
