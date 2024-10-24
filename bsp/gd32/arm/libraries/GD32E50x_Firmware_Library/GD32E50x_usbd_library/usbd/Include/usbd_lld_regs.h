@@ -180,43 +180,43 @@ OF SUCH DAMAGE.
 
 /* TX or RX transfer status setting (bits EPTX_STA[1:0]) */
 
-#define USBD_EP_TX_STAT_SET(ep, stat)do 
+#define USBD_EP_TX_STAT_SET(ep, stat)do
 {\
     USBD_EPxCS(ep) = (USBD_EPxCS(ep) & (uint16_t)EPTX_DTGMASK) ^ (stat); \
 } while(0)
 
-#define USBD_EP_RX_STAT_SET(ep, stat)do 
+#define USBD_EP_RX_STAT_SET(ep, stat)do
 {\
     USBD_EPxCS(ep) = (USBD_EPxCS(ep) & (uint16_t)EPRX_DTGMASK) ^ (stat); \
 } while(0)
 
 /* clear bit EPxCS_RX_ST/EPxCS_TX_ST in the endpoint control and status register */
 
-#define USBD_EP_TX_ST_CLEAR(ep)do 
+#define USBD_EP_TX_ST_CLEAR(ep)do
 {\
     USBD_EPxCS(ep) &= ~EPxCS_TX_ST & (uint16_t)EPCS_MASK; \
 } while(0)
 
-#define USBD_EP_RX_ST_CLEAR(ep)do 
+#define USBD_EP_RX_ST_CLEAR(ep)do
 {\
     USBD_EPxCS(ep) &= ~EPxCS_RX_ST & (uint16_t)EPCS_MASK; \
 } while(0)
 
 /* toggle EPxCS_RX_DTG or EPxCS_TX_DTG bit in the endpoint control and status register */
 
-#define USBD_TX_DTG_TOGGLE(ep)do 
+#define USBD_TX_DTG_TOGGLE(ep)do
 {\
     USBD_EPxCS(ep) = EPxCS_TX_DTG | (USBD_EPxCS(ep) & EPCS_MASK); \
 } while(0)
 
-#define USBD_RX_DTG_TOGGLE(ep)do 
+#define USBD_RX_DTG_TOGGLE(ep)do
 {\
     USBD_EPxCS(ep) = EPxCS_RX_DTG | (USBD_EPxCS(ep) & EPCS_MASK); \
 } while(0)
 
 /* clear EPxCS_RX_DTG or EPxCS_TX_DTG bit in the endpoint control and status register */
 
-#define USBD_TX_DTG_CLEAR(ep)do 
+#define USBD_TX_DTG_CLEAR(ep)do
 {\
     if ((USBD_EPxCS(ep_num) & EPxCS_TX_DTG) != 0U)
     {\
@@ -224,7 +224,7 @@ OF SUCH DAMAGE.
     } \
 } while(0)
 
-#define USBD_RX_DTG_CLEAR(ep)do 
+#define USBD_RX_DTG_CLEAR(ep)do
 {\
     if ((USBD_EPxCS(ep_num) & EPxCS_RX_DTG) != 0U)
     {\

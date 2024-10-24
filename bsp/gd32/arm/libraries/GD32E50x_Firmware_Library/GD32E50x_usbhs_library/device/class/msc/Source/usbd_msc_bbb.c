@@ -192,7 +192,7 @@ void msc_bbb_clrfeature (usb_core_driver *udev, uint8_t ep_num)
 {
     usbd_msc_handler *msc = (usbd_msc_handler *)udev->dev.class_data[USBD_MSC_INTERFACE];
 
-    if (BBB_STATUS_ERROR == msc->bbb_status)/* bad CBW signature */ 
+    if (BBB_STATUS_ERROR == msc->bbb_status)/* bad CBW signature */
     {
         usbd_ep_stall(udev, MSC_IN_EP);
 

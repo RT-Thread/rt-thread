@@ -70,7 +70,7 @@ OF SUCH DAMAGE.
 #define _BYTE2(x)                     (uint8_t)(((x) & 0xFF00U) >> 8U)      /*!< addressing cycle 2nd byte */
 #define _BYTE3(x)                     (uint8_t)(((x) & 0xFF0000U) >> 16U)   /*!< addressing cycle 3rd byte */
 
-#define SET_POLLING_TIMEOUT(x)do 
+#define SET_POLLING_TIMEOUT(x)do
 { \
                                       dfu->bwPollTimeout0 = _BYTE1(x);\
                                       dfu->bwPollTimeout1 = _BYTE2(x);\

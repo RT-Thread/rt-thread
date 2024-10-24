@@ -57,7 +57,7 @@ static uint8_t* _usb_bos_desc_get      (usb_dev *udev, uint8_t index, uint16_t *
 static void int_to_unicode (uint32_t value, uint8_t *pbuf, uint8_t len);
 
 /* standard device request handler */
-static usb_reqsta (*_std_dev_req[]) (usb_dev *udev, usb_req *req)= 
+static usb_reqsta (*_std_dev_req[]) (usb_dev *udev, usb_req *req)=
 {
     [USB_GET_STATUS]        = _usb_std_getstatus,
     [USB_CLEAR_FEATURE]     = _usb_std_clearfeature,
@@ -75,7 +75,7 @@ static usb_reqsta (*_std_dev_req[]) (usb_dev *udev, usb_req *req)=
 };
 
 /* get standard descriptor handler */
-static uint8_t* (*std_desc_get[])(usb_dev *udev, uint8_t index, uint16_t *len)= 
+static uint8_t* (*std_desc_get[])(usb_dev *udev, uint8_t index, uint16_t *len)=
 {
     [USB_DESCTYPE_DEV - 1U]    = _usb_dev_desc_get,
     [USB_DESCTYPE_CONFIG - 1U] = _usb_config_desc_get,

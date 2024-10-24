@@ -419,7 +419,7 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
            so that all instructions following the ISB are fetched from cache or memory,
            after the instruction has been completed.
  */
-#define __ISB()do 
+#define __ISB()do
 {\
                    __schedule_barrier();\
                    __isb(0xF);\
@@ -431,7 +431,7 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
   \details Acts as a special kind of Data Memory Barrier.
            It completes when all explicit memory accesses before this instruction complete.
  */
-#define __DSB()do 
+#define __DSB()do
 {\
                    __schedule_barrier();\
                    __dsb(0xF);\
@@ -443,7 +443,7 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
   \details Ensures the apparent order of the explicit memory operations before
            and after the instruction, without ensuring their completion.
  */
-#define __DMB()do 
+#define __DMB()do
 {\
                    __schedule_barrier();\
                    __dmb(0xF);\

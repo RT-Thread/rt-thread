@@ -390,7 +390,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
 
     /* connect port to USARTx_Rx */
     gpio_init(uart->rx_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, uart->rx_pin);
-    
+
     /* configure alternate1 function */
     if (uart->tx_af != 0 || uart->rx_af != 0)
     {
