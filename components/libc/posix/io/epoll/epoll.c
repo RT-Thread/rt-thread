@@ -369,6 +369,10 @@ static int epoll_epf_init(int fd)
         {
             ret = -ENOMEM;
         }
+
+#ifdef RT_USING_DFS_V2
+    dfs_file_put(df);
+#endif
     }
 
     return ret;
@@ -656,6 +660,10 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
             break;
         }
 
+#ifdef RT_USING_DFS_V2
+        dfs_file_put(epdf);
+#endif
+
         if (ret < 0)
         {
             rt_set_errno(-ret);
@@ -750,6 +758,11 @@ static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
             {
                 req->_key = fl->revents | POLLERR | POLLHUP;
                 mask = df->vnode->fops->poll(df, req);
+
+#ifdef RT_USING_DFS_V2
+                dfs_file_put(df);
+#endif
+
                 if (mask < 0)
                     return mask;
             }
@@ -931,13 +944,27 @@ static int epoll_do_wait(int epfd, struct epoll_event *events, int maxevents, in
     if ((maxevents > 0) && (epfd >= 0))
     {
         df = fd_get(epfd);
+
         if (df && df->vnode)
         {
             ep = (struct rt_eventpoll *)df->vnode->data;
+
             if (ep)
             {
                 ret = epoll_do(ep, events, maxevents, timeout);
             }
+#ifdef RT_USING_DFS_V2
+            dfs_file_put(df);
+#endif
+        }
+        else if (!df)
+        {
+            ret = -EBADF;
+        }
+        else if (!df->vnode)
+        {
+            dfs_file_put(df);
+            ret = -EBADF;
         }
     }
 
