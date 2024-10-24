@@ -180,15 +180,10 @@ typedef int (*init_fn_t)(void);
 
 /* init cpu, memory, interrupt-controller, bus... */
 #define INIT_CORE_EXPORT(fn)            INIT_EXPORT(fn, "1.0")
-/* init pci/pcie, usb platform driver... */
-#define INIT_FRAMEWORK_EXPORT(fn)       INIT_EXPORT(fn, "1.1")
+/* init sys-timer, clk, pinctrl... */
+#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.1")
 /* init platform, user code... */
 #define INIT_PLATFORM_EXPORT(fn)        INIT_EXPORT(fn, "1.2")
-/* init sys-timer, clk, pinctrl... */
-#define INIT_SUBSYS_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.3.0")
-#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3.1")
-/* init early drivers */
-#define INIT_DRIVER_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.4")
 
 /* pre/device/component/env/app init routines will be called in init_thread */
 /* components pre-initialization (pure software initialization) */
