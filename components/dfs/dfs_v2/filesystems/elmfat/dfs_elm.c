@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -247,10 +247,11 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     FRESULT result;
     int index;
     char logic_nbr[3] = {'0',':', 0};
-    MKFS_PARM opt;
+    MKFS_PARM opt = {0};
 
     work = rt_malloc(FF_MAX_SS);
-    if(RT_NULL == work) {
+    if(RT_NULL == work)
+    {
         return -ENOMEM;
     }
 
@@ -307,13 +308,11 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
         logic_nbr[0] = '0' + index;
     }
 
-    /* [IN] Logical drive number */
-    /* [IN] Format options */
-    /* [-]  Working buffer */
-    /* [IN] Size of working buffer */
-    rt_memset(&opt, 0, sizeof(opt));
     opt.fmt = FM_ANY|FM_SFD;
-    result = f_mkfs(logic_nbr, &opt, work, FF_MAX_SS);
+    result = f_mkfs(logic_nbr,  /* [IN] Logical drive number */
+                    &opt,       /* [IN] Format options */
+                    work,       /* [-]  Working buffer */
+                    FF_MAX_SS); /* [IN] Size of working buffer */
     rt_free(work); work = RT_NULL;
 
     /* check flag status, we need clear the temp driver stored in disk[] */
@@ -894,7 +893,7 @@ int dfs_elm_stat(struct dfs_dentry *dentry, struct stat *st)
         if (file_info.fattrib & AM_ARC)
         {
             st->st_blocks = st->st_size ? ((st->st_size - 1) / SS(fat) / fat->csize + 1) : 0;
-            st->st_blocks *= (st->st_blksize / 512);  // man say st_blocks is number of 512B blocks allocated
+            st->st_blocks *= (st->st_blksize / 512);  /* man say st_blocks is number of 512B blocks allocated*/
         }
         else
         {
@@ -1175,6 +1174,7 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
         if (geometry.sector_count == 0)
             return RES_ERROR;
     }
+#if FF_MAX_SS != FF_MIN_SS
     else if (ctrl == GET_SECTOR_SIZE)
     {
         struct rt_device_blk_geometry geometry;
@@ -1184,6 +1184,7 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 
         *(WORD *)buff = (WORD)(geometry.bytes_per_sector);
     }
+#endif /* FF_MAX_SS != FF_MIN_SS */
     else if (ctrl == GET_BLOCK_SIZE) /* Get erase block size in unit of sectors (DWORD) */
     {
         struct rt_device_blk_geometry geometry;
