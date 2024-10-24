@@ -256,7 +256,7 @@ static rt_err_t rt_dw_eth_init(rt_device_t dev)
     }
     else
     {
-        err = -RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
