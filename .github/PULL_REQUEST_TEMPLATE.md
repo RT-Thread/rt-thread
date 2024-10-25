@@ -62,4 +62,4 @@ The following content must not be changed in the submitted PR message. Otherwise
 - [ ] 对难懂代码均提供对应的注释 I've commented appropriately where code is tricky
 - [ ] 代码是高质量的 Code in this PR is of high quality
 - [ ] 已经使用[formatting](https://github.com/mysterywolf/formatting) 等源码格式化工具确保格式符合[RT-Thread代码规范](https://github.com/RT-Thread/rt-thread/blob/master/documentation/contribution_guide/coding_style_cn.md) This PR complies with [RT-Thread code specification](https://github.com/RT-Thread/rt-thread/blob/master/documentation/contribution_guide/coding_style_en.md)
-- [ ] 如果是新增bsp，并且支持scons GCC，请添加ci检查到[.github/workflows/bsp_buildings.yml](.github/workflows/bsp_buildings.yml)  详细请参考链接[BSP自查](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/bsp-selfcheck/bsp_selfcheck)
+- [ ] 如果是新增bsp, 已经添加ci检查到[.github/workflows/bsp_buildings.yml](.github/workflows/bsp_buildings.yml)  详细请参考链接[BSP自查](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/bsp-selfcheck/bsp_selfcheck)
