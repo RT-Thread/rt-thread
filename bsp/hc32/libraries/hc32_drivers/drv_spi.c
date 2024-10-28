@@ -496,24 +496,20 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
-    RT_ASSERT(device->bus->parent.user_data != RT_NULL);
     RT_ASSERT(message != RT_NULL);
 
     struct hc32_spi *spi_drv =  rt_container_of(device->bus, struct hc32_spi, spi_bus);
     CM_SPI_TypeDef *spi_instance = spi_drv->config->Instance;
-    struct hc32_hw_spi_cs *cs = device->parent.user_data;
 
-    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-        {
-            GPIO_SetPins(cs->port, cs->pin);
-        }
+            rt_pin_write(device->cs_pin, PIN_HIGH);
         else
-        {
-            GPIO_ResetPins(cs->port, cs->pin);
-        }
+            rt_pin_write(device->cs_pin, PIN_LOW);
     }
+    
+    LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
     LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d", spi_drv->config->bus_name,
           (uint32_t)message->send_buf, (uint32_t)message->recv_buf, message->length);
 
@@ -621,16 +617,12 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
     /* clear error flag */
     SPI_ClearStatus(spi_instance, SPI_FLAG_CLR_ALL);
 
-    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-        {
-            GPIO_ResetPins(cs->port, cs->pin);
-        }
+            rt_pin_write(device->cs_pin, PIN_LOW);
         else
-        {
-            GPIO_SetPins(cs->port, cs->pin);
-        }
+            rt_pin_write(device->cs_pin, PIN_HIGH);
     }
 
     return message->length;
