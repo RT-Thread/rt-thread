@@ -117,7 +117,7 @@ extern "C" {
 
 /* Common Utilities */
 
-#define RT_UNUSED(x)                   ((void)x)
+#define RT_UNUSED(x)                   ((void)(x))
 
 /* compile time assertion */
 #define RT_STATIC_ASSERT(name, expn) typedef char _static_assert_##name[(expn)?1:-1]
