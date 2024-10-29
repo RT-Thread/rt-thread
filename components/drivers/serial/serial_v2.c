@@ -758,6 +758,9 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device *dev,
 
         rt_hw_interrupt_enable(level);
 
+        /* clear tx_cpt flag */
+        rt_completion_wait(&tx_fifo->tx_cpt, 0);
+
         /* Call the transmit interface for transmission */
         serial->ops->transmit(serial,
                               put_ptr,
