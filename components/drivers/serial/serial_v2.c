@@ -77,7 +77,7 @@ static int serial_fops_open(struct dfs_file *fd)
 
     if ((fd->flags & O_ACCMODE) != O_WRONLY)
         rt_device_set_rx_indicate(device, serial_fops_rx_ind);
-    ret = rt_device_open(device, flags);
+    ret = rt_device_open(device, flags | RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING);
     if (ret == RT_EOK) return 0;
 
     return ret;
@@ -124,25 +124,35 @@ static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count, of
 static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 #endif
 {
-    int         size = 0;
+    ssize_t     size = 0;
     rt_device_t device;
+    rt_int32_t  rx_timout;
+
+    if (count == 0) return 0;
+    RT_ASSERT(fd != RT_NULL && buf != RT_NULL);
 
     device = (rt_device_t)fd->vnode->data;
+    RT_ASSERT(device != RT_NULL);
 
-    do
+    /* nonblock mode */
+    if (fd->flags & O_NONBLOCK)
     {
+        rx_timout = RT_WAITING_NO;
+        rt_device_control(device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timout);
         size = rt_device_read(device, -1, buf, count);
         if (size <= 0)
         {
-            if (fd->flags & O_NONBLOCK)
-            {
-                size = -EAGAIN;
-                break;
-            }
-
-            rt_wqueue_wait(&device->wait_queue, 0, RT_WAITING_FOREVER);
+            size = -1;
+            rt_set_errno(EAGAIN);
         }
-    } while (size <= 0);
+    }
+    else
+    {
+        rx_timout = RT_WAITING_FOREVER;
+        rt_device_control(device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timout);
+        size = rt_device_read(device, -1, buf, count);
+    }
+
 
     return size;
 }
@@ -153,10 +163,46 @@ static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t co
 static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 #endif
 {
+    ssize_t     size = 0;
     rt_device_t device;
+    rt_int32_t  tx_timeout;
 
     device = (rt_device_t)fd->vnode->data;
-    return rt_device_write(device, -1, buf, count);
+
+    if (fd->flags & O_NONBLOCK)
+    {
+        tx_timeout = RT_WAITING_NO;
+        rt_device_control(device, RT_SERIAL_CTRL_SET_TX_TIMEOUT, (void *)&tx_timeout);
+        size = rt_device_write(device, -1, buf, count);
+        if (size <= 0)
+        {
+            size = -1;
+            rt_set_errno(EAGAIN);
+        }
+    }
+    else
+    {
+        tx_timeout = RT_WAITING_FOREVER;
+        rt_device_control(device, RT_SERIAL_CTRL_SET_TX_TIMEOUT, (void *)&tx_timeout);
+        size = rt_device_write(device, -1, buf, count);
+    }
+
+    return size;
+}
+
+static int serial_fops_flush(struct dfs_file *fd)
+{
+    rt_device_t              device;
+    struct rt_serial_device *serial;
+
+    device = (rt_device_t)fd->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+    serial = (struct rt_serial_device *)device;
+    rt_device_control(device, RT_SERIAL_CTRL_TX_FLUSH, (void *)RT_NULL);
+    rt_device_control(device, RT_SERIAL_CTRL_RX_FLUSH, (void *)RT_NULL);
+
+    return 0;
 }
 
 static int serial_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
@@ -199,6 +245,7 @@ const static struct dfs_file_ops _serial_fops =
         .ioctl = serial_fops_ioctl,
         .read  = serial_fops_read,
         .write = serial_fops_write,
+        .flush = serial_fops_flush,
         .poll  = serial_fops_poll,
 };
 #endif /* RT_USING_POSIX_STDIO */
