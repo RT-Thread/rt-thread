@@ -68,35 +68,35 @@ static void uart_send_entry(void *parameter)
 static void uart_rec_entry(void *parameter)
 {
     rt_uint16_t rev_len;
-    rt_uint8_t *ch;
+    rt_uint8_t *uart_write_buffer;
     rt_int32_t  cnt, i;
     rev_len = *(rt_uint16_t *)parameter;
-    ch      = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (rev_len + 1));
+    uart_write_buffer      = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (rev_len + 1));
 
     while (1)
     {
-        cnt = rt_device_read(&serial->parent, 0, (void *)ch, RT_SERIAL_TC_RXBUF_SIZE);
+        cnt = rt_device_read(&serial->parent, 0, (void *)uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE);
         if (cnt != RT_SERIAL_TC_RXBUF_SIZE)
         {
             uart_result = RT_FALSE;
-            rt_free(ch);
+            rt_free(uart_write_buffer);
             return;
         }
 
         for (i = cnt - 1; i >= 0; i--)
         {
-            if (ch[i] != ((rev_len - (cnt - i)) % 256))
+            if (uart_write_buffer[i] != ((rev_len - (cnt - i)) % (UINT8_MAX + 1)))
             {
-                LOG_E("Read Different data2 -> former data: %x, current data: %x.", ch[i], (rev_len - (cnt - i)) % 256);
+                LOG_E("Read Different data2 -> former data: %x, current data: %x.", uart_write_buffer[i], ((rev_len - (cnt - i)) % (UINT8_MAX + 1)));
                 uart_result = RT_FALSE;
-                rt_free(ch);
+                rt_free(uart_write_buffer);
                 return;
             }
         }
 
         break;
     }
-    rt_free(ch);
+    rt_free(uart_write_buffer);
     uart_over_flag = RT_TRUE;
 }
 

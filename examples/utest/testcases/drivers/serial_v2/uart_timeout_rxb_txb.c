@@ -22,7 +22,6 @@ static rt_bool_t                uart_result     = RT_TRUE;
 static rt_uint8_t               uart_write_flag = RT_TRUE;
 static rt_uint8_t               uart_over_flag  = RT_FALSE;
 
-
 static rt_err_t uart_find(void)
 {
     serial = (struct rt_serial_device *)rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
@@ -70,28 +69,30 @@ static void uart_send_entry(void *parameter)
 
 static void uart_rec_entry(void *parameter)
 {
-    rt_uint8_t *ch;
+    rt_uint8_t *uart_write_buffer;
     rt_tick_t   old_tick;
     rt_tick_t   tick_diff;
     rt_ssize_t  recv_len;
     rt_uint32_t i;
-    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_RXBUF_SIZE * 10 + 1));
+    rt_int32_t  timeout = 0;
+    uart_write_buffer   = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_RXBUF_SIZE * 10 + 1));
 
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_TIMEOUT, (void *)100);
+    timeout = 100;
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&timeout);
 
     uart_write_flag = RT_TRUE;
     for (i = 0; i < 10; i++)
     {
         rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
         old_tick  = rt_tick_get();
-        recv_len  = rt_device_read(&serial->parent, 0, (void *)ch, RT_SERIAL_TC_RXBUF_SIZE);
+        recv_len  = rt_device_read(&serial->parent, 0, (void *)uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE);
         tick_diff = rt_tick_get() - old_tick;
         if (tick_diff > 100 + 1 || tick_diff < 100)
         {
             LOG_E("timeout_test: recv_size [%d], RX block time [%d], expect_time [100 - 101]", recv_len, tick_diff);
             uart_write_flag = RT_FALSE;
             uart_result     = RT_FALSE;
-            rt_free(ch);
+            rt_free(uart_write_buffer);
             return;
         }
 
@@ -100,18 +101,19 @@ static void uart_rec_entry(void *parameter)
     uart_write_flag = RT_FALSE;
 
     rt_thread_mdelay(60);
+    timeout = 10;
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_TX_TIMEOUT, (void *)&timeout);
 
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_TIMEOUT, (void *)10);
     for (i = 0; i < 10; i++)
     {
         old_tick  = rt_tick_get();
-        recv_len  = rt_device_write(&serial->parent, 0, ch, RT_SERIAL_TC_RXBUF_SIZE * 10);
+        recv_len  = rt_device_write(&serial->parent, 0, uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE * 10);
         tick_diff = rt_tick_get() - old_tick;
         if (tick_diff > 10 + 1 || tick_diff < 10)
         {
             LOG_E("timeout_test: recv_size [%d], TX block time [%d], expect_time [10 - 11]", recv_len, tick_diff);
             uart_result = RT_FALSE;
-            rt_free(ch);
+            rt_free(uart_write_buffer);
             return;
         }
 
@@ -119,7 +121,7 @@ static void uart_rec_entry(void *parameter)
         rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
     }
 
-    rt_free(ch);
+    rt_free(uart_write_buffer);
     uart_over_flag = RT_TRUE;
 }
 

@@ -32,23 +32,22 @@ static rt_err_t uart_find(void)
     return RT_EOK;
 }
 
-static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t send_size)
+static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
 {
     rt_uint32_t old_tick;
     rt_tick_t   tick_diff;
     rt_tick_t   expect_time = send_size * 0.0868;
 
-    /* In interrupt mode, ticks may be inaccurate; compensation should be applied*/
+    /* In interrupt mode, ticks may be inaccurate; compensation should be applied */
     if (send_size > 384)
     {
         expect_time -= send_size / 384;
     }
 
-    old_tick = rt_tick_get();
-    rt_device_write(&serial->parent, 0, ch, send_size);
+    old_tick         = rt_tick_get();
+    rt_uint32_t size = rt_device_write(&serial->parent, 0, uart_write_buffer, send_size);
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
     tick_diff = rt_tick_get() - old_tick;
-
     if (tick_diff < expect_time)
     {
         LOG_E("send_size [%4d], time required for TXNB mode transmission to complete [%3d], expect_time [%3d]", send_size, tick_diff, expect_time);
@@ -86,26 +85,28 @@ static rt_bool_t uart_api()
         return RT_FALSE;
     }
 
-    rt_uint8_t *ch;
+    rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
-    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 10));
+    rt_int32_t  tx_timeout = 1;
+    uart_write_buffer      = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_RXBUF_SIZE * 5 + 10));
 
-    rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_TIMEOUT, (void *)1);
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_TX_TIMEOUT, (void *)&tx_timeout);
 
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
-        if (RT_EOK != test_item(ch, RT_SERIAL_TC_TXBUF_SIZE * (rand() % 6)))
-        {
-            result = -RT_ERROR;
-            goto __exit;
-        }
-        if (RT_EOK != test_item(ch, RT_SERIAL_TC_TXBUF_SIZE * (rand() % 6) + 1))
+        if (RT_EOK != test_item(uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE * (rand() % 6)))
         {
             result = -RT_ERROR;
             goto __exit;
         }
 
-        if (RT_EOK != test_item(ch, rand() % (RT_SERIAL_TC_TXBUF_SIZE * 5)))
+        if (RT_EOK != test_item(uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE * (rand() % 6) + 1))
+        {
+            result = -RT_ERROR;
+            goto __exit;
+        }
+
+        if (RT_EOK != test_item(uart_write_buffer, rand() % (RT_SERIAL_TC_RXBUF_SIZE * 5)))
         {
             result = -RT_ERROR;
             goto __exit;
@@ -113,7 +114,7 @@ static rt_bool_t uart_api()
     }
 
 __exit:
-    rt_free(ch);
+    rt_free(uart_write_buffer);
     rt_device_close(&serial->parent);
     return result == RT_EOK ? RT_TRUE : RT_FALSE;
 }

@@ -32,18 +32,20 @@ static rt_err_t uart_find(void)
     return RT_EOK;
 }
 
-static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
+static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t size)
 {
-    rt_device_write(&serial->parent, 0, ch, size);
-    rt_thread_mdelay(size * 0.0868 + 5);
-    if (1 != rt_device_read(&serial->parent, 0, ch, 1))
+    rt_device_write(&serial->parent, 0, uart_write_buffer, size);
+    rt_thread_mdelay(size * 0.0868 + 15);
+    if (1 != rt_device_read(&serial->parent, 0, uart_write_buffer, 1))
     {
+        LOG_E("read failed.");
         return -RT_ERROR;
     }
 
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
-    if (0 != rt_device_read(&serial->parent, 0, ch, 1))
+    if (0 != rt_device_read(&serial->parent, 0, uart_write_buffer, 1))
     {
+        LOG_E("read failed.");
         return -RT_ERROR;
     }
 
@@ -74,27 +76,29 @@ static rt_bool_t uart_api()
         return RT_FALSE;
     }
 
-    rt_uint8_t *ch;
+    rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
-    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
 
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
-        if (RT_EOK != test_item(ch, RT_SERIAL_TC_RXBUF_SIZE + RT_SERIAL_TC_RXBUF_SIZE * (rand() % 5)))
+        if (RT_EOK != test_item(uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE + RT_SERIAL_TC_RXBUF_SIZE * (rand() % 5)))
         {
+            LOG_E("test_item failed.");
             result = -RT_ERROR;
             goto __exit;
         }
 
-        if (RT_EOK != test_item(ch, rand() % (RT_SERIAL_TC_RXBUF_SIZE * 5)))
+        if (RT_EOK != test_item(uart_write_buffer, rand() % (RT_SERIAL_TC_RXBUF_SIZE * 5)))
         {
+            LOG_E("test_item failed.");
             result = -RT_ERROR;
             goto __exit;
         }
     }
 
 __exit:
-    rt_free(ch);
+    rt_free(uart_write_buffer);
     rt_device_close(&serial->parent);
     return result == RT_EOK ? RT_TRUE : RT_FALSE;
 }

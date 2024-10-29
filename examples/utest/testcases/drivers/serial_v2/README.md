@@ -19,7 +19,9 @@
 | uart_flush_txnb | 非阻塞模式下刷新发送缓冲区的测试 |
 | uart_timeout_rxb_txb | 串口 发送 / 接收 超时的测试 |
 | uart_overflow_rxb_txb | 串口溢出处理的测试 |
-| uart_get_rx_data_len | 获取串口接收缓冲区中的数据长度的测试 |
+| uart_get_unread_bytes_count | 获取串口接收缓冲区中的数据长度的测试 |
+| uart_posix_nonblock | posix非阻塞测试 |
+| uart_posix_echo_block | posix阻塞echo测试 |
 
 ## 3、软硬件环境
 
@@ -113,6 +115,9 @@ RT-Thread Utestcases  --->
                 	(128)the rx buffer size for serial test	(测试串口rx缓冲区大小)
                 	(128)the tx buffer size for serial test	(测试串口tx缓冲区大小)
                 	(100)the number of iterations for the test routine.	(测试例程的迭代次数)
+                [*] Serial posix testcase --->
+                	the device name for serial posix test: dev/uart2	(posix测试的串口)
+                	(100)the number of iterations for the posix test routine.	(posix测试例程的迭代次数)
 ```
 
 ## 6、使用

@@ -83,8 +83,8 @@ static void uart_rec_entry(void *parameter)
     rt_uint16_t rev_len;
 
     rev_len = *(rt_uint16_t *)parameter;
-    rt_uint8_t *ch;
-    ch = (rt_uint8_t *)rt_calloc(1, sizeof(rt_uint8_t) * (rev_len + 1));
+    rt_uint8_t *uart_write_buffer;
+    uart_write_buffer = (rt_uint8_t *)rt_calloc(1, sizeof(rt_uint8_t) * (rev_len + 1));
     rt_int32_t  cnt, i;
     rt_uint8_t  last_old_data;
     rt_bool_t   fisrt_flag         = RT_TRUE;
@@ -92,7 +92,7 @@ static void uart_rec_entry(void *parameter)
 
     while (1)
     {
-        cnt = rt_device_read(&serial->parent, 0, (void *)ch, rev_len);
+        cnt = rt_device_read(&serial->parent, 0, (void *)uart_write_buffer, rev_len);
         if (cnt != rev_len)
         {
             continue;
@@ -100,11 +100,11 @@ static void uart_rec_entry(void *parameter)
 
         if (fisrt_flag != RT_TRUE)
         {
-            if ((rt_uint8_t)(last_old_data + 1) != ch[0])
+            if ((rt_uint8_t)(last_old_data + 1) != uart_write_buffer[0])
             {
-                LOG_E("_Read Different data -> former data: %x, current data: %x.", last_old_data, ch[0]);
+                LOG_E("_Read Different data -> former data: %x, current data: %x.", last_old_data, uart_write_buffer[0]);
                 uart_result = RT_FALSE;
-                rt_free(ch);
+                rt_free(uart_write_buffer);
                 return;
             }
         }
@@ -115,12 +115,12 @@ static void uart_rec_entry(void *parameter)
 
         for (i = 0; i < cnt - 1; i++)
         {
-            if ((rt_uint8_t)(ch[i] + 1) != ch[i + 1])
+            if ((rt_uint8_t)(uart_write_buffer[i] + 1) != uart_write_buffer[i + 1])
             {
-                LOG_E("Read Different data -> former data: %x, current data: %x.", ch[i], ch[i + 1]);
+                LOG_E("Read Different data -> former data: %x, current data: %x.", uart_write_buffer[i], uart_write_buffer[i + 1]);
 
                 uart_result = RT_FALSE;
-                rt_free(ch);
+                rt_free(uart_write_buffer);
                 return;
             }
         }
@@ -128,9 +128,9 @@ static void uart_rec_entry(void *parameter)
         if (all_receive_length >= rev_len)
             break;
         else
-            last_old_data = ch[cnt - 1];
+            last_old_data = uart_write_buffer[cnt - 1];
     }
-    rt_free(ch);
+    rt_free(uart_write_buffer);
     uart_over_flag = RT_TRUE;
 }
 
@@ -268,9 +268,9 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    tx_sem         = RT_NULL;
-    uart_result    = RT_TRUE;
-    uart_over_flag = RT_FALSE;
+    tx_sem               = RT_NULL;
+    uart_result          = RT_TRUE;
+    uart_over_flag       = RT_FALSE;
     rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
     while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;

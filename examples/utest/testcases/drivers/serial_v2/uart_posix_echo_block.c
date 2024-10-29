@@ -11,23 +11,25 @@
 #include <rtthread.h>
 #include "utest.h"
 #include <rtdevice.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <termios.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define DBG_LVL DBG_LOG
 
 #ifdef UTEST_SERIAL_TC
 
-static struct rt_serial_device *serial;
-static rt_sem_t                 tx_sem;
-static rt_sem_t                 rx_sem;
-static rt_uint8_t               uart_over_flag;
-static rt_bool_t                uart_result = RT_TRUE;
+static int32_t    serial_fd;
+static rt_uint8_t uart_over_flag;
+static rt_bool_t  uart_result = RT_TRUE;
 
 static rt_err_t uart_find(void)
 {
-    serial = (struct rt_serial_device *)rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
-
-    if (serial == RT_NULL)
+    serial_fd = open(RT_SERIAL_POSIX_TC_DEVICE_NAME, O_RDWR);
+    if (serial_fd == -1)
     {
         LOG_E("find %s device failed!\n", RT_SERIAL_TC_DEVICE_NAME);
         return -RT_ERROR;
@@ -36,23 +38,52 @@ static rt_err_t uart_find(void)
     return RT_EOK;
 }
 
-static rt_err_t uart_tx_completion(rt_device_t device, void *buffer)
+static rt_err_t configureSerial(int fd, int baud)
 {
-    rt_sem_release(tx_sem);
-    return RT_EOK;
-}
+    int32_t        result = 0;
+    struct termios options;
 
-static rt_err_t uart_rx_indicate(rt_device_t device, rt_size_t size)
-{
-    rt_sem_release(rx_sem);
+    result = tcgetattr(fd, &options); // 获取当前端口的属性
+    if (result == -1)
+        return -RT_ERROR;
+
+    // 设置波特率
+    result = cfsetispeed(&options, baud); // 设置输入波特率
+    if (result == -1)
+        return -RT_ERROR;
+
+    result = cfsetospeed(&options, baud); // 设置输出波特率
+    if (result == -1)
+        return -RT_ERROR;
+
+    // 设置数据位
+    options.c_cflag &= ~PARENB; // 清除校验位，无校验
+    options.c_cflag &= ~CSTOPB; // 仅一个停止位
+    options.c_cflag &= ~CSIZE;  // 清除掩码
+    options.c_cflag |= CS8;     // 8位数据
+
+    // 设置无流控
+    options.c_cflag &= ~CRTSCTS;                // 不使用硬件流控制
+    options.c_iflag &= ~(IXON | IXOFF | IXANY); // 不使用软件流控制
+
+    // 使能接收器和发送器
+    options.c_cflag |= CLOCAL | CREAD;
+
+    // 设置行终止符
+    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+
+    // 应用属性
+    result = tcsetattr(fd, TCSANOW, &options);
+    if (result == -1)
+        return -RT_ERROR;
+
     return RT_EOK;
 }
 
 static void uart_send_entry(void *parameter)
 {
     rt_uint8_t *uart_write_buffer;
-    rt_uint16_t send_len, len = 0;
-    rt_err_t    result;
+    rt_uint16_t send_len;
 
     rt_uint32_t i = 0;
     send_len      = *(rt_uint16_t *)parameter;
@@ -72,14 +103,9 @@ static void uart_send_entry(void *parameter)
         uart_write_buffer[i] = (rt_uint8_t)i;
     }
     /* send buffer */
-    while (send_len - len)
+    if (write(serial_fd, uart_write_buffer, send_len) != send_len)
     {
-        len    += rt_device_write(&serial->parent, 0, uart_write_buffer + len, send_len - len);
-        result  = rt_sem_take(tx_sem, RT_WAITING_FOREVER);
-        if (result != RT_EOK)
-        {
-            LOG_E("take sem err in send.");
-        }
+        LOG_E("device write failed\r\n");
     }
     rt_free(uart_write_buffer);
 }
@@ -98,15 +124,7 @@ static void uart_rec_entry(void *parameter)
 
     while (1)
     {
-        rt_err_t result;
-
-        result = rt_sem_take(rx_sem, RT_WAITING_FOREVER);
-        if (result != RT_EOK)
-        {
-            LOG_E("take sem err in recv.");
-        }
-
-        cnt = rt_device_read(&serial->parent, 0, (void *)uart_write_buffer, rev_len);
+        cnt = read(serial_fd, (void *)uart_write_buffer, rev_len);
         if (cnt == 0)
         {
             continue;
@@ -148,11 +166,12 @@ static void uart_rec_entry(void *parameter)
     uart_over_flag = RT_TRUE;
 }
 
-static rt_err_t uart_api(rt_uint16_t test_buf)
+static rt_err_t uart_api(rt_uint16_t length)
 {
     rt_thread_t thread_send = RT_NULL;
     rt_thread_t thread_recv = RT_NULL;
     rt_err_t    result      = RT_EOK;
+    int         flags       = 0;
     uart_over_flag          = RT_FALSE;
 
     result = uart_find();
@@ -161,58 +180,32 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
         return -RT_ERROR;
     }
 
-    rx_sem = rt_sem_create("rx_sem", 0, RT_IPC_FLAG_PRIO);
-    if (rx_sem == RT_NULL)
-    {
-        LOG_E("Init rx_sem failed.");
-        uart_result = RT_FALSE;
-        return -RT_ERROR;
-    }
-
-    tx_sem = rt_sem_create("tx_sem", 0, RT_IPC_FLAG_PRIO);
-    if (tx_sem == RT_NULL)
-    {
-        LOG_E("Init tx_sem failed.");
-        uart_result = RT_FALSE;
-        return -RT_ERROR;
-    }
-
-    /* reinitialize */
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    config.baud_rate               = BAUD_RATE_115200;
-    config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
-    config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE;
-    rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
-
-    result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING);
-
-    if (result != RT_EOK)
-    {
-        LOG_E("Open uart device failed.");
-        uart_result = RT_FALSE;
-        return -RT_ERROR;
-    }
-
-    /* set receive callback function */
-    result = rt_device_set_tx_complete(&serial->parent, uart_tx_completion);
-    if (result != RT_EOK)
+    result = configureSerial(serial_fd, B115200);
+    if (result == -1)
     {
         goto __exit;
     }
 
-    result = rt_device_set_rx_indicate(&serial->parent, uart_rx_indicate);
-    if (result != RT_EOK)
+
+    flags = fcntl(serial_fd, F_GETFL, 0);
+    if (flags == -1)
     {
         goto __exit;
     }
 
-    thread_recv = rt_thread_create("uart_recv", uart_rec_entry, &test_buf, 1024, RT_THREAD_PRIORITY_MAX - 5, 10);
-    thread_send = rt_thread_create("uart_send", uart_send_entry, &test_buf, 1024, RT_THREAD_PRIORITY_MAX - 4, 10);
-
-    if (thread_send != RT_NULL && thread_recv != RT_NULL)
+    result = fcntl(serial_fd, F_SETFL, flags & ~O_NONBLOCK);
+    if (result == -1)
     {
-        rt_thread_startup(thread_recv);
+        goto __exit;
+    }
+
+
+    thread_send = rt_thread_create("uart_send", uart_send_entry, &length, 1024, RT_THREAD_PRIORITY_MAX - 4, 10);
+    thread_recv = rt_thread_create("uart_recv", uart_rec_entry, &length, 1024, RT_THREAD_PRIORITY_MAX - 5, 10);
+    if ((thread_send != RT_NULL) && (thread_recv != RT_NULL))
+    {
         rt_thread_startup(thread_send);
+        rt_thread_startup(thread_recv);
     }
     else
     {
@@ -235,15 +228,10 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
         /* waiting for test over */
         rt_thread_mdelay(5);
     }
+
 __exit:
     rt_thread_mdelay(5);
-    if (tx_sem)
-        rt_sem_delete(tx_sem);
-
-    if (rx_sem)
-        rt_sem_delete(rx_sem);
-
-    rt_device_close(&serial->parent);
+    close(serial_fd);
     uart_over_flag = RT_FALSE;
     return result;
 }
@@ -253,29 +241,8 @@ static void tc_uart_api(void)
     rt_uint32_t times = 0;
     rt_uint16_t num   = 0;
     rt_uint32_t i     = 0;
-    for (i = 1; i < 10; i++)
-    {
-        if (uart_api(RT_SERIAL_TC_TXBUF_SIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_TXBUF_SIZE * i + i % 2, ++times);
-        else
-        {
-            LOG_E("uart test error");
-            goto __exit;
-        }
-    }
 
-    for (i = 1; i < 10; i++)
-    {
-        if (uart_api(RT_SERIAL_TC_RXBUF_SIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_RXBUF_SIZE * i + i % 2, ++times);
-        else
-        {
-            LOG_E("uart test error");
-            goto __exit;
-        }
-    }
-
-    while (RT_SERIAL_TC_SEND_ITERATIONS - times)
+    while (RT_SERIAL_POSIX_TC_SEND_ITERATIONS - times)
     {
         num = (rand() % 1000) + 1;
         if (uart_api(num) == RT_EOK)
@@ -299,11 +266,9 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    tx_sem               = RT_NULL;
-    uart_result          = RT_TRUE;
-    uart_over_flag       = RT_FALSE;
-    rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
-    while (rt_device_close(uart_dev) != -RT_ERROR);
+    uart_result    = RT_TRUE;
+    uart_over_flag = RT_FALSE;
+    close(serial_fd);
     return RT_EOK;
 }
 
@@ -312,6 +277,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(tc_uart_api);
 }
 
-UTEST_TC_EXPORT(testcase, "testcases.drivers.uart_rxnb_txnb", utest_tc_init, utest_tc_cleanup, 30);
+UTEST_TC_EXPORT(testcase, "testcases.drivers.uart_posix_echo_block", utest_tc_init, utest_tc_cleanup, 30);
 
-#endif
+#endif /* TC_UART_USING_TC */

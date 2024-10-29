@@ -33,13 +33,13 @@ static rt_err_t uart_find(void)
     return RT_EOK;
 }
 
-static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
+static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t size)
 {
     rt_uint32_t old_tick;
     rt_ssize_t  send_len;
     rt_ssize_t  buf_data_len;
 
-    send_len = rt_device_write(&serial->parent, 0, ch, size);
+    send_len = rt_device_write(&serial->parent, 0, uart_write_buffer, size);
 
     if (size > RT_SERIAL_TC_RXBUF_SIZE)
     {
@@ -54,7 +54,7 @@ static rt_err_t test_item(rt_uint8_t *ch, rt_uint32_t size)
     }
 
 
-    if (size != rt_device_read(&serial->parent, 0, ch, size))
+    if (size != rt_device_read(&serial->parent, 0, uart_write_buffer, size))
     {
         return -RT_ERROR;
     }
@@ -92,19 +92,19 @@ static rt_bool_t uart_api()
         return RT_FALSE;
     }
 
-    rt_uint8_t *ch;
+    rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
-    ch = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
 
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
-        if (RT_EOK != test_item(ch, RT_SERIAL_TC_RXBUF_SIZE + RT_SERIAL_TC_RXBUF_SIZE * (rand() % 5)))
+        if (RT_EOK != test_item(uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE + RT_SERIAL_TC_RXBUF_SIZE * (rand() % 5)))
         {
             result = -RT_ERROR;
             goto __exit;
         }
 
-        if (RT_EOK != test_item(ch, rand() % (RT_SERIAL_TC_RXBUF_SIZE * 5)))
+        if (RT_EOK != test_item(uart_write_buffer, rand() % (RT_SERIAL_TC_RXBUF_SIZE * 5)))
         {
             result = -RT_ERROR;
             goto __exit;
@@ -113,7 +113,7 @@ static rt_bool_t uart_api()
 
 
 __exit:
-    rt_free(ch);
+    rt_free(uart_write_buffer);
     rt_device_close(&serial->parent);
     return result == RT_EOK ? RT_TRUE : RT_FALSE;
 }
@@ -140,6 +140,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(tc_uart_api);
 }
 
-UTEST_TC_EXPORT(testcase, "testcases.drivers.uart_get_rx_data_len", utest_tc_init, utest_tc_cleanup, 30);
+UTEST_TC_EXPORT(testcase, "testcases.drivers.uart_get_unread_bytes_count", utest_tc_init, utest_tc_cleanup, 30);
 
 #endif /* TC_UART_USING_TC */
