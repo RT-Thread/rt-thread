@@ -94,7 +94,7 @@ static wdog_config_t WDOG_3_config =
 };
 #endif
 
-static rt_watchdog_t imx6ull_watchdog[DEV_MAX] =
+static watchdog_t imx6ull_watchdog[DEV_MAX] =
 {
 #ifdef RT_USING_WDT1
     {
@@ -122,7 +122,7 @@ static rt_watchdog_t imx6ull_watchdog[DEV_MAX] =
 
 };
 
-static rt_err_t imx6ull_wdog_init(rt_watchdog_t *wdt)
+static rt_err_t imx6ull_wdog_init(watchdog_t *wdt)
 {
     WDOG_Type *base = RT_NULL;
     base = (WDOG_Type *)wdt->vaddr;
@@ -131,7 +131,7 @@ static rt_err_t imx6ull_wdog_init(rt_watchdog_t *wdt)
     return RT_EOK;
 }
 
-static rt_err_t imx6ull_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
+static rt_err_t imx6ull_wdog_control(watchdog_t *wdt, int cmd, void *args)
 {
     RT_ASSERT(wdt != NULL);
 
@@ -174,7 +174,7 @@ static rt_err_t imx6ull_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
     return RT_EOK;
 }
 
-static struct rt_watchdog_ops imx6ull_wdog_ops =
+static struct rwatchdog_ops imx6ull_wdog_ops =
 {
     .init = imx6ull_wdog_init,
     .control = imx6ull_wdog_control,

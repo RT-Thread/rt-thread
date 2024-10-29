@@ -21,28 +21,28 @@
 #define RT_DEVICE_CTRL_WDT_START          (5) /* start watchdog */
 #define RT_DEVICE_CTRL_WDT_STOP           (6) /* stop watchdog */
 
-struct rt_watchdog_ops;
-struct rt_watchdog_device
+struct rwatchdog_ops;
+struct watchdog_device
 {
     struct rt_device parent;
-    const struct rt_watchdog_ops *ops;
+    const struct rwatchdog_ops *ops;
     const char                  *name;
     rt_uint32_t                 paddr;
     rt_uint32_t                 vaddr;
     rt_uint32_t                 irqno;
     wdog_config_t *config;
 };
-typedef struct rt_watchdog_device rt_watchdog_t;
+typedef struct watchdog_device watchdog_t;
 
-struct rt_watchdog_ops
+struct rwatchdog_ops
 {
-    rt_err_t (*init)(rt_watchdog_t *wdt);
-    rt_err_t (*control)(rt_watchdog_t *wdt, int cmd, void *arg);
+    rt_err_t (*init)(watchdog_t *wdt);
+    rt_err_t (*control)(watchdog_t *wdt, int cmd, void *arg);
 };
 
-rt_err_t rt_hw_watchdog_register(rt_watchdog_t *wdt,
-                                 const char    *name,
-                                 rt_uint32_t    flag,
-                                 void          *data);
+rt_err_t watchdog_register( watchdog_t      *wdt,
+                            const char      *name,
+                            rt_uint32_t      flag,
+                            void            *data);
 
 #endif /* __WATCHDOG_H__ */
