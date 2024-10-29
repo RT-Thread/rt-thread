@@ -589,6 +589,11 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device *dev,
                                       size,
                                       RT_SERIAL_TX_BLOCKING);
 
+    if (tx_fifo->tx_timeout == RT_WAITING_NO)
+    {
+        return send_size;
+    }
+
     /* Waiting for the transmission to complete */
     ret = rt_completion_wait(&tx_fifo->tx_cpt, tx_fifo->tx_timeout);
     if (ret != RT_EOK)
@@ -642,6 +647,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
         /* using poll tx when the scheduler not startup or in stream mode */
         return _serial_poll_tx(dev, pos, buffer, size);
     }
+
     /* When serial transmit in tx_blocking mode,
      * if the activated mode is RT_TRUE, it will return directly */
     level = rt_hw_interrupt_disable();
@@ -652,7 +658,6 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
     }
     tx_fifo->activated = RT_TRUE;
     rt_hw_interrupt_enable(level);
-
 
     rt_int32_t tx_timeout = tx_fifo->tx_timeout;
     rt_tick_t  now_tick   = 0;
