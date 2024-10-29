@@ -168,7 +168,7 @@ static rt_err_t imx6ull_wdog_control(watchdog_t *wdt, int cmd, void *args)
         }
         break;
         default:
-            return RT_EINVAL;
+            return RT_ERROR;
     }
 
     return RT_EOK;

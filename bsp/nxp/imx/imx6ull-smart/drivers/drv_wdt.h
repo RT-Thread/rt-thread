@@ -40,9 +40,4 @@ struct rwatchdog_ops
     rt_err_t (*control)(watchdog_t *wdt, int cmd, void *arg);
 };
 
-rt_err_t watchdog_register( watchdog_t      *wdt,
-                            const char      *name,
-                            rt_uint32_t      flag,
-                            void            *data);
-
 #endif /* __WATCHDOG_H__ */
