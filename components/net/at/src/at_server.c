@@ -242,9 +242,11 @@ rt_size_t at_server_recv(at_server_t server, char *buf, rt_size_t size, rt_int32
         }
     }
 #else
-    rt_device_control(server->device, RT_SERIAL_CTRL_RX_TIMEOUT, (void*)rt_tick_from_millisecond(timeout));
+    rt_int32_t rx_timout = rt_tick_from_millisecond(timeout);
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timout);
     read_idx = rt_device_read(server->device, 0, buf, size);
-    rt_device_control(server->device, RT_SERIAL_CTRL_RX_TIMEOUT, (void*)RT_WAITING_FOREVER);
+    rx_timeout = RT_WAITING_FOREVER;
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timeout);
 #endif
 
     return read_idx;
@@ -426,13 +428,15 @@ static rt_err_t at_server_getchar(at_server_t server, char *ch, rt_int32_t timeo
         rt_sem_control(at_server_local->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
     }
 #else
-    rt_device_control(server->device, RT_SERIAL_CTRL_RX_TIMEOUT, (void*)rt_tick_from_millisecond(timeout));
+    rt_int32_t rx_timout = rt_tick_from_millisecond(timeout);
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timout);
     result = rt_device_read(server->device, 0, ch, 1);
     if(result <= 0)
     {
         result = -RT_ERROR;
     }
-    rt_device_control(server->device, RT_SERIAL_CTRL_RX_TIMEOUT, (void*)RT_WAITING_FOREVER);
+    rx_timeout = RT_WAITING_FOREVER;
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timeout);
 #endif
 
     return result;

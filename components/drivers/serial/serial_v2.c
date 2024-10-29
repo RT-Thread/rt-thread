@@ -1395,7 +1395,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             rx_fifo                           = (struct rt_serial_rx_fifo *)serial->serial_rx;
             RT_ASSERT(rx_fifo != RT_NULL);
 
-            rx_fifo->rx_timeout = (rt_int32_t)args;
+            rx_fifo->rx_timeout = *(rt_int32_t *)args;
         }
         break;
 
@@ -1416,7 +1416,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             tx_fifo                           = (struct rt_serial_tx_fifo *)serial->serial_tx;
             RT_ASSERT(tx_fifo != RT_NULL);
 
-            tx_fifo->tx_timeout = (rt_int32_t)args;
+            tx_fifo->tx_timeout = *(rt_int32_t *)args;
         }
         break;
 
