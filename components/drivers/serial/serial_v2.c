@@ -483,13 +483,10 @@ static rt_ssize_t _serial_fifo_rx(struct rt_device *dev,
         while (1)
         {
             /* Get the length of the data from the ringbuffer */
-            level    = rt_hw_interrupt_disable();
-            data_len = rt_ringbuffer_data_len(&rx_fifo->rb);
-            if (recv_size + data_len > size)
-                data_len = size - recv_size;
+            level = rt_hw_interrupt_disable();
 
-            recv_size += rt_ringbuffer_get(&rx_fifo->rb, (rt_uint8_t *)buffer + recv_size, data_len);
-            if (recv_size == size)
+            recv_size += rt_ringbuffer_get(&rx_fifo->rb, (rt_uint8_t *)buffer + recv_size, size - recv_size);
+            if (recv_size == size || rx_timeout == RT_WAITING_NO)
             {
                 rt_hw_interrupt_enable(level);
                 break;
@@ -681,6 +678,11 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
                               RT_SERIAL_TX_BLOCKING);
 
         send_size += tx_fifo->put_size;
+
+        if (tx_timeout == RT_WAITING_NO)
+        {
+            break;
+        }
 
         /* Waiting for the transmission to complete */
         rt_completion_wait(&tx_fifo->tx_cpt, tx_timeout);
@@ -1743,6 +1745,7 @@ static rt_ssize_t rt_serial_write(struct rt_device *dev,
 
     if (dev->open_flag & RT_SERIAL_TX_BLOCKING)
     {
+        RT_ASSERT(tx_fifo != RT_NULL);
         if ((tx_fifo->rb.buffer_ptr) == RT_NULL)
         {
             return _serial_fifo_tx_blocking_nbuf(dev, pos, buffer, size);
