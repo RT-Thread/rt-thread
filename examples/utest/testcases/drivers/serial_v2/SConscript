@@ -4,9 +4,12 @@ from building import *
 cwd     = GetCurrentDir()
 src     = Glob('*.c')
 
-CPPPATH = [cwd]
+path = [cwd]
 
-group = DefineGroup('utestcases', src, depend = ['UTEST_SERIAL_TC'], CPPPATH = CPPPATH)
+if GetDepend(['UTEST_SERIAL_POSIX_TC']):
+    src += Glob('posix/*.c')
+
+group = DefineGroup('utestcases', src, depend = ['UTEST_SERIAL_TC'], CPPPATH = path)
 
 Return('group')
 
