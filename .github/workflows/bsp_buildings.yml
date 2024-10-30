@@ -235,6 +235,7 @@ jobs:
                 - "renesas/ra6m4-iot"
                 - "renesas/ra6m3-ek"
                 - "renesas/ra6m3-hmi-board"
+                - "renesas/ra6e2-fpb"
                 - "renesas/ra4m2-eco"
                 - "renesas/ra2l1-cpk"
                 - "renesas/ra8m1-ek"
