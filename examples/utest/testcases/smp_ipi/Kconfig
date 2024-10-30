@@ -1,6 +1,6 @@
-menu "SMP Testcase"
+menu "SMP-Call Testcase"
 
 config UTEST_SMP_CALL_FUNC
-    bool "Call random cpu to run func"
+    bool "SMP-Call test cases"
     default n
 endmenu
