@@ -723,6 +723,9 @@ struct rt_cpu
 #ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
 #endif /* RT_USING_CPU_USAGE_TRACER */
+#ifdef ARCH_USING_IRQ_CTX_LIST
+    rt_slist_t                  irq_ctx_head;
+#endif /* ARCH_USING_IRQ_CTX_LIST */
 };
 
 #else /* !RT_USING_SMP */
@@ -734,6 +737,9 @@ struct rt_cpu
 #ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
 #endif /* RT_USING_CPU_USAGE_TRACER */
+#ifdef ARCH_USING_IRQ_CTX_LIST
+    rt_slist_t                  irq_ctx_head;
+#endif /* ARCH_USING_IRQ_CTX_LIST */
 };
 
 #endif /* RT_USING_SMP */
@@ -743,6 +749,16 @@ typedef struct rt_cpu *rt_cpu_t;
 #define rt_current_thread rt_thread_self()
 
 struct rt_thread;
+
+/**
+ * interrupt/exception frame handling
+ *
+ */
+
+typedef struct rt_interrupt_context {
+    void *context;      /**< arch specific context */
+    rt_slist_t node;    /**< node for nested interrupt */
+} *rt_interrupt_context_t;
 
 #ifdef RT_USING_SMART
 typedef rt_err_t (*rt_wakeup_func_t)(void *object, struct rt_thread *thread);

@@ -713,6 +713,10 @@ rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
 void rt_interrupt_enter(void);
 void rt_interrupt_leave(void);
 
+void rt_interrupt_context_push(rt_interrupt_context_t this_ctx);
+void rt_interrupt_context_pop(void);
+void *rt_interrupt_context_get(void);
+
 /**
  * CPU object
  */
