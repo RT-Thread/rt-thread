@@ -56,6 +56,10 @@ extern "C" {
 #ifdef RT_USING_PIC
 #include "drivers/pic.h"
 #endif
+
+#ifdef RT_USING_SCSI
+#include "drivers/scsi.h"
+#endif
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
