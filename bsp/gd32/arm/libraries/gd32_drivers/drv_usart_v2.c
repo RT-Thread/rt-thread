@@ -272,8 +272,8 @@ static void usart_isr (struct rt_serial_device *serial)
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, usart_data_receive(uart->periph));
-
+        char chr = usart_data_receive(uart->periph);
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 
         /* Clear RXNE interrupt flag */
@@ -281,12 +281,8 @@ static void usart_isr (struct rt_serial_device *serial)
     }
     else if (usart_interrupt_flag_get(uart->periph, USART_INT_FLAG_TBE) != RESET)
     {
-        struct rt_serial_tx_fifo *tx_fifo;
-        tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
-        RT_ASSERT(tx_fifo != RT_NULL);
-
         rt_uint8_t put_char = 0;
-        if (rt_ringbuffer_getchar(&(tx_fifo->rb), &put_char))
+        if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, &put_char) == RT_EOK)
         {
             usart_data_transmit(uart->periph, put_char);
         }

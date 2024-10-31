@@ -489,22 +489,20 @@ static rt_ssize_t hc32_transmit(struct rt_serial_device  *serial,
 static void hc32_uart_rx_irq_handler(struct hc32_uart *uart)
 {
     RT_ASSERT(RT_NULL != uart);
-    struct rt_serial_rx_fifo *rx_fifo;
-    rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
-    RT_ASSERT(rx_fifo != RT_NULL);
-    rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)USART_ReadData(uart->config->Instance));
+    struct rt_serial_device *serial = &uart->serial;
+
+    char chr = USART_ReadData(uart->config->Instance);
+    rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
     rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_IND);
 }
 
 static void hc32_uart_tx_irq_handler(struct hc32_uart *uart)
 {
     RT_ASSERT(RT_NULL != uart);
-    struct rt_serial_tx_fifo *tx_fifo;
-    tx_fifo = (struct rt_serial_tx_fifo *)uart->serial.serial_tx;
-    RT_ASSERT(tx_fifo != RT_NULL);
+    struct rt_serial_device *serial = &uart->serial;
 
     rt_uint8_t put_char = 0;
-    if (rt_ringbuffer_getchar(&(tx_fifo->rb), &put_char))
+    if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, &put_char) == RT_EOK)
     {
         USART_WriteData(uart->config->Instance, put_char);
     }

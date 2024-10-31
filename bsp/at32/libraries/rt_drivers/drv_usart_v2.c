@@ -489,22 +489,14 @@ static void usart_isr(struct rt_serial_device *serial)
 
     if (usart_flag_get(instance->uart_x, USART_RDBF_FLAG) != RESET)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, usart_data_receive(instance->uart_x));
-
+        char chr = usart_data_receive(instance->uart_x);
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
     else if ((usart_flag_get(instance->uart_x, USART_TDBE_FLAG) != RESET) && (instance->uart_x->ctrl1_bit.tdbeien))
     {
-        struct rt_serial_tx_fifo *tx_fifo;
-        tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
-        RT_ASSERT(tx_fifo != RT_NULL);
-
         rt_uint8_t put_char = 0;
-        if (rt_ringbuffer_getchar(&(tx_fifo->rb), &put_char))
+        if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, &put_char) == RT_EOK)
         {
             usart_data_transmit(instance->uart_x, put_char);
         }

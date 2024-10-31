@@ -286,11 +286,8 @@ void user_uart0_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
@@ -309,12 +306,8 @@ void user_uart1_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -332,12 +325,8 @@ void user_uart2_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -355,12 +344,8 @@ void user_uart3_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -378,12 +363,8 @@ void user_uart4_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -401,12 +382,8 @@ void user_uart5_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -424,12 +401,8 @@ void user_uart6_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -447,12 +420,8 @@ void user_uart7_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -470,12 +439,8 @@ void user_uart8_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -493,12 +458,8 @@ void user_uart9_callback(uart_callback_args_t *p_args)
 
     if (UART_EVENT_RX_CHAR == p_args->event)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar_force(&rx_fifo->rb, (rt_uint8_t)p_args->data);
-
+        char chr = p_args->data;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 

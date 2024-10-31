@@ -644,8 +644,8 @@ static void hpm_uart_isr(struct rt_serial_device *serial)
     if (irq_id == uart_intr_id_rx_data_avail) {
         while (uart_check_status(uart->uart_base, uart_stat_data_ready)) {
             count++;
-            put_char = uart_read_byte(uart->uart_base);
-            rt_ringbuffer_putchar_force(&rx_fifo->rb, put_char);
+            char chr = uart_read_byte(uart->uart_base);
+            rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
             /*in order to ensure rx fifo there are remaining bytes*/
             if (count > 12) {
                 break;
@@ -655,8 +655,8 @@ static void hpm_uart_isr(struct rt_serial_device *serial)
 
     if (irq_id == uart_intr_id_rx_timeout) {
         while ((uart_check_status(uart->uart_base, uart_stat_data_ready)) || (uart_check_status(uart->uart_base, uart_stat_overrun_error))) {
-            put_char= uart_read_byte(uart->uart_base);
-            rt_ringbuffer_putchar_force(&rx_fifo->rb, put_char);
+            char chr = uart_read_byte(uart->uart_base);
+            rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         }
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
