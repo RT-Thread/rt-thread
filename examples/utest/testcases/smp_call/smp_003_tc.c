@@ -11,7 +11,7 @@
 #include <rtdevice.h>
 #include <utest.h>
 #include <utest_assert.h>
-#include <smp.h>
+#include <smp_call.h>
 
 #define PERCPU_TEST_COUNT 10000
 #define NEWLINE_ON 80
@@ -42,7 +42,6 @@ static void _test_smp_cb(void *param)
         /* SYNC.004 */
         uassert_true(0);
     }
-
     _logging_progress();
     rt_atomic_add(&_entry_counts[req_cpuid], 1);
 }
@@ -52,7 +51,7 @@ static void _utestd_entry(void *oncpu_param)
     rt_ubase_t oncpu = (rt_ubase_t)oncpu_param;
     volatile int cpu_mask;
     volatile int popcount = 0;
-    rt_ubase_t tested_cpus = 0;
+    rt_thread_t curthr = rt_thread_self();
 
     if (rt_hw_cpu_id() != oncpu)
     {
@@ -63,32 +62,29 @@ static void _utestd_entry(void *oncpu_param)
     for (size_t i = 0; i < PERCPU_TEST_COUNT; i++)
     {
         cpu_mask = rand() % RT_ALL_CPU;
-        tested_cpus |= cpu_mask;
 
-        rt_smp_call_cpu_mask(cpu_mask, _test_smp_cb, oncpu_param, SMP_CALL_WAIT_ALL);
+        rt_smp_call_cpu_mask(cpu_mask, _test_smp_cb, oncpu_param, 0);
         popcount += __builtin_popcount(cpu_mask);
+    }
+
+    for (size_t i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_thread_control(curthr, RT_THREAD_CTRL_BIND_CPU, (void *)i);
     }
 
     LOG_D("popcount %d, _entry_counts[%d] %d", popcount, oncpu, _entry_counts[oncpu]);
 
-    /* TARG.001 */
+    /* MP.002 */
     uassert_true(popcount == rt_atomic_load(&_entry_counts[oncpu]));
-
-    /* TOP.001, TOP.002 */
-    uassert_true(tested_cpus == RT_ALL_CPU);
 
     rt_sem_release(&_utestd_exited);
 }
 
-static void _blocking_mtsafe_call(void)
+static void _async_call(void)
 {
-    rt_err_t error;
     for (size_t i = 0; i < RT_CPUS_NR; i++)
     {
-        error = rt_thread_startup(_utestd[i]);
-
-        /* SYNC.001, SYNC.002, SYNC.003 */
-        uassert_true(!error);
+        rt_thread_startup(_utestd[i]);
     }
 
     for (size_t i = 0; i < RT_CPUS_NR; i++)
@@ -126,7 +122,7 @@ static rt_err_t utest_tc_cleanup(void)
 
 static void _testcase(void)
 {
-    UTEST_UNIT_RUN(_blocking_mtsafe_call);
+    UTEST_UNIT_RUN(_async_call);
 }
 
-UTEST_TC_EXPORT(_testcase, "testcase.smp.smoke.002", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(_testcase, "testcase.smp.smoke.003", utest_tc_init, utest_tc_cleanup, 10);
