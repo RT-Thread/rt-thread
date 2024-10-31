@@ -161,7 +161,7 @@ struct rt_serial_tx_fifo
 
     rt_int32_t tx_timeout;
 
-    rt_bool_t activated;
+    rt_atomic_t activated;
 
     struct rt_completion tx_cpt;
 
