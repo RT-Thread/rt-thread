@@ -12,7 +12,7 @@
 #include <rtdevice.h>
 #include <utest.h>
 #include <utest_assert.h>
-#include <smp.h>
+#include <smp_call.h>
 
 #define TEST_COUNT 10000
 

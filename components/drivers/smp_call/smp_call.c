@@ -10,7 +10,7 @@
  *                             fixup data racing
  */
 
-#include "smp.h"
+#include "smp_call.h"
 
 #define DBG_TAG "SMP"
 #define DBG_LVL DBG_INFO
