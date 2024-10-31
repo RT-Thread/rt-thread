@@ -53,6 +53,9 @@
 #define NRZ_NORMAL                      0       /* Non Return to Zero : normal mode */
 #define NRZ_INVERTED                    1       /* Non Return to Zero : inverted mode */
 
+/**
+ * device flag
+ */
 #define RT_DEVICE_FLAG_RX_BLOCKING      0x1000
 #define RT_DEVICE_FLAG_RX_NON_BLOCKING  0x2000
 
@@ -64,27 +67,40 @@
 #define RT_SERIAL_TX_BLOCKING           RT_DEVICE_FLAG_TX_BLOCKING
 #define RT_SERIAL_TX_NON_BLOCKING       RT_DEVICE_FLAG_TX_NON_BLOCKING
 
+/**
+ * hw device control commands
+ */
 #define RT_DEVICE_CHECK_OPTMODE         0x20
 
+/**
+ * hw serial control commands
+ */
+#define RT_HW_SERIAL_CTRL_GETC        0x01    /* Tx irq get char */
+#define RT_HW_SERIAL_CTRL_PUTC        0x02    /* Rx irq put char */
+
+/**
+ * hw isr event
+ */
 #define RT_SERIAL_EVENT_RX_IND          0x01    /* Rx indication */
 #define RT_SERIAL_EVENT_TX_DONE         0x02    /* Tx complete   */
 #define RT_SERIAL_EVENT_RX_DMADONE      0x03    /* Rx DMA transfer done */
 #define RT_SERIAL_EVENT_TX_DMADONE      0x04    /* Tx DMA transfer done */
 
-#define RT_SERIAL_CTRL_SET_RX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x01)    /* set Rx timeout. Call before rt_device_read. not supported in poll mode */
-#define RT_SERIAL_CTRL_SET_TX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x02)    /* set Tx timeout. Call before rt_device_write. not supported in poll mode */
-#define RT_SERIAL_CTRL_GET_RX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x03)    /* get Rx timeout. not supported in poll mode */
-#define RT_SERIAL_CTRL_GET_TX_TIMEOUT           (RT_DEVICE_CTRL_MASK + 0x04)    /* get Tx timeout. not supported in poll mode */
-#define RT_SERIAL_CTRL_RX_FLUSH                 (RT_DEVICE_CTRL_MASK + 0x05)    /* Clear rx buffer. Discard all data */
-#define RT_SERIAL_CTRL_TX_FLUSH                 (RT_DEVICE_CTRL_MASK + 0x06)    /* Clear tx buffer. Blocking and wait for the send buffer data to be sent. not supported in poll mode */
-#define RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT   (RT_DEVICE_CTRL_MASK + 0x07)    /* get unread bytes count. not supported in poll mode */
+/**
+ * device commands
+ * 0x40 -      special device control commands
+ */
+#define RT_SERIAL_CTRL_SET_RX_TIMEOUT           0x41    /* set Rx timeout. Call before rt_device_read. not supported in poll mode */
+#define RT_SERIAL_CTRL_SET_TX_TIMEOUT           0x42    /* set Tx timeout. Call before rt_device_write. not supported in poll mode */
+#define RT_SERIAL_CTRL_GET_RX_TIMEOUT           0x43    /* get Rx timeout. not supported in poll mode */
+#define RT_SERIAL_CTRL_GET_TX_TIMEOUT           0x44    /* get Tx timeout. not supported in poll mode */
+#define RT_SERIAL_CTRL_RX_FLUSH                 0x45    /* Clear rx buffer. Discard all data */
+#define RT_SERIAL_CTRL_TX_FLUSH                 0x46    /* Clear tx buffer. Blocking and wait for the send buffer data to be sent. not supported in poll mode */
+#define RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT   0x47    /* get unread bytes count. not supported in poll mode */
 
 #define RT_SERIAL_ERR_OVERRUN           0x01
 #define RT_SERIAL_ERR_FRAMING           0x02
 #define RT_SERIAL_ERR_PARITY            0x03
-
-#define RT_SERIAL_TX_DATAQUEUE_SIZE     2048
-#define RT_SERIAL_TX_DATAQUEUE_LWM      30
 
 #define RT_SERIAL_RX_MINBUFSZ 64
 #define RT_SERIAL_TX_MINBUFSZ 64
@@ -204,6 +220,8 @@ struct rt_uart_ops
 };
 
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
+
+rt_err_t rt_hw_serial_control_isr(struct rt_serial_device *serial, int cmd, void *args);
 
 rt_err_t rt_hw_serial_register(struct rt_serial_device      *serial,
                                const  char                  *name,

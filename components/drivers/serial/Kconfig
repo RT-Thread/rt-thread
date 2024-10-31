@@ -13,6 +13,17 @@ menuconfig RT_USING_SERIAL
             config RT_USING_SERIAL_V2
                 bool "RT_USING_SERIAL_V2"
         endchoice
+
+        choice
+            prompt "Choice Serial version"
+            depends on RT_USING_SERIAL_V2
+            default RT_SERIAL_BUF_STRATEGY_DROP
+            config RT_SERIAL_BUF_STRATEGY_DROP
+                bool "drop new incoming data when the buffer is full"
+            config RT_SERIAL_BUF_STRATEGY_OVERWRITE
+                bool "overwrite old data when the buffer is full"
+        endchoice
+
         config RT_SERIAL_USING_DMA
             bool "Enable serial DMA mode"
             default y

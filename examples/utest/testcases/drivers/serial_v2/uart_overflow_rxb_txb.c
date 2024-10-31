@@ -70,8 +70,8 @@ static void uart_rec_entry(void *parameter)
     rt_uint16_t rev_len;
     rt_uint8_t *uart_write_buffer;
     rt_int32_t  cnt, i;
-    rev_len = *(rt_uint16_t *)parameter;
-    uart_write_buffer      = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (rev_len + 1));
+    rev_len           = *(rt_uint16_t *)parameter;
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (rev_len + 1));
 
     while (1)
     {
@@ -83,6 +83,18 @@ static void uart_rec_entry(void *parameter)
             return;
         }
 
+#ifdef RT_SERIAL_BUF_STRATEGY_DROP
+        for (i = 0; i < cnt; i++)
+        {
+            if (uart_write_buffer[i] != i)
+            {
+                LOG_E("Read Different data2 -> former data: %x, current data: %x.", uart_write_buffer[i], i);
+                uart_result = RT_FALSE;
+                rt_free(uart_write_buffer);
+                return;
+            }
+        }
+#else
         for (i = cnt - 1; i >= 0; i--)
         {
             if (uart_write_buffer[i] != ((rev_len - (cnt - i)) % (UINT8_MAX + 1)))
@@ -93,7 +105,7 @@ static void uart_rec_entry(void *parameter)
                 return;
             }
         }
-
+#endif /* RT_SERIAL_BUF_STRATEGY_DROP */
         break;
     }
     rt_free(uart_write_buffer);
