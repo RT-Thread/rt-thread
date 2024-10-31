@@ -17,8 +17,9 @@ menuconfig RT_USING_SERIAL
         choice
             prompt "Choice Serial version"
             depends on RT_USING_SERIAL_V2
-            default RT_SERIAL_BUF_STRATEGY_DROP
+            default RT_SERIAL_BUF_STRATEGY_OVERWRITE
             config RT_SERIAL_BUF_STRATEGY_DROP
+                depends on !RT_SERIAL_USING_DMA
                 bool "drop new incoming data when the buffer is full"
             config RT_SERIAL_BUF_STRATEGY_OVERWRITE
                 bool "overwrite old data when the buffer is full"
