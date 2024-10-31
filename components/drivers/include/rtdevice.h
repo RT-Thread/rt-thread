@@ -45,6 +45,8 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#include "drivers/iio.h"
+
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"
 #include "drivers/ofw_fdt.h"
