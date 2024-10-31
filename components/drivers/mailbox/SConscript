@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['mailbox.c']
 
+if GetDepend(['RT_MBOX_PIC']):
+    src += ['mailbox-pic.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

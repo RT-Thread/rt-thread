@@ -57,7 +57,7 @@ rt_err_t rt_mbox_controller_register(struct rt_mbox_controller *ctrl)
 
         rt_snprintf(&timer_name[len], sizeof(timer_name) - len, "%d", i);
         rt_timer_init(&chan->timer, timer_name, mbox_chan_timeout, chan,
-                0, RT_TIMER_FLAG_PERIODIC);
+                0, RT_TIMER_FLAG_ONE_SHOT);
     }
 
     rt_list_init(&ctrl->list);
@@ -179,8 +179,6 @@ static void mbox_chan_timeout(void *param)
 {
     rt_err_t err = RT_EOK;
     struct rt_mbox_chan *chan = param;
-
-    rt_timer_stop(&chan->timer);
 
     if (!chan->complete)
     {
