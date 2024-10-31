@@ -121,7 +121,7 @@ static rt_err_t uart_api()
             goto __exit;
         }
 
-        rt_thread_mdelay(1);
+        rt_thread_mdelay(2);
         cnt = read(serial_fd, (void *)uart_write_buffer, send_size);
         if (cnt != send_size)
         {

@@ -35,7 +35,7 @@ static rt_err_t uart_find(void)
 static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t size)
 {
     rt_device_write(&serial->parent, 0, uart_write_buffer, size);
-    rt_thread_mdelay(size * 0.0868 + 15);
+    rt_thread_mdelay(size * 0.0868 + 5);
     if (1 != rt_device_read(&serial->parent, 0, uart_write_buffer, 1))
     {
         LOG_E("read failed.");
