@@ -11,7 +11,7 @@
 #include <rtdevice.h>
 #include <utest.h>
 #include <utest_assert.h>
-#include <smp.h>
+#include <smp_call.h>
 
 #define PERCPU_TEST_COUNT 10000
 #define NEWLINE_ON 80
