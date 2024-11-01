@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+typedef long suseconds_t;       /* microseconds (signed) */
 typedef uint32_t id_t;          /* may contain pid, uid or gid */
 
 /*
