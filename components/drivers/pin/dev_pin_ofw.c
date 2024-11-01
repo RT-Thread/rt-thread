@@ -130,14 +130,20 @@ rt_ssize_t rt_ofw_get_named_pin(struct rt_ofw_node *np, const char *propname, in
 _out_converts:
     rt_ofw_node_put(pin_dev_np);
 
-    if (out_mode)
+    if (pin >= 0)
     {
-        *out_mode = mode;
-    }
+        /* Get virtual pin */
+        pin += pin_dev->pin_start;
 
-    if (out_value)
-    {
-        *out_value = value;
+        if (out_mode)
+        {
+            *out_mode = mode;
+        }
+
+        if (out_value)
+        {
+            *out_value = value;
+        }
     }
 
     return pin;
