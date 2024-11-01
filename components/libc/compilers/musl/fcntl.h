@@ -22,32 +22,17 @@
 #define O_DSYNC      010000
 #define O_SYNC     04010000
 #define O_RSYNC    04010000
+#define O_DIRECTORY  040000
+#define O_NOFOLLOW  0100000
 #define O_CLOEXEC  02000000
 
 #define O_ASYNC      020000
+#define O_DIRECT    0200000
+#define O_LARGEFILE 0400000
 #define O_NOATIME  01000000
 #define O_PATH    010000000
+#define O_TMPFILE 020040000
 #define O_NDELAY O_NONBLOCK
-
-#ifndef O_LARGEFILE
-#define O_LARGEFILE   0400000
-#endif
-
-#ifndef O_DIRECT
-#define O_DIRECT   0200000
-#endif
-
-#ifndef O_TMPFILE
-#define O_TMPFILE   020040000
-#endif
-
-#ifndef O_NOFOLLOW
-#define O_NOFOLLOW 0100000
-#endif
-
-#ifndef O_DIRECTORY
-#define O_DIRECTORY 040000
-#endif
 
 #ifndef O_BINARY
 #define O_BINARY 00
