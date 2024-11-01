@@ -117,11 +117,11 @@ rt_ssize_t rt_ofw_get_named_pin(struct rt_ofw_node *np, const char *propname, in
 
     if (out_value)
     {
-        if (flags == (PIN_ACTIVE_HIGH | PIN_PUSH_PULL))
+        if ((flags & 1) == PIN_ACTIVE_HIGH)
         {
             value = PIN_HIGH;
         }
-        else if (flags == (PIN_ACTIVE_LOW | PIN_PUSH_PULL))
+        else if ((flags & 1) == PIN_ACTIVE_LOW)
         {
             value = PIN_LOW;
         }
