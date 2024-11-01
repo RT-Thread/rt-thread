@@ -59,6 +59,12 @@ rt_ssize_t rt_ofw_get_named_pin(struct rt_ofw_node *np, const char *propname, in
     }
 
     pin_dev_np = pin_args.data;
+
+    if (!rt_ofw_data(pin_dev_np))
+    {
+        rt_platform_ofw_request(pin_dev_np);
+    }
+
     pin_dev = rt_ofw_data(pin_dev_np);
 
     if (!pin_dev)
