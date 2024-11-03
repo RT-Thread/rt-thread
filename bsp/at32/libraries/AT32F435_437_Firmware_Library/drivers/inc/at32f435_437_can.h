@@ -256,6 +256,14 @@ typedef enum
 /**
   * @brief  can receive fifo
   */
+#ifdef CAN_RX_FIFO0
+#undef CAN_RX_FIFO0
+#endif
+
+#ifdef CAN_RX_FIFO1
+#undef CAN_RX_FIFO1
+#endif
+
 typedef enum
 {
   CAN_RX_FIFO0                           = 0x00, /*!< can fifo 0 used to receive */
