@@ -237,7 +237,7 @@ static rt_err_t hc32_configure(struct rt_serial_device *serial, struct serial_co
 #endif
 
 #ifdef RT_SERIAL_USING_DMA
-    uart->dma_rx_remaining_cnt = (serial->config.rx_bufsz <= 1UL) ? serial->config.rx_bufsz : serial->config.rx_bufsz / 2UL;
+    uart->dma_rx_remaining_cnt = (serial->config.dma_ping_bufsz <= 1UL) ? serial->config.dma_ping_bufsz : serial->config.dma_ping_bufsz / 2UL;
 #endif
     /* Enable USART clock */
     FCG_USART_CLK(uart->config->clock, ENABLE);
@@ -637,24 +637,25 @@ static void hc32_uart_rx_timeout(struct rt_serial_device *serial)
 
 static void hc32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
-    rt_uint32_t trans_count = (serial->config.rx_bufsz <= 1UL) ? serial->config.rx_bufsz : serial->config.rx_bufsz / 2UL;
+    rt_uint32_t trans_count = (serial->config.dma_ping_bufsz <= 1UL) ? serial->config.dma_ping_bufsz : serial->config.dma_ping_bufsz / 2UL;
     struct hc32_uart *uart;
     stc_dma_init_t dma_init;
     struct dma_config *uart_dma;
 
     RT_ASSERT(RT_NULL != serial);
-    RT_ASSERT(RT_NULL == ((serial->config.rx_bufsz) & ((RT_ALIGN_SIZE) - 1)));
+    RT_ASSERT(RT_NULL == ((serial->config.dma_ping_bufsz) & ((RT_ALIGN_SIZE) - 1)));
 
     uart = rt_container_of(serial, struct hc32_uart, serial);
     RT_ASSERT(RT_NULL != uart->config->Instance);
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
         stc_dma_llp_init_t llp_init;
-        struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+        rt_uint8_t *ptr = NULL;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, &ptr);
 
         RT_ASSERT(RT_NULL != uart->config->rx_timeout->TMR0_Instance);
         RT_ASSERT(RT_NULL != uart->config->dma_rx->Instance);
-        RT_ASSERT(RT_NULL != rx_fifo);
+        RT_ASSERT(RT_NULL != ptr);
 
 #if defined (HC32F448) || defined (HC32F472)
         INTC_IntSrcCmd(uart->config->rx_int_src, DISABLE);
@@ -671,7 +672,7 @@ static void hc32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         DMA_StructInit(&dma_init);
         dma_init.u32IntEn       = DMA_INT_ENABLE;
         dma_init.u32SrcAddr     = (uint32_t)(&uart->config->Instance->RDR);
-        dma_init.u32DestAddr    = (uint32_t)rx_fifo->buffer;
+        dma_init.u32DestAddr    = (uint32_t)ptr;
         dma_init.u32DataWidth   = DMA_DATAWIDTH_8BIT;
         dma_init.u32BlockSize   = 1UL;
         dma_init.u32TransCount  = trans_count;
@@ -687,14 +688,14 @@ static void hc32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 
         /* Configure LLP descriptor */
         uart->config->llp_desc[0U].SARx  = dma_init.u32SrcAddr;
-        uart->config->llp_desc[0U].DARx  = dma_init.u32DestAddr + ((serial->config.rx_bufsz <= 1UL) ? 0UL : dma_init.u32TransCount);
-        uart->config->llp_desc[0U].DTCTLx = (((serial->config.rx_bufsz <= 1U) ? dma_init.u32TransCount : (serial->config.rx_bufsz - dma_init.u32TransCount)) << DMA_DTCTL_CNT_POS) | \
+        uart->config->llp_desc[0U].DARx  = dma_init.u32DestAddr + ((serial->config.dma_ping_bufsz <= 1UL) ? 0UL : dma_init.u32TransCount);
+        uart->config->llp_desc[0U].DTCTLx = (((serial->config.dma_ping_bufsz <= 1U) ? dma_init.u32TransCount : (serial->config.dma_ping_bufsz - dma_init.u32TransCount)) << DMA_DTCTL_CNT_POS) | \
                                             (dma_init.u32BlockSize << DMA_DTCTL_BLKSIZE_POS);
-        uart->config->llp_desc[0U].LLPx  = (serial->config.rx_bufsz <= 1U) ? (uint32_t)&uart->config->llp_desc[0U] : (uint32_t)&uart->config->llp_desc[1U];
+        uart->config->llp_desc[0U].LLPx  = (serial->config.dma_ping_bufsz <= 1U) ? (uint32_t)&uart->config->llp_desc[0U] : (uint32_t)&uart->config->llp_desc[1U];
         uart->config->llp_desc[0U].CHCTLx = (dma_init.u32SrcAddrInc | dma_init.u32DestAddrInc | dma_init.u32DataWidth | \
                                              llp_init.u32State      | llp_init.u32Mode        | dma_init.u32IntEn);
 
-        if (serial->config.rx_bufsz > 1UL)
+        if (serial->config.dma_ping_bufsz > 1UL)
         {
             uart->config->llp_desc[1U].SARx  = dma_init.u32SrcAddr;
             uart->config->llp_desc[1U].DARx  = dma_init.u32DestAddr;
@@ -1655,6 +1656,7 @@ static void hc32_uart_get_info(void)
     uart_obj[UART1_INDEX].serial.config.rx_bufsz = BSP_UART1_RX_BUFSIZE;
     uart_obj[UART1_INDEX].serial.config.tx_bufsz = BSP_UART1_TX_BUFSIZE;
 #ifdef BSP_UART1_RX_USING_DMA
+    uart_obj[UART1_INDEX].serial.config.dma_ping_bufsz = BSP_UART1_DMA_PING_BUFSIZE;
     uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart1_dma_rx = UART1_DMA_RX_CONFIG;
     static struct hc32_uart_rxto uart1_rx_timeout = UART1_RXTO_CONFIG;
@@ -1678,6 +1680,7 @@ static void hc32_uart_get_info(void)
     uart_obj[UART2_INDEX].serial.config.rx_bufsz = BSP_UART2_RX_BUFSIZE;
     uart_obj[UART2_INDEX].serial.config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
 #ifdef BSP_UART2_RX_USING_DMA
+    uart_obj[UART2_INDEX].serial.config.dma_ping_bufsz = BSP_UART2_DMA_PING_BUFSIZE;
     uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart2_dma_rx = UART2_DMA_RX_CONFIG;
     static struct hc32_uart_rxto uart2_rx_timeout = UART2_RXTO_CONFIG;
@@ -1702,6 +1705,7 @@ static void hc32_uart_get_info(void)
     uart_obj[UART3_INDEX].serial.config.tx_bufsz = BSP_UART3_TX_BUFSIZE;
 #if defined (HC32F460)
 #ifdef BSP_UART3_RX_USING_DMA
+    uart_obj[UART3_INDEX].serial.config.dma_ping_bufsz = BSP_UART3_DMA_PING_BUFSIZE;
     uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart3_dma_rx = UART3_DMA_RX_CONFIG;
     static struct hc32_uart_rxto uart3_rx_timeout = UART3_RXTO_CONFIG;
@@ -1725,6 +1729,7 @@ static void hc32_uart_get_info(void)
     uart_obj[UART4_INDEX].serial.config.tx_bufsz = BSP_UART4_TX_BUFSIZE;
 #if defined (HC32F460) || defined (HC32F448) || defined (HC32F472)
 #ifdef BSP_UART4_RX_USING_DMA
+    uart_obj[UART4_INDEX].serial.config.dma_ping_bufsz = BSP_UART4_DMA_PING_BUFSIZE;
     uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart4_dma_rx = UART4_DMA_RX_CONFIG;
     static struct hc32_uart_rxto uart4_rx_timeout = UART4_RXTO_CONFIG;
@@ -1750,6 +1755,7 @@ static void hc32_uart_get_info(void)
     uart_obj[UART5_INDEX].serial.config.tx_bufsz = BSP_UART5_TX_BUFSIZE;
 #if defined (HC32F448) || defined (HC32F472)
 #ifdef BSP_UART5_RX_USING_DMA
+    uart_obj[UART5_INDEX].serial.config.dma_ping_bufsz = BSP_UART5_DMA_PING_BUFSIZE;
     uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart5_dma_rx = UART5_DMA_RX_CONFIG;
     static struct hc32_uart_rxto uart5_rx_timeout = UART5_RXTO_CONFIG;
@@ -1772,6 +1778,7 @@ static void hc32_uart_get_info(void)
     uart_obj[UART6_INDEX].serial.config.tx_bufsz = BSP_UART6_TX_BUFSIZE;
 #if defined (HC32F4A0)
 #ifdef BSP_UART6_RX_USING_DMA
+    uart_obj[UART6_INDEX].serial.config.dma_ping_bufsz = BSP_UART6_DMA_PING_BUFSIZE;
     uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart6_dma_rx = UART6_DMA_RX_CONFIG;
     static struct hc32_uart_rxto uart6_rx_timeout = UART6_RXTO_CONFIG;
@@ -1795,6 +1802,7 @@ static void hc32_uart_get_info(void)
     uart_obj[UART7_INDEX].serial.config.tx_bufsz = BSP_UART7_TX_BUFSIZE;
 #if defined (HC32F4A0)
 #ifdef BSP_UART7_RX_USING_DMA
+    uart_obj[UART7_INDEX].serial.config.dma_ping_bufsz = BSP_UART7_DMA_PING_BUFSIZE;
     uart_obj[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart7_dma_rx = UART7_DMA_RX_CONFIG;
     static struct hc32_uart_rxto uart7_rx_timeout = UART7_RXTO_CONFIG;
