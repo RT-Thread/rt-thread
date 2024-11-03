@@ -75,8 +75,9 @@
 /**
  * hw serial control commands
  */
-#define RT_HW_SERIAL_CTRL_GETC        0x01    /* Tx irq get char */
-#define RT_HW_SERIAL_CTRL_PUTC        0x02    /* Rx irq put char */
+#define RT_HW_SERIAL_CTRL_GETC                    0x01    /* Tx irq get char */
+#define RT_HW_SERIAL_CTRL_PUTC                    0x02    /* Rx irq put char */
+#define RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF        0x03    /* get DMA ping-pong buffer */
 
 /**
  * hw isr event
@@ -147,6 +148,10 @@ struct serial_configure
     rt_uint32_t tx_bufsz                :16;
     rt_uint32_t flowcontrol             :1;
     rt_uint32_t reserved                :5;
+
+#ifdef RT_SERIAL_USING_DMA
+    rt_uint32_t dma_ping_bufsz          :16;
+#endif
 };
 
 /*
@@ -156,14 +161,15 @@ struct rt_serial_rx_fifo
 {
     struct rt_ringbuffer rb;
 
-    struct rt_completion rx_cpt;
+#ifdef RT_SERIAL_USING_DMA
+    struct rt_ringbuffer dma_ping_rb;
+#endif
 
-    rt_uint16_t rx_cpt_index;
+    struct rt_completion rx_cpt;
 
     rt_int32_t rx_timeout;
 
-    /* software fifo */
-    rt_uint8_t buffer[];
+    rt_uint16_t rx_cpt_index;
 };
 
 /*
@@ -173,16 +179,13 @@ struct rt_serial_tx_fifo
 {
     struct rt_ringbuffer rb;
 
+    struct rt_completion tx_cpt;
+
     rt_size_t put_size;
 
     rt_int32_t tx_timeout;
 
     rt_atomic_t activated;
-
-    struct rt_completion tx_cpt;
-
-    /* software fifo */
-    rt_uint8_t buffer[];
 };
 
 struct rt_serial_device

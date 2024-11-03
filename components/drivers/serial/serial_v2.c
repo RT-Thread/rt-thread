@@ -703,7 +703,9 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
         /* clear tx_cpt flag */
         rt_completion_wait(&tx_fifo->tx_cpt, 0);
 
-        /* Call the transmit interface for transmission */
+        /* Call the transmit interface for transmission again */
+        /* Note that in interrupt mode, buffer and tx_fifo->put_size
+         * are inactive parameters */
         serial->ops->transmit(serial,
                               (rt_uint8_t *)buffer + send_size,
                               tx_fifo->put_size,
@@ -783,7 +785,9 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device *dev,
         /* clear tx_cpt flag */
         rt_completion_wait(&tx_fifo->tx_cpt, 0);
 
-        /* Call the transmit interface for transmission */
+        /* Call the transmit interface for transmission again */
+        /* Note that in interrupt mode, put_ptr and tx_fifo->put_size
+         * are inactive parameters */
         serial->ops->transmit(serial,
                               put_ptr,
                               tx_fifo->put_size,
@@ -859,7 +863,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
             RT_ASSERT(tx_fifo != RT_NULL);
             rt_memset(tx_fifo, RT_NULL, sizeof(struct rt_serial_tx_fifo) + serial->config.tx_bufsz);
             rt_ringbuffer_init(&tx_fifo->rb,
-                               tx_fifo->buffer,
+                               (rt_uint8_t *)tx_fifo + sizeof(struct rt_serial_tx_fifo),
                                serial->config.tx_bufsz);
             serial->serial_tx = tx_fifo;
 
@@ -896,6 +900,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
 
         return RT_EOK;
     }
+
     /* When using RT_SERIAL_TX_NON_BLOCKING, ringbuffer needs to be initialized,
      * and initialize the tx_fifo->activated value is RT_FALSE.
      */
@@ -904,7 +909,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
     rt_memset(tx_fifo, RT_NULL, sizeof(struct rt_serial_tx_fifo) + serial->config.tx_bufsz);
 
     rt_ringbuffer_init(&tx_fifo->rb,
-                       tx_fifo->buffer,
+                       (rt_uint8_t *)tx_fifo + sizeof(struct rt_serial_tx_fifo),
                        serial->config.tx_bufsz);
     serial->serial_tx = tx_fifo;
 
@@ -937,7 +942,8 @@ static rt_err_t rt_serial_rx_enable(struct rt_device *dev,
                                     rt_uint16_t       rx_oflag)
 {
     struct rt_serial_device  *serial;
-    struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
+    struct rt_serial_rx_fifo *rx_fifo      = RT_NULL;
+    rt_size_t                 rx_fifo_size = 0;
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
@@ -963,11 +969,30 @@ static rt_err_t rt_serial_rx_enable(struct rt_device *dev,
     if (serial->config.rx_bufsz < RT_SERIAL_RX_MINBUFSZ)
         serial->config.rx_bufsz = RT_SERIAL_RX_MINBUFSZ;
 
-    rx_fifo = (struct rt_serial_rx_fifo *)rt_malloc(sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz);
-    RT_ASSERT(rx_fifo != RT_NULL);
-    rt_memset(rx_fifo, RT_NULL, sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz);
+#ifdef RT_SERIAL_USING_DMA
+    if (serial->config.dma_ping_bufsz > 0 && serial->config.dma_ping_bufsz < RT_SERIAL_RX_MINBUFSZ / 2)
+        serial->config.dma_ping_bufsz = RT_SERIAL_RX_MINBUFSZ / 2;
+    rx_fifo_size = sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz + serial->config.dma_ping_bufsz;
+#else
+    rx_fifo_size = sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz;
+#endif
 
-    rt_ringbuffer_init(&rx_fifo->rb, rx_fifo->buffer, serial->config.rx_bufsz);
+    rx_fifo = (struct rt_serial_rx_fifo *)rt_malloc(rx_fifo_size);
+    RT_ASSERT(rx_fifo != RT_NULL);
+    rt_memset(rx_fifo, RT_NULL, rx_fifo_size);
+
+    rt_ringbuffer_init(&rx_fifo->rb,
+                       (rt_uint8_t *)rx_fifo + sizeof(struct rt_serial_rx_fifo),
+                       serial->config.rx_bufsz);
+
+#ifdef RT_SERIAL_USING_DMA
+    if (serial->config.dma_ping_bufsz > 0)
+    {
+        rt_ringbuffer_init(&rx_fifo->dma_ping_rb,
+                           (rt_uint8_t *)rx_fifo + sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz,
+                           serial->config.dma_ping_bufsz);
+    }
+#endif
 
     serial->serial_rx = rx_fifo;
 
@@ -1219,7 +1244,14 @@ static void _serial_rx_flush(struct rt_serial_device *serial)
 
         level                 = rt_hw_interrupt_disable();
         rx_fifo->rx_cpt_index = 0;
+        rt_completion_wait(&rx_fifo->rx_cpt, 0);
         rt_ringbuffer_reset(&rx_fifo->rb);
+#ifdef RT_SERIAL_USING_DMA
+        if (serial->config.dma_ping_bufsz > 0)
+        {
+            rt_ringbuffer_reset(&rx_fifo->dma_ping_rb);
+        }
+#endif
         rt_hw_interrupt_enable(level);
     }
 }
@@ -1370,8 +1402,13 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         else
         {
             struct serial_configure *pconfig = (struct serial_configure *)args;
-            if (((pconfig->rx_bufsz != serial->config.rx_bufsz) || (pconfig->tx_bufsz != serial->config.tx_bufsz))
-                && serial->parent.ref_count)
+            if (((pconfig->rx_bufsz != serial->config.rx_bufsz)
+                 || (pconfig->tx_bufsz != serial->config.tx_bufsz)
+#ifdef RT_SERIAL_USING_DMA
+                 || (pconfig->dma_ping_bufsz != serial->config.dma_ping_bufsz)
+#endif
+                     )
+                && serial->parent.ref_count != 0)
             {
                 /*can not change buffer size*/
                 ret = -RT_EBUSY;
@@ -1886,6 +1923,22 @@ rt_err_t rt_hw_serial_control_isr(struct rt_serial_device *serial, int cmd, void
         }
         break;
 
+#ifdef RT_SERIAL_USING_DMA
+    case RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF:
+        if (args == RT_NULL)
+        {
+            ret = -RT_EINVAL;
+        }
+        else
+        {
+            struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
+            rx_fifo                           = (struct rt_serial_rx_fifo *)serial->serial_rx;
+            RT_ASSERT(rx_fifo != RT_NULL);
+            *(rt_uint8_t **)args = rx_fifo->dma_ping_rb.buffer_ptr;
+        }
+        break;
+#endif
+
     default:
         ret = -RT_EINVAL;
         break;
@@ -1921,10 +1974,58 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
         /* RT_SERIAL_EVENT_RX_DMADONE MODE */
         if (rx_length != 0)
         {
+#ifdef RT_SERIAL_BUF_STRATEGY_DROP
+            rt_uint8_t *ptr;
+            rt_size_t   size;
+            rt_size_t   space_len;
             /* UART_IT_IDLE and dma isr */
             level = rt_hw_interrupt_disable();
-            rt_serial_update_write_index(&rx_fifo->rb, rx_length);
+            rt_serial_update_write_index(&rx_fifo->dma_ping_rb, rx_length);
+            do
+            {
+                space_len = rt_ringbuffer_space_len(&rx_fifo->rb);
+                if (space_len == 0)
+                    break;
+
+                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                if (size == 0)
+                    break;
+
+                space_len -= rt_ringbuffer_put(&rx_fifo->rb, ptr, size);
+                if (space_len == 0)
+                    break;
+
+                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                if (size == 0)
+                    break;
+
+                rt_ringbuffer_put(&rx_fifo->rb, ptr, size);
+            } while (0);
+            if (space_len == 0)
+                rt_serial_update_read_index(&rx_fifo->dma_ping_rb, rt_ringbuffer_get_size(&rx_fifo->dma_ping_rb));
             rt_hw_interrupt_enable(level);
+#else
+            rt_uint8_t *ptr;
+            rt_size_t   size;
+            /* UART_IT_IDLE and dma isr */
+            level = rt_hw_interrupt_disable();
+            rt_serial_update_write_index(&rx_fifo->dma_ping_rb, rx_length);
+            do
+            {
+                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                if (size == 0)
+                    break;
+
+                rt_ringbuffer_put_force(&rx_fifo->rb, ptr, size);
+
+                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                if (size == 0)
+                    break;
+
+                rt_ringbuffer_put_force(&rx_fifo->rb, ptr, size);
+            } while (0);
+            rt_hw_interrupt_enable(level);
+#endif /* RT_SERIAL_BUF_STRATEGY_DROP */
         }
 #endif /* RT_SERIAL_USING_DMA */
 
@@ -1987,7 +2088,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
         /* Note that in interrupt mode, tx_fifo->buffer and tx_length
          * are inactive parameters */
         serial->ops->transmit(serial,
-                              tx_fifo->buffer,
+                              tx_fifo->rb.buffer_ptr,
                               tx_length,
                               serial->parent.open_flag & (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
         break;
