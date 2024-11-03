@@ -93,6 +93,7 @@ static void uart_rec_entry(void *parameter)
             uart_write_flag = RT_FALSE;
             uart_result     = RT_FALSE;
             rt_free(uart_write_buffer);
+            rt_thread_mdelay(60);
             return;
         }
 
@@ -142,6 +143,9 @@ static rt_bool_t uart_api()
     config.baud_rate               = BAUD_RATE_115200;
     config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
     config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE;
+#ifdef RT_SERIAL_USING_DMA
+    config.dma_ping_bufsz = RT_SERIAL_TC_RXBUF_SIZE / 2;
+#endif
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
@@ -182,6 +186,7 @@ static rt_bool_t uart_api()
     }
 
 __exit:
+    rt_thread_mdelay(5);
     rt_device_close(&serial->parent);
     return result == RT_EOK ? RT_TRUE : RT_FALSE;
 }

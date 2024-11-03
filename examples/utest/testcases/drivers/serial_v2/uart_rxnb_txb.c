@@ -163,6 +163,9 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
     config.baud_rate               = BAUD_RATE_115200;
     config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
     config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE;
+#ifdef RT_SERIAL_USING_DMA
+    config.dma_ping_bufsz = RT_SERIAL_TC_RXBUF_SIZE / 2;
+#endif
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);

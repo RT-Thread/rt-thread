@@ -40,7 +40,6 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t size)
     rt_ssize_t  buf_data_len;
 
     send_len = rt_device_write(&serial->parent, 0, uart_write_buffer, size);
-
     if (size > RT_SERIAL_TC_RXBUF_SIZE)
     {
         size = RT_SERIAL_TC_RXBUF_SIZE;
@@ -53,11 +52,7 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t size)
         return -RT_ERROR;
     }
 
-
-    if (size != rt_device_read(&serial->parent, 0, uart_write_buffer, size))
-    {
-        return -RT_ERROR;
-    }
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
 
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT, (void *)&buf_data_len);
     if (0 != buf_data_len)
@@ -83,6 +78,9 @@ static rt_bool_t uart_api()
     config.baud_rate               = BAUD_RATE_115200;
     config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
     config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE;
+#ifdef RT_SERIAL_USING_DMA
+    config.dma_ping_bufsz = RT_SERIAL_TC_RXBUF_SIZE / 2;
+#endif
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
