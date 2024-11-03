@@ -2,7 +2,7 @@ import os
 import shutil
 import re
 import multiprocessing
-
+import yaml
 
 def add_summary(text):
     """
@@ -158,6 +158,40 @@ if __name__ == "__main__":
         else:
             add_summary(f'- ✅ build {bsp} success.')
         print("::endgroup::")
+
+        yml_files_content = []
+        directory = os.path.join(rtt_root, 'bsp', bsp)
+        ci_file_path = os.path.join(directory, 'ci.yml')
+        if os.path.exists(ci_file_path):
+            with open(ci_file_path, 'r') as file:
+                content = yaml.safe_load(file)
+                yml_files_content.append(content)
+
+        config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
+
+        for projects in yml_files_content:
+            for name, details in projects.items():
+                
+                # 把kconfig 放到.config里面，然后执行scons编译
+                config_bacakup = config_file+'.origin'
+                shutil.copyfile(config_file, config_bacakup)
+                with open(config_file, 'a') as destination:
+                    for line in details.get('kconfig'):
+                        destination.write(line + '\n')
+                scons_arg = details.get('scons_arg')
+                scons_arg_str = scons_arg[0] if scons_arg else ' '
+                print(f"::group::\tCompiling yml project: =={name}=scons_arg={scons_arg_str}==")
+                res = build_bsp(bsp, scons_arg_str)
+                if not res:
+                    print(f"::error::build {bsp} {name} failed.")
+                    add_summary(f'\t- ❌ build {bsp} {name} failed.')
+                    failed += 1
+                else:
+                    add_summary(f'\t- ✅ build {bsp} {name} success.')
+                print("::endgroup::")
+
+                shutil.copyfile(config_bacakup, config_file)
+                os.remove(config_bacakup)
 
         attach_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
         attach_list = []
