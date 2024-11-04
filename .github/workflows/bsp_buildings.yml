@@ -278,6 +278,7 @@ jobs:
                 - "gd32/arm/gd32450z-eval" 
                 - "gd32/arm/gd32470z-lckfb"
                 - "gd32/arm/gd32h759i-start"
+                - "gd32/arm/gd32e503v-eval"
                 - "n32/n32g43xcl-stb"
                 - "n32/n32g45xcl-stb"
                 - "n32/n32g45xml-stb"
