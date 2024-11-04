@@ -160,19 +160,21 @@ if __name__ == "__main__":
         print("::endgroup::")
 
         yml_files_content = []
-        directory = os.path.join(rtt_root, 'bsp', bsp)
-        ci_file_path = os.path.join(directory, 'ci.yml')
-        if os.path.exists(ci_file_path):
-            with open(ci_file_path, 'r') as file:
-                content = yaml.safe_load(file)
-                yml_files_content.append(content)
+        directory = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
+        if os.path.exists(directory):
+            for filename in os.listdir(directory):
+                if filename.endswith('attachconfig.yml'):
+                    file_path = os.path.join(directory, filename)
+                    if os.path.exists(file_path):
+                        with open(file_path, 'r') as file:
+                            content = yaml.safe_load(file)
+                            yml_files_content.append(content)
 
         config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
 
         for projects in yml_files_content:
             for name, details in projects.items():
-                
-                # 把kconfig 放到.config里面，然后执行scons编译
+                count += 1
                 config_bacakup = config_file+'.origin'
                 shutil.copyfile(config_file, config_bacakup)
                 with open(config_file, 'a') as destination:
@@ -180,7 +182,7 @@ if __name__ == "__main__":
                         destination.write(line + '\n')
                 scons_arg = details.get('scons_arg')
                 scons_arg_str = scons_arg[0] if scons_arg else ' '
-                print(f"::group::\tCompiling yml project: =={name}=scons_arg={scons_arg_str}==")
+                print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
                 res = build_bsp(bsp, scons_arg_str)
                 if not res:
                     print(f"::error::build {bsp} {name} failed.")
@@ -197,9 +199,10 @@ if __name__ == "__main__":
         attach_list = []
         for root, dirs, files in os.walk(attach_dir):
             for file in files:
-                file_path = os.path.join(root, file)
-                relative_path = os.path.relpath(file_path, attach_dir)
-                attach_list.append(relative_path)
+                if file.endswith('attach'):
+                    file_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(file_path, attach_dir)
+                    attach_list.append(relative_path)
 
         for attach_file in attach_list:
             count += 1
