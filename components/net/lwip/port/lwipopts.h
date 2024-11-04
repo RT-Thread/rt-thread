@@ -654,7 +654,7 @@
 #endif
 #endif /* RT_USING_LWIP_VER_NUM >= 0x20000 */
 
-#if RT_LWIP_ENABLE_USER_HOOKS
+#ifdef RT_LWIP_ENABLE_USER_HOOKS
 /**
  * This hook provides flexibility for handling unknown Ethernet protocols.
  * 
