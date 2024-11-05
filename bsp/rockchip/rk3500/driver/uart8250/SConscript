@@ -1,0 +1,13 @@
+from building import *
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+
+src     = ['core.c', 'early.c']
+
+if GetDepend(['RT_SERIAL_8250']):
+    src += ['8250-dw.c']
+    src += ['fiq-debugger.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')
