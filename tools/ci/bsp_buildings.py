@@ -162,14 +162,15 @@ if __name__ == "__main__":
         yml_files_content = []
         directory = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
         if os.path.exists(directory):
-            for filename in os.listdir(directory):
-                if filename.endswith('attachconfig.yml'):
-                    file_path = os.path.join(directory, filename)
-                    if os.path.exists(file_path):
-                        with open(file_path, 'r') as file:
-                            content = yaml.safe_load(file)
-                            yml_files_content.append(content)
-
+            for root, dirs, files in os.walk(directory):
+                for filename in files:
+                    if filename.endswith('attachconfig.yml'):
+                        file_path = os.path.join(root, filename)
+                        if os.path.exists(file_path):
+                            with open(file_path, 'r') as file:
+                                content = yaml.safe_load(file)
+                                yml_files_content.append(content)
+        
         config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
 
         for projects in yml_files_content:
