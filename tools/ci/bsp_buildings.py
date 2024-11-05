@@ -2,7 +2,7 @@ import os
 import shutil
 import re
 import multiprocessing
-
+import yaml
 
 def add_summary(text):
     """
@@ -159,13 +159,50 @@ if __name__ == "__main__":
             add_summary(f'- ✅ build {bsp} success.')
         print("::endgroup::")
 
+        yml_files_content = []
+        directory = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
+        if os.path.exists(directory):
+            for filename in os.listdir(directory):
+                if filename.endswith('attachconfig.yml'):
+                    file_path = os.path.join(directory, filename)
+                    if os.path.exists(file_path):
+                        with open(file_path, 'r') as file:
+                            content = yaml.safe_load(file)
+                            yml_files_content.append(content)
+
+        config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
+
+        for projects in yml_files_content:
+            for name, details in projects.items():
+                count += 1
+                config_bacakup = config_file+'.origin'
+                shutil.copyfile(config_file, config_bacakup)
+                with open(config_file, 'a') as destination:
+                    for line in details.get('kconfig'):
+                        destination.write(line + '\n')
+                scons_arg = details.get('scons_arg')
+                scons_arg_str = scons_arg[0] if scons_arg else ' '
+                print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
+                res = build_bsp(bsp, scons_arg_str)
+                if not res:
+                    print(f"::error::build {bsp} {name} failed.")
+                    add_summary(f'\t- ❌ build {bsp} {name} failed.')
+                    failed += 1
+                else:
+                    add_summary(f'\t- ✅ build {bsp} {name} success.')
+                print("::endgroup::")
+
+                shutil.copyfile(config_bacakup, config_file)
+                os.remove(config_bacakup)
+
         attach_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
         attach_list = []
         for root, dirs, files in os.walk(attach_dir):
             for file in files:
-                file_path = os.path.join(root, file)
-                relative_path = os.path.relpath(file_path, attach_dir)
-                attach_list.append(relative_path)
+                if file.endswith('attach'):
+                    file_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(file_path, attach_dir)
+                    attach_list.append(relative_path)
 
         for attach_file in attach_list:
             count += 1
