@@ -77,7 +77,7 @@ jobs:
       if: ${{ success() }}
       run: |
         echo "Test to dist project"
-        scons --dist -C $TEST_BSP_ROOT
+        scons --dist --project-name=project -C $TEST_BSP_ROOT
         scons --dist-ide -C $TEST_BSP_ROOT
         ls $TEST_BSP_ROOT
         ls $TEST_BSP_ROOT/dist
