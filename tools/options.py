@@ -22,8 +22,9 @@
 # 2022-04-20     WuGensheng  Add Options to SCons
 #
 
-from SCons.Script import AddOption
+from SCons.Script import AddOption, Dir
 import platform
+import os
 
 def AddOptions():
     ''' ===== Add generic options to SCons ===== '''
@@ -45,7 +46,7 @@ def AddOptions():
     AddOption('--project-name',
                 dest = 'project-name',
                 type = 'string',
-                default = "project",
+                default = os.path.basename(Dir('#').abspath),
                 help = 'set project name')
     AddOption('--cscope',
                 dest = 'cscope',
