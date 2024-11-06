@@ -1065,13 +1065,6 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
     while (1)
     {
-        if (sock->state == AT_SOCKET_CLOSED)
-        {
-            /* socket passively closed, receive function return 0 */
-            result = 0;
-            goto __exit;
-        }
-
         /* receive packet list last transmission of remaining data */
         rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
         recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len);
@@ -1083,6 +1076,13 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
                 at_do_event_clean(sock, AT_EVENT_RECV);
             }
             result = recv_len;
+            goto __exit;
+        }
+
+        if (sock->state == AT_SOCKET_CLOSED)
+        {
+            /* socket passively closed, receive function return 0 */
+            result = 0;
             goto __exit;
         }
 
