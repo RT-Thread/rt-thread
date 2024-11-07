@@ -303,14 +303,9 @@ jobs:
                 - "apm32/apm32e103ze-evalboard"
                 - "apm32/apm32e103ze-tinyboard"
                 - "apm32/apm32s103vb-miniboard"
-         -  RTT_BSP: "nordic_Infineon_TI_microchip" 
+         -  RTT_BSP: "Infineon_TI_microchip" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:  
-                - "nrf5x/nrf51822"
-                - "nrf5x/nrf52832"
-                - "nrf5x/nrf52833"
-                - "nrf5x/nrf52840"
-                - "nrf5x/nrf5340"
                 - "Infineon/psoc6-cy8ckit-062S2-43012"
                 - "Infineon/psoc6-cy8ckit-062-BLE"
                 - "Infineon/psoc6-cy8ckit-062s4"
@@ -387,6 +382,14 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-i386-unknown-elf"
             SUB_RTT_BSP:  
                 - "x86"
+         -  RTT_BSP: "nordic(yml)"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
+                - "nrf5x/nrf51822"
+                - "nrf5x/nrf52832"
+                - "nrf5x/nrf52833"
+                - "nrf5x/nrf52840"
+                - "nrf5x/nrf5340"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
