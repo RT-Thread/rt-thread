@@ -100,6 +100,32 @@ def check_scons_args(file_path):
                 args.append(match.group(1).strip())
     return ' '.join(args)
 
+def get_details_and_dependencies(details, projects, seen=None):
+    if seen is None:
+        seen = set()
+    detail_list = []
+    scons_arg_list = []
+    if details is not None:
+        for dep in details:
+            if dep not in seen:
+                dep_details=projects.get(dep)
+                seen.add(dep)
+                if dep_details is not None:
+                    if dep_details.get('depends') is not None:
+                        detail_temp,scons_arg_temp=get_details_and_dependencies(dep_details.get('depends'), projects, seen)
+                        for line in detail_temp:
+                            detail_list.append(line)
+                        for line in scons_arg_temp:
+                            scons_arg_list.append(line)
+                    if dep_details.get('kconfig') is not None:
+                        for line in dep_details.get('kconfig'):
+                            detail_list.append(line)
+                    if dep_details.get('depend_scons_arg') is not None:   
+                        for line in dep_details.get('depend_scons_arg'):
+                            scons_arg_list.append(line)
+            else:
+                print(f"::error::There are some problems with attachconfig depend: {dep}");
+    return detail_list,scons_arg_list
 
 def build_bsp_attachconfig(bsp, attach_file):
     """
@@ -167,9 +193,18 @@ if __name__ == "__main__":
                     if filename.endswith('attachconfig.yml'):
                         file_path = os.path.join(root, filename)
                         if os.path.exists(file_path):
-                            with open(file_path, 'r') as file:
-                                content = yaml.safe_load(file)
-                                yml_files_content.append(content)
+                            try:
+                                with open(file_path, 'r') as file:
+                                    content = yaml.safe_load(file)
+                                    if content is None:
+                                        continue
+                                    yml_files_content.append(content)
+                            except yaml.YAMLError as e:
+                                print(f"::error::Error parsing YAML file: {e}")
+                                continue
+                            except Exception as e:
+                                print(f"::error::Error reading file: {e}")
+                                continue
         
         config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
 
@@ -179,10 +214,18 @@ if __name__ == "__main__":
                 config_bacakup = config_file+'.origin'
                 shutil.copyfile(config_file, config_bacakup)
                 with open(config_file, 'a') as destination:
-                    for line in details.get('kconfig'):
-                        destination.write(line + '\n')
-                scons_arg = details.get('scons_arg')
-                scons_arg_str = scons_arg[0] if scons_arg else ' '
+                    if(projects.get(name) is not None):
+                        detail_list,scons_arg_list=get_details_and_dependencies([name],projects)
+                        for line in detail_list:
+                            destination.write(line + '\n')
+                scons_arg=[]
+                if details.get('scons_arg') is not None:
+                    for line in details.get('scons_arg'):
+                        scons_arg.append(line)
+                if scons_arg_list is not None:
+                    for line in scons_arg_list:
+                        scons_arg.append(line)
+                scons_arg_str=' '.join(scons_arg) if scons_arg else ' '
                 print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
                 res = build_bsp(bsp, scons_arg_str)
                 if not res:
