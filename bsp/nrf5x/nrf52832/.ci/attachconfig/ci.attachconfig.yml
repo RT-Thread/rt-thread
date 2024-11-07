@@ -3,8 +3,6 @@ scons.args: &scons
       - '--strict'
 devices.gpio:
     <<: *scons
-    depends:
-      - devices.strict
     kconfig:
       - CONFIG_BSP_USING_GPIO=y
 devices.adc:
