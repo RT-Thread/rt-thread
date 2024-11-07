@@ -104,7 +104,6 @@ def get_details_and_dependencies(details, projects, seen=None):
     if seen is None:
         seen = set()
     detail_list = []
-    scons_arg_list = []
     if details is not None:
         for dep in details:
             if dep not in seen:
@@ -112,20 +111,15 @@ def get_details_and_dependencies(details, projects, seen=None):
                 seen.add(dep)
                 if dep_details is not None:
                     if dep_details.get('depends') is not None:
-                        detail_temp,scons_arg_temp=get_details_and_dependencies(dep_details.get('depends'), projects, seen)
+                        detail_temp=get_details_and_dependencies(dep_details.get('depends'), projects, seen)
                         for line in detail_temp:
                             detail_list.append(line)
-                        for line in scons_arg_temp:
-                            scons_arg_list.append(line)
                     if dep_details.get('kconfig') is not None:
                         for line in dep_details.get('kconfig'):
                             detail_list.append(line)
-                    if dep_details.get('depend_scons_arg') is not None:   
-                        for line in dep_details.get('depend_scons_arg'):
-                            scons_arg_list.append(line)
             else:
                 print(f"::error::There are some problems with attachconfig depend: {dep}");
-    return detail_list,scons_arg_list
+    return detail_list
 
 def build_bsp_attachconfig(bsp, attach_file):
     """
@@ -214,16 +208,15 @@ if __name__ == "__main__":
                 config_bacakup = config_file+'.origin'
                 shutil.copyfile(config_file, config_bacakup)
                 with open(config_file, 'a') as destination:
+                    if details.get("kconfig") is None:
+                        continue
                     if(projects.get(name) is not None):
-                        detail_list,scons_arg_list=get_details_and_dependencies([name],projects)
+                        detail_list=get_details_and_dependencies([name],projects)
                         for line in detail_list:
                             destination.write(line + '\n')
                 scons_arg=[]
                 if details.get('scons_arg') is not None:
                     for line in details.get('scons_arg'):
-                        scons_arg.append(line)
-                if scons_arg_list is not None:
-                    for line in scons_arg_list:
                         scons_arg.append(line)
                 scons_arg_str=' '.join(scons_arg) if scons_arg else ' '
                 print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
