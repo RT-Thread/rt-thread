@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['reset.c']
 
+if GetDepend(['RT_RESET_SIMPLE']):
+    src += ['reset-simple.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
