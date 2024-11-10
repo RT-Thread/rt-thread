@@ -29,7 +29,7 @@
         .long   default_handler + 1     // 11: SVCall
         .long   default_handler + 1     // 12: reserved
         .long   default_handler + 1     // 13: reserved
-        .long   PendSV_Handler + 1     // 14: PendSV
+        .long   PendSV_Handler + 1      // 14: PendSV
         .long   SysTick_Handler + 1     // 15: SysTick
         .long   default_handler + 1     // 16: External Interrupt(0)
         .long   default_handler + 1     // 17: External Interrupt(1)
@@ -128,3 +128,5 @@ die:
         b       die
 
         .pool
+
+    .end

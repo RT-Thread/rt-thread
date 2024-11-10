@@ -34,11 +34,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_video *usbh_video_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_VIDEO_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_video_class[devno], 0, sizeof(struct usbh_video));
             g_video_class[devno].minor = devno;
             return &g_video_class[devno];
@@ -49,10 +49,10 @@ static struct usbh_video *usbh_video_class_alloc(void)
 
 static void usbh_video_class_free(struct usbh_video *video_class)
 {
-    int devno = video_class->minor;
+    uint8_t devno = video_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(video_class, 0, sizeof(struct usbh_video));
 }

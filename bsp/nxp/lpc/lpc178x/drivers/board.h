@@ -23,17 +23,13 @@
 // <integer name="LPC_EXT_SDRAM_END" description="End Address of External SDRAM" default="0xA4000000" />
 #define LPC_EXT_SDRAM_END      0xA4000000
 
-// <bool name="RT_USING_UART0" description="Using UART0" default="true" />
-#define RT_USING_UART0
-// <bool name="RT_USING_UART1" description="Using UART1" default="true" />
-//#define RT_USING_UART1
-// <bool name="RT_USING_UART2" description="Using UART2" default="true" />
-//#define RT_USING_UART2
-
-// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
-#define RT_CONSOLE_DEVICE_NAME  "uart0"
-
-// </RDTConfigurator>
+#ifdef __CC_ARM
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#elif __ICCARM__
+#pragma section="HEAP"
+#else
+extern int __bss_end;
+#endif
 
 #define FINSH_DEVICE_NAME   RT_CONSOLE_DEVICE_NAME
 void rt_hw_board_init(void);

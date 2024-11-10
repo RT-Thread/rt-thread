@@ -20,6 +20,10 @@ struct usbd_interface *usbd_video_init_intf(uint8_t busid, struct usbd_interface
 
 void usbd_video_open(uint8_t busid, uint8_t intf);
 void usbd_video_close(uint8_t busid, uint8_t intf);
+
+bool usbd_video_stream_split_transfer(uint8_t busid, uint8_t ep);
+int usbd_video_stream_start_write(uint8_t busid, uint8_t ep, uint8_t *ep_buffer, uint8_t *buf, uint32_t len);
+
 uint32_t usbd_video_payload_fill(uint8_t busid, uint8_t *input, uint32_t input_len, uint8_t *output, uint32_t *out_len);
 
 #ifdef __cplusplus

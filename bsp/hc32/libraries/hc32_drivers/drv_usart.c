@@ -35,7 +35,7 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 #define DMA_CH_REG(reg_base, ch)                                               \
-    (*(uint32_t *)((uint32_t)(&(reg_base)) + ((ch) * 0x40UL)))
+    (*(volatile uint32_t *)((uint32_t)(&(reg_base)) + ((ch) * 0x40UL)))
 
 #define DMA_TRANS_SET_CNT(unit, ch)                                            \
     (READ_REG32(DMA_CH_REG((unit)->DTCTL0,(ch))) >> DMA_DTCTL_CNT_POS)

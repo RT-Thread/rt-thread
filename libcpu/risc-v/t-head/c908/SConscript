@@ -5,8 +5,8 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
 CPPPATH = [cwd]
 
-if not GetDepend('ARCH_USING_ASID'):
-    SrcRemove(src, ['asid.c'])
+if GetDepend('ARCH_RISCV_VECTOR'):
+    CPPPATH += [cwd + '/../../vector/rvv-1.0']
 
 group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
 

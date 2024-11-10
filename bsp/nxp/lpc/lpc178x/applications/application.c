@@ -36,6 +36,22 @@
 #include <finsh.h>
 #endif
 
+static int app_init(void);
+
+int main(void)
+{
+    rt_kprintf("Hello RT-Thread!\n");
+
+    app_init();
+
+    while(1)
+    {
+        rt_thread_mdelay(1000);
+    }
+
+    return 0;
+}
+
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
@@ -141,7 +157,7 @@ static void rt_thread_entry_led(void* parameter)
     }
 }
 
-int rt_application_init(void)
+static int app_init(void)
 {
     rt_thread_t tid;
 

@@ -93,6 +93,7 @@ jobs:
                 - "hc32l196"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "mm32f327x"
+                - "mm32l07x"
                 - "sam7x"
                 - "hk32/hk32f030c8-mini"
                 - "acm32/acm32f0x0-nucleo"
@@ -100,6 +101,12 @@ jobs:
                 - "rm48x50"
                 - "ht32/ht32f52352"
                 - "ht32/ht32f12366"
+                - "w60x"
+                - "essemi/es32f0654"
+                - "essemi/es32f365x"
+                - "hc32l136"
+                - "yichip/yc3121-pos"
+                - "fm33lc026"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -208,8 +215,8 @@ jobs:
                 - "nxp/lpc/lpc1114"
                 - "nxp/lpc/lpc2148"
                 - "nxp/lpc/lpc2478"
-                # - "nxp/lpc/lpc5410x"
-                # - "nxp/lpc/lpc54114-lite"
+                - "nxp/lpc/lpc5410x"
+                - "nxp/lpc/lpc54114-lite"
                 - "nxp/lpc/lpc176x"
                 #- "nxp/lpc/lpc43xx/M4"
                 - "nxp/imx/imx6sx/cortex-a9"
@@ -228,6 +235,7 @@ jobs:
                 - "renesas/ra6m4-iot"
                 - "renesas/ra6m3-ek"
                 - "renesas/ra6m3-hmi-board"
+                - "renesas/ra6e2-fpb"
                 - "renesas/ra4m2-eco"
                 - "renesas/ra2l1-cpk"
                 - "renesas/ra8m1-ek"
@@ -237,6 +245,21 @@ jobs:
                 - "renesas/rzn2l_rsk"
                 - "frdm-k64f"
                 - "xplorer4330/M4"
+         -  RTT_BSP: "nuvoton" 
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP: 
+                - "nuvoton/numaker-pfm-m487"
+                - "nuvoton/numaker-hmi-ma35d1"
+                - "nuvoton/numaker-iot-m487"
+                - "nuvoton/numaker-m032ki"
+                - "nuvoton/numaker-iot-m467"
+                - "nuvoton/numaker-m467hj"
+                - "nuvoton/nk-n9h30"
+                - "nuvoton/nk-rtu980"
+                - "nuvoton/ma35-rtp"
+                - "nuvoton/nk-980iot"
+                - "nuvoton/numaker-iot-ma35d1"
+                - "nuvoton/numaker-m2354"
          -  RTT_BSP: "gd32_n32_apm32"   
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:             
@@ -255,6 +278,7 @@ jobs:
                 - "gd32/arm/gd32450z-eval" 
                 - "gd32/arm/gd32470z-lckfb"
                 - "gd32/arm/gd32h759i-start"
+                - "gd32/arm/gd32e503v-eval"
                 - "n32/n32g43xcl-stb"
                 - "n32/n32g45xcl-stb"
                 - "n32/n32g45xml-stb"
@@ -279,14 +303,9 @@ jobs:
                 - "apm32/apm32e103ze-evalboard"
                 - "apm32/apm32e103ze-tinyboard"
                 - "apm32/apm32s103vb-miniboard"
-         -  RTT_BSP: "nordic_Infineon_TI_microchip" 
+         -  RTT_BSP: "Infineon_TI_microchip" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:  
-                - "nrf5x/nrf51822"
-                - "nrf5x/nrf52832"
-                - "nrf5x/nrf52833"
-                - "nrf5x/nrf52840"
-                - "nrf5x/nrf5340"
                 - "Infineon/psoc6-cy8ckit-062S2-43012"
                 - "Infineon/psoc6-cy8ckit-062-BLE"
                 - "Infineon/psoc6-cy8ckit-062s4"
@@ -363,10 +382,18 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-i386-unknown-elf"
             SUB_RTT_BSP:  
                 - "x86"
+         -  RTT_BSP: "nordic(yml)"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
+                - "nrf5x/nrf51822"
+                - "nrf5x/nrf52832"
+                - "nrf5x/nrf52833"
+                - "nrf5x/nrf52840"
+                - "nrf5x/nrf5340"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@main
         with:
           python-version: 3.8
 

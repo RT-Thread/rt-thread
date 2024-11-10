@@ -155,6 +155,30 @@ extern "C"
 
 #endif /* SOC_SERIES_R9A07G0 */
 
+#if defined(SOC_SERIES_R7FA6E2)
+#include "ra6e2/uart_config.h"
+
+#ifdef BSP_USING_ADC
+#include "ra6e2/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra6e2/dac_config.h"
+#endif
+
+#ifdef BSP_USING_PWM
+#include "ra6e2/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_TIM
+#include "ra6e2/timer_config.h"
+#endif
+
+#ifdef BSP_USING_CAN
+#include "ra6e2/can_config.h"
+#endif
+#endif /* SOC_SERIES_R7FA6E2 */
+
 #ifdef __cplusplus
 }
 #endif

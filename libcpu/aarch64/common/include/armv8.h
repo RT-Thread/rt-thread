@@ -11,6 +11,12 @@
 #ifndef __ARMV8_H__
 #define __ARMV8_H__
 
+#include <rtconfig.h>
+
+#ifdef ARCH_USING_HW_THREAD_SELF
+#define ARM64_THREAD_REG tpidr_el1
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
 #ifdef __ASSEMBLY__
 
 /*********************
@@ -138,6 +144,8 @@ struct rt_hw_exp_stack
 
     rt_uint128_t fpu[32];
 };
+
+void rt_hw_show_register(struct rt_hw_exp_stack *regs);
 
 #define SP_ELx     ((unsigned long)0x01)
 #define SP_EL0     ((unsigned long)0x00)
