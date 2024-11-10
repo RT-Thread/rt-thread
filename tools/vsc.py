@@ -40,7 +40,7 @@ def delete_repeatelist(data):
 
 def GenerateCFiles(env):
     """
-    Generate c_cpp_properties files
+    Generate c_cpp_properties.json and build/compile_commands.json files
     """
     if not os.path.exists('.vscode'):
         os.mkdir('.vscode')
@@ -116,7 +116,7 @@ def GenerateCFiles(env):
 
 def GenerateProjectFiles(env):
     """
-    Generate c_cpp_properties files
+    Generate project.json file
     """
     if not os.path.exists('.vscode'):
         os.mkdir('.vscode')
