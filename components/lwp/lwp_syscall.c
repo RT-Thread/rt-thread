@@ -5767,6 +5767,7 @@ sysret_t sys_mount(char *source, char *target,
     size_t len_filesystemtype, copy_len_filesystemtype;
     char *tmp = NULL;
     int ret = 0;
+    struct stat buf = {0};
 
     len_source = lwp_user_strlen(source);
     if (len_source <= 0)
@@ -5804,8 +5805,6 @@ sysret_t sys_mount(char *source, char *target,
     {
         copy_source = NULL;
     }
-
-    struct stat buf;
 
     if (copy_source && stat(copy_source, &buf) && S_ISBLK(buf.st_mode))
     {
