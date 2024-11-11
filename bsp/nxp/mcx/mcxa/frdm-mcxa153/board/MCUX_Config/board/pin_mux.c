@@ -167,7 +167,7 @@ void BOARD_InitPins(void)
                                                     kPORT_UnlockRegister};
     /* PORT1_9 (pin 3) is configured as LPUART1_TXD */
     PORT_SetPinConfig(PORT1, 9U, &port1_9_pin3_config);
-#endif													
+#endif
 #ifdef BSP_USING_UART2
     const port_pin_config_t port3_14_pin36_config = {/* Internal pull-up resistor is enabled */
                                                      kPORT_PullUp,
@@ -217,7 +217,7 @@ void BOARD_InitPins(void)
                                                      /* Pin Control Register fields [15:0] are not locked */
                                                      kPORT_UnlockRegister};
     /* PORT3_15 (pin 35) is configured as LPUART2_TXD */
-    PORT_SetPinConfig(PORT3, 15U, &port3_15_pin35_config);												
+    PORT_SetPinConfig(PORT3, 15U, &port3_15_pin35_config);
 #endif
 
 #ifdef BSP_USING_PWM0
