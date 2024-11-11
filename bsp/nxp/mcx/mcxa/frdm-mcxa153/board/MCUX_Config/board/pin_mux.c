@@ -53,7 +53,7 @@ void BOARD_InitPins(void)
 
     RESET_ReleasePeripheralReset(kCTIMER1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPSPI0_RST_SHIFT_RSTn);
-	RESET_ReleasePeripheralReset(kLPSPI1_RST_SHIFT_RSTn);
+    RESET_ReleasePeripheralReset(kLPSPI1_RST_SHIFT_RSTn);
 
     RESET_ReleasePeripheralReset(kLPI2C0_RST_SHIFT_RSTn);
 
@@ -167,10 +167,9 @@ void BOARD_InitPins(void)
                                                     kPORT_UnlockRegister};
     /* PORT1_9 (pin 3) is configured as LPUART1_TXD */
     PORT_SetPinConfig(PORT1, 9U, &port1_9_pin3_config);
-#endif
-													
+#endif													
 #ifdef BSP_USING_UART2
-	const port_pin_config_t port3_14_pin36_config = {/* Internal pull-up resistor is enabled */
+    const port_pin_config_t port3_14_pin36_config = {/* Internal pull-up resistor is enabled */
                                                      kPORT_PullUp,
                                                      /* Low internal pull resistor value is selected. */
                                                      kPORT_LowPullResistor,
@@ -353,7 +352,7 @@ void BOARD_InitPins(void)
 #endif
 
 #ifdef BSP_USING_SPI1
-	const port_pin_config_t port2_12_pin22_config = {/* Internal pull-up/down resistor is disabled */
+    const port_pin_config_t port2_12_pin22_config = {/* Internal pull-up/down resistor is disabled */
                                                      kPORT_PullDisable,
                                                      /* Low internal pull resistor value is selected. */
                                                      kPORT_LowPullResistor,
