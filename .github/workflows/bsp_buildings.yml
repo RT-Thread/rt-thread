@@ -342,7 +342,7 @@ jobs:
                 - "qemu-virt64-aarch64"
                 - "raspberry-pi/raspi3-64"
                 - "raspberry-pi/raspi4-64"
-                - "rockchip/rk3568"
+                #- "rockchip/rk3568"   too long
                 - "phytium/aarch64"
          -  RTT_BSP: "riscv-none" 
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
