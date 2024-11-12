@@ -994,7 +994,7 @@ sysret_t sys_kill(int pid, int signo)
          * of system processes) for which the process has permission to send
          * that signal.
          */
-        kret = -RT_ENOSYS;
+        kret = lwp_signal_kill_all(signo, SI_USER, 0);
     }
 
     switch (kret)
