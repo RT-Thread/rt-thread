@@ -21,6 +21,8 @@
 
 static struct dfs_mnt *_root_mnt = RT_NULL;
 
+RT_OBJECT_HOOKLIST_DEFINE(dfs_mnt_umnt);
+
 /*
  * mnt tree structure
  *
@@ -257,6 +259,8 @@ int dfs_mnt_unref(struct dfs_mnt* mnt)
             if (mnt->flags & MNT_IS_UMOUNT)
             {
                 mnt->fs_ops->umount(mnt);
+
+                RT_OBJECT_HOOKLIST_CALL(dfs_mnt_umnt, (mnt));
             }
 
             /* free full path */

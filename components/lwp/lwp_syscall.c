@@ -6171,16 +6171,27 @@ sysret_t sys_chown(const char *pathname, uid_t owner, gid_t group)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-#include <sys/reboot.h>
-sysret_t sys_reboot(int magic, int magic2, int type)
+#ifndef LWP_USING_RUNTIME
+sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void))
+{
+    /* if no LWP_USING_RUNTIME configured */
+    return -ENOSYS;
+}
+#endif
+
+sysret_t sys_reboot(int magic, int magic2, int type, void *arg)
 {
     sysret_t rc;
     switch (type)
     {
-        /* TODO add software poweroff protocols */
+        /* Hardware reset */
         case RB_AUTOBOOT:
+            rc = lwp_teardown(lwp_self(), rt_hw_cpu_reset);
+            break;
+
+        /* Stop system and switch power off */
         case RB_POWER_OFF:
-            rt_hw_cpu_reset();
+            rc = lwp_teardown(lwp_self(), rt_hw_cpu_shutdown);
             break;
         default:
             rc = -ENOSYS;

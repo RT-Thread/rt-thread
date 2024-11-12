@@ -109,3 +109,53 @@ static int lwp_startup(void)
     return error;
 }
 INIT_APP_EXPORT(lwp_startup);
+
+/* don't use heap for safety */
+static struct rt_work _teardown_work;
+
+#define INIT_PID 1
+static void _teardown_entry(struct rt_work *work, void *work_data)
+{
+    int error;
+    void (*cb_on_reboot)(void) = work_data;
+
+    /* cleanup of process */
+    do
+    {
+        error = lwp_pid_wait_for_empty(RT_KILLABLE, RT_WAITING_FOREVER);
+    }
+    while (error);
+    LOG_I("All processes exited");
+
+    cb_on_reboot();
+    return;
+}
+
+static int _get_parent_pid(struct rt_lwp *lwp)
+{
+    return lwp->parent ? lwp->parent->pid : 0;
+}
+
+/* reverse operation of lwp_startup() */
+sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void))
+{
+    struct rt_work *work;
+
+    if (lwp->pid != INIT_PID && _get_parent_pid(lwp) != INIT_PID)
+    {
+        /* The calling process has insufficient privilege */
+        return -EPERM;
+    }
+
+    work = &_teardown_work;
+    rt_work_init(work, _teardown_entry, cb);
+
+#define SOME_DELAY (RT_TICK_PER_SECOND / 10) /* allow idle to cleanup resource */
+    rt_work_submit(work, SOME_DELAY);
+
+    lwp_exit(lwp, LWP_CREATE_STAT_EXIT(EXIT_SUCCESS));
+
+    /* never return */
+    RT_ASSERT(0);
+    return 0;
+}
