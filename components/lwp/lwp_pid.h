@@ -26,7 +26,7 @@ struct rt_lwp;
 
 struct lwp_avl_struct *lwp_get_pid_ary(void);
 int lwp_pid_init(void);
-
+int lwp_pid_wait_for_empty(int wait_flags, rt_tick_t to);
 int lwp_pid_for_each(int (*cb)(pid_t pid, void *data), void *data);
 void lwp_pid_put(struct rt_lwp *lwp);
 void lwp_pid_lock_take(void);

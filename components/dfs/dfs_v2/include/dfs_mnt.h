@@ -64,6 +64,9 @@ rt_bool_t dfs_mnt_has_child_mnt(struct dfs_mnt *mnt, const char* fullpath);
 
 int dfs_mnt_foreach(struct dfs_mnt* (*func)(struct dfs_mnt *mnt, void *parameter), void *parameter);
 
+typedef void (*dfs_mnt_umnt_cb_t)(struct dfs_mnt *mnt);
+RT_OBJECT_HOOKLIST_DECLARE(dfs_mnt_umnt_cb_t, dfs_mnt_umnt);
+
 #ifdef __cplusplus
 }
 #endif
