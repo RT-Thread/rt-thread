@@ -28,6 +28,7 @@ extern "C" {
 
 #include <stdint.h>
 #include "mmio.h"
+#include "drv_ioremap.h"
 
 /**
 \brief Ethernet link speed
@@ -200,8 +201,8 @@ typedef enum eth_link_state
 /* 1000BASE-T Control register */
 #define CVI_ADVERTISE_1000FULL      0x0200  /* Advertise 1000BASE-T full duplex */
 #define CVI_ADVERTISE_1000HALF      0x0100  /* Advertise 1000BASE-T half duplex */
-#define CTL1000_AS_MASTER       0x0800
-#define CTL1000_ENABLE_MASTER   0x1000
+#define CTL1000_AS_MASTER           0x0800
+#define CTL1000_ENABLE_MASTER       0x1000
 
 /* 1000BASE-T Status register */
 #define CVI_LPA_1000LOCALRXOK   0x2000  /* Link partner local receiver status */
@@ -210,8 +211,8 @@ typedef enum eth_link_state
 #define CVI_LPA_1000HALF        0x0400  /* Link partner 1000BASE-T half duplex */
 
 /* Flow control flags */
-#define CVI_FLOW_CTRL_TX    0x01
-#define CVI_FLOW_CTRL_RX    0x02
+#define CVI_FLOW_CTRL_TX        0x01
+#define CVI_FLOW_CTRL_RX        0x02
 
 /* MMD Access Control register fields */
 #define CVI_MII_MMD_CTRL_DEVAD_MASK 0x1f    /* Mask MMD DEVAD*/
@@ -348,13 +349,13 @@ typedef struct {
 } eth_phy_dev_t;
 
 /* ethernet phy config */
-#define ETH_PHY_BASE 0x03009000
-#define ETH_PHY_INIT_MASK 0xFFFFFFF9
-#define ETH_PHY_SHUTDOWN (1 << 1)
-#define ETH_PHY_POWERUP 0xFFFFFFFD
-#define ETH_PHY_RESET 0xFFFFFFFB
-#define ETH_PHY_RESET_N (1 << 2)
-#define ETH_PHY_LED_LOW_ACTIVE (1 << 3)
+#define ETH_PHY_BASE            (uintptr_t)DRV_IOREMAP((void *)0x03009000, 0x1000)
+#define ETH_PHY_INIT_MASK       0xFFFFFFF9
+#define ETH_PHY_SHUTDOWN        (1 << 1)
+#define ETH_PHY_POWERUP         0xFFFFFFFD
+#define ETH_PHY_RESET           0xFFFFFFFB
+#define ETH_PHY_RESET_N         (1 << 2)
+#define ETH_PHY_LED_LOW_ACTIVE  (1 << 3)
 
 int generic_phy_config_aneg(eth_phy_dev_t *dev);
 int generic_phy_restart_aneg(eth_phy_dev_t *dev);

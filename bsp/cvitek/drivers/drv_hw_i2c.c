@@ -11,6 +11,7 @@
 #include <rtdevice.h>
 #include <board.h>
 #include "drv_pinmux.h"
+#include "drv_ioremap.h"
 
 #define DBG_TAG              "drv.i2c"
 #define DBG_LVL               DBG_INFO
@@ -583,6 +584,7 @@ int rt_hw_i2c_init(void)
 
     for (rt_size_t i = 0; i < sizeof(_i2c_obj) / sizeof(struct dw_iic_bus); i++)
     {
+        _i2c_obj->iic_base = (rt_ubase_t)DRV_IOREMAP((void *)_i2c_obj->iic_basee, 0x10000);
         dw_iic_init(_i2c_obj->iic_base);
 
         _i2c_obj[i].parent.ops = &i2c_ops;
