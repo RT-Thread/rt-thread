@@ -83,46 +83,46 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     static spi_device_interface_config_t devcfg;
     if(configuration->data_width == 8)
     {
-        size_t length;                  ///< Total data length, in bits
-        size_t rxlength;                ///< Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)
+        size_t length;                  /*/< Total data length, in bits*/
+        size_t rxlength;                /*/< Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)*/
     }
 
     LOG_W("configuration->max_hz = %d \n",configuration->max_hz);
     if(configuration->max_hz >= SPI_MASTER_FREQ_80M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_80M;    ///< 80MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_80M;    /*/< 80MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_40M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_40M;    ///< 40MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_40M;    /*/< 40MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_26M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_26M;    ///< 26.67MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_26M;    /*/< 26.67MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_20M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_20M;    ///< 20MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_20M;    /*/< 20MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_16M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_16M;    ///< 16MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_16M;    /*/< 16MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_13M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_13M;    ///< 13.33MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_13M;    /*/< 13.33MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_11M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_11M;    ///< 11.43MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_11M;    /*/< 11.43MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_10M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_10M;    ///< 10MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_10M;    /*/< 10MHz*/
     }
     else if(configuration->max_hz >= SPI_MASTER_FREQ_9M)
     {
-        devcfg.clock_speed_hz = SPI_MASTER_FREQ_9M ;    ///< 8.89MHz
+        devcfg.clock_speed_hz = SPI_MASTER_FREQ_9M ;    /*/< 8.89MHz*/
     }
     else
     {
@@ -142,12 +142,12 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         default:
             devcfg.mode = 0;
     }
-    
-    /* todo: support changing cs_pin,queue_size or specifing spi_device_interface_config_t and 
-    * spi_transaction_t by resever data.Meanwhile finish the initialization of interrupt 
-    * callback function and dma.  
+
+    /* todo: support changing cs_pin,queue_size or specifing spi_device_interface_config_t and
+    * spi_transaction_t by resever data.Meanwhile finish the initialization of interrupt
+    * callback function and dma.
     */
-        
+
     devcfg.spics_io_num = RT_BSP_SPI_CS_PIN;
     devcfg.queue_size = 7;
 
@@ -161,7 +161,7 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         spi_bus_obj[i].spi_bus = &spi_bus2;
         spi_bus_obj[i].esp32_spi_bus_cfg = &buscfg;
     }
-    
+
     return RT_EOK;
 };
 
