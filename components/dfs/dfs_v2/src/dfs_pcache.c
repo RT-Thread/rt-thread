@@ -13,6 +13,8 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
+#ifdef RT_USING_PAGECACHE
+
 #include <dfs_pcache.h>
 #include <dfs_dentry.h>
 #include <dfs_mnt.h>
@@ -22,8 +24,6 @@
 #include <tlb.h>
 
 #include <rthw.h>
-
-#ifdef RT_USING_PAGECACHE
 
 #ifndef RT_PAGECACHE_COUNT
 #define RT_PAGECACHE_COUNT          4096
