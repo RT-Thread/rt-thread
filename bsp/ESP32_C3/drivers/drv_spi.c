@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-10-08     wumingzi      first implementation
+ * 2024-10-08     wumingzi      add custom configuration and support muti spi obj
  */
 
 #include <rtthread.h>
