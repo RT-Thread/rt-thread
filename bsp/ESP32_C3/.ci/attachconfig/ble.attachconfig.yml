@@ -1,0 +1,7 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+devices.ble:
+    kconfig:
+      - CONFIG_RT_USING_NANO=y
+      - CONFIG_BSP_USING_BLE=y
