@@ -1,0 +1,12 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+devices.ble:
+    kconfig:
+      - CONFIG_RT_USING_NANO=n
+      - CONFIG_BSP_USING_BLE=n
+      - CONFIG_BSP_USING_WIFI=y
+      - CONFIG_RT_USING_WIFI=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_NETDEV=y
+
