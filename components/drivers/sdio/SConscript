@@ -11,7 +11,12 @@ dev_mmc.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [cwd + '/../include']
+path = [cwd + '/../include' , cwd + '/sdhci/include']
+
+if GetDepend('RT_USING_SDHCI'):
+    src += [os.path.join('sdhci', 'sdhci.c')]
+    src += [os.path.join('sdhci', 'fit-mmc.c')]
+    src += [os.path.join('sdhci', 'sdhci-platform.c')]
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SDIO'], CPPPATH = path)
 
