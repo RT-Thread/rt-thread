@@ -36,3 +36,12 @@ devices.pwm:
       - CONFIG_RT_USING_PWM=y
       - CONFIG_BSP_USING_PWM=y
       - CONFIG_BSP_USING_PWM0=y
+devices.ble:
+    kconfig:
+      - CONFIG_BSP_USING_BLE=y
+devices.wifi:
+    kconfig:
+      - CONFIG_BSP_USING_WIFI=y
+      - CONFIG_RT_USING_WIFI=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_NETDEV=y
