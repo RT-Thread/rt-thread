@@ -1,7 +1,7 @@
 scons.args: &scons
     scons_arg:
       - '--strict'
-devices.ble:
+devices.wifi:
     kconfig:
       - CONFIG_BSP_USING_WIFI=y
       - CONFIG_RT_USING_WIFI=y
