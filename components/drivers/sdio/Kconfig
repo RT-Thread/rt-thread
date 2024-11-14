@@ -24,5 +24,8 @@ config RT_USING_SDIO
             default 16
         config RT_SDIO_DEBUG
             bool "Enable SDIO debug log output"
-        default n
-    endif
+            default n
+        config RT_USING_SDHCI
+            bool "Using sdhci for sd/mmc drivers"
+            default n
+        endif
