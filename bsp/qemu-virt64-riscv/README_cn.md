@@ -1,46 +1,46 @@
-**QEMU/RISCV64 VIRT Board Support Package User Guide**
+**QEMU/RISCV64 VIRT 板级支持包使用说明**
 
-English | [中文](./README_cn.md)
+中文页 | [English](./README.md)
 
 <!-- TOC -->
 
-- [1. Introduction](#1-introduction)
-- [2. Building](#2-building)
-	- [2.1. Installing the toolchain](#21-installing-the-toolchain)
-	- [2.2. Setting RT-Thread toolchain environment variables](#22-setting-rt-thread-toolchain-environment-variables)
-	- [2.3. Downloading the kernel](#23-downloading-the-kernel)
-	- [2.4. Configuring the kernel](#24-configuring-the-kernel)
-	- [2.5. Compiling the kernel](#25-compiling-the-kernel)
-- [3. Running](#3-running)
-	- [3.1. Installing QEMU](#31-installing-qemu)
-	- [3.2. Running QEMU](#32-running-qemu)
-- [4. How to use rv64ilp32 toolchain](#4-how-to-use-rv64ilp32-toolchain)
-- [5. Contact information](#5-contact-information)
+- [1. 简介](#1-简介)
+- [2. 构建](#2-构建)
+	- [2.1. 安装工具链](#21-安装工具链)
+	- [2.2. 设置 RT-Thread 工具链环境变量](#22-设置-rt-thread-工具链环境变量)
+	- [2.3. 下载内核](#23-下载内核)
+	- [2.4. 配置内核](#24-配置内核)
+	- [2.5. 编译内核](#25-编译内核)
+- [3. 运行](#3-运行)
+	- [3.1. 安装 QEMU](#31-安装-qemu)
+	- [3.2. 运行 QEMU](#32-运行-qemu)
+- [4. 如何使用 rv64ilp32 工具链](#4-如何使用-rv64ilp32-工具链)
+- [5. 联系人信息](#5-联系人信息)
 
 <!-- /TOC -->
 
-# 1. Introduction
+# 1. 简介
 
-RISC-V is an open and free instruction set architecture (ISA). This project is a port on the RISCV64 VIRT version of QEMU.
+RISC-V 是一种开放和免费的指令集体系结构 (ISA)。本工程是在 QEMU 的 RISCV64 VIRT 版本上进行的一份移植。
 
-This project supports the world's first rv64ilp32 product-level open source toolchain jointly launched by the Xuantie team and the Institute of Software of the Chinese Academy of Sciences.
+本工程支持玄铁团队联合中科院软件所共同推出的全球首款 rv64ilp32 产品级开源工具链。
 
-# 2. Building
+# 2. 构建
 
-Working system: take Ubuntu 22.04 as an example:
+工作系统：以 Ubuntu 22.04 为例：
 
 ```shell
 $ lsb_release -a
 No LSB modules are available.
 Distributor ID: Ubuntu
-Description: Ubuntu 22.04.2 LTS
-Release: 22.04
-Codename: jammy
+Description:    Ubuntu 22.04.2 LTS
+Release:        22.04
+Codename:       jammy
 ```
 
-## 2.1. Installing the toolchain
+## 2.1. 安装工具链
 
-The specific toolchain used is consistent with the official RT-Thread. For the specific toolchain version, please refer to the file <https://github.com/RT-Thread/rt-thread/blob/master/.github/workflows/action_utest.yml> in the RT-Thread repository.
+具体使用的工具链，和 RT-Thread 官方保持一致，具体的工具链版本可以参考 RT-Thread 仓库的 <https://github.com/RT-Thread/rt-thread/blob/master/.github/workflows/action_utest.yml> 这个文件。
 
 ```yaml
     - name: Install RISC-V ToolChains
@@ -62,50 +62,50 @@ The specific toolchain used is consistent with the official RT-Thread. For the s
         echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
 ```
 
-Among them, `riscv64-unknown-elf-gcc` is used to build the RT-Thread Standard version, and `riscv64-unknown-linux-musl-gcc` is used to build the RT-Thread Smart version. Download them to your local computer according to the links shown above and decompress them.
+其中 `riscv64-unknown-elf-gcc` 用于构建 RT-Thread 标准版，`riscv64-unknown-linux-musl-gcc` 用于构建 RT-Thread Smart 版。根据上面所示链接分别下载到本地后解压缩。
 
-## 2.2. Setting RT-Thread toolchain environment variables
+## 2.2. 设置 RT-Thread 工具链环境变量
 
-There are three environment variables related to the RT-Thread toolchain
+和 RT-Thread 工具链相关的环境变量有三个
 
-- `RTT_CC` is the toolchain name, which is `"gcc"` here
-- `RTT_CC_PREFIX`: is the toolchain prefix, which is `"riscv64-unknown-elf-"` for the Standard version and `"riscv64-unknown-linux-musl-"` for the Smart version.
-- `RTT_EXEC_PATH`: the path where the bin folder of the toolchain is located, such as `"$HOME/tools/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin"`. This is set according to the actual path after personal download and decompression. Note that the toolchains of the RT-Thread standard version and the Smart version are two different versions, and the path name of `RTT_EXEC_PATH` must be set to `bin`.
+- `RTT_CC` 为工具链名称, 这里统一为 `"gcc"`
+- `RTT_CC_PREFIX`: 为工具链前缀, 这里对于标准版是 `"riscv64-unknown-elf-"`，对于 Smart 版是 `"riscv64-unknown-linux-musl-"`。
+- `RTT_EXEC_PATH`: 工具链的 bin 文件夹所在路径, 如 `"$HOME/tools/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin"`, 这个根据个人下载解压后的实际路径进行设置，注意 RT-Thread 标准版和 Smart 版本的工具链是两套不同的版本，而且设置 `RTT_EXEC_PATH` 的路径名时要一直到 `bin`。
 
-If you use them all the time, it is recommended to export these three environment variables in the `.bashrc` file.
+如果一直使用的话，建议将这三个环境变量在 `.bashrc` 文件中 export。
 
-## 2.3. Downloading the kernel
+## 2.3. 下载内核
 
-Assume that the working path is `$WORKSPACE`.
+假设工作路径是 `$WORKSPACE`。
 
 ```shell
 $ cd $WORKSPACE
 $ git clone git@github.com:RT-Thread/rt-thread.git
 ```
 
-**Note: This document is based on the kernel version git commit ID: ebe2926cd6.**
+**注：本文档基于的内核版本 git commit ID 为: ebe2926cd6。**
 
-Enter the BSP directory where qemu-virt64-riscv is located. The following operations will not be introduced separately. By default, it is in this directory.
+进入 qemu-virt64-riscv 所在 BSP 目录，后面的操作不做另外介绍，默认就在这个目录下。
 
 ```shell
 $ cd $WORKSPACE/rt-thread/bsp/qemu-virt64-riscv
 ```
 
-## 2.4. Configuring the kernel
+## 2.4. 配置内核
 
-Refresh the configuration file before compiling for the first time.
+第一次编译前先刷新一下配置文件。
 
 ```shell
 $ scons --menuconfig
 ```
 
-The default configuration is the RT-Thread standard version, so if you don't have any special requirements, don't change anything, just save and exit.
+默认配置就是 RT-Thread 标准版，所以如果没有什么特别需求，什么都不要改动，直接保存退出即可。
 
-If you want to use the RT-Thread Smart version, at least turn on the `RT_USING_SMART` option after entering the configuration menu (see the figure below), and the rest depends on your needs.
+如果要使用 RT-Thread Smart 版，进入配置菜单后至少要打开 `RT_USING_SMART` 这个选项(见下图)，其他的看自己的需求。
 
 ```
 (Top) → RT-Thread Kernel
-RT-Thread Project Configuration
+                                                                RT-Thread Project Configuration
 (24) The maximal size of kernel object name
 [ ] Use the data types defined in ARCH_CPU
 [*] Enable RT-Thread Smart (microkernel on kernel/userland)
@@ -113,34 +113,34 @@ RT-Thread Project Configuration
 ...
 ```
 
-Save and exit after modification.
+修改后保存退出。
 
-## 2.5. Compiling the kernel
+## 2.5. 编译内核
 
-If you have compiled before, you can clean it up:
+如果以前编译后，可以清理一下：
 
 ```shell
 $ scons --clean
 ```
 
-Or compile directly:
+或者直接编译：
 
 ```shell
 $ scons -j$(nproc)
 ```
 
-The kernel binary file `rtthread.bin` will be generated in the `$WORKSPACE/rt-thread/bsp/qemu-virt64-riscv`.
+在 `$WORKSPACE/rt-thread/bsp/qemu-virt64-riscv` 路径下会生成内核的二进制文件 `rtthread.bin`。
 
-# 3. Running
+# 3. 运行
 
-## 3.1. Installing QEMU
+## 3.1. 安装 QEMU
 
 ```shell
 $ sudo apt update
 $ sudo apt install qemu-system-misc
 ```
 
-After the installation is complete, you can check the version.
+安装完毕后可以看一下版本。
 
 ```shell
 $ qemu-system-riscv64 --version
@@ -148,15 +148,15 @@ QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.24)
 Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 ```
 
-## 3.2. Running QEMU
+## 3.2. 运行 QEMU
 
-The repository has provided a ready-made execution script, which can be executed directly:
+仓库里已经提供了现成的执行脚本，可以直接执行：
 
 ```shell
 $ ./qemu-nographic.sh
 ```
 
-The running results of the RT-Thread Standard version are as follows:
+RT-Thread 标准版运行结果如下：
 
 ```shell
 $ ./qemu-nographic.sh 
@@ -214,7 +214,7 @@ Hello RISC-V
 msh />
 ```
 
-The running results of RT-Thread Smart version are as follows:
+RT-Thread Smart 版本运行结果如下：
 
 ```shell
 $ ./qemu-nographic.sh 
@@ -273,23 +273,23 @@ Hello RISC-V
 msh />
 ```
 
-# 4. How to use rv64ilp32 toolchain
+# 4. 如何使用 rv64ilp32 工具链
 
-- Toolchain address: <https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/tags>
+- 工具链地址：https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/tags
 
-- Usage:
+- 使用方法：
 
-  - Configure toolchain path
+  - 配置工具链路径
 
-  - Modify ABI parameter to: `-mabi=ilp32d`
+  - 修改ABI参数为：`-mabi=ilp32d`
 
-  - Then perform regular compilation
+  - 然后执行常规编译
 
-  - Use [script](./qemu-rv64ilp32-nographic.sh) to start QEMU (INFO: QEMU binary is also in the toolchain directory)
+  - 使用 [脚本](./qemu-rv64ilp32-nographic.sh) 启动 QEMU (INFO: QEMU 二进制同样在工具链目录)
 
-- Compare the firmware size of the same project compiled using the traditional 64-bit toolchain and the new 32-bit toolchain:
+- 使用传统 64 位工具链与使用新 32 位工具链编译相同工程的固件大小对比：
 
-  Traditional 64-bit toolchain firmware size:
+  传统 64 位工具链固件大小：
 
   ```bash
   Memory region         Used Size  Region Size  %age Used
@@ -299,8 +299,8 @@ msh />
      text    data     bss     dec     hex filename
    150907    3664   71268  225839   3722f rtthread.elf
   ```
-  
-  New 32-bit toolchain firmware size:
+
+  新 32 位工具链固件大小：
 
   ```bash
   Memory region         Used Size  Region Size  %age Used
@@ -311,8 +311,11 @@ msh />
    138739    1356   69276  209371   331db rtthread.elf
   ```
 
-# 5. Contact information
+# 5. 联系人信息
 
-Maintainer: [bernard][1]
+维护人：[bernard][1]
 
 [1]: https://github.com/BernardXiong
+
+
+
