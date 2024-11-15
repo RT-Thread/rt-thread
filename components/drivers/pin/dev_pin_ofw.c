@@ -148,7 +148,7 @@ rt_ssize_t rt_ofw_get_named_pin_count(struct rt_ofw_node *np, const char *propna
     char gpios_name[64];
     rt_ssize_t count = 0;
 
-    if (!np || !propname)
+    if (!np)
     {
         return -RT_EINVAL;
     }
