@@ -93,6 +93,35 @@ void lwp_pid_lock_release(void)
         RT_ASSERT(0);
 }
 
+struct pid_foreach_param
+{
+    int (*cb)(pid_t pid, void *data);
+    void *data;
+};
+
+static int _before_cb(struct lwp_avl_struct *node, void *data)
+{
+    struct pid_foreach_param *param = data;
+    pid_t pid = node->avl_key;
+    return param->cb(pid, param->data);
+}
+
+int lwp_pid_for_each(int (*cb)(pid_t pid, void *data), void *data)
+{
+    int error;
+    struct pid_foreach_param buf =
+    {
+        .cb = cb,
+        .data = data,
+    };
+
+    lwp_pid_lock_take();
+    error = lwp_avl_traversal(lwp_pid_root, _before_cb, &buf);
+    lwp_pid_lock_release();
+
+    return error;
+}
+
 struct lwp_avl_struct *lwp_get_pid_ary(void)
 {
     return lwp_pid_ary;
