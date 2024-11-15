@@ -30,9 +30,7 @@ echo "board: ${MV_BOARD_LINK}"
 
 if [ ! -d opensbi/build/platform/generic ] || [ ! -d fsbl/build/${MV_BOARD_LINK} ] ||  [ ! -d u-boot-2021.10/build/${MV_BOARD_LINK} ]; then
 	do_build
-	
-	CHIP_ARCH_L=$(echo $CHIP_ARCH | tr '[:upper:]' '[:lower:]')
-	cp -rf build/output/${MV_BOARD_LINK}/cvi_board_memmap.ld ${ROOT_PATH}/c906_little/board/script/${CHIP_ARCH_L}
+
 else
 	echo "Build already done, skip build"
 
