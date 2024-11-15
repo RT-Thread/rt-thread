@@ -14,8 +14,16 @@ if RT_USING_LWP
         config LWP_DEBUG_INIT
             select RT_USING_HOOKLIST
             bool "Enable debug mode of init process"
-            default n
+            depends on LWP_USING_RUNTIME
+            default y
     endif
+
+    config LWP_USING_RUNTIME
+        bool "Using processes runtime environment (INIT process)"
+        default y
+        help
+            Runtime environment provide by init process including boot scripts,
+            poweroff, shutdown, reboot, etc.
 
     config RT_LWP_MAX_NR
         int "The max number of light-weight process"
