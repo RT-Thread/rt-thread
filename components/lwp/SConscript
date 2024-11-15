@@ -45,6 +45,10 @@ for item in termios_path:
     src += Glob(item + '*.c')
 CPPPATH += ['./terminal/']
 
+# Remove optional sources
+if not GetDepend(['LWP_USING_RUNTIME']):
+    SrcRemove(src, 'lwp_runtime.c')
+
 group = DefineGroup('lwP', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 
 group = group + SConscript(os.path.join('vdso', 'SConscript'))
