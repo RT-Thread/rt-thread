@@ -44,6 +44,7 @@ typedef uint16_t                        rt_uint16_t;    /**< 16bit unsigned inte
 typedef uint32_t                        rt_uint32_t;    /**< 32bit unsigned integer type */
 typedef int64_t                         rt_int64_t;     /**< 64bit integer type */
 typedef uint64_t                        rt_uint64_t;    /**< 64bit unsigned integer type */
+typedef va_list                         rt_va_list;     /**< arguments type */
 #else
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
@@ -58,6 +59,7 @@ typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned inte
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
 #endif /* ARCH_CPU_64BIT */
+typedef char*                           rt_va_list;     /**< arguments type */
 #endif /* RT_USING_LIBC */
 #endif /* RT_USING_ARCH_DATA_TYPE */
 
