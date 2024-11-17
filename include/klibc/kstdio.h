@@ -15,8 +15,8 @@
 extern "C" {
 #endif
 
-int rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
-int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
+int rt_vsprintf(char *dest, const char *format, rt_va_list arg_ptr);
+int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, rt_va_list args);
 int rt_sprintf(char *buf, const char *format, ...);
 int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 

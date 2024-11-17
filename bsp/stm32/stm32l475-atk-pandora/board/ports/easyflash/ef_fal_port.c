@@ -141,7 +141,7 @@ void ef_log_debug(const char *file, const long line, const char *format, ...) {
 
 #ifdef PRINT_DEBUG
 
-    va_list args;
+    rt_va_list args;
 
     /* args point to the first variable parameter */
     va_start(args, format);
@@ -162,7 +162,7 @@ void ef_log_debug(const char *file, const long line, const char *format, ...) {
  * @param ... args
  */
 void ef_log_info(const char *format, ...) {
-    va_list args;
+    rt_va_list args;
 
     /* args point to the first variable parameter */
     va_start(args, format);
@@ -179,7 +179,7 @@ void ef_log_info(const char *format, ...) {
  * @param ... args
  */
 void ef_print(const char *format, ...) {
-    va_list args;
+    rt_va_list args;
 
     /* args point to the first variable parameter */
     va_start(args, format);

@@ -103,7 +103,7 @@ RTM_EXPORT(mq_getattr);
 mqd_t mq_open(const char *name, int oflag, ...)
 {
     int mq_fd;
-    va_list arg;
+    rt_va_list arg;
     mode_t mode;
     struct mq_attr *attr = RT_NULL;
     va_start(arg, oflag);

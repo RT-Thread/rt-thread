@@ -422,7 +422,7 @@ rt_weak rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t
 }
 
 rt_weak rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
-        const char *format, va_list args)
+        const char *format, rt_va_list args)
 {
     /* the caller has locker, so it can use static variable for reduce stack usage */
     static rt_size_t log_len;
@@ -642,7 +642,7 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
  * @param args variable argument list
  */
 void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const rt_uint8_t *hex_buf, rt_size_t hex_size,
-        rt_size_t hex_width, rt_base_t hex_addr, const char *format, va_list args)
+        rt_size_t hex_width, rt_base_t hex_addr, const char *format, rt_va_list args)
 {
     static rt_bool_t ulog_voutput_recursion = RT_FALSE;
     char *log_buf = RT_NULL;
@@ -707,7 +707,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const r
 #ifndef ULOG_USING_SYSLOG
         log_len = ulog_formater(log_buf, level, tag, newline, format, args);
 #else
-        extern rt_size_t syslog_formater(char *log_buf, rt_uint8_t level, const char *tag, rt_bool_t newline, const char *format, va_list args);
+        extern rt_size_t syslog_formater(char *log_buf, rt_uint8_t level, const char *tag, rt_bool_t newline, const char *format, rt_va_list args);
         log_len = syslog_formater(log_buf, level, tag, newline, format, args);
 #endif /* ULOG_USING_SYSLOG */
     }
@@ -753,7 +753,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const r
  */
 void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, ...)
 {
-    va_list args;
+    rt_va_list args;
 
     /* args point to the first variable parameter */
     va_start(args, format);
@@ -773,7 +773,7 @@ void ulog_raw(const char *format, ...)
 {
     rt_size_t log_len = 0;
     char *log_buf = RT_NULL;
-    va_list args;
+    rt_va_list args;
     int fmt_result;
 
     RT_ASSERT(ulog.init_ok);
@@ -827,7 +827,7 @@ void ulog_raw(const char *format, ...)
 void ulog_hexdump(const char *tag, rt_size_t width, const rt_uint8_t *buf, rt_size_t size, ...)
 {
     rt_size_t i, len;
-    va_list args;
+    rt_va_list args;
 
     va_start(args, size);
 

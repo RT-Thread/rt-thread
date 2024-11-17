@@ -60,7 +60,7 @@ off_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence);
 int dfs_seq_release(struct dfs_file *file);
 int dfs_seq_write(struct dfs_seq_file *seq, const void *data, size_t len);
 
-void dfs_seq_vprintf(struct dfs_seq_file *seq, const char *fmt, va_list args);
+void dfs_seq_vprintf(struct dfs_seq_file *seq, const char *fmt, rt_va_list args);
 void dfs_seq_printf(struct dfs_seq_file *seq, const char *fmt, ...);
 void dfs_seq_putc(struct dfs_seq_file *seq, char c);
 void dfs_seq_puts(struct dfs_seq_file *seq, const char *s);

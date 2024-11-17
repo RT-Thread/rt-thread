@@ -86,7 +86,7 @@ void openlog(const char *ident, int option, int facility)
  * @param format log format
  * @param args log arguments
  */
-void vsyslog(int priority, const char *format, va_list args)
+void vsyslog(int priority, const char *format, rt_va_list args)
 {
     if (LOG_FAC(priority) == 0)
     {
@@ -105,7 +105,7 @@ void vsyslog(int priority, const char *format, va_list args)
  */
 void syslog(int priority, const char *format, ...)
 {
-    va_list args;
+    rt_va_list args;
 
     if (!is_open)
     {
@@ -168,7 +168,7 @@ static const char *get_month_str(uint8_t month)
     }
 }
 
-rt_weak rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_bool_t newline, const char *format, va_list args)
+rt_weak rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_bool_t newline, const char *format, rt_va_list args)
 {
     extern rt_size_t ulog_strcpy(rt_size_t cur_len, char *dst, const char *src);
 

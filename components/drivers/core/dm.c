@@ -144,7 +144,7 @@ int rt_dm_dev_get_name_id(rt_device_t dev)
 int rt_dm_dev_set_name(rt_device_t dev, const char *format, ...)
 {
     int n;
-    va_list arg_ptr;
+    rt_va_list arg_ptr;
 
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(format != RT_NULL);

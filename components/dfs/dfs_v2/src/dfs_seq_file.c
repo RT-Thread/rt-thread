@@ -312,7 +312,7 @@ int dfs_seq_release(struct dfs_file *file)
     return 0;
 }
 
-void dfs_seq_vprintf(struct dfs_seq_file *seq, const char *f, va_list args)
+void dfs_seq_vprintf(struct dfs_seq_file *seq, const char *f, rt_va_list args)
 {
     int len;
 
@@ -330,7 +330,7 @@ void dfs_seq_vprintf(struct dfs_seq_file *seq, const char *f, va_list args)
 
 void dfs_seq_printf(struct dfs_seq_file *seq, const char *f, ...)
 {
-    va_list args;
+    rt_va_list args;
 
     va_start(args, f);
     dfs_seq_vprintf(seq, f, args);

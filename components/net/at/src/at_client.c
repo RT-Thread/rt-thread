@@ -33,7 +33,7 @@ extern rt_size_t at_utils_send(rt_device_t dev,
                                rt_off_t    pos,
                                const void *buffer,
                                rt_size_t   size);
-extern rt_size_t at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args);
+extern rt_size_t at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, rt_va_list args);
 extern void at_print_raw_cmd(const char *type, const char *cmd, rt_size_t size);
 
 /**
@@ -212,7 +212,7 @@ const char *at_resp_get_line_by_kw(at_response_t resp, const char *keyword)
  */
 int at_resp_parse_line_args(at_response_t resp, rt_size_t resp_line, const char *resp_expr, ...)
 {
-    va_list args;
+    rt_va_list args;
     int resp_args_num = 0;
     const char *resp_line_buf = RT_NULL;
 
@@ -246,7 +246,7 @@ int at_resp_parse_line_args(at_response_t resp, rt_size_t resp_line, const char 
  */
 int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const char *resp_expr, ...)
 {
-    va_list args;
+    rt_va_list args;
     int resp_args_num = 0;
     const char *resp_line_buf = RT_NULL;
 
@@ -281,7 +281,7 @@ int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const
  */
 int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr, ...)
 {
-    va_list args;
+    rt_va_list args;
     rt_err_t result = RT_EOK;
 
     RT_ASSERT(cmd_expr);

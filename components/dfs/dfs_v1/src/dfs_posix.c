@@ -453,7 +453,7 @@ int fcntl(int fildes, int cmd, ...)
     if (d)
     {
         void *arg;
-        va_list ap;
+        rt_va_list ap;
 
         va_start(ap, cmd);
         arg = va_arg(ap, void *);
@@ -488,7 +488,7 @@ RTM_EXPORT(fcntl);
 int ioctl(int fildes, int cmd, ...)
 {
     void *arg;
-    va_list ap;
+    rt_va_list ap;
 
     va_start(ap, cmd);
     arg = va_arg(ap, void *);

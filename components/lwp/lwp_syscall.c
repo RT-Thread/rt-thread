@@ -505,7 +505,7 @@ sysret_t sys_open(const char *name, int flag, ...)
 
     if ((flag & O_CREAT) || (flag & O_TMPFILE) == O_TMPFILE)
     {
-        va_list ap;
+        rt_va_list ap;
         va_start(ap, flag);
         mode = va_arg(ap, mode_t);
         va_end(ap);
@@ -537,7 +537,7 @@ sysret_t sys_open(const char *name, int flag, ...)
 
     if ((flag & O_CREAT) || (flag & O_TMPFILE) == O_TMPFILE)
     {
-        va_list ap;
+        rt_va_list ap;
         va_start(ap, flag);
         mode = va_arg(ap, mode_t);
         va_end(ap);

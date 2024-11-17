@@ -43,8 +43,8 @@ extern rt_size_t at_utils_send(rt_device_t dev,
                                rt_off_t    pos,
                                const void *buffer,
                                rt_size_t   size);
-extern void at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args);
-extern void at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args);
+extern void at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, rt_va_list args);
+extern void at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, rt_va_list args);
 
 /**
  * AT server send data to AT device
@@ -53,7 +53,7 @@ extern void at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size,
  */
 void at_server_printf(const char *format, ...)
 {
-    va_list args;
+    rt_va_list args;
 
     va_start(args, format);
 
@@ -69,7 +69,7 @@ void at_server_printf(const char *format, ...)
  */
 void at_server_printfln(const char *format, ...)
 {
-    va_list args;
+    rt_va_list args;
 
     va_start(args, format);
 
@@ -91,7 +91,7 @@ void at_server_printfln(const char *format, ...)
  */
 int at_req_parse_args(const char *req_args, const char *req_expr, ...)
 {
-    va_list args;
+    rt_va_list args;
     int req_args_num = 0;
 
     RT_ASSERT(req_args);

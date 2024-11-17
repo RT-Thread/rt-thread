@@ -303,7 +303,7 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
+rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, rt_va_list args)
 {
 #ifdef RT_KLIBC_USING_PRINTF_LONGLONG
     unsigned long long num = 0;
@@ -633,7 +633,7 @@ RTM_EXPORT(rt_vsnprintf);
 int rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
 {
     rt_int32_t n = 0;
-    va_list args;
+    rt_va_list args;
 
     va_start(args, fmt);
     n = rt_vsnprintf(buf, size, fmt, args);
@@ -654,7 +654,7 @@ RTM_EXPORT(rt_snprintf);
  *
  * @return The number of characters actually written to buffer.
  */
-int rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
+int rt_vsprintf(char *buf, const char *format, rt_va_list arg_ptr)
 {
     return rt_vsnprintf(buf, (rt_size_t) - 1, format, arg_ptr);
 }
@@ -672,7 +672,7 @@ RTM_EXPORT(rt_vsprintf);
 int rt_sprintf(char *buf, const char *format, ...)
 {
     rt_int32_t n = 0;
-    va_list arg_ptr;
+    rt_va_list arg_ptr;
 
     va_start(arg_ptr, format);
     n = rt_vsprintf(buf, format, arg_ptr);

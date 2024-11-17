@@ -57,13 +57,13 @@ FILE *test_stderr;
 FILE *test_stdin;
 FILE *test_stdout;
 
-int     (*test_vfprintf)(FILE *restrict, const char *restrict, va_list);
-int     (*test_vfscanf)(FILE *restrict, const char *restrict, va_list);
-int     (*test_vprintf)(const char *restrict, va_list);
-int     (*test_vscanf)(const char *restrict, va_list);
-int     (*test_vsnprintf)(char *restrict, size_t, const char *restrict, va_list);
-int     (*test_vsprintf)(char *restrict, const char *restrict, va_list);
-int     (*test_vsscanf)(const char *restrict, const char *restrict, va_list);
+int     (*test_vfprintf)(FILE *restrict, const char *restrict, rt_va_list);
+int     (*test_vfscanf)(FILE *restrict, const char *restrict, rt_va_list);
+int     (*test_vprintf)(const char *restrict, rt_va_list);
+int     (*test_vscanf)(const char *restrict, rt_va_list);
+int     (*test_vsnprintf)(char *restrict, size_t, const char *restrict, rt_va_list);
+int     (*test_vsprintf)(char *restrict, const char *restrict, rt_va_list);
+int     (*test_vsscanf)(const char *restrict, const char *restrict, rt_va_list);
 
 __attribute__((unused)) static int test_defined()
 {

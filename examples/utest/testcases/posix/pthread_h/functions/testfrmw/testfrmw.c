@@ -41,7 +41,7 @@ static void output_init(void)
 
 static void output(char *string, ...)
 {
-    va_list ap;
+    rt_va_list ap;
     struct tm *now;
     time_t nw;
     int oldstate;

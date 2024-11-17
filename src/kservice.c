@@ -363,7 +363,7 @@ void rt_kputs(const char *str)
  */
 rt_weak int rt_kprintf(const char *fmt, ...)
 {
-    va_list args;
+    rt_va_list args;
     rt_size_t length = 0;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 

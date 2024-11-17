@@ -35,7 +35,7 @@ void hal_printf(const char *fmt, ...)
 {
     rt_device_t console = rt_console_get_device();
 
-    va_list args;
+    rt_va_list args;
     rt_size_t length;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 

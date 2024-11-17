@@ -28,7 +28,7 @@ extern int __rtt_heap_start;
 #ifdef __GNUC__
 void __wrap_rtl_printf(const char *fmt, ...)
 {
-    va_list args;
+    rt_va_list args;
     rt_size_t length;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 

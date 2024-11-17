@@ -65,7 +65,7 @@ rt_weak rt_size_t at_utils_send(rt_device_t dev,
     return rt_device_write(dev, pos, buffer, size);
 }
 
-rt_size_t at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args)
+rt_size_t at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, rt_va_list args)
 {
     rt_size_t len = vsnprintf(send_buf, buf_size, format, args);
     if (len == 0)
@@ -80,7 +80,7 @@ rt_size_t at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, con
     return at_utils_send(device, 0, send_buf, len);
 }
 
-rt_size_t at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args)
+rt_size_t at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, rt_va_list args)
 {
     rt_size_t len = vsnprintf(send_buf, buf_size - 2, format, args);
     if (len == 0)

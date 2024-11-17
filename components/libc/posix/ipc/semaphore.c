@@ -327,7 +327,7 @@ RTM_EXPORT(sem_init);
 sem_t *sem_open(const char *name, int oflag, ...)
 {
     sem_t* sem;
-    va_list arg;
+    rt_va_list arg;
     mode_t mode;
     unsigned int value;
 

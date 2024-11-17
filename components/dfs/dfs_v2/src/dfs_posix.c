@@ -49,7 +49,7 @@ int open(const char *file, int flags, ...)
 
     if ((flags & O_CREAT) || (flags & O_TMPFILE) == O_TMPFILE)
     {
-        va_list ap;
+        rt_va_list ap;
         va_start(ap, flags);
         mode = va_arg(ap, mode_t);
         va_end(ap);
@@ -597,7 +597,7 @@ int fcntl(int fildes, int cmd, ...)
     if (file)
     {
         void *arg;
-        va_list ap;
+        rt_va_list ap;
 
         va_start(ap, cmd);
         arg = va_arg(ap, void *);
@@ -639,7 +639,7 @@ RTM_EXPORT(fcntl);
 int ioctl(int fildes, int cmd, ...)
 {
     void *arg;
-    va_list ap;
+    rt_va_list ap;
 
     va_start(ap, cmd);
     arg = va_arg(ap, void *);

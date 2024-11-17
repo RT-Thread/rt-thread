@@ -4,7 +4,7 @@
 
 static void WriteFrmtd(char *format, ...)
 {
-   va_list args;
+   rt_va_list args;
 
    va_start(args, format);
    vprintf(format, args);

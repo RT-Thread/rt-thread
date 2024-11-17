@@ -868,7 +868,7 @@ rt_err_t lcd_show_string(rt_uint16_t x, rt_uint16_t y, rt_uint32_t size, const c
 {
 #define LCD_STRING_BUF_LEN 128
 
-    va_list args;
+    rt_va_list args;
     rt_uint8_t buf[LCD_STRING_BUF_LEN] = {0};
     rt_uint8_t *p = RT_NULL;
 
