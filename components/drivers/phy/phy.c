@@ -10,8 +10,7 @@
  */
 #include <stddef.h>
 #include <rthw.h>
-#include <drivers/phy.h>
-#include <drivers/core/bus.h>
+#include <rtdevice.h>
 #define DBG_TAG "rtdm.phy"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>

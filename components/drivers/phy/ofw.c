@@ -8,7 +8,7 @@
  * 2024-09-25     zhujiale    the first version
  */
 #include <rtthread.h>
-#include <drivers/phy.h>
+#include <rtdevice.h>
 #include <stdio.h>
 #define DBG_TAG "rtdm.phy"
 #define DBG_LVL DBG_INFO
