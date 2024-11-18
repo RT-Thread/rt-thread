@@ -9,6 +9,8 @@
  */
 
 #include <fal.h>
+#include "fal_def.h"
+#include "fal_log.h"
 
 static uint8_t init_ok = 0;
 

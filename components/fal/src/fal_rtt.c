@@ -16,6 +16,7 @@
 #include <rtdevice.h>
 #include <string.h>
 #include <stdlib.h>
+#include "fal_log.h"
 
 /* ========================== block device ======================== */
 struct fal_blk_device
