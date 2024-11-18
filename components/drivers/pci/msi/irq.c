@@ -71,7 +71,7 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
         if (!err)
         {
             /* Get the first irq */
-            desc->irq = irq - irq_nr;
+            desc->irq = irq - (irq_nr - 1);
         }
 
         rt_bitmap_for_each_set_bit(msi_irq_map, irq_idx, MAX_HANDLERS)
