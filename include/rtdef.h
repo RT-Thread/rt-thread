@@ -117,7 +117,7 @@ extern "C" {
 
 /* Common Utilities */
 
-#define RT_UNUSED(x)                   ((void)x)
+#define RT_UNUSED(x)                   ((void)(x))
 
 /* compile time assertion */
 #define RT_STATIC_ASSERT(name, expn) typedef char _static_assert_##name[(expn)?1:-1]
@@ -674,8 +674,8 @@ typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
 
-#ifndef RT_FUNC_IPI
-#define RT_FUNC_IPI                     2
+#ifndef RT_SMP_CALL_IPI
+#define RT_SMP_CALL_IPI                 2
 #endif
 
 #define RT_MAX_IPI                      3
@@ -723,6 +723,9 @@ struct rt_cpu
 #ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
 #endif /* RT_USING_CPU_USAGE_TRACER */
+#ifdef ARCH_USING_IRQ_CTX_LIST
+    rt_slist_t                  irq_ctx_head;
+#endif /* ARCH_USING_IRQ_CTX_LIST */
 };
 
 #else /* !RT_USING_SMP */
@@ -734,6 +737,9 @@ struct rt_cpu
 #ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
 #endif /* RT_USING_CPU_USAGE_TRACER */
+#ifdef ARCH_USING_IRQ_CTX_LIST
+    rt_slist_t                  irq_ctx_head;
+#endif /* ARCH_USING_IRQ_CTX_LIST */
 };
 
 #endif /* RT_USING_SMP */
@@ -743,6 +749,16 @@ typedef struct rt_cpu *rt_cpu_t;
 #define rt_current_thread rt_thread_self()
 
 struct rt_thread;
+
+/**
+ * interrupt/exception frame handling
+ *
+ */
+
+typedef struct rt_interrupt_context {
+    void *context;      /**< arch specific context */
+    rt_slist_t node;    /**< node for nested interrupt */
+} *rt_interrupt_context_t;
 
 #ifdef RT_USING_SMART
 typedef rt_err_t (*rt_wakeup_func_t)(void *object, struct rt_thread *thread);

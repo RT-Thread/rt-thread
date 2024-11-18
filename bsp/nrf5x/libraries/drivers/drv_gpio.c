@@ -356,7 +356,7 @@ const static struct rt_pin_ops _nrf5x_pin_ops =
     RT_NULL,
 };
 
-rt_err_t rt_hw_pin_init(void)
+int rt_hw_pin_init(void)
 {
     nrfx_err_t err_code;
 

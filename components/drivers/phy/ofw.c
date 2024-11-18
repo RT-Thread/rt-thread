@@ -14,6 +14,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 #include "ofw.h"
+
 static const char* const rt_phy_modes[] =
 {
     [RT_PHY_INTERFACE_MODE_NA]         = "",

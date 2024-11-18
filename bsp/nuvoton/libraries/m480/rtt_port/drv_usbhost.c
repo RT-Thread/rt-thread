@@ -31,7 +31,7 @@
     #define NU_USBHOST_HUB_POLLING_INTERVAL    (100)
 #endif
 
-#define NU_MAX_USBH_PORT    2        //USB1.1 + USB2.0 port
+#define NU_MAX_USBH_PORT    2        /* USB1.1 + USB2.0 port */
 #define NU_MAX_USBH_PIPE    16
 #define NU_USBH_THREAD_STACK_SIZE    2048
 
@@ -39,17 +39,20 @@
 
 #define NU_USBHOST_HUB_POLLING_LOCK
 #if defined(NU_USBHOST_HUB_POLLING_LOCK)
-#define NU_USBHOST_MUTEX_INIT()      { \
+#define NU_USBHOST_MUTEX_INIT() \
+{ \
                                 s_sUSBHDev.lock = rt_mutex_create("usbhost_lock", RT_IPC_FLAG_PRIO); \
                                 RT_ASSERT(s_sUSBHDev.lock != RT_NULL); \
                             }
 
-#define NU_USBHOST_LOCK()      { \
+#define NU_USBHOST_LOCK() \
+{ \
                                 rt_err_t result = rt_mutex_take(s_sUSBHDev.lock, RT_WAITING_FOREVER); \
                                 RT_ASSERT(result == RT_EOK); \
                             }
 
-#define NU_USBHOST_UNLOCK()    { \
+#define NU_USBHOST_UNLOCK() \
+{ \
                                 rt_err_t result = rt_mutex_release(s_sUSBHDev.lock); \
                                 RT_ASSERT(result == RT_EOK); \
                             }
@@ -59,7 +62,7 @@
 #define NU_USBHOST_UNLOCK()
 #endif
 
-/* Private typedef --------------------------------------------------------------*/
+/* Private typedef -------------------------------------------------------------- */
 typedef struct nu_port_dev
 {
     rt_bool_t bRHParent;
@@ -88,7 +91,7 @@ struct nu_usbh_dev
     S_NU_RH_PORT_CTRL asPortCtrl[NU_MAX_USBH_PORT];
 };
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ------------------------------------------------------------ */
 static struct nu_usbh_dev s_sUSBHDev;
 
 static S_NU_RH_PORT_CTRL *
@@ -99,13 +102,13 @@ GetRHPortControlFromPipe(
     int port;
     if (pipe->inst->parent_hub->is_roothub)
     {
-        //case: device ---> root hub
+        /* case: device ---> root hub */
         inst = pipe->inst;
         port = inst->port;
     }
     else
     {
-        //case: device ---> hub ---> root hub
+        /* case: device ---> hub ---> root hub */
         inst = pipe->inst->parent_hub->self;
         port = inst->port;
     }
@@ -131,11 +134,11 @@ GetPortDevFromPipe(
 
     if (pipe->inst->parent_hub->is_roothub)
     {
-        //case: device ---> root hub
+        /* case: device ---> root hub */
         return &psRHPortCtrl->sRHPortDev;
     }
 
-    //case: device ---> hub ---> root hub
+    /* case: device ---> hub ---> root hub */
     for (i = 0 ; i < NU_MAX_USBH_HUB_PORT_DEV; i ++)
     {
         if (psRHPortCtrl->asHubPortDev[i].port_num == pipe->inst->port)
@@ -265,7 +268,7 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
 
     if ((psPortDev == NULL) || (psPortDev->pUDev == NULL))
     {
-        //allocate new dev for hub device
+        /* allocate new dev for hub device */
         psPortDev = AllocateNewUDev(psPortCtrl);
 
         if (psPortDev == RT_NULL)
@@ -290,7 +293,7 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
         psPortDev->bEnumDone = FALSE;
     }
 
-    //For ep0 control transfer
+    /* For ep0 control transfer */
     if ((pipe->ep.bEndpointAddress & 0x7F) == 0)
     {
         pipe->pipe_index = 0;
@@ -338,7 +341,7 @@ static rt_err_t nu_close_pipe(upipe_t pipe)
 
     psPortDev = GetPortDevFromPipe(pipe);
 
-    //For ep0 control transfer
+    /* For ep0 control transfer */
     if ((pipe->ep.bEndpointAddress & 0x7F) == 0)
     {
         if ((psPortDev) && (psPortDev->bRHParent == FALSE) && (psPortDev->bEnumDone == TRUE))
@@ -409,7 +412,7 @@ static int nu_bulk_xfer(
     if (ret < 0)
         return ret;
 
-    //wait transfer done
+    /* wait transfer done */
     if (rt_completion_wait(&(psPortDev->utr_completion), timeouts) < 0)
     {
         rt_kprintf("Request Timeout in %d ms!! (bulk_xfer)\n", timeouts);
@@ -464,7 +467,7 @@ static void xfer_done_cb(UTR_T *psUTR)
 {
     S_NU_PORT_DEV *psPortDev = (S_NU_PORT_DEV *)psUTR->context;
 
-    //transfer done, signal utr_completion
+    /* transfer done, signal utr_completion */
     rt_completion_done(&(psPortDev->utr_completion));
 }
 
@@ -492,7 +495,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         goto exit_nu_pipe_xfer;
     }
 
-    //ctrl xfer
+    /* ctrl xfer */
     if (pipe->ep.bmAttributes == USB_EP_ATTR_CONTROL)
     {
         int ret;
@@ -506,13 +509,13 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             /* Read data from USB device. */
             if (psSetup->request_type & USB_REQ_TYPE_DIR_IN)
             {
-                //Store setup request
+                /* Store setup request */
                 rt_memcpy(&psPortCtrl->asHubPortDev->asSetupReq[pipe->pipe_index], psSetup, sizeof(struct urequest));
             }
             else
             {
                 /* Write data to USB device. */
-                //Trigger USBHostLib Ctrl_Xfer
+                /* Trigger USBHostLib Ctrl_Xfer */
                 ret = nu_ctrl_xfer(psPortDev, psSetup, NULL, timeouts);
                 if (ret != psSetup->wLength)
                     goto exit_nu_pipe_xfer;
@@ -520,13 +523,13 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         }
         else
         {
-            //token == USBH_PID_DATA
+            /* token == USBH_PID_DATA */
             if (buffer_nonch && ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_IN))
             {
                 struct urequest *psSetup = &psPortCtrl->asHubPortDev->asSetupReq[pipe->pipe_index];
 
                 /* Read data from USB device. */
-                //Trigger USBHostLib Ctril_Xfer
+                /* Trigger USBHostLib Ctril_Xfer */
                 /*
                 * Workaround: HCD driver can readback all bytes of setup.wLength, but not support single packet transferring.
                 */
@@ -555,10 +558,10 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
                 LOG_D("%d == USBH_PID_DATA, nil buf-%d", token, nbytes);
             }
 
-        } //else
+        } /* else */
         i32XferLen = nbytes;
         goto exit_nu_pipe_xfer;
-    } // if ( pipe->ep.bmAttributes == USB_EP_ATTR_CONTROL )
+    } /* if ( pipe->ep.bmAttributes == USB_EP_ATTR_CONTROL ) */
     else
     {
 
@@ -579,7 +582,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         psUTR->bIsTransferDone = 0;
         psUTR->status = 0;
 
-        //others xfer
+        /* others xfer */
         rt_completion_init(&(psPortDev->utr_completion));
 
         if (pipe->ep.bmAttributes == USB_EP_ATTR_BULK)
@@ -595,7 +598,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             if (nu_int_xfer(pipe, psPortDev, psUTR, timeouts) < 0)
             {
                 LOG_D("nu_pipe_xfer ERROR: int transfer failed");
-                //goto exit_nu_pipe_xfer;
+                /* goto exit_nu_pipe_xfer; */
             }
             else
             {
@@ -605,25 +608,25 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         }
         else if (pipe->ep.bmAttributes == USB_EP_ATTR_ISOC)
         {
-            //TODO: ISO transfer
+            /* TODO: ISO transfer */
             LOG_D("nu_pipe_xfer ERROR: isoc transfer not support");
             goto exit_nu_pipe_xfer;
         }
 
-    } //else
+    } /* else */
 
 failreport_nu_pipe_xfer:
 
     if (psUTR->bIsTransferDone == 0)
     {
-        //Timeout
+        /* Timeout */
         LOG_D("nu_pipe_xfer ERROR: timeout");
         pipe->status = UPIPE_STATUS_ERROR;
         usbh_quit_utr(psUTR);
     }
     else
     {
-        // Transfer Done. Get status
+        /* Transfer Done. Get status*/
         if (psUTR->status == 0)
         {
             pipe->status = UPIPE_STATUS_OK;
@@ -642,7 +645,7 @@ failreport_nu_pipe_xfer:
 
 exit_nu_pipe_xfer:
 
-    //Call callback
+    /* Call callback */
     if (pipe->callback != RT_NULL)
     {
         pipe->callback(pipe);
@@ -741,7 +744,7 @@ static void nu_hcd_disconnect_callback(
 }
 
 
-/* USB host operations -----------------------------------------------------------*/
+/* USB host operations ----------------------------------------------------------- */
 static struct uhcd_ops nu_uhcd_ops =
 {
     nu_reset_port,
@@ -756,10 +759,10 @@ static rt_err_t nu_hcd_init(rt_device_t device)
 
     usbh_core_init();
 
-    //install connect/disconnect callback
+    /* install connect/disconnect callback */
     usbh_install_conn_callback(nu_hcd_connect_callback, nu_hcd_disconnect_callback);
 
-    //create thread for polling usbh port status
+    /* create thread for polling usbh port status */
     /* create usb hub thread */
     pNuUSBHDev->polling_thread = rt_thread_create("usbh_drv", nu_usbh_rh_thread_entry, RT_NULL,
                                  NU_USBH_THREAD_STACK_SIZE, 8, 20);
@@ -771,7 +774,7 @@ static rt_err_t nu_hcd_init(rt_device_t device)
     return RT_EOK;
 }
 
-/* global function for USB host library -----------------------------*/
+/* global function for USB host library ----------------------------- */
 uint32_t usbh_get_ticks(void)
 {
     return rt_tick_get();
@@ -790,7 +793,7 @@ uint32_t usbh_tick_from_millisecond(uint32_t msec)
 #if defined(RT_USING_PM)
 
 /* device pm suspend() entry. */
-static int usbhost_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
+static rt_err_t usbhost_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
 {
     rt_err_t result;
 
@@ -802,7 +805,7 @@ static int usbhost_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
     case PM_SLEEP_MODE_LIGHT:
     case PM_SLEEP_MODE_DEEP:
 
-        pNuUSBHDev->polling_thread->stat = RT_THREAD_READY;
+        RT_SCHED_CTX(pNuUSBHDev->polling_thread).stat = RT_THREAD_READY;
         result = rt_thread_suspend(pNuUSBHDev->polling_thread);
         RT_ASSERT(result == RT_EOK);
 
@@ -890,7 +893,7 @@ int nu_usbh_register(void)
     res = rt_device_register(&psUHCD->parent, "usbh", RT_DEVICE_FLAG_DEACTIVATE);
     RT_ASSERT(res == RT_EOK);
 
-    /*initialize the usb host function */
+    /* initialize the usb host function */
     res = rt_usb_host_init("usbh");
     RT_ASSERT(res == RT_EOK);
 

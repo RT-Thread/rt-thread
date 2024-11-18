@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -174,8 +174,6 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
 
     /* default filter config */
     HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
-    /* can start */
-    HAL_CAN_Start(&drv_can->CanHandle);
 
     return RT_EOK;
 }
@@ -321,7 +319,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         rt_uint32_t id_l = 0;
         rt_uint32_t mask_h = 0;
         rt_uint32_t mask_l = 0;
-        rt_uint32_t mask_l_tail = 0;  //CAN_FxR2 bit [2:0]
+        rt_uint32_t mask_l_tail = 0;  /*CAN_FxR2 bit [2:0]*/
 
         if (RT_NULL == arg)
         {
@@ -458,7 +456,6 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_GET_STATUS:
-    {
         rt_uint32_t errtype;
         errtype = drv_can->CanHandle.Instance->ESR;
         drv_can->device.status.rcverrcnt = errtype >> 24;
@@ -467,8 +464,19 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         drv_can->device.status.errcode = errtype & 0x07;
 
         rt_memcpy(arg, &drv_can->device.status, sizeof(drv_can->device.status));
-    }
-    break;
+        break;
+    case RT_CAN_CMD_START:
+        argval = (rt_uint32_t) arg;
+        if (argval == 0)
+        {
+            HAL_CAN_Stop(&drv_can->CanHandle);
+        }
+        else
+        {
+            HAL_CAN_Start(&drv_can->CanHandle);
+        }
+
+        break;
     }
 
     return RT_EOK;

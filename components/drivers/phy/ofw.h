@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2024 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2024-09-25     zhujiale    the first version
+ */
 #ifndef __NET_OFW_H__
 #define __NET_OFW_H__
 #include <rtthread.h>
@@ -47,4 +56,3 @@ rt_err_t rt_ofw_get_mac_addr_by_name(struct rt_ofw_node *np, const char *name, r
 rt_err_t rt_ofw_get_interface(struct rt_ofw_node *np, rt_phy_interface *interface);
 
 #endif
-

@@ -27,8 +27,14 @@ menu "On-chip Peripheral Drivers"
 
             if BSP_USING_UART
                 config BSP_USING_UART0
-                    bool "Enable LPUART as UART"
+                    bool "Enable LPUART as UART0"
                     default y
+                config BSP_USING_UART1
+                    bool "Enable LPUART as UART1"
+                    default n
+                config BSP_USING_UART2
+                    bool "Enable LPUART as UART2"
+                    default n
             endif
 
     menuconfig BSP_USING_I2C

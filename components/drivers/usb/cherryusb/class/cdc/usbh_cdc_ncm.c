@@ -48,7 +48,7 @@ static int usbh_cdc_ncm_get_ntb_parameters(struct usbh_cdc_ncm *cdc_ncm_class, s
     setup->wLength = 28;
 
     ret = usbh_control_transfer(cdc_ncm_class->hport, setup, g_cdc_ncm_buf);
-    if (ret < 0) {
+    if (ret < 8) {
         return ret;
     }
 
