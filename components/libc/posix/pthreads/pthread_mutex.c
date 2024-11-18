@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,28 @@
 
 const pthread_mutexattr_t pthread_default_mutexattr = PTHREAD_PROCESS_PRIVATE;
 
+/**
+ * @brief Initializes a mutex attributes object.
+ *
+ * This function initializes a mutex attributes object pointed to by `attr` with
+ * default attribute values. Once initialized, the attributes object can be used
+ * to customize the behavior of mutexes created using it.
+ *
+ * @param[out] attr Pointer to the mutex attributes object to be initialized.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure.
+ *
+ * @note
+ * After initialization, the mutex attributes object must be destroyed with
+ * `pthread_mutexattr_destroy()` when it is no longer needed.
+ *
+ * @warning
+ * Using an uninitialized mutex attributes object may result in undefined behavior.
+ *
+ * @see pthread_mutexattr_destroy, pthread_mutex_init
+ */
 int pthread_mutexattr_init(pthread_mutexattr_t *attr)
 {
     if (attr)
@@ -29,6 +51,29 @@ int pthread_mutexattr_init(pthread_mutexattr_t *attr)
 }
 RTM_EXPORT(pthread_mutexattr_init);
 
+/**
+ * @brief Destroys a mutex attributes object.
+ *
+ * This function releases any resources associated with the mutex attributes object
+ * pointed to by `attr`. After the attributes object is destroyed, it should not
+ * be used unless it is re-initialized with `pthread_mutexattr_init()`.
+ *
+ * @param[in,out] attr Pointer to the mutex attributes object to be destroyed.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EINVAL`: The attributes object is invalid or uninitialized.
+ *
+ * @note
+ * Destroying an uninitialized or already destroyed attributes object results in undefined behavior.
+ *
+ * @warning
+ * Ensure that no mutexes are being initialized or created using this attributes object
+ * at the time of its destruction.
+ *
+ * @see pthread_mutexattr_init, pthread_mutex_init
+ */
 int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 {
     if (attr)
@@ -42,6 +87,30 @@ int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 }
 RTM_EXPORT(pthread_mutexattr_destroy);
 
+/**
+ * @brief Retrieves the type attribute of a mutex attributes object.
+ *
+ * This function retrieves the mutex type attribute from the attributes object
+ * pointed to by `attr` and stores it in the integer pointed to by `type`.
+ *
+ * @param[in] attr Pointer to the mutex attributes object.
+ * @param[out] type Pointer to an integer where the mutex type will be stored.
+ *                  Possible values include:
+ *                  - `PTHREAD_MUTEX_NORMAL`: Default mutex type.
+ *                  - `PTHREAD_MUTEX_ERRORCHECK`: Mutex with error-checking.
+ *                  - `PTHREAD_MUTEX_RECURSIVE`: Recursive mutex.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EINVAL`: The attributes object or the `type` pointer is invalid.
+ *
+ * @note
+ * Use this function to check the type of a mutex attributes object that has
+ * already been initialized or configured.
+ *
+ * @see pthread_mutexattr_settype, pthread_mutexattr_init
+ */
 int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type)
 {
     if (attr && type)
@@ -60,6 +129,41 @@ int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type)
 }
 RTM_EXPORT(pthread_mutexattr_gettype);
 
+/**
+ * @brief Sets the type attribute of a mutex attributes object.
+ *
+ * This function sets the type of the mutex to be initialized using the
+ * attributes object pointed to by `attr`. The `type` can be one of the
+ * following values:
+ * - `PTHREAD_MUTEX_NORMAL`: Default mutex type. The mutex does not allow
+ *   a thread to unlock it if it was not locked by that thread (this results
+ *   in undefined behavior).
+ * - `PTHREAD_MUTEX_ERRORCHECK`: Error-checking mutex type. A thread trying to
+ *   lock a mutex it already holds will return an error.
+ * - `PTHREAD_MUTEX_RECURSIVE`: Recursive mutex type. The same thread can lock
+ *   the mutex multiple times without causing a deadlock, but it must unlock it
+ *   the same number of times.
+ *
+ * @param[in,out] attr Pointer to the mutex attributes object.
+ * @param[in] type The type to set for the mutex. One of the following:
+ *                 - `PTHREAD_MUTEX_NORMAL`
+ *                 - `PTHREAD_MUTEX_ERRORCHECK`
+ *                 - `PTHREAD_MUTEX_RECURSIVE`
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EINVAL`: The specified type is invalid.
+ *
+ * @note
+ * The type must be set before the mutex attributes object is used to
+ * initialize a mutex with `pthread_mutex_init()`.
+ *
+ * @warning
+ * Attempting to set an invalid mutex type will result in an error.
+ *
+ * @see pthread_mutexattr_gettype, pthread_mutexattr_init, pthread_mutex_init
+ */
 int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
 {
     if (attr && type >= PTHREAD_MUTEX_NORMAL && type <= PTHREAD_MUTEX_ERRORCHECK)
@@ -73,6 +177,37 @@ int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
 }
 RTM_EXPORT(pthread_mutexattr_settype);
 
+/**
+ * @brief Sets the shared attribute of a mutex attributes object.
+ *
+ * This function sets the `pshared` attribute of the mutex attributes object
+ * pointed to by `attr`. The `pshared` attribute determines whether the mutex
+ * is shared between threads of the same process or can be shared between
+ * threads of different processes.
+ *
+ * @param[in,out] attr Pointer to the mutex attributes object.
+ * @param[in] pshared The sharing behavior of the mutex. This can be one of the following:
+ *                   - `PTHREAD_PROCESS_PRIVATE`: The mutex is only shared between threads
+ *                     of the same process (this is the default behavior).
+ *                   - `PTHREAD_PROCESS_SHARED`: The mutex can be shared between threads
+ *                     of different processes (requires the mutex to be allocated in
+ *                     shared memory).
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EINVAL`: Invalid `pshared` value or invalid attributes object.
+ *
+ * @note
+ * The `pshared` attribute must be set before the mutex attributes object is
+ * used to initialize a mutex with `pthread_mutex_init()`. For shared mutexes
+ * (`PTHREAD_PROCESS_SHARED`), the mutex object must be allocated in shared memory.
+ *
+ * @warning
+ * Attempting to set an invalid `pshared` value will result in an error.
+ *
+ * @see pthread_mutexattr_getpshared, pthread_mutexattr_init, pthread_mutex_init
+ */
 int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared)
 {
     if (!attr)
@@ -93,6 +228,35 @@ int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared)
 }
 RTM_EXPORT(pthread_mutexattr_setpshared);
 
+/**
+ * @brief Retrieves the shared attribute of a mutex attributes object.
+ *
+ * This function retrieves the `pshared` attribute from the mutex attributes
+ * object pointed to by `attr` and stores it in the integer pointed to by `pshared`.
+ * The `pshared` attribute indicates whether the mutex can be shared between threads
+ * of different processes or only within the same process.
+ *
+ * @param[in] attr Pointer to the mutex attributes object.
+ * @param[out] pshared Pointer to an integer where the shared attribute will be stored.
+ *                    Possible values are:
+ *                    - `PTHREAD_PROCESS_PRIVATE`: Mutex is shared only within the same process.
+ *                    - `PTHREAD_PROCESS_SHARED`: Mutex can be shared between threads of different processes.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EINVAL`: Invalid attributes object or the `pshared` pointer is NULL.
+ *
+ * @note
+ * Use this function to check the shared attribute of an already initialized
+ * mutex attributes object.
+ *
+ * @warning
+ * Attempting to get the `pshared` attribute of an uninitialized or invalid
+ * attributes object will result in an error.
+ *
+ * @see pthread_mutexattr_setpshared, pthread_mutexattr_init, pthread_mutex_init
+ */
 int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared)
 {
     if (!attr || !pshared)
@@ -104,6 +268,31 @@ int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared)
 }
 RTM_EXPORT(pthread_mutexattr_getpshared);
 
+/**
+ * @brief Initializes a mutex with optional attributes.
+ *
+ * This function initializes a mutex object pointed to by `mutex`. The mutex
+ * can optionally be initialized with attributes specified by `attr`. If
+ * `attr` is `NULL`, default attributes are used.
+ *
+ * @param[in,out] mutex Pointer to the mutex to be initialized.
+ * @param[in] attr Pointer to the mutex attributes object. Pass `NULL` to use
+ *                 default attributes.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EINVAL`: Invalid parameters or result.
+ *
+ * @note
+ * The mutex object must be destroyed using `pthread_mutex_destroy()` after it
+ * is no longer needed to free associated resources.
+ *
+ * @warning
+ * A mutex should not be re-initialized while it is already in use.
+ *
+ * @see pthread_mutex_destroy, pthread_mutex_lock, pthread_mutex_unlock
+ */
 int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 {
     rt_err_t result;
@@ -133,6 +322,31 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 }
 RTM_EXPORT(pthread_mutex_init);
 
+/**
+ * @brief Destroys a mutex object.
+ *
+ * This function releases any resources associated with the mutex object
+ * pointed to by `mutex`. After the mutex has been destroyed, it cannot
+ * be used unless it is re-initialized with `pthread_mutex_init()`.
+ *
+ * @param[in,out] mutex Pointer to the mutex to be destroyed.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EBUSY`: The mutex is currently locked or being used by another thread.
+ *   - `EINVAL`: The mutex is invalid or has not been initialized.
+ *
+ * @note
+ * Before calling this function, ensure that the mutex is not locked or in use
+ * by any thread. Destroying a locked mutex results in undefined behavior.
+ *
+ * @warning
+ * Attempting to destroy a mutex that is still in use can cause resource leaks
+ * or undefined behavior.
+ *
+ * @see pthread_mutex_init, pthread_mutex_lock, pthread_mutex_unlock
+ */
 int pthread_mutex_destroy(pthread_mutex_t *mutex)
 {
     if (!mutex || mutex->attr == -1)
@@ -149,6 +363,34 @@ int pthread_mutex_destroy(pthread_mutex_t *mutex)
 }
 RTM_EXPORT(pthread_mutex_destroy);
 
+/**
+ * @brief Locks a mutex.
+ *
+ * This function locks the mutex object pointed to by `mutex`. If the mutex is
+ * already locked by another thread, the calling thread will block until the
+ * mutex becomes available.
+ *
+ * @param[in,out] mutex Pointer to the mutex to be locked.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EDEADLK`: A deadlock condition was detected (e.g., the current thread
+ *     already holds the mutex in a recursive locking scenario).
+ *   - `EINVAL`: The mutex is invalid or uninitialized.
+ *
+ * @note
+ * If the mutex is initialized with the `PTHREAD_MUTEX_RECURSIVE` attribute,
+ * the same thread can lock the mutex multiple times without causing a deadlock.
+ * However, the mutex must be unlocked an equal number of times before it
+ * becomes available to other threads.
+ *
+ * @warning
+ * Attempting to lock an uninitialized or already destroyed mutex results in
+ * undefined behavior.
+ *
+ * @see pthread_mutex_unlock, pthread_mutex_trylock, pthread_mutex_init
+ */
 int pthread_mutex_lock(pthread_mutex_t *mutex)
 {
     int mtype;
@@ -182,6 +424,33 @@ int pthread_mutex_lock(pthread_mutex_t *mutex)
 }
 RTM_EXPORT(pthread_mutex_lock);
 
+/**
+ * @brief Unlocks a mutex.
+ *
+ * This function unlocks the mutex object pointed to by `mutex`. If other threads
+ * are blocked waiting for the mutex, one of them will acquire the lock once it is
+ * released. The calling thread must hold the lock on the mutex before calling
+ * this function.
+ *
+ * @param[in,out] mutex Pointer to the mutex to be unlocked.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EPERM`: The current thread does not hold the lock on the mutex.
+ *   - `EINVAL`: The mutex is invalid or uninitialized.
+ *
+ * @note
+ * If the mutex was initialized with the `PTHREAD_MUTEX_RECURSIVE` attribute,
+ * the mutex will only be unlocked after the calling thread unlocks it as many
+ * times as it was locked.
+ *
+ * @warning
+ * Attempting to unlock an uninitialized, destroyed, or unlocked mutex results
+ * in undefined behavior.
+ *
+ * @see pthread_mutex_lock, pthread_mutex_trylock, pthread_mutex_init
+ */
 int pthread_mutex_unlock(pthread_mutex_t *mutex)
 {
     rt_err_t result;
@@ -216,6 +485,31 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex)
 }
 RTM_EXPORT(pthread_mutex_unlock);
 
+/**
+ * @brief Attempts to lock a mutex without blocking.
+ *
+ * This function attempts to lock the mutex object pointed to by `mutex`. If the mutex
+ * is already locked by another thread, the function returns immediately with an error
+ * code instead of blocking.
+ *
+ * @param[in,out] mutex Pointer to the mutex to be locked.
+ *
+ * @return
+ * - 0 on success (the mutex was successfully locked).
+ * - Non-zero error code on failure, including:
+ *   - `EBUSY`: The mutex is already locked by another thread.
+ *   - `EINVAL`: The mutex is invalid or uninitialized.
+ *
+ * @note
+ * This function is useful for implementing non-blocking mutex acquisition. If the mutex
+ * was initialized with the `PTHREAD_MUTEX_RECURSIVE` attribute, the calling thread can
+ * lock it multiple times, but must unlock it the same number of times.
+ *
+ * @warning
+ * Attempting to trylock an uninitialized or destroyed mutex results in undefined behavior.
+ *
+ * @see pthread_mutex_lock, pthread_mutex_unlock, pthread_mutex_init
+ */
 int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
     rt_err_t result;
