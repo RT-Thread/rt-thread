@@ -90,16 +90,18 @@ static int rtc_month_days(unsigned int month, unsigned int year)
 
 static void hal_cvi_rtc_clk_set(int enable)
 {
+    rt_ubase_t clk = (rt_ubase_t)DRV_IOREMAP((void *)CLK_EN_0,0x1000);
+
     uint32_t clk_state;
 
-    clk_state = mmio_read_32((long unsigned int)CLK_EN_0);
+    clk_state = mmio_read_32(clk);
 
     if(enable)
         clk_state |= CLK_RTC_25M_BIT;
     else
         clk_state &= ~(CLK_RTC_25M_BIT);
 
-    mmio_write_32((long unsigned int)CLK_EN_0, clk_state);
+    mmio_write_32(clk, clk_state);
 }
 
 static void hal_cvi_rtc_enable_sec_counter(uintptr_t rtc_base)
