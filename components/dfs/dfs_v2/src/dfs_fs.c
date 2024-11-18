@@ -346,7 +346,7 @@ int dfs_mount(const char *device_name,
 
 int dfs_umount(const char *specialfile, int flags)
 {
-    int ret = -RT_ERROR;
+    int ret = -1;
     char *fullpath = RT_NULL;
     struct dfs_mnt *mnt = RT_NULL;
 
@@ -374,11 +374,13 @@ int dfs_umount(const char *specialfile, int flags)
                 else
                 {
                     LOG_I("the file system is busy!");
+                    ret = -EBUSY;
                 }
             }
             else
             {
                 LOG_I("the path:%s is not a mountpoint!", fullpath);
+                ret = -EINVAL;
             }
         }
         else
