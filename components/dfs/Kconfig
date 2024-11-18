@@ -169,14 +169,16 @@ if RT_USING_DFS_V1
         default n
 endif
 
-    config RT_USING_DFS_ROMFS
+    menuconfig RT_USING_DFS_ROMFS
         bool "Enable ReadOnly file system on flash"
         default n
 
-    config RT_USING_DFS_ROMFS_USER_ROOT
-        bool "Use user's romfs root"
-        depends on RT_USING_DFS_ROMFS
-        default n
+    if RT_USING_DFS_ROMFS
+        config RT_USING_DFS_ROMFS_USER_ROOT
+            bool "Use user's romfs root"
+            depends on RT_USING_DFS_V1
+            default n
+    endif
 
 if RT_USING_SMART
     config RT_USING_DFS_PTYFS
