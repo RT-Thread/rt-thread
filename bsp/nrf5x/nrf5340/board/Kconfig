@@ -19,20 +19,23 @@ choice
         select BSP_USING_UART0
         bool "NRF5340 pca10095 "
 
-    config BSP_BOARD_ARDUINO_NANO_33_BLE
-        bool "Arduino Nano 33 BLE (Sense)"
+    config BSP_BOARD_PCA_10143
+        select BSP_USING_UART
+        select BSP_USING_UART0
+        bool "NRF7002 NRF5340 pca10143"
+		
 endchoice
 
 menu "Onboard Peripheral Drivers"
-    config BSP_USING_JLINK_TO_USART
-        bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
-        default y
-        depends on BSP_BOARD_PCA_10095
+    config BSP_USING_JLINK_SEGGER_RTT_CONSOLE
+	    select PKG_USING_SEGGER_RTT
+        bool "Use the segger rtt instead of console uart"
+        default n
 
     config RT_BSP_LED_PIN
-        int
+        int 
         default 28 if BSP_BOARD_PCA_10095
-        default 16 if BSP_BOARD_ARDUINO_NANO_33_BLE
+        default 38 if BSP_BOARD_PCA_10143
         depends on BSP_USING_GPIO
 
 
@@ -40,8 +43,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_FAL
         bool "Enable QSPI FLASH(MX25R64 8MB)"
         default n
-        depends on BSP_BOARD_PCA_10095
-
+		
         if BSP_USING_QSPI_FLASH
             config NRFX_QSPI_ENABLED
             int
@@ -552,10 +554,6 @@ help
 
 config BLE_STACK_USING_NULL
     bool "not use the ble stack"
-
-config  BSP_USING_SOFTDEVICE
-    select PKG_USING_NRF5X_SDK
-    bool "Nordic softdevice(perpheral)"
 
 config BSP_USING_NIMBLE
     select PKG_USING_NIMBLE
