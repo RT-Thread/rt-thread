@@ -65,16 +65,15 @@ void rt_hw_board_init(void)
     rt_hw_uart_init();
 #endif
 
-#ifdef SEGGER_RTT_ENABLE
-extern int rt_hw_jlink_rtt_init(void);
-        rt_hw_jlink_rtt_init();
-        rt_console_set_device("jlinkRtt");
-#else
-    #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    #ifdef SEGGER_RTT_ENABLE
+    extern int rt_hw_jlink_rtt_init(void);
+            rt_hw_jlink_rtt_init();
+            rt_console_set_device("jlinkRtt");
+    #else
             rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
     #endif
 #endif
-
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
