@@ -271,7 +271,7 @@ menuconfig RT_USING_DEBUG
 config RT_USING_CI_ACTION
     default n
     help
-        Enable CI Action
+        Identify that the environment is CI Action.
 
 menu "Inter-Thread communication"
 
