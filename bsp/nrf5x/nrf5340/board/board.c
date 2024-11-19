@@ -60,7 +60,6 @@ void rt_hw_board_init(void)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-
 #ifdef RT_USING_SERIAL
     rt_hw_uart_init();
 #endif
