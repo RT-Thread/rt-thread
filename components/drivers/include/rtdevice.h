@@ -107,7 +107,6 @@ extern "C" {
 
 #ifdef RT_USING_PHY
 #include "drivers/phy.h"
-#include "drivers/phy_mdio.h"
 #endif /* RT_USING_PHY */
 
 #ifdef RT_USING_SDIO
