@@ -90,6 +90,9 @@ extern "C" {
 #include "drivers/dev_serial_v2.h"
 #else
 #include "drivers/dev_serial.h"
+#ifdef RT_USING_SERIAL_BYPASS
+#include "drivers/bypass.h"
+#endif /* RT_USING_SERIAL_BYPASS */
 #endif
 #endif /* RT_USING_SERIAL */
 

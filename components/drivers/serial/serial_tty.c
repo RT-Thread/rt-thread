@@ -154,10 +154,25 @@ static void _tty_rx_worker(struct rt_work *work, void *data)
     ttydisc_rint_done(tp);
     tty_unlock(tp);
 }
+#ifdef RT_USING_SERIAL_BYPASS
+static rt_err_t _serial_ty_bypass(struct rt_serial_device* serial, char ch,void *data)
+{
+    lwp_tty_t tp;
+    tp = (lwp_tty_t)data;
 
-rt_inline void _setup_serial(struct rt_serial_device *serial, lwp_tty_t tp,
+    tty_lock(tp);
+    ttydisc_rint(tp, ch, 0);
+    ttydisc_rint_done(tp);
+    tty_unlock(tp);
+
+    return RT_EOK;
+
+}
+#endif
+rt_inline void _setup_serial(struct rt_serial_device* serial, lwp_tty_t tp,
                              struct serial_tty_context *softc)
 {
+#ifndef RT_USING_SERIAL_BYPASS
     struct rt_device_notify notify;
 
     softc->backup_notify = serial->rx_notify;
@@ -167,6 +182,9 @@ rt_inline void _setup_serial(struct rt_serial_device *serial, lwp_tty_t tp,
     rt_device_init(&serial->parent);
 
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &notify);
+#else
+    rt_bypass_lower_register(serial, "tty",RT_BYPASS_PROTECT_LEVEL_1, _serial_ty_bypass,(void *)tp);
+#endif
 }
 
 rt_inline void _restore_serial(struct rt_serial_device *serial, lwp_tty_t tp,

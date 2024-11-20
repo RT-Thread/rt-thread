@@ -76,7 +76,7 @@
  *     if (!serial)
  *     {
  *         rt_kprintf("find %s failed!\n", uart_name);
- *         return RT_ERROR;
+ *         return -RT_ERROR;
  *     }
  *
  *
@@ -97,7 +97,7 @@
  *     }
  *     else
  *     {
- *         ret = RT_ERROR;
+ *         ret = -RT_ERROR;
  *     }
  *
  *     return ret;
@@ -264,7 +264,9 @@ struct rt_serial_device
     void *serial_tx;
 
     struct rt_spinlock spinlock;
-
+#ifdef RT_USING_SERIAL_BYPASS
+    struct rt_serial_bypass* bypass;
+#endif
     struct rt_device_notify rx_notify;
 };
 typedef struct rt_serial_device rt_serial_t;
