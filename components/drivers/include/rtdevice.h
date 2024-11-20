@@ -45,6 +45,10 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#ifdef RT_USING_DMA
+#include "drivers/dma.h"
+#endif
+
 #ifdef RT_USING_BLK
 #include "drivers/blk.h"
 #endif
