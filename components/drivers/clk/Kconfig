@@ -5,5 +5,5 @@ menuconfig RT_USING_CLK
     default y
 
 if RT_USING_CLK
-    source "$(RTT_DIR)/components/drivers/$(SOC_DM_CLK_DIR)/Kconfig.dm"
+    osource "$(SOC_DM_CLK_DIR)/Kconfig"
 endif
