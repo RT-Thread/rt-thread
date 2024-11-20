@@ -1410,6 +1410,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 
             while (1)
             {
+                rt_bool_t skip = RT_FALSE;
                 ch = serial->ops->getc(serial);
                 if (ch == -1) break;
 
@@ -1425,9 +1426,18 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                         struct rt_serial_bypass *bypass_run= rt_container_of(node, struct rt_serial_bypass, list);
                         ret = bypass_run->bypass(serial, buf);
                         if (!ret)
-                            continue;
+                        {
+                            skip = RT_TRUE;
+                            break;
+                        }
                         node = node->next;
                     } while (node != &serial->bypass->list);
+                }
+
+                if (skip)
+                {
+                    rt_spin_unlock_irqrestore(&(serial->spinlock), level);
+                    continue;
                 }
 
                 rx_fifo->buffer[rx_fifo->put_index] = ch;
