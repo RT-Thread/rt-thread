@@ -25,6 +25,13 @@
 #define FAL_DEBUG                      0
 #endif
 
+#if FAL_DEBUG
+#ifdef assert
+#undef assert
+#endif
+#define assert(x) RT_ASSERT(x)
+#endif
+
 /* FAL flash and partition device name max length */
 #ifndef FAL_DEV_NAME_MAX
 #define FAL_DEV_NAME_MAX 24

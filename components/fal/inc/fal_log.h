@@ -14,15 +14,6 @@
 #include "fal_def.h"
 
 #if FAL_DEBUG
-#ifdef assert
-#undef assert
-#endif
-#define assert(EXPR)                                                           \
-if (!(EXPR))                                                                   \
-{                                                                              \
-    FAL_PRINTF("(%s) has assert failed at %s.\n", #EXPR, __FUNCTION__);        \
-    while (1);                                                                 \
-}
 
 /* debug level log */
 #ifdef  log_d
