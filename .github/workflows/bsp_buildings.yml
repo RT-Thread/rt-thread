@@ -203,6 +203,7 @@ jobs:
          -  RTT_BSP: "nxp_renesas" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
+                - "nxp/S32K3/S32K344-core"
                 - "nxp/lpc/lpc55sxx/lpc55s69_nxp_evk"
                 - "nxp/lpc/lpc55sxx/lpc55s28_nxp_evk"
                 - "nxp/lpc/lpc55sxx/lpc55s06_nxp_evk"
