@@ -24,7 +24,7 @@
 
 /* klibc optimization */
 
-#define RT_KLIBC_USING_PRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
 /* end of klibc optimization */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
