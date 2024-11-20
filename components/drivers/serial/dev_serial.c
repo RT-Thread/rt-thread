@@ -1413,9 +1413,22 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 ch = serial->ops->getc(serial);
                 if (ch == -1) break;
 
-
                 /* disable interrupt */
                 level = rt_spin_lock_irqsave(&(serial->spinlock));
+
+                if (serial->bypass)
+                {
+                    char buf = (char)ch;
+                    int ret;
+                    rt_list_t* node = &serial->bypass->list;
+                    do {
+                        struct rt_serial_bypass *bypass_run= rt_container_of(node, struct rt_serial_bypass, list);
+                        ret = bypass_run->bypass(serial, buf);
+                        if (!ret)
+                            continue;
+                        node = node->next;
+                    } while (node != &serial->bypass->list);
+                }
 
                 rx_fifo->buffer[rx_fifo->put_index] = ch;
                 rx_fifo->put_index += 1;

@@ -15,6 +15,7 @@ if GetDepend(['RT_USING_SERIAL_V2']):
     src += ['dev_serial_v2.c']
 else:
     src += ['dev_serial.c']
+    src += ['bypass.c']
 
 if GetDepend(['RT_USING_DM']):
     src += ['serial_dm.c']
