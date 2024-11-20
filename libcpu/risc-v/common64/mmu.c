@@ -536,7 +536,7 @@ void rt_hw_mem_setup_early(void)
 
     if (pv_off)
     {
-        if (pv_off & (1ul << (ARCH_INDEX_WIDTH * 2 + ARCH_PAGE_SHIFT)))
+        if (pv_off & ((1ul << (ARCH_INDEX_WIDTH * 2 + ARCH_PAGE_SHIFT)) - 1))
         {
             LOG_E("%s: not aligned virtual address. pv_offset %p", __func__,
                   pv_off);
