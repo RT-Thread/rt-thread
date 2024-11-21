@@ -86,6 +86,30 @@ int pthread_barrier_destroy(pthread_barrier_t *barrier)
     if (!barrier)
         return EINVAL;
 
+    /* Lock the internal mutex to safely check the barrier's state*/
+    result = pthread_mutex_lock(&(barrier->mutex));
+    if (result != 0)
+        return result;
+
+    /* Check if any threads are currently waiting on the barrier*/
+    if (barrier->count != 0)
+    {
+        pthread_mutex_unlock(&(barrier->mutex));
+        return EBUSY; /* Threads are still waiting*/
+    }
+
+    /* Free resources associated with the barrier*/
+    result = pthread_mutex_unlock(&(barrier->mutex));
+    if (result != 0)
+    {
+        return result; /* Return mutex unlock error*/
+    }
+
+    result = pthread_mutex_destroy(&(barrier->mutex));
+    if (result != 0)
+    {
+        return result; /* Return mutex destroy error*/
+    }
     result = pthread_cond_destroy(&(barrier->cond));
 
     return result;
