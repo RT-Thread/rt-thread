@@ -268,6 +268,11 @@ menuconfig RT_USING_DEBUG
                 each thread switch.
     endif
 
+config RT_USING_CI_ACTION
+    default n
+    help
+        Identify that the environment is CI Action.
+
 menu "Inter-Thread communication"
 
     config RT_USING_SEMAPHORE
@@ -456,6 +461,7 @@ config RT_USING_CONSOLE
 if RT_USING_CONSOLE
     config RT_CONSOLEBUF_SIZE
         int "the buffer size for console log printf"
+        default 256 if RT_USING_UTEST
         default 128
 
     config RT_CONSOLE_DEVICE_NAME

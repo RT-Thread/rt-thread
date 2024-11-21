@@ -230,6 +230,39 @@ rt_inline rt_bool_t rt_atomic_inc_not_zero(volatile rt_atomic_t *ptr)
     return rt_atomic_add_unless(ptr, 1, 0);
 }
 
+/**
+ * @brief initialize a lock-less single list
+ *
+ * @param l the single list to be initialized
+ */
+rt_inline void rt_ll_slist_init(rt_ll_slist_t *l)
+{
+    l->next = 0;
+}
+
+rt_inline void rt_ll_slist_enqueue(rt_ll_slist_t *l, rt_ll_slist_t *n)
+{
+    rt_base_t exp;
+    exp = rt_atomic_load(&l->next);
+    do
+    {
+        n->next = exp;
+    } while (!rt_atomic_compare_exchange_strong(&l->next, &exp, (rt_base_t)n));
+}
+
+rt_inline rt_ll_slist_t *rt_ll_slist_dequeue(rt_ll_slist_t *l)
+{
+    rt_base_t exp;
+    rt_ll_slist_t *head;
+
+    exp = rt_atomic_load(&l->next);
+    do
+    {
+        head = (rt_ll_slist_t *)exp;
+    } while (head && !rt_atomic_compare_exchange_strong(&l->next, &exp, rt_atomic_load(&head->next)));
+    return head;
+}
+
 #endif /* __cplusplus */
 
 #endif /* __RT_ATOMIC_H__ */

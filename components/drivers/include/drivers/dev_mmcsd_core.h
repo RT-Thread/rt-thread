@@ -249,8 +249,6 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void);
 void mmcsd_free_host(struct rt_mmcsd_host *host);
 int rt_mmcsd_core_init(void);
 
-int rt_mmcsd_blk_init(void);
-rt_int32_t read_lba(struct rt_mmcsd_card *card, size_t lba, uint8_t *buffer, size_t count);
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card);
 void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card);
 

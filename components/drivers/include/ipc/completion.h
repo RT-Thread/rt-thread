@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-04-28     Shell        Add new wait_flags() & wakeup_by_errno() API
+ * 2024-10-24     yekai        Add C++ support
  */
 #ifndef COMPLETION_H_
 #define COMPLETION_H_
@@ -30,6 +31,10 @@ struct rt_completion
 
 #define RT_COMPLETION_INIT(comp) {0}
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void rt_completion_init(struct rt_completion *completion);
 rt_err_t rt_completion_wait(struct rt_completion *completion,
                             rt_int32_t            timeout);
@@ -42,4 +47,9 @@ rt_err_t rt_completion_wait_flags_noisr(struct rt_completion *completion,
 void rt_completion_done(struct rt_completion *completion);
 rt_err_t rt_completion_wakeup(struct rt_completion *completion);
 rt_err_t rt_completion_wakeup_by_errno(struct rt_completion *completion, rt_err_t error);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

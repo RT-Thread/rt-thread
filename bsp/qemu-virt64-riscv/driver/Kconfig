@@ -34,15 +34,4 @@ config BSP_USING_VIRTIO_INPUT
     default y
     depends on RT_USING_VIRTIO
 
-menuconfig BSP_USING_UART1
-    bool "Enable UART1"
-    default n
-    if BSP_USING_UART1
-        config BSP_UART1_TXD_PIN
-            int "uart1 TXD pin number"
-            default 20
-        config BSP_UART1_RXD_PIN
-            int "uart1 RXD pin number"
-            default 21
-    endif
 endmenu

@@ -117,7 +117,7 @@ extern "C" {
 
 /* Common Utilities */
 
-#define RT_UNUSED(x)                   ((void)x)
+#define RT_UNUSED(x)                   ((void)(x))
 
 /* compile time assertion */
 #define RT_STATIC_ASSERT(name, expn) typedef char _static_assert_##name[(expn)?1:-1]
@@ -180,15 +180,10 @@ typedef int (*init_fn_t)(void);
 
 /* init cpu, memory, interrupt-controller, bus... */
 #define INIT_CORE_EXPORT(fn)            INIT_EXPORT(fn, "1.0")
-/* init pci/pcie, usb platform driver... */
-#define INIT_FRAMEWORK_EXPORT(fn)       INIT_EXPORT(fn, "1.1")
+/* init sys-timer, clk, pinctrl... */
+#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.1")
 /* init platform, user code... */
 #define INIT_PLATFORM_EXPORT(fn)        INIT_EXPORT(fn, "1.2")
-/* init sys-timer, clk, pinctrl... */
-#define INIT_SUBSYS_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.3.0")
-#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3.1")
-/* init early drivers */
-#define INIT_DRIVER_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.4")
 
 /* pre/device/component/env/app init routines will be called in init_thread */
 /* components pre-initialization (pure software initialization) */
@@ -674,8 +669,8 @@ typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
 
-#ifndef RT_FUNC_IPI
-#define RT_FUNC_IPI                     2
+#ifndef RT_SMP_CALL_IPI
+#define RT_SMP_CALL_IPI                 2
 #endif
 
 #define RT_MAX_IPI                      3
@@ -723,6 +718,9 @@ struct rt_cpu
 #ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
 #endif /* RT_USING_CPU_USAGE_TRACER */
+#ifdef ARCH_USING_IRQ_CTX_LIST
+    rt_slist_t                  irq_ctx_head;
+#endif /* ARCH_USING_IRQ_CTX_LIST */
 };
 
 #else /* !RT_USING_SMP */
@@ -734,6 +732,9 @@ struct rt_cpu
 #ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
 #endif /* RT_USING_CPU_USAGE_TRACER */
+#ifdef ARCH_USING_IRQ_CTX_LIST
+    rt_slist_t                  irq_ctx_head;
+#endif /* ARCH_USING_IRQ_CTX_LIST */
 };
 
 #endif /* RT_USING_SMP */
@@ -743,6 +744,16 @@ typedef struct rt_cpu *rt_cpu_t;
 #define rt_current_thread rt_thread_self()
 
 struct rt_thread;
+
+/**
+ * interrupt/exception frame handling
+ *
+ */
+
+typedef struct rt_interrupt_context {
+    void *context;      /**< arch specific context */
+    rt_slist_t node;    /**< node for nested interrupt */
+} *rt_interrupt_context_t;
 
 #ifdef RT_USING_SMART
 typedef rt_err_t (*rt_wakeup_func_t)(void *object, struct rt_thread *thread);
@@ -1374,6 +1385,9 @@ struct rt_device
     rt_uint16_t               open_flag;                /**< device open flag */
 
     rt_uint8_t                ref_count;                /**< reference count */
+#ifdef RT_USING_DM
+    rt_uint8_t                master_id;                /**< 0 - 255 */
+#endif
     rt_uint8_t                device_id;                /**< 0 - 255 */
 
     /* device call back */
