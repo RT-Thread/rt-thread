@@ -49,6 +49,8 @@ extern "C" {
 #include "drivers/blk.h"
 #endif
 
+#include "drivers/iio.h"
+
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"
 #include "drivers/ofw_fdt.h"
