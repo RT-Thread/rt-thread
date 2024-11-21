@@ -46,7 +46,8 @@ _distinguish_syscall:
 #ifdef RT_USING_SMART
     // TODO swap 8 with config macro name
     li      t1, 8
-    beq     t0, t1, syscall_entry
+    bne     t0, t1, _handle_interrupt_and_exception
+    call syscall_entry
     // syscall never return here
 #endif
 
@@ -78,7 +79,8 @@ _resume_execution:
 #ifdef RT_USING_SMART
     LOAD    t0, FRAME_OFF_SSTATUS(sp)
     andi    t0, t0, SSTATUS_SPP
-    beqz    t0, arch_ret_to_user
+    bnez    t0, _resume_kernel
+    call arch_ret_to_user
 #endif
 
 _resume_kernel:

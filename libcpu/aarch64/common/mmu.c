@@ -556,7 +556,8 @@ unsigned long get_free_page(void)
 }
 
 static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
-                               unsigned long pa, unsigned long attr)
+                               unsigned long pa, unsigned long attr,
+                               rt_bool_t flush)
 {
     int level;
     unsigned long *cur_lv_tbl = lv0_tbl;
@@ -585,6 +586,10 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
             }
             rt_memset((char *)page, 0, ARCH_PAGE_SIZE);
             cur_lv_tbl[off] = page | MMU_TYPE_TABLE;
+            if (flush)
+            {
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
+            }
         }
         page = cur_lv_tbl[off];
         if ((page & MMU_TYPE_MASK) == MMU_TYPE_BLOCK)
@@ -600,6 +605,10 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     off = (va >> ARCH_SECTION_SHIFT);
     off &= MMU_LEVEL_MASK;
     cur_lv_tbl[off] = pa;
+    if (flush)
+    {
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
+    }
     return 0;
 }
 
@@ -633,7 +642,7 @@ void *rt_ioremap_early(void *paddr, size_t size)
 
     while (count --> 0)
     {
-        if (_map_single_page_2M(tbl, base, base, MMU_MAP_K_DEVICE))
+        if (_map_single_page_2M(tbl, base, base, MMU_MAP_K_DEVICE, RT_TRUE))
         {
             return RT_NULL;
         }
@@ -661,7 +670,7 @@ static int _init_map_2M(unsigned long *lv0_tbl, unsigned long va,
     }
     for (i = 0; i < count; i++)
     {
-        ret = _map_single_page_2M(lv0_tbl, va, pa, attr);
+        ret = _map_single_page_2M(lv0_tbl, va, pa, attr, RT_FALSE);
         va += ARCH_SECTION_SIZE;
         pa += ARCH_SECTION_SIZE;
         if (ret != 0)

@@ -102,12 +102,21 @@ static int rt_hw_rtc_init(void)
     rcu_bkp_reset_enable();
     rcu_bkp_reset_disable();
     rcu_periph_clock_enable(RCU_RTC);
+#ifdef BSP_RTC_USING_LSE
     rcu_osci_on(RCU_LXTAL);
     if (SUCCESS == rcu_osci_stab_wait(RCU_LXTAL))
     {
         /* set lxtal as rtc clock source */
         rcu_rtc_clock_config(RCU_RTCSRC_LXTAL);
     }
+#elifdef BSP_RTC_USING_LSI
+    rcu_osci_on(RCU_IRC40K);
+    if (SUCCESS == rcu_osci_stab_wait(RCU_IRC40K))
+    {
+        /* set IRC40K as rtc clock source */
+        rcu_rtc_clock_config(RCU_RTCSRC_IRC40K);
+    }
+#endif
     set_rtc_timestamp(rtc_counter);
 
 #ifdef RT_USING_DEVICE_OPS

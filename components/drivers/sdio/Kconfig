@@ -1,5 +1,6 @@
 config RT_USING_SDIO
     bool "Using SD/MMC device drivers"
+    select RT_USING_BLK
     default n
 
     if RT_USING_SDIO

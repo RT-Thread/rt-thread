@@ -101,6 +101,7 @@ config ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M85
     bool
@@ -218,6 +219,7 @@ config ARCH_ARMV8
     select ARCH_ARM
     select ARCH_ARM_MMU
     select RT_USING_CPU_FFS
+    select ARCH_USING_IRQ_CTX_LIST
 
 config ARCH_MIPS
     bool
@@ -322,5 +324,9 @@ config ARCH_CPU_STACK_GROWS_UPWARD
     default n
 
 config ARCH_USING_HW_THREAD_SELF
+    bool
+    default n
+
+config ARCH_USING_IRQ_CTX_LIST
     bool
     default n
