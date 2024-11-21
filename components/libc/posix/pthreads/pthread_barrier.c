@@ -45,7 +45,10 @@ int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared)
     if (!attr)
         return EINVAL;
     if (pshared == PTHREAD_PROCESS_PRIVATE)
-        attr = PTHREAD_PROCESS_PRIVATE;
+    {
+        *attr = PTHREAD_PROCESS_PRIVATE;
+        return 0;
+    }
 
     return EINVAL;
 }
