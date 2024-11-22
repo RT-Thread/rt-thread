@@ -31,6 +31,7 @@ static int _ipi_hash[] =
 #ifdef RT_USING_SMP
     [RT_SCHEDULE_IPI] = RT_SCHEDULE_IPI,
     [RT_STOP_IPI] = RT_STOP_IPI,
+    [RT_SMP_CALL_IPI] = RT_SMP_CALL_IPI,
 #endif
 };
 

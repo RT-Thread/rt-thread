@@ -1,3 +1,8 @@
 config RT_USING_PHY
     bool "Using ethernet phy device drivers"
     default n
+
+config RT_USING_PHY_V2
+    bool "Using phy device and mii bus v2"
+    depends on !RT_USING_PHY
+    default n

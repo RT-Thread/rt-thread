@@ -71,8 +71,9 @@ void gic_common_sgi_config(void *base, void *data, int irq_base)
         pirq = rt_pic_find_ipi(data, ipi);      \
         pirq->mode = RT_IRQ_MODE_EDGE_RISING;   \
 
-        DECLARE_GIC_IPI(RT_SCHEDULE_IPI, 0);
-        DECLARE_GIC_IPI(RT_STOP_IPI, 1);
+        DECLARE_GIC_IPI(RT_SCHEDULE_IPI, RT_SCHEDULE_IPI);
+        DECLARE_GIC_IPI(RT_STOP_IPI, RT_STOP_IPI);
+        DECLARE_GIC_IPI(RT_SMP_CALL_IPI, RT_SMP_CALL_IPI);
 
 #undef DECLARE_GIC_IPI
     }

@@ -78,7 +78,7 @@ do{                                                                 \
 }while(0)
 
 
-extern rt_uint32_t rt_interrupt_nest;
+extern rt_atomic_t rt_interrupt_nest;
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;

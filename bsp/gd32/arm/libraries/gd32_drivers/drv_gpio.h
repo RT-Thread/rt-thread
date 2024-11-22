@@ -29,6 +29,8 @@ extern "C" {
 #include "gd32f4xx_gpio.h"
 #elif defined SOC_SERIES_GD32H7xx
 #include "gd32h7xx_gpio.h"
+#elif defined SOC_SERIES_GD32E50x
+#include "gd32e50x_gpio.h"
 #endif
 
 #define __GD32_PORT(port)  GPIO##port

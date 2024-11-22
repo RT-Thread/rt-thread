@@ -45,6 +45,16 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#ifdef RT_USING_BLK
+#include "drivers/blk.h"
+#endif
+
+#ifdef RT_USING_DMA
+#include "drivers/dma.h"
+#endif
+
+#include "drivers/iio.h"
+
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"
 #include "drivers/ofw_fdt.h"
@@ -59,6 +69,10 @@ extern "C" {
 
 #ifdef RT_USING_SCSI
 #include "drivers/scsi.h"
+#endif
+
+#ifdef RT_MFD_SYSCON
+#include "drivers/syscon.h"
 #endif
 #endif /* RT_USING_DM */
 
@@ -111,7 +125,6 @@ extern "C" {
 
 #ifdef RT_USING_PHY
 #include "drivers/phy.h"
-#include "drivers/phy_mdio.h"
 #endif /* RT_USING_PHY */
 
 #ifdef RT_USING_SDIO
