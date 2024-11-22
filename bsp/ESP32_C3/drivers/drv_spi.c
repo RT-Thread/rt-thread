@@ -87,7 +87,6 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         size_t rxlength;                /*/< Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)*/
     }
 
-    LOG_W("configuration->max_hz = %d \n",configuration->max_hz);
     if(configuration->max_hz >= SPI_MASTER_FREQ_80M)
     {
         devcfg.clock_speed_hz = SPI_MASTER_FREQ_80M;    /*/< 80MHz*/
@@ -195,7 +194,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
 
-    rt_err_t result;rt_device_t busp = RT_NULL;
+    rt_err_t result;
     struct rt_spi_device *spi_device;
 
     /* attach the device to spi bus*/
