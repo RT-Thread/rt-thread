@@ -15,6 +15,10 @@
 #include "riscv.h"
 #include "plic.h"
 
+#ifndef C906_PLIC_PHY_ADDR
+#define C906_PLIC_PHY_ADDR              (0x10000000)
+#endif
+
 extern rt_atomic_t rt_interrupt_nest;
 extern rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 extern rt_uint32_t rt_thread_switch_interrupt_flag;
@@ -32,7 +36,7 @@ static void rt_hw_interrupt_handler(int vector, void *param)
 void rt_hw_interrupt_init(void)
 {
     /* init interrupt controller */
-    plic_init();
+    plic_init(C906_PLIC_PHY_ADDR);
 
     rt_int32_t idx;
 

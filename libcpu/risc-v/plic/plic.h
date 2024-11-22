@@ -14,14 +14,8 @@
 
 #include <interrupt.h>
 
-#ifndef C908_PLIC_PHY_ADDR
-#define C908_PLIC_PHY_ADDR              (0xF00000000UL)
-#endif
-#define C908_PLIC_NR_EXT_IRQS           (IRQ_MAX_NR)
-#define C908_NR_CPUS                    (NR_CPUS)
-
 /* M and S mode context. */
-#define C908_NR_CONTEXT                 (2)
+#define PLIC_NR_CONTEXT                 (2)
 
 #define MAX_DEVICES                     1024
 #define MAX_CONTEXTS                    15872
@@ -50,7 +44,7 @@
 #define CONTEXT_THRESHOLD               0x00
 #define CONTEXT_CLAIM                   0x04
 
-void plic_init(void);
+void plic_init(unsigned long base_pa);
 void plic_enable_irq(int irqno);
 void plic_disable_irq(int irqno);
 // tell PLIC that we've served this IRQ

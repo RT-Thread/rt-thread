@@ -31,7 +31,7 @@ struct plic_handler
 };
 
 rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable);
-struct plic_handler plic_handlers[C908_NR_CPUS];
+struct plic_handler plic_handlers[NR_CPUS];
 static void *plic_irq_priority[INTERRUPTS_MAX] = {RT_NULL};
 
 rt_inline void plic_irq_toggle(int hwirq, int enable)
@@ -153,7 +153,7 @@ rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
     }
 }
 
-void plic_init(void)
+void plic_init(unsigned long base_pa)
 {
     int nr_irqs;
     int nr_context;
@@ -167,16 +167,16 @@ void plic_init(void)
         return;
     }
 
-    nr_context = C908_NR_CONTEXT;
+    nr_context = PLIC_NR_CONTEXT;
 
-    plic_regs = (void *)C908_PLIC_PHY_ADDR;
+    plic_regs = (void *)base_pa;
     if (!plic_regs)
     {
         LOG_E("fatal error, plic is reg space is null.");
         return;
     }
 
-    nr_irqs = C908_PLIC_NR_EXT_IRQS;
+    nr_irqs = IRQ_MAX_NR;
 
     for (i = 0; i < nr_context; i ++)
     {
