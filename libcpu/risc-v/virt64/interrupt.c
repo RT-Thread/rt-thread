@@ -15,7 +15,11 @@
 #include "riscv.h"
 #include "interrupt.h"
 
-struct rt_irq_desc irq_desc[MAX_HANDLERS];
+#ifndef PLIC_BASE_ADDR
+#define PLIC_BASE_ADDR 0x0c000000
+#endif
+
+struct rt_irq_desc isr_table[INTERRUPTS_MAX];
 
 static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 {
@@ -25,13 +29,13 @@ static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 
 int rt_hw_plic_irq_enable(int irq_number)
 {
-    plic_irq_enable(irq_number);
+    plic_enable_irq(irq_number);
     return 0;
 }
 
 int rt_hw_plic_irq_disable(int irq_number)
 {
-    plic_irq_disable(irq_number);
+    plic_disable_irq(irq_number);
     return 0;
 }
 
@@ -57,16 +61,16 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
-    if(vector < MAX_HANDLERS)
+    if(vector < INTERRUPTS_MAX)
     {
-        old_handler = irq_desc[vector].handler;
+        old_handler = isr_table[vector].handler;
         if (handler != RT_NULL)
         {
-            irq_desc[vector].handler = (rt_isr_handler_t)handler;
-            irq_desc[vector].param = param;
+            isr_table[vector].handler = (rt_isr_handler_t)handler;
+            isr_table[vector].param = param;
 #ifdef RT_USING_INTERRUPT_INFO
-            rt_snprintf(irq_desc[vector].name, RT_NAME_MAX - 1, "%s", name);
-            irq_desc[vector].counter = 0;
+            rt_snprintf(isr_table[vector].name, RT_NAME_MAX - 1, "%s", name);
+            isr_table[vector].counter = 0;
 #endif
         }
     }
@@ -79,14 +83,17 @@ void rt_hw_interrupt_init()
     /* Enable machine external interrupts. */
     // set_csr(sie, SIP_SEIP);
     int idx = 0;
+
+    plic_init(PLIC_BASE_ADDR);
+
     /* init exceptions table */
-    for (idx = 0; idx < MAX_HANDLERS; idx++)
+    for (idx = 0; idx < INTERRUPTS_MAX; idx++)
     {
-        irq_desc[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
-        irq_desc[idx].param = RT_NULL;
+        isr_table[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
+        isr_table[idx].param = RT_NULL;
 #ifdef RT_USING_INTERRUPT_INFO
-        rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, "default");
-        irq_desc[idx].counter = 0;
+        rt_snprintf(isr_table[idx].name, RT_NAME_MAX - 1, "default");
+        isr_table[idx].counter = 0;
 #endif
     }
 

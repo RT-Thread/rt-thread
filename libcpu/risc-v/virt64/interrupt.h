@@ -11,10 +11,16 @@
 #ifndef INTERRUPT_H__
 #define INTERRUPT_H__
 
-#define MAX_HANDLERS 128
-
 #include <rthw.h>
 #include "stack.h"
+
+#define NR_CPUS       1
+
+#define IRQ_OFFSET          0
+#ifndef IRQ_MAX_NR
+#define IRQ_MAX_NR          128
+#endif
+#define INTERRUPTS_MAX      (IRQ_OFFSET + IRQ_MAX_NR)
 
 enum
 {

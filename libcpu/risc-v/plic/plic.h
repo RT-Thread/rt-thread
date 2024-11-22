@@ -50,5 +50,7 @@ void plic_disable_irq(int irqno);
 // tell PLIC that we've served this IRQ
 void plic_complete(int irq);
 void plic_handle_irq(void);
+void plic_set_threshold(int mthreshold);
+void plic_set_priority(int irq, int priority);
 
 #endif

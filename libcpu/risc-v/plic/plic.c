@@ -20,35 +20,29 @@
 #include "encoding.h"
 #include "ioremap.h"
 
-static void *plic_regs = RT_NULL;
+static void              *plic_regs = RT_NULL;
 extern struct rt_irq_desc isr_table[];
 
 struct plic_handler
 {
     rt_bool_t present;
-    void *hart_base;
-    void *enable_base;
+    void     *hart_base;
+    void     *enable_base;
 };
 
-rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable);
+rt_inline void      plic_toggle(struct plic_handler *handler, int hwirq, int enable);
 struct plic_handler plic_handlers[NR_CPUS];
-static void *plic_irq_priority[INTERRUPTS_MAX] = {RT_NULL};
+static void        *plic_irq_priority[INTERRUPTS_MAX] = {RT_NULL};
+
+static inline struct plic_handler* plic_get_handler(int cpu)
+{
+    return &plic_handlers[cpu];
+}
 
 rt_inline void plic_irq_toggle(int hwirq, int enable)
 {
-    int cpu = 0;
-    void *priority_addr;
+    int   cpu = 0;
 
-    /* set priority of interrupt, interrupt 0 is zero. */
-    priority_addr = (void *)((rt_size_t)plic_regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
-#ifdef RT_USING_SMART
-    if (plic_irq_priority[hwirq] == RT_NULL)
-    {
-        plic_irq_priority[hwirq] = (void *)rt_ioremap(priority_addr, 0x1000);
-    }
-    priority_addr = plic_irq_priority[hwirq];
-#endif
-    writel(enable, priority_addr);
     struct plic_handler *handler = &plic_handlers[cpu];
 
     if (handler->present)
@@ -60,7 +54,7 @@ rt_inline void plic_irq_toggle(int hwirq, int enable)
 static void generic_handle_irq(int irq)
 {
     rt_isr_handler_t isr;
-    void *param;
+    void            *param;
 
     if (irq < 0 || irq >= IRQ_MAX_NR)
     {
@@ -68,12 +62,12 @@ static void generic_handle_irq(int irq)
         return;
     }
 
-    if (!irq)   // irq = 0 => no irq
+    if (!irq) // irq = 0 => no irq
     {
         LOG_W("no irq!\n");
         return;
     }
-    isr = isr_table[IRQ_OFFSET + irq].handler;
+    isr   = isr_table[IRQ_OFFSET + irq].handler;
     param = isr_table[IRQ_OFFSET + irq].param;
     if (isr != RT_NULL)
     {
@@ -85,7 +79,7 @@ static void generic_handle_irq(int irq)
 
 void plic_complete(int irqno)
 {
-    int cpu = 0;
+    int                  cpu     = 0;
     struct plic_handler *handler = &plic_handlers[cpu];
 
     writel(irqno, (void *)((rt_size_t)handler->hart_base + CONTEXT_CLAIM));
@@ -109,11 +103,11 @@ void plic_enable_irq(int irqno)
  */
 void plic_handle_irq(void)
 {
-    int cpu = 0;
+    int          cpu = 0;
     unsigned int irq;
 
     struct plic_handler *handler = &plic_handlers[cpu];
-    void *claim = (void *)((rt_size_t)handler->hart_base + CONTEXT_CLAIM);
+    void                *claim   = (void *)((rt_size_t)handler->hart_base + CONTEXT_CLAIM);
 
     if (plic_regs == RT_NULL || !handler->present)
     {
@@ -140,8 +134,8 @@ void plic_handle_irq(void)
 
 rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
 {
-    uint32_t  *reg = (uint32_t *)((rt_size_t)handler->enable_base + (hwirq / 32) * sizeof(uint32_t));
-    uint32_t hwirq_mask = 1 << (hwirq % 32);
+    uint32_t *reg        = (uint32_t *)((rt_size_t)handler->enable_base + (hwirq / 32) * sizeof(uint32_t));
+    uint32_t  hwirq_mask = 1 << (hwirq % 32);
 
     if (enable)
     {
@@ -155,11 +149,11 @@ rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
 
 void plic_init(unsigned long base_pa)
 {
-    int nr_irqs;
-    int nr_context;
-    int i;
+    int           nr_irqs;
+    int           nr_context;
+    int           i;
     unsigned long hwirq;
-    int cpu = 0;
+    int           cpu = 0;
 
     if (plic_regs)
     {
@@ -178,10 +172,10 @@ void plic_init(unsigned long base_pa)
 
     nr_irqs = IRQ_MAX_NR;
 
-    for (i = 0; i < nr_context; i ++)
+    for (i = 0; i < nr_context; i++)
     {
         struct plic_handler *handler;
-        uint32_t threshold = 0;
+        uint32_t             threshold = 0;
 
         cpu = 0;
 
@@ -195,18 +189,18 @@ void plic_init(unsigned long base_pa)
         handler = &plic_handlers[cpu];
         if (handler->present)
         {
-            threshold  = 0xffffffff;
+            threshold = 0xffffffff;
             goto done;
         }
 
-        handler->present = RT_TRUE;
-        handler->hart_base = (void *)((rt_size_t)plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART);
+        handler->present     = RT_TRUE;
+        handler->hart_base   = (void *)((rt_size_t)plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART);
         handler->enable_base = (void *)((rt_size_t)plic_regs + ENABLE_BASE + i * ENABLE_PER_HART);
 #ifdef RT_USING_SMART
-        handler->hart_base = (void *)rt_ioremap(handler->hart_base, 0x1000);
+        handler->hart_base   = (void *)rt_ioremap(handler->hart_base, 0x1000);
         handler->enable_base = (void *)rt_ioremap(handler->enable_base, 0x1000);
 #endif
-done:
+    done:
         /* priority must be > threshold to trigger an interrupt */
         writel(threshold, (void *)((rt_size_t)handler->hart_base + CONTEXT_THRESHOLD));
         for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
@@ -217,4 +211,30 @@ done:
 
     /* Enable supervisor external interrupts. */
     set_csr(sie, SIE_SEIE);
+}
+
+void plic_set_threshold(int threshold)
+{
+    int hart = 0;
+    struct plic_handler *handler;
+
+    handler = plic_get_handler(hart);
+
+    writel(threshold, (void *)((rt_size_t)handler->hart_base + CONTEXT_THRESHOLD));
+}
+
+void plic_set_priority(int irq, int priority)
+{
+    void *priority_addr;
+
+    /* set priority of interrupt, interrupt 0 is zero. */
+    priority_addr = (void *)((rt_size_t)plic_regs + PRIORITY_BASE + irq * PRIORITY_PER_ID);
+#ifdef RT_USING_SMART
+    if (plic_irq_priority[hwirq] == RT_NULL)
+    {
+        plic_irq_priority[hwirq] = (void *)rt_ioremap(priority_addr, 0x1000);
+    }
+    priority_addr = plic_irq_priority[hwirq];
+#endif
+    writel(priority, priority_addr);
 }
