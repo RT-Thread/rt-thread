@@ -328,8 +328,8 @@ menu "On-chip Peripheral Drivers"
                 endchoice
                 config BSP_SPI1_MISO_PIN
                     int
-                    default 8 if BSP_SPI0_MISO_PIN_8
-                    default 12 if BSP_SPI0_MISO_PIN_12
+                    default 8 if BSP_SPI1_MISO_PIN_8
+                    default 12 if BSP_SPI1_MISO_PIN_12
 
                 choice
                     prompt "spi1 SCK pin number (GP)"
@@ -347,7 +347,7 @@ menu "On-chip Peripheral Drivers"
 
                 choice
                     prompt "spi1 CS pin number (GP)"
-                    depends on BSP_USING_SPI0
+                    depends on BSP_USING_SPI1
                     default BSP_SPI1_CS_PIN_13 if BSP_USING_ARDUINO
                     config BSP_SPI1_CS_PIN_13
                         bool "13"

@@ -30,6 +30,7 @@ import os
 import json
 import utils
 import rtconfig
+
 from utils import _make_path_relative
 
 def delete_repeatelist(data):
@@ -39,7 +40,7 @@ def delete_repeatelist(data):
 
 def GenerateCFiles(env):
     """
-    Generate c_cpp_properties files
+    Generate c_cpp_properties.json and build/compile_commands.json files
     """
     if not os.path.exists('.vscode'):
         os.mkdir('.vscode')
@@ -113,8 +114,47 @@ def GenerateCFiles(env):
         vsc_space_file.close()    
     return
 
+def GenerateProjectFiles(env):
+    """
+    Generate project.json file
+    """
+    if not os.path.exists('.vscode'):
+        os.mkdir('.vscode')
+
+    project = env['project']
+    vsc_file = open('.vscode/project.json', 'w')
+    if vsc_file:
+        groups = []
+        for group in project:
+            if len(group['src']) > 0:
+                item = {}
+                item['name'] = group['name']
+                item['path'] = _make_path_relative(os.getcwd(), group['path'])
+                item['files'] = []
+
+                for fn in group['src']:
+                    item['files'].append(str(fn))
+
+                # append SConscript if exist
+                if os.path.exists(os.path.join(item['path'], 'SConscript')):
+                    item['files'].append(os.path.join(item['path'], 'SConscript'))
+
+                groups.append(item)
+
+        json_dict = {}
+        json_dict['RT-Thread'] = env['RTT_ROOT']
+        json_dict['Groups'] = groups
+
+        # write groups to project.json
+        vsc_file.write(json.dumps(json_dict, ensure_ascii=False, indent=4))
+        vsc_file.close()
+
+    return
+
 def GenerateVSCode(env):
     print('Update setting files for VSCode...')
+
+    GenerateProjectFiles(env)
     GenerateCFiles(env)
     print('Done!')
 

@@ -37,6 +37,7 @@ struct rt_ofw_node
     /* phandles range from 1 to 2^32-2 (0xfffffffe) */
     rt_phandle phandle;
 
+    struct rt_device *dev;
     struct rt_ofw_prop *props;
     struct rt_ofw_node *parent;
     struct rt_ofw_node *child;

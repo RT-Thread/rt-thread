@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -435,7 +435,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
     }
 
     can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_CAN_INT_ERR);
-
+    can->ops->control(can, RT_CAN_CMD_START, RT_FALSE);
     CAN_UNLOCK(can);
 
     return RT_EOK;
