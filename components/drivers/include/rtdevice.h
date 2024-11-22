@@ -49,6 +49,10 @@ extern "C" {
 #include "drivers/blk.h"
 #endif
 
+#ifdef RT_USING_DMA
+#include "drivers/dma.h"
+#endif
+
 #include "drivers/iio.h"
 
 #ifdef RT_USING_OFW
