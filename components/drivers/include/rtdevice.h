@@ -67,6 +67,10 @@ extern "C" {
 #include "drivers/pic.h"
 #endif
 
+#ifdef RT_USING_SCSI
+#include "drivers/scsi.h"
+#endif
+
 #ifdef RT_MFD_SYSCON
 #include "drivers/syscon.h"
 #endif
