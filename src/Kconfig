@@ -1,9 +1,8 @@
-#include "rtconfig.h"
 menu "RT-Thread Kernel"
 
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
-    range 1 64
+    range 2 64
     default 8
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
@@ -17,6 +16,13 @@ config RT_USING_ARCH_DATA_TYPE
         BSP can define these basic data types in ARCH_CPU level.
 
         Please re-define these data types in rtconfig_project.h file.
+
+config RT_USING_NANO
+    bool "Enable RT-Thread Nano"
+    default n
+    help
+        RT-Thread Nano is a very small size and refined hard real-time kernel,
+        which is suited for the extremely resource-constrained MCU system.
 
 config RT_USING_SMART
     bool "Enable RT-Thread Smart (microkernel on kernel/userland)"
@@ -42,13 +48,6 @@ config RT_USING_SMART
     depends on !RT_USING_NANO
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
-
-config RT_USING_NANO
-    bool "Enable RT-Thread Nano"
-    default n
-    help
-        RT-Thread Nano with a very small size and refined hard real-time kernel,
-        which is very suited for the resource-constrained MCU system.
 
 config RT_USING_AMP
     bool "Enable AMP (Asymmetric Multi-Processing)"
@@ -114,6 +113,13 @@ config RT_TICK_PER_SECOND
     default 1000
     help
         System's tick frequency, Hz.
+
+config RT_USING_OVERFLOW_CHECK
+    bool "Using stack overflow checking"
+    default y if RT_USING_DEBUG
+    help
+        Enable thread stack overflow checking. The stack overflow is checking when
+        each thread switch.
 
 config RT_USING_HOOK
     bool "Enable system hook"
@@ -259,13 +265,6 @@ menuconfig RT_USING_DEBUG
             depends on RT_USING_SMP
             default y if RT_USING_SMART
             default n
-
-        config RT_USING_OVERFLOW_CHECK
-            bool "Using stack overflow checking"
-            default y
-            help
-                Enable thread stack overflow checking. The stack overflow is checking when
-                each thread switch.
     endif
 
 menu "Inter-Thread communication"
