@@ -19,9 +19,9 @@
 rt_device_t sd_dev;
 #define SECTOR_SIZE 512
 static int init(void);
-static int read(long offset, uint8_t *buf, size_t size);
-static int write(long offset, const uint8_t *buf, size_t size);
-static int erase(long offset, size_t size);
+static int read(long offset, rt_uint8_t *buf, rt_size_t size);
+static int write(long offset, const rt_uint8_t *buf, rt_size_t size);
+static int erase(long offset, rt_size_t size);
 
 struct fal_flash_dev sd_card = {
     "sdcard0",  /* name string match yml file */
@@ -31,13 +31,13 @@ struct fal_flash_dev sd_card = {
     {init, read, write, erase}
 };
 
-static int read(long offset, uint8_t *buf, size_t size)
+static int read(long offset, rt_uint8_t *buf, rt_size_t size)
 {
     rt_size_t sector_pos;
     rt_size_t sector_offset;
     rt_size_t remain_size = size;
     rt_size_t req_size;
-    rt_align(4) uint8_t buffer[SECTOR_SIZE];
+    rt_align(4) rt_uint8_t buffer[SECTOR_SIZE];
 
     while (remain_size)
     {
@@ -54,13 +54,13 @@ static int read(long offset, uint8_t *buf, size_t size)
     return size;
 }
 
-static int write(long offset, const uint8_t *buf, size_t size)
+static int write(long offset, const rt_uint8_t *buf, rt_size_t size)
 {
     rt_size_t sector_pos;
     rt_size_t sector_offset;
     rt_size_t remain_size = size;
     rt_size_t req_size;
-    rt_align(4) uint8_t buffer[SECTOR_SIZE];
+    rt_align(4) rt_uint8_t buffer[SECTOR_SIZE];
 
     while (remain_size)
     {
@@ -79,7 +79,7 @@ static int write(long offset, const uint8_t *buf, size_t size)
     return size;
 }
 
-static int erase(long offset, size_t size)
+static int erase(long offset, rt_size_t size)
 {
     return size;
 }
@@ -93,7 +93,7 @@ static int init(void)
     }
     rt_device_open(sd_dev, RT_DEVICE_OFLAG_RDWR);
     struct dev_sdmmc *dev_sdmmc = (struct dev_sdmmc *)sd_dev->user_data;
-    sd_card.len = (size_t)dev_sdmmc->geometry.bytes_per_sector * dev_sdmmc->geometry.sector_count;
+    sd_card.len = (rt_size_t)dev_sdmmc->geometry.bytes_per_sector * dev_sdmmc->geometry.sector_count;
     sd_card.blk_size = dev_sdmmc->geometry.bytes_per_sector;
 
     return 0;
