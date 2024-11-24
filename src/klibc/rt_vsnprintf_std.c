@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-11-27     Meco Man     porting for rt_vsnprintf as the fully functional version
- * 2024-11-19     Meco Man     move into rtklibc
+ * 2024-11-19     Meco Man     move to klibc
  */
 
 /**
