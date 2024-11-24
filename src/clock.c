@@ -205,8 +205,12 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
     }
     else
     {
+#if RT_TICK_PER_SECOND == 1000u
+        tick = ms;
+#else
         tick = RT_TICK_PER_SECOND * (ms / 1000);
         tick += (RT_TICK_PER_SECOND * (ms % 1000) + 999) / 1000;
+#endif /* RT_TICK_PER_SECOND == 1000u */
     }
 
     /* return the calculated tick */

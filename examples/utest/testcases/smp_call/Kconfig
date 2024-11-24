@@ -1,0 +1,6 @@
+menu "SMP-Call Testcase"
+
+config UTEST_SMP_CALL_FUNC
+    bool "SMP-Call test cases"
+    default n
+endmenu

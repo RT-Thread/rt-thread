@@ -38,7 +38,7 @@ struct pin_index
     rt_base_t pin;
 };
 
-rt_err_t rt_hw_pin_init(void);
+int rt_hw_pin_init(void);
 
 #endif /* __DRV_GPIO_H__ */
 

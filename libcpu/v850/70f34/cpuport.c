@@ -11,7 +11,7 @@
 
 #include <rtthread.h>
 
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 
 /* switch flag on interrupt and thread pointer to save switch record */
 rt_uint32_t rt_interrupt_from_thread;
