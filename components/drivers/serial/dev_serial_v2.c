@@ -599,7 +599,7 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device        *dev,
         rt_hw_interrupt_enable(level);
 
         rt_uint8_t *put_ptr = RT_NULL;
-        /* Get the linear length buffer from rinbuffer */
+        /* Get the linear length buffer from ringbuffer */
         tx_fifo->put_size = rt_serial_get_linear_buffer(&(tx_fifo->rb), &put_ptr);
         /* Call the transmit interface for transmission */
         serial->ops->transmit(serial,
@@ -1624,7 +1624,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 tx_fifo->activated = RT_TRUE;
 
                 rt_uint8_t *put_ptr  = RT_NULL;
-                /* Get the linear length buffer from rinbuffer */
+                /* Get the linear length buffer from ringbuffer */
                 tx_fifo->put_size = rt_serial_get_linear_buffer(&(tx_fifo->rb), &put_ptr);
                 /* Call the transmit interface for transmission again */
                 serial->ops->transmit(serial,
