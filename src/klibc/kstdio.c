@@ -72,3 +72,25 @@ int rt_sprintf(char *buf, const char *format, ...)
     return n;
 }
 RTM_EXPORT(rt_sprintf);
+
+/**
+ * @brief  This function parses a formatted string from the input string.
+ *
+ * @param  str the input string to be parsed.
+ *
+ * @param  format the format string that specifies how to interpret the input.
+ *
+ * @return The number of input items successfully matched and assigned.
+ */
+int rt_sscanf(const char *str, const char *format, ...)
+{
+    va_list ap;
+    int rv;
+
+    va_start(ap, format);
+    rv = rt_vsscanf(str, format, ap);
+    va_end(ap);
+
+    return rv;
+}
+RTM_EXPORT(rt_sscanf);
