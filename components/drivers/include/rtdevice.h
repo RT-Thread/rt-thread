@@ -67,6 +67,10 @@ extern "C" {
 #include "drivers/ofw_raw.h"
 #endif /* RT_USING_OFW */
 
+#ifdef RT_USING_PHYE
+#include "drivers/phye.h"
+#endif
+
 #ifdef RT_USING_PIC
 #include "drivers/pic.h"
 #endif
