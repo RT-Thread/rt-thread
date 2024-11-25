@@ -10,8 +10,6 @@
 
 #include <rtthread.h>
 
-#ifndef RT_KLIBC_USING_VSNPRINTF_STANDARD
-
 #define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
 /**
@@ -608,9 +606,6 @@ int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
     */
     return str - buf;
 }
-RTM_EXPORT(rt_vsnprintf);
 #if (defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */) && (__GNUC__ >= 7)
 #pragma GCC diagnostic pop /* ignored "-Wimplicit-fallthrough" */
 #endif /* (defined(__GNUC__) && !defined(__ARMCC_VERSION)) && (__GNUC__ >= 7 */
-
-#endif /* !RT_KLIBC_USING_VSNPRINTF_STANDARD */

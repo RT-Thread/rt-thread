@@ -49,9 +49,6 @@
  */
 
 #include <rtthread.h>
-
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
-
 #include <stdio.h>
 #include <stdint.h>
 #include <limits.h>
@@ -1352,5 +1349,3 @@ int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
   output_gadget_t gadget = buffer_gadget(buf, size);
   return vsnprintf_impl(&gadget, fmt, args);
 }
-
-#endif /* RT_KLIBC_USING_VSNPRINTF_STANDARD */

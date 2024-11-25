@@ -9,9 +9,19 @@
  */
 
 #include <rtthread.h>
-#ifdef RT_KLIBC_USING_STDLIB
+
+#if defined(RT_KLIBC_USING_LIBC_MEMSET) || \
+    defined(RT_KLIBC_USING_LIBC_MEMCPY) || \
+    defined(RT_KLIBC_USING_LIBC_MEMMOVE) || \
+    defined(RT_KLIBC_USING_LIBC_MEMCMP) || \
+    defined(RT_KLIBC_USING_LIBC_STRSTR) || \
+    defined(RT_KLIBC_USING_LIBC_STRNCPY) || \
+    defined(RT_KLIBC_USING_LIBC_STRCPY) || \
+    defined(RT_KLIBC_USING_LIBC_STRNCMP) || \
+    defined(RT_KLIBC_USING_LIBC_STRCMP) || \
+    defined(RT_KLIBC_USING_LIBC_STRLEN)
 #include <string.h>
-#endif /* RT_KLIBC_USING_STDLIB */
+#endif
 
 /**
  * @brief  This function will set the content of memory to specified value.
@@ -25,11 +35,12 @@
  *
  * @return The address of source memory.
  */
-rt_weak void *rt_memset(void *s, int c, rt_ubase_t count)
+#ifndef RT_KLIBC_USING_USER_MEMSET
+void *rt_memset(void *s, int c, rt_ubase_t count)
 {
-#if defined(RT_KLIBC_USING_STDLIB_MEMORY)
+#if defined(RT_KLIBC_USING_LIBC_MEMSET)
     return memset(s, c, count);
-#elif defined(RT_KLIBC_USING_TINY_SIZE)
+#elif defined(RT_KLIBC_USING_TINY_MEMSET)
     char *xs = (char *)s;
 
     while (count--)
@@ -37,6 +48,7 @@ rt_weak void *rt_memset(void *s, int c, rt_ubase_t count)
 
     return s;
 #else
+
 #define LBLOCKSIZE      (sizeof(rt_ubase_t))
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
@@ -92,8 +104,9 @@ rt_weak void *rt_memset(void *s, int c, rt_ubase_t count)
 #undef LBLOCKSIZE
 #undef UNALIGNED
 #undef TOO_SMALL
-#endif /* RT_KLIBC_USING_STDLIB_MEMORY */
+#endif /* RT_KLIBC_USING_LIBC_MEMSET */
 }
+#endif /* RT_KLIBC_USING_USER_MEMSET */
 RTM_EXPORT(rt_memset);
 
 /**
@@ -107,11 +120,12 @@ RTM_EXPORT(rt_memset);
  *
  * @return The address of destination memory
  */
-rt_weak void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+#ifndef RT_KLIBC_USING_USER_MEMCPY
+void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
-#if defined(RT_KLIBC_USING_STDLIB_MEMORY)
+#if defined(RT_KLIBC_USING_LIBC_MEMCPY)
     return memcpy(dst, src, count);
-#elif defined(RT_KLIBC_USING_TINY_SIZE)
+#elif defined(RT_KLIBC_USING_TINY_MEMCPY)
     char *tmp = (char *)dst, *s = (char *)src;
     rt_ubase_t len = 0;
 
@@ -178,8 +192,9 @@ rt_weak void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #undef BIGBLOCKSIZE
 #undef LITTLEBLOCKSIZE
 #undef TOO_SMALL
-#endif /* RT_KLIBC_USING_STDLIB_MEMORY */
+#endif /* RT_KLIBC_USING_LIBC_MEMCPY */
 }
+#endif /* RT_KLIBC_USING_USER_MEMCPY */
 RTM_EXPORT(rt_memcpy);
 
 /**
@@ -195,9 +210,10 @@ RTM_EXPORT(rt_memcpy);
  *
  * @return The address of destination memory.
  */
+#ifndef RT_KLIBC_USING_USER_MEMMOVE
 void *rt_memmove(void *dest, const void *src, rt_size_t n)
 {
-#ifdef RT_KLIBC_USING_STDLIB_MEMORY
+#ifdef RT_KLIBC_USING_LIBC_MEMMOVE
     return memmove(dest, src, n);
 #else
     char *tmp = (char *)dest, *s = (char *)src;
@@ -217,8 +233,9 @@ void *rt_memmove(void *dest, const void *src, rt_size_t n)
     }
 
     return dest;
-#endif /* RT_KLIBC_USING_STDLIB_MEMORY */
+#endif /* RT_KLIBC_USING_LIBC_MEMMOVE */
 }
+#endif /* RT_KLIBC_USING_USER_MEMMOVE */
 RTM_EXPORT(rt_memmove);
 
 /**
@@ -235,9 +252,10 @@ RTM_EXPORT(rt_memmove);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
+#ifndef RT_KLIBC_USING_USER_MEMCMP
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
 {
-#ifdef RT_KLIBC_USING_STDLIB_MEMORY
+#ifdef RT_KLIBC_USING_LIBC_MEMCMP
     return memcmp(cs, ct, count);
 #else
     const unsigned char *su1 = RT_NULL, *su2 = RT_NULL;
@@ -248,8 +266,9 @@ rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
             break;
 
     return res;
-#endif /* RT_KLIBC_USING_STDLIB_MEMORY */
+#endif /* RT_KLIBC_USING_LIBC_MEMCMP */
 }
+#endif /* RT_KLIBC_USING_USER_MEMCMP */
 RTM_EXPORT(rt_memcmp);
 
 /**
@@ -262,9 +281,10 @@ RTM_EXPORT(rt_memcmp);
  *
  * @return The first occurrence of a s2 in s1, or RT_NULL if no found.
  */
+#ifndef RT_KLIBC_USING_USER_STRSTR
 char *rt_strstr(const char *s1, const char *s2)
 {
-#ifdef RT_KLIBC_USING_STDLIB
+#ifdef RT_KLIBC_USING_LIBC_STRSTR
     return strstr(s1, s2);
 #else
     int l1 = 0, l2 = 0;
@@ -288,8 +308,9 @@ char *rt_strstr(const char *s1, const char *s2)
     }
 
     return RT_NULL;
-#endif /* RT_KLIBC_USING_STDLIB */
+#endif /* RT_KLIBC_USING_LIBC_STRSTR */
 }
+#endif /* RT_KLIBC_USING_USER_STRSTR */
 RTM_EXPORT(rt_strstr);
 
 /**
@@ -304,6 +325,7 @@ RTM_EXPORT(rt_strstr);
  *         If the result > 0, a is greater than a.
  *         If the result = 0, a is equal to a.
  */
+#ifndef RT_KLIBC_USING_USER_STRCASECMP
 rt_int32_t rt_strcasecmp(const char *a, const char *b)
 {
     int ca = 0, cb = 0;
@@ -321,6 +343,7 @@ rt_int32_t rt_strcasecmp(const char *a, const char *b)
 
     return ca - cb;
 }
+#endif /* RT_KLIBC_USING_USER_STRCASECMP */
 RTM_EXPORT(rt_strcasecmp);
 
 /**
@@ -334,9 +357,10 @@ RTM_EXPORT(rt_strcasecmp);
  *
  * @return The address where the copied content is stored.
  */
+#ifndef RT_KLIBC_USING_USER_STRNCPY
 char *rt_strncpy(char *dst, const char *src, rt_size_t n)
 {
-#ifdef RT_KLIBC_USING_STDLIB
+#ifdef RT_KLIBC_USING_LIBC_STRNCPY
     return strncpy(dst, src, n);
 #else
     if (n != 0)
@@ -360,8 +384,9 @@ char *rt_strncpy(char *dst, const char *src, rt_size_t n)
     }
 
     return (dst);
-#endif /* RT_KLIBC_USING_STDLIB */
+#endif /* RT_KLIBC_USING_LIBC_STRNCPY */
 }
+#endif /* RT_KLIBC_USING_USER_STRNCPY */
 RTM_EXPORT(rt_strncpy);
 
 /**
@@ -373,9 +398,10 @@ RTM_EXPORT(rt_strncpy);
  *
  * @return The address where the copied content is stored.
  */
+#ifndef RT_KLIBC_USING_USER_STRCPY
 char *rt_strcpy(char *dst, const char *src)
 {
-#ifdef RT_KLIBC_USING_STDLIB
+#ifdef RT_KLIBC_USING_LIBC_STRCPY
     return strcpy(dst, src);
 #else
     char *dest = dst;
@@ -389,8 +415,9 @@ char *rt_strcpy(char *dst, const char *src)
 
     *dst = '\0';
     return dest;
-#endif /* RT_KLIBC_USING_STDLIB */
+#endif /* RT_KLIBC_USING_LIBC_STRCPY */
 }
+#endif /* RT_KLIBC_USING_USER_STRCPY */
 RTM_EXPORT(rt_strcpy);
 
 /**
@@ -407,9 +434,10 @@ RTM_EXPORT(rt_strcpy);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
+#ifndef RT_KLIBC_USING_USER_STRNCMP
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
 {
-#ifdef RT_KLIBC_USING_STDLIB
+#ifdef RT_KLIBC_USING_LIBC_STRNCMP
     return strncmp(cs, ct, count);
 #else
     signed char res = 0;
@@ -425,8 +453,9 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
     }
 
     return res;
-#endif /* RT_KLIBC_USING_STDLIB */
+#endif /* RT_KLIBC_USING_LIBC_STRNCMP */
 }
+#endif /* RT_KLIBC_USING_USER_STRNCMP */
 RTM_EXPORT(rt_strncmp);
 
 /**
@@ -441,9 +470,10 @@ RTM_EXPORT(rt_strncmp);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
+#ifndef RT_KLIBC_USING_USER_STRCMP
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
-#ifdef RT_KLIBC_USING_STDLIB
+#ifdef RT_KLIBC_USING_LIBC_STRCMP
     return strcmp(cs, ct);
 #else
     while (*cs && *cs == *ct)
@@ -453,8 +483,9 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct)
     }
 
     return (*cs - *ct);
-#endif /* RT_KLIBC_USING_STDLIB */
+#endif /* RT_KLIBC_USING_LIBC_STRCMP */
 }
+#endif /* RT_KLIBC_USING_USER_STRCMP */
 RTM_EXPORT(rt_strcmp);
 
 /**
@@ -465,16 +496,18 @@ RTM_EXPORT(rt_strcmp);
  *
  * @return The length of string.
  */
+#ifndef RT_KLIBC_USING_USER_STRLEN
 rt_size_t rt_strlen(const char *s)
 {
-#ifdef RT_KLIBC_USING_STDLIB
+#ifdef RT_KLIBC_USING_LIBC_STRLEN
     return strlen(s);
 #else
     const char *sc = RT_NULL;
     for (sc = s; *sc != '\0'; ++sc);
     return sc - s;
-#endif /* RT_KLIBC_USING_STDLIB */
+#endif /* RT_KLIBC_USING_LIBC_STRLEN */
 }
+#endif /* RT_KLIBC_USING_USER_STRLEN */
 RTM_EXPORT(rt_strlen);
 
 /**
@@ -490,12 +523,14 @@ RTM_EXPORT(rt_strlen);
  *
  * @return The length of string.
  */
+#ifndef RT_KLIBC_USING_USER_STRNLEN
 rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 {
     const char *sc;
     for (sc = s; *sc != '\0' && (rt_ubase_t)(sc - s) < maxlen; ++sc);
     return sc - s;
 }
+#endif /* RT_KLIBC_USING_USER_STRNLEN */
 RTM_EXPORT(rt_strnlen);
 
 #ifdef RT_USING_HEAP

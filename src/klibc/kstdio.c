@@ -9,6 +9,10 @@
  */
 
 #include <rtthread.h>
+#if defined(RT_KLIBC_USING_LIBC_VSSCANF) || \
+    defined(RT_KLIBC_USING_LIBC_VSNPRINTF)
+#include <stdio.h>
+#endif
 
 /**
  * @brief  This function will fill a formatted string to buffer.
@@ -72,6 +76,22 @@ int rt_sprintf(char *buf, const char *format, ...)
     return n;
 }
 RTM_EXPORT(rt_sprintf);
+
+#ifdef RT_KLIBC_USING_LIBC_VSNPRINTF
+int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
+{
+    return vsnprintf(buf, size, fmt, args);
+}
+#endif /* RT_KLIBC_USING_LIBC_VSNPRINTF */
+RTM_EXPORT(rt_vsnprintf);
+
+#ifdef RT_KLIBC_USING_LIBC_VSSCANF
+int rt_vsscanf(const char *buffer, const char *format, va_list ap)
+{
+    return vsscanf(buffer, format, ap);
+}
+#endif /* RT_KLIBC_USING_LIBC_VSSCANF */
+RTM_EXPORT(rt_vsscanf);
 
 /**
  * @brief  This function parses a formatted string from the input string.
