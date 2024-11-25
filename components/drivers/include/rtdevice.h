@@ -45,19 +45,23 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#ifdef RT_USING_MBOX
+#include "drivers/mailbox.h"
+#endif /* RT_USING_MBOX */
+
 #ifdef RT_USING_BLK
 #include "drivers/blk.h"
-#endif
+#endif /* RT_USING_BLK */
 
 #ifdef RT_USING_DMA
 #include "drivers/dma.h"
-#endif
+#endif /* RT_USING_DMA */
 
 #include "drivers/iio.h"
 
 #ifdef RT_USING_NVME
 #include "drivers/nvme.h"
-#endif
+#endif /* RT_USING_NVME */
 
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"
@@ -69,26 +73,26 @@ extern "C" {
 
 #ifdef RT_USING_PHYE
 #include "drivers/phye.h"
-#endif
+#endif /* RT_USING_PHYE */
 
 #ifdef RT_USING_PIC
 #include "drivers/pic.h"
-#endif
+#endif /* RT_USING_PIC */
 
 #ifdef RT_USING_SCSI
 #include "drivers/scsi.h"
-#endif
+#endif /* RT_USING_SCSI */
 
 #ifdef RT_MFD_SYSCON
 #include "drivers/syscon.h"
-#endif
+#endif /* RT_MFD_SYSCON */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
 #include "drivers/dev_rtc.h"
 #ifdef RT_USING_ALARM
 #include "drivers/dev_alarm.h"
-#endif
+#endif /* RT_USING_ALARM */
 #endif /* RT_USING_RTC */
 
 #ifdef RT_USING_SPI
