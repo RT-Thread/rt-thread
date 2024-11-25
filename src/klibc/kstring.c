@@ -13,14 +13,6 @@
 #include <string.h>
 #endif /* RT_KLIBC_USING_STDLIB */
 
-#define DBG_TAG           "kernel.string"
-#ifdef RT_DEBUG_DEVICE
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_DEVICE) */
-#include <rtdbg.h>
-
 /**
  * @brief  This function will set the content of memory to specified value.
  *

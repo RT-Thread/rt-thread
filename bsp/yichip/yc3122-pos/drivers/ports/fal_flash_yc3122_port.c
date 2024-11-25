@@ -13,10 +13,10 @@
 #include "yc_qspi.h"
 #include "rtdbg.h"
 
-#define FLASH_START_ADRESS ((uint32_t)0x1000000)
-#define FLASH_SIZE ((uint32_t)4 * 1024 * 1024)
-#define FLASH_BLOCK_SIZE ((uint32_t)512)
-#define FLASH_END_ADDRESS ((uint32_t)(FLASH_START_ADRESS + FLASH_SIZE))
+#define FLASH_START_ADRESS ((rt_uint32_t)0x1000000)
+#define FLASH_SIZE ((rt_uint32_t)4 * 1024 * 1024)
+#define FLASH_BLOCK_SIZE ((rt_uint32_t)512)
+#define FLASH_END_ADDRESS ((rt_uint32_t)(FLASH_START_ADRESS + FLASH_SIZE))
 #define FLASH_PAGE_NBPERBANK 256
 #define FLASH_BANK_NUMBER 2
 #define FLASH_PAGE_SIZE 256
@@ -26,9 +26,9 @@
 #else
     #define YC3122_FLASH_DEBUG(...)
 #endif
-static int read(long offset, uint8_t *buf, size_t size)
+static int read(long offset, rt_uint8_t *buf, rt_size_t size)
 {
-    uint32_t addr = yc3122_onchip_flash.addr + offset;
+    rt_uint32_t addr = yc3122_onchip_flash.addr + offset;
 
     if ((addr + size) > FLASH_END_ADDRESS)
     {
@@ -40,9 +40,9 @@ static int read(long offset, uint8_t *buf, size_t size)
     return size;
 }
 
-static int write(long offset, const uint8_t *buf, size_t size)
+static int write(long offset, const rt_uint8_t *buf, rt_size_t size)
 {
-    uint32_t addr = yc3122_onchip_flash.addr + offset;
+    rt_uint32_t addr = yc3122_onchip_flash.addr + offset;
 
     if ((addr + size) > FLASH_END_ADDRESS)
     {
@@ -54,14 +54,14 @@ static int write(long offset, const uint8_t *buf, size_t size)
         return -1;
     }
     YC3122_FLASH_DEBUG("w_ addr:0x%x,size:0x%x\n", addr, size);
-    qspi_flash_write(addr, (uint8_t *)buf, size);
+    qspi_flash_write(addr, (rt_uint8_t *)buf, size);
 
     return size;
 }
 
-static int erase(long offset, size_t size)
+static int erase(long offset, rt_size_t size)
 {
-    uint32_t addr = yc3122_onchip_flash.addr + offset;
+    rt_uint32_t addr = yc3122_onchip_flash.addr + offset;
     if ((addr + size) > FLASH_END_ADDRESS || addr % 0x100 != 0)
     {
         YC3122_FLASH_DEBUG("ERROR: erase outrange flash size! addr is (0x%p)\n", (void *)(addr + size));
@@ -72,7 +72,7 @@ static int erase(long offset, size_t size)
     {
         YC3122_FLASH_DEBUG("ERROR: erase addr is not page alignment\n");
     }
-    for (uint32_t i = 0; i < size; i += 256)
+    for (rt_uint32_t i = 0; i < size; i += 256)
         qspi_flash_pageerase(addr + i);
     return size;
 }
