@@ -13,7 +13,7 @@
 #define DBG_TAG "cpu.aa64"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
-#include <smp.h>
+#include <smp_call.h>
 #include <cpu.h>
 #include <mmu.h>
 #include <cpuport.h>
@@ -235,7 +235,17 @@ void rt_hw_common_setup(void)
     rt_memblock_reserve_memory("init-page", init_page_start, init_page_end, MEMBLOCK_NONE);
     rt_memblock_reserve_memory("fdt", fdt_start, fdt_end, MEMBLOCK_NONE);
 
-    rt_memmove((void *)(fdt_start - pv_off), (void *)(fdt_ptr - pv_off), fdt_size);
+    /* To virtual address */
+    fdt_ptr = (void *)(fdt_ptr - pv_off);
+#ifdef KERNEL_VADDR_START
+    if ((rt_ubase_t)fdt_ptr + fdt_size - KERNEL_VADDR_START > SIZE_GB)
+    {
+        fdt_ptr = rt_ioremap_early(fdt_ptr + pv_off, fdt_size);
+
+        RT_ASSERT(fdt_ptr != RT_NULL);
+    }
+#endif
+    rt_memmove((void *)(fdt_start - pv_off), fdt_ptr, fdt_size);
     fdt_ptr = (void *)fdt_start - pv_off;
 
     rt_system_heap_init((void *)(heap_start - pv_off), (void *)(heap_end - pv_off));
@@ -302,14 +312,14 @@ void rt_hw_common_setup(void)
     rt_thread_idle_sethook(rt_hw_idle_wfi);
 
 #ifdef RT_USING_SMP
-    rt_smp_init();
+    rt_smp_call_init();
     /* Install the IPI handle */
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
     rt_hw_ipi_handler_install(RT_STOP_IPI, rt_scheduler_ipi_handler);
-    rt_hw_ipi_handler_install(RT_FUNC_IPI, rt_smp_call_ipi_handler);
+    rt_hw_ipi_handler_install(RT_SMP_CALL_IPI, rt_smp_call_ipi_handler);
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
     rt_hw_interrupt_umask(RT_STOP_IPI);
-    rt_hw_interrupt_umask(RT_FUNC_IPI);
+    rt_hw_interrupt_umask(RT_SMP_CALL_IPI);
 #endif
 }
 
@@ -391,6 +401,7 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
     rt_hw_interrupt_umask(RT_STOP_IPI);
+    rt_hw_interrupt_umask(RT_SMP_CALL_IPI);
 
     LOG_I("Call cpu %d on %s", cpu_id, "success");
 

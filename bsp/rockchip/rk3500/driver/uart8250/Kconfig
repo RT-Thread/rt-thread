@@ -1,0 +1,3 @@
+config RT_SERIAL_8250
+    bool "8250 Serila Family"
+    default n

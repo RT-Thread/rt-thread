@@ -108,6 +108,6 @@ void rt_hw_board_init(void)
 #endif
 
 #ifdef RT_USING_HEAP
-    rt_kprintf("heap: [0x%08x - 0x%08x]\n", (rt_ubase_t)RT_HW_HEAP_BEGIN, (rt_ubase_t)RT_HW_HEAP_END);
+    rt_kprintf("heap: [0x%p - 0x%p]\n", (rt_ubase_t)RT_HW_HEAP_BEGIN, (rt_ubase_t)RT_HW_HEAP_END);
 #endif /* RT_USING_HEAP */
 }

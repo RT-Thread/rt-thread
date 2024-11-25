@@ -439,12 +439,14 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
 #endif
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_skt", idx);
-    /* create AT socket receive mailbox */
+    /* create AT socket receive semaphore */
     if ((sock->recv_notice = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO)) == RT_NULL)
     {
         LOG_E("No memory socket receive notic semaphore create.");
         goto __err;
     }
+    /* set AT socket receive semaphore 'max_value' to 1 */
+    rt_sem_control(sock->recv_notice, RT_IPC_CMD_SET_VLIMIT, (void *)1);
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_skt", idx);
     /* create AT socket receive ring buffer lock */
@@ -823,7 +825,7 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
     }
     rt_mutex_release(sock->recv_lock);
 
-    rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, (void*)1);
+    rt_sem_release(sock->recv_notice);
 
     at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
 }
@@ -842,7 +844,7 @@ static void at_closed_notice_cb(struct at_socket *sock, at_socket_evt_t event, c
     at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
 
     sock->state = AT_SOCKET_CLOSED;
-    rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, (void*)1);
+    rt_sem_release(sock->recv_notice);
 }
 
 #ifdef AT_USING_SOCKET_SERVER
@@ -1063,13 +1065,6 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
     while (1)
     {
-        if (sock->state == AT_SOCKET_CLOSED)
-        {
-            /* socket passively closed, receive function return 0 */
-            result = 0;
-            goto __exit;
-        }
-
         /* receive packet list last transmission of remaining data */
         rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
         recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len);
@@ -1081,6 +1076,13 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
                 at_do_event_clean(sock, AT_EVENT_RECV);
             }
             result = recv_len;
+            goto __exit;
+        }
+
+        if (sock->state == AT_SOCKET_CLOSED)
+        {
+            /* socket passively closed, receive function return 0 */
+            result = 0;
             goto __exit;
         }
 

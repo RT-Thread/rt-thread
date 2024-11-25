@@ -16,6 +16,11 @@
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
+#if __ARMCC_VERSION >= 6010050
+#define rt_packed(declare)          declare __attribute__((packed))
+#else
+#define rt_packed(declare)          declare
+#endif
 #define rt_weak                     __attribute__((weak))
 #define rt_typeof                   typeof
 #define rt_noreturn
@@ -26,6 +31,7 @@
 #define rt_used                     __root
 #define PRAGMA(x)                   _Pragma(#x)
 #define rt_align(n)                 PRAGMA(data_alignment=n)
+#define rt_packed(declare)          declare
 #define rt_weak                     __weak
 #define rt_typeof                   __typeof
 #define rt_noreturn
@@ -37,6 +43,7 @@
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
+#define rt_packed(declare)          declare __attribute__((packed))
 #define rt_weak                     __attribute__((weak))
 #define rt_typeof                   __typeof__
 #define rt_noreturn                 __attribute__ ((noreturn))
@@ -46,6 +53,7 @@
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
+#define rt_packed(declare)          declare
 #define rt_weak                     __attribute__((weak))
 #define rt_typeof                   typeof
 #define rt_noreturn
@@ -55,6 +63,7 @@
 #define rt_section(x)
 #define rt_used
 #define rt_align(n)                 __declspec(align(n))
+#define rt_packed(declare)          __pragma(pack(push, 1)) declare __pragma(pack(pop))
 #define rt_weak
 #define rt_typeof                   typeof
 #define rt_noreturn
@@ -74,6 +83,7 @@
 #endif
 #define PRAGMA(x)                   _Pragma(#x)
 #define rt_align(n)                 __attribute__((aligned(n)))
+#define rt_packed(declare)          declare __attribute__((packed))
 #ifdef __TI_EABI__
 #define rt_weak                     __attribute__((weak))
 #else
@@ -88,6 +98,7 @@
 #define rt_used                     __attribute__((used, protect))
 #define PRAGMA(x)                   _Pragma(#x)
 #define rt_align(n)                 __attribute__((__align(n)))
+#define rt_packed(declare)          declare __packed__
 #define rt_weak                     __attribute__((weak))
 #define rt_typeof                   typeof
 #define rt_noreturn

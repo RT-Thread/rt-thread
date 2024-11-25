@@ -14,6 +14,7 @@
  * 2022-07-04     Yunjie       fix RT_DEBUG_LOG
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2024-01-05     Shell        Fixup of data racing in rt_interrupt_get_nest
+ * 2024-01-03     Shell        Support for interrupt context
  */
 
 #include <rthw.h>
@@ -69,6 +70,25 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 volatile rt_atomic_t rt_interrupt_nest = 0;
 #endif /* RT_USING_SMP */
 
+#ifdef ARCH_USING_IRQ_CTX_LIST
+void rt_interrupt_context_push(rt_interrupt_context_t this_ctx)
+{
+    struct rt_cpu *this_cpu = rt_cpu_self();
+    rt_slist_insert(&this_cpu->irq_ctx_head, &this_ctx->node);
+}
+
+void rt_interrupt_context_pop(void)
+{
+    struct rt_cpu *this_cpu = rt_cpu_self();
+    rt_slist_pop(&this_cpu->irq_ctx_head);
+}
+
+void *rt_interrupt_context_get(void)
+{
+    struct rt_cpu *this_cpu = rt_cpu_self();
+    return rt_slist_first_entry(&this_cpu->irq_ctx_head, struct rt_interrupt_context, node)->context;
+}
+#endif /* ARCH_USING_IRQ_CTX_LIST */
 
 /**
  * @brief This function will be invoked by BSP, when enter interrupt service routine

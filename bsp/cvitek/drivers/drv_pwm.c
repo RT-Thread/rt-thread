@@ -11,6 +11,7 @@
 #include <rtdevice.h>
 #include "drv_pwm.h"
 #include "drv_pinmux.h"
+#include "drv_ioremap.h"
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -326,6 +327,8 @@ int rt_hw_pwm_init(void)
 
     for (i = 0; i < sizeof(cvi_pwm) / sizeof(cvi_pwm[0]); i++)
     {
+        cvi_pwm[i].device.base = (rt_ubase_t)DRV_IOREMAP((void *)cvi_pwm[i].device.base, 0x1000);
+
         result = rt_device_pwm_register(&cvi_pwm[i].device, cvi_pwm[i].name, &cvi_pwm_ops, &cvi_pwm[i]);
         if (result != RT_EOK)
         {

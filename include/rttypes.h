@@ -133,6 +133,15 @@ struct rt_slist_node
 typedef struct rt_slist_node rt_slist_t;                /**< Type for single list. */
 
 /**
+ * Lock-less Single List structure
+ */
+struct rt_lockless_slist_node
+{
+    rt_atomic_t next;                                   /**< point to next node. */
+};
+typedef struct rt_lockless_slist_node rt_ll_slist_t;    /**< Type for lock-les single list. */
+
+/**
  * Spinlock
  */
 #ifdef RT_USING_SMP

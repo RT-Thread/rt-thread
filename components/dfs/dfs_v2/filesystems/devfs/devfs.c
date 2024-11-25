@@ -113,6 +113,29 @@ static int dfs_devfs_close(struct dfs_file *file)
     return ret;
 }
 
+static rt_ubase_t _get_unit_shift(rt_device_t device)
+{
+    rt_ubase_t shift = 0;
+
+    /**
+     * transfer unit size from POSIX RW(in bytes) to rt_device_R/W
+     * (block size for blk device, otherwise in bytes).
+     */
+    if (device->type == RT_Device_Class_Block)
+    {
+        struct rt_device_blk_geometry geometry = {0};
+
+        /* default to 512 */
+        shift = 9;
+        if (!rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry))
+        {
+            shift = __rt_ffs(geometry.block_size) - 1;
+        }
+    }
+
+    return shift;
+}
+
 static ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
     ssize_t ret = -RT_EIO;
@@ -135,9 +158,14 @@ static ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, of
         if (device->ops)
 #endif /* RT_USING_POSIX_DEVIO */
         {
-            /* read device data */
-            ret = rt_device_read(device, *pos, buf, count);
-            *pos += ret;
+            rt_ubase_t shift = _get_unit_shift(device);
+
+            ret = rt_device_read(device, *pos, buf, count >> shift);
+            if (ret > 0)
+            {
+                ret <<= shift;
+                *pos += ret;
+            }
         }
     }
 
@@ -169,9 +197,15 @@ static ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t co
         if (device->ops)
 #endif /* RT_USING_POSIX_DEVIO */
         {
+            rt_ubase_t shift = _get_unit_shift(device);
+
             /* read device data */
-            ret = rt_device_write(device, *pos, buf, count);
-            *pos += ret;
+            ret = rt_device_write(device, *pos, buf, count >> shift);
+            if (ret > 0)
+            {
+                ret <<= shift;
+                *pos += ret;
+            }
         }
     }
 

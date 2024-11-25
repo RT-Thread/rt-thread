@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<azone>
+    <rzone name="R7FA6E2BB3CFM.rzone"/>
+    <partition>
+        <peripheral name="PORT0" group="PORT">
+            <slot name="P000" secure="true"/>
+            <slot name="P001" secure="true"/>
+            <slot name="P002" secure="true"/>
+            <slot name="P003" secure="true"/>
+            <slot name="P004" secure="true"/>
+            <slot name="P005" secure="true"/>
+            <slot name="P006" secure="true"/>
+            <slot name="P008" secure="true"/>
+            <slot name="P013" secure="true"/>
+            <slot name="P014" secure="true"/>
+            <slot name="P015" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT1" group="PORT">
+            <slot name="P100" secure="true"/>
+            <slot name="P101" secure="true"/>
+            <slot name="P102" secure="true"/>
+            <slot name="P105" secure="true"/>
+            <slot name="P106" secure="true"/>
+            <slot name="P107" secure="true"/>
+            <slot name="P108" secure="true"/>
+            <slot name="P109" secure="true"/>
+            <slot name="P110" secure="true"/>
+            <slot name="P111" secure="true"/>
+            <slot name="P113" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT2" group="PORT">
+            <slot name="P205" secure="true"/>
+            <slot name="P206" secure="true"/>
+            <slot name="P207" secure="true"/>
+            <slot name="P208" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT3" group="PORT">
+            <slot name="P300" secure="true"/>
+            <slot name="P301" secure="true"/>
+            <slot name="P304" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT4" group="PORT">
+            <slot name="P400" secure="true"/>
+            <slot name="P401" secure="true"/>
+            <slot name="P402" secure="true"/>
+            <slot name="P403" secure="true"/>
+            <slot name="P407" secure="true"/>
+            <slot name="P408" secure="true"/>
+            <slot name="P409" secure="true"/>
+            <slot name="P410" secure="true"/>
+            <slot name="P411" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT5" group="PORT">
+            <slot name="P500" secure="true"/>
+        </peripheral>
+        <peripheral name="SCI0" group="SCI" security=""/>
+        <peripheral name="ICU">
+            <slot name="IRQ0" secure="true"/>
+            <slot name="IRQ1" secure="true"/>
+            <slot name="IRQ2" secure="true"/>
+            <slot name="IRQ3" secure="true"/>
+        </peripheral>
+    </partition>
+</azone>

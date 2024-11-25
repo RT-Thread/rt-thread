@@ -137,7 +137,7 @@ menuconfig RT_USING_ULOG
             config ULOG_OUTPUT_FLOAT
                 bool "Enable float number support. It will using more thread stack."
                 default n
-                select PKG_USING_RT_VSNPRINTF_FULL
+                select RT_KLIBC_USING_VSNPRINTF_STANDARD
                 help
                     The default formater is using rt_vsnprint and it not supported float number.
                     When enable this option then it will enable libc. The formater will change to vsnprint on libc.
