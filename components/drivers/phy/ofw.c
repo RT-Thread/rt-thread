@@ -116,7 +116,7 @@ rt_err_t rt_ofw_get_phyid(struct rt_ofw_node *np,rt_uint32_t *id)
     if (ret)
         return ret;
 
-    ret = sscanf(phy_id,"ethernet-phy-id%4x.%4x",&upper, &lower);
+    ret = rt_sscanf(phy_id,"ethernet-phy-id%4x.%4x",&upper, &lower);
     if(ret != 2)
         return -RT_ERROR;
 
