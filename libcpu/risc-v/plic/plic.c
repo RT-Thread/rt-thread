@@ -34,6 +34,8 @@ struct plic
     void *base_pa;
     volatile rt_uint32_t *priority_base;
 
+    void (*irq_handler)(int irq);
+
     struct plic_handler handlers[NR_CPUS];
 };
 
@@ -65,9 +67,6 @@ rt_inline void plic_irq_toggle(int hwirq, int enable)
 
 static void generic_handle_irq(int irq)
 {
-    rt_isr_handler_t isr;
-    void            *param;
-
     if (irq < 0 || irq >= IRQ_MAX_NR)
     {
         LOG_E("bad irq number %d!\n", irq);
@@ -79,11 +78,10 @@ static void generic_handle_irq(int irq)
         LOG_W("no irq!\n");
         return;
     }
-    isr   = isr_table[IRQ_OFFSET + irq].handler;
-    param = isr_table[IRQ_OFFSET + irq].param;
-    if (isr != RT_NULL)
+
+    if (plic_get()->irq_handler != RT_NULL)
     {
-        isr(irq, param);
+        plic_get()->irq_handler(irq);
     }
     /* complete irq. */
     plic_complete(irq);
@@ -159,7 +157,7 @@ rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
     }
 }
 
-void plic_init(unsigned long base_pa)
+void plic_init(unsigned long base_pa, void (*irq_handler)(int irq))
 {
     int           nr_irqs;
     int           nr_context;
@@ -174,12 +172,13 @@ void plic_init(unsigned long base_pa)
         return;
     }
 
-    if (!base_pa)
+    if (!base_pa || !irq_handler)
     {
-        LOG_E("fatal error, plic is reg space is null.");
+        LOG_E("fatal error, plic init params is null.");
         return;
     }
     plic->base_pa = (void*)base_pa;
+    plic->irq_handler = irq_handler;
 
     nr_context = PLIC_NR_CONTEXT;
     nr_irqs    = IRQ_MAX_NR;

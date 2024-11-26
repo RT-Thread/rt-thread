@@ -30,13 +30,26 @@ static void rt_hw_interrupt_handler(int vector, void *param)
     rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
 
+static void __isr(int irq)
+{
+    rt_isr_handler_t isr;
+    void *param;
+
+    isr = isr_table[IRQ_OFFSET + irq].handler;
+    param = isr_table[IRQ_OFFSET + irq].param;
+    if (isr != RT_NULL)
+    {
+        isr(irq, param);
+    }
+}
+
 /**
  * This function will initialize hardware interrupt
  */
 void rt_hw_interrupt_init(void)
 {
     /* init interrupt controller */
-    plic_init(C908_PLIC_PHY_ADDR);
+    plic_init(C908_PLIC_PHY_ADDR, __isr);
 
     rt_int32_t idx;
 

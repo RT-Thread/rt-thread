@@ -44,7 +44,7 @@
 #define CONTEXT_THRESHOLD               0x00
 #define CONTEXT_CLAIM                   0x04
 
-void plic_init(unsigned long base_pa);
+void plic_init(unsigned long base_pa, void (*irq_handler)(int irq));
 void plic_enable_irq(int irqno);
 void plic_disable_irq(int irqno);
 // tell PLIC that we've served this IRQ

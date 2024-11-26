@@ -78,13 +78,26 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     return old_handler;
 }
 
-void rt_hw_interrupt_init()
+static void __isr(int irq)
+{
+    rt_isr_handler_t isr;
+    void *param;
+
+    isr = isr_table[IRQ_OFFSET + irq].handler;
+    param = isr_table[IRQ_OFFSET + irq].param;
+    if (isr != RT_NULL)
+    {
+        isr(irq, param);
+    }
+}
+
+void rt_hw_interrupt_init(void)
 {
     /* Enable machine external interrupts. */
     // set_csr(sie, SIP_SEIP);
     int idx = 0;
 
-    plic_init(PLIC_BASE_ADDR);
+    plic_init(PLIC_BASE_ADDR, __isr);
 
     /* init exceptions table */
     for (idx = 0; idx < INTERRUPTS_MAX; idx++)
