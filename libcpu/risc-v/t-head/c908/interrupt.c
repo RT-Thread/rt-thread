@@ -92,7 +92,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
-    if ((vector < 0) || (vector > IRQ_MAX_NR))
+    if ((vector < 0) || (vector >= IRQ_MAX_NR))
     {
         return old_handler;
     }
