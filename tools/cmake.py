@@ -9,7 +9,7 @@ import re
 import utils
 import rtconfig
 from utils import _make_path_relative
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 
 def GenerateCFiles(env, project, project_name):
@@ -183,6 +183,20 @@ def GenerateCFiles(env, project, project_name):
                 interfacelibgroups.append(group)
             else:
                 libgroups.append(group)
+
+        # Process groups whose names differ only in capitalization.
+        # (Groups have same name should be merged into one before)
+        for group in libgroups:
+            group['alias'] = group['name'].lower()
+        names = [group['alias'] for group in libgroups]
+        counter = Counter(names)
+        names = [name for name in names if counter[name] > 1]
+        for group in libgroups:
+            if group['alias'] in names:
+                counter[group['alias']] -= 1
+                group['alias'] = f"{group['name']}_{counter[group['alias']]}"
+                print(f"Renamed {group['name']} to {group['alias']}")
+                group['name'] = group['alias']
 
         cm_file.write("# Library source files\n")
         for group in project:

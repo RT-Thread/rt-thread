@@ -69,6 +69,12 @@ struct ofw_obj_cmp_list
 
 static const struct ofw_obj_cmp_list ofw_obj_cmp_list[] =
 {
+#ifdef RT_USING_CLK
+    { "#clock-cells", RT_CLK_NODE_OBJ_NAME, sizeof(struct rt_clk_node) },
+#endif
+#ifdef RT_USING_RESET
+    { "#reset-cells", RT_RESET_CONTROLLER_OBJ_NAME, sizeof(struct rt_reset_controller) },
+#endif
     { "#power-domain-cells", RT_POWER_DOMAIN_PROXY_OBJ_NAME, sizeof(struct rt_dm_power_domain_proxy) },
     { "#power-domain-cells", RT_POWER_DOMAIN_OBJ_NAME, sizeof(struct rt_dm_power_domain) },
 };

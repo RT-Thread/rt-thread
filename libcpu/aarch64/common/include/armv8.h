@@ -145,6 +145,8 @@ struct rt_hw_exp_stack
     rt_uint128_t fpu[32];
 };
 
+void rt_hw_show_register(struct rt_hw_exp_stack *regs);
+
 #define SP_ELx     ((unsigned long)0x01)
 #define SP_EL0     ((unsigned long)0x00)
 #define PSTATE_EL1 ((unsigned long)0x04)

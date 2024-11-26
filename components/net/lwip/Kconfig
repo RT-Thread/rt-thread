@@ -281,6 +281,10 @@ if RT_USING_LWIP
         endif
     endif
 
+    config RT_LWIP_ENABLE_USER_HOOKS
+        bool "Enable user-defined LWIP hooks"
+        default n
+
     menuconfig RT_LWIP_DEBUG
         bool "Enable lwIP Debugging Options"
         default n

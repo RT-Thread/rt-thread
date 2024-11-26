@@ -35,8 +35,8 @@ static void configure_memory()
 #define QSPI_STD_CMD_RSTEN  0x66
 #define QSPI_STD_CMD_RST    0x99
 
-    uint8_t temporary = 0x40;
-    uint32_t err_code;
+    rt_uint8_t temporary = 0x40;
+    rt_uint32_t err_code;
     nrf_qspi_cinstr_conf_t cinstr_cfg =
     {
         .opcode    = QSPI_STD_CMD_RSTEN,
@@ -75,7 +75,7 @@ static void configure_memory()
 }
 static int init(void)
 {
-    uint32_t err_code;
+    rt_uint32_t err_code;
     nrfx_qspi_config_t config = NRFX_QSPI_DEFAULT_CONFIG(BSP_QSPI_SCK_PIN, BSP_QSPI_CSN_PIN,
                                                          BSP_QSPI_IO0_PIN, BSP_QSPI_IO1_PIN, BSP_QSPI_IO2_PIN, BSP_QSPI_IO3_PIN);
 
@@ -89,9 +89,9 @@ static int init(void)
     return 0;
 }
 
-static int read(long offset, uint8_t *buf, size_t size)
+static int read(long offset, rt_uint8_t *buf, rt_size_t size)
 {
-    uint32_t err_code;
+    rt_uint32_t err_code;
     m_finished = false;
     err_code = nrfx_qspi_read(buf, size, offset);
     WAIT_FOR_PERIPH();
@@ -106,9 +106,9 @@ static int read(long offset, uint8_t *buf, size_t size)
     }
 }
 
-static int write(long offset, const uint8_t *buf, size_t size)
+static int write(long offset, const rt_uint8_t *buf, rt_size_t size)
 {
-    uint32_t err_code;
+    rt_uint32_t err_code;
     m_finished = false;
     err_code = nrfx_qspi_write(buf, size, offset);
     WAIT_FOR_PERIPH();
@@ -123,9 +123,9 @@ static int write(long offset, const uint8_t *buf, size_t size)
     }
 }
 
-static int erase(long offset, size_t size)
+static int erase(long offset, rt_size_t size)
 {
-    uint32_t err_code;
+    rt_uint32_t err_code;
     m_finished = false;
     err_code = nrfx_qspi_erase(NRF_QSPI_ERASE_LEN_64KB, offset);
     WAIT_FOR_PERIPH();

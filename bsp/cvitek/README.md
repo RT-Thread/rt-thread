@@ -44,11 +44,13 @@ Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如�
 
 | BSP 名称      | 大小核  | 芯片架构        | 默认串口控制台 | 备注     |
 | ------------- | ------- |---------------- | -------------- | -------- |
-| cv18xx_risc-v | 大核    | RISC-V C906     | uart0          | 支持 MMU，支持 RT-Thread 标准版 和 RT-SMART 模式，默认运行 RT-Thread 标准版本 |
+| cv18xx_risc-v | 大核    | RISC-V C906     | uart0          | 支持 MMU，支持 RT-Thread 标准版 和 RT-SMART 模式，默认运行 RT-SMART 版本 |
 | c906-little   | 小核    | RISC-V C906     | uart1          | 无 MMU，运行 RT-Thread 标准版 |
 | cv18xx_aarch64| 大核    | ARM Cortex A53  | uart0          | 支持 MMU， 支持 RT-Thread 标准版 和 RT-SMART 版，默认运行 RT-Thread 标准版本 |
 
 由于开发板默认运行的大核为 "cv18xx_risc-v", 所以本文将主要介绍 "cv18xx_risc-v" 和 "c906-little" 的构建和使用。有关 "cv18xx_aarch64" 的介绍请参考 [这里](./cv18xx_aarch64/README.md)。
+
+> 注：不同开发板 uart 输出管脚不同，默认配置可能导致串口无法正常显示，请根据开发板 uart 通过 `scons --menuconfig` 配置对应 uart 的输出管脚。
 
 ## 驱动支持列表
 
@@ -113,7 +115,21 @@ Board Type (milkv-duo)  --->
     ( ) milkv-duos
 ```
 
-2. 编译
+2. 可按照以下方式开启 RT-Smart
+
+```shell
+RT-Thread Kernel  --->
+    [*] Enable RT-Thread Smart (microkernel on kernel/userland)
+```
+
+并配置内核虚拟起始地址 `0xFFFFFFC000200000`
+```shell
+    RT-Thread Kernel  --->
+(0xFFFFFFC000200000) The virtural address of kernel start
+    RT-Thread Components  --->
+```
+
+3. 编译
 ```shell
 $ scons
 ```

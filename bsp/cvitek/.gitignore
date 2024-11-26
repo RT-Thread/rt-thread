@@ -2,5 +2,4 @@ cvitek_bootloader
 fip.bin
 boot.sd
 output
-c906_little/board/script
 Image.lzma

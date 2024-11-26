@@ -322,8 +322,8 @@ int dfs_mount(const char   *device_name,
     /* open device, but do not check the status of device */
     if (dev_id != NULL)
     {
-        if (rt_device_open(fs->dev_id,
-                           RT_DEVICE_OFLAG_RDWR) != RT_EOK)
+        if (rt_device_open(fs->dev_id, RT_DEVICE_OFLAG_RDWR) != RT_EOK &&
+            rt_device_open(fs->dev_id, RT_DEVICE_OFLAG_RDONLY) != RT_EOK)
         {
             /* The underlying device has error, clear the entry. */
             dfs_lock();
