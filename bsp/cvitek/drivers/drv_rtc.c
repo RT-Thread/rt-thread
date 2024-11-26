@@ -317,7 +317,6 @@ static void rt_hw_rtc_isr(int irqno, void *param)
 
     rt_interrupt_leave();
 }
-#endif
 
 static rt_err_t _rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
 {
@@ -367,6 +366,7 @@ static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
 
     return RT_EOK;
 }
+#endif
 
 static const struct rt_rtc_ops _rtc_ops =
 {
