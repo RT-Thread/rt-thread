@@ -15,7 +15,6 @@
 #define LOG_TAG             "drv.hwtimer"
 #include <drv_log.h>
 #include <rtdevice.h>
-#include "drv_hwtimer.h"
 #include "fsl_ctimer.h"
 
 enum
@@ -244,39 +243,42 @@ INIT_DEVICE_EXPORT(rt_hw_hwtimer_init);
 #ifdef BSP_USING_CTIMER0
 void CTIMER0_IRQHandler(void)
 {
+    rt_interrupt_enter();
     uint32_t int_stat;
     /* Get Interrupt status flags */
     int_stat = CTIMER_GetStatusFlags(CTIMER0);
     /* Clear the status flags that were set */
     CTIMER_ClearStatusFlags(CTIMER0, int_stat);
     rt_device_hwtimer_isr(&mcxa_hwtimer_obj[TIM0_INDEX].time_device);
-
+    rt_interrupt_leave();
 }
 #endif /* BSP_USING_HWTIMER0 */
 
 #ifdef BSP_USING_CTIMER1
 void CTIMER1_IRQHandler(void)
 {
+    rt_interrupt_enter();
     uint32_t int_stat;
     /* Get Interrupt status flags */
     int_stat = CTIMER_GetStatusFlags(CTIMER1);
     /* Clear the status flags that were set */
     CTIMER_ClearStatusFlags(CTIMER1, int_stat);
     rt_device_hwtimer_isr(&mcxa_hwtimer_obj[TIM1_INDEX].time_device);
-
+    rt_interrupt_leave();
 }
 #endif /* BSP_USING_HWTIMER1 */
 
 #ifdef BSP_USING_CTIMER2
 void CTIMER2_IRQHandler(void)
 {
+    rt_interrupt_enter();
     uint32_t int_stat;
     /* Get Interrupt status flags */
     int_stat = CTIMER_GetStatusFlags(CTIMER2);
     /* Clear the status flags that were set */
     CTIMER_ClearStatusFlags(CTIMER2, int_stat);
     rt_device_hwtimer_isr(&mcxa_hwtimer_obj[TIM2_INDEX].time_device);
-
+    rt_interrupt_leave();
 }
 #endif /* BSP_USING_HWTIMER2 */
 
