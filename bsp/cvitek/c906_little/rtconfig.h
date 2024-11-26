@@ -56,6 +56,7 @@
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define ARCH_CPU_64BIT
+#define RT_USING_CACHE
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_D
