@@ -45,6 +45,12 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#ifdef RT_USING_ATA
+#ifdef RT_ATA_AHCI
+#include "drivers/ahci.h"
+#endif /* RT_ATA_AHCI */
+#endif /* RT_USING_ATA */
+
 #ifdef RT_USING_MBOX
 #include "drivers/mailbox.h"
 #endif /* RT_USING_MBOX */
