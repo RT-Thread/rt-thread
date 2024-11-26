@@ -16,7 +16,8 @@ if rtconfig.CPU in common64_arch :
 else :
     group += SConscript(os.path.join('common', 'SConscript'))
 
-if GetDepend('ARCH_CPU_64BIT'):
+# FIXME: remove implementation of plic in BSP
+if rtconfig.CPU in common64_arch:
     group += SConscript(os.path.join('plic', 'SConscript'))
 
 # cpu porting code files
