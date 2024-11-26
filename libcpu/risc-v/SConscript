@@ -16,8 +16,8 @@ if rtconfig.CPU in common64_arch :
 else :
     group += SConscript(os.path.join('common', 'SConscript'))
 
-
-group += SConscript(os.path.join('plic', 'SConscript'))
+if GetDepend('ARCH_CPU_64BIT'):
+    group += SConscript(os.path.join('plic', 'SConscript'))
 
 # cpu porting code files
 if 'VENDOR' in vars(rtconfig) and rtconfig.VENDOR != '':
