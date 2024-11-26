@@ -10,6 +10,12 @@ CPPPATH = [cwd + '/../include']
 
 src = ['regulator.c', 'regulator_dm.c']
 
+if GetDepend(['RT_REGULATOR_FIXED']):
+    src += ['regulator-fixed.c']
+
+if GetDepend(['RT_REGULATOR_GPIO']):
+    src += ['regulator-gpio.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
