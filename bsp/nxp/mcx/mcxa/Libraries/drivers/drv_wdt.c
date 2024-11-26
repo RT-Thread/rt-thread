@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,7 +33,7 @@ void APP_WDT_IRQ_HANDLER(void)
 {
     uint32_t wdtStatus = WWDT_GetStatusFlags(WWDT);
 
-    //APP_LED_TOGGLE;
+    /*APP_LED_TOGGLE;*/
 
     /* The chip will reset before this happens */
     if (wdtStatus & kWWDT_TimeoutFlag)
@@ -82,9 +82,9 @@ static rt_err_t wdt_init(rt_watchdog_t *wdt)
     config.enableWatchdogReset = true;
     /* Setup watchdog clock frequency(Hz). */
     config.clockFreq_Hz = WDT_CLK_FREQ;
-	
+
     WWDT_Init(WWDT, &config);
-	NVIC_EnableIRQ(APP_WDT_IRQn);
+    NVIC_EnableIRQ(APP_WDT_IRQn);
 
     return RT_EOK;
 }
@@ -114,7 +114,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             return RT_EOK;
 
         case RT_DEVICE_CTRL_WDT_KEEPALIVE:
-			delayWwdtWindow();
+            delayWwdtWindow();
             WWDT_Refresh(wdt_dev.wdt_base);
             return RT_EOK;
 
