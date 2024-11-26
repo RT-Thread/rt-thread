@@ -85,6 +85,10 @@ extern "C" {
 #include "drivers/pic.h"
 #endif /* RT_USING_PIC */
 
+#ifdef RT_USING_REGULATOR
+#include "drivers/regulator.h"
+#endif /* RT_USING_REGULATOR */
+
 #ifdef RT_USING_RESET
 #include "drivers/reset.h"
 #endif /* RT_USING_RESET */
