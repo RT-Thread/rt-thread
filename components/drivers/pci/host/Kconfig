@@ -8,3 +8,5 @@ config RT_PCI_HOST_GENERIC
     depends on RT_PCI_ECAM
     select RT_PCI_HOST_COMMON
     default y
+
+rsource "dw/Kconfig"
