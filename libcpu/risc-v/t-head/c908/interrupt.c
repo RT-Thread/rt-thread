@@ -15,6 +15,10 @@
 #include "riscv.h"
 #include "plic.h"
 
+#ifndef C908_PLIC_PHY_ADDR
+#define C908_PLIC_PHY_ADDR              (0xF00000000UL)
+#endif
+
 extern rt_atomic_t rt_interrupt_nest;
 extern rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 extern rt_uint32_t rt_thread_switch_interrupt_flag;
@@ -26,13 +30,26 @@ static void rt_hw_interrupt_handler(int vector, void *param)
     rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
 
+static void __isr(int irq)
+{
+    rt_isr_handler_t isr;
+    void *param;
+
+    isr = isr_table[IRQ_OFFSET + irq].handler;
+    param = isr_table[IRQ_OFFSET + irq].param;
+    if (isr != RT_NULL)
+    {
+        isr(irq, param);
+    }
+}
+
 /**
  * This function will initialize hardware interrupt
  */
 void rt_hw_interrupt_init(void)
 {
     /* init interrupt controller */
-    plic_init();
+    plic_init(C908_PLIC_PHY_ADDR, __isr);
 
     rt_int32_t idx;
 
@@ -88,7 +105,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
-    if ((vector < 0) || (vector > IRQ_MAX_NR))
+    if ((vector < 0) || (vector >= IRQ_MAX_NR))
     {
         return old_handler;
     }
