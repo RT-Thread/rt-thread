@@ -1,0 +1,15 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_THERMAL']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = ['thermal.c', 'thermal_dm.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
