@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['thermal.c', 'thermal_dm.c']
 
+if GetDepend(['RT_THERMAL_COOL_PWM_FAN']):
+    src += ['thermal-cool-pwm-fan.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
