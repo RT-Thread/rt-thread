@@ -23,5 +23,5 @@ menuconfig RT_USING_SERIAL
             default 64
         config RT_USING_SERIAL_BYPASS
             bool "Using serial bypass"
-            default y
+            default n
         endif

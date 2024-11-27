@@ -91,7 +91,7 @@ extern "C" {
 #else
 #include "drivers/dev_serial.h"
 #ifdef RT_USING_SERIAL_BYPASS
-#include "drivers/bypass.h"
+#include "drivers/serial_bypass.h"
 #endif /* RT_USING_SERIAL_BYPASS */
 #endif
 #endif /* RT_USING_SERIAL */

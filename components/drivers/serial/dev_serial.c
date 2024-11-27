@@ -1428,7 +1428,6 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 
             while (1)
             {
-                rt_bool_t skip = RT_FALSE;
                 ch = serial->ops->getc(serial);
                 if (ch == -1) break;
 
@@ -1436,6 +1435,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 #ifdef RT_USING_SERIAL_BYPASS
                 if (serial->bypass && serial->bypass->upper_h && (serial->bypass->upper_h->head.next != &serial->bypass->upper_h->head))
                 {
+                    rt_bool_t skip = RT_FALSE;
                     char buf = (char)ch;
                     int ret;
                     rt_list_t* node = serial->bypass->upper_h->head.next;
@@ -1449,10 +1449,11 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                         }
                         node = node->next;
                     } while (node != &serial->bypass->upper_h->head);
+
+                    if (skip)
+                        continue;
                 }
 
-                if (skip)
-                    continue;
 #endif
                 level = rt_spin_lock_irqsave(&(serial->spinlock));
                 rx_fifo->buffer[rx_fifo->put_index] = ch;
@@ -1478,17 +1479,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 rt_workqueue_dowork(serial->bypass->lower_workq, &serial->bypass->work);
 #endif
 
-            /**
-             * Invoke callback.
-             * First try notify if any, and if notify is existed, rx_indicate()
-             * is not callback. This separate the priority and makes the reuse
-             * of same serial device reasonable for RT console.
-             */
-            if (serial->rx_notify.notify)
-            {
-                serial->rx_notify.notify(serial->rx_notify.dev);
-            }
-            else if (serial->parent.rx_indicate != RT_NULL)
+            if (serial->parent.rx_indicate != RT_NULL)
             {
                 rt_size_t rx_length;
 
