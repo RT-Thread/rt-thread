@@ -35,6 +35,9 @@ if GetDepend('RT_USING_SFUD'):
     elif rtconfig.PLATFORM in ['armcc']:
         LOCAL_CFLAGS += ' --c99'
 
+if GetDepend('RT_USING_DM'):
+    src += ['dev_spi_dm.c', 'dev_spi_bus.c']
+
 src += src_device
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
