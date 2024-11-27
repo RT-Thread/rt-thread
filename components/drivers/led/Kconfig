@@ -1,0 +1,8 @@
+menuconfig RT_USING_LED
+    bool "Using Light Emitting Diode (LED) device drivers"
+    depends on RT_USING_DM
+    default n
+
+if RT_USING_LED
+    osource "$(SOC_DM_LED_DIR)/Kconfig"
+endif
