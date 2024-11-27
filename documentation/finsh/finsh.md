@@ -421,7 +421,7 @@ The reference configuration example in rtconfig.h is as follows, and can be conf
 /* Record 5 lines of history commands */
 #define FINSH_HISTORY_LINES 5
 
-/* Enable the use of the Tab key */
+/* Enable the use of symbol table */
 #define FINSH_USING_SYMTAB
 /* Turn on description */
 #define FINSH_USING_DESCRIPTION
