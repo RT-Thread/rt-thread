@@ -2,13 +2,16 @@ from building import *
 
 group = []
 
-if not GetDepend(['RT_PCI_ENDPOINT']):
+if not GetDepend(['RT_USING_DM', 'RT_USING_LED']):
     Return('group')
 
 cwd = GetCurrentDir()
-CPPPATH = [cwd + '/../../include']
+CPPPATH = [cwd + '/../include']
 
-src = ['endpoint.c', 'mem.c']
+src = ['led.c']
+
+if GetDepend(['RT_LED_GPIO']):
+    src += ['led-gpio.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 

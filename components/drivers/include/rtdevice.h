@@ -51,6 +51,10 @@ extern "C" {
 #endif /* RT_ATA_AHCI */
 #endif /* RT_USING_ATA */
 
+#ifdef RT_USING_LED
+#include "drivers/led.h"
+#endif
+
 #ifdef RT_USING_MBOX
 #include "drivers/mailbox.h"
 #endif /* RT_USING_MBOX */
