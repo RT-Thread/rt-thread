@@ -137,6 +137,7 @@ struct dfs_mmap2_args
     int prot;
     int flags;
     off_t pgoffset;
+    size_t min_align_size;
 
     struct rt_lwp *lwp;
     void *ret;
