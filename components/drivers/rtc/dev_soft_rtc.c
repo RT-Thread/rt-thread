@@ -226,8 +226,8 @@ static int rt_soft_rtc_init(void)
     {
         return 0;
     }
-    /* make sure only one 'rtc' device */
-    RT_ASSERT(!rt_device_find("rtc"));
+    /* make sure only one 'sw_rtc' device */
+    RT_ASSERT(!rt_device_find("sw_rtc"));
 
 #ifdef RT_USING_ALARM
     rt_timer_init(&alarm_time,
@@ -258,7 +258,9 @@ static int rt_soft_rtc_init(void)
     /* no private */
     soft_rtc_dev.user_data = RT_NULL;
 
-    rt_device_register(&soft_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR);
+    rt_device_register(&soft_rtc_dev, "sw_rtc", RT_DEVICE_FLAG_RDWR);
+
+    source_device = &soft_rtc_dev;
 
     init_ok = RT_TRUE;
 
@@ -317,7 +319,7 @@ static void cmd_rtc_sync(int argc, char **argv)
     rt_kprintf("local time: %.*s", 25, ctime(&now));
     rt_kprintf("timestamps: %ld\n", (long)tv.tv_sec);
 }
-MSH_CMD_EXPORT_ALIAS(cmd_rtc_sync, rtc_sync, Update time by real rtc);
+MSH_CMD_EXPORT_ALIAS(cmd_rtc_sync, rtc_sync, Update time by soft rtc);
 #endif
 
 #endif /* RT_USING_SYSTEM_WORKQUEUE */
