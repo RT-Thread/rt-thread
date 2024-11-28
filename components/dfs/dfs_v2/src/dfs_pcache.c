@@ -694,14 +694,15 @@ static int dfs_page_unmap(struct dfs_page *page)
     return 0;
 }
 
-static struct dfs_page *dfs_page_create(void)
+static struct dfs_page *dfs_page_create(off_t pos)
 {
     struct dfs_page *page = RT_NULL;
+    int affid = RT_PAGE_PICK_AFFID(pos);
 
     page = rt_calloc(1, sizeof(struct dfs_page));
     if (page)
     {
-        page->page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+        page->page = rt_pages_alloc_tagged(0, affid, PAGE_ANY_AVAILABLE);
         if (page->page)
         {
             //memset(page->page, 0x00, ARCH_PAGE_SIZE);
@@ -992,12 +993,12 @@ static struct dfs_page *dfs_aspace_load_page(struct dfs_file *file, off_t pos)
         struct dfs_vnode *vnode = file->vnode;
         struct dfs_aspace *aspace = vnode->aspace;
 
-        page = dfs_page_create();
+        page = dfs_page_create(pos);
         if (page)
         {
             page->aspace = aspace;
             page->size = ARCH_PAGE_SIZE;
-            page->fpos = pos / ARCH_PAGE_SIZE * ARCH_PAGE_SIZE;
+            page->fpos = RT_ALIGN_DOWN(pos, ARCH_PAGE_SIZE);
             aspace->ops->read(file, page);
             page->ref_count ++;
 

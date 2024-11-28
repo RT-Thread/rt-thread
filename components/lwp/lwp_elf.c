@@ -576,7 +576,7 @@ static int elf_aux_fill(elf_load_info_t *load_info)
     elf_addr_t *aux_info;
     uint32_t random_value = rt_tick_get();
     size_t prot = PROT_READ | PROT_WRITE;
-    size_t flags = MAP_PRIVATE;
+    size_t flags = MAP_FIXED | MAP_PRIVATE;
     rt_lwp_t lwp = load_info->lwp;
     void *va;
 
