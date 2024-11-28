@@ -38,13 +38,15 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     size_t attr;
     size_t lo_off;
     int err;
+    size_t pa_off = (rt_ubase_t)paddr & ~(RT_PAGE_AFFINITY_BLOCK_SIZE - 1);
 
-    lo_off = (rt_ubase_t)paddr & ARCH_PAGE_MASK;
+    lo_off = (rt_ubase_t)paddr - pa_off;
+    pa_off = MM_PA_TO_OFF(pa_off);
 
     struct rt_mm_va_hint hint = {
         .prefer = RT_NULL,
-        .map_size = RT_ALIGN(size + lo_off, ARCH_PAGE_SIZE),
-        .flags = 0,
+        .map_size = RT_ALIGN(size + lo_off, RT_PAGE_AFFINITY_BLOCK_SIZE),
+        .flags = MMF_CREATE(0, RT_PAGE_AFFINITY_BLOCK_SIZE),
         .limit_start = rt_ioremap_start,
         .limit_range_size = rt_ioremap_size,
     };
@@ -63,7 +65,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     default:
         return v_addr;
     }
-    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), (void **)&v_addr);
+    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, pa_off, (void **)&v_addr);
 
     if (err)
     {

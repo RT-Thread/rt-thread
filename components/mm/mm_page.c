@@ -10,6 +10,7 @@
  *                             page management algorithm
  * 2023-02-20     WangXiaoyao  Multi-list page-management
  * 2023-11-28     Shell        Bugs fix for page_install on shadow region
+ * 2024-06-18     Shell        Added affinity page management for page coloring.
  */
 #include <rtthread.h>
 
@@ -41,14 +42,41 @@ static void *init_mpr_cont_start;
 
 static struct rt_varea mpr_varea;
 
-static struct rt_page *page_list_low[RT_PAGE_MAX_ORDER];
-static struct rt_page *page_list_high[RT_PAGE_MAX_ORDER];
+typedef union
+{
+    struct rt_page *page_list;
+    rt_ubase_t aff_page_map;
+} pgls_agr_t;
+
+#define PGLS_IS_AFF_MAP(pgls) ((pgls).aff_page_map & 0x1)
+#define PGLS_FROM_AFF_MAP(pgls, aff_map) \
+    ((pgls).aff_page_map = (-(rt_ubase_t)(aff_map)) | 0x1)
+#define PGLS_GET_AFF_MAP(pgls) \
+    ((struct rt_page **)-((pgls).aff_page_map & ~0x1))
+#define PGLS_GET(pgls) \
+    (PGLS_IS_AFF_MAP(pgls) ? PGLS_GET_AFF_MAP(pgls) : (pgls).page_list)
+#define PAGE_TO_AFFID(page) (RT_PAGE_PICK_AFFID(page_to_paddr(page)))
+
+/* affinity id */
+#define AFFID_BLK_BITS \
+    ((sizeof(int) * 8 - 1) - __builtin_clz(RT_PAGE_AFFINITY_BLOCK_SIZE) - ARCH_PAGE_SHIFT)
+#define AFFID_NUMOF_ID_IN_SET(order) \
+    ((RT_PAGE_AFFINITY_BLOCK_SIZE / ARCH_PAGE_SIZE) / (1ul << (order)))
+#define AFFID_BITS_MASK(order) \
+    (((1 << AFFID_BLK_BITS) - 1) - ((1 << (order)) - 1))
+
+static pgls_agr_t page_list_low[RT_PAGE_MAX_ORDER];
+static rt_page_t
+    aff_pglist_low[AFFID_NUMOF_ID_IN_SET(0) * 2 - 2];
+static pgls_agr_t page_list_high[RT_PAGE_MAX_ORDER];
+static rt_page_t
+    aff_pglist_high[AFFID_NUMOF_ID_IN_SET(0) * 2 - 2];
 static RT_DEFINE_SPINLOCK(_spinlock);
 
 #define page_start ((rt_page_t)rt_mpr_start)
 
-static rt_size_t page_nr;
-static rt_size_t _high_pages_nr;
+static rt_size_t _page_nr, _freed_nr, _freed_nr_hi;
+static rt_size_t _page_nr_hi;
 static rt_size_t early_offset;
 
 static const char *get_name(rt_varea_t varea)
@@ -64,11 +92,13 @@ static void hint_free(rt_mm_va_hint_t hint)
     hint->prefer = rt_mpr_start;
 }
 
-static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
+static void on_page_fault(struct rt_varea *varea,
+                          struct rt_aspace_fault_msg *msg)
 {
     char *init_start = (void *)init_mpr_align_start;
     char *init_end = (void *)init_mpr_align_end;
-    if ((char *)msg->fault_vaddr < init_end && (char *)msg->fault_vaddr >= init_start)
+    if ((char *)msg->fault_vaddr < init_end &&
+        (char *)msg->fault_vaddr >= init_start)
     {
         rt_size_t offset = (char *)msg->fault_vaddr - init_start;
         msg->response.status = MM_FAULT_STATUS_OK;
@@ -207,6 +237,11 @@ static inline void *page_to_addr(rt_page_t page)
     return (void *)(((page - page_start) << ARCH_PAGE_SHIFT) - PV_OFFSET);
 }
 
+static inline rt_ubase_t page_to_paddr(rt_page_t page)
+{
+    return (rt_ubase_t)((page - page_start) << ARCH_PAGE_SHIFT);
+}
+
 static inline rt_page_t addr_to_page(rt_page_t pg_start, void *addr)
 {
     addr = (char *)addr + PV_OFFSET;
@@ -261,7 +296,7 @@ void *rt_page_page2addr(struct rt_page *p)
 }
 
 static inline struct rt_page *_buddy_get(struct rt_page *p,
-                                        rt_uint32_t size_bits)
+                                         rt_uint32_t size_bits)
 {
     rt_size_t addr;
 
@@ -270,7 +305,60 @@ static inline struct rt_page *_buddy_get(struct rt_page *p,
     return rt_page_addr2page((void *)addr);
 }
 
-static void _page_remove(rt_page_t page_list[], struct rt_page *p, rt_uint32_t size_bits)
+static rt_page_t *_get_pgls_head_by_page(pgls_agr_t *agr_pgls, rt_page_t page,
+                                         rt_uint32_t size_bits)
+{
+    rt_page_t *pgls_head;
+    int index;
+
+    if (size_bits < AFFID_BLK_BITS)
+    {
+        index = PAGE_TO_AFFID(page) >> size_bits;
+        RT_ASSERT(index < AFFID_NUMOF_ID_IN_SET(size_bits));
+
+        RT_ASSERT(PGLS_IS_AFF_MAP(agr_pgls[size_bits]));
+        pgls_head = &PGLS_GET_AFF_MAP(agr_pgls[size_bits])[index];
+    }
+    else
+    {
+        RT_ASSERT(!PGLS_IS_AFF_MAP(agr_pgls[size_bits]));
+        pgls_head = &agr_pgls[size_bits].page_list;
+    }
+
+    return pgls_head;
+}
+
+static rt_page_t *_get_pgls_head(pgls_agr_t *agr_pgls, int affid,
+                                 rt_uint32_t size_bits)
+{
+    rt_page_t *pgls_head;
+    int index;
+
+    if (size_bits < AFFID_BLK_BITS)
+    {
+        index = affid >> size_bits;
+        RT_ASSERT(index < AFFID_NUMOF_ID_IN_SET(size_bits));
+
+        RT_ASSERT(PGLS_IS_AFF_MAP(agr_pgls[size_bits]));
+        pgls_head = &PGLS_GET_AFF_MAP(agr_pgls[size_bits])[index];
+    }
+    else
+    {
+        RT_ASSERT(!PGLS_IS_AFF_MAP(agr_pgls[size_bits]));
+        pgls_head = &agr_pgls[size_bits].page_list;
+    }
+
+    return pgls_head;
+}
+
+static void _page_alloc(struct rt_page *p)
+{
+    p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
+    p->ref_cnt = 1;
+}
+
+static void _page_remove(rt_page_t *page_head, struct rt_page *p,
+                         rt_uint32_t size_bits)
 {
     if (p->pre)
     {
@@ -278,7 +366,7 @@ static void _page_remove(rt_page_t page_list[], struct rt_page *p, rt_uint32_t s
     }
     else
     {
-        page_list[size_bits] = p->next;
+        *page_head = p->next;
     }
 
     if (p->next)
@@ -286,18 +374,19 @@ static void _page_remove(rt_page_t page_list[], struct rt_page *p, rt_uint32_t s
         p->next->pre = p->pre;
     }
 
-    p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
+    _page_alloc(p);
 }
 
-static void _page_insert(rt_page_t page_list[], struct rt_page *p, rt_uint32_t size_bits)
+static void _page_insert(rt_page_t *page_head, struct rt_page *p,
+                         rt_uint32_t size_bits)
 {
-    p->next = page_list[size_bits];
+    p->next = *page_head;
     if (p->next)
     {
         p->next->pre = p;
     }
     p->pre = 0;
-    page_list[size_bits] = p;
+    *page_head = p;
     p->size_bits = size_bits;
 }
 
@@ -328,7 +417,8 @@ static int _pages_ref_get(struct rt_page *p, rt_uint32_t size_bits)
     return page_head->ref_cnt;
 }
 
-static int _pages_free(rt_page_t page_list[], struct rt_page *p, rt_uint32_t size_bits)
+static int _pages_free(pgls_agr_t page_list[], struct rt_page *p,
+                       rt_uint32_t size_bits)
 {
     rt_uint32_t level = size_bits;
     struct rt_page *buddy;
@@ -351,7 +441,8 @@ static int _pages_free(rt_page_t page_list[], struct rt_page *p, rt_uint32_t siz
         buddy = _buddy_get(p, level);
         if (buddy && buddy->size_bits == level)
         {
-            _page_remove(page_list, buddy, level);
+            _page_remove(_get_pgls_head_by_page(page_list, buddy, level),
+                         buddy, level);
             p = (p < buddy) ? p : buddy;
             level++;
         }
@@ -360,26 +451,38 @@ static int _pages_free(rt_page_t page_list[], struct rt_page *p, rt_uint32_t siz
             break;
         }
     }
-    _page_insert(page_list, p, level);
+
+    _page_insert(_get_pgls_head_by_page(page_list, p, level),
+                 p, level);
     return 1;
 }
 
-static struct rt_page *_pages_alloc(rt_page_t page_list[], rt_uint32_t size_bits)
+static struct rt_page *__pages_alloc(
+    pgls_agr_t agr_pgls[], rt_uint32_t size_bits, int affid,
+    void (*page_remove)(rt_page_t *page_head, struct rt_page *p,
+                        rt_uint32_t size_bits),
+    void (*page_insert)(rt_page_t *page_head, struct rt_page *p,
+                        rt_uint32_t size_bits),
+    void (*page_alloc)(rt_page_t page))
 {
-    struct rt_page *p;
+    rt_page_t *pgls_head = _get_pgls_head(agr_pgls, affid, size_bits);
+    rt_page_t p = *pgls_head;
 
-    if (page_list[size_bits])
+    if (p)
     {
-        p = page_list[size_bits];
-        _page_remove(page_list, p, size_bits);
+        page_remove(pgls_head, p, size_bits);
     }
     else
     {
         rt_uint32_t level;
+        rt_page_t head;
 
+        /* fallback for allocation */
         for (level = size_bits + 1; level < RT_PAGE_MAX_ORDER; level++)
         {
-            if (page_list[level])
+            pgls_head = _get_pgls_head(agr_pgls, affid, level);
+            p = *pgls_head;
+            if (p)
             {
                 break;
             }
@@ -389,21 +492,47 @@ static struct rt_page *_pages_alloc(rt_page_t page_list[], rt_uint32_t size_bits
             return 0;
         }
 
-        p = page_list[level];
-        _page_remove(page_list, p, level);
+        page_remove(pgls_head, p, level);
+
+        /* pick the page satisfied the affinity tag */
+        head = p;
+        p = head + (affid - (affid & AFFID_BITS_MASK(level)));
+        page_alloc(p);
+
+        /* release the pages caller don't need */
         while (level > size_bits)
         {
-            _page_insert(page_list, p, level - 1);
-            p = _buddy_get(p, level - 1);
-            level--;
+            long lower_bits = level - 1;
+            rt_page_t middle = _buddy_get(head, lower_bits);
+            if (p >= middle)
+            {
+                page_insert(
+                    _get_pgls_head_by_page(agr_pgls, head, lower_bits),
+                    head, lower_bits);
+                head = middle;
+            }
+            else
+            {
+                page_insert(
+                    _get_pgls_head_by_page(agr_pgls, middle, lower_bits),
+                    middle, lower_bits);
+            }
+            level = lower_bits;
         }
     }
-    p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
-    p->ref_cnt = 1;
+
     return p;
 }
 
-static void _early_page_remove(rt_page_t page_list[], rt_page_t page, rt_uint32_t size_bits)
+static struct rt_page *_pages_alloc(pgls_agr_t page_list[],
+                                    rt_uint32_t size_bits, int affid)
+{
+    return __pages_alloc(page_list, size_bits, affid, _page_remove,
+                         _page_insert, _page_alloc);
+}
+
+static void _early_page_remove(rt_page_t *pgls_head, rt_page_t page,
+                               rt_uint32_t size_bits)
 {
     rt_page_t page_cont = (rt_page_t)((char *)page + early_offset);
     if (page_cont->pre)
@@ -413,7 +542,7 @@ static void _early_page_remove(rt_page_t page_list[], rt_page_t page, rt_uint32_
     }
     else
     {
-        page_list[size_bits] = page_cont->next;
+        *pgls_head = page_cont->next;
     }
 
     if (page_cont->next)
@@ -422,70 +551,47 @@ static void _early_page_remove(rt_page_t page_list[], rt_page_t page, rt_uint32_
         next_cont->pre = page_cont->pre;
     }
 
+    RT_ASSERT(page_cont->size_bits == size_bits);
     page_cont->size_bits = ARCH_ADDRESS_WIDTH_BITS;
+    page_cont->ref_cnt = 1;
 }
 
-static void _early_page_insert(rt_page_t page_list[], rt_page_t page, int size_bits)
+static void _early_page_alloc(rt_page_t page)
+{
+    rt_page_t page_cont = (rt_page_t)((char *)page + early_offset);
+    page_cont->size_bits = ARCH_ADDRESS_WIDTH_BITS;
+    page_cont->ref_cnt = 1;
+}
+
+static void _early_page_insert(rt_page_t *pgls_head, rt_page_t page,
+                               rt_uint32_t size_bits)
 {
     RT_ASSERT((void *)page >= rt_mpr_start &&
               ((char *)page - (char *)rt_mpr_start) < rt_mpr_size);
     rt_page_t page_cont = (rt_page_t)((char *)page + early_offset);
 
-    page_cont->next = page_list[size_bits];
+    page_cont->next = *pgls_head;
     if (page_cont->next)
     {
         rt_page_t next_cont = (rt_page_t)((char *)page_cont->next + early_offset);
         next_cont->pre = page;
     }
     page_cont->pre = 0;
-    page_list[size_bits] = page;
+    *pgls_head = page;
     page_cont->size_bits = size_bits;
 }
 
-static struct rt_page *_early_pages_alloc(rt_page_t page_list[], rt_uint32_t size_bits)
+static struct rt_page *_early_pages_alloc(pgls_agr_t page_list[],
+                                          rt_uint32_t size_bits, int affid)
 {
-    struct rt_page *p;
-
-    if (page_list[size_bits])
-    {
-        p = page_list[size_bits];
-        _early_page_remove(page_list, p, size_bits);
-    }
-    else
-    {
-        rt_uint32_t level;
-
-        for (level = size_bits + 1; level < RT_PAGE_MAX_ORDER; level++)
-        {
-            if (page_list[level])
-            {
-                break;
-            }
-        }
-        if (level == RT_PAGE_MAX_ORDER)
-        {
-            return 0;
-        }
-
-        p = page_list[level];
-        _early_page_remove(page_list, p, level);
-        while (level > size_bits)
-        {
-            _early_page_insert(page_list, p, level - 1);
-            p = _buddy_get(p, level - 1);
-            level--;
-        }
-    }
-    rt_page_t page_cont = (rt_page_t)((char *)p + early_offset);
-    page_cont->size_bits = ARCH_ADDRESS_WIDTH_BITS;
-    page_cont->ref_cnt = 1;
-    return p;
+    return __pages_alloc(page_list, size_bits, affid, _early_page_remove,
+                         _early_page_insert, _early_page_alloc);
 }
 
-static rt_page_t *_get_page_list(void *vaddr)
+static pgls_agr_t *_get_page_list(void *vaddr)
 {
     rt_ubase_t pa_int = (rt_ubase_t)vaddr + PV_OFFSET;
-    rt_page_t *list;
+    pgls_agr_t *list;
     if (pa_int > UINT32_MAX)
     {
         list = page_list_high;
@@ -521,14 +627,15 @@ void rt_page_ref_inc(void *addr, rt_uint32_t size_bits)
     rt_spin_unlock_irqrestore(&_spinlock, level);
 }
 
-static rt_page_t (*pages_alloc_handler)(rt_page_t page_list[], rt_uint32_t size_bits);
+static rt_page_t (*pages_alloc_handler)(pgls_agr_t page_list[],
+                                        rt_uint32_t size_bits, int affid);
 
 /* if not, we skip the finding on page_list_high */
 static size_t _high_page_configured = 0;
 
-static rt_page_t *_flag_to_page_list(size_t flags)
+static pgls_agr_t *_flag_to_page_list(size_t flags)
 {
-    rt_page_t *page_list;
+    pgls_agr_t *page_list;
     if (_high_page_configured && (flags & PAGE_ANY_AVAILABLE))
     {
         page_list = page_list_high;
@@ -540,15 +647,21 @@ static rt_page_t *_flag_to_page_list(size_t flags)
     return page_list;
 }
 
-rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
+volatile static rt_ubase_t _last_alloc;
+
+rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags, int affid)
 {
     void *alloc_buf = RT_NULL;
     struct rt_page *p;
     rt_base_t level;
-    rt_page_t *page_list = _flag_to_page_list(flags);
+    pgls_agr_t *page_list = _flag_to_page_list(flags);
 
     level = rt_spin_lock_irqsave(&_spinlock);
-    p = pages_alloc_handler(page_list, size_bits);
+    p = pages_alloc_handler(page_list, size_bits, affid);
+    if (p)
+    {
+        _freed_nr -= 1 << size_bits;
+    }
     rt_spin_unlock_irqrestore(&_spinlock, level);
 
     if (!p && page_list != page_list_low)
@@ -557,13 +670,19 @@ rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
         page_list = page_list_low;
 
         level = rt_spin_lock_irqsave(&_spinlock);
-        p = pages_alloc_handler(page_list, size_bits);
+        p = pages_alloc_handler(page_list, size_bits, affid);
+        if (p)
+        {
+            _freed_nr -= 1 << size_bits;
+            _freed_nr_hi -= 1 << size_bits;
+        }
         rt_spin_unlock_irqrestore(&_spinlock, level);
     }
 
     if (p)
     {
         alloc_buf = page_to_addr(p);
+        _last_alloc = (rt_ubase_t)alloc_buf;
 
         #ifdef RT_DEBUGING_PAGE_LEAK
             level = rt_spin_lock_irqsave(&_spinlock);
@@ -574,20 +693,70 @@ rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
     return alloc_buf;
 }
 
+rt_inline int _get_balanced_id(rt_uint32_t size_bits)
+{
+    rt_ubase_t last_alloc = (_last_alloc / RT_PAGE_AFFINITY_BLOCK_SIZE);
+    return (last_alloc + (1u << size_bits)) & AFFID_BITS_MASK(size_bits);
+}
+
+static void *_do_pages_alloc_noaff(rt_uint32_t size_bits, size_t flags)
+{
+    void *rc = RT_NULL;
+
+    if (size_bits < AFFID_BLK_BITS)
+    {
+        int try_affid = _get_balanced_id(size_bits);
+        size_t numof_id = AFFID_NUMOF_ID_IN_SET(size_bits);
+        size_t valid_affid_mask = numof_id - 1;
+
+        for (size_t i = 0; i < numof_id; i++, try_affid += 1 << size_bits)
+        {
+            rc = _do_pages_alloc(size_bits, flags, try_affid & valid_affid_mask);
+            if (rc)
+            {
+                break;
+            }
+        }
+    }
+    else
+    {
+        rc = _do_pages_alloc(size_bits, flags, 0);
+    }
+
+    if (!rc)
+    {
+        RT_ASSERT(0);
+    }
+    return rc;
+}
+
 void *rt_pages_alloc(rt_uint32_t size_bits)
 {
-    return _do_pages_alloc(size_bits, 0);
+    return _do_pages_alloc_noaff(size_bits, 0);
 }
 
 void *rt_pages_alloc_ext(rt_uint32_t size_bits, size_t flags)
 {
-    return _do_pages_alloc(size_bits, flags);
+    return _do_pages_alloc_noaff(size_bits, flags);
+}
+
+void *rt_pages_alloc_tagged(rt_uint32_t size_bits, long affid, size_t flags)
+{
+    rt_page_t current;
+
+    current = _do_pages_alloc(size_bits, flags, affid);
+    if (current && RT_PAGE_PICK_AFFID(current) != affid)
+    {
+        RT_ASSERT(0);
+    }
+
+    return current;
 }
 
 int rt_pages_free(void *addr, rt_uint32_t size_bits)
 {
     struct rt_page *p;
-    rt_page_t *page_list = _get_page_list(addr);
+    pgls_agr_t *page_list = _get_page_list(addr);
     int real_free = 0;
 
     p = rt_page_addr2page(addr);
@@ -597,117 +766,130 @@ int rt_pages_free(void *addr, rt_uint32_t size_bits)
         level = rt_spin_lock_irqsave(&_spinlock);
         real_free = _pages_free(page_list, p, size_bits);
         if (real_free)
+        {
+            _freed_nr += 1 << size_bits;
+            if (page_list == page_list_high)
+            {
+                _freed_nr_hi += 1 << size_bits;
+            }
             TRACE_FREE(p, size_bits);
+        }
         rt_spin_unlock_irqrestore(&_spinlock, level);
     }
 
     return real_free;
 }
 
-void rt_page_list(void) __attribute__((alias("list_page")));
+int rt_page_list(void) __attribute__((alias("list_page")));
 
-#define PGNR2SIZE(nr) ((nr) * ARCH_PAGE_SIZE / 1024)
+#define PGNR2SIZE(nr) ((nr)*ARCH_PAGE_SIZE / 1024)
 
-void list_page(void)
+static void _dump_page_list(int order, rt_page_t lp, rt_page_t hp,
+                            rt_size_t *pfree)
+{
+    rt_size_t free = 0;
+
+    rt_kprintf("level %d ", order);
+
+    while (lp)
+    {
+        free += (1UL << order);
+        rt_kprintf("[L:0x%08p]", rt_page_page2addr(lp));
+        lp = lp->next;
+    }
+    while (hp)
+    {
+        free += (1UL << order);
+        rt_kprintf("[H:0x%08p]", rt_page_page2addr(hp));
+        hp = hp->next;
+    }
+
+    rt_kprintf("\n");
+
+    *pfree += free;
+}
+
+int list_page(void)
 {
     int i;
     rt_size_t free = 0;
-    rt_size_t installed = page_nr;
+    rt_size_t installed = _page_nr;
 
     rt_base_t level;
     level = rt_spin_lock_irqsave(&_spinlock);
 
-    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
+    /* dump affinity map area */
+    for (i = 0; i < AFFID_BLK_BITS; i++)
     {
-        struct rt_page *lp = page_list_low[i];
-        struct rt_page *hp = page_list_high[i];
-
-        rt_kprintf("level %d ", i);
-
-        while (lp)
+        rt_page_t *iter_lo = PGLS_GET_AFF_MAP(page_list_low[i]);
+        rt_page_t *iter_hi = PGLS_GET_AFF_MAP(page_list_high[i]);
+        rt_size_t list_len = AFFID_NUMOF_ID_IN_SET(i);
+        for (size_t j = 0; j < list_len; j++)
         {
-            free += (1UL << i);
-            rt_kprintf("[0x%08p]", rt_page_page2addr(lp));
-            lp = lp->next;
+            _dump_page_list(i, iter_lo[j], iter_hi[j], &free);
         }
-        while (hp)
-        {
-            free += (1UL << i);
-            rt_kprintf("[0x%08p]", rt_page_page2addr(hp));
-            hp = hp->next;
-        }
-        rt_kprintf("\n");
+    }
+
+    /* dump normal page list */
+    for (; i < RT_PAGE_MAX_ORDER; i++)
+    {
+        rt_page_t lp = page_list_low[i].page_list;
+        rt_page_t hp = page_list_high[i].page_list;
+
+        _dump_page_list(i, lp, hp, &free);
     }
 
     rt_spin_unlock_irqrestore(&_spinlock, level);
     rt_kprintf("-------------------------------\n");
-    rt_kprintf("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
+    rt_kprintf("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n",
+               free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
     rt_kprintf("-------------------------------\n");
+
+    return 0;
 }
 MSH_CMD_EXPORT(list_page, show page info);
 
 void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
 {
-    int i;
-    rt_size_t total_free = 0;
-    rt_base_t level;
-
-    level = rt_spin_lock_irqsave(&_spinlock);
-    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
-    {
-        struct rt_page *p = page_list_low[i];
-
-        while (p)
-        {
-            total_free += (1UL << i);
-            p = p->next;
-        }
-    }
-    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
-    {
-        struct rt_page *p = page_list_high[i];
-
-        while (p)
-        {
-            total_free += (1UL << i);
-            p = p->next;
-        }
-    }
-    rt_spin_unlock_irqrestore(&_spinlock, level);
-    *total_nr = page_nr;
-    *free_nr = total_free;
+    *total_nr = _page_nr;
+    *free_nr = _freed_nr;
 }
 
 void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
 {
-    int i;
-    rt_size_t total_free = 0;
-    rt_base_t level;
-
-    level = rt_spin_lock_irqsave(&_spinlock);
-    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
-    {
-        struct rt_page *p = page_list_high[i];
-
-        while (p)
-        {
-            total_free += (1UL << i);
-            p = p->next;
-        }
-    }
-    rt_spin_unlock_irqrestore(&_spinlock, level);
-    *total_nr = _high_pages_nr;
-    *free_nr = total_free;
+    *total_nr = _page_nr_hi;
+    *free_nr = _freed_nr_hi;
 }
 
-static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_handler)
+static void _invalid_uninstalled_shadow(rt_page_t start, rt_page_t end)
 {
-    void (*insert)(rt_page_t *page_list, rt_page_t page, int size_bits) = insert_handler;
+    for (rt_page_t iter = start; iter < end; iter++)
+    {
+        rt_base_t frame = (rt_base_t)rt_page_page2addr(iter);
+        struct installed_page_reg *page_reg = _find_page_region(frame);
+        if (page_reg)
+        {
+            continue;
+        }
+        iter->size_bits = ARCH_ADDRESS_WIDTH_BITS;
+    }
+}
+
+static void _install_page(rt_page_t mpr_head, rt_region_t region,
+                          void (*insert)(rt_page_t *ppg, rt_page_t page, rt_uint32_t size_bits))
+{
+    pgls_agr_t *page_list;
+    rt_page_t *page_head;
     rt_region_t shadow;
+    const rt_base_t pvoffset = PV_OFFSET;
+
+    _page_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
+    _freed_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
+
     shadow.start = region.start & ~shadow_mask;
     shadow.end = FLOOR(region.end, shadow_mask + 1);
 
-    if (shadow.end + PV_OFFSET > UINT32_MAX)
+    if (shadow.end + pvoffset > UINT32_MAX)
         _high_page_configured = 1;
 
     rt_page_t shad_head = addr_to_page(mpr_head, (void *)shadow.start);
@@ -715,15 +897,9 @@ static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_h
     rt_page_t head = addr_to_page(mpr_head, (void *)region.start);
     rt_page_t tail = addr_to_page(mpr_head, (void *)region.end);
 
-    /* mark shadow pages as illegal */
-    for (rt_page_t iter = shad_head; iter < head; iter++)
-    {
-        iter->size_bits = ARCH_ADDRESS_WIDTH_BITS;
-    }
-    for (rt_page_t iter = tail; iter < shad_tail; iter++)
-    {
-        iter->size_bits = ARCH_ADDRESS_WIDTH_BITS;
-    }
+    /* mark shadow page records not belongs to other region as illegal */
+    _invalid_uninstalled_shadow(shad_head, head);
+    _invalid_uninstalled_shadow(tail, shad_tail);
 
     /* insert reserved pages to list */
     const int max_order = RT_PAGE_MAX_ORDER + ARCH_PAGE_SHIFT - 1;
@@ -732,6 +908,7 @@ static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_h
         struct rt_page *p;
         int align_bits;
         int size_bits;
+        int page_order;
 
         size_bits =
             ARCH_ADDRESS_WIDTH_BITS - 1 - rt_hw_clz(region.end - region.start);
@@ -750,14 +927,70 @@ static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_h
         p->ref_cnt = 0;
 
         /* insert to list */
-        rt_page_t *page_list = _get_page_list((void *)region.start);
+        page_list = _get_page_list((void *)region.start);
         if (page_list == page_list_high)
         {
-            _high_pages_nr += 1 << (size_bits - ARCH_PAGE_SHIFT);
+            _page_nr_hi += 1 << (size_bits - ARCH_PAGE_SHIFT);
+            _freed_nr_hi += 1 << (size_bits - ARCH_PAGE_SHIFT);
         }
-        insert(page_list, (rt_page_t)((char *)p - early_offset), size_bits - ARCH_PAGE_SHIFT);
+
+        page_order = size_bits - ARCH_PAGE_SHIFT;
+        page_head = _get_pgls_head_by_page(page_list, p, page_order);
+        insert(page_head, (rt_page_t)((char *)p - early_offset), page_order);
         region.start += (1UL << size_bits);
     }
+}
+
+static void *_aligned_to_affinity(rt_ubase_t head_page_pa, void *mapped_to)
+{
+#define AFFBLK_MASK (RT_PAGE_AFFINITY_BLOCK_SIZE - 1)
+    rt_ubase_t head_page_pg_aligned;
+    rt_ubase_t aligned_affblk_tag = (long)mapped_to & AFFBLK_MASK;
+
+    head_page_pg_aligned =
+        ((long)head_page_pa & ~AFFBLK_MASK) | aligned_affblk_tag;
+    if (head_page_pg_aligned < head_page_pa)
+    {
+        /* find the page forward */
+        head_page_pg_aligned += RT_PAGE_AFFINITY_BLOCK_SIZE;
+    }
+
+    return (void *)head_page_pg_aligned;
+}
+
+/* page management */
+static struct installed_page_reg
+{
+    rt_region_t region_area;
+    struct installed_page_reg *next;
+} _init_region;
+static _Atomic(struct installed_page_reg *) _head;
+
+static void _update_region_list(struct installed_page_reg *member)
+{
+    struct installed_page_reg *head;
+    do
+    {
+        head = rt_atomic_load(&_head);
+        member->next = head;
+    } while (!rt_atomic_compare_exchange_strong(&_head, &head, member));
+}
+
+rt_bool_t rt_page_is_member(rt_base_t page_pa)
+{
+    rt_bool_t rc = RT_FALSE;
+    rt_ubase_t page_va = page_pa - PV_OFFSET;
+    for (struct installed_page_reg *head = _head; head; head = head->next)
+    {
+        if (page_va >= head->region_area.start &&
+            page_va < head->region_area.end)
+        {
+            rc = RT_TRUE;
+            break;
+        }
+    }
+
+    return rc;
 }
 
 void rt_page_init(rt_region_t reg)
@@ -765,7 +998,12 @@ void rt_page_init(rt_region_t reg)
     int i;
     rt_region_t shadow;
 
-    /* inclusive start, exclusive end */
+    /* setup install page status */
+    _init_region.region_area = reg;
+    _init_region.next = RT_NULL;
+    _head = &_init_region;
+
+    /* adjust install region. inclusive start, exclusive end */
     reg.start += ARCH_PAGE_MASK;
     reg.start &= ~ARCH_PAGE_MASK;
     reg.end &= ~ARCH_PAGE_MASK;
@@ -774,7 +1012,7 @@ void rt_page_init(rt_region_t reg)
         LOG_E("region end(%p) must greater than start(%p)", reg.start, reg.end);
         RT_ASSERT(0);
     }
-    page_nr = ((reg.end - reg.start) >> ARCH_PAGE_SHIFT);
+
     shadow.start = reg.start & ~shadow_mask;
     shadow.end = FLOOR(reg.end, shadow_mask + 1);
     LOG_D("[Init page] start: 0x%lx, end: 0x%lx, total: 0x%lx", reg.start,
@@ -783,10 +1021,21 @@ void rt_page_init(rt_region_t reg)
     int err;
 
     /* init free list */
-    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
+    rt_page_t *aff_pgls_iter_lo = aff_pglist_low;
+    rt_page_t *aff_pgls_iter_hi = aff_pglist_high;
+    for (i = 0; i < AFFID_BLK_BITS; i++)
     {
-        page_list_low[i] = 0;
-        page_list_high[i] = 0;
+        long stride = AFFID_NUMOF_ID_IN_SET(i);
+        PGLS_FROM_AFF_MAP(page_list_low[i], aff_pgls_iter_lo);
+        PGLS_FROM_AFF_MAP(page_list_high[i], aff_pgls_iter_hi);
+        aff_pgls_iter_lo += stride;
+        aff_pgls_iter_hi += stride;
+    }
+
+    for (; i < RT_PAGE_MAX_ORDER; i++)
+    {
+        page_list_low[i].page_list = 0;
+        page_list_high[i].page_list = 0;
     }
 
     /* map MPR area */
@@ -809,7 +1058,10 @@ void rt_page_init(rt_region_t reg)
     rt_size_t init_mpr_size = init_mpr_align_end - init_mpr_align_start;
     rt_size_t init_mpr_npage = init_mpr_size >> ARCH_PAGE_SHIFT;
 
-    init_mpr_cont_start = (void *)reg.start;
+    /* find available aligned page */
+    init_mpr_cont_start = _aligned_to_affinity(reg.start,
+                                               (void *)init_mpr_align_start);
+
     rt_size_t init_mpr_cont_end = (rt_size_t)init_mpr_cont_start + init_mpr_size;
     early_offset = (rt_size_t)init_mpr_cont_start - init_mpr_align_start;
     rt_page_t mpr_cont = (void *)((char *)rt_mpr_start + early_offset);
@@ -874,13 +1126,21 @@ int rt_page_install(rt_region_t region)
         head = addr_to_page(page_start, (void *)shadow.start);
         tail = addr_to_page(page_start, (void *)shadow.end);
 
-        page_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
-
         err = _load_mpr_area(head, tail);
 
         if (err == RT_EOK)
         {
-            _install_page(rt_mpr_start, region, _page_insert);
+            struct installed_page_reg *installed_pgreg =
+                rt_malloc(sizeof(*installed_pgreg));
+
+            if (installed_pgreg)
+            {
+                installed_pgreg->region_area.start = region.start;
+                installed_pgreg->region_area.end = region.end;
+
+                _update_region_list(installed_pgreg);
+                _install_page(rt_mpr_start, region, _page_insert);
+            }
         }
     }
     return err;

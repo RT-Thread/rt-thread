@@ -76,6 +76,7 @@ static void *_map_data_to_uspace(struct dfs_mmap2_args *mmap2, void *data, rt_er
         map_vaddr = (void *)((size_t)map_vaddr & ~ARCH_PAGE_MASK);
 
         k_flags = lwp_user_mm_flag_to_kernel(mmap2->flags);
+        k_flags = MMF_CREATE(k_flags, mmap2->min_align_size);
         k_attr = lwp_user_mm_attr_to_kernel(mmap2->prot);
 
         map_vaddr = _do_mmap(lwp, map_vaddr, map_size, k_attr, k_flags, mmap2->pgoffset, data, code);

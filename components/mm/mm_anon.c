@@ -581,7 +581,7 @@ int rt_varea_fix_private_locked(rt_varea_t ex_varea, void *pa,
         }
         else if (ex_obj->page_read)
         {
-            page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+            page = rt_pages_alloc_tagged(0, RT_PAGE_PICK_AFFID(fault_vaddr), PAGE_ANY_AVAILABLE);
             if (page)
             {
                 /** setup message & fetch the data from source object */

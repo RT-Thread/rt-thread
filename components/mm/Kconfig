@@ -1,5 +1,13 @@
 menu "Memory management"
 
+config RT_PAGE_AFFINITY_BLOCK_SIZE
+    hex "Affinity block size in bytes for page management"
+    default 0x1000
+    help
+        Page affinity block can be used to resolve the VIPT aliasing problem.
+        It should be set to `1ul << ((index + block) - page_offset)` in this case.
+        You could also exploit this as a tunning for cache coloring.
+
 config RT_USING_MEMBLOCK
     bool "Using memblock"
     default n
@@ -15,5 +23,9 @@ config RT_INIT_MEMORY_REGIONS
         During the system initialization phase, the kernel divides
         memory into different types of regions. This variable specifies
         the maximum number of regions supported by the system.
+
+config RT_DEBUGGING_ALIASING
+    bool "Using aliasing paging debugger"
+    default n
 
 endmenu
