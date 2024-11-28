@@ -198,47 +198,6 @@ rt_inline void _timer_remove(rt_timer_t timer)
     }
 }
 
-#if (DBG_LVL == DBG_LOG)
-/**
- * @brief The number of timer
- *
- * @param timer the head of timer
- *
- * @return count of timer
- */
-static int _timer_count_height(struct rt_timer *timer)
-{
-    int i, cnt = 0;
-
-    for (i = 0; i < RT_TIMER_SKIP_LIST_LEVEL; i++)
-    {
-        if (!rt_list_isempty(&timer->row[i]))
-            cnt++;
-    }
-    return cnt;
-}
-/**
- * @brief dump the all timer information
- *
- * @param timer_heads the head of timer
- */
-void rt_timer_dump(rt_list_t timer_heads[])
-{
-    rt_list_t *list;
-
-    for (list = timer_heads[RT_TIMER_SKIP_LIST_LEVEL - 1].next;
-         list != &timer_heads[RT_TIMER_SKIP_LIST_LEVEL - 1];
-         list = list->next)
-    {
-        struct rt_timer *timer = rt_list_entry(list,
-                                               struct rt_timer,
-                                               row[RT_TIMER_SKIP_LIST_LEVEL - 1]);
-        rt_kprintf("%d", _timer_count_height(timer));
-    }
-    rt_kprintf("\n");
-}
-#endif /* (DBG_LVL == DBG_LOG) */
-
 /**
  * @addtogroup Clock
  */
