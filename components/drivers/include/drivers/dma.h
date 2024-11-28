@@ -90,7 +90,8 @@ struct rt_dma_controller
 
 struct rt_dma_controller_ops
 {
-    struct rt_dma_chan *(*request_chan)(struct rt_dma_controller *ctrl, struct rt_device *slave);
+    struct rt_dma_chan *(*request_chan)(struct rt_dma_controller *ctrl,
+            struct rt_device *slave, void *fw_data);
     rt_err_t (*release_chan)(struct rt_dma_chan *chan);
 
     rt_err_t (*start)(struct rt_dma_chan *chan);
@@ -107,8 +108,6 @@ struct rt_dma_controller_ops
     rt_err_t (*prep_single)(struct rt_dma_chan *chan,
             rt_ubase_t dma_buf_addr, rt_size_t buf_len,
             enum rt_dma_transfer_direction dir);
-
-    rt_err_t (*ofw_parse)(struct rt_dma_controller *ctrl, struct rt_ofw_cell_args *dma_args);
 };
 
 struct rt_dma_chan
