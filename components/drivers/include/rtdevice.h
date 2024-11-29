@@ -67,6 +67,10 @@ extern "C" {
 #include "drivers/dma.h"
 #endif /* RT_USING_DMA */
 
+#ifdef RT_USING_HWSPINLOCK
+#include "drivers/hwspinlock.h"
+#endif /* RT_USING_HWSPINLOCK */
+
 #include "drivers/iio.h"
 
 #ifdef RT_USING_NVME
