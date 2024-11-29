@@ -9,3 +9,8 @@ config RT_INPUT_POWER
     bool "Input event power"
     depends on RT_USING_INPUT
     default y
+
+if RT_USING_INPUT
+    rsource "keyboard/Kconfig"
+    rsource "misc/Kconfig"
+endif

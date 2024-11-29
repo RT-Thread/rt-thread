@@ -1,0 +1,13 @@
+menuconfig RT_INPUT_KEYBOARD
+    bool "Keyboards"
+    default n
+
+config RT_INPUT_KEYBOARD_GPIO
+    bool "GPIO"
+    depends on RT_INPUT_KEYBOARD
+    depends on RT_USING_OFW
+    default n
+
+if RT_INPUT_KEYBOARD
+    osource "$(SOC_DM_INPUT_KEYBOARD_DIR)/Kconfig"
+endif
