@@ -1,0 +1,11 @@
+menuconfig RT_USING_INPUT
+    bool "Using Input device drivers"
+    depends on RT_USING_DM
+    select RT_USING_ADT
+    select RT_USING_ADT_BITMAP
+    default n
+
+config RT_INPUT_POWER
+    bool "Input event power"
+    depends on RT_USING_INPUT
+    default y

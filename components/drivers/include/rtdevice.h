@@ -65,6 +65,10 @@ extern "C" {
 
 #include "drivers/iio.h"
 
+#ifdef RT_USING_INPUT
+#include "drivers/input.h"
+#endif /* RT_USING_INPUT */
+
 #ifdef RT_USING_NVME
 #include "drivers/nvme.h"
 #endif /* RT_USING_NVME */
