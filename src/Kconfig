@@ -197,12 +197,21 @@ config RT_USING_CPU_USAGE_TRACER
     default y if RT_USING_SMART
     default n
 
-menu "kservice options"
-    config RT_USING_TINY_FFS
-        bool "Enable kservice to use tiny finding first bit set method"
-        default n
-endmenu
+choice
+    prompt "Choose finding first bit set method"
+    default RT_USING_TINY_FFS
 
+config RT_USING_TINY_FFS
+    bool "Tiny: 37 bytes"
+    help
+        Select this if you want tiny method.
+
+config RT_USING_PUNY_FFS
+    bool "Puny: 0 bytes"
+    help
+        Select this if you want pyny method.
+
+endchoice
 menuconfig RT_USING_DEBUG
     bool "Enable debugging features"
     default y
