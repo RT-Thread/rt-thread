@@ -1028,29 +1028,41 @@ RTM_EXPORT(rt_free_align);
 #ifndef RT_USING_CPU_FFS
 #ifdef RT_USING_PUNY_FFS
 int __rt_ffs(rt_int32_t value) {
-    if (value == 0)
-        return 0; // 0 means no bit 1
-
     int position = 1; // position start from 1
-
+    
+    if (value == 0)
+    {
+        return 0; // 0 means no bit 1
+    }
+    
     // search half range
-    if ((value & 0xFFFF) == 0) { // is lower 16bit 0
+    if ((value & 0xFFFF) == 0)
+    {
+        // is lower 16bit 0
         position += 16;
         value >>= 16;
     }
-    if ((value & 0xFF) == 0) { // is lower 8bit 0
+    if ((value & 0xFF) == 0)
+    {
+        // is lower 8bit 0
         position += 8;
         value >>= 8;
     }
-    if ((value & 0xF) == 0) { // is lower 4bit 0
+    if ((value & 0xF) == 0)
+    {
+        // is lower 4bit 0
         position += 4;
         value >>= 4;
     }
-    if ((value & 0x3) == 0) { // is lower 2bit 0
+    if ((value & 0x3) == 0)
+    {
+        // is lower 2bit 0
         position += 2;
         value >>= 2;
     }
-    if ((value & 0x1) == 0) { // is lower 1bit 0
+    if ((value & 0x1) == 0)
+    {
+        // is lower 1bit 0
         position += 1;
     }
 
