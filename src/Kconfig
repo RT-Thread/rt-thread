@@ -209,7 +209,7 @@ config RT_USING_TINY_FFS
 config RT_USING_PUNY_FFS
     bool "Puny: 0 bytes"
     help
-        Select this if you want pyny method.
+        Select this if you want puny method.
 
 endchoice
 menuconfig RT_USING_DEBUG
