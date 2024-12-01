@@ -1029,12 +1029,12 @@ RTM_EXPORT(rt_free_align);
 #ifdef RT_USING_PUNY_FFS
 int __rt_ffs(rt_int32_t value) {
     int position = 1; // position start from 1
-    
+
     if (value == 0)
     {
         return 0; // 0 means no bit 1
     }
-    
+
     // search half range
     if ((value & 0xFFFF) == 0)
     {
