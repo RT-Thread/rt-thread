@@ -275,27 +275,27 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
     int ret = -1;
 
     void *unmap_va = v_addr;
-    size_t npages;
+    size_t remaining_sz = size;
     size_t stride;
     int (*mapper)(unsigned long *lv0_tbl, void *vaddr, void *paddr, unsigned long attr);
 
-    if (((rt_ubase_t)v_addr & ARCH_SECTION_MASK) || (size & ARCH_SECTION_MASK))
-    {
-        /* legacy 4k mapping */
-        npages = size >> ARCH_PAGE_SHIFT;
-        stride = ARCH_PAGE_SIZE;
-        mapper = _kernel_map_4K;
-    }
-    else
-    {
-        /* 2m huge page */
-        npages = size >> ARCH_SECTION_SHIFT;
-        stride = ARCH_SECTION_SIZE;
-        mapper = _kernel_map_2M;
-    }
+    RT_ASSERT(!(size & ARCH_PAGE_MASK));
 
-    while (npages--)
+    while (remaining_sz)
     {
+        if (((rt_ubase_t)v_addr & ARCH_SECTION_MASK) || (remaining_sz < ARCH_SECTION_SIZE))
+        {
+            /* legacy 4k mapping */
+            stride = ARCH_PAGE_SIZE;
+            mapper = _kernel_map_4K;
+        }
+        else
+        {
+            /* 2m huge page */
+            stride = ARCH_SECTION_SIZE;
+            mapper = _kernel_map_2M;
+        }
+
         MM_PGTBL_LOCK(aspace);
         ret = mapper(aspace->page_table, v_addr, p_addr, attr);
         MM_PGTBL_UNLOCK(aspace);
@@ -314,6 +314,8 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
             }
             break;
         }
+
+        remaining_sz -= stride;
         v_addr = (char *)v_addr + stride;
         p_addr = (char *)p_addr + stride;
     }
