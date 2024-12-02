@@ -104,6 +104,10 @@ extern "C" {
 #ifdef RT_MFD_SYSCON
 #include "drivers/syscon.h"
 #endif /* RT_MFD_SYSCON */
+
+#ifdef RT_USING_THERMAL
+#include "drivers/thermal.h"
+#endif /* RT_USING_THERMAL */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC

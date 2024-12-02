@@ -253,7 +253,11 @@ struct rt_mbox_chan *rt_mbox_request_by_index(struct rt_mbox_client *client, int
 
     if (!rt_ofw_data(ctrl_np))
     {
+        rt_spin_unlock(&mbox_ops_lock);
+
         rt_platform_ofw_request(ctrl_np);
+
+        rt_spin_lock(&mbox_ops_lock);
     }
 
     ctrl = rt_ofw_data(ctrl_np);

@@ -15,7 +15,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+rt_err_t pin_api_init(struct rt_device_pin *gpio, rt_size_t pin_nr);
+
+rt_err_t pin_pic_init(struct rt_device_pin *gpio, int pin_irq);
 rt_err_t pin_pic_handle_isr(struct rt_device_pin *gpio, rt_base_t pin);
-rt_err_t pin_pic_init(struct rt_device_pin *gpio);
 
 #endif /* __DEV_PIN_DM_H__ */

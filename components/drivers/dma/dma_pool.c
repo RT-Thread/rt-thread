@@ -322,8 +322,14 @@ static void *dma_alloc(struct rt_device *dev, rt_size_t size,
 
     rt_list_for_each_entry(pool, &dma_pool_nodes, list)
     {
-        if ((flags & RT_DMA_F_DEVICE) &&
-            (!(pool->flags & RT_DMA_F_DEVICE) || pool->dev != dev))
+        if (pool->flags & RT_DMA_F_DEVICE)
+        {
+            if (!(flags & RT_DMA_F_DEVICE) || pool->dev != dev)
+            {
+                continue;
+            }
+        }
+        else if ((flags & RT_DMA_F_DEVICE))
         {
             continue;
         }

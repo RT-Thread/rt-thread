@@ -448,13 +448,11 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
 }
 
 static struct rt_dma_controller *ofw_find_dma_controller(struct rt_device *dev,
-        const char *name)
+        const char *name, struct rt_ofw_cell_args *args)
 {
     struct rt_dma_controller *ctrl = RT_NULL;
 #ifdef RT_USING_OFW
     int index;
-    rt_err_t err;
-    struct rt_ofw_cell_args dma_args = {};
     struct rt_ofw_node *np = dev->ofw_node, *ctrl_np;
 
     if (!np)
@@ -469,9 +467,9 @@ static struct rt_dma_controller *ofw_find_dma_controller(struct rt_device *dev,
         return RT_NULL;
     }
 
-    if (!rt_ofw_parse_phandle_cells(np, "dmas", "#dma-cells", index, &dma_args))
+    if (!rt_ofw_parse_phandle_cells(np, "dmas", "#dma-cells", index, args))
     {
-        ctrl_np = dma_args.data;
+        ctrl_np = args->data;
 
         if (!rt_ofw_data(ctrl_np))
         {
@@ -480,14 +478,6 @@ static struct rt_dma_controller *ofw_find_dma_controller(struct rt_device *dev,
 
         ctrl = rt_ofw_data(ctrl_np);
         rt_ofw_node_put(ctrl_np);
-
-        if (ctrl && ctrl->ops->ofw_parse)
-        {
-            if ((err = ctrl->ops->ofw_parse(ctrl, &dma_args)))
-            {
-                ctrl = rt_err_ptr(err);
-            }
-        }
     }
 #endif /* RT_USING_OFW */
     return ctrl;
@@ -495,7 +485,9 @@ static struct rt_dma_controller *ofw_find_dma_controller(struct rt_device *dev,
 
 struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name)
 {
+    void *fw_data = RT_NULL;
     struct rt_dma_chan *chan;
+    struct rt_ofw_cell_args dma_args;
     struct rt_dma_controller *ctrl = RT_NULL;
 
     if (!dev)
@@ -505,7 +497,8 @@ struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name)
 
     if (name)
     {
-        ctrl = ofw_find_dma_controller(dev, name);
+        fw_data = &dma_args;
+        ctrl = ofw_find_dma_controller(dev, name, &dma_args);
     }
     else
     {
@@ -531,7 +524,7 @@ struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name)
 
     if (ctrl->ops->request_chan)
     {
-        chan = ctrl->ops->request_chan(ctrl, dev);
+        chan = ctrl->ops->request_chan(ctrl, dev, fw_data);
     }
     else
     {
