@@ -13,6 +13,12 @@ dev_mmc.c
 # The set of source files associated with this SConscript file.
 path = [cwd + '/../include']
 
+if GetDepend(['RT_USING_DM']):
+    src += ['dev_sdio_dm.c']
+
+    if GetDepend(['RT_USING_REGULATOR']):
+        src += ['dev_regulator.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SDIO'], CPPPATH = path)
 
 Return('group')
