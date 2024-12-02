@@ -1026,7 +1026,32 @@ RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
 
 #ifndef RT_USING_CPU_FFS
-#ifdef RT_USING_PUNY_FFS
+#ifdef RT_USING_BUILTIN_FFS
+
+#if defined(__GNUC__) || defined(__clang__)
+#define __HAS_BUILTIN_CTZ__
+#define CTZ(x) ((x) ? 1 + __builtin_ctz(x) : 0)
+
+#elif defined(__ARMCC_VERSION) // Keil ARM Compiler
+#include "arm_math.h"
+#define __HAS_BUILTIN_CTZ__
+#define CTZ(x) ((x) ? 1 + __CLZ(__RBIT(x)) : 0)
+
+#elif defined(__ICCARM__) // IAR ARM Compiler
+#include <intrinsics.h>
+#define __HAS_BUILTIN_CTZ__
+#define CTZ(x) ((x) ? 1 + __CLZ(__RBIT(x)) : 0)
+
+#else
+#message "Don't know if compiler has builtin ctz"
+#endif
+
+#ifdef __HAS_BUILTIN_CTZ__
+int __rt_ffs(rt_int32_t value)
+{
+    return CTZ(value);
+}
+#else
 int __rt_ffs(rt_int32_t value) {
     int position = 1; // position start from 1
 
@@ -1068,6 +1093,7 @@ int __rt_ffs(rt_int32_t value) {
 
     return position;
 }
+#endif
 #elif defined(RT_USING_TINY_FFS)
 const rt_uint8_t __lowest_bit_bitmap[] =
 {
