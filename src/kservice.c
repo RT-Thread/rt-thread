@@ -1047,12 +1047,12 @@ RTM_EXPORT(rt_free_align);
 #endif
 
 #ifdef __HAS_BUILTIN_CTZ__
-int __rt_ffs(rt_int32_t value)
+int __rt_ffs(int value)
 {
     return CTZ(value);
 }
 #else
-int __rt_ffs(rt_int32_t value) {
+int __rt_ffs(int value) {
     int position = 1; // position start from 1
 
     if (value == 0)
