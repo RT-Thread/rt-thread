@@ -289,17 +289,6 @@ endmenu
 
 menu "Memory Management"
 
-    config RT_PAGE_MAX_ORDER
-        int "Max order of pages allocatable by page allocator"
-        default 11
-        depends on ARCH_MM_MMU
-        help
-            For example, A value of 11 means the maximum chunk of contiguous memory
-            allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
-            Large memory requirement can consume all system resource, and should
-            consider reserved memory instead to enhance system endurance.
-            Max order should at least satisfied usage by huge page.
-
     config RT_USING_MEMPOOL
         bool "Using memory pool"
         default y

@@ -36,7 +36,7 @@
 #define RT_PAGE_PICK_AFFID(ptr) \
     ((((long)ptr) & (RT_PAGE_AFFINITY_BLOCK_SIZE - 1)) / ARCH_PAGE_SIZE)
 
-#ifdef RT_DEBUGING_PAGE_LEAK
+#ifdef RT_DEBUGGING_PAGE_LEAK
 #define DEBUG_FIELD struct {    \
     /* trace list */            \
     struct rt_page *tl_next;    \

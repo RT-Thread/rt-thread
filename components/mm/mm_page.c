@@ -48,7 +48,7 @@ typedef union
     rt_ubase_t aff_page_map;
 } pgls_agr_t;
 
-#define PGLS_IS_AFF_MAP(pgls) ((pgls).aff_page_map & 0x1)
+#define PGLS_IS_AFF_MAP(pgls) (!!((pgls).aff_page_map & 0x1))
 #define PGLS_FROM_AFF_MAP(pgls, aff_map) \
     ((pgls).aff_page_map = (-(rt_ubase_t)(aff_map)) | 0x1)
 #define PGLS_GET_AFF_MAP(pgls) \
@@ -71,12 +71,14 @@ static rt_page_t
 static pgls_agr_t page_list_high[RT_PAGE_MAX_ORDER];
 static rt_page_t
     aff_pglist_high[AFFID_NUMOF_ID_IN_SET(0) * 2 - 2];
-static RT_DEFINE_SPINLOCK(_spinlock);
+
+/* protect buddy list and page records */
+static RT_DEFINE_SPINLOCK(_pgmgr_lock);
 
 #define page_start ((rt_page_t)rt_mpr_start)
 
-static rt_size_t _page_nr, _freed_nr, _freed_nr_hi;
-static rt_size_t _page_nr_hi;
+static rt_size_t _page_nr, _page_nr_hi;
+static rt_size_t _freed_nr, _freed_nr_hi;
 static rt_size_t early_offset;
 
 static const char *get_name(rt_varea_t varea)
@@ -117,7 +119,7 @@ static struct rt_mem_obj mm_page_mapper = {
     .hint_free = hint_free,
 };
 
-#ifdef RT_DEBUGING_PAGE_LEAK
+#ifdef RT_DEBUGGING_PAGE_LEAK
 static volatile int enable;
 static rt_page_t _trace_head;
 #define TRACE_ALLOC(pg, size)       _trace_alloc(pg, __builtin_return_address(0), size)
@@ -232,6 +234,164 @@ static void _trace_free(rt_page_t page, void *caller, size_t size_bits)
 #define TRACE_FREE(x, y)
 #endif
 
+/* page management */
+#ifdef RT_DEBUGGING_PAGE_POISON
+#include <bitmap.h>
+RT_BITMAP_DECLARE(_init_region_usage_trace, (1 << (1 + ARCH_SECTION_SHIFT - ARCH_PAGE_SHIFT)));
+#else
+typedef char rt_bitmap_t[0];
+#define RT_BITMAP_LEN(__name) (__name)
+#endif /* RT_DEBUGGING_PAGE_POISON */
+
+static struct installed_page_reg
+{
+    rt_region_t region_area;
+    struct installed_page_reg *next;
+    struct rt_spinlock lock;
+#ifdef RT_DEBUGGING_PAGE_POISON
+    rt_bitmap_t *usage_trace;
+#endif /* RT_DEBUGGING_PAGE_POISON */
+} _init_region;
+
+static RT_DEFINE_SPINLOCK(_inst_page_reg_lock);
+static struct installed_page_reg *_inst_page_reg_head;
+
+static void _print_region_list(void)
+{
+    struct installed_page_reg *iter;
+    int counts = 0;
+
+    rt_spin_lock(&_inst_page_reg_lock);
+    iter = _inst_page_reg_head;
+    while (iter != RT_NULL)
+    {
+        rt_kprintf("  %d: [%p, %p]\n", counts++, iter->region_area.start + PV_OFFSET,
+                   iter->region_area.end + PV_OFFSET);
+        iter = iter->next;
+    }
+    rt_spin_unlock(&_inst_page_reg_lock);
+}
+
+static struct installed_page_reg *_find_page_region(rt_ubase_t page_va)
+{
+    struct installed_page_reg *iter;
+    struct installed_page_reg *rc = RT_NULL;
+    rt_bool_t found = RT_FALSE;
+
+    rt_spin_lock(&_inst_page_reg_lock);
+    for (iter = _inst_page_reg_head; iter; iter = iter->next)
+    {
+        if (page_va >= iter->region_area.start &&
+            page_va < iter->region_area.end)
+        {
+            found = RT_TRUE;
+            break;
+        }
+    }
+    rt_spin_unlock(&_inst_page_reg_lock);
+
+    if (found)
+    {
+        rc = iter;
+    }
+    return rc;
+}
+
+rt_bool_t rt_page_is_member(rt_base_t page_pa)
+{
+    return _find_page_region(page_pa - PV_OFFSET) != RT_NULL;
+}
+
+static rt_bool_t _pages_are_member(rt_ubase_t page_va, size_t size_bits)
+{
+    rt_bool_t rc = RT_TRUE;
+    rt_ubase_t iter_frame = page_va;
+    size_t frame_end = page_va + (1 << size_bits);
+
+    while (iter_frame < frame_end)
+    {
+        size_t overlap_size;
+        struct installed_page_reg *page_reg = _find_page_region(iter_frame);
+
+        if (!page_reg)
+        {
+            rc = RT_FALSE;
+            LOG_E("Allocated invalid page %p", iter_frame);
+            break;
+        }
+
+        overlap_size = page_reg->region_area.end - iter_frame;
+        iter_frame += overlap_size;
+    }
+
+    return rc;
+}
+
+#ifdef RT_DEBUGGING_PAGE_POISON
+static rt_err_t _unpoisoned_pages(char *head, rt_uint32_t size_bits)
+{
+    rt_err_t error = RT_EOK;
+    struct installed_page_reg *page_reg = _find_page_region((rt_ubase_t)head);
+
+    if (page_reg)
+    {
+        int pages_count = 1 << size_bits;
+        long bit_number = ((rt_ubase_t)head - page_reg->region_area.start) / ARCH_PAGE_SIZE;
+
+        /* mark the pages as allocated */
+        for (size_t i = 0; i < pages_count; i++, bit_number++)
+        {
+            rt_spin_lock(&_inst_page_reg_lock);
+            if (rt_bitmap_test_bit(page_reg->usage_trace, bit_number))
+            {
+                error = RT_ERROR;
+                rt_kprintf("%s: Pages[%p, %d] is already in used by others!\n", __func__, head, size_bits);
+            }
+            rt_bitmap_set_bit(page_reg->usage_trace, bit_number);
+            rt_spin_unlock(&_inst_page_reg_lock);
+        }
+    }
+    else
+    {
+        error = RT_EINVAL;
+    }
+
+    return -error;
+}
+
+static rt_err_t _poisoned_pages(char *head, rt_uint32_t size_bits)
+{
+    rt_err_t error = RT_EOK;
+    struct installed_page_reg *page_reg = _find_page_region((rt_ubase_t)head);
+
+    if (page_reg)
+    {
+        int pages_count = 1 << size_bits;
+        long bit_number = ((rt_ubase_t)head - page_reg->region_area.start) / ARCH_PAGE_SIZE;
+
+        /* mark the pages as free */
+        for (size_t i = 0; i < pages_count; i++, bit_number++)
+        {
+            rt_spin_lock(&_inst_page_reg_lock);
+            if (!rt_bitmap_test_bit(page_reg->usage_trace, bit_number))
+            {
+                error = RT_ERROR;
+                rt_kprintf("%s: Pages[%p, %d] is freed before!\n", __func__, head, size_bits);
+            }
+            rt_bitmap_clear_bit(page_reg->usage_trace, bit_number);
+            rt_spin_unlock(&_inst_page_reg_lock);
+        }
+    }
+    else
+    {
+        error = RT_EINVAL;
+    }
+
+    return -error;
+}
+
+#endif /* RT_DEBUGGING_PAGE_POISON */
+
 static inline void *page_to_addr(rt_page_t page)
 {
     return (void *)(((page - page_start) << ARCH_PAGE_SHIFT) - PV_OFFSET);
@@ -248,12 +408,16 @@ static inline rt_page_t addr_to_page(rt_page_t pg_start, void *addr)
     return &pg_start[((rt_ubase_t)addr >> ARCH_PAGE_SHIFT)];
 }
 
-#define FLOOR(val, align) (((rt_size_t)(val) + (align)-1) & ~((align)-1))
+#define CEIL(val, align) (((rt_size_t)(val) + (align)-1) & ~((align)-1))
 
+/**
+ * shadow is the accessible region by buddy but not usable for page manager.
+ * shadow mask is used for calculate the region head from an address.
+ */
 const rt_size_t shadow_mask =
     ((1ul << (RT_PAGE_MAX_ORDER + ARCH_PAGE_SHIFT - 1)) - 1);
 
-const rt_size_t rt_mpr_size = FLOOR(
+const rt_size_t rt_mpr_size = CEIL(
     ((1ul << (ARCH_VADDR_WIDTH - ARCH_PAGE_SHIFT))) * sizeof(struct rt_page),
     ARCH_PAGE_SIZE);
 
@@ -299,6 +463,8 @@ static inline struct rt_page *_buddy_get(struct rt_page *p,
                                          rt_uint32_t size_bits)
 {
     rt_size_t addr;
+
+    RT_ASSERT(size_bits < RT_PAGE_MAX_ORDER - 1);
 
     addr = (rt_size_t)rt_page_page2addr(p);
     addr ^= (1UL << (size_bits + ARCH_PAGE_SHIFT));
@@ -374,6 +540,7 @@ static void _page_remove(rt_page_t *page_head, struct rt_page *p,
         p->next->pre = p->pre;
     }
 
+    RT_ASSERT(p->size_bits == size_bits);
     _page_alloc(p);
 }
 
@@ -418,7 +585,7 @@ static int _pages_ref_get(struct rt_page *p, rt_uint32_t size_bits)
 }
 
 static int _pages_free(pgls_agr_t page_list[], struct rt_page *p,
-                       rt_uint32_t size_bits)
+                       char *frame_va, rt_uint32_t size_bits)
 {
     rt_uint32_t level = size_bits;
     struct rt_page *buddy;
@@ -429,12 +596,18 @@ static int _pages_free(pgls_agr_t page_list[], struct rt_page *p,
     RT_ASSERT(p->ref_cnt > 0);
     RT_ASSERT(p->size_bits == ARCH_ADDRESS_WIDTH_BITS);
     RT_ASSERT(size_bits < RT_PAGE_MAX_ORDER);
+    RT_UNUSED(_pages_are_member);
+    RT_ASSERT(_pages_are_member((rt_ubase_t)frame_va, size_bits));
 
     p->ref_cnt--;
     if (p->ref_cnt != 0)
     {
         return 0;
     }
+
+#ifdef RT_DEBUGGING_PAGE_POISON
+    _poisoned_pages(frame_va, size_bits);
+#endif /* RT_DEBUGGING_PAGE_POISON */
 
     while (level < RT_PAGE_MAX_ORDER - 1)
     {
@@ -610,9 +783,9 @@ int rt_page_ref_get(void *addr, rt_uint32_t size_bits)
     int ref;
 
     p = rt_page_addr2page(addr);
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_spin_lock_irqsave(&_pgmgr_lock);
     ref = _pages_ref_get(p, size_bits);
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_spin_unlock_irqrestore(&_pgmgr_lock, level);
     return ref;
 }
 
@@ -622,9 +795,9 @@ void rt_page_ref_inc(void *addr, rt_uint32_t size_bits)
     rt_base_t level;
 
     p = rt_page_addr2page(addr);
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_spin_lock_irqsave(&_pgmgr_lock);
     _pages_ref_inc(p, size_bits);
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_spin_unlock_irqrestore(&_pgmgr_lock, level);
 }
 
 static rt_page_t (*pages_alloc_handler)(pgls_agr_t page_list[],
@@ -656,27 +829,27 @@ rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags, int affid)
     rt_base_t level;
     pgls_agr_t *page_list = _flag_to_page_list(flags);
 
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_spin_lock_irqsave(&_pgmgr_lock);
     p = pages_alloc_handler(page_list, size_bits, affid);
     if (p)
     {
         _freed_nr -= 1 << size_bits;
     }
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_spin_unlock_irqrestore(&_pgmgr_lock, level);
 
     if (!p && page_list != page_list_low)
     {
         /* fall back */
         page_list = page_list_low;
 
-        level = rt_spin_lock_irqsave(&_spinlock);
+        level = rt_spin_lock_irqsave(&_pgmgr_lock);
         p = pages_alloc_handler(page_list, size_bits, affid);
         if (p)
         {
             _freed_nr -= 1 << size_bits;
             _freed_nr_hi -= 1 << size_bits;
         }
-        rt_spin_unlock_irqrestore(&_spinlock, level);
+        rt_spin_unlock_irqrestore(&_pgmgr_lock, level);
     }
 
     if (p)
@@ -684,12 +857,18 @@ rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags, int affid)
         alloc_buf = page_to_addr(p);
         _last_alloc = (rt_ubase_t)alloc_buf;
 
-        #ifdef RT_DEBUGING_PAGE_LEAK
+        #ifdef RT_DEBUGGING_PAGE_LEAK
             level = rt_spin_lock_irqsave(&_spinlock);
             TRACE_ALLOC(p, size_bits);
             rt_spin_unlock_irqrestore(&_spinlock, level);
         #endif
+
+#ifdef RT_DEBUGGING_PAGE_POISON
+        _unpoisoned_pages(alloc_buf, size_bits);
+#endif /* RT_DEBUGGING_PAGE_POISON */
+
     }
+
     return alloc_buf;
 }
 
@@ -763,8 +942,8 @@ int rt_pages_free(void *addr, rt_uint32_t size_bits)
     if (p)
     {
         rt_base_t level;
-        level = rt_spin_lock_irqsave(&_spinlock);
-        real_free = _pages_free(page_list, p, size_bits);
+        level = rt_spin_lock_irqsave(&_pgmgr_lock);
+        real_free = _pages_free(page_list, p, addr, size_bits);
         if (real_free)
         {
             _freed_nr += 1 << size_bits;
@@ -774,12 +953,13 @@ int rt_pages_free(void *addr, rt_uint32_t size_bits)
             }
             TRACE_FREE(p, size_bits);
         }
-        rt_spin_unlock_irqrestore(&_spinlock, level);
+        rt_spin_unlock_irqrestore(&_pgmgr_lock, level);
     }
 
     return real_free;
 }
 
+/* debug command */
 int rt_page_list(void) __attribute__((alias("list_page")));
 
 #define PGNR2SIZE(nr) ((nr)*ARCH_PAGE_SIZE / 1024)
@@ -814,9 +994,9 @@ int list_page(void)
     int i;
     rt_size_t free = 0;
     rt_size_t installed = _page_nr;
-
     rt_base_t level;
-    level = rt_spin_lock_irqsave(&_spinlock);
+
+    level = rt_spin_lock_irqsave(&_pgmgr_lock);
 
     /* dump affinity map area */
     for (i = 0; i < AFFID_BLK_BITS; i++)
@@ -839,10 +1019,13 @@ int list_page(void)
         _dump_page_list(i, lp, hp, &free);
     }
 
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_spin_unlock_irqrestore(&_pgmgr_lock, level);
     rt_kprintf("-------------------------------\n");
-    rt_kprintf("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n",
+    rt_kprintf("Page Summary:\n => free/installed:\n  0x%lx/0x%lx (%ld/%ld KB)\n",
                free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
+
+    rt_kprintf(" => Installed Pages Region:\n");
+    _print_region_list();
     rt_kprintf("-------------------------------\n");
 
     return 0;
@@ -887,7 +1070,7 @@ static void _install_page(rt_page_t mpr_head, rt_region_t region,
     _freed_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
 
     shadow.start = region.start & ~shadow_mask;
-    shadow.end = FLOOR(region.end, shadow_mask + 1);
+    shadow.end = CEIL(region.end, shadow_mask + 1);
 
     if (shadow.end + pvoffset > UINT32_MAX)
         _high_page_configured = 1;
@@ -958,50 +1141,19 @@ static void *_aligned_to_affinity(rt_ubase_t head_page_pa, void *mapped_to)
     return (void *)head_page_pg_aligned;
 }
 
-/* page management */
-static struct installed_page_reg
-{
-    rt_region_t region_area;
-    struct installed_page_reg *next;
-} _init_region;
-static _Atomic(struct installed_page_reg *) _head;
-
-static void _update_region_list(struct installed_page_reg *member)
-{
-    struct installed_page_reg *head;
-    do
-    {
-        head = rt_atomic_load(&_head);
-        member->next = head;
-    } while (!rt_atomic_compare_exchange_strong(&_head, &head, member));
-}
-
-rt_bool_t rt_page_is_member(rt_base_t page_pa)
-{
-    rt_bool_t rc = RT_FALSE;
-    rt_ubase_t page_va = page_pa - PV_OFFSET;
-    for (struct installed_page_reg *head = _head; head; head = head->next)
-    {
-        if (page_va >= head->region_area.start &&
-            page_va < head->region_area.end)
-        {
-            rc = RT_TRUE;
-            break;
-        }
-    }
-
-    return rc;
-}
-
 void rt_page_init(rt_region_t reg)
 {
     int i;
     rt_region_t shadow;
 
     /* setup install page status */
+    rt_spin_lock_init(&_init_region.lock);
     _init_region.region_area = reg;
     _init_region.next = RT_NULL;
-    _head = &_init_region;
+#ifdef RT_DEBUGGING_PAGE_POISON
+    _init_region.usage_trace = _init_region_usage_trace;
+#endif /* RT_DEBUGGING_PAGE_POISON */
+    _inst_page_reg_head = &_init_region;
 
     /* adjust install region. inclusive start, exclusive end */
     reg.start += ARCH_PAGE_MASK;
@@ -1014,7 +1166,7 @@ void rt_page_init(rt_region_t reg)
     }
 
     shadow.start = reg.start & ~shadow_mask;
-    shadow.end = FLOOR(reg.end, shadow_mask + 1);
+    shadow.end = CEIL(reg.end, shadow_mask + 1);
     LOG_D("[Init page] start: 0x%lx, end: 0x%lx, total: 0x%lx", reg.start,
           reg.end, page_nr);
 
@@ -1054,7 +1206,7 @@ void rt_page_init(rt_region_t reg)
         (rt_size_t)addr_to_page(page_start, (void *)shadow.start) &
         ~ARCH_PAGE_MASK;
     init_mpr_align_end =
-        FLOOR(addr_to_page(page_start, (void *)shadow.end), ARCH_PAGE_SIZE);
+        CEIL(addr_to_page(page_start, (void *)shadow.end), ARCH_PAGE_SIZE);
     rt_size_t init_mpr_size = init_mpr_align_end - init_mpr_align_start;
     rt_size_t init_mpr_npage = init_mpr_size >> ARCH_PAGE_SHIFT;
 
@@ -1093,7 +1245,7 @@ static int _load_mpr_area(void *head, void *tail)
 {
     int err = 0;
     char *iter = (char *)((rt_ubase_t)head & ~ARCH_PAGE_MASK);
-    tail = (void *)FLOOR(tail, ARCH_PAGE_SIZE);
+    tail = (void *)CEIL(tail, ARCH_PAGE_SIZE);
 
     while (iter != tail)
     {
@@ -1124,7 +1276,7 @@ static int _get_mpr_ready_n_install(rt_ubase_t inst_head, rt_ubase_t inst_end)
     void *head, *tail;
 
     shadow.start = region.start & ~shadow_mask;
-    shadow.end = FLOOR(region.end, shadow_mask + 1);
+    shadow.end = CEIL(region.end, shadow_mask + 1);
     head = addr_to_page(page_start, (void *)shadow.start);
     tail = addr_to_page(page_start, (void *)shadow.end);
 
@@ -1132,14 +1284,17 @@ static int _get_mpr_ready_n_install(rt_ubase_t inst_head, rt_ubase_t inst_end)
 
     if (err == RT_EOK)
     {
+        rt_ubase_t level = rt_spin_lock_irqsave(&_pgmgr_lock);
         _install_page(rt_mpr_start, region, _page_insert);
+        rt_spin_unlock_irqrestore(&_pgmgr_lock, level);
     }
 
     return err;
 }
 
 static void _update_region_list(struct installed_page_reg *member,
-                                rt_ubase_t inst_head, rt_ubase_t inst_end)
+                                rt_ubase_t inst_head, rt_ubase_t inst_end,
+                                rt_bitmap_t *ut_bitmap)
 {
     rt_spin_lock_init(&member->lock);
 
@@ -1147,7 +1302,12 @@ static void _update_region_list(struct installed_page_reg *member,
 
     member->region_area.start = inst_head;
     member->region_area.end = inst_end;
+
+#ifdef RT_DEBUGGING_PAGE_POISON
     member->usage_trace = ut_bitmap;
+#else
+    RT_UNUSED(ut_bitmap);
+#endif /* RT_DEBUGGING_PAGE_POISON */
 
     member->next = _inst_page_reg_head;
     _inst_page_reg_head = member;
@@ -1166,12 +1326,15 @@ int rt_page_install(rt_region_t region)
         rt_ubase_t inst_head = region.start;
         rt_ubase_t inst_end = region.end;
         rt_ubase_t iter = inst_head;
+        int pages_count = (inst_end - inst_head) / ARCH_PAGE_SIZE;
         struct installed_page_reg *installed_pgreg =
-            rt_malloc(sizeof(*installed_pgreg));
+            rt_calloc(1, sizeof(struct installed_page_reg) +
+                      RT_BITMAP_LEN(pages_count) * sizeof(rt_bitmap_t));
 
         if (installed_pgreg)
         {
-            _update_region_list(installed_pgreg, inst_head, inst_end);
+            _update_region_list(installed_pgreg, inst_head, inst_end,
+                                (rt_bitmap_t *)(installed_pgreg + 1));
 
             if ((rt_ubase_t)iter & shadow_mask)
             {
