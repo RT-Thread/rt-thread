@@ -1112,34 +1112,82 @@ static int _load_mpr_area(void *head, void *tail)
     return err;
 }
 
+static int _get_mpr_ready_n_install(rt_ubase_t inst_head, rt_ubase_t inst_end)
+{
+    int err;
+    rt_region_t shadow;
+    rt_region_t region =
+    {
+        .start = inst_head,
+        .end = inst_end,
+    };
+    void *head, *tail;
+
+    shadow.start = region.start & ~shadow_mask;
+    shadow.end = FLOOR(region.end, shadow_mask + 1);
+    head = addr_to_page(page_start, (void *)shadow.start);
+    tail = addr_to_page(page_start, (void *)shadow.end);
+
+    err = _load_mpr_area(head, tail);
+
+    if (err == RT_EOK)
+    {
+        _install_page(rt_mpr_start, region, _page_insert);
+    }
+
+    return err;
+}
+
+static void _update_region_list(struct installed_page_reg *member,
+                                rt_ubase_t inst_head, rt_ubase_t inst_end)
+{
+    rt_spin_lock_init(&member->lock);
+
+    rt_spin_lock(&_inst_page_reg_lock);
+
+    member->region_area.start = inst_head;
+    member->region_area.end = inst_end;
+    member->usage_trace = ut_bitmap;
+
+    member->next = _inst_page_reg_head;
+    _inst_page_reg_head = member;
+
+    rt_spin_unlock(&_inst_page_reg_lock);
+}
+
+#define _PAGE_STRIPE (1 << (RT_PAGE_MAX_ORDER + ARCH_PAGE_SHIFT - 1))
 int rt_page_install(rt_region_t region)
 {
     int err = -RT_EINVAL;
-    rt_region_t shadow;
-    void *head, *tail;
 
     if (region.end != region.start && !(region.start & ARCH_PAGE_MASK) &&
         !(region.end & ARCH_PAGE_MASK))
     {
-        shadow.start = region.start & ~shadow_mask;
-        shadow.end = FLOOR(region.end, shadow_mask + 1);
-        head = addr_to_page(page_start, (void *)shadow.start);
-        tail = addr_to_page(page_start, (void *)shadow.end);
+        rt_ubase_t inst_head = region.start;
+        rt_ubase_t inst_end = region.end;
+        rt_ubase_t iter = inst_head;
+        struct installed_page_reg *installed_pgreg =
+            rt_malloc(sizeof(*installed_pgreg));
 
-        err = _load_mpr_area(head, tail);
-
-        if (err == RT_EOK)
+        if (installed_pgreg)
         {
-            struct installed_page_reg *installed_pgreg =
-                rt_malloc(sizeof(*installed_pgreg));
+            _update_region_list(installed_pgreg, inst_head, inst_end);
 
-            if (installed_pgreg)
+            if ((rt_ubase_t)iter & shadow_mask)
             {
-                installed_pgreg->region_area.start = region.start;
-                installed_pgreg->region_area.end = region.end;
+                iter = RT_ALIGN((rt_ubase_t)inst_head, _PAGE_STRIPE);
+                _get_mpr_ready_n_install(inst_head, iter < inst_end ? iter : inst_end);
+            }
 
-                _update_region_list(installed_pgreg);
-                _install_page(rt_mpr_start, region, _page_insert);
+            for (rt_ubase_t next = iter + _PAGE_STRIPE; next < inst_end;
+                 iter = next, next += _PAGE_STRIPE)
+            {
+                _get_mpr_ready_n_install(iter, next);
+            }
+
+            if (iter < inst_end)
+            {
+                _get_mpr_ready_n_install(iter, inst_end);
             }
         }
     }
