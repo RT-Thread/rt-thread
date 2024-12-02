@@ -11,6 +11,8 @@
 #ifndef __RT_KSTRING_H__
 #define __RT_KSTRING_H__
 
+#include <rttypes.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,6 +21,7 @@ void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 void *rt_memmove(void *dest, const void *src, rt_size_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
+
 char *rt_strdup(const char *s);
 rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 char *rt_strstr(const char *str1, const char *str2);

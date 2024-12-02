@@ -4527,18 +4527,6 @@ sysret_t sys_rmdir(const char *path)
 #endif
 }
 
-#ifdef RT_USING_MUSLLIBC
-typedef uint64_t ino_t;
-#endif
-
-struct libc_dirent {
-    ino_t d_ino;
-    off_t d_off;
-    unsigned short d_reclen;
-    unsigned char d_type;
-    char d_name[DIRENT_NAME_MAX];
-};
-
 sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
 {
     int ret = -1;
@@ -5767,6 +5755,7 @@ sysret_t sys_mount(char *source, char *target,
     size_t len_filesystemtype, copy_len_filesystemtype;
     char *tmp = NULL;
     int ret = 0;
+    struct stat buf = {0};
 
     len_source = lwp_user_strlen(source);
     if (len_source <= 0)
@@ -5804,8 +5793,6 @@ sysret_t sys_mount(char *source, char *target,
     {
         copy_source = NULL;
     }
-
-    struct stat buf;
 
     if (copy_source && stat(copy_source, &buf) && S_ISBLK(buf.st_mode))
     {

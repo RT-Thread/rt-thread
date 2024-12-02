@@ -486,7 +486,7 @@ static void pcie_fixup_link(struct rt_pci_device *pdev)
 
         if (!!(exp_lnksta & PCIEM_LINK_STA_DL_ACTIVE))
         {
-            return;
+            goto _status_sync;
         }
 
         rt_thread_mdelay(10);
@@ -496,6 +496,10 @@ static void pcie_fixup_link(struct rt_pci_device *pdev)
     rt_pci_write_config_u16(pdev, pos + PCIER_LINK_CTL2, exp_lnkctl2);
     rt_pci_write_config_u16(pdev, pos + PCIER_LINK_CTL,
             exp_lnkctl | PCIEM_LINK_CTL_RETRAIN_LINK);
+
+_status_sync:
+    /* Wait a while for success or failure */
+    rt_thread_mdelay(100);
 }
 
 static rt_uint32_t pci_scan_bridge_extend(struct rt_pci_bus *bus, struct rt_pci_device *pdev,

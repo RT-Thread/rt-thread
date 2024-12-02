@@ -235,7 +235,17 @@ void rt_hw_common_setup(void)
     rt_memblock_reserve_memory("init-page", init_page_start, init_page_end, MEMBLOCK_NONE);
     rt_memblock_reserve_memory("fdt", fdt_start, fdt_end, MEMBLOCK_NONE);
 
-    rt_memmove((void *)(fdt_start - pv_off), (void *)(fdt_ptr - pv_off), fdt_size);
+    /* To virtual address */
+    fdt_ptr = (void *)(fdt_ptr - pv_off);
+#ifdef KERNEL_VADDR_START
+    if ((rt_ubase_t)fdt_ptr + fdt_size - KERNEL_VADDR_START > SIZE_GB)
+    {
+        fdt_ptr = rt_ioremap_early(fdt_ptr + pv_off, fdt_size);
+
+        RT_ASSERT(fdt_ptr != RT_NULL);
+    }
+#endif
+    rt_memmove((void *)(fdt_start - pv_off), fdt_ptr, fdt_size);
     fdt_ptr = (void *)fdt_start - pv_off;
 
     rt_system_heap_init((void *)(heap_start - pv_off), (void *)(heap_end - pv_off));

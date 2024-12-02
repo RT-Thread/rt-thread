@@ -54,8 +54,10 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rt-thread.bin\n'
+    POST_ACTION += OBJCPY + ' -O ihex $TARGET rt-thread.hex\n'
+    POST_ACTION += SIZE + ' $TARGET \n'
+    
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'

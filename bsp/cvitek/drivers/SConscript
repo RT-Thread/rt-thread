@@ -40,8 +40,8 @@ if GetDepend('BSP_USING_PWM'):
 
 if GetDepend('BSP_ROOTFS_TYPE_CROMFS'):
     src += ['port/mnt_cromfs.c']
-elif GetDepend('BSP_ROOTFS_TYPE_ROMFS'):
-    src += ['port/mnt_romfs.c']
+elif GetDepend('BSP_ROOTFS_TYPE_DISKFS'):
+    src += ['port/mnt_diskfs.c']
 
 if GetDepend('BSP_USING_SDH'):
     src += ['drv_sdhci.c']

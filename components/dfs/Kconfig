@@ -162,6 +162,13 @@ endif
         bool "Using devfs for device objects"
         default y
 
+if RT_USING_DFS_V1
+    config RT_USING_DFS_ISO9660
+        bool "Using ISO9660 filesystem"
+        depends on RT_USING_MEMHEAP
+        default n
+endif
+
     config RT_USING_DFS_ROMFS
         bool "Enable ReadOnly file system on flash"
         default n

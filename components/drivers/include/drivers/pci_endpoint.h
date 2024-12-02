@@ -73,6 +73,7 @@ struct rt_pci_ep_msix_tbl
 };
 
 struct rt_pci_ep_ops;
+struct rt_pci_ep_mem;
 
 struct rt_pci_ep
 {
@@ -84,12 +85,25 @@ struct rt_pci_ep
     const struct rt_device *rc_dev;
     const struct rt_pci_ep_ops *ops;
 
+    rt_size_t mems_nr;
+    struct rt_pci_ep_mem *mems;
+
     rt_uint8_t max_functions;
     RT_BITMAP_DECLARE(functions_map, 8);
     rt_list_t epf_nodes;
     struct rt_mutex lock;
 
     void *priv;
+};
+
+struct rt_pci_ep_mem
+{
+    rt_ubase_t cpu_addr;
+    rt_size_t size;
+    rt_size_t page_size;
+
+    rt_bitmap_t *map;
+    rt_size_t bits;
 };
 
 struct rt_pci_epf
@@ -169,6 +183,16 @@ rt_err_t rt_pci_ep_stop(struct rt_pci_ep *ep);
 
 rt_err_t rt_pci_ep_register(struct rt_pci_ep *ep);
 rt_err_t rt_pci_ep_unregister(struct rt_pci_ep *ep);
+
+rt_err_t rt_pci_ep_mem_array_init(struct rt_pci_ep *ep,
+        struct rt_pci_ep_mem *mems, rt_size_t mems_nr);
+rt_err_t rt_pci_ep_mem_init(struct rt_pci_ep *ep,
+        rt_ubase_t cpu_addr, rt_size_t size, rt_size_t page_size);
+
+void *rt_pci_ep_mem_alloc(struct rt_pci_ep *ep,
+        rt_ubase_t *out_cpu_addr, rt_size_t size);
+void rt_pci_ep_mem_free(struct rt_pci_ep *ep,
+        void *vaddr, rt_ubase_t cpu_addr, rt_size_t size);
 
 rt_err_t rt_pci_ep_add_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf);
 rt_err_t rt_pci_ep_remove_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf);

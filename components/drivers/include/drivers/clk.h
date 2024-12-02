@@ -16,6 +16,8 @@
 #include <ref.h>
 #include <drivers/ofw.h>
 
+#define RT_CLK_NODE_OBJ_NAME    "CLKNP"
+
 struct rt_clk_ops;
 struct rt_reset_control_node;
 
@@ -37,6 +39,8 @@ struct rt_clk_node
      *  };
      * We assume the 'N' is the max value of element in 'clock-indices' if OFW.
      */
+    struct rt_object rt_parent;
+
     rt_list_t list;
     rt_list_t children_nodes;
 
@@ -74,6 +78,8 @@ struct rt_clk
     const char *con_id;
 
     rt_ubase_t rate;
+    int prepare_count;
+    int enable_count;
 
     void *fw_node;
     void *priv;
