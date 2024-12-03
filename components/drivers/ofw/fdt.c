@@ -37,6 +37,12 @@ static rt_phandle _phandle_max;
 static rt_size_t _root_size_cells;
 static rt_size_t _root_addr_cells;
 
+#ifdef ARCH_CPU_64BIT
+#define MIN_BIT   16
+#else
+#define MIN_BIT   8
+#endif
+
 const char *rt_fdt_node_name(const char *full_name)
 {
     const char *node_name = strrchr(full_name, '/');
@@ -358,11 +364,11 @@ static rt_err_t fdt_scan_memory(void)
 
             if (!err)
             {
-                LOG_I("Memory node(%d) ranges: %p - %p%s", no, base, base + size, "");
+                LOG_I("Memory node(%d) ranges: 0x%.*lx - 0x%.*lx%s", no, MIN_BIT, base, MIN_BIT, base + size, "");
             }
             else
             {
-                LOG_W("Memory node(%d) ranges: %p - %p%s", no, base, base + size, " unable to record");
+                LOG_W("Memory node(%d) ranges: 0x%.*lx - 0x%.*lx%s", no, MIN_BIT, base, MIN_BIT, base + size, " unable to record");
             }
         }
     }
