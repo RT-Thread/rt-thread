@@ -38,7 +38,7 @@ on:
         description: 'Type a config you want mannual test in .config, like: CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
         required: false
         type: string
-        default: 'RT_USING_TINY_FFS=n,RT_USING_PUNY_FFS=y,CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
+        default: 'CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
       dist_flag:
         description: 'True to dist all bsp, False not dist'
         required: true
