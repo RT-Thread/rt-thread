@@ -342,6 +342,7 @@ jobs:
                 - "qemu-virt64-aarch64"
                 - "raspberry-pi/raspi3-64"
                 - "raspberry-pi/raspi4-64"
+                - "raspberry-pi/raspi-dm2.0"
                 #- "rockchip/rk3568"   too long
                 - "phytium/aarch64"
          -  RTT_BSP: "riscv-none" 

@@ -3,14 +3,71 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* ------------rt_memset options------------ */
+
+
+/* ------------rt_memcpy options------------ */
+
+
+/* ------------rt_memmove options------------ */
+
+
+/* ------------rt_memcmp options------------ */
+
+
+/* ------------rt_strstr options------------ */
+
+
+/* ------------rt_strcasecmp options------------ */
+
+
+/* ------------rt_strncpy options------------ */
+
+
+/* ------------rt_strcpy options------------ */
+
+
+/* ------------rt_strncmp options------------ */
+
+
+/* ------------rt_strcmp options------------ */
+
+
+/* ------------rt_strlen options------------ */
+
+
+/* ------------rt_strlen options------------ */
+
+/* ------------rt_strnlen options------------ */
+
+
+/* ------------rt_vsscanf options------------ */
+
+
+/* ------------rt_vsnprintf options------------ */
+
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
+/* end of klibc options */
 #define RT_NAME_MAX 8
-#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
+#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -22,18 +79,12 @@
 #define RT_TIMER_THREAD_STACK_SIZE 16384
 #define RT_USING_CPU_USAGE_TRACER
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -54,7 +105,6 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
-#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
@@ -78,8 +128,9 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xffff000000000000
 #define ARCH_ARMV8
+#define ARCH_USING_ASID
+#define ARCH_USING_IRQ_CTX_LIST
 
 /* RT-Thread Components */
 
@@ -126,19 +177,7 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_PTYFS
 #define RT_USING_DFS_TMPFS
-#define RT_USING_PAGECACHE
-
-/* page cache config */
-
-#define RT_PAGECACHE_COUNT 4096
-#define RT_PAGECACHE_ASPACE_COUNT 1024
-#define RT_PAGECACHE_PRELOAD 4
-#define RT_PAGECACHE_HASH_NR 1024
-#define RT_PAGECACHE_GC_WORK_LEVEL 90
-#define RT_PAGECACHE_GC_STOP_LEVEL 70
-/* end of page cache config */
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -171,6 +210,13 @@
 #define RT_USING_WDT
 #define RT_USING_TOUCH
 #define RT_USING_LCD
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_OFW_BUS_RANGES_NUMBER 8
@@ -204,9 +250,6 @@
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
-#define RT_USING_POSIX_EPOLL
-#define RT_USING_POSIX_SIGNALFD
-#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -303,23 +346,7 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
-#define RT_USING_LWP
-#define LWP_DEBUG
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_TID_MAX_NR 64
-#define RT_LWP_SHM_MAX_NR 64
-#define RT_USING_LDSO
-#define LWP_USING_TERMINAL
-#define LWP_PTY_MAX_PARIS_LIMIT 64
-#define RT_USING_VDSO
-
-/* Memory management */
-
 #define RT_USING_MEMBLOCK
-#define RT_INIT_MEMORY_REGIONS 128
-/* end of Memory management */
 
 /* Using USB legacy version */
 
@@ -367,9 +394,9 @@
 
 /* end of Tmpfs Testcase */
 
-/* SMP Testcase */
+/* SMP-Call Testcase */
 
-/* end of SMP Testcase */
+/* end of SMP-Call Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */
@@ -461,6 +488,10 @@
 /* STM32 HAL & SDK Drivers */
 
 /* end of STM32 HAL & SDK Drivers */
+
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
 
 /* Kendryte SDK */
 
@@ -554,14 +585,7 @@
 
 /* RT-Thread Smart */
 
-#define PKG_USING_UKERNEL
-#define PKG_USING_UKERNEL_LATEST_VERSION
-#define RT_USING_NETIF_LOOPBACK
-#define RT_USING_DFS_PROCFS
-#define SAL_USING_AF_UNIX
 /* end of RT-Thread Smart */
-#define PKG_USING_EXT4
-#define PKG_USING_EXT4_SMART_DFS_VERSION
 /* end of Privated Packages of RealThread */
 #define BCM2711_SOC
 
