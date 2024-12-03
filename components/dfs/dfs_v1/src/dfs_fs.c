@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -529,7 +529,8 @@ int dfs_mount_device(rt_device_t dev)
 {
   int index = 0;
 
-  if(dev == RT_NULL) {
+  if(dev == RT_NULL)
+  {
     rt_kprintf("the device is NULL to be mounted.\n");
     return -RT_ERROR;
   }
@@ -538,7 +539,8 @@ int dfs_mount_device(rt_device_t dev)
   {
     if (mount_table[index].path == NULL) break;
 
-    if(strcmp(mount_table[index].device_name, dev->parent.name) == 0) {
+    if(strcmp(mount_table[index].device_name, dev->parent.name) == 0)
+    {
       if (dfs_mount(mount_table[index].device_name,
                     mount_table[index].path,
                     mount_table[index].filesystemtype,
