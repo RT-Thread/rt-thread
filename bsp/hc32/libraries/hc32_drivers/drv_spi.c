@@ -508,7 +508,7 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
         else
             rt_pin_write(device->cs_pin, PIN_LOW);
     }
-    
+
     LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
     LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d", spi_drv->config->bus_name,
           (uint32_t)message->send_buf, (uint32_t)message->recv_buf, message->length);
@@ -637,30 +637,19 @@ static const struct rt_spi_ops hc32_spi_ops =
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint8_t cs_gpio_port, uint16_t cs_gpio_pin)
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
 
     rt_err_t result;
     struct rt_spi_device *spi_device;
-    struct hc32_hw_spi_cs *cs_pin;
-    stc_gpio_init_t stcGpioInit;
-
-    GPIO_StructInit(&stcGpioInit);
-    stcGpioInit.u16PinState = PIN_STAT_SET;
-    stcGpioInit.u16PinDir   = PIN_DIR_OUT;
-    stcGpioInit.u16PullUp   = PIN_PU_ON;
-    GPIO_Init(cs_gpio_port, cs_gpio_pin, &stcGpioInit);
 
     /* attach the device to spi bus*/
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
-    cs_pin = (struct hc32_hw_spi_cs *)rt_malloc(sizeof(struct hc32_hw_spi_cs));
-    RT_ASSERT(cs_pin != RT_NULL);
-    cs_pin->port = cs_gpio_port;
-    cs_pin->pin  = cs_gpio_pin;
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+
+    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, RT_NULL);
 
     if (result != RT_EOK)
     {
