@@ -66,6 +66,7 @@ static rt_err_t pic_mbox_request(struct rt_mbox_chan *chan)
     struct pic_mbox *pic_mbox = raw_to_pic_mbox(chan->ctrl);
 
     HWREG32(pic_mbox->regs + MAILBOX_IMASK) &= ~RT_BIT(index);
+    HWREG32(pic_mbox->regs + MAILBOX_ISTATE) = 0;
 
     return RT_EOK;
 }
@@ -87,6 +88,11 @@ static rt_err_t pic_mbox_send(struct rt_mbox_chan *chan, const void *data)
     while (HWREG32(pic_mbox->peer_regs + MAILBOX_ISTATE) & RT_BIT(index))
     {
         rt_thread_yield();
+    }
+
+    if (HWREG32(pic_mbox->peer_regs + MAILBOX_IMASK) & RT_BIT(index))
+    {
+        return -RT_ERROR;
     }
 
     level = rt_spin_lock_irqsave(&pic_mbox->lock);
@@ -187,6 +193,12 @@ static rt_err_t pic_mbox_probe(struct rt_platform_device *pdev)
         }
 
         pic_mbox->peer_regs = pic_mbox->regs + size / 2;
+
+        /* Init by the captain */
+        HWREG32(pic_mbox->regs + MAILBOX_IMASK) = 0xffffffff;
+        HWREG32(pic_mbox->regs + MAILBOX_ISTATE) = 0;
+        HWREG32(pic_mbox->peer_regs + MAILBOX_IMASK) = 0xffffffff;
+        HWREG32(pic_mbox->peer_regs + MAILBOX_ISTATE) = 0;
     }
     else
     {
