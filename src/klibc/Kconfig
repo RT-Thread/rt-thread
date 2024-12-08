@@ -220,7 +220,7 @@ menu "klibc options"
         endif
     endmenu # rt_strncmp options
 
-    menu "rt_strncmp options"
+    menu "rt_strcmp options"
         config RT_KLIBC_USING_USER_STRCMP
             bool "Enable rt_strcmp to use user-defined version"
             default n
@@ -230,19 +230,7 @@ menu "klibc options"
                 bool "Enable rt_strcmp to use libc strcmp"
                 default n
         endif
-    endmenu # rt_strncmp options
-
-    menu "rt_strncmp options"
-        config RT_KLIBC_USING_USER_STRLEN
-            bool "Enable rt_strlen to use user-defined version"
-            default n
-
-        if !RT_KLIBC_USING_USER_STRLEN
-            config RT_KLIBC_USING_LIBC_STRLEN
-                bool "Enable rt_strlen to use libc strlen"
-                default n
-        endif
-    endmenu # rt_strncmp options
+    endmenu # rt_strcmp options
 
     menu "rt_strlen options"
         config RT_KLIBC_USING_USER_STRLEN
