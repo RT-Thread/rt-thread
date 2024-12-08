@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2021-2022, RT-Thread Development Team
+ * Copyright (c) 2021-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-02     supperthomas first version
- * 2024-12-08     wumingzi     support rt_hw_us_delay 
+ * 2024-12-08     wumingzi     support rt_hw_us_delay
  */
 
 #include <rtthread.h>
@@ -69,7 +69,7 @@ static int delay_us_init(void)
     gptimer_config_t timer_config = {
         .clk_src = GPTIMER_CLK_SRC_DEFAULT,
         .direction = GPTIMER_COUNT_UP,
-        .resolution_hz = 1 * 1000 * 1000, // 1MHz, 1 tick = 1us
+        .resolution_hz = 1 * 1000 * 1000, /* 1MHz, 1 tick = 1us*/
     };
     ESP_ERROR_CHECK(gptimer_new_timer(&timer_config, &gptimer_hw_us));
     ESP_ERROR_CHECK(gptimer_enable(gptimer_hw_us));
@@ -82,7 +82,7 @@ void rt_hw_us_delay(rt_uint32_t us)
     uint64_t count = 0;
     ESP_ERROR_CHECK(gptimer_start(gptimer_hw_us));
     ESP_ERROR_CHECK(gptimer_set_raw_count(gptimer_hw_us, 0));
-    // Retrieve the timestamp at anytime
+    /* Retrieve the timestamp at anytime*/
     while(count < (uint64_t)us)
     {
         ESP_ERROR_CHECK(gptimer_get_raw_count(gptimer_hw_us, &count));
