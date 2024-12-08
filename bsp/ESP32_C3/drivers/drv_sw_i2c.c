@@ -9,7 +9,6 @@
  */
 #include <rtthread.h>
 #include <rtdevice.h>
-//#include "drivers/dev_pin.h"
 #define LOG_TAG     "drv.i2c"
 #ifdef RT_USING_I2C
 #ifdef BSP_USING_SW_I2C
