@@ -3,6 +3,7 @@ import os
 
 cwd = GetCurrentDir()
 src = ['kerrno.c', 'kstdio.c', 'kstring.c']
+CPPDEFINES = []
 
 if not GetDepend(['RT_KLIBC_USING_LIBC_VSNPRINTF']):
     if GetDepend(['RT_KLIBC_USING_VSNPRINTF_STANDARD']):
@@ -13,7 +14,14 @@ if not GetDepend(['RT_KLIBC_USING_LIBC_VSNPRINTF']):
 if not GetDepend(['RT_KLIBC_USING_LIBC_VSSCANF']):
     src += ['rt_vsscanf.c']
 
-group = DefineGroup('klibc', src, depend = [''])
+if GetDepend('RT_KLIBC_USING_FULL_REPLACING_SPRINTF'):
+    CPPDEFINES += ['sprintf=rt_sprintf']
+if GetDepend('RT_KLIBC_USING_FULL_REPLACING_SNPRINTF'):
+    CPPDEFINES += ['snprintf=rt_snprintf']
+if GetDepend('RT_KLIBC_USING_FULL_REPLACING_PRINTF'):
+    CPPDEFINES += ['printf=rt_kprintf']
+
+group = DefineGroup('klibc', src, depend = [''], CPPDEFINES = CPPDEFINES)
 
 list = os.listdir(cwd)
 for item in list:

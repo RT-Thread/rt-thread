@@ -98,7 +98,27 @@ menu "klibc options"
                     The number of terms in a Taylor series expansion of log_10(x) to
                     use for approximation - including the power-zero term (i.e. the
                     value at the point of expansion).
+            if RT_VER_NUM >= 0x40100
+                config RT_KLIBC_USING_FULL_REPLACING_SPRINTF
+                    bool "Enable to take over 'sprintf'"
+                    default n
 
+                config RT_KLIBC_USING_FULL_REPLACING_SNPRINTF
+                    bool "Enable to take over 'snprintf'"
+                    default n
+
+                config RT_KLIBC_USING_FULL_REPLACING_PRINTF
+                    bool "Enable to take over 'printf'"
+                    default n
+
+                config RT_KLIBC_USING_FULL_REPLACING_VSPRINTF
+                    bool "Enable to take over 'vsprintf'"
+                    default n
+
+                config RT_KLIBC_USING_FULL_REPLACING_VSNPRINTF
+                    bool "Enable to take over 'vsnprintf'"
+                    default n
+            endif
         endif
     endmenu # rt_vsnprintf options
 
