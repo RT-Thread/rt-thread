@@ -14,8 +14,9 @@ devices.uart:
 devices.i2c:
     kconfig:
       - CONFIG_RT_USING_I2C=y
-      - CONFIG_BSP_USING_I2C=y
-      - CONFIG_BSP_USING_I2C0=y
+      - CONFIG_BSP_USING_HW_I2C=y
+      - CONFIG_BSP_USING_SW_I2C=y
+      - CONFIG_BSP_USING_SW_I2C0=y
 devices.spi:
     kconfig:
       - CONFIG_RT_USING_SPI=y
