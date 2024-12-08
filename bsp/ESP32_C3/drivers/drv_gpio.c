@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2021-2022, RT-Thread Development Team
+ * Copyright (c) 2021-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-03     supperthomas first version
- * 2024-12-08     wumingzi     support open drain mode for soft i2c 
+ * 2024-12-08     wumingzi     support open drain mode for soft i2c
  */
 
 #include <rtthread.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -62,7 +62,7 @@ static void esp32c3_i2c_gpio_init(struct esp32c3_i2c *i2c)
 static void esp32c3_set_sda(void *data, rt_int32_t state)
 {
     struct esp32c3_soft_i2c_config* cfg = (struct esp32c3_soft_i2c_config*)data;
-    //rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT_OD);
+    /*rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT_OD);*/
     if (state)
     {
         gpio_set_level(cfg->sda, PIN_HIGH);
@@ -134,7 +134,7 @@ static void esp32c3_udelay(rt_uint32_t us)
 static rt_err_t esp32c3_i2c_bus_unlock(const struct esp32c3_soft_i2c_config *cfg)
 {
     rt_int32_t i = 0;
-    
+
     if (PIN_LOW == rt_pin_read(cfg->sda))
     {
         /* 输出9个时钟 解锁IIC死锁  */
@@ -179,7 +179,7 @@ int rt_sw_i2c_init(void)
         i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];
         /* 保存设备方法 */
         i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
-        
+
         esp32c3_i2c_gpio_init(&i2c_obj[i]);
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
         RT_ASSERT(result == RT_EOK);
