@@ -46,7 +46,7 @@ static rt_ssize_t random_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_si
 
 static rt_ssize_t random_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    ssize_t ret = sizeof(seed);
+    ssize_t ret = sizeof(seed) < size ? sizeof(seed) : size;
     rt_memcpy(&seed, buffer, ret);
     return ret;
 }
@@ -137,7 +137,7 @@ static rt_ssize_t random_uread(rt_device_t dev, rt_off_t pos, void *buffer, rt_s
 
 static rt_ssize_t random_uwrite(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    ssize_t ret = sizeof(useed);
+    ssize_t ret = sizeof(useed) < size ? sizeof(useed) : size;
     rt_memcpy(&useed, buffer, ret);
     return ret;
 }

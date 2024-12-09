@@ -45,6 +45,34 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#ifdef RT_USING_ATA
+#ifdef RT_ATA_AHCI
+#include "drivers/ahci.h"
+#endif /* RT_ATA_AHCI */
+#endif /* RT_USING_ATA */
+
+#ifdef RT_USING_LED
+#include "drivers/led.h"
+#endif
+
+#ifdef RT_USING_MBOX
+#include "drivers/mailbox.h"
+#endif /* RT_USING_MBOX */
+
+#ifdef RT_USING_BLK
+#include "drivers/blk.h"
+#endif /* RT_USING_BLK */
+
+#ifdef RT_USING_DMA
+#include "drivers/dma.h"
+#endif /* RT_USING_DMA */
+
+#include "drivers/iio.h"
+
+#ifdef RT_USING_NVME
+#include "drivers/nvme.h"
+#endif /* RT_USING_NVME */
+
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"
 #include "drivers/ofw_fdt.h"
@@ -53,20 +81,44 @@ extern "C" {
 #include "drivers/ofw_raw.h"
 #endif /* RT_USING_OFW */
 
+#ifdef RT_USING_PHYE
+#include "drivers/phye.h"
+#endif /* RT_USING_PHYE */
+
 #ifdef RT_USING_PIC
 #include "drivers/pic.h"
-#endif
+#endif /* RT_USING_PIC */
+
+#ifdef RT_USING_REGULATOR
+#include "drivers/regulator.h"
+#endif /* RT_USING_REGULATOR */
+
+#ifdef RT_USING_RESET
+#include "drivers/reset.h"
+#endif /* RT_USING_RESET */
+
+#ifdef RT_USING_SCSI
+#include "drivers/scsi.h"
+#endif /* RT_USING_SCSI */
+
+#ifdef RT_MFD_SYSCON
+#include "drivers/syscon.h"
+#endif /* RT_MFD_SYSCON */
+
+#ifdef RT_USING_THERMAL
+#include "drivers/thermal.h"
+#endif /* RT_USING_THERMAL */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
-#include "drivers/rtc.h"
+#include "drivers/dev_rtc.h"
 #ifdef RT_USING_ALARM
-#include "drivers/alarm.h"
-#endif
+#include "drivers/dev_alarm.h"
+#endif /* RT_USING_ALARM */
 #endif /* RT_USING_RTC */
 
 #ifdef RT_USING_SPI
-#include "drivers/spi.h"
+#include "drivers/dev_spi.h"
 #endif /* RT_USING_SPI */
 
 #ifdef RT_USING_MTD_NOR
@@ -87,43 +139,41 @@ extern "C" {
 
 #ifdef RT_USING_SERIAL
 #ifdef RT_USING_SERIAL_V2
-#include "drivers/serial_v2.h"
+#include "drivers/dev_serial_v2.h"
 #else
-#include "drivers/serial.h"
+#include "drivers/dev_serial.h"
 #endif
 #endif /* RT_USING_SERIAL */
 
 #ifdef RT_USING_I2C
-#include "drivers/i2c.h"
-#include "drivers/i2c_dev.h"
+#include "drivers/dev_i2c.h"
 
 #ifdef RT_USING_I2C_BITOPS
-#include "drivers/i2c-bit-ops.h"
+#include "drivers/dev_i2c_bit_ops.h"
 #endif /* RT_USING_I2C_BITOPS */
 
 #ifdef RT_USING_DM
-#include "drivers/i2c_dm.h"
+#include "drivers/dev_i2c_dm.h"
 #endif /* RT_USING_DM */
 #endif /* RT_USING_I2C */
 
 #ifdef RT_USING_PHY
 #include "drivers/phy.h"
-#include "drivers/phy_mdio.h"
 #endif /* RT_USING_PHY */
 
 #ifdef RT_USING_SDIO
-#include "drivers/mmcsd_core.h"
-#include "drivers/sd.h"
-#include "drivers/sdio.h"
+#include "drivers/dev_mmcsd_core.h"
+#include "drivers/dev_sd.h"
+#include "drivers/dev_sdio.h"
 #endif /* RT_USING_SDIO */
 
 
 #ifdef RT_USING_WDT
-#include "drivers/watchdog.h"
+#include "drivers/dev_watchdog.h"
 #endif /* RT_USING_WDT */
 
 #ifdef RT_USING_PIN
-#include "drivers/pin.h"
+#include "drivers/dev_pin.h"
 #endif /* RT_USING_PIN */
 
 #ifdef RT_USING_SENSOR
@@ -135,7 +185,7 @@ extern "C" {
 #endif /* RT_USING_SENSOR */
 
 #ifdef RT_USING_CAN
-#include "drivers/can.h"
+#include "drivers/dev_can.h"
 #endif /* RT_USING_CAN */
 
 #ifdef RT_USING_HWTIMER
@@ -143,7 +193,7 @@ extern "C" {
 #endif /* RT_USING_HWTIMER */
 
 #ifdef RT_USING_AUDIO
-#include "drivers/audio.h"
+#include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
 
 #ifdef RT_USING_CPUTIME
@@ -159,7 +209,7 @@ extern "C" {
 #endif /* RT_USING_DAC */
 
 #ifdef RT_USING_PWM
-#include "drivers/rt_drv_pwm.h"
+#include "drivers/dev_pwm.h"
 #endif /* RT_USING_PWM */
 
 #ifdef RT_USING_PM
@@ -191,7 +241,7 @@ extern "C" {
 #endif /* RT_USING_INPUT_CAPTURE */
 
 #ifdef RT_USING_TOUCH
-#include "drivers/touch.h"
+#include "drivers/dev_touch.h"
 #endif
 
 #ifdef RT_USING_DEV_BUS

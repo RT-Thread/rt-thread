@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_sdio.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f415 sdio header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -577,7 +575,7 @@ typedef struct
 
 void sdio_reset(sdio_type *sdio_x);
 void sdio_power_set(sdio_type *sdio_x, sdio_power_state_type power_state);
-flag_status sdio_power_status_get(sdio_type *sdio_x);
+sdio_power_state_type sdio_power_status_get(sdio_type *sdio_x);
 void sdio_clock_config(sdio_type *sdio_x, uint16_t clk_div, sdio_edge_phase_type clk_edg);
 void sdio_bus_width_config(sdio_type *sdio_x, sdio_bus_width_type width);
 void sdio_clock_bypass(sdio_type *sdio_x, confirm_state new_state);
@@ -587,6 +585,7 @@ void sdio_clock_enable(sdio_type *sdio_x, confirm_state new_state);
 void sdio_dma_enable(sdio_type *sdio_x, confirm_state new_state);
 void sdio_interrupt_enable(sdio_type *sdio_x, uint32_t int_opt,  confirm_state new_state);
 flag_status sdio_flag_get(sdio_type *sdio_x, uint32_t flag);
+flag_status sdio_interrupt_flag_get(sdio_type *sdio_x, uint32_t flag);
 void sdio_flag_clear(sdio_type *sdio_x, uint32_t flag);
 void sdio_command_config(sdio_type *sdio_x, sdio_command_struct_type *command_struct);
 void sdio_command_state_machine_enable(sdio_type *sdio_x, confirm_state new_state);

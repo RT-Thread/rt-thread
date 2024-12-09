@@ -13,6 +13,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#define DBG_SECTION_NAME               "drv.ktime"
+#define DBG_LEVEL                      DBG_INFO
+#include <rtdbg.h>
+
 #include "ktime.h"
 
 #ifdef ARCH_CPU_64BIT
@@ -21,9 +25,13 @@
 #define _HRTIMER_MAX_CNT UINT32_MAX
 #endif
 
-static rt_list_t          _timer_list = RT_LIST_OBJECT_INIT(_timer_list);
-static rt_ktime_hrtimer_t _nowtimer   = RT_NULL;
+static rt_list_t          _timer_list   = RT_LIST_OBJECT_INIT(_timer_list);
 static RT_DEFINE_SPINLOCK(_spinlock);
+
+rt_inline rt_ktime_hrtimer_t _first_hrtimer(void)
+{
+    return rt_list_isempty(&_timer_list) ? RT_NULL : rt_list_first_entry(&_timer_list, struct rt_ktime_hrtimer, node);
+}
 
 rt_weak rt_uint64_t rt_ktime_hrtimer_getres(void)
 {
@@ -40,50 +48,30 @@ rt_weak unsigned long rt_ktime_hrtimer_getcnt(void)
     return rt_tick_get();
 }
 
-static void (*_outcb)(void *param) = RT_NULL;
-
-static void _hrtimer_timeout(void *parameter)
-{
-    if (_outcb)
-        _outcb(parameter);
-}
-
-rt_weak rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt, void (*timeout)(void *param), void *param)
+rt_weak rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt)
 {
     static rt_timer_t timer = RT_NULL;
+    static struct rt_timer _sh_rtimer;
 
-    _outcb = timeout;
-    if (cnt == 0)
-    {
-        if (timer != RT_NULL)
-        {
-            if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
-            {
-                rt_timer_stop(timer);
-            }
-        }
-
-        if (_outcb)
-            _outcb(param);
-
-        return RT_EOK;
-    }
+    RT_ASSERT(cnt > 0);
 
     if (timer == RT_NULL)
     {
-        timer = rt_timer_create("shrtimer", _hrtimer_timeout, param, cnt, RT_TIMER_FLAG_ONE_SHOT);
+        timer = &_sh_rtimer;
+        rt_timer_init(timer, "shrtimer", (void (*)(void *))rt_ktime_hrtimer_process, RT_NULL, cnt, RT_TIMER_FLAG_ONE_SHOT);
     }
     else
     {
         rt_tick_t tick = cnt;
         rt_timer_control(timer, RT_TIMER_CTRL_SET_TIME, &tick);
-        rt_timer_control(timer, RT_TIMER_CTRL_SET_PARM, param);
+        rt_timer_control(timer, RT_TIMER_CTRL_SET_PARM, RT_NULL);
     }
 
     if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
     {
         rt_timer_stop(timer);
     }
+
     rt_timer_start(timer);
     return RT_EOK;
 }
@@ -111,63 +99,87 @@ static void _sleep_timeout(void *parameter)
     rt_completion_done(&timer->completion);
 }
 
-static void _set_next_timeout_n_unlock(rt_base_t level);
-static void _timeout_callback(void *parameter)
+static void _insert_timer_to_list_locked(rt_ktime_hrtimer_t timer)
 {
-    rt_ktime_hrtimer_t timer;
-    timer = (rt_ktime_hrtimer_t)parameter;
-    rt_base_t level;
+    rt_ktime_hrtimer_t iter;
 
-    level     = rt_spin_lock_irqsave(&_spinlock);
-    _nowtimer = RT_NULL;
-    rt_list_remove(&(timer->row));
-
-    if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
+    rt_list_for_each_entry(iter, &_timer_list, node)
     {
-        timer->timeout_func(timer->parameter);
+        if (iter->timeout_cnt > timer->timeout_cnt)
+        {
+            break;
+        }
     }
+    rt_list_insert_before(&iter->node, &(timer->node));
 
-    _set_next_timeout_n_unlock(level);
+    timer->flag |= RT_TIMER_FLAG_ACTIVATED;
 }
 
-static void _set_next_timeout_n_unlock(rt_base_t level)
+static void _hrtimer_process_locked(void)
 {
-    rt_ktime_hrtimer_t t;
+    rt_ktime_hrtimer_t timer;
 
-    if (&_timer_list != _timer_list.prev)
+    for (timer = _first_hrtimer();
+        (timer != RT_NULL) && (timer->timeout_cnt <= rt_ktime_cputimer_getcnt());
+        timer = _first_hrtimer())
     {
-        t = rt_list_entry((&_timer_list)->next, struct rt_ktime_hrtimer, row);
-        if (_nowtimer != RT_NULL)
+        rt_list_remove(&(timer->node));
+
+        if (timer->flag & RT_TIMER_FLAG_PERIODIC)
         {
-            if (t != _nowtimer && t->timeout_cnt < _nowtimer->timeout_cnt)
-            {
-                _nowtimer = t;
-                rt_spin_unlock_irqrestore(&_spinlock, level);
-                rt_ktime_hrtimer_settimeout(_cnt_convert(t->timeout_cnt), _timeout_callback, t);
-            }
-            else
-            {
-                rt_spin_unlock_irqrestore(&_spinlock, level);
-            }
+            timer->timeout_cnt = timer->delay_cnt + rt_ktime_cputimer_getcnt();
+            _insert_timer_to_list_locked(timer);
         }
         else
         {
-            _nowtimer = t;
-            rt_spin_unlock_irqrestore(&_spinlock, level);
-            rt_ktime_hrtimer_settimeout(_cnt_convert(t->timeout_cnt), _timeout_callback, t);
+            timer->flag &= ~RT_TIMER_FLAG_ACTIVATED;
+        }
+
+        if (timer->timeout_func)
+        {
+            timer->timeout_func(timer->parameter);
         }
     }
-    else
+}
+
+static void _set_next_timeout_locked(void)
+{
+    rt_ktime_hrtimer_t timer;
+    rt_ubase_t next_timeout_hrtimer_cnt;
+    rt_bool_t find_next;
+
+    do
     {
-        _nowtimer = RT_NULL;
-        rt_spin_unlock_irqrestore(&_spinlock, level);
-        rt_ktime_hrtimer_settimeout(0, RT_NULL, RT_NULL);
+        find_next = RT_FALSE;
+        if ((timer = _first_hrtimer()) != RT_NULL)
+        {
+            next_timeout_hrtimer_cnt = _cnt_convert(timer->timeout_cnt);
+            if (next_timeout_hrtimer_cnt > 0)
+            {
+                rt_ktime_hrtimer_settimeout(next_timeout_hrtimer_cnt);
+            }
+            else
+            {
+                _hrtimer_process_locked();
+                find_next = RT_TRUE;
+            }
+        }
     }
+    while (find_next);
+}
+
+void rt_ktime_hrtimer_process(void)
+{
+    rt_base_t level = rt_spin_lock_irqsave(&_spinlock);
+
+    _hrtimer_process_locked();
+    _set_next_timeout_locked();
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 }
 
 void rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
                            const char        *name,
-                           unsigned long      cnt,
                            rt_uint8_t         flag,
                            void (*timeout)(void *parameter),
                            void *parameter)
@@ -175,55 +187,40 @@ void rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(timeout != RT_NULL);
-    RT_ASSERT(cnt < (_HRTIMER_MAX_CNT / 2));
 
-    /* set flag */
-    timer->parent.flag = flag;
+    rt_memset(timer, 0, sizeof(struct rt_ktime_hrtimer));
 
-    /* set deactivated */
-    timer->parent.flag  &= ~RT_TIMER_FLAG_ACTIVATED;
-    timer->timeout_func  = timeout;
-    timer->parameter     = parameter;
-    timer->timeout_cnt   = cnt + rt_ktime_cputimer_getcnt();
-    timer->init_cnt      = cnt;
-
-    rt_list_init(&(timer->row));
+    timer->flag         = flag & ~RT_TIMER_FLAG_ACTIVATED;
+    timer->timeout_func = timeout;
+    timer->parameter    = parameter;
+    rt_strncpy(timer->name, name, RT_NAME_MAX - 1);
+    rt_list_init(&(timer->node));
     rt_completion_init(&timer->completion);
 }
 
-rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer)
+rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, unsigned long delay_cnt)
 {
-    rt_list_t *timer_list;
     rt_base_t  level;
 
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(delay_cnt < (_HRTIMER_MAX_CNT / 2));
+
+    timer->delay_cnt    = delay_cnt;
+    timer->timeout_cnt  = timer->delay_cnt + rt_ktime_cputimer_getcnt();
 
     level = rt_spin_lock_irqsave(&_spinlock);
-    rt_list_remove(&timer->row); /* remove timer from list */
-    /* change status of timer */
-    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-    timer_list          = &_timer_list;
-    for (; timer_list != _timer_list.prev; timer_list = timer_list->next)
+
+    if (timer->flag & RT_TIMER_FLAG_ACTIVATED)
     {
-        rt_ktime_hrtimer_t t;
-        rt_list_t         *p = timer_list->next;
-
-        t = rt_list_entry(p, struct rt_ktime_hrtimer, row);
-
-        if ((t->timeout_cnt - timer->timeout_cnt) == 0)
-        {
-            continue;
-        }
-        else if ((t->timeout_cnt - timer->timeout_cnt) < (_HRTIMER_MAX_CNT / 2))
-        {
-            break;
-        }
+        rt_spin_unlock_irqrestore(&_spinlock, level);
+        return -RT_ERROR;
     }
-    rt_list_insert_after(timer_list, &(timer->row));
-    timer->parent.flag |= RT_TIMER_FLAG_ACTIVATED;
 
-    _set_next_timeout_n_unlock(level);
+    _insert_timer_to_list_locked(timer);
+    _set_next_timeout_locked();
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -235,16 +232,18 @@ rt_err_t rt_ktime_hrtimer_stop(rt_ktime_hrtimer_t timer)
     RT_ASSERT(timer != RT_NULL); /* timer check */
 
     level = rt_spin_lock_irqsave(&_spinlock);
-    if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+
+    if (!(timer->flag & RT_TIMER_FLAG_ACTIVATED))
     {
         rt_spin_unlock_irqrestore(&_spinlock, level);
         return -RT_ERROR;
     }
-    _nowtimer = RT_NULL;
-    rt_list_remove(&timer->row);
-    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED; /* change status */
 
-    _set_next_timeout_n_unlock(level);
+    rt_list_remove(&timer->node);
+    timer->flag &= ~RT_TIMER_FLAG_ACTIVATED;
+    _set_next_timeout_locked();
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -259,26 +258,27 @@ rt_err_t rt_ktime_hrtimer_control(rt_ktime_hrtimer_t timer, int cmd, void *arg)
     level = rt_spin_lock_irqsave(&_spinlock);
     switch (cmd)
     {
+
     case RT_TIMER_CTRL_GET_TIME:
-        *(unsigned long *)arg = timer->init_cnt;
+        *(unsigned long *)arg = timer->delay_cnt;
         break;
 
     case RT_TIMER_CTRL_SET_TIME:
         RT_ASSERT((*(unsigned long *)arg) < (_HRTIMER_MAX_CNT / 2));
-        timer->init_cnt    = *(unsigned long *)arg;
-        timer->timeout_cnt = *(unsigned long *)arg + rt_ktime_cputimer_getcnt();
+        timer->delay_cnt    = *(unsigned long *)arg;
+        timer->timeout_cnt  = *(unsigned long *)arg + rt_ktime_cputimer_getcnt();
         break;
 
     case RT_TIMER_CTRL_SET_ONESHOT:
-        timer->parent.flag &= ~RT_TIMER_FLAG_PERIODIC;
+        timer->flag &= ~RT_TIMER_FLAG_PERIODIC;
         break;
 
     case RT_TIMER_CTRL_SET_PERIODIC:
-        timer->parent.flag |= RT_TIMER_FLAG_PERIODIC;
+        timer->flag |= RT_TIMER_FLAG_PERIODIC;
         break;
 
     case RT_TIMER_CTRL_GET_STATE:
-        if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
+        if (timer->flag & RT_TIMER_FLAG_ACTIVATED)
         {
             /*timer is start and run*/
             *(rt_uint32_t *)arg = RT_TIMER_FLAG_ACTIVATED;
@@ -330,18 +330,15 @@ rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer)
     level = rt_spin_lock_irqsave(&_spinlock);
 
     /* stop timer */
-    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+    timer->flag &= ~RT_TIMER_FLAG_ACTIVATED;
     /* when interrupted */
     if (timer->error == -RT_EINTR || timer->error == RT_EINTR)
     {
-        _nowtimer = RT_NULL;
-        rt_list_remove(&timer->row);
-        _set_next_timeout_n_unlock(level);
+        rt_list_remove(&timer->node);
+        _set_next_timeout_locked();
     }
-    else
-    {
-        rt_spin_unlock_irqrestore(&_spinlock, level);
-    }
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -350,7 +347,7 @@ rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer)
 
 void rt_ktime_hrtimer_delay_init(struct rt_ktime_hrtimer *timer)
 {
-    rt_ktime_hrtimer_init(timer, "hrtimer_sleep", 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
+    rt_ktime_hrtimer_init(timer, "hrtimer_sleep", RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
                           _sleep_timeout, timer);
 }
 
@@ -366,15 +363,15 @@ rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cn
     if (cnt == 0)
         return -RT_EINVAL;
 
-    timer->timeout_cnt = cnt + rt_ktime_cputimer_getcnt();
-    timer->init_cnt    = cnt;
+    err = rt_ktime_hrtimer_start(timer, cnt);
+    if (err)
+        return err;
 
-    rt_ktime_hrtimer_start(timer); /* reset the timeout of thread timer and start it */
     err = rt_completion_wait_flags(&(timer->completion), RT_WAITING_FOREVER,
                                    RT_INTERRUPTIBLE);
     rt_ktime_hrtimer_keep_errno(timer, err);
 
-    return RT_EOK;
+    return err;
 }
 
 rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, unsigned long ns)

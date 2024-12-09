@@ -31,6 +31,7 @@ static int _ipi_hash[] =
 #ifdef RT_USING_SMP
     [RT_SCHEDULE_IPI] = RT_SCHEDULE_IPI,
     [RT_STOP_IPI] = RT_STOP_IPI,
+    [RT_SMP_CALL_IPI] = RT_SMP_CALL_IPI,
 #endif
 };
 
@@ -173,18 +174,51 @@ rt_err_t rt_pic_linear_irq(struct rt_pic *pic, rt_size_t irq_nr)
     return err;
 }
 
+rt_err_t rt_pic_cancel_irq(struct rt_pic *pic)
+{
+    rt_err_t err = RT_EOK;
+
+    if (pic && pic->pirqs)
+    {
+        rt_ubase_t level = rt_spin_lock_irqsave(&_pic_lock);
+
+        /*
+         * This is only to make system runtime safely,
+         * we don't recommend PICs to unregister.
+         */
+        rt_list_remove(&pic->list);
+
+        rt_spin_unlock_irqrestore(&_pic_lock, level);
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
+}
+
 static void config_pirq(struct rt_pic *pic, struct rt_pic_irq *pirq, int irq, int hwirq)
 {
     rt_ubase_t level = rt_spin_lock_irqsave(&pirq->rw_lock);
+
+    if (pirq->irq < 0)
+    {
+        rt_list_init(&pirq->list);
+        rt_list_init(&pirq->children_nodes);
+        rt_list_init(&pirq->isr.list);
+    }
+    else if (pirq->pic != pic)
+    {
+        RT_ASSERT(rt_list_isempty(&pirq->list) == RT_TRUE);
+        RT_ASSERT(rt_list_isempty(&pirq->children_nodes) == RT_TRUE);
+        RT_ASSERT(rt_list_isempty(&pirq->isr.list) == RT_TRUE);
+    }
 
     pirq->irq = irq;
     pirq->hwirq = hwirq;
 
     pirq->pic = pic;
-
-    rt_list_init(&pirq->list);
-    rt_list_init(&pirq->children_nodes);
-    rt_list_init(&pirq->isr.list);
 
     rt_spin_unlock_irqrestore(&pirq->rw_lock, level);
 }
@@ -494,6 +528,8 @@ rt_err_t rt_pic_do_traps(void)
     rt_err_t err = -RT_ERROR;
     struct irq_traps *traps;
 
+    rt_interrupt_enter();
+
     rt_list_for_each_entry(traps, &_traps_nodes, list)
     {
         if (traps->handler(traps->data))
@@ -503,6 +539,8 @@ rt_err_t rt_pic_do_traps(void)
             break;
         }
     }
+
+    rt_interrupt_leave();
 
     return err;
 }
@@ -515,6 +553,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 #ifdef RT_USING_PIC_STATISTICS
     struct timespec ts;
     rt_ubase_t irq_time_ns;
+    rt_ubase_t current_irq_begin;
 #endif
 
     RT_ASSERT(pirq != RT_NULL);
@@ -522,7 +561,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
 #ifdef RT_USING_PIC_STATISTICS
     rt_ktime_boottime_get_ns(&ts);
-    pirq->stat.current_irq_begin[rt_hw_cpu_id()] = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
+    current_irq_begin = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
 #endif
 
     handler_nodes = &pirq->isr.list;
@@ -534,11 +573,17 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
         rt_list_for_each_entry(child, &pirq->children_nodes, list)
         {
-            rt_pic_irq_ack(child->irq);
+            if (child->pic->ops->irq_ack)
+            {
+                child->pic->ops->irq_ack(child);
+            }
 
             err = rt_pic_handle_isr(child);
 
-            rt_pic_irq_eoi(child->irq);
+            if (child->pic->ops->irq_eoi)
+            {
+                child->pic->ops->irq_eoi(child);
+            }
         }
     }
 
@@ -577,7 +622,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
 #ifdef RT_USING_PIC_STATISTICS
     rt_ktime_boottime_get_ns(&ts);
-    irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - pirq->stat.current_irq_begin[rt_hw_cpu_id()];
+    irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - current_irq_begin;
     pirq->stat.sum_irq_time_ns += irq_time_ns;
     if (irq_time_ns < pirq->stat.min_irq_time_ns || pirq->stat.min_irq_time_ns == 0)
     {

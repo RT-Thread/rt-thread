@@ -15,6 +15,8 @@
 #include <drivers/ofw_raw.h>
 #include <drivers/core/dm.h>
 
+#include <mm_memblock.h>
+
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
@@ -28,9 +30,6 @@ RT_OFW_SYMBOL_TYPE_RANGE(earlycon, struct rt_fdt_earlycon_id, _earlycon_start = 
 #ifndef ARCH_INIT_MEMREGION_NR
 #define ARCH_INIT_MEMREGION_NR 128
 #endif
-
-static rt_region_t _memregion[ARCH_INIT_MEMREGION_NR] rt_section(".bss.noclean.memregion");
-static int _memregion_front_idx = 0, _memregion_last_idx = RT_ARRAY_SIZE(_memregion) - 1;
 
 static void *_fdt = RT_NULL;
 static rt_phandle _phandle_min;
@@ -86,15 +85,15 @@ rt_uint64_t rt_fdt_translate_address(void *fdt, int nodeoffset, rt_uint64_t addr
 
         if (parent >= 0)
         {
-            ranges = fdt_getprop(fdt, nodeoffset, "ranges", &length);
+            ranges = fdt_getprop(fdt, parent, "ranges", &length);
         }
 
         if (ranges && length > 0)
         {
-            local.addr_cells = fdt_address_cells(fdt, nodeoffset);
-            local.size_cells = fdt_size_cells(fdt, nodeoffset);
-            cpu.addr_cells = fdt_io_addr_cells(fdt, nodeoffset);
-            cpu.size_cells = fdt_io_size_cells(fdt, nodeoffset);
+            local.addr_cells = fdt_address_cells(fdt, parent);
+            local.size_cells = fdt_size_cells(fdt, parent);
+            cpu.addr_cells = fdt_io_addr_cells(fdt, parent);
+            cpu.size_cells = fdt_io_size_cells(fdt, parent);
 
             group_len = local.addr_cells + cpu.addr_cells + local.size_cells;
 
@@ -106,7 +105,7 @@ rt_uint64_t rt_fdt_translate_address(void *fdt, int nodeoffset, rt_uint64_t addr
 
                 if (local.addr <= address && local.addr + local.size > address)
                 {
-                    ret += address - cpu.addr;
+                    ret = address - local.addr + cpu.addr;
                     break;
                 }
 
@@ -138,71 +137,6 @@ rt_bool_t rt_fdt_device_is_available(void *fdt, int nodeoffset)
     }
 
     return ret;
-}
-
-rt_err_t rt_fdt_commit_memregion_early(rt_region_t *region, rt_bool_t is_reserved)
-{
-    rt_err_t err = RT_EOK;
-
-    if (region && region->name)
-    {
-        if (_memregion_front_idx < _memregion_last_idx)
-        {
-            int idx;
-
-            if (!_memregion_front_idx && _memregion_last_idx == RT_ARRAY_SIZE(_memregion) - 1)
-            {
-                for (int i = 0; i < RT_ARRAY_SIZE(_memregion); ++i)
-                {
-                    _memregion[i].name = RT_NULL;
-                }
-            }
-
-            idx = is_reserved ? _memregion_last_idx-- : _memregion_front_idx++;
-
-            rt_memcpy(&_memregion[idx], region, sizeof(*region));
-        }
-        else
-        {
-            err = -RT_EEMPTY;
-        }
-    }
-    else
-    {
-        err = -RT_EINVAL;
-    }
-
-    return err;
-}
-
-rt_err_t rt_fdt_commit_memregion_request(rt_region_t **out_region, rt_size_t *out_nr, rt_bool_t is_reserved)
-{
-    rt_err_t err = RT_EOK;
-
-    if (out_region && out_nr)
-    {
-        if (is_reserved)
-        {
-            *out_region = &_memregion[_memregion_last_idx + 1];
-            *out_nr = RT_ARRAY_SIZE(_memregion) - 1 - _memregion_last_idx;
-        }
-        else
-        {
-            *out_region = &_memregion[0];
-            *out_nr = _memregion_front_idx;
-        }
-
-        if (*out_nr == 0)
-        {
-            err = -RT_EEMPTY;
-        }
-    }
-    else
-    {
-        err = -RT_EINVAL;
-    }
-
-    return err;
 }
 
 rt_err_t rt_fdt_prefetch(void *fdt)
@@ -254,26 +188,6 @@ rt_err_t rt_fdt_scan_root(void)
     }
 
     return err;
-}
-
-rt_inline rt_err_t commit_memregion(const char *name, rt_uint64_t base, rt_uint64_t size, rt_bool_t is_reserved)
-{
-    return rt_fdt_commit_memregion_early(&(rt_region_t)
-    {
-        .name = name,
-        .start = (rt_size_t)base,
-        .end = (rt_size_t)(base + size),
-    }, is_reserved);
-}
-
-static rt_err_t reserve_memregion(const char *name, rt_uint64_t base, rt_uint64_t size)
-{
-    if (commit_memregion(name, base, size, RT_TRUE) == -RT_EEMPTY)
-    {
-        LOG_W("Reserved memory: %p - %p%s", base, base + size, " unable to record");
-    }
-
-    return RT_EOK;
 }
 
 static rt_err_t fdt_reserved_mem_check_root(int nodeoffset)
@@ -331,10 +245,11 @@ static rt_err_t fdt_reserved_memory_reg(int nodeoffset, const char *uname)
                     continue;
                 }
 
+                rt_bool_t is_nomap = fdt_getprop(_fdt, nodeoffset, "no-map", RT_NULL) ? RT_TRUE : RT_FALSE;
                 base = rt_fdt_translate_address(_fdt, nodeoffset, base);
-                reserve_memregion(fdt_get_name(_fdt, nodeoffset, RT_NULL), base, size);
 
-                len -= t_len;
+                rt_memblock_reserve_memory(fdt_get_name(_fdt, nodeoffset, RT_NULL),
+                        base, base + size, is_nomap);
             }
         }
     }
@@ -371,7 +286,7 @@ static void fdt_scan_reserved_memory(void)
 
                 if (err == -RT_EEMPTY && fdt_getprop(_fdt, child, "size", RT_NULL))
                 {
-                    reserve_memregion(fdt_get_name(_fdt, child, RT_NULL), 0, 0);
+                    LOG_E("Allocating reserved memory in setup is not yet supported");
                 }
             }
         }
@@ -385,7 +300,6 @@ static void fdt_scan_reserved_memory(void)
 static rt_err_t fdt_scan_memory(void)
 {
     int nodeoffset, no;
-    rt_region_t *region;
     rt_uint64_t base, size;
     rt_err_t err = -RT_EEMPTY;
 
@@ -399,10 +313,8 @@ static rt_err_t fdt_scan_memory(void)
             break;
         }
 
-        reserve_memregion("memreserve", base, size);
+        rt_memblock_reserve_memory("memreserve", base, base + size, MEMBLOCK_NONE);
     }
-
-    no = 0;
 
     fdt_for_each_subnode(nodeoffset, _fdt, 0)
     {
@@ -441,7 +353,8 @@ static rt_err_t fdt_scan_memory(void)
                 continue;
             }
 
-            err = commit_memregion(name, base, size, RT_FALSE);
+            bool is_hotpluggable = fdt_getprop(_fdt, nodeoffset, "hotpluggable", RT_NULL) ? RT_TRUE : RT_FALSE;
+            err = rt_memblock_add_memory(name, base, base + size, is_hotpluggable);
 
             if (!err)
             {
@@ -451,103 +364,12 @@ static rt_err_t fdt_scan_memory(void)
             {
                 LOG_W("Memory node(%d) ranges: %p - %p%s", no, base, base + size, " unable to record");
             }
-
-            ++no;
         }
     }
 
     if (!err)
     {
         fdt_scan_reserved_memory();
-    }
-
-    region = &_memregion[0];
-
-    for (no = 0; region->name; ++region)
-    {
-        /* We need check the memory region now. */
-        for (int i = RT_ARRAY_SIZE(_memregion) - 1; i > no; --i)
-        {
-            rt_region_t *res_region = &_memregion[i];
-
-            if (!res_region->name)
-            {
-                break;
-            }
-
-            /*
-             *  +--------+                                    +--------+
-             *  | memory |                                    | memory |
-             *  +--------+  +----------+        +----------+  +--------+
-             *              | reserved |        | reserved |
-             *              +----------+        +----------+
-             */
-            if (res_region->start >= region->end || res_region->end <= region->start)
-            {
-                /* No adjustments needed */
-                continue;
-            }
-
-            /*
-             * case 0:                      case 1:
-             *  +------------------+             +----------+
-             *  |      memory      |             |  memory  |
-             *  +---+----------+---+         +---+----------+---+
-             *      | reserved |             |     reserved     |
-             *      +----------+             +---+----------+---+
-             *
-             * case 2:                      case 3:
-             *  +------------------+                +------------------+
-             *  |      memory      |                |      memory      |
-             *  +--------------+---+------+  +------+---+--------------+
-             *                 | reserved |  | reserved |
-             *                 +----------+  +----------+
-             */
-            if (res_region->start > region->start)
-            {
-                if (res_region->end < region->end)
-                {
-                    /* case 0 */
-                    rt_size_t new_size = region->end - res_region->end;
-
-                    region->end = res_region->start;
-
-                    /* Commit part next block */
-                    err = commit_memregion(region->name, res_region->end, new_size, RT_FALSE);
-
-                    if (!err)
-                    {
-                        ++no;
-
-                        /* Scan again */
-                        region = &_memregion[0];
-                        --region;
-
-                        break;
-                    }
-                }
-                else
-                {
-                    /* case 2 */
-                    region->end = res_region->start;
-                }
-            }
-            else
-            {
-                if (res_region->end < region->end)
-                {
-                    /* case 3 */
-                    region->start = res_region->end;
-                }
-                else
-                {
-                    /* case 1 */
-                    region->name = RT_NULL;
-
-                    break;
-                }
-            }
-        }
     }
 
     return err;
@@ -579,9 +401,9 @@ static rt_err_t fdt_scan_initrd(rt_uint64_t *ranges, const char *name, const cha
             int s_len, e_len;
             const fdt32_t *start = RT_NULL, *end = RT_NULL;
 
-            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%d-start", oem, name);
+            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%s-start", oem, name);
             start = fdt_getprop(_fdt, offset, tmp_name, &s_len);
-            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%d-end", oem, name);
+            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%s-end", oem, name);
             end = fdt_getprop(_fdt, offset, tmp_name, &e_len);
 
             if (start && end)
@@ -649,7 +471,7 @@ static rt_err_t fdt_scan_initrd(rt_uint64_t *ranges, const char *name, const cha
 
         if (!err)
         {
-            commit_memregion("initrd", ranges[0], ranges[1] - ranges[0], RT_TRUE);
+            rt_memblock_reserve_memory("initrd", ranges[0], ranges[1], MEMBLOCK_NONE);
         }
     }
     else if (!ranges)
@@ -966,6 +788,55 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
     {
         LOG_I("Earlycon: %s at MMIO/PIO %p (options '%s')",
                 con_type, fdt_earlycon.mmio, fdt_earlycon.options);
+    }
+
+    return err;
+}
+
+rt_err_t rt_fdt_bootargs_select(const char *key, int index, const char **out_result)
+{
+    rt_err_t err;
+
+    if (key && index >= 0 && out_result)
+    {
+        int offset = fdt_path_offset(_fdt, "/chosen");
+
+        if (offset >= 0)
+        {
+            int len, key_len = rt_strlen(key);
+            const char *bootargs = fdt_getprop(_fdt, offset, "bootargs", &len), *end;
+
+            end = bootargs + len;
+            err = -RT_EEMPTY;
+
+            for (int i = 0; bootargs < end; ++i)
+            {
+                bootargs = rt_strstr(bootargs, key);
+
+                if (!bootargs)
+                {
+                    break;
+                }
+
+                bootargs += key_len;
+
+                if (i == index)
+                {
+                    *out_result = bootargs;
+
+                    err = -RT_EOK;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            err = -RT_ERROR;
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
     }
 
     return err;

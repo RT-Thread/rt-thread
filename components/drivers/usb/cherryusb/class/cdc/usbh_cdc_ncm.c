@@ -33,8 +33,13 @@ static struct usbh_cdc_ncm g_cdc_ncm_class;
 
 static int usbh_cdc_ncm_get_ntb_parameters(struct usbh_cdc_ncm *cdc_ncm_class, struct cdc_ncm_ntb_parameters *param)
 {
-    struct usb_setup_packet *setup = cdc_ncm_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
+
+    if (!cdc_ncm_class || !cdc_ncm_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cdc_ncm_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CDC_REQUEST_GET_NTB_PARAMETERS;
@@ -43,7 +48,7 @@ static int usbh_cdc_ncm_get_ntb_parameters(struct usbh_cdc_ncm *cdc_ncm_class, s
     setup->wLength = 28;
 
     ret = usbh_control_transfer(cdc_ncm_class->hport, setup, g_cdc_ncm_buf);
-    if (ret < 0) {
+    if (ret < 8) {
         return ret;
     }
 
@@ -206,7 +211,7 @@ get_mac:
         }
     }
 
-    memcpy(hport->config.intf[intf].devname, DEV_FORMAT, CONFIG_USBHOST_DEV_NAMELEN);
+    strncpy(hport->config.intf[intf].devname, DEV_FORMAT, CONFIG_USBHOST_DEV_NAMELEN);
 
     USB_LOG_INFO("Register CDC NCM Class:%s\r\n", hport->config.intf[intf].devname);
 
@@ -248,7 +253,13 @@ void usbh_cdc_ncm_rx_thread(void *argument)
 {
     uint32_t g_cdc_ncm_rx_length;
     int ret;
+#if CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE <= (16 * 1024)
+    uint32_t transfer_size = CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE;
+#else
+    uint32_t transfer_size = (16 * 1024);
+#endif
 
+    (void)argument;
     USB_LOG_INFO("Create cdc ncm rx thread\r\n");
     // clang-format off
 find_class:
@@ -268,7 +279,7 @@ find_class:
 
     g_cdc_ncm_rx_length = 0;
     while (1) {
-        usbh_bulk_urb_fill(&g_cdc_ncm_class.bulkin_urb, g_cdc_ncm_class.hport, g_cdc_ncm_class.bulkin, &g_cdc_ncm_rx_buffer[g_cdc_ncm_rx_length], (CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE > (16 * 1024)) ? (16 * 1024) : CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE, USB_OSAL_WAITING_FOREVER, NULL, NULL);
+        usbh_bulk_urb_fill(&g_cdc_ncm_class.bulkin_urb, g_cdc_ncm_class.hport, g_cdc_ncm_class.bulkin, &g_cdc_ncm_rx_buffer[g_cdc_ncm_rx_length], transfer_size, USB_OSAL_WAITING_FOREVER, NULL, NULL);
         ret = usbh_submit_urb(&g_cdc_ncm_class.bulkin_urb);
         if (ret < 0) {
             goto find_class;
@@ -276,7 +287,12 @@ find_class:
 
         g_cdc_ncm_rx_length += g_cdc_ncm_class.bulkin_urb.actual_length;
 
-        if (g_cdc_ncm_rx_length % USB_GET_MAXPACKETSIZE(g_cdc_ncm_class.bulkin->wMaxPacketSize)) {
+        /* A transfer is complete because last packet is a short packet.
+         * Short packet is not zero, match g_cdc_ncm_rx_length % USB_GET_MAXPACKETSIZE(g_cdc_ncm_class.bulkin->wMaxPacketSize).
+         * Short packet is zero, check if g_cdc_ncm_class.bulkin_urb.actual_length < transfer_size, for example transfer is complete with size is 1024 < 2048.
+        */
+        if ((g_cdc_ncm_rx_length % USB_GET_MAXPACKETSIZE(g_cdc_ncm_class.bulkin->wMaxPacketSize)) ||
+            (g_cdc_ncm_class.bulkin_urb.actual_length < transfer_size)) {
             USB_LOG_DBG("rxlen:%d\r\n", g_cdc_ncm_rx_length);
 
             struct cdc_ncm_nth16 *nth16 = (struct cdc_ncm_nth16 *)&g_cdc_ncm_rx_buffer[0];
@@ -309,11 +325,15 @@ find_class:
             }
 
             g_cdc_ncm_rx_length = 0;
-
         } else {
-            if (g_cdc_ncm_rx_length > CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE) {
-                USB_LOG_ERR("Rx packet is overflow\r\n");
-                g_cdc_ncm_rx_length = 0;
+#if CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE <= (16 * 1024)
+            if (g_cdc_ncm_rx_length == CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE) {
+#else
+            if ((g_cdc_ncm_rx_length + (16 * 1024)) > CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE) {
+#endif
+                USB_LOG_ERR("Rx packet is overflow, please reduce tcp window size or increase CONFIG_USBHOST_CDC_NCM_ETH_MAX_RX_SIZE\r\n");
+                while (1) {
+                }
             }
         }
     }
@@ -324,9 +344,13 @@ delete:
     // clang-format on
 }
 
-int usbh_cdc_ncm_eth_output(uint8_t *buf, uint32_t buflen)
+uint8_t *usbh_cdc_ncm_get_eth_txbuf(void)
 {
-    uint8_t *buffer;
+    return &g_cdc_ncm_tx_buffer[16];
+}
+
+int usbh_cdc_ncm_eth_output(uint32_t buflen)
+{
     struct cdc_ncm_ndp16_datagram *ndp16_datagram;
 
     if (g_cdc_ncm_class.connect_status == false) {
@@ -355,9 +379,6 @@ int usbh_cdc_ncm_eth_output(uint8_t *buf, uint32_t buflen)
     ndp16_datagram->wDatagramIndex = 0;
     ndp16_datagram->wDatagramLength = 0;
 
-    buffer = &g_cdc_ncm_tx_buffer[16];
-    memcpy(buffer, buf, buflen);
-
     USB_LOG_DBG("txlen:%d\r\n", nth16->wBlockLength);
 
     usbh_bulk_urb_fill(&g_cdc_ncm_class.bulkout_urb, g_cdc_ncm_class.hport, g_cdc_ncm_class.bulkout, g_cdc_ncm_tx_buffer, nth16->wBlockLength, USB_OSAL_WAITING_FOREVER, NULL, NULL);
@@ -366,10 +387,12 @@ int usbh_cdc_ncm_eth_output(uint8_t *buf, uint32_t buflen)
 
 __WEAK void usbh_cdc_ncm_run(struct usbh_cdc_ncm *cdc_ncm_class)
 {
+    (void)cdc_ncm_class;
 }
 
 __WEAK void usbh_cdc_ncm_stop(struct usbh_cdc_ncm *cdc_ncm_class)
 {
+    (void)cdc_ncm_class;
 }
 
 const struct usbh_class_driver cdc_ncm_class_driver = {

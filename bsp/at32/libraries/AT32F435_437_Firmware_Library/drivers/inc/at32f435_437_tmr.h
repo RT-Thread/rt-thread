@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_tmr.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 tmr header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -54,6 +52,7 @@ extern "C" {
 #define TMR_C2_FLAG                      ((uint32_t)0x000004) /*!< tmr flag channel 2 */
 #define TMR_C3_FLAG                      ((uint32_t)0x000008) /*!< tmr flag channel 3 */
 #define TMR_C4_FLAG                      ((uint32_t)0x000010) /*!< tmr flag channel 4 */
+#define TMR_C5_FLAG                      ((uint32_t)0x010000) /*!< tmr flag channel 5 */
 #define TMR_HALL_FLAG                    ((uint32_t)0x000020) /*!< tmr flag hall */
 #define TMR_TRIGGER_FLAG                 ((uint32_t)0x000040) /*!< tmr flag trigger */
 #define TMR_BRK_FLAG                     ((uint32_t)0x000080) /*!< tmr flag brake */
@@ -239,7 +238,7 @@ typedef enum
 {
   TMR_CC_CHANNEL_MAPPED_DIRECT           = 0x01, /*!< channel is configured as input, mapped direct */
   TMR_CC_CHANNEL_MAPPED_INDIRECT         = 0x02, /*!< channel is configured as input, mapped indirect */
-  TMR_CC_CHANNEL_MAPPED_STI              = 0x03  /*!< channel is configured as input, mapped trc */
+  TMR_CC_CHANNEL_MAPPED_STI              = 0x03  /*!< channel is configured as input, mapped sti */
 } tmr_input_direction_mapped_type;
 
 /**
@@ -290,17 +289,6 @@ typedef enum
   TMR_TRIGGER_SWTRIG                     = 0x00000040, /*!< tmr event triggered by software of trigger */
   TMR_BRK_SWTRIG                         = 0x00000080  /*!< tmr event triggered by software of brake */
 }tmr_event_trigger_type;
-
-/**
-  * @brief tmr channel output fast type
-  */
-typedef enum
-{
-  TMR_CHANNEL1_OUTPUT_FAST               = MAKE_VALUE(0x18, 2),  /*!< tmr channel 1 output fast mode */
-  TMR_CHANNEL2_OUTPUT_FAST               = MAKE_VALUE(0x18, 10), /*!< tmr channel 2 output fast mode */
-  TMR_CHANNEL3_OUTPUT_FAST               = MAKE_VALUE(0x1c, 2),  /*!< tmr channel 3 output fast mode */
-  TMR_CHANNEL4_OUTPUT_FAST               = MAKE_VALUE(0x1c, 10)  /*!< tmr channel 4 output fast mode */
-}tmr_channel_output_fast_type;
 
 /**
   * @brief tmr polarity active type
@@ -930,7 +918,7 @@ void tmr_brkdt_default_para_init(tmr_brkdt_config_type *tmr_brkdt_struct);
 void tmr_base_init(tmr_type* tmr_x, uint32_t tmr_pr, uint32_t tmr_div);
 void tmr_clock_source_div_set(tmr_type *tmr_x, tmr_clock_division_type tmr_clock_div);
 void tmr_cnt_dir_set(tmr_type *tmr_x, tmr_count_mode_type tmr_cnt_dir);
-void tmr_repetition_counter_set(tmr_type *tmr_x, uint8_t tmr_rpr_value);
+void tmr_repetition_counter_set(tmr_type *tmr_x, uint16_t tmr_rpr_value);
 void tmr_counter_value_set(tmr_type *tmr_x, uint32_t tmr_cnt_value);
 uint32_t tmr_counter_value_get(tmr_type *tmr_x);
 void tmr_div_value_set(tmr_type *tmr_x, uint32_t tmr_div_value);
@@ -962,7 +950,7 @@ void tmr_input_channel_filter_set(tmr_type *tmr_x, tmr_channel_select_type tmr_c
                                   uint16_t filter_value);
 void tmr_pwm_input_config(tmr_type *tmr_x, tmr_input_config_type *input_struct, \
                           tmr_channel_input_divider_type divider_factor);
-void tmr_channel1_input_select(tmr_type *tmr_x, tmr_channel1_input_connected_type ti1_connect);
+void tmr_channel1_input_select(tmr_type *tmr_x, tmr_channel1_input_connected_type ch1_connect);
 void tmr_input_channel_divider_set(tmr_type *tmr_x, tmr_channel_select_type tmr_channel, \
                                    tmr_channel_input_divider_type divider_factor);
 void tmr_primary_mode_select(tmr_type *tmr_x, tmr_primary_select_type primary_mode);
@@ -975,12 +963,12 @@ void tmr_trigger_input_select(tmr_type *tmr_x, sub_tmr_input_sel_type trigger_se
 void tmr_sub_sync_mode_set(tmr_type *tmr_x, confirm_state new_state);
 void tmr_dma_request_enable(tmr_type *tmr_x, tmr_dma_request_type dma_request, confirm_state new_state);
 void tmr_interrupt_enable(tmr_type *tmr_x, uint32_t tmr_interrupt, confirm_state new_state);
+flag_status tmr_interrupt_flag_get(tmr_type *tmr_x, uint32_t tmr_flag);
 flag_status tmr_flag_get(tmr_type *tmr_x, uint32_t tmr_flag);
 void tmr_flag_clear(tmr_type *tmr_x, uint32_t tmr_flag);
 void tmr_event_sw_trigger(tmr_type *tmr_x, tmr_event_trigger_type tmr_event);
 void tmr_output_enable(tmr_type *tmr_x, confirm_state new_state);
 void tmr_internal_clock_set(tmr_type *tmr_x);
-void tmr_output_channel_fast_set(tmr_type *tmr_x, tmr_channel_output_fast_type oc_fast);
 void tmr_output_channel_polarity_set(tmr_type *tmr_x, tmr_channel_select_type tmr_channel, \
                                      tmr_polarity_active_type oc_polarity);
 void tmr_external_clock_config(tmr_type *tmr_x, tmr_external_signal_divider_type es_divide, \

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "usbd_core.h"
-#include "usbd_cdc.h"
+#include "usbd_cdc_acm.h"
 
 #define WINUSB_IN_EP  0x81
 #define WINUSB_OUT_EP 0x02
@@ -219,7 +219,7 @@ const uint8_t winusbv2_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     /* End */
@@ -318,7 +318,7 @@ struct usb_bos_descriptor bos_desc = {
     .string_len = USBD_BOS_WTOTALLENGTH
 };
 
-void winusbv2_init(uint8_t busid, uint32_t reg_base)
+void winusbv2_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, winusbv2_descriptor);
     usbd_bos_desc_register(busid, &bos_desc);

@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_SMARTCARD_PHY_H_
-#define _FSL_SMARTCARD_PHY_H_
+#ifndef FSL_SMARTCARD_PHY_H_
+#define FSL_SMARTCARD_PHY_H_
 
 #include "fsl_smartcard.h"
 
@@ -116,7 +116,7 @@ status_t SMARTCARD_PHY_Control(void *base,
 #if defined(USING_PHY_TDA8035)
 void SMARTCARD_PHY_IRQHandler(void *base, smartcard_context_t *context);
 #endif
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -124,4 +124,4 @@ void SMARTCARD_PHY_IRQHandler(void *base, smartcard_context_t *context);
 
 /*! @}*/
 
-#endif /* _FSL_SMARTCARD_PHY_H_*/
+#endif /* FSL_SMARTCARD_PHY_H_*/

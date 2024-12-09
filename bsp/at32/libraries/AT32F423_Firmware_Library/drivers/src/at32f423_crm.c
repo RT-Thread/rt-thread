@@ -71,8 +71,9 @@ void crm_reset(void)
   /* reset pllms pllns pllfr pllrcs bits */
   CRM->pllcfg = 0x00033002U;
 
-  /* reset clkout_sel, clkoutdiv, pllclk_to_adc, hick_to_sclk, hick_to_usb, hickdiv */
-  CRM->misc1 = 0x000F0000U;
+  /* reset clkout_sel, clkoutdiv, pllclk_to_adc, hick_to_usb */
+  CRM->misc1 &= 0x00005000U;
+  CRM->misc1 |= 0x000F0000U;
 
   /* disable all interrupts enable and clear pending bits  */
   CRM->clkint = 0x009F0000U;
@@ -136,6 +137,64 @@ flag_status crm_flag_get(uint32_t flag)
   {
     status = SET;
   }
+  return status;
+}
+
+/**
+  * @brief  get crm interrupt flag status
+  * @param  flag
+  *         this parameter can be one of the following values:
+  *         - CRM_LICK_READY_INT_FLAG
+  *         - CRM_LEXT_READY_INT_FLAG
+  *         - CRM_HICK_READY_INT_FLAG
+  *         - CRM_HEXT_READY_INT_FLAG
+  *         - CRM_PLL_READY_INT_FLAG
+  *         - CRM_CLOCK_FAILURE_INT_FLAG
+  * @retval flag_status (SET or RESET)
+  */
+flag_status crm_interrupt_flag_get(uint32_t flag)
+{
+  flag_status status = RESET;
+  switch(flag)
+  {
+    case CRM_LICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.lickstblf && CRM->clkint_bit.lickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_LEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.lextstblf && CRM->clkint_bit.lextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.hickstblf && CRM->clkint_bit.hickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.hextstblf && CRM->clkint_bit.hextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_PLL_READY_INT_FLAG:
+      if(CRM->clkint_bit.pllstblf && CRM->clkint_bit.pllstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_CLOCK_FAILURE_INT_FLAG:
+      if(CRM->clkint_bit.cfdf && CRM->ctrl_bit.cfden)
+      {
+        status = SET;
+      }
+      break;
+  }
+
   return status;
 }
 
@@ -711,7 +770,22 @@ void crm_adc_clock_select(crm_adc_clock_source_type value)
   */
 void crm_hick_divider_select(crm_hick_div_6_type value)
 {
+  __IO uint8_t temp_div = CRM->misc2_bit.hick_to_sclk_div;
+  __IO uint8_t temp_sclk = CRM->misc1_bit.hick_to_sclk;
+
+  crm_hick_sclk_div_set(CRM_HICK_SCLK_DIV_16);
+  /* delay */
+  {
+    __NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
+    __NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
+    __NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
+    __NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
+  }
+
+  CRM->misc1_bit.hick_to_sclk = TRUE;
   CRM->misc1_bit.hickdiv = value;
+  CRM->misc1_bit.hick_to_sclk = temp_sclk;
+  crm_hick_sclk_div_set((crm_hick_sclk_div_type)temp_div);
 }
 
 /**
@@ -724,7 +798,7 @@ void crm_hick_divider_select(crm_hick_div_6_type value)
   */
 void crm_hick_sclk_frequency_select(crm_hick_sclk_frequency_type value)
 {
-  __IO uint8_t temp_reg = CRM->misc2_bit.hick_to_sclk_div;
+  __IO uint8_t temp_div = CRM->misc2_bit.hick_to_sclk_div;
 
   crm_hick_sclk_div_set(CRM_HICK_SCLK_DIV_16);
   /* delay */
@@ -736,9 +810,9 @@ void crm_hick_sclk_frequency_select(crm_hick_sclk_frequency_type value)
   }
 
   CRM->misc1_bit.hick_to_sclk = TRUE;
-  crm_hick_divider_select(CRM_HICK48_NODIV);
+  CRM->misc1_bit.hickdiv = CRM_HICK48_NODIV;
   CRM->misc1_bit.hick_to_sclk = value;
-  crm_hick_sclk_div_set((crm_hick_sclk_div_type)temp_reg);
+  crm_hick_sclk_div_set((crm_hick_sclk_div_type)temp_div);
 }
 
 /**
@@ -849,7 +923,7 @@ crm_sclk_type crm_sysclk_switch_status_get(void)
 void crm_clocks_freq_get(crm_clocks_freq_type *clocks_struct)
 {
   uint32_t pll_ns = 0, pll_ms = 0, pll_fr = 0, pll_clock_source = 0, pllrcsfreq = 0;
-  uint32_t temp = 0, div_value = 0;
+  uint32_t temp = 0, div_value = 0, psc = 0;
   crm_sclk_type sclk_source;
 
   static const uint8_t sclk_ahb_div_table[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
@@ -867,9 +941,14 @@ void crm_clocks_freq_get(crm_clocks_freq_type *clocks_struct)
         clocks_struct->sclk_freq = HICK_VALUE * 6;
       else
         clocks_struct->sclk_freq = HICK_VALUE;
+
+      psc = CRM->misc2_bit.hick_to_sclk_div;
+      clocks_struct->sclk_freq = clocks_struct->sclk_freq >> psc;
       break;
     case CRM_SCLK_HEXT:
       clocks_struct->sclk_freq = HEXT_VALUE;
+      psc = CRM->misc2_bit.hext_to_sclk_div;
+      clocks_struct->sclk_freq = clocks_struct->sclk_freq >> psc;
       break;
     case CRM_SCLK_PLL:
       /* get pll clock source */

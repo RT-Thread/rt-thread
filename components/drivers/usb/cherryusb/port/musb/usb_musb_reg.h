@@ -3868,4 +3868,20 @@ typedef struct {                                    /*!< USB0 Structure         
 #define USB_MODE_DEV            0x00000003
 #define USB_MODE_OTG            0x00000000
 
+#define FIFO_TX   0
+#define FIFO_RX   1
+#define FIFO_TXRX 2
+
+struct musb_fifo_cfg {
+  uint8_t ep_num;
+  uint8_t style;
+  uint8_t mode;
+  uint32_t maxpacket;
+};
+
+uint8_t usbd_get_musb_fifo_cfg(struct musb_fifo_cfg **cfg);
+uint8_t usbh_get_musb_fifo_cfg(struct musb_fifo_cfg **cfg);
+uint32_t usb_get_musb_ram_size(void);
+void usbd_musb_delay_ms(uint8_t ms);
+
 #endif

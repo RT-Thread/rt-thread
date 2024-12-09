@@ -21,11 +21,38 @@ menu "Hardware Drivers Config"
             select RT_USING_SERIAL
             select RT_USING_SERIAL_V2
             if BSP_USING_UART
+                menuconfig BSP_USING_UART2
+                    bool "Enable UART2"
+                    default n
+                    if BSP_USING_UART2
+                        config BSP_UART2_RX_USING_DMA
+                            bool "Enable UART2 RX DMA"
+                            depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART2_TX_USING_DMA
+                            bool "Enable UART2 TX DMA"
+                            depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART2_RX_BUFSIZE
+                            int "Set UART2 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART2_TX_BUFSIZE
+                            int "Set UART2 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
                 menuconfig BSP_USING_UART4
                     bool "Enable UART4"
                     default n
                     if BSP_USING_UART4
-                        config BSP_UART0_RX_USING_DMA
+                        config BSP_UART4_RX_USING_DMA
                             bool "Enable UART4 RX DMA"
                             depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
                             default n
@@ -51,10 +78,14 @@ menu "Hardware Drivers Config"
 
         menuconfig BSP_USING_HW_I2C
             bool "Enable hardware I2C BUS"
+            select RT_USING_I2C
             default n
             if BSP_USING_HW_I2C
                 config BSP_USING_HW_I2C1
                     bool "Enable Hardware I2C1 BUS"
+                    default n
+                config BSP_USING_HW_I2C2
+                    bool "Enable Hardware I2C2 BUS"
                     default n
             endif
 
@@ -428,6 +459,93 @@ menu "Hardware Drivers Config"
                                 default 0
                         endif
                     endif
+            endif
+
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            default n
+            select RT_USING_ADC
+            if BSP_USING_ADC
+                config BSP_USING_ADC0
+                    bool "Enable ADC0"
+                    default n
+
+                config BSP_USING_ADC1
+                    bool "Enable ADC1"
+                    default n
+            endif
+
+        menuconfig BSP_USING_DAC
+            bool "Enable DAC"
+            default n
+            select RT_USING_DAC
+            if BSP_USING_DAC
+                config BSP_USING_DAC0
+                    bool "Enable DAC0"
+                    default n
+
+                config BSP_USING_DAC1
+                    bool "Enable DAC1"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM
+            bool "Enable PWM"
+            default n
+            select RT_USING_PWM
+            if BSP_USING_PWM
+                config BSP_USING_PWM0
+                    bool "Enable GPT0 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM1
+                    bool "Enable GPT1 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM2
+                    bool "Enable GPT2 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM3
+                    bool "Enable GPT3 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM4
+                    bool "Enable GPT4 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM5
+                    bool "Enable GPT5 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM6
+                    bool "Enable GPT6 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM7
+                    bool "Enable GPT7 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM8
+                    bool "Enable GPT8 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM9
+                    bool "Enable GPT9 (16-Bits) output PWM"
+                    default n
+            endif
+
+        menuconfig BSP_USING_SPI
+            bool "Enable SPI BUS"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SPI 
+                config BSP_USING_SPI0
+                    bool "Enable SPI0 BUS"
+                    default n
+                config BSP_USING_SPI1
+                    bool "Enable SPI1 BUS"
+                    default n
             endif
 
     endmenu

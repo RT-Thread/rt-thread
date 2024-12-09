@@ -10,10 +10,10 @@
  */
 #include <board.h>
 #include "drv_spi.h"
-#include "spi_flash.h"
+#include "dev_spi_flash.h"
 
 #ifdef RT_USING_SFUD
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash_sfud.h"
 #endif
 
 #include <rthw.h>

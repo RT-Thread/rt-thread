@@ -114,18 +114,18 @@ typedef struct {
     uint8_t prescaler;                  /**< presecaler */
     uint8_t port_size;                  /**< SDRAM port size */
     uint8_t burst_len_in_byte;          /**< 1/2/4/8 bytes */
-    uint8_t cke_off_in_ns;              /**< Tcks */
+    uint8_t cke_off_in_ns;
     uint8_t act_to_precharge_in_ns;     /**< Tras */
     uint8_t precharge_to_act_in_ns;     /**< Trp  */
     uint8_t act_to_rw_in_ns;            /**< Trcd */
     uint8_t act_to_act_in_ns;           /**< Trrd */
     uint8_t refresh_to_refresh_in_ns;   /**< Trc */
-    uint8_t write_recover_in_ns;        /**< Tdpl */
+    uint8_t write_recover_in_ns;        /**< Twr */
     uint8_t self_refresh_recover_in_ns; /**< Txsr */
-    uint8_t refresh_recover_in_ns;      /**< Txsr */
+    uint8_t refresh_recover_in_ns;      /**< Trc */
     uint8_t refresh_in_ms;              /**< Tref */
     uint8_t idle_timeout_in_ns;
-    uint8_t data_width_in_byte;
+    uint8_t cmd_data_width;
     uint8_t auto_refresh_count_in_one_burst;
     bool delay_cell_disable;            /**< Delay cell disable */
     uint8_t delay_cell_value;           /**< Delay cell value */

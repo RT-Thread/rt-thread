@@ -19,6 +19,9 @@
  * @{
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief EWDG error codes
@@ -159,9 +162,7 @@ typedef enum {
 
 typedef enum {
     ewdg_low_power_mode_halt = 0,               /*!< Watchdog is halted in low power mode */
-    ewdg_low_power_mode_work_clock_div_4 = 1,   /*!< Watchdog is will work with 1/4 normal clock in low power mode */
-    ewdg_low_power_mode_work_clock_div_2 = 2,   /*!< Watchdog is will work with 1/2 normal clock in low power mode */
-    ewdg_low_power_mode_work_clock_normal = 3,  /*!< Watchdog is will work with normal clock in low power mode */
+    ewdg_low_power_mode_work_clock_normal = 1,  /*!< Watchdog is will work with normal clock in low power mode */
 } ewdg_low_power_mode_t;
 
 /***
@@ -505,9 +506,6 @@ void ewdg_disable_reset(EWDG_Type *ptr, uint32_t mask);
  */
 void ewdg_switch_clock_source(EWDG_Type *ptr, ewdg_cnt_clk_sel_t clk_sel);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifdef __cplusplus
 }

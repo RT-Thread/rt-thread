@@ -10,18 +10,18 @@
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_ftdi_buf[64];
 
-#define CONFIG_USBHOST_MAX_FTDI_CLASS 4
+#define CONFIG_USBHOST_MAX_FTDI_CLASS 1
 
 static struct usbh_ftdi g_ftdi_class[CONFIG_USBHOST_MAX_FTDI_CLASS];
 static uint32_t g_devinuse = 0;
 
 static struct usbh_ftdi *usbh_ftdi_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_FTDI_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_ftdi_class[devno], 0, sizeof(struct usbh_ftdi));
             g_ftdi_class[devno].minor = devno;
             return &g_ftdi_class[devno];
@@ -32,10 +32,10 @@ static struct usbh_ftdi *usbh_ftdi_class_alloc(void)
 
 static void usbh_ftdi_class_free(struct usbh_ftdi *ftdi_class)
 {
-    int devno = ftdi_class->minor;
+    uint8_t devno = ftdi_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(ftdi_class, 0, sizeof(struct usbh_ftdi));
 }
@@ -57,7 +57,7 @@ static void usbh_ftdi_caculate_baudrate(uint32_t *itdf_divisor, uint32_t actual_
         }
         int divisor = FTDI_USB_CLK / baudrate;
         int frac_bits = 0;
-        for (int i = 0; i < sizeof(frac) / sizeof(frac[0]); i++) {
+        for (uint8_t i = 0; i < sizeof(frac) / sizeof(frac[0]); i++) {
             if ((divisor & 0xF) == frac[i]) {
                 frac_bits = i;
                 break;
@@ -71,7 +71,12 @@ static void usbh_ftdi_caculate_baudrate(uint32_t *itdf_divisor, uint32_t actual_
 
 int usbh_ftdi_reset(struct usbh_ftdi *ftdi_class)
 {
-    struct usb_setup_packet *setup = ftdi_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!ftdi_class || !ftdi_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ftdi_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = SIO_RESET_REQUEST;
@@ -84,7 +89,12 @@ int usbh_ftdi_reset(struct usbh_ftdi *ftdi_class)
 
 static int usbh_ftdi_set_modem(struct usbh_ftdi *ftdi_class, uint16_t value)
 {
-    struct usb_setup_packet *setup = ftdi_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!ftdi_class || !ftdi_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ftdi_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = SIO_SET_MODEM_CTRL_REQUEST;
@@ -97,10 +107,15 @@ static int usbh_ftdi_set_modem(struct usbh_ftdi *ftdi_class, uint16_t value)
 
 static int usbh_ftdi_set_baudrate(struct usbh_ftdi *ftdi_class, uint32_t baudrate)
 {
-    struct usb_setup_packet *setup = ftdi_class->hport->setup;
+    struct usb_setup_packet *setup;
     uint32_t itdf_divisor;
     uint16_t value;
     uint8_t baudrate_high;
+
+    if (!ftdi_class || !ftdi_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ftdi_class->hport->setup;
 
     usbh_ftdi_caculate_baudrate(&itdf_divisor, baudrate);
     value = itdf_divisor & 0xFFFF;
@@ -123,10 +138,15 @@ static int usbh_ftdi_set_data_format(struct usbh_ftdi *ftdi_class, uint8_t datab
      * D11-D12 		STOP_BIT_1=0, STOP_BIT_15=1, STOP_BIT_2=2
      * D14  		BREAK_OFF=0, BREAK_ON=1
      **/
+    struct usb_setup_packet *setup;
+    uint16_t value;
 
-    uint16_t value = ((isbreak & 0x01) << 14) | ((stopbits & 0x03) << 11) | ((parity & 0x0f) << 8) | (databits & 0x0f);
+    if (!ftdi_class || !ftdi_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ftdi_class->hport->setup;
 
-    struct usb_setup_packet *setup = ftdi_class->hport->setup;
+    value = ((isbreak & 0x01) << 14) | ((stopbits & 0x03) << 11) | ((parity & 0x0f) << 8) | (databits & 0x0f);
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = SIO_SET_DATA_REQUEST;
@@ -139,7 +159,12 @@ static int usbh_ftdi_set_data_format(struct usbh_ftdi *ftdi_class, uint8_t datab
 
 static int usbh_ftdi_set_latency_timer(struct usbh_ftdi *ftdi_class, uint16_t value)
 {
-    struct usb_setup_packet *setup = ftdi_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!ftdi_class || !ftdi_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ftdi_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = SIO_SET_LATENCY_TIMER_REQUEST;
@@ -152,7 +177,12 @@ static int usbh_ftdi_set_latency_timer(struct usbh_ftdi *ftdi_class, uint16_t va
 
 static int usbh_ftdi_set_flow_ctrl(struct usbh_ftdi *ftdi_class, uint16_t value)
 {
-    struct usb_setup_packet *setup = ftdi_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!ftdi_class || !ftdi_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ftdi_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = SIO_SET_FLOW_CTRL_REQUEST;
@@ -165,8 +195,13 @@ static int usbh_ftdi_set_flow_ctrl(struct usbh_ftdi *ftdi_class, uint16_t value)
 
 static int usbh_ftdi_read_modem_status(struct usbh_ftdi *ftdi_class)
 {
-    struct usb_setup_packet *setup = ftdi_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
+
+    if (!ftdi_class || !ftdi_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = ftdi_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = SIO_POLL_MODEM_STATUS_REQUEST;
@@ -335,10 +370,12 @@ int usbh_ftdi_bulk_out_transfer(struct usbh_ftdi *ftdi_class, uint8_t *buffer, u
 
 __WEAK void usbh_ftdi_run(struct usbh_ftdi *ftdi_class)
 {
+    (void)ftdi_class;
 }
 
 __WEAK void usbh_ftdi_stop(struct usbh_ftdi *ftdi_class)
 {
+    (void)ftdi_class;
 }
 
 static const uint16_t ftdi_id_table[][2] = {

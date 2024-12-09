@@ -32,10 +32,10 @@
  * round-robin scheduling is used for this case.
  * - The time of scheduler to choose the next highest ready thread is determinant.
  * - There are four status in thread management
- *	-# Initialization
- *	-# Running/Ready
- *	-# Blocked
- *	-# Closed
+ *  -# Initialization
+ *  -# Running/Ready
+ *  -# Blocked
+ *  -# Closed
  * - The number of threads in the system is unlimited, only related with RAM.
  */
 
@@ -93,6 +93,15 @@
  * blocked thread can be found out timing accurately, then will be waked up.
  * - In mailbox, the mail length is fixed to 4 byte, which is more effective than message queue.
  * - The send action for communication facilities is also safe for interrupt service routine.
+ */
+
+/**
+ * @defgroup Signal Signal
+ * @brief signal is used for thread kill etc.
+ *
+ * A signal (also known as a soft interrupt signal), from a software perspective,
+ * is a simulation of interrupt mechanism. When it comes to its principle,
+ * thread receiving a signal is similar to processor receiving an interrupt request.
  */
 
 /**
@@ -154,7 +163,7 @@
  * @brief error code
  *
  * The error code is defined to identify which kind of error occurs. When some
- * bad things happen, the current thread's errno will be set. see @ref _rt_errno
+ * bad things happen, the current thread's errno will be set.
  */
 
 /**@}*/

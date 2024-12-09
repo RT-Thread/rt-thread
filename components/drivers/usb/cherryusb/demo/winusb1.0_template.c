@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "usbd_core.h"
-#include "usbd_cdc.h"
+#include "usbd_cdc_acm.h"
 
 #define WCID_VENDOR_CODE 0x17
 
@@ -151,18 +151,16 @@ __ALIGN_BEGIN const uint8_t WINUSB_IF1_WCIDProperties [142] __ALIGN_END = {
 
 const uint8_t *WINUSB_IFx_WCIDProperties[] = {
     WINUSB_IF0_WCIDProperties,
+#if DOUBLE_WINUSB == 1
     WINUSB_IF1_WCIDProperties,
+#endif
 };
 
 struct usb_msosv1_descriptor msosv1_desc = {
     .string = WCID_StringDescriptor_MSOS,
     .vendor_code = WCID_VENDOR_CODE,
     .compat_id = WINUSB_WCIDDescriptor,
-#if DOUBLE_WINUSB == 0
-    .comp_id_property = &WINUSB_IF0_WCIDProperties,
-#else
     .comp_id_property = WINUSB_IFx_WCIDProperties,
-#endif
 };
 
 #define WINUSB_IN_EP  0x81
@@ -328,7 +326,7 @@ const uint8_t winusb_descriptor[] = {
     0x02,
     0x01,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -446,7 +444,7 @@ struct usbd_interface intf1;
 
 #endif
 
-void winusb_init(uint8_t busid, uint32_t reg_base)
+void winusb_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, winusb_descriptor);
     usbd_msosv1_desc_register(busid, &msosv1_desc);

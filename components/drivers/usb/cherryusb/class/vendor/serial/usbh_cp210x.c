@@ -10,18 +10,18 @@
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cp210x_buf[64];
 
-#define CONFIG_USBHOST_MAX_CP210X_CLASS 4
+#define CONFIG_USBHOST_MAX_CP210X_CLASS 1
 
 static struct usbh_cp210x g_cp210x_class[CONFIG_USBHOST_MAX_CP210X_CLASS];
 static uint32_t g_devinuse = 0;
 
 static struct usbh_cp210x *usbh_cp210x_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_CP210X_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_cp210x_class[devno], 0, sizeof(struct usbh_cp210x));
             g_cp210x_class[devno].minor = devno;
             return &g_cp210x_class[devno];
@@ -32,17 +32,22 @@ static struct usbh_cp210x *usbh_cp210x_class_alloc(void)
 
 static void usbh_cp210x_class_free(struct usbh_cp210x *cp210x_class)
 {
-    int devno = cp210x_class->minor;
+    uint8_t devno = cp210x_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(cp210x_class, 0, sizeof(struct usbh_cp210x));
 }
 
 static int usbh_cp210x_enable(struct usbh_cp210x *cp210x_class)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_IFC_ENABLE;
@@ -55,7 +60,12 @@ static int usbh_cp210x_enable(struct usbh_cp210x *cp210x_class)
 
 static int usbh_cp210x_set_flow(struct usbh_cp210x *cp210x_class)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_SET_FLOW;
@@ -70,7 +80,12 @@ static int usbh_cp210x_set_flow(struct usbh_cp210x *cp210x_class)
 
 static int usbh_cp210x_set_chars(struct usbh_cp210x *cp210x_class)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_SET_CHARS;
@@ -87,7 +102,12 @@ static int usbh_cp210x_set_chars(struct usbh_cp210x *cp210x_class)
 
 static int usbh_cp210x_set_baudrate(struct usbh_cp210x *cp210x_class, uint32_t baudrate)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_SET_BAUDRATE;
@@ -101,8 +121,13 @@ static int usbh_cp210x_set_baudrate(struct usbh_cp210x *cp210x_class, uint32_t b
 
 static int usbh_cp210x_set_data_format(struct usbh_cp210x *cp210x_class, uint8_t databits, uint8_t parity, uint8_t stopbits)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
     uint16_t value;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     value = ((databits & 0x0F) << 8) | ((parity & 0x0f) << 4) | ((stopbits & 0x03) << 0);
 
@@ -117,8 +142,13 @@ static int usbh_cp210x_set_data_format(struct usbh_cp210x *cp210x_class, uint8_t
 
 static int usbh_cp210x_set_mhs(struct usbh_cp210x *cp210x_class, uint8_t dtr, uint8_t rts, uint8_t dtr_mask, uint8_t rts_mask)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
     uint16_t value;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     value = ((dtr & 0x01) << 0) | ((rts & 0x01) << 1) | ((dtr_mask & 0x01) << 8) | ((rts_mask & 0x01) << 9);
 
@@ -268,10 +298,12 @@ int usbh_cp210x_bulk_out_transfer(struct usbh_cp210x *cp210x_class, uint8_t *buf
 
 __WEAK void usbh_cp210x_run(struct usbh_cp210x *cp210x_class)
 {
+    (void)cp210x_class;
 }
 
 __WEAK void usbh_cp210x_stop(struct usbh_cp210x *cp210x_class)
 {
+    (void)cp210x_class;
 }
 
 static const uint16_t cp210x_id_table[][2] = {

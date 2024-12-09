@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_emac.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 eth header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -45,6 +43,7 @@ extern "C" {
   */
 
 #define PHY_TIMEOUT                      (0x000FFFFF) /*!< timeout for phy response */
+#define EMAC_USE_ENHANCED_DMA_DESCRIPTOR
 
 /** @defgroup EMAC_smi_clock_border_definition
   * @brief emac smi clock border
@@ -271,6 +270,15 @@ extern "C" {
 #define EMAC_DMA_AIS_FLAG                ((uint32_t)0x00008000) /*!< emac dma abnormal interrupt summary */
 #define EMAC_DMA_NIS_FLAG                ((uint32_t)0x00010000) /*!< emac dma normal interrupt summary */
 
+/**
+  * @brief  emac ptp time sign
+  */
+#define EMAC_PTP_POSITIVETIME            ((uint32_t)0x00000000)  /*!< Positive time value */
+#define EMAC_PTP_NEGATIVETIME            ((uint32_t)0x80000000)  /*!< Negative time value */
+
+#define EMAC_PTP_TI_FLAG                 ((uint32_t)0x00000004)  /*!< Time Stamp Initialized */
+#define EMAC_PTP_TU_FLAG                 ((uint32_t)0x00000008)  /*!< Time Stamp Updated */
+#define EMAC_PTP_ARU_FLAG                ((uint32_t)0x00000020)  /*!< Addend Register Updated */
 /** @defgroup EMAC_exported_types
   * @{
   */
@@ -346,9 +354,10 @@ typedef enum
   */
 typedef enum
 {
-  EMAC_CONTROL_FRAME_PASSING_NO          = 0x00, /*!< don't pass any control frame to application */
-  EMAC_CONTROL_FRAME_PASSING_ALL         = 0x02, /*!< pass all control frames to application */
-  EMAC_CONTROL_FRAME_PASSING_MATCH       = 0x03  /*!< only pass filtered control frames to application */
+  EMAC_CONTROL_FRAME_PASSING_NO               = 0x00, /*!< don't pass any control frame to application */
+  EMAC_CONTROL_FRAME_PASSING_ALL_EXCEPT_PAUSE = 0x01, /*!< pass all control frames to application except pause frame */
+  EMAC_CONTROL_FRAME_PASSING_ALL              = 0x02, /*!< pass all control frames to application */
+  EMAC_CONTROL_FRAME_PASSING_MATCH            = 0x03  /*!< only pass filtered control frames to application */
 } emac_control_frames_filter_type;
 
 /**
@@ -634,6 +643,10 @@ typedef struct  {
   uint32_t   controlsize;           /*!< control and buffer1, buffer2 lengths */
   uint32_t   buf1addr;              /*!< buffer1 address pointer */
   uint32_t   buf2nextdescaddr;      /*!< buffer2 or next descriptor address pointer */
+  uint32_t   extendedstatus;
+  uint32_t   reserved1;
+  uint32_t   timestamp_l;
+  uint32_t   timestamp_h;
 } emac_dma_desc_type;
 
 /**
@@ -892,7 +905,7 @@ typedef struct
       __IO uint32_t reserved1            : 8; /* [16:23] */
       __IO uint32_t mbc                  : 6; /* [24:29] */
       __IO uint32_t sa                   : 1; /* [30] */
-      __IO uint32_t ae                  : 1; /* [31] */
+      __IO uint32_t ae                   : 1; /* [31] */
     } a1h_bit;
   };
 
@@ -1329,7 +1342,7 @@ typedef struct
       __IO uint32_t swr                  : 1; /* [0] */
       __IO uint32_t da                   : 1; /* [1] */
       __IO uint32_t dsl                  : 5; /* [2:6] */
-      __IO uint32_t reserved1            : 1; /* [7] */
+      __IO uint32_t atds                 : 1; /* [7] */
       __IO uint32_t pbl                  : 6; /* [8:13] */
       __IO uint32_t pr                   : 2; /* [14:15] */
       __IO uint32_t fb                   : 1; /* [16] */
@@ -1337,7 +1350,7 @@ typedef struct
       __IO uint32_t usp                  : 1; /* [23] */
       __IO uint32_t pblx8                : 1; /* [24] */
       __IO uint32_t aab                  : 1; /* [25] */
-      __IO uint32_t reserved2            : 6; /* [26:31] */
+      __IO uint32_t reserved             : 6; /* [26:31] */
     } bm_bit;
   };
 
@@ -1629,6 +1642,7 @@ void emac_address_filter_set(emac_address_type mac, emac_address_filter_type fil
 uint32_t emac_received_packet_size_get(void);
 uint32_t emac_dmarxdesc_frame_length_get(emac_dma_desc_type *dma_rx_desc);
 void emac_dma_descriptor_list_address_set(emac_dma_tx_rx_type transfer_type, emac_dma_desc_type *dma_desc_tab, uint8_t *buff, uint32_t buffer_count);
+void emac_ptp_dma_descriptor_list_address_set(emac_dma_tx_rx_type transfer_type, emac_dma_desc_type *dma_desc_tab, emac_dma_desc_type *ptp_dma_desc_tab, uint8_t *buff, uint32_t buffer_count);
 uint32_t emac_dma_descriptor_list_address_get(emac_dma_tx_rx_type transfer_type);
 void emac_dma_rx_desc_interrupt_config(emac_dma_desc_type *dma_rx_desc, confirm_state new_state);
 void emac_dma_para_init(emac_dma_config_type *control_para);
@@ -1651,6 +1665,7 @@ uint8_t emac_dma_missing_overflow_bit_get(void);
 uint16_t emac_dma_application_missing_frame_get(void);
 uint8_t emac_dma_fifo_overflow_bit_get(void);
 uint32_t emac_dma_tansfer_address_get(emac_dma_transfer_address_type transfer_type);
+void emac_dma_alternate_desc_size(confirm_state new_state);
 void emac_mmc_counter_reset(void);
 void emac_mmc_rollover_stop(confirm_state new_state);
 void emac_mmc_reset_on_read_enable(confirm_state new_state);
@@ -1677,19 +1692,19 @@ void emac_ptp_snapshot_event_message_enable(confirm_state new_state);
 void emac_ptp_snapshot_master_event_enable(confirm_state new_state);
 void emac_ptp_clock_node_set(emac_ptp_clock_node_type node);
 void emac_ptp_mac_address_filter_enable(confirm_state new_state);
+flag_status emac_ptp_flag_get(uint32_t flag);
 void emac_ptp_subsecond_increment_set(uint8_t value);
 uint32_t emac_ptp_system_second_get(void);
 uint32_t emac_ptp_system_subsecond_get(void);
 confirm_state emac_ptp_system_time_sign_get(void);
-void emac_ptp_system_second_set(uint32_t second);
-void emac_ptp_system_subsecond_set(uint32_t subsecond);
-void emac_ptp_system_time_sign_set(confirm_state sign);
+void emac_ptp_system_time_set(uint32_t sign, uint32_t second, uint32_t subsecond);
 void emac_ptp_timestamp_addend_set(uint32_t value);
 void emac_ptp_target_second_set(uint32_t value);
 void emac_ptp_target_nanosecond_set(uint32_t value);
 confirm_state emac_ptp_timestamp_status_get(emac_ptp_timestamp_status_type status);
 void emac_ptp_pps_frequency_set(emac_ptp_pps_control_type freq);
 flag_status emac_dma_flag_get(uint32_t dma_flag);
+flag_status emac_dma_interrupt_flag_get(uint32_t dma_flag);
 void emac_dma_flag_clear(uint32_t dma_flag);
 
 /**

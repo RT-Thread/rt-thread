@@ -8,7 +8,7 @@
 #include <rtthread.h>
 
 #include <rtdevice.h>
-#include <drivers/serial.h>
+#include <drivers/dev_serial.h>
 
 #include "rt_board.h"
 #include "arc/arc_timer.h"

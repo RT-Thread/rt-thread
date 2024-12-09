@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -67,7 +67,7 @@ static void LPSPI_SetOnePcsPolarity(LPSPI_Type *base,
  * @brief Combine the write data for 1 byte to 4 bytes.
  * This is not a public API.
  */
-static uint32_t LPSPI_CombineWriteData(uint8_t *txData, uint8_t bytesEachWrite, bool isByteSwap);
+static uint32_t LPSPI_CombineWriteData(const uint8_t *txData, uint8_t bytesEachWrite, bool isByteSwap);
 
 /*!
  * @brief Separate the read data for 1 byte to 4 bytes.
@@ -122,8 +122,26 @@ static LPSPI_Type *const s_lpspiBases[] = LPSPI_BASE_PTRS;
 /*! @brief Pointers to lpspi IRQ number for each instance. */
 static const IRQn_Type s_lpspiIRQ[] = LPSPI_IRQS;
 
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+/*! @brief Pointers to lpspi clocks for each instance. */
+static const clock_ip_name_t s_lpspiClocks[] = LPSPI_CLOCKS;
+
+#if defined(LPSPI_PERIPH_CLOCKS)
+static const clock_ip_name_t s_LpspiPeriphClocks[] = LPSPI_PERIPH_CLOCKS;
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+/*! @brief Pointers to lpspi handles for each instance. */
+static void *s_lpspiHandle[ARRAY_SIZE(s_lpspiBases)];
+
 /* @brief Dummy data for each instance. This data is used when user's tx buffer is NULL*/
 volatile uint8_t g_lpspiDummyData[ARRAY_SIZE(s_lpspiBases)] = {0};
+
+/*! @brief Pointer to master IRQ handler for each instance. */
+static lpspi_master_isr_t s_lpspiMasterIsr;
+/*! @brief Pointer to slave IRQ handler for each instance. */
+static lpspi_slave_isr_t s_lpspiSlaveIsr;
 
 /**********************************************************************************************************************
  * Code
@@ -179,17 +197,37 @@ void LPSPI_SetDummyData(LPSPI_Type *base, uint8_t dummyData)
 void LPSPI_MasterInit(LPSPI_Type *base, const lpspi_master_config_t *masterConfig, uint32_t srcClock_Hz)
 {
     assert(masterConfig != NULL);
-
+    
     uint32_t tcrPrescaleValue = 0;
+    uint32_t instance = LPSPI_GetInstance(base);    
 
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
 #if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
     /* initialize flexcomm to LPSPI mode */
-    status_t status = LP_FLEXCOMM_Init(LPSPI_GetInstance(base), LP_FLEXCOMM_PERIPH_LPSPI);
-    if (kStatus_Success != status)
-    {
-        assert(false);
-    }
+        status_t status = LP_FLEXCOMM_Init(LPSPI_GetInstance(base), LP_FLEXCOMM_PERIPH_LPSPI);
+        if (kStatus_Success != status)
+        {
+            assert(false);
+        }
 #endif /* LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER */
+    }
+    else
+    {
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+
+        /* Enable LPSPI clock */
+        (void)CLOCK_EnableClock(s_lpspiClocks[instance]);
+
+#if defined(LPSPI_PERIPH_CLOCKS)
+        (void)CLOCK_EnableClock(s_LpspiPeriphClocks[instance]);
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    }
+
+    /* Disable LPSPI first */
+    LPSPI_Enable(base, false);
 
     /* Set LPSPI to master */
     LPSPI_SetMasterSlaveMode(base, kLPSPI_Master);
@@ -199,9 +237,9 @@ void LPSPI_MasterInit(LPSPI_Type *base, const lpspi_master_config_t *masterConfi
 
     /* Set Configuration Register 1 related setting.*/
     base->CFGR1 = (base->CFGR1 & ~(LPSPI_CFGR1_OUTCFG_MASK | LPSPI_CFGR1_PINCFG_MASK | LPSPI_CFGR1_NOSTALL_MASK |
-                                   LPSPI_CFGR1_SAMPLE_MASK | LPSPI_CFGR1_PCSCFG_MASK)) |
+                                   LPSPI_CFGR1_SAMPLE_MASK | LPSPI_CFGR1_PCSCFG_MASK )) |
                   LPSPI_CFGR1_OUTCFG(masterConfig->dataOutConfig) | LPSPI_CFGR1_PINCFG(masterConfig->pinCfg) |
-                  LPSPI_CFGR1_NOSTALL(0) | LPSPI_CFGR1_SAMPLE((uint32_t)masterConfig->enableInputDelay) |
+                  LPSPI_CFGR1_NOSTALL(0) | LPSPI_CFGR1_SAMPLE((uint32_t)masterConfig->enableInputDelay )|
                   LPSPI_CFGR1_PCSCFG(masterConfig->pcsFunc);
 
     /* Set baudrate and delay times*/
@@ -251,12 +289,13 @@ void LPSPI_MasterGetDefaultConfig(lpspi_master_config_t *masterConfig)
     masterConfig->cpha         = kLPSPI_ClockPhaseFirstEdge;
     masterConfig->direction    = kLPSPI_MsbFirst;
 
-    masterConfig->pcsToSckDelayInNanoSec        = 1000000000U / masterConfig->baudRate * 2U;
-    masterConfig->lastSckToPcsDelayInNanoSec    = 1000000000U / masterConfig->baudRate * 2U;
-    masterConfig->betweenTransferDelayInNanoSec = 1000000000U / masterConfig->baudRate * 2U;
+    masterConfig->pcsToSckDelayInNanoSec        = (1000000000U / masterConfig->baudRate) / 2U;
+    masterConfig->lastSckToPcsDelayInNanoSec    = (1000000000U / masterConfig->baudRate) / 2U;
+    masterConfig->betweenTransferDelayInNanoSec = (1000000000U / masterConfig->baudRate) / 2U;
 
     masterConfig->whichPcs           = kLPSPI_Pcs0;
     masterConfig->pcsActiveHighOrLow = kLPSPI_PcsActiveLow;
+    masterConfig->pcsFunc            = kLPSPI_PcsAsCs; 
 
     masterConfig->pinCfg        = kLPSPI_SdiInSdoOut;
     masterConfig->dataOutConfig = kLpspiDataOutRetained;
@@ -273,23 +312,40 @@ void LPSPI_MasterGetDefaultConfig(lpspi_master_config_t *masterConfig)
 void LPSPI_SlaveInit(LPSPI_Type *base, const lpspi_slave_config_t *slaveConfig)
 {
     assert(slaveConfig != NULL);
+    
+    uint32_t instance = LPSPI_GetInstance(base);
 
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
 #if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
     /* initialize flexcomm to LPSPI mode */
-    status_t status = LP_FLEXCOMM_Init(LPSPI_GetInstance(base), LP_FLEXCOMM_PERIPH_LPSPI);
-    if (kStatus_Success != status)
-    {
-        assert(false);
-    }
+        status_t status = LP_FLEXCOMM_Init(LPSPI_GetInstance(base), LP_FLEXCOMM_PERIPH_LPSPI);
+        if (kStatus_Success != status)
+        {
+            assert(false);
+        }
 #endif /* LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER */
+    }
+    else
+    {
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 
+        /* Enable LPSPI clock */
+        (void)CLOCK_EnableClock(s_lpspiClocks[instance]);
+
+#if defined(LPSPI_PERIPH_CLOCKS)
+        (void)CLOCK_EnableClock(s_LpspiPeriphClocks[instance]);
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    }
+    
     LPSPI_SetMasterSlaveMode(base, kLPSPI_Slave);
 
     LPSPI_SetOnePcsPolarity(base, slaveConfig->whichPcs, slaveConfig->pcsActiveHighOrLow);
 
     base->CFGR1 = (base->CFGR1 & ~(LPSPI_CFGR1_OUTCFG_MASK | LPSPI_CFGR1_PINCFG_MASK)) |
-                  LPSPI_CFGR1_OUTCFG(slaveConfig->dataOutConfig) | LPSPI_CFGR1_PINCFG(slaveConfig->pinCfg)|
-                  LPSPI_CFGR1_PCSCFG(slaveConfig->pcsFunc);
+                  LPSPI_CFGR1_OUTCFG(slaveConfig->dataOutConfig) | LPSPI_CFGR1_PINCFG(slaveConfig->pinCfg);
 
     LPSPI_SetFifoWatermarks(base, (uint32_t)kLpspiDefaultTxWatermark, (uint32_t)kLpspiDefaultRxWatermark);
 
@@ -358,12 +414,28 @@ void LPSPI_Reset(LPSPI_Type *base)
  */
 void LPSPI_Deinit(LPSPI_Type *base)
 {
+    uint32_t instance = LPSPI_GetInstance(base);
+
     /* Reset to default value */
     LPSPI_Reset(base);
-
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
 #if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
-    LP_FLEXCOMM_Deinit(LPSPI_GetInstance(base));
+        LP_FLEXCOMM_Deinit(instance);
 #endif
+    }
+    else
+    {        
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+        /* Disable LPSPI clock */
+        (void)CLOCK_DisableClock(s_lpspiClocks[instance]);
+
+#if defined(LPSPI_PERIPH_CLOCKS)
+        (void)CLOCK_DisableClock(s_LpspiPeriphClocks[instance]);
+#endif
+
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    }
 }
 
 static void LPSPI_SetOnePcsPolarity(LPSPI_Type *base,
@@ -715,9 +787,8 @@ void LPSPI_MasterTransferCreateHandle(LPSPI_Type *base,
                                       void *userData)
 {
     assert(handle != NULL);
-
-    lpspi_to_lpflexcomm_t handler;
-    handler.lpspi_master_handler = LPSPI_MasterTransferHandleIRQ;
+    
+    uint32_t instance = LPSPI_GetInstance(base);
 
     /* Zero the handle. */
     (void)memset(handle, 0, sizeof(*handle));
@@ -725,8 +796,21 @@ void LPSPI_MasterTransferCreateHandle(LPSPI_Type *base,
     handle->callback = callback;
     handle->userData = userData;
 
-    /* Save the handle in global variables to support the double weak mechanism. */
-    LP_FLEXCOMM_SetIRQHandler(LPSPI_GetInstance(base), handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPSPI);
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {
+        lpspi_to_lpflexcomm_t handler;
+        handler.lpspi_master_handler = LPSPI_MasterTransferHandleIRQ;
+
+        /* Save the handle in global variables to support the double weak mechanism. */
+        LP_FLEXCOMM_SetIRQHandler(instance, handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPSPI);
+    }
+    else
+    {        
+        s_lpspiHandle[instance] = handle;
+
+        /* Set irq handler. */
+        s_lpspiMasterIsr = LPSPI_MasterTransferHandleIRQ;
+    }
 }
 
 /*!
@@ -847,7 +931,7 @@ status_t LPSPI_MasterTransferBlocking(LPSPI_Type *base, lpspi_transfer_t *transf
     bool isByteSwap = ((transfer->configFlags & (uint32_t)kLPSPI_MasterByteSwap) != 0U);
     uint8_t bytesEachWrite;
     uint8_t bytesEachRead;
-    uint8_t *txData               = transfer->txData;
+    const uint8_t *txData         = transfer->txData;
     uint8_t *rxData               = transfer->rxData;
     uint8_t dummyData             = g_lpspiDummyData[LPSPI_GetInstance(base)];
     uint32_t readData             = 0U;
@@ -882,9 +966,8 @@ status_t LPSPI_MasterTransferBlocking(LPSPI_Type *base, lpspi_transfer_t *transf
 
     /* Configure transfer control register. */
     base->TCR = (base->TCR & ~(LPSPI_TCR_CONT_MASK | LPSPI_TCR_CONTC_MASK | LPSPI_TCR_RXMSK_MASK |
-                               LPSPI_TCR_TXMSK_MASK | LPSPI_TCR_PCS_MASK | LPSPI_TCR_WIDTH_MASK)) |
-                LPSPI_TCR_PCS(whichPcs) |
-                LPSPI_TCR_WIDTH(width);
+                               LPSPI_TCR_TXMSK_MASK | LPSPI_TCR_PCS_MASK)) |
+                LPSPI_TCR_PCS(whichPcs) | LPSPI_TCR_WIDTH(width);
 
     /*TCR is also shared the FIFO, so wait for TCR written.*/
     if (!LPSPI_TxFifoReady(base))
@@ -1118,6 +1201,7 @@ status_t LPSPI_MasterTransferNonBlocking(LPSPI_Type *base, lpspi_master_handle_t
 
     /* Variables */
     bool isRxMask = false;
+    handle->isTxMask = false;
     uint8_t txWatermark;
     uint8_t dummyData = g_lpspiDummyData[LPSPI_GetInstance(base)];
     uint32_t tmpTimes;
@@ -1566,10 +1650,7 @@ void LPSPI_SlaveTransferCreateHandle(LPSPI_Type *base,
     assert(handle != NULL);
 
     /* Get instance from peripheral base address. */
-    // uint32_t instance = LPSPI_GetInstance(base);
-
-    lpspi_to_lpflexcomm_t handler;
-    handler.lpspi_slave_handler = LPSPI_SlaveTransferHandleIRQ;
+    uint32_t instance = LPSPI_GetInstance(base);
 
     /* Zero the handle. */
     (void)memset(handle, 0, sizeof(*handle));
@@ -1577,8 +1658,21 @@ void LPSPI_SlaveTransferCreateHandle(LPSPI_Type *base,
     handle->callback = callback;
     handle->userData = userData;
 
-    /* Save the handle in global variables to support the double weak mechanism. */
-    LP_FLEXCOMM_SetIRQHandler(LPSPI_GetInstance(base), handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPSPI);
+    if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
+    {      
+        lpspi_to_lpflexcomm_t handler;
+        handler.lpspi_slave_handler = LPSPI_SlaveTransferHandleIRQ;
+        
+        /* Save the handle in global variables to support the double weak mechanism. */
+        LP_FLEXCOMM_SetIRQHandler(instance, handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPSPI);
+    }
+    else
+    {
+        s_lpspiHandle[instance] = handle;
+
+        /* Set irq handler. */
+        s_lpspiSlaveIsr = LPSPI_SlaveTransferHandleIRQ;
+    }
 }
 
 /*!
@@ -1627,7 +1721,6 @@ status_t LPSPI_SlaveTransferNonBlocking(LPSPI_Type *base, lpspi_slave_handle_t *
     uint32_t readRegRemainingTimes;
     uint32_t whichPcs      = (transfer->configFlags & LPSPI_SLAVE_PCS_MASK) >> LPSPI_SLAVE_PCS_SHIFT;
     uint32_t bytesPerFrame = ((base->TCR & LPSPI_TCR_FRAMESZ_MASK) >> LPSPI_TCR_FRAMESZ_SHIFT) / 8U + 1U;
-    uint32_t width          = (transfer->configFlags & LPSPI_SLAVE_WIDTH_MASK) >> LPSPI_SLAVE_WIDTH_SHIFT;
 
     /* Assign the original value for members of transfer handle. */
     handle->state                  = (uint8_t)kLPSPI_Busy;
@@ -1684,8 +1777,7 @@ status_t LPSPI_SlaveTransferNonBlocking(LPSPI_Type *base, lpspi_slave_handle_t *
 
     base->TCR = (base->TCR & ~(LPSPI_TCR_CONT_MASK | LPSPI_TCR_CONTC_MASK | LPSPI_TCR_RXMSK_MASK |
                                LPSPI_TCR_TXMSK_MASK | LPSPI_TCR_PCS_MASK)) |
-                LPSPI_TCR_RXMSK(isRxMask) | LPSPI_TCR_TXMSK(isTxMask) | LPSPI_TCR_PCS(whichPcs) |
-                LPSPI_TCR_WIDTH(width);
+                LPSPI_TCR_RXMSK(isRxMask) | LPSPI_TCR_TXMSK(isTxMask) | LPSPI_TCR_PCS(whichPcs);
 
     /* Enable the NVIC for LPSPI peripheral. Note that below code is useless if the LPSPI interrupt is in INTMUX ,
      * and you should also enable the INTMUX interupt in your application.
@@ -1862,7 +1954,7 @@ void LPSPI_SlaveTransferAbort(LPSPI_Type *base, lpspi_slave_handle_t *handle)
  *
  * This function processes the LPSPI transmit and receives an IRQ.
  *
- * param base LPSPI instance.
+ * param instance LPSPI instance index.
  * param handle pointer to lpspi_slave_handle_t structure which stores the transfer state.
  */
 void LPSPI_SlaveTransferHandleIRQ(uint32_t instance, lpspi_slave_handle_t *handle)
@@ -1962,7 +2054,9 @@ void LPSPI_SlaveTransferHandleIRQ(uint32_t instance, lpspi_slave_handle_t *handl
         {
             handle->state = (uint8_t)kLPSPI_Error;
         }
-        handle->errorCount++;
+        handle->errorCount++;     
+        /* ERR051588: Clear FIFO after underrun occurs */   
+        LPSPI_FlushFifo(base, true, false);
     }
     /* Catch rx fifo overflow conditions, service only if rx over flow interrupt enabled */
     if (((LPSPI_GetStatusFlags(base) & (uint32_t)kLPSPI_ReceiveErrorFlag) != 0U) &&
@@ -1978,7 +2072,7 @@ void LPSPI_SlaveTransferHandleIRQ(uint32_t instance, lpspi_slave_handle_t *handl
     }
 }
 
-static uint32_t LPSPI_CombineWriteData(uint8_t *txData, uint8_t bytesEachWrite, bool isByteSwap)
+static uint32_t LPSPI_CombineWriteData(const uint8_t *txData, uint8_t bytesEachWrite, bool isByteSwap)
 {
     assert(txData != NULL);
 
@@ -2160,3 +2254,34 @@ static bool LPSPI_TxFifoReady(LPSPI_Type *base)
 #endif
     return true;
 }
+
+void LPSPI_CommonIRQHandler(LPSPI_Type *base, uint32_t instance);
+void LPSPI_CommonIRQHandler(LPSPI_Type *base, uint32_t instance)
+{
+    assert(s_lpspiHandle[instance] != NULL);
+    if (LPSPI_IsMaster(base))
+    {
+        s_lpspiMasterIsr(instance, (lpspi_master_handle_t *)s_lpspiHandle[instance]);
+    }
+    else
+    {
+        s_lpspiSlaveIsr(instance, (lpspi_slave_handle_t *)s_lpspiHandle[instance]);
+    }
+    SDK_ISR_EXIT_BARRIER;
+}
+
+#if defined(LPSPI14)
+void LPSPI14_DriverIRQHandler(void);
+void LPSPI14_DriverIRQHandler(void)
+{
+    LPSPI_CommonIRQHandler(LPSPI14, 14);
+}
+#endif
+
+#if defined(LPSPI16)
+void LPSPI16_DriverIRQHandler(void);
+void LPSPI16_DriverIRQHandler(void)
+{
+    LPSPI_CommonIRQHandler(LPSPI16, 16);
+}
+#endif

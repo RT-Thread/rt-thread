@@ -148,6 +148,52 @@ void crc_reverse_output_data_set(crc_reverse_output_type value)
 }
 
 /**
+  * @brief  config crc polynomial value
+  * @param  value
+  *         32-bit new data of crc poly value
+  * @retval none.
+  */
+void crc_poly_value_set(uint32_t value)
+{
+  CRC->poly = value;
+}
+
+/**
+  * @brief  return crc polynomial value
+  * @param  none
+  * @retval 32-bit value of the polynomial value.
+  */
+uint32_t crc_poly_value_get(void)
+{
+  return (CRC->poly);
+}
+
+/**
+  * @brief  config crc polynomial data size
+  * @param  size
+  *         this parameter can be one of the following values:
+  *         - CRC_POLY_SIZE_32B
+  *         - CRC_POLY_SIZE_16B
+  *         - CRC_POLY_SIZE_8B
+  *         - CRC_POLY_SIZE_7B
+  * @retval none.
+  */
+void crc_poly_size_set(crc_poly_size_type size)
+{
+  CRC->ctrl_bit.poly_size = size;
+}
+
+/**
+  * @brief  return crc polynomial data size
+  * @param  none
+  * @retval polynomial data size.
+  */
+crc_poly_size_type crc_poly_size_get(void)
+{
+  return (crc_poly_size_type)(CRC->ctrl_bit.poly_size);
+}
+
+/**
   * @}
   */
 

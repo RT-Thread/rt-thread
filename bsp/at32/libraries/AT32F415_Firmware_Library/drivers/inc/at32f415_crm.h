@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_crm.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f415 crm header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -135,7 +133,7 @@ typedef enum
   CRM_I2C1_PERIPH_CLOCK                  = MAKE_VALUE(0x1C, 21), /*!< i2c1 periph clock */
   CRM_I2C2_PERIPH_CLOCK                  = MAKE_VALUE(0x1C, 22), /*!< i2c2 periph clock */
   CRM_CAN1_PERIPH_CLOCK                  = MAKE_VALUE(0x1C, 25), /*!< can1 periph clock */
-  CRM_PWC_PERIPH_CLOCK                   = MAKE_VALUE(0x1C, 28), /*!< pwc periph clock */
+  CRM_PWC_PERIPH_CLOCK                   = MAKE_VALUE(0x1C, 28)  /*!< pwc periph clock */
 
 } crm_periph_clock_type;
 
@@ -176,7 +174,7 @@ typedef enum
   CRM_I2C1_PERIPH_RESET                  = MAKE_VALUE(0x10, 21), /*!< i2c1 periph reset */
   CRM_I2C2_PERIPH_RESET                  = MAKE_VALUE(0x10, 22), /*!< i2c2 periph reset */
   CRM_CAN1_PERIPH_RESET                  = MAKE_VALUE(0x10, 25), /*!< can1 periph reset */
-  CRM_PWC_PERIPH_RESET                   = MAKE_VALUE(0x10, 28), /*!< pwc periph reset */
+  CRM_PWC_PERIPH_RESET                   = MAKE_VALUE(0x10, 28)  /*!< pwc periph reset */
 
 } crm_periph_reset_type;
 
@@ -270,7 +268,7 @@ typedef enum
   CRM_PLL_FREF_8M                         = 2,  /*!< pll refrence clock between 7.8125 mhz and 8.33 mhz */
   CRM_PLL_FREF_12M                        = 3,  /*!< pll refrence clock between 8.33 mhz and 12.5 mhz */
   CRM_PLL_FREF_16M                        = 4,  /*!< pll refrence clock between 15.625 mhz and 20.83 mhz */
-  CRM_PLL_FREF_25M                        = 5,  /*!< pll refrence clock between 20.83 mhz and 31.255 mhz */
+  CRM_PLL_FREF_25M                        = 5   /*!< pll refrence clock between 20.83 mhz and 31.255 mhz */
 } crm_pll_fref_type;
 
 /**
@@ -866,6 +864,7 @@ void crm_reset(void);
 void crm_lext_bypass(confirm_state new_state);
 void crm_hext_bypass(confirm_state new_state);
 flag_status crm_flag_get(uint32_t flag);
+flag_status crm_interrupt_flag_get(uint32_t flag);
 error_status crm_hext_stable_wait(void);
 void crm_hick_clock_trimming_set(uint8_t trim_value);
 void crm_hick_clock_calibration_set(uint8_t cali_value);
@@ -896,7 +895,7 @@ void crm_hick_sclk_frequency_select(crm_hick_sclk_frequency_type value);
 void crm_usb_clock_source_select(crm_usb_clock_source_type value);
 void crm_clkout_div_set(crm_clkout_div_type clkout_div);
 void crm_otgfs_ep3_remap_enable(confirm_state new_state);
-void crm_usbdiv_reset(confirm_state new_state);
+void crm_usbdiv_reset(void);
 
 /**
   * @}

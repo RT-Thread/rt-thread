@@ -25,7 +25,7 @@
 
 /* klibc optimization */
 
-#define RT_KLIBC_USING_PRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
 /* end of klibc optimization */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
@@ -47,11 +47,8 @@
 
 #define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
-#define RT_USING_SMALL_MEM
-#define RT_USING_MEMHEAP
-#define RT_MEMHEAP_FAST_MODE
-#define RT_USING_MEMHEAP_AS_HEAP
-#define RT_USING_MEMHEAP_AUTO_BINDING
+#define RT_USING_SLAB
+#define RT_USING_SLAB_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
 /* end of Memory Management */
@@ -71,6 +68,7 @@
 #define ARCH_MM_MMU
 #define ARCH_RISCV
 #define ARCH_RISCV64
+#define ARCH_USING_RISCV_COMMON64
 #define ARCH_REMAP_KERNEL
 
 /* RT-Thread Components */
@@ -290,6 +288,18 @@
 /* Wiced WiFi */
 
 /* end of Wiced WiFi */
+
+/* CYW43012 WiFi */
+
+/* end of CYW43012 WiFi */
+
+/* BL808 WiFi */
+
+/* end of BL808 WiFi */
+
+/* CYW43439 WiFi */
+
+/* end of CYW43439 WiFi */
 /* end of Wi-Fi */
 
 /* IoT Cloud */
@@ -321,10 +331,6 @@
 /* u8g2: a monochrome graphic library */
 
 /* end of u8g2: a monochrome graphic library */
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-/* end of PainterEngine: A cross-platform graphics application framework written in C language */
 /* end of multimedia packages */
 
 /* tools packages */
@@ -352,15 +358,37 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+/* end of STM32 HAL & SDK Drivers */
+
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
 
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+/* end of HAL & SDK Drivers */
+
+/* sensors drivers */
+
+/* end of sensors drivers */
+
+/* touch drivers */
+
+/* end of touch drivers */
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
 
 /* end of AI packages */
+
+/* Signal Processing and Control Algorithm Packages */
+
+/* end of Signal Processing and Control Algorithm Packages */
 
 /* miscellaneous packages */
 
@@ -380,9 +408,9 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
-/* end of Projects */
+/* end of Projects and Demos */
 
 /* Sensors */
 
@@ -411,6 +439,8 @@
 /* end of Device Control */
 
 /* Other */
+
+/* end of Other */
 
 /* Signal IO */
 

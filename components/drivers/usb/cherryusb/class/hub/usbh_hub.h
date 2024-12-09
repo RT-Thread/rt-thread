@@ -10,10 +10,6 @@
 
 struct usbh_hub;
 
-#define USBH_HUB_MAX_PORTS 4
-/* Maximum size of an interrupt IN transfer */
-#define USBH_HUB_INTIN_BUFSIZE ((USBH_HUB_MAX_PORTS + 8) >> 3)
-
 #ifdef __cplusplus
 extern "C" {
 #endif

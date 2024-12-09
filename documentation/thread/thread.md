@@ -353,16 +353,15 @@ The `rt_thread_yield()` function is similar to the `rt_schedule()` function, but
 In practical applications, we sometimes need to delay the current thread running for a period of time and re-run at a specified time. This is called "thread sleep". Thread sleep can use the following three function interfaces:
 
 ```c
-rt_err_t rt_thread_sleep(rt_tick_t tick);
 rt_err_t rt_thread_delay(rt_tick_t tick);
 rt_err_t rt_thread_mdelay(rt_int32_t ms);
 ```
 
-These three function interfaces have the same effect. Calling them can cause the current thread to suspend for a specified period of time. After, the thread will wake up and enter the ready state again. This function accepts a parameter that specifies the sleep time of the thread. The parameters and return values of the thread sleep interface rt_thread_sleep/delay/mdelay() are as follows:
+These three function interfaces have the same effect. Calling them can cause the current thread to suspend for a specified period of time. After, the thread will wake up and enter the ready state again. This function accepts a parameter that specifies the sleep time of the thread. The parameters and return values of the thread sleep interface rt_thread_delay/mdelay() are as follows:
 
 |**Parameters**|Description                                                    |
 | -------- | ------------------------------------------------------------ |
-| tick/ms  | Thread sleep time：<br>The input parameter tick of rt_thread_sleep/rt_thread_delay is in units of 1 OS Tick; <br>The input parameter ms of rt_thread_mdelay is in units of 1ms; |
+| tick/ms  | Thread sleep time：<br>The input parameter tick of rt_thread_delay is in units of 1 OS Tick; <br>The input parameter ms of rt_thread_mdelay is in units of 1ms; |
 |**Return**| ——                                                           |
 | RT_EOK   | Successful operation.                                |
 

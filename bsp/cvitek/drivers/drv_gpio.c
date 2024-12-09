@@ -11,9 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-#ifdef RT_USING_SMART
-#include <ioremap.h>
-#endif
+#include "drv_ioremap.h"
 
 #ifdef RT_USING_PIN
 #include "drv_gpio.h"
@@ -271,7 +269,7 @@ static void rt_hw_gpio_isr(int irqno, void *param)
     rt_uint32_t pending, mask;
 
     mask = 0;
-    port = (irqno == SYS_GPIO_IRQ_BASE ? 4 : (irqno - GPIO_IRQ_BASE));
+    port = (irqno == BSP_SYS_GPIO_IRQ_BASE ? 4 : (irqno - BSP_GPIO_IRQ_BASE));
 
     base_addr = (port == 4 ? dwapb_gpio_base_e : (dwapb_gpio_base + DWAPB_GPIO_SIZE * port));
     pending = dwapb_read32(base_addr + GPIO_INTSTATUS);
@@ -303,19 +301,22 @@ static void rt_hw_gpio_isr(int irqno, void *param)
 
 int rt_hw_gpio_init(void)
 {
+    dwapb_gpio_base = (rt_ubase_t)DRV_IOREMAP((void *)dwapb_gpio_base, 0x1000);
+    dwapb_gpio_base_e = (rt_ubase_t)DRV_IOREMAP((void *)dwapb_gpio_base_e, 0x1000);
+
     rt_device_pin_register("gpio", &_dwapb_ops, RT_NULL);
 
 #define INT_INSTALL_GPIO_DEVICE(no)     \
-    rt_hw_interrupt_install(GPIO_IRQ_BASE + (no), rt_hw_gpio_isr, RT_NULL, "gpio");    \
-    rt_hw_interrupt_umask(GPIO_IRQ_BASE + (no));
+    rt_hw_interrupt_install(BSP_GPIO_IRQ_BASE + (no), rt_hw_gpio_isr, RT_NULL, "gpio");    \
+    rt_hw_interrupt_umask(BSP_GPIO_IRQ_BASE + (no));
 
     INT_INSTALL_GPIO_DEVICE(0);
     INT_INSTALL_GPIO_DEVICE(1);
     INT_INSTALL_GPIO_DEVICE(2);
     INT_INSTALL_GPIO_DEVICE(3);
 
-    rt_hw_interrupt_install(SYS_GPIO_IRQ_BASE, rt_hw_gpio_isr, RT_NULL, "gpio");
-    rt_hw_interrupt_umask(SYS_GPIO_IRQ_BASE);
+    rt_hw_interrupt_install(BSP_SYS_GPIO_IRQ_BASE, rt_hw_gpio_isr, RT_NULL, "gpio");
+    rt_hw_interrupt_umask(BSP_SYS_GPIO_IRQ_BASE);
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_gpio_init);

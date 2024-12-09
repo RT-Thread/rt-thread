@@ -1,6 +1,16 @@
+#
+# Copyright (c) 2006-2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-09-04     Supperthomas add cppcheck use the latest release version
+#
 name: Static code analysis
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - master
@@ -17,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@main
         with:
           python-version: 3.8
       
@@ -25,11 +35,19 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install cppcheck
           pip install click PyYaml
           git remote -v
           git fetch origin
-          cppcheck --version
           ls
           git branch -a
+          git clone https://github.com/danmar/cppcheck.git
+          cd cppcheck
+          git fetch --tags
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Latest release tag: $latest_tag"
+          git checkout $latest_tag
+          make FILESDIR=/usr/local/share/Cppcheck -j2
+          sudo make install FILESDIR=/usr/local/share/Cppcheck 
+          cppcheck --version
+          cd ..
           python tools/ci/cpp_check.py check

@@ -104,7 +104,6 @@ struct rt_pic_isr
 #ifdef RT_USING_PIC_STATISTICS
 struct rt_pic_irq_statistics
 {
-    rt_ubase_t current_irq_begin[RT_CPUS_NR];
     rt_ubase_t max_irq_time_ns;
     rt_ubase_t min_irq_time_ns;
     rt_ubase_t sum_irq_time_ns;
@@ -149,6 +148,7 @@ void rt_pic_default_name(struct rt_pic *pic);
 struct rt_pic *rt_pic_dynamic_cast(void *ptr);
 
 rt_err_t rt_pic_linear_irq(struct rt_pic *pic, rt_size_t irq_nr);
+rt_err_t rt_pic_cancel_irq(struct rt_pic *pic);
 
 int rt_pic_config_ipi(struct rt_pic *pic, int ipi_index, int hwirq);
 int rt_pic_config_irq(struct rt_pic *pic, int irq_index, int hwirq);

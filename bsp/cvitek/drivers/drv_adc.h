@@ -14,6 +14,7 @@
 #include "mmio.h"
 
 #define SARADC_BASE                         0x030F0000
+#define RTC_ADC_BASE                        0x0502C000
 #define SARADC_CH_MAX                       3
 
 #define SARADC_CTRL_OFFSET                  0x04
@@ -48,35 +49,10 @@
 #define SARADC_RESULT_MASK                  0x0FFF
 #define SARADC_RESULT_VALID                 (1 << 15)
 
-rt_inline void cvi_set_saradc_ctrl(unsigned long reg_base, rt_uint32_t value)
-{
-    value |= mmio_read_32(reg_base + SARADC_CTRL_OFFSET);
-    mmio_write_32(reg_base + SARADC_CTRL_OFFSET, value);
-}
+#define SARADC_TEST_OFFSET                  0x030
+#define SARADC_TEST_VREFSEL_BIT             2
 
-rt_inline void cvi_reset_saradc_ctrl(unsigned long reg_base, rt_uint32_t value)
-{
-    value = mmio_read_32(reg_base + SARADC_CTRL_OFFSET) & ~value;
-    mmio_write_32(reg_base + SARADC_CTRL_OFFSET, value);
-}
-
-rt_inline rt_uint32_t cvi_get_saradc_status(unsigned long reg_base)
-{
-    return((rt_uint32_t)mmio_read_32(reg_base + SARADC_STATUS_OFFSET));
-}
-
-rt_inline void cvi_set_cyc(unsigned long reg_base)
-{
-    rt_uint32_t value;
-
-    value = mmio_read_32(reg_base + SARADC_CYC_SET_OFFSET);
-
-    value &= ~SARADC_CYC_CLKDIV_DIV_16;
-    mmio_write_32(reg_base + SARADC_CYC_SET_OFFSET, value);
-
-    value |= SARADC_CYC_CLKDIV_DIV_16;                                                               //set saradc clock cycle=840ns
-    mmio_write_32(reg_base + SARADC_CYC_SET_OFFSET, value);
-}
+#define SARADC_TRIM_OFFSET                  0x034
 
 int rt_hw_adc_init(void);
 

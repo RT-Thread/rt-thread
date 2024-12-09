@@ -9,7 +9,7 @@
 /*!< endpoint address */
 #define HID_INT_EP          0x81
 #define HID_INT_EP_SIZE     4
-#define HID_INT_EP_INTERVAL 10
+#define HID_INT_EP_INTERVAL 1
 
 #define USBD_VID           0xffff
 #define USBD_PID           0xffff
@@ -126,7 +126,7 @@ const uint8_t hid_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -239,7 +239,7 @@ static struct usbd_endpoint hid_in_ep = {
 
 struct usbd_interface intf0;
 
-void hid_mouse_init(uint8_t busid, uint32_t reg_base)
+void hid_mouse_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, hid_descriptor);
     usbd_add_interface(busid, usbd_hid_init_intf(busid, &intf0, hid_mouse_report_desc, HID_MOUSE_REPORT_DESC_SIZE));
@@ -254,20 +254,59 @@ void hid_mouse_init(uint8_t busid, uint32_t reg_base)
     mouse_cfg.y = 0;
 }
 
-/**
-  * @brief            hid mouse test
-  * @pre              none
-  * @param[in]        none
-  * @retval           none
-  */
+#define CURSOR_STEP  2U
+#define CURSOR_WIDTH 20U
+
+void draw_circle(uint8_t *buf)
+{
+    static int32_t move_cnt = 0;
+    static uint8_t step_x_y = 0;
+    static int8_t x = 0, y = 0;
+
+    move_cnt++;
+    if (move_cnt > CURSOR_WIDTH) {
+        step_x_y++;
+        step_x_y = step_x_y % 4;
+        move_cnt = 0;
+    }
+    switch (step_x_y) {
+        case 0: {
+            y = 0;
+            x = CURSOR_STEP;
+
+        } break;
+
+        case 1: {
+            x = 0;
+            y = CURSOR_STEP;
+
+        } break;
+
+        case 2: {
+            y = 0;
+            x = (int8_t)(-CURSOR_STEP);
+
+        } break;
+
+        case 3: {
+            x = 0;
+            y = (int8_t)(-CURSOR_STEP);
+
+        } break;
+    }
+
+    buf[0] = 0;
+    buf[1] = x;
+    buf[2] = y;
+    buf[3] = 0;
+}
+
+/* https://cps-check.com/cn/polling-rate-check */
 void hid_mouse_test(uint8_t busid)
 {
     int counter = 0;
     while (counter < 1000) {
-        /*!< move mouse pointer */
-        mouse_cfg.x += 40;
-        mouse_cfg.y += 0;
-
+        draw_circle((uint8_t *)&mouse_cfg);
         int ret = usbd_ep_start_write(busid, HID_INT_EP, (uint8_t *)&mouse_cfg, 4);
         if (ret < 0) {
             return;

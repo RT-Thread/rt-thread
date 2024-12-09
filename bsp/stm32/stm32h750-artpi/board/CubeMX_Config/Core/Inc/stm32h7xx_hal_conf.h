@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32h7xx_hal_conf.h
@@ -6,17 +7,16 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32H7xx_HAL_CONF_H
 #define STM32H7xx_HAL_CONF_H
@@ -34,7 +34,7 @@
   */
 #define HAL_MODULE_ENABLED
 
-  #define HAL_ADC_MODULE_ENABLED
+  /* #define HAL_ADC_MODULE_ENABLED   */
 /* #define HAL_FDCAN_MODULE_ENABLED   */
 /* #define HAL_FMAC_MODULE_ENABLED   */
 /* #define HAL_CEC_MODULE_ENABLED   */
@@ -46,6 +46,7 @@
 /* #define HAL_DCMI_MODULE_ENABLED   */
 /* #define HAL_DMA2D_MODULE_ENABLED   */
 #define HAL_ETH_MODULE_ENABLED
+/* #define HAL_ETH_LEGACY_MODULE_ENABLED   */
 /* #define HAL_NAND_MODULE_ENABLED   */
 /* #define HAL_NOR_MODULE_ENABLED   */
 /* #define HAL_OTFDEC_MODULE_ENABLED   */
@@ -58,13 +59,14 @@
 /* #define HAL_JPEG_MODULE_ENABLED   */
 /* #define HAL_OPAMP_MODULE_ENABLED   */
 /* #define HAL_OSPI_MODULE_ENABLED   */
-/* #define HAL_OSPI_MODULE_ENABLED   */
+/* #define HAL_XSPI_MODULE_ENABLED   */
 /* #define HAL_I2S_MODULE_ENABLED   */
 /* #define HAL_SMBUS_MODULE_ENABLED   */
-/* #define HAL_IWDG_MODULE_ENABLED   */
+#define HAL_IWDG_MODULE_ENABLED
 /* #define HAL_LPTIM_MODULE_ENABLED   */
 #define HAL_LTDC_MODULE_ENABLED
-/* #define HAL_QSPI_MODULE_ENABLED   */
+/* #define HAL_XSPI_MODULE_ENABLED   */
+/* #define HAL_RAMECC_MODULE_ENABLED   */
 /* #define HAL_RNG_MODULE_ENABLED   */
 /* #define HAL_RTC_MODULE_ENABLED   */
 /* #define HAL_SAI_MODULE_ENABLED   */
@@ -73,7 +75,7 @@
 /* #define HAL_SPDIFRX_MODULE_ENABLED   */
 #define HAL_SPI_MODULE_ENABLED
 /* #define HAL_SWPMI_MODULE_ENABLED   */
-#define HAL_TIM_MODULE_ENABLED
+/* #define HAL_TIM_MODULE_ENABLED   */
 #define HAL_UART_MODULE_ENABLED
 /* #define HAL_USART_MODULE_ENABLED   */
 /* #define HAL_IRDA_MODULE_ENABLED   */
@@ -105,11 +107,11 @@
   *        (when HSE is used as system clock source, directly or through the PLL).
   */
 #if !defined  (HSE_VALUE)
-#define HSE_VALUE    ((uint32_t)25000000) /*!< Value of the External oscillator in Hz : FPGA case fixed to 60MHZ */
+#define HSE_VALUE    (25000000UL) /*!< Value of the External oscillator in Hz : FPGA case fixed to 60MHZ */
 #endif /* HSE_VALUE */
 
 #if !defined  (HSE_STARTUP_TIMEOUT)
-  #define HSE_STARTUP_TIMEOUT    ((uint32_t)100U)   /*!< Time out for HSE start up, in ms */
+  #define HSE_STARTUP_TIMEOUT    (100UL)   /*!< Time out for HSE start up, in ms */
 #endif /* HSE_STARTUP_TIMEOUT */
 
 /**
@@ -117,7 +119,7 @@
   *        This value is the default CSI value after Reset.
   */
 #if !defined  (CSI_VALUE)
-  #define CSI_VALUE    ((uint32_t)4000000) /*!< Value of the Internal oscillator in Hz*/
+  #define CSI_VALUE    (4000000UL) /*!< Value of the Internal oscillator in Hz*/
 #endif /* CSI_VALUE */
 
 /**
@@ -126,7 +128,7 @@
   *        (when HSI is used as system clock source, directly or through the PLL).
   */
 #if !defined  (HSI_VALUE)
-  #define HSI_VALUE    ((uint32_t)64000000) /*!< Value of the Internal oscillator in Hz*/
+  #define HSI_VALUE    (64000000UL) /*!< Value of the Internal oscillator in Hz*/
 #endif /* HSI_VALUE */
 
 /**
@@ -134,11 +136,11 @@
   *        This value is used by the UART, RTC HAL module to compute the system frequency
   */
 #if !defined  (LSE_VALUE)
-  #define LSE_VALUE    ((uint32_t)32768U) /*!< Value of the External oscillator in Hz*/
+  #define LSE_VALUE    (32768UL) /*!< Value of the External oscillator in Hz*/
 #endif /* LSE_VALUE */
 
 #if !defined  (LSE_STARTUP_TIMEOUT)
-  #define LSE_STARTUP_TIMEOUT    ((uint32_t)5000U)   /*!< Time out for LSE start up, in ms */
+  #define LSE_STARTUP_TIMEOUT    (5000UL)   /*!< Time out for LSE start up, in ms */
 #endif /* LSE_STARTUP_TIMEOUT */
 
 #if !defined  (LSI_VALUE)
@@ -153,7 +155,7 @@
   *        frequency, this source is inserted directly through I2S_CKIN pad.
   */
 #if !defined  (EXTERNAL_CLOCK_VALUE)
-  #define EXTERNAL_CLOCK_VALUE    12288000U /*!< Value of the External clock in Hz*/
+  #define EXTERNAL_CLOCK_VALUE    12288000UL /*!< Value of the External clock in Hz*/
 #endif /* EXTERNAL_CLOCK_VALUE */
 
 /* Tip: To avoid modifying this file each time you need to use different HSE,
@@ -163,11 +165,11 @@
 /**
   * @brief This is the HAL system configuration section
   */
-#define  VDD_VALUE                    ((uint32_t)3300U) /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY            ((uint32_t)0U) /*!< tick interrupt priority */
-#define  USE_RTOS                     0U
-#define  USE_SD_TRANSCEIVER           1U               /*!< use uSD Transceiver */
-#define  USE_SPI_CRC                  0U               /*!< use CRC in SPI */
+#define  VDD_VALUE                    (3300UL) /*!< Value of VDD in mv */
+#define  TICK_INT_PRIORITY            (0UL) /*!< tick interrupt priority */
+#define  USE_RTOS                     0
+#define  USE_SD_TRANSCEIVER           0U               /*!< use uSD Transceiver */
+#define  USE_SPI_CRC	              0U               /*!< use CRC in SPI */
 
 #define  USE_HAL_ADC_REGISTER_CALLBACKS     0U /* ADC register callback disabled     */
 #define  USE_HAL_CEC_REGISTER_CALLBACKS     0U /* CEC register callback disabled     */
@@ -219,15 +221,15 @@
 #define  USE_HAL_WWDG_REGISTER_CALLBACKS    0U /* WWDG register callback disabled    */
 
 /* ########################### Ethernet Configuration ######################### */
-#define ETH_TX_DESC_CNT         4  /* number of Ethernet Tx DMA descriptors */
-#define ETH_RX_DESC_CNT         4  /* number of Ethernet Rx DMA descriptors */
+#define ETH_TX_DESC_CNT         4U  /* number of Ethernet Tx DMA descriptors */
+#define ETH_RX_DESC_CNT         4U  /* number of Ethernet Rx DMA descriptors */
 
-#define ETH_MAC_ADDR0    ((uint8_t)0x02)
-#define ETH_MAC_ADDR1    ((uint8_t)0x00)
-#define ETH_MAC_ADDR2    ((uint8_t)0x00)
-#define ETH_MAC_ADDR3    ((uint8_t)0x00)
-#define ETH_MAC_ADDR4    ((uint8_t)0x00)
-#define ETH_MAC_ADDR5    ((uint8_t)0x00)
+#define ETH_MAC_ADDR0    (0x02UL)
+#define ETH_MAC_ADDR1    (0x00UL)
+#define ETH_MAC_ADDR2    (0x00UL)
+#define ETH_MAC_ADDR3    (0x00UL)
+#define ETH_MAC_ADDR4    (0x00UL)
+#define ETH_MAC_ADDR5    (0x00UL)
 
 /* ########################## Assert Selection ############################## */
 /**
@@ -277,9 +279,17 @@
   #include "stm32h7xx_hal_dfsdm.h"
 #endif /* HAL_DFSDM_MODULE_ENABLED */
 
+#ifdef HAL_DTS_MODULE_ENABLED
+ #include "stm32h7xx_hal_dts.h"
+#endif /* HAL_DTS_MODULE_ENABLED */
+
 #ifdef HAL_ETH_MODULE_ENABLED
   #include "stm32h7xx_hal_eth.h"
 #endif /* HAL_ETH_MODULE_ENABLED */
+
+#ifdef HAL_ETH_LEGACY_MODULE_ENABLED
+  #include "stm32h7xx_hal_eth_legacy.h"
+#endif /* HAL_ETH_LEGACY_MODULE_ENABLED */
 
 #ifdef HAL_EXTI_MODULE_ENABLED
   #include "stm32h7xx_hal_exti.h"
@@ -306,7 +316,7 @@
 #endif /* HAL_COMP_MODULE_ENABLED */
 
 #ifdef HAL_CORDIC_MODULE_ENABLED
-   #include "stm32h7xx_hal_cordic.h"
+  #include "stm32h7xx_hal_cordic.h"
 #endif /* HAL_CORDIC_MODULE_ENABLED */
 
 #ifdef HAL_CRC_MODULE_ENABLED
@@ -325,13 +335,13 @@
   #include "stm32h7xx_hal_flash.h"
 #endif /* HAL_FLASH_MODULE_ENABLED */
 
-#ifdef HAL_FMAC_MODULE_ENABLED
-  #include "stm32h7xx_hal_fmac.h"
-#endif /* HAL_FMAC_MODULE_ENABLED */
-
 #ifdef HAL_GFXMMU_MODULE_ENABLED
   #include "stm32h7xx_hal_gfxmmu.h"
 #endif /* HAL_GFXMMU_MODULE_ENABLED */
+
+#ifdef HAL_FMAC_MODULE_ENABLED
+  #include "stm32h7xx_hal_fmac.h"
+#endif /* HAL_FMAC_MODULE_ENABLED */
 
 #ifdef HAL_HRTIM_MODULE_ENABLED
   #include "stm32h7xx_hal_hrtim.h"
@@ -390,12 +400,16 @@
 #endif /* HAL_OPAMP_MODULE_ENABLED */
 
 #ifdef HAL_OSPI_MODULE_ENABLED
-  #include "stm32h7xx_hal_ospi.h"
+ #include "stm32h7xx_hal_ospi.h"
 #endif /* HAL_OSPI_MODULE_ENABLED */
 
 #ifdef HAL_OTFDEC_MODULE_ENABLED
 #include "stm32h7xx_hal_otfdec.h"
 #endif /* HAL_OTFDEC_MODULE_ENABLED */
+
+#ifdef HAL_PSSI_MODULE_ENABLED
+ #include "stm32h7xx_hal_pssi.h"
+#endif /* HAL_PSSI_MODULE_ENABLED */
 
 #ifdef HAL_PWR_MODULE_ENABLED
  #include "stm32h7xx_hal_pwr.h"
@@ -407,7 +421,7 @@
 
 #ifdef HAL_RAMECC_MODULE_ENABLED
  #include "stm32h7xx_hal_ramecc.h"
-#endif /* HAL_HCD_MODULE_ENABLED */
+#endif /* HAL_RAMECC_MODULE_ENABLED */
 
 #ifdef HAL_RNG_MODULE_ENABLED
  #include "stm32h7xx_hal_rng.h"
@@ -477,14 +491,6 @@
  #include "stm32h7xx_hal_hcd.h"
 #endif /* HAL_HCD_MODULE_ENABLED */
 
-#ifdef HAL_PSSI_MODULE_ENABLED
-  #include "stm32h7xx_hal_pssi.h"
-#endif /* HAL_PSSI_MODULE_ENABLED */
-
-#ifdef HAL_DTS_MODULE_ENABLED
-  #include "stm32h7xx_hal_dts.h"
-#endif /* HAL_DTS_MODULE_ENABLED */
-
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT
 /**
@@ -497,7 +503,7 @@
   */
   #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
-  void assert_failed(uint8_t* file, uint32_t line);
+  void assert_failed(uint8_t *file, uint32_t line);
 #else
   #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */
@@ -506,6 +512,4 @@
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_CONF_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif /* STM32H7xx_HAL_CONF_H */

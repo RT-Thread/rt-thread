@@ -35,6 +35,7 @@ endif
 
 config BSP_DRV_CLCD
     bool "CLCD driver"
+    select RT_USING_LCD
     default n
 
 config BSP_DRV_MOUSE

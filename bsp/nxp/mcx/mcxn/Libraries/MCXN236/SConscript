@@ -1,0 +1,63 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+path = [cwd + '/../CMSIS/Core/Include', cwd + '/MCXN236', cwd + '/MCXN236/drivers']
+src = Split('''
+            MCXN236/system_MCXN236.c
+            ''')
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += ['MCXN236/gcc/startup_MCXN236.S']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += ['MCXN236/arm/startup_MCXN236.S']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += ['MCXN236/iar/startup_MCXN236.s']
+
+src += ['MCXN236/drivers/fsl_cache_lpcac.c']
+src += ['MCXN236/drivers/fsl_cdog.c']
+src += ['MCXN236/drivers/fsl_clock.c']
+src += ['MCXN236/drivers/fsl_cmc.c']
+src += ['MCXN236/drivers/fsl_common.c']
+src += ['MCXN236/drivers/fsl_common_arm.c']
+src += ['MCXN236/drivers/fsl_crc.c']
+src += ['MCXN236/drivers/fsl_ctimer.c']
+src += ['MCXN236/drivers/fsl_edma.c']
+src += ['MCXN236/drivers/fsl_edma_soc.c']
+src += ['MCXN236/drivers/fsl_eim.c']
+src += ['MCXN236/drivers/fsl_erm.c']
+src += ['MCXN236/drivers/fsl_evtg.c']
+src += ['MCXN236/drivers/fsl_ewm.c']
+src += ['MCXN236/drivers/fsl_flexcan.c']
+src += ['MCXN236/drivers/fsl_flexcan_edma.c']
+src += ['MCXN236/drivers/fsl_flexio.c']
+src += ['MCXN236/drivers/fsl_flexio_i2c_master.c']
+src += ['MCXN236/drivers/fsl_flexio_mculcd.c']
+src += ['MCXN236/drivers/fsl_flexio_mculcd_edma.c']
+src += ['MCXN236/drivers/fsl_flexio_spi.c']
+src += ['MCXN236/drivers/fsl_flexio_spi_edma.c']
+src += ['MCXN236/drivers/fsl_flexio_uart.c']
+src += ['MCXN236/drivers/fsl_flexio_uart_edma.c']
+src += ['MCXN236/drivers/fsl_freqme.c']
+src += ['MCXN236/drivers/fsl_gpio.c']
+src += ['MCXN236/drivers/fsl_i3c.c']
+src += ['MCXN236/drivers/fsl_i3c_edma.c']
+src += ['MCXN236/drivers/fsl_irtc.c']
+src += ['MCXN236/drivers/fsl_lpadc.c']
+src += ['MCXN236/drivers/fsl_lpflexcomm.c']
+src += ['MCXN236/drivers/fsl_lpi2c.c']
+src += ['MCXN236/drivers/fsl_lpi2c_edma.c']
+src += ['MCXN236/drivers/fsl_lpspi.c']
+src += ['MCXN236/drivers/fsl_lpspi_edma.c']
+src += ['MCXN236/drivers/fsl_lptmr.c']
+src += ['MCXN236/drivers/fsl_lpuart.c']
+src += ['MCXN236/drivers/fsl_mrt.c']
+src += ['MCXN236/drivers/fsl_wwdt.c']
+src += ['MCXN236/drivers/fsl_reset.c']
+src += ['MCXN236/drivers/fsl_spc.c']
+src += ['MCXN236/drivers/fsl_vref.c']
+
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return('group')

@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_tmr.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the tmr firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -71,16 +69,20 @@ void tmr_reset(tmr_type *tmr_x)
     crm_periph_reset(CRM_TMR4_PERIPH_RESET, TRUE);
     crm_periph_reset(CRM_TMR4_PERIPH_RESET, FALSE);
   }
+#if defined (AT32F413TBU7) || defined (AT32F413Rx) || defined (AT32F413Cx) || \
+    defined (AT32F413Kx)
   else if(tmr_x == TMR5)
   {
     crm_periph_reset(CRM_TMR5_PERIPH_RESET, TRUE);
     crm_periph_reset(CRM_TMR5_PERIPH_RESET, FALSE);
   }
+#if defined (AT32F413CCU7) || defined (AT32F413CCT7) || defined (AT32F413RCT7)
   else if(tmr_x == TMR8)
   {
     crm_periph_reset(CRM_TMR8_PERIPH_RESET, TRUE);
     crm_periph_reset(CRM_TMR8_PERIPH_RESET, FALSE);
   }
+#endif
   else if(tmr_x == TMR9)
   {
     crm_periph_reset(CRM_TMR9_PERIPH_RESET, TRUE);
@@ -96,6 +98,7 @@ void tmr_reset(tmr_type *tmr_x)
     crm_periph_reset(CRM_TMR11_PERIPH_RESET, TRUE);
     crm_periph_reset(CRM_TMR11_PERIPH_RESET, FALSE);
   }
+#endif
 }
 
 /**
@@ -235,11 +238,7 @@ void tmr_cnt_dir_set(tmr_type *tmr_x, tmr_count_mode_type tmr_cnt_dir)
 void tmr_repetition_counter_set(tmr_type *tmr_x, uint8_t tmr_rpr_value)
 {
   /* set the repetition counter value */
-  if((tmr_x == TMR1) || (tmr_x == TMR8))
-
-  {
-    tmr_x->rpr_bit.rpr = tmr_rpr_value;
-  }
+  tmr_x->rpr_bit.rpr = tmr_rpr_value;
 }
 
 /**
@@ -277,8 +276,7 @@ uint32_t tmr_counter_value_get(tmr_type *tmr_x)
   *         this parameter can be one of the following values:
   *         TMR1, TMR2, TMR3, TMR4, TMR5, TMR8, TMR9, TMR10,
   *         TMR11
-  * @param  tmr_div_value (for 16 bit tmr 0x0000~0xFFFF,
-  *                        for 32 bit tmr 0x0000_0000~0xFFFF_FFFF)
+  * @param  tmr_div_value (0x0000~0xFFFF)
   * @retval none
   */
 void tmr_div_value_set(tmr_type *tmr_x, uint32_t tmr_div_value)
@@ -319,23 +317,23 @@ uint32_t tmr_div_value_get(tmr_type *tmr_x)
 void tmr_output_channel_config(tmr_type *tmr_x, tmr_channel_select_type tmr_channel,
                                tmr_output_config_type *tmr_output_struct)
 {
-  uint16_t channel_index = 0, channel_c_index = 0, channel = 0;
+  uint16_t channel_index = 0, channel_c_index = 0, channel = 0, chx_offset, chcx_offset;
+
+  chx_offset = (8 + tmr_channel);
+  chcx_offset = (9 + tmr_channel);
 
   /* get channel idle state bit position in ctrl2 register */
-  channel_index = (uint16_t)(tmr_output_struct->oc_idle_state << (8 + tmr_channel));
+  channel_index = (uint16_t)(tmr_output_struct->oc_idle_state << chx_offset);
 
   /* get channel complementary idle state bit position in ctrl2 register */
-  channel_c_index = (uint16_t)(tmr_output_struct->occ_idle_state << (9 + tmr_channel));
+  channel_c_index = (uint16_t)(tmr_output_struct->occ_idle_state << chcx_offset);
 
-  if((tmr_x == TMR1) || (tmr_x == TMR8))
-  {
-    /* set output channel complementary idle state */
-    tmr_x->ctrl2 &= ~channel_c_index;
-    tmr_x->ctrl2 |= channel_c_index;
-  }
+  /* set output channel complementary idle state */
+  tmr_x->ctrl2 &= ~(1<<chcx_offset);
+  tmr_x->ctrl2 |= channel_c_index;
 
   /* set output channel idle state */
-  tmr_x->ctrl2 &= ~channel_index;
+  tmr_x->ctrl2 &= ~(1<<chx_offset);
   tmr_x->ctrl2 |= channel_index;
 
   /* set channel output mode */
@@ -363,22 +361,25 @@ void tmr_output_channel_config(tmr_type *tmr_x, tmr_channel_select_type tmr_chan
       break;
   }
 
+  chx_offset = ((tmr_channel * 2) + 1);
+  chcx_offset = ((tmr_channel * 2) + 3);
+
   /* get channel polarity bit position in cctrl register */
-  channel_index = (uint16_t)(tmr_output_struct->oc_polarity << ((tmr_channel * 2) + 1));
+  channel_index = (uint16_t)(tmr_output_struct->oc_polarity << chx_offset);
 
   /* get channel complementary polarity bit position in cctrl register */
-  channel_c_index = (uint16_t)(tmr_output_struct->occ_polarity << ((tmr_channel * 2) + 3));
+  channel_c_index = (uint16_t)(tmr_output_struct->occ_polarity << chcx_offset);
 
-  if((tmr_x == TMR1) || (tmr_x == TMR8))
-  {
-    /* set output channel complementary polarity */
-    tmr_x->cctrl &= ~channel_c_index;
-    tmr_x->cctrl |= channel_c_index;
-  }
+  /* set output channel complementary polarity */
+  tmr_x->cctrl &= ~(1<<chcx_offset);
+  tmr_x->cctrl |= channel_c_index;
 
   /* set output channel polarity */
-  tmr_x->cctrl &= ~channel_index;
+  tmr_x->cctrl &= ~(1<<chx_offset);
   tmr_x->cctrl |= channel_index;
+
+  chx_offset = (tmr_channel * 2);
+  chcx_offset = ((tmr_channel * 2) + 2);
 
   /* get channel enable bit position in cctrl register */
   channel_index = (uint16_t)(tmr_output_struct->oc_output_state << (tmr_channel * 2));
@@ -386,15 +387,12 @@ void tmr_output_channel_config(tmr_type *tmr_x, tmr_channel_select_type tmr_chan
   /* get channel complementary enable bit position in cctrl register */
   channel_c_index = (uint16_t)(tmr_output_struct->occ_output_state << ((tmr_channel * 2) + 2));
 
-  if((tmr_x == TMR1) || (tmr_x == TMR8))
-  {
-    /* set output channel complementary enable bit */
-    tmr_x->cctrl &= ~channel_c_index;
-    tmr_x->cctrl |= channel_c_index;
-  }
+  /* set output channel complementary enable bit */
+  tmr_x->cctrl &= ~(1<<chcx_offset);
+  tmr_x->cctrl |= channel_c_index;
 
   /* set output channel enable bit */
-  tmr_x->cctrl &= ~channel_index;
+  tmr_x->cctrl &= ~(1<<chx_offset);
   tmr_x->cctrl |= channel_index;
 }
 
@@ -754,7 +752,12 @@ void tmr_one_cycle_mode_enable(tmr_type *tmr_x, confirm_state new_state)
 void tmr_32_bit_function_enable (tmr_type *tmr_x, confirm_state new_state)
 {
   /* tmr 32 bit function(plus mode) enable,only for TMR2/TMR5 */
-  if((tmr_x == TMR2) || (tmr_x == TMR5))
+  if((tmr_x == TMR2)
+#if defined (AT32F413TBU7) || defined (AT32F413Rx) || defined (AT32F413Cx) || \
+    defined (AT32F413Kx)
+     || (tmr_x == TMR5)
+#endif
+  )
   {
     tmr_x->ctrl1_bit.pmen = new_state;
   }
@@ -815,6 +818,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
   switch(channel)
   {
     case TMR_SELECT_CHANNEL_1:
+    tmr_x->cctrl_bit.c1en       = FALSE;
       tmr_x->cctrl_bit.c1p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c1cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm1_input_bit.c1c    = input_struct->input_mapped_select;
@@ -824,6 +828,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_2:
+    tmr_x->cctrl_bit.c2en       = FALSE;
       tmr_x->cctrl_bit.c2p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c2cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm1_input_bit.c2c    = input_struct->input_mapped_select;
@@ -833,6 +838,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_3:
+    tmr_x->cctrl_bit.c3en       = FALSE;
       tmr_x->cctrl_bit.c3p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c3cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm2_input_bit.c3c    = input_struct->input_mapped_select;
@@ -842,6 +848,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_4:
+    tmr_x->cctrl_bit.c4en       = FALSE;
       tmr_x->cctrl_bit.c4p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cm2_input_bit.c4c    = input_struct->input_mapped_select;
       tmr_x->cm2_input_bit.c4df   = input_struct->input_filter_value;
@@ -1076,15 +1083,15 @@ void tmr_pwm_input_config(tmr_type *tmr_x, tmr_input_config_type *input_struct,
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR2, TMR3, TMR4, TMR5, TMR8
-  * @param  ti1_connect
+  * @param  ch1_connect
   *         this parameter can be one of the following values:
   *         - TMR_CHANEL1_CONNECTED_C1IRAW
   *         - TMR_CHANEL1_2_3_CONNECTED_C1IRAW_XOR
   * @retval none
   */
-void tmr_channel1_input_select(tmr_type *tmr_x, tmr_channel1_input_connected_type ti1_connect)
+void tmr_channel1_input_select(tmr_type *tmr_x, tmr_channel1_input_connected_type ch1_connect)
 {
-  tmr_x->ctrl2_bit.c1insel = ti1_connect;
+  tmr_x->ctrl2_bit.c1insel = ch1_connect;
 }
 
 /**
@@ -1317,6 +1324,40 @@ void tmr_interrupt_enable(tmr_type *tmr_x, uint32_t tmr_interrupt, confirm_state
   {
     tmr_x->iden &= ~tmr_interrupt;
   }
+}
+
+/**
+  * @brief  get tmr interrupt flag
+  * @param  tmr_x: select the tmr peripheral.
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR2, TMR3, TMR4, TMR5, TMR8, TMR9, TMR10,
+  *         TMR11
+  * @param  tmr_flag
+  *         this parameter can be one of the following values:
+  *         - TMR_OVF_FLAG
+  *         - TMR_C1_FLAG
+  *         - TMR_C2_FLAG
+  *         - TMR_C3_FLAG
+  *         - TMR_C4_FLAG
+  *         - TMR_HALL_FLAG
+  *         - TMR_TRIGGER_FLAG
+  *         - TMR_BRK_FLAG
+  * @retval state of tmr interrupt flag
+  */
+flag_status tmr_interrupt_flag_get(tmr_type *tmr_x, uint32_t tmr_flag)
+{
+  flag_status status = RESET;
+
+  if((tmr_x->ists & tmr_flag) && (tmr_x->iden & tmr_flag))
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+
+  return status;
 }
 
 /**
@@ -1704,7 +1745,7 @@ void tmr_dma_control_config(tmr_type *tmr_x, tmr_dma_transfer_length_type dma_le
 }
 
 /**
-  * @brief  config tmr break mode and dead-time
+  * @brief  config tmr brake mode and dead-time
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR8

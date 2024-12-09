@@ -265,6 +265,57 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_HARD_I2C
+        bool "Enable I2C BUS (hardware driver)"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_HARD_I2C
+            config BSP_USING_HARD_I2C1
+                bool "Enable I2C1 BUS"
+                default n
+
+            config BSP_I2C1_TX_USING_DMA
+                bool "Enable I2C1 TX DMA"
+                depends on BSP_USING_HARD_I2C1
+                default n
+
+            config BSP_I2C1_RX_USING_DMA
+                bool "Enable I2C1 RX DMA"
+                depends on BSP_USING_HARD_I2C1
+                select BSP_I2C1_TX_USING_DMA
+                default n
+
+            config BSP_USING_HARD_I2C2
+                bool "Enable I2C2 BUS"
+                default n
+
+            config BSP_I2C2_TX_USING_DMA
+                bool "Enable I2C2 TX DMA"
+                depends on BSP_USING_HARD_I2C2
+                default n
+
+            config BSP_I2C2_RX_USING_DMA
+                bool "Enable I2C2 RX DMA"
+                depends on BSP_USING_HARD_I2C2
+                select BSP_I2C2_TX_USING_DMA
+                default n
+
+            config BSP_USING_HARD_I2C3
+                bool "Enable I2C3 BUS"
+                default n
+
+            config BSP_I2C3_TX_USING_DMA
+                bool "Enable I2C3 TX DMA"
+                depends on BSP_USING_HARD_I2C3
+                default n
+
+            config BSP_I2C3_RX_USING_DMA
+                bool "Enable I2C3 RX DMA"
+                depends on BSP_USING_HARD_I2C3
+                select BSP_I2C3_TX_USING_DMA
+                default n
+        endif
+
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n

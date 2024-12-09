@@ -5,8 +5,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef _FSL_SAI_EDMA_H_
-#define _FSL_SAI_EDMA_H_
+#ifndef FSL_SAI_EDMA_H_
+#define FSL_SAI_EDMA_H_
 
 #include "fsl_edma.h"
 #include "fsl_sai.h"
@@ -22,14 +22,31 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
-#define FSL_SAI_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 5, 0)) /*!< Version 2.5.0 */
-/*@}*/
+/*! @{ */
+#define FSL_SAI_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 7, 1)) /*!< Version 2.7.1 */
+/*! @} */
 
 typedef struct sai_edma_handle sai_edma_handle_t;
 
 /*! @brief SAI eDMA transfer callback function for finish and error */
 typedef void (*sai_edma_callback_t)(I2S_Type *base, sai_edma_handle_t *handle, status_t status, void *userData);
+
+/*!@brief sai interleave type */
+typedef enum _sai_edma_interleave
+{
+    kSAI_EDMAInterleavePerChannelSample =
+        0U, /*!< SAI data interleave per channel sample
+             * ---------------------------------------------------------------------------------------------------
+             * |LEFT CHANNEL | RIGHT CHANNEL | LEFT CHANNEL | RIGHT CHANNEL | LEFT CHANNEL | RIGHT CHANNEL | ....|
+             * ---------------------------------------------------------------------------------------------------
+             */
+    kSAI_EDMAInterleavePerChannelBlock =
+        1U, /*!< SAI data interleave per channel block
+             * --------------------------------------------------------------------------------------------------------
+             * |LEFT CHANNEL | LEFT CHANNEL | LEFT CHANNEL | ... | RIGHT CHANNEL | RIGHT CHANNEL | RIGHT CHANNEL | ...|
+             * --------------------------------------------------------------------------------------------------------
+             */
+} sai_edma_interleave_t;
 
 /*! @brief SAI DMA transfer handle, users should not touch the content of the handle.*/
 struct sai_edma_handle
@@ -47,6 +64,7 @@ struct sai_edma_handle
     uint8_t tcd[(SAI_XFER_QUEUE_SIZE + 1U) * sizeof(edma_tcd_t)]; /*!< TCD pool for eDMA transfer. */
     sai_transfer_t saiQueue[SAI_XFER_QUEUE_SIZE];                 /*!< Transfer queue storing queued transfer. */
     size_t transferSize[SAI_XFER_QUEUE_SIZE];                     /*!< Data bytes need to transfer */
+    sai_edma_interleave_t interleaveType;                         /*!< Transfer interleave type */
     volatile uint8_t queueUser;                                   /*!< Index for user to queue transfer. */
     volatile uint8_t queueDriver; /*!< Index for driver to get the transfer data and size */
 };
@@ -71,7 +89,6 @@ extern "C" {
  *
  * @param base SAI base pointer.
  * @param handle SAI eDMA handle pointer.
- * @param base SAI peripheral base address.
  * @param callback Pointer to user callback function.
  * @param userData User parameter passed to the callback function.
  * @param txDmaHandle eDMA handle pointer, this handle shall be static allocated by users.
@@ -90,7 +107,6 @@ void SAI_TransferTxCreateHandleEDMA(I2S_Type *base,
  *
  * @param base SAI base pointer.
  * @param handle SAI eDMA handle pointer.
- * @param base SAI peripheral base address.
  * @param callback Pointer to user callback function.
  * @param userData User parameter passed to the callback function.
  * @param rxDmaHandle eDMA handle pointer, this handle shall be static allocated by users.
@@ -102,50 +118,16 @@ void SAI_TransferRxCreateHandleEDMA(I2S_Type *base,
                                     edma_handle_t *rxDmaHandle);
 
 /*!
- * @brief Configures the SAI Tx audio format.
+ * @brief Initializes the SAI interleave type.
  *
- * @deprecated Do not use this function.  It has been superceded by @ref SAI_TransferTxSetConfigEDMA
+ * This function initializes the SAI DMA handle member interleaveType, it shall be called only when application would
+ * like to use type kSAI_EDMAInterleavePerChannelBlock, since the default interleaveType is
+ * kSAI_EDMAInterleavePerChannelSample always
  *
- * The audio format can be changed at run-time. This function configures the sample rate and audio data
- * format to be transferred. This function also sets the eDMA parameter according to formatting requirements.
- *
- * @param base SAI base pointer.
  * @param handle SAI eDMA handle pointer.
- * @param format Pointer to SAI audio data format structure.
- * @param mclkSourceClockHz SAI master clock source frequency in Hz.
- * @param bclkSourceClockHz SAI bit clock source frequency in Hz. If bit clock source is master
- * clock, this value should equals to masterClockHz in format.
- * @retval kStatus_Success Audio format set successfully.
- * @retval kStatus_InvalidArgument The input argument is invalid.
+ * @param interleaveType Multi channel interleave type.
  */
-void SAI_TransferTxSetFormatEDMA(I2S_Type *base,
-                                 sai_edma_handle_t *handle,
-                                 sai_transfer_format_t *format,
-                                 uint32_t mclkSourceClockHz,
-                                 uint32_t bclkSourceClockHz);
-
-/*!
- * @brief Configures the SAI Rx audio format.
- *
- * @deprecated Do not use this function.  It has been superceded by @ref SAI_TransferRxSetConfigEDMA
- *
- * The audio format can be changed at run-time. This function configures the sample rate and audio data
- * format to be transferred. This function also sets the eDMA parameter according to formatting requirements.
- *
- * @param base SAI base pointer.
- * @param handle SAI eDMA handle pointer.
- * @param format Pointer to SAI audio data format structure.
- * @param mclkSourceClockHz SAI master clock source frequency in Hz.
- * @param bclkSourceClockHz SAI bit clock source frequency in Hz. If a bit clock source is the master
- * clock, this value should equal to masterClockHz in format.
- * @retval kStatus_Success Audio format set successfully.
- * @retval kStatus_InvalidArgument The input argument is invalid.
- */
-void SAI_TransferRxSetFormatEDMA(I2S_Type *base,
-                                 sai_edma_handle_t *handle,
-                                 sai_transfer_format_t *format,
-                                 uint32_t mclkSourceClockHz,
-                                 uint32_t bclkSourceClockHz);
+void SAI_TransferSetInterleaveType(sai_edma_handle_t *handle, sai_edma_interleave_t interleaveType);
 
 /*!
  * @brief Configures the SAI Tx.

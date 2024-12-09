@@ -15,7 +15,9 @@ struct usbh_hid {
     struct usbh_urb intin_urb;              /* INTR IN urb */
     struct usbh_urb intout_urb;             /* INTR OUT urb */
 
-    uint8_t report_desc[256];
+    uint16_t report_size;
+
+    uint8_t protocol;
     uint8_t intf; /* interface number */
     uint8_t minor;
 
@@ -26,6 +28,7 @@ struct usbh_hid {
 extern "C" {
 #endif
 
+int usbh_hid_get_report_descriptor(struct usbh_hid *hid_class, uint8_t *buffer, uint32_t buflen);
 int usbh_hid_set_idle(struct usbh_hid *hid_class, uint8_t report_id, uint8_t duration);
 int usbh_hid_get_idle(struct usbh_hid *hid_class, uint8_t *buffer);
 int usbh_hid_set_report(struct usbh_hid *hid_class, uint8_t report_type, uint8_t report_id, uint8_t *buffer, uint32_t buflen);

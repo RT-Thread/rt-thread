@@ -1,0 +1,16 @@
+# files format check exclude path, please follow the instructions below to modify;
+# If you need to exclude an entire folder, add the folder path in dir_path;
+# If you need to exclude a file, add the path to the file in file_path.
+
+dir_path:
+- AT32A403A_Firmware_Library
+- AT32A423_Firmware_Library
+- AT32F402_405_Firmware_Library
+- AT32F403A_407_Firmware_Library
+- AT32F413_Firmware_Library
+- AT32F415_Firmware_Library
+- AT32F421_Firmware_Library
+- AT32F423_Firmware_Library
+- AT32F425_Firmware_Library
+- AT32F435_437_Firmware_Library
+- AT32M412_416_Firmware_Library

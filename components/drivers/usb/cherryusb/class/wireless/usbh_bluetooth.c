@@ -96,7 +96,7 @@ static int usbh_bluetooth_connect(struct usbh_hubport *hport, uint8_t intf)
     }
     USB_LOG_INFO("Bluetooth select altsetting 0\r\n");
 #endif
-    snprintf(hport->config.intf[intf].devname, CONFIG_USBHOST_DEV_NAMELEN, DEV_FORMAT);
+    strncpy(hport->config.intf[intf].devname, DEV_FORMAT, CONFIG_USBHOST_DEV_NAMELEN);
     USB_LOG_INFO("Register Bluetooth Class:%s\r\n", hport->config.intf[intf].devname);
     usbh_bluetooth_run(bluetooth_class);
     return ret;
@@ -234,7 +234,12 @@ delete :
 static int usbh_bluetooth_hci_cmd(uint8_t *buffer, uint32_t buflen)
 {
     struct usbh_bluetooth *bluetooth_class = &g_bluetooth_class;
-    struct usb_setup_packet *setup = bluetooth_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!bluetooth_class || !bluetooth_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = bluetooth_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_DEVICE;
     setup->bRequest = 0x00;
@@ -360,14 +365,18 @@ delete :
 
 __WEAK void usbh_bluetooth_hci_read_callback(uint8_t *data, uint32_t len)
 {
+    (void)data;
+    (void)len;
 }
 
 __WEAK void usbh_bluetooth_run(struct usbh_bluetooth *bluetooth_class)
 {
+    (void)bluetooth_class;
 }
 
 __WEAK void usbh_bluetooth_stop(struct usbh_bluetooth *bluetooth_class)
 {
+    (void)bluetooth_class;
 }
 
 static const struct usbh_class_driver bluetooth_class_driver = {

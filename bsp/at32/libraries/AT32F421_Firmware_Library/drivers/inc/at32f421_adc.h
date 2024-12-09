@@ -252,17 +252,15 @@ typedef struct
       __IO uint32_t ocdmaen              : 1; /* [8] */
       __IO uint32_t reserved2            : 2; /* [10:9] */
       __IO uint32_t dtalign              : 1; /* [11] */
-      __IO uint32_t pctesel_l            : 3; /* [14:12] */
+      __IO uint32_t pctesel              : 3; /* [14:12] */
       __IO uint32_t pcten                : 1; /* [15] */
       __IO uint32_t reserved3            : 1; /* [16] */
-      __IO uint32_t octesel_l            : 3; /* [19:17] */
+      __IO uint32_t octesel              : 3; /* [19:17] */
       __IO uint32_t octen                : 1; /* [20] */
       __IO uint32_t pcswtrg              : 1; /* [21] */
       __IO uint32_t ocswtrg              : 1; /* [22] */
       __IO uint32_t itsrven              : 1; /* [23] */
-      __IO uint32_t pctesel_h            : 1; /* [24] */
-      __IO uint32_t octesel_h            : 1; /* [25] */
-      __IO uint32_t reserved4            : 6; /* [31:26] */
+      __IO uint32_t reserved4            : 8; /* [31:24] */
     } ctrl2_bit;
   };
 
@@ -564,6 +562,7 @@ flag_status adc_preempt_software_trigger_status_get(adc_type *adc_x);
 uint16_t adc_ordinary_conversion_data_get(adc_type *adc_x);
 uint16_t adc_preempt_conversion_data_get(adc_type *adc_x, adc_preempt_channel_type adc_preempt_channel);
 flag_status adc_flag_get(adc_type *adc_x, uint8_t adc_flag);
+flag_status adc_interrupt_flag_get(adc_type *adc_x, uint8_t adc_flag);
 void adc_flag_clear(adc_type *adc_x, uint32_t adc_flag);
 
 /**

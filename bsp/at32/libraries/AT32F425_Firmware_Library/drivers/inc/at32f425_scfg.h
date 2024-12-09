@@ -65,9 +65,7 @@ typedef enum
   */
 typedef enum
 {
-  SCFG_IR_SOURCE_TMR16                   = 0x00, /* infrared signal source select tmr16 */
-  SCFG_IR_SOURCE_USART1                  = 0x01, /* infrared signal source select usart1 */
-  SCFG_IR_SOURCE_USART2                  = 0x02  /* infrared signal source select usart2 */
+  SCFG_IR_SOURCE_TMR16                   = 0x00  /* infrared signal source select tmr16 */
 } scfg_ir_source_type;
 
 /**
@@ -268,7 +266,7 @@ typedef struct
 
 void scfg_reset(void);
 void scfg_infrared_config(scfg_ir_source_type source, scfg_ir_polarity_type polarity);
-uint8_t scfg_mem_map_get(void);
+scfg_mem_map_type scfg_mem_map_get(void);
 void scfg_pa11pa12_pin_remap(scfg_pa11pa12_remap_type pin_remap);
 void scfg_exint_line_config(scfg_port_source_type port_source, scfg_pins_source_type pin_source);
 void scfg_pins_ultra_driven_enable(scfg_ultra_driven_pins_type value, confirm_state new_state);

@@ -1,0 +1,12 @@
+config RT_PCI_HOST_COMMON
+    bool "Common PCI host controller"
+    depends on RT_PCI_ECAM
+    default y
+
+config RT_PCI_HOST_GENERIC
+    bool "Generic PCI host controller"
+    depends on RT_PCI_ECAM
+    select RT_PCI_HOST_COMMON
+    default y
+
+rsource "dw/Kconfig"

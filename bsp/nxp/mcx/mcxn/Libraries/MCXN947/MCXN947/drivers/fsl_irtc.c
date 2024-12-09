@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
+ * Copyright 2016-2019, 2023 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -21,6 +21,22 @@
 #define YEAR_RANGE_START (1984U) /* Valid values for year range from -128 to 127; 2112 - 128 */
 #define YEAR_RANGE_END   (2239U) /* Valid values for year range from -128 to 127; 2112 + 127 */
 
+#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)) || \
+    (defined(FSL_FEATURE_RTC_HAS_RESET) && FSL_FEATURE_RTC_HAS_RESET)
+/*! @brief Array to map IRTC instance number to base pointer. */
+static RTC_Type *const kIrtcBases[] = RTC_BASE_PTRS;
+#endif
+
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+/*! @brief Array to map IRTC instance number to clock gate enum. */
+static clock_ip_name_t const kIrtcClocks[] = RTC_CLOCKS;
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+#if defined(FSL_FEATURE_RTC_HAS_RESET) && FSL_FEATURE_RTC_HAS_RESET
+/*! @brief Pointers to IRTC resets for each instance. */
+static const reset_ip_name_t kIrtcResets[] = RTC_RSTS;
+#endif
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -32,6 +48,18 @@
  * @return Returns false if the date & time details are out of range; true if in range
  */
 static bool IRTC_CheckDatetimeFormat(const irtc_datetime_t *datetime);
+
+#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)) || \
+    (defined(FSL_FEATURE_RTC_HAS_RESET) && FSL_FEATURE_RTC_HAS_RESET)
+/*!
+ * @brief Returns an instance number given a base address.
+ *
+ * @param base The IRTC peripheral base address.
+ * @return IRTC instance number starting from 0. If cannot the base address is
+ * not a valid address, this function returns -1.
+ */
+static int32_t IRTC_GetInstance(RTC_Type *base);
+#endif
 
 /*******************************************************************************
  * Code
@@ -70,6 +98,29 @@ static bool IRTC_CheckDatetimeFormat(const irtc_datetime_t *datetime)
     return fgRet;
 }
 
+#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)) || \
+    (defined(FSL_FEATURE_RTC_HAS_RESET) && FSL_FEATURE_RTC_HAS_RESET)
+static int32_t IRTC_GetInstance(RTC_Type *base)
+{
+    int32_t instance;
+
+    for (instance = 0; instance < (int32_t)ARRAY_SIZE(kIrtcBases); ++instance)
+    {
+        if (kIrtcBases[instance] == base)
+        {
+            break;
+        }
+    }
+
+    if (instance >= (int32_t)ARRAY_SIZE(kIrtcBases))
+    {
+        instance = -1;
+    }
+
+    return instance;
+}
+#endif
+
 /*!
  * brief Ungates the IRTC clock and configures the peripheral for basic operation.
  *
@@ -90,12 +141,21 @@ status_t IRTC_Init(RTC_Type *base, const irtc_config_t *config)
     uint16_t reg;
     status_t status = kStatus_Success;
 
+#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)) || \
+    (defined(FSL_FEATURE_RTC_HAS_RESET) && FSL_FEATURE_RTC_HAS_RESET)
+    int32_t instance = IRTC_GetInstance(base);
+    if (instance < 0)
+    {
+        return kStatus_InvalidArgument;
+    }
+#endif
+
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
-    CLOCK_EnableClock(kCLOCK_Rtc0);
+    CLOCK_EnableClock(kIrtcClocks[instance]);
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 #if defined(FSL_FEATURE_RTC_HAS_RESET) && FSL_FEATURE_RTC_HAS_RESET
-    RESET_PeripheralReset(kRTC_RST_SHIFT_RSTn);
+    RESET_ReleasePeripheralReset(kIrtcResets[instance]);
 #endif
 
     /* Unlock to allow register write operation */
@@ -123,7 +183,7 @@ status_t IRTC_Init(RTC_Type *base, const irtc_config_t *config)
 #endif
 #if defined(FSL_FEATURE_RTC_HAS_CLOCK_SELECT) && FSL_FEATURE_RTC_HAS_CLOCK_SELECT
                (uint16_t)RTC_CTRL_CLK_SEL_MASK |
-#endif
+#endif 
 #if defined(FSL_FEATURE_RTC_HAS_CLOCK_OUTPUT_DISABLE) && FSL_FEATURE_RTC_HAS_CLOCK_OUTPUT_DISABLE
                (uint16_t)RTC_CTRL_CLKO_DIS_MASK |
 #endif
@@ -149,6 +209,26 @@ status_t IRTC_Init(RTC_Type *base, const irtc_config_t *config)
     return status;
 }
 
+/*
+ * brief Gate the IRTC clock
+ *
+ * param base IRTC peripheral base address
+ */
+status_t IRTC_Deinit(RTC_Type *base)
+{
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
+    int32_t instance = IRTC_GetInstance(base);
+    if (instance < 0)
+    {
+        return kStatus_InvalidArgument;
+    }
+
+    CLOCK_DisableClock(kIrtcClocks[instance]);
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+
+    return kStatus_Success;
+}
+
 /*!
  * brief Fill in the IRTC config struct with the default settings
  *
@@ -172,7 +252,7 @@ void IRTC_GetDefaultConfig(irtc_config_t *config)
     config->wakeupSelect = true;
 #endif
 
-#if !defined(FSL_FEATURE_RTC_HAS_NO_SAMPLING_CLOCKS) || (!FSL_FEATURE_RTC_HAS_NO_SAMPLING_CLOCKS)
+#if !defined(FSL_FEATURE_RTC_HAS_NO_TIMER_STB_MASK) || (!FSL_FEATURE_RTC_HAS_NO_TIMER_STB_MASK)
     /* Sampling clock are not gated when in standby mode */
     config->timerStdMask = false;
 #endif
@@ -191,6 +271,7 @@ void IRTC_GetDefaultConfig(irtc_config_t *config)
 #endif
 }
 
+#if !(defined(FSL_FEATURE_RTC_IS_SLAVE) && (FSL_FEATURE_RTC_IS_SLAVE != 0U))
 /*!
  * brief Sets the IRTC date and time according to the given time structure.
  *
@@ -239,6 +320,7 @@ status_t IRTC_SetDatetime(RTC_Type *base, const irtc_datetime_t *datetime)
 
     return status;
 }
+#endif /* FSL_FEATURE_RTC_IS_SLAVE  */
 
 /*!
  * brief Gets the IRTC time and stores it in the given time structure.
@@ -395,6 +477,7 @@ status_t IRTC_SetWriteProtection(RTC_Type *base, bool lock)
     return status;
 }
 
+#if !(defined(FSL_FEATURE_RTC_IS_SLAVE) && (FSL_FEATURE_RTC_IS_SLAVE != 0U))
 /*!
  * brief Sets the IRTC daylight savings start and stop date and time.
  *
@@ -423,6 +506,7 @@ void IRTC_SetDaylightTime(RTC_Type *base, const irtc_daylight_time_t *datetime)
     /* Enable daylight saving time */
     base->CTRL |= RTC_CTRL_DST_EN_MASK;
 }
+#endif /* FSL_FEATURE_RTC_IS_SLAVE  */
 
 /*!
  * brief Gets the IRTC daylight savings time and stores it in the given time structure.
@@ -452,6 +536,7 @@ void IRTC_GetDaylightTime(RTC_Type *base, irtc_daylight_time_t *datetime)
     datetime->endHour   = (uint8_t)((temp & RTC_DST_HOUR_DST_END_HOUR_MASK) >> RTC_DST_HOUR_DST_END_HOUR_SHIFT);
 }
 
+#if !(defined(FSL_FEATURE_RTC_IS_SLAVE) && (FSL_FEATURE_RTC_IS_SLAVE != 0U))
 /*!
  * brief Enables the coarse compensation and sets the value in the IRTC compensation register.
  *
@@ -497,6 +582,7 @@ void IRTC_SetFineCompensation(RTC_Type *base, uint8_t integralValue, uint8_t fra
     /* Enable fine compensation */
     base->CTRL |= (RTC_CTRL_COMP_EN_MASK | RTC_CTRL_FINEEN_MASK);
 }
+#endif /* FSL_FEATURE_RTC_IS_SLAVE  */
 
 #if !defined(FSL_FEATURE_RTC_HAS_NO_TAMPER_FEATURE) || (!FSL_FEATURE_RTC_HAS_NO_TAMPER_FEATURE)
 
@@ -676,6 +762,8 @@ void IRTC_ConfigClockOut(RTC_Type *base, irtc_clockout_sel_t clkOut)
     ctrlVal &= (uint16_t)(~RTC_CTRL_CLKOUT_MASK);
 
     ctrlVal |= RTC_CTRL_CLKOUT((uint16_t)clkOut);
+
+#if !(defined(FSL_FEATURE_RTC_IS_SLAVE) && (FSL_FEATURE_RTC_IS_SLAVE != 0U))
     if (clkOut == kIRTC_ClkoutCoarse1Hz)
     {
         ctrlVal |= RTC_CTRL_COMP_EN_MASK;
@@ -688,6 +776,7 @@ void IRTC_ConfigClockOut(RTC_Type *base, irtc_clockout_sel_t clkOut)
     {
         /* empty else */
     }
+#endif /* FSL_FEATURE_RTC_IS_SLAVE */
 
     base->CTRL = ctrlVal;
 }

@@ -10,7 +10,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <drivers/mmcsd_core.h>
+#include <drivers/dev_mmcsd_core.h>
 #include <s3c24x0.h>
 
 #define S3C_PCLK	50000000

@@ -1,10 +1,26 @@
 /*
-* Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
-*/
+ * Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include <rtthread.h>
+#include <mmu.h>
 
 #include "dw_eth_mac.h"
 #include "cache.h"
+#include "string.h"
+#include "drv_ioremap.h"
+
 
 #define roundup(x, y) (                 \
 {                           \
@@ -67,10 +83,15 @@ static void tx_descs_init(eth_mac_handle_t handle)
     struct dmamacdescr *desc_p;
     uint32_t idx;
 
-    for (idx = 0; idx < CVI_CONFIG_TX_DESCR_NUM; idx++) {
+    for (idx = 0; idx < CVI_CONFIG_TX_DESCR_NUM; idx ++) {
         desc_p = &desc_table_p[idx];
+#ifdef RT_USING_SMART
+        desc_p->dmamac_addr = (unsigned long)rt_kmem_v2p((void *)&txbuffs[idx * CVI_CONFIG_ETH_BUFSIZE]);
+        desc_p->dmamac_next = (unsigned long)rt_kmem_v2p((void *)&desc_table_p[idx + 1]);
+#else
         desc_p->dmamac_addr = (unsigned long)&txbuffs[idx * CVI_CONFIG_ETH_BUFSIZE];
         desc_p->dmamac_next = (unsigned long)&desc_table_p[idx + 1];
+#endif
 
 #if defined(CONFIG_DW_ALTDESCRIPTOR)
         desc_p->txrx_status &= ~(CVI_DESC_TXSTS_TXINT | CVI_DESC_TXSTS_TXLAST |
@@ -88,12 +109,20 @@ static void tx_descs_init(eth_mac_handle_t handle)
     }
 
     /* Correcting the last pointer of the chain */
+    #ifdef RT_USING_SMART
+    desc_p->dmamac_next = (unsigned long)rt_kmem_v2p((void *)&desc_table_p[0]);
+    #else
     desc_p->dmamac_next = (unsigned long)&desc_table_p[0];
+    #endif
 
     /* Flush all Tx buffer descriptors at once */
-    rt_hw_cpu_dcache_clean((unsigned long)priv->tx_mac_descrtable, sizeof(priv->tx_mac_descrtable));
+    rt_hw_cpu_dcache_clean((void *)priv->tx_mac_descrtable, sizeof(priv->tx_mac_descrtable));
 
-    dma_reg->txdesclistaddr = (unsigned long)&desc_table_p[0];
+#ifdef RT_USING_SMART
+    dma_reg->txdesclistaddr = (rt_ubase_t)rt_kmem_v2p((void *)&desc_table_p[0]);
+#else
+    dma_reg->txdesclistaddr = (reg_type)&desc_table_p[0];
+#endif
 
     priv->tx_currdescnum = 0;
 }
@@ -114,27 +143,38 @@ static void rx_descs_init(eth_mac_handle_t handle)
      * Otherwise there's a chance to get some of them flushed in RAM when
      * GMAC is already pushing data to RAM via DMA. This way incoming from
      * GMAC data will be corrupted. */
-    rt_hw_cpu_dcache_clean((unsigned long)rxbuffs, CVI_RX_TOTAL_BUFSIZE);
+    rt_hw_cpu_dcache_clean((void *)rxbuffs, CVI_RX_TOTAL_BUFSIZE);
 
     for (idx = 0; idx < CVI_CONFIG_RX_DESCR_NUM; idx++) {
         desc_p = &desc_table_p[idx];
+#ifdef RT_USING_SMART
+        desc_p->dmamac_addr = (unsigned long)rt_kmem_v2p((void *)&rxbuffs[idx * CVI_CONFIG_ETH_BUFSIZE]);
+        desc_p->dmamac_next = (unsigned long)rt_kmem_v2p((void *)&desc_table_p[idx + 1]);
+#else
         desc_p->dmamac_addr = (unsigned long)&rxbuffs[idx * CVI_CONFIG_ETH_BUFSIZE];
         desc_p->dmamac_next = (unsigned long)&desc_table_p[idx + 1];
+#endif
 
-        desc_p->dmamac_cntl =
-            (CVI_MAC_MAX_FRAME_SZ & CVI_DESC_RXCTRL_SIZE1MASK) |
-                      CVI_DESC_RXCTRL_RXCHAIN;
+        desc_p->dmamac_cntl = (CVI_MAC_MAX_FRAME_SZ & CVI_DESC_RXCTRL_SIZE1MASK) | CVI_DESC_RXCTRL_RXCHAIN;
 
         desc_p->txrx_status = CVI_DESC_RXSTS_OWNBYDMA;
     }
 
     /* Correcting the last pointer of the chain */
+#ifdef RT_USING_SMART
+    desc_p->dmamac_next = (unsigned long)rt_kmem_v2p((void *)&desc_table_p[0]);
+#else
     desc_p->dmamac_next = (unsigned long)&desc_table_p[0];
+#endif
 
     /* Flush all Rx buffer descriptors at once */
-    rt_hw_cpu_dcache_clean((unsigned long)priv->rx_mac_descrtable, sizeof(priv->rx_mac_descrtable));
+    rt_hw_cpu_dcache_clean((void *)priv->rx_mac_descrtable, sizeof(priv->rx_mac_descrtable));
 
-    dma_reg->rxdesclistaddr = (unsigned long)&desc_table_p[0];
+#ifdef RT_USING_SMART
+    dma_reg->rxdesclistaddr = (rt_ubase_t)rt_kmem_v2p((void *)&desc_table_p[0]);
+#else
+    dma_reg->rxdesclistaddr = (reg_type)&desc_table_p[0];
+#endif
 
     priv->rx_currdescnum = 0;
 }
@@ -238,8 +278,8 @@ static int32_t designware_eth_enable(eth_mac_handle_t handle, int32_t control)
     struct dw_gmac_mac_regs *mac_reg = mac_dev->priv->mac_regs_p;
     eth_link_state_t link_state = mac_dev->phy_dev->link_state;
 
-    if (link_state == ETH_LINK_DOWN)
-        return -1;
+    // if (link_state == ETH_LINK_DOWN)
+    //     return -1;
 
     switch (control) {
     case CSI_ETH_MAC_CONTROL_TX:
@@ -305,7 +345,7 @@ static int32_t designware_eth_send(eth_mac_handle_t handle, const uint8_t *frame
     struct dmamacdescr *desc_p = &priv->tx_mac_descrtable[desc_num];
     uint64_t desc_start = (uint64_t)desc_p;
     uint64_t desc_end = desc_start + roundup(sizeof(*desc_p), DW_GMAC_DMA_ALIGN);
-    uint64_t data_start = desc_p->dmamac_addr;
+    uint64_t data_start = (uint64_t)DRV_IOREMAP((void *)desc_p->dmamac_addr, 0x1000);
     uint64_t data_end = data_start + roundup(length, DW_GMAC_DMA_ALIGN);
     uint32_t count = 0;
 
@@ -319,12 +359,16 @@ static int32_t designware_eth_send(eth_mac_handle_t handle, const uint8_t *frame
      */
 
     /* Check if the descriptor is owned by CPU */
-    while (1) {
-        rt_hw_cpu_dcache_invalidate(desc_start, desc_end - desc_start);
-        if (!(desc_p->txrx_status & CVI_DESC_TXSTS_OWNBYDMA)) {
+    while (1)
+    {
+        rt_hw_cpu_dcache_invalidate((void *)desc_start, desc_end - desc_start);
+        if (!(desc_p->txrx_status & CVI_DESC_TXSTS_OWNBYDMA))
+        {
             break;
         }
-        if (count > 1000) {
+
+        if (count > 1000)
+        {
             rt_kprintf("desc onwer is DMA\n");
             return -1;
         }
@@ -335,7 +379,7 @@ static int32_t designware_eth_send(eth_mac_handle_t handle, const uint8_t *frame
     memcpy((void *)data_start, frame, length);
 
     /* Flush data to be sent */
-    rt_hw_cpu_dcache_clean(data_start, data_end - data_start);
+    rt_hw_cpu_dcache_clean((void *)data_start, data_end - data_start);
 
 #if defined(CONFIG_DW_ALTDESCRIPTOR)
     desc_p->txrx_status |= CVI_DESC_TXSTS_TXFIRST | CVI_DESC_TXSTS_TXLAST;
@@ -355,7 +399,7 @@ static int32_t designware_eth_send(eth_mac_handle_t handle, const uint8_t *frame
 #endif
 
     /* Flush modified buffer descriptor */
-    rt_hw_cpu_dcache_clean(desc_start, desc_end - desc_start);
+    rt_hw_cpu_dcache_clean((void *)desc_start, desc_end - desc_start);
 
     /* Test the wrap-around condition. */
     if (++desc_num >= CVI_CONFIG_TX_DESCR_NUM)
@@ -377,22 +421,23 @@ static int32_t designware_eth_recv(eth_mac_handle_t handle, uint8_t **packetp)
     struct dmamacdescr *desc_p = &priv->rx_mac_descrtable[desc_num];
     int32_t length = -1;
     uint64_t desc_start = (uint64_t)desc_p;
-    uint64_t desc_end = desc_start +
-        roundup(sizeof(*desc_p), DW_GMAC_DMA_ALIGN);
-    uint64_t data_start = desc_p->dmamac_addr;
+    uint64_t desc_end = desc_start + roundup(sizeof(*desc_p), DW_GMAC_DMA_ALIGN);
+    uint64_t data_start = (uint64_t)DRV_IOREMAP((void *)desc_p->dmamac_addr, 0x1000);
     uint64_t data_end;
 
     /* Invalidate entire buffer descriptor */
-    rt_hw_cpu_dcache_invalidate(desc_start, desc_end - desc_start);
+    rt_hw_cpu_dcache_invalidate((void *)desc_start, desc_end - desc_start);
     status = desc_p->txrx_status;
     /* Check  if the owner is the CPU */
-    if (!(status & CVI_DESC_RXSTS_OWNBYDMA)) {
-        length = (status & CVI_DESC_RXSTS_FRMLENMSK) >>
-             CVI_DESC_RXSTS_FRMLENSHFT;
+    if (!(status & CVI_DESC_RXSTS_OWNBYDMA))
+    {
+        length = (status & CVI_DESC_RXSTS_FRMLENMSK) >> CVI_DESC_RXSTS_FRMLENSHFT;
+
         /* Invalidate received data */
         data_end = data_start + roundup(length, DW_GMAC_DMA_ALIGN);
-        rt_hw_cpu_dcache_invalidate(data_start, data_end - data_start);
-        *packetp = (uint8_t *)((uint64_t)desc_p->dmamac_addr);
+
+        rt_hw_cpu_dcache_invalidate((void *)data_start, data_end - data_start);
+        *packetp = (uint8_t *)data_start;
     }
 
     return length;
@@ -405,8 +450,7 @@ static int32_t designware_free_pkt(eth_mac_handle_t handle)
     uint32_t desc_num = priv->rx_currdescnum;
     struct dmamacdescr *desc_p = &priv->rx_mac_descrtable[desc_num];
     uint64_t desc_start = (uint64_t)desc_p;
-    uint64_t desc_end = desc_start +
-        roundup(sizeof(*desc_p), DW_GMAC_DMA_ALIGN);
+    uint64_t desc_end = desc_start + roundup(sizeof(*desc_p), DW_GMAC_DMA_ALIGN);
 
     /*
      * Make the current descriptor valid again and go to
@@ -415,7 +459,7 @@ static int32_t designware_free_pkt(eth_mac_handle_t handle)
     desc_p->txrx_status |= CVI_DESC_RXSTS_OWNBYDMA;
 
     /* Flush only status field - others weren't changed */
-    rt_hw_cpu_dcache_clean(desc_start, desc_end - desc_start);
+    rt_hw_cpu_dcache_clean((void *)desc_start, desc_end - desc_start);
 
     /* Test the wrap-around condition. */
     if (++desc_num >= CVI_CONFIG_RX_DESCR_NUM)
@@ -458,14 +502,15 @@ int32_t dw_eth_mac_phy_read(eth_mac_handle_t handle, uint8_t phy_addr, uint8_t r
     uint16_t miiaddr;
     int32_t start;
 
-    miiaddr = ((phy_addr << CVI_MIIADDRSHIFT) & CVI_MII_ADDRMSK) |
-          ((reg_addr << CVI_MIIREGSHIFT) & CVI_MII_REGMSK);
+    miiaddr = ((phy_addr << CVI_MIIADDRSHIFT) & CVI_MII_ADDRMSK) | ((reg_addr << CVI_MIIREGSHIFT) & CVI_MII_REGMSK);
 
     mac_reg->miiaddr = (miiaddr | CVI_MII_CLKRANGE_150_250M | CVI_MII_BUSY);
 
     start = rt_tick_get_millisecond();
-    while ((rt_tick_get_millisecond() - start) < CVI_CONFIG_MDIO_TIMEOUT) {
-        if (!(mac_reg->miiaddr & CVI_MII_BUSY)) {
+    while ((rt_tick_get_millisecond() - start) < CVI_CONFIG_MDIO_TIMEOUT)
+    {
+        if (!(mac_reg->miiaddr & CVI_MII_BUSY))
+        {
             *data = mac_reg->miidata;
             return 0;
         }
@@ -619,10 +664,9 @@ int32_t cvi_eth_mac_set_macaddr(eth_mac_handle_t handle, const eth_mac_addr_t *m
   \param[in]   handle  ethernet handle
   \param[in]   frame  Pointer to frame buffer with data to send
   \param[in]   len    Frame buffer length in bytes
-  \param[in]   flags  Frame transmit flags (see CSI_ETH_MAC_TX_FRAME_...)
   \return      error code
 */
-int32_t cvi_eth_mac_send_frame(eth_mac_handle_t handle, const uint8_t *frame, uint32_t len, uint32_t flags)
+int32_t cvi_eth_mac_send_frame(eth_mac_handle_t handle, const uint8_t *frame, uint32_t len)
 {
     RT_ASSERT(handle);
     RT_ASSERT(frame);
@@ -672,14 +716,12 @@ int32_t cvi_eth_mac_read_frame(eth_mac_handle_t handle, uint8_t *frame, uint32_t
   \param[in]   cb  callback to handle ethernet event
   \return      return ethernet handle if success
  */
-eth_mac_handle_t cvi_eth_mac_init(unsigned int base)
+eth_mac_handle_t cvi_eth_mac_init(rt_ubase_t base)
 {
     gmac_dev_t *mac_dev = &gmac_instance[0];
     struct dw_gmac_priv *priv, *priv_unalign;
 
-    mac_dev->base = (unsigned long)base;
-    // mac_dev->irq = (uint8_t)DW_MAC_IRQ;
-    // mac_dev->cb_event = cb_event;
+    mac_dev->base = base;
 
     priv = memalign(DW_GMAC_DMA_ALIGN, sizeof(struct dw_gmac_priv), (void **)&priv_unalign);
     if (!priv)

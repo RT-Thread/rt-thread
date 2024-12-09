@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_spi.c
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    contains all the functions for the spi firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -441,7 +439,7 @@ void i2s_init(spi_type* spi_x, i2s_init_type* i2s_init_struct)
   * @brief  enable or disable i2s.
   * @param  spi_x: select the i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @param  new_state: new state of i2s.
   *         this parameter can be: TRUE or FALSE.
   * @retval none
@@ -455,7 +453,7 @@ void i2s_enable(spi_type* spi_x, confirm_state new_state)
   * @brief  enable or disable the specified spi/i2s interrupts.
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @param  spi_i2s_int: specifies the spi/i2s interrupt sources to be enabled or disabled.
   *         this parameter can be one of the following values:
   *         - SPI_I2S_ERROR_INT
@@ -481,7 +479,7 @@ void spi_i2s_interrupt_enable(spi_type* spi_x, uint32_t spi_i2s_int, confirm_sta
   * @brief  enable or disable the spi/i2s dma transmitter mode.
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @param  new_state: new state of the dma request.
   *         this parameter can be: TRUE or FALSE.
   * @retval none
@@ -495,7 +493,7 @@ void spi_i2s_dma_transmitter_enable(spi_type* spi_x, confirm_state new_state)
   * @brief  enable or disable the spi/i2s dma receiver mode.
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @param  new_state: new state of the dma request.
   *         this parameter can be: TRUE or FALSE.
   * @retval none
@@ -509,7 +507,7 @@ void spi_i2s_dma_receiver_enable(spi_type* spi_x, confirm_state new_state)
   * @brief  spi/i2s data transmit
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @param  tx_data: the data to be transmit.
   *         this parameter can be:
   *         - (0x0000~0xFFFF)
@@ -524,7 +522,7 @@ void spi_i2s_data_transmit(spi_type* spi_x, uint16_t tx_data)
   * @brief  spi/i2s data receive
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @retval the received data value
   */
 uint16_t spi_i2s_data_receive(spi_type* spi_x)
@@ -536,7 +534,7 @@ uint16_t spi_i2s_data_receive(spi_type* spi_x)
   * @brief  get flag of the specified spi/i2s peripheral.
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @param  spi_i2s_flag: select the spi/i2s flag
   *         this parameter can be one of the following values:
   *         - SPI_I2S_RDBF_FLAG
@@ -564,10 +562,73 @@ flag_status spi_i2s_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
 }
 
 /**
+  * @brief  get interrupt flag of the specified spi/i2s peripheral.
+  * @param  spi_x: select the spi/i2s peripheral.
+  *         this parameter can be one of the following values:
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
+  * @param  spi_i2s_flag: select the spi/i2s flag
+  *         this parameter can be one of the following values:
+  *         - SPI_I2S_RDBF_FLAG
+  *         - SPI_I2S_TDBE_FLAG
+  *         - I2S_TUERR_FLAG  (this flag only use in i2s mode)
+  *         - SPI_CCERR_FLAG  (this flag only use in spi mode)
+  *         - SPI_MMERR_FLAG  (this flag only use in spi mode)
+  *         - SPI_I2S_ROERR_FLAG
+  * @retval the new state of spi/i2s flag
+  */
+flag_status spi_i2s_interrupt_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
+{
+  flag_status status = RESET;
+
+  switch(spi_i2s_flag)
+  {
+    case SPI_I2S_RDBF_FLAG:
+      if(spi_x->sts_bit.rdbf && spi_x->ctrl2_bit.rdbfie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_I2S_TDBE_FLAG:
+      if(spi_x->sts_bit.tdbe && spi_x->ctrl2_bit.tdbeie)
+      {
+        status = SET;
+      }
+      break;
+    case I2S_TUERR_FLAG:
+      if(spi_x->sts_bit.tuerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_CCERR_FLAG:
+      if(spi_x->sts_bit.ccerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_MMERR_FLAG:
+      if(spi_x->sts_bit.mmerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    case SPI_I2S_ROERR_FLAG:
+      if(spi_x->sts_bit.roerr && spi_x->ctrl2_bit.errie)
+      {
+        status = SET;
+      }
+      break;
+    default:
+      break;
+  };
+  return status;
+}
+
+/**
   * @brief  clear flag of the specified spi/i2s peripheral.
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3 ,SPI4
+  *         SPI1, SPI2, SPI3 ,SPI4, I2S2EXT, I2S3EXT
   * @param  spi_i2s_flag: select the spi/i2s flag
   *         this parameter can be one of the following values:
   *         - SPI_CCERR_FLAG
@@ -583,23 +644,21 @@ flag_status spi_i2s_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
   */
 void spi_i2s_flag_clear(spi_type* spi_x, uint32_t spi_i2s_flag)
 {
-  volatile uint32_t temp = 0;
-  temp = temp;
   if(spi_i2s_flag == SPI_CCERR_FLAG)
     spi_x->sts = ~SPI_CCERR_FLAG;
   else if(spi_i2s_flag == SPI_I2S_RDBF_FLAG)
-    temp = REG32(&spi_x->dt);
+    UNUSED(spi_x->dt);
   else if(spi_i2s_flag == I2S_TUERR_FLAG)
-    temp = REG32(&spi_x->sts);
+    UNUSED(spi_x->sts);
   else if(spi_i2s_flag == SPI_MMERR_FLAG)
   {
-    temp = REG32(&spi_x->sts);
+    UNUSED(spi_x->sts);
     spi_x->ctrl1 = spi_x->ctrl1;
   }
   else if(spi_i2s_flag == SPI_I2S_ROERR_FLAG)
   {
-    temp = REG32(&spi_x->dt);
-    temp = REG32(&spi_x->sts);
+    UNUSED(spi_x->dt);
+    UNUSED(spi_x->sts);
   }
 }
 

@@ -27,10 +27,12 @@
 // #define ETH_RX_DUMP
 
 #define MAX_ADDR_LEN        6
+#define DETECT_THREAD_PRIORITY         RT_THREAD_PRIORITY_MAX - 2
+#define DETECT_THREAD_STACK_SIZE       4096
 
 struct _dw_eth
 {
-    rt_uint32_t *base;
+    rt_ubase_t base;
     rt_uint32_t irq;
 
     struct eth_device parent;               /* inherit from ethernet device */
@@ -53,20 +55,20 @@ static uint8_t RecvDataBuf[GMAC_BUF_LEN];
 static void cvi_ephy_id_init(void)
 {
     // set rg_ephy_apb_rw_sel 0x0804@[0]=1/APB by using APB interface
-    mmio_write_32(0x03009804, 0x0001);
+    mmio_write_32(ETH_PHY_BASE + 0x804, 0x0001);
 
     // Release 0x0800[0]=0/shutdown
-    mmio_write_32(0x03009800, 0x0900);
+    mmio_write_32(ETH_PHY_BASE + 0x800, 0x0900);
 
     // Release 0x0800[2]=1/dig_rst_n, Let mii_reg can be accessabile
-    mmio_write_32(0x03009800, 0x0904);
+    mmio_write_32(ETH_PHY_BASE + 0x800, 0x0904);
 
     // PHY_ID
-    mmio_write_32(0x03009008, 0x0043);
-    mmio_write_32(0x0300900c, 0x5649);
+    mmio_write_32(ETH_PHY_BASE + 0x008, 0x0043);
+    mmio_write_32(ETH_PHY_BASE + 0x00c, 0x5649);
 
     // switch to MDIO control by ETH_MAC
-    mmio_write_32(0x03009804, 0x0000);
+    mmio_write_32(ETH_PHY_BASE + 0x804, 0x0000);
 }
 
 static int cvi_eth_mac_phy_enable(uint32_t enable)
@@ -109,7 +111,7 @@ static int cvi_eth_mac_phy_enable(uint32_t enable)
     }
 
     /* set mac address */
-    memcpy(addr.b, g_mac_addr, sizeof(g_mac_addr));
+    rt_memcpy(addr.b, g_mac_addr, sizeof(g_mac_addr));
     ret = cvi_eth_mac_set_macaddr(g_mac_handle, &addr);
     if (ret != 0)
     {
@@ -174,6 +176,36 @@ static void dw_gmac_handler_irq(int vector, void *param)
     }
 }
 
+static void phy_link_detect(void *param)
+{
+    int link_status = -1;
+    int link_status_old = -1;
+    int ret = -1;
+
+    while (1)
+    {
+        link_status = eth_phy_update_link(g_phy_handle);
+        LOG_D("eth link status: %d", link_status);
+
+        if (link_status_old != link_status)
+        {
+            if (link_status == 0)
+            {
+                LOG_I("eth link up");
+                eth_device_linkchange(&(dw_eth_device.parent), RT_TRUE);
+            }
+            else
+            {
+                LOG_I("eth link down");
+                eth_device_linkchange(&(dw_eth_device.parent), RT_FALSE);
+            }
+
+            link_status_old = link_status;
+        }
+        rt_thread_delay(RT_TICK_PER_SECOND);
+    }
+}
+
 static rt_err_t rt_dw_eth_init(rt_device_t dev)
 {
     struct _dw_eth *dw_eth;
@@ -209,8 +241,23 @@ static rt_err_t rt_dw_eth_init(rt_device_t dev)
     rt_hw_interrupt_install(dw_eth->irq, dw_gmac_handler_irq, g_mac_handle, "e0");
     rt_hw_interrupt_umask(dw_eth->irq);
 
-    /* change device link status */
-    eth_device_linkchange(&(dw_eth_device.parent), RT_TRUE);
+    LOG_D("PHY MAC init success");
+
+    rt_thread_t link_detect;
+    link_detect = rt_thread_create("link_detect",
+                            phy_link_detect,
+                            (void *)&dw_eth_device,
+                            DETECT_THREAD_STACK_SIZE,
+                            DETECT_THREAD_PRIORITY,
+                            2);
+    if (link_detect != RT_NULL)
+    {
+        rt_thread_startup(link_detect);
+    }
+    else
+    {
+        return -RT_ERROR;
+    }
 
     return RT_EOK;
 }
@@ -275,7 +322,7 @@ struct pbuf* rt_dw_eth_rx(rt_device_t dev)
     uint32_t i = 0;
 
     int32_t len = cvi_eth_mac_read_frame(g_mac_handle, RecvDataBuf, GMAC_BUF_LEN);
-    if((len <= 0) || (len > GMAC_BUF_LEN))
+    if ((len <= 0) || (len > GMAC_BUF_LEN))
     {
         return NULL;
     }
@@ -308,11 +355,11 @@ struct pbuf* rt_dw_eth_rx(rt_device_t dev)
         * actually received size. In this case, ensure the tot_len member of the
         * pbuf is the sum of the chained pbuf len members.
         */
-        memcpy((u8_t*)q->payload, (u8_t*)&RecvDataBuf[i], q->len);
+        rt_memcpy((u8_t*)q->payload, (u8_t*)&RecvDataBuf[i], q->len);
         i = i + q->len;
     }
 
-    if((i != p->tot_len) || (i > len))
+    if ((i != p->tot_len) || (i > len))
     {
         return NULL;
     }
@@ -348,14 +395,14 @@ rt_err_t rt_dw_eth_tx(rt_device_t dev, struct pbuf* p)
         variable. */
         MEMCPY((uint8_t *)&SendDataBuf[len], (uint8_t *)q->payload, q->len);
         len = len + q->len;
-        if((len > GMAC_BUF_LEN) || (len > p->tot_len))
+        if ((len > GMAC_BUF_LEN) || (len > p->tot_len))
         {
             LOG_E("rt_dw_eth_tx: error, len=%d, tot_len=%d", len, p->tot_len);
             return -RT_ERROR;
         }
     }
 
-    if(len == p->tot_len)
+    if (len == p->tot_len)
     {
         if (cvi_eth_mac_send_frame(g_mac_handle, SendDataBuf, len) < 0)
             ret = -RT_ERROR;
@@ -384,7 +431,7 @@ static int rthw_eth_init(void)
 {
     rt_err_t ret = RT_EOK;
 
-    dw_eth_device.base = (rt_uint32_t *)DW_MAC_BASE;
+    dw_eth_device.base = (rt_ubase_t)DW_MAC_BASE;
     dw_eth_device.irq = DW_MAC_IRQ;
 
     dw_eth_device.parent.parent.ops = &dw_eth_ops;
@@ -405,7 +452,6 @@ static int rthw_eth_init(void)
         LOG_E("eth_device_init failed: %d", ret);
         return ret;
     }
-
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rthw_eth_init);

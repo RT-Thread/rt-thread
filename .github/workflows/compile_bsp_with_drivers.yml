@@ -46,13 +46,12 @@ jobs:
       - name: Install Tools
         shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5 libncurses5-dev libncursesw5-dev scons
-          sudo python -m pip install --upgrade pip -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           git remote -v
           git fetch origin
-          python -c "import tools.menukconfig; tools.menukconfig.touch_env()"
 
       - name: Install Arm ToolChains
         if: ${{ success() }}
@@ -67,5 +66,5 @@ jobs:
         if: ${{ success() }}
         shell: bash
         run: |
-          source ~/.env/env.sh
-          #python tools/ci/compile_bsp_with_drivers.py
+          # source ~/.env/env.sh
+          # python tools/ci/compile_bsp_with_drivers.py

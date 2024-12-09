@@ -2,6 +2,7 @@
 ** ###################################################################
 **     Processors:          MCXA153VFM
 **                          MCXA153VFT
+**                          MCXA153VLF
 **                          MCXA153VLH
 **
 **     Compilers:           GNU C Compiler
@@ -11,7 +12,7 @@
 **
 **     Reference manual:    MCXA1 User manual
 **     Version:             rev. 1.0, 2022-03-29
-**     Build:               b230725
+**     Build:               b240403
 **
 **     Abstract:
 **         Provides a system configuration function and a global variable that
@@ -19,7 +20,7 @@
 **         the oscillator (PLL) that is part of the microcontroller device.
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2023 NXP
+**     Copyright 2016-2024 NXP
 **     SPDX-License-Identifier: BSD-3-Clause
 **
 **     http:                 www.nxp.com

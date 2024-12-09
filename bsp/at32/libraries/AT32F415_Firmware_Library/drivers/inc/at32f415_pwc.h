@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_pwc.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f415 pwc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -60,7 +58,7 @@ extern "C" {
 /**
   * @brief pwc wakeup pin num definition
   */
-#define PWC_WAKEUP_PIN_1                 ((uint32_t)0x00000100) /*!< standby wake-up pin1 */
+#define PWC_WAKEUP_PIN_1                 ((uint32_t)0x00000100) /*!< standby wake-up pin1(pa0) */
 
 /** @defgroup PWC_exported_types
   * @{

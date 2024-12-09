@@ -1,11 +1,6 @@
 name: Check Spelling
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'documentation/**'
   pull_request:
     branches:
       - master

@@ -30,8 +30,10 @@
 
 #include "sys/time.h"
 #include <rthw.h>
+#include <rtthread.h>
+#ifdef RT_USING_RTC
 #include <rtdevice.h>
-#include <drivers/rtc.h>
+#endif /* RT_USING_RTC */
 #include <sys/errno.h>
 #include <unistd.h>
 #ifdef RT_USING_SMART
@@ -68,8 +70,8 @@ static const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
 
-rt_align(RT_ALIGN_SIZE) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
-rt_align(RT_ALIGN_SIZE) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+rt_align(RT_ALIGN_SIZE) static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
+rt_align(RT_ALIGN_SIZE) static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 #ifndef __isleap
 static int __isleap(int year)
@@ -87,9 +89,9 @@ static void num2str(char *c, int i)
     c[1] = i % 10 + '0';
 }
 
+#ifdef RT_USING_RTC
 static rt_err_t _control_rtc(int cmd, void *arg)
 {
-#ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
     rt_err_t rst = -RT_ERROR;
 
@@ -113,11 +115,8 @@ static rt_err_t _control_rtc(int cmd, void *arg)
         return -RT_ENOSYS;
     }
     return rst;
-#else
-    LOG_W(_WARNING_NO_RTC);
-    return -RT_ENOSYS;
-#endif /* RT_USING_RTC */
 }
+#endif /* RT_USING_RTC */
 
 /* lightweight timezone and daylight saving time */
 #ifdef RT_LIBC_USING_LIGHT_TZ_DST
@@ -340,6 +339,7 @@ RTM_EXPORT(strftime); /* inherent in the toolchain */
  */
 rt_weak time_t time(time_t *t)
 {
+#ifdef RT_USING_RTC
     time_t _t;
 
     if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIME, &_t) != RT_EOK)
@@ -352,6 +352,10 @@ rt_weak time_t time(time_t *t)
         *t = _t;
 
     return _t;
+#else
+    rt_set_errno(EFAULT);
+    return (time_t)-1;
+#endif
 }
 RTM_EXPORT(time);
 
@@ -363,10 +367,12 @@ RTM_EXPORT(clock);
 
 int stime(const time_t *t)
 {
+#ifdef RT_USING_RTC
     if ((t != RT_NULL) && (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIME, (void *)t) == RT_EOK))
     {
         return 0;
     }
+#endif /* RT_USING_RTC */
 
     rt_set_errno(EFAULT);
     return -1;
@@ -475,6 +481,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 #endif /* RT_LIBC_USING_LIGHT_TZ_DST */
     }
 
+#ifdef RT_USING_RTC
     if (tv != RT_NULL)
     {
         tv->tv_sec  = 0;
@@ -492,6 +499,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
             }
         }
     }
+#endif /* RT_USING_RTC */
 
     rt_set_errno(EINVAL);
     return -1;
@@ -505,6 +513,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
      * The tz_dsttime field has never been used under Linux.
      * Thus, the following is purely of historic interest.
      */
+#ifdef RT_USING_RTC
     if (tv != RT_NULL && (long)tv->tv_usec >= 0 && (long)tv->tv_sec >= 0)
     {
         if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMEVAL, (void *)tv) == RT_EOK)
@@ -519,6 +528,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
             }
         }
     }
+#endif /* RT_USING_RTC */
 
     rt_set_errno(EINVAL);
     return -1;
@@ -594,7 +604,9 @@ int clock_getres(clockid_t clockid, struct timespec *res)
     {
         case CLOCK_REALTIME:  // use RTC
         case CLOCK_REALTIME_COARSE:
+#ifdef RT_USING_RTC
             return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMERES, res);
+#endif /* RT_USING_RTC */
 
         case CLOCK_MONOTONIC:  // use cputimer
         case CLOCK_MONOTONIC_COARSE:
@@ -625,7 +637,9 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     {
         case CLOCK_REALTIME:  // use RTC
         case CLOCK_REALTIME_COARSE:
+#ifdef RT_USING_RTC
             return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, tp);
+#endif /* RT_USING_RTC */
 
         case CLOCK_MONOTONIC:  // use boottime
         case CLOCK_MONOTONIC_COARSE:
@@ -666,9 +680,11 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     switch (clockid)
     {
         case CLOCK_REALTIME:  // use RTC
+#ifdef RT_USING_RTC
             if (flags & TIMER_ABSTIME)
                 err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
             break;
+#endif /* RT_USING_RTC */
 
         case CLOCK_MONOTONIC:  // use boottime
         case CLOCK_PROCESS_CPUTIME_ID:
@@ -717,8 +733,10 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 
     switch (clockid)
     {
+#ifdef RT_USING_RTC
         case CLOCK_REALTIME:
             return _control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMESPEC, (void *)tp);
+#endif /* RT_USING_RTC */
 
         case CLOCK_REALTIME_COARSE:
         case CLOCK_MONOTONIC:
@@ -783,7 +801,7 @@ RTM_EXPORT(rt_timespec_to_tick);
 struct timer_obj
 {
     struct rt_ktime_hrtimer hrtimer;
-    void (*sigev_notify_function)(union sigval val);
+    void (*sigev_notify_func)(union sigval val);
     union sigval val;
     struct timespec interval;              /* Reload value */
     struct timespec value;                 /* Reload value */
@@ -881,12 +899,11 @@ static void rtthread_timer_wrapper(void *timerobj)
                     rt_ktime_cputimer_getres();
     if (timer->reload)
     {
-        rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
-        rt_ktime_hrtimer_start(&timer->hrtimer);
+        rt_ktime_hrtimer_start(&timer->hrtimer, timer->reload);
     }
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
-    void *ptid = &timer->sigev_notify_function;
+    void *ptid = &timer->sigev_notify_func;
     int tid = *(int *)ptid;
     struct lwp_timer_event_param *data = rt_container_of(timer->work, struct lwp_timer_event_param, work);
     data->signo = timer->sigev_signo;
@@ -905,9 +922,9 @@ static void rtthread_timer_wrapper(void *timerobj)
     if (rt_work_submit(timer->work, 0))
         RT_ASSERT(0);
 #else
-    if(timer->sigev_notify_function != RT_NULL)
+    if(timer->sigev_notify_func != RT_NULL)
     {
-        (timer->sigev_notify_function)(timer->val);
+        (timer->sigev_notify_func)(timer->val);
     }
 #endif /* RT_USING_SMART */
 }
@@ -995,7 +1012,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 
     timer->work = work;
 #endif /* RT_USING_SMART */
-    timer->sigev_notify_function = evp->sigev_notify_function;
+    timer->sigev_notify_func = evp->sigev_notify_function;
     timer->val = evp->sigev_value;
     timer->interval.tv_sec = 0;
     timer->interval.tv_nsec = 0;
@@ -1003,7 +1020,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     timer->status = NOT_ACTIVE;
     timer->clockid = clockid;
 
-    rt_ktime_hrtimer_init(&timer->hrtimer, timername, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
+    rt_ktime_hrtimer_init(&timer->hrtimer, timername, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
                           rtthread_timer_wrapper, timer);
 
     _timerid = resource_id_get(&id_timer);
@@ -1182,11 +1199,13 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
 
     switch (timer->clockid)
     {
+#ifdef RT_USING_RTC
         case CLOCK_REALTIME:
         case CLOCK_REALTIME_ALARM:
             if (flags & TIMER_ABSTIME)
                 err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
             break;
+#endif /* RT_USING_RTC */
         case CLOCK_MONOTONIC:
         case CLOCK_BOOTTIME:
         case CLOCK_BOOTTIME_ALARM:
@@ -1226,8 +1245,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     else
         rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
 
-    rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
-    rt_ktime_hrtimer_start(&timer->hrtimer);
+    rt_ktime_hrtimer_start(&timer->hrtimer, timer->reload);
 
     return 0;
 }

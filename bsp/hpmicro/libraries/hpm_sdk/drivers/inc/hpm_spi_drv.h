@@ -144,6 +144,11 @@ typedef enum {
     spi_dummy_count_4
 } spi_dummy_count_t;
 
+typedef enum {
+    msb_first = 0,
+    lsb_first,
+} spi_shift_direction_t;
+
 /**
  * @brief spi master interface timing config structure
  */
@@ -255,7 +260,10 @@ typedef enum {
     sclk_pin,
     cs_pin
 } spi_directio_pin_t;
+
 #endif
+
+
 
 #if defined(__cplusplus)
 extern "C" {
@@ -676,7 +684,7 @@ static inline uint32_t spi_slave_get_received_data_count(SPI_Type *ptr)
  */
 static inline void spi_set_clock_phase(SPI_Type *ptr, spi_sclk_sampling_clk_edges_t clock_phase)
 {
-    ptr->TRANSCTRL |= SPI_TRANSFMT_CPHA_SET(clock_phase);
+    ptr->TRANSFMT = (ptr->TRANSFMT & ~SPI_TRANSFMT_CPHA_MASK) | SPI_TRANSFMT_CPHA_SET(clock_phase);
 }
 
 /**
@@ -687,7 +695,7 @@ static inline void spi_set_clock_phase(SPI_Type *ptr, spi_sclk_sampling_clk_edge
  */
 static inline spi_sclk_sampling_clk_edges_t spi_get_clock_phase(SPI_Type *ptr)
 {
-    return SPI_TRANSFMT_CPHA_GET(ptr->TRANSCTRL);
+    return (spi_sclk_sampling_clk_edges_t)SPI_TRANSFMT_CPHA_GET(ptr->TRANSFMT);
 }
 
 /**
@@ -698,7 +706,7 @@ static inline spi_sclk_sampling_clk_edges_t spi_get_clock_phase(SPI_Type *ptr)
  */
 static inline void spi_set_clock_polarity(SPI_Type *ptr, spi_sclk_idle_state_t clock_polarity)
 {
-    ptr->TRANSCTRL |= SPI_TRANSFMT_CPOL_SET(clock_polarity);
+    ptr->TRANSFMT = (ptr->TRANSFMT & ~SPI_TRANSFMT_CPOL_MASK) | SPI_TRANSFMT_CPOL_SET(clock_polarity);
 }
 
 /**
@@ -709,7 +717,7 @@ static inline void spi_set_clock_polarity(SPI_Type *ptr, spi_sclk_idle_state_t c
  */
 static inline spi_sclk_idle_state_t spi_get_clock_polarity(SPI_Type *ptr)
 {
-    return SPI_TRANSFMT_CPOL_GET(ptr->TRANSCTRL);
+    return (spi_sclk_idle_state_t)SPI_TRANSFMT_CPOL_GET(ptr->TRANSFMT);
 }
 
 /**
@@ -868,7 +876,7 @@ static inline uint8_t spi_get_directio_enable_status(SPI_Type *ptr)
  * @brief  Get valid data size in receive FIFO
  *
  * @param [in] ptr SPI base address
- * 
+ *
  * @return rx fifo valid data size
  */
 static inline uint8_t spi_get_rx_fifo_valid_data_size(SPI_Type *ptr)
@@ -880,13 +888,320 @@ static inline uint8_t spi_get_rx_fifo_valid_data_size(SPI_Type *ptr)
  * @brief  Get valid data size in transmit FIFO
  *
  * @param [in] ptr SPI base address
- * 
+ *
  * @return tx fifo valid data size
  */
 static inline uint8_t spi_get_tx_fifo_valid_data_size(SPI_Type *ptr)
 {
     return ((SPI_STATUS_TXNUM_7_6_GET(ptr->STATUS) << 5) | SPI_STATUS_TXNUM_5_0_GET(ptr->STATUS));
 }
+
+/**
+ * @brief  Get SPI RXFIFO size
+ *
+ * @param [in] ptr SPI base address
+ *
+ * @return RXFIFO size, the unit is word
+ */
+static inline uint8_t spi_get_rx_fifo_size(SPI_Type *ptr)
+{
+    uint8_t size = SPI_CONFIG_RXFIFOSIZE_GET(ptr->CONFIG);
+    return (2 << size);
+}
+
+/**
+ * @brief  Get SPI TXFIFO size
+ *
+ * @param [in] ptr SPI base address
+ *
+ * @return TXFIFO size, the unit is word
+ */
+static inline uint8_t spi_get_tx_fifo_size(SPI_Type *ptr)
+{
+    uint8_t size = SPI_CONFIG_TXFIFOSIZE_GET(ptr->CONFIG);
+    return (2 << size);
+}
+
+/**
+ * @brief SPI slave enable only date mode
+ *
+ * @note This mode only works in the uni-directional regular (single) mode
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_slave_enable_data_only(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL |= SPI_TRANSCTRL_SLVDATAONLY_MASK;
+}
+
+/**
+ * @brief SPI slave disable only date mode
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_slave_disable_data_only(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL &= ~SPI_TRANSCTRL_SLVDATAONLY_MASK;
+}
+
+/**
+ * @brief SPI master enable command phase
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_master_enable_command_phase(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL |= SPI_TRANSCTRL_CMDEN_MASK;
+}
+
+/**
+ * @brief SPI master disable command phase
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_master_disable_command_phase(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL &= ~SPI_TRANSCTRL_CMDEN_MASK;
+}
+
+/**
+ * @brief SPI master enable address phase
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_master_enable_address_phase(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL |= SPI_TRANSCTRL_ADDREN_MASK;
+}
+
+/**
+ * @brief SPI master disable address phase
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_master_disable_address_phase(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL &= ~SPI_TRANSCTRL_ADDREN_MASK;
+}
+
+/**
+ * @brief SPI master set address phase format
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] format spi_addr_phase_format_t enum
+ */
+static inline void spi_master_set_address_phase_format(SPI_Type *ptr, spi_addr_phase_format_t format)
+{
+    ptr->TRANSCTRL = (ptr->TRANSCTRL & ~SPI_TRANSCTRL_ADDRFMT_MASK) | SPI_TRANSCTRL_ADDRFMT_SET(format);
+}
+
+/**
+ * @brief SPI master set transfer mode
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] mode spi_trans_mode_t enum
+ */
+static inline void spi_set_transfer_mode(SPI_Type *ptr, spi_trans_mode_t mode)
+{
+    ptr->TRANSCTRL = (ptr->TRANSCTRL & ~SPI_TRANSCTRL_TRANSMODE_MASK) | SPI_TRANSCTRL_TRANSMODE_SET(mode);
+}
+
+/**
+ * @brief SPI master enable token transfer
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_master_enable_token_transfer(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL |= SPI_TRANSCTRL_TOKENEN_MASK;
+}
+
+/**
+ * @brief SPI master disable token transfer
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_master_disable_token_transfer(SPI_Type *ptr)
+{
+    ptr->TRANSCTRL &= ~SPI_TRANSCTRL_TOKENEN_MASK;
+}
+
+/**
+ * @brief SPI master set transfer count for write data
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] count the number of units of data to be transmitted to the SPI bus from the Data
+ */
+static inline void spi_set_write_data_count(SPI_Type *ptr, uint32_t count)
+{
+#if defined(HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT) && (HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT == 1)
+    ptr->WR_TRANS_CNT = (count - 1);
+#else
+    ptr->TRANSCTRL = (ptr->TRANSCTRL & ~SPI_TRANSCTRL_WRTRANCNT_MASK) | SPI_TRANSCTRL_WRTRANCNT_SET(count - 1);
+#endif
+}
+
+/**
+ * @brief SPI master set transfer count for read data
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] count  the number of units of data to be received from SPI bus and stored to the Data
+ */
+static inline void spi_set_read_data_count(SPI_Type *ptr, uint32_t count)
+{
+#if defined(HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT) && (HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT == 1)
+    ptr->RD_TRANS_CNT = (count - 1);
+#else
+    ptr->TRANSCTRL = (ptr->TRANSCTRL & ~SPI_TRANSCTRL_RDTRANCNT_MASK) | SPI_TRANSCTRL_RDTRANCNT_SET(count - 1);
+#endif
+}
+
+/**
+ * @brief SPI master set the value of the one-byte special token following the address phase for SPI read transfers
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] value spi_token_value_t enum
+ */
+static inline void spi_master_set_token_value(SPI_Type *ptr, spi_token_value_t value)
+{
+    ptr->TRANSCTRL = (ptr->TRANSCTRL & ~SPI_TRANSCTRL_TOKENVALUE_MASK) | SPI_TRANSCTRL_TOKENVALUE_SET(value);
+}
+
+/**
+ * @brief SPI master set dummy data count
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] count spi_dummy_count_t enum
+ */
+static inline void spi_set_dummy_count(SPI_Type *ptr, spi_dummy_count_t count)
+{
+    ptr->TRANSCTRL = (ptr->TRANSCTRL & ~SPI_TRANSCTRL_DUMMYCNT_MASK) | SPI_TRANSCTRL_DUMMYCNT_SET(count);
+}
+
+/**
+ * @brief SPI master set the minimum time between the edges of SPI CS and the edges of SCLK
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] duration spi_cs2sclk_duration_t enum
+ */
+static inline void spi_master_set_cs2sclk_timing(SPI_Type *ptr, spi_cs2sclk_duration_t duration)
+{
+    ptr->TIMING = (ptr->TIMING & ~SPI_TIMING_CS2SCLK_MASK) | SPI_TIMING_CS2SCLK_SET(duration);
+}
+
+/**
+ * @brief SPI master get the minimum time between the edges of SPI CS and the edges of SCLK
+ *
+ * @param [in] ptr SPI base address
+ * @retval spi_cs2sclk_duration_t enum
+ */
+static inline spi_cs2sclk_duration_t spi_master_get_cs2sclk_timing(SPI_Type *ptr)
+{
+    return (spi_cs2sclk_duration_t)SPI_TIMING_CS2SCLK_GET(ptr->TIMING);
+}
+
+/**
+ * @brief SPI master set the minimum time that SPI CS should stay HIGH.
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] duration spi_csht_duration_t enum
+ */
+static inline void spi_master_set_csht_timing(SPI_Type *ptr, spi_csht_duration_t duration)
+{
+    ptr->TIMING = (ptr->TIMING & ~SPI_TIMING_CSHT_MASK) | SPI_TIMING_CSHT_SET(duration);
+}
+
+/**
+ * @brief SPI master get the minimum time that SPI CS should stay HIGH.
+ *
+ * @param [in] ptr SPI base address
+ * @retval spi_csht_duration_t enum
+ */
+static inline spi_csht_duration_t spi_master_get_csht_timing(SPI_Type *ptr)
+{
+    return (spi_csht_duration_t)SPI_TIMING_CSHT_GET(ptr->TIMING);
+}
+
+/**
+ * @brief SPI master set the clock frequency ratio between the clock source and SPI SCLK
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] div the frequency ratio value
+ */
+static inline void spi_master_set_sclk_div(SPI_Type *ptr, uint8_t div)
+{
+    ptr->TIMING = (ptr->TIMING & ~SPI_TIMING_SCLK_DIV_MASK) | SPI_TIMING_SCLK_DIV_SET(div);
+}
+
+/**
+ * @brief SPI master get the clock frequency ratio between the clock source and SPI SCLK
+ *
+ * @param [in] ptr SPI base address
+ *
+ * @retval return the frequency ratio value
+ */
+static inline uint8_t spi_master_get_sclk_div(SPI_Type *ptr)
+{
+    return SPI_TIMING_SCLK_DIV_GET(ptr->TIMING);
+}
+
+/**
+ * @brief SPI slave set the user defined status flags
+ *
+ * @note in Non-SlvDataOnly, the command is read status command, such as 0x05\0x15\0x25 command
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] user_status user status value
+ */
+static inline void spi_slave_set_user_status(SPI_Type *ptr, uint16_t user_status)
+{
+    ptr->SLVST = (ptr->SLVST & ~SPI_SLVST_USR_STATUS_MASK) | SPI_SLVST_USR_STATUS_SET(user_status);
+}
+
+/**
+ * @brief SPI master set data phase format
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] format spi_data_phase_format_t enum
+ */
+static inline void spi_master_set_data_phase_format(SPI_Type *ptr, spi_data_phase_format_t format)
+{
+    ptr->TRANSCTRL = (ptr->TRANSCTRL & ~SPI_TRANSCTRL_DUALQUAD_MASK) | SPI_TRANSCTRL_DUALQUAD_SET(format);
+}
+
+/**
+ * @brief SPI master get data phase format
+ *
+ * @param [in] ptr SPI base address
+ *
+ * @retval return the data phase format
+ */
+static inline spi_data_phase_format_t spi_master_get_data_phase_format(SPI_Type *ptr)
+{
+    return (spi_data_phase_format_t)SPI_TRANSCTRL_DUALQUAD_GET(ptr->TRANSCTRL);
+}
+
+/**
+ * @brief set spi shift direction
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] shift_direction shift direction enum
+ */
+static inline void spi_set_shift_direction(SPI_Type *ptr, spi_shift_direction_t shift_direction)
+{
+    ptr->TRANSFMT = (ptr->TRANSFMT & ~SPI_TRANSFMT_LSB_MASK) | SPI_TRANSFMT_LSB_SET(shift_direction);
+}
+
+/**
+ * @brief get spi shift direction
+ *
+ * @param [in] ptr SPI base address
+ * @retval spi_shift_direction_t msb_first if frist MSB
+ */
+static inline spi_shift_direction_t spi_get_shift_direction(SPI_Type *ptr)
+{
+    return (spi_shift_direction_t)SPI_TRANSFMT_LSB_GET(ptr->TRANSFMT);
+}
+
 /**
  * @}
  */

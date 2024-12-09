@@ -1,0 +1,155 @@
+#
+# Copyright (c) 2006-2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-08-24     Supperthomas the first version
+#
+name:  manual_trigger_scons_build_all
+
+# 这个trigger用来触发python脚本，将所有bsp都编译一遍
+# 选项： update是更新所有bsp，但是不编译
+#       all   是更新所有bsp 然后执行所有bsp的编译， 执行scons命令
+# toolchain主要用来选择默认安装的toolchain
+
+on:
+  # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
+  schedule:
+    - cron:  '0 16 1 * *'
+
+  workflow_dispatch:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+    inputs:
+      bsp_options:
+        description: '选择update或者all'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - "update"
+          - "all"
+
+      bsp_tool_chain:
+        description: 'Choice 编译工具链'
+        required: false
+        default: 'sourcery-arm'
+        type: choice
+        options:
+          - "sourcery-arm"
+          - "llvm-arm"
+          - "sourcery-aarch64"
+          - "sourcery-mips"
+          - "sourcery-riscv-none-embed"
+          - "sourcery-riscv64-unknown-elf"
+          - "gcc"
+          - "sourcery-riscv32-esp32"
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: ${{ github.event.inputs.bsp_options }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+
+      - name: Install Tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
+          git config --global http.postBuffer 524288000
+          echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
+          echo "RTT_CC=gcc" >> $GITHUB_ENV
+
+      - name: Install Arm ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-arm' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+          sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+          /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+
+      - name: Install LLVM-Arm ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'llvm-arm' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
+          sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+          sudo apt-get -qq install libncurses5 libncurses5-dev libncursesw5-dev
+          /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
+          echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
+          echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
+          
+      - name: Install AArch64 ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-aarch64' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz
+          sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
+          /opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin/aarch64-none-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
+
+      - name: Install Mips ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-mips' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2
+          sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt
+          /opt/mips-2016.05/bin/mips-sde-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv64-unknown-elf ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-riscv64-unknown-elf' && success() }}
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+          sudo tar zxf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+          /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv-none-embed ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-riscv-none-embed' && success() }}
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+          sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+          /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
+          echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+
+      - name: Install riscv32-esp-elf ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-riscv32-esp32' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
+          pip3 install esptool
+          echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+      - name: Install GCC Tools
+        if: ${{ github.event.inputs.bsp_tool_chain == 'gcc' && success() }}
+        run: |
+          sudo apt-get -qq install libsdl2-dev
+
+      - name: Bsp Scons Compile
+        if: ${{ success() }}
+        shell: bash
+        env:
+          RTT_BSP: ${{ github.event.inputs.bsp_options }}
+          RTT_TOOL_CHAIN: ${{ github.event.inputs.bsp_tool_chain}}
+        run: |
+          source ~/.env/env.sh
+          python tools/ci/manual_bsp_build_all.py $RTT_BSP
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist_file
+          path: ${{ github.workspace }}/failed_bsp.log

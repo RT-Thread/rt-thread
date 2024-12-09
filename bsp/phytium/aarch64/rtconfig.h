@@ -10,7 +10,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -27,11 +26,12 @@
 
 /* klibc optimization */
 
-#define RT_KLIBC_USING_PRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
 /* end of klibc optimization */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -58,7 +58,6 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50200
-#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -68,6 +67,8 @@
 #define ARCH_RAM_OFFSET 0x80000000
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_HEAP_SIZE 0x4000000
+#define ARCH_INIT_PAGE_SIZE 0x200000
 /* end of AArch64 Architecture Configuration */
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
@@ -131,6 +132,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -158,13 +160,21 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
-#define RT_USING_DEV_BUS
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
 #define RT_USING_PIN
 #define RT_USING_KTIME
-
-/* Using USB */
-
-/* end of Using USB */
+#define RT_USING_CHERRYUSB
+#define RT_CHERRYUSB_HOST
+#define RT_CHERRYUSB_HOST_XHCI
+#define RT_CHERRYUSB_HOST_HID
+#define RT_CHERRYUSB_HOST_MSC
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -275,6 +285,10 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
+
+/* Using USB legacy version */
+
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
@@ -467,10 +481,7 @@
 #define RT_USING_UART0
 #define RT_USING_UART1
 #define BSP_USING_SPI
-#define RT_USING_SPIM0
-#define RT_USING_SPIM1
 #define RT_USING_SPIM2
-#define RT_USING_SPIM3
 #define BSP_USING_CAN
 #define RT_USING_CANFD
 #define RT_USING_CAN0
@@ -480,9 +491,7 @@
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM6
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO15
@@ -493,6 +502,7 @@
 #define USING_SDIF1
 #define USE_SDIF1_TF
 #define BSP_USING_DC
+#define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1
 /* end of On-chip Peripheral Drivers */
 
@@ -537,10 +547,6 @@
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_DEBUG
 /* end of Sdk common configuration */
-
-/* Image information configuration */
-
-/* end of Image information configuration */
 /* end of Standalone Setting */
 
 #endif

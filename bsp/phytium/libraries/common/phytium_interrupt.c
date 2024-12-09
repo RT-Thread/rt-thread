@@ -94,7 +94,6 @@ void phytium_interrupt_init(void)
     rt_uint64_t gic_cpu_base;
     rt_uint64_t gic_dist_base;
     rt_uint64_t gic_irq_start;
-    rt_uint64_t redist_addr;
 
     phytium_gic_table = (struct arm_gic *)arm_gic_get_gic_table_addr();
     /* initialize vector table */
@@ -106,44 +105,15 @@ void phytium_interrupt_init(void)
 #if defined(RT_USING_SMART)
     gic_dist_base = (rt_uint64_t)rt_ioremap((void *)platform_get_gic_dist_base(), 0x40000);
     gic_cpu_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_cpu_base(), 0x1000);
-    redist_addr = (rt_uint64_t)rt_ioremap(GICV3_RD_BASE_ADDR, 4 * GICV3_RD_OFFSET);
 #else
     gic_dist_base = platform_get_gic_dist_base();
     gic_cpu_base = platform_get_gic_cpu_base();
-    redist_addr = GICV3_RD_BASE_ADDR;
 #endif
 
     gic_irq_start = 0;
     arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
     arm_gic_cpu_init(0, gic_cpu_base);
-    arm_gic_redist_address_set(0, redist_addr + 2 * GICV3_RD_OFFSET, 0);
-
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-#if RT_CPUS_NR == 2
-    arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
-#elif RT_CPUS_NR == 3
-    arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr, 2);
-#elif RT_CPUS_NR == 4
-    arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr, 2);
-    arm_gic_redist_address_set(0, redist_addr + GICV3_RD_OFFSET, 3);
-#endif
-#else
-#if defined(TARGET_E2000D)
-    rt_uint32_t cpu_offset =  2;
-#endif
-#if RT_CPUS_NR == 2
-    arm_gic_redist_address_set(0, redist_addr + (1 + cpu_offset) * GICV3_RD_OFFSET, 1);
-#elif RT_CPUS_NR == 3
-    arm_gic_redist_address_set(0, redist_addr + (1 + cpu_offset) * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr + (2 + cpu_offset) * GICV3_RD_OFFSET, 2);
-#elif RT_CPUS_NR == 4
-    arm_gic_redist_address_set(0, redist_addr + (1 + cpu_offset) * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr + (2 + cpu_offset) * GICV3_RD_OFFSET, 2);
-    arm_gic_redist_address_set(0, redist_addr + (3 + cpu_offset) * GICV3_RD_OFFSET, 3);
-#endif
-#endif
+    arm_gic_redist_address_set(0, platform_get_gic_redist_base(), 0);
 
     phytium_aarch64_arm_gic_redist_init();
 }

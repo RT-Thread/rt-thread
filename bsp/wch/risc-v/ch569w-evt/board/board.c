@@ -8,7 +8,7 @@
  * 2022-07-15     Emuzit            first version
  */
 #include <rthw.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "board.h"
 #include "ch56x_pfic.h"
 #include "ch56x_uart.h"

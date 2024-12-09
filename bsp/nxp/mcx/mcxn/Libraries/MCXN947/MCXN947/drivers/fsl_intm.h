@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_INTM_H_
-#define _FSL_INTM_H_
+#ifndef FSL_INTM_H_
+#define FSL_INTM_H_
 
 #include "fsl_common.h"
 
@@ -20,10 +20,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief INTM driver version. */
 #define FSL_INTM_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
-/*@}*/
+/*! @} */
 
 /*! @brief Interrupt monitors. */
 typedef enum _intm_monitor
@@ -204,4 +204,4 @@ static inline bool INTM_GetStatusFlags(INTM_Type *base, intm_monitor_t intms)
 }
 
 /*! @} */
-#endif /* _FSL_INTM_H_*/
+#endif /* FSL_INTM_H_*/

@@ -6,15 +6,9 @@
 #ifndef CHERRYUSB_CONFIG_H
 #define CHERRYUSB_CONFIG_H
 
-#define CHERRYUSB_VERSION     0x010300
-#define CHERRYUSB_VERSION_STR "v1.3.0"
-
 /* ================ USB common Configuration ================ */
 
 #define CONFIG_USB_PRINTF(...) printf(__VA_ARGS__)
-
-#define usb_malloc(size) malloc(size)
-#define usb_free(ptr)    free(ptr)
 
 #ifndef CONFIG_USB_DBG_LEVEL
 #define CONFIG_USB_DBG_LEVEL USB_DBG_INFO
@@ -72,6 +66,10 @@
 #define CONFIG_USBDEV_MSC_VERSION_STRING "0.01"
 #endif
 
+/* move msc read & write from isr to while(1), you should call usbd_msc_polling in while(1) */
+// #define CONFIG_USBDEV_MSC_POLLING
+
+/* move msc read & write from isr to thread */
 // #define CONFIG_USBDEV_MSC_THREAD
 
 #ifndef CONFIG_USBDEV_MSC_PRIO
@@ -171,6 +169,17 @@
 /* This parameter affects usb performance, and depends on (TCP_WND)tcp eceive windows size,
  * you can change to 2K ~ 16K and must be larger than TCP RX windows size in order to avoid being overflow.
  */
+#ifndef CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE
+#define CONFIG_USBHOST_ASIX_ETH_MAX_RX_SIZE (2048)
+#endif
+/* Because lwip do not support multi pbuf at a time, so increasing this variable has no performance improvement */
+#ifndef CONFIG_USBHOST_ASIX_ETH_MAX_TX_SIZE
+#define CONFIG_USBHOST_ASIX_ETH_MAX_TX_SIZE (2048)
+#endif
+
+/* This parameter affects usb performance, and depends on (TCP_WND)tcp eceive windows size,
+ * you can change to 2K ~ 16K and must be larger than TCP RX windows size in order to avoid being overflow.
+ */
 #ifndef CONFIG_USBHOST_RTL8152_ETH_MAX_RX_SIZE
 #define CONFIG_USBHOST_RTL8152_ETH_MAX_RX_SIZE (2048)
 #endif
@@ -203,9 +212,13 @@
 //#define CONFIG_USBDEV_FSDEV_PMA_ACCESS 2 // maybe 1 or 2, many chips may have a difference
 
 /* ---------------- DWC2 Configuration ---------------- */
+/* (5 * number of control endpoints + 8) + ((largest USB packet used / 4) + 1 for
+ * status information) + (2 * number of OUT endpoints) + 1 for Global NAK
+ */
 // #define CONFIG_USB_DWC2_RXALL_FIFO_SIZE (1024 / 4)
+/* IN Endpoints Max packet Size / 4 */
 // #define CONFIG_USB_DWC2_TX0_FIFO_SIZE (64 / 4)
-// #define CONFIG_USB_DWC2_TX1_FIFO_SIZE (512 / 4)
+// #define CONFIG_USB_DWC2_TX1_FIFO_SIZE (1024 / 4)
 // #define CONFIG_USB_DWC2_TX2_FIFO_SIZE (64 / 4)
 // #define CONFIG_USB_DWC2_TX3_FIFO_SIZE (64 / 4)
 // #define CONFIG_USB_DWC2_TX4_FIFO_SIZE (0 / 4)
@@ -213,6 +226,8 @@
 // #define CONFIG_USB_DWC2_TX6_FIFO_SIZE (0 / 4)
 // #define CONFIG_USB_DWC2_TX7_FIFO_SIZE (0 / 4)
 // #define CONFIG_USB_DWC2_TX8_FIFO_SIZE (0 / 4)
+
+// #define CONFIG_USB_DWC2_DMA_ENABLE
 
 /* ---------------- MUSB Configuration ---------------- */
 // #define CONFIG_USB_MUSB_SUNXI
@@ -253,7 +268,7 @@
  * (largest USB packet used / 4) + 1 for status information + 1 transfer complete +
  * 1 location each for Bulk/Control endpoint for handling NAK/NYET scenario
  */
-// #define CONFIG_USB_DWC2_RX_FIFO_SIZE ((1012 - CONFIG_USB_DWC2_NPTX_FIFO_SIZE - CONFIG_USB_DWC2_PTX_FIFO_SIZE) / 4)
+// #define CONFIG_USB_DWC2_RX_FIFO_SIZE ((1012 - CONFIG_USB_DWC2_NPTX_FIFO_SIZE - CONFIG_USB_DWC2_PTX_FIFO_SIZE))
 
 /* ---------------- MUSB Configuration ---------------- */
 // #define CONFIG_USB_MUSB_SUNXI

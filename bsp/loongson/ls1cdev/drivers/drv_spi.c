@@ -10,11 +10,11 @@
  */
 
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include "drivers/dev_spi.h"
 #include <rthw.h>
 #include "drv_spi.h"
 #include "ls1c_public.h"
-#include "spi_msd.h"
+#include "dev_spi_msd.h"
 #include "dfs_fs.h"
 #include "../libraries/ls1c_pin.h"
 

@@ -366,6 +366,7 @@ uint16_t dma_data_number_get(dma_channel_type* dmax_channely);
 void dma_interrupt_enable(dma_channel_type* dmax_channely, uint32_t dma_int, confirm_state new_state);
 void dma_channel_enable(dma_channel_type* dmax_channely, confirm_state new_state);
 flag_status dma_flag_get(uint32_t dmax_flag);
+flag_status dma_interrupt_flag_get(uint32_t dmax_flag);
 void dma_flag_clear(uint32_t dmax_flag);
 void dma_default_para_init(dma_init_type* dma_init_struct);
 void dma_init(dma_channel_type* dmax_channely, dma_init_type* dma_init_struct);

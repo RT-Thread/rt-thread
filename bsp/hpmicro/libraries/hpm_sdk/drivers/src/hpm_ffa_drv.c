@@ -77,9 +77,13 @@ void ffa_start_fir(FFA_Type *ptr, fir_xfer_t *fir_xfer)
 
     uint32_t fir_misc = FFA_OP_FIR_MISC_FIR_COEF_TAPS_SET(fir_xfer->coef_taps);
     ptr->OP_REG0 = fir_misc;
-
+#if defined(HPM_IP_FEATURE_FFA_FP32) && HPM_IP_FEATURE_FFA_FP32
+    uint32_t fir_misc1 = FFA_OP_FIR_MISC1_OUTD_MEM_BLK_SET(0) | FFA_OP_FIR_MISC1_COEF_MEM_BLK_SET(0) |
+        FFA_OP_FIR_MISC1_IND_MEM_BLK_SET(1) | FFA_OP_FIR_MISC1_FIR_DATA_TAPS_SET(fir_xfer->input_taps);
+#else
     uint32_t fir_misc1 = FFA_OP_FIR_MISC1_OUTD_MEM_BLK_SET(0) | FFA_OP_FIR_MISC1_COEF_MEM_BLK_SET(1) |
         FFA_OP_FIR_MISC1_IND_MEM_BLK_SET(2) | FFA_OP_FIR_MISC1_FIR_DATA_TAPS_SET(fir_xfer->input_taps);
+#endif
 
     ptr->OP_REG1 = fir_misc1;
     ptr->OP_REG2 = 0xFFFFFFFFUL;

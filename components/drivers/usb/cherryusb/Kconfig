@@ -36,14 +36,26 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_at"
             config RT_CHERRYUSB_DEVICE_DWC2_GD
                 bool "dwc2_gd"
+            config RT_CHERRYUSB_DEVICE_DWC2_HC
+                bool "dwc2_hc"
             config RT_CHERRYUSB_DEVICE_DWC2_CUSTOM
                 bool "dwc2_custom"
-            config RT_CHERRYUSB_DEVICE_MUSB_STANDARD
-                bool "musb_standard"
+            config RT_CHERRYUSB_DEVICE_MUSB_ES
+                bool "musb_es"
             config RT_CHERRYUSB_DEVICE_MUSB_SUNXI
                 bool "musb_sunxi"
+            config RT_CHERRYUSB_DEVICE_MUSB_BK
+                bool "musb_bk"
             config RT_CHERRYUSB_DEVICE_MUSB_CUSTOM
                 bool "musb_custom"
+            config RT_CHERRYUSB_DEVICE_KINETIS_MCX
+                bool "kinetis_mcx"
+            config RT_CHERRYUSB_DEVICE_KINETIS_CUSTOM
+                bool "kinetis_custom"
+            config RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX
+                bool "chipidea_mcx"
+            config RT_CHERRYUSB_DEVICE_CHIPIDEA_CUSTOM
+                bool "chipidea_custom"
             config RT_CHERRYUSB_DEVICE_BL
                 bool "bouffalo"
             config RT_CHERRYUSB_DEVICE_CH32
@@ -103,7 +115,7 @@ if RT_USING_CHERRYUSB
 
         choice
             prompt "Select usb device template"
-            default RT_CHERRYUSB_DEVICE_TEMPLATE
+            default RT_CHERRYUSB_DEVICE_TEMPLATE_NONE
             config RT_CHERRYUSB_DEVICE_TEMPLATE_NONE
                 bool "none (Implement it yourself)"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
@@ -158,10 +170,12 @@ if RT_USING_CHERRYUSB
                 bool "ehci_hpm"
             config RT_CHERRYUSB_HOST_EHCI_AIC
                 bool "ehci_aic"
-            config RT_CHERRYUSB_HOST_EHCI_NUVOTON_NUC980
-                bool "ehci_nuvoton_nuc980"
-            config RT_CHERRYUSB_HOST_EHCI_NUVOTON_MA35D0
-                bool "ehci_nuvoton_ma35d0"
+            config RT_CHERRYUSB_HOST_EHCI_MCX
+                bool "ehci_mcx"
+            config RT_CHERRYUSB_HOST_EHCI_NUC980
+                bool "ehci_nuc980"
+            config RT_CHERRYUSB_HOST_EHCI_MA35D0
+                bool "ehci_ma35d0"
             config RT_CHERRYUSB_HOST_EHCI_CUSTOM
                 bool "ehci_custom"
             config RT_CHERRYUSB_HOST_DWC2_ST
@@ -170,16 +184,22 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_esp"
             config RT_CHERRYUSB_HOST_DWC2_CUSTOM
                 bool "dwc2_custom"
-            config RT_CHERRYUSB_HOST_MUSB_STANDARD
-                bool "musb_standard"
+            config RT_CHERRYUSB_HOST_MUSB_ES
+                bool "musb_es"
             config RT_CHERRYUSB_HOST_MUSB_SUNXI
                 bool "musb_sunxi"
+            config RT_CHERRYUSB_HOST_MUSB_BK
+                bool "musb_bk"
             config RT_CHERRYUSB_HOST_MUSB_CUSTOM
                 bool "musb_custom"
             config RT_CHERRYUSB_HOST_PUSB2
                 bool "pusb2"
             config RT_CHERRYUSB_HOST_XHCI
                 bool "xhci"
+            config RT_CHERRYUSB_HOST_KINETIS_MCX
+                bool "kinetis_mcx"
+            config RT_CHERRYUSB_HOST_KINETIS_CUSTOM
+                bool "kinetis_custom"
         endchoice
 
         config RT_CHERRYUSB_HOST_CDC_ACM
@@ -197,6 +217,7 @@ if RT_USING_CHERRYUSB
             prompt "Enable usb msc driver"
             default n
             select RT_USING_DFS
+            select RT_USING_DFS_ELMFAT
 
         config RT_CHERRYUSB_HOST_CDC_ECM
             bool
@@ -242,7 +263,7 @@ if RT_USING_CHERRYUSB
             prompt "Enable usb asix driver"
             select RT_USING_LWIP
             select RT_USING_LWIP212
-            select CONFIG_USBHOST_PLATFORM_CDC_ASIX
+            select CONFIG_USBHOST_PLATFORM_ASIX
             default n
 
         config RT_CHERRYUSB_HOST_RTL8152
@@ -250,7 +271,7 @@ if RT_USING_CHERRYUSB
             prompt "Enable usb rtl8152 driver"
             select RT_USING_LWIP
             select RT_USING_LWIP212
-            select CONFIG_USBHOST_PLATFORM_CDC_RTL8152
+            select CONFIG_USBHOST_PLATFORM_RTL8152
             default n
 
         config RT_CHERRYUSB_HOST_FTDI
@@ -285,10 +306,15 @@ if RT_USING_CHERRYUSB
         config CONFIG_USBHOST_PLATFORM_ASIX
             bool
 
-        config CONFIG_USBHOST_PLATFORM_RTL152
+        config CONFIG_USBHOST_PLATFORM_RTL8152
             bool
 
-        config CHERRYUSB_HOST_TEMPLATE
+        config RT_LWIP_PBUF_POOL_BUFSIZE
+            int "The size of each pbuf in the pbuf pool"
+            range 1500 2000
+            default 1600
+
+        config RT_CHERRYUSB_HOST_TEMPLATE
             bool
             prompt "Use usb host template"
             default n

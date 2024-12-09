@@ -16,7 +16,7 @@
 #define MAX_HANDLERS    32
 #define SVCMODE         0x13
 
-extern rt_uint32_t rt_interrupt_nest;
+extern rt_atomic_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
 struct rt_irq_desc irq_desc[MAX_HANDLERS];

@@ -90,6 +90,62 @@ static int cmd_free(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system);
 #endif /* RT_USING_HEAP */
+
+#if RT_CPUS_NR > 1
+static int cmd_bind(int argc, char **argv)
+{
+    rt_err_t result;
+    rt_ubase_t thread_id;
+    rt_ubase_t core_id;
+    rt_thread_t thread;
+    char *endptr;
+
+    if (argc != 3)
+    {
+        rt_kprintf("Usage: bind <thread_id> <core_id>\n");
+        return 0;
+    }
+
+    /* Parse thread_id */
+    thread_id = (rt_ubase_t)strtoul(argv[1], &endptr, 0);
+    if (*endptr != '\0')
+    {
+        rt_kprintf("Error: Invalid thread ID '%s'\n", argv[1]);
+        return 0;
+    }
+
+    /* Parse core_id */
+    core_id = (rt_uint8_t)strtoul(argv[2], &endptr, 0);
+    if (*endptr != '\0')
+    {
+        rt_kprintf("Error: Invalid core ID '%s'\n", argv[2]);
+        return 0;
+    }
+
+    thread = (rt_thread_t)thread_id;
+
+    if (rt_object_get_type(&thread->parent) != RT_Object_Class_Thread)
+    {
+        rt_kprintf("Error: Invalid thread ID %#lx\n", thread_id);
+        return 0;
+    }
+
+    result = rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)core_id);
+    if (result == RT_EOK)
+    {
+        rt_kprintf("Thread 0x%lx bound to core %d successfully\n",
+            thread_id, core_id);
+    }
+    else
+    {
+        rt_kprintf("Failed to bind thread 0x%lx to core %d\n",
+            thread_id, core_id);
+    }
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_bind, bind, Binding thread to core);
+#endif /* RT_CPUS_NR > 1 */
+
 #endif /* MSH_USING_BUILT_IN_COMMANDS */
 
 static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
@@ -501,6 +557,10 @@ int msh_exec(char *cmd, rt_size_t length)
      */
     if (_msh_exec_cmd(cmd, length, &cmd_ret) == 0)
     {
+        if(cmd_ret < 0)
+        {
+            rt_kprintf("%s: command failed %d.\n", cmd, cmd_ret);
+        }
         return cmd_ret;
     }
 #ifdef DFS_USING_POSIX
@@ -695,10 +755,10 @@ void msh_auto_complete_path(char *path)
                     }
                     else if (S_ISLNK(buffer.st_mode))
                     {
-                        DIR *dir = opendir(path);
-                        if (dir)
+                        DIR *link_dir = opendir(path);
+                        if (link_dir)
                         {
-                            closedir(dir);
+                            closedir(link_dir);
                             strcat(path, "/");
                         }
                     }

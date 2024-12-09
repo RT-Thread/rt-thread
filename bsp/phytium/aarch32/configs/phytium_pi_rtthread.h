@@ -10,7 +10,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -32,6 +31,7 @@
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -124,6 +124,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -150,13 +151,13 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
-#define RT_USING_DEV_BUS
 #define RT_USING_PIN
 #define RT_USING_KTIME
-
-/* Using USB */
-
-/* end of Using USB */
+#define RT_USING_CHERRYUSB
+#define RT_CHERRYUSB_HOST
+#define RT_CHERRYUSB_HOST_XHCI
+#define RT_CHERRYUSB_HOST_HID
+#define RT_CHERRYUSB_HOST_MSC
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -277,6 +278,10 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
+
+/* Using USB legacy version */
+
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
@@ -372,6 +377,10 @@
 /* STM32 HAL & SDK Drivers */
 
 /* end of STM32 HAL & SDK Drivers */
+
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
 
 /* Kendryte SDK */
 
@@ -474,15 +483,11 @@
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO0
 #define RT_USING_MIO1
 #define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIF1
-#define USE_SDIF1_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1
@@ -528,10 +533,6 @@
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER
 /* end of Sdk common configuration */
-
-/* Image information configuration */
-
-/* end of Image information configuration */
 /* end of Standalone Setting */
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,6 +41,6 @@ int rt_hw_plic_irq_disable(int irq_number);
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, const char *name);
-void handle_trap(rt_size_t xcause, rt_size_t xtval, rt_size_t xepc, struct rt_hw_stack_frame *sp);
+void handle_trap(rt_ubase_t xcause, rt_ubase_t xtval, rt_ubase_t xepc, struct rt_hw_stack_frame *sp);
 
 #endif

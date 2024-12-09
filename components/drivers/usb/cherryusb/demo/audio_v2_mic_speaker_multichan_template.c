@@ -196,7 +196,7 @@ uint8_t audio_v2_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -275,7 +275,7 @@ void usbd_audio_open(uint8_t busid, uint8_t intf)
 void usbd_audio_close(uint8_t busid, uint8_t intf)
 {
     if (intf == 1) {
-        rx_flag = 1;
+        rx_flag = 0;
         USB_LOG_RAW("CLOSE1\r\n");
     } else {
         tx_flag = 0;
@@ -346,7 +346,7 @@ struct audio_entity_info audio_entity_table[] = {
       .ep = AUDIO_IN_EP },
 };
 
-void audio_v2_init(uint8_t busid, uint32_t reg_base)
+void audio_v2_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, audio_v2_descriptor);
     usbd_add_interface(busid, usbd_audio_init_intf(busid, &intf0, 0x0200, audio_entity_table, 4));

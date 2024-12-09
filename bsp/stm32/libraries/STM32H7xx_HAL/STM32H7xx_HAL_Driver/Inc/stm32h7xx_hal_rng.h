@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -320,7 +319,7 @@ HAL_StatusTypeDef HAL_RNG_UnRegisterReadyDataCallback(RNG_HandleTypeDef *hrng);
   */
 HAL_StatusTypeDef HAL_RNG_GenerateRandomNumber(RNG_HandleTypeDef *hrng, uint32_t *random32bit);
 HAL_StatusTypeDef HAL_RNG_GenerateRandomNumber_IT(RNG_HandleTypeDef *hrng);
-uint32_t HAL_RNG_ReadLastRandomNumber(RNG_HandleTypeDef *hrng);
+uint32_t HAL_RNG_ReadLastRandomNumber(const RNG_HandleTypeDef *hrng);
 
 void HAL_RNG_IRQHandler(RNG_HandleTypeDef *hrng);
 void HAL_RNG_ErrorCallback(RNG_HandleTypeDef *hrng);
@@ -333,8 +332,8 @@ void HAL_RNG_ReadyDataCallback(RNG_HandleTypeDef *hrng, uint32_t random32bit);
 /** @defgroup RNG_Exported_Functions_Group3 Peripheral State functions
   * @{
   */
-HAL_RNG_StateTypeDef HAL_RNG_GetState(RNG_HandleTypeDef *hrng);
-uint32_t             HAL_RNG_GetError(RNG_HandleTypeDef *hrng);
+HAL_RNG_StateTypeDef HAL_RNG_GetState(const RNG_HandleTypeDef *hrng);
+uint32_t             HAL_RNG_GetError(const RNG_HandleTypeDef *hrng);
 /**
   * @}
   */
@@ -392,4 +391,3 @@ HAL_StatusTypeDef RNG_RecoverSeedError(RNG_HandleTypeDef *hrng);
 
 #endif /* STM32H7xx_HAL_RNG_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

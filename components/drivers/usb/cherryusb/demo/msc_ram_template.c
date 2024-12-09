@@ -94,7 +94,7 @@ const uint8_t msc_ram_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -154,12 +154,19 @@ int usbd_msc_sector_write(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *
     return 0;
 }
 
-struct usbd_interface intf0;
+static struct usbd_interface intf0;
 
-void msc_ram_init(uint8_t busid, uint32_t reg_base)
+void msc_ram_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, msc_ram_descriptor);
     usbd_add_interface(busid, usbd_msc_init_intf(busid, &intf0, MSC_OUT_EP, MSC_IN_EP));
 
     usbd_initialize(busid, reg_base, usbd_event_handler);
 }
+
+#if defined(CONFIG_USBDEV_MSC_POLLING)
+void msc_ram_polling(uint8_t busid)
+{
+    usbd_msc_polling(busid);
+}
+#endif

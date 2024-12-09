@@ -962,6 +962,7 @@ can_error_record_type can_error_type_record_get(can_type* can_x);
 uint8_t can_receive_error_counter_get(can_type* can_x);
 uint8_t can_transmit_error_counter_get(can_type* can_x);
 void can_interrupt_enable(can_type* can_x, uint32_t can_int, confirm_state new_state);
+flag_status can_interrupt_flag_get(can_type* can_x, uint32_t can_flag);
 flag_status can_flag_get(can_type* can_x, uint32_t can_flag);
 void can_flag_clear(can_type* can_x, uint32_t can_flag);
 

@@ -775,7 +775,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
   switch(channel)
   {
     case TMR_SELECT_CHANNEL_1:
-      tmr_x->cctrl_bit.c1en       = FALSE;
+    tmr_x->cctrl_bit.c1en       = FALSE;
       tmr_x->cctrl_bit.c1p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c1cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm1_input_bit.c1c    = input_struct->input_mapped_select;
@@ -785,7 +785,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_2:
-      tmr_x->cctrl_bit.c2en       = FALSE;
+    tmr_x->cctrl_bit.c2en       = FALSE;
       tmr_x->cctrl_bit.c2p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c2cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm1_input_bit.c2c    = input_struct->input_mapped_select;
@@ -795,7 +795,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_3:
-      tmr_x->cctrl_bit.c3en       = FALSE;
+    tmr_x->cctrl_bit.c3en       = FALSE;
       tmr_x->cctrl_bit.c3p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cctrl_bit.c3cp       = (input_struct->input_polarity_select & 0x2) >> 1;
       tmr_x->cm2_input_bit.c3c    = input_struct->input_mapped_select;
@@ -805,7 +805,7 @@ void tmr_input_channel_init(tmr_type *tmr_x, tmr_input_config_type *input_struct
       break;
 
     case TMR_SELECT_CHANNEL_4:
-      tmr_x->cctrl_bit.c4en       = FALSE;
+    tmr_x->cctrl_bit.c4en       = FALSE;
       tmr_x->cctrl_bit.c4p        = (uint32_t)input_struct->input_polarity_select;
       tmr_x->cm2_input_bit.c4c    = input_struct->input_mapped_select;
       tmr_x->cm2_input_bit.c4df   = input_struct->input_filter_value;
@@ -1278,10 +1278,45 @@ void tmr_interrupt_enable(tmr_type *tmr_x, uint32_t tmr_interrupt, confirm_state
 }
 
 /**
+  * @brief  get tmr interrupt flag
+  * @param  tmr_x: select the tmr peripheral.
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR2, TMR3, TMR6, TMR7, TMR13, TMR14, TMR15,
+  *         TMR16, TMR17
+  * @param  tmr_flag
+  *         this parameter can be one of the following values:
+  *         - TMR_OVF_FLAG
+  *         - TMR_C1_FLAG
+  *         - TMR_C2_FLAG
+  *         - TMR_C3_FLAG
+  *         - TMR_C4_FLAG
+  *         - TMR_HALL_FLAG
+  *         - TMR_TRIGGER_FLAG
+  *         - TMR_BRK_FLAG
+  * @retval state of tmr interrupt flag
+  */
+flag_status tmr_interrupt_flag_get(tmr_type *tmr_x, uint32_t tmr_flag)
+{
+  flag_status status = RESET;
+
+  if((tmr_x->ists & tmr_flag) && (tmr_x->iden & tmr_flag))
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+
+  return status;
+}
+
+/**
   * @brief  get tmr flag
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
-  *         TMR1, TMR2, TMR3, TMR6, TMR7, TMR13, TMR14, TMR15, TMR16, TMR17
+  *         TMR1, TMR2, TMR3, TMR6, TMR7, TMR13, TMR14, TMR15,
+  *         TMR16, TMR17
   * @param  tmr_flag
   *         this parameter can be one of the following values:
   *         - TMR_OVF_FLAG
@@ -1317,7 +1352,9 @@ flag_status tmr_flag_get(tmr_type *tmr_x, uint32_t tmr_flag)
 /**
   * @brief  clear tmr flag
   * @param  tmr_x: select the tmr peripheral.
-  *         TMR1, TMR2, TMR3, TMR6, TMR7, TMR13, TMR14, TMR15, TMR16, TMR17
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR2, TMR3, TMR6, TMR7, TMR13, TMR14, TMR15,
+  *         TMR16, TMR17
   * @param  tmr_flag
   *         this parameter can be any combination of the following values:
   *         - TMR_OVF_FLAG
@@ -1343,7 +1380,8 @@ void tmr_flag_clear(tmr_type *tmr_x, uint32_t tmr_flag)
   * @brief  generate tmr event
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
-  *         TMR1, TMR2, TMR3, TMR6, TMR7, TMR13, TMR14, TMR15, TMR16, TMR17
+  *         TMR1, TMR2, TMR3, TMR6, TMR7, TMR13, TMR14, TMR15,
+  *         TMR16, TMR17
   * @param  tmr_event
   *         this parameter can be one of the following values:
   *         - TMR_OVERFLOW_SWTRIG
@@ -1656,7 +1694,7 @@ void tmr_dma_control_config(tmr_type *tmr_x, tmr_dma_transfer_length_type dma_le
 }
 
 /**
-  * @brief  config tmr break mode and dead-time
+  * @brief  config tmr brake mode and dead-time
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR15, TMR16, TMR17
@@ -1673,6 +1711,19 @@ void tmr_brkdt_config(tmr_type *tmr_x, tmr_brkdt_config_type *brkdt_struct)
   tmr_x->brk_bit.brkv = brkdt_struct->brk_polarity;
   tmr_x->brk_bit.aoen = brkdt_struct->auto_output_enable;
   tmr_x->brk_bit.wpc = brkdt_struct->wp_level;
+}
+
+/**
+  * @brief  set tmr break input filter value
+  * @param  tmr_x: select the tmr peripheral.
+  *         this parameter can be one of the following values:
+  *         TMR1, TMR15, TMR16, TMR17
+  * @param  filter_value (0x0~0xf)
+  * @retval none
+  */
+void tmr_brk_filter_value_set(tmr_type *tmr_x, uint8_t filter_value)
+{
+  tmr_x->brk_bit.bkf = filter_value;
 }
 
 /**

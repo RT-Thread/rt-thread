@@ -135,6 +135,64 @@ flag_status crm_flag_get(uint32_t flag)
 }
 
 /**
+  * @brief  get crm interrupt flag status
+  * @param  flag
+  *         this parameter can be one of the following values:
+  *         - CRM_LICK_READY_INT_FLAG
+  *         - CRM_LEXT_READY_INT_FLAG
+  *         - CRM_HICK_READY_INT_FLAG
+  *         - CRM_HEXT_READY_INT_FLAG
+  *         - CRM_PLL_READY_INT_FLAG
+  *         - CRM_CLOCK_FAILURE_INT_FLAG
+  * @retval flag_status (SET or RESET)
+  */
+flag_status crm_interrupt_flag_get(uint32_t flag)
+{
+  flag_status status = RESET;
+  switch(flag)
+  {
+    case CRM_LICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.lickstblf && CRM->clkint_bit.lickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_LEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.lextstblf && CRM->clkint_bit.lextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.hickstblf && CRM->clkint_bit.hickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.hextstblf && CRM->clkint_bit.hextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_PLL_READY_INT_FLAG:
+      if(CRM->clkint_bit.pllstblf && CRM->clkint_bit.pllstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_CLOCK_FAILURE_INT_FLAG:
+      if(CRM->clkint_bit.cfdf && CRM->ctrl_bit.cfden)
+      {
+        status = SET;
+      }
+      break;
+  }
+
+  return status;
+}
+
+/**
   * @brief  wait for hext stable
   * @param  none
   * @retval error_status (ERROR or SUCCESS)

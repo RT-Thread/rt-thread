@@ -1,0 +1,273 @@
+menu "Hardware Drivers Config"
+
+config SOC_AT32M416CBT7
+    bool
+    select SOC_SERIES_AT32M416
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SERIAL
+        bool "Enable USART (uart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LEXT
+
+                config BSP_RTC_USING_LEXT
+                    bool "RTC USING LEXT"
+
+                config BSP_RTC_USING_LICK
+                    bool "RTC USING LICK"
+            endchoice
+        endif
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            menuconfig BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_USING_DMA
+                        bool "Enable UART1 RX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
+
+                    config BSP_UART1_TX_USING_DMA
+                        bool "Enable UART1 TX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
+
+                    config BSP_UART1_RX_BUFSIZE
+                        int "Set UART1 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART1_TX_BUFSIZE
+                        int "Set UART1 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+
+            menuconfig BSP_USING_UART2
+                bool "Enable UART2"
+                default y
+                if BSP_USING_UART2
+                    config BSP_UART2_RX_USING_DMA
+                        bool "Enable UART2 RX DMA"
+                        depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                        default n
+
+                    config BSP_UART2_TX_USING_DMA
+                        bool "Enable UART2 TX DMA"
+                        depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                        default n
+
+                    config BSP_UART2_RX_BUFSIZE
+                        int "Set UART2 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART2_TX_BUFSIZE
+                        int "Set UART2 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM1
+            bool "Enable timer1 output pwm"
+            default n
+            if BSP_USING_PWM1
+                config BSP_USING_PWM1_CH1
+                    bool "Enable PWM1 channel1"
+                    default n
+
+                config BSP_USING_PWM1_CH4
+                    bool "Enable PWM1 channel4"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+        config BSP_USING_HWTMR3
+            bool "Enable hardware timer3"
+            default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 BUS"
+                if BSP_USING_I2C1
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 scl pin number"
+                        range 0 63
+                        default 22
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 0 63
+                        default 23
+                endif
+            config BSP_USING_I2C2
+                bool "Enable I2C2 BUS"
+                if BSP_USING_I2C2
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 scl pin number"
+                        range 0 63
+                        default 26
+                    config BSP_I2C2_SDA_PIN
+                        int "I2C2 sda pin number"
+                        range 0 63
+                        default 27
+                endif
+        endif
+
+    menuconfig BSP_USING_HARD_I2C
+        bool "Enable I2C BUS (hardware driver)"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_HARD_I2C
+            config BSP_USING_HARD_I2C1
+                bool "Enable I2C1 BUS"
+                default n
+
+            config BSP_I2C1_TX_USING_DMA
+                bool "Enable I2C1 TX DMA"
+                depends on BSP_USING_HARD_I2C1
+                default n
+
+            config BSP_I2C1_RX_USING_DMA
+                bool "Enable I2C1 RX DMA"
+                depends on BSP_USING_HARD_I2C1
+                select BSP_I2C1_TX_USING_DMA
+                default n
+
+            config BSP_USING_HARD_I2C2
+                bool "Enable I2C2 BUS"
+                default n
+
+            config BSP_I2C2_TX_USING_DMA
+                bool "Enable I2C2 TX DMA"
+                depends on BSP_USING_HARD_I2C2
+                default n
+
+            config BSP_I2C2_RX_USING_DMA
+                bool "Enable I2C2 RX DMA"
+                depends on BSP_USING_HARD_I2C2
+                select BSP_I2C2_TX_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_CAN_V2
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN_V2
+            config BSP_USING_CAN1
+                bool "using CAN1"
+                default n
+        endif
+endmenu
+
+endmenu

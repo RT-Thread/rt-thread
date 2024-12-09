@@ -29,7 +29,6 @@ documentation/html
 *.su
 #source insight 4 project files
 *.si4project
-tools/kconfig-frontends/kconfig-mconf
 packages
 dist
 rt-studio-project
@@ -51,3 +50,11 @@ tags
 CMakeLists.txt
 cmake-build-debug
 *.mk
+
+# vDSO
+vdso_sys.os
+vdso.lds
+
+# cherryusb libraries
+!components/drivers/usb/cherryusb/port/pusb2/*.a
+!components/drivers/usb/cherryusb/port/xhci/phytium/*.a

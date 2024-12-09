@@ -1,5 +1,17 @@
 /*
- * Copyright (C) 2019-2020 AlibabaGroup Holding Limited
+ * Copyright (C) Cvitek Co., Ltd. 2019-2020. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 /******************************************************************************
  * @file     phy.h
@@ -16,6 +28,7 @@ extern "C" {
 
 #include <stdint.h>
 #include "mmio.h"
+#include "drv_ioremap.h"
 
 /**
 \brief Ethernet link speed
@@ -188,8 +201,8 @@ typedef enum eth_link_state
 /* 1000BASE-T Control register */
 #define CVI_ADVERTISE_1000FULL      0x0200  /* Advertise 1000BASE-T full duplex */
 #define CVI_ADVERTISE_1000HALF      0x0100  /* Advertise 1000BASE-T half duplex */
-#define CTL1000_AS_MASTER       0x0800
-#define CTL1000_ENABLE_MASTER   0x1000
+#define CTL1000_AS_MASTER           0x0800
+#define CTL1000_ENABLE_MASTER       0x1000
 
 /* 1000BASE-T Status register */
 #define CVI_LPA_1000LOCALRXOK   0x2000  /* Link partner local receiver status */
@@ -198,8 +211,8 @@ typedef enum eth_link_state
 #define CVI_LPA_1000HALF        0x0400  /* Link partner 1000BASE-T half duplex */
 
 /* Flow control flags */
-#define CVI_FLOW_CTRL_TX    0x01
-#define CVI_FLOW_CTRL_RX    0x02
+#define CVI_FLOW_CTRL_TX        0x01
+#define CVI_FLOW_CTRL_RX        0x02
 
 /* MMD Access Control register fields */
 #define CVI_MII_MMD_CTRL_DEVAD_MASK 0x1f    /* Mask MMD DEVAD*/
@@ -328,21 +341,21 @@ typedef struct {
     uint32_t features;
     int8_t name[20];
     /* config() should be called before calling start() */
-    int32_t (*config)(eth_phy_handle_t *phy_dev);
-    int32_t (*start)(eth_phy_handle_t *phy_dev);
-    int32_t (*stop)(eth_phy_handle_t *phy_dev);
-    int32_t (*loopback)(eth_phy_handle_t *phy_dev);
-    int32_t (*update_link)(eth_phy_handle_t *phy_dev);
+    int32_t (*config)(eth_phy_handle_t phy_dev);
+    int32_t (*start)(eth_phy_handle_t phy_dev);
+    int32_t (*stop)(eth_phy_handle_t phy_dev);
+    int32_t (*loopback)(eth_phy_handle_t phy_dev);
+    int32_t (*update_link)(eth_phy_handle_t phy_dev);
 } eth_phy_dev_t;
 
 /* ethernet phy config */
-#define ETH_PHY_BASE 0x03009000
-#define ETH_PHY_INIT_MASK 0xFFFFFFF9
-#define ETH_PHY_SHUTDOWN (1 << 1)
-#define ETH_PHY_POWERUP 0xFFFFFFFD
-#define ETH_PHY_RESET 0xFFFFFFFB
-#define ETH_PHY_RESET_N (1 << 2)
-#define ETH_PHY_LED_LOW_ACTIVE (1 << 3)
+#define ETH_PHY_BASE            (uintptr_t)DRV_IOREMAP((void *)0x03009000, 0x1000)
+#define ETH_PHY_INIT_MASK       0xFFFFFFF9
+#define ETH_PHY_SHUTDOWN        (1 << 1)
+#define ETH_PHY_POWERUP         0xFFFFFFFD
+#define ETH_PHY_RESET           0xFFFFFFFB
+#define ETH_PHY_RESET_N         (1 << 2)
+#define ETH_PHY_LED_LOW_ACTIVE  (1 << 3)
 
 int generic_phy_config_aneg(eth_phy_dev_t *dev);
 int generic_phy_restart_aneg(eth_phy_dev_t *dev);
@@ -359,40 +372,10 @@ int32_t eth_phy_update_link(eth_phy_handle_t handle);
 int32_t genphy_config(eth_phy_dev_t *phy_dev);
 int32_t genphy_update_link(eth_phy_dev_t *phy_dev);
 
-/*
- * ffs: find first bit set. This is defined the same way as
- * the libc and compiler builtin ffs routines, therefore
- * differs in spirit from the above ffz (man ffs).
- */
+int32_t cvi_eth_phy_power_control(eth_phy_handle_t handle, eth_power_state_t state);
 
-// static inline int32_t ffs(int32_t x)
-// {
-//  int32_t r = 1;
+eth_phy_handle_t cvi_eth_phy_init(csi_eth_phy_read_t  fn_read, csi_eth_phy_write_t fn_write);
 
-//  if (!x)
-//      return 0;
-//  if (!(x & 0xffff)) {
-//      x >>= 16;
-//      r += 16;
-//  }
-//  if (!(x & 0xff)) {
-//      x >>= 8;
-//      r += 8;
-//  }
-//  if (!(x & 0xf)) {
-//      x >>= 4;
-//      r += 4;
-//  }
-//  if (!(x & 3)) {
-//      x >>= 2;
-//      r += 2;
-//  }
-//  if (!(x & 1)) {
-//      x >>= 1;
-//      r += 1;
-//  }
-//  return r;
-// }
 
 #ifdef __cplusplus
 }

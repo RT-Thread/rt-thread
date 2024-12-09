@@ -22,10 +22,11 @@
 
 struct rt_ktime_hrtimer
 {
-    struct rt_object     parent; /**< inherit from rt_object */
-    rt_list_t            row;
+    rt_uint8_t           flag;                  /**< compatible to tick timer's flag */
+    char                 name[RT_NAME_MAX];
+    rt_list_t            node;
     void                *parameter;
-    unsigned long        init_cnt;
+    unsigned long        delay_cnt;
     unsigned long        timeout_cnt;
     rt_err_t             error;
     struct rt_completion completion;
@@ -113,22 +114,24 @@ unsigned long rt_ktime_hrtimer_getfrq(void);
 unsigned long rt_ktime_hrtimer_getcnt(void);
 
 /**
- * @brief set hrtimer timeout, when timeout, the timer callback will call timeout
+ * @brief set hrtimer interrupt timeout count (cnt), you should re-implemented it in hrtimer device driver
  *
  * @param cnt: hrtimer requires a timing cnt value
- * @param timeout: timeout callback
- * @param param: parameter
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt, void (*timeout)(void *param), void *param);
+rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt);
+
+/**
+ * @brief called in hrtimer device driver isr routinue, it will process the timeouts
+ */
+void     rt_ktime_hrtimer_process(void);
 
 void     rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
                                const char        *name,
-                               unsigned long      cnt,
                                rt_uint8_t         flag,
                                void (*timeout)(void *parameter),
                                void *parameter);
-rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer);
+rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, unsigned long cnt);
 rt_err_t rt_ktime_hrtimer_stop(rt_ktime_hrtimer_t timer);
 rt_err_t rt_ktime_hrtimer_control(rt_ktime_hrtimer_t timer, int cmd, void *arg);
 rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer);
@@ -143,6 +146,7 @@ rt_inline void rt_ktime_hrtimer_keep_errno(rt_ktime_hrtimer_t timer, rt_err_t er
 
 void rt_ktime_hrtimer_delay_init(struct rt_ktime_hrtimer *timer);
 void rt_ktime_hrtimer_delay_detach(struct rt_ktime_hrtimer *timer);
+void rt_ktime_hrtimer_process(void);
 
 /**
  * @brief sleep by the cputimer cnt value

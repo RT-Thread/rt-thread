@@ -30,7 +30,11 @@
 #define DBG_LVL     DBG_WARNING
 #include <rtdbg.h>
 
-#define sig_mask(sig_no)    (1u << sig_no)
+#ifdef RT_USING_MUSLLIBC
+    #define sig_mask(sig_no)    (1u << (sig_no - 1))
+#else
+    #define sig_mask(sig_no)    (1u << sig_no)
+#endif
 #define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)
 
 static struct rt_spinlock _thread_signal_lock = RT_SPINLOCK_INIT;
@@ -72,9 +76,9 @@ static void _signal_entry(void *parameter)
     RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL;
 
 #ifdef RT_USING_SMP
-    rt_hw_context_switch_to((rt_base_t)&parameter, tid);
+    rt_hw_context_switch_to((rt_uintptr_t)&parameter, tid);
 #else
-    rt_hw_context_switch_to((rt_ubase_t)&(tid->sp));
+    rt_hw_context_switch_to((rt_uintptr_t)&(tid->sp));
 #endif /* RT_USING_SMP */
 }
 

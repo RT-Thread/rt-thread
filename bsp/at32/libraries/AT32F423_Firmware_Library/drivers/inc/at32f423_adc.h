@@ -646,7 +646,7 @@ typedef struct
   };
 
   /**
-  * @brief adc spt3 register, offset:0x10
+  * @brief adc spt3 register, offset:0x50
   */
   union
   {
@@ -666,7 +666,7 @@ typedef struct
   };
 
   /**
-  * @brief adc osq4 register, offset:0x34
+  * @brief adc osq4 register, offset:0x54
   */
   union
   {
@@ -684,7 +684,7 @@ typedef struct
   };
 
   /**
-  * @brief adc osq5 register, offset:0x34
+  * @brief adc osq5 register, offset:0x58
   */
   union
   {
@@ -702,7 +702,7 @@ typedef struct
   };
 
   /**
-  * @brief adc osq6 register, offset:0x34
+  * @brief adc osq6 register, offset:0x5c
   */
   union
   {
@@ -860,6 +860,7 @@ flag_status adc_preempt_software_trigger_status_get(adc_type *adc_x);
 uint16_t adc_ordinary_conversion_data_get(adc_type *adc_x);
 uint16_t adc_preempt_conversion_data_get(adc_type *adc_x, adc_preempt_channel_type adc_preempt_channel);
 flag_status adc_flag_get(adc_type *adc_x, uint8_t adc_flag);
+flag_status adc_interrupt_flag_get(adc_type *adc_x, uint8_t adc_flag);
 void adc_flag_clear(adc_type *adc_x, uint32_t adc_flag);
 void adc_ordinary_oversample_enable(adc_type *adc_x, confirm_state new_state);
 void adc_preempt_oversample_enable(adc_type *adc_x, confirm_state new_state);

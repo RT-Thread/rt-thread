@@ -29,10 +29,6 @@ if RT_USING_LWP
         int "The maximum number of channel messages"
         default 1024
 
-    config LWP_CONSOLE_INPUT_BUFFER_SIZE
-        int "The input buffer size of lwp console device"
-        default 1024
-
     config LWP_TID_MAX_NR
         int "The maximum number of lwp thread id"
         default 64
@@ -46,6 +42,12 @@ if RT_USING_LWP
         config RT_LWP_SHM_MAX_NR
             int "The maximum number of shared memory"
             default 64
+
+        config LWP_USING_MPROTECT
+            bool
+            default n
+            help
+                ARCH has the support of mprotect
     endif
 
     if ARCH_MM_MPU
@@ -75,5 +77,6 @@ if RT_USING_LWP
     endif
 
 rsource "terminal/Kconfig"
+rsource "vdso/Kconfig"
 endif
 

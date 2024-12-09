@@ -111,17 +111,17 @@ SECTIONS
         KEEP (*(.fini))
         . = ALIGN(8);
 
-        /* section information for usbh class */
-        . = ALIGN(8);
-        __usbh_class_info_start__ = .;
-        KEEP(*(.usbh_class_info))
-        __usbh_class_info_end__ = .;
-
         /*********************************************
          *
          *      RT-Thread related sections - Start
          *
         *********************************************/
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;

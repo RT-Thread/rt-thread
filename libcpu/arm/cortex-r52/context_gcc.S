@@ -8,116 +8,112 @@
  * 2024-03-01     Wangyuqiang  first version
  */
 
-/**
- * @addtogroup cortex-r52
- */
-/*@{*/
+.syntax unified
+.text
 
-//#include <rtconfig.h>
-
-   .text
-   .arm
-   .globl rt_thread_switch_interrupt_flag
-   .globl rt_interrupt_from_thread
-   .globl rt_interrupt_to_thread
-   .globl rt_interrupt_enter
-   .globl rt_interrupt_leave
-   .globl rt_hw_trap_irq
+.globl rt_thread_switch_interrupt_flag
+.globl rt_interrupt_from_thread
+.globl rt_interrupt_to_thread
+.globl rt_interrupt_enter
+.globl rt_interrupt_leave
+.globl rt_hw_trap_irq
 
 /*
- * rt_base_t rt_hw_interrupt_disable()
+ * rt_base_t rt_hw_interrupt_disable();
  */
-    .globl rt_hw_interrupt_disable
+.globl rt_hw_interrupt_disable
 rt_hw_interrupt_disable:
-    MRS r0, cpsr
-    CPSID IF
-    BX  lr
+    mrs r0, cpsr
+    cpsid i
+    bx  lr
 
 /*
- * void rt_hw_interrupt_enable(rt_base_t level)
+ * void rt_hw_interrupt_enable(rt_base_t level);
  */
-    .globl rt_hw_interrupt_enable
+.globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
-    MSR cpsr_c, r0
-    BX  lr
+    msr cpsr, r0
+    bx  lr
 
 /*
  * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to)
  * r0 --> from
  * r1 --> to
  */
-    .globl rt_hw_context_switch
+.globl rt_hw_context_switch
 rt_hw_context_switch:
-    STMDB   sp!, {lr}           @ push pc (lr should be pushed in place of PC)
-    STMDB   sp!, {r0-r12, lr}   @ push lr & register file
+    clrex
+    stmfd   sp!, {lr}       @ push pc (lr should be pushed in place of PC)
+    stmfd   sp!, {r0-r12, lr}   @ push lr & register file
 
-    MRS     r4, cpsr
-    TST     lr, #0x01
-    ORRNE   r4, r4, #0x20       @ it's thumb code
+    mrs r4, cpsr
+    tst lr, #0x01
+    orrne r4, r4, #0x20     @ it's thumb code
 
-    STMDB   sp!, {r4}           @ push cpsr
+    stmfd sp!, {r4}         @ push cpsr
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        VMRS    r4,  fpexc
-        TST     r4,  #0x40000000
-        BEQ     __no_vfp_frame1
-        VSTMDB  sp!, {d0-d15}
-        VMRS    r5, fpscr
-        @ TODO: add support for Common VFPv3.
-        @       Save registers like FPINST, FPINST2
-        STMDB   sp!, {r5}
+#ifdef RT_USING_FPU
+    /* fpu context */
+    vmrs r6, fpexc
+    tst  r6, #(1<<30)
+    beq __no_vfp_frame1
+    vstmdb sp!, {d0-d15}
+    vstmdb sp!, {d16-d31}
+    vmrs r5, fpscr
+    stmfd sp!, {r5}
 __no_vfp_frame1:
-        STMDB   sp!, {r4}
+    stmfd sp!, {r6}
+#endif
+    str sp, [r0]            @ store sp in preempted tasks TCB
+    ldr sp, [r1]            @ get new task stack pointer
+
+#ifdef RT_USING_FPU
+    /* fpu context */
+    ldmfd sp!, {r6}
+    vmsr fpexc, r6
+    tst  r6, #(1<<30)
+    beq __no_vfp_frame2
+    ldmfd sp!, {r5}
+    vmsr fpscr, r5
+    vldmia sp!, {d16-d31}
+    vldmia sp!, {d0-d15}
+__no_vfp_frame2:
 #endif
 
-    STR     sp, [r0]            @ store sp in preempted tasks TCB
-    LDR     sp, [r1]            @ get new task stack pointer
+    ldmfd   sp!, {r1}
+    msr     spsr_cxsf, r1        /* original mode */
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        LDMIA   sp!, {r0}       @ get fpexc
-        VMSR    fpexc,  r0      @ restore fpexc
-        TST     r0,  #0x40000000
-        BEQ     __no_vfp_frame2
-        LDMIA   sp!, {r1}       @ get fpscr
-        VMSR    fpscr, r1
-        VLDMIA  sp!, {d0-d15}
-__no_vfp_frame2:
-    #endif
-
-    LDMIA   sp!, {r4}           @ pop new task cpsr to spsr
-    MSR     spsr_cxsf, r4
-
-    LDMIA   sp!, {r0-r12, lr, pc}^ @ pop new task r0-r12, lr & pc, copy spsr to cpsr
+    ldmfd   sp!, {r0-r12,lr,pc}^ /* irq return */
 
 /*
  * void rt_hw_context_switch_to(rt_uint32 to)
  * r0 --> to
  */
-    .globl rt_hw_context_switch_to
+.globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
     LDR     sp, [r0]            @ get new task stack pointer
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        LDMIA   sp!, {r0}       @ get fpexc
-        VMSR    fpexc, r0
-        TST     r0,  #0x40000000
-        BEQ     __no_vfp_frame_to
-        LDMIA   sp!, {r1}       @ get fpscr
-        VMSR    fpscr, r1
-        VLDMIA  sp!, {d0-d15}
+#ifdef RT_USING_FPU
+    ldmfd sp!, {r6}
+    vmsr fpexc, r6
+    tst  r6, #(1<<30)
+    beq     __no_vfp_frame_to
+    ldmfd sp!, {r5}
+    vmsr fpscr, r5
+    vldmia sp!, {d0-d15}
 __no_vfp_frame_to:
 #endif
 
     LDMIA   sp!, {r4}           @ pop new task cpsr to spsr
     MSR     spsr_cxsf, r4
 
-    LDMIA   sp!, {r0-r12, lr, pc}^ @ pop new task r0-r12, lr & pc, copy spsr to cpsr
+    ldmfd   sp!, {r0-r12,lr,pc}^ /* irq return */
 
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to)@
  */
 
-    .globl rt_hw_context_switch_interrupt
+.globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
     LDR r2, =rt_thread_switch_interrupt_flag
     LDR r3, [r2]
@@ -133,21 +129,21 @@ _reswitch:
     STR r1, [r2]
     BX  lr
 
-    .globl IRQ_Handler
+.globl IRQ_Handler
 IRQ_Handler:
     STMDB   sp!, {r0-r12,lr}
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        VMRS    r0,  fpexc
-        TST     r0,  #0x40000000
-        BEQ     __no_vfp_frame_str_irq
-        VSTMDB  sp!, {d0-d15}
-        VMRS    r1, fpscr
-        @ TODO: add support for Common VFPv3.
-        @       Save registers like FPINST, FPINST2
-        STMDB   sp!, {r1}
+#ifdef RT_USING_FPU
+    VMRS    r0,  fpexc
+    TST     r0,  #0x40000000
+    BEQ     __no_vfp_frame_str_irq
+    VSTMDB  sp!, {d0-d15}
+    VMRS    r1, fpscr
+    @ TODO: add support for Common VFPv3.
+    @       Save registers like FPINST, FPINST2
+    STMDB   sp!, {r1}
 __no_vfp_frame_str_irq:
-        STMDB   sp!, {r0}
+    STMDB   sp!, {r0}
 #endif
 
     BL  rt_interrupt_enter
@@ -161,14 +157,14 @@ __no_vfp_frame_str_irq:
     CMP r1, #1
     BEQ rt_hw_context_switch_interrupt_do
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        LDMIA   sp!, {r0}       @ get fpexc
-        VMSR    fpexc, r0
-        TST     r0,  #0x40000000
-        BEQ     __no_vfp_frame_ldr_irq
-        LDMIA   sp!, {r1}       @ get fpscr
-        VMSR    fpscr, r1
-        VLDMIA  sp!, {d0-d15}
+#ifdef RT_USING_FPU
+    LDMIA   sp!, {r0}       @ get fpexc
+    VMSR    fpexc, r0
+    TST     r0,  #0x40000000
+    BEQ     __no_vfp_frame_ldr_irq
+    LDMIA   sp!, {r1}       @ get fpscr
+    VMSR    fpscr, r1
+    VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_ldr_irq:
 #endif
 
@@ -178,19 +174,19 @@ __no_vfp_frame_ldr_irq:
 /*
  * void rt_hw_context_switch_interrupt_do(rt_base_t flag)
  */
-    .globl rt_hw_context_switch_interrupt_do
+.globl rt_hw_context_switch_interrupt_do
 rt_hw_context_switch_interrupt_do:
     MOV     r1,  #0           @ clear flag
     STR     r1,  [r0]
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        LDMIA   sp!, {r0}       @ get fpexc
-        VMSR    fpexc, r0
-        TST     r0,  #0x40000000
-        BEQ     __no_vfp_frame_do1
-        LDMIA   sp!, {r1}       @ get fpscr
-        VMSR    fpscr, r1
-        VLDMIA  sp!, {d0-d15}
+#ifdef RT_USING_FPU
+    LDMIA   sp!, {r0}       @ get fpexc
+    VMSR    fpexc, r0
+    TST     r0,  #0x40000000
+    BEQ     __no_vfp_frame_do1
+    LDMIA   sp!, {r1}       @ get fpscr
+    VMSR    fpscr, r1
+    VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_do1:
 #endif
 
@@ -213,17 +209,17 @@ __no_vfp_frame_do1:
                               @ use them here.
     STMDB   sp!, {r3}         @ push old task's cpsr
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        VMRS    r0,  fpexc
-        TST     r0,  #0x40000000
-        BEQ     __no_vfp_frame_do2
-        VSTMDB  sp!, {d0-d15}
-        VMRS    r1, fpscr
-        @ TODO: add support for Common VFPv3.
-        @       Save registers like FPINST, FPINST2
-        STMDB   sp!, {r1}
+#ifdef RT_USING_FPU
+    VMRS    r0,  fpexc
+    TST     r0,  #0x40000000
+    BEQ     __no_vfp_frame_do2
+    VSTMDB  sp!, {d0-d15}
+    VMRS    r1, fpscr
+    @ TODO: add support for Common VFPv3.
+    @       Save registers like FPINST, FPINST2
+    STMDB   sp!, {r1}
 __no_vfp_frame_do2:
-        STMDB   sp!, {r0}
+    STMDB   sp!, {r0}
 #endif
 
     LDR     r4,  =rt_interrupt_from_thread
@@ -234,19 +230,20 @@ __no_vfp_frame_do2:
     LDR     r6,  [r6]
     LDR     sp,  [r6]         @ get new task's stack pointer
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-        LDMIA   sp!, {r0}       @ get fpexc
-        VMSR    fpexc, r0
-        TST     r0,  #0x40000000
-        BEQ     __no_vfp_frame_do3
-        LDMIA   sp!, {r1}       @ get fpscr
-        VMSR    fpscr, r1
-        VLDMIA  sp!, {d0-d15}
+#ifdef RT_USING_FPU
+    ldmfd sp!, {r6}
+    vmsr fpexc, r6
+    tst  r6, #(1<<30)
+    beq     __no_vfp_frame_do3
+    ldmfd sp!, {r5}
+    vmsr fpscr, r5
+    vldmia sp!, {d0-d15}
+
 __no_vfp_frame_do3:
 #endif
 
     LDMIA   sp!, {r4}         @ pop new task's cpsr to spsr
     MSR     spsr_cxsf, r4
 
-    LDMIA   sp!, {r0-r12,lr,pc}^ @ pop new task's r0-r12,lr & pc, copy spsr to cpsr
+    ldmfd   sp!, {r0-r12,lr,pc}^ /* irq return */
 

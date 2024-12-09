@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -208,6 +207,7 @@
 
 /* Check of parameters for configuration of ADC hierarchical scope:           */
 /* ADC group injected                                                         */
+#if defined(STM32H745xx) || defined(STM32H745xG) || defined(STM32H742xx) || defined(STM32H743xx) || defined(STM32H747xG) || defined(STM32H747xx) || defined(STM32H750xx) || defined(STM32H753xx) || defined(STM32H755xx) || defined(STM32H757xx)
 #define IS_LL_ADC_INJ_TRIG_SOURCE(__INJ_TRIG_SOURCE__)                         \
   (   ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_SOFTWARE)                      \
    || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM1_TRGO)                 \
@@ -232,6 +232,30 @@
    || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_LPTIM2_OUT)                \
    || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_LPTIM3_OUT)                \
   )
+#else
+#define IS_LL_ADC_INJ_TRIG_SOURCE(__INJ_TRIG_SOURCE__)                         \
+  (   ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_SOFTWARE)                      \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM1_TRGO)                 \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM1_CH4)                  \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM2_TRGO)                 \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM2_CH1)                  \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM3_CH4)                  \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM4_TRGO)                 \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_EXTI_LINE15)               \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM8_CH4)                  \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM1_TRGO2)                \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM8_TRGO)                 \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM8_TRGO2)                \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM3_CH3)                  \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM3_TRGO)                 \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM3_CH1)                  \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM6_TRGO)                 \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_TIM15_TRGO)                \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_LPTIM1_OUT)                \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_LPTIM2_OUT)                \
+   || ((__INJ_TRIG_SOURCE__) == LL_ADC_INJ_TRIG_EXT_LPTIM3_OUT)                \
+  )
+#endif
 
 #define IS_LL_ADC_INJ_TRIG_EXT_EDGE(__INJ_TRIG_EXT_EDGE__)                     \
   (   ((__INJ_TRIG_EXT_EDGE__) == LL_ADC_INJ_TRIG_EXT_RISING)                  \
@@ -489,11 +513,6 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
   /* Disable ADC instance if not already disabled.                            */
   if (LL_ADC_IsEnabled(ADCx) == 1UL)
   {
-    /* Set ADC group regular trigger source to SW start to ensure to not      */
-    /* have an external trigger event occurring during the conversion stop    */
-    /* ADC disable process.                                                   */
-    LL_ADC_REG_SetTriggerSource(ADCx, LL_ADC_REG_TRIG_SOFTWARE);
-
     /* Stop potential ADC conversion on going on ADC group regular.           */
     if (LL_ADC_REG_IsConversionOngoing(ADCx) != 0UL)
     {
@@ -502,11 +521,6 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
         LL_ADC_REG_StopConversion(ADCx);
       }
     }
-
-    /* Set ADC group injected trigger source to SW start to ensure to not     */
-    /* have an external trigger event occurring during the conversion stop    */
-    /* ADC disable process.                                                   */
-    LL_ADC_INJ_SetTriggerSource(ADCx, LL_ADC_INJ_TRIG_SOFTWARE);
 
     /* Stop potential ADC conversion on going on ADC group injected.          */
     if (LL_ADC_INJ_IsConversionOngoing(ADCx) != 0UL)
@@ -823,6 +837,19 @@ ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
     /*    - Set ADC data resolution                                           */
     /*    - Set ADC conversion data alignment                                 */
     /*    - Set ADC low power mode                                            */
+#if defined(ADC_VER_V5_V90)
+    if(ADCx==ADC3)
+    {
+      MODIFY_REG(ADCx->CFGR,
+                 ADC3_CFGR_RES
+                 | ADC_CFGR_AUTDLY
+                 ,
+                 ((__LL_ADC12_RESOLUTION_TO_ADC3(ADC_InitStruct->Resolution)  & (ADC_CFGR_RES_1 | ADC_CFGR_RES_0)) << 1UL)
+                 | ADC_InitStruct->LowPowerMode
+                );
+    }
+    else
+    {
     MODIFY_REG(ADCx->CFGR,
                ADC_CFGR_RES
                | ADC_CFGR_AUTDLY
@@ -830,6 +857,16 @@ ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
                ADC_InitStruct->Resolution
                | ADC_InitStruct->LowPowerMode
               );
+    }
+#else
+    MODIFY_REG(ADCx->CFGR,
+               ADC_CFGR_RES
+               | ADC_CFGR_AUTDLY
+               ,
+               ADC_InitStruct->Resolution
+               | ADC_InitStruct->LowPowerMode
+              );
+#endif
 
     MODIFY_REG(ADCx->CFGR2, ADC_CFGR2_LSHIFT, ADC_InitStruct->LeftBitShift);
   }
@@ -900,6 +937,11 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
   if (ADC_REG_InitStruct->SequencerLength != LL_ADC_REG_SEQ_SCAN_DISABLE)
   {
     assert_param(IS_LL_ADC_REG_SEQ_SCAN_DISCONT_MODE(ADC_REG_InitStruct->SequencerDiscont));
+
+    /* ADC group regular continuous mode and discontinuous mode                 */
+    /* can not be enabled simultenaeously                                       */
+    assert_param((ADC_REG_InitStruct->ContinuousMode == LL_ADC_REG_CONV_SINGLE)
+                 || (ADC_REG_InitStruct->SequencerDiscont == LL_ADC_REG_SEQ_DISCONT_DISABLE));
   }
   assert_param(IS_LL_ADC_REG_CONTINUOUS_MODE(ADC_REG_InitStruct->ContinuousMode));
   assert_param(IS_LL_ADC_REG_DATA_TRANSFER_MODE(ADC_REG_InitStruct->DataTransferMode));
@@ -1121,4 +1163,3 @@ void LL_ADC_INJ_StructInit(LL_ADC_INJ_InitTypeDef *ADC_INJ_InitStruct)
 
 #endif /* USE_FULL_LL_DRIVER */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

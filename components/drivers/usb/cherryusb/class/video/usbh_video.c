@@ -34,11 +34,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_video *usbh_video_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_VIDEO_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_video_class[devno], 0, sizeof(struct usbh_video));
             g_video_class[devno].minor = devno;
             return &g_video_class[devno];
@@ -49,19 +49,24 @@ static struct usbh_video *usbh_video_class_alloc(void)
 
 static void usbh_video_class_free(struct usbh_video *video_class)
 {
-    int devno = video_class->minor;
+    uint8_t devno = video_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(video_class, 0, sizeof(struct usbh_video));
 }
 
 int usbh_video_get(struct usbh_video *video_class, uint8_t request, uint8_t intf, uint8_t entity_id, uint8_t cs, uint8_t *buf, uint16_t len)
 {
-    struct usb_setup_packet *setup = video_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
     uint8_t retry;
+
+    if (!video_class || !video_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = video_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = request;
@@ -91,8 +96,13 @@ int usbh_video_get(struct usbh_video *video_class, uint8_t request, uint8_t intf
 
 int usbh_video_set(struct usbh_video *video_class, uint8_t request, uint8_t intf, uint8_t entity_id, uint8_t cs, uint8_t *buf, uint16_t len)
 {
-    struct usb_setup_packet *setup = video_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
+
+    if (!video_class || !video_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = video_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = request;
@@ -136,7 +146,7 @@ int usbh_video_open(struct usbh_video *video_class,
                     uint16_t wHeight,
                     uint8_t altsetting)
 {
-    struct usb_setup_packet *setup = video_class->hport->setup;
+    struct usb_setup_packet *setup;
     struct usb_endpoint_descriptor *ep_desc;
     uint8_t mult;
     uint16_t mps;
@@ -145,6 +155,11 @@ int usbh_video_open(struct usbh_video *video_class,
     uint8_t formatidx = 0;
     uint8_t frameidx = 0;
     uint8_t step;
+
+    if (!video_class || !video_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = video_class->hport->setup;
 
     if (video_class->is_opened) {
         return 0;
@@ -265,8 +280,13 @@ errout:
 
 int usbh_video_close(struct usbh_video *video_class)
 {
-    struct usb_setup_packet *setup = video_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret = 0;
+
+    if (!video_class || !video_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = video_class->hport->setup;
 
     USB_LOG_INFO("Close video device\r\n");
 
@@ -475,20 +495,26 @@ static int usbh_video_ctrl_disconnect(struct usbh_hubport *hport, uint8_t intf)
 
 static int usbh_video_streaming_connect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 static int usbh_video_streaming_disconnect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 __WEAK void usbh_video_run(struct usbh_video *video_class)
 {
+    (void)video_class;
 }
 
 __WEAK void usbh_video_stop(struct usbh_video *video_class)
 {
+    (void)video_class;
 }
 
 const struct usbh_class_driver video_ctrl_class_driver = {

@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_ertc.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the ertc firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -98,14 +96,8 @@ error_status ertc_wait_update(void)
 {
   uint32_t timeout = ERTC_TIMEOUT * 2;
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   /* clear updf flag */
   ERTC->sts = ~(ERTC_UPDF_FLAG | 0x00000080) | (ERTC->sts_bit.imen << 7);
-
-  /* enable write protection */
-  ertc_write_protect_enable();
 
   while(ERTC->sts_bit.updf == 0)
   {
@@ -163,9 +155,6 @@ error_status ertc_wait_flag(uint32_t flag, flag_status status)
 error_status ertc_init_mode_enter(void)
 {
   uint32_t timeout = ERTC_TIMEOUT * 2;
-
-  /* disable write protection */
-  ertc_write_protect_disable();
 
   if(ERTC->sts_bit.imf == 0)
   {
@@ -331,7 +320,7 @@ error_status ertc_date_set(uint8_t year, uint8_t month, uint8_t date, uint8_t we
     return ERROR;
   }
 
-  /* Set the ertc_DR register */
+  /* set the ertc_date register */
   ERTC->date = reg.date;
 
   /* exit init mode */
@@ -406,7 +395,7 @@ void ertc_calendar_get(ertc_time_type* time)
   ertc_reg_time_type reg_tm;
   ertc_reg_date_type reg_dt;
 
-  (void) (ERTC->sts);
+  UNUSED(ERTC->sts);
 
   reg_tm.time = ERTC->time;
   reg_dt.date = ERTC->date;
@@ -724,8 +713,8 @@ uint32_t ertc_alarm_sub_second_get(ertc_alarm_type alarm_x)
   *         - ERTC_WAT_CLK_ERTCCLK_DIV8: ERTC_CLK / 8.
   *         - ERTC_WAT_CLK_ERTCCLK_DIV4: ERTC_CLK / 4.
   *         - ERTC_WAT_CLK_ERTCCLK_DIV2: ERTC_CLK / 2.
-  *         - ERTC_WAT_CLK_CK_A_16BITS: CK_A, wakeup counter = ERTC_WAT
-  *         - ERTC_WAT_CLK_CK_A_17BITS: CK_A, wakeup counter = ERTC_WAT + 65535.
+  *         - ERTC_WAT_CLK_CK_B_16BITS: CK_B, wakeup counter = ERTC_WAT
+  *         - ERTC_WAT_CLK_CK_B_17BITS: CK_B, wakeup counter = ERTC_WAT + 65535.
   * @retval none.
   */
 void ertc_wakeup_clock_set(ertc_wakeup_clock_type clock)
@@ -1438,6 +1427,53 @@ flag_status ertc_flag_get(uint32_t flag)
 }
 
 /**
+  * @brief  get interrupt flag status.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - ERTC_ALAF_FLAG: alarm clock a flag.
+  *         - ERTC_ALBF_FLAG: alarm clock b flag.
+  *         - ERTC_WATF_FLAG: wakeup timer flag.
+  *         - ERTC_TSF_FLAG: timestamp flag.
+  *         - ERTC_TP1F_FLAG: tamper detection 1 flag.
+  * @retval the new state of flag (SET or RESET).
+  */
+flag_status ertc_interrupt_flag_get(uint32_t flag)
+{
+  __IO uint32_t iten = 0;
+
+  switch(flag)
+  {
+    case ERTC_ALAF_FLAG:
+      iten = ERTC->ctrl_bit.alaien;
+      break;
+    case ERTC_ALBF_FLAG:
+      iten = ERTC->ctrl_bit.albien;
+      break;
+    case ERTC_WATF_FLAG:
+      iten = ERTC->ctrl_bit.watien;
+      break;
+    case ERTC_TSF_FLAG:
+      iten = ERTC->ctrl_bit.tsien;
+      break;
+    case ERTC_TP1F_FLAG:
+      iten = ERTC->tamp_bit.tpien;
+      break;
+
+    default:
+      break;
+  }
+
+  if(((ERTC->sts & flag) != (uint32_t)RESET) && (iten))
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  clear flag status
   * @param  flag: specifies the flag to clear.
   *         this parameter can be any combination of the following values:
@@ -1481,13 +1517,7 @@ void ertc_bpr_data_write(ertc_dt_type dt, uint32_t data)
 
   reg = ERTC_BASE + 0x50 + (dt * 4);
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   *(__IO uint32_t *)reg = data;
-
-  /* enable write protection */
-  ertc_write_protect_enable();
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,10 +11,10 @@
 
 #ifdef RT_USING_PWM
 
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 #include "drv_gpio.h"
 
-//#define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define LOG_TAG "drv.pwm"
 #include <drv_log.h>
 
@@ -31,35 +31,51 @@ struct ifx_pwm
 
 static struct ifx_pwm ifx_pwm_obj[] =
 {
-#ifdef BSP_USING_PWM0_PORT0
+#ifdef BSP_USING_PWM0_CH0_PORT0
     PWM0_CH0_PORT0_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_PORT2
+#ifdef BSP_USING_PWM0_CH2_PORT11_COMPL
+    PWM0_CH2_PORT11_COMPL_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_CH3_PORT11
+    PWM0_CH3_PORT11_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_CH4_PORT5_COMPL
+    PWM0_CH4_PORT5_COMPL_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_CH7_PORT2
     PWM0_CH7_PORT2_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_PORT5
+#ifdef BSP_USING_PWM0_CH7_PORT5
     PWM0_CH7_PORT5_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_PORT7
+#ifdef BSP_USING_PWM0_CH7_PORT5_COMPL
+    PWM0_CH7_PORT5_COMPL_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_CH7_PORT7
     PWM0_CH7_PORT7_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_PORT9
+#ifdef BSP_USING_PWM0_CH7_PORT9
     PWM0_CH7_PORT9_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_PORT10
+#ifdef BSP_USING_PWM0_CH7_PORT10
     PWM0_CH7_PORT10_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_PORT12
+#ifdef BSP_USING_PWM0_CH7_PORT12
     PWM0_CH7_PORT12_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_PORT13
+#ifdef BSP_USING_PWM0_CH7_PORT13
     PWM0_CH3_PORT13_CONFIG,
 #endif
 };
@@ -73,26 +89,12 @@ static rt_err_t drv_pwm_enable(cyhal_pwm_t *htim, struct rt_pwm_configuration *c
     {
         if (!enable)
         {
-            if (channel == 3)
-            {
-                htim->tcpwm.resource.channel_num = channel;
-            }
-            else if (channel == 7)
-            {
-                htim->tcpwm.resource.channel_num = channel;
-            }
+                        htim->tcpwm.resource.channel_num = channel;
             cyhal_pwm_stop(htim);
         }
         else
         {
-            if (channel == 3)
-            {
-                htim->tcpwm.resource.channel_num = channel;
-            }
-            else if (channel == 7)
-            {
-                htim->tcpwm.resource.channel_num = channel;
-            }
+                        htim->tcpwm.resource.channel_num = channel;
             cyhal_pwm_start(htim);
         }
     }
@@ -217,7 +219,7 @@ __exit:
 INIT_BOARD_EXPORT(rt_hw_pwm_init);
 
 #define PWM_DEV_NAME "pwm0"
-#define PWM_DEV_CHANNEL 7
+#define PWM_DEV_CHANNEL 4
 
 struct rt_device_pwm *pwm_dev;
 

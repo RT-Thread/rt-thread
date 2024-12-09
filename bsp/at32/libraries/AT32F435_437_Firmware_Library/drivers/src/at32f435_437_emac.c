@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_emac.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the emac firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -45,8 +43,10 @@
 /**
   * @brief global pointers on tx and rx descriptor used to track transmit and receive descriptors
   */
-emac_dma_desc_type  *dma_tx_desc_to_set;
-emac_dma_desc_type  *dma_rx_desc_to_get;
+__IO emac_dma_desc_type  *dma_tx_desc_to_set;
+__IO emac_dma_desc_type  *dma_rx_desc_to_get;
+__IO emac_dma_desc_type  *ptp_dma_tx_desc_to_set;
+__IO emac_dma_desc_type  *ptp_dma_rx_desc_to_get;
 
 /* emac private function */
 static void emac_delay(uint32_t delay);
@@ -220,7 +220,6 @@ void emac_stop(void)
   /* stop transmit state machine of the mac for transmission on the mii */
   emac_trasmitter_enable(FALSE);
 }
-
 
 /**
   * @brief  write phy data.
@@ -530,6 +529,7 @@ void emac_broadcast_frames_disable(confirm_state new_state)
   * @param  condition: set what control frame can pass filter.
   *         this parameter can be one of the following values:
   *         - EMAC_CONTROL_FRAME_PASSING_NO
+  *         - EMAC_CONTROL_FRAME_PASSING_ALL_EXCEPT_PAUSE
   *         - EMAC_CONTROL_FRAME_PASSING_ALL
   *         - EMAC_CONTROL_FRAME_PASSING_MATCH
   * @retval none
@@ -990,6 +990,90 @@ void emac_dma_descriptor_list_address_set(emac_dma_tx_rx_type transfer_type, ema
 }
 
 /**
+  * @brief  set transmit/receive descriptor list address
+  * @param  transfer_type: it will be transmit or receive
+  *         this parameter can be one of the following values:
+  *         - EMAC_DMA_TRANSMIT
+  *         - EMAC_DMA_RECEIVE
+  * @param  dma_desc_tab: pointer on the first tx desc list
+  * @param  buff: pointer on the first tx/rx buffer list
+  * @param  buffer_count: number of the used Tx desc in the list
+  * @retval none
+  */
+void emac_ptp_dma_descriptor_list_address_set(emac_dma_tx_rx_type transfer_type, emac_dma_desc_type *dma_desc_tab, emac_dma_desc_type *ptp_dma_desc_tab, uint8_t *buff, uint32_t buffer_count)
+{
+  uint32_t i = 0;
+  emac_dma_desc_type *dma_descriptor;
+
+  switch(transfer_type)
+  {
+    case EMAC_DMA_TRANSMIT:
+    {
+      dma_tx_desc_to_set = dma_desc_tab;
+      ptp_dma_tx_desc_to_set = ptp_dma_desc_tab;
+
+      for(i = 0; i < buffer_count; i++)
+      {
+        dma_descriptor = dma_desc_tab + i;
+
+        dma_descriptor->status = EMAC_DMATXDESC_TCH | EMAC_DMATXDESC_TTSE;
+
+        dma_descriptor->buf1addr = (uint32_t)(&buff[i * EMAC_MAX_PACKET_LENGTH]);
+
+        if(i < (buffer_count - 1))
+        {
+          dma_descriptor->buf2nextdescaddr = (uint32_t)(dma_desc_tab + i + 1);
+        }
+        else
+        {
+          dma_descriptor->buf2nextdescaddr = (uint32_t) dma_desc_tab;
+        }
+
+        (&ptp_dma_desc_tab[i])->buf1addr = dma_descriptor->buf1addr;
+        (&ptp_dma_desc_tab[i])->buf2nextdescaddr = dma_descriptor->buf2nextdescaddr;
+      }
+
+      (&ptp_dma_desc_tab[i-1])->status = (uint32_t) ptp_dma_desc_tab;
+
+      EMAC_DMA->tdladdr_bit.stl = (uint32_t) dma_desc_tab;
+      break;
+    }
+    case EMAC_DMA_RECEIVE:
+    {
+      dma_rx_desc_to_get = dma_desc_tab;
+      ptp_dma_rx_desc_to_get = ptp_dma_desc_tab;
+
+      for(i = 0; i < buffer_count; i++)
+      {
+        dma_descriptor = dma_desc_tab + i;
+
+        dma_descriptor->status = EMAC_DMARXDESC_OWN;
+
+        dma_descriptor->controlsize = EMAC_DMARXDESC_RCH | (uint32_t)EMAC_MAX_PACKET_LENGTH;
+
+        dma_descriptor->buf1addr = (uint32_t)(&buff[i * EMAC_MAX_PACKET_LENGTH]);
+
+        if(i < (buffer_count - 1))
+        {
+          dma_descriptor->buf2nextdescaddr = (uint32_t)(dma_desc_tab + i + 1);
+        }
+        else
+        {
+          dma_descriptor->buf2nextdescaddr = (uint32_t) dma_desc_tab;
+        }
+
+        (&ptp_dma_desc_tab[i])->buf1addr = dma_descriptor->buf1addr;
+        (&ptp_dma_desc_tab[i])->buf2nextdescaddr = dma_descriptor->buf2nextdescaddr;
+      }
+
+      (&ptp_dma_desc_tab[i-1])->status = (uint32_t) ptp_dma_desc_tab;
+
+      EMAC_DMA->rdladdr_bit.srl = (uint32_t) dma_desc_tab;
+      break;
+    }
+  }
+}
+/**
   * @brief  enable or disable the specified dma rx descriptor receive interrupt
   * @param  dma_rx_desc: pointer on a rx desc.
   * @param  new_state: new state of the specified dma rx descriptor interrupt.
@@ -1049,7 +1133,7 @@ uint32_t emac_received_packet_size_get(void)
      ((dma_rx_desc_to_get->status & EMAC_DMARXDESC_LS) != (uint32_t)RESET) &&
      ((dma_rx_desc_to_get->status & EMAC_DMARXDESC_FS) != (uint32_t)RESET))
   {
-    frame_length = emac_dmarxdesc_frame_length_get(dma_rx_desc_to_get);
+    frame_length = emac_dmarxdesc_frame_length_get((emac_dma_desc_type*) dma_rx_desc_to_get);
   }
 
   return frame_length;
@@ -1661,6 +1745,16 @@ uint32_t emac_dma_tansfer_address_get(emac_dma_transfer_address_type transfer_ty
 }
 
 /**
+  * @brief  alternate dma descriptor size
+  * @param  new_state: TRUE or FALSE
+  * @retval none
+  */
+void emac_dma_alternate_desc_size(confirm_state new_state)
+{
+  EMAC_DMA->bm_bit.atds = new_state;
+}
+
+/**
   * @brief  reset all counter
   * @param  none
   * @retval none
@@ -2040,6 +2134,27 @@ void emac_ptp_mac_address_filter_enable(confirm_state new_state)
 }
 
 /**
+  * @brief  check whether the specified emac ptp flag is set or not.
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - EMAC_PTP_TI_FLAG: time stamp initialized flag
+  *         - EMAC_PTP_TU_FLAG: time stamp updtated flag
+  *         - EMAC_PTP_ARU_FLAG:  transmit data buffer empty flag
+  * @retval the new state of usart_flag (SET or RESET).
+  */
+flag_status emac_ptp_flag_get(uint32_t flag)
+{
+  if(EMAC_PTP->tsctrl & flag)
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
+  }
+}
+
+/**
   * @brief  set subsecond increment value
   * @param  value: add to subsecond value for every update
   * @retval none
@@ -2089,40 +2204,17 @@ confirm_state emac_ptp_system_time_sign_get(void)
 }
 
 /**
-  * @brief  set system time second
+  * @brief  set system time
+  * @param  sign: plus or minus
   * @param  second: system time second
-  * @retval none
-  */
-void emac_ptp_system_second_set(uint32_t second)
-{
-  EMAC_PTP->tshud_bit.ts = second;
-}
-
-/**
-  * @brief  set system time subsecond
   * @param  subsecond: system time subsecond
   * @retval none
   */
-void emac_ptp_system_subsecond_set(uint32_t subsecond)
+void emac_ptp_system_time_set(uint32_t sign, uint32_t second, uint32_t subsecond)
 {
+  EMAC_PTP->tslud_bit.ast = sign ? 1 : 0;
+  EMAC_PTP->tshud_bit.ts = second;
   EMAC_PTP->tslud_bit.tss = subsecond;
-}
-
-/**
-  * @brief  set system time sign
-  * @param  sign: TRUE or FALSE.
-  * @retval none
-  */
-void emac_ptp_system_time_sign_set(confirm_state sign)
-{
-  if(sign)
-  {
-    EMAC_PTP->tslud_bit.ast = 1;
-  }
-  else
-  {
-    EMAC_PTP->tslud_bit.ast = 0;
-  }
 }
 
 /**
@@ -2262,6 +2354,62 @@ flag_status emac_dma_flag_get(uint32_t dma_flag)
 
   if(EMAC_DMA->sts & dma_flag)
     status = SET;
+  /* return the new state (SET or RESET) */
+  return status;
+}
+
+/**
+  * @brief  check whether the specified emac dma interrupt flag is set or not.
+  * @param  dma_flag: specifies the emac dma flag to check.
+  *         this parameter can be one of emac dma flag status:
+  *         - EMAC_DMA_TI_FLAG
+  *         - EMAC_DMA_TPS_FLAG
+  *         - EMAC_DMA_TBU_FLAG
+  *         - EMAC_DMA_TJT_FLAG
+  *         - EMAC_DMA_OVF_FLAG
+  *         - EMAC_DMA_UNF_FLAG
+  *         - EMAC_DMA_RI_FLAG
+  *         - EMAC_DMA_RBU_FLAG
+  *         - EMAC_DMA_RPS_FLAG
+  *         - EMAC_DMA_RWT_FLAG
+  *         - EMAC_DMA_ETI_FLAG
+  *         - EMAC_DMA_FBEI_FLAG
+  *         - EMAC_DMA_ERI_FLAG
+  *         - EMAC_DMA_AIS_FLAG
+  *         - EMAC_DMA_NIS_FLAG
+  * @retval the new state of dma_flag (SET or RESET).
+  */
+flag_status emac_dma_interrupt_flag_get(uint32_t dma_flag)
+{
+  flag_status status = RESET;
+  switch(dma_flag)
+  {
+    case EMAC_DMA_TI_FLAG:
+    case EMAC_DMA_TBU_FLAG:
+    case EMAC_DMA_RI_FLAG:
+    case EMAC_DMA_ERI_FLAG:
+      if((EMAC_DMA->sts & dma_flag) &&
+        (EMAC_DMA->ie & dma_flag) &&
+        (EMAC_DMA->sts & EMAC_DMA_NIS_FLAG))
+        status = SET;
+      break;
+    case EMAC_DMA_TPS_FLAG:
+    case EMAC_DMA_TJT_FLAG:
+    case EMAC_DMA_OVF_FLAG:
+    case EMAC_DMA_UNF_FLAG:
+    case EMAC_DMA_RBU_FLAG:
+    case EMAC_DMA_RPS_FLAG:
+    case EMAC_DMA_RWT_FLAG:
+    case EMAC_DMA_ETI_FLAG:
+    case EMAC_DMA_FBEI_FLAG:
+      if((EMAC_DMA->sts & dma_flag) &&
+        (EMAC_DMA->ie & dma_flag) &&
+        (EMAC_DMA->sts & EMAC_DMA_AIS_FLAG))
+        status = SET;
+      break;
+    default:
+      break;
+  }
   /* return the new state (SET or RESET) */
   return status;
 }

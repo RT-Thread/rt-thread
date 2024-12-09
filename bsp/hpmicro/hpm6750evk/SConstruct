@@ -5,7 +5,7 @@ import rtconfig
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../../../rt-thread')
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
@@ -59,7 +59,7 @@ hpm_library = 'hpm_sdk'
 rtconfig.BSP_LIBRARY_TYPE = hpm_library
 
 # include soc
-objs.extend(SConscript(os.path.join(libraries_path_prefix, hpm_library,'soc', rtconfig.CHIP_NAME, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, hpm_library,'soc', rtconfig.SOC_FAMILY, rtconfig.CHIP_NAME, 'SConscript')))
 
 # include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, hpm_library, 'SConscript')))

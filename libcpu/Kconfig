@@ -1,23 +1,5 @@
 if ARCH_ARMV8 && ARCH_CPU_64BIT
-    menu "AArch64 Architecture Configuration"
-    config ARCH_TEXT_OFFSET
-        hex "Text offset"
-        default 0x200000
-    config ARCH_RAM_OFFSET
-        hex "RAM offset"
-        default 0
-    config ARCH_SECONDARY_CPU_STACK_SIZE
-        int "Secondary CPU stack size"
-        default 4096
-    config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
-        bool
-        default y
-    config ARCH_USING_GENERIC_CPUID
-        bool "Using generic cpuid implemenation"
-        select ARCH_USING_HW_THREAD_SELF
-        default y if RT_USING_OFW
-        default n
-    endmenu
+    orsource "./aarch64/Kconfig"
 endif
 
 config ARCH_CPU_64BIT
@@ -95,6 +77,7 @@ config ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M85
     bool
@@ -212,6 +195,8 @@ config ARCH_ARMV8
     select ARCH_ARM
     select ARCH_ARM_MMU
     select RT_USING_CPU_FFS
+    select ARCH_USING_ASID
+    select ARCH_USING_IRQ_CTX_LIST
 
 config ARCH_MIPS
     bool
@@ -239,6 +224,21 @@ config ARCH_RISCV
 config ARCH_RISCV_FPU
     bool
 
+config ARCH_RISCV_VECTOR
+    bool
+
+    if ARCH_RISCV_VECTOR
+        choice
+            prompt "RISCV Vector Vlen"
+            default ARCH_VECTOR_VLEN_128
+
+            config ARCH_VECTOR_VLEN_128
+                bool "128"
+            config ARCH_VECTOR_VLEN_256
+                bool "256"
+        endchoice
+    endif
+
 config ARCH_RISCV_FPU_S
     select ARCH_RISCV_FPU
     bool
@@ -257,12 +257,30 @@ config ARCH_RISCV64
     bool
 
 if ARCH_RISCV64
-    config ARCH_REMAP_KERNEL
+    config ARCH_USING_NEW_CTX_SWITCH
         bool
-        depends on RT_USING_SMART
+        default y
+
+    config ARCH_USING_RISCV_COMMON64
+        bool
+        depends on ARCH_RISCV64
+        select RT_USING_CPUTIME
+        select ARCH_USING_NEW_CTX_SWITCH
         help
-            Remapping kernel image to high virtual address region
+            Using the common64 implementation under ./libcpu/risc-v
 endif
+
+config ARCH_REMAP_KERNEL
+    bool
+    depends on RT_USING_SMART
+    help
+        Remapping kernel image to high virtual address region
+
+config ARCH_USING_ASID
+    bool
+    depends on RT_USING_SMART
+    help
+        Using ASID support from architecture
 
 config ARCH_IA32
     bool
@@ -283,5 +301,9 @@ config ARCH_CPU_STACK_GROWS_UPWARD
     default n
 
 config ARCH_USING_HW_THREAD_SELF
+    bool
+    default n
+
+config ARCH_USING_IRQ_CTX_LIST
     bool
     default n

@@ -1,12 +1,12 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2024 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_VBAT_H_
-#define _FSL_VBAT_H_
+#ifndef FSL_VBAT_H_
+#define FSL_VBAT_H_
 
 #include "fsl_common.h"
 
@@ -21,9 +21,15 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief VBAT driver version 2.2.0. */
-#define FSL_VBAT_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
+/*! @brief VBAT driver version 2.3.1. */
+#define FSL_VBAT_DRIVER_VERSION (MAKE_VERSION(2, 3, 1))
 /*@}*/
+
+#if !defined(VBAT_LDORAMC_RET_MASK)
+#define VBAT_LDORAMC_RET_MASK   (0xF00U)
+#define VBAT_LDORAMC_RET_SHIFT  (8U) 
+#define VBAT_LDORAMC_RET(x)     (((uint32_t)(((uint32_t)(x)) << VBAT_LDORAMC_RET_SHIFT)) & VBAT_LDORAMC_RET_MASK)
+#endif 
 
 /*!
  * @brief The enumeration of VBAT module status.
@@ -527,7 +533,7 @@ static inline void VBAT_EnableCrystalOsc32k(VBAT_Type *base, bool enable)
 
         /* Polling status register to check clock is ready. */
         while ((base->STATUSA & VBAT_STATUSA_OSC_RDY_MASK) == 0UL)
-            ;
+        {}
     }
     else
     {
@@ -561,6 +567,7 @@ static inline void VBAT_BypassCrystalOsc32k(VBAT_Type *base, bool enableBypass)
     }
 }
 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT) && FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT) 
 /*!
  * @brief Adjust 32k crystal oscillator amplifier gain.
  *
@@ -575,6 +582,20 @@ static inline void VBAT_AdjustCrystalOsc32kAmplifierGain(VBAT_Type *base, uint8_
     base->OSCCTLB = ((base->OSCCTLB & ~(VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK | VBAT_OSCCTLA_FINE_AMP_GAIN_MASK)) |
                      (VBAT_OSCCTLA_COARSE_AMP_GAIN(~coarse) | VBAT_OSCCTLA_FINE_AMP_GAIN(~fine)));
 }
+#else
+/*!
+ * @brief Adjust 32k crystal oscillator amplifier gain.
+ *
+ * @param base VBAT peripheral base address.
+ * @param coarse Specify amplifier coarse trim value.
+ */
+static inline void VBAT_AdjustCrystalOsc32kAmplifierGain(VBAT_Type *base, uint8_t coarse)
+{
+    base->OSCCTLA = (base->OSCCTLA & ~VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK) | (VBAT_OSCCTLA_COARSE_AMP_GAIN(coarse));
+    base->OSCCTLB = (base->OSCCTLB & ~VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK) | (VBAT_OSCCTLA_COARSE_AMP_GAIN(~(uint32_t)coarse));        
+}
+
+#endif /*  */
 
 /*!
  * @brief Set 32k crystal oscillator mode and load capacitance for the XTAL/EXTAL pin.
@@ -602,7 +623,7 @@ status_t VBAT_SetCrystalOsc32kModeAndLoadCapacitance(VBAT_Type *base,
 static inline void VBAT_TrimCrystalOsc32kStartupTime(VBAT_Type *base, vbat_osc32k_start_up_time_t startupTime)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~(VBAT_OSCCFGA_INIT_TRIM_MASK)) | VBAT_OSCCFGA_INIT_TRIM(startupTime));
-    base->OSCCFGB = ((base->OSCCFGB & ~(VBAT_OSCCFGA_INIT_TRIM_MASK)) | VBAT_OSCCFGA_INIT_TRIM(~startupTime));
+    base->OSCCFGB = ((base->OSCCFGB & ~(VBAT_OSCCFGA_INIT_TRIM_MASK)) | VBAT_OSCCFGA_INIT_TRIM(~((uint32_t)startupTime)));
 }
 
 /*!
@@ -614,7 +635,7 @@ static inline void VBAT_TrimCrystalOsc32kStartupTime(VBAT_Type *base, vbat_osc32
 static inline void VBAT_SetOsc32kSwitchModeComparatorTrimValue(VBAT_Type *base, uint8_t comparatorTrimValue)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~VBAT_OSCCFGA_CMP_TRIM_MASK) | VBAT_OSCCFGA_CMP_TRIM(comparatorTrimValue));
-    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CMP_TRIM_MASK) | VBAT_OSCCFGA_CMP_TRIM(~comparatorTrimValue));
+    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CMP_TRIM_MASK) | VBAT_OSCCFGA_CMP_TRIM(~((uint32_t)comparatorTrimValue)));
 }
 
 /*!
@@ -626,7 +647,7 @@ static inline void VBAT_SetOsc32kSwitchModeComparatorTrimValue(VBAT_Type *base, 
 static inline void VBAT_SetOsc32kSwitchModeDelayTrimValue(VBAT_Type *base, uint8_t delayTrimValue)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~VBAT_OSCCFGA_DLY_TRIM_MASK) | VBAT_OSCCFGA_DLY_TRIM(delayTrimValue));
-    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_DLY_TRIM_MASK) | VBAT_OSCCFGA_DLY_TRIM(~delayTrimValue));
+    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_DLY_TRIM_MASK) | VBAT_OSCCFGA_DLY_TRIM(~((uint32_t)delayTrimValue)));
 }
 
 /*!
@@ -638,7 +659,7 @@ static inline void VBAT_SetOsc32kSwitchModeDelayTrimValue(VBAT_Type *base, uint8
 static inline void VBAT_SetOsc32kSwitchModeCapacitorTrimValue(VBAT_Type *base, uint8_t capacitorTrimValue)
 {
     base->OSCCFGA = ((base->OSCCFGA & ~VBAT_OSCCFGA_CAP_TRIM_MASK) | VBAT_OSCCFGA_CAP_TRIM(capacitorTrimValue));
-    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CAP_TRIM_MASK) | VBAT_OSCCFGA_CAP_TRIM(~capacitorTrimValue));
+    base->OSCCFGB = ((base->OSCCFGB & ~VBAT_OSCCFGA_CAP_TRIM_MASK) | VBAT_OSCCFGA_CAP_TRIM(~((uint32_t)capacitorTrimValue)));
 }
 
 /*!
@@ -835,7 +856,7 @@ static inline void VBAT_SwitchSRAMPowerBySocSupply(VBAT_Type *base)
  */
 static inline void VBAT_PowerOffSRAMsInLowPowerModes(VBAT_Type *base, uint8_t sramMask)
 {
-    base->LDORAMC |= VBAT_LDORAMC_RET(sramMask);
+    base->LDORAMC |= (uint32_t)VBAT_LDORAMC_RET(sramMask);
 }
 
 /*!
@@ -846,7 +867,7 @@ static inline void VBAT_PowerOffSRAMsInLowPowerModes(VBAT_Type *base, uint8_t sr
  */
 static inline void VBAT_RetainSRAMsInLowPowerModes(VBAT_Type *base, uint8_t sramMask)
 {
-    base->LDORAMC &= ~VBAT_LDORAMC_RET(sramMask);
+    base->LDORAMC &= ~(uint32_t)VBAT_LDORAMC_RET(sramMask);
 }
 
 /*!
@@ -951,7 +972,7 @@ static inline void VBAT_SwitchVBATModuleSupplyActiveMode(VBAT_Type *base, vbat_i
  */
 static inline vbat_internal_module_supply_t VBAT_GetVBATModuleSupply(VBAT_Type *base)
 {
-    return (base->SWICTLA & VBAT_SWICTLA_SWI_EN_MASK);
+    return (vbat_internal_module_supply_t)(uint8_t)(base->SWICTLA & VBAT_SWICTLA_SWI_EN_MASK);
 }
 
 /*!
@@ -1362,4 +1383,4 @@ static inline void VBAT_SetWakeupPinDefaultState(VBAT_Type *base, bool assert)
 /*!
  * @}
  */
-#endif /* __FSL_VBAT_H__ */
+#endif /* FSL_VBAT_H__ */

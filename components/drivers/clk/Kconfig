@@ -3,3 +3,7 @@ menuconfig RT_USING_CLK
     depends on RT_USING_DM
     select RT_USING_ADT_REF
     default y
+
+if RT_USING_CLK
+    osource "$(SOC_DM_CLK_DIR)/Kconfig"
+endif

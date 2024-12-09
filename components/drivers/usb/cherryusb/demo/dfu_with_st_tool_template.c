@@ -136,7 +136,7 @@ const uint8_t dfu_flash_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -169,7 +169,7 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
 
 struct usbd_interface intf0;
 
-void dfu_flash_init(uint8_t busid, uint32_t reg_base)
+void dfu_flash_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, dfu_flash_descriptor);
     usbd_add_interface(busid, usbd_dfu_init_intf(&intf0));

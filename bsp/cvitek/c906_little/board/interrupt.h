@@ -11,12 +11,11 @@
 #ifndef __INTERRUPT_H__
 #define __INTERRUPT_H__
 
+#include <rtconfig.h>
+
 #define NR_CPUS       1
 
 #define IRQ_OFFSET          16
-#ifndef IRQ_MAX_NR
-#define IRQ_MAX_NR          207
-#endif
 #define INTERRUPTS_MAX      (IRQ_OFFSET + IRQ_MAX_NR)
 
 #define PLIC_BASE               0x70000000
@@ -46,9 +45,9 @@
 #define PLIC_ENABLE_STRIDE              0x80
 #define PLIC_CONTEXT_STRIDE             0x1000
 
-#define PLIC_PRIORITY(id)               (PLIC_PHY_ADDR + PLIC_PRIORITY_OFFSET + (id) * 4)
-#define PLIC_PENDING(id)                (PLIC_PHY_ADDR + PLIC_PENDING_OFFSET + ((id) / 32))
-#define PLIC_ENABLE(id)                (PLIC_PHY_ADDR + PLIC_ENABLE_OFFSET + ((id) / 32))
+#define PLIC_PRIORITY(id)               (BSP_PLIC_PHY_ADDR + PLIC_PRIORITY_OFFSET + (id) * 4)
+#define PLIC_PENDING(id)                (BSP_PLIC_PHY_ADDR + PLIC_PENDING_OFFSET + ((id) / 32))
+#define PLIC_ENABLE(id)                 (BSP_PLIC_PHY_ADDR + PLIC_ENABLE_OFFSET + ((id) / 32))
 
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);

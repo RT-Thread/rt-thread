@@ -3,6 +3,7 @@ menuconfig RT_USING_OFW
     select RT_USING_ADT
     select RT_USING_ADT_REF
     select RT_USING_ADT_BITMAP
+    select RT_USING_MEMBLOCK
     depends on RT_USING_DM
     default n
 

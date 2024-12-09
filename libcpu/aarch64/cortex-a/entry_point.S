@@ -234,6 +234,10 @@ init_cpu_el:
     bic     x0, x0, #(1 << 1)       /* Disable Alignment check */
     msr     sctlr_el1, x0
 
+    mrs     x0, cntkctl_el1
+    orr     x0, x0, #(1 << 1)      /* Set EL0VCTEN, enabling the EL0 Virtual Count Timer */
+    msr     cntkctl_el1, x0
+
     /* Avoid trap from SIMD or float point instruction */
     mov     x0, #0x00300000         /* Don't trap any SIMD/FP instructions in both EL0 and EL1 */
     msr     cpacr_el1, x0

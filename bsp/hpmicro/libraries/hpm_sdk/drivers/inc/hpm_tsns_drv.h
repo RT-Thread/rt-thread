@@ -300,7 +300,7 @@ static inline void tsns_disable_compare_min(TSNS_Type *ptr)
 static inline void tsns_set_speed(TSNS_Type *ptr, uint8_t speed)
 {
     assert(speed >= 24);
-    ptr->CONFIG = (ptr->CONFIG & TSNS_CONFIG_SPEED_MASK) | TSNS_CONFIG_SPEED_SET(speed);
+    ptr->CONFIG = (ptr->CONFIG & ~TSNS_CONFIG_SPEED_MASK) | TSNS_CONFIG_SPEED_SET(speed);
 }
 
 /**
@@ -311,7 +311,7 @@ static inline void tsns_set_speed(TSNS_Type *ptr, uint8_t speed)
  */
 static inline void tsns_set_average(TSNS_Type *ptr, uint8_t average)
 {
-    ptr->CONFIG = (ptr->CONFIG & TSNS_CONFIG_AVERAGE_MASK) | TSNS_CONFIG_AVERAGE_SET(average);
+    ptr->CONFIG = (ptr->CONFIG & ~TSNS_CONFIG_AVERAGE_MASK) | TSNS_CONFIG_AVERAGE_SET(average);
 }
 
 /**

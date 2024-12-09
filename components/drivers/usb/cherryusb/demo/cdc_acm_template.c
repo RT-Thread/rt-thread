@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "usbd_core.h"
-#include "usbd_cdc.h"
+#include "usbd_cdc_acm.h"
 
 /*!< endpoint address */
 #define CDC_IN_EP  0x81
@@ -98,7 +98,7 @@ static const uint8_t cdc_descriptor[] = {
     0x02,
     0x01,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -174,7 +174,7 @@ struct usbd_endpoint cdc_in_ep = {
 static struct usbd_interface intf0;
 static struct usbd_interface intf1;
 
-void cdc_acm_init(uint8_t busid, uint32_t reg_base)
+void cdc_acm_init(uint8_t busid, uintptr_t reg_base)
 {
     const uint8_t data[10] = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30 };
 

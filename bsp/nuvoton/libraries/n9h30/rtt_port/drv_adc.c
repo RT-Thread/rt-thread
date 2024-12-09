@@ -19,11 +19,11 @@
 #include "nu_bitutil.h"
 #include "drv_adc.h"
 
-/* Private define ---------------------------------------------------------------*/
+/* Private define --------------------------------------------------------------- */
 #define DEF_ADC_TOUCH_SMPL_TICK  40
 #define TOUCH_MQ_LENGTH      64
 
-/* Private Typedef --------------------------------------------------------------*/
+/* Private Typedef -------------------------------------------------------------- */
 struct nu_adc
 {
     struct rt_adc_device dev;
@@ -58,15 +58,15 @@ struct nu_adc_touch_data
 typedef struct nu_adc_touch_data *nu_adc_touch_data_t;
 #endif
 
-/* Private functions ------------------------------------------------------------*/
-static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
-static rt_err_t nu_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
+/* Private functions ------------------------------------------------------------ */
+static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled);
+static rt_err_t nu_adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value);
 static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args);
 
-/* Public functions ------------------------------------------------------------*/
+/* Public functions ------------------------------------------------------------ */
 int rt_hw_adc_init(void);
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ------------------------------------------------------------ */
 
 static struct nu_adc g_sNuADC =
 {
@@ -86,7 +86,7 @@ static void nu_adc_isr(int vector, void *param)
     rt_int32_t irqidx;
     ADC_T  *adc = psNuAdc->base;
 
-    //rt_kprintf("[%s %d] CTL: %08x CONF:%08x IER:%08x ISR:%08x\n", __func__, __LINE__, adc->CTL, adc->CONF, adc->IER, adc->ISR);
+    /* rt_kprintf("[%s %d] CTL: %08x CONF:%08x IER:%08x ISR:%08x\n", __func__, __LINE__, adc->CTL, adc->CONF, adc->IER, adc->ISR); */
 
     isr = adc->ISR;
     wkisr = adc->WKISR;
@@ -99,13 +99,13 @@ static void nu_adc_isr(int vector, void *param)
 
         if (psNuAdc->m_isr[irqidx].cbfunc != RT_NULL)
         {
-            // rt_kprintf("[%s] %d %x\n", __func__, irqidx, psNuAdc->m_isr[irqidx].cbfunc);
+            /* rt_kprintf("[%s] %d %x\n", __func__, irqidx, psNuAdc->m_isr[irqidx].cbfunc); */
             psNuAdc->m_isr[irqidx].cbfunc(isr, psNuAdc->m_isr[irqidx].private_data);
         }
 
         /* Clear sent bit */
         isr &= ~(u32IsrBitMask);
-    } //while
+    } /* while */
 
     while ((irqidx = nu_ctz(wkisr)) < eAdc_WKISR_CNT)
     {
@@ -117,7 +117,7 @@ static void nu_adc_isr(int vector, void *param)
         }
 
         wkisr &= ~(u32IsrBitMask);
-    } //while
+    } /* while */
 }
 
 
@@ -155,7 +155,7 @@ static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
         point.u32Z0 = ADC_GET_CONVERSION_Z1DATA(adc);
         point.u32Z1 = ADC_GET_CONVERSION_Z2DATA(adc);
 
-        //rt_kprintf("x=%d y=%d z0=%d z1=%d\n", point.u32X, point.u32Y, point.u32Z0, point.u32Z1);
+        /* rt_kprintf("x=%d y=%d z0=%d z1=%d\n", point.u32X, point.u32Y, point.u32Z0, point.u32Z1); */
         /* Trigger next or not. */
         if (point.u32Z0 < ADC_TOUCH_Z0_ACTIVE)
         {
@@ -306,10 +306,10 @@ rt_err_t nu_adc_touch_disable(void)
     _nu_adc_control((rt_device_t)psNuAdc, Z_OFF, RT_NULL);
     _nu_adc_control((rt_device_t)psNuAdc, PEDEF_OFF, RT_NULL);
 
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 4);  //Channel number 4
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 5);  //Channel number 5
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 6);  //Channel number 6
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 7);  //Channel number 7
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 4);  /* Channel number 4 */
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 5);  /* Channel number 5 */
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 6);  /* Channel number 6 */
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 7);  /* Channel number 7 */
 
     return RT_EOK;
 }
@@ -365,7 +365,7 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
         adc->CTL |= ADC_CTL_WKTEN_Msk;
         adc->IER |= ADC_IER_WKTIEN_Msk;
 
-        //TODO outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) | (1 << 26));
+        /* TODO outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) | (1 << 26)); */
     }
     break;
 
@@ -374,7 +374,7 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
         adc->CTL &= ~ADC_CTL_WKTEN_Msk;
         adc->IER &= ~ADC_IER_WKTIEN_Msk;
 
-        //TODO outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) & ~(1 << 26));
+        /* TODO outpw(REG_SYS_WKUPSER, inpw(REG_SYS_WKUPSER) & ~(1 << 26)); */
     }
     break;
 
@@ -525,7 +525,7 @@ static const struct rt_adc_ops nu_adc_ops =
 };
 
 /* nu_adc_enabled - Enable ADC clock and wait for ready */
-static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     nu_adc_t psNuADC = (nu_adc_t)device;
     RT_ASSERT(device);
@@ -555,7 +555,7 @@ static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel
     return RT_EOK;
 }
 
-static rt_err_t nu_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t nu_adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     rt_err_t ret = RT_EOK;
 
@@ -567,7 +567,7 @@ static rt_err_t nu_adc_convert(struct rt_adc_device *device, rt_uint32_t channel
         ret = -RT_EINVAL;
         goto exit_nu_adc_convert;
     }
-    else if ((ret = _nu_adc_control((rt_device_t)device, SWITCH_CH, (void *)channel)) != RT_EOK)
+    else if ((ret = _nu_adc_control((rt_device_t)device, SWITCH_CH, (void *)(intptr_t)channel)) != RT_EOK)
     {
         goto exit_nu_adc_convert;
     }
@@ -613,4 +613,4 @@ int rt_hw_adc_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_adc_init);
 
-#endif //#if defined(BSP_USING_ADC)
+#endif /* #if defined(BSP_USING_ADC) */

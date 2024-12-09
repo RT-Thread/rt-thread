@@ -15,6 +15,7 @@ rsource "drivers/ipc/Kconfig"
 rsource "posix/Kconfig"
 rsource "mm/Kconfig"
 rsource "tmpfs/Kconfig"
+rsource "smp_call/Kconfig"
 endif
 
 endmenu

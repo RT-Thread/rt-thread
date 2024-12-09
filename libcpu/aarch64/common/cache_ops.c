@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-03-29 	  quanzhao 	   the first version
+ * 2019-03-29     quanzhao     the first version
  */
 #include <rthw.h>
 #include <rtdef.h>

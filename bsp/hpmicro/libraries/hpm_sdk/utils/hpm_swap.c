@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -7,7 +7,7 @@
 
 #include "hpm_common.h"
 
-#ifndef __riscv_xandes
+#if !defined(__riscv_xandes) || defined(__zcc__)
 uint32_t __bswapsi2 (uint32_t u)
 {
     return ((((u) & 0xff000000) >> 24)

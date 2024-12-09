@@ -12,6 +12,7 @@
  */
 #include "rtconfig.h"
 #include <rtdevice.h>
+#include <string.h>
 #define LOG_TAG      "i2c_drv"
 #include "drv_log.h"
 #include "drv_i2c.h"
@@ -20,7 +21,7 @@
 #include "fio_mux.h"
 #include "fmio_hw.h"
 #include "fmio.h"
-#include "drivers/i2c.h"
+#include "drivers/dev_i2c.h"
 #include "fparameters.h"
 #ifdef RT_USING_SMART
     #include <ioremap.h>
@@ -118,7 +119,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
         return -RT_ERROR;
     }
     mio_handle.is_ready = 0;
-    memset(&mio_handle, 0, sizeof(mio_handle));
+    rt_memset(&mio_handle, 0, sizeof(mio_handle));
 
     return RT_EOK;
 }

@@ -10,7 +10,7 @@
     [..]
     The LL CORTEX driver contains a set of generic APIs that can be
     used by user:
-      (+) SYSTICK configuration used by @ref LL_mDelay and @ref LL_Init1msTick
+      (+) SYSTICK configuration used by LL_mDelay and LL_Init1msTick
           functions
       (+) Low power mode configuration (SCB register of Cortex-MCU)
       (+) MPU API to configure and enable regions
@@ -21,13 +21,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file in
+  * the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -175,6 +174,8 @@ extern "C" {
 #define LL_MPU_TEX_LEVEL0                  (0x00UL << MPU_RASR_TEX_Pos) /*!< b000 for TEX bits */
 #define LL_MPU_TEX_LEVEL1                  (0x01UL << MPU_RASR_TEX_Pos) /*!< b001 for TEX bits */
 #define LL_MPU_TEX_LEVEL2                  (0x02UL << MPU_RASR_TEX_Pos) /*!< b010 for TEX bits */
+
+/* Legacy Define */
 #define LL_MPU_TEX_LEVEL4                  (0x04UL << MPU_RASR_TEX_Pos) /*!< b100 for TEX bits */
 /**
   * @}
@@ -593,7 +594,7 @@ __STATIC_INLINE void LL_MPU_EnableRegion(uint32_t Region)
   *           or @ref LL_MPU_REGION_SIZE_1GB or @ref LL_MPU_REGION_SIZE_2GB or @ref LL_MPU_REGION_SIZE_4GB
   *         @arg @ref LL_MPU_REGION_NO_ACCESS or @ref LL_MPU_REGION_PRIV_RW or @ref LL_MPU_REGION_PRIV_RW_URO or @ref LL_MPU_REGION_FULL_ACCESS
   *           or @ref LL_MPU_REGION_PRIV_RO or @ref LL_MPU_REGION_PRIV_RO_URO
-  *         @arg @ref LL_MPU_TEX_LEVEL0 or @ref LL_MPU_TEX_LEVEL1 or @ref LL_MPU_TEX_LEVEL2 or @ref LL_MPU_TEX_LEVEL4
+  *         @arg @ref LL_MPU_TEX_LEVEL0 or @ref LL_MPU_TEX_LEVEL1 or @ref LL_MPU_TEX_LEVEL2
   *         @arg @ref LL_MPU_INSTRUCTION_ACCESS_ENABLE or  @ref LL_MPU_INSTRUCTION_ACCESS_DISABLE
   *         @arg @ref LL_MPU_ACCESS_SHAREABLE or @ref LL_MPU_ACCESS_NOT_SHAREABLE
   *         @arg @ref LL_MPU_ACCESS_CACHEABLE or @ref LL_MPU_ACCESS_NOT_CACHEABLE
@@ -666,4 +667,3 @@ __STATIC_INLINE void LL_MPU_DisableRegion(uint32_t Region)
 
 #endif /* STM32H7xx_LL_CORTEX_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

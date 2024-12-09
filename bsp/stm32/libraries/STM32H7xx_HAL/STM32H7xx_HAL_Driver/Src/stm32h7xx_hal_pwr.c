@@ -8,6 +8,17 @@
   *           + Initialization and de-initialization functions.
   *           + Peripheral Control functions.
   *           + Interrupt Handling functions.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   @verbatim
   ==============================================================================
                         ##### PWR peripheral overview #####
@@ -129,18 +140,6 @@
       (+) __HAL_PWR_CLEAR_FLAG()            : Clear the PWR pending flags.
 
   @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -568,6 +567,9 @@ void HAL_PWR_EnterSLEEPMode (uint32_t Regulator, uint8_t SLEEPEntry)
   assert_param (IS_PWR_REGULATOR (Regulator));
   assert_param (IS_PWR_SLEEP_ENTRY (SLEEPEntry));
 
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(Regulator);
+
   /* Clear SLEEPDEEP bit of Cortex System Control Register */
   CLEAR_BIT (SCB->SCR, SCB_SCR_SLEEPDEEP_Msk);
 
@@ -872,4 +874,3 @@ __weak void HAL_PWR_PVDCallback (void)
   * @}
   */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

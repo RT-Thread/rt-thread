@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_crm.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the crm firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -61,11 +59,11 @@ void crm_reset(void)
   /* wait sclk switch status */
   while(CRM->cfg_bit.sclksts != CRM_SCLK_HICK);
 
-  /* reset cfg register, include sclk switch, ahbdiv, apb1div, apb2div, adcdiv, clkout bits */
-  CRM->cfg = 0;
-
   /* reset hexten, hextbyps, cfden and pllen bits */
   CRM->ctrl &= ~(0x010D0000U);
+
+  /* reset cfg register, include sclk switch, ahbdiv, apb1div, apb2div, adcdiv, clkout bits */
+  CRM->cfg = 0;
 
   /* reset pllms pllns pllfr pllrcs bits */
   CRM->pllcfg = 0x00033002U;
@@ -132,6 +130,64 @@ flag_status crm_flag_get(uint32_t flag)
   {
     status = SET;
   }
+  return status;
+}
+
+/**
+  * @brief  get crm interrupt flag status
+  * @param  flag
+  *         this parameter can be one of the following values:
+  *         - CRM_LICK_READY_INT_FLAG
+  *         - CRM_LEXT_READY_INT_FLAG
+  *         - CRM_HICK_READY_INT_FLAG
+  *         - CRM_HEXT_READY_INT_FLAG
+  *         - CRM_PLL_READY_INT_FLAG
+  *         - CRM_CLOCK_FAILURE_INT_FLAG
+  * @retval flag_status (SET or RESET)
+  */
+flag_status crm_interrupt_flag_get(uint32_t flag)
+{
+  flag_status status = RESET;
+  switch(flag)
+  {
+    case CRM_LICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.lickstblf && CRM->clkint_bit.lickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_LEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.lextstblf && CRM->clkint_bit.lextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HICK_READY_INT_FLAG:
+      if(CRM->clkint_bit.hickstblf && CRM->clkint_bit.hickstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_HEXT_READY_INT_FLAG:
+      if(CRM->clkint_bit.hextstblf && CRM->clkint_bit.hextstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_PLL_READY_INT_FLAG:
+      if(CRM->clkint_bit.pllstblf && CRM->clkint_bit.pllstblien)
+      {
+        status = SET;
+      }
+      break;
+    case CRM_CLOCK_FAILURE_INT_FLAG:
+      if(CRM->clkint_bit.cfdf && CRM->ctrl_bit.cfden)
+      {
+        status = SET;
+      }
+      break;
+  }
+
   return status;
 }
 
@@ -282,6 +338,7 @@ void crm_periph_reset(crm_periph_reset_type value, confirm_state new_state)
   *         - CRM_USART6_PERIPH_LOWPOWER    - CRM_ADC1_PERIPH_LOWPOWER      - CRM_ADC2_PERIPH_LOWPOWER     - CRM_ADC3_PERIPH_LOWPOWER
   *         - CRM_SPI1_PERIPH_LOWPOWER      - CRM_SPI4_PERIPH_LOWPOWER      - CRM_SCFG_PERIPH_LOWPOWER     - CRM_TMR9_PERIPH_LOWPOWER
   *         - CRM_TMR10_PERIPH_LOWPOWER     - CRM_TMR11_PERIPH_LOWPOWER     - CRM_TMR20_PERIPH_LOWPOWER    - CRM_ACC_PERIPH_LOWPOWER
+  *         - CRM_FLASH_PERIPH_LOWPOWER     - CRM_SRAM1_PERIPH_LOWPOWER     - CRM_SRAM2_PERIPH_LOWPOWER
   * @param  new_state (TRUE or FALSE)
   * @retval none
   */
@@ -367,6 +424,7 @@ void crm_flag_clear(uint32_t flag)
     case CRM_LOWPOWER_RESET_FLAG:
     case CRM_ALL_RESET_FLAG:
       CRM->ctrlsts_bit.rstfc = TRUE;
+      while(CRM->ctrlsts_bit.rstfc == TRUE);
       break;
     case CRM_LICK_READY_INT_FLAG:
       CRM->clkint_bit.lickstblfc = TRUE;
@@ -468,6 +526,7 @@ void crm_ahb_div_set(crm_ahb_div_type value)
 
 /**
   * @brief  set crm apb1 division
+  * @note   the maximum frequency of APB1/APB2 clock is 144 MHz
   * @param  value
   *         this parameter can be one of the following values:
   *         - CRM_APB1_DIV_1
@@ -484,6 +543,7 @@ void crm_apb1_div_set(crm_apb1_div_type value)
 
 /**
   * @brief  set crm apb2 division
+  * @note   the maximum frequency of APB1/APB2 clock is 144 MHz
   * @param  value
   *         this parameter can be one of the following values:
   *         - CRM_APB2_DIV_1
@@ -623,7 +683,7 @@ void crm_clkout_to_tmr10_enable(confirm_state new_state)
   *                          pll_ms
   *
   *                       pll_rcs_freq * pll_ns
-  *         500mhz <=  -------------------------------- <= 1000mhz
+  *         500mhz <=  -------------------------------- <= 1200mhz
   *                               pll_ms
   * @param  clock_source
   *         this parameter can be one of the following values:
@@ -645,6 +705,10 @@ void crm_pll_config(crm_pll_clock_source_type clock_source, uint16_t pll_ns, \
                     uint16_t pll_ms, crm_pll_fr_type pll_fr)
 {
   /* config pll clock source */
+  if(clock_source == CRM_PLL_SOURCE_HICK)
+  {
+    CRM->misc1_bit.hickdiv = CRM_HICK48_NODIV;
+  }
   CRM->pllcfg_bit.pllrcs = clock_source;
 
   /* config pll multiplication factor */
@@ -665,6 +729,7 @@ void crm_pll_config(crm_pll_clock_source_type clock_source, uint16_t pll_ns, \
 void crm_sysclk_switch(crm_sclk_type value)
 {
   CRM->cfg_bit.sclksel = value;
+  DUMMY_NOP();
 }
 
 /**
@@ -888,7 +953,7 @@ void crm_interrupt_enable(uint32_t crm_int, confirm_state new_state)
   *                          pll_ms
   *
   *                       pll_rcs_freq * pll_ns
-  *         500mhz <=  -------------------------------- <= 1000mhz
+  *         500mhz <=  -------------------------------- <= 1200mhz
   *                               pll_ms
   * @param  pll_rcs
   *         this parameter can be one of the following values:
@@ -903,9 +968,10 @@ void crm_interrupt_enable(uint32_t crm_int, confirm_state new_state)
 error_status crm_pll_parameter_calculate(crm_pll_clock_source_type pll_rcs, uint32_t target_sclk_freq, \
                                          uint16_t *ret_ms, uint16_t *ret_ns, uint16_t *ret_fr)
 {
-  uint32_t pll_rcs_freq = 0, ns = 0, ms = 0, fr = 0;
-  uint32_t ms_min = 0, ms_max = 0, error_min = 0xFFFFFFFF;
-  uint32_t result = 0, absolute_value = 0;
+  uint32_t error_min = 0xFFFFFFFF;
+  uint32_t pll_rcs_freq = 0, result = 0, absolute_value = 0;
+  uint16_t ns = 0, ms = 0, ms_min = 0, ms_max = 0;
+  int16_t fr = 0;
 
   /* reduce calculate accuracy, target_sclk_freq accuracy with khz */
   target_sclk_freq = target_sclk_freq / 1000;
@@ -932,13 +998,13 @@ error_status crm_pll_parameter_calculate(crm_pll_clock_source_type pll_rcs, uint
   /* polling pll parameters */
   for(ms = ms_min; ms <= ms_max; ms ++)
   {
-    for(fr = 0; fr <= 5; fr ++)
+    for(fr = 5; fr >= 0; fr --)
     {
       for(ns = 31; ns <= 500; ns ++)
       {
         result = (pll_rcs_freq * ns) / (ms);
         /* check vco frequency range, accuracy with khz */
-        if((result < 500000U) || (result > 1000000U))
+        if((result < 500000U) || (result > 1200000U))
         {
           continue;
         }
@@ -949,7 +1015,7 @@ error_status crm_pll_parameter_calculate(crm_pll_clock_source_type pll_rcs, uint
         {
           *ret_ms = ms;
           *ret_ns = ns;
-          *ret_fr = fr;
+          *ret_fr = (uint16_t)fr;
           /* the pll parameters that is equal to target_sclk_freq */
           return SUCCESS;
         }
@@ -960,7 +1026,7 @@ error_status crm_pll_parameter_calculate(crm_pll_clock_source_type pll_rcs, uint
           error_min = absolute_value;
           *ret_ms = ms;
           *ret_ns = ns;
-          *ret_fr = fr;
+          *ret_fr = (uint16_t)fr;
         }
       }
     }

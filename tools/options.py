@@ -121,16 +121,16 @@ def AddOptions():
                 action = 'store_true',
                 default = False,
                 help = 'reset the project configurations to default')
-    AddOption('--pyconfig', '--guiconfig',
-                dest = 'pyconfig',
+    AddOption('--guiconfig', '--pyconfig',
+                dest = 'guiconfig',
                 action = 'store_true',
                 default = False,
                 help = 'Python GUI menuconfig for RT-Thread BSP')
-    AddOption('--pyconfig-silent', '--defconfig',
-                dest = 'pyconfig-silent',
+    AddOption('--defconfig', '--pyconfig-silent',
+                dest = 'defconfig',
                 action = 'store_true',
                 default = False,
-                help = 'Don`t show pyconfig window')
+                help = 'Don`t show Python GUI menuconfig window')
     AddOption('--menuconfig',
                 dest = 'menuconfig',
                 action = 'store_true',

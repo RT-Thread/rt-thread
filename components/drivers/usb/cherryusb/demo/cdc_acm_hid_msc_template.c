@@ -5,7 +5,7 @@
  */
 #include "usbd_core.h"
 #include "usbd_msc.h"
-#include "usbd_cdc.h"
+#include "usbd_cdc_acm.h"
 #include "usbd_hid.h"
 
 /*!< endpoint address */
@@ -147,7 +147,7 @@ const uint8_t cdc_acm_hid_msc_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -301,7 +301,7 @@ struct usbd_interface intf1;
 struct usbd_interface intf2;
 struct usbd_interface intf3;
 
-void cdc_acm_hid_msc_descriptor_init(uint8_t busid, uint32_t reg_base)
+void cdc_acm_hid_msc_descriptor_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, cdc_acm_hid_msc_descriptor);
 

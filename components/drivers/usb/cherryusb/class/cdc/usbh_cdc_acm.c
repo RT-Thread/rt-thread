@@ -12,18 +12,18 @@
 
 #define DEV_FORMAT "/dev/ttyACM%d"
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_acm_buf[64];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_acm_buf[CONFIG_USBHOST_MAX_CDC_ACM_CLASS][USB_ALIGN_UP(64, CONFIG_USB_ALIGN_SIZE)];
 
 static struct usbh_cdc_acm g_cdc_acm_class[CONFIG_USBHOST_MAX_CDC_ACM_CLASS];
 static uint32_t g_devinuse = 0;
 
 static struct usbh_cdc_acm *usbh_cdc_acm_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_CDC_ACM_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_cdc_acm_class[devno], 0, sizeof(struct usbh_cdc_acm));
             g_cdc_acm_class[devno].minor = devno;
             return &g_cdc_acm_class[devno];
@@ -34,17 +34,22 @@ static struct usbh_cdc_acm *usbh_cdc_acm_class_alloc(void)
 
 static void usbh_cdc_acm_class_free(struct usbh_cdc_acm *cdc_acm_class)
 {
-    int devno = cdc_acm_class->minor;
+    uint8_t devno = cdc_acm_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(cdc_acm_class, 0, sizeof(struct usbh_cdc_acm));
 }
 
 int usbh_cdc_acm_set_line_coding(struct usbh_cdc_acm *cdc_acm_class, struct cdc_line_coding *line_coding)
 {
-    struct usb_setup_packet *setup = cdc_acm_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cdc_acm_class || !cdc_acm_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cdc_acm_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CDC_REQUEST_SET_LINE_CODING;
@@ -52,15 +57,20 @@ int usbh_cdc_acm_set_line_coding(struct usbh_cdc_acm *cdc_acm_class, struct cdc_
     setup->wIndex = cdc_acm_class->intf;
     setup->wLength = 7;
 
-    memcpy(g_cdc_acm_buf, line_coding, sizeof(struct cdc_line_coding));
+    memcpy(g_cdc_acm_buf[cdc_acm_class->minor], line_coding, sizeof(struct cdc_line_coding));
 
-    return usbh_control_transfer(cdc_acm_class->hport, setup, g_cdc_acm_buf);
+    return usbh_control_transfer(cdc_acm_class->hport, setup, g_cdc_acm_buf[cdc_acm_class->minor]);
 }
 
 int usbh_cdc_acm_get_line_coding(struct usbh_cdc_acm *cdc_acm_class, struct cdc_line_coding *line_coding)
 {
-    struct usb_setup_packet *setup = cdc_acm_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
+
+    if (!cdc_acm_class || !cdc_acm_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cdc_acm_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CDC_REQUEST_GET_LINE_CODING;
@@ -68,17 +78,22 @@ int usbh_cdc_acm_get_line_coding(struct usbh_cdc_acm *cdc_acm_class, struct cdc_
     setup->wIndex = cdc_acm_class->intf;
     setup->wLength = 7;
 
-    ret = usbh_control_transfer(cdc_acm_class->hport, setup, g_cdc_acm_buf);
+    ret = usbh_control_transfer(cdc_acm_class->hport, setup, g_cdc_acm_buf[cdc_acm_class->minor]);
     if (ret < 0) {
         return ret;
     }
-    memcpy(line_coding, g_cdc_acm_buf, sizeof(struct cdc_line_coding));
+    memcpy(line_coding, g_cdc_acm_buf[cdc_acm_class->minor], sizeof(struct cdc_line_coding));
     return ret;
 }
 
 int usbh_cdc_acm_set_line_state(struct usbh_cdc_acm *cdc_acm_class, bool dtr, bool rts)
 {
-    struct usb_setup_packet *setup = cdc_acm_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cdc_acm_class || !cdc_acm_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cdc_acm_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CDC_REQUEST_SET_CONTROL_LINE_STATE;
@@ -216,20 +231,26 @@ int usbh_cdc_acm_bulk_out_transfer(struct usbh_cdc_acm *cdc_acm_class, uint8_t *
 
 static int usbh_cdc_data_connect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 static int usbh_cdc_data_disconnect(struct usbh_hubport *hport, uint8_t intf)
 {
+    (void)hport;
+    (void)intf;
     return 0;
 }
 
 __WEAK void usbh_cdc_acm_run(struct usbh_cdc_acm *cdc_acm_class)
 {
+    (void)cdc_acm_class;
 }
 
 __WEAK void usbh_cdc_acm_stop(struct usbh_cdc_acm *cdc_acm_class)
 {
+    (void)cdc_acm_class;
 }
 
 const struct usbh_class_driver cdc_acm_class_driver = {
@@ -245,10 +266,10 @@ const struct usbh_class_driver cdc_data_class_driver = {
 };
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_acm_class_info = {
-    .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
+    .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS,
     .class = USB_DEVICE_CLASS_CDC,
     .subclass = CDC_ABSTRACT_CONTROL_MODEL,
-    .protocol = CDC_COMMON_PROTOCOL_AT_COMMANDS,
+    .protocol = 0x00,
     .id_table = NULL,
     .class_driver = &cdc_acm_class_driver
 };

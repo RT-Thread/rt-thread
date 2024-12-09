@@ -32,11 +32,11 @@
 #warning suggest you to enable LWIP_NO_TX_THREAD, we do not use rtthread eth tx thread
 #endif
 
-#if LWIP_TCPIP_CORE_LOCKING_INPUT !=1
+#if LWIP_TCPIP_CORE_LOCKING_INPUT != 1
 #warning suggest you to set LWIP_TCPIP_CORE_LOCKING_INPUT to 1, usb handles eth input with own thread
 #endif
 
-#if LWIP_TCPIP_CORE_LOCKING !=1
+#if LWIP_TCPIP_CORE_LOCKING != 1
 #error must set LWIP_TCPIP_CORE_LOCKING to 1
 #endif
 
@@ -44,11 +44,27 @@
 #error PBUF_POOL_BUFSIZE must be larger than 1600
 #endif
 
+#if RT_LWIP_TCPTHREAD_STACKSIZE < 2048
+#error RT_LWIP_TCPTHREAD_STACKSIZE must be >= 2048
+#endif
+
 // #define CONFIG_USBHOST_PLATFORM_CDC_ECM
 // #define CONFIG_USBHOST_PLATFORM_CDC_RNDIS
 // #define CONFIG_USBHOST_PLATFORM_CDC_NCM
 // #define CONFIG_USBHOST_PLATFORM_ASIX
 // #define CONFIG_USBHOST_PLATFORM_RTL8152
+
+void usbh_lwip_eth_output_common(struct pbuf *p, uint8_t *buf)
+{
+    struct pbuf *q;
+    uint8_t *buffer;
+
+    buffer = buf;
+    for (q = p; q != NULL; q = q->next) {
+        usb_memcpy(buffer, q->payload, q->len);
+        buffer += q->len;
+    }
+}
 
 void usbh_lwip_eth_input_common(struct netif *netif, uint8_t *buf, uint32_t len)
 {
@@ -65,7 +81,7 @@ void usbh_lwip_eth_input_common(struct netif *netif, uint8_t *buf, uint32_t len)
 #if LWIP_TCPIP_CORE_LOCKING_INPUT
         p->payload = buf;
 #else
-        memcpy(p->payload, buf, len);
+        usb_memcpy(p->payload, buf, len);
 #endif
         err = netif->input(p, netif);
         if (err != ERR_OK) {
@@ -105,7 +121,11 @@ static rt_err_t rt_usbh_cdc_ecm_control(rt_device_t dev, int cmd, void *args)
 
 static rt_err_t rt_usbh_cdc_ecm_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    int ret = usbh_cdc_ecm_eth_output(p->payload, p->tot_len);
+    int ret;
+    (void)dev;
+
+    usbh_lwip_eth_output_common(p, usbh_cdc_ecm_get_eth_txbuf());
+    ret = usbh_cdc_ecm_eth_output(p->tot_len);
     if (ret < 0) {
         return -RT_ERROR;
     } else {
@@ -135,6 +155,8 @@ void usbh_cdc_ecm_run(struct usbh_cdc_ecm *cdc_ecm_class)
 
 void usbh_cdc_ecm_stop(struct usbh_cdc_ecm *cdc_ecm_class)
 {
+    (void)cdc_ecm_class;
+
     eth_device_deinit(&g_cdc_ecm_dev);
 }
 #endif
@@ -188,7 +210,11 @@ static rt_err_t rt_usbh_rndis_control(rt_device_t dev, int cmd, void *args)
 
 static rt_err_t rt_usbh_rndis_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    int ret = usbh_rndis_eth_output(p->payload, p->tot_len);
+    int ret;
+    (void)dev;
+
+    usbh_lwip_eth_output_common(p, usbh_rndis_get_eth_txbuf());
+    ret = usbh_rndis_eth_output(p->tot_len);
     if (ret < 0) {
         return -RT_ERROR;
     } else {
@@ -219,6 +245,8 @@ void usbh_rndis_run(struct usbh_rndis *rndis_class)
 
 void usbh_rndis_stop(struct usbh_rndis *rndis_class)
 {
+    (void)rndis_class;
+
     eth_device_deinit(&g_rndis_dev);
     // rt_timer_stop(keep_timer);
     // rt_timer_delete(keep_timer);
@@ -254,7 +282,11 @@ static rt_err_t rt_usbh_cdc_ncm_control(rt_device_t dev, int cmd, void *args)
 
 static rt_err_t rt_usbh_cdc_ncm_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    int ret = usbh_cdc_ncm_eth_output(p->payload, p->tot_len);
+    int ret;
+    (void)dev;
+
+    usbh_lwip_eth_output_common(p, usbh_cdc_ncm_get_eth_txbuf());
+    ret = usbh_cdc_ncm_eth_output(p->tot_len);
     if (ret < 0) {
         return -RT_ERROR;
     } else {
@@ -284,6 +316,8 @@ void usbh_cdc_ncm_run(struct usbh_cdc_ncm *cdc_ncm_class)
 
 void usbh_cdc_ncm_stop(struct usbh_cdc_ncm *cdc_ncm_class)
 {
+    (void)cdc_ncm_class;
+
     eth_device_deinit(&g_cdc_ncm_dev);
 }
 #endif
@@ -317,7 +351,11 @@ static rt_err_t rt_usbh_asix_control(rt_device_t dev, int cmd, void *args)
 
 static rt_err_t rt_usbh_asix_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    int ret = usbh_asix_eth_output(p->payload, p->tot_len);
+    int ret;
+    (void)dev;
+
+    usbh_lwip_eth_output_common(p, usbh_asix_get_eth_txbuf());
+    ret = usbh_asix_eth_output(p->tot_len);
     if (ret < 0) {
         return -RT_ERROR;
     } else {
@@ -347,6 +385,8 @@ void usbh_asix_run(struct usbh_asix *asix_class)
 
 void usbh_asix_stop(struct usbh_asix *asix_class)
 {
+    (void)asix_class;
+
     eth_device_deinit(&g_asix_dev);
 }
 #endif
@@ -380,7 +420,11 @@ static rt_err_t rt_usbh_rtl8152_control(rt_device_t dev, int cmd, void *args)
 
 static rt_err_t rt_usbh_rtl8152_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    int ret = usbh_rtl8152_eth_output(p->payload, p->tot_len);
+    int ret;
+    (void)dev;
+
+    usbh_lwip_eth_output_common(p, usbh_rtl8152_get_eth_txbuf());
+    ret = usbh_rtl8152_eth_output(p->tot_len);
     if (ret < 0) {
         return -RT_ERROR;
     } else {
@@ -410,6 +454,8 @@ void usbh_rtl8152_run(struct usbh_rtl8152 *rtl8152_class)
 
 void usbh_rtl8152_stop(struct usbh_rtl8152 *rtl8152_class)
 {
+    (void)rtl8152_class;
+
     eth_device_deinit(&g_rtl8152_dev);
 }
 #endif

@@ -13,6 +13,8 @@
  * 2013-07-09     Grissiom     add ref_count support
  * 2016-04-02     Bernard      fix the open_flag initialization issue.
  * 2021-03-19     Meco Man     remove rt_device_init_all()
+ * 2024-09-15     milo         fix log format issue
+ *                             fix reopen with a different oflag issue
  */
 
 #include <rtthread.h>
@@ -163,7 +165,7 @@ void rt_device_destroy(rt_device_t dev)
 {
     /* parameter check */
     RT_ASSERT(dev != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
+    RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Null);
     RT_ASSERT(rt_object_is_systemobject(&dev->parent) == RT_FALSE);
 
     rt_object_detach(&(dev->parent));
@@ -195,8 +197,8 @@ rt_err_t rt_device_init(rt_device_t dev)
             result = device_init(dev);
             if (result != RT_EOK)
             {
-                LOG_E("To initialize device:%s failed. The error code is %d",
-                      dev->parent.name, result);
+                LOG_E("To initialize device:%.*s failed. The error code is %d",
+                      RT_NAME_MAX, dev->parent.name, result);
             }
             else
             {
@@ -233,8 +235,8 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
             result = device_init(dev);
             if (result != RT_EOK)
             {
-                LOG_E("To initialize device:%s failed. The error code is %d",
-                      dev->parent.name, result);
+                LOG_E("To initialize device:%.*s failed. The error code is %d",
+                      RT_NAME_MAX, dev->parent.name, result);
 
                 return result;
             }
@@ -252,7 +254,7 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 
     /* device is not opened or opened by other oflag, call device_open interface */
     if (!(dev->open_flag & RT_DEVICE_OFLAG_OPEN) ||
-         ((dev->open_flag & RT_DEVICE_OFLAG_MASK) != (oflag & RT_DEVICE_OFLAG_MASK)))
+         ((dev->open_flag & RT_DEVICE_OFLAG_MASK) != ((oflag & RT_DEVICE_OFLAG_MASK) | RT_DEVICE_OFLAG_OPEN)))
     {
         if (device_open != RT_NULL)
         {

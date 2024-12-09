@@ -26,10 +26,7 @@ Export('rtconfig')
 
 SDK_ROOT = os.path.abspath('./')
 
-if os.path.exists(SDK_ROOT + '/drivers'):
-    drivers_path_prefix = SDK_ROOT + '/drivers'
-else:
-    drivers_path_prefix = os.path.dirname(SDK_ROOT) + '/drivers'
+drivers_path_prefix = os.path.dirname(SDK_ROOT) + '/drivers'
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
@@ -40,6 +37,9 @@ objs.extend(SConscript(drivers_path_prefix + '/SConscript', variant_dir='build/d
 if GetDepend('BOARD_TYPE_MILKV_DUO256M'):
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('cv180x_lscript.ld', 'cv181x_lscript.ld')
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('-L board/script/cv180x', '-L board/script/cv181x')
+elif GetDepend('BOARD_TYPE_MILKV_DUOS'):
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('cv180x_lscript.ld', 'cv1813h_lscript.ld')
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('-L board/script/cv180x', '-L board/script/cv1813h')
 
 # make a building
 DoBuilding(TARGET, objs)

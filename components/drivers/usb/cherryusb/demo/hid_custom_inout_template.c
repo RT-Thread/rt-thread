@@ -28,6 +28,11 @@
 #define HIDRAW_OUT_EP_INTERVAL 10
 #endif
 
+#define USBD_VID           0xffff
+#define USBD_PID           0xffff
+#define USBD_MAX_POWER     100
+#define USBD_LANGID_STRING 1033
+
 /*!< config descriptor size */
 #define USB_HID_CONFIG_DESC_SIZ (9 + 9 + 9 + 7 + 7)
 
@@ -141,7 +146,7 @@ static const uint8_t hid_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -267,7 +272,7 @@ static struct usbd_endpoint custom_out_ep = {
  */
 struct usbd_interface intf0;
 
-void hid_custom_init(uint8_t busid, uint32_t reg_base)
+void hid_custom_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, hid_descriptor);
     usbd_add_interface(busid, usbd_hid_init_intf(busid, &intf0, hid_custom_report_desc, HID_CUSTOM_REPORT_DESC_SIZE));

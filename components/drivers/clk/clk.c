@@ -55,6 +55,10 @@ static struct rt_clk *clk_alloc(struct rt_clk_node *clk_np, const char *dev_id,
 
         clk->fw_node = fw_node;
     }
+    else
+    {
+        clk = rt_err_ptr(-RT_ENOMEM);
+    }
 
     return clk;
 }
@@ -76,7 +80,7 @@ static struct rt_clk *clk_create(struct rt_clk_node *clk_np, const char *dev_id,
 {
     struct rt_clk *clk = clk_alloc(clk_np, dev_id, con_id, fw_node);
 
-    if (clk)
+    if (!rt_is_err(clk))
     {
         clk_get(clk_np);
 
@@ -136,21 +140,18 @@ rt_err_t rt_clk_register(struct rt_clk_node *clk_np, struct rt_clk_node *parent_
 
     if (clk_np)
     {
-        clk = clk_alloc(clk_np, RT_NULL, RT_NULL, RT_NULL);
-    }
-    else
-    {
-        err = -RT_EINVAL;
-    }
-
-    if (!err && clk_np)
-    {
         clk_np->clk = clk;
 
         if (!clk_np->ops)
         {
             clk_np->ops = &unused_clk_ops;
         }
+
+    #if RT_NAME_MAX > 0
+        rt_strncpy(clk_np->rt_parent.name, RT_CLK_NODE_OBJ_NAME, RT_NAME_MAX);
+    #else
+        clk_np->rt_parent.name = RT_CLK_NODE_OBJ_NAME;
+    #endif
 
         rt_ref_init(&clk_np->ref);
         rt_list_init(&clk_np->list);
@@ -159,7 +160,16 @@ rt_err_t rt_clk_register(struct rt_clk_node *clk_np, struct rt_clk_node *parent_
 
         if (parent_np)
         {
-            clk_set_parent(clk_np, parent_np);
+            clk_np->clk = clk_alloc(clk_np, RT_NULL, RT_NULL, RT_NULL);
+
+            if (clk_np->clk)
+            {
+                clk_set_parent(clk_np, parent_np);
+            }
+            else
+            {
+                err = -RT_ENOMEM;
+            }
         }
         else
         {
@@ -265,9 +275,14 @@ static rt_err_t clk_prepare(struct rt_clk *clk, struct rt_clk_node *clk_np)
         clk_prepare(clk_np->clk, clk_np->parent);
     }
 
-    if (clk_np->ops->prepare)
+    if (clk->prepare_count == 0 && clk_np->ops->prepare)
     {
         err = clk_np->ops->prepare(clk);
+    }
+
+    if (!err)
+    {
+        ++clk->prepare_count;
     }
 
     return err;
@@ -287,10 +302,6 @@ rt_err_t rt_clk_prepare(struct rt_clk *clk)
 
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -302,9 +313,13 @@ static void clk_unprepare(struct rt_clk *clk, struct rt_clk_node *clk_np)
         clk_unprepare(clk_np->clk, clk_np->parent);
     }
 
-    if (clk_np->ops->unprepare)
+    if (clk->prepare_count == 1 && clk_np->ops->unprepare)
     {
         clk_np->ops->unprepare(clk);
+    }
+    if (clk->prepare_count)
+    {
+        --clk->prepare_count;
     }
 }
 
@@ -322,10 +337,6 @@ rt_err_t rt_clk_unprepare(struct rt_clk *clk)
 
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -339,9 +350,14 @@ static rt_err_t clk_enable(struct rt_clk *clk, struct rt_clk_node *clk_np)
         clk_enable(clk_np->clk, clk_np->parent);
     }
 
-    if (clk_np->ops->enable)
+    if (clk->enable_count == 0 && clk_np->ops->enable)
     {
         err = clk_np->ops->enable(clk);
+    }
+
+    if (!err)
+    {
+        ++clk->enable_count;
     }
 
     return err;
@@ -359,10 +375,6 @@ rt_err_t rt_clk_enable(struct rt_clk *clk)
 
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -374,9 +386,13 @@ static void clk_disable(struct rt_clk *clk, struct rt_clk_node *clk_np)
         clk_disable(clk_np->clk, clk_np->parent);
     }
 
-    if (clk_np->ops->disable)
+    if (clk->enable_count == 1 && clk_np->ops->disable)
     {
         clk_np->ops->disable(clk);
+    }
+    if (clk->enable_count)
+    {
+        --clk->enable_count;
     }
 }
 
@@ -394,7 +410,7 @@ void rt_clk_disable(struct rt_clk *clk)
 
 rt_err_t rt_clk_prepare_enable(struct rt_clk *clk)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -411,10 +427,6 @@ rt_err_t rt_clk_prepare_enable(struct rt_clk *clk)
                 rt_clk_unprepare(clk);
             }
         }
-    }
-    else
-    {
-        err = -RT_EINVAL;
     }
 
     return err;
@@ -453,10 +465,6 @@ rt_err_t rt_clk_array_prepare(struct rt_clk_array *clk_arr)
             }
         }
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -477,10 +485,6 @@ rt_err_t rt_clk_array_unprepare(struct rt_clk_array *clk_arr)
                 break;
             }
         }
-    }
-    else
-    {
-        err = -RT_EINVAL;
     }
 
     return err;
@@ -508,10 +512,6 @@ rt_err_t rt_clk_array_enable(struct rt_clk_array *clk_arr)
             }
         }
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -529,29 +529,16 @@ void rt_clk_array_disable(struct rt_clk_array *clk_arr)
 
 rt_err_t rt_clk_array_prepare_enable(struct rt_clk_array *clk_arr)
 {
-    rt_err_t err = RT_EOK;
+    rt_err_t err;
 
-    if (clk_arr)
+    if ((err = rt_clk_array_prepare(clk_arr)))
     {
-        for (int i = 0; i < clk_arr->count; ++i)
-        {
-            if ((err = rt_clk_prepare_enable(clk_arr->clks[i])))
-            {
-                LOG_E("CLK Array[%d] %s failed error = %s", i,
-                        "prepare_enable", rt_strerror(err));
-
-                while (i --> 0)
-                {
-                    rt_clk_disable_unprepare(clk_arr->clks[i]);
-                }
-
-                break;
-            }
-        }
+        return err;
     }
-    else
+
+    if ((err = rt_clk_array_enable(clk_arr)))
     {
-        err = -RT_EINVAL;
+        rt_clk_array_unprepare(clk_arr);
     }
 
     return err;
@@ -559,13 +546,8 @@ rt_err_t rt_clk_array_prepare_enable(struct rt_clk_array *clk_arr)
 
 void rt_clk_array_disable_unprepare(struct rt_clk_array *clk_arr)
 {
-    if (clk_arr)
-    {
-        for (int i = 0; i < clk_arr->count; ++i)
-        {
-            rt_clk_disable_unprepare(clk_arr->clks[i]);
-        }
-    }
+    rt_clk_array_disable(clk_arr);
+    rt_clk_array_unprepare(clk_arr);
 }
 
 rt_err_t rt_clk_set_rate_range(struct rt_clk *clk, rt_ubase_t min, rt_ubase_t max)
@@ -604,10 +586,6 @@ rt_err_t rt_clk_set_rate_range(struct rt_clk *clk, rt_ubase_t min, rt_ubase_t ma
 
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -621,10 +599,6 @@ rt_err_t rt_clk_set_min_rate(struct rt_clk *clk, rt_ubase_t rate)
         struct rt_clk_node *clk_np = clk->clk_np;
 
         err = rt_clk_set_rate_range(clk, rate, clk_np->max_rate);
-    }
-    else
-    {
-        err = -RT_EINVAL;
     }
 
     return err;
@@ -640,10 +614,6 @@ rt_err_t rt_clk_set_max_rate(struct rt_clk *clk, rt_ubase_t rate)
 
         err = rt_clk_set_rate_range(clk, clk_np->min_rate, rate);
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -652,7 +622,9 @@ rt_err_t rt_clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 {
     rt_err_t err = RT_EOK;
 
-    if (clk && clk->clk_np)
+    rate = rt_clk_round_rate(clk, rate);
+
+    if (clk && clk->clk_np && rate > 0)
     {
         struct rt_clk_node *clk_np = clk->clk_np;
 
@@ -690,17 +662,13 @@ rt_err_t rt_clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
 
 rt_ubase_t rt_clk_get_rate(struct rt_clk *clk)
 {
-    rt_ubase_t rate = -1UL;
+    rt_ubase_t rate = 0;
 
     if (clk)
     {
@@ -729,10 +697,6 @@ rt_err_t rt_clk_set_phase(struct rt_clk *clk, int degrees)
 
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
-    else
-    {
-        err = -RT_EINVAL;
-    }
 
     return err;
 }
@@ -749,38 +713,49 @@ rt_base_t rt_clk_get_phase(struct rt_clk *clk)
 
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
-    else
-    {
-        res = -RT_EINVAL;
-    }
 
     return res;
 }
 
 rt_base_t rt_clk_round_rate(struct rt_clk *clk, rt_ubase_t rate)
 {
-    rt_base_t res = RT_EOK;
+    rt_base_t res = -RT_EINVAL;
 
-    if (clk && clk->clk_np && clk->clk_np->ops->round_rate)
+    if (clk && clk->clk_np)
     {
-        rt_ubase_t best_parent_rate;
         struct rt_clk_node *clk_np = clk->clk_np;
 
-        rt_hw_spin_lock(&_clk_lock.lock);
-
-        if (clk_np->min_rate && clk_np->max_rate)
+        if (clk_np->ops->round_rate)
         {
-            rate = rt_clamp(rate, clk_np->min_rate, clk_np->max_rate);
+            rt_ubase_t best_parent_rate;
+
+            rt_hw_spin_lock(&_clk_lock.lock);
+
+            if (clk_np->min_rate && clk_np->max_rate)
+            {
+                rate = rt_clamp(rate, clk_np->min_rate, clk_np->max_rate);
+            }
+
+            res = clk_np->ops->round_rate(clk, rate, &best_parent_rate);
+            (void)best_parent_rate;
+
+            rt_hw_spin_unlock(&_clk_lock.lock);
         }
-
-        res = clk->clk_np->ops->round_rate(clk, rate, &best_parent_rate);
-        (void)best_parent_rate;
-
-        rt_hw_spin_unlock(&_clk_lock.lock);
-    }
-    else
-    {
-        res = -RT_EINVAL;
+        else
+        {
+            if (rate < clk_np->min_rate)
+            {
+                res = clk_np->min_rate;
+            }
+            else if (rate > clk_np->max_rate)
+            {
+                res = clk_np->max_rate;
+            }
+            else
+            {
+                res = rate;
+            }
+        }
     }
 
     return res;
@@ -797,10 +772,6 @@ rt_err_t rt_clk_set_parent(struct rt_clk *clk, struct rt_clk *clk_parent)
         err = clk->clk_np->ops->set_parent(clk, clk_parent);
 
         rt_hw_spin_unlock(&_clk_lock.lock);
-    }
-    else
-    {
-        err = -RT_EINVAL;
     }
 
     return err;
@@ -887,7 +858,7 @@ void rt_clk_put(struct rt_clk *clk)
 }
 
 #ifdef RT_USING_OFW
-static struct rt_clk *ofw_get_clk_no_lock(struct rt_ofw_node *np, int index, const char *name)
+static struct rt_clk *ofw_get_clk_no_lock(struct rt_ofw_node *np, int index, const char *name, rt_bool_t locked)
 {
     struct rt_clk *clk = RT_NULL;
     struct rt_ofw_cell_args clk_args;
@@ -895,10 +866,32 @@ static struct rt_clk *ofw_get_clk_no_lock(struct rt_ofw_node *np, int index, con
     if (!rt_ofw_parse_phandle_cells(np, "clocks", "#clock-cells", index, &clk_args))
     {
         int count;
+        struct rt_object *obj;
+        struct rt_clk_node *clk_np = RT_NULL;
         struct rt_ofw_node *clk_ofw_np = clk_args.data;
-        struct rt_clk_node *clk_np = rt_ofw_data(clk_ofw_np);
 
-        count = rt_ofw_count_of_clk(clk_ofw_np);
+        if (!rt_ofw_data(clk_ofw_np))
+        {
+            if (locked)
+            {
+                rt_hw_spin_unlock(&_clk_lock.lock);
+            }
+
+            rt_platform_ofw_request(clk_ofw_np);
+
+            if (locked)
+            {
+                rt_hw_spin_lock(&_clk_lock.lock);
+            }
+        }
+
+        if (rt_ofw_data(clk_ofw_np) && (obj = rt_ofw_parse_object(clk_ofw_np,
+                    RT_CLK_NODE_OBJ_NAME, "#clock-cells")))
+        {
+            clk_np = rt_container_of(obj, struct rt_clk_node, rt_parent);
+
+            count = rt_ofw_count_of_clk(clk_ofw_np);
+        }
 
         rt_ofw_node_put(clk_ofw_np);
 
@@ -912,6 +905,10 @@ static struct rt_clk *ofw_get_clk_no_lock(struct rt_ofw_node *np, int index, con
 
             clk = clk_create(clk_np, np->full_name, name, &clk_args, np);
         }
+        else
+        {
+            clk = rt_err_ptr(-RT_ERROR);
+        }
     }
 
     return clk;
@@ -923,7 +920,7 @@ static struct rt_clk *ofw_get_clk(struct rt_ofw_node *np, int index, const char 
 
     rt_hw_spin_lock(&_clk_lock.lock);
 
-    clk = ofw_get_clk_no_lock(np, index, name);
+    clk = ofw_get_clk_no_lock(np, index, name, RT_TRUE);
 
     rt_hw_spin_unlock(&_clk_lock.lock);
 
@@ -935,6 +932,11 @@ struct rt_clk_array *rt_ofw_get_clk_array(struct rt_ofw_node *np)
     int count;
     struct rt_clk_array *clk_arr = RT_NULL;
 
+    if (!np)
+    {
+        return rt_err_ptr(-RT_EINVAL);
+    }
+
     if ((count = rt_ofw_count_phandle_cells(np, "clocks", "#clock-cells")) > 0)
     {
         clk_arr = rt_calloc(1, sizeof(*clk_arr) + sizeof(clk_arr->clks[0]) * count);
@@ -942,6 +944,7 @@ struct rt_clk_array *rt_ofw_get_clk_array(struct rt_ofw_node *np)
         if (clk_arr)
         {
             int i;
+            rt_err_t err = RT_EOK;
             rt_bool_t has_name = rt_ofw_prop_read_bool(np, "clock-names");
 
             clk_arr->count = count;
@@ -957,10 +960,12 @@ struct rt_clk_array *rt_ofw_get_clk_array(struct rt_ofw_node *np)
                     rt_ofw_prop_read_string_index(np, "clock-names", i, &name);
                 }
 
-                clk_arr->clks[i] = ofw_get_clk_no_lock(np, i, name);
+                clk_arr->clks[i] = ofw_get_clk_no_lock(np, i, name, RT_FALSE);
 
-                if (!clk_arr->clks[i])
+                if (rt_is_err(clk_arr->clks[i]))
                 {
+                    err = rt_ptr_err(clk_arr->clks[i]);
+
                     --i;
                     break;
                 }
@@ -971,7 +976,7 @@ struct rt_clk_array *rt_ofw_get_clk_array(struct rt_ofw_node *np)
             if (i > 0 && i < count)
             {
                 rt_clk_array_put(clk_arr);
-                clk_arr = RT_NULL;
+                clk_arr = rt_err_ptr(err);
             }
         }
     }

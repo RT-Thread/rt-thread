@@ -113,6 +113,29 @@ static int dfs_devfs_close(struct dfs_file *file)
     return ret;
 }
 
+static rt_ubase_t _get_unit_shift(rt_device_t device)
+{
+    rt_ubase_t shift = 0;
+
+    /**
+     * transfer unit size from POSIX RW(in bytes) to rt_device_R/W
+     * (block size for blk device, otherwise in bytes).
+     */
+    if (device->type == RT_Device_Class_Block)
+    {
+        struct rt_device_blk_geometry geometry = {0};
+
+        /* default to 512 */
+        shift = 9;
+        if (!rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry))
+        {
+            shift = __rt_ffs(geometry.block_size) - 1;
+        }
+    }
+
+    return shift;
+}
+
 static ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
     ssize_t ret = -RT_EIO;
@@ -135,9 +158,14 @@ static ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, of
         if (device->ops)
 #endif /* RT_USING_POSIX_DEVIO */
         {
-            /* read device data */
-            ret = rt_device_read(device, *pos, buf, count);
-            *pos += ret;
+            rt_ubase_t shift = _get_unit_shift(device);
+
+            ret = rt_device_read(device, *pos, buf, count >> shift);
+            if (ret > 0)
+            {
+                ret <<= shift;
+                *pos += ret;
+            }
         }
     }
 
@@ -169,9 +197,15 @@ static ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t co
         if (device->ops)
 #endif /* RT_USING_POSIX_DEVIO */
         {
+            rt_ubase_t shift = _get_unit_shift(device);
+
             /* read device data */
-            ret = rt_device_write(device, *pos, buf, count);
-            *pos += ret;
+            ret = rt_device_write(device, *pos, buf, count >> shift);
+            if (ret > 0)
+            {
+                ret <<= shift;
+                *pos += ret;
+            }
         }
     }
 
@@ -265,7 +299,7 @@ static int dfs_devfs_flush(struct dfs_file *file)
 
 static off_t dfs_devfs_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
-    off_t ret = 0;
+    off_t ret = -EPERM;
     rt_device_t device;
 
     RT_ASSERT(file != RT_NULL);
@@ -408,16 +442,16 @@ mode_t dfs_devfs_device_to_mode(struct rt_device *device)
     switch (device->type)
     {
     case RT_Device_Class_Char:
-        mode = S_IFCHR | 0777;
+        mode = S_IFCHR | 0666;
         break;
     case RT_Device_Class_Block:
-        mode = S_IFBLK | 0777;
+        mode = S_IFBLK | 0666;
         break;
     case RT_Device_Class_Pipe:
-        mode = S_IFIFO | 0777;
+        mode = S_IFIFO | 0666;
         break;
     default:
-        mode = S_IFCHR | 0777;
+        mode = S_IFCHR | 0666;
         break;
     }
 

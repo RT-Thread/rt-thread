@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -17,7 +17,10 @@
 
 #include "hpm_common.h"
 #include "hpm_rtc_regs.h"
+#ifndef __ICCRISCV__
 #include <sys/time.h>
+#endif
+#include <time.h>
 
 /**
  * @brief RTC alarm configuration
@@ -25,7 +28,7 @@
 typedef struct {
     uint16_t index;         /**< RTC alarm index */
     uint16_t type;          /**< Alarm type */
-    time_t period;          /**< ALarm period */
+    time_t period;          /**< Alarm period */
 } rtc_alarm_config_t;
 
 /**
@@ -59,7 +62,7 @@ hpm_stat_t rtc_config_time(RTC_Type *base, time_t time);
  * @brief Configure RTC Alarm
  * @param [in] base RTC base address
  * @param [in] config RTC alarm configuration pointer
- * @retval API execution status status_success or status_invalid_arugment;
+ * @retval API execution status status_success or status_invalid_argument;
  */
 hpm_stat_t rtc_config_alarm(RTC_Type *base, rtc_alarm_config_t *config);
 

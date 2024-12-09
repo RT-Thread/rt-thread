@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _FSL_LPUART_EDMA_H_
-#define _FSL_LPUART_EDMA_H_
+#ifndef FSL_LPUART_EDMA_H_
+#define FSL_LPUART_EDMA_H_
 
 #include "fsl_lpuart.h"
 #include "fsl_edma.h"
@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 /*! @name Driver version */
-/*@{*/
+/*! @{ */
 /*! @brief LPUART EDMA driver version. */
 #define FSL_LPUART_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
-/*@}*/
+/*! @} */
 
 /* Forward declaration of the handle typedef. */
 typedef struct _lpuart_edma_handle lpuart_edma_handle_t;
@@ -173,12 +173,12 @@ status_t LPUART_TransferGetReceiveCountEDMA(LPUART_Type *base, lpuart_edma_handl
  * @note This function is used as default IRQ handler by double weak mechanism.
  * If user's specific IRQ handler is implemented, make sure this function is invoked in the handler.
  *
- * @param base LPUART peripheral base address.
+ * @param instance LPUART peripheral index.
  * @param lpuartEdmaHandle LPUART handle pointer.
  */
 void LPUART_TransferEdmaHandleIRQ(uint32_t instance, void *lpuartEdmaHandle);
 
-/*@}*/
+/*! @} */
 
 #if defined(__cplusplus)
 }
@@ -186,4 +186,4 @@ void LPUART_TransferEdmaHandleIRQ(uint32_t instance, void *lpuartEdmaHandle);
 
 /*! @}*/
 
-#endif /* _FSL_LPUART_EDMA_H_ */
+#endif /* FSL_LPUART_EDMA_H_ */

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-04-18     shelton      first version
+ * 2024-08-30     shelton      add support m412/416
  */
 
 #include "drv_common.h"
@@ -76,6 +77,9 @@ static rt_err_t at32_dac_enabled(struct rt_dac_device *device, rt_uint32_t chann
       LOG_E("dac channel must be 1 or 2.");
       return -RT_ERROR;
     }
+#if defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
+    dac_output_enable(dac_channel, TRUE);
+#endif
     dac_enable(dac_channel, TRUE);
 
     return RT_EOK;
@@ -101,6 +105,9 @@ static rt_err_t at32_dac_disabled(struct rt_dac_device *device, rt_uint32_t chan
       LOG_E("dac channel must be 1 or 2.");
       return -RT_ERROR;
     }
+#if defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
+    dac_output_enable(dac_channel, FALSE);
+#endif
     dac_enable(dac_channel, FALSE);
 
     return RT_EOK;
@@ -141,18 +148,31 @@ static rt_err_t at32_set_dac_value(struct rt_dac_device *device, rt_uint32_t cha
         LOG_E("dac channel must be 1 or 2.");
         return -RT_ERROR;
     }
-
+#if !defined (SOC_SERIES_AT32M412) && !defined (SOC_SERIES_AT32M416)
     dac_output_buffer_enable(dac_channel, FALSE);
+#endif
     dac_trigger_enable(dac_channel, FALSE);
 
     /* set dac channel out value*/
     if(dac_channel == DAC1_SELECT)
     {
+#if !defined (SOC_SERIES_AT32M412) && !defined (SOC_SERIES_AT32M416)
         dac_1_data_set(DAC1_12BIT_RIGHT, *value);
+#else
+        /* 6-bit */
+        *value = *value >> 6;
+        dac_1_data_set(*value);
+#endif
     }
     else
     {
+#if !defined (SOC_SERIES_AT32M412) && !defined (SOC_SERIES_AT32M416)
         dac_2_data_set(DAC2_12BIT_RIGHT, *value);
+#else
+        /* 6-bit */
+        *value = *value >> 6;
+        dac_2_data_set(*value);
+#endif
     }
 
     /* start dac */

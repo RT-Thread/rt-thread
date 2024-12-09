@@ -1,0 +1,240 @@
+menu "Hardware Drivers Config"
+
+config SOC_MCXN947
+    bool
+    select SOC_MCXN947_SERIES
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        select RT_USING_DMA
+        default n
+
+    config BSP_USING_PIN
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN if BSP_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN0
+                bool "Enable CAN0"
+                default n
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default n
+        endif
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
+  
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+        endif
+
+    menuconfig BSP_USING_I2C
+        config BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default y
+
+            if BSP_USING_I2C
+                config BSP_USING_I2C0
+                    bool "Enable Flexcomm0 I2C"
+                    default y
+                config BSP_USING_I2C1
+                    bool "Enable Flexcomm1 I2C"
+                    default y
+            endif
+
+    menuconfig BSP_USING_SW_I2C
+        bool "Enable I2C BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_SW_I2C
+            config BSP_USING_SW_I2C0
+                bool "Enable soft I2C0"
+                default y
+            if BSP_USING_SW_I2C0
+                config BSP_SW_I2C0_SCL_PIN
+                    int "SWI2C0 scl pin number"
+                    range 0 159
+                    default 129
+                config BSP_SW_I2C0_SDA_PIN
+                    int "SWI2C0 sda pin number"
+                    range 0 159
+                    default 128
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        config BSP_USING_SPI
+            bool "Enable SPI"
+            select RT_USING_SPI
+            select BSP_USING_PIN
+            default y
+
+            if BSP_USING_SPI
+                config BSP_USING_SPI1
+                    bool "Enable Flexcomm1 as SPI"
+                    default n
+
+                config BSP_USING_SPI3
+                    bool "Enable Flexcomm3 as SPI"
+                    default n
+
+                config BSP_USING_SPI6
+                    bool "Enable Flexcomm6 as SPI"
+                    default n
+                    if BSP_USING_SPI6
+                        config BSP_USING_SPI6_SAMPLE
+                            bool "Enable SPI6 BUS Sample"
+                            default n
+                    endif
+
+                config BSP_USING_SPI7
+                    bool "Enable Flexcomm7 as SPI"
+                    default n
+            endif
+
+    menuconfig BSP_USING_ADC
+        config BSP_USING_ADC
+            bool "Enable ADC Channel"
+            select RT_USING_ADC
+            default y
+
+            if BSP_USING_ADC
+                config BSP_USING_ADC0
+                    bool
+                    default n
+
+                config BSP_USING_ADC0_CH0
+                    bool "Enable ADC0 Channel0"
+                    select BSP_USING_ADC0
+                    default y
+
+                config BSP_USING_ADC0_CH1
+                    bool "Enable ADC0 Channel1"
+                    select BSP_USING_ADC0
+                    default n
+
+                config BSP_USING_ADC0_CH8
+                    bool "Enable ADC0 Channel8"
+                    select BSP_USING_ADC0
+                    default n
+
+                config BSP_USING_ADC0_CH13
+                    bool "Enable ADC0 Channel13"
+                    select BSP_USING_ADC0
+                    default n
+
+                config BSP_USING_ADC0_CH26
+                    bool "Enable ADC0 Channel26"
+                    select BSP_USING_ADC0
+                    default n
+
+            endif
+
+    menuconfig BSP_USING_DAC
+        config BSP_USING_DAC
+            bool "Enable DAC Channel"
+            select RT_USING_DAC
+            default y
+
+            if BSP_USING_DAC
+                config BSP_USING_DAC0
+                    bool "Enable DAC0 Channel"
+                    default n
+
+                config BSP_USING_DAC1
+                    bool "Enable DAC1 Channel"
+                    default n
+
+                config BSP_USING_DAC2
+                    bool "Enable DAC2 Channel"
+                    default n
+
+            endif
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default y
+
+    config BSP_USING_WDT
+        bool "Enable WatchDog"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_HWTIMER
+        config BSP_USING_HWTIMER
+            bool "Enable Timer"
+            select RT_USING_HWTIMER
+            default y
+
+    menuconfig BSP_USING_PWM
+        config BSP_USING_PWM
+            bool "Enable PWM"
+            select RT_USING_PWM
+            default y
+
+            if BSP_USING_PWM
+                config BSP_USING_LEDG_PWM
+                    bool "Enable on-board green LED as PWM output (pwm0, channel 3)"
+                    default y
+            endif
+
+endmenu
+
+
+menu "Board extended module Drivers"
+    menuconfig BSP_USING_RW007
+        bool "Enable RW007"
+        default n
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select PKG_USING_RW007
+        select RT_USING_MEMPOOL
+        select RW007_NOT_USE_EXAMPLE_DRIVERS
+
+    if BSP_USING_RW007
+        config BOARD_RW007_SPI_BUS_NAME
+            string "RW007 BUS NAME"
+            default "spi1"
+
+        config BOARD_RW007_CS_PIN
+            hex "CS pin index"
+            default 27
+
+        config BOARD_RW007_INT_BUSY_PIN
+            hex "INT/BUSY pin index"
+            default 10
+
+        config BOARD_RW007_RST_PIN
+            hex "RESET pin index"
+            default 28
+    endif
+endmenu
+
+endmenu

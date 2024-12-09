@@ -97,7 +97,7 @@ const uint8_t msc_storage_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -154,7 +154,7 @@ int usbd_msc_sector_write(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *
     return 0;
 }
 
-void msc_storage_init(uint8_t busid, uint32_t reg_base)
+void msc_storage_init(uint8_t busid, uintptr_t reg_base)
 {
     rt_err_t res;
 

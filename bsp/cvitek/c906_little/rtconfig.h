@@ -9,7 +9,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -25,12 +24,13 @@
 
 /* klibc optimization */
 
-#define RT_KLIBC_USING_PRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
 /* end of klibc optimization */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -95,10 +95,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-
-/* Using USB */
-
-/* end of Using USB */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -137,6 +133,10 @@
 /* Utilities */
 
 /* end of Utilities */
+
+/* Using USB legacy version */
+
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
@@ -233,6 +233,10 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
+
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
@@ -319,15 +323,17 @@
 /* General Drivers Configuration */
 
 #define BSP_USING_UART
-#define RT_USING_UART1
-#define UART_IRQ_BASE 30
+#define BSP_USING_UART1
+#define BSP_UART1_RX_PINNAME "IIC0_SDA"
+#define BSP_UART1_TX_PINNAME "IIC0_SCL"
+#define BSP_UART_IRQ_BASE 30
 /* end of General Drivers Configuration */
 #define BSP_USING_C906_LITTLE
-#define PLIC_PHY_ADDR 0x70000000
-#define IRQ_MAX_NR 128
-#define TIMER_CLK_FREQ 25000000
-#define GPIO_IRQ_BASE 41
-#define SYS_GPIO_IRQ_BASE 47
+#define BSP_PLIC_PHY_ADDR 0x70000000
+#define IRQ_MAX_NR 61
+#define BSP_TIMER_CLK_FREQ 25000000
+#define BSP_GPIO_IRQ_BASE 41
+#define BSP_SYS_GPIO_IRQ_BASE 47
 #define SOC_TYPE_SG2002
 #define BOARD_TYPE_MILKV_DUO256M
 
