@@ -1,0 +1,19 @@
+menuconfig RT_USING_RPMSG
+    bool "Using Remote Processor Messaging (RPMSG)"
+    select RT_USING_DEVICE_IPC
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+
+config RT_RPMSG_CHAR_MSG_MAX
+    int "Char device message receive max"
+    depends on RT_USING_RPMSG
+    default 64
+
+config RT_RPMSG_CHAR_MSG_SIZE_MAX
+    int "Char device message size max"
+    depends on RT_USING_RPMSG
+    default 256
+
+if RT_USING_RPMSG
+    osource "$(SOC_DM_RPMSG_DIR)/Kconfig"
+endif

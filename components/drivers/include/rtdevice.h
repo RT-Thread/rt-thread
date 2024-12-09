@@ -97,6 +97,10 @@ extern "C" {
 #include "drivers/reset.h"
 #endif /* RT_USING_RESET */
 
+#ifdef RT_USING_RPMSG
+#include "drivers/rpmsg.h"
+#endif /* RT_USING_RPMSG */
+
 #ifdef RT_USING_SCSI
 #include "drivers/scsi.h"
 #endif /* RT_USING_SCSI */
