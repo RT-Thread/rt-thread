@@ -14,6 +14,7 @@ devices.uart:
 devices.i2c:
     kconfig:
       - CONFIG_RT_USING_I2C=y
+      - CONFIG_BSP_USING_I2C=y
 devices.hwi2c:
     depends:
       - devices.i2c
@@ -45,3 +46,12 @@ devices.pwm:
       - CONFIG_RT_USING_PWM=y
       - CONFIG_BSP_USING_PWM=y
       - CONFIG_BSP_USING_PWM0=y
+devices.ble:
+    kconfig:
+      - CONFIG_BSP_USING_BLE=y
+devices.wifi:
+    kconfig:
+      - CONFIG_BSP_USING_WIFI=y
+      - CONFIG_RT_USING_WIFI=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_NETDEV=y
