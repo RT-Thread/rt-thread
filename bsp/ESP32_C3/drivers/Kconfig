@@ -72,7 +72,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_I2C
         if BSP_USING_I2C
-            config BSP_USING_HW_I2C
+            menuconfig BSP_USING_HW_I2C
                 bool "Enable HardWare I2C"
                 default n
                 
