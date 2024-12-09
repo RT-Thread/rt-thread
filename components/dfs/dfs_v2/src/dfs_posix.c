@@ -96,9 +96,9 @@ RTM_EXPORT(open);
  * @brief Opens a file relative to a directory file descriptor.
  *
  * @param dirfd The file descriptor of the directory to base the relative path on.
- * @param pathname The path to the file to be opened, relative to the directory specified by `dirfd`.
+ * @param path The path to the file to be opened, relative to the directory specified by `dirfd`.
  *                 Can be an absolute path (in which case `dirfd` is ignored).
- * @param flags File access and status flags (e.g., `O_RDONLY`, `O_WRONLY`, `O_CREAT`).
+ * @param flag File access and status flags (e.g., `O_RDONLY`, `O_WRONLY`, `O_CREAT`).
  *
  * @return On success, returns a new file descriptor for the opened file.
  *         On failure, returns `-1` and sets `errno` to indicate the error.
