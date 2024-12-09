@@ -618,7 +618,7 @@ rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_
  *
  * @param device the QSPI device attached to QSPI bus.
  * @param send_buf the buffer to be transmitted to QSPI device.
- * @param send_length the number of data to be transmitted.
+ * @param length the number of data to be transmitted.
  *
  * @return the status of transmit.
  */
