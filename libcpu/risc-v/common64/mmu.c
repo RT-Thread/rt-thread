@@ -149,7 +149,13 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
     int ret = -1;
     void *unmap_va = v_addr;
     size_t npages = size >> ARCH_PAGE_SHIFT;
-
+#ifdef DEVICE_MEM_BASE_ADDR
+    if ((rt_ubase_t)p_addr >= DEVICE_MEM_BASE_ADDR &&
+        (rt_ubase_t)p_addr < (DEVICE_MEM_BASE_ADDR + DEVICE_MEM_SIZE))
+    {
+        attr |= PTE_SO;
+    }
+#endif
     // TODO trying with HUGEPAGE here
     while (npages--)
     {
