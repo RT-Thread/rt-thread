@@ -13,9 +13,7 @@
 #define DBG_TAG "cpu.aa64"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
-#ifdef RT_USING_SMP
 #include <smp_call.h>
-#endif /* RT_USING_SMP */
 #include <cpu.h>
 #include <mmu.h>
 #include <cpuport.h>
