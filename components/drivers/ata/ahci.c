@@ -510,13 +510,13 @@ static void ahci_isr(int irqno, void *param)
 {
     int id;
     rt_uint32_t isr;
-    bitmap_t int_map;
+    rt_bitmap_t int_map;
     struct rt_ahci_port *port;
     struct rt_ahci_host *host = param;
 
     int_map = HWREG32(host->regs + RT_AHCI_HBA_INTS);
 
-    bitmap_for_each_set_bit(&int_map, id, host->ports_nr)
+    rt_bitmap_for_each_set_bit(&int_map, id, host->ports_nr)
     {
         port = &host->ports[id];
 
@@ -535,7 +535,7 @@ static void ahci_isr(int irqno, void *param)
         HWREG32(port->regs + RT_AHCI_PORT_INTS) = isr;
     }
 
-    HWREG32(host->regs + RT_AHCI_HBA_INTS) = isr;
+    HWREG32(host->regs + RT_AHCI_HBA_INTS) = int_map;
 }
 
 rt_err_t rt_ahci_host_register(struct rt_ahci_host *host)
