@@ -18,7 +18,7 @@
 #include <drivers/ofw.h>
 #include <drivers/mailbox.h>
 #include <drivers/platform.h>
-#include <drivers/core/rtdm.h>
+#include <drivers/core/dm.h>
 
 static struct rt_spinlock mbox_ops_lock = {};
 static rt_list_t mbox_nodes = RT_LIST_OBJECT_INIT(mbox_nodes);

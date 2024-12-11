@@ -15,7 +15,7 @@
 #include <rtdbg.h>
 
 #include <drivers/led.h>
-#include <drivers/core/rtdm.h>
+#include <drivers/core/dm.h>
 
 struct blink_timer
 {
