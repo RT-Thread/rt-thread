@@ -14,7 +14,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "reset/reset.h"
 #include <stdlib.h>
 #include "../rockchip.h"
 
