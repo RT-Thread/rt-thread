@@ -8,6 +8,7 @@ menuconfig RT_USING_PIC
 config RT_USING_PIC_STATISTICS
     bool "Enable ISR execution time statistics"
     depends on RT_USING_PIC
+    depends on RT_USING_KTIME
     depends on RT_USING_INTERRUPT_INFO
     default n
 
