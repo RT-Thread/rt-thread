@@ -578,7 +578,7 @@ static rt_err_t nvme_blk_sync(struct rt_blk_disk *disk)
 
 static rt_err_t nvme_blk_erase(struct rt_blk_disk *disk)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
     rt_ssize_t slba, lbas, max_lbas;
     struct rt_nvme_command cmd;
     struct rt_nvme_device *ndev = rt_disk_to_nvme_device(disk);
@@ -955,7 +955,7 @@ static rt_err_t nvme_setup_io_queues(struct rt_nvme_controller *nvme)
     int irq, cpuid = 0;
     char name[RT_NAME_MAX];
     rt_bool_t affinity_fixup = RT_FALSE;
-    RT_DECLARE_IRQ_AFFINITY(affinity) = { 0 };
+    RT_IRQ_AFFINITY_DECLARE(affinity) = { 0 };
     struct rt_nvme_queue *queue;
 
     nvme->io_queue_max = nvme->irqs_nr > 1 ? nvme->irqs_nr - 1 : 1;
@@ -1052,7 +1052,7 @@ static void nvme_remove_devices(struct rt_nvme_controller *nvme)
 static rt_err_t nvme_scan_device(struct rt_nvme_controller *nvme,
         rt_size_t number_of_ns)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
     rt_uint32_t lbaf;
     struct rt_nvme_id_ns *id = RT_NULL;
 
@@ -1272,8 +1272,8 @@ static int nvme_queue_affinify_fixup(void)
 {
     int cpuid = rt_hw_cpu_id();
     struct rt_nvme_controller *nvme;
-    RT_DECLARE_IRQ_AFFINITY(affinity) = { 0 };
-    RT_DECLARE_IRQ_AFFINITY(current_affinity) = { 0 };
+    RT_IRQ_AFFINITY_DECLARE(affinity) = { 0 };
+    RT_IRQ_AFFINITY_DECLARE(current_affinity) = { 0 };
 
     RT_IRQ_AFFINITY_SET(affinity, cpuid);
 
