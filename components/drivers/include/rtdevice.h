@@ -89,6 +89,16 @@ extern "C" {
 #include "drivers/pic.h"
 #endif /* RT_USING_PIC */
 
+#ifdef RT_USING_PCI
+#include "drivers/pci.h"
+#ifdef RT_PCI_MSI
+#include "drivers/pci_msi.h"
+#endif /* RT_PCI_MSI */
+#ifdef RT_PCI_ENDPOINT
+#include "drivers/pci_endpoint.h"
+#endif /* RT_PCI_ENDPOINT */
+#endif /* RT_USING_PCI */
+
 #ifdef RT_USING_REGULATOR
 #include "drivers/regulator.h"
 #endif /* RT_USING_REGULATOR */

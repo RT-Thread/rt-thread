@@ -435,6 +435,6 @@ EP_API rt_err_t dw_pcie_ep_inbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no
 EP_API rt_err_t dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
         rt_ubase_t phys_addr, rt_uint64_t pci_addr, rt_size_t size) EP_RET(-RT_ENOSYS)
 
-EP_API struct dw_pcie_ep_func *dw_pcie_ep_get_func_from_ep(struct dw_pcie_ep *ep, rt_uint8_t func_no) EP_RET()
+EP_API struct dw_pcie_ep_func *dw_pcie_ep_get_func_from_ep(struct dw_pcie_ep *ep, rt_uint8_t func_no) EP_RET(RT_NULL)
 
 #endif /* __PCIE_DESIGNWARE_H__ */
