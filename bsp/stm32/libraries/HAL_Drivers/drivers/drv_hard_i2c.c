@@ -23,51 +23,51 @@ enum
 {
 #ifdef BSP_USING_HARD_I2C1
     I2C1_INDEX,
-#endif
+#endif /* BSP_USING_HARD_I2C1 */
 #ifdef BSP_USING_HARD_I2C2
     I2C2_INDEX,
-#endif
+#endif /* BSP_USING_HARD_I2C2 */
 #ifdef BSP_USING_HARD_I2C3
     I2C3_INDEX,
-#endif
+#endif /* BSP_USING_HARD_I2C3 */
 };
 
 static struct stm32_i2c_config i2c_config[] =
 {
 #ifdef BSP_USING_HARD_I2C1
         I2C1_BUS_CONFIG,
-#endif
+#endif /* BSP_USING_HARD_I2C1 */
 #ifdef BSP_USING_HARD_I2C2
         I2C2_BUS_CONFIG,
-#endif
+#endif /* BSP_USING_HARD_I2C2 */
 #ifdef BSP_USING_HARD_I2C3
         I2C3_BUS_CONFIG,
-#endif
+#endif /* BSP_USING_HARD_I2C3 */
 };
 
 static struct stm32_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = {0};
 
 static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
 {
-	RT_ASSERT(i2c_drv != RT_NULL);
-	
+    RT_ASSERT(i2c_drv != RT_NULL);
+
     I2C_HandleTypeDef *i2c_handle = &i2c_drv->handle;
-	struct stm32_i2c_config *cfg = i2c_drv->config;
-	
+    struct stm32_i2c_config *cfg = i2c_drv->config;
+
     rt_memset(i2c_handle, 0, sizeof(I2C_HandleTypeDef));
-    
+
     i2c_handle->Instance = cfg->Instance;
 #if defined(SOC_SERIES_STM32H7)
     i2c_handle->Init.Timing = cfg->timing;
-#endif
+#endif /* defined(SOC_SERIES_STM32H7) */
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
     i2c_handle->Init.ClockSpeed = 100000;
     i2c_handle->Init.DutyCycle = I2C_DUTYCYCLE_2;
-#endif
+#endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
     i2c_handle->Init.OwnAddress1 = 0;
     i2c_handle->Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
     i2c_handle->Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-	i2c_handle->Init.OwnAddress2 = 0;
+    i2c_handle->Init.OwnAddress2 = 0;
     i2c_handle->Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
     i2c_handle->Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
     if (HAL_I2C_DeInit(i2c_handle) != HAL_OK)
@@ -117,7 +117,7 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
 
     /* In the data transfer function stm32_i2c_master_xfer(), the IT transfer function
        HAL_I2C_Master_Seq_Transmit_IT() is used when DMA is not used, so the IT interrupt
-       must be enable anyway, regardless of the DMA configuration, otherwise 
+       must be enable anyway, regardless of the DMA configuration, otherwise
        the rt_completion_wait() will always timeout. */
     HAL_NVIC_SetPriority(i2c_drv->config->evirq_type, 2, 0);
     HAL_NVIC_EnableIRQ(i2c_drv->config->evirq_type);
@@ -156,14 +156,14 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     uint8_t next_flag = 0;
     struct rt_completion *completion;
     rt_uint32_t timeout;
-	
+
     if (num == 0)
     {
         return 0;
     }
-	
+
     RT_ASSERT((msgs != RT_NULL) && (bus != RT_NULL));
-	
+
     i2c_obj = rt_container_of(bus, struct stm32_i2c, i2c_bus);
     completion = &i2c_obj->completion;
     I2C_HandleTypeDef *handle = &i2c_obj->handle;
@@ -351,7 +351,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_rx.Init.Channel = i2c_config[i].dma_rx->channel;
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             i2c_objs[i].dma.handle_rx.Init.Request = i2c_config[i].dma_rx->request;
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #ifndef SOC_SERIES_STM32U5
             i2c_objs[i].dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
             i2c_objs[i].dma.handle_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
@@ -366,7 +366,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
             i2c_objs[i].dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
             i2c_objs[i].dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) */
 
             {
                 rt_uint32_t tmpreg = 0x00U;
@@ -382,11 +382,11 @@ int RT_hw_i2c_bus_init(void)
                 __HAL_RCC_DMAMUX_CLK_ENABLE();
                 SET_BIT(RCC->MP_AHB2ENSETR, i2c_config[i].dma_rx->dma_rcc);
                 tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, i2c_config[i].dma_rx->dma_rcc);
-#endif
+#endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0) */
                 UNUSED(tmpreg); /* To avoid compiler warnings */
             }
         }
-		
+
         if (i2c_objs[i].i2c_dma_flag & I2C_USING_TX_DMA_FLAG)
         {
             i2c_objs[i].dma.handle_tx.Instance = i2c_config[i].dma_tx->Instance;
@@ -394,7 +394,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.Channel = i2c_config[i].dma_tx->channel;
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             i2c_objs[i].dma.handle_tx.Init.Request = i2c_config[i].dma_tx->request;
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #ifndef SOC_SERIES_STM32U5
             i2c_objs[i].dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
             i2c_objs[i].dma.handle_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
@@ -410,7 +410,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
             i2c_objs[i].dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
             i2c_objs[i].dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) */
 
             {
                 rt_uint32_t tmpreg = 0x00U;
@@ -426,7 +426,7 @@ int RT_hw_i2c_bus_init(void)
                 __HAL_RCC_DMAMUX_CLK_ENABLE();
                 SET_BIT(RCC->MP_AHB2ENSETR, i2c_config[i].dma_tx->dma_rcc);
                 tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, i2c_config[i].dma_tx->dma_rcc);
-#endif
+#endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0) */
                 UNUSED(tmpreg); /* To avoid compiler warnings */
             }
         }

@@ -16,6 +16,12 @@
 #include "drv_config.h"
 #include <ipc/completion.h>
 
+/* C binding of definitions if building with C++ compiler */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 struct stm32_i2c_config
 {
     const char        *name;
@@ -25,13 +31,13 @@ struct stm32_i2c_config
     IRQn_Type         evirq_type;
     IRQn_Type         erirq_type;
     struct dma_config *dma_rx;
-	struct dma_config *dma_tx;
+    struct dma_config *dma_tx;
 };
 
 struct stm32_i2c
 {
     I2C_HandleTypeDef        handle;
-	struct stm32_i2c_config  *config;
+    struct stm32_i2c_config  *config;
     struct
     {
         DMA_HandleTypeDef    handle_rx;
@@ -44,5 +50,9 @@ struct stm32_i2c
 
 #define I2C_USING_TX_DMA_FLAG       (1U)
 #define I2C_USING_RX_DMA_FLAG       (1U << 1)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __DRV_I2C_H__ */
