@@ -108,7 +108,9 @@ def GenerateCFiles(env):
         target_path_list = []
         for path in path_list:
             if path['path'] != '.':
-                path['name'] = 'rtthread/' + '/'.join([p for p in path['path'].split('\\') if p != '..'])
+                normalized_path = path['path'].replace('\\', os.path.sep)
+                segments = [p for p in normalized_path.split(os.path.sep) if p != '..']
+                path['name'] = 'rtthread/' + '/'.join(segments)
         json_obj['folders'] = path_list
         if os.path.exists('compile_commands.json'):
             json_obj['settings'] = {
