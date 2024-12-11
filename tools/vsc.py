@@ -110,6 +110,13 @@ def GenerateCFiles(env):
             if path['path'] != '.':
                 path['name'] = 'rtthread/' + '/'.join([p for p in path['path'].split('\\') if p != '..'])
         json_obj['folders'] = path_list
+        if os.path.exists('compile_commands.json'):
+            json_obj['settings'] = {
+            "clangd.arguments": [
+                "--compile-commands-dir=.",
+                "--header-insertion=never"
+            ]
+            }
         vsc_space_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
         vsc_space_file.close()    
     return
