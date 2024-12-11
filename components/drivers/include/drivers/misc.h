@@ -113,6 +113,22 @@
     _rem;                               \
 })
 
+#define rt_abs(x)                       \
+({                                      \
+    long ret;                           \
+    if (sizeof(x) == sizeof(long))      \
+    {                                   \
+        long __x = (x);                 \
+        ret = (__x < 0) ? -__x : __x;   \
+    }                                   \
+    else                                \
+    {                                   \
+        int __x = (x);                  \
+        ret = (__x < 0) ? -__x : __x;   \
+    }                                   \
+    ret;                                \
+})
+
 #ifndef rt_ilog2
 rt_inline int rt_ilog2(rt_ubase_t v)
 {

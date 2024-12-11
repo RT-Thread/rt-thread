@@ -21,22 +21,6 @@
 #define CPLL_HZ (1000 * MHZ)
 #define PPLL_HZ (100 * MHZ)
 
-#define rt_abs(x)                       \
-({                                      \
-    long ret;                           \
-    if (sizeof(x) == sizeof(long))      \
-    {                                   \
-        long __x = (x);                 \
-        ret = (__x < 0) ? -__x : __x;   \
-    }                                   \
-    else                                \
-    {                                   \
-        int __x = (x);                  \
-        ret = (__x < 0) ? -__x : __x;   \
-    }                                   \
-    ret;                                \
-})
-
 struct rk_pll
 {
     rt_uint32_t con0;
@@ -118,6 +102,13 @@ enum rk_clk_type
 {
     rk_clk_type_clk,
     rk_clk_type_pmuclk,
+};
+
+struct rt_reset_controller_clk_node
+{
+    struct rt_clk_node parent;
+
+    struct rt_reset_controller rstcer;
 };
 
 struct rk_clk

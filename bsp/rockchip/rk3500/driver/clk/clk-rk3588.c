@@ -89,6 +89,12 @@ struct rk3588_clk_platform_data
     rt_uint32_t id;
     void *base;
 };
+struct rt_reset_controller_clk_node
+{
+    struct rt_clk_node parent;
+
+    struct rt_reset_controller rstcer;
+};
 struct rk3588_clk
 {
     struct rt_reset_controller_clk_node parent;
