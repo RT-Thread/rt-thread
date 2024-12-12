@@ -367,7 +367,6 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
             i2c_objs[i].dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
 #endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) */
-
             {
                 rt_uint32_t tmpreg = 0x00U;
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
@@ -411,7 +410,6 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
             i2c_objs[i].dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
 #endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) */
-
             {
                 rt_uint32_t tmpreg = 0x00U;
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
