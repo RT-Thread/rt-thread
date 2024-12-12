@@ -54,7 +54,7 @@ def do_copy_folder(src_dir, dst_dir, ignore=None):
 
     shutil.copytree(src_dir, dst_dir, ignore = ignore)
 
-source_ext = ['c', 'h', 's', 'S', 'cpp', 'xpm']
+source_ext = ['c', 'h', 's', 'S', 'cpp', 'cxx', 'cc', 'xpm']
 source_list = []
 
 def walk_children(child):
