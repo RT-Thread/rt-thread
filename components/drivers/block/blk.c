@@ -195,6 +195,10 @@ static rt_err_t blk_control(rt_device_t dev, int cmd, void *args)
         {
             err = disk->ops->control(disk, RT_NULL, cmd, args);
         }
+        else
+        {
+            err = -RT_ENOSYS;
+        }
         break;
     }
 
@@ -344,7 +348,7 @@ rt_err_t rt_hw_blk_disk_unregister(struct rt_blk_disk *disk)
 
     spin_lock(&disk->lock);
 
-    if (disk->parent.ref_count != 1)
+    if (disk->parent.ref_count > 0)
     {
         err = -RT_EBUSY;
         goto _unlock;
@@ -470,7 +474,7 @@ INIT_ENV_EXPORT(blk_dfs_mnt_table);
 const char *convert_size(struct rt_device_blk_geometry *geome,
         rt_size_t sector_count, rt_size_t *out_cap, rt_size_t *out_minor)
 {
-    rt_size_t cap, minor;
+    rt_size_t cap, minor = 0;
     int size_index = 0;
     const char *size_name[] = { "B", "K", "M", "G", "T", "P", "E" };
 
