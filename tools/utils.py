@@ -106,7 +106,7 @@ def xml_indent(elem, level=0):
             elem.tail = i
 
 
-source_ext = ["c", "h", "s", "S", "cpp", "xpm"]
+source_ext = ["c", "h", "s", "S", "cpp", "cxx", "cc", "xpm"]
 source_list = []
 
 def walk_children(child):
