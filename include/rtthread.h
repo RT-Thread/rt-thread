@@ -794,6 +794,7 @@ rt_device_t rt_console_get_device(void);
 
 int __rt_ffs(int value);
 unsigned long __rt_ffsl(unsigned long value);
+unsigned long __rt_clz(unsigned long value);
 
 void rt_show_version(void);
 
