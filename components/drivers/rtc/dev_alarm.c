@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -52,11 +52,7 @@ static rt_err_t alarm_set(struct rt_alarm *alarm)
     struct rt_rtc_wkalarm wkalarm;
     rt_err_t ret;
 
-#ifdef RT_USING_SOFT_RTC
-    device = rt_device_find("sw_rtc");
-#else
     device = rt_device_find("rtc");
-#endif
 
     if (device == RT_NULL)
     {

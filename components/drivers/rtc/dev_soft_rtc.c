@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -226,8 +226,11 @@ static int rt_soft_rtc_init(void)
     {
         return 0;
     }
-    /* make sure only one 'sw_rtc' device */
-    RT_ASSERT(!rt_device_find("sw_rtc"));
+    /* make sure only one 'rtc' device */
+#if defined(RT_USING_SOFT_RTC) && defined(RT_USING_RTC)
+#warning "Please note: Currently only one RTC device is allowed in the system, and the name is "rtc"."
+#endif
+    RT_ASSERT(!rt_device_find("rtc"));
 
 #ifdef RT_USING_ALARM
     rt_timer_init(&alarm_time,
@@ -258,7 +261,7 @@ static int rt_soft_rtc_init(void)
     /* no private */
     soft_rtc_dev.user_data = RT_NULL;
 
-    rt_device_register(&soft_rtc_dev, "sw_rtc", RT_DEVICE_FLAG_RDWR);
+    rt_device_register(&soft_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR);
 
     source_device = &soft_rtc_dev;
 
@@ -294,7 +297,7 @@ static void rtc_sync_work_func(struct rt_work *work, void *work_data)
 rt_err_t rt_soft_rtc_set_source(const char *name)
 {
     RT_ASSERT(name != RT_NULL);
-    RT_ASSERT(rt_device_find(name));  // make sure source is exist
+    RT_ASSERT(rt_device_find(name));  /* make sure source is exist*/
 
     source_device = rt_device_find(name);
     rt_work_init(&rtc_sync_work, rtc_sync_work_func, RT_NULL);
