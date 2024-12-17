@@ -163,7 +163,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cmake-armclang':('keil', 'armclang'),
                 'xmake':('gcc', 'gcc'),
                 'codelite' : ('gcc', 'gcc'),
-                'esp-idf': ('gcc', 'gcc')}
+                'esp-idf': ('gcc', 'gcc'),
+                'zig':('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
     if tgt_name:
@@ -931,6 +932,10 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'esp-idf':
         from esp_idf import ESPIDFProject
         ESPIDFProject(Env, Projects)
+
+    if GetOption('target') == 'zig':
+        from zigbuild import ZigBuildProject
+        ZigBuildProject(Env, Projects)
 
 def EndBuilding(target, program = None):
     from mkdist import MkDist
