@@ -18,6 +18,8 @@
 	- [6.2. 构建文件系统](#62-构建文件系统)
 	- [6.3. 将文件系统写入 sd-card](#63-将文件系统写入-sd-card)
 	- [6.4. 上电启动](#64-上电启动)
+		- [6.4.1. FAT 的例子](#641-fat-的例子)
+		- [6.4.2. EXT4 的例子](#642-ext4-的例子)
 - [7. FAQ](#7-faq)
 - [8. 联系人信息](#8-联系人信息)
 
@@ -193,7 +195,7 @@ $ scons
 
 # 6. 大核 RT-Smart 启动并自动挂载根文件系统
 
-大核启用 RT-Smart 后可以在启动阶段挂载根文件系统。目前 Duo 支持 ext4，fat 文件格式，下面以 fat 格式为例，具体操作说明如下：
+大核启用 RT-Smart 后可以在启动阶段挂载根文件系统。目前 Duo 支持 ext4, fat 文件格式，具体操作说明如下：
 
 ## 6.1. 内核构建配置
 
@@ -204,6 +206,14 @@ $ scons
 - 使能 `BSP_USING_SDH`: Enable Secure Digital Host Controller, 因为使用 sd-card 存放文件系统。
 - 使能 `BSP_USING_RTC`: Enable RTC, 避免挂载文件系统后执行命令报错：`[W/time] Cannot find a RTC device!`
 - 使能 `BSP_ROOTFS_TYPE_DISKFS`: Disk FileSystems, e.g. ext4, fat ..., 该配置默认已打开。
+- 内核默认支持 fat, 如果要挂载 ext4 的文件系统，则还需要额外安装 lwext4 软件包，即使能 `PKG_USING_LWEXT4`（具体 menuconfig 路径是 (Top) -> RT-Thread online packages -> system packages ->  lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers.）。如果在菜单中找不到该软件包，可以退出 menuconfig 并执行 `pkgs --upgrade` 更新软件包索引后再尝试使能软件包。
+
+  勾选该选项后还需要执行如下操作更新软件并安装源码到 bsp 的 packages 目录下：
+
+  ```shell
+  source ~/.env/env.sh
+  pkgs --update
+  ```
 
 保存后重新编译内核。
 
@@ -229,9 +239,17 @@ xmake smart-image -f fat
 
 在 `$WS/userapps/apps/build` 路径下生成根文件系统镜像文件 `fat.img`。
 
+如果是制作 ext4 格式的文件系统 image，则最后一步换成：
+
+```shell
+xmake smart-image -f ext4
+```
+
+生成根文件系统镜像文件 `ext4.img`。
+
 ## 6.3. 将文件系统写入 sd-card
 
-将 SD 卡分为 2 个分区，第 1 个分区用于存放 `fip.bin` 和 `boot.sd` 文件，第 2 个分区用于存放文件系统，分区格式为 `FAT32`。
+将 SD 卡分为 2 个分区，第 1 个分区的分区格式为 `FAT32`，用于存放 `fip.bin` 和 `boot.sd` 文件，第 2 个分区用于存放文件系统，分区格式需要和具体文件系统的格式一致。这里以 fat 为例介绍如何制作 sd-card 上的文件系统分区，ext4 的操作类似。
 
 将 SD 卡插入 PC 主机系统，假设为 Ubuntu，识别为 `/dev/sdb`，则第二个分区为 `/dev/sdb2`。将第二个分区挂载，假设挂载到 `~/ws/u-disk`。
 
@@ -252,6 +270,8 @@ sudo umount /tmp
 ```
 
 ## 6.4. 上电启动
+
+### 6.4.1. FAT 的例子
 
 启动完成后, 会看到 `[I/app.filesystem] device 'sd1' is mounted to '/' as FAT` 的输出，说明文件系统挂载成功。此时 `msh` 被替换为 `/bin/ash`。
 
@@ -275,6 +295,47 @@ msh />[E/sal.skt] not find network interface device by protocol family(1).
 / # ls
 bin       etc       mnt       root      sbin      tc        usr
 dev       lib       proc      run       services  tmp       var
+```
+
+### 6.4.2. EXT4 的例子
+
+启动完成后, 会看到 `[I/app.filesystem] device 'sd1' is mounted to '/' as EXT` 的输出，说明文件系统挂载成功。此时 `msh` 被替换为 `/bin/ash`。如果 `ls /bin -l`，会看到大部分命令程序都是指向 busybox 的符号链接，符号链接是 EXT4 区别于 FAT 的重要特征。
+
+```shell
+ \ | /
+- RT -     Thread Smart Operating System
+ / | \     5.2.0 build Dec 17 2024 14:04:27
+ 2006 - 2024 Copyright by RT-Thread team
+lwIP-2.1.2 initialized!
+[I/sal.skt] Socket Abstraction Layer initialize success.
+[I/drivers.serial] Using /dev/ttyS0 as default console
+[I/SDIO] SD card capacity 30216192 KB.
+[I/SDIO] sd: switch to High Speed / SDR25 mode 
+
+found part[0], begin: 1048576, size: 128.0MB
+found part[1], begin: 135266304, size: 28.707GB
+[I/app.filesystem] device 'sd1' is mounted to '/' as EXT
+Hello RT-Smart!
+msh />[E/sal.skt] not find network interface device by protocol family(1).
+[E/sal.skt] SAL socket protocol family input failed, return error -3.
+/ # ls 
+bin         lib         proc        sbin        tmp
+dev         lost+found  root        services    usr
+etc         mnt         run         tc          var
+/ # ls /bin -l
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 arch -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 ash -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 base32 -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 base64 -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 bash -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 bbconfig -> busybox
+-rwxr-xr-x    0 0        0          1003000 Dec 17  2024 busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 cat -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chattr -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chgrp -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chmod -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chown -> busybox
+......
 ```
 
 # 7. FAQ
