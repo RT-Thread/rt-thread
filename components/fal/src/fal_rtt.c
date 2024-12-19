@@ -10,6 +10,8 @@
  */
 
 #include <fal.h>
+#include <string.h>
+#include <stdlib.h>
 #include <rtdevice.h>
 
 #define DBG_TAG "FAL"
