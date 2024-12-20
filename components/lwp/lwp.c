@@ -447,7 +447,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 
     if (lwp == RT_NULL)
     {
-        dbg_log(DBG_ERROR, "lwp struct out of memory!\n");
+        LOG_E("lwp struct out of memory!\n");
         return -ENOMEM;
     }
     LOG_D("lwp malloc : %p, size: %d!", lwp, sizeof(struct rt_lwp));
