@@ -22,35 +22,35 @@
 
 /* tickless threshold time */
 #ifndef PM_TICKLESS_THRESHOLD_TIME
-#define PM_TICKLESS_THRESHOLD_TIME          2
+#define PM_TICKLESS_THRESHOLD_TIME 2
 #endif
 
 /* tickless threshold : sleep mode */
 #ifndef PM_TICKLESS_THRESHOLD_MODE
-#define PM_TICKLESS_THRESHOLD_MODE          PM_SLEEP_MODE_IDLE
+#define PM_TICKLESS_THRESHOLD_MODE PM_SLEEP_MODE_IDLE
 #endif
 
 /* busy : sleep mode */
 #ifndef PM_BUSY_SLEEP_MODE
-#define PM_BUSY_SLEEP_MODE                  PM_SLEEP_MODE_IDLE
+#define PM_BUSY_SLEEP_MODE PM_SLEEP_MODE_IDLE
 #endif
 
 /* suspend : suspend sleep mode */
 #ifndef PM_SUSPEND_SLEEP_MODE
-#define PM_SUSPEND_SLEEP_MODE               PM_SLEEP_MODE_IDLE
+#define PM_SUSPEND_SLEEP_MODE PM_SLEEP_MODE_IDLE
 #endif
 
 #ifdef PM_ENABLE_THRESHOLD_SLEEP_MODE
 #ifndef PM_LIGHT_THRESHOLD_TIME
-#define PM_LIGHT_THRESHOLD_TIME             5
+#define PM_LIGHT_THRESHOLD_TIME 5
 #endif
 
 #ifndef PM_DEEP_THRESHOLD_TIME
-#define PM_DEEP_THRESHOLD_TIME              20
+#define PM_DEEP_THRESHOLD_TIME 20
 #endif
 
 #ifndef PM_STANDBY_THRESHOLD_TIME
-#define PM_STANDBY_THRESHOLD_TIME           100
+#define PM_STANDBY_THRESHOLD_TIME 100
 #endif
 #endif
 
@@ -63,7 +63,7 @@ static rt_uint8_t _pm_default_sleep = RT_PM_DEFAULT_SLEEP_MODE;
 static rt_uint8_t _pm_default_deepsleep = RT_PM_DEFAULT_DEEPSLEEP_MODE;
 
 static struct rt_pm_notify _pm_notify;
-static rt_uint8_t _pm_init_flag = 0;
+static rt_uint8_t          _pm_init_flag = 0;
 
 rt_weak rt_uint32_t rt_pm_enter_critical(rt_uint8_t sleep_mode)
 {
@@ -110,9 +110,9 @@ static void pm_sleep(struct rt_pm *pm, uint8_t sleep_mode)
  */
 static rt_err_t _pm_device_suspend(rt_uint8_t mode)
 {
-    rt_err_t ret = RT_EOK;
+    rt_err_t             ret       = RT_EOK;
     struct rt_device_pm *device_pm = RT_NULL;
-    rt_slist_t *node = RT_NULL;
+    rt_slist_t          *node      = RT_NULL;
 
     for (node = rt_slist_first(&_pm.device_list); node; node = rt_slist_next(node))
     {
@@ -120,7 +120,7 @@ static rt_err_t _pm_device_suspend(rt_uint8_t mode)
         if (device_pm->ops != RT_NULL && device_pm->ops->suspend != RT_NULL)
         {
             ret = device_pm->ops->suspend(device_pm->device, mode);
-            if(ret != RT_EOK)
+            if (ret != RT_EOK)
             {
                 break;
             }
@@ -136,7 +136,7 @@ static rt_err_t _pm_device_suspend(rt_uint8_t mode)
 static void _pm_device_resume(rt_uint8_t mode)
 {
     struct rt_device_pm *device_pm = RT_NULL;
-    rt_slist_t *node = RT_NULL;
+    rt_slist_t          *node      = RT_NULL;
 
     for (node = rt_slist_first(&_pm.device_list); node; node = rt_slist_next(node))
     {
@@ -154,7 +154,7 @@ static void _pm_device_resume(rt_uint8_t mode)
 static void _pm_device_frequency_change(rt_uint8_t mode)
 {
     struct rt_device_pm *device_pm = RT_NULL;
-    rt_slist_t *node = RT_NULL;
+    rt_slist_t          *node      = RT_NULL;
 
     for (node = rt_slist_first(&_pm.device_list); node; node = rt_slist_next(node))
     {
@@ -177,7 +177,7 @@ static void _pm_frequency_scaling(struct rt_pm *pm)
     {
         level = rt_hw_interrupt_disable();
         /* change system runing mode */
-        if(pm->ops->run != RT_NULL)
+        if (pm->ops->run != RT_NULL)
         {
             pm->ops->run(pm, pm->run_mode);
         }
@@ -188,6 +188,7 @@ static void _pm_frequency_scaling(struct rt_pm *pm)
     }
 }
 
+#ifndef PM_DISABLE_MODULE
 /**
  * judge sleep mode from sleep request
  *
@@ -200,7 +201,7 @@ static rt_uint8_t _judge_sleep_mode(void)
     rt_uint16_t index;
     rt_uint16_t len;
 
-    for (index = 0; index < PM_SLEEP_MODE_MAX -1; index++)
+    for (index = 0; index < PM_SLEEP_MODE_MAX - 1; index++)
     {
         for (len = 0; len < ((PM_MODULE_MAX_ID + 31) / 32); len++)
         {
@@ -209,61 +210,13 @@ static rt_uint8_t _judge_sleep_mode(void)
         }
     }
 
-    return PM_SLEEP_MODE_MAX;  /* default sleep mode */
-}
-
-/**
- * This function selects the sleep mode according to the rt_pm_request/rt_pm_release count.
- */
-static rt_uint8_t _pm_select_sleep_mode(struct rt_pm *pm)
-{
-    int index;
-    rt_uint8_t mode;
-
-    mode = _pm_default_deepsleep;
-    rt_uint8_t request_mode = _judge_sleep_mode();
-    for (index = PM_SLEEP_MODE_NONE; index < PM_SLEEP_MODE_MAX; index ++)
-    {
-        if (pm->modes[index])
-        {
-            mode = index;
-            break;
-        }
-    }
-
-    /* select the high power mode */
-    if (request_mode < mode)
-        mode = request_mode;
-
-    return mode;
-}
-
-/**
- * pm module request delay sleep.
- */
-void rt_pm_module_delay_sleep(rt_uint8_t module_id, rt_tick_t timeout)
-{
-    rt_base_t level;
-    struct rt_pm *pm;
-
-    if (_pm_init_flag == 0)
-        return;
-
-    if (module_id > (PM_MODULE_MAX_ID - 1))
-        return;
-
-    level = rt_hw_interrupt_disable();
-    pm = &_pm;
-    pm->module_status[module_id].busy_flag = RT_TRUE;
-    pm->module_status[module_id].timeout = timeout;
-    pm->module_status[module_id].start_time = rt_tick_get();
-    rt_hw_interrupt_enable(level);
+    return PM_SLEEP_MODE_MAX; /* default sleep mode */
 }
 
 /**
  * This function check if all modules in idle status.
  */
-static rt_bool_t _pm_device_check_idle(void)
+static rt_bool_t _pm_module_check_idle(void)
 {
     struct rt_pm *pm;
 
@@ -278,7 +231,7 @@ static rt_bool_t _pm_device_check_idle(void)
             if (rt_tick_get() - pm->module_status[i].start_time > pm->module_status[i].timeout)
             {
                 pm->module_status[i].busy_flag = RT_FALSE;
-                pm->module_status[i].timeout = 0x00;
+                pm->module_status[i].timeout   = 0x00;
             }
         }
         if (pm->module_status[i].busy_flag == RT_TRUE)
@@ -288,6 +241,39 @@ static rt_bool_t _pm_device_check_idle(void)
     }
 
     return RT_TRUE;
+}
+
+#endif
+
+/**
+ * This function selects the sleep mode according to the rt_pm_request/rt_pm_release count.
+ */
+static rt_uint8_t _pm_select_sleep_mode(struct rt_pm *pm)
+{
+    int        index;
+    rt_uint8_t mode;
+
+    mode = _pm_default_deepsleep;
+    for (index = PM_SLEEP_MODE_NONE; index < PM_SLEEP_MODE_MAX; index++)
+    {
+        if (pm->modes[index])
+        {
+            mode = index;
+            break;
+        }
+    }
+
+#ifndef PM_DISABLE_MODULE
+    {
+        rt_uint8_t request_mode;
+        request_mode = _judge_sleep_mode();
+        /* select the high power mode */
+        if (request_mode < mode)
+            mode = request_mode;
+    }
+#endif
+
+    return mode;
 }
 
 /**
@@ -300,11 +286,11 @@ rt_weak rt_tick_t pm_timer_next_timeout_tick(rt_uint8_t mode)
 {
     switch (mode)
     {
-        case PM_SLEEP_MODE_LIGHT:
-            return rt_timer_next_timeout_tick();
-        case PM_SLEEP_MODE_DEEP:
-        case PM_SLEEP_MODE_STANDBY:
-            return rt_lptimer_next_timeout_tick();
+    case PM_SLEEP_MODE_LIGHT:
+        return rt_timer_next_timeout_tick();
+    case PM_SLEEP_MODE_DEEP:
+    case PM_SLEEP_MODE_STANDBY:
+        return rt_lptimer_next_timeout_tick();
     }
 
     return RT_TICK_MAX;
@@ -370,22 +356,23 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
 {
     rt_tick_t timeout_tick = 0, delta_tick = 0;
     rt_base_t level = 0;
-    uint8_t sleep_mode = PM_SLEEP_MODE_DEEP;
 
     level = rt_pm_enter_critical(pm->sleep_mode);
 
     /* judge sleep mode from module request */
     pm->sleep_mode = _pm_select_sleep_mode(pm);
 
+#ifndef PM_DISABLE_MODULE
     /* module busy request check */
-    if (_pm_device_check_idle() == RT_FALSE)
+    if (_pm_module_check_idle() == RT_FALSE)
     {
-        sleep_mode = PM_BUSY_SLEEP_MODE;
+        uint8_t sleep_mode = PM_BUSY_SLEEP_MODE;
         if (sleep_mode < pm->sleep_mode)
         {
             pm->sleep_mode = sleep_mode; /* judge the highest sleep mode */
         }
     }
+#endif
 
     if (_pm.sleep_mode == PM_SLEEP_MODE_NONE)
     {
@@ -487,7 +474,7 @@ void rt_system_power_manager(void)
  */
 rt_err_t rt_pm_request(rt_uint8_t mode)
 {
-    rt_base_t level;
+    rt_base_t     level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -501,9 +488,9 @@ rt_err_t rt_pm_request(rt_uint8_t mode)
     }
 
     level = rt_hw_interrupt_disable();
-    pm = &_pm;
+    pm    = &_pm;
     if (pm->modes[mode] < 255)
-        pm->modes[mode] ++;
+        pm->modes[mode]++;
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -518,7 +505,7 @@ rt_err_t rt_pm_request(rt_uint8_t mode)
  */
 rt_err_t rt_pm_release(rt_uint8_t mode)
 {
-    rt_base_t level;
+    rt_base_t     level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -532,9 +519,9 @@ rt_err_t rt_pm_release(rt_uint8_t mode)
     }
 
     level = rt_hw_interrupt_disable();
-    pm = &_pm;
+    pm    = &_pm;
     if (pm->modes[mode] > 0)
-        pm->modes[mode] --;
+        pm->modes[mode]--;
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -549,7 +536,7 @@ rt_err_t rt_pm_release(rt_uint8_t mode)
  */
 rt_err_t rt_pm_release_all(rt_uint8_t mode)
 {
-    rt_base_t level;
+    rt_base_t     level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -562,14 +549,15 @@ rt_err_t rt_pm_release_all(rt_uint8_t mode)
         return -RT_EINVAL;
     }
 
-    level = rt_hw_interrupt_disable();
-    pm = &_pm;
+    level           = rt_hw_interrupt_disable();
+    pm              = &_pm;
     pm->modes[mode] = 0;
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
 
+#ifndef PM_DISABLE_MODULE
 /**
  * Upper application or device driver requests the system
  * stall in corresponding power mode.
@@ -577,9 +565,9 @@ rt_err_t rt_pm_release_all(rt_uint8_t mode)
  * @param module_id the application or device module id
  * @param mode the system power sleep mode
  */
-rt_err_t rt_pm_module_request(uint8_t module_id, rt_uint8_t mode)
+rt_err_t rt_pm_module_request(rt_uint16_t module_id, rt_uint8_t mode)
 {
-    rt_base_t level;
+    rt_base_t     level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -597,11 +585,11 @@ rt_err_t rt_pm_module_request(uint8_t module_id, rt_uint8_t mode)
         return -RT_EINVAL;
     }
 
-    level = rt_hw_interrupt_disable();
-    pm = &_pm;
+    level                                   = rt_hw_interrupt_disable();
+    pm                                      = &_pm;
     pm->module_status[module_id].req_status = 0x01;
     if (pm->modes[mode] < 255)
-        pm->modes[mode] ++;
+        pm->modes[mode]++;
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -615,9 +603,9 @@ rt_err_t rt_pm_module_request(uint8_t module_id, rt_uint8_t mode)
  * @param mode the system power sleep mode
  *
  */
-rt_err_t rt_pm_module_release(uint8_t module_id, rt_uint8_t mode)
+rt_err_t rt_pm_module_release(rt_uint16_t module_id, rt_uint8_t mode)
 {
-    rt_base_t level;
+    rt_base_t     level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -636,9 +624,9 @@ rt_err_t rt_pm_module_release(uint8_t module_id, rt_uint8_t mode)
     }
 
     level = rt_hw_interrupt_disable();
-    pm = &_pm;
+    pm    = &_pm;
     if (pm->modes[mode] > 0)
-        pm->modes[mode] --;
+        pm->modes[mode]--;
     if (pm->modes[mode] == 0)
         pm->module_status[module_id].req_status = 0x00;
     rt_hw_interrupt_enable(level);
@@ -654,9 +642,9 @@ rt_err_t rt_pm_module_release(uint8_t module_id, rt_uint8_t mode)
  * @param mode the system power sleep mode
  *
  */
-rt_err_t rt_pm_module_release_all(uint8_t module_id, rt_uint8_t mode)
+rt_err_t rt_pm_module_release_all(rt_uint16_t module_id, rt_uint8_t mode)
 {
-    rt_base_t level;
+    rt_base_t     level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -669,13 +657,51 @@ rt_err_t rt_pm_module_release_all(uint8_t module_id, rt_uint8_t mode)
         return -RT_EINVAL;
     }
 
-    level = rt_hw_interrupt_disable();
-    pm = &_pm;
-    pm->modes[mode] = 0;
+    level                                   = rt_hw_interrupt_disable();
+    pm                                      = &_pm;
+    pm->modes[mode]                         = 0;
     pm->module_status[module_id].req_status = 0x00;
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
+}
+
+/**
+ * pm module request delay sleep.
+ */
+void rt_pm_module_delay_sleep(rt_uint16_t module_id, rt_tick_t timeout)
+{
+    rt_base_t     level;
+    struct rt_pm *pm;
+
+    if (_pm_init_flag == 0)
+        return;
+
+    if (module_id > (PM_MODULE_MAX_ID - 1))
+        return;
+
+    level                                   = rt_hw_interrupt_disable();
+    pm                                      = &_pm;
+    pm->module_status[module_id].busy_flag  = RT_TRUE;
+    pm->module_status[module_id].timeout    = timeout;
+    pm->module_status[module_id].start_time = rt_tick_get();
+    rt_hw_interrupt_enable(level);
+}
+
+rt_uint32_t rt_pm_module_get_status(void)
+{
+    rt_uint8_t    index = 0;
+    struct rt_pm *pm;
+    rt_uint32_t   req_status = 0x00;
+    pm                       = &_pm;
+
+    for (index = 0; index < PM_MODULE_MAX_ID; index++)
+    {
+        if (pm->module_status[index].req_status == 0x01)
+            req_status |= 1 << index;
+    }
+
+    return req_status;
 }
 
 /**
@@ -700,11 +726,41 @@ rt_err_t rt_pm_sleep_request(rt_uint16_t module_id, rt_uint8_t mode)
         return -RT_EINVAL;
     }
 
-    level = rt_hw_interrupt_disable();
+    level                                   = rt_hw_interrupt_disable();
     _pm.sleep_status[mode][module_id / 32] |= 1 << (module_id % 32);
     rt_hw_interrupt_enable(level);
     return RT_EOK;
 }
+
+/**
+ * When current module don't work, release requested sleep mode.
+ *
+ * @param module_id the pm module id
+ * @param mode the pm sleep mode
+ *
+ * @return NULL
+ */
+rt_err_t rt_pm_sleep_release(rt_uint16_t module_id, rt_uint8_t mode)
+{
+    rt_base_t level;
+
+    if (module_id >= PM_MODULE_MAX_ID)
+    {
+        return -RT_EINVAL;
+    }
+
+    if (mode >= (PM_SLEEP_MODE_MAX - 1))
+    {
+        return -RT_EINVAL;
+    }
+
+    level                                   = rt_hw_interrupt_disable();
+    _pm.sleep_status[mode][module_id / 32] &= ~(1 << (module_id % 32));
+    rt_hw_interrupt_enable(level);
+    return RT_EOK;
+}
+
+#endif
 
 /**
  * This function will let current module work with PM_SLEEP_MODE_NONE mode.
@@ -740,34 +796,6 @@ rt_err_t rt_pm_sleep_idle_request(rt_uint16_t module_id)
 rt_err_t rt_pm_sleep_light_request(rt_uint16_t module_id)
 {
     return rt_pm_sleep_request(module_id, PM_SLEEP_MODE_LIGHT);
-}
-
-/**
- * When current module don't work, release requested sleep mode.
- *
- * @param module_id the pm module id
- * @param mode the pm sleep mode
- *
- * @return NULL
- */
-rt_err_t rt_pm_sleep_release(rt_uint16_t module_id, rt_uint8_t mode)
-{
-    rt_base_t level;
-
-    if (module_id >= PM_MODULE_MAX_ID)
-    {
-        return -RT_EINVAL;
-    }
-
-    if (mode >= (PM_SLEEP_MODE_MAX - 1))
-    {
-        return -RT_EINVAL;
-    }
-
-    level = rt_hw_interrupt_disable();
-    _pm.sleep_status[mode][module_id / 32] &= ~(1 << (module_id % 32));
-    rt_hw_interrupt_enable(level);
-    return RT_EOK;
 }
 
 /**
@@ -833,7 +861,7 @@ void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_o
 void rt_pm_device_unregister(struct rt_device *device)
 {
     struct rt_device_pm *device_pm = RT_NULL;
-    rt_slist_t *node = RT_NULL;
+    rt_slist_t          *node      = RT_NULL;
     for (node = rt_slist_first(&_pm.device_list); node; node = rt_slist_next(node))
     {
         device_pm = rt_slist_entry(node, struct rt_device_pm, list);
@@ -852,7 +880,7 @@ void rt_pm_device_unregister(struct rt_device *device)
 void rt_pm_notify_set(void (*notify)(rt_uint8_t event, rt_uint8_t mode, void *data), void *data)
 {
     _pm_notify.notify = notify;
-    _pm_notify.data = data;
+    _pm_notify.data   = data;
 }
 
 /**
@@ -867,22 +895,22 @@ void rt_pm_default_set(rt_uint8_t sleep_mode)
  * RT-Thread device interface for PM device
  */
 static rt_ssize_t _rt_pm_device_read(rt_device_t dev,
-                                    rt_off_t    pos,
-                                    void       *buffer,
-                                    rt_size_t   size)
+                                     rt_off_t    pos,
+                                     void       *buffer,
+                                     rt_size_t   size)
 {
     struct rt_pm *pm;
-    rt_size_t length;
+    rt_size_t     length;
 
     length = 0;
-    pm = (struct rt_pm *)dev;
+    pm     = (struct rt_pm *)dev;
     RT_ASSERT(pm != RT_NULL);
 
     if (pos < PM_SLEEP_MODE_MAX)
     {
         int mode;
 
-        mode = pm->modes[pos];
+        mode   = pm->modes[pos];
         length = rt_snprintf(buffer, size, "%d", mode);
     }
 
@@ -890,9 +918,9 @@ static rt_ssize_t _rt_pm_device_read(rt_device_t dev,
 }
 
 static rt_ssize_t _rt_pm_device_write(rt_device_t dev,
-                                     rt_off_t    pos,
-                                     const void *buffer,
-                                     rt_size_t   size)
+                                      rt_off_t    pos,
+                                      const void *buffer,
+                                      rt_size_t   size)
 {
     unsigned char request;
 
@@ -900,7 +928,7 @@ static rt_ssize_t _rt_pm_device_write(rt_device_t dev,
     {
         /* get request */
         request = *(unsigned char *)buffer;
-        if (request ==  0x01)
+        if (request == 0x01)
         {
             rt_pm_request(pos);
         }
@@ -937,9 +965,9 @@ static rt_err_t _rt_pm_device_control(rt_device_t dev,
 
 rt_err_t rt_pm_run_enter(rt_uint8_t mode)
 {
-    rt_base_t level = 0;
-    struct rt_pm *pm = RT_NULL;
-    rt_err_t ret = RT_EOK;
+    rt_base_t     level = 0;
+    struct rt_pm *pm    = RT_NULL;
+    rt_err_t      ret   = RT_EOK;
 
     if (_pm_init_flag == 0)
         return -RT_EIO;
@@ -953,7 +981,7 @@ rt_err_t rt_pm_run_enter(rt_uint8_t mode)
     if (mode < pm->run_mode)
     {
         /* change system runing mode */
-        if(pm->ops != RT_NULL && pm->ops->run != RT_NULL)
+        if (pm->ops != RT_NULL && pm->ops->run != RT_NULL)
         {
             pm->ops->run(pm, mode);
         }
@@ -972,13 +1000,13 @@ rt_err_t rt_pm_run_enter(rt_uint8_t mode)
 
 #ifdef RT_USING_DEVICE_OPS
 const static struct rt_device_ops pm_ops =
-{
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    _rt_pm_device_read,
-    _rt_pm_device_write,
-    _rt_pm_device_control,
+    {
+        RT_NULL,
+        RT_NULL,
+        RT_NULL,
+        _rt_pm_device_read,
+        _rt_pm_device_write,
+        _rt_pm_device_control,
 };
 #endif
 
@@ -994,9 +1022,9 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
                        void                   *user_data)
 {
     struct rt_device *device;
-    struct rt_pm *pm;
+    struct rt_pm     *pm;
 
-    pm = &_pm;
+    pm     = &_pm;
     device = &(_pm.parent);
 
     device->type        = RT_Device_Class_PM;
@@ -1006,14 +1034,14 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
 #ifdef RT_USING_DEVICE_OPS
     device->ops = &pm_ops;
 #else
-    device->init        = RT_NULL;
-    device->open        = RT_NULL;
-    device->close       = RT_NULL;
-    device->read        = _rt_pm_device_read;
-    device->write       = _rt_pm_device_write;
-    device->control     = _rt_pm_device_control;
+    device->init    = RT_NULL;
+    device->open    = RT_NULL;
+    device->close   = RT_NULL;
+    device->read    = _rt_pm_device_read;
+    device->write   = _rt_pm_device_write;
+    device->control = _rt_pm_device_control;
 #endif
-    device->user_data   = user_data;
+    device->user_data = user_data;
 
     /* register PM device to the system */
     rt_device_register(device, "pm", RT_DEVICE_FLAG_RDWR);
@@ -1023,7 +1051,9 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
 
     /* when system power on, set default sleep modes */
     pm->modes[pm->sleep_mode] = 1;
+#ifndef PM_DISABLE_MODULE
     pm->module_status[PM_POWER_ID].req_status = 1;
+#endif
     pm->run_mode   = RT_PM_DEFAULT_RUN_MODE;
     pm->timer_mask = timer_mask;
 
@@ -1034,7 +1064,7 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
     rt_slist_init(&pm->device_list);
 
 #if IDLE_THREAD_STACK_SIZE <= 256
-    #error "[pm.c ERR] IDLE Stack Size Too Small!"
+#error "[pm.c ERR] IDLE Stack Size Too Small!"
 #endif
 
     _pm_init_flag = 1;
@@ -1044,7 +1074,7 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
 #include <finsh.h>
 
 static const char *_pm_sleep_str[] = PM_SLEEP_MODE_NAMES;
-static const char *_pm_run_str[] = PM_RUN_MODE_NAMES;
+static const char *_pm_run_str[]   = PM_RUN_MODE_NAMES;
 
 static void rt_pm_release_mode(int argc, char **argv)
 {
@@ -1085,12 +1115,12 @@ MSH_CMD_EXPORT_ALIAS(rt_pm_request_mode, pm_request, request power management mo
 static void rt_module_release_mode(int argc, char **argv)
 {
     int module = 0;
-    int mode = 0;
+    int mode   = 0;
 
     if (argc >= 3)
     {
         module = atoi(argv[1]);
-        mode = atoi(argv[2]);
+        mode   = atoi(argv[2]);
     }
 
     rt_pm_module_release(module, mode);
@@ -1100,12 +1130,12 @@ MSH_CMD_EXPORT_ALIAS(rt_module_release_mode, pm_module_release, release module p
 static void rt_module_release_mode_all(int argc, char **argv)
 {
     int module = 0;
-    int mode = 0;
+    int mode   = 0;
 
     if (argc >= 3)
     {
         module = atoi(argv[1]);
-        mode = atoi(argv[2]);
+        mode   = atoi(argv[2]);
     }
 
     rt_pm_module_release_all(module, mode);
@@ -1115,32 +1145,34 @@ MSH_CMD_EXPORT_ALIAS(rt_module_release_mode_all, pm_module_release_all, release 
 static void rt_module_request_mode(int argc, char **argv)
 {
     int module = 0;
-    int mode = 0;
+    int mode   = 0;
 
     if (argc >= 3)
     {
         module = atoi(argv[1]);
-        mode = atoi(argv[2]);
+        mode   = atoi(argv[2]);
     }
 
     rt_pm_module_request(module, mode);
 }
 MSH_CMD_EXPORT_ALIAS(rt_module_request_mode, pm_module_request, request power management mode);
 
+#ifndef PM_DISABLE_MODULE
 static void rt_module_delay_sleep(int argc, char **argv)
 {
-    int module = 0;
+    int          module  = 0;
     unsigned int timeout = 0;
 
     if (argc >= 3)
     {
-        module = atoi(argv[1]);
+        module  = atoi(argv[1]);
         timeout = atoi(argv[2]);
     }
 
     rt_pm_module_delay_sleep(module, timeout);
 }
 MSH_CMD_EXPORT_ALIAS(rt_module_delay_sleep, pm_module_delay, module request delay sleep);
+#endif
 
 static void rt_pm_run_mode_switch(int argc, char **argv)
 {
@@ -1153,22 +1185,6 @@ static void rt_pm_run_mode_switch(int argc, char **argv)
     rt_pm_run_enter(mode);
 }
 MSH_CMD_EXPORT_ALIAS(rt_pm_run_mode_switch, pm_run, switch power management run mode);
-
-rt_uint32_t rt_pm_module_get_status(void)
-{
-    rt_uint8_t index = 0;
-    struct rt_pm *pm;
-    rt_uint32_t req_status = 0x00;
-    pm = &_pm;
-
-    for (index = 0; index < PM_MODULE_MAX_ID; index ++)
-    {
-        if (pm->module_status[index].req_status == 0x01)
-            req_status |= 1<<index;
-    }
-
-    return req_status;
-}
 
 rt_uint8_t rt_pm_get_sleep_mode(void)
 {
@@ -1194,18 +1210,18 @@ struct rt_pm *rt_pm_get_handle(void)
  */
 void pm_sleep_dump(void)
 {
-    uint8_t index;
+    uint8_t  index;
     uint16_t len;
 
     rt_kprintf("+-------------+--------------+\n");
     rt_kprintf("| Sleep Mode  | Request List |\n");
     rt_kprintf("+-------------+--------------+\n");
-    for (index = 0; index < PM_SLEEP_MODE_MAX -1; index++)
+    for (index = 0; index < PM_SLEEP_MODE_MAX - 1; index++)
     {
         for (len = 0; len < ((PM_MODULE_MAX_ID + 31) / 32); len++)
         {
             rt_kprintf("| Mode[%d] : %d |  0x%08x  |\n", index, len,
-                _pm.sleep_status[index][len]);
+                       _pm.sleep_status[index][len]);
         }
     }
     rt_kprintf("+-------------+--------------+\n");
@@ -1215,12 +1231,12 @@ MSH_CMD_EXPORT(pm_sleep_dump, dump pm request list);
 static void pm_sleep_request(int argc, char **argv)
 {
     int module = 0;
-    int mode = 0;
+    int mode   = 0;
 
     if (argc >= 3)
     {
         module = atoi(argv[1]);
-        mode = atoi(argv[2]);
+        mode   = atoi(argv[2]);
         rt_pm_sleep_request(module, mode);
     }
 }
@@ -1229,12 +1245,12 @@ MSH_CMD_EXPORT(pm_sleep_request, pm_sleep_request module sleep_mode);
 static void pm_sleep_release(int argc, char **argv)
 {
     int module = 0;
-    int mode = 0;
+    int mode   = 0;
 
     if (argc >= 3)
     {
         module = atoi(argv[1]);
-        mode = atoi(argv[2]);
+        mode   = atoi(argv[2]);
         rt_pm_sleep_release(module, mode);
     }
 }
@@ -1243,14 +1259,14 @@ MSH_CMD_EXPORT(pm_sleep_release, pm_sleep_release module sleep_mode);
 
 static void rt_pm_dump_status(void)
 {
-    rt_uint32_t index;
+    rt_uint32_t   index;
     struct rt_pm *pm;
 
     pm = &_pm;
 
     rt_kprintf("| Power Management Mode | Counter | Timer |\n");
     rt_kprintf("+-----------------------+---------+-------+\n");
-    for (index = 0; index < PM_SLEEP_MODE_MAX; index ++)
+    for (index = 0; index < PM_SLEEP_MODE_MAX; index++)
     {
         int has_timer = 0;
         if (pm->timer_mask & (1 << index))
@@ -1263,24 +1279,26 @@ static void rt_pm_dump_status(void)
     rt_kprintf("pm current sleep mode: %s\n", _pm_sleep_str[pm->sleep_mode]);
     rt_kprintf("pm current run mode:   %s\n", _pm_run_str[pm->run_mode]);
 
+#ifndef PM_DISABLE_MODULE
     rt_kprintf("\n");
     rt_kprintf("| module | busy | start time |  timeout  |\n");
     rt_kprintf("+--------+------+------------+-----------+\n");
-    for (index = 0; index < PM_MODULE_MAX_ID; index ++)
+    for (index = 0; index < PM_MODULE_MAX_ID; index++)
     {
-        if ((pm->module_status[index].busy_flag == RT_TRUE) ||
-            (pm->module_status[index].req_status != 0x00))
+        if ((pm->module_status[index].busy_flag == RT_TRUE) || (pm->module_status[index].req_status != 0x00))
         {
             rt_kprintf("|  %04d  |  %d   | 0x%08x | 0x%08x |\n",
-                index, pm->module_status[index].busy_flag,
-                pm->module_status[index].start_time,
-                pm->module_status[index].timeout);
+                       index, pm->module_status[index].busy_flag,
+                       pm->module_status[index].start_time,
+                       pm->module_status[index].timeout);
         }
     }
     rt_kprintf("+--------+------+------------+-----------+\n");
+#endif
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pm_dump_status, pm_dump, dump power management status);
 MSH_CMD_EXPORT_ALIAS(rt_pm_dump_status, pm_dump, dump power management status);
-#endif
+
+#endif /* RT_USING_FINSH */
 
 #endif /* RT_USING_PM */

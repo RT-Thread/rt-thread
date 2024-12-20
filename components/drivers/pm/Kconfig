@@ -19,6 +19,10 @@ config RT_USING_PM
             bool "PM Device suspend change sleep mode"
             default n
 
+        config PM_DISABLE_MODULE
+            bool "PM disable module"
+            default n
+
         config PM_ENABLE_THRESHOLD_SLEEP_MODE
             bool "PM using threshold time change sleep mode"
             default n

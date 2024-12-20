@@ -49,23 +49,23 @@ enum
 };
 
 /* The name of all modes used in the msh command "pm_dump" */
-#define PM_SLEEP_MODE_NAMES     \
-{                               \
-    "None Mode",                \
-    "Idle Mode",                \
-    "LightSleep Mode",          \
-    "DeepSleep Mode",           \
-    "Standby Mode",             \
-    "Shutdown Mode",            \
-}
+#define PM_SLEEP_MODE_NAMES \
+    {                       \
+        "None Mode",        \
+        "Idle Mode",        \
+        "LightSleep Mode",  \
+        "DeepSleep Mode",   \
+        "Standby Mode",     \
+        "Shutdown Mode",    \
+    }
 
-#define PM_RUN_MODE_NAMES       \
-{                               \
-    "High Speed",               \
-    "Normal Speed",             \
-    "Medium Speed",             \
-    "Low Mode",                 \
-}
+#define PM_RUN_MODE_NAMES \
+    {                     \
+        "High Speed",     \
+        "Normal Speed",   \
+        "Medium Speed",   \
+        "Low Mode",       \
+    }
 
 #ifndef PM_USING_CUSTOM_CONFIG
 /**
@@ -74,7 +74,8 @@ enum
  * pm_module_release(PM_BOARD_ID, PM_SLEEP_MODE_IDLE)
  * pm_module_release_all(PM_BOARD_ID, PM_SLEEP_MODE_IDLE)
  */
-enum pm_module_id {
+enum pm_module_id
+{
     PM_NONE_ID = 0,
     PM_POWER_ID,
     PM_BOARD_ID,
@@ -102,22 +103,22 @@ enum pm_module_id {
 #endif /* PM_USING_CUSTOM_CONFIG */
 
 #ifndef RT_PM_DEFAULT_SLEEP_MODE
-#define RT_PM_DEFAULT_SLEEP_MODE        PM_SLEEP_MODE_NONE
+#define RT_PM_DEFAULT_SLEEP_MODE PM_SLEEP_MODE_NONE
 #endif
 
 #ifndef RT_PM_DEFAULT_DEEPSLEEP_MODE
-#define RT_PM_DEFAULT_DEEPSLEEP_MODE    PM_SLEEP_MODE_DEEP
+#define RT_PM_DEFAULT_DEEPSLEEP_MODE PM_SLEEP_MODE_DEEP
 #endif
 
 #ifndef RT_PM_DEFAULT_RUN_MODE
-#define RT_PM_DEFAULT_RUN_MODE          PM_RUN_MODE_NORMAL_SPEED
+#define RT_PM_DEFAULT_RUN_MODE PM_RUN_MODE_NORMAL_SPEED
 #endif
 
 /**
  * device control flag to request or release power
  */
-#define RT_PM_DEVICE_CTRL_RELEASE   (RT_DEVICE_CTRL_BASE(PM) + 0x00)
-#define RT_PM_DEVICE_CTRL_REQUEST   (RT_DEVICE_CTRL_BASE(PM) + 0x01)
+#define RT_PM_DEVICE_CTRL_RELEASE (RT_DEVICE_CTRL_BASE(PM) + 0x00)
+#define RT_PM_DEVICE_CTRL_REQUEST (RT_DEVICE_CTRL_BASE(PM) + 0x01)
 
 struct rt_pm;
 
@@ -142,15 +143,15 @@ struct rt_device_pm_ops
 
 struct rt_device_pm
 {
-    const struct rt_device *device;
+    const struct rt_device        *device;
     const struct rt_device_pm_ops *ops;
-    rt_slist_t list;
+    rt_slist_t                     list;
 };
 
 struct rt_pm_module
 {
-    rt_uint8_t req_status;
-    rt_bool_t busy_flag;
+    rt_uint8_t  req_status;
+    rt_bool_t   busy_flag;
     rt_uint32_t timeout;
     rt_uint32_t start_time;
 };
@@ -164,17 +165,18 @@ struct rt_pm
 
     /* modes */
     rt_uint8_t modes[PM_SLEEP_MODE_MAX];
-    rt_uint8_t sleep_mode;    /* current sleep mode */
-    rt_uint8_t run_mode;      /* current running mode */
+    rt_uint8_t sleep_mode; /* current sleep mode */
+    rt_uint8_t run_mode;   /* current running mode */
 
+#ifndef PM_DISABLE_MODULE
     /* modules request status*/
     struct rt_pm_module module_status[PM_MODULE_MAX_ID];
-
     /* sleep request table */
     rt_uint32_t sleep_status[PM_SLEEP_MODE_MAX - 1][(PM_MODULE_MAX_ID + 31) / 32];
+#endif
 
     /* the list of device, which has PM feature */
-    rt_slist_t device_list;
+    rt_slist_t           device_list;
     struct rt_device_pm *device_pm;
 
     /* if the mode has timer, the corresponding bit is 1*/
@@ -209,18 +211,44 @@ void rt_pm_default_set(rt_uint8_t sleep_mode);
 
 void rt_system_pm_init(const struct rt_pm_ops *ops,
                        rt_uint8_t              timer_mask,
-                       void                 *user_data);
-rt_err_t rt_pm_module_request(uint8_t module_id, rt_uint8_t sleep_mode);
-rt_err_t rt_pm_module_release(uint8_t module_id, rt_uint8_t sleep_mode);
-rt_err_t rt_pm_module_release_all(uint8_t module_id, rt_uint8_t sleep_mode);
-void rt_pm_module_delay_sleep(rt_uint8_t module_id, rt_tick_t timeout);
-rt_uint32_t rt_pm_module_get_status(void);
-rt_uint8_t rt_pm_get_sleep_mode(void);
+                       void                   *user_data);
+
+rt_uint8_t    rt_pm_get_sleep_mode(void);
 struct rt_pm *rt_pm_get_handle(void);
+
+#ifndef PM_DISABLE_MODULE
+rt_err_t    rt_pm_module_request(rt_uint16_t module_id, rt_uint8_t sleep_mode);
+rt_err_t    rt_pm_module_release(rt_uint16_t module_id, rt_uint8_t sleep_mode);
+rt_err_t    rt_pm_module_release_all(rt_uint16_t module_id, rt_uint8_t sleep_mode);
+void        rt_pm_module_delay_sleep(rt_uint16_t module_id, rt_tick_t timeout);
+rt_uint32_t rt_pm_module_get_status(void);
 
 /* sleep : request or release */
 rt_err_t rt_pm_sleep_request(rt_uint16_t module_id, rt_uint8_t mode);
 rt_err_t rt_pm_sleep_release(rt_uint16_t module_id, rt_uint8_t mode);
+
+#else
+
+rt_inline rt_err_t rt_pm_module_request(rt_uint16_t module_id, rt_uint8_t sleep_mode)
+{
+    RT_UNUSED(module_id);
+    return rt_pm_request(sleep_mode);
+}
+rt_inline rt_err_t rt_pm_module_release(rt_uint16_t module_id, rt_uint8_t sleep_mode)
+{
+    RT_UNUSED(module_id);
+    return rt_pm_release(sleep_mode);
+}
+rt_inline rt_err_t rt_pm_module_release_all(rt_uint16_t module_id, rt_uint8_t sleep_mode)
+{
+    RT_UNUSED(module_id);
+    return rt_pm_release_all(sleep_mode);
+}
+#define rt_pm_sleep_request(module_id, mode) rt_pm_request(mode)
+#define rt_pm_sleep_release(module_id, mode) rt_pm_release(mode)
+
+#endif
+
 rt_err_t rt_pm_sleep_none_request(rt_uint16_t module_id);
 rt_err_t rt_pm_sleep_none_release(rt_uint16_t module_id);
 rt_err_t rt_pm_sleep_idle_request(rt_uint16_t module_id);
