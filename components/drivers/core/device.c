@@ -84,7 +84,7 @@ rt_err_t rt_device_register(rt_device_t dev,
     rt_wqueue_init(&(dev->wait_queue));
 #endif /* RT_USING_POSIX_DEVIO */
 
-#if((defined RT_USING_DFS_V2) && (defined RT_USING_DFS_DEVFS))
+#if defined (RT_USING_DFS_V2) && defined (RT_USING_DFS_DEVFS)
     dfs_devfs_device_add(dev);
 #endif /* RT_USING_DFS_V2 */
 
