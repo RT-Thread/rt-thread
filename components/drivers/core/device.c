@@ -31,7 +31,7 @@
 #include <rtdevice.h> /* for wqueue_init */
 #endif /* RT_USING_POSIX_DEVIO */
 
-#if((defined RT_USING_DFS_V2) && (defined RT_USING_DFS_DEVFS))
+#if defined (RT_USING_DFS_V2) && defined (RT_USING_DFS_DEVFS)
 #include <devfs.h>
 #endif /* RT_USING_DFS_V2  RT_USING_DFS_DEVFS */
 
