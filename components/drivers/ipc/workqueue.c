@@ -144,11 +144,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         list_tmp = &(queue->delayed_list);
         rt_list_for_each_entry(work_tmp, &(queue->delayed_list), list)
         {
-            if ((work_tmp->timeout_tick - work->timeout_tick) == 0)
-            {
-                continue;
-            }
-            else if ((work_tmp->timeout_tick - work->timeout_tick) < RT_TICK_MAX / 2)
+            if ((work_tmp->timeout_tick - work->timeout_tick) < RT_TICK_MAX / 2)
             {
                 list_tmp = &(work_tmp->list);
                 break;
