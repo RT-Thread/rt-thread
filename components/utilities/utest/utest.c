@@ -191,7 +191,7 @@ static int utest_help(void)
     return 0;
 }
 
-static void utest_run(const char *utest_name)
+static void utest_do_run(const char *utest_name)
 {
     rt_size_t i;
     rt_uint32_t index;
@@ -300,17 +300,38 @@ static void utest_run(const char *utest_name)
     }
 }
 
-static void utest_thr_entry(const char *utest_name)
+static void utest_thr_entry(void *para)
 {
-    /* see commit:0dc7b9a for details */
-    rt_thread_mdelay(1000);
-
-    utest_run(utest_name);
+    char *utest_name = (char *)para;
+    rt_thread_mdelay(1000); /* see commit:0dc7b9a for details */
+    rt_kprintf("\n");
+    utest_do_run(utest_name);
 }
 
-long utest_testcase_run(int argc, char** argv)
+static void utest_thread_create(const char *utest_name)
 {
+    rt_thread_t tid = RT_NULL;
+    tid = rt_thread_create("utest",
+                           utest_thr_entry, (void *)utest_name,
+                           UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
+    if (tid != RT_NULL)
+    {
+        rt_thread_startup(tid);
+    }
+}
 
+#ifdef RT_USING_CI_ACTION
+static int utest_ci_action(void)
+{
+    tc_loop = 1;
+    utest_thread_create(RT_NULL);
+    return RT_EOK;
+}
+INIT_APP_EXPORT(utest_ci_action);
+#endif /* RT_USING_CI_ACTION */
+
+int utest_testcase_run(int argc, char** argv)
+{
     static char utest_name[UTEST_NAME_MAX_LEN];
     rt_memset(utest_name, 0x0, sizeof(utest_name));
 
@@ -318,27 +339,21 @@ long utest_testcase_run(int argc, char** argv)
 
     if (argc == 1)
     {
-        utest_run(RT_NULL);
-        return 0;
+        utest_thread_create(RT_NULL);
     }
     else if (argc == 2 || argc == 3 || argc == 4)
     {
         if (rt_strcmp(argv[1], "-thread") == 0)
         {
-            rt_thread_t tid = RT_NULL;
             if (argc == 3 || argc == 4)
             {
                 rt_strncpy(utest_name, argv[2], sizeof(utest_name) -1);
-
-                if (argc == 4) tc_loop = atoi(argv[3]);
+                if (argc == 4)
+                {
+                    tc_loop = atoi(argv[3]);
+                }
             }
-            tid = rt_thread_create("utest",
-                                   (void (*)(void *))utest_thr_entry, utest_name,
-                                   UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
-            if (tid != NULL)
-            {
-                rt_thread_startup(tid);
-            }
+            utest_thread_create(utest_name);
         }
         else if (rt_strcmp(argv[1], "-help") == 0)
         {
@@ -347,8 +362,11 @@ long utest_testcase_run(int argc, char** argv)
         else
         {
             rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
-            if (argc == 3) tc_loop = atoi(argv[2]);
-            utest_run(utest_name);
+            if (argc == 3)
+            {
+                tc_loop = atoi(argv[2]);
+            }
+            utest_do_run(utest_name);
         }
     }
     else
@@ -356,7 +374,8 @@ long utest_testcase_run(int argc, char** argv)
         LOG_E("[  error   ] at (%s:%d), in param error.", __func__, __LINE__);
         utest_help();
     }
-    return 0;
+
+    return RT_EOK;
 }
 MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num]);
 
