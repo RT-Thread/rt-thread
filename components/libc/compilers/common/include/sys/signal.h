@@ -28,6 +28,9 @@ extern "C" {
 #include <signal.h>
 #endif
 
+#elif defined(RT_USING_MLIBC)
+#include <signal.h>
+
 #else
 
 #include <stdint.h>
