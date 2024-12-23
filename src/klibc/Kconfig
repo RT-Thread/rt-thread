@@ -1,7 +1,7 @@
 menu "klibc options"
     menu "rt_vsnprintf options"
         config RT_KLIBC_USING_LIBC_VSNPRINTF
-            bool "Enable rt_vsnprintf to use libc vsscanf"
+            bool "Enable rt_vsnprintf to use libc vsnprintf"
             default n
 
         config RT_KLIBC_USING_VSNPRINTF_LONGLONG
