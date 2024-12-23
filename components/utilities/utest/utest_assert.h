@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 /* No need for the user to use this function directly */
-void utest_assert(int value, const char *file, int line, const char *func, const char *msg);
+rt_bool_t utest_assert(int value, const char *file, int line, const char *func, const char *msg);
 
 /* No need for the user to use this function directly */
 void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const char *file, int line, const char *func, const char *msg);
@@ -55,6 +55,9 @@ void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equa
 
 #define uassert_int_equal(a, b)      __utest_assert((a) == (b), "(" #a ") not equal to (" #b ")")
 #define uassert_int_not_equal(a, b)  __utest_assert((a) != (b), "(" #a ") equal to (" #b ")")
+
+#define uassert_ptr_equal(a, b)      __utest_assert((const void*)(a) == (const void*)(b), "(" #a ") not equal to (" #b ")")
+#define uassert_ptr_not_equal(a, b)  __utest_assert((const void*)(a) != (const void*)(b), "(" #a ") equal to (" #b ")")
 
 #define uassert_str_equal(a, b)      utest_assert_string((const char*)(a), (const char*)(b), RT_TRUE, __FILE__, __LINE__, __func__, "string not equal")
 #define uassert_str_not_equal(a, b)  utest_assert_string((const char*)(a), (const char*)(b), RT_FALSE, __FILE__, __LINE__, __func__, "string equal")

@@ -13,7 +13,7 @@
 
 #include <rtthread.h>
 
-#define UTEST_DEBUG
+// #define UTEST_DEBUG
 
 #undef DBG_TAG
 #undef DBG_LVL
