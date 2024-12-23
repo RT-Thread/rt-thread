@@ -448,7 +448,7 @@ int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
             s = va_arg(args, char *);
             if (!s)
             {
-                s = "(NULL)";
+                s = "(null)";
             }
 
             for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
