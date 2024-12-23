@@ -11,12 +11,8 @@
 #include <rtthread.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include "utest.h"
-#include <utest_log.h>
-
-#undef DBG_TAG
-#undef DBG_LVL
+#include "utest_log.h"
 
 #define DBG_TAG          "utest"
 #ifdef UTEST_DEBUG
@@ -217,7 +213,7 @@ static void utest_do_run(const char *utest_name)
         {
             if (utest_name)
             {
-                int len = strlen(utest_name);
+                int len = rt_strlen(utest_name);
                 if (utest_name[len - 1] == '*')
                 {
                     len -= 1;
@@ -397,13 +393,27 @@ void utest_unit_run(test_unit_func func, const char *unit_func_name)
     }
 }
 
-void utest_assert(int value, const char *file, int line, const char *func, const char *msg)
+/*
+* utest_assert - assert function
+*
+* @param value - assert value
+* @param file - file name
+* @param line - line number
+* @param func - function name
+* @param msg - assert message
+*
+* @return - RT_TRUE: assert success; RT_FALSE: assert failed
+*/
+rt_bool_t utest_assert(int value, const char *file, int line, const char *func, const char *msg)
 {
+    rt_bool_t rst = RT_FALSE;
+
     if (!(value))
     {
         local_utest.error = UTEST_FAILED;
         local_utest.failed_num ++;
         LOG_E("[  ASSERT  ] [ unit     ] at (%s); func: (%s:%d); msg: (%s)", file_basename(file), func, line, msg);
+        rst = RT_FALSE;
     }
     else
     {
@@ -413,37 +423,49 @@ void utest_assert(int value, const char *file, int line, const char *func, const
         }
         local_utest.error = UTEST_PASSED;
         local_utest.passed_num ++;
+        rst = RT_TRUE;
     }
+
+    return rst;
 }
 
 void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const char *file, int line, const char *func, const char *msg)
 {
+    rt_bool_t rst = RT_FALSE;
+
     if (a == RT_NULL || b == RT_NULL)
     {
-        utest_assert(0, file, line, func, msg);
-    }
-
-    if (equal)
-    {
-        if (rt_strcmp(a, b) == 0)
-        {
-            utest_assert(1, file, line, func, msg);
-        }
-        else
-        {
-            utest_assert(0, file, line, func, msg);
-        }
+        rst = utest_assert(0, file, line, func, msg);
     }
     else
     {
-        if (rt_strcmp(a, b) == 0)
+        if (equal)
         {
-            utest_assert(0, file, line, func, msg);
+            if (rt_strcmp(a, b) == 0)
+            {
+                rst = utest_assert(1, file, line, func, msg);
+            }
+            else
+            {
+                rst = utest_assert(0, file, line, func, msg);
+            }
         }
         else
         {
-            utest_assert(1, file, line, func, msg);
+            if (rt_strcmp(a, b) == 0)
+            {
+                rst = utest_assert(0, file, line, func, msg);
+            }
+            else
+            {
+                rst = utest_assert(1, file, line, func, msg);
+            }
         }
+    }
+
+    if (!rst)
+    {
+        LOG_E("[  ASSERT  ] [ unit     ] str-a: (%s); str-b: (%s)", a, b);
     }
 }
 
