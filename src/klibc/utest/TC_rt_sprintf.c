@@ -60,14 +60,10 @@ extremal_unsigned_integer_values
 
 #define base_buffer_size 100
 
-#define SPRINTF_CHECK(expected, buffer, format, ...) \
+#define SPRINTF_CHECK(expected, buffer, format, ...)  \
 do {                                                  \
     rt_memset(buffer, 0xCC, base_buffer_size);        \
     rt_sprintf(buffer, format, ##__VA_ARGS__);        \
-    if (rt_strcmp(buffer, expected) != 0) {           \
-        rt_kprintf("Expected: %s\n", expected);       \
-        rt_kprintf("Actual  : %s\n", buffer);         \
-    }                                                 \
     uassert_str_equal(expected, buffer);              \
 } while (0)
 
