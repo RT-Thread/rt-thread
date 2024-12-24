@@ -24,13 +24,6 @@
 extern "C" {
 #endif
 
-
-struct hc32_hw_spi_cs
-{
-    rt_uint8_t  port;
-    rt_uint16_t pin;
-};
-
 struct hc32_spi_irq_config
 {
     struct hc32_irq_config irq_config;
@@ -58,7 +51,7 @@ struct hc32_spi
     rt_uint16_t                 spi_dma_flag;
 };
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint8_t cs_gpio_port, uint16_t cs_gpio_pin);
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
 
 
 #ifdef __cplusplus

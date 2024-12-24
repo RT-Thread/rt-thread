@@ -11,6 +11,7 @@
 #include <rtdevice.h>
 #include "drv_adc.h"
 #include "drv_pinmux.h"
+#include "drv_ioremap.h"
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -247,15 +248,24 @@ int rt_hw_adc_init(void)
 {
     rt_uint8_t i;
 
+    for (i = 0; i < sizeof(adc_dev_config) / sizeof(adc_dev_config[0]); i++)
+    {
+        if (!rt_strcmp(adc_dev_config[i].name, "adc1"))
+        {
+            adc_dev_config[i].base = (rt_ubase_t)DRV_IOREMAP(SARADC_BASE, 0x10000);
+        }
+        else if (!rt_strcmp(adc_dev_config[i].name, "adc2"))
+        {
+            adc_dev_config[i].base = (rt_ubase_t)DRV_IOREMAP(RTC_ADC_BASE, 0x1000);
+        }
+    }
+
     rt_hw_adc_pinmux_config();
 
     for (i = 0; i < sizeof(adc_dev_config) / sizeof(adc_dev_config[0]); i++)
     {
         cvi_do_calibration(adc_dev_config[i].base);
-    }
 
-    for (i = 0; i < sizeof(adc_dev_config) / sizeof(adc_dev_config[0]); i++)
-    {
         if (rt_hw_adc_register(&adc_dev_config[i].device, adc_dev_config[i].name, &_adc_ops, &adc_dev_config[i]) != RT_EOK)
         {
             LOG_E("%s register failed!", adc_dev_config[i].name);

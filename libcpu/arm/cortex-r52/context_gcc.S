@@ -8,7 +8,6 @@
  * 2024-03-01     Wangyuqiang  first version
  */
 
-#include "rtconfig.h"
 .syntax unified
 .text
 

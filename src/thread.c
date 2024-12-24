@@ -829,7 +829,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
         {
             rt_uint8_t cpu;
 
-            cpu = (rt_uint8_t)(size_t)arg;
+            cpu = (rt_uint8_t)(rt_size_t)arg;
             return rt_sched_thread_bind_cpu(thread, cpu);
         }
 

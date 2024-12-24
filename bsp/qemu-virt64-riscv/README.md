@@ -14,6 +14,9 @@ English | [中文](./README_cn.md)
 - [3. Running](#3-running)
 	- [3.1. Installing QEMU](#31-installing-qemu)
 	- [3.2. Running QEMU](#32-running-qemu)
+		- [3.2.1. Running RT-Thread Standard Edition](#321-running-rt-thread-standard-edition)
+		- [3.2.2. Running RT-Thread Smart version](#322-running-rt-thread-smart-version)
+		- [3.2.3. Running RT-Thread Smart version + Root file-system](#323-running-rt-thread-smart-version--root-file-system)
 - [4. How to use rv64ilp32 toolchain](#4-how-to-use-rv64ilp32-toolchain)
 - [5. Contact information](#5-contact-information)
 
@@ -83,8 +86,6 @@ $ cd $WORKSPACE
 $ git clone git@github.com:RT-Thread/rt-thread.git
 ```
 
-**Note: This document is based on the kernel version git commit ID: ebe2926cd6.**
-
 Enter the BSP directory where qemu-virt64-riscv is located. The following operations will not be introduced separately. By default, it is in this directory.
 
 ```shell
@@ -153,13 +154,15 @@ Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 The repository has provided a ready-made execution script, which can be executed directly:
 
 ```shell
-$ ./qemu-nographic.sh
+$ ./run.sh
 ```
 
-The running results of the RT-Thread Standard version are as follows:
+### 3.2.1. Running RT-Thread Standard Edition
+
+The following is an example:
 
 ```shell
-$ ./qemu-nographic.sh 
+$ ./run.sh 
 
 OpenSBI v0.9
    ____                    _____ ____ _____
@@ -213,11 +216,12 @@ file system initialization done!
 Hello RISC-V
 msh />
 ```
+### 3.2.2. Running RT-Thread Smart version
 
-The running results of RT-Thread Smart version are as follows:
+The following is an example:
 
 ```shell
-$ ./qemu-nographic.sh 
+$ ./run.sh 
 
 OpenSBI v0.9
    ____                    _____ ____ _____
@@ -271,6 +275,89 @@ lwIP-2.0.3 initialized!
 file system initialization done!
 Hello RISC-V
 msh />
+```
+
+### 3.2.3. Running RT-Thread Smart version + Root file-system
+
+For the Smart version of the kernel, you can also specify the path of the root file-system image file when executing the `run.sh` script to mount the root file-system during the startup process.
+
+It should be noted that the kernel supports fat by default. If you want to mount the ext4 file-system, you need to install the lwext4 package additionally, i.e. to enable the `PKG_USING_LWEXT4` option (the specific menuconfig path is (Top) -> RT-Thread online packages -> system packages -> lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers.). If you can't find the item in the menu, you can exit menuconfig and execute `pkgs --upgrade` to update the package index and then try to enable the package.
+
+After checking this option, you also need to perform the following operations to update the software and install the source code to the packages directory of bsp (this operation only needs to be performed once):
+
+```shell
+$ source ~/.env/env.sh
+$ pkgs --update
+```
+
+Save and recompile the kernel.
+
+For how to make a root file-system, please refer to <https://github.com/RT-Thread/userapps/blob/main/README.md>, which will not be repeated here.
+
+The example is as follows:
+
+```shell
+$ ./run.sh /home/u/ws/duo/userapps/apps/build/ext4.img 
+
+OpenSBI v0.9
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name             : riscv-virtio,qemu
+Platform Features         : timer,mfdeleg
+Platform HART Count       : 1
+Firmware Base             : 0x80000000
+Firmware Size             : 100 KB
+Runtime SBI Version       : 0.2
+
+Domain0 Name              : root
+Domain0 Boot HART         : 0
+Domain0 HARTs             : 0*
+Domain0 Region00          : 0x0000000080000000-0x000000008001ffff ()
+Domain0 Region01          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
+Domain0 Next Address      : 0x0000000080200000
+Domain0 Next Arg1         : 0x000000008f000000
+Domain0 Next Mode         : S-mode
+Domain0 SysReset          : yes
+
+Boot HART ID              : 0
+Boot HART Domain          : root
+Boot HART ISA             : rv64imafdcsu
+Boot HART Features        : scounteren,mcounteren,time
+Boot HART PMP Count       : 16
+Boot HART PMP Granularity : 4
+Boot HART PMP Address Bits: 54
+Boot HART MHPM Count      : 0
+Boot HART MHPM Count      : 0
+Boot HART MIDELEG         : 0x0000000000000222
+Boot HART MEDELEG         : 0x000000000000b109
+heap: [0x00326438 - 0x04326438]
+
+ \ | /
+- RT -     Thread Smart Operating System
+ / | \     5.2.0 build Dec 17 2024 11:49:39
+ 2006 - 2024 Copyright by RT-Thread team
+lwIP-2.0.3 initialized!
+[I/sal.skt] Socket Abstraction Layer initialize success.
+[I/utest] utest is initialize success.
+[I/utest] total utest testcase num: (0)
+[I/drivers.serial] Using /dev/ttyS0 as default console
+[W/DFS.fs] mount / failed with file system type: elm
+file system initialization done!
+Hello RISC-V
+msh />[E/sal.skt] not find network interface device by protocol family(1).
+[E/sal.skt] SAL socket protocol family input failed, return error -3.
+/ # ls
+bin         lib         proc        sbin        tmp
+dev         lost+found  root        services    usr
+etc         mnt         run         tc          var
+/ # 
 ```
 
 # 4. How to use rv64ilp32 toolchain

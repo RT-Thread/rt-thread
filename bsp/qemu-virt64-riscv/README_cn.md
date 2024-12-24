@@ -14,6 +14,9 @@
 - [3. 运行](#3-运行)
 	- [3.1. 安装 QEMU](#31-安装-qemu)
 	- [3.2. 运行 QEMU](#32-运行-qemu)
+		- [3.2.1. 运行 RT-Thread 标准版](#321-运行-rt-thread-标准版)
+		- [3.2.2. 运行 RT-Thread Smart 版](#322-运行-rt-thread-smart-版)
+		- [3.2.3. 运行 RT-Thread Smart 版 + 根文件系统](#323-运行-rt-thread-smart-版--根文件系统)
 - [4. 如何使用 rv64ilp32 工具链](#4-如何使用-rv64ilp32-工具链)
 - [5. 联系人信息](#5-联系人信息)
 
@@ -83,8 +86,6 @@ $ cd $WORKSPACE
 $ git clone git@github.com:RT-Thread/rt-thread.git
 ```
 
-**注：本文档基于的内核版本 git commit ID 为: ebe2926cd6。**
-
 进入 qemu-virt64-riscv 所在 BSP 目录，后面的操作不做另外介绍，默认就在这个目录下。
 
 ```shell
@@ -153,13 +154,15 @@ Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 仓库里已经提供了现成的执行脚本，可以直接执行：
 
 ```shell
-$ ./qemu-nographic.sh
+$ ./run.sh
 ```
 
-RT-Thread 标准版运行结果如下：
+### 3.2.1. 运行 RT-Thread 标准版
+
+示例如下：
 
 ```shell
-$ ./qemu-nographic.sh 
+$ ./run.sh
 
 OpenSBI v0.9
    ____                    _____ ____ _____
@@ -214,10 +217,12 @@ Hello RISC-V
 msh />
 ```
 
-RT-Thread Smart 版本运行结果如下：
+### 3.2.2. 运行 RT-Thread Smart 版
+
+示例如下：
 
 ```shell
-$ ./qemu-nographic.sh 
+$ ./run.sh
 
 OpenSBI v0.9
    ____                    _____ ____ _____
@@ -271,6 +276,89 @@ lwIP-2.0.3 initialized!
 file system initialization done!
 Hello RISC-V
 msh />
+```
+
+### 3.2.3. 运行 RT-Thread Smart 版 + 根文件系统
+
+对于 Smart 版本的内核，也可以在执行 `run.sh` 脚本时指定根文件系统镜像文件的路径在启动过程中挂载根文件系统。
+
+需要注意的是，内核默认支持 fat, 如果要挂载 ext4 的文件系统，则还需要额外安装 lwext4 软件包，即使能 `PKG_USING_LWEXT4`（具体 menuconfig 路径是 (Top) -> RT-Thread online packages -> system packages ->  lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers.）。如果在菜单中找不到该软件包，可以退出 menuconfig 并执行 `pkgs --upgrade` 更新软件包索引后再尝试使能软件包。
+
+勾选该选项后还需要执行如下操作更新软件并安装源码到 bsp 的 packages 目录下(该操作只要执行一次即可)：
+
+```shell
+$ source ~/.env/env.sh
+$ pkgs --update
+```
+
+保存后重新编译内核。
+
+有关如何制作根文件系统，请参考 <https://github.com/RT-Thread/userapps/blob/main/README.md>，这里不再赘述。
+
+示例如下：
+
+```shell
+$ ./run.sh /home/u/ws/duo/userapps/apps/build/ext4.img 
+
+OpenSBI v0.9
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name             : riscv-virtio,qemu
+Platform Features         : timer,mfdeleg
+Platform HART Count       : 1
+Firmware Base             : 0x80000000
+Firmware Size             : 100 KB
+Runtime SBI Version       : 0.2
+
+Domain0 Name              : root
+Domain0 Boot HART         : 0
+Domain0 HARTs             : 0*
+Domain0 Region00          : 0x0000000080000000-0x000000008001ffff ()
+Domain0 Region01          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
+Domain0 Next Address      : 0x0000000080200000
+Domain0 Next Arg1         : 0x000000008f000000
+Domain0 Next Mode         : S-mode
+Domain0 SysReset          : yes
+
+Boot HART ID              : 0
+Boot HART Domain          : root
+Boot HART ISA             : rv64imafdcsu
+Boot HART Features        : scounteren,mcounteren,time
+Boot HART PMP Count       : 16
+Boot HART PMP Granularity : 4
+Boot HART PMP Address Bits: 54
+Boot HART MHPM Count      : 0
+Boot HART MHPM Count      : 0
+Boot HART MIDELEG         : 0x0000000000000222
+Boot HART MEDELEG         : 0x000000000000b109
+heap: [0x00326438 - 0x04326438]
+
+ \ | /
+- RT -     Thread Smart Operating System
+ / | \     5.2.0 build Dec 17 2024 11:49:39
+ 2006 - 2024 Copyright by RT-Thread team
+lwIP-2.0.3 initialized!
+[I/sal.skt] Socket Abstraction Layer initialize success.
+[I/utest] utest is initialize success.
+[I/utest] total utest testcase num: (0)
+[I/drivers.serial] Using /dev/ttyS0 as default console
+[W/DFS.fs] mount / failed with file system type: elm
+file system initialization done!
+Hello RISC-V
+msh />[E/sal.skt] not find network interface device by protocol family(1).
+[E/sal.skt] SAL socket protocol family input failed, return error -3.
+/ # ls
+bin         lib         proc        sbin        tmp
+dev         lost+found  root        services    usr
+etc         mnt         run         tc          var
+/ # 
 ```
 
 # 4. 如何使用 rv64ilp32 工具链

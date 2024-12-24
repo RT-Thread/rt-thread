@@ -12,6 +12,7 @@
 #define __RT_KERRNO_H__
 
 #include <rtconfig.h>
+#include <rttypes.h>
 
 #ifdef __cplusplus
 extern "C" {

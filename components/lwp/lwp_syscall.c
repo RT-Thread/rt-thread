@@ -821,7 +821,7 @@ sysret_t sys_unlink(const char *pathname)
 sysret_t sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     int ret = 0;
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
         return -EFAULT;
 
@@ -4759,7 +4759,7 @@ sysret_t sys_clock_gettime(clockid_t clk, struct timespec *ts)
 sysret_t sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {
     int ret = 0;
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
         return -EFAULT;
 

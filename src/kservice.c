@@ -448,7 +448,7 @@ rt_weak rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen)
 {
     rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
 
-    for (size_t i = 0; i < buflen && buffer[i] != 0; i++)
+    for (rt_size_t i = 0; i < buflen && buffer[i] != 0; i++)
     {
         rt_kprintf(" 0x%lx", (rt_ubase_t)buffer[i]);
     }

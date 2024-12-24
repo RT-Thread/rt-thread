@@ -27,20 +27,17 @@
     #define SPI_BUS_NAME                "spi1"
     #define SPI_FLASH_DEVICE_NAME       "spi10"
     #define SPI_FLASH_CHIP              "w25q64"
-    #define SPI_FLASH_SS_PORT           GPIO_PORT_C
-    #define SPI_FLASH_SS_PIN            GPIO_PIN_07
+    #define SPI_FLASH_SS_PIN            GET_PIN(C, 7)
 #elif defined(HC32F460)
     #define SPI_BUS_NAME                "spi3"
     #define SPI_FLASH_DEVICE_NAME       "spi30"
     #define SPI_FLASH_CHIP              "w25q64"
-    #define SPI_FLASH_SS_PORT           GPIO_PORT_C
-    #define SPI_FLASH_SS_PIN            GPIO_PIN_07
+    #define SPI_FLASH_SS_PIN            GET_PIN(C, 7)
 #elif defined(HC32F472)
     #define SPI_BUS_NAME                "spi1"
     #define SPI_FLASH_DEVICE_NAME       "spi10"
     #define SPI_FLASH_CHIP              "w25q64"
-    #define SPI_FLASH_SS_PORT           GPIO_PORT_B
-    #define SPI_FLASH_SS_PIN            GPIO_PIN_12
+    #define SPI_FLASH_SS_PIN            GET_PIN(B,12)
 #endif
 #define SPI_FLASH_CMD_ENABLE_RESET      0x66
 #define SPI_FLASH_CMD_RESET_DEVICE      0x99
@@ -72,7 +69,7 @@ static void rt_hw_spi_flash_reset(char *spi_dev_name)
 
 static int rt_hw_spi_flash_with_sfud_init(void)
 {
-    rt_hw_spi_device_attach(SPI_BUS_NAME, SPI_FLASH_DEVICE_NAME, SPI_FLASH_SS_PORT, SPI_FLASH_SS_PIN);
+    rt_hw_spi_device_attach(SPI_BUS_NAME, SPI_FLASH_DEVICE_NAME, SPI_FLASH_SS_PIN);
 
     if (RT_NULL == rt_sfud_flash_probe(SPI_FLASH_CHIP, SPI_FLASH_DEVICE_NAME))
     {

@@ -1,0 +1,10 @@
+from building import *
+
+src = []
+
+if GetDepend('RT_USING_CI_ACTION') or GetDepend('RT_UTEST_TC_USING_KLIBC'):
+    src += Glob('TC_*.c')
+
+group = DefineGroup('utestcases', src, depend = [''])
+
+Return('group')

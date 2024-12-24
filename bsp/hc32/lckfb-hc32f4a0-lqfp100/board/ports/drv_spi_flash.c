@@ -26,8 +26,7 @@
 #define SPI_BUS_NAME                    "spi1"
 #define SPI_FLASH_DEVICE_NAME           "spi10"
 #define SPI_FLASH_CHIP                  "w25q64"
-#define SPI_FLASH_SS_PORT               GPIO_PORT_A
-#define SPI_FLASH_SS_PIN                GPIO_PIN_04
+#define SPI_FLASH_SS_PIN                GET_PIN(A, 4)
 /* Partition Name */
 #define FS_PARTITION_NAME              "filesystem"
 
@@ -54,7 +53,7 @@ static void rt_hw_spi_flash_reset(char *spi_dev_name)
 
 static int rt_hw_spi_flash_with_sfud_init(void)
 {
-    rt_hw_spi_device_attach(SPI_BUS_NAME, SPI_FLASH_DEVICE_NAME, SPI_FLASH_SS_PORT, SPI_FLASH_SS_PIN);
+    rt_hw_spi_device_attach(SPI_BUS_NAME, SPI_FLASH_DEVICE_NAME, SPI_FLASH_SS_PIN);
 
     if (RT_NULL == rt_sfud_flash_probe(SPI_FLASH_CHIP, SPI_FLASH_DEVICE_NAME))
     {

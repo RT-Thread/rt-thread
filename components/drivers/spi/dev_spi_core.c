@@ -19,6 +19,10 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_USING_DM
+#include "dev_spi_dm.h"
+#endif
+
 extern rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name);
 extern rt_err_t rt_spidev_device_init(struct rt_spi_device *dev, const char *name);
 
@@ -40,6 +44,46 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
     bus->owner = RT_NULL;
     /* set bus mode */
     bus->mode = RT_SPI_BUS_MODE_SPI;
+
+#ifdef RT_USING_DM
+    if (!bus->slave)
+    {
+        int pin_count = rt_pin_get_named_pin_count(&bus->parent, "cs");
+
+        if (pin_count > 0)
+        {
+            pin_count = rt_max_t(int, pin_count, bus->num_chipselect);
+            bus->pins = rt_malloc(sizeof(bus->pins[0]) * pin_count);
+
+            if (!bus->pins)
+            {
+                rt_device_unregister(&bus->parent);
+                return -RT_ENOMEM;
+            }
+
+            for (int i = 0; i < pin_count; ++i)
+            {
+                bus->pins[i] = rt_pin_get_named_pin(&bus->parent, "cs", i,
+                        RT_NULL, RT_NULL);
+            }
+        }
+        else if (pin_count == 0)
+        {
+            bus->pins = RT_NULL;
+        }
+        else
+        {
+            result = pin_count;
+
+            LOG_E("CS PIN find error = %s", rt_strerror(result));
+
+            rt_device_unregister(&bus->parent);
+            return result;
+        }
+    }
+
+    spi_bus_scan_devices(bus);
+#endif
 
     return RT_EOK;
 }

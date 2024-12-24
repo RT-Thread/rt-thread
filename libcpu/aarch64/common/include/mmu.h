@@ -41,11 +41,16 @@ struct mem_desc
 #define RT_HW_MMU_PROT_USER 16
 #define RT_HW_MMU_PROT_CACHE 32
 
+#define MMU_ASID_SHIFT   48
+#define MMU_NG_SHIFT     11     /* not global bit */
 #define MMU_AF_SHIFT     10
 #define MMU_SHARED_SHIFT 8
 #define MMU_AP_SHIFT     6
 #define MMU_MA_SHIFT     2
 #define MMU_AP_MASK      (0x3 << MMU_AP_SHIFT)
+
+/* we dont support feat detecting for now, so 8-bit is used to fallback */
+#define MMU_SUPPORTED_ASID_BITS 8
 
 #define MMU_AP_KAUN      0UL /* kernel r/w, user none */
 #define MMU_AP_KAUA      1UL /* kernel r/w, user r/w */
@@ -54,19 +59,20 @@ struct mem_desc
 #define MMU_ATTR_AF      (1ul << MMU_AF_SHIFT)  /* the access flag */
 #define MMU_ATTR_DBM     (1ul << 51)            /* the dirty bit modifier */
 
-#define MMU_MAP_CUSTOM(ap, mtype)                                              \
+#define MMU_MAP_CUSTOM(ap, mtype, nglobal)                                      \
     ((0x1UL << MMU_AF_SHIFT) | (0x2UL << MMU_SHARED_SHIFT) |                   \
-     ((ap) << MMU_AP_SHIFT) | ((mtype) << MMU_MA_SHIFT))
-#define MMU_MAP_K_ROCB      MMU_MAP_CUSTOM(MMU_AP_KRUN, NORMAL_MEM)
-#define MMU_MAP_K_RO        MMU_MAP_CUSTOM(MMU_AP_KRUN, NORMAL_NOCACHE_MEM)
-#define MMU_MAP_K_RWCB      MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM)
-#define MMU_MAP_K_RW        MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_NOCACHE_MEM)
-#define MMU_MAP_K_DEVICE    MMU_MAP_CUSTOM(MMU_AP_KAUN, DEVICE_MEM)
-#define MMU_MAP_U_ROCB      MMU_MAP_CUSTOM(MMU_AP_KRUR, NORMAL_MEM)
-#define MMU_MAP_U_RO        MMU_MAP_CUSTOM(MMU_AP_KRUR, NORMAL_NOCACHE_MEM)
-#define MMU_MAP_U_RWCB      MMU_MAP_CUSTOM(MMU_AP_KAUA, NORMAL_MEM)
-#define MMU_MAP_U_RW        MMU_MAP_CUSTOM(MMU_AP_KAUA, NORMAL_NOCACHE_MEM)
-#define MMU_MAP_U_DEVICE    MMU_MAP_CUSTOM(MMU_AP_KAUA, DEVICE_MEM)
+     ((ap) << MMU_AP_SHIFT) | ((mtype) << MMU_MA_SHIFT)) |                     \
+     ((rt_ubase_t)(nglobal) << MMU_NG_SHIFT)
+#define MMU_MAP_K_ROCB      MMU_MAP_CUSTOM(MMU_AP_KRUN, NORMAL_MEM, 0)
+#define MMU_MAP_K_RO        MMU_MAP_CUSTOM(MMU_AP_KRUN, NORMAL_NOCACHE_MEM, 0)
+#define MMU_MAP_K_RWCB      MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM, 0)
+#define MMU_MAP_K_RW        MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_NOCACHE_MEM, 0)
+#define MMU_MAP_K_DEVICE    MMU_MAP_CUSTOM(MMU_AP_KAUN, DEVICE_MEM, 0)
+#define MMU_MAP_U_ROCB      MMU_MAP_CUSTOM(MMU_AP_KRUR, NORMAL_MEM, 1)
+#define MMU_MAP_U_RO        MMU_MAP_CUSTOM(MMU_AP_KRUR, NORMAL_NOCACHE_MEM, 1)
+#define MMU_MAP_U_RWCB      MMU_MAP_CUSTOM(MMU_AP_KAUA, NORMAL_MEM, 1)
+#define MMU_MAP_U_RW        MMU_MAP_CUSTOM(MMU_AP_KAUA, NORMAL_NOCACHE_MEM, 1)
+#define MMU_MAP_U_DEVICE    MMU_MAP_CUSTOM(MMU_AP_KAUA, DEVICE_MEM, 1)
 #define MMU_MAP_TRACE(attr) ((attr) & ~(MMU_ATTR_AF | MMU_ATTR_DBM))
 
 #define ARCH_SECTION_SHIFT  21

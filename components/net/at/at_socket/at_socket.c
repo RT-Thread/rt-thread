@@ -759,7 +759,7 @@ static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, 
     }
     new_sock = at_get_socket(new_socket);
     new_sock->state = AT_SOCKET_CONNECT;
-    sscanf(buff, "SOCKET:%d", &base_socket);
+    rt_sscanf(buff, "SOCKET:%d", &base_socket);
     LOG_D("ACCEPT BASE SOCKET: %d", base_socket);
     new_sock->user_data = (void *)base_socket;
 
@@ -985,7 +985,7 @@ int at_accept(int socket, struct sockaddr *name, socklen_t *namelen)
         at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
     }
 
-    sscanf(&receive_buff[0], "SOCKET:%d", &new_socket);
+    rt_sscanf(&receive_buff[0], "SOCKET:%d", &new_socket);
     new_sock = at_get_socket(new_socket);
     ip4_addr_set_any(&remote_addr);
     ipaddr_port_to_socketaddr(name, &remote_addr, &remote_port);

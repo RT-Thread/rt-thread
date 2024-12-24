@@ -1,0 +1,13 @@
+config RT_PCI_DW
+    bool "DesignWare-based PCIe"
+    depends on RT_MFD_SYSCON
+    depends on RT_USING_DMA
+    default n
+
+config RT_PCI_DW_HOST
+    bool
+    depends on RT_PCI_DW
+
+config RT_PCI_DW_EP
+    bool
+    depends on RT_PCI_DW
