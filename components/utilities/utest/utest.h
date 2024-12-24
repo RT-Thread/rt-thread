@@ -172,9 +172,10 @@ utest_t utest_handle_get(void);
  * @return None
  *
 */
-#define UTEST_UNIT_RUN(test_unit_func)                                         \
-    utest_unit_run(test_unit_func, #test_unit_func);                           \
-    if(utest_handle_get()->failed_num != 0) return;
+#define UTEST_UNIT_RUN(test_unit_func)                   \
+    do {                                                 \
+        utest_unit_run(test_unit_func, #test_unit_func); \
+    } while (0)
 
 #ifdef __cplusplus
 }

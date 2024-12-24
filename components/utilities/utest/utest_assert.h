@@ -50,11 +50,17 @@ void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equa
 */
 #define uassert_true(value)      __utest_assert(value, "(" #value ") is false")
 #define uassert_false(value)     __utest_assert(!(value), "(" #value ") is true")
+
 #define uassert_null(value)      __utest_assert((const char *)(value) == RT_NULL, "(" #value ") is not null")
 #define uassert_not_null(value)  __utest_assert((const char *)(value) != RT_NULL, "(" #value ") is null")
 
-#define uassert_int_equal(a, b)      __utest_assert((a) == (b), "(" #a ") not equal to (" #b ")")
-#define uassert_int_not_equal(a, b)  __utest_assert((a) != (b), "(" #a ") equal to (" #b ")")
+#define __uassert_int_op(a, b, op)      __utest_assert((a) op (b), "(" #a ") not " #op " (" #b ")")
+#define uassert_int_equal(a, b)         __uassert_int_op(a, b, ==)
+#define uassert_int_not_equal(a, b)     __uassert_int_op(a, b, !=)
+#define uassert_int_less(a, b)          __uassert_int_op(a, b, <)
+#define uassert_int_less_equal(a, b)    __uassert_int_op(a, b, <=)
+#define uassert_int_greater(a, b)       __uassert_int_op(a, b, >)
+#define uassert_int_greater_equal(a, b) __uassert_int_op(a, b, >=)
 
 #define uassert_ptr_equal(a, b)      __utest_assert((const void*)(a) == (const void*)(b), "(" #a ") not equal to (" #b ")")
 #define uassert_ptr_not_equal(a, b)  __utest_assert((const void*)(a) != (const void*)(b), "(" #a ") equal to (" #b ")")

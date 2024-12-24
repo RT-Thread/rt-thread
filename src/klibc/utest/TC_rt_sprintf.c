@@ -70,16 +70,6 @@ do {                                                  \
 #define SPRINTF_TEST_CASE_NAME(testname) TC_##testname
 #define SPRINTF_TEST_CASE(testname) static void SPRINTF_TEST_CASE_NAME(testname)(void)
 
-static rt_err_t utest_tc_init(void)
-{
-    return RT_EOK;
-}
-
-static rt_err_t utest_tc_cleanup(void)
-{
-    return RT_EOK;
-}
-
 SPRINTF_TEST_CASE(space_flag)
 {
     char buffer[base_buffer_size];
@@ -1072,4 +1062,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(misc));
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "klibc.rt_sprintf", utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(utest_do_tc, "klibc.rt_sprintf", RT_NULL, RT_NULL, 1000);

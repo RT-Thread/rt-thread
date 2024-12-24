@@ -9,30 +9,24 @@
  * 2024-12-24     Meco Man           port to utest
  */
 
-#include <rtklibc.h>
+#include <rtthread.h>
 #include <utest.h>
+
+#define N 80 /**< Define the constant N for buffer size as 80 */
+#define TEST_BUF_SIZE 512 /**< Define the constant TEST_BUF_SIZE as 512 */
+static char *buf; /**< Define a static buffer of 512 bytes, initialized to 0 */
 
 static rt_err_t utest_tc_init(void)
 {
+    buf = rt_malloc(TEST_BUF_SIZE * sizeof(char)); /**< Allocate memory for the buffer */
+    uassert_not_null(buf);
     return RT_EOK;
 }
 
 static rt_err_t utest_tc_cleanup(void)
 {
+    rt_free(buf);
     return RT_EOK;
-}
-
-#define N 80 /**< Define the constant N for buffer size as 80 */
-static char buf[512] = {0}; /**< Define a static buffer of 512 bytes, initialized to 0 */
-
-/**
- * Align a given pointer to a 64-byte boundary.
- * @param p The pointer to align.
- * @return The aligned pointer.
- */
-static void* aligned(void* p)
-{
-    return (void*)(((intptr_t)p + 63) & -64);
 }
 
 /**
@@ -43,10 +37,10 @@ static void* aligned(void* p)
  */
 static void test_align(unsigned dalign, unsigned salign, size_t len)
 {
-    char* src = aligned(buf); /**< Source buffer starting address, 64-byte aligned */
-    char* dst = aligned(buf + 128); /**< Destination buffer starting address, 64-byte aligned from buf+128 */
-    char* want = aligned(buf + 256); /**< Expected result buffer starting address, 64-byte aligned from buf+256 */
-    char* p; /**< Pointer to receive the return value of rt_memcpy */
+    char *src = (char *)RT_ALIGN((rt_ubase_t)buf, 64); /**< Source buffer starting address, 64-byte aligned */
+    char *dst = (char *)RT_ALIGN(((rt_ubase_t)buf + 128), 64); /**< Destination buffer starting address, 64-byte aligned from buf+128 */
+    char *want = (char *)RT_ALIGN(((rt_ubase_t)buf + 256), 64); /**< Expected result buffer starting address, 64-byte aligned from buf+256 */
+    char *p; /**< Pointer to receive the return value of rt_memcpy */
     unsigned i;
 
     /** Assert that the source alignment offset plus length does not exceed N */
