@@ -325,6 +325,7 @@ static uint8_t _get_can_data_bytes_len(uint32_t dlc)
     {
         data_bytes = dlc;
     }
+#ifdef RT_CAN_USING_CANFD
     else
     {
         switch (dlc)
@@ -355,6 +356,7 @@ static uint8_t _get_can_data_bytes_len(uint32_t dlc)
             break;
         }
     }
+#endif
 
     return data_bytes;
 }

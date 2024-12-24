@@ -1,7 +1,7 @@
 menu "klibc options"
     menu "rt_vsnprintf options"
         config RT_KLIBC_USING_LIBC_VSNPRINTF
-            bool "Enable rt_vsnprintf to use libc vsscanf"
+            bool "Enable rt_vsnprintf to use libc vsnprintf"
             default n
 
         config RT_KLIBC_USING_VSNPRINTF_LONGLONG
@@ -249,4 +249,10 @@ menu "klibc options"
             bool "Enable rt_strnlen to use user-defined version"
             default n
     endmenu # rt_strnlen options
+
+    config RT_UTEST_TC_USING_KLIBC
+        bool "Enable klibc utest cases"
+        select RT_USING_UTEST
+        default n
+
 endmenu
