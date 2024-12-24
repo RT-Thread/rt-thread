@@ -131,7 +131,13 @@ export RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 ```shell
 $ sudo apt install -y scons libncurses5-dev device-tree-compiler
 ```
-
+具体环境的软件依赖版本及下载地址补充（欢迎大家一起添加条目）：
+unbuntu 18:
+    openssl[libssl1.1]
+    (补充方法：
+     wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
+     sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
+    )
 ## 4.3. 构建
 
 异构芯片需单独编译每个核的 OS，在大/小核对应的目录下，依次执行:
