@@ -3,12 +3,82 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* rt_vsnprintf options */
+
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
+/* end of klibc options */
 #define RT_NAME_MAX 24
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
+#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -19,19 +89,13 @@
 #define RT_TIMER_THREAD_STACK_SIZE 16384
 #define RT_USING_CPU_USAGE_TRACER
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -54,7 +118,6 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
-#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
@@ -64,10 +127,11 @@
 /* end of RT-Thread Kernel */
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
-#define RT_USING_HW_ATOMIC
 #define ARCH_MM_MMU
 #define ARCH_RISCV
+#define ARCH_RISCV_FPU
 #define ARCH_RISCV64
+#define ARCH_USING_NEW_CTX_SWITCH
 #define ARCH_USING_RISCV_COMMON64
 #define ARCH_REMAP_KERNEL
 
@@ -144,6 +208,8 @@
 #define RT_USING_VIRTIO_NET
 #define RT_USING_VIRTIO_CONSOLE
 #define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
+#define RT_USING_VIRTIO_GPU
+#define RT_USING_VIRTIO_INPUT
 #define RT_USING_PIN
 #define RT_USING_KTIME
 /* end of Device Drivers */
@@ -451,28 +517,18 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-/* end of Network Utilities */
-
-/* RT-Thread Smart */
-
-/* end of RT-Thread Smart */
-/* end of Privated Packages of RealThread */
-
 /* RISC-V QEMU virt64 configs */
 
 #define RISCV_S_MODE
+#define BSP_USING_VIRTIO
 #define BSP_USING_VIRTIO_BLK
 #define BSP_USING_VIRTIO_NET
 #define BSP_USING_VIRTIO_CONSOLE
+#define BSP_USING_VIRTIO_GPU
+#define BSP_USING_VIRTIO_INPUT
 /* end of RISC-V QEMU virt64 configs */
 #define BOARD_QEMU_VIRT_RV64
 #define ENABLE_FPU
-#define ARCH_USING_NEW_CTX_SWITCH
 #define __STACKSIZE__ 16384
 
 #endif
