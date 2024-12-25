@@ -34,9 +34,9 @@
 
 支持开发板以及集成 SoC 芯片信息如下
 
-- milk-v duo: [https://milkv.io/duo](https://milkv.io/duo)，SoC 采用 CV1800B。
-- milk-v duo256m: [https://milkv.io/duo256m](https://milkv.io/docs/duo/getting-started/duo256m)，SoC 采用 SG2002（原 CV181xC）。
-- milk-v duos: [https://milkv.io/duos](https://milkv.io/docs/duo/getting-started/duos)，SoC 采用 SG2000（原 CV181xH）。
+- Milk-V Duo: <https://milkv.io/docs/duo/getting-started/duo>，SoC 采用 CV1800B。
+- Milk-V Duo 256m: <https://milkv.io/docs/duo/getting-started/duo256m>，SoC 采用 SG2002（原 CV181xC）。
+- Milk-V Duo S: <https://milkv.io/docs/duo/getting-started/duos>，SoC 采用 SG2000（原 CV181xH）。
 
 Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如下：
 
@@ -61,8 +61,6 @@ Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如�
 
 由于开发板默认运行的大核为 "cv18xx_risc-v", 所以本文将主要介绍 "cv18xx_risc-v" 和 "c906-little" 的构建和使用。有关 "cv18xx_aarch64" 的介绍请参考 [这里](./cv18xx_aarch64/README.md)。
 
-
-
 ## 3.1. 驱动支持列表
 
 | 驱动  | 支持情况 | 备注              |
@@ -71,7 +69,7 @@ Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如�
 | gpio  | 支持     |  |
 | i2c   | 支持     |  |
 | adc   | 支持     |  |
-| spi   | 支持     | 默认CS引脚，每个数据之间CS会拉高，请根据时序选择GPIO作为CS。若读取数据，tx需持续dummy数据。|
+| spi   | 支持     | 默认 CS 引脚，每个数据之间 CS 会拉高，请根据时序选择 GPIO 作为 CS。若读取数据，tx 需持续 dummy 数据。|
 | pwm   | 支持     |  |
 | timer | 支持     |  |
 | wdt   | 支持     |  |
@@ -79,7 +77,9 @@ Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如�
 | eth   | 支持     |  |
 
 ## 3.2. 默认串口控制台管脚配置
+
 不同开发板 uart 输出管脚不同，默认配置可能导致串口无法正常显示，请根据开发板 uart 通过 `scons --menuconfig` 配置对应 uart 的输出管脚。
+
 ```shell
 $ scons --menuconfig
   General Drivers Configuration  --->
@@ -89,27 +89,25 @@ $ scons --menuconfig
           (IIC0_SCL) uart1 tx pin name
 ```
 
-| 开发板 | 大核 uart0 默认管脚 | 小核 uart1 默认管脚 |
-| ------ | ---- | ---- |
-| Duo   |  rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL |
-| Duo 256M | rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL |
-| Duo S  | rx: UART0_RX<br>tx: UART0_TX | rx: JTAG_CPU_TCK<br>tx: JTAG_CPU_TMS |
+| 开发板   | 大核 uart0 默认管脚          | 小核 uart1 默认管脚                  |
+| -------- | ---------------------------- | ------------------------------------ |
+| Duo      | rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL         |
+| Duo 256M | rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL         |
+| Duo S    | rx: UART0_RX<br>tx: UART0_TX | rx: JTAG_CPU_TCK<br>tx: JTAG_CPU_TMS |
 
-如需配置其他管脚可参考 [https://milkv.io/zh/docs/duo/getting-started](https://milkv.io/zh/docs/duo/getting-started) 对应型号的开发板。
-
+如需配置其他管脚可参考对应型号的开发板信息 <https://milkv.io/docs/duo/overview>。
 
 # 4. 编译
 
-## 4.1. Toolchain 下载
+**注：当前 bsp 只支持 Linux 编译，推荐 ubuntu 22.04**
 
-> 注：当前 bsp 只支持 Linux 编译，推荐 ubuntu 22.04
+## 4.1. Toolchain 下载
 
 1. 用于编译 RT-Thread 标准版的工具链是 `riscv64-unknown-elf-gcc` 下载地址  [https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz](https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz)
 
 2. 用于编译 RT-Thread Smart 版的工具链是 `riscv64-unknown-linux-musl-gcc` 下载地址 [https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2](https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2)
 
-
-正确解压后，导出如下环境变量，建议将这些 export 命令写入 `~/.bashrc`。**并注意在使用不同工具链时确保导出正确的一组环境变量**。
+正确解压后(假设解压到 `/opt` 下, 也可以自己设定解压后的目录)，导出如下环境变量，建议将这些 export 命令写入 `~/.bashrc`。**并注意在使用不同工具链时确保导出正确的一组环境变量**。
 
 构建 RT-Thread 标准版时按照以下配置：
 
@@ -128,6 +126,7 @@ export RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 ```
 
 ## 4.2. 依赖安装
+
 ```shell
 $ sudo apt install -y scons libncurses5-dev device-tree-compiler
 ```
@@ -137,8 +136,6 @@ $ sudo apt install -y scons libncurses5-dev device-tree-compiler
 异构芯片需单独编译每个核的 OS，在大/小核对应的目录下，依次执行:
 
 ### 4.3.1. 开发板选择
-
-   Linux平台下，可以先执行：
 
 ```shell
 $ scons --menuconfig
