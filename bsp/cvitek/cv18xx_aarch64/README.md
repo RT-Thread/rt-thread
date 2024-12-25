@@ -1,135 +1,193 @@
-# Milkv-Duo256M 板级支持包说明
+<!-- TOC -->
 
-## 1. 简介
+- [1. 概述](#1-概述)
+	- [1.1. 驱动支持列表](#11-驱动支持列表)
+- [2. 构建说明](#2-构建说明)
+	- [2.1. Toolchain 下载](#21-toolchain-下载)
+	- [2.2. 依赖安装](#22-依赖安装)
+	- [2.3. 执行构建](#23-执行构建)
+		- [2.3.1. 开发板选择](#231-开发板选择)
+		- [2.3.2. 开启 RT-Smart](#232-开启-rt-smart)
+		- [2.3.3. 编译大核固件 `boot.sd`](#233-编译大核固件-bootsd)
+		- [2.3.4. 编译小核固件 `fip.bin`](#234-编译小核固件-fipbin)
+- [3. 运行](#3-运行)
+	- [3.1. RT-Thread 标准版的例子](#31-rt-thread-标准版的例子)
+	- [3.2. RT-Thread Smart 版的例子](#32-rt-thread-smart-版的例子)
+- [4. 联系人信息](#4-联系人信息)
 
-Milk-V Duo 256M 是 Duo 的升级版本，内存提升至 256M，满足需要更大内存容量的应用。采用 SG2002 计算系列芯片，计算能力提升至 1.0TOPS@INT8。它可以实现 RISC-V/ARM 架构之间的无缝切换，并支持双系统同时运行。此外，它还包含 SPI、UART 等一系列丰富的 GPIO 接口，适合边缘智能监控领域的各种硬件开发，包括 IP 摄像头、智能猫眼锁、可视门铃等。
+<!-- /TOC -->
 
-该板级支持包主要是针对**ARM架构的大核**实现的一份移植，支持RT-Thread标准版和Smart版内核。
+# 1. 概述
 
-## 2. 编译说明
+本文档用于介绍 BSP "cv18xx_aarch64"，该 BSP 目前仅支持 Milk-V Duo 256M 的 ARM Cortex A53 大核。支持 RT-Thread 标准版和 RT-Thread Smart 版内核。
 
-推荐使用ubuntu20的[env环境](https://github.com/RT-Thread/env)，当然也可以使用windows上的[env工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool)进行编译。下面介绍**标准版**和**Smart版本**的编译流程。
+## 1.1. 驱动支持列表
 
-### 2.1 RT-Thread编译
+| 驱动  | 支持情况 | 备注              |
+| :---- | :------- | :---------------- |
+| uart  | 支持     | 默认波特率115200  |
 
-**1.menuconfig配置工程：**
+# 2. 构建说明
 
-该BSP默认menuconfig支持的就是RT-Thread标准版，无需配置工程。
+**注：当前 bsp 只支持 Linux 环境下编译，推荐 ubuntu 22.04**
 
-**2.配置工具链相关环境：**
+## 2.1. Toolchain 下载
 
-依次执行下面命令进行环境变量的相关配置：
+用于编译 RT-Thread 标准版和 RT-Thread Smart 版的工具链可以通用，下载地址：<https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2>。
+
+正确解压后(假设解压到 `/opt` 下, 也可以自己设定解压后的目录)，导出如下环境变量，建议将这些 export 命令写入 `~/.bashrc`。
 
 ```shell
-export RTT_CC=gcc
-export RTT_EXEC_PATH="/opt/tools/gnu_gcc/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf/bin"
-export RTT_CC_PREFIX=aarch64-none-elf-
-export PATH=$PATH:$RTT_EXEC_PATH
+export RTT_CC="gcc"
+export RTT_CC_PREFIX=aarch64-linux-musleabi-
+export RTT_EXEC_PATH=/opt/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 ```
 
-**3.编译：**
+## 2.2. 依赖安装
+
+参考 [bsp cvitek 的 README.md 文件](../README.md)。
+
+## 2.3. 执行构建
+
+这里我们只需要构建 ARM 大核的 OS，进入 `bsp/cvitek/cv18xx_aarch64` 目录下（记为当前工作目录 `$CWD`），依次执行以下步骤：
+
+### 2.3.1. 开发板选择
 
 ```shell
-scons -j12
+$ scons --menuconfig
 ```
 
-### 2.2 RT-Smart编译
+选择当前需要编译的目标开发板类型，默认是 "milkv-duo256m"，目前也仅支持了 "milkv-duo256m"。
 
-**1.menuconfig配置工程：**
+### 2.3.2. 开启 RT-Smart
+
+目前 ARM 的大核默认没有开启 RT-Smart，默认配置是 RT 标准版，如果要对大核启用 RT-Smart，可以按如下方式设置。
 
 ```shell
-RT-Thread Kernel --->
+RT-Thread Kernel  --->
     [*] Enable RT-Thread Smart (microkernel on kernel/userland)
 ```
 
-**2.配置工具链相关环境：**
-
-依次执行下面命令进行环境变量的相关配置：
+### 2.3.3. 编译大核固件 `boot.sd`
 
 ```shell
-export RTT_CC=gcc
-export RTT_EXEC_PATH="/opt/tools/gnu_gcc/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu/bin"
-export RTT_CC_PREFIX=aarch64-linux-musleabi-
-export PATH=$PATH:$RTT_EXEC_PATH
+$ scons
 ```
 
-**3.编译：**
+如果编译正确无误，在 $CWD 下会产生 `rtthread.elf`, `rtthread.bin` 文件。同时在 `$CWD/../output/milkv-duo256m/` 下生成 `boot.sd` 文件，`boot.sd` 中封装了 RT-Thread 的内核 `rtthread.bin`。
+
+### 2.3.4. 编译小核固件 `fip.bin`
+
+`fip.bin`：这是一个打包后生成的 bin 文件，包含了 `fsbl`、`uboot` 以及小核的内核镜像文件 `rtthread.bin`。Duo 256m 的小核是一个 RISC-V 的 core，对应的 bsp 是 c906_little。具体构建的说明参考 [对应的 README 文件](../README.md)。但注意 BSP `c906_little` 构建生成的 `fip.bin` 中的 `fsbl`、`uboot` 这些文件都是 RISC-V 的，所以我们并不能把 BSP `c906_little` 构建生成的 `fip.bin` 直接拿来用。
+
+为此 BSP `cv18xx_aarch64` 下预先提供了 ARM 核上可以运行的 `fsbl`、`uboot` 等文件，在 `bsp/cvitek/cv18xx_aarch64/prebuild/milkv-duo256m` 下，可以用来打包生成 ARM 的 `fip.bin`。具体打包的脚本是 BSP `cv18xx_aarch64` 目录下的 `combine.sh`。
+
+所以如果您需要使用最新的小核版本，可以先基于 BSP `c906_little` 做出 `rtthread.bin`，然后在 cv18xx_aarch64 目录下运行 `combine.sh` 即可生成 ARM 可用的 `fip.bin`。生成路径和 `boot.sd` 一样，在 `$CWD/../output/milkv-duo256m/` 下。
 
 ```shell
-scons -j12
+$ cd $CWD
+$ ./combine.sh
 ```
 
-如果编译正确无误，会产生 `rtthread.elf`, `rtthread.bin` 文件。
+如果您不关心小核的版本，BSP cv18xx_aarch64 也提供了一个 prebuild 的 `fip.bin`，在 `bsp/cvitek/cv18xx_aarch64/prebuild/milkv-duo256m` 下，直接烧录到 sd-card 中就可以使用。
 
-## 3. 运行
+# 3. 运行
 
-### 3.1 uboot加载rtthread.bin
+1. 将 SD 卡分为 2 个分区，第 1 个分区的分区格式为 `FAT32`，用于存放 `fip.bin` 和 `boot.sd` 文件，第 2 个分区可选，如果有可用于作为数据存储分区或者存放文件系统。
 
-1. 将 SD 卡分为 2 个分区，第 1 个分区用于存放 bin 文件，第 2 个分区用于作为数据存储分区，分区格式为 `FAT32`。
+2. 将 `fip.bin` (自己打包生成的或者 prebuild 的) 和编译生成的 `boot.sd` 复制到 SD 卡第一个分区中。`fip.bin` 是小核启动固件，如果只关注 ARM 大核系统，后续只需更新大核的固件，即更新 `boot.sd` 文件即可。
 
-2. 将bsp的boot目录下的 `fip.bin` 和编译生成的 `rtthread.bin` 复制 SD 卡第一个分区中。后续更新固件只需要复制 `rtthread.bin` 文件即可。
+3. Duo256M 的大核可以选择使用 RISC-V 或者 ARM，默认使用的是 RISC-V 核，所以这里需要通过短接物理引脚 35（Boot-Switch）和 GND 来切换到 ARM 核。具体参考 [Milk-V Duo 256M 的官方说明](https://milkv.io/zh/docs/duo/getting-started/duo256m#risc-v-%E4%B8%8E-arm-%E5%88%87%E6%8D%A2)。
 
-配置**串口0**参数： 115200 8N1 ，硬件和软件流控为关。
+4. 配置 **串口0** 参数： 115200 8N1 ，硬件和软件流控为关。
 
-进入uboot命令行后依次输入以下命令。
+直接上电运行，uboot 会自动调用 bootcmd 解析 `boot.sd` 文件，然后加载 `rtthread.bin` 运行。
 
-```shell
-fatload mmc 0:1 0x80200000 rtthread.bin
-dcache flush
-go 0x80200000
-```
-
-> 0x80200000为rtthread.bin加载到内存的位置，可在menuconfig中自己修改，注意不能与小核固件加载位置重叠。
-
-### 3.2 uboot加载boot.sd
-
-1. 将 SD 卡分为 2 个分区，第 1 个分区用于存放 bin 文件，第 2 个分区用于作为数据存储分区，分区格式为 `FAT32`。
-
-2. 将bsp的boot目录下的 `fip.bin` 和编译生成的 `boot.sd` 复制 SD 卡第一个分区中。后续更新固件只需要复制 `boot.sd` 文件即可。
-
-配置**串口0**参数： 115200 8N1 ，硬件和软件流控为关。
-
-直接上电运行，uboot会自动调用bootcmd解析boot.sd文件，然后加载`rtthread.bin`运行。
-
-### 3.3 如何生成fip.bin
-
-在本bsp的boot/milkv-duo256m目录下存放了所有需要构建出fip.bin的一些依赖文件和相关脚本。用户只需要在boot目录下执行`combine.sh`即可生成fip.bin。
-
-> 如何用户编译了小核c906_little的bsp，那么`combine.sh`脚本将会生成带有小核程序的fip.bin。未编译则不会。
-
-完成后可以看到串口的输出信息：
-
-**标准版log信息：**
+## 3.1. RT-Thread 标准版的例子
 
 ```shell
-heap: [0x8028f2b0 - 0x84000000]
+......
+
+U-Boot 2021.10-ga57aa1f29b (Apr 20 2024 - 23:53:08 +0800)cvitek_cv181x
+
+......
+
+Starting kernel ...
+
+[I/rtdm.ofw] Booting RT-Thread on physical CPU 0x0
+[I/rtdm.ofw] Machine model: SOPHGO ASIC. ARM.
+[I/rtdm.ofw] Memory node(1) ranges: 0x0000000080000000 - 0x000000008fe00000
+[E/rtdm.ofw] Allocating reserved memory in setup is not yet supported
+[E/rtdm.ofw] Allocating reserved memory in setup is not yet supported
+[I/mm.memblock] System memory:
+[I/mm.memblock]                    [0x0000000080000000, 0x000000008fe00000]
+[I/mm.memblock] Reserved memory:
+[I/mm.memblock]                    [0x0000000080000000, 0x0000000080080000]
+[I/mm.memblock]                    [0x0000000080200000, 0x00000000802dd000]
+[I/mm.memblock]                    [0x00000000802dd000, 0x00000000842dd000]
+[I/mm.memblock]                    [0x00000000842dd000, 0x00000000844dd000]
+[I/mm.memblock]                    [0x00000000844dd000, 0x00000000844e2000]
+[I/mm.memblock] physical memory region [0x0000000080080000-0x0000000080200000] installed to system page
+[I/mm.memblock] physical memory region [0x00000000844e2000-0x000000008fe00000] installed to system page
+[I/mm.memblock] 195 MB memory installed to system page
+[I/drv.pinmux] Pin Name = "UART0_RX", Func Type = 281, selected Func [0]
+
+[I/drv.pinmux] Pin Name = "UART0_TX", Func Type = 282, selected Func [0]
+
+[I/osi.psci] Using PSCI v1.0 Function IDs
+[I/rtdm.ofw] Console: uart0 (<no-node>)
 
  \ | /
 - RT -     Thread Operating System
- / | \     5.1.0 build Apr 16 2024 00:05:56
+ / | \     5.2.0 build Dec 25 2024 14:16:49
  2006 - 2024 Copyright by RT-Thread team
+[I/rtdm.mnt] File system initialization done
 hello rt-thread!
 msh />
 ```
 
-**Smart版log信息：**
+## 3.2. RT-Thread Smart 版的例子
 
 ```shell
-heap: [0x002f62c0 - 0x04000000]
+U-Boot 2021.10-ga57aa1f29b (Apr 20 2024 - 23:53:08 +0800)cvitek_cv181x
+
+......
+
+Starting kernel ...
+
+[I/rtdm.ofw] Booting RT-Thread on physical CPU 0x0
+[I/rtdm.ofw] Machine model: SOPHGO ASIC. ARM.
+[I/rtdm.ofw] Memory node(1) ranges: 0x0000000080000000 - 0x000000008fe00000
+[E/rtdm.ofw] Allocating reserved memory in setup is not yet supported
+[E/rtdm.ofw] Allocating reserved memory in setup is not yet supported
+[I/mm.memblock] System memory:
+[I/mm.memblock]                    [0x0000000080000000, 0x000000008fe00000]
+[I/mm.memblock] Reserved memory:
+[I/mm.memblock]                    [0x0000000080000000, 0x0000000080080000]
+[I/mm.memblock]                    [0x0000000080200000, 0x0000000080346000]
+[I/mm.memblock]                    [0x0000000080346000, 0x0000000084346000]
+[I/mm.memblock]                    [0x0000000084346000, 0x0000000084546000]
+[I/mm.memblock]                    [0x0000000084546000, 0x000000008454b000]
+[I/mm.memblock] physical memory region [0x0000000080080000-0x0000000080200000] installed to system page
+[I/mm.memblock] physical memory region [0x000000008454b000-0x000000008fe00000] installed to system page
+[I/mm.memblock] 195 MB memory installed to system page
+[I/drv.pinmux] Pin Name = "UART0_RX", Func Type = 281, selected Func [0]
+
+[I/drv.pinmux] Pin Name = "UART0_TX", Func Type = 282, selected Func [0]
+
+[I/osi.psci] Using PSCI v1.0 Function IDs
+[I/rtdm.ofw] Console: uart0 (<no-node>)
 
  \ | /
 - RT -     Thread Smart Operating System
- / | \     5.1.0 build Apr 16 2024 00:04:47
+ / | \     5.2.0 build Dec 25 2024 12:10:56
  2006 - 2024 Copyright by RT-Thread team
-[E/lwp] lwp_startup: init program not found
-Switching to legacy mode...
+[I/drivers.serial] Using /dev/ttyS0 as default console
+[I/rtdm.mnt] File system initialization done
 hello rt-thread!
 msh />
 ```
-## 4. 注意事项
 
-目前RISC-V(Smart版本)支持外设物理地址映射到完全相同的虚拟地址，而ARM(Smart版本)目前是不支持这样搞的，所以在编写驱动的时候应该使用rt_ioremap这样的函数将物理地址映射到可访问的虚拟地址上去。为了保证ARM的Smart版本内核能够成功运行，目前仅对uart和pinctrl的驱动进行了适配。其他驱动可能会因为未进行ioremap（IO口重映射）导致不可用。
-
-## 5. 联系人信息
+# 4. 联系人信息
 
 维护人：[liYony](https://github.com/liYony)
