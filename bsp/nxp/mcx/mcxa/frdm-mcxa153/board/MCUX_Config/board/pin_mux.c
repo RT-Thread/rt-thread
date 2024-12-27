@@ -60,6 +60,7 @@ void BOARD_InitPins(void)
     RESET_ReleasePeripheralReset(kLPSPI1_RST_SHIFT_RSTn);
 
     RESET_ReleasePeripheralReset(kLPI2C0_RST_SHIFT_RSTn);
+    RESET_ReleasePeripheralReset(kFLEXPWM0_RST_SHIFT_RSTn);
 
     RESET_ReleasePeripheralReset(kPORT0_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kPORT1_RST_SHIFT_RSTn);
@@ -225,9 +226,7 @@ void BOARD_InitPins(void)
 #endif
 
 #ifdef BSP_USING_PWM0
-    ctimer_config_t config;
-    CTIMER_Init(CTIMER1, &config);
-    const port_pin_config_t port1_4_pin62_config = {/* Internal pull-up/down resistor is disabled */
+    const port_pin_config_t port3_0_pin46_config = {/* Internal pull-up/down resistor is disabled */
                                                     kPORT_PullDisable,
                                                     /* Low internal pull resistor value is selected. */
                                                     kPORT_LowPullResistor,
@@ -241,16 +240,68 @@ void BOARD_InitPins(void)
                                                     kPORT_LowDriveStrength,
                                                     /* Normal drive strength is configured */
                                                     kPORT_NormalDriveStrength,
-                                                    /* Pin is configured as CT1_MAT2 */
-                                                    kPORT_MuxAlt4,
+                                                    /* Pin is configured as PWM0_A0 */
+                                                    kPORT_MuxAlt5,
                                                     /* Digital input enabled */
                                                     kPORT_InputBufferEnable,
                                                     /* Digital input is not inverted */
                                                     kPORT_InputNormal,
                                                     /* Pin Control Register fields [15:0] are not locked */
                                                     kPORT_UnlockRegister};
-    /* PORT1_4 (pin 62) is configured as CT1_MAT2 */
-    PORT_SetPinConfig(PORT1, 4U, &port1_4_pin62_config);
+    /* PORT3_0 (pin 38) is configured as PWM0_A0 */
+    PORT_SetPinConfig(PORT3, 0U, &port3_0_pin46_config);
+#endif
+#ifdef BSP_USING_PWM1
+    const port_pin_config_t port3_8_pin42_config = {/* Internal pull-up/down resistor is disabled */
+                                                    kPORT_PullDisable,
+                                                    /* Low internal pull resistor value is selected. */
+                                                    kPORT_LowPullResistor,
+                                                    /* Fast slew rate is configured */
+                                                    kPORT_FastSlewRate,
+                                                    /* Passive input filter is disabled */
+                                                    kPORT_PassiveFilterDisable,
+                                                    /* Open drain output is disabled */
+                                                    kPORT_OpenDrainDisable,
+                                                    /* Low drive strength is configured */
+                                                    kPORT_LowDriveStrength,
+                                                    /* Normal drive strength is configured */
+                                                    kPORT_NormalDriveStrength,
+                                                    /* Pin is configured as PWM0_A0 */
+                                                    kPORT_MuxAlt5,
+                                                    /* Digital input enabled */
+                                                    kPORT_InputBufferEnable,
+                                                    /* Digital input is not inverted */
+                                                    kPORT_InputNormal,
+                                                    /* Pin Control Register fields [15:0] are not locked */
+                                                    kPORT_UnlockRegister};
+    /* PORT3_8 (pin 42) is configured as PWM0_A1 */
+    PORT_SetPinConfig(PORT3, 8U, &port3_8_pin42_config);
+#endif
+#ifdef BSP_USING_PWM2
+    const port_pin_config_t port3_10_pin40_config = {/* Internal pull-up/down resistor is disabled */
+                                                    kPORT_PullDisable,
+                                                    /* Low internal pull resistor value is selected. */
+                                                    kPORT_LowPullResistor,
+                                                    /* Fast slew rate is configured */
+                                                    kPORT_FastSlewRate,
+                                                    /* Passive input filter is disabled */
+                                                    kPORT_PassiveFilterDisable,
+                                                    /* Open drain output is disabled */
+                                                    kPORT_OpenDrainDisable,
+                                                    /* Low drive strength is configured */
+                                                    kPORT_LowDriveStrength,
+                                                    /* Normal drive strength is configured */
+                                                    kPORT_NormalDriveStrength,
+                                                    /* Pin is configured as PWM0_A0 */
+                                                    kPORT_MuxAlt5,
+                                                    /* Digital input enabled */
+                                                    kPORT_InputBufferEnable,
+                                                    /* Digital input is not inverted */
+                                                    kPORT_InputNormal,
+                                                    /* Pin Control Register fields [15:0] are not locked */
+                                                    kPORT_UnlockRegister};
+    /* PORT3_10 (pin 40) is configured as PWM0_A2 */
+    PORT_SetPinConfig(PORT3, 10U, &port3_10_pin40_config);
 #endif
 
 #ifdef BSP_USING_SPI0
