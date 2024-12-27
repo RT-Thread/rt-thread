@@ -385,6 +385,37 @@ endmenu
 
 menu "Board extended module Drivers"
 
+    menuconfig BSP_USING_LCD
+        bool "Enable LCD"
+        select RT_USING_LCD
+        default n
+        if BSP_USING_LCD
+
+            config BSP_USING_TLI
+                bool "Enable TLI"
+                default y  
+
+            config BSP_USING_SDRAM
+                bool "Enable SDRAM"
+                select RT_USING_SDRAM
+                default y
+
+            config BSP_USING_TOUCH
+                bool "Enable TOUCH"
+                select RT_USING_TOUCH
+                default n
+                
+            config BSP_USING_GPU
+                bool "Enable GPU"
+                select RT_USING_GPU
+                default y
+
+            config BSP_USING_DRAW_PANEL_EXAMPLE
+                bool "Enable DRAW PANEL EXAMPLE"
+                select RT_USING_DRAW_PANEL_EXAMPLE
+                default n
+        endif
+        
 endmenu
 
 endmenu
