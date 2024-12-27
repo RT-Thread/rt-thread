@@ -49,5 +49,7 @@ rt_err_t dfs_partition(struct rt_blk_disk *disk)
         }
     }
 
+    rt_free(sector);
+
     return RT_EOK;
 }
