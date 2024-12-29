@@ -602,9 +602,9 @@ int clock_getres(clockid_t clockid, struct timespec *res)
 
     switch (clockid)
     {
-#ifdef RT_USING_RTC
         case CLOCK_REALTIME:  // use RTC
         case CLOCK_REALTIME_COARSE:
+#ifdef RT_USING_RTC
             return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMERES, res);
 #endif /* RT_USING_RTC */
 
@@ -635,9 +635,9 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
 
     switch (clockid)
     {
-#ifdef RT_USING_RTC
         case CLOCK_REALTIME:  // use RTC
         case CLOCK_REALTIME_COARSE:
+#ifdef RT_USING_RTC
             return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, tp);
 #endif /* RT_USING_RTC */
 
@@ -679,8 +679,8 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 
     switch (clockid)
     {
-#ifdef RT_USING_RTC
         case CLOCK_REALTIME:  // use RTC
+#ifdef RT_USING_RTC
             if (flags & TIMER_ABSTIME)
                 err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
             break;

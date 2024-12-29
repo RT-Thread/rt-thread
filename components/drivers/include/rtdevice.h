@@ -45,6 +45,34 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#ifdef RT_USING_ATA
+#ifdef RT_ATA_AHCI
+#include "drivers/ahci.h"
+#endif /* RT_ATA_AHCI */
+#endif /* RT_USING_ATA */
+
+#ifdef RT_USING_LED
+#include "drivers/led.h"
+#endif
+
+#ifdef RT_USING_MBOX
+#include "drivers/mailbox.h"
+#endif /* RT_USING_MBOX */
+
+#ifdef RT_USING_BLK
+#include "drivers/blk.h"
+#endif /* RT_USING_BLK */
+
+#ifdef RT_USING_DMA
+#include "drivers/dma.h"
+#endif /* RT_USING_DMA */
+
+#include "drivers/iio.h"
+
+#ifdef RT_USING_NVME
+#include "drivers/nvme.h"
+#endif /* RT_USING_NVME */
+
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"
 #include "drivers/ofw_fdt.h"
@@ -53,16 +81,50 @@ extern "C" {
 #include "drivers/ofw_raw.h"
 #endif /* RT_USING_OFW */
 
+#ifdef RT_USING_PHYE
+#include "drivers/phye.h"
+#endif /* RT_USING_PHYE */
+
 #ifdef RT_USING_PIC
 #include "drivers/pic.h"
-#endif
+#endif /* RT_USING_PIC */
+
+#ifdef RT_USING_PCI
+#include "drivers/pci.h"
+#ifdef RT_PCI_MSI
+#include "drivers/pci_msi.h"
+#endif /* RT_PCI_MSI */
+#ifdef RT_PCI_ENDPOINT
+#include "drivers/pci_endpoint.h"
+#endif /* RT_PCI_ENDPOINT */
+#endif /* RT_USING_PCI */
+
+#ifdef RT_USING_REGULATOR
+#include "drivers/regulator.h"
+#endif /* RT_USING_REGULATOR */
+
+#ifdef RT_USING_RESET
+#include "drivers/reset.h"
+#endif /* RT_USING_RESET */
+
+#ifdef RT_USING_SCSI
+#include "drivers/scsi.h"
+#endif /* RT_USING_SCSI */
+
+#ifdef RT_MFD_SYSCON
+#include "drivers/syscon.h"
+#endif /* RT_MFD_SYSCON */
+
+#ifdef RT_USING_THERMAL
+#include "drivers/thermal.h"
+#endif /* RT_USING_THERMAL */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
 #include "drivers/dev_rtc.h"
 #ifdef RT_USING_ALARM
 #include "drivers/dev_alarm.h"
-#endif
+#endif /* RT_USING_ALARM */
 #endif /* RT_USING_RTC */
 
 #ifdef RT_USING_SPI
@@ -90,6 +152,9 @@ extern "C" {
 #include "drivers/dev_serial_v2.h"
 #else
 #include "drivers/dev_serial.h"
+#ifdef RT_USING_SERIAL_BYPASS
+#include "drivers/serial_bypass.h"
+#endif /* RT_USING_SERIAL_BYPASS */
 #endif
 #endif /* RT_USING_SERIAL */
 
@@ -107,7 +172,6 @@ extern "C" {
 
 #ifdef RT_USING_PHY
 #include "drivers/phy.h"
-#include "drivers/phy_mdio.h"
 #endif /* RT_USING_PHY */
 
 #ifdef RT_USING_SDIO

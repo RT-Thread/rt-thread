@@ -341,7 +341,7 @@ rt_err_t gicv2m_ofw_probe(struct rt_ofw_node *np, const struct rt_ofw_node_id *i
             }
         }
 
-        bitmap_size = RT_BITMAP_LEN(v2m->spis_nr) * sizeof(bitmap_t);
+        bitmap_size = RT_BITMAP_LEN(v2m->spis_nr) * sizeof(rt_bitmap_t);
 
         if (!(v2m->vectors = rt_calloc(1, bitmap_size)))
         {

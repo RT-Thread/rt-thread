@@ -15,6 +15,7 @@
  * 2018-11-02     MurphyZhao   port to lwIP 2.1.0
  * 2021-09-07     Grissiom     fix eth_tx_msg ack bug
  * 2022-02-22     xiangxistu   integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ * 2024-09-12     Evlers       add support for independent dns services for multiple network devices
  */
 
 /*
@@ -169,8 +170,11 @@ static int lwip_netdev_set_addr_info(struct netdev *netif, ip_addr_t *ip_addr, i
 }
 
 #ifdef RT_LWIP_DNS
-static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_addr_t *dns_server)
+static int lwip_netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, ip_addr_t *dns_server)
 {
+#if RT_USING_LWIP_VER_NUM >= 0x20102
+    netdev_low_level_set_dns_server(netdev, dns_num, dns_server);
+#else
 #if LWIP_VERSION_MAJOR == 1U /* v1.x */
     extern void dns_setserver(u8_t numdns, ip_addr_t *dnsserver);
 #else /* >=2.x */
@@ -178,6 +182,7 @@ static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_
 #endif /* LWIP_VERSION_MAJOR == 1U */
 
     dns_setserver(dns_num, dns_server);
+#endif /* RT_USING_LWIP_VER_NUM >= 0x20102 */
     return ERR_OK;
 }
 #endif /* RT_LWIP_DNS */

@@ -21,4 +21,7 @@ menuconfig RT_USING_SERIAL
             int "Set RX buffer size"
             depends on !RT_USING_SERIAL_V2
             default 64
-    endif
+        config RT_USING_SERIAL_BYPASS
+            bool "Using serial bypass"
+            default n
+        endif

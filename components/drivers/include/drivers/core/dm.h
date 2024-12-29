@@ -13,9 +13,11 @@
 
 #include <rthw.h>
 #include <rtdef.h>
+#include <bitmap.h>
 #include <ioremap.h>
 #include <drivers/misc.h>
 #include <drivers/byteorder.h>
+#include <drivers/core/master_id.h>
 
 #ifndef RT_CPUS_NR
 #define RT_CPUS_NR 1
@@ -26,6 +28,24 @@ extern int rt_hw_cpu_id(void);
 #endif
 
 void rt_dm_secondary_cpu_init(void);
+
+/* ID Allocation */
+struct rt_dm_ida
+{
+    rt_uint8_t master_id;
+
+#define RT_DM_IDA_NUM 256
+    RT_BITMAP_DECLARE(map, RT_DM_IDA_NUM);
+    struct rt_spinlock lock;
+};
+
+#define RT_DM_IDA_INIT(id)  { .master_id = MASTER_ID_##id }
+
+int rt_dm_ida_alloc(struct rt_dm_ida *ida);
+rt_bool_t rt_dm_ida_take(struct rt_dm_ida *ida, int id);
+void rt_dm_ida_free(struct rt_dm_ida *ida, int id);
+
+rt_device_t rt_dm_device_find(int master_id, int device_id);
 
 int rt_dm_dev_set_name_auto(rt_device_t dev, const char *prefix);
 int rt_dm_dev_get_name_id(rt_device_t dev);

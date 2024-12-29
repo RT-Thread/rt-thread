@@ -1,9 +1,10 @@
-#include "rtconfig.h"
 menu "RT-Thread Kernel"
+
+rsource "klibc/Kconfig"
 
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
-    range 1 64
+    range 2 64
     default 8
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
@@ -17,6 +18,13 @@ config RT_USING_ARCH_DATA_TYPE
         BSP can define these basic data types in ARCH_CPU level.
 
         Please re-define these data types in rtconfig_project.h file.
+
+config RT_USING_NANO
+    bool "Enable RT-Thread Nano"
+    default n
+    help
+        RT-Thread Nano is a very small size and refined hard real-time kernel,
+        which is suited for the extremely resource-constrained MCU system.
 
 config RT_USING_SMART
     bool "Enable RT-Thread Smart (microkernel on kernel/userland)"
@@ -42,13 +50,6 @@ config RT_USING_SMART
     depends on !RT_USING_NANO
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
-
-config RT_USING_NANO
-    bool "Enable RT-Thread Nano"
-    default n
-    help
-        RT-Thread Nano with a very small size and refined hard real-time kernel,
-        which is very suited for the resource-constrained MCU system.
 
 config RT_USING_AMP
     bool "Enable AMP (Asymmetric Multi-Processing)"
@@ -114,6 +115,13 @@ config RT_TICK_PER_SECOND
     default 1000
     help
         System's tick frequency, Hz.
+
+config RT_USING_OVERFLOW_CHECK
+    bool "Using stack overflow checking"
+    default y if RT_USING_DEBUG
+    help
+        Enable thread stack overflow checking. The stack overflow is checking when
+        each thread switch.
 
 config RT_USING_HOOK
     bool "Enable system hook"
@@ -189,38 +197,10 @@ config RT_USING_CPU_USAGE_TRACER
     default y if RT_USING_SMART
     default n
 
-menu "kservice optimization"
+menu "kservice options"
     config RT_USING_TINY_FFS
         bool "Enable kservice to use tiny finding first bit set method"
         default n
-endmenu
-
-menu "klibc optimization"
-
-    config RT_KLIBC_USING_STDLIB
-        bool "Enable klibc to use standard C library"
-        default n
-
-    if RT_KLIBC_USING_STDLIB
-        config RT_KLIBC_USING_STDLIB_MEMORY
-            bool "Use stdlib memory functions to replace (faster, but not safe)"
-            default n
-            help
-                e.g. use memcpy to replace rt_memcpy
-    endif
-
-    config RT_KLIBC_USING_TINY_SIZE
-        bool "Enable tiny size of klibc"
-        default n
-
-    config RT_KLIBC_USING_PRINTF_LONGLONG
-        bool "Enable rt_printf-family functions to support long-long format"
-        default y if ARCH_CPU_64BIT
-        default n
-        help
-            Enable rt_printf()/rt_snprintf()/rt_sprintf()/rt_vsnprintf()/rt_vsprintf()
-            functions to support long-long format
-
 endmenu
 
 menuconfig RT_USING_DEBUG
@@ -259,14 +239,14 @@ menuconfig RT_USING_DEBUG
             depends on RT_USING_SMP
             default y if RT_USING_SMART
             default n
-
-        config RT_USING_OVERFLOW_CHECK
-            bool "Using stack overflow checking"
-            default y
-            help
-                Enable thread stack overflow checking. The stack overflow is checking when
-                each thread switch.
     endif
+
+config RT_USING_CI_ACTION
+    bool "Enable CI Action build mode"
+    select RT_USING_UTEST
+    default n
+    help
+        Identify that the environment is CI Action.
 
 menu "Inter-Thread communication"
 
@@ -456,6 +436,7 @@ config RT_USING_CONSOLE
 if RT_USING_CONSOLE
     config RT_CONSOLEBUF_SIZE
         int "the buffer size for console log printf"
+        default 256 if RT_USING_UTEST
         default 128
 
     config RT_CONSOLE_DEVICE_NAME

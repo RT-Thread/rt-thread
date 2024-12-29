@@ -338,4 +338,4 @@ static int dw8250_drv_register(void)
 
     return 0;
 }
-INIT_DRIVER_EARLY_EXPORT(dw8250_drv_register);
+INIT_PLATFORM_EXPORT(dw8250_drv_register);

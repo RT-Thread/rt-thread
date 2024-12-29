@@ -1,0 +1,10 @@
+menuconfig RT_USING_DMA
+    bool "Using Direct Memory Access (DMA)"
+    depends on RT_USING_DM
+    select RT_USING_ADT
+    select RT_USING_ADT_BITMAP
+    default n
+
+if RT_USING_DMA
+    osource "$(SOC_DM_DMA_DIR)/Kconfig"
+endif

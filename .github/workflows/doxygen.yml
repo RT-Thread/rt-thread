@@ -1,5 +1,16 @@
 name: doc_doxygen
 on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'documentation/doxygen/**'
+      - 'src/**'
+      - 'include/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/dfs/dfs_v2/include/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/finsh/**'
   # Runs at 16:00 UTC (BeiJing 00:00) on the 30st of every month
   schedule:
     - cron:  '0 16 30 * *'
@@ -7,7 +18,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: doxygen_doc generate
     if: github.repository_owner == 'RT-Thread'
     steps:

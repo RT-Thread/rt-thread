@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -107,7 +107,8 @@ int dfs_init(void)
 INIT_PREV_EXPORT(dfs_init);
 
 /**
- * this function will lock device file system.
+ * @brief this function will lock device file system.
+ * this lock (fslock) is used for protecting filesystem_operation_table and filesystem_table.
  *
  * @note please don't invoke it on ISR.
  */
@@ -126,6 +127,12 @@ void dfs_lock(void)
     }
 }
 
+/**
+ * @brief this function will lock file descriptors.
+ * this lock (fdlock) is used for protecting fd table (_fdtab).
+ *
+ * @note please don't invoke it on ISR.
+ */
 void dfs_file_lock(void)
 {
     rt_err_t result = -RT_EBUSY;
@@ -142,7 +149,7 @@ void dfs_file_lock(void)
 }
 
 /**
- * this function will lock device file system.
+ * @brief this function will unlock device file system.
  *
  * @note please don't invoke it on ISR.
  */
@@ -151,33 +158,56 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
-#ifdef DFS_USING_POSIX
-
+/**
+ * @brief this function will unlock fd table.
+ */
 void dfs_file_unlock(void)
 {
     rt_mutex_release(&fdlock);
 }
 
+#ifdef DFS_USING_POSIX
+/**
+ * @brief Expand the file descriptor table to accommodate a specific file descriptor.
+ *
+ * This function ensures that the file descriptor table in the given `dfs_fdtable` structure
+ * has sufficient capacity to include the specified file descriptor `fd`. If the table
+ * needs to be expanded, it reallocates memory and initializes new slots to `NULL`.
+ *
+ * @param fdt Pointer to the `dfs_fdtable` structure representing the file descriptor table.
+ * @param fd The file descriptor that the table must accommodate.
+ * @return int
+ *         - The input file descriptor `fd` if it is within the current or newly expanded table's capacity.
+ *         - `-1` if the requested file descriptor exceeds `DFS_FD_MAX` or memory allocation fails.
+ */
 static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
 {
     int nr;
     int index;
     struct dfs_file **fds = NULL;
 
+    /* If the file descriptor is already within the current capacity, no expansion is needed.*/
     if (fd < fdt->maxfd)
     {
         return fd;
     }
+
+    /* If the file descriptor exceeds the maximum allowable limit, return an error.*/
     if (fd >= DFS_FD_MAX)
     {
         return -1;
     }
 
+    /* Calculate the new capacity, rounding up to the nearest multiple of 4.*/
     nr = ((fd + 4) & ~3);
+
+    /* Ensure the new capacity does not exceed the maximum limit.*/
     if (nr > DFS_FD_MAX)
     {
         nr = DFS_FD_MAX;
     }
+
+    /* Attempt to reallocate the file descriptor table to the new capacity.*/
     fds = (struct dfs_file **)rt_realloc(fdt->fds, nr * sizeof(struct dfs_file *));
     if (!fds)
     {
@@ -189,12 +219,23 @@ static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
     {
         fds[index] = NULL;
     }
+
+    /* Update the file descriptor table and its capacity.*/
     fdt->fds   = fds;
     fdt->maxfd = nr;
 
     return fd;
 }
 
+/**
+ * @brief Allocate a file descriptor slot starting from a specified index.
+ *
+ * @param fdt fdt Pointer to the `dfs_fdtable` structure representing the file descriptor table.
+ * @param startfd The starting index for the search for an empty slot.
+ * @return int
+ *         - The index of the first available slot if successful.
+ *         - `-1` if no slot is available or if table expansion fails
+ */
 static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
@@ -219,6 +260,17 @@ static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
     }
     return idx;
 }
+
+/**
+ * @brief Allocate a new file descriptor and associate it with a newly allocated `struct dfs_file`.
+ *
+ * @param fdt Pointer to the `dfs_fdtable` structure representing the file descriptor table.
+ * @param startfd The starting index for searching an available file descriptor slot.
+ *
+ * @return
+ * - The index of the allocated file descriptor if successful.
+ * - `-1` if no slot is available or memory allocation fails.
+ */
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
@@ -323,7 +375,11 @@ struct dfs_file *fd_get(int fd)
 /**
  * @ingroup Fd
  *
- * This function will put the file descriptor.
+ * @brief This function will release the file descriptor.
+ *
+ * This function releases a file descriptor slot in the file descriptor table, decrements reference
+ * counts, and cleans up resources associated with the `dfs_file` and `dfs_vnode` structures when applicable.
+ *
  */
 void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
 {
@@ -378,6 +434,20 @@ void fd_release(int fd)
     fdt_fd_release(fdt, fd);
 }
 
+/**
+ * @brief Duplicates a file descriptor.
+ *
+ * This function duplicates an existing file descriptor (`oldfd`) and returns
+ * a new file descriptor that refers to the same underlying file object.
+ *
+ * @param oldfd The file descriptor to duplicate. It must be a valid file
+ *              descriptor within the range of allocated descriptors.
+ *
+ * @return The new file descriptor if successful, or a negative value
+ *         (e.g., -1) if an error occurs.
+ *
+ * @see sys_dup2()
+ */
 rt_err_t sys_dup(int oldfd)
 {
     int newfd = -1;
@@ -470,6 +540,23 @@ int fd_is_open(const char *pathname)
     return -1;
 }
 
+/**
+ * @brief Duplicates a file descriptor to a specified file descriptor.
+ *
+ * This function duplicates an existing file descriptor (`oldfd`) and assigns it
+ * to the specified file descriptor (`newfd`).
+ *
+ * @param oldfd The file descriptor to duplicate. It must be a valid and open file
+ *              descriptor within the range of allocated descriptors.
+ * @param newfd The target file descriptor. If `newfd` is already in use, it will
+ *              be closed before duplication. If `newfd` exceeds the current file
+ *              descriptor table size, the table will be expanded to accommodate it.
+ *
+ * @return The value of `newfd` on success, or a negative value (e.g., -1) if an
+ *         error occurs.
+ *
+ * @see sys_dup()
+ */
 rt_err_t sys_dup2(int oldfd, int newfd)
 {
     struct dfs_fdtable *fdt = NULL;
@@ -550,6 +637,10 @@ static int fd_get_fd_index_form_fdt(struct dfs_fdtable *fdt, struct dfs_file *fi
     return fd;
 }
 
+/**
+ * @brief get fd (index) by dfs file object.
+ *
+ */
 int fd_get_fd_index(struct dfs_file *file)
 {
     struct dfs_fdtable *fdt;
@@ -558,6 +649,21 @@ int fd_get_fd_index(struct dfs_file *file)
     return fd_get_fd_index_form_fdt(fdt, file);
 }
 
+/**
+ * @brief Associates a file descriptor with a file object.
+ *
+ * This function associates a given file descriptor (`fd`) with a specified
+ * file object (`file`) in the file descriptor table (`fdt`).
+ *
+ * @param fdt The file descriptor table to operate on. It must be a valid
+ *            and initialized `dfs_fdtable` structure.
+ * @param fd The file descriptor to associate. It must be within the range
+ *           of allocated file descriptors and currently unoccupied.
+ * @param file The file object to associate with the file descriptor. It must
+ *             be a valid and initialized `dfs_file` structure.
+ *
+ * @return The value of `fd` on success, or -1 if an error occurs.
+ */
 int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_file *file)
 {
     int retfd = -1;
@@ -591,6 +697,10 @@ exit:
     return retfd;
 }
 
+/**
+ * @brief initialize a dfs file object.
+ *
+ */
 void fd_init(struct dfs_file *fd)
 {
     if (fd)

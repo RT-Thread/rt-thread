@@ -8,10 +8,11 @@
  * 2012-01-10     bernard      porting to AM1808
  * 2021-11-28     GuEe-GUI     first version
  * 2022-12-10     WangXiaoyao  porting to MM
+ * 2024-07-08     Shell        added support for ASID
  */
 
 #define DBG_TAG "hw.mmu"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <rthw.h>
@@ -138,8 +139,8 @@ static int _kernel_map_4K(unsigned long *lv0_tbl, void *vaddr, void *paddr, unsi
     unsigned long *cur_lv_tbl = lv0_tbl;
     unsigned long page;
     unsigned long off;
-    intptr_t va = (intptr_t)vaddr;
-    intptr_t pa = (intptr_t)paddr;
+    rt_ubase_t va = (rt_ubase_t)vaddr;
+    rt_ubase_t pa = (rt_ubase_t)paddr;
     int level_shift = MMU_ADDRESS_BITS;
 
     if (va & ARCH_PAGE_MASK)
@@ -274,27 +275,27 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
     int ret = -1;
 
     void *unmap_va = v_addr;
-    size_t npages;
+    size_t remaining_sz = size;
     size_t stride;
     int (*mapper)(unsigned long *lv0_tbl, void *vaddr, void *paddr, unsigned long attr);
 
-    if (((rt_ubase_t)v_addr & ARCH_SECTION_MASK) || (size & ARCH_SECTION_MASK))
-    {
-        /* legacy 4k mapping */
-        npages = size >> ARCH_PAGE_SHIFT;
-        stride = ARCH_PAGE_SIZE;
-        mapper = _kernel_map_4K;
-    }
-    else
-    {
-        /* 2m huge page */
-        npages = size >> ARCH_SECTION_SHIFT;
-        stride = ARCH_SECTION_SIZE;
-        mapper = _kernel_map_2M;
-    }
+    RT_ASSERT(!(size & ARCH_PAGE_MASK));
 
-    while (npages--)
+    while (remaining_sz)
     {
+        if (((rt_ubase_t)v_addr & ARCH_SECTION_MASK) || (remaining_sz < ARCH_SECTION_SIZE))
+        {
+            /* legacy 4k mapping */
+            stride = ARCH_PAGE_SIZE;
+            mapper = _kernel_map_4K;
+        }
+        else
+        {
+            /* 2m huge page */
+            stride = ARCH_SECTION_SIZE;
+            mapper = _kernel_map_2M;
+        }
+
         MM_PGTBL_LOCK(aspace);
         ret = mapper(aspace->page_table, v_addr, p_addr, attr);
         MM_PGTBL_UNLOCK(aspace);
@@ -313,6 +314,8 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
             }
             break;
         }
+
+        remaining_sz -= stride;
         v_addr = (char *)v_addr + stride;
         p_addr = (char *)p_addr + stride;
     }
@@ -345,23 +348,82 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
     }
 }
 
+#ifdef ARCH_USING_ASID
+/**
+ * the asid is to identified specialized address space on TLB.
+ * In the best case, each address space has its own exclusive asid. However,
+ * ARM only guarantee with 8 bits of ID space, which give us only 254(except
+ * the reserved 1 ASID for kernel).
+ */
+
+static rt_spinlock_t _asid_lock = RT_SPINLOCK_INIT;
+
+rt_uint16_t _aspace_get_asid(rt_aspace_t aspace)
+{
+    static rt_uint16_t _asid_pool = 0;
+    rt_uint16_t asid_to, asid_from;
+    rt_ubase_t ttbr0_from;
+
+    asid_to = aspace->asid;
+    if (asid_to == 0)
+    {
+        rt_spin_lock(&_asid_lock);
+        #define MAX_ASID (1ul << MMU_SUPPORTED_ASID_BITS)
+        if (_asid_pool && _asid_pool < MAX_ASID)
+        {
+            asid_to = ++_asid_pool;
+            LOG_D("Allocated ASID %d to PID %d(aspace %p)", asid_to, lwp_self()->pid, aspace);
+        }
+        else
+        {
+            asid_to = _asid_pool = 1;
+            LOG_D("Overflowed ASID %d to PID %d(aspace %p)", asid_to, lwp_self()->pid, aspace);
+        }
+
+        rt_spin_unlock(&_asid_lock);
+
+        aspace->asid = asid_to;
+        rt_hw_tlb_invalidate_aspace(aspace);
+    }
+
+    __asm__ volatile("mrs %0, ttbr0_el1" :"=r"(ttbr0_from));
+    asid_from = ttbr0_from >> MMU_ASID_SHIFT;
+    if (asid_from == asid_to)
+    {
+        LOG_D("Conflict ASID. from %d, to %d", asid_from, asid_to);
+        rt_hw_tlb_invalidate_aspace(aspace);
+    }
+    else
+    {
+        LOG_D("ASID switched. from %d, to %d", asid_from, asid_to);
+    }
+
+    return asid_to;
+}
+
+#else
+
+
+rt_uint16_t _aspace_get_asid(rt_aspace_t aspace)
+{
+    rt_hw_tlb_invalidate_all();
+    return 0;
+}
+#endif /* ARCH_USING_ASID */
+
+#define CREATE_TTBR0(pgtbl, asid) ((rt_ubase_t)(pgtbl) | (rt_ubase_t)(asid) << MMU_ASID_SHIFT)
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
     if (aspace != &rt_kernel_space)
     {
+        rt_ubase_t ttbr0;
         void *pgtbl = aspace->page_table;
         pgtbl = rt_kmem_v2p(pgtbl);
-        rt_ubase_t tcr;
 
-        __asm__ volatile("msr ttbr0_el1, %0" ::"r"(pgtbl) : "memory");
+        ttbr0 = CREATE_TTBR0(pgtbl, _aspace_get_asid(aspace));
 
-        __asm__ volatile("mrs %0, tcr_el1" : "=r"(tcr));
-        tcr &= ~(1ul << 7);
-        __asm__ volatile("msr tcr_el1, %0\n"
-                         "isb" ::"r"(tcr)
-                         : "memory");
-
-        rt_hw_tlb_invalidate_all_local();
+        __asm__ volatile("msr ttbr0_el1, %0" ::"r"(ttbr0));
+        __asm__ volatile("isb" ::: "memory");
     }
 }
 
@@ -556,7 +618,8 @@ unsigned long get_free_page(void)
 }
 
 static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
-                               unsigned long pa, unsigned long attr)
+                               unsigned long pa, unsigned long attr,
+                               rt_bool_t flush)
 {
     int level;
     unsigned long *cur_lv_tbl = lv0_tbl;
@@ -585,6 +648,10 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
             }
             rt_memset((char *)page, 0, ARCH_PAGE_SIZE);
             cur_lv_tbl[off] = page | MMU_TYPE_TABLE;
+            if (flush)
+            {
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
+            }
         }
         page = cur_lv_tbl[off];
         if ((page & MMU_TYPE_MASK) == MMU_TYPE_BLOCK)
@@ -600,6 +667,10 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     off = (va >> ARCH_SECTION_SHIFT);
     off &= MMU_LEVEL_MASK;
     cur_lv_tbl[off] = pa;
+    if (flush)
+    {
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
+    }
     return 0;
 }
 
@@ -633,7 +704,7 @@ void *rt_ioremap_early(void *paddr, size_t size)
 
     while (count --> 0)
     {
-        if (_map_single_page_2M(tbl, base, base, MMU_MAP_K_DEVICE))
+        if (_map_single_page_2M(tbl, base, base, MMU_MAP_K_DEVICE, RT_TRUE))
         {
             return RT_NULL;
         }
@@ -661,7 +732,7 @@ static int _init_map_2M(unsigned long *lv0_tbl, unsigned long va,
     }
     for (i = 0; i < count; i++)
     {
-        ret = _map_single_page_2M(lv0_tbl, va, pa, attr);
+        ret = _map_single_page_2M(lv0_tbl, va, pa, attr, RT_FALSE);
         va += ARCH_SECTION_SIZE;
         pa += ARCH_SECTION_SIZE;
         if (ret != 0)
@@ -827,7 +898,7 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
 {
     int ret;
     unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
-    unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
+    unsigned long normal_attr = MMU_MAP_K_RWCB;
     extern unsigned char _start;
     unsigned long va = (unsigned long) &_start - pv_off;
     va = RT_ALIGN_DOWN(va, 0x200000);

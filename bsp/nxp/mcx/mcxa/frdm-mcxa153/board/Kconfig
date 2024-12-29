@@ -27,8 +27,14 @@ menu "On-chip Peripheral Drivers"
 
             if BSP_USING_UART
                 config BSP_USING_UART0
-                    bool "Enable LPUART as UART"
+                    bool "Enable LPUART as UART0"
                     default y
+                config BSP_USING_UART1
+                    bool "Enable LPUART as UART1"
+                    default n
+                config BSP_USING_UART2
+                    bool "Enable LPUART as UART2"
+                    default n
             endif
 
     menuconfig BSP_USING_I2C
@@ -97,7 +103,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_HWTIMER
         config BSP_USING_HWTIMER
-            bool "Enable Timer"
+            bool "Enable Hardware Timer"
             select RT_USING_HWTIMER
             default y
 
@@ -110,12 +116,8 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable CIMER1"
                     default n
 
-                config BSP_USING_CTIMER3
-                    bool "Enable CIMER3"
-                    default n
-
-                config BSP_USING_CTIMER4
-                    bool "Enable CIMER4"
+                config BSP_USING_CTIMER2
+                    bool "Enable CIMER2"
                     default n
             endif
 
@@ -123,12 +125,18 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_PWM
             bool "Enable PWM"
             select RT_USING_PWM
-            default N
+            default n
 
             if BSP_USING_PWM
                 config BSP_USING_PWM0
-                    bool "Enable PWM0"
-                    default N
+                    bool "Enable eFlex PWM0"
+                    default n
+		config BSP_USING_PWM1
+                    bool "Enable eFlex PWM1"
+                    default n
+		config BSP_USING_PWM2
+                    bool "Enable eFlex PWM2"
+                    default n
             endif
 endmenu
 

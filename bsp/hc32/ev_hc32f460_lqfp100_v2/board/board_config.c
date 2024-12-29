@@ -111,7 +111,7 @@ rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx)
     switch ((rt_uint32_t)CANx)
     {
 #if defined(BSP_USING_CAN1)
-    case (rt_uint32_t)CM_CAN1:
+    case (rt_uint32_t)CM_CAN:
         GPIO_SetFunc(CAN1_TX_PORT, CAN1_TX_PIN, CAN1_TX_PIN_FUNC);
         GPIO_SetFunc(CAN1_RX_PORT, CAN1_RX_PIN, CAN1_RX_PIN_FUNC);
         break;

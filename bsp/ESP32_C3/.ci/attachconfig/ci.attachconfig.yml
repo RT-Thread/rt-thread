@@ -1,0 +1,57 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+devices.gpio:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_PIN=y
+      - CONFIG_BSP_USING_GPIO=y
+devices.uart:
+    kconfig:
+      - CONFIG_RT_USING_SERIAL=y
+      - CONFIG_RT_USING_SERIAL_V1=y
+      - CONFIG_BSP_USING_UART=y
+devices.i2c:
+    kconfig:
+      - CONFIG_RT_USING_I2C=y
+      - CONFIG_BSP_USING_I2C=y
+devices.hwi2c:
+    depends:
+      - devices.i2c
+    kconfig:
+      - CONFIG_BSP_USING_HW_I2C=y
+devices.swi2c:
+    depends:
+      - devices.i2c
+    kconfig:
+      - CONFIG_BSP_USING_SW_I2C=y
+      - CONFIG_BSP_USING_SW_I2C0=y
+devices.spi:
+    kconfig:
+      - CONFIG_RT_USING_SPI=y
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI2=y
+devices.hwtimer:
+    kconfig:
+      - CONFIG_RT_USING_HWTIMER=y
+      - CONFIG_BSP_USING_HWTIMER=y
+      - CONFIG_BSP_USING_TIMER0=y
+devices.adc:
+    kconfig:
+      - CONFIG_RT_USING_ADC=y
+      - CONFIG_BSP_USING_ADC=y
+      - CONFIG_BSP_USING_ADC1=y
+devices.pwm:
+    kconfig:
+      - CONFIG_RT_USING_PWM=y
+      - CONFIG_BSP_USING_PWM=y
+      - CONFIG_BSP_USING_PWM0=y
+devices.ble:
+    kconfig:
+      - CONFIG_BSP_USING_BLE=y
+devices.wifi:
+    kconfig:
+      - CONFIG_BSP_USING_WIFI=y
+      - CONFIG_RT_USING_WIFI=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_NETDEV=y

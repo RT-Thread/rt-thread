@@ -375,4 +375,4 @@ static int rockchip_fiq_debugger_drv_register(void)
 
     return 0;
 }
-INIT_DRIVER_EARLY_EXPORT(rockchip_fiq_debugger_drv_register);
+INIT_PLATFORM_EXPORT(rockchip_fiq_debugger_drv_register);

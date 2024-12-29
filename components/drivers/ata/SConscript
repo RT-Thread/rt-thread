@@ -1,0 +1,21 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_ATA']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = []
+
+if GetDepend(['RT_ATA_AHCI']):
+    src += ['ahci.c']
+
+    if GetDepend(['RT_ATA_AHCI_PCI']):
+        src += ['ahci-pci.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

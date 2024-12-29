@@ -1,5 +1,6 @@
 config RT_USING_SDIO
     bool "Using SD/MMC device drivers"
+    select RT_USING_BLK
     default n
 
     if RT_USING_SDIO
@@ -24,5 +25,8 @@ config RT_USING_SDIO
             default 16
         config RT_SDIO_DEBUG
             bool "Enable SDIO debug log output"
-        default n
-    endif
+            default n
+        config RT_USING_SDHCI
+            bool "Using sdhci for sd/mmc drivers"
+            default n
+        endif
