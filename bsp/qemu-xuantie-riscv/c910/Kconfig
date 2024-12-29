@@ -1,0 +1,42 @@
+mainmenu "RT-Thread Project Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+PKGS_DIR := packages
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+rsource "board/Kconfig"
+
+config BSP_USING_XIAOHUI
+    bool
+    select ARCH_RISCV64
+    select ARCH_RISCV_FPU_D
+    select ARCH_USING_RISCV_COMMON64
+    select RT_USING_SYSTEM_WORKQUEUE
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+
+    default y
+
+config BSP_PLIC_PHY_ADDR
+    hex
+    default 0x70000000
+
+config IRQ_MAX_NR
+    int 
+    default 61
+
+config BSP_UART_FREQ
+    int
+    default 36000000
+
+config IRQ_MAX_NR
+    int
+    default 101
+
+config __STACKSIZE__
+    int "stack size for interrupt"
+    default 4096

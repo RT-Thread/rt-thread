@@ -1,0 +1,18 @@
+
+menu "xuantie qemu virt64 configs"
+    menuconfig BSP_SUPPORT_FPU
+        bool "Using Float"
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Using UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_UART
+            config RT_USING_UART0
+            bool "Enabel UART 0"
+            default y
+        endif
+
+endmenu

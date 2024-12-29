@@ -1,0 +1,18 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+    drv_uart.c
+    libraries/uart/dw_uart_ll.c
+''')
+
+CPPDEFINES = []
+
+CPPPATH = [cwd]
+CPPPATH += [cwd + '/libraries']
+CPPPATH += [cwd + '/libraries/core']
+CPPPATH += [cwd + '/libraries/uart']
+
+group = DefineGroup('drivers', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

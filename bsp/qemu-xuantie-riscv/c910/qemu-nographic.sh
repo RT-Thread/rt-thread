@@ -1,0 +1,1 @@
+qemu-system-riscv64 -machine xiaohui  -nographic -kernel rtthread.elf -cpu c910
