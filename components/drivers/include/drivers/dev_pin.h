@@ -111,7 +111,7 @@ struct rt_device_pin
     const struct rt_pin_ops *ops;
 };
 
-#define PIN_NONE                (-1)
+#define PIN_NONE                (-RT_EEMPTY)
 
 #define PIN_LOW                 0x00 /*!< low level */
 #define PIN_HIGH                0x01 /*!< high level */
