@@ -269,7 +269,6 @@ rt_err_t rt_workqueue_destroy(struct rt_workqueue *queue)
  * @param work is a pointer to the work item object.
  *
  * @return RT_EOK       Success.
- *         -RT_EBUSY    This work item is executing.
  */
 rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
 {
@@ -291,7 +290,6 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
  *             NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
  *
  * @return RT_EOK       Success.
- *         -RT_EBUSY    This work item is executing.
  *         -RT_ERROR    The ticks parameter is invalid.
  */
 rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t ticks)
@@ -421,7 +419,6 @@ static struct rt_workqueue *sys_workq; /* system work queue */
  *             NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
  *
  * @return RT_EOK       Success.
- *         -RT_EBUSY    This work item is executing.
  *         -RT_ERROR    The ticks parameter is invalid.
  */
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t ticks)
