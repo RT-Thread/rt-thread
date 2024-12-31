@@ -123,6 +123,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     {
         if (geometry.bytes_per_sector > FF_MAX_SS)
         {
+            disk[index] = RT_NULL;
             rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
             return -EINVAL;
         }
