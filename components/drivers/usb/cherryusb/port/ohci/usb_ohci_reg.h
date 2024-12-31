@@ -95,10 +95,10 @@
 /* HcControl: HC control (7.1.2) */
 
 #define OHCI_CTRL_CBSR              (3 << 0)  /* Bit 0:  Control/bulk service ratio */
-#define OHCI_CTRL_PLE               (1 << 2)  /* Bit 1:  Periodic list enable */
-#define OHCI_CTRL_IE                (1 << 3)  /* Bit 2:  Isochronous enable */
-#define OHCI_CTRL_CLE               (1 << 4)  /* Bit 3:  Control list enable */
-#define OHCI_CTRL_BLE               (1 << 5)  /* Bit 4:  Bulk list enable */
+#define OHCI_CTRL_PLE               (1 << 2)  /* Bit 2:  Periodic list enable */
+#define OHCI_CTRL_IE                (1 << 3)  /* Bit 3:  Isochronous enable */
+#define OHCI_CTRL_CLE               (1 << 4)  /* Bit 4:  Control list enable */
+#define OHCI_CTRL_BLE               (1 << 5)  /* Bit 5:  Bulk list enable */
 #define OHCI_CTRL_HCFS_SHIFT        (6)       /* Bits 6-7: Host controller functional state */
 #define OHCI_CTRL_HCFS_MASK         (3 << OHCI_CTRL_HCFS_SHIFT)
 #  define OHCI_CTRL_HCFS_RESET      (0 << OHCI_CTRL_HCFS_SHIFT)
@@ -261,9 +261,9 @@
 #  define ED_CONTROL_D_IN          (2 << ED_CONTROL_D_SHIFT) /* IN */
 #  define ED_CONTROL_D_TD2         (3 << ED_CONTROL_D_SHIFT) /* Get direction from TD */
 
-#define ED_CONTROL_S               (1 << 13)  /* Bit 13: Speed (low) */
-#define ED_CONTROL_K               (1 << 14)  /* Bit 14: Skip */
-#define ED_CONTROL_F               (1 << 15)  /* Bit 15: Format (isochronous) */
+#define ED_CONTROL_SPPED_LOW       (1 << 13)  /* Bit 13: Speed (low) */
+#define ED_CONTROL_SKIP            (1 << 14)  /* Bit 14: Skip */
+#define ED_CONTROL_FORMAT_ISO      (1 << 15)  /* Bit 15: Format (isochronous) */
 #define ED_CONTROL_MPS_SHIFT       (16)       /* Bits 16-26: Maximum packet size */
 #define ED_CONTROL_MPS_MASK        (0x7ff << ED_CONTROL_MPS_SHIFT)
 
@@ -406,7 +406,7 @@ struct ohci_hcor
 
 /* Endpoint Descriptor Offsets (4.2.1) */
 
-struct ohci_ed_s
+struct ohci_ed
 {
   volatile  uint32_t ctrl;         /* ED status/control bits */
   volatile  uint32_t tailp;        /* TD Queue Tail Pointer (TailP) */
@@ -416,7 +416,7 @@ struct ohci_ed_s
 
 /* General Transfer Descriptor (4.3.1) */
 
-struct ohci_gtd_s
+struct ohci_gtd
 {
   volatile uint32_t ctrl;          /* TD status/control bits */
   volatile uint32_t cbp;           /* Current Buffer Pointer (CBP) */
@@ -426,7 +426,7 @@ struct ohci_gtd_s
 
 /* Isochronous Transfer Descriptor Offsets (4.3.2) */
 
-struct ohci_itd_s
+struct ohci_itd
 {
   volatile uint32_t ctrl;          /* TD status/control bits */
   volatile uint32_t bp0;           /* Buffer page 0 (BP0 */
@@ -437,7 +437,7 @@ struct ohci_itd_s
 
 /* Host Controller Communications Area Format (4.4.1) */
 
-struct ohci_hcca_s
+struct ohci_hcca
 {
   /* HccaInterruptTable: 32x32-bit pointers to interrupt EDs */
 

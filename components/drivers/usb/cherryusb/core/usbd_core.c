@@ -64,6 +64,7 @@ USB_NOCACHE_RAM_SECTION struct usbd_core_priv {
     bool test_req;
 #endif
     struct usbd_interface *intf[16];
+    uint8_t intf_altsetting[16];
     uint8_t intf_offset;
 
     struct usbd_tx_rx_msg tx_msg[CONFIG_USBDEV_EP_NUM];
@@ -98,6 +99,7 @@ static bool is_device_configured(uint8_t busid)
  * This function sets endpoint configuration according to one specified in USB
  * endpoint descriptor and then enables it for data transfers.
  *
+ * @param [in]  busid busid
  * @param [in]  ep Endpoint descriptor byte array
  *
  * @return true if successfully configured and enabled
@@ -125,6 +127,7 @@ static bool usbd_set_endpoint(uint8_t busid, const struct usb_endpoint_descripto
  * This function cancels transfers that are associated with endpoint and
  * disabled endpoint itself.
  *
+ * @param [in]  busid busid
  * @param [in]  ep Endpoint descriptor byte array
  *
  * @return true if successfully deconfigured and disabled
@@ -144,6 +147,7 @@ static bool usbd_reset_endpoint(uint8_t busid, const struct usb_endpoint_descrip
  * This function parses the list of installed USB descriptors and attempts
  * to find the specified USB descriptor.
  *
+ * @param [in]  busid busid
  * @param [in]  type_index Type and index of the descriptor
  * @param [out] data       Descriptor data
  * @param [out] len        Descriptor length
@@ -370,6 +374,7 @@ static bool usbd_get_descriptor(uint8_t busid, uint16_t type_index, uint8_t **da
  * index and alternate setting by parsing the installed USB descriptor list.
  * A configuration index of 0 unconfigures the device.
  *
+ * @param [in] busid busid
  * @param [in] config_index Configuration index
  * @param [in] alt_setting  Alternate setting number
  *
@@ -439,6 +444,7 @@ static bool usbd_set_configuration(uint8_t busid, uint8_t config_index, uint8_t 
 /**
  * @brief set USB interface
  *
+ * @param [in] busid busid
  * @param [in] iface Interface index
  * @param [in] alt_setting  Alternate setting number
  *
@@ -494,7 +500,6 @@ static bool usbd_set_interface(uint8_t busid, uint8_t iface, uint8_t alt_setting
                         goto find_end;
                     } else if (cur_alt_setting == alt_setting) {
                         ret = usbd_set_endpoint(busid, ep_desc);
-                        goto find_end;
                     } else {
                     }
                 }
@@ -522,6 +527,7 @@ find_end:
 /**
  * @brief handle a standard device request
  *
+ * @param [in]     busid    busid
  * @param [in]     setup    The setup packet
  * @param [in,out] data     Data buffer
  * @param [in,out] len      Pointer to data length
@@ -617,6 +623,7 @@ static bool usbd_std_device_req_handler(uint8_t busid, struct usb_setup_packet *
 /**
  * @brief handle a standard interface request
  *
+ * @param [in]     busid    busid
  * @param [in]     setup    The setup packet
  * @param [in,out] data     Data buffer
  * @param [in,out] len      Pointer to data length
@@ -703,11 +710,12 @@ static bool usbd_std_interface_req_handler(uint8_t busid, struct usb_setup_packe
             ret = false;
             break;
         case USB_REQUEST_GET_INTERFACE:
-            (*data)[0] = 0;
+            (*data)[0] = g_usbd_core[busid].intf_altsetting[intf_num];
             *len = 1;
             break;
 
         case USB_REQUEST_SET_INTERFACE:
+            g_usbd_core[busid].intf_altsetting[intf_num] = LO_BYTE(setup->wValue);
             usbd_set_interface(busid, setup->wIndex, setup->wValue);
             *len = 0;
             break;
@@ -723,6 +731,7 @@ static bool usbd_std_interface_req_handler(uint8_t busid, struct usb_setup_packe
 /**
  * @brief handle a standard endpoint request
  *
+ * @param [in]     busid    busid
  * @param [in]     setup    The setup packet
  * @param [in,out] data     Data buffer
  * @param [in,out] len      Pointer to data length
@@ -787,6 +796,7 @@ static bool usbd_std_endpoint_req_handler(uint8_t busid, struct usb_setup_packet
 /**
  * @brief handle standard requests (list in chapter 9)
  *
+ * @param [in]     busid    busid
  * @param [in]     setup    The setup packet
  * @param [in,out] data     Data buffer
  * @param [in,out] len      Pointer to data length
@@ -830,8 +840,7 @@ static int usbd_standard_request_handler(uint8_t busid, struct usb_setup_packet 
 /**
  * @brief handler for class requests
  *
- * If a custom request handler was installed, this handler is called first.
- *
+ * @param [in]     busid    busid
  * @param [in]     setup    The setup packet
  * @param [in,out] data     Data buffer
  * @param [in,out] len      Pointer to data length
@@ -863,8 +872,7 @@ static int usbd_class_request_handler(uint8_t busid, struct usb_setup_packet *se
 /**
  * @brief handler for vendor requests
  *
- * If a custom request handler was installed, this handler is called first.
- *
+ * @param [in]     busid    busid
  * @param [in]     setup    The setup packet
  * @param [in,out] data     Data buffer
  * @param [in,out] len      Pointer to data length
@@ -1006,6 +1014,7 @@ static int usbd_vendor_request_handler(uint8_t busid, struct usb_setup_packet *s
 /**
  * @brief handle setup request( standard/class/vendor/other)
  *
+ * @param [in]     busid busid
  * @param [in]     setup The setup packet
  * @param [in,out] data  Data buffer
  * @param [in,out] len   Pointer to data length
@@ -1167,7 +1176,7 @@ void usbd_event_ep0_setup_complete_handler(uint8_t busid, uint8_t *psetup)
 #ifdef CONFIG_USBDEV_EP0_INDATA_NO_COPY
         g_usbd_core[busid].ep0_data_buf = buf;
 #else
-        memcpy(g_usbd_core[busid].ep0_data_buf, buf, g_usbd_core[busid].ep0_data_buf_residue);
+        usb_memcpy(g_usbd_core[busid].ep0_data_buf, buf, g_usbd_core[busid].ep0_data_buf_residue);
 #endif
     } else {
         /* use memcpy(*data, xxx, len); has copied into ep0 buffer, we do nothing */

@@ -648,6 +648,18 @@ struct audio_cs_if_ac_feature_unit_descriptor {
 
 #define AUDIO_SIZEOF_AC_FEATURE_UNIT_DESC(ch, n) (7 + (ch + 1) * n)
 
+struct audio_cs_if_ac_selector_unit_descriptor {
+    uint8_t bLength;
+    uint8_t bDescriptorType;
+    uint8_t bDescriptorSubtype;
+    uint8_t bUnitID;
+    uint8_t bNrInPins;
+    uint8_t baSourceID[1];
+    uint8_t iSelector;
+} __PACKED;
+
+#define AUDIO_SIZEOF_AC_SELECTOR_UNIT_DESC(n) (6 + n)
+
 struct audio_cs_if_as_general_descriptor {
     uint8_t bLength;
     uint8_t bDescriptorType;
