@@ -991,4 +991,48 @@ __exit:
 
     return result;
 }
+
+int at_client_deinit(const char *dev_name)
+{
+    at_client_t client;
+    rt_err_t result;
+
+    RT_ASSERT(dev_name);
+
+    client = at_client_get(dev_name);
+    if (client == RT_NULL)
+    {
+        LOG_E("AT client(V%s) device(%s) does not exist." AT_SW_VERSION, dev_name);
+        return -RT_ERROR;
+    }
+
+    result = rt_device_close(client->device);
+    if (result != RT_EOK)
+    {
+        LOG_E("Close AT client(V%s) device(%s) failed." AT_SW_VERSION, dev_name);
+        return -RT_EIO;
+    }
+    result = rt_thread_delete(client->parser);
+    if (result != RT_EOK)
+    {
+        LOG_E("Delete AT client(V%s) parser-thread failed." AT_SW_VERSION);
+        return -RT_ERROR;
+    }
+
+    if (client->urc_table != RT_NULL)
+    {
+        rt_free(client->urc_table);
+    }
+
+    rt_mutex_delete(client->lock);
+    rt_sem_delete(client->rx_notice);
+    rt_sem_delete(client->resp_notice);
+    rt_free(client->recv_line_buf);
+    rt_free(client->send_buf);
+
+    rt_memset(client, 0x00, sizeof(struct at_client));
+
+    return RT_EOK;
+}
+
 #endif /* AT_USING_CLIENT */

@@ -199,6 +199,7 @@ int at_req_parse_args(const char *req_args, const char *req_expr, ...);
 
 /* AT client initialize and start*/
 int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bufsz);
+int at_client_deinit(const char *dev_name);
 
 /* ========================== multiple AT client function ============================ */
 
