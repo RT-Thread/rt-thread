@@ -7,7 +7,7 @@
 #include "usbd_video.h"
 #include "cherryusb_mjpeg.h"
 
-#define VIDEO_STREAM_SPLIT_ENABLE 1
+#define MAX_PACKETS_IN_ONE_TRANSFER 1
 
 #define VIDEO_IN_EP  0x81
 #define VIDEO_INT_EP 0x83
@@ -182,14 +182,10 @@ void usbd_video_close(uint8_t busid, uint8_t intf)
 
 void usbd_video_iso_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-#if VIDEO_STREAM_SPLIT_ENABLE
     if (usbd_video_stream_split_transfer(busid, ep)) {
         /* one frame has done */
         iso_tx_busy = false;
     }
-#else
-    iso_tx_busy = false;
-#endif
 }
 
 static struct usbd_endpoint video_in_ep = {
@@ -210,42 +206,21 @@ void video_init(uint8_t busid, uintptr_t reg_base)
     usbd_initialize(busid, reg_base, usbd_event_handler);
 }
 
-#if VIDEO_STREAM_SPLIT_ENABLE
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t packet_buffer[MAX_PAYLOAD_SIZE];
-#else
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t packet_buffer[40 * 1024];
-#endif
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t packet_buffer[2][MAX_PACKETS_IN_ONE_TRANSFER * MAX_PAYLOAD_SIZE];
 
 void video_test(uint8_t busid)
 {
-    uint32_t out_len;
-    uint32_t packets;
-
-    (void)packets;
-    (void)out_len;
     memset(packet_buffer, 0, sizeof(packet_buffer));
 
     while (1) {
         if (tx_flag) {
-#if VIDEO_STREAM_SPLIT_ENABLE
             iso_tx_busy = true;
-            usbd_video_stream_start_write(busid, VIDEO_IN_EP, packet_buffer, (uint8_t *)cherryusb_mjpeg, sizeof(cherryusb_mjpeg));
+            usbd_video_stream_start_write(busid, VIDEO_IN_EP, &packet_buffer[0][0], &packet_buffer[1][0], MAX_PACKETS_IN_ONE_TRANSFER * MAX_PAYLOAD_SIZE, (uint8_t *)cherryusb_mjpeg, sizeof(cherryusb_mjpeg));
             while (iso_tx_busy) {
                 if (tx_flag == 0) {
                     break;
                 }
             }
-#else
-            packets = usbd_video_payload_fill(busid, (uint8_t *)cherryusb_mjpeg, sizeof(cherryusb_mjpeg), packet_buffer, &out_len);
-
-            iso_tx_busy = true;
-            usbd_ep_start_write(busid, VIDEO_IN_EP, packet_buffer, out_len);
-            while (iso_tx_busy) {
-                if (tx_flag == 0) {
-                    break;
-                }
-            }
-#endif
         }
     }
 }

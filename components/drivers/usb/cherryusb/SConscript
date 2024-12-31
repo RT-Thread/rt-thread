@@ -45,6 +45,9 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_HC']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
         src += Glob('port/dwc2/usb_glue_hc.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_KENDRYTE']):
+        src += Glob('port/dwc2/usb_dc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_kendryte.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_CUSTOM']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_ES']):
@@ -177,6 +180,9 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
     if GetDepend(['RT_CHERRYUSB_HOST_DWC2_ESP']):
         src += Glob('port/dwc2/usb_hc_dwc2.c')
         src += Glob('port/dwc2/usb_glue_esp.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_DWC2_KENDRYTE']):
+        src += Glob('port/dwc2/usb_hc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_kendryte.c')
     if GetDepend(['RT_CHERRYUSB_HOST_DWC2_CUSTOM']):
         src += Glob('port/dwc2/usb_hc_dwc2.c')
     if GetDepend(['RT_CHERRYUSB_HOST_MUSB_STANDARD']):

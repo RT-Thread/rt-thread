@@ -7,6 +7,8 @@
 #include "usbd_video.h"
 #include "cherryusb_h264.h"
 
+#define MAX_PACKETS_IN_ONE_TRANSFER 1
+
 #define VIDEO_IN_EP  0x81
 #define VIDEO_INT_EP 0x83
 
@@ -180,8 +182,10 @@ void usbd_video_close(uint8_t busid, uint8_t intf)
 
 void usbd_video_iso_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    //USB_LOG_RAW("actual in len:%d\r\n", nbytes);
-    iso_tx_busy = false;
+    if (usbd_video_stream_split_transfer(busid, ep)) {
+        /* one frame has done */
+        iso_tx_busy = false;
+    }
 }
 
 static struct usbd_endpoint video_in_ep = {
@@ -202,7 +206,7 @@ void video_init(uint8_t busid, uintptr_t reg_base)
     usbd_initialize(busid, reg_base, usbd_event_handler);
 }
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t packet_buffer[40 * 1024];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t packet_buffer[2][40 * 1024];
 
 void video_test(uint8_t busid)
 {
@@ -210,40 +214,16 @@ void video_test(uint8_t busid)
     uint32_t packets;
 
     (void)packets;
-    memset(packet_buffer, 0, 40 * 1024);
+    memset(packet_buffer, 0, sizeof(packet_buffer));
     while (1) {
         if (tx_flag) {
-            packets = usbd_video_payload_fill(busid, (uint8_t *)cherryusb_h264, sizeof(cherryusb_h264), packet_buffer, &out_len);
-#if 1
             iso_tx_busy = true;
-            usbd_ep_start_write(busid, VIDEO_IN_EP, packet_buffer, out_len);
+            usbd_video_stream_start_write(busid, VIDEO_IN_EP, &packet_buffer[0][0], &packet_buffer[1][0], MAX_PACKETS_IN_ONE_TRANSFER * MAX_PAYLOAD_SIZE, (uint8_t *)cherryusb_h264, sizeof(cherryusb_h264));
             while (iso_tx_busy) {
                 if (tx_flag == 0) {
                     break;
                 }
             }
-#else
-            /* dwc2 must use this method */
-            for (uint32_t i = 0; i < packets; i++) {
-                if (i == (packets - 1)) {
-                    iso_tx_busy = true;
-                    usbd_ep_start_write(busid, VIDEO_IN_EP, &packet_buffer[i * MAX_PAYLOAD_SIZE], out_len - (packets - 1) * MAX_PAYLOAD_SIZE);
-                    while (iso_tx_busy) {
-                        if (tx_flag == 0) {
-                            break;
-                        }
-                    }
-                } else {
-                    iso_tx_busy = true;
-                    usbd_ep_start_write(busid, VIDEO_IN_EP, &packet_buffer[i * MAX_PAYLOAD_SIZE], MAX_PAYLOAD_SIZE);
-                    while (iso_tx_busy) {
-                        if (tx_flag == 0) {
-                            break;
-                        }
-                    }
-                }
-            }
-#endif
         }
     }
 }

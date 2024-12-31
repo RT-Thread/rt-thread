@@ -20,6 +20,11 @@ If you are using more than one port, all ip parameters must be the same(like fif
 
 ## GD32
 
+CONFIG_USBDEV_EP_NUM 必须为4 或者 6，并删除 usb_dc_dwc2.c 中 while(1){}
+
+当 CONFIG_USBDEV_EP_NUM 为4 时，fifo_num 不得大于 320 字
+当 CONFIG_USBDEV_EP_NUM 为6 时，fifo_num 不得大于 1280 字
+
 - GD32F30X_CL
 - GD32F405、GD32F407
 - GD32F450

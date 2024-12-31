@@ -323,9 +323,9 @@ const struct usbh_class_driver cdc_ecm_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_ecm_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_CDC,
-    .subclass = CDC_ETHERNET_NETWORKING_CONTROL_MODEL,
-    .protocol = CDC_COMMON_PROTOCOL_NONE,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC,
+    .bInterfaceSubClass = CDC_ETHERNET_NETWORKING_CONTROL_MODEL,
+    .bInterfaceProtocol = CDC_COMMON_PROTOCOL_NONE,
     .id_table = NULL,
     .class_driver = &cdc_ecm_class_driver
 };

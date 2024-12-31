@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2021-2024 HPMicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
+/*
+ * Copyright (c) 2024, sakumisu
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include "usbd_core.h"
 #include "usb_chipidea_reg.h"
 

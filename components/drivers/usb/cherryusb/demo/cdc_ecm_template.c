@@ -6,6 +6,10 @@
 #include "usbd_core.h"
 #include "usbd_cdc_ecm.h"
 
+#ifndef CONFIG_USBDEV_CDC_ECM_USING_LWIP
+#error "Please enable CONFIG_USBDEV_CDC_ECM_USING_LWIP for this demo"
+#endif
+
 /*!< endpoint address */
 #define CDC_IN_EP          0x81
 #define CDC_OUT_EP         0x02
@@ -222,12 +226,12 @@ void cdc_ecm_lwip_init(void)
     while (!netif_is_up(netif)) {
     }
 
-    // while (dhserv_init(&dhcp_config)) {}
+    while (dhserv_init(&dhcp_config)) {}
 
-    // while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
+    while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
 }
 
-void usbd_cdc_ecm_data_recv_done(uint8_t *buf, uint32_t len)
+void usbd_cdc_ecm_data_recv_done(uint32_t len)
 {
 }
 

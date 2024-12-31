@@ -18,7 +18,8 @@ struct usbd_interface *usbd_rndis_init_intf(struct usbd_interface *intf,
                                              const uint8_t in_ep,
                                              const uint8_t int_ep, uint8_t mac[6]);
 
-void usbd_rndis_data_recv_done(void);
+void usbd_rndis_data_recv_done(uint32_t len);
+void usbd_rndis_data_send_done(uint32_t len);
 
 #ifdef CONFIG_USBDEV_RNDIS_USING_LWIP
 struct pbuf *usbd_rndis_eth_rx(void);
