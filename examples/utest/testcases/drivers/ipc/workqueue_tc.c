@@ -396,7 +396,6 @@ static void repeat_work_test03(void)
     struct rt_work work;
     volatile int work_flag = 0;
     rt_err_t err;
-    rt_tick_t start_tick, timeout_tick;
 
     /* 1 priority higher than current test thread */
     curr_priority = get_test_thread_priority(-1);
