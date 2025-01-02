@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,7 @@
  * 2018-08-17     chenyong     multiple client support
  * 2021-03-17     Meco Man     fix a buf of leaking memory
  * 2021-07-14     Sszl         fix a buf of leaking memory
+ * 2025-01-02     dongly       support SERIAL_V2
  */
 
 #include <at.h>
