@@ -56,7 +56,7 @@ static int cdc_sample(void)
     if (cdc_dev == RT_NULL)
     {
         rt_kprintf("cdc sample run failed! can't find %s device!\n", USBD_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 以读写方式打开设备 */
@@ -74,7 +74,7 @@ static int cdc_sample(void)
         if (rt_device_write(cdc_dev, 0, str_write, sizeof(str_write)) != sizeof(str_write))
         {
             rt_kprintf("send test message failed\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         /* 延时1000ms */
         rt_thread_mdelay(1000);
@@ -159,7 +159,7 @@ static int rt_hw_spi_flash_with_sfud_init(void)
         rt_hw_spi_flash_reset(SPI_FLASH_DEVICE_NAME);
         if (RT_NULL == rt_sfud_flash_probe(SPI_FLASH_CHIP, SPI_FLASH_DEVICE_NAME))
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -211,7 +211,7 @@ static int hid_sample(void)
     if (hid_dev == RT_NULL)
     {
         rt_kprintf("hid sample run failed! can't find %s device!\n", USBD_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 以收中断方式打开设备 */
@@ -296,7 +296,7 @@ static int winusb_sample(void)
     if (winusb_dev == RT_NULL)
     {
         rt_kprintf("winusb sample run failed! can't find %s device!\n", WINUSB_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 以读写方式打开设备 */

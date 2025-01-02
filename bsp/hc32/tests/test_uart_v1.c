@@ -187,7 +187,7 @@ int uart_sample_v1(int argc, char *argv[])
     else
     {
         rt_kprintf("argc error!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 查找系统中的串口设备 */
@@ -195,7 +195,7 @@ int uart_sample_v1(int argc, char *argv[])
     if (!serial)
     {
         rt_kprintf("find %s failed!\n", uart_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* modify configure */
@@ -256,7 +256,7 @@ int uart_sample_v1(int argc, char *argv[])
     else
     {
         rt_kprintf("communication mode error, please input cmd: uart_sample_v1 %s int or uart_sample_v1 uartx dma!\n", uart_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (thread != RT_NULL)
@@ -265,7 +265,7 @@ int uart_sample_v1(int argc, char *argv[])
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;

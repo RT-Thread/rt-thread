@@ -329,7 +329,7 @@ int can_sample(int argc, char **argv)
         else
         {
             rt_kprintf("The chip hasn't the can unit!\r\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
     else
@@ -347,7 +347,7 @@ int can_sample(int argc, char **argv)
     if (!can_dev)
     {
         rt_kprintf("find %s failed!\n", can_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (can_mutex == RT_NULL)

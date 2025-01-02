@@ -71,7 +71,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if ((argc != 4) || (rt_strcmp("oneshot", argv[2]) && rt_strcmp("period", argv[2])))
     {
         _hwtimer_cmd_print_usage();
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 查找定时器设备 */
@@ -79,7 +79,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", argv[1]);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     else
     {
@@ -116,7 +116,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
         rt_kprintf("set timeout value failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     tick = rt_tick_get();
     rt_kprintf("set timeout (%d) ms successful\n", atoi(argv[3]));

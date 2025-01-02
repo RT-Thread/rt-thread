@@ -66,14 +66,14 @@ static int wdt_sample(int argc, char *argv[])
         if (!wdg_dev)
         {
             rt_kprintf("find %s failed!\n", WDT_DEVICE_NAME);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         ret = rt_device_init(wdg_dev);
         if (ret != RT_EOK)
         {
             rt_kprintf("init %s failed!\n", WDT_DEVICE_NAME);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         /* Set timeout (Unit:S) */
@@ -81,7 +81,7 @@ static int wdt_sample(int argc, char *argv[])
         if (ret != RT_EOK)
         {
             rt_kprintf("set %s timeout failed!\n", WDT_DEVICE_NAME);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         /* Get the time when it real effective */

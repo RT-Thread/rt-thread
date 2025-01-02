@@ -50,7 +50,7 @@ static int dac_vol_sample(int argc, char *argv[])
         else
         {
             rt_kprintf("The chip hasn't the dac unit!\r\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -59,13 +59,13 @@ static int dac_vol_sample(int argc, char *argv[])
     if (dac_dev == RT_NULL)
     {
         rt_kprintf("dac sample run failed! can't find %s device!\n", dac_device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (RT_EOK != rt_device_control(&dac_dev->parent, RT_DAC_CMD_GET_RESOLUTION, &convertBits))
     {
         rt_kprintf("dac sample can't read resolution!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     convertBits = (1 << (rt_uint8_t)convertBits);
     for (channel = 1; channel < 3; channel++)
@@ -79,7 +79,7 @@ static int dac_vol_sample(int argc, char *argv[])
             if (value > DAC_MAX_OUTPUT_VALUE)
             {
                 rt_kprintf("invalid dac value!!! \n");
-                return RT_ERROR;
+                return -RT_ERROR;
             }
         }
         rt_dac_write(dac_dev, channel, value);

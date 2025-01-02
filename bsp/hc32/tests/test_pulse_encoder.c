@@ -159,7 +159,7 @@ static int encoder_sample(int argc, char **argv)
     if ((argc != 4))
     {
         _pulse_cmd_print_usage();
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_pin_mode(TEST_IO_A_PIN, PIN_MODE_OUTPUT);
@@ -170,7 +170,7 @@ static int encoder_sample(int argc, char **argv)
     {
         rt_kprintf("encoder_sample run failed! can't find %s device!\n", argv[1]);
         _pulse_cmd_print_usage();
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_device_open(pulse_encoder_dev, RT_DEVICE_OFLAG_RDONLY);
     rt_device_control(pulse_encoder_dev, PULSE_ENCODER_CMD_CLEAR_COUNT, RT_NULL);
@@ -188,7 +188,7 @@ static int encoder_sample(int argc, char **argv)
         rt_kprintf("**************Self-test failed**************\n");
         rt_device_close(pulse_encoder_dev);
         _pulse_cmd_print_usage();
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     else
     {

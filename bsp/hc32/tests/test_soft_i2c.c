@@ -140,7 +140,7 @@ static int sw_i2c_sample(int argc, char *argv[])
         rt_kprintf("sw_i2c_sample %d: oled ssd1306 init\n", SSD1306_CMD_INIT);
         rt_kprintf("sw_i2c_sample %d: write ssd1306 \n", SSD1306_CMD_DISPLAY);
         rt_kprintf("sw_i2c_sample %d: turn off ssd1306\n", SSD1306_CMD_DEINIT);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     switch (*argv[1] - '0')
@@ -150,7 +150,7 @@ static int sw_i2c_sample(int argc, char *argv[])
         if (NULL == rt_i2c_dev)
         {
             rt_kprintf("failed to find i2c device %s\n", SW_I2C_NAME);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         break;
     /* communicate with eeprom to soft i2c read function */

@@ -33,14 +33,14 @@ static rt_int32_t pwm_sample(int argc, char *argv[])
 
     if (argc != 2)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     pwm_dev = (struct rt_device_pwm *)rt_device_find(argv[1]);
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("pwm sample run failed! can't find %s device!\n", argv[1]);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);

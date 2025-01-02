@@ -111,7 +111,7 @@ static int adc_vol_sample(int argc, char **argv)
         else
         {
             rt_kprintf("The chip hasn't the adc unit!\r\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -120,7 +120,7 @@ static int adc_vol_sample(int argc, char **argv)
     if (adc_dev == RT_NULL)
     {
         rt_kprintf("adc sample run failed! can't find %s device!\r\n", adc_device);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
 #if defined(BSP_ADC1_USING_DMA) || defined(BSP_ADC2_USING_DMA) || defined(BSP_ADC3_USING_DMA)

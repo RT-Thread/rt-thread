@@ -98,7 +98,7 @@ static int rtc_sample(int argc, char *argv[])
         rt_kprintf("\'8\': dump all alarm \n");
         rt_kprintf("\'9\': delete all alarm \n");
 #endif /* RT_USING_ALARM */
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     idx = *(argv[1]) - '0';
@@ -110,12 +110,12 @@ static int rtc_sample(int argc, char *argv[])
         if (!rtc_dev)
         {
             rt_kprintf("find %s failed\n", SAMPLE_RTC_NAME);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         if (RT_EOK != rt_device_open(rtc_dev, RT_NULL))
         {
             rt_kprintf("failed to open %s\n", SAMPLE_RTC_NAME);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         rt_kprintf("rtc opened\n");
         break;
@@ -124,7 +124,7 @@ static int rtc_sample(int argc, char *argv[])
         if (argc < 3)
         {
             rt_kprintf("unsurpported command\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         temp1 = ((argv[2][0] - '0') * 10) + \
                 (argv[2][1] - '0');
@@ -135,7 +135,7 @@ static int rtc_sample(int argc, char *argv[])
         if (RT_EOK != set_time(temp1, temp2, temp3))
         {
             rt_kprintf("set RTC time failed\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         rt_kprintf("\nset RTC time as %2d:%2d:%2d\n", temp1, temp2, temp3);
         break;
@@ -152,7 +152,7 @@ static int rtc_sample(int argc, char *argv[])
         if (RT_EOK != set_date(temp1, temp2, temp3))
         {
             rt_kprintf("failed to set date for %s\n", SAMPLE_RTC_NAME);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         rt_kprintf("\nset RTC date as %4d-%2d-%2d\n", temp1, temp2, temp3);
         break;
@@ -190,7 +190,7 @@ static int rtc_sample(int argc, char *argv[])
         if (RT_NULL == ptr_alarm)
         {
             rt_kprintf("failed to create rtc alarm\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         callback_counter = 2;
         ++alarm_idx;
@@ -200,7 +200,7 @@ static int rtc_sample(int argc, char *argv[])
         if (RT_EOK != rt_alarm_start(ptr_alarm))
         {
             rt_kprintf("failed to start rtc alarm\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         rt_kprintf("rtc alarm started\n");
         break;
@@ -208,7 +208,7 @@ static int rtc_sample(int argc, char *argv[])
         if (RT_EOK != rt_alarm_stop(ptr_alarm))
         {
             rt_kprintf("failed to stop rtc alarm\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         rt_kprintf("rtc alarm stopped\n");
         break;
@@ -216,7 +216,7 @@ static int rtc_sample(int argc, char *argv[])
         if (argc < 3)
         {
             rt_kprintf("unkown para to control rtc alarm\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         switch (argv[2][0])
         {
@@ -253,7 +253,7 @@ static int rtc_sample(int argc, char *argv[])
         if (RT_EOK != rt_device_close(rtc_dev))
         {
             rt_kprintf("failed to close RTC\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         rt_kprintf("unkown rtc command, rtc closed \n");
         break;
