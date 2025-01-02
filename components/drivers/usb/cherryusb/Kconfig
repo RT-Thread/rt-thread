@@ -38,6 +38,8 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_gd"
             config RT_CHERRYUSB_DEVICE_DWC2_HC
                 bool "dwc2_hc"
+            config RT_CHERRYUSB_DEVICE_DWC2_KENDRYTE
+                bool "dwc2_kendryte"
             config RT_CHERRYUSB_DEVICE_DWC2_CUSTOM
                 bool "dwc2_custom"
             config RT_CHERRYUSB_DEVICE_MUSB_ES
@@ -182,6 +184,8 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_st"
             config RT_CHERRYUSB_HOST_DWC2_ESP
                 bool "dwc2_esp"
+            config RT_CHERRYUSB_HOST_DWC2_KENDRYTE
+                bool "dwc2_kendryte"
             config RT_CHERRYUSB_HOST_DWC2_CUSTOM
                 bool "dwc2_custom"
             config RT_CHERRYUSB_HOST_MUSB_ES

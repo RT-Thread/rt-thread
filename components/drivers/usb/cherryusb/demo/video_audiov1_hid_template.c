@@ -9,6 +9,8 @@
 #include "usbd_hid.h"
 #include "cherryusb_mjpeg.h"
 
+#define MAX_PACKETS_IN_ONE_TRANSFER 1
+
 #define VIDEO_IN_EP  0x81
 #define VIDEO_INT_EP 0x86
 
@@ -267,7 +269,7 @@ static const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t audio_read_buffer[AUDIO_OUT_PACKET];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t audio_write_buffer[AUDIO_IN_PACKET];
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t video_packet_buffer[40 * 1024];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t video_packet_buffer[2][MAX_PACKETS_IN_ONE_TRANSFER * MAX_PAYLOAD_SIZE];
 
 volatile bool video_tx_flag = 0;
 volatile bool audio_tx_flag = 0;
@@ -331,8 +333,10 @@ void usbd_video_close(uint8_t busid, uint8_t intf)
 
 void usbd_video_iso_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    //USB_LOG_RAW("actual in len:%d\r\n", nbytes);
-    video_iso_tx_busy = false;
+    if (usbd_video_stream_split_transfer(busid, ep)) {
+        /* one frame has done */
+        video_iso_tx_busy = false;
+    }
 }
 
 static struct usbd_endpoint video_in_ep = {
@@ -458,56 +462,30 @@ void hid_keyboard_test(uint8_t busid)
 {
     const uint8_t sendbuffer[8] = { 0x00, 0x00, HID_KBD_USAGE_A, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-    memcpy(hid_write_buffer, sendbuffer, 8);
-    int ret = usbd_ep_start_write(busid, HID_INT_EP, hid_write_buffer, 8);
-    if (ret < 0) {
+    if(usb_device_is_configured(busid) == false) {
         return;
     }
+
+    memcpy(hid_write_buffer, sendbuffer, 8);
     hid_state = HID_STATE_BUSY;
+    usbd_ep_start_write(busid, HID_INT_EP, hid_write_buffer, 8);
     while (hid_state == HID_STATE_BUSY) {
     }
 }
 
 void video_test(uint8_t busid)
 {
-    uint32_t out_len;
-    uint32_t packets;
+    memset(video_packet_buffer, 0, sizeof(video_packet_buffer));
 
-    (void)packets;
-    memset(video_packet_buffer, 0, 40 * 1024);
     while (1) {
         if (video_tx_flag) {
-            packets = usbd_video_payload_fill(busid, (uint8_t *)cherryusb_mjpeg, sizeof(cherryusb_mjpeg), video_packet_buffer, &out_len);
-#if 1
             video_iso_tx_busy = true;
-            usbd_ep_start_write(busid, VIDEO_IN_EP, video_packet_buffer, out_len);
+            usbd_video_stream_start_write(busid, VIDEO_IN_EP, &video_packet_buffer[0][0], &video_packet_buffer[1][0], MAX_PACKETS_IN_ONE_TRANSFER * MAX_PAYLOAD_SIZE, (uint8_t *)cherryusb_mjpeg, sizeof(cherryusb_mjpeg));
             while (video_iso_tx_busy) {
                 if (video_tx_flag == 0) {
                     break;
                 }
             }
-#else
-            /* dwc2 must use this method */
-            for (uint32_t i = 0; i < packets; i++) {
-                if (i == (packets - 1)) {
-                    video_iso_tx_busy = true;
-                    usbd_ep_start_write(busid, VIDEO_IN_EP, &video_packet_buffer[i * MAX_PAYLOAD_SIZE], out_len - (packets - 1) * MAX_PAYLOAD_SIZE);
-                    while (video_iso_tx_busy) {
-                        if (video_tx_flag == 0) {
-                            break;
-                        }
-                    }
-                } else {
-                    video_iso_tx_busy = true;
-                    usbd_ep_start_write(busid, VIDEO_IN_EP, &video_packet_buffer[i * MAX_PAYLOAD_SIZE], MAX_PAYLOAD_SIZE);
-                    while (video_iso_tx_busy) {
-                        if (video_tx_flag == 0) {
-                            break;
-                        }
-                    }
-                }
-            }
-#endif
         }
     }
 }

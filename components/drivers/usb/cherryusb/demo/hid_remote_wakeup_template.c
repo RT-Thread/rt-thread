@@ -307,6 +307,10 @@ void hid_mouse_test(uint8_t busid)
     static uint32_t count = 1000;
     int ret;
 
+    if(usb_device_is_configured(busid) == false) {
+        return;
+    }
+
     // if (gpio_read_pin(GPIO_PIN) == 1) {
     //     ret = usbd_send_remote_wakeup(busid);
     //     if (ret < 0) {
@@ -317,11 +321,8 @@ void hid_mouse_test(uint8_t busid)
 
     while (count) {
         draw_circle((uint8_t *)&mouse_cfg);
-        int ret = usbd_ep_start_write(busid, HID_INT_EP, (uint8_t *)&mouse_cfg, 4);
-        if (ret < 0) {
-            return;
-        }
         hid_state = HID_STATE_BUSY;
+        usbd_ep_start_write(busid, HID_INT_EP, (uint8_t *)&mouse_cfg, 4);
         while (hid_state == HID_STATE_BUSY) {
         }
 

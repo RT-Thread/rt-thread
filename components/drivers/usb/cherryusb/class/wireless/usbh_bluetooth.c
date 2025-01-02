@@ -393,18 +393,18 @@ static const uint16_t bluetooth_id_table[][2] = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info bluetooth_h4_nrf_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS,
-    .class = 0xff,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = 0xff,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = bluetooth_id_table,
     .class_driver = &bluetooth_class_driver
 };
 #else
 CLASS_INFO_DEFINE const struct usbh_class_info bluetooth_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_WIRELESS,
-    .subclass = 0x01,
-    .protocol = 0x01,
+    .bInterfaceClass = USB_DEVICE_CLASS_WIRELESS,
+    .bInterfaceSubClass = 0x01,
+    .bInterfaceProtocol = 0x01,
     .id_table = NULL,
     .class_driver = &bluetooth_class_driver
 };

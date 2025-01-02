@@ -10,6 +10,8 @@
  */
 
 #include <fal.h>
+#include <string.h>
+#include <stdlib.h>
 #include <rtdevice.h>
 
 #define DBG_TAG "FAL"
@@ -50,7 +52,7 @@ static rt_err_t blk_dev_control(rt_device_t dev, rt_uint8_t cmd, void *args)
             return -RT_ERROR;
         }
 
-        memcpy(geometry, &part->geometry, sizeof(struct rt_device_blk_geometry));
+        rt_memcpy(geometry, &part->geometry, sizeof(struct rt_device_blk_geometry));
     }
     else if (cmd == RT_DEVICE_CTRL_BLK_ERASE)
     {
