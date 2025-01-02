@@ -9,6 +9,7 @@
  * 2022-05-31     CDT                  delete this file
  * 2022-06-10     xiaoxiaolisunny      re-add this file for F460
  * 2023-02-14     CDT                  add alarm(precision is 1 minute)
+ * 2024-06-07     CDT                  Add support for F448/F472
  */
 
 #include <board.h>
@@ -171,13 +172,39 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     return RT_EOK;
 }
 
+#if defined(HC32F4A0) || defined(HC32F460)
+    #if defined(BSP_RTC_USING_XTAL32)
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
+    #else
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
+    #endif
+#elif defined(HC32F448)
+    #if defined(BSP_RTC_USING_XTAL32)
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
+    #elif defined(BSP_RTC_USING_XTAL_DIV)
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL_DIV)
+    #else
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
+    #endif
+#elif defined(HC32F472)
+    #if defined(BSP_RTC_USING_XTAL32)
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
+    #elif defined(BSP_RTC_USING_XTAL_DIV)
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL_DIV)
+    #elif defined(BSP_RTC_USING_EXTCLK)
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_EXTCLK)
+    #else
+        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
+    #endif
+#endif
+
 static rt_err_t _rtc_init(void)
 {
     stc_rtc_init_t stcRtcInit;
 
 #if defined(HC32F4A0)
     if ((LL_OK != _bakup_reg_check()) || (LL_OK != _hc32_rtc_rw_check()))
-#elif  defined(HC32F460)
+#elif  defined(HC32F460) || defined(HC32F448) || defined(HC32F472)
     if (DISABLE == RTC_GetCounterState())
 #endif
     {
@@ -195,11 +222,7 @@ static rt_err_t _rtc_init(void)
             (void)RTC_StructInit(&stcRtcInit);
 
             /* Configuration RTC structure */
-#ifdef BSP_RTC_USING_XTAL32
-            stcRtcInit.u8ClockSrc = RTC_CLK_SRC_XTAL32;
-#else
-            stcRtcInit.u8ClockSrc = RTC_CLK_SRC_LRC;
-#endif
+            stcRtcInit.u8ClockSrc = RTC_CLK_SRC_SEL;
             stcRtcInit.u8HourFormat = RTC_HOUR_FMT_24H;
             (void)RTC_Init(&stcRtcInit);
 
@@ -258,6 +281,16 @@ static void _rtc_alarm_irq_handler(void)
     rt_alarm_update(&rtc_dev.parent, 1);
     rt_interrupt_leave();
 }
+
+#if defined(HC32F448) || defined(HC32F472)
+void RTC_Handler(void)
+{
+    if (RTC_GetStatus(RTC_FLAG_ALARM) != RESET)
+    {
+        _rtc_alarm_irq_handler();
+    }
+}
+#endif
 
 static void hc32_rtc_alarm_enable(void)
 {
@@ -353,7 +386,6 @@ int rt_hw_rtc_init(void)
     /* register interrupt */
     hc32_install_irq_handler(&hc32_alarm_irq.irq_config, hc32_alarm_irq.irq_callback, RT_FALSE);
 #endif
-
     rtc_dev.ops = &_ops;
     result = rt_hw_rtc_register(&rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)

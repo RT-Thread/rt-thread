@@ -155,9 +155,6 @@ typedef struct
 #ifdef USE_DEVICE_MODE
     USB_DEV_PARAM          dev;
 #endif
-#ifdef USE_HOST_MODE
-    USB_HOST_PARAM         host;
-#endif
 } usb_core_instance;
 
 typedef struct

@@ -11,7 +11,7 @@
 
 #include <rtdevice.h>
 #include "board_config.h"
-#include "tca9539.h"
+#include "tca9539_port.h"
 
 /**
  * The below functions will initialize HC32 board.
@@ -130,7 +130,7 @@ rt_err_t rt_hw_board_dac_init(CM_DAC_TypeDef *DACx)
     switch ((rt_uint32_t)DACx)
     {
 #if defined(BSP_USING_DAC1)
-    case (rt_uint32_t)CM_DAC1:
+    case (rt_uint32_t)CM_DAC:
         (void)GPIO_Init(DAC1_CH1_PORT, DAC1_CH1_PIN, &stcGpioInit);
         (void)GPIO_Init(DAC1_CH2_PORT, DAC1_CH2_PIN, &stcGpioInit);
         break;

@@ -36,8 +36,6 @@
     #define PWC_WKT_COUNT_FRQ           (32768UL)
 #endif
 
-static rt_uint32_t cmpval = CMPVAL_MAX;
-
 /**
  * This function get current count value of WKTM
  * @param  None
@@ -81,8 +79,7 @@ rt_err_t hc32_wktm_start(rt_uint32_t reload)
     {
         return -RT_ERROR;
     }
-    cmpval = reload;
-    PWC_WKT_SetCompareValue(cmpval);
+    PWC_WKT_SetCompareValue(reload);
     PWC_WKT_Cmd(ENABLE);
 
     return RT_EOK;

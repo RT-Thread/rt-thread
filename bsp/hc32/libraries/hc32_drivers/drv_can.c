@@ -8,7 +8,7 @@
  * 2022-04-28     CDT                  first version
  * 2022-06-07     xiaoxiaolisunny      add hc32f460 series
  * 2022-06-08     CDT                  fix a bug of RT_CAN_CMD_SET_FILTER
- * 2022-06-15     lianghongquan        fix bug, FILTER_COUNT, RT_CAN_CMD_SET_FILTER, interrupt setup and processing.
+ * 2022-06-15     lianghongquan        fix bug, CAN_FILTER_COUNT, RT_CAN_CMD_SET_FILTER, interrupt setup and processing.
  */
 
 #include "drv_can.h"
@@ -16,9 +16,9 @@
 #include <board_config.h>
 
 #if defined(BSP_USING_CAN)
-#define LOG_TAG    "drv_can"
+#define LOG_TAG         "drv_can"
 
-#if defined(BSP_USING_CAN1) || defined(BSP_USING_CAN2)
+#if defined(BSP_USING_CAN1) || defined(BSP_USING_CAN2) || defined(BSP_USING_CAN3)
 
 #if defined(RT_CAN_USING_CANFD) && defined(HC32F460)
     #error "Selected mcu does not support canfd!"
@@ -26,67 +26,79 @@
 
 #define TSEG1_MIN_FOR_CAN2_0                                (2U)
 #define TSEG1_MAX_FOR_CAN2_0                                (65U)
-#define TSEG1_MIN_FOR_CANFD_ARBITRATION                     (2U)
-#define TSEG1_MAX_FOR_CANFD_ARBITRATION                     (65U)
-#define TSEG1_MIN_FOR_CANFD_DATA                            (2U)
-#define TSEG1_MAX_FOR_CANFD_DATA                            (17U)
-
 #define TSEG2_MIN_FOR_CAN2_0                                (1U)
 #define TSEG2_MAX_FOR_CAN2_0                                (8U)
+#if defined(HC32F4A0) || defined(HC32F472)
+    #define TSJW_MIN_FOR_CAN2_0                             (1U)
+    #define TSJW_MAX_FOR_CAN2_0                             (16U)
+#elif defined(HC32F460)
+    #define TSJW_MIN_FOR_CAN2_0                             (1U)
+    #define TSJW_MAX_FOR_CAN2_0                             (8U)
+#endif
+#define NUM_TQ_MIN_FOR_CAN2_0                               (8U)
+#define NUM_TQ_MAX_FOR_CAN2_0                               (TSEG1_MAX_FOR_CAN2_0 + TSEG2_MAX_FOR_CAN2_0)
+
+#define CAN_BIT_TIMING_CAN2_0                               (1U << 0)
+
+#define IS_VALID_PRIV_MODE(mode)                            ((mode == RT_CAN_MODE_PRIV) || (mode == RT_CAN_MODE_NOPRIV))
+#define IS_VALID_WORK_MODE(mode)                            (mode <= RT_CAN_MODE_LOOPBACKANLISTEN)
+#define IS_VALID_BAUD_RATE_CAN2_0(baud)                     (baud == (CAN10kBaud)  || baud == (CAN20kBaud)  || \
+                                                             baud == (CAN50kBaud)  || baud == (CAN100kBaud) || \
+                                                             baud == (CAN125kBaud) || baud == (CAN250kBaud) || \
+                                                             baud == (CAN500kBaud) || baud == (CAN800kBaud) || \
+                                                             baud == (CAN1MBaud))
+
+#if defined(RT_CAN_USING_CANFD)
+#define TSEG1_MIN_FOR_CANFD_ARBITRATION                     (2U)
+#define TSEG1_MAX_FOR_CANFD_ARBITRATION                     (65U)
 #define TSEG2_MIN_FOR_CANFD_ARBITRATION                     (1U)
 #define TSEG2_MAX_FOR_CANFD_ARBITRATION                     (32U)
-#define TSEG2_MIN_FOR_CANFD_DATA                            (1U)
-#define TSEG2_MAX_FOR_CANFD_DATA                            (8U)
-
-#define TSJW_MIN_FOR_CAN2_0                                 (1U)
-#define TSJW_MAX_FOR_CAN2_0                                 (16U)
 #define TSJW_MIN_FOR_CANFD_ARBITRATION                      (1U)
 #define TSJW_MAX_FOR_CANFD_ARBITRATION                      (16U)
+
+#define TSEG1_MIN_FOR_CANFD_DATA                            (2U)
+#define TSEG1_MAX_FOR_CANFD_DATA                            (17U)
+#define TSEG2_MIN_FOR_CANFD_DATA                            (1U)
+#define TSEG2_MAX_FOR_CANFD_DATA                            (8U)
 #define TSJW_MIN_FOR_CANFD_DATA                             (1U)
 #define TSJW_MAX_FOR_CANFD_DATA                             (8U)
 
-#define NUM_TQ_MIN_FOR_CAN2_0                               (8U)
-#define NUM_TQ_MAX_FOR_CAN2_0                               (TSEG1_MAX_FOR_CAN2_0 + TSEG2_MAX_FOR_CAN2_0)
 #define NUM_TQ_MIN_FOR_CANFD_ARBITRATION                    (8U)
 #define NUM_TQ_MAX_FOR_CANFD_ARBITRATION                    (TSEG1_MAX_FOR_CANFD_ARBITRATION + TSEG2_MAX_FOR_CANFD_ARBITRATION)
 #define NUM_TQ_MIN_FOR_CANFD_DATA                           (8U)
 #define NUM_TQ_MAX_FOR_CANFD_DATA                           (TSEG1_MAX_FOR_CANFD_DATA + TSEG2_MAX_FOR_CANFD_DATA)
 
-#define NUM_PRESCALE_MAX                                    (256U)
-#define MIN_TQ_MUL_PRESCALE                                 (4U)
+#define IS_VALID_BAUD_RATE_CANFD_ARBITRATION(baud)          IS_VALID_BAUD_RATE_CAN2_0(baud)
+#define IS_VALID_BAUD_RATE_CANFD_DATA(baud)                 (baud == (CAN10kBaud)  || baud == (CAN20kBaud)  || \
+                                                             baud == (CAN50kBaud)  || baud == (CAN100kBaud) || \
+                                                             baud == (CAN125kBaud) || baud == (CAN250kBaud) || \
+                                                             baud == (CAN500kBaud) || baud == (CAN800kBaud) || \
+                                                             baud == (CAN1MBaud)   ||                          \
+                                                             baud == (CANFD_DATA_BAUD_2M) ||                   \
+                                                             baud == (CANFD_DATA_BAUD_4M) ||                   \
+                                                             baud == (CANFD_DATA_BAUD_5M) ||                   \
+                                                             baud == (CANFD_DATA_BAUD_8M))
 
-#define CAN_BIT_TIMING_CAN2_0                               (1U << 0)
 #define CAN_BIT_TIMING_CANFD_ARBITRATION                    (1U << 1)
 #define CAN_BIT_TIMING_CANFD_DATA                           (1U << 2)
+#define CAN_BIT_TIMING_TABLE_NUM                            (3U)
+#endif
 
+#define NUM_PRESCALE_MAX                                    (256U)
 #if defined(HC32F4A0)
-    #define FILTER_COUNT                                    (16U)
+    #define CAN_FILTER_COUNT                                (16U)
     #define CAN1_INT_SRC                                    (INT_SRC_CAN1_HOST)
     #define CAN2_INT_SRC                                    (INT_SRC_CAN2_HOST)
-#endif
-
-#if defined (HC32F460)
-    #define FILTER_COUNT                                    (8U)
+#elif defined (HC32F460)
+    #define CAN_FILTER_COUNT                                (8U)
     #define CAN1_INT_SRC                                    (INT_SRC_CAN_INT)
+#elif defined (HC32F472)
+    #define CAN_FILTER_COUNT                                (16U)
+    #define CAN1_INT_SRC                                    (INT_SRC_CAN1_HOST)
+    #define CAN2_INT_SRC                                    (INT_SRC_CAN2_HOST)
+    #define CAN3_INT_SRC                                    (INT_SRC_CAN3_HOST)
 #endif
 
-#define IS_VALID_PRIV_MODE(mode)                            ((mode == RT_CAN_MODE_PRIV) || (mode == RT_CAN_MODE_NOPRIV))
-#define IS_VALID_WORK_MODE(mode)                            (mode <= RT_CAN_MODE_LOOPBACKANLISTEN)
-#define IS_VALID_BAUD_RATE_CAN2_0(baud)                     (baud == (CAN10kBaud)    \
-                                                            || baud == (CAN20kBaud)  \
-                                                            || baud == (CAN50kBaud)  \
-                                                            || baud == (CAN125kBaud) \
-                                                            || baud == (CAN250kBaud) \
-                                                            || baud == (CAN500kBaud) \
-                                                            || baud == (CAN1MBaud)   \
-                                                            )
-#define IS_VALID_BAUD_RATE_CANFD_ARBITRATION(baud)             IS_VALID_BAUD_RATE_CAN2_0(baud)
-#define IS_VALID_BAUD_RATE_CANFD_DATA(baud)                 (baud == (CANFD_DATA_BAUD_1M)   \
-                                                            || baud == (CANFD_DATA_BAUD_2M) \
-                                                            || baud == (CANFD_DATA_BAUD_4M) \
-                                                            || baud == (CANFD_DATA_BAUD_5M) \
-                                                            || baud == (CANFD_DATA_BAUD_8M) \
-                                                            )
 
 enum
 {
@@ -95,6 +107,9 @@ enum
 #endif
 #ifdef BSP_USING_CAN2
     CAN2_INDEX,
+#endif
+#ifdef BSP_USING_CAN3
+    CAN3_INDEX,
 #endif
     CAN_INDEX_MAX,
 };
@@ -150,7 +165,7 @@ typedef struct
 } can_device;
 
 #ifdef RT_CAN_USING_CANFD
-static const can_bit_timing_table_t _g_can_bit_timing_tbl[3] =
+static const can_bit_timing_table_t _g_can_bit_timing_tbl[CAN_BIT_TIMING_TABLE_NUM] =
 {
     {
         .tq_min = NUM_TQ_MIN_FOR_CAN2_0,
@@ -214,12 +229,15 @@ static const struct canfd_baud_rate_tab _g_baudrate_fd[] =
 
 static can_device _g_can_dev_array[] =
 {
-#if defined(HC32F4A0)
 #ifdef BSP_USING_CAN1
     {
         {0},
         CAN1_INIT_PARAMS,
+#if defined(HC32F4A0) || defined(HC32F472)
         .instance = CM_CAN1,
+#elif defined (HC32F460)
+        .instance = CM_CAN,
+#endif
     },
 #endif
 #ifdef BSP_USING_CAN2
@@ -229,16 +247,12 @@ static can_device _g_can_dev_array[] =
         .instance = CM_CAN2,
     },
 #endif
-#endif
-
-#if defined (HC32F460)
-#ifdef BSP_USING_CAN1
+#ifdef BSP_USING_CAN3
     {
         {0},
-        CAN1_INIT_PARAMS,
-        .instance = CM_CAN,
+        CAN3_INIT_PARAMS,
+        .instance = CM_CAN3,
     },
-#endif
 #endif
 };
 
@@ -301,7 +315,7 @@ static uint32_t _get_filter_idx(struct rt_can_filter_config *p_filter_in)
     {
         if (p_filter_in->items[i].hdr_bank == -1)
         {
-            for (int j = 0; j < FILTER_COUNT; j++)
+            for (int j = 0; j < CAN_FILTER_COUNT; j++)
             {
                 if ((filter_selected & 1 << j) == 0)
                 {
@@ -328,6 +342,7 @@ static uint8_t _get_can_data_bytes_len(uint32_t dlc)
 #ifdef RT_CAN_USING_CANFD
     else
     {
+#ifdef RT_CAN_USING_CANFD
         switch (dlc)
         {
         case CAN_DLC12:
@@ -355,6 +370,7 @@ static uint8_t _get_can_data_bytes_len(uint32_t dlc)
             /* Code should never touch here */
             break;
         }
+#endif
     }
 #endif
 
@@ -364,13 +380,13 @@ static uint8_t _get_can_data_bytes_len(uint32_t dlc)
 static rt_bool_t _check_filter_params(struct rt_can_filter_config *p_filter_in)
 {
     RT_ASSERT(p_filter_in != NULL);
-    RT_ASSERT(p_filter_in->count <= FILTER_COUNT);
+    RT_ASSERT(p_filter_in->count <= CAN_FILTER_COUNT);
 
     for (int i = 0; i < p_filter_in->count; i++)
     {
-        if (p_filter_in->items[i].hdr_bank != -1 && p_filter_in->items[i].hdr_bank >= FILTER_COUNT)
+        if (p_filter_in->items[i].hdr_bank != -1 && p_filter_in->items[i].hdr_bank >= CAN_FILTER_COUNT)
         {
-            RT_ASSERT(p_filter_in->items[i].hdr_bank < FILTER_COUNT);
+            RT_ASSERT(p_filter_in->items[i].hdr_bank < CAN_FILTER_COUNT);
             return RT_FALSE;
         }
         if (p_filter_in->items[i].mode == 1)
@@ -402,6 +418,11 @@ static uint32_t _get_can_clk_src(CM_CAN_TypeDef *CANx)
 #ifdef BSP_USING_CAN2
     case (rt_uint32_t)CM_CAN2:
         can_clk = CAN2_CLOCK_SEL;
+        break;
+#endif
+#ifdef BSP_USING_CAN3
+    case (rt_uint32_t)CM_CAN3:
+        can_clk = CAN3_CLOCK_SEL;
         break;
 #endif
     default:
@@ -506,7 +527,7 @@ static rt_err_t _calc_can_bit_timing(CM_CAN_TypeDef *CANx, int option, uint32_t 
     do
     {
         uint8_t idx = 0;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < CAN_BIT_TIMING_TABLE_NUM; i++)
         {
             if (option & (1 << i))
             {
@@ -514,8 +535,7 @@ static rt_err_t _calc_can_bit_timing(CM_CAN_TypeDef *CANx, int option, uint32_t 
                 break;
             }
         }
-        if ((idx >= 3) || (baudrate == 0U) ||
-                (can_clk / baudrate < MIN_TQ_MUL_PRESCALE) || (p_stc_bit_cfg == NULL))
+        if ((idx >= CAN_BIT_TIMING_TABLE_NUM) || (baudrate == 0U) || (p_stc_bit_cfg == NULL))
         {
             break;
         }
@@ -731,6 +751,11 @@ static void _init_ll_struct_canfd(can_device *p_can_dev)
 #ifdef BSP_USING_CAN2
     case (rt_uint32_t)CM_CAN2:
         p_can_dev->ll_init.pstcCanFd->u8Mode = CAN2_CANFD_MODE;
+        break;
+#endif
+#ifdef BSP_USING_CAN3
+    case (rt_uint32_t)CM_CAN3:
+        p_can_dev->ll_init.pstcCanFd->u8Mode = CAN3_CANFD_MODE;
         break;
 #endif
     default:
@@ -1054,26 +1079,22 @@ rt_inline void _isr_can_rx(can_device *p_can_dev)
         rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_RXOF_IND);
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_OVF);
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX) == SET)
     {
         /* Received a frame. */
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX);
         rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_RX_IND);
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_WARN) == SET)
     {
         /* RX buffer warning. */
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_WARN);
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_FULL) == SET)
     {
         /* RX buffer full. */
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_RX_BUF_FULL);
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_RX_OVERRUN) == SET)
     {
         /* RX buffer overrun. */
@@ -1090,13 +1111,11 @@ rt_inline void _isr_can_tx(can_device *p_can_dev)
     {
         /* TX buffer full. */
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED) == SET)
     {
         /* TX aborted. */
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED);
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_PTB_TX) == SET)
     {
         /* PTB transmitted. */
@@ -1123,6 +1142,7 @@ rt_inline void _isr_can_tx(can_device *p_can_dev)
             is_tx_done = RT_TRUE;
         }
     }
+
     if (need_check_single_trans)
     {
         if ((CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) != SET) \
@@ -1136,14 +1156,11 @@ rt_inline void _isr_can_tx(can_device *p_can_dev)
         rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_DONE);
     }
 
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) == SET)
     {
         rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST);
     }
-
-
 }
 
 rt_inline void _isr_can_err(can_device *p_can_dev)
@@ -1163,13 +1180,11 @@ rt_inline void _isr_can_err(can_device *p_can_dev)
         /* error-passive to error-active or error-active to error-passive. */
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ERR_PASSIVE);
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TEC_REC_WARN) == SET)
     {
         /* TEC or REC reached warning limit. */
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_TEC_REC_WARN);
     }
-
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_OFF) == SET)
     {
         /* BUS OFF. */
@@ -1183,12 +1198,10 @@ rt_inline void _isr_ttcan(can_device *p_can_dev)
         /* Time trigger interrupt. */
         CAN_TTC_ClearStatus(p_can_dev->instance, CAN_TTC_FLAG_TIME_TRIG);
     }
-
     if (CAN_TTC_GetStatus(p_can_dev->instance, CAN_TTC_FLAG_TRIG_ERR) == SET)
     {
         /* Trigger error interrupt. */
     }
-
     if (CAN_TTC_GetStatus(p_can_dev->instance, CAN_TTC_FLAG_WATCH_TRIG) == SET)
     {
         /* Watch trigger interrupt. */
@@ -1214,6 +1227,13 @@ static void _irq_handler_can1(void)
     _isr_can(&_g_can_dev_array[CAN1_INDEX]);
     rt_interrupt_leave();
 }
+
+#if defined(HC32F472)
+void CAN1_Handler(void)
+{
+    _irq_handler_can1();
+}
+#endif
 #endif
 
 #if defined(BSP_USING_CAN2)
@@ -1223,23 +1243,45 @@ static void _irq_handler_can2(void)
     _isr_can(&_g_can_dev_array[CAN2_INDEX]);
     rt_interrupt_leave();
 }
+
+#if defined(HC32F472)
+void CAN2_Handler(void)
+{
+    _irq_handler_can2();
+}
+#endif
+#endif
+
+#if defined(BSP_USING_CAN3)
+static void _irq_handler_can3(void)
+{
+    rt_interrupt_enter();
+    _isr_can(&_g_can_dev_array[CAN3_INDEX]);
+    rt_interrupt_leave();
+}
+
+#if defined(HC32F472)
+void CAN3_Handler(void)
+{
+    _irq_handler_can3();
+}
+#endif
 #endif
 
 static void _enable_can_clock(void)
 {
-#if defined(HC32F4A0)
 #if defined(BSP_USING_CAN1)
+#if defined(HC32F4A0) || defined(HC32F472)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN1, ENABLE);
-#endif
-#if   defined(BSP_USING_CAN2)
-    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN2, ENABLE);
-#endif
-#endif
-
-#if defined(HC32F460)
-#if defined(BSP_USING_CAN1)
+#elif defined(HC32F460)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN, ENABLE);
 #endif
+#endif
+#if defined(BSP_USING_CAN2)
+    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN2, ENABLE);
+#endif
+#if defined(BSP_USING_CAN3)
+    FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN3, ENABLE);
 #endif
 }
 
@@ -1264,17 +1306,26 @@ static void _config_can_irq(void)
                              _irq_handler_can2,
                              RT_TRUE);
 #endif
+#if defined(BSP_USING_CAN3)
+    irq_config.irq_num = BSP_CAN3_IRQ_NUM;
+    irq_config.int_src = CAN3_INT_SRC;
+    irq_config.irq_prio = BSP_CAN3_IRQ_PRIO;
+    /* register interrupt */
+    hc32_install_irq_handler(&irq_config,
+                             _irq_handler_can3,
+                             RT_TRUE);
+#endif
 }
 
 static void _init_ll_struct_filter(can_device *p_can_dev)
 {
     if (p_can_dev->ll_init.pstcFilter == RT_NULL)
     {
-        p_can_dev->ll_init.pstcFilter = (stc_can_filter_config_t *)rt_malloc(sizeof(stc_can_filter_config_t) * FILTER_COUNT);
+        p_can_dev->ll_init.pstcFilter = (stc_can_filter_config_t *)rt_malloc(sizeof(stc_can_filter_config_t) * CAN_FILTER_COUNT);
     }
     RT_ASSERT((p_can_dev->ll_init.pstcFilter != RT_NULL));
 
-    rt_memset(p_can_dev->ll_init.pstcFilter, 0, sizeof(stc_can_filter_config_t) * FILTER_COUNT);
+    rt_memset(p_can_dev->ll_init.pstcFilter, 0, sizeof(stc_can_filter_config_t) * CAN_FILTER_COUNT);
     p_can_dev->ll_init.pstcFilter[0].u32ID = 0U;
     p_can_dev->ll_init.pstcFilter[0].u32IDMask = 0x1FFFFFFF;
     p_can_dev->ll_init.pstcFilter[0].u32IDType = CAN_ID_STD_EXT;
@@ -1288,7 +1339,7 @@ static void _init_struct_by_static_cfg(can_device *p_can_dev)
     rt_can_config.privmode = RT_CAN_MODE_NOPRIV;
     rt_can_config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
-    rt_can_config.maxhdr = FILTER_COUNT;
+    rt_can_config.maxhdr = CAN_FILTER_COUNT;
 #endif
 #ifdef RT_CAN_USING_CANFD
     rt_can_config.baud_rate_fd = CANFD_DATA_BAUD_1M;

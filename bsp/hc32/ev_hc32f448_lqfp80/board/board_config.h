@@ -78,17 +78,17 @@
 
 /***********  ADC configure *********/
 #if defined(BSP_USING_ADC1)
-    #define ADC1_CH_PORT                    (GPIO_PORT_C)
+    #define ADC1_CH_PORT                    (GPIO_PORT_C)   /* Default ADC12_IN10 */
     #define ADC1_CH_PIN                     (GPIO_PIN_00)
 #endif
 
 #if defined(BSP_USING_ADC2)
-    #define ADC2_CH_PORT                    (GPIO_PORT_C)
-    #define ADC2_CH_PIN                     (GPIO_PIN_01)
+    #define ADC2_CH_PORT                    (GPIO_PORT_A)   /* Default ADC12_IN4 */
+    #define ADC2_CH_PIN                     (GPIO_PIN_04)
 #endif
 
 #if defined(BSP_USING_ADC3)
-    #define ADC3_CH_PORT                    (GPIO_PORT_E)
+    #define ADC3_CH_PORT                    (GPIO_PORT_E)   /* Default ADC3_IN1 */
     #define ADC3_CH_PIN                     (GPIO_PIN_03)
 #endif
 
@@ -296,11 +296,11 @@
 
     #if defined(BSP_USING_TMR6_PULSE_ENCODER)
         #if defined(BSP_USING_PULSE_ENCODER_TMR6_1)
-            #define PULSE_ENCODER_TMR6_1_A_PORT      (GPIO_PORT_A)
-            #define PULSE_ENCODER_TMR6_1_A_PIN       (GPIO_PIN_08)
+            #define PULSE_ENCODER_TMR6_1_A_PORT      (GPIO_PORT_B)
+            #define PULSE_ENCODER_TMR6_1_A_PIN       (GPIO_PIN_05)
             #define PULSE_ENCODER_TMR6_1_A_PIN_FUNC  (GPIO_FUNC_3)
-            #define PULSE_ENCODER_TMR6_1_B_PORT      (GPIO_PORT_A)
-            #define PULSE_ENCODER_TMR6_1_B_PIN       (GPIO_PIN_07)
+            #define PULSE_ENCODER_TMR6_1_B_PORT      (GPIO_PORT_B)
+            #define PULSE_ENCODER_TMR6_1_B_PIN       (GPIO_PIN_13)
             #define PULSE_ENCODER_TMR6_1_B_PIN_FUNC  (GPIO_FUNC_3)
         #endif /* BSP_USING_PULSE_ENCODER_TMR6_1 */
     #endif /* BSP_USING_TMR6_PULSE_ENCODER */
