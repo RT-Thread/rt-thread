@@ -16,14 +16,15 @@
 #include <dfs_pcache.h>
 #include <dfs_dentry.h>
 #include <dfs_mnt.h>
-#include <mm_page.h>
-#include <mm_private.h>
-#include <mmu.h>
-#include <tlb.h>
 
 #include <rthw.h>
 
 #ifdef RT_USING_PAGECACHE
+
+#include <mm_page.h>
+#include <mm_private.h>
+#include <mmu.h>
+#include <tlb.h>
 
 #ifndef RT_PAGECACHE_COUNT
 #define RT_PAGECACHE_COUNT          4096
