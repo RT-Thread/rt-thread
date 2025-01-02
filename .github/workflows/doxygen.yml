@@ -15,6 +15,15 @@ on:
   # Runs at 16:00 UTC (BeiJing 00:00) on the 30st of every month
   push:
     branches: [master]
+    paths:
+      - 'documentation/doxygen/**'
+      - 'src/**'
+      - 'include/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/dfs/dfs_v2/include/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/finsh/**'
+      - '.github/workflows/doxygen.yml'
   schedule:
     - cron:  '0 16 30 * *'
   workflow_dispatch:
