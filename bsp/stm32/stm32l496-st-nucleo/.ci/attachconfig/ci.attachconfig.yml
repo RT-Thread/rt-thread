@@ -1,0 +1,10 @@
+nano:
+    scons_arg:
+      - '--strict'
+    kconfig: 
+      - CONFIG_RT_USING_NANO=y
+devices.on_chip:
+    kconfig:
+      - CONFIG_BSP_USING_ON_CHIP_FLASH=y
+      - CONFIG_BSP_USING_ON_CHIP_FLASH_FATFS=y
+      - CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE=2048
