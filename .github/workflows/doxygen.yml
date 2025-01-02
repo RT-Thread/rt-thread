@@ -13,6 +13,8 @@ on:
       - 'components/finsh/**'
       - '.github/workflows/doxygen.yml'
   # Runs at 16:00 UTC (BeiJing 00:00) on the 30st of every month
+  push:
+    branches: [master]
   schedule:
     - cron:  '0 16 30 * *'
   workflow_dispatch:
@@ -50,6 +52,7 @@ jobs:
           path: documentation/doxygen/html/
           
   deploy:
+    if: github.event_name == 'push'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
