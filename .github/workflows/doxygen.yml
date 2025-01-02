@@ -15,14 +15,19 @@ on:
   schedule:
     - cron:  '0 16 30 * *'
   workflow_dispatch:
-
+  
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  
 jobs:
   build:
     runs-on: ubuntu-22.04
     name: doxygen_doc generate
     if: github.repository_owner == 'RT-Thread'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
         with:
           submodules: 'recursive'
       - name: Install Tools
@@ -36,3 +41,20 @@ jobs:
           cd documentation/doxygen
           doxygen Doxyfile
           cat Doxyfile
+          
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@main # or specific "vX.X.X" version tag for this action
+        with:
+          path: documentation/doxygen/html/
+          
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@main
