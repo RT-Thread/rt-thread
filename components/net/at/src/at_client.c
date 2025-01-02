@@ -960,6 +960,10 @@ int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bu
         RT_ASSERT(client->device->type == RT_Device_Class_Char);
 
         rt_device_set_rx_indicate(client->device, at_client_rx_ind);
+
+#ifdef RT_USING_SERIAL_V2
+        open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_NON_BLOCKING);
+#else
         /* using DMA mode first */
         open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
         /* using interrupt mode when DMA mode not supported */
@@ -967,6 +971,7 @@ int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bu
         {
             open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
         }
+#endif // RT_USING_SERIAL_V2
         RT_ASSERT(open_result == RT_EOK);
     }
     else
