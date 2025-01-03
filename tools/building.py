@@ -823,6 +823,11 @@ def DoBuilding(target, objects):
 
                 break
     else:
+        # generate build/compile_commands.json
+        if GetOption('cdb') and utils.VerTuple(SCons.__version__) >= (4, 0, 0):
+            Env.Tool("compilation_db")
+            Env.CompilationDatabase('build/compile_commands.json')
+
         # remove source files with local flags setting
         for group in Projects:
             if 'LOCAL_CFLAGS' in group or 'LOCAL_CXXFLAGS' in group or 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPPATH' in group or 'LOCAL_CPPDEFINES' in group:
@@ -842,11 +847,6 @@ def DoBuilding(target, objects):
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
         objects.append(objects_in_group)
-
-        # generate build/compile_commands.json
-        if GetOption('cdb') and utils.VerTuple(SCons.__version__) >= (4, 0, 0):
-            Env.Tool("compilation_db")
-            Env.CompilationDatabase('build/compile_commands.json')
 
         program = Env.Program(target, objects)
 
