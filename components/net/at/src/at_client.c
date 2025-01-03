@@ -972,7 +972,7 @@ int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bu
         {
             open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
         }
-#endif // RT_USING_SERIAL_V2
+#endif /* RT_USING_SERIAL_V2 */
         RT_ASSERT(open_result == RT_EOK);
     }
     else
