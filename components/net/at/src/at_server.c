@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-03-30     chenyong     first version
  * 2018-04-14     chenyong     modify parse arguments
+ * 2025-01-02     dongly       support SERIAL_V2
  */
 
 #include <at.h>
@@ -565,6 +566,10 @@ int at_server_init(void)
         RT_ASSERT(at_server_local->device->type == RT_Device_Class_Char);
 
         rt_device_set_rx_indicate(at_server_local->device, at_rx_ind);
+
+#ifdef RT_USING_SERIAL_V2
+        open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_NON_BLOCKING);
+#else
         /* using DMA mode first */
         open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
         /* using interrupt mode when DMA mode not supported */
@@ -572,6 +577,7 @@ int at_server_init(void)
         {
             open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
         }
+#endif /* RT_USING_SERIAL_V2 */
         RT_ASSERT(open_result == RT_EOK);
     }
     else
