@@ -30,7 +30,7 @@ $ sudo apt install graphviz
 Assume that the path of RT-Thead code tree is $RTT, execute the following command to build html.
 
 ```shell
-$ cd $RTT/documentation/doxygen
+$ cd $RTT/documentation
 $ rm -rf html
 $ doxygen
 ```
@@ -45,4 +45,11 @@ $ python3 -m http.server
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
 
-Open the browser and enter `http://<IP>:8000/index.html` to access the created html web pages. If it is a local access, then `<IP>` should be replaced by `localhost`. If it is a remote access, then `<IP>` should be replaced by the actual accessible IP address of the machine where HTML is located.
+A bash script `run.sh` is provided to automatic upon operations.
+
+```shell
+$ cd $RTT/documentation
+$ ./run.sh
+```
+
+Then open the browser and enter `http://<IP>:8000/index.html` to access the created html web pages. If it is a local access, then `<IP>` should be replaced by `localhost`. If it is a remote access, then `<IP>` should be replaced by the actual accessible IP address of the machine where HTML is located.
