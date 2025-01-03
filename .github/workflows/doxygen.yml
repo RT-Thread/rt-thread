@@ -47,7 +47,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -qq install doxygen graphviz
-      - name: generat doxygen html
+      - name: generate doxygen html
         shell: bash
         run: |
           cd documentation/doxygen
