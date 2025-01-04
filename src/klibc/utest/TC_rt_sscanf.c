@@ -37,7 +37,7 @@ static void TC_rt_sscanf_basic_float(void)
     float value;
     int result = rt_sscanf(str, "%f", &value);
     uassert_int_equal(result, 1);
-    uassert_in_range(value, 123.445, 123.455); /* Floating point comparison with tolerance */
+    uassert_float_equal(value, 123.45);
 }
 
 static void TC_rt_sscanf_basic_string(void)
