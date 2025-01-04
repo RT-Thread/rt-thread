@@ -174,7 +174,6 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
 
     /* default filter config */
     HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
-    
     return RT_EOK;
 }
 
