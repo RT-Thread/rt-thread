@@ -11,6 +11,8 @@
 #define __BOARD_H__
 
 #include <rtconfig.h>
+#include "tick.h"
+#include "drv_uart.h"
 
 extern rt_uint8_t HeapBase;
 extern rt_uint8_t HeapLimit;

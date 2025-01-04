@@ -12,6 +12,8 @@
 
 #include <encoding.h>
 
+extern int rt_hw_tick_isr(void);
+extern void rt_hw_irq_isr(void);
 
 struct exception_stack_frame
 {
