@@ -224,6 +224,9 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 
                 mask = f->vnode->fops->poll(f, req);
 
+#ifdef RT_USING_DFS_V2
+                dfs_file_put(f);
+#endif
                 /* dealwith the device return error -1*/
                 if (mask < 0)
                 {
