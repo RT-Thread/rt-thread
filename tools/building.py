@@ -23,6 +23,7 @@
 # 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
 #                             group definition.
 # 2024-04-21     Bernard      Add toolchain detection in sdk packages
+# 2025-01-05     Bernard      Add logging as Env['log']
 
 import os
 import sys
@@ -31,6 +32,7 @@ import utils
 import operator
 import rtconfig
 import platform
+import logging
 
 from SCons.Script import *
 from utils import _make_path_relative
@@ -130,6 +132,14 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOptions()
 
     Env = env
+
+    # prepare logging and set log
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    logger = logging.getLogger('rt-scons')
+    if GetOption('verbose'):
+        logger.setLevel(logging.DEBUG)
+    Env['log'] = logger
+
     Rtt_Root = os.path.abspath(root_directory)
 
     # make an absolute root directory
@@ -189,6 +199,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
     if not utils.CmdExists(os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)):
+        Env['log'].debug('To detect CC because CC path in rtconfig.py is invalid:')
+        Env['log'].debug('  rtconfig.py cc ->' + os.path.join(rtconfig.EXEC_PATH, rtconfig.CC))
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
@@ -202,11 +214,14 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 exec_path = os.path.join(exec_path, 'bin')
 
             if os.path.exists(exec_path):
-                print('set CC to ' + exec_path)
+                Env['log'].debug('set CC to ' + exec_path)
                 rtconfig.EXEC_PATH = exec_path
                 os.environ['RTT_EXEC_PATH'] = exec_path
+            else:
+                Env['log'].debug('No Toolchain found in path(%s).' % exec_path)
         except Exception as e:
             # detect failed, ignore
+            Env['log'].debug(e)
             pass
 
     exec_path = GetOption('exec-path')
