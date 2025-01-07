@@ -399,7 +399,7 @@ typedef enum IRQn
   USB_IRQn                = 29,     /*!< USB interrupt                                                      */
   #endif
   #if defined(USE_HT32F54231_41) || defined(USE_HT32F54243_53) || defined(USE_HT32F50020_30) || defined(USE_HT32F53231_41) || defined(USE_HT32F53242_52) || defined(USE_HT32F50431_41) || defined(USE_HT32F50442_52)
-  LEDC_IRQn               = 29,     /*!< LEDC global Interrupt                                              */  
+  LEDC_IRQn               = 29,     /*!< LEDC global Interrupt                                              */
   #endif
   #if defined(USE_HT32F52342_52) || defined(USE_HT32F52243_53) || defined(USE_HT32F5826) || defined(USE_HT32F0008) || defined(USE_HT32F52344_54) || defined(USE_HT32F0006) || defined(USE_HT32F52357_67) || defined(USE_HT32F57342_52) || defined(USE_HT32F50343) || defined(USE_HT32F54243_53) || defined(USE_HT32F61244_45) || defined(USE_HT32F67041_51) || defined(USE_HT32F53231_41) || defined(USE_HT32F53242_52) || defined(USE_HT32F50431_41) || defined(USE_HT32F50442_52) || defined(USE_HT32F52234_44)
   PDMACH0_1_IRQn          = 30,     /*!< PDMA channel 0-1 interrupt                                         */
@@ -906,7 +906,7 @@ typedef struct
   __IO uint32_t DOUTR;           /*!< 0x020         Data Output Register                                    */
   __IO uint32_t SRR;             /*!< 0x024         Output Set and Reset Control Register                   */
   __IO uint32_t RR;              /*!< 0x028         Output Reset Control Register                           */
-  #if defined(USE_HT32F50020_30) || defined(USE_HT32F50220_30) || defined(USE_HT32F50231_41) 
+  #if defined(USE_HT32F50020_30) || defined(USE_HT32F50220_30) || defined(USE_HT32F50231_41)
   __IO uint32_t SCER;            /*!< 0x02C         Sink Current Enhanced Selection Register                */
   #endif
 } HT_GPIO_TypeDef;
@@ -958,7 +958,7 @@ typedef struct
   __IO uint32_t CFGR6;           /*!< 0x018         EXTI Interrupt 6 Configuration Register                 */
   __IO uint32_t CFGR7;           /*!< 0x01C         EXTI Interrupt 7 Configuration Register                 */
   #if defined(USE_HT32F50020_30)
-  __IO uint32_t RESERVE0[8];     /*!< 0x020 - 0x3C  Reserved                                                */  
+  __IO uint32_t RESERVE0[8];     /*!< 0x020 - 0x3C  Reserved                                                */
   #else
   __IO uint32_t CFGR8;           /*!< 0x020         EXTI Interrupt 8 Configuration Register                 */
   __IO uint32_t CFGR9;           /*!< 0x024         EXTI Interrupt 9 Configuration Register                 */
@@ -1440,7 +1440,7 @@ typedef struct
   __IO uint32_t EP9IER;          /*!< 0x0CC USB Endpoint 9 Interrupt Enable Register                        */
   __IO uint32_t EP9ISR;          /*!< 0x0D0 USB Endpoint 9 Interrupt Status Register                        */
   __IO uint32_t EP9TCR;          /*!< 0x0D4 USB Endpoint 9 Transfer Count Register                          */
-  __IO uint32_t EP9CFGR;         /*!< 0x0D8 USB Endpoint 9 Configuration Register                           */ 
+  __IO uint32_t EP9CFGR;         /*!< 0x0D8 USB Endpoint 9 Configuration Register                           */
   #endif
 } HT_USB_TypeDef;
 
@@ -1774,7 +1774,7 @@ typedef struct
   #endif
   #if defined(USE_HT32F54243_53)
   __IO uint32_t DR[12];          /*!< 0x018 - 0x044 LED Data Register                                       */
-  #endif  
+  #endif
 } HT_LEDC_TypeDef;
 
 

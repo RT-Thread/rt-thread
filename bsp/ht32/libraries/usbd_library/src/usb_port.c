@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2024-07-09     QT-one       first version
  */
- 
+
 #include "usb_port.h"
 
 /* Global variables ----------------------------------------------------------------------------------------*/
@@ -156,7 +156,7 @@ void USB_Configuration(USBDCore_TypeDef *pCore)
     CKCUClock.Bit.USBD = 1;
     CKCUClock.Bit.EXTI = 1;
     CKCU_PeripClockConfig(CKCUClock, ENABLE);
-    
+
     gUSBCore = pCore;
 
 #if (LIBCFG_CKCU_USB_PLL)

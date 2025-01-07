@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -740,7 +740,7 @@ static void usbd_test(void *parameter)
     char buf[] = "usbd vcom test!\r\n";
 
     dev = rt_device_find(dev_name);
-    
+
     if (dev)
     {
         rt_device_open(dev, RT_DEVICE_FLAG_RDWR);
@@ -761,7 +761,7 @@ static void usbd_test(void *parameter)
 static int usbd_task(int argc, char *argv[])
 {
     rt_err_t ret = -RT_ERROR;
-    
+
     if(argc == 2)
     {
         if(rt_strcmp(argv[1],"start") == 0)
@@ -804,7 +804,7 @@ int mnt_init(void)
     rt_device_t dev = RT_NULL;
     char dev_name[] = BSP_USING_SDIO_NAME;
     rt_thread_mdelay(1000);
-    
+
     dev = rt_device_find(dev_name);
     if(dev)
     {

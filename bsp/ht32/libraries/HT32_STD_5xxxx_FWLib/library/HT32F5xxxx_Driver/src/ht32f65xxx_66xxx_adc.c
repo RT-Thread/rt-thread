@@ -320,7 +320,7 @@ void ADC_HPChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u8 Rank, u8 Sampl
   #else
   HT_ADCn->STR[ADC_CH_n] = SampleClock;
   #endif
-  
+
   /* Get the old register value                                                                             */
   #if (LIBCFG_ADC_HLST_0_2)
   tmpreg1 = HT_ADCn->HLST[Rank >> 2];

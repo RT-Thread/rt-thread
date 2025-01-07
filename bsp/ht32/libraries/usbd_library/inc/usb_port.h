@@ -11,7 +11,7 @@
 #define HT32F_DVB_USBDisConnect()   USBD_DPpullupCmd(DISABLE)
 
 
-/* º¯ÊýÉùÃ÷ */
+/* ÂºÂ¯ÃŠÃ½Ã‰Ã¹ÃƒÃ· */
 void usbd_sof_callback(USBDCore_TypeDef *pCore);
 void usbd_reset_callback(USBDCore_TypeDef *pCore);
 void usbd_suspend_callback(USBDCore_TypeDef *pCore);

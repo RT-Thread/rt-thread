@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -356,7 +356,7 @@ extern "C" {
 
     #define _HTCFG_SDIO_DAT2_GPIOX                   C
     #define _HTCFG_SDIO_DAT2_GPION                   11
-    
+
     #define _HTCFG_SDIO_DAT3_GPIOX                   C
     #define _HTCFG_SDIO_DAT3_GPION                   12
 

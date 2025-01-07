@@ -339,7 +339,7 @@ void PGA_CalibrationCmd(HT_PGA0_X_TypeDef* HT_PGAn, ControlStatus NewState)
   {
     HT_PGAn->VOS |= (u32)VOS_OFM_CALIBRATION_MODE << VOS_OFM_POS;
     /*
-       Set the HT_PGAn calibration value flag to true to ensure that the calibration value does not change 
+       Set the HT_PGAn calibration value flag to true to ensure that the calibration value does not change
        after executing calibration.
     */
     if(HT_PGAn == HT_PGA0)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,117 +25,117 @@ static USBD_Driver_TypeDef gUSBDriver;
 static u32 gIsLowPowerAllowed = TRUE;
 
 /*
-    ÎªÁË²»ÆÆ»µÔ­±¾µÄusb_codeÎÄ¼þÖÐµÄUSBÖÐ¶Ï»Øµ÷º¯Êý
-    ´Ë´¦ÖØ¹¹USBÖÐ¶Ï»Øµ÷º¯Êý
-    ³ýÁËÖØ¹¹USBµÄÖÐ¶Ï»Øµ÷º¯ÊýÒÔÍâ£¬»¹ÐèÒªÖØÐ´Ò»Ð©ÖÐ¶Ï»Øµ÷¹¦ÄÜº¯Êý
+    ä¸ºäº†ä¸ç ´ååŽŸæœ¬çš„usb_codeæ–‡ä»¶ä¸­çš„USBä¸­æ–­å›žè°ƒå‡½æ•°
+    æ­¤å¤„é‡æž„USBä¸­æ–­å›žè°ƒå‡½æ•°
+    é™¤äº†é‡æž„USBçš„ä¸­æ–­å›žè°ƒå‡½æ•°ä»¥å¤–ï¼Œè¿˜éœ€è¦é‡å†™ä¸€äº›ä¸­æ–­å›žè°ƒåŠŸèƒ½å‡½æ•°
 */
 /*
-    RTTµÄUSBÖÐ¶Ï»Øµ÷¹ý³ÌÈçÏÂ
-    USBÖÐ¶Ïº¯Êý -> USBÖÐ¶Ï»Øµ÷º¯Êý -> USBÏà¹Ø¹¦ÄÜ»Øµ÷º¯Êý
-    -> RTTµÄUSBÏà¹Ø¹¦ÄÜ»Øµ÷º¯Êý -> ½áÊøUSBÖÐ¶Ï
+    RTTçš„USBä¸­æ–­å›žè°ƒè¿‡ç¨‹å¦‚ä¸‹
+    USBä¸­æ–­å‡½æ•° -> USBä¸­æ–­å›žè°ƒå‡½æ•° -> USBç›¸å…³åŠŸèƒ½å›žè°ƒå‡½æ•°
+    -> RTTçš„USBç›¸å…³åŠŸèƒ½å›žè°ƒå‡½æ•° -> ç»“æŸUSBä¸­æ–­
 
-    RTTµÄUSB³ÌÐòÔËÐÐÁ÷³Ì£¨RTTµÄUSBÏß³ÌÔËÐÐÁ÷³Ì£©
-    USBÏß³Ì×èÈûµÈ´ýUSB»ñÈ¡µ½ÏûÏ¢¶ÓÁÐÖÐµÄÏûÏ¢
-    -> USBÖÐ¶ÏÍ¨¹ý»Øµ÷º¯Êý½«½ÓÊÕµ½µÄÏûÏ¢´«¸øUSBµÄÏûÏ¢¶ÓÁÐ
-    -> RTTµÄUSBÏà¹Ø¹¦ÄÜ»Øµ÷º¯Êý»ñÈ¡µ½USBÖÐ¶ÏµÄÏûÏ¢£¬²¢ÉèÖÃUSBÏûÏ¢¶ÓÁÐµÄ×´Ì¬
-    -> USBÍË³öÖÐ¶Ï£¬USB»ñÈ¡µ½ÏûÏ¢ºó£¬Ïß³Ì×èÈû±»½â³ý
-    -> USBÏß³Ì¸ù¾Ý»ñÈ¡µÄ×´Ì¬Ö´ÐÐ¶ÔÓ¦µÄ¹¦ÄÜ
-    -> USBÏß³ÌÍ¨¹ýUSB²Ù×÷½Ó¿ÚÊµÏÖ¶ÔÓ¦µÄ¹¦ÄÜ
+    RTTçš„USBç¨‹åºè¿è¡Œæµç¨‹ï¼ˆRTTçš„USBçº¿ç¨‹è¿è¡Œæµç¨‹ï¼‰
+    USBçº¿ç¨‹é˜»å¡žç­‰å¾…USBèŽ·å–åˆ°æ¶ˆæ¯é˜Ÿåˆ—ä¸­çš„æ¶ˆæ¯
+    -> USBä¸­æ–­é€šè¿‡å›žè°ƒå‡½æ•°å°†æŽ¥æ”¶åˆ°çš„æ¶ˆæ¯ä¼ ç»™USBçš„æ¶ˆæ¯é˜Ÿåˆ—
+    -> RTTçš„USBç›¸å…³åŠŸèƒ½å›žè°ƒå‡½æ•°èŽ·å–åˆ°USBä¸­æ–­çš„æ¶ˆæ¯ï¼Œå¹¶è®¾ç½®USBæ¶ˆæ¯é˜Ÿåˆ—çš„çŠ¶æ€
+    -> USBé€€å‡ºä¸­æ–­ï¼ŒUSBèŽ·å–åˆ°æ¶ˆæ¯åŽï¼Œçº¿ç¨‹é˜»å¡žè¢«è§£é™¤
+    -> USBçº¿ç¨‹æ ¹æ®èŽ·å–çš„çŠ¶æ€æ‰§è¡Œå¯¹åº”çš„åŠŸèƒ½
+    -> USBçº¿ç¨‹é€šè¿‡USBæ“ä½œæŽ¥å£å®žçŽ°å¯¹åº”çš„åŠŸèƒ½
 
 */
 /*
-    ¸ù¾ÝRTTµÄUSBÖÐ¶Ï»Øµ÷¹ý³ÌºÍRTTµÄUSBÏß³ÌÖ´ÐÐ¹ý³Ì
-    µÃ³öÍê³ÉUSBÇý¶¯ÐèÒªÊµÏÖµÄÁ½¸öÖØÒª²¿·Ö
-    1¡¢USBÏß³ÌÊµÏÖ¹¦ÄÜËùÐèÒªµÄµ÷ÓÃµ½µÄUSB²Ù×÷½Ó¿Úº¯Êý
-    2¡¢USBÖÐ¶Ï»Øµ÷¹ý³ÌÊ¹ÓÃµ½µÄRTTµÄUSBÇý¶¯µÄº¯ÊýµÄÏà¹ØÏÎ½Ó²¿·Ö
+    æ ¹æ®RTTçš„USBä¸­æ–­å›žè°ƒè¿‡ç¨‹å’ŒRTTçš„USBçº¿ç¨‹æ‰§è¡Œè¿‡ç¨‹
+    å¾—å‡ºå®ŒæˆUSBé©±åŠ¨éœ€è¦å®žçŽ°çš„ä¸¤ä¸ªé‡è¦éƒ¨åˆ†
+    1ã€USBçº¿ç¨‹å®žçŽ°åŠŸèƒ½æ‰€éœ€è¦çš„è°ƒç”¨åˆ°çš„USBæ“ä½œæŽ¥å£å‡½æ•°
+    2ã€USBä¸­æ–­å›žè°ƒè¿‡ç¨‹ä½¿ç”¨åˆ°çš„RTTçš„USBé©±åŠ¨çš„å‡½æ•°çš„ç›¸å…³è¡”æŽ¥éƒ¨åˆ†
 
-    ³ýÁËÒÔÉÏÁ½¸ö±È½ÏÖØÒªµÄ¹¦ÄÜÍâ£¬»¹ÐèÒªÍê³ÉÒÔÏÂµÄÒ»Ð©±ØÒª²¿·Ö
-    1¡¢USB³õÊ¼»¯º¯Êý
-    2¡¢USBÉè±¸×¢²áº¯Êý
+    é™¤äº†ä»¥ä¸Šä¸¤ä¸ªæ¯”è¾ƒé‡è¦çš„åŠŸèƒ½å¤–ï¼Œè¿˜éœ€è¦å®Œæˆä»¥ä¸‹çš„ä¸€äº›å¿…è¦éƒ¨åˆ†
+    1ã€USBåˆå§‹åŒ–å‡½æ•°
+    2ã€USBè®¾å¤‡æ³¨å†Œå‡½æ•°
 
-    Íê³ÉÒÔÉÏ¹¦ÄÜÖ÷ÒªÉæ¼°µ½Á½¸öÎÄ¼þÎª£º
-    1¡¢drv_usbd.c
-    2¡¢ht32_usbd_int.c
+    å®Œæˆä»¥ä¸ŠåŠŸèƒ½ä¸»è¦æ¶‰åŠåˆ°ä¸¤ä¸ªæ–‡ä»¶ä¸ºï¼š
+    1ã€drv_usbd.c
+    2ã€ht32_usbd_int.c
 
-    ¶ÔÁ½¸öÎÄ¼þµÄÄÚÈÝ·ÖÅäÒÔ¼°ÎÄ¼þÒÀÀµÈçÏÂ£º
+    å¯¹ä¸¤ä¸ªæ–‡ä»¶çš„å†…å®¹åˆ†é…ä»¥åŠæ–‡ä»¶ä¾èµ–å¦‚ä¸‹ï¼š
     drv_usbd.c
-        Ö÷Òª¸ºÔðÊµÏÖUSBµÄ²Ù×÷½Ó¿ÚµÄÊµÏÖ
-        ÒÔ¼°³õÊ¼»¯º¯ÊýºÍUSBÉè±¸×¢²áº¯Êý
-        ÓÉÓÚ×Ô¶¨ÒåµÄUSBÄÚºË¹ÒÔØµãÔÚ¸ÃÎÄ¼þÖÐ
-        ËùÒÔUSBµÄÖÐ¶Ïº¯ÊýÒ²»áÐ´ÔÚ¸ÃÎÄ¼þÖÐ
-        ÒÀÀµ£º
+        ä¸»è¦è´Ÿè´£å®žçŽ°USBçš„æ“ä½œæŽ¥å£çš„å®žçŽ°
+        ä»¥åŠåˆå§‹åŒ–å‡½æ•°å’ŒUSBè®¾å¤‡æ³¨å†Œå‡½æ•°
+        ç”±äºŽè‡ªå®šä¹‰çš„USBå†…æ ¸æŒ‚è½½ç‚¹åœ¨è¯¥æ–‡ä»¶ä¸­
+        æ‰€ä»¥USBçš„ä¸­æ–­å‡½æ•°ä¹Ÿä¼šå†™åœ¨è¯¥æ–‡ä»¶ä¸­
+        ä¾èµ–ï¼š
             ht32_usbd_core.c
             ht32_usbd_int.c
-            ÒÔ¼°RTTµÄÏà¹ØÎÄ¼þ
+            ä»¥åŠRTTçš„ç›¸å…³æ–‡ä»¶
 
     ht32_usbd_int.c
-        Ö÷Òª¸ºÔðÊµÏÖUSBÖÐ¶Ï»Øµ÷ÒÔ¼°»Øµ÷º¯Êý
-        ÖÐºÍRTTµÄUSBÇý¶¯º¯ÊýÏà¹ØÏÎ½Ó²¿·Ö
-        ¸ÃÎÄ¼þ»¹»á°üº¬USBµÄ³õÊ¼ÅäÖÃº¯ÊýÒÔ¼°
-        USBµÄÐÝÃßÓë»½ÐÑµÄÏà¹Øº¯Êý
-        ÒÀÀµ£º
+        ä¸»è¦è´Ÿè´£å®žçŽ°USBä¸­æ–­å›žè°ƒä»¥åŠå›žè°ƒå‡½æ•°
+        ä¸­å’ŒRTTçš„USBé©±åŠ¨å‡½æ•°ç›¸å…³è¡”æŽ¥éƒ¨åˆ†
+        è¯¥æ–‡ä»¶è¿˜ä¼šåŒ…å«USBçš„åˆå§‹é…ç½®å‡½æ•°ä»¥åŠ
+        USBçš„ä¼‘çœ ä¸Žå”¤é†’çš„ç›¸å…³å‡½æ•°
+        ä¾èµ–ï¼š
             ht32_usbd_core.c
-            ÒÔ¼°RTTµÄÏà¹ØÎÄ¼þ
+            ä»¥åŠRTTçš„ç›¸å…³æ–‡ä»¶
 */
 
-/* Ö¡ÆðÊ¼£¨SOF£©ÖÐ¶Ï»Øµ÷ */
+/* å¸§èµ·å§‹ï¼ˆSOFï¼‰ä¸­æ–­å›žè°ƒ */
 void usbd_sof_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_sof_handler(udcd);
 }
-/* USB¸´Î»ÖÐ¶Ï */
+/* USBå¤ä½ä¸­æ–­ */
 void usbd_reset_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_reset_handler(udcd);
 }
 
-/* USBÔÝÍ£(¶Ï¿ªÁ¬½Ó)ÖÐ¶Ï */
+/* USBæš‚åœ(æ–­å¼€è¿žæŽ¥)ä¸­æ–­ */
 void usbd_suspend_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_disconnect_handler(udcd);
 }
 
-/* USB»Ö¸´£¨ÖØÐÂÁ¬½Ó£©ÖÐ¶Ï */
+/* USBæ¢å¤ï¼ˆé‡æ–°è¿žæŽ¥ï¼‰ä¸­æ–­ */
 void usbd_resume_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_connect_handler(udcd);
 }
 
-/* USB¶Ëµã0ÖÐ¶Ï */
-/* ¶Ëµã0¿ØÖÆÖÐ¶Ï */
+/* USBç«¯ç‚¹0ä¸­æ–­ */
+/* ç«¯ç‚¹0æŽ§åˆ¶ä¸­æ–­ */
 void usbd_setup_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_ep0_setup_handler(udcd, (struct urequest *)&pCore->Device.Request);
 }
 
-/* ¶Ëµã0ÊäÈëÖÐ¶Ï£¨¿ÉÒÔ¹éÈëÆäËû¶ËµãÊäÈëÖÐ¶Ï£© */
+/* ç«¯ç‚¹0è¾“å…¥ä¸­æ–­ï¼ˆå¯ä»¥å½’å…¥å…¶ä»–ç«¯ç‚¹è¾“å…¥ä¸­æ–­ï¼‰ */
 void usbd_ep0_in_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_ep0_in_handler(udcd);
 }
 
-/* ¶Ëµã0Êä³öÖÐ¶Ï£¨¿ÉÒÔ¹éÈëÆäËû¶ËµãÊä³öÖÐ¶Ï£© */
+/* ç«¯ç‚¹0è¾“å‡ºä¸­æ–­ï¼ˆå¯ä»¥å½’å…¥å…¶ä»–ç«¯ç‚¹è¾“å‡ºä¸­æ–­ï¼‰ */
 void usbd_ep0_out_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_ep0_out_handler(udcd, pCore->Device.Transfer.sByteLength);
 }
 
-/* USBÆäËû¶ËµãÖÐ¶Ï */
-/* ÆäËû¶ËµãÊäÈëÖÐ¶Ï */
+/* USBå…¶ä»–ç«¯ç‚¹ä¸­æ–­ */
+/* å…¶ä»–ç«¯ç‚¹è¾“å…¥ä¸­æ–­ */
 void usbd_ep_in_callback(USBDCore_TypeDef *pCore, USBD_EPTn_Enum EPTn)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_ep_in_handler(udcd, EPTn | 0x80, pCore->Device.Transfer.sByteLength);
 }
 
-/* ÆäËû¶ËµãÊä³öÖÐ¶Ï */
+/* å…¶ä»–ç«¯ç‚¹è¾“å‡ºä¸­æ–­ */
 void usbd_ep_out_callback(USBDCore_TypeDef *pCore, USBD_EPTn_Enum EPTn)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
@@ -163,7 +163,7 @@ static void USB_Configuration(USBDCore_TypeDef *pCore)
     CKCUClock.Bit.USBD       = 1;
     CKCUClock.Bit.EXTI       = 1;
     CKCU_PeripClockConfig(CKCUClock, ENABLE);
-    
+
     int_p_usbd_code = pCore;
 
 #if (LIBCFG_CKCU_USB_PLL)
@@ -180,12 +180,12 @@ static void USB_Configuration(USBDCore_TypeDef *pCore)
 //    gUSBCore.pDriver = (u32 *)&gUSBDriver;                /* Initiate memory pointer of USB driver            */
 //    gUSBCore.Power.CallBack_Suspend.func  = Suspend;      /* Install suspend call back function into USB core */
     //gUSBCore.Power.CallBack_Suspend.uPara = (u32)NULL;
-    
-    /* ÃèÊö·û³õÊ¼»¯ */
+
+    /* æè¿°ç¬¦åˆå§‹åŒ– */
 //    USBDDesc_Init(&pCore->Device.Desc);                 /* Initiate memory pointer of descriptor            */
-    /* USBÀà³õÊ¼»¯ */
+    /* USBç±»åˆå§‹åŒ– */
 //    USBDClass_Init(&(pCore->Class));                      /* Initiate USB Class layer                         */
-    /* USBÄÚºË³õÊ¼»¯ */
+    /* USBå†…æ ¸åˆå§‹åŒ– */
     USBDCore_Init(pCore);                             /* Initiate USB Core layer                          */
 
     /* !!! NOTICE !!!
@@ -288,7 +288,7 @@ static void Suspend(u32 uPara)
         // Add your procedure here which disable related IO to reduce power consumption
         // ..................
         //
-        
+
         if ((int_p_usbd_code->Info.CurrentStatus == USB_STATE_SUSPENDED) && ((HT_USB->CSR & 0xC0) == 0x40))   // D+ = 1, D- = 0
         {
             /* For Bus powered device, you must enter DeepSleep1 when device has been suspended. For self-powered */

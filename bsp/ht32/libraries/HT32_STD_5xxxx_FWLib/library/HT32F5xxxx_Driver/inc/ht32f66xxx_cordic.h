@@ -277,7 +277,7 @@ void CORDIC_PDMACmd(u32 CORDIC_DMA, ControlStatus NewState);
 FlagStatus CORDIC_GetFlagStatus_RRDY(void);
 void CORDIC_WriteData(u32 InData);
 u32 CORDIC_ReadData(void);
-  
+
 /**
   * @}
   */

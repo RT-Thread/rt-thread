@@ -194,7 +194,7 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
         {
             pCore->Class.CallBack_StartOfFrame.func(pCore->Class.CallBack_StartOfFrame.uPara);
         }
-        
+
         usbd_sof_callback(pCore);
 
         API_USB_CLR_SOF_INT();
@@ -208,7 +208,7 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
         __DBG_USBPrintf("%06ld SUSPEND[%02d]\r\n", ++__DBG_USBCount, pCore->Info.CurrentStatus);
         API_USB_CLR_SUSPEND_INT();
         _USBDCore_Suspend(pCore);
-        
+
 //        usbd_suspend_callback(pCore);
     }
 
@@ -229,7 +229,7 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
             {
                 pCore->Class.CallBack_Reset.func(pCore->Class.CallBack_Reset.uPara);
             }
-            
+
             usbd_reset_callback(pCore);
         }
         API_USB_CLR_RESET_INT();
@@ -242,9 +242,9 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
     {
         __DBG_USBPrintf("%06ld RESUME\r\n", ++__DBG_USBCount);
         _USBDCore_Resume(pCore);
-        
+
 //        usbd_resume_callback(pCore);
-        
+
         API_USB_CLR_RESUME_INT();
     }
 
@@ -266,9 +266,9 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
             __DBG_USBDump((uc8 *) & (pCore->Device.Request), 8);
 
 //            _USBDCore_Setup(pCore);
-            
+
             usbd_setup_callback(pCore);
-            
+
             API_USB_CLR_SETUP_INT();                                    /* Clear SETUP Interrupt                  */
         }
 
@@ -280,9 +280,9 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
             __DBG_USBPrintf("%06ld EP0IN\t[%02ld]", ++__DBG_USBCount, pCore->Device.Transfer.sByteLength);
 
 //            _USBDCore_ControlIN(pCore);
-            
+
             usbd_ep0_in_callback(pCore);
-            
+
             API_USB_EPTn_CLR_IN_INT(USBD_EPT0);
         }
 
@@ -299,7 +299,7 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
             /*----------------------------------------------------------------------------------------------------*/
             API_USB_EPTn_CLR_OUT_INT(USBD_EPT0);
 //            _USBDCore_ControlOUT(pCore);
-            
+
             usbd_ep0_out_callback(pCore);
         }
 
@@ -327,15 +327,15 @@ void USBDCore_IRQHandler(USBDCore_TypeDef *pCore)
             {
                 pCore->Class.CallBack_EPTn[EPTn](EPTn);
             }
-            /* ÔÚ´Ë´¦µ÷ÓÃ¶ËµãÊäÈëÊä³ö»Øµ÷º¯Êý*/
+            /* åœ¨æ­¤å¤„è°ƒç”¨ç«¯ç‚¹è¾“å…¥è¾“å‡ºå›žè°ƒå‡½æ•°*/
             if (USBEPTISRFlag & IDTXIF)
             {
-                /* ÔÚ´Ë´¦µ÷ÓÃ¶ËµãÊäÈëº¯Êý */
+                /* åœ¨æ­¤å¤„è°ƒç”¨ç«¯ç‚¹è¾“å…¥å‡½æ•° */
                 usbd_ep_in_callback(pCore, (USBD_EPTn_Enum)EPTn);
             }
             else
             {
-                /* ÔÚ´Ë´¦µ÷ÓÃ¶ËµãÊä³öº¯Êý */
+                /* åœ¨æ­¤å¤„è°ƒç”¨ç«¯ç‚¹è¾“å‡ºå‡½æ•° */
                 usbd_ep_out_callback(pCore, (USBD_EPTn_Enum)EPTn);
             }
 

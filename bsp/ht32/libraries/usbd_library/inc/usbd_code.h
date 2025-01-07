@@ -202,7 +202,7 @@ typedef struct
   USBDCore_Class_TypeDef    Class;        /*!< USB Class call back function                                 */
   u32                       *pDriver;     /*!< USB Device Driver initialization structure                   */
   USBDCore_Power_TypeDef    Power;        /*!< USB Device Power related call back function                  */
-    
+
     usb_ept_info ept_io[8];               /*!< */
   void *pdata;                            /*!< USB User private pointer                                     */
 } USBDCore_TypeDef;

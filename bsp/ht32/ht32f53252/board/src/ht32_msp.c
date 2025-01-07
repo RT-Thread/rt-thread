@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -255,7 +255,7 @@ void ht32_can_gpio_init(void *instance)
 {
     CKCU_PeripClockConfig_TypeDef CKCUClock = {{ 0 }};
     HT_CAN_TypeDef *can_x = (HT_CAN_TypeDef *)instance;
-    
+
     if (HT_CAN0 == can_x)
     {
         CKCUClock.Bit.HTCFG_CAN_TX_GPIO_CLK = 1;

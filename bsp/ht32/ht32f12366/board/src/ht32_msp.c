@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -267,7 +267,7 @@ void ht32_sdio_gpio_init(void *instance)
         CKCUClock.Bit.PDMA                      = 1;
         CKCUClock.Bit.AFIO                      = 1;
         CKCU_PeripClockConfig(CKCUClock, ENABLE);
-        
+
         /* Configure SDIO pins                                                                                    */
         AFIO_GPxConfig(HTCFG_SDIO_CLK_GPIO_ID, HTCFG_SDIO_CLK_GPIO_PIN, AFIO_FUN_SDIO);
         AFIO_GPxConfig(HTCFG_SDIO_CMD_GPIO_ID, HTCFG_SDIO_CMD_GPIO_PIN, AFIO_FUN_SDIO);

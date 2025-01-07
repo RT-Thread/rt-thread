@@ -89,14 +89,14 @@ void usbd_setup_callback(USBDCore_TypeDef *pCore)
     rt_usbd_ep0_setup_handler(udcd, (struct urequest *)&pCore->Device.Request);
 }
 
-/* Endpoint 0 input interrupt£¨Can be classified as other endpoint input interrupt£© */
+/* Endpoint 0 input interruptÂ£Â¨Can be classified as other endpoint input interruptÂ£Â© */
 void usbd_ep0_in_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
     rt_usbd_ep0_in_handler(udcd);
 }
 
-/* Endpoint 0 output interrupt£¨Can be classified as other endpoint input interrupt£© */
+/* Endpoint 0 output interruptÂ£Â¨Can be classified as other endpoint input interruptÂ£Â© */
 void usbd_ep0_out_callback(USBDCore_TypeDef *pCore)
 {
     udcd_t udcd = (udcd_t)pCore->pdata;
