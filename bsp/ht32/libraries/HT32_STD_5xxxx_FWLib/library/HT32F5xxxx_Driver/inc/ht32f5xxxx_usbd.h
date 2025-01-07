@@ -57,7 +57,7 @@
 /** @defgroup USBDevice_Settings USB Device settings
   * @{
   */
-#if (LIBCFG_USBD_V2)
+#if (LIBCFG_USBD_V2)  
 #define MAX_EP_NUM                  (10)
 #else
 #define MAX_EP_NUM                  (8)

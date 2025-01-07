@@ -2043,7 +2043,7 @@ __STATIC_INLINE void TZ_SAU_Disable(void)
   @{
  */
 
-
+ 
 /**
   \brief   Set Debug Authentication Control Register
   \details writes to Debug Authentication Control register.
@@ -2110,7 +2110,7 @@ __STATIC_INLINE uint32_t TZ_DCB_GetAuthCtrl_NS(void)
   @{
  */
 
-
+ 
 /**
   \brief   Get Debug Authentication Status Register
   \details Reads Debug Authentication Status register.

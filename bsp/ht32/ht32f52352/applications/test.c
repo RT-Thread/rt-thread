@@ -58,20 +58,29 @@ static struct rt_semaphore rx_sem;
 static rt_mutex_t task_mutex = RT_NULL; /* task mutex */
 
 /* device handle */
+#ifdef BSP_USING_UART
 static rt_device_t serial;
+#endif
+#ifdef BSP_USING_WDT
 static rt_device_t wdt_dev;
-struct rt_i2c_bus_device *i2c_dev;
+#endif
+#ifdef BSP_USING_I2C
+static struct rt_i2c_bus_device *i2c_dev;
+#endif
+#ifdef BSP_USING_SPI
 static struct rt_spi_device *spi_dev;
+#endif
 
 /* In-file function declarations */
-static void sys_run_dir(void *parameter);
-static void gpio_output_test(void *parameter);
-static void gpio_input_test(void *parameter);
-static void key_iqr_handle(void *args);
+//static void sys_run_dir(void *parameter);
+//static void gpio_output_test(void *parameter);
+//static void gpio_input_test(void *parameter);
+//static void key_iqr_handle(void *args);
 
 /* Task registration */
 int task_registration(void)
 {
+//    USB_Configuration(RT_NULL);
     /* Create a dynamic mutex */
     task_mutex = rt_mutex_create("task_mutex", RT_IPC_FLAG_FIFO);
     if (task_mutex == RT_NULL)
@@ -90,6 +99,7 @@ int task_registration(void)
 INIT_BOARD_EXPORT(task_registration);
 
 /* System operation indicator */
+#ifdef BSP_USING_GPIO
 static void sys_run_dir(void *parameter)
 {
     rt_uint32_t e;
@@ -301,7 +311,9 @@ static int gpio_input_task(int argc, char *argv[])
     return -1;
 }
 MSH_CMD_EXPORT(gpio_input_task, gpio input task operation);
+#endif
 /* uart test */
+#ifdef BSP_USING_UART
 static rt_err_t uart_iqr_handle(rt_device_t dev, rt_size_t size)
 {
     /* Serial port callback function */
@@ -396,7 +408,9 @@ static int uart_task(int argc, char *argv[])
     return ret;
 }
 MSH_CMD_EXPORT(uart_task, uart device sample);
+#endif
 /* hw/sw iic test */
+#ifdef BSP_USING_I2C
 static void i2c_thread(void *parameter)
 {
     uint8_t write_addr = 0x00;
@@ -497,7 +511,9 @@ static int i2c_task(int argc, char *argv[])
     return ret;
 }
 MSH_CMD_EXPORT(i2c_task, i2c device sample);
+#endif
 /* spi test */
+#ifdef BSP_USING_SPI
 static void spi_thread(void *parameter)
 {
     rt_uint8_t w25x_read_id = 0x9F;
@@ -584,7 +600,9 @@ static int spi_task(int argc, char *argv[])
     return ret;
 }
 MSH_CMD_EXPORT(spi_task, spi device sample);
+#endif
 /* adc test */
+#ifdef BSP_USING_ADC
 static void adc_test(void *parameter)
 {
     rt_uint32_t adc0_ch6_val,adc0_ch7_val;
@@ -640,8 +658,9 @@ static int adc_task(int argc, char *argv[])
     return -1;
 }
 MSH_CMD_EXPORT(adc_task, adc task operation);
-
+#endif
 /* wdt test */
+#ifdef BSP_USING_WDT
 static void wdt_test(void)
 {
     rt_device_control(wdt_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
@@ -712,5 +731,74 @@ static int wdt_task(int argc, char *argv[])
     return -1;
 }
 MSH_CMD_EXPORT(wdt_task, wdt task operation);
+#endif
+/* usbd test */
+#ifdef BSP_USING_USBD
+static void usbd_test(void *parameter)
+{
+    rt_device_t dev = RT_NULL;
+    char dev_name[] = "vcom";
+    char buf[] = "usbd vcom test!\r\n";
 
+    dev = rt_device_find(dev_name);
+    
+    if (dev)
+    {
+        rt_device_open(dev, RT_DEVICE_FLAG_RDWR);
+    }
+    else
+    {
+        rt_kprintf("Device with name %s not found.\n",dev_name);
+        rt_thread_t tid = rt_thread_self();
+        rt_thread_delete(tid);
+    }
+    while (1)
+    {
+        rt_device_write(dev, 0, buf, rt_strlen(buf));
+        rt_thread_mdelay(500);
+    }
+}
+
+static int usbd_task(int argc, char *argv[])
+{
+    rt_err_t ret = -RT_ERROR;
+    
+    if(argc == 2)
+    {
+        if(rt_strcmp(argv[1],"start") == 0)
+        {
+            /* Gpio input test tasks */
+            rt_thread_t usbd_vcom_task = rt_thread_create("usbd_vcom_task",
+                                            usbd_test, RT_NULL,
+                                            THREAD_STACK_SIZE,
+                                            THREAD_PRIORITY, THREAD_TIMESLICE);
+            if (usbd_vcom_task != RT_NULL)
+            {
+                rt_thread_startup(usbd_vcom_task);
+                rt_kprintf("The usbd vcom task is registered.\n");
+            }
+            else
+            {
+                rt_kprintf("usbd vcom task registration failed.\n");
+            }
+            ret = RT_EOK;
+        }
+        else if(rt_strcmp(argv[1],"stop") == 0)
+        {
+            ret = RT_EOK;
+        }
+    }
+    else
+    {
+        rt_kprintf("Necessary parameters are missing.\n");
+        rt_kprintf("You can use the following commands.\n");
+        rt_kprintf("%s start\n",__func__);
+        rt_kprintf("%s stop\n",__func__);
+    }
+    return ret;
+}
+MSH_CMD_EXPORT(usbd_task, usbd task operation);
+
+
+#endif
 #endif /* BSP_USING_TEST */

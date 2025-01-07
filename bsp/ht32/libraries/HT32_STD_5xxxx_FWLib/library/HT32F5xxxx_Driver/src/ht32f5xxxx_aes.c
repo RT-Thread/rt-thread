@@ -1,8 +1,8 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_aes.c
- * @version $Rev:: 7390         $
- * @date    $Date:: 2023-12-12 #$
- * @brief   This file provides all the ADC firmware functions.
+ * @version $Rev:: 8205         $
+ * @date    $Date:: 2024-10-15 #$
+ * @brief   This file provides all the AES firmware functions.
  *************************************************************************************************************
  * @attention
  *
@@ -61,7 +61,7 @@ static void _AES_Init(HT_AES_TypeDef* HT_AESn, AES_InitTypeDef* AES_InitStruct);
 void AES_DeInit(HT_AES_TypeDef* HT_AESn)
 {
   RSTCU_PeripReset_TypeDef RSTCUReset = {{0}};
-
+  
   if (HT_AESn == NULL) // Remove the compiler warning
   {
   }
@@ -355,12 +355,12 @@ void AES_SetKeyTable(HT_AES_TypeDef* HT_AESn, u32 *Key, u32 keySize)
   }
   HT_AESn->CR = uCRTemp;
 
-  for (i = 0; i < keySize; i += 4)
+  for (i = 0; i < (keySize / 4); i++)
   {
     #if (LIBCFG_AES_SWAP)
-    HT_AESn->KEYR[i >> 2] = __REV(*&Key[i]);
+    HT_AESn->KEYR[i] = __REV(*&Key[i]);
     #else
-    HT_AESn->KEYR[i >> 2] = *&Key[i];
+    HT_AESn->KEYR[i] = *&Key[i];
     #endif
   }
 
@@ -378,12 +378,12 @@ void AES_SetVectorTable(HT_AES_TypeDef* HT_AESn, u32 *Vector)
   int i;
   Assert_Param(IS_AES(HT_AESn));
 
-  for (i = 0; i < 16; i += 4)
+  for (i = 0; i < 4; i++)
   {
     #if (LIBCFG_AES_SWAP)
-    HT_AESn->IVR[i >> 2] = __REV(*&Vector[i]);
+    HT_AESn->IVR[i] = __REV(*&Vector[i]);
     #else
-    HT_AESn->IVR[i >> 2] = *&Vector[i];
+    HT_AESn->IVR[i] = *&Vector[i];
     #endif
   }
 }

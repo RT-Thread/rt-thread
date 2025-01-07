@@ -245,7 +245,7 @@
   #define _EP7LEN_T         (_EP7LEN_TMP * (_EP7_CFG_SDBS + 1))
 #else
   #define _EP7LEN           (0)
-  #define _EP7LEN_T         (0)
+  #define _EP7LEN_T         (0)  
 #endif
 #if (_EP7_TYPR == EP_TYPE_ISO)
   #define _EP7_CFG_EPTYPE   (1)

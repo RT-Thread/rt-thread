@@ -72,7 +72,7 @@ typedef enum
 } LEDC_DTYNUM_Enum;
 
 /**
- * @brief Definition of LEDC Init Structure
+ * @brief Definition of LEDC Init Structure 
  */
 typedef struct
 {

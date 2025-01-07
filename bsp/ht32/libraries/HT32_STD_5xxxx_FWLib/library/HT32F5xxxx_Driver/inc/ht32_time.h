@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32_time.h
- * @version $Rev:: 6751         $
- * @date    $Date:: 2023-03-02 #$
+ * @version $Rev:: 7693         $
+ * @date    $Date:: 2024-04-02 #$
  * @brief   The header file of time function.
  *************************************************************************************************************
  * @attention
@@ -80,7 +80,7 @@
 
 /* Exported constants --------------------------------------------------------------------------------------*/
 #ifndef IS_IPN_BFTM
-#undef IPN_MCTM0
+#undef IPN_MCTM0 
 #undef IPN_MCTM1
 #undef IPN_GPTM0
 #undef IPN_GPTM1
@@ -132,23 +132,23 @@
 #define TIME_TICKDIFF(start, current)             ((current >= start) ? (u32)(current - start) : (u32)(0xFFFFFFFF - start + 1 + current))
 
 #if (HTCFG_TIME_TICKHZ < 1000000)
-#define TIME_US2TICK(us)                          (us / (1000000UL / HTCFG_TIME_TICKHZ))
-#define TIME_TICK2US(t)                           (t * (1000000UL / HTCFG_TIME_TICKHZ))
+#define TIME_US2TICK(us)                          ((us) / (1000000UL / HTCFG_TIME_TICKHZ))
+#define TIME_TICK2US(t)                           ((t) * (1000000UL / HTCFG_TIME_TICKHZ))
 #else
-#define TIME_US2TICK(us)                          (us * (HTCFG_TIME_TICKHZ / 1000000UL))
-#define TIME_TICK2US(t)                           (t / (HTCFG_TIME_TICKHZ / 1000000UL))
+#define TIME_US2TICK(us)                          ((us) * (HTCFG_TIME_TICKHZ / 1000000UL))
+#define TIME_TICK2US(t)                           ((t) / (HTCFG_TIME_TICKHZ / 1000000UL))
 #endif
 
 #if (HTCFG_TIME_TICKHZ < 1000)
-#define TIME_MS2TICK(ms)                          (ms / (1000UL / HTCFG_TIME_TICKHZ))
-#define TIME_TICK2MS(t)                           (t * (1000UL / HTCFG_TIME_TICKHZ))
+#define TIME_MS2TICK(ms)                          ((ms) / (1000UL / HTCFG_TIME_TICKHZ))
+#define TIME_TICK2MS(t)                           ((t) * (1000UL / HTCFG_TIME_TICKHZ))
 #else
-#define TIME_MS2TICK(ms)                          (ms * (HTCFG_TIME_TICKHZ / 1000UL))
-#define TIME_TICK2MS(t)                           (t / (HTCFG_TIME_TICKHZ / 1000UL))
+#define TIME_MS2TICK(ms)                          ((ms) * (HTCFG_TIME_TICKHZ / 1000UL))
+#define TIME_TICK2MS(t)                           ((t) / (HTCFG_TIME_TICKHZ / 1000UL))
 #endif
 
-#define TIME_S2TICK(s)                            (s * (u32)(HTCFG_TIME_TICKHZ))
-#define TIME_TICK2S(t)                            (t / (HTCFG_TIME_TICKHZ))
+#define TIME_S2TICK(s)                            ((s) * (u32)(HTCFG_TIME_TICKHZ))
+#define TIME_TICK2S(t)                            ((t) / (HTCFG_TIME_TICKHZ))
 
 
 #define GET_CNT()                                 (_HTCFG_TIME_PORT->CNTR)

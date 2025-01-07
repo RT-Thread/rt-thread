@@ -375,7 +375,7 @@ void I2C_OwnAddressCmd(HT_I2C_TypeDef* I2Cx, I2C_ADDR_Enum Address, ControlStatu
   {
     value = value << 16;
   }
-
+  
   if (NewState != DISABLE)
   {
     I2Cx->ADDR |= value;

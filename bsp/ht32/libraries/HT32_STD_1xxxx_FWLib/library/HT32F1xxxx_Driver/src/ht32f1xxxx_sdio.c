@@ -145,7 +145,7 @@ u32 SDIO_GetResponse(u32 SDIO_RESP)
 
 /*********************************************************************************************************//**
  * @brief Initialize the SDIO data path according to the specified parameters in the SDIO_DataInitStruct.
- * @param SDIO_DataInitStruct: pointer to a SDIO_DataInitTypeDef structure.
+ * @param SDIO_DataInitStruct: pointer to a SDIO_DataInitTypeDef structure. 
  * @retval None
  ************************************************************************************************************/
 void SDIO_DataConfig(SDIO_DataInitTypeDef* SDIO_DataInitStruct)
@@ -166,7 +166,7 @@ void SDIO_DataConfig(SDIO_DataInitTypeDef* SDIO_DataInitStruct)
 }
 
 /*********************************************************************************************************//**
- * @brief Read one data word from FIFO.
+ * @brief Read one data word from FIFO. 
  * @return Data received
  ************************************************************************************************************/
 u32 SDIO_ReadData(void)
@@ -185,7 +185,7 @@ void SDIO_WriteData(u32 Data)
 }
 
 /*********************************************************************************************************//**
- * @brief Return the number of words left to be written to or read from FIFO.
+ * @brief Return the number of words left to be written to or read from FIFO.	
  * @return Remaining number of words.
  ************************************************************************************************************/
 u32 SDIO_GetFIFOCount(void)

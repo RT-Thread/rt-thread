@@ -109,7 +109,7 @@ typedef struct
                                          (LEVEL == SLED_FIFO_LEVEL_1) || \
                                          (LEVEL == SLED_FIFO_LEVEL_2) || \
                                          (LEVEL == SLED_FIFO_LEVEL_3))
-
+                                                     
 #define IS_SLED(SLED)                   ((SLED == HT_SLED0) || (SLED == HT_SLED1))
 /**
   * @}

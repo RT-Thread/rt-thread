@@ -69,7 +69,7 @@ void ht32_usart_gpio_init(void *instance)
     }
 #endif
 }
-#endif
+#endif  /* BSP_USING_UART */
 
 /* GPIO configuration for SPI */
 #ifdef BSP_USING_SPI
@@ -104,7 +104,7 @@ void ht32_spi_gpio_init(void *instance)
     }
 #endif
 }
-#endif
+#endif  /* BSP_USING_SPI */
 
 /* GPIO configuration for I2C */
 #ifdef BSP_USING_I2C_HW
@@ -135,7 +135,7 @@ void ht32_hardware_i2c_gpio_init(void *instance)
     }
 #endif
 }
-#endif
+#endif  /* BSP_USING_I2C_HW */
 /* GPIO configuration for ADC */
 #ifdef BSP_USING_ADC
 void ht32_adc_gpio_init(void *instance,int8_t channel)
@@ -247,4 +247,42 @@ void ht32_adc_gpio_init(void *instance,int8_t channel)
     }
 #endif
 }
-#endif
+#endif  /* BSP_USING_ADC */
+
+/* GPIO configuration for SDIO */
+#ifdef BSP_USING_SDIO
+void ht32_sdio_gpio_init(void *instance)
+{
+    CKCU_PeripClockConfig_TypeDef CKCUClock = {{0}};
+    HT_SDIO_TypeDef *sdio_x = (HT_SDIO_TypeDef *)instance;
+    if(HT_SDIO == sdio_x)
+    {
+        CKCUClock.Bit.HTCFG_SDIO_CLK_GPIO_CLK   = 1;
+        CKCUClock.Bit.HTCFG_SDIO_CMD_GPIO_CLK   = 1;
+        CKCUClock.Bit.HTCFG_SDIO_DAT0_GPIO_CLK  = 1;
+        CKCUClock.Bit.HTCFG_SDIO_DAT1_GPIO_CLK  = 1;
+        CKCUClock.Bit.HTCFG_SDIO_DAT2_GPIO_CLK  = 1;
+        CKCUClock.Bit.HTCFG_SDIO_DAT3_GPIO_CLK  = 1;
+        CKCUClock.Bit.SDIO                      = 1;
+        CKCUClock.Bit.PDMA                      = 1;
+        CKCUClock.Bit.AFIO                      = 1;
+        CKCU_PeripClockConfig(CKCUClock, ENABLE);
+        
+        /* Configure SDIO pins                                                                                    */
+        AFIO_GPxConfig(HTCFG_SDIO_CLK_GPIO_ID, HTCFG_SDIO_CLK_GPIO_PIN, AFIO_FUN_SDIO);
+        AFIO_GPxConfig(HTCFG_SDIO_CMD_GPIO_ID, HTCFG_SDIO_CMD_GPIO_PIN, AFIO_FUN_SDIO);
+        AFIO_GPxConfig(HTCFG_SDIO_DAT0_GPIO_ID, HTCFG_SDIO_DAT0_GPIO_PIN, AFIO_FUN_SDIO);
+        AFIO_GPxConfig(HTCFG_SDIO_DAT1_GPIO_ID, HTCFG_SDIO_DAT1_GPIO_PIN, AFIO_FUN_SDIO);
+        AFIO_GPxConfig(HTCFG_SDIO_DAT2_GPIO_ID, HTCFG_SDIO_DAT2_GPIO_PIN, AFIO_FUN_SDIO);
+        AFIO_GPxConfig(HTCFG_SDIO_DAT3_GPIO_ID, HTCFG_SDIO_DAT3_GPIO_PIN, AFIO_FUN_SDIO);
+        /* 配置SDIO引脚驱动能力 */
+        GPIO_DriveConfig(HTCFG_SDIO_CLK_GPIO_PORT, HTCFG_SDIO_CLK_GPIO_PIN, GPIO_DV_8MA);
+        GPIO_DriveConfig(HTCFG_SDIO_CMD_GPIO_PORT, HTCFG_SDIO_CMD_GPIO_PIN, GPIO_DV_8MA);
+        GPIO_DriveConfig(HTCFG_SDIO_DAT0_GPIO_PORT, HTCFG_SDIO_DAT0_GPIO_PIN, GPIO_DV_8MA);
+        GPIO_DriveConfig(HTCFG_SDIO_DAT1_GPIO_PORT, HTCFG_SDIO_DAT1_GPIO_PIN, GPIO_DV_8MA);
+        GPIO_DriveConfig(HTCFG_SDIO_DAT2_GPIO_PORT, HTCFG_SDIO_DAT2_GPIO_PIN, GPIO_DV_8MA);
+        GPIO_DriveConfig(HTCFG_SDIO_DAT3_GPIO_PORT, HTCFG_SDIO_DAT3_GPIO_PIN, GPIO_DV_8MA);
+
+    }
+}
+#endif /* BSP_USING_SDIO */

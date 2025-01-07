@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_lib.h
- * @version $Rev:: 7319         $
- * @date    $Date:: 2023-10-28 #$
+ * @version $Rev:: 7924         $
+ * @date    $Date:: 2024-08-07 #$
  * @brief   The header file includes all the header files of the libraries.
  *************************************************************************************************************
  * @attention
@@ -34,8 +34,8 @@
 #endif
 
 /* Settings ------------------------------------------------------------------------------------------------*/
-#define HT32_FWLIB_VER                  (0x01009001)
-#define HT32_FWLIB_SVN                  (0x7446)
+#define HT32_FWLIB_VER                  (0x01014003)
+#define HT32_FWLIB_SVN                  (0x8294)
 
 #if defined(USE_HT32F52220_30)
   #include "ht32f52220_30_libcfg.h"
@@ -179,6 +179,10 @@ void assert_error(u8* file, u32 line);
   #include "ht32f5xxxx_cmp.h"
 #endif
 
+#if _CORDIC && LIBCFG_CORDIC
+  #include "ht32f66xxx_cordic.h"
+#endif
+
 #if _CRC && LIBCFG_CRC
   #include "ht32f5xxxx_crc.h"
 #endif
@@ -251,6 +255,14 @@ void assert_error(u8* file, u32 line);
 
 #if _PDMA && LIBCFG_PDMA
   #include "ht32f5xxxx_pdma.h"
+#endif
+
+#if _PGA && LIBCFG_PGA
+  #include "ht32f65xxx_66xxx_pga.h"
+#endif
+
+#if _PID && LIBCFG_PID
+  #include "ht32f66xxx_pid.h"
 #endif
 
 #if _PWRCU

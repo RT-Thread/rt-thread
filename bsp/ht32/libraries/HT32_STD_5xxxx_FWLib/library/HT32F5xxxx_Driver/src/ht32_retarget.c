@@ -206,8 +206,8 @@ int fputc (int ch, FILE *f)
 /*
   IAR's version after 9.20 use write to implement printf
 */
-int __write(int Handle,
-            const unsigned char * Buf,
+int __write(int Handle, 
+            const unsigned char * Buf, 
             int Bufsize)
 {
   size_t nChars = 0;

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f65xxx_66xxx_adc.c
- * @version $Rev:: 7367         $
- * @date    $Date:: 2023-12-06 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the ADC firmware functions.
  *************************************************************************************************************
  * @attention
@@ -43,7 +43,11 @@
   * @{
   */
 #define ADC_ENABLE_BIT       (0x00000080)
+
+#if (LIBCFG_ADC1)
 #define DUAL_MODE_MASK       (0x00000003)
+#endif
+
 #define ADC_SOFTWARE_RESET   (0x00000001)
 #define LST_SEQ_SET          (0x0000001F)
 #define TCR_SC_SET           (0x00000001)
@@ -51,9 +55,15 @@
 #define HLST_SEQ_SET         (0x0000001F)
 #define HTCR_SC_SET          (0x00000001)
 
+#if (!LIBCFG_ADC_NO_OFFSET_REG)
 #define OFR_ADOF_MASK        (0x00000FFF)
 #define OFR_ADAL             (1 << 14)
 #define OFR_ADOFE            (1 << 15)
+#endif
+
+#if (LIBCFG_ADC_MVDDA)
+#define ADC_VREF_MVDDAEN     (0x00000100)
+#endif
 /**
   * @}
   */
@@ -162,8 +172,8 @@ void ADC_DualModeConfig(HT_ADC_TypeDef* HT_ADCn, u32 DUAL_X, u8 HDelayTime, u8 D
  *     @arg ONE_SHOT_MODE      :
  *     @arg CONTINUOUS_MODE    :
  *     @arg DISCONTINUOUS_MODE :
- * @param Length: must between 1 ~ 16
- * @param SubLength: must between 1 ~ 16, only valid for DISCONTINUOUS_MODE.
+ * @param Length: must between 1 ~ 8
+ * @param SubLength: must between 1 ~ 8, only valid for DISCONTINUOUS_MODE.
  * @retval None
  ************************************************************************************************************/
 void ADC_RegularGroupConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_MODE, u8 Length, u8 SubLength)
@@ -189,8 +199,8 @@ void ADC_RegularGroupConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_MODE, u8 Length, u8 
  *     @arg ONE_SHOT_MODE      :
  *     @arg CONTINUOUS_MODE    :
  *     @arg DISCONTINUOUS_MODE :
- * @param Length: must between 1 ~ 4
- * @param SubLength: must between 1 ~ 4
+ * @param Length: must between 1 ~ 8 (5 ~ 8 only for specific model)
+ * @param SubLength: must between 1 ~ 8 (5 ~ 8 only for specific model)
  * @retval None
  ************************************************************************************************************/
 void ADC_HPGroupConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_MODE, u8 Length, u8 SubLength)
@@ -211,8 +221,16 @@ void ADC_HPGroupConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_MODE, u8 Length, u8 SubLe
  * @param ADC_CH_n: the ADC channel to configure
  *   This parameter can be one of the following values:
  *     @arg ADC_CH_n        : ADC Channel x selected, x must between 0 ~ 7
+ *     @arg ADC_CH_OPA0     : ADC OPA0O selected
+ *     @arg ADC_CH_OPA1     : ADC OPA1O selected
+ *     @arg ADC_CH_PGA0O    : ADC PGA0O selected
+ *     @arg ADC_CH_PGA1O    : ADC PGA1O selected
+ *     @arg ADC_CH_PGA2O    : ADC PGA2O selected
+ *     @arg ADC_CH_PGA3O    : ADC PGA3O selected
  *     @arg ADC_CH_GND_VREF : ADC GND VREF selected
  *     @arg ADC_CH_VDD_VREF : ADC VDD VREF selected
+ *     @arg ADC_CH_BANDGAP  : ADC BANDGAP selected
+ *     @arg ADC_CH_MVDDA    : ADC MVDDA selected
  * @param Rank: The rank in the regular group sequencer.
  *   This parameter must be between 0 to 7.
  * @param SampleClock: Number of sampling clocks.
@@ -230,7 +248,18 @@ void ADC_RegularChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u8 Rank, u8 
   Assert_Param(IS_ADC_INPUT_SAMPLING_TIME(SampleClock));
 
   /* config sampling clock of correspond ADC input channel                                                  */
+  #if (LIBCFG_ADC_STR_16_17)
+  if (ADC_CH_n < 16)
+  {
+    HT_ADCn->STR[ADC_CH_n] = SampleClock;
+  }
+  else
+  {
+    HT_ADCn->STR16[ADC_CH_n - 16] = SampleClock;
+  }
+  #else
   HT_ADCn->STR[ADC_CH_n] = SampleClock;
+  #endif
 
   /* Get the old register value                                                                             */
   tmpreg1 = HT_ADCn->LST[Rank >> 2];
@@ -252,10 +281,18 @@ void ADC_RegularChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u8 Rank, u8 
  * @param ADC_CH_n: the ADC channel to configure
  *   This parameter can be one of the following values:
  *     @arg ADC_CH_n        : ADC Channel x selected, x must between 0 ~ 7
+ *     @arg ADC_CH_OPA0     : ADC OPA0O selected
+ *     @arg ADC_CH_OPA1     : ADC OPA1O selected
+ *     @arg ADC_CH_PGA0O    : ADC PGA0O selected
+ *     @arg ADC_CH_PGA1O    : ADC PGA1O selected
+ *     @arg ADC_CH_PGA2O    : ADC PGA2O selected
+ *     @arg ADC_CH_PGA3O    : ADC PGA3O selected
  *     @arg ADC_CH_GND_VREF : ADC GND VREF selected
  *     @arg ADC_CH_VDD_VREF : ADC VDD VREF selected
+ *     @arg ADC_CH_BANDGAP  : ADC BANDGAP selected
+ *     @arg ADC_CH_MVDDA    : ADC MVDDA selected
  * @param Rank: The rank in the high priority group sequencer.
- *   This parameter must be between 0 to 3.
+ *   This parameter must be between 0 to 11. (4 ~ 11 only for specific model)
  * @param SampleClock: Number of sampling clocks.
  *   This parameter must be between 0x00 to 0xFF.
  * @retval None
@@ -271,10 +308,25 @@ void ADC_HPChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u8 Rank, u8 Sampl
   Assert_Param(IS_ADC_INPUT_SAMPLING_TIME(SampleClock));
 
   /* config sampling clock of correspond ADC input channel                                                  */
+  #if (LIBCFG_ADC_STR_16_17)
+  if (ADC_CH_n < 16)
+  {
+    HT_ADCn->STR[ADC_CH_n] = SampleClock;
+  }
+  else
+  {
+    HT_ADCn->STR16[ADC_CH_n - 16] = SampleClock;
+  }
+  #else
   HT_ADCn->STR[ADC_CH_n] = SampleClock;
-
+  #endif
+  
   /* Get the old register value                                                                             */
+  #if (LIBCFG_ADC_HLST_0_2)
+  tmpreg1 = HT_ADCn->HLST[Rank >> 2];
+  #else
   tmpreg1 = HT_ADCn->HLST;
+  #endif
   /* Calculate the mask to clear                                                                            */
   tmpreg2 = HLST_SEQ_SET << (8 * (Rank & 0x3));
   /* Clear the old SEQx bits for the selected rank                                                          */
@@ -284,7 +336,11 @@ void ADC_HPChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u8 Rank, u8 Sampl
   /* Set the SEQx bits for the selected rank                                                                */
   tmpreg1 |= tmpreg2;
   /* Store the new register value                                                                           */
+  #if (LIBCFG_ADC_HLST_0_2)
+  HT_ADCn->HLST[Rank >> 2] = tmpreg1;
+  #else
   HT_ADCn->HLST = tmpreg1;
+  #endif
 }
 
 /*********************************************************************************************************//**
@@ -537,7 +593,7 @@ u16 ADC_GetConversionData(HT_ADC_TypeDef* HT_ADCn, u8 ADC_REGULAR_DATAn)
 /*********************************************************************************************************//**
  * @brief Return the result of ADC high priority channel conversion.
  * @param HT_ADCn: where HT_ADCn is the selected ADC from the ADC peripherals.
- * @param ADC_HP_DATAn: where x can be 0 ~ 3
+ * @param ADC_HP_DATAn: where x can be 0 ~ 11, (4 ~ 11 only for specific model)
  * @retval The Value of data conversion.
  ************************************************************************************************************/
 u16 ADC_GetHPConversionData(HT_ADC_TypeDef* HT_ADCn, u8 ADC_HP_DATAn)
@@ -546,7 +602,18 @@ u16 ADC_GetHPConversionData(HT_ADC_TypeDef* HT_ADCn, u8 ADC_HP_DATAn)
   Assert_Param(IS_ADC(HT_ADCn));
   Assert_Param(IS_ADC_HP_DATA(ADC_HP_DATAn));
 
+  #if (LIBCFG_ADC_HDR_4_11)
+  if (ADC_HP_DATAn < 4)
+  {
+    return ((u16)HT_ADCn->HDR[ADC_HP_DATAn]);
+  }
+  else
+  {
+    return ((u16)HT_ADCn->HDR4[ADC_HP_DATAn - 4]);
+  }
+  #else
   return ((u16)HT_ADCn->HDR[ADC_HP_DATAn]);
+  #endif
 }
 
 /*********************************************************************************************************//**
@@ -770,6 +837,54 @@ void ADC_PDMAConfig(HT_ADC_TypeDef* HT_ADCn, u32 ADC_PDMA_x, ControlStatus NewSt
     HT_ADCn->PDMAR &= ~ADC_PDMA_x;
   }
 }
+
+#if (LIBCFG_ADC_IVREF)
+/*********************************************************************************************************//**
+ * @brief Enable or Disable the VREF.
+ * @param HT_ADCn: where HT_ADCn is the selected ADC from the ADC peripherals.
+ * @param NewState: This parameter can be ENABLE or DISABLE.
+ * @retval None
+ ************************************************************************************************************/
+void ADC_VREFCmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_ADC(HT_ADCn));
+  Assert_Param(IS_CONTROL_STATUS(NewState));
+
+  if (NewState != DISABLE)
+  {
+    HT_ADCn->VREFCR |= 0x00000001;
+  }
+  else
+  {
+    HT_ADCn->VREFCR &= ~(0x00000001);
+  }
+}
+#endif
+
+#if (LIBCFG_ADC_MVDDA)
+/*********************************************************************************************************//**
+ * @brief Enable or Disable the power of MVDDA (VDDA/2)
+ * @param HT_ADCn: where HT_ADCn is the selected ADC from the ADC peripherals.
+ * @param NewState: This parameter can be ENABLE or DISABLE.
+ * @retval None
+ ************************************************************************************************************/
+void ADC_MVDDACmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_ADC(HT_ADCn));
+  Assert_Param(IS_CONTROL_STATUS(NewState));
+
+  if (NewState != DISABLE)
+  {
+    HT_ADCn->VREFCR |= ADC_VREF_MVDDAEN;
+  }
+  else
+  {
+    HT_ADCn->VREFCR &= ~(ADC_VREF_MVDDAEN);
+  }
+}
+#endif
 /**
   * @}
   */

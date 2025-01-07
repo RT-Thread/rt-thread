@@ -111,7 +111,7 @@ menu "Onboard Peripheral Drivers"
     if RT_USING_CONSOLE
 		config RT_CONSOLE_DEVICE_NAME
 		string "the device name for console"
-		default "usart0"
+		default "usart1"
 	endif
 
 endmenu
@@ -126,7 +126,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default n
-        select RT_USING_SERIAL
+        select RT_USING_SERIAL if BSP_USING_UART
         if BSP_USING_UART
             config BSP_USING_USART0
                 bool "Enable USART0"
@@ -306,6 +306,141 @@ menu "On-chip Peripheral Drivers"
         depends on BSP_USING_WDT
         string "wdt device name"
         default "wdt"
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        depends on SOC_HT32F53241 || SOC_HT32F53242 || SOC_HT32F53252
+        default n
+        select RT_USING_CAN if BSP_USING_CAN
+        config BSP_USING_CAN_NAME
+        depends on BSP_USING_CAN
+        string "can device name"
+        default "can"
+        if BSP_USING_CAN
+            config CAN_DEFAULT_BASE_CONFIGURATION  
+                choice
+                    prompt "Default CAN baud rate"
+                    default BSP_USING_CAN500kBaud
+                    config BSP_USING_CAN1MBaud
+                        bool "CAN1MBaud"
+                    config BSP_USING_CAN800kBaud
+                        bool "CAN800kBaud"
+                    config BSP_USING_CAN500kBaud
+                        bool "CAN500kBaud"
+                    config BSP_USING_CAN250kBaud
+                        bool "CAN250kBaud"
+                    config BSP_USING_CAN125kBaud
+                        bool "CAN125kBaud"
+                    config BSP_USING_CAN100kBaud
+                        bool "CAN100kBaud"
+                    config BSP_USING_CAN50kBaud
+                        bool "CAN50kBaud"
+                    config BSP_USING_CAN20kBaud
+                        bool "CAN20kBaud"
+                    config BSP_USING_CAN10kBaud
+                        bool "CAN10kBaud"
+                endchoice
+                choice
+                    prompt "Default CAN mode"
+                    default BSP_USING_RT_CAN_MODE_NORMAL
+                    config BSP_USING_RT_CAN_MODE_NORMAL
+                        bool "RT_CAN_MODE_NORMAL"
+                    config BSP_USING_RT_CAN_MODE_LISTEN
+                        bool "RT_CAN_MODE_LISTEN"
+                    config BSP_USING_RT_CAN_MODE_LOOPBACK
+                        bool "RT_CAN_MODE_LOOPBACK"
+                    config BSP_USING_RT_CAN_MODE_LOOPBACKANLISTEN
+                        bool "RT_CAN_MODE_LOOPBACKANLISTEN"
+                endchoice
+
+                config BSP_USING_CAN_BAUD
+                int
+                default 1000000 if BSP_USING_CAN1MBaud
+                default 800000 if BSP_USING_CAN800kBaud
+                default 500000 if BSP_USING_CAN500kBaud
+                default 250000 if BSP_USING_CAN250kBaud
+                default 125000 if BSP_USING_CAN125kBaud
+                default 100000 if BSP_USING_CAN100kBaud
+                default 50000 if BSP_USING_CAN50kBaud
+                default 20000 if BSP_USING_CAN20kBaud
+                default 10000 if BSP_USING_CAN10kBaud
+
+                config BSP_USING_CAN_MODE
+                int
+                default 0 if BSP_USING_RT_CAN_MODE_NORMAL
+                default 1 if BSP_USING_RT_CAN_MODE_LISTEN
+                default 2 if BSP_USING_RT_CAN_MODE_LOOPBACK
+                default 3 if BSP_USING_RT_CAN_MODE_LOOPBACKANLISTEN
+            
+            config CAN_DEFAULT_FILTER_TABLE_CONFIGURATION
+                choice
+                    prompt "Default filter id mode"
+                    default BSP_USING_CAN_STD_ID
+                    config BSP_USING_CAN_STD_ID
+                        bool "CAN_STD_ID"
+                    config BSP_USING_CAN_EXT_ID
+                        bool "CAN_EXT_ID"
+                endchoice
+
+                choice
+                    prompt "Default filter frame mode"
+                    default BSP_USING_CAN_DATA_FRAME
+                    config BSP_USING_CAN_DATA_FRAME
+                        bool "CAN_DATA_FRAME"
+                    config BSP_USING_CAN_REMOTE_FRAME
+                        bool "CAN_REMOTE_FRAME"
+                endchoice
+
+                config BSP_USING_CAN_ID_MODE
+                int
+                default 0 if BSP_USING_CAN_STD_ID
+                default 1 if BSP_USING_CAN_EXT_ID
+
+                config BSP_USING_CAN_FRAME_MODE
+                int
+                default 0 if BSP_USING_CAN_REMOTE_FRAME
+                default 1 if BSP_USING_CAN_DATA_FRAME
+
+                config BSP_USING_CAN_MSG_NUM
+                int "Default filter table number"
+                range 0 31
+                default 0
+
+                config BSP_USING_CAN_ID
+                hex "Default filter arbitration bit(ID)"
+                range 0 0x7FF if BSP_USING_CAN_STD_ID
+                default 0x541 if BSP_USING_CAN_STD_ID
+                range 0 0x1FFFFFFF if BSP_USING_CAN_EXT_ID
+                default 0x541 if BSP_USING_CAN_EXT_ID
+
+                config BSP_USING_CAN_MASK
+                hex "Default filter mask bit(MASK)"
+                range 0 0x7FF if BSP_USING_CAN_STD_ID
+                default 0x7FF if BSP_USING_CAN_STD_ID
+                range 0 0x1FFFFFFF if BSP_USING_CAN_EXT_ID
+                default 0x1FFFFFFF if BSP_USING_CAN_EXT_ID
+
+        endif
+
+    menuconfig BSP_USING_SDIO
+        bool "Enable SDIO"
+        depends on SOC_HT32F12345 || SOC_HT32F12365 || SOC_HT32F12366
+        default n
+        select RT_USING_SDIO if BSP_USING_SDIO
+        select RT_USING_DFS if BSP_USING_SDIO
+        config BSP_USING_SDIO_NAME
+        depends on BSP_USING_SDIO
+        string "sdio device name"
+        default "sd0"
+
+    menuconfig BSP_USING_USBD
+        bool "Enable USB BUS"
+        default n
+        select RT_USING_USB_DEVICE if BSP_USING_USBD
+        config BSP_USING_USBD_NAME
+        depends on BSP_USING_USBD
+        string "usbd device name"
+        default "usbd"
 endmenu
 
 menu "Board extended module Drivers"

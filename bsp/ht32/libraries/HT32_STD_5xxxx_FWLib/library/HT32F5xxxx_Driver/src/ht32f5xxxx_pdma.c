@@ -255,7 +255,7 @@ FlagStatus PDMA_GetFlagStatus(u32 PDMA_CHn, u32 PDMA_FLAG_x)
      Must turn on the PDMA IER to get the ISR flag.
      For example: PDMA_GetFlagStatus(PDMA_CH0, PDMA_INT_TC, ENABLE);
   */
-
+  
   /* Check the parameters                                                                                   */
   Assert_Param(IS_PDMA_CH(PDMA_CHn));
   Assert_Param(IS_PDMA_FLAG(PDMA_FLAG_x));
