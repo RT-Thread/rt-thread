@@ -13,6 +13,8 @@
 #define __SMP_IPI_H__
 #include <rtthread.h>
 
+#ifdef RT_USING_SMP
+
 /* callback of smp call */
 typedef void (*rt_smp_call_cb_t)(void *data);
 typedef rt_bool_t (*rt_smp_cond_t)(int cpu, void *info);
@@ -66,4 +68,7 @@ rt_inline size_t rt_smp_get_next_remote(size_t iter, size_t cpuid)
     return iter == cpuid ? iter + 1 : iter;
 }
 #define rt_smp_for_each_remote_cpu(_iter, _cpuid) for (_iter = rt_smp_get_next_remote(-1, _cpuid); (_iter) < RT_CPUS_NR; _iter=rt_smp_get_next_remote(_iter, _cpuid))
-#endif
+
+#endif // RT_USING_SMP
+
+#endif // __SMP_IPI_H__

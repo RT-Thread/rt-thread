@@ -30,7 +30,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: ${{ matrix.legs.RTT_BSP }}
     if: github.repository_owner == 'RT-Thread'
     strategy:

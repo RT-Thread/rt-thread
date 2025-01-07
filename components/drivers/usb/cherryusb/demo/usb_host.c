@@ -254,38 +254,38 @@ delete:
 }
 #endif
 
+#if TEST_USBH_CDC_ACM
 void usbh_cdc_acm_run(struct usbh_cdc_acm *cdc_acm_class)
 {
-#if TEST_USBH_CDC_ACM
     usb_osal_thread_create("usbh_cdc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_cdc_acm_thread, cdc_acm_class);
-#endif
 }
 
 void usbh_cdc_acm_stop(struct usbh_cdc_acm *cdc_acm_class)
 {
 }
+#endif
 
+#if TEST_USBH_HID
 void usbh_hid_run(struct usbh_hid *hid_class)
 {
-#if TEST_USBH_HID
     usb_osal_thread_create("usbh_hid", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_hid_thread, hid_class);
-#endif
 }
 
 void usbh_hid_stop(struct usbh_hid *hid_class)
 {
 }
+#endif
 
+#if TEST_USBH_MSC
 void usbh_msc_run(struct usbh_msc *msc_class)
 {
-#if TEST_USBH_MSC
     usb_osal_thread_create("usbh_msc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_msc_thread, msc_class);
-#endif
 }
 
 void usbh_msc_stop(struct usbh_msc *msc_class)
 {
 }
+#endif
 
 #if TEST_USBH_AUDIO
 #error "commercial charge"
@@ -293,4 +293,27 @@ void usbh_msc_stop(struct usbh_msc *msc_class)
 
 #if TEST_USBH_VIDEO
 #error "commercial charge"
+#endif
+
+#if 0
+#include "usbh_aoa.h"
+
+static struct aoa_string_info deviceinfo = {
+    .acc_manufacturer = "CherryUSB",
+    .acc_model = "CherryUSB",
+    .acc_description = "Android Open Accessory CherryUSB",
+    .acc_version = "1.0",
+    .acc_uri = "http://developer.android.com/tools/adk/index.html",
+    .acc_serial = "CherryUSB"
+};
+
+int aoa_switch(int argc, char **argv)
+{
+    struct usbh_hubport *hport = usbh_find_hubport(0, 1, 1);
+
+    usbh_aoa_switch(hport, &deviceinfo);
+    return 0;
+}
+
+SHELL_CMD_EXPORT_ALIAS(aoa_switch, aoa_switch, aoa_switch);
 #endif

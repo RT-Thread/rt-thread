@@ -162,7 +162,7 @@ def generate_code_workspace_file(source_dirs,command_json_path,root_path):
 
 def command_json_to_workspace(root_path,command_json_path):
     
-    with open('compile_commands.json', 'r') as f:
+    with open('build/compile_commands.json', 'r') as f:
         compile_commands = json.load(f)
 
     source_dirs = extract_source_dirs(compile_commands)
@@ -246,11 +246,11 @@ def GenerateCFiles(env):
         vsc_file.close()
 
     """
-    Generate vscode.code-workspace files by compile_commands.json
+    Generate vscode.code-workspace files by build/compile_commands.json
     """
-    if os.path.exists('compile_commands.json'):
+    if os.path.exists('build/compile_commands.json'):
 
-        command_json_to_workspace(env['RTT_ROOT'],'compile_commands.json')
+        command_json_to_workspace(env['RTT_ROOT'],'build/compile_commands.json')
         return
     """
     Generate vscode.code-workspace files
@@ -282,7 +282,7 @@ def GenerateCFiles(env):
                 segments = [p for p in normalized_path.split(os.path.sep) if p != '..']
                 path['name'] = 'rtthread/' + '/'.join(segments)
         json_obj['folders'] = path_list
-        if os.path.exists('compile_commands.json'):
+        if os.path.exists('build/compile_commands.json'):
             json_obj['settings'] = {
             "clangd.arguments": [
                 "--compile-commands-dir=.",

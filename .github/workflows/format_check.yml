@@ -11,7 +11,7 @@ on:
 
 jobs:
   scancode_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Scan code format and license
     if: github.repository_owner == 'RT-Thread'
     steps:

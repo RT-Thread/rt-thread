@@ -1,6 +1,16 @@
-# CherryUSB
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">CherryUSB</h1>
+<p align="center">
+	<a href="https://github.com/cherry-embedded/CherryUSB/releases"><img src="https://img.shields.io/github/release/cherry-embedded/CherryUSB.svg"><a>
+	<a href="https://github.com/cherry-embedded/CherryUSB/blob/master/LICENSE"><img src="https://img.shields.io/github/license/cherry-embedded/CherryUSB.svg?style=flat-square"></a>
+    <a href="https://github.com/cherry-embedded/CherryUSB/actions/workflows/deploy-docs.yml"><img src="https://github.com/cherry-embedded/CherryUSB/actions/workflows/deploy-docs.yml/badge.svg"> </a>
+    <a href="https://discord.com/invite/wFfvrSAey8"><img src="https://img.shields.io/badge/Discord-blue?logo=discord&style=flat-square"> </a>
+</p>
 
-[English](./README.md)
+<p align="center">
+    <a href="./README_zh.md">中文</a>
+    |
+    <a href="./README.md">English</a>
+</p>
 
 CherryUSB 是一个小而美的、可移植性高的、用于嵌入式系统(带 USB IP)的 USB 主从协议栈。
 
@@ -103,6 +113,7 @@ CherryUSB Host 协议栈当前实现以下功能：
 - 支持 USB Bluetooth (支持 nimble and zephyr bluetooth 协议栈，支持 **CLASS: 0xE0** 或者厂家自定义类，类似于 cdc acm 功能)
 - 支持 Vendor 类 class (serial, net, wifi)
 - 支持 USB modeswitch
+- 支持 Android Open Accessory
 - 支持相同 USB IP 的多主机
 
 同时，CherryUSB Host 协议栈还提供了 lsusb 的功能，借助 shell 插件可以查看所有挂载设备的信息，包括外部 hub 上的设备的信息。
@@ -149,7 +160,7 @@ x 受以下宏影响：
 
 |   IP             |  device    | host     | Support status |
 |:----------------:|:----------:|:--------:|:--------------:|
-|  OHCI(intel)     |  none      | OHCI     |  ×   |
+|  OHCI(intel)     |  none      | OHCI     |  √   |
 |  EHCI(intel)     |  none      | EHCI     |  √   |
 |  XHCI(intel)     |  none      | XHCI     |  √   |
 |  UHCI(intel)     |  none      | UHCI     |  ×   |
@@ -187,6 +198,7 @@ CherryUSB 快速入门、USB 基本概念，API 手册，Class 基本概念和�
 |Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Long-term |
 |Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)|<= latest | Long-term |
 |NXP            |  mcx | kinetis/chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Long-term |
+|Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/canmv_k230)|v1.2.0 | Long-term |
 |AllwinnerTech  |  F1C100S/F1C200S | musb |[cherryusb_rtt_f1c100s](https://github.com/CherryUSB/cherryusb_rtt_f1c100s)|<= latest | the same with musb |
 |Bekencorp      |  bk7256/bk7258 | musb |[bk_idk](https://github.com/CherryUSB/bk_idk)| v0.7.0 | the same with musb |
 |Sophgo         |  cv18xx | dwc2 |[cvi_alios_open](https://github.com/CherryUSB/cvi_alios_open)| v0.7.0 | TBD |
@@ -214,4 +226,4 @@ CherryUSB 微信群：与我联系后邀请加入
 
 感谢以下企业支持（顺序不分先后）。
 
-<img src="docs/assets/bouffalolab.jpg"  width="100" height="80"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="80" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="80" /> <img src="docs/assets/rtthread.jpg"  width="100" height="80" /> <img src="docs/assets/sophgo.jpg"  width="100" height="80" /> <img src="docs/assets/phytium.jpg"  width="100" height="80" /> <img src="docs/assets/thead.jpg"  width="100" height="80" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="80" /> <img src="docs/assets/artinchip.jpg"  width="100" height="80" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="80" /> <img src="docs/assets/nxp.png"  width="100" height="80" /> <img src="docs/assets/espressif.png"  width="100" height="80" />
+<img src="docs/assets/bouffalolab.jpg"  width="100" height="80"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="80" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="80" /> <img src="docs/assets/rtthread.jpg"  width="100" height="80" /> <img src="docs/assets/sophgo.jpg"  width="100" height="80" /> <img src="docs/assets/phytium.jpg"  width="100" height="80" /> <img src="docs/assets/thead.jpg"  width="100" height="80" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="80" /> <img src="docs/assets/artinchip.jpg"  width="100" height="80" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="80" /> <img src="docs/assets/nxp.png"  width="100" height="80" /> <img src="docs/assets/espressif.png"  width="100" height="80" /> <img src="docs/assets/canaan.jpg"  width="100" height="80" />

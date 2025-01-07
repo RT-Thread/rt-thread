@@ -1,0 +1,25 @@
+version: "1.4.2"
+description: CherryUSB is a tiny and portable USB Stack (device & host) for embedded system with USB IP
+tags:
+  - usb
+  - usb-device
+  - usb-host
+  - cdc_acm
+  - cdc_ecm
+  - cdc_ncm
+  - hid
+  - msc
+  - rndis
+  - uvc
+  - uac
+  - winusb
+url: https://github.com/cherry-embedded/CherryUSB
+repository: https://github.com/cherry-embedded/CherryUSB.git
+documentation: https://cherryusb.readthedocs.io/
+issues: https://github.com/cherry-embedded/CherryUSB/issues
+dependencies:
+  idf: ">=5.0"
+targets:
+  - esp32s2
+  - esp32s3
+  - esp32p4

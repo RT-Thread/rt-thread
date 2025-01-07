@@ -456,6 +456,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_GET_STATUS:
+    {
         rt_uint32_t errtype;
         errtype = drv_can->CanHandle.Instance->ESR;
         drv_can->device.status.rcverrcnt = errtype >> 24;
@@ -465,6 +466,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 
         rt_memcpy(arg, &drv_can->device.status, sizeof(drv_can->device.status));
         break;
+    }
     case RT_CAN_CMD_START:
         argval = (rt_uint32_t) arg;
         if (argval == 0)

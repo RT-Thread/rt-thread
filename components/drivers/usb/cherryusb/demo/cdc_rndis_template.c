@@ -6,6 +6,10 @@
 #include "usbd_core.h"
 #include "usbd_rndis.h"
 
+#ifndef CONFIG_USBDEV_RNDIS_USING_LWIP
+#error "Please enable CONFIG_USBDEV_RNDIS_USING_LWIP for this demo"
+#endif
+
 /*!< endpoint address */
 #define CDC_IN_EP  0x81
 #define CDC_OUT_EP 0x02
@@ -170,7 +174,7 @@ rt_err_t rt_usbd_rndis_eth_tx(rt_device_t dev, struct pbuf *p)
     return usbd_rndis_eth_tx(p);
 }
 
-void usbd_rndis_data_recv_done(void)
+void usbd_rndis_data_recv_done(uint32_t len)
 {
     eth_device_ready(&rndis_dev);
 }
@@ -258,12 +262,12 @@ void rndis_lwip_init(void)
     while (!netif_is_up(netif)) {
     }
 
-    // while (dhserv_init(&dhcp_config)) {}
+    while (dhserv_init(&dhcp_config)) {}
 
-    // while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
+    while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
 }
 
-void usbd_rndis_data_recv_done(void)
+void usbd_rndis_data_recv_done(uint32_t len)
 {
 }
 
