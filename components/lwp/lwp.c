@@ -495,6 +495,8 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 
 #ifdef RT_USING_MUSLLIBC
 extern char **__environ;
+#elif defined(RT_USING_MLIBC)
+extern char **__environ;
 #else
 char **__environ = 0;
 #endif
