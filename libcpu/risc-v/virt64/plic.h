@@ -30,7 +30,10 @@ extern size_t plic_base;
 #define PLIC_ENABLE_STRIDE              0x80
 #define PLIC_CONTEXT_STRIDE             0x1000
 
-#ifndef RISCV_S_MODE
+/* RT-Thread runs in S-mode on virt64 by default */
+#define RISCV_VIRT64_S_MODE
+
+#ifndef RISCV_VIRT64_S_MODE
 #define PLIC_MENABLE_OFFSET             (0x2000)
 #define PLIC_MTHRESHOLD_OFFSET          (0x200000)
 #define PLIC_MCLAIM_OFFSET              (0x200004)
