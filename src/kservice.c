@@ -422,7 +422,7 @@ rt_weak rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_f
 {
     long nesting = 0;
 
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
 
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
@@ -446,7 +446,7 @@ rt_weak rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_f
  */
 rt_weak rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen)
 {
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
 
     for (rt_size_t i = 0; i < buflen && buffer[i] != 0; i++)
     {

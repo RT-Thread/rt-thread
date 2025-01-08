@@ -664,12 +664,12 @@ rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *
         argv = lwp_get_command_line_args(lwp);
         if (argv)
         {
-            rt_kprintf("please use: addr2line -e %s -a -f", argv[0]);
+            rt_kprintf("please use: addr2line -e %s -a -f\n", argv[0]);
             lwp_free_command_line_args(argv);
         }
         else
         {
-            rt_kprintf("please use: addr2line -e %s -a -f", lwp->cmd);
+            rt_kprintf("please use: addr2line -e %s -a -f\n", lwp->cmd);
         }
 
         while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
