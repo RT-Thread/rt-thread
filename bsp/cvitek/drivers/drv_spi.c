@@ -225,7 +225,7 @@ static const struct rt_spi_ops _spi_ops =
     .xfer = spi_xfer,
 };
 
-#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR) || defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO256M)
 // For Duo / Duo 256m, only SPI2 are exported on board.
 #ifdef BSP_USING_SPI0
 static const char *pinname_whitelist_spi0_sck[] = {
