@@ -24,12 +24,12 @@ static void TC_uassert_int_op(void)
 
     uassert_int_equal(a, a);
     uassert_int_not_equal(a, b);
-    uassert_int_less(a, b);
-    uassert_int_less_equal(a, b);
-    uassert_int_less_equal(a, a);
-    uassert_int_greater(b, a);
-    uassert_int_greater_equal(b, a);
-    uassert_int_greater_equal(b, b);
+    uassert_value_less(a, b);
+    uassert_value_less_equal(a, b);
+    uassert_value_less_equal(a, a);
+    uassert_value_greater(b, a);
+    uassert_value_greater_equal(b, a);
+    uassert_value_greater_equal(b, b);
 }
 
 static void TC_uassert_ptr_op(void)

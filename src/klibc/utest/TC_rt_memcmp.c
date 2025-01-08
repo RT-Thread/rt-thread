@@ -22,8 +22,8 @@ static void TC_rt_memcmp_str(void)
 
     /* The following tests intentionally use a length > 3 */
     /* To test what rt_memcmp does in such a situation */
-    uassert_int_greater(rt_memcmp(s, "abc", 6), 0);
-    uassert_int_less(rt_memcmp("abc", s, 6), 0);
+    uassert_value_greater(rt_memcmp(s, "abc", 6), 0);
+    uassert_value_less(rt_memcmp("abc", s, 6), 0);
 }
 
 static void TC_rt_memcmp_int_array(void)
@@ -33,8 +33,8 @@ static void TC_rt_memcmp_int_array(void)
     int arr3[] = {1, 2, 3, 4, 6};
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
-    uassert_int_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
-    uassert_int_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
+    uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
+    uassert_value_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
 }
 
 static void TC_rt_memcmp_float_array(void)
@@ -44,8 +44,8 @@ static void TC_rt_memcmp_float_array(void)
     float arr3[] = {1.0f, 2.0f, 3.1f};
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
-    uassert_int_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
-    uassert_int_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
+    uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
+    uassert_value_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
 }
 
 typedef struct {
@@ -60,8 +60,8 @@ static void TC_rt_memcmp_struct_array(void)
     Item arr3[] = {{1, 1.0f}, {2, 2.1f}};
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
-    uassert_int_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
-    uassert_int_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
+    uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
+    uassert_value_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
 }
 
 typedef struct {
@@ -77,8 +77,8 @@ static void TC_rt_memcmp_mixed_array(void)
     MixedItem arr3[] = {{1, 1.0f, "item1"}, {2, 2.1f, "item2"}};
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
-    uassert_int_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
-    uassert_int_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
+    uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
+    uassert_value_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
 }
 
 typedef struct {
@@ -139,8 +139,8 @@ static void TC_rt_memcmp_large_array(void)
     uassert_int_equal(rt_memcmp(arr1, arr2, LARGE_ARRAY_SIZE * sizeof(int)), 0);
     arr2[LARGE_ARRAY_SIZE - 1] = LARGE_ARRAY_SIZE;
 
-    uassert_int_less(rt_memcmp(arr1, arr2, LARGE_ARRAY_SIZE * sizeof(int)), 0);
-    uassert_int_greater(rt_memcmp(arr2, arr1, LARGE_ARRAY_SIZE * sizeof(int)), 0);
+    uassert_value_less(rt_memcmp(arr1, arr2, LARGE_ARRAY_SIZE * sizeof(int)), 0);
+    uassert_value_greater(rt_memcmp(arr2, arr1, LARGE_ARRAY_SIZE * sizeof(int)), 0);
 
     rt_free(arr1);
     rt_free(arr2);
