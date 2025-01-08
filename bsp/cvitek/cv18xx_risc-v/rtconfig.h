@@ -5,48 +5,7 @@
 
 /* klibc options */
 
-/* ------------rt_memset options------------ */
-
-
-/* ------------rt_memcpy options------------ */
-
-
-/* ------------rt_memmove options------------ */
-
-
-/* ------------rt_memcmp options------------ */
-
-
-/* ------------rt_strstr options------------ */
-
-
-/* ------------rt_strcasecmp options------------ */
-
-
-/* ------------rt_strncpy options------------ */
-
-
-/* ------------rt_strcpy options------------ */
-
-
-/* ------------rt_strncmp options------------ */
-
-
-/* ------------rt_strcmp options------------ */
-
-
-/* ------------rt_strlen options------------ */
-
-
-/* ------------rt_strlen options------------ */
-
-/* ------------rt_strnlen options------------ */
-
-
-/* ------------rt_vsscanf options------------ */
-
-
-/* ------------rt_vsnprintf options------------ */
+/* rt_vsnprintf options */
 
 #define RT_KLIBC_USING_VSNPRINTF_LONGLONG
 #define RT_KLIBC_USING_VSNPRINTF_STANDARD
@@ -59,6 +18,59 @@
 #define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
 #define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
 #define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 8
 #define RT_USING_SMART
@@ -195,6 +207,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_BYPASS
 #define RT_USING_CPUTIME
 #define RT_USING_CPUTIME_RISCV
 #define CPUTIME_TIMER_FREQ 25000000
@@ -337,6 +350,7 @@
 /* end of Utilities */
 #define RT_USING_LWP
 #define LWP_DEBUG
+#define LWP_USING_RUNTIME
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
 #define RT_CH_MSG_MAX_NR 1024

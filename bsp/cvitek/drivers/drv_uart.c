@@ -240,7 +240,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
     }
 }
 
-#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO)
 
 #ifdef BSP_USING_UART0
 static const char *pinname_whitelist_uart0_rx[] = {
@@ -301,7 +301,7 @@ static const char *pinname_whitelist_uart4_tx[] = {
 };
 #endif
 
-#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#elif defined(BOARD_TYPE_MILKV_DUO256M)
 
 #ifdef BSP_USING_UART0
 static const char *pinname_whitelist_uart0_rx[] = {
