@@ -910,7 +910,7 @@ int can_test(int argc, char *argv[])
     if (!can_dev)
     {
         rt_kprintf("find %s failed!\n", can_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);

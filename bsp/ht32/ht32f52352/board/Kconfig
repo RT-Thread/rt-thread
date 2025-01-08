@@ -138,7 +138,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_USART1
                 bool "Enable USART1"
-                default n
+                default y
                 config BSP_USING_USART1_NAME
                 depends on BSP_USING_USART1
                 string "usart1 bus name"
@@ -168,7 +168,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SPI
             config BSP_USING_SPI0
                 bool "Enable SPI0 Bus"
-                default n
+                default y
                 config BSP_USING_SPI0_NAME
                 depends on BSP_USING_SPI0
                 string "spi0 bus name"
@@ -189,12 +189,12 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_I2C
             menuconfig BSP_USING_I2C_HW
                 bool "Enable I2C Bus(hardware)"
-                default n
+                default y
                 select RT_USING_I2C if BSP_USING_I2C_HW
                 if BSP_USING_I2C_HW
                     config BSP_USING_I2C0_HW
                     bool "Enable Hardware I2C0 Bus"
-                    default n
+                    default y
                     config BSP_USING_I2C0_HW_NAME
                     depends on BSP_USING_I2C0_HW
                     string "hardware i2c0 name"
@@ -282,7 +282,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC0
             bool "Enable ADC0"
-            default n
+            default y
             config BSP_USING_ADC0_NAME
             depends on BSP_USING_ADC0
             string "adc0 device name"

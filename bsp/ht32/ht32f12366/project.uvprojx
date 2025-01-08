@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--gnu</MiscControls>
-              <Define>RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC, USE_HT32F12366_SK, USE_HT32F12365_66, USE_MEM_HT32F12366, __STDC_LIMIT_MACROS, USE_HT32_DRIVER, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, USE_HT32_DRIVER, RT_USING_LIBC, __RTTHREAD__, USE_HT32F12366_SK, USE_HT32F12365_66, USE_MEM_HT32F12366, RT_USING_ARMLIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\inc;..\libraries\HT32_STD_1xxxx_FWLib\library\CMSIS\Include;..\..\..\components\drivers\smp_call;..\..\..\include;board\inc;..\..\..\libcpu\arm\common;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\libraries\ht32_drivers;applications;..\..\..\libcpu\arm\cortex-m3;.;..\..\..\components\libc\posix\io\poll;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension;..\libraries\HT32_STD_1xxxx_FWLib\library\Device\Holtek\HT32F1xxxx\Include;..\..\..\components\libc\compilers\common\include;..\libraries\usbd_library\inc;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\inc;..\libraries\usbd_library\inc;..\..\..\components\drivers\include;applications;..\..\..\components\drivers\smp_call;..\libraries\ht32_drivers;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;board\inc;..\libraries\HT32_STD_1xxxx_FWLib\library\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\finsh;..\libraries\HT32_STD_1xxxx_FWLib\library\Device\Holtek\HT32F1xxxx\Include;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -488,7 +488,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -543,7 +543,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -598,7 +598,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -653,7 +653,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -708,7 +708,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -763,7 +763,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -818,7 +818,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -873,7 +873,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -928,7 +928,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -983,7 +983,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1038,7 +1038,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1093,7 +1093,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1150,14 +1150,14 @@
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
             <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh_parse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1213,7 +1213,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1268,7 +1268,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1323,7 +1323,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1378,7 +1378,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1433,7 +1433,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1488,7 +1488,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1543,7 +1543,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1598,7 +1598,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1653,7 +1653,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1708,7 +1708,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1763,7 +1763,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1818,7 +1818,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1873,7 +1873,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1928,7 +1928,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1983,7 +1983,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -2038,7 +2038,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -2050,14 +2050,14 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-            <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
             <File>
               <FileName>kstring.c</FileName>
@@ -2065,9 +2065,9 @@
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2105,9 +2105,14 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>ht32f1xxxx_ckcu.c</FileName>
+              <FileName>ht32f1xxxx_bftm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_ckcu.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_bftm.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_gpio.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_usart.c</FileName>
@@ -2115,9 +2120,14 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_usart.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_tm.c</FileName>
+              <FileName>ht32f1xxxx_ebi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_tm.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_ebi.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_cmp.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_exti.c</FileName>
@@ -2125,34 +2135,9 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_exti.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_spi.c</FileName>
+              <FileName>ht32f1xxxx_mctm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32_cm3_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32_cm3_misc.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_usbd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_usbd.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_wdt.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_i2c.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_mctm.c</FilePath>
             </File>
             <File>
               <FileName>ht32f2xxxx_csif.c</FileName>
@@ -2170,14 +2155,19 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_pwrcu.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_aes.c</FileName>
+              <FileName>ht32f1xxxx_rstcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_aes.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rstcu.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_flash.c</FileName>
+              <FileName>ht32f1xxxx_pdma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_flash.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_pdma.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rtc.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_sci.c</FileName>
@@ -2185,34 +2175,14 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_sci.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_ebi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_ebi.c</FilePath>
-            </File>
-            <File>
               <FileName>system_ht32f1xxxx_02.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\Device\Holtek\HT32F1xxxx\Source\system_ht32f1xxxx_02.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_cmp.c</FileName>
+              <FileName>ht32f1xxxx_usbd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_cmp.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_bftm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_bftm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_mctm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_mctm.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_usbd.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_i2s.c</FileName>
@@ -2220,9 +2190,34 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_i2s.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_rstcu.c</FileName>
+              <FileName>ht32f1xxxx_aes.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rstcu.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_aes.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_tm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_tm.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_i2c.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_adc.c</FileName>
@@ -2230,14 +2225,19 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_adc.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_gpio.c</FileName>
+              <FileName>ht32f1xxxx_ckcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_gpio.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_ckcu.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f1xxxx_pdma.c</FileName>
+              <FileName>ht32f1xxxx_wdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_pdma.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_wdt.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32_cm3_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32_cm3_misc.c</FilePath>
             </File>
           </Files>
         </Group>
