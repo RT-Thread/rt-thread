@@ -22,6 +22,10 @@
 #include <mm_fault.h>
 #include <mm_page.h>
 
+#ifdef RT_USING_MLIBC
+#include <sys/mman.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
