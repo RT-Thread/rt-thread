@@ -8,7 +8,7 @@ menuconfig RT_USING_LWP
 if RT_USING_LWP
     menuconfig LWP_DEBUG
         bool "Enable debugging features of LwP"
-        default y
+        default n
 
     if LWP_DEBUG
         config LWP_DEBUG_INIT

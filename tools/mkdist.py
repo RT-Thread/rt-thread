@@ -26,6 +26,7 @@ import subprocess
 import shutil
 from shutil import ignore_patterns
 from SCons.Script import *
+import time
 
 def do_copy_file(src, dst):
     # check source file
@@ -40,7 +41,6 @@ def do_copy_file(src, dst):
     shutil.copy2(src, dst)
 
 def do_copy_folder(src_dir, dst_dir, ignore=None):
-    import shutil
     # check source directory
     if not os.path.exists(src_dir):
         return
@@ -171,6 +171,215 @@ def zip_dist(dist_dir, dist_name):
 
     zip.close()
 
+def get_system_features():
+    """获取系统内置特性列表"""
+    return {
+        # 内核特性
+        'components_init',
+        'console',
+        'cpu_usage_tracer',
+        'heap',
+        'slab',
+        'mempool',
+        'memtrace',
+        'timer_soft',
+        'event',
+        'mailbox',
+        'messagequeue',
+        'mutex',
+        'semaphore',
+        'signals',
+        'hook',
+        'idle_hook',
+        'thread',
+        'cache',
+        'debug',
+        'device_ops',
+        'overflow_check',
+        'slab_as_heap',
+        'user_main',
+        'stdc_atomic',
+    }
+
+def parse_components_from_config(config_file):
+    """从 .config 文件解析启用的组件"""
+    enabled_components = set()
+    
+    if not os.path.exists(config_file):
+        print(f"Error: {config_file} does not exist")
+        return enabled_components
+        
+    with open(config_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith('CONFIG_'):
+                if '=' in line:
+                    config = line.split('=')[0][7:]  # 去掉 CONFIG_ 前缀
+                    if config.startswith('RT_USING_'):
+                        component = config[9:].lower()  # 去掉 RT_USING_ 前缀
+                        enabled_components.add(component)
+    return enabled_components
+
+def scan_components_dir(RTT_ROOT):
+    """扫描组件目录结构，生成组件映射表"""
+    components_map = {}
+    components_root = os.path.join(RTT_ROOT, 'components')
+    
+    def parse_kconfig(kconfig_file):
+        """解析 Kconfig 文件中的配置选项"""
+        components = set()
+        try:
+            with open(kconfig_file, 'r') as f:
+                content = f.read()
+                # 查找 config RT_USING_XXX 形式的配置
+                import re
+                matches = re.finditer(r'config\s+RT_USING_(\w+)', content)
+                for match in matches:
+                    component_name = match.group(1).lower()
+                    components.add(component_name)
+        except Exception as e:
+            print(f"Warning: Failed to parse {kconfig_file}: {str(e)}")
+        return components
+
+    def get_relative_path(full_path):
+        """获取相对于 RTT_ROOT 的路径"""
+        return os.path.relpath(os.path.dirname(full_path), RTT_ROOT)
+
+    # 扫描所有组件目录
+    for root, dirs, files in os.walk(components_root):
+        if 'Kconfig' in files:
+            kconfig_path = os.path.join(root, 'Kconfig')
+            component_configs = parse_kconfig(kconfig_path)
+            rel_path = get_relative_path(kconfig_path)
+            
+            # 将组件名称与路径关联
+            for comp_name in component_configs:
+                components_map[comp_name] = rel_path
+
+    return components_map
+
+def get_component_path(component_name, RTT_ROOT):
+    """获取组件的实际路径"""
+    # 获取动态组件映射
+    dynamic_map = scan_components_dir(RTT_ROOT)
+    return dynamic_map.get(component_name)
+
+def generate_dist_doc(dist_dir, enabled_components, project_name, BSP_ROOT, RTT_ROOT):
+    """Generate distribution package documentation"""
+    doc_lines = []  # Store document content in a list
+    
+    # Basic information
+    doc_lines.extend([
+        "# RT-Thread Distribution Package\n",
+        "\n## Basic Information\n\n",
+        f"- Project Name: {project_name}\n",
+        f"- Generation Time: {time.strftime('%Y-%m-%d %H:%M:%S')}\n",
+        f"- BSP: {os.path.basename(BSP_ROOT)}\n",
+        "\n## Components\n\n",
+        "### Included Components:\n\n"
+    ])
+
+    # Add component information
+    for comp in sorted(enabled_components):
+        path = get_component_path(comp, RTT_ROOT)
+        if path:
+            doc_lines.append(f"- {comp}\n  - Path: {path}\n")
+
+    # Add configuration information
+    doc_lines.extend(["\n## Configuration\n\n"])
+    config_file = os.path.join(BSP_ROOT, '.config')
+    if os.path.exists(config_file):
+        doc_lines.extend([
+            "### Main Configuration Items:\n\n```\n"
+        ])
+        with open(config_file, 'r') as f:
+            for line in f:
+                if line.startswith('CONFIG_'):
+                    doc_lines.append(line)
+        doc_lines.append("```\n")
+    
+    # Add simplified directory structure
+    doc_lines.extend(["\n## Directory Structure\n\n```\n"])
+    
+    # Show only top-level directories
+    items = os.listdir(dist_dir)
+    items.sort()
+    for item in items:
+        if item.startswith('.') or item == 'dist':
+            continue
+        path = os.path.join(dist_dir, item)
+        if os.path.isdir(path):
+            doc_lines.append(f"├── {item}/\n")
+        else:
+            doc_lines.append(f"├── {item}\n")
+    
+    doc_lines.append("```\n")
+    
+    # Add build instructions
+    doc_lines.extend(["""
+## Build Instructions
+
+1. Requirements:
+   - Python 3.x
+   - SCons build tool
+   - Appropriate cross-compiler toolchain
+
+2. Build Steps:
+   ```bash
+   scons
+   ```
+
+3. Clean Build:
+   ```bash
+   scons -c
+   ```
+
+## Notes
+
+1. Make sure the toolchain environment variables are properly set
+2. To modify configuration, use menuconfig:
+   ```bash
+   scons --menuconfig
+   ```
+
+## License
+
+See `COPYING` file for details.
+"""])
+    
+    # Write documentation
+    doc_file = os.path.join(dist_dir, 'dist_readme.md')
+    with open(doc_file, 'w', encoding='utf-8') as f:
+        f.writelines(doc_lines)
+    
+    print(f"=> Generated distribution documentation: {doc_file}")
+
+def components_copy_files(RTT_ROOT, rtt_dir_path, config_file):
+    """根据配置复制组件"""
+    print('=> components (selective copy)')
+    
+    # 获取启用的组件
+    enabled_components = parse_components_from_config(config_file)
+    if not enabled_components:
+        print("Warning: No components found in config file")
+        return enabled_components
+    
+    # 复制每个启用的组件
+    for comp_name in enabled_components:
+        comp_path = get_component_path(comp_name, RTT_ROOT)
+        if comp_path:
+            src_path = os.path.join(RTT_ROOT, comp_path)
+            dst_path = os.path.join(rtt_dir_path, comp_path)
+            if os.path.exists(src_path):
+                print(f'    => copying {comp_name} from {comp_path}')
+                do_copy_folder(src_path, dst_path)
+            else:
+                print(f"Warning: Component path not found: {src_path}")
+        else:
+            print(f"Note: Skipping system feature: {comp_name}")
+            
+    return enabled_components
+
 def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     print('make distribution....')
 
@@ -191,10 +400,10 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
         dist_handle = Env['dist_handle']
         dist_handle(BSP_ROOT, dist_dir)
 
-    # copy tools directory
-    print('=> components')
-    do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(rtt_dir_path, 'components'))
-
+    # 使用新的组件复制函数并获取启用的组件列表
+    config_file = os.path.join(BSP_ROOT, '.config')
+    enabled_components = components_copy_files(RTT_ROOT, rtt_dir_path, config_file)
+    
     # skip documentation directory
     # skip examples
 
@@ -246,5 +455,8 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     # make zip package
     if project_path == None:
         zip_dist(dist_dir, project_name)
+
+    # 生成说明文档
+    generate_dist_doc(dist_dir, enabled_components, project_name+'-dist', BSP_ROOT, RTT_ROOT)
 
     print('dist project successfully!')
