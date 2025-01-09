@@ -55,6 +55,15 @@ def GetSDKPath(name):
     sdk_pkgs = GetSDKPackagePath()
 
     if sdk_pkgs:
+        # read env/tools/scripts/sdk_cfg.json for curstomized SDK path
+        if os.path.exists(os.path.join(sdk_pkgs, '..', 'sdk_cfg.json')):
+            with open(os.path.join(sdk_pkgs, '..', 'sdk_cfg.json'), 'r', encoding='utf-8') as f:
+                sdk_cfg = json.load(f)
+                for item in sdk_cfg:
+                    if item['name'] == name:
+                        sdk = os.path.join(sdk_pkgs, item['path'])
+                        return sdk
+
         # read packages.json under env/tools/scripts/packages
         with open(os.path.join(sdk_pkgs, 'pkgs.json'), 'r', encoding='utf-8') as f:
             # packages_json = f.read()
@@ -68,7 +77,8 @@ def GetSDKPath(name):
                     package = json.load(f)
 
                     if package['name'] == name:
-                        return os.path.join(sdk_pkgs, package['name'] + '-' + item['ver'])
+                        sdk = os.path.join(sdk_pkgs, package['name'] + '-' + item['ver'])
+                        return sdk
 
     # not found named package
     return None
