@@ -316,15 +316,15 @@ static void utest_thread_create(const char *utest_name)
     }
 }
 
-#ifdef RT_USING_CI_ACTION
-static int utest_ci_action(void)
+#ifdef RT_UTEST_USING_AUTO_RUN
+static int utest_auto_run(void)
 {
     tc_loop = 1;
     utest_thread_create(RT_NULL);
     return RT_EOK;
 }
-INIT_APP_EXPORT(utest_ci_action);
-#endif /* RT_USING_CI_ACTION */
+INIT_APP_EXPORT(utest_auto_run);
+#endif /* RT_UTEST_USING_AUTO_RUN */
 
 int utest_testcase_run(int argc, char** argv)
 {

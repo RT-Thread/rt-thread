@@ -2,7 +2,7 @@ from building import *
 
 src = []
 
-if GetDepend('RT_USING_CI_ACTION') or GetDepend('RT_UTEST_TC_USING_KLIBC'):
+if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('RT_UTEST_TC_USING_KLIBC'):
     src += Glob('TC_*.c')
 
 group = DefineGroup('utestcases', src, depend = [''])
