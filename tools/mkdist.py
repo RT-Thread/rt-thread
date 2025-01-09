@@ -423,9 +423,33 @@ def copy_essential_paths(RTT_ROOT, rtt_dir_path, copied_files=None):
             
     return copied_files
 
+def copy_components_kconfig(RTT_ROOT, rtt_dir_path):
+    """Copy all Kconfig files under components directory"""
+    components_dir = os.path.join(RTT_ROOT, 'components')
+    print('=> copying components Kconfig files')
+    
+    # Walk through all directories under components
+    for root, dirs, files in os.walk(components_dir):
+        if 'Kconfig' in files:
+            # Get relative path from components directory
+            rel_path = os.path.relpath(root, RTT_ROOT)
+            src_file = os.path.join(root, 'Kconfig')
+            dst_file = os.path.join(rtt_dir_path, rel_path, 'Kconfig')
+            
+            # Create destination directory if not exists
+            dst_dir = os.path.dirname(dst_file)
+            if not os.path.exists(dst_dir):
+                os.makedirs(dst_dir)
+                
+            do_copy_file(src_file, dst_file)
+            print(f'    => copying Kconfig from {rel_path}')
+
 def components_copy_files(RTT_ROOT, rtt_dir_path, config_file):
     """Copy components based on configuration"""
     print('=> components (selective copy)')
+    
+    # Copy all Kconfig files first
+    copy_components_kconfig(RTT_ROOT, rtt_dir_path)
     
     # Track copied build files to avoid duplication
     copied_files = set()
@@ -529,5 +553,20 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
 
     # Generate documentation
     generate_dist_doc(dist_dir, enabled_components, project_name+'-dist', BSP_ROOT, RTT_ROOT)
+
+    target_project_type = GetOption('target')
+    if target_project_type:
+        child = subprocess.Popen('scons --target={} --project-name="{}"'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = child.communicate()
+        if child.returncode == 0:
+            print(stdout)
+        else:
+            print(stderr)
+    else:
+        print('suggest to use command scons --dist [--target=xxx] [--project-name="xxx"] [--project-path="xxx"]')
+
+    # make zip package
+    if project_path == None:
+        zip_dist(dist_dir, project_name)
 
     print('dist project successfully!')
