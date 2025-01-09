@@ -2,9 +2,9 @@
 
 function get_board_type()
 {
-	BOARD_CONFIG=("CONFIG_BOARD_TYPE_MILKV_DUO" "CONFIG_BOARD_TYPE_MILKV_DUO_SPINOR" "CONFIG_BOARD_TYPE_MILKV_DUO_SPINAND" "CONFIG_BOARD_TYPE_MILKV_DUO256M" "CONFIG_BOARD_TYPE_MILKV_DUO256M_SPINOR" "CONFIG_BOARD_TYPE_MILKV_DUO256M_SPINAND" "CONFIG_BOARD_TYPE_MILKV_DUOS")
-	BOARD_VALUE=("milkv-duo" "milkv-duo-spinor" "milkv-duo-spinand" "milkv-duo256m" "milkv-duo256m-spinor" "milkv-duo256m-spinand" "milkv-duos-sd")
-	STORAGE_VAUE=("sd" "spinor" "spinand" "sd" "spinor" "spinand" "sd")
+	BOARD_CONFIG=("CONFIG_BOARD_TYPE_MILKV_DUO" "CONFIG_BOARD_TYPE_MILKV_DUO256M" "CONFIG_BOARD_TYPE_MILKV_DUOS")
+	BOARD_VALUE=("milkv-duo" "milkv-duo256m" "milkv-duos-sd")
+	STORAGE_VAUE=("sd" "sd" "sd")
 
 	for ((i=0;i<${#BOARD_CONFIG[@]};i++))
 	do

@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <drivers/dev_pin.h>
 
-#if defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO256M)
 #define LED_PIN     "E02" /* Onboard LED pins */
-#elif defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#elif defined(BOARD_TYPE_MILKV_DUO)
 #define LED_PIN     "C24" /* Onboard LED pins */
 #elif defined(BOARD_TYPE_MILKV_DUOS)
 #define LED_PIN     "A29" /* Onboard LED pins */

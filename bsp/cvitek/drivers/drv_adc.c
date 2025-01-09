@@ -154,7 +154,7 @@ static const struct rt_adc_ops _adc_ops =
 };
 
 
-#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO)
 
 /*
  * cv180xb supports
@@ -189,7 +189,7 @@ static const char *pinname_whitelist_adc3_nodie[] = {
 };
 #endif
 
-#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#elif defined(BOARD_TYPE_MILKV_DUO256M)
 
 /*
  * sg2002 supports

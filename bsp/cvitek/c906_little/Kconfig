@@ -58,17 +58,9 @@ choice
         select SOC_TYPE_CV180X
         bool "milkv-duo"
 
-    config BOARD_TYPE_MILKV_DUO_SPINOR
-        select SOC_TYPE_CV180X
-        bool "milkv-duo-spinor"
-
     config BOARD_TYPE_MILKV_DUO256M
         select SOC_TYPE_SG2002
         bool "milkv-duo256m"
-
-    config BOARD_TYPE_MILKV_DUO256M_SPINOR
-        select SOC_TYPE_SG2002
-        bool "milkv-duo256m-spinor"
 
     config BOARD_TYPE_MILKV_DUOS
         select SOC_TYPE_SG2000
