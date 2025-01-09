@@ -302,38 +302,19 @@ static rt_err_t ra_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 #endif
 }
 
-static rt_base_t ra_pin_get(const char *name)
+// USE "PXX_X" or "pXX_X" format, the character 'P'/'p' and '_' are required.
+static rt_base_t ra_pin_get(const char *name) 
 {
-    int pin_number = -1, port = -1, pin = -1;
-
-    if (rt_strlen(name) != 4)
-        return -1;
-
-    if ((name[0] == 'P' || name[0] == 'p'))
+    if ((rt_strlen(name) == 5) &&
+        ((name[0] == 'P') || (name[0] == 'p')) &&
+        (name[3] == '_') &&
+        ('0' <= (int) name[1] && (int) name[1] <= '1') &&
+        ('0' <= (int) name[2] && (int) name[2] <= '9') &&
+        ('0' <= (int) name[4] && (int) name[4] <= '7')) 
     {
-        if ('0' <= name[1] && name[1] <= '9')
-        {
-            port = (name[1] - '0') * 16 * 16;
-            if ('0' <= name[2] && name[2] <= '9' && '0' <= name[3] && name[3] <= '9')
-            {
-                pin = (name[2] - '0') * 10 + (name[3] - '0');
-                pin_number = port + pin;
-
-                return pin_number;
-            }
-        }
-        else if ('A' <= name[1] && name[1] <= 'Z')
-        {
-            port = (name[1] - '0' - 7) * 16 * 16;
-            if ('0' <= name[2] && name[2] <= '9' && '0' <= name[3] && name[3] <= '9')
-            {
-                pin = (name[2] - '0') * 10 + (name[3] - '0');
-                pin_number = port + pin;
-
-                return pin_number;
-            }
-        }
+        return (((int) name[1] - '0') * 10 + ((int) name[2] - '0')) * 0x100 + ((int) name[4] - '0');
     }
+    LOG_W("Invalid pin expression, use `PXX_X` format");
     return -1;
 }
 
