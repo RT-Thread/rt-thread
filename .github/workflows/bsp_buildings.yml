@@ -101,6 +101,7 @@ jobs:
                 - "rm48x50"
                 - "ht32/ht32f52352"
                 - "ht32/ht32f12366"
+                - "ht32/ht32f53252"
                 - "w60x"
                 - "essemi/es32f0654"
                 - "essemi/es32f365x"
@@ -391,7 +392,6 @@ jobs:
                 - "nrf5x/nrf52833"
                 - "nrf5x/nrf52840"
                 - "nrf5x/nrf5340"
-                - "ht32/ht32f53252"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
