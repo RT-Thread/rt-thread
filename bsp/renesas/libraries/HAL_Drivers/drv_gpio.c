@@ -302,7 +302,7 @@ static rt_err_t ra_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 #endif
 }
 
-// USE "PXX_X" or "pXX_X" format, the character 'P'/'p' and '_' are required.
+/* USE "PXX_X" or "pXX_X" format, the character 'P'/'p' and '_' are required, like "P18_1" */
 static rt_base_t ra_pin_get(const char *name)
 {
     if ((rt_strlen(name) == 5) &&
