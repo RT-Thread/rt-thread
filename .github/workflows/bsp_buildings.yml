@@ -345,6 +345,10 @@ jobs:
                 - "raspberry-pi/raspi4-64"
                 #- "rockchip/rk3568"   too long
                 - "phytium/aarch64"
+         - RTT_BSP: "xuantie-900"
+           RTT_TOOL_CHAIN: "sourcery-Xuantie-900-gcc-elf"
+           SUB_RTT_BSP:
+                - "cvitek/c906_little"
          -  RTT_BSP: "riscv-none" 
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
             SUB_RTT_BSP:  
@@ -355,7 +359,6 @@ jobs:
                 - "bluetrum/ab32vg1-ab-prougen"
                 - "bouffalo_lab/bl60x"
                 - "bouffalo_lab/bl70x"
-                - "cvitek/c906_little"
          -  RTT_BSP: "hpmicro"
             RTT_TOOL_CHAIN: "RISC-V-GCC-RV32"
             SUB_RTT_BSP:
@@ -438,7 +441,15 @@ jobs:
           sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
           /opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin/aarch64-none-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
-
+          
+      - name: Install Xuantie-900-gcc-elf Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-Xuantie-900-gcc-elf' && success() }}
+        run: |
+          wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz
+          sudo tar -zxvf Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz -C /opt
+          /opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin" >> $GITHUB_ENV
+          
       - name: Install Mips ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-mips' && success() }}
         shell: bash
