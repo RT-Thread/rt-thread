@@ -244,6 +244,8 @@ menuconfig RT_USING_DEBUG
 config RT_USING_CI_ACTION
     bool "Enable CI Action build mode"
     select RT_USING_UTEST
+    select RT_UTEST_USING_AUTO_RUN
+    select RT_UTEST_USING_ALL_CASES
     default n
     help
         Identify that the environment is CI Action.
