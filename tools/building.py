@@ -210,15 +210,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             envm = utils.ImportModule('env_utility')
             # from env import GetSDKPath
             exec_path = envm.GetSDKPath(rtconfig.CC)
-            if 'gcc' in rtconfig.CC:
-                exec_path = os.path.join(exec_path, 'bin')
+            if exec_path != None:
+                if 'gcc' in rtconfig.CC:
+                    exec_path = os.path.join(exec_path, 'bin')
 
-            if os.path.exists(exec_path):
-                Env['log'].debug('set CC to ' + exec_path)
-                rtconfig.EXEC_PATH = exec_path
-                os.environ['RTT_EXEC_PATH'] = exec_path
-            else:
-                Env['log'].debug('No Toolchain found in path(%s).' % exec_path)
+                if os.path.exists(exec_path):
+                    Env['log'].debug('set CC to ' + exec_path)
+                    rtconfig.EXEC_PATH = exec_path
+                    os.environ['RTT_EXEC_PATH'] = exec_path
+                else:
+                    Env['log'].debug('No Toolchain found in path(%s).' % exec_path)
         except Exception as e:
             # detect failed, ignore
             Env['log'].debug(e)
