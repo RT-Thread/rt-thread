@@ -327,7 +327,7 @@ static rt_base_t ra_pin_get(const char *name)
     {
         return (name[1] - '0') * 0x100 + (name[2] - '0') * 10 + (name[3] - '0');
     }
-    LOG_W("Invalid pin expression, use `PXXX` format like `P101`");    
+    LOG_W("Invalid pin expression, use `PXXX` format like `P101`");
 #endif
     return -RT_ERROR;
 }
