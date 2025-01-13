@@ -7,12 +7,10 @@
 
 /* rt_vsnprintf options */
 
-#define RT_KLIBC_USING_LIBC_VSNPRINTF
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
 
-#define RT_KLIBC_USING_LIBC_VSSCANF
 /* end of rt_vsscanf options */
 
 /* rt_memset options */
@@ -379,7 +377,6 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_TEST
 /* end of Onboard Peripheral Drivers */
 
 /* On-chip Peripheral Drivers */

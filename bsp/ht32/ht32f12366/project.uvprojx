@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--gnu</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, USE_HT32_DRIVER, RT_USING_LIBC, __RTTHREAD__, USE_HT32F12366_SK, USE_HT32F12365_66, USE_MEM_HT32F12366, RT_USING_ARMLIBC</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, USE_HT32_DRIVER, USE_HT32F12366_SK, USE_HT32F12365_66, USE_MEM_HT32F12366, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, RT_USING_ARMLIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\inc;..\libraries\usbd_library\inc;..\..\..\components\drivers\include;applications;..\..\..\components\drivers\smp_call;..\libraries\ht32_drivers;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;board\inc;..\libraries\HT32_STD_1xxxx_FWLib\library\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\finsh;..\libraries\HT32_STD_1xxxx_FWLib\library\Device\Holtek\HT32F1xxxx\Include;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\eventfd;board\inc;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\finsh;..\..\..\components\libc\posix\ipc;..\libraries\usbd_library\inc;..\libraries\ht32_drivers;applications;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\components\drivers\smp_call;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\inc;.;..\libraries\HT32_STD_1xxxx_FWLib\library\CMSIS\Include;..\libraries\HT32_STD_1xxxx_FWLib\library\Device\Holtek\HT32F1xxxx\Include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,11 +383,6 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\test.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1140,11 +1135,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
@@ -1158,6 +1148,11 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2055,6 +2050,11 @@
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
             <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
@@ -2065,9 +2065,9 @@
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2105,34 +2105,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>ht32f1xxxx_bftm.c</FileName>
+              <FileName>ht32f1xxxx_i2s.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_bftm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_ebi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_ebi.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_cmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_cmp.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_exti.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_i2s.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_mctm.c</FileName>
@@ -2140,69 +2115,9 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_mctm.c</FilePath>
             </File>
             <File>
-              <FileName>ht32f2xxxx_csif.c</FileName>
+              <FileName>ht32f1xxxx_bftm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f2xxxx_csif.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_sdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_pwrcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_pwrcu.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_rstcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rstcu.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_pdma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_pdma.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_sci.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_sci.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_ht32f1xxxx_02.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\Device\Holtek\HT32F1xxxx\Source\system_ht32f1xxxx_02.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_usbd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_usbd.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_i2s.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_aes.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_aes.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_tm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_tm.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_bftm.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_flash.c</FileName>
@@ -2210,14 +2125,74 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_flash.c</FilePath>
             </File>
             <File>
+              <FileName>ht32f1xxxx_tm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_tm.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_usbd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_usbd.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_ebi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_ebi.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_rstcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_rstcu.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_aes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_aes.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_ht32f1xxxx_02.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\Device\Holtek\HT32F1xxxx\Source\system_ht32f1xxxx_02.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_cmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32_cm3_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32_cm3_misc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_sci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_sci.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_pwrcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_pwrcu.c</FilePath>
+            </File>
+            <File>
               <FileName>ht32f1xxxx_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>ht32f1xxxx_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_i2c.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_adc.c</FileName>
@@ -2225,9 +2200,34 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_adc.c</FilePath>
             </File>
             <File>
+              <FileName>ht32f1xxxx_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_sdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_usart.c</FilePath>
+            </File>
+            <File>
               <FileName>ht32f1xxxx_ckcu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_ckcu.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f1xxxx_pdma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_pdma.c</FilePath>
+            </File>
+            <File>
+              <FileName>ht32f2xxxx_csif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f2xxxx_csif.c</FilePath>
             </File>
             <File>
               <FileName>ht32f1xxxx_wdt.c</FileName>
@@ -2235,9 +2235,9 @@
               <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_wdt.c</FilePath>
             </File>
             <File>
-              <FileName>ht32_cm3_misc.c</FileName>
+              <FileName>ht32f1xxxx_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32_cm3_misc.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_1xxxx_FWLib\library\HT32F1xxxx_Driver\src\ht32f1xxxx_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
