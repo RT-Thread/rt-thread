@@ -58,7 +58,7 @@
 //    <o0.13> Endpoint5 Interrupt Enable (EP5IE)
 //    <o0.14> Endpoint6 Interrupt Enable (EP6IE)
 //    <o0.15> Endpoint7 Interrupt Enable (EP7IE)
-#define _UIER               (0x011D)
+#define _UIER               (0xFF1D)
 //  </h>
 
 
@@ -96,7 +96,7 @@
 /* Endpoint1 Configuration Setting                                                                          */
 /*----------------------------------------------------------------------------------------------------------*/
 //  <e0> Endpoint1 Configuration
-#define _EP1_ENABLE         (0)
+#define _EP1_ENABLE         (1)
 
 //    <o0> Endpoint Address (EPADR)
 //      <1=> 1
@@ -114,7 +114,7 @@
 //    <o0> Endpoint Transfer Type
 //      <2=> Bulk
 //      <3=> Interrupt
-#define _EP1_TYPR           (3)
+#define _EP1_TYPR           (2)
 
 //    <o0> Endpoint Direction (EPDIR)
 //      <1=> IN
@@ -123,7 +123,7 @@
 
 //    <o0> Endpoint Buffer Length (EPLEN) (in byte) <4-64:4>
                             /* Maximum: 64 Bytes                                                            */
-#define _EP1LEN_TMP         (8)
+#define _EP1LEN_TMP         (64)
 
 //    <h> Endpoint Interrupt Enable Settings (EPIER)
 //      <o0> Endpoint Interrupt Enable Settings (EPIER) <0x0-0xFF:1>
@@ -135,7 +135,7 @@
 //      <o0.5> NAK Transmitted Interrupt Enable (NAKIE)
 //      <o0.6> STALL Transmitted Interrupt Enable (STLIE)
 //      <o0.7> USB Error Interrupt Enable (UERIE)
-#define _EP1_IER            (0x10)
+#define _EP1_IER            (0x12)
 // </h>
 // </e>
 
@@ -144,7 +144,7 @@
 /* Endpoint2 Configuration Setting                                                                          */
 /*----------------------------------------------------------------------------------------------------------*/
 //  <e0> Endpoint2 Configuration
-#define _EP2_ENABLE         (0)
+#define _EP2_ENABLE         (1)
 
 //    <o0> Endpoint Address (EPADR)
 //      <1=> 1
@@ -162,7 +162,7 @@
 //    <o0> Endpoint Transfer Type
 //      <2=> Bulk
 //      <3=> Interrupt
-#define _EP2_TYPR           (3)
+#define _EP2_TYPR           (2)
 
 //    <o0> Endpoint Direction (EPDIR)
 //      <1=> IN
@@ -171,7 +171,7 @@
 
 //    <o0> Endpoint Buffer Length (EPLEN) (in byte) <4-64:4>
                             /* Maximum: 64 Bytes                                                            */
-#define _EP2LEN_TMP         (8)
+#define _EP2LEN_TMP         (64)
 
 //    <h> Endpoint Interrupt Enable Settings (EPIER)
 //      <o0> Endpoint Interrupt Enable Settings (EPIER) <0x0-0xFF:1>
@@ -183,7 +183,7 @@
 //      <o0.5> NAK Transmitted Interrupt Enable (NAKIE)
 //      <o0.6> STALL Transmitted Interrupt Enable (STLIE)
 //      <o0.7> USB Error Interrupt Enable (UERIE)
-#define _EP2_IER            (0x002)
+#define _EP2_IER            (0x012)
 // </h>
 // </e>
 
@@ -191,7 +191,7 @@
 /* Endpoint3 Configuration Setting                                                                          */
 /*----------------------------------------------------------------------------------------------------------*/
 //  <e0> Endpoint3 Configuration
-#define _EP3_ENABLE         (0)
+#define _EP3_ENABLE         (1)
 
 //    <o0> Endpoint Address (EPADR)
 //      <1=> 1
@@ -218,7 +218,7 @@
 
 //    <o0> Endpoint Buffer Length (EPLEN) (in byte) <4-64:4>
                             /* Maximum: 64 Bytes                                                            */
-#define _EP3LEN_TMP         (8)
+#define _EP3LEN_TMP         (64)
 
 //    <h> Endpoint Interrupt Enable Settings (EPIER)
 //      <o0> Endpoint Interrupt Enable Settings (EPIER) <0x0-0xFF:1>
@@ -230,7 +230,7 @@
 //      <o0.5> NAK Transmitted Interrupt Enable (NAKIE)
 //      <o0.6> STALL Transmitted Interrupt Enable (STLIE)
 //      <o0.7> USB Error Interrupt Enable (UERIE)
-#define _EP3_IER            (0x10)
+#define _EP3_IER            (0x12)
 // </h>
 // </e>
 
@@ -238,7 +238,7 @@
 /* Endpoint4 Configuration Setting                                                                          */
 /*----------------------------------------------------------------------------------------------------------*/
 //  <e0> Endpoint4 Configuration
-#define _EP4_ENABLE         (0)
+#define _EP4_ENABLE         (1)
 
 //    <o0> Endpoint Address (EPADR)
 //      <1=> 1
@@ -266,7 +266,7 @@
 
 //    <o0> Endpoint Buffer Length (EPLEN) (in byte) <4-1000:4>
                             /* Maximum: 1000 Bytes                                                          */
-#define _EP4LEN_TMP         (8)
+#define _EP4LEN_TMP         (64)
 
 //    <o0> Single/Double Buffer Selection (SDBS)
 //      <0=> Single Buffer
@@ -283,7 +283,7 @@
 //      <o0.5> NAK Transmitted Interrupt Enable (NAKIE)
 //      <o0.6> STALL Transmitted Interrupt Enable (STLIE)
 //      <o0.7> USB Error Interrupt Enable (UERIE)
-#define _EP4_IER            (0x02)
+#define _EP4_IER            (0x12)
 // </h>
 // </e>
 
@@ -292,7 +292,7 @@
 /* Endpoint5 Configuration Setting                                                                          */
 /*----------------------------------------------------------------------------------------------------------*/
 //  <e0> Endpoint5 Configuration
-#define _EP5_ENABLE         (0)
+#define _EP5_ENABLE         (1)
 
 //    <o0> Endpoint Address (EPADR)
 //      <1=> 1
@@ -311,7 +311,7 @@
 //      <1=> Isochronous
 //      <2=> Bulk
 //      <3=> Interrupt
-#define _EP5_TYPR           (3)
+#define _EP5_TYPR           (1)
 
 //    <o0> Endpoint Direction (EPDIR)
 //      <1=> IN
@@ -320,7 +320,7 @@
 
 //    <o0> Endpoint Buffer Length (EPLEN) (in byte) <4-1000:4>
                             /* Maximum: 1000 Bytes                                                          */
-#define _EP5LEN_TMP         (8)
+#define _EP5LEN_TMP         (64)
 
 
 //    <o0> Single/Double Buffer Selection (SDBS)
@@ -338,7 +338,7 @@
 //      <o0.5> NAK Transmitted Interrupt Enable (NAKIE)
 //      <o0.6> STALL Transmitted Interrupt Enable (STLIE)
 //      <o0.7> USB Error Interrupt Enable (UERIE)
-#define _EP5_IER            (0x10)
+#define _EP5_IER            (0x12)
 // </h>
 // </e>
 
@@ -347,7 +347,7 @@
 /* Endpoint6 Configuration Setting                                                                          */
 /*----------------------------------------------------------------------------------------------------------*/
 //  <e0> Endpoint6 Configuration
-#define _EP6_ENABLE         (0)
+#define _EP6_ENABLE         (1)
 
 //    <o0> Endpoint Address (EPADR)
 //      <1=> 1
@@ -366,7 +366,7 @@
 //      <1=> Isochronous
 //      <2=> Bulk
 //      <3=> Interrupt
-#define _EP6_TYPR           (3)
+#define _EP6_TYPR           (1)
 
 //    <o0> Endpoint Direction (EPDIR)
 //      <1=> IN
@@ -375,7 +375,7 @@
 
 //    <o0> Endpoint Buffer Length (EPLEN) (in byte) <4-1000:4>
                             /* Maximum: 1000 Bytes                                                          */
-#define _EP6LEN_TMP         (8)
+#define _EP6LEN_TMP         (64)
 
 //    <o0> Single/Double Buffer Selection (SDBS)
 //      <0=> Single Buffer
@@ -392,7 +392,7 @@
 //      <o0.5> NAK Transmitted Interrupt Enable (NAKIE)
 //      <o0.6> STALL Transmitted Interrupt Enable (STLIE)
 //      <o0.7> USB Error Interrupt Enable (UERIE)
-#define _EP6_IER            (0x02)
+#define _EP6_IER            (0x12)
 // </h>
 // </e>
 
@@ -401,7 +401,7 @@
 /* Endpoint7 Configuration Setting                                                                          */
 /*----------------------------------------------------------------------------------------------------------*/
 //  <e0> Endpoint7 Configuration
-#define _EP7_ENABLE         (0)
+#define _EP7_ENABLE         (1)
 
 //    <o0> Endpoint Address (EPADR)
 //      <1=> 1
@@ -429,7 +429,7 @@
 
 //    <o0> Endpoint Buffer Length (EPLEN) (in byte) <4-1000:4>
                             /* Maximum: 1000 Bytes                                                          */
-#define _EP7LEN_TMP         (8)
+#define _EP7LEN_TMP         (64)
 
 //    <o0> Single/Double Buffer Selection (SDBS)
 //      <0=> Single Buffer
@@ -446,7 +446,7 @@
 //      <o0.5> NAK Transmitted Interrupt Enable (NAKIE)
 //      <o0.6> STALL Transmitted Interrupt Enable (STLIE)
 //      <o0.7> USB Error Interrupt Enable (UERIE)
-#define _EP7_IER            (0x10)
+#define _EP7_IER            (0x12)
 // </h>
 // </e>
 

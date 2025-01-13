@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_gpio.c
- * @version $Rev:: 6398         $
- * @date    $Date:: 2022-10-27 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the GPIO and AFIO firmware functions.
  *************************************************************************************************************
  * @attention
@@ -293,7 +293,7 @@ void GPIO_OpenDrainConfig(HT_GPIO_TypeDef* HT_GPIOx, u16 GPIO_PIN_nBITMAP, Contr
   GPIO_CK_OFF();
 }
 
-#if LIBCFG_GPIO_SINK_CURRENT_ENHANCED
+#if (LIBCFG_GPIO_SINK_CURRENT_ENHANCED)
 /*********************************************************************************************************//**
  * @brief Select the sink current of specified GPIO pins.
  * @param HT_GPIOx: where HT_GPIOx is the selected GPIO from the GPIO peripherals.

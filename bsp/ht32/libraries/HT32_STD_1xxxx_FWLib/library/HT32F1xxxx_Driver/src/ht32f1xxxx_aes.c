@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_aes.c
- * @version $Rev:: 2788         $
- * @date    $Date:: 2022-11-24 #$
+ * @version $Rev:: 3174         $
+ * @date    $Date:: 2024-08-27 #$
  * @brief   This file provides all the AES firmware functions.
  *************************************************************************************************************
  * @attention
@@ -331,7 +331,7 @@ u32 AES_GetOutputData(HT_AES_TypeDef* HT_AESn)
  * @param keySize: Key table's size
  * @retval None
  ************************************************************************************************************/
-void AES_SetKeyTable(HT_AES_TypeDef* HT_AESn, uc8* Key, u32 keySize)
+void AES_SetKeyTable(HT_AES_TypeDef* HT_AESn, u32 *Key, u32 keySize)
 {
   u32 i;
   u32 uCRTemp = HT_AESn->CR & (~(0x00000060UL));
@@ -353,12 +353,12 @@ void AES_SetKeyTable(HT_AES_TypeDef* HT_AESn, uc8* Key, u32 keySize)
   }
   HT_AESn->CR = uCRTemp;
 
-  for (i = 0; i < keySize; i += 4)
+  for (i = 0; i < (keySize / 4); i++)
   {
     #if (LIBCFG_AES_SWAP)
-    HT_AESn->KEYR[i >> 2] = __REV(*(u32*)&Key[i]);
+    HT_AESn->KEYR[i] = __REV(*&Key[i]);
     #else
-    HT_AESn->KEYR[i >> 2] = *(u32*)&Key[i];
+    HT_AESn->KEYR[i] = *&Key[i];
     #endif
   }
 
@@ -371,17 +371,17 @@ void AES_SetKeyTable(HT_AES_TypeDef* HT_AESn, uc8* Key, u32 keySize)
  * @param Vector:
  * @retval None
  ************************************************************************************************************/
-void AES_SetVectorTable(HT_AES_TypeDef* HT_AESn, uc8* Vector)
+void AES_SetVectorTable(HT_AES_TypeDef* HT_AESn, u32 *Vector)
 {
   int i;
   Assert_Param(IS_AES(HT_AESn));
 
-  for (i = 0; i < 16; i += 4)
+  for (i = 0; i < 4; i++)
   {
     #if (LIBCFG_AES_SWAP)
-    HT_AESn->IVR[i >> 2] = __REV(*(u32*)&Vector[i]);
+    HT_AESn->IVR[i] = __REV(*&Vector[i]);
     #else
-    HT_AESn->IVR[i >> 2] = *(u32*)&Vector[i];
+    HT_AESn->IVR[i] = *&Vector[i];
     #endif
   }
 }
@@ -398,10 +398,10 @@ void AES_SetVectorTable(HT_AES_TypeDef* HT_AESn, uc8* Vector)
  ************************************************************************************************************/
 ErrStatus _AES_CryptData(HT_AES_TypeDef* HT_AESn,
                          AES_DIR_Enum dir,
-                         uc8 *iv,
+                         u32 *iv,
                          u32 length,
-                         uc8 *inputData,
-                         u8 *outputData)
+                         u32 *inputData,
+                         u32 *outputData)
 {
   /*AES Data blocks 16 byte                                                                                 */
   if ((length % 16) != 0)
@@ -423,8 +423,8 @@ ErrStatus _AES_CryptData(HT_AES_TypeDef* HT_AESn,
   HT_AESn->CR = (HT_AESn->CR & 0xFFFFFFFD) | dir;
 
   /*Create input/output data                                                                                */
-  gpu32InputBuff = (u32*)inputData;
-  gpu32OutputBuff = (u32*)outputData;
+  gpu32InputBuff = inputData;
+  gpu32OutputBuff = outputData;
 
   /*Init Index                                                                                              */
   gu32OutputIndex = 0;
@@ -451,8 +451,8 @@ ErrStatus _AES_CryptData(HT_AES_TypeDef* HT_AESn,
 ErrStatus AES_ECB_CryptData(HT_AES_TypeDef* HT_AESn,
                        AES_DIR_Enum dir,
                        u32 length,
-                       uc8 *inputData,
-                       u8 *outputData)
+                       u32 *inputData,
+                       u32 *outputData)
 {
   return _AES_CryptData(HT_AESn,
                         dir,
@@ -474,10 +474,10 @@ ErrStatus AES_ECB_CryptData(HT_AES_TypeDef* HT_AESn,
  ************************************************************************************************************/
 ErrStatus AES_CBC_CryptData(HT_AES_TypeDef* HT_AESn,
                        AES_DIR_Enum dir,
-                       uc8 *iv,
+                       u32 *iv,
                        u32 length,
-                       uc8 *inputData,
-                       u8 *outputData)
+                       u32 *inputData,
+                       u32 *outputData)
 {
   return _AES_CryptData(HT_AESn,
                         dir,
@@ -497,10 +497,10 @@ ErrStatus AES_CBC_CryptData(HT_AES_TypeDef* HT_AESn,
  * @retval SUCCESS or ERROR
  ************************************************************************************************************/
 ErrStatus AES_CTR_CryptData(HT_AES_TypeDef* HT_AESn,
-                       uc8 *iv,
+                       u32 *iv,
                        u32 length,
-                       uc8 *inputData,
-                       u8 *outputData)
+                       u32 *inputData,
+                       u32 *outputData)
 {
   return _AES_CryptData(HT_AESn,
                         AES_DIR_ENCRYPT,

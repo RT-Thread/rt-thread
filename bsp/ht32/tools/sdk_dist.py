@@ -37,3 +37,27 @@ def dist_do_building(BSP_ROOT, dist_dir):
     bsp_update_kconfig_library(dist_dir)
 
 
+def get_source(ic_model, file_path, system_path, base_path):
+    source_path = []
+    files_list = []
+    readafter = 0
+    if not os.path.isfile(file_path):
+        return
+
+    with open(file_path, 'r') as file:
+        # content = file.read()
+        for line in file:
+            if readafter == 2 and line.find('>') != -1:
+                break
+            if readafter == 2:
+                files_list.append(line.strip())
+            if line.find(ic_model) != -1:
+                readafter = 1
+            if readafter == 1 and line.find('<') != -1:
+                readafter = 2
+    for line in files_list:
+        if line.find('system') != -1:
+            source_path.append(os.path.join(system_path, line.strip()))
+        else:
+            source_path.append(os.path.join(base_path, line.strip()))
+    return source_path

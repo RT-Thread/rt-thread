@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_iar_13.s
-;  Version          : $Rev:: 7119         $
-;  Date             : $Date:: 2023-08-15 #$
+;  Version          : $Rev:: 7704         $
+;  Date             : $Date:: 2024-05-10 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -16,6 +16,7 @@
 ;   HT32F50020, HT32F50030
 ;   HT32F61630
 ;   HT32F61030
+;   HT32F61730
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
 
@@ -24,6 +25,7 @@
 ;//      <25=> HT32F50020/30
 ;//      <25=> HT32F61630
 ;//      <25=> HT32F61030
+;//      <25=> HT32F61730
 USE_HT32_CHIP_SET   EQU     0
 
 _HT32FWID           EQU     0xFFFFFFFF
@@ -31,10 +33,12 @@ _HT32FWID           EQU     0xFFFFFFFF
 ;_HT32FWID           EQU     0x00050030
 ;_HT32FWID           EQU     0x00061630
 ;_HT32FWID           EQU     0x00061030
+;_HT32FWID           EQU     0x00061730
 
 HT32F50020_30       EQU     25
 HT32F61630          EQU     25
 HT32F61030          EQU     25
+HT32F61730          EQU     25
 
   IF USE_HT32_CHIP_SET=0
   ELSE

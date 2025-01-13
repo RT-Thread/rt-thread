@@ -6,8 +6,8 @@
 /*                                                                                                         */
 /*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_cs3_10.s
-;  Version          : $Rev:: 6601         $
-;  Date             : $Date:: 2022-12-27 #$
+;  Version          : $Rev:: 8101         $
+;  Date             : $Date:: 2024-09-04 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -15,6 +15,7 @@
 ;  Supported Device
 ;  ========================================
 ;   HT32F61244, HT32F61245
+;   NW32F61242
 */
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
@@ -22,6 +23,7 @@
 ;// <o>  HT32 Device
 ;//      <0=> By Project Asm Define
 ;//      <24=> HT32F61244/45
+;//      <24=> NW32F61242
 */
     .equ    USE_HT32_CHIP_SET, 0
 
@@ -29,9 +31,11 @@
 /*
     .equ _HT32FWID, 0x00061244
     .equ _HT32FWID, 0x00061245
+    .equ _HT32FWID, 0x00061242
 */
 
     .equ HT32F61244_45, 24
+    .equ NW32F61242,    24
 
   .if USE_HT32_CHIP_SET == 0
   .else

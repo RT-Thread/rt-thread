@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_usart.c
- * @version $Rev:: 7054         $
- * @date    $Date:: 2023-07-24 #$
+ * @version $Rev:: 7698         $
+ * @date    $Date:: 2024-04-15 #$
  * @brief   This file provides all the USART firmware functions.
  *************************************************************************************************************
  * @attention
@@ -366,7 +366,7 @@ void USART_ClearFlag(HT_USART_TypeDef* USARTx, u32 USART_Flag)
  *     @arg USART_INT_RSADD :
  *     @arg USART_INT_TOUT  :
  *     @arg USART_INT_CTS   :
-*      @arg USART_INT_LBD   :
+ *     @arg USART_INT_LBD   :
  * @param NewState: This parameter can be ENABLE or DISABLE.
  * @retval None
  ************************************************************************************************************/
@@ -871,11 +871,10 @@ void USART_LIN_SendBreak(HT_USART_TypeDef* USARTx)
   USARTx->CR |= USART_LINSENDBREAK;
 }
 
-
 /*********************************************************************************************************//**
  * @brief Configure the break detection length in LIN mode.
  * @param USARTx: where USARTx is the selected USART/UART from the USART/UART peripherals.
- * @param length: data length in byte.
+ * @param USART_LIN_Length: data length in byte.
  *   This parameter can be one of the following values:
  *     @arg USART_LINLENGTH_11BIT
  *     @arg USART_LINLENGTH_10BIT
