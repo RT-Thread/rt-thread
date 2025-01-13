@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_rtc.c
- * @version $Rev:: 2233         $
- * @date    $Date:: 2020-10-13 #$
+ * @version $Rev:: 2984         $
+ * @date    $Date:: 2023-11-23 #$
  * @brief   This file provides all the RTC firmware functions.
  *************************************************************************************************************
  * @attention
@@ -138,12 +138,10 @@ void RTC_LSECmd(ControlStatus NewState)
   if (NewState == DISABLE)
   {
     BB_LSE_EN = 0;
-    while (HT_CKCU->GCSR & 0x10);
   }
   else
   {
     BB_LSE_EN = 1;
-    while ((HT_CKCU->GCSR & 0x10) == 0);
   }
 }
 

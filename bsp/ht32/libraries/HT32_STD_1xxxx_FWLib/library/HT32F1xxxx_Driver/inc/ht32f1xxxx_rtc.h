@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_rtc.h
- * @version $Rev:: 2971         $
- * @date    $Date:: 2023-10-25 #$
+ * @version $Rev:: 3094         $
+ * @date    $Date:: 2024-06-19 #$
  * @brief   The header file of the RTC library.
  *************************************************************************************************************
  * @attention
@@ -105,7 +105,7 @@ typedef enum
   RTC_ROWM_LEVEL                   /*!< Level mode.                                                         */
 } RTC_ROWM_Enum;
 /**
- * @brief Waveform mode of RTC output
+ * @brief Event selection of RTC output
  */
 typedef enum
 {

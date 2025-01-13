@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_adc.c
- * @version $Rev:: 7366         $
- * @date    $Date:: 2023-12-06 #$
+ * @version $Rev:: 7691         $
+ * @date    $Date:: 2024-04-02 #$
  * @brief   This file provides all the ADC firmware functions.
  *************************************************************************************************************
  * @attention
@@ -90,6 +90,7 @@ void ADC_Reset(HT_ADC_TypeDef* HT_ADCn)
   Assert_Param(IS_ADC(HT_ADCn));
 
   HT_ADCn->CR |= ADC_SOFTWARE_RESET;
+  while ((HT_ADCn->CR & ADC_SOFTWARE_RESET) != 0);
 }
 
 /*********************************************************************************************************//**
@@ -107,6 +108,7 @@ void ADC_Cmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState)
   if (NewState != DISABLE)
   {
     HT_ADCn->CR |= ADC_ENABLE_BIT;
+    ADC_Reset(HT_ADCn);
   }
   else
   {
@@ -539,12 +541,13 @@ void ADC_VREFConfig(HT_ADC_TypeDef* HT_ADCn, u32 ADC_VREF_x)
 
 #if (LIBCFG_ADC_VREFBUF)
 /*********************************************************************************************************//**
- * @brief Enable or Disable the VREF output. When enable, the VREF provides a stable voltage output to the ADVREFP pin (ADC reference positive voltage).
+ * @brief Enable or Disable the VREF output. When enable, the VREF provides a stable voltage output to the
+          ADVREFP pin (ADC reference positive voltage).
  * @param HT_ADCn: where HT_ADCn is the selected ADC from the ADC peripherals.
  * @param NewState: This parameter can be ENABLE or DISABLE.
  * @retval None
  ************************************************************************************************************/
-void ADC_VREFOutputCmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState)
+void ADC_VREFOutputADVREFPCmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState)
 {
   /* !!! NOTICE !!!
      The ADCREFP pin should not be connected to an external voltage when the VREF output is enabled.

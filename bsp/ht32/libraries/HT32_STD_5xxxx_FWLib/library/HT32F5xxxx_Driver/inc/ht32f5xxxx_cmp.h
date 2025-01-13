@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_cmp.h
- * @version $Rev:: 7319         $
- * @date    $Date:: 2023-10-28 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the CMP library.
  *************************************************************************************************************
  * @attention
@@ -59,7 +59,7 @@ typedef struct
   u32 CMP_ScalerEnable;
   u32 CMP_CoutSync;
   u32 CMP_OutputPol;
-  #if (LIBCFG_CMP_65x_VER)
+  #if (LIBCFG_CMP_65x_66x_VER)
   u32 CMP_InputSelection;
   #endif
   u32 CMP_InvInputSelection;
@@ -108,7 +108,7 @@ typedef enum
 
 
 /* Definitions of CMP Output Selection for IP Trigger Source                                                */
-#if (LIBCFG_CMP_65x_VER)
+#if (LIBCFG_CMP_65x_66x_VER)
 #define CMP_TRIG_NONE                             ((u32)0x0 << 11)
 #define CMP_TRIG_GPTM_CH0                         ((u32)0x1 << 11) // CMP0
 #define CMP_TRIG_GPTM_CH1                         ((u32)0x1 << 11) // CMP1
@@ -198,7 +198,7 @@ typedef enum
 
 
 /* Definitions of CMP Inverted Input Source Selection                                                       */
-#if (LIBCFG_CMP_65x_VER)
+#if (LIBCFG_CMP_65x_66x_VER)
 #if (LIBCFG_CMP_POS_INPUT_SEL_V2)
 #define CMP_INPUT_CMPnP                           ((u32)0x00000000)
 #define CMP_INPUT_CMPnP0                          ((u32)0x00000000)
@@ -211,6 +211,26 @@ typedef enum
                                                    (x == CMP_INPUT_CMPnP1) || \
                                                    (x == CMP_INPUT_CMPnP2) || \
                                                    (x == CMP_INPUT_OPA0O))
+#elif (LIBCFG_CMP_POS_INPUT_SEL_V3)
+#define CMP_INPUT_CMP0P                           ((u32)0x00000000)
+#define CMP_INPUT_CMP0P0                          ((u32)0x00000000)
+#define CMP_INPUT_CMP1P0                          ((u32)0x00000001)
+#define CMP_INPUT_CMP1P1                          ((u32)0x00000002)
+#define CMP_INPUT_CMP1P2                          ((u32)0x00000003)
+#define CMP_INPUT_PGA0O                           ((u32)0x00000004)
+#define CMP_INPUT_PGA1O                           ((u32)0x00000005)
+#define CMP_INPUT_PGA2O                           ((u32)0x00000006)
+#define CMP_INPUT_PGA3O                           ((u32)0x00000007)
+
+#define IS_CMP_InputSelection(x)                  ((x == CMP_INPUT_CMP0P)  || \
+                                                   (x == CMP_INPUT_CMP0P0) || \
+                                                   (x == CMP_INPUT_CMP1P0) || \
+                                                   (x == CMP_INPUT_CMP1P1) || \
+                                                   (x == CMP_INPUT_CMP1P2) || \
+                                                   (x == CMP_INPUT_PGA0O)  || \
+                                                   (x == CMP_INPUT_PGA1O)  || \
+                                                   (x == CMP_INPUT_PGA2O)  || \
+                                                   (x == CMP_INPUT_PGA3O))
 #else
 #define CMP_INPUT_CMPnP                           ((u32)0x00000000)
 #define CMP_INPUT_OPA0O                           ((u32)0x00000001)
@@ -223,6 +243,22 @@ typedef enum
 
 /* Definitions of CMP Inverted Input Source Selection                                                       */
 #define CMP_EXTERNAL_CN_IN                        ((u32)0x00000000)
+
+#if defined(USE_HT32F66242) || defined(USE_HT32F66246)
+#define CMP0_CMP0N_CN_IN                          ((u32)0x00000000)
+#define CMP1_CMP1N_CN_IN                          ((u32)0x00000000)
+
+#define CMP0_CMP1N_CN_IN                          ((u32)0x00000010)
+#define CMP1_CMP0N_CN_IN                          ((u32)0x00000010)
+
+#define CMP_CVREF0_CN_IN                          ((u32)0x00000020)
+#define CMP_CVREF1_CN_IN                          ((u32)0x00000030)
+
+#define IS_CMP_InvInputSelection(x)               ((x == CMP_EXTERNAL_CN_IN) || (x == CMP0_CMP0N_CN_IN) || (x == CMP1_CMP1N_CN_IN) || \
+                                                   (x == CMP0_CMP1N_CN_IN)   || (x == CMP1_CMP0N_CN_IN) || \
+                                                   (x == CMP_CVREF0_CN_IN)   || \
+                                                   (x == CMP_CVREF1_CN_IN))
+#else
 #define CMP_SCALER_CN_IN                          ((u32)0x00000010)
 
 #define IS_CMP_InvInSel2(x)                       (0)
@@ -247,6 +283,7 @@ typedef enum
 #endif
 
 #define IS_CMP_InvInputSelection(x)               ((x == CMP_EXTERNAL_CN_IN) || (x == CMP_SCALER_CN_IN) || IS_CMP_InvInSel2(x))
+#endif
 
 
 /* Definitions of CMP Hysteresis Level Selection                                                            */
