@@ -2083,7 +2083,7 @@
       <name>$PROJ_DIR$\board\board_config.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\hc32f4a0_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Source\IAR\startup_hc32f4a0.s</name>
+      <name>$PROJ_DIR$\..\libraries\hc32f4a0_ddl\cmsis\Device\HDSC\hc32f4xx\Source\IAR\startup_hc32f4a0.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\hc32_drivers\drv_common.c</name>
