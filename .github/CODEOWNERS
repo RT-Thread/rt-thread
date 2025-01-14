@@ -20,6 +20,8 @@
 /bsp/maxim                                @supperthomas
 /bsp/nxp                                  @Rbb666
 /bsp/renesas                              @Rbb666
+/bsp/cvitek                               @unicornx
+/bsp/qemu-virt64-riscv                    @unicornx
 
 *arduino*                                 @mysterywolf
 *.attach                                  @mysterywolf
