@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-10-27     CDT          first version
+ * 2024-06-13     CDT          modify FCM lower/upper margin to 10%
  */
 
 /*******************************************************************************
@@ -40,8 +41,8 @@ void xtal32_fcm_thread_entry(void *parameter)
     stcFcmInit.u32RefClockEdge   = FCM_REF_CLK_RISING;
     stcFcmInit.u32TargetClock    = FCM_TARGET_CLK_XTAL32;
     stcFcmInit.u32TargetClockDiv = FCM_TARGET_CLK_DIV1;
-    stcFcmInit.u16LowerLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 96UL / 100UL);
-    stcFcmInit.u16UpperLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 104UL / 100UL);
+    stcFcmInit.u16LowerLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 90UL / 100UL);
+    stcFcmInit.u16UpperLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 110UL / 100UL);
     (void)FCM_Init(&stcFcmInit);
     /* Enable FCM, to ensure xtal32 stable */
     FCM_Cmd(ENABLE);

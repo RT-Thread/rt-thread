@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>../libraries/hc32f448_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/sfr/HC32F448.SFR</SFDFile>
+          <SFDFile>../libraries/hc32f448_ddl/cmsis/Device/HDSC/hc32f4xx/Source/ARM/sfr/HC32F448.SFR</SFDFile>
           <bCustSvd>1</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -245,7 +245,7 @@
               </Ocm6>
               <IRAM>
                 <Type>0</Type>
-                <StartAddress>0x1FFF8000</StartAddress>
+                <StartAddress>0x1fff8000</StartAddress>
                 <Size>0x10000</Size>
               </IRAM>
               <IROM>
@@ -280,7 +280,7 @@
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
-                <StartAddress>0x03000C00</StartAddress>
+                <StartAddress>0x3000c00</StartAddress>
                 <Size>0x400</Size>
               </OCR_RVCT5>
               <OCR_RVCT6>
@@ -300,12 +300,12 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x1FFF8000</StartAddress>
+                <StartAddress>0x1fff8000</StartAddress>
                 <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x200F0000</StartAddress>
+                <StartAddress>0x200f0000</StartAddress>
                 <Size>0x1000</Size>
               </OCR_RVCT10>
             </OnChipMemories>

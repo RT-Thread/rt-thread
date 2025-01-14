@@ -476,6 +476,7 @@ static rt_ssize_t hc32_transmit(struct rt_serial_device  *serial,
         DMA_SetSrcAddr(uart_dma->Instance, uart_dma->channel, (uint32_t)buf);
         DMA_SetTransCount(uart_dma->Instance, uart_dma->channel, size);
         DMA_ChCmd(uart_dma->Instance, uart_dma->channel, ENABLE);
+        USART_FuncCmd(uart->config->Instance, USART_TX, DISABLE);
         USART_FuncCmd(uart->config->Instance, USART_TX, ENABLE);
         USART_FuncCmd(uart->config->Instance, USART_INT_TX_CPLT, ENABLE);
         return size;
@@ -737,7 +738,7 @@ static void hc32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         /* Enable DMA module */
         DMA_Cmd(uart_dma->Instance, ENABLE);
         AOS_SetTriggerEventSrc(uart_dma->trigger_select, uart_dma->trigger_event);
-        USART_FuncCmd(uart->config->Instance, (USART_TX | USART_INT_TX_EMPTY | USART_INT_TX_CPLT), DISABLE);
+        USART_FuncCmd(uart->config->Instance, (USART_INT_TX_EMPTY | USART_INT_TX_CPLT), DISABLE);
         NVIC_EnableIRQ(uart->config->tc_irq.irq_config.irq_num);
     }
 }

@@ -21,7 +21,7 @@
 #define DBG_LVL             DBG_INFO
 
 #include <rtdbg.h>
-#ifdef RT_USING_ADC
+#ifdef BSP_USING_ADC
 typedef struct
 {
     struct rt_adc_device rt_adc;
@@ -87,9 +87,11 @@ static void _adc_internal_trigger0_set(adc_device *p_adc_dev)
     case (rt_uint32_t)CM_ADC2:
         u32TriggerSel = AOS_ADC2_0;
         break;
+#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448)
     case (rt_uint32_t)CM_ADC3:
         u32TriggerSel = AOS_ADC3_0;
         break;
+#endif
     default:
         break;
     }
@@ -116,9 +118,11 @@ static void _adc_internal_trigger1_set(adc_device *p_adc_dev)
     case (rt_uint32_t)CM_ADC2:
         u32TriggerSel = AOS_ADC2_1;
         break;
+#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448)
     case (rt_uint32_t)CM_ADC3:
         u32TriggerSel = AOS_ADC3_1;
         break;
+#endif
     default:
         break;
     }
@@ -376,4 +380,4 @@ int rt_hw_adc_init(void)
 INIT_DEVICE_EXPORT(rt_hw_adc_init);
 #endif
 
-#endif  /* RT_USING_ADC */
+#endif  /* BSP_USING_ADC */

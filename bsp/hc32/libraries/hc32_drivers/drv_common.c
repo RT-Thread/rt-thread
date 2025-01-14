@@ -10,20 +10,20 @@
 
 #include "board.h"
 
-#define DBG_TAG    "drv_common"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG                         "drv_common"
+#define DBG_LVL                         DBG_INFO
 #include <rtdbg.h>
 
 #ifdef RT_USING_PIN
-#include <drv_gpio.h>
+    #include <drv_gpio.h>
 #endif
 
 #ifdef RT_USING_SERIAL
-#ifdef RT_USING_SERIAL_V2
-#include <drv_usart_v2.h>
-#else
-#include <drv_usart.h>
-#endif /* RT_USING_SERIAL */
+    #ifdef RT_USING_SERIAL_V2
+        #include <drv_usart_v2.h>
+    #else
+        #include <drv_usart.h>
+    #endif /* RT_USING_SERIAL */
 #endif /* RT_USING_SERIAL_V2 */
 
 #ifdef RT_USING_FINSH
@@ -53,9 +53,7 @@ void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-
     rt_tick_increase();
-
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -65,13 +63,11 @@ void SysTick_Handler(void)
  */
 void  SysTick_Configuration(void)
 {
-    stc_clock_freq_t stcClkFreq;
     rt_uint32_t cnts;
+    stc_clock_freq_t stcClkFreq;
 
     CLK_GetClockFreq(&stcClkFreq);
-
     cnts = (rt_uint32_t)stcClkFreq.u32HclkFreq / RT_TICK_PER_SECOND;
-
     SysTick_Config(cnts);
 }
 
@@ -125,5 +121,3 @@ void rt_hw_us_delay(rt_uint32_t us)
     }
     while (delta < us_tick * us);
 }
-
-/*@}*/

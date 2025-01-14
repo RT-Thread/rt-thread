@@ -584,6 +584,9 @@ static int32_t hc32_qspi_read_instr(struct hc32_qspi_bus *qspi_bus, struct rt_qs
     uint32_t u32RxIndex = 0U;
     rt_uint32_t u32TimeoutCnt;
 #endif
+#if defined (HC32F448)
+    rt_uint32_t u32ReadMd;
+#endif
 
 #if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F472)
 #ifndef BSP_QSPI_USING_SOFT_CS
@@ -591,6 +594,12 @@ static int32_t hc32_qspi_read_instr(struct hc32_qspi_bus *qspi_bus, struct rt_qs
     SET_REG32_BIT(CM_QSPI->CR, QSPI_CR_DCOME);
 #endif
 #elif defined (HC32F448)
+    if ((message->instruction.qspi_lines == 4) || (message->address.qspi_lines == 4) ||
+            (message->qspi_data_lines == 4))
+    {
+        u32ReadMd = READ_REG32_BIT(CM_QSPI->CR, QSPI_CR_MDSEL);
+        QSPI_SetReadMode(QSPI_RD_MD_QUAD_IO_FAST_RD);
+    }
     /* Enter direct communication mode */
     SET_REG32_BIT(CM_QSPI->CR, QSPI_CR_DCOME);
 #endif
@@ -699,6 +708,11 @@ static int32_t hc32_qspi_read_instr(struct hc32_qspi_bus *qspi_bus, struct rt_qs
     CLR_REG32_BIT(CM_QSPI->CR, QSPI_CR_DCOME);
 #endif
 #elif defined (HC32F448)
+    if ((message->instruction.qspi_lines == 4) || (message->address.qspi_lines == 4) ||
+            (message->qspi_data_lines == 4))
+    {
+        QSPI_SetReadMode(u32ReadMd);
+    }
     /* Exit direct communication mode */
     CLR_REG32_BIT(CM_QSPI->CR, QSPI_CR_DCOME);
 #endif
@@ -1092,11 +1106,7 @@ static int rt_hw_qspi_bus_init(void)
 {
     hc32_get_qspi_info();
     /* register the handle */
-#if defined (HC32F460) || defined (HC32F4A0)
     hc32_install_irq_handler(&qspi_bus_obj.config->err_irq.irq_config, qspi_bus_obj.config->err_irq.irq_callback, RT_FALSE);
-#elif defined (HC32F448) || defined (HC32F472)
-    hc32_install_independ_irq_handler(&qspi_bus_obj.config->err_irq.irq_config, RT_FALSE);
-#endif
 
     return hc32_qspi_register_bus(&qspi_bus_obj, "qspi1");
 }

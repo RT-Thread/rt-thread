@@ -15,6 +15,7 @@ board_config.c
 path =  [cwd]
 path += [cwd + '/ports']
 path += [cwd + '/config']
+path += [cwd + '/config/usb_config']
 
 startup_path_prefix = SDK_LIB
 

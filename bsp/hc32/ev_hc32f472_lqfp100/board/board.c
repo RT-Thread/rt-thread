@@ -7,6 +7,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-02-20     CDT          first version
+ * 2024-06-07     CDT          Add XTAL divider config code for RTC
  */
 
 #include "board.h"
@@ -41,14 +42,15 @@ void SystemClock_Config(void)
 #if defined(BSP_RTC_USING_XTAL32) || defined(RT_USING_PM)
     stc_clock_xtal32_init_t stcXtal32Init;
 #endif
+#if defined(BSP_RTC_USING_XTAL_DIV)
+    stc_clock_xtaldiv_init_t stcXtaldivInit;
+#endif
 
-    /* PCLK0, HCLK Max 200MHz */
-    /* PCLK1, PCLK4 Max 100MHz */
-    /* PCLK2, EXCLK Max 60MHz */
-    /* PCLK3 Max 50MHz */
+    /* PCLK0, HCLK  Max 120MHz */
+    /* PCLK1, PCLK2, PCLK3, PCLK4, EX BUS Max 60MHz */
     CLK_SetClockDiv(CLK_BUS_CLK_ALL,
-                    (CLK_PCLK0_DIV1 | CLK_PCLK1_DIV2 | CLK_PCLK2_DIV4 |
-                     CLK_PCLK3_DIV4 | CLK_PCLK4_DIV2 | CLK_EXCLK_DIV4 |
+                    (CLK_PCLK0_DIV1 | CLK_PCLK1_DIV2 | CLK_PCLK2_DIV2 |
+                     CLK_PCLK3_DIV2 | CLK_PCLK4_DIV2 | CLK_EXCLK_DIV2 |
                      CLK_HCLK_DIV1));
 
     GPIO_AnalogCmd(XTAL_PORT, XTAL_IN_PIN | XTAL_OUT_PIN, ENABLE);
@@ -67,7 +69,7 @@ void SystemClock_Config(void)
     stcPLLHInit.PLLCFGR_f.PLLM = 1UL - 1UL;
     stcPLLHInit.PLLCFGR_f.PLLN = 40UL - 1UL;
     stcPLLHInit.PLLCFGR_f.PLLP = 4UL - 1UL;
-    stcPLLHInit.PLLCFGR_f.PLLQ = 4UL - 1UL;
+    stcPLLHInit.PLLCFGR_f.PLLQ = 10UL - 1UL; /* 48M for USB */
     stcPLLHInit.PLLCFGR_f.PLLR = 4UL - 1UL;
     stcPLLHInit.PLLCFGR_f.PLLSRC = CLK_PLL_SRC_XTAL;
     (void)CLK_PLLInit(&stcPLLHInit);
@@ -87,6 +89,16 @@ void SystemClock_Config(void)
     stcXtal32Init.u8Filter = CLK_XTAL32_FILTER_RUN_MD;
     (void)CLK_Xtal32Init(&stcXtal32Init);
 #endif
+
+#if defined(BSP_RTC_USING_XTAL_DIV)
+    /* Xtal Div config */
+    (void)CLK_XtalDivStructInit(&stcXtaldivInit);
+    /* 8000000Hz / 32768Hz = 0x7A12 / 0x80 */
+    stcXtaldivInit.u32Num = 0x7A12UL;
+    stcXtaldivInit.u32Den = 0x80UL;
+    stcXtaldivInit.u32State = CLK_XTALDIV_ON;
+    (void)CLK_XtalDivInit(&stcXtaldivInit);
+#endif
 }
 
 /** Peripheral Clock Configuration
@@ -94,14 +106,20 @@ void SystemClock_Config(void)
 void PeripheralClock_Config(void)
 {
 #if defined(BSP_USING_CAN1)
-    CLK_SetCANClockSrc(CLK_CAN1, CLK_CANCLK_SYSCLK_DIV6);
+    CLK_SetCANClockSrc(CLK_CAN1, CLK_CANCLK_SYSCLK_DIV3);
 #endif
 #if defined(BSP_USING_CAN2)
-    CLK_SetCANClockSrc(CLK_CAN2, CLK_CANCLK_SYSCLK_DIV6);
+    CLK_SetCANClockSrc(CLK_CAN2, CLK_CANCLK_SYSCLK_DIV3);
+#endif
+#if defined(BSP_USING_CAN3)
+    CLK_SetCANClockSrc(CLK_CAN3, CLK_CANCLK_SYSCLK_DIV3);
 #endif
 
 #if defined(RT_USING_ADC)
     CLK_SetPeriClockSrc(CLK_PERIPHCLK_PCLK);
+#endif
+#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
+    CLK_SetUSBClockSrc(CLK_USBCLK_PLLQ);
 #endif
 }
 

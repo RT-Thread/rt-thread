@@ -116,7 +116,7 @@ extern "C"
  * @note  If there is no supported BSP board or the BSP function is not used,
  * the value needs to be set to 0U.
  */
-#define BSP_EV_HC32F4XX                             (BSP_EV_HC32F4A0_LQFP176)
+#define BSP_EV_HC32F4XX                             (0U)
 
 /**
  * @brief This is the list of BSP components to be used.
