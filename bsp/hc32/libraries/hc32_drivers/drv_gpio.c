@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
  * 2023-10-09     CDT          support HC32F448
+ * 2024-06-12     CDT          support external interrupt for HC32F448/HC32F472
  */
 
 #include <rtthread.h>
@@ -227,6 +228,88 @@ static void extint15_irq_handler(void)
     pin_irq_handler(pin_irq_map[15].pinbit);
     rt_interrupt_leave();
 }
+
+#if defined (HC32F448) || defined (HC32F472)
+void EXTINT00_SWINT16_Handler(void)
+{
+    extint0_irq_handler();
+}
+
+void EXTINT01_SWINT17_Handler(void)
+{
+    extint1_irq_handler();
+}
+
+void EXTINT02_SWINT18_Handler(void)
+{
+    extint2_irq_handler();
+}
+
+void EXTINT03_SWINT19_Handler(void)
+{
+    extint3_irq_handler();
+}
+
+void EXTINT04_SWINT20_Handler(void)
+{
+    extint4_irq_handler();
+}
+
+void EXTINT05_SWINT21_Handler(void)
+{
+    extint5_irq_handler();
+}
+
+void EXTINT06_SWINT22_Handler(void)
+{
+    extint6_irq_handler();
+}
+
+void EXTINT07_SWINT23_Handler(void)
+{
+    extint7_irq_handler();
+}
+
+void EXTINT08_SWINT24_Handler(void)
+{
+    extint8_irq_handler();
+}
+
+void EXTINT09_SWINT25_Handler(void)
+{
+    extint9_irq_handler();
+}
+
+void EXTINT10_SWINT26_Handler(void)
+{
+    extint10_irq_handler();
+}
+
+void EXTINT11_SWINT27_Handler(void)
+{
+    extint11_irq_handler();
+}
+
+void EXTINT12_SWINT28_Handler(void)
+{
+    extint12_irq_handler();
+}
+
+void EXTINT13_SWINT29_Handler(void)
+{
+    extint13_irq_handler();
+}
+
+void EXTINT14_SWINT30_Handler(void)
+{
+    extint14_irq_handler();
+}
+
+void EXTINT15_SWINT31_Handler(void)
+{
+    extint15_irq_handler();
+}
+#endif
 
 static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {

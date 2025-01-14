@@ -19,10 +19,6 @@ extern "C" {
 #endif
 
 #ifdef BSP_USING_CAN1
-#define CAN1_CLOCK_SEL                  (CAN_CLOCK_SRC_40M)
-#ifdef RT_CAN_USING_CANFD
-#define CAN1_CANFD_MODE                 (CAN_FD_MD_ISO)
-#endif
 #define CAN1_NAME                       ("can1")
 #ifndef CAN1_INIT_PARAMS
 #define CAN1_INIT_PARAMS                                    \
@@ -40,25 +36,49 @@ extern "C" {
   TQ = u32Prescaler / CANClock.
   Bit time = (u32TimeSeg2 + u32TimeSeg2) x TQ.
 
-  The following bit time configures are based on CAN Clock 40M
+  The following bit time configures are based on CAN Clock 8M
 */
 #define CAN_BIT_TIME_CONFIG_1M_BAUD                         \
     {                                                       \
-        .u32Prescaler = 2,                                  \
-        .u32TimeSeg1 = 16,                                  \
-        .u32TimeSeg2 = 4,                                   \
-        .u32SJW = 4                                         \
+        .u32Prescaler = 1,                                  \
+        .u32TimeSeg1 = 6,                                   \
+        .u32TimeSeg2 = 2,                                   \
+        .u32SJW = 2                                         \
     }
 
 #define CAN_BIT_TIME_CONFIG_800K_BAUD                       \
     {                                                       \
-        .u32Prescaler = 2,                                  \
-        .u32TimeSeg1 = 20,                                  \
-        .u32TimeSeg2 = 5,                                   \
-        .u32SJW = 4                                         \
+        .u32Prescaler = 1,                                  \
+        .u32TimeSeg1 = 7,                                   \
+        .u32TimeSeg2 = 3,                                   \
+        .u32SJW = 3                                         \
     }
 
 #define CAN_BIT_TIME_CONFIG_500K_BAUD                       \
+    {                                                       \
+        .u32Prescaler = 1,                                  \
+        .u32TimeSeg1 = 12,                                  \
+        .u32TimeSeg2 = 4,                                   \
+        .u32SJW = 4                                         \
+    }
+
+#define CAN_BIT_TIME_CONFIG_250K_BAUD                       \
+    {                                                       \
+        .u32Prescaler = 2,                                  \
+        .u32TimeSeg1 = 12,                                  \
+        .u32TimeSeg2 = 4,                                   \
+        .u32SJW = 4                                         \
+    }
+
+#define CAN_BIT_TIME_CONFIG_125K_BAUD                       \
+    {                                                       \
+        .u32Prescaler = 4,                                  \
+        .u32TimeSeg1 = 12,                                  \
+        .u32TimeSeg2 = 4,                                   \
+        .u32SJW = 4                                         \
+    }
+
+#define CAN_BIT_TIME_CONFIG_100K_BAUD                       \
     {                                                       \
         .u32Prescaler = 4,                                  \
         .u32TimeSeg1 = 16,                                  \
@@ -66,7 +86,7 @@ extern "C" {
         .u32SJW = 4                                         \
     }
 
-#define CAN_BIT_TIME_CONFIG_250K_BAUD                       \
+#define CAN_BIT_TIME_CONFIG_50K_BAUD                        \
     {                                                       \
         .u32Prescaler = 8,                                  \
         .u32TimeSeg1 = 16,                                  \
@@ -74,15 +94,7 @@ extern "C" {
         .u32SJW = 4                                         \
     }
 
-#define CAN_BIT_TIME_CONFIG_125K_BAUD                       \
-    {                                                       \
-        .u32Prescaler = 16,                                 \
-        .u32TimeSeg1 = 16,                                  \
-        .u32TimeSeg2 = 4,                                   \
-        .u32SJW = 4                                         \
-    }
-
-#define CAN_BIT_TIME_CONFIG_100K_BAUD                       \
+#define CAN_BIT_TIME_CONFIG_20K_BAUD                        \
     {                                                       \
         .u32Prescaler = 20,                                 \
         .u32TimeSeg1 = 16,                                  \
@@ -90,25 +102,9 @@ extern "C" {
         .u32SJW = 4                                         \
     }
 
-#define CAN_BIT_TIME_CONFIG_50K_BAUD                        \
-    {                                                       \
-        .u32Prescaler = 40,                                 \
-        .u32TimeSeg1 = 16,                                  \
-        .u32TimeSeg2 = 4,                                   \
-        .u32SJW = 4                                         \
-    }
-
-#define CAN_BIT_TIME_CONFIG_20K_BAUD                        \
-    {                                                       \
-        .u32Prescaler = 100,                                \
-        .u32TimeSeg1 = 16,                                  \
-        .u32TimeSeg2 = 4,                                   \
-        .u32SJW = 4                                         \
-    }
-
 #define CAN_BIT_TIME_CONFIG_10K_BAUD                        \
     {                                                       \
-        .u32Prescaler = 200,                                \
+        .u32Prescaler = 40,                                 \
         .u32TimeSeg1 = 16,                                  \
         .u32TimeSeg2 = 4,                                   \
         .u32SJW = 4                                         \
