@@ -152,7 +152,7 @@ static void on_varea_close(struct rt_varea *varea)
         if (rt_atomic_load(&(file->ref_count)) == 1)
         {
             dfs_file_close(file);
-            dfs_file_free(file);
+            dfs_file_destroy(file);
         }
         else
         {

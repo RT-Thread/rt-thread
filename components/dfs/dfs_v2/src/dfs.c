@@ -190,7 +190,7 @@ int dfs_init(void)
 }
 INIT_PREV_EXPORT(dfs_init);
 
-struct dfs_file* dfs_empty_file_alloc(void)
+struct dfs_file* dfs_file_create(void)
 {
     struct dfs_file *file;
 
@@ -205,7 +205,7 @@ struct dfs_file* dfs_empty_file_alloc(void)
     return file;
 }
 
-void dfs_file_free(struct dfs_file *file)
+void dfs_file_destroy(struct dfs_file *file)
 {
     rt_mutex_detach(&file->pos_lock);
 
@@ -244,7 +244,7 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     {
         struct dfs_file *file;
 
-        file = dfs_empty_file_alloc();
+        file = dfs_file_create();
 
         if (file)
         {
@@ -279,14 +279,7 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 
         if (file && file->ref_count == 1)
         {
-            rt_mutex_detach(&file->pos_lock);
-
-            if (file->mmap_context)
-            {
-                rt_free(file->mmap_context);
-            }
-
-            rt_free(file);
+            dfs_file_destroy(file);
         }
         else
         {
