@@ -508,6 +508,6 @@ jobs:
       - name: Post failure comment
         if: failure()
         run: |
-          curl -X POST -H "Authorization: token ${{ secrets.RTTHREAD_GITHUB_TOKEN }}" \
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN_COMMENT }}" \
           -d '{"body":"@${{ github.actor }}, Thank you for your contribution, but there was an error with the action. Could you please help check the BSP compilation issue? Thank you."}' \
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
