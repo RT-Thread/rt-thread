@@ -36,7 +36,7 @@ static const struct fal_partition *part = NULL;
  *
  * @return result
  */
-EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
+EfErrCode ef_port_init(ef_env const **default_env, rt_size_t *default_env_size) {
     EfErrCode result = EF_NO_ERR;
 
     *default_env = default_env_set;
@@ -60,10 +60,10 @@ EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
  *
  * @return result
  */
-EfErrCode ef_port_read(uint32_t addr, uint32_t *buf, size_t size) {
+EfErrCode ef_port_read(rt_uint32_t addr, rt_uint32_t *buf, rt_size_t size) {
     EfErrCode result = EF_NO_ERR;
 
-    fal_partition_read(part, addr, (uint8_t *)buf, size);
+    fal_partition_read(part, addr, (rt_uint8_t *)buf, size);
 
     return result;
 }
@@ -78,7 +78,7 @@ EfErrCode ef_port_read(uint32_t addr, uint32_t *buf, size_t size) {
  *
  * @return result
  */
-EfErrCode ef_port_erase(uint32_t addr, size_t size) {
+EfErrCode ef_port_erase(rt_uint32_t addr, rt_size_t size) {
     EfErrCode result = EF_NO_ERR;
 
     /* make sure the start address is a multiple of FLASH_ERASE_MIN_SIZE */
@@ -102,10 +102,10 @@ EfErrCode ef_port_erase(uint32_t addr, size_t size) {
  *
  * @return result
  */
-EfErrCode ef_port_write(uint32_t addr, const uint32_t *buf, size_t size) {
+EfErrCode ef_port_write(rt_uint32_t addr, const rt_uint32_t *buf, rt_size_t size) {
     EfErrCode result = EF_NO_ERR;
 
-    if (fal_partition_write(part, addr, (uint8_t *)buf, size) < 0)
+    if (fal_partition_write(part, addr, (rt_uint8_t *)buf, size) < 0)
     {
         result = EF_WRITE_ERR;
     }

@@ -390,4 +390,4 @@ static int rk_timer_drv_register(void)
 
     return 0;
 }
-INIT_DRIVER_EARLY_EXPORT(rk_timer_drv_register);
+INIT_PLATFORM_EXPORT(rk_timer_drv_register);

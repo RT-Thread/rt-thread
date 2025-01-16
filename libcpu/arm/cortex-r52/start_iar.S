@@ -31,11 +31,13 @@ ABT_Stack_Size  EQU     0x00000000
 FIQ_Stack_Size  EQU     0x00001000  
 IRQ_Stack_Size  EQU     0x00001000
         
-    IMPORT _c_int00
+    IMPORT entry
     IMPORT rt_hw_trap_svc
     IMPORT rt_hw_trap_pabt
     IMPORT rt_hw_trap_dabt
     IMPORT rt_hw_trap_resv
+    IMPORT rt_hw_trap_swi
+    IMPORT rt_hw_trap_undef
     IMPORT system_init
     IMPORT __iar_program_start
   
@@ -307,6 +309,18 @@ turnon_VFP:
         str     sp, [r0, #13*4]         ;@/* Save calling SP                 */
         str     lr, [r0, #14*4]         ;@/* Save calling PC                 */
     endm
+
+    EXPORT  SWI_Handler
+SWI_Handler:
+        push_svc_reg
+        bl      rt_hw_trap_swi
+        b       .
+
+    EXPORT  Undefined_Handler
+Undefined_Handler:
+        push_svc_reg
+        bl      rt_hw_trap_undef
+        b       .
 
     EXPORT  SVC_Handler
 SVC_Handler:

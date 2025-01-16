@@ -53,11 +53,16 @@ static struct ra_pwm ra6m4_pwm_obj[BSP_PWMS_NUM] =
 #endif
 };
 
+#ifdef SOC_SERIES_R9A07G0
+    #define FSP_PRIV_CLOCK  FSP_PRIV_CLOCK_PCLKGPTL
+#else
+    #define FSP_PRIV_CLOCK  FSP_PRIV_CLOCK_PCLKD
+#endif
 
 /* Convert the raw PWM period counts into ns */
 static rt_uint32_t _convert_counts_ns(uint32_t source_div, uint32_t raw)
 {
-    uint32_t pclkd_freq_hz = R_FSP_SystemClockHzGet(FSP_PRIV_CLOCK_PCLKD) >> source_div;
+    uint32_t pclkd_freq_hz = R_FSP_SystemClockHzGet(FSP_PRIV_CLOCK) >> source_div;
     uint32_t ns = (uint32_t)(((uint64_t)raw * 1000000000ULL) / pclkd_freq_hz);
     return ns;
 }
@@ -65,7 +70,7 @@ static rt_uint32_t _convert_counts_ns(uint32_t source_div, uint32_t raw)
 /* Convert ns into raw PWM period counts */
 static rt_uint32_t _convert_ns_counts(uint32_t source_div, uint32_t raw)
 {
-    uint32_t pclkd_freq_hz = R_FSP_SystemClockHzGet(FSP_PRIV_CLOCK_PCLKD) >> source_div;
+    uint32_t pclkd_freq_hz = R_FSP_SystemClockHzGet(FSP_PRIV_CLOCK) >> source_div;
     uint32_t counts = (uint32_t)(((uint64_t)raw * (uint64_t)pclkd_freq_hz) / 1000000000ULL);
     return counts;
 }

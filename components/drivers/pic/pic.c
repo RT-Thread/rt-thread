@@ -16,7 +16,9 @@
 #include <rtdbg.h>
 
 #include <drivers/pic.h>
+#ifdef RT_USING_PIC_STATISTICS
 #include <ktime.h>
+#endif
 
 struct irq_traps
 {

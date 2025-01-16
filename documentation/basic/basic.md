@@ -669,7 +669,7 @@ Configuration is mainly done by modifying the file under project directory - rtc
 /* While turning the system FinSH: define the number of historical command lines. */
 #define FINSH_HISTORY_LINES 5
 
-/* While turning the system FinSH: define this macro to open the Tab key, if not defined, close. */
+/* While turning the system FinSH: define this macro to use symbol table in Finsh, if not defined, close. */
 #define FINSH_USING_SYMTAB
 
 /* While turning the system FinSH: define the priority of the thread. */

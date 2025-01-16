@@ -17,8 +17,7 @@ elif rtconfig.PLATFORM in GetGCCLikePLATFORM():
     if GetOption('target') != 'mdk5':
         CPPPATH = [cwd]
         src = Glob('./src/*.c')
-
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+        group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 for d in list:
     path = os.path.join(cwd, d)

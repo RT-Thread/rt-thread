@@ -73,7 +73,7 @@ static const char *dev_console_filename;
 #define TTYSUP_CFLAG                                                       \
     (CIGNORE | CSIZE | CSTOPB | CREAD | PARENB | PARODD | HUPCL | CLOCAL | \
      CCTS_OFLOW | CRTS_IFLOW | CDTR_IFLOW | CDSR_OFLOW | CCAR_OFLOW |      \
-     CNO_RTSDTR)
+     CNO_RTSDTR | CBAUD)
 
 /*
  * Set TTY buffer sizes.

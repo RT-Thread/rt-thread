@@ -1,0 +1,252 @@
+menu "klibc options"
+    menu "rt_vsnprintf options"
+        config RT_KLIBC_USING_LIBC_VSNPRINTF
+            bool "Enable rt_vsnprintf to use libc vsscanf"
+            default n
+
+        config RT_KLIBC_USING_VSNPRINTF_LONGLONG
+            bool "Enable rt_vsnprintf function to support long-long format"
+            depends on !RT_KLIBC_USING_LIBC_VSNPRINTF
+            default n
+                help
+                    Support for the long long integral types (with the ll, z and t length modifiers for specifiers
+                    %d,%i,%o,%x,%X,%u, and with the %p specifier). Note: 'L' (long double) is not supported.
+
+        menuconfig RT_KLIBC_USING_VSNPRINTF_STANDARD
+            bool "Enable standard rt_vsnprintf version"
+            default y if ARCH_CPU_64BIT
+            default n
+            select RT_KLIBC_USING_VSNPRINTF_LONGLONG
+            depends on !RT_KLIBC_USING_LIBC_VSNPRINTF
+            help
+                Standard version of rt_vsnprintf, which is full function but higher stack usage.
+
+        if RT_KLIBC_USING_VSNPRINTF_STANDARD
+
+            config RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+                bool "Support decimal notation floating point conversion specifiers (%f, %F)"
+                default y
+                help
+                    Support for the decimal notation floating point conversion specifiers (%f, %F)
+
+            config RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+                bool "Support exponential notation floating point conversion specifiers (%e, %g, %E, %G)"
+                default y
+                help
+                    Support for the exponential notation floating point conversion specifiers (%e, %g, %E, %G)
+
+            config RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+                bool "Support length write-back specifier (%n)"
+                default y
+                help
+                    Support for the length write-back specifier (%n)
+
+            config RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
+                bool "safety check: no NULL end string"
+                default y if RT_USING_DEBUG
+                default n
+                help
+                    Be extra-safe, and don't assume format specifiers are completed correctly
+                    before the format string end.
+
+            config RT_KLIBC_USING_VSNPRINTF_MSVC_STYLE_INTEGER_SPECIFIERS
+                bool "Support MSVC style integer specifiers"
+                default n
+                help
+                    the integer format specifiers used in Microsoft's Visual C++ (MSVC) compiler.
+                    These specifiers, like %I64d for 64-bit integers, deviate slightly from the standard
+                    C format specifiers and are specific to MSVC. They allow for controlled formatting of
+                    integers in printf()-like functions, accommodating different integer sizes and ensuring
+                    compatibility with MSVC's environment. It's important to note that these specifiers might
+                    not be recognized or function in other compilers due to their MSVC-specific nature.
+
+            config RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE
+                int "'ntoa' conversion buffer size"
+                default 32
+                help
+                    'ntoa' conversion buffer size, this must be big enough to hold one converted
+                    numeric number including padded zeros (dynamically created on stack)
+
+            config RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE
+                int "printing individual decimal numbers buffer size"
+                default 32
+                help
+                    size of the fixed (on-stack) buffer for printing individual decimal numbers.
+                    this must be big enough to hold one converted floating-point value including
+                    padded zeros.
+
+            config RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION
+                int "floating point conversion specifiers"
+                default 6
+                help
+                    Default precision for the floating point conversion specifiers (the C standard sets this at 6)
+
+            config RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL
+                int "integral nums printed as float in rt_vsnprint"
+                default 9
+                help
+                    According to the C languages standard, printf() and related functions must be able to print any
+                    integral number in floating-point notation, regardless of length, when using the %f specifier -
+                    possibly hundreds of characters, potentially overflowing your buffers. In this implementation,
+                    all values beyond this threshold are switched to exponential notation.
+
+            config RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS
+                int "the number of terms in a Taylor series expansion of log_10(x)"
+                default 4
+                range 2 99
+                help
+                    The number of terms in a Taylor series expansion of log_10(x) to
+                    use for approximation - including the power-zero term (i.e. the
+                    value at the point of expansion).
+
+        endif
+    endmenu # rt_vsnprintf options
+
+    menu "rt_vsscanf options"
+        config RT_KLIBC_USING_LIBC_VSSCANF
+            bool "Enable rt_vsscanf to use libc vsscanf"
+            default n
+    endmenu # rt_vsscanf options
+
+    menu "rt_memset options"
+        config RT_KLIBC_USING_USER_MEMSET
+            bool "Enable rt_memset to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_MEMSET
+            config RT_KLIBC_USING_LIBC_MEMSET
+                bool "Enable rt_memset to use libc memset"
+                default n
+
+            config RT_KLIBC_USING_TINY_MEMSET
+                bool "Enable rt_memset to use tiny version"
+                depends on !RT_KLIBC_USING_LIBC_MEMSET
+                default n
+        endif
+    endmenu # rt_memset options
+
+    menu "rt_memcpy options"
+        config RT_KLIBC_USING_USER_MEMCPY
+            bool "Enable rt_memcpy to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_MEMCPY
+            config RT_KLIBC_USING_LIBC_MEMCPY
+                bool "Enable rt_memcpy to use libc memcpy"
+                default n
+
+            config RT_KLIBC_USING_TINY_MEMCPY
+                bool "Enable rt_memcpy to use tiny version"
+                depends on !RT_KLIBC_USING_LIBC_MEMCPY
+                default n
+        endif
+    endmenu # rt_memcpy options
+
+    menu "rt_memmove options"
+        config RT_KLIBC_USING_USER_MEMMOVE
+            bool "Enable rt_memmove to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_MEMMOVE
+            config RT_KLIBC_USING_LIBC_MEMMOVE
+                bool "Enable rt_memmove to use libc memmove"
+                default n
+        endif
+    endmenu # rt_memmove options
+
+    menu "rt_memcmp options"
+        config RT_KLIBC_USING_USER_MEMCMP
+            bool "Enable rt_memcmp to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_MEMCMP
+            config RT_KLIBC_USING_LIBC_MEMCMP
+                bool "Enable rt_memcmp to use libc memcmp"
+                default n
+        endif
+    endmenu # rt_memcmp options
+
+    menu "rt_strstr options"
+        config RT_KLIBC_USING_USER_STRSTR
+            bool "Enable rt_strstr to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_STRSTR
+            config RT_KLIBC_USING_LIBC_STRSTR
+                bool "Enable rt_strstr to use libc strstr"
+                default n
+        endif
+    endmenu # rt_strstr options
+
+    menu "rt_strcasecmp options"
+        config RT_KLIBC_USING_USER_STRCASECMP
+            bool "Enable rt_strcasecmp to use user-defined version"
+            default n
+    endmenu # rt_strcasecmp options
+
+    menu "rt_strncpy options"
+        config RT_KLIBC_USING_USER_STRNCPY
+            bool "Enable rt_strncpy to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_STRNCPY
+            config RT_KLIBC_USING_LIBC_STRNCPY
+                bool "Enable rt_strncpy to use libc strncpy"
+                default n
+        endif
+    endmenu # rt_strncpy options
+
+    menu "rt_strcpy options"
+        config RT_KLIBC_USING_USER_STRCPY
+            bool "Enable rt_strcpy to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_STRCPY
+            config RT_KLIBC_USING_LIBC_STRCPY
+                bool "Enable rt_strcpy to use libc strcpy"
+                default n
+        endif
+    endmenu # rt_strcpy options
+
+    menu "rt_strncmp options"
+        config RT_KLIBC_USING_USER_STRNCMP
+            bool "Enable rt_strncmp to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_STRNCMP
+            config RT_KLIBC_USING_LIBC_STRNCMP
+                bool "Enable rt_strncmp to use libc strncmp"
+                default n
+        endif
+    endmenu # rt_strncmp options
+
+    menu "rt_strcmp options"
+        config RT_KLIBC_USING_USER_STRCMP
+            bool "Enable rt_strcmp to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_STRCMP
+            config RT_KLIBC_USING_LIBC_STRCMP
+                bool "Enable rt_strcmp to use libc strcmp"
+                default n
+        endif
+    endmenu # rt_strcmp options
+
+    menu "rt_strlen options"
+        config RT_KLIBC_USING_USER_STRLEN
+            bool "Enable rt_strlen to use user-defined version"
+            default n
+
+        if !RT_KLIBC_USING_USER_STRLEN
+            config RT_KLIBC_USING_LIBC_STRLEN
+                bool "Enable rt_strlen to use libc strlen"
+                default n
+        endif
+    endmenu # rt_strlen options
+
+    menu "rt_strnlen options"
+        config RT_KLIBC_USING_USER_STRNLEN
+            bool "Enable rt_strnlen to use user-defined version"
+            default n
+    endmenu # rt_strnlen options
+endmenu

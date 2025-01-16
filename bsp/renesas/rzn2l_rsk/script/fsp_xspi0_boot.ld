@@ -1,11 +1,46 @@
 /*
                   Linker File for Renesas RZ/N2L FSP
 */
-
-INCLUDE memory_regions.ld
-
 /* The memory information for each device is done in memory regions file.
  * The starting address and length of memory not defined in memory regions file are defined as 0. */
+
+/* generated memory regions file - do not edit */
+ATCM_START  = 0x00000000;
+ATCM_LENGTH = 0x20000;
+BTCM_START  = 0x00100000;
+BTCM_LENGTH = 0x20000;
+SYSTEM_RAM_START  = 0x10000000;
+SYSTEM_RAM_LENGTH = 0x180000;
+SYSTEM_RAM_MIRROR_START  = 0x30000000;
+SYSTEM_RAM_MIRROR_LENGTH = 0x180000;
+xSPI0_CS0_SPACE_MIRROR_START  = 0x40000000;
+xSPI0_CS0_SPACE_MIRROR_LENGTH = 0x4000000;
+xSPI0_CS1_SPACE_MIRROR_START  = 0x44000000;
+xSPI0_CS1_SPACE_MIRROR_LENGTH = 0x4000000;
+xSPI1_CS0_SPACE_MIRROR_START  = 0x48000000;
+xSPI1_CS0_SPACE_MIRROR_LENGTH = 0x4000000;
+CS0_SPACE_MIRROR_START  = 0x50000000;
+CS0_SPACE_MIRROR_LENGTH = 0x4000000;
+CS2_SPACE_MIRROR_START  = 0x54000000;
+CS2_SPACE_MIRROR_LENGTH = 0x4000000;
+CS3_SPACE_MIRROR_START  = 0x58000000;
+CS3_SPACE_MIRROR_LENGTH = 0x4000000;
+CS5_SPACE_MIRROR_START  = 0x5C000000;
+CS5_SPACE_MIRROR_LENGTH = 0x4000000;
+xSPI0_CS0_SPACE_START  = 0x60000000;
+xSPI0_CS0_SPACE_LENGTH = 0x4000000;
+xSPI0_CS1_SPACE_START  = 0x64000000;
+xSPI0_CS1_SPACE_LENGTH = 0x4000000;
+xSPI1_CS0_SPACE_START  = 0x68000000;
+xSPI1_CS0_SPACE_LENGTH = 0x4000000;
+CS0_SPACE_START  = 0x70000000;
+CS0_SPACE_LENGTH = 0x4000000;
+CS2_SPACE_START  = 0x74000000;
+CS2_SPACE_LENGTH = 0x4000000;
+CS3_SPACE_START  = 0x78000000;
+CS3_SPACE_LENGTH = 0x4000000;
+CS5_SPACE_START  = 0x7C000000;
+CS5_SPACE_LENGTH = 0x4000000;
 
 ATCM_PRV_START = DEFINED(ATCM_START) ? ATCM_START : 0;
 ATCM_PRV_LENGTH = DEFINED(ATCM_LENGTH) ? ATCM_LENGTH : 0;
@@ -51,13 +86,13 @@ CS5_SPACE_PRV_LENGTH = DEFINED(CS5_SPACE_LENGTH) ? CS5_SPACE_LENGTH : 0;
 LOADER_PARAM_ADDRESS       = xSPI0_CS0_SPACE_PRV_START;
 FLASH_CONTENTS_ADDRESS     = LOADER_PARAM_ADDRESS + 0x0000004C;
 LOADER_TEXT_ADDRESS        = 0x00102000;
-INTVEC_ADDRESS             = 0x00000000;
-TEXT_ADDRESS               = 0x00000100;
+INTVEC_ADDRESS             = 0x10000000;
+TEXT_ADDRESS               = 0x10020000;
 NONCACHE_BUFFER_OFFSET     = 0x00020000;
 DMAC_LINK_MODE_OFFSET      = 0x00044000;
 DATA_NONCACHE_OFFSET       = 0x00048000;
-RAM_START                  = ATCM_PRV_START;
-RAM_LENGTH                 = ATCM_PRV_LENGTH;
+RAM_START                  = SYSTEM_RAM_PRV_START;
+RAM_LENGTH                 = SYSTEM_RAM_PRV_LENGTH;
 LOADER_START               = BTCM_PRV_START;
 LOADER_LENGTH              = BTCM_PRV_LENGTH;
 
@@ -205,22 +240,37 @@ SECTIONS
         *(.dtors)
         _dtor_end = .;
 
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
 
-		/* section information for finsh shell */
-		. = ALIGN(4);
-		__fsymtab_start = .;
-		KEEP(*(FSymTab))
-		__fsymtab_end = .;
-		
-		. = ALIGN(4);
-		__vsymtab_start = .;
-		KEEP(*(VSymTab))
-		__vsymtab_end = .;
-		
-		
-		
-		. = ALIGN(4);
-		KEEP(*(FalPartTable))
+        /* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+
+        /* section information for initial. */
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+
+        /* new GCC version uses .init_array */
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+        KEEP(*(FalPartTable))
 
         KEEP(*(.eh_frame*))
     } > RAM
@@ -310,7 +360,7 @@ SECTIONS
         /* Place the STD heap here. */
         KEEP(*(.heap))
         __HeapLimit = .;
-    } > ATCM
+    } > RAM
     .thread_stack (NOLOAD):
     {
         . = ALIGN(8);

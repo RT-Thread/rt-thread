@@ -89,6 +89,8 @@ struct rt_pin_irqchip
     int irq;
     rt_base_t pin_range[2];
 };
+
+struct rt_pin_irq_hdr;
 #endif /* RT_USING_DM */
 
 /**
@@ -98,7 +100,13 @@ struct rt_device_pin
 {
     struct rt_device parent;
 #ifdef RT_USING_DM
+    /* MUST keep the order member after parent */
     struct rt_pin_irqchip irqchip;
+    /* Fill by DM */
+    rt_base_t pin_start;
+    rt_size_t pin_nr;
+    rt_list_t list;
+    struct rt_pin_irq_hdr *legacy_isr;
 #endif /* RT_USING_DM */
     const struct rt_pin_ops *ops;
 };
@@ -212,6 +220,7 @@ struct rt_pin_ops
     rt_err_t (*pin_detach_irq)(struct rt_device *device, rt_base_t pin);
     rt_err_t (*pin_irq_enable)(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled);
     rt_base_t (*pin_get)(const char *name);
+    rt_err_t (*pin_debounce)(struct rt_device *device, rt_base_t pin, rt_uint32_t debounce);
 #ifdef RT_USING_DM
     rt_err_t (*pin_irq_mode)(struct rt_device *device, rt_base_t pin, rt_uint8_t mode);
     rt_ssize_t (*pin_parse)(struct rt_device *device, struct rt_ofw_cell_args *args, rt_uint32_t *flags);
@@ -283,6 +292,14 @@ rt_err_t rt_pin_detach_irq(rt_base_t pin);
  * @return rt_err_t error code
  */
 rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint8_t enabled);
+
+/**
+ * @brief set the pin's debounce time
+ * @param pin the pin number
+ * @param debounce time
+ * @return rt_err_t error code
+ */
+rt_err_t rt_pin_debounce(rt_base_t pin, rt_uint32_t debounce);
 
 #ifdef RT_USING_DM
 rt_ssize_t rt_pin_get_named_pin(struct rt_device *dev, const char *propname, int index,

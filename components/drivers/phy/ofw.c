@@ -8,6 +8,11 @@
  * 2024-09-25     zhujiale    the first version
  */
 #include <rtthread.h>
+#include <rtdevice.h>
+#include <stdio.h>
+#define DBG_TAG "rtdm.phy"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 #include "ofw.h"
 
 static const char* const rt_phy_modes[] =
@@ -99,4 +104,53 @@ rt_err_t rt_ofw_get_mac_addr(struct rt_ofw_node *np, rt_uint8_t *addr)
         return RT_EOK;
 
     return -RT_ERROR;
+}
+
+rt_err_t rt_ofw_get_phyid(struct rt_ofw_node *np,rt_uint32_t *id)
+{
+    const char *phy_id;
+    unsigned int upper, lower;
+    int ret;
+
+    ret = rt_ofw_prop_read_string(np,"compatible",&phy_id);
+    if (ret)
+        return ret;
+
+    ret = rt_sscanf(phy_id,"ethernet-phy-id%4x.%4x",&upper, &lower);
+    if(ret != 2)
+        return -RT_ERROR;
+
+    *id = ((upper & 0xffff) << 16) | (lower & 0xffff);
+    return RT_EOK;
+
+}
+struct rt_phy_device *rt_ofw_create_phy(struct mii_bus *bus,struct rt_ofw_node *np,int phyaddr)
+{
+    struct rt_phy_device *dev = RT_NULL;
+    struct rt_ofw_node *phy_node;
+    int ret;
+    rt_uint32_t id = 0xffff;
+
+    phy_node = rt_ofw_parse_phandle(np, "phy-handle", 0);
+    if (!phy_node)
+    {
+        LOG_D("Failed to find phy-handle");
+        return RT_NULL;
+    }
+
+    ret = rt_ofw_get_phyid(np, &id);
+    if (ret)
+    {
+        LOG_D("Failed to read eth PHY id, err: %d\n", ret);
+        return RT_NULL;
+    }
+
+    LOG_D("Found a PHY id: 0x%x\n", id);
+
+    dev = rt_phy_device_create(bus, phyaddr, id, RT_FALSE);
+
+    if(dev)
+        dev->node = phy_node;
+
+    return dev;
 }

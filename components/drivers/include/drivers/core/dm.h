@@ -17,6 +17,7 @@
 #include <ioremap.h>
 #include <drivers/misc.h>
 #include <drivers/byteorder.h>
+#include <drivers/core/master_id.h>
 
 #ifndef RT_CPUS_NR
 #define RT_CPUS_NR 1

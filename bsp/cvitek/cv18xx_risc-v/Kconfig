@@ -84,10 +84,10 @@ endchoice
 
 choice BSP_ROOTFS_TYPE
     prompt "rootfs type"
-    default BSP_ROOTFS_TYPE_ROMFS
+    default BSP_ROOTFS_TYPE_DISKFS
 
-    config BSP_ROOTFS_TYPE_ROMFS
-        bool "ROMFS"
+    config BSP_ROOTFS_TYPE_DISKFS
+        bool "Disk FileSystems, e.g. ext4, fat ..."
         select RT_USING_DFS_ROMFS
 
     config BSP_ROOTFS_TYPE_CROMFS

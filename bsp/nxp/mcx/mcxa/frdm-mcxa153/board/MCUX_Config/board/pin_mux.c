@@ -44,8 +44,12 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_GateGPIO2);
     CLOCK_EnableClock(kCLOCK_GateGPIO3);
 
+    CLOCK_SetClockDiv(kCLOCK_DivCTIMER0, 1u);
+    CLOCK_AttachClk(kFRO_HF_to_CTIMER0);
     CLOCK_SetClockDiv(kCLOCK_DivCTIMER1, 1u);
     CLOCK_AttachClk(kFRO_HF_to_CTIMER1);
+    CLOCK_SetClockDiv(kCLOCK_DivCTIMER2, 1u);
+    CLOCK_AttachClk(kFRO_HF_to_CTIMER2);
 
     RESET_ReleasePeripheralReset(kLPUART0_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPUART1_RST_SHIFT_RSTn);

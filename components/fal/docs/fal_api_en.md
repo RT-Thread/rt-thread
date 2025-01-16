@@ -25,7 +25,7 @@ const struct fal_partition *fal_partition_find(const char *name)
 ## Get the partition table
 
 ```C
-const struct fal_partition *fal_get_partition_table(size_t *len)
+const struct fal_partition *fal_get_partition_table(rt_size_t *len)
 ```
 
 | Parameters | Description |
@@ -38,7 +38,7 @@ const struct fal_partition *fal_get_partition_table(size_t *len)
 The default partition table will be automatically loaded when FAL is initialized. Using this setting will temporarily modify the partition table and will **lost** this setting after restarting
 
 ```C
-void fal_set_partition_table_temp(struct fal_partition *table, size_t len)
+void fal_set_partition_table_temp(struct fal_partition *table, rt_size_t len)
 ```
 
 | Parameters | Description |
@@ -49,7 +49,7 @@ void fal_set_partition_table_temp(struct fal_partition *table, size_t len)
 ## Read data from partition
 
 ```C
-int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t *buf, size_t size)
+int fal_partition_read(const struct fal_partition *part, rt_uint32_t addr, rt_uint8_t *buf, rt_size_t size)
 ```
 
 | Parameters | Description |
@@ -63,7 +63,7 @@ int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t 
 ## Write data to partition
 
 ```C
-int fal_partition_write(const struct fal_partition *part, uint32_t addr, const uint8_t *buf, size_t size)
+int fal_partition_write(const struct fal_partition *part, rt_uint32_t addr, const rt_uint8_t *buf, rt_size_t size)
 ```
 
 | Parameters | Description |
@@ -77,7 +77,7 @@ int fal_partition_write(const struct fal_partition *part, uint32_t addr, const u
 ## Erase partition data
 
 ```C
-int fal_partition_erase(const struct fal_partition *part, uint32_t addr, size_t size)
+int fal_partition_erase(const struct fal_partition *part, rt_uint32_t addr, rt_size_t size)
 ```
 
 | Parameters | Description |

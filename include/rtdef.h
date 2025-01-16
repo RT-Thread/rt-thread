@@ -1378,6 +1378,9 @@ struct rt_device
     void *ofw_node;                                     /**< ofw node get from device tree */
 #endif /* RT_USING_OFW */
     void *power_domain_unit;
+#ifdef RT_USING_DMA
+    const void *dma_ops;
+#endif
 #endif /* RT_USING_DM */
 
     enum rt_device_class_type type;                     /**< device type */
