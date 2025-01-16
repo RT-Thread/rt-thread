@@ -870,7 +870,8 @@ INPUT                  = ../../src \
                          ../../components/finsh \
                          ../../components/drivers/include/drivers \
                          ../../components/dfs/dfs_v2/src \
-                         ../../components/dfs/dfs_v2/include
+                         ../../components/dfs/dfs_v2/include \
+                         ../../components/lwp \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
