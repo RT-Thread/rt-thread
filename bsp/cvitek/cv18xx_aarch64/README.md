@@ -142,7 +142,7 @@ Starting kernel ...
  / | \     5.2.0 build Dec 25 2024 14:16:49
  2006 - 2024 Copyright by RT-Thread team
 [I/rtdm.mnt] File system initialization done
-hello rt-thread!
+Hello AARCH64 !
 msh />
 ```
 
@@ -184,7 +184,7 @@ Starting kernel ...
  2006 - 2024 Copyright by RT-Thread team
 [I/drivers.serial] Using /dev/ttyS0 as default console
 [I/rtdm.mnt] File system initialization done
-hello rt-thread!
+Hello AARCH64 !
 msh />
 ```
 
