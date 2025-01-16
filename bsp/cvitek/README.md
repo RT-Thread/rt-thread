@@ -284,7 +284,7 @@ lwIP-2.1.2 initialized!
 found part[0], begin: 1048576, size: 128.0MB
 found part[1], begin: 135266304, size: 28.707GB
 [I/app.filesystem] device 'sd1' is mounted to '/' as FAT
-Hello RT-Smart!
+Hello RISC-V/C906B !
 msh />[E/sal.skt] not find network interface device by protocol family(1).
 [E/sal.skt] SAL socket protocol family input failed, return error -3.
 / # ls
@@ -310,7 +310,7 @@ lwIP-2.1.2 initialized!
 found part[0], begin: 1048576, size: 128.0MB
 found part[1], begin: 135266304, size: 28.707GB
 [I/app.filesystem] device 'sd1' is mounted to '/' as EXT
-Hello RT-Smart!
+Hello RISC-V/C906B !
 msh />[E/sal.skt] not find network interface device by protocol family(1).
 [E/sal.skt] SAL socket protocol family input failed, return error -3.
 / # ls 

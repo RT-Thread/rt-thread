@@ -12,7 +12,7 @@
 
 int main(void)
 {
-    rt_kprintf("hello rt-thread!\n");
+    rt_kprintf("Hello AARCH64 !\n");
 
     return 0;
 }
