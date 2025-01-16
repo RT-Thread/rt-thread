@@ -220,9 +220,9 @@ static const uint16_t xbox_id_table[][2] = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info xbox_custom_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_VEND_SPECIFIC,
-    .subclass = 0x5d,
-    .protocol = 0x01,
+    .bInterfaceClass = USB_DEVICE_CLASS_VEND_SPECIFIC,
+    .bInterfaceSubClass = 0x5d,
+    .bInterfaceProtocol = 0x01,
     .id_table =  xbox_id_table,
     .class_driver = &xbox_class_driver
 };

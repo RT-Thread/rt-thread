@@ -35,6 +35,11 @@ static void usb_host_mode_init(USB_Type *ptr)
     /* Set parallel transceiver width */
     ptr->PORTSC1 &= ~USB_PORTSC1_PTW_MASK;
 
+#ifdef CONFIG_USB_HOST_FORCE_FULL_SPEED
+    /* Set usb forced to full speed mode */
+    ptr->PORTSC1 |= USB_PORTSC1_PFSC_MASK;
+#endif
+
     /* Not use interrupt threshold. */
     ptr->USBCMD &= ~USB_USBCMD_ITC_MASK;
 }
@@ -53,7 +58,7 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
 #endif
     }
 
-    usb_phy_init((USB_Type *)(bus->hcd.reg_base));
+    usb_phy_init((USB_Type *)(bus->hcd.reg_base), true);
     intc_m_enable_irq(_hcd_irqnum[bus->hcd.hcd_id]);
 }
 
@@ -86,18 +91,18 @@ uint8_t usbh_get_port_speed(struct usbh_bus *bus, const uint8_t port)
 
 extern void USBH_IRQHandler(uint8_t busid);
 
+SDK_DECLARE_EXT_ISR_M(IRQn_USB0, isr_usbh0)
 void isr_usbh0(void)
 {
     USBH_IRQHandler(_hcd_busid[0]);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_USB0, isr_usbh0)
 
 #ifdef HPM_USB1_BASE
+SDK_DECLARE_EXT_ISR_M(IRQn_USB1, isr_usbh1)
 void isr_usbh1(void)
 {
     USBH_IRQHandler(_hcd_busid[1]);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_USB1, isr_usbh1)
 #endif
 
 #endif

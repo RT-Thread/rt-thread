@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_05.s
-;  Version          : $Rev:: 6993         $
-;  Date             : $Date:: 2023-06-26 #$
+;  Version          : $Rev:: 7935         $
+;  Date             : $Date:: 2024-08-08 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -19,6 +19,8 @@
 ;   HT32F5828
 ;   HT32F67742
 ;   HT32F59746
+;   HT32F57541
+;   HT32F57552
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
 
@@ -32,6 +34,8 @@
 ;//      <14=> HT32F5828
 ;//      <13=> HT32F67742
 ;//      <13=> HT32F59746
+;//      <13=> HT32F57541
+;//      <14=> HT32F57552
 USE_HT32_CHIP_SET   EQU     13 ; Notice that the project's Asm Define has the higher priority.
 
 _HT32FWID           EQU     0xFFFFFFFF
@@ -43,6 +47,8 @@ _HT32FWID           EQU     0xFFFFFFFF
 ;_HT32FWID           EQU     0x00005828
 ;_HT32FWID           EQU     0x00067742
 ;_HT32FWID           EQU     0x00059746
+;_HT32FWID           EQU     0x00057541
+;_HT32FWID           EQU     0x00057552
 
 HT32F57331_41       EQU     13
 HT32F57342_52       EQU     14
@@ -50,6 +56,8 @@ HT32F59741          EQU     13
 HT32F5828           EQU     14
 HT32F67742          EQU     13
 HT32F59746          EQU     13
+HT32F57541          EQU     13
+HT32F57552          EQU     14
 
   IF USE_HT32_CHIP_SET=0
   ; Use project's Asm Define setting (default)
@@ -64,13 +72,24 @@ USE_HT32_CHIP       EQU     USE_HT32_CHIP_SET
 
 ; Amount of memory (in bytes) allocated for Stack and Heap
 ; Tailor those values to your application needs
+
+;//   <o> Stack Location
+;//       <0=> After the RW/ZI/Heap (Default)
+;//       <1=> On the top of the SRAM (The end of the SRAM)
+USE_STACK_ON_TOP    EQU     0
+
 ;//   <o> Stack Size (in Bytes, must 8 byte aligned) <0-16384:8>
+;//       <i> Only meanful when the Stack Location = "After the RW/ZI/Heap" (USE_STACK_ON_TOP = 0).
 Stack_Size          EQU     512
 
                     AREA    STACK, NOINIT, READWRITE, ALIGN = 3
 __HT_check_sp
 Stack_Mem           SPACE   Stack_Size
+  IF (USE_STACK_ON_TOP = 1)
+__initial_sp        EQU 0x20000000 + USE_LIBCFG_RAM_SIZE
+  ELSE
 __initial_sp
+  ENDIF
 
 ;//   <o>  Heap Size (in Bytes) <0-16384:8>
 Heap_Size           EQU     0
@@ -323,10 +342,11 @@ PDMA_CH2_5_IRQHandler
 ;*******************************************************************************
 ; User Stack and Heap initialization
 ;*******************************************************************************
-                    IF      :DEF:__MICROLIB
-
                     EXPORT  __HT_check_heap
                     EXPORT  __HT_check_sp
+
+                    IF      :DEF:__MICROLIB
+
                     EXPORT  __initial_sp
                     EXPORT  __heap_base
                     EXPORT  __heap_limit
@@ -337,11 +357,19 @@ PDMA_CH2_5_IRQHandler
                     EXPORT  __user_initial_stackheap
 __user_initial_stackheap
 
-                    LDR     R0, =  Heap_Mem
+                  IF (USE_STACK_ON_TOP = 1)
+                    LDR     R0, = Heap_Mem
+                    LDR     R1, = (0x20000000 + USE_LIBCFG_RAM_SIZE)
+                    LDR     R2, = (Heap_Mem + Heap_Size)
+                    LDR     R3, = (Heap_Mem + Heap_Size)
+                    BX      LR
+                  ELSE
+                    LDR     R0, = Heap_Mem
                     LDR     R1, = (Stack_Mem + Stack_Size)
                     LDR     R2, = (Heap_Mem + Heap_Size)
                     LDR     R3, = Stack_Mem
                     BX      LR
+                  ENDIF
 
                     ALIGN
 

@@ -13,12 +13,12 @@
 
 #include <rtthread.h>
 
-#define UTEST_DEBUG
+// #define UTEST_DEBUG
 
 #undef DBG_TAG
 #undef DBG_LVL
 
-#define DBG_TAG              "testcase"
+#define DBG_TAG              "utest"
 #ifdef UTEST_DEBUG
 #define DBG_LVL              DBG_LOG
 #else

@@ -34,6 +34,15 @@ if GetDepend(['BSP_USING_ADC']):
 
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_CAN']):
+    src += ['drv_can.c']
+
+if GetDepend(['BSP_USING_SDIO']):
+    src += ['drv_sdio.c']
+
+if GetDepend(['BSP_USING_USBD']):
+    src += ['drv_usbd.c']
     
 #创建一个列表，用于保存需要包含的H文件路径
 path = [cwd]

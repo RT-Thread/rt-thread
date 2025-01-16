@@ -215,6 +215,12 @@ static inline void dwc2_chan_char_init(struct usbh_bus *bus, uint8_t ch_num, uin
         regval |= USB_OTG_HCCHAR_EPDIR;
     }
 
+    if ((usbh_get_port_speed(bus, 0) == USB_SPEED_HIGH) && (speed != USB_SPEED_HIGH)) {
+        USB_LOG_ERR("Do not support LS/FS device on HS hub\r\n");
+        while (1) {
+        }
+    }
+
     /* LS device plugged to HUB */
     if ((speed == USB_SPEED_LOW) && (usbh_get_port_speed(bus, 0) != USB_SPEED_LOW)) {
         regval |= USB_OTG_HCCHAR_LSDEV;

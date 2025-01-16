@@ -821,7 +821,7 @@ sysret_t sys_unlink(const char *pathname)
 sysret_t sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     int ret = 0;
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
         return -EFAULT;
 
@@ -994,7 +994,7 @@ sysret_t sys_kill(int pid, int signo)
          * of system processes) for which the process has permission to send
          * that signal.
          */
-        kret = -RT_ENOSYS;
+        kret = lwp_signal_kill_all(signo, SI_USER, 0);
     }
 
     switch (kret)
@@ -4759,7 +4759,7 @@ sysret_t sys_clock_gettime(clockid_t clk, struct timespec *ts)
 sysret_t sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {
     int ret = 0;
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
         return -EFAULT;
 
@@ -5743,79 +5743,94 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
     return ret;
 }
 
-sysret_t sys_mount(char *source, char *target,
-        char *filesystemtype,
-        unsigned long mountflags, void *data)
+static char *_cp_from_usr_string(char *dst, char *src, size_t length)
 {
-    char *copy_source;
-    char *copy_target;
-    char *copy_filesystemtype;
-    size_t len_source, copy_len_source;
-    size_t len_target, copy_len_target;
-    size_t len_filesystemtype, copy_len_filesystemtype;
-    char *tmp = NULL;
-    int ret = 0;
-    struct stat buf = {0};
-
-    len_source = lwp_user_strlen(source);
-    if (len_source <= 0)
-        return -EINVAL;
-
-    len_target = lwp_user_strlen(target);
-    if (len_target <= 0)
-        return -EINVAL;
-
-    len_filesystemtype = lwp_user_strlen(filesystemtype);
-    if (len_filesystemtype <= 0)
-        return -EINVAL;
-
-    copy_source = (char*)rt_malloc(len_source + 1 + len_target + 1 + len_filesystemtype + 1);
-    if (!copy_source)
+    char *rc;
+    size_t copied_bytes;
+    if (length)
     {
-        return -ENOMEM;
-    }
-    copy_target = copy_source + len_source + 1;
-    copy_filesystemtype = copy_target + len_target + 1;
-
-    copy_len_source = lwp_get_from_user(copy_source, source, len_source);
-    copy_source[copy_len_source] = '\0';
-    copy_len_target = lwp_get_from_user(copy_target, target, len_target);
-    copy_target[copy_len_target] = '\0';
-    copy_len_filesystemtype = lwp_get_from_user(copy_filesystemtype, filesystemtype, len_filesystemtype);
-    copy_filesystemtype[copy_len_filesystemtype] = '\0';
-
-    if (strcmp(copy_filesystemtype, "nfs") == 0)
-    {
-        tmp = copy_source;
-        copy_source = NULL;
-    }
-    if (strcmp(copy_filesystemtype, "tmp") == 0)
-    {
-        copy_source = NULL;
-    }
-
-    if (copy_source && stat(copy_source, &buf) && S_ISBLK(buf.st_mode))
-    {
-        char *dev_fullpath = dfs_normalize_path(RT_NULL, copy_source);
-        RT_ASSERT(rt_strncmp(dev_fullpath, "/dev/", sizeof("/dev/") - 1) == 0);
-        ret = dfs_mount(dev_fullpath + sizeof("/dev/") - 1, copy_target, copy_filesystemtype, 0, tmp);
-        if (ret < 0)
-        {
-            ret = -rt_get_errno();
-        }
-        rt_free(copy_source);
-        rt_free(dev_fullpath);
+        copied_bytes = lwp_get_from_user(dst, src, length);
+        dst[copied_bytes] = '\0';
+        rc = dst;
     }
     else
     {
-        ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
+        rc = RT_NULL;
+    }
+    return rc;
+}
+
+sysret_t sys_mount(char *source, char *target, char *filesystemtype,
+                   unsigned long mountflags, void *data)
+{
+    char *kbuffer, *ksource, *ktarget, *kfs;
+    size_t len_source, len_target, len_fs;
+    char *tmp = NULL;
+    int ret = 0;
+    struct stat buf = {0};
+    char *dev_fullpath = RT_NULL;
+
+    len_source = source ? lwp_user_strlen(source) : 0;
+    if (len_source < 0)
+        return -EINVAL;
+
+    len_target = target ? lwp_user_strlen(target) : 0;
+    if (len_target <= 0)
+        return -EINVAL;
+
+    len_fs = filesystemtype ? lwp_user_strlen(filesystemtype) : 0;
+    if (len_fs < 0)
+        return -EINVAL;
+
+    kbuffer = (char *)rt_malloc(len_source + 1 + len_target + 1 + len_fs + 1);
+    if (!kbuffer)
+    {
+        return -ENOMEM;
+    }
+
+    /* get parameters from user space */
+    ksource = kbuffer;
+    ktarget = ksource + len_source + 1;
+    kfs = ktarget + len_target + 1;
+    ksource = _cp_from_usr_string(ksource, source, len_source);
+    ktarget = _cp_from_usr_string(ktarget, target, len_target);
+    kfs = _cp_from_usr_string(kfs, filesystemtype, len_fs);
+
+    if (mountflags & MS_REMOUNT)
+    {
+        ret = dfs_remount(ktarget, mountflags, data);
+    }
+    else
+    {
+        if (strcmp(kfs, "nfs") == 0)
+        {
+            tmp = ksource;
+            ksource = NULL;
+        }
+        if (strcmp(kfs, "tmp") == 0)
+        {
+            ksource = NULL;
+        }
+
+        if (ksource && !dfs_file_stat(ksource, &buf) && S_ISBLK(buf.st_mode))
+        {
+            dev_fullpath = dfs_normalize_path(RT_NULL, ksource);
+            RT_ASSERT(rt_strncmp(dev_fullpath, "/dev/", sizeof("/dev/") - 1) == 0);
+            ret = dfs_mount(dev_fullpath + sizeof("/dev/") - 1, ktarget, kfs, 0, tmp);
+        }
+        else
+        {
+            ret = dfs_mount(ksource, ktarget, kfs, 0, tmp);
+        }
+
         if (ret < 0)
         {
             ret = -rt_get_errno();
         }
-        rt_free(copy_source);
     }
 
+    rt_free(kbuffer);
+    rt_free(dev_fullpath);
     return ret;
 }
 
@@ -6171,16 +6186,27 @@ sysret_t sys_chown(const char *pathname, uid_t owner, gid_t group)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-#include <sys/reboot.h>
-sysret_t sys_reboot(int magic, int magic2, int type)
+#ifndef LWP_USING_RUNTIME
+sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void))
+{
+    /* if no LWP_USING_RUNTIME configured */
+    return -ENOSYS;
+}
+#endif
+
+sysret_t sys_reboot(int magic, int magic2, int type, void *arg)
 {
     sysret_t rc;
     switch (type)
     {
-        /* TODO add software poweroff protocols */
+        /* Hardware reset */
         case RB_AUTOBOOT:
+            rc = lwp_teardown(lwp_self(), rt_hw_cpu_reset);
+            break;
+
+        /* Stop system and switch power off */
         case RB_POWER_OFF:
-            rt_hw_cpu_reset();
+            rc = lwp_teardown(lwp_self(), rt_hw_cpu_shutdown);
             break;
         default:
             rc = -ENOSYS;

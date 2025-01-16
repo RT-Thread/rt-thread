@@ -734,9 +734,9 @@ const struct usbh_class_driver hub_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info hub_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS,
-    .class = USB_DEVICE_CLASS_HUB,
-    .subclass = 0,
-    .protocol = 0,
+    .bInterfaceClass = USB_DEVICE_CLASS_HUB,
+    .bInterfaceSubClass = 0,
+    .bInterfaceProtocol = 0,
     .id_table = NULL,
     .class_driver = &hub_class_driver
 };

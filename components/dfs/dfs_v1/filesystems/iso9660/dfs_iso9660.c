@@ -20,6 +20,7 @@
 #include <dfs.h>
 #include <dfs_fs.h>
 #include <dfs_file.h>
+#include <posix/string.h>
 #include <drivers/misc.h>
 #include <drivers/byteorder.h>
 
@@ -118,7 +119,7 @@ rt_packed(struct iso9660_common_voldesc
     struct iso9660_date created;
     struct iso9660_date modified;
     rt_uint8_t unused5[0 /* 1201 */];
-};
+});
 
 struct iso9660
 {
@@ -250,7 +251,7 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
 
         /* Skip the first '/' */
         ++path;
-        len = rt_strchrnul(path, '/') - path;
+        len = strchrnul(path, '/') - path;
     }
 
     lba = rt_le32_to_cpu(dirent->first_sector);
@@ -359,7 +360,7 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
             sz = 0;
 
             path += len + 1;
-            len = rt_strchrnul(path, '/') - path;
+            len = strchrnul(path, '/') - path;
         }
     } while (len);
 
@@ -474,7 +475,7 @@ _end:
     return rcount;
 }
 
-static int dfs_iso9660_lseek(struct dfs_file *fd, off_t offset)
+static off_t dfs_iso9660_lseek(struct dfs_file *fd, off_t offset)
 {
     int ret = -EIO;
 

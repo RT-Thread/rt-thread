@@ -16,14 +16,15 @@
 #include <dfs_pcache.h>
 #include <dfs_dentry.h>
 #include <dfs_mnt.h>
-#include <mm_page.h>
-#include <mm_private.h>
-#include <mmu.h>
-#include <tlb.h>
 
 #include <rthw.h>
 
 #ifdef RT_USING_PAGECACHE
+
+#include <mm_page.h>
+#include <mm_private.h>
+#include <mmu.h>
+#include <tlb.h>
 
 #ifndef RT_PAGECACHE_COUNT
 #define RT_PAGECACHE_COUNT          4096
@@ -161,7 +162,7 @@ void dfs_pcache_release(size_t count)
     dfs_pcache_unlock();
 }
 
-void dfs_pcache_unmount(struct dfs_mnt *mnt)
+static void _pcache_clean(struct dfs_mnt *mnt, int (*cb)(struct dfs_aspace *aspace))
 {
     rt_list_t *node = RT_NULL;
     struct dfs_aspace *aspace = RT_NULL;
@@ -176,7 +177,7 @@ void dfs_pcache_unmount(struct dfs_mnt *mnt)
         if (aspace && aspace->mnt == mnt)
         {
             dfs_aspace_clean(aspace);
-            dfs_aspace_release(aspace);
+            cb(aspace);
         }
     }
 
@@ -188,11 +189,26 @@ void dfs_pcache_unmount(struct dfs_mnt *mnt)
         if (aspace && aspace->mnt == mnt)
         {
             dfs_aspace_clean(aspace);
-            dfs_aspace_release(aspace);
+            cb(aspace);
         }
     }
 
     dfs_pcache_unlock();
+}
+
+void dfs_pcache_unmount(struct dfs_mnt *mnt)
+{
+    _pcache_clean(mnt, dfs_aspace_release);
+}
+
+static int _dummy_cb(struct dfs_aspace *mnt)
+{
+    return 0;
+}
+
+void dfs_pcache_clean(struct dfs_mnt *mnt)
+{
+    _pcache_clean(mnt, _dummy_cb);
 }
 
 static int dfs_pcache_limit_check(void)
@@ -1139,13 +1155,20 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
 
     if (file && file->vnode && file->vnode->aspace)
     {
-        if (!(file->vnode->aspace->ops->write))
-            return ret;
         struct dfs_vnode *vnode = file->vnode;
         struct dfs_aspace *aspace = vnode->aspace;
 
         struct dfs_page *page;
         char *ptr = (char *)buf;
+
+        if (!(aspace->ops->write))
+        {
+            return ret;
+        }
+        else if (aspace->mnt && (aspace->mnt->flags & MNT_RDONLY))
+        {
+            return -EROFS;
+        }
 
         ret = 0;
 

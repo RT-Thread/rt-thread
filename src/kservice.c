@@ -187,23 +187,15 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
-    rt_device_t new_device, old_device;
+    rt_device_t old_device = _console_device;
+    rt_device_t new_device = rt_device_find(name);
 
-    /* save old device */
-    old_device = _console_device;
-
-    /* find new console device */
-    new_device = rt_device_find(name);
-
-    /* check whether it's a same device */
-    if (new_device == old_device) return RT_NULL;
-
-    if (new_device != RT_NULL)
+    if (new_device != RT_NULL && new_device != old_device)
     {
-        if (_console_device != RT_NULL)
+        if (old_device != RT_NULL)
         {
             /* close old console device */
-            rt_device_close(_console_device);
+            rt_device_close(old_device);
         }
 
         /* set new console device */
@@ -319,20 +311,23 @@ static void _console_release(void)
  */
 static void _kputs(const char *str, long len)
 {
-    RT_UNUSED(len);
+#ifdef RT_USING_DEVICE
+    rt_device_t console_device = rt_console_get_device();
+#endif /* RT_USING_DEVICE */
 
     CONSOLE_TAKE;
 
 #ifdef RT_USING_DEVICE
-    if (_console_device == RT_NULL)
+    if (console_device == RT_NULL)
     {
         rt_hw_console_output(str);
     }
     else
     {
-        rt_device_write(_console_device, 0, str, len);
+        rt_device_write(console_device, 0, str, len);
     }
 #else
+    RT_UNUSED(len);
     rt_hw_console_output(str);
 #endif /* RT_USING_DEVICE */
 
@@ -422,7 +417,7 @@ rt_weak rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_f
 {
     long nesting = 0;
 
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
 
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
@@ -446,9 +441,9 @@ rt_weak rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_f
  */
 rt_weak rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen)
 {
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
 
-    for (size_t i = 0; i < buflen && buffer[i] != 0; i++)
+    for (rt_size_t i = 0; i < buflen && buffer[i] != 0; i++)
     {
         rt_kprintf(" 0x%lx", (rt_ubase_t)buffer[i]);
     }

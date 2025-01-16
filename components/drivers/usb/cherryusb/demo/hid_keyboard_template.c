@@ -236,12 +236,13 @@ void hid_keyboard_test(uint8_t busid)
 {
     const uint8_t sendbuffer[8] = { 0x00, 0x00, HID_KBD_USAGE_A, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-    memcpy(write_buffer, sendbuffer, 8);
-    int ret = usbd_ep_start_write(busid, HID_INT_EP, write_buffer, 8);
-    if (ret < 0) {
+    if(usb_device_is_configured(busid) == false) {
         return;
     }
+
+    memcpy(write_buffer, sendbuffer, 8);
     hid_state = HID_STATE_BUSY;
+    usbd_ep_start_write(busid, HID_INT_EP, write_buffer, 8);
     while (hid_state == HID_STATE_BUSY) {
     }
 }

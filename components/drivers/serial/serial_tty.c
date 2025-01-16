@@ -114,59 +114,24 @@ static void _setup_debug_rxind_hook(void)
 
 #endif /* LWP_DEBUG_INIT */
 
-static void _tty_rx_notify(struct rt_device *device)
+static rt_err_t _serial_ty_bypass(struct rt_serial_device* serial, char ch,void *data)
 {
     lwp_tty_t tp;
-    struct serial_tty_context *softc;
-
-    tp = rt_container_of(device, struct lwp_tty, parent);
-    RT_ASSERT(tp);
-
-    softc = tty_softc(tp);
-
-    if (_ttyworkq)
-        rt_workqueue_submit_work(_ttyworkq, &softc->work, 0);
-}
-
-static void _tty_rx_worker(struct rt_work *work, void *data)
-{
-    char input;
-    rt_ssize_t readbytes;
-    lwp_tty_t tp = data;
-    struct serial_tty_context *softc;
-    struct rt_serial_device *serial;
+    tp = (lwp_tty_t)data;
 
     tty_lock(tp);
-
-    while (1)
-    {
-        softc = tty_softc(tp);
-        serial = softc->parent;
-        readbytes = rt_device_read(&serial->parent, -1, &input, 1);
-        if (readbytes != 1)
-        {
-            break;
-        }
-
-        ttydisc_rint(tp, input, 0);
-    }
-
+    ttydisc_rint(tp, ch, 0);
     ttydisc_rint_done(tp);
     tty_unlock(tp);
+
+    return RT_EOK;
+
 }
 
-rt_inline void _setup_serial(struct rt_serial_device *serial, lwp_tty_t tp,
+rt_inline void _setup_serial(struct rt_serial_device* serial, lwp_tty_t tp,
                              struct serial_tty_context *softc)
 {
-    struct rt_device_notify notify;
-
-    softc->backup_notify = serial->rx_notify;
-    notify.dev = &tp->parent;
-    notify.notify = _tty_rx_notify;
-
-    rt_device_init(&serial->parent);
-
-    rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &notify);
+    rt_bypass_lower_register(serial, "tty",RT_BYPASS_PROTECT_LEVEL_1, _serial_ty_bypass,(void *)tp);
 }
 
 rt_inline void _restore_serial(struct rt_serial_device *serial, lwp_tty_t tp,
@@ -345,7 +310,6 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
             {
                 _serial_tty_set_speed(tty);
                 rc = lwp_tty_register(tty, dev_name);
-                rt_work_init(&softc->work, _tty_rx_worker, tty);
 
                 if (rc != RT_EOK)
                 {

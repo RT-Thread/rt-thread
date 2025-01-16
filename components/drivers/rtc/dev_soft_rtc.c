@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,6 @@
 #endif
 
 static struct rt_work rtc_sync_work;
-static rt_device_t    source_device = RT_NULL;
 
 static struct rt_device soft_rtc_dev;
 static rt_tick_t init_tick;
@@ -82,18 +81,6 @@ static void set_rtc_time(time_t t)
 #endif
 }
 
-static void _source_device_control(int cmd, void *args)
-{
-    if (source_device == RT_NULL)
-        return;
-
-    if (rt_device_open(source_device, 0) == RT_EOK)
-    {
-        rt_device_control(source_device, cmd, args);
-        rt_device_close(source_device);
-    }
-}
-
 static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     time_t *t;
@@ -114,7 +101,6 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     {
         t = (time_t *) args;
         set_rtc_time(*t);
-        _source_device_control(RT_DEVICE_CTRL_RTC_SET_TIME, t);
         break;
     }
 #ifdef RT_USING_ALARM
@@ -143,7 +129,6 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
         rt_ktime_boottime_get_us(&_tv);
         set_rtc_time(tv->tv_sec);
         init_tv.tv_usec = tv->tv_usec - _tv.tv_usec;
-        _source_device_control(RT_DEVICE_CTRL_RTC_SET_TIME, &(tv->tv_sec));
         break;
     }
     case RT_DEVICE_CTRL_RTC_GET_TIMESPEC:
@@ -162,7 +147,6 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
         rt_ktime_boottime_get_ns(&_ts);
         set_rtc_time(ts->tv_sec);
         init_ts.tv_nsec = ts->tv_nsec - _ts.tv_nsec;
-        _source_device_control(RT_DEVICE_CTRL_RTC_SET_TIME, &(ts->tv_sec));
         break;
     }
     case RT_DEVICE_CTRL_RTC_GET_TIMERES:
@@ -187,7 +171,6 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
         rt_tick_t tick = rt_tick_get() - init_tick;
         set_rtc_time(tv->tv_sec);
         init_tv.tv_usec = tv->tv_usec - ((tick % RT_TICK_PER_SECOND) * (1000000 / RT_TICK_PER_SECOND));
-        _source_device_control(RT_DEVICE_CTRL_RTC_SET_TIME, &(tv->tv_sec));
         break;
     }
     case RT_DEVICE_CTRL_RTC_GET_TIMERES:
@@ -226,8 +209,11 @@ static int rt_soft_rtc_init(void)
     {
         return 0;
     }
-    /* make sure only one 'sw_rtc' device */
-    RT_ASSERT(!rt_device_find("sw_rtc"));
+    /* make sure only one 'rtc' device */
+#if defined(RT_USING_SOFT_RTC) && defined(BSP_USING_ONCHIP_RTC)
+#warning "Please note: Currently only one RTC device is allowed in the system, and the name is "rtc"."
+#endif
+    RT_ASSERT(!rt_device_find("rtc"));
 
 #ifdef RT_USING_ALARM
     rt_timer_init(&alarm_time,
@@ -258,9 +244,7 @@ static int rt_soft_rtc_init(void)
     /* no private */
     soft_rtc_dev.user_data = RT_NULL;
 
-    rt_device_register(&soft_rtc_dev, "sw_rtc", RT_DEVICE_FLAG_RDWR);
-
-    source_device = &soft_rtc_dev;
+    rt_device_register(&soft_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR);
 
     init_ok = RT_TRUE;
 
@@ -274,13 +258,7 @@ rt_err_t rt_soft_rtc_sync(void)
 {
     time_t time = 0;
 
-    if (source_device == RT_NULL)
-    {
-        rt_kprintf("error: rtc source not found, please set it!!!\n");
-        return RT_ENOSYS;
-    }
-
-    _source_device_control(RT_DEVICE_CTRL_RTC_GET_TIME, &time);
+    rt_device_control(&soft_rtc_dev, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
     set_rtc_time(time);
     return RT_EOK;
 }
@@ -294,9 +272,8 @@ static void rtc_sync_work_func(struct rt_work *work, void *work_data)
 rt_err_t rt_soft_rtc_set_source(const char *name)
 {
     RT_ASSERT(name != RT_NULL);
-    RT_ASSERT(rt_device_find(name));  // make sure source is exist
+    RT_ASSERT(rt_device_find(name));  /* make sure source is exist*/
 
-    source_device = rt_device_find(name);
     rt_work_init(&rtc_sync_work, rtc_sync_work_func, RT_NULL);
     rt_work_submit(&rtc_sync_work, rt_tick_from_millisecond(RTC_AUTO_SYNC_FIRST_DELAY * 1000));
 

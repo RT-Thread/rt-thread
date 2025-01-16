@@ -303,9 +303,9 @@ const struct usbh_class_driver hid_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info hid_custom_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS,
-    .class = USB_DEVICE_CLASS_HID,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = USB_DEVICE_CLASS_HID,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = NULL,
     .class_driver = &hid_class_driver
 };

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_ckcu.c
- * @version $Rev:: 7322         $
- * @date    $Date:: 2023-10-28 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the Clock Control Unit firmware functions.
  *************************************************************************************************************
  * @attention
@@ -90,7 +90,7 @@
 #define CKCU_MASK_POTD          ((u32)0x3 << CKCU_POS_POTD)
 
 #define CKCU_POS_PFBD           23
-#define CKCU_MASK_PFBD          ((u32)0x0F << CKCU_POS_PFBD)
+#define CKCU_MASK_PFBD          ((u32)0x1F << CKCU_POS_PFBD)
 
 /* PLLCR bit field definition                                                                               */
 #define CKCU_POS_PLLBYPASS      31
@@ -139,8 +139,10 @@
 #define CKCU_MASK_CKSWST        ((u32)0x7 << CKCU_POS_CKSWST)
 
 /* LPCR bit field definition                                                                                */
+#if (!LIBCFG_CKCU_NO_LPCR)
 #define CKCU_POS_BKISO          0
 #define CKCU_MASK_BKISO         ((u32)0x1 << CKCU_POS_BKISO)
+#endif
 
 /* HSICR bit field definition                                                                               */
 #define CKCU_POS_TRIMEN         (0)
@@ -151,6 +153,7 @@
 
 #define CKCU_POS_REFCLKSEL      (5)
 #define CKCU_MASK_REFCLKSEL     ((u32)0x3 << CKCU_POS_REFCLKSEL)
+
 
 /**
   * @}
@@ -521,12 +524,12 @@ void CKCU_SetLCDPrescaler(CKCU_LCDPRE_TypeDef LCDPRE)
 /*********************************************************************************************************//**
  * @brief Configure the CK_MIDI prescaler.
  * @param MIDIPRE: specify the value of divider.
- *        This parameter can be:
- *        @arg CKCU_MIDIPRE_DIV8  : CK_MIDI = HCLK / 8
- *        @arg CKCU_MIDIPRE_DIV9  : CK_MIDI = HCLK / 9
- *        @arg CKCU_MIDIPRE_DIV11 : CK_MIDI = HCLK / 11
- *        @arg CKCU_MIDIPRE_DIV13 : CK_MIDI = HCLK / 13
- *        @arg CKCU_MIDIPRE_DIV16 : CK_MIDI = HCLK / 16
+ *   This parameter can be:
+ *     @arg CKCU_MIDIPRE_DIV8  : CK_MIDI = HCLK / 8
+ *     @arg CKCU_MIDIPRE_DIV9  : CK_MIDI = HCLK / 9
+ *     @arg CKCU_MIDIPRE_DIV11 : CK_MIDI = HCLK / 11
+ *     @arg CKCU_MIDIPRE_DIV13 : CK_MIDI = HCLK / 13
+ *     @arg CKCU_MIDIPRE_DIV16 : CK_MIDI = HCLK / 16
  * @retval None
  ************************************************************************************************************/
 void CKCU_SetMIDIPrescaler(CKCU_MIDIPRE_TypeDef MIDIPRE)
@@ -637,31 +640,31 @@ u32 CKCU_GetPLLFrequency(void)
 /*********************************************************************************************************//**
  * @brief Configure the APB peripheral prescaler.
  * @param Perip: specify the APB peripheral.
- *        This parameter can be:
- *        @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1, CKCU_PCLK_I2C2,
- *             CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
- *             CKCU_PCLK_CAN0,
- *             CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
- *             CKCU_PCLK_MCTM0,
- *             CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
- *             CKCU_PCLK_USART0, CKCU_PCLK_USART1,
- *             CKCU_PCLK_UART0, CKCU_PCLK_UART1, CKCU_PCLK_UART2, CKCU_PCLK_UART3
- *             CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC, CKCU_PCLK_CMP, CKCU_PCLK_OPA
- *             CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
- *             CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
- *             CKCU_PCLK_I2S,
- *             CKCU_PCLK_SCTM0, CKCU_PCLK_SCTM1, CKCU_PCLK_SCTM2, CKCU_PCLK_SCTM3
- *             CKCU_PCLK_PWM0, CKCU_PCLK_PWM1
- *             CKCU_PCLK_AFE, CKCU_PCLK_DAC0, CKCU_PCLK_DAC1, CKCU_PCLK_MIDI
- *             CKCU_PCLK_LEDC, CKCU_PCLK_TKEY
+ *   This parameter can be:
+ *     @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1, CKCU_PCLK_I2C2,
+ *          CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
+ *          CKCU_PCLK_CAN0,
+ *          CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
+ *          CKCU_PCLK_MCTM0,
+ *          CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
+ *          CKCU_PCLK_USART0, CKCU_PCLK_USART1,
+ *          CKCU_PCLK_UART0, CKCU_PCLK_UART1, CKCU_PCLK_UART2, CKCU_PCLK_UART3
+ *          CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC, CKCU_PCLK_CMP, CKCU_PCLK_OPA, CKCU_PCLK_PGA
+ *          CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
+ *          CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
+ *          CKCU_PCLK_I2S,
+ *          CKCU_PCLK_SCTM0, CKCU_PCLK_SCTM1, CKCU_PCLK_SCTM2, CKCU_PCLK_SCTM3
+ *          CKCU_PCLK_PWM0, CKCU_PCLK_PWM1
+ *          CKCU_PCLK_AFE, CKCU_PCLK_DAC0, CKCU_PCLK_DAC1, CKCU_PCLK_MIDI
+ *          CKCU_PCLK_LEDC, CKCU_PCLK_TKEY
  * @param PCLKPrescaler: specify the value of prescaler.
- *        This parameter can be:
- *        @arg CKCU_APBCLKPRE_DIV1:  specific peripheral clock = PCLK / 1  (inapplicable to BKPRCLK)
- *        @arg CKCU_APBCLKPRE_DIV2:  specific peripheral clock = PCLK / 2  (inapplicable to BKPRCLK)
- *        @arg CKCU_APBCLKPRE_DIV4:  specific peripheral clock = PCLK / 4
- *        @arg CKCU_APBCLKPRE_DIV8:  specific peripheral clock = PCLK / 8
- *        @arg CKCU_APBCLKPRE_DIV16: specific peripheral clock = PCLK / 16 (BKPRCLK only)
- *        @arg CKCU_APBCLKPRE_DIV32: specific peripheral clock = PCLK / 32 (BKPRCLK only)
+ *   This parameter can be:
+ *     @arg CKCU_APBCLKPRE_DIV1:  specific peripheral clock = PCLK / 1  (inapplicable to BKPRCLK)
+ *     @arg CKCU_APBCLKPRE_DIV2:  specific peripheral clock = PCLK / 2  (inapplicable to BKPRCLK)
+ *     @arg CKCU_APBCLKPRE_DIV4:  specific peripheral clock = PCLK / 4
+ *     @arg CKCU_APBCLKPRE_DIV8:  specific peripheral clock = PCLK / 8
+ *     @arg CKCU_APBCLKPRE_DIV16: specific peripheral clock = PCLK / 16 (BKPRCLK only)
+ *     @arg CKCU_APBCLKPRE_DIV32: specific peripheral clock = PCLK / 32 (BKPRCLK only)
  * @retval None
  ************************************************************************************************************/
 void CKCU_SetPeripPrescaler(CKCU_PeripPrescaler_TypeDef Perip, CKCU_APBCLKPRE_TypeDef PCLKPrescaler)
@@ -673,29 +676,29 @@ void CKCU_SetPeripPrescaler(CKCU_PeripPrescaler_TypeDef Perip, CKCU_APBCLKPRE_Ty
     Prescaler -= 2;
   }
   Perip &= 0x0000001F;
-  CKCU_BF_WRITE(*PCSR, (3UL << Perip), Perip, Prescaler);
+  CKCU_BF_WRITE(*PCSR, (3UL << Perip), Perip, (Prescaler & 0x3));
 }
 #endif
 
 /*********************************************************************************************************//**
  * @brief Return the operating frequency of the specific APB peripheral.
  * @param Perip: specify the APB peripheral.
- *        This parameter can be:
- *        @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1, CKCU_PCLK_I2C2,
- *             CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
- *             CKCU_PCLK_CAN0,
- *             CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
- *             CKCU_PCLK_MCTM0,
- *             CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
- *             CKCU_PCLK_USART0, CKCU_PCLK_USART1,
- *             CKCU_PCLK_UART0, CKCU_PCLK_UART1, CKCU_PCLK_UART2, CKCU_PCLK_UART3
- *             CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC0, CKCU_PCLK_ADC1, CKCU_PCLK_CMP, CKCU_PCLK_OPA
- *             CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
- *             CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
- *             CKCU_PCLK_I2S,
- *             CKCU_PCLK_PWM0, CKCU_PCLK_PWM1
- *             CKCU_PCLK_AFE, CKCU_PCLK_DAC0, CKCU_PCLK_DAC1, CKCU_PCLK_MIDI
- *             CKCU_PCLK_LEDC, CKCU_PCLK_TKEY
+ *   This parameter can be:
+ *     @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1, CKCU_PCLK_I2C2,
+ *          CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
+ *          CKCU_PCLK_CAN0,
+ *          CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
+ *          CKCU_PCLK_MCTM0,
+ *          CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
+ *          CKCU_PCLK_USART0, CKCU_PCLK_USART1,
+ *          CKCU_PCLK_UART0, CKCU_PCLK_UART1, CKCU_PCLK_UART2, CKCU_PCLK_UART3
+ *          CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC0, CKCU_PCLK_ADC1, CKCU_PCLK_CMP, CKCU_PCLK_OPA, CKCU_PCLK_PGA
+ *          CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
+ *          CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
+ *          CKCU_PCLK_I2S,
+ *          CKCU_PCLK_PWM0, CKCU_PCLK_PWM1
+ *          CKCU_PCLK_AFE, CKCU_PCLK_DAC0, CKCU_PCLK_DAC1, CKCU_PCLK_MIDI
+ *          CKCU_PCLK_LEDC, CKCU_PCLK_TKEY
  * @retval Frequency in Hz
  ************************************************************************************************************/
 u32 CKCU_GetPeripFrequency(CKCU_PeripPrescaler_TypeDef Perip)
@@ -993,14 +996,14 @@ void CKCU_PeripClockConfig(CKCU_PeripClockConfig_TypeDef Clock, ControlStatus Cm
   HT_CKCU->APBCCR1 = uAPBCCR1;
 }
 
-#if (((LIBCFG_LSE) || (LIBCFG_USBD)) && (!LIBCFG_CKCU_NO_AUTO_TRIM))
+#if (((LIBCFG_LSE) || (LIBCFG_USBD) || (LIBCFG_CKCU_REFCLK_EXT_PIN)) && (!LIBCFG_CKCU_NO_AUTO_TRIM))
 /*********************************************************************************************************//**
  * @brief Configure the reference clock of HSI auto-trim function.
  * @param CLKSRC: specify the clock source.
- *        This parameter can be:
- *        @arg CKCU_ATC_LSE: LSE is selected as reference clock
- *        @arg CKCU_ATC_USB: USB is selected as reference clock
- *        @arg CKCU_ATC_CKIN: External pin (CKIN) is selected as reference clock
+ *   This parameter can be:
+ *     @arg CKCU_ATC_LSE: LSE is selected as reference clock
+ *     @arg CKCU_ATC_USB: USB is selected as reference clock
+ *     @arg CKCU_ATC_CKIN: External pin (CKIN) is selected as reference clock
  * @retval None
  ************************************************************************************************************/
 void CKCU_HSIAutoTrimClkConfig(CKCU_ATC_TypeDef CLKSRC)
@@ -1083,7 +1086,7 @@ bool CKCU_HSIAutoTrimIsReady(void)
  * @param Value: 0x0~0x1F.
  * @retval None
  ************************************************************************************************************/
-void CKCU_Set_HSIReadyCounter(u8 Value)
+void CKCU_SetHSIReadyCounter(u8 Value)
 {
   /* Check the parameters                                                                                   */
   Assert_Param(IS_COUNTER_VALUE(Value));
@@ -1091,6 +1094,23 @@ void CKCU_Set_HSIReadyCounter(u8 Value)
   HT_CKCU->HSIRDYCR = ((HT_CKCU->HSIRDYCR) & (~(0x1F))) | Value;
 }
 #endif
+
+/*********************************************************************************************************//**
+ * @brief Set HSE Gain Mode.
+ * @param GanMode: Specify the gain mode of HSE.
+ *   This parameter can be:
+ *     @arg CKCU_HSE_LOW_GAIN_MODE         : HSE low gain mode
+ *     @arg CKCU_HSE_HIGH_GAIN_MODE        : HSE high gain mode
+ * @retval None
+ ************************************************************************************************************/
+void CKCU_SetHSEGainMode(u32 GanMode)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_GAINMODE(GanMode));
+
+  HT_CKCU->GCCR = (HT_CKCU->GCCR & ~(0x100)) | GanMode;
+}
+
 /**
   * @}
   */

@@ -125,12 +125,18 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_PWM
             bool "Enable PWM"
             select RT_USING_PWM
-            default N
+            default n
 
             if BSP_USING_PWM
                 config BSP_USING_PWM0
-                    bool "Enable PWM0"
-                    default N
+                    bool "Enable eFlex PWM0"
+                    default n
+		config BSP_USING_PWM1
+                    bool "Enable eFlex PWM1"
+                    default n
+		config BSP_USING_PWM2
+                    bool "Enable eFlex PWM2"
+                    default n
             endif
 endmenu
 

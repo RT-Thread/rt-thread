@@ -304,14 +304,15 @@ void draw_circle(uint8_t *buf)
 /* https://cps-check.com/cn/polling-rate-check */
 void hid_mouse_test(uint8_t busid)
 {
+    if(usb_device_is_configured(busid) == false) {
+        return;
+    }
+
     int counter = 0;
     while (counter < 1000) {
         draw_circle((uint8_t *)&mouse_cfg);
-        int ret = usbd_ep_start_write(busid, HID_INT_EP, (uint8_t *)&mouse_cfg, 4);
-        if (ret < 0) {
-            return;
-        }
         hid_state = HID_STATE_BUSY;
+        usbd_ep_start_write(busid, HID_INT_EP, (uint8_t *)&mouse_cfg, 4);
         while (hid_state == HID_STATE_BUSY) {
         }
 

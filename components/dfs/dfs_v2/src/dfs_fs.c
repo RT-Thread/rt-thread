@@ -95,6 +95,52 @@ int dfs_unregister(struct dfs_filesystem_type *fs)
     return ret;
 }
 
+#define REMNT_UNSUPP_FLAGS (~(MS_REMOUNT | MS_RMT_MASK))
+int dfs_remount(const char *path, rt_ubase_t flags, void *data)
+{
+    int rc = 0;
+    char *fullpath = RT_NULL;
+    struct dfs_mnt *mnt = RT_NULL;
+
+    if (flags & REMNT_UNSUPP_FLAGS)
+    {
+        return -EINVAL;
+    }
+
+    fullpath = dfs_normalize_path(RT_NULL, path);
+    if (!fullpath)
+    {
+        rc = -ENOENT;
+    }
+    else
+    {
+        DLOG(msg, "dfs", "mnt", DLOG_MSG, "mnt = dfs_mnt_lookup(%s)", fullpath);
+        mnt = dfs_mnt_lookup(fullpath);
+        if (mnt)
+        {
+            dfs_lock();
+            dfs_mnt_setflags(mnt, flags);
+            dfs_unlock();
+        }
+        else
+        {
+            struct stat buf = {0};
+            if (dfs_file_stat(fullpath, &buf) == 0 && S_ISBLK(buf.st_mode))
+            {
+                /* path was not already mounted on target */
+                rc = -EINVAL;
+            }
+            else
+            {
+                /* path is not a directory */
+                rc = -ENOTDIR;
+            }
+        }
+    }
+
+    return rc;
+}
+
 /*
  *    parent(mount path)
  *    mnt_parent <- - - - - - -  +
@@ -300,7 +346,7 @@ int dfs_mount(const char *device_name,
 
 int dfs_umount(const char *specialfile, int flags)
 {
-    int ret = -RT_ERROR;
+    int ret = -1;
     char *fullpath = RT_NULL;
     struct dfs_mnt *mnt = RT_NULL;
 
@@ -314,7 +360,7 @@ int dfs_umount(const char *specialfile, int flags)
             if (strcmp(mnt->fullpath, fullpath) == 0)
             {
                 /* is the mount point */
-                rt_atomic_t ref_count = rt_atomic_load(&(mnt->ref_count));
+                rt_base_t ref_count = rt_atomic_load(&(mnt->ref_count));
 
                 if (!(mnt->flags & MNT_IS_LOCKED) && rt_list_isempty(&mnt->child) && (ref_count == 1 || (flags & MNT_FORCE)))
                 {
@@ -327,17 +373,19 @@ int dfs_umount(const char *specialfile, int flags)
                 }
                 else
                 {
-                    LOG_E("the file system is busy!");
+                    LOG_I("the file system is busy!");
+                    ret = -EBUSY;
                 }
             }
             else
             {
-                LOG_E("the path:%s is not a mountpoint!", fullpath);
+                LOG_I("the path:%s is not a mountpoint!", fullpath);
+                ret = -EINVAL;
             }
         }
         else
         {
-            LOG_E("no filesystem found.");
+            LOG_I("no filesystem found.");
         }
         rt_free(fullpath);
     }

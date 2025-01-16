@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f53231_41_libcfg.h
- * @version $Rev:: 7265         $
- * @date    $Date:: 2023-10-02 #$
+ * @version $Rev:: 7664         $
+ * @date    $Date:: 2024-03-26 #$
  * @brief   The library configuration file.
  *************************************************************************************************************
 * @attention
@@ -91,6 +91,5 @@
 #define LIBCFG_ADC_MVDDA                  (1)
 #define LIBCFG_USART_LIN                  (1)
 #define LIBCFG_USART_SINGLE_WIRE          (1)
-#define LIBCFG_GPIO_SINK_CURREMT_ENHANCED (1)
 
 #endif

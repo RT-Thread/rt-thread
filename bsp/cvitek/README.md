@@ -18,6 +18,8 @@
 	- [6.2. 构建文件系统](#62-构建文件系统)
 	- [6.3. 将文件系统写入 sd-card](#63-将文件系统写入-sd-card)
 	- [6.4. 上电启动](#64-上电启动)
+		- [6.4.1. FAT 的例子](#641-fat-的例子)
+		- [6.4.2. EXT4 的例子](#642-ext4-的例子)
 - [7. FAQ](#7-faq)
 - [8. 联系人信息](#8-联系人信息)
 
@@ -32,9 +34,9 @@
 
 支持开发板以及集成 SoC 芯片信息如下
 
-- milk-v duo: [https://milkv.io/duo](https://milkv.io/duo)，SoC 采用 CV1800B。
-- milk-v duo256m: [https://milkv.io/duo256m](https://milkv.io/docs/duo/getting-started/duo256m)，SoC 采用 SG2002（原 CV181xC）。
-- milk-v duos: [https://milkv.io/duos](https://milkv.io/docs/duo/getting-started/duos)，SoC 采用 SG2000（原 CV181xH）。
+- Milk-V Duo: <https://milkv.io/docs/duo/getting-started/duo>，SoC 采用 CV1800B。
+- Milk-V Duo 256m: <https://milkv.io/docs/duo/getting-started/duo256m>，SoC 采用 SG2002（原 CV181xC）。
+- Milk-V Duo S: <https://milkv.io/docs/duo/getting-started/duos>，SoC 采用 SG2000（原 CV181xH）。
 
 Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如下：
 
@@ -59,8 +61,6 @@ Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如�
 
 由于开发板默认运行的大核为 "cv18xx_risc-v", 所以本文将主要介绍 "cv18xx_risc-v" 和 "c906-little" 的构建和使用。有关 "cv18xx_aarch64" 的介绍请参考 [这里](./cv18xx_aarch64/README.md)。
 
-
-
 ## 3.1. 驱动支持列表
 
 | 驱动  | 支持情况 | 备注              |
@@ -69,7 +69,7 @@ Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如�
 | gpio  | 支持     |  |
 | i2c   | 支持     |  |
 | adc   | 支持     |  |
-| spi   | 支持     | 默认CS引脚，每个数据之间CS会拉高，请根据时序选择GPIO作为CS。若读取数据，tx需持续dummy数据。|
+| spi   | 支持     | 默认 CS 引脚，每个数据之间 CS 会拉高，请根据时序选择 GPIO 作为 CS。若读取数据，tx 需持续 dummy 数据。|
 | pwm   | 支持     |  |
 | timer | 支持     |  |
 | wdt   | 支持     |  |
@@ -77,7 +77,9 @@ Duo 家族开发板采用 CV18xx 系列芯片。芯片的工作模式总结如�
 | eth   | 支持     |  |
 
 ## 3.2. 默认串口控制台管脚配置
+
 不同开发板 uart 输出管脚不同，默认配置可能导致串口无法正常显示，请根据开发板 uart 通过 `scons --menuconfig` 配置对应 uart 的输出管脚。
+
 ```shell
 $ scons --menuconfig
   General Drivers Configuration  --->
@@ -87,27 +89,25 @@ $ scons --menuconfig
           (IIC0_SCL) uart1 tx pin name
 ```
 
-| 开发板 | 大核 uart0 默认管脚 | 小核 uart1 默认管脚 |
-| ------ | ---- | ---- |
-| Duo   |  rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL |
-| Duo 256M | rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL |
-| Duo S  | rx: UART0_RX<br>tx: UART0_TX | rx: JTAG_CPU_TCK<br>tx: JTAG_CPU_TMS |
+| 开发板   | 大核 uart0 默认管脚          | 小核 uart1 默认管脚                  |
+| -------- | ---------------------------- | ------------------------------------ |
+| Duo      | rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL         |
+| Duo 256M | rx: UART0_RX<br>tx: UART0_TX | rx: IIC0_SDA<br>tx: IIC0_SCL         |
+| Duo S    | rx: UART0_RX<br>tx: UART0_TX | rx: JTAG_CPU_TCK<br>tx: JTAG_CPU_TMS |
 
-如需配置其他管脚可参考 [https://milkv.io/zh/docs/duo/getting-started](https://milkv.io/zh/docs/duo/getting-started) 对应型号的开发板。
-
+如需配置其他管脚可参考对应型号的开发板信息 <https://milkv.io/docs/duo/overview>。
 
 # 4. 编译
 
-## 4.1. Toolchain 下载
+**注：当前 bsp 只支持 Linux 编译，推荐 ubuntu 22.04**
 
-> 注：当前 bsp 只支持 Linux 编译，推荐 ubuntu 22.04
+## 4.1. Toolchain 下载
 
 1. 用于编译 RT-Thread 标准版的工具链是 `riscv64-unknown-elf-gcc` 下载地址  [https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz](https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz)
 
 2. 用于编译 RT-Thread Smart 版的工具链是 `riscv64-unknown-linux-musl-gcc` 下载地址 [https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2](https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2)
 
-
-正确解压后，导出如下环境变量，建议将这些 export 命令写入 `~/.bashrc`。**并注意在使用不同工具链时确保导出正确的一组环境变量**。
+正确解压后(假设解压到 `/opt` 下, 也可以自己设定解压后的目录)，导出如下环境变量，建议将这些 export 命令写入 `~/.bashrc`。**并注意在使用不同工具链时确保导出正确的一组环境变量**。
 
 构建 RT-Thread 标准版时按照以下配置：
 
@@ -126,6 +126,7 @@ export RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 ```
 
 ## 4.2. 依赖安装
+
 ```shell
 $ sudo apt install -y scons libncurses5-dev device-tree-compiler
 ```
@@ -136,8 +137,6 @@ $ sudo apt install -y scons libncurses5-dev device-tree-compiler
 
 ### 4.3.1. 开发板选择
 
-   Linux平台下，可以先执行：
-
 ```shell
 $ scons --menuconfig
 ```
@@ -147,9 +146,7 @@ $ scons --menuconfig
 ```shell
 Board Type (milkv-duo)  --->
     ( ) milkv-duo
-    ( ) milkv-duo-spinor
     (X) milkv-duo256m
-    ( ) milkv-duo256m-spinor
     ( ) milkv-duos
 ```
 
@@ -193,7 +190,7 @@ $ scons
 
 # 6. 大核 RT-Smart 启动并自动挂载根文件系统
 
-大核启用 RT-Smart 后可以在启动阶段挂载根文件系统。目前 Duo 支持 ext4，fat 文件格式，下面以 fat 格式为例，具体操作说明如下：
+大核启用 RT-Smart 后可以在启动阶段挂载根文件系统。目前 Duo 支持 ext4, fat 文件格式，具体操作说明如下：
 
 ## 6.1. 内核构建配置
 
@@ -204,6 +201,14 @@ $ scons
 - 使能 `BSP_USING_SDH`: Enable Secure Digital Host Controller, 因为使用 sd-card 存放文件系统。
 - 使能 `BSP_USING_RTC`: Enable RTC, 避免挂载文件系统后执行命令报错：`[W/time] Cannot find a RTC device!`
 - 使能 `BSP_ROOTFS_TYPE_DISKFS`: Disk FileSystems, e.g. ext4, fat ..., 该配置默认已打开。
+- 内核默认支持 fat, 如果要挂载 ext4 的文件系统，则还需要额外安装 lwext4 软件包，即使能 `PKG_USING_LWEXT4`（具体 menuconfig 路径是 (Top) -> RT-Thread online packages -> system packages ->  lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers.）。如果在菜单中找不到该软件包，可以退出 menuconfig 并执行 `pkgs --upgrade` 更新软件包索引后再尝试使能软件包。
+
+  勾选该选项后还需要执行如下操作更新软件并安装源码到 bsp 的 packages 目录下：
+
+  ```shell
+  source ~/.env/env.sh
+  pkgs --update
+  ```
 
 保存后重新编译内核。
 
@@ -229,9 +234,17 @@ xmake smart-image -f fat
 
 在 `$WS/userapps/apps/build` 路径下生成根文件系统镜像文件 `fat.img`。
 
+如果是制作 ext4 格式的文件系统 image，则最后一步换成：
+
+```shell
+xmake smart-image -f ext4
+```
+
+生成根文件系统镜像文件 `ext4.img`。
+
 ## 6.3. 将文件系统写入 sd-card
 
-将 SD 卡分为 2 个分区，第 1 个分区用于存放 `fip.bin` 和 `boot.sd` 文件，第 2 个分区用于存放文件系统，分区格式为 `FAT32`。
+将 SD 卡分为 2 个分区，第 1 个分区的分区格式为 `FAT32`，用于存放 `fip.bin` 和 `boot.sd` 文件，第 2 个分区用于存放文件系统，分区格式需要和具体文件系统的格式一致。这里以 fat 为例介绍如何制作 sd-card 上的文件系统分区，ext4 的操作类似。
 
 将 SD 卡插入 PC 主机系统，假设为 Ubuntu，识别为 `/dev/sdb`，则第二个分区为 `/dev/sdb2`。将第二个分区挂载，假设挂载到 `~/ws/u-disk`。
 
@@ -252,6 +265,8 @@ sudo umount /tmp
 ```
 
 ## 6.4. 上电启动
+
+### 6.4.1. FAT 的例子
 
 启动完成后, 会看到 `[I/app.filesystem] device 'sd1' is mounted to '/' as FAT` 的输出，说明文件系统挂载成功。此时 `msh` 被替换为 `/bin/ash`。
 
@@ -275,6 +290,47 @@ msh />[E/sal.skt] not find network interface device by protocol family(1).
 / # ls
 bin       etc       mnt       root      sbin      tc        usr
 dev       lib       proc      run       services  tmp       var
+```
+
+### 6.4.2. EXT4 的例子
+
+启动完成后, 会看到 `[I/app.filesystem] device 'sd1' is mounted to '/' as EXT` 的输出，说明文件系统挂载成功。此时 `msh` 被替换为 `/bin/ash`。如果 `ls /bin -l`，会看到大部分命令程序都是指向 busybox 的符号链接，符号链接是 EXT4 区别于 FAT 的重要特征。
+
+```shell
+ \ | /
+- RT -     Thread Smart Operating System
+ / | \     5.2.0 build Dec 17 2024 14:04:27
+ 2006 - 2024 Copyright by RT-Thread team
+lwIP-2.1.2 initialized!
+[I/sal.skt] Socket Abstraction Layer initialize success.
+[I/drivers.serial] Using /dev/ttyS0 as default console
+[I/SDIO] SD card capacity 30216192 KB.
+[I/SDIO] sd: switch to High Speed / SDR25 mode 
+
+found part[0], begin: 1048576, size: 128.0MB
+found part[1], begin: 135266304, size: 28.707GB
+[I/app.filesystem] device 'sd1' is mounted to '/' as EXT
+Hello RT-Smart!
+msh />[E/sal.skt] not find network interface device by protocol family(1).
+[E/sal.skt] SAL socket protocol family input failed, return error -3.
+/ # ls 
+bin         lib         proc        sbin        tmp
+dev         lost+found  root        services    usr
+etc         mnt         run         tc          var
+/ # ls /bin -l
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 arch -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 ash -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 base32 -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 base64 -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 bash -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 bbconfig -> busybox
+-rwxr-xr-x    0 0        0          1003000 Dec 17  2024 busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 cat -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chattr -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chgrp -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chmod -> busybox
+lrwxrwxrwx    0 0        0                7 Dec 17  2024 chown -> busybox
+......
 ```
 
 # 7. FAQ

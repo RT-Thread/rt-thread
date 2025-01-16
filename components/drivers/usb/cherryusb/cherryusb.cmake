@@ -40,6 +40,7 @@ ${CMAKE_CURRENT_LIST_DIR}/class/adb
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/net
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/wifi
+${CMAKE_CURRENT_LIST_DIR}/class/aoa
 )
 
 if(CONFIG_CHERRYUSB_DEVICE)
@@ -218,6 +219,9 @@ if(CONFIG_CHERRYUSB_HOST)
     if(CONFIG_CHERRYUSB_HOST_BL616)
     list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/wifi/usbh_bl616.c)
     endif()
+    if(CONFIG_CHERRYUSB_HOST_AOA)
+    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/aoa/usbh_aoa.c)
+    endif()
 
     if(DEFINED CONFIG_CHERRYUSB_HOST_HCD)
         if("${CONFIG_CHERRYUSB_HOST_HCD}" STREQUAL "ehci_bouffalo")
@@ -294,4 +298,9 @@ endif()
 if(CONFIG_CHERRYMP)
 list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool.c)
 list(APPEND cherryusb_incs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp)
+    if("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "freertos")
+    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool_osal_freertos.c)
+    elseif("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "rtthread")
+    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool_osal_rtthread.c)
+    endif()
 endif()

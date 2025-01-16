@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_iar_05.s
-;  Version          : $Rev:: 6993         $
-;  Date             : $Date:: 2023-06-26 #$
+;  Version          : $Rev:: 7935         $
+;  Date             : $Date:: 2024-08-08 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -19,6 +19,8 @@
 ;   HT32F5828
 ;   HT32F67742
 ;   HT32F59746
+;   HT32F57541
+;   HT32F57552
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
 
@@ -30,6 +32,8 @@
 ;//      <14=> HT32F5828
 ;//      <13=> HT32F67742
 ;//      <13=> HT32F59746
+;//      <13=> HT32F57541
+;//      <14=> HT32F57552
 USE_HT32_CHIP_SET   EQU     0
 
 _HT32FWID           EQU     0xFFFFFFFF
@@ -41,6 +45,8 @@ _HT32FWID           EQU     0xFFFFFFFF
 ;_HT32FWID           EQU     0x00005828
 ;_HT32FWID           EQU     0x00067742
 ;_HT32FWID           EQU     0x00059746
+;_HT32FWID           EQU     0x00057541
+;_HT32FWID           EQU     0x00057552
 
 HT32F57331_41       EQU     13
 HT32F57342_52       EQU     14
@@ -48,6 +54,8 @@ HT32F59741          EQU     13
 HT32F5828           EQU     14
 HT32F67742          EQU     13
 HT32F59746          EQU     13
+HT32F57541          EQU     13
+HT32F57552          EQU     14
 
   IF USE_HT32_CHIP_SET=0
   ELSE

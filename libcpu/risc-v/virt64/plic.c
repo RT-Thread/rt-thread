@@ -52,7 +52,7 @@ void plic_irq_enable(int irq)
 {
     int hart = __raw_hartid();
     *(uint32_t *)PLIC_ENABLE(hart) = ((*(uint32_t *)PLIC_ENABLE(hart)) | (1 << irq));
-#ifdef RISCV_S_MODE
+#ifdef RISCV_VIRT64_S_MODE
     set_csr(sie, read_csr(sie) | MIP_SEIP);
 #else
     set_csr(mie, read_csr(mie) | MIP_MEIP);

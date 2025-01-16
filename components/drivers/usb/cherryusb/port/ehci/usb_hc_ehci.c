@@ -952,6 +952,7 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
 
         while (!(EHCI_HCOR->portsc[port - 1] & EHCI_PORTSC_OWNER)) {
         }
+        USB_LOG_INFO("Switch port %u to OHCI\r\n", port);
         return ohci_roothub_control(bus, setup, buf);
     }
 #endif
@@ -1063,7 +1064,9 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
 
                             while (!(EHCI_HCOR->portsc[port - 1] & EHCI_PORTSC_OWNER)) {
                             }
-                            return ohci_roothub_control(bus, setup, buf);
+
+                            USB_LOG_INFO("Switch port %u to OHCI\r\n", port);
+                            return -USB_ERR_NOTSUPP;
                         }
 #endif
                         break;

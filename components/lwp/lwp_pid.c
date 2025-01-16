@@ -69,11 +69,28 @@ static int lwp_pid_ary_alloced = 0;
 static struct lwp_avl_struct *lwp_pid_root = RT_NULL;
 static pid_t current_pid = 0;
 static struct rt_mutex pid_mtx;
+static struct rt_wqueue _pid_emptyq;
 
 int lwp_pid_init(void)
 {
+    rt_wqueue_init(&_pid_emptyq);
     rt_mutex_init(&pid_mtx, "pidmtx", RT_IPC_FLAG_PRIO);
     return 0;
+}
+
+int lwp_pid_wait_for_empty(int wait_flags, rt_tick_t to)
+{
+    int error;
+
+    if (wait_flags == RT_INTERRUPTIBLE)
+    {
+        error = rt_wqueue_wait_interruptible(&_pid_emptyq, 0, to);
+    }
+    else
+    {
+        error = rt_wqueue_wait_killable(&_pid_emptyq, 0, to);
+    }
+    return error;
 }
 
 void lwp_pid_lock_take(void)
@@ -91,6 +108,35 @@ void lwp_pid_lock_release(void)
     /* should never failed */
     if (lwp_mutex_release_safe(&pid_mtx) != RT_EOK)
         RT_ASSERT(0);
+}
+
+struct pid_foreach_param
+{
+    int (*cb)(pid_t pid, void *data);
+    void *data;
+};
+
+static int _before_cb(struct lwp_avl_struct *node, void *data)
+{
+    struct pid_foreach_param *param = data;
+    pid_t pid = node->avl_key;
+    return param->cb(pid, param->data);
+}
+
+int lwp_pid_for_each(int (*cb)(pid_t pid, void *data), void *data)
+{
+    int error;
+    struct pid_foreach_param buf =
+    {
+        .cb = cb,
+        .data = data,
+    };
+
+    lwp_pid_lock_take();
+    error = lwp_avl_traversal(lwp_pid_root, _before_cb, &buf);
+    lwp_pid_lock_release();
+
+    return error;
 }
 
 struct lwp_avl_struct *lwp_get_pid_ary(void)
@@ -182,7 +228,15 @@ void lwp_pid_put(struct rt_lwp *lwp)
 
     lwp_pid_lock_take();
     lwp_pid_put_locked(lwp->pid);
-    lwp_pid_lock_release();
+    if (lwp_pid_root == AVL_EMPTY)
+    {
+        rt_wqueue_wakeup_all(&_pid_emptyq, RT_NULL);
+        /* refuse any new pid allocation now */
+    }
+    else
+    {
+        lwp_pid_lock_release();
+    }
 
     /* reset pid field */
     lwp->pid = 0;
@@ -1510,6 +1564,7 @@ static void _notify_parent(rt_lwp_t lwp)
 
 static void _resr_cleanup(struct rt_lwp *lwp)
 {
+    int need_cleanup_pid = RT_FALSE;
     lwp_jobctrl_on_exit(lwp);
 
     LWP_LOCK(lwp);
@@ -1579,7 +1634,7 @@ static void _resr_cleanup(struct rt_lwp *lwp)
          * if process is orphan, it doesn't have parent to do the recycling.
          * Otherwise, its parent had setup a flag to mask out recycling event
          */
-        lwp_pid_put(lwp);
+        need_cleanup_pid = RT_TRUE;
     }
 
     LWP_LOCK(lwp);
@@ -1598,6 +1653,11 @@ static void _resr_cleanup(struct rt_lwp *lwp)
     else
     {
         LWP_UNLOCK(lwp);
+    }
+
+    if (need_cleanup_pid)
+    {
+        lwp_pid_put(lwp);
     }
 }
 

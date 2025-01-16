@@ -1,6 +1,7 @@
-C906_LITTLE_BIN_PATH=../../c906_little/rtthread.bin
-GEN_FIP_PATH=.
-DEPENDS_FILE_PATH=${GEN_FIP_PATH}/milkv-duo256m
+#!/bin/bash
+C906_LITTLE_BIN_PATH=../c906_little/rtthread.bin
+GEN_FIP_PATH=../output/milkv-duo256m/
+DEPENDS_FILE_PATH=./prebuild/milkv-duo256m
 
 BLCP_IMG_RUNADDR=0x05200200
 BLCP_PARAM_LOADADDR=0
@@ -20,7 +21,10 @@ if [ -f "$C906_LITTLE_BIN_PATH" ]; then
     BLCP_2ND_PATH=${C906_LITTLE_BIN_PATH}
 else
     echo "The file $C906_LITTLE_BIN_PATH does not exist. Execute scons to compile it."
+    exit
 fi
+
+mkdir -p $GEN_FIP_PATH
 
 echo "Combining fip.bin..."
 . ${DEPENDS_FILE_PATH}/blmacros.env && \

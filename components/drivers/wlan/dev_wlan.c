@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-03     tyx          the first version
+ * 2024-12-25     Evlers       add get_info api for more new sta information
+ * 2025-01-04     Evlers       add ap_get_info api for more ap information
  */
 
 #include <rthw.h>
@@ -247,6 +249,44 @@ int rt_wlan_dev_get_rssi(struct rt_wlan_device *device)
     }
 
     return rssi;
+}
+
+rt_err_t rt_wlan_dev_get_info(struct rt_wlan_device *device, struct rt_wlan_info *info)
+{
+    rt_err_t result = RT_EOK;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_INFO, info);
+    if (result != RT_EOK)
+    {
+        rt_set_errno(result);
+        return 0;
+    }
+
+    return result;
+}
+
+rt_err_t rt_wlan_dev_ap_get_info(struct rt_wlan_device *device, struct rt_wlan_info *info)
+{
+    rt_err_t result = RT_EOK;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EIO;
+    }
+
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_AP_GET_INFO, info);
+    if (result != RT_EOK)
+    {
+        rt_set_errno(result);
+        return 0;
+    }
+
+    return result;
 }
 
 rt_err_t rt_wlan_dev_get_mac(struct rt_wlan_device *device, rt_uint8_t mac[6])
@@ -782,6 +822,26 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_RSSI, "RT_WLAN_CMD_GET_RSSI");
         if (wlan->ops->wlan_get_rssi)
             *rssi = wlan->ops->wlan_get_rssi(wlan);
+        break;
+    }
+    case RT_WLAN_CMD_GET_INFO:
+    {
+        struct rt_wlan_info *info = args;
+
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_INFO, "RT_WLAN_CMD_GET_INFO");
+        if (wlan->ops->wlan_get_info)
+            err = wlan->ops->wlan_get_info(wlan, info);
+        else
+            err = -RT_ERROR;
+        break;
+    }
+    case RT_WLAN_CMD_AP_GET_INFO:
+    {
+        struct rt_wlan_info *info = args;
+
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_AP_GET_INFO, "RT_WLAN_CMD_AP_GET_INFO");
+        if (wlan->ops->wlan_ap_get_info)
+            err = wlan->ops->wlan_ap_get_info(wlan, info);
         break;
     }
     case RT_WLAN_CMD_SET_POWERSAVE:

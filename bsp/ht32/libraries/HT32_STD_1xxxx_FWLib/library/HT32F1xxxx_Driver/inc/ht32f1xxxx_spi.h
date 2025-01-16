@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_spi.h
- * @version $Rev:: 2797         $
- * @date    $Date:: 2022-11-28 #$
+ * @version $Rev:: 3180         $
+ * @date    $Date:: 2024-10-15 #$
  * @brief   The header file of the SPI library.
  *************************************************************************************************************
  * @attention
@@ -159,14 +159,14 @@ typedef struct
 #define SPI_FLAG_TOUT                               ((u32)0x00000080)
 #define SPI_FLAG_BUSY                               ((u32)0x00000100)
 
-#define IS_SPI_FLAG(FLAG)                           ((FLAG ==  SPI_FLAG_TXBE) || \
-                                                     (FLAG ==  SPI_FLAG_TXE) || \
+#define IS_SPI_FLAG(FLAG)                           ((FLAG ==  SPI_FLAG_TXBE)  || \
+                                                     (FLAG ==  SPI_FLAG_TXE)   || \
                                                      (FLAG ==  SPI_FLAG_RXBNE) || \
-                                                     (FLAG ==  SPI_FLAG_WC) || \
-                                                     (FLAG ==  SPI_FLAG_RO) || \
-                                                     (FLAG ==  SPI_FLAG_MF) || \
-                                                     (FLAG ==  SPI_FLAG_SA) || \
-                                                     (FLAG ==  SPI_FLAG_TOUT) || \
+                                                     (FLAG ==  SPI_FLAG_WC)    || \
+                                                     (FLAG ==  SPI_FLAG_RO)    || \
+                                                     (FLAG ==  SPI_FLAG_MF)    || \
+                                                     (FLAG ==  SPI_FLAG_SA)    || \
+                                                     (FLAG ==  SPI_FLAG_TOUT)  || \
                                                      (FLAG ==  SPI_FLAG_BUSY))
 
 #define IS_SPI_FLAG_CLEAR(CLEAR)                    ((CLEAR ==  SPI_FLAG_WC) || \
