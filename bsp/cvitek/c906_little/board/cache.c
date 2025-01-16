@@ -5,6 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025/01/16     zdtyuiop4444 fix type cast warning
  * 2024/11/26     zdtyuiop4444 The first version
  */
 
@@ -33,10 +34,10 @@ inline void rt_hw_cpu_dcache_ops(int ops, void* addr, int size)
     switch (ops)
     {
     case RT_HW_CACHE_FLUSH:
-        flush_dcache_range(addr, size);
+        flush_dcache_range((uintptr_t)addr, size);
         break;
     case RT_HW_CACHE_INVALIDATE:
-        inv_dcache_range(addr, size);
+        inv_dcache_range((uintptr_t)addr, size);
         break;
     default:
         break;
@@ -62,7 +63,7 @@ inline void rt_hw_cpu_icache_ops(int ops, void* addr, int size)
     switch (ops)
     {
     case RT_HW_CACHE_INVALIDATE:
-        inv_icache_range(addr, size);
+        inv_icache_range((uintptr_t)addr, size);
         break;
     default:
         break;
