@@ -43,6 +43,7 @@ ncscope.*
 tags
 
 .idea
+**/.cache/
 .vscode
 *.code-workspace
 *.eide.*
