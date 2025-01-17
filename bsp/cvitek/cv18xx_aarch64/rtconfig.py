@@ -46,4 +46,4 @@ if PLATFORM == 'gcc':
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 POST_ACTION += OBJCPY + ' -O binary $TARGET Image \n' + SIZE + ' $TARGET \n'
-POST_ACTION += 'cd .. && bash mksdimg.sh ' + os.getcwd() + ' Image \n'
+POST_ACTION += './combine.sh && cd .. && bash mksdimg.sh ' + os.getcwd() + ' Image \n'
