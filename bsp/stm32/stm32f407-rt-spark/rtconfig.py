@@ -19,7 +19,8 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = r'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
+    PLATFORM    = 'armclang'  #KEIL AC6
+    #PLATFORM    = 'armcc'     #KEIL AC5
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iccarm'
@@ -28,7 +29,7 @@ elif CROSS_TOOL == 'llvm-arm':
     PLATFORM    = 'llvm-arm'
     EXEC_PATH   = r'D:\Progrem\LLVMEmbeddedToolchainForArm-17.0.1-Windows-x86_64\bin'
 
-if os.getenv('RTT_EXEC_PATH'):
+if os.getenv('RTT_EXEC_PATH') and CROSS_TOOL == 'gcc':
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
