@@ -390,6 +390,10 @@ static rt_ssize_t stm32_transmit(struct rt_serial_device     *serial,
 
     if (uart->uart_dma_flag & RT_DEVICE_FLAG_DMA_TX)
     {
+#if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+        struct rt_serial_tx_fifo *tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
+        SCB_CleanDCache_by_Addr((uint32_t *)tx_fifo->rb.buffer_ptr, tx_fifo->rb.buffer_size);
+#endif    
         HAL_UART_Transmit_DMA(&uart->handle, buf, size);
         return size;
     }
