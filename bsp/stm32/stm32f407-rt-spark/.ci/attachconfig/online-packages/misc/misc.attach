@@ -1,4 +1,0 @@
-# scons: --strict
-
-# MultiButton
-CONFIG_PKG_USING_MULTIBUTTON=y
