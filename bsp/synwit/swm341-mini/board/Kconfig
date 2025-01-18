@@ -184,38 +184,39 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS (software simulation)"
+    config RT_USING_I2C
+        bool
         default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C
-            config BSP_USING_I2C0
-                bool "Enable I2C0"
+        if RT_USING_I2C
+            config RT_USING_SOFT_I2C
+                bool "Enable software I2C BUS"
                 default n
-                if BSP_USING_I2C0
-                    config BSP_I2C0_SCL_PIN
-                        int "I2C0 scl pin number"
-                        range 0 111
-                        default 1
-                    config BSP_I2C0_SDA_PIN
-                        int "I2C0 sda pin number"
-                        range 0 111
-                        default 0
-                endif
-            config BSP_USING_I2C1
-                bool "Enable I2C1"
-                default n
-                if BSP_USING_I2C1
-                    config BSP_I2C1_SCL_PIN
-                        int "I2C1 scl pin number"
-                        range 0 111
-                        default 37
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 0 111
-                        default 36
+                if RT_USING_SOFT_I2C
+                    menuconfig RT_USING_SOFT_I2C0
+                        bool "Enable I2C0 Bus (software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C0
+                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                            config RT_SOFT_I2C0_SCL_PIN
+                                int "i2c0 scl pin number"                        
+                                range 0 111
+                                default 1
+                            config RT_SOFT_I2C0_SDA_PIN
+                                int "i2c0 sda pin number"                                
+                                range 0 111
+                                default 0
+                            config RT_SOFT_I2C0_BUS_NAME
+                                string "Bus name"
+                                default "i2c0"
+                            config RT_SOFT_I2C0_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C0_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
                 endif
         endif
 
@@ -369,8 +370,9 @@ menu "On-chip Peripheral Drivers"
         bool "Enable gt9147(use i2c0)"
         select RT_USING_TOUCH
         select RT_TOUCH_PIN_IRQ
-        select BSP_USING_I2C
-        select BSP_USING_I2C0
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C0
         select PKG_USING_GT9147
         select PKG_USING_GT9147_LATEST_VERSION
         default n

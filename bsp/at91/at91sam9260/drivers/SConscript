@@ -20,9 +20,6 @@ if GetDepend('RT_USING_SDIO'):
 if GetDepend('RT_USING_LWIP'):
     src += ['macb.c']
 
-if GetDepend('RT_USING_I2C') and GetDepend('RT_USING_I2C_BITOPS'):
-    src += ['at91_i2c_gpio.c']
-
 if GetDepend('RT_USING_MTD_NAND'):
     src += ['at91_nand.c']
 

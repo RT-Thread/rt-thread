@@ -126,21 +126,6 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number (PB.6)"
-                default 22
-            config BSP_I2C1_SDA_PIN
-                int "i2c1 sda pin number (PB.7)"
-                default 23
-        endif
-
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu

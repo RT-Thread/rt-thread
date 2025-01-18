@@ -72,30 +72,6 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
-        menuconfig BSP_USING_SOFT_I2C
-            bool "Enable software I2C bus"
-            select RT_USING_I2C
-            select RT_USING_I2C_BITOPS
-            select RT_USING_PIN
-            default n
-            if BSP_USING_SOFT_I2C
-                config BSP_USING_SOFT_I2C
-                menuconfig BSP_USING_I2C1
-                    bool "Enable I2C1 Bus (software simulation)"
-                    default n
-                    if BSP_USING_I2C1
-                        comment "Please refer to the 'bsp_io.h' file to configure the pins"
-                        config BSP_I2C1_SCL_PIN
-                            hex "i2c1 scl pin number (hex)"
-                            range 0x0000 0xFFFF
-                            default 0x0B03
-                        config BSP_I2C1_SDA_PIN
-                            hex "i2c1 sda pin number (hex)"
-                            range 0x0000 0xFFFF
-                            default 0x050E
-                    endif
-            endif
-
         menuconfig BSP_USING_SPI
             bool "Enable SPI BUS"
             default n

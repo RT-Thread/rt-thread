@@ -19,11 +19,6 @@ if GetDepend(['RT_USING_SERIAL']):
     else:
         src += ['drv_usart.c']
 
-# add i2c drivers.
-if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
-    if GetDepend('BSP_USING_I2C0') or GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3'):
-        src += ['drv_soft_i2c.c']
-
 # add spi drivers.
 if GetDepend('RT_USING_SPI'):
     src += ['drv_spi.c']

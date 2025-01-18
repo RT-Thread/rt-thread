@@ -185,24 +185,6 @@ menu "On-chip Peripheral Drivers"
             default 200000
     endif
 
-    menuconfig BSP_USING_SOFT_I2C
-        bool "Enable SOFT I2C"
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        default n
-
-        if BSP_USING_SOFT_I2C
-            config BSP_USING_SOFT_I2C1
-                bool "Enabel SOFT I2C1"
-                default n
-        endif
-
-        if BSP_USING_SOFT_I2C
-            config BSP_USING_SOFT_I2C2
-                bool "Enabel SOFT I2C2"
-                default n
-        endif
-
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_SPI

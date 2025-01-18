@@ -57,11 +57,6 @@ menuconfig BSP_USING_UART3
     endif
 endmenu
 
-config BSP_USING_I2C1
-    bool "Enable I2C1 (GPIO0/1)"
-    select RT_USING_I2C
-    default n
-
 menuconfig BSP_USING_SPI1
     bool "Enable SPI1"
     select RT_USING_SPI
