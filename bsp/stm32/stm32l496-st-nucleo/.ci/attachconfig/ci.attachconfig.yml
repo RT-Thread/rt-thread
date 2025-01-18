@@ -13,7 +13,7 @@ devices.on_chip:
       - CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE=2048
 device.usb.cdc:
    kconfig: 
-   - CONFIG__RT_USB_DEVICE_CDC=y
+   - CONFIG_RT_USB_DEVICE_CDC=y
    - CONFIG_BSP_USING_USBD=y
 pkg.tools.coremark:
    kconfig: 
