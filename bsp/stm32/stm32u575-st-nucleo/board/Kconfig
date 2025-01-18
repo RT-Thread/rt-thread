@@ -15,8 +15,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM1_CH3
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH4
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C1
         select BSP_USING_SPI
         select BSP_USING_SPI1
         select BSP_SPI1_TX_USING_DMA
@@ -169,26 +170,39 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS"
+    config RT_USING_I2C
+        bool
         default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 BUS (software simulation)"
-                default y
-                if BSP_USING_I2C1
-                    comment "Notice: PB8 --> 24; PB9 --> 25" 
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 1 176
-                        default 24
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 1 176
-                        default 25
+        if RT_USING_I2C
+            config RT_USING_SOFT_I2C
+                bool "Enable software I2C BUS"
+                default n
+                if RT_USING_SOFT_I2C
+                    menuconfig RT_USING_SOFT_I2C1
+                        bool "Enable I2C1 Bus (software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C1
+                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                            config RT_SOFT_I2C1_SCL_PIN
+                                int "i2c1 scl pin number"                        
+                                range 1 179
+                                default 24
+                            config RT_SOFT_I2C1_SDA_PIN
+                                int "i2c1 sda pin number"                                
+                                range 1 176
+                                default 25
+                            config RT_SOFT_I2C1_BUS_NAME
+                                string "Bus name"
+                                default "i2c1"
+                            config RT_SOFT_I2C1_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C1_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
                 endif
         endif
 

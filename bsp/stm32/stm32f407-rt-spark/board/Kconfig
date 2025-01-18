@@ -22,9 +22,10 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM2_CH4
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH1
-        select BSP_USING_I2C
-        select BSP_USING_I2C4
-        select BSP_USING_I2C5
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C4
+        select RT_USING_SOFT_I2C5
         select BSP_USING_SOFT_SPI
         select BSP_USING_SOFT_SPI1
         imply RTDUINO_USING_SERVO
@@ -124,7 +125,9 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C1
         default n
 
     config BSP_USING_ENC28j60
@@ -214,24 +217,27 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_AHT21
         bool "Enable AHT21(i2c3)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C3
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C3
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_AHT10
         default n
 
     config BSP_USING_AP3216C
         bool "Enable AP3216C(i2c2)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C2
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_AP3216C
         default n
 
     config BSP_USING_ICM20608
         bool "Enable ICM20608(i2c2)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C2
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_ICM20608
         default n
@@ -543,93 +549,139 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C"
+    config RT_USING_I2C
+        bool
         default n
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 BUS (software simulation)"
+        if RT_USING_I2C
+            config RT_USING_SOFT_I2C
+                bool "Enable software I2C BUS"
                 default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C1
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 0 143
-                        default 24
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 0 143
-                        default 25
-                endif
-
-            menuconfig BSP_USING_I2C2
-                bool "Enable I2C2 BUS for AP3216C/ICM20608/ES8388/ Onboard(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C2
-                    config BSP_I2C2_SCL_PIN
-                        int "i2c2 scl pin number, PF1"
-                        range 0 143
-                        default 81
-                    config BSP_I2C2_SDA_PIN
-                        int "I2C2 sda pin number, PF0"
-                        range 0 143
-                        default 80
-                endif
-
-            menuconfig BSP_USING_I2C3
-                bool "Enable I2C3 BUS for AHT21 Onboard(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C3
-                    config BSP_I2C3_SCL_PIN
-                        int "i2c3 scl pin number, PE0"
-                        range 0 143
-                        default 64
-                    config BSP_I2C3_SDA_PIN
-                        int "I2C3 sda pin number, PE1"
-                        range 0 143
-                        default 65
-                endif
-            
-            menuconfig BSP_USING_I2C4
-                bool "Enable I2C4 BUS for RTduino(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C4
-                    config BSP_I2C4_SCL_PIN
-                        int "i2c4 scl pin number, PG7"
-                        range 0 143
-                        default 103
-                    config BSP_I2C4_SDA_PIN
-                        int "I2C4 sda pin number, PD7"
-                        range 0 143
-                        default 55
-                endif
-                
-            menuconfig BSP_USING_I2C5
-                bool "Enable I2C5 BUS for RTduino(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C5
-                    config BSP_I2C5_SCL_PIN
-                        int "i2c5 scl pin number, PB6"
-                        range 0 143
-                        default 22
-                    config BSP_I2C5_SDA_PIN
-                        int "I2C5 sda pin number, PB7"
-                        range 0 143
-                        default 23
+                if RT_USING_SOFT_I2C
+                    menuconfig RT_USING_SOFT_I2C1
+                        bool "Enable I2C0 Bus (software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C1
+                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                            config RT_SOFT_I2C1_SCL_PIN
+                                int "i2c1 scl pin number"
+                                range 1 143
+                                default 24
+                            config RT_SOFT_I2C1_SDA_PIN
+                                int "i2c1 sda pin number"
+                                range 1 143
+                                default 25
+                            config RT_SOFT_I2C1_BUS_NAME
+                                string "Bus name"
+                                default "i2c1"
+                            config RT_SOFT_I2C1_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C1_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
+                    menuconfig RT_USING_SOFT_I2C2
+                        bool "Enable I2C2 BUS for AP3216C/ICM20608/ES8388/ Onboard(software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C2
+                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                            config RT_SOFT_I2C2_SCL_PIN
+                                int "i2c2 scl pin number"
+                                range 1 143
+                                default 24
+                            config RT_SOFT_I2C2_SDA_PIN
+                                int "i2c2 sda pin number"
+                                range 1 143
+                                default 25
+                            config RT_SOFT_I2C2_BUS_NAME
+                                string "Bus name"
+                                default "i2c2"
+                            config RT_SOFT_I2C2_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C2_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
+                    menuconfig RT_USING_SOFT_I2C3
+                        bool "Enable I2C3 BUS for AHT21 Onboard(software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C3
+                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                            config RT_SOFT_I2C3_SCL_PIN
+                                int "i2c3 scl pin number"
+                                range 1 143
+                                default 64
+                            config RT_SOFT_I2C3_SDA_PIN
+                                int "i2c3 sda pin number"
+                                range 1 143
+                                default 65
+                            config RT_SOFT_I2C3_BUS_NAME
+                                string "Bus name"
+                                default "i2c3"
+                            config RT_SOFT_I2C3_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C3_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
+                    menuconfig RT_USING_SOFT_I2C4
+                        bool "Enable I2C4 BUS for RTduino(software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C4
+                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                            config RT_SOFT_I2C4_SCL_PIN
+                                int "i2c4 scl pin number"
+                                range 1 143
+                                default 103
+                            config RT_SOFT_I2C4_SDA_PIN
+                                int "i2c4 sda pin number"
+                                range 1 143
+                                default 55
+                            config RT_SOFT_I2C4_BUS_NAME
+                                string "Bus name"
+                                default "i2c4"
+                            config RT_SOFT_I2C4_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C4_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
+                    menuconfig RT_USING_SOFT_I2C5
+                        bool "Enable I2C5 BUS for RTduino(software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C5
+                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                            config RT_SOFT_I2C5_SCL_PIN
+                                int "i2c5 scl pin number"
+                                range 1 143
+                                default 22
+                            config RT_SOFT_I2C5_SDA_PIN
+                                int "i2c5 sda pin number"
+                                range 1 143
+                                default 23
+                            config RT_SOFT_I2C5_BUS_NAME
+                                string "Bus name"
+                                default "i2c5"
+                            config RT_SOFT_I2C5_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C5_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
                 endif
         endif
 

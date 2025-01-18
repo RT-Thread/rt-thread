@@ -14,8 +14,9 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_PMIC
         bool "Enable PMIC"
-        select BSP_USING_I2C
-        select BSP_USING_I2C3
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C3
         default y
 
     config BSP_USING_PWR
@@ -81,8 +82,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SDMMC
         select BSP_USING_SDCARD
         select SD_USING_DFS
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C2
         default n
 
     config BSP_USING_DCMI
@@ -91,8 +93,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PMIC
     select BSP_USING_SDMMC
         select BSP_USING_SDCARD
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C2
         default n
 
     config BSP_USING_MFX
@@ -250,54 +253,64 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS (software simulation)"
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
+    config RT_USING_I2C
+        bool
         default n
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 BUS (software simulation)"
+        if RT_USING_I2C
+            config RT_USING_SOFT_I2C
+                bool "Enable software I2C BUS"
                 default n
-                if BSP_USING_I2C1
-                    comment "Notice: PD7 --> 55; PG15 --> 111"
-                    config BSP_I2C1_SCL_PIN
-                        int "I2C1 scl pin number"
-                        range 1 176
-                        default 55
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 1 176
-                        default 111
-                endif
-            menuconfig BSP_USING_I2C2
-                bool "Enable I2C2 BUS (software simulation)"
-                default n
-                if BSP_USING_I2C2
-                    comment "Notice: PH4 --> 116; PH5 --> 117"
-                    config BSP_I2C2_SCL_PIN
-                        int "i2c2 scl pin number"
-                        range 1 176
-                        default 116
-                    config BSP_I2C2_SDA_PIN
-                        int "I2C2 sda pin number"
-                        range 1 176
-                        default 117
-                endif
-        menuconfig BSP_USING_I2C3
-                bool "Enable I2C3 BUS (software simulation)"
-                default n
-                if BSP_USING_I2C3
-                    comment "Notice: PZ4 --> 180; PZ5 --> 181"
-                    config BSP_I2C3_SCL_PIN
-                        int "i2c3 scl pin number"
-                        range 1 191
-                        default 180
-                    config BSP_I2C3_SDA_PIN
-                        int "I2C3 sda pin number"
-                        range 1 191
-                        default 181
+                if RT_USING_SOFT_I2C
+                    menuconfig RT_USING_SOFT_I2C2
+                        bool "Enable I2C2 Bus (software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C2
+                            comment "Notice: PH4 --> 116; PH5 --> 117"
+                            config RT_SOFT_I2C2_SCL_PIN
+                                int "i2c2 scl pin number"                        
+                                range 1 176
+                                default 116
+                            config RT_SOFT_I2C2_SDA_PIN
+                                int "i2c2 sda pin number"                                
+                                range 1 176
+                                default 25
+                            config RT_SOFT_I2C2_BUS_NAME
+                                string "Bus name"
+                                default "i2c2"
+                            config RT_SOFT_I2C2_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C2_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
+                    menuconfig RT_USING_SOFT_I2C3
+                        bool "Enable I2C2 Bus (software simulation)"
+                        default n
+                        if RT_USING_SOFT_I2C3
+                            comment "Notice: PZ4 --> 180; PZ5 --> 181"
+                            config RT_SOFT_I2C3_SCL_PIN
+                                int "i2c3 scl pin number"                        
+                                range 1 191
+                                default 180
+                            config RT_SOFT_I2C3_SDA_PIN
+                                int "i2c3 sda pin number"                                
+                                range 1 191
+                                default 181
+                            config RT_SOFT_I2C3_BUS_NAME
+                                string "Bus name"
+                                default "i2c3"
+                            config RT_SOFT_I2C3_TIMING_DELAY
+                                int "Timing delay (us)"
+                                range 0 32767
+                                default 10
+                            config RT_SOFT_I2C3_TIMING_TIMEOUT
+                                int "Timing timeout (tick)"
+                                range 0 32767
+                                default 10
+                        endif
                 endif
         endif
 

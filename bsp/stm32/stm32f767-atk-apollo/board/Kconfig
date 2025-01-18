@@ -165,24 +165,6 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25"
-            config BSP_I2C1_SCL_PIN
-                int "I2C1 scl pin number"
-                range 1 176
-                default 24
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 1 176
-                default 25
-        endif
-
     menuconfig BSP_USING_I2C2
         bool "Enable I2C2 BUS (software simulation)"
         default n

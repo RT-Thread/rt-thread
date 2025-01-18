@@ -68,46 +68,6 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-
-
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 BUS (software simulation)"
-                default y
-                if BSP_USING_I2C1
-                    comment "Notice: PB8 --> 24; PB9 --> 25"
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 1 143
-                        default 24
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 1 143
-                        default 25
-                endif
-
-            menuconfig BSP_USING_I2C3
-                bool "Enable I2C3 BUS (software simulation)"
-                default y
-                if BSP_USING_I2C3
-                    comment "Notice: PB13 --> 29; PAB6 -->30"
-                    config BSP_I2C3_SCL_PIN
-                        int "i2c3 scl pin number"
-                        range 1 143
-                        default 29
-                    config BSP_I2C3_SDA_PIN
-                        int "I2C3 sda pin number"
-                        range 1 143
-                        default 30
-                endif
-        endif
-
     menuconfig BSP_USING_TIM
         bool "Enable timer"
         default n
