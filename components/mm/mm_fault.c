@@ -185,14 +185,21 @@ int rt_aspace_fault_try_fix(rt_aspace_t aspace, struct rt_aspace_fault_msg *msg)
                 case MM_FAULT_OP_EXECUTE:
                     err = _exec_fault(varea, pa, msg);
                     break;
+                default:
+                    LOG_D("Unhandle exception");
+                    break;
                 }
             }
         }
         else
         {
-            LOG_I("%s: varea not found at 0x%lx", __func__, msg->fault_vaddr);
+            LOG_W("%s: varea not found at 0x%lx", __func__, msg->fault_vaddr);
         }
         RD_UNLOCK(aspace);
+    }
+    else
+    {
+        LOG_W("No aspace found");
     }
 
     return err;

@@ -296,6 +296,17 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
             mapper = _kernel_map_2M;
         }
 
+        /* check aliasing */
+        #ifdef RT_DEBUGGING_ALIASING
+        #define _ALIAS_OFFSET(addr) ((long)(addr) & (RT_PAGE_AFFINITY_BLOCK_SIZE - 1))
+        if (rt_page_is_member((rt_base_t)p_addr) && _ALIAS_OFFSET(v_addr) != _ALIAS_OFFSET(p_addr))
+        {
+            LOG_W("Possibly aliasing on va(0x%lx) to pa(0x%lx)", v_addr, p_addr);
+            rt_backtrace();
+            RT_ASSERT(0);
+        }
+        #endif /* RT_DEBUGGING_ALIASING */
+
         MM_PGTBL_LOCK(aspace);
         ret = mapper(aspace->page_table, v_addr, p_addr, attr);
         MM_PGTBL_UNLOCK(aspace);

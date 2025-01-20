@@ -503,29 +503,99 @@ void *lwp_user_memory_remap_to_kernel(rt_lwp_t lwp, void *uaddr, size_t length)
 
     return kaddr;
 }
+#include <dfs_dentry.h>
+#define _AFFBLK_PGOFFSET (RT_PAGE_AFFINITY_BLOCK_SIZE >> MM_PAGE_SHIFT)
+
+static rt_base_t _aligned_for_weak_mapping(off_t *ppgoff, rt_size_t *plen, rt_size_t *palign)
+{
+    off_t aligned_pgoffset, pgoffset = *ppgoff;
+    rt_size_t length = *plen;
+    rt_size_t min_align_size = *palign;
+    rt_base_t aligned_size = 0;
+
+    if (pgoffset >= 0)
+    {
+        /* force an alignment */
+        aligned_pgoffset =
+            RT_ALIGN_DOWN(pgoffset, RT_PAGE_AFFINITY_BLOCK_SIZE >> MM_PAGE_SHIFT);
+        aligned_size = (pgoffset - aligned_pgoffset) << MM_PAGE_SHIFT;
+
+        if (aligned_pgoffset != pgoffset)
+        {
+            /**
+             * If requested pgoffset is not sitting on an aligned page offset,
+             * expand the request mapping to force an alignment.
+             */
+            length += aligned_size;
+            pgoffset = aligned_pgoffset;
+        }
+
+        /**
+         * As this is a weak mapping, we can pick any reasonable address for our
+         * requirement.
+         */
+        min_align_size = RT_PAGE_AFFINITY_BLOCK_SIZE;
+    }
+    else
+    {
+        RT_ASSERT(0 && "Unexpected input");
+    }
+
+    *ppgoff = pgoffset;
+    *plen = length;
+    *palign = min_align_size;
+
+    return aligned_size;
+}
 
 void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
                 int flags, int fd, off_t pgoffset)
 {
     rt_err_t rc;
-    rt_size_t k_attr;
-    rt_size_t k_flags;
-    rt_size_t k_offset;
+    rt_size_t k_attr, k_flags, k_offset, aligned_size = 0;
+    rt_size_t min_align_size = 1 << MM_PAGE_SHIFT;
     rt_aspace_t uspace;
     rt_mem_obj_t mem_obj;
     void *ret = 0;
-    LOG_D("%s(addr=0x%lx,length=%ld,fd=%d)", __func__, addr, length, fd);
+    LOG_D("%s(addr=0x%lx,length=0x%lx,fd=%d,pgoff=0x%lx)", __func__, addr, length, fd, pgoffset);
+
+    /* alignment for affinity page block */
+    if (flags & MAP_FIXED)
+    {
+        if (fd != -1)
+        {
+            /* requested mapping address */
+            rt_base_t va_affid = RT_PAGE_PICK_AFFID(addr);
+            rt_base_t pgoff_affid = RT_PAGE_PICK_AFFID(pgoffset << MM_PAGE_SHIFT);
+
+            /* filter illegal align address */
+            if (va_affid != pgoff_affid)
+            {
+                LOG_W("Unaligned mapping address %p(pgoff=0x%lx) from fd=%d",
+                    addr, pgoffset, fd);
+            }
+        }
+        else
+        {
+            /* anonymous mapping can always aligned */
+        }
+    }
+    else
+    {
+        /* weak address selection */
+        aligned_size = _aligned_for_weak_mapping(&pgoffset, &length, &min_align_size);
+    }
 
     if (fd == -1)
     {
-        /**
-         * todo: add threshold
-         */
+    #ifdef RT_DEBUGGING_PAGE_THRESHOLD
         if (!_memory_threshold_ok())
             return (void *)-ENOMEM;
+    #endif /* RT_DEBUGGING_PAGE_THRESHOLD */
 
         k_offset = MM_PA_TO_OFF(addr);
-        k_flags = lwp_user_mm_flag_to_kernel(flags) | MMF_MAP_PRIVATE;
+        k_flags = MMF_CREATE(lwp_user_mm_flag_to_kernel(flags) | MMF_MAP_PRIVATE,
+                             min_align_size);
         k_attr = lwp_user_mm_attr_to_kernel(prot);
 
         uspace = lwp->aspace;
@@ -553,6 +623,7 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
 
             mmap2.addr = addr;
             mmap2.length = length;
+            mmap2.min_align_size = min_align_size;
             mmap2.prot = prot;
             mmap2.flags = flags;
             mmap2.pgoffset = pgoffset;
@@ -572,7 +643,15 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
     }
 
     if ((long)ret <= 0)
+    {
         LOG_D("%s() => %ld", __func__, ret);
+    }
+    else
+    {
+        ret = (char *)ret + aligned_size;
+        LOG_D("%s() => 0x%lx", __func__, ret);
+    }
+
     return ret;
 }
 

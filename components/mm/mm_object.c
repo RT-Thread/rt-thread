@@ -34,7 +34,8 @@ static const char *get_name(rt_varea_t varea)
 static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     void *page;
-    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+    int affid = RT_PAGE_PICK_AFFID(msg->fault_vaddr);
+    page = rt_pages_alloc_tagged(0, affid, PAGE_ANY_AVAILABLE);
 
     if (!page)
     {

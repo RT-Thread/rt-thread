@@ -1149,12 +1149,17 @@ static void *_ascending_search(rt_varea_t varea, rt_size_t req_size,
         rt_varea_t nx_va = ASPACE_VAREA_NEXT(varea);
         if (nx_va)
         {
-            rt_size_t gap_size =
-                (char *)_lower(limit.end, (char *)nx_va->start - 1) - candidate + 1;
-            if (gap_size >= req_size)
+            if (candidate < (char *)nx_va->start)
             {
-                ret = candidate;
-                break;
+                rt_size_t gap_size =
+                    (char *)_lower(limit.end, (char *)nx_va->start - 1) -
+                    candidate + 1;
+
+                if (gap_size >= req_size)
+                {
+                    ret = candidate;
+                    break;
+                }
             }
         }
         else
@@ -1172,15 +1177,16 @@ static void *_find_head_and_asc_search(rt_aspace_t aspace, rt_size_t req_size,
                                        struct _mm_range limit)
 {
     void *va = RT_NULL;
+    char *candidate = _align(limit.start, align_mask);
 
-    rt_varea_t varea = _aspace_bst_search_exceed(aspace, limit.start);
+    rt_varea_t varea = _aspace_bst_search_exceed(aspace, candidate);
     if (varea)
     {
-        char *candidate = _align(limit.start, align_mask);
         rt_size_t gap_size = (char *)varea->start - candidate;
         if (gap_size >= req_size)
         {
-            rt_varea_t former = _aspace_bst_search(aspace, limit.start);
+            /* try previous memory region of varea if possible */
+            rt_varea_t former = ASPACE_VAREA_PREV(varea);
             if (former)
             {
                 candidate = _align((char *)former->start + former->size, align_mask);
@@ -1203,12 +1209,7 @@ static void *_find_head_and_asc_search(rt_aspace_t aspace, rt_size_t req_size,
     }
     else
     {
-        char *candidate;
-        rt_size_t gap_size;
-
-        candidate = limit.start;
-        candidate = _align(candidate, align_mask);
-        gap_size = (char *)limit.end - candidate + 1;
+        rt_size_t gap_size = (char *)limit.end - candidate + 1;
 
         if (gap_size >= req_size)
             va = candidate;
@@ -1217,6 +1218,12 @@ static void *_find_head_and_asc_search(rt_aspace_t aspace, rt_size_t req_size,
     return va;
 }
 
+/**
+ * Find a memory region that:
+ * - is free
+ * - sits inside the limit range
+ * - meets the alignment requirement
+ */
 static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
                         void *limit_start, rt_size_t limit_size,
                         mm_flag_t flags)
@@ -1231,20 +1238,42 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
         align_mask = ~((1 << MMF_GET_ALIGN(flags)) - 1);
     }
 
-    if (prefer != RT_NULL)
+    if (flags & MMF_MAP_FIXED)
     {
-        /* if prefer and free, just return the prefer region */
-        prefer = _align(prefer, align_mask);
         struct _mm_range range = {prefer, (char *)prefer + req_size - 1};
-        varea = _aspace_bst_search_overlap(aspace, range);
 
+        /* caller should guarantee that the request region is legal */
+        RT_ASSERT(!_not_in_range(flags, prefer, req_size, limit_start, limit_size));
+
+        varea = _aspace_bst_search_overlap(aspace, range);
         if (!varea)
         {
             va = prefer;
         }
-        else if (flags & MMF_MAP_FIXED)
+        else
         {
-            /* OVERLAP */
+            /* region not freed */
+        }
+    }
+    else if (prefer != RT_NULL)
+    {
+        struct _mm_range range;
+
+        /* ceiling the prefer address */
+        prefer = _align(prefer, align_mask);
+        if (_not_in_range(flags, prefer, req_size, limit_start, limit_size))
+        {
+            prefer = limit_start;
+        }
+
+        range.start = prefer;
+        range.end = (char *)prefer + req_size - 1;
+        varea = _aspace_bst_search_overlap(aspace, range);
+
+        if (!varea)
+        {
+            /* if preferred and free, just return the prefer region */
+            va = prefer;
         }
         else
         {
