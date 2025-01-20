@@ -43,6 +43,7 @@ ncscope.*
 tags
 
 .idea
+**/.cache/
 .vscode
 *.code-workspace
 *.eide.*
@@ -58,3 +59,7 @@ vdso.lds
 # cherryusb libraries
 !components/drivers/usb/cherryusb/port/pusb2/*.a
 !components/drivers/usb/cherryusb/port/xhci/phytium/*.a
+
+# stm32cubemx
+**/CubeMX_Config/Drivers/
+**/CubeMX_Config/MDK-ARM/
