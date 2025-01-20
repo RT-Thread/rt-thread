@@ -31,10 +31,4 @@ typedef uint64_t fsfilcnt_t;
 #define __LONG_MAX INT32_MAX
 #endif /* __GNUC__ */
 
-struct iovec
-{
-    void *iov_base; /* Base address. */
-    size_t iov_len; /* Length. */
-};
-
 #endif
