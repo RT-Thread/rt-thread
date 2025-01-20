@@ -40,7 +40,6 @@
 #include <mm_aspace.h>
 #include <lwp_user_mm.h>
 #include <lwp_arch.h>
-#include <bsd_porting.h>
 #endif
 
 #include <fcntl.h>
