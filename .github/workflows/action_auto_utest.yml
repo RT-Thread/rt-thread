@@ -1,4 +1,4 @@
-name: AutoTestCI
+name: action_auto_utest
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -33,21 +33,9 @@ jobs:
       fail-fast: false
       matrix:
        legs:
-         - {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/mem.conf",     SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/ipc",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/ipc.conf",     SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/irq",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/irq.conf",     SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/timer",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/timer.conf",   SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/thread",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/thread.conf",  SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/device",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/device.conf",  SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/atomic",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/atomic.conf",  SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/atomic_c11",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/atomic_c11.conf",  SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "components/cpp11", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "cpp11/cpp11.conf",    SD_FILE: "sd.bin", RUN: "yes"}
-         - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/mem.conf",   SD_FILE: "None", RUN: "yes"}
-         - {UTEST: "kernel/atomic/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/atomic.conf",   SD_FILE: "None", RUN: "yes"}
-         - {UTEST: "kernel/atomic_c11/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/atomic_c11.conf",   SD_FILE: "None", RUN: "yes"}
-         - {UTEST: "rtsmart/arm",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
-         - {UTEST: "rtsmart/aarch64", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
-         - {UTEST: "rtsmart/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv",   QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "None", RUN: "yes"}
+         - {UTEST: "qemu-vexpress-a9", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "qemu-virt64-aarch64", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "utest_self/self.conf",   SD_FILE: "sd.bin", RUN: "no"}
+         - {UTEST: "qemu-virt64-riscv", RTT_BSP: "bsp/qemu-virt64-riscv",   QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "utest_self/self.conf",   SD_FILE: "None", RUN: "yes"}
     env:
       TEST_QEMU_ARCH: ${{ matrix.legs.QEMU_ARCH }}
       TEST_QEMU_MACHINE: ${{ matrix.legs.QEMU_MACHINE }}
@@ -136,15 +124,33 @@ jobs:
     - name: Start run Test
       if: ${{matrix.legs.RUN == 'yes' && success() }}
       run: |
-        git clone https://github.com/armink/UtestRunner.git
-        pushd $TEST_BSP_ROOT
-        dd if=/dev/zero of=sd.bin bs=1024 count=65536
-        popd
-        pushd UtestRunner
         if [ $TEST_SD_FILE != "None" ]; then
-          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.bin --sd ../$TEST_BSP_ROOT/$TEST_SD_FILE
+          dd if=/dev/zero of=$TEST_BSP_ROOT/sd.bin bs=1024 count=65536
+          qemu-system-$TEST_QEMU_ARCH -nographic -M $TEST_QEMU_MACHINE -kernel $TEST_BSP_ROOT/rtthread.bin -nographic -sd $TEST_BSP_ROOT/sd.bin > qemu_output_${TEST_QEMU_ARCH}.log 2>&1 &
         else
-          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.bin
+          qemu-system-$TEST_QEMU_ARCH -nographic -M $TEST_QEMU_MACHINE -kernel $TEST_BSP_ROOT/rtthread.bin -nographic > qemu_output_${TEST_QEMU_ARCH}.log 2>&1 &
         fi
-        cat rtt_console.log
-        popd
+
+    - name: Monitor qemu log
+      if: ${{matrix.legs.RUN == 'yes' && success() }}
+      run: |
+        FAILURE_DETECTED=false
+        ERROR_LOGS=""
+        
+        tail -n 0 -f qemu_output_${TEST_QEMU_ARCH}.log | while read line; do
+          echo $line
+          if [[ "$line" == *"[  FAILED  ] [ result   ]"* ]]; then
+            ERROR_LOGS="$ERROR_LOGS$line"$'\n'
+            FAILURE_DETECTED=true
+          fi
+          
+          if [[ "$line" == *"[==========] [ utest    ] end"* ]]; then
+            echo "Utest run completed. Exiting log monitoring..."
+            if $FAILURE_DETECTED; then
+              echo "Error: Failures detected in logs. Below are the failure details..."
+              echo "$ERROR_LOGS"
+              exit 1
+            fi
+            break
+          fi
+        done
