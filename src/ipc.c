@@ -979,6 +979,25 @@ static void _mutex_before_delete_detach(rt_mutex_t mutex)
  * @addtogroup mutex
  * @{
  */
+#define LEGAL_CTRL_FLAGS (RT_MTX_CTRL_FLAG_NO_RECUR | RT_IPC_FLAG_PRIO | RT_IPC_FLAG_FIFO)
+static void _mutex_init(rt_mutex_t mutex, rt_uint8_t ctrl_flags)
+{
+    RT_ASSERT(!(~LEGAL_CTRL_FLAGS & ctrl_flags));
+
+    /* initialize ipc object */
+    _ipc_object_init(&(mutex->parent));
+
+    mutex->owner    = RT_NULL;
+    mutex->priority = 0xFF;
+    mutex->hold     = 0;
+    mutex->ceiling_priority = 0xFF;
+    mutex->ctrl_flags = ctrl_flags;
+    rt_list_init(&(mutex->taken_list));
+
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
+    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
+    rt_spin_lock_init(&(mutex->spinlock));
+}
 
 /**
  * @brief    Initialize a static mutex object.
@@ -995,9 +1014,11 @@ static void _mutex_before_delete_detach(rt_mutex_t mutex)
  *
  * @param    name is a pointer to the name that given to the mutex.
  *
- * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
- *           when the mutex is not available.
- *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
+ * @param    flag is the mutex flag, which determines specified behaviors:
+ *               - RT_MTX_CTRL_FLAG_DEFAULT create a mutex with default behavior
+ *               - RT_MTX_CTRL_FLAG_NO_RECUR create a mutex without recursive taken
+ *               - [[obsoleted]] RT_IPC_FLAG_PRIO
+ *               - [[obsoleted]] RT_IPC_FLAG_FIFO
  *
  * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
  *           If the return value is any other values, it represents the initialization failed.
@@ -1006,27 +1027,13 @@ static void _mutex_before_delete_detach(rt_mutex_t mutex)
  */
 rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
 {
-    /* flag parameter has been obsoleted */
-    RT_UNUSED(flag);
-
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
 
     /* initialize object */
     rt_object_init(&(mutex->parent.parent), RT_Object_Class_Mutex, name);
 
-    /* initialize ipc object */
-    _ipc_object_init(&(mutex->parent));
-
-    mutex->owner    = RT_NULL;
-    mutex->priority = 0xFF;
-    mutex->hold     = 0;
-    mutex->ceiling_priority = 0xFF;
-    rt_list_init(&(mutex->taken_list));
-
-    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
-    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
-    rt_spin_lock_init(&(mutex->spinlock));
+    _mutex_init(mutex, flag);
 
     return RT_EOK;
 }
@@ -1222,9 +1229,11 @@ RTM_EXPORT(rt_mutex_getprioceiling);
  *
  * @param    name is a pointer to the name that given to the mutex.
  *
- * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
- *           when the mutex is not available.
- *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
+ * @param    flag is the mutex flag, which determines specified behaviors:
+ *               - RT_MTX_CTRL_FLAG_DEFAULT create a mutex with default behavior
+ *               - RT_MTX_CTRL_FLAG_NO_RECUR create a mutex without recursive taken
+ *               - [[obsoleted]] RT_IPC_FLAG_PRIO
+ *               - [[obsoleted]] RT_IPC_FLAG_FIFO
  *
  * @return   Return a pointer to the mutex object. When the return value is RT_NULL, it means the creation failed.
  *
@@ -1234,9 +1243,6 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
 {
     struct rt_mutex *mutex;
 
-    /* flag parameter has been obsoleted */
-    RT_UNUSED(flag);
-
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* allocate object */
@@ -1244,18 +1250,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
     if (mutex == RT_NULL)
         return mutex;
 
-    /* initialize ipc object */
-    _ipc_object_init(&(mutex->parent));
-
-    mutex->owner    = RT_NULL;
-    mutex->priority = 0xFF;
-    mutex->hold     = 0;
-    mutex->ceiling_priority = 0xFF;
-    rt_list_init(&(mutex->taken_list));
-
-    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
-    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
-    rt_spin_lock_init(&(mutex->spinlock));
+    _mutex_init(mutex, flag);
 
     return mutex;
 }
@@ -1351,7 +1346,8 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
     if (mutex->owner == thread)
     {
-        if (mutex->hold < RT_MUTEX_HOLD_MAX)
+        if (!(mutex->ctrl_flags & RT_MTX_CTRL_FLAG_NO_RECUR) &&
+            mutex->hold < RT_MUTEX_HOLD_MAX)
         {
             /* it's the same thread */
             mutex->hold ++;
