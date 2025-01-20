@@ -98,12 +98,17 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         default n
 
+    config BSP_USING_EXT_IO
+        bool
+        default y
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
+        select BSP_USING_TCA9539
         default y
 
     menuconfig BSP_USING_UART
@@ -338,11 +343,11 @@ menu "On-chip Peripheral Drivers"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 scl pin number"
                         range 1 176
-                        default 51
+                        default 8       # PA8
                     config BSP_I2C1_SDA_PIN
                         int "I2C1 sda pin number"
                         range 1 176
-                        default 90
+                        default 23      # PB7
                 endif
         endif
 
@@ -554,15 +559,30 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_ADC
         if BSP_USING_ADC
-            config BSP_USING_ADC1
-                bool "using adc1"
+            menuconfig BSP_USING_ADC1
+                bool "Enable ADC1"
                 default n
-            config BSP_USING_ADC2
-                bool "using adc2"
+                if BSP_USING_ADC1
+                    config BSP_ADC1_USING_DMA
+                        bool "using adc1 dma"
+                        default n
+                endif
+            menuconfig BSP_USING_ADC2
+                bool "Enable ADC2"
                 default n
-            config BSP_USING_ADC3
-                bool "using adc3"
+                if BSP_USING_ADC2
+                    config BSP_ADC2_USING_DMA
+                        bool "using adc2 dma"
+                        default n
+                endif
+            menuconfig BSP_USING_ADC3
+                bool "Enable ADC3"
                 default n
+                if BSP_USING_ADC3
+                    config BSP_ADC3_USING_DMA
+                        bool "using adc3 dma"
+                        default n
+                endif
         endif
 
     menuconfig BSP_USING_DAC
@@ -790,60 +810,94 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_USB
         bool "Enable USB"
         default n
-        select RT_USING_USB_DEVICE if BSP_USING_USBD
-        select RT_USING_USB_HOST if BSP_USING_USBH
         if BSP_USING_USB
-            choice
-                prompt "Select USB FS/HS Core"
-                default BSP_USING_USBFS
+            config BSP_USING_USBD
+                bool
+                default n
+            config BSP_USING_USBH
+                bool
+                default n
+            config BSP_USING_USBFS
+                bool "Use USBFS Core "
+                default n
+            if BSP_USING_USBFS
+                choice
+                    prompt "Select USB Mode"
+                    default BSP_USING_USBD_FS
 
-                config BSP_USING_USBFS
-                    bool "Use USBFS Core"
+                    config BSP_USING_USBD_FS
+                        bool "USB Device Mode"
+                        select BSP_USING_USBD
+                        select RT_USING_USB_DEVICE
 
-                config BSP_USING_USBHS
-                    bool "Use USBHS Core"
-            endchoice
-
-            choice
-                depends on BSP_USING_USBHS
-                prompt "Select USB PHY"
-                default BSP_USING_USBHS_PHY_EMBED
-
-                config BSP_USING_USBHS_PHY_EMBED
-                    bool "Use USBHS Embedded PHY"
-
-                config BSP_USING_USBHS_PHY_EXTERN
-                    bool "Use USBHS External PHY"
-                    select BSP_USING_I2C1
-                    select BSP_USING_TCA9539
-            endchoice
-
-            choice
-                prompt "Select USB Mode"
-                default BSP_USING_USBD
-
-                config BSP_USING_USBD
-                    bool "USB Device Mode"
-
-                config BSP_USING_USBH
-                    bool "USB Host Mode"
-            endchoice
-
-            if BSP_USING_USBD
-                config BSP_USING_USBD_VBUS_SENSING
-                    bool "Enable VBUS Sensing"
+                    config BSP_USING_USBH_FS
+                        bool "USB Host Mode"
+                        select BSP_USING_USBH
+                        select RT_USING_USB_HOST
+                endchoice
+                if BSP_USING_USBD_FS
+                    config BSP_USING_USBD_VBUS_SENSING
+                    bool "Enable VBUS Sensing for Device"
                     default y
+                endif
+                if BSP_USING_USBH_FS
+                    menuconfig RT_USBH_MSTORAGE
+                        bool "Enable Udisk Drivers for Host"
+                        default n
+                        if RT_USBH_MSTORAGE
+                            config UDISK_MOUNTPOINT
+                            string "Udisk mount dir"
+                            default "/"
+                        endif
+                endif
             endif
+            config BSP_USING_USBHS
+                bool "Use USBHS Core "
+                default n
+            if BSP_USING_USBHS
+                choice
+                    prompt "Select USB Mode"
+                    default BSP_USING_USBH_HS
 
-            if BSP_USING_USBH
-                menuconfig RT_USBH_MSTORAGE
-                    bool "Enable Udisk Drivers"
-                    default n
-                    if RT_USBH_MSTORAGE
-                        config UDISK_MOUNTPOINT
-                        string "Udisk mount dir"
-                        default "/"
-                    endif
+                    config BSP_USING_USBD_HS
+                        bool "USB Device Mode"
+                        select BSP_USING_USBD
+                        select RT_USING_USB_DEVICE
+                        depends on !BSP_USING_USBD_FS
+
+                    config BSP_USING_USBH_HS
+                        bool "USB Host Mode"
+                        select BSP_USING_USBH
+                        select RT_USING_USB_HOST
+                        depends on !BSP_USING_USBH_FS
+                endchoice
+                choice
+                    prompt "Select USB PHY"
+                    default BSP_USING_USBHS_PHY_EMBED
+
+                    config BSP_USING_USBHS_PHY_EMBED
+                        bool "Use USBHS Embedded PHY"
+
+                    config BSP_USING_USBHS_PHY_EXTERN
+                        bool "Use USBHS External PHY"
+                        select BSP_USING_I2C1
+                        select BSP_USING_TCA9539
+                endchoice
+                if BSP_USING_USBD_HS
+                    config BSP_USING_USBD_VBUS_SENSING
+                    bool "Enable VBUS Sensing for Device"
+                    default y
+                endif
+                if BSP_USING_USBH_HS
+                    menuconfig RT_USBH_MSTORAGE
+                        bool "Enable Udisk Drivers for Host"
+                        default n
+                        if RT_USBH_MSTORAGE
+                            config UDISK_MOUNTPOINT
+                            string "Udisk mount dir"
+                            default "/"
+                        endif
+                endif
             endif
         endif
 
@@ -926,7 +980,33 @@ menu "On-chip Peripheral Drivers"
                 bool "Use Timer_a12 As The Hw Timer"
                 default n
         endif
-
+    menuconfig BSP_USING_INPUT_CAPTURE
+        bool "Enable Input Capture"
+        default n
+        select RT_USING_INPUT_CAPTURE
+        if BSP_USING_INPUT_CAPTURE
+            menuconfig BSP_USING_INPUT_CAPTURE_TMR6
+                bool "Use Timer6 As The Input Capture"
+                default n
+                if BSP_USING_INPUT_CAPTURE_TMR6
+                    config BSP_USING_INPUT_CAPTURE_TMR6_1
+                        bool "unit 1"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_2
+                        bool "unit 2"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_3
+                        bool "unit 3"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_4
+                        bool "unit 4"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_5
+                        bool "unit 5"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_6
+                        bool "unit 6"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_7
+                        bool "unit 7"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_8
+                        bool "unit 8"
+                endif
+        endif
 endmenu
 
 menu "Board extended module Drivers"

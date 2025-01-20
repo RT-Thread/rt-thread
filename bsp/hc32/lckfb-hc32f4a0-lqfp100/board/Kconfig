@@ -104,6 +104,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
+        select BSP_USING_TCA9539
         default y
 
     menuconfig BSP_USING_UART

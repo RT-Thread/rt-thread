@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-06-12     CDT          first version
+ * 2024-06-14     CDT          Move common function SysTick_Configuration to _pm_run
  */
 
 #include <board.h>
@@ -158,19 +159,17 @@ static void _pm_sleep(struct rt_pm *pm, uint8_t mode)
 static void _run_switch_high_to_low(void)
 {
     struct pm_run_mode_config st_run_mode_cfg = PM_RUN_MODE_CFG;
-    st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_LOW_SPEED);
-    SysTick_Configuration();
 
+    st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_LOW_SPEED);
     PWC_HighSpeedToLowSpeed();
 }
 
 static void _run_switch_low_to_high(void)
 {
-    PWC_LowSpeedToHighSpeed();
     struct pm_run_mode_config st_run_mode_cfg = PM_RUN_MODE_CFG;
 
+    PWC_LowSpeedToHighSpeed();
     st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_HIGH_SPEED);
-    SysTick_Configuration();
 }
 
 static void _pm_run(struct rt_pm *pm, uint8_t mode)
@@ -183,6 +182,7 @@ static void _pm_run(struct rt_pm *pm, uint8_t mode)
     if (_run_switch_func[last_mode][mode] != RT_NULL)
     {
         _run_switch_func[last_mode][mode]();
+        SysTick_Configuration();
     }
 
     _uart_console_reconfig();
@@ -234,6 +234,14 @@ static void _pm_wakeup_timer_stop(struct rt_pm *pm)
     hc32_wktm_stop();
 }
 
+static rt_tick_t _timer_get_tick(struct rt_pm *pm)
+{
+    RT_ASSERT(pm != RT_NULL);
+
+    /* Get timeout tick */
+    return hc32_wktm_get_timeout_tick();
+}
+
 /**
  * This function initialize the power manager
  * @note timer feature: only work as wake up timer
@@ -246,7 +254,7 @@ int rt_hw_pm_init(void)
         _pm_run,
         _pm_wakeup_timer_start,
         _pm_wakeup_timer_stop,
-        RT_NULL
+        _timer_get_tick,
     };
 
     rt_uint8_t timer_mask = PM_TICKLESS_TIMER_ENABLE_MASK;

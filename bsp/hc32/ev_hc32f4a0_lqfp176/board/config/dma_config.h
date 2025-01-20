@@ -145,6 +145,15 @@ extern "C" {
 #define I2C2_RX_DMA_IRQn                BSP_DMA1_CH3_IRQ_NUM
 #define I2C2_RX_DMA_INT_PRIO            BSP_DMA1_CH3_IRQ_PRIO
 #define I2C2_RX_DMA_INT_SRC             INT_SRC_DMA1_TC3
+#elif defined(BSP_ADC1_USING_DMA) && !defined(ADC1_EOCA_DMA_INSTANCE)
+#define ADC1_EOCA_DMA_INSTANCE          CM_DMA1
+#define ADC1_EOCA_DMA_CHANNEL           DMA_CH3
+#define ADC1_EOCA_DMA_CLOCK             (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
+#define ADC1_EOCA_DMA_TRIG_SELECT       AOS_DMA1_3
+#define ADC1_EOCA_DMA_TRANS_FLAG        DMA_FLAG_TC_CH3
+#define ADC1_EOCA_DMA_IRQn              BSP_DMA1_CH3_IRQ_NUM
+#define ADC1_EOCA_DMA_INT_PRIO          BSP_DMA1_CH3_IRQ_PRIO
+#define ADC1_EOCA_DMA_INT_SRC           INT_SRC_DMA1_TC3
 #endif
 
 /* DMA1 ch4 */
@@ -166,6 +175,15 @@ extern "C" {
 #define I2C3_TX_DMA_IRQn                BSP_DMA1_CH4_IRQ_NUM
 #define I2C3_TX_DMA_INT_PRIO            BSP_DMA1_CH4_IRQ_PRIO
 #define I2C3_TX_DMA_INT_SRC             INT_SRC_DMA1_TC4
+#elif defined(BSP_ADC2_USING_DMA) && !defined(ADC2_EOCA_DMA_INSTANCE)
+#define ADC2_EOCA_DMA_INSTANCE          CM_DMA1
+#define ADC2_EOCA_DMA_CHANNEL           DMA_CH4
+#define ADC2_EOCA_DMA_CLOCK             (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
+#define ADC2_EOCA_DMA_TRIG_SELECT       AOS_DMA1_4
+#define ADC2_EOCA_DMA_TRANS_FLAG        DMA_FLAG_TC_CH4
+#define ADC2_EOCA_DMA_IRQn              BSP_DMA1_CH4_IRQ_NUM
+#define ADC2_EOCA_DMA_INT_PRIO          BSP_DMA1_CH4_IRQ_PRIO
+#define ADC2_EOCA_DMA_INT_SRC           INT_SRC_DMA1_TC4
 #endif
 
 /* DMA1 ch5 */
@@ -187,6 +205,15 @@ extern "C" {
 #define I2C3_RX_DMA_IRQn                BSP_DMA1_CH5_IRQ_NUM
 #define I2C3_RX_DMA_INT_PRIO            BSP_DMA1_CH5_IRQ_PRIO
 #define I2C3_RX_DMA_INT_SRC             INT_SRC_DMA1_TC5
+#elif defined(BSP_ADC3_USING_DMA) && !defined(ADC3_EOCA_DMA_INSTANCE)
+#define ADC3_EOCA_DMA_INSTANCE          CM_DMA1
+#define ADC3_EOCA_DMA_CHANNEL           DMA_CH5
+#define ADC3_EOCA_DMA_CLOCK             (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
+#define ADC3_EOCA_DMA_TRIG_SELECT       AOS_DMA1_5
+#define ADC3_EOCA_DMA_TRANS_FLAG        DMA_FLAG_TC_CH5
+#define ADC3_EOCA_DMA_IRQn              BSP_DMA1_CH5_IRQ_NUM
+#define ADC3_EOCA_DMA_INT_PRIO          BSP_DMA1_CH5_IRQ_PRIO
+#define ADC3_EOCA_DMA_INT_SRC           INT_SRC_DMA1_TC5
 #endif
 
 /* DMA1 ch6 */

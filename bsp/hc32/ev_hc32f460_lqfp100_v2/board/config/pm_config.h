@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-05-12     CDT          first version
+ * 2024-06-13     CDT          disable pm tickless timer
+ *                             delete member u16ExBusHold of PM_SLEEP_DEEP_CFG
  */
 
 #ifndef __PM_CONFIG_H__
@@ -21,9 +23,7 @@ extern "C" {
 extern void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode);
 
 #ifndef PM_TICKLESS_TIMER_ENABLE_MASK
-#define PM_TICKLESS_TIMER_ENABLE_MASK                                          \
-(   (1UL << PM_SLEEP_MODE_IDLE)  |                                             \
-    (1UL << PM_SLEEP_MODE_DEEP))
+#define PM_TICKLESS_TIMER_ENABLE_MASK           (0UL)
 #endif
 
 /**
@@ -55,7 +55,6 @@ extern void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode);
     {                                                                          \
         .u16Clock = PWC_STOP_CLK_KEEP,                                         \
         .u8StopDrv = PWC_STOP_DRV_HIGH,                                        \
-        .u16ExBusHold = PWC_STOP_EXBUS_HIZ,                                    \
         .u16FlashWait = PWC_STOP_FLASH_WAIT_ON,                                \
     },                                                                         \
     .pwc_stop_type = PWC_STOP_WFE_INT,                                         \

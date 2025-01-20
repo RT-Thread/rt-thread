@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$PROJ_DIR$/../libraries/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F4A0.svd</state>
+                    <state>$PROJ_DIR$/../libraries/hc32f4a0_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F4A0.svd</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -88,7 +88,7 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.50.9.33458</state>
+                    <state>8.40.2.22864</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$PROJ_DIR$\..\libraries\hc32f4a0_ddl\config\flashloader\FlashHC32F4A0xI.board</state>
+                    <state>$PROJ_DIR$\..\libraries\hc32f4a0_ddl\cmsis\Device\HDSC\hc32f4xx\Source\IAR\flashloader\FlashHC32F4A0xI.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -1525,11 +1525,11 @@
                 </option>
                 <option>
                     <name>MemOverride</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$PROJ_DIR$/../libraries/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F4A0.svd</state>
+                    <state>$PROJ_DIR$/../libraries/hc32f4a0_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F4A0.svd</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -1597,7 +1597,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$PROJ_DIR$\..\libraries\hc32f4a0_ddl\config\flashloader\FlashHC32F4A0xI.board</state>
+                    <state>$PROJ_DIR$\..\libraries\hc32f4a0_ddl\cmsis\Device\HDSC\hc32f4xx\Source\IAR\flashloader\FlashHC32F4A0xI.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>

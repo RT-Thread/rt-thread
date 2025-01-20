@@ -292,10 +292,15 @@ extern "C" {
 #endif/* RT_USING_ALARM */
 
 
-#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
-#define BSP_USB_GLB_IRQ_NUM             INT003_IRQn
-#define BSP_USB_GLB_IRQ_PRIO            DDL_IRQ_PRIO_DEFAULT
-#endif/* BSP_USING_USBD */
+#if defined(BSP_USING_USBFS)
+#define BSP_USBFS_GLB_IRQ_NUM           INT003_IRQn
+#define BSP_USBFS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
+#endif/* BSP_USING_USBFS */
+
+#if defined(BSP_USING_USBHS)
+#define BSP_USBHS_GLB_IRQ_NUM           INT000_IRQn
+#define BSP_USBHS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
+#endif/* BSP_USING_USBHS */
 
 #if defined (BSP_USING_QSPI)
 #define BSP_QSPI_ERR_IRQ_NUM            INT002_IRQn
@@ -472,6 +477,24 @@ extern "C" {
 #define BSP_USING_TMRA_12_IRQ_NUM       INT101_IRQn
 #define BSP_USING_TMRA_12_IRQ_PRIO      DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_TMRA_12 */
+
+#if defined(BSP_USING_INPUT_CAPTURE)
+#define BSP_INPUT_CAPTURE_TMR6_1_OVF_IRQ_NUM                (INT012_IRQn)
+#define BSP_INPUT_CAPTURE_TMR6_1_OVF_IRQ_PRIO               (DDL_IRQ_PRIO_DEFAULT)
+#define BSP_INPUT_CAPTURE_TMR6_1_CAP_IRQ_NUM                (INT013_IRQn)
+#define BSP_INPUT_CAPTURE_TMR6_1_CAP_IRQ_PRIO               (DDL_IRQ_PRIO_DEFAULT)
+
+#define BSP_INPUT_CAPTURE_TMR6_2_OVF_IRQ_NUM                (INT014_IRQn)
+#define BSP_INPUT_CAPTURE_TMR6_2_OVF_IRQ_PRIO               (DDL_IRQ_PRIO_DEFAULT)
+#define BSP_INPUT_CAPTURE_TMR6_2_CAP_IRQ_NUM                (INT015_IRQn)
+#define BSP_INPUT_CAPTURE_TMR6_2_CAP_IRQ_PRIO               (DDL_IRQ_PRIO_DEFAULT)
+
+#define BSP_INPUT_CAPTURE_TMR6_3_OVF_IRQ_NUM                (INT016_IRQn)
+#define BSP_INPUT_CAPTURE_TMR6_3_OVF_IRQ_PRIO               (DDL_IRQ_PRIO_DEFAULT)
+#define BSP_INPUT_CAPTURE_TMR6_3_CAP_IRQ_NUM                (INT017_IRQn)
+#define BSP_INPUT_CAPTURE_TMR6_3_CAP_IRQ_PRIO               (DDL_IRQ_PRIO_DEFAULT)
+#endif
+
 #ifdef __cplusplus
 }
 #endif
