@@ -47,7 +47,6 @@ rt_weak rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t ha
         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
-    void *user_param = param;
 
     if(vector < ISR_NUMBER)
     {
@@ -74,7 +73,7 @@ rt_weak void rt_rv32_system_irq_handler(rt_uint32_t mcause)
     rt_uint32_t exception = !(mcause & 0x80000000);
     if(exception)
     {
-        s_stack_frame = (rt_hw_stack_frame_t *)mscratch;
+        s_stack_frame = (volatile rt_hw_stack_frame_t *)(uintptr_t)mscratch;
         rt_show_stack_frame();
     }
     else
