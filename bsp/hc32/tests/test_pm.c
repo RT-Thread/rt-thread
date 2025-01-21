@@ -24,12 +24,14 @@
 *       PM_SLEEP_MODE_STANDBY  | 掉电模式1或2（可配，默认配置是模式1）
 *       PM_SLEEP_MODE_SHUTDOWN | 掉电模式3或4（可配，默认配置是模式3）
 *
-* 操作步骤：
+* 操作步骤1：
 *   1）按下按键K10：  MCU进入休眠模式
 *   2）再按下按键K10：MCU退出休眠模式
 *   3）重复上述按键操作，MCU循环进入休眠模式(deep、standby、shutdown、idle)和退出对应的休眠模式。
 *   每次进入休眠模式前，MCU打印 "sleep:" + 休眠模式名称
 *   每次退出休眠模式后，MCU打印 "wake from sleep:" + 休眠模式名称
+* 操作步骤2：
+*   1）支持运行模式切换的芯片循环切换 低速->高速->低速 运行模式,对应时钟输出口输出对应模式下的时钟信号
 */
 
 #include <rtthread.h>
@@ -37,10 +39,7 @@
 #include <board.h>
 #include <drivers/lptimer.h>
 
-
 #if defined(BSP_USING_PM)
-
-#define EFM_ERASE_TIME_MAX_IN_MILLISECOND       (20)
 
 #if defined (HC32F4A0)
     #define PLL_SRC                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
@@ -101,10 +100,6 @@
     #define BSP_KEY_EVT                         (EVT_SRC_PORT_EIRQ5)
     #define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP       (PWC_PD_WKUP_TRIG_WKUP1)
     #define BSP_KEY_PWC_PD_WKUP_WKUP            (PWC_PD_WKUP_WKUP11)
-
-    #define MCO_PORT                            (GPIO_PORT_A)
-    #define MCO_PIN                             (GPIO_PIN_08)
-    #define MCO_GPIO_FUNC                       (GPIO_FUNC_1)
 #endif
 
 #define KEYCNT_BACKUP_ADDR                      (uint32_t *)(0x200F0010)
@@ -327,6 +322,7 @@ static void pm_cmd_handler(void *parameter)
     }
 }
 
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
 static void pm_run_main(void *parameter)
 {
     static rt_uint8_t run_index = 0;
@@ -354,6 +350,7 @@ static void pm_run_main(void *parameter)
         rt_thread_mdelay(3000);
     }
 }
+#endif
 
 static void _keycnt_cmd_init_after_power_on(void)
 {
@@ -440,6 +437,7 @@ int pm_sample_init(void)
         rt_kprintf("create pm sample thread failed!\n");
     }
 
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
     thread = rt_thread_create("pm_run_main", pm_run_main, RT_NULL, 1024, 25, 10);
     if (thread != RT_NULL)
     {
@@ -449,6 +447,8 @@ int pm_sample_init(void)
     {
         rt_kprintf("create pm run thread failed!\n");
     }
+#endif
+
     return RT_EOK;
 }
 MSH_CMD_EXPORT(pm_sample_init, pm sample init);
