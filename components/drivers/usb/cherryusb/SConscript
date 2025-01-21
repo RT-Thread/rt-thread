@@ -28,6 +28,8 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
     if GetDepend(['RT_CHERRYUSB_DEVICE_SPEED_HS']):
         CPPDEFINES+=['CONFIG_USB_HS']
 
+    if GetDepend(['RT_CHERRYUSB_DEVICE_NRF5X']):
+        src += Glob('port/nrf5x/usb_dc_nrf5x.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_FSDEV']):
         src += Glob('port/fsdev/usb_dc_fsdev.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_ST']):

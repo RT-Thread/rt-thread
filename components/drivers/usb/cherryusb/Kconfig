@@ -68,6 +68,8 @@ if RT_USING_CHERRYUSB
                 bool "aic"
             config RT_CHERRYUSB_DEVICE_PUSB2
                 bool "pusb2"
+            config RT_CHERRYUSB_DEVICE_NRF5X
+                bool "nrf5x"
         endchoice
 
         config RT_CHERRYUSB_DEVICE_CDC_ACM
