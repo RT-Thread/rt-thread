@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -87,11 +87,23 @@ rt_inline rt_ssize_t spi_xfer_4line_data8(struct rt_spi_bit_ops       *ops,
 
                 TOG_SCLK(ops);
 
-                if (config->mode & RT_SPI_MSB) { rx_data <<= 1; bit = 0x01; }
-                else                           { rx_data >>= 1; bit = 0x80; }
+                if (config->mode & RT_SPI_MSB)
+                {
+                    rx_data <<= 1; bit = 0x01;
+                }
+                else
+                {
+                    rx_data >>= 1; bit = 0x80;
+                }
 
-                if (GET_MISO(ops)) { rx_data |=  bit; }
-                else               { rx_data &= ~bit; }
+                if (GET_MISO(ops))
+                {
+                    rx_data |=  bit;
+                }
+                else
+                {
+                    rx_data &= ~bit;
+                }
 
                 spi_delay2(ops);
 
@@ -150,11 +162,23 @@ rt_inline rt_ssize_t spi_xfer_4line_data16(struct rt_spi_bit_ops       *ops,
 
                 TOG_SCLK(ops);
 
-                if (config->mode & RT_SPI_MSB) { rx_data <<= 1; bit = 0x0001; }
-                else                           { rx_data >>= 1; bit = 0x8000; }
+                if (config->mode & RT_SPI_MSB)
+                {
+                    rx_data <<= 1; bit = 0x0001;
+                }
+                else
+                {
+                    rx_data >>= 1; bit = 0x8000;
+                }
 
-                if (GET_MISO(ops)) { rx_data |=  bit; }
-                else               { rx_data &= ~bit; }
+                if (GET_MISO(ops))
+                {
+                    rx_data |=  bit;
+                }
+                else
+                {
+                    rx_data &= ~bit;
+                }
 
                 spi_delay2(ops);
 
@@ -244,11 +268,23 @@ rt_inline rt_ssize_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
 
                     TOG_SCLK(ops);
 
-                    if (config->mode & RT_SPI_MSB) { rx_data <<= 1; bit = 0x01; }
-                    else                           { rx_data >>= 1; bit = 0x80; }
+                    if (config->mode & RT_SPI_MSB)
+                    {
+                        rx_data <<= 1; bit = 0x01;
+                    }
+                    else
+                    {
+                        rx_data >>= 1; bit = 0x80;
+                    }
 
-                    if (GET_MOSI(ops)) { rx_data |=  bit; }
-                    else               { rx_data &= ~bit; }
+                    if (GET_MOSI(ops))
+                    {
+                        rx_data |=  bit;
+                    }
+                    else
+                    {
+                        rx_data &= ~bit;
+                    }
 
                     spi_delay2(ops);
 
@@ -345,11 +381,23 @@ rt_inline rt_ssize_t spi_xfer_3line_data16(struct rt_spi_bit_ops       *ops,
 
                     TOG_SCLK(ops);
 
-                    if (config->mode & RT_SPI_MSB) { rx_data <<= 1; bit = 0x0001; }
-                    else                           { rx_data >>= 1; bit = 0x8000; }
+                    if (config->mode & RT_SPI_MSB)
+                    {
+                        rx_data <<= 1; bit = 0x0001;
+                    }
+                    else
+                    {
+                        rx_data >>= 1; bit = 0x8000;
+                    }
 
-                    if (GET_MOSI(ops)) { rx_data |=  bit; }
-                    else               { rx_data &= ~bit; }
+                    if (GET_MOSI(ops))
+                    {
+                        rx_data |=  bit;
+                    }
+                    else
+                    {
+                        rx_data &= ~bit;
+                    }
 
                     spi_delay2(ops);
 
@@ -456,15 +504,14 @@ rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *mes
             rt_pin_write(cs_pin, PIN_LOW);
         }
         spi_delay(ops);
+    }
 
         /* spi phase */
-        if (config->mode & RT_SPI_CPHA)
+        if ((config->mode & RT_SPI_CPHA))
         {
             spi_delay(ops);
             TOG_SCLK(ops);
         }
-    }
-
     if (config->mode & RT_SPI_3WIRE)
     {
         if (config->data_width <= 8)
@@ -487,10 +534,15 @@ rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *mes
             length = spi_xfer_4line_data16(ops, config, message->send_buf, message->recv_buf, message->length);
         }
     }
-
     /* release CS */
-    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
     {
+
+        if ((config->mode & RT_SPI_CPOL) && !GET_SCLK(ops))
+        {
+            spi_delay(ops);
+            TOG_SCLK(ops);
+        }
         spi_delay(ops);
         if (device->config.mode & RT_SPI_CS_HIGH)
         {
@@ -501,6 +553,7 @@ rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *mes
             rt_pin_write(cs_pin, PIN_HIGH);
         }
         LOG_I("spi release cs\n");
+
     }
 
     return length;
