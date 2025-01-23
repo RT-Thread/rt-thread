@@ -1,10 +1,10 @@
-# utest Framework
+@page component_utest utest Framework
 
-## utest Introduction
+# utest Introduction
 
 utest (unit test) is a unit testing framework developed by RT-Thread. The original intention of designing utest is to make it easier for RT-Thread developers to write test programs using a unified framework interface for unit testing, coverage testing, and integration testing.
 
-### Test Case Definition
+## Test Case Definition
 
 A test case (tc) is a single test performed to achieve a specific test objective. It is a specification that includes test input, execution conditions, test procedures, and expected results. It is a infinite loop with clear end conditions and test results.
 
@@ -12,21 +12,21 @@ The utest (unit test) framework defines user-written test programs as **test cas
 
 The test code for a function, specifically through the API provided by the utest framework, is a test case.
 
-### Test Unit Definition
+## Test Unit Definition
 
 The test unit is a test point subdivided by the function to be tested. Each test point can be the smallest measurable unit of the function to be tested. Of course, different classification methods will subdivide different test units.
 
-### utest Application Block Diagram
+## utest Application Block Diagram
 
 ![utest Application Block Diagram](./figures/UtestAppStruct-1.png)
 
 As shown in the figure above, the test case is designed based on the service interface provided by the test framework utest, which supports compiling multiple test cases together for testing. In addition, as you can see from the figure, a test case corresponds to a unique *testcase* function, and multiple test units are included in *testcase*.
 
-## utest API
+# utest API
 
 To enable uniform test case code, the test framework utest provides a common API interface for test case writing.
 
-### Macros of assertion
+## Macros of assertion
 
 > NOTE:
 > Here assert only records the number of passes and failures, it does not generate assertions or terminates program execution. Its function is not equivalent to RT_ASSERT.
@@ -45,7 +45,7 @@ To enable uniform test case code, the test framework utest provides a common API
 | uassert_in_range(value, min, max)    | If the value is in the range of min and max, the test passes, otherwise the test fails. |
 | uassert_not_in_range(value, min, max)| If the value is not in the range of min and max, the test passes, otherwise the test fails. |
 
-### Macros for Running Test Units
+## Macros for Running Test Units
 
 ```c
 UTEST_UNIT_RUN(test_unit_func)
@@ -53,7 +53,7 @@ UTEST_UNIT_RUN(test_unit_func)
 
 In the test case, the specified test unit function `test_unit_func` is executed using the `UTEST_UNIT_RUN` macro. The test unit must be executed using the `UTEST_UNIT_RUN` macro.
 
-### Macros for Exporting Test Cases
+## Macros for Exporting Test Cases
 
 ```c
 UTEST_TC_EXPORT(testcase, name, init, cleanup, timeout)
@@ -75,7 +75,7 @@ Test cases need to be named in the prescribed format. Specifies the naming forma
 
 Assuming that there is a `testcases\components\filesystem\dfs\dfs_api_tc.c` test case file in the test case `testcases` directory, the test case name in the `dfs_api_tc.c` is named `components.filesystem.dfs.dfs_api_tc`.
 
-### Test Case LOG Output Interface
+## Test Case LOG Output Interface
 
 The utest framework relies on the *ulog log module* for log output and the log output level in the utest framework. So just add `#include "utest.h"` to the test case to use all level interfaces (LOG_D/LOG_I/LOG_E) of the ulog log module.
 
@@ -90,7 +90,7 @@ void utest_log_lv_set(rt_uint8_t lv);
 
 Users can use the `utest_log_lv_set` interface to control the log output level in test cases. The `UTEST_LOG_ALL` configuration outputs all logs, and the `UTEST_LOG_ASSERT` configuration only outputs logs after the failure of uassert.
 
-## Configuration Enable
+# Configuration Enable
 
 Using the utest framework requires the following configuration in the ENV tool using menuconfig:
 
@@ -105,7 +105,7 @@ RT-Thread Components  --->
         (20)   The utest thread priority            /* Set utest thread priority (required for -thread mode) */
 ```
 
-## Application Paradigm
+# Application Paradigm
 
 The utest framework and related APIs were introduced earlier. The basic test case code structure is described here.
 
@@ -185,7 +185,7 @@ A basic test case must contain the following:
 
     Export the test case testcase function to the test framework.
 
-## Requirements for running test cases
+# Requirements for running test cases
 
 The test framework utest exports all test cases to the `UtestTcTab` code segment. The `UtestTcTab` section is not required to be defined in the link script in the IAR and MDK compilers, but it needs to be explicitly set in the link script when GCC is compiled.
 
@@ -201,7 +201,7 @@ KEEP(*(UtestTcTab))
 __rt_utest_tc_tab_end = .;
 ```
 
-## Running Test Cases
+# Running Test Cases
 
 The test framework provides the following commands to make it easy for users to run test cases on the RT-Thread MSH command line. The commands are as follows:
 
@@ -250,13 +250,13 @@ msh />utest_run components.filesystem.dfs.dfs_api_tc
 msh />
 ```
 
-### Test result analysis
+## Test result analysis
 
 ![utest log display](./figures/UtestRunLogShow.png)
 
 As shown in the figure above, the log of the test case run is divided into four columns from left to right, which are `(1) log header information`, `(2) result bar`, `(3) property bar`, and `(4) detail information display bar`. The test case test result (PASSED or FAILED) is identified in the log using the `result` attribute.
 
-## Test Case Run Process
+# Test Case Run Process
 
 ![Test Case Run Process](./figures/testcase-runflowchart.jpg)
 
@@ -265,7 +265,7 @@ From the above flow chart you can get the following:
 * The utest framework is a sequential execution of all **test units** in the *testcase* function
 * Assert of the previous UTEST_UNIT_RUN macro has occurred, and all subsequent UTEST_UNIT_RUN will skip execution.
 
-## NOTE
+# NOTE
 
 - Determine whether the link script has the `UtestTcTab` section added before compiling with GCC.
 - Make sure `RT-Thread Kernel -> Kernel Device Object -> (256) the buffer size for console log printf` is at least 256 bytes before compiling.

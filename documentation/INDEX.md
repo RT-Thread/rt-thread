@@ -35,16 +35,16 @@
 - @ref device_wlan
 - @ref device_sensor
 
-**Components**
+@subpage components
 
-- [FinSH Console](finsh/finsh.md)
-- [Virtual File System](filesystem/README.md)
-- [utest Framework](utest/utest.md)
-- [Dynamic Module: dlmodule](dlmodule/README.md)
-- [Socket Abstraction Layer: SAL](sal/sal.md)
-- [AT Commands](at/at.md)
-- [POSIX Interface](posix/README.md)
-- [Ulog Log](ulog/ulog.md)
-- [Power Management: PM](pm/pm.md)
-- [Network Framework](network/network.md)
+- @ref component_finsh
+- @ref component_vfs
+- @ref component_utest
+- @ref component_dlmodule
+- @ref component_sal
+- @ref component_at
+- @ref component_posix
+- @ref component_ulog
+- @ref component_pm
+- @ref component_network
 
