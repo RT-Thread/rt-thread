@@ -1,6 +1,11 @@
 scons.args: &scons
     scons_arg:
       - '--strict'
+# ------ nano CI ------
+nano:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_NANO=y
 # ------ kernel CI ------
 kernel.klibc-stdlib:
     <<: *scons
@@ -182,8 +187,11 @@ peripheral.sram:
 peripheral.usb_mouse:
     kconfig:
       - CONFIG_BSP_USING_USB_MOUSE=y
-# ------ nano CI ------
-nano:
-    <<: *scons
+# ------ component CI ------
+component.cherryusb_cdc:
     kconfig:
-      - CONFIG_RT_USING_NANO=y
+      - CONFIG_RT_USING_CHERRYUSB=y
+      - CONFIG_RT_CHERRYUSB_DEVICE=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_DWC2_ST=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_CDC_ACM=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM=y
