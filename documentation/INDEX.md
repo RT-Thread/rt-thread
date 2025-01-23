@@ -15,10 +15,10 @@
 - @ref interrupt_management
 - @ref kernel_porting
 
-**Tool**
+@subpage tool
 
-- [User Manual of Env](env/env.md)
-- [SCons](scons/scons.md)
+- @ref env
+- @ref scons
 
 **Device**
 

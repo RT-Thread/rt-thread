@@ -1,12 +1,12 @@
-# SCons
+@page scons SCons
 
-## Introduction to SCons
+# Introduction to SCons
 
 SCons is an open source build system written in the Python language, similar to GNU Make. It uses a different approach than the usual Makefile, but instead uses SConstruct and SConscript files instead. These files are also Python scripts that can be written using standard Python syntax, so the Python standard library can be called in SConstruct, SConscript files for a variety of complex processing, not limited to the rules set by the Makefile.
 
 A detailed [SCons user manual](http://www.scons.org/doc/production/HTML/scons-user/index.html) can be found on the SCons website. This section describes the basic usage of SCons and how to use the SCons tool in RT-Thread.
 
-### What is Construction Tool
+## What is Construction Tool
 
 A software construction tool is a piece of software that compiles source code into an executable binary program according to certain rules or instructions. This is the most basic and important feature of building tools. In fact, these are not the only functions of construction tools. Usually these rules have a certain syntax and are organized into files. These files are used to control the behavior of the build tool, and you can do other things besides software building.
 
@@ -14,13 +14,13 @@ The most popular build tool today is GNU Make. Many well-known open source softw
 
 Due to historical reasons, the syntax of the Makefile is confusing, which is not conducive to beginners. In addition, it is not convenient to use Make on the Windows platform, you need to install the Cygwin environment. To overcome the shortcomings of Make, other build tools have been developed, such as CMake and SCons.
 
-### RT-Thread Construciton Tool
+## RT-Thread Construciton Tool
 
 RT-Thread was built using Make/Makefile in the earlier stage. Starting from 0.3.x, the RT-Thread development team gradually introduced the SCons build system. The only goal of introducing SCons is to get everyone out of the complex Makefile configuration, IDE configuration, and focus on RT-Thread function development.
 
 Some may doubt the difference between the build tools described here and the IDE. The IDE completes the build through the operation of the graphical interface. Most IDEs generate script files like Makefile or SConscript based on the source code added by the user, and call the tools like Make or SCons to build the source code.
 
-### Install SCons
+## Install SCons
 
 It needs to be installed on the PC host before using the SCons system because it is written in the Python language, so you need to install the Python runtime environment before using SCons.
 
@@ -30,13 +30,13 @@ In Linux and BSD environments, Python should already be installed by default, wh
 
 `sudo apt-get install scons`
 
-## Basic Functions of SCons
+# Basic Functions of SCons
 
 The RT-Thread build system supports multiple compilers, including ARM GCC, MDK, IAR, VisualStudio, and Visual DSP. The mainstream ARM Cortex M0, M3, M4 platforms, basically all support ARM GCC, MDK, IAR. Some BSPs may only support one compiler, and readers can read the currently supported compiler by reading the CROSS_TOOL option in rtconfig.py under the BSP directory.
 
 If it is a chip on the ARM platform, you can use the Env tool and enter the scons command to compile the BSP directly. At this time, the ARM GCC compiler is used by default because the Env tool comes with the ARM GCC compiler. Compile a BSP using the scons command as shown below, and the SCons will be based on this BSP.
 
-![Compile BSP using scons](figures/scons.png)
+![Compile BSP using scons](figures/scons_compile.png)
 
 If the user wants to use another compiler that the BSP already supports to compile the project, or if the BSP is a non-ARM platform chip, then you can't compile the project directly with the scons command. You need to install the corresponding compiler yourself and specify the compiler path to use. Before compiling the project, you can use the following two commands in the Env command line interface to specify the compiler path for the MDK and the compiler path to MDK.
 
@@ -45,22 +45,22 @@ set RTT_CC=keil
 set RTT_EXEC_PATH=C:/Keilv5
 ```
 
-### Commonly Used SCons Commands
+## Commonly Used SCons Commands
 
 This section describes the SCons commands that are commonly used in RT-Thread. SCons not only completes basic compilation, but also generates MDK/IAR/VS projects.
 
-#### scons
+### scons
 
 Go to the BSP project directory to be compiled in the Env command line window, and then use this command to compile the project directly. If some source files are modified after executing the  `scons` command, and the scons command is executed again, SCons will incrementally compile and compile only the modified source files and link them.
 
 
 `scons` can also be followed by a `-s` parameter, the command `scons -s`,  which differs from the `scons` command in that it does not print specific internal commands.
 
-#### scons -c
+### scons -c
 
 Clear the compilation target. This command clears the temporary and target files generated when `scons` is executed.
 
-#### scons --target=XXX
+### scons --target=XXX
 
 If you use mdk/iar for project development, when you open or close some components, you need to use one of the following commands to regenerate the corresponding customized project, then compile and download in mdk/iar.
 
@@ -85,17 +85,17 @@ This command can also be followed by a `-s` parameter, such as the command  `sco
 
 > To generate a MDK or IAR project file, the prerequisite is that there is a project template file in the BSP directory, and then the scons will add relevant source code, header file search path, compilation parameters, link parameters, etc. according to the template file. As for which chip this project is for, it is directly specified by this engineering template file. So in most cases, this template file is an empty project file that is used to assist SCons in generating project.uvprojx or project.eww.
 
-#### scons -jN
+### scons -jN
 
 Multi-threaded compilation target, you can use this command to speed up compilation on multi-core computers. In general, a cpu core can support 2 threads. Use the `scons -j4`  command on a dual-core machine.
 
 > If you just want to look at compilation errors or warnings, it's best not to use the -j parameter so that the error message won't be mixed with multiple files in parallel.
 
-#### scons --dist
+### scons --dist
 
 Build a project framework. Using this command will generate the `dist` directory in the BSP directory, this is the directory structure of the development project, including RT-Thread source code and BSP related projects, irrelevant BSP folder and libcpu will be removed, and you can freely copy this work to any directory.
 
-#### scons --verbose
+### scons --verbose
 
 By default, output compiled with the scons command does not display compilation parameters as follows:
 
@@ -124,7 +124,7 @@ er\inc -ILibraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x -IF:\Project\git\rt-thre
 ...
 ```
 
-## SCons Advanced
+# SCons Advanced
 
 SCons uses SConscript and SConstruct files to organize the source structure. Usually a project has only one SConstruct, but there will be multiple SConscripts. In general, an SConscript will be placed in each subdirectory where the source code is stored.
 
@@ -132,29 +132,29 @@ In order to make RT-Thread better support multiple compilers and to easily adjus
 
 RT-Thread SConscript files are also present in most source folders. These files are "found" by the SConscript file in the BSP directory to add the source code corresponding to the macro defined in rtconfig.h to the compiler. The following article will take stm32f10x-HAL BSP as an example to explain how SCons builds the project.
 
-### SCons Build-In Functions
+## SCons Build-In Functions
 
 If you want to add some of your own source code to the SCons build environment, you can usually create or modify an existing SConscript file. The SConscript file can control the addition of source files and can specify the group of files (similar to the concept of Groups in IDEs such as MDK/IAR).
 
 SCons provides a lot of built-in functions to help us quickly add source code, and with these simple Python statements we can add or remove source code to our project. The following is a brief introduction to some common functions.
 
-#### GetCurrentDir()
+### GetCurrentDir()
 
 Get current directory.
 
-####  Glob('\*.c')
+###  Glob('\*.c')
 
 Get all C files in the current directory. Modify the value of the parameter to match the suffix to match all files of the current directory.
 
-#### GetDepend(macro)
+### GetDepend(macro)
 
 This function is defined in the script file in the `tools` directory. It reads the configuration information from the rtconfig.h file with the macro name in rtconfig.h. This method (function) returns true if rtconfig.h has a macro turned on, otherwise it returns false.
 
-#### Split(str)
+### Split(str)
 
 Split the string str into a list list.
 
-#### DefineGroup(name， src， depend，**parameters)
+### DefineGroup(name， src， depend，**parameters)
 
 This is a method (function) of RT-Thread based on the SCons extension. DefineGroup is used to define a component. A component can be a directory (under a file or subdirectory) and a Group or folder in some subsequent IDE project files.
 
@@ -176,7 +176,7 @@ parameters that could be added：
 | CPPDEFINES | Link parameter                    |
 | LIBRARY    | Include this parameter, the object file generated by the component will be packaged into a library file |
 
-#### SConscript(dirs，variant_dir，duplicate)
+### SConscript(dirs，variant_dir，duplicate)
 
 Read the new SConscript file, and the parameter description of the SConscript() function is as follows:
 
@@ -186,11 +186,11 @@ Read the new SConscript file, and the parameter description of the SConscript() 
 | variant_dir | Specify the path to store the generated target file |
 | duiplicate  | Set whether to copy or link the source file to variant_dir |
 
-## SConscript Examples
+# SConscript Examples
 
 Below we will use a few SConscript as an example to explain how to use the scons tool.
 
-### SConscript Example 1
+## SConscript Example 1
 
 Let's start with the SConcript file in the stm32f10x-HAL BSP directory. This file manages all the other SConscript files under the BSP, as shown below.
 
@@ -218,7 +218,7 @@ Return('objs')
 
 With this SConscript file, the source code required by the BSP project is added to the compilation list.
 
-### SConscript Example 2
+## SConscript Example 2
 
 So what about stm32f10x-HAL BSP other SConcript files? Let's take a look at the SConcript file in the drivers directory, which will manage the source code under the drivers directory. The drivers directory is used to store the underlying driver code implemented by the driver framework provided by RT-Thread.
 
@@ -274,7 +274,7 @@ The last line uses DefineGroup to create a group called Drivers, which correspon
 
 `CPPPATH =CPPPATH` means to add the current path to the system's header file path. The CPPPATH on the left is a built-in parameter in the DefineGroup that represents the header file path. The CPPPATH on the right is defined in the previous line of this document. This way we can reference the header files in the drivers directory in other source code.
 
-### SConscript Example 3
+## SConscript Example 3
 
 Let's take a look at the SConcript file in the applications directory, which will manage the source code under the applications directory for the user's own application code.
 
@@ -298,7 +298,7 @@ The last line uses DefineGroup to create a group called `Applications`. The sour
 
 To sum up, this source program will add all c programs in the current directory to the group `Applications`, so if you add or delete files in this directory, you can add files to the project or delete them from the project. It is suitable for adding source files in batches.
 
-### SConscript Example 4
+## SConscript Example 4
 
 Below is the contents of the RT-Thread source code `component/finsh/SConscript` file, which will manage the source code under the finsh directory.
 
@@ -359,11 +359,11 @@ Then add the finsh directory to the system header directory so that we can refer
 
 `LINKFLAGS = LINKFLAGS` has the same meaning as `CPPPATH = CPPPATH` . The LINKFLAGS on the left represents the link parameter, and the LINKFLAGS on the right is the value defined by the previous if else statement. That is, specify the link parameters for the project.
 
-## Manage Projects with SCons
+# Manage Projects with SCons
 
 The previous section on the SConscript related to the RT-Thread source code is explained in detail, you should also know some common ways to write SConscript files, this section will guide you how to use SCons to manage your own projects.
 
-### Add App Code
+## Add App Code
 
 As mentioned earlier, the Applications folder under BSP is used to store the user's own application code. Currently there is only one main.c file. If the user's application code is not a lot, it is recommended that the relevant source files be placed under this folder. Two simple files hello.c and hello.h have been added under the Applications folder, as shown below.
 
@@ -394,7 +394,7 @@ MSH_CMD_EXPORT(hello_world, Hello world!)
 
 The SConcript file in the applications directory will add all source files in the current directory to the project. You need to use the `scons --target=xxx` command to add the 2 new files to your project. Note that the project will be regenerated each time a new file is added.
 
-### Add Module
+## Add Module
 
 As mentioned above, in the case that there are not many source code files, it is recommended that all source code files be placed in the applications folder. If the user has a lot of source code and wants to create your own project module, or need to use other modules that you have obtained, what would be appropriate?
 
@@ -460,9 +460,9 @@ After saving the configuration, exit the configuration interface and open the rt
 
 Because the RT_USING_HELLO macro has been defined in rtconfig.h, the source file for hello.c is added to the new project when the project is newly built.
 
-The above simply enumerates the configuration options for adding your own modules to the Kconfig file. Users can also refer to [*User Manual of Env*](../env/env.md), which also explains how to modify and add configuration options. They can also view the Kconfig documentation in your own Baidu to implement other more complex configuration options.
+The above simply enumerates the configuration options for adding your own modules to the Kconfig file. Users can also refer to @ref env, which also explains how to modify and add configuration options. They can also view the Kconfig documentation in your own Baidu to implement other more complex configuration options.
 
-### Add Library
+## Add Library
 
 If you want to add an extra library to your project, you need to pay attention to the naming of the binary library by different toolchains. For example, the GCC toolchain, which recognizes library names such as `libabc.a`, specifies `abc` instead of `libabc` when specifying a library. So you need to pay special attention to the SConscript file when linking additional libraries. In addition, when specifying additional libraries, it is also a good idea to specify the corresponding library search path. Here is an example:
 
@@ -482,7 +482,7 @@ group = DefineGroup('ABC'， src， depend = ['']， LIBS = LIBS， LIBPATH=LIBP
 
 LIBPATH specifies the path to the library, and LIBS specifies the name of the library. If the toolchain is GCC, the name of the library should be libabc.a; if the toolchain is armcc, the name of the library should be abc.lib.`LIBPATH = [cwd + '/libs']` indicates that the search path for the library is the 'libs' directory in the current directory.
 
-### Compiler Options
+## Compiler Options
 
 `rtconfig.py` is a RT-Thread standard compiler configuration file that controls most of the compilation options. It is a script file written in Python and is used to do the following:
 
@@ -562,13 +562,13 @@ As mentioned earlier, if the user wants to compile the project with another comp
 
 Suppose a compiler is installed under `D:\Dir1\Dir2`. The following are the correct ways to write:
 
-* EXEC_PATH = `r'D:\Dir1\Dir2'`  Note that with the string `r` in front of the string, `“\”`can be used normally.
+* EXEC_PATH = `r'D:\\Dir1\\Dir2'`  Note that with the string `r` in front of the string, `“\”`can be used normally.
 
 * EXEC_PATH = `'D:/Dir1/Dir2'`   Note that instead of `“/”`, there is no `r` in front.
 
 * EXEC_PATH = `'D:\\Dir1\\Dir2'` Note that the escapement of  `“\”` s used here to escape `“\”` itself.
 
-* This is the wrong way to write: EXEC_PATH = `'D:\Dir1\Dir2'`。
+* This is the wrong way to write: EXEC_PATH = `'D:\\Dir1\\Dir2'`。
 
 If the rtconfig.py file has the following code, comment out the following code when configuring your own compiler.
 
@@ -584,11 +584,11 @@ The above 2 `if` judgments will set CROSS_TOOL and EXEC_PATH to the default valu
 
 After the compiler is configured, we can use SCons to compile the BSP of RT-Thread. Open a command line window in the BSP directory and execute the  `scons` command to start the compilation process.
 
-### RT-Thread Auxiliary Compilation Script
+## RT-Thread Auxiliary Compilation Script
 
 In the tools directory of the RT-Thread source code, there are some auxiliary compiled scripts defined by RT-Thread, such as the project files for automatically generating RT-Thread for some IDE. The most important of these is the building.py script.
 
-### SCons Further Usage
+## SCons Further Usage
 
 For a complex, large-scale system, it is obviously more than just a few files in a directory. It is probably a combination of several folders at the first level.
 

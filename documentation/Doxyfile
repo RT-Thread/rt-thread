@@ -915,7 +915,8 @@ RECURSIVE              = YES
 
 EXCLUDE                = ./0.doxygen/mainpage.h \
                          ./README.md \
-                         ./2.quick-start/quick_start_qemu
+                         ./2.quick-start/quick_start_qemu \
+                         ./env/env-vscode.md
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
