@@ -4,16 +4,16 @@
 
 @subpage quick_start
 
-**Kernel**
+@subpage kernel
 
-- [Kernel Basics](basic/basic.md)
-- [Thread Management](thread/thread.md)
-- [Clock&Timer Management](timer/timer.md)
-- [Inter-thread Synchronization](thread-sync/thread-sync.md)
-- [Inter-thread Communication](thread-comm/thread-comm.md)
-- [Memory Management](memory/memory.md)
-- [Interrupt Management](interrupt/interrupt.md)
-- [Kernel Porting](kernel-porting/kernel-porting.md)
+- @ref kernel_basics
+- @ref thread_management
+- @ref clock_management
+- @ref thread_sync
+- @ref thread_comm
+- @ref memory_management
+- @ref interrupt_management
+- @ref kernel_porting
 
 **Tool**
 

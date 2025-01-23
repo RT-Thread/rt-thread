@@ -1,5 +1,4 @@
-Interrupt Management
-==============
+@page interrupt_management Interrupt Management
 
 Interrupts often occur in embedded operating systems. When the CPU is processing a normal task, an external urgent event has occurred, requiring the CPU to suspend the current task to handle the asynchronous event. After the external event has been handled, CPU then returns to the interrupted address to continue working on the previous task. The system that implements this function is called the interrupt system, and the source of the request requesting for the CPU interrupt is called the interrupt source. An interrupt is an exception. An exception is any event that causes the processor to move away from normal operation and execute special code. If it is not processed in time, the system will either encounter an error or face a complete breakdown. So appropriately handling exceptions to avoid errors is a very important part of improving software robustness (stability). The following picture is a simple interrupt diagram.
 
@@ -7,12 +6,11 @@ Interrupts often occur in embedded operating systems. When the CPU is processing
 
 Interrupt processing is closely related to the CPU architecture. Therefore, this chapter first introduces the ARM Cortex-M CPU architecture, and then introduces the RT-Thread interrupt management mechanism in conjunction with the Cortex-M CPU architecture. After reading this chapter, you will learn more about the interrupt handling process of RT-Thread, how to add an interrupt service routine (ISR) and other matters related.
 
-Cortex-M CPU Architecture Foundation
---------------------
+# Cortex-M CPU Architecture Foundation
 
 Unlike older classic ARM processors (like ARM7, ARM9), the ARM Cortex-M processor has a very different architecture. Cortex-M is serious which Cortex M0/M3/M4/M7 models. There will be some differences between each model. For example, the Cortex-M4 has more floating point calculation functions than the Cortex-M3, but their programming models are basically the same, so the parts of the book that describe interrupt management and porting are not going to be too finely differentiated for the Cortex M0/M3/M4/M7. This section focuses on the architectural aspects related to RT-Thread interrupt management.
 
-### Introduction to Register
+## Introduction to Register
 
 The register set of Cortex-M series CPU has 16 general register sets and several special function registers from R0~R15, as shown in the figure below.
 
@@ -31,7 +29,7 @@ The program status word registers stores arithmetic and logic flags, such as neg
 
 In the case of a Cortex-M4 or Cortex-M7 with a floating point unit, the control register is also used to indicate whether the floating point unit is currently in use. The floating point unit contains 32 floating point general-purpose registers S0~S31 and a special FPSCR register (Floating point status and control register).
 
-### Operating  Scheme  and Privilege Level
+## Operating  Scheme  and Privilege Level
 
 Cortex-M introduces the concept of operation scheme and privilege level, which are thread mode and processing mode respectively. If it enters exception or interrupt processing, it enters processing mode, otherwise it is thread mode.
 
@@ -41,7 +39,7 @@ Cortex-M has two running levels, privilege-level and user-level. Thread mode can
 
 Cortex-M's stack register SP corresponds to two physical registers MSP and PSP, MSP is the main stack, PSP is the process stack. Processing mode always uses MSP as the stack; thread mode can choose to use MSP or PSP as the stack, also controlled through special register CONTROL.  After reset, Cortex-M enters thread mode, privilege-level, and uses the MSP stack by default.
 
-### Nested Vector Interrupt Controller
+## Nested Vector Interrupt Controller
 
 The Cortex-M interrupt controller is called NVIC (nested vectored interrupt controller) and supports interrupt nesting. When an interrupt is triggered and the system responds, the processor hardware automatically pushes the context register of the current location of running into the interrupt stack. The registers in this section include the PSR, PC, LR, R12, and R3-R0 registers.
 
@@ -49,14 +47,13 @@ The Cortex-M interrupt controller is called NVIC (nested vectored interrupt cont
 
 When the system is servicing an interrupt, if a higher priority interrupt is triggered, then the processor will also interrupt the currently running interrupt service routine, and then save the context of the interrupt service program register PSR, PC, LR, R12, R3-R0 to the interrupt stack.
 
-### PendSV System Call
+## PendSV System Call
 
 PendSV, also known as a suspendable system call, is an exception that can be suspended like a normal interrupt. It is specifically designed to assist the operating system in context switching. PendSV exceptions are initialized as lowest priority exceptions. Each time a context switch is required, the PendSV exception is triggered manually, and the context switch is performed in the PendSV exception handler. The detailed process of operating system context switching using the PendSV mechanism will be illustrated in the next chapter, *Kernel Porting*.
 
-RT-Thread Interruption Mechanism
----------------------
+# RT-Thread Interruption Mechanism
 
-### Interrupt Vector Table
+## Interrupt Vector Table
 
 The interrupt vector table is the entry point for all interrupt handlers. The following figure shows the Cortex-M serious of interrupt handlers: linking a function (user interrupt service routine) to the interrupt vector in a virtual interrupt vector table. When the interrupt vector corresponds to an interrupt, the hooked user interrupt service routine is called.
 
@@ -112,13 +109,13 @@ void SysTick_Handler(void)
 }
 ```
 
-### Interrupt Processing
+## Interrupt Processing
 
 In RT-Thread interrupt management, interrupt handler is divided into three parts: interrupt preamble, user interrupt service routine, and interrupt follow-up procedure, as shown in the following figure:
 
 ![3 Parts of the Interrupt Handler](figures/09interrupt_work_process.png)
 
-#### Interrupt Preamble
+### Interrupt Preamble
 
 The main job of interrupt preamble is as follows:
 
@@ -139,7 +136,7 @@ void rt_interrupt_enter(void)
 }
 ```
 
-#### User Interrupt Service Routine
+### User Interrupt Service Routine
 
 In the user interrupt service routine (ISR), there are two cases. The first case is that no thread switching is performed. In this case, after user interrupt service routine and interrupt subsequent program finished running, it exits and return to the interrupted thread. .
 
@@ -149,7 +146,7 @@ In Cortex-M architecture, the function implementation of rt_hw_context_switch_in
 
 ![Function rt_hw_context_switch_interrupt() Implementation Process](figures/09fun1.png)
 
-#### Interrupt Follow-up Procedure
+### Interrupt Follow-up Procedure
 
 The main work done by interrupt follow-up procedure is:
 
@@ -170,13 +167,13 @@ void rt_interrupt_leave(void)
 
 ![Function rt_hw_context_switch_interrupt() Implementation Process](figures/09fun2.png)
 
-### Interrupt Nesting
+## Interrupt Nesting
 
 In the case of interrupt nesting, in the process of executing the interrupt service routine, if a high priority interrupt occurs, the execution of the current interrupt service routine will be interrupted to execute the interrupt service routine of the high priority interrupt. After the processing of the high priority interrupt is completed, the interrupted interrupt service routine is resumed. If thread scheduling is required, the thread context switch will occur when all interrupt handlers finish running, as shown in the following figure.
 
 ![Thread Switching during Interrupt](figures/09ths_switch.png)
 
-### Interrupt Stack
+## Interrupt Stack
 
 During the interrupt processing, before the system responds to the interrupt, the software code (or processor) needs to save the context of the current thread (usually stored in the thread stack of the current thread), and then call the interrupt service routine for interrupt response and processing. During interrupt processing (essentially calling the user's interrupt service routine function), the interrupt handler function is likely to have its own local variables, which require the corresponding stack space to save, so the interrupt response still needs a stack space as the context to run the interrupt handler. The interrupt stack can be saved in the stack of the interrupted thread. When exiting from the interrupt, the corresponding thread is resumed to be executed.
 
@@ -186,7 +183,7 @@ RT-Thread adopts interrupt stack that provides independence. When an interrupt o
 
 There are two stack pointers in the Cortex-M processor core. One is the main stack pointer (MSP) which is the stack pointer by default. It is used before the first thread and in the interrupt and exception handlers. The other is the thread stack pointer (PSP), used in threads. When the interrupt and exception service routine exits, modify the value of the second bit of LR register as 1, and the SP of the thread is switched from MSP to PSP.
 
-### Processing of the Bottom Half of the Interruption
+## Processing of the Bottom Half of the Interruption
 
 RT-Thread does not make any assumptions or restrictions on the processing time required by the interrupt service routine, but like other real-time operating systems or non-real-time operating systems, users need to ensure that all interrupt service routines are completed in the shortest possible time (the interrupt service routine is equivalent to having the highest priority in the system and will preempt all threads to execute first). In the process of interrupt nesting or masking the corresponding interrupt source, the other nested interrupt processing and the next interrupt signal of its own interrupt source will not delayed.
 
@@ -258,14 +255,13 @@ void demo_nw_isr(int vector, void *param)
 
 As can be seen from the two code snippets of the above example, the interrupt service routine completes the start and end of the interrupt Bottom Half by waiting and releasing a semaphore object. Since the interrupt processing is divided into two parts, Top and Bottom, the interrupt processing becomes an asynchronous process. This part of the system overhead requires the user to seriously consider whether the interrupt service processing time is greater than the time to send notifications to Bottom Half and process when using RT-Thread.
 
-RT-Thread Interrupt Management Interface
----------------------
+# RT-Thread Interrupt Management Interface
 
 In order to isolate the operating system from the underlying exceptions and interrupt hardware, RT-Thread encapsulates interrupts and exceptions into a set of abstract interfaces, as shown in the following figure:
 
 ![Interrupt Related Interfaces](figures/09interrupt_ops.png)
 
-### Mount Interrupt Service Routine
+## Mount Interrupt Service Routine
 
 The system associates the user's interrupt handler with the specified interrupt number. You can call the following interface to mount a new interrupt service routine:
 
@@ -293,7 +289,7 @@ Input parameters and return values of rt_hw_interrupt_install()
 
 The interrupt service routine is a kind of runtime environment that requires special attention. It runs in a non-threaded execution environment (generally a special operating mode of the chip (privileged mode)). In this runtime environment, the current thread cannot be  suspended because the current thread does not exist. During the execution of related operations, information similar to print prompt information will appear, "Function [abc_func] shall not used in ISR", meaning a function that should not be called in the interrupt service routine.
 
-### Interrupt Source Management
+## Interrupt Source Management
 
 Usually before the ISR is ready to process an interrupt signal, we need to mask the interrupt source and open the previously blocked interrupt source in time after the ISR finishes processing the status or data.
 
@@ -329,7 +325,7 @@ Input parameters of rt_hw_interrupt_umask()
 
 >This API does not appear in every migration branch. For example, there is usually no such API in the migration branch of Cortex-M0/M3/M4.
 
-### Global Interrupt Switch
+## Global Interrupt Switch
 
 The global interrupt switch, also known as the interrupt lock, is the easiest way to disable multi-threaded access to critical sections by shutting down the interrupts to ensure that the current thread is not interrupted by other events (because the entire system no longer responds to those external events that could trigger a thread rescheduling), that is, the current thread will not be preempted unless the thread voluntarily gives up control of the processor. When you need to shut off the interrupt of the entire system , you can call the following function interface:
 
@@ -413,7 +409,7 @@ void global_interrupt_demo(void)
 
 This feature can bring great convenience to the development of the code. For example, if interrupt is turned off in a function, call some sub-functions and then turn on the interrupt. There may also be code for interrupt switch in these subfunctions. Since the API for global interrupts allows the use of nest, users do not need to do special processing for this code.
 
-### Interrupt Notification
+## Interrupt Notification
 
 When the entire system is interrupted by an interrupt and enters the interrupt handler function, it needs to inform the kernel that it has entered the interrupt state. In this case, the following interfaces can be used:
 
@@ -446,8 +442,7 @@ The following table describes the return value of rt_interrupt_get_nest()
 | 1        | the current system is in an interrupt context |
 | Bigger Than 1 | current interrupt nesting level |
 
-Interrupt and Polling
-----------
+# Interrupt and Polling
 
 When the drive peripheral is working, whether the programming mode is triggered by interrupt mode or polling mode is often the first problem to be considered by the driver developer, and there is a difference between the real-time operating system and the time-sharing operating system when it comes to this problem.  Because the polling mode itself adopts the sequential execution mode:  corresponding processing is done after finding corresponding event.   Therefore, the polling mode is relatively simple and clear in terms of implementation. For example, to write data to the serial port, the program code writes the next data only when the serial controller finishes writing a data (otherwise the data is discarded). The corresponding code can look like this:
 
@@ -480,8 +475,7 @@ Through the above calculation process, we can see some of the key factors: the s
 
 2) Change the interrupt mode to polling mode if necessary. At the same time, in order to solve the problem that the processor is always preempted with polling mode and other low-priority threads cannot be operated, the priority of the polling thread can be lowered accordingly.
 
-Global Interrupt Switch Usage Example
---------------------
+# Global Interrupt Switch Usage Example
 
 This is an interrupted application routine: when multiple threads access the same variable, use the switch global interrupt to protect the variable, as shown in the following code:
 
