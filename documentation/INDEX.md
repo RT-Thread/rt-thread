@@ -1,6 +1,7 @@
 @mainpage RT-Thread User Guide
 
-- [RT-Thread Introduction](introduction/introduction.md)
+@subpage introduction
+
 - [Start Guide: Simulate STM32F103 on KEIL simulator](quick-start/quick-start.md)
 
 **Kernel**
