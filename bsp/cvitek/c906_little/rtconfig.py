@@ -64,4 +64,4 @@ if PLATFORM == 'gcc':
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-#POST_ACTION += 'cd .. && bash combine-fip.sh ' + os.getcwd() + ' rtthread.bin' + ' \n'
+POST_ACTION += 'cd .. && bash combine-fip.sh ' + os.getcwd() + ' rtthread.bin' + ' \n'
