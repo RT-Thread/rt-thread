@@ -1,6 +1,6 @@
-# Sensor Device
+@page device_sensor Sensor Device
 
-## Introduction
+# Introduction
 
 Sensors are an important part of the Internet of Things, and sensors in an IoT system are equivalent to the eyes of humans. Without eyes, human beings can not see and interpret the world around them. The same is true for the Internet of Things.
 
@@ -8,13 +8,13 @@ Nowadays, with the development of IoT, a large number of sensors are available f
 
 The function of the Sensor device is to provide a unified operation interface for the upper layer and improve the reusability of the upper code.
 
-### Characteristics of the Sensor Device
+## Characteristics of the Sensor Device
 
 - **Interface:** Standard device interface (open/close/read/control)
 - **Work mode:** Supports polling, interrupts, three FIFO (First In, First Out) modes
 - **Power mode:** support four modes: power failure, common, low power consumption and high power consumption
 
-## Access Sensor Device
+# Access Sensor Device
 
 The application accesses the sensor device through the I/O device management interface provided by RT-Thread. The related interfaces are as follows:
 
@@ -27,7 +27,7 @@ The application accesses the sensor device through the I/O device management int
 | rt_device_set_rx_indicate() | setting reveive callback fuction                             |
 | rt_device_close()           | close sensor device                                          |
 
-### Find Sensor Device
+## Find Sensor Device
 
 The application obtains the device handle according to the name of the sensor device, and then can operate the sensor device. The function of finding the device is as follows:
 
@@ -51,7 +51,7 @@ static rt_device_t sensor_dev;         /* sensor device handle */
 sensor_dev = rt_device_find(SENSOR_DEVICE_NAME);
 ```
 
-### Open Sensor Device
+## Open Sensor Device
 
 Through the device handle, the application can open and close the device. When the device is opened, it will check whether the device has been initialized or not. If it is not initialized, it will call the initialization interface by default. Open the device through the following functions:
 
@@ -107,7 +107,7 @@ int main(void)
 }
 ```
 
-### Control Sensor Device
+## Control Sensor Device
 
 By command control words, the application program can configure the sensor device through the following functions:
 
@@ -137,7 +137,7 @@ rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void* arg);
 #define  RT_SEN_CTRL_SELF_TEST         (6)  /* selfcheck */
 ```
 
-#### Get device information
+### Get device information
 
 ```c
 struct rt_sensor_info info;
@@ -149,7 +149,7 @@ LOG_I("intf_type :%d", info.intf_type);
 LOG_I("period_min:%d", info.period_min);
 ```
 
-#### Read Device ID
+### Read Device ID
 
 ```c
 rt_uint8_t reg = 0xFF;
@@ -157,7 +157,7 @@ rt_device_control(dev, RT_SEN_CTRL_GET_ID, &reg);
 LOG_I("device id: 0x%x!", reg);
 ```
 
-#### Setting the measuring range of the sensor
+### Setting the measuring range of the sensor
 
 The unit that sets the measuring range of the sensor is the unit that is provided when the device is registered.
 
@@ -165,7 +165,7 @@ The unit that sets the measuring range of the sensor is the unit that is provide
 rt_device_control(dev, RT_SEN_CTRL_SET_RANGE, (void *)1000);
 ```
 
-#### Setting the Output Rate of Sensor Data
+### Setting the Output Rate of Sensor Data
 
 Set the output rate to 100Hz and call the following interface.
 
@@ -173,7 +173,7 @@ Set the output rate to 100Hz and call the following interface.
 rt_device_control(dev, RT_SEN_CTRL_SET_ODR, (void *)100);
 ```
 
-#### Setting up working mode
+### Setting up working mode
 
 ```c
 /* Set the working mode to polling mode */
@@ -184,7 +184,7 @@ rt_device_control(dev, RT_SEN_CTRL_SET_MODE, (void *)RT_SEN_MODE_INT);
 rt_device_control(dev, RT_SEN_CTRL_SET_MODE, (void *)RT_SEN_MODE_FIFO);
 ```
 
-####  Setting up power mode
+###  Setting up power mode
 
 ```c
 /* Set power mode to power-off mode */
@@ -197,7 +197,7 @@ rt_device_control(dev, RT_SEN_CTRL_SET_POWER, (void *)RT_SEN_POWER_LOW);
 rt_device_control(dev, RT_SEN_CTRL_SET_POWER, (void *)RT_SEN_POWER_HIGH);
 ```
 
-####  Device self-inspection
+###  Device self-inspection
 
 ```c
 int test_res;
@@ -205,7 +205,7 @@ int test_res;
 rt_device_control(dev, RT_SEN_CTRL_SELF_TEST, &test_res);
 ```
 
-### Setting Reveive Callback Fuction
+## Setting Reveive Callback Fuction
 
 Data reception instructions can be set by following functions. When the sensor receives data, it notifies the upper application thread that data arrives:
 
@@ -255,7 +255,7 @@ static int sensor_sample(int argc, char *argv[])
 
 ```
 
-### Read Data of Sensor Device
+## Read Data of Sensor Device
 
 The following functions can be called to read the data received by the sensor:
 
@@ -349,7 +349,7 @@ int main(void)
 }
 ```
 
-### Close Sensor Device
+## Close Sensor Device
 
 When the application completes the sensor operation, the sensor device can be closed by the following functions:
 
@@ -367,7 +367,7 @@ rt_err_t rt_device_close(rt_device_t dev);
 
 Closing the device interface and opening the device interface should be used in pairs, opening the primary device should close the primary device, so that the device will be completely closed, otherwise the device is still in an open state.
 
-## Example Code for Sensor Device
+# Example Code for Sensor Device
 
 The specific use of sensor devices can be referred to the following sample code, the main steps of the sample code are as follows:
 

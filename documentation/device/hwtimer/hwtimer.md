@@ -1,7 +1,6 @@
-# HWTIMER Device
+@page device_hwtimer HWTIMER Device
 
-
-## Introduction to the Timer
+# Introduction to the Timer
 
 Hardware timers generally have two modes of operation, timer mode and counter mode. No matter which mode is operated, it works by counting the pulse signal counted by the internal counter module. Here are some important concepts of timers.
 
@@ -11,7 +10,7 @@ Hardware timers generally have two modes of operation, timer mode and counter mo
 
 **Counting frequency**：Since the input frequency is usually fixed, the time it takes for the counter to reach its desired count number can be calculated from just the given frequency - `time = count value / count frequency`. For example, if the counting frequency is 1 MHz, the counter counts once every 1 / 1000000 seconds. That is, every 1 microsecond, the counter is incremented by one (or subtracted by one), at this time, the maximum timing capability of the 16-bit counter is 65535 microseconds, or 65.535 milliseconds.
 
-## Access Hardware Timer Device
+# Access Hardware Timer Device
 
 The application accesses the hardware timer device through the I/O device management interface provided by RT-Thread. The related interfaces are as follows:
 
@@ -25,7 +24,7 @@ The application accesses the hardware timer device through the I/O device manage
 | rt_device_read()  | to get the current value of the timer |
 | rt_device_close()  | to turn off the timer device. |
 
-### Find Timer Device
+## Find Timer Device
 
 The application obtains the device handle based on the hardware timer device name, and thus can operate the hardware timer device. The device function is as follows:
 
@@ -49,7 +48,7 @@ rt_device_t hw_dev;                     /* timer device handle */
 hw_dev = rt_device_find(HWTIMER_DEV_NAME);
 ```
 
-### Open Timer Device
+## Open Timer Device
 
 With the device handle, the application can open the device. When the device is open, it will detect whether the device has been initialized. If it is not initialized, it will call the initialization interface to initialize the device by default. Open the device with the following function:
 
@@ -76,7 +75,7 @@ hw_dev = rt_device_find(HWTIMER_DEV_NAME);
 rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
 ```
 
-### Set the Timeout Callback Function
+## Set the Timeout Callback Function
 
 Set the timer timeout callback function with the following function - this is the function that will be called when the timer reaches its set count value:
 
@@ -117,7 +116,7 @@ static int hwtimer_sample(int argc, char *argv[])
 }
 ```
 
-### Control the Timer Device
+## Control the Timer Device
 
 By sending control words, the application can configure the hardware timer device with the following function:
 
@@ -189,7 +188,7 @@ static int hwtimer_sample(int argc, char *argv[])
 }
 ```
 
-### Set the Timer Timeout Value
+## Set the Timer Timeout Value
 
 The timer timeout value can be set by the following function：
 
@@ -253,7 +252,7 @@ static int hwtimer_sample(int argc, char *argv[])
 }
 ```
 
-### Obtain the Current Value of the Timer
+## Obtain the Current Value of the Timer
 
 The current value of the timer can be obtained by the following function：
 
@@ -279,7 +278,7 @@ rt_hwtimerval_t timeout_s;      /* Used to save the time the timer has elapsed *
 rt_device_read(hw_dev, 0, &timeout_s, sizeof(timeout_s));
 ```
 
-### Close the Timer Device
+## Close the Timer Device
 
 The timer device can be closed with the following function:
 
@@ -310,7 +309,7 @@ rt_device_close(hw_dev);
 
 >Timing errors may occur. Assume that the counter has a maximum value of 0xFFFF, a counting frequency of 1Mhz, and a timing time of 1 second and 1 microsecond. Since the timer can only count up to 65535us at a time, the timing requirement for 1000001us can be completed 20 times at 50000us, and the calculation error will be 1us.
 
-## Hardware Timer Device Usage Example
+# Hardware Timer Device Usage Example
 
 The specific use of the hardware timer device can refer to the following sample code. The main steps of the sample code are as follows:
 

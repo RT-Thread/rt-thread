@@ -20,20 +20,20 @@
 - @ref env
 - @ref scons
 
-**Device**
+@subpage device
 
-- [I/O Device Framework](device/device.md)
-- [PIN Device](device/pin/pin.md)
-- [UART Device](device/uart/uart.md)
-- [ADC Device](device/adc/adc.md)
-- [I2C Bus Device](device/i2c/i2c.md)
-- [SPI Device](device/spi/spi.md)
-- [PWM Device](device/pwm/pwm.md)
-- [RTC Device](device/rtc/rtc.md)
-- [HWTIMER Device](device/hwtimer/hwtimer.md)
-- [WATCHDOG Device](device/watchdog/watchdog.md)
-- [WLAN Device](device/wlan/wlan.md)
-- [Sensor Device](device/sensor/sensor.md)
+- @ref device_framework
+- @ref device_pin
+- @ref device_uart
+- @ref device_adc
+- @ref device_i2c
+- @ref device_spi
+- @ref device_pwm
+- @ref device_rtc
+- @ref device_hwtimer
+- @ref device_watchdog
+- @ref device_wlan
+- @ref device_sensor
 
 **Components**
 

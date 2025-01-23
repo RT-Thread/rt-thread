@@ -1,10 +1,10 @@
-# ADC Device
+@page device_adc ADC Device
 
-## An Introduction to ADC
+# An Introduction to ADC
 
 An ADC (analog-to-digital converter) is a hardware device that converts continuously changing analog signals to discrete digital signals. Usually, these analog signals include temperature, pressure, sound, video and many other types of signals. Converting them is important, as digital signals are easier to store, process, and transmit. This conversion can be achieved by using an ADC device which is commonly integrated in various platforms. Historically, ADCs were first used to convert received wireless signals to digital signals, for example, television signals, or signals from long-short broadcast stations.
 
-### Conversion Process
+## Conversion Process
 
 As shown in the figure below, the analog-to-digital conversion generally involves steps of sampling, holding, quantifying, and encoding. In actual circuits, some processes are combined, such as sampling and holding, while quantization and encoding are implemented simultaneously in the conversion process.
 
@@ -14,19 +14,19 @@ Sampling is the conversion of analog signals that changes continuously over time
 
 The process of converting a numerically continuous analog quantity into a digital quantity is called quantization. Digital signals are discrete numerically. The output voltage of the sample-and-hold circuit also needs to be naturalized to a corresponding discrete level in a similar way, and any digital quantity can only be an integer multiple of a certain minimum quantity unit. The quantized value also requires the encoding process, which is the digital output of the A/D converter.
 
-### Resolution
+## Resolution
 
 Resolution is represented as binary (or decimal) numbers. Generally, it comes in 8 bits, 10 bits, 12 bits, 16 bits, etc. A larger resolution, in bits,  means more accuracy in the conversion of analog to digital signals.
 
-### Precision
+## Precision
 
 Precision is the maximum error value between analog signals and real ADC device numerical points’ values.An ADC with a high resolution might have a low precision, meaning that factors like noise can affect the numerical ADC reading more than small changes in the input signal.
 
-### Conversion Rate
+## Conversion Rate
 
 The conversion rate is the reciprocal of time taken for an ADC device to complete conversion from an analog to a digital signal. For example, an ADC device with a conversion rate of 1MHz means that the ADC conversion time is 1 microsecond.
 
-## Access ADC Device
+# Access ADC Device
 
 The application accesses the ADC hardware through the ADC device management interface provided by RT-Thread. The relevant interfaces are as follows:
 
@@ -37,7 +37,7 @@ The application accesses the ADC hardware through the ADC device management inte
 | rt_adc_read()   | Read ADC device data |
 | rt_adc_disable()  | Close the ADC device |
 
-### Find ADC Devices
+## Find ADC Devices
 
 The application gets the device handler based on the ADC device name to operate the ADC device. Following is the interface function to find the devices: 
 
@@ -62,7 +62,7 @@ rt_adc_device_t adc_dev;            /* ADC device handle */
 adc_dev = (rt_adc_device_t)rt_device_find(ADC_DEV_NAME);
 ```
 
-### Enable ADC Channel
+## Enable ADC Channel
 
 It is required to enable the ADC device with the following interface function before reading and operating the ADC device.
 
@@ -91,7 +91,7 @@ adc_dev = (rt_adc_device_t)rt_device_find(ADC_DEV_NAME);
 rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
 ```
 
-### Read ADC Channel Sample Values
+## Read ADC Channel Sample Values
 
 Reading the ADC channel sample values can be done by the following function:
 
@@ -129,7 +129,7 @@ rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
 
 The calculation formula of the actual voltage value is: `sampling value * reference voltage/(1 << resolution digit)`.  In the above example,  variable *vol* was enlarged 100 times, so finally the integer part of voltage is obtained through *vol / 100*, and the decimal part of voltage is obtained through *vol % 100*.
 
-### Disabling the ADC Channel
+## Disabling the ADC Channel
 
 An ADC channel can be disabled through the following function:
 
@@ -166,7 +166,7 @@ rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
 rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
 ```
 
-### FinSH Command
+## FinSH Command
 
 To find out the registered device, you can use the command adc probe followed by the registered ADC device name as following,
 
@@ -198,7 +198,7 @@ adc1 channel 5 disable success
 msh >
 ```
 
-## ADC Device Usage Example
+# ADC Device Usage Example
 
 The specific usage of the ADC device can refer to the following sample code. The main steps of the sample code are as follows:
 
