@@ -914,7 +914,8 @@ RECURSIVE              = YES
 # run.
 
 EXCLUDE                = ./0.doxygen/mainpage.h \
-                         ./README.md
+                         ./README.md \
+                         ./2.quick-start/quick_start_qemu
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

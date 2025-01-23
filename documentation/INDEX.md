@@ -2,7 +2,7 @@
 
 @subpage introduction
 
-- [Start Guide: Simulate STM32F103 on KEIL simulator](quick-start/quick-start.md)
+@subpage quick_start
 
 **Kernel**
 

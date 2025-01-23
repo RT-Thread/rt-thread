@@ -1,4 +1,4 @@
-# Start Guide: Simulate STM32F103 on Keil Simulator
+@page quick_start Start Guide
 
 Because of its particularity, the embedded operating system is often closely related to the hardware platform, and specific embedded operating systems can only run on specific hardware. For those who might not have an RT-Thread compatible hardware module, or want to test out their ideas, a complete RT-Thread system can be developed in the simulation environment MDK-ARM.
 
@@ -8,11 +8,11 @@ Because of its full STM32F103 software simulation environment, the MDK-ARM integ
 
 What will follow is a demonstration of RT-Thread running on a simulated STM32F103 microcontroller through MDK-ARM.
 
-## Preparation
+# Preparation
 
-MDK development environment: MDK-ARM 5.24 (official or evaluation version, version 5.14 and above) needs to be installed. This version is a relatively new version, which can provide relatively complete debugging functions. An installation guide can be found here: [Keil MDK Installation](./keil-installation/keil-installation.md).
+MDK development environment: MDK-ARM 5.24 (official or evaluation version, version 5.14 and above) needs to be installed. This version is a relatively new version, which can provide relatively complete debugging functions. An installation guide can be found here: @subpage quickstart_keil.
 
-## First acquaintance with RT-Thread
+# First acquaintance with RT-Thread
 
 To see the code size of RT-Thread we first need to get an example of RT-Thread that is suited for this environment, which can be obtained from the following link:
 
@@ -69,7 +69,7 @@ After compiling RT-Thread/STM32, we can simulate running RT-Thread through the M
 ![simulate RT-Thread2](./figures/6.png)
 
 
-## User Entry Code
+# User Entry Code
 
 The above startup code is related to the RT-Thread system, so how do users add initialization code for their own applications? RT-Thread uses main function as the user code entry, all you need to do is just add your own code to the main function.
 
@@ -83,7 +83,7 @@ int main(void)
 
 >Note: In order to complete the initialization for the system functions before entering the main program, you can use the `$sub$$` and `$super$$` function identifiers to call another sample before entering the main program, this was, users can ignore the initialization operations before the main() function. See [ARM® Compiler v5.06 for µVision® armlink User Guide](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0377g/pge1362065967698.html) for details.
 
-## Example of a Marquee
+# Example of a Marquee
 
 For technical engineers working on electronics, marquee is probably the simplest example, the equivalent of Hello World in every programming language programmers learn. So we will start with a marquee in the following example, to make it periodically update (turn on or off) the LED.
 
@@ -123,13 +123,13 @@ int led(void)
 MSH_CMD_EXPORT(led, RT-Thread first led sample);
 ```
 
-## Other Examples
+# Other Examples
 
 Additional kernel examples can be found in the kernel-sample-0.1.0 directory.
 
 ![more kernel samples](./figures/14.png)
 
-## Frequently Asked Question
+# Frequently Asked Question
 
 * Compilation error occurred as following:
 
