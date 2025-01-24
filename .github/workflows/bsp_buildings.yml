@@ -234,6 +234,7 @@ jobs:
                 - "nxp/mcx/mcxn/frdm-mcxn947"
                 - "nxp/mcx/mcxn/frdm-mcxn236"
                 - "nxp/mcx/mcxa/frdm-mcxa153"
+                - "nxp/mcx/mcxa/frdm-mcxa156"
                 - "renesas/ebf_qi_min_6m5"
                 - "renesas/ra6m4-cpk"
                 - "renesas/ra6m4-iot"
