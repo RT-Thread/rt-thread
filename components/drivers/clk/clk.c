@@ -454,9 +454,14 @@ static void clk_unprepare(struct rt_clk *clk, struct rt_clk_node *clk_np)
     }
 }
 
-rt_err_t rt_clk_unprepare(struct rt_clk *clk)
+/**
+ * @brief   Unprepare clock
+ *
+ * @param   clk             point to clock
+ *
+ */
+void rt_clk_unprepare(struct rt_clk *clk)
 {
-    rt_err_t err = RT_EOK;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -469,7 +474,6 @@ rt_err_t rt_clk_unprepare(struct rt_clk *clk)
         rt_hw_spin_unlock(&_clk_lock.lock);
     }
 
-    return err;
 }
 
 /**
@@ -647,25 +651,23 @@ rt_err_t rt_clk_array_prepare(struct rt_clk_array *clk_arr)
     return err;
 }
 
-rt_err_t rt_clk_array_unprepare(struct rt_clk_array *clk_arr)
+/**
+ * @brief   Unprepare clock array for mutipule out clock
+ *
+ * @param   clk_arr         point to clock array
+ *
+ */
+void rt_clk_array_unprepare(struct rt_clk_array *clk_arr)
 {
-    rt_err_t err = RT_EOK;
 
     if (clk_arr)
     {
         for (int i = 0; i < clk_arr->count; ++i)
         {
-            if ((err = rt_clk_unprepare(clk_arr->clks[i])))
-            {
-                LOG_E("CLK Array[%d] %s failed error = %s", i,
-                        "unprepare", rt_strerror(err));
-
-                break;
-            }
+            rt_clk_unprepare(clk_arr->clks[i]);
         }
     }
 
-    return err;
 }
 
 /**
