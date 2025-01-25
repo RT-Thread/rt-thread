@@ -869,6 +869,7 @@ INPUT                  = . \
                          ../include \
                          ../components/finsh \
                          ../components/drivers/include/drivers \
+                         ../components/drivers/clk \
                          ../components/dfs/dfs_v2/src \
                          ../components/dfs/dfs_v2/include
 
