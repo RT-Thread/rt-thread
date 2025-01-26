@@ -25,6 +25,7 @@
 import os
 import sys
 import string
+import shutil
 
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
@@ -337,7 +338,26 @@ def MDK4Project(target, script):
     if os.path.exists('template.uvopt'):
         import shutil
         shutil.copy2('template.uvopt', '{}.uvopt'.format(os.path.splitext(target)[0]))
-
+import threading
+import time
+def monitor_log_file(log_file_path):
+    if not os.path.exists(log_file_path):
+        open(log_file_path, 'w').close()
+    empty_line_count = 0
+    with open(log_file_path, 'r') as log_file:
+        while True:
+            line = log_file.readline()
+            if line:
+                print(line.strip())
+                if 'Build Time Elapsed' in line:
+                    break
+                empty_line_count = 0
+            else:
+                empty_line_count += 1
+                time.sleep(1)
+            if empty_line_count > 30:
+                print("Timeout reached or too many empty lines, exiting log monitoring thread.")
+                break
 def MDK5Project(target, script):
 
     if os.path.isfile('template.uvprojx') is False:
@@ -356,6 +376,22 @@ def MDK5Project(target, script):
     if os.path.exists('template.uvoptx'):
         import shutil
         shutil.copy2('template.uvoptx', '{}.uvoptx'.format(os.path.splitext(target)[0]))
+        # build with UV4.exe
+
+        if shutil.which('UV4.exe') is not None:
+            target_name = template_tree.find('Targets/Target/TargetName')
+            print('target_name:', target_name.text)
+            log_file_path = 'keil.log'
+            if os.path.exists(log_file_path):
+                os.remove(log_file_path)
+            log_thread = threading.Thread(target=monitor_log_file, args=(log_file_path,))
+            log_thread.start()
+            cmd = 'UV4.exe -b project.uvprojx -q -j0 -t '+ target_name.text +' -o '+log_file_path
+            print('Start to build keil project')
+            print(cmd)
+            os.system(cmd)
+        else:
+            print('UV4.exe is not available, please check your keil installation')
 
 def MDK2Project(target, script):
     template = open('template.Uv2', "r")
