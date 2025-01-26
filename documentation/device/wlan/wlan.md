@@ -1,8 +1,8 @@
-# WLAN Device
+@page device_wlan WLAN Device
 
 With the rapid development of the Internet of Things, more and more embedded devices are equipped with WIFI wireless network devices. In order to be able to manage WIFI network devices, RT-Thread introduces a WLAN device management framework. This framework has many features to control and manage WIFI, providing developers with many conveniences for using WIFI devices.
 
-## Introduction to the WLAN Framework
+# Introduction to the WLAN Framework
 
 The WLAN framework is a set of middleware developed by RT-Thread for managing WIFI. Connect to the specific WIFI driver, control the WIFI connection disconnection, scan and other operations. Support different applications, provide WIFI control, events, data diversion and other operations for the application, and provide a unified WIFI control interface for the upper application. The WLAN framework consists of three main parts. The DEV driver interface layer provides a unified API for the WLAN framework. Manage layer provides users with specific functions such as WIFI scanning, connection, and disconnection. Protocol is responsible for processing the data stream generated on the WIFI. Different protocols such as LWIP can be mounted according to different usage scenarios. It has the characteristics of simple use, complete functions, convenient docking and strong compatibility.
 
@@ -22,14 +22,14 @@ The Fifth Part: `WLAN Config`, the parameter management layer. Manage hotspot in
 
 The Sixth Part: `WLAN Device`, the driver interface layer. Connect to specific WLAN hardware and provide unified APIs for management.
 
-### Functions
+## Functions
 
 * Automatic Connection: After using automatic connection function, as long as the WIFI is disconnected, the hotspot information of the previous successful connection will be automatically read, and the hotspot will be connected. If a hotspot connection fails, switch to the next hotspot to connect until the connection is successful. The hotspot information used by the automatic connection is sequentially tried in the order of the success of the connection, and the hotspot information of the latest connection success is preferentially used. After the connection is successful, the hotspot information is cached first, and use it first when reconnecting after the next disconnection.
 * Parameter storage: Stores the WIFI parameters for successful connection. The WIFI parameter will be cached in the memory. If the external non-volatile storage interface is configured, it will be stored in the external storage medium. Users can implement the `struct rt_wlan_cfg_ops` structure according to his actual situation and save the parameters anywhere. The cached parameters mainly provide hotspot information for automatic connections. When WIFI is unconnected, it will read the cached parameters and try to connect.
 * WIFI control: Provide complete WIFI control APIs, scanning, connection, hotspot, etc. Provide WIFI related status callback events, disconnect, connection, connection failure, etc. Provide users with an easy to use WIFI management APIs.
 * Shell command: You can enter the command in Msh to control WIFI to perform scanning, connecting, disconnecting and other actions. Print debugging information such as WIFI status.
 
-### Configuration
+## Configuration
 
 Use `menuconfig` command in ENV to enter the WLAN configuration interface by following the menu:
 
@@ -58,7 +58,7 @@ Configuration options are described in detail as follows:
 [ ]   Enable WLAN Debugging Options      /* Enable WLAN Debugging Options */
 ```
 
-## Access Wi-Fi Devices
+# Access Wi-Fi Devices
 
 The application accesses the WLAN device hardware through the WLAN device management interface, and the relevant interfaces are as follows:
 
@@ -70,7 +70,7 @@ The application accesses the WLAN device hardware through the WLAN device manage
 | rt_wlan_disconnect()            | Synchronized Hotspot Disconnection |
 | rt_wlan_config_autoreconnect()  | Configuration automatic reconnection mode |
 
-### Specify Protocol
+## Specify Protocol
 
 ```c
 rt_err_t rt_wlan_prot_attach(const char *dev_name, const char *prot_name);
@@ -84,7 +84,7 @@ rt_err_t rt_wlan_prot_attach(const char *dev_name, const char *prot_name);
 | -RT_ERROR                     | Execution failed            |
 | RT_EOK                        | Execution succeed           |
 
-### Synchronized WLAN Scan
+## Synchronized WLAN Scan
 
 ```c
 struct rt_wlan_scan_result *rt_wlan_scan_sync(void);
@@ -104,7 +104,7 @@ struct rt_wlan_scan_result
 };
 ```
 
-### Synchronized Hotspot Connection
+## Synchronized Hotspot Connection
 
 ```c
 rt_err_t rt_wlan_connect(const char *ssid, const char *password);
@@ -120,7 +120,7 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password);
 | -RT_ERROR                     | Connection failed           |
 | RT_EOK                        | Connection successful  |
 
-### Synchronized Hotspot Disconnection
+## Synchronized Hotspot Disconnection
 
 ```c
 rt_err_t rt_wlan_disconnect(void);
@@ -133,7 +133,7 @@ rt_err_t rt_wlan_disconnect(void);
 | -RT_ERROR                     | Disconnection failed      |
 | RT_EOK                        | Disconnection successful    |
 
-### Automatic Reconnection Mode Configuration
+## Automatic Reconnection Mode Configuration
 
 ```c
 void rt_wlan_config_autoreconnect(rt_bool_t enable);
@@ -143,7 +143,7 @@ void rt_wlan_config_autoreconnect(rt_bool_t enable);
 | ----------------------------- | ---------------------------------- |
 | enable                        | enable or disable automatic reconnection |
 
-## FinSH Command
+# FinSH Command
 
 Using shell commands can help us quickly debug WiFi-related features. The wifi related shell commands are as follows:
 
@@ -159,7 +159,7 @@ wifi status                    /* Print wifi status sta + ap */
 wifi smartconfig               /* Start to configure network function */
 ```
 
-### WiFi Scan
+## WiFi Scan
 
 The wifi scan command is `wifi scan`. After the wifi scan command is executed, the surrounding hotspot information will be printed on the terminal. Through the printed hotspot information, you can see multiple attributes such as SSID and MAC address.
 
@@ -175,7 +175,7 @@ rtt_test_ssid_2                 ec:88:8f:88:aa:9a  WPA2_MIXED_PSK -47    6  144
 rtt_test_ssid_3                 c0:3d:46:00:41:ca  WPA2_MIXED_PSK -48    3  300
 ```
 
-### WiFi Connection
+## WiFi Connection
 
 The wifi scan command is `wifi join`. The command needs to be followed by the hotspot name and hotspot password. If the hotspot does not have a password, you may not enter this item. After the WiFi connection command is executed, if the hotspot exists and the password is correct, the board will connect to the hotspot and obtain the IP address. After the network connection is successful, you can use `socket` sockets for network communication.
 
@@ -187,7 +187,7 @@ wifi join ssid_test 12345678
 [I/WLAN.lwip] Got IP address : 192.168.1.110
 ```
 
-### WiFi Disconnection
+## WiFi Disconnection
 
 The command to disconnect WiFi is  `wifi disc`. After the WiFi disconnect command is executed, the development board will disconnect from the hotspot.
 
@@ -198,9 +198,9 @@ wifi disc
 [I/WLAN.mgnt] disconnect success!
 ```
 
-## Example for WLAN Device Usage
+# Example for WLAN Device Usage
 
-### WiFi Scan
+## WiFi Scan
 
 The following code will show a WiFi sync scan, and then print the results on the terminal. First perform WIFI initialization, and then execute the WIFI scan function `rt_wlan_scan_sync`, this function is synchronous, the number of scans and results returned by the function. In this example, the scanned hotspot name will be printed.
 
@@ -241,7 +241,7 @@ The results are as follows:
 
 ![Scan](figures/an0026_3.png)
 
-### WiFi Connection and Disconnection
+## WiFi Connection and Disconnection
 
 The code below will show a WiFi sync connection. Initialize WIFI first, and then create a semaphore for waiting for the `RT_WLAN_EVT_READY` event. Register the callback function of the event that needs attention, execute the  `rt_wlan_connect` wifi connection function, and return value will indicate whether the connection has been successful. If the WiFi connection succeeds, it needs to wait for the network to get the IP address before communication. Use the semaphore created in advance to wait for the network to be ready. Once the network is ready, it will be able to communicate.
 
@@ -364,7 +364,7 @@ The results are as follows:
 
 ![Disconnection](figures/an0026_4.png)
 
-### WiFi Auto Reconnection when Turn On
+## WiFi Auto Reconnection when Turn On
 
 First enable the automatic reconnection function, use the command line to connect to the hotspot A, and connect another hotspot B. After waiting for a few seconds, power off hotspot B, the system will automatically retry connecting B hotspot. At this time, B hotspot connection can not be connected, and the system automatically switches hotspot A to connect. After the connection is successful, the system stops connecting.
 

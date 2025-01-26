@@ -1,6 +1,6 @@
-# POSIX Interface
+@page component_posix POSIX Interface
 
-## Introduction to Pthreads
+# Introduction to Pthreads
 
 POSIX Threads is abbreviated as Pthreads. POSIX is the abbreviation of "Portable Operating System Interface". POSIX is a set of standards established by IEEE Computer Society to improve the compatibility of different operating systems and the portability of applications. Pthreads is a threaded POSIX standard defined in the POSIX.1c, Threads extensions (IEEE Std1003.1c-1995) standard, which defines a set of C programming language types, functions, and constants. Defined in the `pthread.h` header file and a thread library, there are about 100 APIs, all of which have a "`pthread_`" prefix and can be divided into 4 categories:
 
@@ -34,7 +34,7 @@ Message queues, like semaphores, are used with Pthreads and are not part of the 
 
 Most Pthreads functions return a value of 0 if they succeed, and an error code contained in the `errno.h` header file if unsuccessful. Many operating systems support Pthreads, such as Linux, MacOSX, Android, and Solaris, so applications written using Pthreads functions are very portable and can be compiled and run directly on many platforms that support Pthreads.
 
-### Use POSIX in RT-Thread
+## Use POSIX in RT-Thread
 
 Using the POSIX API interface in RT-Thread includes several parts: libc (for example, newlib), filesystem, pthread, and so on. Need to open the relevant options in rtconfig.h:
 
@@ -47,17 +47,17 @@ Using the POSIX API interface in RT-Thread includes several parts: libc (for exa
 
 RT-Thread implements most of the functions and constants of Pthreads, defined in the pthread.h, mqueue.h, semaphore.h, and sched.h header files according to the POSIX standard. Pthreads is a sublibrary of libc, and Pthreads in RT-Thread are based on the encapsulation of RT-Thread kernel functions, making them POSIX compliant. The Pthreads functions and related functions implemented in RT-Thread are described in detail in the following sections.
 
-## Thread
+# Thread
 
-### Thread Handle
+## Thread Handle
 
 ``` c
 typedef rt_thread_t pthread_t;
 ```
 
-`Pthread_t` is a redefinition of the `rt_thread_t` type, defined in the `pthread.h` header file. rt_thread_t is the thread handle (or thread identifier) of the RT-Thread and is a pointer to the thread control block. You need to define a variable of type pthread_t before creating a thread. Each thread corresponds to its own thread control block, which is a data structure used by the operating system to control threads. It stores some information about the thread, such as priority, thread name, and thread stack address. Thread control blocks and thread specific information are described in detail in the [Thread Management](../thread/thread.md) chapter.
+`Pthread_t` is a redefinition of the `rt_thread_t` type, defined in the `pthread.h` header file. rt_thread_t is the thread handle (or thread identifier) of the RT-Thread and is a pointer to the thread control block. You need to define a variable of type pthread_t before creating a thread. Each thread corresponds to its own thread control block, which is a data structure used by the operating system to control threads. It stores some information about the thread, such as priority, thread name, and thread stack address. Thread control blocks and thread specific information are described in detail in the @ref thread_management chapter.
 
-### Create Thread
+## Create Thread
 
 ``` c
 int pthread_create (pthread_t *tid,
@@ -82,7 +82,7 @@ Thread properties and related functions are described in detail in the *Thread A
 
 > After the pthread thread is created, if the thread needs to be created repeatedly, you need to set the pthread thread to detach mode, or use pthread_join to wait for the created pthread thread to finish.
 
-#### Example Code for Creating Thread
+### Example Code for Creating Thread
 
 The following program initializes two threads, which have a common entry function, but their entry parameters are not the same. Others, they have the same priority and are scheduled for rotation in time slices.
 
@@ -140,7 +140,7 @@ int rt_application_init()
 }
 ```
 
-### Detach Thread
+## Detach Thread
 
 ``` c
 int pthread_detach (pthread_t thread);
@@ -158,7 +158,7 @@ Usage: The child thread calls `pthread_detach(pthread_self())` (*pthread_self()*
 
 > Once the detach state of the thread property is set to detached, the thread cannot be waited by the pthread_join() function or re-set to detached.
 
-#### Example Code for Detaching Thread
+### Example Code for Detaching Thread
 
 The following program initializes 2 threads, which have the same priority and are scheduled according to the time slice. Both threads will be set to the detached state. The 2 threads will automatically exit after printing 3 times of information. After exiting, the system will automatically reclaim its resources.
 
@@ -237,7 +237,7 @@ int rt_application_init()
 }
 ```
 
-### Waiting for Thread to End
+## Waiting for Thread to End
 
 ``` c
 int pthread_join (pthread_t thread, void**value_ptr);
@@ -257,7 +257,7 @@ The thread calling this function blocks and waits for the thread with the joinab
 
 The pthread_join() and pthread_detach() functions are similar in that they are used to reclaim the resources occupied by threads after the thread running ends. A thread cannot wait for itself to end. The detached state of the thread thread must be `joinable`, and one thread only corresponds to the `pthread_join()` call. A thread with a split state of joinable will only release the resources it occupies when other threads execute `pthread_join()` on it. So in order to avoid memory leaks, all threads that will end up running, either detached or set to detached, or use pthread_join() to reclaim the resources they consume.
 
-#### Example Code for Waiting for the Thread to End
+### Example Code for Waiting for the Thread to End
 
 The following program code initializes 2 threads, they have the same priority, and the threads of the same priority are scheduled according to the time slice. The separation status of the 2 thread attributes is the default value joinable, and thread 1 starts running first, and ends after printing 3 times of information. Thread 2 calls pthread_join() to block waiting for thread 1 to end, and reclaims the resources occupied by thread 1, and thread 2 prints the message every 2 seconds.
 
@@ -336,7 +336,7 @@ int rt_application_init()
 }
 ```
 
-### Exit Thread
+## Exit Thread
 
 ``` c
 void pthread_exit(void *value_ptr);
@@ -350,7 +350,7 @@ Calling this function by the pthread thread terminates execution, just as the pr
 
 > If the split state of the thread is joinable, the resources occupied by the thread will not be released after the thread exits. The pthread_join() function must be called to release the resources occupied by the thread.
 
-#### Example Code for Exiting Thread
+### Example Code for Exiting Thread
 
 This program initializes 2 threads, they have the same priority, and the threads of the same priority are scheduled according to the time slice. The separation state of the two thread attributes is the default value joinable, and thread 1 starts running first, sleeps for 2 seconds after printing the information once, and then prints the exit information and then ends the operation. Thread 2 calls pthread_join() to block waiting for thread 1 to end, and reclaims the resources occupied by thread 1, and thread 2 prints the message every 2 seconds.
 
@@ -426,7 +426,7 @@ int rt_application_init()
 }
 ```
 
-## Mutex
+# Mutex
 
 Mutexes, also known as mutually exclusive semaphores, are a special binary semaphore. Mutexes are used to ensure the integrity of shared resources. Only one thread can access the shared resource at any time. To access shared resources, the thread must first obtain the mutex. After the access is complete, the mutex must be released. Embedded shared resources include memory, IO, SCI, SPI, etc. If two threads access shared resources at the same time, there may be problems because one thread may use the resource while another thread modifies the shared resource and consider sharing.
 
@@ -436,9 +436,9 @@ The main APIs of the mutex include: calling `pthread_mutex_init()` to initialize
 
 The rt-thread operating system implements a priority inheritance algorithm to prevent priority inversion.Priority inheritance is the practice of raising the priority of a low-priority thread that occupies a resource to the same level as the highest-priority thread of all the threads waiting for the resource, then executing, and then returning to the initial setting when the low-priority thread releases the resource.Thus, threads that inherit priority prevent system resources from being preempted by any intermediate priority thread.
 
-For a detailed introduction to priority reversal, please refer to the [Inter-thread Synchronization](../thread-sync/thread-sync.md) Mutex section.
+For a detailed introduction to priority reversal, please refer to the @ref thread_sync Mutex section.
 
-### Mutex Lock Control Block
+## Mutex Lock Control Block
 
 Each mutex corresponds to a mutex control block that contains some information about the control of the mutex. Before creating a mutex, you must first define a variable of type `pthread_mutex_t`. pthread_mutex_t is a redefinition of pthread_mutex. The pthread_mutex data structure is defined in the pthread.h header file. The data structure is as follows:
 
@@ -463,7 +463,7 @@ struct rt_mutex
 typedef struct rt_mutex* rt_mutex_t;             /* Rt_mutext_t is a pointer to the mutex structure */
 ```
 
-### Initialize the Mutex
+## Initialize the Mutex
 
 ``` c
 int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr);
@@ -483,7 +483,7 @@ In addition to calling the pthread_mutex_init() function to create a mutex, you 
 
 The mutex lock properties and related functions are described in detail in the *thread advanced programming* chapter. In general, the default properties can be used.
 
-### Destroy Mutex
+## Destroy Mutex
 
 ``` c
 int pthread_mutex_destroy(pthread_mutex_t *mutex);
@@ -501,7 +501,7 @@ This function destroys the mutex `mutex`. Mutex is mutable in an uninitialized s
 
 The mutex can be destroyed when it is determined that the mutex is not locked and no thread is blocked on the mutex.
 
-### Blocking Mode Locks the Mutex
+## Blocking Mode Locks the Mutex
 
 ``` c
 int pthread_mutex_lock(pthread_mutex_t *mutex);
@@ -517,7 +517,7 @@ int pthread_mutex_lock(pthread_mutex_t *mutex);
 
 This function locks the mutex `mutex`, which is a wrapper of the rt_mutex_take() function. If the mutex has not been locked yet, the thread applying for the mutex will successfully lock the mutex. If the mutex has been locked by the current thread and the mutex type is a nested lock, the mutex's holding count is incremented by one, and the current thread will not suspend waiting (deadlock), but the thread must corresponds to the same number of unlocks. If the mutex is held by another thread, the current thread will be blocked until the other thread unlocks the mutex, and the thread waiting for the mutex will acquire the mutex according to the *first in first out* principle. .
 
-### Non-blocking Mode Locks the Mutex
+## Non-blocking Mode Locks the Mutex
 
 ``` c
 int pthread_mutex_trylock(pthread_mutex_t *mutex);
@@ -534,7 +534,7 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex);
 
 This function is a non-blocking version of the pthread_mutex_lock() function. The difference is that if the mutex has been locked, the thread will not be blocked, but the error code will be returned immediately.
 
-### Unlock the Mutex
+## Unlock the Mutex
 
 ``` c
 int pthread_mutex_unlock(pthread_mutex_t *mutex);
@@ -551,7 +551,7 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex);
 
 Calling this function to unlock the mutex. This function is a wrapper of the rt_mutex_release() function. When the thread completes the access of the shared resource, it should release the possessed mutex as soon as possible, so that other threads can acquire the mutex in time. Only a thread that already has a mutex can release it, and its holding count is decremented by one each time the mutex is released. When the mutex's holding count is zero (ie, the holding thread has released all holding operations), the mutex becomes available, and the thread waiting on the mutex is placed in a first-in-first-out manner.  If the thread's run priority is promoted by the mutex lock, then when the mutex is released, the thread reverts to the priority before holding the mutex.
 
-### Example Code for Mutex Lock
+## Example Code for Mutex Lock
 
 This program will initialize 2 threads, they have the same priority, 2 threads will call the same printer() function to output their own string, the printer() function will output only one character at a time, then sleep for 1 second, call printer The thread of the () function also sleeps. If you do not use a mutex, thread 1 prints a character, and after hibernation, thread 2 is executed, and thread 2 prints a character, so that the thread 1 and thread 2 strings cannot be completely printed, and the printed string is confusing. If a mutex is used to protect the print function printer() shared by 2 threads, thread 1 takes the mutex and executes the printer() print function to print a character, then sleeps for 1 second, which is switched to thread 2 because The nick lock has been locked by thread 1, and thread 2 will block until thread 1 of thread 1 is fully released and the thread 2 is woken up after the mutex is actively released.
 
@@ -636,7 +636,7 @@ int rt_application_init()
 }
 ```
 
-## Conditional Variable
+# Conditional Variable
 
 A condition variable is actually a semaphore used for synchronization between threads. A condition variable is used to block a thread. When a condition is met, a condition is sent to the blocked thread. The blocking thread is woken up. The condition variable needs to be used with the mutex. The mutex is used to protect the shared data.
 
@@ -644,7 +644,7 @@ Condition variables can be used to inform shared data status. For example, if a 
 
 The main operations of the condition variable include: calling `pthread_cond_init()` to initialize the condition variable, calling `pthread_cond_destroy()` to destroy a condition variable, calling `pthread_cond_wait()` to wait for a condition variable, and calling `pthread_cond_signal()` to send a condition variable.
 
-### Condition Variable Control Block
+## Condition Variable Control Block
 
 Each condition variable corresponds to a condition variable control block, including some information about the operation of the condition variable. A `pthread_cond_t` condition variable control block needs to be defined before initializing a condition variable. `pthread_cond_t` is a redefinition of the `pthread_cond` structure type, defined in the pthread.h header file.
 
@@ -665,7 +665,7 @@ struct rt_semaphore
 };
 ```
 
-### Initialization Condition Variable
+## Initialization Condition Variable
 
 ``` c
 int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr);
@@ -685,7 +685,7 @@ You can also statically initialize a condition variable with the macro PTHREAD_C
 
 Attr General setting NULL use the default value, as described in the thread advanced programming chapter.
 
-### Destroy Condition Variables
+## Destroy Condition Variables
 
 ``` c
 int pthread_cond_destroy(pthread_cond_t *cond);
@@ -704,7 +704,7 @@ This function destroys the `cond` condition variable, and the `cond` is uninitia
 
 Before destroying a condition variable, you need to make sure that no threads are blocked on the condition variable and will not wait to acquire, signal, or broadcast.
 
-### Blocking Mode to Obtain Condition Variables
+## Blocking Mode to Obtain Condition Variables
 
 ``` c
 int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
@@ -720,7 +720,7 @@ int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
 
 This function gets the `cond` condition variable in blocking mode. The thread needs to lock the mutex before waiting for the condition variable. This function first determines whether the condition variable is available. If it is not available, initializes a condition variable, then unlocks the mutex and then tries to acquire a semaphore when the semaphore's value is greater than zero, it indicates that the semaphore is available, the thread will get the semaphore, and the condition variable will be obtained, and the corresponding semaphore value will be decremented by 1. If the value of the semaphore is equal to zero, indicating that the semaphore is not available, the thread will block until the semaphore is available, after which the mutex will be locked again.
 
-### Specify Blocking Time to Obtain Condition Variables
+## Specify Blocking Time to Obtain Condition Variables
 
 ``` c
 int pthread_cond_timedwait(pthread_cond_t *cond,
@@ -741,7 +741,7 @@ int pthread_cond_timedwait(pthread_cond_t *cond,
 
 The only difference between this function and the `pthread_cond_wait()` function is that if the condition variable is not available, the thread will be blocked for the `abstime` duration. After the timeout, the function will directly return the ETIMEDOUT error code and the thread will be woken up to the ready state.
 
-### Send a Conditional Semaphore
+## Send a Conditional Semaphore
 
 ``` c
 int pthread_cond_signal(pthread_cond_t *cond);
@@ -755,7 +755,7 @@ int pthread_cond_signal(pthread_cond_t *cond);
 
 This function sends a signal and wakes up only one thread waiting for the `cond` condition variable, which encapsulates the rt_sem_release() function, which is to send a semaphore. When the value of the semaphore is equal to zero, and a thread waits for this semaphore, it will wake up the first thread waiting in the queue of the semaphore to get the semaphore. Otherwise the value of the semaphore will be increased by 1.
 
-### Broadcast
+## Broadcast
 
 ``` c
 int pthread_cond_broadcast(pthread_cond_t *cond);
@@ -770,7 +770,7 @@ int pthread_cond_broadcast(pthread_cond_t *cond);
 
 Calling this function will wake up all threads waiting for the `cond` condition variable.
 
-### Example Code for Condition Variable
+## Example Code for Condition Variable
 
 This example is a producer consumer model with a producer thread and a consumer thread that have the same priority. The producer will produce a number every 2 seconds, put it in the list pointed to by the `head`, and then call pthread_cond_signal() to send signal to the consumer thread to inform the consumer that there is data in the thread list. The consumer thread calls pthread_cond_wait() to wait for the producer thread to send a signal.
 
@@ -885,7 +885,7 @@ int rt_application_init()
 }
 ```
 
-## Read-write Lock
+# Read-write Lock
 
 Read-write locks are also known as multi-reader single-writer locks. The read-write lock divides the visitors of the shared resource into readers and writers. The reader only reads and accesses the shared resources, and the writer needs to write the shared resources. Only one thread can occupy the read-write lock of the write mode at the same time, but there can be multiple threads simultaneously occupying the read-write lock of the read mode. Read-write locks are suitable for reading data structures much more often than writes because read patterns can be shared when locked, and write mode locks are exclusive.
 
@@ -893,7 +893,7 @@ Read-write locks are usually implemented based on mutex locks and condition vari
 
 The main operations of the read-write lock include: calling `pthread_rwlock_init()` to initialize a read-write lock, the write thread calling `pthread_rwlock_wrlock()` to lock the read-write lock, and the read thread calling `pthread_rwlock_rdlock()` to lock the read-write lock , when this read-write lock is not required, calling `pthread_rwlock_destroy()` to destroys the read-write lock.
 
-### Read-write Lock Control Block
+## Read-write Lock Control Block
 
 Each read-write lock corresponds to a read-write lock control block, including some information about the operation of the read-write lock. `pthread_rwlock_t` is a redefinition of the `pthread_rwlock` data structure, defined in the `pthread.h` header file. Before creating a read-write lock, you need to define a data structure of type `pthread_rwlock_t`.
 
@@ -912,7 +912,7 @@ struct pthread_rwlock
 typedef struct pthread_rwlock pthread_rwlock_t;     /* Type redefinition */
 ```
 
-### Initialize Read-write Lock
+## Initialize Read-write Lock
 
 ``` c
 int pthread_rwlock_init (pthread_rwlock_t *rwlock,
@@ -933,7 +933,7 @@ You can also use the macro PTHREAD_RWLOCK_INITIALIZER to statically initialize t
 
 `attr` generally sets NULL to the default value, as described in the chapter on advanced threading.
 
-### Destroy Read-write Lock
+## Destroy Read-write Lock
 
 ``` c
 int pthread_rwlock_destroy (pthread_rwlock_t *rwlock);
@@ -950,9 +950,9 @@ int pthread_rwlock_destroy (pthread_rwlock_t *rwlock);
 
 This function destroys a `rwlock` read-write lock, which destroys the mutex and condition variables in the read-write lock. After the destruction, the properties of the read-write lock and the control block parameters will not be valid, but you can call pthread_rwlock_init() or re-initialize the read-write lock in static mode.
 
-### Read-Lock of Read-Write Lock
+## Read-Lock of Read-Write Lock
 
-#### Blocking mode Read-lock the read-write locks
+### Blocking mode Read-lock the read-write locks
 
 ``` c
 int pthread_rwlock_rdlock (pthread_rwlock_t *rwlock);
@@ -968,7 +968,7 @@ int pthread_rwlock_rdlock (pthread_rwlock_t *rwlock);
 
 The reader thread can call this function to read-lock the `rwlock` read-write lock. If the read-write lock is not write-locked and no writer thread is blocked on the read-write lock, the read-write thread will successfully acquire the read-write lock. If the read-write lock has been write-locked, the reader thread will block until the thread that executes the write-lock unlocks the read-write lock.
 
-#### Non-blocking Mode Read-lock Read-write Locks
+### Non-blocking Mode Read-lock Read-write Locks
 
 ``` c
 int pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock);
@@ -985,7 +985,7 @@ int pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock);
 
 This function differs from the pthread_rwlock_rdlock() function in that if the read-write lock is already write-locked, the reader thread is not blocked, but instead returns an error code EBUSY.
 
-#### Specify Blocking Time for the Read-write Lock to be Read-Locked
+### Specify Blocking Time for the Read-write Lock to be Read-Locked
 
 ``` c
 int pthread_rwlock_timedrdlock (pthread_rwlock_t *rwlock,
@@ -1004,9 +1004,9 @@ int pthread_rwlock_timedrdlock (pthread_rwlock_t *rwlock,
 
 The difference between this function and the pthread_rwlock_rdlock() function is that if the read-write lock has been write-locked, the reader thread will block the specified abstime duration. After the timeout, the function will return the error code ETIMEDOUT and the thread will be woken up to the ready state.
 
-### Write-Lock of Read-Write Lock
+## Write-Lock of Read-Write Lock
 
-#### Blocking Mode Write-Locks a Read-write Lock
+### Blocking Mode Write-Locks a Read-write Lock
 
 ``` c
 int pthread_rwlock_wrlock (pthread_rwlock_t *rwlock);
@@ -1022,7 +1022,7 @@ int pthread_rwlock_wrlock (pthread_rwlock_t *rwlock);
 
 The writer thread calls this function to write-lock the `rwlock` read-write lock. A write-lock read-write lock is similar to a mutex, and only one thread can write-lock a read-write lock at a time. If no thread locks the read-write lock, that is, the read-write lock value is 0, the writer thread that calls this function will write-lock the read-write lock, and other threads cannot acquire the read-write lock at this time. If there is already a thread locked the read-write lock, ie the read/write lock value is not 0, then the writer thread will be blocked until the read-write lock is unlocked.
 
-#### Non-blocking Mode Write-Lock a Read-write Lock
+### Non-blocking Mode Write-Lock a Read-write Lock
 
 ``` c
 int pthread_rwlock_trywrlock (pthread_rwlock_t *rwlock);
@@ -1039,7 +1039,7 @@ int pthread_rwlock_trywrlock (pthread_rwlock_t *rwlock);
 
 The only difference between this function and the pthread_rwlock_wrlock() function is that if a thread has locked the read-write lock, ie the read-write lock value is not 0, the writer thread that called the function will directly return an error code, and the thread will not be Blocked.
 
-#### Specify Blocking Time for the Read-write Lock to be Write-Lock
+### Specify Blocking Time for the Read-write Lock to be Write-Lock
 
 ``` c
 int pthread_rwlock_timedwrlock (pthread_rwlock_t *rwlock,
@@ -1057,7 +1057,7 @@ int pthread_rwlock_timedwrlock (pthread_rwlock_t *rwlock,
 
 The only difference between this function and the pthread_rwlock_wrlock() function is that if a thread locks the read-write lock, that is, the read-write lock value is not 0, the calling thread blocks the specified `abstime` duration. After the timeout, the function returns the error code ETIMEDOUT, and the thread will be woken up to the ready state.
 
-### Unlock the Read-write Lock
+## Unlock the Read-write Lock
 
 ``` c
 int pthread_rwlock_unlock (pthread_rwlock_t *rwlock);
@@ -1073,7 +1073,7 @@ int pthread_rwlock_unlock (pthread_rwlock_t *rwlock);
 
 This function unlocks the `rwlock` read-write lock. A thread locks the same read-write lock multiple times and must have the same number of unlocks. If multiple threads wait for the read-write lock to lock after unlocking, the system will activate the waiting thread according to the first-in-first-out rule.
 
-### Example Code for Read-write Lock
+## Example Code for Read-write Lock
 
 This program has two reader threads, one reader thread. The two reader threads read-lock the read-write lock first, then sleep for 2 seconds. This time the other reader threads can read-lock the read-write lock, and then read the shared data.
 
@@ -1165,13 +1165,13 @@ int rt_application_init()
 }
 ```
 
-## Barrier
+# Barrier
 
 Barriers are a way to synchronize multithreading. Barrier means a barrier or railing that blocks multiple threads that arrive in the same railing until all threads arrived, then remove the railings and let them go at the same time. The thread that arrives first will block, and when all the threads that call the pthread_barrier_wait() function (the number equal to the count specified by the barrier initialization) arrive, the threads will enter the ready state from the blocked state and participate in the system scheduling again.
 
 Barriers are implemented based on condition variables and mutex locks. The main operations include: calling `pthread_barrier_init()` to initialize a barrier, and other threads calling `pthread_barrier_wait()`. After all threads arrived, the thread wakes up to the ready state. Destroy a barrier by calling pthread_barrier_destroy() when the barrier will not be used.
 
-### Barrier Control Block
+## Barrier Control Block
 
 Before creating a barrier, you need to define a `pthread_barrier_t` barrier control block. `pthread_barrier_t` is a redefinition of the `pthread_barrier` structure type, defined in the pthread.h header file.
 
@@ -1185,7 +1185,7 @@ struct pthread_barrier
 typedef struct pthread_barrier pthread_barrier_t;
 ```
 
-### Create a Barrier
+## Create a Barrier
 
 ``` c
 int pthread_barrier_init(pthread_barrier_t *barrier,
@@ -1206,7 +1206,7 @@ This function creates a `barrier` barrier and initializes the conditional variab
 
 attr generally sets NULL to the default value, as described in the chapter on *thread advanced programming*.
 
-### Destruction of Barrier
+## Destruction of Barrier
 
 ``` c
 int pthread_barrier_destroy(pthread_barrier_t *barrier);
@@ -1221,7 +1221,7 @@ int pthread_barrier_destroy(pthread_barrier_t *barrier);
 
 This function destroys a barrier. The barrier's properties and control block parameters will not be valid after destruction, but can be reinitialized by calling pthread_barrier_init().
 
-### Wait for Barrier
+## Wait for Barrier
 
 ``` c
 int pthread_barrier_wait(pthread_barrier_t *barrier);
@@ -1236,7 +1236,7 @@ int pthread_barrier_wait(pthread_barrier_t *barrier);
 
 This function synchronizes the threads waiting in front of the barrier and called by each thread. If the number of queue waiting threads is not 0, count will be decremented by 1. If the count is 0, indicating that all threads have reached the railing. All arriving threads will be woken up and re-entered into the ready state to participate in system scheduling. If count is not 0 after the decrease, it indicates that there is still threads that do not reach the barrier, and the calling thread will block until all threads reach the barrier.
 
-### Example Code for Barrier
+## Example Code for Barrier
 
 This program will create 3 threads, initialize a barrier, and the barrier waits for 3 threads.  3 threads will call pthread_barrier_wait() to wait in front of the barrier. When all 3 threads are arrived, 3 threads will enter the ready state. The output count information is printed every 2 seconds.
 
@@ -1335,7 +1335,7 @@ int rt_application_init()
 }
 ```
 
-## Semaphore
+# Semaphore
 
 Semaphores can be used for communication between processes and processes, or between in-process threads. Each semaphore has a semaphore value that is not less than 0, corresponding to the available amount of semaphore. Call sem_init() or sem_open() to assign an initial value to the semaphore . Call sem_post() to increment the semaphore value by 1. Call sem_wait() to decrement the semaphore value by 1. If the current semaphore is 0, call sem_wait(), the thread will suspended on the wait queue for this semaphore until the semaphore value is greater than 0 and is available.
 
@@ -1353,7 +1353,7 @@ POSIX semaphores are also divided into named semaphores and unnamed semaphores:
 
 The POSIX semaphore of the RT-Thread operating system is mainly based on a package of RT-Thread kernel semaphores, mainly used for communication between threads in the system. It is used in the same way as the semaphore of the RT-Thread kernel.
 
-### Semaphore Control Block
+## Semaphore Control Block
 
 Each semaphore corresponds to a semaphore control block. Before creating a semaphore, you need to define a sem_t semaphore control block. Sem_t is a redefinition of the posix_sem structure type, defined in the semaphore.h header file.
 
@@ -1380,11 +1380,11 @@ typedef struct rt_semaphore* rt_sem_t;
 
 ```
 
-### Unnamed semaphore
+## Unnamed semaphore
 
 The value of an unnamed semaphore is stored in memory and is generally used for inter-thread synchronization or mutual exclusion. Before using it, you must first call sem_init() to initialize it.
 
-#### Initialize the unnamed semaphore
+### Initialize the unnamed semaphore
 
 ``` c
 int sem_init(sem_t *sem, int pshared, unsigned int value);
@@ -1401,7 +1401,7 @@ int sem_init(sem_t *sem, int pshared, unsigned int value);
 
 This function initializes an unnamed semaphore sem, initializes the semaphore related data structure according to the given or default parameters, and puts the semaphore into the semaphore list. The semaphore value after initialization is the given initial value. This function is a wrapper of the rt_sem_create() function.
 
-#### Destroy Unnamed Semaphore
+### Destroy Unnamed Semaphore
 
 ``` c
 int sem_destroy(sem_t *sem);
@@ -1416,11 +1416,11 @@ int sem_destroy(sem_t *sem);
 
 This function destroys an unnamed semaphore sem and releases the resources occupied by the semaphore.
 
-### Named Semaphore
+## Named Semaphore
 
 A named semaphore whose value is stored in a file and is generally used for inter-process synchronization or mutual exclusion. Two processes can operate on named semaphores of the same name. The well-known semaphore implementation in the RT-Thread operating system is similar to the unnamed semaphore. It is designed for communication between threads and is similar in usage.
 
-#### Create or Open a Named Semaphore
+### Create or Open a Named Semaphore
 
 ``` c
 sem_t *sem_open(const char *name, int oflag, ...);
@@ -1436,7 +1436,7 @@ sem_t *sem_open(const char *name, int oflag, ...);
 
 This function creates a new semaphore based on the semaphore name or opens an existing semaphore. The optional values for Oflag are `0`, `O_CREAT` or `O_CREAT|O_EXCL`. If Oflag is set to `O_CREAT` , a new semaphore is created. If Oflag sets to  `O_CREAT|O_EXCL`, it returns NULL if the semaphore already exists, and creates a new semaphore if it does not exist. If Oflag is set to 0, a semaphore does not exist and NULL is returned.
 
-#### Detach the Named Semaphore
+### Detach the Named Semaphore
 
 ``` c
 int sem_unlink(const char *name);
@@ -1451,7 +1451,7 @@ int sem_unlink(const char *name);
 
 This function looks up the semaphore based on the semaphore name, and marks the semaphore as a detached state if the semaphore is present. Then check the reference count. If the value is 0, the semaphore is deleted immediately. If the value is not 0, it will not be deleted until all threads holding the semaphore close the semaphore.
 
-#### Close the Named Semaphore
+### Close the Named Semaphore
 
 ``` c
 int sem_close(sem_t *sem);
@@ -1466,7 +1466,7 @@ int sem_close(sem_t *sem);
 
 When a thread terminates,it closes the semaphore it occupies. Whether the thread terminates voluntarily or involuntarily, this closing operation is performed. This is equivalent to a reduction of 1 in the number of semaphores held. If the holding count is zero after subtracting 1 and the semaphore is in separated state, the `sem` semaphore will be deleted and the resources it occupies will be released.
 
-### Obtain Semaphore Value
+## Obtain Semaphore Value
 
 ``` c
 int sem_getvalue(sem_t *sem, int *sval);
@@ -1482,7 +1482,7 @@ int sem_getvalue(sem_t *sem, int *sval);
 
 This function obtains the value of the semaphore and saves it in the memory pointed to by `sval` to know the amount of semaphore resources.
 
-### Blocking Mode to Wait Semaphore
+## Blocking Mode to Wait Semaphore
 
 ``` c
 int sem_wait(sem_t *sem);
@@ -1497,7 +1497,7 @@ int sem_wait(sem_t *sem);
 
 The thread calls this function to get the semaphore, which is a wrapper of the `rt_sem_take(sem,RT_WAITING_FOREVER)` function. If the semaphore value is greater than zero, the semaphore is available, the thread gets the semaphore, and the semaphore value is decremented by one. If the semaphore value is equal to 0, indicating that the semaphore is not available, the thread is blocked and entering the suspended state and queued in a first-in, first-out manner until the semaphore is available.
 
-### Non-blocking Mode to Wait Semaphore
+## Non-blocking Mode to Wait Semaphore
 
 ``` c
 int sem_trywait(sem_t *sem);
@@ -1512,7 +1512,7 @@ int sem_trywait(sem_t *sem);
 
 This function is a non-blocking version of the sem_wait() function and is a wrapper of the `rt_sem_take(sem,0)` function. When the semaphore is not available, the thread does not block, but returns directly.
 
-### Specify the Blocking Time Waiting for the Semaphore
+## Specify the Blocking Time Waiting for the Semaphore
 
 ``` c
 int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);
@@ -1528,7 +1528,7 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);
 
 The difference between this function and `the sem_wait()` function is that if the semaphore is not available, the thread will block the duration of `abs_timeout`. After the timeout, the function returns -1, and the thread will be awakened from the blocking state to the ready state.
 
-### Send Semaphore
+## Send Semaphore
 
 ``` c
 int sem_post(sem_t *sem);
@@ -1543,7 +1543,7 @@ int sem_post(sem_t *sem);
 
 This function will release a sem semaphore, which is a wrapper of the rt_sem_release() function. If the thread queue waiting for the semaphore is not empty, indicating that there are threads waiting for the semaphore, the first thread waiting for the semaphore will switch from the suspended state to the ready state, waiting for system scheduling. If no thread is waiting for the semaphore, the semaphore value will be incremented by one.
 
-### Example Code for Unnamed Semaphore
+## Example Code for Unnamed Semaphore
 
 A typical case of semaphore usage is the producer consumer model. A producer thread and a consumer thread operate on the same block of memory, the producer fills the shared memory, and the consumer reads the data from the shared memory.
 
@@ -1662,7 +1662,7 @@ int rt_application_init()
 }
 ```
 
-## Message Queue
+# Message Queue
 
 Message Queuing is another commonly used inter-thread communication method that accepts messages of unfixed length from threads or interrupt service routines and caches the messages in their own memory space. Other threads can also read the corresponding message from the message queue, and when the message queue is empty, the reader thread can be suspended. When a new message arrives, the suspended thread will be woken up to receive and process the message.
 
@@ -1670,7 +1670,7 @@ The main operations of the message queue include: creating or opening by the fun
 
 POSIX message queue is mainly used for inter-process communication. The POSIX message queue of RT-Thread operating system is mainly based on a package of RT-Thread kernel message queue, mainly used for communication between threads in the system. It is used in the same way as the message queue of the RT-Thread kernel.
 
-### Message Queue Control Block
+## Message Queue Control Block
 
 Each message queue corresponds to a message queue control block. Before creating a message queue, you need to define a message queue control block. The message queue control block is defined in the mqueue.h header file.
 
@@ -1685,7 +1685,7 @@ struct mqdes
 typedef struct mqdes* mqd_t;  /* Message queue control block pointer type redefinition */
 ```
 
-### Create or Open a Message Queue
+## Create or Open a Message Queue
 
 ``` c
 mqd_t mq_open(const char *name, int oflag, ...);
@@ -1701,7 +1701,7 @@ mqd_t mq_open(const char *name, int oflag, ...);
 
 This function creates a new message queue or opens an existing message queue based on the name of the message queue. The optional values for Oflag are `0`, `O_CREAT` or `O_CREAT\|O_EXCL`. If Oflag is set to `O_CREAT` then a new message queue is created. If Oflag sets `O_CREAT\|O_EXCL`, it returns NULL if the message queue already exists, and creates a new message queue if it does not exist. If Oflag is set to `0`, the message queue does not exist and returns NULL.
 
-### Detach Message Queue
+## Detach Message Queue
 
 ``` c
 int mq_unlink(const char *name);
@@ -1716,7 +1716,7 @@ int mq_unlink(const char *name);
 
 This function finds the message queue based on the message queue name name. If found, it sets the message queue to a detached state. If the hold count is 0, the message queue is deleted and the resources occupied by the message queue are released.
 
-### Close the Message Queue
+## Close the Message Queue
 
 ``` c
 int mq_close(mqd_t mqdes);
@@ -1731,7 +1731,7 @@ int mq_close(mqd_t mqdes);
 
 When a thread terminates,it closes the message queue it occupies. Whether the thread terminates voluntarily or involuntarily, this closure is performed.  This is equivalent to the message queue holding count minus 1. If the holding count is 0 after the minus 1 and the message queue is in the separated state, the `mqdes` message queue will be deleted and released the resources it occupies.
 
-### Block Mode to Send a Message
+## Block Mode to Send a Message
 
 ``` c
 int mq_send(mqd_t mqdes,
@@ -1754,7 +1754,7 @@ This function is used to send a message to the `mqdes` message queue, which is a
 
 If the message queue is full, that is, the number of messages in the message queue is equal to the maximum number of messages, the thread that sent the message or the interrupt program will receive an error code (-RT_EFULL).
 
-### Specify Blocking Time to Send a Message
+## Specify Blocking Time to Send a Message
 
 ``` c
 int mq_timedsend(mqd_t mqdes,
@@ -1777,7 +1777,7 @@ int mq_timedsend(mqd_t mqdes,
 
 Currently RT-Thread does not support sending messages with the specified blocking time, but the function interface has been implemented, which is equivalent to calling mq_send().
 
-### Blocking Mode to Receive Message
+## Blocking Mode to Receive Message
 
 ``` c
 ssize_t mq_receive(mqd_t mqdes,
@@ -1798,7 +1798,7 @@ ssize_t mq_receive(mqd_t mqdes,
 
 This function removes the oldest message from the `mqdes` message queue and puts the message in the memory pointed to by `msg_ptr`. If the message queue is empty, the thread that called the mq_receive() function will block until the message in the message queue is available.
 
-### Specify Blocking Time to Receive Message
+## Specify Blocking Time to Receive Message
 
 ``` c
 ssize_t mq_timedreceive(mqd_t mqdes,
@@ -1821,7 +1821,7 @@ ssize_t mq_timedreceive(mqd_t mqdes,
 
 The difference between this function and the mq_receive() function is that if the message queue is empty, the thread will block the `abs_timeout` duration. After the timeout, the function will return `-1`, and the thread will be awakened from the blocking state to the ready state.
 
-### Example Code for Message Queue
+## Example Code for Message Queue
 
 This program creates 3 threads, thread2 accepts messages from the message queue, and thread2 and thread3 send messages to the message queue.
 
@@ -1953,7 +1953,7 @@ int rt_application_init()
 }
 ```
 
-## Thread Advanced Programming
+# Thread Advanced Programming
 
 This section provides a detailed introduction to some of the rarely used property objects and related functions.
 
@@ -1976,7 +1976,7 @@ struct pthread_attr
 };
 ```
 
-#### Thread Property Initialization and Deinitialization
+## Thread Property Initialization and Deinitialization
 
 The thread property initialization and deinitialization functions are as follows:
 
@@ -1995,7 +1995,7 @@ Using the pthread_attr_init() function initializes the thread attribute structur
 
 The pthread_attr_destroy() function deinitializes the property pointed to by `attr` and can then reinitialize this property object by calling the pthread_attr_init() function again.
 
-#### Thread Detached State
+## Thread Detached State
 
 Setting or getting the separation state of a thread  is as follows. By default, the thread is non-separated.
 
@@ -2015,7 +2015,7 @@ The thread separation state property value state can be `PTHREAD_CREATE_JOINABL`
 
 The detached state of a thread determines how a thread reclaims the resources it occupies after the end of its run. There are two types of thread separation: joinable or detached. When the thread is created, you should call pthread_join() or pthread_detach() to reclaim the resources occupied by the thread after it finishes running. If the thread's detached state is joinable, other threads can call the pthread_join() function to wait for the thread to finish and get the thread return value, and then reclaim the resources occupied by the thread. A thread with a detached state cannot be joined by another thread. Immediately after the end of its operation, the system resources are released.
 
-#### Thread Scheduling Policy
+## Thread Scheduling Policy
 
 Setting \ Obtaining thread scheduling policy function is as follows:
 
@@ -2026,7 +2026,7 @@ int pthread_attr_getschedpolicy(pthread_attr_t const *attr, int *policy);
 
 Only the function interface is implemented. The default different priorities are based on priority scheduling, and the same priority time slice polling scheduling
 
-#### Thread Scheduling Parameter
+## Thread Scheduling Parameter
 
 Set / Obtain the thread's priority function as follows:
 
@@ -2057,7 +2057,7 @@ struct sched_param
 
 The member  `sched_paraority`  of the `sched_param` controls the priority value of the thread.
 
-#### Thread Stack Size
+## Thread Stack Size
 
 Set / Obtain the stack size of a thread is as follows:
 
@@ -2075,7 +2075,7 @@ int pthread_attr_getstacksize(pthread_attr_t const *attr, size_t *stack_size);
 
 The `pthread_attr_setstacksize()` function sets the stack size in bytes. Stack space address alignment is required on most systems (for example, the ARM architecture needs to be aligned to a 4-byte address).
 
-#### Thread Stack Size and Address
+## Thread Stack Size and Address
 
 Set / Obtain the stack address and stack size of a thread is as follows:
 
@@ -2096,7 +2096,7 @@ int pthread_attr_getstack(pthread_attr_t const *attr,
 |**return**| ——          |
 | 0         | Succeeded |
 
-#### Thread Attribute Related Function
+## Thread Attribute Related Function
 
 The function that sets / obtains the scope of the thread is as follows:
 
@@ -2114,7 +2114,7 @@ int pthread_attr_getscope(pthread_attr_t const *attr);
 | EOPNOTSUPP    | scope is PTHREAD_SCOPE_PROCESS |
 | EINVAL        | scope is PTHREAD_SCOPE_SYSTEM |
 
-#### Example Code for Thread Property
+## Example Code for Thread Property
 
 This program will initialize 2 threads, they have a common entry function, but their entry parameters are not the same. The first thread created will use the provided `attr` thread attribute, and the other thread will use the system default attribute. Thread priority is a very important parameter, so this program will modify the first created thread to have a priority of 8, and the system default priority of 24.
 
@@ -2178,11 +2178,11 @@ int rt_application_init()
 }
 ```
 
-### Thread Cancellation
+## Thread Cancellation
 
 Cancellation is a mechanism that allows one thread to end other threads. A thread can send a cancel request to another thread. Depending on the settings, the target thread may ignore it and may end immediately or postpone it until the next cancellation point.
 
-#### Send Cancellation Request
+### Send Cancellation Request
 
 The cancellation request can be sent using the following function:
 
@@ -2198,7 +2198,7 @@ int pthread_cancel(pthread_t thread);
 
 This function sends a cancel request to the `thread` thread. Whether the thread will respond to the cancellation request and when it responds depends on the state and type of thread cancellation.
 
-#### Set Cancel Status
+### Set Cancel Status
 
 The cancellation request can be set using the following function:
 
@@ -2216,7 +2216,7 @@ int pthread_setcancelstate(int state, int *oldstate);
 
 This function sets the cancel state and is called by the thread itself. Canceling the enabled thread will react to the cancel request, and canceling the disabled thread will not react to the cancel request.
 
-#### Set Cancellation Type
+### Set Cancellation Type
 
 You can use the following function to set the cancellation type, which is called by the thread itself:
 
@@ -2232,7 +2232,7 @@ int pthread_setcanceltype(int type, int *oldtype);
 | 0         | Succeeded |
 | EINVAL | state is neither PTHREAD_CANCEL_DEFFERED nor PTHREAD_CANCEL_ASYNCHRONOUS |
 
-#### Set Cancellation Point
+### Set Cancellation Point
 
 The cancellation point can be set using the following function:
 
@@ -2242,7 +2242,7 @@ void pthread_testcancel(void);
 
 This function creates a cancellation point where the thread is called. Called primarily by a thread that does not contain a cancellation point, it can respond to a cancellation request. This function does not work if pthread_testcancel() is called while the cancel state is disabled.
 
-#### Cancellation Point
+### Cancellation Point
 
 The cancellation point is where the thread ends when it accepts the cancellation request. According to the POSIX standard, system calls that cause blocking, such as pthread_join(), pthread_testcancel(), pthread_cond_wait(), pthread_cond_timedwait(), and sem_wait(), are cancellation points.
 
@@ -2282,7 +2282,7 @@ All cancellation points included in RT-Thread are as follows:
 
 -   pthread_rwlock_wrlock()
 
-#### Example Code for Thread Cancel
+### Example Code for Thread Cancel
 
 This program creates 2 threads. After thread2 starts running, it sleeps for 8 seconds. Thread1 sets its own cancel state and type, and then prints the run count information in an infinite loop. After thread2 wakes up, it sends a cancel request to thread1, and thread1 ends the run immediately after receiving the cancel request.
 
@@ -2356,7 +2356,7 @@ int rt_application_init()
 }
 ```
 
-### One-time Initialization
+## One-time Initialization
 
 It can be initialized once using the following function:
 
@@ -2373,7 +2373,7 @@ int pthread_once(pthread_once_t * once_control, void (*init_routine) (void));
 
 Sometimes we need to initialize some variables only once. If we do multiple initialization procedures, it will get an error. In traditional sequential programming, one-time initialization is often managed by using Boolean variables. The control variable is statically initialized to 0, and any code that relies on initialization can test the variable. If the variable value is still 0, it can be initialized and then set the variable to 1. Codes that are checked later will skip initialization.
 
-### Clean up after the Thread Ends
+## Clean up after the Thread Ends
 
 The thread cleanup function interface:
 
@@ -2390,9 +2390,9 @@ void pthread_cleanup_push(void (*routine)(void*), void *arg);
 
 pthread_cleanup_push() puts the specified cleanup `routine` into the thread's cleanup function list. pthread_cleanup_pop() takes the first function from the header of the cleanup function list. If `execute` is a non-zero value, then this function is executed.
 
-### Other Thread Related Functions
+## Other Thread Related Functions
 
-#### Determine if two Threads are Equal
+### Determine if two Threads are Equal
 
 ``` c
 int pthread_equal (pthread_t t1, pthread_t t2);
@@ -2405,14 +2405,14 @@ int pthread_equal (pthread_t t1, pthread_t t2);
 | 0         | Not equal |
 | 1         | Equal |
 
-#### Obtain Thread Handle
+### Obtain Thread Handle
 
 ``` c
 pthread_t pthread_self (void);
 ```
 pthread_self() returns the handle of the calling thread.
 
-#### Get the Maximum and Minimum Priority
+### Get the Maximum and Minimum Priority
 
 ``` c
 int sched_get_priority_min(int policy);
@@ -2425,11 +2425,11 @@ int sched_get_priority_max(int policy);
 
 sched_get_priority_min() returns a value of 0, with the highest priority in RT-Thread and sched_get_priority_max() with the lowest priority.
 
-### Mutex Attribute
+## Mutex Attribute
 
 The mutex properties implemented by RT-Thread include the mutex type and the mutex scope.
 
-#### Mutex Lock Attribute Initialization and Deinitialization
+### Mutex Lock Attribute Initialization and Deinitialization
 
 ``` c
 int pthread_mutexattr_init(pthread_mutexattr_t *attr);
@@ -2447,7 +2447,7 @@ The pthread_mutexattr_init() function initializes the property object pointed to
 
 The pthread_mutexattr_destroy() function will initialize the property object pointed to by `attr` and can be reinitialized by calling the pthread_mutexattr_init() function.
 
-#### Mutex Lock Scope
+### Mutex Lock Scope
 
 ``` c
 int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int  pshared);
@@ -2462,7 +2462,7 @@ int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared);
 | 0         | Succeeded |
 | EINVAL        | Invalid parameter |
 
-#### Mutex Type
+### Mutex Type
 
 ``` c
 int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type);
@@ -2485,7 +2485,7 @@ The type of mutex determines how a thread behaves when it acquires a mutex. RT-T
 
 -   **PTHREAD_MUTEX_ERRORCHECK**: Error checking lock, if a thread tries to regain the mutex without first releasing the mutex, an error is returned. This ensures that deadlocks do not occur when multiple locks are not allowed.
 
-### Condition Variable Attribute
+## Condition Variable Attribute
 
 Use the default value PTHREAD_PROCESS_PRIVATE to initialize the condition variable attribute attr to use the following function:
 
@@ -2500,7 +2500,7 @@ int pthread_condattr_init(pthread_condattr_t *attr);
 | 0         | Succeeded |
 | EINVAL        | Invalid parameter |
 
-#### Obtain Condition Variable Scope
+### Obtain Condition Variable Scope
 
 ``` c
 int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared);
@@ -2513,9 +2513,9 @@ int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared);
 | 0         | Succeeded |
 | EINVAL        | Invalid parameter |
 
-### Read-write Lock Attribute
+## Read-write Lock Attribute
 
-#### Initialize Property
+### Initialize Property
 
 ``` c
 int pthread_rwlockattr_init (pthread_rwlockattr_t *attr);
@@ -2530,7 +2530,7 @@ int pthread_rwlockattr_init (pthread_rwlockattr_t *attr);
 
 This function initializes the read-write lock attribute `attr` with the default value PTHREAD_PROCESS_PRIVATE.
 
-#### Obtain Scope
+### Obtain Scope
 
 ``` c
 int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *attr, int *pshared);
@@ -2546,9 +2546,9 @@ int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *attr, int *pshare
 
 The memory pointed to by pshared is saved as PTHREAD_PROCESS_PRIVATE.
 
-### Barrier Attribute
+## Barrier Attribute
 
-#### Initialize Property
+### Initialize Property
 
 ``` c
 int pthread_barrierattr_init(pthread_barrierattr_t *attr);
@@ -2563,7 +2563,7 @@ int pthread_barrierattr_init(pthread_barrierattr_t *attr);
 
 The modified function initializes the barrier attribute `attr` with the default value PTHREAD_PROCESS_PRIVATE.
 
-#### Obtain Scope
+### Obtain Scope
 
 ``` c
 int pthread_barrierattr_getpshared(const pthread_barrierattr_t *attr, int *pshared);
@@ -2577,7 +2577,7 @@ int pthread_barrierattr_getpshared(const pthread_barrierattr_t *attr, int *pshar
 | 0         | Succeeded |
 |-1         | Invalid parameter |
 
-### Message Queue Property
+## Message Queue Property
 
 The message queue attribute control block is as follows:
 
@@ -2590,7 +2590,7 @@ struct mq_attr
     long mq_curmsgs;    /* Message queue current message number */
 };
 ```
-#### Obtain Attribute
+### Obtain Attribute
 ``` c
 int mq_getattr(mqd_t mqdes, struct mq_attr *mqstat);
 ```

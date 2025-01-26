@@ -38,7 +38,7 @@ PROJECT_NAME           = "RT-Thread RTOS"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 1.2.0
+PROJECT_NUMBER         =
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -51,14 +51,14 @@ PROJECT_BRIEF          = "An open source embedded real-time operating system"
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = ./images/rtthread_logo.png
+PROJECT_LOGO           = ./0.doxygen/images/rtthread_logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = .
+OUTPUT_DIRECTORY       =
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -864,13 +864,13 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../../src \
-                         ../../include \
-                         . \
-                         ../../components/finsh \
-                         ../../components/drivers/include/drivers \
-                         ../../components/dfs/dfs_v2/src \
-                         ../../components/dfs/dfs_v2/include
+INPUT                  = . \
+                         ../src \
+                         ../include \
+                         ../components/finsh \
+                         ../components/drivers/include/drivers \
+                         ../components/dfs/dfs_v2/src \
+                         ../components/dfs/dfs_v2/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -903,13 +903,14 @@ FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cpp \
                          *.h \
-                         *.inc
+                         *.inc \
+                         *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
 # The default value is: NO.
 
-RECURSIVE              = NO
+RECURSIVE              = YES
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
@@ -918,7 +919,11 @@ RECURSIVE              = NO
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = .svn
+EXCLUDE                = ./0.doxygen/mainpage.h \
+                         ./README.md \
+                         ./2.quick-start/quick_start_qemu \
+                         ./env/env-vscode.md \
+                         ./contribution_guide/coding_style_cn.md
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -971,7 +976,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = ./images
+IMAGE_PATH             = .
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -1643,7 +1648,7 @@ MATHJAX_FORMAT         = HTML-CSS
 # The default value is: https://cdn.jsdelivr.net/npm/mathjax@2.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_RELPATH        = http://www.mathjax.org/mathjax
+MATHJAX_RELPATH        = https://cdn.jsdelivr.net/npm/mathjax@2
 
 # The MATHJAX_EXTENSIONS tag can be used to specify one or more MathJax
 # extension names that should be enabled during MathJax rendering. For example
@@ -1776,7 +1781,7 @@ LATEX_OUTPUT           = latex
 # the output language.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_CMD_NAME         = latex
+LATEX_CMD_NAME         =
 
 # The MAKEINDEX_CMD_NAME tag can be used to specify the command name to generate
 # index for LaTeX.
@@ -1880,7 +1885,7 @@ LATEX_EXTRA_FILES      =
 # The default value is: YES.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-PDF_HYPERLINKS         = NO
+PDF_HYPERLINKS         = YES
 
 # If the USE_PDFLATEX tag is set to YES, doxygen will use the engine as
 # specified with LATEX_CMD_NAME to generate the PDF file directly from the LaTeX
@@ -1890,7 +1895,7 @@ PDF_HYPERLINKS         = NO
 # The default value is: YES.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-USE_PDFLATEX           = NO
+USE_PDFLATEX           = YES
 
 # If the LATEX_BATCHMODE tag is set to YES, doxygen will add the \batchmode
 # command to the generated LaTeX files. This will instruct LaTeX to keep running
@@ -2126,10 +2131,6 @@ DOCBOOK_PROGRAMLISTING = NO
 GENERATE_AUTOGEN_DEF   = NO
 
 #---------------------------------------------------------------------------
-# Configuration options related to Sqlite3 output
-#---------------------------------------------------------------------------
-
-#---------------------------------------------------------------------------
 # Configuration options related to the Perl module output
 #---------------------------------------------------------------------------
 
@@ -2337,7 +2338,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # http://www.graphviz.org/), a graph visualization toolkit from AT&T and Lucent
 # Bell Labs. The other options in this section have no effect if this option is
 # set to NO
-# The default value is: NO.
+# The default value is: YES.
 
 HAVE_DOT               = YES
 
@@ -2515,7 +2516,9 @@ DIRECTORY_GRAPH        = YES
 # Note: If you choose svg you need to set HTML_FILE_EXTENSION to xhtml in order
 # to make the SVG files visible in IE 9+ (other browsers do not have this
 # requirement).
-# Possible values are: png, jpg, gif, svg, png:gd, png:gd:gd, png:cairo,
+# Possible values are: png, png:cairo, png:cairo:cairo, png:cairo:gd, png:gd,
+# png:gd:gd, jpg, jpg:cairo, jpg:cairo:gd, jpg:gd, jpg:gd:gd, gif, gif:cairo,
+# gif:cairo:gd, gif:gd, gif:gd:gd, svg, png:gd, png:gd:gd, png:cairo,
 # png:cairo:gd, png:cairo:cairo, png:cairo:gdiplus, png:gdiplus and
 # png:gdiplus:gdiplus.
 # The default value is: png.
@@ -2546,7 +2549,7 @@ DOT_PATH               =
 # command).
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOTFILE_DIRS           = ../doxygen/images
+DOTFILE_DIRS           =
 
 # The MSCFILE_DIRS tag can be used to specify one or more directories that
 # contain msc files that are included in the documentation (see the \mscfile

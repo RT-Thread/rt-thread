@@ -1,6 +1,6 @@
-# AT Commands #
+@page component_at AT Commands
 
-## Introduction to AT Commands
+# Introduction to AT Commands
 
 The AT command set was originally a control protocol invented by Dennis Hayes, initially used to control dial-up modems. Later, with the upgrade of network bandwidth, low-speed dial-up modems with very low speed essentially exited the general market, but the AT command set was retained. However, the AT command set lived on when major mobile phone manufacturers jointly developed a set of commands to control the GSM modules of mobile phones. The AT command set evolved on this basis and added the GSM 07.05 standard and the later GSM 07.07 standard to achieve more robust standardization.
 
@@ -32,7 +32,7 @@ Although the AT command set has standardization to a certain degree, the AT comm
 
 In order to facilitate the user to use AT commands which can be easily adapted to different AT modules, RT-Thread provides AT components for AT Device connectivity and data communication. The implementation of the AT components consists of both a client and a server.
 
-## Introduction to AT Components
+# Introduction to AT Components
 
 The AT component is based on the implementation of the `AT Server` and `AT Client` of the RT-Thread system. The component completes the AT command transmission, command format and parameter parsing, command response, response data reception, response data parsing, URC data processing, etc.. 
 
@@ -66,9 +66,9 @@ Overall, the AT component resources are extremely small, making them ideal for u
 - AT Socket: An extension of AT Client function, it uses the AT command set to send and receive as the basis. This is implemented through the standard BSD Socket API, which completes the data sending and receiving function, and enables users to implement complete device networking and data communication through AT commands.
 - Multi-client support: The AT component supports multiple clients running simultaneously.
 
-## AT Server ##
+# AT Server
 
-### AT Server Configuration ###
+## AT Server Configuration ###
 
 When we use the AT Server feature in the AT component, we need to define the following configuration in rtconfig.h:
 
@@ -110,7 +110,7 @@ RT-Thread Components  --->
 
 After the add configuration is complete, you can use the command line to rebuild the project, or use `scons` to compile.
 
-### AT Server Initialization ###
+## AT Server Initialization
 
 After enabling the AT Server in Env, you need to initialize it at startup to enable the AT Server function. If the component has been initialized automatically, no additional initialization is required. Otherwise, you need to call the following function in the initialization task:
 
@@ -121,7 +121,7 @@ The AT Server initialization function, which belongs to the application layer fu
 
 After the AT Server is successfully initialized, the device can be used as an AT Server to connect to an AT Client's serial device for data communication, or use a serial-to-USB conversion tool to connect to a PC, so that the PC-side serial debugging assistant can communicate with the AT Client.
 
-### Add custom AT commands ###
+## Add custom AT commands
 
 At present, the format of the AT command set used by AT devices of different manufacturers does not have a completely uniform standard, so the AT Server in the AT component only supports some basic general AT commands, such as ATE, AT+RST, etc. These commands can only be used to meet the basic operation of the device. If users want to use more functions, they need to implement custom AT Server commands for different AT devices. The AT component provides an AT command addition method similar to the FinSH/msh command addition method, which is convenient for users to implement the required commands.
 
@@ -175,9 +175,9 @@ static at_result_t at_test_query(void)
 AT_CMD_EXPORT("AT+TEST", =<value1>[,<value2>], NULL, at_test_query, NULL, at_test_exec);
 ```
 
-### AT Server APIs
+## AT Server APIs
 
-#### Send Data to the Client (no newline)
+### Send Data to the Client (no newline)
 
 ```c
 void at_server_printf(const char *format, ...);
@@ -190,7 +190,7 @@ This function is used by the AT Server to send fixed-format data to the correspo
 | format | Customize the expression of the input data |
 |   ...  | Input data list, variable parameters |
 
-#### Send Data to the Client (newline)
+### Send Data to the Client (newline)
 
 ```c
 void at_server_printfln(const char *format, ...);
@@ -203,7 +203,7 @@ This function is used by the AT Server to send fixed-format data to the correspo
 | format | Customize the expression of the input data |
 |   ...  | Input data list, variable parameters |
 
-#### Send Command Execution Results to the Client
+### Send Command Execution Results to the Client
 
 ```c
 void at_server_print_result(at_result_t result);
@@ -252,7 +252,7 @@ static at_result_t at_test_exec(void)
 AT_CMD_EXPORT("AT+TEST", =<value1>,<value2>, NULL, NULL, at_test_setup, at_test_exec);
 ```
 
-#### Parsing Input Command Parameters
+### Parsing Input Command Parameters
 
 ```c
 int at_req_parse_args(const char *req_args, const char *req_expr, ...);
@@ -299,7 +299,7 @@ static at_result_t at_test_setup(const char *args)
 AT_CMD_EXPORT("AT+TEST", =<value1>,<value2>, NULL, NULL, at_test_setup, NULL);
 ```
 
-#### Porting-related interfaces
+### Porting-related interfaces
 
 The AT Server supports a variety of basic commands (ATE, ATZ, etc.) by default. The function implementation of some commands is related to hardware or platform and requires user-defined implementation. The AT component source code `src/at_server.c` file gives the weak function definition of the migration file. The user can create a new migration file in the project to implement the following function to complete the migration interface, or modify the weak function to complete the migration interface directly in the file.
 
@@ -326,9 +326,9 @@ If you use the gcc toolchain in your project, you need to add the *section* corr
 } > CODE
 ```
 
-## AT Client
+# AT Client
 
-### AT Client Configuration
+## AT Client Configuration
 
 When using the AT Client feature in the AT component, the following configuration in rtconfig.h needs to be defined:
 
@@ -371,7 +371,7 @@ RT-Thread Components  --->
 
 After the configuration is complete, you can use the command line to rebuild the project, or use `scons` to compile.
 
-### AT Client Initialization ###
+## AT Client Initialization
 
 After configuring the AT Client, you need to initialize it at startup to enable the AT Client function. If the component has been initialized automatically, no additional initialization is required. Otherwise, you need to call the following function in the initialization task:
 
@@ -381,7 +381,7 @@ int at_client_init(const char *dev_name,  rt_size_t recv_bufsz);
 
 The AT Client initialization function, which belongs to the application layer function, needs to be called before using the AT Client function or using the AT Client CLI function. The `at_client_init()` function completes the initialization of the AT Client device, the initialization of the AT Client porting function, the semaphore and mutex used by the AT Client, and other resources, and creates the  `at_client` thread for parsing the data received in the AT Client and for processing the URC data.
 
-### AT Client data receiving and sending ###
+## AT Client data receiving and sending
 
 The main function of the AT Client is to send AT commands, receive data, and parse data. The following is an introduction to the processes and APIs related to AT Client data reception and transmission.
 
@@ -418,7 +418,7 @@ In the AT component, this structure is used to define a control block for AT com
 
 Introduction to related API interfaces:
 
-#### Create a Response Structure
+### Create a Response Structure
 
 ```c
 at_response_t at_create_resp(rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout);
@@ -435,7 +435,7 @@ at_response_t at_create_resp(rt_size_t buf_size, rt_size_t line_num, rt_int32_t 
 
 This function is used to create a custom response data receiving structure for later receiving and parsing the send command response data.
 
-#### Delete a Response Structure
+### Delete a Response Structure
 
 ```c
 void at_delete_resp(at_response_t resp);
@@ -447,7 +447,7 @@ void at_delete_resp(at_response_t resp);
 
 This function is used to delete the created response structure object, which is generally paired with the **at_create_resp** creation function.
 
-#### Set the Parameters of Response Structure
+### Set the Parameters of Response Structure
 
 ```c
 at_response_t at_resp_set_info(at_response_t resp, rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout);
@@ -465,7 +465,7 @@ at_response_t at_resp_set_info(at_response_t resp, rt_size_t buf_size, rt_size_t
 
 This function is used to set the response structure information that has been created. It mainly sets the restriction information on the response data. It is generally used after creating the structure and before sending the AT command. This function is mainly used to send commands when the device is initialized, which can reduce the number of times the response structure is created and reduce the code resource occupation.
 
-#### Send a Command and Receive a Response
+### Send a Command and Receive a Response
 
 ```c
 rt_err_t at_exec_cmd(at_response_t resp, const char *cmd_expr, ...);
@@ -535,11 +535,11 @@ MSH_CMD_EXPORT(at_Client_send, AT Client send commands to AT Server and get resp
 
 The implementation principle of sending and receiving data is relatively simple. It mainly reads and writes the serial port device bound by the AT client, and sets the relevant number of rows and timeout to limit the response data. It is worth noting that the `res` response needs to be created first. The structure passed `in_exec_cmd` function is for data reception. When the `at_exec_cmd` function's parameter `resp` is NULL, it means that the data sent this time **does not consider processing the response data and directly returns the result**.
 
-### AT Client Data Parsing Method ###
+## AT Client Data Parsing Method
 
 After the data is normally acquired, the response data needs to be parsed, which is one of the important functions of the AT Client. Parsing of data in the AT Client provides a parsed form of a custom parsing expression whose parsing syntax uses the standard `sscanf` parsing syntax. Developers can use the custom data parsing expression to respond to useful information in the data, provided that the developer needs to review the relevant manual in advance to understand the basic format of the AT Server device response data that the AT Client connects to. The following is a simple AT Client data parsing method through several functions and routines.
 
-#### Get Response Data for the Specified Line Number
+### Get Response Data for the Specified Line Number
 
 ```c
 const char *at_resp_get_line(at_response_t resp, rt_size_t resp_line);
@@ -555,7 +555,7 @@ const char *at_resp_get_line(at_response_t resp, rt_size_t resp_line);
 
 This function is used to get a row of data with the specified line number in the AT Server response data. The line number is judged by the standard data terminator. The above send and receive functions `at_exec_cmd` have recorded and processed the data and line numbers of the response data in the `resp` response structure, where the data information of the corresponding line number can be directly obtained.
 
-#### Get Response Data by the Specified Keyword
+### Get Response Data by the Specified Keyword
 
 ```c
 const char *at_resp_get_line_by_kw(at_response_t resp, const char *keyword);
@@ -571,7 +571,7 @@ const char *at_resp_get_line_by_kw(at_response_t resp, const char *keyword);
 
 This function is used to get a corresponding row of data by keyword in the AT Server response data.
 
-#### Parse Response Data for the Specified Line Number
+### Parse Response Data for the Specified Line Number
 
 ```c
 int at_resp_parse_line_args(at_response_t resp, rt_size_t resp_line, const char *resp_expr, ...);
@@ -590,7 +590,7 @@ int at_resp_parse_line_args(at_response_t resp, rt_size_t resp_line, const char 
 
 This function is used to get a row of data with the specified line number in the AT Server response data, and parse the parameters in the row data.
 
-#### Parse Response Data for a Row with Specified Keyword
+### Parse Response Data for a Row with Specified Keyword
 
 ```c
 int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const char *resp_expr, ...);
@@ -611,7 +611,7 @@ This function is used to get a row of data containing a keyword in the AT Server
 
 The data parsing syntax uses the standard `sscanf` syntax, the content of the syntax is more, developers can search their parsing syntax, here two procedures are used to introduce the simple use method.
 
-#### Serial Port Configuration Information Analysis Example
+### Serial Port Configuration Information Analysis Example
 
 The data sent by the client:
 
@@ -644,7 +644,7 @@ printf("baudrate=%d, databits=%d, stopbits=%d, parity=%d, control=%d\n",
 at_delete_resp(resp);
 ```
 
-#### IP and MAC Address Resolution Example ####
+### IP and MAC Address Resolution Example
 
 The data sent by the client:
 
@@ -678,7 +678,7 @@ at_delete_resp(resp);
 
 The key to parsing data is to correctly define the expression. Because the response data of the different device manufacturers is not unique to the response data of the AT device, only the form of the custom parsing expression can be obtained to obtain the required information. The design of the `at_resp_parse_line_args` parsing parameter function is based on the `sscanf` data parsing method. Before using it, the developer needs to understand the basic parsing syntax and then design the appropriate parsing syntax in combination with the response data. If the developer does not need to parse the specific parameters, you can use the `at_resp_get_line` function to get the specific data of a row.
 
-### AT Client URC Data Processing ###
+## AT Client URC Data Processing
 
 The processing of URC data is another important feature of AT Client. URC data is the data that is actively sent by the server. It cannot be received by the above data sending and receiving functions. The URC data format and function are different for different devices. Therefore, the URC data processing mode needs to be customized. The AT component provides a list management method for the processing of URC data. Users can customize the addition of URC data and its execution functions to the management list, so the processing of URC data is also the main porting work of AT Client.
 
@@ -697,7 +697,7 @@ typedef struct at_urc *at_urc_t;
 Each URC data has a structure control block that defines and determines the prefix and suffix of the URC data, as well as the execution function of the URC data. A piece of data can be defined as URC data only if it matches the prefix and suffix of the URC exactly. The URC data execution function is executed immediately after the matching URC data is obtained. So developers adding a URC data requires a custom matching prefix, suffix, and execution function.
 
 
-#### URC Data List Initialization
+### URC Data List Initialization
 
 ```c
 void at_set_urc_table(const struct at_urc *table, rt_size_t size);
@@ -745,9 +745,9 @@ int at_client_port_init(void)
 }
 ```
 
-### AT Client Other APIs Introduction
+## AT Client Other APIs Introduction
 
-#### Send Specified Length Data
+### Send Specified Length Data
 
 ```c
 rt_size_t at_client_send(const char *buf, rt_size_t size);
@@ -763,7 +763,7 @@ rt_size_t at_client_send(const char *buf, rt_size_t size);
 
 This function is used to send the specified length data to the AT Server device through the AT Client device, which is mostly used for the AT Socket function.
 
-#### Receive Specified Length Data
+### Receive Specified Length Data
 
 ```c
 rt_size_t at_client_recv(char *buf, rt_size_t size,rt_int32_t timeout);
@@ -780,7 +780,7 @@ rt_size_t at_client_recv(char *buf, rt_size_t size,rt_int32_t timeout);
 
 This function is used to receive data of a specified length through the AT Client device, and is mostly used for the AT Socket function. This function can only be used in URC callback handlers.
 
-#### Set the line terminator for receiving data ####
+### Set the line terminator for receiving data
 
 ```c
 void at_set_end_sign(char ch);
@@ -794,7 +794,7 @@ void at_set_end_sign(char ch);
 
 This function is used to set the line terminator, which is used to judge the end of a row of data received by the client, and is mostly used for the AT Socket function.
 
-#### Waiting for module initialization to complete ####
+### Waiting for module initialization to complete
 
 ```c
 int at_client_wait_connect(rt_uint32_t timeout);
@@ -809,7 +809,7 @@ int at_client_wait_connect(rt_uint32_t timeout);
 
 This function is used to cyclically send AT commands when the AT module starts, until the module responds to the data, indicating that the module is successfully started.
 
-### AT Client Multi-Client Support ###
+## AT Client Multi-Client Support
 
 In general, the device as the AT Client only connects to one AT module (the AT module acts as the AT Server) and can directly use the above functions of data transmission and reception and command parsing. In a few cases, the device needs to connect multiple AT modules as the AT Client. In this case, the multi-client support function of the device is required.
 
@@ -882,16 +882,16 @@ at_delete_resp(resp);
 
 The process differences used by other functions are similar to the above `at_obj_exec_cmd()` function. The main function is to obtain the client object through the `at_client_get()` function, and then determine which client is the client through the incoming object to achieve multi-client support.
 
-## FAQs
+# FAQs
 
-### Q: What should I do if the log on the shell shows an error when enabling the AT command to send and receive data real-time printing function. ?
+## Q: What should I do if the log on the shell shows an error when enabling the AT command to send and receive data real-time printing function. ?
 
 **A:** Increase the baudrate of the serial port device corresponding to the shell to 921600, improve the serial port printing speed, and prevent the printing error when the data is too large.
 
-### Q: When the AT Socket function is started, the compile prompt "The AT socket device is not selected, please select it through the env menuconfig".
+## Q: When the AT Socket function is started, the compile prompt "The AT socket device is not selected, please select it through the env menuconfig".
 
 **A:** After the AT Socket function is enabled, the corresponding device model is enabled in the at device package by default. Enter the at device package, configure the device as an ESP8266 device, configure WIFI information, re-generate the project, compile and download.
 
-### Q: AT Socket function data reception timeout or data reception is not complete.
+## Q: AT Socket function data reception timeout or data reception is not complete.
 
 **A:** The error may be that the receive data buffer in the serial device used by the AT is too small (RT_SERIAL_RB_BUFSZ default is 64 bytes), and the data is overwritten after the data is not received in time. The buffer size of the serial port receiving data (such as 256 bytes) is appropriately increased.

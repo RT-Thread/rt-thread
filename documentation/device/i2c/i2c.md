@@ -1,6 +1,6 @@
-# I2C Bus Device
+@page device_i2c I2C Bus Device
 
-## Introduction of I2C
+# Introduction of I2C
 
 The I2C (Inter Integrated Circuit) bus is a half-duplex, bidirectional two-wire synchronous serial bus developed by Philips. The I2C bus has only two signal lines, one is the bidirectional data line SDA (serial data), and the other is the bidirectional clock line SCL (serial clock). Compared to the SPI bus, which has two lines for receiving data and transmitting data between the master and slave devices, the I2C bus uses only one line for data transmission and reception.
 
@@ -28,7 +28,7 @@ When the bus is idle, both SDA and SCL are in a high state. When the host wants 
 
 * **Stop Condition：** When SDA is low, the master pulls SCL high and stays high, then pulls SDA high to indicate the end of the transfer.
 
-## Access to I2C Bus Devices
+# Access to I2C Bus Devices
 
 In general, the MCU's I2C device communicates as a master and slave. In the RT-Thread, the I2C master is virtualized as an I2C bus device. The I2C slave communicates with the I2C bus through the I2C device interface. The related interfaces are as follows:
 
@@ -37,7 +37,7 @@ In general, the MCU's I2C device communicates as a master and slave. In the RT-T
 | rt_device_find()  | Find device handles based on I2C bus device name |
 | rt_i2c_transfer() | transfer data |
 
-### Finding I2C Bus Device
+## Finding I2C Bus Device
 
 Before using the I2C bus device, you need to obtain the device handle according to the I2C bus device name, so that you can operate the I2C bus device. The device function is as follows.
 
@@ -62,7 +62,7 @@ struct rt_i2c_bus_device *i2c_bus;      /* I2C bus device handle */
 i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(name);
 ```
 
-### Data Transmission
+## Data Transmission
 
 You can use `rt_i2c_transfer()` for data transfer by getting the I2C bus device handle. The function prototype is as follows:
 
@@ -144,7 +144,7 @@ static rt_err_t read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t len, rt_uint
 }
 ```
 
-## I2C Bus Device Usage Example
+# I2C Bus Device Usage Example
 
 The specific usage of the I2C device can be referred to the following sample code. The main steps of the sample code are as follows:
 

@@ -1,4 +1,4 @@
-# Keil MDK Installation
+@page quickstart_keil Keil MDK Installation
 
 Before running the RT-Thread operating system, we need to install MDK-ARM 5.24 (either official or evaluation version, version 5.14 and above), this version is also a relatively new version. This version can provide relatively complete debugging functions. Here, we are using evaluation version 5.24 of 16k compiled code limit. If you want to remove the 16k compiled code limit, please purchase the official MDK-ARM.
 

@@ -1,6 +1,6 @@
-# UART Device
+@page device_uart UART Device
 
-## UART Introduction
+# UART Introduction
 
 UART (Universal Asynchronous Receiver/Transmitter), as a kind of asynchronous serial communication protocol, the working principle is to transmit each character of the transmitted data one by one. It is the most frequently used data bus during application development.
 
@@ -14,7 +14,7 @@ The UART serial port is characterized by sequentially transmitting data one bit 
 - Stop Bit: Indicates the end of one frame of data. The level logic is "1".
 - Baudrate: It is the rate at which a serial port communicates, which expressed in bits per second (bps) of the binary code transmitted in unit time. The common baud rate values are 4800, 9600, 14400, 38400, 115200, etc. The higher the value is, the faster the data transmission will be.
 
-## Access UART Device
+# Access UART Device
 
 The application accesses the serial port hardware through the I/O device management interface provided by RT-Thread. The related interfaces are as follows:
 
@@ -29,7 +29,7 @@ The application accesses the serial port hardware through the I/O device managem
 | rt_device_set_tx_complete()  | set send complete callback function |
 | rt_device_close()     | close device |
 
-### Find UART Device
+## Find UART Device
 
 The application obtains the device handle according to the uart device name, and then can operate the uart device.The device find function is shown below
 
@@ -53,7 +53,7 @@ static rt_device_t serial;              /* uart device handle */
 serial = rt_device_find(SAMPLE_UART_NAME);
 ```
 
-### Open UART Device
+## Open UART Device
 
 Through the device handle, the application can open and close the device. When the device is opened, it will detect whether the device has been initialized. If it is not initialized, it will call the initialization interface to initialize the device by default. Open the device through the following functions:
 
@@ -114,7 +114,7 @@ serial = rt_device_find(SAMPLE_UART_NAME);
 rt_device_open(serial, RT_DEVICE_FLAG_DMA_RX);
 ```
 
-### Control UART  Device
+## Control UART Device
 
 Through command  control word, the application can configure the uart device by the following function:
 
@@ -231,7 +231,7 @@ config.parity = PARITY_NONE;
 rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &config);
 ```
 
-### Send Data
+## Send Data
 
 To write data to the serial port, the following functions can be used:
 
@@ -267,7 +267,7 @@ rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
 rt_device_write(serial, 0, str, (sizeof(str) - 1));
 ```
 
-### Set The Send completion Callback Function
+## Set The Send completion Callback Function
 
 When the application calls `rt_device_write()` to write data, if the underlying hardware can support automatic transmission, the upper application can set a callback function. This callback function is called after the underlying hardware data has been sent (for example, when the DMA transfer is complete or the FIFO has been written to complete the completion interrupt). You can set the device to send completion instructions by the following function:
 
@@ -284,7 +284,7 @@ rt_err_t rt_device_set_tx_complete(rt_device_t dev, rt_err_t (*tx_done)(rt_devic
 
 When this function is called, the callback function is provided by the user. When the hardware device sends the data, the device driver calls back this function and passes the sent data block address buffer as a parameter to the upper application. When the application (thread) receives the indication, it will release the buffer memory block or use it as the buffer for the next write data according to the condition of sending the buffer.
 
-### Set The Receive Callback Function
+## Set The Receive Callback Function
 
 The data receiving instruction can be set by the following function. When the serial port receives the data, it will inform the upper application thread that the data has arrived:
 
@@ -337,7 +337,7 @@ static int uart_sample(int argc, char *argv[])
 
 ```
 
-### Receive Data
+## Receive Data
 
 You can call the following function to read the data received by the uart:
 
@@ -383,7 +383,7 @@ static void serial_thread_entry(void *parameter)
 }
 ```
 
-### Close The UART Device
+## Close The UART Device
 
 After the application completes the serial port operation, the uart device can be closed by the following functions:
 
@@ -401,9 +401,9 @@ rt_err_t rt_device_close(rt_device_t dev);
 
 Use the `rt_device_close()` interface and `rt_device_open()` interface in pair. When you open the device, you need to close the device once, so that the device will be completely shut down, otherwise the device will remain open.
 
-## Examples Of Using UART Device
+# Examples Of Using UART Device
 
-### Interrupt Receiving And Polling Send
+## Interrupt Receiving And Polling Send
 
 The main steps of the sample code are as follows:
 
@@ -512,7 +512,7 @@ static int uart_sample(int argc, char *argv[])
 MSH_CMD_EXPORT(uart_sample, uart device sample);
 ```
 
-### DMA Reception And Polling Transmission
+## DMA Reception And Polling Transmission
 
 When the serial port receives a batch of data, it will call the receive callback function. The receive callback function will send the data size of the buffer at this time to the waiting data processing thread through the message queue. After the thread gets the message, it is activated and reads the data. In general, the DMA receive mode completes data reception in conjunction with the DMA receive completion interrupt and the serial port idle interrupt.
 

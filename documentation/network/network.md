@@ -1,4 +1,4 @@
-# Network Framework
+@page component_network Network Framework
 
 With the popularity of the Internet, people's lives are increasingly dependent on the application of the network. More and more products need to connect to the Internet, and device networking has become a trend. To achieve the connection between the device and the network, you need to follow the TCP/IP protocol, you can run the network protocol stack on the device to connect to the network, or you can use devices (chips with hardware network protocol stack interfaces) to connect to the Internet.
 
@@ -6,15 +6,15 @@ When the device is connected to the network, it is like plugging in the wings. Y
 
 This chapter will explain the related content of the RT-Thread network framework, and introduce you to the concept, function and usage of the network framework. After reading this chapter, you will be familiar with the concept and implementation principle of the RT-Thread network framework and familiar with  network programming using Socket API.
 
-## TCP/IP Introduction to Network Protocols
+# TCP/IP Introduction to Network Protocols
 
 TCP/IP is short for Transmission Control Protocol/Internet Protocol. It is not a single protocol, but a general term for a protocol family. It includes IP protocol, ICMP protocol, TCP protocol, and http and ftp, pop3, https protocol, etc., which define how electronic devices connect to the Internet and the standards by which data is transferred between them.
 
-### OSI Reference Model
+## OSI Reference Model
 
 OSI (Open System Interconnect), which is an open system interconnection. Generally referred to as the OSI reference model, it is a network interconnection model studied by the ISO (International Organization for Standardization) in 1985.  The architecture standard defines a seven-layer framework for the network interconnection (physical layer, data link layer, network layer, transport layer, session layer, presentation layer, and application layer), that is, the ISO open system interconnection reference model. The first to third layers belong to the lower three layers of the OSI Reference Model and are responsible for creating links for network communication connections; the fourth to seventh layers are the upper four layers of the OSI reference model and is responsible for end-to-end data communication. The capabilities of each layer are further detailed in this framework to achieve interconnectivity, interoperability, and application portability in an open system environment.
 
-### TCP/IP Reference Model
+## TCP/IP Reference Model
 
 The TCP/IP communication protocol uses a four-layer hierarchical structure, and each layer calls the network provided by its next layer to fulfill its own needs. The four layers are:
 
@@ -23,7 +23,7 @@ The TCP/IP communication protocol uses a four-layer hierarchical structure, and 
 * **Network layer**: responsible for providing basic data packet transfer functions, so that each packet can reach the destination host (but not check whether it is received correctly), such as Internet Protocol (IP).
 * **Network interface layer**: Management of actual network media, defining how to use actual networks (such as Ethernet, Serial Line, etc.) to transmit data.
 
-### Difference between TCP/IP Reference Model and OSI Reference Model
+## Difference between TCP/IP Reference Model and OSI Reference Model
 
 The following figure shows the TCP/IP reference model and the OSI reference model diagram:
 
@@ -31,19 +31,19 @@ The following figure shows the TCP/IP reference model and the OSI reference mode
 
 Both the OSI reference model and the TCP/IP reference model are hierarchical, based on the concept of a separate protocol stack. The OSI reference model has 7 layers, while the TCP/IP reference model has only 4 layers, that is, the TCP/IP reference model has no presentation layer and session layer, and the data link layer and physical layer are merged into a network interface layer. However, there is a certain correspondence between the two layers. Due to the complexity of the OSI system and the design prior to implementation, many designs are too ideal and not very convenient for software implementation. Therefore, there are not many systems that fully implement the OSI reference model, and the scope of application is limited. The TCP/IP reference model was first implemented in a computer system. It has a stable implementation on UNIX and Windows platforms, and provides a simple and convenient programming interface (API) on which a wide range of applications are developed. The TCP/IP reference model has become the international standard and industry standard for Internet connectivity.
 
-### IP Address
+## IP Address
 
 The IP address refers to the Internet Protocol Address (also translated as the Internet Protocol Address) and is a uniform address format that assigns a logical address to each network and each host on the Internet to mask physical address differences provided by  Internet Protocol. The common LAN IP address is 192.168.X.X.
 
-### Subnet Mask
+## Subnet Mask
 
 Subnet mask (also called netmask, address mask), which is used to indicate which bits of an IP address identify the subnet where the host is located, and which bits are identified as the bit mask of the host. The subnet mask cannot exist alone, it must be used in conjunction with an IP address. Subnet mask has only one effect, which is to divide an IP address into two parts: network address and host address. The subnet mask is the bit of 1, the IP address is the network address, the subnet mask is the bit of 0, and the IP address is the host address. Taking the IP address 192.168.1.10 and the subnet mask 255.255.255.0 as an example, the first 24 bits of the subnet mask (converting decimal to binary) is 1, so the first 24 bits of the IP address 192.168.1 represent the network address. The remaining 0 is the host address.
 
-### MAC Address
+## MAC Address
 
 MAC (figures Access Control or Medium Access Control) address, which is translated as media access control, or physical address, hardware address, used to define the location of  network devices. In OSI model, the third layer network Layer is responsible for IP address, the second layer data link layer is responsible for the MAC address. A host will have at least one MAC address.
 
-## Introduction to the Network Framework of RT-Thread
+# Introduction to the Network Framework of RT-Thread
 
 In order to support various network protocol stacks, RT-Thread has developed a **SAL** component, the full name of the **Socket abstraction layer**. RT-Thread can seamlessly access various protocol stacks, including several commonly used TCP/IP protocol stack, such as the LwIP protocol stack commonly used in embedded development and the AT Socket protocol stack component developed by RT-Thread, which complete the conversion of data from the network layer to the transport layer.
 
@@ -92,11 +92,11 @@ In addition, based on the network framework, RT-Thread provides a large number o
 | netutils         | A collection of useful network debugging gadgets, including: ping, TFTP, iperf, NetIO, NTP, Telnet, etc. |
 | OneNet           | Software for accessing China Mobile OneNet Cloud             |
 
-## Network Framework Workflow
+# Network Framework Workflow
 
 Using the RT-Thread network framework, you first need to initialize the SAL, then register various network protocol clusters to ensure that the application can communicate using the socket network socket interface. This section mainly uses LwIP as an example.
 
-### Register the Network Protocol Cluster
+## Register the Network Protocol Cluster
 
 First use the `sal_init()` interface to initialize resources such as mutex locks used in the component. The interface looks like this:
 
@@ -141,23 +141,23 @@ int sal_proto_family_register(const struct proto_family *pf)；
 | 0        | registration success |
 | -1      | registration failed |
 
-### Network Data Receiving Process
+## Network Data Receiving Process
 
 After the LwIP is registered to the SAL, the application can send and receive network data through the network socket interface. In LwIP, several main threads are created, and they are `tcpip` thread, `erx` receiving thread and `etx` sending thread. The network data receiving process is as shown in the following picture. The application receives data by calling the standard socket interface `recv()` with blocking mode. When the Ethernet hardware device receives the network data packet, it stores the packet in the receiving buffer, and then sends an email to notify the `erx` thread that the data arrives through the Ethernet interrupt program. The `erx` thread applies for the `pbuf` memory block according to the received data length and put the data into the pbuf's `payload` data, then send the `pbuf` memory block to the `tcpip` thread via mailbox, and the `tcpip` thread returns the data to the application that is blocking the receiving data.
 
 ![Data receiving function call flow chart](figures/net-recv.png)
 
-### Network Data Sending Process
+## Network Data Sending Process
 
 The network data sending process is shown in the figure below. When there is data to send, the application calls the standard network socket interface `send()` to hand the data to the `tcpip` thread. The `tcpip` thread sends a message to wake up the `etx` thread. The `etx` thread first determines if the Ethernet is sending data. If data is not being sent, it will put the data to be sent into the send buffer, and then send the data through the Ethernet device. If data is being sent, the `etx` thread suspends itself until the Ethernet device is idle before sending the data out.
 
 ![Data sending function call flow chart](figures/net-send.png)
 
-## Network Socket Programming
+# Network Socket Programming
 
 The application uses Socket (network socket) interface programming to implement network communication functions. Socket is a set of application program interface (API), which shields the communication details of each protocol, so that the application does not need to pay attention to the protocol itself, directly using the interfaces provide by socket to communicate between different hosts interconnected.
 
-### TCP socket Communication Process
+## TCP socket Communication Process
 
 TCP(Tranfer Control Protocol) is a connection-oriented protocol to ensure reliable data transmission. Through the TCP protocol transmission, a sequential error-free data stream is obtained. The TCP-based socket programming flow diagram is shown in the following figure. A connection must be established between the sender and the receiver's two sockets in order to communicate on the basis of the TCP protocol. When a socket (usually a server socket) waits for a connection to be established. Another socket can request a connection. Once the two sockets are connected, they can perform two-way data transmission, and both sides can send or receive data. A TCP connection is a reliable connection that guarantees that packets arrive in order, and if a packet loss occurs, the packet is automatically resent.
 
@@ -165,7 +165,7 @@ For example, TCP is equivalent to calling in life. When you call the other party
 
 ![TCP-based socket programming flow chart](figures/net-tcp.png)
 
-### UDP socket Communication Process
+## UDP socket Communication Process
 
 UDP is short for User Datagram Protocol. It is a connectionless protocol. Each datagram is a separate information, including the complete source address and destination address. It is transmitted to the destination on the network in any possible path. Therefore, whether the destination can be reached, the time to reach the destination, and the correctness of the content cannot be guaranteed. The UDP-based socket programming flow is shown in the following figure.
 
@@ -173,7 +173,7 @@ UDP is short for User Datagram Protocol. It is a connectionless protocol. Each d
 
 For example, UDP is equivalent to the walkie-talkie communication in life. After you set up the channel, you can directly say the information you want to express. The data is sent out by the walkie-talkie, but you don't know if your message has been received by others. By the way, unless someone else responds to you with a walkie-talkie. So this method is not reliable.
 
-### Create a Socket
+## Create a Socket
 
 Before communicating, the communicating parties first use the `socket()` interface to create a socket, assigning a socket descriptor and its resources based on the specified address family, data type, and protocol. The interface is as follows:
 
@@ -209,7 +209,7 @@ The sample code for creating a TCP type socket is as follows:
     }
 ```
 
-### Binding Socket
+## Binding Socket
 
 A binding socket is used to bind a port number and an IP address to a specified socket. When using socket() to create a socket, only the protocol family is given, and no address is assigned. Before the socket receives a connection from another host, it must bind it with an address and port number using bind(). The interface is as follows:
 
@@ -226,11 +226,11 @@ int bind(int s, const struct sockaddr *name, socklen_t namelen);
 | 0        | Successful                      |
 | -1      | Fail                                   |
 
-### Establishing a TCP Connection
+## Establishing a TCP Connection
 
 For server-side programs, after using `bind()` to bind the socket, you also need to use the `listen()` function to make the socket enter the passive listening state, and then call the `accept()` function to respond to the client at any time.
 
-#### Listening Socket
+### Listening Socket
 
 The listening socket is used by the TCP server to listen for the specified socket connection. The interface is as follows:
 
@@ -246,7 +246,7 @@ int listen(int s, int backlog);
 | 0        | Successful                  |
 | -1      | Fail                       |
 
-#### Accept the Connection
+### Accept the Connection
 
 When the application listens for connections from other clients, the connection must be initialized with the `accept()` function, which creates a new socket for each connection and removes the connection from the listen queue. The interface is as follows:
 
@@ -263,7 +263,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
 | >=0     | Successful, return the newly created socket descriptor |
 | -1      | Fail                        |
 
-#### Establish Connection
+### Establish Connection
 
 Used by the client to establish a connection with the specified server. The interface is as follows:
 
@@ -300,11 +300,11 @@ if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -
 }
 ```
 
-### Data Transmission
+## Data Transmission
 
 TCP and UDP have different data transmission methods. TCP needs to establish a connection before data transmission, use `send()` function for data transmission, use `recv()` function for data reception, and UDP does not need to establish connection. It uses `sendto()` function sends data and receives data using the `recvfrom()` function.
 
-#### TCP Data Transmission
+### TCP Data Transmission
 
 After the TCP connection is established, the data is sent using the `send()` function. The interface is as follows:
 
@@ -322,7 +322,7 @@ int send(int s, const void *dataptr, size_t size, int flags);
 | >0      | Successful, return the length of the sent data |
 | <=0     | Failed                 |
 
-#### TCP Data Reception
+### TCP Data Reception
 
 After the TCP connection is established, use `recv()` to receive the data. The interface is as follows:
 
@@ -341,7 +341,7 @@ int recv(int s, void *mem, size_t len, int flags);
 | =0       | The destination address has been transferred and the connection is closed |
 | <0      | Fail                    |
 
-#### UDP Data transmission
+### UDP Data transmission
 
 In the case where a connection is not established, you can use the `sendto()` function to send UDP data to the specified destination address, as shown below:
 
@@ -362,7 +362,7 @@ int sendto(int s, const void *dataptr, size_t size, int flags,
 | >0      | Successful, return the length of the sent data |
 | <=0     | Fail                |
 
-#### UDP Data Reception
+### UDP Data Reception
 
 To receive UDP data, use the `recvfrom()` function, and the interface is:
 
@@ -384,7 +384,7 @@ int recvfrom(int s, void *mem, size_t len, int flags,
 | 0        | The receiving address has been transferred and the connection is closed |
 | <0      | Fail                   |
 
-### Close Network Connection
+## Close Network Connection
 
 After the network communication is over, you need to close the network connection. There are two ways to use `closesocket()` and `shutdown()`.
 
@@ -415,7 +415,7 @@ int shutdown(int s, int how);
 | 0        | Successful           |
 | -1      | Fail                    |
 
-## Network Function Configuration
+# Network Function Configuration
 
 The main functional configuration options of the network framework are shown in the following table, which can be configured according to different functional requirements:
 
@@ -462,9 +462,9 @@ LwIP Configuration options:
 | RT_LWIP_ETHTHREAD_STACKSIZE | Integer  | Receive/send thread's stack size |
 | RT_LwIP_ETHTHREAD_MBOX_SIZE | Integer  | Receive/send thread's mailbox size |
 
-## Network Application Example
+# Network Application Example
 
-### View IP Address
+## View IP Address
 
 In the console, you can use the ifconfig command to check the network status. The IP address is 192.168.12.26, and the FLAGS status is LINK_UP, indicating that the network is configured:
 
@@ -481,7 +481,7 @@ dns server #0: 192.168.10.1
 dns server #1: 223.5.5.5
 ```
 
-### Ping Network Test
+## Ping Network Test
 
 Use the ping command for network testing:
 
@@ -501,7 +501,7 @@ msh />
 
 Getting the above output indicates that the connection network is successful!
 
-### TCP Client Example
+## TCP Client Example
 
 After the network is successfully connected, you can run the network example, first run the TCP client example. This example will open a TCP server on the PC, open a TCP client on the IoT Board, and both parties will communicate on the network.
 
@@ -683,7 +683,7 @@ msh >
 
 The above information indicates that the TCP client received 5 "hello world" data sent from the server. Finally, the exit command 'q' was received from the TCP server, and the TCP client program exited the operation and returned to the FinSH console.
 
-### UDP Client Example
+## UDP Client Example
 
 This is an example of a UDP client. This example will open a UDP server on the PC and open a UDP client on the IoT Board for network communication. A UDP client program has been implemented in the sample project. The function is to send data to the server. The sample code is as follows:
 

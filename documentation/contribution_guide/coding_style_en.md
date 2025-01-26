@@ -1,4 +1,4 @@
-                           RT-Thread Coding Style
+@page rtt_code_style_en RT-Thread Coding Style
 
 This is an developing instruction for RT-Thread developers. As open source
 software, RT-Thread is created by the cooperation of different people. This
@@ -7,7 +7,7 @@ RT-Thread users should also get to know some conventions in the code through it
 and thus easier to understand the implementations of RT-Thread.
 
 
-1. Directory Naming
+# 1. Directory Naming
 
 In normal conditions, please name directories in lowercase. Directories should
 have descriptive names. For example, the port of a chip should be composed of
@@ -15,14 +15,14 @@ the name of the chip and the category of the chip. Directories under components/
 should name what the component does.
 
 
-2. File Naming
+# 2. File Naming
 
 In normal conditions, please name files in lowercase. If the file is
 referencing other places, it can have the original name. To avoid naming
 collision, do not use general names or the names that are frequently used.
 
 
-3. Header Files
+# 3. Header Files
 
 To avoid include the same header file for multiple times, you need to define a
 symbol like this:
@@ -36,7 +36,7 @@ The symbol should begin and end with "__" to avoid naming collision. The words
 of the file name should be connected by "_". (This convention is called "snake case".)
 
 
-4. Header File Comments
+# 4. Header File Comments
 
 In every header file, there should be copyright information and Change Log
 record like this:
@@ -52,7 +52,7 @@ record like this:
     * 2006-04-26     Bernard      add semaphore APIs
     */
 
-5. Structure Defines
+# 5. Structure Defines
 
 Please name structures in lowercase and connect words with "_". For example:
 
@@ -76,7 +76,7 @@ example:
     typedef struct rt_timer* rt_timer_t;
 
 
-6. Macros
+# 6. Macros
 
 In RT-Thread, please use uppercase names for macro definitions. Words are
 connected by "_". Like:
@@ -84,7 +84,7 @@ connected by "_". Like:
     #define RT_TRUE                         1
 
 
-7. Function Naming and Declaration
+# 7. Function Naming and Declaration
 
 Please name functions in lowercase. Separate words with "_". The API provided to
 upper application should be declared in header files. If the function don't have
@@ -93,7 +93,7 @@ parameters, it should be declared as void:
     rt_thread_t rt_thread_self(void);
 
 
-8. Commenting
+# 8. Commenting
 
 Please use English to comment. There shouldn't be many comments as the
 comments should describe what the code does. It should describe complicated
@@ -101,7 +101,7 @@ algorithms, for example. Comments for statements should be placed before the
 statements or to the right of them. Any other locations are invalid.
 
 
-9. Indent
+# 9. Indent
 
 Please use TAB or 4 spaces to indent. It's preferred to use 4 spaces. If no
 other special meanings, the indent should begin right after "{":
@@ -123,7 +123,7 @@ aligned with "switch":
 "case" is aligned with "switch". The following code block should be indented.
 
 
-10. Braces and Spaces
+# 10. Braces and Spaces
 
 For ease of reading, it is advised that braces should occupy the whole line
 instead of following other statements. Like:
@@ -160,7 +160,7 @@ operators and the strings. There should be no spaces around(inside) parentheses,
 This is a bad practice.
 
 
-11. trace, log Information
+# 11. trace, log Information
 
 In RT-Thread, rt_kprintf is a commonly used logging routine. In RT-Thread
 rt_kprintf is implemented as a polling, non-interrupting string output. It is
@@ -175,14 +175,14 @@ variable or a macro). When logging, it should be easy to understand and easy to
 determine where the problem is.
 
 
-12. Functions
+# 12. Functions
 
 Functions in kernel should be K.I.S.S. ("Keep it simple, stupid.") If the function
 is too long, you should split it into smaller ones, with each of them simplified to
 be easy to understand.
 
 
-13. Objects
+# 13. Objects
 
 The kernel of RT-Thread uses object-oriented techniques in C. The naming convention
 is: structure names are the object names, object names + verb phrases are the
@@ -211,7 +211,7 @@ When creating a new object, think twice on memory allocations: whether a static
 object could be created or it could only created dynamically on the heap. Allocations
 can be slower, but may be necessary in dynamic environments.
 
-14. Use astyle to format the code automatically
+# 14. Use astyle to format the code automatically
 parameters: --style=allman
             --indent=spaces=4
             --indent-preproc-block

@@ -1,6 +1,6 @@
-# PIN Device
+@page device_pin PIN Device
 
-## Introduction of Pin
+# Introduction of Pin
 
 The pins on the chip are generally divided into four categories: power supply, clock, control, and I/O. The I/O pins are further divided into General Purpose Input Output (GPIO) and function-multiplexed I/O (such as SPI/I2C/UART, etc.) pins, referring to their usage mode.
 
@@ -16,7 +16,7 @@ Most MCU pins have more than one function. Their internal structure is different
 
    * Input modes generally include: Input floating,  Input pull-up,  Input pull-down, and  Analog. When the pin is in the input mode, the level state of the pin can be read, that is, high level or low level.
 
-## Access PIN Device
+# Access PIN Device
 
 The application accesses the GPIO through the PIN device management interface provided by RT-Thread. The related interfaces are as follows:
 
@@ -29,11 +29,11 @@ The application accesses the GPIO through the PIN device management interface pr
 | rt_pin_irq_enable()   | Enable pin interrupt |
 | rt_pin_detach_irq()  | Detach pin interrupt callback function |
 
-### Obtain Pin Number
+## Obtain Pin Number
 
 The pin numbers provided by RT-Thread need to be distinguished from the chip pin numbers, which not the same. The pin numbers are defined by the PIN device driver and are related to the specific chip used. There are two ways to obtain the pin number: use the macro definition or view the PIN driver file.
 
-#### Use Macro Definition
+### Use Macro Definition
 
 If you use the BSP in the `rt-thread/bsp/stm32` directory, you can use the following macro to obtain the pin number:
 
@@ -47,7 +47,7 @@ The sample code for the pin number corresponding to LED0 with pin number PF9 is 
 #define LED0_PIN        GET_PIN(F, 9)
 ```
 
-#### View Driver Files
+### View Driver Files
 
 If you use a different BSP, you will need to check the PIN driver code `drv_gpio.c` file to confirm the pin number. There is an array in this file that holds the number information for each PIN pin, as shown below:
 
@@ -70,7 +70,7 @@ static const rt_uint16_t pins[] =
 
 Take `__STM32_PIN(2, A, 15)` as an example, 2 is the pin number used by RT-Thread, A is the port number, and 15 is the pin number, so the pin number corresponding to PA15 is 2.
 
-### Set Pin Mode
+## Set Pin Mode
 
 Before the pin is used, you need to set the input or output mode first, and the following functions are used:
 
@@ -102,7 +102,7 @@ An example of use is as follows:
 rt_pin_mode(BEEP_PIN_NUM, PIN_MODE_OUTPUT);
 ```
 
-### Set The Pin Level
+## Set The Pin Level
 
 The function to set the pin output level is as follows:
 
@@ -126,7 +126,7 @@ rt_pin_mode(BEEP_PIN_NUM, PIN_MODE_OUTPUT);
 rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 ```
 
-### Read Pin Level
+## Read Pin Level
 
 The functions to read the pin level are as follows:
 
@@ -155,7 +155,7 @@ rt_pin_write(BEEP_PIN_NUM, PIN_LOW);
 status = rt_pin_read(BEEP_PIN_NUM);
 ```
 
-### Bind Pin Interrupt Callback Function
+## Bind Pin Interrupt Callback Function
 
 To use the interrupt functionality of a pin, you can use the following function to configure the pin to some interrupt trigger mode and bind an interrupt callback function to the corresponding pin. When the pin interrupt occurs, the callback function will be executed.:
 
@@ -204,7 +204,7 @@ static void pin_beep_sample(void)
 }
 ```
 
-### Enable Pin Interrupt
+## Enable Pin Interrupt
 
 After binding the pin interrupt callback function, use the following function to enable pin interrupt:
 
@@ -242,7 +242,7 @@ static void pin_beep_sample(void)
 }
 ```
 
-### Detach Pin Interrupt Callback Function
+## Detach Pin Interrupt Callback Function
 
 You can use the following function to detach the pin interrupt callback function:
 
@@ -281,7 +281,7 @@ static void pin_beep_sample(void)
 }
 ```
 
-## PIN Device Usage Example
+# PIN Device Usage Example
 
 The following sample code is the pin device usage example. The main steps of the sample code are as follows:
 

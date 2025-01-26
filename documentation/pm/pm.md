@@ -1,4 +1,4 @@
-# Power Management: PM
+@page component_pm Power Management: PM
 
 The purpose of low power management of embedded system is to reduce system energy consumption as much as possible to prolong the standby time of equipment on the premise of satisfying users'performance requirements. The contradiction between high performance and limited battery energy is most prominent in embedded systems. The combination of hardware low power design and software low power management has become an effective means to solve the contradiction. Nowadays, all kinds of MCUs provide management interfaces in low power consumption more or less. For example, adjusting the frequency of the main control clock, changing the working voltage, adjusting or even closing the bus frequency, closing the working clock of peripheral equipment, etc. With the support of hardware, reasonable software design becomes the key to energy saving. Generally, low power management can be divided into three categories:
 
@@ -18,13 +18,13 @@ With the rise of the Internet of Things (IoT), the demand for power consumption 
 
 In the initial stage of product development, the first consideration is to complete the development of product functions as soon as possible. After the function of the product is gradually improved, it is necessary to add the power management (PM) function. To meet this need of IoT, RT-Thread provides power management components. The idea of power management components is to be as transparent as possible, making it easier for products to add low power functions.
 
-## Introduction of PM Components
+# Introduction of PM Components
 
 RT-Thread's PM components adopt a layered design idea, separating architecture and chip-related parts, and extracting common parts as the core. While providing a common interface to the upper layer, it also makes it easier for the bottom driver to adapt components.
 
 ![PM Component Overview](figures/pm_system.png)
 
-### Main Features
+## Main Features
 
 The main features of RT-Thread PM components are as follows:
 
@@ -35,7 +35,7 @@ The main features of RT-Thread PM components are as follows:
 - Optional sleep time compensation is supported to make OS Tick dependent applications transparent.
 - Provide the device interface to the upper layer. If the devfs component is opened, it can also be accessed through the file system interface.
 
-### Working Principle
+## Working Principle
 
 The essence of low power consumption is that when the system is idle, the CPU stops working, interrupts or resumes working after the event wakes up. In RTOS, there is usually an IDLE task, which has the lowest priority and remains ready. When the high priority task is not ready, the OS executes the IDLE task. Generally, the CPU executes empty instructions in IDLE tasks without low power processing. The power management component of RT-Thread can effectively reduce the power consumption of the system by managing CPU, clock and equipment in IDLE tasks.
 
@@ -43,13 +43,13 @@ The essence of low power consumption is that when the system is idle, the CPU st
 
 As shown in the figure above, when the high priority thread runs out or is suspended, the system enters the IDLE thread . After the IDLE thread is executed, it will determine whether the system can go to sleep (to save power). If the system goes to sleep, Some hardware modules will be shut down depending on the chip condition, and OS Tick is also very likely to enter a pause state. At this time, the power management framework will calculate the next timeout point according to the system timer situation, and set a low-power timer, so that the device can wake up at that point, and carry out follow-up work. When the system is awakened (low power timer interrupt or other wake-up interrupt source), the system also needs to know how long it sleeps, and compensate for OS Tick, so that the OS tick value of the system is adjusted to a correct value.
 
-## PM Framework
+# PM Framework
 
 In RT-Thrad PM components, peripherals or applications vote on the required power consumption mode by voting mechanism. When the system is idle, the appropriate power consumption mode is decided according to the voting number, and the abstract interface is called to control the chip to enter a low power consumption state, so as to reduce the power consumption of the system. When no vote is taken, it is entered in the default mode (usually idle mode). Unlike applications, some peripherals may perform specific operations when they enter a low-power state and take measures to recover when they exit a low-power state, which can be achieved by registering PM devices. By registering PM devices, `suspend` callbacks of registered devices will be triggered before entering a low power state. Developers can perform their own operations in the callbacks. Similarly, `resume` callbacks will be triggered when exiting from a low power state.
 
 ![PM Framework](figures/pm_architecture.png)
 
-## Low Power State and Mode
+# Low Power State and Mode
 
 The RT-Thread PM component divides the system into two states: RUN(running state) and Sleep(sleeping state).
 
@@ -83,23 +83,23 @@ Running state is usually used to change the running frequency of CPU, independen
 | PM_RUN_MODE_MEDIUM_SPEED | Medium-speed mode, reduce CPU running speed, thereby reducing power consumption |
 | PM_RUN_MODE_LOW_SPEED    | Low-speed mode, CPU frequency further reduced                |
 
-### Request and release of patterns
+## Request and release of patterns
 
 In PM components, upper applications can actively participate in power management by requesting and releasing sleep modes. Applications can request different sleep modes according to scenarios and release them after processing. As long as any application or device requests higher-level power mode, it will not switch to a lower mode. Therefore, the requests and releases of sleep mode usually occur in pairs and can be used to protect a certain stage, such as the peripheral DMA transmission process.
 
-### Device Sensitive to Mode Changes
+## Device Sensitive to Mode Changes
 
 In PM components, switching to a new mode of operation may lead to changes in CPU frequency. If peripherals and CPUs share a part of the clock, the peripheral clock will be affected. When entering the new sleep mode, most clock sources will be stopped. If the peripheral does not support the freezing function of sleep, then the peripheral clock needs to be reconfigured when waking up from sleep. So PM components support PM mode sensitive PM devices. It enables the device to work normally when switching to a new operation mode or a new sleep mode. This function requires the underlying driver to implement the relevant interface and register as a device sensitive to mode changes.
 
-## The calling process
+# The calling process
 
 ![PM Sequence](figures/pm_sequence.png)
 
 Firstly, the application layer sets the callback function of entering and exiting the dormancy state, and then calls `rt_pm_request` to request the sleeping mode to trigger the sleeping operation. The PM component checks the number of sleeping modes when the system is idle, and gives the recommended mode according to the number of votes. Then the PM component calls `notfiy` to inform the application that it is going to enter the sleep mode, and then suspends the registered PM device and executes the sleep mode implemented by SOC after returning to OK. The system enters the sleep state (if the enabling time is compensated, the low-power timer will be started before the sleep). At this point, the CPU stops working and waits for an event or interrupt to wake up. When the system is awakened, because the global interruption is closed, the system continues to execute from there, gets the sleep time to compensate the OS tick of the system, wakes up the device in turn, and notifies the application to exit from the sleep mode. Such a cycle is completed, exits, and waits for the system to be idle next time.
 
-## Introduction to APIs
+# Introduction to APIs
 
-### Request Sleep Mode
+## Request Sleep Mode
 
 ```c
 void rt_pm_request(uint8_t sleep_mode);
@@ -127,7 +127,7 @@ enum
 
 Calling this function adds the corresponding pattern count to 1 and locks the pattern. At this point, if a lower level of power mode is requested, it will not be accessible. Only after releasing (unlocking) the previously requested mode, the system can enter a lower level of power mode; requests to higher power mode are not affected by this. This function needs to be used in conjunction with `rt_pm_release` to protect a certain stage or process.
 
-### Release  Sleep Mode
+## Release  Sleep Mode
 
 ```c
 void rt_pm_release(uint8_t sleep_mode);
@@ -139,7 +139,7 @@ void rt_pm_release(uint8_t sleep_mode);
 
 Calling this function decreases the corresponding pattern count by 1, and releases the previously requested pattern in conjunction with `rt_pm_request`.
 
-### Setting up Running Mode
+## Setting up Running Mode
 
 ```c
 int rt_pm_run_enter(uint8_t run_mode);
@@ -165,7 +165,7 @@ enum
 
 Calling this function changes the CPU's running frequency, thereby reducing the power consumption at runtime. This function only provides levels, and the specific CPU frequency should depend on the actual situation during the migration phase.
 
-### Setting up callback notifications for entering/exiting sleep mode
+## Setting up callback notifications for entering/exiting sleep mode
 
 ```c
 void rt_pm_notify_set(void (*notify)(uint8_t event, uint8_t mode, void *data), void *data);
@@ -187,9 +187,9 @@ enum
 
 ```
 
-## Instruction for Use
+# Instruction for Use
 
-### Setting Low Power Level
+## Setting Low Power Level
 
 If the system needs to enter a specified level of low power consumption, it can be achieved by calling rt_pm_request. For example, into deep sleep mode:
 
@@ -200,7 +200,7 @@ rt_pm_request(PM_SLEEP_MODE_DEEP);
 
 > Note: If higher power consumption modes, such as Light Mode or Idle Mode, are requested elsewhere in the program, then the corresponding mode needs to be released before the deep sleep mode can be entered.
 
-### Protect a stage or process
+## Protect a stage or process
 
 In special cases, for example, the system is not allowed to enter a lower power mode at a certain stage, which can be protected by rt_pm_request and rt_pm_release. For example, deep sleep mode (which may cause peripherals to stop working) is not allowed during I2C reading data, so the following processing can be done:
 
@@ -215,7 +215,7 @@ rt_pm_release(PM_SLEEP_MODE_LIGHT);
 
 ```
 
-### Changing CPU Running Frequency
+## Changing CPU Running Frequency
 
 Reducing the running frequency can effectively reduce the power consumption of the system, and the running frequency of the CPU can be changed through the `rt_pm_run_enter` interface. Generally speaking, frequency reduction means that CPU performance decreases and processing speed decreases, which may lead to the increase of task execution time and need to be weighed reasonably.
 
@@ -224,7 +224,7 @@ Reducing the running frequency can effectively reduce the power consumption of t
 rt_pm_run_enter(PM_RUN_MODE_MEDIUM_SPEED);
 ```
 
-## Migration instructions
+# Migration instructions
 
 Low power management is a very meticulous task. Developers need not only to fully understand the power management of the chip itself, but also to be familiar with the peripheral circuit of the board and deal with it one by one when they enter the low power state, so as to avoid leakage of the peripheral circuit and pull up the overall power consumption.
 
@@ -261,7 +261,7 @@ struct rt_device_pm_ops
 void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_ops *ops);
 ```
 
-### Power Consumption Characteristics of Chips
+## Power Consumption Characteristics of Chips
 
 ```c
 void (*sleep)(struct rt_pm *pm, uint8_t mode);
@@ -269,7 +269,7 @@ void (*sleep)(struct rt_pm *pm, uint8_t mode);
 
 Each chip has different definitions and management of low power mode. PM component abstracts chip-related characteristics into sleep interface. The interface adapts to low power management related to chips. When entering different `sleep` modes, some hardware-related configurations, storage and other related processing are needed.
 
-### Time Compensation for Sleep Mode
+## Time Compensation for Sleep Mode
 
 ```c
 void (*timer_start)(struct rt_pm *pm, rt_uint32_t timeout);
@@ -296,7 +296,7 @@ rt_system_pm_init(&_ops, timer_mask, RT_NULL);
 
 ```
 
-### Frequency Conversion in Running Mode
+## Frequency Conversion in Running Mode
 
 ```
 void (*run)(struct rt_pm *pm, uint8_t mode);
@@ -304,7 +304,7 @@ void (*run)(struct rt_pm *pm, uint8_t mode);
 
 The frequency conversion of operation mode is realized by adapting the `run` interface in `rt_pm_ops`, and the appropriate frequency is selected according to the use scenario.
 
-### Power management of peripherals
+## Power management of peripherals
 
 Power processing of peripherals is an important part of low power management system. When entering some level of sleep mode, it is usually necessary to process some peripherals, such as emptying DMA, closing clock or setting IO to reset state, and recover after quitting sleep.
 
@@ -312,9 +312,9 @@ In this case, PM devices can be registered through rt_pm_device_register interfa
 
 A more detailed migration case can be referred to stm32l476-nucleo BSP in the RT-Thread repository.
 
-## MSH Commands
+# MSH Commands
 
-### Request Sleep Mode
+## Request Sleep Mode
 
 The `pm_request` command can be used to request related patterns, using an example as follows:
 
@@ -339,7 +339,7 @@ enum
 };
 ```
 
-### Release Sleep Mode
+## Release Sleep Mode
 
 You can use the `pm_release` command to release the sleep mode. The range of parameters is 0-5, and the examples are as follows:
 
@@ -348,7 +348,7 @@ msh />pm_release 0
 msh />
 ```
 
-### Setting up Running Mode
+## Setting up Running Mode
 
 You can use the `pm_run` command to switch the mode of operation with parameters ranging from 0 to 3, as shown in the following example
 
@@ -371,7 +371,7 @@ enum
 };
 ```
 
-### View mode status
+## View mode status
 
 You can use the `pm_dump` command to view the mode state of the PM component, as shown in the following example
 
@@ -400,7 +400,7 @@ The `Timer` column identifies whether to turn on sleep time compensation. In the
 
 The bottom part identifies the current sleep mode and running mode level respectively.
 
-## Common problems and debugging methods
+# Common problems and debugging methods
 
 - When the system enters the low power mode, the power consumption is too high.
 

@@ -1,4 +1,4 @@
-# FinSH Console
+@page component_finsh FinSH Console
 
 In the early days of computer development, before the advent of graphics systems, there was no mouse or even a keyboard. How did people interact with computers at the time? The earliest computers used a punched note to enter commands into the computer and write the program. Later, with the continuous development of computers, monitors and keyboards became the standard configuration of computers, but the operating system at this time did not support the graphical interface. Computer pioneers developed a software that accepts commands entered by the user, and after interpretation, passes it to The operating system and return the results of the operating system execution to the user. This program wraps around the operating system like a layer of shell, so it's called a shell.
 
@@ -6,7 +6,7 @@ Embedded devices usually need to connect the development board to the PC for com
 
 FinSH is the command line component (shell) of RT-Thread. It is based on the above considerations. FinSH is pronounced [ˈfɪnʃ]. After reading this chapter, we will have a deeper understanding of how FinSH works and how to export your own commands to FinSH.
 
-## Introduction of FinSH
+# Introduction of FinSH
 
 FinSH is the command line component of RT-Thread. It provides a set of operation interfaces for users to call from the command line. It is mainly used to debug or view system information. It can communicate with a PC using serial/Ethernet/USB, etc. The hardware topology is shown below:
 
@@ -31,7 +31,7 @@ FinSH supports auto-completion, and viewing history commands, etc. These functio
 
 FinSH supports two input modes, the traditional command line mode and the C language interpreter mode.
 
-### Traditional Command Line Mode
+## Traditional Command Line Mode
 
 This mode is also known as msh(module shell). In msh mode, FinSH is implemented in the same way as the traditional shell (dos/bash). For example, you can switch directories to the root directory with the `cd /` command.
 
@@ -43,7 +43,7 @@ command [arg1] [arg2] [...]
 
 The command can be either a built-in command in RT-Thread or an executable file.
 
-### C Language Interpreter Mode
+## C Language Interpreter Mode
 
 This mode is also known as C-Style mode. In C language interpreter mode, FinSH can solve and parse most C language expressions, and use functions like C to access functions and global variables in the system. In addition, it can create variables through the command line. In this mode, the command entered must be similar to the function call in C language, that is, you must carry the `()` symbol. For example, to output all current threads and their status in the system, type `list_thread()` in FinSH to print out the required information. The output of the FinSH command is the return value of this function. For some functions that do not have a return value (void return value), this printout has no meaning.
 
@@ -51,7 +51,7 @@ Initially FinSH only supported C-Style mode. Later, with the development of RT-T
 
 If both modes are enabled in the RT-Thread, they can be dynamically switched. Enter the `exit` in msh mode and press `Enter` to switch to C-Style mode. Enter `msh()` in C-Style mode and press `Enter` to enter msh mode. The commands of the two modes are not common, and the msh command cannot be used in C-Style mode, and vice versa.
 
-## FinSH Built-in Commands
+# FinSH Built-in Commands
 
 Some FinSH commands are built in by default in RT-Thread. You can print all commands supported by the current system by entering help in FinSH and pressing Enter or directly pressing Tab. The built-in commands in C-Style and msh mode are basically the same, so msh is taken as an example here.
 
@@ -79,7 +79,7 @@ free            - Show the memory usage in the system.
 
 Here lists the field information returned after entering the common commands, so that the developer can understand the content of the returned information.
 
-### Display Thread Status
+## Display Thread Status
 
 Use the `ps` or `list_thread` command to list all thread information in the system, including thread priority, state, maximum stack usage, and more.
 
@@ -104,7 +104,7 @@ list_thread Return field description:
 | left tick  | The number of remaining ticks of the thread |
 | error      | Thread error code |
 
-### Display Semaphore Status
+## Display Semaphore Status
 
 Use the `list_sem` command to display all semaphore information in the system, including the name of the semaphore, the value of the semaphore, and the number of threads waiting for this semaphore.
 
@@ -124,7 +124,7 @@ list_sem  Return field description:
 | v              | The current value of semaphore                   |
 | suspend thread | The number of threads waiting for this semaphore |
 
-### Display Event Status
+## Display Event Status
 
 Use the `list_event` command to display all event information in the system, including the event name, the value of the event, and the number of threads waiting for this event.
 
@@ -142,7 +142,7 @@ list_event Return field description:
 | set            | The current event in the event set                           |
 | suspend thread | The number of threads waiting for an event in this event set |
 
-### Display Mutex Status
+## Display Mutex Status
 
 Use the `list_mutex` command to display all mutex information in the system, including the mutex name, the owner of the mutex, and the number of nestings the owner holds on the mutex.
 
@@ -163,7 +163,7 @@ list_mutex Return field description:
 | hold           | The number of times the holder is nested on this mutex |
 | suspend thread | The number of threads waiting for this mutex |
 
-### Display Mailbox Status
+## Display Mailbox Status
 
 Use the `list_mailbox` command to display all mailbox information in the system, including the mailbox name, the number of messages in the mailbox, and the maximum number of messages the mailbox can hold.
 
@@ -184,7 +184,7 @@ list_mailbox Return field description:
 | size           | The maximum number of messages a mailbox can hold |
 | suspend thread | The number of threads waiting for this mailbox |
 
-### Display Message Queue Status
+## Display Message Queue Status
 
 Use the `list_msgqueue` command to display all message queue information in the system, including the name of the message queue, the number of messages it contains, and the number of threads waiting for this message queue.
 
@@ -202,7 +202,7 @@ list_msgqueue Return field description:
 | entry          | The number of messages currently included in the message queue |
 | suspend thread | Number of threads waiting for this message queue |
 
-### Display Memory Pool Status
+## Display Memory Pool Status
 
 Use the `list_mempool` command to display all the memory pool information in the system, including the name of the memory pool, the size of the memory pool, and the maximum memory size used.
 
@@ -223,7 +223,7 @@ list_mempool Return field description:
 | free | Free memory block                                  |
 | suspend thread | The number of threads waiting for this memory pool |
 
-### Display Timer Status
+## Display Timer Status
 
 Use the `list_timer` command to display all the timer information in the system, including the name of the timer, whether it is the periodic timer, and the number of beats of the timer timeout.
 
@@ -245,7 +245,7 @@ list_timer Return field description:
 | timeout  | The number of beats when the timer expires                   |
 | flag     | The state of the timer, activated indicates active, and deactivated indicates inactive |
 
-### Display Device Status
+## Display Device Status
 
 Use the `list_device` command to display all device information in the system, including the device name, device type, and the number of times the device was opened.
 
@@ -265,7 +265,7 @@ list_device Return field description:
 | type      | Device type                               |
 | ref count | The number of times the device was opened |
 
-### Display Dynamic Memory Status
+## Display Dynamic Memory Status
 
 Use the `free` command to display all memory information in the system.
 
@@ -284,11 +284,11 @@ free Return field description:
 | used memory              | Used memory size         |
 | maximum allocated memory | Maximum allocated memory |
 
-## Custom FinSH Command
+# Custom FinSH Command
 
 In addition to the commands that come with FinSH, FinSH also provides multiple macro interfaces to export custom commands. The exported commands can be executed directly in FinSH.
 
-### Custom msh Command
+## Custom msh Command
 
 The custom msh command can be run in msh mode. To export a command to msh mode, you can use the following macro interface：
 
@@ -323,7 +323,7 @@ static void atcmd(int argc, char**argv)
 MSH_CMD_EXPORT(atcmd, atcmd sample: atcmd <server|client>);
 ```
 
-### Custom C-Style Commands and Variables
+## Custom C-Style Commands and Variables
 
 Export custom commands to C-Style mode can use the following interface：
 
@@ -365,7 +365,7 @@ The following example defines a `dummy` variable and exports it to a variable co
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 ```
-### Custom Command Rename
+## Custom Command Rename
 
 The function name length of FinSH is limited. It is controlled by the macro definition `FINSH_NAME_MAX` in `finsh.h`. The default is 16 bytes, which means that the FinSH command will not exceed 16 bytes in length. There is a potential problem here: when a function name is longer than FINSH_NAME_MAX, after using FINSH_FUNCTION_EXPORT to export the function to the command table, the full function name is seen in the FinSH symbol table, but a full node execution will result in a *null node* error. This is because although the full function name is displayed, in fact FinSH saves the first 16 bytes as a command. Too many inputs will result in the command not being found correctly. In this case, you can use `FINSH_FUNCTION_EXPORT_ALIAS` to re-export the command name.
 
@@ -389,23 +389,23 @@ void hello(void)
 
 FINSH_FUNCTION_EXPORT_ALIAS(hello , ho, say hello to RT-Thread);
 ```
-## FinSH Function Configuration
+# FinSH Function Configuration
 
 The FinSH function can be cropped, and the macro configuration options are defined in the rtconfig.h file. The specific configuration items are shown in the following table.
 
-| **Macro Definition**            | **Value Type** | Description                                                | Default  |
-|------------------------|----|------------|-------|
-| #define RT_USING_FINSH   | None  | Enable FinSH                                               | on     |
-| #define FINSH_THREAD_NAME  | String         | FinSH thread name                                          | "tshell"   |
-| #define FINSH_USING_HISTORY   | None | Turn on historical traceback                               | on     |
-| #define FINSH_HISTORY_LINES | Integer type   | Number of historical command lines that can be traced back | 5|
-| #define FINSH_USING_SYMTAB | None | Symbol table can be used in FinSH                          | on     |
-|#define FINSH_USING_DESCRIPTION | None | Add a description to each FinSH symbol                     | on |
-| #define FINSH_USING_MSH| None | Enable msh mode                                            | on |
-| #define FINSH_USING_MSH_ONLY    | None | Use only msh mode                                          | on     |
-| #define FINSH_ARG_MAX  | Integer type   | Maximum number of input parameters                         | 10         |
-| #define FINSH_USING_AUTH  | None | Enable permission verification                             | off    |
-| #define FINSH_DEFAULT_PASSWORD  | String         | Authority verification password                            | off    |
+| **Macro Definition**              | **Value Type** | Description                                                | Default |
+|-----------------------------------|----------------|------------------------------------------------------------|---------|
+| `#define RT_USING_FINSH`          | None           | Enable FinSH                                               | on      |
+| `#define FINSH_THREAD_NAME`       | String         | FinSH thread name                                          | "tshell"|
+| `#define FINSH_USING_HISTORY`     | None           | Turn on historical traceback                               | on      |
+| `#define FINSH_HISTORY_LINES`     | Integer type   | Number of historical command lines that can be traced back | 5       |
+| `#define FINSH_USING_SYMTAB`      | None           | Symbol table can be used in FinSH                          | on      |
+| `#define FINSH_USING_DESCRIPTION` | None           | Add a description to each FinSH symbol                     | on      |
+| `#define FINSH_USING_MSH`         | None           | Enable msh mode                                            | on      |
+| `#define FINSH_USING_MSH_ONLY`    | None           | Use only msh mode                                          | on      |
+| `#define FINSH_ARG_MAX`           | Integer type   | Maximum number of input parameters                         | 10      |
+| `#define FINSH_USING_AUTH`        | None           | Enable permission verification                             | off     |
+| `#define FINSH_DEFAULT_PASSWORD`  | String         | Authority verification password                            | off     |
 
 The reference configuration example in rtconfig.h is as follows, and can be configured according to actual functional requirements.
 
@@ -441,9 +441,9 @@ The reference configuration example in rtconfig.h is as follows, and can be conf
 #define FINSH_ARG_MAX 10
 ```
 
-## FinSH Application Examples
+# FinSH Application Examples
 
-### Examples of msh Command without Arguments
+## Examples of msh Command without Arguments
 
 This section demonstrates how to export a custom command to msh. The sample code is as follows, the hello function is created in the code, and the `hello` function can be exported to the FinSH command list via the `MSH_CMD_EXPORT` command.
 
@@ -477,7 +477,7 @@ hello RT_Thread!
 msh />
 ```
 
-### Example of msh Command with Parameters
+## Example of msh Command with Parameters
 
 This section demonstrates how to export a custom command with parameters to FinSH. The sample code is as follows, the `atcmd()` function is created in the code, and the `atcmd()` function can be exported to the msh command list via the MSH_CMD_EXPORT command.
 
@@ -545,7 +545,7 @@ AT client!
 msh />
 ```
 
-## FinSH Porting
+# FinSH Porting
 
 FinSH is written entirely in ANSI C and has excellent portability; it has a small memory footprint, and FinSH will not dynamically request memory if you do not use the functions described in the previous section to dynamically add symbols to FinSH. The FinSH source is located in the `components/finsh` directory. Porting FinSH requires attention to the following aspects:
 
