@@ -11,8 +11,6 @@
 #ifndef __TICK_H__
 #define __TICK_H__
 
-
-int tick_isr(void);
 int rt_hw_tick_init(void);
 
 #endif /* __TICK_H__ */
