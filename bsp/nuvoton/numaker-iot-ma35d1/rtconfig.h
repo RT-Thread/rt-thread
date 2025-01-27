@@ -5,12 +5,71 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* rt_vsnprintf options */
+
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
+/* end of klibc options */
 #define RT_NAME_MAX 8
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
+#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -20,18 +79,13 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -70,6 +124,8 @@
 #define RT_SMP_AUTO_BOOT
 #define RT_USING_GIC_V2
 #define ARCH_ARMV8
+#define ARCH_USING_ASID
+#define ARCH_USING_IRQ_CTX_LIST
 
 /* RT-Thread Components */
 
@@ -153,6 +209,13 @@
 #define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
 #define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
 #define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
 #define RT_USING_PIN
 #define RT_USING_KTIME
 #define RT_USING_HWTIMER
@@ -324,6 +387,10 @@
 
 /* end of Utest Serial Testcase */
 
+/* Serial-Bypass Testcase */
+
+/* end of Serial-Bypass Testcase */
+
 /* Utest IPC Testcase */
 
 /* end of Utest IPC Testcase */
@@ -340,9 +407,9 @@
 
 /* end of Tmpfs Testcase */
 
-/* SMP Testcase */
+/* SMP-Call Testcase */
 
-/* end of SMP Testcase */
+/* end of SMP-Call Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */

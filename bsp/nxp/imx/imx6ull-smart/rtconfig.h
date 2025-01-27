@@ -3,6 +3,64 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* rt_vsnprintf options */
+
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
+/* end of klibc options */
 #define RT_NAME_MAX 8
 #define RT_USING_SMART
 #define RT_CPUS_NR 1
@@ -19,15 +77,13 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_USING_CPU_USAGE_TRACER
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
+#define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
 
@@ -138,6 +194,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -146,6 +203,7 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_BYPASS
 #define RT_USING_CPUTIME
 #define CPUTIME_TIMER_FREQ 0
 #define RT_USING_I2C
@@ -165,7 +223,6 @@
 #define RT_USING_TOUCH
 #define RT_TOUCH_PIN_IRQ
 #define RT_USING_LCD
-#define RT_USING_DEV_BUS
 #define RT_USING_WIFI
 #define RT_WLAN_DEVICE_STA_NAME "wlan0"
 #define RT_WLAN_DEVICE_AP_NAME "wlan1"
@@ -192,20 +249,15 @@
 #define RT_WLAN_WORKQUEUE_THREAD_NAME "wlan"
 #define RT_WLAN_WORKQUEUE_THREAD_SIZE 2048
 #define RT_WLAN_WORKQUEUE_THREAD_PRIO 15
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
 #define RT_USING_PIN
 #define RT_USING_KTIME
-
-/* Using USB */
-
-#define RT_USING_USB
-#define RT_USING_USB_DEVICE
-#define RT_USBD_THREAD_STACK_SZ 4096
-#define USB_VENDOR_ID 0x0FFE
-#define USB_PRODUCT_ID 0x0001
-#define _RT_USB_DEVICE_WINUSB
-#define RT_USB_DEVICE_WINUSB
-#define RT_WINUSB_GUID "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
-/* end of Using USB */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -337,10 +389,10 @@
 #define RT_USING_ADT_REF
 /* end of Utilities */
 #define RT_USING_LWP
+#define LWP_USING_RUNTIME
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
 #define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
 #define LWP_TID_MAX_NR 64
 #define LWP_ENABLE_ASID
 #define RT_LWP_SHM_MAX_NR 64
@@ -351,6 +403,18 @@
 /* Memory management */
 
 /* end of Memory management */
+
+/* Using USB legacy version */
+
+#define RT_USING_USB
+#define RT_USING_USB_DEVICE
+#define RT_USBD_THREAD_STACK_SZ 4096
+#define USB_VENDOR_ID 0x0FFE
+#define USB_PRODUCT_ID 0x0001
+#define _RT_USB_DEVICE_WINUSB
+#define RT_USB_DEVICE_WINUSB
+#define RT_WINUSB_GUID "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
@@ -445,6 +509,21 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+/* end of STM32 HAL & SDK Drivers */
+
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
+
+/* Kendryte SDK */
+
+/* end of Kendryte SDK */
+/* end of HAL & SDK Drivers */
+
 /* sensors drivers */
 
 /* end of sensors drivers */
@@ -452,10 +531,6 @@
 /* touch drivers */
 
 /* end of touch drivers */
-
-/* Kendryte SDK */
-
-/* end of Kendryte SDK */
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
@@ -526,18 +601,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-/* end of Network Utilities */
-
-/* RT-Thread Smart */
-
-/* end of RT-Thread Smart */
-/* end of Privated Packages of RealThread */
 #define SOC_IMX6ULL
 #define CPU_MCIMX6Y2CVM05
 #define FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL 1
