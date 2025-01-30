@@ -870,6 +870,7 @@ INPUT                  = . \
                          ../components/finsh \
                          ../components/drivers/include/drivers \
                          ../components/drivers/clk \
+                         ../components/drivers/cputime\
                          ../components/dfs/dfs_v2/src \
                          ../components/dfs/dfs_v2/include
 

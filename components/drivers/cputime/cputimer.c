@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,15 +7,31 @@
  * Date           Author            Notes
  * 2023-02-13     zhkag             first version
  * 2023-04-03     xqyjlj            fix cputimer in multithreading
+ * 2025-01-30     wumingzi          add doxygen comment
  */
 
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
 
+/**
+ * @addtogroup  Drivers                 RTTHREAD Driver
+ * @defgroup    cputimer                cputimer
+ * @brief       cputimer driver api
+ * @ingroup     Drivers
+ * @addtogroup  cputimer
+ * @{
+ */
+
 static rt_list_t           _cputimer_list     = RT_LIST_OBJECT_INIT(_cputimer_list);
 static struct rt_cputimer *_cputimer_nowtimer = RT_NULL;
 
+/**
+ * @brief   When cpu timeout,it will release relative semphore
+ *
+ * @param   parameter
+ *
+ */
 static void _cputime_sleep_timeout(void *parameter)
 {
     struct rt_semaphore *sem;
@@ -23,6 +39,15 @@ static void _cputime_sleep_timeout(void *parameter)
     rt_sem_release(sem);
 }
 
+/**
+ * @brief   Set callback function for next timeout cputimer
+ *
+ * @param   parameter       point to struct rt_cputimer where callback
+                            function needs to be set
+ * @note    The function isn't recursively to call callback function, instead
+            set asynchronously next callback function after executing callback function, function when call current
+            callback function,
+ */
 static void _cputime_timeout_callback(void *parameter)
 {
     struct rt_cputimer *timer;
@@ -46,6 +71,10 @@ static void _cputime_timeout_callback(void *parameter)
     }
 }
 
+/**
+ * @brief   Set next the earliest timeout cputimer and its callback function
+ *
+ */
 static void _set_next_timeout()
 {
     struct rt_cputimer *t;
@@ -74,6 +103,18 @@ static void _set_next_timeout()
     }
 }
 
+/**
+ * @brief   Init cputimer
+ *
+ * @param   timer           memeory space of cputimer
+ * @param   name            name of cputimer
+ * @param   timeout         callback function that is called when timeout
+ * @param   parameter       parameter of callback function
+ * @param   tick            number of ticks left until next timeout
+ * @param   flag            flag of cputimer
+ *
+ * @note    Config RT_USING_HEAP option will be vital if you want to using this function.
+ */
 void rt_cputimer_init(rt_cputimer_t timer,
                       const char   *name,
                       void (*timeout)(void *parameter),
@@ -100,6 +141,14 @@ void rt_cputimer_init(rt_cputimer_t timer,
     rt_sem_init(&(timer->sem), "cputime", 0, RT_IPC_FLAG_PRIO);
 }
 
+/**
+ * @brief   Delete cputimer object
+ *
+ * @param   timer           deleted cputimer
+ *
+ * @note    Config RT_USING_HEAP option will be vital if you want to using this function.
+ * @return  return RT_EOK forever
+ */
 rt_err_t rt_cputimer_delete(rt_cputimer_t timer)
 {
     rt_base_t level;
@@ -123,6 +172,13 @@ rt_err_t rt_cputimer_delete(rt_cputimer_t timer)
     return RT_EOK;
 }
 
+/**
+ * @brief   Insert timer to timer list and start it.
+ *
+ * @param   timer           timer to be inserted
+ *
+ * @return  return RT_EOK forever
+ */
 rt_err_t rt_cputimer_start(rt_cputimer_t timer)
 {
     rt_list_t *timer_list;
@@ -171,6 +227,13 @@ rt_err_t rt_cputimer_start(rt_cputimer_t timer)
     return RT_EOK;
 }
 
+/**
+ * @brief   Stop cputimer
+ *
+ * @param   timer           stopped cputimer
+ *
+ * @return  return RT_EOK forever
+ */
 rt_err_t rt_cputimer_stop(rt_cputimer_t timer)
 {
     rt_base_t level;
@@ -199,6 +262,39 @@ rt_err_t rt_cputimer_stop(rt_cputimer_t timer)
     return RT_EOK;
 }
 
+/**
+ * @brief   Control cputimer by cmd
+ *
+ * @param   timer           controlled cputimer
+ * @param   cmd             the command of cputimer. It can be one of:
+                            | Options                            | Description                                       |
+                            |------------------------------------|---------------------------------------------------|
+                            | `RT_TIMER_CTRL_GET_TIME`:          | Get number of init ticks.                         |
+                            | `RT_TIMER_CTRL_SET_TIME`:          | Set number of init ticks.                         |
+                            | `RT_TIMER_CTRL_SET_ONESHOT`:       | Set flag of timer to ONESHOT.                     |
+                            | `RT_TIMER_CTRL_SET_PERIODIC`:      | Set flag of timer to PERIODIC.                    |
+                            | `RT_TIMER_CTRL_GET_STATE`:         | Get state of timer.                               |
+                            | `RT_TIMER_CTRL_GET_REMAIN_TIME`:   | Get number of ticks left.                         |
+                            | `RT_TIMER_CTRL_GET_FUNC`:          | Get of timeout callback function.                 |
+                            | `RT_TIMER_CTRL_SET_FUNC`:          | Set of timeout callback function.                 |
+                            | `RT_TIMER_CTRL_GET_PARM`:          | Get parameters of callback function.              |
+                            | `RT_TIMER_CTRL_SET_PARM`:          | Set parameters of callback function.              |
+ * @param   arg             point to user data. It will depands on  vary of cmd parameter:
+                            | Cmd options                        | Description                                       |
+                            |------------------------------------|---------------------------------------------------|
+                            | `RT_TIMER_CTRL_GET_TIME`:          | Arg will be a pointer to rt_uint64_t type.        |
+                            | `RT_TIMER_CTRL_SET_TIME`:          | Arg shall be a pointer to rt_uint64_t type.       |
+                            | `RT_TIMER_CTRL_SET_ONESHOT`:       | Arg is useless parameter.                         |
+                            | `RT_TIMER_CTRL_SET_PERIODIC`:      | Arg is useless parameter.                         |
+                            | `RT_TIMER_CTRL_GET_STATE`:         | Arg shall be a pointer to rt_uint32_t type.       |
+                            | `RT_TIMER_CTRL_GET_REMAIN_TIME`:   | Arg shall be a pointer to rt_uint64_t type..      |
+                            | `RT_TIMER_CTRL_GET_FUNC`:          | Arg will be a pointer to void (*)(void*) type.    |
+                            | `RT_TIMER_CTRL_SET_FUNC`:          | Arg shall be a pointer to void (*)(void*) type.   |
+                            | `RT_TIMER_CTRL_GET_PARM`:          | Arg will be a pointer to void* type.              |
+                            | `RT_TIMER_CTRL_SET_PARM`:          | Arg shall be a pointer to void* type.             |
+ *
+ * @return  rt_err_t        return RT_EOK forever
+ */
 rt_err_t rt_cputimer_control(rt_cputimer_t timer, int cmd, void *arg)
 {
     rt_base_t level;
@@ -268,6 +364,13 @@ rt_err_t rt_cputimer_control(rt_cputimer_t timer, int cmd, void *arg)
     return RT_EOK;
 }
 
+/**
+ * @brief   Detach cputimer
+ *
+ * @param   timer           deteched cputimer
+ *
+ * @return  rt_err_t        return RT_EOK forever
+ */
 rt_err_t rt_cputimer_detach(rt_cputimer_t timer)
 {
     rt_base_t level;
@@ -292,6 +395,14 @@ rt_err_t rt_cputimer_detach(rt_cputimer_t timer)
     return RT_EOK;
 }
 
+/**
+ * @brief   Let cpu to sleep a number of ticks
+ *
+ * @param   tick            number of ticks to sleep
+ *
+ * @return  rt_err_t        returns RT_EOK if the delay is successful;
+                            otherwise, returns a value indicating failure.
+ */
 rt_err_t rt_cputime_sleep(rt_uint64_t tick)
 {
     rt_base_t          level;
@@ -322,18 +433,43 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
     return RT_EOK;
 }
 
+/**
+ * @brief   Let cpu to sleep a number of nanosecond
+ *
+ * @param   ns              time of sleep
+ *
+ * @return  rt_err_t        returns RT_EOK if the delay is successful;
+                            otherwise, returns a value indicating failure.
+ */
 rt_err_t rt_cputime_ndelay(rt_uint64_t ns)
 {
     uint64_t unit = clock_cpu_getres();
     return rt_cputime_sleep(ns * (1000UL * 1000) / unit);
 }
 
+/**
+ * @brief   Let cpu to sleep a number of microsecond
+ *
+ * @param   us              time of sleep
+ *
+ * @return  rt_err_t        returns RT_EOK if the delay is successful;
+                            otherwise, returns a value indicating failure.
+ */
 rt_err_t rt_cputime_udelay(rt_uint64_t us)
 {
     return rt_cputime_ndelay(us * 1000);
 }
 
+/**
+ * @brief   Let cpu to sleep a number of millisecond
+ *
+ * @param   ms              time of sleep
+ *
+ * @return  rt_err_t        returns RT_EOK if the delay is successful;
+                            otherwise, returns a value indicating failure.
+ */
 rt_err_t rt_cputime_mdelay(rt_uint64_t ms)
 {
     return rt_cputime_ndelay(ms * 1000000);
 }
+/*! @}*/

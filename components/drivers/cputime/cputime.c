@@ -1,24 +1,34 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2017-12-23     Bernard           first version
+ * 2025-01-30     wumingzi          transform to doxygen comment
  */
 
 #include <rtdevice.h>
 #include <rtthread.h>
 #include <sys/errno.h>
 
+/**
+ * @addtogroup  Drivers                 RTTHREAD Driver
+ * @defgroup    cputimer                cputimer
+ * @brief       cputimer driver api
+ * @ingroup     Drivers
+ * @addtogroup  cputimer
+ * @{
+ */
+
 static const struct rt_clock_cputime_ops *_cputime_ops  = RT_NULL;
 
 /**
- * The clock_cpu_getres() function shall return the resolution of CPU time, the
+ * @brief   The clock_cpu_getres() function shall return the resolution of CPU time, the
  * number of nanosecond per tick.
  *
- * @return the number of nanosecond per tick(x (1000UL * 1000))
+ * @return  the number of nanosecond per tick(x (1000UL * 1000))
  */
 uint64_t clock_cpu_getres(void)
 {
@@ -30,9 +40,9 @@ uint64_t clock_cpu_getres(void)
 }
 
 /**
- * The clock_cpu_gettime() function shall return the current value of cpu time tick.
+ * @brief   The clock_cpu_gettime() function shall return the current value of cpu time tick.
  *
- * @return the cpu tick
+ * @return  the cpu tick
  */
 uint64_t clock_cpu_gettime(void)
 {
@@ -44,13 +54,14 @@ uint64_t clock_cpu_gettime(void)
 }
 
 /**
- * The clock_cpu_settimeout() fucntion set timeout time and timeout callback function
+ * @brief   The clock_cpu_settimeout() fucntion set timeout time and timeout callback function
  * The timeout callback function will be called when the timeout time is reached
  *
  * @param tick the Timeout tick
  * @param timeout the Timeout function
- * @param parameter the Parameters of timeout function
+ * @param param the Parameters of timeout function
  *
+ * @return  RT_FALSE or RT_TURE
  */
 int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param)
 {
@@ -61,6 +72,11 @@ int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *para
     return 0;
 }
 
+/**
+ * @brief   Check if cputimer timeout callback function has been set
+ *
+ * @return  RT_FALSE or RT_TURE
+ */
 int clock_cpu_issettimeout(void)
 {
     if (_cputime_ops)
@@ -69,12 +85,12 @@ int clock_cpu_issettimeout(void)
 }
 
 /**
- * The clock_cpu_microsecond() fucntion shall return the microsecond according to
+ * @brief   The clock_cpu_microsecond() fucntion shall return the microsecond according to
  * cpu_tick parameter.
  *
  * @param cpu_tick the cpu tick
  *
- * @return the microsecond
+ * @return  the microseconds
  */
 uint64_t clock_cpu_microsecond(uint64_t cpu_tick)
 {
@@ -84,12 +100,12 @@ uint64_t clock_cpu_microsecond(uint64_t cpu_tick)
 }
 
 /**
- * The clock_cpu_microsecond() fucntion shall return the millisecond according to
+ * @brief   The clock_cpu_millisecond() fucntion shall return the millisecond according to
  * cpu_tick parameter.
  *
  * @param cpu_tick the cpu tick
  *
- * @return the millisecond
+ * @return  the milliseconds
  */
 uint64_t clock_cpu_millisecond(uint64_t cpu_tick)
 {
@@ -99,9 +115,9 @@ uint64_t clock_cpu_millisecond(uint64_t cpu_tick)
 }
 
 /**
- * The clock_cpu_seops() function shall set the ops of cpu time.
+ * @brief   The clock_cpu_seops() function shall set the ops of cpu time.
  *
- * @return always return 0.
+ * @return  always return 0.
  */
 int clock_cpu_setops(const struct rt_clock_cputime_ops *ops)
 {
@@ -114,3 +130,4 @@ int clock_cpu_setops(const struct rt_clock_cputime_ops *ops)
 
     return 0;
 }
+/*! @}*/

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,7 +18,11 @@
 #include <perf_counter.h>
 #endif
 
-/* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
+/**
+ * @brief   Get nanoseconds per tick
+ *
+ * @return  the number of nanoseconds per tick multiplied by 1 000 000
+ */
 static uint64_t cortexm_cputime_getres(void)
 {
     uint64_t ret = 1000UL * 1000 * 1000;
@@ -27,6 +31,11 @@ static uint64_t cortexm_cputime_getres(void)
     return ret;
 }
 
+/**
+ * @brief   Read time counter
+ *
+ * @return  value of ticks
+ */
 static uint64_t cortexm_cputime_gettime(void)
 {
 #ifdef PKG_USING_PERF_COUNTER
@@ -42,7 +51,12 @@ const static struct rt_clock_cputime_ops _cortexm_ops =
     cortexm_cputime_gettime
 };
 
-
+/**
+ * @brief   Init cputimer operation of cortex-m architecture by using Cycle
+            counter of Data Watchpoint and Trace Register for CPU time
+ *
+ * @return  return 0 forever
+ */
 int cortexm_cputime_init(void)
 {
 #ifdef PKG_USING_PERF_COUNTER

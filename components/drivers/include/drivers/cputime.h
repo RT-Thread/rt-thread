@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2017-12-23     Bernard           first version
+ * 2025-01-30     wumingzi          add doxygen comment
  */
 
 #ifndef CPUTIME_H__
@@ -13,6 +14,15 @@
 
 #include <stdint.h>
 #include "cputimer.h"
+
+/**
+ * @addtogroup  Drivers                 RTTHREAD Driver
+ * @defgroup    cputimer                cputimer
+ * @brief       cputimer driver api
+ * @ingroup     Drivers
+ * @addtogroup  cputimer
+ * @{
+ */
 
 struct rt_clock_cputime_ops
 {
@@ -36,3 +46,4 @@ int riscv_cputime_init(void);
 #endif /* RT_USING_CPUTIME_RISCV */
 
 #endif
+/*! @}*/
