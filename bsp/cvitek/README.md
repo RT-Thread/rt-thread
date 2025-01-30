@@ -128,7 +128,7 @@ export RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 ## 4.2. 依赖安装
 
 ```shell
-$ sudo apt install -y scons libncurses5-dev device-tree-compiler
+$ sudo apt install -y scons libncurses5-dev device-tree-compiler u-boot-tools
 ```
 
 ## 4.3. 构建
