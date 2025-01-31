@@ -26,6 +26,8 @@ on:
       - '**/*.c'
       - '**/*.h'
       - '**/*.cpp'
+  workflow_dispatch:
+  repository_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -60,7 +62,12 @@ jobs:
 
     - name: Build Tools
       run: |
-        scons --pyconfig-silent -C $TEST_BSP_ROOT
+        scons --pyconfig-silent -C $TEST_BSP_ROOT 2>menuconfig.log
+        cat menuconfig.log
+        if grep -q "warning:" menuconfig.log; then
+          echo "Errors found in menuconfig, failing the build."
+          exit 1
+        fi
         scons -j$(nproc) -C $TEST_BSP_ROOT
 
     - name: Project generate Tools
