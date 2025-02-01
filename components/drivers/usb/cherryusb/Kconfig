@@ -229,7 +229,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb cdc ecm driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_CDC_ECM
             default n
 
@@ -237,7 +236,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb rndis driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_CDC_RNDIS
             default n
 
@@ -245,7 +243,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb cdc ncm driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_CDC_NCM
             default n
 
@@ -268,7 +265,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb asix driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_ASIX
             default n
 
@@ -276,7 +272,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb rtl8152 driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_RTL8152
             default n
 
