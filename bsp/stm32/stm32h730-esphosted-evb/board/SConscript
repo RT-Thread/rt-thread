@@ -15,8 +15,7 @@ path += [cwd + '/CubeMX_Config/Core/Inc']
 startup_path_prefix = SDK_LIB
 
 if rtconfig.PLATFORM in ['gcc']:
-    src += Glob('CubeMX_Config/Core/Startup/startup_stm32h730vbtx.s')
-    src += Glob('CubeMX_Config/Core/Startup/reset_handler.c')
+    src += Glob(startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h730xx.s')
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h730xx.s']
 elif rtconfig.PLATFORM in ['iccarm']:
