@@ -16,4 +16,5 @@ add_custom_target(flash ALL
         -c "tcl_port disabled" -c "gdb_port disabled"
         -c "program ${CMAKE_PROJECT_NAME}.elf"
         -c reset -c shutdown
+        DEPENDS ${CMAKE_PROJECT_NAME}.elf
 )

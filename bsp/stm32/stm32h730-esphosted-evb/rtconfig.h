@@ -144,9 +144,8 @@
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V1
+#define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -386,7 +385,8 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART2
-#define BSP_USING_UART3
+#define BSP_UART2_RX_BUFSIZE 256
+#define BSP_UART2_TX_BUFSIZE 0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
