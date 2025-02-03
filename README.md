@@ -152,3 +152,14 @@ If you are interested in RT-Thread and want to join in the development of RT-Thr
 <a href="https://github.com/RT-Thread/rt-thread/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=RT-Thread/rt-thread" />
 </a>
+## AI-generated ProductMaps
+
+
+
+| Github file | ProductMap |
+|-------------|------------|
+| [kservice.c](https://github.com/RT-Thread/rt-thread/blob/master/src/kservice.c) | [Link to Map](https://product-map.ai/app/public?url=https://github.com/RT-Thread/rt-thread/blob/master/src/kservice.c) |
+
+Contact ProductMap if you have any questions at [juan@product-map.ai](juan@product-map.ai).
+
+Last updated on Mon Feb 03 22:57:08 UTC 2025.
