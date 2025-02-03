@@ -1,7 +1,7 @@
 #!/bin/bash
 C906_LITTLE_BIN_PATH=../c906_little/rtthread.bin
-GEN_FIP_PATH=../output/milkv-duo256m/
-DEPENDS_FILE_PATH=./prebuild/milkv-duo256m
+GEN_FIP_PATH=../output/duo256m/
+DEPENDS_FILE_PATH=./prebuild/duo256m
 
 BLCP_IMG_RUNADDR=0x05200200
 BLCP_PARAM_LOADADDR=0
