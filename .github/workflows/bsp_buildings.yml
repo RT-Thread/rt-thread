@@ -190,6 +190,7 @@ jobs:
                 - "stm32/stm32h563-st-nucleo"
                 - "stm32/stm32h503-st-nucleo"
                 - "stm32/stm32h723-st-nucleo"
+                - "stm32/stm32h730-esphosted-evb"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
