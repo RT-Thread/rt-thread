@@ -146,6 +146,14 @@ online-packages.system.os-wrappers:
     <<: *scons
     kconfig:
       - CONFIG_PKG_USING_FREERTOS_WRAPPER=y
+online-packages.ai.llmchat:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_RW007_WLAN=y
+      - CONFIG_WEBCLIENT_USING_MBED_TLS=y
+      - CONFIG_MBEDTLS_SSL_MAX_CONTENT_LEN=6144
+      - CONFIG_PKG_USING_LLMCHAT=y
+      - CONFIG_PKG_USING_LLMCHAT_LATEST_VERSION=y
 # ------ peripheral CI ------
 peripheral.aht21:
     kconfig:
