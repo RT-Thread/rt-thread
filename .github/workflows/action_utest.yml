@@ -133,6 +133,9 @@ jobs:
         echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
         cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
         scons --menuconfig
+        ls ~/.env
+        source ~/.env/env.sh
+        pkgs --update
         scons --pyconfig-silent -C $TEST_BSP_ROOT
         scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
