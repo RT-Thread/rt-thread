@@ -62,6 +62,9 @@ jobs:
     - name: Install Tools
       shell: bash
       run: |
+        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+        chmod 777 install_ubuntu.sh
+        ./install_ubuntu.sh
         sudo apt-get update
         sudo apt-get -yqq install scons qemu-system git
         pip3 install kconfiglib
@@ -132,7 +135,6 @@ jobs:
       run: |
         echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
         cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
-        scons --menuconfig
         scons --pyconfig-silent -C $TEST_BSP_ROOT
         scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
