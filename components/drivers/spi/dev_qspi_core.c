@@ -52,7 +52,12 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
     device->config.parent.mode = cfg->parent.mode;
     device->config.parent.max_hz = cfg->parent.max_hz;
     device->config.parent.data_width = cfg->parent.data_width;
+#ifdef RT_USING_DM
+    device->config.parent.data_width_tx = cfg->parent.data_width_tx;
+    device->config.parent.data_width_rx = cfg->parent.data_width_rx;
+#else
     device->config.parent.reserved = cfg->parent.reserved;
+#endif
     device->config.medium_size = cfg->medium_size;
     device->config.ddr_mode = cfg->ddr_mode;
     device->config.qspi_dl_width = cfg->qspi_dl_width;
