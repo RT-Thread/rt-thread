@@ -921,7 +921,6 @@ RECURSIVE              = YES
 # run.
 
 EXCLUDE                = ./0.doxygen/mainpage.h \
-                         ./README.md \
                          ./2.quick-start/quick_start_qemu \
                          ./env/env-vscode.md \
                          ./contribution_guide/coding_style_cn.md
