@@ -4,25 +4,27 @@ on:
     branches:
       - master
     paths:
-      - 'documentation/doxygen/**'
+      - 'documentation/**'
       - 'src/**'
       - 'include/**'
-      - 'components/drivers/include/drivers/**'
-      - 'components/dfs/dfs_v2/include/**'
-      - 'components/dfs/dfs_v2/src/**'
       - 'components/finsh/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/drivers/clk/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/dfs/dfs_v2/include/**'
       - '.github/workflows/doxygen.yml'
   # Runs at 16:00 UTC (BeiJing 00:00) on the 30st of every month
   push:
     branches: [master]
     paths:
-      - 'documentation/doxygen/**'
+      - 'documentation/**'
       - 'src/**'
       - 'include/**'
-      - 'components/drivers/include/drivers/**'
-      - 'components/dfs/dfs_v2/include/**'
-      - 'components/dfs/dfs_v2/src/**'
       - 'components/finsh/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/drivers/clk/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/dfs/dfs_v2/include/**'
       - '.github/workflows/doxygen.yml'
   schedule:
     - cron:  '0 16 30 * *'
