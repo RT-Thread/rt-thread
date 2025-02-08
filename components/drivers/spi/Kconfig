@@ -3,22 +3,11 @@ config RT_USING_SPI
     default n
 
     if RT_USING_SPI
-        config RT_USING_SPI_BITOPS
-            select RT_USING_PIN
-            bool "Use GPIO to simulate SPI"
-            default n
-
-        if RT_USING_SPI_BITOPS
-            config RT_SPI_BITOPS_DEBUG
-                bool "Use simulate SPI debug message"
-                default n
-        endif
 
         menuconfig RT_USING_SOFT_SPI
-            bool "Use GPIO to soft simulate SPI"
+            bool "Use GPIO to simulate SPI"
             default n
             select RT_USING_PIN
-            select RT_USING_SPI_BITOPS
             if RT_USING_SOFT_SPI
                 menuconfig RT_USING_SOFT_SPI0
                     bool "Enable SPI0 Bus (software simulation)"
@@ -188,8 +177,12 @@ config RT_USING_SPI
                             range 0 32767
                             default 1
                     endif
-
             endif
+
+        config RT_SPI_BITOPS_DEBUG
+            bool "Use simulate SPI debug message"
+            depends on RT_USING_SOFT_SPI
+            default n
 
         config RT_USING_QSPI
             bool "Enable QSPI mode"
