@@ -492,8 +492,8 @@ typedef struct
     __IO uint32_t vmhb;
     struct
     {
-      __IO uint32_t vmhb                 : 12; /* [11:0] */
-      __IO uint32_t reserved1            : 20; /* [31:12] */
+      __IO uint32_t vmhb                 : 16; /* [15:0] */
+      __IO uint32_t reserved1            : 16; /* [31:16] */
     } vmhb_bit;
   };
 
@@ -505,8 +505,8 @@ typedef struct
     __IO uint32_t vmlb;
     struct
     {
-      __IO uint32_t vmlb                 : 12; /* [11:0] */
-      __IO uint32_t reserved1            : 20; /* [31:12] */
+      __IO uint32_t vmlb                 : 16; /* [15:0] */
+      __IO uint32_t reserved1            : 16; /* [31:16] */
     } vmlb_bit;
   };
 

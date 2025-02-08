@@ -120,7 +120,8 @@ typedef enum
 {
   DMA_DIR_PERIPHERAL_TO_MEMORY           = 0x0000, /*!< dma data transfer direction: peripheral to memory */
   DMA_DIR_MEMORY_TO_PERIPHERAL           = 0x0010, /*!< dma data transfer direction: memory to peripheral */
-  DMA_DIR_MEMORY_TO_MEMORY               = 0x4000  /*!< dma data transfer direction: memory to memory */
+  DMA_DIR_MEMORY_TO_MEMORY               = 0x4000  /*!< dma data transfer direction: memory to memory,
+                                                        note:if the direction is memory to memory,peripheral_base_addr as source and memory_base_addr as destnation */
 } dma_dir_type;
 
 /**
@@ -165,8 +166,9 @@ typedef enum
   DMAMUX_DMAREQ_ID_REQ_G3                = 0x03, /*!< dmamux channel dma request inputs resources: generator channel3 */
   DMAMUX_DMAREQ_ID_REQ_G4                = 0x04, /*!< dmamux channel dma request inputs resources: generator channel4 */
   DMAMUX_DMAREQ_ID_ADC1                  = 0x05, /*!< dmamux channel dma request inputs resources: adc1 */
+  DMAMUX_DMAREQ_ID_ADC2                  = 0x24, /*!< dmamux channel dma request inputs resources: adc2 */
   DMAMUX_DMAREQ_ID_DAC1                  = 0x06, /*!< dmamux channel dma request inputs resources: dac1 */
-  DMAMUX_DMAREQ_ID_DAC2                  = 0x29, /*!< dmamux channel dma request inputs resources: dac2 */  
+  DMAMUX_DMAREQ_ID_DAC2                  = 0x29, /*!< dmamux channel dma request inputs resources: dac2 */
   DMAMUX_DMAREQ_ID_TMR6_OVERFLOW         = 0x08, /*!< dmamux channel dma request inputs resources: timer6 overflow */
   DMAMUX_DMAREQ_ID_TMR7_OVERFLOW         = 0x09, /*!< dmamux channel dma request inputs resources: timer7 overflow */
   DMAMUX_DMAREQ_ID_SPI1_RX               = 0x0A, /*!< dmamux channel dma request inputs resources: spi1 rx */
@@ -187,7 +189,7 @@ typedef enum
   DMAMUX_DMAREQ_ID_TMR1_CH4              = 0x2D, /*!< dmamux channel dma request inputs resources: timer1 ch4 */
   DMAMUX_DMAREQ_ID_TMR1_OVERFLOW         = 0x2E, /*!< dmamux channel dma request inputs resources: timer1 overflow */
   DMAMUX_DMAREQ_ID_TMR1_TRIG             = 0x2F, /*!< dmamux channel dma request inputs resources: timer1 trig */
-  DMAMUX_DMAREQ_ID_TMR1_HALL             = 0x30, /*!< dmamux channel dma request inputs resources: timer1 hall */ 
+  DMAMUX_DMAREQ_ID_TMR1_HALL             = 0x30, /*!< dmamux channel dma request inputs resources: timer1 hall */
   DMAMUX_DMAREQ_ID_TMR3_CH1              = 0x3D, /*!< dmamux channel dma request inputs resources: timer3 ch1 */
   DMAMUX_DMAREQ_ID_TMR3_CH2              = 0x3E, /*!< dmamux channel dma request inputs resources: timer3 ch2 */
   DMAMUX_DMAREQ_ID_TMR3_CH3              = 0x3F, /*!< dmamux channel dma request inputs resources: timer3 ch3 */

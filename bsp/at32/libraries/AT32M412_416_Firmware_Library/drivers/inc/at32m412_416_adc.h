@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -29,8 +29,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
- 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "at32m412_416.h"
 
@@ -43,10 +43,10 @@ extern "C" {
   */
 
 /** @defgroup ADC_interrupts_definition
-  * @brief adc interrupt    
+  * @brief adc interrupt
   * @{
   */
-  
+
 #define ADC_OCCE_INT                     ((uint32_t)0x00000020) /*!< ordinary channels conversion end interrupt */
 #define ADC_VMOR_INT                     ((uint32_t)0x00000040) /*!< voltage monitoring out of range interrupt */
 #define ADC_PCCE_INT                     ((uint32_t)0x00000080) /*!< preempt channels conversion end interrupt */
@@ -720,7 +720,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } odt_bit;
   };
-  
+
   /**
   * @brief adc spt3 register, offset:0x50
   */
@@ -837,9 +837,9 @@ typedef struct
       __IO uint32_t codth                : 16; /* [31:16] */
     } codt_bit;
   };
-  
+
   __IO uint32_t reserved1;
-  
+
   /**
   * @brief adc1 odt1 register, offset:0x310
   */
@@ -852,7 +852,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt1_bit;
   };
-  
+
   /**
   * @brief adc1 odt2 register, offset:0x314
   */
@@ -865,7 +865,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt2_bit;
   };
-  
+
   /**
   * @brief adc1 odt3 register, offset:0x318
   */
@@ -878,7 +878,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt3_bit;
   };
-  
+
   /**
   * @brief adc1 odt4 register, offset:0x31c
   */
@@ -891,7 +891,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt4_bit;
   };
-  
+
   /**
   * @brief adc1 odt4 register, offset:0x320
   */
@@ -904,7 +904,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt5_bit;
   };
-  
+
   /**
   * @brief adc1 odt6 register, offset:0x324
   */
@@ -917,7 +917,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt6_bit;
   };
-  
+
   /**
   * @brief adc1 odt7 register, offset:0x328
   */
@@ -930,7 +930,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt7_bit;
   };
-  
+
   /**
   * @brief adc1 odt8 register, offset:0x32c
   */
@@ -943,7 +943,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt8_bit;
   };
-  
+
   /**
   * @brief adc1 odt9 register, offset:0x330
   */
@@ -956,7 +956,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt9_bit;
   };
-  
+
   /**
   * @brief adc1 odt10 register, offset:0x334
   */
@@ -969,7 +969,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt10_bit;
   };
-  
+
   /**
   * @brief adc1 odt11 register, offset:0x338
   */
@@ -982,7 +982,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt11_bit;
   };
-  
+
   /**
   * @brief adc1 odt12 register, offset:0x33c
   */
@@ -995,7 +995,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt12_bit;
   };
-  
+
   /**
   * @brief adc1 odt13 register, offset:0x340
   */
@@ -1008,7 +1008,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt13_bit;
   };
-  
+
   /**
   * @brief adc1 odt14 register, offset:0x344
   */
@@ -1021,7 +1021,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt14_bit;
   };
-  
+
   /**
   * @brief adc1 odt15 register, offset:0x348
   */
@@ -1034,7 +1034,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt15_bit;
   };
-  
+
   /**
   * @brief adc1 odt16 register, offset:0x34c
   */
@@ -1047,7 +1047,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc1_odt16_bit;
   };
-  
+
   /**
   * @brief adc2 odt1 register, offset:0x350
   */
@@ -1060,7 +1060,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt1_bit;
   };
-  
+
   /**
   * @brief adc2 odt2 register, offset:0x354
   */
@@ -1073,7 +1073,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt2_bit;
   };
-  
+
   /**
   * @brief adc2 odt3 register, offset:0x358
   */
@@ -1086,7 +1086,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt3_bit;
   };
-  
+
   /**
   * @brief adc2 odt4 register, offset:0x35c
   */
@@ -1099,7 +1099,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt4_bit;
   };
-  
+
   /**
   * @brief adc2 odt4 register, offset:0x360
   */
@@ -1112,7 +1112,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt5_bit;
   };
-  
+
   /**
   * @brief adc2 odt6 register, offset:0x364
   */
@@ -1125,7 +1125,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt6_bit;
   };
-  
+
   /**
   * @brief adc2 odt7 register, offset:0x368
   */
@@ -1138,7 +1138,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt7_bit;
   };
-  
+
   /**
   * @brief adc2 odt8 register, offset:0x36c
   */
@@ -1151,7 +1151,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt8_bit;
   };
-  
+
   /**
   * @brief adc2 odt9 register, offset:0x370
   */
@@ -1164,7 +1164,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt9_bit;
   };
-  
+
   /**
   * @brief adc2 odt10 register, offset:0x374
   */
@@ -1177,7 +1177,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt10_bit;
   };
-  
+
   /**
   * @brief adc2 odt11 register, offset:0x378
   */
@@ -1190,7 +1190,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt11_bit;
   };
-  
+
   /**
   * @brief adc2 odt12 register, offset:0x37c
   */
@@ -1203,7 +1203,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt12_bit;
   };
-  
+
   /**
   * @brief adc2 odt13 register, offset:0x380
   */
@@ -1216,7 +1216,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt13_bit;
   };
-  
+
   /**
   * @brief adc2 odt14 register, offset:0x384
   */
@@ -1229,7 +1229,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt14_bit;
   };
-  
+
   /**
   * @brief adc2 odt15 register, offset:0x388
   */
@@ -1242,7 +1242,7 @@ typedef struct
       __IO uint32_t reserved1            : 16; /* [31:16] */
     } adc2_odt15_bit;
   };
-  
+
   /**
   * @brief adc2 odt16 register, offset:0x38c
   */

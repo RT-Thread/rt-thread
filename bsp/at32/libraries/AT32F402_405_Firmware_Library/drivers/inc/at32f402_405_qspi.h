@@ -195,7 +195,7 @@ typedef struct
   uint8_t                                second_dummy_cycle_num;  /*!< number of second dummy state cycle 0~32 */
   qspi_operate_mode_type                 operation_mode;          /*!< operation mode */
   qspi_read_status_conf_type             read_status_config;      /*!< config to read status */
-  confirm_state                          read_status_enable;      /*!< config to read status */
+  confirm_state                          read_status_enable;      /*!< enable to read status */
   confirm_state                          write_data_enable;       /*!< enable to write data */
 } qspi_cmd_type;
 

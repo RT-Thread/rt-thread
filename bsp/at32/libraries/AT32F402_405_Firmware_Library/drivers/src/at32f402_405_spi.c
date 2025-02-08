@@ -395,7 +395,7 @@ void i2s_init(spi_type* spi_x, i2s_init_type* i2s_init_struct)
           /* hext selected as pll clock entry */
           pllrcsfreq = HEXT_VALUE;
         }
-        i2s_sclk_index = (pllrcsfreq * pll_ns) / (pll_ms * pll_fr);
+        i2s_sclk_index = (uint32_t)(((uint64_t)pllrcsfreq * pll_ns) / (pll_ms * pll_fr));
       }
       else if(CRM->cfg_bit.i2sf5clksel == CRM_I2SF5_CLOCK_SOURCE_HICK)
       {
@@ -800,11 +800,11 @@ void i2sf_full_duplex_mode_enable(spi_type* spi_x, confirm_state new_state)
 }
 
 /**
-  * @brief  set the i2s pcm mode sample clock for the spi peripheral.
+  * @brief  set the i2s pcm mode sample clock edge for the spi peripheral.
   * @param  spi_x: select the spi peripheral.
   *         this parameter can be one of the following values:
   *         I2SF5
-  * @param  channel_num: i2s tdm mode channel number
+  * @param  pcm_sample_clock: i2s pcm mode sample clock edge
   *         this parameter can be one of the following values:
   *         - I2S_PCM_SAMPLE_CLOCK_FALLING
   *         - I2S_PCM_SAMPLE_CLOCK_RISING

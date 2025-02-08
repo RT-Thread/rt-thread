@@ -217,10 +217,12 @@ void tmr_cnt_dir_set(tmr_type *tmr_x, tmr_count_mode_type tmr_cnt_dir)
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR15, TMR16, TMR17
-  * @param  tmr_rpr_value (0x00~0xFF)
+  * @param  tmr_rpr_value
+  *         for TMR1: 0x0000~0xFFFF;
+  *         for TMR15, TMR16, TMR17: 0x00~0xFF;
   * @retval none
   */
-void tmr_repetition_counter_set(tmr_type *tmr_x, uint8_t tmr_rpr_value)
+void tmr_repetition_counter_set(tmr_type *tmr_x, uint16_t tmr_rpr_value)
 {
   /* set the repetition counter value */
   tmr_x->rpr_bit.rpr = tmr_rpr_value;

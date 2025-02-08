@@ -1061,7 +1061,7 @@ error_status crm_pll_parameter_calculate(crm_pll_clock_source_type pll_rcs, uint
   /* polling pll parameters */
   for(ms = ms_min; ms <= ms_max; ms ++)
   {
-    for(fp = 0; fp <= 16; fp ++)
+    for(fp = 0; fp <= 15; fp ++)
     {
       for(ns = 31; ns <= 500; ns ++)
       {

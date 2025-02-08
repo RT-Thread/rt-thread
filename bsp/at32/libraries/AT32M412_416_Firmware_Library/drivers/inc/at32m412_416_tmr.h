@@ -42,11 +42,11 @@ extern "C" {
   * @{
   */
 
-/** @defgroup TMR_flags_definition 
-  * @brief tmr flag 
+/** @defgroup TMR_flags_definition
+  * @brief tmr flag
   * @{
   */
-  
+
 #define TMR_OVF_FLAG                     ((uint32_t)0x000001) /*!< tmr flag overflow */
 #define TMR_C1_FLAG                      ((uint32_t)0x000002) /*!< tmr flag channel 1 */
 #define TMR_C2_FLAG                      ((uint32_t)0x000004) /*!< tmr flag channel 2 */
@@ -68,7 +68,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup TMR_interrupt_select_type_definition 
+/** @defgroup TMR_interrupt_select_type_definition
   * @brief tmr interrupt select type
   * @{
   */
@@ -86,11 +86,11 @@ extern "C" {
   * @}
   */
 
-/** @defgroup tmr_ch5_combined_type_definition 
+/** @defgroup tmr_ch5_combined_type_definition
   * @brief tmr channel5 combined type
   * @{
   */
-  
+
 #define TMR_CH5_COMBINED_NONE            ((uint32_t)0x00000000) /*!< no effect of c5oraw on c1oraw, c2oraw and c3oraw */
 #define TMR_CH5_COMBINED_C1ORAW          ((uint32_t)0x20000000) /*!< c1oraw is the logical and of c1oraw and c5oraw */
 #define TMR_CH5_COMBINED_C2ORAW          ((uint32_t)0x40000000) /*!< c2oraw is the logical and of c2oraw and c5oraw */
@@ -100,7 +100,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup tmr_input_channel_select_type_definition 
+/** @defgroup tmr_input_channel_select_type_definition
   * @brief tmr input channel select type
   * @{
   */
@@ -169,7 +169,7 @@ extern "C" {
   */
 
 /**
-  * @brief tmr clock division type 
+  * @brief tmr clock division type
   */
 typedef enum
 {
@@ -179,7 +179,7 @@ typedef enum
 } tmr_clock_division_type;
 
 /**
-  * @brief tmr counter mode type 
+  * @brief tmr counter mode type
   */
 typedef enum
 {
@@ -191,7 +191,7 @@ typedef enum
 } tmr_count_mode_type;
 
 /**
-  * @brief tmr primary mode select type  
+  * @brief tmr primary mode select type
   */
 typedef enum
 {
@@ -214,7 +214,7 @@ typedef enum
 } tmr_primary_select_type;
 
 /**
-  * @brief tmr subordinate mode input select type 
+  * @brief tmr subordinate mode input select type
   */
 typedef enum
 {
@@ -229,7 +229,7 @@ typedef enum
 } sub_tmr_input_sel_type;
 
 /**
-  * @brief tmr subordinate mode select type 
+  * @brief tmr subordinate mode select type
   */
 typedef enum
 {
@@ -245,7 +245,7 @@ typedef enum
 } tmr_sub_mode_select_type;
 
 /**
-  * @brief tmr encoder mode type 
+  * @brief tmr encoder mode type
   */
 typedef enum
 {
@@ -255,7 +255,7 @@ typedef enum
 } tmr_encoder_mode_type;
 
 /**
-  * @brief tmr output control mode type 
+  * @brief tmr output control mode type
   */
 typedef enum
 {
@@ -344,7 +344,7 @@ typedef enum
 } tmr_input_direction_mapped_type;
 
 /**
-  * @brief tmr input divider type 
+  * @brief tmr input divider type
   */
 typedef enum
 {
@@ -355,7 +355,7 @@ typedef enum
 } tmr_channel_input_divider_type;
 
 /**
-  * @brief tmr dma request source select type 
+  * @brief tmr dma request source select type
   */
 typedef enum
 {
@@ -364,7 +364,7 @@ typedef enum
 } tmr_dma_request_source_type;
 
 /**
-  * @brief tmr dma request type 
+  * @brief tmr dma request type
   */
 typedef enum
 {
@@ -378,7 +378,7 @@ typedef enum
 } tmr_dma_request_type;
 
 /**
-  * @brief tmr event triggered by software type  
+  * @brief tmr event triggered by software type
   */
 typedef enum
 {
@@ -394,7 +394,7 @@ typedef enum
 }tmr_event_trigger_type;
 
 /**
-  * @brief tmr channel output fast type 
+  * @brief tmr channel output fast type
   */
 typedef enum
 {
@@ -405,7 +405,7 @@ typedef enum
 }tmr_channel_output_fast_type;
 
 /**
-  * @brief tmr polarity active type 
+  * @brief tmr polarity active type
   */
 typedef enum
 {
@@ -415,7 +415,7 @@ typedef enum
 }tmr_polarity_active_type;
 
 /**
-  * @brief tmr external signal divider type 
+  * @brief tmr external signal divider type
   */
 typedef enum
 {
@@ -426,7 +426,7 @@ typedef enum
 }tmr_external_signal_divider_type;
 
 /**
-  * @brief tmr external signal polarity type 
+  * @brief tmr external signal polarity type
   */
 typedef enum
 {
@@ -435,7 +435,7 @@ typedef enum
 }tmr_external_signal_polarity_type;
 
 /**
-  * @brief tmr dma transfer length type 
+  * @brief tmr dma transfer length type
   */
 typedef enum
 {
@@ -460,7 +460,7 @@ typedef enum
 }tmr_dma_transfer_length_type;
 
 /**
-  * @brief tmr dma base address type 
+  * @brief tmr dma base address type
   */
 typedef enum
 {
@@ -486,7 +486,7 @@ typedef enum
 }tmr_dma_address_type;
 
 /**
-  * @brief tmr brk polarity type 
+  * @brief tmr brk polarity type
   */
 typedef enum
 {
@@ -504,7 +504,7 @@ typedef enum
 }tmr_blk_state_type;
 
 /**
-  * @brief tmr blanking source polarity type 
+  * @brief tmr blanking source polarity type
   */
 typedef enum
 {
@@ -513,28 +513,28 @@ typedef enum
 }tmr_blk_source_polarity_type;
 
 /**
-  * @brief tmr blanking source select type 
+  * @brief tmr blanking source select type
   */
 typedef enum
 {
-  TMR_BLK_SOURCE_0                       = 0x00, /*!< tmr blanking source 0 */               
+  TMR_BLK_SOURCE_0                       = 0x00, /*!< tmr blanking source 0 */
   TMR_BLK_SOURCE_1                       = 0x01, /*!< tmr blanking source 1 */
   TMR_BLK_SOURCE_2                       = 0x02, /*!< tmr blanking source 2 */
   TMR_BLK_SOURCE_3                       = 0x03  /*!< tmr blanking source 3 */
 }tmr_blk_source_type;
 
 /**
-  * @brief tmr write protect level type 
+  * @brief tmr write protect level type
   */
 typedef enum
 {
-  TMR_WP_OFF                             = 0x00, /*!< tmr write protect off */            
+  TMR_WP_OFF                             = 0x00, /*!< tmr write protect off */
   TMR_WP_LEVEL_3                         = 0x01, /*!< tmr write protect level 3 */
   TMR_WP_LEVEL_2                         = 0x02, /*!< tmr write protect level 2 */
   TMR_WP_LEVEL_1                         = 0x03  /*!< tmr write protect level 1 */
 }tmr_wp_level_type;
 
-/** 
+/**
   * @brief tmr coraw clear input source
   */
 typedef enum
@@ -544,7 +544,7 @@ typedef enum
   TMR_CORAW_CLR_EXT                      = 0x02  /*!< tmr cxoraw clear input from ext */
 }tmr_coraw_clear_type;
 
-/** 
+/**
   * @brief tmr brake selection
   */
 typedef enum
@@ -553,7 +553,7 @@ typedef enum
   TMR_BRK_SELECT_2                       = 0x02  /*!< tmr brake select 2 */
 }tmr_brk_type;
 
-/** 
+/**
   * @brief tmr brake selection
   */
 typedef enum
@@ -564,7 +564,7 @@ typedef enum
 }tmr_brkin_src_type;
 
 /**
-  * @brief tmr brk polarity type 
+  * @brief tmr brk polarity type
   */
 typedef enum
 {
@@ -573,7 +573,7 @@ typedef enum
 }tmr_brkin_pol_type;
 
 /**
-  * @brief tmr brk polarity type 
+  * @brief tmr brk polarity type
   */
 typedef enum
 {
@@ -587,7 +587,7 @@ typedef enum
 }tmr_ext_source_type;
 
 /**
-  * @brief tmr brk polarity status 
+  * @brief tmr brk polarity status
   */
 typedef enum
 {
@@ -597,21 +597,21 @@ typedef enum
 
 /**
 
-  * @brief tmr output config type 
+  * @brief tmr output config type
   */
 typedef struct
 {
   tmr_output_control_mode_type           oc_mode;             /*!< output channel mode */
   confirm_state                          oc_idle_state;       /*!< output channel idle state */
-  confirm_state                          occ_idle_state;      /*!< output channel complementary idle state */  
-  tmr_output_polarity_type               oc_polarity;         /*!< output channel polarity */   
-  tmr_output_polarity_type               occ_polarity;        /*!< output channel complementary polarity */ 
-  confirm_state                          oc_output_state;     /*!< output channel enable */ 
-  confirm_state                          occ_output_state;    /*!< output channel complementary enable */ 
+  confirm_state                          occ_idle_state;      /*!< output channel complementary idle state */
+  tmr_output_polarity_type               oc_polarity;         /*!< output channel polarity */
+  tmr_output_polarity_type               occ_polarity;        /*!< output channel complementary polarity */
+  confirm_state                          oc_output_state;     /*!< output channel enable */
+  confirm_state                          occ_output_state;    /*!< output channel complementary enable */
 } tmr_output_config_type;
 
-/** 
-  * @brief tmr input capture config type 
+/**
+  * @brief tmr input capture config type
   */
 typedef struct
 {
@@ -621,7 +621,7 @@ typedef struct
   uint8_t                                input_filter_value;     /*!< tmr channel filter value */
 } tmr_input_config_type;
 
-/** 
+/**
   * @brief tmr brkdt config type
   */
 typedef struct
@@ -629,13 +629,13 @@ typedef struct
   uint8_t                                deadtime;            /*!< dead-time generator setup */
   tmr_brk_polarity_type                  brk_polarity;        /*!< tmr brk polarity */
   tmr_wp_level_type                      wp_level;            /*!< write protect configuration */
-  confirm_state                          auto_output_enable;  /*!< automatic output enable */  
+  confirm_state                          auto_output_enable;  /*!< automatic output enable */
   confirm_state                          fcsoen_state;        /*!< frozen channel status when output enable */
   confirm_state                          fcsodis_state;       /*!< frozen channel status when output disable */
   confirm_state                          brk_enable;          /*!< tmr brk enale */
 } tmr_brkdt_config_type;
 
-/** 
+/**
   * @brief tmr brk2 config type
   */
 typedef struct
@@ -645,7 +645,7 @@ typedef struct
   uint8_t                                brk2_filter;         /*!< tmr brk2 filter */
 } tmr_brk2_config_type;
 
-/** 
+/**
   * @brief tmr blanking config type
   */
 typedef struct
@@ -674,13 +674,13 @@ typedef struct
 typedef struct
 {
   /**
-    * @brief tmr ctrl1 register, offset:0x00 
+    * @brief tmr ctrl1 register, offset:0x00
     */
   union
   {
     __IO uint32_t ctrl1;
     struct
-    {       
+    {
       __IO uint32_t tmren                : 1; /* [0] */
       __IO uint32_t ovfen                : 1; /* [1] */
       __IO uint32_t ovfs                 : 1; /* [2] */
@@ -695,7 +695,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr ctrl2 register, offset:0x04 
+    * @brief tmr ctrl2 register, offset:0x04
     */
   union
   {
@@ -728,7 +728,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr smc register, offset:0x08 
+    * @brief tmr smc register, offset:0x08
     */
   union
   {
@@ -753,7 +753,7 @@ typedef struct
     */
   union
   {
-    __IO uint32_t iden;   
+    __IO uint32_t iden;
     struct
     {
       __IO uint32_t ovfien               : 1; /* [0] */
@@ -776,7 +776,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr ists register, offset:0x10 
+    * @brief tmr ists register, offset:0x10
     */
   union
   {
@@ -805,7 +805,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr eveg register, offset:0x14 
+    * @brief tmr eveg register, offset:0x14
     */
   union
   {
@@ -826,12 +826,12 @@ typedef struct
   };
 
   /**
-    * @brief tmr ccm1 register, offset:0x18 
+    * @brief tmr ccm1 register, offset:0x18
     */
   union
   {
     __IO uint32_t cm1;
-    
+
     /**
      * @brief channel mode
      */
@@ -844,15 +844,15 @@ typedef struct
       __IO uint32_t c1osen               : 1; /* [7] */
       __IO uint32_t c2c                  : 2; /* [9:8] */
       __IO uint32_t c2oien               : 1; /* [10] */
-      __IO uint32_t c2oben               : 1; /* [11] */  
-      __IO uint32_t c2octrl              : 3; /* [14:12] */ 
+      __IO uint32_t c2oben               : 1; /* [11] */
+      __IO uint32_t c2octrl              : 3; /* [14:12] */
       __IO uint32_t c2osen               : 1; /* [15] */
       __IO uint32_t c1octrl_3            : 1; /* [16] */
       __IO uint32_t reserved1            : 7; /* [23:17] */
       __IO uint32_t c2octrl_3            : 1; /* [24] */
       __IO uint32_t reserved2            : 7; /* [31:25] */
     } cm1_output_bit;
-    
+
     /**
       * @brief input capture mode
       */
@@ -869,12 +869,12 @@ typedef struct
   };
 
   /**
-    * @brief tmr ccm2 register, offset:0x1C 
+    * @brief tmr ccm2 register, offset:0x1C
     */
   union
   {
     __IO uint32_t cm2;
-    
+
     /**
       * @brief channel mode
       */
@@ -887,8 +887,8 @@ typedef struct
       __IO uint32_t c3osen               : 1; /* [7] */
       __IO uint32_t c4c                  : 2; /* [9:8] */
       __IO uint32_t c4oien               : 1; /* [10] */
-      __IO uint32_t c4oben               : 1; /* [11] */  
-      __IO uint32_t c4octrl              : 3; /* [14:12] */ 
+      __IO uint32_t c4oben               : 1; /* [11] */
+      __IO uint32_t c4octrl              : 3; /* [14:12] */
       __IO uint32_t c4osen               : 1; /* [15] */
       __IO uint32_t c3octrl_3            : 1; /* [16] */
       __IO uint32_t reserved1            : 7; /* [23:17] */
@@ -912,7 +912,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr cce register, offset:0x20 
+    * @brief tmr cce register, offset:0x20
     */
   union
   {
@@ -945,7 +945,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr cnt register, offset:0x24 
+    * @brief tmr cnt register, offset:0x24
     */
   union
   {
@@ -959,7 +959,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr div, offset:0x28 
+    * @brief tmr div, offset:0x28
     */
   union
   {
@@ -972,7 +972,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr pr register, offset:0x2C 
+    * @brief tmr pr register, offset:0x2C
     */
   union
   {
@@ -985,7 +985,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr rpr register, offset:0x30 
+    * @brief tmr rpr register, offset:0x30
     */
   union
   {
@@ -998,7 +998,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c1dt register, offset:0x34 
+    * @brief tmr c1dt register, offset:0x34
     */
   union
   {
@@ -1011,7 +1011,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c2dt register, offset:0x38 
+    * @brief tmr c2dt register, offset:0x38
     */
   union
   {
@@ -1024,7 +1024,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c3dt register, offset:0x3C 
+    * @brief tmr c3dt register, offset:0x3C
     */
   union
   {
@@ -1037,7 +1037,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c4dt register, offset:0x40 
+    * @brief tmr c4dt register, offset:0x40
     */
   union
   {
@@ -1050,7 +1050,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr brk register, offset:0x44 
+    * @brief tmr brk register, offset:0x44
     */
   union
   {
@@ -1077,7 +1077,7 @@ typedef struct
     } brk_bit;
   };
   /**
-    * @brief tmr dmactrl register, offset:0x48 
+    * @brief tmr dmactrl register, offset:0x48
     */
   union
   {
@@ -1092,7 +1092,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr dmadt register, offset:0x4C 
+    * @brief tmr dmadt register, offset:0x4C
     */
   union
   {
@@ -1132,8 +1132,8 @@ typedef struct
       __IO uint32_t c5osen               : 1; /* [7] */
       __IO uint32_t reserved2            : 2; /* [9:8] */
       __IO uint32_t c6oien               : 1; /* [10] */
-      __IO uint32_t c6oben               : 1; /* [11] */  
-      __IO uint32_t c6octrl              : 3; /* [14:12] */ 
+      __IO uint32_t c6oben               : 1; /* [11] */
+      __IO uint32_t c6octrl              : 3; /* [14:12] */
       __IO uint32_t c6osen               : 1; /* [15] */
       __IO uint32_t c5octrl_3            : 1; /* [16] */
       __IO uint32_t reserved3            : 7; /* [23:17] */
@@ -1143,7 +1143,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c5dt register, offset:0x58 
+    * @brief tmr c5dt register, offset:0x58
     */
   union
   {
@@ -1152,14 +1152,14 @@ typedef struct
     {
       __IO uint32_t c5dt                 : 16;/* [15:0] */
       __IO uint32_t reserved1            : 13;/* [28:16] */
-      __IO uint32_t cc5c1                : 1; /* [29] */ 
-      __IO uint32_t cc5c2                : 1; /* [30] */ 
-      __IO uint32_t cc5c3                : 1; /* [31] */ 
+      __IO uint32_t cc5c1                : 1; /* [29] */
+      __IO uint32_t cc5c2                : 1; /* [30] */
+      __IO uint32_t cc5c3                : 1; /* [31] */
     } c5dt_bit;
   };
 
   /**
-    * @brief tmr c6dt register, offset:0x5C 
+    * @brief tmr c6dt register, offset:0x5C
     */
   union
   {
@@ -1172,7 +1172,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr opt2 register, offset:0x60 
+    * @brief tmr opt2 register, offset:0x60
     */
   union
   {
@@ -1180,20 +1180,20 @@ typedef struct
     struct
     {
       __IO uint32_t brkinen              : 1; /* [0] */
-      __IO uint32_t brkcmp1en            : 1; /* [1] */ 
-      __IO uint32_t brkcmp2en            : 1; /* [2] */ 
-      __IO uint32_t reserved1            : 6; /* [8:3] */ 
-      __IO uint32_t brkinp               : 1; /* [9] */ 
-      __IO uint32_t brkcmp1p             : 1; /* [10] */ 
-      __IO uint32_t brkcmp2p             : 1; /* [11] */ 
-      __IO uint32_t reserved2            : 2; /* [13:12] */ 
-      __IO uint32_t extsel               : 4; /* [17:14] */ 
+      __IO uint32_t brkcmp1en            : 1; /* [1] */
+      __IO uint32_t brkcmp2en            : 1; /* [2] */
+      __IO uint32_t reserved1            : 6; /* [8:3] */
+      __IO uint32_t brkinp               : 1; /* [9] */
+      __IO uint32_t brkcmp1p             : 1; /* [10] */
+      __IO uint32_t brkcmp2p             : 1; /* [11] */
+      __IO uint32_t reserved2            : 2; /* [13:12] */
+      __IO uint32_t extsel               : 4; /* [17:14] */
       __IO uint32_t reserved3            : 14;/* [31:18] */
     } opt2_bit;
   };
 
   /**
-    * @brief tmr opt3 register, offset:0x64 
+    * @brief tmr opt3 register, offset:0x64
     */
   union
   {
@@ -1201,31 +1201,31 @@ typedef struct
     struct
     {
       __IO uint32_t brk2inen             : 1; /* [0] */
-      __IO uint32_t brk2cmp1en           : 1; /* [1] */ 
-      __IO uint32_t brk2cmp2en           : 1; /* [2] */ 
-      __IO uint32_t reserved1            : 6; /* [8:3] */ 
-      __IO uint32_t brk2inp              : 1; /* [9] */ 
-      __IO uint32_t brk2cmp1p            : 1; /* [10] */ 
+      __IO uint32_t brk2cmp1en           : 1; /* [1] */
+      __IO uint32_t brk2cmp2en           : 1; /* [2] */
+      __IO uint32_t reserved1            : 6; /* [8:3] */
+      __IO uint32_t brk2inp              : 1; /* [9] */
+      __IO uint32_t brk2cmp1p            : 1; /* [10] */
       __IO uint32_t brk2cmp2p            : 1; /* [11] */
       __IO uint32_t reserved2            : 20;/* [31:12] */
     } opt3_bit;
   };
 
   /**
-    * @brief tmr chsel register, offset:0x68 
+    * @brief tmr chsel register, offset:0x68
     */
   union
   {
     uint32_t chsel;
     struct
     {
-      __IO uint32_t ch1sel               : 4; /* [3:0] */ 
-      __IO uint32_t reserved1            : 4; /* [7:4] */ 
-      __IO uint32_t ch2sel               : 4; /* [11:8] */ 
-      __IO uint32_t reserved2            : 4; /* [15:12] */ 
-      __IO uint32_t ch3sel               : 4; /* [19:16] */ 
-      __IO uint32_t reserved3            : 4; /* [23:20] */ 
-      __IO uint32_t ch4sel               : 4; /* [27:24] */ 
+      __IO uint32_t ch1sel               : 4; /* [3:0] */
+      __IO uint32_t reserved1            : 4; /* [7:4] */
+      __IO uint32_t ch2sel               : 4; /* [11:8] */
+      __IO uint32_t reserved2            : 4; /* [15:12] */
+      __IO uint32_t ch3sel               : 4; /* [19:16] */
+      __IO uint32_t reserved3            : 4; /* [23:20] */
+      __IO uint32_t ch4sel               : 4; /* [27:24] */
       __IO uint32_t reserved4            : 4; /* [31:28] */
     } chsel_bit;
   };
@@ -1269,7 +1269,7 @@ typedef struct
   __IO uint32_t reserved2[3];
 
   /**
-    * @brief tmr c1adt register, offset:0x80 
+    * @brief tmr c1adt register, offset:0x80
     */
   union
   {
@@ -1282,7 +1282,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c2adt register, offset:0x84 
+    * @brief tmr c2adt register, offset:0x84
     */
   union
   {
@@ -1295,7 +1295,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c3adt register, offset:0x88 
+    * @brief tmr c3adt register, offset:0x88
     */
   union
   {
@@ -1308,7 +1308,7 @@ typedef struct
   };
 
   /**
-    * @brief tmr c4adt register, offset:0x8C 
+    * @brief tmr c4adt register, offset:0x8C
     */
   union
   {

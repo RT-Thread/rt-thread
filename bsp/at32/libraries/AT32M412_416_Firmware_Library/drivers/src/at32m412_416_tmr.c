@@ -344,7 +344,7 @@ void tmr_output_channel_config(tmr_type *tmr_x, tmr_channel_select_type tmr_chan
       tmr_x->ctrl2_bit.c1ios = tmr_output_struct->oc_idle_state;
       tmr_x->ctrl2_bit.c1cios = tmr_output_struct->occ_idle_state;
       tmr_x->cm1_output_bit.c1octrl = cxoctrl_bit2_0;
-      tmr_x->cm1_output_bit.c1octrl_3 = cxoctrl_bit3;    
+      tmr_x->cm1_output_bit.c1octrl_3 = cxoctrl_bit3;
       tmr_x->cctrl_bit.c1p = tmr_output_struct->oc_polarity;
       tmr_x->cctrl_bit.c1cp = tmr_output_struct->occ_polarity;
       tmr_x->cctrl_bit.c1en = tmr_output_struct->oc_output_state;
@@ -426,10 +426,10 @@ void tmr_output_channel_config(tmr_type *tmr_x, tmr_channel_select_type tmr_chan
   *         - TMR_OUTPUT_CONTROL_FORCE_LOW
   *         - TMR_OUTPUT_CONTROL_PWM_MODE_A
   *         - TMR_OUTPUT_CONTROL_PWM_MODE_B
-  *         - TMR_OUTPUT_CONTROL_RETRIG_OCM_A    
-  *         - TMR_OUTPUT_CONTROL_RETRIG_OCM_B    
-  *         - TMR_OUTPUT_CONTROL_COMBINED_PWM_A  
-  *         - TMR_OUTPUT_CONTROL_COMBINED_PWM_B  
+  *         - TMR_OUTPUT_CONTROL_RETRIG_OCM_A
+  *         - TMR_OUTPUT_CONTROL_RETRIG_OCM_B
+  *         - TMR_OUTPUT_CONTROL_COMBINED_PWM_A
+  *         - TMR_OUTPUT_CONTROL_COMBINED_PWM_B
   *         - TMR_OUTPUT_CONTROL_ASYMMETRIC_PWM_A
   *         - TMR_OUTPUT_CONTROL_ASYMMETRIC_PWM_B
   * @retval none
@@ -576,7 +576,7 @@ void tmr_channel_value_set(tmr_type *tmr_x, tmr_channel_select_type tmr_channel,
     case TMR_SELECT_CHANNEL_4A:
       tmr_x->c4adt = tmr_channel_value;
       break;
-    
+
     default:
       break;
   }
@@ -971,21 +971,21 @@ void tmr_input_channel_blk_config(tmr_type *tmr_x, tmr_blk_config_type *input_bl
     case TMR_SELECT_CHANNEL_2:
       tmr_x->blkctrl_bit.ch2blkss = input_blk_struct->blk_source_select;
       tmr_x->blkctrl_bit.ch2blkp = input_blk_struct->blk_source_polarity;
-      tmr_x->blkctrl_bit.ch2blkst = input_blk_struct->input_blk_state;      
+      tmr_x->blkctrl_bit.ch2blkst = input_blk_struct->input_blk_state;
       tmr_x->blkctrl_bit.ch2blken = input_blk_struct->blk_enable;
       break;
 
     case TMR_SELECT_CHANNEL_3:
       tmr_x->blkctrl_bit.ch3blkss = input_blk_struct->blk_source_select;
       tmr_x->blkctrl_bit.ch3blkp = input_blk_struct->blk_source_polarity;
-      tmr_x->blkctrl_bit.ch3blkst = input_blk_struct->input_blk_state;      
+      tmr_x->blkctrl_bit.ch3blkst = input_blk_struct->input_blk_state;
       tmr_x->blkctrl_bit.ch3blken = input_blk_struct->blk_enable;
       break;
 
     case TMR_SELECT_CHANNEL_4:
       tmr_x->blkctrl_bit.ch4blkss = input_blk_struct->blk_source_select;
       tmr_x->blkctrl_bit.ch4blkp = input_blk_struct->blk_source_polarity;
-      tmr_x->blkctrl_bit.ch4blkst = input_blk_struct->input_blk_state;     
+      tmr_x->blkctrl_bit.ch4blkst = input_blk_struct->input_blk_state;
       tmr_x->blkctrl_bit.ch4blken = input_blk_struct->blk_enable;
       break;
 
@@ -1960,7 +1960,7 @@ void tmr_brkdt_config(tmr_type *tmr_x, tmr_brkdt_config_type *brkdt_struct)
   tmr_x->brk_bit.fcsodis = brkdt_struct->fcsodis_state;
   tmr_x->brk_bit.fcsoen = brkdt_struct->fcsoen_state;
   tmr_x->brk_bit.brkv = brkdt_struct->brk_polarity;
-  tmr_x->brk_bit.aoen = brkdt_struct->auto_output_enable;	
+  tmr_x->brk_bit.aoen = brkdt_struct->auto_output_enable;
   tmr_x->brk_bit.brken = brkdt_struct->brk_enable;
   tmr_x->brk_bit.wpc = brkdt_struct->wp_level;
 }
@@ -2043,7 +2043,7 @@ void tmr_primary_mode2_select(tmr_type *tmr_x, tmr_primary_select_type primary_m
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR3, TMR4
-  * @param  ocrefclearinputsource 
+  * @param  ocrefclearinputsource
   *         this parameter can be one of the following values:
   *         - TMR_CORAW_CLR_EXT
   *         - TMR_CORAW_CLR_CMP1
@@ -2128,7 +2128,7 @@ void tmr_brk_release(tmr_type *tmr_x, tmr_brk_type brk_sel)
   *         - TMR_BRK_SELECT_1
   *         - TMR_BRK_SELECT_2
   * @retval tmr_brk_release_status
-  *         - TMR_BRK_RELEASED  
+  *         - TMR_BRK_RELEASED
   *         - TMR_BRK_UNRELEASED
   */
 tmr_brk_release_status tmr_brk_release_check(tmr_type *tmr_x, tmr_brk_type brk)
@@ -2150,7 +2150,7 @@ tmr_brk_release_status tmr_brk_release_check(tmr_type *tmr_x, tmr_brk_type brk)
   *         TMR1
   * @param  ch5_comb
   *         this parameter can be a combination of the following values:
-  *         - TMR_CH5_COMBINED_NONE  
+  *         - TMR_CH5_COMBINED_NONE
   *         - TMR_CH5_COMBINED_C1ORAW
   *         - TMR_CH5_COMBINED_C2ORAW
   *         - TMR_CH5_COMBINED_C3ORAW
@@ -2222,7 +2222,7 @@ void tmr_brk_input_config(tmr_type *tmr_x, tmr_brkin_config_type *brkin_struct)
 }
 
 /**
-  * @brief  select external source 
+  * @brief  select external source
   * @param  tmr_x: select the tmr peripheral.
   *         this parameter can be one of the following values:
   *         TMR1, TMR3, TMR4
@@ -2253,60 +2253,60 @@ void tmr_external_source_select(tmr_type *tmr_x, uint32_t ext_src)
   *         TMR1, TMR3, TMR4, TMR9, TMR10, TMR11
   * @param  remap
   *         for tmr1 this parameter can be one of the following values:
-  *         - TMR_TMR1_CH1_GPIO    
-  *         - TMR_TMR1_CH1_CMP1    
-  *         - TMR_TMR1_CH1_CMP2    
-  *         - TMR_TMR1_CH2_GPIO    
-  *         - TMR_TMR1_CH2_CMP1    
-  *         - TMR_TMR1_CH2_CMP2    
+  *         - TMR_TMR1_CH1_GPIO
+  *         - TMR_TMR1_CH1_CMP1
+  *         - TMR_TMR1_CH1_CMP2
+  *         - TMR_TMR1_CH2_GPIO
+  *         - TMR_TMR1_CH2_CMP1
+  *         - TMR_TMR1_CH2_CMP2
   *         for tmr3 this parameter can be one of the following values:
-  *         - TMR_TMR3_CH1_GPIO    
-  *         - TMR_TMR3_CH1_CMP1    
-  *         - TMR_TMR3_CH1_CMP2    
-  *         - TMR_TMR3_CH1_TMR4CH1 
-  *         - TMR_TMR3_CH2_GPIO    
-  *         - TMR_TMR3_CH2_CMP1    
-  *         - TMR_TMR3_CH2_CMP2    
-  *         - TMR_TMR3_CH2_TMR4CH2 
-  *         - TMR_TMR3_CH3_GPIO    
-  *         - TMR_TMR3_CH3_CMP1    
-  *         - TMR_TMR3_CH3_TMR4CH3 
-  *         - TMR_TMR3_CH4_GPIO    
-  *         - TMR_TMR3_CH4_CMP2    
+  *         - TMR_TMR3_CH1_GPIO
+  *         - TMR_TMR3_CH1_CMP1
+  *         - TMR_TMR3_CH1_CMP2
+  *         - TMR_TMR3_CH1_TMR4CH1
+  *         - TMR_TMR3_CH2_GPIO
+  *         - TMR_TMR3_CH2_CMP1
+  *         - TMR_TMR3_CH2_CMP2
+  *         - TMR_TMR3_CH2_TMR4CH2
+  *         - TMR_TMR3_CH3_GPIO
+  *         - TMR_TMR3_CH3_CMP1
+  *         - TMR_TMR3_CH3_TMR4CH3
+  *         - TMR_TMR3_CH4_GPIO
+  *         - TMR_TMR3_CH4_CMP2
   *         for tmr4 this parameter can be one of the following values:
-  *         - TMR_TMR4_CH1_GPIO    
-  *         - TMR_TMR4_CH1_CMP1    
-            - TMR_TMR4_CH1_CMP2    
-  *         - TMR_TMR4_CH1_TMR3CH1 
-  *         - TMR_TMR4_CH2_GPIO    
-  *         - TMR_TMR4_CH2_CMP1    
-  *         - TMR_TMR4_CH2_CMP2    
-  *         - TMR_TMR4_CH2_TMR3CH2 
-  *         - TMR_TMR4_CH3_GPIO    
-  *         - TMR_TMR4_CH3_CMP2    
-  *         - TMR_TMR4_CH3_TMR3CH3 
-  *         - TMR_TMR4_CH4_GPIO    
-  *         - TMR_TMR4_CH4_CMP1    
+  *         - TMR_TMR4_CH1_GPIO
+  *         - TMR_TMR4_CH1_CMP1
+            - TMR_TMR4_CH1_CMP2
+  *         - TMR_TMR4_CH1_TMR3CH1
+  *         - TMR_TMR4_CH2_GPIO
+  *         - TMR_TMR4_CH2_CMP1
+  *         - TMR_TMR4_CH2_CMP2
+  *         - TMR_TMR4_CH2_TMR3CH2
+  *         - TMR_TMR4_CH3_GPIO
+  *         - TMR_TMR4_CH3_CMP2
+  *         - TMR_TMR4_CH3_TMR3CH3
+  *         - TMR_TMR4_CH4_GPIO
+  *         - TMR_TMR4_CH4_CMP1
   *         for tmr9 this parameter can be one of the following values:
-  *         - TMR_TMR9_CH1_GPIO    
-  *         - TMR_TMR9_CH1_CMP1    
-  *         - TMR_TMR9_CH1_CMP2    
-  *         - TMR_TMR9_CH2_GPIO    
-  *         - TMR_TMR9_CH2_CMP1    
-  *         - TMR_TMR9_CH2_CMP2    
+  *         - TMR_TMR9_CH1_GPIO
+  *         - TMR_TMR9_CH1_CMP1
+  *         - TMR_TMR9_CH1_CMP2
+  *         - TMR_TMR9_CH2_GPIO
+  *         - TMR_TMR9_CH2_CMP1
+  *         - TMR_TMR9_CH2_CMP2
   *         for tmr10 this parameter can be one of the following values:
-  *         - TMR_TMR10_CH1_GPIO   
-  *         - TMR_TMR10_CH1_CMP1   
-  *         - TMR_TMR10_CH1_CMP2   
+  *         - TMR_TMR10_CH1_GPIO
+  *         - TMR_TMR10_CH1_CMP1
+  *         - TMR_TMR10_CH1_CMP2
   *         for tmr11 this parameter can be one of the following values:
-  *         - TMR_TMR11_CH1_GPIO   
-  *         - TMR_TMR11_CH1_CMP1   
-  *         - TMR_TMR11_CH1_CMP2   
-  *         - TMR_TMR11_CH1_CLKOUT 
+  *         - TMR_TMR11_CH1_GPIO
+  *         - TMR_TMR11_CH1_CMP1
+  *         - TMR_TMR11_CH1_CMP2
+  *         - TMR_TMR11_CH1_CLKOUT
   *         - TMR_TMR11_CH1_HEXTDIV
   *         - TMR_TMR11_CH1_ERTCCLK
-  *         - TMR_TMR11_CH1_LEXT   
-  *         - TMR_TMR11_CH1_LICK   
+  *         - TMR_TMR11_CH1_LEXT
+  *         - TMR_TMR11_CH1_LICK
   * @retval none
   */
 void tmr_input_ch_select(tmr_type *tmr_x, uint32_t ch_src)

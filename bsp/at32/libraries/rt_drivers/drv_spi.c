@@ -12,6 +12,7 @@
  * 2023-10-18     shelton      add support f402/f405
  * 2024-04-12     shelton      add support a403a and a423
  * 2024-08-30     shelton      add support m412 and m416
+ * 2024-12-18     shelton      add support f455/f456 and f457
  */
 
 #include "drv_common.h"
@@ -537,7 +538,9 @@ static void at32_spi_dma_init(struct at32_spi *instance)
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
     defined (SOC_SERIES_AT32F405) || defined (SOC_SERIES_AT32A423) || \
-    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
+    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
         dmamux_enable(instance->config->dma_rx->dma_x, TRUE);
         dmamux_init(instance->config->dma_rx->dmamux_channel, (dmamux_requst_id_sel_type)instance->config->dma_rx->request_id);
 #endif
@@ -559,7 +562,9 @@ static void at32_spi_dma_init(struct at32_spi *instance)
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
     defined (SOC_SERIES_AT32F405) || defined (SOC_SERIES_AT32A423) || \
-    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
+    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
         dmamux_enable(instance->config->dma_tx->dma_x, TRUE);
         dmamux_init(instance->config->dma_tx->dmamux_channel, (dmamux_requst_id_sel_type)instance->config->dma_tx->request_id);
 #endif

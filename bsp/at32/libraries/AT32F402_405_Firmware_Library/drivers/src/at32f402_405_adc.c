@@ -267,10 +267,10 @@ void adc_voltage_monitor_enable(adc_type *adc_x, adc_voltage_monitoring_type adc
   *         ADC1.
   * @param  adc_high_threshold: voltage monitoring's high thresholds value.
   *         this parameter can be:
-  *         - (0x000~0xFFF)
+  *         - (0x0000~0xFFFF)
   * @param  adc_low_threshold: voltage monitoring's low thresholds value.
   *         this parameter can be:
-  *         - (0x000~0xFFF)
+  *         - (0x0000~0xFFFF)
   * @retval none
   */
 void adc_voltage_monitor_threshold_value_set(adc_type *adc_x, uint16_t adc_high_threshold, uint16_t adc_low_threshold)

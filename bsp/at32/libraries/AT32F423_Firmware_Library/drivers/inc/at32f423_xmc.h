@@ -330,7 +330,7 @@ typedef struct
   xmc_bank1_tmgwr_reg_type tmgwr_group[4];
 
   /**
-    * @brief xmc bank1 reserved register, offset:0x120~0x21C
+    * @brief xmc bank1 reserved register, offset:0x120~0x220
     */
   __IO uint32_t reserved2[63];
 

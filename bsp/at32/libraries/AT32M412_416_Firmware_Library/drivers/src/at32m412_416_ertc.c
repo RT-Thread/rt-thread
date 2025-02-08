@@ -96,14 +96,8 @@ error_status ertc_wait_update(void)
 {
   uint32_t timeout = ERTC_TIMEOUT * 2;
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   /* clear updf flag */
   ERTC->sts = ~(ERTC_UPDF_FLAG | 0x00000080) | (ERTC->sts_bit.imen << 7);
-
-  /* enable write protection */
-  ertc_write_protect_enable();
 
   while(ERTC->sts_bit.updf == 0)
   {
@@ -162,9 +156,6 @@ error_status ertc_init_mode_enter(void)
 {
   uint32_t timeout = ERTC_TIMEOUT * 2;
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   if(ERTC->sts_bit.imf == 0)
   {
     /* enter init mode */
@@ -195,9 +186,6 @@ error_status ertc_init_mode_enter(void)
 void ertc_init_mode_exit(void)
 {
   ERTC->sts = 0xFFFFFF7F;
-  
-  /* wait register update finish */
-  ertc_wait_update();
 }
 
 /**
@@ -331,11 +319,11 @@ error_status ertc_date_set(uint8_t year, uint8_t month, uint8_t date, uint8_t we
     return ERROR;
   }
 
-  /* Set the ertc_DR register */
+  /* set the ertc_date register */
   ERTC->date = reg.date;
 
   /* exit init mode */
-  ertc_init_mode_exit(); 
+  ertc_init_mode_exit();
 
   if(ERTC->ctrl_bit.dren == 0)
   {
@@ -545,7 +533,7 @@ void ertc_alarm_set(ertc_alarm_type alarm_x, uint8_t week_date, uint8_t hour, ui
   {
     reg.ala = ERTC->alb;
   }
-  
+
   reg.ala_bit.d = ertc_num_to_bcd(week_date);
   reg.ala_bit.h = ertc_num_to_bcd(hour);
   reg.ala_bit.m = ertc_num_to_bcd(min);
@@ -722,8 +710,8 @@ uint32_t ertc_alarm_sub_second_get(ertc_alarm_type alarm_x)
   *         - ERTC_WAT_CLK_ERTCCLK_DIV8: ERTC_CLK / 8.
   *         - ERTC_WAT_CLK_ERTCCLK_DIV4: ERTC_CLK / 4.
   *         - ERTC_WAT_CLK_ERTCCLK_DIV2: ERTC_CLK / 2.
-  *         - ERTC_WAT_CLK_CK_A_16BITS: CK_A, wakeup counter = ERTC_WAT
-  *         - ERTC_WAT_CLK_CK_A_17BITS: CK_A, wakeup counter = ERTC_WAT + 65535.
+  *         - ERTC_WAT_CLK_CK_B_16BITS: CK_B, wakeup counter = ERTC_WAT
+  *         - ERTC_WAT_CLK_CK_B_17BITS: CK_B, wakeup counter = ERTC_WAT + 65535.
   * @retval none.
   */
 void ertc_wakeup_clock_set(ertc_wakeup_clock_type clock)
@@ -777,7 +765,7 @@ error_status ertc_wakeup_enable(confirm_state new_state)
 
   if(new_state == FALSE)
   {
-    if(ertc_wait_flag(ERTC_ALAWF_FLAG, RESET) != SUCCESS)
+    if(ertc_wait_flag(ERTC_WATWF_FLAG, RESET) != SUCCESS)
     {
       return ERROR;
     }
@@ -1436,7 +1424,7 @@ flag_status ertc_flag_get(uint32_t flag)
 flag_status ertc_interrupt_flag_get(uint32_t flag)
 {
   __IO uint32_t iten = 0;
-  
+
   switch(flag)
   {
     case ERTC_ALAF_FLAG:
@@ -1455,7 +1443,7 @@ flag_status ertc_interrupt_flag_get(uint32_t flag)
     case ERTC_TP2F_FLAG:
       iten = ERTC->tamp_bit.tpien;
       break;
-    
+
     default:
       break;
   }
@@ -1514,13 +1502,7 @@ void ertc_bpr_data_write(ertc_dt_type dt, uint32_t data)
 
   reg = ERTC_BASE + 0x50 + (dt * 4);
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   *(__IO uint32_t *)reg = data;
-
-  /* enable write protection */
-  ertc_write_protect_enable();
 }
 
 /**

@@ -583,16 +583,18 @@ can_transmit_status_type can_transmit_status_get(can_type* can_x, can_tx_mailbox
   */
 void can_transmit_cancel(can_type* can_x, can_tx_mailbox_num_type transmit_mailbox)
 {
+  uint32_t transmit_cancel_bit = 0;
+  transmit_cancel_bit = can_x->tsts & (CAN_TSTS_TM0CT_VAL | CAN_TSTS_TM1CT_VAL | CAN_TSTS_TM2CT_VAL);
   switch (transmit_mailbox)
   {
     case CAN_TX_MAILBOX0:
-      can_x->tsts = CAN_TSTS_TM0CT_VAL;
+      can_x->tsts = transmit_cancel_bit | CAN_TSTS_TM0CT_VAL;
       break;
     case CAN_TX_MAILBOX1:
-      can_x->tsts = CAN_TSTS_TM1CT_VAL;
+      can_x->tsts = transmit_cancel_bit | CAN_TSTS_TM1CT_VAL;
       break;
     case CAN_TX_MAILBOX2:
-      can_x->tsts = CAN_TSTS_TM2CT_VAL;
+      can_x->tsts = transmit_cancel_bit | CAN_TSTS_TM2CT_VAL;
       break;
     default:
       break;

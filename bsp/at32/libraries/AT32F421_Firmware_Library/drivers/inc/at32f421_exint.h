@@ -82,6 +82,7 @@ extern "C" {
 typedef enum
 {
   EXINT_LINE_INTERRUPUT                  = 0x00, /*!< external interrupt line interrupt mode */
+  EXINT_LINE_INTERRUPT                   = 0x00, /*!< same as EXINT_LINE_INTERRUPUT, fixed spelling error */
   EXINT_LINE_EVENT                       = 0x01  /*!< external interrupt line event mode */
 } exint_line_mode_type;
 

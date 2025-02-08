@@ -210,6 +210,7 @@ void pwc_deep_sleep_mode_enter(pwc_deep_sleep_enter_type pwc_deep_sleep_enter)
   *         - PWC_REGULATOR_ON
   *         - PWC_REGULATOR_LOW_POWER
   *         - PWC_REGULATOR_EXTRA_LOW_POWER
+  * @note:  when using extra low power mode, it is prohibited to enable deepsleep_debug for debugging!
   * @retval none
   */
 void pwc_voltage_regulate_set(pwc_regulator_type pwc_regulator)

@@ -1,0 +1,49 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+cmsis/cm4/device_support/system_at32f45x.c
+drivers/src/at32f45x_acc.c
+drivers/src/at32f45x_adc.c
+drivers/src/at32f45x_aes.c
+drivers/src/at32f45x_can.c
+drivers/src/at32f45x_crc.c
+drivers/src/at32f45x_crm.c
+drivers/src/at32f45x_dac.c
+drivers/src/at32f45x_debug.c
+drivers/src/at32f45x_dma.c
+drivers/src/at32f45x_emac.c
+drivers/src/at32f45x_ertc.c
+drivers/src/at32f45x_exint.c
+drivers/src/at32f45x_flash.c
+drivers/src/at32f45x_gpio.c
+drivers/src/at32f45x_i2c.c
+drivers/src/at32f45x_misc.c
+drivers/src/at32f45x_pwc.c
+drivers/src/at32f45x_qspi.c
+drivers/src/at32f45x_scfg.c
+drivers/src/at32f45x_sdio.c
+drivers/src/at32f45x_spi.c
+drivers/src/at32f45x_tmr.c
+drivers/src/at32f45x_trng.c
+drivers/src/at32f45x_usart.c
+drivers/src/at32f45x_usb.c
+drivers/src/at32f45x_wdt.c
+drivers/src/at32f45x_wwdt.c
+drivers/src/at32f45x_xmc.c
+""")
+
+path = [
+    cwd + '/cmsis/cm4/device_support',
+    cwd + '/cmsis/cm4/core_support',
+    cwd + '/drivers/inc',]
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

@@ -252,8 +252,11 @@ void usbh_hch_in_handler(usbh_core_type *uhost, uint8_t chn)
     }
     else if(uhost->hch[chn].state == HCH_NAK)
     {
-      usb_chh->hcchar_bit.chdis = FALSE;
-      usb_chh->hcchar_bit.chena = TRUE;
+      if(usb_chh->hcchar_bit.eptype != EPT_INT_TYPE)
+      {
+        usb_chh->hcchar_bit.chdis = FALSE;
+        usb_chh->hcchar_bit.chena = TRUE;
+      }
       uhost->urb_state[chn] = URB_NOTREADY;
     }
     usb_chh->hcint = USB_OTG_HC_CHHLTD_FLAG;

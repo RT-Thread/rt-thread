@@ -252,10 +252,10 @@ void adc_voltage_monitor_enable(adc_type *adc_x, adc_voltage_monitoring_type adc
   *         ADC1.
   * @param  adc_high_threshold: voltage monitoring's high thresholds value.
   *         this parameter can be:
-  *         - (0x000~0xFFF)
+  *         - (0x0000~0xFFFF)
   * @param  adc_low_threshold: voltage monitoring's low thresholds value.
   *         this parameter can be:
-  *         - (0x000~0xFFF)
+  *         - (0x0000~0xFFFF)
   * @retval none
   */
 void adc_voltage_monitor_threshold_value_set(adc_type *adc_x, uint16_t adc_high_threshold, uint16_t adc_low_threshold)
@@ -441,8 +441,8 @@ void adc_preempt_channel_set(adc_type *adc_x, adc_channel_select_type adc_channe
   * @param  adc_ordinary_trig: select the external trigger event.
   *         this parameter can be one of the following values:
   *         adc1
-  *         - ADC12_ORDINARY_TRIG_TMR1CH1     - ADC12_ORDINARY_TRIG_TMR1CH2  - ADC12_ORDINARY_TRIG_TMR1CH3
-  *         - ADC12_ORDINARY_TRIG_TMR3TRGOUT  - ADC12_ORDINARY_TRIG_TMR15CH1 - ADC12_ORDINARY_TRIG_EXINT11   - ADC12_ORDINARY_TRIG_SOFTWARE
+  *         - ADC12_ORDINARY_TRIG_TMR1TRGOUT  - ADC12_ORDINARY_TRIG_TMR1CH4   - ADC12_ORDINARY_TRIG_TMR2TRGOUT  - ADC12_ORDINARY_TRIG_TMR3TRGOUT
+  *         - ADC12_ORDINARY_TRIG_TMR15TRGOUT - ADC12_ORDINARY_TRIG_TMR1CH1   - ADC12_ORDINARY_TRIG_EXINT11     - ADC12_ORDINARY_TRIG_SOFTWARE
   * @param  new_state: new state of ordinary channel's external trigger.
   *         this parameter can be: TRUE or FALSE.
   * @retval none
@@ -471,8 +471,8 @@ void adc_ordinary_conversion_trigger_set(adc_type *adc_x, adc_ordinary_trig_sele
   * @param  adc_preempt_trig: select the external trigger event.
   *         this parameter can be one of the following values:
   *         adc1
-  *         - ADC12_PREEMPT_TRIG_TMR1TRGOUT  - ADC12_PREEMPT_TRIG_TMR1CH4
-  *         - ADC12_PREEMPT_TRIG_TMR3CH4     - ADC12_PREEMPT_TRIG_TMR15TRGOUT  - ADC12_PREEMPT_TRIG_EXINT15     - ADC12_PREEMPT_TRIG_SOFTWARE
+  *         - ADC12_PREEMPT_TRIG_TMR1CH2  - ADC12_PREEMPT_TRIG_TMR1CH3     - ADC12_PREEMPT_TRIG_TMR2CH4   - ADC12_PREEMPT_TRIG_TMR3CH4
+  *         - ADC12_PREEMPT_TRIG_TMR15CH1 - ADC12_PREEMPT_TRIG_TMR6TRGOUT  - ADC12_PREEMPT_TRIG_EXINT15   - ADC12_PREEMPT_TRIG_SOFTWARE
   * @param  new_state: new state of preempt channel's external trigger.
   *         this parameter can be: TRUE or FALSE.
   * @retval none

@@ -569,7 +569,7 @@ typedef struct
       __IO uint32_t rcden                :1; /* [4] */
       __IO uint32_t dren                 :1; /* [5] */
       __IO uint32_t hm                   :1; /* [6] */
-      __IO uint32_t ccalen               :1; /* [7] */
+      __IO uint32_t reserved1            :1; /* [7] */
       __IO uint32_t alaen                :1; /* [8] */
       __IO uint32_t alben                :1; /* [9] */
       __IO uint32_t waten                :1; /* [10] */
@@ -585,7 +585,7 @@ typedef struct
       __IO uint32_t outp                 :1; /* [20] */
       __IO uint32_t outsel               :2; /* [22:21] */
       __IO uint32_t caloen               :1; /* [23] */
-      __IO uint32_t reserved1            :8; /* [31:24] */
+      __IO uint32_t reserved2            :8; /* [31:24] */
     } ctrl_bit;
   };
 
@@ -647,19 +647,9 @@ typedef struct
   };
 
   /**
-    * @brief ertc ccal register, offset:0x18
+    * @brief ertc reserved register, offset:0x18
     */
-  union
-  {
-    __IO uint32_t ccal;
-    struct
-    {
-      __IO uint32_t calval               :5; /* [4:0] */
-      __IO uint32_t reserved1            :2; /* [6:5] */
-      __IO uint32_t caldir               :1; /* [7] */
-      __IO uint32_t reserved2            :24;/* [31:8] */
-    } ccal_bit;
-  };
+  __IO uint32_t reserved1;
 
   /**
     * @brief ertc ala register, offset:0x1C
@@ -866,7 +856,7 @@ typedef struct
   /**
     * @brief reserved register, offset:0x4c
     */
-  __IO uint32_t reserved1;
+  __IO uint32_t reserved2;
 
   /**
     * @brief ertc dt1 register, offset:0x50
@@ -1148,8 +1138,6 @@ void ertc_wakeup_counter_set(uint32_t counter);
 uint16_t ertc_wakeup_counter_get(void);
 error_status ertc_wakeup_enable(confirm_state new_state);
 error_status ertc_smooth_calibration_config(ertc_smooth_cal_period_type period, ertc_smooth_cal_clk_add_type clk_add, uint32_t clk_dec);
-error_status ertc_coarse_calibration_set(ertc_cal_direction_type dir, uint32_t value);
-error_status ertc_coarse_calibration_enable(confirm_state new_state);
 void ertc_cal_output_select(ertc_cal_output_select_type output);
 void ertc_cal_output_enable(confirm_state new_state);
 error_status ertc_time_adjust(ertc_time_adjust_type add1s, uint32_t decsbs);
