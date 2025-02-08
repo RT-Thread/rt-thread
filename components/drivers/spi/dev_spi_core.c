@@ -140,7 +140,7 @@ rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
         result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
         if (result == RT_EOK)
         {
-            if (device->bus->owner == RT_NULL || device->bus->owner == device)
+            if (device->bus->owner == device)
             {
                 /* current device is using, re-configure SPI bus */
                 result = device->bus->ops->configure(device, &device->config);
