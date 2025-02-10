@@ -14,7 +14,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-static struct rt_spinlock msi_irq_map_lock = {};
+static RT_DEFINE_SPINLOCK(msi_irq_map_lock);
 static RT_BITMAP_DECLARE(msi_irq_map, MAX_HANDLERS) = {};
 
 rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)

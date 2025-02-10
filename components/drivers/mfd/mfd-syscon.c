@@ -17,7 +17,7 @@
 #include <drivers/core/dm.h>
 #include <drivers/platform.h>
 
-static struct rt_spinlock _syscon_nodes_lock = { 0 };
+static RT_DEFINE_SPINLOCK(_syscon_nodes_lock);
 static rt_list_t _syscon_nodes = RT_LIST_OBJECT_INIT(_syscon_nodes);
 
 rt_err_t rt_syscon_read(struct rt_syscon *syscon, rt_off_t offset, rt_uint32_t *out_val)

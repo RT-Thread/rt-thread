@@ -24,7 +24,7 @@ struct rt_regulator
     struct rt_regulator_node *reg_np;
 };
 
-static struct rt_spinlock _regulator_lock = { 0 };
+static RT_DEFINE_SPINLOCK(_regulator_lock);
 
 static rt_err_t regulator_enable(struct rt_regulator_node *reg_np);
 static rt_err_t regulator_disable(struct rt_regulator_node *reg_np);
