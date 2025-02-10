@@ -23,7 +23,7 @@
 #define device_list(dev)            (dev)->parent.parent.list
 #define device_foreach(dev, nodes)  rt_list_for_each_entry(dev, nodes, parent.parent.list)
 
-static struct rt_spinlock nodes_lock = {};
+static RT_DEFINE_SPINLOCK(nodes_lock);
 static rt_list_t thermal_zone_device_nodes = RT_LIST_OBJECT_INIT(thermal_zone_device_nodes);
 static rt_list_t thermal_cooling_device_nodes = RT_LIST_OBJECT_INIT(thermal_cooling_device_nodes);
 static rt_list_t thermal_cooling_governor_nodes = RT_LIST_OBJECT_INIT(thermal_cooling_governor_nodes);

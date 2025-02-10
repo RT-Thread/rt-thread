@@ -86,7 +86,7 @@ rt_err_t rt_device_bus_destroy(rt_device_t dev)
 #ifdef RT_USING_DM
 #include <drivers/core/bus.h>
 
-static struct rt_spinlock bus_lock = {};
+static RT_DEFINE_SPINLOCK(bus_lock);
 static rt_list_t bus_nodes = RT_LIST_OBJECT_INIT(bus_nodes);
 
 static void _dm_bus_lock(struct rt_spinlock *spinlock)

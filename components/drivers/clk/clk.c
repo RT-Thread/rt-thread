@@ -26,7 +26,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-static struct rt_spinlock _clk_lock = { 0 };
+static RT_DEFINE_SPINLOCK(_clk_lock);
 static rt_list_t _clk_nodes = RT_LIST_OBJECT_INIT(_clk_nodes);
 static rt_list_t _clk_notifier_nodes = RT_LIST_OBJECT_INIT(_clk_notifier_nodes);
 
