@@ -25,7 +25,7 @@
 
 int main(void)
 {
-    printf("SystemClk: %d Hz\r\n", SystemCoreClock);
+    rt_kprintf("SystemClk: %d Hz\r\n", SystemCoreClock);
 
     rt_pin_mode(LED_BLUE, PIN_MODE_OUTPUT);
     rt_pin_mode(LED_RED,  PIN_MODE_OUTPUT);
