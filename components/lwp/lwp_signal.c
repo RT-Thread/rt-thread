@@ -27,6 +27,11 @@
 #include "sys/signal.h"
 #include "syscall_generic.h"
 
+rt_inline rt_err_t valid_signo_check(unsigned long sig)
+{
+	return sig <= _LWP_NSIG ? 0 : -RT_EINVAL;
+}
+
 static lwp_siginfo_t siginfo_create(rt_thread_t current, int signo, int code, lwp_siginfo_ext_t ext)
 {
     lwp_siginfo_t siginfo;
@@ -1432,7 +1437,8 @@ rt_err_t lwp_pgrp_signal_kill(rt_processgroup_t pgrp, long signo, long code,
 
     PGRP_ASSERT_LOCKED(pgrp);
 
-    if (pgrp)
+    rc = valid_signo_check(signo);
+    if (pgrp && !rc)
     {
         rt_list_for_each_entry(lwp, &pgrp->process, pgrp_node)
         {
