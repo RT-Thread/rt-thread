@@ -391,7 +391,7 @@ static int dfs_iso9660_close(struct dfs_file *fd)
     return 0;
 }
 
-static int dfs_iso9660_read(struct dfs_file *fd, void *buf, size_t count)
+static ssize_t dfs_iso9660_read(struct dfs_file *fd, void *buf, size_t count)
 {
     rt_uint32_t pos;
     void *buf_ptr;
