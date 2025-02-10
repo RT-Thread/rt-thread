@@ -17,7 +17,7 @@ jobs:
         echo "> If any words shown as incorrect are spelled correctly, please add them to .github/actions/spelling/allow.txt." >> $GITHUB_STEP_SUMMARY
     - name: check spelling
       id: spelling
-      uses: check-spelling/check-spelling@v0.0.20
+      uses: check-spelling/check-spelling@main
       with:
         checkout: true
         check_file_names: 0
