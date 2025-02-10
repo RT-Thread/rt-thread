@@ -29,7 +29,7 @@
 
 rt_inline rt_err_t valid_signo_check(unsigned long sig)
 {
-	return sig <= _LWP_NSIG ? 0 : -RT_EINVAL;
+    return sig <= _LWP_NSIG ? 0 : -RT_EINVAL;
 }
 
 static lwp_siginfo_t siginfo_create(rt_thread_t current, int signo, int code, lwp_siginfo_ext_t ext)
