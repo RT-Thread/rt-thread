@@ -289,13 +289,13 @@
 
 /* end of Kendryte SDK */
 
-/* STM32 HAL & SDK Drivers */
+/* WCH HAL & SDK Drivers */
 
 #define PKG_USING_CH32V307_SDK
-#define PKG_USING_CH32V307_SDK_LATEST_VERSION
+#define PKG_USING_CH32V307_SDK_V207
 #define PKG_USING_CH32V307_SDK_RTT_PATCH
-#define PKG_USING_CH32V307_SDK_RTT_PATCH_LATEST_VERSION
-/* end of STM32 HAL & SDK Drivers */
+#define PKG_USING_CH32V307_SDK_RTT_PATCH_V207
+/* end of WCH HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
