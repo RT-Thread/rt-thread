@@ -9,7 +9,6 @@ peripheral.LVGL:
       - CONFIG_BSP_USING_LVGL=y     
       
 # ------ online-packages CI ------
-# ----------贪吃蛇 游戏
 online-packages.misc.entertainment.tetris:
     kconfig:
       - CONFIG_PKG_USING_TETRIS=y
