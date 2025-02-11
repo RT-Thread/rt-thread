@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f1xxxx_01.s
-;  Version          : $Rev:: 2524         $
-;  Date             : $Date:: 2022-02-17 #$
+;  Version          : $Rev:: 3052         $
+;  Date             : $Date:: 2024-02-26 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -49,13 +49,24 @@ USE_HT32_CHIP       EQU     USE_HT32_CHIP_SET
 
 ; Amount of memory (in bytes) allocated for Stack and Heap
 ; Tailor those values to your application needs
+
+;//   <o> Stack Location
+;//       <0=> After the RW/ZI/Heap (Default)
+;//       <1=> On the top of the SRAM (The end of the SRAM)
+USE_STACK_ON_TOP    EQU     0
+
 ;//   <o> Stack Size (in Bytes, must 8 byte aligned) <0-131072:8>
+;//       <i> Only meanful when the Stack Location = "After the RW/ZI/Heap" (USE_STACK_ON_TOP = 0).
 Stack_Size          EQU     512
 
                     AREA    STACK, NOINIT, READWRITE, ALIGN = 3
 __HT_check_sp
 Stack_Mem           SPACE   Stack_Size
+  IF (USE_STACK_ON_TOP = 1)
+__initial_sp        EQU 0x20000000 + USE_LIBCFG_RAM_SIZE
+  ELSE
 __initial_sp
+  ENDIF
 
 ;//   <o>  Heap Size (in Bytes) <0-131072:8>
 Heap_Size           EQU     0
@@ -125,14 +136,14 @@ __Vectors
                     DCD  COMP_IRQHandler                    ;  24, 40, 0x0A0,
                     DCD  ADC_IRQHandler                     ;  25, 41, 0x0A4,
                     DCD  _RESERVED                          ;  26, 42, 0x0A8,
-                    DCD  MCTM0BRK_IRQHandler                ;  27, 43, 0x0AC,
-                    DCD  MCTM0UP_IRQHandler                 ;  28, 44, 0x0B0,
-                    DCD  MCTM0TR_IRQHandler                 ;  29, 45, 0x0B4,
-                    DCD  MCTM0CC_IRQHandler                 ;  30, 46, 0x0B8,
-                    DCD  MCTM1BRK_IRQHandler                ;  31, 47, 0x0BC,
-                    DCD  MCTM1UP_IRQHandler                 ;  32, 48, 0x0C0,
-                    DCD  MCTM1TR_IRQHandler                 ;  33, 49, 0x0C4,
-                    DCD  MCTM1CC_IRQHandler                 ;  34, 50, 0x0C8,
+                    DCD  MCTM0_BRK_IRQHandler               ;  27, 43, 0x0AC,
+                    DCD  MCTM0_UP_IRQHandler                ;  28, 44, 0x0B0,
+                    DCD  MCTM0_TR_IRQHandler                ;  29, 45, 0x0B4,
+                    DCD  MCTM0_CC_IRQHandler                ;  30, 46, 0x0B8,
+                    DCD  MCTM1_BRK_IRQHandler               ;  31, 47, 0x0BC,
+                    DCD  MCTM1_UP_IRQHandler                ;  32, 48, 0x0C0,
+                    DCD  MCTM1_TR_IRQHandler                ;  33, 49, 0x0C4,
+                    DCD  MCTM1_CC_IRQHandler                ;  34, 50, 0x0C8,
                     DCD  GPTM0_IRQHandler                   ;  35, 51, 0x0CC,
                     DCD  GPTM1_IRQHandler                   ;  36, 52, 0x0D0,
                     DCD  _RESERVED                          ;  37, 53, 0x0D4,
@@ -330,14 +341,14 @@ Default_Handler     PROC
                     EXPORT  EXTI15_IRQHandler               [WEAK]
                     EXPORT  COMP_IRQHandler                 [WEAK]
                     EXPORT  ADC_IRQHandler                  [WEAK]
-                    EXPORT  MCTM0BRK_IRQHandler             [WEAK]
-                    EXPORT  MCTM0UP_IRQHandler              [WEAK]
-                    EXPORT  MCTM0TR_IRQHandler              [WEAK]
-                    EXPORT  MCTM0CC_IRQHandler              [WEAK]
-                    EXPORT  MCTM1BRK_IRQHandler             [WEAK]
-                    EXPORT  MCTM1UP_IRQHandler              [WEAK]
-                    EXPORT  MCTM1TR_IRQHandler              [WEAK]
-                    EXPORT  MCTM1CC_IRQHandler              [WEAK]
+                    EXPORT  MCTM0_BRK_IRQHandler            [WEAK]
+                    EXPORT  MCTM0_UP_IRQHandler             [WEAK]
+                    EXPORT  MCTM0_TR_IRQHandler             [WEAK]
+                    EXPORT  MCTM0_CC_IRQHandler             [WEAK]
+                    EXPORT  MCTM1_BRK_IRQHandler            [WEAK]
+                    EXPORT  MCTM1_UP_IRQHandler             [WEAK]
+                    EXPORT  MCTM1_TR_IRQHandler             [WEAK]
+                    EXPORT  MCTM1_CC_IRQHandler             [WEAK]
                     EXPORT  GPTM0_IRQHandler                [WEAK]
                     EXPORT  GPTM1_IRQHandler                [WEAK]
                     EXPORT  BFTM0_IRQHandler                [WEAK]
@@ -395,14 +406,14 @@ EXTI14_IRQHandler
 EXTI15_IRQHandler
 COMP_IRQHandler
 ADC_IRQHandler
-MCTM0BRK_IRQHandler
-MCTM0UP_IRQHandler
-MCTM0TR_IRQHandler
-MCTM0CC_IRQHandler
-MCTM1BRK_IRQHandler
-MCTM1UP_IRQHandler
-MCTM1TR_IRQHandler
-MCTM1CC_IRQHandler
+MCTM0_BRK_IRQHandler
+MCTM0_UP_IRQHandler
+MCTM0_TR_IRQHandler
+MCTM0_CC_IRQHandler
+MCTM1_BRK_IRQHandler
+MCTM1_UP_IRQHandler
+MCTM1_TR_IRQHandler
+MCTM1_CC_IRQHandler
 GPTM0_IRQHandler
 GPTM1_IRQHandler
 BFTM0_IRQHandler
@@ -442,10 +453,11 @@ AES_IRQHandler
 ;*******************************************************************************
 ; User Stack and Heap initialization
 ;*******************************************************************************
-                    IF      :DEF:__MICROLIB
-
                     EXPORT  __HT_check_heap
                     EXPORT  __HT_check_sp
+
+                    IF      :DEF:__MICROLIB
+
                     EXPORT  __initial_sp
                     EXPORT  __heap_base
                     EXPORT  __heap_limit
@@ -456,11 +468,19 @@ AES_IRQHandler
                     EXPORT  __user_initial_stackheap
 __user_initial_stackheap
 
-                    LDR     R0, =  Heap_Mem
+                  IF (USE_STACK_ON_TOP = 1)
+                    LDR     R0, = Heap_Mem
+                    LDR     R1, = (0x20000000 + USE_LIBCFG_RAM_SIZE)
+                    LDR     R2, = (Heap_Mem + Heap_Size)
+                    LDR     R3, = (Heap_Mem + Heap_Size)
+                    BX      LR
+                  ELSE
+                    LDR     R0, = Heap_Mem
                     LDR     R1, = (Stack_Mem + Stack_Size)
                     LDR     R2, = (Heap_Mem + Heap_Size)
                     LDR     R3, = Stack_Mem
                     BX      LR
+                  ENDIF
 
                     ALIGN
 

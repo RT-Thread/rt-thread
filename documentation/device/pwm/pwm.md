@@ -1,6 +1,6 @@
-# PWM Device
+@page device_pwm PWM Device
 
-## Introduction to PWM
+# Introduction to PWM
 
 PWM (Pulse Width Modulation) is a method of digitally encoding the level of an analog signal. The frequency of the square wave is used to encode the level of a specific analog signal by pulses of different frequencies. The output receives a series of pulses of equal magnitude and uses these pulses to replace the device with the desired waveform.
 
@@ -12,7 +12,7 @@ One of the common PWM control scenarios is to adjust the brightness of a light o
 
 ![PWM Brightness Adjustment](figures/pwm-l.png)
 
-## Access to PWM Devices
+# Access to PWM Devices
 
 The application accesses the PWM device hardware through the PWM device management interface provided by RT-Thread. The related interfaces are as follows:
 
@@ -23,7 +23,7 @@ The application accesses the PWM device hardware through the PWM device manageme
 | rt_pwm_enable()   | Enable PWM device |
 | rt_pwm_disable()  | Disable the PWM device |
 
-### Find the PWM Device
+## Find the PWM Device
 
 The application obtains the device handle based on the name of PWM device, which in turn can operate the PWM device. The function is as follows:
 
@@ -47,7 +47,7 @@ struct rt_device_pwm *pwm_dev;      /* PWM device handle */
 pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
 ```
 
-### Set PWM Period and Pulse Width
+## Set PWM Period and Pulse Width
 
 Set the PWM period and duty cycle by using the following function:
 
@@ -88,7 +88,7 @@ pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
 rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
 ```
 
-### Enable the PWM Device
+## Enable the PWM Device
 
 After setting the PWM period and pulse width, you can enable the PWM device by the following function:
 
@@ -123,7 +123,7 @@ rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
 rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
 ```
 
-### Disable the PWM device Channel
+## Disable the PWM device Channel
 
 Use the following function to turn off the corresponding channel of the PWM device.
 
@@ -160,7 +160,7 @@ rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
 rt_pwm_disable(pwm_dev,PWM_DEV_CHANNEL);
 ```
 
-## FinSH Command
+# FinSH Command
 
 To set the period and duty cycle of a channel of a PWM device, use the command `pwm_set pwm1 1 500000 5000`. The first parameter is the command, the second parameter is the PWM device name, the third parameter is the PWM channel, and the fourth parameter is PWM period (ns), the fifth parameter is the pulse width (ns).
 
@@ -183,7 +183,7 @@ msh />pwm_disable pwm1 1
 msh />
 ```
 
-## PWM Device Usage Example
+# PWM Device Usage Example
 
 The following sample code is a  PWM device usage sample . The main steps of the sample code are as follows:
 

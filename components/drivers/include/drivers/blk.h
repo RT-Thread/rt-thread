@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-25     GuEe-GUI     first version
+ * 2025-01-24     wumingzi     add doxygen comment
  */
 
 #ifndef __BLK_H__
@@ -15,10 +16,22 @@
 #include <rtthread.h>
 #include <drivers/classes/block.h>
 
+/**
+ * @addtogroup  Drivers          RTTHREAD Driver
+ * @defgroup    blk              blk
+ * @brief       blk driver api
+ * @ingroup     Drivers
+ * @addtogroup  blk
+ * @{
+ */
+
 struct rt_dm_ida;
 struct rt_blk_device;
 struct rt_blk_disk_ops;
 
+/**
+ * @brief Physical blk device
+ */
 struct rt_blk_disk
 {
     struct rt_device parent;
@@ -44,6 +57,9 @@ struct rt_blk_disk
     struct rt_semaphore usr_lock;
 };
 
+/**
+ * @brief Configure the blk device.
+ */
 struct rt_blk_disk_ops
 {
     rt_ssize_t (*read)(struct rt_blk_disk *disk, rt_off_t sector, void *buffer,
@@ -60,6 +76,9 @@ struct rt_blk_disk_ops
 #ifndef __DFS_H__
 #include <dfs_fs.h>
 
+/**
+ * @brief Logical blk device, if you don't used DFS it will be defined by default.
+ */
 struct rt_blk_device
 {
     struct rt_device parent;
@@ -77,11 +96,41 @@ struct rt_blk_device
 struct rt_blk_device;
 #endif /* __DFS_H__ */
 
+/**
+ * @brief Register the blk disk device
+ * @param disk Point to blk disk
+ * @return rt_err_t        error code
+ */
 rt_err_t rt_hw_blk_disk_register(struct rt_blk_disk *disk);
+
+/**
+ * @brief Unregister the blk disk device
+ * @param disk Point to blk disk
+ * @return rt_err_t        error code
+ */
 rt_err_t rt_hw_blk_disk_unregister(struct rt_blk_disk *disk);
 
+/**
+ * @brief Probe and register the blk disk partition
+ * @param disk Point to blk disk
+ * @return rt_err_t        error code
+ */
 rt_err_t rt_blk_disk_probe_partition(struct rt_blk_disk *disk);
+
+/**
+ * @brief Get the blk disk capacity
+ * @param disk Point to blk disk
+ * @return rt_ssize_t        sector count or error code
+ */
 rt_ssize_t rt_blk_disk_get_capacity(struct rt_blk_disk *disk);
+
+/**
+ * @brief Get the sector size
+ * @param disk Point to blk disk
+ * @return rt_ssize_t        bytes per sector or error code
+ */
 rt_ssize_t rt_blk_disk_get_logical_block_size(struct rt_blk_disk *disk);
+
+/*! @}*/
 
 #endif /* __BLK_H__ */

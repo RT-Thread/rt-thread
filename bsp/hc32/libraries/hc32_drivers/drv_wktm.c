@@ -16,10 +16,10 @@
 #if defined(BSP_USING_PM)
 
 // #define DRV_DEBUG
-#define LOG_TAG                     "drv_wktm"
+#define LOG_TAG                         "drv_wktm"
 #include <drv_log.h>
 
-#define CMPVAL_MAX                  (0xFFFUL)
+#define CMPVAL_MAX                      (0xFFFUL)
 
 #if defined(BSP_USING_WKTM_XTAL32)
     #define PWC_WKT_CLK_SRC             (PWC_WKT_CLK_SRC_XTAL32)
@@ -29,23 +29,21 @@
     #define PWC_WKT_COUNT_FRQ           (64U)
 #else
     #if defined(HC32F4A0)
-        #define PWC_WKT_CLK_SRC             (PWC_WKT_CLK_SRC_RTCLRC)
-    #elif defined(HC32F460) || defined(HC32F448)
-        #define PWC_WKT_CLK_SRC             (PWC_WKT_CLK_SRC_LRC)
+        #define PWC_WKT_CLK_SRC         (PWC_WKT_CLK_SRC_RTCLRC)
+    #elif defined(HC32F460) || defined(HC32F448) || defined(HC32F472)
+        #define PWC_WKT_CLK_SRC         (PWC_WKT_CLK_SRC_LRC)
     #endif
     #define PWC_WKT_COUNT_FRQ           (32768UL)
 #endif
 
-static rt_uint32_t cmpval = CMPVAL_MAX;
-
 /**
- * This function get current count value of WKTM
+ * This function get timeout count value of WKTM
  * @param  None
  * @return the count value
  */
-rt_uint32_t hc32_wktm_get_current_tick(void)
+rt_uint32_t hc32_wktm_get_timeout_tick(void)
 {
-    return (CMPVAL_MAX);
+    return (RT_TICK_PER_SECOND * PWC_WKT_GetCompareValue() / PWC_WKT_COUNT_FRQ);
 }
 
 /**
@@ -81,8 +79,7 @@ rt_err_t hc32_wktm_start(rt_uint32_t reload)
     {
         return -RT_ERROR;
     }
-    cmpval = reload;
-    PWC_WKT_SetCompareValue(cmpval);
+    PWC_WKT_SetCompareValue(reload);
     PWC_WKT_Cmd(ENABLE);
 
     return RT_EOK;

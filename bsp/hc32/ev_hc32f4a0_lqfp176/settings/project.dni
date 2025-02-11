@@ -1,5 +1,5 @@
 [PlDriver]
-MemConfigValue=$PROJ_DIR$/../libraries/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F4A0.svd
+MemConfigValue=$PROJ_DIR$/../libraries/hc32f4a0_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F4A0.svd
 [PlCacheRanges]
 CustomRanges0=0 0 2097152 1 2048
 CustomRangesText0=Flash

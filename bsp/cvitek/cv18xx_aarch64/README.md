@@ -9,7 +9,6 @@
 		- [2.3.1. 开发板选择](#231-开发板选择)
 		- [2.3.2. 开启 RT-Smart](#232-开启-rt-smart)
 		- [2.3.3. 编译大核固件 `boot.sd`](#233-编译大核固件-bootsd)
-		- [2.3.4. 编译小核固件 `fip.bin`](#234-编译小核固件-fipbin)
 - [3. 运行](#3-运行)
 	- [3.1. RT-Thread 标准版的例子](#31-rt-thread-标准版的例子)
 	- [3.2. RT-Thread Smart 版的例子](#32-rt-thread-smart-版的例子)
@@ -49,7 +48,11 @@ export RTT_EXEC_PATH=/opt/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 
 ## 2.3. 执行构建
 
-这里我们只需要构建 ARM 大核的 OS，进入 `bsp/cvitek/cv18xx_aarch64` 目录下（记为当前工作目录 `$CWD`），依次执行以下步骤：
+首先确保 RISC-V 小核已经构建完成并生成了 `rtthread.bin` 和 `fip.bin`。Duo 256m 的小核是一个 RISC-V 的 core，对应的 bsp 是 `bsp/cvitek/c906_little`。具体构建的说明参考 [bsp cvitek 的 README.md 文件](../README.md)。
+
+`fip.bin` 是一个打包后生成的 bin 文件，包含了 `fsbl`、`uboot` 以及小核的内核镜像文件 `rtthread.bin`。但注意 BSP `c906_little` 构建生成的 `fip.bin` 中的 `fsbl`、`uboot` 这些文件都是 RISC-V 的，所以我们并不能把 BSP `c906_little` 构建生成的 `fip.bin` 直接拿来用于引导启动 ARM 大核。我们这一步只是确保先基于 BSP `c906_little` 做出最新的小核版本 `rtthread.bin`。在下一步构建大核的过程中我们会重新打包更新并生成新的 `fip.bin`，而在重新打包过程中我们需要这个小核的 `rtthread.bin`。
+
+这里我们主要关注如何构建 ARM 大核的 `rtthread.bin`。进入 `bsp/cvitek/cv18xx_aarch64` 目录下（记为当前工作目录 `$CWD`），依次执行以下步骤：
 
 ### 2.3.1. 开发板选择
 
@@ -74,20 +77,11 @@ RT-Thread Kernel  --->
 $ scons
 ```
 
-如果编译正确无误，在 $CWD 下会产生 `rtthread.elf`, `rtthread.bin` 文件。同时在 `$CWD/../output/milkv-duo256m/` 下生成 `boot.sd` 文件，`boot.sd` 中封装了 RT-Thread 的内核 `rtthread.bin`。
+scons 会执行如下步骤的工作：
 
-### 2.3.4. 编译小核固件 `fip.bin`
-
-`fip.bin`：这是一个打包后生成的 bin 文件，包含了 `fsbl`、`uboot` 以及小核的内核镜像文件 `rtthread.bin`。Duo 256m 的小核是一个 RISC-V 的 core，对应的 bsp 是 c906_little。具体构建的说明参考 [对应的 README 文件](../README.md)。但注意 BSP `c906_little` 构建生成的 `fip.bin` 中的 `fsbl`、`uboot` 这些文件都是 RISC-V 的，所以我们并不能把 BSP `c906_little` 构建生成的 `fip.bin` 直接拿来用。
-
-为此 BSP `cv18xx_aarch64` 下预先提供了 ARM 核上可以运行的 `fsbl`、`uboot` 等文件，在 `bsp/cvitek/cv18xx_aarch64/prebuild/milkv-duo256m` 下，可以用来打包生成 ARM 的 `fip.bin`。具体打包的脚本是 BSP `cv18xx_aarch64` 目录下的 `combine.sh`。
-
-所以如果您需要使用最新的小核版本，可以先基于 BSP `c906_little` 做出 `rtthread.bin`，然后在 cv18xx_aarch64 目录下运行 `combine.sh` 即可生成 ARM 可用的 `fip.bin`。生成路径和 `boot.sd` 一样，在 `$CWD/../output/milkv-duo256m/` 下。
-
-```shell
-$ cd $CWD
-$ ./combine.sh
-```
+- 如果编译正确无误，在 `$CWD` 下会产生 `rtthread.bin` 文件。
+- 通过运行 `combine.sh`，利用 BSP `cv18xx_aarch64` 下预先提供的、可以在 ARM 核上运行的 `fsbl`、`uboot` 等文件，加上基于 BSP `c906_little` 做出的 `rtthread.bin`，重新打包生成可供 ARM 大核解析和运行的 `fip.bin`。`fip.bin` 会生成在 `$CWD/../output/milkv-duo256m/` 下。
+- 在 `$CWD/../output/milkv-duo256m/` 下生成 `boot.sd` 文件，`boot.sd` 中封装了 ARM 大核对应的 `rtthread.bin`。
 
 如果您不关心小核的版本，BSP cv18xx_aarch64 也提供了一个 prebuild 的 `fip.bin`，在 `bsp/cvitek/cv18xx_aarch64/prebuild/milkv-duo256m` 下，直接烧录到 sd-card 中就可以使用。
 
@@ -142,7 +136,7 @@ Starting kernel ...
  / | \     5.2.0 build Dec 25 2024 14:16:49
  2006 - 2024 Copyright by RT-Thread team
 [I/rtdm.mnt] File system initialization done
-hello rt-thread!
+Hello AARCH64 !
 msh />
 ```
 
@@ -184,7 +178,7 @@ Starting kernel ...
  2006 - 2024 Copyright by RT-Thread team
 [I/drivers.serial] Using /dev/ttyS0 as default console
 [I/rtdm.mnt] File system initialization done
-hello rt-thread!
+Hello AARCH64 !
 msh />
 ```
 

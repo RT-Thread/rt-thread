@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_adc.h
- * @version $Rev:: 7265         $
- * @date    $Date:: 2023-10-02 #$
+ * @version $Rev:: 7678         $
+ * @date    $Date:: 2024-04-01 #$
  * @brief   The header file of the ADC library.
  *************************************************************************************************************
  * @attention
@@ -634,7 +634,7 @@ void ADC_VREFConfig(HT_ADC_TypeDef* HT_ADCn, u32 ADC_VREF_x);
 #endif
 
 #if (LIBCFG_ADC_VREFBUF)
-void ADC_VREFOutputCmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState);
+void ADC_VREFOutputADVREFPCmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState);
 #endif
 
 #if (LIBCFG_ADC_MVDDA)

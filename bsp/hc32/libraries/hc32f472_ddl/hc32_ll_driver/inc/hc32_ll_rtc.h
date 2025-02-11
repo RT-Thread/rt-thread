@@ -158,6 +158,7 @@ typedef struct {
 #define RTC_CLK_SRC_LRC                         (RTC_CR3_RCKSEL | RTC_CR3_LRCEN)        /*!< RTC LRC Clock           */
 #define RTC_CLK_SRC_XTAL_DIV                    (RTC_CR3_RCKSEL | PWC_PWRC6_RTCCKSEL_0) /*!< XTAL Fractional Divider */
 #define RTC_CLK_SRC_EXTCLK                      (RTC_CR3_RCKSEL | PWC_PWRC6_RTCCKSEL_1) /*!< External Clock          */
+#define RTC_CLK_SRC_EXTCLK_1                    (RTC_CR3_RCKSEL | PWC_PWRC6_RTCCKSEL)   /*!< External Clock          */
 /**
  * @}
  */

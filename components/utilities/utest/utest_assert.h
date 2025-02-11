@@ -47,19 +47,50 @@ void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equa
  * @macro uassert_buf_not_equal if @a not equal to @b, not assert, means passing. buf type test.
  * @macro uassert_in_range      if @value is in range of min and max,     not assert, means passing.
  * @macro uassert_not_in_range  if @value is not in range of min and max, not assert, means passing.
- *
-*/
+ * @macro uassert_float_equal   if @a equal to @b,     not assert, means passing. Float type test.
+ * @macro uassert_float_not_equal if @a not equal to @b, not assert, means passing. Float type test.
+ * @macro uassert_value_less        if @a less than @b,     not assert, means passing.
+ * @macro uassert_value_less_equal  if @a less than or equal to @b, not assert, means passing.
+ * @macro uassert_value_greater     if @a greater than @b,  not assert, means passing.
+ * @macro uassert_value_greater_equal if @a greater than or equal to @b, not assert, means passing.
+ * @macro uassert_ptr_equal     if @a equal to @b,     not assert, means passing. Pointer type test.
+ * @macro uassert_ptr_not_equal if @a not equal to @b, not assert, means passing. Pointer type test.
+ */
 #define uassert_true(value)      __utest_assert(value, "(" #value ") is false")
 #define uassert_false(value)     __utest_assert(!(value), "(" #value ") is true")
 
 #define uassert_null(value)      __utest_assert((const char *)(value) == RT_NULL, "(" #value ") is not null")
 #define uassert_not_null(value)  __utest_assert((const char *)(value) != RT_NULL, "(" #value ") is null")
 
-#define uassert_in_range(value, min, max)     __utest_assert(((value >= min) && (value <= max)), "(" #value ") not in range("#min","#max")")
-#define uassert_not_in_range(value, min, max) __utest_assert(!((value >= min) && (value <= max)), "(" #value ") in range("#min","#max")")
+#define uassert_in_range(value, min, max) \
+    do { \
+        double _value = (value); \
+        double _min = (min); \
+        double _max = (max); \
+        __utest_assert((_value >= _min) && (_value <= _max), "(" #value ") not in range("#min","#max")"); \
+    } while(0)
 
-#define uassert_float_equal(a, b)         uassert_in_range(a, ((double)b - 0.0001), ((double)b + 0.0001))
-#define uassert_float_not_equal(a, b)     uassert_not_in_range(a, ((double)b - 0.0001), ((double)b + 0.0001))
+#define uassert_not_in_range(value, min, max) \
+    do { \
+        double _value = (value); \
+        double _min = (min); \
+        double _max = (max); \
+        __utest_assert((_value < _min) || (_value > _max), "(" #value ") in range("#min","#max")"); \
+    } while(0)
+
+#define uassert_float_equal(a, b) \
+    do { \
+        double _a = (a); \
+        double _b = (b); \
+        uassert_in_range(_a, ((double)_b - 0.0001), ((double)_b + 0.0001)); \
+    } while(0)
+
+#define uassert_float_not_equal(a, b) \
+    do { \
+        double _a = (a); \
+        double _b = (b); \
+        uassert_not_in_range(_a, ((double)_b - 0.0001), ((double)_b + 0.0001)); \
+    } while(0)
 
 #define uassert_int_equal(a, b)           __uassert_value_op(a, b, ==)
 #define uassert_int_not_equal(a, b)       __uassert_value_op(a, b, !=)

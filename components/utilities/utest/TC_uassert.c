@@ -32,6 +32,15 @@ static void TC_uassert_int_op(void)
     uassert_value_greater_equal(b, b);
 }
 
+static void TC_uassert_float_op(void)
+{
+    float a = 5.0;
+    float b = 5.0;
+
+    uassert_float_equal(a, b);
+    uassert_float_not_equal(a, b + 0.0002);
+}
+
 static void TC_uassert_ptr_op(void)
 {
     int a = 5;
@@ -65,6 +74,7 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_uassert_true_false);
     UTEST_UNIT_RUN(TC_uassert_null_not_null);
     UTEST_UNIT_RUN(TC_uassert_int_op);
+    UTEST_UNIT_RUN(TC_uassert_float_op);
     UTEST_UNIT_RUN(TC_uassert_ptr_op);
     UTEST_UNIT_RUN(TC_uassert_str_op);
     UTEST_UNIT_RUN(TC_uassert_in_range);

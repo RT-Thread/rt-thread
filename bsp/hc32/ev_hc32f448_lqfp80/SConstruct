@@ -56,7 +56,13 @@ objs.extend(SConscript(os.path.join(libraries_path_prefix, hc32_library, 'SConsc
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'hc32_drivers', 'SConscript')))
 
-objs.extend(SConscript(os.path.join(os.getcwd(), 'board', 'ports', 'SConscript')))
+# include platform
+platform_path_prefix = os.path.dirname(SDK_ROOT) + '/platform'
+objs.extend(SConscript(os.path.join(platform_path_prefix, 'SConscript')))
+
+# include tests
+test_path_prefix = os.path.dirname(SDK_ROOT) + '/tests'
+objs.extend(SConscript(os.path.join(test_path_prefix, 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

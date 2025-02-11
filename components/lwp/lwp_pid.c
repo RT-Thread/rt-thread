@@ -813,7 +813,7 @@ pid_t lwp_name2pid(const char *name)
 
         if (lwp)
         {
-            process_name = strrchr(lwp->cmd, '/');
+            process_name = strrchr(lwp->exe_file, '/');
             process_name = process_name? process_name + 1: lwp->cmd;
             if (!rt_strncmp(name, process_name, RT_NAME_MAX))
             {

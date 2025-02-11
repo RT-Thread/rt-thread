@@ -1,6 +1,6 @@
-# SPI Device
+@page device_spi SPI Device
 
-## Introduction to SPI
+# Introduction to SPI
 
 SPI (Serial Peripheral Interface) is a high-speed, full-duplex, synchronous communication bus commonly used for short-range communication. It is mainly used in EEPROM, FLASH, real-time clock, AD converter, and digital signal processing and between the device and the digital signal decoder. SPI generally uses 4 lines of communication, as shown in the following figure:
 
@@ -34,7 +34,7 @@ The slave's clock is provided by the master through SCLK, and MOSI and MISO comp
 
 So for SPI Flash, there are three types of standard SPI Flash, Dual SPI Flash, Quad SPI Flash. At the same clock, the higher the number of lines, the higher the transmission rate.
 
-## Mount SPI Device
+# Mount SPI Device
 
 The SPI driver registers the SPI bus and the SPI device needs to be mounted to the SPI bus that has already been registered.
 
@@ -84,7 +84,7 @@ static int rt_hw_spi_flash_init(void)
 INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
 ```
 
-## Configuring SPI Device
+# Configuring SPI Device
 
 The SPI device's transmission parameters need to be configured after the SPI device is mounted to the SPI bus.
 
@@ -152,7 +152,7 @@ The example for configuration is as follows:
     rt_spi_configure(spi_dev, &cfg);
 ```
 
-## QSPI Configuration
+# QSPI Configuration
 
 To configure the transmission parameters of a QSPI device, use the following function:
 
@@ -181,7 +181,7 @@ struct rt_qspi_configuration
 };
 ```
 
-## Access SPI Device
+# Access SPI Device
 
 In general, the MCU's SPI device communicates as a master and slave. In the RT-Thread, the SPI master is virtualized as an SPI bus device. The application uses the SPI device management interface to access the SPI slave device. The main interfaces are as follows:
 
@@ -197,7 +197,7 @@ In general, the MCU's SPI device communicates as a master and slave. In the RT-T
 
 >The SPI data transfer related interface will call rt_mutex_take(). This function cannot be called in the interrupt service routine, which will cause the assertion to report an error.
 
-### Find SPI Device
+## Find SPI Device
 
 Before using the SPI device, you need to find and obtain the device handle according to the SPI device name, so that you can operate the SPI device. The device function is as follows.
 
@@ -222,7 +222,7 @@ struct rt_spi_device *spi_dev_w25q;     /* SPI device handle */
 spi_dev_w25q = (struct rt_spi_device *)rt_device_find(W25Q_SPI_DEVICE_NAME);
 ```
 
-### Transfer Custom Data
+## Transfer Custom Data
 
 By obtaining the SPI device handle, the SPI device management interface can be used to access the SPI device device for data transmission and reception. You can transfer messages by the following function:
 
@@ -298,7 +298,7 @@ rt_spi_transfer_message(spi_dev_w25q, &msg1);
 rt_kprintf("use rt_spi_transfer_message() read w25q ID is:%x%x\n", id[3], id[4]);
 ```
 
-### Transfer Data Once
+## Transfer Data Once
 
 If only transfer data for once, use the following function:
 
@@ -332,7 +332,7 @@ msg.cs_release = 1;
 msg.next        = RT_NULL;
 ```
 
-### Send Data Once
+## Send Data Once
 
 If only send data once and ignore the received data, use the following function:
 
@@ -366,7 +366,7 @@ msg.cs_release = 1;
 msg.next       = RT_NULL;
 ```
 
-### Receive Data Once
+## Receive Data Once
 
 If only receive data once,  use the following function:
 
@@ -400,7 +400,7 @@ msg.cs_release = 1;
 msg.next       = RT_NULL;
 ```
 
-### Send Data Twice in Succession
+## Send Data Twice in Succession
 
 If need to send data of 2 buffers in succession and the CS is not released within the process, you can call the following function:
 
@@ -447,7 +447,7 @@ msg2.cs_release = 1;
 msg2.next       = RT_NULL;
 ```
 
-### Receive Data After Sending Data
+## Receive Data After Sending Data
 
 If need to send data to the slave device first, then receive the data sent from the slave device, and the CS is not released within the process, call the following function to implement:
 
@@ -496,7 +496,7 @@ msg2.next       = RT_NULL;
 
 The SPI device management module also provides  `rt_spi_sendrecv8()` and `rt_spi_sendrecv16()` functions, both are wrapper of the `rt_spi_send_then_recv()`. `rt_spi_sendrecv8()` sends a byte data and receives one byte data, and`rt_spi_sendrecv16()` sends 2 bytes. The section data receives 2 bytes of data at the same time.
 
-## Access QSPI Device
+# Access QSPI Device
 
 The data transfer interface of QSPI is as follows:
 
@@ -508,7 +508,7 @@ The data transfer interface of QSPI is as follows:
 
 >The QSPI data transfer related interface will call rt_mutex_take(). This function cannot be called in the interrupt service routine, which will cause the assertion to report an error.
 
-### Transfer Data
+## Transfer Data
 
 Transfer messages by the following function:
 
@@ -548,7 +548,7 @@ struct rt_qspi_message
 };
 ```
 
-### Receive Data
+## Receive Data
 
 Use the following function to receive data:
 
@@ -573,7 +573,7 @@ rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device,
 
 The send_buf parameter contains the sequence of commands that will be sent.
 
-### Send Data
+## Send Data
 
 ```c
 rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_size_t length)
@@ -590,11 +590,11 @@ rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
 
 The send_buf parameter contains the sequence of commands and data to be sent.
 
-## Special Usage Scenarios
+# Special Usage Scenarios
 
 In some special usage scenarios, a device wants to monopolize the bus for a period of time, and the CS is always valid during the period, during which the data transmission may be intermittent, then the relevant interface can be used as shown. The transfer data function must use `rt_spi_transfer_message()`, and this function must set the cs_take and cs_release of the message to be transmitted to 0 value, because the CS has already used other interface control, and does not need to control during data transmission.
 
-### Acquire the SPI bus
+## Acquire the SPI bus
 
 In the case of multi-threading, the same SPI bus may be used in different threads. In order to prevent the data being transmitted by the SPI bus from being lost, the slave device needs to acquire the right to use the SPI bus before starting to transfer data. To transfer data using the bus, use the following function to acquire the SPI bus:
 
@@ -609,7 +609,7 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device);
 | RT_EOK   | Successful |
 | Other Errors | Failed     |
 
-### Select CS
+## Select CS
 
 After obtaining the usage right of the bus from the device, you need to set the corresponding chip selection signal to be valid. You can use the following function to select the CS:
 
@@ -624,7 +624,7 @@ rt_err_t rt_spi_take(struct rt_spi_device *device)；
 | 0        | Successful |
 | Other Errors | Failed     |
 
-### Add a New Message
+## Add a New Message
 
 When using `rt_spi_transfer_message()` to transfer messages, all messages to be transmitted are connected in the form of a singly linked list. Use the following function to add a new message to be sent to the message list:
 
@@ -638,7 +638,7 @@ void rt_spi_message_append(struct rt_spi_message *list,
 | list          | Message link node to be transmitted |
 | message       | New message pointer                 |
 
-### Release CS
+## Release CS
 
 After the device data transfer is completed, CS need to be released. Use the following function to release the CS:
 
@@ -653,7 +653,7 @@ rt_err_t rt_spi_release(struct rt_spi_device *device)；
 | 0        | Successful |
 | Other Errors | Failed     |
 
-### Release Data Bus
+## Release Data Bus
 
 The slave device does not use the SPI bus to transfer data. The bus must be released as soon as possible so that other slave devices can use the SPI bus to transfer data. The following function can be used to release the bus:
 
@@ -667,7 +667,7 @@ rt_err_t rt_spi_release_bus(struct rt_spi_device *device);
 | **Return** | ——            |
 | RT_EOK   | Successful |
 
-## SPI Device Usage Example
+# SPI Device Usage Example
 
 The specific use of the SPI device can be referred to the following sample code. The sample code first finds the SPI device to get the device handle, and then uses the rt_spi_transfer_message() send command to read the ID information.
 

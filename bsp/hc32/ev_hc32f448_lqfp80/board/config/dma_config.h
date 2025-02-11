@@ -193,6 +193,16 @@ extern "C" {
 #define UART1_RX_DMA_IRQn               BSP_DMA2_CH0_IRQ_NUM
 #define UART1_RX_DMA_INT_PRIO           BSP_DMA2_CH0_IRQ_PRIO
 #define UART1_RX_DMA_INT_SRC            INT_SRC_DMA2_TC0
+
+#elif defined(BSP_QSPI_USING_DMA) && !defined(QSPI_DMA_INSTANCE)
+#define QSPI_DMA_INSTANCE               CM_DMA2
+#define QSPI_DMA_CHANNEL                DMA_CH0
+#define QSPI_DMA_CLOCK                  (PWC_FCG0_DMA2 | PWC_FCG0_AOS)
+#define QSPI_DMA_TRIG_SELECT            AOS_DMA2_0
+#define QSPI_DMA_TRANS_FLAG             DMA_FLAG_TC_CH0
+#define QSPI_DMA_IRQn                   BSP_DMA2_CH0_IRQ_NUM
+#define QSPI_DMA_INT_PRIO               BSP_DMA2_CH0_IRQ_PRIO
+#define QSPI_DMA_INT_SRC                INT_SRC_DMA2_TC0
 #endif
 
 /* DMA2 ch1 */

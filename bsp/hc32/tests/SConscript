@@ -1,0 +1,98 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+
+from building import *
+import os
+
+cwd = GetCurrentDir()
+# add the app files.
+src = []
+
+if GetDepend(['RT_USING_SERIAL']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['test_uart_v2.c']
+    else:
+        src += ['test_uart_v1.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['test_spi.c']
+
+if GetDepend(['BSP_USING_QSPI']):
+    src += ['test_qspi.c']
+
+if GetDepend(['BSP_USING_I2C']):
+    src += ['test_i2c.c']
+    if GetDepend(['RT_USING_I2C_BITOPS']):
+        src += ['test_soft_i2c.c']
+
+if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
+    src += ['test_eth.c']
+    #lwIP: HTTP server
+    lwiphttp_src = []
+    lwiphttp_src = Split("""
+    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/altcp_proxyconnect.c
+    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/fs.c
+    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/http_client.c
+    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/httpd.c
+    """)
+    src += lwiphttp_src
+
+if GetDepend(['BSP_USING_ADC']):
+    src += ['test_adc.c']
+
+if GetDepend(['BSP_USING_DAC']):
+    src += ['test_dac.c']
+
+if GetDepend(['BSP_USING_CAN']):
+    src += ['test_can.c']
+
+if GetDepend(['BSP_USING_RTC']):
+    src += ['test_rtc.c']
+
+if GetDepend(['BSP_USING_WDT']) or GetDepend(['BSP_USING_SWDT']):
+    src += ['test_wdt.c']
+
+if GetDepend(['BSP_USING_HWTIMER']):
+    src += ['test_hwtimer.c']
+
+if GetDepend(['BSP_USING_PULSE_ENCODER']):
+    src += ['test_pulse_encoder.c']
+
+if GetDepend(['BSP_USING_PWM']):
+    src += ['test_pwm.c']
+
+if GetDepend(['BSP_USING_INPUT_CAPTURE']):
+    src += ['test_tmr_capture.c']
+
+if GetDepend(['BSP_USING_PM']):
+    src += ['test_pm.c']
+
+if GetDepend('BSP_USING_HWCRYPTO'):
+    src += ['test_crypto.c']
+
+if GetDepend(['BSP_USING_SDIO']):
+    src += ['test_sdmmc.c']
+
+if GetDepend(['BSP_USING_EXMC', 'BSP_USING_SDRAM']):
+    src += ['test_sdram.c']
+
+if GetDepend(['BSP_USING_EXMC', 'BSP_USING_NAND']):
+    src += ['test_nand.c']
+
+if GetDepend(['BSP_USING_USBD']):
+    src += ['test_usbd.c']
+
+if GetDepend(['BSP_USING_USBH']):
+    src += ['test_usbh.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['test_fal.c']
+
+if GetDepend(['BSP_USING_GPIO']):
+    src += ['test_gpio.c']
+
+path = [cwd]
+
+group = DefineGroup('Tests', src, depend = [''], CPPPATH = path)
+
+Return('group')

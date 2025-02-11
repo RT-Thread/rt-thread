@@ -1,6 +1,6 @@
-# Ulog Log
+@page component_ulog Ulog Log
 
-## Ulog Introduction
+# Ulog Introduction
 
 **Log definition**：The log is to output the status, process and other information of the software to different media (for example: file, console, display, etc.), display and save. Provide reference for software traceability, performance analysis, system monitoring, fault warning and other functions during software debugging and maintenance. It can be said that the use of logs consumes at least 80% of the software life cycle.
 
@@ -26,7 +26,7 @@ Ulog is a very simple and easy to use C/C++ log component. The first letter u st
 
 * Compatible with `rtdbg` (RTT's early log header file) and EasyLogger's log output API.
 
-### Ulog Architecture
+## Ulog Architecture
 
 The following figure shows the ulog log component architecture diagram:
 
@@ -38,7 +38,7 @@ The following figure shows the ulog log component architecture diagram:
 
 * **Back end**：After receiving the log frames sent from the core layer, the logs are output to the registered log backend devices, such as files, consoles, log servers, and so on.
 
-### Configuration Options ###
+## Configuration Options
 
 The path to configure ulog using menuconfig in the ENV tool is as follows:
 
@@ -72,7 +72,7 @@ The path to configure ulog using menuconfig in the ENV tool is as follows:
     [ ] Enable thread information.          /* Thread information */
 ```
 
-### Log Level
+## Log Level
 
 The log level represents the importance of the log, from high to low in ulog, with the following log levels:
 
@@ -102,7 +102,7 @@ As can be seen from the above classification, the output level of the log can be
 
 Their scope of action is：**Global Static**>**Global Dynamics**>**Module Static**>**Module Dynamic**.
 
-### Log Label
+## Log Label
 
 Due to the increasing log output, in order to avoid the log being outputted indiscriminately, it is necessary to use a tag to classify each log. The definition of the label is in the form of **modular**, for example: Wi-Fi components include device driver (wifi_driver), device management (wifi_mgnt) and other modules, Wi-Fi component internal module can use `wifi.driver`, `wifi.mgnt` is used as a label to perform classified output of logs.
 
@@ -120,9 +120,9 @@ Note that the definition log tag must be above `#include <ulog.h>`, otherwise th
 
 The scope of the log tag is the current source file, and the project source code will usually be classified according to the module. Therefore, when defining a label, you can specify the module name and sub-module name as the label name. This is not only clear and intuitive when the log output is displayed, but also facilitates subsequent dynamic adjustment of the level or filtering by label.
 
-## Log Initialization
+# Log Initialization
 
-### Initialization
+## Initialization
 
 ```c
 int ulog_init(void)
@@ -135,7 +135,7 @@ int ulog_init(void)
 
 This function must be called to complete ulog initialization before using ulog. This function will also be called automatically if component auto-initialization is turned on.
 
-### Deinitialization
+## Deinitialization
 
 ```c
 void ulog_deinit(void)
@@ -143,7 +143,7 @@ void ulog_deinit(void)
 
 This deinit release resource can be executed when ulog is no longer used.
 
-## Log Output API
+# Log Output API
 
 Ulog mainly has two log output macro APIs, which are defined in the source code as follows:
 
@@ -197,9 +197,9 @@ void show_string(const char *str)
 }
 ```
 
-## ULog Usage Example
+# ULog Usage Example
 
-### Example
+## Example
 
 The following is a description of the ulog routine. Open `rt-thread\examples\ulog_example.c` and you can see that there are labels and static priorities defined at the top.
 
@@ -233,7 +233,7 @@ The following will show the effect of the ulog routine on qemu:
 
 You can see that each log is displayed in rows, and different levels of logs have different colors. At the top of the log is the tick of the current system, with the log level and label displayed in the middle, and the specific log content at the end. These log formats and configuration instructions are also highlighted later in this article.
 
-### Used in Interrupt ISR
+## Used in Interrupt ISR
 
 Many times you need to output a log in the interrupt ISR, but the ISR may interrupt the thread that is doing the log output. To ensure that the interrupt log and the thread log do not interfere with each other, special handling must be performed for the interrupt condition.
 
@@ -263,7 +263,7 @@ Here are the different strategies for interrupt logging in ulog in synchronous m
 
 **In asynchronous mode**：If the above situation occurs, the log in the interrupt will be put into the buffer first, and finally sent to the log output thread for processing together with the thread log.
 
-### Set the Log Format
+## Set the Log Format
 
 The log format supported by ulog can be configured in menuconfig, located in `RT-Thread Components` → `Utilities` → `ulog` → `log format`. The specific configuration is as follows:
 
@@ -275,7 +275,7 @@ They can be configured separately: floating-point number support (traditional rt
 
 It can be seen that the time information has been changed from the tick value of the system to the timestamp information compared to the first run routine, and the thread information has also been output.
 
-### Hexdump Output Using
+## Hexdump Output Using
 
 Hexdump is also a more common function when logging output. hexdump can output a piece of data in hex format. The corresponding API is: `void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t size)` , see below the specific use method and operation effect:
 
@@ -297,13 +297,13 @@ You can copy the above code into the ulog routine, and then look at the actual r
 
 It can be seen that the middle is the hexadecimal information of the buf data, and the rightmost is the character information corresponding to each data.
 
-## Log Advanced Features
+# Log Advanced Features
 
 After understanding the introduction of the log in the previous section, the basic functions of ulog can be mastered. In order to let everyone better use ulog, this application note will focus on the advanced features of ulog and some experience and skills in log debugging. After learning these advanced uses, developers can also greatly improve the efficiency of log debugging.
 
 It also introduces the advanced mode of ulog: syslog mode, which is fully compatible with the Linux syslog from the front-end API to the log format, greatly facilitating the migration of software from Linux.
 
-### Log Backend
+## Log Backend
 
 ![Ulog framework](figures/ulog_framework_backend.png)
 
@@ -311,7 +311,7 @@ Speaking of the backend, let's review the ulog's framework. As can be seen from 
 
 Currently ulog has integrated the console backend, the traditional device that outputs `rt_kprintf` print logs. Ulog also supports the Flash backend, which seamlessly integrates with EasyFlash. See its package for details.（[Click to view](https://github.com/armink-rtt-pkgs/ulog_easyflash_be)）。Later ulog will also increase the implementation of backends such as file backends and network backends. Of course, if there are special needs, users can also implement the backend themselves.
 
-#### Register Backend Device
+### Register Backend Device
 
 ```c
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color)
@@ -327,7 +327,7 @@ rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool
 
 This function is used to register the backend device into the ulog, ensuring that the function members in the backend device structure are set before registration.
 
-#### Logout Backend Device
+### Logout Backend Device
 
 ```c
 rt_err_t ulog_backend_unregister(ulog_backend_t backend);
@@ -341,7 +341,7 @@ rt_err_t ulog_backend_unregister(ulog_backend_t backend);
 
 This function is used to unregister a backend device that has already been registered.
 
-#### Backend Implementation and Registration Examples
+### Backend Implementation and Registration Examples
 
 The console backend is taken as an example to briefly introduce the implementation method and registration method of the backend.
 
@@ -400,7 +400,7 @@ From the perspective of this structure, the requirements for implementing the ba
 
 * `flush` is also optional, and some internal output cached backends need to implement this interface. For example, some file systems with RAM cache. The flush of the backend is usually called by `ulog_flush` in the case of an exception such as assertion or hardfault.
 
-### Asynchronous Log
+## Asynchronous Log
 
 In ulog, the default output mode is synchronous mode, and in many scenarios users may also need asynchronous mode. When the user calls the log output API, the log is cached in the buffer, and the thread dedicated to the log output takes out the log and outputs it to the back end.
 
@@ -420,7 +420,7 @@ The advantages and disadvantages of asynchronous mode are as follows:
 
 **Disadvantage**：First, the asynchronous mode requires a log buffer. Furthermore, the output of the asynchronous log needs to be completed by a special thread, such as an idle thread or a user-defined thread, which is slightly more complicated to use. The overall sense of asynchronous mode resource occupancy will be higher than the synchronous mode.
 
-#### Configuration Option
+### Configuration Option
 
 Use menuconfig in the Env tool to enter the ulog configuration options:
 
@@ -444,7 +444,7 @@ When using the idle thread output, the implementation is simple, just call `rt_t
 
 * Because thread suspend operations are not allowed inside idle threads, backends such as Flash and networking may not be available based on idle threads.
 
-#### Use Example
+### Use Example
 
 Save the asynchronous output option configuration and copy `rt-thread\examples\ulog_example.c` to the `rt-thread\bsp\qemu-vexpress-a9\applications` folder.
 
@@ -455,13 +455,13 @@ Enter the `ulog_example` command to see the results of the ulog routine. The app
 
 If you look carefully, you can see that after the asynchronous mode is turned on, the time information of these logs that are very close in code is almost the same. However, in synchronous mode, the log is output using the user thread. Since the log output takes a certain amount of time, there is a certain interval between each log. It also fully shows that the asynchronous log output is very efficient, and it takes almost no time for the caller.
 
-### Log Dynamic Filter
+## Log Dynamic Filter
 
 In the previous section, some static filtering functions have been introduced. Static filtering has its advantages such as saving resources, but in many cases, users need to dynamically adjust the filtering mode of the log while the software is running. This allows the dynamic filter function of ulog to be used. To use the dynamic filter feature, turn on the `Enable runtime log filter.` option in menuconfig, which is **turned off by default**.
 
 There are four types of dynamic filtering supported by ulog, and there are corresponding API functions and Finsh/MSH commands, which will be introduced one by one.
 
-#### Filter by Module Level
+### Filter by Module Level
 
 ```c
 int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
@@ -499,7 +499,7 @@ An example of a function call and command is as follows:
 | Open all logs of `wifi` module | `ulog_tag_lvl_filter_set("wifi", LOG_FILTER_LVL_ALL);`    | `ulog_tag_lvl wifi 7` |
 | Set the `wifi` module log level to warning | `ulog_tag_lvl_filter_set("wifi", LOG_LVL_WARNING);`       | `ulog_tag_lvl wifi 4` |
 
-#### Global Filtering by Label
+### Global Filtering by Label
 
 ```c
 void ulog_global_filter_tag_set(const char *tag)
@@ -521,7 +521,7 @@ For example: there are 3 kinds of tags for `wifi.driver`, `wifi.mgnt`, `audio.dr
 | Set the filter tag to `driver` | `ulog_global_filter_tag_set("driver");` | `ulog_tag driver` |
 | Cancel label filtering | `ulog_global_filter_tag_set("");` | `ulog_tag`    |
 
-#### Global Filtering by Level
+### Global Filtering by Level
 
 ```c
 void ulog_global_filter_lvl_set(rt_uint32_t level)
@@ -549,7 +549,7 @@ After setting the global filter level by function or command, the log below **se
 | Open all logs | `ulog_global_filter_lvl_set(LOG_FILTER_LVL_ALL);`    | `ulog_lvl 7` |
 | Set the log level to warning | `ulog_global_filter_lvl_set(LOG_LVL_WARNING);`       | `ulog_lvl 4` |
 
-#### Global Filtering by Keyword
+### Global Filtering by Keyword
 
 ```c
 void ulog_global_filter_kw_set(const char *keyword)
@@ -568,7 +568,7 @@ This filtering method can filter all the logs by keyword, and the log **containi
 | Set the filter keyword to `wifi` | `ulog_global_filter_kw_set("wifi");` | `ulog_kw wifi` |
 | Clear filter keywords | `ulog_global_filter_kw_set("");`     | `ulog_kw`      |
 
-#### View Filter Information
+### View Filter Information
 
 After setting the filter parameters, if you want to view the current filter information, you can enter the `ulog_filter` command. The approximate effect is as follows:
 
@@ -588,7 +588,7 @@ msh />
 
 > Filter parameters are also supported storing in Flash and also support boot autoload configuration. If you need this feature, please see the instructions for the **ulog_easyflash** package.（[Click to check](https://github.com/armink-rtt-pkgs/ulog_easyflash_be)）
 
-#### Use Example
+### Use Example
 
 Still executing in qemu BSP, first open dynamic filter in menuconfig, then save the configuration and compile and run the routine. After the log output is about **20** times, the corresponding filter code in ulog_example.c will be executed:
 
@@ -642,7 +642,7 @@ At this time, the log output level of the `test` module is adjusted to `LOG_FILT
 
 ![ulog filter routine 40](figures/ulog_example_filter40.png)
 
-### Usage when the System is Abnormal
+## Usage when the System is Abnormal
 
 Since the asynchronous mode of ulog has a caching mechanism, the registered backend may also have a cache inside. If there are error conditions such as hardfault and assertion in the system, but there are still logs in the cache that are not output, which may cause the log to be lost. It is impossible to find the cause of the exception.
 
@@ -650,7 +650,7 @@ For this scenario, ulog provides a unified log flush function: `void ulog_flush(
 
 The following is an example of RT-Thread assertion and CmBacktrace:
 
-#### Assertion
+### Assertion
 
 RT-Thread assertions support assertion callbacks. We define an assertion hook function similar to the following, and then set it to the system via the `rt_assert_set_hook(rtt_user_assert_hook);` function.
 
@@ -666,7 +666,7 @@ static void rtt_user_assert_hook(const char* ex, const char* func, rt_size_t lin
 }
 ```
 
-#### CmBacktrace
+### CmBacktrace
 
 CmBacktrace is a fault diagnosis library for ARM Cortex-M series MCUs. It also has a corresponding RT-Thread package, and the latest version of the package has been adapted for ulog. The adaptation code is located in `cmb_cfg.h` :
 
@@ -685,7 +685,7 @@ CmBacktrace is a fault diagnosis library for ARM Cortex-M series MCUs. It also h
 
 It can be seen that when ulog is enabled, each log output of CmBacktrace will use the error level, and `ulog_flush` will be executed at the same time, and the user does not need to make any modifications.
 
-### Syslog Mode
+## Syslog Mode
 
 On Unix-like operating systems, syslog is widely used in system logs. The common backends of syslog are files and networks. The syslog logs can be recorded in local files or sent over the network to the server that receives the syslog.
 
@@ -693,7 +693,7 @@ Ulog provides support for the syslog mode, not only the front-end API is exactly
 
 To use the syslog configuration you need to enable the `Enable syslog format log and API.` option.
 
-#### Log Format
+### Log Format
 
 ![ulog syslog format](figures/ulog_syslog_format.png)
 
@@ -706,7 +706,7 @@ As shown in the figure above, the ulog syslog log format is divided into the fol
 | TAG | The current log label can be passed in via the `openlog` function. If not specified, `rtt` will be used as the default label. |
 | Content | The specific content of the log |
 
-#### Instruction
+### Instruction
 
 The syslog option needs to be enabled in menuconfig before use. The main commonly used APIs are:
 
@@ -721,15 +721,15 @@ syslog() is very simple to use. The input format is the same as the printf funct
 
 ![ulog syslog routine](figures/ulog_example_syslog.png)
 
-### Migrate from *rt_dbg.h* or elog to ulog
+## Migrate from *rt_dbg.h* or elog to ulog
 
 If the two types of log components were used in the project before, when ulog is to be used, it will involve how to make the previous code also support ulog. The following will focus on the migration process.
 
-#### Migrate from rt_dbg.h
+### Migrate from rt_dbg.h
 
 Currently rtdbg has completed **seamless docking** ulog. After ulog is turned on, the code of rtdbg in the old project can be used to complete the log output without any modification.
 
-#### Migrate from Elog(EasyLogger)
+### Migrate from Elog(EasyLogger)
 
 If you are not sure that a source code file is running on a target platform that will use ulog, then it is recommended to add the following changes to the file:
 
@@ -743,58 +743,58 @@ If you are not sure that a source code file is running on a target platform that
 
 If you explicitly only use the ulog component, then simply change the header file reference from `elog.h` to `ulog .h`, and no other code needs to be changed.
 
-### Log Usage Tip
+## Log Usage Tip
 
 With the logging tool, if it is used improperly, it will also cause the log to be abused, and the log information cannot be highlighted. Here we will focus on sharing some tips on the use of the log component to make the log information more intuitive. The main concerns are:
 
-#### Rational Use of Label Classification
+### Rational Use of Label Classification
 
 Reasonably use the label function. For each module code before the use of the log, first clear the module, sub-module name. This also allows the logs to be categorized at the very beginning and ready for later log filtering.
 
-#### Rational Use of Log Levels
+### Rational Use of Log Levels
 
 When you first use the log library, you will often encounter warnings and errors. The logs cannot be distinguished. The information cannot be distinguished from the debug logs, which makes the log level selection inappropriate. Some important logs may not be visible, and unimportant logs are full of problems. Therefore, be sure to read the log level section carefully before using it. For each level, there are clear standards.
 
-#### Avoid Repetitive and Redundant Logs
+### Avoid Repetitive and Redundant Logs
 
 In some cases, repeated or cyclic execution of code occurs, and the same, similar log problems are output multiple times. Such a log not only takes up a lot of system resources, but also affects the developer's positioning of the problem. Therefore, in this case, it is recommended to add special processing for repetitive logs, such as: let the upper layer output some business-related logs, the bottom layer only returns the specific result status; the same log at the same time point, can increase to deal with the re-processing, only output once and so on when the error state has not changed.
 
-#### Open More Log Formats
+### Open More Log Formats
 
 The timestamp and thread information are not turned on in the default log format of ulog. These two log messages are useful on RTOS. They can help developers to understand the running time and time difference of each log, and clearly see which thread is executing the current code. So if conditions permit, it is still recommended to open.
 
-#### Close Unimportant Logs
+### Close Unimportant Logs
 
 Ulog provides log switch and filtering functions in various dimensions, which can completely control the refinement. Therefore, if you debug a function module, you can properly close the log output of other unrelated modules, so that you can focus on the current debugging on the module.
 
-## Common Problems
+# Common Problems
 
-### Q: The log code has been executed, but there is no output.
+## Q: The log code has been executed, but there is no output.
 
  **A:** Refer to the Log Levels section for the log level classification and check the log filtering parameters. There is also the possibility of accidentally closing the console backend and re-opening `Enable console backend`.
 
-### Q: After ulog is turned on, the system crashes, for example: thread stack overflow.
+## Q: After ulog is turned on, the system crashes, for example: thread stack overflow.
 
  **A:** Ulog will occupy more part of the thread stack space than the previous rtdbg or `rt_kprintf` printout function. If floating-point printing support is enabled, it is recommended because it uses the internal memory of libc with a large amount of `vsnprintf`. Reserve more than 250 bytes. If the timestamp function is turned on, the stack recommends a reserve of 100 bytes.
 
-### Q: The end of the log content is missing.
+## Q: The end of the log content is missing.
 
  **A:** This is because the log content exceeds the maximum width of the set log. Check the `The log's max width` option and increase it to the appropriate size.
 
-### Q: After turning on the timestamp, why can't I see the millisecond time?
+## Q: After turning on the timestamp, why can't I see the millisecond time?
 
  **A:** This is because ulog currently only supports millisecond timestamps when the software emulation RTC state is turned on. To display, just turn on the RT-Thread software to simulate the RTC function.
 
-### Q: Define LOG_TAG and LOG_LVL before each include ulog header file, can it be simplified?
+## Q: Define LOG_TAG and LOG_LVL before each include ulog header file, can it be simplified?
 
 **A:** If `LOG_TAG` is not defined, the `NO_TAG` tag will be used by default, so the output log will be easily misunderstood. Therefore the tag macro is not recommended to be omitted.
 
 If `LOG_LVL` is not defined, the debug level is used by default. If the module is in the development stage, this process can be omitted, but if the module code is stable, it is recommended to define the macro and modify the level to information level.
 
-### Q: Warning when running：Warning: There is no enough buffer for saving async log, please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option。
+## Q: Warning when running：Warning: There is no enough buffer for saving async log, please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option。
 
 **A:** When this prompt is encountered, it indicates that the buffer in the asynchronous mode has overflowed, which will cause some of the log to be lost. Increasing the ULOG_ASYNC_OUTPUT_BUF_SIZE option can solve the problem.
 
-### Q: Compile time prompt：The idle thread stack size must more than 384 when using async output by idle (ULOG_ASYNC_OUTPUT_BY_IDLE)。
+## Q: Compile time prompt：The idle thread stack size must more than 384 when using async output by idle (ULOG_ASYNC_OUTPUT_BY_IDLE)。
 
 **A:** When using an idle thread as the output thread, the stack size of the idle thread needs to be increased, depending on the specific backend device. For example, when the console being a backend, the idle thread must be at least 384 bytes.

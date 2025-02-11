@@ -7,13 +7,13 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>HC32F4A0SITB</Device>
           <Vendor>HDSC</Vendor>
-          <PackID>HDSC.HC32F4A0.1.0.7</PackID>
+          <PackID>HDSC.HC32F4A0.1.0.8</PackID>
           <PackURL>https://raw.githubusercontent.com/hdscmcu/pack/master/</PackURL>
           <Cpu>IROM(0x00000000,0x200000) IRAM(0x1FFE0000,0x80000)  IRAM2(0X200F0000,0x1000) CPUTYPE("Cortex-M4") FPU2 CLOCK(240000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec />
@@ -30,7 +30,7 @@
           <SLE66CMisc />
           <SLE66AMisc />
           <SLE66LinkerMisc />
-          <SFDFile>../libraries/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/sfr/HC32F4A0.SFR</SFDFile>
+          <SFDFile>../libraries/hc32f4a0_ddl/cmsis/Device/HDSC/hc32f4xx/Source/ARM/sfr/HC32F4A0.SFR</SFDFile>
           <bCustSvd>1</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath />
@@ -182,9 +182,8 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>1</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>1</hadIRAM2>
-            <hadIROM2>1</hadIROM2>
+            <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>0</useUlib>
             <EndSel>1</EndSel>
@@ -334,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, USE_DDL_DRIVER, HC32F4A0, __RTTHREAD__, __DEBUG</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, __DEBUG, __RTTHREAD__, RT_USING_ARMLIBC, HC32F4A0, USE_DDL_DRIVER, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\hc32f4a0_ddl\drivers\cmsis\Include;..\..\..\components\libc\compilers\common\include;board\ports;..\libraries\hc32f4a0_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Include;..\..\..\components\finsh;board\config\usb_config;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\libraries\hc32_drivers;board;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;applications;.;..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\inc;..\..\..\components\libc\posix\io\epoll;board\config;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\libraries\hc32f4a0_ddl\cmsis\Device\HDSC\hc32f4xx\Include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\libraries\hc32_drivers;..\platform\tca9539;..\libraries\hc32f4a0_ddl\hc32_ll_driver\inc;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;applications;..\..\..\components\finsh;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\smp_call;..\libraries\hc32f4a0_ddl\cmsis\Include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;board\ports;..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\extension;board;..\..\..\include;board\config;board\config\usb_config;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\tests</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -349,7 +348,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls />
               <Define />
@@ -365,7 +364,7 @@
             <RepFail>1</RepFail>
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
-            <DataAddressRange>0x1FFF8000</DataAddressRange>
+            <DataAddressRange>0x1FFE0000</DataAddressRange>
             <pXoBase />
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs />
@@ -381,16 +380,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>xtal32_fcm.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\xtal32_fcm.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>xtal32_fcm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\xtal32_fcm.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -476,9 +475,104 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>dev_i2c_bit_ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\i2c\dev_i2c_bit_ops.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dev_i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\dev_i2c_core.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dev_i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\dev_i2c_dev.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -609,9 +703,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -628,9 +722,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -666,7 +760,7 @@
             <File>
               <FileName>startup_hc32f4a0.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Source\ARM\startup_hc32f4a0.s</FilePath>
+              <FilePath>..\libraries\hc32f4a0_ddl\cmsis\Device\HDSC\hc32f4xx\Source\ARM\startup_hc32f4a0.s</FilePath>
             </File>
           </Files>
           <Files>
@@ -685,9 +779,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>drv_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32_drivers\drv_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\hc32_drivers\drv_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_soft_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32_drivers\drv_soft_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -702,13 +810,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
@@ -719,6 +820,13 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -755,6 +863,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -812,44 +958,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1018,6 +1126,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1059,121 +1205,169 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>hc32_ll_clk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_clk.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_icg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_icg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_utility.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_utility.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>hc32_ll_fcg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_fcg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_interrupts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_interrupts.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_pwc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_pwc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_aos.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_aos.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_sram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_efm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_efm.c</FilePath>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_fcg.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32f4a0_ll_interrupts_share.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32f4a0_ll_interrupts_share.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_usart.c</FilePath>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32f4a0_ll_interrupts_share.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32_ll_rmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_rmu.c</FilePath>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_rmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>system_hc32f4a0.c</FileName>
+              <FileName>hc32_ll_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Source\system_hc32f4a0.c</FilePath>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hc32_ll_tmr0.c</FileName>
+              <FileName>hc32_ll.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_tmr0.c</FilePath>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_utility.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_utility.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_pwc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_pwc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32_ll_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\hc32f4a0_ddl\drivers\hc32_ll_driver\src\hc32_ll_dma.c</FilePath>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_hc32f4a0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\cmsis\Device\HDSC\hc32f4xx\Source\system_hc32f4a0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_icg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_icg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_interrupts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_interrupts.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_sram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_efm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_efm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_aos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_aos.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_clk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_tmr0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_tmr0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hc32_ll_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32f4a0_ddl\hc32_ll_driver\src\hc32_ll_i2c.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Platform</GroupName>
+          <Files>
+            <File>
+              <FileName>tca9539.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\platform\tca9539\tca9539.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Tests</GroupName>
+          <Files>
+            <File>
+              <FileName>test_uart_v1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\tests\test_uart_v1.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>test_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\tests\test_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>test_soft_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\tests\test_soft_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>test_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\tests\test_i2c.c</FilePath>
             </File>
           </Files>
         </Group>

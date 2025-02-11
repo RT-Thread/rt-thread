@@ -222,7 +222,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_SOFT_SPI
         bool "Enable SOFT SPI"
-        select RT_USING_SPI_BITOPS
+        select RT_USING_SOFT_SPI
 
         if BSP_USING_SOFT_SPI
             config BSP_USING_SOFT_SPI1

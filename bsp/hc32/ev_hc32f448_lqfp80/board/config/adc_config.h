@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
  * Copyright (c) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -32,7 +31,7 @@ extern "C" {
        .hard_trig_src                   = ADC_HARDTRIG_EVT0,                    \
        .internal_trig0_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig0_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_A,                 \
+       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
        .internal_trig1_sel              = EVT_SRC_MAX,                          \
@@ -75,7 +74,7 @@ extern "C" {
        .hard_trig_src                   = ADC_HARDTRIG_EVT0,                    \
        .internal_trig0_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig0_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_A,                 \
+       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
        .internal_trig1_sel              = EVT_SRC_MAX,                          \
@@ -118,7 +117,7 @@ extern "C" {
        .hard_trig_src                   = ADC_HARDTRIG_EVT0,                    \
        .internal_trig0_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig0_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_A,                 \
+       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
        .internal_trig1_sel              = EVT_SRC_MAX,                          \

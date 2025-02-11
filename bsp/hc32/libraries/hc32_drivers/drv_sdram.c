@@ -8,6 +8,7 @@
  * 2023-02-24     CDT          first version
  * 2024-02-20     CDT          modify exclk clock max frequency to 40MHz for HC32F4A0
  *                             add t_rcd_p/t_rfc_p/t_rp_p configuration
+ * 2024-12-24     CDT          modify sample clock to EXMC_DMC_SAMPLE_CLK_EXTCLK for HC32F4A0
  */
 
 
@@ -123,6 +124,7 @@ static rt_int32_t _sdram_init(void)
 
     /* configure DMC width && refresh period & chip & timing. */
     (void)EXMC_DMC_StructInit(&stcDmcInit);
+    stcDmcInit.u32SampleClock          = EXMC_DMC_SAMPLE_CLK_EXTCLK;
     stcDmcInit.u32RefreshPeriod        = SDRAM_REFRESH_COUNT;
     stcDmcInit.u32ColumnBitsNumber     = SDRAM_COLUMN_BITS;
     stcDmcInit.u32RowBitsNumber        = SDRAM_ROW_BITS;

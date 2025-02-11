@@ -128,8 +128,10 @@ export RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 ## 4.2. 依赖安装
 
 ```shell
-$ sudo apt install -y scons libncurses5-dev device-tree-compiler
+$ sudo apt install -y scons libncurses5-dev device-tree-compiler u-boot-tools xz-utils
 ```
+
+其中 u-boot-tools 包含了打包需要的 mkimage, xz-utils 包含了打包需要的 lzma。
 
 ## 4.3. 构建
 
@@ -284,7 +286,7 @@ lwIP-2.1.2 initialized!
 found part[0], begin: 1048576, size: 128.0MB
 found part[1], begin: 135266304, size: 28.707GB
 [I/app.filesystem] device 'sd1' is mounted to '/' as FAT
-Hello RT-Smart!
+Hello RISC-V/C906B !
 msh />[E/sal.skt] not find network interface device by protocol family(1).
 [E/sal.skt] SAL socket protocol family input failed, return error -3.
 / # ls
@@ -310,7 +312,7 @@ lwIP-2.1.2 initialized!
 found part[0], begin: 1048576, size: 128.0MB
 found part[1], begin: 135266304, size: 28.707GB
 [I/app.filesystem] device 'sd1' is mounted to '/' as EXT
-Hello RT-Smart!
+Hello RISC-V/C906B !
 msh />[E/sal.skt] not find network interface device by protocol family(1).
 [E/sal.skt] SAL socket protocol family input failed, return error -3.
 / # ls 

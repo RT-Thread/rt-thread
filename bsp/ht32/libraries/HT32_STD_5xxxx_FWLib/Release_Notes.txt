@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    Release_Notes.txt
- * @version V1.9.1
- * @date    2023-12-22
+ * @version V1.14.3
+ * @date    2024-11-29
  * @brief   The Release notes of HT32 Firmware Library.
  *************************************************************************************************************
  * @attention
@@ -48,20 +48,24 @@
 //   HT32F57331, HT32F57341
 //   HT32F57342, HT32F57352
 //   HT32F59041, HT32F59741
-//   HT32F59046, HT32F59746
+//   HT32F59045
+//   HT32F59746
 //   HT32F5826, HT32F5828
 //   HT32F0006
 //   HT32F0008
 //   HT32F52142
 //   HT32F61030, HT32F61041
+//   HT32F61052
 //   HT32F61141
 //   HT32F61244, HT32F61245
 //   HT32F61352
 //   HT32F61355, HT32F61356, HT32F61357
 //   HT32F61630, HT32F61641
+//   HT32F61730, HT32F61741
 //   HT32F62030, HT32F62040, HT32F62050
 //   HT32F65230, HT32F65240
 //   HT32F65232
+//   HT32F66242, HT32F66246
 //   HT32F67041, HT32F67051
 //   HT32F67232
 //   HT32F67233
@@ -71,6 +75,267 @@
 //   HT50F3200S, HT50F3200T
 //   HF5032
 //   MXTX6306
+//   MXTX52231, MXTX52352
+//   NW32F61242
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.14.3_8294                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-11-29
+  Main Changes
+  + Add new device support.
+    - HT32F61052
+
+  Others
+  + Update comment, format, typing error, and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.14.2_8286                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-11-26
+  Main Changes
+  + Add example support of HT32F65232.
+  + Fix "ADC/OneShot_SWTrigger/ht32f5xxxx_01_it.h" parameter error.
+    - Rename "ADC_IRQHandler" to "HTCFG_ADC_IRQHandler"
+  + Add the "DISABLE_BOOTPIN_OUTPUT" definition in "CKCU/Clock_Configuration/ht32_board_config.h" to prevent
+    circuit conflicts on certain development boards.
+    - HT32F65232_DVB
+    - HT32F66242_DVB
+    - HT32F66246_DVB
+  + Modify the "OPA/OPA_Enable" example to use a single OPA and add "ht32_board_config.h".
+  + Add the "LED_HIGH_ACTIVE" definition to the following files and Fix "ht32f5xxxx_board_01.c" to align with
+    the LED circuit on the development board:
+    - bm18b367a_dvb.h
+    - bm53b367a_dvb.h
+    - ht32f65232_dvb.h
+    - ht32f65240_dvb.h
+    - ht32f66242_dvb.h
+    - ht32f66246_dvb.h
+
+  Others
+  + Update comment, format, typing error, and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.14.1_8273                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-11-08
+  Main Changes
+  + Add new device support.
+    - HT32F66242, HT32F66246
+  + Add new IP drivers.
+    - Programmable Gain Amplifier, "ht32f65xxx_66xxx_pga.c/h"
+    - Coordinate Rotation Digital Computer, "ht32f66xxx_cordic.c/h"
+    - Proportion Integration Differentiation driver, "ht32f66xxx_pid.c/h"
+  + Add new examples:
+    - "CORDIC/CosSin_Interrupt"
+    - "CORDIC/CosSin_Polling"
+    - "PGA/Comparator"
+    - "PGA/Inverting"
+    - "PGA/InvertingAdder"
+    - "PGA/NonInverting"
+    - "PGA/NonInvertingAdder"
+    - "PGA/VoltageFollower"
+    - "PID/ChangePara_inSameMode"
+    - "PID/Interrupt"
+    - "PID/MultiMode"
+    - "PID/Polling"
+  + Add the "LIBCFG_CKCU_NO_LPCR" definition in "ht32f65230_40_libcfg.h" and "ht32f65232_libcfg.h" to
+    fix the "CKCU_BKISOCmd" the redundant flow of the HT32F65230/65240 and HT32F65232 (related to the Low Power Control).
+  + Add the "LIBCFG_PWRCU_NO_DS2_MODE" definition in "ht32f65230_40_libcfg.h" and "ht32f65232_libcfg.h" to
+    fix the "PWRCU_DeepSleep2()" and "PWRCU_GetDMOSStatus()" the redundant flow
+    of the HT32F65230/65240 and HT32F65232 (related to the Deep-Sleep2 Mode).
+  + Remove the "LIBCFG_PWRCU_NO_PORF" definition in "ht32f65232_libcfg.h" to fix the "PWRCU_DeInit()" 
+    missing flow of the HT32F65232 (related to the Power-On Reset Flag).
+  + Change the HTCFG_TIMER_PRESCALER value according to HTCFG_PULSE_SYS_CLK is less 
+    than or greater than 60 MHz to ensure that the Counter-Reload value is less than 0xFFFF.
+    - "TM/UpdateEvent"
+    - "TM/SinglePulseMode"
+    - "TM/TriggerCounter"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Change define "LIBCFG_CMP_65x_VER" to "LIBCFG_CMP_65x_66x_VER"  for the HT32F65xxx and HT32F66xxx series ICs.
+  + Add "IS_ADC_TRIG_CMP2()" macro, for use to confirm the adc trigger is CMP2 in ht32f65xxx_66xxx_adc.h
+  + Fix the bit position error in the "IS_ADC_INT" macro.
+  + Change define "LIBCFG_TM_652XX_V1" to "LIBCFG_TM_65X_66X_V1"
+  + Change define "LIBCFG_TM_65232" to "LIBCFG_TM_65X_66X_BK_FROM_CMP" and "LIBCFG_TM_65X_66X_RECCDI"
+
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.13.2_8218                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-10-23
+  Main Changes
+  + Fix "CAN_Legacy/TxRxLoopback" example compiling error.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.13.1_8190                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-09-24
+  Main Changes
+  + Add new device support.
+    - NW32F61242
+  + Change the CAN IP Driver, switch to the latest designed API.
+  + Add new examples.
+    "CAN/Recv_DATA"
+    "CAN/Recv_Interrupt"
+    "CAN/Recv_Mask_Filter"
+    "CAN/Recv_REMOTE"
+    "CAN/Send_DATA"
+    "CAN/Send_Recv_DATA"
+    "CAN/Send_REMOTE"
+  + Fix "AES_SetKeyTable()" and "AES_SetVectorTable()" Key and Vector index errors, which cause incorrect AES
+    encryption and decryption.
+  + Modify "I2C/7_bit_mode" example, fix pin assignment error of HT32F50343.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update AES examples.
+    - Change the key, IV, and plain text from hex array to string, making the result easier to compare with
+      online tools.
+    - Add expected cipher text and compare it with the MCU's H/W AES result as an error-proofing mechanism.
+  + Remove device support.
+    - HT32F57541, HT32F57552
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.12.1_7949                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-08-08
+  Main Changes
+  + Add new device support.
+    - HT32F57541
+    - HT32F57552
+  + Update "uart_module.c" to fix the UART0 ~ UART3 not work issue of BM53A367A.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Change path of the "Holtek.HT32_DFP.latest.pack".
+  + Minor changes were made to the USBD "HID_Keyboard_Virtual_COM" and "Virtual_COM" examples.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.11.1_7908                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-07-26
+  Main Changes
+  + Add new device support.
+    - HT32F59045
+    - MXTX52231, MXTX52352
+  + Remove device support.
+    - HT32F59046
+  + Rename WDT parameters.
+    - Old Name                          | New Name
+    - --------------------------------- | ----------------------------
+    - "MODE0_WDTSHLT_BOTH"              | "WDT_SLEEP_HALT_NONE"
+    - "MODE0_WDTSHLT_SLEEP"             | "WDT_SLEEP_HALT_DEEPSLEEP"
+    - "MODE0_WDTSHLT_SLEEP"             | "WDT_SLEEP_HALT_ALL"
+  + Update below files to support the BMduino shield/module Keil Driver.
+    - Modify :"utilities/bmduino_board.h".
+    - Add    :"utilities/bmduino_check.h".
+  + Modify "void StackUsageAnalysisInit(void)". Added parameter "u32 addr" and reimplemented as
+    "void StackUsageAnalysisInit(u32 addr);"
+  + Fix the below examples ADC_IRQHandler define error of HT32F65232 and HT32F65240.
+    - "ADC/AnalogWatchdog"
+    - "ADC/Continuous_Potentiometer"
+    - "ADC/Discontinuous_EXTITrigger"
+    - "ADC/OneShot_PWMTrigger"
+    - "ADC/OneShot_PWMTrigger_with_Delay"
+    - "ADC/OneShot_SWTrigger"
+  + Modify example IO define of HT32F65232.
+    - "ADC/AnalogWatchdog"
+    - "ADC/Continuous_Potentiometer"
+    - "ADC/Discontinuous_EXTITrigger"
+    - "ADC/OneShot_PWMTrigger"
+    - "ADC/OneShot_PWMTrigger_with_Delay"
+    - "ADC/OneShot_SWTrigger"
+    - "ADC/OneShot_TMTrigger_PDMA"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update ht32f5xxxx_01.h.
+    - Modify the preprocessor define of "__ALIGN4", "__PACKED_H", "__PACKED_F" for old Arm Compiler V6.
+  + Modify "void FLASH_SetRemappingMode(FLASH_Vector FLASH_BOOT_x);". Changed parameter name from
+    "RemapMode" to "FLASH_BOOT_x".
+  + Modify comments to remind users about "Stack Usage Analysis" notification.
+  + Remove redefined "PWRRST_SET" setting in "ht32f5xxxx_pwrcu.c".
+  + Update CKCU API. Enhanced program stability with robustness settings for parameter "PCLKPrescaler"
+    in "CKCU_SetPeripPrescaler(..., CKCU_APBCLKPRE_TypeDef PCLKPrescaler)".
+  + Update I2C Master middleware, improve setting way and fix minor errors.
+  + Update the following middleware to support the BMduino Keil Driver.
+    "utilities/middleware/i2c_master.c"
+    "utilities/middleware/i2c_master.h"
+    "utilities/middleware/spi_module.c"
+    "utilities/middleware/spi_module.h"
+    "utilities/middleware/uart_module.c"
+    "utilities/middleware/uart_module.h"
+  + Update xxTM IP Driver
+    - Remove redundant "TM_ClearOREFConfig()" function.
+  + Update "DAC_Cmd()" of "ht32f5xxxx_dac.c", remove compiler warning of the GNU compiler.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.10.1_7761                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-06-11
+  Main Changes
+  + Add new device support.
+    - HT32F61730, HT32F61741
+  + Add new examples.
+    "ADC/BandgapVoltage"
+    "GPIO/SinkCurrentEnhanced"
+  + Update related files of HT32F59046.
+  + Fix the "USE_HT32_CHIP" ID error of HT32F52244 (change from 33 to 35).
+  + Remove "LIBCFG_GPIO_SINK_CURRENT_ENHANCED" setting error for the following part number.
+    HT32F50431/50441
+    HT32F50442/50452
+    HT32F53231/53241
+    HT32F53242/53252
+    HT32F54231/54241
+    HT32F54243/54253
+  + Change the ADC API, "ADC_VREFOutputCmd()" as "ADC_VREFOutputADVREFPCmd()".
+  + Change the CKCU API, "CKCU_Set_HSIReadyCounter" as "CKCU_SetHSIReadyCounter()".
+  + Add "LIBCFG_GPIO_SINK_CURRENT_ENHANCED" setting of HT32F50020/50030.
+  + Improve the thread-safe capability of "utilities/common/ring_buffer.c".
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update the project file of HT32F61141, change the "ht32f5xxxx_01_usbdconf.h" as ht32f5xxxx_02_usbdconf.h".
+  + Update "SPI_DUALCmd()", "QSPI_QuadCmd()", and "QSPI_DirectionConfig()", make sure the SPI Bus is not busy
+    before changing the settings.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.9.2_7624                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-02-29
+  Main Changes
+  + Add new examples.
+    "Tips/Checksum_CRC16"
+    "Tips/StackOnTop"
+    "USART/LIN_Master"
+    "USART/LIN_Slave"
+    "CAN/TxRxLoopback"
+  + Add "LIBCFG_CMP_IVREF_CN_IN" define of the following parts, to fix the comparator function/feature
+    missing (select VREF as inverted input).
+    - HT32F50442/50452/53242/53252.
+  + Add HT32 Stack Usage Analysis feature.
+    - Modify "ht32f5xxxx_conf.h", add "HTCFG_STACK_USAGE_ANALYSIS" setting for enabling HT32 Stack Usage
+      Analysis.
+    - Update project templates and "ht32_cm0plus_misc.c/.h", add "StackUsageAnalysisInit()" function to
+      initialize stack.
+    - Update project files, add HT32 Stack Usage Analysis component viewer.
+  + Update and sync "startup_ht32f5xxxx_nn.s" for the "Stack On Top" and "Stack Usage Analysis" feature.
+  + Add "USE_LIBCFG_RAM_SIZE" define in Keil project files for the "Stack On Top" feature.
+  + Modify "ht32f5xxxx_01.h", fix the MCTM alias mismatch.
+    - "MCTMn_IRQHandler" alias from "MCTM0_G_IRQHandler" to "MCTM0_UP_IRQHandler"
+  + Update related middleware (eeprom_emulation and spi_module).
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update e-Link32 Pro/Lite Command line tool as "V1.20" ("utilities/elink32pro/eLink32pro.exe").
+  + Update "TM/PWM_Buzzer/buzzer_pwm.c" to remove redefine alias (they are also defined in "ht32f5xxxx_01.h.).
+  + Update Keil after build setting, add double quotes (") in the command to prevent space in the path issues.
+  + Remove "ht32_board_config.h" from the "PDMA/SoftwareTrigger" example.
 
 /*----------------------------------------------------------------------------------------------------------*/
 /* HT32_STD_5xxxx_FWLib_V1.9.1_7446                                                                         */
@@ -386,8 +651,8 @@
     - Add "gEXTIn_IRQn[]" and "EXTI_GetIRQn()"" macro to map GPIO pin number (0 ~ 15) to "EXTIn_IRQn".
     - Add "GPIO2EXTI()"" macro to map GPIO pin to EXTI Channel.
     - Change "AFIO_EXTISourceConfig()"" API, remove "AFIO_EXTI_CH_Enum" and "AFIO_ESS_Enum".
-      Old: "void AFIO_EXTISourceConfig(AFIO_EXTI_CH_Enum AFIO_EXTI_CH_n, AFIO_ESS_Enum AFIO_ESS_Px);"
-      New: "void AFIO_EXTISourceConfig(u32 GPIO_PIN_NUM_n, u32 GPIO_Px);"
+      Old: void AFIO_EXTISourceConfig(AFIO_EXTI_CH_Enum AFIO_EXTI_CH_n, AFIO_ESS_Enum AFIO_ESS_Px)
+      New: void AFIO_EXTISourceConfig(u32 GPIO_PIN_NUM_n, u32 GPIO_Px)
   + LEDC
     - Fix typing error of the following define.
       Old                  New
@@ -772,7 +1037,7 @@
   + Update GNU project (*.uvprojx), fix the compile error when use new GNU Arm version
     ("gcc-arm-none-eabi-10-2020-q2-preview-win32" or above).
   + Fix Keil compiling error when disable both retarget and MicroLib.
-  + Update "ht32f1xxxx_01.h", fix the compatibility issue when user include "stdbool.h".
+  + Update "ht32f5xxxx_01.h", fix the compatibility issue when user include "stdbool.h".
   + Modify GNU compiler settings, output text file (disassembly) after building the code.
   + Change the startup/system supporting files of specify MCU device.
       Old                                New
@@ -782,12 +1047,12 @@
       startup_ht32f5xxxx_xxx_01.s   to   startup_ht32f5xxxx_xxx_07.s
     - HT32F52344/HT32F52354
       startup_ht32f5xxxx_01.s       to   startup_ht32f5xxxx_03.s
-  + Add "HT32_FWLIB_VER" and "HT32_FWLIB_SVN" in "ht32f1xxxx_lib.h" for the version information of
+  + Add "HT32_FWLIB_VER" and "HT32_FWLIB_SVN" in "ht32f5xxxx_lib.h" for the version information of
     HT32 Firmware Library.
     Example:
     "#define HT32_FWLIB_VER                  (018)"
     "#define HT32_FWLIB_VER                  (5303)"
-  + Add new AFIO define in "ht32f1xxxx_gpio.h".
+  + Add new AFIO define in "ht32f5xxxx_gpio.h".
     - "AFIO_FUN_MCTM0", "AFIO_FUN_MCTM1"
     - "AFIO_FUN_GPTM0", "AFIO_FUN_GPTM1", "AFIO_FUN_GPTM2", "AFIO_FUN_GPTM3"
     - "AFIO_FUN_PWM0", "AFIO_FUN_PWM1", "AFIO_FUN_PWM2", "AFIO_FUN_PWM3"

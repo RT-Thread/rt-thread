@@ -358,7 +358,11 @@ static int ra_uart_putc(struct rt_serial_device *serial, char c)
     sci_uart_instance_ctrl_t *p_ctrl = (sci_uart_instance_ctrl_t *)param->sci_ctrl;
 
     p_ctrl->p_reg->TDR = c;
+#ifdef SOC_SERIES_R9A07G0
+    while ((p_ctrl->p_reg->CSR_b.TEND) == 0);
+#else
     while ((p_ctrl->p_reg->SSR_b.TEND) == 0);
+#endif
 
     return RT_EOK;
 }

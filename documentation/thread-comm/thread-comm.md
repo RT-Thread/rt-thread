@@ -1,16 +1,14 @@
-Inter-thread Communication
-==========
+@page thread_comm Inter-thread Communication
 
 In the last chapter, we talked about inter-thread synchronization, concepts such as semaphores, mutexes, and event sets were mentioned. Following the last chapter, this chapter is going to explain inter-thread communication. In bare-metal programming, global variables are often used for communication between functions. For example, some functions may change the value of a global variable due to some operations. Another function reads the global variable and will perform corresponding actions to achieve communication and collaboration according to the global variable values it read. More tools are available in RT-Thread to help pass information between different threads. These tools are covered in more detail in this chapter. After reading this chapter, you will learn how to use mailboxes, message queues, and signals for communication between threads.
 
-Mailbox
-----
+# Mailbox
 
 Mailbox service is a typical inter-thread communication method in real-time operating systems.For example, there are two threads, thread 1 detects the state of the button and sends it's state, and thread 2 reads the state of the button and turns on or off the LED according to the state of the button. Here, a mailbox can be used to communicate. Thread 1 sends the status of the button as an email to the mailbox. Thread 2 reads the message in the mailbox to get the button status and turn on or off the LED accordingly.
 
 Thread 1 here can also be extended to multiple threads. For example, there are three threads, thread 1 detects and sends the button state, thread 2 detects and sends the ADC information, and thread 3 performs different operations according to the type of information received.
 
-### Mailbox Working Mechanism
+## Mailbox Working Mechanism
 
 The mailbox of the RT-Thread operating system is used for inter-thread communication, which is characterized by low overhead and high efficiency. Each message in the mailbox can only hold a fixed 4 bytes(for a 32-bit processing system, the pointer is 4 bytes in size, so an email can hold only one pointer). A typical mailbox is also called message exchange. As shown in the following figure, a thread or an interrupt service routine sends a 4-byte message to a mailbox, and one or more threads can receive and process the message from the mailbox.
 
@@ -22,7 +20,7 @@ When a thread sends a message to a mailbox, if the mailbox is not full, the mess
 
 When a thread receives a message from a mailbox, if the mailbox is empty, the thread receiving the message can choose whether to set a timeout or wait and suspend until a new message is received to be awaken. When the set timeout is up and the mailbox still hasn't received the message, the thread that chose to wait till timeout will be awaken and return -RT_ETIMEOUT. If there are messages in the mailbox, then the thread receiving the message will copy the 4-byte message in the mailbox to the receiving cache.
 
-### Mailbox Control Block
+## Mailbox Control Block
 
 In RT-Thread, the mailbox control block is a data structure used by the operating system to manage mailboxes, represented by the structure `struct rt_mailbox`. Another C expression, `rt_mailbox_t`, represents the handle of the mailbox, and the implementation in C language is a pointer to the mailbox control block. See the following code for a detailed definition of the mailbox control block structure:
 
@@ -44,13 +42,13 @@ typedef struct rt_mailbox* rt_mailbox_t;
 
 The `rt_mailbox` object is derived from `rt_ipc_object` and is managed by the IPC container.
 
-### Management of Mailbox
+## Management of Mailbox
 
 The mailbox control block is a structure that contains important parameters related to mailbox and it plays an important role in the function implementation of the mailbox. The relevant interfaces of the mailbox are as shown in the following figure. The operation on a mailbox includes: create/initiate a mailbox, send a mail, receive a mail, and delete/detach a mailbox.
 
 ![Mailbox Related Interface](figures/07mb_ops.png)
 
-#### Create and Delete Mailbox
+### Create and Delete Mailbox
 
 To dynamically create a mailbox object, call the following function interface:
 
@@ -87,7 +85,7 @@ Input parameters and return values of rt_mb_delete()
 |**Return**| ——             |
 | RT_EOK   | Successful |
 
-#### Initialize and Detach Mailbox
+### Initialize and Detach Mailbox
 
 Initializing a mailbox is similar to creating a mailbox, except that the mailbox initialized is for static mailbox objects. Different from creating a mailbox, the memory of a static mailbox object is allocated by the compiler during system compilation which is usually placed in a read-write data segment or an uninitialized data segment. The rest of the initialization is the same as the creation of a mailbox. The function interface is as follows:
 
@@ -131,7 +129,7 @@ Input parameters and return values for rt_mb_detach()
 |**Return**| ——             |
 | RT_EOK   | Successful |
 
-#### Send Mail
+### Send Mail
 
 The thread or ISR can send mail to other threads through the mailbox. The function interface of sending mails is as follows:
 
@@ -151,7 +149,7 @@ Input parameters and return values of rt_mb_send()
 | RT_EOK     | Sent successfully |
 | \-RT_EFULL | The mailbox is filled |
 
-#### Send Mails with Waiting
+### Send Mails with Waiting
 
 Users can also send mails to specified mailbox through the following function interface:
 
@@ -175,7 +173,7 @@ Input parameters and return values of rt_mb_send_wait()
 | \-RT_ETIMEOUT | Timeout |
 | \-RT_ERROR    | Failed, return error |
 
-#### Receive Mails
+### Receive Mails
 
 Only when there is a mail in the mailbox, the recipient can receive the mail immediately and return  RT_EOK. Otherwise, the thread receiving the message will suspend on the waiting thread queue of the mailbox or return directly according to the set timeout. The receiving mail function interface is as follows:
 
@@ -197,7 +195,7 @@ Input parameters and return values of rt_mb_recv()
 | \-RT_ETIMEOUT | Timeout  |
 | \-RT_ERROR    | Failed, return error |
 
-### Mail Usage Sample
+## Mail Usage Sample
 
 This is a mailbox application routine that initializes 2 static threads, 1 static mailbox object, one of the threads sends mail to the mailbox, and one thread receives mail from the mailbox. As shown in the following code:
 
@@ -339,7 +337,7 @@ thread1: get a mail from mailbox, the content:over
 
 The routine demonstrates how to use the mailbox. Thread 2 sends the mails, for  a total of 11 times; thread 1 receives the mails, for a total of 11 mails, prints the contents of the mail, and determines end.
 
-### Occasions to Use Mails
+## Occasions to Use Mails
 
 Mailbox is a simple inter-thread messaging method, which is characterized by low overhead and high efficiency. In the implementation of the RT-Thread operating system, a 4-byte message can be delivered at a time, and the mailbox has certain storage capabilities, which can cache a certain number of messages (the number of messages is determined by the capacity specified when creating and initializing the mailbox). The maximum length of a message in a mailbox is 4 bytes, so the mailbox can be used for messages less than 4 bytes. Since on the 32 system, 4 bytes can be placed right on a pointer, when a larger message needs to be transferred between threads, a pointer pointing to a buffer can be sent as an mail to the mailbox, which means the mailbox can also delivery a pointer. For example,
 
@@ -374,12 +372,11 @@ if (rt_mb_recv(mb, (rt_uint32_t*)&msg_ptr) == RT_EOK)
 }
 ```
 
-Message Queue
---------
+# Message Queue
 
 Message Queuing is another commonly used inter-thread communication method, which is an extension of the mailbox. Can be used in a variety of occasions, like message exchange between threads, use the serial port to receive variable length data, etc.
 
-### Message Queue Working Mechanism
+## Message Queue Working Mechanism
 
 Message queue can receive messages with unfixed length from threads or ISR and cache messages in their own memory space. Other threads can also read the corresponding message from the message queue, and when the message queue is empty, the thread reading the messages can be suspended. When a new message arrives, the suspended thread will be awaken to receive and process the message. Message queue is an asynchronous way of communication.
 
@@ -389,7 +386,7 @@ As shown in the following figure, a thread or interrupt service routine can put 
 
 The message queue object of the RT-Thread operating system consists of multiple elements. When a message queue is created, it is assigned a message queue control block: name, memory buffer, message size, and queue length. At the same time, each message queue object contains multiple message boxes, and each message box can store one message. The first and last message boxes in the message queue are respectively called the message linked list header and the message linked list tail, corresponding to `msg_queue_head` and `msg_queue_tail` in the queue control block. Some message boxes may be empty, they form a linked list of idle message boxes via `msg_queue_free`. The total number of message boxes in all message queues is the length of the message queue, which can be specified when creating the message queue.
 
-### Message Queue Control Block
+## Message Queue Control Block
 
 In RT-Thread, a message queue control block is a data structure used by the operating system to manage message queues, represented by the structure `struct rt_messagequeue`. Another C expression, `rt_mq_t`, represents the handle of the message queue. The implementation in C language is a pointer to the message queue control block. See the following code for a detailed definition of the message queue control block structure:
 
@@ -414,13 +411,13 @@ typedef struct rt_messagequeue* rt_mq_t;
 
 rt_messagequeue object is derived from rt_ipc_object and is managed by the IPC container.
 
-### Management of Message Queue
+## Management of Message Queue
 
 The message queue control block is a structure that contains important parameters related to the message queue and plays an important role in the implementation of functions of the message queue. The relevant interfaces of the message queue are shown in the figure below. Operations on a message queue include: create a message queue - send a message - receive a message - delete a message queue.
 
 ![Message Queue Related Interfaces](figures/07msg_ops.png)
 
-#### Create and Delete Message Queue
+### Create and Delete Message Queue
 
 The message queue should be created before it is used, or the existing static message queue objects should be initialized. The function interface for creating the message queue is as follows:
 
@@ -460,7 +457,7 @@ Input parameters and return values of rt_mq_delete()
 |**Return**| ——                 |
 | RT_EOK   | Successful     |
 
-#### Initialize and Detach Message Queue
+### Initialize and Detach Message Queue
 
 Initializing a static message queue object is similar to creating a message queue object, except that the memory of a static message queue object is allocated by the compiler during system compilation and is typically placed in a read data segment or an uninitialized data segment. Initialization is required before using such static message queue objects. The function interface for initializing a message queue object is as follows:
 
@@ -501,7 +498,7 @@ Input parameters and return values for rt_mq_detach()
 |**Return**| ——                 |
 | RT_EOK   | Successful       |
 
-#### Send Message
+### Send Message
 
 A thread or ISR can send a message to the message queue. When sending a message, the message queue object first takes an idle message block from the idle message list, then copies the content of the message sent by the thread or the interrupt service program to the message block, and then suspends the message block to the end of the message queue. The sender can successfully send a message if and only if there is an idle message block available on the idle message list; when there is no message block available on the idle message list, it means that the message queue is full, at this time, the thread or interrupt program that sent the message will receive an error code (-RT_EFULL). The function interface for sending messages is as follows:
 
@@ -523,7 +520,7 @@ Input parameters and return values of rt_mq_send()
 | \-RT_EFULL | Message queue is full                    |
 | \-RT_ERROR | Failed, indicating that the length of the sent message is greater than the maximum length of the message in the message queue. |
 
-#### Send an Emergency Message
+### Send an Emergency Message
 
 The process of sending an emergency message is almost the same as sending a message. The only difference is that when an emergency message is sent, the message block taken from the idle message list is not put in the end of the message queue, but the head of the queue. The recipient can receive the emergency message preferentially, so that the message can be processed in time. The function interface for sending an emergency message is as follows:
 
@@ -545,7 +542,7 @@ Input parameters and return values of rt_mq_urgent()
 | \-RT_EFULL | Message queue is full |
 | \-RT_ERROR | Fail            |
 
-#### Receive Message
+### Receive Message
 
 Only when there is a message in the message queue, can the receiver receive message, otherwise the receiver will set according to the timeout, or suspend on the waiting queue of the message queue, or return directly. The function interface to receive message is as follows:
 
@@ -569,7 +566,7 @@ Input parameters and return values of rt_mq_recv()
 | \-RT_ETIMEOUT | Timeout       |
 | \-RT_ERROR    | Fail, return error |
 
-### Message Queue Application Example
+## Message Queue Application Example
 
 This is a message queue application routine. Two static threads are initialized in the routine, one thread will receive messages from the message queue; and another thread will periodically send regular messages and emergency messages to the message queue, as shown in the following code:
 
@@ -745,11 +742,11 @@ thread1: detach mq
 
 The routine demonstrates how to use message queue. Thread 1 receives messages from the message queue; thread 2 periodically sends regular and emergency messages to the message queue. Since the message "I" that thread 2 sent is an emergency message, it will be inserted directly into the front of the message queue. So after receiving the message "B", thread 1 receives the emergency message and then receives the message "C".
 
-### Occasions to Use Message Queue
+## Occasions to Use Message Queue
 
 Message Queue can be used where occasional long messages are sent, including exchanging message between threads and threads and sending message to threads in interrupt service routines (interrupt service routines cannot receive messages). The following sections describe the use of message queues from two perspectives, sending messages and synchronizing messages.
 
-#### Sending Messages
+### Sending Messages
 
 The obvious difference between message queue and mailbox is that the length of the message is not limited to 4 bytes. In addition, message queue also includes a function interface for sending emergency messages. But when you create a message queue with a maximum length of 4 bytes for all messages, the message queue object will be reduced to a mailbox. This unrestricted message is also reflected in the case of code writing which is also a mailbox-like code:
 
@@ -793,7 +790,7 @@ void message_handler()
 
 Because message queue is a direct copy of data content, so in the above example, local structure is used to save the message structure, which eliminates the trouble of dynamic memory allocation (and no need to worry, because message memory space has already been released when the thread receives the message).
 
-#### Synchronizing Messages
+### Synchronizing Messages
 
 In general system designs, the problem of sending synchronous messages is often encountered. At this time, corresponding implementations can be selected according to the state of the time: two threads can be implemented in the form of [message queue + semaphore or mailbox]. The thread sending messages sends the corresponding message to the message queue in the form of message sending. After the message is sent, it is hoping to receive the confirmation from the threads receiving messages. The working diagram is as shown below:
 
@@ -817,12 +814,11 @@ struct msg
 
 The first type of message uses a mailbox as a confirmation flag, while the second type of message uses a semaphore as a confirmation flag. The mailbox is used as a confirmation flag, which means that the receiving thread can notify some  status values to the thread sending messages; and the semaphore is used as a confirmation flag that can only notify the thread sending messages in a single way, and the message has been confirmed to be received.
 
-Signal
-----
+# Signal
 
 A signal (also known as a soft interrupt signal), from a software perspective, is a simulation of interrupt mechanism. When it comes to its principle, thread receiving a signal is similar to processor receiving an interrupt request.
 
-### Signal Working Mechanism
+## Signal Working Mechanism
 
 Signals are used for asynchronous communication in RT-Thread. The POSIX standard defines that sigset_t type defines a signal set. However, the sigset_t type may be defined differently in different systems. In RT-Thread, sigset_t is defined as unsigned long and named rt_sigset_t, the signals that the application can use are SIGUSR1(10) and SIGUSR2(12).
 
@@ -842,13 +838,13 @@ As shown in the following figure, suppose that thread 1 needs to process the sig
 
 When the signal is passed to thread 1, if it is suspended, it will be switched to ready to process the corresponding signal. If it is running, it will create a new stack frame space on its current thread stack to process the corresponding signal. It should be noted that the thread stack size used will also increase accordingly.
 
-### Management of Signals
+## Management of Signals
 
 Operations on signals include: install signal, block signal, unblock signal, send signal, and wait for signal. The interfaces of the signal are shown in the following figure:
 
 ![Signal Related Interface](figures/07signal_ops.png)
 
-#### Install Signal
+### Install Signal
 
 If the thread is to process a signal, then the signal needs to be installed in the thread. Signal installation is primarily used to determine the mapping relation between the signal value and the actions of the thread on that signal value, that is what signal is to be processed, what actions will be taken when the signal is passed to the thread. See the following code for a detailed definition:
 
@@ -876,7 +872,7 @@ Setting the handler parameter during signal installation determines the differen
 
 3) The parameter is set to SIG_DFL, and the system will call the default function _signal_default_handler() to process.
 
-#### Block Signal
+### Block Signal
 
 Blocking signal can also be understood as shielding signals. If the signal is blocked, the signal will not be delivered to the thread that installed the signal and will not cause soft interrupt processing. Call rt_signal_mask() to block the signal:
 
@@ -892,7 +888,7 @@ rt_signal_mask() function parameters
 |----------|----------|
 | signo    | Signal value |
 
-#### Unblock Signal
+### Unblock Signal
 
 Several signals can be installed in the thread. Using this function can give some "attention" to some of the signals, then sending these signals will cause a soft interrupt for the thread. Calling rt_signal_unmask() to unblock the signal:
 
@@ -908,7 +904,7 @@ rt_signal_unmask() function parameters
 |----------|----------|
 | signo    | Signal value |
 
-#### Send Signals
+### Send Signals
 
 When we need to process abnormality, a signal can be sent to the thread that has been set to process abnormality. Call rt_thread_kill() to send a signal to any thread:
 
@@ -928,7 +924,7 @@ Input parameters and return values for rt_thread_kill()
 | RT_EOK      | Sent successfully |
 | \-RT_EINVAL | Parameter error |
 
-#### Wait for Signal
+### Wait for Signal
 
 Wait for the arrival of the set signal. If this signal did not arrive, suspend the thread until the signal arrival or the wait until time exceeds the specified timeout. If the signal arrived, the pointer pointing to the signal body is stored in si, as follows is the function to wait for signal.
 
@@ -951,7 +947,7 @@ Input parameters and return values for rt_signal_wait()
 | \-RT_ETIMEOUT | Timeout             |
 | \-RT_EINVAL   | Parameter error |
 
-### Signal Application Example
+## Signal Application Example
 
 This is a signal application routine, as shown in the following code. This routine creates one thread. When the signal is installed, the signal processing mode is set to custom processing. The processing function of the signal is defined to be thread1_signal_handler(). After the thread is running and the signal is installed, a signal is sent to this thread. This thread will receive the signal and print the message.
 

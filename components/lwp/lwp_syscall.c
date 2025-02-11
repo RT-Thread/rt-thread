@@ -1000,6 +1000,7 @@ sysret_t sys_kill(int pid, int signo)
     switch (kret)
     {
         case -RT_ENOENT:
+        case -ECHILD:
             sysret = -ESRCH;
             break;
         case -RT_EINVAL:

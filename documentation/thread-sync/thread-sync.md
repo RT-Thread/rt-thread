@@ -1,4 +1,4 @@
-# Inter-thread Synchronization
+@page thread_sync Inter-thread Synchronization
 
 In a multi-threaded real-time system, the completion of a task can often be accomplished through coordination of multiple threads, so how do these multiple threads collaborate well with each other to perform without errors? Here is an example.
 
@@ -22,8 +22,7 @@ There are many ways to synchronize threads. The core idea is that **only one (or
 
 This chapter introduces several synchronization methods: **semaphores,** **mutex**, and **event**. After learning this chapter, you will learn how to use semaphores, mutex, and event to synchronize threads.
 
-Semaphores
-------
+# Semaphores
 
 Take parking lot as an example to understand the concept of semaphore:
 
@@ -35,7 +34,7 @@ Take parking lot as an example to understand the concept of semaphore:
 
 In this example, the administrator is equivalent to the semaphore. The number of empty parking spaces that the administrator is in charge of is the value of the semaphore (non-negative, dynamic change); the parking space is equivalent to the common resource (critical section), and the cars are equivalent to the threads.  Cars access the parking spaces by obtaining permission from the administrator, which is similar to thread accessing public resource by obtaining the semaphore.
 
-### Semaphore Working Mechanism
+## Semaphore Working Mechanism
 
 Semaphore is a light-duty kernel object that can solve the problems of synchronization between threads. By obtaining or releasing semaphore, a thread can achieve synchronization or mutual exclusion.
 
@@ -43,7 +42,7 @@ Schematic diagram of semaphore is shown in the figure below. Each semaphore obje
 
 ![Schematic Diagram of Semaphore](figures/06sem_work.png)
 
-### Semaphore Control Block
+## Semaphore Control Block
 
 In RT-Thread, semaphore control block is a data structure used by the operating system to manage semaphores, represented by struct rt rt_semaphore. Another C expression is rt_sem_t, which represents the handle of the semaphore, and the implementation in C language is a pointer to the semaphore control block. The detailed definition of semaphore control block structure is as follows:
 
@@ -59,13 +58,13 @@ typedef struct rt_semaphore* rt_sem_t;
 
 rt_semaphore object is derived from rt_ipc_object and is managed by the IPC container. The maximum semaphore is 65535.
 
-### Semaphore Management
+## Semaphore Management
 
 Semaphore control block contains important parameters related to the semaphore and acts as a link between various states of the semaphore. Interfaces related to semaphore are shown in the figure below. Operations on a semaphore includes: creating/initializing the semaphore, obtaining the semaphore, releasing the semaphore, and deleting/detaching the semaphore.
 
 ![Interfaces Related to Semaphore](figures/06sem_ops.png)
 
-#### Create and Delete Semaphore
+### Create and Delete Semaphore
 
 When creating a semaphore, the kernel first creates a semaphore control block, then performs basic initialization on the control block. The following function interface is used to create a semaphore:
 
@@ -104,7 +103,7 @@ Input parameters and return values of rt_sem_delete()
 |**Return**| ——                               |
 | RT_EOK   | Successfully deleted |
 
-#### Initialize and Detach Semaphore
+### Initialize and Detach Semaphore
 
 For a static semaphore object, its memory space is allocated by the compiler during compiling and placed on the read-write data segment or on the uninitialized data segment. In this case,rt_sem_create interface is no longer needed to create the semaphore to use it, just initialize it before using it. To initialize the semaphore object, use the following function interface:
 
@@ -144,7 +143,7 @@ After using this function, the kernel wakes up all threads suspended in the sema
 |**Return**| ——               |
 | RT_EOK   | Successfully detached |
 
-#### Obtain Semaphore
+### Obtain Semaphore
 
 Thread obtains semaphore resource instances by obtaining semaphores. When the semaphore value is greater than zero, the thread will get the semaphore, and the corresponding semaphore value will be reduced by 1. The semaphore is obtained using the following function interface:
 
@@ -165,7 +164,7 @@ When calling this function, if the value of the semaphore is zero, it means the 
 | \-RT_ETIMEOUT | Did not received semaphore after timeout |
 | \-RT_ERROR    | Other errors                                  |
 
-#### Obtain Semaphore without Waiting
+### Obtain Semaphore without Waiting
 
 When user does not want to suspend thread on the applied semaphore and wait,  the semaphore can be obtained using the wait-free mode , and the following function interface is used for obtaining the semaphore without waiting:
 
@@ -184,7 +183,7 @@ This function has the same effect as rt_sem_take(sem, 0),  which means when the 
 | RT_EOK        | Semaphore successfully obtained |
 | \-RT_ETIMEOUT | Semaphore obtainment failed |
 
-#### Interrupt Service Routine
+### Semaphore Release
 
 Semaphore is released to wake up the thread that suspends on the semaphore. To release the semaphore, use the following function interface:
 
@@ -202,7 +201,7 @@ For example, when semaphore value is zero and a thread is waiting for this semap
 |**Return**| ——               |
 | RT_EOK   | Semaphore successfully released |
 
-### Semaphore Application Sample
+## Semaphore Application Sample
 
 This is a sample of semaphore usage routine. This routine creates a dynamic semaphore and initializes two threads, one thread sends the semaphore, and one thread receives the semaphore and performs the corresponding operations. As shown in the following code:
 
@@ -548,23 +547,23 @@ This routine can be understood as the process of producers producing products an
 
 The producer generates 10 numbers in turn, and the consumers take them away in turn and sum the values of the 10 numbers. Semaphore lock protects array critical region resources, ensuring the exclusivity of number taking for the consumers each time and achieving inter-thread synchronization.
 
-### Semaphore Usage Occasion
+## Semaphore Usage Occasion
 
 Semaphores is a very flexible way to synchronize and can be used in a variety of situations, like forming locks, synchronization, resource counts, etc. It can also be conveniently used for synchronization between threads and threads, interrupts and threads.
 
-#### Thread Synchronization
+### Thread Synchronization
 
 Thread synchronization is one of the simplest types of semaphore applications. For example, using semaphores to synchronize between two threads, the value of the semaphore is initialized to 0, indicating that there are 0 semaphore resource instances; and the thread attempting to acquire the semaphore will wait directly on this semaphore.
 
 When the thread holding the semaphore completes the work it is processing, it will release this semaphore. Thread waiting on this semaphore can be awaken, and it can then perform the next part of the work. This occasion can also be seen as using the semaphore for the work completion flag: the thread holding the semaphore completes its own work, and then notifies the thread waiting for the semaphore to continue the next part of the work.
 
-#### Lock
+### Lock
 
 Locks, a single lock is often applied to multiple threads accessing the same shared resource (in other words, critical region). When semaphore is used as a lock, the semaphore resource instance should normally be initialized to 1, indicating that the system has one resource available by default. Because the semaphore value always varies between 1 and 0, so this type of lock is also called binary semaphore. As shown in the following figure, when a thread needs to access shared resource, it needs to obtain the resource lock first. When this thread successfully obtains the resource lock, other threads that intend to access the shared resource will suspend because they cannot obtain the resource. This is because it is already locked (semaphore value is 0) when other threads are trying to obtain the lock. When thread holding the semaphore is processed and exiting the critical region, it will release the semaphore and unlock the lock, and the first waiting thread that is suspending on the lock will be awaken to gain access to the critical region.
 
 ![Lock](figures/06sem_lock.png)
 
-#### Interrupt Synchronization between Threads
+### Interrupt Synchronization between Threads
 
 Semaphore can also be easily applied to interrupting synchronization between threads, such as an interrupt trigger. When interrupting service routine, thread needs to be notifies to perform corresponding data processing. At this time, the initial value of the semaphore can be set to 0. When the thread tries to hold this semaphore, since the initial value of the semaphore is 0, the thread will then suspends on this semaphore until the semaphore is released. When the interrupt is triggered, hardware-related actions are firstly performed, such as reading corresponding data from the hardware I/O port, and confirming the interrupt to clear interrupt source, and then releasing a semaphore to wake up the corresponding thread for subsequent data processing. For example, the processing of FinSH threads is as shown in the following figure.
 
@@ -574,18 +573,17 @@ The value of the semaphore is initially 0. When the FinSH thread attempts to obt
 
 >The mutual exclusion between interrupts and threads cannot be done by means of semaphores (locks), but by means of switch interrupts.
 
-#### Resource Count
+### Resource Count
 
 Semaphore can also be considered as an incrementing or decrementing counter. It should be noted that the semaphore value is non-negative. For example, if the value of a semaphore is initialized to 5, then the semaphore can be reduced by a maximum of 5 consecutive times until the counter is reduced to zero. Resource count is suitable for occasions where the processing speeds between threads do not match. At this time, the semaphore can be counted as the number of completed tasks of the previous thread, and when dispatched to the next thread, it can also be used in a continuous manner handling multiple events each time. For example, in the producer and consumer problem, the producer can release the semaphore multiple times, and then the consumer can process multiple semaphore resources each time when dispatched.
 
 >Generally, resource count is mostly inter-thread synchronization in a hybrid mode, because there are still multiple accesses from threads for a single resource processing, which requires accessing and processing for a single resource, and operate lock mutex operation.
 
-Mutex
-------
+# Mutex
 
 Mutexes, also known as mutually exclusive semaphores, are a special binary semaphore. Mutex is similar to a parking lot with only one parking space: when one car enters, the parking lot gate is locked and other vehicles are waiting outside. When the car inside comes out, parking lot gate will open and the next car can enter.
 
-### Mutex Working Mechanism
+## Mutex Working Mechanism
 
 The difference between a mutex and a semaphore is that the thread with a mutex has ownership of the mutex, mutex supports recursive access and prevents thread priority from reversing; and mutex can only be released by the  thread holding it, whereas semaphore can be released by any thread.
 
@@ -603,7 +601,7 @@ In the RT-Thread operating system, mutex can solve the priority inversion proble
 
 >After the mutex is obtained, release the mutex as soon as possible. During the time when holding the mutex, you must not change the priority of the thread holding the mutex.
 
-### Mutex Control Block
+## Mutex Control Block
 
 In RT-Thread, mutex control block is a data structure used by the operating system to manage mutexes, represented by the struct rt rt_mutex. Another C expression, rt_mutex_t, represents the handle of the mutex, and the implementation in C language refers to the pointer of the mutex control block. See the following code for a detailed definition of the mutex control block structure:
 
@@ -623,13 +621,13 @@ struct rt_mutex
 
 The rt_mutex object is derived from rt_ipc_object and is managed by the IPC container.
 
-### Mutex Management
+## Mutex Management
 
 The mutex control block contains important parameters related to mutex and it plays an important role in the implementation of the mutex function. The mutex-related interface is as shown in the following figure. The operation of a mutex includes: creating/initiating a mutex, obtaining a mutex, releasing a mutex, and deleting/detaching a mutex.
 
 ![Mutex Related Interface](figures/06mutex_ops.png)
 
-#### Create and Delete Mutex
+### Create and Delete Mutex
 
 When creating a mutex, the kernel first creates a mutex control block and then completes the initialization of the control block. Create a mutex using the following function interface:
 
@@ -665,7 +663,7 @@ Input parameters and return values of rt_mutex_delete()
 |**Return**| ——               |
 | RT_EOK   | Deleted successfully |
 
-#### Initialize and Detach Mutex
+### Initialize and Detach Mutex
 
 The memory of a static mutex object is allocated by the compiler during system compilation, and is usually placed in a read-write data segment or an uninitialized data segment. Before using such static mutex objects, you need to initialize them first. To initialize the mutex, use the following function interface:
 
@@ -701,7 +699,7 @@ Input parameters and return values for rt_mutex_detach()
 |**Return**| ——               |
 | RT_EOK   | Successful |
 
-#### Obtain Mutex
+### Obtain Mutex
 
 Once the thread obtains the mutex, the thread has ownership of the mutex, that is, a mutex can only be held by one thread at a time. To obtain the mutex, use the following function interface:
 
@@ -722,7 +720,7 @@ Input parameters and return values of rt_mutex_take()
 | \-RT_ETIMEOUT | Timeout |
 | \-RT_ERROR    | Failed to obtain |
 
-#### Release Mutex
+### Release Mutex
 
 When a thread completes the access to a mutually exclusive resource, it should release the mutex it occupies as soon as possible, so that other threads can obtain the mutex in time. To release the mutex, use the following function interface:
 
@@ -740,7 +738,7 @@ Input parameters and return values of rt_mutex_release()
 |**Return**| ——               |
 | RT_EOK   | Success       |
 
-### Mutex Application Sample
+## Mutex Application Sample
 
 This is a mutex application routine, and a mutex lock is a way to protect shared resources. When a thread has the mutex lock, it can protect shared resources from being destroyed by other threads. The following example can be used to illustrate. There are two threads: thread 1 and thread 2, thread 1 adds 1 to each of the two numbers; thread 2 also adds 1 to each of the two numbers. mutex is used to ensure that the operation of the thread changing the values of the 2 numbers is  not interrupted. As shown in the following code:
 
@@ -1003,7 +1001,7 @@ The routine demonstrates how to use the mutex. Thread 3 holds the mutex first, a
 
 >It is important to remember that mutexes cannot be used in interrupt service routines.
 
-### Occasions to Use Mutex
+## Occasions to Use Mutex
 
 The use of a mutex is relatively simple because it is a type of semaphore and it exists in the form of a lock. At the time of initialization, the mutex is always unlocked, and when it is held by the thread, it immediately becomes locked. Mutex is more suitable for:
 
@@ -1011,8 +1009,7 @@ The use of a mutex is relatively simple because it is a type of semaphore and it
 
 (2) A situation in which priority inversion may occur due to multi-thread synchronization.
 
-Event
-------
+# Event
 
 Event set is also one of the mechanisms for synchronization between threads. An event set can contain multiple events. Event set can be used to complete one-to-many, many-to-many thread synchronization. Let's take taking bus as an example to illustrate event. There may be the following situations when waiting for a bus at a bus stop:
 
@@ -1024,7 +1021,7 @@ Event set is also one of the mechanisms for synchronization between threads. An 
 
 Here, P1 leaving for a certain place can be regarded as a thread, and “bus arrives at the bus stop” and “P2 arrives at the bus stop” are regarded as the occurrence of events. Situation ① is a specific event to wakes up the thread; situation ② is any single event to wake up the thread; situation ③ is when multiple events must occur simultaneously to wake up the thread.
 
-### Event Set Working Mechanism
+## Event Set Working Mechanism
 
 The event set is mainly used for synchronization between threads. Unlike the semaphore, it can achieve one-to-many, many-to-many synchronization. That is, the relationship between a thread and multiple events can be set as follows: any one of the events wakes up the thread, or several events wake up the thread for subsequent processing; likewise, the event can be multiple threads to synchronize multiple events. This collection of multiple events can be represented by a 32-bit unsigned integer variable, each bit of the variable representing an event, and the thread associates one or more events by "logical AND" or "logical OR" to form event combination. The "logical OR" of an event is also called independent synchronization, which means that the thread is synchronized with one of the events; the event "logical AND" is also called associative synchronization, which means that the thread is synchronized with several events.
 
@@ -1042,7 +1039,7 @@ In RT-Thread, each thread has an event information tag with three attributes. Th
 
 As shown in the figure above, the first and 30th bits of the event flag of thread #1 are set. If the event information flag is set to logical AND, it means that thread #1 will be triggered to wake up only after both event 1 and event 30 occur. If the event information flag is set to logical OR, the occurrence of either event 1 or event 30 will trigger to wake up thread #1. If the message flag also sets the clear flag bit, this means event 1 and event 30 will be automatically cleared to zero when thread #1 wakes up, otherwise the event flag will still be present (set to 1).
 
-### Event Set Control Block
+## Event Set Control Block
 
 In RT-Thread, event set control block is a data structure used by the operating system to manage events, represented by the structure struct rt_event. Another C expression, rt_event_t, represents the handle of the event set, and the implementation in C language is a pointer to the event set control block. See the following code for a detailed definition of the event set control block structure:
 
@@ -1060,13 +1057,13 @@ typedef struct rt_event* rt_event_t;
 
 rt_event object is derived from rt_ipc_object and is managed by the IPC container.
 
-### Management of Event Sets
+## Management of Event Sets
 
 Event set control block contains important parameters related to the event set and plays an important role in the implementation of the event set function. The event set related interfaces are as shown in the following figure. The operations on an event set include: create/initiate event sets, send events, receive events, and delete/detach event sets.
 
 ![Event Related Interface](figures/06event_ops.png)
 
-#### Create and Delete Event Set
+### Create and Delete Event Set
 
 When creating an event set, the kernel first creates an event set control block, and then performs basic initialization on the event set control block. The event set is created using the following function interface:
 
@@ -1102,7 +1099,7 @@ Input parameters and return values of rt_event_delete()
 |**Return**| ——               |
 | RT_EOK   | Success        |
 
-#### Initialize and Detach Event Set
+### Initialize and Detach Event Set
 
 The memory of a static event set object is allocated by the compiler during system compilation, and is usually placed in a read-write data segment or an uninitialized data segment. Before using a static event set object, you need to initialize it first. The initialization event set uses the following function interface:
 
@@ -1138,7 +1135,7 @@ Input parameters and return values for rt_event_detach()
 |**Return**| ——               |
 | RT_EOK   | Success        |
 
-#### Send Event
+### Send Event
 
 The send event function can send one or more events in the event set as follows:
 
@@ -1157,7 +1154,7 @@ Input parameters and return values of rt_event_send()
 |**Return**| ——                           |
 | RT_EOK   | Success                    |
 
-#### Receive Event
+### Receive Event
 
 The kernel uses a 32-bit unsigned integer to identify the event set, each bit represents an event, so an event set object can wait to receive 32 events at the same time, and the kernel can decide how to activate the thread by specifying the parameter "logical AND" or "logical OR". Using the "logical AND" parameter indicates that the thread is only activated when all waiting events occur, and using the "logical OR" parameter means that the thread is activated as soon as one waiting event occurs. To receive events, use the following function interface:
 
@@ -1196,7 +1193,7 @@ RT_EVENT_FLAG_AND
 RT_EVENT_FLAG_CLEAR
 ```
 
-### Event Set Application Sample
+## Event Set Application Sample
 
 This is the application routine for the event set, which initializes an event set, two threads. One thread waits for an event of interest to it, and another thread sends an event, as shown in code listing 6-5:
 
@@ -1322,7 +1319,7 @@ thread1 leave.
 
 The routine demonstrates how to use the event set. Thread 1 receives events twice before and after, using the "logical OR" and "logical AND" respectively.
 
-### Occasions to Use Event Set
+## Occasions to Use Event Set
 
 Event sets can be used in a variety of situations, and it can replace semaphores to some extent for inter-thread synchronization. A thread or interrupt service routine sends an event to the event set object, and the waiting thread is awaken and the corresponding event is processed.  However, unlike semaphore, the event transmission operation is not cumulative until the event is cleared, and the release actions of semaphore are cumulative. Another feature of the event is that the receiving thread can wait for multiple events, meaning multiple events correspond to one thread or multiple threads. At the same time, according to thread waiting parameters, you can choose between a "logical OR" trigger or a "logical AND" trigger. This feature is not available for semaphores, etc. The semaphore can only recognize a single release action, and cannot wait for multiple types of release at the same time. The following figure shows the multi-event receiving diagram:
 

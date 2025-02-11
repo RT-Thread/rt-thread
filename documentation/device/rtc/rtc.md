@@ -1,13 +1,13 @@
-# RTC Device
+@page device_rtc RTC Device
 
-## Introduction of RTC
+# Introduction of RTC
 
 The RTC (Real-Time Clock) provides accurate real-time clock time, which can be used to generate information such as year, month, day, hour, minute, and second. At present, most real-time clock chips use a higher precision crystal oscillator as a clock source. In order to work when the main power supply is powered down, some clock chips will be powered by a battery to keep the time information valid.
 
 The RT-Thread RTC device provides the basic services for the operating system's time system. RTCs find many uses in IoT scenarios, and even in secure transmission processes such as SSL, RTC has become an indispensable part.
 
 
-## Access RTC Devices
+# Access RTC Devices
 
 The application accesses the RTC hardware through the RTC device management interface, and the relevant interfaces are as follows:
 
@@ -17,7 +17,7 @@ The application accesses the RTC hardware through the RTC device management inte
 | set_time()     | Set time, hour, minute, second |
 | time()   | Obtain current time |
 
-### Set Date
+## Set Date
 
 Set the current date value of the RTC device by the following functions:
 
@@ -42,7 +42,7 @@ An example of use is as follows:
 set_date(2018, 12, 3);
 ```
 
-### Set Time
+## Set Time
 
 Set the current time value of the RTC device by the following function:
 
@@ -67,7 +67,7 @@ An example of use is as follows:
 set_time(11, 15, 50);
 ```
 
-### Obtain Current Time
+## Obtain Current Time
 
 Obtain time using the time API in the C standard library:
 
@@ -93,9 +93,9 @@ rt_kprintf("%s\n", ctime(&now));
 
 >Currently only one RTC device is allowed in the system and the name is `"rtc"`.
 
-## Functional Configuration
+# Functional Configuration
 
-### Enable Soft RTC (Software Emulation RTC)
+## Enable Soft RTC (Software Emulation RTC)
 
 You can use the function of enabling RTC software emulation, which is ideal for products that do not require high time precision and have no hardware RTC. The configuration options of menuconfig are as follows:
 
@@ -106,7 +106,7 @@ RT-Thread Components →
         [ ]   Using software simulation RTC device                   /* Use software simulation RTC device */
 ```
 
-### Enable NTP Time Automatic Synchronization
+## Enable NTP Time Automatic Synchronization
 
 If the RT-Thread is connected to the Internet, you can enable automatic NTP time synchronization to synchronize local time periodically.
 
@@ -131,7 +131,7 @@ RT-Thread Components →
        (3600)  NTP auto sync period(second)                          /* NTP The synchronization period is automatically synchronized in seconds, and the default period is one hour (ie 3600S). */
 ```
 
-## FinSH Command
+# FinSH Command
 
 Enter `date` to view the current time.
 
@@ -148,7 +148,7 @@ msh />date 2018 02 16 01 15 30
 msh />
 ```
 
-## RTC Device Usage Examples
+# RTC Device Usage Examples
 
 For the specific usage of the RTC device, refer to the following example code. First, set the year, month, date, hour, minute and second information, and then delay the data for 3 seconds to get the current time information.
 

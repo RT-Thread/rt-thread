@@ -37,7 +37,7 @@ if GetDepend(['RT_USING_QSPI']):
     src += ['hc32_ll_driver/src/hc32_ll_qspi.c']
 
 if GetDepend(['RT_USING_CAN']):
-    src += ['hc32_ll_driver/src/hc32_ll_mcan.c']
+    src += ['hc32_ll_driver/src/hc32_ll_can.c']
 
 if GetDepend(['RT_USING_ADC']):
     src += ['hc32_ll_driver/src/hc32_ll_adc.c']
@@ -83,6 +83,9 @@ if GetDepend(['RT_HWCRYPTO_USING_SHA2']):
 
 if GetDepend(['BSP_RTC_USING_XTAL32']) or GetDepend(['RT_USING_PM']):
     src += ['hc32_ll_driver/src/hc32_ll_fcm.c']
+
+if GetDepend(['BSP_USING_USBD']) or GetDepend(['BSP_USING_USBH']):
+    src += ['hc32_ll_driver/src/hc32_ll_usb.c']
 
 path = [
     cwd + '/cmsis/Device/HDSC/hc32f4xx/Include',

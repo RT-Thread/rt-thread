@@ -1,6 +1,6 @@
-# WATCHDOG Device
+@page device_watchdog WATCHDOG Device
 
-## An Introduction to WATCHDOG
+# An Introduction to WATCHDOG
 
 The hardware watchdog timer is a timer whose timing output is connected to the reset terminal of the circuit. In a productized embedded system, in order to automatically reset the system under abnormal conditions, it generally needs a watchdog.
 
@@ -8,7 +8,7 @@ When the watchdog was started, the counter starts counting automatically. If it 
 
 In general, users can feed the dog in the idlehook function and key function of RT-Thread.
 
-## Access to the WATCHDOG Device
+# Access to the WATCHDOG Device
 
 The application accesses the watchdog hardware through the I/O device management interface provided by RT-Thread. The related interfaces are as follows:
 
@@ -19,7 +19,7 @@ The application accesses the watchdog hardware through the I/O device management
 | rt_device_control()   |Control the watchdog device |
 | rt_device_close()  | Close the watchdog device |
 
-### Find the Watchdog Device
+## Find the Watchdog Device
 
 The application obtains the device handle based on the watchdog device's name, and then it can operate the watchdog device. The function for finding a device is as follows:
 
@@ -44,7 +44,7 @@ static rt_device_t wdg_dev;         /* device handle of the watchdog */
 wdg_dev = rt_device_find(IWDG_DEVICE_NAME);
 ```
 
-### Initialize the Watchdog Device
+## Initialize the Watchdog Device
 
 The watchdog device need to be initialized before using, which can be done by the following function:
 
@@ -73,7 +73,7 @@ wdg_dev = rt_device_find(IWDG_DEVICE_NAME);
 rt_device_init(wdg_dev);
 ```
 
-### Control the Watchdog Device
+## Control the Watchdog Device
 
 The application can configure the watchdog device using the command control word, which can be done by the following function:
 
@@ -130,7 +130,7 @@ static void idle_hook(void)
 }
 ```
 
-### Close the Watchdog Device
+## Close the Watchdog Device
 
 When the application completes the operation of the watchdog, it can close the watchdog device:
 
@@ -148,7 +148,7 @@ rt_err_t rt_device_close(rt_device_t dev);
 
 Closing the device interface and opening the device interface need to match each other. When you open the device, you need to close the device once correspondingly, so that the device will be completely shut down, otherwise the device will remain unclosed.
 
-## Watchdog Device usage example
+# Watchdog Device usage example
 
 The specific use of the watchdog device can be referred to the following sample code. The main steps of the sample code are as follows:
 

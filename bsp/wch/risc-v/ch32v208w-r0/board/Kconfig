@@ -164,7 +164,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
-        select RT_USING_SPI_BITOPS
+        select RT_USING_SOFT_SPI
         select RT_USING_SPI
 
         if BSP_USING_SPI

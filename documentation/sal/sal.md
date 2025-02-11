@@ -1,6 +1,6 @@
-# Socket Abstraction Layer: SAL
+@page component_sal Socket Abstraction Layer: SAL
 
-## SAL Introduction
+# SAL Introduction
 
 In order to adapt to more network protocol stack types and avoid the system's dependence on a single network protocol stack, the RT-Thread system provides a SAL (Socket Abstraction Layer) components that implement different network protocol stacks or network implementations. The abstraction of the interface provides a set of standard BSD Socket APIs to the upper layer, so that developers only need to care about and use the network interface provided by the network application layer, without concern for the underlying specific network protocol stack type and implementation, which greatly improves the system's compatibility makes it easy for developers to complete protocol stack adaptation and network-related development. Main features of the SAL component are as follows:
 
@@ -9,7 +9,7 @@ In order to adapt to more network protocol stack types and avoid the system's de
 - Support standard BSD Socket APIs；
 - Unified FD management for easy operation of network functions using read/write poll/select；
 
-### SAL Network Framework
+## SAL Network Framework
 
 The SAL network framework of RT-Thread is mainly shown in the following structure:
 
@@ -25,14 +25,14 @@ The fourth part is the protocol stack layer, which includes several commonly use
 
 The network application layer of RT-thread provides interfaces mainly based on the standard BSD Socket API, which ensures that programs can be written on PC, debugged, and then ported to the RT-thread operating system.
 
-### Working Principles
+## Working Principles
 
 The working principle of SAL component is mainly divided into the following three parts:
 
 - Unified abstract functions of multi-protocol stack access and interface functions；
 - SAL TLS encryption transmission function；
 
-#### Multi-Protocol Stack Access and Unified Abstract Function Of Interface Function
+### Multi-Protocol Stack Access and Unified Abstract Function Of Interface Function
 
 For different protocol stacks or network function implementations, the names of network interfaces may be different. Take the `connect` connection function as an example. The interface name in the lwIP protocol stack is `lwip_connect`, and the interface name in the AT Socket network implementation is `at_connect`. The SAL component provides abstraction and unification of the interface of different protocol stacks or networks. When the socket is created, the component **judges the protocol stack or network function used by judging the incoming protocol domain type**, and completes the RT-Thread.
 
@@ -46,8 +46,7 @@ The above is the definition of the socket creation function in the standard BSD 
 
 For different software packages, the protocol domain type passed to the socket may be fixed and will not change depending on how the SAL component is accessed. **In order to dynamically adapt access to different protocol stacks or network implementations**, the SAL component provides two protocol domain type matching methods for each protocol stack or network implementation: **Primary protocol domain type and secondary protocol domain type**. When socket is created, it first determines whether the incoming protocol domain type has the supported primary protocol type. If it is, it uses the corresponding protocol stack or network implementation, if not, determine whether the subprotocol cluster type supports. The current system support protocol domain types are as follows:
 
-1.
-   lwIP Protocol stack： family = AF_INET、sec_family = AF_INET
+1. lwIP Protocol stack： family = AF_INET、sec_family = AF_INET
 
 2. AT Socket Protocol stack： family = AF_AT、sec_family = AF_INET
 
@@ -109,7 +108,7 @@ int lwip_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 }
 ```
 
-#### SAL TLS Encrypted Transmission Function
+### SAL TLS Encrypted Transmission Function
 
 **1. SAL TLS Feature**
 
@@ -221,7 +220,7 @@ MSH_CMD_EXPORT(sal_tls_test, SAL TLS function test);
 #endif /* FINSH_USING_MSH */
 ```
 
-### Configuration Options
+## Configuration Options
 
 When we use the SAL component we need to define the following macro definition in rtconfig.h：
 
@@ -251,7 +250,7 @@ RT-Thread Components  --->
 
 After the configuration is complete, you can use the `scons` command to regenerate the function and complete the addition of the SAL component.
 
-## Initialization ##
+# Initialization
 
 配置开启 SAL 选项之后，需要在启动时对它进行初始化，开启 SAL 功能，如果程序中已经使用了组件自动初始化，则不再需要额外进行单独的初始化，否则需要在初始化任务中调用如下函数：
 
@@ -262,11 +261,11 @@ int sal_init(void);
 The initialization function is mainly for initializing the SAL component, supporting the component to repeatedly initialize the judgment, and completing the initialization of the resource such as the mutex used in the component. There is no new thread created in the SAL component, which means that the SAL component resource is very small. Currently, the **SAL component resource is occupied by ROM 2.8K and RAM 0.6K**.
 
 
-## BSD Socket API Introduction ##
+# BSD Socket API Introduction
 
 The SAL component abstracts the standard BSD Socket API interface. The following is an introduction to common network interfaces:
 
-### Create a Socket (socket)
+## Create a Socket (socket)
 
 ``` c
 int socket(int domain, int type, int protocol);
@@ -294,7 +293,7 @@ This function is used to assign a socket descriptor and the resources it USES ba
 -   SOCK_DGRAM： Datagram socket
 -   SOCK_RAW： Raw socket
 
-### Bind Socket (bind)
+## Bind Socket (bind)
 
 ```c
 int bind(int s, const struct sockaddr *name, socklen_t namelen);
@@ -392,7 +391,7 @@ MSH_CMD_EXPORT(bing_test, bind network interface device test);
 #endif /* FINSH_USING_MSH */
 ```
 
-### Listen Socket (listen)
+## Listen Socket (listen)
 
 ```c
 int listen(int s, int backlog);
@@ -408,7 +407,7 @@ int listen(int s, int backlog);
 
 This function is used by the TCP server to listen for a specified socket connection。
 
-### Accept Connection (accept)
+## Accept Connection (accept)
 
 ```c
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
@@ -425,7 +424,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
 
 When the application listens for connections from other hosts, the connection is initialized with the `accept()` function, and `accept()` creates a new socket for each connection and removes the connection from the listen queue.
 
-### Establish Connection (connect)
+## Establish Connection (connect)
 
 ```c
 int connect(int s, const struct sockaddr *name, socklen_t namelen);
@@ -442,7 +441,7 @@ int connect(int s, const struct sockaddr *name, socklen_t namelen);
 
 This function is used to establish a connection to the specified socket.
 
-### Send TCP Data (send)
+## Send TCP Data (send)
 
 ```c
 int send(int s, const void *dataptr, size_t size, int flags);
@@ -460,7 +459,7 @@ int send(int s, const void *dataptr, size_t size, int flags);
 
 This function is commonly used to send data over a TCP connection。
 
-### Receive TCP Data (recv)
+## Receive TCP Data (recv)
 
 ```c
 int recv(int s, void *mem, size_t len, int flags);
@@ -479,7 +478,7 @@ int recv(int s, void *mem, size_t len, int flags);
 
 This function is used to receive data over a TCP connection。
 
-### Send UDP Data (sendto)
+## Send UDP Data (sendto)
 
 ```c
 int sendto(int s, const void *dataptr, size_t size, int flags, const struct sockaddr *to, socklen_t tolen);
@@ -499,7 +498,7 @@ int sendto(int s, const void *dataptr, size_t size, int flags, const struct sock
 
 This function is used for UDP connections to send data。
 
-### Receive  UDP Data (recvfrom)
+## Receive  UDP Data (recvfrom)
 
 ```c
 int recvfrom(int s, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen);
@@ -520,7 +519,7 @@ int recvfrom(int s, void *mem, size_t len, int flags, struct sockaddr *from, soc
 
 This function is used to receive data on a UDP connection。
 
-### Close Socket (closesocket）
+## Close Socket (closesocket）
 
 ```c
 int closesocket(int s);
@@ -535,7 +534,7 @@ int closesocket(int s);
 
 This function is used to close the connection and release the resource.。
 
-### Shutdown The Socket By Setting（shutdown）
+## Shutdown The Socket By Setting（shutdown）
 
 ```c
 int shutdown(int s, int how);
@@ -557,7 +556,7 @@ This function provides more permissions to control the closing process of the so
 -   1： Stop sending data and discard unsent data；
 -   2： Stop receiving and sending data。
 
-### Set Socket Options（setsockopt）
+## Set Socket Options（setsockopt）
 
 ```c
 int setsockopt(int s, int level, int optname, const void *optval, socklen_t optlen);
@@ -588,7 +587,7 @@ This function is used to set the socket mode and modify the socket configuration
 -   SO_RCVTIMEO：Set socket data reception timeout
 -   SO_SNDTIMEO：Set socket data sending timeout
 
-### Get Socket Options（getsockopt）
+## Get Socket Options（getsockopt）
 
 ```c
 int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen);
@@ -607,7 +606,7 @@ int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen);
 
 This function is used to get the socket configuration options。
 
-### Get Remote Address Information (getpeername)
+## Get Remote Address Information (getpeername)
 
 ```c
 int getpeername(int s, struct sockaddr *name, socklen_t *namelen);
@@ -624,7 +623,7 @@ int getpeername(int s, struct sockaddr *name, socklen_t *namelen);
 
 This function is used to get the remote address information associated with the socket。
 
-### Get Local Address Information (getsockname)
+## Get Local Address Information (getsockname)
 
 ```c
 int getsockname(int s, struct sockaddr *name, socklen_t *namelen);
@@ -641,7 +640,7 @@ int getsockname(int s, struct sockaddr *name, socklen_t *namelen);
 
 This function is used to get local socket address information。
 
-### Configure Socket Parameters (ioctlsocket)）
+## Configure Socket Parameters (ioctlsocket)）
 
 ```c
 int ioctlsocket(int s, long cmd, void *arg);
@@ -662,7 +661,7 @@ This function sets the socket control mode。
 
 -   FIONBIO: Turns on or off the socket's non-blocking mode. Arg parameter 1 is open non-blocking and 0 is closed non-blocking.
 
-## Network Protocol Stack Access
+# Network Protocol Stack Access
 
 Access to the network protocol stack or network function implementation is mainly to initialize and register the protocol cluster structure, and add it to the protocol cluster list in SAL component. The protocol cluster structure is defined as follows：
 

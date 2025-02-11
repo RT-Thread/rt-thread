@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32_cm0plus_misc.h
- * @version $Rev:: 750          $
- * @date    $Date:: 2016-05-31 #$
+ * @version $Rev:: 7802         $
+ * @date    $Date:: 2024-07-01 #$
  * @brief   All the function prototypes for the miscellaneous firmware library.
  *************************************************************************************************************
  * @attention
@@ -112,6 +112,11 @@ void SYSTICK_CounterCmd(u32 SysTick_Counter);
 void SYSTICK_IntConfig(ControlStatus NewState);
 void SYSTICK_SetReloadValue(u32 SysTick_Reload);
 u32 RBIT(u32 in);
+#if (HTCFG_STACK_USAGE_ANALYSIS == 1)
+void StackUsageAnalysisInit(u32 addr);
+#else
+#define StackUsageAnalysisInit(...)
+#endif
 /**
   * @}
   */

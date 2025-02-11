@@ -50,7 +50,7 @@ jobs:
       - name: generate doxygen html
         shell: bash
         run: |
-          cd documentation/doxygen
+          cd documentation
           doxygen Doxyfile
           cat Doxyfile
           
@@ -58,7 +58,7 @@ jobs:
         id: deployment
         uses: actions/upload-pages-artifact@main # or specific "vX.X.X" version tag for this action
         with:
-          path: documentation/doxygen/html/
+          path: documentation/html/
           
   deploy:
     if: github.event_name == 'push'

@@ -33,7 +33,6 @@ import operator
 import rtconfig
 import platform
 import logging
-
 from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
@@ -335,6 +334,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                     print('--global-macros arguments are illegal!')
         else:
             print('--global-macros arguments are illegal!')
+
+    if GetOption('attach'):
+        from attachconfig import GenAttachConfigProject
+        GenAttachConfigProject()
+        exit(0)
 
     if GetOption('genconfig'):
         from env_utility import genconfig

@@ -202,7 +202,7 @@ menu "Hardware Drivers Config"
             bool "Enable soft SPI BUS"
             default n
             select RT_USING_PIN
-            select RT_USING_SPI_BITOPS
+            select RT_USING_SOFT_SPI
             select RT_USING_SPI
             if BSP_USING_SOFT_SPI
                 config BSP_USING_SOFT_SPI1

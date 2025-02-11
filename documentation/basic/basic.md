@@ -1,4 +1,4 @@
-# Kernel Basics
+@page kernel_basics Kernel Basics
 
 This chapter gives a brief introduction to the software architecture of the RT-Thread kernel, beginning with its composition and implementation.  While also introducing RT-Thread kernel-related concepts for beginners.
 After understanding this chapter, readers will have an elementary understanding of the RT Thread kernel and will be able to answer questions such as -
@@ -10,15 +10,7 @@ After understanding this chapter, readers will have an elementary understanding 
 
 In the nutshell, this is only a brief introduction to software architecture decomposition and implementation of the real-time kernel. This will give understanding and concepts of how RT-Thread kernel works togther. After learning from this chapter, readers will have basic knowledge of each kernel components, system booting up proccesses, memory allocation and distrubtion, and methods of kernel configuration.
 
-## **Table of Contents**
-
-1. [Introduction to RT-Thread Kernel](#introduction-to-rt-thread-kernel)
-2. [RT-Thread Startup Process](#rt-thread-startup-process)
-3. [RT-Thread Program Memory Distribution](#rt-thread-program-memory-distribution)
-4. [RT-Thread Automatic Initialization Mechanism](#rt-thread-automatic-initialization-mechanism)
-5. [RT-Thread Kernel Object Model](#rt-thread-kernel-object-model)
-
-## Introduction to RT-Thread Kernel
+# Introduction to RT-Thread Kernel
 
 Kernel is the most basic and fundenmental part of an Operating System. Kernel service library and RT-Thread kernel libraries are interfacing between hardware and components/service layer. This includes the implementation of real-time kernel service library (rtservice.h/kservice.c) and other RT-Thread kernel libraries such as object management, thread management and scheduler, inter-thread communication management, clock management and memory management respectively. Below diagram is the core architecture diagram of the core kernel.
 
@@ -30,7 +22,7 @@ Implementation of core kernel libraries are similar to a small set of standard C
 The built of the Kernel will be vary depending on the complier. For example, using GNU GCC compiler, it will use more implementation from the standard C library. Last but not least, the minimum resource requirements of the Kernel is 3KB ROM and 1.2KB RAM.
 
 
-### Thread Scheduling
+## Thread Scheduling
 
 Thread is the smallest scheduling unit in the RT-Thread operating system. The thread scheduling algorithm is a **Priority-based Full Preemptive Multi-Thread** scheduling algorithm.
 The system can support up to 256(0 - 255) thread priorities. For systems with tight resources, configurations with 8 or 32 thread priorities can be chosen(For example, STM32 has 32 thread priorities as per the default configuration). Lower numbers have a higher priority where 0 represents the highest priority furthermore the lowest priority(highest number) is reserved for idle threads.
@@ -39,7 +31,7 @@ The number of threads is bounded by the memory of the hardware platform and not 
 
 Thread management will be covered in detail in the "Thread Management" chapter.
 
-### Clock Management
+## Clock Management
 
 RT-Thread's Clock management is based upon a **clock beat**, which is the smallest clock unit in the RT-Thread operating system.
 The RT-Thread timer provides two types of timer mechanisms:
@@ -52,7 +44,7 @@ The timer service is concluded using a timer timing callback i.e. a timeout func
 
 Timer will be explained further in the "Clock Management" chapter.
 
-### Synchronization between Threads
+## Synchronization between Threads
 
 RT-Thread uses thread semaphores, mutexes, and event sets to achieve inter-thread synchronization.
 Thread synchronizations happen through the acquisition and release of semaphore and mutexes.
@@ -61,13 +53,13 @@ Event sets are primarily used for synchronization between threads, they can achi
 
 The concepts of semaphores, mutexes, and event sets are detailed in the "Inter-Thread Synchronization" chapter.
 
-### Inter-Thread Communication
+## Inter-Thread Communication
 
 RT-Thread supports communication mechanisms such as mailbox, message queue, etc. The mailbox's message length is fixed to 4 bytes. Whereas, message queue can receive messages in variable size and cache the messages in its own memory space.  
 Compared to a message queue, a mailbox is more efficient. The sending action of the mailbox and message queue can be safely used in an ISR (Interrupt Service Routine). The communication mechanism allows threads to wait by priority or to acquire by the First In First Out (FIFO) method.  
 The concept of mailbox and message queue will be explained in detail in the "Inter-Thread Communication" chapter.
 
-### Memory Management
+## Memory Management
 
 RT-Thread allows:
 1. Static Memory Pool
@@ -82,13 +74,13 @@ There is also a dynamic memory heap management called memheap, suitable for memo
 
 The concept of memory management will be explained in the "Memory Management" chapter.
 
-### I/O Device Management
+## I/O Device Management
 
 RT-Thread uses I2C, SPI, USB, UART, etc., as peripheral devices and is uniformly registered through the device. It realized a device management subsystem accessed by the name, and it can access hardware devices according to a unified API interface. On the device driver interface, depending on the characteristics of the embedded system, corresponding events can be attached to different devices. The driver notifies the upper application program when the device event is triggered.
 
 The concept of I/O device management will be explained in the "Device Model" and "General Equipment" chapters.
 
-## RT-Thread Startup Process
+# RT-Thread Startup Process
 
 The understanding of most codes usually starts from learning the startup process. We will firstly look for the source of the startup. Taking MDK-ARM as an example, the user program entry for MDK-ARM is the main() function located in the main.c file. The launching of the system starts from the assembly code startup_stm32f103xe.s, jumps to the C code, initializes the RT-Thread system function, and finally enters the user program entry main().
 
@@ -172,7 +164,7 @@ int main(void)
 }
 ```
 
-## RT-Thread Program Memory Distribution
+# RT-Thread Program Memory Distribution
 
 The general MCU contains storage space that includes the on-chip Flash and the on-chip RAM. RAM is equivalent to memory, and Flash is comparable to a hard disk. The compiler classifies a program into several parts stored in different memory areas of the MCU.
 
@@ -239,7 +231,7 @@ void sensor_init()
 ```
 The `sensor_value` is stored in the ZI segment and is automatically initialized to zero after system startup (some library functions provided by the user program or compiler are initialized to zero). The sensor_inited variable is stored in the RW segment, and the sensor_enable is stored in the RO segment.
 
-## RT-Thread Automatic Initialization Mechanism
+# RT-Thread Automatic Initialization Mechanism
 
 The automatic initialization mechanism means that the initialization function does not need to be called by explicit function. It only needs to be declared by macro definition at the function definition, and it will be executed during system startup.
 
@@ -288,10 +280,9 @@ The macro interface definitions used to implement the automatic initialization f
 
 Initialization function actively declares through these macro interfaces, such as INIT_BOARD_EXPORT (rt_hw_usart_init), the linker will automatically collect all the declared initialization functions, placed in the RTI symbol segment, the symbol segment is located in the RO segment of the memory distribution. All functions in this RTI symbol segment are automatically called when the system is initialized.
 
-RT-Thread Kernel Object Model
----------------------
+# RT-Thread Kernel Object Model
 
-### Static and Dynamic Objects
+## Static and Dynamic Objects
 
 The RT-Thread kernel is designed with object-oriented method. The system-level infrastructures are all kernel objects such as threads, semaphores, mutexes, timers, and more. Kernel objects fall into two categories: static kernel objects and dynamic kernel objects. Static kernel objects are usually placed in RW and ZI segments, initialized in the program after system startup; dynamic kernel objects are created from the memory heap and then manually initialized.
 
@@ -372,7 +363,7 @@ In this example, thread1 is a static thread object and thread2 is a dynamic thre
 
 Static objects take up RAM space and is not depend on the memory heap manager. When allocating static objects, the time needed is determined. Dynamic objects depend on the memory heap manager. It requests RAM space while running. When the object is deleted, the occupied RAM space is released. These two methods have their own advantages and disadvantages, and can be selected according to actual needs.
 
-### Kernel Object Management Structure
+## Kernel Object Management Structure
 
 RT-Thread uses the kernel object management system to access/manage all kernel objects. Kernel objects contain most of the facilities in the kernel. These kernel objects can be statically allocated static objects and dynamic objects allocated from the system memory heap. .
 
@@ -396,7 +387,7 @@ The advantages of this design approach are:
 
 Derivations from object control block rt_object in the above figure includes: thread object, memory pool object, timer object, device object and IPC object (IPC: Inter-Process Communication. In RT-Thread real-time operating system, IPC objects is used for synchronization and communicate between threads); derivations from IPC objects includes: semaphores, mutexes, events, mailboxes, message queues, signals, etc.
 
-### Object Control Block
+## Object Control Block
 
 Data structure of kernel object control block:
 
@@ -452,7 +443,7 @@ enum rt_object_class_type
 
 From the above type specification, we can see that if it is a static object, the highest bit of the object type will be 1 (which is the OR operation of RT_Object_Class_Static and other object types and operations).  Otherwise it will be dynamic object, and the maximum number of object classes that the system can accommodate is 127.
 
-### Kernel Object Management
+## Kernel Object Management
 
 Data structure of kernel object container:
 
@@ -470,7 +461,7 @@ struct rt_object_information
 
 A class of objects is managed by an rt_object_information structure, and each practical instance of such type of object is mounted to the object_list in the form of a linked list. The memory block size of this type of object is identified by object_size (the memory block each practical instance of each type of object is the same size).
 
-#### Initialization Object
+### Initialization Object
 
 An uninitialized static object must be initialized before it can be used. The initialization object uses the following interfaces:
 
@@ -489,7 +480,7 @@ When this function is called to initialize the object, the system will place the
 | type     | The type of the object must be a enumeration type listed in rt_object_class_type, RT_Object_Class_Static excluded. (For static objects, or objects initialized with the rt_object_init interface, the system identifies it as an RT_Object_Class_Static type) |
 | name     | Name of the object. Each object can be set to a name, and the maximum length for the name is specified by RT_NAME_MAX. The system does not care if it uses ’`\0`’as a terminal symbol. |
 
-#### Detach Object
+### Detach Object
 
 Detach an object from the kernel object manager. The following interfaces are used to detach objects:
 
@@ -499,7 +490,7 @@ void rt_object_detach(rt_object_t object);
 
 Calling this interface makes a static kernel object to be detached from the kernel object container, meaning the corresponding object node is deleted from the kernel object container linked list. After the object is detached, the memory occupied by the object will not be released.
 
-#### Allocate object
+### Allocate object
 
 The above descriptions are interfaces of objects initialization and detachment, both of which are under circumstances that object-oriented memory blocks already exist. But dynamic objects can be requested when needed. The memory space is freed for other applications when not needed. To request assigning new objects, you can use the following interfaces:
 
@@ -519,7 +510,7 @@ When calling the above interface, the system first needs to obtain object inform
 | object handle allocated successfully | Allocate successfully |
 | RT_NULL            | Fail to allocate               |
 
-#### Delete Object
+### Delete Object
 
 For a dynamic object, when it is no longer used, you can call the following interface to delete the object and release the corresponding system resources:
 
@@ -534,7 +525,7 @@ When the above interface is called, the object is first detached from the object
 |----------|------------|
 | object   | object handle |
 
-#### Identify objects
+### Identify objects
 
 Identify whether the specified object is a system object (static kernel object). The following interface is used to identify the object:
 

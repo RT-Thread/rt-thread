@@ -93,6 +93,7 @@ jobs:
                 - "hc32l196"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "mm32f327x"
+                - "mm32f526x"
                 - "mm32l07x"
                 - "sam7x"
                 - "hk32/hk32f030c8-mini"
@@ -101,6 +102,7 @@ jobs:
                 - "rm48x50"
                 - "ht32/ht32f52352"
                 - "ht32/ht32f12366"
+                - "ht32/ht32f53252"
                 - "w60x"
                 - "essemi/es32f0654"
                 - "essemi/es32f365x"
@@ -189,6 +191,7 @@ jobs:
                 - "stm32/stm32h563-st-nucleo"
                 - "stm32/stm32h503-st-nucleo"
                 - "stm32/stm32h723-st-nucleo"
+                - "stm32/stm32h730-esphosted-evb"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
@@ -231,6 +234,7 @@ jobs:
                 - "nxp/mcx/mcxn/frdm-mcxn947"
                 - "nxp/mcx/mcxn/frdm-mcxn236"
                 - "nxp/mcx/mcxa/frdm-mcxa153"
+                - "nxp/mcx/mcxa/frdm-mcxa156"
                 - "renesas/ebf_qi_min_6m5"
                 - "renesas/ra6m4-cpk"
                 - "renesas/ra6m4-iot"
@@ -349,6 +353,7 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
             SUB_RTT_BSP:  
                 - "k210"
+                - "wch/risc-v/ch32v307v-r1"
          -  RTT_BSP: "riscv64-unknown" 
             RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"
             SUB_RTT_BSP:  
@@ -404,6 +409,7 @@ jobs:
           wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh
+          pip install -r tools/requirements.txt
           git config --global http.postBuffer 524288000
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV

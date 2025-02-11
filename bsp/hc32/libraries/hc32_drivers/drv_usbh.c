@@ -24,7 +24,15 @@
 #include "irq_config.h"
 #include "drv_usbh.h"
 
-extern rt_err_t rt_hw_usb_board_init(void);
+#if defined(HC32F472)
+    #define USBFS_DRVVBUS_PIN            (rt_base_t)(((rt_uint16_t)USBF_DRVVBUS_PORT * 16) + __CLZ(__RBIT(USBF_DRVVBUS_PIN)))
+#endif
+
+#if !defined(BSP_USING_USBH_HS)
+    extern rt_err_t rt_hw_usbfs_board_init(void);
+#else
+    extern rt_err_t rt_hw_usbhs_board_init(void);
+#endif
 extern void rt_hw_us_delay(rt_uint32_t us);
 
 static usb_core_instance _hc32_usbh;
@@ -44,11 +52,22 @@ void usb_mdelay(const uint32_t msec)
 
 void usb_bsp_cfgvbus(usb_core_instance *pdev)
 {
-    /* reserved */
+#if defined(HC32F472)
+    rt_pin_mode(USBFS_DRVVBUS_PIN, PIN_MODE_OUTPUT);
+#endif
 }
 void usb_bsp_drivevbus(usb_core_instance *pdev, uint8_t state)
 {
-    /* reserved */
+#if defined(HC32F472)
+    if (0x00U == state)
+    {
+        rt_pin_write(USBFS_DRVVBUS_PIN, PIN_LOW);
+    }
+    else
+    {
+        rt_pin_write(USBFS_DRVVBUS_PIN, PIN_HIGH);
+    }
+#endif
 }
 
 static void usb_device_connect_callback(usb_core_instance *pdev)
@@ -663,6 +682,13 @@ static void usbh_irq_handler(void)
     rt_interrupt_leave();
 }
 
+#if defined(HC32F472)
+void USBFS_Handler(void)
+{
+    usbh_irq_handler();
+}
+#endif
+
 static void usb_host_chopen(usb_core_instance *pdev,
                             uint8_t  hc_num,
                             uint8_t  epnum,
@@ -886,7 +912,11 @@ static int _usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nby
             u32NakCnt ++;
             if (u32NakCnt > MAX_NAK_CNT)
             {
+#if defined(RT_USBH_MSTORAGE) || defined(RT_USBH_HID)
+                /* Do not limit the number of Naks */
+#else
                 return -1;
+#endif
             }
             if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
             {
@@ -1065,13 +1095,13 @@ static rt_err_t _usbh_init(rt_device_t device)
     usb_core_instance *hhcd = (usb_core_instance *)device->user_data;
 
     /* Fcg config */
-#if !defined(BSP_USING_USBHS)
+#if !defined(BSP_USING_USBH_HS)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_USBFS, ENABLE);
 #else
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_USBHS, ENABLE);
 #endif
     /* Parameters */
-#if !defined(BSP_USING_USBHS)
+#if !defined(BSP_USING_USBH_HS)
     stcPortIdentify.u8CoreID = USBFS_CORE_ID;
 #else
     stcPortIdentify.u8CoreID = USBHS_CORE_ID;
@@ -1084,17 +1114,23 @@ static rt_err_t _usbh_init(rt_device_t device)
 #endif
 #endif
     /* BSP Config */
-    rt_hw_usb_board_init();
+#if !defined(BSP_USING_USBH_HS)
+    rt_hw_usbfs_board_init();
+#else
+    rt_hw_usbhs_board_init();
+#endif
     /* Host driver init */
     _usbh_driver_init(hhcd, &stcPortIdentify);
     /* NVIC config */
-    irq_config.irq_num = BSP_USB_GLB_IRQ_NUM;
-#if !defined(BSP_USING_USBHS)
+#if !defined(BSP_USING_USBH_HS)
+    irq_config.irq_num = BSP_USBFS_GLB_IRQ_NUM;
     irq_config.int_src = INT_SRC_USBFS_GLB;
+    irq_config.irq_prio = BSP_USBFS_GLB_IRQ_PRIO;
 #else
+    irq_config.irq_num = BSP_USBHS_GLB_IRQ_NUM;
     irq_config.int_src = INT_SRC_USBHS_GLB;
+    irq_config.irq_prio = BSP_USBHS_GLB_IRQ_PRIO;
 #endif
-    irq_config.irq_prio = BSP_USB_GLB_IRQ_PRIO;
     /* register interrupt */
     hc32_install_irq_handler(&irq_config,
                              usbh_irq_handler,
@@ -1102,6 +1138,7 @@ static rt_err_t _usbh_init(rt_device_t device)
 
     return RT_EOK;
 }
+
 
 int rt_hw_usbh_init(void)
 {

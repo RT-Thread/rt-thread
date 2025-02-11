@@ -185,6 +185,9 @@ if RT_USING_SMART
         bool "Using Pseudo-Teletype Filesystem (UNIX98 PTY)"
         depends on RT_USING_DFS_DEVFS
         default y
+    config RT_USING_DFS_PROCFS
+        bool "Enable proc file system"
+        default n
 endif
 
     config RT_USING_DFS_CROMFS

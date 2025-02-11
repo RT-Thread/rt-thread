@@ -1,12 +1,10 @@
-Kernel Porting
-===============
+@page kernel_porting Kernel Porting
 
 After learning the previous chapters, everyone has a better understanding of RT-Thread, but many people are not familiar with how to port the RT-Thread kernel to different hardware platforms. Kernel porting refers to the RT-Thread kernel running on different chip architectures and different boards. It can have functions such as thread management and scheduling, memory management, inter-thread synchronization and communication, and timer management. Porting can be divided into two parts: CPU architecture porting and BSP (Board support package) porting .
 
-This chapter will introduce CPU architecture porting and BSP porting. The CPU architecture porting part will be introduced in conjunction with the Cortex-M CPU architecture. Therefore, it is necessary to review "Cortex-M CPU Architecture Foundation" in the previous chapter ["Interrupt Management"](../interrupt/interrupt.md).  After reading this chapter, how to complete the RT-Thread kernel porting will be learned.
+This chapter will introduce CPU architecture porting and BSP porting. The CPU architecture porting part will be introduced in conjunction with the Cortex-M CPU architecture. Therefore, it is necessary to review "Cortex-M CPU Architecture Foundation" in the previous chapter @ref interrupt_management.  After reading this chapter, how to complete the RT-Thread kernel porting will be learned.
 
-CPU Architecture Porting
------------
+# CPU Architecture Porting
 
 There are many different CPU architectures in the embedded world, for example, Cortex-M, ARM920T, MIPS32, RISC-V, etc. In order to enable RT-Thread to run on different CPU architecture chips, RT-Thread provides a libcpu abstraction layer to adapt to different CPU architectures. The libcpu layer provides unified interfaces to the kernel, including global interrupt switches, thread stack initialization, context switching, and more.
 
@@ -25,7 +23,7 @@ libcpu porting related API
 | rt_uint32_t rt_thread_switch_interrupt_flag;                 | A flag indicating that a switch is needed in the interrupt.  |
 | rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread; | Used to save *from* and *to* threads when the thread is context switching. |
 
-### Implement Global Interrupt Enable/Disable
+## Implement Global Interrupt Enable/Disable
 
 Regardless of kernel code or user code, there may be some variables that need to be used in multiple threads or interrupts. If there is no corresponding protection mechanism, it may lead to critical section problems. In order to solve this problem, RT-Thread provides a series of inter-thread synchronization and communication mechanism. But these mechanisms require the global interrupt enable/disable function provided in libcpu. They are, respectively:
 
@@ -44,7 +42,7 @@ CPSID I ;PRIMASK=1， ; disable global interrupt
 CPSIE I ;PRIMASK=0， ; enable global interrupt
 ```
 
-#### Disable Global Interrupt
+### Disable Global Interrupt
 
 The functions that need to be done in order in the rt_hw_interrupt_disable() function are:
 
@@ -72,7 +70,7 @@ The above code first uses the MRS instruction to save the value of the PRIMASK r
 
 There are different conventions for different CPU architectures regarding how registers are managed during function calls and in interrupt handlers. A more detailed introduction to the use of registers for Cortex-M can be found in the official ARM manual, "*Procedure Call Standard for the ARM ® Architecture*."
 
-#### Enable Global Interrupt
+### Enable Global Interrupt
 
 In `rt_hw_interrupt_enable(rt_base_t level)`, the variable *level* is used as the state to be restored, overriding the global interrupt status of the chip.
 
@@ -93,7 +91,7 @@ rt_hw_interrupt_enable    PROC      ; PROC pseudoinstruction definition function
 
 The above code first uses the MSR instruction to write the value register of r0 to the PRIMASK register, thus restoring the previous interrupt status.
 
-### Implement Thread Stack Initialization
+## Implement Thread Stack Initialization
 
 When dynamically creating threads and initializing threads, the internal thread initialization function *_rt_thread_init()* is used. The _rt_thread_init() function calls the stack initialization function *rt_hw_stack_init()*, which manually constructs a context in the stack initialization function. The context will be used as the initial value for each thread's first execution. The layout of the context on the stack is shown below:
 
@@ -147,7 +145,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 }
 ```
 
-### Implement Context Switching
+## Implement Context Switching
 
 In different CPU architectures, context switches between threads and context switches from interrupts to context, the register portion of the context may be different or the same. In Cortex-M, context switching is done uniformly using PendSV exceptions, and there is no difference in the switching parts. However, in order to adapt to different CPU architectures, RT-Thread's libcpu abstraction layer still needs to implement three thread switching related functions:
 
@@ -167,7 +165,7 @@ Context switching between threads, as shown in the following figure:
 
 ![Context Switch between Threads](figures/10ths_env1.png)
 
-The hardware automatically saves the PSR, PC, LR, R12, R3-R0 registers of the *from* thread before entering the PendSV interrupt, then saves the R11\~R4 registers of the *from* thread in PendSV, and restores the R4\~R11 registers of the *to* thread, and finally the hardware automatically restores the R0\~R3, R12, LR, PC, PSR registers of the *to* thread after exiting the PendSV interrupt.
+The hardware automatically saves the PSR, PC, LR, R12, R3-R0 registers of the *from* thread before entering the PendSV interrupt, then saves the R11~R4 registers of the *from* thread in PendSV, and restores the R4~R11 registers of the *to* thread, and finally the hardware automatically restores the R0~R3, R12, LR, PC, PSR registers of the *to* thread after exiting the PendSV interrupt.
 
 The context switch from interrupt to thread can be represented by the following figure:
 
@@ -177,7 +175,7 @@ The hardware automatically saves the PSR, PC, LR, R12, R3-R0 registers of the *f
 
 Obviously, in the Cortex-M kernel, the rt_hw_context_switch() and rt_hw_context_switch_interrupt() have same functions, which is finishing saving and replying the remaining contexts in PendSV. So we just need to implement a piece of code to simplify the porting.
 
-#### Implement rt_hw_context_switch_to()
+### Implement rt_hw_context_switch_to()
 
 rt_hw_context_switch_to() has only the target thread and no source thread. This function implements the function of switching to the specified thread. The following figure is a flowchart:
 
@@ -236,7 +234,7 @@ rt_hw_context_switch_to    PROC
     ENDP
 ```
 
-#### Implement rt_hw_context_switch()/ rt_hw_context_switch_interrupt()
+### Implement rt_hw_context_switch()/ rt_hw_context_switch_interrupt()
 
 The function rt_hw_context_switch() and the function rt_hw_context_switch_interrupt() have two parameters, the *from* thread and the *to* thread. They implement the function to switch from the *from* thread to the *to* thread. The following figure is a specific flow chart:
 
@@ -285,7 +283,7 @@ _reswitch
     BX      LR
 ```
 
-#### Implement PendSV Interrupt
+### Implement PendSV Interrupt
 
 In Cortex-M3, the PendSV interrupt handler is PendSV_Handler(). The actual thread switching is done in PendSV_Handler(). The following figure is a specific flow chart:
 
@@ -345,7 +343,7 @@ pendsv_exit
     ENDP
 ```
 
-### Impalement OS Tick
+## Impalement OS Tick
 
 With the basics of switching global interrupts and context switching, RTOS can perform functions such as creating, running, and scheduling threads. With OS Tick, RT-Thread can schedule time-to-roll rotations for threads of the same priority, implementing timer functions, implementing rt_thread_delay() delay functions, and so on.
 
@@ -366,8 +364,7 @@ void SysTick_Handler(void)
 }
 ```
 
-BSP Porting
--------
+# BSP Porting
 
 In a practical project, for the same CPU architecture, different boards may use the same CPU architecture, carry different peripheral resources, and complete different products, so we also need to adapt to the board. RT-Thread provides a BSP abstraction layer to fit boards commonly seen. If you want to use the RT-Thread kernel on a board, in addition to the need to have the corresponding chip architecture porting, you need to port the corresponding board, that is, implement a basic BSP. The job is to establish a basic environment for the operating system to run. The main tasks that need to be completed are:
 

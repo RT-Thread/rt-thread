@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_aes.h
- * @version $Rev:: 2022         $
- * @date    $Date:: 2020-02-03 #$
+ * @version $Rev:: 2985         $
+ * @date    $Date:: 2023-12-14 #$
  * @brief   The header file of the ADC library.
  *************************************************************************************************************
  * @attention
@@ -159,15 +159,15 @@ typedef enum
 void AES_ECB_Init(HT_AES_TypeDef* HT_AESn, AES_InitTypeDef* AES_InitStruct);
 void AES_CBC_Init(HT_AES_TypeDef* HT_AESn, AES_InitTypeDef* AES_InitStruct);
 void AES_CTR_Init(HT_AES_TypeDef* HT_AESn, AES_InitTypeDef* AES_InitStruct);
-void AES_SetKeyTable(HT_AES_TypeDef* HT_AESn, uc8* Key, u32 keySize);
-ErrStatus _AES_CryptData(HT_AES_TypeDef* HT_AESn, AES_DIR_Enum dir, uc8 *iv, u32 length, uc8 *inputData, u8 *outputData);
+void AES_SetKeyTable(HT_AES_TypeDef* HT_AESn, u32 *Key, u32 keySize);
+ErrStatus _AES_CryptData(HT_AES_TypeDef* HT_AESn, AES_DIR_Enum dir, u32 *iv, u32 length, u32 *inputData, u32 *outputData);
 #define AES_ECB_CryptData(a, b, c, d, e)     _AES_CryptData(a, b, NULL, c, d, e)
 #define AES_CBC_CryptData                    _AES_CryptData
 #define AES_CTR_CryptData(a, b, c, d, e)     _AES_CryptData(a, AES_DIR_ENCRYPT, b, c, d, e)
 #if 0
-ErrStatus AES_ECB_CryptData(HT_AES_TypeDef* HT_AESn, AES_DIR_Enum mode, u32 length, uc8 *inputData, u8 *outputData);
-ErrStatus AES_CBC_CryptData(HT_AES_TypeDef* HT_AESn, AES_DIR_Enum mode, uc8 *iv, u32 length, uc8 *inputData, u8 *outputData);
-ErrStatus AES_CTR_CryptData(HT_AES_TypeDef* HT_AESn, uc8 *iv, u32 length, uc8 *inputData, u8 *outputData);
+ErrStatus AES_ECB_CryptData(HT_AES_TypeDef* HT_AESn, AES_DIR_Enum mode, u32 length, u32 *inputData, u32 *outputData);
+ErrStatus AES_CBC_CryptData(HT_AES_TypeDef* HT_AESn, AES_DIR_Enum mode, u32 *iv, u32 length, u32 *inputData, u32 *outputData);
+ErrStatus AES_CTR_CryptData(HT_AES_TypeDef* HT_AESn, u32 *iv, u32 length, u32 *inputData, u32 *outputData);
 #endif
 
 void AES_StartKey(HT_AES_TypeDef* HT_AESn);
@@ -180,7 +180,7 @@ FlagStatus AES_GetIntStatus(HT_AES_TypeDef* HT_AESn, u32 AES_INTSR_x);
 void AES_IntConfig(HT_AES_TypeDef* HT_AESn, u32 AES_IER_x, ControlStatus NewState);
 void AES_SetInputData(HT_AES_TypeDef* HT_AESn, uc32 AES_Data);
 u32 AES_GetOutputData(HT_AES_TypeDef* HT_AESn);
-void AES_SetVectorTable(HT_AES_TypeDef* HT_AESn, uc8* Vector);
+void AES_SetVectorTable(HT_AES_TypeDef* HT_AESn, u32 *Vector);
 void AESCore_IRQHandler(HT_AES_TypeDef* HT_AESn);
 /**
   * @}
