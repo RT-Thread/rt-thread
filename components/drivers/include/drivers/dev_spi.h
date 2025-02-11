@@ -132,6 +132,8 @@ extern "C"{
 #define RT_SPI_BUS_MODE_SPI         (1<<0)
 #define RT_SPI_BUS_MODE_QSPI        (1<<1)
 
+#define RT_SPI_CS_CNT_MAX           16
+
 /**
  * @brief SPI message structure
  */
@@ -175,7 +177,8 @@ struct rt_spi_bus
     const struct rt_spi_ops *ops;
 
 #ifdef RT_USING_DM
-    rt_base_t *pins;
+    rt_base_t cs_pins[RT_SPI_CS_CNT_MAX];
+    rt_uint8_t cs_active_vals[RT_SPI_CS_CNT_MAX];
     rt_bool_t slave;
     int num_chipselect;
 #endif /* RT_USING_DM */
@@ -220,7 +223,7 @@ struct rt_spi_device
     const struct rt_spi_device_id *id;
     const struct rt_ofw_node_id *ofw_id;
 
-    rt_uint8_t chip_select;
+    rt_uint8_t chip_select[RT_SPI_CS_CNT_MAX];
     struct rt_spi_delay cs_setup;
     struct rt_spi_delay cs_hold;
     struct rt_spi_delay cs_inactive;

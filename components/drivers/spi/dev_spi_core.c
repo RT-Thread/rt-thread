@@ -53,25 +53,14 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
         if (pin_count > 0)
         {
             pin_count = rt_max_t(int, pin_count, bus->num_chipselect);
-            bus->pins = rt_malloc(sizeof(bus->pins[0]) * pin_count);
-
-            if (!bus->pins)
-            {
-                rt_device_unregister(&bus->parent);
-                return -RT_ENOMEM;
-            }
 
             for (int i = 0; i < pin_count; ++i)
             {
-                bus->pins[i] = rt_pin_get_named_pin(&bus->parent, "cs", i,
-                                                    RT_NULL, RT_NULL);
+                bus->cs_pins[i] = rt_pin_get_named_pin(&bus->parent, "cs", i,
+                                                       RT_NULL, &bus->cs_active_vals[i]);
             }
         }
-        else if (pin_count == 0)
-        {
-            bus->pins = RT_NULL;
-        }
-        else
+        else if (pin_count < 0)
         {
             result = pin_count;
 
