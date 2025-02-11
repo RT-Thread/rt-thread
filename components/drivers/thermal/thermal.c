@@ -638,10 +638,6 @@ void rt_thermal_zone_device_update(struct rt_thermal_zone_device *zdev, rt_ubase
             int trip_low;
             rt_bool_t low_set = RT_FALSE;
 
-            if (i >= zdev->trips_nr)
-            {
-                goto _call_notifier;
-            }
             rt_memcpy(&trip, &zdev->trips[i], sizeof(trip));
 
             trip_low = trip.temperature - trip.hysteresis;
