@@ -1,0 +1,23 @@
+# ------ PERIPHERAL CI ------
+peripheral.EMAC:
+    kconfig:
+      - CONFIG_BSP_DRV_EMAC=y
+peripheral.LVGL:
+    kconfig:
+      - CONFIG_RT_USING_POSIX_SOCKET=y  
+      - ONFIG_RT_USING_LWIP=y 
+      - CONFIG_BSP_USING_LVGL=y     
+      
+# ------ online-packages CI ------
+online-packages.misc.entertainment.tetris:
+    kconfig:
+      - CONFIG_PKG_USING_TETRIS=y
+online-packages.misc.entertainment.2048:
+    kconfig:
+      - CONFIG_PKG_USING_2048=y
+online-packages.ai.llmchat:
+    kconfig:
+      - CONFIG_WEBCLIENT_USING_MBED_TLS=y
+      - CONFIG_BSP_DRV_EMAC=y
+      - CONFIG_PKG_USING_LLMCHAT=y
+      - CONFIG_PKG_LLM_API_KEY="sk-xxxxxx"
