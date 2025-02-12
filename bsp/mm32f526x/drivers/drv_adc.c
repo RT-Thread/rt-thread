@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-01-22     chasel       first version
+ * 2025-02-10     chasel       fix adc calibration did not clear flag bits
  */
 #include <rtdevice.h>
 #include "board.h"
@@ -94,14 +95,8 @@ static rt_err_t mm32_get_adc_value(struct rt_adc_device *device, rt_int8_t chann
 
     ADC_SoftwareStartConvCmd(adc_x, ENABLE);
 
-    rt_uint32_t cnt = 0;
-    /* @warning There is a bug here, please fix me. */
-    while(ADC_GetFlagStatus(adc_x, ADC_FLAG_EOS) == 0) {
-        rt_thread_mdelay(1);
-        if (cnt++ > 5)
-            break;
-    }
-    ADC_ClearFlag(adc_x, ADC_FLAG_EOS);
+    while(ADC_GetFlagStatus(adc_x, ADC_FLAG_EOC) == 0);
+    ADC_ClearFlag(adc_x, ADC_FLAG_EOC);
 
     *value = ADC_GetChannelConvertedValue(adc_x, channel);
     return RT_EOK;
