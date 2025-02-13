@@ -1,4 +1,4 @@
-@page env User Manual of Env
+@page page_env User Manual of Env
 
 Env is a handy utility tool developed by RT-Thread team to build environment, graphical system configuration, and packages management for software projects that intend to run on RT-Thread operating system. Env tool come with source code builder, compilation environment and package management system.
 
@@ -82,7 +82,7 @@ scons --target=mdk4
 scons --target=mdk5
 ```
 
-For more scons tutorials, please refer to  @ref scons.
+For more scons tutorials, please refer to  @ref page_scons.
 
 ## BSP configuration: menuconfig
 

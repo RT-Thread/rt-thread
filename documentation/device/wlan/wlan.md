@@ -1,4 +1,4 @@
-@page device_wlan WLAN Device
+@page page_device_wlan WLAN Device
 
 With the rapid development of the Internet of Things, more and more embedded devices are equipped with WIFI wireless network devices. In order to be able to manage WIFI network devices, RT-Thread introduces a WLAN device management framework. This framework has many features to control and manage WIFI, providing developers with many conveniences for using WIFI devices.
 

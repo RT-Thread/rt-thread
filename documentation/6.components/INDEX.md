@@ -1,12 +1,12 @@
-@page components Components
+@page page_components Components
 
-- @subpage component_finsh
-- @subpage component_vfs
-- @subpage component_utest
-- @subpage component_dlmodule
-- @subpage component_sal
-- @subpage component_at
-- @subpage component_posix
-- @subpage component_ulog
-- @subpage component_pm
-- @subpage component_network
+- @subpage page_component_finsh
+- @subpage page_component_vfs
+- @subpage page_component_utest
+- @subpage page_component_dlmodule
+- @subpage page_component_sal
+- @subpage page_component_at
+- @subpage page_component_posix
+- @subpage page_component_ulog
+- @subpage page_component_pm
+- @subpage page_component_network

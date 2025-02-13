@@ -1,4 +1,4 @@
-@page device_hwtimer HWTIMER Device
+@page page_device_hwtimer HWTIMER Device
 
 # Introduction to the Timer
 

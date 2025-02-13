@@ -1,4 +1,4 @@
-@page component_posix POSIX Interface
+@page page_component_posix POSIX Interface
 
 # Introduction to Pthreads
 
@@ -55,7 +55,7 @@ RT-Thread implements most of the functions and constants of Pthreads, defined in
 typedef rt_thread_t pthread_t;
 ```
 
-`Pthread_t` is a redefinition of the `rt_thread_t` type, defined in the `pthread.h` header file. rt_thread_t is the thread handle (or thread identifier) of the RT-Thread and is a pointer to the thread control block. You need to define a variable of type pthread_t before creating a thread. Each thread corresponds to its own thread control block, which is a data structure used by the operating system to control threads. It stores some information about the thread, such as priority, thread name, and thread stack address. Thread control blocks and thread specific information are described in detail in the @ref thread_management chapter.
+`Pthread_t` is a redefinition of the `rt_thread_t` type, defined in the `pthread.h` header file. rt_thread_t is the thread handle (or thread identifier) of the RT-Thread and is a pointer to the thread control block. You need to define a variable of type pthread_t before creating a thread. Each thread corresponds to its own thread control block, which is a data structure used by the operating system to control threads. It stores some information about the thread, such as priority, thread name, and thread stack address. Thread control blocks and thread specific information are described in detail in the @ref page_thread_management chapter.
 
 ## Create Thread
 
@@ -436,7 +436,7 @@ The main APIs of the mutex include: calling `pthread_mutex_init()` to initialize
 
 The rt-thread operating system implements a priority inheritance algorithm to prevent priority inversion.Priority inheritance is the practice of raising the priority of a low-priority thread that occupies a resource to the same level as the highest-priority thread of all the threads waiting for the resource, then executing, and then returning to the initial setting when the low-priority thread releases the resource.Thus, threads that inherit priority prevent system resources from being preempted by any intermediate priority thread.
 
-For a detailed introduction to priority reversal, please refer to the @ref thread_sync Mutex section.
+For a detailed introduction to priority reversal, please refer to the @ref page_thread_sync Mutex section.
 
 ## Mutex Lock Control Block
 

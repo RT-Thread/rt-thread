@@ -1,4 +1,4 @@
-@page memory_management Memory Management
+@page page_memory_management Memory Management
 
 In a computing system, there are usually two types of memory space: internal memory space and external memory space. Internal memory can be quickly accessed, its contents can be read to and changed and only an address is required. The contents of internal memory are deleted after each power off. It is what would usually be called RAM (Random Access Memory) and is analogous to the RAM in a desktop computer. On the other hand, external memory has relatively fixed contents, retains data even after power off. It is usually called ROM (Read-Only Memory) and is analogous to the hard disk in a desktop computer.
 

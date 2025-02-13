@@ -1,4 +1,4 @@
-@page quick_start Start Guide
+@page page_quick_start Start Guide
 
 Because of its particularity, the embedded operating system is often closely related to the hardware platform, and specific embedded operating systems can only run on specific hardware. For those who might not have an RT-Thread compatible hardware module, or want to test out their ideas, a complete RT-Thread system can be developed in the simulation environment MDK-ARM.
 
@@ -10,7 +10,7 @@ What will follow is a demonstration of RT-Thread running on a simulated STM32F10
 
 # Preparation
 
-MDK development environment: MDK-ARM 5.24 (official or evaluation version, version 5.14 and above) needs to be installed. This version is a relatively new version, which can provide relatively complete debugging functions. An installation guide can be found here: @subpage quickstart_keil.
+MDK development environment: MDK-ARM 5.24 (official or evaluation version, version 5.14 and above) needs to be installed. This version is a relatively new version, which can provide relatively complete debugging functions. An installation guide can be found here: @subpage page_quickstart_keil.
 
 # First acquaintance with RT-Thread
 

@@ -1,4 +1,4 @@
-@page device_watchdog WATCHDOG Device
+@page page_device_watchdog WATCHDOG Device
 
 # An Introduction to WATCHDOG
 

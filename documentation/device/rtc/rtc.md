@@ -1,4 +1,4 @@
-@page device_rtc RTC Device
+@page page_device_rtc RTC Device
 
 # Introduction of RTC
 

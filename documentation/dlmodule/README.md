@@ -1,4 +1,4 @@
-@page component_dlmodule Dynamic Module: dlmodule
+@page page_component_dlmodule Dynamic Module: dlmodule
 
 In traditional desktop operating systems, user space and kernel space are separate. The application runs in user space, and the kernel and kernel modules run in kernel space. The kernel module can be dynamically loaded and deleted to extend the kernel functionality.  `dlmodule` is a software component of the dynamic module loading mechanism provided in kernel space of RT-Thread. In versions of RT-Thread v3.1.0, this was also called the `Application Module`. After RT-Thread v3.1.0 and later, it returned to the tradition and was named after the `dynamic module`.
 
@@ -295,7 +295,7 @@ This function closes the dynamic library pointed to by  `handle` and unloads it 
 
 # FAQs
 
-Please refer to @ref env for issues related to the Env tool.
+Please refer to @ref page_env for issues related to the Env tool.
 
 ## Q: Dynamic modules cannot be run successfully according to the documentation.
 

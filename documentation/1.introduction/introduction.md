@@ -1,4 +1,4 @@
-@page introduction Introduction
+@page page_introduction Introduction
 
 As a beginner of Real-time Operating Systems (RTOS), you might be new to RT-Thread. However, with a better understanding of it over time, you will gradually discover the charm of RT-Thread and its advantages over other RTOSs of the same type. RT-Thread is an RTOS. With over 16 years of experience accumulated, along with the rise of the Internet of Things (IoT), it is evolving into a powerful, component-rich IoT operating system.  
 

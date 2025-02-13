@@ -1,4 +1,4 @@
-@page device_adc ADC Device
+@page page_device_adc ADC Device
 
 # An Introduction to ADC
 

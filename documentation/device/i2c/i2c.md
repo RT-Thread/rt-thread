@@ -1,4 +1,4 @@
-@page device_i2c I2C Bus Device
+@page page_device_i2c I2C Bus Device
 
 # Introduction of I2C
 

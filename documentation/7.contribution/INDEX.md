@@ -1,4 +1,4 @@
-@page code_contribution Contribution
+@page page_code_contribution Contribution
 
 # Contribution Guide
 
@@ -6,6 +6,6 @@ We sincerely thank you for your contribution, and welcome to submit the code thr
 
 All the real-time operating system kernel and open source components can be used free of charge for commercial products, there is no potential commercial risk and you will not being request to publish application source.
 
-@subpage rtt_code_style_en
+@subpage page_rtt_code_style_en
 
-@subpage howto_doxygen
+@subpage page_howto_doxygen

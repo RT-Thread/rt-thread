@@ -1,8 +1,8 @@
-@page kernel_porting Kernel Porting
+@page page_kernel_porting Kernel Porting
 
 After learning the previous chapters, everyone has a better understanding of RT-Thread, but many people are not familiar with how to port the RT-Thread kernel to different hardware platforms. Kernel porting refers to the RT-Thread kernel running on different chip architectures and different boards. It can have functions such as thread management and scheduling, memory management, inter-thread synchronization and communication, and timer management. Porting can be divided into two parts: CPU architecture porting and BSP (Board support package) porting .
 
-This chapter will introduce CPU architecture porting and BSP porting. The CPU architecture porting part will be introduced in conjunction with the Cortex-M CPU architecture. Therefore, it is necessary to review "Cortex-M CPU Architecture Foundation" in the previous chapter @ref interrupt_management.  After reading this chapter, how to complete the RT-Thread kernel porting will be learned.
+This chapter will introduce CPU architecture porting and BSP porting. The CPU architecture porting part will be introduced in conjunction with the Cortex-M CPU architecture. Therefore, it is necessary to review "Cortex-M CPU Architecture Foundation" in the previous chapter @ref page_interrupt_management.  After reading this chapter, how to complete the RT-Thread kernel porting will be learned.
 
 # CPU Architecture Porting
 

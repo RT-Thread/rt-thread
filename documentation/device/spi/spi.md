@@ -1,4 +1,4 @@
-@page device_spi SPI Device
+@page page_device_spi SPI Device
 
 # Introduction to SPI
 

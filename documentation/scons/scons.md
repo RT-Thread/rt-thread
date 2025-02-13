@@ -1,4 +1,4 @@
-@page scons SCons
+@page page_scons SCons
 
 # Introduction to SCons
 
@@ -460,7 +460,7 @@ After saving the configuration, exit the configuration interface and open the rt
 
 Because the RT_USING_HELLO macro has been defined in rtconfig.h, the source file for hello.c is added to the new project when the project is newly built.
 
-The above simply enumerates the configuration options for adding your own modules to the Kconfig file. Users can also refer to @ref env, which also explains how to modify and add configuration options. They can also view the Kconfig documentation in your own Baidu to implement other more complex configuration options.
+The above simply enumerates the configuration options for adding your own modules to the Kconfig file. Users can also refer to @ref page_env, which also explains how to modify and add configuration options. They can also view the Kconfig documentation in your own Baidu to implement other more complex configuration options.
 
 ## Add Library
 
