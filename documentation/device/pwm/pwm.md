@@ -1,4 +1,4 @@
-@page device_pwm PWM Device
+@page page_device_pwm PWM Device
 
 # Introduction to PWM
 

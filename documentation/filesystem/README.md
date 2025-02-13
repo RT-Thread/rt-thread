@@ -1,4 +1,4 @@
-@page component_vfs Virtual File System
+@page page_component_vfs Virtual File System
 
 In early days, the amount of data to be stored in embedded systems was relatively small and data types were relatively simple.
 The data were stored by directly writing to a specific address in storage devices. However, with today modern technology, embedded device's functions are getting complicated and required more data storage. Therefore, we need new data management methods to simplify and organize the data storage.

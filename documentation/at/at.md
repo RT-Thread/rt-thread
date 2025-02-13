@@ -1,4 +1,4 @@
-@page component_at AT Commands
+@page page_component_at AT Commands
 
 # Introduction to AT Commands
 

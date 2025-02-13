@@ -1,10 +1,10 @@
-@page kernel Kenrel
+@page page_kernel Kenrel
 
-- @subpage kernel_basics
-- @subpage thread_management
-- @subpage clock_management
-- @subpage thread_sync
-- @subpage thread_comm
-- @subpage memory_management
-- @subpage interrupt_management
-- @subpage kernel_porting
+- @subpage page_kernel_basics
+- @subpage page_thread_management
+- @subpage page_clock_management
+- @subpage page_thread_sync
+- @subpage page_thread_comm
+- @subpage page_memory_management
+- @subpage page_interrupt_management
+- @subpage page_kernel_porting

@@ -1,4 +1,4 @@
-@page component_ulog Ulog Log
+@page page_component_ulog Ulog Log
 
 # Ulog Introduction
 

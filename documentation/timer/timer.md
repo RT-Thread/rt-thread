@@ -1,4 +1,4 @@
-@page clock_management Clock & Timer Management
+@page page_clock_management Clock & Timer Management
 
 The concept of time is very important. You need to set a time to go out with friends and it takes time to complete tasks. Life is inseparable from time. The same is true for operating systems, which require time to regulate the execution of their tasks. The smallest time unit in operating system is clock tick (OS Tick). This chapter focuses on introduction of clock ticks and clock-based timers. After reading this chapter, we will learn how clock ticks are generated and how to use RT-Thread timers.
 

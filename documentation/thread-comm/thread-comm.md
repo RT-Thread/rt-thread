@@ -1,4 +1,4 @@
-@page thread_comm Inter-thread Communication
+@page page_thread_comm Inter-thread Communication
 
 In the last chapter, we talked about inter-thread synchronization, concepts such as semaphores, mutexes, and event sets were mentioned. Following the last chapter, this chapter is going to explain inter-thread communication. In bare-metal programming, global variables are often used for communication between functions. For example, some functions may change the value of a global variable due to some operations. Another function reads the global variable and will perform corresponding actions to achieve communication and collaboration according to the global variable values it read. More tools are available in RT-Thread to help pass information between different threads. These tools are covered in more detail in this chapter. After reading this chapter, you will learn how to use mailboxes, message queues, and signals for communication between threads.
 

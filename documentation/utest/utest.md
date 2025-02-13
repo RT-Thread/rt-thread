@@ -1,4 +1,4 @@
-@page component_utest utest Framework
+@page page_component_utest utest Framework
 
 # utest Introduction
 

@@ -1,52 +1,52 @@
 @mainpage RT-Thread User Guide
 
-@subpage introduction
+@subpage page_introduction
 
-@subpage quick_start
+@subpage page_quick_start
 
-@subpage kernel
+@subpage page_kernel
 
-- @ref kernel_basics
-- @ref thread_management
-- @ref clock_management
-- @ref thread_sync
-- @ref thread_comm
-- @ref memory_management
-- @ref interrupt_management
-- @ref kernel_porting
+- @ref page_kernel_basics
+- @ref page_thread_management
+- @ref page_clock_management
+- @ref page_thread_sync
+- @ref page_thread_comm
+- @ref page_memory_management
+- @ref page_interrupt_management
+- @ref page_kernel_porting
 
-@subpage tool
+@subpage page_tool
 
-- @ref env
-- @ref scons
+- @ref page_env
+- @ref page_scons
 
-@subpage device
+@subpage page_device
 
-- @ref device_framework
-- @ref device_pin
-- @ref device_uart
-- @ref device_adc
-- @ref device_i2c
-- @ref device_spi
-- @ref device_pwm
-- @ref device_rtc
-- @ref device_hwtimer
-- @ref device_watchdog
-- @ref device_wlan
-- @ref device_sensor
+- @ref page_device_framework
+- @ref page_device_pin
+- @ref page_device_uart
+- @ref page_device_adc
+- @ref page_device_i2c
+- @ref page_device_spi
+- @ref page_device_pwm
+- @ref page_device_rtc
+- @ref page_device_hwtimer
+- @ref page_device_watchdog
+- @ref page_device_wlan
+- @ref page_device_sensor
 
-@subpage components
+@subpage page_components
 
-- @ref component_finsh
-- @ref component_vfs
-- @ref component_utest
-- @ref component_dlmodule
-- @ref component_sal
-- @ref component_at
-- @ref component_posix
-- @ref component_ulog
-- @ref component_pm
-- @ref component_network
+- @ref page_component_finsh
+- @ref page_component_vfs
+- @ref page_component_utest
+- @ref page_component_dlmodule
+- @ref page_component_sal
+- @ref page_component_at
+- @ref page_component_posix
+- @ref page_component_ulog
+- @ref page_component_pm
+- @ref page_component_network
 
-@subpage code_contribution
+@subpage page_code_contribution
 

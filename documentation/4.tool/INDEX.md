@@ -1,5 +1,5 @@
-@page tool Tool
+@page page_tool Tool
 
-- @subpage env
+- @subpage page_env
 
-- @subpage scons
+- @subpage page_scons

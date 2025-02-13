@@ -1,4 +1,4 @@
-@page device_pin PIN Device
+@page page_device_pin PIN Device
 
 # Introduction of Pin
 

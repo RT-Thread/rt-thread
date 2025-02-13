@@ -1,4 +1,4 @@
-@page thread_management Thread Management
+@page page_thread_management Thread Management
 
 When we are facing a big task in our daily life, we usually break it down into a number of simple, easy-to-manage smaller tasks. Then, we would deal with these smaller tasks one by one, gradually, the big task is worked out. In a multi-threaded operating system, developers also need to break down a complex application into multiple small, schedulable, and serialized program units. When tasks are reasonably divided and properly executed, this design allows the system to meet the capacity and time requirements of the real-time system. For example, to have the embedded system to perform such tasks, the system would collect data through sensors and display the data on the screen. In a multi-threaded real-time system, the task can be decomposed into two subtasks. The subtask, as shown in the following figure, reads the sensor data continuously and writes the data into the shared memory. The other subtask periodically reads the data from the shared memory and outputs the sensor data onto the screen.
 

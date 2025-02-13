@@ -1,4 +1,4 @@
-@page component_sal Socket Abstraction Layer: SAL
+@page page_component_sal Socket Abstraction Layer: SAL
 
 # SAL Introduction
 

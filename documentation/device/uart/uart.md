@@ -1,4 +1,4 @@
-@page device_uart UART Device
+@page page_device_uart UART Device
 
 # UART Introduction
 

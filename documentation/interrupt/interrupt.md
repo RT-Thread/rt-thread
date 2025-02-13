@@ -1,4 +1,4 @@
-@page interrupt_management Interrupt Management
+@page page_interrupt_management Interrupt Management
 
 Interrupts often occur in embedded operating systems. When the CPU is processing a normal task, an external urgent event has occurred, requiring the CPU to suspend the current task to handle the asynchronous event. After the external event has been handled, CPU then returns to the interrupted address to continue working on the previous task. The system that implements this function is called the interrupt system, and the source of the request requesting for the CPU interrupt is called the interrupt source. An interrupt is an exception. An exception is any event that causes the processor to move away from normal operation and execute special code. If it is not processed in time, the system will either encounter an error or face a complete breakdown. So appropriately handling exceptions to avoid errors is a very important part of improving software robustness (stability). The following picture is a simple interrupt diagram.
 

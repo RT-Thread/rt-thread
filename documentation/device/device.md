@@ -1,4 +1,4 @@
-@page device_framework I/O Device Framework
+@page page_device_framework I/O Device Framework
 
 Most embedded systems include some I/O (Input/Output) devices, data displays on instruments, serial communication on industrial devices, Flash or SD cards for saving data on data acquisition devices,as well as Ethernet interfaces for network devices, are examples of I/O devices that are commonly seen in embedded systems.
 

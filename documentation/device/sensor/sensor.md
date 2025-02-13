@@ -1,4 +1,4 @@
-@page device_sensor Sensor Device
+@page page_device_sensor Sensor Device
 
 # Introduction
 

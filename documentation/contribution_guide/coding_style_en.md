@@ -1,4 +1,4 @@
-@page rtt_code_style_en RT-Thread Coding Style
+@page page_rtt_code_style_en RT-Thread Coding Style
 
 This is an developing instruction for RT-Thread developers. As open source
 software, RT-Thread is created by the cooperation of different people. This

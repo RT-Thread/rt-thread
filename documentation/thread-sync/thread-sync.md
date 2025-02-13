@@ -1,4 +1,4 @@
-@page thread_sync Inter-thread Synchronization
+@page page_thread_sync Inter-thread Synchronization
 
 In a multi-threaded real-time system, the completion of a task can often be accomplished through coordination of multiple threads, so how do these multiple threads collaborate well with each other to perform without errors? Here is an example.
 

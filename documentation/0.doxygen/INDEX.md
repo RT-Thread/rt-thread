@@ -1,8 +1,8 @@
-@page howto_doxygen How to write doxygen documentation for RT-Thread
+@page page_howto_doxygen How to write doxygen documentation for RT-Thread
 
 RT-Thread Online Documentation is created based on doxygen and is available at: <https://rt-thread.github.io/rt-thread/>. It is consisted of two parts.
 
-One part is the detailed introduction of Kernel, which is written in markdown format and converted into HTML page by doxygen. It is displayed under "RT-Thread User Guide" in Treeview on the left side of the browser. Each sub-chapter is organized into a hierarchical structure by using doxygen's [subpage mechanism][2]. There are no special requirements for writing this part, so I will not go into details in this article.
+One part is the detailed introduction of Kernel, which is written in markdown format and converted into HTML page by doxygen. It is displayed under "RT-Thread User Guide" in Treeview on the left side of the browser. Each sub-chapter is organized into a hierarchical structure by using doxygen's [subpage mechanism][2]. To define a page, we use `@page` command. The page name should be prefixed with a "page_", and the page name should be unique. Besides this, there are no special requirements for writing this part, so I will not go into details in this article.
 
 The other part is the description of API. RT-Thread uses [doxygen][1] to automate the generation of documentation from source code comments, parsing information about classes, functions, and variables to produce output in format of HTML. It is displayed under "Modules" in Treeview on the left side of the browser. Each sub-chapter is organized into a hierarchical structure by using doxygen's [topics mechanism][3]. The main content of this article is to describe how to write API with doxygen.
 

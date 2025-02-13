@@ -1,4 +1,4 @@
-@page component_pm Power Management: PM
+@page page_component_pm Power Management: PM
 
 The purpose of low power management of embedded system is to reduce system energy consumption as much as possible to prolong the standby time of equipment on the premise of satisfying users'performance requirements. The contradiction between high performance and limited battery energy is most prominent in embedded systems. The combination of hardware low power design and software low power management has become an effective means to solve the contradiction. Nowadays, all kinds of MCUs provide management interfaces in low power consumption more or less. For example, adjusting the frequency of the main control clock, changing the working voltage, adjusting or even closing the bus frequency, closing the working clock of peripheral equipment, etc. With the support of hardware, reasonable software design becomes the key to energy saving. Generally, low power management can be divided into three categories:
 
