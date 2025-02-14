@@ -155,7 +155,7 @@ typedef long (*syscall_func)(void);
  * @code
  *      #define MSH_CMD_EXPORT_ALIAS(command, alias, desc) or
  *      #define MSH_CMD_EXPORT_ALIAS(command, alias, desc, opt)
- * @endcode 
+ * @endcode
  */
 #define MSH_CMD_EXPORT_ALIAS(...)                                           \
     __MSH_GET_EXPORT_MACRO(__VA_ARGS__, _MSH_FUNCTION_EXPORT_CMD3_OPT,      \
