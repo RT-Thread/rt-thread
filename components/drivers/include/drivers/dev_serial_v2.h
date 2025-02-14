@@ -15,8 +15,8 @@
 
 
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    Serial_v2       Serial v2
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_Serial_v2 Serial v2
  *
  * @brief       Serial v2 driver api
  * 
@@ -120,12 +120,12 @@
  * MSH_CMD_EXPORT(uart_dma_sample, uart device dma sample);
  * @endcode
  * 
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  */
 
 
 /*!
- * @addtogroup Serial_v2
+ * @addtogroup group_Serial_v2
  * @{
  */
 
@@ -317,7 +317,7 @@ struct rt_uart_ops
  * @brief Serial interrupt service routine
  * @param serial    serial device
  * @param event     event mask
- * @ingroup  Serial_v2
+ * @ingroup group_Serial_v2
  */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
 
@@ -332,7 +332,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
  * @return rt_err_t        error code
  * @note This function will register a serial device to system device list,
  *       and add a device object to system object list.
- * @ingroup  Serial_v2
+ * @ingroup group_Serial_v2
  */
 rt_err_t rt_hw_serial_register(struct rt_serial_device      *serial,
                                const  char                  *name,
@@ -345,7 +345,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device      *serial,
  * @param serial    serial device
  * @return rt_err_t error code
  * 
- * @ingroup  Serial_v2
+ * @ingroup group_Serial_v2
  */
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial);
 

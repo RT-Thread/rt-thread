@@ -152,7 +152,7 @@ void (*rt_object_take_hook)(struct rt_object *object);
 void (*rt_object_put_hook)(struct rt_object *object);
 
 /**
- * @addtogroup Hook
+ * @addtogroup group_Hook
  */
 
 /**@{*/
@@ -231,7 +231,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup KernelObject
+ * @addtogroup group_KernelObject
  */
 
 /**@{*/

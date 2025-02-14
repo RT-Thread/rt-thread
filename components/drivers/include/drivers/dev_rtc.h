@@ -17,8 +17,8 @@
 #include <rtdef.h>
 #include <sys/time.h>
 /**
- * @addtogroup  Drivers    RTTHREAD Driver
- * @defgroup    RTC        RTC 
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_RTC RTC 
  *
  * @brief       RTC driver api
  * 
@@ -73,11 +73,11 @@
  * MSH_CMD_EXPORT(rtc_sample, rtc sample);
  * @endcode
  * 
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  */
 
 /*!
- * @addtogroup RTC
+ * @addtogroup group_RTC
  * @{
  */
 #ifdef __cplusplus

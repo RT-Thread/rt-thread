@@ -3,7 +3,7 @@
  */
 
 /**
- * @addtogroup Thread
+ * @addtogroup group_Thread
  * @{
  */
 

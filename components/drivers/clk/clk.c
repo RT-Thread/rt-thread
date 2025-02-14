@@ -14,11 +14,11 @@
 #include <rtdevice.h>
 
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    clk              clk
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_clk clk
  * @brief       clk driver api
- * @ingroup     Drivers
- * @addtogroup  clk
+ * @ingroup group_Drivers
+ * @addtogroup  group_clk
  * @{
  */
 

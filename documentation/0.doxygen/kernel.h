@@ -3,7 +3,7 @@
  */
 
 /**
- * @defgroup Kernel RT-Thread Kernel API
+ * @defgroup group_Kernel RT-Thread Kernel API
  *
  * The Kernel APIs are the core APIs of RT-Thread, which supports the following
  * features:
@@ -15,12 +15,12 @@
  */
 
 /**
- * @addtogroup Kernel
+ * @addtogroup group_Kernel
  * @{
  */
 
 /**
- * @defgroup Thread Thread Management
+ * @defgroup group_Thread Thread Management
  * @brief the thread management
  *
  * RT-Thread operating system supports multitask systems, which are based on thread
@@ -40,7 +40,7 @@
  */
 
 /**
- * @defgroup Clock Clock and Timer Management
+ * @defgroup group_Clock Clock and Timer Management
  * @brief clock and system timer management
  *
  * RT-Thread uses clock tick to implement shared time-slice scheduling.
@@ -50,7 +50,7 @@
  */
 
 /**
- * @defgroup KernelObject Kernel Object Management
+ * @defgroup group_KernelObject Kernel Object Management
  * @brief kernel object management
  *
  * The Kernel object system can access and manage all of the kernel objects.
@@ -70,7 +70,7 @@
  */
 
 /**
- * @defgroup IPC Inter-Thread Communication
+ * @defgroup group_IPC Inter-Thread Communication
  * @brief inter-thread communication
  *
  * RT-Thread operating system supports the traditional semaphore and mutex.
@@ -96,7 +96,7 @@
  */
 
 /**
- * @defgroup Signal Signal
+ * @defgroup group_Signal Signal
  * @brief signal is used for thread kill etc.
  *
  * A signal (also known as a soft interrupt signal), from a software perspective,
@@ -105,7 +105,7 @@
  */
 
 /**
- * @defgroup MM Memory Management
+ * @defgroup group_MM Memory Management
  * @brief memory management for memory pool and heap memory
  *
  * RT-Thread operating system supports two types memory management:
@@ -124,7 +124,7 @@
  */
 
 /**
- * @defgroup Device Device System
+ * @defgroup group_Device Device System
  * @brief device I/O subsystem
  *
  * The Device System is designed as simple and minimum layer to help communication between
@@ -139,7 +139,7 @@
  */
 
 /**
- * @defgroup Hook Runtime Trace and Record
+ * @defgroup group_Hook Runtime Trace and Record
  * @brief the hook function set in runtime
  *
  * In order to trace and record RT-Thread activity in runtime, a hook mechanism
@@ -154,12 +154,12 @@
  */
 
 /**
- * @defgroup KernelService Other useful kernel service
+ * @defgroup group_KernelService Other useful kernel service
  * @brief other useful service in the kernel
  */
 
 /**
- * @defgroup Error Error Code
+ * @defgroup group_Error Error Code
  * @brief error code
  *
  * The error code is defined to identify which kind of error occurs. When some

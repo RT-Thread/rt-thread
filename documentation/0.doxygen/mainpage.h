@@ -38,12 +38,12 @@
  * - Memory management, memory pool and dynamic heap memory management
  * - Asynchronous timer
  *
- * For more details, please refer to @ref Kernel
+ * For more details, please refer to @ref group_Kernel
  *
  * @section system_init System Initialization
  *
  * Once RT-Thread operating system starts up, the facility in system must be initialized
  * firstly.
  *
- * For more details, please refer to @ref SystemInit
+ * For more details, please refer to @ref group_SystemInit
  */

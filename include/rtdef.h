@@ -75,7 +75,7 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup BasicDef
+ * @addtogroup group_BasicDef
  */
 
 /**@{*/
@@ -235,7 +235,7 @@ typedef int (*init_fn_t)(void);
 #endif /* RT_KERNEL_REALLOC */
 
 /**
- * @ingroup BasicDef
+ * @ingroup group_BasicDef
  *
  * @def RT_IS_ALIGN(addr, align)
  * Return true(1) or false(0).
@@ -246,7 +246,7 @@ typedef int (*init_fn_t)(void);
 #define RT_IS_ALIGN(addr, align) ((!(addr & (align - 1))) && (addr != RT_NULL))
 
 /**
- * @ingroup BasicDef
+ * @ingroup group_BasicDef
  *
  * @def RT_ALIGN(size, align)
  * Return the most contiguous size aligned at specified width. RT_ALIGN(13, 4)
@@ -255,7 +255,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ALIGN(size, align)           (((size) + (align) - 1) & ~((align) - 1))
 
 /**
- * @ingroup BasicDef
+ * @ingroup group_BasicDef
  *
  * @def RT_ALIGN_DOWN(size, align)
  * Return the down number of aligned at specified width. RT_ALIGN_DOWN(13, 4)
@@ -264,7 +264,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ALIGN_DOWN(size, align)      ((size) & ~((align) - 1))
 
 /**
- * @addtogroup KernelObject
+ * @addtogroup group_KernelObject
  */
 
 /**@{*/
@@ -513,7 +513,7 @@ struct rt_object_information
 /**@}*/
 
 /**
- * @addtogroup Clock
+ * @addtogroup group_Clock
  */
 
 /**@{*/
@@ -576,7 +576,7 @@ typedef struct rt_timer *rt_timer_t;
 /**@}*/
 
 /**
- * @addtogroup Signal
+ * @addtogroup group_Signal
  */
 /**@{*/
 
@@ -589,7 +589,7 @@ typedef void (*rt_sighandler_t)(int signo);
 /**@}*/
 
 /**
- * @addtogroup Thread
+ * @addtogroup group_Thread
  */
 
 /**@{*/
@@ -961,7 +961,7 @@ typedef struct rt_thread *rt_thread_t;
 /**@}*/
 
 /**
- * @addtogroup IPC
+ * @addtogroup group_IPC
  */
 
 /**@{*/
@@ -969,8 +969,8 @@ typedef struct rt_thread *rt_thread_t;
 /**
  * IPC flags and control command definitions
  */
-#define RT_IPC_FLAG_FIFO                0x00            /**< FIFOed IPC. @ref IPC. */
-#define RT_IPC_FLAG_PRIO                0x01            /**< PRIOed IPC. @ref IPC. */
+#define RT_IPC_FLAG_FIFO                0x00            /**< FIFOed IPC. @ref group_IPC. */
+#define RT_IPC_FLAG_PRIO                0x01            /**< PRIOed IPC. @ref group_IPC. */
 
 #define RT_IPC_CMD_UNKNOWN              0x00            /**< unknown IPC command */
 #define RT_IPC_CMD_RESET                0x01            /**< reset IPC object */
@@ -991,7 +991,7 @@ struct rt_ipc_object
 };
 
 /**
- * @addtogroup semaphore
+ * @addtogroup group_semaphore Semaphore
  * @{
  */
 
@@ -1013,7 +1013,7 @@ typedef struct rt_semaphore *rt_sem_t;
 /**@}*/
 
 /**
- * @addtogroup mutex
+ * @addtogroup group_mutex Mutex
  * @{
  */
 
@@ -1040,7 +1040,7 @@ typedef struct rt_mutex *rt_mutex_t;
 /**@}*/
 
 /**
- * @addtogroup event
+ * @addtogroup group_event Event
  * @{
  */
 
@@ -1068,7 +1068,7 @@ typedef struct rt_event *rt_event_t;
 /**@}*/
 
 /**
- * @addtogroup mailbox
+ * @addtogroup group_mailbox MailBox
  * @{
  */
 
@@ -1097,7 +1097,7 @@ typedef struct rt_mailbox *rt_mailbox_t;
 /**@}*/
 
 /**
- * @addtogroup messagequeue
+ * @addtogroup group_messagequeue Message Queue
  * @{
  */
 
@@ -1131,7 +1131,7 @@ typedef struct rt_messagequeue *rt_mq_t;
 /**@}*/
 
 /**
- * @addtogroup MM
+ * @addtogroup group_MM
  */
 
 /**@{*/
@@ -1234,7 +1234,7 @@ typedef struct rt_mempool *rt_mp_t;
 
 #ifdef RT_USING_DEVICE
 /**
- * @addtogroup Device
+ * @addtogroup group_Device
  */
 
 /**@{*/

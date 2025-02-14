@@ -3,7 +3,7 @@
  */
 
 /**
- * @defgroup SystemInit System Initialization
+ * @defgroup group_SystemInit System Initialization
  *
  * @brief System initialization procedure.
  *
@@ -47,7 +47,7 @@
  */
 
 /**
- * @ingroup SystemInit
+ * @ingroup group_SystemInit
  *
  * This function will initialize user application.
  *
@@ -58,6 +58,6 @@
 void rt_application_init();
 
 /**
- * @ingroup SystemInit
+ * @ingroup group_SystemInit
  */
 void rt_system_heap_init(void* begin_addr, void* end_addr);

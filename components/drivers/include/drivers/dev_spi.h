@@ -19,8 +19,8 @@
 #include <drivers/core/driver.h>
 
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    SPI              SPI
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_SPI SPI
  *
  * @brief       SPI driver api
  *
@@ -85,11 +85,11 @@
  * MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
  * @endcode
  *
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  */
 
 /*!
- * @addtogroup SPI
+ * @addtogroup group_SPI
  * @{
  */
 #ifdef __cplusplus

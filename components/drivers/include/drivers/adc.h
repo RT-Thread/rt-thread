@@ -15,8 +15,8 @@
 
 #include <rtthread.h>
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    ADC           ADC
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_ADC ADC
  *
  * @brief       ADC driver api
  *
@@ -57,12 +57,12 @@
  *
  * @endcode
  *
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  */
 
 
 /*!
- * @addtogroup ADC
+ * @addtogroup group_ADC
  * @{
  */
 #define RT_ADC_INTERN_CH_TEMPER     (-1)
@@ -105,7 +105,7 @@ typedef enum
  * @param ops device ops
  * @param user_data device private data
  * @return rt_err_t        error code
- * @ingroup  ADC
+ * @ingroup group_ADC
  */
 rt_err_t rt_hw_adc_register(rt_adc_device_t adc,const char *name, const struct rt_adc_ops *ops, const void *user_data);
 
@@ -114,7 +114,7 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t adc,const char *name, const struct r
  * @param dev adc device
  * @param channel adc channel
  * @return rt_uint32_t adc value
- * @ingroup  ADC
+ * @ingroup group_ADC
  */
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_int8_t channel);
 
@@ -123,7 +123,7 @@ rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_int8_t channel);
  * @param dev adc device
  * @param channel adc channel
  * @return rt_err_t error code
- * @ingroup  ADC
+ * @ingroup group_ADC
  */
 rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_int8_t channel);
 
@@ -132,7 +132,7 @@ rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_int8_t channel);
  * @param dev adc device
  * @param channel adc channel
  * @return rt_err_t error code
- * @ingroup  ADC
+ * @ingroup group_ADC
  */
 rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel);
 
@@ -141,7 +141,7 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel);
  * @param dev adc device
  * @param channel adc channel
  * @return rt_int16_t adc resolution
- * @ingroup  ADC
+ * @ingroup group_ADC
  */
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel);
 
