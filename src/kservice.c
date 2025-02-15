@@ -54,7 +54,7 @@
 #endif
 
 /**
- * @addtogroup KernelService
+ * @addtogroup group_KernelService
  * @{
  */
 
@@ -589,7 +589,7 @@ static void (*rt_realloc_exit_hook)(void **ptr, rt_size_t size);
 static void (*rt_free_hook)(void **ptr);
 
 /**
- * @ingroup Hook
+ * @ingroup group_Hook
  * @{
  */
 

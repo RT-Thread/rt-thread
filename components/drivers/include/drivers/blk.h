@@ -17,11 +17,11 @@
 #include <drivers/classes/block.h>
 
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    blk              blk
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_blk blk
  * @brief       blk driver api
- * @ingroup     Drivers
- * @addtogroup  blk
+ * @ingroup group_Drivers
+ * @addtogroup  group_blk
  * @{
  */
 

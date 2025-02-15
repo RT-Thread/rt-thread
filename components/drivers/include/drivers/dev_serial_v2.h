@@ -15,19 +15,19 @@
 
 
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    Serial_v2       Serial v2
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_Serial_v2 Serial v2
  *
  * @brief       Serial v2 driver api
- * 
+ *
  * <b>Example</b>
  * @code {.c}
- * 
+ *
  * #include <rtthread.h>
  * #include <rtdevice.h>
- * 
- * #define SAMPLE_UART_NAME       "uart1"      
- * 
+ *
+ * #define SAMPLE_UART_NAME       "uart1"
+ *
  * struct rx_msg
  * {
  *     rt_device_t dev;
@@ -35,14 +35,14 @@
  * };
  * static rt_device_t serial;
  * static struct rt_messagequeue rx_mq;
- * 
+ *
  * static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
  * {
  *     struct rx_msg msg;
  *     rt_err_t result;
  *     msg.dev = dev;
  *     msg.size = size;
- * 
+ *
  *     result = rt_mq_send(&rx_mq, &msg, sizeof(msg));
  *     if (result == -RT_EFULL)
  *     {
@@ -50,14 +50,14 @@
  *     }
  *     return result;
  * }
- * 
+ *
  * static void serial_thread_entry(void *parameter)
  * {
  *     struct rx_msg msg;
  *     rt_err_t result;
  *     rt_uint32_t rx_length;
  *     static char rx_buffer[BSP_UART1_RX_BUFSIZE + 1];
- * 
+ *
  *     while (1)
  *     {
  *         rt_memset(&msg, 0, sizeof(msg));
@@ -71,14 +71,14 @@
  *         }
  *     }
  * }
- * 
+ *
  * static int uart_dma_sample(int argc, char *argv[])
  * {
  *     rt_err_t ret = RT_EOK;
  *     char uart_name[RT_NAME_MAX];
  *     static char msg_pool[256];
  *     char str[] = "hello RT-Thread!\r\n";
- * 
+ *
  *     if (argc == 2)
  *     {
  *         rt_strncpy(uart_name, argv[1], RT_NAME_MAX);
@@ -87,24 +87,24 @@
  *     {
  *         rt_strncpy(uart_name, SAMPLE_UART_NAME, RT_NAME_MAX);
  *     }
- * 
+ *
  *     serial = rt_device_find(uart_name);
  *     if (!serial)
  *     {
  *         rt_kprintf("find %s failed!\n", uart_name);
- *         return RT_ERROR;
+ *         return -RT_ERROR;
  *     }
- * 
+ *
  *     rt_mq_init(&rx_mq, "rx_mq",
- *                msg_pool,                 
- *                sizeof(struct rx_msg),    
- *                sizeof(msg_pool),         
- *                RT_IPC_FLAG_FIFO);       
- * 
+ *                msg_pool,
+ *                sizeof(struct rx_msg),
+ *                sizeof(msg_pool),
+ *                RT_IPC_FLAG_FIFO);
+ *
  *     rt_device_open(serial, RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
  *     rt_device_set_rx_indicate(serial, uart_input);
  *     rt_device_write(serial, 0, str, (sizeof(str) - 1));
- * 
+ *
  *     rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 1024, 25, 10);
  *     if (thread != RT_NULL)
  *     {
@@ -114,18 +114,18 @@
  *     {
  *         ret = RT_ERROR;
  *     }
- * 
+ *
  *     return ret;
  * }
  * MSH_CMD_EXPORT(uart_dma_sample, uart device dma sample);
  * @endcode
- * 
- * @ingroup     Drivers
+ *
+ * @ingroup group_Drivers
  */
 
 
 /*!
- * @addtogroup Serial_v2
+ * @addtogroup group_Serial_v2
  * @{
  */
 
@@ -221,7 +221,7 @@
 
 /**
  * @brief Serial receive indicate hook function type
- * 
+ *
  */
 typedef void (*rt_hw_serial_rxind_hookproto_t)(rt_device_t dev, rt_size_t size);
 RT_OBJECT_HOOKLIST_DECLARE(rt_hw_serial_rxind_hookproto_t, rt_hw_serial_rxind);
@@ -258,7 +258,7 @@ struct rt_serial_rx_fifo
 
 /**
  * @brief Serial Transmit FIFO mode
- * 
+ *
  */
 struct rt_serial_tx_fifo
 {
@@ -276,7 +276,7 @@ struct rt_serial_tx_fifo
 
 /**
  * @brief     serial device structure
- * 
+ *
  */
 struct rt_serial_device
 {
@@ -293,7 +293,7 @@ struct rt_serial_device
 
 /**
  * @brief uart device operations
- * 
+ *
  */
 struct rt_uart_ops
 {
@@ -317,14 +317,14 @@ struct rt_uart_ops
  * @brief Serial interrupt service routine
  * @param serial    serial device
  * @param event     event mask
- * @ingroup  Serial_v2
+ * @ingroup group_Serial_v2
  */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
 
 
 /**
  * @brief Register a serial device to device list
- * 
+ *
  * @param serial    serial device
  * @param name      device name
  * @param flag      device flag
@@ -332,7 +332,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
  * @return rt_err_t        error code
  * @note This function will register a serial device to system device list,
  *       and add a device object to system object list.
- * @ingroup  Serial_v2
+ * @ingroup group_Serial_v2
  */
 rt_err_t rt_hw_serial_register(struct rt_serial_device      *serial,
                                const  char                  *name,
@@ -341,11 +341,11 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device      *serial,
 
 /**
  * @brief     register a serial device to system device list and add a device object to system object list
- * 
+ *
  * @param serial    serial device
  * @return rt_err_t error code
- * 
- * @ingroup  Serial_v2
+ *
+ * @ingroup group_Serial_v2
  */
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial);
 

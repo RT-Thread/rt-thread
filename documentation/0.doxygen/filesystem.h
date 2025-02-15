@@ -3,7 +3,7 @@
  */
 
 /**
- * @defgroup DFS Device Virtual File System
+ * @defgroup group_DFS Device Virtual File System
  *
  * @brief DFS is a virtual file system in RT-Thread RTOS.
  *
@@ -20,25 +20,25 @@
  */
 
 /**
- * @addtogroup DFS
+ * @addtogroup group_DFS
  * @{
  */
 
 /**
- * @defgroup Fd File Descriptor
+ * @defgroup group_Fd File Descriptor
  *
  */
 
 /**
- * @defgroup FsApi File System API
+ * @defgroup group_FsApi File System API
  */
 
 /**
- * @defgroup FileApi File API
+ * @defgroup group_FileApi File API
  */
 
 /**
- * @defgroup FsPosixApi File POSIX API
+ * @defgroup group_FsPosixApi File POSIX API
  */
 
 /**@}*/

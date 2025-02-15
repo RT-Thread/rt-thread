@@ -3,7 +3,7 @@
  */
 
 /**
- * @defgroup BasicDef Basic Definitions
+ * @defgroup group_BasicDef Basic Definitions
  *
  * @brief Basic data type in RT-Thread RTOS.
  *

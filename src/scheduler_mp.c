@@ -145,7 +145,7 @@ static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 
 /**
- * @addtogroup Hook
+ * @addtogroup group_Hook
  */
 
 /**@{*/
@@ -495,7 +495,7 @@ void rt_system_scheduler_start(void)
 }
 
 /**
- * @addtogroup Thread
+ * @addtogroup group_Thread
  * @cond
  */
 

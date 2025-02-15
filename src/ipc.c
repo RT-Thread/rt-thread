@@ -63,7 +63,7 @@ extern void (*rt_object_put_hook)(struct rt_object *object);
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup IPC
+ * @addtogroup group_IPC
  * @{
  */
 
@@ -314,7 +314,7 @@ void rt_susp_list_print(rt_list_t *list)
 
 #ifdef RT_USING_SEMAPHORE
 /**
- * @addtogroup semaphore
+ * @addtogroup group_semaphore Semaphore
  * @{
  */
 
@@ -976,7 +976,7 @@ static void _mutex_before_delete_detach(rt_mutex_t mutex)
 }
 
 /**
- * @addtogroup mutex
+ * @addtogroup group_mutex Mutex
  * @{
  */
 
@@ -1745,7 +1745,7 @@ RTM_EXPORT(rt_mutex_control);
 
 #ifdef RT_USING_EVENT
 /**
- * @addtogroup event
+ * @addtogroup group_event Event
  * @{
  */
 
@@ -2298,7 +2298,7 @@ RTM_EXPORT(rt_event_control);
 
 #ifdef RT_USING_MAILBOX
 /**
- * @addtogroup mailbox
+ * @addtogroup group_mailbox MailBox
  * @{
  */
 
@@ -3043,7 +3043,7 @@ RTM_EXPORT(rt_mb_control);
 
 #ifdef RT_USING_MESSAGEQUEUE
 /**
- * @addtogroup messagequeue
+ * @addtogroup group_messagequeue Message Queue
  * @{
  */
 

@@ -3,7 +3,7 @@
  */
 
 /**
- * @defgroup Module Application Module
+ * @defgroup group_Module Application Module
  *
  * @brief Application Module is a feature let user to execute application in RT-Thread RTOS.
  *

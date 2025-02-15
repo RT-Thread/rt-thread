@@ -109,7 +109,7 @@ typedef long (*syscall_func)(void);
 
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This macro exports a system function to finsh shell.
  *
@@ -119,7 +119,7 @@ typedef long (*syscall_func)(void);
 #define FINSH_FUNCTION_EXPORT(name, desc)
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This macro exports a system function with an alias name to finsh shell.
  *
@@ -130,7 +130,7 @@ typedef long (*syscall_func)(void);
 #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This macro exports a command to module shell.
  *
@@ -144,7 +144,7 @@ typedef long (*syscall_func)(void);
         _MSH_FUNCTION_CMD2)(__VA_ARGS__)
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This macro exports a command with alias to module shell.
  *
@@ -155,7 +155,7 @@ typedef long (*syscall_func)(void);
  * @code
  *      #define MSH_CMD_EXPORT_ALIAS(command, alias, desc) or
  *      #define MSH_CMD_EXPORT_ALIAS(command, alias, desc, opt)
- * @endcode 
+ * @endcode
  */
 #define MSH_CMD_EXPORT_ALIAS(...)                                           \
     __MSH_GET_EXPORT_MACRO(__VA_ARGS__, _MSH_FUNCTION_EXPORT_CMD3_OPT,      \

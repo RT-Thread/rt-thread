@@ -17,67 +17,67 @@
 #include <rtdef.h>
 #include <sys/time.h>
 /**
- * @addtogroup  Drivers    RTTHREAD Driver
- * @defgroup    RTC        RTC 
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_RTC RTC
  *
  * @brief       RTC driver api
- * 
+ *
  * <b>Example</b>
  * @code {.c}
- * 
+ *
  * #include <rtthread.h>
  * #include <rtdevice.h>
- * 
+ *
  * #define RTC_NAME       "rtc"
- * 
+ *
  * static int rtc_sample(int argc, char *argv[])
  * {
  *     rt_err_t ret = RT_EOK;
  *     time_t now;
  *     rt_device_t device = RT_NULL;
- * 
+ *
  *     device = rt_device_find(RTC_NAME);
  *     if (!device)
  *     {
  *       LOG_E("find %s failed!", RTC_NAME);
- *       return RT_ERROR;
+ *       return -RT_ERROR;
  *     }
- * 
+ *
  *     if(rt_device_open(device, 0) != RT_EOK)
  *     {
  *       LOG_E("open %s failed!", RTC_NAME);
- *       return RT_ERROR;
+ *       return -RT_ERROR;
  *     }
- * 
+ *
  *     ret = set_date(2018, 12, 3);
  *     if (ret != RT_EOK)
  *     {
  *         rt_kprintf("set RTC date failed\n");
  *         return ret;
  *     }
- * 
+ *
  *     ret = set_time(11, 15, 50);
  *     if (ret != RT_EOK)
  *     {
  *         rt_kprintf("set RTC time failed\n");
  *         return ret;
  *     }
- * 
+ *
  *     rt_thread_mdelay(3000);
- * 
+ *
  *     now = time(RT_NULL);
  *     rt_kprintf("%s\n", ctime(&now));
- * 
+ *
  *     return ret;
  * }
  * MSH_CMD_EXPORT(rtc_sample, rtc sample);
  * @endcode
- * 
- * @ingroup     Drivers
+ *
+ * @ingroup group_Drivers
  */
 
 /*!
- * @addtogroup RTC
+ * @addtogroup group_RTC
  * @{
  */
 #ifdef __cplusplus
@@ -132,7 +132,7 @@ typedef struct rt_rtc_device
 
 /**
  * @brief Register a RTC device
- * 
+ *
  * @param rtc RTC device
  * @param name RTC device name
  * @param flag RTC device flag
@@ -145,8 +145,8 @@ rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
                             void          *data);
 
 /**
- * @brief set date 
- * 
+ * @brief set date
+ *
  * @param year year
  * @param month month
  * @param day day
@@ -156,7 +156,7 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
 
 /**
  * @brief set time
- * 
+ *
  * @param hour hour
  * @param minute minute
  * @param second second
@@ -166,7 +166,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);
 
 /**
  * @brief set timestamp
- * 
+ *
  * @param timestamp A pointer to time
  * @return rt_err_t error code
  */
@@ -174,7 +174,7 @@ rt_err_t set_timestamp(time_t timestamp);
 
 /**
  * @brief get timestamp
- * 
+ *
  * @param timestamp A secondary pointer to time
  * @return rt_err_t error code
  */

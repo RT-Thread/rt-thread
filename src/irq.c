@@ -30,7 +30,7 @@ static void (*rt_interrupt_enter_hook)(void);
 static void (*rt_interrupt_leave_hook)(void);
 
 /**
- * @ingroup Hook
+ * @ingroup group_Hook
  *
  * @brief This function set a hook function when the system enter a interrupt
  *
@@ -44,7 +44,7 @@ void rt_interrupt_enter_sethook(void (*hook)(void))
 }
 
 /**
- * @ingroup Hook
+ * @ingroup group_Hook
  *
  * @brief This function set a hook function when the system exit a interrupt.
  *
@@ -59,7 +59,7 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup Kernel
+ * @addtogroup group_Kernel
  */
 
 /**@{*/

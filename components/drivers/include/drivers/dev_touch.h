@@ -14,8 +14,8 @@
 #include <rtthread.h>
 #include "dev_pin.h"
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    Touch            Touch
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_Touch Touch
  *
  * @brief       Touch driver api
  *
@@ -112,11 +112,11 @@
  * MSH_CMD_EXPORT(gt9147_sample, gt9147 sample);
  * @endcode
  *
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  */
 
 /*!
- * @addtogroup Touch
+ * @addtogroup group_Touch
  * @{
  */
 #ifdef __cplusplus

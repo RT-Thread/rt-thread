@@ -139,7 +139,7 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
-/** @addtogroup DFS
+/** @addtogroup group_DFS
  *
  *
  *  @{
@@ -218,7 +218,7 @@ void dfs_file_destroy(struct dfs_file *file)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  * This function will allocate a file descriptor.
  *
  * @return -1 on failed or the allocated file descriptor.
@@ -291,7 +291,7 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  *
  * This function will return a file descriptor structure according to file
  * descriptor.
@@ -369,7 +369,7 @@ int fd_new(void)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  *
  * This function will put the file descriptor.
  */

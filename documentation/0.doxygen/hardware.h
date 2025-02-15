@@ -3,7 +3,7 @@
  */
 
 /**
- * @defgroup bsp Hardware Related Package
+ * @defgroup group_bsp Hardware Related Package
  *
  * @brief Hardware Related Package includes board support package(BSP) and CSP(Chip
  * Support Package).
@@ -18,7 +18,7 @@
  */
 
 /**
- * @addtogroup bsp
+ * @addtogroup group_bsp
  * @{
  */
 
