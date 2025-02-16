@@ -13,7 +13,12 @@ if rtconfig.ARCH in list:
     else:
         src += Glob("src/" + rtconfig.ARCH + "/*.c")
 CPPPATH = [cwd, cwd + "/inc"]
+LOCAL_CCFLAGS = ''
+if rtconfig.PLATFORM in ['gcc', 'armclang']:
+    LOCAL_CCFLAGS += ' -std=gnu99'
+elif rtconfig.PLATFORM in ['armcc']:
+    LOCAL_CCFLAGS += ' --c99 --gnu'
 
-group = DefineGroup('ktime', src, depend=['RT_USING_KTIME'], CPPPATH=CPPPATH)
+group = DefineGroup('ktime', src, depend=['RT_USING_KTIME'], CPPPATH=CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')

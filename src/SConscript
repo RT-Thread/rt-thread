@@ -44,6 +44,12 @@ if rtconfig.PLATFORM in ['gcc']: # only for GCC
     if rtconfig.ARCH not in ['sim']:
         LINKFLAGS += ' -Wl,--gc-sections,--print-memory-usage' # remove unused sections and print memory usage
 
+if GetDepend('RT_USING_HOOKLIST') == True:
+    if rtconfig.PLATFORM in ['gcc', 'armclang']:
+        LOCAL_CFLAGS += ' -std=gnu99'
+    elif rtconfig.PLATFORM in ['armcc']:
+        LOCAL_CFLAGS += ' --c99 --gnu'
+
 group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc,
                     LINKFLAGS=LINKFLAGS, LOCAL_CFLAGS=LOCAL_CFLAGS,
                     CPPDEFINES=['__RTTHREAD__'], LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
