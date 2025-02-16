@@ -19,6 +19,6 @@ if rtconfig.PLATFORM in ['gcc', 'armclang']:
 elif rtconfig.PLATFORM in ['armcc']:
     LOCAL_CCFLAGS += ' --c99 --gnu'
 
-group = DefineGroup('ktime', src, depend=['RT_USING_KTIME'], CPPPATH=CPPPATH,LOCAL_CCFLAGS = LOCAL_CCFLAGS)
+group = DefineGroup('ktime', src, depend=['RT_USING_KTIME'], CPPPATH=CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')
