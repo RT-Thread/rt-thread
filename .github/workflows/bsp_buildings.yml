@@ -435,12 +435,6 @@ jobs:
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
           sudo apt install cmake ninja-build 
-      
-      # - name: Install Cmake & Ninja
-      #   uses: lukka/get-cmake@latest
-      #   with:
-      #     cmakeVersion: latest      
-      #     ninjaVersion: latest        
 
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
@@ -533,11 +527,6 @@ jobs:
           RTT_BUILD_TOOL: ${{ matrix.legs.RTT_BUILD_TOOL }}
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
         run: |
-          which cmake
-          cmake --version
-          cmake --help
-          which ninja
-          ninja --version
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py
 

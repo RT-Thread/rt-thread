@@ -38,6 +38,15 @@ def run_cmd(cmd, output_info=True):
 
 
 def build_bsp(bsp, scons_args=''):
+    if build_tool == 'scons':
+        return build_bsp_scons(bsp)
+    elif build_tool =='cmake':
+        return build_bsp_cmake(bsp)
+    else:
+        print(f"::error::build tool {build_tool} is not supported")
+        return False
+
+def build_bsp_scons(bsp, scons_args=''):
     """
     build bsp.
 
@@ -230,13 +239,7 @@ if __name__ == "__main__":
     for bsp in srtt_bsp:
         count += 1
         print(f"::group::Compiling BSP: =={count}=== {bsp} ====")
-        res = False
-        if build_tool == 'scons':
-            res = build_bsp(bsp)
-        elif build_tool =='cmake':
-            res = build_bsp_cmake(bsp)
-        else:
-            print(f"::error::build tool {build_tool} is not supported")
+        res = build_bsp(bsp)
         if not res:
             print(f"::error::build {bsp} failed")
             add_summary(f"- ❌ build {bsp} failed.")
