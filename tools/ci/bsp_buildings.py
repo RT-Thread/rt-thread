@@ -81,6 +81,58 @@ def build_bsp(bsp, scons_args=''):
 
     return success
 
+def build_bsp_cmake(bsp, scons_args=''):
+    """
+    build bsp using cmake generater.
+
+    cd {rtt_root}
+    scons -C bsp/{bsp} --pyconfig-silent > /dev/null
+
+    cd {rtt_root}/bsp/{bsp}
+    pkgs --update > /dev/null
+    pkgs --list
+
+    scons --target=cmake
+    mkdir build
+    cd build
+    cmake .. -G Ninja
+    ninja -j{nproc}
+
+    cd ..
+    rm -rf build
+    rm -rf packages
+
+    """
+    if scons_args != '':
+        print("this project would be built regularly because `scons_args` is not empty")
+        return build_bsp(bsp, scons_args)
+    success = True
+    os.chdir(rtt_root)
+    if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
+        os.chdir(rtt_root)
+        run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
+
+        os.chdir(f'{rtt_root}/bsp/{bsp}')
+        run_cmd('pkgs --update', output_info=False)
+        run_cmd('pkgs --list')
+        
+        nproc = multiprocessing.cpu_count()
+        
+        run_cmd('scons --target=cmake')
+        os.mkdir(f'{rtt_root}/bsp/{bsp}/cmake-build')
+        os.chdir(f'{rtt_root}/bsp/{bsp}/cmake-build')
+        run_cmd('cmake .. -G Ninja')
+        _, res = run_cmd(f'ninja -j{nproc}')
+
+        if res != 0:
+            success = False
+
+    build_dir = os.path.join(rtt_root, 'bsp', bsp, 'cmake-build')
+    shutil.rmtree(build_dir, ignore_errors=True)
+    pkg_dir = os.path.join(rtt_root, 'bsp', bsp, 'packages')
+    shutil.rmtree(pkg_dir, ignore_errors=True)
+    
+    return success
 
 def append_file(source_file, destination_file):
     """
@@ -166,11 +218,18 @@ if __name__ == "__main__":
 
     rtt_root = os.getcwd()
     srtt_bsp = os.getenv('SRTT_BSP').split(',')
+    build_tool = os.getenv('RTT_BUILD_TOOL')
 
     for bsp in srtt_bsp:
         count += 1
         print(f"::group::Compiling BSP: =={count}=== {bsp} ====")
-        res = build_bsp(bsp)
+        res = False
+        if build_tool == 'scons':
+            res = build_bsp(bsp)
+        elif build_tool =='cmake':
+            res = build_bsp_cmake(bsp)
+        else:
+            print(f"::error::build tool {build_tool} is not supported")
         if not res:
             print(f"::error::build {bsp} failed")
             add_summary(f"- ❌ build {bsp} failed.")

@@ -39,18 +39,22 @@ jobs:
        legs:
          -  RTT_BSP: "RT-Thread Online Packages (STM32F407 RT-Spark)"
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:
                 - "stm32/stm32f407-rt-spark"
          -  RTT_BSP: "RTduino/Arduino Libraries (STM32F412 Nucleo)"
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:
                 - "stm32/stm32f412-st-nucleo"
          -  RTT_BSP: "RTduino/Arduino Libraries (Raspberry Pico)"
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:
                 - "raspberry-pico"
          -  RTT_BSP: "others_at32_hc32_ht32"
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
@@ -109,8 +113,9 @@ jobs:
                 - "hc32l136"
                 - "yichip/yc3121-pos"
                 - "fm33lc026"
-         -  RTT_BSP: "stm32l4_f0_f1" 
+         -  RTT_BSP: "stm32l4_f0_f1(cmake)" 
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "cmake"
             SUB_RTT_BSP: 
                 - "stm32/stm32l4r5-st-nucleo"
                 - "stm32/stm32l4r9-st-eval"
@@ -148,6 +153,7 @@ jobs:
                 - "stm32/stm32f107-uc-eval"
          -  RTT_BSP: "stm32_f2_f4" 
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP: 
                 - "stm32/stm32f207-st-nucleo"
                 - "stm32/stm32f302-st-nucleo"
@@ -175,6 +181,7 @@ jobs:
                 - "stm32/stm32f469-st-disco"
          -  RTT_BSP: "stm32_f7_g0_h7_mp15_u5_h5_wb5" 
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP: 
                 - "stm32/stm32f746-st-disco"
                 - "stm32/stm32f746-st-nucleo"
@@ -208,6 +215,7 @@ jobs:
                 - "stm32/stm32wb55-st-nucleo"
          -  RTT_BSP: "nxp_renesas" 
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP: 
                 - "nxp/lpc/lpc55sxx/lpc55s69_nxp_evk"
                 - "nxp/lpc/lpc55sxx/lpc55s28_nxp_evk"
@@ -252,6 +260,7 @@ jobs:
                 - "xplorer4330/M4"
          -  RTT_BSP: "nuvoton" 
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP: 
                 - "nuvoton/numaker-pfm-m487"
                 - "nuvoton/numaker-hmi-ma35d1"
@@ -267,6 +276,7 @@ jobs:
                 - "nuvoton/numaker-m2354"
          -  RTT_BSP: "gd32_n32_apm32"   
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:             
                 - "gd32/arm/gd32103c-eval" 
                 - "gd32/arm/gd32105c-eval" 
@@ -310,6 +320,7 @@ jobs:
                 - "apm32/apm32s103vb-miniboard"
          -  RTT_BSP: "Infineon_TI_microchip" 
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "Infineon/psoc6-cy8ckit-062S2-43012"
                 - "Infineon/psoc6-cy8ckit-062-BLE"
@@ -337,12 +348,14 @@ jobs:
                 - "maxim/max32660-evsys"
          -  RTT_BSP: "mips" 
             RTT_TOOL_CHAIN: "sourcery-mips"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "loongson/ls1bdev"
                 - "loongson/ls2kdev"
                 - "loongson/ls1cdev"
          -  RTT_BSP: "aarch64" 
             RTT_TOOL_CHAIN: "sourcery-aarch64"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "qemu-virt64-aarch64"
                 - "raspberry-pi/raspi3-64"
@@ -351,17 +364,20 @@ jobs:
                 - "phytium/aarch64"
          -  RTT_BSP: "riscv-none" 
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "k210"
                 - "wch/risc-v/ch32v307v-r1"
          -  RTT_BSP: "riscv64-unknown" 
             RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "bluetrum/ab32vg1-ab-prougen"
                 - "bouffalo_lab/bl60x"
                 - "bouffalo_lab/bl70x"
          -  RTT_BSP: "hpmicro"
             RTT_TOOL_CHAIN: "RISC-V-GCC-RV32"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:
                 - "hpmicro/hpm6750evkmini"
                 - "hpmicro/hpm6750evk"
@@ -374,22 +390,27 @@ jobs:
                 - "hpmicro/hpm6e00evk"
          -  RTT_BSP: "llvm-arm" 
             RTT_TOOL_CHAIN: "llvm-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "stm32/stm32l475-atk-pandora"
          -  RTT_BSP: "simulator" 
             RTT_TOOL_CHAIN: "gcc"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "simulator"
          -  RTT_BSP: "ESP32C3" 
             RTT_TOOL_CHAIN: "sourcery-riscv32-esp32"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "ESP32_C3"
          -  RTT_BSP: "i386-unknown" 
             RTT_TOOL_CHAIN: "sourcery-i386-unknown-elf"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "x86"
          -  RTT_BSP: "nordic(yml)"
             RTT_TOOL_CHAIN: "sourcery-arm"
+            RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:
                 - "nrf5x/nrf51822"
                 - "nrf5x/nrf52832"
@@ -414,6 +435,12 @@ jobs:
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
+      
+      - name: Install Cmake & Ninja
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: latestrc      
+          ninjaVersion: latest        
 
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
@@ -505,6 +532,7 @@ jobs:
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
+          RTT_BUILD_TOOL: ${{ matrix.legs.RTT_BUILD_TOOL }}
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
         run: |
           source ~/.env/env.sh
