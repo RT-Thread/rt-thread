@@ -439,8 +439,16 @@ jobs:
       - name: Install Cmake & Ninja
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: latestrc      
+          cmakeVersion: latest      
           ninjaVersion: latest        
+
+      - name: test cmake
+        shell: bash
+        run: |
+          which cmake
+          cmake --version
+          which ninja
+          ninja --version
 
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
