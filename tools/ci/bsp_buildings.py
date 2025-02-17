@@ -119,7 +119,7 @@ def build_bsp_cmake(bsp, scons_args=''):
         ext_flags += '-DCMAKE_COMPILE_WARNING_AS_ERROR'
     elif scons_args != '':
         print("this project would be built regularly because `scons_args` is not empty")
-        return build_bsp(bsp, scons_args)
+        return build_bsp_scons(bsp, scons_args)
     success = True
     os.chdir(rtt_root)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
