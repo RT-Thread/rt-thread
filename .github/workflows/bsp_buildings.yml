@@ -425,7 +425,6 @@ jobs:
           python-version: 3.8
 
       - name: Install Tools
-        shell: bash
         run: |
           wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
           chmod 777 install_ubuntu.sh
@@ -444,7 +443,6 @@ jobs:
 
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
-        shell: bash
         run: |
           wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
           sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
@@ -534,6 +532,10 @@ jobs:
           RTT_BUILD_TOOL: ${{ matrix.legs.RTT_BUILD_TOOL }}
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
         run: |
+          which cmake
+          cmake --version
+          which ninja
+          ninja --version
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py
 
