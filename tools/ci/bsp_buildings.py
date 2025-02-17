@@ -104,7 +104,11 @@ def build_bsp_cmake(bsp, scons_args=''):
     rm -rf packages
 
     """
-    if scons_args != '':
+    ext_flags = ''
+    if scons_args == "--strict":
+        print("scons using strict mode, build it with `-Werror` flag")
+        ext_flags += '-DCMAKE_COMPILE_WARNING_AS_ERROR'
+    elif scons_args != '':
         print("this project would be built regularly because `scons_args` is not empty")
         return build_bsp(bsp, scons_args)
     success = True
@@ -122,7 +126,7 @@ def build_bsp_cmake(bsp, scons_args=''):
         run_cmd('scons --target=cmake')
         os.mkdir(f'{rtt_root}/bsp/{bsp}/cmake-build')
         os.chdir(f'{rtt_root}/bsp/{bsp}/cmake-build')
-        run_cmd('cmake .. -G Ninja')
+        run_cmd(f'cmake {ext_flags} .. -G Ninja')
         _, res = run_cmd(f'ninja -j{nproc}')
 
         if res != 0:
@@ -222,16 +226,6 @@ if __name__ == "__main__":
     rtt_root = os.getcwd()
     srtt_bsp = os.getenv('SRTT_BSP').split(',')
     build_tool = os.getenv('RTT_BUILD_TOOL')
-    
-    os.system("which cmake")
-    os.system("cmake --version")
-    os.system("cmake --help")
-    os.system("which ninja")
-    os.system("ninja --version")
-    
-    subprocess.run(['cmake', '--version'])
-    subprocess.run(['cmake', '--help'])
-    subprocess.run(['ninja', '--version'])
 
     for bsp in srtt_bsp:
         count += 1
