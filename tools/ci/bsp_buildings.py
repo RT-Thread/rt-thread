@@ -2,6 +2,7 @@ import os
 import shutil
 import re
 import multiprocessing
+import subprocess
 import yaml
 
 def add_summary(text):
@@ -221,6 +222,16 @@ if __name__ == "__main__":
     rtt_root = os.getcwd()
     srtt_bsp = os.getenv('SRTT_BSP').split(',')
     build_tool = os.getenv('RTT_BUILD_TOOL')
+    
+    os.system("which cmake")
+    os.system("cmake --version")
+    os.system("cmake --help")
+    os.system("which ninja")
+    os.system("ninja --version")
+    
+    subprocess.run(['cmake', '--version'])
+    subprocess.run(['cmake', '--help'])
+    subprocess.run(['ninja', '--version'])
 
     for bsp in srtt_bsp:
         count += 1
