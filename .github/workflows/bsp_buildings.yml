@@ -434,12 +434,13 @@ jobs:
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
+          sudo apt install cmake ninja-build 
       
-      - name: Install Cmake & Ninja
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: latest      
-          ninjaVersion: latest        
+      # - name: Install Cmake & Ninja
+      #   uses: lukka/get-cmake@latest
+      #   with:
+      #     cmakeVersion: latest      
+      #     ninjaVersion: latest        
 
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
