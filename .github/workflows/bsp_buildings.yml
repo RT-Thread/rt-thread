@@ -442,14 +442,6 @@ jobs:
           cmakeVersion: latest      
           ninjaVersion: latest        
 
-      - name: test cmake
-        shell: bash
-        run: |
-          which cmake
-          cmake --version
-          which ninja
-          ninja --version
-
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
         shell: bash
@@ -536,7 +528,6 @@ jobs:
 
       - name: Bsp Scons Compile
         if: ${{ success() }}
-        shell: bash
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}

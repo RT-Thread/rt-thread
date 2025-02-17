@@ -21,7 +21,7 @@ def run_cmd(cmd, output_info=True):
     res = 0
 
     if output_info:
-        res = os.system('/bin/bash -c' + '"' + cmd + " > output.txt 2>&1" + '"')
+        res = os.system(cmd + " > output.txt 2>&1")
     else:
         res = os.system(cmd + " > /dev/null 2>output.txt")
 
