@@ -126,6 +126,8 @@ def build_bsp_cmake(bsp, scons_args=''):
 
         if res != 0:
             success = False
+            
+    os.chdir(f'{rtt_root}/bsp/{bsp}')
 
     build_dir = os.path.join(rtt_root, 'bsp', bsp, 'cmake-build')
     shutil.rmtree(build_dir, ignore_errors=True)

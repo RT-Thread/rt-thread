@@ -534,6 +534,7 @@ jobs:
         run: |
           which cmake
           cmake --version
+          cmake --help
           which ninja
           ninja --version
           source ~/.env/env.sh
