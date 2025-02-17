@@ -37,11 +37,13 @@ def run_cmd(cmd, output_info=True):
     return output_str_list, res
 
 
-def build_bsp(bsp, scons_args=''):
+def build_bsp(bsp, scons_args='', build_tool=None):
+    if build_tool is None:
+        build_tool = os.getenv('RTT_BUILD_TOOL')
     if build_tool == 'scons':
-        return build_bsp_scons(bsp)
+        return build_bsp_scons(bsp, scons_args)
     elif build_tool =='cmake':
-        return build_bsp_cmake(bsp)
+        return build_bsp_cmake(bsp, scons_args)
     else:
         print(f"::error::build tool {build_tool} is not supported")
         return False
@@ -234,7 +236,6 @@ if __name__ == "__main__":
 
     rtt_root = os.getcwd()
     srtt_bsp = os.getenv('SRTT_BSP').split(',')
-    build_tool = os.getenv('RTT_BUILD_TOOL')
 
     for bsp in srtt_bsp:
         count += 1
