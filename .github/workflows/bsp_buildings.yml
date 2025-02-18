@@ -398,9 +398,9 @@ jobs:
             RTT_BUILD_TOOL: "scons"
             SUB_RTT_BSP:  
                 - "simulator"
-         -  RTT_BSP: "ESP32C3" 
+         -  RTT_BSP: "ESP32C3(cmake)" 
             RTT_TOOL_CHAIN: "sourcery-riscv32-esp32"
-            RTT_BUILD_TOOL: "scons"
+            RTT_BUILD_TOOL: "cmake"
             SUB_RTT_BSP:  
                 - "ESP32_C3"
          -  RTT_BSP: "i386-unknown" 
@@ -520,7 +520,7 @@ jobs:
           echo "RTT_EXEC_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
 
       - name: Bsp Scons Compile
-        if: ${{ success() && matrix.legs.RTT_BSP == 'stm32l4_f0_f1(cmake)' }}
+        if: ${{ success() && matrix.legs.RTT_BUILD_TOOL == 'cmake' }}
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
