@@ -473,8 +473,8 @@ static int32_t hc32_spi_dma_trans(struct hc32_spi_config *spi_config, const uint
     while ((RESET == DMA_GetTransCompleteStatus(DmaInstance, DmaFlag)) &&
             (u32TimeoutCnt < spi_config->timeout))
     {
-        rt_thread_mdelay(1);
-        u32TimeoutCnt++;
+//        rt_thread_mdelay(1);
+//        u32TimeoutCnt++;
     }
     if (u32TimeoutCnt >= spi_config->timeout)
     {
@@ -544,7 +544,7 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
         if (message->send_buf && message->recv_buf)
         {
             hc32_spi_set_trans_mode(spi_instance, SPI_FULL_DUPLEX);
-            if ((spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX) && (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX))
+            if ((spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX) && (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX) && (send_length > 32))
             {
                 state = hc32_spi_dma_trans(spi_drv->config, send_buf, recv_buf, send_length);
             }
@@ -557,7 +557,7 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
         else if (message->send_buf)
         {
             hc32_spi_set_trans_mode(spi_instance, SPI_SEND_ONLY);
-            if (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX)
+            if ((spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX) && (send_length > 32))
             {
                 state = hc32_spi_dma_trans(spi_drv->config, send_buf, RT_NULL, send_length);
             }
@@ -601,8 +601,8 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
                     while ((RESET == SPI_GetStatus(spi_instance, SPI_FLAG_IDLE)) &&
                             (u32TimeoutCnt < spi_drv->config->timeout))
                     {
-                        rt_thread_mdelay(1);
-                        u32TimeoutCnt++;
+//                        rt_thread_mdelay(1);
+//                        u32TimeoutCnt++;
                     }
                     if (u32TimeoutCnt >= spi_drv->config->timeout)
                     {
