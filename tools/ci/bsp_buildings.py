@@ -147,8 +147,8 @@ def build_bsp_attachconfig(bsp, attach_file):
 
     res = build_bsp(bsp, scons_args)
 
-    shutil.copyfile(config_bacakup, config_file)
-    os.remove(config_bacakup)
+    #shutil.copyfile(config_bacakup, config_file)
+    #os.remove(config_bacakup)
 
     return res
 
