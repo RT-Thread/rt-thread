@@ -183,14 +183,12 @@ def IARPath():
     # backup environ
     old_environ = os.environ
     os.environ['RTT_CC'] = 'iar'
-    utils.ReloadModule(rtconfig)
 
     # get iar path
     path = rtconfig.EXEC_PATH
 
     # restore environ
     os.environ = old_environ
-    utils.ReloadModule(rtconfig)
 
     return path
 
