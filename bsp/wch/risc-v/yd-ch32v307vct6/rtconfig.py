@@ -10,7 +10,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'C:\Users\yekai\Documents\DevTools\wch-riscv-none-elf-gcc-8\bin'
+    EXEC_PATH   = r'/opt/MRS_Toolchain_Linux_x64_V1.90/RISC-V_Embedded_GCC/bin/'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
