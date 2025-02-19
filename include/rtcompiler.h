@@ -22,7 +22,7 @@
 #define rt_packed(declare)          declare
 #endif
 #define rt_weak                     __attribute__((weak))
-#define rt_typeof                   typeof
+#define rt_typeof                   __typeof
 #define rt_noreturn
 #define rt_inline                   static __inline
 #define rt_always_inline            rt_inline
