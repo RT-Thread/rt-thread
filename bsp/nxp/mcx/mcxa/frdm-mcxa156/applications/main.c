@@ -29,10 +29,15 @@ int main(void)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
 
+    rt_kprintf("MCXA156 HelloWorld\r\n");
+    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
+
     while (1)
     {
-        rt_thread_mdelay(1000);               /* Delay 1S */
-              rt_kprintf("MCXA156 HelloWorld\r\n");
+        rt_pin_write(LED_PIN, PIN_HIGH);    /* Set GPIO output 1 */
+        rt_thread_mdelay(500);               /* Delay 500mS */
+        rt_pin_write(LED_PIN, PIN_LOW);     /* Set GPIO output 0 */
+        rt_thread_mdelay(500);               /* Delay 500mS */
     }
 }
 
