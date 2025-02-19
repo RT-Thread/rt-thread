@@ -473,8 +473,6 @@ static int32_t hc32_spi_dma_trans(struct hc32_spi_config *spi_config, const uint
     while ((RESET == DMA_GetTransCompleteStatus(DmaInstance, DmaFlag)) &&
             (u32TimeoutCnt < spi_config->timeout))
     {
-//        rt_thread_mdelay(1);
-//        u32TimeoutCnt++;
     }
     if (u32TimeoutCnt >= spi_config->timeout)
     {
@@ -601,8 +599,6 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
                     while ((RESET == SPI_GetStatus(spi_instance, SPI_FLAG_IDLE)) &&
                             (u32TimeoutCnt < spi_drv->config->timeout))
                     {
-//                        rt_thread_mdelay(1);
-//                        u32TimeoutCnt++;
                     }
                     if (u32TimeoutCnt >= spi_drv->config->timeout)
                     {
