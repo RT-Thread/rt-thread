@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,6 +34,20 @@ static rt_err_t ra_rtc_init(void)
         result = -RT_ERROR;
     }
 
+#if defined(SOC_SERIES_R9A07G0)
+    rtc_time_t default_set_time =
+    {
+        .tm_sec  = 0,
+        .tm_min  = 0,
+        .tm_hour = 0,
+        .tm_mday = 1,
+        .tm_wday = 1,
+        .tm_mon  = 1,
+        .tm_year = 1900,
+    };
+
+    R_RTC_CalendarTimeSet(&g_rtc_ctrl, &default_set_time);
+#endif
     return result;
 }
 
