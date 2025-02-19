@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,11 +22,19 @@
 
 #include <hal_data.h>
 
-#define RA_SCI_EVENT_ABORTED        1
-#define RA_SCI_EVENT_RX_COMPLETE    2
-#define RA_SCI_EVENT_TX_COMPLETE    4
-#define RA_SCI_EVENT_ERROR          8
-#define RA_SCI_EVENT_ALL            15
+#ifndef BIT
+    #define BIT(idx)        (1ul << (idx))
+#endif
+
+#ifndef BITS
+    #define BITS(b,e)       ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
+#endif
+
+#define RA_SCI_EVENT_ABORTED        BIT(0)
+#define RA_SCI_EVENT_RX_COMPLETE    BIT(1)
+#define RA_SCI_EVENT_TX_COMPLETE    BIT(2)
+#define RA_SCI_EVENT_ERROR          BIT(3)
+#define RA_SCI_EVENT_ALL            BITS(0,3)
 
 struct ra_i2c_handle
 {

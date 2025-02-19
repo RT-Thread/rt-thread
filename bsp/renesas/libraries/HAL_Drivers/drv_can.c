@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2021-10-29     mazhiyuan         first version
+ * 2025-02-11     kurisaW           support can and canfd drivers for RZ family
  */
 
 #include "drv_can.h"
@@ -47,6 +48,18 @@ static const struct ra_baud_rate_tab can_baud_rate_tab[] =
     {CAN10kBaud, 4, 14, 5, 1 + 249}
 };
 
+#if defined(BSP_USING_CANFD)
+
+#define can_instance_ctrl_t         canfd_instance_ctrl_t
+
+#define R_CAN_Open                  R_CANFD_Open
+#define R_BSP_IrqStatusClear        R_BSP_IrqClearPending
+#define R_CAN_ModeTransition        R_CANFD_ModeTransition
+#define R_CAN_InfoGet               R_CANFD_InfoGet
+#define R_CAN_Write                 R_CANFD_Write
+
+#endif
+
 static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
 {
     rt_uint32_t len, index;
@@ -66,13 +79,13 @@ static void ra_can_get_config(void)
     struct can_configure config = CANDEFAULTCONFIG;
 #ifdef BSP_USING_CAN0
     can_obj[CAN0_INDEX].can_dev.config = config;
-    can_obj[CAN0_INDEX].can_dev.config.msgboxsz = CAN_NO_OF_MAILBOXES_g_can0;
+    can_obj[CAN0_INDEX].can_dev.config.msgboxsz = 32;
     can_obj[CAN0_INDEX].can_dev.config.sndboxnumber = 1;
     can_obj[CAN0_INDEX].can_dev.config.ticks = 50;
 #endif
 #ifdef BSP_USING_CAN1
     can_obj[CAN1_INDEX].can_dev.config = config;
-    can_obj[CAN1_INDEX].can_dev.config.msgboxsz = CAN_NO_OF_MAILBOXES_g_can1;
+    can_obj[CAN1_INDEX].can_dev.config.msgboxsz = 32;
     can_obj[CAN1_INDEX].can_dev.config.sndboxnumber = 1;
     can_obj[CAN1_INDEX].can_dev.config.ticks = 50;
 #endif
@@ -168,7 +181,7 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     }
     return RT_EOK;
 }
-int ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
+rt_ssize_t ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
 {
     struct ra_can *can;
     can_frame_t g_can_tx_frame;
@@ -180,7 +193,13 @@ int ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uint32_t b
     g_can_tx_frame.id_mode = msg_rt->ide;
     g_can_tx_frame.type = msg_rt->rtr;
     g_can_tx_frame.data_length_code = msg_rt->len;
+#if defined(BSP_USING_CANFD) && defined(BSP_USING_CAN_RZ)
     g_can_tx_frame.options = 0;
+#elif defined(BSP_USING_CANFD)
+    g_can_tx_frame.options = CANFD_FRAME_OPTION_FD | CANFD_FRAME_OPTION_BRS;
+#else
+    g_can_tx_frame.options = 0;
+#endif
     memcpy(g_can_tx_frame.data, msg_rt->data, 8);
     can = rt_container_of(can_dev, struct ra_can, can_dev);
     RT_ASSERT(boxno < can->config->num_of_mailboxs);
@@ -193,7 +212,7 @@ int ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uint32_t b
     return RT_EOK;
 }
 
-int ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
+rt_ssize_t ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
 {
     struct rt_can_msg *msg_rt = (struct rt_can_msg *)buf;
     can_frame_t *msg_ra;
@@ -205,7 +224,11 @@ int ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
     RT_ASSERT(boxno < can->config->num_of_mailboxs);
     if (can->callback_args->mailbox != boxno)
         return 0;
+#if defined(BSP_USING_CANFD)
+    msg_ra = &can->callback_args->frame;
+#else
     msg_ra = can->callback_args->p_frame;
+#endif
 
     msg_rt->id = msg_ra->id;
     msg_rt->ide = msg_ra->id_mode;

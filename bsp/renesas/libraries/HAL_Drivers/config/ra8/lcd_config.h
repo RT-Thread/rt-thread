@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,6 +28,6 @@ typedef enum
 #define ENABLE_DOUBLE_BUFFER    (1)
 
 #define LCD_BL_PIN              BSP_IO_PORT_10_PIN_11
-#define LCD_RST_PIN         	BSP_IO_PORT_11_PIN_04
+#define LCD_RST_PIN             BSP_IO_PORT_11_PIN_04
 
 #endif
