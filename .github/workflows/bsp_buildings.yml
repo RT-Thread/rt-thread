@@ -354,6 +354,7 @@ jobs:
             SUB_RTT_BSP:  
                 - "k210"
                 - "wch/risc-v/ch32v307v-r1"
+                - "wch/risc-v/yd-ch32v307vct6"
          -  RTT_BSP: "riscv64-unknown" 
             RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"
             SUB_RTT_BSP:  
