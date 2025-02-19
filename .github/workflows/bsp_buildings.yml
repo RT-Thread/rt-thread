@@ -248,6 +248,7 @@ jobs:
                 - "renesas/ra8d1-vision-board"
                 - "renesas/rzt2m_rsk"
                 - "renesas/rzn2l_rsk"
+                - "renesas/rzn2l_etherkit"
                 - "frdm-k64f"
                 - "xplorer4330/M4"
          -  RTT_BSP: "nuvoton" 

@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2018-12-25     zylx         first version
- */
+* Copyright (c) 2006-2025, RT-Thread Development Team
+*
+* SPDX-License-Identifier: Apache-2.0
+*
+* Change Logs:
+* Date           Author       Notes
+* 2018-12-25     zylx         first version
+*/
 
 #ifndef __DRV_ETH_H__
 #define __DRV_ETH_H__
@@ -102,5 +102,9 @@
 #define PHY_Status_SPEED_100M(sr)   ((sr) & PHY_100M_MASK)
 #define PHY_Status_FULL_DUPLEX(sr)  ((sr) & PHY_FULL_DUPLEX_MASK)
 #endif /* PHY_USING_LAN8742A */
+
+#define PHY_LINK (1 << 0)
+#define PHY_100M (1 << 1)
+#define PING_PORT_COUNT (3) ///< Count of port
 
 #endif /* __DRV_ETH_H__ */
