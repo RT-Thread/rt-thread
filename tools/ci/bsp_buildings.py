@@ -116,11 +116,12 @@ def build_bsp_cmake(bsp, scons_args=''):
 
     """
     ext_flags = ''
+    scons_arg = scons_arg.strip()
     if scons_args == "--strict":
         print("scons using strict mode, build it with `-Werror` flag")
         ext_flags += '-DCMAKE_COMPILE_WARNING_AS_ERROR=1'
     elif scons_args != '':
-        print("this project would be built regularly because `scons_args` is not empty")
+        print(f"this project would be built regularly because `scons_args` is `{scons_args}`")
         return build_bsp_scons(bsp, scons_args)
     success = True
     os.chdir(rtt_root)
