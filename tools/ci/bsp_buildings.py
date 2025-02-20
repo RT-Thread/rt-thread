@@ -116,7 +116,7 @@ def build_bsp_cmake(bsp, scons_args=''):
 
     """
     ext_flags = ''
-    scons_arg = scons_arg.strip()
+    scons_args = scons_args.strip()
     if scons_args == "--strict":
         print("scons using strict mode, build it with `-Werror` flag")
         ext_flags += '-DCMAKE_COMPILE_WARNING_AS_ERROR=1'
