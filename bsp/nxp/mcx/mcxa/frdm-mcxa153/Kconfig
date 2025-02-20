@@ -9,10 +9,9 @@ PKGS_DIR := packages
 config SOC_MCX
     bool
     select ARCH_ARM_CORTEX_M33
-    select ARCH_ARM_CORTEX_SECURE
     default y
 
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
-rsource "../libraries/Kconfig"
+rsource "../Libraries/Kconfig"
 rsource "board/Kconfig"
