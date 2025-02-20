@@ -44,8 +44,8 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -mcpu=' + CPU + '+nodsp' + ' -mthumb -mfloat-abi=soft -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -Wall'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__START=entry -D__STARTUP_CLEAR_BSS'
     LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--defsym=__heap_size__=0x2000,--gc-sections,-Map=rtthread.map,--print-memory-usage -Tboard/linker_scripts/MCXA156_flash.ld'
 
