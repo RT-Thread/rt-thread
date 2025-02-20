@@ -55,7 +55,7 @@ static void _dlmodule_set_name(struct rt_dlmodule *module, const char *path)
     }
 
     size = end - first + 1;
-    if (size > RT_NAME_MAX) size = RT_NAME_MAX;
+    if (size >= RT_NAME_MAX) size = RT_NAME_MAX - 1;
 
     rt_strncpy(object->name, first, size);
     object->name[size] = '\0';
