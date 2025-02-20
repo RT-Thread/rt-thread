@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_MCXN947
+config SOC_MCXA153
     bool
-    select SOC_MCXN947_SERIES
+    select SOC_MCXA153_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
