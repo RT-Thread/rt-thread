@@ -126,7 +126,6 @@
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_FPU
-#define ARCH_ARM_CORTEX_SECURE
 #define ARCH_ARM_CORTEX_M33
 
 /* RT-Thread Components */
@@ -322,6 +321,10 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
