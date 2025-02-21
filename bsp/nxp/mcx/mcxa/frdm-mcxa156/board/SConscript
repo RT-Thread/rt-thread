@@ -9,6 +9,9 @@ MCUX_Config/board/clock_config.c
 MCUX_Config/board/pin_mux.c
 """)
 
+if GetDepend(['BSP_USING_RW007']):
+    src += Glob('ports/drv_spi_sample_rw007.c')
+
 CPPPATH = [cwd, cwd + '/MCUX_Config/board']
 CPPDEFINES = ['DEBUG', 'CPU_MCXA156VLL']
 

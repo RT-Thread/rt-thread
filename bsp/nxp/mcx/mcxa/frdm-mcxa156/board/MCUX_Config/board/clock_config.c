@@ -52,6 +52,19 @@ extern uint32_t SystemCoreClock;
 void BOARD_InitBootClocks(void)
 {
     BOARD_BootClockFRO96M();
+
+    CLOCK_SetClockDiv(kCLOCK_DivFRO_HF_DIV, 2U);
+
+    CLOCK_EnableClock(kCLOCK_GateLPSPI0);
+    CLOCK_EnableClock(kCLOCK_GateLPSPI1);
+    CLOCK_EnableClock(kCLOCK_GateDMA);
+
+    CLOCK_AttachClk(kFRO_HF_DIV_to_LPSPI0);
+    CLOCK_AttachClk(kFRO_HF_DIV_to_LPSPI1);
+
+    RESET_ReleasePeripheralReset(kLPSPI0_RST_SHIFT_RSTn);
+    RESET_ReleasePeripheralReset(kLPSPI1_RST_SHIFT_RSTn);
+    RESET_ReleasePeripheralReset(kDMA_RST_SHIFT_RSTn);
 }
 
 /*******************************************************************************
