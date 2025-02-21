@@ -1,6 +1,12 @@
 @page page_introduction Introduction
 
-As a beginner of Real-time Operating Systems (RTOS), you might be new to RT-Thread. However, with a better understanding of it over time, you will gradually discover the charm of RT-Thread and its advantages over other RTOSs of the same type. RT-Thread is an RTOS. With over 16 years of experience accumulated, along with the rise of the Internet of Things (IoT), it is evolving into a powerful, component-rich IoT operating system.  
+As a beginner of Real-time Operating Systems (RTOS), you might be new to RT-Thread. However, with a better understanding of it over time, you will gradually discover the charm of RT-Thread and its advantages over other RTOSs of the same type. RT-Thread is an RTOS.
+
+RT-Thread was born in 2006, with years of experience accumulated till now, along with the rise of the Internet of Things (IoT), it is evolving into a powerful, component-rich IoT operating system.
+
+More info. about RT-Thread, see ["RT-Thread on Wikipedia"][rtt-wiki].
+
+[rtt-wiki]:https://en.wikipedia.org/wiki/RT-Thread
 
 # RT-Thread Overview
 
@@ -25,13 +31,15 @@ One of the main differences between RT-Thread and many other RTOSs such as FreeR
 It includes: 
 
 - Kernel layer: RT-Thread kernel, the core part of RT-Thread, includes the implementation of objects in the kernel system, such as multi-threading and its scheduling, semaphore, mailbox, message queue, memory management, timer, etc.; libcpu/BSP (Chip Migration Related Files/Board Support Package) is closely related to hardware and consists of peripheral drivers and CPU transport. 
-- Components and Service Layer: Components are based on upper-level software on top of the RT-Thread kernel, such as virtual file systems, FinSH command-line interfaces, network frameworks, device frameworks, and more. Its modular design allows for high internal cohesion within the assembly and low coupling between components.
+
+- Components and Service Layer: Components are software modules on top of the RT-Thread kernel, such as virtual file systems, FinSH command-line interfaces, network frameworks, device frameworks, and more. Its modular design allows for high internal cohesion within the assembly and low coupling between components.
+
 - RT-Thread software package: A general-purpose software component running on the RT-Thread IoT operating system platform for different application areas, consisting of description information, source code or library files. RT-Thread provides an open package platform with officially available or developer-supplied packages that provide developers with a choice of reusable packages that are an important part of the RT-Thread ecosystem. The package ecosystem is critical to the choice of an operating system because these packages are highly reusable and modular, making it easy for application developers to build the system they want in the shortest amount of time.  RT-Thread supports more than 60 software packages, listed below: 
 
-1. Internet of Things related software packages: Paho MQTT, WebClient, mongoose, WebTerminal, etc.
-2. Scripting language related software packages: JerryScript and MicroPython are currently supported.
-3. Multimedia related software packages: Openmv, mupdf.
-4. Tools packages: CmBacktrace, EasyFlash, EasyLogger, SystemView.
-5. System related software packages: RTGUI, Persimmon UI, lwext4, partition, SQLite, etc.
-6. Peripheral library and driver software packages: RealTek RTL8710BN SDK.
-7. Others.
+  1. Internet of Things related software packages: Paho MQTT, WebClient, mongoose, WebTerminal, etc.
+  2. Scripting language related software packages: JerryScript and MicroPython are currently supported.
+  3. Multimedia related software packages: Openmv, mupdf.
+  4. Tools packages: CmBacktrace, EasyFlash, EasyLogger, SystemView.
+  5. System related software packages: RTGUI, Persimmon UI, lwext4, partition, SQLite, etc.
+  6. Peripheral library and driver software packages: RealTek RTL8710BN SDK.
+  7. Others.
