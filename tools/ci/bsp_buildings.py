@@ -36,7 +36,18 @@ def run_cmd(cmd, output_info=True):
     return output_str_list, res
 
 
-def build_bsp(bsp, scons_args=''):
+def build_bsp(bsp, scons_args='', build_tool=None):
+    if build_tool is None:
+        build_tool = os.getenv('RTT_BUILD_TOOL')
+    if build_tool == 'scons':
+        return build_bsp_scons(bsp, scons_args)
+    elif build_tool =='cmake':
+        return build_bsp_cmake(bsp, scons_args)
+    else:
+        print(f"::error::build tool {build_tool} is not supported")
+        return False
+
+def build_bsp_scons(bsp, scons_args=''):
     """
     build bsp.
 
@@ -81,6 +92,65 @@ def build_bsp(bsp, scons_args=''):
 
     return success
 
+def build_bsp_cmake(bsp, scons_args=''):
+    """
+    build bsp using cmake generater.
+
+    cd {rtt_root}
+    scons -C bsp/{bsp} --pyconfig-silent > /dev/null
+
+    cd {rtt_root}/bsp/{bsp}
+    pkgs --update > /dev/null
+    pkgs --list
+
+    scons --target=cmake
+    mkdir build
+    cd build
+    cmake .. -G Ninja
+    ninja -j{nproc}
+
+    cd ..
+    rm -rf build
+    rm -rf packages
+
+    """
+    ext_flags = ''
+    scons_args = scons_args.strip()
+    if scons_args == "--strict":
+        print("scons using strict mode, build it with `-Werror` flag")
+        ext_flags += '-DCMAKE_COMPILE_WARNING_AS_ERROR=1'
+    elif scons_args != '':
+        print(f"this project would be built regularly because `scons_args` is `{scons_args}`")
+        return build_bsp_scons(bsp, scons_args)
+    success = True
+    os.chdir(rtt_root)
+    if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
+        os.chdir(rtt_root)
+        run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
+
+        os.chdir(f'{rtt_root}/bsp/{bsp}')
+        run_cmd('pkgs --update', output_info=False)
+        run_cmd('pkgs --list')
+        
+        nproc = multiprocessing.cpu_count()
+        
+        run_cmd('scons --target=cmake')
+        os.mkdir(f'{rtt_root}/bsp/{bsp}/cmake-build')
+        os.chdir(f'{rtt_root}/bsp/{bsp}/cmake-build')
+        run_cmd(f'cmake {ext_flags} .. -G Ninja')
+        _, res = run_cmd(f'ninja -j{nproc}')
+
+        if res != 0:
+            success = False
+            
+    os.chdir(f'{rtt_root}/bsp/{bsp}')
+
+    build_dir = os.path.join(rtt_root, 'bsp', bsp, 'cmake-build')
+    shutil.rmtree(build_dir, ignore_errors=True)
+    pkg_dir = os.path.join(rtt_root, 'bsp', bsp, 'packages')
+    shutil.rmtree(pkg_dir, ignore_errors=True)
+    
+    return success
 
 def append_file(source_file, destination_file):
     """
