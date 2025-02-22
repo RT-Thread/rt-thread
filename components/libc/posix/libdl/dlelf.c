@@ -383,9 +383,9 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             rt_memcpy(ptr,
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
-            rodata_addr = (rt_uint32_t)ptr;
+            rodata_addr = (rt_ubase_t)ptr;
             LOG_D("load rodata 0x%x, size %d, rodata 0x%x", ptr,
-                shdr[index].sh_size, *(rt_uint32_t *)data_addr);
+                shdr[index].sh_size, *(rt_ubase_t *)rodata_addr);
             ptr += shdr[index].sh_size;
         }
 
@@ -395,9 +395,9 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             rt_memcpy(ptr,
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
-            data_addr = (rt_uint32_t)ptr;
+            data_addr = (rt_ubase_t)ptr;
             LOG_D("load data 0x%x, size %d, data 0x%x", ptr,
-                shdr[index].sh_size, *(rt_uint32_t *)data_addr);
+                shdr[index].sh_size, *(rt_ubase_t *)data_addr);
             ptr += shdr[index].sh_size;
         }
 
@@ -405,7 +405,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
         if (IS_NOPROG(shdr[index]) && IS_AW(shdr[index]))
         {
             rt_memset(ptr, 0, shdr[index].sh_size);
-            bss_addr = (rt_uint32_t)ptr;
+            bss_addr = (rt_ubase_t)ptr;
             LOG_D("load bss 0x%x, size %d", ptr, shdr[index].sh_size);
         }
     }
