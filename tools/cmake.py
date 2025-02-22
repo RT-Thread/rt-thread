@@ -1,6 +1,22 @@
 """
-Utils for CMake
-Author: https://github.com/klivelinux
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-05-24     klivelinux   first version
+ * 2021-04-19     liukangcc    add c++ support and libpath
+ * 2021-06-25     Guozhanxin   fix path issue
+ * 2021-06-30     Guozhanxin   add scons --target=cmake-armclang
+ * 2022-03-16     liukangcc    通过 SCons生成 CMakefile.txt 使用相对路径
+ * 2022-04-12     mysterywolf  rtconfig.CROSS_TOOL->rtconfig.PLATFORM
+ * 2022-04-29     SunJun8      默认开启生成编译数据库
+ * 2024-03-18     wirano       fix the issue of the missing link flags added in Sconscript
+ * 2024-07-04     kaidegit     Let cmake generator get more param from `rtconfig.py`
+ * 2024-08-07     imi415       Updated CMake generator handles private macros, using OBJECT and INTERFACE libraries.
+ * 2024-11-18     kaidegit     fix processing groups with similar name
+ * 2024-11-18     kaidegit     fix missing some flags added in Sconscript
 """
 
 import os
@@ -46,12 +62,12 @@ def GenerateCFiles(env, project, project_name):
     OBJCOPY = tool_path_conv["CMAKE_OBJCOPY"]["path"]
     FROMELF = tool_path_conv["CMAKE_FROMELF"]["path"]
 
-    CFLAGS = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    CFLAGS = env['CFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     if 'CXXFLAGS' in dir(rtconfig):
-        CXXFLAGS = rtconfig.CXXFLAGS.replace('\\', "/").replace('\"', "\\\"")
+        CXXFLAGS = env['CXXFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     else:
         CXXFLAGS = CFLAGS
-    AFLAGS = rtconfig.AFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    AFLAGS = env['ASFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     LFLAGS = env['LINKFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     
     POST_ACTION = rtconfig.POST_ACTION
