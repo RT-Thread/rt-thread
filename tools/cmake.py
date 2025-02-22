@@ -45,21 +45,13 @@ def GenerateCFiles(env, project, project_name):
     OBJDUMP = tool_path_conv["CMAKE_OBJDUMP"]["path"]
     OBJCOPY = tool_path_conv["CMAKE_OBJCOPY"]["path"]
     FROMELF = tool_path_conv["CMAKE_FROMELF"]["path"]
-
-    CFLAGS = rtconfig.CFLAGS
-    for group in project:
-        if 'CFLAGS' in group.keys():
-            CFLAGS += ' ' + group['CFLAGS']
-    CFLAGS = CFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    
+    CFLAGS = env['CFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     if 'CXXFLAGS' in dir(rtconfig):
-        CXXFLAGS = rtconfig.CXXFLAGS
-        for group in project:
-            if 'CXXFLAGS' in group.keys():
-                CXXFLAGS +='' + group['CXXFLAGS']
-        CXXFLAGS = CXXFLAGS.replace('\\', "/").replace('\"', "\\\"")
+        CXXFLAGS = env['CXXFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     else:
         CXXFLAGS = CFLAGS
-    AFLAGS = rtconfig.AFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    AFLAGS = env['ASFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     LFLAGS = env['LINKFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     
     POST_ACTION = rtconfig.POST_ACTION
