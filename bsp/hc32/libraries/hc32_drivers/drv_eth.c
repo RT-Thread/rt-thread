@@ -358,7 +358,7 @@ static void hc32_eth_irq_handle(stc_eth_handle_t *eth_handle)
         result = eth_device_ready(&(hc32_eth_device.parent));
         if (result != RT_EOK)
         {
-#ifdef ULOG_USING_ISR_LOG
+#if !defined (RT_USING_ULOG) || defined (ULOG_USING_ISR_LOG)
             LOG_I("eth rx complete callback err = %d", result);
 #endif
         }
