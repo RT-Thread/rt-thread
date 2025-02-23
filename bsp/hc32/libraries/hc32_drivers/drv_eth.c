@@ -467,7 +467,7 @@ static void eth_phy_irq_handler(void *args)
     rt_uint16_t status = 0;
 
     ETH_PHY_ReadReg(&EthHandle, PHY_IISDR, &status);
-#ifdef ULOG_USING_ISR_LOG
+#if !defined (RT_USING_ULOG) || defined (ULOG_USING_ISR_LOG)
     LOG_D("phy interrupt status reg is 0x%X", status);
 #endif
 #endif
