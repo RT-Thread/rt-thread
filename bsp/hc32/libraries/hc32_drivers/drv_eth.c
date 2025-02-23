@@ -358,7 +358,7 @@ static void hc32_eth_irq_handle(stc_eth_handle_t *eth_handle)
         result = eth_device_ready(&(hc32_eth_device.parent));
         if (result != RT_EOK)
         {
-#if !defined (RT_USING_ULOG) || defined (ULOG_USING_ISR_LOG)
+#if defined (RT_USING_ULOG) || defined (ULOG_USING_ISR_LOG)
             LOG_I("eth rx complete callback err = %d", result);
 #endif
         }
@@ -467,7 +467,7 @@ static void eth_phy_irq_handler(void *args)
     rt_uint16_t status = 0;
 
     ETH_PHY_ReadReg(&EthHandle, PHY_IISDR, &status);
-#if !defined (RT_USING_ULOG) || defined (ULOG_USING_ISR_LOG)
+#if defined (RT_USING_ULOG) || defined (ULOG_USING_ISR_LOG)
     LOG_D("phy interrupt status reg is 0x%X", status);
 #endif
 #endif
