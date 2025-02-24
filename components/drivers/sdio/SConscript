@@ -18,6 +18,12 @@ if GetDepend('RT_USING_SDHCI'):
     src += [os.path.join('sdhci', 'fit-mmc.c')]
     src += [os.path.join('sdhci', 'sdhci-platform.c')]
 
+if GetDepend(['RT_USING_DM']):
+    src += ['dev_sdio_dm.c']
+
+    if GetDepend(['RT_USING_REGULATOR']):
+        src += ['dev_regulator.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SDIO'], CPPPATH = path)
 
 Return('group')
