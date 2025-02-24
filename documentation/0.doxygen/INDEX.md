@@ -75,6 +75,16 @@ $ sudo apt install doxygen
 $ sudo apt install graphviz
 ```
 
+You can execute script to generate documentation or manually execute code
+
+### For script automated
+
+```shell
+$ ./generate_doxygen.sh
+```
+
+### For manual execution
+
 Assume that the path of RT-Thead code tree is $RTT, execute the following command to build html.
 
 ```shell
