@@ -7,8 +7,8 @@ RTT_DIR := ../../..
 PKGS_DIR := packages
 
 source "$(RTT_DIR)/Kconfig"
-osource "$PKGS_DIR/Kconfig"
-rsource "board/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "board/Kconfig"
 
 config BSP_USING_C906_LITTLE
     bool
