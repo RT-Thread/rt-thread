@@ -160,7 +160,7 @@ rt_err_t rt_clk_notifier_unregister(struct rt_clk *clk, struct rt_clk_notifier *
 rt_err_t rt_clk_set_parent(struct rt_clk *clk, struct rt_clk *clk_parent);
 
 rt_err_t rt_clk_prepare(struct rt_clk *clk);
-rt_err_t rt_clk_unprepare(struct rt_clk *clk);
+void rt_clk_unprepare(struct rt_clk *clk);
 
 rt_err_t rt_clk_enable(struct rt_clk *clk);
 void rt_clk_disable(struct rt_clk *clk);
@@ -169,7 +169,7 @@ rt_err_t rt_clk_prepare_enable(struct rt_clk *clk);
 void rt_clk_disable_unprepare(struct rt_clk *clk);
 
 rt_err_t rt_clk_array_prepare(struct rt_clk_array *clk_arr);
-rt_err_t rt_clk_array_unprepare(struct rt_clk_array *clk_arr);
+void rt_clk_array_unprepare(struct rt_clk_array *clk_arr);
 
 rt_err_t rt_clk_array_enable(struct rt_clk_array *clk_arr);
 void rt_clk_array_disable(struct rt_clk_array *clk_arr);
