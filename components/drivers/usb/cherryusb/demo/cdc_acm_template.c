@@ -5,6 +5,8 @@
  */
 #include "usbd_core.h"
 #include "usbd_cdc_acm.h"
+#include <rtthread.h>
+#include "string.h"
 
 /*!< endpoint address */
 #define CDC_IN_EP  0x81
@@ -140,10 +142,10 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
 void usbd_cdc_acm_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
     USB_LOG_RAW("actual out len:%d\r\n", nbytes);
-    // for (int i = 0; i < 100; i++) {
-    //     printf("%02x ", read_buffer[i]);
-    // }
-    // printf("\r\n");
+    for (int i = 0; i < nbytes; i++) {
+        printf("%c", read_buffer[i]);
+    }
+    printf("\r\n");
     /* setup next out ep read transfer */
     usbd_ep_start_read(busid, CDC_OUT_EP, read_buffer, 2048);
 }
@@ -207,5 +209,21 @@ void cdc_acm_data_send_with_dtr_test(uint8_t busid)
         usbd_ep_start_write(busid, CDC_IN_EP, write_buffer, 2048);
         while (ep_tx_busy_flag) {
         }
+    }
+}
+
+void cdc_acm_data_send(char *format, ...)
+{
+    uint8_t str[4096];
+    uint32_t str_len;
+	va_list arg;
+	va_start(arg, format);
+	vsprintf(str, format, arg);
+	va_end(arg);
+    str_len=strlen(str);
+    ep_tx_busy_flag = true;
+    memcpy(write_buffer,str,str_len);
+    usbd_ep_start_write(0, CDC_IN_EP, write_buffer, str_len);
+    while (ep_tx_busy_flag) {
     }
 }
