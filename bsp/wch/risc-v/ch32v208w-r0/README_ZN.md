@@ -38,8 +38,11 @@ CH32V208W-R0 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主
 1. [下载WCH编译工具链](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH/archive/refs/tags/V1.0.0.zip)
 2. 下载Env工具[最新版本](https://github.com/RT-Thread/env-windows/releases)
 3. 下载RT-Thread[最新源码](https://github.com/RT-Thread/rt-thread/archive/refs/heads/master.zip)
-4. 并在当前BSP根目录下打开Env工具并执行 `scons --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` 命令，在指定工具链位置的同时直接编译。
-5. 编译完成之后会生成 **rtthread.bin** 文件。
+4. 打开Env工具进入bsp目录
+5. 执行`scons --pyconfig-silent`刷新配置
+6. 执行`pkgs --update`拉取
+7. 执行 `scons --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` 命令，在指定工具链位置的同时直接编译。
+8. 编译完成之后会生成 **rtthread.bin** 文件。
 
 ![sconscompile](./figures/sconscompile.jpg)
 

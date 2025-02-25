@@ -3,6 +3,7 @@ menu "Hardware Drivers Config"
 config SOC_CH32V208WBU6
     bool
     select SOC_RISCV_SERIES_CH32V2
+    select SOC_RISCV_SERIES_CH32V20x_D8W
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
