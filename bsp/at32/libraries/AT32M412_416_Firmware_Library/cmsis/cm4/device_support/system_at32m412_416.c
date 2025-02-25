@@ -88,7 +88,7 @@ void SystemInit (void)
   /* reset pllms pllns pllfr pllrcs bits */
   CRM->pllcfg = 0x00033002U;
 
-  /* reset clkout[3], hickdiv, clkoutdiv */
+  /* reset clkout[3], clkoutdiv */
   CRM->misc1 = 0x000F1000;
 
   /* disable all interrupts enable and clear pending bits  */
@@ -124,7 +124,7 @@ void system_core_clock_update(void)
   switch(sclk_source)
   {
     case CRM_SCLK_HICK:
-      if(((CRM->misc1_bit.hick_to_sclk) != RESET) && ((CRM->misc1_bit.hickdiv) != RESET))
+      if((CRM->misc1_bit.hick_to_sclk) != RESET)
         system_core_clock = HICK_VALUE * 6;
       else
         system_core_clock = HICK_VALUE;

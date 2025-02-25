@@ -604,7 +604,7 @@ flag_status spi_i2s_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
 flag_status spi_i2s_interrupt_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
 {
   flag_status status = RESET;
-  
+
   switch(spi_i2s_flag)
   {
     case SPI_I2S_RDBF_FLAG:
@@ -659,7 +659,7 @@ flag_status spi_i2s_interrupt_flag_get(spi_type* spi_x, uint32_t spi_i2s_flag)
   * @brief  clear flag of the specified spi/i2s peripheral.
   * @param  spi_x: select the spi/i2s peripheral.
   *         this parameter can be one of the following values:
-  *         SPI1, SPI2, SPI3, I2SF5 
+  *         SPI1, SPI2, SPI3, I2SF5
   * @param  spi_i2s_flag: select the spi/i2s flag
   *         this parameter can be one of the following values:
   *         - SPI_CCERR_FLAG

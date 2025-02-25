@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -519,7 +519,7 @@ void crm_vbath_div_set(crm_vbath_div_type value)
 }
 
 /**
-  * @brief  set crm lext driving strength 
+  * @brief  set crm lext driving strength
   * @param  value
   *         this parameter can be one of the following values:
   *         - CRM_DRV_STRENGTH_LOW
@@ -534,7 +534,7 @@ void crm_lextdrv_set(crm_drv_strength_type value)
 }
 
 /**
-  * @brief  set crm hext driving strength 
+  * @brief  set crm hext driving strength
   * @param  value
   *         this parameter can be one of the following values:
   *         - CRM_DRV_STRENGTH_LOW
@@ -614,7 +614,7 @@ void crm_auto_step_mode_enable(confirm_state new_state)
     CRM->misc2_bit.auto_step_en = CRM_AUTO_STEP_MODE_DISABLE;
 }
 
-/** 
+/**
   * @brief  can multi clock source select
   * @param  can_index
   *         this parameter can be one of the following values:
@@ -636,7 +636,7 @@ void crm_can_clock_select(crm_can_type can_index, crm_can_clock_source_type valu
   }
 }
 
-/** 
+/**
   * @brief  can multi clock source select
   * @param  can_index
   *         this parameter can be one of the following values:
@@ -657,7 +657,7 @@ crm_can_clock_source_type crm_can_clock_get(crm_can_type can_index)
   return value;
 }
 
-/** 
+/**
   * @brief  hick as system clock frequency select
   * @param  value
   *         this parameter can be one of the following values:
@@ -679,7 +679,6 @@ void crm_hick_sclk_frequency_select(crm_hick_sclk_frequency_type value)
   }
 
   CRM->misc1_bit.hick_to_sclk = TRUE;
-  CRM->misc1_bit.hickdiv = CRM_HICK48_NODIV;
   CRM->misc1_bit.hick_to_sclk = value;
   crm_hick_sclk_div_set((crm_hick_sclk_div_type)temp_div);
 }
@@ -720,10 +719,6 @@ void crm_pll_config(crm_pll_clock_source_type clock_source, uint16_t pll_ns, \
                     uint16_t pll_ms, crm_pll_fr_type pll_fr)
 {
   /* config pll clock source */
-  if(clock_source == CRM_PLL_SOURCE_HICK)
-  {
-    CRM->misc1_bit.hickdiv = CRM_HICK48_NODIV;
-  }
   CRM->pllcfg_bit.pllrcs = clock_source;
 
   /* config pll multiplication factor */
@@ -789,7 +784,7 @@ void crm_clocks_freq_get(crm_clocks_freq_type *clocks_struct)
   switch(sclk_source)
   {
     case CRM_SCLK_HICK:
-      if(((CRM->misc1_bit.hick_to_sclk) != RESET) && ((CRM->misc1_bit.hickdiv) != RESET))
+      if((CRM->misc1_bit.hick_to_sclk) != RESET)
         clocks_struct->sclk_freq = HICK_VALUE * 6;
       else
         clocks_struct->sclk_freq = HICK_VALUE;

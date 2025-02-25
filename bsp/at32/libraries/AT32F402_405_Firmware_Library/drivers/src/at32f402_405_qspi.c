@@ -111,6 +111,7 @@ void qspi_clk_division_set(qspi_type* qspi_x, qspi_clk_div_type new_clkdiv)
 /**
   * @brief  enable/disable cache in xip mode
   * @note   the function must be configured only when qspi in command-port mode!!!
+  *         the function only for applications in xip read-only(e.g. qspi flash)!!!
   * @param  qspi_x: select the qspi peripheral.
   *         this parameter can be one of the following values:
   *         QSPI1.
@@ -198,7 +199,7 @@ flag_status qspi_interrupt_flag_get(qspi_type* qspi_x, uint32_t flag)
   */
 void qspi_flag_clear(qspi_type* qspi_x, uint32_t flag)
 {
-  qspi_x->cmdsts = QSPI_CMDSTS_FLAG;
+  qspi_x->cmdsts = flag;
 }
 
 /**

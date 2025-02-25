@@ -83,7 +83,7 @@ void exint_init(exint_init_type *exint_struct)
 
   if(exint_struct->line_enable != FALSE)
   {
-    if(exint_struct->line_mode == EXINT_LINE_INTERRUPUT)
+    if(exint_struct->line_mode == EXINT_LINE_INTERRUPT)
     {
       EXINT->inten |= line_index;
     }

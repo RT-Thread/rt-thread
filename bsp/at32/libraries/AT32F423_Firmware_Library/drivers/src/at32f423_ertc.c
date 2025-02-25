@@ -328,6 +328,11 @@ error_status ertc_date_set(uint8_t year, uint8_t month, uint8_t date, uint8_t we
   /* exit init mode */
   ertc_init_mode_exit();
 
+  if(ERTC->ctrl_bit.dren == 0)
+  {
+    ertc_wait_update();
+  }
+
   /* enable write protection */
   ertc_write_protect_enable();
 
@@ -370,6 +375,11 @@ error_status ertc_time_set(uint8_t hour, uint8_t min, uint8_t sec, ertc_am_pm_ty
 
   /* exit init mode */
   ertc_init_mode_exit();
+
+  if(ERTC->ctrl_bit.dren == 0)
+  {
+    ertc_wait_update();
+  }
 
   /* enable write protection */
   ertc_write_protect_enable();

@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -35,7 +35,7 @@
 
 #ifdef CAN_MODULE_ENABLED
 
-#ifdef SUPPORT_CAN_FD 
+#ifdef SUPPORT_CAN_FD
 static const uint8_t dlc_to_bytes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64};
 #endif
 
@@ -180,13 +180,13 @@ error_status can_standby_mode_enable(can_type* can_x, confirm_state new_state)
   {
     can_x->ctrlstat_bit.stby = FALSE;
   }
-  
+
   return SUCCESS;
 }
 
 /**
   * @brief  enable restricted operation of the can peripheral.
-  *         a can node which is in restricted operation mode shall not transmit data frames 
+  *         a can node which is in restricted operation mode shall not transmit data frames
   *         unless it is a potential time master for ttcan.
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:
@@ -210,12 +210,12 @@ void can_bittime_default_para_init(can_bittime_type* can_bittime_struct)
   /* reset can bittime structure parameters values */
 
   can_bittime_struct->bittime_div = 1;
-  
+
   can_bittime_struct->ac_bts1_size = 12;
   can_bittime_struct->ac_bts2_size = 4;
   can_bittime_struct->ac_rsaw_size = 4;
- 
-#ifdef SUPPORT_CAN_FD   
+
+#ifdef SUPPORT_CAN_FD
   can_bittime_struct->fd_bts1_size = 6;
   can_bittime_struct->fd_bts2_size = 2;
   can_bittime_struct->fd_rsaw_size = 2;
@@ -236,12 +236,12 @@ void can_bittime_default_para_init(can_bittime_type* can_bittime_struct)
 void can_bittime_set(can_type* can_x, can_bittime_type* can_bittime_struct)
 {
   can_x->lbtcfg_bit.presc = can_bittime_struct->bittime_div - 1;
-  
+
   can_x->actime_bit.ac_seg_1 = can_bittime_struct->ac_bts1_size-2;
   can_x->actime_bit.ac_seg_2 = can_bittime_struct->ac_bts2_size-1;
   can_x->actime_bit.ac_sjw = can_bittime_struct->ac_rsaw_size-1;
- 
-#ifdef SUPPORT_CAN_FD   
+
+#ifdef SUPPORT_CAN_FD
   can_x->fdtime_bit.fd_seg_1 = can_bittime_struct->fd_bts1_size-2;
   can_x->fdtime_bit.fd_seg_2 = can_bittime_struct->fd_bts2_size-1;
   can_x->fdtime_bit.fd_sjw = can_bittime_struct->fd_rsaw_size-1;
@@ -348,19 +348,19 @@ uint32_t can_transmit_timestamp_get(can_type* can_x)
   * @retval SUCCESS or ERROR
   */
 error_status can_txbuf_write(can_type* can_x, can_txbuf_select_type txbuf_type, can_txbuf_type* can_txbuf_struct)
-{ 
-#ifdef SUPPORT_CAN_FD  
+{
+#ifdef SUPPORT_CAN_FD
   uint8_t len = dlc_to_bytes[can_txbuf_struct->data_length];
-#else  
+#else
   uint8_t len = can_txbuf_struct->data_length;
-#endif 
+#endif
   uint32_t* wp = (uint32_t*)can_x->tbdat;
   uint8_t* rp = can_txbuf_struct->data;
   uint8_t byte_cnt;
-  
+
   uint8_t* reg;
-  uint8_t tmp; 
-  
+  uint8_t tmp;
+
   switch(txbuf_type)
   {
     case CAN_TXBUF_PTB:
@@ -385,7 +385,7 @@ error_status can_txbuf_write(can_type* can_x, can_txbuf_select_type txbuf_type, 
   reg = (uint8_t*)&can_x->ctrlstat + 1;
   tmp = *reg & 0x60;
   *reg = tmp | (txbuf_type<<7);
-  
+
   switch(can_txbuf_struct->id_type)
   {
     case CAN_ID_STANDARD:
@@ -398,16 +398,16 @@ error_status can_txbuf_write(can_type* can_x, can_txbuf_select_type txbuf_type, 
       return ERROR;
   }
   can_x->tbid |= (can_txbuf_struct->tx_timestamp << 31);
-  
+
   can_x->tbfmt = 0;
   can_x->tbfmt_bit.ide = can_txbuf_struct->id_type;
-  can_x->tbfmt_bit.rmf = can_txbuf_struct->frame_type;  
+  can_x->tbfmt_bit.rmf = can_txbuf_struct->frame_type;
   can_x->tbfmt_bit.dlc = can_txbuf_struct->data_length;
-#ifdef  SUPPORT_CAN_FD  
+#ifdef  SUPPORT_CAN_FD
   can_x->tbfmt_bit.brs = can_txbuf_struct->fd_rate_switch;
   can_x->tbfmt_bit.fdf = can_txbuf_struct->fd_format;
 #endif
-  
+
   /* write tx payload to the buffer ram. */
   for (byte_cnt = 0; byte_cnt < len; byte_cnt += 4U)
   {
@@ -416,19 +416,19 @@ error_status can_txbuf_write(can_type* can_x, can_txbuf_select_type txbuf_type, 
              ((uint32_t)rp[byte_cnt + 1U] << 8U)  |
               (uint32_t)rp[byte_cnt]);
   }
-  
+
   can_x->tbtyp = 0;
   can_x->tbtyp_bit.handle = can_txbuf_struct->handle;
-  can_x->tbacf = 0;
-  
+  can_x->reserved8 = 0;
+
   if(txbuf_type == CAN_TXBUF_STB)
   {
     /* write TSNEXT, mark a slot filled and point to the next frame slot. */
     reg = (uint8_t*)&can_x->ctrlstat + 2;
     tmp = *reg;
-    *reg = tmp | 0x40;    
+    *reg = tmp | 0x40;
   }
-  
+
   return SUCCESS;
 }
 
@@ -453,14 +453,14 @@ error_status can_rxbuf_read(can_type* can_x, can_rxbuf_type* can_rxbuf_struct)
   uint16_t pos;
 
   uint8_t* reg;
-  uint8_t tmp; 
+  uint8_t tmp;
 
   if(can_x->ctrlstat_bit.rstat == CAN_RXBUF_STATUS_EMPTY)
   {
     /* receive buffer is empty. */
-    return ERROR;  
+    return ERROR;
   }
-  
+
   can_rxbuf_struct->id_type = (can_identifier_type)can_x->rbfmt_bit.ide;
   switch(can_rxbuf_struct->id_type)
   {
@@ -473,17 +473,17 @@ error_status can_rxbuf_read(can_type* can_x, can_rxbuf_type* can_rxbuf_struct)
     default:
       return ERROR;
   }
-  
+
   can_rxbuf_struct->frame_type = (can_frame_type)can_x->rbfmt_bit.rmf;
-#ifdef SUPPORT_CAN_FD  
+#ifdef SUPPORT_CAN_FD
   can_rxbuf_struct->fd_format = (can_format_type)can_x->rbfmt_bit.fdf;
   can_rxbuf_struct->fd_rate_switch = (can_rate_switch_type)can_x->rbfmt_bit.brs;
   can_rxbuf_struct->fd_error_state = (can_error_state_type)can_x->rbfmt_bit.esi;
-#endif 
+#endif
   can_rxbuf_struct->kind_error = (can_error_type)can_x->rbfmt_bit.koer;
   can_rxbuf_struct->recv_frame = (can_recv_frame_type)can_x->rbfmt_bit.lbf;
   can_rxbuf_struct->data_length = (can_data_length_type)can_x->rbfmt_bit.dlc;
-  
+
   /* read the buffer ram to rx payload */
   for (byte_cnt = 0; byte_cnt < len; byte_cnt += 4U)
   {
@@ -493,12 +493,12 @@ error_status can_rxbuf_read(can_type* can_x, can_rxbuf_type* can_rxbuf_struct)
     wp[byte_cnt+3U] = (*rp >> 24U) & 0xFF;
     rp++;
   }
-  
+
   can_x->llcformat = can_x->rbfmt;
   pos = (can_x->llcsize_bit.llcaot / 4) - 4;
   can_rxbuf_struct->rx_timestamp = (uint32_t)can_x->rbdat[pos];
   can_rxbuf_struct->cycle_time = (uint16_t)can_x->rbdat[pos + 2];
-  
+
   /* set RREL, receive buffer release. */
   reg = (uint8_t*)&can_x->ctrlstat + 3;
   tmp = *reg;
@@ -513,7 +513,7 @@ error_status can_rxbuf_read(can_type* can_x, can_rxbuf_type* can_rxbuf_struct)
   *         this parameter can be one of the following values:
   *         CAN1.
   * @param  filter_number: point to a specific acceptance filter.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - CAN_FILTER_NUM_0
   *         - CAN_FILTER_NUM_1
   *         - CAN_FILTER_NUM_2
@@ -554,7 +554,7 @@ void can_filter_enable(can_type* can_x, can_filter_type filter_number, confirm_s
 void can_filter_default_para_init(can_filter_config_type* filter_config_struct)
 {
   /* reset can filter config structure parameters values */
- 
+
   filter_config_struct->code_para.id = 0;
   filter_config_struct->code_para.id_type = CAN_ID_STANDARD;
   filter_config_struct->code_para.frame_type = CAN_FRAME_DATA;
@@ -564,8 +564,8 @@ void can_filter_default_para_init(can_filter_config_type* filter_config_struct)
   filter_config_struct->code_para.fd_format = CAN_FORMAT_CLASSIC;
   filter_config_struct->code_para.fd_rate_switch = CAN_BRS_OFF;
   filter_config_struct->code_para.fd_error_state = CAN_ESI_ACTIVE;
-#endif 
- 
+#endif
+
   filter_config_struct->mask_para.id = 0xFFFFFFFF;
   filter_config_struct->mask_para.id_type = TRUE;
   filter_config_struct->mask_para.frame_type = TRUE;
@@ -575,7 +575,7 @@ void can_filter_default_para_init(can_filter_config_type* filter_config_struct)
   filter_config_struct->mask_para.fd_format = TRUE;
   filter_config_struct->mask_para.fd_rate_switch = TRUE;
   filter_config_struct->mask_para.fd_error_state = TRUE;
-#endif 
+#endif
 }
 
 /**
@@ -584,7 +584,7 @@ void can_filter_default_para_init(can_filter_config_type* filter_config_struct)
   *         this parameter can be one of the following values:
   *         CAN1.
   * @param  filter_number: point to a specific acceptance filter number.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - CAN_FILTER_NUM_0
   *         - CAN_FILTER_NUM_1
   *         - CAN_FILTER_NUM_2
@@ -607,7 +607,7 @@ void can_filter_default_para_init(can_filter_config_type* filter_config_struct)
 void can_filter_set(can_type* can_x, can_filter_type filter_number, can_filter_config_type* filter_config_struct)
 {
   can_x->acfctrl_bit.acfadr = filter_number;
-  
+
   switch(filter_config_struct->code_para.id_type)
   {
     case CAN_ID_STANDARD:
@@ -623,12 +623,12 @@ void can_filter_set(can_type* can_x, can_filter_type filter_number, can_filter_c
   can_x->fcfmt_bit.rmf = filter_config_struct->code_para.frame_type;
   can_x->fcfmt_bit.dlc = filter_config_struct->code_para.data_length;
   can_x->fcfmt_bit.lbf = filter_config_struct->code_para.recv_frame;
-#ifdef SUPPORT_CAN_FD  
+#ifdef SUPPORT_CAN_FD
   can_x->fcfmt_bit.brs = filter_config_struct->code_para.fd_rate_switch;
   can_x->fcfmt_bit.fdf = filter_config_struct->code_para.fd_format;
   can_x->fcfmt_bit.esi = filter_config_struct->code_para.fd_error_state;
-#endif  
-  
+#endif
+
   can_x->fmid = 0xFFFFFFFF;
   /* write mask_id by id_type of filter_code_struct. */
   switch(filter_config_struct->code_para.id_type)
@@ -644,16 +644,16 @@ void can_filter_set(can_type* can_x, can_filter_type filter_number, can_filter_c
   }
   can_x->fmfmt = 0xFFFFFFFF;
   can_x->fmfmt_bit.ide = filter_config_struct->mask_para.id_type;
-  can_x->fmfmt_bit.rmf = filter_config_struct->mask_para.frame_type;  
+  can_x->fmfmt_bit.rmf = filter_config_struct->mask_para.frame_type;
   can_x->fmfmt_bit.dlc = filter_config_struct->mask_para.data_length;
-  can_x->fmfmt_bit.lbf = filter_config_struct->mask_para.recv_frame; 
-#ifdef SUPPORT_CAN_FD  
+  can_x->fmfmt_bit.lbf = filter_config_struct->mask_para.recv_frame;
+#ifdef SUPPORT_CAN_FD
   can_x->fmfmt_bit.brs = filter_config_struct->mask_para.fd_rate_switch;
   can_x->fmfmt_bit.fdf = filter_config_struct->mask_para.fd_format;
   can_x->fmfmt_bit.esi = filter_config_struct->mask_para.fd_error_state;
-#endif  
+#endif
   can_x->fmtyp = 0xFFFFFFFF;
-  can_x->fmacf = 0xFFFFFFFF;
+  can_x->reserved6[0] = 0xFFFFFFFF;
 }
 
 /**
@@ -666,7 +666,7 @@ void can_filter_set(can_type* can_x, can_filter_type filter_number, can_filter_c
 error_status can_rxbuf_release(can_type* can_x)
 {
   uint8_t* reg;
-  uint8_t tmp; 
+  uint8_t tmp;
 
   if(can_x->ctrlstat_bit.rstat == CAN_RXBUF_STATUS_EMPTY)
   {
@@ -699,7 +699,7 @@ uint8_t can_arbitration_lost_position_get(can_type* can_x)
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:
   *         CAN1.
-  * @param  warning_value: defines the internal warning limit of receive buffer almost full. 
+  * @param  warning_value: defines the internal warning limit of receive buffer almost full.
   *         this parameter can be 1~6.
   * @retval none
   */
@@ -713,7 +713,7 @@ void can_rxbuf_warning_set(can_type* can_x, uint8_t warning_value)
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:
   *         CAN1.
-  * @param  warning_value: programmable error warning limit = (warning_value + 1)*8. possible limit values: 8, 16, бн 128. 
+  * @param  warning_value: programmable error warning limit = (warning_value + 1)*8. possible limit values: 8, 16, ... 128.
   *         this parameter can be 0~15.
   * @retval none
   */
@@ -755,7 +755,7 @@ uint8_t can_transmit_error_counter_get(can_type* can_x)
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:
   *         CAN1.
-  * @retval can kind of error type. 
+  * @retval can kind of error type.
   *         the returned value can be one of the following values:
   *         - CAN_KOER_NOERR
   *         - CAN_KOER_BIT
@@ -789,7 +789,7 @@ flag_status can_busoff_get(can_type* can_x)
   {
     bit_status = SET;
   }
-  return bit_status; 
+  return bit_status;
 }
 
 /**
@@ -826,7 +826,7 @@ void can_stb_transmit_mode_set(can_type* can_x, can_stb_transmit_mode_type stb_t
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:
   *         CAN1.
-  * @retval the status of the secondary transmit buffer. 
+  * @retval the status of the secondary transmit buffer.
   *         the returned value can be one of the following values:
   *         - CAN_STB_STATUS_EMPTY
   *         - CAN_STB_STATUS_LESS
@@ -860,7 +860,7 @@ void can_transmit_status_get(can_type* can_x, can_transmit_status_type* transmit
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:
   *         CAN1.
-  * @retval the status of can receive buffer. 
+  * @retval the status of can receive buffer.
   *         the returned value can be:
   *         - CAN_RXBUF_STATUS_EMPTY
   *         - CAN_RXBUF_STATUS_LESS
@@ -871,12 +871,12 @@ void can_transmit_status_get(can_type* can_x, can_transmit_status_type* transmit
 can_rxbuf_status_type can_rxbuf_status_get(can_type* can_x)
 {
   uint8_t status = can_x->ctrlstat_bit.rstat;
-  
+
   if(can_x->ctrlstat_bit.rov == SET)
   {
     status = CAN_RXBUF_STATUS_OVERFLOW;
   }
-  
+
   return (can_rxbuf_status_type)status;
 }
 
@@ -925,7 +925,7 @@ void can_transmit_abort(can_type* can_x, can_abort_transmit_type abort_type)
 {
   uint8_t* reg = (uint8_t*)&can_x->ctrlstat + 1;
   uint8_t tmp;
-  
+
   /* avoid duplicate setting these bits(TSA, TSALL, TSONE, TPA, TPE). */
   tmp = *reg & 0xE0;
   *reg = tmp | abort_type;
@@ -946,17 +946,17 @@ error_status can_stb_clear(can_type* can_x, can_clear_stb_type clear_type)
 {
   uint8_t* reg = (uint8_t*)&can_x->ctrlstat + 1;
   uint8_t tmp;
-  
+
   if(can_x->ctrlstat_bit.tsstat == CAN_STB_STATUS_EMPTY)
   {
     /* the secondary transmit buffer is empty. */
-    return ERROR; 
+    return ERROR;
   }
-  
+
   /* avoid duplicate setting these bits(TSA, TSALL, TSONE, TPA, TPE). */
   tmp = *reg & 0xE0;
   *reg = tmp | clear_type;
-  
+
   return SUCCESS;
 }
 
@@ -975,8 +975,8 @@ error_status can_stb_clear(can_type* can_x, can_clear_stb_type clear_type)
 error_status can_txbuf_transmit(can_type* can_x, can_txbuf_transmit_type transmit_type)
 {
   uint8_t* reg = (uint8_t*)&can_x->ctrlstat + 1;
-  uint8_t tmp; 
-  
+  uint8_t tmp;
+
   /* once standby is activated no transmission is possible. */
   if(can_x->ctrlstat_bit.stby == SET)
     return ERROR;
@@ -985,23 +985,23 @@ error_status can_txbuf_transmit(can_type* can_x, can_txbuf_transmit_type transmi
   {
     case CAN_TRANSMIT_PTB:
       if(can_x->ctrlstat_bit.tpe || can_x->ctrlstat_bit.tpa)
-        return ERROR;     
+        return ERROR;
       break;
     case CAN_TRANSMIT_STB_ONE:
     case CAN_TRANSMIT_STB_ALL:
       if(can_x->ctrlstat_bit.tsstat == CAN_STB_STATUS_EMPTY)
-        return ERROR;     
+        return ERROR;
       if(can_x->ctrlstat_bit.tsall || can_x->ctrlstat_bit.tsone || can_x->ctrlstat_bit.tsa)
         return ERROR;
       break;
     default:
       return ERROR;
   }
-  
+
   /* avoid duplicate setting these bits(TSA, TSALL, TSONE, TPA, TPE). */
   tmp = *reg & 0xE0;
   *reg = tmp | transmit_type;
-  
+
   return SUCCESS;
 }
 
@@ -1133,7 +1133,7 @@ void can_ttcan_watch_trigger_set(can_type* can_x, uint16_t watch_trigger_time)
   *         this parameter can be one of the following values:
   *         CAN1.
   * @param  txbuf_number: pointer to a txbuf frame slot.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - CAN_TTCAN_TXBUF_NUM_0
   *         - CAN_TTCAN_TXBUF_NUM_1
   *         - CAN_TTCAN_TXBUF_NUM_2
@@ -1141,7 +1141,7 @@ void can_ttcan_watch_trigger_set(can_type* can_x, uint16_t watch_trigger_time)
   * @param  ttcan_buffer_type: ttcan txbuf slot status.
   *         this parameter can be one of the following values:
   *         - CAN_TTCAN_TXBUF_EMPTY
-  *         - CAN_TTCAN_TXBUF_FILLED   
+  *         - CAN_TTCAN_TXBUF_FILLED
   * @retval none
   */
 void can_ttcan_txbuf_status_set(can_type* can_x,  can_ttcan_txbuf_type txbuf_number, can_ttcan_txbuf_status_type status_type)
@@ -1166,7 +1166,7 @@ void can_ttcan_txbuf_status_set(can_type* can_x,  can_ttcan_txbuf_type txbuf_num
   *         this parameter can be one of the following values:
   *         CAN1.
   * @param  txbuf_number: pointer to a txbuf frame slot.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - CAN_TTCAN_TXBUF_NUM_0
   *         - CAN_TTCAN_TXBUF_NUM_1
   *         - CAN_TTCAN_TXBUF_NUM_2
@@ -1194,7 +1194,7 @@ can_ttcan_txbuf_status_type can_ttcan_txbuf_status_get(can_type* can_x, can_ttca
   *         this parameter can be one of the following values:
   *         CAN1.
   * @param  txbuf_number: pointer to a txbuf frame slot.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - CAN_TTCAN_TXBUF_NUM_0
   *         - CAN_TTCAN_TXBUF_NUM_1
   *         - CAN_TTCAN_TXBUF_NUM_2
@@ -1204,22 +1204,22 @@ can_ttcan_txbuf_status_type can_ttcan_txbuf_status_get(can_type* can_x, can_ttca
   */
 error_status can_ttcan_txbuf_write(can_type* can_x,  can_ttcan_txbuf_type txbuf_number, can_txbuf_type* can_txbuf_struct)
 {
-#ifdef SUPPORT_CAN_FD 
+#ifdef SUPPORT_CAN_FD
   uint8_t len = dlc_to_bytes[can_txbuf_struct->data_length];
-#else 
+#else
   uint8_t len = can_txbuf_struct->data_length;
-#endif 
+#endif
   uint32_t *wp = (uint32_t*)can_x->tbdat;
   uint8_t *rp = can_txbuf_struct->data;
   uint8_t byte_cnt;
-  
+
   can_x->ttcfg_bit.tbptr = txbuf_number;
   if(can_x->ctrlstat_bit.tsff == SET)
   {
     /* the buffer slot selected by tbptr be filled are write-locked. */
     return ERROR;
   }
-  
+
   switch(can_txbuf_struct->id_type)
   {
     case CAN_ID_STANDARD:
@@ -1232,16 +1232,16 @@ error_status can_ttcan_txbuf_write(can_type* can_x,  can_ttcan_txbuf_type txbuf_
       return ERROR;
   }
   can_x->tbid |= (can_txbuf_struct->tx_timestamp << 31);
-  
+
   can_x->tbfmt = 0;
   can_x->tbfmt_bit.ide = can_txbuf_struct->id_type;
-  can_x->tbfmt_bit.rmf = can_txbuf_struct->frame_type;  
+  can_x->tbfmt_bit.rmf = can_txbuf_struct->frame_type;
   can_x->tbfmt_bit.dlc = can_txbuf_struct->data_length;
-#ifdef SUPPORT_CAN_FD 
+#ifdef SUPPORT_CAN_FD
   can_x->tbfmt_bit.brs = can_txbuf_struct->fd_rate_switch;
   can_x->tbfmt_bit.fdf = can_txbuf_struct->fd_format;
 #endif
-  
+
   /* Write Tx payload to the message RAM */
   for (byte_cnt = 0; byte_cnt < len; byte_cnt += 4U)
   {
@@ -1250,14 +1250,14 @@ error_status can_ttcan_txbuf_write(can_type* can_x,  can_ttcan_txbuf_type txbuf_
              ((uint32_t)rp[byte_cnt + 1U] << 8U)  |
               (uint32_t)rp[byte_cnt]);
   }
-  
+
   can_x->tbtyp = 0;
   can_x->tbtyp_bit.handle = can_txbuf_struct->handle;
-  can_x->tbacf = 0;
-  
+  can_x->reserved8 = 0;
+
   /* the buffer slot selected by tbptr shall be marked as filled. */
   can_x->ttcfg_bit.tbf = TRUE;
-  
+
   return SUCCESS;
 }
 
@@ -1267,11 +1267,11 @@ error_status can_ttcan_txbuf_write(can_type* can_x,  can_ttcan_txbuf_type txbuf_
   *         this parameter can be one of the following values:
   *         CAN1.
   * @param  txbuf_number: pointer to a txbuf frame slot.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - CAN_TTCAN_TXBUF_NUM_0
   *         - CAN_TTCAN_TXBUF_NUM_1
   *         - CAN_TTCAN_TXBUF_NUM_2
-  *         - CAN_TTCAN_TXBUF_NUM_3  
+  *         - CAN_TTCAN_TXBUF_NUM_3
   * @retval none
   */
 void can_ttcan_txbuf_transmit_set(can_type* can_x,  can_ttcan_txbuf_type txbuf_number)
@@ -1330,7 +1330,7 @@ void can_interrupt_enable(can_type* can_x, uint32_t can_int, confirm_state new_s
   {
     can_x->inten &= ~can_int;
   }
-}  
+}
 
 /**
   * @brief  get flag of the specified can peripheral.
@@ -1339,22 +1339,22 @@ void can_interrupt_enable(can_type* can_x, uint32_t can_int, confirm_state new_s
   *         CAN1.
   * @param  can_flag: select the flag.
   *         this parameter can be one of the following flags:
-  *         - CAN_AIF_FLAG   
-  *         - CAN_EIF_FLAG   
-  *         - CAN_TSIF_FLAG   
-  *         - CAN_TPIF_FLAG  
-  *         - CAN_RAFIF_FLAG 
-  *         - CAN_RFIF_FLAG  
-  *         - CAN_ROIF_FLAG  
-  *         - CAN_RIF_FLAG   
-  *         - CAN_BEIF_FLAG  
-  *         - CAN_ALIF_FLAG  
-  *         - CAN_EPIF_FLAG  
-  *         - CAN_TTIF_FLAG  
-  *         - CAN_TEIF_FLAG  
-  *         - CAN_WTIE_FLAG  
-  *         - CAN_EPASS_FLAG 
-  *         - CAN_EWARN_FLAG 
+  *         - CAN_AIF_FLAG
+  *         - CAN_EIF_FLAG
+  *         - CAN_TSIF_FLAG
+  *         - CAN_TPIF_FLAG
+  *         - CAN_RAFIF_FLAG
+  *         - CAN_RFIF_FLAG
+  *         - CAN_ROIF_FLAG
+  *         - CAN_RIF_FLAG
+  *         - CAN_BEIF_FLAG
+  *         - CAN_ALIF_FLAG
+  *         - CAN_EPIF_FLAG
+  *         - CAN_TTIF_FLAG
+  *         - CAN_TEIF_FLAG
+  *         - CAN_WTIE_FLAG
+  *         - CAN_EPASS_FLAG
+  *         - CAN_EWARN_FLAG
   * @retval status of can flag, the returned value can be:SET or RESET.
   */
 flag_status can_flag_get(can_type* can_x, uint32_t can_flag)
@@ -1374,19 +1374,19 @@ flag_status can_flag_get(can_type* can_x, uint32_t can_flag)
   *         CAN1.
   * @param  can_flag: select the flag.
   *         this parameter can be one of the following flags:
-  *         - CAN_AIF_FLAG   
-  *         - CAN_EIF_FLAG   
-  *         - CAN_TSIF_FLAG   
-  *         - CAN_TPIF_FLAG  
-  *         - CAN_RAFIF_FLAG 
-  *         - CAN_RFIF_FLAG  
-  *         - CAN_ROIF_FLAG  
-  *         - CAN_RIF_FLAG   
-  *         - CAN_BEIF_FLAG  
-  *         - CAN_ALIF_FLAG  
-  *         - CAN_EPIF_FLAG  
-  *         - CAN_TTIF_FLAG  
-  *         - CAN_TEIF_FLAG  
+  *         - CAN_AIF_FLAG
+  *         - CAN_EIF_FLAG
+  *         - CAN_TSIF_FLAG
+  *         - CAN_TPIF_FLAG
+  *         - CAN_RAFIF_FLAG
+  *         - CAN_RFIF_FLAG
+  *         - CAN_ROIF_FLAG
+  *         - CAN_RIF_FLAG
+  *         - CAN_BEIF_FLAG
+  *         - CAN_ALIF_FLAG
+  *         - CAN_EPIF_FLAG
+  *         - CAN_TTIF_FLAG
+  *         - CAN_TEIF_FLAG
   *         - CAN_WTIE_FLAG
   * @retval flag_status (SET or RESET)
   */
@@ -1407,23 +1407,23 @@ flag_status can_interrupt_flag_get(can_type* can_x, uint32_t can_flag)
   *         CAN1.
   * @param  can_flag: select the flag.
   *         this parameter can be one of the following flags:
-  *         - CAN_AIF_FLAG   
-  *         - CAN_EIF_FLAG   
-  *         - CAN_TSIF_FLAG  
-  *         - CAN_TPIF_FLAG  
-  *         - CAN_RAFIF_FLAG  
-  *         - CAN_RFIF_FLAG  
-  *         - CAN_ROIF_FLAG  
-  *         - CAN_RIF_FLAG    
-  *         - CAN_BEIF_FLAG  
-  *         - CAN_ALIF_FLAG  
-  *         - CAN_EPIF_FLAG  
-  *         - CAN_TTIF_FLAG  
-  *         - CAN_TEIF_FLAG   
-  *         - CAN_WTIE_FLAG  
-  *         - CAN_EPASS_FLAG 
-  *         - CAN_EWARN_FLAG 
-  *         - CAN_ALL_FLAG   
+  *         - CAN_AIF_FLAG
+  *         - CAN_EIF_FLAG
+  *         - CAN_TSIF_FLAG
+  *         - CAN_TPIF_FLAG
+  *         - CAN_RAFIF_FLAG
+  *         - CAN_RFIF_FLAG
+  *         - CAN_ROIF_FLAG
+  *         - CAN_RIF_FLAG
+  *         - CAN_BEIF_FLAG
+  *         - CAN_ALIF_FLAG
+  *         - CAN_EPIF_FLAG
+  *         - CAN_TTIF_FLAG
+  *         - CAN_TEIF_FLAG
+  *         - CAN_WTIE_FLAG
+  *         - CAN_EPASS_FLAG
+  *         - CAN_EWARN_FLAG
+  *         - CAN_ALL_FLAG
   * @retval none.
   */
 void can_flag_clear(can_type* can_x, uint32_t can_flag)

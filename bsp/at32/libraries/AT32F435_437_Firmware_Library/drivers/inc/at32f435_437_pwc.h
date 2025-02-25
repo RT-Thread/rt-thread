@@ -67,8 +67,7 @@ extern "C" {
   *         this parameter can be one of the following values:
   *         - PWC_LDO_OUTPUT_1V3: system clock up to 288MHz.
   *         - PWC_LDO_OUTPUT_1V2: system clock up to 240MHz.
-  *         - PWC_LDO_OUTPUT_1V1: system clock up to 192MHz.
-  *         - PWC_LDO_OUTPUT_1V0: system clock up to 144MHz.
+  *         - PWC_LDO_OUTPUT_1V1: system clock up to 144MHz.
   * @note   useage limited.
   *         PWC_LDO_OUTPUT_1V3: operation temperature range -40~85 degree, VDD must over 3.0V.
   */
@@ -99,8 +98,7 @@ typedef enum
 {
   PWC_LDO_OUTPUT_1V3                     = 0x01, /*!< ldo output voltage is 1.3v */
   PWC_LDO_OUTPUT_1V2                     = 0x00, /*!< ldo output voltage is 1.2v */
-  PWC_LDO_OUTPUT_1V1                     = 0x04, /*!< ldo output voltage is 1.1v */
-  PWC_LDO_OUTPUT_1V0                     = 0x05, /*!< ldo output voltage is 1.0v */
+  PWC_LDO_OUTPUT_1V1                     = 0x04  /*!< ldo output voltage is 1.1v */
 } pwc_ldo_output_voltage_type;
 
 /**

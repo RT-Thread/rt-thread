@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -83,7 +83,7 @@ void nvic_irq_disable(IRQn_Type irqn)
 /**
   * @brief  config nvic priority group
   * @param  priority_group
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - NVIC_PRIORITY_GROUP_0
   *         - NVIC_PRIORITY_GROUP_1
   *         - NVIC_PRIORITY_GROUP_2
@@ -100,8 +100,8 @@ void nvic_priority_group_config(nvic_priority_group_type priority_group)
 /**
   * @brief  set the vector table location and offset.
   * @param  base
-  *         this parameter can be one of the following values:  
-  *         - NVIC_VECTTAB_RAM  
+  *         this parameter can be one of the following values:
+  *         - NVIC_VECTTAB_RAM
   *         - NVIC_VECTTAB_FLASH
   * @param  offset (vector table base offset field. this value must be a multiple of 0x200)
   * @retval none
@@ -114,7 +114,7 @@ void nvic_vector_table_set(uint32_t base, uint32_t offset)
 /**
   * @brief  config nvic lowpower mode
   * @param  lp_mode
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - NVIC_LP_SEVONPEND
   *         - NVIC_LP_SLEEPDEEP
   *         - NVIC_LP_SLEEPONEXIT
@@ -136,8 +136,8 @@ void nvic_lowpower_mode_config(nvic_lowpower_mode_type lp_mode, confirm_state ne
 /**
   * @brief  config systick clock source
   * @param  source
-  *         this parameter can be one of the following values:  
-  *         - SYSTICK_CLOCK_SOURCE_AHBCLK_DIV8 
+  *         this parameter can be one of the following values:
+  *         - SYSTICK_CLOCK_SOURCE_AHBCLK_DIV8
   *         - SYSTICK_CLOCK_SOURCE_AHBCLK_NODIV
   * @retval none
   */

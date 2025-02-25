@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, __RTTHREAD__, RT_USING_ARMLIBC, AT32M416CBT7</Define>
+              <Define>RT_USING_LIBC, __STDC_LIMIT_MACROS, AT32M416CBT7, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>..\libraries\AT32M412_416_Firmware_Library\drivers\inc;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\rt_drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\epoll;.;..\..\..\components\drivers\include;..\libraries\AT32M412_416_Firmware_Library\cmsis\cm4\device_support;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\AT32M412_416_Firmware_Library\cmsis\cm4\core_support;..\..\..\components\finsh;..\..\..\components\drivers\include;board\inc;..\libraries\rt_drivers;..\..\..\components\libc\compilers\common\include;applications;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\eventfd;board</IncludePath>
+              <IncludePath>..\libraries\AT32M412_416_Firmware_Library\cmsis\cm4\device_support;..\libraries\AT32M412_416_Firmware_Library\cmsis\cm4\core_support;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension;..\libraries\rt_drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;board;..\..\..\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;..\libraries\rt_drivers\config;..\libraries\AT32M412_416_Firmware_Library\drivers\inc;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;.;applications;..\..\..\components\drivers\include;..\..\..\components\finsh;board\inc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -662,9 +662,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -681,9 +681,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -762,16 +762,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -836,6 +836,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\defunct.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
@@ -877,44 +896,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1102,6 +1083,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1143,23 +1162,37 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>at32m412_416_dac.c</FileName>
+              <FileName>at32m412_416_scfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_dac.c</FilePath>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_scfg.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>at32m412_416_crm.c</FileName>
+              <FileName>at32m412_416_tmr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_crm.c</FilePath>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_tmr.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>at32m412_416_crc.c</FileName>
+              <FileName>at32m412_416_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_crc.c</FilePath>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_pwc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_pwc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1171,6 +1204,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>at32m412_416_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_cmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>at32m412_416_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_misc.c</FilePath>
@@ -1178,9 +1225,51 @@
           </Files>
           <Files>
             <File>
+              <FileName>at32m412_416_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_wwdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_wwdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>at32m412_416_exint.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_exint.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_ertc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_ertc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1199,93 +1288,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>at32m412_416_wdt.c</FileName>
+              <FileName>at32m412_416_crm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_wdt.c</FilePath>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_crm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>at32m412_416_cmp.c</FileName>
+              <FileName>at32m412_416_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_cmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_wwdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_wwdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_ertc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_ertc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_tmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_pwc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_pwc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32m412_416_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_spi.c</FilePath>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_dac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1297,9 +1309,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>at32m412_416_scfg.c</FileName>
+              <FileName>at32m412_416_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_scfg.c</FilePath>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32m412_416_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32M412_416_Firmware_Library\drivers\src\at32m412_416_crc.c</FilePath>
             </File>
           </Files>
         </Group>

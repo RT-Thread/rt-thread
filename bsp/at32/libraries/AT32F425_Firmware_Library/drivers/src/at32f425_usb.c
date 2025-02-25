@@ -484,6 +484,10 @@ void usb_ept_open(otg_global_type *usbx, usb_ept_info *ept_info)
       mps = USB_EPT0_MPS_8;
     }
   }
+  if(ept_info->trans_type == EPT_ISO_TYPE)
+  {
+    OTG_DEVICE(usbx)->dctl |= 1 << 15;
+  }
   /* endpoint direction is in */
   if(ept_info->inout == EPT_DIR_IN)
   {
@@ -533,11 +537,22 @@ void usb_ept_close(otg_global_type *usbx, usb_ept_info *ept_info)
   if(ept_info->inout == EPT_DIR_IN)
   {
     OTG_DEVICE(usbx)->daintmsk &= ~(1 << ept_info->eptn);
+    if(USB_INEPT(usbx, ept_info->eptn)->diepctl_bit.eptena == SET)
+    {
+      USB_INEPT(usbx, ept_info->eptn)->diepctl_bit.eptdis = TRUE;
+      USB_INEPT(usbx, ept_info->eptn)->diepctl_bit.snak = TRUE;
+    }
     USB_INEPT(usbx, ept_info->eptn)->diepctl_bit.usbacept = FALSE;
   }
   else
   {
     OTG_DEVICE(usbx)->daintmsk &= ~((1 << ept_info->eptn) << 16);
+    if(USB_OUTEPT(usbx, ept_info->eptn)->doepctl_bit.eptena == SET)
+    {
+      USB_OUTEPT(usbx, ept_info->eptn)->doepctl_bit.eptdis = TRUE;
+      USB_OUTEPT(usbx, ept_info->eptn)->doepctl_bit.snak = TRUE;
+    }
+
     USB_OUTEPT(usbx, ept_info->eptn)->doepctl_bit.usbacept = FALSE;
   }
 }
@@ -896,6 +911,9 @@ void usb_hc_enable(otg_global_type *usbx,
   otg_hchannel_type *hch = USB_CHL(usbx, chn);
   otg_host_type *usb_host = OTG_HOST(usbx);
 
+  /* clear old interrupt flag */
+  hch->hcint = 0xFFFFFFFF;
+
   switch(type)
   {
     case EPT_CONTROL_TYPE:
@@ -959,7 +977,7 @@ uint32_t usb_hch_read_interrupt(otg_global_type *usbx)
   */
 void usb_host_disable(otg_global_type *usbx)
 {
-  uint32_t i_index = 0, count = 0;
+  uint32_t i_index = 0;
   otg_hchannel_type *hch;
   otg_host_type *usb_host = OTG_HOST(usbx);
 
@@ -970,22 +988,10 @@ void usb_host_disable(otg_global_type *usbx)
   for(i_index = 0; i_index < 16; i_index ++)
   {
     hch = USB_CHL(usbx, i_index);
-    hch->hcchar_bit.chdis = TRUE;
-    hch->hcchar_bit.chena = FALSE;
-    hch->hcchar_bit.eptdir = 0;
-  }
-
-  for(i_index = 0; i_index < 16; i_index ++)
-  {
-    hch = USB_CHL(usbx, i_index);
-    hch->hcchar_bit.chdis = TRUE;
-    hch->hcchar_bit.chena = TRUE;
-    hch->hcchar_bit.eptdir = 0;
-    do
+    if(hch->hcchar_bit.chena == TRUE)
     {
-      if(count ++ > 1000)
-        break;
-    }while(hch->hcchar_bit.chena);
+      hch->hcchar_bit.chdis = TRUE;
+    }
   }
   usb_host->haint = 0xFFFFFFFF;
   usbx->gintsts = 0xFFFFFFFF;
@@ -1015,7 +1021,8 @@ void usb_hch_halt(otg_global_type *usbx, uint8_t chn)
     if((usbx->gnptxsts_bit.nptxqspcavail) == 0)
     {
       usb_chh->hcchar_bit.chena = FALSE;
-      usb_chh->hcchar_bit.chena = TRUE;
+      if(usb_chh->hcchar_bit.chena != TRUE)
+        usb_chh->hcchar_bit.chena = TRUE;
       do
       {
         if(count ++ > 1000)
@@ -1024,7 +1031,8 @@ void usb_hch_halt(otg_global_type *usbx, uint8_t chn)
     }
     else
     {
-      usb_chh->hcchar_bit.chena = TRUE;
+      if(usb_chh->hcchar_bit.chena != TRUE)
+        usb_chh->hcchar_bit.chena = TRUE;
     }
   }
   else
@@ -1033,7 +1041,8 @@ void usb_hch_halt(otg_global_type *usbx, uint8_t chn)
     if((usb_host->hptxsts_bit.ptxqspcavil) == 0)
     {
       usb_chh->hcchar_bit.chena = FALSE;
-      usb_chh->hcchar_bit.chena = TRUE;
+      if(usb_chh->hcchar_bit.chena != TRUE)
+        usb_chh->hcchar_bit.chena = TRUE;
       do
       {
         if(count ++ > 1000)
@@ -1042,7 +1051,8 @@ void usb_hch_halt(otg_global_type *usbx, uint8_t chn)
     }
     else
     {
-      usb_chh->hcchar_bit.chena = TRUE;
+      if(usb_chh->hcchar_bit.chena != TRUE)
+        usb_chh->hcchar_bit.chena = TRUE;
     }
   }
 }

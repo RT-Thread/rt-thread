@@ -537,34 +537,6 @@ typedef struct
       __IO uint32_t reserved1            : 16;/* [31:16] */
     } hdrv_bit;
   };
-
-  /**
-    * @brief gpio srctr register, offset:0x40
-    */
-  union
-  {
-    __IO uint32_t srctr;
-    struct
-    {
-      __IO uint32_t srctr0               : 1; /* [0] */
-      __IO uint32_t srctr1               : 1; /* [1] */
-      __IO uint32_t srctr2               : 1; /* [2] */
-      __IO uint32_t srctr3               : 1; /* [3] */
-      __IO uint32_t srctr4               : 1; /* [4] */
-      __IO uint32_t srctr5               : 1; /* [5] */
-      __IO uint32_t srctr6               : 1; /* [6] */
-      __IO uint32_t srctr7               : 1; /* [7] */
-      __IO uint32_t srctr8               : 1; /* [8] */
-      __IO uint32_t srctr9               : 1; /* [9] */
-      __IO uint32_t srctr10              : 1; /* [10] */
-      __IO uint32_t srctr11              : 1; /* [11] */
-      __IO uint32_t srctr12              : 1; /* [12] */
-      __IO uint32_t srctr13              : 1; /* [13] */
-      __IO uint32_t srctr14              : 1; /* [14] */
-      __IO uint32_t srctr15              : 1; /* [15] */
-      __IO uint32_t reserved1            : 16;/* [31:16] */
-    } srctr_bit;
-  };
 } gpio_type;
 
 /**

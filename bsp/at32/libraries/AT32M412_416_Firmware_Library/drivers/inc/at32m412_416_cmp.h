@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -141,7 +141,7 @@ typedef struct
   * @brief type define cmp register all
   */
 typedef struct
-{  
+{
   /**
     * @brief cmp1 control and status register, offset:0x30
     */
@@ -161,7 +161,7 @@ typedef struct
       __IO uint32_t cmphyst              : 2; /* [17:16] */
       __IO uint32_t reserved4            : 1; /* [18] */
       __IO uint32_t cmpblanking          : 7; /* [25:19] */
-      __IO uint32_t reserved5            : 4; /* [29:26] */      
+      __IO uint32_t reserved5            : 4; /* [29:26] */
       __IO uint32_t cmpvalue             : 1; /* [30] */
       __IO uint32_t cmpwp                : 1; /* [31] */
     } cmp1_ctrlsts_bit;
@@ -225,7 +225,7 @@ typedef struct
       __IO uint32_t cmphyst              : 2; /* [17:16] */
       __IO uint32_t reserved4            : 1; /* [18] */
       __IO uint32_t cmpblanking          : 7; /* [25:19] */
-      __IO uint32_t reserved5            : 4; /* [29:26] */      
+      __IO uint32_t reserved5            : 4; /* [29:26] */
       __IO uint32_t cmpvalue             : 1; /* [30] */
       __IO uint32_t cmpwp                : 1; /* [31] */
     } cmp2_ctrlsts_bit;

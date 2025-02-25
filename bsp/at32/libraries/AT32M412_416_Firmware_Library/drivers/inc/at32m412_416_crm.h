@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -41,15 +41,15 @@ extern "C" {
 /** @addtogroup CRM
   * @{
   */
-  
+
 #define CRM_REG(value)                   PERIPH_REG(CRM_BASE, value)
 #define CRM_REG_BIT(value)               PERIPH_REG_BIT(value)
-  
+
 /** @defgroup CRM_flags_definition
-  * @brief crm flag 
+  * @brief crm flag
   * @{
   */
-  
+
 #define CRM_HICK_STABLE_FLAG             MAKE_VALUE(0x00, 1)  /*!< high speed internal clock stable flag */
 #define CRM_HEXT_STABLE_FLAG             MAKE_VALUE(0x00, 17) /*!< high speed external crystal stable flag */
 #define CRM_PLL_STABLE_FLAG              MAKE_VALUE(0x00, 25) /*!< phase locking loop stable flag */
@@ -73,12 +73,12 @@ extern "C" {
 /**
   * @}
   */
-  
+
 /** @defgroup CRM_interrupts_definition
-  * @brief crm interrupt 
+  * @brief crm interrupt
   * @{
   */
-  
+
 #define CRM_LICK_STABLE_INT              ((uint32_t)0x00000100) /*!< low speed internal clock stable interrupt */
 #define CRM_LEXT_STABLE_INT              ((uint32_t)0x00000200) /*!< low speed external crystal stable interrupt */
 #define CRM_HICK_STABLE_INT              ((uint32_t)0x00000400) /*!< high speed internal clock stable interrupt */
@@ -316,7 +316,7 @@ typedef enum
   CRM_HEXT_SCLK_DIV_8                    = 0x03, /*!< hext div8 to sysclk */
   CRM_HEXT_SCLK_DIV_16                   = 0x04, /*!< hext div16 to sysclk */
   CRM_HEXT_SCLK_DIV_32                   = 0x05  /*!< hext div32 to sysclk */
-} crm_hext_sclk_div_type;                
+} crm_hext_sclk_div_type;
 
 /**
   * @brief crm hick to sysclk division
@@ -369,15 +369,6 @@ typedef enum
   CRM_ERTC_CLOCK_HEXT_DIV_30             = 0x1E3, /*!< high speed external crystal div30 as ertc clock source */
   CRM_ERTC_CLOCK_HEXT_DIV_31             = 0x1F3  /*!< high speed external crystal div31 as ertc clock source */
 } crm_ertc_clock_type;
-
-/**
-  * @brief crm hick 48mhz division
-  */
-typedef enum
-{
-  CRM_HICK48_DIV6                        = 0x00, /*!< fixed 8 mhz when hick is selected as sclk */
-  CRM_HICK48_NODIV                       = 0x01  /*!< 8 mhz or 48 mhz depend on hickdiv when hick is selected as sclk */
-} crm_hick_div_6_type;
 
 /**
   * @brief crm sclk select
@@ -930,8 +921,7 @@ typedef struct
     struct
     {
       __IO uint32_t hickcal_key          : 8; /* [7:0] */
-      __IO uint32_t reserved1            : 4; /* [11:8] */
-      __IO uint32_t hickdiv              : 1; /* [12] */
+      __IO uint32_t reserved1            : 5; /* [12:8] */
       __IO uint32_t reserved2            : 1; /* [13] */
       __IO uint32_t hick_to_sclk         : 1; /* [14] */
       __IO uint32_t reserved3            : 1; /* [15] */

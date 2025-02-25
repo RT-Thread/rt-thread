@@ -212,6 +212,7 @@ extern "C" {
   */
 #define USB_OTG_HC_XFERCM_INT            ((uint32_t)0x00000001) /*!< channel transfer complete interrupt */
 #define USB_OTG_HC_CHHLTDM_INT           ((uint32_t)0x00000002) /*!< channel halted interrupt */
+#define USB_OTG_HC_AHBERRM_INT           ((uint32_t)0x00000004) /*!< channel ahb error */
 #define USB_OTG_HC_STALLM_INT            ((uint32_t)0x00000008) /*!< channel stall interrupt */
 #define USB_OTG_HC_NAKM_INT              ((uint32_t)0x00000010) /*!< channel nak interrupt */
 #define USB_OTG_HC_ACKM_INT              ((uint32_t)0x00000020) /*!< channel ack interrupt */
@@ -226,6 +227,7 @@ extern "C" {
   */
 #define USB_OTG_HC_XFERC_FLAG            ((uint32_t)0x00000001) /*!< channel transfer complete flag */
 #define USB_OTG_HC_CHHLTD_FLAG           ((uint32_t)0x00000002) /*!< channel halted flag */
+#define USB_OTG_HC_AHBERR_FLAG           ((uint32_t)0x00000004) /*!< channel ahb error flag */
 #define USB_OTG_HC_STALL_FLAG            ((uint32_t)0x00000008) /*!< channel stall flag */
 #define USB_OTG_HC_NAK_FLAG              ((uint32_t)0x00000010) /*!< channel nak flag */
 #define USB_OTG_HC_ACK_FLAG              ((uint32_t)0x00000020) /*!< channel ack flag */
@@ -961,7 +963,7 @@ typedef struct
     {
       __IO uint32_t xferc                    : 1; /* [0] */
       __IO uint32_t chhltd                   : 1; /* [1] */
-      __IO uint32_t reserved1                : 1; /* [2] */
+      __IO uint32_t ahberr                   : 1; /* [2] */
       __IO uint32_t stall                    : 1; /* [3] */
       __IO uint32_t nak                      : 1; /* [4] */
       __IO uint32_t ack                      : 1; /* [5] */
@@ -984,7 +986,7 @@ typedef struct
     {
       __IO uint32_t xfercmsk                 : 1; /* [0] */
       __IO uint32_t chhltdmsk                : 1; /* [1] */
-      __IO uint32_t reserved1                : 1; /* [2] */
+      __IO uint32_t ahberrmsk                : 1; /* [2] */
       __IO uint32_t stallmsk                 : 1; /* [3] */
       __IO uint32_t nakmsk                   : 1; /* [4] */
       __IO uint32_t ackmsk                   : 1; /* [5] */

@@ -89,12 +89,6 @@ extern "C" {
 #define ERTC_ALARM_MASK_ALL              ((uint32_t)0x80808080) /*!< ertc alarm don't match all */
 
 /**
-  * @brief compatible with older versions
-  */
-#define ERTC_WAT_CLK_CK_A_16BITS         ERTC_WAT_CLK_CK_B_16BITS
-#define ERTC_WAT_CLK_CK_A_17BITS         ERTC_WAT_CLK_CK_B_17BITS
-
-/**
   * @}
   */
 
@@ -1144,8 +1138,6 @@ void ertc_wakeup_counter_set(uint32_t counter);
 uint16_t ertc_wakeup_counter_get(void);
 error_status ertc_wakeup_enable(confirm_state new_state);
 error_status ertc_smooth_calibration_config(ertc_smooth_cal_period_type period, ertc_smooth_cal_clk_add_type clk_add, uint32_t clk_dec);
-error_status ertc_coarse_calibration_set(ertc_cal_direction_type dir, uint32_t value);
-error_status ertc_coarse_calibration_enable(confirm_state new_state);
 void ertc_cal_output_select(ertc_cal_output_select_type output);
 void ertc_cal_output_enable(confirm_state new_state);
 error_status ertc_time_adjust(ertc_time_adjust_type add1s, uint32_t decsbs);

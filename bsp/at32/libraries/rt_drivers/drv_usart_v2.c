@@ -10,6 +10,7 @@
  * 2023-11-16     shelton      add support at32f402/405 series
  * 2024-04-12     shelton      add support a403a and a423
  * 2024-08-30     shelton      add support m412 and m416
+ * 2024-12-18     shelton      add support f455/f456 and f457
  */
 
 #include "drv_common.h"
@@ -370,7 +371,9 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
     defined (SOC_SERIES_AT32F405) || defined (SOC_SERIES_AT32A423) || \
-    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
+    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
     dmamux_enable(dma_config->dma_x, TRUE);
     dmamux_init(dma_config->dmamux_channel, (dmamux_requst_id_sel_type)dma_config->request_id);
 #endif
