@@ -1,3 +1,25 @@
+"""
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-12-24     vacabun      first version
+ * 2023-12-25     kurisaW      remove pkgs upgrade everytime
+ * 2023-12-25     vacabun      del debug time remove some output
+ * 2023-12-25     mysterywolf  silent pkgs --update when building bsp
+ * 2023-12-26     mysterywolf  add attach config CI check
+ * 2023-12-28     vacabun      support subfolders
+ * 2024-01-09     vacabun      attachconfig add scons args parsing
+ * 2024-08-25     supperthomas add manual trigger build all bsp
+ * 2024-11-05     supperthomas add the yml file support
+ * 2024-11-05     hydevcode    Recursive folder lookup attachconfig.yml
+ * 2024-11-07     hydevcode    yml file adds the depends parameter 
+ * 2024-11-07     hydevcode    attachconfig adapts yml syntax features 
+ * 2025-02-25     kaidegit     support using cmake and ninja to build
+"""
+
 import os
 import shutil
 import re
