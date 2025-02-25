@@ -359,6 +359,7 @@ jobs:
          -  RTT_BSP: "riscv64-unknown" 
             RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"
             SUB_RTT_BSP:  
+                - "k230"
                 - "bluetrum/ab32vg1-ab-prougen"
                 - "bouffalo_lab/bl60x"
                 - "bouffalo_lab/bl70x"
