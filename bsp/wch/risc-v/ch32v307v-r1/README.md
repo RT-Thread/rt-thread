@@ -48,8 +48,11 @@ This section is about to introduce how to use Env to compile the BSP.
 1. [Download WCH Compile Toolchain](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH/releases)
 2. [Download the Env tool latest version](https://github.com/RT-Thread/env-windows/releases)
 3. [Download the RT-Thread latest code](https://github.com/RT-Thread/rt-thread/archive/refs/heads/master.zip)
-4. Open the Env tool in the current BSP root directory and execute the `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` command, compile it directly while specifying the toolchain location.
-5. After compilation, the **rtthread.bin** file will be generated
+4. enter bsp
+5. execute `scons --pyconfig-silent`
+6. execute `pkgs --update`
+7. Open the Env tool in the current BSP root directory and execute the `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` command, compile it directly while specifying the toolchain location.
+8. After compilation, the **rtthread.bin** file will be generated
 
 ![sconscompile](./figures/sconscompile.jpg)
 

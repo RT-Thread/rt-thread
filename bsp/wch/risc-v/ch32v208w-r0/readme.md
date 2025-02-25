@@ -10,6 +10,8 @@ The CH32V208W-R0 supports RT-Studio projects, and this tutorial gives an example
 - Download and install RT-Thread Studio, [link to address](https://www.rt-thread.org/studio.html).
 - Prepare the ESP8266 module.
 
+>NOTE: Please execute `pkgs --update` before `scons`
+
 ## 2 BSP Start Stage
 
 ### 2.1 Click on the file and select the import option.
@@ -141,3 +143,4 @@ void loop(void)
 <img src="./figures/17led.png" style="zoom: 25%;" />
 
 So the basic environment of ch32v208w-r0 is built and tested!
+

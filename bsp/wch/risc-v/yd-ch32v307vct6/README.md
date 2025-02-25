@@ -56,8 +56,9 @@ This section is about to introduce how to compile the BSP in Linux.
 3. Install SCons construction tool (similar GNU Make): sudo apt install scons
 4. Edit the variable **EXEC_PATH** in file **rtconfig.py** to point to the directory with executable WCH Compile Toolchain (file riscv-none-embed-gcc).
 5. Configure RT-Thread and hardware board: scons --menuconfig
-6. Start compilation: scons
-7. After compilation, the **rtthread.bin** file will be generated
+6. Update sdk library: `pkgs --update`
+7. Start compilation: scons
+8. After compilation, the **rtthread.bin** file will be generated
 
 #### 3.1.2 Download
 
