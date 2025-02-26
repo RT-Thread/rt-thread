@@ -62,7 +62,7 @@ def build_bsp(bsp, scons_args=''):
         run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
 
         os.chdir(f'{rtt_root}/bsp/{bsp}')
-        run_cmd('pkgs --update', output_info=False)
+        run_cmd('pkgs --update-force', output_info=False)
         run_cmd('pkgs --list')
 
         nproc = multiprocessing.cpu_count()
@@ -76,8 +76,8 @@ def build_bsp(bsp, scons_args=''):
     os.chdir(f'{rtt_root}/bsp/{bsp}')
     run_cmd('scons -c', output_info=False)
 
-    pkg_dir = os.path.join(rtt_root, 'bsp', bsp, 'packages')
-    shutil.rmtree(pkg_dir, ignore_errors=True)
+    #pkg_dir = os.path.join(rtt_root, 'bsp', bsp, 'packages')
+    #shutil.rmtree(pkg_dir, ignore_errors=True)
 
     return success
 
