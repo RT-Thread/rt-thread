@@ -1,0 +1,62 @@
+# List of maintainers of the RT-Thread open-source community
+#
+# This file manages the maintainers and their associated sections in the repository.
+# Developers should update this file according to project needs.
+# The following are explanations of each field and guidelines for adding new maintainer entries.
+#
+# When adding new entries, please follow the format:
+#
+# 1. **tag** - Assign a unique tag to each entry for identifying the code module or functionality.
+#    - The tag should be concise and descriptive, such as `workflow`, `libc`.
+#    - Tags should be written in lowercase letters, avoiding special characters and spaces.
+#    - **Rule for Adding**: Use a new tag when adding a new functionality or module to ensure it clearly describes the area of responsibility.
+#
+# 2. **path** - Specify the directory or file path that the maintainer is responsible for.
+#    - The path must be relative to the repository's root directory and can refer to either a single file or a folder.
+#    - If the maintainer is responsible for all files in a directory, use the directory path; if it's for a specific file, provide the full file path.
+#    - **Rule for Adding**: Ensure that the path correctly points to the relevant code location. If multiple paths are managed by different maintainers, you can add multiple entries.
+#
+# 3. **owners** - List the maintainers responsible for the section, including their GitHub usernames and contact information.
+#    - The owners should be listed as a comma-separated list if there are multiple maintainers.
+#    - Format: `Name(GitHub username)<email address>`.
+#    - **Rule for Adding**: Ensure that the listed GitHub usernames are correct, and the maintainers are aware of their responsibilities and duties.
+#
+# Example: How to Add a Maintainer Entry
+#
+# The following is a template for adding new entries in the MAINTAINER file:
+#
+# tag: <module-name>
+# path: <file-or-directory-path>
+# owners: <maintainer1>, <maintainer2>, ...
+#
+# When adding entries, please follow these guidelines:
+# - Ensure the `tag` is unique and descriptive.
+# - Ensure the `path` points to the correct location in the repository.
+# - Ensure the `owners` are accurate and that all new maintainers are aware of their responsibilities.
+#
+# Example Entry:
+# tag: example-module
+# path: example/module/path
+# owners: John Doe(johndoe)<johndoe@example.com>, Jane Smith(janesmith)<janesmith@example.com>
+
+# Below are existing maintainer entries, divided by module:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+tag: bsp: stm32
+path: bsp/stm32
+owners: ixd (kurisaW) <reviewer1@example.com>
+
+tag: kernel
+path: src
+owners: ixd (kurisaW) <reviewer1@example.com>, pad (Nedki-L) <reviewer2@example.com>
+
+tag: kernel
+path: include
+owners: pad (Nedki-L) <reviewer2@example.com>
+
+tag: workflow
+path: .github/workflows
+owners: ixd (kurisaW) <reviewer1@example.com>, pad (Nedki-L) <reviewer2@example.com>, mem (KurisaW-Collaborative) <reviewer3@example.com>
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Note: Each entry includes a `tag` that identifies the module or functionality, a `path` that points to the relevant code location,
+# and `owners` who are the maintainers for that part of the codebase.
