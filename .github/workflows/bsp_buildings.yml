@@ -349,7 +349,7 @@ jobs:
                 - "raspberry-pi/raspi3-64"
                 - "raspberry-pi/raspi4-64"
                 #- "rockchip/rk3568"   too long
-                - "phytium/aarch64"
+                #- "phytium/aarch64"   too long
          -  RTT_BSP: "riscv-none" 
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
             SUB_RTT_BSP:  
