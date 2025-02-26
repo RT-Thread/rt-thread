@@ -957,7 +957,7 @@ static void _mutex_before_delete_detach(rt_mutex_t mutex)
     rt_list_remove(&mutex->taken_list);
 
     /* whether change the thread priority */
-    if (mutex->owner)
+    if (mutex->owner && !(mutex->flag & RT_MUTEX_NO_PI))
     {
         need_schedule = _check_and_update_prio(mutex->owner, mutex);
     }
@@ -1022,6 +1022,7 @@ rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
     mutex->priority = 0xFF;
     mutex->hold     = 0;
     mutex->ceiling_priority = 0xFF;
+    mutex->flag     = flag;
     rt_list_init(&(mutex->taken_list));
 
     /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
@@ -1095,43 +1096,46 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
     /* detach from suspended list */
     rt_list_remove(&RT_THREAD_LIST_NODE(thread));
 
-    /**
-     * Should change the priority of mutex owner thread
-     * Note: After current thread is detached from mutex pending list, there is
-     *       a chance that the mutex owner has been released the mutex. Which
-     *       means mutex->owner can be NULL at this point. If that happened,
-     *       it had already reset its priority. So it's okay to skip
-     */
-    if (mutex->owner && rt_sched_thread_get_curr_prio(mutex->owner) ==
+    if (!(mutex->flag & RT_MUTEX_NO_PI))
+    {
+        /**
+         * Should change the priority of mutex owner thread
+         * Note: After current thread is detached from mutex pending list, there is
+         *       a chance that the mutex owner has been released the mutex. Which
+         *       means mutex->owner can be NULL at this point. If that happened,
+         *       it had already reset its priority. So it's okay to skip
+         */
+        if (mutex->owner && rt_sched_thread_get_curr_prio(mutex->owner) ==
                             rt_sched_thread_get_curr_prio(thread))
-    {
-        need_update = RT_TRUE;
-    }
-
-    /* update the priority of mutex */
-    if (!rt_list_isempty(&mutex->parent.suspend_thread))
-    {
-        /* more thread suspended in the list */
-        struct rt_thread *th;
-
-        th = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
-        /* update the priority of mutex */
-        mutex->priority = rt_sched_thread_get_curr_prio(th);
-    }
-    else
-    {
-        /* set mutex priority to maximal priority */
-        mutex->priority = 0xff;
-    }
-
-    /* try to change the priority of mutex owner thread */
-    if (need_update)
-    {
-        /* get the maximal priority of mutex in thread */
-        priority = _thread_get_mutex_priority(mutex->owner);
-        if (priority != rt_sched_thread_get_curr_prio(mutex->owner))
         {
-            _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
+            need_update = RT_TRUE;
+        }
+
+        /* update the priority of mutex */
+        if (!rt_list_isempty(&mutex->parent.suspend_thread))
+        {
+            /* more thread suspended in the list */
+            struct rt_thread *th;
+
+            th = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
+            /* update the priority of mutex */
+            mutex->priority = rt_sched_thread_get_curr_prio(th);
+        }
+        else
+        {
+            /* set mutex priority to maximal priority */
+            mutex->priority = 0xff;
+        }
+
+        /* try to change the priority of mutex owner thread */
+        if (need_update)
+        {
+            /* get the maximal priority of mutex in thread */
+            priority = _thread_get_mutex_priority(mutex->owner);
+            if (priority != rt_sched_thread_get_curr_prio(mutex->owner))
+            {
+                _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
+            }
         }
     }
 
@@ -1299,55 +1303,13 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex)
 RTM_EXPORT(rt_mutex_delete);
 #endif /* RT_USING_HEAP */
 
-
-/**
- * @brief    This function will take a mutex, if the mutex is unavailable, the thread shall wait for
- *           the mutex up to a specified time.
- *
- * @note     When this function is called, the count value of the mutex->value will decrease 1 until it is equal to 0.
- *           When the mutex->value is 0, it means that the mutex is unavailable. At this time, it will suspend the
- *           thread preparing to take the mutex.
- *           On the contrary, the rt_mutex_release() function will increase the count value of mutex->value by 1 each time.
- *
- * @see      rt_mutex_trytake()
- *
- * @param    mutex is a pointer to a mutex object.
- *
- * @param    timeout is a timeout period (unit: an OS tick). If the mutex is unavailable, the thread will wait for
- *           the mutex up to the amount of time specified by the argument.
- *           NOTE: Generally, we set this parameter to RT_WAITING_FOREVER, which means that when the mutex is unavailable,
- *           the thread will be waitting forever.
- *
- * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
- *           If the return value is any other values, it means that the mutex take failed.
- *
- * @warning  This function can ONLY be called in the thread context. It MUST NOT BE called in interrupt context.
- */
-static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend_flag)
+static rt_err_t _rt_mutex_take_pi(rt_mutex_t mutex, rt_thread_t thread, rt_int32_t timeout, int suspend_flag)
 {
-    struct rt_thread *thread;
     rt_err_t ret;
-
-    /* this function must not be used in interrupt even if time = 0 */
-    /* current context checking */
-    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
-
-    /* parameter check */
-    RT_ASSERT(mutex != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
-
-    /* get current thread */
-    thread = rt_thread_self();
 
     rt_spin_lock(&(mutex->spinlock));
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
-
-    LOG_D("mutex_take: current thread %s, hold: %d",
-          thread->parent.name, mutex->hold);
-
-    /* reset thread error */
-    thread->error = RT_EOK;
 
     if (mutex->owner == thread)
     {
@@ -1534,6 +1496,157 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
     return RT_EOK;
 }
 
+static rt_err_t _rt_mutex_take_nopi(rt_mutex_t mutex, rt_thread_t thread, rt_int32_t timeout, int suspend_flag)
+{
+    rt_err_t ret = RT_EOK;
+
+    rt_spin_lock(&(mutex->spinlock));
+
+    RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
+
+    /* take success */
+    if (mutex->owner == RT_NULL)
+    {
+        RT_ASSERT(mutex->hold == 0);
+        mutex->owner = thread;
+        mutex->hold = 1;
+        rt_spin_unlock(&(mutex->spinlock));
+        return RT_EOK;
+    }
+
+    /* recursive take */
+    if (mutex->owner == thread)
+    {
+        if(mutex->hold < RT_MUTEX_HOLD_MAX)
+        {
+            mutex->hold ++;
+        }
+        else
+        {
+            ret = -RT_EFULL;
+        }
+
+        rt_spin_unlock(&(mutex->spinlock));
+        return ret;
+    }
+
+    /* no waiting, return with timeout */
+    if (timeout == 0)
+    {
+        /* set error as timeout */
+        thread->error = RT_ETIMEOUT;
+        rt_spin_unlock(&(mutex->spinlock));
+        return -RT_ETIMEOUT;
+    }
+
+    /* waiting */
+    /* mutex is unavailable, push to suspend list */
+    LOG_D("mutex_take: suspend thread: %s", thread->parent.name);
+
+    /* suspend current thread */
+    ret = rt_thread_suspend_to_list(thread, &(mutex->parent.suspend_thread),
+                                mutex->parent.parent.flag, suspend_flag);
+
+    if (ret != RT_EOK)
+    {
+        rt_spin_unlock(&(mutex->spinlock));
+        return ret;
+    }
+
+    /* set pending object in thread to this mutex */
+    thread->pending_object = &(mutex->parent.parent);
+
+    /* has waiting time, start thread timer */
+    if (timeout > 0)
+    {
+        LOG_D("mutex_take: start the timer of thread:%s", thread->parent.name);
+
+        /* reset the timeout of thread timer and start it */
+        rt_timer_control(&(thread->thread_timer),
+                         RT_TIMER_CTRL_SET_TIME,
+                         &timeout);
+        rt_timer_start(&(thread->thread_timer));
+    }
+
+    rt_spin_unlock(&(mutex->spinlock));
+
+    /* do schedule */
+    rt_schedule();
+
+    if (mutex->owner == thread)
+    {
+        /**
+         * get mutex successfully
+         */
+        RT_ASSERT(thread->error == RT_EOK);
+
+        thread->pending_object = RT_NULL;
+    }
+    else
+    {
+        /* the mutex has not been taken and thread has detach from the pending list. */
+        /* get value first before calling to other APIs */
+        ret = thread->error;
+    }
+
+    /* fix thread error number to negative value and return */
+    return ret > 0 ? -ret : ret;
+}
+
+/**
+ * @brief    This function will take a mutex, if the mutex is unavailable, the thread shall wait for
+ *           the mutex up to a specified time.
+ *
+ * @note     When this function is called, the count value of the mutex->value will decrease 1 until it is equal to 0.
+ *           When the mutex->value is 0, it means that the mutex is unavailable. At this time, it will suspend the
+ *           thread preparing to take the mutex.
+ *           On the contrary, the rt_mutex_release() function will increase the count value of mutex->value by 1 each time.
+ *
+ * @see      rt_mutex_trytake()
+ *
+ * @param    mutex is a pointer to a mutex object.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick). If the mutex is unavailable, the thread will wait for
+ *           the mutex up to the amount of time specified by the argument.
+ *           NOTE: Generally, we set this parameter to RT_WAITING_FOREVER, which means that when the mutex is unavailable,
+ *           the thread will be waitting forever.
+ *
+ * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mutex take failed.
+ *
+ * @warning  This function can ONLY be called in the thread context. It MUST NOT BE called in interrupt context.
+ */
+static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend_flag)
+{
+    rt_thread_t thread;
+
+    /* this function must not be used in interrupt even if time = 0 */
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
+    /* parameter check */
+    RT_ASSERT(mutex != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
+
+    /* get current thread */
+    thread = rt_thread_self();
+
+    LOG_D("mutex_take: current thread %s, hold: %d",
+          thread->parent.name, mutex->hold);
+
+    /* reset thread error */
+    thread->error = RT_EOK;
+
+    if (mutex->flag & RT_MUTEX_NO_PI)
+    {
+        return _rt_mutex_take_nopi(mutex, thread, timeout, suspend_flag);
+    }
+    else
+    {
+        return _rt_mutex_take_pi(mutex, thread, timeout, suspend_flag);
+    }
+}
+
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
     return _rt_mutex_take(mutex, time, RT_UNINTERRUPTIBLE);
@@ -1586,28 +1699,14 @@ RTM_EXPORT(rt_mutex_trytake);
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it means that the mutex release failed.
  */
-rt_err_t rt_mutex_release(rt_mutex_t mutex)
+static rt_err_t _rt_mutex_release_pi(rt_mutex_t mutex, rt_thread_t thread)
 {
     rt_sched_lock_level_t slvl;
-    struct rt_thread *thread;
     rt_bool_t need_schedule;
-
-    /* parameter check */
-    RT_ASSERT(mutex != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
 
     need_schedule = RT_FALSE;
 
-    /* only thread could release mutex because we need test the ownership */
-    RT_DEBUG_IN_THREAD_CONTEXT;
-
-    /* get current thread */
-    thread = rt_thread_self();
-
     rt_spin_lock(&(mutex->spinlock));
-
-    LOG_D("mutex_release:current thread %s, hold: %d",
-          thread->parent.name, mutex->hold);
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
 
@@ -1713,8 +1812,126 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     return RT_EOK;
 }
-RTM_EXPORT(rt_mutex_release);
 
+static rt_err_t _rt_mutex_release_nopi(rt_mutex_t mutex, rt_thread_t thread)
+{
+    rt_sched_lock_level_t slvl;
+    rt_bool_t need_schedule;
+
+    need_schedule = RT_FALSE;
+
+    rt_spin_lock(&(mutex->spinlock));
+
+    RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
+
+    /* mutex only can be released by owner */
+    if (thread != mutex->owner)
+    {
+        thread->error = -RT_ERROR;
+        rt_spin_unlock(&(mutex->spinlock));
+        return -RT_ERROR;
+    }
+
+    /* decrease hold */
+    mutex->hold --;
+
+    /* if no hold */
+    if (mutex->hold == 0)
+    {
+        /* remove mutex from thread's taken list */
+        rt_list_remove(&mutex->taken_list);
+
+        rt_sched_lock(&slvl);
+
+        /* wakeup suspended thread */
+        if (!rt_list_isempty(&mutex->parent.suspend_thread))
+        {
+            struct rt_thread *next_thread;
+            do
+            {
+                /* get the first suspended thread */
+                next_thread = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
+
+                RT_ASSERT(rt_sched_thread_is_suspended(next_thread));
+
+                /* remove the thread from the suspended list of mutex */
+                rt_list_remove(&RT_THREAD_LIST_NODE(next_thread));
+
+                /* resume thread to ready queue */
+                if (rt_sched_thread_ready(next_thread) != RT_EOK)
+                {
+                    /**
+                     * a timeout timer had triggered while we try. So we skip
+                     * this thread and try again.
+                     */
+                    next_thread = RT_NULL;
+                }
+            } while (!next_thread && !rt_list_isempty(&mutex->parent.suspend_thread));
+
+            if (next_thread)
+            {
+                LOG_D("mutex_release: resume thread: %s",
+                    next_thread->parent.name);
+
+                /* set new owner and put mutex into taken list of thread */
+                mutex->owner = next_thread;
+                mutex->hold  = 1;
+                rt_list_insert_after(&next_thread->taken_object_list, &mutex->taken_list);
+
+                /* cleanup pending object */
+                next_thread->pending_object = RT_NULL;
+                need_schedule = RT_TRUE;
+            }
+            else
+            {
+                /* no waiting thread is woke up, clear owner */
+                mutex->owner = RT_NULL;
+            }
+        }
+        else
+        {
+            /* clear owner */
+            mutex->owner    = RT_NULL;
+        }
+
+        rt_sched_unlock(slvl);
+    }
+
+    rt_spin_unlock(&(mutex->spinlock));
+
+    /* perform a schedule */
+    if (need_schedule == RT_TRUE)
+        rt_schedule();
+
+    return RT_EOK;
+}
+
+rt_err_t rt_mutex_release(rt_mutex_t mutex)
+{
+    rt_thread_t thread;
+
+    /* parameter check */
+    RT_ASSERT(mutex != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
+
+    /* only thread could release mutex because we need test the ownership */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
+    thread = rt_thread_self();
+
+    LOG_D("mutex_release:current thread %s, hold: %d",
+          thread->parent.name, mutex->hold);
+
+    if (mutex->flag & RT_MUTEX_NO_PI)
+    {
+        return _rt_mutex_release_nopi(mutex, thread);
+    }
+    else
+    {
+        return _rt_mutex_release_pi(mutex, thread);
+    }
+}
+RTM_EXPORT(rt_mutex_release);
 
 /**
  * @brief    This function will set some extra attributions of a mutex object.
