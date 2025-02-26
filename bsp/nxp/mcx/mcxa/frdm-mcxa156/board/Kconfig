@@ -189,6 +189,19 @@ menu "Board extended module Drivers"
             hex "RESET pin index"
             default 0x2F
     endif
+
+    menuconfig BSP_USING_P3T1755
+        bool "Enable P3T1755"
+        default n
+        select BSP_USING_I2C
+        select BSP_USING_I2C0
+        select PKG_USING_P3T1755
+        
+    if BSP_USING_P3T1755
+        config P3T1755_I2C_BUS_NAME
+            string "P3T1755 BUS NAME"
+            default "i2c0"
+    endif
 endmenu
 
 endmenu
