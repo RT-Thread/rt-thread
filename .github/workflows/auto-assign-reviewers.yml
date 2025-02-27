@@ -32,13 +32,17 @@ jobs:
 
       - name: Get changed files
         id: changed_files
+        env:
+          SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}
         run: |
           # 通过 GitHub API 获取 PR 的变更文件列表
           changed_files=$(curl -s \
             -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | \
             jq -r '.[].filename')  # 使用 jq 提取文件名
-          
+          curl -s \
+            -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files"
           echo "$changed_files" | grep -v '^MAINTAINERS$' > changed_files.txt
 
       - name: Parse MAINTAINERS file
