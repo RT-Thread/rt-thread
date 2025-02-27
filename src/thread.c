@@ -797,7 +797,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
             rt_err_t error;
             rt_sched_lock_level_t slvl;
             rt_sched_lock(&slvl);
-            error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
+            error = rt_sched_thread_set_priority(thread, *(rt_uint8_t *)arg);
             rt_sched_unlock(slvl);
             return error;
         }
