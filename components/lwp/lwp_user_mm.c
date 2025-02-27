@@ -548,6 +548,38 @@ static rt_base_t _aligned_for_weak_mapping(off_t *ppgoff, rt_size_t *plen, rt_si
     return aligned_size;
 }
 
+static int _validate_mmap_flags(void *addr, int flags, int fd) {
+    rt_err_t rc = RT_EOK;
+    if (!flags) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: flags cannot be 0. At least MAP_PRIVATE or MAP_SHARED is required.");
+        goto err;
+    }
+
+    if ((flags & MAP_PRIVATE) && (flags & MAP_SHARED)) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_PRIVATE and MAP_SHARED cannot be used together.");
+        goto err;
+    }
+    if ((flags & MAP_ANON) && !(flags & (MAP_PRIVATE | MAP_SHARED))) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_ANON must be used with MAP_PRIVATE or MAP_SHARED.");
+        goto err;
+    }
+    if ((flags & MAP_FIXED) && (addr == NULL)) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_FIXED requires a valid non-null address.");
+        goto err;
+    }
+    if ((flags & MAP_ANON) && (fd != -1)) {
+        rc = -RT_EINVAL;
+        LOG_E("Invalid flags: MAP_ANON requires fd to be -1.\n");
+        goto err;
+    }
+err:
+    return rc;
+}
+
 void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
                 int flags, int fd, off_t pgoffset)
 {
@@ -584,6 +616,13 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
     {
         /* weak address selection */
         aligned_size = _aligned_for_weak_mapping(&pgoffset, &length, &min_align_size);
+    }
+
+    rc = _validate_mmap_flags(addr, flags, fd);
+    if(rc != RT_EOK)
+    {
+        ret = (void *)lwp_errno_to_posix(rc);
+        return ret;
     }
 
     if (fd == -1)
@@ -640,6 +679,11 @@ void *lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot,
                 ret = (void *)lwp_errno_to_posix(rc);
             }
         }
+        else
+        {
+            rc = -RT_EINVAL;
+            ret = (void *)lwp_errno_to_posix(rc);
+        }
     }
 
     if ((long)ret <= 0)
@@ -660,6 +704,14 @@ int lwp_munmap(struct rt_lwp *lwp, void *addr, size_t length)
     int ret;
 
     RT_ASSERT(lwp);
+    long offset = 0;
+    if ((rt_base_t)addr & ARCH_PAGE_MASK)
+    {
+        offset = (char *)addr - (char *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+        length += offset;
+        addr = (void *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+
+    }
     ret = rt_aspace_unmap_range(lwp->aspace, addr, length);
     return lwp_errno_to_posix(ret);
 }
