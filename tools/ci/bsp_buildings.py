@@ -74,7 +74,7 @@ def build_bsp(bsp, scons_args=''):
             success = False
 
     os.chdir(f'{rtt_root}/bsp/{bsp}')
-    run_cmd('scons -c', output_info=False)
+    #run_cmd('scons -c', output_info=False)
 
     #pkg_dir = os.path.join(rtt_root, 'bsp', bsp, 'packages')
     #shutil.rmtree(pkg_dir, ignore_errors=True)
