@@ -79,7 +79,7 @@ static rt_ssize_t imx6ull_i2c_mst_xfer(struct rt_i2c_bus_device *bus, struct rt_
         if(msgs[i].flags & RT_I2C_RD)
         {
             xfer.flags = kI2C_TransferNoStartFlag;
-            xfer.slaveAddress = msgs[i].addr;
+            xfer.slaveAddress = msgs[i].addr >> 1;
             xfer.direction = kI2C_Read;
             xfer.subaddress = 0;
             xfer.subaddressSize = 0;
@@ -107,7 +107,7 @@ static rt_ssize_t imx6ull_i2c_mst_xfer(struct rt_i2c_bus_device *bus, struct rt_
         else
         {
             xfer.flags = kI2C_TransferNoStartFlag;
-            xfer.slaveAddress = msgs[i].addr;
+            xfer.slaveAddress = msgs[i].addr >> 1;
             xfer.direction = kI2C_Write;
             xfer.subaddress = 0;
             xfer.subaddressSize = 0;

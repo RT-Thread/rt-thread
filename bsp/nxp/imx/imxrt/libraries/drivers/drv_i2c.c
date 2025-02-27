@@ -269,7 +269,7 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         {
             if ((imxrt_i2c->msg[i].flags & RT_I2C_NO_START) != RT_I2C_NO_START)
             {
-                if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
+                if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr >> 1, kLPI2C_Write) != kStatus_Success)
                 {
                     i = 0;
                     break;
@@ -279,7 +279,7 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 {
                 }
 
-                if (LPI2C_MasterRepeatedStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+                if (LPI2C_MasterRepeatedStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr >> 1, kLPI2C_Read) != kStatus_Success)
                 {
                     i = 0;
                     break;
@@ -287,7 +287,7 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             }
             else
             {
-                if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+                if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr >> 1, kLPI2C_Read) != kStatus_Success)
                 {
                     i = 0;
                     break;
@@ -298,7 +298,7 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 }
             }
 
-            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr >> 1, kLPI2C_Read) != kStatus_Success)
             {
                 i = 0;
                 break;
@@ -316,7 +316,7 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         }
         else
         {
-            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
+            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr >> 1, kLPI2C_Write) != kStatus_Success)
             {
                 i = 0;
                 break;
