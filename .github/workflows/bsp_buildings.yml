@@ -424,6 +424,7 @@ jobs:
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
       - name: Cache GCC Arm Toolchain
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
         id: cache-gcc-arm
         uses: actions/cache@main
         with:
