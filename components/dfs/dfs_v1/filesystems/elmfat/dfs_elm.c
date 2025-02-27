@@ -280,8 +280,8 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
-        rt_free(fat);
         f_mount(RT_NULL, logic_nbr, (BYTE)index);
+        rt_free(fat);
         disk[index] = RT_NULL;
         /* close device */
         rt_device_close(dev_id);
