@@ -420,9 +420,14 @@ jobs:
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
-
+      - name: Cache GCC Arm Toolchain
+        id: cache-gcc-arm
+        uses: actions/cache@v4
+        with:
+          path: /opt/gcc-arm-none-eabi-10-2020-q4-major
+          key: gcc-arm-none-eabi-10-2020-q4-major
       - name: Install Arm ToolChains
-        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() && (steps.cache-gcc-arm.outputs.cache-hit != 'true') }}
         shell: bash
         run: |
           wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
