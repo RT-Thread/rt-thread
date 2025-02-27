@@ -22,7 +22,6 @@ on:
 jobs:
   assign-reviewers:
     runs-on: ubuntu-22.04
-    if: github.repository_owner == 'RT-Thread'
     permissions:
       issues: write
       pull-requests: write
