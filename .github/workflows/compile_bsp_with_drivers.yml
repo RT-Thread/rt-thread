@@ -53,5 +53,5 @@ jobs:
         if: ${{ success() }}
         shell: bash
         run: |
-          # source ~/.env/env.sh
-          # python tools/ci/compile_bsp_with_drivers.py
+           source ~/.env/env.sh
+           python tools/ci/compile_bsp_with_drivers.py
