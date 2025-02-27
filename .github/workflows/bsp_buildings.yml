@@ -370,10 +370,10 @@ jobs:
                 - "raspberry-pi/raspi4-64"
                 #- "rockchip/rk3568"   too long
                 #- "phytium/aarch64"   too long
-         -  RTT_BSP: "RTduino/Arduino Libraries (Raspberry Pico)"
-            RTT_TOOL_CHAIN: "sourcery-arm"
-            SUB_RTT_BSP:
-                - "raspberry-pico"
+#         -  RTT_BSP: "RTduino/Arduino Libraries (Raspberry Pico)"
+#            RTT_TOOL_CHAIN: "sourcery-arm"
+#            SUB_RTT_BSP:
+#                - "raspberry-pico"
          -  RTT_BSP: "riscv64-unknown" 
             RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"
             SUB_RTT_BSP:  
