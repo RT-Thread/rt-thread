@@ -13,20 +13,7 @@ name: BSP compilation with more drivers
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
-  pull_request:
-    branches:
-      - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
+  workflow_dispatch:  #disable
 
 permissions:
   contents: read # to fetch code (actions/checkout)
