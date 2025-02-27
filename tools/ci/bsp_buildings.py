@@ -50,10 +50,6 @@ def build_bsp(bsp, scons_args=''):
     cd {rtt_root}
     scons -C bsp/{bsp} -j{nproc} {scons_args}
 
-    cd {rtt_root}/bsp/{bsp}
-    scons -c > /dev/null
-    rm -rf packages
-
     """
     success = True
     os.chdir(rtt_root)
@@ -67,7 +63,7 @@ def build_bsp(bsp, scons_args=''):
 
         nproc = multiprocessing.cpu_count()
         os.chdir(rtt_root)
-        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}'
+        cmd = f'scons -C bsp/{bsp} -j12 {scons_args}'
         __, res = run_cmd(cmd, output_info=True)
 
         if res != 0:
