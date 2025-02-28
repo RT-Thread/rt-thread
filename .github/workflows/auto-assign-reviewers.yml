@@ -27,6 +27,8 @@ jobs:
       pull-requests: write
       contents: write
       discussions: write
+    env:
+      SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -176,8 +178,6 @@ jobs:
 
       - name: Post/Update comment
         id: post_comment
-        env:
-          SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}
         run: |
           # 查找现有的 bot 评论
           existing_comment=$(curl -s \
@@ -209,6 +209,11 @@ jobs:
           echo "Creating new comment"
             response=$(curl -s -X POST \
               -H "Authorization: Bearer $SUPER_SECRET" \
+              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+          echo "Creating new comment"
+            response=$(curl -s -X POST \
+              -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
       - name: Comment on PR
