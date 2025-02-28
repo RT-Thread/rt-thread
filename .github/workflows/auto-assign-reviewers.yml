@@ -30,8 +30,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          github_token: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW2 }}
+        
       - name: Get changed files
         id: changed_files
         # uses: tj-actions/changed-files@v45
@@ -177,10 +176,12 @@ jobs:
 
       - name: Post/Update comment
         id: post_comment
+        env:
+          github_token: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW2 }}
         run: |
           # 查找现有的 bot 评论
           existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
             jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
           
@@ -189,25 +190,25 @@ jobs:
             comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
             echo "Updating existing comment $comment_id"
             response=$(curl -s -X PATCH \
-              -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
           else
             # 创建新评论
             echo "Creating new comment"
             response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
           fi
           # 创建新评论
-            echo "Creating new comment"
-            response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ github.token }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-            echo "Creating new comment"
-            response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ github_token }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+          echo "Creating new comment"
+          response=$(curl -s -X POST \
+            -H "Authorization: Bearer ${{ github_token }}" \
+            -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+      - name: Comment on PR
+        uses: unsplash/comment-on-pr@master
+        with:
+          message: "欢迎提交PR！我们的团队将会尽快审查。"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
