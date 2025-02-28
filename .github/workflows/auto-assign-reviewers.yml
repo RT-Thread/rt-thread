@@ -8,7 +8,7 @@
 # 2025-01-21     kurisaW      Initial version
 #
 
-# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasasasasaasasss
+# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasasaassasaasasss
 
 name: Auto Review Assistant
 
@@ -200,17 +200,20 @@ jobs:
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+            echo ${{ secrets.GITHUB_TOKEN }}
           fi
           echo "Creating new comment"
             response=$(curl -s -X POST \
               -H "Authorization: Bearer ${{ github.token }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+          echo github.token
           echo "Creating new comment"
             response=$(curl -s -X POST \
               -H "Authorization: Bearer $SUPER_SECRET" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+          echo $SUPER_SECRET
           echo "Creating new comment"
             response=$(curl -s -X POST \
               -H "Authorization: Bearer ${{ vars.TOKEN }}" \
