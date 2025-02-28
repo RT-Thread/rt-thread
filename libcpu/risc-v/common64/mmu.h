@@ -41,7 +41,7 @@ struct mem_desc
 #define GET_L2(addr)        __PARTBIT(addr, VPN1_SHIFT, VPN1_BIT)
 #define GET_L3(addr)        __PARTBIT(addr, VPN0_SHIFT, VPN0_BIT)
 #define GET_PPN(pte)                                                           \
-    (__PARTBIT(pte, PTE_PPN_SHIFT, PHYSICAL_ADDRESS_WIDTH_BITS - PTE_PPN_SHIFT))
+    (__PARTBIT(pte, PTE_PPN_SHIFT, PHYSICAL_ADDRESS_WIDTH_BITS - PAGE_OFFSET_BIT))
 #define GET_PADDR(pte)            (GET_PPN(pte) << PAGE_OFFSET_BIT)
 #define VPN_TO_PPN(vaddr, pv_off) (((rt_uintptr_t)(vaddr)) + (pv_off))
 #define PPN_TO_VPN(paddr, pv_off) (((rt_uintptr_t)(paddr)) - (pv_off))
