@@ -278,7 +278,6 @@ static void utest_do_run(const char *utest_name)
             break;
         }
 
-        LOG_I("[==========] [ utest    ] finished");
         LOG_I("[==========] [ utest    ] %d tests from %d testcase ran.", tc_run_num, tc_num);
         LOG_I("[  PASSED  ] [ result   ] %d tests.", tc_run_num - tc_fail_num);
 
@@ -293,6 +292,8 @@ static void utest_do_run(const char *utest_name)
                 }
             }
         }
+
+        LOG_I("[==========] [ utest    ] finished");
     }
 }
 
