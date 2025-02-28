@@ -175,7 +175,8 @@ jobs:
             echo "> ℹ️ **刷新CI状态操作需要具备仓库写入权限。**"
             echo "> ℹ️ **Refresh CI status operation requires repository Write permission.**"
           } > review_data.md
-
+          pwd
+          whereis review_data.md
       - name: Post/Update comment
         id: post_comment
         run: |
@@ -224,4 +225,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          filename: review_data.md
+          filename: ./review_data.md
