@@ -56,12 +56,10 @@ extern "C" {
 #define DEBUG_TMR4_PAUSE                 0x00000004 /*!< debug timer4 pause */
 #define DEBUG_TMR6_PAUSE                 0x00000010 /*!< debug timer6 pause */
 #define DEBUG_TMR7_PAUSE                 0x00000020 /*!< debug timer7 pause */
-
 #define DEBUG_WWDT_PAUSE                 0x00000800 /*!< debug window watchdog timer pause */
 #define DEBUG_WDT_PAUSE                  0x00001000 /*!< debug watchdog timer pause */
 #define DEBUG_I2C1_SMBUS_TIMEOUT         0x01000000 /*!< debug i2c1 smbus timeout */
 #define DEBUG_I2C2_SMBUS_TIMEOUT         0x08000000 /*!< debug i2c2 smbus timeout */
-#define DEBUG_CAN1_PAUSE                 0x02000000 /*!< debug can1 pause */
 
 /* debug apb2 frz register bit */
 #define DEBUG_TMR1_PAUSE                 0x00000001 /*!< debug timer1 pause */
@@ -107,7 +105,7 @@ typedef struct
       __IO uint32_t sleep_debug          : 1;/* [0] */
       __IO uint32_t deepsleep_debug      : 1;/* [1] */
       __IO uint32_t standby_debug        : 1;/* [2] */
-      __IO uint32_t reserved1            : 29;/* [31:3] */   
+      __IO uint32_t reserved1            : 29;/* [31:3] */
     } ctrl_bit;
   };
 
@@ -130,8 +128,7 @@ typedef struct
       __IO uint32_t wdt_pause            : 1;/* [12] */
       __IO uint32_t reserved4            : 11;/* [23:13] */
       __IO uint32_t i2c1_smbus_timeout   : 1;/* [24] */
-      __IO uint32_t can1_pause           : 1;/* [25] */
-      __IO uint32_t reserved5            : 1;/* [26] */
+      __IO uint32_t reserved5            : 2;/* [26:25] */
       __IO uint32_t i2c2_smbus_timeout   : 1;/* [27] */
       __IO uint32_t reserved6            : 4;/* [31:28] */
     } apb1_frz_bit;
@@ -153,7 +150,7 @@ typedef struct
       __IO uint32_t reserved2            : 13;/* [31:19] */
     } apb2_frz_bit;
   };
-  
+
   /**
     * @brief debug apb3 frz register, offset:0x10
     */

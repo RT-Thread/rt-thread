@@ -483,26 +483,28 @@ flag_status xmc_flag_status_get(xmc_class_bank_type xmc_bank, xmc_interrupt_flag
 flag_status xmc_interrupt_flag_status_get(xmc_class_bank_type xmc_bank, xmc_interrupt_flag_type xmc_flag)
 {
   flag_status status = RESET;
-
-  switch(xmc_flag)
+  if(xmc_bank == XMC_BANK2_NAND)
   {
-    case XMC_RISINGEDGE_FLAG:
-      if(XMC_BANK2->bk2is_bit.reien && XMC_BANK2->bk2is_bit.res)
-        status = SET;
-      break;
+    switch(xmc_flag)
+    {
+      case XMC_RISINGEDGE_FLAG:
+        if(XMC_BANK2->bk2is_bit.reien && XMC_BANK2->bk2is_bit.res)
+          status = SET;
+        break;
 
-    case XMC_LEVEL_FLAG:
-      if(XMC_BANK2->bk2is_bit.feien && XMC_BANK2->bk2is_bit.fes)
-        status = SET;
-      break;
+      case XMC_LEVEL_FLAG:
+        if(XMC_BANK2->bk2is_bit.feien && XMC_BANK2->bk2is_bit.fes)
+          status = SET;
+        break;
 
-    case XMC_FALLINGEDGE_FLAG:
-      if(XMC_BANK2->bk2is_bit.hlien && XMC_BANK2->bk2is_bit.hls)
-        status = SET;
-      break;
+      case XMC_FALLINGEDGE_FLAG:
+        if(XMC_BANK2->bk2is_bit.hlien && XMC_BANK2->bk2is_bit.hls)
+          status = SET;
+        break;
 
-    default:
-      break;
+      default:
+        break;
+    }
   }
 
   /* return the flag status */

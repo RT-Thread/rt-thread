@@ -91,7 +91,7 @@ void pwc_power_voltage_monitor_enable(confirm_state new_state)
 }
 
 /**
-  * @brief  set wakeup pin's polarity  
+  * @brief  set wakeup pin's polarity
   * @param  pin_num: choose the wakeup pin.
   *         this parameter can be be any combination of the following values:
   *         - PWC_WAKEUP_PIN_1
@@ -143,22 +143,22 @@ void pwc_wakeup_pin_enable(uint32_t pin_num, confirm_state new_state)
 }
 
 /**
-  * @brief  clear flag of pwc 
+  * @brief  clear flag of pwc
   * @param  pwc_flag: select the pwc flag.
   *         this parameter can be any combination of the following values:
   *         - PWC_WAKEUP_PIN1_FLAG
   *         - PWC_WAKEUP_PIN2_FLAG
   *         - PWC_WAKEUP_PIN6_FLAG
   *         - PWC_WAKEUP_PIN7_FLAG
-  *         - PWC_STANDBY_FLAG                           
-  *         - PWC_WAKEUP_INTERNAL_FLAG 
+  *         - PWC_STANDBY_FLAG
+  *         - PWC_WAKEUP_INTERNAL_FLAG
   *         - note:"PWC_PVM_OUTPUT_FLAG" cannot be choose!this bit is readonly bit,it means the voltage monitoring output state
-  * @retval none                            
+  * @retval none
   */
 void pwc_flag_clear(uint32_t pwc_flag)
 {
   PWC->clr |= pwc_flag;
-} 
+}
 
 /**
   * @brief  get flag of pwc
@@ -169,12 +169,12 @@ void pwc_flag_clear(uint32_t pwc_flag)
   *         - PWC_WAKEUP_PIN6_FLAG
   *         - PWC_WAKEUP_PIN7_FLAG
   *         - PWC_STANDBY_FLAG
-  *         - PWC_PVM_OUTPUT_FLAG                            
-  *         - PWC_WAKEUP_INTERNAL_FLAG                      
+  *         - PWC_PVM_OUTPUT_FLAG
+  *         - PWC_WAKEUP_INTERNAL_FLAG
   * @retval state of select flag(SET or RESET).
   */
 flag_status pwc_flag_get(uint32_t pwc_flag)
-{   
+{
   flag_status status = RESET;
   if ((PWC->ctrlsts & pwc_flag) == RESET)
   {
@@ -260,7 +260,7 @@ void pwc_voltage_regulate_set(pwc_regulator_type pwc_regulator)
       PWC->ldoov_bit.vrexlpen = TRUE;
       PWC->ctrl_bit.vrsel = TRUE;
       break;
-    default: 
+    default:
       break;
   }
 }

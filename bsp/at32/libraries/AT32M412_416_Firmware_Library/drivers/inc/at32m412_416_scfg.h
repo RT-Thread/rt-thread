@@ -123,7 +123,7 @@ typedef enum
   SCFG_PINS_SOURCE12                     = 0x0C,
   SCFG_PINS_SOURCE13                     = 0x0D,
   SCFG_PINS_SOURCE14                     = 0x0E,
-  SCFG_PINS_SOURCE15                     = 0x0F 
+  SCFG_PINS_SOURCE15                     = 0x0F
 } scfg_pins_source_type;
 
 /**
@@ -353,5 +353,5 @@ void scfg_nrst_rmp_config(scfg_nrst_rmp_type remap);
 #ifdef __cplusplus
 }
 #endif
-  
+
 #endif

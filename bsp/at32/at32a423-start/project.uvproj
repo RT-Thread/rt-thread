@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, AT32A423VCT7, __RTTHREAD__</Define>
+              <Define>RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, AT32A423VCT7, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\include;..\libraries\rt_drivers\config;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\libraries\rt_drivers;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\poll;applications;board\inc;..\..\..\libcpu\arm\common;board;..\libraries\AT32A423_Firmware_Library\drivers\inc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\finsh;.;..\..\..\components\libc\posix\ipc;..\libraries\usbotg_library\inc;..\libraries\AT32A423_Firmware_Library\cmsis\cm4\device_support;..\libraries\AT32A423_Firmware_Library\cmsis\cm4\core_support;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\epoll</IncludePath>
+              <IncludePath>..\libraries\rt_drivers\config;board\inc;..\..\..\components\drivers\include;..\libraries\rt_drivers;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\poll;..\libraries\AT32A423_Firmware_Library\cmsis\cm4\core_support;..\libraries\usbotg_library\inc;..\libraries\AT32A423_Firmware_Library\cmsis\cm4\device_support;..\..\..\components\drivers\include;.;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;board;applications;..\libraries\AT32A423_Firmware_Library\drivers\inc;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -491,9 +491,28 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion_up.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -643,9 +662,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -662,9 +681,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -798,6 +817,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\defunct.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
@@ -839,44 +896,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1064,6 +1083,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1105,86 +1162,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>system_at32a423.c</FileName>
+              <FileName>at32a423_pwc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\cmsis\cm4\device_support\system_at32a423.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_exint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_exint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_debug.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_acc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_acc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_xmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_xmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_tmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_crc.c</FilePath>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_pwc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1196,51 +1176,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>at32a423_ertc.c</FileName>
+              <FileName>at32a423_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_ertc.c</FilePath>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>at32a423_pwc.c</FileName>
+              <FileName>at32a423_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_pwc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32a423_wwdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_wwdt.c</FilePath>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1252,9 +1197,114 @@
           </Files>
           <Files>
             <File>
+              <FileName>at32a423_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_ertc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_ertc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_acc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_acc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_at32a423.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\cmsis\cm4\device_support\system_at32a423.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_tmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_tmr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_xmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_xmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_wwdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_wwdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>at32a423_wdt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_debug.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_exint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_exint.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_misc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1266,9 +1316,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>at32a423_gpio.c</FileName>
+              <FileName>at32a423_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_gpio.c</FilePath>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at32a423_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\AT32A423_Firmware_Library\drivers\src\at32a423_usart.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -210,7 +210,7 @@ void exint_software_interrupt_event_generate(uint32_t exint_line)
   *         - EXINT_LINE_22
   * @param  new_state: new state of exint interrupt.
   *         this parameter can be: TRUE or FALSE.
-  * @retval none                            
+  * @retval none
   */
 void exint_interrupt_enable(uint32_t exint_line, confirm_state new_state)
 {
@@ -235,7 +235,7 @@ void exint_interrupt_enable(uint32_t exint_line, confirm_state new_state)
   *         - EXINT_LINE_22
   * @param  new_state: new state of exint event.
   *         this parameter can be: TRUE or FALSE.
-  * @retval none                            
+  * @retval none
   */
 void exint_event_enable(uint32_t exint_line, confirm_state new_state)
 {

@@ -810,7 +810,7 @@ typedef struct
   /**
     * @brief crm reserved2 register, offset:0x40~0x34
     */
-  __IO uint32_t reserved2[4];
+  __IO uint32_t reserved1[4];
 
   /**
     * @brief crm otg_extctrl register, offset:0x44
@@ -829,7 +829,7 @@ typedef struct
   /**
     * @brief crm reserved3 register, offset:0x50~0x48
     */
-  __IO uint32_t reserved3[3];
+  __IO uint32_t reserved2[3];
 
   /**
     * @brief crm misc2 register, offset:0x54

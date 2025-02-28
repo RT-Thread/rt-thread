@@ -105,8 +105,7 @@ typedef enum
 typedef enum
 {
   PWC_REGULATOR_ON                       = 0x00, /*!< voltage regulator state on when deepsleep mode */
-  PWC_REGULATOR_LOW_POWER                = 0x01,  /*!< voltage regulator state low power when deepsleep mode */
-  PWC_REGULATOR_EXTRA_LOW_POWER          = 0x02  /*!< voltage regulator state extra low power when deepsleep mode */
+  PWC_REGULATOR_LOW_POWER                = 0x01  /*!< voltage regulator state low power when deepsleep mode */
 } pwc_regulator_type;
 
 /**
@@ -153,26 +152,6 @@ typedef struct
       __IO uint32_t reserved3            : 17;/* [31:15] */
     } ctrlsts_bit;
   };
-
-  /**
-    * @brief pwc reserved register, offset:0x08~0x1C
-    */
-  __IO uint32_t reserved1[6];
-
-  /**
-    * @brief pwc ctrl2 register, offset:0x20
-    */
-  union
-  {
-    __IO uint32_t ctrl2;
-    struct
-    {
-      __IO uint32_t reserved1            : 5;/* [4:0] */
-      __IO uint32_t vrexlpen             : 1; /* [5] */
-      __IO uint32_t reserved2            : 26;/* [31:6] */
-    } ctrl2_bit;
-  };
-
 } pwc_type;
 
 /**

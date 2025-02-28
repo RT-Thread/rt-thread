@@ -42,8 +42,8 @@ extern "C" {
   * @{
   */
 
-/** @defgroup ERTC_interrupts_definition 
-  * @brief ertc interrupt  
+/** @defgroup ERTC_interrupts_definition
+  * @brief ertc interrupt
   * @{
   */
 
@@ -57,11 +57,11 @@ extern "C" {
   * @}
   */
 
-/** @defgroup ERTC_flags_definition 
-  * @brief ertc flag  
+/** @defgroup ERTC_flags_definition
+  * @brief ertc flag
   * @{
   */
-  
+
 #define ERTC_ALAWF_FLAG                  ((uint32_t)0x00000001) /*!< ertc alarm a register allows write flag */
 #define ERTC_ALBWF_FLAG                  ((uint32_t)0x00000002) /*!< ertc alarm b register allows write flag */
 #define ERTC_WATWF_FLAG                  ((uint32_t)0x00000004) /*!< ertc wakeup timer register allows write flag */
@@ -91,11 +91,11 @@ extern "C" {
 /**
   * @}
   */
- 
+
 /** @defgroup ERTC_exported_types
   * @{
   */
-  
+
 /**
   * @brief ertc hour mode
   */
@@ -369,14 +369,14 @@ typedef enum
   */
 typedef struct
 {
-  uint8_t                                year;  /*!< year */
-  uint8_t                                month; /*!< month */
-  uint8_t                                day;   /*!< date */
-  uint8_t                                hour;  /*!< hour */
-  uint8_t                                min;   /*!< minute */
-  uint8_t                                sec;   /*!< second */
-  uint8_t                                week;  /*!< week */
-  ertc_am_pm_type                        ampm;  /*!< ante meridiem / post meridiem */
+  uint8_t year;                          /*!< year */
+  uint8_t month;                         /*!< month */
+  uint8_t day;                           /*!< date */
+  uint8_t hour;                          /*!< hour */
+  uint8_t min;                           /*!< minute */
+  uint8_t sec;                           /*!< second */
+  uint8_t week;                          /*!< week */
+  ertc_am_pm_type ampm;                  /*!< ante meridiem / post meridiem */
 } ertc_time_type;
 
 /**
@@ -384,14 +384,14 @@ typedef struct
   */
 typedef struct
 {
-  uint8_t                                day;           /*!< date */
-  uint8_t                                hour;          /*!< hour */
-  uint8_t                                min;           /*!< minute */
-  uint8_t                                sec;           /*!< second */
-  ertc_am_pm_type                        ampm;          /*!< ante meridiem / post meridiem */
-  uint32_t                               mask;          /*!< alarm mask*/
-  uint8_t                                week_date_sel; /*!< week or date mode */
-  uint8_t                                week;          /*!< week */
+  uint8_t day;                           /*!< date */
+  uint8_t hour;                          /*!< hour */
+  uint8_t min;                           /*!< minute */
+  uint8_t sec;                           /*!< second */
+  ertc_am_pm_type ampm;                  /*!< ante meridiem / post meridiem */
+  uint32_t mask;                         /*!< alarm mask*/
+  uint8_t week_date_sel;                 /*!< week or date mode */
+  uint8_t week;                          /*!< week */
 } ertc_alarm_value_type;
 
 /**
@@ -569,7 +569,7 @@ typedef struct
       __IO uint32_t rcden                :1; /* [4] */
       __IO uint32_t dren                 :1; /* [5] */
       __IO uint32_t hm                   :1; /* [6] */
-      __IO uint32_t reserved0            :1; /* [7] */
+      __IO uint32_t reserved1            :1; /* [7] */
       __IO uint32_t alaen                :1; /* [8] */
       __IO uint32_t alben                :1; /* [9] */
       __IO uint32_t waten                :1; /* [10] */
@@ -585,7 +585,7 @@ typedef struct
       __IO uint32_t outp                 :1; /* [20] */
       __IO uint32_t outsel               :2; /* [22:21] */
       __IO uint32_t caloen               :1; /* [23] */
-      __IO uint32_t reserved1            :8; /* [31:24] */
+      __IO uint32_t reserved2            :8; /* [31:24] */
     } ctrl_bit;
   };
 
@@ -1100,12 +1100,12 @@ typedef struct
 
 
 } ertc_type;
- 
+
 /**
   * @}
   */
 
-#define ERTC                              ((ertc_type *) ERTC_BASE)  
+#define ERTC                              ((ertc_type *) ERTC_BASE)
 
 /** @defgroup ERTC_exported_functions
   * @{

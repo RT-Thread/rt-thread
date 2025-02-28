@@ -572,7 +572,6 @@ typedef struct
 
 void dvp_reset(void);
 void dvp_capture_enable(confirm_state new_state);
-void dvp_capture_enable(confirm_state new_state);
 void dvp_capture_mode_set(dvp_cfm_type cap_mode);
 void dvp_window_crop_enable(confirm_state new_state);
 void dvp_window_crop_set(uint16_t crop_x, uint16_t crop_y, uint16_t crop_w, uint16_t crop_h, uint8_t bytes);

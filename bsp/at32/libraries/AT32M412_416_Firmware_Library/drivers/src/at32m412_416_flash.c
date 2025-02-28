@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -823,7 +823,7 @@ flash_status_type flash_otp_data_program(uint32_t address, uint8_t *data_buf, ui
     /* wait for operation to be completed */
     status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
     if(status != FLASH_OPERATE_DONE)
-      break; 
+      break;
   }
   /* disable the fprgm bit */
   FLASH->ctrl_bit.fprgm = FALSE;

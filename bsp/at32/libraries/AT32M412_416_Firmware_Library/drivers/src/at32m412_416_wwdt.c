@@ -5,11 +5,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -39,33 +39,33 @@
   * @{
   */
 
-/** 
+/**
   * @brief  wwdt reset by crm reset register
   * @retval none
   */
 void wwdt_reset(void)
-{  
+{
   crm_periph_reset(CRM_WWDT_PERIPH_RESET, TRUE);
   crm_periph_reset(CRM_WWDT_PERIPH_RESET, FALSE);
 }
 
 /**
-  * @brief  wwdt division set 
-  * @param  division        
+  * @brief  wwdt division set
+  * @param  division
   *         this parameter can be one of the following values:
-  *         - WWDT_PCLK1_DIV_4096        (wwdt counter clock = (pclk1/4096)/1)              
-  *         - WWDT_PCLK1_DIV_8192        (wwdt counter clock = (pclk1/4096)/2)          
-  *         - WWDT_PCLK1_DIV_16384       (wwdt counter clock = (pclk1/4096)/4)          
-  *         - WWDT_PCLK1_DIV_32768       (wwdt counter clock = (pclk1/4096)/8)                                             
-  * @retval none                            
+  *         - WWDT_PCLK1_DIV_4096        (wwdt counter clock = (pclk1/4096)/1)
+  *         - WWDT_PCLK1_DIV_8192        (wwdt counter clock = (pclk1/4096)/2)
+  *         - WWDT_PCLK1_DIV_16384       (wwdt counter clock = (pclk1/4096)/4)
+  *         - WWDT_PCLK1_DIV_32768       (wwdt counter clock = (pclk1/4096)/8)
+  * @retval none
   */
 void wwdt_divider_set(wwdt_division_type division)
-{   
+{
   WWDT->cfg_bit.div = division;
 }
 
 /**
-  * @brief  wwdt reload counter interrupt flag clear 
+  * @brief  wwdt reload counter interrupt flag clear
   * @param  none
   * @retval none
   */
@@ -85,7 +85,7 @@ void wwdt_enable(uint8_t wwdt_cnt)
 }
 
 /**
-  * @brief  wwdt reload counter interrupt enable 
+  * @brief  wwdt reload counter interrupt enable
   * @param  none
   * @retval none
   */
@@ -95,12 +95,12 @@ void wwdt_interrupt_enable(void)
 }
 
 /**
-  * @brief  wwdt reload counter interrupt flag get 
-  * @param  none         
-  * @retval state of reload counter interrupt flag                            
+  * @brief  wwdt reload counter interrupt flag get
+  * @param  none
+  * @retval state of reload counter interrupt flag
   */
 flag_status wwdt_flag_get(void)
-{   
+{
   return (flag_status)WWDT->sts_bit.rldf;
 }
 

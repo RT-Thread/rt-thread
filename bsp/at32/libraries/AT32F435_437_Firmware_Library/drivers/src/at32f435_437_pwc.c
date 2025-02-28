@@ -224,7 +224,7 @@ void pwc_standby_mode_enter(void)
   PWC->ctrl_bit.clswef = TRUE;
   PWC->ctrl_bit.lpsel = TRUE;
   SCB->SCR |= 0x04;
-#if defined (__ARMCC_VERSION)
+#if defined (__CC_ARM)
   __force_stores();
 #endif
   while(1)

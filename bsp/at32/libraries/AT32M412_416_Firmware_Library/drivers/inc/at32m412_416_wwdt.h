@@ -41,12 +41,12 @@ extern "C" {
 /** @addtogroup WWDT
   * @{
   */
- 
-/** @defgroup WWDT_enable_bit_definition 
+
+/** @defgroup WWDT_enable_bit_definition
   * @brief wwdt enable bit
   * @{
   */
-  
+
 #define WWDT_EN_BIT                      ((uint32_t)0x00000080) /*!< wwdt enable bit */
 
 /**
@@ -122,7 +122,7 @@ typedef struct
   * @}
   */
 
-#define WWDT                             ((wwdt_type *) WWDT_BASE) 
+#define WWDT                             ((wwdt_type *) WWDT_BASE)
 
 /** @defgroup WWDT_exported_functions
   * @{

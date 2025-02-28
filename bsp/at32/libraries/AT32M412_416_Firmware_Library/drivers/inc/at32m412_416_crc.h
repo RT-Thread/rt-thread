@@ -83,7 +83,7 @@ typedef enum
 typedef struct
 {
   /**
-    * @brief crc dt register, offset:0x00 
+    * @brief crc dt register, offset:0x00
     */
   union
   {
@@ -95,7 +95,7 @@ typedef struct
   };
 
   /**
-    * @brief crc cdt register, offset:0x04 
+    * @brief crc cdt register, offset:0x04
     */
   union
   {
@@ -108,7 +108,7 @@ typedef struct
   };
 
   /**
-    * @brief crc ctrl register, offset:0x08 
+    * @brief crc ctrl register, offset:0x08
     */
   union
   {
@@ -142,7 +142,7 @@ typedef struct
   };
 
   /**
-    * @brief crc polynomial register, offset:0x14 
+    * @brief crc polynomial register, offset:0x14
     */
   union
   {

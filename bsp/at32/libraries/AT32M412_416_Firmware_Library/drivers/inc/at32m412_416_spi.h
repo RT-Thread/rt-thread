@@ -424,7 +424,7 @@ typedef struct
       __IO uint32_t i2smsel             : 1; /* [11] */
       __IO uint32_t reserved2           : 20;/* [31:12] */
     } i2sctrl_bit;
-  };  
+  };
 
   /**
     * @brief spi i2sclk register, offset:0x20
@@ -440,8 +440,8 @@ typedef struct
       __IO uint32_t i2sdiv_h            : 2; /* [11:10] */
       __IO uint32_t reserved1           : 20;/* [31:12] */
     } i2sclk_bit;
-  }; 
-} spi_type;  
+  };
+} spi_type;
 
 /**
   * @}

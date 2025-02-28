@@ -96,14 +96,8 @@ error_status ertc_wait_update(void)
 {
   uint32_t timeout = ERTC_TIMEOUT * 2;
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   /* clear updf flag */
   ERTC->sts = ~(ERTC_UPDF_FLAG | 0x00000080) | (ERTC->sts_bit.imen << 7);
-
-  /* enable write protection */
-  ertc_write_protect_enable();
 
   while(ERTC->sts_bit.updf == 0)
   {
@@ -161,9 +155,6 @@ error_status ertc_wait_flag(uint32_t flag, flag_status status)
 error_status ertc_init_mode_enter(void)
 {
   uint32_t timeout = ERTC_TIMEOUT * 2;
-
-  /* disable write protection */
-  ertc_write_protect_disable();
 
   if(ERTC->sts_bit.imf == 0)
   {
@@ -224,7 +215,6 @@ error_status ertc_reset(void)
   ERTC->ctrl   = (uint32_t)0x00000000;
   ERTC->div    = (uint32_t)0x007F00FF;
   ERTC->wat    = (uint32_t)0x0000FFFF;
-  ERTC->ccal   = (uint32_t)0x00000000;
   ERTC->ala    = (uint32_t)0x00000000;
   ERTC->alb    = (uint32_t)0x00000000;
   ERTC->tadj   = (uint32_t)0x00000000;
@@ -332,7 +322,7 @@ error_status ertc_date_set(uint8_t year, uint8_t month, uint8_t date, uint8_t we
     return ERROR;
   }
 
-  /* Set the ertc_DR register */
+  /* set the ertc_date register */
   ERTC->date = reg.date;
 
   /* exit init mode */
@@ -723,8 +713,8 @@ uint32_t ertc_alarm_sub_second_get(ertc_alarm_type alarm_x)
   *         - ERTC_WAT_CLK_ERTCCLK_DIV8: ERTC_CLK / 8.
   *         - ERTC_WAT_CLK_ERTCCLK_DIV4: ERTC_CLK / 4.
   *         - ERTC_WAT_CLK_ERTCCLK_DIV2: ERTC_CLK / 2.
-  *         - ERTC_WAT_CLK_CK_A_16BITS: CK_A, wakeup counter = ERTC_WAT
-  *         - ERTC_WAT_CLK_CK_A_17BITS: CK_A, wakeup counter = ERTC_WAT + 65535.
+  *         - ERTC_WAT_CLK_CK_B_16BITS: CK_B, wakeup counter = ERTC_WAT
+  *         - ERTC_WAT_CLK_CK_B_17BITS: CK_B, wakeup counter = ERTC_WAT + 65535.
   * @retval none.
   */
 void ertc_wakeup_clock_set(ertc_wakeup_clock_type clock)
@@ -778,7 +768,7 @@ error_status ertc_wakeup_enable(confirm_state new_state)
 
   if(new_state == FALSE)
   {
-    if(ertc_wait_flag(ERTC_ALAWF_FLAG, RESET) != SUCCESS)
+    if(ertc_wait_flag(ERTC_WATWF_FLAG, RESET) != SUCCESS)
     {
       return ERROR;
     }
@@ -836,66 +826,6 @@ error_status ertc_smooth_calibration_config(ertc_smooth_cal_period_type period, 
   reg.scal_bit.dec = clk_dec;
 
   ERTC->scal = reg.scal;
-
-  /* enable write protection */
-  ertc_write_protect_enable();
-
-  return SUCCESS;
-}
-
-/**
-  * @brief  set the coarse digital calibration.
-  * @param  dir: calibration direction.
-  *         this parameter can be one of the following values:
-  *         - ERTC_CAL_DIR_POSITIVE: positive calibration.
-  *         - ERTC_CAL_DIR_NEGATIVE: negative calibration.
-  * @param  value: calibration value(0~31).
-  * @retval error_status (ERROR or SUCCESS).
-  */
-error_status ertc_coarse_calibration_set(ertc_cal_direction_type dir, uint32_t value)
-{
-  /* disable write protection */
-  ertc_write_protect_disable();
-
-  /* enter init mode */
-  if(ertc_init_mode_enter() == ERROR)
-  {
-    return ERROR;
-  }
-
-  ERTC->ccal_bit.caldir = dir;
-
-  ERTC->ccal_bit.calval = value;
-
-  /* exit init mode */
-  ertc_init_mode_exit();
-
-  /* enable write protection */
-  ertc_write_protect_enable();
-
-  return SUCCESS;
-}
-
-/**
-  * @brief  enable or disable coarse calibration.
-  * @param  new_state (TRUE or FALSE).
-  * @retval error_status (ERROR or SUCCESS).
-  */
-error_status ertc_coarse_calibration_enable(confirm_state new_state)
-{
-  /* disable write protection */
-  ertc_write_protect_disable();
-
-  /* enter init mode */
-  if(ertc_init_mode_enter() == ERROR)
-  {
-    return ERROR;
-  }
-
-  ERTC->ctrl_bit.ccalen = new_state;
-
-  /* exit init mode */
-  ertc_init_mode_exit();
 
   /* enable write protection */
   ertc_write_protect_enable();
@@ -1575,13 +1505,7 @@ void ertc_bpr_data_write(ertc_dt_type dt, uint32_t data)
 
   reg = ERTC_BASE + 0x50 + (dt * 4);
 
-  /* disable write protection */
-  ertc_write_protect_disable();
-
   *(__IO uint32_t *)reg = data;
-
-  /* enable write protection */
-  ertc_write_protect_enable();
 }
 
 /**

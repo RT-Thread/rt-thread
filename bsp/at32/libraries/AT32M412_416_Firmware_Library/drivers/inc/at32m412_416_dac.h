@@ -210,7 +210,7 @@ typedef struct
       __IO uint32_t reserved3            : 2; /* [31:30] */
     } sts_bit;
   };
-  
+
   /**
     * @brief dac sts register, offset:0x1c
     */

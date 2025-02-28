@@ -176,7 +176,8 @@ typedef enum
 {
   DMA_DIR_PERIPHERAL_TO_MEMORY           = 0x0000, /*!< dma data transfer direction:peripheral to memory */
   DMA_DIR_MEMORY_TO_PERIPHERAL           = 0x0010, /*!< dma data transfer direction:memory to peripheral */
-  DMA_DIR_MEMORY_TO_MEMORY               = 0x4000  /*!< dma data transfer direction:memory to memory */
+  DMA_DIR_MEMORY_TO_MEMORY               = 0x4000  /*!< dma data transfer direction:memory to memory,
+                                                        note:if the direction is memory to memory,peripheral_base_addr as source and memory_base_addr as destnation */
 } dma_dir_type;
 
 /**
@@ -235,7 +236,7 @@ typedef struct
 {
   uint32_t                               peripheral_base_addr;    /*!< base addrress for peripheral */
   uint32_t                               memory_base_addr;        /*!< base addrress for memory */
-  dma_dir_type                           direction;               /*!< dma transmit direction, peripheral as source or as destnation  */
+  dma_dir_type                           direction;               /*!< dma transmit direction, peripheral as source or as destnation */
   uint16_t                               buffer_size;             /*!< counter to transfer */
   confirm_state                          peripheral_inc_enable;   /*!< periphera address increment after one transmit */
   confirm_state                          memory_inc_enable;       /*!< memory address increment after one transmit */

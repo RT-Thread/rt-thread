@@ -66,8 +66,8 @@ extern "C" {
   * @brief  select ldo output voltage.
   * @param  val: set the ldo output voltage.
   *         this parameter can be one of the following values:
-  *         - PWC_LDO_OUTPUT_1V0: system clock up to 108MHz.
-  *         - PWC_LDO_OUTPUT_1V2: system clock up to 168MHz.
+  *         - PWC_LDO_OUTPUT_1V1: system clock up to 108MHz.
+  *         - PWC_LDO_OUTPUT_1V2: system clock up to 192MHz.
   *         - PWC_LDO_OUTPUT_1V3: system clock up to 216MHz.
   * @note   none.
   */
@@ -96,7 +96,6 @@ typedef enum
   */
 typedef enum
 {
-  PWC_LDO_OUTPUT_1V0                     = 0x00, /*!< ldo output voltage is 1.0v */
   PWC_LDO_OUTPUT_1V1                     = 0x01, /*!< ldo output voltage is 1.1v */
   PWC_LDO_OUTPUT_1V2                     = 0x02, /*!< ldo output voltage is 1.2v */
   PWC_LDO_OUTPUT_1V3                     = 0x03  /*!< ldo output voltage is 1.3v */

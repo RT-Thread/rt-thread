@@ -10,6 +10,7 @@
  * 2023-10-18   shelton        add support f402/f405
  * 2024-04-12   shelton        add support a403a and a423
  * 2024-08-30   shelton        add support m412 and m416
+ * 2024-12-18   shelton        add support f455/f456 and f457
  */
 
 #include <rtthread.h>
@@ -54,7 +55,8 @@ static time_t get_rtc_timestamp(void)
     defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
     defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405) || \
     defined (SOC_SERIES_AT32A423) || defined (SOC_SERIES_AT32M412) || \
-    defined (SOC_SERIES_AT32M416)
+    defined (SOC_SERIES_AT32M416) || defined (SOC_SERIES_AT32F455) || \
+    defined (SOC_SERIES_AT32F456) || defined (SOC_SERIES_AT32F457)
     struct tm tm_new;
     ertc_time_type ertc_time_struct;
 
@@ -82,7 +84,8 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
     defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405) || \
     defined (SOC_SERIES_AT32A423) || defined (SOC_SERIES_AT32M412) || \
-    defined (SOC_SERIES_AT32M416)
+    defined (SOC_SERIES_AT32M416) || defined (SOC_SERIES_AT32F455) || \
+    defined (SOC_SERIES_AT32F456) || defined (SOC_SERIES_AT32F457)
     struct tm now;
 
     gmtime_r(&time_stamp, &now);
@@ -130,7 +133,8 @@ static rt_err_t rt_rtc_config(void)
     defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
     defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405) || \
     defined (SOC_SERIES_AT32A423) || defined (SOC_SERIES_AT32M412) || \
-    defined (SOC_SERIES_AT32M416)
+    defined (SOC_SERIES_AT32M416) || defined (SOC_SERIES_AT32F455) || \
+    defined (SOC_SERIES_AT32F456) || defined (SOC_SERIES_AT32F457)
 
     /* select rtc clock source */
 #ifdef BSP_RTC_USING_LICK

@@ -149,7 +149,8 @@ typedef enum
 {
   DMA_DIR_PERIPHERAL_TO_MEMORY           = 0x0000, /*!< dma data transfer direction: peripheral to memory */
   DMA_DIR_MEMORY_TO_PERIPHERAL           = 0x0010, /*!< dma data transfer direction: memory to peripheral */
-  DMA_DIR_MEMORY_TO_MEMORY               = 0x4000  /*!< dma data transfer direction: memory to memory */
+  DMA_DIR_MEMORY_TO_MEMORY               = 0x4000  /*!< dma data transfer direction: memory to memory,
+                                                        note:if the direction is memory to memory,peripheral_base_addr as source and memory_base_addr as destnation */
 } dma_dir_type;
 
 /**

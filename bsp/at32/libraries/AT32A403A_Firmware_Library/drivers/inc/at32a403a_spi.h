@@ -48,14 +48,14 @@ extern "C" {
   * @{
   */
 
-#define SPI_I2S_RDBF_FLAG                0x0001 /*!< spi or i2s receive data buffer full flag */
-#define SPI_I2S_TDBE_FLAG                0x0002 /*!< spi or i2s transmit data buffer empty flag */
-#define I2S_ACS_FLAG                     0x0004 /*!< i2s audio channel state flag */
-#define I2S_TUERR_FLAG                   0x0008 /*!< i2s transmitter underload error flag */
-#define SPI_CCERR_FLAG                   0x0010 /*!< spi crc calculation error flag */
-#define SPI_MMERR_FLAG                   0x0020 /*!< spi master mode error flag */
-#define SPI_I2S_ROERR_FLAG               0x0040 /*!< spi or i2s receiver overflow error flag */
-#define SPI_I2S_BF_FLAG                  0x0080 /*!< spi or i2s busy flag */
+#define SPI_I2S_RDBF_FLAG                ((uint32_t)0x000000001) /*!< spi or i2s receive data buffer full flag */
+#define SPI_I2S_TDBE_FLAG                ((uint32_t)0x000000002) /*!< spi or i2s transmit data buffer empty flag */
+#define I2S_ACS_FLAG                     ((uint32_t)0x000000004) /*!< i2s audio channel state flag */
+#define I2S_TUERR_FLAG                   ((uint32_t)0x000000008) /*!< i2s transmitter underload error flag */
+#define SPI_CCERR_FLAG                   ((uint32_t)0x000000010) /*!< spi crc calculation error flag */
+#define SPI_MMERR_FLAG                   ((uint32_t)0x000000020) /*!< spi master mode error flag */
+#define SPI_I2S_ROERR_FLAG               ((uint32_t)0x000000040) /*!< spi or i2s receiver overflow error flag */
+#define SPI_I2S_BF_FLAG                  ((uint32_t)0x000000080) /*!< spi or i2s busy flag */
 
 /**
   * @}
@@ -67,9 +67,9 @@ extern "C" {
   * @{
   */
 
-#define SPI_I2S_ERROR_INT                0x0020 /*!< error interrupt */
-#define SPI_I2S_RDBF_INT                 0x0040 /*!< receive data buffer full interrupt */
-#define SPI_I2S_TDBE_INT                 0x0080 /*!< transmit data buffer empty interrupt */
+#define SPI_I2S_ERROR_INT                ((uint32_t)0x00000020) /*!< error interrupt */
+#define SPI_I2S_RDBF_INT                 ((uint32_t)0x00000040) /*!< receive data buffer full interrupt */
+#define SPI_I2S_TDBE_INT                 ((uint32_t)0x00000080) /*!< transmit data buffer empty interrupt */
 
 /**
   * @}

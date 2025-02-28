@@ -45,7 +45,7 @@ extern "C" {
 /** @defgroup GPIO_pins_number_definition
   * @{
   */
-  
+
 #define GPIO_PINS_0                      0x0001 /*!< gpio pins number 0 */
 #define GPIO_PINS_1                      0x0002 /*!< gpio pins number 1 */
 #define GPIO_PINS_2                      0x0004 /*!< gpio pins number 2 */

@@ -164,7 +164,14 @@ void i2c_init(i2c_type *i2c_x, i2c_fsmode_duty_cycle_type duty, uint32_t speed)
     i2c_x->clkctrl_bit.speedmode = TRUE;
 
     /* set the maximum rise time */
-    i2c_x->tmrise_bit.risetime = (uint16_t)(((freq_mhz * (uint16_t)300) / (uint16_t)1000) + (uint16_t)1);
+    if(speed <= 400000)
+    {
+      i2c_x->tmrise_bit.risetime = (uint16_t)(((freq_mhz * (uint16_t)300) / (uint16_t)1000) + (uint16_t)1);
+    }
+    else
+    {
+      i2c_x->tmrise_bit.risetime = (uint16_t)(((freq_mhz * (uint16_t)120) / (uint16_t)1000) + (uint16_t)1);
+    }
   }
 }
 
@@ -695,13 +702,15 @@ void i2c_flag_clear(i2c_type *i2c_x, uint32_t flag)
 {
   i2c_x->sts1 = (uint16_t)~(flag & (uint32_t)0x0000DF00);
 
-  if(i2c_x->sts1 & I2C_ADDR7F_FLAG)
+  if(flag & I2C_ADDR7F_FLAG)
   {
+    UNUSED(i2c_x->sts1);
     UNUSED(i2c_x->sts2);
   }
 
-  if(i2c_x->sts1 & I2C_STOPF_FLAG)
+  if(flag & I2C_STOPF_FLAG)
   {
+    UNUSED(i2c_x->sts1);
     i2c_x->ctrl1_bit.i2cen = TRUE;
   }
 }
