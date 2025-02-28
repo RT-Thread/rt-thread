@@ -747,7 +747,7 @@ static int fill_file_data(file_info *fi)
     int ret = -1;
     cromfs_info *ci = NULL;
     void *compressed_file_buff = NULL;
-    uint32_t size = 0, osize = 0;
+    uLongf size = 0, osize = 0;
 
     if (!fi->data_valid)
     {
