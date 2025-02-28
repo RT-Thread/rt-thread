@@ -8,7 +8,7 @@
 # 2025-01-21     kurisaW      Initial version
 #
 
-# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasasddasdasdads
+# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasasddasdasdadsass
 
 name: Auto Review Assistant
 
@@ -25,11 +25,13 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-      contents: read
+      contents: write
+      discussions: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        with:
+          github_token: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW2 }}
       - name: Get changed files
         id: changed_files
         # uses: tj-actions/changed-files@v45
