@@ -224,6 +224,6 @@ jobs:
       - name: Pos1t comment
         uses: harupy/comment-on-pr@master
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}
         with:
           filename: /home/runner/work/rt-thread/rt-thread/review_data.md
