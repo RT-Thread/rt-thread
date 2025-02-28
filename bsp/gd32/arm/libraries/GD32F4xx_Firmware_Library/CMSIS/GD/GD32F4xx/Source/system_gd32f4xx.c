@@ -34,6 +34,7 @@
 /* This file refers the CMSIS standard, some adjustments are made according to GigaDevice chips */
 
 #include "gd32f4xx.h"
+#include "rtconfig.h"
 
 /* system frequency define */
 #define __IRC16M          (IRC16M_VALUE)            /* internal 16 MHz RC oscillator frequency */
@@ -79,7 +80,10 @@
 #define SEL_PLLP        0x02U
                         
 /* set the system clock frequency and declare the system clock configuration function */
-#ifdef __SYSTEM_CLOCK_IRC16M
+#ifdef BSP_GD32_HXTAL_CLOCK_CFG
+uint32_t SystemCoreClock = BSP_GD32_SYSTEM_CLOCK;
+static void system_clock_config_hxtal(void);
+#elif defined (__SYSTEM_CLOCK_IRC16M)
 uint32_t SystemCoreClock = __SYSTEM_CLOCK_IRC16M;
 static void system_clock_16m_irc16m(void);
 #elif defined (__SYSTEM_CLOCK_HXTAL)
@@ -179,7 +183,9 @@ void SystemInit (void)
 */
 static void system_clock_config(void)
 {
-#ifdef __SYSTEM_CLOCK_IRC16M
+#ifdef BSP_GD32_HXTAL_CLOCK_CFG
+    system_clock_config_hxtal();
+#elif defined (__SYSTEM_CLOCK_IRC16M)
     system_clock_16m_irc16m();
 #elif defined (__SYSTEM_CLOCK_HXTAL)
     system_clock_hxtal();
@@ -210,7 +216,83 @@ static void system_clock_config(void)
 #endif /* __SYSTEM_CLOCK_IRC16M */   
 }
 
-#ifdef __SYSTEM_CLOCK_IRC16M
+#ifdef BSP_GD32_HXTAL_CLOCK_CFG
+/*!
+    \brief      configure the system clock to BSP_GD32_SYSTEM_CLOCK 
+                by PLL which selects HXTAL as its clock source
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+static void system_clock_config_hxtal(void)
+{
+    uint32_t timeout = 0U;
+    uint32_t stab_flag = 0U;
+    
+    /* enable HXTAL */
+    RCU_CTL |= RCU_CTL_HXTALEN;
+
+    /* wait until HXTAL is stable or the startup time is longer than HXTAL_STARTUP_TIMEOUT */
+    do
+    {
+        timeout++;
+        stab_flag = (RCU_CTL & RCU_CTL_HXTALSTB);
+    } 
+    while ((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
+
+    /* if fail */
+    if (0U == (RCU_CTL & RCU_CTL_HXTALSTB))
+    {
+        while (1)
+        {
+        }
+    }
+         
+    RCU_APB1EN |= RCU_APB1EN_PMUEN;
+    PMU_CTL |= PMU_CTL_LDOVS;
+
+    /* HXTAL is stable */
+    /* AHB = SYSCLK */
+    RCU_CFG0 |= RCU_AHB_CKSYS_DIV1;
+    /* APB2 = AHB/2 */
+    RCU_CFG0 |= RCU_APB2_CKAHB_DIV2;
+    /* APB1 = AHB/4 */
+    RCU_CFG0 |= RCU_APB1_CKAHB_DIV4;
+
+    /* Configure the main PLL */ 
+    RCU_PLL = (BSP_GD32_CLOCK_PSC | (BSP_GD32_CLOCK_PLL_N << 6U) | (((BSP_GD32_CLOCK_PLL_P >> 1U) - 1U) << 16U) |
+                                  (RCU_PLLSRC_HXTAL) | (BSP_GD32_CLOCK_PLL_Q << 24U));
+
+    /* enable PLL */
+    RCU_CTL |= RCU_CTL_PLLEN;
+
+    /* wait until PLL is stable */
+    while (0U == (RCU_CTL & RCU_CTL_PLLSTB))
+    {
+    }
+    
+    /* Enable the high-drive to extend the clock frequency to 240 Mhz */
+    PMU_CTL |= PMU_CTL_HDEN;
+    while (0U == (PMU_CS & PMU_CS_HDRF))
+    {
+    }
+    
+    /* select the high-drive mode */
+    PMU_CTL |= PMU_CTL_HDS;
+    while (0U == (PMU_CS & PMU_CS_HDSRF))
+    {
+    } 
+    
+    /* select PLL as system clock */
+    RCU_CFG0 &= ~RCU_CFG0_SCS;
+    RCU_CFG0 |= RCU_CKSYSSRC_PLLP;
+
+    /* wait until PLL is selected as system clock */
+    while (0U == (RCU_CFG0 & RCU_SCSS_PLLP))
+    {
+    }
+}
+#elif defined (__SYSTEM_CLOCK_IRC16M)
 /*!
     \brief      configure the system clock to 16M by IRC16M
     \param[in]  none
