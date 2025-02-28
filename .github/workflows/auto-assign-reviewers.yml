@@ -8,7 +8,7 @@
 # 2025-01-21     kurisaW      Initial version
 #
 
-# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasasassaasss
+# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasasassaasasss
 
 name: Auto Review Assistant
 
@@ -176,6 +176,8 @@ jobs:
 
       - name: Post/Update comment
         id: post_comment
+        env:
+          SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}
         run: |
           # 查找现有的 bot 评论
           existing_comment=$(curl -s \
@@ -199,8 +201,18 @@ jobs:
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
           fi
+          echo "Creating new comment"
+            response=$(curl -s -X POST \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+          echo "Creating new comment"
+            response=$(curl -s -X POST \
+              -H "Authorization: Bearer $SUPER_SECRET" \
+              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
       - name: Comment on PR
         uses: unsplash/comment-on-pr@master
         with:
           message: "欢迎提交PR！我们的团队将会尽快审查。"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
