@@ -221,12 +221,6 @@ jobs:
               -H "Authorization: Bearer ${{ vars.TOKEN }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-      - name: Post comment
-        uses: harupy/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: $SUPER_SECRET
-        with:
-          filename: /home/runner/work/rt-thread/rt-thread/review_data.md
       - name: Pos1t comment
         uses: harupy/comment-on-pr@master
         env:
