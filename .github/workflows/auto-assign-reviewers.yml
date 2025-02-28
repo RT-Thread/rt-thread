@@ -8,7 +8,7 @@
 # 2025-01-21     kurisaW      Initial version
 #
 
-# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasasddasdasdadsass
+# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasassass
 
 name: Auto Review Assistant
 
@@ -203,6 +203,11 @@ jobs:
           # 创建新评论
             echo "Creating new comment"
             response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW2 }}" \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+            echo "Creating new comment"
+            response=$(curl -s -X POST \
+              -H "Authorization: Bearer ${{ github_token }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
