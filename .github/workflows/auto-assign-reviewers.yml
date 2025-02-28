@@ -8,7 +8,7 @@
 # 2025-01-21     kurisaW      Initial version
 #
 
-# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasdasd
+# Script Function Description: Assign PR reviews based on the MAINTAINERS list.asdasdasdasdads
 
 name: Auto Review Assistant
 
@@ -97,7 +97,7 @@ jobs:
           
           # 获取 PR 的所有评论
           comments=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}" \
+            -H "Authorization: Bearer ${{ github.token }}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
 
           echo '#!/bin/bash' > approval_data.sh
@@ -178,7 +178,7 @@ jobs:
         run: |
           # 查找现有的 bot 评论
           existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}" \
+            -H "Authorization: Bearer ${{ github.token }}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
             jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
           
@@ -187,14 +187,14 @@ jobs:
             comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
             echo "Updating existing comment $comment_id"
             response=$(curl -s -X PATCH \
-              -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}" \
+              -H "Authorization: Bearer ${{ github.token }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
           else
             # 创建新评论
             echo "Creating new comment"
             response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}" \
+              -H "Authorization: Bearer ${{ github.token }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
           fi
