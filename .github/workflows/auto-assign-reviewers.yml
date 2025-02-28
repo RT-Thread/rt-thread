@@ -224,6 +224,12 @@ jobs:
       - name: Post comment
         uses: harupy/comment-on-pr@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: $SUPER_SECRET
+        with:
+          filename: /home/runner/work/rt-thread/rt-thread/review_data.md
+      - name: Pos1t comment
+        uses: harupy/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           filename: /home/runner/work/rt-thread/rt-thread/review_data.md
