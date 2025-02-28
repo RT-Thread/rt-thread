@@ -12,3 +12,4 @@
 - @subpage page_device_watchdog
 - @subpage page_device_wlan
 - @subpage page_device_sensor
+- @subpage page_device_audio
