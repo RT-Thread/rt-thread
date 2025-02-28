@@ -178,7 +178,7 @@ jobs:
         run: |
           # 查找现有的 bot 评论
           existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
             jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
           
@@ -187,14 +187,14 @@ jobs:
             comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
             echo "Updating existing comment $comment_id"
             response=$(curl -s -X PATCH \
-              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
           else
             # 创建新评论
             echo "Creating new comment"
             response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
           fi
