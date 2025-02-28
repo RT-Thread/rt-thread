@@ -57,7 +57,7 @@ static int mcx_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
 
         if (msg->flags & RT_I2C_RD)
         {
-            xfer.slaveAddress = msg->addr;
+            xfer.slaveAddress = msg->addr >> 1;
             xfer.direction = kI2C_Read;
             xfer.subaddress = 0;
             xfer.subaddressSize = 0;
@@ -84,7 +84,7 @@ static int mcx_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
         }
         else
         {
-            xfer.slaveAddress = msg->addr;
+            xfer.slaveAddress = msg->addr >> 1;
             xfer.direction = kI2C_Write;
             xfer.subaddress = 0;
             xfer.subaddressSize = 0;

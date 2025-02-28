@@ -99,7 +99,7 @@ static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
 
         if (msg->flags & RT_I2C_RD)
         {
-            xfer.slaveAddress = msg->addr;
+            xfer.slaveAddress = msg->addr >> 1;
             xfer.direction = kI2C_Read;
             xfer.subaddress = 0;
             xfer.subaddressSize = 0;
@@ -120,7 +120,7 @@ static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
         }
         else
         {
-            xfer.slaveAddress = msg->addr;
+            xfer.slaveAddress = msg->addr >> 1;
             xfer.direction = kI2C_Write;
             xfer.subaddress = 0;
             xfer.subaddressSize = 0;

@@ -55,7 +55,7 @@ static rt_ssize_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
         if (!(msg->flags & RT_I2C_NO_START))
         {
             /* Start condition and slave address. */
-            result = I2C_MasterStart(lpc_i2c->base, msg->addr, direction);
+            result = I2C_MasterStart(lpc_i2c->base, msg->addr >> 1, direction);
         }
 
         if (result == kStatus_Success)
