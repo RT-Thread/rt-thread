@@ -16,7 +16,8 @@
  * 2024-07-04     kaidegit     Let cmake generator get more param from `rtconfig.py`
  * 2024-08-07     imi415       Updated CMake generator handles private macros, using OBJECT and INTERFACE libraries.
  * 2024-11-18     kaidegit     fix processing groups with similar name
- * 2024-11-18     kaidegit     fix missing some flags added in Sconscript
+ * 2025-02-22     kaidegit     fix missing some flags added in Sconscript
+ * 2025-02-24     kaidegit     remove some code that is unnecessary but takes time, get them from env
 """
 
 import os
@@ -32,7 +33,6 @@ def GenerateCFiles(env, project, project_name):
     """
     Generate CMakeLists.txt files
     """
-    info = utils.ProjectInfo(env)
     
     PROJECT_NAME = project_name if project_name != "project" else "rtthread"
 
@@ -177,14 +177,14 @@ def GenerateCFiles(env, project, project_name):
         cm_file.write('\n')
 
         cm_file.write("INCLUDE_DIRECTORIES(\n")
-        for i in info['CPPPATH']:
+        for i in env['CPPPATH']:
             # use relative path
             path = _make_path_relative(os.getcwd(), i)
             cm_file.write( "\t" + path.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
         cm_file.write("ADD_DEFINITIONS(\n")
-        for i in info['CPPDEFINES']:
+        for i in env['CPPDEFINES']:
             cm_file.write("\t-D" + i + "\n")
         cm_file.write(")\n\n")
 
