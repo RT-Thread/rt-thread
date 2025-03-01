@@ -176,14 +176,14 @@ jobs:
             comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
             echo "Updating existing comment $comment_id"
             response=$(curl -s -X PATCH \
-              -H "Authorization: Bearer $SUPER_SECRET" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
           else
             # 创建新评论
             echo "Creating new comment"
             response=$(curl -s -X POST \
-              -H "Authorization: Bearer $SUPER_SECRET" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
           fi
