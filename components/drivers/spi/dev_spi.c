@@ -181,7 +181,7 @@ static rt_err_t spidev_probe(struct rt_spi_device *spi_dev)
     }
 
     bus_name = rt_dm_dev_get_name(&spi_dev->bus->parent);
-    rt_dm_dev_set_name(dev, "%s_%d", bus_name, spi_dev->chip_select);
+    rt_dm_dev_set_name(dev, "%s_%d", bus_name, spi_dev->chip_select[0]);
 
     return RT_EOK;
 }
