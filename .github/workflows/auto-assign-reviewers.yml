@@ -35,26 +35,13 @@ jobs:
         
       - name: Get changed files
         id: changed_files
-        # uses: tj-actions/changed-files@v45
-        
         run: |
           # 通过 GitHub API 获取 PR 的变更文件列表
           changed_files=$(curl -s \
             -H "Authorization: Bearer ${{ github.token }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | \
             jq -r '.[].filename')  # 使用 jq 提取文件名
-          curl -s \
-            -H "Authorization: Bearer ${{ github.token }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files"
           echo "$changed_files" | grep -v '^MAINTAINERS$' > changed_files.txt
-      # - name: List all changed files
-      #   env:
-      #     ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-      #   run: |
-      #     for file in ${ALL_CHANGED_FILES}; do
-      #       echo "$file was changed"
-      #     done
-      #     echo "${ALL_CHANGED_FILES}" | grep -v '^MAINTAINERS$' > changed_files.txt
       - name: Parse MAINTAINERS file
         id: parse_maintainer
         run: |
@@ -175,15 +162,12 @@ jobs:
             echo "> ℹ️ **刷新CI状态操作需要具备仓库写入权限。**"
             echo "> ℹ️ **Refresh CI status operation requires repository Write permission.**"
           } > review_data.md
-          pwd
-          whereis review_data.md
-          cat /home/runner/work/rt-thread/rt-thread/review_data.md
       - name: Post/Update comment
         id: post_comment
         run: |
           # 查找现有的 bot 评论
           existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: Bearer $SUPER_SECRET" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
             jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
           
@@ -192,38 +176,14 @@ jobs:
             comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
             echo "Updating existing comment $comment_id"
             response=$(curl -s -X PATCH \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Authorization: Bearer $SUPER_SECRET" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
           else
             # 创建新评论
             echo "Creating new comment"
             response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-            echo ${{ secrets.GITHUB_TOKEN }}
-          fi
-          echo "Creating new comment"
-            response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ github.token }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-          echo github.token
-          echo "Creating new comment"
-            response=$(curl -s -X POST \
               -H "Authorization: Bearer $SUPER_SECRET" \
               -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-          echo $SUPER_SECRET
-          echo "Creating new comment"
-            response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ vars.TOKEN }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-      - name: Pos1t comment
-        uses: harupy/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}
-        with:
-          filename: /home/runner/work/rt-thread/rt-thread/review_data.md
+          fi
