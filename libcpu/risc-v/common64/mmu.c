@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -43,6 +43,20 @@ static void *current_mmu_table = RT_NULL;
 volatile __attribute__((aligned(4 * 1024)))
 rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
+/**
+ * @brief Switch the current address space to the specified one.
+ *
+ * This function is responsible for switching the address space by updating the page table
+ * and related hardware state. The behavior depends on whether the architecture supports
+ * Address Space Identifiers (ASIDs), devided by macro definition of ARCH_USING_ASID.
+ *
+ * @param aspace Pointer to the address space structure containing the new page table.
+ *
+ * @note If ASID is supported (`ARCH_USING_ASID` is defined), the function will call
+ *       `rt_hw_asid_switch_pgtbl` to switch the page table and update the ASID.
+ *       Otherwise, it will directly write the `satp` CSR to switch the page table
+ *       and invalidate the TLB.
+ */
 #ifdef ARCH_USING_ASID
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
@@ -68,11 +82,13 @@ void rt_hw_asid_init(void)
 }
 #endif /* ARCH_USING_ASID */
 
+/* get current page table. */
 void *rt_hw_mmu_tbl_get()
 {
     return current_mmu_table;
 }
 
+/* Map a single virtual address page to a physical address page in the page table. */
 static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
                          size_t attr)
 {
@@ -125,7 +141,7 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
                 COMBINEPTE((rt_ubase_t)VPN_TO_PPN(mmu_l3, PV_OFFSET),
                            PAGE_DEFAULT_ATTR_NEXT);
             rt_hw_cpu_dcache_clean(mmu_l2, sizeof(*mmu_l2));
-            // declares a reference to parent page table
+            /* declares a reference to parent page table */
             rt_page_ref_inc((void *)mmu_l2, 0);
         }
         else
@@ -135,14 +151,34 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
     }
 
     RT_ASSERT(!PTE_USED(*(mmu_l3 + l3_off)));
-    // declares a reference to parent page table
+    /* declares a reference to parent page table */
     rt_page_ref_inc((void *)mmu_l3, 0);
     *(mmu_l3 + l3_off) = COMBINEPTE((rt_ubase_t)pa, attr);
     rt_hw_cpu_dcache_clean(mmu_l3 + l3_off, sizeof(*(mmu_l3 + l3_off)));
     return 0;
 }
 
-/** rt_hw_mmu_map will never override existed page table entry */
+/**
+ * @brief Maps a virtual address space to a physical address space.
+ *
+ * This function maps a specified range of virtual addresses to a range of physical addresses
+ * and sets the attributes of the page table entries (PTEs). If an error occurs during the
+ * mapping process, the function will automatically roll back any partially completed mappings.
+ *
+ * @param aspace Pointer to the address space structure containing the page table information.
+ * @param v_addr The starting virtual address to be mapped.
+ * @param p_addr The starting physical address to be mapped.
+ * @param size The size of the memory to be mapped (in bytes).
+ * @param attr The attributes of the page table entries (e.g., read/write permissions, cache policies).
+ *
+ * @return On success, returns the starting virtual address `v_addr`;
+ *         On failure, returns `NULL`.
+ *
+ * @note This function will not override existing page table entries.
+ * @warning The caller must ensure that `v_addr` and `p_addr` are page-aligned,
+ *          and `size` is a multiple of the page size.
+ *
+ */
 void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
                     size_t size, size_t attr)
 {
@@ -150,7 +186,7 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
     void *unmap_va = v_addr;
     size_t npages = size >> ARCH_PAGE_SHIFT;
 
-    // TODO trying with HUGEPAGE here
+    /* TODO trying with HUGEPAGE here */
     while (npages--)
     {
         MM_PGTBL_LOCK(aspace);
@@ -180,6 +216,7 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
     return NULL;
 }
 
+/* unmap page table entry */
 static void _unmap_pte(rt_ubase_t *pentry, rt_ubase_t *lvl_entry[], int level)
 {
     int loop_flag = 1;
@@ -189,12 +226,12 @@ static void _unmap_pte(rt_ubase_t *pentry, rt_ubase_t *lvl_entry[], int level)
         *pentry = 0;
         rt_hw_cpu_dcache_clean(pentry, sizeof(*pentry));
 
-        // we don't handle level 0, which is maintained by caller
+        /* we don't handle level 0, which is maintained by caller */
         if (level > 0)
         {
             void *page = (void *)((rt_ubase_t)pentry & ~ARCH_PAGE_MASK);
 
-            // decrease reference from child page to parent
+            /* decrease reference from child page to parent */
             rt_pages_free(page, 0);
 
             int free = rt_page_ref_get(page, 0);
@@ -208,6 +245,7 @@ static void _unmap_pte(rt_ubase_t *pentry, rt_ubase_t *lvl_entry[], int level)
     }
 }
 
+/* Unmaps a virtual address range from the page table. */
 static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
 {
     rt_ubase_t loop_va = __UMASKVALUE((rt_ubase_t)v_addr, PAGE_OFFSET_MASK);
@@ -225,7 +263,7 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
     lvl_entry[i] = ((rt_ubase_t *)aspace->page_table + lvl_off[i]);
     pentry = lvl_entry[i];
 
-    // find leaf page table entry
+    /* find leaf page table entry */
     while (PTE_USED(*pentry) && !PAGE_IS_LEAF(*pentry))
     {
         i += 1;
@@ -235,7 +273,7 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
         unmapped >>= ARCH_INDEX_WIDTH;
     }
 
-    // clear PTE & setup its
+    /* clear PTE & setup its */
     if (PTE_USED(*pentry))
     {
         _unmap_pte(pentry, lvl_entry, i);
@@ -244,10 +282,30 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
     return unmapped;
 }
 
-/** unmap is different from map that it can handle multiple pages */
+/**
+ * @brief Unmaps a range of virtual memory addresses from the specified address space.
+ *
+ * This function is responsible for unmapping a contiguous region of virtual memory
+ * from the given address space. It handles multiple pages and ensures thread safety
+ * by locking the page table during the unmapping operation.
+ *
+ * @param aspace Pointer to the address space structure from which the memory will be unmapped.
+ * @param v_addr Starting virtual address to unmap. Must be page-aligned.
+ * @param size Size of the memory region to unmap. Must be page-aligned.
+ *
+ * @note The caller must ensure that both `v_addr` and `size` are page-aligned.
+ *
+ * @details The function operates in a loop, unmapping memory in chunks. It uses the
+ * `_unmap_area` function to perform the actual unmapping, which is called within a
+ * locked section to ensure thread safety. The loop continues until the entire region
+ * is unmapped.
+ *
+ * @see _unmap_area
+ * @note unmap is different from map that it can handle multiple pages
+ */
 void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size)
 {
-    // caller guarantee that v_addr & size are page aligned
+    /* caller guarantee that v_addr & size are page aligned */
     if (!aspace->page_table)
     {
         return;
@@ -260,7 +318,7 @@ void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size)
         unmapped = _unmap_area(aspace, v_addr, size);
         MM_PGTBL_UNLOCK(aspace);
 
-        // when unmapped == 0, region not exist in pgtbl
+        /* when unmapped == 0, region not exist in pgtbl */
         if (!unmapped || unmapped > size) break;
 
         size -= unmapped;
@@ -292,11 +350,31 @@ static inline void _init_region(void *vaddr, size_t size)
 #define KERN_SPACE_SIZE  ((size_t)USER_VADDR_START - 0x1000)
 #endif
 
+/**
+ * @brief Initialize the MMU (Memory Management Unit) mapping.
+ *
+ * This function initializes the MMU mapping, incluing these steps as follows:
+ * 1. Check the validity of the input parameters,
+ * 2. Calculate the start and end virtual addresses based on the input virtual address and size.
+ * 3. Convert the virtual addresses to PPN2 indices.
+ * 4. Check the initialization of the page table. If any entry in the page table within
+ *    the specified range is non-zero, it returns -1.
+ * 5. It initializes the kernel address space using rt_aspace_init() and initializes the specified region
+ *    using _init_region.
+ *
+ * @param aspace Pointer to the address space. Must not be NULL.
+ * @param v_address The starting virtual address.
+ * @param size The size of the virtual address space.
+ * @param vtable Pointer to the page table. Must not be NULL.
+ * @param pv_off The page table offset.
+ *
+ * @return Returns 0 if the initialization is successful. Returns -1 if any input parameter is invalid
+ *         or the page table initialization check fails.
+ */
 int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_ubase_t size,
                        rt_ubase_t *vtable, rt_ubase_t pv_off)
 {
     size_t l1_off, va_s, va_e;
-    rt_base_t level;
 
     if ((!aspace) || (!vtable))
     {
@@ -311,7 +389,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_ubase_t size,
         return -1;
     }
 
-    // convert address to PPN2 index
+    /* convert address to PPN2 index */
     va_s = GET_L1(va_s);
     va_e = GET_L1(va_e);
 
@@ -320,7 +398,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_ubase_t size,
         return -1;
     }
 
-    // vtable initialization check
+    /* vtable initialization check */
     for (l1_off = va_s; l1_off <= va_e; l1_off++)
     {
         size_t v = vtable[l1_off];
@@ -395,6 +473,22 @@ static rt_ubase_t *_query(struct rt_aspace *aspace, void *vaddr, int *level)
     return RT_NULL;
 }
 
+/**
+ * @brief Translate a virtual address to a physical address.
+ *
+ * This function translates a given virtual address (`vaddr`) to its corresponding
+ * physical address (`paddr`) using the page table in the specified address space (`aspace`).
+ *
+ * @param aspace Pointer to the address space structure containing the page table.
+ * @param vaddr The virtual address to be translated.
+ *
+ * @return The translated physical address. If the translation fails, `ARCH_MAP_FAILED` is returned.
+ *
+ * @note The function queries the page table entry (PTE) for the virtual address using `_query`.
+ *       If a valid PTE is found, the physical address is extracted and combined with the offset
+ *       from the virtual address. If no valid PTE is found, a debug log is recorded, and
+ *       `ARCH_MAP_FAILED` is returned.
+ */
 void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr)
 {
     int level;
@@ -424,11 +518,29 @@ static int _cache(rt_base_t *pte)
     return 0;
 }
 
-static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_base_t *pte) = {
+static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_base_t *pte)=
+{
     [MMU_CNTL_CACHE] = _cache,
     [MMU_CNTL_NONCACHE] = _noncache,
 };
 
+/**
+ * @brief Control the page table entries (PTEs) for a specified virtual address range.
+ *
+ * This function applies a control command (e.g., cache control) to the page table entries
+ * (PTEs) corresponding to the specified virtual address range (`vaddr` to `vaddr + size`).
+ *
+ * @param aspace Pointer to the address space structure containing the page table.
+ * @param vaddr The starting virtual address of the range.
+ * @param size The size of the virtual address range.
+ * @param cmd The control command to apply (e.g., `MMU_CNTL_CACHE`, `MMU_CNTL_NONCACHE`.etc.).
+ *
+ * @return `RT_EOK` on success, or an error code (`-RT_EINVAL` or `-RT_ENOSYS`) on failure.
+ *
+ * @note The function uses the `control_handler` array to map the command to a handler function.
+ *       It iterates over the virtual address range, queries the PTEs, and applies the handler
+ *       to each valid PTE. If the command is invalid, `-RT_ENOSYS` is returned.
+ */
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd)
 {
@@ -471,9 +583,9 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
  * otherwise is a failure and no report will be
  * returned.
  *
- * @param aspace
- * @param mdesc
- * @param desc_nr
+ * @param aspace Pointer to the address space structure.
+ * @param mdesc Pointer to the array of memory descriptors.
+ * @param desc_nr Number of memory descriptors in the array.
  */
 void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
 {
@@ -575,6 +687,16 @@ void rt_hw_mem_setup_early(void)
     /* return to lower text section */
 }
 
+/**
+ * @brief Creates and initializes a new MMU page table.
+ *
+ * This function allocates a new MMU page table, copies the kernel space
+ * page table into it, and flushes the data cache to ensure consistency.
+ *
+ * @return
+ * - A pointer to the newly allocated MMU page table on success.
+ * - RT_NULL if the allocation fails.
+ */
 void *rt_hw_mmu_pgtbl_create(void)
 {
     rt_ubase_t *mmu_table;
@@ -589,6 +711,13 @@ void *rt_hw_mmu_pgtbl_create(void)
     return mmu_table;
 }
 
+/**
+ * @brief Deletes an MMU page table.
+ *
+ * This function frees the memory allocated for the given MMU page table.
+ *
+ * @param pgtbl Pointer to the MMU page table to be deleted.
+ */
 void rt_hw_mmu_pgtbl_delete(void *pgtbl)
 {
     rt_pages_free(pgtbl, 0);
