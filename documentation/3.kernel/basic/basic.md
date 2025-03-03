@@ -1,7 +1,8 @@
 @page page_kernel_basics Kernel Basics
 
 This chapter gives a brief introduction to the software architecture of the RT-Thread kernel, beginning with its composition and implementation.  While also introducing RT-Thread kernel-related concepts for beginners.
-After understanding this chapter, readers will have an elementary understanding of the RT Thread kernel and will be able to answer questions such as -
+
+After understanding this chapter, readers will have an elementary understanding of the RT Thread kernel and will be able to answer questions such as:
 
 - What are the constituents of the kernel?
 - How does the system startup?
@@ -12,29 +13,32 @@ In the nutshell, this is only a brief introduction to software architecture deco
 
 # Introduction to RT-Thread Kernel
 
-Kernel is the most basic and fundenmental part of an Operating System. Kernel service library and RT-Thread kernel libraries are interfacing between hardware and components/service layer. This includes the implementation of real-time kernel service library (rtservice.h/kservice.c) and other RT-Thread kernel libraries such as object management, thread management and scheduler, inter-thread communication management, clock management and memory management respectively. Below diagram is the core architecture diagram of the core kernel.
+Kernel is the most basic and fundenmental part of an Operating System. Kernel service library and RT-Thread kernel libraries are interfacing between hardware and components/service layer. This includes the implementation of real-time kernel service library (`rtservice.h/kservice.c`) and other RT-Thread kernel libraries such as object management, thread management and scheduler, inter-thread communication management, clock management and memory management respectively. Below diagram is the core architecture diagram of the core kernel.
 
 ![RT-Thread Kernel and its Substructure](figures/03kernel_Framework.png)
 
 Implementation of core kernel libraries are similar to a small set of standard C runtime library and it can run independently. For example, Standard C library (C runtime library) provides "strcpy", "memcpy", "printf", "scanf" and other function implementations. RT-Thread kernel libraries also provide the function implementations which are mainly used by Core Kernel. However, to avoid name conflicts, specifically functions' names are preceded with rt_.
 
-
 The built of the Kernel will be vary depending on the complier. For example, using GNU GCC compiler, it will use more implementation from the standard C library. Last but not least, the minimum resource requirements of the Kernel is 3KB ROM and 1.2KB RAM.
-
 
 ## Thread Scheduling
 
 Thread is the smallest scheduling unit in the RT-Thread operating system. The thread scheduling algorithm is a **Priority-based Full Preemptive Multi-Thread** scheduling algorithm.
+
 The system can support up to 256(0 - 255) thread priorities. For systems with tight resources, configurations with 8 or 32 thread priorities can be chosen(For example, STM32 has 32 thread priorities as per the default configuration). Lower numbers have a higher priority where 0 represents the highest priority furthermore the lowest priority(highest number) is reserved for idle threads.
+
 RT-Thread supports the creation of multiple threads with the same priority. Threads having the same priority are scheduled with a Time Slice Rotation Scheduling algorithm so that each thread runs for the same amount of time.
+
 The number of threads is bounded by the memory of the hardware platform and not the system.
 
-Thread management will be covered in detail in the "Thread Management" chapter.
+Thread management will be covered in detail in the chapter @ref page_thread_management.
 
-## Clock Management
+## Clock & Timer Management
 
 RT-Thread's Clock management is based upon a **clock beat**, which is the smallest clock unit in the RT-Thread operating system.
+
 The RT-Thread timer provides two types of timer mechanisms:
+
 - **One-Shot Timer** - Triggers only one timer event after startup and then stops automatically.
 - **Periodic Trigger Timer** - Periodically triggers timer events until the user manually stops the timer or it will continue to operate.
 
@@ -42,52 +46,60 @@ The RT-Thread timer can be set to the `HARD_TIMER` or the `SOFT_TIMER` mode depe
 
 The timer service is concluded using a timer timing callback i.e. a timeout function. The user can select the appropriate type of timer according to their real-time requirements for timing processing.
 
-Timer will be explained further in the "Clock Management" chapter.
+Timer will be explained further in the chapter @ref page_clock_management.
 
 ## Synchronization between Threads
 
 RT-Thread uses thread semaphores, mutexes, and event sets to achieve inter-thread synchronization.
-Thread synchronizations happen through the acquisition and release of semaphore and mutexes.
-The mutex uses priority inheritance to solve the common priority inversion problem in the real-time system. The thread synchronization mechanism allows threads to wait according to priorities or to acquire semaphores/mutexes following the First In First Out(FIFO) method.
-Event sets are primarily used for synchronization between threads, they can achieve one-to-many and many-to-many synchronization. It allows "**OR** trigger"(*independent synchronization*) and "**AND** trigger"(*associative synchronization*) suitable for situations where threads are waiting for multiple events.
 
-The concepts of semaphores, mutexes, and event sets are detailed in the "Inter-Thread Synchronization" chapter.
+Thread synchronizations happen through the acquisition and release of semaphore and mutexes.
+
+The mutex uses priority inheritance to solve the common priority inversion problem in the real-time system. The thread synchronization mechanism allows threads to wait according to priorities or to acquire semaphores/mutexes following the First In First Out(FIFO) method.
+
+Event sets are primarily used for synchronization between threads, they can achieve one-to-many and many-to-many synchronization. It allows **OR trigger** (*independent synchronization*) and **AND trigger**(*associative synchronization*) suitable for situations where threads are waiting for multiple events.
+
+The concepts of semaphores, mutexes, and event sets are detailed in the chapter @ref page_thread_sync.
 
 ## Inter-Thread Communication
 
 RT-Thread supports communication mechanisms such as mailbox, message queue, etc. The mailbox's message length is fixed to 4 bytes. Whereas, message queue can receive messages in variable size and cache the messages in its own memory space.  
+
 Compared to a message queue, a mailbox is more efficient. The sending action of the mailbox and message queue can be safely used in an ISR (Interrupt Service Routine). The communication mechanism allows threads to wait by priority or to acquire by the First In First Out (FIFO) method.  
-The concept of mailbox and message queue will be explained in detail in the "Inter-Thread Communication" chapter.
+
+The concept of mailbox and message queue will be explained in detail in the chapter @ref page_thread_comm.
 
 ## Memory Management
 
 RT-Thread allows:
+
 1. Static Memory Pool
 2. Dynamic Memory Pool  
 
 When the static memory pool has available memory, the time allocated to the memory block will be constant. 
+
 When the static memory pool is empty, the system will then request for suspending or blocking the thread of the memory block. The thread will abandon the request and return if the memory block is not obtained after waiting for a while, or the thread will abandon and return immediately. The waiting time depends on the waiting time parameter set when the memory block is applied. When other threads release the memory block to the memory pool, the system will wake up the thread if there are suspended threads waiting to be allocated of memory blocks.
 
 Under circumstances of different system resources, the dynamic memory heap management module respectively provides memory management algorithms for small memory systems and SLAB memory management algorithms for large memory systems.
 
 There is also a dynamic memory heap management called memheap, suitable for memory heaps in systems with multiple addresses that can be discontinuous. Using memheap, the user can "paste" multiple memory heaps together, letting them operate as if operating a memory heap.
 
-The concept of memory management will be explained in the "Memory Management" chapter.
+The concept of memory management will be explained in the chapter @ref page_memory_management.
 
 ## I/O Device Management
 
 RT-Thread uses I2C, SPI, USB, UART, etc., as peripheral devices and is uniformly registered through the device. It realized a device management subsystem accessed by the name, and it can access hardware devices according to a unified API interface. On the device driver interface, depending on the characteristics of the embedded system, corresponding events can be attached to different devices. The driver notifies the upper application program when the device event is triggered.
 
-The concept of I/O device management will be explained in the "Device Model" and "General Equipment" chapters.
+The concept of I/O device management will be explained in the chapter @ref page_device_framework.
 
 # RT-Thread Startup Process
 
-The understanding of most codes usually starts from learning the startup process. We will firstly look for the source of the startup. Taking MDK-ARM as an example, the user program entry for MDK-ARM is the main() function located in the main.c file. The launching of the system starts from the assembly code startup_stm32f103xe.s, jumps to the C code, initializes the RT-Thread system function, and finally enters the user program entry main().
+The understanding of most codes usually starts from learning the startup process. We will firstly look for the source of the startup. Taking MDK-ARM as an example, the user program entry for MDK-ARM is the `main()` function located in the `main.c` file. The launching of the system starts from the assembly code `startup_stm32f103xe.s`, jumps to the C code, initializes the RT-Thread system function, and finally enters the user program entry `main()`.
 
-To complete the RT-Thread system function initialization before entering main(), we used the MDK extensions  `$Sub$$` and  `$Super$$`. Users can add the prefix of `$Sub$$` to main to make it a new function `$Sub$$main`.  
-`$Sub$$main` can call some functions to be added before main (here, RT-Thread system initialization function is added). Then, call `$Super$$main` to the main() function so that the user does not have to manage the system initialization before main(). 
+To complete the RT-Thread system function initialization before entering `main()`, we used the MDK extensions  `$Sub$$` and  `$Super$$`. Users can add the prefix of `$Sub$$` to main to make it a new function `$Sub$$main`.
 
-For more information on the use of the `$Sub$$` and `$Super$$`extensions, see the ARM® Compiler v5.06 for μVision®armlink User Guide.
+`$Sub$$main` can call some functions to be added before main (here, RT-Thread system initialization function is added). Then, call `$Super$$main` to the `main()` function so that the user does not have to manage the system initialization before main().
+
+For more information on the use of the `$Sub$$` and `$Super$$` extensions, see the ARM® Compiler v5.06 for μVision®armlink User Guide.
 
 Let's take a look at this code defined in components.c:
 
@@ -100,12 +112,13 @@ int $Sub$$main(void)
 }
 ```
 
-Here, the `$Sub$$main` function simply calls the rtthread_startup() function. RT-Thread allows multiple platforms and multiple compilers, and the rtthread_startup() function is a uniform entry point specified by RT-Thread, so the `$Sub$$main` function only needs to call the rtthread_startup() function (RT-Thread compiled using compiler GNU GCC is an example where it jumps directly from the assembly startup code section to the rtthread_startup() function and starts the execution of the first C code).  
-The rtthread_startup() function can be found in the code of components.c, the startup process of RT-Thread is as shown below:
+Here, the `$Sub$$main` function simply calls the `rtthread_startup()` function. RT-Thread allows multiple platforms and multiple compilers, and the `rtthread_startup()` function is a uniform entry point specified by RT-Thread, so the `$Sub$$main` function only needs to call the `rtthread_startup()` function (RT-Thread compiled using compiler GNU GCC is an example where it jumps directly from the assembly startup code section to the `rtthread_startup()` function and starts the execution of the first C code).
+
+The `rtthread_startup()` function can be found in the code of `components.c`, the startup process of RT-Thread is as shown below:
 
 ![System startup process](figures/03Startup_process.png)
 
-Code for the rtthread_startup() function is as follows:
+Code for the `rtthread_startup()` function is as follows:
 
 ```c
 int rtthread_startup(void)
@@ -153,8 +166,9 @@ This part of the startup code can be roughly divided into four parts:
 3. Create the main thread initialize various modules in the main thread one by one.
 4. Initialize the timer thread, idle thread, and start the scheduler.
 
-Set the system clock in rt_hw_board_init() to provide heartbeat and serial port initialization for the system, bound to the system's input and output terminals to this serial port. Subsequent system operation information will be printed out from the serial port later.  
-The main() function is the user code entry for RT-Thread, and users can add their own applications to the main() function.
+Set the system clock in `rt_hw_board_init()` to provide heartbeat and serial port initialization for the system, bound to the system's input and output terminals to this serial port. Subsequent system operation information will be printed out from the serial port later.
+
+The `main()` function is the user code entry for RT-Thread, and users can add their own applications to the `main()` function.
 
 ```c
 int main(void)
@@ -229,6 +243,7 @@ void sensor_init()
      /* ... */
 }
 ```
+
 The `sensor_value` is stored in the ZI segment and is automatically initialized to zero after system startup (some library functions provided by the user program or compiler are initialized to zero). The sensor_inited variable is stored in the RW segment, and the sensor_enable is stored in the RO segment.
 
 # RT-Thread Automatic Initialization Mechanism
@@ -250,35 +265,35 @@ int rt_hw_usart_init(void)  /* Serial port initialization function */
 INIT_BOARD_EXPORT(rt_hw_usart_init);    /* Use component auto-initialization mechanism */
 ```
 
-The last part of the sample code INIT_BOARD_EXPORT(rt_hw_usart_init) indicates that the automatic initialization function is used. In this way, rt_hw_usart_init() function is automatically called by the system, so where is it called?
+The last part of the sample code `INIT_BOARD_EXPORT(rt_hw_usart_init)` indicates that the automatic initialization function is used. In this way, `rt_hw_usart_init()` function is automatically called by the system, so where is it called?
 
-In the system startup flowchart, there are two functions: rt_components_board_init() and rt_components_init(), subsequent functions inside the box with the underlying color represent functions that are automatically initialized, where:
+In the system startup flowchart, there are two functions: `rt_components_board_init()` and `rt_components_init()`, subsequent functions inside the box with the underlying color represent functions that are automatically initialized, where:
 
-1.  “board init functions” are all initialization functions declared by INIT_BOARD_EXPORT(fn).
-2.  “pre-initialization functions” are all initialization functions declared by INIT_PREV_EXPORT(fn).
-3.  “device init functions” are all initialization functions declared by INIT_DEVICE_EXPORT(fn).
-4.  “components init functions” are all initialization functions declared by INIT_COMPONENT_EXPORT(fn).
-5.  “enviroment init functions” are all initialization functions declared by INIT_ENV_EXPORT(fn).
-6.  “application init functions” are all initialization functions declared by INIT_APP_EXPORT(fn).
+1.  “board init functions” are all initialization functions declared by `INIT_BOARD_EXPORT(fn)`.
+2.  “pre-initialization functions” are all initialization functions declared by `INIT_PREV_EXPORT(fn)`.
+3.  “device init functions” are all initialization functions declared by `INIT_DEVICE_EXPORT(fn)`.
+4.  “components init functions” are all initialization functions declared by `INIT_COMPONENT_EXPORT(fn)`.
+5.  “enviroment init functions” are all initialization functions declared by `INIT_ENV_EXPORT(fn)`.
+6.  “application init functions” are all initialization functions declared by `INIT_APP_EXPORT(fn)`.
 
-The rt_components_board_init() function executes earlier, mainly to initialize the relevant hardware environment. When this function is executed, it will traverse the initialization function table declared by INIT_BOARD_EXPORT(fn) and call each function.
+The `rt_components_board_init()` function executes earlier, mainly to initialize the relevant hardware environment. When this function is executed, it will traverse the initialization function table declared by `INIT_BOARD_EXPORT(fn)` and call each function.
 
-The rt_components_init() function is called and executed in the main thread created after the operating system is running. At this time, the hardware environment and the operating system have been initialized and the application-related code can be executed. The rt_components_init() function will transverse through the remaining few initialization function tables declared by macros.
+The `rt_components_init()` function is called and executed in the main thread created after the operating system is running. At this time, the hardware environment and the operating system have been initialized and the application-related code can be executed. The `rt_components_init()` function will transverse through the remaining few initialization function tables declared by macros.
 
 RT-Thread's automatic initialization mechanism uses a custom RTI symbol segment, it puts the function pointer that needs to be initialized at startup into this segment and forms an initialization function table which will be traversed during system startup. It calls the functions in the table to achieve the purpose of automatic initialization.
 
 The macro interface definitions used to implement the automatic initialization function are described in the following table:
 
-|Initialization sequence|Macro Interface               |Description                                    |
-|----------------|------------------------------------|----------------------------------------------|
-| 1              | INIT_BOARD_EXPORT(fn)     | Very early initialization, the scheduler has not started yet. |
-| 2              | INIT_PREV_EXPORT(fn)      | Mainly used for pure software initialization, functions without too many dependencies |
-| 3              | INIT_DEVICE_EXPORT(fn)    | Peripheral driver initialization related, such as network card devices |
-| 4             | INIT_COMPONENT_EXPORT(fn) | Component initialization, such as file system or LWIP |
-| 5              | INIT_ENV_EXPORT(fn)       | System environment initialization, such as mounting file systems |
-| 6              | INIT_APP_EXPORT(fn)       | Application initialization, such as application GUI |
+|Initialization sequence|Macro Interface            |Description                                   |
+|-----------------------|---------------------------|----------------------------------------------|
+| 1                     | INIT_BOARD_EXPORT(fn)     | Very early initialization, the scheduler has not started yet. |
+| 2                     | INIT_PREV_EXPORT(fn)      | Mainly used for pure software initialization, functions without too many dependencies |
+| 3                     | INIT_DEVICE_EXPORT(fn)    | Peripheral driver initialization related, such as network card devices |
+| 4                     | INIT_COMPONENT_EXPORT(fn) | Component initialization, such as file system or LWIP |
+| 5                     | INIT_ENV_EXPORT(fn)       | System environment initialization, such as mounting file systems |
+| 6                     | INIT_APP_EXPORT(fn)       | Application initialization, such as application GUI |
 
-Initialization function actively declares through these macro interfaces, such as INIT_BOARD_EXPORT (rt_hw_usart_init), the linker will automatically collect all the declared initialization functions, placed in the RTI symbol segment, the symbol segment is located in the RO segment of the memory distribution. All functions in this RTI symbol segment are automatically called when the system is initialized.
+Initialization function actively declares through these macro interfaces, such as `INIT_BOARD_EXPORT(rt_hw_usart_init)`, the linker will automatically collect all the declared initialization functions, placed in the RTI symbol segment, the symbol segment is located in the RO segment of the memory distribution. All functions in this RTI symbol segment are automatically called when the system is initialized.
 
 # RT-Thread Kernel Object Model
 
@@ -359,7 +374,7 @@ int thread_sample_init()
 }
 ```
 
-In this example, thread1 is a static thread object and thread2 is a dynamic thread object. The memory space of the thread1 object, including the thread control block thread1 and the stack space thread1_stack are all determined while compiling, because there is no initial value in the code and they are uniformly placed in the uninitialized data segment. The space used by thread2 is dynamically allocated includes the thread control block (the content pointed to by thread2_ptr) and the stack space.
+In this example, `thread1` is a static thread object and `thread2` is a dynamic thread object. The memory space of the `thread1` object, including the thread control block `thread1` and the stack space `thread1_stack` are all determined while compiling, because there is no initial value in the code and they are uniformly placed in the uninitialized data segment. The space used by `thread2` is dynamically allocated includes the thread control block (the content pointed to by `thread2_ptr`) and the stack space.
 
 Static objects take up RAM space and is not depend on the memory heap manager. When allocating static objects, the time needed is determined. Dynamic objects depend on the memory heap manager. It requests RAM space while running. When the object is deleted, the occupied RAM space is released. These two methods have their own advantages and disadvantages, and can be selected according to actual needs.
 
@@ -441,7 +456,7 @@ enum rt_object_class_type
 };
 ```
 
-From the above type specification, we can see that if it is a static object, the highest bit of the object type will be 1 (which is the OR operation of RT_Object_Class_Static and other object types and operations).  Otherwise it will be dynamic object, and the maximum number of object classes that the system can accommodate is 127.
+From the above type specification, we can see that if it is a static object, the highest bit of the object type will be 1 (which is the OR operation of `RT_Object_Class_Static` and other object types and operations).  Otherwise it will be dynamic object, and the maximum number of object classes that the system can accommodate is 127.
 
 ## Kernel Object Management
 
@@ -459,7 +474,7 @@ struct rt_object_information
 };
 ```
 
-A class of objects is managed by an rt_object_information structure, and each practical instance of such type of object is mounted to the object_list in the form of a linked list. The memory block size of this type of object is identified by object_size (the memory block each practical instance of each type of object is the same size).
+A class of objects is managed by an `rt_object_information` structure, and each practical instance of such type of object is mounted to the `object_list` in the form of a linked list. The memory block size of this type of object is identified by `object_size` (the memory block each practical instance of each type of object is the same size).
 
 ### Initialization Object
 
@@ -474,7 +489,7 @@ void rt_object_init(struct  rt_object*  object ,
 When this function is called to initialize the object, the system will place the object into the object container for management, that is, initialize some parameters of the object, and then insert the object node into the object linked list of the object container. Input parameters of the function is described in the following table:
 
 
-|Parameters|Description                                                    |
+|Parameters| Description                                                  |
 | -------- | ------------------------------------------------------------ |
 | object   | The object pointer that needs to be initialized must point to a specific object memory block, not a null pointer or a wild pointer. |
 | type     | The type of the object must be a enumeration type listed in rt_object_class_type, RT_Object_Class_Static excluded. (For static objects, or objects initialized with the rt_object_init interface, the system identifies it as an RT_Object_Class_Static type) |
@@ -502,13 +517,13 @@ rt_object_t rt_object_allocate(enum  rt_object_class_typetype ,
 When calling the above interface, the system first needs to obtain object information according to the object type (especially the size information of the object type for the system to allocate the correct size of the memory data block), and then allocate memory space corresponding to the size of the object from the memory heap. Next, to start necessary initialization for the object, and finally insert it into the object container linked list in which it is located. The input parameters for this function are described in the following table:
 
 
-|Parameters          |Description                                                    |
+|Parameters          |Description                                                   |
 | ------------------ | ------------------------------------------------------------ |
 | type               | The type of the allocated object can only be of type rt_object_class_type other than RT_Object_Class_Static. In addition, the type of object allocated through this interface is dynamic, not static. |
 | name               | Name of the object. Each object can be set to a name, and the maximum length for the name is specified by RT_NAME_MAX. The system does not care if it uses ’`\0`’as a terminal symbol. |
-|**Return**          | ——                                                           |
-| object handle allocated successfully | Allocate successfully |
-| RT_NULL            | Fail to allocate               |
+|**Return**          | -                                                            |
+| object handle allocated successfully | Allocate successfully                      |
+| RT_NULL            | Fail to allocate                                             |
 
 ### Delete Object
 
@@ -521,8 +536,8 @@ void rt_object_delete(rt_object_t object);
 When the above interface is called, the object is first detached from the object container linked list, and then the memory occupied by the object is released. The following table describes the input parameters of the function:
 
 
-|Parameter|Description  |
-|----------|------------|
+|Parameter |Description    |
+|----------|---------------|
 | object   | object handle |
 
 ### Identify objects
@@ -533,20 +548,19 @@ Identify whether the specified object is a system object (static kernel object).
 rt_err_t rt_object_is_systemobject(rt_object_t object);
 ```
 
-Calling the rt_object_is_systemobject interface can help to identify whether an object is a system object. In RT-Thread operating system, a system object is also a static object, RT_Object_Class_Static bit is set to 1 on the object type identifier. Usually, objects that are initialized using the rt_object_init() method are system objects. The input parameters for this function are described in the following table:
+Calling the `rt_object_is_systemobject` interface can help to identify whether an object is a system object. In RT-Thread operating system, a system object is also a static object, `RT_Object_Class_Static` bit is set to 1 on the object type identifier. Usually, objects that are initialized using the `rt_object_init()` method are system objects. The input parameters for this function are described in the following table:
 
-Input parameter of rt_object_is_systemobject()
+Input parameter of `rt_object_is_systemobject()`
 
-|**Parameter**|Description  |
-|----------|------------|
-| object   | Object handle |
+|**Parameter**|Description    |
+|-------------|---------------|
+| object      | Object handle |
 
-RT-Thread Kernel Configuration Example
-----------------------
+## RT-Thread Kernel Configuration Example
 
 An important feature of RT-Thread is its high degree of tailorability, which allows for fine-tuning of the kernel and flexible removal of components.
 
-Configuration is mainly done by modifying the file under project directory - rtconfig.h. User can conditionally compile the code by opening/closing the macro definition in the file, and finally achieve the purpos e of system configuration and cropping, as follows:
+Configuration is mainly done by modifying the file under project directory - `rtconfig.h`. User can conditionally compile the code by opening/closing the macro definition in the file, and finally achieve the purpose of system configuration and cropping, as follows:
 
 （1）RT-Thread Kernel part
 
@@ -691,44 +705,43 @@ Configuration is mainly done by modifying the file under project directory - rtc
 #define RT_USING_UART1
 ```
 
->In practice, the system configuration file rtconfig.h is automatically generated by configuration tools and does not need to be changed manually.
+In practice, the system configuration file `rtconfig.h` is automatically generated by configuration tools and does not need to be changed manually.
 
-Common Macro Definition Description
---------------
+## Common Macro Definition Description
 
 Macro definitions are often used in RT-Thread. For example, some common macro definitions in the Keil compilation environment:
 
-1）rt_inline, definition is as follows, static keyword is to make the function only available for use in the current file; inline means inline, after modification using static, the compiler is recommended to perform inline expansion when calling the function.
+1）`rt_inline`, definition is as follows, static keyword is to make the function only available for use in the current file; inline means inline, after modification using static, the compiler is recommended to perform inline expansion when calling the function.
 
 ```c
 #define rt_inline                   static __inline
 ```
 
-2）rt_used，definition is as follows, the purpose of this macro is to explain to the compiler that this code is useful, compilation needs to be saved even if it is not called in the function. For example, RT-Thread auto-initialization uses custom segments, using rt_used will retain custom code snippets.
+2）`rt_used`，definition is as follows, the purpose of this macro is to explain to the compiler that this code is useful, compilation needs to be saved even if it is not called in the function. For example, RT-Thread auto-initialization uses custom segments, using `rt_used` will retain custom code snippets.
 
 ```c
 #define rt_used                     __attribute__((used))
 ```
 
-3）RT_UNUSED，definition is as follows, indicates that a function or variable may not be used. This attribute prevents the compiler from generating warnings.
+3）`RT_UNUSED`，definition is as follows, indicates that a function or variable may not be used. This attribute prevents the compiler from generating warnings.
 
 ```c
 #define RT_UNUSED                   __attribute__((unused))
 ```
 
-4）rt_weak，definition is as follows, often used to define functions, when linking the function, the compiler will link the function without the keyword prefix first and link the function modified by weak if it can't find those functions.
+4）`rt_weak`，definition is as follows, often used to define functions, when linking the function, the compiler will link the function without the keyword prefix first and link the function modified by weak if it can't find those functions.
 
 ```c
 #define rt_weak                     __weak
 ```
 
-5）ALIGN(n)，definition is as follows, is used to align its stored address with n bytes when allocating an address space to an object. Here, n can be the power of 2. Byte alignment not only facilitates quick CPU access, but also save memory space if byte alignment  is properly used.
+5）`ALIGN(n)`，definition is as follows, is used to align its stored address with n bytes when allocating an address space to an object. Here, `n` can be the power of 2. Byte alignment not only facilitates quick CPU access, but also save memory space if byte alignment is properly used.
 
 ```c
 #define ALIGN(n)                    __attribute__((aligned(n)))
 ```
 
-6）RT_ALIGN(size,align)，definition is as follows, to increase size to a multiple of an integer defined by align. For example, RT_ALIGN(13,4) will return to 16.
+6）`RT_ALIGN(size,align)`，definition is as follows, to increase size to a multiple of an integer defined by align. For example, `RT_ALIGN(13,4)` will return to 16.
 
 ```c
 #define RT_ALIGN(size, align)      (((size) + (align) - 1) & ~((align) - 1))
