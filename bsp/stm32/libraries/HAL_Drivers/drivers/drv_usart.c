@@ -34,9 +34,6 @@
 static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
 #endif
 
-/* Number of while blocking timeouts for the stm32_putc */
-#define TX_BLOCK_TIMEOUT    2000
-
 enum
 {
 #ifdef BSP_USING_UART1
@@ -233,8 +230,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
         return -RT_ERROR;
     }
     uart->DR_mask = stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
-    uart->tx_block_timeout = TX_BLOCK_TIMEOUT;
-
+    uart->tx_block_timeout = BSP_STM32_UART_V1_TX_TIMEOUT;
     return RT_EOK;
 }
 
