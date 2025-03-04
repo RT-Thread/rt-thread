@@ -169,9 +169,6 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
         /* clean magic */
         ptd->magic = 0x0;
 
-        /* clear the "ptd->tid->pthread_data" */
-        ptd->tid->pthread_data = RT_NULL;
-
         /* free ptd */
         rt_free(ptd);
     }
@@ -184,6 +181,9 @@ static void _pthread_cleanup(rt_thread_t tid)
 
     /* restore tid stack */
     rt_free(tid->stack_addr);
+
+    /* clear the "ptd->tid->pthread_data" */
+    tid->pthread_data = RT_NULL;
 
     /* restore tid control block */
     rt_free(tid);
