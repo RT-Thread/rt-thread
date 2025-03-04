@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
+ * 2025-03-04     wumingzi     add doxygen comments.
  */
 
 #include <rthw.h>
