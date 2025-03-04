@@ -5,6 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-03-04     wumingzi     add doxygen comments.
  */
 #ifndef __DEV_AUDIO_PIPE_H__
 #define __DEV_AUDIO_PIPE_H__

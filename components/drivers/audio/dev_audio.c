@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017-05-09     Urey         first version
  * 2019-07-09     Zero-Free    improve device ops interface and data flows
+ * 2025-03-04     wumingzi     add doxygen comments.
  */
 
 #include <stdio.h>
@@ -23,7 +24,7 @@
 #endif
 
 /**
- * @addtogroup group_AudioPipe
+ * @addtogroup group_Audio
  */
 
 /** @{ */
