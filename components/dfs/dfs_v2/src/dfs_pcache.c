@@ -21,11 +21,6 @@
 
 #ifdef RT_USING_PAGECACHE
 
-#include <mm_page.h>
-#include <mm_private.h>
-#include <mmu.h>
-#include <tlb.h>
-
 #ifndef RT_PAGECACHE_COUNT
 #define RT_PAGECACHE_COUNT          4096
 #endif
