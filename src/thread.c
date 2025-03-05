@@ -398,7 +398,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     LOG_D("startup a thread:%s with priority:%d",
-          thread->parent.name, thread->current_priority);
+          thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 
     /* calculate priority attribute and reset thread stat to suspend */
     rt_sched_thread_startup(thread);
@@ -911,7 +911,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     stat = rt_sched_thread_get_stat(thread);
     if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        LOG_D("thread suspend: thread disorder, 0x%2x", thread->stat);
+        LOG_D("thread suspend: thread disorder, 0x%2x", RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
         return -RT_ERROR;
     }
