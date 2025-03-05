@@ -26,6 +26,7 @@ struct rt_ofw_stub *rt_ofw_stub_probe_range(struct rt_ofw_node *np,
     const struct rt_ofw_stub *stub = RT_NULL;
 
     if (np && stub_start && stub_end &&
+        rt_ofw_node_is_available(np) &&
         !rt_ofw_node_test_flag(np, RT_OFW_F_READLY) &&
         !rt_ofw_node_test_flag(np, RT_OFW_F_SYSTEM))
     {
