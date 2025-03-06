@@ -26,8 +26,6 @@ jobs:
       issues: write
       pull-requests: write
       contents: write
-    env:
-      SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -161,28 +159,28 @@ jobs:
             echo "> ℹ️ **刷新CI状态操作需要具备仓库写入权限。**"
             echo "> ℹ️ **Refresh CI status operation requires repository Write permission.**"
           } > review_data.md
-      - name: Post/Update comment
-        id: post_comment
-        run: |
-          # 查找现有的 bot 评论
-          existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
-            jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
+      # - name: Post/Update comment
+      #   id: post_comment
+      #   run: |
+      #     # 查找现有的 bot 评论
+      #     existing_comment=$(curl -s \
+      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #       "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
+      #       jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
           
-          if [[ -n "$existing_comment" ]]; then
-            # 更新现有评论
-            comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
-            echo "Updating existing comment $comment_id"
-            response=$(curl -s -X PATCH \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
-          else
-            # 创建新评论
-            echo "Creating new comment"
-            response=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-          fi
+      #     if [[ -n "$existing_comment" ]]; then
+      #       # 更新现有评论
+      #       comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
+      #       echo "Updating existing comment $comment_id"
+      #       response=$(curl -s -X PATCH \
+      #         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #         -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
+      #         "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
+      #     else
+      #       # 创建新评论
+      #       echo "Creating new comment"
+      #       response=$(curl -s -X POST \
+      #         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #         -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
+      #         "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+      #     fi
