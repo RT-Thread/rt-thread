@@ -26,7 +26,6 @@ jobs:
       issues: write
       pull-requests: write
       contents: write
-      discussions: write
     env:
       SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}
     steps:
