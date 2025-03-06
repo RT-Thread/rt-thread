@@ -45,9 +45,7 @@
  * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/src/function.c">documentation/0.doxygen/example/src/function.c</a>
  * for code example.
  *
- * See
- * <a href="./group__group__doxygen__example__function.html">Doxygen Example of Function</a>
- * for html output.
+ * See @ref group_doxygen_example_function for html output.
  *
  * @note <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/src/function.h">documentation/0.doxygen/example/src/function.h</a>
  * is just an example of the header file where we declare the API without

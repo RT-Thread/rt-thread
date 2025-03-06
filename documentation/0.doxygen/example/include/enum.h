@@ -16,9 +16,7 @@
  * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/enum.h">documentation/0.doxygen/example/include/enum.h</a>
  * for code example.
  *
- * See
- * <a href="./group__group__doxygen__example__enum.html">Doxygen Example of Enumeration</a>
- * for html output.
+ * See @ref group_doxygen_example_enum for html output.
  */
 
 /**
