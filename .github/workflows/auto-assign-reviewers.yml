@@ -159,6 +159,7 @@ jobs:
             echo "> ℹ️ **刷新CI状态操作需要具备仓库写入权限。**"
             echo "> ℹ️ **Refresh CI status operation requires repository Write permission.**"
           } > review_data.md
+          pwd
       # - name: Post/Update comment
       #   id: post_comment
       #   run: |
