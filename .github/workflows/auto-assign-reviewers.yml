@@ -28,7 +28,7 @@ jobs:
       contents: write
       discussions: write
     env:
-      SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW1 }}
+      SUPER_SECRET: ${{ secrets.ACTION_TOKEN_AUTO_REVIEW }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
