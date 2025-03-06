@@ -14,14 +14,22 @@
  *
  * See
  * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/enum.h">documentation/0.doxygen/example/include/enum.h</a>
- * for example.
+ * for code example.
+ *
+ * See
+ * <a href="./group__group__doxygen__example__enum.html">Doxygen Example of Enumeration</a>
+ * for html output.
  */
 
 /**
- * @addtogroup group_doxygen_example
+ * @defgroup group_doxygen_example_enum Doxygen Example of Enumeration
+ *
+ * @ingroup group_doxygen_example
+ *
+ * @brief Doxygen Example of Enumeration.
+ *
+ * @{
  */
-
-/** @{ */
 
 /**
  * @brief Brief description of this enumeration
