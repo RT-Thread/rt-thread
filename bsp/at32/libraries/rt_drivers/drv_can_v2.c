@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-08-30     shelton      first version
+ * 2024-12-18     shelton      add support f455/f456 and f457
  */
 
 #include "drv_can_v2.h"
@@ -64,6 +65,83 @@ static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
     {CANFD_DATA_4MBaud, 1 ,   9,   36,   9,  37},
     {CANFD_DATA_5MBaud, 1 ,   9,   27,   9,  28},
     {CANFD_DATA_6MBaud, 1 ,   6,   24,   6,  25},
+};
+#endif
+#endif
+
+#ifdef SOC_SERIES_AT32F455
+/* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
+/* attention !!! default apbclk 192 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   1 ,  48,  144,  48},
+    {CAN800kBaud, 1 ,  60,  180,  60},
+    {CAN500kBaud, 1 ,  96,  288,  96},
+    {CAN250kBaud, 2 ,  96,  288,  96},
+    {CAN125kBaud, 3 ,  128, 384, 128},
+    {CAN100kBaud, 4 ,  120, 260, 120},
+    {CAN50kBaud,  8,   120, 260, 120},
+    {CAN20kBaud,  16,  150, 450, 150},
+    {CAN10kBaud,  24,  200, 600, 200},
+};
+#endif
+
+#ifdef SOC_SERIES_AT32F456
+/* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
+/* attention !!! default apbclk 192 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   1 ,  48,  144,  48},
+    {CAN800kBaud, 1 ,  60,  180,  60},
+    {CAN500kBaud, 1 ,  96,  288,  96},
+    {CAN250kBaud, 2 ,  96,  288,  96},
+    {CAN125kBaud, 3 ,  128, 384, 128},
+    {CAN100kBaud, 4 ,  120, 260, 120},
+    {CAN50kBaud,  8,   120, 260, 120},
+    {CAN20kBaud,  16,  150, 450, 150},
+    {CAN10kBaud,  24,  200, 600, 200},
+};
+
+#ifdef RT_CAN_USING_CANFD
+/* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
+/* attention !!! default apbclk 192 mhz, ssoffset default value is 'seg1 + 1', baud_rate_fd.div must equal to baud_rate.div */
+static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
+{
+    {CANFD_DATA_1MBaud, 1 ,  48,  144,  48, 145},
+    {CANFD_DATA_2MBaud, 1 ,  24,   72,  24,  25},
+    {CANFD_DATA_3MBaud, 1 ,  16,   48,  16,  49},
+    {CANFD_DATA_4MBaud, 1 ,  12,   36,  12,  37},
+    {CANFD_DATA_6MBaud, 1 ,  12,   24,  12,  25},
+};
+#endif
+#endif
+
+#ifdef SOC_SERIES_AT32F457
+/* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
+/* attention !!! default apbclk 192 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   1 ,  48,  144,  48},
+    {CAN800kBaud, 1 ,  60,  180,  60},
+    {CAN500kBaud, 1 ,  96,  288,  96},
+    {CAN250kBaud, 2 ,  96,  288,  96},
+    {CAN125kBaud, 3 ,  128, 384, 128},
+    {CAN100kBaud, 4 ,  120, 260, 120},
+    {CAN50kBaud,  8,   120, 260, 120},
+    {CAN20kBaud,  16,  150, 450, 150},
+    {CAN10kBaud,  24,  200, 600, 200},
+};
+
+#ifdef RT_CAN_USING_CANFD
+/* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
+/* attention !!! default apbclk 192 mhz, ssoffset default value is 'seg1 + 1', baud_rate_fd.div must equal to baud_rate.div */
+static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
+{
+    {CANFD_DATA_1MBaud, 1 ,  48,  144,  48, 145},
+    {CANFD_DATA_2MBaud, 1 ,  24,   72,  24,  25},
+    {CANFD_DATA_3MBaud, 1 ,  16,   48,  16,  49},
+    {CANFD_DATA_4MBaud, 1 ,  12,   36,  12,  37},
+    {CANFD_DATA_6MBaud, 1 ,  12,   24,  12,  25},
 };
 #endif
 #endif
