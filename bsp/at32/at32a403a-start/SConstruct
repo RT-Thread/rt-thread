@@ -48,7 +48,7 @@ Export('SDK_LIB')
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # include cmsis
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'cmsis', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'CMSIS', 'SConscript')))
 
 # include usb libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'usbd_library', 'SConscript')))
