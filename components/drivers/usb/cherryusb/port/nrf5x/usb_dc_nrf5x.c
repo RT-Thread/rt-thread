@@ -5,10 +5,6 @@
 #include "usb_dc.h"
 #include "usbd_core.h"
 
-#ifndef USBD_IRQHandler
-#define USBD_IRQHandler USBD_IRQHandler /*!< Use actual usb irq name instead */
-#endif
-
 #ifndef USBD_CONFIG_ISO_IN_ZLP
 #define USBD_CONFIG_ISO_IN_ZLP 0
 #endif
@@ -594,7 +590,7 @@ int usb_dc_deinit(uint8_t busid)
  * @param[in]        None
  * @retval           None
  */
-void USBD_IRQHandler(void)
+void USBD_IRQHandler(uint8_t busid)
 {
   uint32_t const inten = NRF_USBD->INTEN;
   uint32_t int_status = 0;
