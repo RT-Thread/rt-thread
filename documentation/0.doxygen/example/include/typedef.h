@@ -28,9 +28,7 @@
  * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/typedef.h">documentation/0.doxygen/example/include/typedef.h</a>
  * for code example.
  *
- * See
- * <a href="./group__group__doxygen__example__typedef.html">Doxygen Example of Typedef</a>
- * for html output.
+ * See @ref group_doxygen_example_typedef for html output.
  */
 
 #include "struct.h"

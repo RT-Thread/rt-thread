@@ -20,9 +20,14 @@
  *   <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/macro.h">documentation/0.doxygen/example/include/macro.h</a>
  *   for code example.
  *
- * See
- * <a href="./group__group__doxygen__example__macro.html">Doxygen Example of Macro</a>
- * for html output.
+ * We often categorize macros in our code. Similarly, when writing doxygen
+ * comments for these categorized macros, we can also group them. See
+ * `DOXYGEN_EXAMPLE_GROUP_A_X`/`DOXYGEN_EXAMPLE_GROUP_A_Y` and
+ * `DOXYGEN_EXAMPLE_GROUP_B_X`/`DOXYGEN_EXAMPLE_GROUP_B_Y` in
+ * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/macro.h">documentation/0.doxygen/example/include/macro.h</a>
+ * for code example.
+ *
+ * See @ref group_doxygen_example_macro for html output.
  */
 
  /**
@@ -46,6 +51,28 @@
  * @return absolute value of @a x.
  */
 #define DOXYGEN_EXAMPLE_ABS(x) (((x)>0)?(x):-(x))
+
+/**
+ * @defgroup group_doxygen_example_macro_group_a Group A of Macros
+ *
+ * @brief Doxygen Example of Macros grouped in A.
+ *
+ * @{
+ */
+#define DOXYGEN_EXAMPLE_GROUP_A_X 0x0000 /**< Description of X in group A */
+#define DOXYGEN_EXAMPLE_GROUP_A_Y 0x0001 /**< Description of Y in group A */
+/** @} */
+
+/**
+ * @defgroup group_doxygen_example_macro_group_b Group B of Macros
+ *
+ * @brief Doxygen Example of Macros grouped in B
+ *
+ * @{
+ */
+#define DOXYGEN_EXAMPLE_GROUP_B_X 0x0000 /**< Description of X in group B */
+#define DOXYGEN_EXAMPLE_GROUP_B_Y 0x0001 /**< Description of Y in group B */
+/** @} */
 
 /** @} */
 

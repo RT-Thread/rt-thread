@@ -26,9 +26,7 @@
  * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/groups.h">documentation/0.doxygen/example/include/groups.h</a>
  * for code example.
  *
- * See
- * <a href="./group__group__doxygen__example__sub.html">Doxygen Example of Groups and Sub-Groups</a>
- * for html output.
+ * See @ref group_doxygen_example for html output.
  *
  * More information can be found in the Doxygen manual:
  * <a href="https://www.doxygen.nl/manual/grouping.html">Grouping</a>.
