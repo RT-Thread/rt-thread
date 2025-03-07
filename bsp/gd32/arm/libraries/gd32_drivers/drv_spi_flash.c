@@ -67,7 +67,7 @@ static int rt_hw_spi_flash_with_sfud_init(void)
 
     return RT_EOK;
 }
-INIT_COMPONENT_EXPORT(rt_hw_spi_flash_with_sfud_init)
+INIT_COMPONENT_EXPORT(rt_hw_spi_flash_with_sfud_init);
 #endif
 
 #ifdef RT_USING_DFS
