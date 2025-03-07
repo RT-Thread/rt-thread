@@ -103,6 +103,120 @@
 
 #define HID_KEYBOARD_REPORT_DESC_SIZE 63
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+static const uint8_t device_descriptor[] = {
+    USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0xef, 0x02, 0x01, USBD_VID, USBD_PID, 0x0001, 0x01)
+};
+
+static const uint8_t config_descriptor[] = {
+    USB_CONFIG_DESCRIPTOR_INIT(USB_VIDEO_DESC_SIZ, 0x06, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+    //VIDEO_VC_DESCRIPTOR_INIT(0x00, VIDEO_INT_EP, 0x0100, VIDEO_VC_TERMINAL_LEN, 48000000, 0x02),
+    VIDEO_VC_NOEP_DESCRIPTOR_INIT(0x00, VIDEO_INT_EP, 0x0100, VIDEO_VC_TERMINAL_LEN, 48000000, 0x02),
+    VIDEO_VS_DESCRIPTOR_INIT(0x01, 0x00, 0x00),
+    VIDEO_VS_INPUT_HEADER_DESCRIPTOR_INIT(0x01, VS_HEADER_SIZ, VIDEO_IN_EP, 0x00),
+    VIDEO_VS_FORMAT_MJPEG_DESCRIPTOR_INIT(0x01, 0x01),
+    VIDEO_VS_FRAME_MJPEG_DESCRIPTOR_INIT(0x01, WIDTH, HEIGHT, MIN_BIT_RATE, MAX_BIT_RATE, MAX_FRAME_SIZE, DBVAL(INTERVAL), 0x01, DBVAL(INTERVAL)),
+    VIDEO_VS_DESCRIPTOR_INIT(0x01, 0x01, 0x01),
+    /* 1.2.2.2 Standard VideoStream Isochronous Video Data Endpoint Descriptor */
+    USB_ENDPOINT_DESCRIPTOR_INIT(VIDEO_IN_EP, 0x05, VIDEO_PACKET_SIZE, 0x01),
+    AUDIO_AC_DESCRIPTOR_INIT(0x02, 0x03, AUDIO_AC_SIZ, 0x00, 0x03, 0x04),
+    AUDIO_AC_INPUT_TERMINAL_DESCRIPTOR_INIT(0x01, AUDIO_INTERM_MIC, 0x02, 0x0003),
+    AUDIO_AC_FEATURE_UNIT_DESCRIPTOR_INIT(0x02, 0x01, 0x01, 0x03, 0x00, 0x00),
+    AUDIO_AC_OUTPUT_TERMINAL_DESCRIPTOR_INIT(0x03, AUDIO_TERMINAL_STREAMING, 0x02),
+    AUDIO_AC_INPUT_TERMINAL_DESCRIPTOR_INIT(0x04, AUDIO_TERMINAL_STREAMING, 0x02, 0x0003),
+    AUDIO_AC_FEATURE_UNIT_DESCRIPTOR_INIT(0x05, 0x04, 0x01, 0x03, 0x00, 0x00),
+    AUDIO_AC_OUTPUT_TERMINAL_DESCRIPTOR_INIT(0x06, AUDIO_OUTTERM_SPEAKER, 0x05),
+    AUDIO_AS_DESCRIPTOR_INIT(0x03, 0x04, 0x02, AUDIO_SPEAKER_FRAME_SIZE_BYTE, AUDIO_SPEAKER_RESOLUTION_BIT, AUDIO_OUT_EP, 0x09, AUDIO_OUT_PACKET,
+                             EP_INTERVAL, AUDIO_SAMPLE_FREQ_3B(AUDIO_SPEAKER_FREQ)),
+    AUDIO_AS_DESCRIPTOR_INIT(0x04, 0x03, 0x02, AUDIO_MIC_FRAME_SIZE_BYTE, AUDIO_MIC_RESOLUTION_BIT, AUDIO_IN_EP, 0x05, AUDIO_IN_PACKET,
+                             EP_INTERVAL, AUDIO_SAMPLE_FREQ_3B(AUDIO_MIC_FREQ)),
+    /************** Descriptor of Joystick Mouse interface ****************/
+    /* 09 */
+    0x09,                          /* bLength: Interface Descriptor size */
+    USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType: Interface descriptor type */
+    0x05,                          /* bInterfaceNumber: Number of Interface */
+    0x00,                          /* bAlternateSetting: Alternate setting */
+    0x01,                          /* bNumEndpoints */
+    0x03,                          /* bInterfaceClass: HID */
+    0x01,                          /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+    0x01,                          /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+    0,                             /* iInterface: Index of string descriptor */
+    /******************** Descriptor of Joystick Mouse HID ********************/
+    /* 18 */
+    0x09,                    /* bLength: HID Descriptor size */
+    HID_DESCRIPTOR_TYPE_HID, /* bDescriptorType: HID */
+    0x11,                    /* bcdHID: HID Class Spec release number */
+    0x01,
+    0x00,                          /* bCountryCode: Hardware target country */
+    0x01,                          /* bNumDescriptors: Number of HID class descriptors to follow */
+    0x22,                          /* bDescriptorType */
+    HID_KEYBOARD_REPORT_DESC_SIZE, /* wItemLength: Total length of Report descriptor */
+    0x00,
+    /******************** Descriptor of Mouse endpoint ********************/
+    /* 27 */
+    0x07,                         /* bLength: Endpoint Descriptor size */
+    USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */
+    HID_INT_EP,                   /* bEndpointAddress: Endpoint Address (IN) */
+    0x03,                         /* bmAttributes: Interrupt endpoint */
+    HID_INT_EP_SIZE,              /* wMaxPacketSize: 4 Byte max */
+    0x00,
+    HID_INT_EP_INTERVAL, /* bInterval: Polling Interval */
+    /* 34 */
+};
+
+static const uint8_t device_quality_descriptor[] = {
+    ///////////////////////////////////////
+    /// device qualifier descriptor
+    ///////////////////////////////////////
+    0x0a,
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x00,
+    0x00,
+};
+
+static const char *string_descriptors[] = {
+    (const char[]){ 0x09, 0x04 }, /* Langid */
+    "CherryUSB",                  /* Manufacturer */
+    "CherryUSB UVC UAC HID DEMO", /* Product */
+    "2022123456",                 /* Serial Number */
+};
+
+static const uint8_t *device_descriptor_callback(uint8_t speed)
+{
+    return device_descriptor;
+}
+
+static const uint8_t *config_descriptor_callback(uint8_t speed)
+{
+    return config_descriptor;
+}
+
+static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
+{
+    return device_quality_descriptor;
+}
+
+static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
+{
+    if (index > 3) {
+        return NULL;
+    }
+    return string_descriptors[index];
+}
+
+const struct usb_descriptor video_audio_hid_descriptor = {
+    .device_descriptor_callback = device_descriptor_callback,
+    .config_descriptor_callback = config_descriptor_callback,
+    .device_quality_descriptor_callback = device_quality_descriptor_callback,
+    .string_descriptor_callback = string_descriptor_callback
+};
+#else
 const uint8_t video_audio_hid_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0xef, 0x02, 0x01, USBD_VID, USBD_PID, 0x0001, 0x01),
     USB_CONFIG_DESCRIPTOR_INIT(USB_VIDEO_DESC_SIZ, 0x06, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
@@ -231,6 +345,7 @@ const uint8_t video_audio_hid_descriptor[] = {
 #endif
     0x00
 };
+#endif
 
 static const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
     0x05, 0x01, // USAGE_PAGE (Generic Desktop)
@@ -422,7 +537,11 @@ struct audio_entity_info audio_entity_table[] = {
 
 void composite_init(uint8_t busid, uintptr_t reg_base)
 {
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_desc_register(busid, &video_audio_hid_descriptor);
+#else
     usbd_desc_register(busid, video_audio_hid_descriptor);
+#endif
     usbd_add_interface(busid, usbd_video_init_intf(busid, &intf0, INTERVAL, MAX_FRAME_SIZE, MAX_PAYLOAD_SIZE));
     usbd_add_interface(busid, usbd_video_init_intf(busid, &intf1, INTERVAL, MAX_FRAME_SIZE, MAX_PAYLOAD_SIZE));
     usbd_add_endpoint(busid, &video_in_ep);

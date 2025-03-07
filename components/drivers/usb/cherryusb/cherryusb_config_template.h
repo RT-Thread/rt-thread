@@ -17,10 +17,12 @@
 /* Enable print with color */
 #define CONFIG_USB_PRINTF_COLOR_ENABLE
 
-/* data align size when use dma */
+/* data align size when use dma or use dcache */
 #ifndef CONFIG_USB_ALIGN_SIZE
 #define CONFIG_USB_ALIGN_SIZE 4
 #endif
+
+//#define CONFIG_USB_DCACHE_ENABLE
 
 /* attribute data into no cache ram */
 #define USB_NOCACHE_RAM_SECTION __attribute__((section(".noncacheable")))
@@ -45,6 +47,20 @@
 
 /* Enable test mode */
 // #define CONFIG_USBDEV_TEST_MODE
+
+/* enable advance desc register api */
+// CONFIG_USBDEV_ADVANCE_DESC
+
+/* move ep0 setup handler from isr to thread */
+// #define CONFIG_USBDEV_EP0_THREAD
+
+#ifndef CONFIG_USBDEV_EP0_PRIO
+#define CONFIG_USBDEV_EP0_PRIO 4
+#endif
+
+#ifndef CONFIG_USBDEV_EP0_STACKSIZE
+#define CONFIG_USBDEV_EP0_STACKSIZE 2048
+#endif
 
 #ifndef CONFIG_USBDEV_MSC_MAX_LUN
 #define CONFIG_USBDEV_MSC_MAX_LUN 1
@@ -275,5 +291,27 @@
 
 /* ---------------- MUSB Configuration ---------------- */
 // #define CONFIG_USB_MUSB_SUNXI
+
+/* ================ USB Dcache Configuration ==================*/
+
+#ifdef CONFIG_USB_DCACHE_ENABLE
+/* style 1*/
+// void usb_dcache_clean(uintptr_t addr, uint32_t size);
+// void usb_dcache_invalidate(uintptr_t addr, uint32_t size);
+// void usb_dcache_flush(uintptr_t addr, uint32_t size);
+
+/* style 2*/
+// #define usb_dcache_clean(addr, size)
+// #define usb_dcache_invalidate(addr, size)
+// #define usb_dcache_flush(addr, size)
+#endif
+
+#ifndef usb_phyaddr2ramaddr
+#define usb_phyaddr2ramaddr(addr) (addr)
+#endif
+
+#ifndef usb_ramaddr2phyaddr
+#define usb_ramaddr2phyaddr(addr) (addr)
+#endif
 
 #endif

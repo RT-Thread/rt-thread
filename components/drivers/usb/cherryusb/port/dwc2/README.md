@@ -27,7 +27,7 @@ CONFIG_USBDEV_EP_NUM 必须为4 或者 6，并删除 usb_dc_dwc2.c 中 while(1){
 
 - GD32F30X_CL
 - GD32F405、GD32F407
-- GD32F450
+- GD32F350、GD32F450
 
 ## HC32
 
@@ -35,7 +35,7 @@ CONFIG_USBDEV_EP_NUM 必须为4 或者 6，并删除 usb_dc_dwc2.c 中 while(1){
 
 ## Espressif
 
-- ESP32S2、ESP32S3
+- ESP32S2、ESP32S3、ESP32P4
 
 ## Sophgo
 

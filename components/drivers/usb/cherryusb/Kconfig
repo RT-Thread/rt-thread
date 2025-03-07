@@ -125,7 +125,9 @@ if RT_USING_CHERRYUSB
             config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
                 bool "cdc_acm"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_MSC
-                bool "msc"
+                bool "msc_ram"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV
+                bool "msc_blkdev"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD
                 bool "hid_keyboard"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_MOUSE
