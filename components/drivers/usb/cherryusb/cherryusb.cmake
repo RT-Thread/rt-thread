@@ -26,6 +26,7 @@
 # set(CONFIG_CHERRYUSB_HOST_HCD "ehci_xxx")
 
 list(APPEND cherryusb_incs
+${CMAKE_CURRENT_LIST_DIR}
 ${CMAKE_CURRENT_LIST_DIR}/common
 ${CMAKE_CURRENT_LIST_DIR}/core
 ${CMAKE_CURRENT_LIST_DIR}/class/hub
@@ -37,6 +38,7 @@ ${CMAKE_CURRENT_LIST_DIR}/class/video
 ${CMAKE_CURRENT_LIST_DIR}/class/wireless
 ${CMAKE_CURRENT_LIST_DIR}/class/midi
 ${CMAKE_CURRENT_LIST_DIR}/class/adb
+${CMAKE_CURRENT_LIST_DIR}/class/dfu
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/net
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/wifi
@@ -116,6 +118,8 @@ if(CONFIG_CHERRYUSB_DEVICE)
         elseif("${CONFIG_CHERRYUSB_DEVICE_DCD}" STREQUAL "aic")
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/aic/usb_dc_aic.c)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/aic/usb_dc_aic_ll.c)
+        elseif("${CONFIG_CHERRYUSB_DEVICE_DCD}" STREQUAL "rp2040")
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/rp2040/usb_dc_rp2040.c)
         endif()
     endif()
 
@@ -270,6 +274,8 @@ if(CONFIG_CHERRYUSB_HOST)
         elseif("${CONFIG_CHERRYUSB_HOST_HCD}" STREQUAL "kinetis_mcx")
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/kinetis/usb_hc_kinetis.c)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/kinetis/usb_glue_mcx.c)
+        elseif("${CONFIG_CHERRYUSB_HOST_HCD}" STREQUAL "rp2040")
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/rp2040/usb_hc_rp2040.c)
         endif()
     endif()
 

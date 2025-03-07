@@ -1,18 +1,23 @@
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/common']
+path = [cwd]
+path += [cwd + '/common']
 path += [cwd + '/core']
+path += [cwd + '/class/hub']
 path += [cwd + '/class/cdc']
 path += [cwd + '/class/msc']
 path += [cwd + '/class/hid']
 path += [cwd + '/class/audio']
 path += [cwd + '/class/video']
 path += [cwd + '/class/wireless']
+path += [cwd + '/class/midi']
+path += [cwd + '/class/adb']
 path += [cwd + '/class/dfu']
 path += [cwd + '/class/midi']
 path += [cwd + '/class/vendor/net']
 path += [cwd + '/class/vendor/serial']
+path += [cwd + '/class/vendor/wifi']
 src = []
 
 LIBS    = []
@@ -109,13 +114,15 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('class/cdc/usbd_cdc_ecm.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_CDC_NCM']):
         src += Glob('class/cdc/usbd_cdc_ncm.c')
-    if GetDepend(['RT_CHERRYUSB_USING_DFU']):
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DFU']):
         src += Glob('class/dfu/usbd_dfu.c')
 
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM']):
         src += Glob('demo/cdc_acm_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC']):
         src += Glob('demo/msc_ram_template.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV']):
+        src += Glob('platform/rtthread/usbd_msc_blkdev.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_HID_MOUSE']):
         src += Glob('demo/hid_mouse_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD']):
@@ -147,7 +154,6 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
 
 # USB HOST
 if GetDepend(['RT_CHERRYUSB_HOST']):
-    path += [cwd + '/class/hub']
     src += Glob('core/usbh_core.c')
     src += Glob('class/hub/usbh_hub.c')
     src += Glob('osal/usb_osal_rtthread.c')
