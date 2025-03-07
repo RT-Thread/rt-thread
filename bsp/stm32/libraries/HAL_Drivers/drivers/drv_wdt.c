@@ -9,8 +9,7 @@
  */
 
 #include <board.h>
-#include <rtconfig.h>
-#include "drivers/dev_watchdog.h"
+#include <rtdevice.h>
 
 #ifdef RT_USING_WDT
 
