@@ -1,0 +1,28 @@
+menu "Hardware Drivers Config"
+
+config CPU_S32K344
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select BSP_USING_SHELL_TO_USART
+    default y
+
+config BSP_USING_SHELL_TO_USART
+        bool "Enable SHELL TO USART (uart3)"
+        select BSP_USING_UART
+        select BSP_USING_UART3
+        default y
+
+menu "On-chip Peripheral Drivers"
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            menuconfig BSP_USING_UART3
+                bool "Enable UART3(PD2,PD3)"
+                default y
+        endif
+endmenu
+
+endmenu
