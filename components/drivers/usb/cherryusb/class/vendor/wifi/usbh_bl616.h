@@ -205,7 +205,7 @@ void usbh_bl616_sta_update_ip(uint8_t ip4_addr[4], uint8_t ip4_mask[4], uint8_t 
 uint8_t *usbh_bl616_get_eth_txbuf(void);
 int usbh_bl616_eth_output(uint32_t buflen);
 void usbh_bl616_eth_input(uint8_t *buf, uint32_t buflen);
-void usbh_bl616_rx_thread(void *argument);
+void usbh_bl616_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV);
 
 void usbh_bl616_run(struct usbh_bl616 *bl616_class);
 void usbh_bl616_stop(struct usbh_bl616 *bl616_class);

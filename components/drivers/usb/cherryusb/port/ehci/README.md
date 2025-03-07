@@ -12,7 +12,7 @@
 
 ### AllwinnerTech
 
-- F133
+- F133/T113
 
 ### Nuvoton
 

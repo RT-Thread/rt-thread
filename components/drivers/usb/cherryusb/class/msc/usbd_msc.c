@@ -60,7 +60,7 @@ USB_NOCACHE_RAM_SECTION struct usbd_msc_priv {
 } g_usbd_msc[CONFIG_USBDEV_MAX_BUS];
 
 #ifdef CONFIG_USBDEV_MSC_THREAD
-static void usbdev_msc_thread(void *argument);
+static void usbdev_msc_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV);
 #endif
 
 static void usdb_msc_set_max_lun(uint8_t busid)
@@ -911,11 +911,11 @@ void mass_storage_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 }
 
 #if defined(CONFIG_USBDEV_MSC_THREAD)
-static void usbdev_msc_thread(void *argument)
+static void usbdev_msc_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     uintptr_t event;
     int ret;
-    uint8_t busid = (uint8_t)(uint32_t)argument;
+    uint8_t busid = (uint8_t)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
     while (1) {
         ret = usb_osal_mq_recv(g_usbd_msc[busid].usbd_msc_mq, (uintptr_t *)&event, USB_OSAL_WAITING_FOREVER);

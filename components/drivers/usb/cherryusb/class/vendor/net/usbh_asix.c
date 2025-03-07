@@ -670,7 +670,7 @@ int usbh_asix_get_connect_status(struct usbh_asix *asix_class)
     return 0;
 }
 
-void usbh_asix_rx_thread(void *argument)
+void usbh_asix_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     uint32_t g_asix_rx_length;
     int ret;
@@ -683,7 +683,7 @@ void usbh_asix_rx_thread(void *argument)
     uint32_t transfer_size = (16 * 1024);
 #endif
 
-    (void)argument;
+    (void)CONFIG_USB_OSAL_THREAD_GET_ARGV;
     USB_LOG_INFO("Create asix rx thread\r\n");
     // clang-format off
 find_class:

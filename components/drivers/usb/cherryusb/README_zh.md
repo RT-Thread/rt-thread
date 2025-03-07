@@ -12,7 +12,7 @@
     <a href="./README.md">English</a>
 </p>
 
-CherryUSB 是一个小而美的、可移植性高的、用于嵌入式系统(带 USB IP)的 USB 主从协议栈。
+CherryUSB 是一个小而美的、可移植性高的、用于嵌入式系统(带 USB IP)的高性能 USB 主从协议栈。
 
 ![CherryUSB](CherryUSB.svg)
 
@@ -103,7 +103,7 @@ CherryUSB Host 协议栈当前实现以下功能：
 - 自动加载支持的Class 驱动
 - 支持阻塞式传输和异步传输
 - 支持复合设备
-- 支持多级 HUB,最高可拓展到 7 级(目前测试 1拖 10 没有问题，当前仅支持 dwc2 和 ehci)
+- 支持多级 HUB,最高可拓展到 7 级(目前测试 1拖 10 没有问题，仅支持 dwc2/ehci/xhci/rp2040)
 - 支持 Communication Device Class (CDC_ACM, CDC_ECM)
 - 支持 Human Interface Device (HID)
 - 支持 Mass Storage Class (MSC)
@@ -198,12 +198,12 @@ CherryUSB 快速入门、USB 基本概念，API 手册，Class 基本概念和�
 |Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Long-term |
 |Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)|<= latest | Long-term |
 |NXP            |  mcx | kinetis/chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Long-term |
-|Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/canmv_k230)|v1.2.0 | Long-term |
+|Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/k230_sdk)|v1.2.0 | Long-term |
+|Raspberry pi   |  rp2040/rp2350 | rp2040 |[pico-examples](https://github.com/CherryUSB/pico-examples)|<= latest | Long-term |
 |AllwinnerTech  |  F1C100S/F1C200S | musb |[cherryusb_rtt_f1c100s](https://github.com/CherryUSB/cherryusb_rtt_f1c100s)|<= latest | the same with musb |
 |Bekencorp      |  bk7256/bk7258 | musb |[bk_idk](https://github.com/CherryUSB/bk_idk)| v0.7.0 | the same with musb |
 |Sophgo         |  cv18xx | dwc2 |[cvi_alios_open](https://github.com/CherryUSB/cvi_alios_open)| v0.7.0 | TBD |
 |WCH            |  CH32V307/ch58x | ch32_usbfs/ch32_usbhs/ch58x |[wch_repo](https://github.com/CherryUSB/cherryusb_wch)|<= v0.10.2 | TBD |
-|Raspberry pi   |  rp2040 | rp2040 |[pico-examples](https://github.com/CherryUSB/pico-examples)|<= v0.10.2 | No more updated |
 
 ## 软件包支持
 

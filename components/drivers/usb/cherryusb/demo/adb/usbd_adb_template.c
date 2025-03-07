@@ -108,6 +108,70 @@ struct usb_msosv1_descriptor msosv1_desc = {
     .comp_id_property = WINUSB_IFx_WCIDProperties,
 };
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+static const uint8_t device_descriptor[] = {
+    USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0100, 0x01)
+};
+
+static const uint8_t config_descriptor[] = {
+    USB_CONFIG_DESCRIPTOR_INIT(USB_CONFIG_SIZE, 0x01, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+    ADB_DESCRIPTOR_INIT(ADB_INTF_NUM, WINUSB_IN_EP, WINUSB_OUT_EP, WINUSB_MAX_MPS)
+};
+
+static const uint8_t device_quality_descriptor[] = {
+    ///////////////////////////////////////
+    /// device qualifier descriptor
+    ///////////////////////////////////////
+    0x0a,
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x00,
+    0x00,
+};
+
+static const char *string_descriptors[] = {
+    (const char[]){ 0x09, 0x04 }, /* Langid */
+    "CherryUSB",                  /* Manufacturer */
+    "CherryADB",                  /* Product */
+    "CherryADB2024",              /* Serial Number */
+};
+
+static const uint8_t *device_descriptor_callback(uint8_t speed)
+{
+    return device_descriptor;
+}
+
+static const uint8_t *config_descriptor_callback(uint8_t speed)
+{
+    return config_descriptor;
+}
+
+static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
+{
+    return device_quality_descriptor;
+}
+
+static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
+{
+    if (index > 3) {
+        return NULL;
+    }
+    return string_descriptors[index];
+}
+
+const struct usb_descriptor msc_bootuf2_descriptor = {
+    .device_descriptor_callback = device_descriptor_callback,
+    .config_descriptor_callback = config_descriptor_callback,
+    .device_quality_descriptor_callback = device_quality_descriptor_callback,
+    .string_descriptor_callback = string_descriptor_callback,
+    .msosv1_descriptor = &msosv1_desc
+};
+#else
 /*!< global descriptor */
 static const uint8_t adb_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0100, 0x01),
@@ -171,15 +235,16 @@ static const uint8_t adb_descriptor[] = {
     USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
     0x00,
     0x02,
-    0x02,
-    0x02,
-    0x01,
+    0x00,
+    0x00,
+    0x00,
     0x40,
     0x00,
     0x00,
 #endif
     0x00
 };
+#endif
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
 {
@@ -222,7 +287,14 @@ void cherryadb_init(uint8_t busid, uint32_t reg_base)
         }
     }
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_desc_register(busid, &adb_descriptor);
+#else
     usbd_desc_register(busid, adb_descriptor);
+#endif
+#ifndef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_msosv1_desc_register(busid, &msosv1_desc);
+#endif
     usbd_add_interface(busid, usbd_adb_init_intf(busid, &intf0, WINUSB_IN_EP, WINUSB_OUT_EP));
     usbd_initialize(busid, reg_base, usbd_event_handler);
 }

@@ -108,6 +108,9 @@ int usbh_submit_urb(struct usbh_urb *urb);
  */
 int usbh_kill_urb(struct usbh_urb *urb);
 
+/* called by user */
+void USBH_IRQHandler(uint8_t busid);
+
 #ifdef __cplusplus
 }
 #endif

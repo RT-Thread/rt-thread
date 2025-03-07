@@ -648,12 +648,12 @@ static void usbh_hub_events(struct usbh_hub *hub)
     }
 }
 
-static void usbh_hub_thread(void *argument)
+static void usbh_hub_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     struct usbh_hub *hub;
     int ret = 0;
 
-    struct usbh_bus *bus = (struct usbh_bus *)argument;
+    struct usbh_bus *bus = (struct usbh_bus *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
     usb_hc_init(bus);
     while (1) {

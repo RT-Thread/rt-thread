@@ -2130,7 +2130,7 @@ static int usbh_rtl8152_disconnect(struct usbh_hubport *hport, uint8_t intf)
     return ret;
 }
 
-void usbh_rtl8152_rx_thread(void *argument)
+void usbh_rtl8152_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     uint32_t g_rtl8152_rx_length;
     int ret;
@@ -2142,7 +2142,7 @@ void usbh_rtl8152_rx_thread(void *argument)
     uint32_t transfer_size = (16 * 1024);
 #endif
 
-    (void)argument;
+    (void)CONFIG_USB_OSAL_THREAD_GET_ARGV;
     USB_LOG_INFO("Create rtl8152 rx thread\r\n");
     // clang-format off
 find_class:

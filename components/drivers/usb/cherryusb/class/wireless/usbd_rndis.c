@@ -37,14 +37,17 @@ struct usbd_rndis_priv {
 #define CONFIG_USBDEV_RNDIS_ETH_MAX_FRAME_SIZE 1580
 #endif
 
+#ifdef CONFIG_USBDEV_RNDIS_USING_LWIP
 static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_rndis_rx_buffer[CONFIG_USBDEV_RNDIS_ETH_MAX_FRAME_SIZE];
 static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_rndis_tx_buffer[CONFIG_USBDEV_RNDIS_ETH_MAX_FRAME_SIZE];
+#endif
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t rndis_encapsulated_resp_buffer[CONFIG_USBDEV_RNDIS_RESP_BUFFER_SIZE];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t NOTIFY_RESPONSE_AVAILABLE[8];
 
 volatile uint8_t *g_rndis_rx_data_buffer;
 volatile uint32_t g_rndis_rx_data_length;
+volatile uint32_t g_rndis_rx_total_length;
 volatile uint32_t g_rndis_tx_data_length;
 
 /* RNDIS options list */
@@ -447,12 +450,14 @@ static void rndis_notify_handler(uint8_t busid, uint8_t event, void *arg)
     switch (event) {
         case USBD_EVENT_RESET:
             g_usbd_rndis.link_status = NDIS_MEDIA_STATE_DISCONNECTED;
-            break;
-        case USBD_EVENT_CONFIGURED:
             g_rndis_rx_data_length = 0;
             g_rndis_tx_data_length = 0;
+            break;
+        case USBD_EVENT_CONFIGURED:
+#ifdef CONFIG_USBDEV_RNDIS_USING_LWIP
             g_usbd_rndis.link_status = NDIS_MEDIA_STATE_CONNECTED;
-            usbd_ep_start_read(0, rndis_ep_data[RNDIS_OUT_EP_IDX].ep_addr, g_rndis_rx_buffer, sizeof(g_rndis_rx_buffer));
+            usbd_rndis_start_read(g_rndis_rx_buffer, sizeof(g_rndis_rx_buffer));
+#endif
             break;
 
         default:
@@ -467,10 +472,9 @@ void rndis_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
     (void)busid;
     (void)ep;
 
-    hdr = (rndis_data_packet_t *)g_rndis_rx_buffer;
-    g_rndis_rx_data_buffer = g_rndis_rx_buffer;
+    hdr = (rndis_data_packet_t *)g_rndis_rx_data_buffer;
     if ((hdr->MessageType != REMOTE_NDIS_PACKET_MSG) || (nbytes < hdr->MessageLength)) {
-        usbd_ep_start_read(0, rndis_ep_data[RNDIS_OUT_EP_IDX].ep_addr, g_rndis_rx_buffer, sizeof(g_rndis_rx_buffer));
+        usbd_rndis_start_read((uint8_t *)g_rndis_rx_data_buffer, g_rndis_rx_total_length);
         return;
     }
 
@@ -503,6 +507,34 @@ void rndis_int_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
     //USB_LOG_DBG("len:%d\r\n", nbytes);
 }
 
+int usbd_rndis_start_write(uint8_t *buf, uint32_t len)
+{
+    if (!usb_device_is_configured(0)) {
+        return -USB_ERR_NODEV;
+    }
+
+    if (g_rndis_tx_data_length > 0) {
+        return -USB_ERR_BUSY;
+    }
+
+    g_rndis_tx_data_length = len;
+
+    USB_LOG_DBG("txlen:%d\r\n", g_rndis_tx_data_length);
+    return usbd_ep_start_write(0, rndis_ep_data[RNDIS_IN_EP_IDX].ep_addr, buf, len);
+}
+
+int usbd_rndis_start_read(uint8_t *buf, uint32_t len)
+{
+    if (!usb_device_is_configured(0)) {
+        return -USB_ERR_NODEV;
+    }
+
+    g_rndis_rx_data_buffer = buf;
+    g_rndis_rx_total_length = len;
+    g_rndis_rx_data_length = 0;
+    return usbd_ep_start_read(0, rndis_ep_data[RNDIS_OUT_EP_IDX].ep_addr, buf, len);
+}
+
 #ifdef CONFIG_USBDEV_RNDIS_USING_LWIP
 #include <lwip/pbuf.h>
 
@@ -515,15 +547,14 @@ struct pbuf *usbd_rndis_eth_rx(void)
     }
     p = pbuf_alloc(PBUF_RAW, g_rndis_rx_data_length, PBUF_POOL);
     if (p == NULL) {
+        usbd_rndis_start_read(g_rndis_rx_buffer, sizeof(g_rndis_rx_buffer));
         return NULL;
     }
     usb_memcpy(p->payload, (uint8_t *)g_rndis_rx_data_buffer, g_rndis_rx_data_length);
     p->len = g_rndis_rx_data_length;
 
     USB_LOG_DBG("rxlen:%d\r\n", g_rndis_rx_data_length);
-    g_rndis_rx_data_length = 0;
-    usbd_ep_start_read(0, rndis_ep_data[RNDIS_OUT_EP_IDX].ep_addr, g_rndis_rx_buffer, sizeof(g_rndis_rx_buffer));
-
+    usbd_rndis_start_read(g_rndis_rx_buffer, sizeof(g_rndis_rx_buffer));
     return p;
 }
 
@@ -592,6 +623,11 @@ struct usbd_interface *usbd_rndis_init_intf(struct usbd_interface *intf,
     intf->notify_handler = rndis_notify_handler;
 
     return intf;
+}
+
+void usbd_rndis_set_connect(bool connect)
+{
+    g_usbd_rndis.link_status = connect ? NDIS_MEDIA_STATE_CONNECTED : NDIS_MEDIA_STATE_DISCONNECTED;
 }
 
 __WEAK void usbd_rndis_data_recv_done(uint32_t len)
