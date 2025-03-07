@@ -166,8 +166,6 @@ uint32_t *lwp_get_kernel_sp(void)
 /* lwp-thread clean up routine */
 void lwp_cleanup(struct rt_thread *tid)
 {
-    struct rt_lwp *lwp;
-
     if (tid == NULL)
     {
         LOG_I("%s: invalid parameter tid == NULL", __func__);
@@ -176,18 +174,8 @@ void lwp_cleanup(struct rt_thread *tid)
     else
         LOG_D("cleanup thread: %s, stack_addr: 0x%x", tid->parent.name, tid->stack_addr);
 
-    /**
-     * Brief: lwp thread cleanup
-     *
-     * Note: Critical Section
-     * - thread control block (RW. It's ensured that no one else can access tcb
-     *   other than itself)
-     */
-    lwp = (struct rt_lwp *)tid->lwp;
     lwp_thread_signal_detach(&tid->signal);
 
-    /* tty will be release in lwp_ref_dec() if ref is cleared */
-    lwp_ref_dec(lwp);
     return;
 }
 
