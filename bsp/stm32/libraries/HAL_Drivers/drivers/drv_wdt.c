@@ -9,6 +9,7 @@
  */
 
 #include <board.h>
+#include <rtdevice.h>
 
 #ifdef RT_USING_WDT
 
