@@ -69,7 +69,7 @@ static struct dfs_dentry *_dentry_create(struct dfs_mnt *mnt, char *path, rt_boo
         rt_atomic_store(&(dentry->ref_count), 1);
         dentry->flags |= DENTRY_IS_ALLOCED;
 
-        LOG_I("create a dentry:%p for %s", dentry, fullpath);
+        LOG_I("create a dentry:%p for %s", dentry, mnt->fullpath);
     }
 
     return dentry;
