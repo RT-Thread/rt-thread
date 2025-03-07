@@ -604,6 +604,8 @@ void _thread_exit(rt_lwp_t lwp, rt_thread_t thread)
     lwp_tid_put(thread->tid);
     thread->tid = 0;
 
+    lwp_ref_dec(lwp);
+
     rt_thread_delete(thread);
     rt_schedule();
     while (1) ;
