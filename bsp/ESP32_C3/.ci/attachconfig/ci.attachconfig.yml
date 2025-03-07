@@ -55,3 +55,9 @@ devices.wifi:
       - CONFIG_RT_USING_WIFI=y
       - CONFIG_RT_USING_LWIP=y
       - CONFIG_RT_USING_NETDEV=y
+devices.at:
+    kconfig:
+      - CONFIG_RT_USING_AT=y
+      - CONFIG_AT_USING_CLIENT=y
+      - CONFIG_RT_USING_SAL=y
+      - CONFIG_RT_USING_NETDEV=y
