@@ -189,7 +189,7 @@ int usbh_bluetooth_hci_write(uint8_t hci_type, uint8_t *buffer, uint32_t buflen)
     return ret;
 }
 
-void usbh_bluetooth_hci_rx_thread(void *argument)
+void usbh_bluetooth_hci_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
     uint32_t ep_mps;
@@ -271,7 +271,7 @@ int usbh_bluetooth_hci_write(uint8_t hci_type, uint8_t *buffer, uint32_t buflen)
     return ret;
 }
 
-void usbh_bluetooth_hci_evt_rx_thread(void *argument)
+void usbh_bluetooth_hci_evt_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
     uint32_t ep_mps;
@@ -320,7 +320,7 @@ delete :
     // clang-format on
 }
 
-void usbh_bluetooth_hci_acl_rx_thread(void *argument)
+void usbh_bluetooth_hci_acl_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
     uint32_t ep_mps;

@@ -22,14 +22,18 @@
 #ifndef CONFIG_USB_OHCI_TD_NUM
 #define CONFIG_USB_OHCI_TD_NUM 3
 #endif
+#ifndef CONFIG_USB_OHCI_ALIGN_SIZE
+#define CONFIG_USB_OHCI_ALIGN_SIZE  64
+#endif
 
 struct ohci_ed_hw;
 struct ohci_td_hw {
     struct ohci_gtd hw;
     struct usbh_urb *urb;
+    bool dir_in;
     uint32_t buf_start;
     uint32_t length;
-} __attribute__((aligned(32))); /* min is 16bytes, we use 32 for cacheline */
+} __attribute__((aligned(CONFIG_USB_OHCI_ALIGN_SIZE))); /* min is 16bytes, we use CONFIG_USB_OHCI_ALIGN_SIZE for cacheline */
 
 struct ohci_ed_hw {
     struct ohci_ed hw;
@@ -37,7 +41,7 @@ struct ohci_ed_hw {
     uint32_t td_count;
     uint8_t ed_type;
     usb_osal_sem_t waitsem;
-} __attribute__((aligned(32))); /* min is 16bytes, we use 32 for cacheline */
+} __attribute__((aligned(CONFIG_USB_OHCI_ALIGN_SIZE))); /* min is 16bytes, we use CONFIG_USB_OHCI_ALIGN_SIZE for cacheline */
 
 struct ohci_hcd {
     bool ohci_ed_used[CONFIG_USB_OHCI_ED_NUM];

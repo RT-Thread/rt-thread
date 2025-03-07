@@ -42,6 +42,12 @@ USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t msc_sector[512];
 
 static rt_err_t rt_udisk_init(rt_device_t dev)
 {
+    struct usbh_msc *msc_class = (struct usbh_msc *)dev->user_data;
+
+    if (usbh_msc_scsi_init(msc_class) < 0) {
+        return -RT_ERROR;
+    }
+
     return RT_EOK;
 }
 
@@ -157,39 +163,35 @@ const static struct rt_device_ops udisk_device_ops = {
 };
 #endif
 
-int udisk_init(struct usbh_msc *msc_class)
+static void usbh_msc_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
-    rt_err_t ret = 0;
-    rt_uint8_t i;
-    struct dfs_partition part0;
-    struct rt_device *dev;
+    struct usbh_msc *msc_class = (struct usbh_msc *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
     char name[CONFIG_USBHOST_DEV_NAMELEN];
     char mount_point[CONFIG_USBHOST_DEV_NAMELEN];
+    int ret;
+
+    snprintf(name, CONFIG_USBHOST_DEV_NAMELEN, DEV_FORMAT, msc_class->sdchar);
+    snprintf(mount_point, CONFIG_USBHOST_DEV_NAMELEN, CONFIG_USB_DFS_MOUNT_POINT, msc_class->sdchar);
+
+    ret = dfs_mount(name, mount_point, "elm", 0, 0);
+    if (ret == 0) {
+        rt_kprintf("udisk: %s mount successfully\n", name);
+    } else {
+        rt_kprintf("udisk: %s mount failed, ret = %d\n", name, ret);
+    }
+
+    usb_osal_thread_delete(NULL);
+}
+
+void usbh_msc_run(struct usbh_msc *msc_class)
+{
+    struct rt_device *dev;
+    char name[CONFIG_USBHOST_DEV_NAMELEN];
 
     dev = rt_malloc(sizeof(struct rt_device));
     memset(dev, 0, sizeof(struct rt_device));
 
     snprintf(name, CONFIG_USBHOST_DEV_NAMELEN, DEV_FORMAT, msc_class->sdchar);
-    snprintf(mount_point, CONFIG_USBHOST_DEV_NAMELEN, CONFIG_USB_DFS_MOUNT_POINT, msc_class->sdchar);
-
-    ret = usbh_msc_scsi_read10(msc_class, 0, msc_sector, 1);
-    if (ret != RT_EOK) {
-        rt_kprintf("usb mass_storage read failed\n");
-        rt_free(dev);
-        return ret;
-    }
-
-    for (i = 0; i < 4; i++) {
-        /* Get the first partition */
-        ret = dfs_filesystem_get_partition(&part0, msc_sector, i);
-        if (ret == RT_EOK) {
-            rt_kprintf("Found partition %d: type = %d, offet=0x%x, size=0x%x\n",
-                       i, part0.type, part0.offset, part0.size);
-            break;
-        } else {
-            break;
-        }
-    }
 
     dev->type = RT_Device_Class_Block;
 #ifdef RT_USING_DEVICE_OPS
@@ -204,19 +206,7 @@ int udisk_init(struct usbh_msc *msc_class)
 
     rt_device_register(dev, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
 
-    ret = dfs_mount(name, mount_point, "elm", 0, 0);
-    if (ret == 0) {
-        rt_kprintf("udisk: %s mount successfully\n", name);
-    } else {
-        rt_kprintf("udisk: %s mount failed, ret = %d\n", name, ret);
-    }
-
-    return ret;
-}
-
-void usbh_msc_run(struct usbh_msc *msc_class)
-{
-    udisk_init(msc_class);
+    usb_osal_thread_create("usbh_msc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_msc_thread, msc_class);
 }
 
 void usbh_msc_stop(struct usbh_msc *msc_class)

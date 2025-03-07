@@ -21,6 +21,7 @@
 #include "usb_osal.h"
 #include "usbh_hub.h"
 #include "usb_memcpy.h"
+#include "usb_dcache.h"
 #include "usb_version.h"
 
 #ifdef __cplusplus
