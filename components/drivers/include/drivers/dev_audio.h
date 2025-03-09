@@ -144,9 +144,11 @@
 #define CFG_AUDIO_REPLAY_QUEUE_COUNT        4
 
 /**
+ * @enum audio_stream
+ *
  * @brief Audio stream control command
  */
-enum
+enum audio_stream
 {
     AUDIO_STREAM_REPLAY = 0,
     AUDIO_STREAM_RECORD,
