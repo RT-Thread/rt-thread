@@ -134,7 +134,7 @@ static void _pgmgr_pop_all(rt_varea_t varea)
         char *page_va = rt_kmem_p2v(page_pa);
         if (page_pa != ARCH_MAP_FAILED && page_va)
         {
-            rt_hw_mmu_unmap(aspace, iter, ARCH_PAGE_SIZE);
+            rt_varea_unmap_page(varea, iter);
             rt_pages_free(page_va, 0);
         }
     }
