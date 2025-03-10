@@ -4,13 +4,10 @@
 #ifdef BSP_USING_FS
 
 #include <dfs_fs.h>
+#include <rtdbg.h>
 
 #define DBG_TAG "app.filesystem"
 #define DBG_LVL DBG_INFO
-#include <rtdbg.h>
-
-#define SDHI_USING_CD
-#define RA_SDHI_CD_PIN "p503"
 
 #ifdef BSP_USING_OPENMV
 #include "led.h"
@@ -175,11 +172,6 @@ int sd_mount(void)
 
 int mount_init(void)
 {
-    mmcsd_wait_cd_changed(0);
-
-    sdcard_change();
-    mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
-
     rt_thread_mdelay(200);
     sd_mount();
     return RT_EOK;
