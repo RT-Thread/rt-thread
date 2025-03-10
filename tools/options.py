@@ -148,3 +148,9 @@ def AddOptions():
                 'e.g. scons --attach=? View all attachconfig for the current bsp.'+\
                 ' or scons --attach=component.cherryusb_cdc Set option component.cherryusb_cdc inside attachconfig to.config.'+\
                 ' or scons --attach=default Restore.config and rtconfig to before attch was set.')
+    AddOption('--attachtest',
+                dest = 'attachtest',
+                type = 'string',
+                help = 'Automatically compiles to elf files based on selected attachconfig'+\
+                'e.g. scons --attachtest=all Automatically compiles all options of attachconfig to elf.'+\
+                ' or scons --attachtest=component.cherryusb_cdc Generate elf files according to the config compilation of this option.')

@@ -340,6 +340,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         GenAttachConfigProject()
         exit(0)
 
+    if GetOption('attachtest'):
+        from attachconfig import AttachTestConfig
+        AttachTestConfig()
+        exit(0)
+
     if GetOption('genconfig'):
         from env_utility import genconfig
         genconfig()
