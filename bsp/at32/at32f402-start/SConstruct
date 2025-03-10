@@ -51,7 +51,7 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'CMSIS', 'SConscript')))
 
 # include usb libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'usbd_library', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'usbotg_library', 'SConscript')))
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'rt_drivers', 'SConscript')))
