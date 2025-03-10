@@ -21,12 +21,25 @@ menu "Hardware Drivers Config"
                     select RT_USING_MTD_NOR
                     select BSP_USING_ONCHIP_FLASH
                     default n
-                config BSP_USING_SDCARD_FS
+
+                menuconfig BSP_USING_SDCARD_FS
                     bool "Enable SDCARD filesystem"
                     select BSP_USING_SDHI
                     select BSP_USING_SDHI1
                     select RT_USING_DFS_ELMFAT
                     default n
+                    
+                    if  BSP_USING_SDCARD_FS
+
+                        config SDHI_USING_CD
+                            bool "enable RA_SDHI_CD_PIN"
+                            default y
+
+                        config RA_SDHI_CD_PIN
+                            string "SD Card hot plug detection pin"
+                            default "p503"
+                    endif
+                
                 config BSP_USING_SPICARD_FS
                     bool "Enable SPI FLASH filesystem"
                     select BSP_USING_SCI
