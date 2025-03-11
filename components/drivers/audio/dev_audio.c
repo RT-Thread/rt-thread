@@ -548,7 +548,7 @@ static rt_ssize_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const vo
  *
  * @param[in] dev pointer to device
  *
- * @param[in] cmd audio cmd, it can be one of value in @ref audio_control
+ * @param[in] cmd audio cmd, it can be one of value in @ref group_audio_control
  *
  * @param[in] args command argument
  *
@@ -693,7 +693,7 @@ rt_err_t rt_audio_register(struct rt_audio_device *audio, const char *name, rt_u
 /**
  * @brief Set audio sample rate
  *
- * @param[in] bitValue audio sample rate, it can be one of value in @ref audio_samp_rates
+ * @param[in] bitValue audio sample rate, it can be one of value in @ref group_audio_samp_rates
  *
  * @return speed has been set
  */
