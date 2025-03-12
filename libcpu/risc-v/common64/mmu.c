@@ -630,6 +630,19 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
 }
 
 #define SATP_BASE ((rt_ubase_t)SATP_MODE << SATP_MODE_OFFSET)
+
+/**
+ * @brief Early memory setup function for hardware initialization.
+ *
+ * This function performs early memory setup tasks, including:
+ * - Calculating the physical-to-virtual (PV) offset.
+ * - Setting up initial page tables for identity mapping and text region relocation.
+ * - Applying new memory mappings by updating the SATP register.
+ *
+ * @note This function is typically called during the early stages of system initialization (startup_gcc.S),
+ *       before the memory management system is fully operational.
+ *       Here the identity mapping is implemented by a 1-stage page table, whose page size is 1GB.
+ */
 void rt_hw_mem_setup_early(void)
 {
     rt_ubase_t pv_off;
