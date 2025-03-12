@@ -48,7 +48,7 @@ static void thermal_ofw_params_parse(struct rt_ofw_node *np,
      * For now, the thermal framework supports only one sensor per thermal zone.
      * Thus, we are considering only the first two values as slope and offset.
      */
-    if (rt_ofw_prop_read_u32_array_index(np, "coefficients", 0, 1, coef) < 0)
+    if (rt_ofw_prop_read_u32_array_index(np, "coefficients", 0, 2, coef) < 0)
     {
         coef[0] = 1;
         coef[1] = 0;

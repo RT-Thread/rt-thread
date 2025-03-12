@@ -710,7 +710,9 @@ void sd_lowlevel_dmatx_config(uint32_t *src, uint32_t *dst, uint32_t buffer_size
     dma_init(sdio_obj.dma.handle_tx, &dma_init_struct);
     dma_interrupt_enable(sdio_obj.dma.handle_tx, DMA_FDT_INT, TRUE);
 
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
     dmamux_init(sdio_config.dma_tx.dmamux_channel, sdio_config.dma_tx.dmamux_id);
     dmamux_enable(sdio_config.dma_tx.dma_x, TRUE);
 #endif
@@ -747,7 +749,9 @@ void sd_lowlevel_dmarx_config(uint32_t *src, uint32_t *dst, uint32_t buffer_size
     dma_init(sdio_obj.dma.handle_rx, &dma_init_struct);
     dma_interrupt_enable(sdio_obj.dma.handle_rx, DMA_FDT_INT, TRUE);
 
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
     dmamux_init(sdio_config.dma_rx.dmamux_channel, sdio_config.dma_rx.dmamux_id);
     dmamux_enable(sdio_config.dma_rx.dma_x, TRUE);
 #endif
@@ -755,7 +759,9 @@ void sd_lowlevel_dmarx_config(uint32_t *src, uint32_t *dst, uint32_t buffer_size
     dma_channel_enable(sdio_obj.dma.handle_rx, TRUE);
 }
 
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
 void DMA2_Channel4_IRQHandler(void)
 #else
 void DMA2_Channel4_5_IRQHandler(void)

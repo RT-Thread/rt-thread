@@ -9,6 +9,7 @@
 #include "esp_private/usb_phy.h"
 #include "soc/periph_defs.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "usbd_core.h"
 #include "usbh_core.h"
 

@@ -30,14 +30,19 @@
 #ifndef CONFIG_USB_EHCI_ISO_NUM
 #define CONFIG_USB_EHCI_ISO_NUM  4
 #endif
+#ifndef CONFIG_USB_EHCI_ALIGN_SIZE
+#define CONFIG_USB_EHCI_ALIGN_SIZE  64
+#endif
 
 extern uint8_t usbh_get_port_speed(struct usbh_bus *bus, const uint8_t port);
 
 struct ehci_qtd_hw {
     struct ehci_qtd hw;
     struct usbh_urb *urb;
+    bool dir_in;
+    uintptr_t bufaddr;
     uint32_t length;
-} __attribute__((aligned(32)));
+} __attribute__((aligned(CONFIG_USB_EHCI_ALIGN_SIZE)));
 
 struct ehci_qh_hw {
     struct ehci_qh hw;
@@ -46,7 +51,7 @@ struct ehci_qh_hw {
     struct usbh_urb *urb;
     usb_osal_sem_t waitsem;
     uint8_t remove_in_iaad;
-} __attribute__((aligned(32)));
+} __attribute__((aligned(CONFIG_USB_EHCI_ALIGN_SIZE)));
 
 struct ehci_itd_hw {
     struct ehci_itd hw;
@@ -55,7 +60,8 @@ struct ehci_itd_hw {
     uint8_t mf_unmask;
     uint8_t mf_valid;
     uint32_t pkt_idx[8];
-} __attribute__((aligned(32)));
+    bool dir_in;
+} __attribute__((aligned(CONFIG_USB_EHCI_ALIGN_SIZE)));
 
 struct ehci_iso_hw
 {

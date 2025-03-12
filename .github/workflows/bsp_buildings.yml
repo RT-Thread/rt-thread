@@ -49,12 +49,45 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:
                 - "raspberry-pico"
-         -  RTT_BSP: "others_at32_hc32_ht32"
+         -  RTT_BSP: "at32_hc32_ht32"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
+                - "at32/at32a403a-start"
+                - "at32/at32a423-start"
+                - "at32/at32f402-start"
+                - "at32/at32f403a-start"
+                - "at32/at32f405-start"
+                - "at32/at32f407-start"
+                - "at32/at32f413-start"
+                - "at32/at32f415-start"
+                - "at32/at32f421-start"
+                - "at32/at32f423-start"
+                - "at32/at32f425-start"
+                - "at32/at32f435-start"
+                - "at32/at32f437-start"
+                - "at32/at32f455-start"
+                - "at32/at32f456-start"
+                - "at32/at32f457-start"
+                - "at32/at32m412-start"
+                - "at32/at32m416-start"
+                - "hc32/ev_hc32f4a0_lqfp176"
+                - "hc32/ev_hc32f448_lqfp80"
+                - "hc32/ev_hc32f460_lqfp100_v2"
+                - "hc32/ev_hc32f472_lqfp100"
+                - "hc32/lckfb-hc32f4a0-lqfp100"
+                - "hc32l196"
+                - "hc32l136"
+                - "ht32/ht32f52352"
+                - "ht32/ht32f12366"
+                - "ht32/ht32f53252"
+         -  RTT_BSP: "others_ft32_mm32_acm32"
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
                 - "acm32/acm32f0x0-nucleo"
+                - "acm32/acm32f0x0-nucleo"
+                - "acm32/acm32f4xx-nucleo"
                 - "CME_M7"
                 - "apollo2"
                 - "asm9260t"
@@ -69,45 +102,18 @@ jobs:
                 - "synwit/swm341-mini"
                 - "beaglebone"
                 - "zynqmp-r5-axu4ev"
-                - "at32/at32a403a-start"
-                - "at32/at32a423-start"
-                - "at32/at32f402-start"
-                - "at32/at32f403a-start"
-                - "at32/at32f405-start"
-                - "at32/at32f407-start"
-                - "at32/at32f413-start"
-                - "at32/at32f415-start"
-                - "at32/at32f421-start"
-                - "at32/at32f423-start"
-                - "at32/at32f425-start"
-                - "at32/at32f435-start"
-                - "at32/at32f437-start"
-                - "at32/at32m412-start"
-                - "at32/at32m416-start"
                 - "yichip/yc3122-pos"
-                - "hc32/ev_hc32f4a0_lqfp176"
-                - "hc32/ev_hc32f448_lqfp80"
-                - "hc32/ev_hc32f460_lqfp100_v2"
-                - "hc32/ev_hc32f472_lqfp100"
-                - "hc32/lckfb-hc32f4a0-lqfp100"
-                - "hc32l196"
+                - "yichip/yc3121-pos"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "mm32f327x"
                 - "mm32f526x"
                 - "mm32l07x"
                 - "sam7x"
                 - "hk32/hk32f030c8-mini"
-                - "acm32/acm32f0x0-nucleo"
-                - "acm32/acm32f4xx-nucleo"
                 - "rm48x50"
-                - "ht32/ht32f52352"
-                - "ht32/ht32f12366"
-                - "ht32/ht32f53252"
                 - "w60x"
                 - "essemi/es32f0654"
                 - "essemi/es32f365x"
-                - "hc32l136"
-                - "yichip/yc3121-pos"
                 - "fm33lc026"
          -  RTT_BSP: "stm32l4" 
             RTT_TOOL_CHAIN: "sourcery-arm"
@@ -421,12 +427,25 @@ jobs:
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
 
-      - name: Install Arm ToolChains
-        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
+      - name: Cache GCC Arm Toolchain
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
+        id: cache-gcc-arm
+        uses: actions/cache@main
+        with:
+          path: /opt/gcc-arm-none-eabi-10-2020-q4-major
+          key: ${{ runner.os }}-arm-none-eabi-10-2020-q4-major
+
+      - name: Download Arm ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && (steps.cache-gcc-arm.outputs.cache-hit != 'true') }}
         shell: bash
         run: |
           wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
           sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+
+      - name: Install Arm ToolChains2
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
+        shell: bash
+        run: |
           /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
           echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
 

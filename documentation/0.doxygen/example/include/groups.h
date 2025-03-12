@@ -24,14 +24,16 @@
  *
  * See
  * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/groups.h">documentation/0.doxygen/example/include/groups.h</a>
- * for example.
+ * for code example.
+ *
+ * See @ref group_doxygen_example for html output.
  *
  * More information can be found in the Doxygen manual:
  * <a href="https://www.doxygen.nl/manual/grouping.html">Grouping</a>.
  */
 
 /**
- * @defgroup group_doxygen_example_sub Sub Group of Doxygen Example
+ * @defgroup group_doxygen_example_sub Doxygen Example of Groups
  *
  * All members of this group will be displayed in one HTML page.
  *

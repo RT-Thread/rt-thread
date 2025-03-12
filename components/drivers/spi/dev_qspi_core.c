@@ -199,6 +199,9 @@ rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_
     message.parent.cs_release = 1;
 
     message.qspi_data_lines = 1;
+    /* set next */
+    /* Ensure correct QSPI message chaining by setting next pointer to NULL, preventing unintended data transmission issues.*/
+    message.parent.next = RT_NULL;
 
     result = rt_qspi_transfer_message(device, &message);
     if (result == 0)
@@ -282,6 +285,9 @@ rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
     message.parent.length = length - count;
     message.parent.cs_take = 1;
     message.parent.cs_release = 1;
+    /* set next */
+    /* Ensure correct QSPI message chaining by setting next pointer to NULL, preventing unintended data transmission issues.*/
+    message.parent.next = RT_NULL;
 
     result = rt_qspi_transfer_message(device, &message);
     if (result == 0)
