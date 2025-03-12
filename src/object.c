@@ -335,11 +335,20 @@ RTM_EXPORT(rt_object_get_pointers);
  * @brief This function will initialize an object and add it to object system
  *        management.
  *
- * @param object is the specified object to be initialized.
+ * @param object The specified object to be initialized.
+ *               The object pointer that needs to be initialized must point to
+ *               a specific object memory block, not a null pointer or a wild pointer.
  *
- * @param type is the object type.
+ * @param type The object type. The type of the object must be a enumeration
+ *             type listed in rt_object_class_type, RT_Object_Class_Static
+ *             excluded. (For static objects, or objects initialized with the
+ *             rt_object_init interface, the system identifies it as an
+ *             RT_Object_Class_Static type)
  *
- * @param name is the object name. In system, the object's name must be unique.
+ * @param name Name of the object. In system, the object's name must be unique.
+ *             Each object can be set to a name, and the maximum length for the
+ *             name is specified by RT_NAME_MAX. The system does not care if it
+ *             uses '\0' as a terminal symbol.
  */
 void rt_object_init(struct rt_object         *object,
                     enum rt_object_class_type type,
@@ -436,11 +445,17 @@ void rt_object_detach(rt_object_t object)
 /**
  * @brief This function will allocate an object from object system.
  *
- * @param type is the type of object.
+ * @param type Type of object. The type of the allocated object can only be of
+ *             type rt_object_class_type other than RT_Object_Class_Static.
+ *             In addition, the type of object allocated through this interface
+ *             is dynamic, not static.
  *
- * @param name is the object name. In system, the object's name must be unique.
+ * @param name Name of the object. In system, the object's name must be unique.
+ *             Each object can be set to a name, and the maximum length for the
+ *             name is specified by RT_NAME_MAX. The system does not care if it
+ *             uses '\0' as a terminal symbol.
  *
- * @return object
+ * @return object handle allocated successfully, or RT_NULL if no memory can be allocated.
  */
 rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
@@ -505,7 +520,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 /**
  * @brief This function will delete an object and release object memory.
  *
- * @param object is the specified object to be deleted.
+ * @param object The specified object to be deleted.
  */
 void rt_object_delete(rt_object_t object)
 {
@@ -543,7 +558,7 @@ void rt_object_delete(rt_object_t object)
  * @note  Normally, the system object is a static object and the type
  *        of object set to RT_Object_Class_Static.
  *
- * @param object is the specified object to be judged.
+ * @param object The specified object to be judged.
  *
  * @return RT_TRUE if a system object, RT_FALSE for others.
  */
