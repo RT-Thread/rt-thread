@@ -18,7 +18,7 @@ STM32F103战舰V3，资源丰富，接口多，功能强大，性价比高，资
 
 开发板外观如下图所示：
 
-![board](figures/board.png)
+![board](figures/board.jpg)
 
 该开发板常用 **板载资源** 如下：
 
