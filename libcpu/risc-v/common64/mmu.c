@@ -263,10 +263,23 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr)
     lvl_entry[i] = ((rt_ubase_t *)aspace->page_table + lvl_off[i]);
     pentry = lvl_entry[i];
 
+    /* check if lvl_entry[0] is valid. if no, return 0 directly. */
+    if (!PTE_USED(*pentry))
+    {
+        return 0;
+    }
+
     /* find leaf page table entry */
     while (PTE_USED(*pentry) && !PAGE_IS_LEAF(*pentry))
     {
         i += 1;
+
+        if (i >= 3)
+        {
+            unmapped = 0;
+            break;
+        }
+
         lvl_entry[i] = ((rt_ubase_t *)PPN_TO_VPN(GET_PADDR(*pentry), PV_OFFSET) +
                         lvl_off[i]);
         pentry = lvl_entry[i];
@@ -277,6 +290,10 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr)
     if (PTE_USED(*pentry))
     {
         _unmap_pte(pentry, lvl_entry, i);
+    }
+    else
+    {
+        unmapped = 0; /* invalid pte, return 0. */
     }
 
     return unmapped;
