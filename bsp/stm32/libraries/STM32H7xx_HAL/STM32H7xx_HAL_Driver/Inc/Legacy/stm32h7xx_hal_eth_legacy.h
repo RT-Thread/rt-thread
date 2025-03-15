@@ -1558,7 +1558,7 @@ typedef struct{
   */
 
 /* Include ETH HAL Extension module */
-#include "stm32h7xx_hal_eth_ex.h"
+#include "stm32h7xx_hal_eth_ex_legacy.h"
 
 /* Exported functions --------------------------------------------------------*/
 

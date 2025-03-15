@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -117,7 +117,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 {
     ETH_MACConfigTypeDef MACConf;
     uint32_t regvalue = 0;
-    uint8_t  status = RT_EOK;
+    rt_err_t  status = RT_EOK;
 
     __HAL_RCC_D2SRAM3_CLK_ENABLE();
 
@@ -357,7 +357,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
         {
             for (q = p, l = 0; q != NULL; q = q->next)
             {
-                memcpy((rt_uint8_t *)q->payload, (rt_uint8_t *)&RxBuff.buffer[l], q->len);
+                rt_memcpy((rt_uint8_t *)q->payload, (rt_uint8_t *)&RxBuff.buffer[l], q->len);
                 l = l + q->len;
             }
         }

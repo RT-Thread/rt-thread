@@ -1,5 +1,8 @@
 menu "Hardware Drivers Config"
-
+    config SOC_STM32H750_ARTPI
+        bool 
+        default y
+        
 menu "Board extended module"
 
     menuconfig ART_PI_USING_MEDIA_IO
