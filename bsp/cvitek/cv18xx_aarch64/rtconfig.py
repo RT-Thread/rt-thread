@@ -46,4 +46,5 @@ if PLATFORM == 'gcc':
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 POST_ACTION += OBJCPY + ' -O binary $TARGET Image \n' + SIZE + ' $TARGET \n'
-POST_ACTION += './combine.sh && ./mksdimg.sh ' + os.getcwd() + ' Image \n'
+POST_ACTION += 'cd .. && bash ./build.sh && DPT_PATH_KERNEL='+  os.path.normpath(os.getcwd() + '/../../..') +' DPT_ARCH=arm DPT_BOARD_TYPE=duo256m ../rttpkgtool/script/mkpkg.sh && cp -r ../rttpkgtool/output/duo256m/ ../output/ ' 
+
