@@ -212,14 +212,22 @@ typedef struct msh_cmd_opt
  *
  * @param[in] command The command associated with these options.
  */
+#ifdef _MSC_VER
+#define CMD_OPTIONS_STATEMENT(command) static struct msh_cmd_opt command##_msh_options[16];
+#else
 #define CMD_OPTIONS_STATEMENT(command) static struct msh_cmd_opt command##_msh_options[];
+#endif
 
 /**
  * @brief Starts the definition of command options for a specific command.
  *
  * @param[in] command The command these options are associated with.
  */
+#ifdef _MSC_VER
+#define CMD_OPTIONS_NODE_START(command) static struct msh_cmd_opt command##_msh_options[16] = {
+#else
 #define CMD_OPTIONS_NODE_START(command) static struct msh_cmd_opt command##_msh_options[] = {
+#endif
 
 /**
  * @brief Defines a single command option.
