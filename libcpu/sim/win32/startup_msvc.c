@@ -221,33 +221,16 @@ void rt_application_init(void);
 void rt_hw_board_init(void);
 int rtthread_startup(void);
 
-#if defined(__ARMCC_VERSION)
-extern int $Super$$main(void);
-/* re-define main function */
-int $Sub$$main(void)
+/* system entry */
+extern int rtthread_startup(void);
+int wmain(int argc, char* argv[])
 {
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
+    /* startup RT-Thread RTOS */
     rtthread_startup();
-    return 0;
 }
-#elif defined(__ICCARM__)
-extern int main(void);
-/* __low_level_init will auto called by IAR cstartup */
-extern void __iar_data_init3(void);
-int __low_level_init(void)
-{
-    // call IAR table copy function.
-    __iar_data_init3();
-    rtthread_startup();
-    return 0;
-}
-#elif defined(__GNUC__)
-/* Add -eentry to arm-none-eabi-gcc argument */
-int entry(void)
-{
-    rtthread_startup();
-    return 0;
-}
-#endif
+#pragma comment(linker, "/subsystem:console /entry:wmainCRTStartup")
 
 #ifndef RT_USING_HEAP
 /* if there is not enable heap, we should use static thread and stack. */
@@ -269,15 +252,9 @@ void main_thread_entry(void *parameter)
 #ifdef RT_USING_SMP
     rt_hw_secondary_cpu_up();
 #endif
+
     /* invoke system main function */
-#if defined(__ARMCC_VERSION)
-    {
-        extern int $Super$$main(void);
-        $Super$$main(); /* for ARMCC. */
-    }
-#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__) || defined(_MSC_VER)
     main();
-#endif
 }
 
 void rt_application_init(void)
