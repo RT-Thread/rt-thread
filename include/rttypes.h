@@ -77,8 +77,8 @@ typedef uintptr_t                       rt_uintptr_t;   /**< Type for unsigned p
 #else
 typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
 typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
-typedef rt_ubase_t                      rt_intptr_t;    /**< Type for signed pointer length integer */
-typedef rt_base_t                       rt_uintptr_t;   /**< Type for unsigned pointer length integer */
+typedef rt_base_t                      rt_intptr_t;    /**< Type for signed pointer length integer */
+typedef rt_ubase_t                       rt_uintptr_t;   /**< Type for unsigned pointer length integer */
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
