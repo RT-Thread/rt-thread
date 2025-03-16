@@ -699,14 +699,3 @@ rt_uint32_t YieldInterruptHandle(void)
 
     return 0;
 } /*** YieldInterruptHandle ***/
-
-/* system entry */
-extern int rtthread_startup(void);
-int wmain(int argc, char* argv[])
-{
-    /* disable interrupt first */
-    rt_hw_interrupt_disable();
-    /* startup RT-Thread RTOS */
-    rtthread_startup();
-}
-#pragma comment(linker, "/subsystem:console /entry:wmainCRTStartup")
