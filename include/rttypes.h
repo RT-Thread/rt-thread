@@ -32,6 +32,12 @@ extern "C" {
  * RT-Thread basic data types definition
  */
 
+#if defined(_WIN64) || defined(__x86_64__)
+#ifndef ARCH_CPU_64BIT
+#define ARCH_CPU_64BIT
+#endif // ARCH_CPU_64BIT
+#endif // defined(_WIN64) || defined(__x86_64__)
+
 typedef int                             rt_bool_t;      /**< boolean type */
 
 #ifndef RT_USING_ARCH_DATA_TYPE
