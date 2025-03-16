@@ -256,10 +256,10 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
         rt_thread_switch_interrupt_flag = 1;
 
         // set rt_interrupt_from_thread
-        rt_interrupt_from_thread = from;
+        rt_interrupt_from_thread = *((rt_ubase_t *)(from));
     }
 
-    rt_interrupt_to_thread = to;
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //trigger YIELD exception(cause context switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
@@ -274,12 +274,12 @@ void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to)
         rt_thread_switch_interrupt_flag  = 1;
 
         // set rt_interrupt_from_thread
-        rt_interrupt_from_thread = from;
+        rt_interrupt_from_thread = *((rt_ubase_t *)(from));
 
     }
 
     // set rt_interrupt_to_thread
-    rt_interrupt_to_thread = to;
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //trigger YIELD exception(cause contex switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
@@ -312,7 +312,7 @@ void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to)
 void rt_hw_context_switch_to(rt_ubase_t to)
 {
     //set to thread
-    rt_interrupt_to_thread = to;
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //clear from thread
     rt_interrupt_from_thread = 0;
