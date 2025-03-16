@@ -86,8 +86,13 @@ int mpu_init(void)
     HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 
     /* Enable CACHE */
+#ifdef BSP_SCB_ENABLE_I_CACHE
     SCB_EnableICache();
+#endif
+
+#ifdef BSP_SCB_ENABLE_D_CACHE
     SCB_EnableDCache();
+#endif
 
     return RT_EOK;
 
