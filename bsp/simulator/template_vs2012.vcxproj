@@ -45,6 +45,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <TreatSpecificWarningsAsErrors>4029</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;Packet.lib;wpcap.lib;%(AdditionalDependencies)</AdditionalDependencies>
