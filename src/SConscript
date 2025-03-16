@@ -50,9 +50,14 @@ if GetDepend('RT_USING_HOOKLIST') == True:
     elif rtconfig.PLATFORM in ['armcc']:
         LOCAL_CFLAGS += ' --c99 --gnu'
 
-group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc,
-                    LINKFLAGS=LINKFLAGS, LOCAL_CFLAGS=LOCAL_CFLAGS,
-                    CPPDEFINES=['__RTTHREAD__'], LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
+if rtconfig.CROSS_TOOL == 'msvc':
+    group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc,
+                        LINKFLAGS=LINKFLAGS, LOCAL_CFLAGS=LOCAL_CFLAGS,
+                        CPPDEFINES=['__RTTHREAD__', '__RT_KERNEL_SOURCE__'])
+else:
+    group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc,
+                        LINKFLAGS=LINKFLAGS, LOCAL_CFLAGS=LOCAL_CFLAGS,
+                        CPPDEFINES=['__RTTHREAD__'], LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
 
 list = os.listdir(cwd)
 for item in list:
