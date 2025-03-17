@@ -116,6 +116,8 @@ extern "C" {
 #define dbg_log_line(lvl, color_n, fmt, ...)                \
     do                                                      \
     {                                                       \
+        rt_kprintf("\r");                                   \
+        rt_kprintf("\r");                                   \
         _DBG_LOG_HDR(lvl, color_n);                         \
         rt_kprintf(fmt, ##__VA_ARGS__);                     \
         _DBG_LOG_X_END;                                     \
