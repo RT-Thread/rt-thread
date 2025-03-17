@@ -1,3 +1,620 @@
+# RT-Thread v5.2.0 Released
+
+Change Log Since v5.1.0 Release
+
+## Kernel
+
+* **include/rtatomic.h:** set RT_USING_STDC_ATOMIC to first priority
+* **src/clock.c:** rt_tick setting arbitrary value function is added to support low-power wake-up tick compensation
+* **src/timer:**
+  * add all soft timer config [(#9048)](https://github.com/RT-Thread/rt-thread/pull/9048)
+  * Merge the functions of rt_timer_check and _soft_timer_check [(#8884)](https://github.com/RT-Thread/rt-thread/pull/8884)
+* **src/kservise:**
+  * Enhance support for backtrace service [(#9037)](https://github.com/RT-Thread/rt-thread/pull/9037)
+  * optimize console_device[(#9767)](https://github.com/RT-Thread/rt-thread/pull/9767)
+* **src:**
+  * add CPU/thread usage tracing config [(#8947)](https://github.com/RT-Thread/rt-thread/pull/8947)
+
+  * **src/Kconfig:** separate klibc Kconfig, format Kconfig, update src/Kconfig, add RT_USING_CI_ACTION
+* Remove redundant memset & unlock in smp
+* Add smp_ipi_call function to call other cpus to work
+* Change size_t to rt_size_t [(#9787)](https://github.com/RT-Thread/rt-thread/pull/9787)
+* Fix kconfig display copywriting error [(#9750)](https://github.com/RT-Thread/rt-thread/pull/9750)
+* Add RT_USING_SMP judgement inside smp_call.h [(#9835)](https://github.com/RT-Thread/rt-thread/pull/9835)
+* Support rt_packed
+* Added rt_interrupt_context* family for nested interrupt handling
+* Suppress unused warnings when DEBUG disabled
+* Specification interrupt nested level variable declaration type
+* Enable "recycling thread" in smart mode to fix bug with thread hanged
+* Remove RT_USING_SCHED_THREAD_CTX for next release
+* smart: User space context optimization
+* Add kerrno.h, kstring.h and kstdio.h
+* driver: smp_call: add non-blocking IPI calling method
+* Fixup memory address reserved and translate in early
+* fix bug of thread exit without releasing mutex & add error check log
+* add memset zero for rt_thread_init
+* support of lockless rt_completion，The new rt_completion implemented by lockless algorithm can improve timer resolution for up to ~12%, compare to sem IPC.[(#8887)](https://github.com/RT-Thread/rt-thread/pull/8887)
+* add rt_hw_cpu_id() wrapper API [(#8894)](https://github.com/RT-Thread/rt-thread/pull/8894) 
+* make RT_ASSERT independent of RT_USING_DEUBG
+* add rt_thread_close()
+* fix the issue of abnormal memcheck and memtrace calls when using SLAB.[(#8862)](https://github.com/RT-Thread/rt-thread/pull/8862)
+* Fixup UP irq_spinlock ,add cpu up,add Kconfig option
+* add rt_hw_interrupt_uninstall declare in rthw
+* upgrade RT-Thread version to v5.2.0
+* Add a check for the time slice parameter in the create thread function[(#8807)](https://github.com/RT-Thread/rt-thread/pull/8807)
+* Add subsys init level to facilitate earlier clk initialization
+* Fixed the rt_exit_critical_safe function incorrectly using returns
+* SIGNAL node assignment failure should return an error
+
+## Components
+
+* **drivers**
+  
+  * **virtio:** fix virtio net rx error[(#9170)](https://github.com/RT-Thread/rt-thread/pull/9170)
+  * **sensor:** 
+    * Add power detection type[(#9410)](https://github.com/RT-Thread/rt-thread/pull/9410)
+    * added sensor device lookup function
+    * Synchronizing sensor_v1 changes 
+    * [sensor_v2] Repair an error occurs when sensor v2 probes a sensor device for the first time
+  * **fdt:** 
+    * legacy fdt [(#9062)](https://github.com/RT-Thread/rt-thread/pull/9062)
+    * Add bootargs select in early[(#9411)](https://github.com/RT-Thread/rt-thread/pull/9411)
+    * fixup: add address reverse/translate for DMA/CPU's address
+    * fixup: ofw_parse_object fail
+    * fixup: DTS version header always v1.0
+    * fixup: Increase append child node's ref_count
+    * fixup: rt_ofw_foreach_node_by_compatible args
+  * **tty:** 
+  * **serial:**
+    * skip configure of rt_serial on tty open [(#9152)](https://github.com/RT-Thread/rt-thread/pull/9152)
+    * Make serial_v2.c compatible with the DFS_V2 interface [(#9153)](https://github.com/RT-Thread/rt-thread/pull/9153)
+    * Add an exception exit mechanism to poll tx.
+    * fix_serial_baudrate_set
+    * fix compiler error in serial dm [(#8927)](https://github.com/RT-Thread/rt-thread/pull/8927)
+    * fix error in getting serial_tty settings [(#8953)](https://github.com/RT-Thread/rt-thread/pull/8953)
+    * init dm serial naming framework in a separate phase [(#8971)](https://github.com/RT-Thread/rt-thread/pull/8971)
+    * fix when open smart but using msh after run elf file the msh will down
+    * Add bypass hook to direct processing char when uart irq coming  [(#9713)](https://github.com/RT-Thread/rt-thread/pull/9713)
+    * Add bypass testcase in utest [(#9713)](https://github.com/RT-Thread/rt-thread/pull/9713)
+    * fixed a minor typo in the comments of dev_serial_v2.c
+    * using serial name to name tty
+    * introduce hook for tty,improve code quality.
+    * fix: code format of serial.c and compile error in aarch64 context_gcc
+    * fix posix tty, and add more baudrate [(#8683)](https://github.com/RT-Thread/rt-thread/pull/8683)
+  * **i2c:** 
+    * merge the software i2c driver[(#9886)](https://github.com/RT-Thread/rt-thread/pull/9886)
+    * adjust the timing for I2C initialization
+    * add ofw support i2c
+  * **rtc:** 
+    * Specifies the rtc synchronization function [(#9804)](https://github.com/RT-Thread/rt-thread/pull/9804)
+    * Update software and hardware rtc device naming as rtc [(#9778)](https://github.com/RT-Thread/rt-thread/pull/9778)
+    * Fix rtc alarm thread parameters issue
+    * Make RTC alarm internal thread's attributes configurable
+  * **hwtimer:** 
+    * Add a user control interface
+  * **core:** 
+    * Added default values for `CPUTIME_TIMER_FREQ` in `components/drivers/cputime/Kconfig`.
+    * DFS mount auto by kernel parameters [(#8989)](https://github.com/RT-Thread/rt-thread/pull/8989)
+    * Simple NUMA (Non-Uniform Memory Access) [(#9000)](https://github.com/RT-Thread/rt-thread/pull/9000)
+    * Support simple power domain API [(#9005)](https://github.com/RT-Thread/rt-thread/pull/9005)
+    * Add IDA init in runtime
+    * check available in stub probe
+    * Fix the issue where creating a device using rt_device_create fails when attempting to delete it using rt_device_destroy[(#9379)](https://github.com/RT-Thread/rt-thread/pull/9379)
+  * **wlan:** 
+    * Add get_info api for more new sta information [(#9837)](https://github.com/RT-Thread/rt-thread/pull/9837)
+    * Add ap_get_info api for more ap information [(#9867)](https://github.com/RT-Thread/rt-thread/pull/9867)
+    * fixed a duplicate issue with the wifi scan command
+    * add the wlan join scan function
+  * **usb**
+    * refactor(drivers/usb):replace rtt usb stack with cherryusb [(#8799)](https://github.com/RT-Thread/rt-thread/pull/8799)
+    * cherryusb fix USBD_IRQHandler argument
+    * update(cherryusb) to v1.4.3
+  * **common**
+    * Organize the Kconfig in components/drivers[(#9054)](https://github.com/RT-Thread/rt-thread/pull/9054)
+    * Replace spinlock static init by RT_DEFINE_SPINLOCK
+  * **led**
+    * Rename LED register/unregister
+  * **pin**
+    * Reset the value of PIN_NONE
+  * **spi**
+    * Fix potential abnormal operations.
+    * Fixed the issue where spi configure would be executed twice [(#9972)](https://github.com/RT-Thread/rt-thread/pull/9972)
+    * Fixup device rename by chip_select
+    * Make CS pin config fixed in system [(#9977)](https://github.com/RT-Thread/rt-thread/pull/9977)
+    * Unified software SPI configuration
+    * dev_spi_flash_sfud: fix: set message.parent.next to NULL for qspi_read API
+    * fix: set message.parent.next to NULL for rt_qspi_send_then_recv API and rt_qspi_send API
+    * Fixed an issue that caused spi bus deadlock in the spi configuration
+    * Add -RT_EBUSY return value for rt_spi_bus_configure and mutex protection
+    * soft_spi_pin_init loop variable is initialized to 0
+    * spi device driver framework adds pin init function function
+  * **thermal**
+    * Remove unused code in update poll
+    * fixup coefficients's offset lost
+  * **can:**
+    * Fix possible memory overflow caused by RX
+    * close can irq before release fifo
+    * fix can warning in 64bit cpu [(#8772)](https://github.com/RT-Thread/rt-thread/pull/8772)
+    * fix compile warning in 64 bits arch cpu [(#8739)](https://github.com/RT-Thread/rt-thread/pull/8739)
+  * **sdio:**
+    * fix a bug that read members in non-existent functions
+    * fix an issue where repeated remove of card resulted in assertions
+    * Fix the issue where ART-PI smart cannot read partitions on SD/EMMC.[(#9058)](https://github.com/RT-Thread/rt-thread/pull/9058)
+    * add HS400 support to mmc driver
+    * port to the block
+  * **ofw:**
+    * fix initrd scan err
+    * add cromfs start with bootargs cmd
+    *  fix ofw_alias_scan() bug [(#8908)](https://github.com/RT-Thread/rt-thread/pull/8908)
+    * Fixup irq parse map and map mask [(#8992)](https://github.com/RT-Thread/rt-thread/pull/8992)
+    * Support ID map interface [(#8994)](https://github.com/RT-Thread/rt-thread/pull/8994)
+    * io ranges use list to storage without ofw data [(#8993)](https://github.com/RT-Thread/rt-thread/pull/8993)
+    * Delete redundant strcasecmp function  [(#9779)](https://github.com/RT-Thread/rt-thread/pull/9779)
+    * Fix when printf 0 addr by %p will return nil [(#9741)](https://github.com/RT-Thread/rt-thread/pull/9741)
+    * add pci
+    * Fixed fdt_scan_memory() memory adjustment bug [(#8853)](https://github.com/RT-Thread/rt-thread/pull/8853)
+    * fix some uninitialize err [(#8806)](https://github.com/RT-Thread/rt-thread/pull/8806)
+    * fix pin ofw variable init.
+  * **misc:**
+    * Fix the calculation error in ADC voltage conversion.
+    * random should copy size bytes of data to buffer [(#9012)](https://github.com/RT-Thread/rt-thread/pull/9012)
+    * fix pwm driver warnings
+    * Fix potential return value discrepancy when writing to urandom
+  * **pic**:
+    * fix compile err in pic-gic [(#9015)](https://github.com/RT-Thread/rt-thread/pull/9015)
+    * Implement PIC irq state { get; set } [(#9006)](https://github.com/RT-Thread/rt-thread/pull/9006)
+    * add percpu interrupt info
+    * remove intr disable
+    * add isr statistics [(#8955)](https://github.com/RT-Thread/rt-thread/pull/8955)
+    * Make affinity helper interface [(#8995)](https://github.com/RT-Thread/rt-thread/pull/8995)
+    * Fixup PIC ktime depends [(#9774)](https://github.com/RT-Thread/rt-thread/pull/9774)
+    * Add pci api,the pci/pcie driver writer can use this to get resource of current device with flag,there are three flag :
+    * Add ARM GICv2/v3 V2M, ITS support.[(#9428)](https://github.com/RT-Thread/rt-thread/pull/9428)
+    * support PIC cancel (only in debug)
+    * fixup: pirq's child handler should lock less
+    * fixup: set interrupt status when do traps
+    * fixup: pirq reinit fail
+    * delete nonexist include file
+  * **phy:**
+    *  add one more parameter for mulitiple phys;add phy and mdio bus, add head, add ofw api to of net,driver writer can use this api get phy modes or get mac address
+  * **audio**
+    * fixup: audio_pipe function conflicts with POSIX PIPE when enabling POSIX IPC[(#9404)](https://github.com/RT-Thread/rt-thread/pull/9404)
+    * fixup: protect taken_list on shared lock[(#9368)](https://github.com/RT-Thread/rt-thread/pull/9368)
+  
+* **lwp**
+  * feat: add unmap for null mapper [(#9186)](https://github.com/RT-Thread/rt-thread/pull/9186)
+  * Add VDSO functionality under the aarch64 architecture [(#9176)](https://github.com/RT-Thread/rt-thread/pull/9176)
+  * add mprotect config [(#9082)](https://github.com/RT-Thread/rt-thread/pull/9082)
+  * select console device dynamically [(#8949)](https://github.com/RT-Thread/rt-thread/pull/8949)
+  * fixup compiler warning [(#8961)](https://github.com/RT-Thread/rt-thread/pull/8961)
+  * arm: fixup signal handling [(#8988)](https://github.com/RT-Thread/rt-thread/pull/8988)
+  * add FIONREAD ioctl support for tty [(#8996)](https://github.com/RT-Thread/rt-thread/pull/8996)
+  * Initialize the user-mode SP before entering libc [(#8997)](https://github.com/RT-Thread/rt-thread/pull/8997)
+  * update sched_setaffinity() to use thread(task) ID [(#9004)](https://github.com/RT-Thread/rt-thread/pull/9004)
+  * fixup errno passing on sys_mkdir() [(#9007)](https://github.com/RT-Thread/rt-thread/pull/9007)
+  * list_process can print tid [(#8991)](https://github.com/RT-Thread/rt-thread/pull/8991)
+  * fixup of script execution [(#9009)](https://github.com/RT-Thread/rt-thread/pull/9009)
+  * Check the validity of the killpg signo parameter [(#9981)](https://github.com/RT-Thread/rt-thread/pull/9981)
+  * Fix the problem of user mode parameter space occupying heap address space [(#10014)](https://github.com/RT-Thread/rt-thread/pull/10014)
+  * Fix the return value error when killing (pid < -1)
+  * Fixed the problem of not being able to find pid by file name [(#9935)](https://github.com/RT-Thread/rt-thread/pull/9935)
+  * Kconfig: LWP_DEBUG default as n [(#9921)](https://github.com/RT-Thread/rt-thread/pull/9921)
+  * add comments for lwp system calls. [(#9934)](https://github.com/RT-Thread/rt-thread/pull/9934)
+  * fix TTYSUP_CFLAG did not include CBAUD flag [(#9773)](https://github.com/RT-Thread/rt-thread/pull/9773)
+  * add signal kill all functionality [(#9654)](https://github.com/RT-Thread/rt-thread/pull/9654)
+  * add system reboot and process teardown support [(#9654)](https://github.com/RT-Thread/rt-thread/pull/9654)
+  * support PID iteration [(#9654)](https://github.com/RT-Thread/rt-thread/pull/9654)
+  * use c99 to implement traversal [(#9654)](https://github.com/RT-Thread/rt-thread/pull/9654)
+  * Fixup possible memory leaking on close() in pty
+  * Uncheck the specific cpu category that restricts rv in the script[(#9438)](https://github.com/RT-Thread/rt-thread/pull/9438)
+  * remove extra check in sys_bind[(#9412)](https://github.com/RT-Thread/rt-thread/pull/9412)
+  * fix sys_getcwd [(#8852)](https://github.com/RT-Thread/rt-thread/pull/8852)
+  * fixup devfs porting layer of terminal [(#8797)](https://github.com/RT-Thread/rt-thread/pull/8797)
+  * fixup: uninitialized argument vector element
+  * Implementation of setpgrp and fix mmap2 problems [(#9308)](https://github.com/RT-Thread/rt-thread/pull/9308)
+  * add error log when tid depleted, and return correct errno when clone failed [(#9327)](https://github.com/RT-Thread/rt-thread/pull/9327)
+  * fix mount param issue [(#9333)](https://github.com/RT-Thread/rt-thread/pull/9333)
+  * fixup: compiler warning on cvitek risc-v cause by unsupport vDSO on rv64
+  * fix exec and mount error code
+  
+* **libc**
+
+  * fix Compilation error in "driver.c", "completion_up.c", "syslog.c" and "dlmodule.c". [(#9093)](https://github.com/RT-Thread/rt-thread/pull/9093)
+  * Fix the issue where the destructor of C++11 thread_local objects and the actual memory release actions occur in the opposite order.
+  * fix array overflow in rt_object name assignment
+  * fix pointer-to-integer cast warnings and address truncation
+  * uncomment wcwidth for win32 [(#9823)](https://github.com/RT-Thread/rt-thread/pull/9823)
+  * Add comments for timer fd APIs. [(#9794)](https://github.com/RT-Thread/rt-thread/pull/9794)
+  * Fix RT_USING_MUSLLIBC struct error bug [(#9834)](https://github.com/RT-Thread/rt-thread/pull/9834)
+  * add rt_sscanf
+  * **posix:**
+    * Add comments for thread local storage APIs
+    * Fix the problem that it doesn't check if barrier still in use and dosen't destory the mutex either, 
+    * Fix the errors that assigning an integer to a pointer and always return EINVAL, 
+    * Fixed the issue that TLS did not initialize memory after applying for it
+  * **compilers:** 
+    * add __rt_utest_tc_tab_start to support utest
+    * Add RT_USING_RTC conditional compilation protection in ctimer.c
+    * Fixed compile error when RT_USING_DEVICE is not enabled [(#9145)](https://github.com/RT-Thread/rt-thread/pull/9145)
+  * Fix issue with inconsistency between sig_mask and sigaddset implementations when using musl libc
+  * Fix ctime () crashes[(#9384)](https://github.com/RT-Thread/rt-thread/pull/9384)
+  * Fix logic error in POSIX thread local storage when looking for posix thread handle [(#8790)](https://github.com/RT-Thread/rt-thread/pull/8790)
+  * fix legacy macros will be added if cannot get the IAR version
+  * Fix the issue of incorrect return of invalid parameters in aio_write
+  * Fix incorrect naming of triggered 
+  
+* **dfs**
+
+  * **dfs v1**:
+    * Remove warning for ops
+    * Add comments and fix former comments error for dfs v1. [(#9739)](https://github.com/RT-Thread/rt-thread/pull/9739)
+    * Fixup ISO9660 build [(#9790)](https://github.com/RT-Thread/rt-thread/pull/9790)
+    * Fix cat command to output actual length
+  * **dfs v2**:
+    * fix cromfs read out of mem range [(#9197)](https://github.com/RT-Thread/rt-thread/pull/9197)
+    * Mark dirty on unmap on shared mapping only [(#9195)](https://github.com/RT-Thread/rt-thread/pull/9195)
+    * fix tmpfs bug  [(#8970)](https://github.com/RT-Thread/rt-thread/pull/8970)
+    * fixup out-of-memory access [(#8973)](https://github.com/RT-Thread/rt-thread/pull/8973)
+    * Fix cromfs bug [(#10054)](https://github.com/RT-Thread/rt-thread/pull/10054)
+    * releases the file pointer after closing the mmap file[(#9917)](https://github.com/RT-Thread/rt-thread/pull/9917)
+    * Add procfs and fix ref count check error;[(#9206)](https://github.com/RT-Thread/rt-thread/pull/9206)
+    * Separate dfs fs data structure ops;[(#9205)](https://github.com/RT-Thread/rt-thread/pull/9205)
+    * Fix DFS_V2 error and FAL warning during compilation [(#9826)](https://github.com/RT-Thread/rt-thread/pull/9826)
+    * Add ioctl assignments [(#9828)](https://github.com/RT-Thread/rt-thread/pull/9828)
+    * Add support for dfs remount functionality [(#9654)](https://github.com/RT-Thread/rt-thread/pull/9654)
+    * Fix dfs_devfs_open memory leak [(#9899)](https://github.com/RT-Thread/rt-thread/pull/9899)
+    * Set errno according to POSIX [(#9654)](https://github.com/RT-Thread/rt-thread/pull/9654)
+    * fixup: aligned proto of lseek to manual[(#9447)](https://github.com/RT-Thread/rt-thread/pull/9447)
+    * Fix symlink system call return value is not expected[(#9326)](https://github.com/RT-Thread/rt-thread/pull/9326)
+    * Fix link system call return value issue[(#9325)](https://github.com/RT-Thread/rt-thread/pull/9325)
+    * Fix rmdir system call return value does not meet user expectations[(#9328)](https://github.com/RT-Thread/rt-thread/pull/9328)
+    * Fix dup system call return value for user mode[(#9324)](https://github.com/RT-Thread/rt-thread/pull/9324)
+    * fix file mmap [(#8865)](https://github.com/RT-Thread/rt-thread/pull/8865)
+    * remove duplicate lseek in devfs[(#8859)](https://github.com/RT-Thread/rt-thread/pull/8859)
+    * fix chdir for ash's cd [(#8824)](https://github.com/RT-Thread/rt-thread/pull/8824)
+    * fix symlink, relative path resolution[(#8755)](https://github.com/RT-Thread/rt-thread/pull/8755)
+    * add dfs pwrite pread
+  * Collecting some config to sub-menu [(#9654)](https://github.com/RT-Thread/rt-thread/pull/9654)
+
+* **utilities**
+  * ulog: Fix the problem of file_buf being released incorrectly;add some comments to ulog for supplement.
+  * ymodem: last frame's data_sz issue, fixed
+  * Fix the issue of LOG_RAW asynchronous output being truncated.
+  * Fix the issue of files not being closed after the sy command in Ymodem.
+
+* **mm**
+  * improve sconscript [(#9028)](https://github.com/RT-Thread/rt-thread/pull/9028)
+  * fix DeprecationWarning: invalid escape sequence.
+  * Fixed the problem of missing the refresh address translation table when unmap memory.
+  * added affinity pages allocator
+  * improve Kconfig structure on MM
+  * install page in a discrete method
+  * page poison debugging and assertion enhancements
+
+* **Net**
+
+  * Update af_inet_at.c[(#9065)](https://github.com/RT-Thread/rt-thread/pull/9065)
+
+  * netdev: add statistics and more inupt parameters to ping command
+
+  * add comments for BSD socket APIs.
+
+  * add more socket flag [(#9436)](https://github.com/RT-Thread/rt-thread/pull/9436)
+
+  * **sal/socket:**
+
+    * optimize sal_bind[(#9413)](https://github.com/RT-Thread/rt-thread/pull/9413)
+    * delete netdev_lo[(#9431)](https://github.com/RT-Thread/rt-thread/pull/9431) 
+    * delay getting sal_proto_family in sal_ioctlsocket[(#9429)](https://github.com/RT-Thread/rt-thread/pull/9429)
+    * replace netdev's spin_lock_irqsave to spin_lock[(#9423)](https://github.com/RT-Thread/rt-thread/pull/9423)
+
+    * Add netdev ifindex feature, it will support SIOCGIFINDEX command and find netdev by ifindex
+    * Add netgetdev api for configure routation
+    * Increased the limit on the number of messages
+    * Fix compilation error when SAL_TLS is turned on
+
+  * **at:**
+
+    * Add support for SERIAL_V2 [(#9860)](https://github.com/RT-Thread/rt-thread/pull/9860);Fix the issue of data loss after socket disconnection for large data transmission volume;Fix the at socket semaphore release exception
+    * Fix the bug that udp communicates with multiple addresses for one socket、DNS locking prevents multithreading confusion 、Achieve at_gethostbyname_r、stability optimization[(#9403)](https://github.com/RT-Thread/rt-thread/pull/9403)
+    * netdb add at_gethostbyname_r 
+    * _gethostbyname_by_device 
+
+  * **lwip: **
+
+    * Add support for independent dns services for multiple network devices [(#9433)](https://github.com/RT-Thread/rt-thread/pull/9433);Hook functions are provided to provide greater flexibility for unknown Ethernet protocolsfix lwip poll macro conflict[(#9434)](https://github.com/RT-Thread/rt-thread/pull/9434)
+    * components: net: lwip: port: add netdev callback on link status change setting
+
+* **ktime**
+
+  * quality: remove recursion on hrtimer [(#9110)](https://github.com/RT-Thread/rt-thread/pull/9110)
+  * support period ktime timeout and multiple ktimer_hrtimer [(#8972)](https://github.com/RT-Thread/rt-thread/pull/8972)
+  * fixup use-after-free [(#8928)](https://github.com/RT-Thread/rt-thread/pull/8928)
+  * Address unsigned long overflow in some ktime function calculations [(#9008)](https://github.com/RT-Thread/rt-thread/pull/9008)
+  * improve ktimer sleep [(#8838)](https://github.com/RT-Thread/rt-thread/pull/8838)
+
+* **sdio**
+  * Fix the issue of not being able to read emmc/sd partitions on ART-PI samrt.[(#9051)](https://github.com/RT-Thread/rt-thread/pull/9051)
+  * add uhs-i mode support to sd driver
+  * Fix wrong max data rate calculation logic
+  
+* **finsh**
+  * Add print logs for msh command failures
+  * add msh command to bind thread to specific core [(#9085)](https://github.com/RT-Thread/rt-thread/pull/9085)
+  * When RT-USHING-POSIX_STDIO, use "get_console" to retrieve the current console descriptor
+  * remove finsh_syscall_lookup() function declaration
+  * solve data access bugs and fix shell.c strcat()
+  * feat: add finsh thread entry hook
+
+* **fal:** 
+
+  * Log warning for block partition exceeding flash length
+  * Fix the type mismatch issue in the FAL driver.
+
+* **ipc:**
+  * Fix the abnormal release of resources when pipe creation fails.
+  * If the requested space is insufficient and an appropriate space cannot be allocated, the new_rbb needs to be reclaimed.
+  * Update the implementation of list traversal [(#9869)](https://github.com/RT-Thread/rt-thread/pull/9869)
+  * remove timer and use list. [(#9825)](https://github.com/RT-Thread/rt-thread/pull/9825)
+  * remove useless judgments from task scheduling [(#9825)](https://github.com/RT-Thread/rt-thread/pull/9825)
+  * remove RT_EBUSY return value comment [(#9825)](https://github.com/RT-Thread/rt-thread/pull/9825)
+  * Fixed the error that a hung thread in the queue pop cannot be resumed by push [(#8839)](https://github.com/RT-Thread/rt-thread/pull/8839)
+  * fix workqueue bug
+  * feat: add ISR safe completion API fix 
+  * rt_atomic_dec_and_test
+
+* **pm:**
+  * The device is registered 和 uninstalled by linked list
+
+* **DM2.0**
+  
+  * **Feature:** 
+  
+    * Support virtual pin,LED, regulator
+  
+    * Support ATA AHCI [(#9683)](https://github.com/RT-Thread/rt-thread/pull/9683)、reset controller [(#9630)](https://github.com/RT-Thread/rt-thread/pull/9630)、hardware mailbox [(#9599)](https://github.com/RT-Thread/rt-thread/pull/9599)、PHY (external) [(#9597)](https://github.com/RT-Thread/rt-thread/pull/9597)、NVME [(#9591)](https://github.com/RT-Thread/rt-thread/pull/9591)、SCSI bus [(#9592)](https://github.com/RT-Thread/rt-thread/pull/9592)、DMA management [(#9682)](https://github.com/RT-Thread/rt-thread/pull/9682)、 IIO (Industrial I/O) [(#9598)](https://github.com/RT-Thread/rt-thread/pull/9598)、import SoC Pinctrl config
+    * Support milkv-duo rt-smart
+    * Support simple block layer
+    * Support MFD syscon
+    * Support import SoC CLK config
+    * Support clock subprobe in OFW
+    * Support driver depends fix auto
+    * Add general sdhci driver it support pio&&sdma [(#9649)](https://github.com/RT-Thread/rt-thread/pull/9649)
+    * Add PWM cool fan[(#9711)](https://github.com/RT-Thread/rt-thread/pull/9711)
+    * Add support AMP mode [(#9762)](https://github.com/RT-Thread/rt-thread/pull/9762)
+    * Add support PIC mailbox in AMP [(#9762)](https://github.com/RT-Thread/rt-thread/pull/9762)
+    * Add ms sleep for link status change
+    * DM Device IDA management
+    * Make SoC Kconfig import easy
+    * Basic PCI/PCIe (Peripheral Component Interconnect Express) bus
+    * Extended drivers MISC interface
+    * Merge ofw_parse and request_chan, use strict mode for device DMA pool
+  
+  * **Fixup:** 
+  
+    * Fixup pin propname check
+    * Fixup pin flags get from OFW and pin depend auto
+    * Fixup PCI device ofw private node for MSI
+    * Fixup pinctrl depend auto
+    * Fixup MSI first IRQ read offset
+    * Fixup PCI MSI global irq map
+    * Fixup bitmap to new type [(#9774)](https://github.com/RT-Thread/rt-thread/pull/9774)
+    * Fixup block value init [(#9774)](https://github.com/RT-Thread/rt-thread/pull/9774)
+    * Fix smart uninitialized buffer on mount(2) [(#9636)](https://github.com/RT-Thread/rt-thread/pull/9636)
+    * Fix DFS partition memory leak [(#9841)](https://github.com/RT-Thread/rt-thread/pull/9841)
+    * Fixup platform request will deadlock
+
+## Libcpu
+
+* **aarch64:**
+  * Fixed the rt_hw_secondary_cpu_bsp_start() bug [(#8898)](https://github.com/RT-Thread/rt-thread/pull/8898)
+  * fix fdt_ptr error [(#9138)](https://github.com/RT-Thread/rt-thread/pull/9138)
+  * cleanup libcpu/aarch64 [(#8950)](https://github.com/RT-Thread/rt-thread/pull/8950)
+  * mmu log fixup [(#9078)](https://github.com/RT-Thread/rt-thread/pull/9078)
+  * memory setup using memblock [(#9092)](https://github.com/RT-Thread/rt-thread/pull/9092)
+  * Update kernel's boot link for ARM64
+  * Add __rt_clz loss in aarch64 [(#9774)](https://github.com/RT-Thread/rt-thread/pull/9774)
+  * Improve memory mapping process [(#9733)](https://github.com/RT-Thread/rt-thread/pull/9733)
+  * fix No memory higher than 1 GB is mapped
+  * Update thread self on sp-switch
+  * Modify atomic implementation[(#9364)](https://github.com/RT-Thread/rt-thread/pull/9364)
+  * fix memheap search in setup of aarch64
+  * aarch64 UMP compiler error [(#8677)](https://github.com/RT-Thread/rt-thread/pull/8677)
+  * improve performance of IRQ dis/en-able [(#8687)](https://github.com/RT-Thread/rt-thread/pull/8687)
+  * call PV_OFFSET on entry for once
+  * quality: include the essential only to avoid recursion
+  * Trimming General Context
+* **arm:** 
+  * implement cpuid get by assembly [(#9052)](https://github.com/RT-Thread/rt-thread/pull/9052)
+  * Correct ".cpu cortex-m4" to ".cpu cortex-m7"
+  * add C11 atomic ticket spinlock [(#8882)](https://github.com/RT-Thread/rt-thread/pull/8882)
+  * discard rt_current_thread [(#8976)](https://github.com/RT-Thread/rt-thread/pull/8976)
+  * add hw thread self [(#8942)](https://github.com/RT-Thread/rt-thread/pull/8942)
+  * cortex-m7: Use hw atomic
+  * cortex-m4: allows rewrite to interrupt enable/disable api to support independent interrupts management[(#9305)](https://github.com/RT-Thread/rt-thread/pull/9305)
+  * generic implementation of vector irq[(#9336)](https://github.com/RT-Thread/rt-thread/pull/9336)
+  * dealing with mem region out of kernel space [(#8847)](https://github.com/RT-Thread/rt-thread/pull/8847)
+* **riscv:** 
+
+   - unify tick.c [(#9164)](https://github.com/RT-Thread/rt-thread/pull/9164)
+   - Bugfix/fix weak handle trap in riscv common crash rv64 trap handling [(#9189)](https://github.com/RT-Thread/rt-thread/pull/9189)
+   - support ARCH_REMAP_KERNEL on libcpu/c906 [(#9123)](https://github.com/RT-Thread/rt-thread/pull/9123)
+   - Fix missing break statements and update functions. [(#9095)](https://github.com/RT-Thread/rt-thread/pull/9095)
+   - Correct the issue where the user-mode sp is 8 less after exiting signal[(#9080)](https://github.com/RT-Thread/rt-thread/pull/9080)
+   - Restore gp before entering user mode from signal handling [(#9072)](https://github.com/RT-Thread/rt-thread/pull/9072)
+   - rv64: support for ARCH_REMAP_KERNEL [(#9067)](https://github.com/RT-Thread/rt-thread/pull/9067)
+   - add a doc for wch saving the irq stack as  stack-512 [(#10063)](https://github.com/RT-Thread/rt-thread/pull/10063)
+   - add comments for rv64 sv39 mmu APIs. [(#10053)](https://github.com/RT-Thread/rt-thread/pull/10053)
+   - fix the PPN length error in GET_PPN(pte). [(#10020)](https://github.com/RT-Thread/rt-thread/pull/10020)
+   - fixup for parameter passing on backtrace
+   - resolve compilation issues in cpuport. h under smp
+   - add build script for vector module, use general vector support code for virt64
+   - correct the alignment check of pv_offset
+   - fix the issue of long jmp with call
+   - Support riscv vector
+   - Fix the system fails to boot properly if ARCH_USING_ASID=y when using ASID in the RV64 MMU
+   - Add c908 cpu
+   - Optimize the judgment condition for selecting vendor directory in rv build script[(#9455)](https://github.com/RT-Thread/rt-thread/pull/9455)
+   - feat: remove redundant codes under virt64, c906[(#9154)](https://github.com/RT-Thread/rt-thread/pull/9154)
+   - feat: unify low-level bringups[(#9181)](https://github.com/RT-Thread/rt-thread/pull/9181)
+   - feat: unify interrupt & IO on rv64
+   - feat: unify mmu related works
+   - feat: unify context on c906, virt64
+   - fit into common64
+   - fixup for parameter passing on backtrace [(#8655)](https://github.com/RT-Thread/rt-thread/pull/8655)
+   - fixup for parameter passing on backtrace
+   - adapt to rv64ilp32 toolchain
+
+## Tools
+
+* Delete the tools/kconfiglib folder and use pip to install kconfiglib.
+* Let cmake generator get more param from `rtconfig.py` [(#9139)](https://github.com/RT-Thread/rt-thread/pull/9139)
+* remove kconfig-frontends
+* fix the issue of the missing link flags added in Sconscript [(#8957)](https://github.com/RT-Thread/rt-thread/pull/8957)
+* fix env toolchain path parse issue [(#8936)](https://github.com/RT-Thread/rt-thread/pull/8936)
+* fix the issue of cc detection failure in Windows [(#8914)](https://github.com/RT-Thread/rt-thread/pull/8914)
+* Address the incompatibility of str.decode() between Python 3 and Python 2 in tools/keil.py.
+* test kconfiglib is installed and info how to install
+* mkdist and sdk_dist support the kconfiglib syntax.
+* Add requirements.txt for python packages
+* Verify l4 platform, fix scons --dist
+* ci.attachconfig.yml is used in combination with scons
+* fix missing some flags added in Sconscript
+* get some info from env to save time [(#10062)](https://github.com/RT-Thread/rt-thread/pull/10062)
+* iar.py fix scons --target=iar --dist [(#9997)](https://github.com/RT-Thread/rt-thread/pull/9997)
+* pkgs --update-force instead of pkgs --update [(#10042)](https://github.com/RT-Thread/rt-thread/pull/10042)
+* Fix cppcheck fail error in lwp.c [(#9912)](https://github.com/RT-Thread/rt-thread/pull/9912)
+* Add sdk_cfg.json setting for env CC detection [(#9890)](https://github.com/RT-Thread/rt-thread/pull/9890)
+* Add clangd support [(#9772)](https://github.com/RT-Thread/rt-thread/pull/9772)
+* Add more c++ src file type [(#9776)](https://github.com/RT-Thread/rt-thread/pull/9776)
+* Add zig target Support [(#9787)](https://github.com/RT-Thread/rt-thread/pull/9787)
+* Fix the issue of missing commands in compile_commands.json[(#9856)](https://github.com/RT-Thread/rt-thread/pull/9856)
+* Update workspace by compile_commands.json [(#9781)](https://github.com/RT-Thread/rt-thread/pull/9781)
+* cmake: fix processing groups with similar name [(#9667)](https://github.com/RT-Thread/rt-thread/pull/9667)
+* vsc: Add project.json generation in vsc.py [(#9632)](https://github.com/RT-Thread/rt-thread/pull/9632)
+* fix the SDK path issue in env script.[(#9362)](https://github.com/RT-Thread/rt-thread/pull/9362)
+* disable tools check temporarily
+* Add --cdb to make compile_commands.json.
+* set at_device package as strict mode
+* add workflow to check env 1.5.x stable version
+* fix doxygen ci grammar error
+* fix menuconfig error on vscode console [(#8843)](https://github.com/RT-Thread/rt-thread/pull/8843)
+* Added clang-format configuration, supporting automatic code formatting via IDE or script.
+* fix EXEC_PATH exists, but the CC does not.
+* Add toolchain detection in sdk packages [(#8827)](https://github.com/RT-Thread/rt-thread/pull/8827)
+* disable doxygen check
+* remove Jenkinsfile
+* Unify the invocation of kconfiglib with scons --menuconfig, --pyconfig, and --pyconfig-silent.
+* Add install env script
+* add RTduino libraries check
+* add footprint information when compiling
+* Unify env-related interfaces in tools and optimize env partial path splicing [(#9185)](https://github.com/RT-Thread/rt-thread/pull/9185),
+* fix: add gd32h759i-start to CI,
+* add the keil ci check for runner
+* env_utility: [tools] fix the SDK package path issue
+* CMake: Generator re-write and bug fixes.
+
+## Action
+
+* use env install script to install env
+* remove env-v1.5.x checking
+* add bsp to bsp_buildings.yml
+* Resolve the issue of pull_request_template.md being accidentally moved to the issue_template directory [(#9021)](https://github.com/RT-Thread/rt-thread/pull/9021)
+* Update the issue template to use an issue form format [(#9011)](https://github.com/RT-Thread/rt-thread/pull/9011)
+* Revert "[action] add cvitek/c906_little ci" [(#9945)](https://github.com/RT-Thread/rt-thread/pull/9945)
+* ci script associated with auto_utest. [(#9933)](https://github.com/RT-Thread/rt-thread/pull/9933)
+* remove spell_check
+* update bsp_buildings.yml
+* set runner to ubuntu22.04 [(#9874)](https://github.com/RT-Thread/rt-thread/pull/9874)
+* Remove rockchip/rk3568 because of the complie time
+* Attachconfig adapts yml syntax features [(#9629)](https://github.com/RT-Thread/rt-thread/pull/9629)
+* Recursive folder lookup attachconfig.yml
+* Add toolchain stup script [(#9453)](https://github.com/RT-Thread/rt-thread/pull/9453)
+* add cppcheck new feature[(#9425)](https://github.com/RT-Thread/rt-thread/pull/9425)
+* Add summary for easy viewing of error messages[(#9426)](https://github.com/RT-Thread/rt-thread/pull/9426)
+* add cppcheck project and action debug[(#9401)](https://github.com/RT-Thread/rt-thread/pull/9401)
+* Supplementary part bsp, Component's label.[(#9350)](https://github.com/RT-Thread/rt-thread/pull/9350)
+* add toolchain download link
+
+## Documents
+
+* **Doxygen**:
+  * Fix some doxygen error.
+  * add prefix for groups [(#9991)](https://github.com/RT-Thread/rt-thread/pull/9991)
+  * add prefix for page name [(#9989)](https://github.com/RT-Thread/rt-thread/pull/9989)
+  * create framework to unify markdown and source code part [(#9946)](https://github.com/RT-Thread/rt-thread/pull/9946)
+  * Introduce how to build & run doxygen on ubuntu [(#9821)](https://github.com/RT-Thread/rt-thread/pull/9821)
+  * Doxygen attach github pages [(#9859)](https://github.com/RT-Thread/rt-thread/pull/9859)
+  * Update doxygen rtthread_logo.png [(#9861)](https://github.com/RT-Thread/rt-thread/pull/9861)
+  * Add pwm、touch、can、i2c、spi、pin、dac、rtc、adcdriver example for doxygen
+  
+* **dfs**:
+  
+  * Add some comments to dfs posix APIs for supplement
+  
+  * Handling unit size in POSIX RW request
+  
+* **finsh**: fix the wrong comments for FINSH_USING_SYMTAB macro in markdown files.
+
+* Update STM32 BSP production tutorial
+
+* add driver example for doxygen [(#9446)](https://github.com/RT-Thread/rt-thread/pull/9446)
+
+* fix source code catalog Name itemUtest
+
+* Remove useless code And Update mem documentation
+
+* fix dead link to contribution_guide.md in README.md README_es.md README_de.md
+
+## Utest
+
+*  add device find [(#8959)](https://github.com/RT-Thread/rt-thread/pull/8959)
+*  remove delay for on thread testing [(#9053)](https://github.com/RT-Thread/rt-thread/pull/9053)
+*  Implementation of some test cases has been added.
+   * Add implementation of more test case for rt_memcpy  [(#9823)](https://github.com/RT-Thread/rt-thread/pull/9823)
+   * Add implementation of rt_memcmp test cases [(#9823)](https://github.com/RT-Thread/rt-thread/pull/9823)
+   * Add implementation of uassert_ptr_equal and uassert_ptr_not_equal [(#9823)](https://github.com/RT-Thread/rt-thread/pull/9823)
+   * Add rt_memcpy utest case [(#9815)](https://github.com/RT-Thread/rt-thread/pull/9815)
+   * Add rt_memset test case [(#9831)](https://github.com/RT-Thread/rt-thread/pull/9831)
+   * Add float operators uassert_float_equal and uassert_float_not_equal [(#9868)](https://github.com/RT-Thread/rt-thread/pull/9868) 
+   * Add workqueue_tc [(#9850)](https://github.com/RT-Thread/rt-thread/pull/9850)
+   * Add rt_sprintf family functions test cases [(#9820)](https://github.com/RT-Thread/rt-thread/pull/9820)
+   * add mutex_pi_tc[(#9353)](https://github.com/RT-Thread/rt-thread/pull/9353)
+   * add smp testcases[(#9356)](https://github.com/RT-Thread/rt-thread/pull/9356)
+*  precise & readable mm fault type [(#9047)](https://github.com/RT-Thread/rt-thread/pull/9047)
+*  fix twice operation of uassert;[(#9911)](https://github.com/RT-Thread/rt-thread/pull/9911)
+*  fix an issue where macros are output directly when UTEST_UNIT_RUN is nested [(#9868)](https://github.com/RT-Thread/rt-thread/pull/9868)
+*  Optimize the utest to support new CI [(#9815)](https://github.com/RT-Thread/rt-thread/pull/9815)
+*  Remove rt_kprintf from TC_rt_sprintf.c [(#9823)](https://github.com/RT-Thread/rt-thread/pull/9823)
+*  make RT_USING_CI_ACTION to be clear RT_USING_CI_ACTION will select RT_UTEST_USING_AUTO_RUN and RT_UTEST_USING_ALL_CASES[(#9889)](https://github.com/RT-Thread/rt-thread/pull/9889)
+*  fix race in mutex tc & add recurse lock tc[(#9365)](https://github.com/RT-Thread/rt-thread/pull/9365)
+*  feat: print progress on testing
+
+## BSP
+
+* Some driver issues have been resolved and some driver support has been added...
+* Added some new BSPs
+  * ST: 
+    * STM32H730 [(#9962)](https://github.com/RT-Thread/rt-thread/pull/9962)、stm32h723-st-nucleo board [(#9738)](https://github.com/RT-Thread/rt-thread/pull/9738)、stm32f407-lckfb-skystar、 stm32h7s7-st-disco、FK407M2-ZGT6 
+  * Infineon：
+    * XMC7200
+  * HT32:
+    * ht32f53252 [(#9876)](https://github.com/RT-Thread/rt-thread/pull/9876)
+  * HC32: 
+    * lckfb-hc32f4a0-lqfp100  [(#9119)](https://github.com/RT-Thread/rt-thread/pull/9119)
+  * mm32f526x:
+    * mm32f526x [(#9940)](https://github.com/RT-Thread/rt-thread/pull/9940)
+  * gd32:
+    * gd32e503v-eval
+    * gd32h759i-start bsp 
+  * renesas:
+    * ra6e2-fpb
+    * RZN2L-RSK[(#9450)](https://github.com/RT-Thread/rt-thread/pull/9450)、RZT2M-RSK、EtherKit
+  * rpi4b:
+    - qemu-rpi4b
+  * canaan:
+    * k230
+
 # RT-Thread v5.1.0 released
 
 Change log since v5.0.2 release:
