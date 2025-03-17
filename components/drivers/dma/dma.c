@@ -278,7 +278,7 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
     {
         rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
 
-        err = ctrl->ops->prep_memcpy(chan, dma_addr_dst, dma_addr_src, len);
+        err = ctrl->ops->prep_memcpy(chan, dma_addr_src, dma_addr_dst, len);
 
         rt_mutex_release(&ctrl->mutex);
     }
