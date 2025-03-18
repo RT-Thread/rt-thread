@@ -335,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, SKIP_SYSCLK_INIT, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, CPU_MIMXRT1061CVL5A, __RTTHREAD__, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM</Define>
+              <Define>SKIP_SYSCLK_INIT, RT_USING_LIBC, __RTTHREAD__, CPU_MIMXRT1061CVL5A, EVK_MCIMXRM, __STDC_LIMIT_MACROS, XIP_EXTERNAL_FLASH=1, __CLK_TCK=RT_TICK_PER_SECOND, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\..\libcpu\arm\cortex-m7;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;board\ports;..\libraries\MIMXRT1061\CMSIS\Include;..\..\..\..\..\components\libc\compilers\common\include;board\MCUX_Config;..\libraries\MIMXRT1061\MIMXRT1061;..\libraries\MIMXRT1061\MIMXRT1061\drivers;applications;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\libraries\drivers;.;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\..\..\components\drivers\include;..\libraries\MIMXRT1061\CMSIS\Include;..\libraries\drivers;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;.;applications;..\libraries\MIMXRT1061\MIMXRT1061;..\libraries\MIMXRT1061\MIMXRT1061\drivers;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;board;board\ports;..\..\..\..\..\components\finsh;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\smp_call;board\MCUX_Config;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\libcpu\arm\cortex-m7;..\..\..\..\..\components\drivers\phy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -470,9 +470,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -603,9 +641,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -622,9 +660,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -689,9 +727,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -710,9 +748,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -742,6 +780,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -799,44 +875,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1005,6 +1043,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1046,58 +1122,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fsl_os_abstraction_rtthread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_os_abstraction_rtthread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_xbara.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_xbara.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>fsl_clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_xbarb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_xbarb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_MIMXRT1061.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\system_MIMXRT1061.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_cache.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_MIMXRT1061.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\arm\startup_MIMXRT1061.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1109,6 +1136,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>system_MIMXRT1061.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\system_MIMXRT1061.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_MIMXRT1061.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\arm\startup_MIMXRT1061.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>generic_list.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\generic_list.c</FilePath>
@@ -1116,9 +1157,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>fsl_os_abstraction_rtthread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_os_abstraction_rtthread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_xbara.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_xbara.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_cache.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_xbarb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_xbarb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1061\MIMXRT1061\drivers\fsl_gpio.c</FilePath>
             </File>
           </Files>
         </Group>

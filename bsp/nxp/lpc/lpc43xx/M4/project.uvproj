@@ -346,9 +346,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, BOOT_PROCESSOR, __RTTHREAD__, CORE_M4, USE_SPIFI</Define>
+              <Define>USE_SPIFI, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, CORE_M4, BOOT_PROCESSOR</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\..\components\vbus;..\..\..\..\..\components\libc\compilers\common\include;..\drivers;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\libc\compilers\common\extension;applications;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\vbus\share_hdr;..\..\..\..\..\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\libc\posix\ipc;..\Libraries\CMSIS\Include;..\..\..\..\..\components\drivers\include;..\Libraries\Device\NXP\LPC43xx\Include</IncludePath>
+              <IncludePath>..\..\..\..\..\components\vbus\share_hdr;..\..\..\..\..\components\drivers\phy;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\components\finsh;..\..\..\..\..\components\libc\posix\io\eventfd;..\drivers;..\..\..\..\..\components\libc\compilers\common\extension;applications;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\include;..\Libraries\CMSIS\Include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\vbus;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\Libraries\Device\NXP\LPC43xx\Include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\include;..\..\..\..\..\libcpu\arm\cortex-m4</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -391,13 +391,6 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>vbus_drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\vbus_drv.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\board.c</FilePath>
@@ -408,6 +401,13 @@
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>vbus_drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\vbus_drv.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -517,9 +517,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -650,9 +688,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -751,6 +789,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\defunct.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\idle.c</FilePath>
@@ -792,44 +868,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1017,6 +1055,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1051,9 +1127,9 @@
           <GroupName>VBus</GroupName>
           <Files>
             <File>
-              <FileName>vbus_chnx.c</FileName>
+              <FileName>prio_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\vbus_chnx.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\prio_queue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1072,9 +1148,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>prio_queue.c</FileName>
+              <FileName>vbus_chnx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\prio_queue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\vbus_chnx.c</FilePath>
             </File>
           </Files>
         </Group>
