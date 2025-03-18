@@ -1,7 +1,12 @@
 scons.args: &scons
     scons_arg:
       - '--strict'
-
+# ------ nano CI ------
+nano:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_NANO=y
+      
 # ------ peripheral CI ------
 peripheral.eth:
     kconfig:
