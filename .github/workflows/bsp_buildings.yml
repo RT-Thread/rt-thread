@@ -192,6 +192,7 @@ jobs:
                 - "stm32/stm32f767-st-nucleo"
                 - "stm32/stm32f769-st-disco"
                 - "stm32/stm32f723-st-disco"
+                - "stm32/stm32g030-tiny-board"
                 - "stm32/stm32g070-st-nucleo"
                 - "stm32/stm32g071-st-nucleo"
                 - "stm32/stm32g431-st-nucleo"
