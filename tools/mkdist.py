@@ -20,6 +20,7 @@
 # Change Logs:
 # Date           Author       Notes
 # 2017-10-04     Bernard      The first version
+# 2025-01-07     ZhaoCake     components copy and gen doc
 
 import os
 import subprocess
@@ -93,7 +94,7 @@ def walk_kconfig(RTT_ROOT, source_list):
 def bsp_copy_files(bsp_root, dist_dir):
     # copy BSP files
     do_copy_folder(os.path.join(bsp_root), dist_dir,
-        ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
+        ignore_patterns('build','__pycache__','dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
 
 def bsp_update_sconstruct(dist_dir):
     with open(os.path.join(dist_dir, 'SConstruct'), 'r') as f:
@@ -172,9 +173,9 @@ def zip_dist(dist_dir, dist_name):
     zip.close()
 
 def get_system_features():
-    """获取系统内置特性列表"""
+    """Get system built-in feature list"""
     return {
-        # 内核特性
+        # Kernel features
         'components_init',
         'console',
         'cpu_usage_tracer',
@@ -202,7 +203,7 @@ def get_system_features():
     }
 
 def parse_components_from_config(config_file):
-    """从 .config 文件解析启用的组件"""
+    """Parse enabled components from .config file"""
     enabled_components = set()
     
     if not os.path.exists(config_file):
@@ -212,26 +213,30 @@ def parse_components_from_config(config_file):
     with open(config_file, 'r') as f:
         for line in f:
             line = line.strip()
+            # Skip empty lines and comments
+            if not line or line.startswith('#'):
+                continue
+                
             if line.startswith('CONFIG_'):
                 if '=' in line:
-                    config = line.split('=')[0][7:]  # 去掉 CONFIG_ 前缀
+                    config = line.split('=')[0][7:]  # Remove CONFIG_ prefix
                     if config.startswith('RT_USING_'):
-                        component = config[9:].lower()  # 去掉 RT_USING_ 前缀
+                        component = config[9:].lower()  # Remove RT_USING_ prefix
                         enabled_components.add(component)
     return enabled_components
 
 def scan_components_dir(RTT_ROOT):
-    """扫描组件目录结构，生成组件映射表"""
+    """Scan component directory structure and generate component mapping"""
     components_map = {}
     components_root = os.path.join(RTT_ROOT, 'components')
     
     def parse_kconfig(kconfig_file):
-        """解析 Kconfig 文件中的配置选项"""
+        """Parse configuration options from Kconfig file"""
         components = set()
         try:
             with open(kconfig_file, 'r') as f:
                 content = f.read()
-                # 查找 config RT_USING_XXX 形式的配置
+                # Find configurations in the form of config RT_USING_XXX
                 import re
                 matches = re.finditer(r'config\s+RT_USING_(\w+)', content)
                 for match in matches:
@@ -242,25 +247,25 @@ def scan_components_dir(RTT_ROOT):
         return components
 
     def get_relative_path(full_path):
-        """获取相对于 RTT_ROOT 的路径"""
+        """Get path relative to RTT_ROOT"""
         return os.path.relpath(os.path.dirname(full_path), RTT_ROOT)
 
-    # 扫描所有组件目录
+    # Scan all component directories
     for root, dirs, files in os.walk(components_root):
         if 'Kconfig' in files:
             kconfig_path = os.path.join(root, 'Kconfig')
             component_configs = parse_kconfig(kconfig_path)
             rel_path = get_relative_path(kconfig_path)
             
-            # 将组件名称与路径关联
+            # Associate component names with paths
             for comp_name in component_configs:
                 components_map[comp_name] = rel_path
 
     return components_map
 
 def get_component_path(component_name, RTT_ROOT):
-    """获取组件的实际路径"""
-    # 获取动态组件映射
+    """Get actual path of component"""
+    # Get dynamic component mapping
     dynamic_map = scan_components_dir(RTT_ROOT)
     return dynamic_map.get(component_name)
 
@@ -355,16 +360,16 @@ See `COPYING` file for details.
     print(f"=> Generated distribution documentation: {doc_file}")
 
 def components_copy_files(RTT_ROOT, rtt_dir_path, config_file):
-    """根据配置复制组件"""
+    """Copy components based on configuration"""
     print('=> components (selective copy)')
     
-    # 获取启用的组件
+    # Get enabled components
     enabled_components = parse_components_from_config(config_file)
     if not enabled_components:
         print("Warning: No components found in config file")
         return enabled_components
     
-    # 复制每个启用的组件
+    # Copy each enabled component
     for comp_name in enabled_components:
         comp_path = get_component_path(comp_name, RTT_ROOT)
         if comp_path:
@@ -390,42 +395,43 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
 
     rtt_dir_path = os.path.join(dist_dir, 'rt-thread')
 
-    # copy BSP files
+    # Copy BSP files
     print('=> %s' % os.path.basename(BSP_ROOT))
     bsp_copy_files(BSP_ROOT, dist_dir)
 
-    # do bsp special dist handle
+    # Do BSP special dist handle
     if 'dist_handle' in Env:
         print("=> start dist handle")
         dist_handle = Env['dist_handle']
         dist_handle(BSP_ROOT, dist_dir)
 
-    # 使用新的组件复制函数并获取启用的组件列表
+    # Use new component copy function and get list of enabled components
     config_file = os.path.join(BSP_ROOT, '.config')
     enabled_components = components_copy_files(RTT_ROOT, rtt_dir_path, config_file)
     
-    # skip documentation directory
-    # skip examples
+    # Skip documentation directory
+    # Skip examples
 
-    # copy include directory
+    # Copy include directory
     print('=> include')
     do_copy_folder(os.path.join(RTT_ROOT, 'include'), os.path.join(rtt_dir_path, 'include'))
 
-    # copy all libcpu/ARCH directory
+    # Copy all libcpu/ARCH directory
     print('=> libcpu')
     import rtconfig
     do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(rtt_dir_path, 'libcpu', 'SConscript'))
 
-    # copy src directory
+    # Copy src directory
     print('=> src')
     do_copy_folder(os.path.join(RTT_ROOT, 'src'), os.path.join(rtt_dir_path, 'src'))
 
-    # copy tools directory
+    # Copy tools directory
     print('=> tools')
     do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(rtt_dir_path, 'tools'), ignore_patterns('*.pyc'))
 
+    # Copy necessary files
     do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(rtt_dir_path, 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(rtt_dir_path, 'AUTHORS'))
     do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(rtt_dir_path, 'COPYING'))
@@ -433,30 +439,12 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(rtt_dir_path, 'README_zh.md'))
 
     print('Update configuration files...')
-    # change RTT_ROOT in SConstruct
     bsp_update_sconstruct(dist_dir)
-    # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
     bsp_update_kconfig_library(dist_dir)
-    # delete testcases in Kconfig
     bsp_update_kconfig_testcases(dist_dir)
 
-    target_project_type = GetOption('target')
-    if target_project_type:
-        child = subprocess.Popen('scons --target={} --project-name="{}"'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = child.communicate()
-        if child.returncode == 0:
-            print(stdout)
-        else:
-            print(stderr)
-    else:
-        print('suggest to use command scons --dist [--target=xxx] [--project-name="xxx"] [--project-path="xxx"]')
-
-    # make zip package
-    if project_path == None:
-        zip_dist(dist_dir, project_name)
-
-    # 生成说明文档
+    # Generate documentation
     generate_dist_doc(dist_dir, enabled_components, project_name+'-dist', BSP_ROOT, RTT_ROOT)
 
     print('dist project successfully!')
