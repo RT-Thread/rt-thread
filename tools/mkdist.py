@@ -172,36 +172,6 @@ def zip_dist(dist_dir, dist_name):
 
     zip.close()
 
-def get_system_features():
-    """Get system built-in feature list"""
-    return {
-        # Kernel features
-        'components_init',
-        'console',
-        'cpu_usage_tracer',
-        'heap',
-        'slab',
-        'mempool',
-        'memtrace',
-        'timer_soft',
-        'event',
-        'mailbox',
-        'messagequeue',
-        'mutex',
-        'semaphore',
-        'signals',
-        'hook',
-        'idle_hook',
-        'thread',
-        'cache',
-        'debug',
-        'device_ops',
-        'overflow_check',
-        'slab_as_heap',
-        'user_main',
-        'stdc_atomic',
-    }
-
 def parse_components_from_config(config_file):
     """Parse enabled components from .config file"""
     enabled_components = set()
@@ -248,7 +218,11 @@ def scan_components_dir(RTT_ROOT):
 
     def get_relative_path(full_path):
         """Get path relative to RTT_ROOT"""
-        return os.path.relpath(os.path.dirname(full_path), RTT_ROOT)
+        rel_path = os.path.relpath(os.path.dirname(full_path), RTT_ROOT)
+        # Skip if path is directly under components directory
+        if rel_path == 'components' or rel_path == os.path.join('components', ''):
+            return None
+        return rel_path
 
     # Scan all component directories
     for root, dirs, files in os.walk(components_root):
@@ -257,9 +231,10 @@ def scan_components_dir(RTT_ROOT):
             component_configs = parse_kconfig(kconfig_path)
             rel_path = get_relative_path(kconfig_path)
             
-            # Associate component names with paths
-            for comp_name in component_configs:
-                components_map[comp_name] = rel_path
+            # Only add component if it has a valid sub-path
+            if rel_path:
+                for comp_name in component_configs:
+                    components_map[comp_name] = rel_path
 
     return components_map
 
@@ -359,9 +334,113 @@ See `COPYING` file for details.
     
     print(f"=> Generated distribution documentation: {doc_file}")
 
+def is_text_file(filepath):
+    """Check if a file is a text file"""
+    text_extensions = {
+        '.h', '.c', '.cpp', '.hpp', '.S', '.s', '.asm',
+        '.txt', '.md', '.rst', '.ini', '.conf',
+        'Kconfig', 'SConscript', 'SConstruct',
+        '.json', '.yml', '.yaml',
+        '.cmake', 'CMakeLists.txt',
+        '.py', '.sh', '.bat',
+        'README', 'LICENSE', 'Makefile'
+    }
+    
+    # Check by extension
+    ext = os.path.splitext(filepath)[1].lower()
+    if ext in text_extensions or os.path.basename(filepath) in text_extensions:
+        return True
+        
+    # Additional check for files without extension
+    if '.' not in os.path.basename(filepath):
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                f.read(1024)  # Try to read as text
+            return True
+        except:
+            return False
+            
+    return False
+
+def copy_component_dependencies(src_path, dst_base, RTT_ROOT, copied_files=None):
+    """Copy component dependencies (text files) from parent directories"""
+    if copied_files is None:
+        copied_files = set()
+        
+    # Get relative path from RTT_ROOT
+    rel_path = os.path.relpath(src_path, RTT_ROOT)
+    parent_path = os.path.dirname(rel_path)
+    
+    # Process all parent directories until RTT_ROOT
+    while parent_path and parent_path != '.':
+        src_dir = os.path.join(RTT_ROOT, parent_path)
+        
+        # Copy all text files in the directory (not recursively)
+        for item in os.listdir(src_dir):
+            src_file = os.path.join(src_dir, item)
+            if os.path.isfile(src_file) and src_file not in copied_files:
+                if is_text_file(src_file):
+                    dst_file = os.path.join(dst_base, parent_path, item)
+                    dst_dir = os.path.dirname(dst_file)
+                    
+                    if not os.path.exists(dst_dir):
+                        os.makedirs(dst_dir)
+                        
+                    do_copy_file(src_file, dst_file)
+                    copied_files.add(src_file)
+                    print(f'    => copying {item} from {parent_path}')
+        
+        parent_path = os.path.dirname(parent_path)
+    
+    return copied_files
+
+def get_essential_paths():
+    """Get essential paths that must be included"""
+    return {
+        'components/libc/compilers',  # Common compiler support
+        'components/drivers/include',        # Driver headers
+        'components/drivers/core',         # Driver core
+        'components/utilities',              # Utility functions
+        'components/mm',                    # Memory management
+        'components/legacy/ipc',            # IPC support, not always used, but have no config option for it
+    }
+
+def copy_essential_paths(RTT_ROOT, rtt_dir_path, copied_files=None):
+    """Copy essential paths and their build files"""
+    if copied_files is None:
+        copied_files = set()
+        
+    print('=> copying essential paths')
+    for path in get_essential_paths():
+        src_path = os.path.join(RTT_ROOT, path)
+        if os.path.exists(src_path):
+            dst_path = os.path.join(rtt_dir_path, path)
+            print(f'    => copying {path}')
+            do_copy_folder(src_path, dst_path)
+            
+            # Copy build files for this path
+            copied_files = copy_component_dependencies(src_path, rtt_dir_path, RTT_ROOT, copied_files)
+            
+    return copied_files
+
 def components_copy_files(RTT_ROOT, rtt_dir_path, config_file):
     """Copy components based on configuration"""
     print('=> components (selective copy)')
+    
+    # Track copied build files to avoid duplication
+    copied_files = set()
+    
+    # Copy components/SConscript first
+    components_sconscript = os.path.join(RTT_ROOT, 'components', 'SConscript')
+    if os.path.exists(components_sconscript):
+        dst_dir = os.path.join(rtt_dir_path, 'components')
+        if not os.path.exists(dst_dir):
+            os.makedirs(dst_dir)
+        do_copy_file(components_sconscript, os.path.join(dst_dir, 'SConscript'))
+        copied_files.add(components_sconscript)
+    
+    # Copy essential paths first
+    copied_files = copy_essential_paths(RTT_ROOT, rtt_dir_path, copied_files)
     
     # Get enabled components
     enabled_components = parse_components_from_config(config_file)
@@ -375,9 +454,13 @@ def components_copy_files(RTT_ROOT, rtt_dir_path, config_file):
         if comp_path:
             src_path = os.path.join(RTT_ROOT, comp_path)
             dst_path = os.path.join(rtt_dir_path, comp_path)
+            
             if os.path.exists(src_path):
                 print(f'    => copying {comp_name} from {comp_path}')
                 do_copy_folder(src_path, dst_path)
+                
+                # Copy parent directory build files
+                copied_files = copy_component_dependencies(src_path, rtt_dir_path, RTT_ROOT, copied_files)
             else:
                 print(f"Warning: Component path not found: {src_path}")
         else:
