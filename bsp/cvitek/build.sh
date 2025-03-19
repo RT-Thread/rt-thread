@@ -4,10 +4,11 @@ source ./tools.sh
 
 function usage() {
         echo "Usage:"
-        echo "  ./build.sh [-h|-l|-b]"
+        echo "  ./build.sh [-h|-l|-b|-a]"
         echo "  -h: display usage"
         echo "  -l: build c906L"
         echo "  -b: build c906B"
+        echo "  -a: build Cortex-A53"
 }
 
 function build_c906b() {
@@ -28,7 +29,13 @@ function build_c906l() {
 	DPT_PATH_KERNEL=$BSP_PATH/../../ DPT_BOARD_TYPE=$BOARD_TYPE DPT_PATH_OUTPUT=$BSP_PATH/output ./rttpkgtool/script/mkpkg.sh -l
 }
 
-while getopts ":hbl" opt
+function build_a53() {
+	echo "build_a53 for duo256m"
+
+	DPT_PATH_KERNEL=$BSP_PATH/../../ DPT_BOARD_TYPE=duo256m DPT_PATH_OUTPUT=$BSP_PATH/output DPT_ARCH=arm ./rttpkgtool/script/mkpkg.sh
+}
+
+while getopts ":hbla" opt
 do
         case $opt in
         h)
@@ -39,6 +46,9 @@ do
 		;;
 	l)
 		O_MAKE_LITTLE=y
+		;;
+	a)
+		O_MAKE_ARM=y
 		;;
         ?)
                 echo "Unrecognized parameter."
@@ -64,5 +74,9 @@ fi
 
 if [ "$O_MAKE_LITTLE" = "y" ]; then
 	build_c906l
+fi
+
+if [ "$O_MAKE_ARM" = "y" ]; then
+	build_a53
 fi
 
