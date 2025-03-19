@@ -330,9 +330,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>RT_USING_LIBC, CPU_LPC54608, RT_USING_ARMLIBC, SDK_DEBUGCONSOLE=0, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, CORE_M4, CPU_LPC54608J512ET180=1</Define>
+              <Define>SDK_DEBUGCONSOLE=0, RT_USING_LIBC, CORE_M4, __CLK_TCK=RT_TICK_PER_SECOND, CPU_LPC54608, CPU_LPC54608J512ET180=1, RT_USING_ARMLIBC, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\libcpu\arm\cortex-m4;SDK_2.2_LPCXpresso54608\devices\LPC54608\drivers;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;drivers;..\..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\..\components\libc\posix\pthreads;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;applications;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\ktime;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;SDK_2.2_LPCXpresso54608\CMSIS\Include;..\..\..\..\components\net\sal\include\dfs_net;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\inc;..\..\..\..\components\net\sal\include;..\..\..\..\components\net\sal\include\socket;..\..\..\..\components\finsh;.;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\net\netdev\include;..\..\..\..\components\libc\posix\io\eventfd;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\src;..\..\..\..\components\net\lwip\port;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;SDK_2.2_LPCXpresso54608\devices\LPC54608;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\libc\cplusplus;..\..\..\..\components\net\sal\impl;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\delay;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif;SDK_2.2_LPCXpresso54608\devices\LPC54608\utilities;..\..\..\..\components\drivers\ktime\inc</IncludePath>
+              <IncludePath>..\..\..\..\components\drivers\smp_call;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\..\..\components\libc\posix\pthreads;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\..\..\components\net\lwip\port;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\inc;..\..\..\..\components\libc\posix\io\eventfd;SDK_2.2_LPCXpresso54608\devices\LPC54608;..\..\..\..\components\libc\posix\io\poll;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\src;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\..\..\components\libc\posix\tls;..\..\..\..\components\drivers\ktime;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\ktime\inc;drivers;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\dfs\dfs_v1\include;applications;SDK_2.2_LPCXpresso54608\devices\LPC54608\utilities;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;SDK_2.2_LPCXpresso54608\CMSIS\Include;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\drivers\include;..\..\..\..\components\net\sal\include\socket;..\..\..\..\components\net\sal\include\dfs_net;..\..\..\..\include;..\..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\..\components\drivers\phy;..\..\..\..\components\libc\posix\delay;..\..\..\..\components\drivers\include;SDK_2.2_LPCXpresso54608\devices\LPC54608\drivers;..\..\..\..\components\libc\cplusplus;..\..\..\..\components\net\netdev\include;..\..\..\..\components\drivers\sdio\sdhci\include;..\..\..\..\components\drivers\include;..\..\..\..\components\net\sal\include;..\..\..\..\components\drivers\include;.;..\..\..\..\components\net\sal\impl;..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -377,9 +377,9 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -387,13 +387,6 @@
               <FileName>mnt.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\mnt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -411,6 +404,13 @@
               <FileName>system_LPC54608.c</FileName>
               <FileType>1</FileType>
               <FilePath>SDK_2.2_LPCXpresso54608\devices\LPC54608\system_LPC54608.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>keil_lib_power.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>SDK_2.2_LPCXpresso54608\devices\LPC54608\arm\keil_lib_power.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -513,9 +513,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c-bit-ops.c</FileName>
+              <FileName>dev_i2c_bit_ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\i2c\dev_i2c_bit_ops.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -532,9 +532,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c_core.c</FileName>
+              <FileName>dev_i2c_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\i2c\dev_i2c_core.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -551,9 +551,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c_dev.c</FileName>
+              <FileName>dev_i2c_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\i2c\dev_i2c_dev.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -570,9 +570,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -722,9 +760,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -741,9 +779,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rtc.c</FileName>
+              <FileName>dev_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\rtc\rtc.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\rtc\dev_rtc.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -760,9 +798,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>block_dev.c</FileName>
+              <FileName>dev_block.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\sdio\block_dev.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\sdio\dev_block.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -779,9 +817,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>gpt.c</FileName>
+              <FileName>dev_mmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\sdio\gpt.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\sdio\dev_mmc.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -798,9 +836,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mmc.c</FileName>
+              <FileName>dev_mmcsd_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\sdio\mmc.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\sdio\dev_mmcsd_core.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -817,9 +855,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mmcsd_core.c</FileName>
+              <FileName>dev_sd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\sdio\mmcsd_core.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\sdio\dev_sd.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -836,9 +874,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>sd.c</FileName>
+              <FileName>dev_sdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\sdio\sd.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\sdio\dev_sdio.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -855,9 +893,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>sdio.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\sdio\sdio.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -874,9 +912,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\spi\dev_spi.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -893,28 +931,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>spi_core.c</FileName>
+              <FileName>dev_spi_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\spi\spi_core.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\spi\spi_dev.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\spi\dev_spi_core.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -934,58 +953,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_emac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_phy.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\fsl_phy.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_ft5406.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_ft5406.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_sram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_sd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -997,9 +967,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_sdram.c</FileName>
+              <FileName>drv_sd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_sdram.c</FilePath>
+              <FilePath>drivers\drv_sd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\clock_config.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1011,9 +995,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>clock_config.c</FileName>
+              <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\clock_config.c</FilePath>
+              <FilePath>drivers\drv_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_sram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_phy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\fsl_phy.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_emac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1024,6 +1043,18 @@
               <FileName>devfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\filesystems\devfs\devfs.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1031,6 +1062,18 @@
               <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat\dfs_elm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1038,6 +1081,18 @@
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat\ff.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1045,6 +1100,18 @@
               <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat\ffunicode.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1052,6 +1119,18 @@
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1059,6 +1138,18 @@
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_file.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1066,6 +1157,18 @@
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1073,18 +1176,23 @@
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>msh.c</FileName>
@@ -1104,6 +1212,13 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1140,6 +1255,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1197,44 +1350,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1422,19 +1537,81 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>ktime</GroupName>
+          <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>boottime.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ktime</GroupName>
           <Files>
             <File>
               <FileName>cputimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\ktime\src\cputimer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>boottime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -1442,6 +1619,18 @@
               <FileName>hrtimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
@@ -2140,6 +2329,13 @@
               <FileName>sched.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\posix\pthreads\sched.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>emutls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\posix\tls\emutls.c</FilePath>
             </File>
           </Files>
         </Group>

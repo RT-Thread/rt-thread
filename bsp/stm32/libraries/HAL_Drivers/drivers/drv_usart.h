@@ -78,4 +78,8 @@ struct stm32_uart
     struct rt_serial_device serial;
 };
 
+#ifndef BSP_STM32_UART_V1_TX_TIMEOUT
+#define BSP_STM32_UART_V1_TX_TIMEOUT    2000
+#endif
+
 #endif  /* __DRV_USART_H__ */
