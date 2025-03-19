@@ -26,7 +26,7 @@
  */
 
 /**
- * @defgroup audio_control AUDIO_CTL
+ * @defgroup group_audio_control AUDIO_CTL
  *
  * @brief Control audio device.
  *
@@ -48,10 +48,10 @@
 #define AUDIO_CTL_STOP                      _AUDIO_CTL(4) /**< Stop audio device */
 #define AUDIO_CTL_GETBUFFERINFO             _AUDIO_CTL(5) /**< Get audio device buffer information */
 
-/** @} */ /* End of audio_control */
+/** @} */ /* End of group_audio_control */
 
 /**
- * @defgroup audio_type AUDIO_TYPE
+ * @defgroup group_audio_type AUDIO_TYPE
  *
  * @brief Audio Device Types
  *
@@ -61,10 +61,10 @@
 #define AUDIO_TYPE_INPUT                    0x01 /**< Set audio device type to input type */
 #define AUDIO_TYPE_OUTPUT                   0x02 /**< Set audio device type to output type */
 #define AUDIO_TYPE_MIXER                    0x04 /**< Set audio device type to mixer type */
-/** @} */ /* End of audio_type */
+/** @} */ /* End of group_audio_type */
 
 /**
- * @defgroup audio_samp_rates AUDIO_SAMP_RATES
+ * @defgroup group_audio_samp_rates AUDIO_SAMP_RATES
  *
  * @brief Supported audio sample rates for the audio device.
  *
@@ -82,10 +82,10 @@
 #define AUDIO_SAMP_RATE_160K                0x0200 /**< Set audio device sample rate to 160K */
 #define AUDIO_SAMP_RATE_172K                0x0400 /**< Set audio device sample rate to 172K */
 #define AUDIO_SAMP_RATE_192K                0x0800 /**< Set audio device sample rate to 192K */
-/** @} */ /* End of audio_samp_rates */
+/** @} */ /* End of group_audio_samp_rates */
 
 /**
- * @defgroup audio_bit_rates AUDIO_BIT_RATES
+ * @defgroup group_audio_bit_rates AUDIO_BIT_RATES
  *
  * @brief Supported bit rates for the audio device.
  *
@@ -99,11 +99,11 @@
 #define AUDIO_BIT_RATE_160K                 0x20 /**< Set audio device bit rates to 160K */
 #define AUDIO_BIT_RATE_172K                 0x40 /**< Set audio device bit rates to 172K */
 #define AUDIO_BIT_RATE_192K                 0x80 /**< Set audio device bit rates to 192K */
-/** @} */ /* End of audio_bit_rates */
+/** @} */ /* End of group_audio_bit_rates */
 
 
 /**
- * @defgroup audio_dsp AUDIO_DSP
+ * @defgroup group_audio_dsp AUDIO_DSP
  *
  * @brief Support Dsp(input/output) Units controls. The macro group from application level, can
  *        set audio mixer parameters including samplerate, channels etc.
@@ -114,10 +114,10 @@
 #define AUDIO_DSP_SAMPLERATE                1 /**< samplerate */
 #define AUDIO_DSP_CHANNELS                  2 /**< channels */
 #define AUDIO_DSP_SAMPLEBITS                3 /**< sample bits width */
-/** @} */ /* End of audio_dsp */
+/** @} */ /* End of group_audio_dsp */
 
 /**
- * @defgroup audio_mixer AUDIO_MIXER
+ * @defgroup group_audio_mixer AUDIO_MIXER
  *
  * @brief Supported Mixer Units controls. The macro group from driver level, can set audio mixer
  *        parameters including volume, frequence db, microphone etc.
@@ -136,7 +136,7 @@
 #define AUDIO_MIXER_MIC                     0x0100 /**< Set microphone option */
 #define AUDIO_MIXER_VITURAL                 0x0200 /**< Set virtual audio option */
 #define AUDIO_MIXER_EXTEND                  0x8000 /**< Extend mixer command */
-/** @} */ /* End of audio_mixer */
+/** @} */ /* End of group_audio_mixer */
 
 #define AUDIO_VOLUME_MAX                    (100)
 #define AUDIO_VOLUME_MIN                    (0)
@@ -213,8 +213,8 @@ struct rt_audio_configure
  */
 struct rt_audio_caps
 {
-    int main_type;                          /**< Audio main type, one value of @ref audio_type */
-    int sub_type;                           /**< Audio sub type, one value of @ref audio_dsp @ref audio_mixer */
+    int main_type;                          /**< Audio main type, one value of @ref group_audio_type */
+    int sub_type;                           /**< Audio sub type, one value of @ref group_audio_dsp or @ref group_audio_mixer */
 
     union
     {
@@ -269,7 +269,7 @@ void        rt_audio_tx_complete(struct rt_audio_device *audio);
 void        rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t len);
 
 /**
- * @defgroup audio_codec_cmd CODEC_CMD
+ * @defgroup group_audio_codec_cmd CODEC_CMD
  *
  * @brief Device Control Commands. The macro group from hardware level, can set codec
  *        parametes including volume, EQ and 3D etc.
@@ -284,7 +284,7 @@ void        rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt
 #define CODEC_CMD_3D                5 /**< Set 3D effect by codec */
 
 #define CODEC_VOLUME_MAX            (63)
-/** @} */ /* End of audio_codec_cmd */
+/** @} */ /* End of group_audio_codec_cmd */
 
 /** @} group_Audio */
 
