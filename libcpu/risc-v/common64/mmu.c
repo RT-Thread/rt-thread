@@ -36,7 +36,7 @@
 #define USER_VADDR_START 0
 #endif
 
-static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size);
+static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr);
 
 static void *current_mmu_table = RT_NULL;
 
@@ -198,7 +198,7 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
             while (unmap_va != v_addr)
             {
                 MM_PGTBL_LOCK(aspace);
-                _unmap_area(aspace, unmap_va, ARCH_PAGE_SIZE);
+                _unmap_area(aspace, unmap_va);
                 MM_PGTBL_UNLOCK(aspace);
                 unmap_va += ARCH_PAGE_SIZE;
             }
@@ -245,8 +245,8 @@ static void _unmap_pte(rt_ubase_t *pentry, rt_ubase_t *lvl_entry[], int level)
     }
 }
 
-/* Unmaps a virtual address range from the page table. */
-static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
+/* Unmaps a virtual address range (1GB/2MB/4KB according to actual page level) from the page table. */
+static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr)
 {
     rt_ubase_t loop_va = __UMASKVALUE((rt_ubase_t)v_addr, PAGE_OFFSET_MASK);
     size_t unmapped = 0;
@@ -315,7 +315,7 @@ void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size)
     while (size > 0)
     {
         MM_PGTBL_LOCK(aspace);
-        unmapped = _unmap_area(aspace, v_addr, size);
+        unmapped = _unmap_area(aspace, v_addr);
         MM_PGTBL_UNLOCK(aspace);
 
         /* when unmapped == 0, region not exist in pgtbl */
