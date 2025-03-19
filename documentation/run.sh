@@ -1,8 +1,12 @@
 #!/bin/bash
 
-rm -rf ./html
+RTT_PATH=$(realpath $(dirname $0)/..)
+RTT_DOC_PATH=$RTT_PATH/documentation
 
-doxygen
+rm -rf $RTT_DOC_PATH/html
+
+cd $RTT_DOC_PATH
+doxygen ./Doxyfile
 if [ $? -ne 0 ]; then
     echo ""
     echo "OOPS: Something error/warning occurred during Doxygen building, please check it out!"
@@ -10,5 +14,5 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-pushd html
+pushd $RTT_DOC_PATH/html
 python3 -m http.server
