@@ -110,7 +110,42 @@ Then open the browser and enter `http://<IP>:8000/index.html` to access the crea
 4. Open the file ./Doxyfile 
 5.  To tab `Run` , Click `Run doxygen`
 
+## How to contribute doxygen comments on vscode more comfortably
+
+There is a script can help you write comments more easily.You can copy the code to your setting.json inner .vscode folder.
+
+```json
+"doxdocgen.c.triggerSequence": "/**",
+"doxdocgen.c.firstLine": "/**",
+"doxdocgen.c.commentPrefix": " * ",
+"doxdocgen.c.lastLine": " */",
+"doxdocgen.generic.briefTemplate": "@brief ",
+
+//You can set param to @param[in] or @param[out] for your preference
+"doxdocgen.generic.paramTemplate": "@param[] {param} \n ",
+
+//You can comment out returnTemplate to auto addof return value type after @return  
+"doxdocgen.generic.returnTemplate": "@return ",
+
+//You can comment out customTags to unconfig @note line, meanwhile comment out "empty" item before custom item will make comment more compliant 
+"doxdocgen.generic.customTags":[
+    "@note "
+],
+
+"doxdocgen.generic.order":[
+    "brief",
+    "empty",
+    "param",
+    "return",
+    "empty",
+    "custom",
+],
+```
+
+If you perfer to write mutiple lines comments at behind one doxygen command, [Auto Comment Blocks][5] extension can auto complete "*" at the start of line when you start a new line.
+
 [1]:https://www.doxygen.nl/
 [2]:https://www.doxygen.nl/manual/grouping.html#subpaging
 [3]:https://www.doxygen.nl/manual/grouping.html#topics
 [4]:https://www.doxygen.nl/manual/docblocks.html
+[5]:https://marketplace.visualstudio.com/items?itemName=kevinkyang.auto-comment-blocks
