@@ -26,17 +26,25 @@
  *
  * See
  * <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/typedef.h">documentation/0.doxygen/example/include/typedef.h</a>
- * for example.
+ * for code example.
+ *
+ * See
+ * <a href="./group__group__doxygen__example__typedef.html">Doxygen Example of Typedef</a>
+ * for html output.
  */
 
 #include "struct.h"
 #include "enum.h"
 
 /**
- * @addtogroup group_doxygen_example
+ * @defgroup group_doxygen_example_typedef Doxygen Example of Typedef
+ *
+ * @ingroup group_doxygen_example
+ *
+ * @brief Doxygen Example of Typedef.
+ *
+ * @{
  */
-
-/** @{ */
 
 /**
  * @typedef dogygen_example_struct_t
@@ -49,7 +57,7 @@ typedef struct dogygen_example_struct dogygen_example_struct_t;
 typedef struct dogygen_example_struct_another dogygen_example_struct_another_t;
 
 /**
- * @typedef doxygen_example_enum
+ * @typedef doxygen_example_enum_t
  * Alias of `enum doxygen_example_enum`.
  */
 typedef enum doxygen_example_enum doxygen_example_enum_t;

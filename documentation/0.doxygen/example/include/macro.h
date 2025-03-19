@@ -10,7 +10,7 @@
  *   recommend putting documentation after members. See `DOXYGEN_EXAMPLE_CONST_A`
  *   and `DOXYGEN_EXAMPLE_CONST_B` in
  *   <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/macro.h">documentation/0.doxygen/example/include/macro.h</a>
- *   for exmaple.
+ *   for code exmaple.
  *
  * - The other is to define macros with parameters. For this type of
  *   macro, we recommend using a method similar to documenting for
@@ -18,14 +18,22 @@
  *   More details please see @ref page_howto_function
  *   See `DOXYGEN_EXAMPLE_ABS` in
  *   <a href="https://github.com/RT-Thread/rt-thread/blob/master/documentation/0.doxygen/example/include/macro.h">documentation/0.doxygen/example/include/macro.h</a>
- *   for example.
+ *   for code example.
+ *
+ * See
+ * <a href="./group__group__doxygen__example__macro.html">Doxygen Example of Macro</a>
+ * for html output.
  */
 
-/**
- * @addtogroup group_doxygen_example
+ /**
+ * @defgroup group_doxygen_example_macro Doxygen Example of Macro
+ *
+ * @ingroup group_doxygen_example
+ *
+ * @brief Doxygen Example of Macro.
+ *
+ * @{
  */
-
-/** @{ */
 
 #define DOXYGEN_EXAMPLE_CONST_A 100 /**< Description of macro const A */
 #define DOXYGEN_EXAMPLE_CONST_B 200 /**< Description of macro const B */
