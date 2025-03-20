@@ -2,7 +2,7 @@
 #define RT_CONFIG_H__
 
 #define SOC_STM32G030RB
-#define BOARD_STM32G030_NUCLEO
+#define BOARD_STM32G030_TINY_BOARD
 
 /* RT-Thread Kernel */
 
