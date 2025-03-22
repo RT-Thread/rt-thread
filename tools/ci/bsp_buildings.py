@@ -36,7 +36,7 @@ def run_cmd(cmd, output_info=True):
     return output_str_list, res
 
 
-def build_bsp(bsp, scons_args=''):
+def build_bsp(bsp, scons_args='',name='default'):
     """
     build bsp.
 
@@ -57,6 +57,7 @@ def build_bsp(bsp, scons_args=''):
     """
     success = True
     os.chdir(rtt_root)
+    os.makedirs(f'{rtt_root}/output/bsp/{bsp}', exist_ok=True)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
         os.chdir(rtt_root)
         run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
@@ -67,17 +68,22 @@ def build_bsp(bsp, scons_args=''):
 
         nproc = multiprocessing.cpu_count()
         os.chdir(rtt_root)
-        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args} --debug=time'
+        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}' # --debug=time for debug time
         __, res = run_cmd(cmd, output_info=True)
 
         if res != 0:
             success = False
+        else:
+            #拷贝当前的文件夹下面的所有以elf结尾的文件拷贝到rt-thread/output文件夹下
+            import glob
+            # 拷贝编译生成的文件到output目录,文件拓展为 elf,bin,hex
+            for file_type in ['*.elf', '*.bin', '*.hex']:
+                files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
+                for file in files:
+                    shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
 
     os.chdir(f'{rtt_root}/bsp/{bsp}')
     run_cmd('scons -c', output_info=False)
-
-    #pkg_dir = os.path.join(rtt_root, 'bsp', bsp, 'packages')
-    #shutil.rmtree(pkg_dir, ignore_errors=True)
 
     return success
 
@@ -145,7 +151,7 @@ def build_bsp_attachconfig(bsp, attach_file):
 
     scons_args = check_scons_args(attach_path)
 
-    res = build_bsp(bsp, scons_args)
+    res = build_bsp(bsp, scons_args,name=attach_file)
 
     shutil.copyfile(config_bacakup, config_file)
     os.remove(config_bacakup)
@@ -220,7 +226,7 @@ if __name__ == "__main__":
                         scons_arg.append(line)
                 scons_arg_str=' '.join(scons_arg) if scons_arg else ' '
                 print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
-                res = build_bsp(bsp, scons_arg_str)
+                res = build_bsp(bsp, scons_arg_str,name=name)
                 if not res:
                     print(f"::error::build {bsp} {name} failed.")
                     add_summary(f'\t- ❌ build {bsp} {name} failed.')

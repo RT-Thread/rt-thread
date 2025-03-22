@@ -23,16 +23,17 @@ typedef signed int        int32_t;
 typedef signed long long  int64_t;
 #else
 #include "stdio.h"
+#include "stdint.h"
 typedef unsigned char      byte;
 typedef unsigned short     word;
 #endif
 
-/** 
+/**
   * @brief  __NOINLINE definition
-  */ 
+  */
 #if defined ( __CC_ARM   ) || defined   (  __GNUC__  )
-/* ARM & GNUCompiler 
-   ---------------- 
+/* ARM & GNUCompiler
+   ----------------
 */
 #define __NOINLINE   noinline
 
