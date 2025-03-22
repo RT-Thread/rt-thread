@@ -68,7 +68,7 @@ def build_bsp(bsp, scons_args='',name='default'):
 
         nproc = multiprocessing.cpu_count()
         os.chdir(rtt_root)
-        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args} --debug=time'
+        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}' # --debug=time for debug time
         __, res = run_cmd(cmd, output_info=True)
 
         if res != 0:
@@ -151,7 +151,7 @@ def build_bsp_attachconfig(bsp, attach_file):
 
     scons_args = check_scons_args(attach_path)
 
-    res = build_bsp(bsp, scons_args,name=attach_file.tostring())
+    res = build_bsp(bsp, scons_args,name=attach_file)
 
     shutil.copyfile(config_bacakup, config_file)
     os.remove(config_bacakup)
