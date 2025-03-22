@@ -80,7 +80,7 @@ def build_bsp(bsp, scons_args='',name='default'):
             for file_type in ['*.elf', '*.bin', '*.hex']:
                 files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
                 for file in files:
-                    shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name}.{file_type[2:]}')
+                    shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name.Replace("/", "_")}.{file_type[2:]}')
 
     os.chdir(f'{rtt_root}/bsp/{bsp}')
     run_cmd('scons -c', output_info=False)
