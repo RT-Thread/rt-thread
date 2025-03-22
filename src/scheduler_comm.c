@@ -178,6 +178,55 @@ rt_err_t rt_sched_tick_increase(rt_tick_t tick)
 }
 
 /**
+ * @brief Set priority of the target thread
+ */
+rt_err_t rt_sched_thread_set_priority(struct rt_thread *thread, rt_uint8_t priority)
+{
+    RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
+    RT_SCHED_DEBUG_IS_LOCKED;
+
+    /* for ready thread, change queue; otherwise simply update the priority */
+    if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
+    {
+        /* remove thread from schedule queue first */
+        rt_sched_remove_thread(thread);
+
+        /* change thread priority */
+        RT_SCHED_PRIV(thread).init_priority = priority;
+        RT_SCHED_PRIV(thread).current_priority = priority;
+
+        /* recalculate priority attribute */
+#if RT_THREAD_PRIORITY_MAX > 32
+        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).number;
+        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
+#else
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).current_priority;
+#endif /* RT_THREAD_PRIORITY_MAX > 32 */
+        RT_SCHED_CTX(thread).stat = RT_THREAD_INIT;
+
+        /* insert thread to schedule queue again */
+        rt_sched_insert_thread(thread);
+    }
+    else
+    {
+        RT_SCHED_PRIV(thread).init_priority = priority;
+        RT_SCHED_PRIV(thread).current_priority = priority;
+
+        /* recalculate priority attribute */
+#if RT_THREAD_PRIORITY_MAX > 32
+        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).number;
+        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
+#else
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).current_priority;
+#endif /* RT_THREAD_PRIORITY_MAX > 32 */
+    }
+
+    return RT_EOK;
+}
+
+/**
  * @brief Update priority of the target thread
  */
 rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t priority)
