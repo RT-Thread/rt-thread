@@ -1,23 +1,19 @@
 import os
 from building import *
 
-cwd = GetCurrentDir()
+objs = []
+cwd  = GetCurrentDir()
 
 # add general drivers
-src = Split('''
-board.c
-CubeMX_Config/Src/stm32f4xx_hal_msp.c
-''')
+src = []
 path =  [cwd]
-path += [os.path.join(cwd, 'CubeMX_Config', 'Inc')]
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('spi_flash_init.c')
 
 
 CPPDEFINES = ['STM32F411xE']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
-
-
-# if os.path.isfile(os.path.join(cwd, "ports", 'SConscript')):
-#     group = group + SConscript(os.path.join("ports", 'SConscript'))
 
 list = os.listdir(cwd)
 for item in list:
