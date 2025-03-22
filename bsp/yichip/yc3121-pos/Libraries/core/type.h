@@ -28,12 +28,12 @@ typedef unsigned char      byte;
 typedef unsigned short     word;
 #endif
 
-/** 
+/**
   * @brief  __NOINLINE definition
-  */ 
+  */
 #if defined ( __CC_ARM   ) || defined   (  __GNUC__  )
-/* ARM & GNUCompiler 
-   ---------------- 
+/* ARM & GNUCompiler
+   ----------------
 */
 #define __NOINLINE   noinline
 
