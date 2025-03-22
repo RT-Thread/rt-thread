@@ -57,6 +57,7 @@ def build_bsp(bsp, scons_args='',name='default'):
     """
     success = True
     os.chdir(rtt_root)
+    os.makedirs(f'{rtt_root}/output/bsp/{bsp}', exist_ok=True)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
         os.chdir(rtt_root)
         run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
