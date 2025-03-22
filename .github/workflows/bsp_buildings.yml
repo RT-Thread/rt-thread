@@ -1,3 +1,12 @@
+#
+# Copyright (c) 2025, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2025-03-22     Supperthomas 添加upload 上传编译固件
+#
 name: RT-Thread BSP Static Build Check
 
 # Controls when the action will run. Triggers the workflow on push or pull request
@@ -535,6 +544,14 @@ jobs:
         run: |
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py
+
+      - name: Upload output as artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ matrix.legs.RTT_BSP }}
+          if-no-files-found: ignore
+          path: output/
 
       - name: Post failure comment
         if: failure()
