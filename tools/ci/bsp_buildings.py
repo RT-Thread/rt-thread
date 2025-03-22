@@ -72,13 +72,14 @@ def build_bsp(bsp, scons_args='',name='default'):
 
         if res != 0:
             success = False
-    #拷贝当前的文件夹下面的所有以elf结尾的文件拷贝到rt-thread/output文件夹下
-    import glob
-    # 拷贝编译生成的文件到output目录,文件拓展为 elf,bin,hex
-    for file_type in ['*.elf', '*.bin', '*.hex']:
-        files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
-        for file in files:
-            shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name}.{file_type[2:]}')
+        else:
+            #拷贝当前的文件夹下面的所有以elf结尾的文件拷贝到rt-thread/output文件夹下
+            import glob
+            # 拷贝编译生成的文件到output目录,文件拓展为 elf,bin,hex
+            for file_type in ['*.elf', '*.bin', '*.hex']:
+                files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
+                for file in files:
+                    shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name}.{file_type[2:]}')
 
     os.chdir(f'{rtt_root}/bsp/{bsp}')
     run_cmd('scons -c', output_info=False)
