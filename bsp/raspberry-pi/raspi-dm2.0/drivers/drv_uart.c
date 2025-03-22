@@ -415,4 +415,4 @@ static int pl011_drv_register(void)
 
     return 0;
 }
-INIT_DRIVER_EARLY_EXPORT(pl011_drv_register);
+INIT_PLATFORM_EXPORT(pl011_drv_register);
