@@ -442,22 +442,22 @@ jobs:
         id: cache-gcc-arm
         uses: actions/cache@main
         with:
-          path: /opt/gcc-arm-none-eabi-10-2020-q4-major
-          key: ${{ runner.os }}-arm-none-eabi-10-2020-q4-major
+          path: /opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
+          key: ${{ runner.os }}-arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
 
       - name: Download Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && (steps.cache-gcc-arm.outputs.cache-hit != 'true') }}
         shell: bash
         run: |
-          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
-          sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.8/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
+          sudo tar -xf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz -C /opt
 
       - name: Install Arm ToolChains2
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
         shell: bash
         run: |
-          /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
-          echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+          /opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc --version
+          echo "RTT_EXEC_PATH=/opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_ENV
 
       - name: Install LLVM-Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'llvm-arm' && success() }}

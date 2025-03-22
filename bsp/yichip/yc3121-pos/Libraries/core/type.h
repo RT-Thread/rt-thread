@@ -23,6 +23,7 @@ typedef signed int        int32_t;
 typedef signed long long  int64_t;
 #else
 #include "stdio.h"
+#include "stdint.h"
 typedef unsigned char      byte;
 typedef unsigned short     word;
 #endif
