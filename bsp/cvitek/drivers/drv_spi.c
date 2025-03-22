@@ -335,7 +335,7 @@ int rt_hw_spi_init(void)
 
     for (rt_size_t i = 0; i < sizeof(_spi_obj) / sizeof(struct _device_spi); i++)
     {
-        _spi_obj[i].base_addr = (rt_ubase_t)DRV_IOREMAP((void *)_spi_obj[i].base_addr, 0x1000);
+        _spi_obj[i].dws.regs = (rt_ubase_t)DRV_IOREMAP((void *)_spi_obj[i].dws.regs, 0x1000);
 
         _spi_obj[i].spi_bus.parent.user_data = (void *)&_spi_obj[i];
         ret = rt_spi_bus_register(&_spi_obj[i].spi_bus, _spi_obj[i].device_name, &_spi_ops);
