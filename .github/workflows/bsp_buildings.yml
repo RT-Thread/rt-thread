@@ -576,5 +576,5 @@ jobs:
       - name: Upload combined output as artifact
         uses: actions/upload-artifact@main
         with:
-          name: 00_all_bsp_output_${{ github.sha }}
+          name: 00_all_bsp_output_${{ substr(github.sha, 0, 7) }}  # 取hash值的前7位
           path: output/
