@@ -559,3 +559,21 @@ jobs:
           curl -X POST -H "Authorization: token ${{ secrets.RTTHREAD_GITHUB_TOKEN }}" \
           -d '{"body":"@${{ github.actor }}, Thank you for your contribution, but there was an error with the action. Could you please help check the BSP compilation issue? Thank you."}' \
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+  # 整合所有的output为一个文件夹 
+  collect-artifacts:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      #这里会下载所有产物
+      - name: Download all artifacts
+        uses: actions/download-artifact@main
+        with:
+          path: output/
+          merge-multiple: true
+      - run: ls -R output/
+
+      - name: Upload combined output as artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: 00_all_bsp_output
+          path: output/
