@@ -563,6 +563,7 @@ jobs:
   collect-artifacts:
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' #排除Pull request
     steps:
       #这里会下载所有产物
       - name: Download all artifacts
