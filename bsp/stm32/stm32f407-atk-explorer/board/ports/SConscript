@@ -8,20 +8,27 @@ cwd  = GetCurrentDir()
 src = []
 path =  [cwd]
 
-if GetDepend(['BSP_USING_FAL']):
-    src += Glob('fal/fal_spi_flash_sfud_port.c')
-    path += [cwd + '/fal']
-
-if GetDepend(['BSP_USING_ONBOARD_PM']):
-	src += Glob('pm/drv_pm.c')
-	src += Glob('pm/drv_wakeup.c')
-	path += [cwd + '/pm']
-
 if GetDepend(['BSP_USING_FS']):
     src += Glob('drv_filesystem.c')
+    if GetDepend(['BSP_USING_SPI_FLASH_LITTLEFS']):
+        src += Glob('fal/fal_spi_flash_sfud_port.c')
+        path += [cwd + '/fal']
 
-if GetDepend(['BSP_USING_EASYFLASH']):
-    src += Glob('ef_fal_port.c')
+if GetDepend(['BSP_USING_TOUCH_CAP']):
+    src += Glob('touch/drv_touch_ft.c')
+    src += Glob('touch/drv_touch.c')
+    path += [cwd + '/touch']
+
+if GetDepend(['BSP_USING_TOUCH_RES']):
+    src += Glob('touch/drv_touch_xpt.c')
+    src += Glob('touch/drv_xpt2046_init.c')
+    path += [cwd + '/touch']
+
+if GetDepend(['BSP_USING_ONBOARD_LCD']):
+    src += Glob('drv_lcd.c')
+
+if GetDepend(['BSP_USING_SRAM']):
+    src += Glob('drv_sram.c')
 
 if GetDepend(['BSP_USING_ETH']):
     src += Glob('phy_reset.c')

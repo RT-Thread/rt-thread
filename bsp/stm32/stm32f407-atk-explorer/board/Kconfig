@@ -104,6 +104,10 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         default n
 
+    config BSP_ETH_LEGACY_MODULE_ENABLED
+    bool
+    default n
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
@@ -111,6 +115,7 @@ menu "Onboard Peripheral Drivers"
         select RT_LWIP_USING_HW_CHECKSUM
         select RT_USING_POSIX_FS
         select RT_USING_POSIX_SOCKET
+        select BSP_ETH_LEGACY_MODULE_ENABLED
 
     config PHY_USING_LAN8720A
         bool
@@ -122,6 +127,16 @@ menu "Onboard Peripheral Drivers"
         default n
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
+    
+    menuconfig BSP_USING_CAN
+        bool "Enable On Board CAN"
+        select RT_USING_CAN
+        default n
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+            bool "Enable On Board CAN1"
+            default n
+        endif    
 
     menuconfig BSP_USING_FS
         bool "Enable File System"
