@@ -20,6 +20,8 @@
 #include <rtdbg.h>
 static unsigned int debug_quirks = 0;
 static unsigned int debug_quirks2;
+
+#define  ENOMEDIUM      123
 /********************************************************* */
 /*                        cmd                              */
 /********************************************************* */
@@ -2073,7 +2075,7 @@ static rt_bool_t sdhci_send_command_retry(struct sdhci_host   *host,
 static rt_bool_t sdhci_request_done(struct sdhci_host *host)
 {
     rt_base_t            flags;
-    struct rt_mmcsd_req *mrq;
+    struct rt_mmcsd_req *mrq = RT_NULL;
     int                  i;
 
     flags = rt_spin_lock_irqsave(&host->lock);
