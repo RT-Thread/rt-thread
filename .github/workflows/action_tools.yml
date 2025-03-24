@@ -68,12 +68,12 @@ jobs:
           echo "Errors found in menuconfig, failing the build."
           exit 1
         fi
+        pushd bsp/$TEST_BSP_ROOT && pkgs --update && popd
         scons -j$(nproc) -C $TEST_BSP_ROOT
 
     - name: Project generate Tools
       if: ${{ success() }}
       run: |
-        pushd bsp/$TEST_BSP_ROOT && pkgs --update && popd
         echo "Test to generate eclipse project"
         scons --target=eclipse -s -C $TEST_BSP_ROOT
         echo "Test to generate cmake project"
