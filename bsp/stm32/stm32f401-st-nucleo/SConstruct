@@ -50,7 +50,6 @@ rtconfig.BSP_LIBRARY_TYPE = None
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'),variant_dir='build/libraries/HAL_Drivers', duplicate=0))
 
-#objs.extend(SConscript(os.path.join(os.getcwd(), 'board', 'ports', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
