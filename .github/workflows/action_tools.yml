@@ -62,6 +62,7 @@ jobs:
 
     - name: Build Tools
       run: |
+        source ~/.env/env.sh
         scons --pyconfig-silent -C $TEST_BSP_ROOT 2>menuconfig.log
         cat menuconfig.log
         if grep -q "warning:" menuconfig.log; then
