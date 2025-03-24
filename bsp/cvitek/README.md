@@ -350,8 +350,16 @@ $ sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 
 3. 如发现切换开发板编译正常，但无法正常打包，请切换至自动下载的 `cvi_bootloader` 目录，并手工运行 `git pull` 更新，或删除该目录后重新自动下载。
 
+4. 有关配置 pinmux（管脚复用）的通用方法, 以 duo256m 配置大核（`bsp/cvitek/cv18xx_risc-v`）的 UART0 输出为例。
+   - duo256m 控制台默认使用 UART0。查看 [duo256m 的板级输出引脚定义](https://milkv.io/docs/duo/getting-started/duo256m#gpio-pinout)，找到 UART0 的 `UART0_RX` 和 `UART0_TX` 对应板上引脚为 `GP13`（`XGPIOA[17]`） 和 `GP12`（`XGPIOA[16]`）。这也是我们需要连接串口线的引脚。
+   - duo256m 使用的 SoC 为 SG2002。查看 [SG2002 TRM 手册的 "CHAPTER 10 管脚复用与控制"](https://github.com/sophgo/sophgo-doc/releases)，TRM 让我们查看在线表格: <https://github.com/sophgo/sophgo-hardware/blob/master/SG200X/04_SG2002/04_SG2002_PINOUT.xls>。在 “1. 管脚信息表(QFN)” 那一页，对于 `UART0_RX`，我们搜索 “`XGPIOA[17]`” 可以找到其所在行的 "Pin Name" 那一列的值是 “`UART0_RX`”；对于 `UART0_TX`，我们搜索 “XGPIOA[16]” 可以找到其所在行的 "Pin Name" 那一列的值是 “`UART0_TX`”。***注意，这里对于 UART0，duo256m 的 “Pin Name” 和板上引脚中的 UART 信息字符串正好一致，但其他的外设就不一定了。具体的 “Pin Name” 以 xls 表格上的为准***。
+   - 执行 `scons --menuconfig`, 进入 “(Top) → General Drivers Configuration → Using UART”，设置 “uart0 rx pin name” 为 “UART0_RX”；设置 “uart0 tx pin name” 为 “UART0_TX”。这也是目前默认的配置。
+
 # 8. 联系人信息
 
-维护人：[flyingcys](https://github.com/flyingcys)
+维护人：
+
+- [flyingcys](https://github.com/flyingcys)
+- Chen Wang <unicorn_wang@outlook.com>
 
 更多信息请参考 [https://riscv-rtthread-programming-manual.readthedocs.io](https://riscv-rtthread-programming-manual.readthedocs.io)
