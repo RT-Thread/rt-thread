@@ -73,8 +73,7 @@ jobs:
     - name: Project generate Tools
       if: ${{ success() }}
       run: |
-        echo "test to pull package"
-        pkgs --update
+        pushd bsp/$TEST_BSP_ROOT && pkgs --update && popd
         echo "Test to generate eclipse project"
         scons --target=eclipse -s -C $TEST_BSP_ROOT
         echo "Test to generate cmake project"
