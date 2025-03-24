@@ -1,0 +1,5 @@
+board/linker_scripts/*.ld
+libraries/s32k344_SDK/**/*.c
+libraries/s32k344_SDK/**/*.s
+libraries/s32k344_SDK/**/*.h
+libraries/s32k344_SDK/**/*.svd
