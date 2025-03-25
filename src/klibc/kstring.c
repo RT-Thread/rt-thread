@@ -330,9 +330,9 @@ char *rt_strnstr(const char *s1, const char *s2, rt_size_t maxlen)
 {
     rt_size_t l1 = 0, l2 = 0;
     int max_pos = 0;
-    
+
     l2 = rt_strlen(s2);
-    if (!l2) 
+    if (!l2)
     {
         return (char *)s1;
     }
@@ -342,7 +342,7 @@ char *rt_strnstr(const char *s1, const char *s2, rt_size_t maxlen)
     {
         return RT_NULL;
     }
-    
+
     max_pos = maxlen < l1 ? maxlen : l1;
     if (max_pos < l2)
     {
@@ -352,9 +352,9 @@ char *rt_strnstr(const char *s1, const char *s2, rt_size_t maxlen)
     max_pos = max_pos - l2;
     while (max_pos >= 0)
     {
-        if (*s1 == *s2) 
+        if (*s1 == *s2)
         {
-            if (!rt_strncmp(s1, s2, l2)) 
+            if (!rt_strncmp(s1, s2, l2))
             {
                 return (char *)s1;
             }
