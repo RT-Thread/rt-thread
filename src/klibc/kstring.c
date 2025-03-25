@@ -314,6 +314,62 @@ char *rt_strstr(const char *s1, const char *s2)
 RTM_EXPORT(rt_strstr);
 
 /**
+ * @brief  This function will return the first occurrence of a string, without the
+ * terminator '\0'.
+ *
+ * @param  s1 is the source string.
+ *
+ * @param  s2 is the find string.
+ *
+ * @param  maxlen is the max size.
+ *
+ * @return The first occurrence of a s2 in s1, or RT_NULL if no found.
+ */
+#ifndef RT_KLIBC_USING_USER_STRNSTR
+char *rt_strnstr(const char *s1, const char *s2, rt_size_t maxlen)
+{
+    rt_size_t l1 = 0, l2 = 0;
+    int max_pos = 0;
+    
+    l2 = rt_strlen(s2);
+    if (!l2) 
+    {
+        return (char *)s1;
+    }
+
+    l1 = rt_strlen(s1);
+    if (!l1)
+    {
+        return RT_NULL;
+    }
+    
+    max_pos = maxlen < l1 ? maxlen : l1;
+    if (max_pos < l2)
+    {
+        return RT_NULL;
+    }
+
+    max_pos = max_pos - l2;
+    while (max_pos >= 0)
+    {
+        if (*s1 == *s2) 
+        {
+            if (!rt_strncmp(s1, s2, l2)) 
+            {
+                return (char *)s1;
+            }
+        }
+
+        s1++;
+        max_pos--;
+    }
+
+    return RT_NULL;
+}
+#endif /* RT_KLIBC_USING_USER_STRNSTR */
+RTM_EXPORT(rt_strnstr);
+
+/**
  * @brief  This function will compare two strings while ignoring differences in case
  *
  * @param  a is the string to be compared.

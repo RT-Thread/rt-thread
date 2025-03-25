@@ -178,6 +178,12 @@ menu "klibc options"
         endif
     endmenu # rt_strstr options
 
+    menu "rt_strnstr options"
+        config RT_KLIBC_USING_USER_STRNSTR
+            bool "Enable rt_strnstr to use user-defined version"
+            default n
+    endmenu # rt_strnstr options
+
     menu "rt_strcasecmp options"
         config RT_KLIBC_USING_USER_STRCASECMP
             bool "Enable rt_strcasecmp to use user-defined version"
