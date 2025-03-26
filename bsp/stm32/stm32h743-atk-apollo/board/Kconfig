@@ -123,9 +123,6 @@ menu "On-chip Peripheral Drivers"
                     int "I2C1 sda pin number"
                     range 1 176
                     default 117
-                        menuconfig BSP_USING_I2C2
-                    bool "Enable I2C2 BUS (software simulation)"
-                    default n
             endif
 
             menuconfig BSP_USING_I2C2
