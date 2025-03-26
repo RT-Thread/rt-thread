@@ -13,6 +13,7 @@ list  = os.listdir(cwd)
 # add common code files
 if rtconfig.CPU in common64_arch :
     group += SConscript(os.path.join('common64', 'SConscript'))
+    group += SConscript(os.path.join('plic', 'SConscript'))
 else :
     group += SConscript(os.path.join('common', 'SConscript'))
 
