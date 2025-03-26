@@ -453,7 +453,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->parent.name,
+                           (m->owner == RT_NULL) ? "(null)" : m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));
@@ -466,7 +466,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->parent.name,
+                           (m->owner == RT_NULL) ? "(null)" : m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));
