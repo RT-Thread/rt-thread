@@ -1,0 +1,21 @@
+import os
+from building import *
+
+objs = []
+cwd  = GetCurrentDir()
+
+# add general drivers
+src = []
+path =  [cwd]
+
+
+
+CPPDEFINES = ['STM32F411xE']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')
