@@ -374,6 +374,74 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN BUS"
+        default n
+        select RT_USING_CAN
+        select RT_USING_DEVICE_IPC
+        if BSP_USING_CAN
+            config BSP_USING_CAN0
+                bool "Enable CAN0"
+                default n
+
+            if BSP_USING_CAN0
+                choice
+                    prompt "Select CAN0 TX source"
+                    default BSP_CAN0_TX_PD1
+
+                    config BSP_CAN0_TX_PA12
+                        bool "GPIOA pin 12"
+                    config BSP_CAN0_TX_PB9
+                        bool "GPIOB pin 9"
+                    config BSP_CAN0_TX_PD1
+                        bool "GPIOD pin 1"
+                    config BSP_CAN0_TX_PH13
+                        bool "GPIOH pin 13"
+                endchoice
+
+                choice
+                    prompt "Select CAN0 RX source"
+                    default BSP_CAN0_RX_PD0
+
+                    config BSP_CAN0_RX_PA11
+                        bool "GPIOA pin 11"
+                    config BSP_CAN0_RX_PB8
+                        bool "GPIOB pin 8"
+                    config BSP_CAN0_RX_PD0
+                        bool "GPIOD pin 0"
+                    config BSP_CAN0_RX_PI9
+                        bool "GPIOI pin 9"
+                endchoice
+            endif
+
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default n
+
+            if BSP_USING_CAN1
+                choice
+                    prompt "Select CAN1 TX source"
+                    default BSP_CAN1_TX_PB6
+
+                    config BSP_CAN1_TX_PB6
+                        bool "GPIOB pin 6"
+                    config BSP_CAN1_TX_PB13
+                        bool "GPIOB pin 13"
+                endchoice
+
+                choice
+                    prompt "Select CAN1 RX source"
+                    default BSP_CAN1_RX_PB5
+
+                    config BSP_CAN1_RX_PB5
+                        bool "GPIOB pin 5"
+                    config BSP_CAN1_RX_PI12
+                        bool "GPIOI pin 12"
+                endchoice
+            endif
+
+        endif
+
     rsource "../../libraries/gd32_drivers/Kconfig"
 
 endmenu
