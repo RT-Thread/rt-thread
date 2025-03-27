@@ -858,7 +858,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 static int stm32_hwtimer_init(void)
 {
-    int i = 0;
+    rt_uint32_t i = 0;
     int result = RT_EOK;
 
     for (i = 0; i < sizeof(stm32_hwtimer_obj) / sizeof(stm32_hwtimer_obj[0]); i++)

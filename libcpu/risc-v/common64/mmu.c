@@ -36,7 +36,7 @@
 #define USER_VADDR_START 0
 #endif
 
-static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size);
+static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr);
 
 static void *current_mmu_table = RT_NULL;
 
@@ -198,7 +198,7 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
             while (unmap_va != v_addr)
             {
                 MM_PGTBL_LOCK(aspace);
-                _unmap_area(aspace, unmap_va, ARCH_PAGE_SIZE);
+                _unmap_area(aspace, unmap_va);
                 MM_PGTBL_UNLOCK(aspace);
                 unmap_va += ARCH_PAGE_SIZE;
             }
@@ -245,8 +245,8 @@ static void _unmap_pte(rt_ubase_t *pentry, rt_ubase_t *lvl_entry[], int level)
     }
 }
 
-/* Unmaps a virtual address range from the page table. */
-static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
+/* Unmaps a virtual address range (1GB/2MB/4KB according to actual page level) from the page table. */
+static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr)
 {
     rt_ubase_t loop_va = __UMASKVALUE((rt_ubase_t)v_addr, PAGE_OFFSET_MASK);
     size_t unmapped = 0;
@@ -263,10 +263,23 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
     lvl_entry[i] = ((rt_ubase_t *)aspace->page_table + lvl_off[i]);
     pentry = lvl_entry[i];
 
+    /* check if lvl_entry[0] is valid. if no, return 0 directly. */
+    if (!PTE_USED(*pentry))
+    {
+        return 0;
+    }
+
     /* find leaf page table entry */
     while (PTE_USED(*pentry) && !PAGE_IS_LEAF(*pentry))
     {
         i += 1;
+
+        if (i >= 3)
+        {
+            unmapped = 0;
+            break;
+        }
+
         lvl_entry[i] = ((rt_ubase_t *)PPN_TO_VPN(GET_PADDR(*pentry), PV_OFFSET) +
                         lvl_off[i]);
         pentry = lvl_entry[i];
@@ -277,6 +290,10 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size)
     if (PTE_USED(*pentry))
     {
         _unmap_pte(pentry, lvl_entry, i);
+    }
+    else
+    {
+        unmapped = 0; /* invalid pte, return 0. */
     }
 
     return unmapped;
@@ -315,7 +332,7 @@ void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size)
     while (size > 0)
     {
         MM_PGTBL_LOCK(aspace);
-        unmapped = _unmap_area(aspace, v_addr, size);
+        unmapped = _unmap_area(aspace, v_addr);
         MM_PGTBL_UNLOCK(aspace);
 
         /* when unmapped == 0, region not exist in pgtbl */

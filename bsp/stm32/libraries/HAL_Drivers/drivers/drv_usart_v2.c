@@ -1315,7 +1315,7 @@ int rt_hw_usart_init(void)
     rt_size_t obj_num = sizeof(uart_obj) / sizeof(struct stm32_uart);
 
     stm32_uart_get_config();
-    for (int i = 0; i < obj_num; i++)
+    for (rt_uint32_t i = 0; i < obj_num; i++)
     {
         /* init UART object */
         uart_obj[i].config = &uart_config[i];

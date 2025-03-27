@@ -11,6 +11,8 @@ list = os.listdir(cwd)
 # add the general drivers.
 src = Glob('board.c')
 src += Glob('CubeMX_Config/Core/Src/stm32h7xx_hal_msp.c')
+if GetDepend(['BSP_SCB_ENABLE_I_CACHE']) or GetDepend(['BSP_SCB_ENABLE_D_CACHE']):
+    src += Glob('port/drv_mpu.c')
 
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += Glob('port/drv_qspi_flash.c')

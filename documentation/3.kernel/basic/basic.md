@@ -404,7 +404,7 @@ Derivations from object control block rt_object in the above figure includes: th
 
 ## Object Control Block
 
-Data structure of kernel object control block:
+A simple code example snippet for data structure of kernel object control block:
 
 ```c
 struct rt_object
@@ -420,40 +420,12 @@ struct rt_object
 };
 ```
 
-Types currently supported by kernel objects are as follows:
+More details about this structure, see `struct rt_object`.
+
+Regarding types currently supported by kernel objects, see:
 
 ```c
 enum rt_object_class_type
-{
-     RT_Object_Class_Thread = 0,             /* Object is thread type      */
-#ifdef RT_USING_SEMAPHORE
-    RT_Object_Class_Semaphore,              /* Object is semaphore type    */
-#endif
-#ifdef RT_USING_MUTEX
-    RT_Object_Class_Mutex,                  /* Object is mutex type    */
-#endif
-#ifdef RT_USING_EVENT
-    RT_Object_Class_Event,                  /* Object is event type      */
-#endif
-#ifdef RT_USING_MAILBOX
-    RT_Object_Class_MailBox,                /* Object is mailbox type      */
-#endif
-#ifdef RT_USING_MESSAGEQUEUE
-    RT_Object_Class_MessageQueue,           /* Object is message queue type   */
-#endif
-#ifdef RT_USING_MEMPOOL
-    RT_Object_Class_MemPool,                /* Object is memory pool type     */
-#endif
-#ifdef RT_USING_DEVICE
-    RT_Object_Class_Device,                 /* Object is device type       */
-#endif
-    RT_Object_Class_Timer,                  /* Object is timer type     */
-#ifdef RT_USING_MODULE
-    RT_Object_Class_Module,                 /* Object is module         */
-#endif
-    RT_Object_Class_Unknown,                /* Object is unknown        */
-    RT_Object_Class_Static = 0x80           /* Object is a static object      */
-};
 ```
 
 From the above type specification, we can see that if it is a static object, the highest bit of the object type will be 1 (which is the OR operation of `RT_Object_Class_Static` and other object types and operations).  Otherwise it will be dynamic object, and the maximum number of object classes that the system can accommodate is 127.
@@ -486,14 +458,9 @@ void rt_object_init(struct  rt_object*  object ,
                     const char* name)
 ```
 
-When this function is called to initialize the object, the system will place the object into the object container for management, that is, initialize some parameters of the object, and then insert the object node into the object linked list of the object container. Input parameters of the function is described in the following table:
+When this function is called to initialize the object, the system will place the object into the object container for management, that is, initialize some parameters of the object, and then insert the object node into the object linked list of the object container.
 
-
-|Parameters| Description                                                  |
-| -------- | ------------------------------------------------------------ |
-| object   | The object pointer that needs to be initialized must point to a specific object memory block, not a null pointer or a wild pointer. |
-| type     | The type of the object must be a enumeration type listed in rt_object_class_type, RT_Object_Class_Static excluded. (For static objects, or objects initialized with the rt_object_init interface, the system identifies it as an RT_Object_Class_Static type) |
-| name     | Name of the object. Each object can be set to a name, and the maximum length for the name is specified by RT_NAME_MAX. The system does not care if it uses ’`\0`’as a terminal symbol. |
+More details about this function, see `rt_object_init()`.
 
 ### Detach Object
 
@@ -505,25 +472,19 @@ void rt_object_detach(rt_object_t object);
 
 Calling this interface makes a static kernel object to be detached from the kernel object container, meaning the corresponding object node is deleted from the kernel object container linked list. After the object is detached, the memory occupied by the object will not be released.
 
+More details about this function, see `rt_object_detach()`.
+
 ### Allocate object
 
 The above descriptions are interfaces of objects initialization and detachment, both of which are under circumstances that object-oriented memory blocks already exist. But dynamic objects can be requested when needed. The memory space is freed for other applications when not needed. To request assigning new objects, you can use the following interfaces:
 
 ```c
-rt_object_t rt_object_allocate(enum  rt_object_class_typetype ,
-                               const  char*  name)
+rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 ```
 
-When calling the above interface, the system first needs to obtain object information according to the object type (especially the size information of the object type for the system to allocate the correct size of the memory data block), and then allocate memory space corresponding to the size of the object from the memory heap. Next, to start necessary initialization for the object, and finally insert it into the object container linked list in which it is located. The input parameters for this function are described in the following table:
+When calling the above interface, the system first needs to obtain object information according to the object type (especially the size information of the object type for the system to allocate the correct size of the memory data block), and then allocate memory space corresponding to the size of the object from the memory heap. Next, to start necessary initialization for the object, and finally insert it into the object container linked list in which it is located.
 
-
-|Parameters          |Description                                                   |
-| ------------------ | ------------------------------------------------------------ |
-| type               | The type of the allocated object can only be of type rt_object_class_type other than RT_Object_Class_Static. In addition, the type of object allocated through this interface is dynamic, not static. |
-| name               | Name of the object. Each object can be set to a name, and the maximum length for the name is specified by RT_NAME_MAX. The system does not care if it uses ’`\0`’as a terminal symbol. |
-|**Return**          | -                                                            |
-| object handle allocated successfully | Allocate successfully                      |
-| RT_NULL            | Fail to allocate                                             |
+More details about this function, see `rt_object_allocate()`.
 
 ### Delete Object
 
@@ -533,12 +494,9 @@ For a dynamic object, when it is no longer used, you can call the following inte
 void rt_object_delete(rt_object_t object);
 ```
 
-When the above interface is called, the object is first detached from the object container linked list, and then the memory occupied by the object is released. The following table describes the input parameters of the function:
+When the above interface is called, the object is first detached from the object container linked list, and then the memory occupied by the object is released.
 
-
-|Parameter |Description    |
-|----------|---------------|
-| object   | object handle |
+More details about this function, see `rt_object_delete()`.
 
 ### Identify objects
 
@@ -548,13 +506,9 @@ Identify whether the specified object is a system object (static kernel object).
 rt_err_t rt_object_is_systemobject(rt_object_t object);
 ```
 
-Calling the `rt_object_is_systemobject` interface can help to identify whether an object is a system object. In RT-Thread operating system, a system object is also a static object, `RT_Object_Class_Static` bit is set to 1 on the object type identifier. Usually, objects that are initialized using the `rt_object_init()` method are system objects. The input parameters for this function are described in the following table:
+Calling the `rt_object_is_systemobject` interface can help to identify whether an object is a system object. In RT-Thread operating system, a system object is also a static object, `RT_Object_Class_Static` bit is set to 1 on the object type identifier. Usually, objects that are initialized using the `rt_object_init()` method are system objects. 
 
-Input parameter of `rt_object_is_systemobject()`
-
-|**Parameter**|Description    |
-|-------------|---------------|
-| object      | Object handle |
+More details about this function, see `rt_object_is_systemobject()`.
 
 ## RT-Thread Kernel Configuration Example
 

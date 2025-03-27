@@ -97,8 +97,9 @@ static MMRESULT     OSTick_TimerID;
 /*
  * flag in interrupt handling
  */
-rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrupt_flag;
+volatile rt_ubase_t rt_interrupt_from_thread = 0;
+volatile rt_ubase_t rt_interrupt_to_thread   = 0;
+volatile rt_uint32_t rt_thread_switch_interrupt_flag = 0;
 
 /*
 *********************************************************************************************************
@@ -248,18 +249,17 @@ void rt_hw_interrupt_enable(rt_base_t level)
 * Note(s)     : none
 *********************************************************************************************************
 */
-void rt_hw_context_switch_interrupt(rt_uint32_t from,
-                                    rt_uint32_t to)
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread)
 {
     if(rt_thread_switch_interrupt_flag != 1)
     {
         rt_thread_switch_interrupt_flag = 1;
 
         // set rt_interrupt_from_thread
-        rt_interrupt_from_thread = *((rt_uint32_t *)(from));
+        rt_interrupt_from_thread = *((rt_ubase_t *)(from));
     }
 
-    rt_interrupt_to_thread = *((rt_uint32_t *)(to));
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //trigger YIELD exception(cause context switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
@@ -267,20 +267,19 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from,
 
 
 
-void rt_hw_context_switch(rt_uint32_t from,
-                          rt_uint32_t to)
+void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to)
 {
     if(rt_thread_switch_interrupt_flag != 1)
     {
         rt_thread_switch_interrupt_flag  = 1;
 
         // set rt_interrupt_from_thread
-        rt_interrupt_from_thread = *((rt_uint32_t *)(from));
+        rt_interrupt_from_thread = *((rt_ubase_t *)(from));
 
     }
 
     // set rt_interrupt_to_thread
-    rt_interrupt_to_thread = *((rt_uint32_t *)(to));
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //trigger YIELD exception(cause contex switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
@@ -310,10 +309,10 @@ void rt_hw_context_switch(rt_uint32_t from,
 * Note(s)     : this function is used to perform the first thread switch
 *********************************************************************************************************
 */
-void rt_hw_context_switch_to(rt_uint32_t to)
+void rt_hw_context_switch_to(rt_ubase_t to)
 {
     //set to thread
-    rt_interrupt_to_thread = *((rt_uint32_t *)(to));
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //clear from thread
     rt_interrupt_from_thread = 0;
@@ -699,14 +698,3 @@ rt_uint32_t YieldInterruptHandle(void)
 
     return 0;
 } /*** YieldInterruptHandle ***/
-
-/* system entry */
-extern int rtthread_startup(void);
-int wmain(int argc, char* argv[])
-{
-    /* disable interrupt first */
-    rt_hw_interrupt_disable();
-    /* startup RT-Thread RTOS */
-    rtthread_startup();
-}
-#pragma comment(linker, "/subsystem:console /entry:wmainCRTStartup")

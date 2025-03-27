@@ -8,49 +8,61 @@
 
 /* klibc options */
 
-/* ------------rt_memset options------------ */
+/* rt_vsnprintf options */
 
+/* end of rt_vsnprintf options */
 
-/* ------------rt_memcpy options------------ */
+/* rt_vsscanf options */
 
+/* end of rt_vsscanf options */
 
-/* ------------rt_memmove options------------ */
+/* rt_memset options */
 
+/* end of rt_memset options */
 
-/* ------------rt_memcmp options------------ */
+/* rt_memcpy options */
 
+/* end of rt_memcpy options */
 
-/* ------------rt_strstr options------------ */
+/* rt_memmove options */
 
+/* end of rt_memmove options */
 
-/* ------------rt_strcasecmp options------------ */
+/* rt_memcmp options */
 
+/* end of rt_memcmp options */
 
-/* ------------rt_strncpy options------------ */
+/* rt_strstr options */
 
+/* end of rt_strstr options */
 
-/* ------------rt_strcpy options------------ */
+/* rt_strcasecmp options */
 
+/* end of rt_strcasecmp options */
 
-/* ------------rt_strncmp options------------ */
+/* rt_strncpy options */
 
+/* end of rt_strncpy options */
 
-/* ------------rt_strcmp options------------ */
+/* rt_strcpy options */
 
+/* end of rt_strcpy options */
 
-/* ------------rt_strlen options------------ */
+/* rt_strncmp options */
 
+/* end of rt_strncmp options */
 
-/* ------------rt_strlen options------------ */
+/* rt_strcmp options */
 
-/* ------------rt_strnlen options------------ */
+/* end of rt_strcmp options */
 
+/* rt_strlen options */
 
-/* ------------rt_vsscanf options------------ */
+/* end of rt_strlen options */
 
+/* rt_strnlen options */
 
-/* ------------rt_vsnprintf options------------ */
-
+/* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 8
 #define RT_CPUS_NR 1
@@ -373,6 +385,7 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
+#define BSP_STM32_UART_V1_TX_TIMEOUT 6000
 #define BSP_USING_UART3
 /* end of On-chip Peripheral Drivers */
 

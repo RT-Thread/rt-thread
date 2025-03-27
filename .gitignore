@@ -13,6 +13,7 @@
 *.crf
 build
 Debug
+.vs
 rtthread
 settings
 documentation/html

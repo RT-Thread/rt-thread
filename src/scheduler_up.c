@@ -32,6 +32,7 @@
  * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
  */
 
+#define __RT_IPC_SOURCE__
 #include <rtthread.h>
 #include <rthw.h>
 
