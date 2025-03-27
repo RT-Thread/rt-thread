@@ -48,11 +48,9 @@ export RTT_EXEC_PATH=/opt/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 
 ## 2.3. 执行构建
 
-首先确保 RISC-V 小核已经构建完成并生成了 `rtthread.bin` 和 `fip.bin`。Duo 256m 的小核是一个 RISC-V 的 core，对应的 bsp 是 `bsp/cvitek/c906_little`。具体构建的说明参考 [bsp cvitek 的 README.md 文件](../README.md)。
+首先确保 RISC-V 小核已经构建完成并生成了 `rtthread.bin` 。Duo 256m 的小核是一个 RISC-V 的 core，对应的 bsp 是 `bsp/cvitek/c906_little`。具体构建的说明参考 [bsp cvitek 的 README.md 文件](../README.md)。构建过后会生成小核的内核镜像文件 `rtthread.bin`，在使用 `rttpkgtool` 制作ARM架构`fip.bin`固件时会使用到。
 
-`fip.bin` 是一个打包后生成的 bin 文件，包含了 `fsbl`、`uboot` 以及小核的内核镜像文件 `rtthread.bin`。但注意 BSP `c906_little` 构建生成的 `fip.bin` 中的 `fsbl`、`uboot` 这些文件都是 RISC-V 的，所以我们并不能把 BSP `c906_little` 构建生成的 `fip.bin` 直接拿来用于引导启动 ARM 大核。我们这一步只是确保先基于 BSP `c906_little` 做出最新的小核版本 `rtthread.bin`。在下一步构建大核的过程中我们会重新打包更新并生成新的 `fip.bin`，而在重新打包过程中我们需要这个小核的 `rtthread.bin`。
-
-这里我们主要关注如何构建 ARM 大核的 `rtthread.bin`。进入 `bsp/cvitek/cv18xx_aarch64` 目录下（记为当前工作目录 `$CWD`），依次执行以下步骤：
+ `rttpkgtool` 目录下有对应开发板和架构制作固件时所需使用的预编译文件，也可以在 `rttpkgtool` 目录下运行 `./prebuild.sh` 命令来重新制作预编译文件 参考[ rttpkgtool 的 README.md 文件](../rttpkgtool/README.md)。
 
 ### 2.3.1. 开发板选择
 
@@ -71,7 +69,7 @@ RT-Thread Kernel  --->
     [*] Enable RT-Thread Smart (microkernel on kernel/userland)
 ```
 
-### 2.3.3. 编译大核固件 `boot.sd`
+### 2.3.3. 编译固件 
 
 ```shell
 $ scons
@@ -80,16 +78,14 @@ $ scons
 scons 会执行如下步骤的工作：
 
 - 如果编译正确无误，在 `$CWD` 下会产生 `rtthread.bin` 文件。
-- 通过运行 `combine.sh`，利用 BSP `cv18xx_aarch64` 下预先提供的、可以在 ARM 核上运行的 `fsbl`、`uboot` 等文件，加上基于 BSP `c906_little` 做出的 `rtthread.bin`，重新打包生成可供 ARM 大核解析和运行的 `fip.bin`。`fip.bin` 会生成在 `$CWD/../output/milkv-duo256m/` 下。
-- 在 `$CWD/../output/milkv-duo256m/` 下生成 `boot.sd` 文件，`boot.sd` 中封装了 ARM 大核对应的 `rtthread.bin`。
-
-如果您不关心小核的版本，BSP cv18xx_aarch64 也提供了一个 prebuild 的 `fip.bin`，在 `bsp/cvitek/cv18xx_aarch64/prebuild/milkv-duo256m` 下，直接烧录到 sd-card 中就可以使用。
+- 通过运行 `../build.sh -a` ，利用 rttpkgtool 下提供的可以在 ARM 核上运行的 `fsbl`、`uboot` 等预编译文件，打包生成可供 ARM 大核解析和运行的 `fip.bin`。`fip.bin` 会生成在 `$CWD/../output/milkv-duo256m/` 下。
+- 在 `$CWD/../output/milkv-duo256m/` 下生成 `fip.bin`和`boot.sd` 文件，`fip.bin`中封装了RISCv小核对应的`rtthread.bin`, `boot.sd` 中封装了 ARM 大核对应的 `Image` (与`rtthread.bin`等同)。
 
 # 3. 运行
 
 1. 将 SD 卡分为 2 个分区，第 1 个分区的分区格式为 `FAT32`，用于存放 `fip.bin` 和 `boot.sd` 文件，第 2 个分区可选，如果有可用于作为数据存储分区或者存放文件系统。
 
-2. 将 `fip.bin` (自己打包生成的或者 prebuild 的) 和编译生成的 `boot.sd` 复制到 SD 卡第一个分区中。`fip.bin` 是小核启动固件，如果只关注 ARM 大核系统，后续只需更新大核的固件，即更新 `boot.sd` 文件即可。
+2. 将 `fip.bin` 和 `boot.sd` 复制到 SD 卡第一个分区中。`fip.bin` 是小核启动固件，如果只关注 ARM 大核系统，后续只需更新大核的固件，即更新 `boot.sd` 文件即可。
 
 3. Duo256M 的大核可以选择使用 RISC-V 或者 ARM，默认使用的是 RISC-V 核，所以这里需要通过短接物理引脚 35（Boot-Switch）和 GND 来切换到 ARM 核，如下图所示。具体参考 [Milk-V Duo 256M 的官方说明](https://milkv.io/zh/docs/duo/getting-started/duo256m#risc-v-%E4%B8%8E-arm-%E5%88%87%E6%8D%A2)。
 
@@ -97,7 +93,19 @@ scons 会执行如下步骤的工作：
 
 4. 配置 **串口0** 参数： 115200 8N1 ，硬件和软件流控为关。
 
-直接上电运行，uboot 会自动调用 bootcmd 解析 `boot.sd` 文件，然后加载 `rtthread.bin` 运行。
+开发板上电运行后会先执行BL1 BootROM程序，这段程序是芯片厂烧写在芯片内部，它会加载我们制作的 Fip.bin 固件,也就是从BL2开始往后的代码，运行到BLCP代码段后加载小核的 `rtthread.bin` 运行,运行到 uboot 代码段后会自动调用 bootcmd 解析 `boot.sd` 文件，然后大核加载 `rtthread.bin`运行。
+
+SOC双核启动流程如下：
+```shell
+BL1( BootROM )
+  ↓
+BL2( b12.bin )    →   加载BLCP   →  初始化协处理器 
+  |                       ↓
+  ↓                  BL3.2( empty.bin )  →  加载小核RT-Thread ( rtthread.bin )
+BL3.1( OpenSBI )
+  ↓
+BL3.3( U-Boot )  →  加载大核RT-Thread ( Boot.sd )
+```
 
 ## 3.1. RT-Thread 标准版的例子
 
