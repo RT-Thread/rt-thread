@@ -92,6 +92,9 @@ static const struct gd32_can gd32_can_gpio[] =
 #elif defined BSP_CAN0_TX_PD1
         .tx_clk = RCU_GPIOD,
         .tx_pin = GET_PIN(D, 1),
+#elif defined BSP_CAN0_TX_PH13
+        .tx_clk = RCU_GPIOH,
+        .tx_pin = GET_PIN(H, 13),
 #else
     #error "Select CAN0 tx pin"
 #endif
@@ -101,6 +104,9 @@ static const struct gd32_can gd32_can_gpio[] =
 #elif defined BSP_CAN0_RX_PB8
         .rx_clk = RCU_GPIOB,
         .rx_pin = GET_PIN(B, 8),
+#elif defined BSP_CAN0_RX_PD0
+        .rx_clk = RCU_GPIOD,
+        .rx_pin = GET_PIN(D, 0),
 #elif defined BSP_CAN0_RX_PI9
         .rx_clk = RCU_GPIOI,
         .rx_pin = GET_PIN(I, 9),
