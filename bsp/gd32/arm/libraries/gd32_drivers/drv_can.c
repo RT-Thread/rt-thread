@@ -150,7 +150,7 @@ static void gd32_can_gpio_init(void)
 
         gpio_output_options_set(PIN_GDPORT(gd32_can_gpio[i].tx_pin), GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, PIN_GDPIN(gd32_can_gpio[i].tx_pin));
         gpio_output_options_set(PIN_GDPORT(gd32_can_gpio[i].rx_pin), GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, PIN_GDPIN(gd32_can_gpio[i].rx_pin));
-        
+
         gpio_mode_set(PIN_GDPORT(gd32_can_gpio[i].tx_pin), GPIO_MODE_AF, GPIO_PUPD_NONE, PIN_GDPIN(gd32_can_gpio[i].tx_pin));
         gpio_mode_set(PIN_GDPORT(gd32_can_gpio[i].rx_pin), GPIO_MODE_AF, GPIO_PUPD_NONE, PIN_GDPIN(gd32_can_gpio[i].rx_pin));
 #else
@@ -192,7 +192,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     can_init_struct.auto_retrans = DISABLE;
     can_init_struct.rec_fifo_overwrite = DISABLE;
     can_init_struct.trans_fifo_order = DISABLE;
-    
+
     switch (cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
