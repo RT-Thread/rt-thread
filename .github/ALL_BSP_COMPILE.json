@@ -1,0 +1,451 @@
+// Copyright (c) 2025, RT-Thread Development Team
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// Change Logs:
+// Date           Author       Notes
+// 2025-03-22     Supperthomas 添加upload 上传编译固件
+// 2025-03-31     Hydevcode    将需要编译的bsp列表分离，根据修改的文件对相应的bsp编译
+//
+{
+  "legs": [
+    {
+      "RTT_BSP": "RT-Thread Online Packages (STM32F407 RT-Spark)",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "stm32/stm32f407-rt-spark"
+      ]
+    },
+    {
+      "RTT_BSP": "RTduino_Arduino Libraries (STM32F412 Nucleo)",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "stm32/stm32f412-st-nucleo"
+      ]
+    },
+    {
+      "RTT_BSP": "RTduino_Arduino Libraries (Raspberry Pico)",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "raspberry-pico"
+      ]
+    },
+    {
+      "RTT_BSP": "at32_hc32_ht32",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "at32/at32a403a-start",
+        "at32/at32a423-start",
+        "at32/at32f402-start",
+        "at32/at32f403a-start",
+        "at32/at32f405-start",
+        "at32/at32f407-start",
+        "at32/at32f413-start",
+        "at32/at32f415-start",
+        "at32/at32f421-start",
+        "at32/at32f423-start",
+        "at32/at32f425-start",
+        "at32/at32f435-start",
+        "at32/at32f437-start",
+        "at32/at32f455-start",
+        "at32/at32f456-start",
+        "at32/at32f457-start",
+        "at32/at32m412-start",
+        "at32/at32m416-start",
+        "hc32/ev_hc32f4a0_lqfp176",
+        "hc32/ev_hc32f448_lqfp80",
+        "hc32/ev_hc32f460_lqfp100_v2",
+        "hc32/ev_hc32f472_lqfp100",
+        "hc32/lckfb-hc32f4a0-lqfp100",
+        "hc32l196",
+        "hc32l136",
+        "ht32/ht32f52352",
+        "ht32/ht32f12366",
+        "ht32/ht32f53252"
+      ]
+    },
+    {
+      "RTT_BSP": "others_ft32_mm32_acm32",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "qemu-vexpress-a9",
+        "airm2m/air32f103",
+        "acm32/acm32f0x0-nucleo",
+        "acm32/acm32f0x0-nucleo",
+        "acm32/acm32f4xx-nucleo",
+        "CME_M7",
+        "apollo2",
+        "asm9260t",
+        "allwinner_tina",
+        "ft32/ft32f072xb-starter",
+        "mini2440",
+        "at91/at91sam9g45",
+        "at91/at91sam9260",
+        "wch/arm/ch32f103c8-core",
+        "wch/arm/ch32f203r-evt",
+        "synwit/swm320-mini",
+        "synwit/swm341-mini",
+        "beaglebone",
+        "zynqmp-r5-axu4ev",
+        "yichip/yc3122-pos",
+        "yichip/yc3121-pos",
+        "mm32/mm32f3270-100ask-pitaya",
+        "mm32f327x",
+        "mm32f526x",
+        "mm32l07x",
+        "sam7x",
+        "hk32/hk32f030c8-mini",
+        "rm48x50",
+        "w60x",
+        "essemi/es32f0654",
+        "essemi/es32f365x",
+        "fm33lc026"
+      ]
+    },
+    {
+      "RTT_BSP": "stm32l4",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "stm32/stm32l4r5-st-nucleo",
+        "stm32/stm32l4r9-st-eval",
+        "stm32/stm32l4r9-st-sensortile-box",
+        "stm32/stm32l010-st-nucleo",
+        "stm32/stm32l053-st-nucleo",
+        "stm32/stm32l412-st-nucleo",
+        "stm32/stm32l431-BearPi",
+        "stm32/stm32l431-tencentos-tiny-EVB_MX+",
+        "stm32/stm32l432-st-nucleo",
+        "stm32/stm32l433-ali-startkit",
+        "stm32/stm32l433-st-nucleo",
+        "stm32/stm32l452-st-nucleo",
+        "stm32/stm32l475-atk-pandora",
+        "stm32/stm32l475-st-discovery",
+        "stm32/stm32l476-st-nucleo",
+        "stm32/stm32l496-ali-developer",
+        "stm32/stm32l496-st-nucleo",
+        "stm32/stm32l496-st-discovery"
+      ]
+    },
+    {
+      "RTT_BSP": "stm32f0_f1",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "stm32/stm32f072-st-nucleo",
+        "stm32/stm32f091-st-nucleo",
+        "stm32/stm32f103-100ask-mini",
+        "stm32/stm32f103-100ask-pro",
+        "stm32/stm32f103-atk-nano",
+        "stm32/stm32f103-atk-warshipv3",
+        "stm32/stm32f103-blue-pill",
+        "stm32/stm32f103-dofly-lyc8",
+        "stm32/stm32f103-dofly-M3S",
+        "stm32/stm32f103-fire-arbitrary",
+        "stm32/stm32f103-gizwits-gokitv21",
+        "stm32/stm32f103-hw100k-ibox",
+        "stm32/stm32f103-onenet-nbiot",
+        "stm32/stm32f103-yf-ufun",
+        "stm32/stm32f103-ys-f1pro",
+        "stm32/stm32f107-uc-eval"
+      ]
+    },
+    {
+      "RTT_BSP": "stm32_f2_f4",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "stm32/stm32f207-st-nucleo",
+        "stm32/stm32f302-st-nucleo",
+        "stm32/stm32f334-st-nucleo",
+        "stm32/stm32f401-st-nucleo",
+        "stm32/stm32f401-weact-blackpill",
+        "stm32/stm32f405-smdz-breadfruit",
+        "stm32/stm32f407-armfly-v5",
+        "stm32/stm32f407-fk407m2-zgt6",
+        "stm32/stm32f407-lckfb-skystar",
+        "stm32/stm32f407-atk-explorer",
+        "stm32/stm32f407-robomaster-c",
+        "stm32/stm32f407-st-discovery",
+        "stm32/stm32f410-st-nucleo",
+        "stm32/stm32f411-st-nucleo",
+        "stm32/stm32f411-atk-nano",
+        "stm32/stm32f411-weact-blackpill",
+        "stm32/stm32f413-st-nucleo",
+        "stm32/stm32f427-robomaster-a",
+        "stm32/stm32f429-armfly-v6",
+        "stm32/stm32f429-atk-apollo",
+        "stm32/stm32f429-fire-challenger",
+        "stm32/stm32f429-st-disco",
+        "stm32/stm32f446-st-nucleo",
+        "stm32/stm32f469-st-disco"
+      ]
+    },
+    {
+      "RTT_BSP": "stm32_f7_g0_h7_mp15_u5_h5_wb5",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "stm32/stm32f746-st-disco",
+        "stm32/stm32f746-st-nucleo",
+        "stm32/stm32f767-atk-apollo",
+        "stm32/stm32f767-fire-challenger-v1",
+        "stm32/stm32f767-st-nucleo",
+        "stm32/stm32f769-st-disco",
+        "stm32/stm32f723-st-disco",
+        "stm32/stm32g030-tiny-board",
+        "stm32/stm32g070-st-nucleo",
+        "stm32/stm32g071-st-nucleo",
+        "stm32/stm32g431-st-nucleo",
+        "stm32/stm32g491-st-nucleo",
+        "stm32/stm32g474-st-nucleo",
+        "stm32/stm32h563-st-nucleo",
+        "stm32/stm32h503-st-nucleo",
+        "stm32/stm32h723-st-nucleo",
+        "stm32/stm32h730-esphosted-evb",
+        "stm32/stm32h743-armfly-v7",
+        "stm32/stm32h743-atk-apollo",
+        "stm32/stm32h743-openmv-h7plus",
+        "stm32/stm32h743-st-nucleo",
+        "stm32/stm32h747-st-discovery",
+        "stm32/stm32h750-artpi",
+        "stm32/stm32h750-weact-ministm32h7xx",
+        "stm32/stm32h750-fk750m1-vbt6",
+        "stm32/stm32h7s7-st-disco",
+        "stm32/stm32mp157a-st-discovery",
+        "stm32/stm32mp157a-st-ev1",
+        "stm32/stm32u575-st-nucleo",
+        "stm32/stm32u585-iot02a",
+        "stm32/stm32wb55-st-nucleo"
+      ]
+    },
+    {
+      "RTT_BSP": "nxp_renesas",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "nxp/lpc/lpc55sxx/lpc55s69_nxp_evk",
+        "nxp/lpc/lpc55sxx/lpc55s28_nxp_evk",
+        "nxp/lpc/lpc55sxx/lpc55s06_nxp_evk",
+        "nxp/lpc/lpc55sxx/lpc55s16_nxp_evk",
+        "nxp/lpc/lpc55sxx/lpc55s36_nxp_evk",
+        "nxp/lpc/lpc178x",
+        "nxp/lpc/lpc408x",
+        "nxp/lpc/lpc1114",
+        "nxp/lpc/lpc2148",
+        "nxp/lpc/lpc2478",
+        "nxp/lpc/lpc5410x",
+        "nxp/lpc/lpc54114-lite",
+        "nxp/lpc/lpc176x",
+        "nxp/imx/imx6sx/cortex-a9",
+        "nxp/imx/imxrt/imxrt1052-atk-commander",
+        "nxp/imx/imxrt/imxrt1052-fire-pro",
+        "nxp/imx/imxrt/imxrt1052-nxp-evk",
+        "nxp/imx/imxrt/imxrt1052-seeed-ArchMix",
+        "nxp/imx/imxrt/imxrt1060-nxp-evk",
+        "nxp/imx/imxrt/imxrt1064-nxp-evk",
+        "nxp/imx/imxrt/imxrt1021-nxp-evk",
+        "nxp/mcx/mcxn/frdm-mcxn947",
+        "nxp/mcx/mcxn/frdm-mcxn236",
+        "nxp/mcx/mcxa/frdm-mcxa153",
+        "nxp/mcx/mcxa/frdm-mcxa156",
+        "renesas/ebf_qi_min_6m5",
+        "renesas/ra6m4-cpk",
+        "renesas/ra6m4-iot",
+        "renesas/ra6m3-ek",
+        "renesas/ra6m3-hmi-board",
+        "renesas/ra6e2-fpb",
+        "renesas/ra4m2-eco",
+        "renesas/ra2l1-cpk",
+        "renesas/ra8m1-ek",
+        "renesas/ra8d1-ek",
+        "renesas/ra8d1-vision-board",
+        "renesas/rzt2m_rsk",
+        "renesas/rzn2l_rsk",
+        "renesas/rzn2l_etherkit",
+        "frdm-k64f",
+        "xplorer4330/M4"
+      ]
+    },
+    {
+      "RTT_BSP": "nuvoton",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "nuvoton/numaker-pfm-m487",
+        "nuvoton/numaker-hmi-ma35d1",
+        "nuvoton/numaker-iot-m487",
+        "nuvoton/numaker-m032ki",
+        "nuvoton/numaker-iot-m467",
+        "nuvoton/numaker-m467hj",
+        "nuvoton/nk-n9h30",
+        "nuvoton/nk-rtu980",
+        "nuvoton/ma35-rtp",
+        "nuvoton/nk-980iot",
+        "nuvoton/numaker-iot-ma35d1",
+        "nuvoton/numaker-m2354"
+      ]
+    },
+    {
+      "RTT_BSP": "gd32_n32_apm32",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "gd32/arm/gd32103c-eval",
+        "gd32/arm/gd32105c-eval",
+        "gd32/arm/gd32105r-start",
+        "gd32/arm/gd32107c-eval",
+        "gd32/arm/gd32205r-start",
+        "gd32/arm/gd32207i-eval",
+        "gd32/arm/gd32303e-eval",
+        "gd32/arm/gd32303c-start",
+        "gd32/arm/gd32305r-start",
+        "gd32/arm/gd32307e-start",
+        "gd32/arm/gd32407v-start",
+        "gd32/arm/gd32407v-lckfb",
+        "gd32/arm/gd32450z-eval",
+        "gd32/arm/gd32470z-lckfb",
+        "gd32/arm/gd32h759i-start",
+        "gd32/arm/gd32e503v-eval",
+        "n32/n32g43xcl-stb",
+        "n32/n32g45xcl-stb",
+        "n32/n32g45xml-stb",
+        "n32/n32g45xrl-stb",
+        "n32/n32g45xvl-stb",
+        "n32/n32g457qel-stb",
+        "n32/n32g4frml-stb",
+        "n32/n32l40xcl-stb",
+        "n32/n32l43xml-stb",
+        "n32/n32l43xrl-stb",
+        "n32/n32l436-evb",
+        "n32/n32wb45xl-evb",
+        "apm32/apm32f103xe-minibroard",
+        "apm32/apm32f407ig-minibroard",
+        "apm32/apm32f407zg-evalboard",
+        "apm32/apm32f072vb-miniboard",
+        "apm32/apm32f107vc-evalboard",
+        "apm32/apm32f030r8-miniboard",
+        "apm32/apm32f051r8-evalboard",
+        "apm32/apm32f091vc-miniboard",
+        "apm32/apm32f103vb-miniboard",
+        "apm32/apm32e103ze-evalboard",
+        "apm32/apm32e103ze-tinyboard",
+        "apm32/apm32s103vb-miniboard"
+      ]
+    },
+    {
+      "RTT_BSP": "Infineon_TI_microchip",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "Infineon/psoc6-cy8ckit-062S2-43012",
+        "Infineon/psoc6-cy8ckit-062-BLE",
+        "Infineon/psoc6-cy8ckit-062s4",
+        "Infineon/psoc6-cy8ckit-062-WIFI-BT",
+        "Infineon/psoc6-cy8cproto-062S3-4343W",
+        "Infineon/psoc6-evaluationkit-062S2",
+        "Infineon/xmc7200-kit_xmc7200_evk",
+        "fujitsu/mb9x/mb9bf500r",
+        "fujitsu/mb9x/mb9bf506r",
+        "fujitsu/mb9x/mb9bf618s",
+        "fujitsu/mb9x/mb9bf568r",
+        "raspberry-pi/raspi3-32",
+        "raspberry-pi/raspi4-32",
+        "lm3s8962",
+        "lm3s9b9x",
+        "lm4f232",
+        "tm4c123bsp",
+        "tm4c129x",
+        "msp432e401y-LaunchPad",
+        "microchip/samc21",
+        "microchip/same54",
+        "microchip/same70",
+        "smartfusion2",
+        "maxim/max32660-evsys"
+      ]
+    },
+    {
+      "RTT_BSP": "mips",
+      "RTT_TOOL_CHAIN": "sourcery-mips",
+      "SUB_RTT_BSP": [
+        "loongson/ls1bdev",
+        "loongson/ls2kdev",
+        "loongson/ls1cdev"
+      ]
+    },
+    {
+      "RTT_BSP": "aarch64",
+      "RTT_TOOL_CHAIN": "sourcery-aarch64",
+      "SUB_RTT_BSP": [
+        "qemu-virt64-aarch64",
+        "raspberry-pi/raspi3-64",
+        "raspberry-pi/raspi4-64"
+      ]
+    },
+    {
+      "RTT_BSP": "riscv-none",
+      "RTT_TOOL_CHAIN": "sourcery-riscv-none-embed",
+      "SUB_RTT_BSP": [
+        "k210",
+        "wch/risc-v/ch32v208w-r0",
+        "wch/risc-v/ch32v307v-r1",
+        "wch/risc-v/yd-ch32v307vct6"
+      ]
+    },
+    {
+      "RTT_BSP": "riscv64-unknown",
+      "RTT_TOOL_CHAIN": "sourcery-riscv64-unknown-elf",
+      "SUB_RTT_BSP": [
+        "bluetrum/ab32vg1-ab-prougen",
+        "bouffalo_lab/bl60x",
+        "bouffalo_lab/bl70x"
+      ]
+    },
+    {
+      "RTT_BSP": "hpmicro",
+      "RTT_TOOL_CHAIN": "RISC-V-GCC-RV32",
+      "SUB_RTT_BSP": [
+        "hpmicro/hpm6750evkmini",
+        "hpmicro/hpm6750evk",
+        "hpmicro/hpm6750evk2",
+        "hpmicro/hpm6300evk",
+        "hpmicro/hpm6200evk",
+        "hpmicro/hpm5300evk",
+        "hpmicro/hpm5301evklite",
+        "hpmicro/hpm6800evk",
+        "hpmicro/hpm6e00evk"
+      ]
+    },
+    {
+      "RTT_BSP": "llvm-arm",
+      "RTT_TOOL_CHAIN": "llvm-arm",
+      "SUB_RTT_BSP": [
+        "stm32/stm32l475-atk-pandora"
+      ]
+    },
+    {
+      "RTT_BSP": "simulator",
+      "RTT_TOOL_CHAIN": "gcc",
+      "SUB_RTT_BSP": [
+        "simulator"
+      ]
+    },
+    {
+      "RTT_BSP": "ESP32C3",
+      "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
+      "SUB_RTT_BSP": [
+        "ESP32_C3"
+      ]
+    },
+    {
+      "RTT_BSP": "i386-unknown",
+      "RTT_TOOL_CHAIN": "sourcery-i386-unknown-elf",
+      "SUB_RTT_BSP": [
+        "x86"
+      ]
+    },
+    {
+      "RTT_BSP": "nordic(yml)",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "nrf5x/nrf51822",
+        "nrf5x/nrf52832",
+        "nrf5x/nrf52833",
+        "nrf5x/nrf52840",
+        "nrf5x/nrf5340"
+      ]
+    }
+  ]
+}
