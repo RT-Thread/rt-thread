@@ -180,7 +180,7 @@ rt_err_t rt_sched_tick_increase(rt_tick_t tick)
 /**
  * @brief Update priority of the target thread
  */
-rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t priority)
+rt_err_t rt_sched_thread_change_curr_priority(struct rt_thread *thread, rt_uint8_t priority)
 {
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
     RT_SCHED_DEBUG_IS_LOCKED;
@@ -219,6 +219,26 @@ rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t pr
 #else
         RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).current_priority;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Update priority of the target thread
+ */
+rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t priority)
+{
+    RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
+    RT_SCHED_DEBUG_IS_LOCKED;
+
+    /* change thread init priority */
+    RT_SCHED_PRIV(thread).init_priority = priority;
+
+    /* if this thread takes mutex, its current prio is controlled by mutex PI protocol */
+    if (rt_list_isempty(&thread->taken_object_list) && !(thread->pending_object && (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex)))
+    {
+        rt_sched_thread_change_curr_priority(thread, priority);
     }
 
     return RT_EOK;
