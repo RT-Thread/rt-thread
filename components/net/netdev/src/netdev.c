@@ -580,6 +580,7 @@ int netdev_set_down(struct netdev *netdev)
     return err;
 }
 
+#ifdef RT_LWIP_DHCP
 /**
  * This function will control network interface device DHCP capability enable or disable.
  *
@@ -608,6 +609,34 @@ int netdev_dhcp_enabled(struct netdev *netdev, rt_bool_t is_enabled)
     /* execute network interface device DHCP capability control operations */
     return netdev->ops->set_dhcp(netdev, is_enabled);
 }
+
+int netdev_dhcp_open(char *netdev_name)
+{
+    struct netdev *netdev = RT_NULL;
+    netdev                = netdev_get_by_name(netdev_name);
+    if (netdev == RT_NULL)
+    {
+        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
+        return -1;
+    }
+    netdev_dhcp_enabled(netdev, RT_TRUE);
+    return 0;
+}
+
+int netdev_dhcp_close(char *netdev_name)
+{
+    struct netdev *netdev = RT_NULL;
+
+    netdev = netdev_get_by_name(netdev_name);
+    if (netdev == RT_NULL)
+    {
+        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
+        return -1;
+    }
+    netdev_dhcp_enabled(netdev, RT_FALSE);
+    return 0;
+}
+#endif /* RT_LWIP_DHCP */
 
 /**
  * This function will set network interface device IP address.
@@ -709,6 +738,32 @@ int netdev_set_gw(struct netdev *netdev, const ip_addr_t *gw)
 }
 
 /**
+ * This function will try to get network device and set DNS server address.
+ *
+ * @param netdev_name the network interface device name
+ * @param dns_num the number of the DNS server
+ * @param dns_server the new DNS server address
+ */
+void netdev_set_dns(char *netdev_name, uint8_t dns_num, char *dns_server)
+{
+    struct netdev *netdev = RT_NULL;
+    ip_addr_t      dns_addr;
+
+    netdev = netdev_get_by_name(netdev_name);
+    if (netdev == RT_NULL)
+    {
+        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
+        return;
+    }
+
+    inet_aton(dns_server, &dns_addr);
+    if (netdev_set_dns_server(netdev, dns_num, &dns_addr) == RT_EOK)
+    {
+        rt_kprintf("set network interface device(%s) dns server #%d: %s\n", netdev_name, dns_num, dns_server);
+    }
+}
+
+/**
  * This function will set network interface device DNS server address.
  *
  * @param netdev the network interface device to change
@@ -737,6 +792,49 @@ int netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_
 
     /* execute network interface device set DNS server address operations */
     return netdev->ops->set_dns_server(netdev, dns_num, (ip_addr_t *)dns_server);
+}
+
+/**
+ * This function will set network interface device IP, gateway and netmask address according to device name.
+ *
+ * @param netdev_name the network interface device name
+ * @param ip_addr the new IP address
+ * @param gw_addr the new gateway address
+ * @param nm_addr the new netmask address
+ */
+void netdev_set_if(char *netdev_name, char *ip_addr, char *gw_addr, char *nm_addr)
+{
+    struct netdev *netdev = RT_NULL;
+    ip_addr_t      addr;
+
+    netdev = netdev_get_by_name(netdev_name);
+    if (netdev == RT_NULL)
+    {
+        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
+        return;
+    }
+
+#ifdef RT_LWIP_DHCP
+    netdev_dhcp_close(netdev_name);
+#endif
+
+    /* set IP address */
+    if ((ip_addr != RT_NULL) && inet_aton(ip_addr, &addr))
+    {
+        netdev_set_ipaddr(netdev, &addr);
+    }
+
+    /* set gateway address */
+    if ((gw_addr != RT_NULL) && inet_aton(gw_addr, &addr))
+    {
+        netdev_set_gw(netdev, &addr);
+    }
+
+    /* set netmask address */
+    if ((nm_addr != RT_NULL) && inet_aton(nm_addr, &addr))
+    {
+        netdev_set_netmask(netdev, &addr);
+    }
 }
 
 /**
@@ -1172,70 +1270,6 @@ static void netdev_list_if(void)
     }
 }
 
-#ifdef RT_LWIP_DHCP
-int netdev_dhcp_open(char* netdev_name)
-{
-    struct netdev *netdev = RT_NULL;
-    netdev = netdev_get_by_name(netdev_name);
-    if (netdev == RT_NULL)
-    {
-        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
-        return -1;
-    }
-    netdev_dhcp_enabled(netdev,RT_TRUE);
-    return 0;
-}
-
-int netdev_dhcp_close(char* netdev_name)
-{
-    struct netdev *netdev = RT_NULL;
-
-    netdev = netdev_get_by_name(netdev_name);
-    if (netdev == RT_NULL)
-    {
-        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
-        return -1;
-    }
-    netdev_dhcp_enabled(netdev,RT_FALSE);
-    return 0;
-}
-#endif
-
-static void netdev_set_if(char* netdev_name, char* ip_addr, char* gw_addr, char* nm_addr)
-{
-    struct netdev *netdev = RT_NULL;
-    ip_addr_t addr;
-
-    netdev = netdev_get_by_name(netdev_name);
-    if (netdev == RT_NULL)
-    {
-        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
-        return;
-    }
-
-#ifdef RT_LWIP_DHCP
-    netdev_dhcp_close(netdev_name);
-#endif
-
-    /* set IP address */
-    if ((ip_addr != RT_NULL) && inet_aton(ip_addr, &addr))
-    {
-        netdev_set_ipaddr(netdev, &addr);
-    }
-
-    /* set gateway address */
-    if ((gw_addr != RT_NULL) && inet_aton(gw_addr, &addr))
-    {
-        netdev_set_gw(netdev, &addr);
-    }
-
-    /* set netmask address */
-    if ((nm_addr != RT_NULL) && inet_aton(nm_addr, &addr))
-    {
-        netdev_set_netmask(netdev, &addr);
-    }
-}
-
 int netdev_ifconfig(int argc, char **argv)
 {
     if (argc == 1)
@@ -1429,7 +1463,7 @@ int netdev_ping(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(netdev_ping, ping, ping network host);
-#endif /* NETDEV_USING_IFCONFIG */
+#endif /* NETDEV_USING_PING */
 
 static void netdev_list_dns(void)
 {
@@ -1457,25 +1491,6 @@ static void netdev_list_dns(void)
     }
 }
 
-static void netdev_set_dns(char *netdev_name, uint8_t dns_num, char *dns_server)
-{
-    struct netdev *netdev = RT_NULL;
-    ip_addr_t dns_addr;
-
-    netdev = netdev_get_by_name(netdev_name);
-    if (netdev == RT_NULL)
-    {
-        rt_kprintf("bad network interface device name(%s).\n", netdev_name);
-        return;
-    }
-
-    inet_aton(dns_server, &dns_addr);
-    if (netdev_set_dns_server(netdev, dns_num, &dns_addr) == RT_EOK)
-    {
-        rt_kprintf("set network interface device(%s) dns server #%d: %s\n", netdev_name, dns_num, dns_server);
-    }
-}
-
 int netdev_dns(int argc, char **argv)
 {
     if (argc == 1)
@@ -1499,6 +1514,7 @@ int netdev_dns(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(netdev_dns, dns, list and set the information of dns);
+
 #ifdef NETDEV_USING_NETSTAT
 static void netdev_cmd_netstat(void)
 {
