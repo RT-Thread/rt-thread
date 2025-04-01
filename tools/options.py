@@ -70,10 +70,10 @@ def AddOptions():
                 action = 'store_true',
                 default = False,
                 help = 'clean up the library by --buildlib')
-    AddOption('--target',
+    AddOption('--target', '--ide',
                 dest = 'target',
                 type = 'string',
-                help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+                help = 'set ide project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
     AddOption('--cmsispack',
                 dest = 'cmsispack',
                 type = 'string',
