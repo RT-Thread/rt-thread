@@ -128,6 +128,7 @@ rt_err_t rt_sched_thread_yield(struct rt_thread *thread);
 rt_err_t rt_sched_thread_close(struct rt_thread *thread);
 rt_err_t rt_sched_thread_ready(struct rt_thread *thread);
 rt_err_t rt_sched_thread_suspend(struct rt_thread *thread, rt_sched_lock_level_t level);
+rt_err_t rt_sched_thread_set_priority(struct rt_thread *thread, rt_uint8_t priority);
 rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t priority);
 rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu);
 rt_uint8_t rt_sched_thread_is_suspended(struct rt_thread *thread);
