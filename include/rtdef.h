@@ -1028,7 +1028,7 @@ struct rt_mutex
     rt_uint8_t           ceiling_priority;              /**< the priority ceiling of mutexe */
     rt_uint8_t           priority;                      /**< the maximal priority for pending thread */
     rt_uint8_t           hold;                          /**< numbers of thread hold the mutex */
-    rt_uint8_t           reserved;                      /**< reserved field */
+    rt_uint8_t           ctrl_flags;                    /**< flags to control mutex behavior */
 
     struct rt_thread    *owner;                         /**< current owner of mutex */
     rt_list_t            taken_list;                    /**< the object list taken by thread */
