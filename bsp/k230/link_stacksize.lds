@@ -1,1 +1,1 @@
-__STACKSIZE__ = 8192;
+__STACKSIZE__ = 65536;
