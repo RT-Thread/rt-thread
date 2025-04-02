@@ -23,7 +23,7 @@
 
 #include "ofw_internal.h"
 
-struct rt_fdt_earlycon fdt_earlycon rt_section(".bss.noclean.earlycon");
+struct rt_fdt_earlycon fdt_earlycon;
 
 RT_OFW_SYMBOL_TYPE_RANGE(earlycon, struct rt_fdt_earlycon_id, _earlycon_start = {}, _earlycon_end = {});
 
