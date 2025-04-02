@@ -24,14 +24,14 @@
 #include "page.h"
 
 /* respect to boot loader, must be 0xFFFFFFC000200000 */
-RT_STATIC_ASSERT(kmem_region, KERNEL_VADDR_START == 0xFFFFFFC000220000);
+RT_STATIC_ASSERT(kmem_region, KERNEL_VADDR_START == 0xffffffc000020000);
 
 rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
 
 extern size_t MMUTable[];
 
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
+    {KERNEL_VADDR_START, (rt_size_t)0xFFFFFFC020000000 - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
 };
 
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
