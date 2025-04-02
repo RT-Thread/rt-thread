@@ -1,0 +1,196 @@
+#
+# Copyright (c) 2025, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2025-03-22     Supperthomas 添加upload 上传编译固件
+# 2025-04-03     Hydevcode    自动生成attach的产物
+#
+# 1.读取重点看护表
+# 2.生成矩阵
+# 3.编译对应bsp
+# 4.调用对应的attach的python编译
+# 5.生成产物
+name: Auto Version Attach Generate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.read-config.outputs.matrix }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          sparse-checkout: .github/PART_BSP_COMPILE.json
+          persist-credentials: false
+      - name: Read matrix config
+        id: read-config
+        run: |
+          raw_matrix=$(cat .github/PART_BSP_COMPILE.json |egrep -v '^//')
+          FILTER_CONDITION='.legs[]'
+          matrix=$(jq -c "{legs: [$FILTER_CONDITION]}" <<< "$raw_matrix")
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+  build:
+    runs-on: ubuntu-22.04
+    needs: generate-matrix
+    name: ${{ matrix.legs.RTT_BSP }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@main
+        with:
+          python-version: 3.8
+
+      - name: Install Tools
+        shell: bash
+        run: |
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
+          pip install -r tools/requirements.txt
+          git config --global http.postBuffer 524288000
+          echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
+          echo "RTT_CC=gcc" >> $GITHUB_ENV
+          echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
+
+      - name: Cache GCC Arm Toolchain
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
+        id: cache-gcc-arm
+        uses: actions/cache@main
+        with:
+          path: /opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
+          key: ${{ runner.os }}-arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
+
+      - name: Download Arm ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && (steps.cache-gcc-arm.outputs.cache-hit != 'true') }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.8/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
+          sudo tar -xf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz -C /opt
+
+      - name: Install Arm ToolChains2
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
+        shell: bash
+        run: |
+          /opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc --version
+          echo "RTT_EXEC_PATH=/opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_ENV
+
+      - name: Install LLVM-Arm ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'llvm-arm' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
+          sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+          sudo apt-get -qq install libncurses5 libncurses5-dev libncursesw5-dev
+          /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
+          echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
+          echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
+
+      - name: Install AArch64 ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-aarch64' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz
+          sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
+          /opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin/aarch64-none-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
+
+      - name: Install Mips ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-mips' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2
+          sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt
+          /opt/mips-2016.05/bin/mips-sde-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv64-unknown-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv64-unknown-elf' && success() }}
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+          sudo tar zxf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+          /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+      - name: Install riscv32-unknown-elf Toolchains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'RISC-V-GCC-RV32' && success() }}
+        run: |
+           wget -q https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
+           sudo tar zxf riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz -C /opt
+           /opt/riscv32-unknown-elf-newlib-multilib/bin/riscv32-unknown-elf-gcc --version
+           echo "RTT_EXEC_PATH=/opt/riscv32-unknown-elf-newlib-multilib/bin/" >> $GITHUB_ENV
+
+      - name: Install Riscv-none-embed ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+          sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+          /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
+          echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+
+      - name: Install riscv32-esp-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
+          pip3 install esptool
+          echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+      - name: Install Simulator Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}
+        run: |
+          sudo apt-get -qq install libsdl2-dev
+
+      - name: Install i386-unknown-elf Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-i386-unknown-elf' && success() }}
+        run: |
+          wget -q https://github.com/zhkag/toolchains/releases/download/i386-unknown/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2
+          sudo tar -jxvf i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
+          /opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin/i386-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+      - name: Bsp Scons Compile
+        if: ${{ success() }}
+        shell: bash
+        env:
+          RTT_BSP: ${{ matrix.legs.RTT_BSP }}
+          RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
+          SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
+        run: |
+          source ~/.env/env.sh
+          python tools/ci/bsp_buildings.py
+      - name: Upload output as artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ matrix.legs.RTT_BSP }}
+          if-no-files-found: ignore
+          path: version_output/
+            # 整合所有的output为一个文件夹 
+  collect-artifacts:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      #这里会下载所有产物
+      - name: Download all artifacts
+        uses: actions/download-artifact@main
+        with:
+          path: version_output/
+          merge-multiple: true
+      - run: ls -R version_output/
+
+      - name: Upload combined output as artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: 00_all_bsp_output_${{ github.sha }}  
+          path: version_output/

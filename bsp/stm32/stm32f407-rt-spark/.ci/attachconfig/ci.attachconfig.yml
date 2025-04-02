@@ -158,6 +158,7 @@ online-packages.ai.llmchat:
 peripheral.aht21:
     kconfig:
       - CONFIG_BSP_USING_AHT21=y
+      - CONFIG_VERSIONCONFIG_USING_AHT21_SAMPLE=y
 peripheral.ap3216c:
     kconfig:
       - CONFIG_BSP_USING_AP3216C=y
