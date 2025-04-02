@@ -592,6 +592,7 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
     int offset;
     int len, options_len = 0;
     const char *options = RT_NULL, *con_type = RT_NULL;
+    struct rt_fdt_earlycon_id *earlycon_id, *earlycon_id_end, *best_earlycon_id = RT_NULL;
 
     rt_memset(&fdt_earlycon, 0, rt_offsetof(struct rt_fdt_earlycon, msg_idx));
     fdt_earlycon.nodeoffset = -1;
@@ -658,7 +659,6 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
             if (options)
             {
                 int type_len = 0;
-                struct rt_fdt_earlycon_id *earlycon_id, *earlycon_id_end, *best_earlycon_id = RT_NULL;
 
                 earlycon_id = (struct rt_fdt_earlycon_id *)&_earlycon_start;
                 earlycon_id_end = (struct rt_fdt_earlycon_id *)&_earlycon_end;
@@ -783,8 +783,10 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
     if (fdt_earlycon.msg_idx)
     {
         fdt_earlycon.msg_idx = 0;
-
-        rt_kputs(fdt_earlycon.msg);
+        if(best_earlycon_id != RT_NULL)
+        {
+            rt_kputs(fdt_earlycon.msg);
+        }
     }
 
     rt_fdt_boot_dump();
