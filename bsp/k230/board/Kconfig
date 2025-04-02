@@ -1,5 +1,9 @@
 menu "Drivers Configuration"
 
+    config BSP_USING_HARDLOCK
+        bool "Enable Hard-Lock"
+        default y
+
     menuconfig BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO

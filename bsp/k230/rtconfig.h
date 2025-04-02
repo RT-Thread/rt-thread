@@ -559,6 +559,7 @@
 
 /* Drivers Configuration */
 
+#define BSP_USING_HARDLOCK
 /* end of Drivers Configuration */
 #define BOARD_fpgac908
 #define __STACKSIZE__ 65536
