@@ -171,7 +171,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
-    rsource "../../libraries/gd32_drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
 endmenu
 
