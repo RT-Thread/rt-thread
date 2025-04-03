@@ -32,7 +32,7 @@ elif rtconfig.CROSS_TOOL == 'keil':
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/STM32H7RSxx_HAL/CMSIS/Device/ST/STM32H7RSxx/Source/Templates/iar/startup_stm32h7s7xx.s']
 
-CPPDEFINES = ['STM32H7S7xx']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

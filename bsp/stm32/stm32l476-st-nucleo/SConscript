@@ -1,10 +1,13 @@
 # RT-Thread scons bridge
 import os
+Import('env')
 from building import *
 
 cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
+
+env.Append(CPPDEFINES = ['STM32L476xx'])
 
 for d in list:
     path = os.path.join(cwd, d)
