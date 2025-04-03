@@ -691,11 +691,10 @@ void rt_hw_mem_setup_early(void)
          * identical mapping,
          * PC are still at lower region before relocating to high memory
          */
-        for (size_t i = 0; i < __SIZE(PPN0_BIT); i++)
-        {
-            early_pgtbl[i] = COMBINEPTE(ps, MMU_MAP_EARLY);
-            ps += L1_PAGE_SIZE;
-        }
+        rt_ubase_t pg_idx ;
+        ps = (rt_ubase_t)symb_pc & (~(L1_PAGE_SIZE - 1));
+        pg_idx = GET_L1(ps);
+        early_pgtbl[pg_idx] = COMBINEPTE(ps, MMU_MAP_EARLY);
 
         /* relocate text region */
         __asm__ volatile("la %0, _start\n" : "=r"(ps));
