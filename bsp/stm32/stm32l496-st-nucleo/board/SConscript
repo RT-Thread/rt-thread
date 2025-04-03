@@ -15,9 +15,7 @@ path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
 
-CPPDEFINES = ['STM32L496xx']
-
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 list = os.listdir(cwd)
 for item in list:

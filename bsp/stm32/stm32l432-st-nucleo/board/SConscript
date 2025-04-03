@@ -11,8 +11,6 @@ CubeMX_Config/Src/stm32l4xx_hal_msp.c
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 
-CPPDEFINES = ['STM32L432xx']
-
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

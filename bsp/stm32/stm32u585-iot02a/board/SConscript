@@ -13,9 +13,7 @@ CubeMX_Config/Src/stm32u5xx_hal_msp.c
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 
-# You can select chips from the list above
-CPPDEFINES = ['STM32U585xx']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')
 

@@ -11,8 +11,7 @@ CubeMX_Config/Src/stm32f4xx_hal_msp.c
 path =  [cwd]
 path += [os.path.join(cwd, 'CubeMX_Config', 'Inc')]
 
-CPPDEFINES = ['STM32F429xx']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 # if os.path.isfile(os.path.join(cwd, "ports", 'SConscript')):
 #     group = group + SConscript(os.path.join("ports", 'SConscript'))
