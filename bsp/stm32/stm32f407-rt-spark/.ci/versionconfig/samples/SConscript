@@ -1,0 +1,16 @@
+from building import *
+import os
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend(['VERSIONCONFIG_USING_AHT21_SAMPLE']):
+    src += ['peripheral_aht21.c']
+
+if GetDepend(['VERSIONCONFIG_USING_ICM20608_SAMPLE']):
+    src += ['peripheral_icm20608.c']
+
+group = DefineGroup('Versionconfig', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
