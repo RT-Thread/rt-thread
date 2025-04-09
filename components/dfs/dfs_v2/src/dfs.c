@@ -1037,7 +1037,7 @@ int dfs_dlog(int argc, char** argv)
         }
     }
 
-            return 0;
+    return 0;
 }
 MSH_CMD_EXPORT(dfs_dlog, dfs dlog on|off);
 
