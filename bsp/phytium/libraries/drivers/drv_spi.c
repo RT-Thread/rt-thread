@@ -230,7 +230,6 @@ static int spi_init(phytium_spi_bus *spi_bus)
         return -RT_ERROR;
     }
     FSpimRegisterIntrruptHandler(&spi_bus->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
-    
 
     rt_spi_bus_register(&spi_bus->spi_bus, spi_bus->name, &spim_ops);
     RT_ASSERT((struct rt_spi_device *)rt_device_find(spi_bus->name));

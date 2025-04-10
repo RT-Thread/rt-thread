@@ -184,7 +184,6 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         }
 
         i2c_bus->i2c_handle.config.slave_addr = pmsg->addr;
-        
         if (pmsg->flags & RT_I2C_RD)
         {
             rt_thread_delay(100);
