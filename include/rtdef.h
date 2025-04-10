@@ -643,7 +643,7 @@ enum
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 #define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
-#define RT_THREAD_CTRL_SET_PRIORITY     0x05                /**< Set thread priority. */
+#define RT_THREAD_CTRL_RESET_PRIORITY   0x05                /**< Reset thread priority. */
 
 /**
  * CPU usage statistics data
