@@ -8,7 +8,7 @@
  * 2020/12/12     bernard      The first version
  */
 
-INCLUDE "link_stacksize.lds"
+#include "rtconfig.h"
 
 OUTPUT_ARCH( "riscv" )
 
@@ -22,7 +22,7 @@ OUTPUT_ARCH( "riscv" )
 
 MEMORY
 {
-   SRAM : ORIGIN = 0xffffffc000020000, LENGTH = 262012K
+   SRAM : ORIGIN = KERNEL_VADDR_START, LENGTH = 262012K
 }
 
 ENTRY(_start)
