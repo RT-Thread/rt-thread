@@ -121,7 +121,6 @@ void rt_hw_aspace_switch(struct rt_aspace *aspace);
 void rt_hw_mmu_switch(void *tbl);
 
 void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr);
-void rt_hw_mmu_kernel_map_init(struct rt_aspace *aspace, size_t vaddr_start, size_t size);
 void *rt_hw_mmu_tbl_get(void);
 
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size, enum rt_mmu_cntl cmd);
