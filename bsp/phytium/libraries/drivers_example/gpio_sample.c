@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-12-10  liqiaozhong  first commit 
- * 2025-04-08  liqiaozhong  
+ * 2022-12-10  liqiaozhong  first commit
+ * 2025-04-08  liqiaozhong
  *
  */
 
@@ -58,7 +58,6 @@ static int gpio_toggle_sample(uint8_t argc, char **argv)
     input_pin_index = FGPIO_ID(FGPIO_CTRL_0, FGPIO_PIN_0);
     rt_pin_mode(input_pin_index, PIN_MODE_INPUT);
     rt_pin_attach_irq(input_pin_index, PIN_IRQ_MODE_RISING, gpio_irq_test, RT_NULL);
-    
     output_pin_index = FGPIO_ID(FGPIO_CTRL_4, FGPIO_PIN_13);
     rt_pin_mode(output_pin_index, PIN_MODE_OUTPUT);
 #endif
@@ -68,11 +67,9 @@ static int gpio_toggle_sample(uint8_t argc, char **argv)
     input_pin_index = FGPIO_ID(FGPIO_CTRL_4, FGPIO_PIN_13);
     rt_pin_mode(input_pin_index, PIN_MODE_INPUT);
     rt_pin_attach_irq(input_pin_index, PIN_IRQ_MODE_RISING, gpio_irq_test, RT_NULL);
-    
     output_pin_index = FGPIO_ID(FGPIO_CTRL_4, FGPIO_PIN_10);
     rt_pin_mode(output_pin_index, PIN_MODE_OUTPUT);
 #endif
-    
     /* toggle operation */
     rt_pin_write(output_pin_index, set_level);
     set_level = (FGPIO_OPS_LEVEL_LOW == set_level) ? FGPIO_OPS_LEVEL_HIGH : FGPIO_OPS_LEVEL_LOW;

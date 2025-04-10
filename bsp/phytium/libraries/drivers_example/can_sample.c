@@ -65,7 +65,7 @@ int can_sample(int argc, char *argv[])
     if (!can_dev)
     {
         rt_kprintf("Find %s failed.\n", can_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Initialize CAN receive signal quantity */

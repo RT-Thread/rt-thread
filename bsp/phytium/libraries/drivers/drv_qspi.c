@@ -411,7 +411,6 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
     }
 
     LOG_E("cmd not found!!!\r\n");
-    
     return -RT_ERROR;
 }
 

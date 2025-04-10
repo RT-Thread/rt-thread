@@ -10,7 +10,7 @@
 #include "fmio.h"
 #include "fparameters.h"
 
-static struct rt_i2c_bus_device *i2c_test_bus = RT_NULL; 
+static struct rt_i2c_bus_device *i2c_test_bus = RT_NULL;
 int i2c_sample(int argc, char *argv[])
 {
     char name[RT_NAME_MAX];

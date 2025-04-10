@@ -62,12 +62,11 @@ static void FDdmaSetupInterrupt(FDdma *const instance)
 
     rt_uint32_t cpu_id = rt_hw_cpu_id();
     rt_hw_interrupt_set_target_cpus(config->irq_num, cpu_id);
-    
     rt_hw_interrupt_set_priority(config->irq_num, 16);
     /* register intr callback */
-    rt_hw_interrupt_install(config->irq_num, 
-                            FDdmaIrqHandler, 
-                            instance, 
+    rt_hw_interrupt_install(config->irq_num,
+                            FDdmaIrqHandler,
+                            instance,
                             NULL);
 
     /* enable ddma0 irq */
@@ -136,7 +135,6 @@ static FError FI2sEs8336Init(u32 word_length)
     FError ret = FT_SUCCESS;
 
     FIOPadSetI2sMux();
-    
     ret = RtEs8336Init(); /* es8336初始化，i2s slave设置 */
     if (FT_SUCCESS != ret)
     {
@@ -176,7 +174,7 @@ static FError FI2sRxInit(struct phytium_i2s_device *i2s_dev, u32 word_length)
         return ret;
     }
 
-    FI2sClkOutDiv(&i2s_dev->i2s_ctrl, i2s_dev->config.samplerate); 
+    FI2sClkOutDiv(&i2s_dev->i2s_ctrl, i2s_dev->config.samplerate);
     FI2sTxRxEnable(&i2s_dev->i2s_ctrl, TRUE); /* 模块使能 */
     return ret;
 }
@@ -471,11 +469,9 @@ static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)
     }
 
     i2s_dev->audio.ops = &i2s_ops;
-    
     int ret = rt_audio_register(audio, i2s_dev->name, RT_DEVICE_FLAG_RDONLY, (void *)i2s_dev);
     RT_ASSERT(RT_EOK == ret);
     LOG_D("i2s_controller_init i2s bus reg success. \n");
-    
     return ret;
 }
 

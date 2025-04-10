@@ -88,7 +88,6 @@ static rt_err_t rt_dc_init(struct phytium_dc_bus  *device)
     _dc_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
     _dc_info.width = FB_XSIZE;
     _dc_info.height = FB_YSIZE;
-    
     rt_hw_dc_register(device, device->name, RT_DEVICE_FLAG_RDWR, NULL);
     dc_config(device);
     ret = FDcDpInitial(instance_p, device->fdc_id, user_cfg.width, user_cfg.height);
