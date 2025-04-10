@@ -64,7 +64,7 @@ void qspi_thread(void *parameter)
     rt_uint8_t recv;
     rt_uint8_t cmd = 0x9F;/*read the flash status reg2*/
     res = rt_qspi_send_then_recv(qspi_test_device, &cmd, sizeof(cmd), &recv, sizeof(recv));
-    if (recv != 0x0 || res != 0)
+    if (recv == 0x0 || res != 0)
     {
         LOG_E("The status reg is incorrect\n");
         res = RT_ERROR;
