@@ -115,8 +115,6 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
 void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size);
 void rt_hw_aspace_switch(struct rt_aspace *aspace);
 void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr);
-void rt_hw_mmu_kernel_map_init(struct rt_aspace *aspace, rt_size_t vaddr_start,
-                               rt_size_t size);
 void *rt_hw_mmu_pgtbl_create(void);
 void rt_hw_mmu_pgtbl_delete(void *pgtbl);
 void *rt_hw_mmu_tbl_get(void);
