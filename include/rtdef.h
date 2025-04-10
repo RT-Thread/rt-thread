@@ -804,6 +804,7 @@ typedef struct lwp_siginfo_ext {
             clock_t utime;
             clock_t stime;
         } sigchld;
+        union sigval sigval;
     };
 } *lwp_siginfo_ext_t;
 
