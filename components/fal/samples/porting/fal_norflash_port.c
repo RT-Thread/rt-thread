@@ -118,7 +118,7 @@ static int write( long offset, const uint8_t* buf, size_t size )
     uint32_t write_len     = 0;
 
     if ( addr_end_up > FLASH_END_ADDR || ( int )addr_end_down < FLASH_START_ADDR ) return -1;
-    //如果不使用内存分配可以定义一个static FLASH_SECTOR_SIZE 长度的buf 
+    //如果不使用内存分配可以定义一个static FLASH_SECTOR_SIZE 长度的buf
     uint8_t* read_sector_buf = FAL_MALLOC( FLASH_SECTOR_SIZE );
     if ( read_sector_buf == RT_NULL ) {
         return -2;
