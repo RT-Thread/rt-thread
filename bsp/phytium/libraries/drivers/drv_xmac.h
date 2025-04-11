@@ -26,6 +26,7 @@
 #include "fxmac_bdring.h"
 #include "eth_ieee_reg.h"
 #include "fcpu_info.h"
+#include "fxmac_phy.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -111,6 +111,12 @@ load_e2000d_demo_rtthread:
 	@cp ./configs/e2000d_demo_rtthread.h ./rtconfig.h -f
 	scons -c
 
+load_e2000d_demo_rtthread_pusb2_dc:
+	@echo "Load configs from ./configs/e2000d_demo_rtthread_pusb2_dc"
+	@cp ./configs/e2000d_demo_rtthread_pusb2_dc ./.config -f
+	@cp ./configs/e2000d_demo_rtthread_pusb2_dc.h ./rtconfig.h -f
+	scons -c
+
 load_e2000d_demo_rtthread_test:
 	@echo "Load configs from ./configs/e2000d_demo_rtthread_test"
 	@cp ./configs/e2000d_demo_rtthread_test ./.config -f

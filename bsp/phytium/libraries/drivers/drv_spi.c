@@ -96,11 +96,7 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
     phytium_spi_bus *user_data_cfg = device->parent.user_data;
-    FSpimConfig input_cfg = *FSpimLookupConfig(user_data_cfg->spim_instance.config.instance_id);
-#ifdef RT_USING_SMART
-    input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
-#endif
-    FSpimConfig *set_input_cfg = &input_cfg;
+    FSpimConfig *set_input_cfg = &user_data_cfg->spim_instance.config;
 
     /* set fspim device according to configuration */
     if (configuration->mode & RT_SPI_CPOL)
@@ -130,7 +126,7 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     }
 
     /* send spi_cfg to RT-Thread sys */
-    ret = FSpimCfgInitialize(&user_data_cfg->spim_instance, &input_cfg);
+    ret = FSpimCfgInitialize(&user_data_cfg->spim_instance, set_input_cfg);
     if (FSPIM_SUCCESS != ret)
     {
         return -RT_ERROR;
@@ -211,10 +207,32 @@ static rt_ssize_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message 
     return message_length;
 }
 
-static int spi_init(phytium_spi_bus *phytium_spi)
+static int spi_init(phytium_spi_bus *spi_bus)
 {
-    rt_spi_bus_register(&phytium_spi->spi_bus, phytium_spi->name, &spim_ops);
-    RT_ASSERT((struct rt_spi_device *)rt_device_find(phytium_spi->name));
+    FError ret = FSPIM_SUCCESS;
+    FSpimConfig input_cfg = *FSpimLookupConfig(spi_bus->spim_instance.config.instance_id);
+#ifdef RT_USING_SMART
+    input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
+#endif
+    FSpimConfig *set_input_cfg = &input_cfg;
+
+    /* send spi_cfg to RT-Thread sys */
+    ret = FSpimCfgInitialize(&spi_bus->spim_instance, &input_cfg);
+    if (FSPIM_SUCCESS != ret)
+    {
+        return -RT_ERROR;
+    }
+
+    /* irq setting */
+    ret = FSpimSetupInterrupt(&spi_bus->spim_instance);
+    if (FSPIM_SUCCESS != ret)
+    {
+        return -RT_ERROR;
+    }
+    FSpimRegisterIntrruptHandler(&spi_bus->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
+
+    rt_spi_bus_register(&spi_bus->spi_bus, spi_bus->name, &spim_ops);
+    RT_ASSERT((struct rt_spi_device *)rt_device_find(spi_bus->name));
 
     return 0;
 }
