@@ -648,6 +648,8 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
 
 #define SATP_BASE ((rt_ubase_t)SATP_MODE << SATP_MODE_OFFSET)
 
+extern unsigned int __bss_end;
+
 /**
  * @brief Early memory setup function for hardware initialization.
  *
