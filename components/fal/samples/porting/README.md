@@ -273,13 +273,13 @@ static int write_sector( long offset, const uint8_t* buf, size_t size )
     uint32_t addr      = FLASH_START_ADDR + offset;
     
     // 计算地址的页对齐上边界和下边界（按FLASH_PAGE_SIZE对齐）
-    uint32_t addr_up   = FAL_ALIGN_UP( addr, FALSH_PAGE_SIZE );
-    uint32_t addr_down = FAL_ALIGN_DOWN( addr, FALSH_PAGE_SIZE );
+    uint32_t addr_up   = FAL_ALIGN_UP( addr, FLASH_PAGE_SIZE );
+    uint32_t addr_down = FAL_ALIGN_DOWN( addr, FLASH_PAGE_SIZE );
 
     // 计算写入结束地址及其页对齐边界
     uint32_t addr_end      = addr + size;
-    uint32_t addr_end_up   = FAL_ALIGN_UP( addr_end, FALSH_PAGE_SIZE );
-    uint32_t addr_end_down = FAL_ALIGN_DOWN( addr_end, FALSH_PAGE_SIZE );
+    uint32_t addr_end_up   = FAL_ALIGN_UP( addr_end, FLASH_PAGE_SIZE );
+    uint32_t addr_end_down = FAL_ALIGN_DOWN( addr_end, FLASH_PAGE_SIZE );
 
     // 初始化当前处理地址和长度变量
     uint32_t cur_addr      = addr_down;    // 从页对齐起始地址开始处理
@@ -302,7 +302,7 @@ static int write_sector( long offset, const uint8_t* buf, size_t size )
         // 处理结束未对齐部分（跨页结束边界）
         else if ( cur_addr == addr_end_down ) {
             // 单页最大写入长度
-            max_write_len = FALSH_PAGE_SIZE;
+            max_write_len = FLASH_PAGE_SIZE;
             // 计算实际需要写入的长度（结束地址 - 当前页起始地址）
             write_len     = addr_end - cur_addr;
             // 确保不超过页最大长度
@@ -314,12 +314,12 @@ static int write_sector( long offset, const uint8_t* buf, size_t size )
         // 处理完整页写入
         else {
             // 整页写入（FLASH_PAGE_SIZE长度）
-            norflash_write_page( buf, cur_addr, FALSH_PAGE_SIZE );
-            buf += FALSH_PAGE_SIZE;  // 移动数据指针整页长度
+            norflash_write_page( buf, cur_addr, FLASH_PAGE_SIZE );
+            buf += FLASH_PAGE_SIZE;  // 移动数据指针整页长度
         }
 
         // 移动到下一页起始地址
-        cur_addr += FALSH_PAGE_SIZE;
+        cur_addr += FLASH_PAGE_SIZE;
     }
     return size;  // 返回成功写入的总字节数
 }

@@ -6,8 +6,8 @@
 #define FLASH_END_ADDR         0x01000000U  // 16*1024*1024
 
 #define FLASH_PROGRAM_MIN_SIZE 256  // 256 bytes
-//每次对falsh写入时 底层可以写入的最大字节数为 FALSH_PAGE_SIZE
-#define FALSH_PAGE_SIZE        FLASH_PROGRAM_MIN_SIZE  // 256 bytes
+//每次对falsh写入时 底层可以写入的最大字节数为 FLASH_PAGE_SIZE
+#define FLASH_PAGE_SIZE        FLASH_PROGRAM_MIN_SIZE  // 256 bytes
 
 /**
  * @brief 需要实现以下函数
@@ -71,12 +71,12 @@ static uint32_t judge_whether_erase( uint8_t* sector_buf, uint16_t len )
 static int write_sector( long offset, const uint8_t* buf, size_t size )
 {
     uint32_t addr      = FLASH_START_ADDR + offset;
-    uint32_t addr_up   = FAL_ALIGN_UP( addr, FALSH_PAGE_SIZE );
-    uint32_t addr_down = FAL_ALIGN_DOWN( addr, FALSH_PAGE_SIZE );
+    uint32_t addr_up   = FAL_ALIGN_UP( addr, FLASH_PAGE_SIZE );
+    uint32_t addr_down = FAL_ALIGN_DOWN( addr, FLASH_PAGE_SIZE );
 
     uint32_t addr_end      = addr + size;
-    uint32_t addr_end_up   = FAL_ALIGN_UP( addr_end, FALSH_PAGE_SIZE );
-    uint32_t addr_end_down = FAL_ALIGN_DOWN( addr_end, FALSH_PAGE_SIZE );
+    uint32_t addr_end_up   = FAL_ALIGN_UP( addr_end, FLASH_PAGE_SIZE );
+    uint32_t addr_end_down = FAL_ALIGN_DOWN( addr_end, FLASH_PAGE_SIZE );
 
     uint32_t cur_addr      = addr_down;
     uint32_t max_write_len = 0;
@@ -89,17 +89,17 @@ static int write_sector( long offset, const uint8_t* buf, size_t size )
             buf += write_len;
         }
         else if ( cur_addr == addr_end_down ) {
-            max_write_len = FALSH_PAGE_SIZE;
+            max_write_len = FLASH_PAGE_SIZE;
             write_len     = addr_end - cur_addr;
             write_len     = write_len >= max_write_len ? max_write_len : write_len;
             norflash_write_page( buf, cur_addr, write_len );
         }
         else {
-            norflash_write_page( buf, cur_addr, FALSH_PAGE_SIZE );
-            buf += FALSH_PAGE_SIZE;
+            norflash_write_page( buf, cur_addr, FLASH_PAGE_SIZE );
+            buf += FLASH_PAGE_SIZE;
         }
 
-        cur_addr += FALSH_PAGE_SIZE;
+        cur_addr += FLASH_PAGE_SIZE;
     }
     return size;
 }
