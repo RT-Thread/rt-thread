@@ -779,6 +779,8 @@ RTM_EXPORT(rt_thread_mdelay);
  *
  *              RT_THREAD_CTRL_BIND_CPU for bind the thread to a CPU.
  *
+ *              RT_THREAD_CTRL_RESET_PRIORITY for reset priority level of thread.
+ *
  * @param   arg is the argument of control command.
  *
  * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
@@ -798,6 +800,16 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
             rt_sched_lock_level_t slvl;
             rt_sched_lock(&slvl);
             error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
+            rt_sched_unlock(slvl);
+            return error;
+        }
+
+        case RT_THREAD_CTRL_RESET_PRIORITY:
+        {
+            rt_err_t error;
+            rt_sched_lock_level_t slvl;
+            rt_sched_lock(&slvl);
+            error = rt_sched_thread_reset_priority(thread, *(rt_uint8_t *)arg);
             rt_sched_unlock(slvl);
             return error;
         }

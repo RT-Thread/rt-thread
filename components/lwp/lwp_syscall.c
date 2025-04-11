@@ -1634,7 +1634,7 @@ sysret_t sys_setpriority(int which, id_t who, int prio)
             for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
             {
                 thread = rt_list_entry(list, struct rt_thread, sibling);
-                rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &prio);
+                rt_thread_control(thread, RT_THREAD_CTRL_RESET_PRIORITY, &prio);
             }
             lwp_pid_lock_release();
             return 0;
@@ -8789,7 +8789,7 @@ sysret_t sys_sched_setparam(pid_t tid, void *param)
 
     if (thread)
     {
-        ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&sched_param->sched_priority);
+        ret = rt_thread_control(thread, RT_THREAD_CTRL_RESET_PRIORITY, (void *)&sched_param->sched_priority);
     }
 
     lwp_tid_dec_ref(thread);
@@ -8959,7 +8959,7 @@ sysret_t sys_sched_setscheduler(int tid, int policy, void *param)
     }
 
     thread = lwp_tid_get_thread_and_inc_ref(tid);
-    ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&sched_param->sched_priority);
+    ret = rt_thread_control(thread, RT_THREAD_CTRL_RESET_PRIORITY, (void *)&sched_param->sched_priority);
     lwp_tid_dec_ref(thread);
 
     kmem_put(sched_param);

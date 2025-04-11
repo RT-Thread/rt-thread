@@ -180,7 +180,7 @@ rt_err_t rt_sched_tick_increase(rt_tick_t tick)
 /**
  * @brief Update priority of the target thread
  */
-rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t priority)
+static rt_err_t _rt_sched_update_priority(struct rt_thread *thread, rt_uint8_t priority, rt_bool_t update_init_prio)
 {
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
     RT_SCHED_DEBUG_IS_LOCKED;
@@ -192,6 +192,10 @@ rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t pr
         rt_sched_remove_thread(thread);
 
         /* change thread priority */
+        if (update_init_prio)
+        {
+            RT_SCHED_PRIV(thread).init_priority = priority;
+        }
         RT_SCHED_PRIV(thread).current_priority = priority;
 
         /* recalculate priority attribute */
@@ -209,6 +213,10 @@ rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t pr
     }
     else
     {
+        if (update_init_prio)
+        {
+            RT_SCHED_PRIV(thread).init_priority = priority;
+        }
         RT_SCHED_PRIV(thread).current_priority = priority;
 
         /* recalculate priority attribute */
@@ -222,6 +230,22 @@ rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t pr
     }
 
     return RT_EOK;
+}
+
+/**
+ * @brief Update priority of the target thread
+ */
+rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t priority)
+{
+    return _rt_sched_update_priority(thread, priority, RT_FALSE);
+}
+
+/**
+ * @brief Reset priority of the target thread
+ */
+rt_err_t rt_sched_thread_reset_priority(struct rt_thread *thread, rt_uint8_t priority)
+{
+    return _rt_sched_update_priority(thread, priority, RT_TRUE);
 }
 
 #ifdef RT_USING_OVERFLOW_CHECK
