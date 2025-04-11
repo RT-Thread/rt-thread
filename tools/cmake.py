@@ -64,7 +64,8 @@ def GenerateCFiles(env, project, project_name):
 
     CFLAGS = env['CFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     if 'CXXFLAGS' in dir(rtconfig):
-        CXXFLAGS = env['CXXFLAGS'].replace('\\', "/").replace('\"', "\\\"")
+        cflag_str=''.join(env['CXXFLAGS'])
+        CXXFLAGS = cflag_str.replace('\\', "/").replace('\"', "\\\"")
     else:
         CXXFLAGS = CFLAGS
     AFLAGS = env['ASFLAGS'].replace('\\', "/").replace('\"', "\\\"")
