@@ -11,13 +11,28 @@ config SOC_VEXPRESS_A9
     default y
 
 menu "Onboard Peripheral Drivers"
-config RT_USING_UART0
-    bool "Enable UART0"
+menuconfig BSP_USING_UART
+    bool "Enable UART"
     default y
-
-config RT_USING_UART1
-    bool "Enable UART1"
-    default y
+    select RT_USING_SERIAL
+    if BSP_USING_UART
+        config BSP_USING_UART0
+            bool "Enable UART0"
+            select RT_USING_UART0
+            default y
+        config BSP_USING_UART1
+            bool "Enable UART1"
+            select RT_USING_UART1
+            default n
+        config BSP_USING_UART2
+            bool "Enable UART2"
+            select RT_USING_UART2
+            default n
+        config BSP_USING_UART3
+            bool "Enable UART3"
+            select RT_USING_UART3
+            default n
+    endif
 
 config BSP_USING_LVGL
     bool "Enable LVGL for LCD"
