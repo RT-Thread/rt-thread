@@ -109,7 +109,7 @@ static int rt_hw_rtc_init(void)
         /* set lxtal as rtc clock source */
         rcu_rtc_clock_config(RCU_RTCSRC_LXTAL);
     }
-#elifdef BSP_RTC_USING_LSI
+#elif def BSP_RTC_USING_LSI
     rcu_osci_on(RCU_IRC40K);
     if (SUCCESS == rcu_osci_stab_wait(RCU_IRC40K))
     {
