@@ -446,6 +446,20 @@
         "nrf5x/nrf52840",
         "nrf5x/nrf5340"
       ]
+    },
+    {
+      "RTT_BSP": "phytium_aarch32",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "phytium/aarch32"
+      ]
+    },
+    {
+      "RTT_BSP": "phytium_aarch64",
+      "RTT_TOOL_CHAIN": "sourcery-aarch64",
+      "SUB_RTT_BSP": [
+        "phytium/aarch64"
+      ]
     }
   ]
 }
