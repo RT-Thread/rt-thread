@@ -11,28 +11,14 @@
 #ifndef BOARD_H__
 #define BOARD_H__
 
-#include <rtconfig.h>
+#include "rtconfig.h"
+#include "mem_layout.h"
 
-extern unsigned int __sram_size;
-extern unsigned int __sram_base;
-extern unsigned int __sram_end;
-#define RAM_END (rt_size_t)((void *)&__sram_end)
-
-extern unsigned int __bss_start;
-extern unsigned int __bss_end;
-
-#define RT_HW_HEAP_BEGIN    ((void *)&__bss_end)
-#define RT_HW_HEAP_END ((void *)(((rt_size_t)RT_HW_HEAP_BEGIN) + 0x2000000 ))
-
-#define RT_HW_PAGE_START    ((void *)((rt_size_t)RT_HW_HEAP_END + sizeof(rt_size_t)))
-#define RT_HW_PAGE_END      ((void *)(RAM_END))
-
-void rt_hw_board_init(void);
-void rt_init_user_mem(struct rt_thread *thread, const char *name, unsigned long *entry);
-
-#define TIMER_CLK_FREQ  (27000000)
-
-/* From K230 Technical Reference Manual, chapter 1.5 Address Space mapping */
+/*
+ * K230 Memory Map
+ *
+ * See K230 Technical Reference Manual, chapter 1.5 Address Space mapping
+ */
 #define SRAM_BASE_ADDR              (0x80200000UL)
 #define SRAM_IO_SIZE                (0x00200000UL)
 
@@ -200,4 +186,7 @@ void rt_init_user_mem(struct rt_thread *thread, const char *name, unsigned long 
 #define SPI_XIP_FLASH_IO_SIZE       (0x08000000UL)
 
 #define IO_SPACE_BASE_ADDR          (KPU_BASE_ADDR)
-#endif
+
+#define TIMER_CLK_FREQ  (27000000)
+
+#endif // BOARD_H__
