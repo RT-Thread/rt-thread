@@ -5,6 +5,9 @@ menu "Hardware Drivers"
         default n
 
 menu "On-chip Peripheral Drivers"
+    config BSP_USING_DRIVERS_EXAMPLE
+        bool "Enable drivers example"
+        default n
 
     config BSP_USING_IOPAD
         bool "Enable IOPAD"
@@ -271,6 +274,22 @@ menu "On-chip Peripheral Drivers"
                 default n
             config RT_USING_DC_CHANNEL1
                 bool "using dc channel_1"
+                default n
+        endif
+
+        menuconfig BSP_USING_I2S
+        bool "Enable I2S"
+            default n
+            select RT_USING_AUDIO
+        if BSP_USING_I2S
+            config RT_I2S_SAMPLERATE
+                int "The samplerate param"
+                default 8000
+            config RT_I2S_SAMPLEBITS
+                int "The samplebits param"
+                default 16
+            config RT_USING_I2S0
+                bool "Enable i2s0"
                 default n
         endif
 endmenu

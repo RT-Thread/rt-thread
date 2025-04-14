@@ -29,7 +29,7 @@
 
 /*Please define the length of the mem_addr of the device*/
 #ifndef FI2C_DEVICE_MEMADDR_LEN
-    #define FI2C_DEVICE_MEMADDR_LEN 2
+    #define FI2C_DEVICE_MEMADDR_LEN 1
 #endif
 #define FI2C_DEFAULT_ID 0
 #define I2C_USE_MIO
@@ -131,7 +131,7 @@ static rt_err_t phytium_i2c_set_speed(struct phytium_i2c_bus *i2c_bus, rt_uint32
     u32 ret;
     uintptr base_addr = i2c_bus->i2c_handle.config.base_addr;
 
-    ret = FI2cSetSpeed(base_addr, speed);
+    ret = FI2cSetSpeed(base_addr, speed, TRUE);
     if (ret != FI2C_SUCCESS)
     {
         LOG_E("Set i2c speed failed!\n");
@@ -184,7 +184,6 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         }
 
         i2c_bus->i2c_handle.config.slave_addr = pmsg->addr;
-
         if (pmsg->flags & RT_I2C_RD)
         {
             rt_thread_delay(100);

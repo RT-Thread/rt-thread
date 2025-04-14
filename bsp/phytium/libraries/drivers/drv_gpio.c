@@ -39,7 +39,7 @@
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /************************** Variable Definitions *****************************/
-static FGpio gpio_device[FGPIO_NUM];
+static FGpio gpio_device[FGPIO_PIN_NUM * FGPIO_PORT_NUM * FGPIO_CTRL_NUM + 1];
 extern FGpioIntrMap fgpio_intr_map[FGPIO_CTRL_NUM];
 /*******************************Api Functions*********************************/
 static void FGpioOpsSetupIRQ(FGpio *ctrl)
@@ -56,18 +56,12 @@ static void FGpioOpsSetupIRQ(FGpio *ctrl)
     return;
 }
 
-/* on E2000, if u want use GPIO-4-11, set pin = FGPIO_OPS_PIN_INDEX(4, 0, 11) */
+/* on E2000, if u want use GPIO-4-11, set pin = FGPIO_ID(4, 11) */
 static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     FGpio *instance = (FGpio *)device->user_data;
     FError err = FGPIO_SUCCESS;
     u32 index = (u32)pin;
-
-    if (index >= FGPIO_NUM)
-    {
-        LOG_E("ctrl_id too large!!!");
-        return;
-    }
 
     FGpioConfig input_cfg = *FGpioLookupConfig(index);
     rt_memset(&instance[index], 0, sizeof(FGpio));
@@ -94,7 +88,6 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
             rt_kprintf("Not support mode %d!!!\n", mode);
             break;
     }
-
 }
 
 void drv_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
@@ -148,7 +141,7 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
             break;
     }
 
-    FGpioRegisterInterruptCB(&instance[index], (FGpioInterruptCallback)hdr, args); /* register intr callback */
+    FGpioRegisterInterruptCB(&instance[index], (FGpioInterruptCallback)hdr, &instance[index]); /* register intr callback */
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;

@@ -15,21 +15,42 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #define LOG_TAG      "dc_drv"
-#include "mm_aspace.h"
 #include "drv_log.h"
 #include "drv_dc.h"
+#include "mm_aspace.h"
 #include "fparameters.h"
 #include "fdcdp.h"
 #include "fdc.h"
 #include "fdp_hw.h"
-#include "fdc_common_hw.h"
+
 
 #ifdef RT_USING_SMART
     #include "ioremap.h"
 #endif
-static  rt_uint16_t _rt_framebuffer[1024 * 768 * 4] __aligned(128);
+static  rt_uint8_t _rt_framebuffer[1024 * 768 * 4] __aligned(128) = {0};
 
 static struct  rt_device_graphic_info _dc_info;
+
+typedef struct
+{
+    u32 bit_depth;
+    u32 bpc;
+    u32 color_depth;
+    u32 clock_mode;
+    u32 color_rep;
+    u32 width;
+    u32 height;
+} FuserCfg;
+
+static const FuserCfg user_cfg = {
+    .bit_depth = 8,
+    .bpc = 8,
+    .color_depth = 32,
+    .clock_mode = 1,
+    .color_rep = 0,
+    .width = 640,
+    .height = 480
+};
 
 void rt_hw_dc_register(struct phytium_dc_bus *dc_control_bus, const char *name, rt_uint32_t flag, void *data);
 
@@ -47,33 +68,29 @@ static rt_err_t rt_dc_init(struct phytium_dc_bus  *device)
     RT_ASSERT(device != RT_NULL);
     rt_err_t ret;
     FDcDp *instance_p = &device->dc_handle;
-    FDcDpCfgInitialize(instance_p);
     rt_uint32_t chan = device->fdc_id;
-    instance_p->user_config[chan].color_depth = DISPLAY_COLOR_DEPTH;
-    instance_p->user_config[chan].width = FB_XSIZE;
-    instance_p->user_config[chan].height = FB_YSIZE;
-    instance_p->user_config[chan].refresh_rate = DISPLAY_REFRESH_RATE_60;
-    instance_p->user_config[chan].multi_mode = 0;
-    instance_p->user_config[chan].fb_phy = _rt_framebuffer;
-    instance_p->user_config[chan].fb_virtual = _rt_framebuffer;
+
+    FDcDpCfgInitialize(instance_p, chan);
     instance_p->dc_instance_p[chan].config = *FDcLookupConfig(chan);
     instance_p->dp_instance_p[chan].config = *FDpLookupConfig(chan);
-#ifdef RT_USING_SMART
-    instance_p->user_config[chan].fb_phy = instance_p->user_config[chan].fb_phy +  PV_OFFSET;/*the FB addr iomap length is x_size * y_size * 4 */
-    instance_p->dc_instance_p[chan].config.dcch_baseaddr = (uintptr)rt_ioremap((void *)instance_p->dc_instance_p[chan].config.dcch_baseaddr, 0x1000);/*the dc channel addr iomap length is 0x1000*/
-    instance_p->dc_instance_p[chan].config.dcctrl_baseaddr = (uintptr)rt_ioremap((void *)instance_p->dc_instance_p[chan].config.dcctrl_baseaddr, 0x4000);/*the dc control addr iomap length is 0x4000*/
-    instance_p->dp_instance_p[chan].config.dp_channe_base_addr = (uintptr)rt_ioremap((void *)instance_p->dp_instance_p[chan].config.dp_channe_base_addr, 0x4000); /*the dc control addr iomap length is 0x4000*/
-    instance_p->dp_instance_p[chan].config.dp_phy_base_addr = (size_t)rt_ioremap((void *) instance_p->dp_instance_p[chan].config.dp_phy_base_addr,  0x100000);/*the dc control addr iomap length is 0x100000*/
-#endif
+    instance_p->dc_instance_p[chan].crtc.bpc = user_cfg.bpc;
+    instance_p->dc_instance_p[chan].color_depth = user_cfg.color_depth;
+    instance_p->dc_instance_p[chan].channel = chan;
+    instance_p->dc_instance_p[chan].fb_addr = (uintptr)_rt_framebuffer;/*当前例程虚拟地址和物理地址一致，实际需要根据需要进行映射*/
+    instance_p->dc_instance_p[chan].fb_virtual = (uintptr)_rt_framebuffer;
+    instance_p->dp_instance_p[chan].trans_config.clock_mode = user_cfg.clock_mode;
+    instance_p->dp_instance_p[chan].trans_config.color_rep_format = user_cfg.color_rep;
+    instance_p->dp_instance_p[chan].trans_config.bit_depth = user_cfg.bit_depth;
+
+    FDcDpGeneralCfgInitial(instance_p, chan);
+    _dc_info.framebuffer = (rt_uint8_t *)instance_p->dc_instance_p[chan].fb_addr;
     _dc_info.bits_per_pixel = DISPLAY_COLOR_DEPTH;
     _dc_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
-    _dc_info.framebuffer = (rt_uint8_t *)instance_p->user_config[chan].fb_virtual;
     _dc_info.width = FB_XSIZE;
     _dc_info.height = FB_YSIZE;
     rt_hw_dc_register(device, device->name, RT_DEVICE_FLAG_RDWR, NULL);
     dc_config(device);
-
-    ret = FDcDpInitialize(instance_p, device->fdc_id);
+    ret = FDcDpInitial(instance_p, device->fdc_id, user_cfg.width, user_cfg.height);
     if (ret != RT_EOK)
     {
         LOG_E("Init dc failed, ret: 0x%x", ret);
