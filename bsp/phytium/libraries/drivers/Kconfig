@@ -281,6 +281,9 @@ menu "On-chip Peripheral Drivers"
         bool "Enable I2S"
             default n
             select RT_USING_AUDIO
+            select RT_USING_MEMPOOL
+            select BSP_USING_I2C
+            select I2C_USE_MIO
         if BSP_USING_I2S
             config RT_I2S_SAMPLERATE
                 int "The samplerate param"

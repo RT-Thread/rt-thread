@@ -74,7 +74,7 @@
 /* end of klibc options */
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -117,11 +117,10 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
-#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50200
+#define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -173,7 +172,9 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V2
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -191,6 +192,7 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_RAMFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -205,38 +207,11 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_CAN
-#define RT_CAN_USING_HDR
-#define RT_CAN_USING_CANFD
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_PWM
 #define RT_USING_RTC
-#define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 8192
-#define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 8192
-#define RT_MMCSD_THREAD_PRIORITY 22
-#define RT_MMCSD_MAX_PARTITION 16
-#define RT_USING_SPI
-#define RT_USING_QSPI
-#define RT_USING_AUDIO
-#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
-#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
-#define RT_AUDIO_RECORD_PIPE_SIZE 2048
-#define RT_USING_BLK
-
-/* Partition Types */
-
-#define RT_BLK_PARTITION_DFS
-#define RT_BLK_PARTITION_EFI
-/* end of Partition Types */
-#define RT_USING_PIN
 #define RT_USING_KTIME
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -550,37 +525,7 @@
 
 #define BSP_USING_IOPAD
 #define BSP_USING_UART
-#define RT_USING_UART0
 #define RT_USING_UART1
-#define BSP_USING_SPI
-#define RT_USING_SPIM2
-#define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_CAN0
-#define RT_USING_CAN1
-#define BSP_USING_GPIO
-#define BSP_USING_QSPI
-#define RT_USING_QSPI0
-#define USING_QSPI_CHANNEL0
-#define BSP_USING_ETH
-#define BSP_USING_PWM
-#define RT_USING_PWM2
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO15
-#define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIF0
-#define USE_SDIF0_EMMC
-#define USING_SDIF1
-#define USE_SDIF1_TF
-#define BSP_USING_DC
-#define RT_USING_DC_CHANNEL0
-#define RT_USING_DC_CHANNEL1
-#define BSP_USING_I2S
-#define RT_I2S_SAMPLERATE 8000
-#define RT_I2S_SAMPLEBITS 16
-#define RT_USING_I2S0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -589,7 +534,7 @@
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
-#define ARM_SPI_BIND_CPU_ID 2
+#define ARM_SPI_BIND_CPU_ID 0
 
 /* Standalone Setting */
 
@@ -597,10 +542,10 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000Q
+#define TARGET_E2000D
 #define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "q"
-#define SOC_CORE_NUM 4
+#define TARGET_TYPE_NAME "d"
+#define SOC_CORE_NUM 2
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -611,8 +556,8 @@
 
 /* Board Configuration */
 
+#define E2000D_DEMO_BOARD
 #define BOARD_NAME "demo"
-#define E2000Q_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 

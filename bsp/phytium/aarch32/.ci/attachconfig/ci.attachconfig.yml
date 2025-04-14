@@ -1,0 +1,272 @@
+board.e2000d_demo_rtthread:
+    depends:
+      - devices.uart
+      - devices.i2c
+      - devices.can
+      - devices.gpio
+      - devices.i2s
+      - devices.pwm
+      - devices.spi
+      - devices.qspi
+      - devices.xmac
+      - devices.sdif
+      - devices.dc
+    kconfig:
+      - CONFIG_TARGET_E2000D=y
+      - CONFIG_RT_CPUS_NR=2
+      - CONFIG_RT_USING_UART1=y
+      - CONFIG_RT_USING_MIO15=y
+      - CONFIG_RT_USING_CAN0=y
+      - CONFIG_RT_USING_CAN1=y
+      - CONFIG_RT_USING_I2S0=y
+      - CONFIG_RT_USING_PWM3=y
+      - CONFIG_RT_USING_SPIM2=y
+      - CONFIG_USING_QSPI_CHANNEL0=y
+      - CONFIG_BSP_USING_SDCARD_FATFS=y
+      - CONFIG_USING_SDIF0=y
+      - CONFIG_USING_SDIF1=y
+      - CONFIG_USE_SDIF1_TF=y
+      - CONFIG_USE_SDIF0_EMMC=y
+      - CONFIG_RT_SDIO_STACK_SIZE=4096
+      - CONFIG_RT_MMCSD_STACK_SIZE=4096
+      - CONFIG_RT_USING_DC_CHANNEL0=y
+      - CONFIG_RT_USING_DC_CHANNEL1=y
+
+board.e2000d_demo_rtsmart:
+    depends:
+      - devices.uart
+      - devices.i2c
+      - devices.can
+      - devices.gpio
+      - devices.i2s
+      - devices.pwm
+      - devices.spi
+      - devices.qspi
+      - devices.xmac
+      - devices.sdif
+      - devices.dc
+    kconfig:
+      - CONFIG_RT_USING_SMART=y
+      - CONFIG_TARGET_E2000D=y
+      - CONFIG_RT_CPUS_NR=2
+      - CONFIG_RT_USING_UART1=y
+      - CONFIG_RT_USING_MIO15=y
+      - CONFIG_RT_USING_CAN0=y
+      - CONFIG_RT_USING_CAN1=y
+      - CONFIG_RT_USING_I2S0=y
+      - CONFIG_RT_USING_PWM3=y
+      - CONFIG_RT_USING_SPIM2=y
+      - CONFIG_USING_QSPI_CHANNEL0=y
+      - CONFIG_BSP_USING_SDCARD_FATFS=y
+      - CONFIG_USING_SDIF0=y
+      - CONFIG_USING_SDIF1=y
+      - CONFIG_USE_SDIF1_TF=y
+      - CONFIG_USE_SDIF0_EMMC=y
+      - CONFIG_RT_SDIO_STACK_SIZE=4096
+      - CONFIG_RT_MMCSD_STACK_SIZE=4096
+      - CONFIG_RT_USING_DC_CHANNEL0=y
+      - CONFIG_RT_USING_DC_CHANNEL1=y
+
+board.e2000q_demo_rtthread:
+    depends:
+      - devices.uart
+      - devices.i2c
+      - devices.can
+      - devices.gpio
+      - devices.i2s
+      - devices.pwm
+      - devices.spi
+      - devices.qspi
+      - devices.xmac
+      - devices.sdif
+      - devices.dc
+    kconfig:
+      - CONFIG_TARGET_E2000Q=y
+      - CONFIG_RT_CPUS_NR=4
+      - CONFIG_RT_USING_UART1=y
+      - CONFIG_RT_USING_MIO15=y
+      - CONFIG_RT_USING_CAN0=y
+      - CONFIG_RT_USING_CAN1=y
+      - CONFIG_RT_USING_I2S0=y
+      - CONFIG_RT_USING_PWM3=y
+      - CONFIG_RT_USING_SPIM2=y
+      - CONFIG_USING_QSPI_CHANNEL0=y
+      - CONFIG_BSP_USING_SDCARD_FATFS=y
+      - CONFIG_USING_SDIF0=y
+      - CONFIG_USING_SDIF1=y
+      - CONFIG_USE_SDIF1_TF=y
+      - CONFIG_USE_SDIF0_EMMC=y
+      - CONFIG_RT_SDIO_STACK_SIZE=4096
+      - CONFIG_RT_MMCSD_STACK_SIZE=4096
+      - CONFIG_RT_USING_DC_CHANNEL0=y
+      - CONFIG_RT_USING_DC_CHANNEL1=y
+
+board.e2000q_demo_rtsmart:
+    depends:
+      - devices.uart
+      - devices.i2c
+      - devices.can
+      - devices.gpio
+      - devices.i2s
+      - devices.pwm
+      - devices.spi
+      - devices.qspi
+      - devices.xmac
+      - devices.sdif
+      - devices.dc
+    kconfig:
+      - CONFIG_RT_USING_SMART=y
+      - CONFIG_TARGET_E2000Q=y
+      - CONFIG_RT_CPUS_NR=4
+      - CONFIG_RT_USING_UART1=y
+      - CONFIG_RT_USING_MIO15=y
+      - CONFIG_RT_USING_CAN0=y
+      - CONFIG_RT_USING_CAN1=y
+      - CONFIG_RT_USING_I2S0=y
+      - CONFIG_RT_USING_PWM3=y
+      - CONFIG_RT_USING_SPIM2=y
+      - CONFIG_USING_QSPI_CHANNEL0=y
+      - CONFIG_BSP_USING_SDCARD_FATFS=y
+      - CONFIG_USING_SDIF0=y
+      - CONFIG_USING_SDIF1=y
+      - CONFIG_USE_SDIF1_TF=y
+      - CONFIG_USE_SDIF0_EMMC=y
+      - CONFIG_RT_SDIO_STACK_SIZE=4096
+      - CONFIG_RT_MMCSD_STACK_SIZE=4096
+      - CONFIG_RT_USING_DC_CHANNEL0=y
+      - CONFIG_RT_USING_DC_CHANNEL1=y
+
+board.phytium_pi_rtthread:
+    depends:
+      - devices.uart
+      - devices.i2c
+      - devices.gpio
+      - devices.pwm
+      - devices.spi
+      - devices.qspi
+      - devices.xmac
+      - devices.sdif
+      - devices.dc
+    kconfig:
+      - CONFIG_TARGET_PHYTIUMPI=y
+      - CONFIG_RT_CPUS_NR=4
+      - CONFIG_RT_USING_UART1=y
+      - CONFIG_RT_USING_MIO10=y
+      - CONFIG_RT_USING_PWM2=y
+      - CONFIG_RT_USING_SPIM0=y
+      - CONFIG_USING_QSPI_CHANNEL0=y
+      - CONFIG_BSP_USING_SDCARD_FATFS=y
+      - CONFIG_USING_SDIF1=y
+      - CONFIG_USE_SDIF1_TF=y
+      - CONFIG_RT_SDIO_STACK_SIZE=4096
+      - CONFIG_RT_USING_DC_CHANNEL0=y
+
+board.phytium_pi_rtsmart:
+    depends:
+      - devices.uart
+      - devices.i2c
+      - devices.gpio
+      - devices.pwm
+      - devices.spi
+      - devices.qspi
+      - devices.xmac
+      - devices.sdif
+      - devices.dc
+    kconfig:
+      - CONFIG_TARGET_PHYTIUMPI=y
+      - CONFIG_RT_USING_SMART=y
+      - CONFIG_RT_CPUS_NR=4
+      - CONFIG_RT_USING_UART1=y
+      - CONFIG_RT_USING_MIO10=y
+      - CONFIG_RT_USING_PWM2=y
+      - CONFIG_RT_USING_SPIM0=y
+      - CONFIG_BSP_USING_SDCARD_FATFS=y
+      - CONFIG_USING_SDIF1=y
+      - CONFIG_USE_SDIF1_TF=y
+      - CONFIG_RT_SDIO_STACK_SIZE=4096
+      - CONFIG_RT_USING_DC_CHANNEL0=y
+
+board.e2000d_demo_rtthread_pusb2_dc:
+    kconfig:
+      - CONFIG_TARGET_E2000D=y
+      - CONFIG_RT_CPUS_NR=2
+      - RT_USING_CHERRYUSB=y
+      - RT_CHERRYUSB_DEVICE=y
+      - RT_CHERRYUSB_DEVICE_SPEED_HS=y
+      - RT_CHERRYUSB_DEVICE_CUSTOM=y
+      - RT_CHERRYUSB_DEVICE_TEMPLATE_NONE=y
+      - RT_USING_USB=y
+      - RT_USING_USB_DEVICE=y
+      - RT_USBD_THREAD_STACK_SZ=4096
+      - USB_VENDOR_ID=0x0FFE
+      - USB_PRODUCT_ID=0x0001
+      - RT_USB_DEVICE_NONE=y
+
+board.e2000d_demo_rtthread_pusb2_xhic:
+    kconfig:
+      - CONFIG_TARGET_E2000D=y
+      - CONFIG_RT_CPUS_NR=2
+      - RT_USING_CHERRYUSB=y
+      - RT_CHERRYUSB_HOST=y
+      - RT_CHERRYUSB_HOST_XHCI=y
+      - RT_CHERRYUSB_HOST_HID=y
+      - RT_CHERRYUSB_HOST_MSC=y
+
+board.phytium_pi_pusb2_hc:
+    kconfig:
+      - CONFIG_TARGET_PHYTIUMPI=y
+      - CONFIG_RT_CPUS_NR=4
+      - RT_USING_CHERRYUSB=y
+      - RT_CHERRYUSB_HOST=y
+      - RT_CHERRYUSB_HOST_PUSB2=y
+      - RT_CHERRYUSB_HOST_HID=y
+      - RT_CHERRYUSB_HOST=y
+
+board.phytium_pi_pusb2_xhic:
+    kconfig:
+      - CONFIG_TARGET_PHYTIUMPI=y
+      - CONFIG_RT_CPUS_NR=4
+      - RT_USING_CHERRYUSB=y
+      - RT_CHERRYUSB_HOST=y
+      - RT_CHERRYUSB_HOST_XHCI=y
+      - RT_CHERRYUSB_HOST_HID=y
+      - RT_CHERRYUSB_HOST_MSC=y
+      
+devices.i2c:    
+    kconfig:      
+      - CONFIG_BSP_USING_I2C=y
+      - CONFIG_I2C_USE_MIO=y
+      - CONFIG_I2C_USE_CONTROLLER=y
+devices.dc:    
+    kconfig:      
+      - CONFIG_BSP_USING_DC=y
+devices.can:    
+    kconfig:      
+      - CONFIG_BSP_USING_CAN=y
+devices.gpio:    
+    kconfig:      
+      - CONFIG_BSP_USING_GPIO=y
+devices.i2s:    
+    kconfig:      
+      - CONFIG_BSP_USING_I2S=y
+devices.pwm:    
+    kconfig:      
+      - CONFIG_BSP_USING_PWM=y
+devices.spi:    
+    kconfig:      
+      - CONFIG_BSP_USING_SPI=y
+devices.qspi:    
+    kconfig:      
+      - CONFIG_BSP_USING_QSPI=y
+devices.uart:    
+    kconfig:      
+      - CONFIG_BSP_USING_UART=y
+devices.xmac:    
+    kconfig:      
+      - CONFIG_BSP_USING_ETH=y
+devices.sdif:    
+    kconfig:      
+      - CONFIG_BSP_USING_SDIF=y
+scons.args: &scons    
+    scons_arg:      
+      - '--strict'
