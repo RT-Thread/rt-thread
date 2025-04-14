@@ -370,7 +370,7 @@
       "RTT_BSP": "aarch64",
       "RTT_TOOL_CHAIN": "sourcery-aarch64",
       "SUB_RTT_BSP": [
-        "phytium/aarch32",
+        "phytium/aarch64",
         "qemu-virt64-aarch64",
         "raspberry-pi/raspi3-64",
         "raspberry-pi/raspi4-64"
