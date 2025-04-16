@@ -31,6 +31,7 @@ import utils
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 from defusedxml.ElementTree import parse
+from defusedxml.common import DefusedXmlException
 from utils import _make_path_relative
 from utils import xml_indent
 fs_encoding = sys.getfilesystemencoding()
@@ -88,7 +89,7 @@ def VSProject(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
 
     # tree = etree.parse('template_vs2005.vcproj') 
-    tree = parse('template_vs2005.vcproj', forbid_dtd=True)
+    tree = parse('template_vs2005.vcproj', forbid_dtd=False, forbid_external=True)
     root = tree.getroot()
 
     out = open(target, 'w')
