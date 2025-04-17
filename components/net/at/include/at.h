@@ -91,7 +91,7 @@ struct at_server
     char recv_buffer[AT_SERVER_RECV_BUFF_LEN];
     rt_size_t cur_recv_len;
 
-#if (!defined(RT_USING_SERIAL_V2) || RT_VER_NUM < 0x50200)
+#if (!defined(RT_USING_SERIAL_V2))
     rt_sem_t rx_notice;
 #endif
 
@@ -169,7 +169,7 @@ struct at_client
     /* The maximum supported receive data length */
     rt_size_t recv_bufsz;
 
-#if (!defined(RT_USING_SERIAL_V2) || RT_VER_NUM < 0x50200)
+#if (!defined(RT_USING_SERIAL_V2))
     rt_sem_t rx_notice;
 #endif
 
@@ -229,6 +229,7 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc * table, rt_siz
 
 /* AT client send commands to AT server and waiter response */
 int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr, ...);
+int at_obj_exec_cmd_format(at_client_t client, at_response_t resp, const char* format, const char *cmd_expr, ...);
 
 /* AT response object create and delete */
 at_response_t at_create_resp(rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout);
@@ -249,6 +250,7 @@ int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const
  */
 
 #define at_exec_cmd(resp, ...)                   at_obj_exec_cmd(at_client_get_first(), resp, __VA_ARGS__)
+#define at_exec_cmd_format(resp, format, ...)    at_obj_exec_cmd_format(at_client_get_first(), resp, format, __VA_ARGS__)
 #define at_client_wait_connect(timeout)          at_client_obj_wait_connect(at_client_get_first(), timeout)
 #define at_client_send(buf, size)                at_client_obj_send(at_client_get_first(), buf, size)
 #define at_client_recv(buf, size, timeout)       at_client_obj_recv(at_client_get_first(), buf, size, timeout)
