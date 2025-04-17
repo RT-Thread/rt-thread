@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <stdlib.h>
 
-/* #define DBG_LVL DBG_LOG*/
+/* */
 
 #ifdef UTEST_SERIAL_TC
 
@@ -186,8 +186,8 @@ static rt_bool_t uart_api()
     }
 
 __exit:
-    rt_thread_mdelay(5);
     rt_device_close(&serial->parent);
+    rt_thread_mdelay(5);
     return result == RT_EOK ? RT_TRUE : RT_FALSE;
 }
 

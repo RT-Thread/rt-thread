@@ -140,7 +140,7 @@ RT-Thread Utestcases  --->
 
 其余同理，可在函数内部查看命令。
 
-如果仅仅配置了 `Serial testcase` 相关的测试用例，则直接输入 `utest_run` 运行即可将上述测试用例按序测试。
+如果仅仅配置了 `Serial testcase` 相关的测试用例，则直接输入 `utest_run *` 运行即可将上述测试用例按序测试。
 
 ## 7、注意事项
 

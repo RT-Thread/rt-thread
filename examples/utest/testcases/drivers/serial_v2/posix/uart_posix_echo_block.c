@@ -18,7 +18,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define DBG_LVL DBG_LOG
 
 #ifdef UTEST_SERIAL_TC
 

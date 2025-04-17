@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <stdlib.h>
 
-/* #define DBG_LVL DBG_LOG*/
+/* */
 
 #ifdef UTEST_SERIAL_TC
 
@@ -94,6 +94,7 @@ static rt_bool_t uart_api()
     rt_uint32_t i;
     uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
 
+    srand(rt_tick_get());
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         if (RT_EOK != test_item(uart_write_buffer, RT_SERIAL_TC_RXBUF_SIZE + RT_SERIAL_TC_RXBUF_SIZE * (rand() % 5)))
@@ -113,6 +114,7 @@ static rt_bool_t uart_api()
 __exit:
     rt_free(uart_write_buffer);
     rt_device_close(&serial->parent);
+    rt_thread_mdelay(5);
     return result == RT_EOK ? RT_TRUE : RT_FALSE;
 }
 

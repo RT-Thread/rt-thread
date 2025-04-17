@@ -13,7 +13,6 @@
 #include <rtdevice.h>
 #include <stdlib.h>
 
-#define DBG_LVL DBG_LOG
 
 #ifdef UTEST_SERIAL_TC
 
@@ -49,7 +48,7 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
     tick_diff = rt_tick_get() - old_tick;
 
-    if (tick_diff < expect_time)
+    if (tick_diff < expect_time || tick_diff > expect_time + 10)
     {
         LOG_E("send_size [%4d], time required for TXB mode transmission to complete [%3d], expect_time [%3d]", send_size, tick_diff, expect_time);
         return -RT_ERROR;
@@ -96,6 +95,7 @@ static rt_bool_t uart_api()
 
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_TX_TIMEOUT, (void *)&tx_timeout);
 
+    srand(rt_tick_get());
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
         if (RT_EOK != test_item(uart_write_buffer, RT_SERIAL_TC_TXBUF_SIZE * (rand() % 6)))
@@ -119,6 +119,7 @@ static rt_bool_t uart_api()
 __exit:
     rt_free(uart_write_buffer);
     rt_device_close(&serial->parent);
+    rt_thread_mdelay(5);
     return result == RT_EOK ? RT_TRUE : RT_FALSE;
 }
 

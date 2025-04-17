@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <stdlib.h>
 
-#define DBG_LVL DBG_LOG
+
 
 #ifdef UTEST_SERIAL_TC
 
@@ -160,19 +160,22 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
     config.baud_rate               = BAUD_RATE_115200;
     config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
     config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE;
+    
 #ifdef RT_SERIAL_USING_DMA
     config.dma_ping_bufsz = RT_SERIAL_TC_RXBUF_SIZE / 2;
 #endif
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING);
-
     if (result != RT_EOK)
     {
         LOG_E("Open uart device failed.");
         uart_result = RT_FALSE;
         return -RT_ERROR;
     }
+
+    rt_int32_t timeout = 5000;
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&timeout);
 
     /* set receive callback function */
     result = rt_device_set_tx_complete(&serial->parent, uart_tx_completion);
@@ -211,24 +214,24 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
         rt_thread_mdelay(5);
     }
 __exit:
-    rt_thread_mdelay(5);
     if (tx_sem)
         rt_sem_delete(tx_sem);
 
     rt_device_close(&serial->parent);
+    rt_thread_mdelay(5);
     uart_over_flag = RT_FALSE;
     return result;
 }
 
 static void tc_uart_api(void)
 {
-    rt_uint32_t times = 0;
+    rt_uint32_t count = 0;
     rt_uint16_t num   = 0;
     rt_uint32_t i     = 0;
     for (i = 1; i < 10; i++)
     {
         if (uart_api(RT_SERIAL_TC_TXBUF_SIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_TXBUF_SIZE * i + i % 2, ++times);
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", RT_SERIAL_TC_TXBUF_SIZE * i + i % 2, ++count);
         else
         {
             LOG_E("uart test error");
@@ -239,7 +242,7 @@ static void tc_uart_api(void)
     for (i = 1; i < 10; i++)
     {
         if (uart_api(RT_SERIAL_TC_RXBUF_SIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_RXBUF_SIZE * i + i % 2, ++times);
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", RT_SERIAL_TC_RXBUF_SIZE * i + i % 2, ++count);
         else
         {
             LOG_E("uart test error");
@@ -247,11 +250,12 @@ static void tc_uart_api(void)
         }
     }
 
-    while (RT_SERIAL_TC_SEND_ITERATIONS - times)
+    srand(rt_tick_get());
+    while (RT_SERIAL_TC_SEND_ITERATIONS - count)
     {
         num = (rand() % 1000) + 1;
         if (uart_api(num) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", num, ++times);
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", num, ++count);
         else
         {
             LOG_E("uart test error");

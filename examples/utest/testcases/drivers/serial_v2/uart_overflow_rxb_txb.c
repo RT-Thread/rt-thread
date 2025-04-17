@@ -13,7 +13,6 @@
 #include <rtdevice.h>
 #include <stdlib.h>
 
-#define DBG_LVL DBG_LOG
 
 #ifdef UTEST_SERIAL_TC
 
@@ -37,10 +36,10 @@ static rt_err_t uart_find(void)
 
 static void uart_send_entry(void *parameter)
 {
-    rt_uint16_t send_len;
+    rt_uint32_t send_len;
     rt_uint8_t *uart_write_buffer = RT_NULL;
     rt_uint32_t i                 = 0;
-    send_len                      = *(rt_uint16_t *)parameter;
+    send_len                      = *(rt_uint32_t *)parameter;
 
     /* assign send buffer */
     uart_write_buffer = (rt_uint8_t *)rt_malloc(send_len);
@@ -67,10 +66,10 @@ static void uart_send_entry(void *parameter)
 
 static void uart_rec_entry(void *parameter)
 {
-    rt_uint16_t rev_len;
+    rt_uint32_t rev_len;
     rt_uint8_t *uart_write_buffer;
     rt_int32_t  cnt, i;
-    rev_len           = *(rt_uint16_t *)parameter;
+    rev_len           = *(rt_uint32_t *)parameter;
     uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (rev_len + 1));
 
     while (1)
@@ -112,7 +111,7 @@ static void uart_rec_entry(void *parameter)
     uart_over_flag = RT_TRUE;
 }
 
-static rt_err_t uart_api(rt_uint16_t length)
+static rt_err_t uart_api(rt_uint32_t length)
 {
     rt_thread_t thread_send = RT_NULL;
     rt_thread_t thread_recv = RT_NULL;
@@ -136,7 +135,6 @@ static rt_err_t uart_api(rt_uint16_t length)
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
-
     if (result != RT_EOK)
     {
         LOG_E("Open uart device failed.");
@@ -144,14 +142,16 @@ static rt_err_t uart_api(rt_uint16_t length)
         return -RT_ERROR;
     }
 
+    rt_int32_t timeout = 5000;
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&timeout);
+
     thread_send = rt_thread_create("uart_send", uart_send_entry, &length, 2048, RT_THREAD_PRIORITY_MAX - 4, 10);
     thread_recv = rt_thread_create("uart_recv", uart_rec_entry, &length, 2048, RT_THREAD_PRIORITY_MAX - 5, 10);
-
     if ((thread_send != RT_NULL) && (thread_recv != RT_NULL))
     {
         rt_thread_startup(thread_send);
         /* waiting for data transmission to complete*/
-        rt_thread_mdelay(length * 0.0868 + 5);
+        rt_thread_mdelay(length * 0.0868 + 10);
         rt_thread_startup(thread_recv);
     }
     else
@@ -177,18 +177,21 @@ static rt_err_t uart_api(rt_uint16_t length)
     }
 __exit:
     rt_device_close(&serial->parent);
+    rt_thread_mdelay(5);
     return result;
 }
 
 static void tc_uart_api(void)
 {
-    rt_uint32_t times = 0;
+    rt_uint32_t count = 0;
     rt_uint16_t num   = 0;
     rt_uint32_t i     = 0;
+
+    LOG_W("skdjfffjkkkkkkkkkkkkkkkkkkkk");
     for (i = 1; i < 10; i++)
     {
         if (uart_api(RT_SERIAL_TC_TXBUF_SIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_TXBUF_SIZE * i + i % 2, ++times);
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", RT_SERIAL_TC_TXBUF_SIZE * i + i % 2, ++count);
         else
         {
             LOG_E("uart test error");
@@ -199,7 +202,7 @@ static void tc_uart_api(void)
     for (i = 1; i < 10; i++)
     {
         if (uart_api(RT_SERIAL_TC_RXBUF_SIZE * i + i % 2) == RT_EOK)
-            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] times testing.", RT_SERIAL_TC_RXBUF_SIZE * i + i % 2, ++times);
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", RT_SERIAL_TC_RXBUF_SIZE * i + i % 2, ++count);
         else
         {
             LOG_E("uart test error");
@@ -207,11 +210,12 @@ static void tc_uart_api(void)
         }
     }
 
-    while (RT_SERIAL_TC_SEND_ITERATIONS - times)
+    srand(rt_tick_get());
+    while (RT_SERIAL_TC_SEND_ITERATIONS - count)
     {
         num = (rand() % RT_SERIAL_TC_RXBUF_SIZE) + 1;
         if (uart_api(num + RT_SERIAL_TC_RXBUF_SIZE) == RT_EOK)
-            LOG_I("data_lens [%3d], it is correct to read and write data. [%d] times testing.", num, ++times);
+            LOG_I("data_lens [%3d], it is correct to read and write data. [%d] count testing.", num, ++count);
         else
         {
             LOG_E("uart test error");

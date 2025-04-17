@@ -2,7 +2,6 @@
 #include <rtdevice.h>
 #include "utest.h"
 
-#define DBG_LVL             DBG_LOG
 #ifdef UTEST_SERIAL_TC
 
 static rt_bool_t block_read(rt_device_t uart_dev)

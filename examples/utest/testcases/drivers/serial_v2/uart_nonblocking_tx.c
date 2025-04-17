@@ -5,7 +5,7 @@
 #define UART_SEND_TIMES  100
 #define UART_TEST_NUMBER 6
 
-#define DBG_LVL DBG_LOG
+
 #ifdef UTEST_SERIAL_TC
 
 static rt_bool_t nonblock_write(rt_device_t uart_dev)
