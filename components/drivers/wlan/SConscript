@@ -4,26 +4,26 @@ cwd     = GetCurrentDir()
 CPPPATH = [cwd]
 
 src = Split('''
-        wlan_dev.c
+        dev_wlan.c
         ''')
 
 if GetDepend(['RT_WLAN_MANAGE_ENABLE']):
-    src += ['wlan_mgnt.c']
+    src += ['dev_wlan_mgnt.c']
 
 if GetDepend(['RT_WLAN_MSH_CMD_ENABLE']):
-    src += ['wlan_cmd.c']
+    src += ['dev_wlan_cmd.c']
 
 if GetDepend(['RT_WLAN_PROT_ENABLE']):
-    src += ['wlan_prot.c']
+    src += ['dev_wlan_prot.c']
 
 if GetDepend(['RT_WLAN_PROT_LWIP_ENABLE']):
-    src += ['wlan_lwip.c']
+    src += ['dev_wlan_lwip.c']
 
 if GetDepend(['RT_WLAN_CFG_ENABLE']):
-    src += ['wlan_cfg.c']
+    src += ['dev_wlan_cfg.c']
 
 if GetDepend(['RT_WLAN_WORK_THREAD_ENABLE']):
-    src += ['wlan_workqueue.c']
+    src += ['dev_wlan_workqueue.c']
 
 group   = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_WIFI'], CPPPATH = CPPPATH)
 

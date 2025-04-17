@@ -27,6 +27,9 @@ if GetDepend('BSP_USING_HWTIMER'):
 if GetDepend('BSP_USING_WIFI'):
     src += ['drv_wifi.c']
 
+if GetDepend('BSP_USING_SPI'):
+    src += ['drv_spi.c']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

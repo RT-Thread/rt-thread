@@ -357,7 +357,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 #else
     uart->handle.Instance->DR = c;
 #endif
-    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET && block_timeout--);
+    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET && --block_timeout);
     return (block_timeout != 0) ? 1 : -1;
 }
 

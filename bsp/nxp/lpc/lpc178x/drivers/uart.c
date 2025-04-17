@@ -35,14 +35,14 @@ struct rt_uart_lpc
     rt_uint8_t rx_buffer[RT_SERIAL_RB_BUFSZ];
 };
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
 struct rt_uart_lpc uart0_device;
 #endif
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
 struct rt_uart_lpc uart1_device;
 #endif
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
 void UART0_IRQHandler(void)
 {
     rt_ubase_t level, iir;
@@ -85,7 +85,7 @@ void UART0_IRQHandler(void)
 }
 #endif
 
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
 void UART1_IRQHandler(void)
 {
     rt_ubase_t level, iir;
@@ -133,7 +133,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
     struct rt_uart_lpc *uart = (struct rt_uart_lpc*)dev;
     UART_CFG_Type UART_ConfigStruct;
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     if( uart->UART == LPC_UART0 )
     {
         /*
@@ -158,7 +158,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
     }
 #endif
 
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
     if( ((LPC_UART1_TypeDef *)uart->UART) == LPC_UART1 )
     {
         /*
@@ -183,7 +183,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
     }
 #endif
 
-#ifdef RT_USING_UART2
+#ifdef BSP_USING_UART2
     if( uart->UART == LPC_UART2 )
     {
     }
@@ -298,11 +298,11 @@ static rt_ssize_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffe
     return (rt_size_t) ptr - (rt_size_t) buffer;
 }
 
-void rt_hw_uart_init(void)
+void rt_hw_usart_init(void)
 {
     struct rt_uart_lpc* uart;
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     /* get uart device */
     uart = &uart0_device;
     uart0_device.UART = LPC_UART0;
@@ -326,7 +326,7 @@ void rt_hw_uart_init(void)
         "uart0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX);
 #endif
 
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
     /* get uart device */
     uart = &uart1_device;
     uart1_device.UART = (LPC_UART_TypeDef *)LPC_UART1;

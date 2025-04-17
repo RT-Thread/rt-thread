@@ -5,12 +5,12 @@ ARCH='arm'
 CPU='cortex-m0'
 CROSS_TOOL='iar'
 
-print "############rtconfig##############"
+print('############rtconfig##############')
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
-print "CROSS_TOOL: " + CROSS_TOOL
+print('CROSS_TOOL: ' + CROSS_TOOL)
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = '  -mcpu=cortex-m0 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    DEVICE = '  -mcpu=cortex-m0 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=soft -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall -DHC32F4A0 -D__DEBUG -DUSE_DDL_DRIVER -D__ASSEMBLY__ -D__FPU_USED'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'

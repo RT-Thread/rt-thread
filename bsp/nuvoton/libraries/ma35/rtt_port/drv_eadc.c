@@ -16,7 +16,7 @@
 #include <rtdevice.h>
 #include "NuMicro.h"
 
-/* Private define ---------------------------------------------------------------*/
+/* Private define --------------------------------------------------------------- */
 #define DEF_EADC_MAX_CHANNEL_NUM     8
 
 enum
@@ -28,7 +28,7 @@ enum
     EADC_CNT
 };
 
-/* Private Typedef --------------------------------------------------------------*/
+/* Private Typedef -------------------------------------------------------------- */
 struct nu_eadc
 {
     struct rt_adc_device parent;
@@ -40,15 +40,14 @@ struct nu_eadc
 };
 typedef struct nu_eadc *nu_eadc_t;
 
-/* Private functions ------------------------------------------------------------*/
-static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
-static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
-static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
+/* Private functions ------------------------------------------------------------ */
+static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled);
+static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value);
 
-/* Public functions ------------------------------------------------------------*/
+/* Public functions ------------------------------------------------------------ */
 int rt_hw_eadc_init(void);
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ------------------------------------------------------------ */
 
 static struct nu_eadc nu_eadc_arr [] =
 {
@@ -66,7 +65,7 @@ typedef struct rt_adc_ops *rt_adc_ops_t;
 
 
 /* nu_adc_enabled - Enable ADC clock and wait for ready */
-static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     nu_eadc_t psNuEadc = (nu_eadc_t)device;
     RT_ASSERT(device != RT_NULL);
@@ -97,7 +96,7 @@ static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_uint32_t channe
     return RT_EOK;
 }
 
-static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     nu_eadc_t psNuEadc = (nu_eadc_t)device;
 
@@ -151,4 +150,4 @@ int rt_hw_eadc_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_eadc_init);
 
-#endif //#if defined(BSP_USING_EADC)
+#endif /* #if defined(BSP_USING_EADC) */

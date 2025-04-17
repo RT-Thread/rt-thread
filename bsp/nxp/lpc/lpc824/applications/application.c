@@ -19,22 +19,42 @@
 
 #ifndef RT_USING_HEAP
 /* if there is not enable heap, we should use static thread and stack. */
-rt_align(8)
-static rt_uint8_t init_stack[INIT_STACK_SIZE];
-static struct rt_thread init_thread;
 
 rt_align(8)
 static rt_uint8_t led_stack[LED_STACK_SIZE];
 static struct rt_thread led_thread;
 #endif
 
-void rt_init_thread_entry(void* parameter)
-{
-     /* initialization RT-Thread Components */
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_init();
-#endif
+static int led_app();
 
+int main(void)
+{
+    rt_kprintf("Hello RT-Thread!\n");
+
+    while(1)
+    {
+        rt_thread_mdelay(1000);
+    }
+
+    return 0;
+}
+
+/*******************************************************************************
+* Function Name  : assert_failed
+* Description    : Reports the name of the source file and the source line number
+*                  where the assert error has occurred.
+* Input          : - file: pointer to the source file name
+*                  - line: assert error line source number
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void assert_failed(uint8_t* file, uint32_t line)
+{
+    rt_kprintf("\n\r Wrong parameter value detected on\r\n");
+    rt_kprintf("       file  %s\r\n", file);
+    rt_kprintf("       line  %d\r\n", line);
+
+    while (1) ;
 }
 
 void rt_led_thread_entry(void *parameter)
@@ -54,27 +74,9 @@ void rt_led_thread_entry(void *parameter)
     }
 }
 
-int rt_application_init()
+static int led_app()
 {
     rt_thread_t tid;
-
-#ifdef RT_USING_HEAP
-    tid = rt_thread_create("init",
-        rt_init_thread_entry, RT_NULL,
-        INIT_STACK_SIZE, RT_THREAD_PRIORITY_MAX/3, 20);
-#else
-    {
-
-        rt_err_t result;
-
-        tid = &init_thread;
-        result = rt_thread_init(tid, "init", rt_init_thread_entry, RT_NULL,
-                                init_stack, sizeof(init_stack), RT_THREAD_PRIORITY_MAX / 3, 20);
-        RT_ASSERT(result == RT_EOK);
-    }
-#endif
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
 
 #ifdef RT_USING_HEAP
     tid = rt_thread_create("led",

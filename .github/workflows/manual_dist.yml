@@ -44,11 +44,6 @@ on:
         required: true
         type: boolean
         default: false
-      debug_flag:
-        description: 'True to debug action, False not debug'
-        required: true
-        type: boolean
-        default: false
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -167,12 +162,6 @@ jobs:
           cppcheck --project=bsp/$RTT_BSP/compile_commands.json 
           pwd
 
-          
-          
-      - name: Setup Debug Session
-        if:  ${{ github.event.inputs.debug_flag }} 
-        uses: csexton/debugger-action@master
-        
       - uses: actions/upload-artifact@v3
         if:  ${{ github.event.inputs.dist_flag }} 
         with:

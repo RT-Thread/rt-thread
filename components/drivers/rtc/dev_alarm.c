@@ -9,6 +9,7 @@
  * 2013-05-17     aozima            initial alarm event & mutex in system init.
  * 2020-10-15     zhangsz           add alarm flags hour minute second.
  * 2020-11-09     zhangsz           fix alarm set when modify rtc time.
+ * 2024-09-29     milo              make internal thread's attributes configurable.
  */
 
 #include <rtthread.h>
@@ -23,6 +24,15 @@
 #endif
 
 #if (defined(RT_USING_RTC) && defined(RT_USING_ALARM))
+#ifndef RT_ALARM_STACK_SIZE
+#define RT_ALARM_STACK_SIZE       2048
+#endif
+#ifndef RT_ALARM_TIMESLICE
+#define RT_ALARM_TIMESLICE        5
+#endif
+#ifndef RT_ALARM_PRIORITY
+#define RT_ALARM_PRIORITY         10
+#endif
 static struct rt_alarm_container _container;
 
 rt_inline rt_uint32_t alarm_mkdaysec(struct tm *time)
@@ -789,7 +799,9 @@ int rt_alarm_system_init(void)
 
     tid = rt_thread_create("alarmsvc",
                            rt_alarmsvc_thread_init, RT_NULL,
-                           2048, 10, 5);
+                           RT_ALARM_STACK_SIZE,
+                           RT_ALARM_PRIORITY,
+                           RT_ALARM_TIMESLICE);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
 

@@ -261,7 +261,7 @@ MSH_CMD_EXPORT(wdt_sample, wdt sample);
 
 #include "drv_spi.h"
 #ifdef RT_USING_SFUD
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash_sfud.h"
 
 static int rt_hw_spi_flash_init(void)
 {
@@ -388,7 +388,7 @@ MSH_CMD_EXPORT(spi_flash_elmfat_sample, spi flash elmfat sample);
 #define SDCARD_NAME "sd0"
 
 #include "drv_spi.h"
-#include "spi_msd.h"
+#include "dev_spi_msd.h"
 #include <dfs_file.h>
 #include <unistd.h>
 

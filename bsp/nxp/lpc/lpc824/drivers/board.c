@@ -13,7 +13,7 @@
 
 #include "board.h"
 #include "board_lpc.h"
-#include "usart.h"
+#include "drv_usart.h"
 
 void _init(void)
 {
@@ -50,21 +50,37 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
+void rt_hw_systick_init(void)
+{
+    SystemCoreClockUpdate();
+    SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+}
+
 
 /**
  * This function will initial LPC8XX board.
  */
-void rt_hw_board_init()
+rt_weak void rt_hw_board_init()
 {
-    SystemCoreClockUpdate();
-    SysTick_Config(SystemCoreClock / RT_TIMER_TICK_PER_SECOND);
+  rt_hw_systick_init();
 
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_board_init();
+#ifdef RT_USING_HEAP
+    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
 #endif
 
+    /* USART driver initialization is open by default */
+#ifdef RT_USING_SERIAL
+    rt_hw_usart_init();
+#endif
+
+    /* Set the shell console output device */
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+    /* Board underlying hardware initialization */
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
 #endif
 }
 

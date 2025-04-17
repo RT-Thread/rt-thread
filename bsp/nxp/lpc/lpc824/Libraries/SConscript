@@ -12,8 +12,7 @@ src += Glob('common/chip/*.c')
 
 # add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-    print("not gcc startup file")
-    exit(0)
+    src += [cwd + '/common/startup/gcc_startup_lpc82x.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/common/startup/keil_startup_lpc82x.s']
 elif rtconfig.PLATFORM in ['iccarm']:

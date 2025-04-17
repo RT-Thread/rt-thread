@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,8 +7,11 @@
  * Date           Author       Notes
  * 2022-02-22     airm2m       first version
  */
-
 #include "board.h"
+#include "drv_common.h"
+#include "drv_gpio.h"
+#include "drv_usart_v2.h"
+
 uint32_t SystemCoreClock;
 extern const uint32_t __isr_start_address;
 
@@ -38,7 +41,7 @@ void SystemInit(void)
     __enable_irq();
 }
 
-void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
+void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency */
 {
     SystemCoreClock = HSE_VALUE * (((SYSCTRL->FREQ_SEL & SYSCTRL_FREQ_SEL_XTAL_Mask) >> SYSCTRL_FREQ_SEL_XTAL_Pos) + 1);
 }
@@ -56,7 +59,7 @@ void rt_hw_board_init(void)
     rt_hw_systick_init();
     DMA_GlobalInit();
     Uart_GlobalInit();
-    DMA_TakeStream(DMA1_STREAM_1);//for qspi
+    DMA_TakeStream(DMA1_STREAM_1);/* for qspi */
     CoreTick_Init();
 #ifdef RT_USING_PIN
     rt_hw_pin_init();

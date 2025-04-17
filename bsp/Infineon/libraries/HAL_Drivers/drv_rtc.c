@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 
 #ifdef BSP_USING_RTC
 
-//#define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define LOG_TAG                         "drv.rtc"
 #include <drv_log.h>
 

@@ -11,6 +11,12 @@
 #ifndef __ARMV8_H__
 #define __ARMV8_H__
 
+#include <rtconfig.h>
+
+#ifdef ARCH_USING_HW_THREAD_SELF
+#define ARM64_THREAD_REG tpidr_el1
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
 #ifdef __ASSEMBLY__
 
 /*********************

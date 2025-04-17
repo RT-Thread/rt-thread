@@ -596,7 +596,7 @@ const struct rt_pci_device_id *rt_pci_match_ids(struct rt_pci_device *pdev,
 
 rt_err_t rt_pci_driver_register(struct rt_pci_driver *pdrv);
 rt_err_t rt_pci_device_register(struct rt_pci_device *pdev);
-
+struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device* pdev,rt_ubase_t flags,int index);
 #define RT_PCI_DRIVER_EXPORT(driver)    RT_DRIVER_EXPORT(driver, pci, BUILIN)
 
 extern struct rt_spinlock rt_pci_lock;

@@ -17,7 +17,7 @@
 #include <rtthread.h>
 
 #include <sep4020.h>
-#include <serial.h>
+#include <drivers/dev_serial.h>
 
 void rt_hw_serial_putc(const char c);
 

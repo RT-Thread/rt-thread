@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,13 +28,13 @@ cyhal_adc_channel_t adc_chan_obj;
 
 const cyhal_adc_config_t adc_config =
 {
-    .continuous_scanning = false,   // Continuous Scanning is disabled
-    .average_count = 1,             // Average count disabled
-    .vref = CYHAL_ADC_REF_VDDA,     // VREF for Single ended channel set to VDDA
-    .vneg = CYHAL_ADC_VNEG_VSSA,    // VNEG for Single ended channel set to VSSA
-    .resolution = 12u,              // 12-bit resolution
-    .ext_vref = NC,                 // No connection
-    .bypass_pin = NC                // No connection
+    .continuous_scanning = false,   /* Continuous Scanning is disabled*/
+    .average_count = 1,             /* Average count disabled*/
+    .vref = CYHAL_ADC_REF_VDDA,     /* VREF for Single ended channel set to VDDA*/
+    .vneg = CYHAL_ADC_VNEG_VSSA,    /* VNEG for Single ended channel set to VSSA*/
+    .resolution = 12u,              /* 12-bit resolution*/
+    .ext_vref = NC,                 /* No connection*/
+    .bypass_pin = NC                /* No connection*/
 };
 
 #ifndef ADC1_CONFIG

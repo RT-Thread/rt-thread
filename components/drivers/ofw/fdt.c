@@ -85,15 +85,15 @@ rt_uint64_t rt_fdt_translate_address(void *fdt, int nodeoffset, rt_uint64_t addr
 
         if (parent >= 0)
         {
-            ranges = fdt_getprop(fdt, nodeoffset, "ranges", &length);
+            ranges = fdt_getprop(fdt, parent, "ranges", &length);
         }
 
         if (ranges && length > 0)
         {
-            local.addr_cells = fdt_address_cells(fdt, nodeoffset);
-            local.size_cells = fdt_size_cells(fdt, nodeoffset);
-            cpu.addr_cells = fdt_io_addr_cells(fdt, nodeoffset);
-            cpu.size_cells = fdt_io_size_cells(fdt, nodeoffset);
+            local.addr_cells = fdt_address_cells(fdt, parent);
+            local.size_cells = fdt_size_cells(fdt, parent);
+            cpu.addr_cells = fdt_io_addr_cells(fdt, parent);
+            cpu.size_cells = fdt_io_size_cells(fdt, parent);
 
             group_len = local.addr_cells + cpu.addr_cells + local.size_cells;
 
@@ -105,7 +105,7 @@ rt_uint64_t rt_fdt_translate_address(void *fdt, int nodeoffset, rt_uint64_t addr
 
                 if (local.addr <= address && local.addr + local.size > address)
                 {
-                    ret += address - cpu.addr;
+                    ret = address - local.addr + cpu.addr;
                     break;
                 }
 
@@ -247,9 +247,9 @@ static rt_err_t fdt_reserved_memory_reg(int nodeoffset, const char *uname)
 
                 rt_bool_t is_nomap = fdt_getprop(_fdt, nodeoffset, "no-map", RT_NULL) ? RT_TRUE : RT_FALSE;
                 base = rt_fdt_translate_address(_fdt, nodeoffset, base);
-                rt_memblock_reserve_memory(uname, base, base + size, is_nomap);
 
-                len -= t_len;
+                rt_memblock_reserve_memory(fdt_get_name(_fdt, nodeoffset, RT_NULL),
+                        base, base + size, is_nomap);
             }
         }
     }
@@ -788,6 +788,55 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
     {
         LOG_I("Earlycon: %s at MMIO/PIO %p (options '%s')",
                 con_type, fdt_earlycon.mmio, fdt_earlycon.options);
+    }
+
+    return err;
+}
+
+rt_err_t rt_fdt_bootargs_select(const char *key, int index, const char **out_result)
+{
+    rt_err_t err;
+
+    if (key && index >= 0 && out_result)
+    {
+        int offset = fdt_path_offset(_fdt, "/chosen");
+
+        if (offset >= 0)
+        {
+            int len, key_len = rt_strlen(key);
+            const char *bootargs = fdt_getprop(_fdt, offset, "bootargs", &len), *end;
+
+            end = bootargs + len;
+            err = -RT_EEMPTY;
+
+            for (int i = 0; bootargs < end; ++i)
+            {
+                bootargs = rt_strstr(bootargs, key);
+
+                if (!bootargs)
+                {
+                    break;
+                }
+
+                bootargs += key_len;
+
+                if (i == index)
+                {
+                    *out_result = bootargs;
+
+                    err = -RT_EOK;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            err = -RT_ERROR;
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
     }
 
     return err;

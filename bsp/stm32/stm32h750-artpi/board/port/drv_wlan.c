@@ -14,9 +14,9 @@
 #ifdef RT_USING_WIFI
 
 #include <drv_common.h>
-#include <wlan_mgnt.h>
-#include <wlan_prot.h>
-#include <wlan_cfg.h>
+#include <dev_wlan_mgnt.h>
+#include <dev_wlan_prot.h>
+#include <dev_wlan_cfg.h>
 #include <string.h>
 #include <fal.h>
 

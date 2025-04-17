@@ -245,6 +245,21 @@ config ARCH_RISCV
 config ARCH_RISCV_FPU
     bool
 
+config ARCH_RISCV_VECTOR
+    bool
+
+    if ARCH_RISCV_VECTOR
+        choice
+            prompt "RISCV Vector Vlen"
+            default ARCH_VECTOR_VLEN_128
+
+            config ARCH_VECTOR_VLEN_128
+                bool "128"
+            config ARCH_VECTOR_VLEN_256
+                bool "256"
+        endchoice
+    endif
+
 config ARCH_RISCV_FPU_S
     select ARCH_RISCV_FPU
     bool
@@ -263,10 +278,15 @@ config ARCH_RISCV64
     bool
 
 if ARCH_RISCV64
+    config ARCH_USING_NEW_CTX_SWITCH
+        bool
+        default y
+
     config ARCH_USING_RISCV_COMMON64
         bool
         depends on ARCH_RISCV64
         select RT_USING_CPUTIME
+        select ARCH_USING_NEW_CTX_SWITCH
         help
             Using the common64 implementation under ./libcpu/risc-v
 endif

@@ -10,11 +10,12 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <spi.h>
 
 #ifdef RT_USING_SPI
 #include "drv_spi.h"
 #include <drv_io_config.h>
-#include <spi.h>
+#include <drivers/dev_spi.h>
 #include "dmalock.h"
 #include <sysctl.h>
 #include <gpiohs.h>

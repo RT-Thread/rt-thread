@@ -198,6 +198,18 @@ void lwp_cleanup(struct rt_thread *tid);
                 case INTF_SO_NO_CHECK:
                     *optname = IMPL_SO_NO_CHECK;
                     break;
+                case INTF_SO_BINDTODEVICE:
+                    *optname = IMPL_SO_BINDTODEVICE;
+                    break;
+                case INTF_SO_TIMESTAMPNS:
+                    *optname = IMPL_SO_TIMESTAMPNS;
+                    break;
+                case INTF_SO_TIMESTAMPING:
+                    *optname = IMPL_SO_TIMESTAMPING;
+                    break;
+                case INTF_SO_SELECT_ERR_QUEUE:
+                    *optname = IMPL_SO_SELECT_ERR_QUEUE;
+                    break;
 
                 /*
                 * SO_DONTLINGER (*level = ((int)(~SO_LINGER))),
@@ -2880,23 +2892,12 @@ sysret_t sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namele
     lwp_get_from_user(&family, (void *)name, 2);
     if (family == AF_UNIX)
     {
-        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
-        {
-            return -EFAULT;
-        }
-
         lwp_get_from_user(&un_addr, (void *)name, sizeof(struct sockaddr_un));
         ret = bind(socket, (struct sockaddr *)&un_addr, namelen);
     }
     else if (family == AF_NETLINK)
     {
-        if (!lwp_user_accessable((void *)name, namelen))
-        {
-            return -EFAULT;
-        }
-
         lwp_get_from_user(&sa, (void *)name, namelen);
-
         ret = bind(socket, &sa, namelen);
     }
     else
@@ -3137,6 +3138,11 @@ static int netflags_muslc_2_lwip(int flags)
     {
         flgs |= MSG_MORE;
     }
+    if (flags & MSG_ERRQUEUE)
+    {
+        flgs |= MSG_ERRQUEUE;
+    }
+
     return flgs;
 }
 
@@ -5804,13 +5810,13 @@ sysret_t sys_mount(char *source, char *target,
     if (copy_source && stat(copy_source, &buf) && S_ISBLK(buf.st_mode))
     {
         char *dev_fullpath = dfs_normalize_path(RT_NULL, copy_source);
-        rt_free(copy_source);
         RT_ASSERT(rt_strncmp(dev_fullpath, "/dev/", sizeof("/dev/") - 1) == 0);
         ret = dfs_mount(dev_fullpath + sizeof("/dev/") - 1, copy_target, copy_filesystemtype, 0, tmp);
         if (ret < 0)
         {
             ret = -rt_get_errno();
         }
+        rt_free(copy_source);
         rt_free(dev_fullpath);
     }
     else

@@ -18,9 +18,9 @@
 
 #ifdef BSP_USING_SPI_FLASH
 
-#include "spi_flash.h"
+#include "dev_spi_flash.h"
 #ifdef RT_USING_SFUD
-    #include "spi_flash_sfud.h"
+    #include "dev_spi_flash_sfud.h"
 #endif
 
 #if defined(HC32F4A0) || defined(HC32F448)

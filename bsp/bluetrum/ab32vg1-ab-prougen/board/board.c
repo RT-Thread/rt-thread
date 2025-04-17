@@ -27,7 +27,7 @@ typedef void (*spiflash_init_func)(uint8_t sf_read, uint8_t dummy);
 
 static struct rt_mutex mutex_spiflash = {0};
 static struct rt_mutex mutex_cache = {0};
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 extern uint32_t __heap_start, __heap_end;
 
 #ifdef RT_USING_CONSOLE

@@ -52,6 +52,11 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
+rt_weak void UART_IRQHandler(void)
+{
+    
+};
+
 void os_clock_init(void)
 {
     /* bump up system clock 12MHz to 48MHz, using IRC (internal RC) osc. */
@@ -111,7 +116,9 @@ void rt_hw_board_init(void)
     rt_system_heap_init((void *)&__bss_end__, (void *)&_ram_end);
 #endif
     /* initialize uart */
+#ifdef RT_USING_SERIAL
     rt_hw_uart_init();
+#endif
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */

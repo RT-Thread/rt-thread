@@ -1069,9 +1069,6 @@ void rt_sched_post_ctx_switch(struct rt_thread *thread)
     }
     /* safe to access since irq is masked out */
     pcpu->current_thread = thread;
-#ifdef ARCH_USING_HW_THREAD_SELF
-    rt_hw_thread_set_self(thread);
-#endif /* ARCH_USING_HW_THREAD_SELF */
 }
 
 #ifdef RT_DEBUGING_CRITICAL

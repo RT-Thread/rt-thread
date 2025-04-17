@@ -25,21 +25,10 @@
 #endif
 
 // <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
-
 // <integer name="LPC_EXT_SDRAM" description="Begin Address of External SDRAM" default="0xA0000000" />
 #define LPC_EXT_SDRAM_BEGIN    0xA0000000
 // <integer name="LPC_EXT_SDRAM_END" description="End Address of External SDRAM" default="0xA2000000" />
 #define LPC_EXT_SDRAM_END      0xA2000000
-
-// <bool name="RT_USING_UART0" description="Using UART0" default="true" />
-#define RT_USING_UART0
-// <bool name="RT_USING_UART1" description="Using UART1" default="true" />
-//#define RT_USING_UART1
-// <bool name="RT_USING_UART2" description="Using UART2" default="true" />
-#define RT_USING_UART2
-// <string name="RT_CONSOLE_DEVICE_NAME" description="The name of console device" default="" />
-#define RT_CONSOLE_DEVICE_NAME  "uart0"
-
 // </RDTConfigurator>
 
 #ifdef __CC_ARM

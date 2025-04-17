@@ -52,8 +52,8 @@ struct gd32_uart
         rt_size_t last_index;
         rt_sem_t sem_ftf;
     } dma;
-    rt_uint16_t uart_dma_flag;
 #endif
+    rt_uint16_t uart_dma_flag;
 };
 
 int rt_hw_usart_init(void);

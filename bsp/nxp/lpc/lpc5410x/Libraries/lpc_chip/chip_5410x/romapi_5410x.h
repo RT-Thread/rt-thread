@@ -63,27 +63,27 @@ extern "C" {
  * @brief High level ROM API structure
  */
 typedef struct {
-	const uint32_t reserved_usb;				/*!< Reserved */
-	const uint32_t reserved_clib;				/*!< Reserved */
-	const uint32_t reserved_can;				/*!< Reserved */
-	const PWRD_API_T *pPWRD;					/*!< Power API function table base address */
-	const uint32_t reserved_div;				/*!< Reserved */
-	const uint32_t reserved_i2cd;				/*!< Reserved */
-	const uint32_t reserved_dmad;				/*!< Reserved */
-	const uint32_t reserved_spid;				/*!< Reserved */
-	const uint32_t reserved_adcd;				/*!< Reserved */
-	const uint32_t reserved_uartd;				/*!< Reserved */
-	const uint32_t reserved_vfifo;				/*!< Reserved */
-	const uint32_t reserved_usart;				/*!< Reserved */
-	/* v2 drivers - only present in some LPC5410x devices */
-	const ROM_I2CMD_API_T *pI2CMD;				/*!< v2 I2C master only driver API function table base address */
-	const ROM_I2CSD_API_T *pI2CSD;				/*!< v2 I2C slave only driver API function table base address */
-	const ROM_I2CMOND_API_T *pI2CMOND;			/*!< v2 I2C bus monitor driver API function table base address */
-	const ROM_SPIMD_API_T *pSPIMD;				/*!< v2 SPI master only driver API function table base address */
-	const ROM_SPISD_API_T *pSPISD;				/*!< v2 SPI slave only driver API function table base address */
-	const ROM_DMAALTD_API_T *pDMAALT;			/*!< v2 abstract DMA driver API function table base address */
-	const ROM_ADC_API_T *pADCALT;				/*!< v2 ADC driver API function table base address */
-	const ROM_UART_API_T *pUARTALT;				/*!< v2 UART driver API function table base address */
+    const uint32_t reserved_usb;                /*!< Reserved */
+    const uint32_t reserved_clib;               /*!< Reserved */
+    const uint32_t reserved_can;                /*!< Reserved */
+    const PWRD_API_T *pPWRD;                    /*!< Power API function table base address */
+    const uint32_t reserved_div;                /*!< Reserved */
+    const uint32_t reserved_i2cd;               /*!< Reserved */
+    const uint32_t reserved_dmad;               /*!< Reserved */
+    const uint32_t reserved_spid;               /*!< Reserved */
+    const uint32_t reserved_adcd;               /*!< Reserved */
+    const uint32_t reserved_uartd;              /*!< Reserved */
+    const uint32_t reserved_vfifo;              /*!< Reserved */
+    const uint32_t reserved_usart;              /*!< Reserved */
+    /* v2 drivers - only present in some LPC5410x devices */
+    const ROM_I2CMD_API_T *pI2CMD;              /*!< v2 I2C master only driver API function table base address */
+    const ROM_I2CSD_API_T *pI2CSD;              /*!< v2 I2C slave only driver API function table base address */
+    const ROM_I2CMOND_API_T *pI2CMOND;          /*!< v2 I2C bus monitor driver API function table base address */
+    const ROM_SPIMD_API_T *pSPIMD;              /*!< v2 SPI master only driver API function table base address */
+    const ROM_SPISD_API_T *pSPISD;              /*!< v2 SPI slave only driver API function table base address */
+    const ROM_DMAALTD_API_T *pDMAALT;           /*!< v2 abstract DMA driver API function table base address */
+    const ROM_ADC_API_T *pADCALT;               /*!< v2 ADC driver API function table base address */
+    const ROM_UART_API_T *pUARTALT;             /*!< v2 UART driver API function table base address */
 } LPC_ROM_API_T;
 
 /* Pointer to ROM API function address */
@@ -123,9 +123,9 @@ typedef struct {
 /**
  * @brief LPC5410x IAP_ENTRY API function type
  */
-static INLINE void iap_entry(unsigned int cmd_param[5], unsigned int status_result[4])
+static INLINE void iap_entry(uint32_t cmd_param[5], uint32_t status_result[4])
 {
-	((IAP_ENTRY_T) IAP_ENTRY_LOCATION)(cmd_param, status_result);
+    ((IAP_ENTRY_T) IAP_ENTRY_LOCATION)(cmd_param, status_result);
 }
 
 /**

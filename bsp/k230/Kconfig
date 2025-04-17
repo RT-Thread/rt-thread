@@ -1,0 +1,46 @@
+mainmenu "RT-Thread Project Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../../rt-thread"
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+rsource "board/Kconfig"
+
+config BOARD_fpgac908
+    bool
+    select ARCH_RISCV64
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+	select ARCH_MM_MMU
+    select ARCH_RISCV_FPU_D
+    select ARCH_REMAP_KERNEL if RT_USING_SMART
+    default y
+
+config __STACKSIZE__
+    int "stack size for interrupt"
+    default 4096
+
+config C908_PLIC_PHY_ADDR
+    int "PLIC base address"
+    default 0xF00000000
+
+config BSP_ROOTFS_TYPE_CROMFS
+    bool "Use CROMFS as ROOTFS"
+    select RT_USING_DFS_CROMFS
+    select PKG_USING_ZLIB
+    select PKG_USING_ZLIB_LATEST_VERSION
+    default y

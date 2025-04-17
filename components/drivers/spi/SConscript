@@ -3,29 +3,29 @@ from gcc import *
 import rtconfig
 
 cwd = GetCurrentDir()
-src = ['spi_core.c', 'spi_dev.c']
+src = ['dev_spi_core.c', 'dev_spi.c']
 CPPPATH = [cwd, cwd + '/../include']
 LOCAL_CFLAGS = ''
 
 if GetDepend('RT_USING_SPI_BITOPS'):
-    src += ['spi-bit-ops.c']
+    src += ['dev_spi_bit_ops.c']
 
 if GetDepend('RT_USING_QSPI'):
-    src += ['qspi_core.c']
+    src += ['dev_qspi_core.c']
 
 src_device = []
 
 if GetDepend('RT_USING_SPI_WIFI'):
-    src_device += ['spi_wifi_rw009.c']
+    src_device += ['dev_spi_wifi_rw009.c']
 
 if GetDepend('RT_USING_ENC28J60'):
     src_device += ['enc28j60.c']
 
 if GetDepend('RT_USING_SPI_MSD'):
-    src_device += ['spi_msd.c']
+    src_device += ['dev_spi_msd.c']
 
 if GetDepend('RT_USING_SFUD'):
-    src_device += ['spi_flash_sfud.c', 'sfud/src/sfud.c']
+    src_device += ['dev_spi_flash_sfud.c', 'sfud/src/sfud.c']
     CPPPATH += [cwd + '/sfud/inc']
     if GetDepend('RT_SFUD_USING_SFDP'):
         src_device += ['sfud/src/sfud_sfdp.c']

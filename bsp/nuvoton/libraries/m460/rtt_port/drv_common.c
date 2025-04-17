@@ -127,7 +127,7 @@ void nu_pin_set_function(rt_base_t pin, int data)
     GPx_MFPx_org = *GPx_MFPx;
     *GPx_MFPx    = (GPx_MFPx_org & (~MFP_Msk)) | data;
 
-    //rt_kprintf("Port[%d]-Pin[%d] Addr[%08x] Data[%08x] %08x -> %08x\n", port_index, pin_index, GPx_MFPx, data, GPx_MFPx_org, *GPx_MFPx);
+    /* rt_kprintf("Port[%d]-Pin[%d] Addr[%08x] Data[%08x] %08x -> %08x\n", port_index, pin_index, GPx_MFPx, data, GPx_MFPx_org, *GPx_MFPx); */
 }
 
 /**
@@ -145,16 +145,12 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-void rt_hw_cpu_reset(void)
+int reboot(int argc, char **argv)
 {
     SYS_UnlockReg();
 
     SYS->IPRST0 |= SYS_IPRST0_CHIPRST_Msk;
-}
 
-int reboot(int argc, char **argv)
-{
-    rt_hw_cpu_reset();
     return 0;
 }
 MSH_CMD_EXPORT(reboot, Reboot System);
@@ -173,7 +169,7 @@ void devmem(int argc, char *argv[])
     {
         if (sscanf(argv[2], "0x%x", &value) != 1)
             goto exit_devmem;
-        mode = 1; //Write
+        mode = 1; /*Write*/
     }
 
     if (sscanf(argv[1], "0x%x", &u32Addr) != 1)
@@ -207,7 +203,7 @@ void devmem2(int argc, char *argv[])
 
     if (argc == 3)
     {
-        if (sscanf(argv[2], "%d", &value) != 1)
+        if (sscanf(argv[2], "%u", &value) != 1)
             goto exit_devmem;
         word_count = value;
     }

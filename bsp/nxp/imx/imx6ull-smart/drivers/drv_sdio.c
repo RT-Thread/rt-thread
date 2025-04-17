@@ -12,7 +12,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <drivers/mmcsd_core.h>
+#include <drivers/dev_mmcsd_core.h>
 #include <ioremap.h>
 
 #include <board.h>

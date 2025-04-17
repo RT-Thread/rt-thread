@@ -145,7 +145,7 @@ const uint8_t midi_descriptor[] = {
     0x02,
     0x01,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00

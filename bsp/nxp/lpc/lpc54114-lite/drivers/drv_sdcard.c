@@ -6,7 +6,7 @@
 
 #include "drv_sdcard.h"
 #include "drv_spi.h"
-#include "spi_msd.h"
+#include "dev_spi_msd.h"
 
 #define RT_SDCARD_CS_PIN (3)
 

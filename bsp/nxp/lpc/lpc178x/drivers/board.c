@@ -29,7 +29,8 @@
  * This is the timer interrupt service routine.
  *
  */
-void rt_hw_timer_handler(void)
+
+void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -38,11 +39,6 @@ void rt_hw_timer_handler(void)
 
     /* leave interrupt */
     rt_interrupt_leave();
-}
-
-void SysTick_Handler(void)
-{
-    rt_hw_timer_handler();
 }
 
 /**
@@ -65,8 +61,31 @@ void rt_hw_board_init()
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
 
-    rt_hw_uart_init();
+#ifdef RT_USING_HEAP
+    /* initialize memory system */
+    #ifdef __CC_ARM
+        rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)(0x10000000 + 1024*64));
+    #elif __ICCARM__
+        rt_system_heap_init(__segment_end("HEAP"), (void*)(0x10000000 + 1024*64));
+    #else
+        rt_system_heap_init((void*)&__bss_end, (void*)(0x10000000 + 1024*64));
+    #endif
+#endif
+
+    /* USART driver initialization is open by default */
+#ifdef RT_USING_SERIAL
+    rt_hw_usart_init();
+#endif
+
+    /* Set the shell console output device */
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+    /* Board underlying hardware initialization */
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
+#endif
 
 #if LPC_EXT_SDRAM == 1
     {

@@ -1351,7 +1351,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
     if (mutex->owner == thread)
     {
-        if(mutex->hold < RT_MUTEX_HOLD_MAX)
+        if (mutex->hold < RT_MUTEX_HOLD_MAX)
         {
             /* it's the same thread */
             mutex->hold ++;

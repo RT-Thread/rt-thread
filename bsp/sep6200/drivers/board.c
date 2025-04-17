@@ -16,7 +16,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <serial.h>
+#include <drivers/dev_serial.h>
 
 #include <sep6200.h>
 

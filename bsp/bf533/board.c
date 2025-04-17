@@ -12,7 +12,7 @@
 #include "rtconfig.h"
 #include "rtdef.h"
 #include "rthw.h"
-#include "serial.h"
+#include "drivers/dev_serial.h"
 
 #include <signal.h>
 #include <sys/platform.h>

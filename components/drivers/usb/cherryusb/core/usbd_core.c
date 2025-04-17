@@ -489,10 +489,13 @@ static bool usbd_set_interface(uint8_t busid, uint8_t iface, uint8_t alt_setting
                 if (cur_iface == iface) {
                     ep_desc = (struct usb_endpoint_descriptor *)p;
 
-                    if (cur_alt_setting != alt_setting) {
+                    if (alt_setting == 0) {
                         ret = usbd_reset_endpoint(busid, ep_desc);
-                    } else {
+                        goto find_end;
+                    } else if (cur_alt_setting == alt_setting) {
                         ret = usbd_set_endpoint(busid, ep_desc);
+                        goto find_end;
+                    } else {
                     }
                 }
 
@@ -510,6 +513,7 @@ static bool usbd_set_interface(uint8_t busid, uint8_t iface, uint8_t alt_setting
         }
     }
 
+find_end:
     usbd_class_event_notify_handler(busid, USBD_EVENT_SET_INTERFACE, (void *)if_desc);
 
     return ret;
@@ -1406,6 +1410,12 @@ int usbd_initialize(uint8_t busid, uintptr_t reg_base, void (*event_handler)(uin
 
 int usbd_deinitialize(uint8_t busid)
 {
+    if (busid >= CONFIG_USBDEV_MAX_BUS) {
+        USB_LOG_ERR("bus overflow\r\n");
+        while (1) {
+        }
+    }
+
     g_usbd_core[busid].event_handler(busid, USBD_EVENT_DEINIT);
     usbd_class_event_notify_handler(busid, USBD_EVENT_DEINIT, NULL);
     usb_dc_deinit(busid);

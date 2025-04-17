@@ -54,12 +54,16 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_SPI
-                config BSP_USING_SPI1
-                    bool "Enable Flexcomm1 as SPI"
+                config BSP_USING_SPI0
+                    bool "Enable SPI0"
                     default n
-
             endif
 
+            if BSP_USING_SPI
+                config BSP_USING_SPI1
+                    bool "Enable SPI1"
+                    default n
+            endif
         
     config BSP_USING_RTC
         bool "Enable RTC"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2)
 
-//#define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define LOG_TAG             "drv.adc"
 #include <drv_log.h>
 
@@ -45,9 +45,9 @@ static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
     const cyhal_adc_channel_config_t channel_config =
     {
-        .enable_averaging = false,      // Disable averaging for channel
-        .min_acquisition_ns = 1000,     // Minimum acquisition time set to 1us
-        .enabled = enabled              // Sample this channel when ADC performs a scan
+        .enable_averaging = false,      /* Disable averaging for channel*/
+        .min_acquisition_ns = 1000,     /* Minimum acquisition time set to 1us*/
+        .enabled = enabled              /* Sample this channel when ADC performs a scan*/
     };
 
     if (enabled)

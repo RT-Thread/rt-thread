@@ -27,7 +27,6 @@ static int ptm_fops_open(struct dfs_file *file)
     rt_uint32_t oflags = file->flags;
     rt_thread_t cur_thr = rt_thread_self();
 
-    /* we don't check refcnt because each open will create a new device */
     if (file->vnode && file->vnode->data)
     {
         /**
@@ -62,16 +61,9 @@ static int ptm_fops_close(struct dfs_file *file)
 
     if (file->data)
     {
-        if (file->vnode->ref_count != 1)
-        {
-            rc = 0;
-        }
-        else
-        {
-            device = (rt_device_t)file->data;
-            tp = rt_container_of(device, struct lwp_tty, parent);
-            rc = bsd_ptsdev_methods.fo_close(tp, rt_thread_self());
-        }
+        device = (rt_device_t)file->data;
+        tp = rt_container_of(device, struct lwp_tty, parent);
+        rc = bsd_ptsdev_methods.fo_close(tp, rt_thread_self());
     }
     else
     {

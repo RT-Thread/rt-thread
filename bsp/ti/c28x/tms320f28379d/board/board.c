@@ -17,7 +17,7 @@
 #include "F28x_Project.h"
 
 #ifndef RT_USING_SMP
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 #endif
 
 extern rt_uint32_t rt_thread_switch_interrupt_flag;

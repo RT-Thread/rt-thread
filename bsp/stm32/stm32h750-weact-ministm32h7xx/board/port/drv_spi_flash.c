@@ -10,8 +10,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <drv_spi.h>
-#include <spi_flash.h>
-#include <spi_flash_sfud.h>
+#include <dev_spi_flash.h>
+#include <dev_spi_flash_sfud.h>
 #include <fal.h>
 #include <dfs_fs.h>
 

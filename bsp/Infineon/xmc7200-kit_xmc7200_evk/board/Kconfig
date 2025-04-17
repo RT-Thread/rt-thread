@@ -37,6 +37,11 @@ menu "On-chip Peripheral Drivers"
                 range 0 7
                 default 3
         endif
+    
+    config BSP_USING_ETH
+        bool "Enable ETH"
+        select RT_USING_ETH
+        default n  
 
 endmenu
 

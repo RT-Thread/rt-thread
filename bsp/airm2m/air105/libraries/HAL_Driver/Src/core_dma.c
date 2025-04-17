@@ -18,11 +18,11 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
+#include "core_irq.h"
 #include "user.h"
 typedef struct
 {
-    const DMA_TypeDef *RegBase;
+    DMA_TypeDef *RegBase;
     const uint32_t Index;
     CBFuncEx_t CB;
     void *pData;
@@ -65,17 +65,17 @@ typedef struct
 
 /************ operation definition for DMA  DMA_CFG_L REGISTER ************/
 #define DMA_CFG_HS_SEL_SRC_Pos                              (11)
-#define DMA_CFG_HS_SEL_SRC_Mask                             (0x01U<<DMA_CFG_HS_SEL_SRC_Pos)//0 HARD 1 SOFT
+#define DMA_CFG_HS_SEL_SRC_Mask                             (0x01U<<DMA_CFG_HS_SEL_SRC_Pos)/*0 HARD 1 SOFT*/
 
 #define DMA_CFG_HS_SEL_DST_Pos                              (10)
 #define DMA_CFG_HS_SEL_DST_Mask                             (0x01U<<DMA_CFG_HS_SEL_DST_Pos)
 
 /************ operation definition for DMA  DMA_CFG_H REGISTER ************/
 #define DMA_CFG_DEST_PER_Pos                                (11)
-#define DMA_CFG_DEST_PER_Mask                               (0x07U<<DMA_CFG_DEST_PER_Pos)//need write current channel num
+#define DMA_CFG_DEST_PER_Mask                               (0x07U<<DMA_CFG_DEST_PER_Pos)/*need write current channel num*/
 
 #define DMA_CFG_SRC_PER_Pos                                 (7)
-#define DMA_CFG_SRC_PER_Mask                                (0x07U<<DMA_CFG_SRC_PER_Pos)//need write current channel num
+#define DMA_CFG_SRC_PER_Mask                                (0x07U<<DMA_CFG_SRC_PER_Pos)/*need write current channel num*/
 
 /************ operation definition for DMA  DMA_LLP_L REGISTER ************/
 #define DMAC_LLP_NEXT_LLI_MSK                                   (0x3)
@@ -212,7 +212,7 @@ int DMA_ConfigStream(uint8_t Stream, void *Config)
                 (DMA_InitStruct->DMA_PeripheralDataSize << DMA_CTL_DST_TR_WIDTH_Pos);
 
         hwDMAChannal[Stream].TxDir = 1;
-//      hwDMA->CFG_L = (1 << 18);
+        /* hwDMA->CFG_L = (1 << 18); */
         hwDMA->CFG_L = 0;
         break;
     default:
@@ -333,7 +333,7 @@ uint32_t DMA_GetDataLength(uint8_t Stream, uint32_t FirstAddress)
 static void DMA_IrqHandle(int32_t IrqLine, void *pData)
 {
     uint32_t i;
-//  DBG("%x", DMA->StatusTfr_L);
+    /* DBG("%x", DMA->StatusTfr_L); */
     if (DMA->StatusInt_L & (1 << 0))
     {
         for(i = 0; i < DMA_STREAM_QTY; i++)
@@ -352,7 +352,7 @@ static void DMA_IrqHandle(int32_t IrqLine, void *pData)
             if (DMA->StatusErr_L & (1 << i))
             {
                 DMA->ClearErr_L = (1 << i);
-                hwDMAChannal[i].CB(hwDMAChannal[i].pData, 0xffffffff);
+                hwDMAChannal[i].CB(hwDMAChannal[i].pData, (void *)0xffffffff);
             }
         }
     }

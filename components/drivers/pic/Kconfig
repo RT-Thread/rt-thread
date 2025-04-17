@@ -1,6 +1,7 @@
 menuconfig RT_USING_PIC
     bool "Using Programmable Interrupt Controller (PIC)"
-    select RT_USING_BITMAP
+    select RT_USING_ADT
+    select RT_USING_ADT_BITMAP
     depends on RT_USING_DM
     default n
 
@@ -22,11 +23,30 @@ config RT_PIC_ARM_GIC
     select RT_USING_OFW
     default n
 
+config RT_PIC_ARM_GIC_V2M
+    bool "ARM GIC V2M" if RT_PIC_ARM_GIC && RT_PCI_MSI
+    depends on RT_USING_OFW
+    default n
+
 config RT_PIC_ARM_GIC_V3
     bool "ARM GICv3"
     depends on RT_USING_PIC
     select RT_USING_OFW
     default n
+
+config RT_PIC_ARM_GIC_V3_ITS
+    bool "ARM GICv3 ITS (Interrupt Translation Service)" if RT_PIC_ARM_GIC_V3 && RT_PCI_MSI
+    depends on RT_USING_OFW
+    select RT_USING_ADT_REF
+    default n
+
+config RT_PIC_ARM_GIC_V3_ITS_IRQ_MAX
+    int "IRQ maximum used"
+    depends on RT_PIC_ARM_GIC_V3_ITS
+    default 127 if ARCH_CPU_64BIT
+    default 63
+    help
+      Recommended to be based on the bit length (full bits) of maximum usage.
 
 config RT_PIC_ARM_GIC_MAX_NR
     int

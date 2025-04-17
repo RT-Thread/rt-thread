@@ -30,7 +30,7 @@
 #include "xintc_l.h"
 
 #ifdef RT_USING_UART1
-#include "serial.h"
+#include "drivers/dev_serial.h"
 #endif
 
 #define  TIMER_CNTR_0		0
@@ -143,8 +143,8 @@ static void rt_hw_console_init()
 	rt_uint32_t status;
 
 	/*
-	 * Initialize the UartLite driver so that it is ready to use.
-	 */
+	* Initialize the UartLite driver so that it is ready to use.
+	*/
 	status = XUartLite_Initialize(&uart_lite, RS232_DEVICE_ID);
 	if (status != XST_SUCCESS)
 	{

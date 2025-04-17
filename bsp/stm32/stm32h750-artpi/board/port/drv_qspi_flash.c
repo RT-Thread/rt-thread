@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <spi_flash.h>
+#include <dev_spi_flash.h>
 #include <drv_qspi.h>
 
 #ifdef BSP_USING_QSPI_FLASH

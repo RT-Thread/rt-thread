@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -64,7 +64,8 @@ static struct ifx_uart_config uart_config[] =
 #endif
 };
 
-static struct ifx_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
+static struct ifx_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] =
+{0};
 
 static void uart_isr(struct rt_serial_device *serial)
 {

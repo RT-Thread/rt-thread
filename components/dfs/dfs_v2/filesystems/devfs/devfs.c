@@ -408,16 +408,16 @@ mode_t dfs_devfs_device_to_mode(struct rt_device *device)
     switch (device->type)
     {
     case RT_Device_Class_Char:
-        mode = S_IFCHR | 0777;
+        mode = S_IFCHR | 0666;
         break;
     case RT_Device_Class_Block:
-        mode = S_IFBLK | 0777;
+        mode = S_IFBLK | 0666;
         break;
     case RT_Device_Class_Pipe:
-        mode = S_IFIFO | 0777;
+        mode = S_IFIFO | 0666;
         break;
     default:
-        mode = S_IFCHR | 0777;
+        mode = S_IFCHR | 0666;
         break;
     }
 

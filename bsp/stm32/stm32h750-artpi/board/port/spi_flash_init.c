@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <spi_flash.h>
+#include <dev_spi_flash.h>
 #include <drv_spi.h>
 
 static int rt_flash_init(void)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -101,7 +101,8 @@ static struct ifx_i2c_config i2c_config[] =
 #endif
 };
 
-static struct ifx_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = {0};
+static struct ifx_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] =
+{0};
 
 static int ifx_i2c_read(struct ifx_i2c *hi2c, rt_uint16_t slave_address, rt_uint8_t *p_buffer, rt_uint16_t data_byte)
 {

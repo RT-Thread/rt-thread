@@ -28,7 +28,8 @@ vector_fiq:
 
     SAVE_IRQ_CONTEXT
     bl      rt_hw_trap_fiq
-    RESTORE_IRQ_CONTEXT
+
+    b       rt_hw_irq_exit
 
 .globl      rt_thread_switch_interrupt_flag
 .globl      rt_hw_context_switch_interrupt_do

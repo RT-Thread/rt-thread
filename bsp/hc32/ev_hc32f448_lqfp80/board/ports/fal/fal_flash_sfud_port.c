@@ -13,7 +13,7 @@
 
 #include <sfud.h>
 #ifdef RT_USING_SFUD
-    #include <spi_flash_sfud.h>
+    #include <dev_spi_flash_sfud.h>
 #endif
 
 #ifndef FAL_USING_NOR_FLASH_DEV_NAME

@@ -59,6 +59,17 @@ void rt_hw_board_init()
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
+    /* Heap initialization */
+#ifdef RT_USING_HEAP
+#ifdef BSP_DRV_SDRAM
+    rt_kprintf("      heap: [0x%08x - 0x%08x]\n", LPC_EXT_SDRAM_BEGIN, LPC_EXT_SDRAM_END);
+    rt_system_heap_init((void *)LPC_EXT_SDRAM_BEGIN, (void *)LPC_EXT_SDRAM_END);
+    sram_init();
+#else
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
+#endif
+
     /*init uart device*/
     rt_hw_uart_init();
 

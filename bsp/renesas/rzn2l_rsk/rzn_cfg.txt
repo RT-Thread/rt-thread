@@ -1,0 +1,1158 @@
+FSP Configuration
+  Board "RSK+RZN2L (xSPI0 x1 boot mode)"
+    Parameter information for the loader: CACHE_FLG: 0x00000000
+    Parameter information for the loader: WRAPCFG_V: 0x00000000
+    Parameter information for the loader: COMCFG_V: 0x00000000
+    Parameter information for the loader: BMCFG_V: 0x00000000
+    Parameter information for the loader: xSPI_FLG: 0x00000000
+    Parameter information for the loader: LDR_ADDR_NML: 0x6000004C
+    Parameter information for the loader: LDR_SIZE_NML: 0x00006000
+    Parameter information for the loader: DEST_ADDR_NML: 0x00102000
+    Parameter information for the loader: CSSCTL_V: 0x0000003F
+    Parameter information for the loader: LIOCFGCS0_V: 0x00070000
+    Parameter information for the loader: ACCESS_SPEED: 0x00000006
+    Parameter information for the loader: CHECK_SUM: Auto Calculate.
+    
+  R9A07G084M04GBG
+    part_number: R9A07G084M04GBG
+    atcm_size_bytes: 131072
+    btcm_size_bytes: 131072
+    system_ram_size_bytes: 1572864
+    package_style: FBGA
+    package_pins: 225
+    Cortex-R52 CPU core: CPU0
+    
+  RZN2L Memory Config
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 0 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 0 End: 0x00000C00
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 1 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 1 End: 0x00000C00
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 2 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 2 End: 0x00000C00
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 3 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 3 End: 0x00000C00
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 4 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 4 End: 0x00000C00
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 5 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 5 End: 0x00000C00
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 6 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 6 End: 0x00000C00
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU0 : DMAC Unit0: Region 7 Start: 0x00000000
+    Master MPU: MPU0 : DMAC Unit0: Region 7 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 0 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 0 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 1 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 1 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 2 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 2 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 3 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 3 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 4 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 4 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 5 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 5 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 6 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 6 End: 0x00000C00
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU1 : DMAC Unit1: Region 7 Start: 0x00000000
+    Master MPU: MPU1 : DMAC Unit1: Region 7 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU2 : GMAC: Region 0 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 0 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU2 : GMAC: Region 1 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 1 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU2 : GMAC: Region 2 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 2 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU2 : GMAC: Region 3 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 3 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU2 : GMAC: Region 4 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 4 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU2 : GMAC: Region 5 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 5 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU2 : GMAC: Region 6 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 6 End: 0x00000C00
+    Master MPU: MPU2 : GMAC: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU2 : GMAC: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU2 : GMAC: Region 7 Start: 0x00000000
+    Master MPU: MPU2 : GMAC: Region 7 End: 0x00000C00
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU3 : USB Host: Region 0 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 0 End: 0x00000000
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU3 : USB Host: Region 1 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 1 End: 0x00000000
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU3 : USB Host: Region 2 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 2 End: 0x00000000
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU3 : USB Host: Region 3 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 3 End: 0x00000000
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU3 : USB Host: Region 4 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 4 End: 0x00000000
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU3 : USB Host: Region 5 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 5 End: 0x00000000
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU3 : USB Host: Region 6 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 6 End: 0x00000000
+    Master MPU: MPU3 : USB Host: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU3 : USB Host: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU3 : USB Host: Region 7 Start: 0x00000000
+    Master MPU: MPU3 : USB Host: Region 7 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU4 : USB Function: Region 0 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 0 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU4 : USB Function: Region 1 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 1 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU4 : USB Function: Region 2 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 2 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU4 : USB Function: Region 3 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 3 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU4 : USB Function: Region 4 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 4 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU4 : USB Function: Region 5 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 5 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU4 : USB Function: Region 6 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 6 End: 0x00000000
+    Master MPU: MPU4 : USB Function: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU4 : USB Function: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU4 : USB Function: Region 7 Start: 0x00000000
+    Master MPU: MPU4 : USB Function: Region 7 End: 0x00000000
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU6 : CoreSight: Region 0 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 0 End: 0x00000C00
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU6 : CoreSight: Region 1 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 1 End: 0x00000C00
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU6 : CoreSight: Region 2 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 2 End: 0x00000C00
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU6 : CoreSight: Region 3 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 3 End: 0x00000C00
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU6 : CoreSight: Region 4 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 4 End: 0x00000C00
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU6 : CoreSight: Region 5 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 5 End: 0x00000C00
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU6 : CoreSight: Region 6 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 6 End: 0x00000C00
+    Master MPU: MPU6 : CoreSight: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU6 : CoreSight: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU6 : CoreSight: Region 7 Start: 0x00000000
+    Master MPU: MPU6 : CoreSight: Region 7 End: 0x00000C00
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 0 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 0 End: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 1 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 1 End: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 2 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 2 End: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 3 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 3 End: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 4 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 4 End: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 5 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 5 End: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 6 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 6 End: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU7 : SHOSTIF: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU7 : SHOSTIF: Region 7 Start: 0x00000000
+    Master MPU: MPU7 : SHOSTIF: Region 7 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 0: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 0: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 0 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 0 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 1: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 1: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 1 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 1 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 2: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 2: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 2 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 2 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 3: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 3: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 3 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 3 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 4: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 4: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 4 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 4 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 5: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 5: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 5 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 5 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 6: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 6: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 6 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 6 End: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Enable or disable read control for Region 7: Disabled
+    Master MPU: MPU8 : PHOSTIF: Enable or disable write control for Region 7: Disabled
+    Master MPU: MPU8 : PHOSTIF: Region 7 Start: 0x00000000
+    Master MPU: MPU8 : PHOSTIF: Region 7 End: 0x00000000
+    CPU MPU: Attribute: Attribute 0: Memory Type: Normal memory
+    CPU MPU: Attribute: Attribute 0: Normal Memory: Inner: Memory Attribute Indirection: Write-Back non-transient
+    CPU MPU: Attribute: Attribute 0: Normal Memory: Inner: Read: Allocate
+    CPU MPU: Attribute: Attribute 0: Normal Memory: Inner: Write: Allocate
+    CPU MPU: Attribute: Attribute 0: Normal Memory: Outer: Memory Attribute Indirection: Write-Back non-transient
+    CPU MPU: Attribute: Attribute 0: Normal Memory: Outer: Read: Allocate
+    CPU MPU: Attribute: Attribute 0: Normal Memory: Outer: Write: Allocate
+    CPU MPU: Attribute: Attribute 0: Device Memory: Device Type: Device-nGnRnE memory
+    CPU MPU: Attribute: Attribute 1: Memory Type: Normal memory
+    CPU MPU: Attribute: Attribute 1: Normal Memory: Inner: Memory Attribute Indirection: Write-Through non-transient
+    CPU MPU: Attribute: Attribute 1: Normal Memory: Inner: Read: Allocate
+    CPU MPU: Attribute: Attribute 1: Normal Memory: Inner: Write: Allocate
+    CPU MPU: Attribute: Attribute 1: Normal Memory: Outer: Memory Attribute Indirection: Write-Through non-transient
+    CPU MPU: Attribute: Attribute 1: Normal Memory: Outer: Read: Allocate
+    CPU MPU: Attribute: Attribute 1: Normal Memory: Outer: Write: Allocate
+    CPU MPU: Attribute: Attribute 1: Device Memory: Device Type: Device-nGnRnE memory
+    CPU MPU: Attribute: Attribute 2: Memory Type: Normal memory
+    CPU MPU: Attribute: Attribute 2: Normal Memory: Inner: Memory Attribute Indirection: Write-Through non-transient
+    CPU MPU: Attribute: Attribute 2: Normal Memory: Inner: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 2: Normal Memory: Inner: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 2: Normal Memory: Outer: Memory Attribute Indirection: Write-Through non-transient
+    CPU MPU: Attribute: Attribute 2: Normal Memory: Outer: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 2: Normal Memory: Outer: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 2: Device Memory: Device Type: Device-nGnRnE memory
+    CPU MPU: Attribute: Attribute 3: Memory Type: Normal memory
+    CPU MPU: Attribute: Attribute 3: Normal Memory: Inner: Memory Attribute Indirection: Non-Cacheable
+    CPU MPU: Attribute: Attribute 3: Normal Memory: Inner: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 3: Normal Memory: Inner: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 3: Normal Memory: Outer: Memory Attribute Indirection: Non-Cacheable
+    CPU MPU: Attribute: Attribute 3: Normal Memory: Outer: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 3: Normal Memory: Outer: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 3: Device Memory: Device Type: Device-nGnRnE memory
+    CPU MPU: Attribute: Attribute 4: Memory Type: Device memory
+    CPU MPU: Attribute: Attribute 4: Normal Memory: Inner: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 4: Normal Memory: Inner: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 4: Normal Memory: Inner: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 4: Normal Memory: Outer: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 4: Normal Memory: Outer: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 4: Normal Memory: Outer: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 4: Device Memory: Device Type: Device-nGnRnE memory
+    CPU MPU: Attribute: Attribute 5: Memory Type: Device memory
+    CPU MPU: Attribute: Attribute 5: Normal Memory: Inner: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 5: Normal Memory: Inner: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 5: Normal Memory: Inner: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 5: Normal Memory: Outer: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 5: Normal Memory: Outer: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 5: Normal Memory: Outer: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 5: Device Memory: Device Type: Device-nGnRE memory
+    CPU MPU: Attribute: Attribute 6: Memory Type: Device memory
+    CPU MPU: Attribute: Attribute 6: Normal Memory: Inner: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 6: Normal Memory: Inner: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 6: Normal Memory: Inner: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 6: Normal Memory: Outer: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 6: Normal Memory: Outer: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 6: Normal Memory: Outer: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 6: Device Memory: Device Type: Device-nGRE memory
+    CPU MPU: Attribute: Attribute 7: Memory Type: Device memory
+    CPU MPU: Attribute: Attribute 7: Normal Memory: Inner: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 7: Normal Memory: Inner: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 7: Normal Memory: Inner: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 7: Normal Memory: Outer: Memory Attribute Indirection: Write-Through transient
+    CPU MPU: Attribute: Attribute 7: Normal Memory: Outer: Read: Do not allocate
+    CPU MPU: Attribute: Attribute 7: Normal Memory: Outer: Write: Do not allocate
+    CPU MPU: Attribute: Attribute 7: Device Memory: Device Type: Device-GRE memory
+    CPU MPU: Region: Region 00: Name: ATCM
+    CPU MPU: Region: Region 00: Base: 0x00000000
+    CPU MPU: Region: Region 00: Limit: 0x0001FFFF
+    CPU MPU: Region: Region 00: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 00: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 00: Execute never: Execute Enable
+    CPU MPU: Region: Region 00: Attribute Index: Attribute 3
+    CPU MPU: Region: Region 00: Region enable: Enabled
+    CPU MPU: Region: Region 01: Name: BTCM
+    CPU MPU: Region: Region 01: Base: 0x00100000
+    CPU MPU: Region: Region 01: Limit: 0x0011FFFF
+    CPU MPU: Region: Region 01: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 01: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 01: Execute never: Execute Enable
+    CPU MPU: Region: Region 01: Attribute Index: Attribute 3
+    CPU MPU: Region: Region 01: Region enable: Enabled
+    CPU MPU: Region: Region 02: Name: System RAM
+    CPU MPU: Region: Region 02: Base: 0x10000000
+    CPU MPU: Region: Region 02: Limit: 0x1017FFFF
+    CPU MPU: Region: Region 02: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 02: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 02: Execute never: Execute Enable
+    CPU MPU: Region: Region 02: Attribute Index: Attribute 1
+    CPU MPU: Region: Region 02: Region enable: Enabled
+    CPU MPU: Region: Region 03: Name: Mirror area of System RAM
+    CPU MPU: Region: Region 03: Base: 0x30000000
+    CPU MPU: Region: Region 03: Limit: 0x3017FFFF
+    CPU MPU: Region: Region 03: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 03: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 03: Execute never: Execute Enable
+    CPU MPU: Region: Region 03: Attribute Index: Attribute 3
+    CPU MPU: Region: Region 03: Region enable: Enabled
+    CPU MPU: Region: Region 04: Name: Mirror area of external address space
+    CPU MPU: Region: Region 04: Base: 0x40000000
+    CPU MPU: Region: Region 04: Limit: 0x5FFFFFFF
+    CPU MPU: Region: Region 04: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 04: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 04: Execute never: Execute Enable
+    CPU MPU: Region: Region 04: Attribute Index: Attribute 3
+    CPU MPU: Region: Region 04: Region enable: Enabled
+    CPU MPU: Region: Region 05: Name: External address space
+    CPU MPU: Region: Region 05: Base: 0x60000000
+    CPU MPU: Region: Region 05: Limit: 0x7FFFFFFF
+    CPU MPU: Region: Region 05: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 05: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 05: Execute never: Execute Enable
+    CPU MPU: Region: Region 05: Attribute Index: Attribute 1
+    CPU MPU: Region: Region 05: Region enable: Enabled
+    CPU MPU: Region: Region 06: Name: Non-Safety Peripheral
+    CPU MPU: Region: Region 06: Base: 0x80000000
+    CPU MPU: Region: Region 06: Limit: 0x80FFFFFF
+    CPU MPU: Region: Region 06: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 06: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 06: Execute never: Execute Never
+    CPU MPU: Region: Region 06: Attribute Index: Attribute 5
+    CPU MPU: Region: Region 06: Region enable: Enabled
+    CPU MPU: Region: Region 07: Name: Safety Peripheral
+    CPU MPU: Region: Region 07: Base: 0x81000000
+    CPU MPU: Region: Region 07: Limit: 0x81FFFFFF
+    CPU MPU: Region: Region 07: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 07: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 07: Execute never: Execute Never
+    CPU MPU: Region: Region 07: Attribute Index: Attribute 5
+    CPU MPU: Region: Region 07: Region enable: Enabled
+    CPU MPU: Region: Region 08: Name: LLPP Peripheral
+    CPU MPU: Region: Region 08: Base: 0x90000000
+    CPU MPU: Region: Region 08: Limit: 0x901FFFFF
+    CPU MPU: Region: Region 08: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 08: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 08: Execute never: Execute Never
+    CPU MPU: Region: Region 08: Attribute Index: Attribute 5
+    CPU MPU: Region: Region 08: Region enable: Enabled
+    CPU MPU: Region: Region 09: Name: GIC0
+    CPU MPU: Region: Region 09: Base: 0x94000000
+    CPU MPU: Region: Region 09: Limit: 0x941FFFFF
+    CPU MPU: Region: Region 09: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 09: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 09: Execute never: Execute Never
+    CPU MPU: Region: Region 09: Attribute Index: Attribute 4
+    CPU MPU: Region: Region 09: Region enable: Enabled
+    CPU MPU: Region: Region 10: Name: Debug Private
+    CPU MPU: Region: Region 10: Base: 0xC0000000
+    CPU MPU: Region: Region 10: Limit: 0xC0FFFFFF
+    CPU MPU: Region: Region 10: Sharebility field: Outer Shareable
+    CPU MPU: Region: Region 10: Access Permission(EL1 / EL0): ReadWrite / ReadWrite
+    CPU MPU: Region: Region 10: Execute never: Execute Never
+    CPU MPU: Region: Region 10: Attribute Index: Attribute 4
+    CPU MPU: Region: Region 10: Region enable: Enabled
+    CPU MPU: Region: Region 11: Name: Not Used
+    CPU MPU: Region: Region 11: Base: 0x00000000
+    CPU MPU: Region: Region 11: Limit: 0x00000000
+    CPU MPU: Region: Region 11: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 11: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 11: Execute never: Execute Enable
+    CPU MPU: Region: Region 11: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 11: Region enable: Disabled
+    CPU MPU: Region: Region 12: Name: Not Used
+    CPU MPU: Region: Region 12: Base: 0x00000000
+    CPU MPU: Region: Region 12: Limit: 0x00000000
+    CPU MPU: Region: Region 12: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 12: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 12: Execute never: Execute Enable
+    CPU MPU: Region: Region 12: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 12: Region enable: Disabled
+    CPU MPU: Region: Region 13: Name: Not Used
+    CPU MPU: Region: Region 13: Base: 0x00000000
+    CPU MPU: Region: Region 13: Limit: 0x00000000
+    CPU MPU: Region: Region 13: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 13: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 13: Execute never: Execute Enable
+    CPU MPU: Region: Region 13: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 13: Region enable: Disabled
+    CPU MPU: Region: Region 14: Name: Not Used
+    CPU MPU: Region: Region 14: Base: 0x00000000
+    CPU MPU: Region: Region 14: Limit: 0x00000000
+    CPU MPU: Region: Region 14: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 14: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 14: Execute never: Execute Enable
+    CPU MPU: Region: Region 14: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 14: Region enable: Disabled
+    CPU MPU: Region: Region 15: Name: Not Used
+    CPU MPU: Region: Region 15: Base: 0x00000000
+    CPU MPU: Region: Region 15: Limit: 0x00000000
+    CPU MPU: Region: Region 15: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 15: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 15: Execute never: Execute Enable
+    CPU MPU: Region: Region 15: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 15: Region enable: Disabled
+    CPU MPU: Region: Region 16: Name: Not Used
+    CPU MPU: Region: Region 16: Base: 0x00000000
+    CPU MPU: Region: Region 16: Limit: 0x00000000
+    CPU MPU: Region: Region 16: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 16: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 16: Execute never: Execute Enable
+    CPU MPU: Region: Region 16: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 16: Region enable: Disabled
+    CPU MPU: Region: Region 17: Name: Not Used
+    CPU MPU: Region: Region 17: Base: 0x00000000
+    CPU MPU: Region: Region 17: Limit: 0x00000000
+    CPU MPU: Region: Region 17: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 17: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 17: Execute never: Execute Enable
+    CPU MPU: Region: Region 17: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 17: Region enable: Disabled
+    CPU MPU: Region: Region 18: Name: Not Used
+    CPU MPU: Region: Region 18: Base: 0x00000000
+    CPU MPU: Region: Region 18: Limit: 0x00000000
+    CPU MPU: Region: Region 18: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 18: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 18: Execute never: Execute Enable
+    CPU MPU: Region: Region 18: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 18: Region enable: Disabled
+    CPU MPU: Region: Region 19: Name: Not Used
+    CPU MPU: Region: Region 19: Base: 0x00000000
+    CPU MPU: Region: Region 19: Limit: 0x00000000
+    CPU MPU: Region: Region 19: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 19: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 19: Execute never: Execute Enable
+    CPU MPU: Region: Region 19: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 19: Region enable: Disabled
+    CPU MPU: Region: Region 20: Name: Not Used
+    CPU MPU: Region: Region 20: Base: 0x00000000
+    CPU MPU: Region: Region 20: Limit: 0x00000000
+    CPU MPU: Region: Region 20: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 20: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 20: Execute never: Execute Enable
+    CPU MPU: Region: Region 20: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 20: Region enable: Disabled
+    CPU MPU: Region: Region 21: Name: Not Used
+    CPU MPU: Region: Region 21: Base: 0x00000000
+    CPU MPU: Region: Region 21: Limit: 0x00000000
+    CPU MPU: Region: Region 21: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 21: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 21: Execute never: Execute Enable
+    CPU MPU: Region: Region 21: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 21: Region enable: Disabled
+    CPU MPU: Region: Region 22: Name: Not Used
+    CPU MPU: Region: Region 22: Base: 0x00000000
+    CPU MPU: Region: Region 22: Limit: 0x00000000
+    CPU MPU: Region: Region 22: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 22: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 22: Execute never: Execute Enable
+    CPU MPU: Region: Region 22: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 22: Region enable: Disabled
+    CPU MPU: Region: Region 23: Name: Not Used
+    CPU MPU: Region: Region 23: Base: 0x00000000
+    CPU MPU: Region: Region 23: Limit: 0x00000000
+    CPU MPU: Region: Region 23: Sharebility field: Non-shareable
+    CPU MPU: Region: Region 23: Access Permission(EL1 / EL0): ReadWrite / None
+    CPU MPU: Region: Region 23: Execute never: Execute Enable
+    CPU MPU: Region: Region 23: Attribute Index: Attribute 0
+    CPU MPU: Region: Region 23: Region enable: Disabled
+    CPU MPU: Background Region: Disabled
+    CPU MPU: Instruction Cache: Enabled
+    CPU MPU: Data Cache: Enabled
+    
+  RZN2L
+    stack size (bytes): FIQ stack size: 0x400
+    stack size (bytes): IRQ stack size: 0x400
+    stack size (bytes): ABT stack size: 0x400
+    stack size (bytes): UND stack size: 0x400
+    stack size (bytes): SYS stack size: 0x400
+    stack size (bytes): SVC stack size: 0x400
+    Heap size (bytes): 0x2000
+    C Runtime Initialization : Enabled
+    TFU Mathlib: Enabled
+    
+  RZN2L Family
+    
+  RZN Common
+    MCU Vcc (mV): 3300
+    Parameter checking: Disabled
+    Assert Failures: Return FSP_ERR_ASSERTION
+    Error Log: No Error Log
+    Soft Reset: Disabled
+    Port Protect: Enabled
+    Early BSP Initialization : Disabled
+    Multiplex Interrupt: Disabled
+    
+  Clocks
+    LOCO Enabled
+    PLL1 is initial state
+    Ethernet Clock src: Main clock oscillator
+    CLMA0 Enabled
+    CLMA0 error not mask
+    CLMA3 error not mask
+    CLMA1 error mask
+    CLMA3 Enabled
+    CLMA1 Enabled
+    CLMA2 Enabled
+    CLMA0 CMPL 1
+    CLMA1 CMPL 1
+    CLMA2 CMPL 1
+    CLMA3 CMPL 1
+    Alternative clock: LOCO
+    CLMA0 CMPH 1023
+    CLMA1 CMPH 1023
+    CLMA2 CMPH 1023
+    CLMA3 CMPH 1023
+    ICLK 200MHz
+    CPU0CLK Mulx2
+    CKIO Div/4
+    SCI0ASYNCCLK: 96MHz
+    SCI1ASYNCCLK: 96MHz
+    SCI2ASYNCCLK: 96MHz
+    SCI3ASYNCCLK: 96MHz
+    SCI4ASYNCCLK: 96MHz
+    SCI5ASYNCCLK: 96MHz
+    SPI0ASYNCCLK: 96MHz
+    SPI1ASYNCCLK: 96MHz
+    SPI2ASYNCCLK: 96MHz
+    SPI3ASYNCCLK: 96MHz
+    PCLKCAN 40MHz
+    XSPI_CLK0 12.5MHz
+    XSPI_CLK1 12.5MHz
+    
+  Pin Configurations
+    RSK+RZN2L -> g_bsp_pin_cfg
+      AN000 B13 SYSTEM_AN000 - - - - - - - - I "Read only" - 
+      AN001 C12 SYSTEM_AN001 - - - - - - - - I "Read only" - 
+      AN002 B14 SYSTEM_AN002 - - - - - - - - I "Read only" - 
+      AN003 C13 SYSTEM_AN003 - - - - - - - - I "Read only" - 
+      AN100 B12 SYSTEM_AN100 - - - - - - - - I "Read only" - 
+      AN101 A14 SYSTEM_AN101 - - - - - - - - I "Read only" - 
+      AN102 B11 SYSTEM_AN102 - - - - - - - - I "Read only" - 
+      AN103 A13 SYSTEM_AN103 - - - - - - - - I "Read only" - 
+      AN104 A12 SYSTEM_AN104 - - - - - - - - I "Read only" - 
+      AN105 B10 SYSTEM_AN105 - - - - - - - - I "Read only" - 
+      AN106 A11 SYSTEM_AN106 - - - - - - - - I "Read only" - 
+      AN107 C9 SYSTEM_AN107 - - - - - - - - I "Read only" - 
+      AVCC18_TSU C14 SYSTEM_AVCC18_TSU - - - - - - - - I "Read only" - 
+      AVCC18_USB P10 SYSTEM_AVCC18_USB - - - - - - - - I "Read only" - 
+      AVCC18_USB R10 SYSTEM_AVCC18_USB - - - - - - - - I "Read only" - 
+      BSCANP G2 SYSTEM_BSCANP - - - - - - - - I "Read only" - 
+      EXTAL R7 CGC_EXTAL - - - - - - - - I "Read only" - 
+      EXTCLKIN R6 CGC_EXTCLKIN - - - - - - - - I "Read only" - 
+      MDX P5 SYSTEM_MDX - - - - - - - - IO "Read only" - 
+      P00_0 C4 - ETH2_RXD3 - - Disabled - - "BSC: D15; ETHER_ETH2: ETH2_RXD3; PHOSTIF: HD15; SCI2: DE2; SCI2: SCK2" - None - - 
+      P00_1 D5 - ETH2_RXDV - - Disabled - - "BSC: A13; ETHER_ETH2: ETH2_RXDV_CRSDV_RXCTL; IRQ: IRQ0; MTU35: MTIC5U; SCI2: RXD_MISO2; SCI2: SCL2" - None - - 
+      P00_2 A3 - ETH2_TXEN - - Disabled - - "BSC: RD#; ETHER_ETH2: ETH2_TXEN_TXCTL; MTU35: MTIC5V; SCI2: SDA2; SCI2: TXD_MOSI2; USB_HS: USB_OVRCUR" - None - - 
+      P00_3 B3 - ETH2_REFCLK - - Disabled - - "BSC: RD_WR#; ETHER_ETH2: ETH2_REFCLK; ETHER_ETH2: ETH2_RMII2_REFCLK; IRQ: IRQ1; MTU35: MTIC5W; SCI2: CTS_RTS_SS2#" - None - - 
+      P00_4 A4 - - - - Disabled - - "BSC: WAIT#; DSMIF0: MCLK0; ETHER_ETH2: ETH2_RXER; GPT0: GTIOC0A; IRQ: IRQ13; MTU33: MTIOC3A; PHOSTIF: HWAIT#" - None - - 
+      P00_5 B4 - ETH2_LINK - - Disabled - - "BSC: CS0#; DSMIF0: MDAT0; ETHER_ESC: ESC_PHYLINK0; ETHER_ESC: ESC_PHYLINK2; ETHER_ETHSW: ETHSW_PHYLINK0; ETHER_ETHSW: ETHSW_PHYLINK2; GPT0: GTIOC0B; MTU33: MTIOC3C" - None - - 
+      P00_6 C3 - ETH2_TXCLK - - Disabled - - "BSC: CS5#; ETHER_ETH2: ETH2_TXCLK_TXC; GPT1: GTIOC1A; MTU33: MTIOC3B" - None - - 
+      P00_7 D4 - - - - Disabled - - "BSC: RAS#; GPT2: GTIOC2A; IRQ: IRQ13; MTU34: MTIOC4A" - None - - 
+      P01_0 A2 - - - - Disabled - - "BSC: CAS#; DSMIF1: MCLK1; ETHER_ESC: ESC_MDIO; ETHER_ETHSW: ETHSW_MDIO; ETHER_GMAC: GMAC_MDIO; GPT3: GTIOC3A; MTU34: MTIOC4C; SCI2: CTS2#" - None - - 
+      P01_1 D3 - - - - Disabled - - "BSC: CKE; DSMIF1: MDAT1; ETHER_ESC: ESC_MDC; ETHER_ETHSW: ETHSW_MDC; ETHER_GMAC: GMAC_MDC; GPT1: GTIOC1B; MTU33: MTIOC3D; SCI2: DE2" - None - - 
+      P01_2 B2 - ETH2_TXD3 - - Disabled - - "BSC: CS2#; ETHER_ETH2: ETH2_TXD3; GPT2: GTIOC2B; IRQ: IRQ2; MTU34: MTIOC4B" - None - - 
+      P01_3 C2 - ETH2_TXD2 - - Disabled - - "BSC: AH#; ETHER_ETH2: ETH2_TXD2; GPT3: GTIOC3B; MTU34: MTIOC4D" - None - - 
+      P01_4 E4 - ETH2_TXD1 - - Disabled - - "BSC: WE1#_DQMLU; ETHER_ETH2: ETH2_TXD1; IRQ: IRQ3; MTU_POE3: POE0#" - None - - 
+      P01_5 B1 - ETH2_TXD0 - - Disabled - - "BSC: WE0#_DQMLL; ETHER_ETH2: ETH2_TXD0" - None - - 
+      P01_6 D2 - - - - Disabled - - "BSC: A20; CANFD1: CANTXDP1; ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_GMAC: GMAC_PTPTRG1; GPT9: GTIOC9A; MTU31: MTIOC1A; PHOSTIF: HA20; SCI1: CTS1#; TRACE: TRACEDATA0" - None - - 
+      P01_7 C1 CANFD0_CANRX0 CAN_RX Middle - "Peripheral mode" - - "ADC0: ADTRG0#; BSC: A19; CANFD0: CANRX0; ETHER_ETHSW: ETHSW_LPI1; GPT9: GTIOC9B; MTU31: MTIOC1B; PHOSTIF: HA19; SCI1: SCK1; SPI3: SPI_RSPCK3; TRACE: TRACEDATA1" - I - - 
+      P02_0 E3 - - - - Disabled - - "BSC: A18; CANFD1: CANTX1; ETHER_ETHSW: ETHSW_LPI2; GPT: GTADSML0; IRQ: IRQ4; PHOSTIF: HA18; SCI1: RXD_MISO1; SCI1: SCL1; SPI3: SPI_MISO3; TRACE: TRACEDATA2; USB_HS: USB_OTGID" - None - - 
+      P02_1 D1 - - - - Disabled - - "BSC: A17; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT1; PHOSTIF: HA17; SCI1: DE1" - None - - 
+      P02_2 F3 CANFD0_CANTX0 CAN_TX Middle - "Peripheral mode" - - "BSC: A16; CANFD0: CANTX0; ETHER_ETHSW: ETHSW_TDMAOUT0; GPT10: GTIOC10A; IRQ: IRQ14; MTU32: MTIOC2A; MTU_POE3: POE10#; PHOSTIF: HA16; RTC: RTCAT1HZ; SCI1: SDA1; SCI1: TXD_MOSI1; SPI3: SPI_MOSI3" - O - - 
+      P02_3 E1 - - - - Disabled - - "BSC: A15; BSC: AH#; CANFD1: CANRX1; ETHER_ETHSW: ETHSW_TDMAOUT1; GPT10: GTIOC10B; IRQ: IRQ15; MTU32: MTIOC2B; MTU_POE3: POE11#; PHOSTIF: HA15; SCI1: CTS_RTS_SS1#; SPI3: SPI_SSL30" - None - - 
+      P02_4 F4 JTAG/SWD_TDO TDO High - "Peripheral mode" - - "BSC: WE0#_DQMLL; JTAG/SWD: TDO; SCI1: DE1; SPI3: SPI_SSL33" - O - - 
+      P02_5 F2 JTAG/SWD_TDI TDI Low - "Peripheral mode" - - "BSC: WE1#_DQMLU; ETHER_ETHSW: ETHSW_TDMAOUT3; JTAG/SWD: TDI; SCI5: SCK5; SPI3: SPI_SSL31" - I - - 
+      P02_6 F5 JTAG/SWD_TMS_SWDIO TMS High - "Peripheral mode" - - "JTAG/SWD: TMS_SWDIO; SCI5: RXD_MISO5; SCI5: SCL5" - IO - - 
+      P02_7 F1 JTAG/SWD_TCK_SWCLK TCK Low - "Peripheral mode" - - "JTAG/SWD: TCK_SWCLK; SCI5: SDA5; SCI5: TXD_MOSI5" - I - - 
+      P03_0 G3 GPIO ETH_LED4 Low - "Output mode (Low & Not Into Input)" - - "BSC: A14; BSC: CS5#; CANFD1: CANTXDP1; GPT: GTADSML1; IRQ: IRQ14; PHOSTIF: HA14; SCI2: SCK2; SPI3: SPI_SSL32; TRACE: TRACEDATA3" - IO - - 
+      P03_5 G1 - - - - Disabled - - "BSC: A12; DSMIF2: MCLK2; ETHER_ETH2: ETH2_CRS; GPT4: GTIOC4A; IRQ: IRQ5; MTU33: MTIOC3A; PHOSTIF: HA12; SCI2: RXD_MISO2; SCI2: SCL2" - None - - 
+      P03_6 G4 - - - - Disabled - - "BSC: A11; DSMIF2: MDAT2; ETHER_ETH2: ETH2_COL; GPT4: GTIOC4B; IRQ: IRQ8; MTU33: MTIOC3B; PHOSTIF: HA11; SCI2: SDA2; SCI2: TXD_MOSI2; SPI1: SPI_SSL13; TRACE: TRACEDATA4" - None - - 
+      P03_7 G5 - - - - Disabled - - "BSC: A10; ETHER_ETH2: ETH2_TXER; GPT5: GTIOC5A; IRQ: IRQ9; MTU33: MTIOC3C; PHOSTIF: HA10; SCI3: SCK3; TRACE: TRACEDATA5" - None - - 
+      P04_0 H1 - - - - Disabled - - "BSC: A9; GPT5: GTIOC5B; MTU33: MTIOC3D; PHOSTIF: HA9; SCI3: RXD_MISO3; SCI3: SCL3; TRACE: TRACEDATA6" - None - - 
+      P04_1 H2 GPIO LED_RED1 Low - "Output mode (Low & Not Into Input)" - - "BSC: CKIO; IIC2: IIC_SDA2; PHOSTIF: HCKIO; SCI3: SDA3; SCI3: TXD_MOSI3; SPI0: SPI_MOSI0" - IO - - 
+      P04_4 H4 GPIO ETH_LED6 Low - "Output mode (Low & Not Into Input)" - - "BSC: A8; GPT: GTADSMP0; IRQ: IRQ10; MTU_POE3: POE10#; PHOSTIF: HA8; SCI3: CTS3#; SPI1: SPI_RSPCK1; TRACE: TRACEDATA7" - IO - - 
+      P04_5 H3 - - - - Disabled - - "BSC: A7; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT0; PHOSTIF: HA7; SCI3: DE3" - None - - 
+      P04_6 H5 - - - - Disabled - - "BSC: A6; DMAC: DACK; ETHER_ETH1: ETH1_TXER; PHOSTIF: HA6; RTC: RTCAT1HZ" - None - - 
+      P04_7 J1 - - - - Disabled - - "BSC: A5; ETHER_ETH0: ETH0_TXER; ETHER_ETH2: ETH2_TXER; PHOSTIF: HA5; SPI2: SPI_SSL21" - None - - 
+      P05_0 J5 GPIO ETH_LED7 Low - "Output mode (Low & Not Into Input)" - - "BSC: A4; CANFD0: CANTXDP0; CMTW0: CMTW0_TOC0; DSMIF3: MCLK3; ETHER_ETH1: ETH1_CRS; GPT6: GTIOC6A; IRQ: IRQ12; MTU34: MTIOC4A; PHOSTIF: HA4; SCI5: CTS_RTS_SS5#; USB_HS: USB_VBUSEN" - IO - - 
+      P05_1 J2 - - - - Disabled - - "BSC: A3; CANFD0: CANRXDP0; CMTW0: CMTW0_TIC1; DSMIF3: MDAT3; ETHER_ETH1: ETH1_COL; GPT6: GTIOC6B; IRQ: IRQ13; MTU34: MTIOC4B; PHOSTIF: HA3; SCI5: CTS5#; USB_HS: USB_EXICEN" - None - - 
+      P05_2 J4 IIC1_IIC_SCL1 SCL Middle - "Peripheral mode" - - "BSC: A2; CANFD0: CANRX0; CMTW0: CMTW0_TOC0; DMAC: DREQ; ETHER_ETH0: ETH0_CRS; GPT7: GTIOC7A; GPT_POEG: GTETRGSA; IIC1: IIC_SCL1; IRQ: IRQ14; MTU34: MTIOC4C; PHOSTIF: HA2; SCI5: DE5; USB_HS: USB_VBUSEN" - IO - - 
+      P05_3 J3 IIC1_IIC_SDA1 SDA Middle - "Peripheral mode" - - "BSC: A1; CANFD0: CANTX0; CMTW0: CMTW0_TIC0; ETHER_ETH0: ETH0_COL; GPT7: GTIOC7B; GPT_POEG: GTETRGSB; IIC1: IIC_SDA1; IRQ: IRQ15; MTU34: MTIOC4D; MTU_POE3: POE11#; PHOSTIF: HA1; SCI4: SCK4; USB_HS: USB_EXICEN" - IO - - 
+      P05_4 K1 GPIO SW2 - - "Input mode" - - "BSC: A0; CANFD0: CANTXDP0; DMAC: DACK; ETHER_ETHSW: ETHSW_LPI0; GPT14: GTIOC14A; IRQ: IRQ12; PHOSTIF: HA0; SCI4: RXD_MISO4; SCI4: SCL4; SPI0: SPI_SSL00; USB_HS: USB_OVRCUR" - IO - - 
+      P05_5 K2 - ETH1_LINK - - Disabled - - "CMTW0: CMTW0_TOC1; ETHER_ESC: ESC_PHYLINK1; ETHER_ETHSW: ETHSW_PHYLINK1; GPT14: GTIOC14B; SPI2: SPI_RSPCK2" - None - - 
+      P05_6 K3 - - - - Disabled - - "CMTW1: CMTW1_TIC0; ETHER_ETH1: ETH1_RXER; GPT15: GTIOC15A; IRQ: IRQ12; SPI2: SPI_SSL22" - None - - 
+      P05_7 M1 - ETH1_TXD2 - - Disabled - - "CMTW1: CMTW1_TOC1; ETHER_ETH1: ETH1_TXD2; GPT15: GTIOC15B; SCI4: SDA4; SCI4: TXD_MOSI4; SPI2: SPI_SSL23" - None - - 
+      P06_0 L2 - ETH1_TXD3 - - Disabled - - "CANFD1: CANRX1; CMTW1: CMTW1_TOC0; ETHER_ETH1: ETH1_TXD3; GPT16: GTIOC16A; SCI4: CTS_RTS_SS4#; SPI2: SPI_SSL23" - None - - 
+      P06_1 L3 - ETH1_REFCLK - - Disabled - - "CANFD1: CANTX1; ETHER_ETH1: ETH1_REFCLK; ETHER_ETH1: ETH1_RMII1_REFCLK; GPT16: GTIOC16B; SCI4: CTS4#; SPI2: SPI_SSL22" - None - - 
+      P06_2 M2 - ETH1_TXD1 - - Disabled - - "CANFD1: CANRXDP1; ETHER_ETH1: ETH1_TXD1; GPT17: GTIOC17A" - None - - 
+      P06_3 K4 - ETH1_TXD0 - - Disabled - - "CANFD1: CANTXDP1; CMTW1: CMTW1_TIC1; ETHER_ETH1: ETH1_TXD0; GPT17: GTIOC17B; SCI4: DE4; SPI1: SPI_MISO1" - None - - 
+      P06_4 N1 - ETH1_TXCLK - - Disabled - - "ETHER_ETH1: ETH1_TXCLK_TXC; GPT11: GTIOC11A; SPI1: SPI_MOSI1" - None - - 
+      P06_5 N2 - ETH1_TXEN - - Disabled - - "ETHER_ETH1: ETH1_TXEN_TXCTL; GPT11: GTIOC11B" - None - - 
+      P06_6 L4 - ETH1_RXD0 - - Disabled - - "ETHER_ETH1: ETH1_RXD0; GPT12: GTIOC12A; SPI1: SPI_SSL10" - None - - 
+      P06_7 M3 - ETH1_RXD1 - - Disabled - - "ETHER_ETH1: ETH1_RXD1; GPT12: GTIOC12B; SPI1: SPI_SSL11" - None - - 
+      P07_0 P1 - ETH1_RXD2 - - Disabled - - "ETHER_ETH1: ETH1_RXD2; GPT13: GTIOC13A" - None - - 
+      P07_1 N3 - ETH1_RXD3 - - Disabled - - "ETHER_ETH1: ETH1_RXD3; GPT13: GTIOC13B" - None - - 
+      P07_2 P2 - ETH1_RXDV - - Disabled - - "ETHER_ETH1: ETH1_RXDV_CRSDV_RXCTL" - None - - 
+      P07_3 M4 - ETH1_RXCLK - - Disabled - - "ETHER_ETH1: ETH1_RXCLK_REF_CLK_RXC" - None - - 
+      P07_4 R2 USB_HS_USB_VBUSIN USB_VBUSIN - - "Peripheral mode" - - "ADC0: ADTRG0#; IRQ: IRQ1; USB_HS: USB_VBUSIN" - I - - 
+      P08_4 N4 - ETH0_RXD3 - - Disabled - - "ETHER_ETH0: ETH0_RXD3; MTU36: MTIOC6A" - None - - 
+      P08_5 P3 - ETH0_RXDV - - Disabled - - "ETHER_ETH0: ETH0_RXDV_CRSDV_RXCTL; MTU36: MTIOC6B" - None - - 
+      P08_6 M5 - ETH0_RXCLK - - Disabled - - "ETHER_ETH0: ETH0_RXCLK_REF_CLK_RXC; MTU36: MTIOC6C" - None - - 
+      P08_7 N5 ETHER_GMAC_GMAC_MDC ETH_MDC Low - "Peripheral mode" - - "ETHER_ESC: ESC_MDC; ETHER_ETHSW: ETHSW_MDC; ETHER_GMAC: GMAC_MDC; MTU36: MTIOC6D" - O - - 
+      P09_0 P4 ETHER_GMAC_GMAC_MDIO ETH_MDIO Low - "Peripheral mode" - - "ETHER_ESC: ESC_MDIO; ETHER_ETHSW: ETHSW_MDIO; ETHER_GMAC: GMAC_MDIO; MTU37: MTIOC7A" - IO - - 
+      P09_1 R3 - ETH0_REFCLK - - Disabled - - "ETHER_ETH0: ETH0_REFCLK; ETHER_ETH0: ETH0_RMII0_REFCLK; MTU37: MTIOC7B" - None - - 
+      P09_2 N6 - - - - Disabled - - "ETHER_ETH0: ETH0_RXER; IRQ: IRQ0; MTU37: MTIOC7C" - None - - 
+      P09_3 R4 - ETH0_TXD3 - - Disabled - - "ETHER_ETH0: ETH0_TXD3; MTU37: MTIOC7D" - None - - 
+      P09_4 M6 - ETH0_TXD2 - - Disabled - - "ETHER_ETH0: ETH0_TXD2" - None - - 
+      P09_5 N7 - ETH0_TXD1 - - Disabled - - "ETHER_ETH0: ETH0_TXD1" - None - - 
+      P09_6 M7 - ETH0_TXD0 - - Disabled - - "ETHER_ETH0: ETH0_TXD0" - None - - 
+      P09_7 L7 - ETH0_TXCLK - - Disabled - - "ETHER_ETH0: ETH0_TXCLK_TXC" - None - - 
+      P10_0 N8 - ETH0_TXEN - - Disabled - - "ETHER_ETH0: ETH0_TXEN_TXCTL" - None - - 
+      P10_1 M8 - ETH0_RXD0 - - Disabled - - "ETHER_ETH0: ETH0_RXD0" - None - - 
+      P10_2 L8 - ETH0_RXD1 - - Disabled - - "ETHER_ETH0: ETH0_RXD1" - None - - 
+      P10_3 L9 - ETH0_RXD2 - - Disabled - - "ETHER_ETH0: ETH0_RXD2; RTC: RTCAT1HZ" - None - - 
+      P10_4 M9 - ETH0_LINK - - Disabled - - "ETHER_ESC: ESC_PHYLINK0; ETHER_ETHSW: ETHSW_PHYLINK0; IRQ: IRQ11" - None - - 
+      P12_4 N11 - - - - Disabled - - "BSC: D15; ETHER_ETH1: ETH1_CRS; GPT8: GTIOC8B; MBXSEM: MBX_HINT#; MTU38: MTIOC8B; SPI0: SPI_SSL01; TRACE: TRACEDATA0" - None - - 
+      P13_2 L10 IIC0_IIC_SCL0 EEPROM_SCL Middle - "Peripheral mode" - - "BSC: A13; BSC: D9; DSMIF4: MCLK4; ETHER_ESC: ESC_I2CCLK; ETHER_ETHSW: ETHSW_PTPOUT2; GPT10: GTIOC10A; IIC0: IIC_SCL0; IRQ: IRQ5; MTU30: MTIOC0A; MTU_POE3: POE8#; SCI1: CTS_RTS_SS1#; SPI0: SPI_MISO0; TRACE: TRACEDATA6" - IO - - 
+      P13_3 N12 IIC0_IIC_SDA0 EEPROM_SDA Middle - "Peripheral mode" - - "BSC: D8; BSC: RD#; CMTW1: CMTW1_TOC0; DSMIF4: MDAT4; ETHER_ESC: ESC_I2CDATA; ETHER_ETHSW: ETHSW_PTPOUT3; GPT10: GTIOC10B; IIC0: IIC_SDA0; MTU30: MTIOC0B; MTU30: MTIOC0C; SCI1: CTS1#; SPI0: SPI_RSPCK0; TRACE: TRACEDATA7" - IO - - 
+      P13_4 L12 GPIO ESC_RESETOUT Low - "Output mode (Low & Not Into Input)" - - "BSC: A0; ETHER_ESC: ESC_RESETOUT#; GPT8: GTIOC8B; MTU30: MTIOC0D" - IO - - 
+      P13_5 M12 GPIO SW3_Pin2 - - "Input mode" - - "ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_GMAC: GMAC_PTPTRG0; IIC2: IIC_SCL2; MTU3: MTCLKA; SPI1: SPI_RSPCK1; XSPI0: XSPI0_WP1#" - IO - - 
+      P13_6 M13 GPIO SW3_Pin1 - - "Input mode" - - "ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT0; MTU3: MTCLKB; XSPI0: XSPI0_WP0#" - IO - - 
+      P13_7 M11 GPIO SW3_Pin4 - - "Input mode" - - "ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_GMAC: GMAC_PTPTRG1; MBXSEM: MBX_HINT#; MTU3: MTCLKC; XSPI0: XSPI0_ECS1#" - IO - - 
+      P14_0 L13 GPIO SW3_Pin3 - - "Input mode" - - "ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT1; MTU3: MTCLKD; XSPI0: XSPI0_INT0#" - IO - - 
+      P14_1 L14 - - - - Disabled - - "ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_ETH1: ETH1_COL; ETHER_GMAC: GMAC_PTPTRG1; GPT8: GTIOC8A; MTU38: MTIOC8A; SHOSTIF: HSPI_IO0; XSPI0: XSPI0_INT1#" - None - - 
+      P14_2 K12 XSPI0_XSPI0_ECS0# XSPI0_ECS Low - "Peripheral mode" - - "ETHER_ETH0: ETH0_CRS; ETHER_ETH2: ETH2_CRS; GPT8: GTIOC8B; IRQ: IRQ6; MTU38: MTIOC8B; SHOSTIF: HSPI_CK; XSPI0: XSPI0_ECS0#" - I - - 
+      P14_3 M14 - - - - Disabled - - "ETHER_ETH0: ETH0_COL; ETHER_ETH2: ETH2_COL; MTU30: MTIOC0A; SHOSTIF: HSPI_IO1; XSPI0: XSPI0_RSTO1#" - None - - 
+      P14_4 J13 XSPI0_XSPI0_DS XSPI0_DS High - "Peripheral mode" - - "BSC: BS#; ETHER_ESC: ESC_IRQ; MTU30: MTIOC0B; PHOSTIF: HBS#; XSPI0: XSPI0_DS" - IO - - 
+      P14_5 J12 XSPI0_XSPI0_CKN XSPI0_CKN High - "Peripheral mode" - - "BSC: CS3#; MTU_POE3: POE8#; SHOSTIF: HSPI_INT#; XSPI0: XSPI0_CKN" - O - - 
+      P14_6 K13 XSPI0_XSPI0_CKP XSPI0_CKP High - "Peripheral mode" - - "BSC: A21; XSPI0: XSPI0_CKP" - O - - 
+      P14_7 M15 XSPI0_XSPI0_IO0 XSPI0_IO0 High - "Peripheral mode" - - "BSC: A22; BSC: BS#; SCI5: SCK5; SPI1: SPI_MISO1; XSPI0: XSPI0_IO0" - IO - - 
+      P15_0 L11 XSPI0_XSPI0_IO1 XSPI0_IO1 High - "Peripheral mode" - - "BSC: A23; BSC: CKE; SCI5: RXD_MISO5; SCI5: SCL5; SPI1: SPI_MOSI1; XSPI0: XSPI0_IO1" - IO - - 
+      P15_1 K14 XSPI0_XSPI0_IO2 XSPI0_IO2 High - "Peripheral mode" - - "BSC: A24; BSC: CAS#; MTU30: MTIOC0C; SCI5: SDA5; SCI5: TXD_MOSI5; SPI1: SPI_SSL10; XSPI0: XSPI0_IO2" - IO - - 
+      P15_2 K15 XSPI0_XSPI0_IO3 XSPI0_IO3 High - "Peripheral mode" - - "BSC: A25; BSC: RAS#; MTU30: MTIOC0D; SCI5: CTS_RTS_SS5#; SPI1: SPI_SSL11; XSPI0: XSPI0_IO3" - IO - - 
+      P15_3 K11 XSPI0_XSPI0_IO4 XSPI0_IO4 High - "Peripheral mode" - - "BSC: D11; DSMIF1: MCLK1; MTU38: MTIOC8C; XSPI0: XSPI0_IO4" - IO - - 
+      P15_4 H13 XSPI0_XSPI0_IO5 XSPI0_IO5 High - "Peripheral mode" - - "BSC: D12; DSMIF1: MDAT1; MTU38: MTIOC8D; XSPI0: XSPI0_IO5" - IO - - 
+      P15_5 J14 XSPI0_XSPI0_IO6 XSPI0_IO6 High - "Peripheral mode" - - "BSC: D13; DSMIF2: MCLK2; XSPI0: XSPI0_IO6" - IO - - 
+      P15_6 H12 XSPI0_XSPI0_IO7 XSPI0_IO7 High - "Peripheral mode" - - "BSC: D14; DSMIF2: MDAT2; SPI1: SPI_SSL12; XSPI0: XSPI0_IO7" - IO - - 
+      P15_7 J15 XSPI0_XSPI0_CS0# OSPI_CS High - "Peripheral mode" - - "DMAC: TEND; SCI5: CTS5#; SPI1: SPI_SSL13; XSPI0: XSPI0_CS0#" - O - - 
+      P16_0 G13 XSPI0_XSPI0_CS1# ORAM_CS0 High - "Peripheral mode" - - "DSMIF3: MCLK3; ETHER_ETH0: ETH0_TXER; ETHER_ETH2: ETH2_REFCLK; SCI0: SDA0; SCI0: TXD_MOSI0; SHOSTIF: HSPI_CS#; SPI3: SPI_MOSI3; XSPI0: XSPI0_CS1#" - O - - 
+      P16_1 H11 XSPI0_XSPI0_RESET0# XSPI0_RESET0 Low - "Peripheral mode" - - "ADC0: ADTRG0#; BSC: CS2#; CMTW0: CMTW0_TOC1; DSMIF3: MDAT3; PHOSTIF: HCS1#; SCI0: RXD_MISO0; SCI0: SCL0; SPI3: SPI_MISO3; XSPI0: XSPI0_RESET0#" - O - - 
+      P16_2 H14 - - - - Disabled - - "IRQ: NMI; PHOSTIF: HERROUT#; SCI0: CTS0#; SHOSTIF: HSPI_IO2; SPI3: SPI_RSPCK3; USB_HS: USB_EXICEN; XSPI0: XSPI0_RESET1#" - None - - 
+      P16_3 G12 GPIO SW1 - - "Input mode" - - "BSC: CS3#; ETHER_ETH1: ETH1_CRS; ETHER_ETH1: ETH1_TXER; GPT: GTADSMP1; IRQ: IRQ7; SCI0: SCK0; SHOSTIF: HSPI_IO3; SPI3: SPI_SSL30; XSPI0: XSPI0_RSTO0#" - IO - - 
+      P16_5 H15 SCI0_TXD_MOSI0 UART_USB_TX High - "Peripheral mode" - - "BSC: A15; MTU35: MTIC5U; SCI0: SDA0; SCI0: TXD_MOSI0; SHOSTIF: HSPI_IO4" - IO - - 
+      P16_6 G11 SCI0_RXD_MISO0 UART_USB_RX High - "Peripheral mode" - - "BSC: CS0#; IRQ: IRQ8; MTU35: MTIC5V; PHOSTIF: HCS0#; SCI0: RXD_MISO0; SCI0: SCL0; SHOSTIF: HSPI_IO5" - IO - - 
+      P16_7 G14 - - - - Disabled - - "BSC: A13; MTU35: MTIC5W; PHOSTIF: HA13; SCI0: SCK0; XSPI1: XSPI1_IO0" - None - - 
+      P17_0 F12 - - - - Disabled - - "ETHER_ESC: ESC_IRQ; SCI0: CTS_RTS_SS0#; XSPI1: XSPI1_IO1" - None - - 
+      P17_3 F14 GPIO LED_RED2 Low - "Output mode (Low & Not Into Input)" - - "ADC1: ADTRG1#; DMAC: DREQ; GPT_POEG: GTETRGA; MTU_POE3: POE0#; SPI3: SPI_SSL31; TRACE: TRACECTL; XSPI1: XSPI1_IO2" - IO - - 
+      P17_4 F13 - - - - Disabled - - "DMAC: DACK; GPT0: GTIOC0A; GPT_POEG: GTETRGB; MTU33: MTIOC3C; SCI3: CTS3#; SPI3: SPI_SSL32; TRACE: TRACECLK; XSPI1: XSPI1_IO3" - None - - 
+      P17_5 F15 USB_HS_USB_OVRCUR USB_OVRCUR Low - "Peripheral mode" - - "DMAC: TEND; GPT0: GTIOC0B; GPT_POEG: GTETRGC; MTU33: MTIOC3A; USB_HS: USB_OVRCUR" - I - - 
+      P17_6 G15 - - - - Disabled - - "BSC: RD_WR#; GPT1: GTIOC1A; MTU33: MTIOC3B; PHOSTIF: HWRSTB#; SCI3: SCK3; XSPI1: XSPI1_DS" - None - - 
+      P17_7 E15 SCI3_RXD_MISO3 SCI_RXD High - "Peripheral mode" - - "BSC: RD#; DMAC: DACK; GPT2: GTIOC2A; GPT3: GTIOC3A; MTU34: MTIOC4A; MTU34: MTIOC4C; PHOSTIF: HRD#; SCI3: RXD_MISO3; SCI3: SCL3; XSPI1: XSPI1_CKP" - IO - - 
+      P18_0 E14 SCI3_TXD_MOSI3 SCI_TXD High - "Peripheral mode" - - "BSC: WE0#_DQMLL; GPT2: GTIOC2A; GPT3: GTIOC3A; MTU34: MTIOC4A; MTU34: MTIOC4C; PHOSTIF: HWR0#; SCI3: SDA3; SCI3: TXD_MOSI3; SHOSTIF: HSPI_IO6" - IO - - 
+      P18_1 D15 - - - - Disabled - - "ADC1: ADTRG1#; BSC: WE1#_DQMLU; GPT1: GTIOC1B; IRQ: IRQ10; MTU33: MTIOC3D; PHOSTIF: HWR1#; SCI3: CTS_RTS_SS3#; SHOSTIF: HSPI_IO7" - None - - 
+      P18_2 D14 GPIO LED_GREEN Low - "Output mode (Low & Not Into Input)" - - "BSC: BS#; ETHER_ETH1: ETH1_COL; GPT2: GTIOC2B; GPT3: GTIOC3B; IIC2: IIC_SDA2; MTU34: MTIOC4B; MTU34: MTIOC4D; SCI0: SCK0; XSPI1: XSPI1_CS0#" - IO - - 
+      P18_3 E13 - - - - Disabled - - "BSC: CKE; CANFD1: CANRXDP1; CMTW1: CMTW1_TIC1; ETHER_ETH2: ETH2_CRS; GPT2: GTIOC2B; GPT3: GTIOC3B; IRQ: IRQ0; MTU34: MTIOC4B; MTU34: MTIOC4D; XSPI1: XSPI1_IO4" - None - - 
+      P18_4 E12 SPI2_SPI_RSPCK2 SCK High - "Peripheral mode" - - "BSC: CAS#; CANFD0: CANTX0; ETHER_ETH1: ETH1_CRS; IRQ: IRQ1; MTU35: MTIC5U; SCI4: SDA4; SCI4: TXD_MOSI4; SPI2: SPI_RSPCK2; XSPI1: XSPI1_IO5" - IO - - 
+      P18_5 D13 SPI2_SPI_MOSI2 MOSI High - "Peripheral mode" - - "BSC: RAS#; CANFD0: CANRX0; ETHER_ETH2: ETH2_COL; MTU35: MTIC5V; SCI4: RXD_MISO4; SCI4: SCL4; SPI2: SPI_MOSI2; TRACE: TRACECTL; XSPI1: XSPI1_IO6" - IO - - 
+      P18_6 C15 SPI2_SPI_MISO2 MISO High - "Peripheral mode" - - "ADC0: ADTRG0#; ETHER_ETH1: ETH1_COL; IIC2: IIC_SCL2; IRQ: IRQ11; MTU35: MTIC5W; SCI4: DE4; SCI4: SCK4; SPI2: SPI_MISO2; TRACE: TRACECLK; XSPI1: XSPI1_IO7" - IO - - 
+      P19_0 B15 USB_HS_USB_VBUSEN USB_VBUSEN Low - "Peripheral mode" - - "USB_HS: USB_VBUSEN" - O - - 
+      P20_1 B9 - ETH_LED2_MDV0 - - Disabled - - "ETHER_ESC: ESC_LINKACT0; ETHER_ETHSW: ETHSW_PTPOUT3; ETHER_ETHSW: ETHSW_TDMAOUT0" - None - - 
+      P20_2 D8 - ETH_LED0_MDV1 - - Disabled - - "ETHER_ESC: ESC_LEDRUN; ETHER_ESC: ESC_LEDSTER; ETHER_ETHSW: ETHSW_PTPOUT2; ETHER_ETHSW: ETHSW_TDMAOUT1; SCI3: DE3" - None - - 
+      P20_3 D9 - ETH_LED1_MDV2 - - Disabled - - "ETHER_ESC: ESC_LEDERR; ETHER_ETHSW: ETHSW_PTPOUT1; ETHER_ETHSW: ETHSW_TDMAOUT2" - None - - 
+      P20_4 A9 - ETH_LED3_MDV3 - - Disabled - - "ETHER_ESC: ESC_LINKACT1; ETHER_ETHSW: ETHSW_PTPOUT0; ETHER_ETHSW: ETHSW_TDMAOUT3" - None - - 
+      P21_1 B8 SPI2_SPI_SSL20 CS High - "Peripheral mode" - - "BSC: D0; CMTW0: CMTW0_TIC0; DSMIF0: MCLK0; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; GPT14: GTIOC14A; IIC1: IIC_SCL1; MTU36: MTIOC6A; PHOSTIF: HD0; SCI5: SCK5; SHOSTIF: HSPI_INT#; SPI2: SPI_SSL20; TRACE: TRACEDATA0" - IO - - 
+      P21_2 C8 - - - - Disabled - - "BSC: D1; CMTW0: CMTW0_TIC1; DSMIF0: MDAT0; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; GPT14: GTIOC14B; IIC1: IIC_SDA1; MTU36: MTIOC6B; PHOSTIF: HD1; SCI5: RXD_MISO5; SCI5: SCL5; SPI2: SPI_MISO2; TRACE: TRACEDATA1" - None - - 
+      P21_3 A8 - - - - Disabled - - "BSC: D2; DSMIF1: MCLK1; GPT15: GTIOC15A; IRQ: NMI; MTU36: MTIOC6C; PHOSTIF: HD2; SCI5: SDA5; SCI5: TXD_MOSI5; SPI3: SPI_SSL33; TRACE: TRACEDATA2" - None - - 
+      P21_4 E7 - - - - Disabled - - "BSC: D3; DSMIF1: MDAT1; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT1; GPT15: GTIOC15B; MBXSEM: MBX_HINT#; MTU36: MTIOC6D; PHOSTIF: HD3; SCI5: CTS_RTS_SS5#; SPI0: SPI_SSL02; TRACE: TRACEDATA3" - None - - 
+      P21_5 C7 - - - - Disabled - - "ADC1: ADTRG1#; BSC: D4; CMTW1: CMTW1_TOC1; DSMIF2: MCLK2; GPT16: GTIOC16A; IRQ: IRQ6; MTU37: MTIOC7A; PHOSTIF: HD4; SCI5: CTS5#; SPI0: SPI_MISO0; TRACE: TRACEDATA4" - None - - 
+      P21_6 D7 - - - - Disabled - - "BSC: D5; DMAC: TEND; DSMIF2: MDAT2; GPT16: GTIOC16B; IRQ: IRQ9; MTU37: MTIOC7B; PHOSTIF: HD5; SCI0: CTS0#; TRACE: TRACEDATA5" - None - - 
+      P21_7 B7 - - - - Disabled - - "BSC: D6; DMAC: DREQ; DSMIF3: MCLK3; GPT17: GTIOC17A; IRQ: IRQ10; MTU37: MTIOC7C; PHOSTIF: HD6; SCI0: DE0; TRACE: TRACEDATA6" - None - - 
+      P22_0 A7 - - - - Disabled - - "BSC: D7; DSMIF3: MDAT3; GPT17: GTIOC17B; IRQ: IRQ15; MTU37: MTIOC7D; PHOSTIF: HD7; SCI5: DE5; TRACE: TRACEDATA7" - None - - 
+      P22_1 A6 GPIO ETH_LED5 Low - "Output mode (Low & Not Into Input)" - - "BSC: D8; ETHER_ESC: ESC_LINKACT2; GPT_POEG: GTETRGB; MTU_POE3: POE4#; PHOSTIF: HD8; SCI4: CTS_RTS_SS4#; TRACE: TRACECTL" - IO - - 
+      P22_2 C6 - - - - Disabled - - "BSC: D9; DSMIF1: MCLK1; GPT_POEG: GTETRGSA; IRQ: IRQ4; MTU38: MTIOC8C; PHOSTIF: HD9; SPI1: SPI_SSL12; TRACE: TRACECLK" - None - - 
+      P22_3 B6 GPIO LED_ORANGE Low - "Output mode (Low & Not Into Input)" - - "BSC: D10; GPT_POEG: GTETRGSB; MTU38: MTIOC8D; PHOSTIF: HD10; SCI5: RXD_MISO5; SCI5: SCL5" - IO - - 
+      P23_7 D6 - ETH2_RXD0 - - Disabled - - "BSC: BS#; BSC: D11; DSMIF4: MCLK4; ETHER_ETH2: ETH2_RXD0; GPT_POEG: GTETRGA; MTU30: MTIOC0A; PHOSTIF: HD11; SCI1: SCK1" - None - - 
+      P24_0 A5 - ETH2_RXD1 - - Disabled - - "BSC: CKE; BSC: D12; DMAC: DREQ; DSMIF4: MDAT4; ETHER_ETH2: ETH2_RXD1; GPT_POEG: GTETRGB; MTU30: MTIOC0B; PHOSTIF: HD12; SCI1: RXD_MISO1; SCI1: SCL1" - None - - 
+      P24_1 B5 - ETH2_RXCLK - - Disabled - - "BSC: CAS#; BSC: D13; DSMIF5: MCLK5; ETHER_ETH2: ETH2_RXCLK_REF_CLK_RXC; GPT_POEG: GTETRGC; MTU30: MTIOC0C; MTU_POE3: POE8#; PHOSTIF: HD13" - None - - 
+      P24_2 C5 - ETH2_RXD2 - - Disabled - - "BSC: D14; BSC: RAS#; DSMIF5: MDAT5; ETHER_ETH2: ETH2_RXD2; GPT_POEG: GTETRGD; MTU30: MTIOC0D; PHOSTIF: HD14; SCI1: SDA1; SCI1: TXD_MOSI1" - None - - 
+      RES# P6 SYSTEM_RES# - - - - - - - - I "Read only" - 
+      TRST# E2 SYSTEM_TRST# - - - - - - - - I "Read only" - 
+      USB_DM P13 SYSTEM_USB_DM - - - - - - - - IO "Read only" - 
+      USB_DP R13 SYSTEM_USB_DP - - - - - - - - IO "Read only" - 
+      USB_RREF P15 SYSTEM_USB_RREF - - - - - - - - I "Read only" - 
+      VCC1833_0 L6 SYSTEM_VCC1833_0 - - - - - - - - I "Read only" - 
+      VCC1833_1 K5 SYSTEM_VCC1833_1 - - - - - - - - I "Read only" - 
+      VCC1833_2 E5 SYSTEM_VCC1833_2 - - - - - - - - I "Read only" - 
+      VCC1833_3 J11 SYSTEM_VCC1833_3 - - - - - - - - I "Read only" - 
+      VCC1833_4 F11 SYSTEM_VCC1833_4 - - - - - - - - I "Read only" - 
+      VCC18_ADC0 E11 SYSTEM_VCC18_ADC0 - - - - - - - - I "Read only" - 
+      VCC18_ADC1 E9 SYSTEM_VCC18_ADC1 - - - - - - - - I "Read only" - 
+      VCC18_PLL0 P9 SYSTEM_VCC18_PLL0 - - - - - - - - I "Read only" - 
+      VCC18_PLL1 N9 SYSTEM_VCC18_PLL1 - - - - - - - - I "Read only" - 
+      VCC18_USB P11 SYSTEM_VCC18_USB - - - - - - - - I "Read only" - 
+      VCC33 E6 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33 E8 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33 M10 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33 L5 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33_USB R11 SYSTEM_VCC33_USB - - - - - - - - I "Read only" - 
+      VDD H10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD G10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F8 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F9 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD G6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD H6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD J6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K7 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K8 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD P7 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD J10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VREFH0 C11 SYSTEM_VREFH0 - - - - - - - - I "Read only" - 
+      VREFH1 C10 SYSTEM_VREFH1 - - - - - - - - I "Read only" - 
+      VSS A1 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R1 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS A10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R5 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS A15 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS F7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS G7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS G8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS G9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS N10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS H7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS N14 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS H8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS H9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS E10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS J7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS J8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS J9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS K9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS D10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS D11 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS L1 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS L15 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS P8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R15 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS_ADC D12 SYSTEM_VSS_ADC - - - - - - - - I "Read only" - 
+      VSS_USB P12 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB P14 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB N13 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB N15 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB R12 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB R14 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      XTAL R8 CGC_XTAL - - - - - - - - O "Read only" - 
+    R9A07G084M04GBG.pincfg -> 
+      AN000 B13 SYSTEM_AN000 - - - - - - - - I "Read only" - 
+      AN001 C12 SYSTEM_AN001 - - - - - - - - I "Read only" - 
+      AN002 B14 SYSTEM_AN002 - - - - - - - - I "Read only" - 
+      AN003 C13 SYSTEM_AN003 - - - - - - - - I "Read only" - 
+      AN100 B12 SYSTEM_AN100 - - - - - - - - I "Read only" - 
+      AN101 A14 SYSTEM_AN101 - - - - - - - - I "Read only" - 
+      AN102 B11 SYSTEM_AN102 - - - - - - - - I "Read only" - 
+      AN103 A13 SYSTEM_AN103 - - - - - - - - I "Read only" - 
+      AN104 A12 SYSTEM_AN104 - - - - - - - - I "Read only" - 
+      AN105 B10 SYSTEM_AN105 - - - - - - - - I "Read only" - 
+      AN106 A11 SYSTEM_AN106 - - - - - - - - I "Read only" - 
+      AN107 C9 SYSTEM_AN107 - - - - - - - - I "Read only" - 
+      AVCC18_TSU C14 SYSTEM_AVCC18_TSU - - - - - - - - I "Read only" - 
+      AVCC18_USB P10 SYSTEM_AVCC18_USB - - - - - - - - I "Read only" - 
+      AVCC18_USB R10 SYSTEM_AVCC18_USB - - - - - - - - I "Read only" - 
+      BSCANP G2 SYSTEM_BSCANP - - - - - - - - I "Read only" - 
+      EXTAL R7 CGC_EXTAL - - - - - - - - I "Read only" - 
+      EXTCLKIN R6 CGC_EXTCLKIN - - - - - - - - I "Read only" - 
+      MDX P5 SYSTEM_MDX - - - - - - - - IO "Read only" - 
+      P00_0 C4 - ETH2_RXD3 - - Disabled - - "BSC: D15; ETHER_ETH2: ETH2_RXD3; PHOSTIF: HD15; SCI2: DE2; SCI2: SCK2" - None - - 
+      P00_1 D5 - ETH2_RXDV - - Disabled - - "BSC: A13; ETHER_ETH2: ETH2_RXDV_CRSDV_RXCTL; IRQ: IRQ0; MTU35: MTIC5U; SCI2: RXD_MISO2; SCI2: SCL2" - None - - 
+      P00_2 A3 - ETH2_TXEN - - Disabled - - "BSC: RD#; ETHER_ETH2: ETH2_TXEN_TXCTL; MTU35: MTIC5V; SCI2: SDA2; SCI2: TXD_MOSI2; USB_HS: USB_OVRCUR" - None - - 
+      P00_3 B3 - ETH2_REFCLK - - Disabled - - "BSC: RD_WR#; ETHER_ETH2: ETH2_REFCLK; ETHER_ETH2: ETH2_RMII2_REFCLK; IRQ: IRQ1; MTU35: MTIC5W; SCI2: CTS_RTS_SS2#" - None - - 
+      P00_4 A4 - - - - Disabled - - "BSC: WAIT#; DSMIF0: MCLK0; ETHER_ETH2: ETH2_RXER; GPT0: GTIOC0A; IRQ: IRQ13; MTU33: MTIOC3A; PHOSTIF: HWAIT#" - None - - 
+      P00_5 B4 - ETH2_LINK - - Disabled - - "BSC: CS0#; DSMIF0: MDAT0; ETHER_ESC: ESC_PHYLINK0; ETHER_ESC: ESC_PHYLINK2; ETHER_ETHSW: ETHSW_PHYLINK0; ETHER_ETHSW: ETHSW_PHYLINK2; GPT0: GTIOC0B; MTU33: MTIOC3C" - None - - 
+      P00_6 C3 - ETH2_TXCLK - - Disabled - - "BSC: CS5#; ETHER_ETH2: ETH2_TXCLK_TXC; GPT1: GTIOC1A; MTU33: MTIOC3B" - None - - 
+      P00_7 D4 - - - - Disabled - - "BSC: RAS#; GPT2: GTIOC2A; IRQ: IRQ13; MTU34: MTIOC4A" - None - - 
+      P01_0 A2 - - - - Disabled - - "BSC: CAS#; DSMIF1: MCLK1; ETHER_ESC: ESC_MDIO; ETHER_ETHSW: ETHSW_MDIO; ETHER_GMAC: GMAC_MDIO; GPT3: GTIOC3A; MTU34: MTIOC4C; SCI2: CTS2#" - None - - 
+      P01_1 D3 - - - - Disabled - - "BSC: CKE; DSMIF1: MDAT1; ETHER_ESC: ESC_MDC; ETHER_ETHSW: ETHSW_MDC; ETHER_GMAC: GMAC_MDC; GPT1: GTIOC1B; MTU33: MTIOC3D; SCI2: DE2" - None - - 
+      P01_2 B2 - ETH2_TXD3 - - Disabled - - "BSC: CS2#; ETHER_ETH2: ETH2_TXD3; GPT2: GTIOC2B; IRQ: IRQ2; MTU34: MTIOC4B" - None - - 
+      P01_3 C2 - ETH2_TXD2 - - Disabled - - "BSC: AH#; ETHER_ETH2: ETH2_TXD2; GPT3: GTIOC3B; MTU34: MTIOC4D" - None - - 
+      P01_4 E4 - ETH2_TXD1 - - Disabled - - "BSC: WE1#_DQMLU; ETHER_ETH2: ETH2_TXD1; IRQ: IRQ3; MTU_POE3: POE0#" - None - - 
+      P01_5 B1 - ETH2_TXD0 - - Disabled - - "BSC: WE0#_DQMLL; ETHER_ETH2: ETH2_TXD0" - None - - 
+      P01_6 D2 - - - - Disabled - - "BSC: A20; CANFD1: CANTXDP1; ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_GMAC: GMAC_PTPTRG1; GPT9: GTIOC9A; MTU31: MTIOC1A; PHOSTIF: HA20; SCI1: CTS1#; TRACE: TRACEDATA0" - None - - 
+      P01_7 C1 - CAN_RX Low - Disabled - - "ADC0: ADTRG0#; BSC: A19; CANFD0: CANRX0; ETHER_ETHSW: ETHSW_LPI1; GPT9: GTIOC9B; MTU31: MTIOC1B; PHOSTIF: HA19; SCI1: SCK1; SPI3: SPI_RSPCK3; TRACE: TRACEDATA1" - I - - 
+      P02_0 E3 - - - - Disabled - - "BSC: A18; CANFD1: CANTX1; ETHER_ETHSW: ETHSW_LPI2; GPT: GTADSML0; IRQ: IRQ4; PHOSTIF: HA18; SCI1: RXD_MISO1; SCI1: SCL1; SPI3: SPI_MISO3; TRACE: TRACEDATA2; USB_HS: USB_OTGID" - None - - 
+      P02_1 D1 - - - - Disabled - - "BSC: A17; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT1; PHOSTIF: HA17; SCI1: DE1" - None - - 
+      P02_2 F3 - CAN_TX Low - Disabled - - "BSC: A16; CANFD0: CANTX0; ETHER_ETHSW: ETHSW_TDMAOUT0; GPT10: GTIOC10A; IRQ: IRQ14; MTU32: MTIOC2A; MTU_POE3: POE10#; PHOSTIF: HA16; RTC: RTCAT1HZ; SCI1: SDA1; SCI1: TXD_MOSI1; SPI3: SPI_MOSI3" - O - - 
+      P02_3 E1 - - - - Disabled - - "BSC: A15; BSC: AH#; CANFD1: CANRX1; ETHER_ETHSW: ETHSW_TDMAOUT1; GPT10: GTIOC10B; IRQ: IRQ15; MTU32: MTIOC2B; MTU_POE3: POE11#; PHOSTIF: HA15; SCI1: CTS_RTS_SS1#; SPI3: SPI_SSL30" - None - - 
+      P02_4 F4 JTAG/SWD_TDO TDO High - "Peripheral mode" - - "BSC: WE0#_DQMLL; JTAG/SWD: TDO; SCI1: DE1; SPI3: SPI_SSL33" - O - - 
+      P02_5 F2 JTAG/SWD_TDI TDI Low - "Peripheral mode" - - "BSC: WE1#_DQMLU; ETHER_ETHSW: ETHSW_TDMAOUT3; JTAG/SWD: TDI; SCI5: SCK5; SPI3: SPI_SSL31" - I - - 
+      P02_6 F5 JTAG/SWD_TMS_SWDIO TMS High - "Peripheral mode" - - "JTAG/SWD: TMS_SWDIO; SCI5: RXD_MISO5; SCI5: SCL5" - IO - - 
+      P02_7 F1 JTAG/SWD_TCK_SWCLK TCK Low - "Peripheral mode" - - "JTAG/SWD: TCK_SWCLK; SCI5: SDA5; SCI5: TXD_MOSI5" - I - - 
+      P03_0 G3 - ETH_LED4 Low - Disabled - - "BSC: A14; BSC: CS5#; CANFD1: CANTXDP1; GPT: GTADSML1; IRQ: IRQ14; PHOSTIF: HA14; SCI2: SCK2; SPI3: SPI_SSL32; TRACE: TRACEDATA3" - IO - - 
+      P03_5 G1 - - - - Disabled - - "BSC: A12; DSMIF2: MCLK2; ETHER_ETH2: ETH2_CRS; GPT4: GTIOC4A; IRQ: IRQ5; MTU33: MTIOC3A; PHOSTIF: HA12; SCI2: RXD_MISO2; SCI2: SCL2" - None - - 
+      P03_6 G4 - - - - Disabled - - "BSC: A11; DSMIF2: MDAT2; ETHER_ETH2: ETH2_COL; GPT4: GTIOC4B; IRQ: IRQ8; MTU33: MTIOC3B; PHOSTIF: HA11; SCI2: SDA2; SCI2: TXD_MOSI2; SPI1: SPI_SSL13; TRACE: TRACEDATA4" - None - - 
+      P03_7 G5 - - - - Disabled - - "BSC: A10; ETHER_ETH2: ETH2_TXER; GPT5: GTIOC5A; IRQ: IRQ9; MTU33: MTIOC3C; PHOSTIF: HA10; SCI3: SCK3; TRACE: TRACEDATA5" - None - - 
+      P04_0 H1 - - - - Disabled - - "BSC: A9; GPT5: GTIOC5B; MTU33: MTIOC3D; PHOSTIF: HA9; SCI3: RXD_MISO3; SCI3: SCL3; TRACE: TRACEDATA6" - None - - 
+      P04_1 H2 - LED_RED1 Low - Disabled - - "BSC: CKIO; IIC2: IIC_SDA2; PHOSTIF: HCKIO; SCI3: SDA3; SCI3: TXD_MOSI3; SPI0: SPI_MOSI0" - IO - - 
+      P04_4 H4 - ETH_LED6 Low - Disabled - - "BSC: A8; GPT: GTADSMP0; IRQ: IRQ10; MTU_POE3: POE10#; PHOSTIF: HA8; SCI3: CTS3#; SPI1: SPI_RSPCK1; TRACE: TRACEDATA7" - IO - - 
+      P04_5 H3 - - - - Disabled - - "BSC: A7; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT0; PHOSTIF: HA7; SCI3: DE3" - None - - 
+      P04_6 H5 - - - - Disabled - - "BSC: A6; DMAC: DACK; ETHER_ETH1: ETH1_TXER; PHOSTIF: HA6; RTC: RTCAT1HZ" - None - - 
+      P04_7 J1 - - - - Disabled - - "BSC: A5; ETHER_ETH0: ETH0_TXER; ETHER_ETH2: ETH2_TXER; PHOSTIF: HA5; SPI2: SPI_SSL21" - None - - 
+      P05_0 J5 - ETH_LED7 Low - Disabled - - "BSC: A4; CANFD0: CANTXDP0; CMTW0: CMTW0_TOC0; DSMIF3: MCLK3; ETHER_ETH1: ETH1_CRS; GPT6: GTIOC6A; IRQ: IRQ12; MTU34: MTIOC4A; PHOSTIF: HA4; SCI5: CTS_RTS_SS5#; USB_HS: USB_VBUSEN" - IO - - 
+      P05_1 J2 - - - - Disabled - - "BSC: A3; CANFD0: CANRXDP0; CMTW0: CMTW0_TIC1; DSMIF3: MDAT3; ETHER_ETH1: ETH1_COL; GPT6: GTIOC6B; IRQ: IRQ13; MTU34: MTIOC4B; PHOSTIF: HA3; SCI5: CTS5#; USB_HS: USB_EXICEN" - None - - 
+      P05_2 J4 - SCL Low - Disabled - - "BSC: A2; CANFD0: CANRX0; CMTW0: CMTW0_TOC0; DMAC: DREQ; ETHER_ETH0: ETH0_CRS; GPT7: GTIOC7A; GPT_POEG: GTETRGSA; IIC1: IIC_SCL1; IRQ: IRQ14; MTU34: MTIOC4C; PHOSTIF: HA2; SCI5: DE5; USB_HS: USB_VBUSEN" - IO - - 
+      P05_3 J3 - SDA Low - Disabled - - "BSC: A1; CANFD0: CANTX0; CMTW0: CMTW0_TIC0; ETHER_ETH0: ETH0_COL; GPT7: GTIOC7B; GPT_POEG: GTETRGSB; IIC1: IIC_SDA1; IRQ: IRQ15; MTU34: MTIOC4D; MTU_POE3: POE11#; PHOSTIF: HA1; SCI4: SCK4; USB_HS: USB_EXICEN" - IO - - 
+      P05_4 K1 - SW2 - - Disabled - - "BSC: A0; CANFD0: CANTXDP0; DMAC: DACK; ETHER_ETHSW: ETHSW_LPI0; GPT14: GTIOC14A; IRQ: IRQ12; PHOSTIF: HA0; SCI4: RXD_MISO4; SCI4: SCL4; SPI0: SPI_SSL00; USB_HS: USB_OVRCUR" - IO - - 
+      P05_5 K2 - ETH1_LINK - - Disabled - - "CMTW0: CMTW0_TOC1; ETHER_ESC: ESC_PHYLINK1; ETHER_ETHSW: ETHSW_PHYLINK1; GPT14: GTIOC14B; SPI2: SPI_RSPCK2" - None - - 
+      P05_6 K3 - - - - Disabled - - "CMTW1: CMTW1_TIC0; ETHER_ETH1: ETH1_RXER; GPT15: GTIOC15A; IRQ: IRQ12; SPI2: SPI_SSL22" - None - - 
+      P05_7 M1 - ETH1_TXD2 - - Disabled - - "CMTW1: CMTW1_TOC1; ETHER_ETH1: ETH1_TXD2; GPT15: GTIOC15B; SCI4: SDA4; SCI4: TXD_MOSI4; SPI2: SPI_SSL23" - None - - 
+      P06_0 L2 - ETH1_TXD3 - - Disabled - - "CANFD1: CANRX1; CMTW1: CMTW1_TOC0; ETHER_ETH1: ETH1_TXD3; GPT16: GTIOC16A; SCI4: CTS_RTS_SS4#; SPI2: SPI_SSL23" - None - - 
+      P06_1 L3 - ETH1_REFCLK - - Disabled - - "CANFD1: CANTX1; ETHER_ETH1: ETH1_REFCLK; ETHER_ETH1: ETH1_RMII1_REFCLK; GPT16: GTIOC16B; SCI4: CTS4#; SPI2: SPI_SSL22" - None - - 
+      P06_2 M2 - ETH1_TXD1 - - Disabled - - "CANFD1: CANRXDP1; ETHER_ETH1: ETH1_TXD1; GPT17: GTIOC17A" - None - - 
+      P06_3 K4 - ETH1_TXD0 - - Disabled - - "CANFD1: CANTXDP1; CMTW1: CMTW1_TIC1; ETHER_ETH1: ETH1_TXD0; GPT17: GTIOC17B; SCI4: DE4; SPI1: SPI_MISO1" - None - - 
+      P06_4 N1 - ETH1_TXCLK - - Disabled - - "ETHER_ETH1: ETH1_TXCLK_TXC; GPT11: GTIOC11A; SPI1: SPI_MOSI1" - None - - 
+      P06_5 N2 - ETH1_TXEN - - Disabled - - "ETHER_ETH1: ETH1_TXEN_TXCTL; GPT11: GTIOC11B" - None - - 
+      P06_6 L4 - ETH1_RXD0 - - Disabled - - "ETHER_ETH1: ETH1_RXD0; GPT12: GTIOC12A; SPI1: SPI_SSL10" - None - - 
+      P06_7 M3 - ETH1_RXD1 - - Disabled - - "ETHER_ETH1: ETH1_RXD1; GPT12: GTIOC12B; SPI1: SPI_SSL11" - None - - 
+      P07_0 P1 - ETH1_RXD2 - - Disabled - - "ETHER_ETH1: ETH1_RXD2; GPT13: GTIOC13A" - None - - 
+      P07_1 N3 - ETH1_RXD3 - - Disabled - - "ETHER_ETH1: ETH1_RXD3; GPT13: GTIOC13B" - None - - 
+      P07_2 P2 - ETH1_RXDV - - Disabled - - "ETHER_ETH1: ETH1_RXDV_CRSDV_RXCTL" - None - - 
+      P07_3 M4 - ETH1_RXCLK - - Disabled - - "ETHER_ETH1: ETH1_RXCLK_REF_CLK_RXC" - None - - 
+      P07_4 R2 - USB_VBUSIN - - Disabled - - "ADC0: ADTRG0#; IRQ: IRQ1; USB_HS: USB_VBUSIN" - I - - 
+      P08_4 N4 - ETH0_RXD3 - - Disabled - - "ETHER_ETH0: ETH0_RXD3; MTU36: MTIOC6A" - None - - 
+      P08_5 P3 - ETH0_RXDV - - Disabled - - "ETHER_ETH0: ETH0_RXDV_CRSDV_RXCTL; MTU36: MTIOC6B" - None - - 
+      P08_6 M5 - ETH0_RXCLK - - Disabled - - "ETHER_ETH0: ETH0_RXCLK_REF_CLK_RXC; MTU36: MTIOC6C" - None - - 
+      P08_7 N5 - ETH_MDC Low - Disabled - - "ETHER_ESC: ESC_MDC; ETHER_ETHSW: ETHSW_MDC; ETHER_GMAC: GMAC_MDC; MTU36: MTIOC6D" - O - - 
+      P09_0 P4 - ETH_MDIO Low - Disabled - - "ETHER_ESC: ESC_MDIO; ETHER_ETHSW: ETHSW_MDIO; ETHER_GMAC: GMAC_MDIO; MTU37: MTIOC7A" - IO - - 
+      P09_1 R3 - ETH0_REFCLK - - Disabled - - "ETHER_ETH0: ETH0_REFCLK; ETHER_ETH0: ETH0_RMII0_REFCLK; MTU37: MTIOC7B" - None - - 
+      P09_2 N6 - - - - Disabled - - "ETHER_ETH0: ETH0_RXER; IRQ: IRQ0; MTU37: MTIOC7C" - None - - 
+      P09_3 R4 - ETH0_TXD3 - - Disabled - - "ETHER_ETH0: ETH0_TXD3; MTU37: MTIOC7D" - None - - 
+      P09_4 M6 - ETH0_TXD2 - - Disabled - - "ETHER_ETH0: ETH0_TXD2" - None - - 
+      P09_5 N7 - ETH0_TXD1 - - Disabled - - "ETHER_ETH0: ETH0_TXD1" - None - - 
+      P09_6 M7 - ETH0_TXD0 - - Disabled - - "ETHER_ETH0: ETH0_TXD0" - None - - 
+      P09_7 L7 - ETH0_TXCLK - - Disabled - - "ETHER_ETH0: ETH0_TXCLK_TXC" - None - - 
+      P10_0 N8 - ETH0_TXEN - - Disabled - - "ETHER_ETH0: ETH0_TXEN_TXCTL" - None - - 
+      P10_1 M8 - ETH0_RXD0 - - Disabled - - "ETHER_ETH0: ETH0_RXD0" - None - - 
+      P10_2 L8 - ETH0_RXD1 - - Disabled - - "ETHER_ETH0: ETH0_RXD1" - None - - 
+      P10_3 L9 - ETH0_RXD2 - - Disabled - - "ETHER_ETH0: ETH0_RXD2; RTC: RTCAT1HZ" - None - - 
+      P10_4 M9 - ETH0_LINK - - Disabled - - "ETHER_ESC: ESC_PHYLINK0; ETHER_ETHSW: ETHSW_PHYLINK0; IRQ: IRQ11" - None - - 
+      P12_4 N11 - - - - Disabled - - "BSC: D15; ETHER_ETH1: ETH1_CRS; GPT8: GTIOC8B; MBXSEM: MBX_HINT#; MTU38: MTIOC8B; SPI0: SPI_SSL01; TRACE: TRACEDATA0" - None - - 
+      P13_2 L10 - EEPROM_SCL Low - Disabled - - "BSC: A13; BSC: D9; DSMIF4: MCLK4; ETHER_ESC: ESC_I2CCLK; ETHER_ETHSW: ETHSW_PTPOUT2; GPT10: GTIOC10A; IIC0: IIC_SCL0; IRQ: IRQ5; MTU30: MTIOC0A; MTU_POE3: POE8#; SCI1: CTS_RTS_SS1#; SPI0: SPI_MISO0; TRACE: TRACEDATA6" - IO - - 
+      P13_3 N12 - EEPROM_SDA Low - Disabled - - "BSC: D8; BSC: RD#; CMTW1: CMTW1_TOC0; DSMIF4: MDAT4; ETHER_ESC: ESC_I2CDATA; ETHER_ETHSW: ETHSW_PTPOUT3; GPT10: GTIOC10B; IIC0: IIC_SDA0; MTU30: MTIOC0B; MTU30: MTIOC0C; SCI1: CTS1#; SPI0: SPI_RSPCK0; TRACE: TRACEDATA7" - IO - - 
+      P13_4 L12 - ESC_RESETOUT Low - Disabled - - "BSC: A0; ETHER_ESC: ESC_RESETOUT#; GPT8: GTIOC8B; MTU30: MTIOC0D" - IO - - 
+      P13_5 M12 - SW3_Pin2 - - Disabled - - "ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_GMAC: GMAC_PTPTRG0; IIC2: IIC_SCL2; MTU3: MTCLKA; SPI1: SPI_RSPCK1; XSPI0: XSPI0_WP1#" - IO - - 
+      P13_6 M13 - SW3_Pin1 - - Disabled - - "ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT0; MTU3: MTCLKB; XSPI0: XSPI0_WP0#" - IO - - 
+      P13_7 M11 - SW3_Pin4 - - Disabled - - "ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_GMAC: GMAC_PTPTRG1; MBXSEM: MBX_HINT#; MTU3: MTCLKC; XSPI0: XSPI0_ECS1#" - IO - - 
+      P14_0 L13 - SW3_Pin3 - - Disabled - - "ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT1; MTU3: MTCLKD; XSPI0: XSPI0_INT0#" - IO - - 
+      P14_1 L14 - - - - Disabled - - "ETHER_ESC: ESC_LATCH0; ETHER_ESC: ESC_LATCH1; ETHER_ETH1: ETH1_COL; ETHER_GMAC: GMAC_PTPTRG1; GPT8: GTIOC8A; MTU38: MTIOC8A; SHOSTIF: HSPI_IO0; XSPI0: XSPI0_INT1#" - None - - 
+      P14_2 K12 - XSPI0_ECS Low - Disabled - - "ETHER_ETH0: ETH0_CRS; ETHER_ETH2: ETH2_CRS; GPT8: GTIOC8B; IRQ: IRQ6; MTU38: MTIOC8B; SHOSTIF: HSPI_CK; XSPI0: XSPI0_ECS0#" - I - - 
+      P14_3 M14 - - - - Disabled - - "ETHER_ETH0: ETH0_COL; ETHER_ETH2: ETH2_COL; MTU30: MTIOC0A; SHOSTIF: HSPI_IO1; XSPI0: XSPI0_RSTO1#" - None - - 
+      P14_4 J13 - XSPI0_DS Low - Disabled - - "BSC: BS#; ETHER_ESC: ESC_IRQ; MTU30: MTIOC0B; PHOSTIF: HBS#; XSPI0: XSPI0_DS" - IO - - 
+      P14_5 J12 - XSPI0_CKN Low - Disabled - - "BSC: CS3#; MTU_POE3: POE8#; SHOSTIF: HSPI_INT#; XSPI0: XSPI0_CKN" - O - - 
+      P14_6 K13 - XSPI0_CKP Low - Disabled - - "BSC: A21; XSPI0: XSPI0_CKP" - O - - 
+      P14_7 M15 - XSPI0_IO0 Low - Disabled - - "BSC: A22; BSC: BS#; SCI5: SCK5; SPI1: SPI_MISO1; XSPI0: XSPI0_IO0" - IO - - 
+      P15_0 L11 - XSPI0_IO1 Low - Disabled - - "BSC: A23; BSC: CKE; SCI5: RXD_MISO5; SCI5: SCL5; SPI1: SPI_MOSI1; XSPI0: XSPI0_IO1" - IO - - 
+      P15_1 K14 - XSPI0_IO2 Low - Disabled - - "BSC: A24; BSC: CAS#; MTU30: MTIOC0C; SCI5: SDA5; SCI5: TXD_MOSI5; SPI1: SPI_SSL10; XSPI0: XSPI0_IO2" - IO - - 
+      P15_2 K15 - XSPI0_IO3 Low - Disabled - - "BSC: A25; BSC: RAS#; MTU30: MTIOC0D; SCI5: CTS_RTS_SS5#; SPI1: SPI_SSL11; XSPI0: XSPI0_IO3" - IO - - 
+      P15_3 K11 - XSPI0_IO4 Low - Disabled - - "BSC: D11; DSMIF1: MCLK1; MTU38: MTIOC8C; XSPI0: XSPI0_IO4" - IO - - 
+      P15_4 H13 - XSPI0_IO5 Low - Disabled - - "BSC: D12; DSMIF1: MDAT1; MTU38: MTIOC8D; XSPI0: XSPI0_IO5" - IO - - 
+      P15_5 J14 - XSPI0_IO6 Low - Disabled - - "BSC: D13; DSMIF2: MCLK2; XSPI0: XSPI0_IO6" - IO - - 
+      P15_6 H12 - XSPI0_IO7 Low - Disabled - - "BSC: D14; DSMIF2: MDAT2; SPI1: SPI_SSL12; XSPI0: XSPI0_IO7" - IO - - 
+      P15_7 J15 - OSPI_CS Low - Disabled - - "DMAC: TEND; SCI5: CTS5#; SPI1: SPI_SSL13; XSPI0: XSPI0_CS0#" - O - - 
+      P16_0 G13 - ORAM_CS0 Low - Disabled - - "DSMIF3: MCLK3; ETHER_ETH0: ETH0_TXER; ETHER_ETH2: ETH2_REFCLK; SCI0: SDA0; SCI0: TXD_MOSI0; SHOSTIF: HSPI_CS#; SPI3: SPI_MOSI3; XSPI0: XSPI0_CS1#" - O - - 
+      P16_1 H11 - XSPI0_RESET0 Low - Disabled - - "ADC0: ADTRG0#; BSC: CS2#; CMTW0: CMTW0_TOC1; DSMIF3: MDAT3; PHOSTIF: HCS1#; SCI0: RXD_MISO0; SCI0: SCL0; SPI3: SPI_MISO3; XSPI0: XSPI0_RESET0#" - O - - 
+      P16_2 H14 - - - - Disabled - - "IRQ: NMI; PHOSTIF: HERROUT#; SCI0: CTS0#; SHOSTIF: HSPI_IO2; SPI3: SPI_RSPCK3; USB_HS: USB_EXICEN; XSPI0: XSPI0_RESET1#" - None - - 
+      P16_3 G12 - SW1 - - Disabled - - "BSC: CS3#; ETHER_ETH1: ETH1_CRS; ETHER_ETH1: ETH1_TXER; GPT: GTADSMP1; IRQ: IRQ7; SCI0: SCK0; SHOSTIF: HSPI_IO3; SPI3: SPI_SSL30; XSPI0: XSPI0_RSTO0#" - IO - - 
+      P16_5 H15 - UART_USB_TX Low - Disabled - - "BSC: A15; MTU35: MTIC5U; SCI0: SDA0; SCI0: TXD_MOSI0; SHOSTIF: HSPI_IO4" - IO - - 
+      P16_6 G11 - UART_USB_RX Low - Disabled - - "BSC: CS0#; IRQ: IRQ8; MTU35: MTIC5V; PHOSTIF: HCS0#; SCI0: RXD_MISO0; SCI0: SCL0; SHOSTIF: HSPI_IO5" - IO - - 
+      P16_7 G14 - - - - Disabled - - "BSC: A13; MTU35: MTIC5W; PHOSTIF: HA13; SCI0: SCK0; XSPI1: XSPI1_IO0" - None - - 
+      P17_0 F12 - - - - Disabled - - "ETHER_ESC: ESC_IRQ; SCI0: CTS_RTS_SS0#; XSPI1: XSPI1_IO1" - None - - 
+      P17_3 F14 - LED_RED2 Low - Disabled - - "ADC1: ADTRG1#; DMAC: DREQ; GPT_POEG: GTETRGA; MTU_POE3: POE0#; SPI3: SPI_SSL31; TRACE: TRACECTL; XSPI1: XSPI1_IO2" - IO - - 
+      P17_4 F13 - - - - Disabled - - "DMAC: DACK; GPT0: GTIOC0A; GPT_POEG: GTETRGB; MTU33: MTIOC3C; SCI3: CTS3#; SPI3: SPI_SSL32; TRACE: TRACECLK; XSPI1: XSPI1_IO3" - None - - 
+      P17_5 F15 - USB_OVRCUR Low - Disabled - - "DMAC: TEND; GPT0: GTIOC0B; GPT_POEG: GTETRGC; MTU33: MTIOC3A; USB_HS: USB_OVRCUR" - I - - 
+      P17_6 G15 - - - - Disabled - - "BSC: RD_WR#; GPT1: GTIOC1A; MTU33: MTIOC3B; PHOSTIF: HWRSTB#; SCI3: SCK3; XSPI1: XSPI1_DS" - None - - 
+      P17_7 E15 - SCI_RXD Low - Disabled - - "BSC: RD#; DMAC: DACK; GPT2: GTIOC2A; GPT3: GTIOC3A; MTU34: MTIOC4A; MTU34: MTIOC4C; PHOSTIF: HRD#; SCI3: RXD_MISO3; SCI3: SCL3; XSPI1: XSPI1_CKP" - IO - - 
+      P18_0 E14 - SCI_TXD Low - Disabled - - "BSC: WE0#_DQMLL; GPT2: GTIOC2A; GPT3: GTIOC3A; MTU34: MTIOC4A; MTU34: MTIOC4C; PHOSTIF: HWR0#; SCI3: SDA3; SCI3: TXD_MOSI3; SHOSTIF: HSPI_IO6" - IO - - 
+      P18_1 D15 - - - - Disabled - - "ADC1: ADTRG1#; BSC: WE1#_DQMLU; GPT1: GTIOC1B; IRQ: IRQ10; MTU33: MTIOC3D; PHOSTIF: HWR1#; SCI3: CTS_RTS_SS3#; SHOSTIF: HSPI_IO7" - None - - 
+      P18_2 D14 - LED_GREEN Low - Disabled - - "BSC: BS#; ETHER_ETH1: ETH1_COL; GPT2: GTIOC2B; GPT3: GTIOC3B; IIC2: IIC_SDA2; MTU34: MTIOC4B; MTU34: MTIOC4D; SCI0: SCK0; XSPI1: XSPI1_CS0#" - IO - - 
+      P18_3 E13 - - - - Disabled - - "BSC: CKE; CANFD1: CANRXDP1; CMTW1: CMTW1_TIC1; ETHER_ETH2: ETH2_CRS; GPT2: GTIOC2B; GPT3: GTIOC3B; IRQ: IRQ0; MTU34: MTIOC4B; MTU34: MTIOC4D; XSPI1: XSPI1_IO4" - None - - 
+      P18_4 E12 - SCK Low - Disabled - - "BSC: CAS#; CANFD0: CANTX0; ETHER_ETH1: ETH1_CRS; IRQ: IRQ1; MTU35: MTIC5U; SCI4: SDA4; SCI4: TXD_MOSI4; SPI2: SPI_RSPCK2; XSPI1: XSPI1_IO5" - IO - - 
+      P18_5 D13 - MOSI Low - Disabled - - "BSC: RAS#; CANFD0: CANRX0; ETHER_ETH2: ETH2_COL; MTU35: MTIC5V; SCI4: RXD_MISO4; SCI4: SCL4; SPI2: SPI_MOSI2; TRACE: TRACECTL; XSPI1: XSPI1_IO6" - IO - - 
+      P18_6 C15 - MISO Low - Disabled - - "ADC0: ADTRG0#; ETHER_ETH1: ETH1_COL; IIC2: IIC_SCL2; IRQ: IRQ11; MTU35: MTIC5W; SCI4: DE4; SCI4: SCK4; SPI2: SPI_MISO2; TRACE: TRACECLK; XSPI1: XSPI1_IO7" - IO - - 
+      P19_0 B15 - USB_VBUSEN Low - Disabled - - "USB_HS: USB_VBUSEN" - O - - 
+      P20_1 B9 - ETH_LED2_MDV0 - - Disabled - - "ETHER_ESC: ESC_LINKACT0; ETHER_ETHSW: ETHSW_PTPOUT3; ETHER_ETHSW: ETHSW_TDMAOUT0" - None - - 
+      P20_2 D8 - ETH_LED0_MDV1 - - Disabled - - "ETHER_ESC: ESC_LEDRUN; ETHER_ESC: ESC_LEDSTER; ETHER_ETHSW: ETHSW_PTPOUT2; ETHER_ETHSW: ETHSW_TDMAOUT1; SCI3: DE3" - None - - 
+      P20_3 D9 - ETH_LED1_MDV2 - - Disabled - - "ETHER_ESC: ESC_LEDERR; ETHER_ETHSW: ETHSW_PTPOUT1; ETHER_ETHSW: ETHSW_TDMAOUT2" - None - - 
+      P20_4 A9 - ETH_LED3_MDV3 - - Disabled - - "ETHER_ESC: ESC_LINKACT1; ETHER_ETHSW: ETHSW_PTPOUT0; ETHER_ETHSW: ETHSW_TDMAOUT3" - None - - 
+      P21_1 B8 - CS Low - Disabled - - "BSC: D0; CMTW0: CMTW0_TIC0; DSMIF0: MCLK0; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; GPT14: GTIOC14A; IIC1: IIC_SCL1; MTU36: MTIOC6A; PHOSTIF: HD0; SCI5: SCK5; SHOSTIF: HSPI_INT#; SPI2: SPI_SSL20; TRACE: TRACEDATA0" - IO - - 
+      P21_2 C8 - - - - Disabled - - "BSC: D1; CMTW0: CMTW0_TIC1; DSMIF0: MDAT0; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; GPT14: GTIOC14B; IIC1: IIC_SDA1; MTU36: MTIOC6B; PHOSTIF: HD1; SCI5: RXD_MISO5; SCI5: SCL5; SPI2: SPI_MISO2; TRACE: TRACEDATA1" - None - - 
+      P21_3 A8 - - - - Disabled - - "BSC: D2; DSMIF1: MCLK1; GPT15: GTIOC15A; IRQ: NMI; MTU36: MTIOC6C; PHOSTIF: HD2; SCI5: SDA5; SCI5: TXD_MOSI5; SPI3: SPI_SSL33; TRACE: TRACEDATA2" - None - - 
+      P21_4 E7 - - - - Disabled - - "BSC: D3; DSMIF1: MDAT1; ETHER_ESC: ESC_SYNC0; ETHER_ESC: ESC_SYNC1; ETHER_ETHSW: ETHSW_PTPOUT1; GPT15: GTIOC15B; MBXSEM: MBX_HINT#; MTU36: MTIOC6D; PHOSTIF: HD3; SCI5: CTS_RTS_SS5#; SPI0: SPI_SSL02; TRACE: TRACEDATA3" - None - - 
+      P21_5 C7 - - - - Disabled - - "ADC1: ADTRG1#; BSC: D4; CMTW1: CMTW1_TOC1; DSMIF2: MCLK2; GPT16: GTIOC16A; IRQ: IRQ6; MTU37: MTIOC7A; PHOSTIF: HD4; SCI5: CTS5#; SPI0: SPI_MISO0; TRACE: TRACEDATA4" - None - - 
+      P21_6 D7 - - - - Disabled - - "BSC: D5; DMAC: TEND; DSMIF2: MDAT2; GPT16: GTIOC16B; IRQ: IRQ9; MTU37: MTIOC7B; PHOSTIF: HD5; SCI0: CTS0#; TRACE: TRACEDATA5" - None - - 
+      P21_7 B7 - - - - Disabled - - "BSC: D6; DMAC: DREQ; DSMIF3: MCLK3; GPT17: GTIOC17A; IRQ: IRQ10; MTU37: MTIOC7C; PHOSTIF: HD6; SCI0: DE0; TRACE: TRACEDATA6" - None - - 
+      P22_0 A7 - - - - Disabled - - "BSC: D7; DSMIF3: MDAT3; GPT17: GTIOC17B; IRQ: IRQ15; MTU37: MTIOC7D; PHOSTIF: HD7; SCI5: DE5; TRACE: TRACEDATA7" - None - - 
+      P22_1 A6 - ETH_LED5 Low - Disabled - - "BSC: D8; ETHER_ESC: ESC_LINKACT2; GPT_POEG: GTETRGB; MTU_POE3: POE4#; PHOSTIF: HD8; SCI4: CTS_RTS_SS4#; TRACE: TRACECTL" - IO - - 
+      P22_2 C6 - - - - Disabled - - "BSC: D9; DSMIF1: MCLK1; GPT_POEG: GTETRGSA; IRQ: IRQ4; MTU38: MTIOC8C; PHOSTIF: HD9; SPI1: SPI_SSL12; TRACE: TRACECLK" - None - - 
+      P22_3 B6 - LED_ORANGE Low - Disabled - - "BSC: D10; GPT_POEG: GTETRGSB; MTU38: MTIOC8D; PHOSTIF: HD10; SCI5: RXD_MISO5; SCI5: SCL5" - IO - - 
+      P23_7 D6 - ETH2_RXD0 - - Disabled - - "BSC: BS#; BSC: D11; DSMIF4: MCLK4; ETHER_ETH2: ETH2_RXD0; GPT_POEG: GTETRGA; MTU30: MTIOC0A; PHOSTIF: HD11; SCI1: SCK1" - None - - 
+      P24_0 A5 - ETH2_RXD1 - - Disabled - - "BSC: CKE; BSC: D12; DMAC: DREQ; DSMIF4: MDAT4; ETHER_ETH2: ETH2_RXD1; GPT_POEG: GTETRGB; MTU30: MTIOC0B; PHOSTIF: HD12; SCI1: RXD_MISO1; SCI1: SCL1" - None - - 
+      P24_1 B5 - ETH2_RXCLK - - Disabled - - "BSC: CAS#; BSC: D13; DSMIF5: MCLK5; ETHER_ETH2: ETH2_RXCLK_REF_CLK_RXC; GPT_POEG: GTETRGC; MTU30: MTIOC0C; MTU_POE3: POE8#; PHOSTIF: HD13" - None - - 
+      P24_2 C5 - ETH2_RXD2 - - Disabled - - "BSC: D14; BSC: RAS#; DSMIF5: MDAT5; ETHER_ETH2: ETH2_RXD2; GPT_POEG: GTETRGD; MTU30: MTIOC0D; PHOSTIF: HD14; SCI1: SDA1; SCI1: TXD_MOSI1" - None - - 
+      RES# P6 SYSTEM_RES# - - - - - - - - I "Read only" - 
+      TRST# E2 SYSTEM_TRST# - - - - - - - - I "Read only" - 
+      USB_DM P13 SYSTEM_USB_DM - - - - - - - - IO "Read only" - 
+      USB_DP R13 SYSTEM_USB_DP - - - - - - - - IO "Read only" - 
+      USB_RREF P15 SYSTEM_USB_RREF - - - - - - - - I "Read only" - 
+      VCC1833_0 L6 SYSTEM_VCC1833_0 - - - - - - - - I "Read only" - 
+      VCC1833_1 K5 SYSTEM_VCC1833_1 - - - - - - - - I "Read only" - 
+      VCC1833_2 E5 SYSTEM_VCC1833_2 - - - - - - - - I "Read only" - 
+      VCC1833_3 J11 SYSTEM_VCC1833_3 - - - - - - - - I "Read only" - 
+      VCC1833_4 F11 SYSTEM_VCC1833_4 - - - - - - - - I "Read only" - 
+      VCC18_ADC0 E11 SYSTEM_VCC18_ADC0 - - - - - - - - I "Read only" - 
+      VCC18_ADC1 E9 SYSTEM_VCC18_ADC1 - - - - - - - - I "Read only" - 
+      VCC18_PLL0 P9 SYSTEM_VCC18_PLL0 - - - - - - - - I "Read only" - 
+      VCC18_PLL1 N9 SYSTEM_VCC18_PLL1 - - - - - - - - I "Read only" - 
+      VCC18_USB P11 SYSTEM_VCC18_USB - - - - - - - - I "Read only" - 
+      VCC33 E6 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33 E8 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33 M10 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33 L5 SYSTEM_VCC33 - - - - - - - - I "Read only" - 
+      VCC33_USB R11 SYSTEM_VCC33_USB - - - - - - - - I "Read only" - 
+      VDD H10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD G10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F8 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F9 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD G6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD F10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD H6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD J6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K6 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K7 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K8 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD K10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD P7 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VDD J10 SYSTEM_VDD - - - - - - - - I "Read only" - 
+      VREFH0 C11 SYSTEM_VREFH0 - - - - - - - - I "Read only" - 
+      VREFH1 C10 SYSTEM_VREFH1 - - - - - - - - I "Read only" - 
+      VSS A1 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R1 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS A10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R5 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS A15 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS F7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS G7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS G8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS G9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS N10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS H7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS N14 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS H8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS H9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS E10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS J7 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS J8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS J9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS K9 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS D10 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS D11 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS L1 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS L15 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS P8 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS R15 SYSTEM_VSS - - - - - - - - I "Read only" - 
+      VSS_ADC D12 SYSTEM_VSS_ADC - - - - - - - - I "Read only" - 
+      VSS_USB P12 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB P14 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB N13 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB N15 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB R12 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      VSS_USB R14 SYSTEM_VSS_USB - - - - - - - - I "Read only" - 
+      XTAL R8 CGC_XTAL - - - - - - - - O "Read only" - 
+    
+  User Events
+    
+  User Event Links
+    
+  Module "I/O Port (r_ioport)"
+    Parameter Checking: Default (BSP)
+    
+  Module "Memory config check"
+    MPU/MMU Type: MPU
+    
+  Module "UART (r_sci_uart)"
+    Parameter Checking: Default (BSP)
+    FIFO Support: Enable
+    DMAC Support: Disable
+    Flow Control Support: Disable
+    Multiplex Interrupt: Disabled
+    
+  HAL
+    Instance "g_ioport I/O Port (r_ioport)"
+      General: Name: g_ioport
+      ELC Output Port Group 1: Trigger Source: Disabled
+      ELC Output Port Group 1: Port Selection: 
+      ELC Output Port Group 1: Output Operation: Low output
+      ELC Output Port Group 2: Trigger Source: Disabled
+      ELC Output Port Group 2: Port Selection: 
+      ELC Output Port Group 2: Output Operation: Low output
+      ELC Input Port Group 1: Trigger Source: Disabled
+      ELC Input Port Group 1: Event Link Control: Disabled
+      ELC Input Port Group 1: Port Selection: 
+      ELC Input Port Group 1: Edge Detection: Rising edge
+      ELC Input Port Group 1: Buffer Overwrite: Disabled
+      ELC Input Port Group 1: Buffer Initial Value: P16_0: Low input
+      ELC Input Port Group 1: Buffer Initial Value: P16_1: Low input
+      ELC Input Port Group 1: Buffer Initial Value: P16_2: Low input
+      ELC Input Port Group 1: Buffer Initial Value: P16_3: Low input
+      ELC Input Port Group 1: Buffer Initial Value: P16_5: Low input
+      ELC Input Port Group 1: Buffer Initial Value: P16_6: Low input
+      ELC Input Port Group 1: Buffer Initial Value: P16_7: Low input
+      ELC Input Port Group 2: Trigger Source: Disabled
+      ELC Input Port Group 2: Event Link Control: Disabled
+      ELC Input Port Group 2: Port Selection: 
+      ELC Input Port Group 2: Edge Detection: Rising edge
+      ELC Input Port Group 2: Buffer Overwrite: Disabled
+      ELC Input Port Group 2: Buffer Initial Value: P18_0: Low input
+      ELC Input Port Group 2: Buffer Initial Value: P18_1: Low input
+      ELC Input Port Group 2: Buffer Initial Value: P18_2: Low input
+      ELC Input Port Group 2: Buffer Initial Value: P18_3: Low input
+      ELC Input Port Group 2: Buffer Initial Value: P18_4: Low input
+      ELC Input Port Group 2: Buffer Initial Value: P18_5: Low input
+      ELC Input Port Group 2: Buffer Initial Value: P18_6: Low input
+      ELC Single Port 0: Common: Event Link Control: Disabled
+      ELC Single Port 0: Common: Event Direction: Output direction
+      ELC Single Port 0: Common: Port selection: P16_0
+      ELC Single Port 0: Output Direction Setting: Trigger Source: Disabled
+      ELC Single Port 0: Output Direction Setting: Output Operation: Low output
+      ELC Single Port 0: Input Direction Setting: Edge Detection: Rising edge
+      ELC Single Port 1: Common: Event Link Control: Disabled
+      ELC Single Port 1: Common: Event Direction: Output direction
+      ELC Single Port 1: Common: Port selection: P16_0
+      ELC Single Port 1: Output Direction Setting: Trigger Source: Disabled
+      ELC Single Port 1: Output Direction Setting: Output Operation: Low output
+      ELC Single Port 1: Input Direction Setting: Edge Detection: Rising edge
+      ELC Single Port 2: Common: Event Link Control: Disabled
+      ELC Single Port 2: Common: Event Direction: Output direction
+      ELC Single Port 2: Common: Port selection: P16_0
+      ELC Single Port 2: Output Direction Setting: Trigger Source: Disabled
+      ELC Single Port 2: Output Direction Setting: Output Operation: Low output
+      ELC Single Port 2: Input Direction Setting: Edge Detection: Rising edge
+      ELC Single Port 3: Common: Event Link Control: Disabled
+      ELC Single Port 3: Common: Event Direction: Output direction
+      ELC Single Port 3: Common: Port selection: P16_0
+      ELC Single Port 3: Output Direction Setting: Trigger Source: Disabled
+      ELC Single Port 3: Output Direction Setting: Output Operation: Low output
+      ELC Single Port 3: Input Direction Setting: Edge Detection: Rising edge
+      
+    Instance "Memory config check"
+    Instance "g_uart0 UART (r_sci_uart)"
+      General: Name: g_uart0
+      General: Channel: 0
+      General: Data Bits: 8bits
+      General: Parity: None
+      General: Stop Bits: 1bit
+      Baud: Baud Rate: 115200
+      Baud: Baud Rate Modulation: Disabled
+      Baud: Max Error (%): 5
+      Baud: Synchronizer Bypass: Not Bypassed (The operation clock is SCInASYNCCLK)
+      Flow Control: CTS/RTS Selection: Hardware RTS
+      Flow Control: Software RTS Port: Disabled
+      Flow Control: Software RTS Pin: Disabled
+      Extra: Clock Source: Internal Clock
+      Extra: Start bit detection: Falling Edge
+      Extra: Noise Filter: Disable
+      Extra: Receive FIFO Trigger Level: Max
+      Extra: RS-485: DE Pin: Disable
+      Extra: RS-485: DE Pin Polarity: Active High
+      Extra: RS-485: DE Pin Assertion Time: 1
+      Extra: RS-485: DE Pin Negation Time: 1
+      Interrupts: Callback: user_uart0_callback
+      Interrupts: Receive Interrupt Priority: Priority 12
+      Interrupts: Transmit Data Empty Interrupt Priority: Priority 12
+      Interrupts: Transmit End Interrupt Priority: Priority 12
+      Interrupts: Error Interrupt Priority: Priority 12
+      

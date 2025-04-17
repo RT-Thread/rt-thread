@@ -12,7 +12,7 @@
 
 #include <sep4020.h>
 #include <board.h>
-#include <serial.h>
+#include <drivers/dev_serial.h>
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #endif

@@ -19,9 +19,9 @@
 
 #ifdef BSP_USING_SPI_FLASH
 
-#include "spi_flash.h"
+#include "dev_spi_flash.h"
 #ifdef RT_USING_SFUD
-    #include "spi_flash_sfud.h"
+    #include "dev_spi_flash_sfud.h"
 #endif
 
 #define SPI_BUS_NAME                    "spi1"

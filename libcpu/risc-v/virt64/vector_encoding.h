@@ -12,8 +12,15 @@
 #ifndef __VECTOR_ENCODING_H__
 #define __VECTOR_ENCODING_H__
 
+/* mstatus/sstatus */
+#define MSTATUS_VS          0x00000600
+#define SSTATUS_VS          0x00000600 /* Vector Status */
+#define SSTATUS_VS_INITIAL  0x00000200
+#define SSTATUS_VS_CLEAN    0x00000400
+#define SSTATUS_VS_DIRTY    0x00000600
+
 /**
- * assembler names used for vset{i}vli vtypei immediate 
+ * assembler names used for vset{i}vli vtypei immediate
  */
 
 #define VEC_IMM_SEW_8      e8

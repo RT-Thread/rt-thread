@@ -376,9 +376,9 @@ rt_inline rt_bool_t rt_ofw_node_is_type(const struct rt_ofw_node *np, const char
     for (np = rt_ofw_find_node_by_type(RT_NULL, type); np;  \
          np = rt_ofw_find_node_by_type(np, type))
 
-#define rt_ofw_foreach_node_by_compatible(np, type, compatible)                 \
-    for (np = rt_ofw_find_node_by_compatible(RT_NULL, type, compatible); np;    \
-         np = rt_ofw_find_node_by_compatible(np, type, compatible))
+#define rt_ofw_foreach_node_by_compatible(np, compatible)               \
+    for (np = rt_ofw_find_node_by_compatible(RT_NULL, compatible); np;  \
+         np = rt_ofw_find_node_by_compatible(np, compatible))
 
 #define rt_ofw_foreach_node_by_ids_r(np, id, ids)           \
     for (np = rt_ofw_find_node_by_ids_r(RT_NULL, ids, id);  \

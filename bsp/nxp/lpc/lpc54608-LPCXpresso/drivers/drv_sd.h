@@ -16,7 +16,7 @@
 #include <LPC54608.h>
 #include "fsl_card.h"
 #include "fsl_iocon.h"
-
+#include <rtdevice.h>
 
 #define IOCON_PIO_DIGITAL_EN        0x0100u   /*!< Enables digital function */
 #define IOCON_PIO_FUNC1               0x01u   /*!< Selects pin function 1 */

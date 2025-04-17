@@ -66,7 +66,7 @@ extern "C" {
 #endif /* RT_USING_RTC */
 
 #ifdef RT_USING_SPI
-#include "drivers/spi.h"
+#include "drivers/dev_spi.h"
 #endif /* RT_USING_SPI */
 
 #ifdef RT_USING_MTD_NOR
@@ -87,9 +87,9 @@ extern "C" {
 
 #ifdef RT_USING_SERIAL
 #ifdef RT_USING_SERIAL_V2
-#include "drivers/serial_v2.h"
+#include "drivers/dev_serial_v2.h"
 #else
-#include "drivers/serial.h"
+#include "drivers/dev_serial.h"
 #endif
 #endif /* RT_USING_SERIAL */
 
@@ -111,14 +111,14 @@ extern "C" {
 #endif /* RT_USING_PHY */
 
 #ifdef RT_USING_SDIO
-#include "drivers/mmcsd_core.h"
-#include "drivers/sd.h"
-#include "drivers/sdio.h"
+#include "drivers/dev_mmcsd_core.h"
+#include "drivers/dev_sd.h"
+#include "drivers/dev_sdio.h"
 #endif /* RT_USING_SDIO */
 
 
 #ifdef RT_USING_WDT
-#include "drivers/watchdog.h"
+#include "drivers/dev_watchdog.h"
 #endif /* RT_USING_WDT */
 
 #ifdef RT_USING_PIN
@@ -190,7 +190,7 @@ extern "C" {
 #endif /* RT_USING_INPUT_CAPTURE */
 
 #ifdef RT_USING_TOUCH
-#include "drivers/touch.h"
+#include "drivers/dev_touch.h"
 #endif
 
 #ifdef RT_USING_DEV_BUS

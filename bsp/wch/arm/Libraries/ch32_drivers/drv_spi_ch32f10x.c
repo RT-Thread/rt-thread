@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <drivers/spi.h>
+#include "drivers/dev_spi.h"
 #include "board.h"
 #include "drv_spi.h"
 #include "ch32f10x_spi.h"

@@ -20,8 +20,8 @@
 #endif
 #include <rtdbg.h>
 
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
 #include "drv_sdh.h"
 
 #if defined(BL808)

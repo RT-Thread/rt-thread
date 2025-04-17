@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm7tdmi-s'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2478.map,-cref,-u,Reset_Handler -nostartfiles -T lpc2478_rom.lds'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -nostartfiles -T lpc2478_rom.lds'
 
     CPATH = ''
     LPATH = ''
@@ -66,7 +66,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMP'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc2478.map --scatter lpc2478_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter lpc2478_rom.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'

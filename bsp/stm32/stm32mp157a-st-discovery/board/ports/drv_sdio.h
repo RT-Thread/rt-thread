@@ -16,8 +16,8 @@
 #include <rthw.h>
 #include <drv_common.h>
 #include <string.h>
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
 
 #ifndef SDIO1_BASE_ADDRESS
 #define SDIO1_BASE_ADDRESS    (SDMMC1)

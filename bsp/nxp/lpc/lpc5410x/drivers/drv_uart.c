@@ -157,6 +157,7 @@ void UART0_IRQHandler(void)
         break;
     default :
         tmp = LPC_USART0->INTSTAT;
+        RT_UNUSED(tmp);
         break;
     }
     /* leave interrupt */

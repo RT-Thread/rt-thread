@@ -1,16 +1,19 @@
+import os
 from building import *
 
+objs = []
 cwd  = GetCurrentDir()
-src  = Glob('*.[cs]')
 list = os.listdir(cwd)
 CPPPATH = [cwd]
-objs = []
+src = Glob('board.c')
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+if not GetDepend('RT_USING_NANO'):
+    src += Glob(cwd + 'drv_uart.c')
 
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
-objs = objs + group
+objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        objs = objs + SConscript(os.path.join(item, 'SConscript'))
+
 Return('objs')

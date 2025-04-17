@@ -124,7 +124,7 @@ static const uint8_t cdc_ecm_descriptor[] = {
     0x02,
     0x01,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00

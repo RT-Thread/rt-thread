@@ -8,7 +8,7 @@
  * 2022-05-16     shelton           first version
  */
 
-#include <drivers/watchdog.h>
+#include "drivers/dev_watchdog.h"
 #include "drv_common.h"
 
 #ifdef RT_USING_WDT

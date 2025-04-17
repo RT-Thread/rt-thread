@@ -13,7 +13,7 @@
 
 #include "board.h"
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include "drivers/dev_spi.h"
 
 struct apm32_spi_config
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 
 #ifdef RT_USING_I2C
 
-//#define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define LOG_TAG              "drv.i2c"
 #include <drv_log.h>
 

@@ -13,7 +13,7 @@
 #include <asm/processor.h>
 
 /* interrupt nest */
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
 #define MAX_HANDLERS 32

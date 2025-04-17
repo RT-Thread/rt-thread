@@ -58,6 +58,11 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('port/musb/usb_glue_bk.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_CUSTOM']):
         src += Glob('port/musb/usb_dc_musb.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_KINETIS_MCX']):
+        src += Glob('port/kinetis/usb_dc_kinetis.c')
+        src += Glob('port/kinetis/usb_glue_mcx.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_KINETIS_CUSTOM']):
+        src += Glob('port/kinetis/usb_dc_kinetis.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX']):
         src += Glob('port/chipidea/usb_dc_chipidea.c')
         src += Glob('port/chipidea/usb_glue_mcx.c')
@@ -187,6 +192,11 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('port/musb/usb_glue_bk.c')
     if GetDepend(['RT_CHERRYUSB_HOST_MUSB_CUSTOM']):
         src += Glob('port/musb/usb_hc_musb.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_KINETIS_MCX']):
+        src += Glob('port/kinetis/usb_hc_kinetis.c')
+        src += Glob('port/kinetis/usb_glue_mcx.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_KINETIS_CUSTOM']):
+        src += Glob('port/kinetis/usb_hc_kinetis.c')
     if GetDepend(['RT_CHERRYUSB_HOST_PUSB2']):
         path += [cwd + '/port/pusb2/rt-thread']
         src += Glob('port/pusb2/rt-thread/usb_hc_glue_phytium.c')

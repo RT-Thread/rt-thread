@@ -29,10 +29,6 @@ if RT_USING_LWP
         int "The maximum number of channel messages"
         default 1024
 
-    config LWP_CONSOLE_INPUT_BUFFER_SIZE
-        int "The input buffer size of lwp console device"
-        default 1024
-
     config LWP_TID_MAX_NR
         int "The maximum number of lwp thread id"
         default 64

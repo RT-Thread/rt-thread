@@ -18,8 +18,7 @@ cpu      = rtconfig.CPU
 
 # fix the cpu for risc-v
 if arch == 'risc-v':
-    rv64 = ['virt64', 'c906']
-    if cpu in rv64:
+    if GetDepend('ARCH_CPU_64BIT'):
         cpu = 'rv64'
 
 if platform in platform_file.keys(): # support platforms

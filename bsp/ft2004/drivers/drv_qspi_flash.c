@@ -16,8 +16,8 @@
 
 #ifdef BSP_USE_QSPI
 
-#include "spi_flash.h"
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash.h"
+#include "dev_spi_flash_sfud.h"
 #define _QSPI_DEVICE_NAME "qspiflash"
 
 static int

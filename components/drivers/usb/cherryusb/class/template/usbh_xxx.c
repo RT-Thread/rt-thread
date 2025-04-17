@@ -9,11 +9,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_xxx *usbh_xxx_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_CUSTOM_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_xxx_class[devno], 0, sizeof(struct usbh_xxx));
             g_xxx_class[devno].minor = devno;
             return &g_xxx_class[devno];
@@ -24,10 +24,10 @@ static struct usbh_xxx *usbh_xxx_class_alloc(void)
 
 static void usbh_xxx_class_free(struct usbh_xxx *xxx_class)
 {
-    int devno = xxx_class->minor;
+    uint8_t devno = xxx_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(xxx_class, 0, sizeof(struct usbh_xxx));
 }

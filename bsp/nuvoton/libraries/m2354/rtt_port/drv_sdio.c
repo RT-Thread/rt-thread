@@ -15,8 +15,8 @@
 #if defined(BSP_USING_SDH)
 
 #include <rtdevice.h>
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
 
 #include "NuMicro.h"
 

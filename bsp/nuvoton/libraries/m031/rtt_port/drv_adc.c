@@ -30,8 +30,8 @@ struct nu_adc
 typedef struct nu_adc *nu_adc_t;
 
 /* Private functions ------------------------------------------------------------*/
-static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
-static rt_err_t nu_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
+static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled);
+static rt_err_t nu_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value);
 
 /* Public functions ------------------------------------------------------------*/
 int rt_hw_adc_init(void);
@@ -60,7 +60,7 @@ typedef struct rt_adc_ops *rt_adc_ops_t;
 
 
 /* nu_adc_enabled - Enable ADC clock and wait for ready */
-static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
 
     ADC_T *adc_base = ((nu_adc_t)device)->adc_base;
@@ -96,7 +96,7 @@ static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel
     return RT_EOK;
 }
 
-static rt_err_t nu_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t nu_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
 
     RT_ASSERT(device != RT_NULL);
@@ -111,7 +111,7 @@ static rt_err_t nu_get_adc_value(struct rt_adc_device *device, rt_uint32_t chann
         return -(RT_EINVAL);
     }
 
-    if ((*padc_reg_tab & (1 << channel)) == 0)
+    if ((*padc_reg_tab & (0x1 << channel)) == 0)
     {
         *value = 0xFFFFFFFF;
         return -(RT_EBUSY);
@@ -127,7 +127,7 @@ static rt_err_t nu_get_adc_value(struct rt_adc_device *device, rt_uint32_t chann
 
     while (ADC_GET_INT_FLAG(adc_base, ADC_ADF_INT) == 0);
 
-    *value = ADC_GET_CONVERSION_DATA(adc_base, channel);
+    *value = ADC_GET_CONVERSION_DATA(adc_base,channel);
 
     return RT_EOK;
 }
@@ -151,4 +151,4 @@ int rt_hw_adc_init(void)
 INIT_BOARD_EXPORT(rt_hw_adc_init);
 
 
-#endif //#if defined(BSP_USING_ADC)
+#endif /* #if defined(BSP_USING_ADC) */

@@ -500,8 +500,8 @@ static rt_err_t _rym_do_fin(struct rym_ctx *ctx)
     else
         return -RYM_ERR_CODE;
 
-    i = _rym_read_data(ctx, _RYM_SOH_PKG_SZ - 1);
-    if (i != (_RYM_SOH_PKG_SZ - 1))
+    i = _rym_read_data(ctx, data_sz - 1);
+    if (i != (data_sz - 1))
         return -RYM_ERR_DSZ;
 
     /* sanity check
@@ -509,8 +509,8 @@ static rt_err_t _rym_do_fin(struct rym_ctx *ctx)
     if (ctx->buf[1] != 0 || ctx->buf[2] != 0xFF)
         return -RYM_ERR_SEQ;
 
-    recv_crc = (rt_uint16_t)(*(ctx->buf + _RYM_SOH_PKG_SZ - 2) << 8) | *(ctx->buf + _RYM_SOH_PKG_SZ - 1);
-    if (recv_crc != CRC16(ctx->buf + 3, _RYM_SOH_PKG_SZ - 5))
+    recv_crc = (rt_uint16_t)(*(ctx->buf + data_sz - 2) << 8) | *(ctx->buf + data_sz - 1);
+    if (recv_crc != CRC16(ctx->buf + 3, data_sz - 5))
         return -RYM_ERR_CRC;
 
     /*next file transmission*/

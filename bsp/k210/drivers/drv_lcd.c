@@ -17,6 +17,7 @@
 #include "drv_lcd.h"
 #include <board.h>
 #include <gpiohs.h>
+#include <drivers/dev_spi.h>
 #include <spi.h>
 #include <drv_io_config.h>
 #include <rthw.h>

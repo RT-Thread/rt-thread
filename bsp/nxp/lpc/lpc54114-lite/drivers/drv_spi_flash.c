@@ -9,8 +9,8 @@
 
 #include "rtthread.h"
 #include "rtdevice.h"
-#include "spi_flash.h"
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash.h"
+#include "dev_spi_flash_sfud.h"
 
 #define RT_SPI_FLASH_CS_PIN (2)
 

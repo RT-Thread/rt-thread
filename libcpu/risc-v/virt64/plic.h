@@ -72,5 +72,6 @@ void plic_complete(int irq);
 void plic_set_thresh(rt_uint32_t val);
 void plic_set_ie(rt_uint32_t word_index,rt_uint32_t val);
 void plic_init();
+void plic_handle_irq(void);
 
 #endif

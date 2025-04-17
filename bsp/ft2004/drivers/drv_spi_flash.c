@@ -21,8 +21,8 @@
 
 #ifdef BSP_USE_SPI
 
-#include "spi_flash.h"
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash.h"
+#include "dev_spi_flash_sfud.h"
 
 static int rt_hw_spi_flash_init(void)
 {

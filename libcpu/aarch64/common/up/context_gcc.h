@@ -19,17 +19,23 @@
 #include <asm-fpu.h>
 #include <armv8.h>
 
-.macro RESTORE_CONTEXT_SWITCH using_sp
-    /* Set the SP to point to the stack of the task being restored. */
-    mov     sp, \using_sp
-
+/* restore address space */
+.macro RESTORE_ADDRESS_SPACE
 #ifdef RT_USING_SMART
     bl      rt_thread_self
     mov     x19, x0
     bl      lwp_aspace_switch
     mov     x0, x19
     bl      lwp_user_setting_restore
-#endif /* RT_USING_SMART */
+#endif
+.endm
+
+.macro RESTORE_CONTEXT_SWITCH using_sp
+    /* Set the SP to point to the stack of the task being restored. */
+    mov     sp, \using_sp
+
+    RESTORE_ADDRESS_SPACE
+
     _RESTORE_CONTEXT_SWITCH
 .endm
 

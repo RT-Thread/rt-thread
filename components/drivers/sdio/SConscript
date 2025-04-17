@@ -3,12 +3,12 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split("""
-block_dev.c
-mmcsd_core.c
-sd.c
-sdio.c
-gpt.c
-mmc.c
+dev_block.c
+dev_mmcsd_core.c
+dev_sd.c
+dev_sdio.c
+dev_gpt.c
+dev_mmc.c
 """)
 
 # The set of source files associated with this SConscript file.

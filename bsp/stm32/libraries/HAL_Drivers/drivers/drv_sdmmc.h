@@ -18,8 +18,8 @@
 #include <rthw.h>
 #include <drv_common.h>
 #include <string.h>
-#include <drivers/mmcsd_core.h>
-#include <drivers/sdio.h>
+#include <drivers/dev_mmcsd_core.h>
+#include <drivers/dev_sdio.h>
 
 #define SDIO_BUFF_SIZE       4096
 #define SDIO_ALIGN_LEN       32

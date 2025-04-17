@@ -1,0 +1,20 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../../..
+
+PKGS_DIR := packages
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+
+config SOC_LPC824
+    bool
+    select ARCH_ARM_CORTEX_M0
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+source "$(BSP_DIR)/drivers/Kconfig"
+

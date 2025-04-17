@@ -459,7 +459,7 @@ en_result_t Rtc_CheckDateTimeFormat(uint8_t* pu8TimeDate,uint8_t u8Mode)
     en_result_t enRet=Error;
     while(u8i<7)
     {
-        if(u8Mode&&(1<<u8i))
+        if(u8Mode && (1 << u8i) != 0)
         {
             switch(u8i)
             {
