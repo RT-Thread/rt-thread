@@ -12,8 +12,7 @@
 #define __DEV_SERIAL_V2_H__
 
 #include <rtthread.h>
-
-
+#include <rtdevice.h>
 /**
  * @addtogroup  Drivers          RTTHREAD Driver
  * @defgroup    Serial_v2       Serial v2
@@ -193,7 +192,7 @@
  */
 #define RT_HW_SERIAL_CTRL_GETC                    0x01    /* Tx irq get char */
 #define RT_HW_SERIAL_CTRL_PUTC                    0x02    /* Rx irq put char */
-#define RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF        0x03    /* get DMA ping-pong buffer */
+#define RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF        0x03    /* Get DMA ping-pong buffer */
 
 /**
  * hw isr event
@@ -211,8 +210,8 @@
 #define RT_SERIAL_CTRL_SET_TX_TIMEOUT           0x42    /* set Tx timeout. Call before rt_device_write. not supported in poll mode */
 #define RT_SERIAL_CTRL_GET_RX_TIMEOUT           0x43    /* get Rx timeout. not supported in poll mode */
 #define RT_SERIAL_CTRL_GET_TX_TIMEOUT           0x44    /* get Tx timeout. not supported in poll mode */
-#define RT_SERIAL_CTRL_RX_FLUSH                 0x45    /* Clear rx buffer. Discard all data */
-#define RT_SERIAL_CTRL_TX_FLUSH                 0x46    /* Clear tx buffer. Blocking and wait for the send buffer data to be sent. not supported in poll mode */
+#define RT_SERIAL_CTRL_RX_FLUSH                 0x45    /* clear rx buffer. Discard all data */
+#define RT_SERIAL_CTRL_TX_FLUSH                 0x46    /* clear tx buffer. Blocking and wait for the send buffer data to be sent. not supported in poll mode */
 #define RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT   0x47    /* get unread bytes count. not supported in poll mode */
 
 #define RT_SERIAL_ERR_OVERRUN           0x01
@@ -240,7 +239,8 @@
     RT_SERIAL_RX_MINBUFSZ,      /* rxBuf size */      \
     RT_SERIAL_TX_MINBUFSZ,      /* txBuf size */      \
     RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
-    0                                                 \
+    0,                          /* reserved */        \
+    0,                          /* dma_ping_bufsz */  \
 }
 
 /**
@@ -282,9 +282,9 @@ struct rt_serial_rx_fifo
 
     struct rt_completion rx_cpt;
 
-    rt_int32_t rx_timeout;
+    rt_size_t rx_cpt_index;
 
-    rt_uint16_t rx_cpt_index;
+    rt_atomic_t rx_timeout;
 };
 
 /**
@@ -298,8 +298,8 @@ struct rt_serial_tx_fifo
     struct rt_completion tx_cpt;
 
     rt_size_t put_size;
-
-    rt_int32_t tx_timeout;
+    
+    rt_atomic_t tx_timeout;
 
     rt_atomic_t activated;
 };
@@ -317,6 +317,8 @@ struct rt_serial_device
 
     void *serial_rx;
     void *serial_tx;
+
+    struct rt_spinlock spinlock;
 
     struct rt_device_notify rx_notify;
 };
