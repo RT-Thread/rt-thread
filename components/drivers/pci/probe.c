@@ -17,6 +17,8 @@
 #include <drivers/pci.h>
 #include <drivers/core/bus.h>
 
+#include "procfs.h"
+
 rt_inline void spin_lock(struct rt_spinlock *spinlock)
 {
     rt_hw_spin_lock(&spinlock->lock);
@@ -146,6 +148,7 @@ struct rt_pci_device *rt_pci_scan_single_device(struct rt_pci_bus *bus, rt_uint3
         goto _end;
     }
 
+    pci_procfs_attach(pdev);
     rt_pci_device_register(pdev);
 
 _end:
@@ -900,6 +903,8 @@ rt_err_t rt_pci_device_remove(struct rt_pci_device *pdev)
     if (pdev)
     {
         struct rt_pci_bus *bus = pdev->bus;
+
+        pci_procfs_detach(pdev);
 
         spin_lock(&bus->lock);
 
