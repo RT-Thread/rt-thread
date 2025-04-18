@@ -36,13 +36,29 @@ struct hw_uart_device
 #define UART_CR(base)   __REG32(base + 0x30)
 #define UART_IMSC(base) __REG32(base + 0x38)
 #define UART_ICR(base)  __REG32(base + 0x44)
+#define UART_IFLS(base) __REG32(base + 0x34)
+#define UART_TCR(base)  __REG32(base + 0x80)
+#define UART_ITOP(base) __REG32(base + 0x88)
+
+#define UART_LCR_H(base)    __REG32(base + 0x2C)
+#define UART_DMACR(base)    __REG32(base + 0x48)
+
+#define UARTITOP_RXINTR 0x400
+
+#define UARTLCR_H_FEN     0x10
 
 #define UARTFR_RXFE     0x10
 #define UARTFR_TXFF     0x20
-#define UARTIMSC_RXIM   0x10
-#define UARTIMSC_TXIM   0x20
+#define UARTFR_RXFF     0x40
+#define UARTFR_TXFE     0x80
+#define UARTFR_BUSY     0x08
+
 #define UARTICR_RXIC    0x10
 #define UARTICR_TXIC    0x20
+
+#define UARTIMSC_RXIM   0x10
+#define UARTIMSC_RTIM   0x40
+#define UARTIMSC_TXIM   0x20
 
 #if defined(BSP_USING_UART0)
 struct rt_serial_device serial0;
@@ -105,17 +121,40 @@ static struct hw_uart_device _uart_device[] = {
  *
  * @param serial Serial device
  */
+
 static void rt_hw_uart_isr(int irqno, void *param)
 {
     struct rt_serial_device *serial = (struct rt_serial_device *)param;
-    struct hw_uart_device *uart;
+
     RT_ASSERT(serial != RT_NULL);
+
+    struct hw_uart_device *uart;
+
     uart = (struct hw_uart_device *)serial->parent.user_data;
-    struct rt_serial_rx_fifo *rx_fifo;
-    rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-    RT_ASSERT(rx_fifo != RT_NULL);
-    rt_ringbuffer_putchar(&(rx_fifo->rb), UART_DR(uart->hw_base));
-    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+
+    RT_ASSERT(uart != RT_NULL);
+
+    if(!(UART_FR(uart->hw_base) & UARTFR_RXFE) && (UART_IMSC(uart->hw_base) & UARTIMSC_RXIM))
+    {
+
+        struct rt_serial_rx_fifo *rx_fifo;
+
+        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+
+        RT_ASSERT(rx_fifo != RT_NULL);
+
+        char rec_ch = UART_DR(uart->hw_base) & 0xff;
+
+        rt_ringbuffer_putchar(&(rx_fifo->rb),rec_ch);
+
+        rt_hw_serial_isr(serial,RT_SERIAL_EVENT_RX_IND);
+    }
+    else if((UART_IMSC(uart->hw_base) & UARTIMSC_TXIM))
+    {
+        UART_ICR(uart->hw_base) |= UARTICR_TXIC;
+
+        rt_hw_serial_isr(serial,RT_SERIAL_EVENT_TX_DONE);
+    }
 }
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -135,17 +174,11 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
     if(ctrl_arg & (RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_RX_NON_BLOCKING))
     {
-        {
-            ctrl_arg = RT_DEVICE_FLAG_INT_RX;
-        }
-
+        ctrl_arg = RT_DEVICE_FLAG_INT_RX;
     }
     else if(ctrl_arg & (RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING))
     {
-        {
-            ctrl_arg = RT_DEVICE_FLAG_INT_TX;
-        }
-
+        ctrl_arg = RT_DEVICE_FLAG_INT_TX;
     }
 
     switch (cmd)
@@ -161,7 +194,6 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
                 /* disable tx irq */
                 UART_IMSC(uart->hw_base) &= ~UARTIMSC_TXIM;
             }
-
             break;
 
         case RT_DEVICE_CTRL_SET_INT:
@@ -183,7 +215,6 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
             uart_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)ctrl_arg);
             break;
     }
-
     return RT_EOK;
 }
 
@@ -194,7 +225,6 @@ static int uart_putc(struct rt_serial_device *serial, char ch)
     RT_ASSERT(serial != RT_NULL);
 
     uart = (struct hw_uart_device *)serial->parent.user_data;
-
     while (UART_FR(uart->hw_base) & UARTFR_TXFF);
     UART_DR(uart->hw_base) = ch;
 
@@ -207,6 +237,7 @@ static int uart_getc(struct rt_serial_device *serial)
     struct hw_uart_device *uart;
 
     RT_ASSERT(serial != RT_NULL);
+
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
     ch = -1;
@@ -218,18 +249,37 @@ static int uart_getc(struct rt_serial_device *serial)
     return ch;
 }
 static rt_ssize_t uart_transmit(struct rt_serial_device *serial,
-                                    rt_uint8_t *buf,
-                                    rt_size_t size,
-                                    rt_uint32_t tx_flag)
+    rt_uint8_t *buf,
+    rt_size_t size,
+    rt_uint32_t tx_flag)
 {
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
-
     RT_ASSERT(size);
+    uint32_t fifo_size = 0, tx_size = 0;
+    struct hw_uart_device *uart = (struct hw_uart_device *)serial->parent.user_data;
+    struct rt_serial_tx_fifo *tx_fifo;
+    tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
+    uint8_t ch = 0;
+    RT_ASSERT(tx_fifo != RT_NULL);
 
-    uart_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)tx_flag);
+    if (size > 0)
+    {
+        if (UART_IMSC(uart->hw_base) & UARTIMSC_TXIM)
+        {
+            UART_IMSC(uart->hw_base) &= ~UARTIMSC_TXIM;
+            if(rt_ringbuffer_getchar(&tx_fifo->rb, &ch))
+            {
+                while (UART_FR(uart->hw_base) & UARTFR_TXFF);
+                UART_DR(uart->hw_base) = ch;
+            }
+            UART_IMSC(uart->hw_base) |= UARTIMSC_TXIM;
+        }
+    }
+
     return size;
 }
+
 static const struct rt_uart_ops _uart_ops = {
     .configure = uart_configure,
     .control = uart_control,
@@ -238,12 +288,43 @@ static const struct rt_uart_ops _uart_ops = {
     .transmit = uart_transmit
 };
 
+static int uart_config(void)
+{
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+
+#ifdef BSP_USING_UART0
+    _uart_device[0].serial->config = config;
+    _uart_device[0].serial->config.rx_bufsz = BSP_UART0_RX_BUFSIZE;
+    _uart_device[0].serial->config.tx_bufsz = BSP_UART0_TX_BUFSIZE;
+#endif /* BSP_USING_UART0 */
+
+#ifdef BSP_USING_UART1
+    _uart_device[1].serial->config = config;
+    _uart_device[1].serial->config.rx_bufsz = BSP_UART1_RX_BUFSIZE;
+    _uart_device[1].serial->config.tx_bufsz = BSP_UART1_TX_BUFSIZE;
+#endif /* BSP_USING_UART1 */
+
+#ifdef BSP_USING_UART2
+    _uart_device[2].serial->config = config;
+    _uart_device[2].serial->config.rx_bufsz = BSP_UART2_RX_BUFSIZE;
+    _uart_device[2].serial->config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
+#endif /* BSP_USING_UART2 */
+
+#ifdef BSP_USING_UART3
+    _uart_device[3].serial->config = config;
+    _uart_device[3].serial->config.rx_bufsz = BSP_UART3_RX_BUFSIZE;
+    _uart_device[3].serial->config.tx_bufsz = BSP_UART3_TX_BUFSIZE;
+#endif /* BSP_USING_UART3 */
+
+    return RT_EOK;
+}
+
 int rt_hw_uart_init(void)
 {
 
     rt_err_t err = RT_EOK;
 
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    uart_config();
 
     for (uint32_t i = 0; i < sizeof(_uart_device) / sizeof(_uart_device[0]); i++)
     {
@@ -253,9 +334,6 @@ int rt_hw_uart_init(void)
         #endif
 
         _uart_device[i].serial->ops = &_uart_ops;
-        _uart_device[i].serial->config = config;
-        _uart_device[i].serial->config.rx_bufsz = 64;
-        _uart_device[i].serial->config.tx_bufsz = 0;
         /* register UART device */
         err = rt_hw_serial_register(_uart_device[i].serial,
                             _uart_device[i].device_name,
@@ -264,6 +342,7 @@ int rt_hw_uart_init(void)
         rt_hw_interrupt_install(_uart_device[i].irqno, rt_hw_uart_isr, _uart_device[i].serial, _uart_device[i].device_name);
         /* enable Rx and Tx of UART */
         UART_CR(_uart_device[i].hw_base) = (1 << 0) | (1 << 8) | (1 << 9);
+        UART_LCR_H(_uart_device[i].hw_base) =(1 << 4);
     }
 
     return err;
