@@ -513,7 +513,6 @@ static rt_ssize_t _serial_fifo_rx(struct rt_device *dev,
     if (dev->open_flag & RT_SERIAL_RX_BLOCKING)
     {
         rt_size_t data_len = 0;
-        // fifo 接收一半的时候再处理
         rt_size_t  rx_bufsz_third  = serial->config.rx_bufsz / 2;
         rt_int32_t base_rx_timeout = rt_atomic_load(&rx_fifo->rx_timeout);
         rt_int32_t rx_timeout      = base_rx_timeout;
@@ -614,7 +613,6 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device *dev,
 
     /* When serial transmit in tx_blocking mode,
      * if the activated mode is RT_TRUE, it will return directly */
-    // 返回值是之前的结果，如果之前结果为1，表示有线程在使用
     if (rt_atomic_flag_test_and_set(&tx_fifo->activated))
     {
         return 0;
