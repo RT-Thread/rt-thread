@@ -1,0 +1,1390 @@
+/*!
+    \file    change log.txt
+    \brief   change log for GD32F5xx firmware
+
+    \version 2024-07-31, V1.1.0, firmware for GD32F5xx
+*/
+
+/*
+    Copyright (c) 2024, GigaDevice Semiconductor Inc.
+
+    Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this 
+       list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
+       and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+OF SUCH DAMAGE.
+*/
+
+******************* V1.1.0 2024-06-07 ******************************************************************************************
+______________________Common______________________________________________________________________________________________
+Fix file:
+gd32F5xx_it.c
+fix reason:
+The single bit ECC error and FPU interrupts are enabled  by default, so an interrupt service function needs to be added.
+V1.0.0:
+none
+V1.1.0:
+#define SINGLE_ECC_ERROR_HANDLE(s)   do{}while(1)
+/*!
+    \brief    this function handles SRAM and Flash single bit ECC non-correction exception
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void SYSCFG_SINGLE_BIT_ECC_ER_IRQHandler(void)
+{
+    if((SET == syscfg_interrupt_flag_get(SYSCFG_INT_FLAG_ECCSE0)) ||
+            (SET == syscfg_interrupt_flag_get(SYSCFG_INT_FLAG_ECCSE1)) ||
+            (SET == syscfg_interrupt_flag_get(SYSCFG_INT_FLAG_ECCSE2)) ||
+            (SET == syscfg_interrupt_flag_get(SYSCFG_INT_FLAG_ECCSE3)) ||
+            (SET == syscfg_interrupt_flag_get(SYSCFG_INT_FLAG_ECCSE4)) ||
+            (SET == syscfg_interrupt_flag_get(SYSCFG_INT_FLAG_ECCSE5)) ||
+            (SET == syscfg_interrupt_flag_get(SYSCFG_INT_FLAG_ECCSE6))) {
+        MULTI_ECC_ERROR_HANDLE("SRAM or FLASH single bit ECC error\r\n");
+    }
+}
+
+/*!
+    \brief    this function handles FPU exception
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void FPU_IRQHandler(void)
+{
+    /* if FPU exception occurs, go to infinite loop */
+    while(1) {
+    }
+}
+
+Fix file:
+gd32F5xx_it.h
+fix reason:
+Add the declaration of the SYSCFG_SINGLE_BIT_ECC_ER_IRQHandler and FPU_IRQHandler function. 
+V1.0.0:
+none
+V1.1.0:
+/* this function handles SRAM and Flash single bit ECC non-correction exception */
+void SYSCFG_SINGLE_BIT_ECC_ER_IRQHandler(void);
+/* this function handles FPU exception */
+void FPU_IRQHandler(void);
+
+Fix file:
+All functions in the file that involve the use of a serial port.
+fix reason:
+Modify the serial port redirection function to adapt to the Embedded Builder IDE.
+V1.0.0:
+/* retarget the C library printf function to the USART */
+int fputc(int ch, FILE *f)
+{
+    usart_data_transmit(EVAL_COM0, (uint8_t)ch);
+    while(RESET == usart_flag_get(EVAL_COM0, USART_FLAG_TBE));
+    return ch;
+}
+V1.1.0:
+#ifdef GD_ECLIPSE_GCC
+/* retarget the C library printf function to the USART, in Eclipse GCC environment */
+int __io_putchar(int ch)
+{
+    usart_data_transmit(EVAL_COM0, (uint8_t) ch );
+    while(RESET == usart_flag_get(EVAL_COM0, USART_FLAG_TBE));
+    return ch;
+}
+#else
+/* retarget the C library printf function to the USART */
+int fputc(int ch, FILE *f)
+{
+    usart_data_transmit(EVAL_COM0, (uint8_t)ch);
+    while(RESET == usart_flag_get(EVAL_COM0, USART_FLAG_TBE));
+    return ch;
+}
+#endif /* GD_ECLIPSE_GCC */
+
+Fix file:
+../Firmware/CMSIS/GD/GD32F5xx/Include/gd32f5xx.h
+fix reason:
+Add a firmware library version acquisition function to the firmware library. 
+V1.0.0:
+/* GD32F5xx firmware library version number V1.0 */
+#define __GD32F5XX_STDPERIPH_VERSION_MAIN   (0x01) /*!< [31:24] main version     */
+#define __GD32F5XX_STDPERIPH_VERSION_SUB1   (0x01) /*!< [23:16] sub1 version     */
+#define __GD32F5XX_STDPERIPH_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version     */
+#define __GD32F5XX_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]   release candidate */
+#define __GD32F5XX_STDPERIPH_VERSION        ((__GD32F5XX_STDPERIPH_VERSION_MAIN << 24)\
+                                             |(__GD32F5XX_STDPERIPH_VERSION_SUB1 << 16)\
+                                             |(__GD32F5XX_STDPERIPH_VERSION_SUB2 << 8)\
+                                             |(__GD32F5XX_STDPERIPH_VERSION_RC))
+V1.1.0:
+/* GD32F5xx firmware library version number V1.0 */
+#define __GD32F5xx_STDPERIPH_VERSION_MAIN   (0x01) /*!< [31:24] main version     */
+#define __GD32F5xx_STDPERIPH_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version     */
+#define __GD32F5xx_STDPERIPH_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version     */
+#define __GD32F5xx_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
+#define __GD32F5xx_STDPERIPH_VERSION        ((__GD32F5xx_STDPERIPH_VERSION_MAIN << 24)\
+                                             |(__GD32F5xx_STDPERIPH_VERSION_SUB1 << 16)\
+                                             |(__GD32F5xx_STDPERIPH_VERSION_SUB2 << 8)\
+                                             |(__GD32F5xx_STDPERIPH_VERSION_RC))
+
+Fix file:
+../Firmware/CMSIS/GD/GD32F5xx/Include/system_gd32f5xx.h
+fix reason:
+Add a firmware library version acquisition function to the firmware library. 
+V1.0.0:
+none
+V1.1.0:
+/* firmware version can be aquired by uncommenting the macro */
+#define __FIRMWARE_VERSION_DEFINE
+#ifdef __FIRMWARE_VERSION_DEFINE
+/* get firmware version */
+extern uint32_t gd32f5xx_firmware_version_get(void);
+#endif /* __FIRMWARE_VERSION_DEFINE */
+
+Fix file:
+../Firmware/CMSIS/GD/GD32F5xx/Source/system_gd32f5xx.c
+fix reason:
+Add a firmware library version acquisition function to the firmware library. 
+V1.0.0:
+none
+V1.1.0:
+#ifdef __FIRMWARE_VERSION_DEFINE
+/*!
+    \brief      get firmware version
+    \param[in]  none
+    \param[out] none
+    \retval     firmware version
+*/
+uint32_t gd32f5xx_firmware_version_get(void)
+{
+    return __GD32F5XX_STDPERIPH_VERSION;
+}
+#endif /* __FIRMWARE_VERSION_DEFINE */
+
+Fix file:
+../Template/main.c
+fix reason:
+Display the firmware library version through USART in main function. 
+V1.0.0:
+none
+V1.1.0:
+#ifdef __FIRMWARE_VERSION_DEFINE
+    uint32_t fw_ver = 0;
+#endif
+
+#ifdef __FIRMWARE_VERSION_DEFINE
+    fw_ver = gd32f5xx_firmware_version_get();
+    /* print firmware version */
+    printf("\r\nGD32F5xx series firmware version: V%d.%d.%d", (uint8_t)(fw_ver >> 24), (uint8_t)(fw_ver >> 16), (uint8_t)(fw_ver >> 8));
+#endif /* __FIRMWARE_VERSION_DEFINE */
+__________________________________________________________________________________________________________________________
+
+______________________ENET________________________________________________________________________________________________ 
+Fix file:
+../Firmware/GD32F5xx_standard_peripheral/Source/gd32f5xx_enet.c
+fix reason: 
+Default to disabling carrier sensing to prevent half-duplex issues.
+V1.0.0:
+                | ENET_CARRIERSENSE_ENABLE | ENET_RECEIVEOWN_ENABLE \
+V1.1.0:
+                | ENET_CARRIERSENSE_DISABLE | ENET_RECEIVEOWN_ENABLE \					
+__________________________________________________________________________________________________________________________
+
+______________________TIMER_______________________________________________________________________________________________ 
+Fix file:
+../Firmware/GD32F5xx_standard_peripheral/Source/gd32f5xx_timer.c
+fix reason: 
+Fixed the bug of interfaces timer_flag_clear/timer_interrupt_flag_clear.
+void timer_flag_clear(uint32_t timer_periph, uint32_t flag)
+{
+    TIMER_INTF(timer_periph) &= (~(uint32_t)flag);
+}
+
+void timer_interrupt_flag_clear(uint32_t timer_periph, uint32_t interrupt)
+{
+    TIMER_INTF(timer_periph) &= (~(uint32_t)interrupt);
+}
+
+V1.1.0:
+void timer_flag_clear(uint32_t timer_periph, uint32_t flag)
+{
+    TIMER_INTF(timer_periph) = (~(uint32_t)flag);
+}
+
+void timer_interrupt_flag_clear(uint32_t timer_periph, uint32_t interrupt)
+{
+    TIMER_INTF(timer_periph) = (~(uint32_t)interrupt);
+}
+_________________________________________________________________________________________________________________________
+
+______________________MISC_______________________________________________________________________________________________
+Fix file:
+../Firmware/GD32F5xx_standard_peripheral/Source/gd32f5xx_misc.c
+fix reason: New function nvic_system_reset added.
+V1.0.0:
+none
+V1.1.0:
+/*!
+    \brief      initiates a system reset request to reset the MCU
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void nvic_system_reset(void)
+{
+    NVIC_SystemReset();
+}
+
+../Firmware/GD32F5xx_standard_peripheral/Source/gd32f5xx_misc.h
+fix reason: New function nvic_system_reset declaration added.
+V1.0.0:
+none
+V1.1.0:
+/* initiates a system reset request to reset the MCU */
+void nvic_system_reset(void);
+_________________________________________________________________________________________________________________________
+
+______________________CAU_______________________________________________________________________________________________
+Fix file:
+../Firmware/GD32F5xx_standard_peripheral/Source/gd32f5xx_cau.c
+fix reason: Fixed the bug of interface cau_flag_get.
+V1.0.0:
+#define FLAG_MASK            ((uint32_t)0x00000020U)
+
+FlagStatus cau_flag_get(uint32_t flag)
+{
+    uint32_t reg = 0U;
+    FlagStatus ret_flag = RESET;
+
+    /* check if the flag is in CAU_STAT1 register */
+    if(RESET != (flag & FLAG_MASK)) {
+        reg = CAU_STAT1;
+    } else {
+        /* the flag is in CAU_STAT0 register */
+        reg = CAU_STAT0;
+    }
+
+    /* check the status of the specified CAU flag */
+    if(RESET != (reg & flag)) {
+        ret_flag = SET;
+    }
+
+    return ret_flag;
+}
+V1.1.0:
+FlagStatus cau_flag_get(uint32_t flag)
+{
+    uint32_t reg = 0U;
+    FlagStatus ret_flag = RESET;
+
+    /* check if the flag is in CAU_STAT1 register */
+    if(1U == (flag >> 31U)) {
+        reg = CAU_STAT1;
+    } else {
+        /* the flag is in CAU_STAT0 register */
+        reg = CAU_STAT0;
+    }
+
+    /* check the status of the specified CAU flag */
+    if(0U != (reg & flag)) {
+        ret_flag = SET;
+    }
+
+    return ret_flag;
+}
+
+../Firmware/GD32F5xx_standard_peripheral/Source/gd32f5xx_cau.h
+fix reason: New function nvic_system_reset declaration added.
+V1.0.0:
+#define CAU_FLAG_INFIFO             CAU_STAT1_ISTA                              /*!< IN FIFO flag status */
+#define CAU_FLAG_OUTFIFO            CAU_STAT1_OSTA                              /*!< OUT FIFO flag status */
+V1.1.0:
+/* cau_stat1 register value */
+#define CAU_FLAG_INFIFO             (CAU_STAT1_ISTA | BIT(31))                  /*!< IN FIFO flag status */
+#define CAU_FLAG_OUTFIFO            (CAU_STAT1_OSTA | BIT(31))                  /*!< OUT FIFO flag status */
+_________________________________________________________________________________________________________________________
+
+______________________USB________________________________________________________________________________________________
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Include\usb_iap_core.h
+fix reason: 
+Changing IAP commands due to IAP protocol modification
+V1.0.0:
+/* special commands with download request */
+#define IAP_OPTION_BYTE1                    0x01U
+#define IAP_ERASE                           0x02U
+#define IAP_DNLOAD                          0x03U
+#define IAP_LEAVE                           0x04U
+#define IAP_GETBIN_ADDRESS                  0x05U
+#define IAP_OPTION_BYTE2                    0x06U
+V1.1.0:
+/* special commands with download request */
+#define IAP_READ_OPTION_BYTE                0x01U                                  /*!< read option byte request */
+#define IAP_ERASE                           0x02U                                  /*!< erase request */
+#define IAP_DOWNLOAD                        0x03U                                  /*!< download request */
+#define IAP_LEAVE                           0x04U                                  /*!< leave request */
+#define IAP_GETBIN_ADDRESS                  0x05U                                  /*!< get bin address request */
+#define IAP_WRITE_OPTION_BYTE               0x06U                                  /*!< write option byte request */
+#define IAP_UPLOAD                          0x07U                                  /*!< upload request */
+#define IAP_CHECK_RDP                       0x08U                                  /*!< check rdp state request */
+
+#define OPERATION_SUCCESS                   0x02U                                  /*!< operation success status */
+#define OPERATION_FAIL                      0x5FU                                  /*!< operation fail status */
+#define LEAVE_FINISH                        0x04U                                  /*!< leave finish status */
+#define OB_WRITE_SUCCESS                    0x03U                                  /*!< OB write success status */
+#define IS_RDP_MODE                         0xBBU                                  /*!< MCU RDP status */
+#define IS_NORMAL_MODE                      0xA5U                                  /*!< MCU normal status */
+
+#define IAP_HOST_ID                         0x01U                                  /*!< IAP host ID */
+#define IAP_DEVICE_ID                       0x02U                                  /*!< IAP device ID */
+
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Changing IAP DATA OUT function due to IAP protocol modification
+V1.0.0:
+/*!
+    \brief      handle data out stage
+    \param[in]  udev: pointer to USB device instance
+    \param[in]  ep_num: endpoint identifier
+    \param[out] none
+    \retval     none
+*/
+static uint8_t iap_data_out (usb_dev *udev ,uint8_t ep_num)
+{
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    if (0x01U == iap->report_buf[0]) {
+        switch (iap->report_buf[1]) {
+        case IAP_DNLOAD:
+            iap_req_dnload(udev);
+            break;
+
+        case IAP_ERASE:
+            iap_req_erase(udev);
+            break;
+
+        case IAP_OPTION_BYTE1:
+            iap_req_optionbyte(udev, 0x01U);
+            break;
+
+        case IAP_LEAVE:
+            iap_req_leave(udev);
+            break;
+
+        case IAP_GETBIN_ADDRESS:
+            iap_address_send(udev);
+            break;
+
+        case IAP_OPTION_BYTE2:
+            iap_req_optionbyte(udev, 0x02U);
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    usbd_ep_recev(udev, IAP_OUT_EP, iap->report_buf, IAP_OUT_PACKET);
+
+    return USBD_OK;
+}
+V1.1.0:
+/*!
+    \brief      handle data OUT stage
+    \param[in]  udev: pointer to USB device instance
+    \param[in]  ep_num: endpoint number
+    \param[out] none
+    \retval     USB device operation status
+*/
+static uint8_t iap_data_out(usb_dev *udev, uint8_t ep_num)
+{
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    if(IAP_HOST_ID == iap->report_buf[0]) {
+        switch(iap->report_buf[1]) {
+        case IAP_DOWNLOAD:
+            iap_req_download(udev);
+            break;
+
+        case IAP_ERASE:
+            iap_req_erase(udev);
+            break;
+
+        case IAP_READ_OPTION_BYTE:
+            iap_req_read_optionbyte(udev);
+            break;
+
+        case IAP_LEAVE:
+            iap_req_leave(udev);
+            break;
+
+        case IAP_GETBIN_ADDRESS:
+            iap_address_send(udev);
+            break;
+
+        case IAP_WRITE_OPTION_BYTE:
+            iap_req_write_optionbyte(udev);
+            break;
+
+        case IAP_UPLOAD:
+            iap_req_upload(udev);
+            break;
+
+        case IAP_CHECK_RDP:
+            iap_check_rdp(udev);
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    usbd_ep_recev(udev, IAP_OUT_EP, iap->report_buf, IAP_OUT_PACKET);
+
+    return USBD_OK;
+}
+
+Fix file:
+\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Changing IAP download request function due to IAP protocol modification
+V1.0.0:
+/*!
+    \brief      handle the IAP_DNLOAD request
+    \param[in]  udev: pointer to usb device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_dnload(usb_dev *udev)
+{
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    if (0U != iap->transfer_times) {
+        if (1U == iap->transfer_times) {
+            if (0U == iap->lps) {
+                iap_data_write(&iap->report_buf[2], iap->base_address, TRANSFER_SIZE);
+            } else {
+                iap_data_write(&iap->report_buf[2], iap->base_address, iap->file_length % TRANSFER_SIZE);
+                iap->lps = 0U;
+            }
+
+            iap->dev_status[0] = 0x02U;
+            iap->dev_status[1] = 0x02U;
+            iap_report_send (udev, iap->dev_status, IAP_IN_PACKET);
+        } else {
+            iap_data_write(&iap->report_buf[2], iap->base_address, TRANSFER_SIZE);
+
+            iap->base_address += TRANSFER_SIZE;
+        }
+
+        iap->transfer_times--;
+    }
+}
+V1.1.0:
+/*!
+    \brief      handle the IAP_DOWNLOAD request
+    \param[in]  udev: pointer to USB device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_download(usb_dev *udev)
+{
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    iap->dev_status[0] = IAP_DEVICE_ID;
+
+    /* get the target address to download */
+    iap->base_address  = iap->report_buf[2];
+    iap->base_address |= (uint32_t)iap->report_buf[3] << 8;
+    iap->base_address |= (uint32_t)iap->report_buf[4] << 16;
+    iap->base_address |= (uint32_t)iap->report_buf[5] << 24;
+
+    /* program the target address */
+    if(FMC_READY == iap_data_write(&iap->report_buf[6], iap->base_address, TRANSFER_SIZE)) {
+        iap->dev_status[1] = OPERATION_SUCCESS;
+    } else {
+        iap->dev_status[1] = OPERATION_FAIL;
+    }
+
+    iap_report_send(udev, iap->dev_status, IAP_IN_PACKET);
+}
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Adding IAP write option byte request function due to IAP protocol modification
+V1.0.0:
+none
+V1.1.0:
+/*!
+    \brief      handle the IAP_WRITE_OPTION_BYTE request
+    \param[in]  udev: pointer to USB device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_write_optionbyte(usb_dev *udev)
+{
+    uint32_t option_byte_addr = 0U;
+    uint16_t option_byte_size = 0U;
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    /* get option byte address address */
+    option_byte_addr  = iap->report_buf[2];
+    option_byte_addr |= (uint32_t)iap->report_buf[3] << 8;
+    option_byte_addr |= (uint32_t)iap->report_buf[4] << 16;
+    option_byte_addr |= (uint32_t)iap->report_buf[5] << 24;
+
+    /* get option byte address size */
+    if(OPT_BYTE_ADDR == option_byte_addr) {
+        option_byte_size = OPT_BYTE_SIZE;
+    }
+
+    iap->dev_status[0] = IAP_DEVICE_ID;
+
+    /* write option byte address data */
+    if(FMC_READY == option_byte_write(option_byte_addr, &iap->report_buf[6], option_byte_size)) {
+        iap->dev_status[1] = OB_WRITE_SUCCESS;
+    } else {
+        iap->dev_status[1] = OPERATION_FAIL;
+    }
+
+    iap_report_send(udev, iap->dev_status, IAP_IN_PACKET);
+}
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Changing IAP erase flash request function due to IAP protocol modification
+V1.0.0:
+/*!
+    \brief      handle the IAP_ERASE request
+    \param[in]  udev: pointer to usb device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_erase(usb_dev *udev)
+{
+    uint32_t addr = 0U;
+
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    /* get base address to erase */
+    iap->base_address  = iap->report_buf[2];
+    iap->base_address |= iap->report_buf[3] << 8U;
+    iap->base_address |= iap->report_buf[4] << 16U;
+    iap->base_address |= iap->report_buf[5] << 24U;
+
+    /* get file length */
+    iap->file_length = iap->report_buf[7];
+    iap->file_length |= iap->report_buf[8] << 8U;
+    iap->file_length |= iap->report_buf[9] << 16U;
+    iap->file_length |= iap->report_buf[10] << 24U;
+
+    iap->lps = iap->file_length % TRANSFER_SIZE;
+    if (0U == iap->lps) {
+        iap->transfer_times = iap->file_length / TRANSFER_SIZE;
+    } else {
+        iap->transfer_times = iap->file_length / TRANSFER_SIZE + 1U;
+    }
+
+    /* check if the address is in protected area */
+    if (IS_PROTECTED_AREA(iap->base_address)) {
+        return;
+    }
+
+    addr = iap->base_address;
+
+    /* unlock the flash program erase controller */
+    fmc_unlock();
+
+    flash_erase(addr, iap->file_length, iap->report_buf);
+
+    fmc_lock();
+
+    iap->dev_status[0] = 0x02U;
+    iap->dev_status[1] = 0x01U;
+
+    usbd_ep_send(udev, IAP_IN_EP, iap->dev_status, IAP_IN_PACKET);
+}
+V1.1.0:
+/*!
+    \brief      handle the IAP_ERASE request
+    \param[in]  udev: pointer to USB device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_erase(usb_dev *udev)
+{
+    uint32_t addr = 0U;
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    /* get base address to erase */
+    iap->base_address  = iap->report_buf[2];
+    iap->base_address |= (uint32_t)iap->report_buf[3] << 8;
+    iap->base_address |= (uint32_t)iap->report_buf[4] << 16;
+    iap->base_address |= (uint32_t)iap->report_buf[5] << 24;
+
+    /* get file length */
+    iap->file_length = iap->report_buf[6];
+    iap->file_length |= (uint32_t)iap->report_buf[7] << 8;
+    iap->file_length |= (uint32_t)iap->report_buf[8] << 16;
+    iap->file_length |= (uint32_t)iap->report_buf[9] << 24;
+
+    /* check if the address is in protected area */
+    if(IS_PROTECTED_AREA(iap->base_address)) {
+        return;
+    }
+
+    addr = iap->base_address;
+    iap->dev_status[0] = IAP_DEVICE_ID;
+
+    if(FMC_READY == flash_erase(addr, iap->file_length)) {
+        iap->dev_status[1] = OPERATION_SUCCESS;
+    } else {
+        iap->dev_status[1] = OPERATION_FAIL;
+    }
+
+    usbd_ep_send(udev, IAP_IN_EP, iap->dev_status, IAP_IN_PACKET);
+}
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Changing IAP read option byte request function due to IAP protocol modification
+V1.0.0:
+/*!
+    \brief      handle the IAP_OPTION_BYTE request
+    \param[in]  udev: pointer to USB device instance
+    \param[in]  option_num: number of option byte
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_optionbyte(usb_dev *udev, uint8_t option_num)
+{
+    uint8_t i = 0U;
+    uint32_t address = 0U;
+
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    iap->option_byte[0] = 0x02U;
+
+    if (0x01U == option_num) {
+        address = OPT_BYTE_ADDR1;
+#ifdef OPT_BYTE_ADDR2
+    } else if (0x02U == option_num) {
+        address = OPT_BYTE_ADDR2;
+#endif
+    } else {
+        return;
+    }
+
+    for (i = 1U; i < 17U; i++) {
+        iap->option_byte[i] = *(uint8_t *)address;
+        address++;
+    }
+
+    iap_report_send (udev, iap->option_byte, IAP_IN_PACKET);
+}
+V1.1.0:
+/*!
+    \brief      handle the IAP_READ_OPTION_BYTE request
+    \param[in]  udev: pointer to USB device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_read_optionbyte(usb_dev *udev)
+{
+    uint8_t i = 0U;
+    uint32_t option_size = 0U, temp = 0U, option_address = 0U;
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    /* read option address address */
+    option_address = iap->report_buf[2] + (iap->report_buf[3] << 8) + (iap->report_buf[4] << 16) + (iap->report_buf[5] << 24);
+
+    iap->option_byte[0] = IAP_DEVICE_ID;
+
+    if(OPT_BYTE_ADDR == option_address) {
+        option_size = OPT_BYTE_SIZE;
+    }
+
+    /* read option address content */
+    for(i = 0U; i < (option_size / 4U); i++) {
+        temp =  *(uint32_t *)option_address;
+        iap->option_byte[4 * i + 5] = temp >> 24;
+        iap->option_byte[4 * i + 4] = temp >> 16;
+        iap->option_byte[4 * i + 3] = temp >> 8;
+        iap->option_byte[4 * i + 2] = temp;
+        option_address = option_address + 4U;
+    }
+    iap->option_byte[1] = OPERATION_SUCCESS;
+
+    iap_report_send(udev, iap->option_byte, IAP_IN_PACKET);
+}
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Changing leave IAP mode request function due to IAP protocol modification
+V1.0.0:
+/*!
+    \brief      handle the IAP_LEAVE request
+    \param[in]  udev: pointer to usb device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_leave(usb_dev *udev)
+{
+    /* lock the internal flash */
+    fmc_lock();
+
+    /* generate system reset to allow jumping to the user code */
+    NVIC_SystemReset();
+}
+V1.1.0:
+/*!
+    \brief      handle the IAP_LEAVE request
+    \param[in]  udev: pointer to USB device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_leave(usb_dev *udev)
+{
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    /* get base address to jump */
+    iap->base_address  = iap->report_buf[2];
+    iap->base_address |= (uint32_t)iap->report_buf[3] << 8;
+    iap->base_address |= (uint32_t)iap->report_buf[4] << 16;
+    iap->base_address |= (uint32_t)iap->report_buf[5] << 24;
+
+    iap->dev_status[0] = IAP_DEVICE_ID;
+    iap->dev_status[1] = LEAVE_FINISH;
+
+    usbd_ep_send(udev, IAP_IN_EP, iap->dev_status, IAP_IN_PACKET);
+
+    usbd_disconnect(udev);
+
+    /* reset register */
+    register_reset();
+
+    /* jump to target */
+    jump_to_execute(iap->base_address);
+}
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Changing IAP upload request function due to IAP protocol modification
+V1.0.0:
+none
+V1.1.0:
+/*!
+    \brief      handle the IAP_UPLOAD request
+    \param[in]  udev: pointer to USB device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_req_upload(usb_dev *udev)
+{
+    uint16_t packet_valid_length = 0U, i= 0U;
+    uint32_t bin_flash_addr = APP_LOADED_ADDR;
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    iap->bin_addr[0] = IAP_DEVICE_ID;
+
+    /* get target flash address */
+    bin_flash_addr  = iap->report_buf[2];
+    bin_flash_addr |= (uint32_t)iap->report_buf[3] << 8;
+    bin_flash_addr |= (uint32_t)iap->report_buf[4] << 16;
+    bin_flash_addr |= (uint32_t)iap->report_buf[5] << 24;
+
+    /* get current packet valid length */
+    packet_valid_length = iap->report_buf[6];
+    packet_valid_length |= iap->report_buf[7] << 8;
+
+    /* get target flash address content */
+    for(i = 0U; i < packet_valid_length; i++) {
+        iap->bin_addr[i + 1] = REG8(bin_flash_addr + i);
+    }
+
+    iap_report_send(udev, iap->bin_addr, IAP_IN_PACKET);
+}
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\iap\Source\usb_iap_core.c
+fix reason: 
+Adding IAP check read protected request function due to IAP protocol modification
+V1.0.0:
+none
+V1.1.0:
+/*!
+    \brief      handle the IAP_CHECK_RDP request
+    \param[in]  udev: pointer to USB device instance
+    \param[out] none
+    \retval     none
+*/
+static void iap_check_rdp(usb_dev *udev)
+{
+    uint8_t mode = 0U;
+    usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
+
+    /* check whether the SPC bit of FMC module is normal state */
+    if(0xA5U != REG8(OPT_BYTE_ADDR)) {
+        mode = IS_RDP_MODE;
+    } else {
+        mode = IS_NORMAL_MODE;
+    }
+
+    iap->bin_addr[0] = IAP_DEVICE_ID;
+    iap->bin_addr[1] = mode;
+
+    iap_report_send(udev, iap->bin_addr, IAP_IN_PACKET);
+}
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\class\msc\Include\usbd_msc_scsi.h
+fix reason: 
+The statement here can be removed
+V1.0.0:
+extern const uint8_t msc_page00_inquiry_data[];
+extern const uint8_t msc_mode_sense6_data[];
+extern const uint8_t msc_mode_sense10_data[];
+V1.1.0:
+none
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\core\Source\usbd_core.c
+fix reason: 
+GD32F5xx can not support USB high-speed core, it has only one full-speed core
+V1.0.0:
+void usbd_init (usb_core_driver *udev, usb_core_enum core, usb_desc *desc, usb_class_core *class_core)
+V1.1.0:
+void usbd_init(usb_core_driver *udev, usb_desc *desc, usb_class_core *class_core)
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\device\core\Source\usbd_core.c
+fix reason: 
+The endpoint size in the endpoint descriptor is the lower 11 bits
+V1.0.0:
+uint16_t max_len = ep_desc->wMaxPacketSize;
+V1.1.0:
+uint16_t max_len = ep_desc->wMaxPacketSize & EP_MAX_PACKET_SIZE_MASK;
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Include\drv_usb_core.h
+fix reason: 
+Adding endpoint size mask
+V1.0.0:
+none
+V1.1.0:
+#define EP_MAX_PACKET_SIZE_MASK             0x07FFU                             /*!< endpoint maximum packet size mask */
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Include\drv_usb_regs.h
+fix reason: 
+Removing the core enumeration as GD32F5xx has only one full-speed core
+V1.0.0:
+typedef enum
+{
+    USB_CORE_ENUM_HS = 0,                           /*!< USB core type is HS */
+    USB_CORE_ENUM_FS = 1                            /*!< USB core type is FS */
+} usb_core_enum;
+V1.1.0:
+none
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Source\drv_usb_core.c
+fix reason: 
+GD32F5xx can not support USB high-speed core, it has only one full-speed core
+V1.0.0:
+usb_status usb_basic_init(usb_core_basic *usb_basic, usb_core_regs *usb_regs, usb_core_enum usb_core)
+V1.1.0:
+usb_status usb_basic_init(usb_core_basic *usb_basic, usb_core_regs *usb_regs)
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Source\drv_usb_core.c
+fix reason: 
+GD32F5xx have no ULPI
+V1.0.0:
+#ifdef USBHS_EXTERNAL_VBUS_ENABLED
+        /* use external VBUS driver */
+        usb_regs->gr->GUSBCS |= GUSBCS_ULPIEVD;
+#else
+        /* use internal VBUS driver */
+        usb_regs->gr->GUSBCS &= ~GUSBCS_ULPIEVD;
+#endif /* USBHS_EXTERNAL_VBUS_ENABLED */
+V1.1.0:
+none
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Source\drv_usb_host.c
+fix reason: 
+GD32F5xx can not support USB high-speed
+V1.0.0:
+if (!pp->ep.dir) {
+	if (PORT_SPEED_HIGH == pp->dev_speed) {
+		pp_inten |= HCHINTEN_NYETIE;
+		pp_inten |= HCHINTEN_ACKIE;
+	}
+}
+V1.1.0:
+none
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Source\drv_usb_host.c
+fix reason: 
+As GD32F5xx can not support USB high-speed, so it can not support PING protocol
+V1.0.0:
+/*!
+    \brief      configure host pipe to do ping operation
+    \param[in]  udev: pointer to USB device
+    \param[in]  pipe_num: host pipe number which is in (0..7)
+    \param[out] none
+    \retval     operation status
+*/
+usb_status usb_pipe_ping (usb_core_driver *udev, uint8_t pipe_num)
+{
+    uint32_t pp_ctl = 0U;
+
+    udev->regs.pr[pipe_num]->HCHLEN = HCHLEN_PING | (HCHLEN_PCNT & (1U << 19U));
+
+    pp_ctl = udev->regs.pr[pipe_num]->HCHCTL;
+
+    pp_ctl |= HCHCTL_CEN;
+    pp_ctl &= ~HCHCTL_CDIS;
+
+    udev->regs.pr[pipe_num]->HCHCTL = pp_ctl;
+
+    return USB_OK;
+}
+V1.1.0:
+none
+
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Source\drv_usbh_int.c
+fix reason: 
+The wakeup interrupt is repeated
+V1.0.0:
+if (intr & GINTF_WKUPIF) {
+	/* clear interrupt */
+	udev->regs.gr->GINTF = GINTF_WKUPIF;
+}
+V1.1.0:
+none
+
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Source\drv_usbh_int.c
+fix reason: 
+GD32F5xx is embedded PHY by default
+V1.0.0:
+if (USB_EMBEDDED_PHY == udev->bp.phy_itf) {
+V1.1.0:
+none
+
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\driver\Source\drv_usbh_int.c
+fix reason: 
+As GD32F5xx can not support USB high-speed, so it can not support PING protocol
+V1.0.0:
+if (URB_PING == pp->urb_state) {
+	pp->err_count = 0U;
+	usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_TF, PIPE_XF);
+}
+V1.1.0:
+none
+
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\host\class\hid\Include\usbh_standard_hid.h
+fix reason: 
+The name of the structure has been changed since it is confusing
+V1.0.0:
+typedef struct _hid_mouse_info
+{
+    uint8_t x;
+    uint8_t y;
+    uint8_t buttons[3];
+} hid_mouse_info;
+V1.1.0:
+typedef struct _mouse_report_data {
+    uint8_t x;                                                                /*!< X coordinate value */
+    uint8_t y;                                                                /*!< Y coordinate value */
+    uint8_t buttons[3];                                                       /*!< button buff */
+} mouse_report_data;
+
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\host\class\hid\Source\usbh_standard_hid.c
+fix reason: 
+It is changed as the structure has been changed
+V1.0.0:
+hid_mouse_info mouse_info;
+
+uint8_t mouse_report_data[8] = {0U};
+
+if(hid->len > sizeof(mouse_report_data)) {
+	hid->len = sizeof(mouse_report_data);
+}
+
+hid->pdata = (uint8_t *)(void *)mouse_report_data;
+V1.1.0:
+mouse_report_data mouse_info;
+
+uint8_t hid_mouse_info[8] = {0U};
+
+if(hid->len > sizeof(hid_mouse_info)) {
+	hid->len = sizeof(hid_mouse_info);
+}
+
+hid->pdata = (uint8_t *)(void *)hid_mouse_info;
+
+
+Fix file:
+..\Firmware\GD32F5xx_usb_library\host\core\Source\usbh_pipe.c
+fix reason: 
+As GD32F5xx can not support USB high-speed, so it can not support PING protocol
+V1.0.0:
+if ((USB_EPTYPE_BULK == pp->ep.type) || (USB_EPTYPE_CTRL == pp->ep.type)) {
+	pp->supp_ping = (uint8_t)(pp->dev_speed == PORT_SPEED_HIGH);
+}
+V1.1.0:
+none
+
+Fix file:
+..\Examples\USB\USB_Device\audio\inc\usb_conf.h
+..\Examples\USB\USB_Device\cdc_acm\inc\usb_conf.h
+..\Examples\USB\USB_Device\composite_dev_hid_printer\inc\usb_conf.h
+..\Examples\USB\USB_Device\custom_hid\inc\usb_conf.h
+..\Examples\USB\USB_Device\dev_firmware_update\inc\usb_conf.h
+..\Examples\USB\USB_Device\in_application_program_hid\inc\usb_conf.h
+..\Examples\USB\USB_Device\msc_cdrom\inc\usb_conf.h
+..\Examples\USB\USB_Device\msc_udisk\inc\usb_conf.h
+..\Examples\USB\USB_Device\standard_hid_keyboard\inc\usb_conf.h
+..\Examples\USB\USB_Device\usb_printer\inc\usb_conf.h
+..\Examples\USB\USB_Device\usb_host_hid_keyboard_mouse\inc\usb_conf.h
+..\Examples\USB\USB_Device\usb_host_msc_udisk\inc\usb_conf.h
+fix reason: 
+GD32F5xx can not support USB high-speed core, it has only one full-speed core
+V1.0.0:
+#ifdef USE_USB_FS
+    #define USB_FS_CORE
+#endif
+
+#define __ALIGN_BEGIN
+#define __ALIGN_END
+V1.1.0:
+none
+
+Fix file:
+..\Examples\USB\USB_Device\audio\inc\app.c
+..\Examples\USB\USB_Device\cdc_acm\inc\app.c
+..\Examples\USB\USB_Device\composite_dev_hid_printer\inc\app.c
+..\Examples\USB\USB_Device\custom_hid\inc\app.c
+..\Examples\USB\USB_Device\dev_firmware_update\inc\app.c
+..\Examples\USB\USB_Device\in_application_program_hid\inc\app.c
+..\Examples\USB\USB_Device\msc_cdrom\inc\app.c
+..\Examples\USB\USB_Device\msc_udisk\inc\app.c
+..\Examples\USB\USB_Device\standard_hid_keyboard\inc\app.c
+..\Examples\USB\USB_Device\usb_printer\inc\app.c
+fix reason: 
+GD32F5xx can not support USB high-speed core, it has only one full-speed core
+V1.0.0:
+usbd_init (&usbd_printer, USB_CORE_ENUM_FS, ...);
+V1.1.0:
+usbd_init(&usbd_printer, ...);
+
+
+Fix file:
+..\Examples\USB\USB_Device\in_application_program_hid\src\flash_operation.c
+fix reason: 
+Changing flash erase function due to IAP protocol modification
+V1.0.0:
+/*!
+    \brief      erase flash
+    \param[in]  address: erase start address
+    \param[in]  file_length: file length
+    \param[in]  report_buffer: report buffer
+    \param[out] none
+    \retval     MAL_OK if all operations are OK, MAL_FAIL else
+*/
+void flash_erase(uint32_t address, uint32_t file_length, uint8_t* report_buffer)
+{
+    uint16_t page_count = 0U, i = 0U;
+
+    page_count = report_buffer[6];
+
+    /* clear pending flags */
+    fmc_flag_clear (FMC_FLAG_PGERR | FMC_FLAG_WPERR | FMC_FLAG_END);
+
+    for (i = 0U; i < page_count; i ++) {
+        /* call the standard flash erase-page function */
+        fmc_page_erase(address);
+
+        address += PAGE_SIZE;
+    }
+}
+V1.1.0:
+/*!
+    \brief      erase flash
+    \param[in]  address: erase start address
+    \param[in]  file_length: file length
+    \param[out] none
+    \retval     state of FMC, refer to fmc_state_enum
+*/
+fmc_state_enum flash_erase(uint32_t address, uint32_t file_length)
+{
+    uint16_t page_count = 0U, i = 0U;
+    fmc_state_enum fmc_state = FMC_READY;
+
+    if(0U == (file_length % PAGE_SIZE)) {
+        page_count = (uint16_t)(file_length / PAGE_SIZE);
+    } else {
+        page_count = (uint16_t)(file_length / PAGE_SIZE + 1U);
+    }
+
+    /* unlock the flash program erase controller */
+    fmc_unlock();
+
+    /* clear pending flags */
+    fmc_flag_clear(FMC_FLAG_PGERR | FMC_FLAG_WPERR | FMC_FLAG_END);
+
+    for(i = 0U; i < page_count; i ++) {
+        /* call the standard flash erase-page function */
+        fmc_state = fmc_page_erase(address);
+
+        address += PAGE_SIZE;
+    }
+
+    /* lock the flash program erase controller */
+    fmc_lock();
+
+    return fmc_state;
+}
+
+Fix file:
+..\Examples\USB\USB_Device\in_application_program_hid\src\flash_operation.c
+fix reason: 
+Changing flash write function due to IAP protocol modification
+V1.0.0:
+/*!
+    \brief      write data to sectors of memory
+    \param[in]  data: data to be written
+    \param[in]  addr: sector address/code
+    \param[in]  len: length of data to be written (in bytes)
+    \param[out] none
+    \retval     MAL_OK if all operations are OK, MAL_FAIL else
+*/
+void iap_data_write (uint8_t *data, uint32_t addr, uint32_t len)
+{
+    uint32_t idx = 0U;
+
+    /* check if the address is in protected area */
+    if (IS_PROTECTED_AREA(addr)) {
+        return;
+    }
+
+    /* unlock the flash program erase controller */
+    fmc_unlock();
+
+    /* clear pending flags */
+    fmc_flag_clear(FMC_FLAG_PGERR | FMC_FLAG_WPERR | FMC_FLAG_END);
+
+    /* data received are word multiple */
+    for (idx = 0U; idx < len; idx += 4) {
+        if (FMC_READY == fmc_word_program(addr, *(uint32_t *)(data + idx))) {
+            addr += 4U;
+        } else {
+            while(1){
+            }
+        }
+    }
+
+    fmc_lock();
+}
+V1.1.0:
+/*!
+    \brief      write data to sectors of memory
+    \param[in]  data: data to be written
+    \param[in]  addr: sector address/code
+    \param[in]  len: length of data to be written (in bytes)
+    \param[out] none
+    \retval     MAL_OK if all operations are OK, MAL_FAIL else
+*/
+fmc_state_enum iap_data_write(uint8_t *data, uint32_t addr, uint32_t len)
+{
+    uint32_t idx = 0U;
+    fmc_state_enum fmc_state = FMC_READY;
+
+    /* check if the address is in protected area */
+    if(IS_PROTECTED_AREA(addr)) {
+        return FMC_BUSY;
+    }
+
+    /* unlock the flash program erase controller */
+    fmc_unlock();
+
+    /* clear pending flags */
+    fmc_flag_clear(FMC_FLAG_PGERR | FMC_FLAG_WPERR | FMC_FLAG_END);
+
+    /* data received are word multiple */
+    for(idx = 0U; idx < len; idx += 4) {
+        if(FMC_READY == fmc_word_program(addr, *(uint32_t *)(data + idx))) {
+            addr += 4U;
+        } else {
+            while(1){
+            }
+        }
+    }
+
+    /* lock the flash program erase controller */
+    fmc_lock();
+
+    return fmc_state;
+}
+
+Fix file:
+..\Examples\USB\USB_Device\in_application_program_hid\src\flash_operation.c
+fix reason: 
+Adding related operation due to IAP protocol modifications
+V1.0.0:
+none
+V1.1.0:
+fmc_state_enum option_byte_write(uint32_t mem_add, uint8_t *data, uint16_t len)
+
+void jump_to_execute(uint32_t addr)
+
+void register_reset(void)
+
+static fmc_state_enum fmc_state_get(void)
+
+static fmc_state_enum fmc_ready_wait(uint32_t timeout)
+
+
+Fix file:
+..\Examples\USB\USB_Device\standard_hid_keyboard\src\gd32f5xx_hw.c
+fix reason: 
+Repeated definition
+V1.0.0:
+#ifdef USE_USBFS
+    #define USBFS_CORE
+#endif /* USE_USBFS */
+
+#ifdef USBFS_CORE
+    #define RX_FIFO_FS_SIZE                         128
+    #define TX0_FIFO_FS_SIZE                        64
+    #define TX1_FIFO_FS_SIZE                        128
+    #define TX2_FIFO_FS_SIZE                        0
+    #define TX3_FIFO_FS_SIZE                        0
+
+    #define USBFS_LOW_PWR_MGMT_SUPPORT
+    #define USBFS_SOF_OUTPUT_ENABLED
+
+#endif /* USBFS_CORE */
+V1.1.0:
+none
+
+Fix file:
+..\Examples\USB\USB_Host\usb_host_hid_keyboard_mouse\src\gd32f5xx_usb_hw.c
+..\Examples\USB\USB_Host\usb_host_msc_udisk\src\gd32f5xx_usb_hw.c
+fix reason: 
+There is no relevant action about USB over current and SOF output in the code
+V1.0.0:
+#define HOST_OVRCURR_PORT                       GPIOE
+#define HOST_OVRCURR_LINE                       GPIO_PIN_1
+#define HOST_OVRCURR_PORT_SOURCE                GPIO_PORT_SOURCE_GPIOE
+#define HOST_OVRCURR_PIN_SOURCE                 GPIO_PINSOURCE1
+#define HOST_OVRCURR_PORT_RCC                   RCC_APB2PERIPH_GPIOE
+#define HOST_OVRCURR_EXTI_LINE                  EXTI_LINE1
+#define HOST_OVRCURR_IRQn                       EXTI1_IRQn
+
+#define HOST_SOF_OUTPUT_RCC                     RCC_APB2PERIPH_GPIOA
+#define HOST_SOF_PORT                           GPIOA
+#define HOST_SOF_SIGNAL                         GPIO_PIN_8
+V1.1.0:
+none
+
+
+Fix file:
+..\Examples\USB\USB_Host\usb_host_hid_keyboard_mouse\src\gd32f5xx_usb_hw.c
+..\Examples\USB\USB_Host\usb_host_msc_udisk\src\gd32f5xx_usb_hw.c
+fix reason: 
+Repeated operation
+V1.0.0:
+/*!
+    \brief      configure USB GPIO
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void usb_gpio_config (void)
+{
+#ifdef USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
+    EXTI_InitPara EXTI_InitStructure;
+#endif
+
+#ifdef USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
+
+    EXTI_ClearIntBitState(EXTI_LINE18);
+
+    /* USB wakeup EXTI line configuration */
+    EXTI_InitStructure.EXTI_LINE = EXTI_LINE18;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+    EXTI_InitStructure.EXTI_LINEEnable = ENABLE;
+    EXTI_Init(&EXTI_InitStructure);
+
+#endif
+}
+V1.1.0:
+none
+
+
+Fix file:
+..\Examples\USB\USB_Host\usb_host_hid_keyboard_mouse\src\lcd_font.c
+..\Examples\USB\USB_Host\usb_host_msc_udisk\src\lcd_font.c
+fix reason: 
+Chinese fonts compile with errors in some IDE
+V1.0.0:
+const typefont_GB162 hz16[] = {
+    "鏄?,0x00,0x00,0x1F,0xF0,0x10,0x10,0x10,0x10,0x1F,0xF0,0x10,0x10,0x10,0x10,0x1F,0xF0,0x04,0x40,0x44,0x44,0x24,0x44,0x14,0x48,0x14,0x50,0x04,0x40,0xFF,0xFE,0x00,0x00,
+    "绀?,0x00,0x00,0x3F,0xF8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFE,0x01,0x00,0x01,0x00,0x11,0x10,0x11,0x08,0x21,0x04,0x41,0x02,0x81,0x02,0x05,0x00,0x02,0x00,
+    "娴?,0x00,0x04,0x27,0xC4,0x14,0x44,0x14,0x54,0x85,0x54,0x45,0x54,0x45,0x54,0x15,0x54,0x15,0x54,0x25,0x54,0xE5,0x54,0x21,0x04,0x22,0x84,0x22,0x44,0x24,0x14,0x08,0x08,
+    "璇?,0x00,0x28,0x20,0x24,0x10,0x24,0x10,0x20,0x07,0xFE,0x00,0x20,0xF0,0x20,0x17,0xE0,0x11,0x20,0x11,0x10,0x11,0x10,0x15,0x10,0x19,0xCA,0x17,0x0A,0x02,0x06,0x00,0x02,
+    0x00,
+};
+
+/* song typeface bold small 2 font */
+const typefont_GB242 hz24[] = 
+{
+    "鏄?,0x00,0x00,0x00,0x00,0x00,0x00,0x07,0xFF,0x00,0x0F,0x03,0xC0,0x0C,0x00,0x40,0x1F,0xF8,0x60,0x18,0x00,0x60,0x08,0x00,0x40,0x0E,0x01,0xC0,0x07,0xFF,0x00,0x00,0x00,0x00,0x01,0x84,0x00,0x01,0x84,0x00,0x19,0x87,0x80,0x0F,0x8C,0xE0,0x07,0x8C,0x20,0x00,0xCC,0x00,0x03,0xFF,0xE0,0x1F,0xFF,0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    "绀?,0x00,0x00,0x00,0x00,0x00,0x00,0x0E,0x00,0x00,0x1F,0xFF,0xC0,0x00,0x7F,0xE0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3F,0xC0,0x3F,0xFF,0xE0,0x00,0x30,0x00,0x00,0x30,0x00,0x00,0x30,0x00,0x06,0x13,0x00,0x0C,0x13,0xC0,0x0C,0x18,0xF0,0x18,0x18,0x00,0x18,0x18,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    "娴?,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x30,0x39,0xFC,0x30,0x1F,0xCC,0x30,0x07,0x06,0xB0,0x0F,0x06,0xF0,0x19,0x07,0xB0,0x31,0x37,0xB0,0x31,0x36,0xF0,0x1F,0x27,0xF0,0x01,0x67,0xF0,0x01,0xE5,0xF0,0x01,0xE1,0xF0,0x00,0x41,0xF0,0x0C,0xF8,0xB0,0x3C,0xD8,0x30,0x00,0x8C,0x30,0x00,0x80,0x30,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    "璇?,0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x03,0x60,0x0C,0x03,0x70,0x0C,0x03,0x30,0x00,0x3F,0xE0,0x00,0x3F,0x80,0x08,0x01,0x00,0x3C,0x01,0x80,0x04,0x7F,0x80,0x04,0x7D,0x80,0x0C,0x00,0x80,0x0C,0x10,0xC0,0x0C,0x10,0xC0,0x0C,0x18,0x40,0x0C,0x1C,0x60,0x0F,0x7E,0x60,0x06,0x70,0x30,0x00,0x00,0x30,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,
+};
+V1.1.0:
+none
+__________________________________________________________________________________________________________________________
+
+__________________________________________________________________________________________________________________________
+
