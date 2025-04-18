@@ -251,6 +251,7 @@ typedef int (*init_fn_t)(void);
  * @def RT_ALIGN(size, align)
  * Return the most contiguous size aligned at specified width. RT_ALIGN(13, 4)
  * would return 16.
+ * @note align Must be an integer power of 2 or the result will be incorrect
  */
 #define RT_ALIGN(size, align)           (((size) + (align) - 1) & ~((align) - 1))
 
@@ -260,6 +261,7 @@ typedef int (*init_fn_t)(void);
  * @def RT_ALIGN_DOWN(size, align)
  * Return the down number of aligned at specified width. RT_ALIGN_DOWN(13, 4)
  * would return 12.
+ * @note align Must be an integer power of 2 or the result will be incorrect
  */
 #define RT_ALIGN_DOWN(size, align)      ((size) & ~((align) - 1))
 
