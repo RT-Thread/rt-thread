@@ -4,7 +4,7 @@
 
 @subpage page_quick_start
 
-@subpage page_kernel
+@subpage page_kernel_core
 
 - @ref page_kernel_basics
 - @ref page_thread_management
