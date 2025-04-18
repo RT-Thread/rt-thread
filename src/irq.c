@@ -59,7 +59,7 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup group_Kernel
+ * @addtogroup group_kernel_core
  */
 
 /**@{*/

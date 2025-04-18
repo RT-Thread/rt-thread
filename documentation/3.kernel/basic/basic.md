@@ -295,7 +295,7 @@ The macro interface definitions used to implement the automatic initialization f
 
 Initialization function actively declares through these macro interfaces, such as `INIT_BOARD_EXPORT(rt_hw_usart_init)`, the linker will automatically collect all the declared initialization functions, placed in the RTI symbol segment, the symbol segment is located in the RO segment of the memory distribution. All functions in this RTI symbol segment are automatically called when the system is initialized.
 
-# RT-Thread Kernel Object Model
+@section section_kernel_object_model RT-Thread Kernel Object Model
 
 ## Static and Dynamic Objects
 

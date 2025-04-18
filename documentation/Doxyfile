@@ -2241,7 +2241,8 @@ PREDEFINED             = RT_USING_SEMAPHORE \
                          FINSH_USING_DESCRIPTION \
                          RT_USING_FINSH \
                          RT_USING_HEAP \
-                         RT_USING_MODULE
+                         RT_USING_MODULE \
+                         RT_USING_SIGNALS
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
