@@ -1,4 +1,10 @@
 # ------ PERIPHERAL CI ------
+peripheral.UARTv2:
+    kconfig:
+      - CONFIG_RT_USING_SERIAL_V2=y
+      - CONFIG_BSP_USING_UART1=y
+      - CONFIG_BSP_USING_UART2=y
+      - CONFIG_BSP_USING_UART3=y
 peripheral.EMAC:
     kconfig:
       - CONFIG_BSP_DRV_EMAC=y
