@@ -163,11 +163,11 @@ RT-Thread Kernel  --->
     [*] Enable RT-Thread Smart (microkernel on kernel/userland)
 ```
 
-**注意检查内核虚拟起始地址的配置，确保为 `0xFFFFFFC000200000`。**
+**注意检查内核虚拟起始地址的配置，确保为 `0xFFFFFFC000000000`。**
 
 ```shell
     RT-Thread Kernel  --->
-(0xFFFFFFC000200000) The virtural address of kernel start
+(0xFFFFFFC000000000) The virtural address of kernel start
     RT-Thread Components  --->
 ```
 
