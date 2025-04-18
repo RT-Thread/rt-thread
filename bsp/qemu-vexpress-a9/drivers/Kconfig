@@ -16,22 +16,74 @@ menuconfig BSP_USING_UART
     default y
     select RT_USING_SERIAL
     if BSP_USING_UART
-        config BSP_USING_UART0
-            bool "Enable UART0"
-            select RT_USING_UART0
+    menuconfig BSP_USING_UART0
+            bool "Enable UART0 (Debugger)"
             default y
-        config BSP_USING_UART1
+            if BSP_USING_UART0
+                config BSP_UART0_RX_BUFSIZE
+                    int "Set UART0 RX buffer size"
+                    range 64 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 10240
+
+                config BSP_UART0_TX_BUFSIZE
+                    int "Set UART0 TX buffer size"
+                    range 0 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 0
+            endif
+
+        menuconfig BSP_USING_UART1
             bool "Enable UART1"
-            select RT_USING_UART1
             default n
-        config BSP_USING_UART2
+            if BSP_USING_UART1
+                config BSP_UART1_RX_BUFSIZE
+                    int "Set UART1 RX buffer size"
+                    range 64 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 10240
+
+                config BSP_UART1_TX_BUFSIZE
+                    int "Set UART1 TX buffer size"
+                    range 0 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 0
+            endif
+
+        menuconfig BSP_USING_UART2
             bool "Enable UART2"
-            select RT_USING_UART2
             default n
-        config BSP_USING_UART3
+            if BSP_USING_UART2
+                config BSP_UART2_RX_BUFSIZE
+                    int "Set UART2 RX buffer size"
+                    range 64 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 10240
+
+                config BSP_UART2_TX_BUFSIZE
+                    int "Set UART2 TX buffer size"
+                    range 0 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 0
+            endif
+
+        menuconfig BSP_USING_UART3
             bool "Enable UART3"
-            select RT_USING_UART3
             default n
+            if BSP_USING_UART3
+                config BSP_UART3_RX_BUFSIZE
+                    int "Set UART3 RX buffer size"
+                    range 64 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 10240
+
+                config BSP_UART3_TX_BUFSIZE
+                    int "Set UART3 TX buffer size"
+                    range 0 65535
+                    depends on RT_USING_SERIAL_V2
+                    default 0
+            endif
+
     endif
 
 config BSP_USING_LVGL
