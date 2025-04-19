@@ -3,12 +3,10 @@ bsp_board_info:
   toolchain: arm-none-eabi-gcc
   pre_build: |
     scons -c
-    qemu-system-arm --version
   build_cmd: |
     scons -j8
   post_build: |
     scons --version
-    qemu-system-arm --version
   run_cmd: ./qemu-nographic.sh
   qemu_flag: true
 pkg.tools.coremark:
@@ -17,12 +15,10 @@ pkg.tools.coremark:
     - CONFIG_COREMARK_ITERATIONS=36000
   pre_build: |
     scons -c
-    qemu-system-arm --version
   build_cmd: |
     scons -j8
   post_build: |
     scons --version
-    qemu-system-arm --version
   ci_build_run_flag : true
   buildcheckresult: "core_main"              #检查编译的log中是否有匹配字
   msh_cmd: |
