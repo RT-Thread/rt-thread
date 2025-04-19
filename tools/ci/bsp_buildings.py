@@ -291,7 +291,7 @@ def check_output(output, check_string):
     if flag == True:
         print('find string ' + check_string)
     else:
-        print('::error:: can not find string ' + check_string + output)
+        print('::error:: can not find string ' + check_string + '  output:' + output)
 
     return flag
 if __name__ == "__main__":
@@ -432,15 +432,15 @@ if __name__ == "__main__":
                         output, returncode = run_command(command)
                         print(output)
                         if returncode != 0 or not check_output(output, build_check_result):
-                                print("Build failed or build check result not found")
-                                print(output)
+                            print(f"build command failed: {command}")
+                            print(output)
                 #执行编译后的命令
                 if post_build_command is not None:
                     for command in post_build_command:
                         output, returncode = run_command(command)
                         print(output)
                         if returncode != 0:
-                            print(f"Post-build command failed: {post_build_command}")
+                            print(f"Post-build command failed: {command}")
                             print(output)
                 #执行qemu中的执行命令
                 if ci_build_run_flag is True:
