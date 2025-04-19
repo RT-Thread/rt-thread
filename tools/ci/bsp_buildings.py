@@ -273,22 +273,36 @@ if __name__ == "__main__":
                 if details.get("kconfig") is not None:
                     if details.get("buildcheckresult")  is not None:
                         build_check_result = details.get("buildcheckresult")
+                    else:
+                        build_check_result = None
                     if details.get("msh_cmd") is not None:
                         commands = details.get("msh_cmd").splitlines()
+                    else:
+                        msh_cmd = None
                     if details.get("checkresult") is not None:
                         check_result = details.get("checkresult")
+                    else:
+                        check_result = None
                     if details.get("ci_build_run_flag") is not None:
                         ci_build_run_flag = details.get("ci_build_run_flag")
+                    else:
+                        ci_build_run_flag = None
                     if details.get("pre_build") is not None:
                         pre_build_commands = details.get("pre_build").splitlines()
                     if details.get("env") is not None:
                         bsp_build_env = details.get("env")
+                    else:
+                        bsp_build_env = None
                     if details.get("build_cmd") is not None:
                         build_command = details.get("build_cmd").splitlines()
+                    else:
+                        build_command = None
                     if details.get("post_build") is not None:
                         post_build_command = details.get("post_build").splitlines()
                     if details.get("run_cmd") is not None:
                         qemu_command = details.get("run_cmd")
+                    else:
+                        qemu_command = None
                 count += 1
                 config_bacakup = config_file+'.origin'
                 shutil.copyfile(config_file, config_bacakup)
