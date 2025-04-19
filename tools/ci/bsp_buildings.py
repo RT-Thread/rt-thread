@@ -347,6 +347,14 @@ if __name__ == "__main__":
 
         for projects in yml_files_content:
             for name, details in projects.items():
+                # 在使用 pre_build_commands 之前，确保它被定义
+                pre_build_commands = None
+                build_command = None
+                post_build_command = None
+                qemu_command = None
+                build_check_result = None
+                commands = None
+                check_result = None
                 # 如果是bsp_board_info，读取基本的信息
                 if(name == 'bsp_board_info'):
                     print(details)
