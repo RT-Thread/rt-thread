@@ -69,7 +69,6 @@
       "RTT_TOOL_CHAIN": "sourcery-arm",
       "SUB_RTT_BSP": [
         "phytium/aarch32",
-        "qemu-vexpress-a9",
         "airm2m/air32f103",
         "acm32/acm32f0x0-nucleo",
         "acm32/acm32f0x0-nucleo",
@@ -448,6 +447,14 @@
         "nrf5x/nrf52833",
         "nrf5x/nrf52840",
         "nrf5x/nrf5340"
+      ]
+    },
+    {
+      "RTT_BSP": "arm-none-bsp-smart",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "RTT_SMART_TOOL_CHAIN": "arm-linux-musleabi",
+      "SUB_RTT_BSP": [
+        "qemu-vexpress-a9"
       ]
     }
   ]
