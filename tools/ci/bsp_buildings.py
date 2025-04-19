@@ -41,7 +41,7 @@ def run_cmd(cmd, output_info=True):
     return output_str_list, res
 
 
-def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_build_command=None,build_check_result = None):
+def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_build_command=None,build_check_result = None,bsp_build_env=None):
     """
     build bsp.
 
@@ -61,6 +61,12 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
 
     """
     success = True
+    # 设置环境变量
+    if bsp_build_env is not None:
+        print("Setting environment variables:")
+        for key, value in bsp_build_env.items():
+            print(f"{key}={value}")
+            os.environ[key] = value  # 设置环境变量
     os.chdir(rtt_root)
     os.makedirs(f'{rtt_root}/output/bsp/{bsp}', exist_ok=True)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
@@ -73,6 +79,8 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
 
         nproc = multiprocessing.cpu_count()
         if pre_build_commands is not None:
+            print("Pre-build commands:")
+            print(pre_build_commands)
             for command in pre_build_commands:
                 print(command)
                 output, returncode = run_cmd(command, output_info=True)
@@ -367,6 +375,7 @@ if __name__ == "__main__":
         build_check_result = None
         commands = None
         check_result = None
+        bsp_build_env = None
         for projects in yml_files_content:
             for name, details in projects.items():
                 # 如果是bsp_board_info，读取基本的信息
@@ -388,6 +397,8 @@ if __name__ == "__main__":
                         ci_build_run_flag = details.get("ci_build_run_flag")
                     if details.get("pre_build") is not None:
                         pre_build_commands = details.get("pre_build").splitlines()
+                    if details.get("env") is not None:
+                        bsp_build_env = details.get("env")
                     if details.get("build_cmd") is not None:
                         build_command = details.get("build_cmd").splitlines()
                     if details.get("post_build") is not None:
@@ -416,7 +427,7 @@ if __name__ == "__main__":
                 print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
 
                 # #开始编译bsp
-                res = build_bsp(bsp, scons_arg_str,name=name,pre_build_commands=pre_build_commands,post_build_command=post_build_command,build_check_result=build_check_result)
+                res = build_bsp(bsp, scons_arg_str,name=name,pre_build_commands=pre_build_commands,post_build_command=post_build_command,build_check_result=build_check_result,bsp_build_env =bsp_build_env)
 
                 shutil.copyfile(config_bacakup, config_file)
                 os.remove(config_bacakup)

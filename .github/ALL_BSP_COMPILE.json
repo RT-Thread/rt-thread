@@ -12,9 +12,9 @@
     {
       "RTT_BSP": "others_ft32_mm32_acm32",
       "RTT_TOOL_CHAIN": "sourcery-arm",
+      "RTT_SMART_TOOL_CHAIN": "arm-linux-musleabi",
       "SUB_RTT_BSP": [
-        "qemu-vexpress-a9",
-        "airm2m/air32f103"
+        "qemu-vexpress-a9"
       ]
     }
   ]
