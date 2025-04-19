@@ -282,10 +282,11 @@ class QemuManager:
 def check_output(output, check_string):
     """检查输出中是否包含指定字符串"""
     flag = check_string in output
+    output_str = ''.join(output) if isinstance(output, list) else str(output)
     if flag == True:
         print('find string ' + check_string)
     else:
-        print('::error:: can not find string ' + check_string + '  output:' + output)
+        print(f"::error:: can not find string {check_string}  output: {output_str}")
 
     return flag
 if __name__ == "__main__":
