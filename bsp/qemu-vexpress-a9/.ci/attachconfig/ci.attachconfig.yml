@@ -1,3 +1,36 @@
+bsp_board_info:
+  arch: arm
+  toolchain: arm-none-eabi-gcc
+  pre_build: |
+    scons -c
+    qemu-system-arm --version
+  build_cmd: |
+    scons -j8
+  post_build: |
+    scons --version
+    qemu-system-arm --version
+  run_cmd: ./qemu-nographic.sh
+  qemu_flag: true
+pkg.tools.coremark:
+  kconfig:
+    - CONFIG_PKG_USING_COREMARK=y
+    - CONFIG_COREMARK_ITERATIONS=36000
+  pre_build: |
+    scons -c
+    qemu-system-arm --version
+  build_cmd: |
+    scons -j8
+  post_build: |
+    scons --version
+    qemu-system-arm --version
+  ci_build_run_flag : true
+  buildcheckresult: "core_main"              #检查编译的log中是否有匹配字
+  msh_cmd: |
+    ps
+    version
+    core_mark
+  msh_cmd_timeout: 60
+  checkresult: 'CoreMark 1.0' #检查执行过程中的log是否有匹配字
 # ------ PERIPHERAL CI ------
 peripheral.EMAC:
     kconfig:
@@ -21,3 +54,4 @@ online-packages.ai.llmchat:
       - CONFIG_BSP_DRV_EMAC=y
       - CONFIG_PKG_USING_LLMCHAT=y
       - CONFIG_PKG_LLM_API_KEY="sk-xxxxxx"
+
