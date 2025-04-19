@@ -279,12 +279,6 @@ class QemuManager:
         finally:
             self.stop_qemu()
 
-def run_command(command, timeout=None):
-    """运行命令并返回输出和结果"""
-    print(command)
-    result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=timeout)
-    return result.stdout, result.returncode
-
 def check_output(output, check_string):
     """检查输出中是否包含指定字符串"""
     flag = check_string in output
@@ -421,7 +415,7 @@ if __name__ == "__main__":
                 #执行编译前的命令
                 if pre_build_commands is not None:
                     for command in pre_build_commands:
-                        output, returncode = run_command(command)
+                        output, returncode = run_cmd(command, output_info=False)
                         print(output)
                         if returncode != 0:
                             print(f"Pre-build command failed: {command}")
@@ -429,7 +423,7 @@ if __name__ == "__main__":
                 #执行编译命令
                 if build_command is not None:
                     for command in build_command:
-                        output, returncode = run_command(command)
+                        output, returncode = run_cmd(command, output_info=False)
                         print(output)
                         if returncode != 0 or not check_output(output, build_check_result):
                             print(f"build command failed: {command}")
@@ -437,7 +431,7 @@ if __name__ == "__main__":
                 #执行编译后的命令
                 if post_build_command is not None:
                     for command in post_build_command:
-                        output, returncode = run_command(command)
+                        output, returncode = run_cmd(command, output_info=False)
                         print(output)
                         if returncode != 0:
                             print(f"Post-build command failed: {command}")
