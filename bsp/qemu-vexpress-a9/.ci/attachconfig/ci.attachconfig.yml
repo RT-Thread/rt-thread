@@ -1,3 +1,14 @@
+bsp_board_info:
+  arch: arm
+  toolchain: arm-none-eabi-gcc
+  pre_build: |
+    scons --version
+  build_cmd: |
+    scons -j8
+  post_build: |
+    scons --version
+  run_cmd: ./qemu-nographic.sh
+  qemu_flag: true
 # ------ PERIPHERAL CI ------
 peripheral.EMAC:
     kconfig:
@@ -9,15 +20,39 @@ peripheral.LVGL:
       - CONFIG_BSP_USING_LVGL=y     
       
 # ------ online-packages CI ------
+online-packages.tools.coremark:
+  kconfig:
+    - CONFIG_PKG_USING_COREMARK=y
+    - CONFIG_COREMARK_ITERATIONS=36000
+  pre_build: |
+    scons --version
+  build_cmd: |
+    scons -j8
+  post_build: |
+    scons --version
+  ci_build_run_flag : true
+  buildcheckresult: "core_main"              #检查编译的log中是否有匹配字
+  msh_cmd: |
+    ps
+    version
+    core_mark
+  msh_cmd_timeout: 60
+  checkresult: 'CoreMark 1.0' #检查执行过程中的log是否有匹配字
+
 online-packages.misc.entertainment.tetris:
     kconfig:
       - CONFIG_PKG_USING_TETRIS=y
 online-packages.misc.entertainment.2048:
     kconfig:
       - CONFIG_PKG_USING_2048=y
-online-packages.ai.llmchat:
+# ------ RT_SMART PART ------
+rt_smart.base:
+    env:
+      RTT_CC_PREFIX: arm-linux-musleabi-
+      RTT_EXEC_PATH: /opt/arm-linux-musleabi_for_x86_64-pc-linux-gnu/bin
+    pre_build: |
+      echo $RTT_CC_PREFIX
     kconfig:
-      - CONFIG_WEBCLIENT_USING_MBED_TLS=y
-      - CONFIG_BSP_DRV_EMAC=y
-      - CONFIG_PKG_USING_LLMCHAT=y
-      - CONFIG_PKG_LLM_API_KEY="sk-xxxxxx"
+      - CONFIG_RT_USING_SMART=y
+      - CONFIG_RT_USING_MEMHEAP=y
+      - CONFIG_RT_USING_DFS_V2=y
