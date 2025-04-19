@@ -41,7 +41,7 @@ def run_cmd(cmd, output_info=True):
     return output_str_list, res
 
 
-def build_bsp(bsp, scons_args='',name='default'):
+def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_build_command=None,build_check_result = None):
     """
     build bsp.
 
@@ -65,17 +65,29 @@ def build_bsp(bsp, scons_args='',name='default'):
     os.makedirs(f'{rtt_root}/output/bsp/{bsp}', exist_ok=True)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
         os.chdir(rtt_root)
-        run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
+        run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=True)
 
         os.chdir(f'{rtt_root}/bsp/{bsp}')
-        run_cmd('pkgs --update-force', output_info=False)
+        run_cmd('pkgs --update-force', output_info=True)
         run_cmd('pkgs --list')
 
         nproc = multiprocessing.cpu_count()
+        if pre_build_commands is not None:
+            for command in pre_build_commands:
+                print(command)
+                output, returncode = run_cmd(command, output_info=True)
+                print(output)
+                if returncode != 0:
+                    print(f"Pre-build command failed: {command}")
+                    print(output)
         os.chdir(rtt_root)
+        # scons 编译命令
         cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}' # --debug=time for debug time
-        __, res = run_cmd(cmd, output_info=True)
-
+        output, res = run_cmd(cmd, output_info=True)
+        if build_check_result is not None:
+            if res != 0 or not check_output(output, build_check_result):
+                    print("Build failed or build check result not found")
+                    print(output)
         if res != 0:
             success = False
         else:
@@ -88,6 +100,13 @@ def build_bsp(bsp, scons_args='',name='default'):
                     shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
 
     os.chdir(f'{rtt_root}/bsp/{bsp}')
+    if post_build_command is not None:
+        for command in post_build_command:
+            output, returncode = run_cmd(command, output_info=True)
+            print(output)
+            if returncode != 0:
+                print(f"Post-build command failed: {command}")
+                print(output)
     run_cmd('scons -c', output_info=False)
 
     return success
@@ -281,11 +300,12 @@ class QemuManager:
 
 def check_output(output, check_string):
     """检查输出中是否包含指定字符串"""
-    flag = check_string in output
     output_str = ''.join(output) if isinstance(output, list) else str(output)
+    flag = check_string in output_str
     if flag == True:
-        print('find string ' + check_string)
+        print('Success: find string ' + check_string)
     else:
+        print(output)
         print(f"::error:: can not find string {check_string}  output: {output_str}")
 
     return flag
@@ -395,55 +415,8 @@ if __name__ == "__main__":
                 scons_arg_str=' '.join(scons_arg) if scons_arg else ' '
                 print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
 
-                #开始编译bsp
-                res = build_bsp(bsp, scons_arg_str,name=name)
-                
-                if not res:
-                    print(f"::error::build {bsp} {name} failed.")
-                    add_summary(f'\t- ❌ build {bsp} {name} failed.')
-                    failed += 1
-                else:
-                    add_summary(f'\t- ✅ build {bsp} {name} success.')
-                print("::endgroup::")
-
-                # print(commands)
-                # print(check_result)
-                # print(build_check_result)
-                # print(qemu_command)
-                # print(pre_build_commands)
-                # print(ci_build_run_flag)
-
-                #执行编译前的命令
-                if pre_build_commands is not None:
-                    for command in pre_build_commands:
-                        output, returncode = run_cmd(command, output_info=False)
-                        print(output)
-                        if returncode != 0:
-                            print(f"Pre-build command failed: {command}")
-                            print(output)
-                #执行编译命令
-                if build_command is not None:
-                    for command in build_command:
-                        output, returncode = run_cmd(command, output_info=False)
-                        print(output)
-                        if returncode != 0 or not check_output(output, build_check_result):
-                            print(f"build command failed: {command}")
-                            print(output)
-                #执行编译后的命令
-                if post_build_command is not None:
-                    for command in post_build_command:
-                        output, returncode = run_cmd(command, output_info=False)
-                        print(output)
-                        if returncode != 0:
-                            print(f"Post-build command failed: {command}")
-                            print(output)
-                #执行qemu中的执行命令,这个暂时先注释掉，ci跑不起来
-                # if ci_build_run_flag is True:
-                #     print(qemu_command)
-                #     #exit(1)
-                #     print(os.getcwd())
-                #     qemu_manager = QemuManager(qemu_cmd=qemu_command, idle_timeout=qemu_timeout_second,checkresult=check_result)
-                #     qemu_manager.run(commands)
+                # #开始编译bsp
+                res = build_bsp(bsp, scons_arg_str,name=name,pre_build_commands=pre_build_commands,post_build_command=post_build_command,build_check_result=build_check_result)
 
                 shutil.copyfile(config_bacakup, config_file)
                 os.remove(config_bacakup)
