@@ -6,13 +6,23 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-07-08     Rbb666       first implementation.
+ * 2025-04-21     Hydevcode    adapt xmc7100d
  */
 
 #include "board.h"
 
 #if defined(RT_USING_I2C)
-#if defined(BSP_USING_HW_I2C2) || defined(BSP_USING_HW_I2C3) || defined(BSP_USING_HW_I2C4)|| defined(BSP_USING_HW_I2C6)
+#if defined(BSP_USING_HW_I2C1) || defined(BSP_USING_HW_I2C2) || defined(BSP_USING_HW_I2C3) || defined(BSP_USING_HW_I2C4)|| defined(BSP_USING_HW_I2C6)
 #include <rtdevice.h>
+
+#ifndef I2C1_CONFIG
+#define I2C1_CONFIG                  \
+    {                                \
+        .name = "i2c1",              \
+        .scl_pin = BSP_I2C1_SCL_PIN, \
+        .sda_pin = BSP_I2C1_SDA_PIN, \
+    }
+#endif /* I2C1_CONFIG */
 
 #ifndef I2C2_CONFIG
 #define I2C2_CONFIG                  \
@@ -53,6 +63,9 @@
 
 enum
 {
+#ifdef BSP_USING_HW_I2C1
+    I2C1_INDEX,
+#endif
 #ifdef BSP_USING_HW_I2C2
     I2C2_INDEX,
 #endif
@@ -84,6 +97,10 @@ struct ifx_i2c
 
 static struct ifx_i2c_config i2c_config[] =
 {
+#ifdef BSP_USING_HW_I2C1
+    I2C1_CONFIG,
+#endif
+
 #ifdef BSP_USING_HW_I2C2
     I2C2_CONFIG,
 #endif
