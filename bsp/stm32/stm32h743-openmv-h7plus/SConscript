@@ -1,6 +1,5 @@
 # for module compiling
 import os
-Import('RTT_ROOT')
 Import('env')
 from building import *
 
@@ -8,7 +7,8 @@ cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 
-
+# STM32H743xx || STM32H750xx || STM32F753xx || STM32H723xx
+# You can select chips from the list above
 env.Append(CPPDEFINES = ['STM32H743xx'])
 
 for d in list:
