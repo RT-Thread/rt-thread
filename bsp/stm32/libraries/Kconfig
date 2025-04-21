@@ -80,6 +80,7 @@ config SOC_SERIES_STM32H5
     bool
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32H5_HAL_DRIVER
 
 config SOC_SERIES_STM32MP1
     bool
