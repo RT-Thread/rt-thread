@@ -1,0 +1,148 @@
+/*******************************************************************************
+* \file xmc7100d_x4160_cm0plus.icf
+* \version 1.0.0
+*
+* Linker file for the IAR compiler.
+*
+* The main purpose of the linker script is to describe how the sections in the
+* input files should be mapped into the output file, and to control the memory
+* layout of the output file.
+*
+* \note The entry point is fixed and starts at 0x10000000. The valid application
+* image should be placed there.
+*
+* \note The linker files included with the PDL template projects must be generic
+* and handle all common use cases. Your project may not use every section
+* defined in the linker files. In that case you may see warnings during the
+* build process. In your project, you can simply comment out or remove the
+* relevant code in the linker file.
+*
+********************************************************************************
+* \copyright
+* Copyright 2021 Cypress Semiconductor Corporation
+* SPDX-License-Identifier: Apache-2.0
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*******************************************************************************/
+define symbol RAMVECTORS_ALIGNMENT              = 128;
+
+define symbol sram_start_reserve                = 0;
+define symbol sram_private_for_srom             = 0x00000800; /* Private SRAM for SROM (e.g. API processing). Reserved at the beginning */
+
+define symbol cm0plus_sram_reserve              = 0x00004000; /* 16K : cm0 sram size */
+define symbol cm0plus_code_flash_reserve        = 0x00080000; /* 512K: cm0 flash size */
+
+define symbol sram_base_address                 = 0x28000000;
+define symbol code_flash_base_address           = 0x10000000;
+
+define symbol ecc_init_width                    = 8; /* Most restrictive native ECC width of all "normal" memories (SRAM, DTCM, ITCM) in any Traveo II derivate is used to keep the code generic */
+
+define symbol cm0plus_heap_reserve              = 0x00001000;
+define symbol cm0plus_stack_reserve             = 0x00001000;
+
+/*###ICF### Section handled by ICF editor, don't touch! ****/
+/*-Editor annotation file-*/
+/* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_0.xml" */
+/*-Specials-*/
+define symbol __ICFEDIT_intvec_start__ = 0x00000000;
+
+/* The symbols below define the location and size of blocks of memory in the target.
+ * Use these symbols to specify the memory regions available for allocation.
+ */
+
+/* The following symbols control RAM and flash memory allocation for the CM0+ core.
+ * You can change the memory allocation by editing RAM and Flash values.
+ * Using this memory region for other purposes will lead to unexpected behavior.
+ * Your changes must be aligned with the corresponding symbols for CM7 core in 'xx_cm7.icf',
+ * where 'xx' is the device group; for example, 'xmc7100d_x4160_cm7.icf'.
+ * any changes here must also be aligned in file 'xmc7xxx_partition.h'.
+ * after which cm0p core aplication must be build and flashed again.
+ */
+/* RAM */
+define symbol __ICFEDIT_region_RAM_start__ = 0x28000800; // sram_base_address + sram_start_reserve + sram_private_for_srom;
+define symbol __ICFEDIT_region_RAM_end__   = 0x28003FFF; // cm0plus_sram_reserve - 1
+
+/* Flash */
+define symbol __ICFEDIT_region_ROM_start__ = 0x10000000; // code_flash_base_address
+define symbol __ICFEDIT_region_ROM_end__   = 0x1007FFFF; // cm0plus_code_flash_reserve - 1
+
+/*-Sizes-*/
+
+define symbol __ICFEDIT_size_cstack__ = 0x00001000; //cm0plus_stack_reserve
+/* Defines the minimum heap size. The actual heap size will be expanded to the end of the stack region */
+define symbol __ICFEDIT_size_heap__ = 0x00001000; //cm0plus_heap_reserve
+
+/**** End of ICF editor section. ###ICF###*/
+
+define symbol heap_reserve                      = __ICFEDIT_size_heap__;
+define symbol stack_reserve                     = (__ICFEDIT_size_cstack__ + (ecc_init_width - 1)) & (~((ecc_init_width - 1))); /* Ensure that stack size is an integer multiple of ECC init width (round up) */
+
+
+define symbol _base_SRAM_CM0P                   = __ICFEDIT_region_RAM_start__;
+define symbol _size_SRAM_CM0P                   = __ICFEDIT_region_RAM_end__ - __ICFEDIT_region_RAM_start__ + 1;
+define symbol _base_CODE_FLASH_CM0P             = __ICFEDIT_region_ROM_start__;
+define symbol _size_CODE_FLASH_CM0P             = __ICFEDIT_region_ROM_end__ - __ICFEDIT_region_ROM_start__ + 1;
+
+/*============================================================
+ * Memory definitions
+ *============================================================
+ */
+
+define memory mem with size = 4G;
+
+define region SRAM                              = mem:[from _base_SRAM_CM0P          size _size_SRAM_CM0P           ];
+define region CODE_FLASH                        = mem:[from _base_CODE_FLASH_CM0P    size _size_CODE_FLASH_CM0P     ];
+
+/*============================================================
+ * Block definitions
+ *============================================================
+ */
+define block CSTACK         with alignment = 8, size = stack_reserve { };
+define block HEAP           with expanding size, alignment = 8, minimum size = heap_reserve { };
+define block HEAP_STACK     { block HEAP, last block CSTACK };
+
+/*============================================================
+ * Initialization
+ *============================================================
+ */
+initialize by copy { readwrite };
+do not initialize  { section .noinit, section .intvec_ram };
+
+/*============================================================
+ * Placement
+ *============================================================
+ */
+
+/* Link location specific assignment of 'readonly' type sections to either SRAM or CODE_FLASH */
+/* Note: .intvec must be the first section in ROM in order for __cm7_vector_base_linker_symbol to be correctly calculated! */
+
+place at start of CODE_FLASH  { section .intvec };
+place in          CODE_FLASH  { readonly };
+
+place in          SRAM  { readwrite };
+place at end   of SRAM  { block HEAP_STACK };
+
+keep {  section .intvec  };
+
+/*============================================================
+ * Symbols for use by application
+ *============================================================
+ */
+/* The start of CM7_0/1 vector table is required by CM0+ application to correctly
+ * set CPUSS->CM7_0/1_VECTOR_TABLE_BASE register before releasing CM7_0 or CM7_1 from reset
+ */
+
+define exported symbol __ecc_init_sram_start_address = start(SRAM);
+define exported symbol __ecc_init_sram_end_address   = end(SRAM);
+
+/* EOF */
