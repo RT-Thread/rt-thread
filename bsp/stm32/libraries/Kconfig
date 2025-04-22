@@ -37,6 +37,7 @@ config SOC_SERIES_STM32L0
     bool
     select ARCH_ARM_CORTEX_M0
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32L0_HAL_DRIVER
 
 config SOC_SERIES_STM32L1
     bool
