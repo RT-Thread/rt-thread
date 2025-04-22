@@ -17,6 +17,7 @@ config SOC_SERIES_STM32F2
     bool
     select ARCH_ARM_CORTEX_M3
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32F2_HAL_DRIVER
 
 config SOC_SERIES_STM32F3
     bool
