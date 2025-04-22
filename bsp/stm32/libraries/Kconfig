@@ -91,6 +91,7 @@ config SOC_SERIES_STM32WL
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32WL_HAL_DRIVER
 
 config SOC_SERIES_STM32WB
     bool
