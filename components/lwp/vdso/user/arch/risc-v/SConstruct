@@ -4,11 +4,15 @@ import subprocess
 
 arguments = sys.argv[2]
 vdso_usr = os.path.dirname(arguments)
-vdso_root = os.path.dirname(vdso_usr)
-
+user_path = os.path.dirname(vdso_usr)
+user_path = os.path.dirname(user_path)
+user_path = os.path.dirname(user_path)
+rt_root_path = os.path.abspath(os.path.join(vdso_usr, "../../../../../../"))
+include_path = os.path.join(rt_root_path, "include")
+rtconfig_path = os.path.join(rt_root_path, "bsp", "qemu-virt64-riscv")
 
 EXEC_PATH  = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
-PREFIX     = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
+PREFIX     = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-linux-gnu-'
 
 CC      = PREFIX + 'gcc'
 CXX     = PREFIX + 'g++'
@@ -16,13 +20,12 @@ CPP     = PREFIX + 'cpp'
 AS      = PREFIX + 'gcc'
 AR      = PREFIX + 'ar'
 LINK    = PREFIX + 'gcc'
-
-DEVICE   = ' -march=armv8-a -mtune=cortex-a53 -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
-CXXFLAGS = DEVICE + ' -Wall -fdiagnostics-color=always'
+DEVICE   = ' -march=rv64imafdc -mabi=lp64'
+CXXFLAGS = DEVICE + ' -Wall -fdiagnostics-color=always -fPIC -O0 -g'
 AFLAGS   = ' -x assembler-with-cpp'
 CFLAGS  = DEVICE + ' -Wall -Wno-cpp -std=gnu99 -fdiagnostics-color=always -fPIC -O2'
-LFLAGS  = DEVICE + ' -Bsymbolic -Wl,--gc-sections,-u,system_vectors -T {path}/vdso.lds'.format(path=vdso_usr)
-CFLAGS += " -I {path} -I{path}/user".format(path=vdso_root)
+LFLAGS  = DEVICE + ' -Bsymbolic -Wl,--gc-sections -T {path}/vdso.lds'.format(path=vdso_usr)
+CFLAGS += " -I {path} -I {upath} -I {include_path} -I {rtconfig_path} ".format(path=vdso_usr, upath=user_path, include_path=include_path, rtconfig_path=rtconfig_path)
 
 env = Environment(tools=['gcc', 'link'],
     AS   = AS,   ASFLAGS = AFLAGS,
@@ -34,6 +37,6 @@ env.PrependENVPath('PATH', EXEC_PATH)
 
 src = os.path.join(vdso_usr,'vdso_sys.c')
 target_name = 'librtos_vdso.so'
-target = os.path.join(vdso_usr, "build", target_name)
+target = os.path.join(user_path + "/user", "build", target_name)
 shared_lib = env.SharedLibrary(target=target, source=src)
 env.Default(shared_lib)

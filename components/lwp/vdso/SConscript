@@ -12,7 +12,7 @@ CPPPATH = [cwd, cwd + "/kernel"]
 if not GetDepend(['RT_USING_VDSO']):
     Return('group')
 
-if rtconfig.ARCH != "aarch64":
+if rtconfig.ARCH != "aarch64" and rtconfig.ARCH != "risc-v":
     src = Glob('*.c')
     group = DefineGroup('VDSO', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
     Return('group')
@@ -21,15 +21,15 @@ list = os.listdir(cwd)
 src    = Glob('kernel/*.c')
 src    +=Glob('kernel/*.S')
 
-if not os.path.exists(cwd + "/user/vdso.lds"):
-    Preprocessing("user/vdso.lds.S", ".lds", CPPPATH=[cwd])
+if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"):
+    Preprocessing("user/arch/" + rtconfig.ARCH + "/vdso.lds.S", ".lds", CPPPATH=[cwd])
 
 #aarch64 vdso xmake
 # vdso_file = os.path.join(cwd, 'usr', 'xmake.lua')
 # command = ["xmake", "-F", vdso_file]
 # clean = ["xmake", "clean"]
 
-vdso_file = os.path.join(cwd, 'user', 'SConstruct')
+vdso_file = os.path.join(cwd, 'user',"arch", rtconfig.ARCH, 'SConstruct')
 command = ["scons", "-f", vdso_file]
 clean = ["scons", "-f", vdso_file, "--clean"]
 
