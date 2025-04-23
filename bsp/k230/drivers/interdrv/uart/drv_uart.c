@@ -129,7 +129,17 @@ static void _uart_init(void *uart_base)
     dlh = bdiv >> 12;
     dll = (bdiv - (dlh << 12)) / 16;
     dlf = bdiv - (dlh << 12)  - dll * 16;
-    if(dlh == 0 && dll == 0)
+    // dlh can be 0 only if bdiv < 4096 (since we're shifting right by 12 bits)
+    // bdiv = UART_CLK / UART_DEFAULT_BAUDRATE
+    //      = 50000000 / 115200
+    //      = 434.027
+    // so when dlh is 0,
+    // dll = (bdiv - (dlh << 12)) / 16
+    //     = (434.027 - 0) / 16
+    //     = 27.626
+    // which means dll can not reach 0,
+    // so we use 1 as the minimum value for dll
+    if((dlh == 0) && (dll < 1))
     {
         dll = 1;
         dlf = 0;
