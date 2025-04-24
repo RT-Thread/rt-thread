@@ -41,7 +41,7 @@ struct hc32_uart_rxto
     rt_uint32_t                 channel;
     rt_uint32_t                 clock;
     rt_size_t                   timeout_bits;
-#if defined (HC32F460) || defined (HC32F4A0)
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
     struct hc32_irq_config      irq_config;
     func_ptr_t                  irq_callback;
 #endif
@@ -53,7 +53,7 @@ struct hc32_uart_config
     const char                  *name;
     CM_USART_TypeDef            *Instance;
     rt_uint32_t                 clock;
-#if defined (HC32F460) || defined (HC32F4A0)
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
     struct hc32_uart_irq_config rxerr_irq;
     struct hc32_uart_irq_config rx_irq;
     struct hc32_uart_irq_config tx_irq;

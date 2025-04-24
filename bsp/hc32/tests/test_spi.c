@@ -11,7 +11,7 @@
 /*
  * 程序清单：这是一个 SPI 设备使用例程
  * 例程导出了 spi_w25q_sample 命令到控制终端
- * 命令调用格式：spi_w25q_sample spi10
+ * 命令调用格式：spi_w25q_sample spix0
  * 命令解释：命令第二个参数是要使用的SPI设备名称，为空则使用默认的SPI设备
  * 程序功能：通过SPI设备读取 w25q 的 ID 数据
 */
@@ -40,7 +40,7 @@
 #define W25Q_SPI_DATA_BUF_LEN           0x2000
 
 
-#if defined(HC32F4A0) || defined(HC32F448)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8)
     #define SPI_CS_PORT                 SPI1_CS_PORT
     #define SPI_CS_PIN                  SPI1_CS_PIN
     #define SPI_CS_PORT_PIN             GET_PIN(C, 7)
@@ -68,7 +68,6 @@ struct rt_spi_device *spi_dev_w25q;     /* SPI 设备句柄 */
 
 static uint8_t u8WrBuf[W25Q_SPI_DATA_BUF_LEN];
 static uint8_t u8RdBuf[W25Q_SPI_DATA_BUF_LEN];
-
 
 static int rt_hw_spi_flash_init(void)
 {
@@ -124,7 +123,6 @@ void w25q_read_uid(struct rt_spi_device *device)
                u8UID[0], u8UID[1], u8UID[2], u8UID[3], u8UID[4], u8UID[5], u8UID[6], u8UID[7]);
 }
 
-
 int32_t w25q_check_process_done(struct rt_spi_device *device, uint32_t u32Timeout)
 {
     __IO uint32_t u32Count = 0U;
@@ -170,7 +168,6 @@ int32_t w25q_read_data(struct rt_spi_device *device, uint32_t u32Addr, uint8_t *
 
     return i32Ret;
 }
-
 
 int32_t w25q_write_data(struct rt_spi_device *device, uint32_t u32Addr, uint8_t *pu8WriteBuf, uint32_t u32Size)
 {
