@@ -107,7 +107,7 @@ static int rt_hw_qspi_flash_init(void)
 #else
 #if defined (HC32F472)
     if (RT_EOK != rt_hw_qspi_bus_attach_device("qspi1", "qspi10", GET_PIN(B, 12), W25Q_QSPI_DATA_LINE_WIDTH, RT_NULL, RT_NULL))
-#elif defined (HC32F4A0) || defined (HC32F460) || defined (HC32F448)
+#elif defined (HC32F4A0) || defined (HC32F460) || defined (HC32F448) || defined (HC32F4A8)
     if (RT_EOK != rt_hw_qspi_bus_attach_device("qspi1", "qspi10", GET_PIN(C, 7), W25Q_QSPI_DATA_LINE_WIDTH, RT_NULL, RT_NULL))
 #endif
 #endif

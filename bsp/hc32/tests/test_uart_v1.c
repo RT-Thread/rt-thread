@@ -18,6 +18,10 @@
  *     uart_ch: uartx (x对应测试通道)
  *     输出输入的字符
  *
+ * 命令调用格式：
+ * uart1 中断，命令调用格式：uart_sample_v1 uart1 int
+ * uart1 DMA，命令调用格式：uart_sample_v1 uart1 dma
+ *
  * 修改rtconfig.h
  *     #define RT_SERIAL_USING_DMA
  *     #define BSP_USING_UART
@@ -29,9 +33,6 @@
  *     #define BSP_UART2_TX_USING_DMA
  *     #define BSP_USING_UART5
  *
- * 命令调用格式：
- * uart1 中断，命令调用格式：uart_sample_v1 uart1 int
- * uart1 DMA，命令调用格式：uart_sample_v1 uart1 dma
  */
 
 #include <rtthread.h>
@@ -45,6 +46,8 @@
     #define SAMPLE_DEFAULT_UART_NAME       "uart1"
 #elif defined(HC32F472) && defined (BSP_USING_UART1)
     #define SAMPLE_DEFAULT_UART_NAME       "uart1"
+#elif defined(HC32F4A8) && defined (BSP_USING_UART6)
+    #define SAMPLE_DEFAULT_UART_NAME       "uart6"
 #endif
 
 #if defined(SAMPLE_DEFAULT_UART_NAME)

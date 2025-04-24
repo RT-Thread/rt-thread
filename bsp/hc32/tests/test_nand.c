@@ -13,11 +13,11 @@
  * 命令调用格式：nand_sample
  * 程序功能：对整个Nand存储空间进行擦除、写和读操作，比较数据是否一致
  *
- * 注意: 修改函数SystemClock_Config，调用函数CLK_SetClockDiv参数，
- *     CLK_EXCLK_DIV2改为CLK_EXCLK_DIV4;
+ * 注意:
+ * F4A0: 修改函数SystemClock_Config，调用函数CLK_SetClockDiv参数，CLK_EXCLK_DIV2改为CLK_EXCLK_DIV4;
  *
  * menuconfig:
- *     Hardware Drivers Config  --->  On-chip Peripheral Drivers  ---->  Enable EXMC  ---->  Using SDRAM or NAND  ---->  Using NAND (MT29F2G08AB)
+ *     Hardware Drivers Config  --->  Onboard Peripheral Drivers  ---->  Enable EXMC  ---->  Using SDRAM or NAND  ---->  Using NAND
  */
 
 #include <stdlib.h>
