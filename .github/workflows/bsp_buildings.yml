@@ -183,6 +183,14 @@ jobs:
           /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
 
+      - name: Install k230 MUSL ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'riscv64-unknown-linux-musl-' && matrix.legs.RTT_BSP == 'K230' && success() }}
+        run: |
+          wget -q https://download.rt-thread.org/rt-smart/riscv64/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2
+          sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2 -C /opt
+          /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
+          echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+
       - name: Install riscv32-unknown-elf Toolchains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'RISC-V-GCC-RV32' && success() }}
         run: |

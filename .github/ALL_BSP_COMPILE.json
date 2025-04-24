@@ -398,6 +398,13 @@
       ]
     },
     {
+      "RTT_BSP": "K230",
+      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
+      "SUB_RTT_BSP": [
+        "k230"
+      ]
+    },
+    {
       "RTT_BSP": "hpmicro",
       "RTT_TOOL_CHAIN": "RISC-V-GCC-RV32",
       "SUB_RTT_BSP": [
