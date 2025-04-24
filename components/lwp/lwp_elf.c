@@ -651,8 +651,9 @@ static int elf_file_mmap(elf_load_info_t *load_info, elf_info_t *elf_info, rt_ub
         load_addr = tmp_phdr->p_vaddr + *load_base;
         LOG_D("%s : p_vaddr : 0x%x, load_addr : 0x%x", __func__, tmp_phdr->p_vaddr, load_addr);
 
-        /* When both the segment's virtual address and the load base are 0, it indicates that the segment should be loaded
-         at any available address rather than a fixed one. particularly useful for PIC or shared libraries.*/
+        /* When both the segment's virtual address and the load base are 0, the segment is loaded at any available
+         address rather than a fixed one. This behavior is particularly useful for Position-Independent Code (PIC)
+         or shared libraries. */
         if ((tmp_phdr->p_vaddr == 0) && (*load_base == 0))
         {
             flags &= ~MAP_FIXED;
