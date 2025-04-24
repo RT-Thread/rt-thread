@@ -24,4 +24,4 @@
 #define UART_RX_DMA_IT_HT_FLAG          0x01
 #define UART_RX_DMA_IT_TC_FLAG          0x02
 
-#endif  /* __DRV_USART_H__ */
+#endif  /* __DRV_USART_V2_H__ */
