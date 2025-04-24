@@ -321,7 +321,7 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = &pin_irq_map[gpio_port];
 
 #if !defined(COMPONENT_CAT1C)
-        IRQn_Type irqn = (IRQn_Type)(irqmap->irqno + PORT_GET(irqmap->port));
+        IRQn_Type irqn = irqmap->irqno;
         irq_cb_data[irqn].callback = irq_callback;
         irq_cb_data[irqn].callback_arg = (rt_uint16_t *)&pin_irq_map[gpio_port].port;
         cyhal_gpio_register_callback(gpio_pin, &irq_cb_data[irqn]);
@@ -357,7 +357,7 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = &pin_irq_map[gpio_port];
 
 #if !defined(COMPONENT_CAT1C)
-        IRQn_Type irqn = (IRQn_Type)(irqmap->irqno + PORT_GET(irqmap->port));
+        IRQn_Type irqn = irqmap->irqno;
         _cyhal_irq_disable(irqn);
 #endif
         rt_hw_interrupt_enable(level);
