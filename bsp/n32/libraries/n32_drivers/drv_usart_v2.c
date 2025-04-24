@@ -11,6 +11,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
+#include "n32g45x_gpio.h"
+#include "n32g45x_dma.h"
 #include "drv_usart_v2.h"
 
 #ifdef RT_USING_SERIAL_V2
@@ -141,6 +143,11 @@ static void     n32_uart_mode_set(struct n32_uart_config *uart);
 static void     n32_uart_get_config(void);
 static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_configure *cfg);
 static void     NVIC_Set(IRQn_Type irq, FunctionalState state);
+#ifdef RT_SERIAL_USING_DMA
+static void n32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
+#endif
+void HAL_UART_TxCpltCallback(struct UART_HandleTypeDef *huart);
+static void GPIOInit(GPIO_Module* GPIOx, GPIO_ModeType mode, GPIO_SpeedType speed, uint16_t Pin);
 /********************************************************************************************************************************** */
 /******************************** value ******************************************************************************************* */
 static struct n32_uart_config uart_config[] =
@@ -238,11 +245,49 @@ static struct n32_uart_config uart_config[] =
 static struct n32_uart uart_obj[sizeof(uart_config) / sizeof(struct n32_uart_config)];
 /********************************************************************************************************************************** */
 
-#ifdef RT_SERIAL_USING_DMA
-static void n32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
-#endif
-
-void HAL_UART_TxCpltCallback(struct UART_HandleTypeDef *huart);
+static void GPIOInit(GPIO_Module* GPIOx, GPIO_ModeType mode, GPIO_SpeedType speed, uint16_t Pin)
+{
+    GPIO_InitType GPIO_InitStructure;
+    /* Check the parameters */
+    assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    /* Enable the GPIO Clock */
+    if (GPIOx == GPIOA)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+    }
+    else if (GPIOx == GPIOB)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+    }
+    else if (GPIOx == GPIOC)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+    }
+    else if (GPIOx == GPIOD)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
+    }
+    else if (GPIOx == GPIOE)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
+    }
+    else if (GPIOx == GPIOF)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOF, ENABLE);
+    }
+    else
+    {
+        if (GPIOx == GPIOG)
+        {
+            RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOG, ENABLE);
+        }
+    }
+    /* Configure the GPIO pin */
+    GPIO_InitStructure.Pin        = Pin;
+    GPIO_InitStructure.GPIO_Mode  = mode;
+    GPIO_InitStructure.GPIO_Speed = speed;
+    GPIO_InitPeripheral(GPIOx, &GPIO_InitStructure);
+}
 
 static void n32_uart_mode_set(struct n32_uart_config *uart)
 {
