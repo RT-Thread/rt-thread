@@ -30,15 +30,15 @@ Import('PACKAGES_PATH')
 replace = PACKAGES_PATH.split("\\")[-1]
 
 if rtconfig.PLATFORM in ['gcc']:
-    file_path = cwd + './jlink/ev_hc32f4a8_lqfp176 Debug.launch'
+    file_path = os.path.join(cwd, 'jlink', 'ev_hc32f4a8_lqfp176 Debug.launch')
     svd_keyword = 'HC32F4A8.svd'
     split_num = 3
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    file_path = cwd + './template.uvprojx'
+    file_path = os.path.join(cwd, 'template.uvprojx')
     svd_keyword = 'HC32F4A8.SFR'
     split_num = 2
 elif rtconfig.PLATFORM in ['iccarm']:
-    file_path = cwd + '/project.ewd'
+    file_path = os.path.join(cwd, 'project.ewd')
     svd_keyword = 'HC32F4A8.svd'
     split_num = 3
     board_keyword = 'FlashHC32F4A8xI.board'
