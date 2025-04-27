@@ -20,9 +20,6 @@ extern "C" {
 
 #ifdef BSP_USING_CAN1
 #define CAN1_CLOCK_SEL                  (CAN_CLOCK_SRC_40M)
-#ifdef RT_CAN_USING_CANFD
-#define CAN1_CANFD_MODE                 (CAN_FD_MD_ISO)
-#endif
 #define CAN1_NAME                       ("can1")
 #ifndef CAN1_INIT_PARAMS
 #define CAN1_INIT_PARAMS                                    \
@@ -35,9 +32,6 @@ extern "C" {
 
 #ifdef BSP_USING_CAN2
 #define CAN2_CLOCK_SEL                  (CAN_CLOCK_SRC_40M)
-#ifdef RT_CAN_USING_CANFD
-#define CAN2_CANFD_MODE                 (CAN_FD_MD_ISO)
-#endif
 #define CAN2_NAME                       ("can2")
 #ifndef CAN2_INIT_PARAMS
 #define CAN2_INIT_PARAMS                                    \
@@ -50,9 +44,6 @@ extern "C" {
 
 #ifdef BSP_USING_CAN3
 #define CAN3_CLOCK_SEL                  (CAN_CLOCK_SRC_40M)
-#ifdef RT_CAN_USING_CANFD
-#define CAN3_CANFD_MODE                 (CAN_FD_MD_ISO)
-#endif
 #define CAN3_NAME                       ("can3")
 #ifndef CAN3_INIT_PARAMS
 #define CAN3_INIT_PARAMS                                    \

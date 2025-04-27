@@ -27,7 +27,7 @@
 #define BSP_TCA9539_I2C_BUS_NAME        "i2c1"
 #define BSP_TCA9539_DEV_ADDR            (0x74U)
 
-#if defined(HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A8)
     #define TCA9539_RST_PIN             (45)    /* PC13 */
 #elif defined(HC32F448)
     #define TCA9539_RST_PIN             (31)    /* PB15 */

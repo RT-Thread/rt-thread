@@ -11,7 +11,17 @@
 /*
  * 程序清单：这是一个串口设备
  * 例程导出了 uart_sample_v2 命令到控制终端
- * 程序功能：通过串口输出字符串 "hello RT-Thread!"，并通过串口输出接收到的数据，然后打印接收到的数据。
+ *
+ * 命令解释：命令第二个参数是要使用的串口设备名称，为空则使用默认的串口设备(uart1)
+ * 程序功能：通过串口输出字符串:
+ *     drv_usart: drv_usart_v1
+ *     commnucation：using DMA/interrupt,
+ *     uart_ch: uartx (x对应测试通道)
+ *     输出输入的字符
+ *
+ * 命令调用格式：
+ * uart1 中断，命令调用格式：uart_sample_v1 uart1 int
+ * uart1 DMA，命令调用格式：uart_sample_v1 uart1 dma
  *
  * 中断方式，rtconfig.h修改如下
  * #define BSP_USING_GPIO
@@ -51,9 +61,6 @@
  * #define BSP_UART5_RX_BUFSIZE 256
  * #define BSP_UART5_TX_BUFSIZE 256
  *
- * 命令调用格式：
- * uart1 中断，命令调用格式：uart_sample_v2 uart1 int
- * uart1 DMA，命令调用格式：uart_sample_v2 uart1 dma
  */
 
 #include <rtthread.h>
@@ -67,6 +74,8 @@
     #define SAMPLE_DEFAULT_UART_NAME       "uart1"
 #elif defined(HC32F472) && defined (BSP_USING_UART1)
     #define SAMPLE_DEFAULT_UART_NAME       "uart1"
+#elif defined(HC32F4A8) && defined (BSP_USING_UART6)
+    #define SAMPLE_DEFAULT_UART_NAME       "uart6"
 #endif
 
 #if defined(SAMPLE_DEFAULT_UART_NAME)

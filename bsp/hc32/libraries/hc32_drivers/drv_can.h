@@ -42,6 +42,10 @@ extern "C" {
 #define CANFD_DATA_BAUD_5M              (5*1000*1000UL)
 #define CANFD_DATA_BAUD_8M              (8*1000*1000UL)
 
+#define CAN_FRAME_CLASSIC               (0x0U)
+#define CAN_FRAME_ISO_FD                (0x2U)
+#define CAN_FRAME_NON_ISO_FD            (0x4U)
+
 /* hc32 can device */
 struct can_dev_init_params
 {

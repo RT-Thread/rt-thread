@@ -51,20 +51,13 @@
 *       示例：
 *           MSH >can send_msg （触发can发送数据）
 */
-
-#include <rtthread.h>
-#include "rtdevice.h"
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F460)
-    #include "drv_can.h"
-#elif defined (HC32F448)
-    #include "drv_mcan.h"
-#endif
-
 #include <stdlib.h>
 #include <string.h>
+#include <rtthread.h>
+#include "rtdevice.h"
+#include "drv_can.h"
 
-#if defined(BSP_USING_CAN) || defined(BSP_USING_MCAN)
-
+#define MSH_USAGE_CAN_SAMPLE            "can_sample <can1 | can2 | mcan1 | mcan2>          - open can device and test\n"
 #define MSH_USAGE_CAN_SET_BAUD          "can set_baud <baud>        - set can baud\n"
 #define MSH_USAGE_CAN_SET_BAUDFD        "can set_baudfd <baudfd>    - set can baudfd\n"
 #define MSH_USAGE_CAN_SET_BITTIMING     "can set_bittiming <count> <rt_can_bit_timing_arbitration> <rt_can_bit_timing_data>  - set can bit timing,\n"
@@ -76,8 +69,6 @@ static rt_device_t can_dev = RT_NULL;
 static struct rt_semaphore can_rx_sem;
 static rt_mutex_t can_mutex = RT_NULL;
 static rt_thread_t rx_thread;
-static uint32_t can_msg_tx_cnt = 0U;
-static uint32_t can_msg_rx_cnt = 0U;
 
 #define CAN_IF_INIT()                   do {                            \
                                             if (can_dev == RT_NULL || can_mutex == RT_NULL) { \
@@ -132,7 +123,6 @@ static void can_rx_thread(void *parameter)
         /* 发送接收到的消息 */
         size = rt_device_write(can_dev, 0, &rxmsg, sizeof(rxmsg));
         rt_mutex_release(can_mutex);
-        can_msg_rx_cnt++;
         if (size == 0)
         {
             rt_kprintf("can dev write data failed!\n");
@@ -180,8 +170,8 @@ void _msh_cmd_set_timing(int argc, char **argv)
         items[0].prescaler = atoi(argv[pos++]);
         items[0].num_seg1 =  atoi(argv[pos++]);
         items[0].num_seg2 =  atoi(argv[pos++]);
-        items[0].num_sjw =  atoi(argv[pos++]);
-        items[0].num_sspoff =  atoi(argv[pos++]);
+        items[0].num_sjw =   atoi(argv[pos++]);
+        items[0].num_sspoff = atoi(argv[pos++]);
         if (count > 1)
         {
             items[1].prescaler =  atoi(argv[pos++]);
@@ -241,11 +231,7 @@ void _msh_cmd_send_msg(int argc, char **argv)
         msg.id  = 0x300;
         msg.ide = RT_CAN_STDID;
         msg.rtr = RT_CAN_DTR;
-#ifdef BSP_USING_MCAN
-        msg.len = MCAN_DLC64;
-#else
-        msg.len = CAN_DLC64;
-#endif
+        msg.len = 0xFU;
         msg.fd_frame = 1;
         msg.brs = 1;
         for (u8Tick = 0; u8Tick < 64; u8Tick++)
@@ -256,7 +242,11 @@ void _msh_cmd_send_msg(int argc, char **argv)
         msg.id  = 0x300;
         msg.ide = RT_CAN_STDID;
         msg.rtr = RT_CAN_DTR;
+#ifdef BSP_USING_MCAN
+        msg.len = MCAN_DLC8;
+#else
         msg.len = CAN_DLC8;
+#endif
         for (u8Tick = 0; u8Tick < 8; u8Tick++)
         {
             msg.data[u8Tick] = u8Tick + 1 + 0xA0;
@@ -268,8 +258,8 @@ void _msh_cmd_send_msg(int argc, char **argv)
         {
             rt_kprintf("can dev write data failed!\n");
         }
+
         rt_mutex_release(can_mutex);
-        can_msg_tx_cnt++;
         rt_kprintf("send msg ok! \n");
     }
     else
@@ -313,109 +303,84 @@ int can(int argc, char **argv)
     else
     {
         _show_usage();
+        return -RT_ERROR;
     }
 
-    return 0;
+    return RT_EOK;
 }
 MSH_CMD_EXPORT(can, can function configuration);
 
 int can_sample(int argc, char **argv)
 {
-    char can_name[RT_NAME_MAX] = "can1";
+    char can_name[RT_NAME_MAX];
     char sem_name[RT_NAME_MAX] = "can_sem";
     char mutex_name[RT_NAME_MAX] = "can_mtx";
     rt_err_t res;
 
-    /* 参数无输入或者输入错误按照默认值处理 */
     if (argc == 2)
     {
-        if (0 == rt_strcmp(argv[1], "can1"))
+        rt_strcpy(can_name, argv[1]);
+        /* 设备已经打开则关闭 */
+        if (can_dev != RT_NULL)
         {
-            rt_strcpy(can_name, "can1");
+            rt_device_close(can_dev);
         }
-#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F472)
-        else if (0 == rt_strcmp(argv[1], "can2"))
+        /* 查找设备 */
+        can_dev = rt_device_find(can_name);
+        if (can_dev == RT_NULL)
         {
-            rt_strcpy(can_name, "can2");
-        }
-#endif
-#if defined (HC32F472)
-        else if (0 == rt_strcmp(argv[1], "can3"))
-        {
-            rt_strcpy(can_name, "can3");
-        }
-#endif
-        else
-        {
-            rt_kprintf("The chip hasn't the can unit!\r\n");
+            rt_kprintf("find %s failed!\n", can_name);
             return -RT_ERROR;
         }
+        rt_kprintf("found %s\n", can_name);
+
+        if (can_mutex == RT_NULL)
+        {
+            rt_sem_init(&can_rx_sem, sem_name, 0, RT_IPC_FLAG_FIFO);
+            can_mutex = rt_mutex_create(mutex_name, RT_IPC_FLAG_FIFO);
+        }
+
+        res = rt_device_open(can_dev, RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX);
+        RT_ASSERT(res == RT_EOK);
+        res = rt_device_control(can_dev, RT_CAN_CMD_SET_BAUD, (void *)CAN500kBaud);
+        RT_ASSERT(res == RT_EOK);
+        rt_kprintf("baud = %ld\n", CAN500kBaud);
+        res = rt_device_control(can_dev, RT_CAN_CMD_SET_MODE, (void *)RT_CAN_MODE_NORMAL);
+        RT_ASSERT(res == RT_EOK);
+
+#ifdef RT_CAN_USING_CANFD
+        /* 使能CAN_FD BRS功能 */
+        res = rt_device_control(can_dev, RT_CAN_CMD_SET_CANFD, (void *)CAN_FRAME_ISO_FD);
+        RT_ASSERT(res == RT_EOK);
+        res = rt_device_control(can_dev, RT_CAN_CMD_SET_BAUD_FD, (void *)CANFD_DATA_BAUD_4M);
+        RT_ASSERT(res == RT_EOK);
+        rt_kprintf("baudfd = %ld\n", CANFD_DATA_BAUD_4M);
+#endif
+        /* 设置接收回调函数 */
+        rt_device_set_rx_indicate(can_dev, can_rx_call);
+        /* 设置过滤器 */
+        _set_default_filter();
+
+        if (rx_thread == RT_NULL)
+        {
+            rx_thread = rt_thread_create("can_rx", can_rx_thread, RT_NULL, 2048, 15, 10);
+            if (rx_thread != RT_NULL)
+            {
+                rt_thread_startup(rx_thread);
+            }
+            else
+            {
+                rt_kprintf("create can_rx rx_thread failed!\n");
+            }
+        }
+
+        return RT_EOK;
     }
     else
     {
-        rt_kprintf("Default used %s to test!\r\n", can_name);
-    }
-
-    /* 设备已经打开则关闭 */
-    if (can_dev != RT_NULL)
-    {
-        rt_device_close(can_dev);
-    }
-    /* 查找设备 */
-    can_dev = rt_device_find(can_name);
-    if (!can_dev)
-    {
-        rt_kprintf("find %s failed!\n", can_name);
+        rt_kprintf(MSH_USAGE_CAN_SAMPLE);
+        rt_kprintf("    e.g. MSH >can_sample can1\n");
         return -RT_ERROR;
     }
-
-    rt_kprintf("found %s\n", can_name);
-
-    if (can_mutex == RT_NULL)
-    {
-        rt_sem_init(&can_rx_sem, sem_name, 0, RT_IPC_FLAG_FIFO);
-        can_mutex = rt_mutex_create(mutex_name, RT_IPC_FLAG_FIFO);
-    }
-
-    res = rt_device_open(can_dev, RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX);
-    RT_ASSERT(res == RT_EOK);
-    res = rt_device_control(can_dev, RT_CAN_CMD_SET_BAUD, (void *)CAN500kBaud);
-    RT_ASSERT(res == RT_EOK);
-    res = rt_device_control(can_dev, RT_CAN_CMD_SET_MODE, (void *)RT_CAN_MODE_NORMAL);
-    RT_ASSERT(res == RT_EOK);
-#ifdef RT_CAN_USING_CANFD
-#if defined (HC32F4A0)
-    if (can_name == "can2")
-#endif
-    {
-#ifdef BSP_USING_MCAN
-        res = rt_device_control(can_dev, RT_CAN_CMD_SET_BAUD_FD, (void *)MCANFD_DATA_BAUD_4M);
-#else
-        res = rt_device_control(can_dev, RT_CAN_CMD_SET_BAUD_FD, (void *)CANFD_DATA_BAUD_4M);
-#endif
-        RT_ASSERT(res == RT_EOK);
-    }
-#endif
-    rt_device_set_rx_indicate(can_dev, can_rx_call);
-
-    _set_default_filter();
-
-    if (rx_thread == RT_NULL)
-    {
-        rx_thread = rt_thread_create("can_rx", can_rx_thread, RT_NULL, 2048, 15, 10);
-        if (rx_thread != RT_NULL)
-        {
-            rt_thread_startup(rx_thread);
-        }
-        else
-        {
-            rt_kprintf("create can_rx rx_thread failed!\n");
-        }
-    }
-
-    return RT_EOK;
 }
-
-MSH_CMD_EXPORT(can_sample, can sample: select < can1 | can2 | can3 >);
-
-#endif
+MSH_CMD_EXPORT(can_sample, can sample: select < can1 | can2 | mcan1 | mcan2 >);

@@ -43,7 +43,7 @@ if GetDepend(['BSP_USING_ADC']):
 if GetDepend(['BSP_USING_DAC']):
     src += ['test_dac.c']
 
-if GetDepend(['BSP_USING_CAN']):
+if GetDepend(['BSP_USING_CAN']) or GetDepend(['BSP_USING_MCAN']):
     src += ['test_can.c']
 
 if GetDepend(['BSP_USING_RTC']):

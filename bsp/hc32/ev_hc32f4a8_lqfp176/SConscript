@@ -1,0 +1,49 @@
+# for module compiling
+import os
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+def find_keyword_replace(file_path, keyword, replace, split_num, split_char):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    for i, line in enumerate(lines):
+        if keyword in line:
+            parts = line.split(split_char)
+            parts[split_num] = replace
+            new_line = split_char.join(parts)
+            lines[i] = new_line
+
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.writelines(lines)
+
+Import('PACKAGES_PATH')
+replace = PACKAGES_PATH.split("\\")[-1]
+
+if rtconfig.PLATFORM in ['gcc']:
+    file_path = os.path.join(cwd, 'jlink', 'ev_hc32f4a8_lqfp176 Debug.launch')
+    svd_keyword = 'HC32F4A8.svd'
+    split_num = 3
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    file_path = os.path.join(cwd, 'template.uvprojx')
+    svd_keyword = 'HC32F4A8.SFR'
+    split_num = 2
+elif rtconfig.PLATFORM in ['iccarm']:
+    file_path = os.path.join(cwd, 'project.ewd')
+    svd_keyword = 'HC32F4A8.svd'
+    split_num = 3
+    board_keyword = 'FlashHC32F4A8xI.board'
+    find_keyword_replace(file_path, board_keyword, replace, split_num, '/')
+
+find_keyword_replace(file_path, svd_keyword, replace, split_num, '/')
+
+Return('objs')
