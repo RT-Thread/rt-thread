@@ -1,0 +1,12 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+# ------ peripheral CI ------
+peripheral.aht21:
+    kconfig:
+      - CONFIG_BSP_USING_AHT21=y
+      - CONFIG_VERSIONCONFIG_USING_AHT21_SAMPLE=y
+peripheral.icm20608:
+    kconfig:
+      - CONFIG_BSP_USING_ICM20608=y
+      - CONFIG_VERSIONCONFIG_USING_ICM20608_SAMPLE=y

@@ -141,8 +141,8 @@ def build_bsp_attachconfig(bsp, attach_file):
 
     """
     config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
-    config_bacakup = config_file+'.origin'
-    shutil.copyfile(config_file, config_bacakup)
+    config_backup = config_file+'.origin'
+    shutil.copyfile(config_file, config_backup)
 
     attachconfig_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
     attach_path = os.path.join(attachconfig_dir, attach_file)
@@ -153,11 +153,44 @@ def build_bsp_attachconfig(bsp, attach_file):
 
     res = build_bsp(bsp, scons_args,name=attach_file)
 
-    shutil.copyfile(config_bacakup, config_file)
-    os.remove(config_bacakup)
+    shutil.copyfile(config_backup, config_file)
+    os.remove(config_backup)
 
     return res
 
+def build_bsp_versionconfig(bsp, scons_args='',name='default'):
+    success = True
+    os.chdir(rtt_root)
+    os.makedirs(f'{rtt_root}/version_output/bsp/{bsp}', exist_ok=True)
+    if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
+        os.chdir(rtt_root)
+        run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
+
+        os.chdir(f'{rtt_root}/bsp/{bsp}')
+
+        run_cmd('pkgs --update-force', output_info=False)
+        run_cmd('pkgs --list')
+
+        nproc = multiprocessing.cpu_count()
+        os.chdir(rtt_root)
+        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}' # --debug=time for debug time
+        __, res = run_cmd(cmd, output_info=True)
+
+        if res != 0:
+            success = False
+        else:
+            #拷贝当前的文件夹下面的所有以elf结尾的文件拷贝到rt-thread/output文件夹下
+            import glob
+            # 拷贝编译生成的文件到output目录,文件拓展为 elf,bin,hex
+            for file_type in ['*.elf', '*.bin', '*.hex']:
+                files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
+                for file in files:
+                    shutil.copy(file, f'{rtt_root}/version_output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
+
+    os.chdir(f'{rtt_root}/bsp/{bsp}')
+    run_cmd('scons -c', output_info=False)
+
+    return success
 
 if __name__ == "__main__":
     """
@@ -211,8 +244,8 @@ if __name__ == "__main__":
         for projects in yml_files_content:
             for name, details in projects.items():
                 count += 1
-                config_bacakup = config_file+'.origin'
-                shutil.copyfile(config_file, config_bacakup)
+                config_backup = config_file+'.origin'
+                shutil.copyfile(config_file, config_backup)
                 with open(config_file, 'a') as destination:
                     if details.get("kconfig") is None:
                         continue
@@ -235,8 +268,106 @@ if __name__ == "__main__":
                     add_summary(f'\t- ✅ build {bsp} {name} success.')
                 print("::endgroup::")
 
-                shutil.copyfile(config_bacakup, config_file)
-                os.remove(config_bacakup)
+                shutil.copyfile(config_backup, config_file)
+                os.remove(config_backup)
+        version_yml_files_content = []
+        directory = os.path.join(rtt_root, 'bsp', bsp, '.ci/versionconfig')
+        if os.path.exists(directory):
+            for root, dirs, files in os.walk(directory):
+                for filename in files:
+                    if filename.endswith('versionconfig.yml'):
+                        file_path = os.path.join(root, filename)
+                        if os.path.exists(file_path):
+                            try:
+                                with open(file_path, 'r') as file:
+                                    content = yaml.safe_load(file)
+                                    if content is None:
+                                        continue
+                                    version_yml_files_content.append(content)
+                            except yaml.YAMLError as e:
+                                print(f"::error::Error parsing YAML file: {e}")
+                                continue
+                            except Exception as e:
+                                print(f"::error::Error reading file: {e}")
+                                continue
+        
+        config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
+        rtconfig_file = os.path.join(rtt_root, 'bsp', bsp, 'rtconfig.h')
+        for projects in version_yml_files_content:
+            for name, details in projects.items():
+                detail_list=[]
+                count += 1
+                config_backup = config_file+'.origin'
+                shutil.copyfile(config_file, config_backup)
+                with open(config_file, 'a') as destination:
+                    if details.get("kconfig") is None:
+                        continue
+                    if(projects.get(name) is not None):
+                        detail_list=get_details_and_dependencies([name],projects)
+                        for line in detail_list:
+                            destination.write(line + '\n')
+                            # 判断前缀是否有version
+                scons_arg=[]
+                if details.get('scons_arg') is not None:
+                    for line in details.get('scons_arg'):
+                        scons_arg.append(line)
+                scons_arg_str=' '.join(scons_arg) if scons_arg else ' '
+                print(f"::group::\tCompiling version yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
+                success = True
+                os.chdir(rtt_root)
+                os.makedirs(f'{rtt_root}/version_output/bsp/{bsp}', exist_ok=True)
+                if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
+                    os.chdir(rtt_root)
+                    run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
+
+                    os.chdir(f'{rtt_root}/bsp/{bsp}')
+
+                    run_cmd('pkgs --update-force', output_info=False)
+                    pattern = r'VERSIONCONFIG_[A-Z0-9_]+'
+                    with open(rtconfig_file, 'a') as destination:
+                        for line in detail_list:
+                            match = re.search(pattern, line)
+                            if match:
+                                # 提取匹配到的部分
+                                extracted_part = match.group(0)
+                                # 组合成 #define 格式
+                                result = f"#define {extracted_part}"
+                                destination.write(result + '\n')
+                                print(result)
+                            else:
+                                continue
+                            
+                    run_cmd('pkgs --list')
+
+                    nproc = multiprocessing.cpu_count()
+                    os.chdir(rtt_root)
+                    cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_arg_str}' # --debug=time for debug time
+                    __, res = run_cmd(cmd, output_info=True)
+
+                    if res != 0:
+                        success = False
+                    else:
+                        #拷贝当前的文件夹下面的所有以elf结尾的文件拷贝到rt-thread/output文件夹下
+                        import glob
+                        # 拷贝编译生成的文件到output目录,文件拓展为 elf,bin,hex
+                        for file_type in ['*.elf', '*.bin', '*.hex']:
+                            files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
+                            for file in files:
+                                shutil.copy(file, f'{rtt_root}/version_output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
+
+                os.chdir(f'{rtt_root}/bsp/{bsp}')
+                run_cmd('scons -c', output_info=False)
+                res=success
+                if not res:
+                    print(f"::error::build {bsp} {name} failed.")
+                    add_summary(f'\t- ❌ build {bsp} {name} failed.')
+                    failed += 1
+                else:
+                    add_summary(f'\t- ✅ build {bsp} {name} success.')
+                print("::endgroup::")
+
+                shutil.copyfile(config_backup, config_file)
+                os.remove(config_backup)
 
         attach_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
         attach_list = []

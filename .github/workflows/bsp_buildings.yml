@@ -34,6 +34,15 @@ on:
     types:
       - online-pkgs-static-building-trigger-event
   workflow_dispatch:
+    inputs:
+      output_contral:
+        description: 'Output Contral'
+        required: false
+        default: 'attachconfig'
+        type: choice
+        options:
+          - "attachconfig"
+          - "versionconfig"
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -101,7 +110,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs: generate-matrix
     name: ${{ matrix.legs.RTT_BSP }}
-    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.filtered_matrix) }}
@@ -241,12 +249,20 @@ jobs:
           python tools/ci/bsp_buildings.py
 
       - name: Upload output as artifact
-        if: ${{ success() }}
+        if: ${{ success() && github.event.inputs.output_contral == 'attachconfig' }}
         uses: actions/upload-artifact@main
         with:
           name: ${{ matrix.legs.RTT_BSP }}
           if-no-files-found: ignore
           path: output/
+
+      - name: Upload output as artifact
+        if: ${{ success() && github.event.inputs.output_contral == 'versionconfig'}}
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ matrix.legs.RTT_BSP }}
+          if-no-files-found: ignore
+          path: version_output/
 
       - name: Post failure comment
         if: failure()
@@ -255,10 +271,10 @@ jobs:
           -d '{"body":"@${{ github.actor }}, Thank you for your contribution, but there was an error with the action. Could you please help check the BSP compilation issue? Thank you."}' \
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
   # 整合所有的output为一个文件夹 
-  collect-artifacts:
+  collect-artifacts1:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' #排除Pull request
+    if: ${{github.event_name != 'pull_request' && github.event.inputs.output_contral == 'attachconfig'}}
     steps:
       #这里会下载所有产物
       - name: Download all artifacts
@@ -273,3 +289,20 @@ jobs:
         with:
           name: 00_all_bsp_output_${{ github.sha }}  
           path: output/
+  collect-artifacts2:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{github.event_name != 'pull_request' && github.event.inputs.output_contral == 'versionconfig'}}
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@main
+        with:
+          path: version_output/
+          merge-multiple: true
+      - run: ls -R version_output/
+
+      - name: Upload combined output as artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: 00_all_bsp_output_${{ github.sha }}  
+          path: version_output/
