@@ -12,12 +12,10 @@ CanMV-K230 Board Support Package 使用说明
 		- [3.2.3. Env](#323-env)
 	- [3.3. 下载 RT-Thread 并更新依赖的软件包](#33-下载-rt-thread-并更新依赖的软件包)
 	- [3.4. 构建](#34-构建)
-- [4. 烧写](#4-烧写)
-	- [4.1. 制作启动 SD 卡](#41-制作启动-sd-卡)
-		- [4.1.1. 编译固件](#411-编译固件)
-		- [4.1.2. 烧录固件](#412-烧录固件)
-	- [4.2. 单独更新 RT-Thread 内核](#42-单独更新-rt-thread-内核)
-- [5. 上电启动](#5-上电启动)
+- [4. 采用 rttpkgtool 对内核打包](#4-采用-rttpkgtool-对内核打包)
+- [5. 制作基础 SD 卡](#5-制作基础-sd-卡)
+- [6. 单独更新 RT-Thread 内核](#6-单独更新-rt-thread-内核)
+- [7. 上电启动](#7-上电启动)
 
 <!-- /TOC -->
 
@@ -105,19 +103,64 @@ $ scons -j$(nproc)
 
 此时在 `$WS/rt-thread/bsp/k230` 下会看到生成了 `rtthread.bin`, 这个就是我们构建出来的内核二进制文件。
 
+# 4. 采用 rttpkgtool 对内核打包
 
-# 4. 烧写
+直接构建生成的 `rtthread.bin` 并不能直接用于启动，我们采用 rttpkgtool 对 `rtthread.bin` 进行二次打包生成符合开发板能够识别的格式。
 
-`rtthread.bin` 并不能直接运行。目前我们基于 Canaan 官方的 RTOS-only SDK 制作 SD 卡，并基于 SD 卡启动内核。
+可以从以下网站获取 rttpkgtool(**注意需要切换到 `for-k230` 分支**)：
 
-## 4.1. 制作启动 SD 卡
+- 主站（github）：<https://github.com/plctlab/rttpkgtool>
+- 中国区镜像（gitee）：<https://gitee.com/unicornx/rttpkgtool/>
 
-### 4.1.1. 编译固件
+为方便使用，在本 bsp 下提供了一份封装脚本 `build.sh`，可以直接执行后打包生成最终可以烧录的 `opensbi_rtt_system.bin` 文件。
 
-参考 K230 RTOS Only 用户指南中的 “如何编译固件”：<https://developer.canaan-creative.com/k230_rtos/zh/dev/userguide/how_to_build.html>。
+但需要注意是，`build.sh` 只负责下载 rttpkgtool 并运行 rttpkgtool，但不会自动安装 rttpkgtool 依赖的工具软件，所以在使用 `build.sh` 前请仔细阅读 rttpkgtool 仓库的 “for-k230” 分支上的 `README.md` 文件。提前安装好一些额外的依赖和用于编译 opensbi 的交叉工具链（**注意这个编译 opensbi 的交叉工具链和编译 RTT 的 工具链是不同的**）。
 
-假设 sdk 安装的路径在 `$WS/rtos_k230`
-注意事项如下：
+以上依赖和交叉工具链安装好后，可以执行如下命令进行打包：
+
+```shell
+$ cd rt-thread/bsp/k230 # 确保在本 bsp 目录下
+$ ./build.sh
+BSP_PATH: /home/u/ws/canaan/rt-thread/bsp/k230
+rttpkgtool does not exist, clone it from https://gitee.com/unicornx/rttpkgtool.git
+Cloning into '/home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool'...
+......
+Trying to download the opensbi source code ......
+/home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool/output/src/opensbi does not exist, clone it from https://gitee.com/canmv-k230/opensbi.git
+Cloning into '/home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool/output/src/opensbi'...
+......
+ AS-DEP    platform/kendryte/fpgac908/firmware/fw_payload.dep
+......
+ CC        lib/sbi/riscv_asm.o
+......
+ OBJCOPY   platform/kendryte/fpgac908/firmware/fw_payload.bin
+~/ws/canaan/rt-thread/bsp/k230/rttpkgtool
+Image Name:   rtt
+Created:      Sun Apr 27 15:26:23 2025
+Image Type:   RISC-V RISC-V OpenSBI Multi-File Image (gzip compressed)
+Data Size:    391973 Bytes = 382.79 KiB = 0.37 MiB
+Load Address: 00000000
+Entry Point:  00000000
+Contents:
+   Image 0: 391965 Bytes = 382.78 KiB = 0.37 MiB
+the magic is:  b'K230'
+----- NO ENCRYPTION + HASH-256 -----
+the encryption type:  0
+mesg_hash:  b'7c469067ab0e5c3f9701f8dbd67ffe90f0213d14aa3ac262f7d9fdeff0343377'
+/home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool
+Generate the image file successfully!
+The image file is located at /home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool/output/k230_rtos_01studio_defconfig/images/opensbi/opensbi_rtt_system.bin
+```
+
+第一次执行 `build.sh` 会自动 clone 下载 rttpkgtool 以及 opensbi 源码，并完整编译 opensbi 后再执行打包。以后执行 `build.sh` 只会增量打包。
+
+如果希望重新下载 rttpkgtool 以及 opensbi，可以删除 `rt-thread/bsp/k230` 下的 `rttpkgtool` 目录后重新执行 `build.sh` 脚本即可。
+
+# 5. 制作基础 SD 卡
+
+在单独更新内核镜像之前，我们需要先制作一个基础的 SD 卡。可以参考 K230 RTOS Only SDK 用户指南中的 “如何编译固件”：<https://developer.canaan-creative.com/k230_rtos/zh/dev/userguide/how_to_build.html> 生成一个完整的 image。
+
+假设 sdk 安装的路径在 `$WS/rtos_k230`。注意事项如下：
 
 - 目前用户指南的环境只在 Ubuntu 20.04 LTS (x86_64) 上验证过，*其他 Linux 发行版未经充分测试，可能存在兼容性问题*。为避免和 BSP 构建环境冲突，建议在另外一台机器或者虚拟机中搭建此环境。
 
@@ -140,56 +183,33 @@ $ scons -j$(nproc)
 
   为简单起见，这里选择 “ k230_rtos_01studio_defconfig” 。
 
-最后在 `$WS/rtos_k230/output/k230_rtos_01studio_defconfig/` 下生成 `RtSmart-K230_01Studio_rtsmart_local_nncase_v2.9.0.img`
+构建完成后在 `$WS/rtos_k230/output/k230_rtos_01studio_defconfig/` 下生成 `RtSmart-K230_01Studio_rtsmart_local_nncase_v2.9.0.img`
 
-### 4.1.2. 烧录固件
+然后参考 K230 RTOS Only SDK 用户指南中的 “如何烧录固件”：<https://developer.canaan-creative.com/k230_rtos/zh/dev/userguide/how_to_flash.html>, 通过 SD 卡烧录。熟悉 Windows 平台的可以使用 balenaEtcher。烧录后，SD 卡上会自动分区和格式化。
 
-参考 K230 RTOS Only 用户指南中的 “如何烧录固件”：<https://developer.canaan-creative.com/k230_rtos/zh/dev/userguide/how_to_flash.html>, 通过 SD 卡烧录。熟悉 Windows 平台的可以使用 balenaEtcher。
+**注意本小节的操作只要做一次**。以后只要单独更新 RT-Thread 内核的镜像即可。
 
-## 4.2. 单独更新 RT-Thread 内核
+# 6. 单独更新 RT-Thread 内核
 
-在开发 BSP 过程中每次更新内核都烧写整个 SD 卡是一件非常麻烦的事情。以下操作只更新内核所在分区。
+我们可以利用 rttpkgtool 提供的脚本 `sdcard.sh` 快速更新打包后生成的内核镜像 `opensbi_rtt_system.bin`。
 
-首先前面构建生成的 `rtthread.bin` 并不能直接用，而是需要和 opensbi 的 image 打包后才能被 u-boot 加载。我们这里利用 K230 RTOS Only SDK 来打包。具体步骤如下：
-
-先将前面生成的 `rtthread.bin` 拷贝到 `$WS/rtos_k230/output/k230_rtos_01studio_defconfig/images/rtsmart` 下。
-
-修改 `rtos_k230/Makefile`：
-
-```diff
-diff --git a/Makefile b/Makefile
-index 45a3f0c..39a017b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -93,13 +93,20 @@ rtsmart-menuconfig:
-        @$(MAKE) -C $(SDK_RTSMART_SRC_DIR) menuconfig
- 
- .PHONY: opensbi opensbi-clean opensbi-distclean
--opensbi: .autoconf rtsmart
-+opensbi: .autoconf
-        @$(MAKE) -C $(SDK_OPENSBI_SRC_DIR) all
- opensbi-clean:
-        @$(MAKE) -C $(SDK_OPENSBI_SRC_DIR) clean
- opensbi-distclean:
-        @$(MAKE) -C $(SDK_OPENSBI_SRC_DIR) distclean
-```
-然后执行：
+先将 SD 卡通过 USB 读卡器接入 Ubuntu 机器。以下假设 USB 读卡器设备枚举为 `/dev/sdb`。如果不同请阅读 `sdcard.sh` 脚本代码。
 
 ```shell
-$ make opensbi
+$ cd rt-thread/bsp/k230 # 确保在本 bsp 目录下
+$ ./rttpkgtool/script/sdcard.sh
+SRC:  /home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool/output/k230_rtos_01studio_defconfig/images/opensbi/opensbi_rtt_system.bin
+DEST: /dev/sdb
+[sudo] password for u: 
+766+1 records in
+766+1 records out
+392569 bytes (393 kB, 383 KiB) copied, 0.0886941 s, 4.4 MB/s
+Done!
 ```
 
-会在 `$WS/rtos_k230/output/k230_rtos_01studio_defconfig/images/opensbi` 下生成一个新的 `opensbi_rtt_system.bin`，这也是我们要烧写的最终文件。
+# 7. 上电启动
 
-将 SD卡通过 USB 读卡器接入 Ubuntu 机器。假设枚举为 `/dev/sdb`。执行如下命令烧写：
-
-```shell
-$ sudo dd if=$WS/rtos_k230/output/k230_rtos_01studio_defconfig/images/opensbi/opensbi_rtt_system.bin of=/dev/sdb seek=20480
-```
-
-# 5. 上电启动
-
-将 SD 卡插入 01Studo 开发板的 SD 卡槽。
+将 SD 卡插入 01Studio 开发板的 SD 卡槽。
 
 连接 USB 转 UART 串口线到 “CPU0 调试口”，具体见下图：
 
