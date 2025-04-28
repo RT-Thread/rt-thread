@@ -42,17 +42,11 @@ if os.path.exists(SDK_ROOT + '/libraries'):
 else:
     libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
 
-SDK_LIB = libraries_path_prefix
-Export('SDK_LIB')
-
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-stm32_library = 'STM32H7xx_HAL'
-rtconfig.BSP_LIBRARY_TYPE = stm32_library
+rtconfig.BSP_LIBRARY_TYPE = None
 
-# include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript'), variant_dir='build/libraries/'+stm32_library, duplicate=0))
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'),variant_dir='build/libraries/'+'HAL_Drivers', duplicate=0))
 

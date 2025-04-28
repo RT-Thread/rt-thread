@@ -12,6 +12,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#include "i2c.h"
 #include "board.h"
 #include "drivers/dev_i2c.h"
 #include "gpiohs.h"

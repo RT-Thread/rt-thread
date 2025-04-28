@@ -69,7 +69,6 @@
       "RTT_TOOL_CHAIN": "sourcery-arm",
       "SUB_RTT_BSP": [
         "phytium/aarch32",
-        "qemu-vexpress-a9",
         "airm2m/air32f103",
         "acm32/acm32f0x0-nucleo",
         "acm32/acm32f0x0-nucleo",
@@ -338,6 +337,7 @@
         "Infineon/psoc6-cy8cproto-062S3-4343W",
         "Infineon/psoc6-evaluationkit-062S2",
         "Infineon/xmc7200-kit_xmc7200_evk",
+        "Infineon/xmc7100d-f144k4160aa",
         "fujitsu/mb9x/mb9bf500r",
         "fujitsu/mb9x/mb9bf506r",
         "fujitsu/mb9x/mb9bf618s",
@@ -397,6 +397,13 @@
       ]
     },
     {
+      "RTT_BSP": "K230",
+      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
+      "SUB_RTT_BSP": [
+        "k230"
+      ]
+    },
+    {
       "RTT_BSP": "hpmicro",
       "RTT_TOOL_CHAIN": "RISC-V-GCC-RV32",
       "SUB_RTT_BSP": [
@@ -448,6 +455,14 @@
         "nrf5x/nrf52833",
         "nrf5x/nrf52840",
         "nrf5x/nrf5340"
+      ]
+    },
+    {
+      "RTT_BSP": "arm-none-bsp-smart",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "RTT_SMART_TOOL_CHAIN": "arm-linux-musleabi",
+      "SUB_RTT_BSP": [
+        "qemu-vexpress-a9"
       ]
     }
   ]
