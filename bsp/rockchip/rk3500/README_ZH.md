@@ -1,94 +1,92 @@
-# RK3568 BSP Introduction
+# RK3566 BSP 介绍
 
-[中文页](./README_ZH.md) | English
+中文页 | [English](./README.md)
 
-## 1. Introduction
+## 1. 介绍
 
-### Core Architecture
+### 核心架构
 
-- **CPU**: Quad-core 64-bit ARM Cortex-A55
-- **Process Node**: 22nm FinFET
-- **Clock Speed**: Up to 1.8GHz (boost)
+- **CPU**: 四核 64 位 Cortex-A55 处理器
+- **制程工艺**: 22nm 光刻技术  
+- **主频**: 最高 1.8GHz
 
-### Graphics Subsystem
+### 图形处理
 
-- **GPU**: ARM Mali-G52 MP2
-  - Graphics APIs:
-    - OpenGL ES 3.2/2.0/1.1
-    - Vulkan 1.1
-  - Display Outputs:
-    - HDMI 2.0b
-    - eDP 1.3
-    - MIPI-DSI (4 lanes)
-- **Video Processing**:
-  - Decoding: 4K@60fps (H.265/H.264/VP9)
-  - Encoding: 1080P@60fps (H.264/H.265)
+- **GPU**: Mali-G52
+  - 支持 OpenGL ES 3.2/2.0/1.1
+  - 支持 Vulkan 1.1
+- **视频编解码**:
+  - 4K@60fps 解码 (H.265/H.264/VP9)
+  - 1080P@60fps 编码
 
-### Memory & Storage
+### 存储与扩展
 
-- **RAM Support**:
-  - Dual-channel LPDDR4/LPDDR4X
-  - Max Capacity: 8GB
-- **Storage Options**:
-  - eMMC 5.1 HS400
-  - SD 3.0 UHS-I
-  - Optional SATA III (6Gbps)
-- **High-Speed Interfaces**:
-  - USB 3.0 Type-A/C
-  - PCIe 2.1 (x1 lane)
+- **内存支持**:
+  - LPDDR4/LPDDR4X
+  - 最高 8GB 容量
+- **存储接口**:
+  - eMMC 5.1
+  - SDIO 3.0
+  - SATA 3.0 (可选)
+- **高速接口**:
+  - USB 3.0/2.0
+  - PCIe 2.1 (1x lane)
 
-### AI Acceleration
+### AI
 
-- **NPU**: 0.8 TOPS INT8
-  - Framework Support:
-    - TensorFlow Lite
-    - MXNet
-    - PyTorch Mobile
+- **NPU**: 0.8TOPS 算力
+- **支持框架**:
+  - TensorFlow
+  - MXNet  
+  - PyTorch
 
-### Connectivity
+### 网络连接
 
-- **Wired**:
-  - Dual Gigabit Ethernet (RGMII)
-- **Wireless**:
-  - Expansion via:
-    - PCIe-based WiFi6
-    - USB Bluetooth 5.0
+- **有线网络**:
+  - 双千兆以太网 (RGMII)
+- **无线扩展**:
+  - 支持 WiFi6/蓝牙模块扩展
 
-### Multimedia I/O
+### 多媒体接口
 
-- **Camera Input**:
-  - Dual 4-lane MIPI-CSI
-  - Supports up to 13MP sensors
+- **显示输出**:
+  - HDMI 2.0
+  - eDP 1.3
+  - MIPI-DSI
+- **摄像头输入**:
+  - 双 MIPI-CSI
+  - 支持 4K 图像处理
 
-## 2. Compiling
+## 2. 编译
 
-Use the RT-Thread Smart dedicated toolchain to compile:
+使用RT-Thread Smart 专用工具链进行编译:
 
 ```plaintext
 wget https://github.com/RT-Thread/rt-thread/releases/download/v5.2.0/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_242520-979be38cba.tar.bz2
 
-sudo tar -xf aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_242520-979be38cba.tar.bz2 -C /opt
+sudo tar -xf aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_242520-979be38cba.tar.bz2  -C /opt
 ```
 
-After downloading, extract the toolchain to the /opt directory.Then configure your environment variables:
+将工具链下载后,解压至/opt目录。并设置环境变量
 
-```plaintext
+```shell
+环境变量配置为：
 export RTT_CC="gcc"
 export RTT_EXEC_PATH="/opt/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/"
 export RTT_CC_PREFIX="aarch64-linux-musleabi-"
 export PATH="$RTT_EXEC_PATH:$PATH"
 ```
 
-Navigate to the rt-thread/bsp/rockchip/rk3500 directory and enter:
+进入`rt-thread/bsp/rockchip/rk3500`目录下输入:
 
-```shell
+```plaintext
 scons --menuconfig
 ```
 
-Select and pull the zlib package in the menu:
+选择并拉取zlib软件包
 ![zlib_pack](./figures/zlib_pack.png)
 
-Then run the following commands to fetch packages and build the project:
+执行一下命令拉取软件包并编译
 
 ```shell
 source  ~/.env/tools/scripts/pkgs --update
@@ -96,21 +94,20 @@ source  ~/.env/tools/scripts/pkgs --update
 scons
 ```
 
-## 3. Execution
+## 3. 运行
 
-The RK3566 SoC uses different methods to install the kernel depending on the board.It is recommended to install and boot from an SD card.The following steps take the Orange Pi Compute Module 4 as an example:
-
-Connect the serial port of the development board:
+RK3566 根据不同的板卡有不同的内核安装方法，建议安装到 SD 卡中，这里以Orange Pi Compute Module 4举例说明：
+连接开发板串口： 
 ![uart](./figures/uart.png)
 
-1. Open a serial terminal, select the correct serial port, and set the baud rate to 1500000.
+1. 打开串口工具，选择对应串口，设置波特率为1500000
 
-2. Copy the generated rtthread.bin file to the SD card.
+2. 将上述生成好的rtthread.bin放置sd卡中
 
-3. Power up the development board and press Ctrl + C on the keyboard to enter U-Boot command line mode.
+3. 开发板上电，键盘点击`ctrl + c`进入uboot命令行模式
 ![uboot_cmd](./figures/uboot_cmd.png)
 
-4. Enter the following command to load and boot the Smart system:
+4. 输入下述指令运行smart系统
 
 ```shell
 fatload mmc 1:1 0x480000 rtthread.bin;booti 0x480000 - 0x8300000
