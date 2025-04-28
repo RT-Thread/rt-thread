@@ -21,6 +21,14 @@ list = os.listdir(cwd)
 src    = Glob('kernel/*.c')
 src    +=Glob('kernel/*.S')
 
+
+
+PREFIX  = os.getenv('RTT_CC_PREFIX')
+CPP     = PREFIX + 'cpp'
+CPPFLAGS= ' -E -P -x assembler-with-cpp'
+rtconfig.CPP = CPP
+rtconfig.CPPFLAGS = CPPFLAGS
+
 if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"):
     Preprocessing("user/arch/" + rtconfig.ARCH + "/vdso.lds.S", ".lds", CPPPATH=[cwd])
 
