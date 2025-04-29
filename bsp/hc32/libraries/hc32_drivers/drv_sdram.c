@@ -84,9 +84,9 @@ static rt_int32_t _sdram_verify_clock_frequency(void)
 {
     rt_int32_t ret = RT_EOK;
 
-#if defined (HC32F4A0)
-    /* EXCLK max frequency for SDRAM: 40MHz */
-    if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > (40 * 1000000))
+#if defined (HC32F4A0) || defined (HC32F4A8)
+    /* EXCLK max frequency for SDRAM */
+    if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > EXMC_EXCLK_DMC_MAX_FREQ)
     {
         ret = -RT_ERROR;
     }
@@ -124,7 +124,9 @@ static rt_int32_t _sdram_init(void)
 
     /* configure DMC width && refresh period & chip & timing. */
     (void)EXMC_DMC_StructInit(&stcDmcInit);
+#if defined (HC32F4A0)
     stcDmcInit.u32SampleClock          = EXMC_DMC_SAMPLE_CLK_EXTCLK;
+#endif
     stcDmcInit.u32RefreshPeriod        = SDRAM_REFRESH_COUNT;
     stcDmcInit.u32ColumnBitsNumber     = SDRAM_COLUMN_BITS;
     stcDmcInit.u32RowBitsNumber        = SDRAM_ROW_BITS;

@@ -53,6 +53,7 @@
         "at32/at32m412-start",
         "at32/at32m416-start",
         "hc32/ev_hc32f4a0_lqfp176",
+        "hc32/ev_hc32f4a8_lqfp176",
         "hc32/ev_hc32f448_lqfp80",
         "hc32/ev_hc32f460_lqfp100_v2",
         "hc32/ev_hc32f472_lqfp100",

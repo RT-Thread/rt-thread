@@ -15,35 +15,17 @@
 extern "C" {
 #endif
 
-#include <board.h>
-#include <rtdevice.h>
-#include <rtthread.h>
+#include "drv_can.h"
 
-/* Attention !!!
-* If RT_CAN_USING_CANFD is enabled, RT_CAN_CMD_SET_BITTIMING is more recommended
-* than RT_CAN_CMD_SET_BAUD_FD.
-* because sample point is not specified by config when using RT_CAN_CMD_SET_BAUD_FD
-* but in range [MCAN_SAMPLEPOINT_MIN/1000, MCAN_SAMPLEPOINT_MAX/1000]
-* this may not match with your application
-*/
-#define MCAN_SAMPLEPOINT_MIN            (700U)
-#define MCAN_SAMPLEPOINT_MAX            (850U)
+/* The arguments of RT command RT_CAN_CMD_SET_CANFD */
+#define MCAN_FD_CLASSICAL                   0       /* CAN classical */
+#define MCAN_FD_ISO_FD_NO_BRS               1       /* ISO CAN FD without BRS */
+#define MCAN_FD_ISO_FD_BRS                  2       /* ISO CAN FD with BRS */
+#define MCAN_FD_NON_ISO_FD_NO_BRS           3       /* non-ISO CAN FD without BRS */
+#define MCAN_FD_NON_ISO_FD_BRS              4       /* non-ISO CAN FD with BRS */
 
-#define MCAN_CLOCK_SRC_20M              (20*1000*1000UL)
-#define MCAN_CLOCK_SRC_40M              (40*1000*1000UL)
-#define MCAN_CLOCK_SRC_80M              (80*1000*1000UL)
-
-#define MCANFD_NOMINAL_BAUD_500K        (500*1000UL)
-#define MCANFD_NOMINAL_BAUD_1M          (1000*1000UL)
-
-#define MCANFD_DATA_BAUD_1M             (1*1000*1000UL)
-#define MCANFD_DATA_BAUD_2M             (2*1000*1000UL)
-#define MCANFD_DATA_BAUD_4M             (4*1000*1000UL)
-#define MCANFD_DATA_BAUD_5M             (5*1000*1000UL)
-#define MCANFD_DATA_BAUD_8M             (8*1000*1000UL)
-
-
-int rt_hw_mcan_init(void);
+#define MCAN_FD_ARG_MIN                     MCAN_FD_ISO_FD_NO_BRS
+#define MCAN_FD_ARG_MAX                     MCAN_FD_NON_ISO_FD_BRS
 
 #ifdef __cplusplus
 }
