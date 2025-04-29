@@ -1,19 +1,10 @@
 mainmenu "RT-Thread Project Configuration"
 
-config BSP_DIR
-    string
-    option env="BSP_ROOT"
-    default "."
+BSP_DIR := .
 
-config RTT_DIR
-    string
-    option env="RTT_ROOT"
-    default "../../"
+RTT_DIR := ../../
 
-config PKGS_DIR
-    string
-    option env="PKGS_ROOT"
-    default "packages"
+PKGS_DIR := packages
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
@@ -34,13 +25,8 @@ config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
 
-config C908_PLIC_PHY_ADDR
-    int "PLIC base address"
-    default 0xF00000000
-
 config BSP_ROOTFS_TYPE_CROMFS
     bool "Use CROMFS as ROOTFS"
     select RT_USING_DFS_CROMFS
     select PKG_USING_ZLIB
-    select PKG_USING_ZLIB_LATEST_VERSION
     default y
