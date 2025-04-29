@@ -562,7 +562,6 @@
 /* end of Drivers Configuration */
 #define BOARD_fpgac908
 #define __STACKSIZE__ 65536
-#define C908_PLIC_PHY_ADDR 0xF00000000
 #define BSP_ROOTFS_TYPE_CROMFS
 
 #endif
