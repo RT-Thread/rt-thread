@@ -358,6 +358,11 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
 #if !defined(COMPONENT_CAT1C)
         IRQn_Type irqn = irqmap->irqno;
+        if (irqn < 0 || irqn >= PIN_IFXPORT_MAX)
+        {
+            rt_hw_interrupt_enable(level);
+            return -RT_EINVAL;
+        }
         _cyhal_irq_disable(irqn);
 #endif
         rt_hw_interrupt_enable(level);
