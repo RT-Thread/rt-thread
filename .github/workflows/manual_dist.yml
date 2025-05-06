@@ -76,6 +76,7 @@ jobs:
         shell: bash
         run: |
           source tools/ci/toolchain.sh arm-none-eabi-gcc
+          echo "RTT_EXEC_PATH=/opt/arm-none-eabi-gcc/bin" >> $GITHUB_ENV
 
       - name: Install LLVM-Arm ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'llvm-arm' && success() }}
