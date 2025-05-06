@@ -154,10 +154,10 @@ jobs:
           scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           cat bsp/$RTT_BSP/.config
-          scons -C bsp/$RTT_BSP -j$(nproc) 
+          scons -C bsp/$RTT_BSP -j$(nproc) --cdb
           ls bsp/$RTT_BSP
           scons --dist -C bsp/$RTT_BSP
-          cppcheck --project=bsp/$RTT_BSP/compile_commands.json 
+          cppcheck --project=bsp/$RTT_BSP/build/compile_commands.json 
 
       - uses: actions/upload-artifact@main
         if:  ${{ github.event.inputs.dist_flag  && success()}} 
