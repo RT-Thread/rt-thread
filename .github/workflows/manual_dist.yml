@@ -70,7 +70,6 @@ jobs:
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
-          sudo apt-get -qq install cppcheck
 
       - name: Install Arm ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-arm' && success() }}
@@ -153,15 +152,11 @@ jobs:
           config=${{ github.event.inputs.bsp_config}}
           echo "$config"
           echo "$config" >> bsp/$RTT_BSP/.config
-          insert_code="env.Tool('compilation_db')\nenv.CompilationDatabase()\n"
-          sed -i "/DoBuilding(TARGET, objs)/i $insert_code" bsp/$RTT_BSP/SConstruct
           scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           cat bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP -j$(nproc) 
           ls bsp/$RTT_BSP
-          cppcheck --project=bsp/$RTT_BSP/compile_commands.json 
-          pwd
 
       - uses: actions/upload-artifact@main
         if:  ${{ github.event.inputs.dist_flag  && success()}} 
