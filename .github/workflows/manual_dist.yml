@@ -162,8 +162,8 @@ jobs:
           cppcheck --project=bsp/$RTT_BSP/compile_commands.json 
           pwd
 
-      - uses: actions/upload-artifact@v3
-        if:  ${{ github.event.inputs.dist_flag }} 
+      - uses: actions/upload-artifact@main
+        if:  ${{ github.event.inputs.dist_flag  && success()}} 
         with:
           name: dist_file
           path: ${{ github.workspace }}/${{ github.event.inputs.bsp_options }}/*
