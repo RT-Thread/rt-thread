@@ -101,7 +101,7 @@ static rt_bool_t echo_test()
         sendTotalCount += sendCount;
 
         // Wait for the cross-send to complete
-        rt_thread_mdelay(15);
+        rt_thread_mdelay(UART_SEND_TIMES);
 
         if (count % 50 == 0)
         {
