@@ -70,6 +70,7 @@ jobs:
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
           echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
+          sudo apt-get -qq install cppcheck
 
       - name: Install ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-arm' && success() }}
@@ -156,6 +157,7 @@ jobs:
           scons -C bsp/$RTT_BSP -j$(nproc) 
           ls bsp/$RTT_BSP
           scons --dist -C bsp/$RTT_BSP
+          cppcheck --project=bsp/$RTT_BSP/compile_commands.json 
 
       - uses: actions/upload-artifact@main
         if:  ${{ github.event.inputs.dist_flag  && success()}} 
