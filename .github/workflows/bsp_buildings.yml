@@ -45,7 +45,7 @@ jobs:
       filtered_matrix: ${{ steps.filter.outputs.filtered_matrix }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
         with:
           sparse-checkout: .github/ALL_BSP_COMPILE.json
           persist-credentials: false
@@ -106,7 +106,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.filtered_matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Set up Python
         uses: actions/setup-python@main
         with:

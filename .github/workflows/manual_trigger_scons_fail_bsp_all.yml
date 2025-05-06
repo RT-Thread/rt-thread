@@ -102,9 +102,9 @@ jobs:
         - {RTT_BSP_NAME: "yichip_yc3122-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3122-pos"}  #编译问题
   
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@main
         with:
           python-version: 3.8
 
