@@ -90,7 +90,7 @@ void rt_components_board_init(void)
     const struct rt_init_desc *desc;
     for (desc = &__rt_init_desc_rti_board_start; desc < &__rt_init_desc_rti_board_end; desc ++)
     {
-        rt_kprintf("initialize %s", desc->fn_name);
+        rt_kprintf("initialize %s\n", desc->fn_name);
         result = desc->fn();
         rt_kprintf(":%d done\n", result);
     }
@@ -116,7 +116,7 @@ void rt_components_init(void)
     rt_kprintf("do components initialization.\n");
     for (desc = &__rt_init_desc_rti_board_end; desc < &__rt_init_desc_rti_end; desc ++)
     {
-        rt_kprintf("initialize %s", desc->fn_name);
+        rt_kprintf("initialize %s\n", desc->fn_name);
         result = desc->fn();
         rt_kprintf(":%d done\n", result);
     }

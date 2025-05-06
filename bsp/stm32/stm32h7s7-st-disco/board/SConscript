@@ -1,12 +1,7 @@
 import os
-import rtconfig
 from building import *
 
-Import('SDK_LIB')
-
-objs = []
 cwd = GetCurrentDir()
-list = os.listdir(cwd)
 
 # add the general drivers.
 src = Glob('board.c')
@@ -16,23 +11,17 @@ src += Split('''
 CubeMX_Config/Appli/Core/Src/stm32h7rsxx_hal_msp.c
 ''')
 
-if GetDepend(['BSP_USING_FS']):
-    src += Glob('port/filesystem.c')
-
 path = [cwd]
 path += [cwd + '/CubeMX_Config/Appli/Core/Inc']
-path += [cwd + '/port']
-
-startup_path_prefix = SDK_LIB
-
-if rtconfig.CROSS_TOOL == 'gcc':
-    src += [startup_path_prefix + '/STM32H7RSxx_HAL/CMSIS/Device/ST/STM32H7RSxx/Source/Templates/gcc/startup_stm32h7s7xx.s']
-elif rtconfig.CROSS_TOOL == 'keil':
-    src += [startup_path_prefix + '/STM32H7RSxx_HAL/CMSIS/Device/ST/STM32H7RSxx/Source/Templates/arm/startup_stm32h7s7xx.s']
-elif rtconfig.CROSS_TOOL == 'iar':
-    src += [startup_path_prefix + '/STM32H7RSxx_HAL/CMSIS/Device/ST/STM32H7RSxx/Source/Templates/iar/startup_stm32h7s7xx.s']
 
 CPPDEFINES = ['STM32H7S7xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+# if os.path.isfile(os.path.join(cwd, "ports", 'SConscript')):
+#     group = group + SConscript(os.path.join("ports", 'SConscript'))
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

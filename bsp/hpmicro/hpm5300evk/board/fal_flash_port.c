@@ -42,9 +42,9 @@
  ***************************************************************************************************/
 
 static int init(void);
-static int read(long offset, uint8_t *buf, size_t size);
-static int write(long offset, const uint8_t *buf, size_t size);
-static int erase(long offset, size_t size);
+static int read(long offset, rt_uint8_t *buf, rt_size_t size);
+static int write(long offset, const rt_uint8_t *buf, rt_size_t size);
+static int erase(long offset, rt_size_t size);
 
 static xpi_nor_config_t s_flashcfg;
 
@@ -85,9 +85,9 @@ FAL_RAMFUNC static int init(void)
     {
         s_flashcfg.device_info.clk_freq_for_non_read_cmd = 0U;
         /* update the flash chip information */
-        uint32_t sector_size;
+        rt_uint32_t sector_size;
         rom_xpi_nor_get_property(BOARD_APP_XPI_NOR_XPI_BASE, &s_flashcfg, xpi_nor_property_sector_size, &sector_size);
-        uint32_t flash_size;
+        rt_uint32_t flash_size;
         rom_xpi_nor_get_property(BOARD_APP_XPI_NOR_XPI_BASE, &s_flashcfg, xpi_nor_property_total_size, &flash_size);
         nor_flash0.blk_size = sector_size;
         nor_flash0.len = flash_size;
@@ -104,12 +104,12 @@ FAL_RAMFUNC static int init(void)
  * @param size Size of data to be read
  * @return actual read bytes
  */
-FAL_RAMFUNC static int read(long offset, uint8_t *buf, size_t size)
+FAL_RAMFUNC static int read(long offset, rt_uint8_t *buf, rt_size_t size)
 {
-    uint32_t flash_addr = nor_flash0.addr + offset;
-    uint32_t aligned_start = HPM_L1C_CACHELINE_ALIGN_DOWN(flash_addr);
-    uint32_t aligned_end = HPM_L1C_CACHELINE_ALIGN_UP(flash_addr + size);
-    uint32_t aligned_size = aligned_end - aligned_start;
+    rt_uint32_t flash_addr = nor_flash0.addr + offset;
+    rt_uint32_t aligned_start = HPM_L1C_CACHELINE_ALIGN_DOWN(flash_addr);
+    rt_uint32_t aligned_end = HPM_L1C_CACHELINE_ALIGN_UP(flash_addr + size);
+    rt_uint32_t aligned_size = aligned_end - aligned_start;
     rt_base_t level = rt_hw_interrupt_disable();
     l1c_dc_invalidate(aligned_start, aligned_size);
     rt_hw_interrupt_enable(level);
@@ -126,7 +126,7 @@ FAL_RAMFUNC static int read(long offset, uint8_t *buf, size_t size)
  * @param size Size of data to be written
  * @return actual size of written data or error code
  */
-FAL_RAMFUNC static int write_unaligned_page_data(long offset, const uint32_t *buf, size_t size)
+FAL_RAMFUNC static int write_unaligned_page_data(long offset, const rt_uint32_t *buf, rt_size_t size)
 {
     hpm_stat_t status;
 
@@ -151,21 +151,21 @@ FAL_RAMFUNC static int write_unaligned_page_data(long offset, const uint32_t *bu
  * @param size Size of data to be written
  * @return actual size of written data or error code
  */
-FAL_RAMFUNC static int write(long offset, const uint8_t *buf, size_t size)
+FAL_RAMFUNC static int write(long offset, const rt_uint8_t *buf, rt_size_t size)
 {
-    uint32_t *src = NULL;
-    uint32_t buf_32[64];
-    uint32_t write_size;
-    size_t remaining_size = size;
+    rt_uint32_t *src = NULL;
+    rt_uint32_t buf_32[64];
+    rt_uint32_t write_size;
+    rt_size_t remaining_size = size;
     int ret = (int)size;
 
-    uint32_t page_size;
+    rt_uint32_t page_size;
     rom_xpi_nor_get_property(BOARD_APP_XPI_NOR_XPI_BASE, &s_flashcfg, xpi_nor_property_page_size, &page_size);
-    uint32_t offset_in_page = offset % page_size;
+    rt_uint32_t offset_in_page = offset % page_size;
     if (offset_in_page != 0)
     {
-        uint32_t write_size_in_page = page_size - offset_in_page;
-        uint32_t write_page_size = MIN(write_size_in_page, size);
+        rt_uint32_t write_size_in_page = page_size - offset_in_page;
+        rt_uint32_t write_page_size = MIN(write_size_in_page, size);
         (void) rt_memcpy(buf_32, buf, write_page_size);
         write_size = write_unaligned_page_data(offset, buf_32, write_page_size);
         if (write_size < 0)
@@ -214,17 +214,17 @@ write_quit:
  * @ret RT_EOK Erase operation is successful
  * @retval -RT_ERROR Erase operation failed
  */
-FAL_RAMFUNC static int erase(long offset, size_t size)
+FAL_RAMFUNC static int erase(long offset, rt_size_t size)
 {
-    uint32_t aligned_size = (size + nor_flash0.blk_size - 1U) & ~(nor_flash0.blk_size - 1U);
+    rt_uint32_t aligned_size = (size + nor_flash0.blk_size - 1U) & ~(nor_flash0.blk_size - 1U);
     hpm_stat_t status;
     int ret = (int)size;
 
-    uint32_t block_size;
-    uint32_t sector_size;
+    rt_uint32_t block_size;
+    rt_uint32_t sector_size;
     (void) rom_xpi_nor_get_property(BOARD_APP_XPI_NOR_XPI_BASE, &s_flashcfg, xpi_nor_property_sector_size, &sector_size);
     (void) rom_xpi_nor_get_property(BOARD_APP_XPI_NOR_XPI_BASE, &s_flashcfg, xpi_nor_property_block_size, &block_size);
-    uint32_t erase_unit;
+    rt_uint32_t erase_unit;
     while (aligned_size > 0)
     {
         FAL_ENTER_CRITICAL();

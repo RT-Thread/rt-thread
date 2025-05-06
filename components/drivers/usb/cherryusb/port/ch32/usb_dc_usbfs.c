@@ -101,6 +101,11 @@ int usbd_set_address(uint8_t busid, const uint8_t addr)
     return 0;
 }
 
+int usbd_set_remote_wakeup(uint8_t busid)
+{
+    return -1;
+}
+
 uint8_t usbd_get_port_speed(uint8_t busid)
 {
     return USB_SPEED_FULL;

@@ -53,10 +53,6 @@ ch32_library = 'ch32v20x_libraries'
 rtconfig.BSP_LIBRARY_TYPE = ch32_library
 
 bsp_vdir = 'build'
-library_vdir = 'build/libraries'
-
-# include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, ch32_library, 'SConscript'), variant_dir=library_vdir + '/ch32_library', duplicate=0))
 
 # common include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ch32_drivers','SConscript')))

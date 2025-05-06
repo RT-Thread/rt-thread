@@ -673,7 +673,16 @@ dhcp_handle_ack(struct netif *netif, struct dhcp_msg *msg_in)
   for (n = 0; (n < LWIP_DHCP_PROVIDE_DNS_SERVERS) && dhcp_option_given(dhcp, DHCP_OPTION_IDX_DNS_SERVER + n); n++) {
     ip_addr_t dns_addr;
     ip_addr_set_ip4_u32_val(dns_addr, lwip_htonl(dhcp_get_option_value(dhcp, DHCP_OPTION_IDX_DNS_SERVER + n)));
+#ifdef RT_USING_NETDEV
+    extern struct netdev *netdev_get_by_name(const char *name);
+    extern void netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
+    /* Here we only need to set the dns server of the corresponding network device,
+     * but do not need to configure all network devices.
+     */
+    netdev_set_dns_server(netdev_get_by_name(netif->name), n, &dns_addr);
+#else
     dns_setserver(n, &dns_addr);
+#endif
   }
 #endif /* LWIP_DHCP_PROVIDE_DNS_SERVERS */
 }

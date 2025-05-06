@@ -31,9 +31,9 @@
 #include <rtdevice.h> /* for wqueue_init */
 #endif /* RT_USING_POSIX_DEVIO */
 
-#ifdef RT_USING_DFS_V2
+#if defined (RT_USING_DFS_V2) && defined (RT_USING_DFS_DEVFS)
 #include <devfs.h>
-#endif /* RT_USING_DFS_V2 */
+#endif /* RT_USING_DFS_V2  RT_USING_DFS_DEVFS */
 
 #ifdef RT_USING_DEVICE
 
@@ -84,7 +84,7 @@ rt_err_t rt_device_register(rt_device_t dev,
     rt_wqueue_init(&(dev->wait_queue));
 #endif /* RT_USING_POSIX_DEVIO */
 
-#ifdef RT_USING_DFS_V2
+#if defined (RT_USING_DFS_V2) && defined (RT_USING_DFS_DEVFS)
     dfs_devfs_device_add(dev);
 #endif /* RT_USING_DFS_V2 */
 

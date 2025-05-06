@@ -1,0 +1,22 @@
+menuconfig RT_USING_ATA
+    bool "Using Advanced Technology Attachment (ATA) device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_BLK
+    depends on RT_USING_DMA
+    default n
+
+config RT_ATA_AHCI
+    bool "Advanced Host Controller Interface (AHCI)"
+    depends on RT_USING_ATA
+    depends on RT_USING_SCSI
+    default y
+
+config RT_ATA_AHCI_PCI
+    bool "AHCI support on PCI bus"
+    depends on RT_ATA_AHCI
+    depends on RT_USING_PCI
+    default n
+
+if RT_USING_ATA
+    osource "$(SOC_DM_ATA_DIR)/Kconfig"
+endif

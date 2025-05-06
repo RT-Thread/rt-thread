@@ -42,10 +42,6 @@ choice
         select SOC_TYPE_SG2002
         bool "milkv-duo256m"
 
-    config BOARD_TYPE_MILKV_DUO256M_SPINOR
-        select SOC_TYPE_SG2002
-        bool "milkv-duo256m-spinor"
-        
 endchoice
 
 source "$(BSP_DIR)/board/Kconfig"

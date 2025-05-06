@@ -1,17 +1,49 @@
 name: doc_doxygen
 on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'documentation/**'
+      - 'src/**'
+      - 'include/**'
+      - 'components/finsh/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/drivers/clk/**'
+      - 'components/drivers/audio/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/dfs/dfs_v2/include/**'
+      - '.github/workflows/doxygen.yml'
   # Runs at 16:00 UTC (BeiJing 00:00) on the 30st of every month
+  push:
+    branches: [master]
+    paths:
+      - 'documentation/**'
+      - 'src/**'
+      - 'include/**'
+      - 'components/finsh/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/drivers/clk/**'
+      - 'components/drivers/audio/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/dfs/dfs_v2/include/**'
+      - '.github/workflows/doxygen.yml'
   schedule:
     - cron:  '0 16 30 * *'
   workflow_dispatch:
-
+  
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: doxygen_doc generate
     if: github.repository_owner == 'RT-Thread'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
         with:
           submodules: 'recursive'
       - name: Install Tools
@@ -19,9 +51,27 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -qq install doxygen graphviz
-      - name: generat doxygen html
+      - name: generate doxygen html
         shell: bash
         run: |
-          cd documentation/doxygen
+          cd documentation
           doxygen Doxyfile
           cat Doxyfile
+          
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@main # or specific "vX.X.X" version tag for this action
+        with:
+          path: documentation/html/
+          
+  deploy:
+    if: github.event_name == 'push'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@main

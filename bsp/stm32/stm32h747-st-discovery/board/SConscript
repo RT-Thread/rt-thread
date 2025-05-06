@@ -1,7 +1,5 @@
-import rtconfig
+import os
 from building import *
-
-Import('SDK_LIB')
 
 cwd = GetCurrentDir()
 
@@ -12,18 +10,14 @@ src += Glob('CubeMX_Config/CM7/Src/stm32h7xx_hal_msp.c')
 path = [cwd]
 path += [cwd + '/CubeMX_Config/CM7/Inc']
 
-startup_path_prefix = SDK_LIB
-
-if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h747xx.s']
-elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h747xx.s']
-elif rtconfig.PLATFORM in ['iccarm']:
-    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32h747xx.s']
-
 # STM32H743xx || STM32H750xx || STM32F753xx
 # You can select chips from the list above
 CPPDEFINES = ['STM32H747xx', 'CORE_CM7']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

@@ -21,7 +21,7 @@ from utils import xml_indent
 
 MODULE_VER_NUM = 6
 
-source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm','*.cmd']
+source_pattern = ['*.c', '*.cpp', '*.cxx', '*.cc', '*.s', '*.S', '*.asm','*.cmd']
 
 
 def OSPath(path):

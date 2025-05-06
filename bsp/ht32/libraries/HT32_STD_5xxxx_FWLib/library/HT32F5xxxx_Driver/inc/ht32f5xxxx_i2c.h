@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_i2c.h
- * @version $Rev:: 7104         $
- * @date    $Date:: 2023-08-08 #$
+ * @version $Rev:: 7698         $
+ * @date    $Date:: 2024-04-15 #$
  * @brief   The header file of the I2C library.
  *************************************************************************************************************
  * @attention
@@ -347,7 +347,7 @@ typedef enum
 #define SEQ_FILTER_2_PCLK                           ((u32)0x00008000)
 
 #define IS_I2C_SEQ_FILTER_MASK(CONFIG)              ((CONFIG == SEQ_FILTER_DISABLE) || \
-                                                     (CONFIG == SEQ_FILTER_1_PCLK) || \
+                                                     (CONFIG == SEQ_FILTER_1_PCLK)  || \
                                                      (CONFIG == SEQ_FILTER_2_PCLK))
 /**
   * @}

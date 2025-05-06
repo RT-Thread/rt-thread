@@ -9,7 +9,6 @@
  */
 
 #include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
 
 /* defined the LED0 pin: PI8 */

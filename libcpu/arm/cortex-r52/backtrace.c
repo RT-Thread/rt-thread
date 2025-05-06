@@ -490,7 +490,7 @@ void unwind_backtrace(struct pt_regs *regs, const struct unwind_idx exidx_start[
     arm_get_current_stackframe(regs, &frame);
 
 #ifndef RT_BACKTRACE_FUNCTION_NAME
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f %08x", frame.pc);
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f %08x\n", frame.pc);
 #endif
     LOG_D("pc = %08x, sp = %08x", frame.pc, frame.sp);
 

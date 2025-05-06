@@ -59,6 +59,12 @@ rt_ssize_t rt_ofw_get_named_pin(struct rt_ofw_node *np, const char *propname, in
     }
 
     pin_dev_np = pin_args.data;
+
+    if (!rt_ofw_data(pin_dev_np))
+    {
+        rt_platform_ofw_request(pin_dev_np);
+    }
+
     pin_dev = rt_ofw_data(pin_dev_np);
 
     if (!pin_dev)
@@ -111,11 +117,11 @@ rt_ssize_t rt_ofw_get_named_pin(struct rt_ofw_node *np, const char *propname, in
 
     if (out_value)
     {
-        if (flags == (PIN_ACTIVE_HIGH | PIN_PUSH_PULL))
+        if ((flags & 1) == PIN_ACTIVE_HIGH)
         {
             value = PIN_HIGH;
         }
-        else if (flags == (PIN_ACTIVE_LOW | PIN_PUSH_PULL))
+        else if ((flags & 1) == PIN_ACTIVE_LOW)
         {
             value = PIN_LOW;
         }
@@ -124,14 +130,20 @@ rt_ssize_t rt_ofw_get_named_pin(struct rt_ofw_node *np, const char *propname, in
 _out_converts:
     rt_ofw_node_put(pin_dev_np);
 
-    if (out_mode)
+    if (pin >= 0)
     {
-        *out_mode = mode;
-    }
+        /* Get virtual pin */
+        pin += pin_dev->pin_start;
 
-    if (out_value)
-    {
-        *out_value = value;
+        if (out_mode)
+        {
+            *out_mode = mode;
+        }
+
+        if (out_value)
+        {
+            *out_value = value;
+        }
     }
 
     return pin;
@@ -142,7 +154,7 @@ rt_ssize_t rt_ofw_get_named_pin_count(struct rt_ofw_node *np, const char *propna
     char gpios_name[64];
     rt_ssize_t count = 0;
 
-    if (!np || !propname)
+    if (!np)
     {
         return -RT_EINVAL;
     }

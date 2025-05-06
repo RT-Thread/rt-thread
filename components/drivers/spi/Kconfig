@@ -3,16 +3,186 @@ config RT_USING_SPI
     default n
 
     if RT_USING_SPI
-        config RT_USING_SPI_BITOPS
-            select RT_USING_PIN
+
+        menuconfig RT_USING_SOFT_SPI
             bool "Use GPIO to simulate SPI"
             default n
+            select RT_USING_PIN
+            if RT_USING_SOFT_SPI
+                menuconfig RT_USING_SOFT_SPI0
+                    bool "Enable SPI0 Bus (software simulation)"
+                    default y
+                    if RT_USING_SOFT_SPI0
+                        config RT_SOFT_SPI0_SCK_PIN
+                            int "SCK pin number"
+                            range 0 32767
+                            default 1
+                        config RT_SOFT_SPI0_MISO_PIN
+                            int "MISO pin number"
+                            range 0 32767
+                            default 2
+                        config RT_SOFT_SPI0_MOSI_PIN
+                            int "MOSI pin number"
+                            range 0 32767
+                            default 3
+                        config RT_SOFT_SPI0_BUS_NAME
+                            string "Bus name"
+                            default "spi0"
+                        config RT_SOFT_SPI0_TIMING_DELAY
+                            int "Timing delay (us)"
+                            range 0 32767
+                            default 1
+                    endif
+                menuconfig RT_USING_SOFT_SPI1
+                    bool "Enable SPI1 Bus (software simulation)"
+                    default y
+                    if RT_USING_SOFT_SPI1
+                        config RT_SOFT_SPI1_SCK_PIN
+                            int "SCK pin number"
+                            range 0 32767
+                            default 4
+                        config RT_SOFT_SPI1_MISO_PIN
+                            int "MISO pin number"
+                            range 0 32767
+                            default 5
+                        config RT_SOFT_SPI1_MOSI_PIN
+                            int "MOSI pin number"
+                            range 0 32767
+                            default 6
+                        config RT_SOFT_SPI1_BUS_NAME
+                            string "Bus name"
+                            default "spi1"
+                        config RT_SOFT_SPI1_TIMING_DELAY
+                            int "Timing delay (us)"
+                            range 0 32767
+                            default 1
+                    endif
+                menuconfig RT_USING_SOFT_SPI2
+                    bool "Enable SPI2 Bus (software simulation)"
+                    default n
+                    if RT_USING_SOFT_SPI2
+                        config RT_SOFT_SPI2_SCK_PIN
+                            int "SCK pin number"
+                            range 0 32767
+                            default 7
+                        config RT_SOFT_SPI2_MISO_PIN
+                            int "MISO pin number"
+                            range 0 32767
+                            default 8
+                        config RT_SOFT_SPI2_MOSI_PIN
+                            int "MOSI pin number"
+                            range 0 32767
+                            default 9
+                        config RT_SOFT_SPI2_BUS_NAME
+                            string "Bus name"
+                            default "spi2"
+                        config RT_SOFT_SPI2_TIMING_DELAY
+                            int "Timing delay (us)"
+                            range 0 32767
+                            default 1
+                    endif
+                menuconfig RT_USING_SOFT_SPI3
+                    bool "Enable SPI3 Bus (software simulation)"
+                    default n
+                    if RT_USING_SOFT_SPI3
+                        config RT_SOFT_SPI3_SCK_PIN
+                            int "SCK pin number"
+                            range 0 32767
+                            default 10
+                        config RT_SOFT_SPI3_MISO_PIN
+                            int "MISO pin number"
+                            range 0 32767
+                            default 11
+                        config RT_SOFT_SPI3_MOSI_PIN
+                            int "MOSI pin number"
+                            range 0 32767
+                            default 12
+                        config RT_SOFT_SPI3_BUS_NAME
+                            string "Bus name"
+                            default "spi3"
+                        config RT_SOFT_SPI3_TIMING_DELAY
+                            int "Timing delay (us)"
+                            range 0 32767
+                            default 1
+                    endif
+                menuconfig RT_USING_SOFT_SPI4
+                    bool "Enable SPI4 Bus (software simulation)"
+                    default n
+                    if RT_USING_SOFT_SPI4
+                        config RT_SOFT_SPI4_SCK_PIN
+                            int "SCK pin number"
+                            range 0 32767
+                            default 13
+                        config RT_SOFT_SPI4_MISO_PIN
+                            int "MISO pin number"
+                            range 0 32767
+                            default 14
+                        config RT_SOFT_SPI4_MOSI_PIN
+                            int "MOSI pin number"
+                            range 0 32767
+                            default 15
+                        config RT_SOFT_SPI4_BUS_NAME
+                            string "Bus name"
+                            default "spi4"
+                        config RT_SOFT_SPI4_TIMING_DELAY
+                            int "Timing delay (us)"
+                            range 0 32767
+                            default 1
+                    endif
+                menuconfig RT_USING_SOFT_SPI5
+                    bool "Enable SPI5 Bus (software simulation)"
+                    default n
+                    if RT_USING_SOFT_SPI5
+                        config RT_SOFT_SPI5_SCK_PIN
+                            int "SCK pin number"
+                            range 0 32767
+                            default 16
+                        config RT_SOFT_SPI5_MISO_PIN
+                            int "MISO pin number"
+                            range 0 32767
+                            default 17
+                        config RT_SOFT_SPI5_MOSI_PIN
+                            int "MOSI pin number"
+                            range 0 32767
+                            default 18
+                        config RT_SOFT_SPI5_BUS_NAME
+                            string "Bus name"
+                            default "spi5"
+                        config RT_SOFT_SPI5_TIMING_DELAY
+                            int "Timing delay (us)"
+                            range 0 32767
+                            default 1
+                    endif
+                menuconfig RT_USING_SOFT_SPI6
+                    bool "Enable SPI6 Bus (software simulation)"
+                    default n
+                    if RT_USING_SOFT_SPI6
+                        config RT_SOFT_SPI6_SCK_PIN
+                            int "SCK pin number"
+                            range 0 32767
+                            default 19
+                        config RT_SOFT_SPI6_MISO_PIN
+                            int "MISO pin number"
+                            range 0 32767
+                            default 20
+                        config RT_SOFT_SPI6_MOSI_PIN
+                            int "MOSI pin number"
+                            range 0 32767
+                            default 21
+                        config RT_SOFT_SPI6_BUS_NAME
+                            string "Bus name"
+                            default "spi6"
+                        config RT_SOFT_SPI6_TIMING_DELAY
+                            int "Timing delay (us)"
+                            range 0 32767
+                            default 1
+                    endif
+            endif
 
-        if RT_USING_SPI_BITOPS
-            config RT_SPI_BITOPS_DEBUG
-                bool "Use simulate SPI debug message"
-                default n
-        endif
+        config RT_SPI_BITOPS_DEBUG
+            bool "Use simulate SPI debug message"
+            depends on RT_USING_SOFT_SPI
+            default n
 
         config RT_USING_QSPI
             bool "Enable QSPI mode"

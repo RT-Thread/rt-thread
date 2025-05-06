@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -82,6 +82,6 @@ void dlmodule_exit(int ret_code);
 
 struct rt_dlmodule *dlmodule_find(const char *name);
 
-rt_uint32_t dlmodule_symbol_find(const char *sym_str);
+rt_ubase_t dlmodule_symbol_find(const char *sym_str);
 
 #endif

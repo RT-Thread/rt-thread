@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2021-2022, RT-Thread Development Team
+ * Copyright (c) 2021-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-03     supperthomas first version
- *
+ * 2024-12-08     wumingzi     support open drain mode for soft i2c
  */
 
 #include <rtthread.h>
@@ -37,9 +37,14 @@ static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 0;
     gpio_config(&io_conf);
-    if (mode == PIN_MODE_OUTPUT)
+    switch  (mode)
     {
-        gpio_set_direction(pin, GPIO_MODE_OUTPUT);
+        case PIN_MODE_INPUT:
+            gpio_set_direction(pin, GPIO_MODE_INPUT);
+        case PIN_MODE_OUTPUT:
+            gpio_set_direction(pin, GPIO_MODE_OUTPUT);
+        case PIN_MODE_OUTPUT_OD:
+            gpio_set_direction(pin, GPIO_MODE_INPUT_OUTPUT_OD);
     }
     /*TODO:set gpio out put mode */
 }

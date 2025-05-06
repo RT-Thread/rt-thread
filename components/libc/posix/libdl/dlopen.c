@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,19 @@
 
 #define MODULE_ROOT_DIR     "/modules"
 
+/**
+ * @brief  dynamically load a shared library at runtime.
+ *
+ * @param  filename the path to the shared library to load, which shouldn't be set to NULL.
+ * @param  flags options for loading the shared library.
+ * @return void* on success, it returns a handle (a pointer) to the opened shared library, otherwise it returns NULL.
+ *
+ * @note   This function is an API of POSIX standard, which is used for dynamically loading shared libraries at runtime.
+ *         the function first tries to check if the module is already loaded, by finding module in module list.
+ *         If module is found in memory (RT_NULL check fails), the reference count (nref) is incremented.
+ *         Otherwise,  dlmodule_load() will be called to load the module into memory.
+ *         A handle (a pointer to the module) is returned at last, which can be used with other functions like dlsym().
+ */
 void* dlopen(const char *filename, int flags)
 {
     struct rt_dlmodule *module;

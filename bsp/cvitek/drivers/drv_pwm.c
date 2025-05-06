@@ -11,6 +11,7 @@
 #include <rtdevice.h>
 #include "drv_pwm.h"
 #include "drv_pinmux.h"
+#include "drv_ioremap.h"
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -136,7 +137,7 @@ static struct cvi_pwm_dev cvi_pwm[] =
 };
 
 
-#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO)
 
 #ifdef BSP_USING_PWM0
 static const char *pinname_whitelist_pwm0[] = {
@@ -208,7 +209,7 @@ static const char *pinname_whitelist_pwm15[] = {
 };
 #endif
 
-#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#elif defined(BOARD_TYPE_MILKV_DUO256M)
 
 #ifdef BSP_USING_PWM0
 static const char *pinname_whitelist_pwm0[] = {
@@ -326,6 +327,8 @@ int rt_hw_pwm_init(void)
 
     for (i = 0; i < sizeof(cvi_pwm) / sizeof(cvi_pwm[0]); i++)
     {
+        cvi_pwm[i].device.base = (rt_ubase_t)DRV_IOREMAP((void *)cvi_pwm[i].device.base, 0x1000);
+
         result = rt_device_pwm_register(&cvi_pwm[i].device, cvi_pwm[i].name, &cvi_pwm_ops, &cvi_pwm[i]);
         if (result != RT_EOK)
         {

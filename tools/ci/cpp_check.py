@@ -52,6 +52,10 @@ class CPPCheck:
         logging.info("Start to static code analysis.")
         check_result = True
         for file in file_list_filtered:
+            macros = []
+            if os.path.basename(file) == 'lwp.c':
+                macros.append('-DRT_USING_DFS')
+
             result = subprocess.run(
                 [
                     'cppcheck',
@@ -70,7 +74,7 @@ class CPPCheck:
                     '--error-exitcode=1',
                     '--force',
                     file
-                ],
+                ] + macros,
                 stdout = subprocess.PIPE, stderr = subprocess.PIPE)
             logging.info(result.stdout.decode())
             logging.info(result.stderr.decode())

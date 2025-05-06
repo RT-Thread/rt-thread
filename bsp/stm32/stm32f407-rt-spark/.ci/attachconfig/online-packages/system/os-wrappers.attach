@@ -1,2 +1,0 @@
-# scons: --strict
-CONFIG_PKG_USING_FREERTOS_WRAPPER=y

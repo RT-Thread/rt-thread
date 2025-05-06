@@ -57,7 +57,7 @@
 /*
  * Our goal is to boot the rt-thread as possible without modifying the
  * bootloader's config, so we use the kernel's boot header for ARM64:
- *   https://www.kernel.org/doc/html/latest/arm64/booting.html#call-the-kernel-image
+ *   https://www.kernel.org/doc/html/latest/arch/arm64/booting.html#call-the-kernel-image
  */
 _head:
     b       _start          /* Executable code */

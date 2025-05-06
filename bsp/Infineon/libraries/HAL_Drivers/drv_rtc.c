@@ -6,6 +6,7 @@
  * Change Logs:
  * Date         Author         Notes
  * 2022-07-25   Rbb666         first version
+ * 2024-11-06   kurisaw        add alarm function
  */
 
 #include <rtthread.h>
@@ -21,7 +22,15 @@
 
 cyhal_rtc_t rtc_obj;
 
-static rt_rtc_dev_t ifx32_rtc_dev;
+struct rtc_device_object
+{
+    rt_rtc_dev_t  rtc_dev;
+#ifdef RT_USING_ALARM
+    struct rt_rtc_wkalarm   wkalarm;
+#endif
+};
+
+static struct rtc_device_object ifx32_rtc_dev;
 
 static int get_day_of_week(int day, int month, int year)
 {
@@ -105,6 +114,10 @@ static rt_err_t _rtc_init(void)
         return -RT_ERROR;
     }
 
+#ifdef RT_USING_ALARM
+    cyhal_rtc_register_callback(&rtc_obj, rtc_alarm_callback, NULL);
+    cyhal_rtc_enable_event(&rtc_obj, CYHAL_RTC_ALARM, 3u, true);
+#endif
     return RT_EOK;
 }
 
@@ -133,13 +146,62 @@ static rt_err_t _rtc_set_secs(time_t *sec)
     return result;
 }
 
+#if defined(RT_USING_ALARM)
+
+static rt_err_t _rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
+{
+#ifdef RT_USING_ALARM
+    *alarm = ifx32_rtc_dev.wkalarm;
+    LOG_D("GET_ALARM %d:%d:%d",ifx32_rtc_dev.wkalarm.tm_hour,
+        ifx32_rtc_dev.wkalarm.tm_min,ifx32_rtc_dev.wkalarm.tm_sec);
+    return RT_EOK;
+#else
+    return -RT_ERROR;
+#endif
+}
+
+static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
+{
+#ifdef RT_USING_ALARM
+    LOG_D("RT_DEVICE_CTRL_RTC_SET_ALARM");
+    if (alarm != RT_NULL)
+    {
+        ifx32_rtc_dev.wkalarm.enable = alarm->enable;
+        ifx32_rtc_dev.wkalarm.tm_hour = alarm->tm_hour;
+        ifx32_rtc_dev.wkalarm.tm_min = alarm->tm_min;
+        ifx32_rtc_dev.wkalarm.tm_sec = alarm->tm_sec;
+
+        cyhal_rtc_set_alarm_by_seconds(&rtc_obj, 1);
+    }
+    else
+    {
+        LOG_E("RT_DEVICE_CTRL_RTC_SET_ALARM error!!");
+        return -RT_ERROR;
+    }
+    LOG_D("SET_ALARM %d:%d:%d",alarm->tm_hour,
+        alarm->tm_min, alarm->tm_sec);
+    return RT_EOK;
+#else
+    return -RT_ERROR;
+#endif
+}
+
+#ifdef RT_USING_ALARM
+void rtc_alarm_callback(void)
+{
+    rt_interrupt_enter();
+    rt_alarm_update(0, 0);
+    rt_interrupt_leave();
+}
+#endif
+
 static const struct rt_rtc_ops _rtc_ops =
 {
     _rtc_init,
     _rtc_get_secs,
     _rtc_set_secs,
-    RT_NULL,
-    RT_NULL,
+    _rtc_get_alarm,
+    _rtc_set_alarm,
     ifx_rtc_get_timeval,
     RT_NULL,
 };
@@ -153,9 +215,9 @@ static int rt_hw_rtc_init(void)
 {
     rt_err_t result = RT_EOK;
 
-    ifx32_rtc_dev.ops = &_rtc_ops;
+    ifx32_rtc_dev.rtc_dev.ops = &_rtc_ops;
 
-    if (rt_hw_rtc_register(&ifx32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL) != RT_EOK)
+    if (rt_hw_rtc_register(&(ifx32_rtc_dev.rtc_dev), "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL) != RT_EOK)
     {
         LOG_E("rtc init failed");
         result = -RT_ERROR;

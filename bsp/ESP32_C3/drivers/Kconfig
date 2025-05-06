@@ -72,9 +72,28 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_I2C
         if BSP_USING_I2C
-            config BSP_USING_I2C0
-                bool "Enable I2C0"
+            menuconfig BSP_USING_HW_I2C
+                bool "Enable HardWare I2C"
                 default n
+                
+            menuconfig BSP_USING_SW_I2C
+                bool "Enable SoftWare I2C"
+                default n
+                if BSP_USING_SW_I2C
+                    config BSP_USING_SW_I2C0
+                        bool "Enable SoftWare I2C0"
+                        default n
+                        if BSP_USING_SW_I2C0
+                            config BSP_SW_I2C0_SDA_PIN
+                                int "SWI2C0 sda pin number"
+                                range 0 21
+                                default 18
+                            config BSP_SW_I2C0_SCL_PIN
+                                int "SWI2C0 scl pin number"
+                                range 0 21
+                                default 19
+                        endif
+                endif
         endif
 
     menuconfig BSP_USING_SPI

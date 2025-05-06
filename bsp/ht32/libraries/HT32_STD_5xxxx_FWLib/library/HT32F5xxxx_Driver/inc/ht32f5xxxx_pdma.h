@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_pdma.h
- * @version $Rev:: 7319         $
- * @date    $Date:: 2023-10-28 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the PDMA library.
  *************************************************************************************************************
  * @attention
@@ -134,7 +134,7 @@ typedef struct
 #define PDMA_DAC1_CH1             PDMA_CH5                      /*!< DAC1 CH1 PDMA channel number           */
 #endif
 
-#if defined(USE_HT32F65230_40) || defined(USE_HT32F65232) || defined(USE_HT32F0006) || defined(USE_HT32F61244_45)
+#if defined(USE_HT32F65230_40) || defined(USE_HT32F65232) || defined(USE_HT32F0006) || defined(USE_HT32F61244_45) || defined(USE_HT32F66242) || defined (USE_HT32F66246)
 #define PDMA_SPI0_RX              PDMA_CH4                      /*!< SPI0_RX PDMA channel number            */
 #define PDMA_SPI0_TX              PDMA_CH5                      /*!< SPI0_TX PDMA channel number            */
 #elif defined(USE_HT32F57342_52) || defined(USE_HT32F52357_67) || defined(USE_HT32F67041_51) || defined(USE_HT32F52234_44)
@@ -196,12 +196,14 @@ typedef struct
 #endif
 #endif
 
+#if (LIBCFG_I2C2)
 #if defined(USE_HT32F52243_53) || defined(USE_HT32F54243_53)
 #define PDMA_I2C2_RX              PDMA_CH0                      /*!< I2C2_RX PDMA channel number            */
 #define PDMA_I2C2_TX              PDMA_CH1                      /*!< I2C2_TX PDMA channel number            */
 #elif defined(USE_HT32F52234_44)
 #define PDMA_I2C2_RX              PDMA_CH4                      /*!< I2C2_RX PDMA channel number            */
 #define PDMA_I2C2_TX              PDMA_CH5                      /*!< I2C2_TX PDMA channel number            */
+#endif
 #endif
 
 #if defined(USE_HT32F52342_52) || defined(USE_HT32F5826) || defined(USE_HT32F57342_52) || defined(USE_HT32F52357_67)
@@ -228,7 +230,7 @@ typedef struct
 
 #if (LIBCFG_NO_GPTM0)
 #else
-#if defined(USE_HT32F65230_40) || defined(USE_HT32F65232)
+#if defined(USE_HT32F65230_40) || defined(USE_HT32F65232) || defined(USE_HT32F66242) || defined (USE_HT32F66246)
 #define PDMA_GPTM0_CH1            PDMA_CH0                      /*!< GPTM0_CH1 PDMA channel number          */
 #define PDMA_GPTM0_CH2            PDMA_CH1                      /*!< GPTM0_CH2 PDMA channel number          */
 #define PDMA_GPTM0_CH0            PDMA_CH2                      /*!< GPTM0_CH0 PDMA channel number          */
@@ -254,7 +256,7 @@ typedef struct
 #define PDMA_GPTM1_TRIG           PDMA_CH5                      /*!< GPTM1_TRIG PDMA channel number         */
 #endif
 
-#if defined(USE_HT32F65230_40) || defined(USE_HT32F65232)
+#if defined(USE_HT32F65230_40) || defined(USE_HT32F65232) || defined(USE_HT32F66242) || defined (USE_HT32F66246)
 #define PDMA_SCTM0_CH0            PDMA_CH0                      /*!< SCTM0_CH0 PDMA channel number          */
 #define PDMA_SCTM0_CH1            PDMA_CH1                      /*!< SCTM0_CH1 PDMA channel number          */
 #define PDMA_SCTM1_CH0            PDMA_CH2                      /*!< SCTM1_CH0 PDMA channel number          */
@@ -316,6 +318,11 @@ typedef struct
 #if (LIBCFG_MIDI)
 #define PDMA_MIDI_IN              PDMA_CH3                      /*!< MIDI_IN PDMA channel number            */
 #define PDMA_MIDI_OUT             PDMA_CH4                      /*!< MIDI_OUT PDMA channel number           */
+#endif
+
+#if (LIBCFG_CORDIC)
+#define PDMA_CORDIC_WR            PDMA_CH4                      /*!< CORDIC_WR PDMA channel number          */
+#define PDMA_CORDIC_RD            PDMA_CH5                      /*!< CORDIC_RD PDMA channel number          */
 #endif
 
 /* flag                                                                                                     */

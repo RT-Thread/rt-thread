@@ -22,6 +22,12 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#ifdef ARCH_CPU_64BIT
+#define MIN_BIT   16
+#else
+#define MIN_BIT   8
+#endif
+
 #ifndef RT_INIT_MEMORY_REGIONS
 #define RT_INIT_MEMORY_REGIONS 128
 #endif
@@ -155,16 +161,16 @@ static rt_err_t _memblock_add_range(struct rt_memblock *memblock,
 
 rt_err_t rt_memblock_add_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
 {
-    LOG_D("add physical address range [%p-%p) with flag 0x%x" \
-            " to overall memory regions\n", base, base + size, flag);
+    LOG_D("add physical address range [0x%.*lx-0x%.*lx) with flag 0x%x" \
+            " to overall memory regions\n", MIN_BIT, base, MIN_BIT, base + size, flag);
 
     return _memblock_add_range(&mmblk_memory, name, start, end, flags);
 }
 
 rt_err_t rt_memblock_reserve_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
 {
-    LOG_D("add physical address range [%p-%p) to reserved memory regions\n",\
-                                        base, base + size);
+    LOG_D("add physical address range %s [0x%.*lx-0x%.*lx) to reserved memory regions\n",
+                                     name, MIN_BIT, start, MIN_BIT, end);
 
     return _memblock_add_range(&mmblk_reserved, name, start, end, flags);
 }
@@ -347,14 +353,14 @@ void rt_memblock_setup_memory_environment(void)
 
     rt_slist_for_each_entry(iter, &(mmblk_memory.reg_list), node)
     {
-        LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX, iter->memreg.name, iter->memreg.start, iter->memreg.end);
+        LOG_I("  %-*.s [0x%.*lx, 0x%.*lx]", RT_NAME_MAX, iter->memreg.name, MIN_BIT, iter->memreg.start, MIN_BIT, iter->memreg.end);
     }
 
     LOG_I("Reserved memory:");
 
     rt_slist_for_each_entry(iter, &(mmblk_reserved.reg_list), node)
     {
-        LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX, iter->memreg.name, iter->memreg.start, iter->memreg.end);
+        LOG_I("  %-*.s [0x%.*lx, 0x%.*lx]", RT_NAME_MAX, iter->memreg.name, MIN_BIT, iter->memreg.start, MIN_BIT, iter->memreg.end);
 
         if (iter->flags != MEMBLOCK_NONE)
         {

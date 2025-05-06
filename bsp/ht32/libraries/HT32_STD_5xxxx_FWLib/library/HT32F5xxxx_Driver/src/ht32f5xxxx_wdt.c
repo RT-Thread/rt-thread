@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_wdt.c
- * @version $Rev:: 2772         $
- * @date    $Date:: 2018-05-15 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the WDT firmware functions.
  *************************************************************************************************************
  * @attention
@@ -55,8 +55,8 @@
 #define MODE0_WDTFIEN_RESET    ((u32)0xFFFFEFFF)
 
 /* WDT WDTRSTEN mask                                                                                        */
-#define MODE0_WDTRETEN_SET     ((u32)0x00002000)
-#define MODE0_WDTRETEN_RESET   ((u32)0xFFFFDFFF)
+#define MODE0_WDTRSTEN_SET     ((u32)0x00002000)
+#define MODE0_WDTRSTEN_RESET   ((u32)0xFFFFDFFF)
 
 /* WDT WDTEN mask                                                                                           */
 #define MODE0_WDTEN_SET        ((u32)0x00010000)
@@ -109,9 +109,9 @@ void WDT_Cmd(ControlStatus NewState)
  * @brief Configure the WDT to run or halt in sleep and deep sleep1 mode.
  * @param WDT_Mode:
  *   This parameter can be one of the following values:
- *     @arg MODE0_WDTSHLT_BOTH  : WDT runs in sleep and deep sleep1 mode
- *     @arg MODE0_WDTSHLT_SLEEP : WDT runs in sleep mode
- *     @arg MODE0_WDTSHLT_HALT  : WDT halts in sleep and deep sleep1 mode
+ *     @arg WDT_SLEEP_HALT_NONE      : WDT no halt
+ *     @arg WDT_SLEEP_HALT_DEEPSLEEP : WDT halts in deep sleep1 mode
+ *     @arg WDT_SLEEP_HALT_ALL       : WDT halts in sleep and deep sleep1 mode
  * @retval None
  ************************************************************************************************************/
 void WDT_HaltConfig(u32 WDT_Mode)
@@ -134,11 +134,11 @@ void WDT_ResetCmd(ControlStatus NewState)
 
   if (NewState != DISABLE)
   {
-    HT_WDT->MR0 |= MODE0_WDTRETEN_SET;
+    HT_WDT->MR0 |= MODE0_WDTRSTEN_SET;
   }
   else
   {
-    HT_WDT->MR0 &= MODE0_WDTRETEN_RESET;
+    HT_WDT->MR0 &= MODE0_WDTRSTEN_RESET;
   }
 }
 

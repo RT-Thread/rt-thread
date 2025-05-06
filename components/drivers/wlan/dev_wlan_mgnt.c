@@ -7,6 +7,8 @@
  * Date           Author       Notes
  * 2018-08-06     tyx          the first version
  * 2023-12-12     Evlers       add the wlan join scan function
+ * 2024-12-25     Evlers       add get_info api for more new sta information
+ * 2025-01-04     Evlers       add ap_get_info api for more ap information
  */
 
 #include <rthw.h>
@@ -1185,8 +1187,14 @@ rt_err_t rt_wlan_get_info(struct rt_wlan_info *info)
 
     if (rt_wlan_is_connected() == RT_TRUE)
     {
+        /* Initialize the information to the scan first */
         *info = _sta_mgnt.info;
-        info->rssi = rt_wlan_get_rssi();
+        /* Try using get_info's API for more new information */
+        if (rt_wlan_dev_get_info(STA_DEVICE(), info) != RT_EOK)
+        {
+            /* The get_info returns an error and gets the rssi value separately */
+            info->rssi = rt_wlan_get_rssi();
+        }
         return RT_EOK;
     }
     return -RT_ERROR;
@@ -1401,6 +1409,11 @@ rt_err_t rt_wlan_ap_get_info(struct rt_wlan_info *info)
     if (rt_wlan_ap_is_active() == RT_TRUE)
     {
         *info = _ap_mgnt.info;
+        if (rt_wlan_dev_ap_get_info(AP_DEVICE(), info) != RT_EOK)
+        {
+            RT_WLAN_LOG_E("get ap info failed!");
+            return -RT_ERROR;
+        }
         return RT_EOK;
     }
     return -RT_ERROR;

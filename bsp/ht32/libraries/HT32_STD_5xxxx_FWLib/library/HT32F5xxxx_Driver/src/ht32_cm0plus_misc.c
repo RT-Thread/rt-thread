@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32_cm0plus_misc.c
- * @version $Rev:: 5377         $
- * @date    $Date:: 2021-05-26 #$
+ * @version $Rev:: 7888         $
+ * @date    $Date:: 2024-07-22 #$
  * @brief   This file provides all the miscellaneous firmware functions.
  *************************************************************************************************************
  * @attention
@@ -221,7 +221,7 @@ u32 RBIT(u32 in)
   u32 uRBIT = 0;
   s32 i;
 
-  for(i = 31; i >=0; i--)
+  for (i = 31; i >=0; i--)
   {
     uRBIT |= ((in & 0x1) << i);
     in = in >> 1;
@@ -229,6 +229,99 @@ u32 RBIT(u32 in)
 
   return uRBIT;
 }
+
+#if 0
+// Copy the code below to the begin of the main().
+// START
+
+  #if (HTCFG_STACK_USAGE_ANALYSIS == 1)
+  /* !!! NOTICE !!!
+     Please update the Keil HT32 PACK and HT32 Firmware Library to the latest version to make sure the
+     Stack Usage Analysis function works properly.
+  */
+  /*
+    Set HTCFG_STACK_USAGE_ANALYSIS as 1 in the "ht32xxxxxx_conf.h" to enable Stack Usage Analysis feature.
+    This feature is only applicable to the Keil MDK-ARM. Please call the "StackUsageAnalysisInit()" function
+    in the begin of the "main()".
+    The "StackUsageAnalysisInit()" parameter shall be the start address of the vector table.
+    Under Keil Debug mode, tick "View > Watch Window > HT32 Stack Usage Analysis" to show the stack usage
+    information. Those information is only valid after calling "StackUsageAnalysisInit()" function.
+  */
+  StackUsageAnalysisInit(0x00000000);
+  #endif
+
+// END
+#endif
+
+#if (HTCFG_STACK_USAGE_ANALYSIS == 1)
+#if defined (__CC_ARM)
+#define STACKLIMITADDR  0x20000010
+#define STACKSTART      0x20000014
+u32 _StackLimit __attribute__((at(STACKLIMITADDR)))= HT_SRAM_BASE + LIBCFG_RAM_SIZE;
+u32 _StackStart __attribute__((at(STACKSTART)))= HT_SRAM_BASE;
+/*********************************************************************************************************//**
+  * @brief  Stack Usage Analysis Init
+  * @retval None
+  ***********************************************************************************************************/
+__ASM void StackUsageAnalysisInit(u32 addr)
+{
+  extern _StackLimit;
+  extern __HT_check_sp;
+  extern _StackStart;
+  LDR R0, [r0]
+  LDR R1, =_StackLimit
+  STR R0, [r1]
+
+  LDR R0, =__HT_check_sp
+  LDR R1, =_StackStart
+  STR R0, [r1]
+  MOV R1, SP
+  LDR R2, =0xCDCDCDCD
+  LDR R3, =0xABABABAB
+  STR R3, [ R0 ]
+  B Loop_Check
+Loop
+  STR R2, [ R0 ]
+Loop_Check
+  ADDS R0, R0, #0x04
+  CMP R0, R1
+  BLT Loop
+  BX LR
+  ALIGN
+}
+#elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+#define STACKLIMITADDR  "0x20000010"
+#define STACKSTART      "0x20000014"
+u32 _StackLimit __attribute__((section(".ARM.__at_"STACKLIMITADDR))) = HT_SRAM_BASE + LIBCFG_RAM_SIZE;
+u32 _StackStart __attribute__((section(".ARM.__at_"STACKSTART))) = HT_SRAM_BASE;
+/*********************************************************************************************************//**
+  * @brief  Stack Usage Analysis Init
+  * @retval None
+  ***********************************************************************************************************/
+__attribute__((noinline)) void StackUsageAnalysisInit(u32 addr)
+{
+  __ASM volatile ("  LDR R0, [r0]");
+  __ASM volatile ("  LDR R1, =_StackLimit");
+  __ASM volatile ("  STR R0, [r1]");
+
+  __ASM volatile ("  LDR R0, =__HT_check_sp");
+  __ASM volatile ("  LDR R1, =_StackStart");
+  __ASM volatile ("  STR R0, [r1]");
+  __ASM volatile ("  MOV R1, SP");
+  __ASM volatile ("  LDR R2, =0xCDCDCDCD");
+  __ASM volatile ("  LDR R3, =0xABABABAB");
+  __ASM volatile ("  STR R3, [ R0 ]");
+  __ASM volatile ("  B Loop_Check");
+  __ASM volatile ("Loop:");
+  __ASM volatile ("  STR R2, [ R0 ]");
+  __ASM volatile ("Loop_Check:");
+  __ASM volatile ("  ADDS R0, R0, #0x04");
+  __ASM volatile ("  CMP R0, R1");
+  __ASM volatile ("  BLT Loop");
+  __ASM volatile ("  BX LR");
+}
+#endif
+#endif
 /**
   * @}
   */

@@ -32,7 +32,7 @@ typedef struct {
     sdhci_dma_mode_e mode;                           ///< define the DMA mode */
 
 
-    uint32_t        *dma_des_buffer_start_addr;     ///< internal DMA descriptor start address
+    rt_ubase_t      dma_des_buffer_start_addr;     ///< internal DMA descriptor start address
     uint32_t        dma_des_buffer_len;             ///  internal DMA buffer descriptor buffer len ,user need to pay attention to the
     ///  dma descriptor buffer length if it is bigger enough for your transfer
     uint8_t         dma_dws_skip_len;               ///< define the descriptor skip length ,the length between two descriptor

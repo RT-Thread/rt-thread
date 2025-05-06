@@ -10,6 +10,7 @@
 
 #include "cv180x_pinlist_swconfig.h"
 #include "cv180x_reg_fmux_gpio.h"
+#include "drv_ioremap.h"
 
 #define  PAD_MIPI_TXM4__MIPI_TXM4 0
 #define  PAD_MIPI_TXP4__MIPI_TXP4 0
@@ -22,7 +23,8 @@
 #define  PAD_MIPI_TXM0__MIPI_TXM0 0
 #define  PAD_MIPI_TXP0__MIPI_TXP0 0
 
-#define PINMUX_BASE 0x03001000
+#define PINMUX_BASE (uintptr_t)DRV_IOREMAP((void *)0x3001000, 0x1000)
+
 #define PINMUX_MASK(PIN_NAME) FMUX_GPIO_FUNCSEL_##PIN_NAME##_MASK
 #define PINMUX_OFFSET(PIN_NAME) FMUX_GPIO_FUNCSEL_##PIN_NAME##_OFFSET
 #define PINMUX_VALUE(PIN_NAME, FUNC_NAME) PIN_NAME##__##FUNC_NAME

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-11-26     GuEe-GUI     first version
+ * 2025-01-24     wumingzi     add doxygen comment
  */
 
 #ifndef __CLK_H__
@@ -16,27 +17,42 @@
 #include <ref.h>
 #include <drivers/ofw.h>
 
+/**
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_clk clk
+ * @brief       clk driver api
+ * @ingroup group_Drivers
+ * @addtogroup  group_clk
+ * @{
+ */
+
+#define RT_CLK_NODE_OBJ_NAME    "CLKNP"
+
 struct rt_clk_ops;
 struct rt_reset_control_node;
 
+/**
+ * @brief  Clk node, it is a pat of clk source or controller
+ * @note   Defined as the array like this if the CLK have multi out clocks:
+ * @code{.c}
+ *       struct XYZ_single_clk
+ *       {
+ *           struct rt_clk_node parent;
+ *           ...
+ *       };
+ *
+ *       struct XYZ_multi_clk
+ *       {
+ *           struct rt_clk_node parent[N];
+ *           ...
+ *       };
+ * @endcode
+ *          We assume the 'N' is the max value of element in 'clock-indices' if OFW.
+ */
 struct rt_clk_node
 {
-    /*
-     * Defined as the array like this if if the CLK have multi out clocks:
-     *
-     *  struct XYZ_single_clk
-     *  {
-     *      struct rt_clk_node parent;
-     *      ...
-     *  };
-     *
-     *  struct XYZ_multi_clk
-     *  {
-     *      struct rt_clk_node parent[N];
-     *      ...
-     *  };
-     * We assume the 'N' is the max value of element in 'clock-indices' if OFW.
-     */
+    struct rt_object rt_parent;
+
     rt_list_t list;
     rt_list_t children_nodes;
 
@@ -58,6 +74,9 @@ struct rt_clk_node
     rt_size_t multi_clk;
 };
 
+/**
+ * @brief   Constant rate clk
+ */
 struct rt_clk_fixed_rate
 {
     struct rt_clk_node clk;
@@ -66,6 +85,9 @@ struct rt_clk_fixed_rate
     rt_ubase_t fixed_accuracy;
 };
 
+/**
+ * @brief   Clk object, it can be clk source or controller
+ */
 struct rt_clk
 {
     struct rt_clk_node *clk_np;
@@ -74,11 +96,16 @@ struct rt_clk
     const char *con_id;
 
     rt_ubase_t rate;
+    int prepare_count;
+    int enable_count;
 
     void *fw_node;
     void *priv;
 };
 
+/**
+ * @brief   Clk array
+ */
 struct rt_clk_array
 {
     rt_size_t count;
@@ -112,6 +139,9 @@ struct rt_clk_notifier;
 typedef rt_err_t (*rt_clk_notifier_callback)(struct rt_clk_notifier *notifier,
         rt_ubase_t msg, rt_ubase_t old_rate, rt_ubase_t new_rate);
 
+/**
+ * @brief   Clock notifier, it containers of clock list and callback function
+ */
 struct rt_clk_notifier
 {
     rt_list_t list;
@@ -185,5 +215,7 @@ rt_inline rt_ssize_t rt_ofw_count_of_clk(struct rt_ofw_node *clk_ofw_np)
     return 0;
 }
 #endif /* RT_USING_OFW */
+
+/*! @}*/
 
 #endif /* __CLK_H__ */

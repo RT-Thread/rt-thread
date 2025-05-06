@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-03-01     CDT          first version
+ * 2042-12-24     CDT          fix compiler warning
  */
 
 
@@ -257,14 +258,15 @@ static rt_err_t _nand_read_id(struct rt_mtd_nand_device *device)
     return RT_EOK;
 }
 
-static rt_ssize_t _nand_read_page(struct rt_mtd_nand_device *device,
-                                  rt_off_t page,
-                                  rt_uint8_t *data,
-                                  rt_uint32_t data_len,
-                                  rt_uint8_t *spare,
-                                  rt_uint32_t spare_len)
+static rt_err_t _nand_read_page(struct rt_mtd_nand_device *device,
+                                rt_off_t page,
+                                rt_uint8_t *data,
+                                rt_uint32_t data_len,
+                                rt_uint8_t *spare,
+                                rt_uint32_t spare_len)
 {
     rt_err_t result = RT_EOK;
+    stc_exmc_nfc_column_t stcColumn;
     struct rthw_nand *hw_nand = (struct rthw_nand *)device;
 
     RT_ASSERT(device != RT_NULL);
@@ -311,8 +313,11 @@ static rt_ssize_t _nand_read_page(struct rt_mtd_nand_device *device,
     {
         RT_ASSERT(spare_len <= device->oob_free);
 
-        if (LL_OK != EXMC_NFC_Read(hw_nand->nfc_bank, page, (rt_uint32_t)device->page_size,
-                                   (rt_uint32_t *)spare, (spare_len >> 2), DISABLE, NAND_READ_TIMEOUT))
+        stcColumn.u32Bank = hw_nand->nfc_bank;
+        stcColumn.u32Page = page;
+        stcColumn.u32Column = (rt_uint32_t)device->page_size;
+        if (LL_OK != EXMC_NFC_Read(&stcColumn, (rt_uint32_t *)spare,
+                                   (spare_len >> 2), DISABLE, NAND_READ_TIMEOUT))
         {
             result = -RT_EIO;
             goto _exit;
@@ -325,14 +330,15 @@ _exit:
     return result;
 }
 
-static rt_ssize_t _nand_write_page(struct rt_mtd_nand_device *device,
-                                   rt_off_t page,
-                                   const rt_uint8_t *data,
-                                   rt_uint32_t data_len,
-                                   const rt_uint8_t *spare,
-                                   rt_uint32_t spare_len)
+static rt_err_t _nand_write_page(struct rt_mtd_nand_device *device,
+                                 rt_off_t page,
+                                 const rt_uint8_t *data,
+                                 rt_uint32_t data_len,
+                                 const rt_uint8_t *spare,
+                                 rt_uint32_t spare_len)
 {
     rt_err_t result = RT_EOK;
+    stc_exmc_nfc_column_t stcColumn;
     struct rthw_nand *hw_nand = (struct rthw_nand *)device;
 
     RT_ASSERT(device != RT_NULL);
@@ -375,8 +381,11 @@ static rt_ssize_t _nand_write_page(struct rt_mtd_nand_device *device,
     {
         RT_ASSERT(spare_len <= device->oob_free);
 
-        if (LL_OK != EXMC_NFC_Write(hw_nand->nfc_bank, page, (rt_uint32_t)device->page_size,
-                                    (rt_uint32_t *)spare, (spare_len >> 2), DISABLE, NAND_WRITE_TIMEOUT))
+        stcColumn.u32Bank = hw_nand->nfc_bank;
+        stcColumn.u32Page = page;
+        stcColumn.u32Column = (rt_uint32_t)device->page_size;
+        if (LL_OK != EXMC_NFC_Write(&stcColumn, (rt_uint32_t *)spare,
+                                    (spare_len >> 2), DISABLE, NAND_WRITE_TIMEOUT))
         {
             result = -RT_EIO;
             goto _exit;

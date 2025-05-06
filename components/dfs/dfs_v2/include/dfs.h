@@ -141,6 +141,9 @@ struct dfs_fdtable *dfs_fdtable_get_global(void);
 int dfs_dup(int oldfd, int startfd);
 #endif /* DFS_USING_POSIX */
 
+struct dfs_file* dfs_file_create(void);
+void dfs_file_destroy(struct dfs_file *file);
+
 #ifdef __cplusplus
 }
 #endif

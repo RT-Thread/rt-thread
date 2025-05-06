@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017-05-09     Urey         first version
  * 2019-07-09     Zero-Free    improve device ops interface and data flows
+ * 2025-03-04     wumingzi     add doxygen comments.
  */
 
 #include <stdio.h>
@@ -22,6 +23,12 @@
 #define MIN(a, b)         ((a) < (b) ? (a) : (b))
 #endif
 
+/**
+ * @addtogroup group_Audio
+ */
+
+/** @{ */
+
 enum
 {
     REPLAY_EVT_NONE  = 0x00,
@@ -29,6 +36,20 @@ enum
     REPLAY_EVT_STOP  = 0x02,
 };
 
+/**
+ * @brief Send a replay frame to the audio hardware device
+ *
+ * This function handles sending audio data from the memory queue to the hardware buffer for playback.
+ * If there is no data available in the queue, it sends zero frames. Otherwise, it copies data from the memory pool
+ * to the hardware device FIFO and manages the read index and position accordingly.
+ *
+ * @param[in] audio pointer to the audio device structure
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ *
+ * @note This function may temporarily disable interrupts or perform time-consuming operations like memcpy,
+ *       which could affect system responsiveness
+ */
 static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
 {
     rt_err_t result = RT_EOK;
@@ -108,6 +129,13 @@ static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
     return result;
 }
 
+/**
+ * @brief Write replay frame into audio device replay queue
+ *
+ * @param[in] audio pointer to audio device
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _audio_flush_replay_frame(struct rt_audio_device *audio)
 {
     rt_err_t result = RT_EOK;
@@ -125,6 +153,13 @@ static rt_err_t _audio_flush_replay_frame(struct rt_audio_device *audio)
     return result;
 }
 
+/**
+ * @brief Replay audio
+ *
+ * @param[in] audio pointer to audio device
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _aduio_replay_start(struct rt_audio_device *audio)
 {
     rt_err_t result = RT_EOK;
@@ -142,6 +177,16 @@ static rt_err_t _aduio_replay_start(struct rt_audio_device *audio)
     return result;
 }
 
+/**
+ * @brief Stop replaying audio
+ *
+ * When audio->replay->queue is empty and the audio->replay->event was set REPLAY_EVT_STOP,
+ * _audio_send_replay_frame will send completion to stop replaying audio.
+ *
+ * @param[in] audio pointer to audio device
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _aduio_replay_stop(struct rt_audio_device *audio)
 {
     rt_err_t result = RT_EOK;
@@ -170,6 +215,13 @@ static rt_err_t _aduio_replay_stop(struct rt_audio_device *audio)
     return result;
 }
 
+/**
+ * @brief Open audio pipe and start to record audio
+ *
+ * @param[in] audio pointer to audio device
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _audio_record_start(struct rt_audio_device *audio)
 {
     rt_err_t result = RT_EOK;
@@ -190,6 +242,13 @@ static rt_err_t _audio_record_start(struct rt_audio_device *audio)
     return result;
 }
 
+/**
+ * @brief stop recording audio and closeaudio pipe
+ *
+ * @param[in] audio pointer to audio device
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _audio_record_stop(struct rt_audio_device *audio)
 {
     rt_err_t result = RT_EOK;
@@ -210,6 +269,20 @@ static rt_err_t _audio_record_stop(struct rt_audio_device *audio)
     return result;
 }
 
+/**
+ * @brief Init audio pipe
+ *
+ * In kernel, this function will set replay or record function depending on device
+ * flag. For replaying, it will malloc for managing audio replay struct meanwhile
+ * creating mempool and dataqueue.For recording, it will creat audio pipe and
+ * it's ringbuffer.
+ * In driver, this function will only execute hardware driver initialization code
+ * and get hardware buffer infomation.
+ *
+ * @param[in] dev pointer to audio device
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _audio_dev_init(struct rt_device *dev)
 {
     rt_err_t result = RT_EOK;
@@ -288,6 +361,15 @@ static rt_err_t _audio_dev_init(struct rt_device *dev)
     return result;
 }
 
+/**
+ * @brief Start record audio
+ *
+ * @param[in] dev pointer to audio device
+ *
+ * @param[in] oflag device flag
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
 {
     struct rt_audio_device *audio;
@@ -334,6 +416,13 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
     return RT_EOK;
 }
 
+/**
+ * @brief Stop record, replay or both.
+ *
+ * @param[in] dev pointer to audio device
+ *
+ * @return useless param
+ */
 static rt_err_t _audio_dev_close(struct rt_device *dev)
 {
     struct rt_audio_device *audio;
@@ -357,6 +446,21 @@ static rt_err_t _audio_dev_close(struct rt_device *dev)
     return RT_EOK;
 }
 
+/**
+ * @brief Read audio device
+ *
+ * @param[in] dev pointer to device
+ *
+ * @param[in] pos position when reading
+ *
+ * @param[out] buffer a data buffer to save the read data
+ *
+ * @param[in] size buffer size
+ *
+ * @return the actually read size on successfully, otherwise 0 will be returned.
+ *
+ * @note
+ */
 static rt_ssize_t _audio_dev_read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct rt_audio_device *audio;
@@ -369,6 +473,21 @@ static rt_ssize_t _audio_dev_read(struct rt_device *dev, rt_off_t pos, void *buf
     return rt_device_read(RT_DEVICE(&audio->record->pipe), pos, buffer, size);
 }
 
+/**
+ * @brief Write data into replay data queue and replay it
+ *
+ * @param[in] dev pointer to device
+ *
+ * @param[in] pos useless param
+ *
+ * @param[in] buffer a data buffer to be written into data queue
+ *
+ * @param[in] size buffer size
+ *
+ * @return the actually read size on successfully, otherwise 0 will be returned.
+ *
+ * @note This function will take mutex.
+ */
 static rt_ssize_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
 
@@ -424,6 +543,17 @@ static rt_ssize_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const vo
     return index;
 }
 
+/**
+ * @brief Control audio device
+ *
+ * @param[in] dev pointer to device
+ *
+ * @param[in] cmd audio cmd, it can be one of value in @ref group_audio_control
+ *
+ * @param[in] args command argument
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t _audio_dev_control(struct rt_device *dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
@@ -513,6 +643,19 @@ const static struct rt_device_ops audio_ops =
 };
 #endif
 
+/**
+ * @brief Register and initialize audio device
+ *
+ * @param[in] audio pointer to audio deive
+ *
+ * @param[in] name device name
+ *
+ * @param[in] flag device flags
+ *
+ * @param[in] data user data
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 rt_err_t rt_audio_register(struct rt_audio_device *audio, const char *name, rt_uint32_t flag, void *data)
 {
     rt_err_t result = RT_EOK;
@@ -547,6 +690,13 @@ rt_err_t rt_audio_register(struct rt_audio_device *audio, const char *name, rt_u
     return result;
 }
 
+/**
+ * @brief Set audio sample rate
+ *
+ * @param[in] bitValue audio sample rate, it can be one of value in @ref group_audio_samp_rates
+ *
+ * @return speed has been set
+ */
 int rt_audio_samplerate_to_speed(rt_uint32_t bitValue)
 {
     int speed = 0;
@@ -595,12 +745,32 @@ int rt_audio_samplerate_to_speed(rt_uint32_t bitValue)
     return speed;
 }
 
+/**
+ * @brief Send a replay frame to the audio hardware device
+ *
+ * See _audio_send_replay_frame for details
+ *
+ * @param[in] audio pointer to audio device
+ *
+ * @return void
+ */
 void rt_audio_tx_complete(struct rt_audio_device *audio)
 {
     /* try to send next frame */
     _audio_send_replay_frame(audio);
 }
 
+/**
+ * @brief Receive recording from audio device
+ *
+ * @param[in] audio pointer to audio device
+ *
+ * @param[in] pbuf pointer ro data to be received
+ *
+ * @param[in] len buffer size
+ *
+ * @return void
+ */
 void rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t len)
 {
     /* save data to record pipe */
@@ -610,3 +780,5 @@ void rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t
     if (audio->parent.rx_indicate != RT_NULL)
         audio->parent.rx_indicate(&audio->parent, len);
 }
+
+/** @} group_Audio */

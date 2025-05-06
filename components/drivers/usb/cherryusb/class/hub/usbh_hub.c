@@ -648,12 +648,12 @@ static void usbh_hub_events(struct usbh_hub *hub)
     }
 }
 
-static void usbh_hub_thread(void *argument)
+static void usbh_hub_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     struct usbh_hub *hub;
     int ret = 0;
 
-    struct usbh_bus *bus = (struct usbh_bus *)argument;
+    struct usbh_bus *bus = (struct usbh_bus *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
     usb_hc_init(bus);
     while (1) {
@@ -734,9 +734,9 @@ const struct usbh_class_driver hub_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info hub_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS,
-    .class = USB_DEVICE_CLASS_HUB,
-    .subclass = 0,
-    .protocol = 0,
+    .bInterfaceClass = USB_DEVICE_CLASS_HUB,
+    .bInterfaceSubClass = 0,
+    .bInterfaceProtocol = 0,
     .id_table = NULL,
     .class_driver = &hub_class_driver
 };

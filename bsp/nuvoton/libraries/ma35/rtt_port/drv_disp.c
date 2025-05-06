@@ -399,7 +399,7 @@ static rt_err_t lcd_set_overlay_colkey(int argc, char **argv)
 
     for (index = 0; index < (len - 1); index ++)
     {
-        if (sscanf(argv[index + 1], "%x", &arg[index]) != 1)
+        if (rt_sscanf(argv[index + 1], "%x", &arg[index]) != 1)
             return -1;
     }
     rt_kprintf("colkeylow:0x%08x colkeyhigh:0x%08x\n", arg[0], arg[1]);
@@ -459,7 +459,7 @@ static rt_err_t lcd_set_alphablend_opmode(int argc, char **argv)
 
     for (index = 0; index < (len - 1); index ++)
     {
-        if (sscanf(argv[index + 1], "%x", &arg[index]) != 1)
+        if (rt_sscanf(argv[index + 1], "%x", &arg[index]) != 1)
             return -1;
     }
 

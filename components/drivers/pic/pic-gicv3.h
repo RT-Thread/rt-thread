@@ -385,6 +385,8 @@ struct gicv3
     rt_uint64_t redist_flags;
     rt_size_t redist_stride;
     rt_size_t redist_regions_nr;
+
+    rt_bool_t skip_init;
 };
 
 #endif /* __PIC_GICV3_H__ */

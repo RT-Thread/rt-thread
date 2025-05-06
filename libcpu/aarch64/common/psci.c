@@ -415,4 +415,4 @@ static int psci_drv_register(void)
 
     return 0;
 }
-INIT_FRAMEWORK_EXPORT(psci_drv_register);
+INIT_PLATFORM_EXPORT(psci_drv_register);

@@ -12,24 +12,7 @@ RT-THREAD bsp company list
 - STM32
   - [stm32](stm32) series
 - NXP
-  - [lpc55sxx](lpc55sxx) series
-  - [imxrt](imxrt) series
-  - [frdm-k64f](frdm-k64f)
-  - [imx6sx](imx6sx)
-  - [imx6ul](imx6ul)
-  - [lpc824](lpc824)
-  - [lpc54608-LPCXpresso](lpc54608-LPCXpresso)
-  - [lpc54114-lite](lpc54114-lite) 
-  - [lpc5410x](lpc5410x)
-  - [lpc43xx](lpc43xx)
-  - [lpc408x](lpc408x)
-  - [lpc2478](lpc2478)
-  - [lpc2148](lpc2148)
-  - [lpc178x](lpc178x)
-  - [lpc176x](lpc176x)
-  - [lpc1114](lpc1114)
-  - [xplorer4330](xplorer4330)
-  - [rv32m1_vega](rv32m1_vega)
+  - [nxp](nxp) series
 - Renesas
   - [renesas](renesas) series
   - [rx](rx) series
@@ -171,3 +154,5 @@ RT-THREAD bsp company list
   - [CME_M7](CME_M7)
 - 好钜润 TIKY
   - [tkm32F499](tkm32F499)
+- Milk-V
+  - [cvitek](cvitek)

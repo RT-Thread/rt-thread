@@ -44,6 +44,10 @@ ifdef CONFIG_RT_CHERRYUSB_DEVICE_PUSB2
 RTCONFIG := $(RTCONFIG)_pusb2_dc
 endif
 
+ifdef CONFIG_RT_CHERRYUSB_HOST_XHCI
+RTCONFIG := $(RTCONFIG)_xhci
+endif
+
 boot:
 	make all
 	cp rtthread_a64.elf /mnt/d/tftpboot
@@ -55,7 +59,7 @@ debug:
 
 all:
 	@echo "Build started..."
-	scons -j1024
+	scons -j8
 
 clean:
 	@echo "Cleaning..."
@@ -118,11 +122,15 @@ load_e2000d_demo_rtthread_test:
 	@cp ./configs/e2000d_demo_rtthread_test.h ./rtconfig.h -f
 	scons -c
 
-load_phytium_pi_rtthread:
-	@echo "Load configs from ./configs/phytium_pi_rtthread"
-	@cp ./configs/phytium_pi_rtthread ./.config -f
-	@cp ./configs/phytium_pi_rtthread.h ./rtconfig.h -f
-	scons -c
+load_e2000d_demo_rtthread_pusb2_dc:
+	@echo "Load configs from ./configs/e2000d_demo_rtthread_pusb2_dc"
+	@cp ./configs/e2000d_demo_rtthread_pusb2_dc ./.config -f
+	@cp ./configs/e2000d_demo_rtthread_pusb2_dc.h ./rtconfig.h -f
+
+load_e2000d_demo_rtthread_xhci:
+	@echo "Load configs from ./configs/e2000d_demo_rtthread_xhci"
+	@cp ./configs/e2000d_demo_rtthread_xhci ./.config -f
+	@cp ./configs/e2000d_demo_rtthread_xhci.h ./rtconfig.h -f
 
 load_phytium_pi_rtthread_pusb2_hc:
 	@echo "Load configs from ./configs/phytium_pi_rtthread_pusb2_hc"
@@ -130,8 +138,20 @@ load_phytium_pi_rtthread_pusb2_hc:
 	@cp ./configs/phytium_pi_rtthread_pusb2_hc.h ./rtconfig.h -f
 	scons -c
 
+load_phytium_pi_rtthread_xhic:
+	@echo "Load configs from ./configs/phytium_pi_rtthread_xhci"
+	@cp ./configs/phytium_pi_rtthread_xhci ./.config -f
+	@cp ./configs/phytium_pi_rtthread_xhci.h ./rtconfig.h -f
+	scons -c
+
 load_phytium_pi_rtsmart:
 	@echo "Load configs from ./configs/phytium_pi_rtsmart"
 	@cp ./configs/phytium_pi_rtsmart ./.config -f
 	@cp ./configs/phytium_pi_rtsmart.h ./rtconfig.h -f
+	@scons -c
+
+load_phytium_pi_rtthread:
+	@echo "Load configs from ./configs/phytium_pi_rtthread"
+	@cp ./configs/phytium_pi_rtthread ./.config -f
+	@cp ./configs/phytium_pi_rtthread.h ./rtconfig.h -f
 	@scons -c

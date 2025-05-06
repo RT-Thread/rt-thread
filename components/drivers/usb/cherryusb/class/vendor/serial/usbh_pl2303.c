@@ -440,9 +440,9 @@ const struct usbh_class_driver pl2303_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info pl2303_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS,
-    .class = 0xff,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = 0xff,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = pl2303_id_table,
     .class_driver = &pl2303_class_driver
 };

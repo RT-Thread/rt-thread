@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -524,6 +524,7 @@ static const struct rt_pin_ops _stm32_pin_ops =
     stm32_pin_dettach_irq,
     stm32_pin_irq_enable,
     stm32_pin_get,
+    RT_NULL,
 };
 
 rt_inline void pin_irq_hdr(int irqno)

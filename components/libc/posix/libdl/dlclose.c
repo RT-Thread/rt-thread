@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,6 +13,15 @@
 
 #include "dlmodule.h"
 
+/**
+ * @brief  close a dynamically loaded shared library.
+ *
+ * @param  handle the handle which identifies the shared library to be closed.
+ * @return int it returns RT_TRUE on success.
+ *
+ * @note   This function is an API of POSIX standard, which is designed to decrease the reference count (nref) for a dynamically loaded module
+ *         and destroy it if no references remain.
+ */
 int dlclose(void *handle)
 {
     struct rt_dlmodule *module;

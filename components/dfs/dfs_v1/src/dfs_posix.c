@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@
 #endif
 
 /**
- * @addtogroup FsPosixApi
+ * @addtogroup group_FsPosixApi
  * @{
  */
 
@@ -28,7 +28,17 @@
  * return a file descriptor according specified flags.
  *
  * @param file the path name of file.
- * @param flags the file open flags.
+ * @param flags the file open flags. Common values include:
+ *     - Access modes (mutually exclusive):
+ *         - `O_RDONLY`: Open for read-only access.
+ *         - `O_WRONLY`: Open for write-only access.
+ *         - `O_RDWR`: Open for both reading and writing.
+ *     - File status flags (can be combined with bitwise OR `|`):
+ *         - `O_CREAT`: Create the file if it does not exist. Requires a `mode` argument.
+ *         - `O_TRUNC`: Truncate the file to zero length if it already exists.
+ *         - `O_APPEND`: Append writes to the end of the file.
+ *         - `O_EXCL`: Ensure that `O_CREAT` creates the file exclusively.
+ *         - Other platform-specific flags
  *
  * @return the non-negative integer on successful open, others for failed.
  */
@@ -65,6 +75,22 @@ RTM_EXPORT(open);
 #ifndef AT_FDCWD
 #define AT_FDCWD (-100)
 #endif
+
+/**
+ * @brief Opens a file relative to a directory file descriptor.
+ *
+ * @param dirfd The file descriptor of the directory to base the relative path on.
+ * @param pathname The path to the file to be opened, relative to the directory specified by `dirfd`.
+ *                 Can be an absolute path (in which case `dirfd` is ignored).
+ * @param flags File access and status flags (e.g., `O_RDONLY`, `O_WRONLY`, `O_CREAT`).
+ *
+ * @return On success, returns a new file descriptor for the opened file.
+ *         On failure, returns `-1` and sets `errno` to indicate the error.
+ *
+ * @note When using relative paths, ensure `dirfd` is a valid directory descriptor.
+ *       When `pathname` is absolute, the `dirfd` argument is ignored.
+ *
+ */
 int openat(int dirfd, const char *path, int flag, ...)
 {
     struct dfs_file *d;
@@ -241,14 +267,22 @@ ssize_t write(int fd, const void *buf, size_t len)
 RTM_EXPORT(write);
 
 /**
- * this function is a POSIX compliant version, which will seek the offset for
+ * this function is a POSIX compliant version, which will Reposition the file offset for
  * an open file descriptor.
  *
- * @param fd the file descriptor.
- * @param offset the offset to be seeked.
- * @param whence the directory of seek.
+ * The `lseek` function sets the file offset for the file descriptor `fd`
+ * to a new value, determined by the `offset` and `whence` parameters.
+ * It can be used to seek to specific positions in a file for reading or writing.
  *
- * @return the current read/write position in the file, or -1 on failed.
+ * @param fd the file descriptor.
+ * @param offset The offset, in bytes, to set the file position.
+ *               The meaning of `offset` depends on the value of `whence`.
+ * @param whence the directive of seek. It can be one of:
+ *               - `SEEK_SET`: Set the offset to `offset` bytes from the beginning of the file.
+ *               - `SEEK_CUR`: Set the offset to its current location plus `offset` bytes.
+ *               - `SEEK_END`: Set the offset to the size of the file plus `offset` bytes.
+ *
+ * @return the resulting read/write position in the file, or -1 on failed.
  */
 off_t lseek(int fd, off_t offset, int whence)
 {
@@ -436,9 +470,15 @@ RTM_EXPORT(fsync);
  * control functions on devices.
  *
  * @param fildes the file description
- * @param cmd the specified command
+ * @param cmd the specified command, Common values include:
+ *     - `F_DUPFD`: Duplicate a file descriptor.
+ *     - `F_GETFD`: Get the file descriptor flags.
+ *     - `F_SETFD`: Set the file descriptor flags.
+ *     - `F_GETFL`: Get the file status flags.
+ *     - `F_SETFL`: Set the file status flags.
  * @param ... represents the additional information that is needed by this
- * specific device to perform the requested function.
+ * specific device to perform the requested function. For example:
+ *     - When `cmd` is `F_SETFL`, an additional integer argument specifies the new status flags.
  *
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
  * set to indicate the error.
@@ -595,7 +635,7 @@ RTM_EXPORT(fstatfs);
  * this function is a POSIX compliant version, which will make a directory
  *
  * @param path the directory path to be made.
- * @param mode
+ * @param mode The permission mode for the new directory (unused here, can be set to 0).
  *
  * @return 0 on successful, others on failed.
  */

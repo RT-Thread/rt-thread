@@ -6,6 +6,10 @@
 #include "usbd_core.h"
 #include "usbd_cdc_ecm.h"
 
+#ifndef CONFIG_USBDEV_CDC_ECM_USING_LWIP
+#error "Please enable CONFIG_USBDEV_CDC_ECM_USING_LWIP for this demo"
+#endif
+
 /*!< endpoint address */
 #define CDC_IN_EP          0x81
 #define CDC_OUT_EP         0x02
@@ -30,6 +34,69 @@
 /* str idx = 4 is for mac address: aa:bb:cc:dd:ee:ff*/
 #define CDC_ECM_MAC_STRING_INDEX      4
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+static const uint8_t device_descriptor[] = {
+    USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0xEF, 0x02, 0x01, USBD_VID, USBD_PID, 0x0100, 0x01)
+};
+
+static const uint8_t config_descriptor[] = {
+    USB_CONFIG_DESCRIPTOR_INIT(USB_CONFIG_SIZE, 0x02, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+    CDC_ECM_DESCRIPTOR_INIT(0x00, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP, CDC_MAX_MPS, CDC_ECM_ETH_STATISTICS_BITMAP, CONFIG_CDC_ECM_ETH_MAX_SEGSZE, 0, 0, CDC_ECM_MAC_STRING_INDEX)
+};
+
+static const uint8_t device_quality_descriptor[] = {
+    ///////////////////////////////////////
+    /// device qualifier descriptor
+    ///////////////////////////////////////
+    0x0a,
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x00,
+    0x00,
+};
+
+static const char *string_descriptors[] = {
+    (const char[]){ 0x09, 0x04 }, /* Langid */
+    "CherryUSB",                  /* Manufacturer */
+    "CherryUSB CDC ECM DEMO",     /* Product */
+    "2022123456",                 /* Serial Number */
+};
+
+static const uint8_t *device_descriptor_callback(uint8_t speed)
+{
+    return device_descriptor;
+}
+
+static const uint8_t *config_descriptor_callback(uint8_t speed)
+{
+    return config_descriptor;
+}
+
+static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
+{
+    return device_quality_descriptor;
+}
+
+static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
+{
+    if (index > 3) {
+        return NULL;
+    }
+    return string_descriptors[index];
+}
+
+const struct usb_descriptor cdc_ecm_descriptor = {
+    .device_descriptor_callback = device_descriptor_callback,
+    .config_descriptor_callback = config_descriptor_callback,
+    .device_quality_descriptor_callback = device_quality_descriptor_callback,
+    .string_descriptor_callback = string_descriptor_callback
+};
+#else
 /*!< global descriptor */
 static const uint8_t cdc_ecm_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0xEF, 0x02, 0x01, USBD_VID, USBD_PID, 0x0100, 0x01),
@@ -120,15 +187,16 @@ static const uint8_t cdc_ecm_descriptor[] = {
     USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
     0x00,
     0x02,
-    0x02,
-    0x02,
-    0x01,
+    0x00,
+    0x00,
+    0x00,
     0x40,
     0x00,
     0x00,
 #endif
     0x00
 };
+#endif
 
 const uint8_t mac[6] = { 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
 
@@ -222,12 +290,12 @@ void cdc_ecm_lwip_init(void)
     while (!netif_is_up(netif)) {
     }
 
-    // while (dhserv_init(&dhcp_config)) {}
+    while (dhserv_init(&dhcp_config)) {}
 
-    // while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
+    while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
 }
 
-void usbd_cdc_ecm_data_recv_done(uint8_t *buf, uint32_t len)
+void usbd_cdc_ecm_data_recv_done(uint32_t len)
 {
 }
 
@@ -273,7 +341,11 @@ void cdc_ecm_init(uint8_t busid, uintptr_t reg_base)
 {
     cdc_ecm_lwip_init();
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_desc_register(busid, &cdc_ecm_descriptor);
+#else
     usbd_desc_register(busid, cdc_ecm_descriptor);
+#endif
     usbd_add_interface(busid, usbd_cdc_ecm_init_intf(&intf0, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP));
     usbd_add_interface(busid, usbd_cdc_ecm_init_intf(&intf1, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP));
     usbd_initialize(busid, reg_base, usbd_event_handler);

@@ -62,12 +62,12 @@ static void print_ntb_parameters(struct cdc_ncm_ntb_parameters *param)
     USB_LOG_RAW("wLength: 0x%02x             \r\n", param->wLength);
     USB_LOG_RAW("bmNtbFormatsSupported: %s     \r\n", param->bmNtbFormatsSupported ? "NTB16" : "NTB32");
 
-    USB_LOG_RAW("dwNtbInMaxSize: 0x%04x           \r\n", param->dwNtbInMaxSize);
+    USB_LOG_RAW("dwNtbInMaxSize: 0x%08lx           \r\n", param->dwNtbInMaxSize);
     USB_LOG_RAW("wNdbInDivisor: 0x%02x \r\n", param->wNdbInDivisor);
     USB_LOG_RAW("wNdbInPayloadRemainder: 0x%02x      \r\n", param->wNdbInPayloadRemainder);
     USB_LOG_RAW("wNdbInAlignment: 0x%02x    \r\n", param->wNdbInAlignment);
 
-    USB_LOG_RAW("dwNtbOutMaxSize: 0x%04x     \r\n", param->dwNtbOutMaxSize);
+    USB_LOG_RAW("dwNtbOutMaxSize: 0x%08lx     \r\n", param->dwNtbOutMaxSize);
     USB_LOG_RAW("wNdbOutDivisor: 0x%02x     \r\n", param->wNdbOutDivisor);
     USB_LOG_RAW("wNdbOutPayloadRemainder: 0x%02x     \r\n", param->wNdbOutPayloadRemainder);
     USB_LOG_RAW("wNdbOutAlignment: 0x%02x     \r\n", param->wNdbOutAlignment);
@@ -249,7 +249,7 @@ static int usbh_cdc_ncm_disconnect(struct usbh_hubport *hport, uint8_t intf)
     return ret;
 }
 
-void usbh_cdc_ncm_rx_thread(void *argument)
+void usbh_cdc_ncm_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     uint32_t g_cdc_ncm_rx_length;
     int ret;
@@ -259,7 +259,7 @@ void usbh_cdc_ncm_rx_thread(void *argument)
     uint32_t transfer_size = (16 * 1024);
 #endif
 
-    (void)argument;
+    (void)CONFIG_USB_OSAL_THREAD_GET_ARGV;
     USB_LOG_INFO("Create cdc ncm rx thread\r\n");
     // clang-format off
 find_class:
@@ -403,9 +403,9 @@ const struct usbh_class_driver cdc_ncm_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_ncm_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_CDC,
-    .subclass = CDC_NETWORK_CONTROL_MODEL,
-    .protocol = CDC_COMMON_PROTOCOL_NONE,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC,
+    .bInterfaceSubClass = CDC_NETWORK_CONTROL_MODEL,
+    .bInterfaceProtocol = CDC_COMMON_PROTOCOL_NONE,
     .id_table = NULL,
     .class_driver = &cdc_ncm_class_driver
 };

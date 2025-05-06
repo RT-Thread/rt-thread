@@ -7,6 +7,9 @@
 #include "stdint.h"
 #include "usb_dwc2_reg.h"
 
+extern unsigned int system_core_clock;
+
+uint32_t SystemCoreClock;
 /* you can find this config in function: usb_global_init, file:at32fxxx_usb.c, for example:
  *
  *  usbx->gccfg_bit.pwrdown = TRUE;
@@ -17,6 +20,7 @@
 
 uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base)
 {
+    SystemCoreClock = system_core_clock;
 #ifdef CONFIG_USB_HS
     return ((1 << 16) | (1 << 21));
 #else
@@ -35,6 +39,7 @@ uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base)
 
 uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base)
 {
+    SystemCoreClock = system_core_clock;
 #ifdef CONFIG_USB_HS
     return ((1 << 16) | (1 << 21));
 #else

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_pwrcu.h
- * @version $Rev:: 7054         $
- * @date    $Date:: 2023-07-24 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the Power Control Unit library.
  *************************************************************************************************************
  * @attention
@@ -64,6 +64,7 @@ typedef enum
   PWRCU_WAKEUP_PIN_1
   #endif
 } PWRCU_WUP_Enum;
+
 /**
  * @brief Wakeup pin trigger type selection
  */
@@ -82,6 +83,8 @@ typedef enum
   PWRCU_TIMEOUT,                    /*!< Time out                                                           */
   PWRCU_ERROR                       /*!< Error                                                              */
 } PWRCU_Status;
+
+#if (!LIBCFG_PWRCU_NO_DS2_MODE)
 /**
  * @brief DMOS status
  */
@@ -91,6 +94,8 @@ typedef enum
   PWRCU_DMOS_STS_OFF,               /*!< DMOS off                                                           */
   PWRCU_DMOS_STS_OFF_BY_BODRESET    /*!< DMOS off caused by brow out reset                                  */
 } PWRCU_DMOSStatus;
+#endif
+
 /**
  * @brief LVD level selection
  */
@@ -105,6 +110,7 @@ typedef enum
   PWRCU_LVDS_LV7 = 0x00440000,      /*!< LVD level 7                                                        */
   PWRCU_LVDS_LV8 = 0x00460000       /*!< LVD level 8                                                        */
 } PWRCU_LVDS_Enum;
+
 #if (LIBCFG_PWRCU_VDD_5V)
   #define PWRCU_LVDS_2V65           PWRCU_LVDS_LV1
   #define PWRCU_LVDS_2V85           PWRCU_LVDS_LV2
@@ -133,6 +139,7 @@ typedef enum
   #define PWRCU_LVDS_2V95           PWRCU_LVDS_LV7
   #define PWRCU_LVDS_3V15           PWRCU_LVDS_LV8
 #endif
+
 /**
  * @brief BOD reset or interrupt selection
  */
@@ -141,6 +148,7 @@ typedef enum
   PWRCU_BODRIS_RESET = 0,  /*!< Reset the whole chip                                                        */
   PWRCU_BODRIS_INT   = 1,  /*!< Assert interrupt                                                            */
 } PWRCU_BODRIS_Enum;
+
 /**
  * @brief Sleep entry instruction selection
  */
@@ -149,6 +157,7 @@ typedef enum
   PWRCU_SLEEP_ENTRY_WFE = 0,          /*!< Sleep then wait for event                                        */
   PWRCU_SLEEP_ENTRY_WFI               /*!< Sleep then wait for interrupt                                    */
 } PWRCU_SLEEP_ENTRY_Enum;
+
 #if (LIBCFG_BAKREG)
 /**
  * @brief Backup register selection
@@ -167,6 +176,8 @@ typedef enum
   PWRCU_BAKREG_9
 } PWRCU_BAKREG_Enum;
 #endif
+
+#if (LIBCFG_PWRCU_V15_READY_SOURCE)
 /**
  * @brief Vdd15 power good source selection
  */
@@ -175,6 +186,8 @@ typedef enum
   PWRCU_V15RDYSC_V33ISO = 0, /*!< Vdd15 power good source come from BK_ISO bit in CKCU unit                 */
   PWRCU_V15RDYSC_V15POR      /*!< Vdd15 power good source come from Vdd15 power on reset                    */
 } PWRCU_V15RDYSC_Enum;
+#endif
+
 /**
  * @brief LDO operation mode selection
  */
@@ -183,6 +196,7 @@ typedef enum
   PWRCU_LDO_NORMAL = 0,     /*!< The LDO is operated in normal current mode                                 */
   PWRCU_LDO_LOWCURRENT      /*!< The LDO is operated in low current mode                                    */
 } PWRCU_LDOMODE_Enum;
+
 #if defined(USE_HT32F52342_52) || defined(USE_HT32F5826)
 /**
  * @brief HSI ready counter bit length selection
@@ -195,6 +209,7 @@ typedef enum
   PWRCU_HSIRCBL_7       /*!< 7 bits (Default)                                                               */
 } PWRCU_HSIRCBL_Enum;
 #endif
+
 #if (LIBCFG_PWRCU_VREG)
 /**
  * @brief VREG output voltage selection
@@ -210,6 +225,7 @@ typedef enum
   PWRCU_VREG_3V0 = 0x04000000,      /*!< VREG output voltage is 3.0 V                                       */
   PWRCU_VREG_1V8 = 0x0C000000,      /*!< VREG output voltage is 1.8 V                                       */
 } PWRCU_VREG_VOLT_Enum;
+
 /**
  * @brief VREG operation mode
  */
@@ -220,6 +236,7 @@ typedef enum
   PWRCU_VREG_BYPASS  = 0x02000000,  /*!< VREG is bypassed                                                   */
 } PWRCU_VREG_MODE_Enum;
 #endif
+
 /**
   * @}
   */
@@ -254,17 +271,23 @@ typedef enum
 /* check PWRCU_BODRIS parameter                                                                             */
 #define IS_PWRCU_BODRIS(x)      ((x == PWRCU_BODRIS_RESET) || (x == PWRCU_BODRIS_INT))
 
+#if defined(USE_HT32F52342_52) || defined(USE_HT32F5826)
 /* check PWRCU_HSIRCBL parameter                                                                            */
 #define IS_PWRCU_HSIRCBL(x)     (x <= 3)
+#endif
 
 /* check PWRCU_SLEEP_ENTRY parameter                                                                        */
 #define IS_PWRCU_SLEEP_ENTRY(x) ((x == PWRCU_SLEEP_ENTRY_WFI) || (x == PWRCU_SLEEP_ENTRY_WFE))
 
+#if (LIBCFG_BAKREG)
 /* check PWRCU_BAKREG parameter                                                                             */
 #define IS_PWRCU_BAKREG(x)      (x < 10)
+#endif
 
+#if (LIBCFG_PWRCU_V15_READY_SOURCE)
 /* check PWRCU_V15RDY_SRC parameter                                                                         */
 #define IS_PWRCU_V15RDYSC(x)    ((x == PWRCU_V15RDYSC_V33ISO) || (x == PWRCU_V15RDYSC_V15POR))
+#endif
 
 /* check PWRCU_LDOMODE parameter                                                                            */
 #define IS_PWRCU_LDOMODE(x)     ((x == PWRCU_LDO_NORMAL) || (x == PWRCU_LDO_LOWCURRENT))
@@ -324,9 +347,11 @@ void PWRCU_WriteBackupRegister(PWRCU_BAKREG_Enum BAKREGx, u32 DATA);
 #endif
 void PWRCU_Sleep(PWRCU_SLEEP_ENTRY_Enum SleepEntry);
 void PWRCU_DeepSleep1(PWRCU_SLEEP_ENTRY_Enum SleepEntry);
+#if (!LIBCFG_PWRCU_NO_DS2_MODE)
 void PWRCU_DeepSleep2(PWRCU_SLEEP_ENTRY_Enum SleepEntry);
 #if !defined(USE_HT32F52220_30)
 void PWRCU_DeepSleep2Ex(PWRCU_SLEEP_ENTRY_Enum SleepEntry);
+#endif
 #endif
 #if (!LIBCFG_PWRCU_NO_PD_MODE)
 void PWRCU_PowerDown(void);
@@ -338,8 +363,10 @@ void PWRCU_BODCmd(ControlStatus NewState);
 void PWRCU_BODRISConfig(PWRCU_BODRIS_Enum Selection);
 FlagStatus PWRCU_GetLVDFlagStatus(void);
 FlagStatus PWRCU_GetBODFlagStatus(void);
+#if (!LIBCFG_PWRCU_NO_DS2_MODE)
 PWRCU_DMOSStatus PWRCU_GetDMOSStatus(void);
 void PWRCU_DMOSCmd(ControlStatus NewState);
+#endif
 #if (LIBCFG_PWRCU_V15_READY_SOURCE)
 void PWRCU_V15RDYSourceConfig(PWRCU_V15RDYSC_Enum Sel);
 #endif

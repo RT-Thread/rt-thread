@@ -122,7 +122,7 @@ Basierend auf [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/m
 ## Simulator
 
 Das RT-Thread BSP kann direkt kompiliert und zur Verwendung auf das entsprechende Entwicklungsboard heruntergeladen werden. Darüber hinaus bietet RT-Thread auch das qemu-vexpress-a9 BSP, das ohne Hardware-Plattform verwendet werden kann. Weitere Informationen finden Sie in der Anleitung für die ersten Schritte unten.
-[Windows](documentation/quick-start/quick_start_qemu/quick_start_qemu.md) | [Linux Ubuntu](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md) | [Mac OS](documentation/quick-start/quick_start_qemu/quick_start_qemu_macos.md)
+[Windows](documentation/2.quick-start/quick_start_qemu/quick_start_qemu_windows.md) | [Linux Ubuntu](documentation/2.quick-start/quick_start_qemu/quick_start_qemu_linux.md) | [Mac OS](documentation/2.quick-start/quick_start_qemu/quick_start_qemu_macos.md)
 
 # Lizenz
 

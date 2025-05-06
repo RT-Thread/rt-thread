@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-02-06     yandld       The first version for MCX
+ * 2024-11-11     hywing       add more UART channels
  */
 #include <rtdevice.h>
 #include "drv_uart.h"
@@ -35,6 +36,22 @@ void LPUART0_IRQHandler(void)
     uart_isr(&serial0);
 }
 #endif
+#if defined(BSP_USING_UART1)
+struct rt_serial_device serial1;
+
+void LPUART1_IRQHandler(void)
+{
+    uart_isr(&serial1);
+}
+#endif
+#if defined(BSP_USING_UART2)
+struct rt_serial_device serial2;
+
+void LPUART2_IRQHandler(void)
+{
+    uart_isr(&serial2);
+}
+#endif
 
 static const struct mcx_uart uarts[] =
 {
@@ -48,6 +65,30 @@ static const struct mcx_uart uarts[] =
         kCLOCK_GateLPUART0,
         kCLOCK_DivLPUART0,
         "uart0",
+    },
+#endif
+#ifdef BSP_USING_UART1
+    {
+        &serial1,
+        LPUART1,
+        LPUART1_IRQn,
+        kCLOCK_Fro12M,
+        kFRO12M_to_LPUART1,
+        kCLOCK_GateLPUART1,
+        kCLOCK_DivLPUART1,
+        "uart1",
+    },
+#endif
+#ifdef BSP_USING_UART2
+    {
+        &serial2,
+        LPUART2,
+        LPUART2_IRQn,
+        kCLOCK_Fro12M,
+        kFRO12M_to_LPUART2,
+        kCLOCK_GateLPUART2,
+        kCLOCK_DivLPUART2,
+        "uart2",
     },
 #endif
 };

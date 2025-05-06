@@ -139,7 +139,7 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
-/** @addtogroup DFS
+/** @addtogroup group_DFS
  *
  *
  *  @{
@@ -190,8 +190,35 @@ int dfs_init(void)
 }
 INIT_PREV_EXPORT(dfs_init);
 
+struct dfs_file* dfs_file_create(void)
+{
+    struct dfs_file *file;
+
+    file = (struct dfs_file *)rt_calloc(1, sizeof(struct dfs_file));
+    if (file)
+    {
+        file->magic = DFS_FD_MAGIC;
+        file->ref_count = 1;
+        rt_mutex_init(&file->pos_lock, "fpos", RT_IPC_FLAG_PRIO);
+    }
+
+    return file;
+}
+
+void dfs_file_destroy(struct dfs_file *file)
+{
+    rt_mutex_detach(&file->pos_lock);
+
+    if (file->mmap_context)
+    {
+        rt_free(file->mmap_context);
+    }
+
+    rt_free(file);
+}
+
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  * This function will allocate a file descriptor.
  *
  * @return -1 on failed or the allocated file descriptor.
@@ -217,13 +244,10 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     {
         struct dfs_file *file;
 
-        file = (struct dfs_file *)rt_calloc(1, sizeof(struct dfs_file));
+        file = dfs_file_create();
 
         if (file)
         {
-            file->magic = DFS_FD_MAGIC;
-            file->ref_count = 1;
-            rt_mutex_init(&file->pos_lock, "fpos", RT_IPC_FLAG_PRIO);
             fdt->fds[idx] = file;
 
             LOG_D("allocate a new fd @ %d", idx);
@@ -255,14 +279,7 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 
         if (file && file->ref_count == 1)
         {
-            rt_mutex_detach(&file->pos_lock);
-
-            if (file->mmap_context)
-            {
-                rt_free(file->mmap_context);
-            }
-
-            rt_free(file);
+            dfs_file_destroy(file);
         }
         else
         {
@@ -274,7 +291,7 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  *
  * This function will return a file descriptor structure according to file
  * descriptor.
@@ -352,7 +369,7 @@ int fd_new(void)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  *
  * This function will put the file descriptor.
  */

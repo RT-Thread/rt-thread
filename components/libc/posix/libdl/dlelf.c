@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,8 +14,32 @@
 
 #define DBG_TAG    "DLMD"
 #define DBG_LVL    DBG_INFO
-#include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
+#include <rtdbg.h>          /* must after of DEBUG_ENABLE or some other options*/
 
+/**
+ * @brief Load a shared object file into memory.
+ *
+ * @param module A pointer to a rt_dlmodule object for holding the module's information.
+ * @param module_ptr A pointer to the raw memory of the ELF file (shared object) that is being loaded.
+ * @return rt_err_t On success, it returns RT_EOK. Otherwise, it returns the error code.
+ *
+ * @note This function loads a shared object (ELF file) into memory, broken down into steps:
+ *       1. Initialization and Validation: it begins by validating the module pointer
+ *          and checking if the ELF file has been linked by comparing its magic number (RTMMAG).
+ *          If matched, the module is considered linked.
+ *       2. Calculating the ELF Image Size: it iterates over the ELF program headers to compute the total size of the ELF image
+ *          by adding the sizes of loadable segments. It also ensures there are no overlaps or invalid addresses in the segments.
+ *       3. Allocating Memory for the Module: After determining the module size, the function allocates memory (module->mem_space) for the ELF image
+ *          and initializes it to zero. Then, it copies the relevant program segments from the ELF file into this allocated memory.
+ *       4. Setting the Module Entry Point: it sets the entry point address (module->entry_addr) based on the ELF entry point adjusted by the calculated base address.
+ *       5. Handling Relocation Sections: It processes each relocation section in the ELF file.
+ *          For each relocation entry, it either resolves the symbol from the module's own symbol table
+ *          or looks up the symbol in the kernel symbol table if it was not found locally.
+ *       6. Building the Module's Symbol Table: it looks for the .dynsym section to extract global function symbols.
+ *          It creates a symbol table (module->symtab) and populates it with the function names and addresses for all global symbols of type STT_FUNC.
+ *       7. Extracting Additional Parameters: It extracts additional parameters, such as thread priority (dlmodule_thread_priority) and stack size (dlmodule_thread_stacksize),
+ *          from the symbol table and assigns them to the module if valid.
+ */
 rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_ptr)
 {
     rt_bool_t linked   = RT_FALSE;
@@ -273,6 +297,23 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     return RT_EOK;
 }
 
+/**
+ * @brief Load a relocatable file into memory.
+ *
+ * @param module A pointer to a rt_dlmodule object for holding the module's information.
+ * @param module_ptr A pointer to the raw memory of the ELF file (relocatable file) that is being loaded.
+ * @return rt_err_t On success, it returns RT_EOK. Otherwise, it returns the error code.
+ *
+ * @note This function loads a relocatable file (ELF file) into memory, broken down step by step:
+ *       1. Calculate Module Size: iterates over the ELF sections (text, data, rodata, and bss) to calculate the total size of the module
+ *          and identifies the start address for each section.
+ *       2. Allocate Memory: It allocates memory for the module based on the calculated size. If allocation fails, an error is returned.
+ *       3. Load Sections into Memory: The function loads the text, rodata, data, and BSS sections into the allocated memory.
+ *          The BSS section is zeroed out, while the others are copied from the ELF image.
+ *       4. Set Entry Point: The entry point of the module is set by calculating the address relative to the start of the allocated memory.
+ *       5. Handle Relocation: It processes the relocation entries, resolving symbol addresses and relocating them as needed.
+ *          This includes functions, sections (rodata, bss, data), and external symbols from the kernel symbol table.
+ */
 rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module_ptr)
 {
     rt_ubase_t index, rodata_addr = 0, bss_addr = 0, data_addr = 0;
@@ -342,9 +383,9 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             rt_memcpy(ptr,
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
-            rodata_addr = (rt_uint32_t)ptr;
+            rodata_addr = (rt_ubase_t)ptr;
             LOG_D("load rodata 0x%x, size %d, rodata 0x%x", ptr,
-                shdr[index].sh_size, *(rt_uint32_t *)data_addr);
+                shdr[index].sh_size, *(rt_ubase_t *)rodata_addr);
             ptr += shdr[index].sh_size;
         }
 
@@ -354,9 +395,9 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             rt_memcpy(ptr,
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
-            data_addr = (rt_uint32_t)ptr;
+            data_addr = (rt_ubase_t)ptr;
             LOG_D("load data 0x%x, size %d, data 0x%x", ptr,
-                shdr[index].sh_size, *(rt_uint32_t *)data_addr);
+                shdr[index].sh_size, *(rt_ubase_t *)data_addr);
             ptr += shdr[index].sh_size;
         }
 
@@ -364,7 +405,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
         if (IS_NOPROG(shdr[index]) && IS_AW(shdr[index]))
         {
             rt_memset(ptr, 0, shdr[index].sh_size);
-            bss_addr = (rt_uint32_t)ptr;
+            bss_addr = (rt_ubase_t)ptr;
             LOG_D("load bss 0x%x, size %d", ptr, shdr[index].sh_size);
         }
     }

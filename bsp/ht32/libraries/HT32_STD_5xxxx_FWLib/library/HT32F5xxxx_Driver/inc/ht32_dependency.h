@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32_dependency.h
- * @version $Rev:: 5863         $
- * @date    $Date:: 2022-05-12 #$
+ * @version $Rev:: 7593         $
+ * @date    $Date:: 2024-02-22 #$
  * @brief   The header file of dependency check.
  *************************************************************************************************************
  * @attention
@@ -41,13 +41,21 @@
 #if 0 // Version setting example for module
 
 /* Dependency check ----------------------------------------------------------------------------------------*/
-#if (__CORTEX_M == 0)
+#if defined(__HT32L5XXXX_LIB_H)
+#define MIN_HT32_FWLIB_VER              (0x01000000) //0xmmnnnrrr -> Vm.n.r
+#define MIN_HT32_FWLIB_SVN              (0x209)
+#endif
+#if defined(__HT32F5XXXX_LIB_H)
 #define MIN_HT32_FWLIB_VER              (0x01000024) //0xmmnnnrrr -> Vm.n.r
 #define MIN_HT32_FWLIB_SVN              (0x5762)
 #endif
-#if (__CORTEX_M == 3)
+#if defined(__HT32F1XXXX_LIB_H)
 #define MIN_HT32_FWLIB_VER              (0x01000009) //0xmmnnnrrr -> Vm.n.r
 #define MIN_HT32_FWLIB_SVN              (0x2556)
+#endif
+#if defined(__HT32F4XXXX_LIB_H)
+#define MIN_HT32_FWLIB_VER              (0x01000000) //0xmmnnnrrr -> Vm.n.r
+#define MIN_HT32_FWLIB_SVN              (0x336)
 #endif
 #include "ht32_dependency.h" // Not exist means the version of HT32 Firmware Library is older than the module required.
 
@@ -62,7 +70,7 @@
 #endif
 
 
-// Check "ht32fxxxxx_lib.h" for the version of HT32 Firmwar Library
+// Check "ht32f5xxxx_lib.h" for the version of HT32 Firmwar Library
 #if (HT32_FWLIB_VER != 999999)
 #if HT32_FWLIB_VER < MIN_HT32_FWLIB_VER
   #error !!! The version of HT32 Firmware Library is older than the module required. Please update HT32 Firmware Library.

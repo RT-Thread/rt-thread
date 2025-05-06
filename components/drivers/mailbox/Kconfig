@@ -1,0 +1,14 @@
+menuconfig RT_USING_MBOX
+    bool "Using Hardware Mailbox device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_OFW
+    default n
+
+config RT_MBOX_PIC
+    bool "RT-Thread PIC Mailbox"
+    depends on RT_USING_MBOX
+    default y
+
+if RT_USING_MBOX
+    osource "$(SOC_DM_MBOX_DIR)/Kconfig"
+endif

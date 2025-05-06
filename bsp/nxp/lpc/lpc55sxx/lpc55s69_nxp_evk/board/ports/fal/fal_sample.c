@@ -26,7 +26,7 @@ static int fal_test(const char *partiton_name)
 {
     int ret;
     int i, j, len;
-    uint8_t buf[BUF_SIZE];
+    rt_uint8_t buf[BUF_SIZE];
     const struct fal_flash_dev *flash_dev = RT_NULL;
     const struct fal_partition *partition = RT_NULL;
 
@@ -241,7 +241,7 @@ static void easyflash_sample(void)
     /* easyflash init */
     if(easyflash_init() == EF_NO_ERR)
     {
-        uint32_t i_boot_times = NULL;
+        rt_uint32_t i_boot_times = NULL;
         char *c_old_boot_times, c_new_boot_times[11] = {0};
 
         /* get the boot count number from Env */

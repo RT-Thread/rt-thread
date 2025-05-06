@@ -27,6 +27,11 @@
 #include "sys/signal.h"
 #include "syscall_generic.h"
 
+rt_inline rt_err_t valid_signo_check(unsigned long sig)
+{
+    return sig <= _LWP_NSIG ? 0 : -RT_EINVAL;
+}
+
 static lwp_siginfo_t siginfo_create(rt_thread_t current, int signo, int code, lwp_siginfo_ext_t ext)
 {
     lwp_siginfo_t siginfo;
@@ -1432,7 +1437,8 @@ rt_err_t lwp_pgrp_signal_kill(rt_processgroup_t pgrp, long signo, long code,
 
     PGRP_ASSERT_LOCKED(pgrp);
 
-    if (pgrp)
+    rc = valid_signo_check(signo);
+    if (pgrp && !rc)
     {
         rt_list_for_each_entry(lwp, &pgrp->process, pgrp_node)
         {
@@ -1441,4 +1447,42 @@ rt_err_t lwp_pgrp_signal_kill(rt_processgroup_t pgrp, long signo, long code,
     }
 
     return rc;
+}
+
+struct kill_all_param
+{
+    long signo;
+    long code;
+    lwp_siginfo_ext_t value;
+};
+
+static int _kill_each(pid_t pid, void *data)
+{
+    struct kill_all_param *param = data;
+    rt_lwp_t lwp;
+    rt_err_t error;
+
+    lwp = lwp_from_pid_locked(pid);
+    if (lwp && !lwp->sig_protected)
+    {
+        error = lwp_signal_kill(lwp, param->signo, param->code, param->value);
+    }
+    else
+    {
+        error = RT_EOK;
+    }
+
+    return error;
+}
+
+rt_err_t lwp_signal_kill_all(long signo, long code, lwp_siginfo_ext_t value)
+{
+    struct kill_all_param buf =
+    {
+        .signo = signo,
+        .code = code,
+        .value = value,
+    };
+
+    return lwp_pid_for_each(_kill_each, &buf);
 }

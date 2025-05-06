@@ -196,7 +196,7 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-    rsource "../../libraries/gd32_drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
 endmenu
 

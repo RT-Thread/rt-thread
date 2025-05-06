@@ -26,6 +26,7 @@
 # set(CONFIG_CHERRYUSB_HOST_HCD "ehci_xxx")
 
 list(APPEND cherryusb_incs
+${CMAKE_CURRENT_LIST_DIR}
 ${CMAKE_CURRENT_LIST_DIR}/common
 ${CMAKE_CURRENT_LIST_DIR}/core
 ${CMAKE_CURRENT_LIST_DIR}/class/hub
@@ -37,9 +38,11 @@ ${CMAKE_CURRENT_LIST_DIR}/class/video
 ${CMAKE_CURRENT_LIST_DIR}/class/wireless
 ${CMAKE_CURRENT_LIST_DIR}/class/midi
 ${CMAKE_CURRENT_LIST_DIR}/class/adb
+${CMAKE_CURRENT_LIST_DIR}/class/dfu
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/net
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial
 ${CMAKE_CURRENT_LIST_DIR}/class/vendor/wifi
+${CMAKE_CURRENT_LIST_DIR}/class/aoa
 )
 
 if(CONFIG_CHERRYUSB_DEVICE)
@@ -115,6 +118,8 @@ if(CONFIG_CHERRYUSB_DEVICE)
         elseif("${CONFIG_CHERRYUSB_DEVICE_DCD}" STREQUAL "aic")
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/aic/usb_dc_aic.c)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/aic/usb_dc_aic_ll.c)
+        elseif("${CONFIG_CHERRYUSB_DEVICE_DCD}" STREQUAL "rp2040")
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/rp2040/usb_dc_rp2040.c)
         endif()
     endif()
 
@@ -218,6 +223,9 @@ if(CONFIG_CHERRYUSB_HOST)
     if(CONFIG_CHERRYUSB_HOST_BL616)
     list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/wifi/usbh_bl616.c)
     endif()
+    if(CONFIG_CHERRYUSB_HOST_AOA)
+    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/aoa/usbh_aoa.c)
+    endif()
 
     if(DEFINED CONFIG_CHERRYUSB_HOST_HCD)
         if("${CONFIG_CHERRYUSB_HOST_HCD}" STREQUAL "ehci_bouffalo")
@@ -266,6 +274,8 @@ if(CONFIG_CHERRYUSB_HOST)
         elseif("${CONFIG_CHERRYUSB_HOST_HCD}" STREQUAL "kinetis_mcx")
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/kinetis/usb_hc_kinetis.c)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/kinetis/usb_glue_mcx.c)
+        elseif("${CONFIG_CHERRYUSB_HOST_HCD}" STREQUAL "rp2040")
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/rp2040/usb_hc_rp2040.c)
         endif()
     endif()
 
@@ -294,4 +304,9 @@ endif()
 if(CONFIG_CHERRYMP)
 list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool.c)
 list(APPEND cherryusb_incs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp)
+    if("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "freertos")
+    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool_osal_freertos.c)
+    elseif("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "rtthread")
+    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool_osal_rtthread.c)
+    endif()
 endif()

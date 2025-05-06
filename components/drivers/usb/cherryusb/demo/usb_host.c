@@ -58,10 +58,10 @@ void usbh_cdc_acm_callback(void *arg, int nbytes)
     }
 }
 
-static void usbh_cdc_acm_thread(void *argument)
+static void usbh_cdc_acm_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
-    struct usbh_cdc_acm *cdc_acm_class = (struct usbh_cdc_acm *)argument;
+    struct usbh_cdc_acm *cdc_acm_class = (struct usbh_cdc_acm *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
     /* test with only one buffer, if you have more cdc acm class, modify by yourself */
 #if TEST_USBH_CDC_SPEED
@@ -133,10 +133,10 @@ void usbh_hid_callback(void *arg, int nbytes)
     }
 }
 
-static void usbh_hid_thread(void *argument)
+static void usbh_hid_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
-    struct usbh_hid *hid_class = (struct usbh_hid *)argument;
+    struct usbh_hid *hid_class = (struct usbh_hid *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
     ;
 
     /* test with only one buffer, if you have more hid class, modify by yourself */
@@ -222,13 +222,18 @@ unmount:
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t partition_table[512];
 
-static void usbh_msc_thread(void *argument)
+static void usbh_msc_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
-    struct usbh_msc *msc_class = (struct usbh_msc *)argument;
+    struct usbh_msc *msc_class = (struct usbh_msc *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
     /* test with only one buffer, if you have more msc class, modify by yourself */
-#if 1
+#if TEST_USBH_MSC_FATFS == 0
+    ret = usbh_msc_scsi_init(msc_class);
+    if (ret < 0) {
+        USB_LOG_RAW("scsi_init error,ret:%d\r\n", ret);
+        goto delete;
+    }
     /* get the partition table */
     ret = usbh_msc_scsi_read10(msc_class, 0, partition_table, 1);
     if (ret < 0) {
@@ -242,11 +247,10 @@ static void usbh_msc_thread(void *argument)
         USB_LOG_RAW("%02x ", partition_table[i]);
     }
     USB_LOG_RAW("\r\n");
-#endif
-
-#if TEST_USBH_MSC_FATFS
+#else
     usb_msc_fatfs_test();
 #endif
+
     // clang-format off
 delete:
     usb_osal_thread_delete(NULL);
@@ -254,38 +258,38 @@ delete:
 }
 #endif
 
+#if TEST_USBH_CDC_ACM
 void usbh_cdc_acm_run(struct usbh_cdc_acm *cdc_acm_class)
 {
-#if TEST_USBH_CDC_ACM
     usb_osal_thread_create("usbh_cdc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_cdc_acm_thread, cdc_acm_class);
-#endif
 }
 
 void usbh_cdc_acm_stop(struct usbh_cdc_acm *cdc_acm_class)
 {
 }
+#endif
 
+#if TEST_USBH_HID
 void usbh_hid_run(struct usbh_hid *hid_class)
 {
-#if TEST_USBH_HID
     usb_osal_thread_create("usbh_hid", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_hid_thread, hid_class);
-#endif
 }
 
 void usbh_hid_stop(struct usbh_hid *hid_class)
 {
 }
+#endif
 
+#if TEST_USBH_MSC
 void usbh_msc_run(struct usbh_msc *msc_class)
 {
-#if TEST_USBH_MSC
     usb_osal_thread_create("usbh_msc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_msc_thread, msc_class);
-#endif
 }
 
 void usbh_msc_stop(struct usbh_msc *msc_class)
 {
 }
+#endif
 
 #if TEST_USBH_AUDIO
 #error "commercial charge"
@@ -293,4 +297,27 @@ void usbh_msc_stop(struct usbh_msc *msc_class)
 
 #if TEST_USBH_VIDEO
 #error "commercial charge"
+#endif
+
+#if 0
+#include "usbh_aoa.h"
+
+static struct aoa_string_info deviceinfo = {
+    .acc_manufacturer = "CherryUSB",
+    .acc_model = "CherryUSB",
+    .acc_description = "Android Open Accessory CherryUSB",
+    .acc_version = "1.0",
+    .acc_uri = "http://developer.android.com/tools/adk/index.html",
+    .acc_serial = "CherryUSB"
+};
+
+int aoa_switch(int argc, char **argv)
+{
+    struct usbh_hubport *hport = usbh_find_hubport(0, 1, 1);
+
+    usbh_aoa_switch(hport, &deviceinfo);
+    return 0;
+}
+
+SHELL_CMD_EXPORT_ALIAS(aoa_switch, aoa_switch, aoa_switch);
 #endif

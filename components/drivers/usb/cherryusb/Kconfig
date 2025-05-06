@@ -38,6 +38,8 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_gd"
             config RT_CHERRYUSB_DEVICE_DWC2_HC
                 bool "dwc2_hc"
+            config RT_CHERRYUSB_DEVICE_DWC2_KENDRYTE
+                bool "dwc2_kendryte"
             config RT_CHERRYUSB_DEVICE_DWC2_CUSTOM
                 bool "dwc2_custom"
             config RT_CHERRYUSB_DEVICE_MUSB_ES
@@ -66,6 +68,8 @@ if RT_USING_CHERRYUSB
                 bool "aic"
             config RT_CHERRYUSB_DEVICE_PUSB2
                 bool "pusb2"
+            config RT_CHERRYUSB_DEVICE_NRF5X
+                bool "nrf5x"
         endchoice
 
         config RT_CHERRYUSB_DEVICE_CDC_ACM
@@ -121,7 +125,9 @@ if RT_USING_CHERRYUSB
             config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
                 bool "cdc_acm"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_MSC
-                bool "msc"
+                bool "msc_ram"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV
+                bool "msc_blkdev"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD
                 bool "hid_keyboard"
             config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_MOUSE
@@ -182,6 +188,8 @@ if RT_USING_CHERRYUSB
                 bool "dwc2_st"
             config RT_CHERRYUSB_HOST_DWC2_ESP
                 bool "dwc2_esp"
+            config RT_CHERRYUSB_HOST_DWC2_KENDRYTE
+                bool "dwc2_kendryte"
             config RT_CHERRYUSB_HOST_DWC2_CUSTOM
                 bool "dwc2_custom"
             config RT_CHERRYUSB_HOST_MUSB_ES
@@ -223,7 +231,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb cdc ecm driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_CDC_ECM
             default n
 
@@ -231,7 +238,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb rndis driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_CDC_RNDIS
             default n
 
@@ -239,7 +245,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb cdc ncm driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_CDC_NCM
             default n
 
@@ -262,7 +267,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb asix driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_ASIX
             default n
 
@@ -270,7 +274,6 @@ if RT_USING_CHERRYUSB
             bool
             prompt "Enable usb rtl8152 driver"
             select RT_USING_LWIP
-            select RT_USING_LWIP212
             select CONFIG_USBHOST_PLATFORM_RTL8152
             default n
 

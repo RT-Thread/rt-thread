@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-03-18     ChenYong     First version
+ * 2025-01-04     Evlers       add statistics and more inupt parameters to ping command
  */
 
 #include <stdio.h>
@@ -1286,7 +1287,7 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
 
     struct netdev *netdev = RT_NULL;
     struct netdev_ping_resp ping_resp;
-    rt_uint32_t index;
+    rt_uint32_t index, received, loss, max_time, min_time, avg_time;
     int ret = 0;
     rt_bool_t isbind = RT_FALSE;
 
@@ -1326,6 +1327,8 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
         }
     }
 
+    max_time = avg_time = received = 0;
+    min_time = 0xFFFFFFFF;
     for (index = 0; index < times; index++)
     {
         int delay_tick = 0;
@@ -1337,7 +1340,7 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
         if (ret == -RT_ETIMEOUT)
         {
             rt_kprintf("ping: from %s icmp_seq=%d timeout\n",
-                (ip_addr_isany(&(ping_resp.ip_addr))) ? target_name : inet_ntoa(ping_resp.ip_addr), index);
+                (ip_addr_isany(&(ping_resp.ip_addr))) ? target_name : inet_ntoa(ping_resp.ip_addr), index + 1);
         }
         else if (ret == -RT_ERROR)
         {
@@ -1350,18 +1353,51 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
             if (ping_resp.ttl == 0)
             {
                 rt_kprintf("%d bytes from %s icmp_seq=%d time=%d ms\n",
-                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index, ping_resp.ticks);
+                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index + 1, ping_resp.ticks);
             }
             else
             {
                 rt_kprintf("%d bytes from %s icmp_seq=%d ttl=%d time=%d ms\n",
-                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index, ping_resp.ttl, ping_resp.ticks);
+                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index + 1, ping_resp.ttl, ping_resp.ticks);
             }
+            received += 1;
+            if (ping_resp.ticks > max_time)
+            {
+                max_time = ping_resp.ticks;
+            }
+            else if (ping_resp.ticks < min_time)
+            {
+                min_time = ping_resp.ticks;
+            }
+            avg_time += ping_resp.ticks;
         }
 
         /* if the response time is more than NETDEV_PING_DELAY, no need to delay */
         delay_tick = ((rt_tick_get() - start_tick) > NETDEV_PING_DELAY) || (index == times) ? 0 : NETDEV_PING_DELAY;
         rt_thread_delay(delay_tick);
+    }
+
+    /* print ping statistics */
+    loss = (uint32_t)((1 - ((float)received) / index) * 100);
+    avg_time = (uint32_t)(avg_time / received);
+#if NETDEV_IPV4 && NETDEV_IPV6
+    if (IP_IS_V4_VAL(&ping_resp.ip_addr))
+    {
+        rt_kprintf("\n--- %s ping statistics ---\n", inet_ntoa(*ip_2_ip4(&ping_resp.ip_addr)));
+    }
+    else
+    {
+        rt_kprintf("\n--- %s ping statistics ---\n", inet6_ntoa(*ip_2_ip6(&ping_resp.ip_addr)));
+    }
+#elif NETDEV_IPV4
+    rt_kprintf("\n--- %s ping statistics ---\n", inet_ntoa(ping_resp.ip_addr));
+#elif NETDEV_IPV6
+    rt_kprintf("\n--- %s ping statistics ---\n", inet6_ntoa(ping_resp.ip_addr));
+#endif
+    rt_kprintf("%d packets transmitted, %d received, %d%% packet loss\n", index, received, loss);
+    if (received > 0)
+    {
+        rt_kprintf("minimum = %dms, maximum = %dms, average = %dms\n", min_time, max_time, avg_time);
     }
 
     return RT_EOK;
@@ -1371,7 +1407,7 @@ int netdev_ping(int argc, char **argv)
 {
     if (argc == 1)
     {
-        rt_kprintf("Please input: ping <host address> [netdev name]\n");
+        rt_kprintf("Please input: ping <host address> [netdev name] [times] [data size]\n");
     }
     else if (argc == 2)
     {
@@ -1380,6 +1416,14 @@ int netdev_ping(int argc, char **argv)
     else if (argc == 3)
     {
         netdev_cmd_ping(argv[1], argv[2], 4, 0);
+    }
+    else if (argc == 4)
+    {
+        netdev_cmd_ping(argv[1], argv[2], atoi(argv[3]), 0);
+    }
+    else if (argc == 5)
+    {
+        netdev_cmd_ping(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]));
     }
 
     return 0;

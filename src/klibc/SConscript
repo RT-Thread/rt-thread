@@ -1,0 +1,23 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = ['kerrno.c', 'kstdio.c', 'kstring.c']
+
+if not GetDepend(['RT_KLIBC_USING_LIBC_VSNPRINTF']):
+    if GetDepend(['RT_KLIBC_USING_VSNPRINTF_STANDARD']):
+        src += ['rt_vsnprintf_std.c']
+    else:
+        src += ['rt_vsnprintf_tiny.c']
+
+if not GetDepend(['RT_KLIBC_USING_LIBC_VSSCANF']):
+    src += ['rt_vsscanf.c']
+
+group = DefineGroup('klibc', src, depend = [''])
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

@@ -556,7 +556,7 @@ int main(int argc, char *argv[])
 {
     if (argc == 2)
     {
-        sscanf(argv[1], "%d", &loop_count);
+        rt_sscanf(argv[1], "%d", &loop_count);
     }
     else
     {

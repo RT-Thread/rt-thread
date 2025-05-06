@@ -9,7 +9,7 @@ RUN apt-get update
 
 RUN apt-get upgrade -y
 
-RUN apt-get install -y vim git wget python3 python-is-python3 pip gcc-arm-none-eabi scons libncurses5-dev
+RUN apt-get install -y vim git wget python3 python-is-python3 pip gcc-arm-none-eabi libncurses5-dev
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y qemu-system-arm
 
@@ -34,7 +34,7 @@ RUN git clone https://github.com/RT-Thread/packages.git /root/.env/packages/pack
 
 ENV PATH="/root/.env/tools/scripts:$PATH"
 
-RUN pip install requests psutil kconfiglib tqdm -qq
+RUN pip install scons requests psutil kconfiglib tqdm -qq
 
 ENV RTT_EXEC_PATH=/usr/bin
 

@@ -13,13 +13,13 @@
 #include <rtthread.h>
 #include <stdlib.h>
 
+#ifndef RT_USING_PICOLIBC
 /**
  * @brief erases the data in the n bytes of the memory starting at the
  *        location pointed to by s, by writing zeros (bytes containing '\0') to that area.
  *
  * @note  The bzero() function is deprecated (marked as LEGACY in POSIX. 1-2001).
  */
-#ifndef RT_USING_PICOLIBC
 void bzero(void* s, size_t n)
 {
     rt_memset(s, 0, n);
@@ -46,12 +46,12 @@ void explicit_bzero(void* s, size_t n)
     }
 }
 
-char* index(const char* s, int c)
+char *index(const char* s, int c)
 {
     return strchr(s, c);
 }
 
-char* rindex(const char* s, int c)
+char *rindex(const char* s, int c)
 {
     return strrchr(s, c);
 }
@@ -99,7 +99,7 @@ int ffsll(long long i)
  *
  * @note  This function is GNU extension, available since glibc 2.1.91.
  */
-void* memrchr(const void* ptr, int ch, size_t pos)
+void *memrchr(const void* ptr, int ch, size_t pos)
 {
     char* end = (char*)ptr + pos - 1;
     while (end != ptr)
@@ -118,7 +118,7 @@ size_t strnlen(const char *s, size_t maxlen)
     return sc - s;
 }
 
-char* strchrnul(const char* s, int c)
+char *strchrnul(const char* s, int c)
 {
     while (*s != '\0' && *s != c)
         s++;

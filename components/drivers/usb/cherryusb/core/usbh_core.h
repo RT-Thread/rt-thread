@@ -21,6 +21,7 @@
 #include "usb_osal.h"
 #include "usbh_hub.h"
 #include "usb_memcpy.h"
+#include "usb_dcache.h"
 #include "usb_version.h"
 
 #ifdef __cplusplus
@@ -61,9 +62,9 @@ extern "C" {
 
 struct usbh_class_info {
     uint8_t match_flags;           /* Used for product specific matches; range is inclusive */
-    uint8_t class;                 /* Base device class code */
-    uint8_t subclass;              /* Sub-class, depends on base class. Eg. */
-    uint8_t protocol;              /* Protocol, depends on base class. Eg. */
+    uint8_t bInterfaceClass;       /* Base device class code */
+    uint8_t bInterfaceSubClass;    /* Sub-class, depends on base class. Eg. */
+    uint8_t bInterfaceProtocol;    /* Protocol, depends on base class. Eg. */
     const uint16_t (*id_table)[2]; /* List of Vendor/Product ID pairs */
     const struct usbh_class_driver *class_driver;
 };
@@ -275,6 +276,7 @@ int usbh_set_interface(struct usbh_hubport *hport, uint8_t intf, uint8_t altsett
 int usbh_initialize(uint8_t busid, uintptr_t reg_base);
 int usbh_deinitialize(uint8_t busid);
 void *usbh_find_class_instance(const char *devname);
+struct usbh_hubport *usbh_find_hubport(uint8_t busid, uint8_t hub_index, uint8_t hub_port);
 
 int lsusb(int argc, char **argv);
 

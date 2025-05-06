@@ -64,8 +64,8 @@ enum CANBAUD
 #define RT_CAN_MODE_NOPRIV              0x00
 
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    CAN_Device          CAN Driver
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_CAN_Device CAN Driver
  *
  * @brief       CAN driver api
  *
@@ -111,7 +111,8 @@ enum CANBAUD
  *     res = rt_device_control(can_dev, RT_CAN_CMD_SET_FILTER, &cfg);
  *     RT_ASSERT(res == RT_EOK);
  * #endif
- *
+ *     res = RT_TRUE;
+ *     res = rt_device_control(can_dev, RT_CAN_CMD_START, &res);
  *     while (1)
  *     {
  *         // hdr 值为 - 1，表示直接从 uselist 链表读取数据
@@ -198,13 +199,13 @@ enum CANBAUD
  * MSH_CMD_EXPORT(can_sample, can device sample);
  * @endcode
  *
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  *
  */
 
 
 /*!
- * @addtogroup CAN_Device
+ * @addtogroup group_CAN_Device
  * @{
  */
 #define CAN_RX_FIFO0                (0x00000000U)  /*!< CAN receive FIFO 0 */
@@ -345,6 +346,7 @@ struct rt_can_ops;
 #define RT_CAN_CMD_SET_CANFD        0x1A
 #define RT_CAN_CMD_SET_BAUD_FD      0x1B
 #define RT_CAN_CMD_SET_BITTIMING    0x1C
+#define RT_CAN_CMD_START            0x1D
 
 #define RT_DEVICE_CAN_INT_ERR       0x1000
 

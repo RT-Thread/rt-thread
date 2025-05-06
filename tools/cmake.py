@@ -1,6 +1,23 @@
 """
-Utils for CMake
-Author: https://github.com/klivelinux
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-05-24     klivelinux   first version
+ * 2021-04-19     liukangcc    add c++ support and libpath
+ * 2021-06-25     Guozhanxin   fix path issue
+ * 2021-06-30     Guozhanxin   add scons --target=cmake-armclang
+ * 2022-03-16     liukangcc    通过 SCons生成 CMakefile.txt 使用相对路径
+ * 2022-04-12     mysterywolf  rtconfig.CROSS_TOOL->rtconfig.PLATFORM
+ * 2022-04-29     SunJun8      默认开启生成编译数据库
+ * 2024-03-18     wirano       fix the issue of the missing link flags added in Sconscript
+ * 2024-07-04     kaidegit     Let cmake generator get more param from `rtconfig.py`
+ * 2024-08-07     imi415       Updated CMake generator handles private macros, using OBJECT and INTERFACE libraries.
+ * 2024-11-18     kaidegit     fix processing groups with similar name
+ * 2025-02-22     kaidegit     fix missing some flags added in Sconscript
+ * 2025-02-24     kaidegit     remove some code that is unnecessary but takes time, get them from env
 """
 
 import os
@@ -9,14 +26,13 @@ import re
 import utils
 import rtconfig
 from utils import _make_path_relative
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 
 def GenerateCFiles(env, project, project_name):
     """
     Generate CMakeLists.txt files
     """
-    info = utils.ProjectInfo(env)
     
     PROJECT_NAME = project_name if project_name != "project" else "rtthread"
 
@@ -46,12 +62,13 @@ def GenerateCFiles(env, project, project_name):
     OBJCOPY = tool_path_conv["CMAKE_OBJCOPY"]["path"]
     FROMELF = tool_path_conv["CMAKE_FROMELF"]["path"]
 
-    CFLAGS = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    CFLAGS = env['CFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     if 'CXXFLAGS' in dir(rtconfig):
-        CXXFLAGS = rtconfig.CXXFLAGS.replace('\\', "/").replace('\"', "\\\"")
+        cflag_str=''.join(env['CXXFLAGS'])
+        CXXFLAGS = cflag_str.replace('\\', "/").replace('\"', "\\\"")
     else:
         CXXFLAGS = CFLAGS
-    AFLAGS = rtconfig.AFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    AFLAGS = env['ASFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     LFLAGS = env['LINKFLAGS'].replace('\\', "/").replace('\"', "\\\"")
     
     POST_ACTION = rtconfig.POST_ACTION
@@ -161,14 +178,14 @@ def GenerateCFiles(env, project, project_name):
         cm_file.write('\n')
 
         cm_file.write("INCLUDE_DIRECTORIES(\n")
-        for i in info['CPPPATH']:
+        for i in env['CPPPATH']:
             # use relative path
             path = _make_path_relative(os.getcwd(), i)
             cm_file.write( "\t" + path.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
         cm_file.write("ADD_DEFINITIONS(\n")
-        for i in info['CPPDEFINES']:
+        for i in env['CPPDEFINES']:
             cm_file.write("\t-D" + i + "\n")
         cm_file.write(")\n\n")
 
@@ -183,6 +200,20 @@ def GenerateCFiles(env, project, project_name):
                 interfacelibgroups.append(group)
             else:
                 libgroups.append(group)
+
+        # Process groups whose names differ only in capitalization.
+        # (Groups have same name should be merged into one before)
+        for group in libgroups:
+            group['alias'] = group['name'].lower()
+        names = [group['alias'] for group in libgroups]
+        counter = Counter(names)
+        names = [name for name in names if counter[name] > 1]
+        for group in libgroups:
+            if group['alias'] in names:
+                counter[group['alias']] -= 1
+                group['alias'] = f"{group['name']}_{counter[group['alias']]}"
+                print(f"Renamed {group['name']} to {group['alias']}")
+                group['name'] = group['alias']
 
         cm_file.write("# Library source files\n")
         for group in project:

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f50442_52_libcfg.h
- * @version $Rev:: 7265         $
- * @date    $Date:: 2023-10-02 #$
+ * @version $Rev:: 7664         $
+ * @date    $Date:: 2024-03-26 #$
  * @brief   The library configuration file.
  *************************************************************************************************************
 * @attention
@@ -80,6 +80,7 @@
 #define LIBCFG_CKCU_ATM_V01               (1)
 #define LIBCFG_CKCU_SYS_CK_60M            (1)
 #define LIBCFG_CKCU_REFCLK_EXT_PIN        (1)
+#define LIBCFG_CMP_IVREF_CN_IN            (1)
 #define LIBCFG_PWRCU_VDD_5V               (1)
 #define LIBCFG_PWRCU_WAKEUP1              (1)
 #define LIBCFG_PWRCU_WAKEUP_V01           (1)
@@ -94,6 +95,5 @@
 #define LIBCFG_ADC_MVDDA                  (1)
 #define LIBCFG_USART_LIN                  (1)
 #define LIBCFG_USART_SINGLE_WIRE          (1)
-#define LIBCFG_GPIO_SINK_CURREMT_ENHANCED (1)
 
 #endif

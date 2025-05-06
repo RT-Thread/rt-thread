@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -546,16 +546,100 @@ static int timerfd_do_gettime(int fd, struct itimerspec *cur)
     return 0;
 }
 
+/**
+ * @brief Creates a file descriptor for a timer.
+ *
+ * The `timerfd_create` function creates a new timer object that generates
+ * timer expiration notifications via a file descriptor.
+ *
+ * @param clockid The clock ID that specifies the clock to be used as the
+ *                timing base for the timer. Common values include:
+ *                - `CLOCK_REALTIME`: A system-wide clock representing
+ *                  wall-clock time.
+ *                - `CLOCK_MONOTONIC`: A clock that cannot be set and
+ *                  represents monotonic time since some unspecified
+ *                  starting point.
+ * @param flags   A bitmask that can include the following flags:
+ *                - `TFD_CLOEXEC`: Close the file descriptor on `execve`.
+ *                - `TFD_NONBLOCK`: Set the file descriptor to non-blocking mode.
+ *
+ * @return On success, returns a file descriptor for the timer. On error,
+ *         returns -1 and sets `errno` appropriately.
+ *
+ * @note The file descriptor can be used with select, poll, or epoll to wait
+ *       for timer expirations.
+ *
+ * @warning The timerfd interface is Linux-specific and may not be available
+ *          on other operating systems.
+ *
+ * @see timerfd_settime, timerfd_gettime
+ */
 int timerfd_create(int clockid, int flags)
 {
     return timerfd_do_create(clockid, flags);
 }
 
+/**
+ * @brief Sets the time for a timer file descriptor.
+ *
+ * The `timerfd_settime` function starts or modifies the timer associated
+ * with the specified timer file descriptor.
+ *
+ * @param fd      The file descriptor of the timer, obtained from
+ *                `timerfd_create`.
+ * @param flags   Flags that control the behavior of the timer. Possible
+ *                values include:
+ *                - `0`: Relative time is specified in `new`.
+ *                - `TFD_TIMER_ABSTIME`: Use absolute time instead of
+ *                  relative time.
+ * @param new     A pointer to a `itimerspec` structure that specifies the
+ *                new timer settings:
+ *                - `it_value`: The initial expiration time. A zero value
+ *                  means the timer is disabled.
+ *                - `it_interval`: The interval for periodic timers. A zero
+ *                  value means the timer is not periodic.
+ * @param old     A pointer to a `itimerspec` structure to store the
+ *                previous timer settings. Can be `NULL` if this information
+ *                is not needed.
+ *
+ * @return On success, returns 0. On error, returns -1 and sets `errno`
+ *         appropriately.
+ *
+ * @note The timer starts counting down immediately after this call if
+ *       `it_value` is non-zero.
+ *
+ * @warning If the timer is set to a very short interval, high-frequency
+ *          events may impact system performance.
+ *
+ * @see timerfd_create, timerfd_gettime
+ */
 int timerfd_settime(int fd, int flags, const struct itimerspec *new, struct itimerspec *old)
 {
     return timerfd_do_settime(fd, flags, new, old);
 }
 
+/**
+ * @brief Retrieves the current value and interval of a timer.
+ *
+ * The `timerfd_gettime` function queries the settings of the timer associated
+ * with the specified timer file descriptor.
+ *
+ * @param fd   The file descriptor of the timer, obtained from `timerfd_create`.
+ * @param cur  A pointer to a `itimerspec` structure where the current timer
+ *             settings will be stored:
+ *             - `it_value`: The time remaining until the next expiration.
+ *               If zero, the timer is disabled.
+ *             - `it_interval`: The interval for periodic timers. Zero if the
+ *               timer is not periodic.
+ *
+ * @return On success, returns 0. On error, returns -1 and sets `errno`
+ *         appropriately.
+ *
+ * @note This function does not reset or modify the timer; it only retrieves
+ *       the current settings.
+ *
+ * @see timerfd_create, timerfd_settime
+ */
 int timerfd_gettime(int fd, struct itimerspec *cur)
 {
     return timerfd_do_gettime(fd, cur);

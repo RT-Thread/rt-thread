@@ -347,7 +347,7 @@ static int usbh_bl616_disconnect(struct usbh_hubport *hport, uint8_t intf)
     return ret;
 }
 
-void usbh_bl616_rx_thread(void *argument)
+void usbh_bl616_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
     usb_data_t *usb_hdr;
@@ -356,7 +356,7 @@ void usbh_bl616_rx_thread(void *argument)
     rnm_scan_ind_msg_t *scanmsg;
     uint8_t *data;
 
-    (void)argument;
+    (void)CONFIG_USB_OSAL_THREAD_GET_ARGV;
     USB_LOG_INFO("Create bl616 wifi rx thread\r\n");
 
     while (1) {
@@ -504,9 +504,9 @@ static const struct usbh_class_driver bl616_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info bl616_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS,
-    .class = 0xff,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = 0xff,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = bl616_id_table,
     .class_driver = &bl616_class_driver
 };

@@ -20,7 +20,7 @@
 # Change Logs:
 # Date           Author       Notes
 # 2022-04-20     WuGensheng  Add Options to SCons
-#
+# 2025-03-02     ZhaoCake    Add Options about compile_commands
 
 from SCons.Script import AddOption
 import platform
@@ -141,3 +141,16 @@ def AddOptions():
                 action = 'store_true',
                 default = False,
                 help = 'make compile_commands.json')
+    AddOption('--attach',
+                dest = 'attach',
+                type = 'string',
+                help = 'View attachconfig or add attach to.config.'+\
+                'e.g. scons --attach=? View all attachconfig for the current bsp.'+\
+                ' or scons --attach=component.cherryusb_cdc Set option component.cherryusb_cdc inside attachconfig to.config.'+\
+                ' or scons --attach=default Restore.config and rtconfig to before attch was set.')
+    AddOption('--dist-strip', 
+              dest='dist_strip',
+              action='store_true',
+              default=False,
+              help='create minimal distribution based on compile_commands.json.'+\
+              'So you should run `bear -- scons` to generate compile_commands.json first.')

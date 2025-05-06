@@ -1,0 +1,25 @@
+menu "AArch64 Architecture Configuration"
+    config ARCH_TEXT_OFFSET
+        hex "Text offset"
+        default 0x200000
+    config ARCH_RAM_OFFSET
+        hex "RAM offset"
+        default 0
+    config ARCH_SECONDARY_CPU_STACK_SIZE
+        int "Secondary CPU stack size"
+        default 4096
+    config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+        bool
+        default y
+    config ARCH_USING_GENERIC_CPUID
+        bool "Using generic cpuid implemenation"
+        select ARCH_USING_HW_THREAD_SELF
+        default y if RT_USING_OFW
+        default n
+    config ARCH_HEAP_SIZE
+        hex "Size of system heap"
+        default 0x4000000
+    config ARCH_INIT_PAGE_SIZE
+        hex "Size of init page region"
+        default 0x200000
+endmenu

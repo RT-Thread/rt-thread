@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_gpio.h
- * @version $Rev:: 7115         $
- * @date    $Date:: 2023-08-11 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the GPIO and AFIO library.
  *************************************************************************************************************
  * @attention
@@ -166,7 +166,15 @@ typedef enum
 #else
 #define AFIO_FUN_LEDC       AFIO_MODE_14       /*!< AFIO mode LEDC                                          */
 #endif
+#if ((LIBCFG_CMP) && (LIBCFG_OPA))
+#define AFIO_FUN_CMP        AFIO_FUN_CMP_OPA   /*!< AFIO mode CMP                                           */
+#define AFIO_FUN_OPA        AFIO_FUN_CMP_OPA   /*!< AFIO mode OPA                                           */
+#elif ((LIBCFG_CMP) && (LIBCFG_PGA))
+#define AFIO_FUN_CMP        AFIO_FUN_CMP_PGA   /*!< AFIO mode CMP                                           */
+#define AFIO_FUN_PGA        AFIO_FUN_CMP_PGA   /*!< AFIO mode PGA                                           */
+#elif (LIBCFG_CMP)
 #define AFIO_FUN_CMP        AFIO_MODE_3        /*!< AFIO mode CMP                                           */
+#endif
 #define AFIO_FUN_MCTM_GPTM  AFIO_MODE_4        /*!< AFIO mode MCTM/GPTM                                     */
 #if (LIBCFG_AFIO_SCTM_MODE4)
 #define AFIO_FUN_SCTM       AFIO_MODE_4        /*!< AFIO mode SCTM                                          */
@@ -184,7 +192,11 @@ typedef enum
 #define AFIO_FUN_USART_UART AFIO_MODE_6        /*!< AFIO mode USART/UART                                    */
 #define AFIO_FUN_I2C        AFIO_MODE_7        /*!< AFIO mode I2C                                           */
 #define AFIO_FUN_SCI        AFIO_MODE_8        /*!< AFIO mode SCI                                           */
+#if ((LIBCFG_CMP) && (LIBCFG_OPA))
 #define AFIO_FUN_CMP_OPA    AFIO_MODE_8        /*!< AFIO mode CMP/OPA                                       */
+#elif ((LIBCFG_CMP) && (LIBCFG_PGA))
+#define AFIO_FUN_CMP_PGA    AFIO_MODE_8        /*!< AFIO mode CMP/PGA                                       */
+#endif
 #define AFIO_FUN_EBI        AFIO_MODE_9        /*!< AFIO mode EBI                                           */
 #define AFIO_FUN_I2S        AFIO_MODE_10       /*!< AFIO mode I2S                                           */
 #define AFIO_FUN_CAN        AFIO_MODE_12       /*!< AFIO mode CAN                                           */
@@ -465,7 +477,7 @@ void GPIO_PullResistorConfig(HT_GPIO_TypeDef* HT_GPIOx, u16 GPIO_PIN_nBITMAP, GP
 void GPIO_InputConfig(HT_GPIO_TypeDef* HT_GPIOx, u16 GPIO_PIN_nBITMAP, ControlStatus Cmd);
 void GPIO_DriveConfig(HT_GPIO_TypeDef* HT_GPIOx, u16 GPIO_PIN_nBITMAP, GPIO_DV_Enum GPIO_DV_nMA);
 void GPIO_OpenDrainConfig(HT_GPIO_TypeDef* HT_GPIOx, u16 GPIO_PIN_nBITMAP, ControlStatus Cmd);
-#if LIBCFG_GPIO_SINK_CURRENT_ENHANCED
+#if (LIBCFG_GPIO_SINK_CURRENT_ENHANCED)
 void GPIO_SinkConfig(HT_GPIO_TypeDef* HT_GPIOx, u16 GPIO_PIN_n, ControlStatus Cmd);
 #endif
 FlagStatus GPIO_ReadInBit(HT_GPIO_TypeDef* HT_GPIOx, u16 GPIO_PIN_n);

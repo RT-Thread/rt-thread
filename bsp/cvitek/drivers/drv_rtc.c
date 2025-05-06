@@ -17,12 +17,13 @@
 
 #include "pinctrl.h"
 #include "mmio.h"
+#include "drv_ioremap.h"
 
-#define CVI_RTC_BASE 0x05026000U
-#define RTC_ALARM_O  17
-#define CVI_RTC_CTRL_BASE 0x05025000U
-#define CLK_EN_0 0x03002000U
-#define CLK_RTC_25M_BIT (1 << 8)
+#define CVI_RTC_BASE        0x05026000U
+#define RTC_ALARM_O         17
+#define CVI_RTC_CTRL_BASE   0x05025000U
+#define CLK_EN_0            0x03002000U
+#define CLK_RTC_25M_BIT     (1 << 8)
 
 /* CVITEK RTC registers */
 #define CVI_RTC_ANA_CALIB               0x0
@@ -57,6 +58,7 @@
 struct rtc_device_object
 {
     rt_rtc_dev_t  rtc_dev;
+    rt_ubase_t base;
 };
 
 static struct rtc_device_object rtc_device;
@@ -91,25 +93,26 @@ static int rtc_month_days(unsigned int month, unsigned int year)
 static void hal_cvi_rtc_clk_set(int enable)
 {
     uint32_t clk_state;
+    rt_ubase_t clk = (rt_ubase_t)DRV_IOREMAP((void *)CLK_EN_0, 0x1000);
 
-    clk_state = mmio_read_32((long unsigned int)CLK_EN_0);
+    clk_state = mmio_read_32(clk);
 
     if(enable)
         clk_state |= CLK_RTC_25M_BIT;
     else
         clk_state &= ~(CLK_RTC_25M_BIT);
 
-    mmio_write_32((long unsigned int)CLK_EN_0, clk_state);
+    mmio_write_32(clk, clk_state);
 }
 
 static void hal_cvi_rtc_enable_sec_counter(uintptr_t rtc_base)
 {
     uint32_t value = 0;
 
-    value = mmio_read_32(rtc_base + CVI_RTC_SEC_PULSE_GEN) & ~(1 << 31);
+    value = mmio_read_32(rtc_base + CVI_RTC_SEC_PULSE_GEN) & 0x7FFFFFFF;
     mmio_write_32(rtc_base + CVI_RTC_SEC_PULSE_GEN, value);
 
-    value = mmio_read_32(rtc_base + CVI_RTC_ANA_CALIB) & ~(1 << 31);
+    value = mmio_read_32(rtc_base + CVI_RTC_ANA_CALIB) & 0x7FFFFFFF;
     mmio_write_32(rtc_base + CVI_RTC_ANA_CALIB, value);
 
     mmio_read_32(rtc_base + CVI_RTC_SEC_CNTR_VALUE);
@@ -239,7 +242,7 @@ static rt_err_t _rtc_get_timeval(struct timeval *tv)
     cvi_rtc_time_t t = {0};
     struct tm tm_new = {0};
 
-    hal_cvi_rtc_get_time_sec(CVI_RTC_BASE, &sec);
+    hal_cvi_rtc_get_time_sec(rtc_device.base, &sec);
     rtc_time64_to_tm(sec, &t);
 
     tm_new.tm_sec  = t.tm_sec;
@@ -258,7 +261,7 @@ static rt_err_t _rtc_get_timeval(struct timeval *tv)
 static rt_err_t _rtc_init(void)
 {
     hal_cvi_rtc_clk_set(1);
-    hal_cvi_rtc_enable_sec_counter(CVI_RTC_BASE);
+    hal_cvi_rtc_enable_sec_counter(rtc_device.base);
 
     return RT_EOK;
 }
@@ -292,7 +295,7 @@ static rt_err_t _rtc_set_secs(time_t *sec)
     t.tm_wday    = tm.tm_wday;
 
     set_sec = rtc_tm_to_time64(&t);
-    hal_cvi_rtc_set_time(CVI_RTC_BASE, set_sec);
+    hal_cvi_rtc_set_time(rtc_device.base, set_sec);
 
     return result;
 }
@@ -300,7 +303,7 @@ static rt_err_t _rtc_set_secs(time_t *sec)
 #ifdef RT_USING_ALARM
 static void rtc_alarm_enable(rt_bool_t enable)
 {
-    mmio_write_32(CVI_RTC_BASE + CVI_RTC_ALARM_ENABLE, enable);
+    mmio_write_32(rtc_device.base + CVI_RTC_ALARM_ENABLE, enable);
 }
 
 static void rt_hw_rtc_isr(int irqno, void *param)
@@ -314,7 +317,6 @@ static void rt_hw_rtc_isr(int irqno, void *param)
 
     rt_interrupt_leave();
 }
-#endif
 
 static rt_err_t _rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
 {
@@ -324,7 +326,7 @@ static rt_err_t _rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
     unsigned long int sec;
     cvi_rtc_time_t t = {0};
 
-    sec = mmio_read_32(CVI_RTC_BASE + CVI_RTC_ALARM_TIME);
+    sec = mmio_read_32(rtc_device.base + CVI_RTC_ALARM_TIME);
     rtc_time64_to_tm(sec, &t);
 
     alarm->tm_sec     = t.tm_sec;
@@ -355,7 +357,7 @@ static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
         t.tm_year    = alarm->tm_year;
 
         set_sec = rtc_tm_to_time64(&t);
-        mmio_write_32(CVI_RTC_BASE + CVI_RTC_ALARM_TIME, set_sec);
+        mmio_write_32(rtc_device.base + CVI_RTC_ALARM_TIME, set_sec);
 
         LOG_D("GET_ALARM %d:%d:%d", alarm->tm_hour, alarm->tm_min, alarm->tm_sec);
     }
@@ -364,6 +366,7 @@ static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
 
     return RT_EOK;
 }
+#endif
 
 static const struct rt_rtc_ops _rtc_ops =
 {
@@ -386,6 +389,10 @@ static int rt_hw_rtc_init(void)
     rt_err_t result;
 
     rtc_device.rtc_dev.ops = &_rtc_ops;
+
+    rtc_device.base = CVI_RTC_BASE;
+    rtc_device.base = (rt_ubase_t)DRV_IOREMAP((void *)rtc_device.base, 0x1000);
+
     result = rt_hw_rtc_register(&rtc_device.rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {

@@ -19,6 +19,13 @@ extern "C" {
 #endif
 
 /* DMA1 channel1 */
+#if defined(BSP_ADC1_USING_DMA) && !defined(ADC1_DMA_INSTANCE)
+#define ADC1_DMA_IRQHandler             DMA1_Channel1_IRQHandler
+#define ADC1_DMA_RCC                    RCC_AHBENR_DMA1EN
+#define ADC1_DMA_INSTANCE               DMA1_Channel1
+#define ADC1_DMA_IRQ                    DMA1_Channel1_IRQn
+#endif
+
 /* DMA1 channel2 */
 #if defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
 #define SPI1_DMA_RX_IRQHandler          DMA1_Channel2_IRQHandler
@@ -56,6 +63,11 @@ extern "C" {
 #define UART1_TX_DMA_RCC                RCC_AHBENR_DMA1EN
 #define UART1_TX_DMA_INSTANCE           DMA1_Channel4
 #define UART1_TX_DMA_IRQ                DMA1_Channel4_IRQn
+#elif defined(BSP_I2C2_TX_USING_DMA) && !defined(I2C2_TX_DMA_INSTANCE)
+#define I2C2_DMA_TX_IRQHandler          DMA1_Channel4_IRQHandler
+#define I2C2_TX_DMA_RCC                 RCC_AHBENR_DMA1EN
+#define I2C2_TX_DMA_INSTANCE            DMA1_Channel4
+#define I2C2_TX_DMA_IRQ                 DMA1_Channel4_IRQn
 #endif
 
 /* DMA1 channel5 */
@@ -64,12 +76,16 @@ extern "C" {
 #define SPI2_TX_DMA_RCC                 RCC_AHBENR_DMA1EN
 #define SPI2_TX_DMA_INSTANCE            DMA1_Channel5
 #define SPI2_TX_DMA_IRQ                 DMA1_Channel5_IRQn
-
 #elif defined(BSP_UART1_RX_USING_DMA) && !defined(UART1_RX_DMA_INSTANCE)
 #define UART1_DMA_RX_IRQHandler         DMA1_Channel5_IRQHandler
 #define UART1_RX_DMA_RCC                RCC_AHBENR_DMA1EN
 #define UART1_RX_DMA_INSTANCE           DMA1_Channel5
 #define UART1_RX_DMA_IRQ                DMA1_Channel5_IRQn
+#elif defined(BSP_I2C2_RX_USING_DMA) && !defined(I2C2_RX_DMA_INSTANCE)
+#define I2C2_DMA_RX_IRQHandler          DMA1_Channel5_IRQHandler
+#define I2C2_RX_DMA_RCC                 RCC_AHBENR_DMA1EN
+#define I2C2_RX_DMA_INSTANCE            DMA1_Channel5
+#define I2C2_RX_DMA_IRQ                 DMA1_Channel5_IRQn
 #endif
 
 /* DMA1 channel6 */
@@ -78,6 +94,11 @@ extern "C" {
 #define UART2_RX_DMA_RCC                RCC_AHBENR_DMA1EN
 #define UART2_RX_DMA_INSTANCE           DMA1_Channel6
 #define UART2_RX_DMA_IRQ                DMA1_Channel6_IRQn
+#elif defined(BSP_I2C1_TX_USING_DMA) && !defined(I2C1_TX_DMA_INSTANCE)
+#define I2C1_DMA_TX_IRQHandler          DMA1_Channel6_IRQHandler
+#define I2C1_TX_DMA_RCC                 RCC_AHBENR_DMA1EN
+#define I2C1_TX_DMA_INSTANCE            DMA1_Channel6
+#define I2C1_TX_DMA_IRQ                 DMA1_Channel6_IRQn
 #endif
 
 /* DMA1 channel7 */
@@ -86,6 +107,11 @@ extern "C" {
 #define UART2_TX_DMA_RCC                RCC_AHBENR_DMA1EN
 #define UART2_TX_DMA_INSTANCE           DMA1_Channel7
 #define UART2_TX_DMA_IRQ                DMA1_Channel7_IRQn
+#elif defined(BSP_I2C1_RX_USING_DMA) && !defined(I2C1_RX_DMA_INSTANCE)
+#define I2C1_DMA_RX_IRQHandler          DMA1_Channel7_IRQHandler
+#define I2C1_RX_DMA_RCC                 RCC_AHBENR_DMA1EN
+#define I2C1_RX_DMA_INSTANCE            DMA1_Channel7
+#define I2C1_RX_DMA_IRQ                 DMA1_Channel7_IRQn
 #endif
 
 /* DMA2 channel1 */
@@ -111,9 +137,27 @@ extern "C" {
 #define UART4_RX_DMA_INSTANCE           DMA2_Channel3
 #define UART4_RX_DMA_IRQ                DMA2_Channel3_IRQn
 #endif
+
 /* DMA2 channel4 */
+#if defined(BSP_SDIO_TX_USING_DMA) && !defined(SDIO_TX_DMA_INSTANCE)
+#define SDIO_DMA_TX_IRQHandler          DMA2_Channel4_5_IRQHandler
+#define SDIO_TX_DMA_RCC                 RCC_AHBENR_DMA2EN
+#define SDIO_TX_DMA_INSTANCE            DMA2_Channel4
+#define SDIO_TX_DMA_IRQ                 DMA2_Channel4_5_IRQn
+#elif defined(BSP_SDIO_RX_USING_DMA) && !defined(SDIO_RX_DMA_INSTANCE)
+#define SDIO_DMA_RX_IRQHandler          DMA2_Channel4_5_IRQHandler
+#define SDIO_RX_DMA_RCC                 RCC_AHBENR_DMA2EN
+#define SDIO_RX_DMA_INSTANCE            DMA2_Channel4
+#define SDIO_RX_DMA_IRQ                 DMA2_Channel4_5_IRQn
+#endif
+
 /* DMA2 channel5 */
-#if defined(BSP_UART4_TX_USING_DMA) && !defined(UART4_TX_DMA_INSTANCE)
+#if defined(BSP_ADC3_USING_DMA) && !defined(ADC3_DMA_INSTANCE)
+#define ADC3_DMA_IRQHandler             DMA2_Channel4_5_IRQHandler
+#define ADC3_DMA_RCC                    RCC_AHBENR_DMA2EN
+#define ADC3_DMA_INSTANCE               DMA2_Channel5
+#define ADC3_DMA_IRQ                    DMA2_Channel4_5_IRQn
+#elif defined(BSP_UART4_TX_USING_DMA) && !defined(UART4_TX_DMA_INSTANCE)
 #define UART4_DMA_TX_IRQHandler         DMA2_Channel4_5_IRQHandler
 #define UART4_TX_DMA_RCC                RCC_AHBENR_DMA2EN
 #define UART4_TX_DMA_INSTANCE           DMA2_Channel5

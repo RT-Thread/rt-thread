@@ -531,18 +531,18 @@ const struct usbh_class_driver video_streaming_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info video_ctrl_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_VIDEO,
-    .subclass = VIDEO_SC_VIDEOCONTROL,
-    .protocol = VIDEO_PC_PROTOCOL_UNDEFINED,
+    .bInterfaceClass = USB_DEVICE_CLASS_VIDEO,
+    .bInterfaceSubClass = VIDEO_SC_VIDEOCONTROL,
+    .bInterfaceProtocol = VIDEO_PC_PROTOCOL_UNDEFINED,
     .id_table = NULL,
     .class_driver = &video_ctrl_class_driver
 };
 
 CLASS_INFO_DEFINE const struct usbh_class_info video_streaming_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_VIDEO,
-    .subclass = VIDEO_SC_VIDEOSTREAMING,
-    .protocol = VIDEO_PC_PROTOCOL_UNDEFINED,
+    .bInterfaceClass = USB_DEVICE_CLASS_VIDEO,
+    .bInterfaceSubClass = VIDEO_SC_VIDEOSTREAMING,
+    .bInterfaceProtocol = VIDEO_PC_PROTOCOL_UNDEFINED,
     .id_table = NULL,
     .class_driver = &video_streaming_class_driver
 };

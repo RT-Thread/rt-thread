@@ -11,6 +11,7 @@
 #include <rtdevice.h>
 #include <board.h>
 #include "drv_pinmux.h"
+#include "drv_ioremap.h"
 
 #define DBG_TAG              "drv.i2c"
 #define DBG_LVL               DBG_INFO
@@ -427,7 +428,7 @@ static void dw_iic_init(dw_iic_regs_t *iic_base)
     dw_iic_set_standard_scl_lcnt(iic_base, (((IC_CLK * 4700) / 1000U) - 1U));
 }
 
-#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO)
 
 #ifdef BSP_USING_I2C0
 static const char *pinname_whitelist_i2c0_scl[] = {
@@ -486,7 +487,7 @@ static const char *pinname_whitelist_i2c4_sda[] = {
 };
 #endif
 
-#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#elif defined(BOARD_TYPE_MILKV_DUO256M)
 
 #ifdef BSP_USING_I2C0
 // I2C0 is not ALLOWED for Duo256
@@ -583,6 +584,7 @@ int rt_hw_i2c_init(void)
 
     for (rt_size_t i = 0; i < sizeof(_i2c_obj) / sizeof(struct dw_iic_bus); i++)
     {
+        _i2c_obj->iic_base = (rt_ubase_t)DRV_IOREMAP((void *)_i2c_obj->iic_basee, 0x10000);
         dw_iic_init(_i2c_obj->iic_base);
 
         _i2c_obj[i].parent.ops = &i2c_ops;

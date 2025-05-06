@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-06-12     CDT          first version
+ * 2024-06-14     CDT          Move common function SysTick_Configuration to _pm_run
  */
 
 #include <board.h>
@@ -107,6 +108,7 @@ static void _sleep_enter_deep(void)
 
     (void)PWC_STOP_Config(&sleep_deep_cfg.cfg);
 
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
     if (PWC_PWRC2_DVS == (READ_REG8(CM_PWC->PWRC2) & PWC_PWRC2_DVS))
     {
         CLR_REG8_BIT(CM_PWC->PWRC1, PWC_PWRC1_STPDAS);
@@ -115,6 +117,7 @@ static void _sleep_enter_deep(void)
     {
         SET_REG8_BIT(CM_PWC->PWRC1, PWC_PWRC1_STPDAS);
     }
+#endif
     PWC_STOP_Enter(sleep_deep_cfg.pwc_stop_type);
 }
 
@@ -158,19 +161,23 @@ static void _pm_sleep(struct rt_pm *pm, uint8_t mode)
 static void _run_switch_high_to_low(void)
 {
     struct pm_run_mode_config st_run_mode_cfg = PM_RUN_MODE_CFG;
-    st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_LOW_SPEED);
-    SysTick_Configuration();
 
+    st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_LOW_SPEED);
+
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
     PWC_HighSpeedToLowSpeed();
+#endif
 }
 
 static void _run_switch_low_to_high(void)
 {
-    PWC_LowSpeedToHighSpeed();
     struct pm_run_mode_config st_run_mode_cfg = PM_RUN_MODE_CFG;
 
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
+    PWC_LowSpeedToHighSpeed();
+#endif
+
     st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_HIGH_SPEED);
-    SysTick_Configuration();
 }
 
 static void _pm_run(struct rt_pm *pm, uint8_t mode)
@@ -183,6 +190,7 @@ static void _pm_run(struct rt_pm *pm, uint8_t mode)
     if (_run_switch_func[last_mode][mode] != RT_NULL)
     {
         _run_switch_func[last_mode][mode]();
+        SysTick_Configuration();
     }
 
     _uart_console_reconfig();
@@ -234,6 +242,14 @@ static void _pm_wakeup_timer_stop(struct rt_pm *pm)
     hc32_wktm_stop();
 }
 
+static rt_tick_t _timer_get_tick(struct rt_pm *pm)
+{
+    RT_ASSERT(pm != RT_NULL);
+
+    /* Get timeout tick */
+    return hc32_wktm_get_timeout_tick();
+}
+
 /**
  * This function initialize the power manager
  * @note timer feature: only work as wake up timer
@@ -246,7 +262,7 @@ int rt_hw_pm_init(void)
         _pm_run,
         _pm_wakeup_timer_start,
         _pm_wakeup_timer_stop,
-        RT_NULL
+        _timer_get_tick,
     };
 
     rt_uint8_t timer_mask = PM_TICKLESS_TIMER_ENABLE_MASK;

@@ -10,6 +10,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_wdt.h"
+#include "drv_ioremap.h"
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -21,13 +22,15 @@
 rt_inline void cvi_wdt_top_setting()
 {
     uint32_t val;
+    rt_ubase_t base = (rt_ubase_t)DRV_IOREMAP((void *)(CV_TOP + CV_TOP_WDT_OFFSET), 0x1000);
 
-    mmio_write_32(CV_TOP + CV_TOP_WDT_OFFSET, CV_TOP_WDT_VAL);
+    mmio_write_32(base, CV_TOP_WDT_VAL);
 
-    val = mmio_read_32(CV_RST_REG);
-    mmio_write_32(CV_RST_REG, val & ~CV_RST_WDT);
+    base = (rt_ubase_t)DRV_IOREMAP((void *)CV_RST_REG, 0x1000);
+    val = mmio_read_32(base);
+    mmio_write_32(base, val & ~CV_RST_WDT);
     rt_hw_us_delay(10);
-    mmio_write_32(CV_RST_REG, val | CV_RST_WDT);
+    mmio_write_32(base, val | CV_RST_WDT);
 }
 
 rt_inline void cvi_wdt_start_en(unsigned long reg_base)
@@ -91,7 +94,7 @@ struct _cvi_wdt_dev
 {
     struct rt_watchdog_device device;
     const char *name;
-    rt_uint32_t base;
+    rt_ubase_t base;
     rt_uint32_t timeout;
 };
 
@@ -227,6 +230,8 @@ int rt_hw_wdt_init(void)
     for (i = 0; i < sizeof(_wdt_dev) / sizeof(_wdt_dev[0]); i ++)
     {
         _wdt_dev[i].device.ops = &_wdt_ops;
+        _wdt_dev[i].base = (rt_ubase_t)DRV_IOREMAP((void *)_wdt_dev[i].base, 0x1000);
+
         if (rt_hw_watchdog_register(&_wdt_dev[i].device, _wdt_dev[i].name, RT_DEVICE_FLAG_RDWR, RT_NULL) != RT_EOK)
         {
             LOG_E("%s register failed!", _wdt_dev[i].name);

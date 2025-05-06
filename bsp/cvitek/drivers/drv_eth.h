@@ -13,8 +13,9 @@
 #include "mmio.h"
 #include "dw_eth_mac.h"
 #include "cvi_eth_phy.h"
+#include "drv_ioremap.h"
 
-#define DW_MAC_BASE                 0x04070000UL
+#define DW_MAC_BASE                 DRV_IOREMAP((void *)0x04070000, 0x10000)
 #define DW_MAC_IRQ                  31
 
 #endif /* __DRV_ETH_H__ */

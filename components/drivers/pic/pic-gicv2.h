@@ -78,6 +78,8 @@ struct gicv2
     rt_size_t hyp_size;
     void *vcpu_base;
     rt_size_t vcpu_size;
+
+    rt_bool_t skip_init;
 };
 
 #endif /* __IRQ_GICV2_H__ */

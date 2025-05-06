@@ -112,12 +112,12 @@ int wcwidth(wchar_t ucs)
         (ucs >= 0xf900 && ucs <= 0xfaff) || /* CJK Compatibility Ideographs */
         (ucs >= 0xfe30 && ucs <= 0xfe6f) || /* CJK Compatibility Forms */
         (ucs >= 0xff00 && ucs <= 0xff5f) || /* Fullwidth Forms */
-        (ucs >= 0xffe0 && ucs <= 0xffe6) // ||
-    //#ifndef _WIN32
-    //      (ucs >= 0x20000 && ucs <= 0x2ffff)
-    //#else
-    //    0
-    //#endif
+        (ucs >= 0xffe0 && ucs <= 0xffe6) ||
+    #ifndef _WIN32
+         (ucs >= 0x20000 && ucs <= 0x2ffff)
+    #else
+       0
+    #endif
         ));
 }
 

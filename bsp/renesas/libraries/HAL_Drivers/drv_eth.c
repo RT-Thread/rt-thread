@@ -1,15 +1,16 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2018-11-19     SummerGift   first version
- * 2018-12-25     zylx         fix some bugs
- * 2019-06-10     SummerGift   optimize PHY state detection process
- * 2019-09-03     xiaofan      optimize link change detection process
- */
+* Copyright (c) 2006-2025, RT-Thread Development Team
+*
+* SPDX-License-Identifier: Apache-2.0
+*
+* Change Logs:
+* Date           Author       Notes
+* 2018-11-19     SummerGift   first version
+* 2018-12-25     zylx         fix some bugs
+* 2019-06-10     SummerGift   optimize PHY state detection process
+* 2019-09-03     xiaofan      optimize link change detection process
+* 2025-02-11     kurisaW      adaptation for RZ Ethernet driver
+*/
 
 #include "drv_config.h"
 #include "drv_eth.h"
@@ -17,35 +18,24 @@
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
 
-/*
-* Emac driver uses CubeMX tool to generate emac and phy's configuration,
-* the configuration files can be found in CubeMX_Config folder.
-*/
-
 /* debug option */
-//#define ETH_RX_DUMP
-//#define ETH_TX_DUMP
-#define MINIMUM_ETHERNET_FRAME_SIZE               (60U)
-#define ETH_MAX_PACKET_SIZE 1514
+// #define ETH_RX_DUMP
+// #define ETH_TX_DUMP
+#define MINIMUM_ETHERNET_FRAME_SIZE (60U)
+#define ETH_MAX_PACKET_SIZE (2048U)
+#define ETHER_GMAC_INTERRUPT_FACTOR_RECEPTION (0x000000C0)
 #define ETH_RX_BUF_SIZE ETH_MAX_PACKET_SIZE
 #define ETH_TX_BUF_SIZE ETH_MAX_PACKET_SIZE
-//#define DRV_DEBUG
-#define LOG_TAG             "drv.eth"
+// #define DRV_DEBUG
+#define LOG_TAG "drv.eth"
 #ifdef DRV_DEBUG
-    #define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-    #define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
-#define MAX_ADDR_LEN 6
-
-#undef PHY_FULL_DUPLEX
-#define PHY_LINK         (1 << 0)
-#define PHY_100M         (1 << 1)
-#define PHY_FULL_DUPLEX  (1 << 2)
-
-struct rt_ra6m3_eth
+struct rt_eth_dev
 {
     /* inherit from ethernet device */
     struct eth_device parent;
@@ -55,8 +45,24 @@ struct rt_ra6m3_eth
 };
 
 static rt_uint8_t *Rx_Buff, *Tx_Buff;
-//static  ETH_HandleTypeDef EthHandle;
-static struct rt_ra6m3_eth ra6m3_eth_device;
+// static  ETH_HandleTypeDef EthHandle;
+static struct rt_eth_dev ra_eth_device;
+
+static uint8_t g_link_change = 0; ///< Link change (bit0:port0, bit1:port1, bit2:port2)
+static uint8_t g_link_status = 0; ///< Link status (bit0:port0, bit1:port1, bit2:port2)
+static uint8_t previous_link_status = 0;
+
+#if defined(SOC_SERIES_R9A07G0)
+
+#define status_ecsr             status_link
+#define ETHER_EVENT_INTERRUPT   ETHER_EVENT_SBD_INTERRUPT
+
+#define R_ETHER_Open        R_GMAC_Open
+#define R_ETHER_Write       R_GMAC_Write
+#define R_ETHER_Read        R_GMAC_Read
+#define R_ETHER_LinkProcess R_GMAC_LinkProcess
+
+#endif
 
 #if defined(ETH_RX_DUMP) || defined(ETH_TX_DUMP)
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
@@ -86,43 +92,44 @@ static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
 
 extern void phy_reset(void);
 /* EMAC initialization function */
-static rt_err_t rt_ra6m3_eth_init(void)
+static rt_err_t rt_ra_eth_init(void)
 {
     fsp_err_t res;
 
     res = R_ETHER_Open(&g_ether0_ctrl, &g_ether0_cfg);
     if (res != FSP_SUCCESS)
         LOG_W("R_ETHER_Open failed!, res = %d", res);
+
     return RT_EOK;
 }
 
-static rt_err_t rt_ra6m3_eth_open(rt_device_t dev, rt_uint16_t oflag)
+static rt_err_t rt_ra_eth_open(rt_device_t dev, rt_uint16_t oflag)
 {
     LOG_D("emac open");
     return RT_EOK;
 }
 
-static rt_err_t rt_ra6m3_eth_close(rt_device_t dev)
+static rt_err_t rt_ra_eth_close(rt_device_t dev)
 {
     LOG_D("emac close");
     return RT_EOK;
 }
 
-static rt_ssize_t rt_ra6m3_eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_ra_eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     LOG_D("emac read");
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_ssize_t rt_ra6m3_eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_ra_eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     LOG_D("emac write");
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_err_t rt_ra6m3_eth_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t rt_ra_eth_control(rt_device_t dev, int cmd, void *args)
 {
     switch (cmd)
     {
@@ -130,7 +137,11 @@ static rt_err_t rt_ra6m3_eth_control(rt_device_t dev, int cmd, void *args)
         /* get mac address */
         if (args)
         {
+#if defined(SOC_SERIES_R9A07G0)
+            SMEMCPY(args, g_ether0_ctrl.p_gmac_cfg->p_mac_address, 6);
+#else
             SMEMCPY(args, g_ether0_ctrl.p_ether_cfg->p_mac_address, 6);
+#endif
         }
         else
         {
@@ -138,7 +149,7 @@ static rt_err_t rt_ra6m3_eth_control(rt_device_t dev, int cmd, void *args)
         }
         break;
 
-    default :
+    default:
         break;
     }
 
@@ -147,7 +158,7 @@ static rt_err_t rt_ra6m3_eth_control(rt_device_t dev, int cmd, void *args)
 
 /* ethernet device interface */
 /* transmit data*/
-rt_err_t rt_ra6m3_eth_tx(rt_device_t dev, struct pbuf *p)
+rt_err_t rt_ra_eth_tx(rt_device_t dev, struct pbuf *p)
 {
     fsp_err_t res;
     struct pbuf *q;
@@ -185,7 +196,6 @@ rt_err_t rt_ra6m3_eth_tx(rt_device_t dev, struct pbuf *p)
         framelength = framelength + byteslefttocopy;
     }
 
-
 #ifdef ETH_TX_DUMP
     dump_hex(buffer, p->tot_len);
 #endif
@@ -197,7 +207,6 @@ rt_err_t rt_ra6m3_eth_tx(rt_device_t dev, struct pbuf *p)
         {
             dump_hex(q->payload, q->len);
         }
-
     }
 #endif
     res = R_ETHER_Write(&g_ether0_ctrl, buffer, p->tot_len);//>MINIMUM_ETHERNET_FRAME_SIZE?p->tot_len:MINIMUM_ETHERNET_FRAME_SIZE);
@@ -207,7 +216,7 @@ rt_err_t rt_ra6m3_eth_tx(rt_device_t dev, struct pbuf *p)
 }
 
 /* receive data*/
-struct pbuf *rt_ra6m3_eth_rx(rt_device_t dev)
+struct pbuf *rt_ra_eth_rx(rt_device_t dev)
 {
     struct pbuf *p = NULL;
     struct pbuf *q = NULL;
@@ -270,98 +279,116 @@ struct pbuf *rt_ra6m3_eth_rx(rt_device_t dev)
         {
             dump_hex(q->payload, q->len);
         }
-
     }
 #endif
-
 
     return p;
 }
 
 static void phy_linkchange()
 {
-    static uint32_t phy_speed = 0;
-    uint32_t phy_speed_new = 0;
     fsp_err_t res;
+    uint8_t port = 0;
+    uint8_t port_bit = 0;
 
-    uint32_t p_local_pause;
-    uint32_t p_partner_pause;
+#if defined(SOC_SERIES_R9A07G0)
+    gmac_link_status_t port_status;
+#endif
 
     res = R_ETHER_LinkProcess(&g_ether0_ctrl);
     if (res != FSP_SUCCESS)
         LOG_D("R_ETHER_LinkProcess failed!, res = %d", res);
 
-    res = R_ETHER_PHY_LinkStatusGet(&g_ether_phy0_ctrl);
-    if (res != FSP_SUCCESS)
-        LOG_D("R_ETHER_PHY_LinkStatusGet failed!, res = %d", res);
-
-    if(res == FSP_ERR_ETHER_PHY_ERROR_LINK)
+    if (0 == g_ether0.p_cfg->p_callback)
     {
-        LOG_D("link down");
-        eth_device_linkchange(&ra6m3_eth_device.parent, RT_FALSE);
-        return;
-    }
-
-    res = R_ETHER_PHY_LinkPartnerAbilityGet(&g_ether_phy0_ctrl,
-                                        &phy_speed_new,
-                                        &p_local_pause,
-                                        &p_partner_pause);
-    if (res != FSP_SUCCESS)
-    LOG_D("R_ETHER_PHY_LinkPartnerAbilityGet failed!, res = %d", res);
-
-    if(res == FSP_ERR_ETHER_PHY_ERROR_LINK)
-    {
-        LOG_I("link down");
-        eth_device_linkchange(&ra6m3_eth_device.parent, RT_FALSE);
-        return;
-    }
-
-    if (phy_speed != phy_speed_new)
-    {
-        phy_speed = phy_speed_new;
-        if (phy_speed != ETHER_PHY_LINK_SPEED_NO_LINK)
+        for (port = 0; port < PING_PORT_COUNT; port++)
         {
-            LOG_D("link up");
-            if (phy_speed == ETHER_PHY_LINK_SPEED_100H || phy_speed == ETHER_PHY_LINK_SPEED_100F)
+#if defined(SOC_SERIES_R9A07G0)
+            res = R_GMAC_GetLinkStatus(&g_ether0_ctrl, port, &port_status);
+#else
+            res = R_ETHER_PHY_LinkStatusGet(&g_ether_phy0_ctrl);
+#endif
+            if (FSP_SUCCESS != res)
             {
-                LOG_D("100Mbps");
+                /* An error has occurred */
+                LOG_E("PHY_LinkStatus get failed!, res = %d", res);
+                break;
+            }
+
+            /* Set link up */
+            g_link_status |= (uint8_t)(1U << port);
+        }
+        if (FSP_SUCCESS == res)
+        {
+            /* Set changed link status */
+            g_link_change = previous_link_status ^ g_link_status;
+        }
+    }
+
+    for (port = 0; port < PING_PORT_COUNT; port++)
+    {
+        port_bit = (uint8_t)(1U << port);
+
+        if (g_link_change & port_bit)
+        {
+            /* Link status changed */
+            g_link_change &= (uint8_t)(~port_bit); // change bit clear
+
+            if (g_link_status & port_bit)
+            {
+                /* Changed to Link-up */
+                eth_device_linkchange(&ra_eth_device.parent, RT_TRUE);
+                LOG_I("link up");
             }
             else
             {
-                LOG_D("10Mbps");
+                /* Changed to Link-down */
+                eth_device_linkchange(&ra_eth_device.parent, RT_FALSE);
+                LOG_I("link down");
             }
-
-            if (phy_speed == ETHER_PHY_LINK_SPEED_100F || phy_speed == ETHER_PHY_LINK_SPEED_10F)
-            {
-                LOG_D("full-duplex");
-            }
-            else
-            {
-                LOG_D("half-duplex");
-            }
-
-            /* send link up. */
-            LOG_I("link up");
-            eth_device_linkchange(&ra6m3_eth_device.parent, RT_TRUE);
-        }
-        else
-        {
-            LOG_D("link down");
-            eth_device_linkchange(&ra6m3_eth_device.parent, RT_FALSE);
         }
     }
+
+    previous_link_status = g_link_status;
 }
 
-void user_ether0_callback(ether_callback_args_t * p_args)
+void user_ether0_callback(ether_callback_args_t *p_args)
 {
-    rt_err_t result;
-        result = eth_device_ready(&(ra6m3_eth_device.parent));
+    rt_interrupt_enter();
+
+    switch (p_args->event)
+    {
+    case ETHER_EVENT_LINK_ON:                          ///< Link up detection event/
+        g_link_status |= (uint8_t)p_args->status_ecsr; ///< status up
+        g_link_change |= (uint8_t)p_args->status_ecsr; ///< change bit set
+        break;
+
+    case ETHER_EVENT_LINK_OFF:                            ///< Link down detection event
+        g_link_status &= (uint8_t)(~p_args->status_ecsr); ///< status down
+        g_link_change |= (uint8_t)p_args->status_ecsr;    ///< change bit set
+        break;
+
+    case ETHER_EVENT_WAKEON_LAN:    ///< Magic packet detection event
+    /* If EDMAC FR (Frame Receive Event) or FDE (Receive Descriptor Empty Event)
+        * interrupt occurs, send rx mailbox. */
+    case ETHER_EVENT_INTERRUPT: ///< BSD Interrupt event
+    {
+        rt_err_t result;
+        result = eth_device_ready(&(ra_eth_device.parent));
         if (result != RT_EOK)
             rt_kprintf("RX err =%d\n", result);
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    rt_interrupt_leave();
 }
 
 /* Register the EMAC device */
-static int rt_hw_ra6m3_eth_init(void)
+static int rt_hw_ra_eth_init(void)
 {
     rt_err_t state = RT_EOK;
 
@@ -382,21 +409,21 @@ static int rt_hw_ra6m3_eth_init(void)
         goto __exit;
     }
 
-    ra6m3_eth_device.parent.parent.init       = NULL;
-    ra6m3_eth_device.parent.parent.open       = rt_ra6m3_eth_open;
-    ra6m3_eth_device.parent.parent.close      = rt_ra6m3_eth_close;
-    ra6m3_eth_device.parent.parent.read       = rt_ra6m3_eth_read;
-    ra6m3_eth_device.parent.parent.write      = rt_ra6m3_eth_write;
-    ra6m3_eth_device.parent.parent.control    = rt_ra6m3_eth_control;
-    ra6m3_eth_device.parent.parent.user_data  = RT_NULL;
+    ra_eth_device.parent.parent.init = NULL;
+    ra_eth_device.parent.parent.open = rt_ra_eth_open;
+    ra_eth_device.parent.parent.close = rt_ra_eth_close;
+    ra_eth_device.parent.parent.read = rt_ra_eth_read;
+    ra_eth_device.parent.parent.write = rt_ra_eth_write;
+    ra_eth_device.parent.parent.control = rt_ra_eth_control;
+    ra_eth_device.parent.parent.user_data = RT_NULL;
 
-    ra6m3_eth_device.parent.eth_rx     = rt_ra6m3_eth_rx;
-    ra6m3_eth_device.parent.eth_tx     = rt_ra6m3_eth_tx;
+    ra_eth_device.parent.eth_rx = rt_ra_eth_rx;
+    ra_eth_device.parent.eth_tx = rt_ra_eth_tx;
 
-    rt_ra6m3_eth_init();
+    rt_ra_eth_init();
 
     /* register eth device */
-    state = eth_device_init(&(ra6m3_eth_device.parent), "e0");
+    state = eth_device_init(&(ra_eth_device.parent), "e0");
     if (RT_EOK == state)
     {
         LOG_D("emac device init success");
@@ -408,9 +435,9 @@ static int rt_hw_ra6m3_eth_init(void)
         goto __exit;
     }
 
-    ra6m3_eth_device.poll_link_timer = rt_timer_create("phylnk", (void (*)(void*))phy_linkchange,
-                                        NULL, RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC);
-    if (!ra6m3_eth_device.poll_link_timer || rt_timer_start(ra6m3_eth_device.poll_link_timer) != RT_EOK)
+    ra_eth_device.poll_link_timer = rt_timer_create("phylnk", (void (*)(void *))phy_linkchange,
+                                                    NULL, RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC);
+    if (!ra_eth_device.poll_link_timer || rt_timer_start(ra_eth_device.poll_link_timer) != RT_EOK)
     {
         LOG_E("Start link change detection timer failed");
     }
@@ -426,9 +453,8 @@ __exit:
         {
             rt_free(Tx_Buff);
         }
-
     }
 
     return state;
 }
-INIT_DEVICE_EXPORT(rt_hw_ra6m3_eth_init);
+INIT_DEVICE_EXPORT(rt_hw_ra_eth_init);

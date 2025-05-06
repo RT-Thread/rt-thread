@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 HPMicro
+ * Copyright (c) 2022-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -44,7 +44,9 @@
  *       Keep this option disabled by default, please enable it if the default setting cannot meet
  *       real requirement of application.
  */
+#ifndef HPM_SDXC_ALLOC_CACHELINE_ALIGNED_BUF
 #define HPM_SDXC_ALLOC_CACHELINE_ALIGNED_BUF 0
+#endif
 
 struct hpm_mmcsd
 {
@@ -395,7 +397,7 @@ static void hpm_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
     struct rt_mmcsd_cmd *cmd = req->cmd;
     struct rt_mmcsd_data *data = cmd->data;
 
-    /*　configure command　*/
+    /* configure command */
     sdxc_cmd.cmd_index = cmd->cmd_code;
     sdxc_cmd.cmd_argument = cmd->arg;
     sdxc_cmd.cmd_type = (cmd->cmd_code == STOP_TRANSMISSION) ? sdxc_cmd_type_abort_cmd : sdxc_cmd_type_normal_cmd;
@@ -451,17 +453,17 @@ static void hpm_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
         adma_config.adma_table = (uint32_t*) core_local_mem_to_sys_address(BOARD_RUNNING_CORE,
                 (uint32_t) mmcsd->sdxc_adma2_table);
         adma_config.adma_table_words = SDXC_ADMA_TABLE_WORDS;
-        size_t xfer_buf_addr = (uint32_t)data->buf;
+        rt_size_t xfer_buf_addr = (uint32_t)data->buf;
         uint32_t xfer_len = data->blks * data->blksize;
         if ((req->data->flags & DATA_DIR_WRITE) != 0U)
         {
             uint32_t write_size = xfer_len;
-            size_t aligned_start;
+            rt_size_t aligned_start;
             uint32_t aligned_size;
 #if defined(HPM_SDXC_ALLOC_CACHELINE_ALIGNED_BUF) && (HPM_SDXC_ALLOC_CACHELINE_ALIGNED_BUF == 1)
             if (!SDXC_IS_CACHELINE_ALIGNED(xfer_buf_addr) || !SDXC_IS_CACHELINE_ALIGNED(write_size))
 #else
-            if ((xfer_buf_addr % 4 != 0) && (write_size % 4 != 0))
+            if ((xfer_buf_addr % 4 != 0) || (write_size % 4 != 0))
 #endif
             {
                 write_size = SDXC_CACHELINE_ALIGN_UP(xfer_len);
@@ -481,12 +483,10 @@ static void hpm_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
                 sdxc_data.tx_data = (uint32_t const *) core_local_mem_to_sys_address(BOARD_RUNNING_CORE, xfer_buf_addr);
 
                 aligned_start = SDXC_CACHELINE_ALIGN_DOWN(sdxc_data.tx_data);
-                size_t aligned_end = SDXC_CACHELINE_ALIGN_UP((uint32_t)sdxc_data.tx_data + write_size);
+                rt_size_t aligned_end = SDXC_CACHELINE_ALIGN_UP((uint32_t)sdxc_data.tx_data + write_size);
                 aligned_size = aligned_end - aligned_start;
             }
-            rt_base_t level = rt_hw_interrupt_disable();
             l1c_dc_flush(aligned_start, aligned_size);
-            rt_hw_interrupt_enable(level);
             sdxc_data.rx_data = NULL;
         }
         else
@@ -503,16 +503,23 @@ static void hpm_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
                 RT_ASSERT(raw_alloc_buf != RT_NULL);
                 aligned_buf = (uint32_t *) SDXC_CACHELINE_ALIGN_UP(raw_alloc_buf);
                 sdxc_data.rx_data =  (uint32_t*) core_local_mem_to_sys_address(BOARD_RUNNING_CORE, (uint32_t) aligned_buf);
+                /* Invalidate cache-line for the new allocated buffer */
+                l1c_dc_invalidate((uint32_t) sdxc_data.rx_data, aligned_read_size);
             }
             else
             {
                 sdxc_data.rx_data = (uint32_t*) core_local_mem_to_sys_address(BOARD_RUNNING_CORE, xfer_buf_addr);
-                size_t aligned_start = SDXC_CACHELINE_ALIGN_DOWN(sdxc_data.rx_data);
-                size_t aligned_end = SDXC_CACHELINE_ALIGN_UP((uint32_t)sdxc_data.rx_data + read_size);
-                uint32_t aligned_size = aligned_end - aligned_start;
-                rt_base_t level = rt_hw_interrupt_disable();
-                l1c_dc_flush(aligned_start, aligned_size);
-                rt_hw_interrupt_enable(level);
+                rt_size_t buf_start = (uint32_t) sdxc_data.rx_data;
+                rt_size_t aligned_start = HPM_L1C_CACHELINE_ALIGN_DOWN(buf_start);
+                rt_size_t end_addr = buf_start + xfer_len;
+                /* FLUSH un-cacheline aligned memory region */
+                if ((buf_start % HPM_L1C_CACHELINE_SIZE) != 0) {
+                    l1c_dc_writeback(aligned_start, HPM_L1C_CACHELINE_SIZE);
+                }
+                if ((end_addr % HPM_L1C_CACHELINE_SIZE) != 0) {
+                    uint32_t aligned_tail = HPM_L1C_CACHELINE_ALIGN_DOWN(end_addr);
+                    l1c_dc_writeback(aligned_tail, HPM_L1C_CACHELINE_SIZE);
+                }
             }
             sdxc_data.tx_data = RT_NULL;
         }
@@ -571,8 +578,8 @@ static void hpm_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
         }
         else
         {
-            size_t aligned_start = SDXC_CACHELINE_ALIGN_DOWN(sdxc_data.rx_data);
-            size_t aligned_end = SDXC_CACHELINE_ALIGN_UP((uint32_t)sdxc_data.rx_data + read_size);
+            rt_size_t aligned_start = SDXC_CACHELINE_ALIGN_DOWN(sdxc_data.rx_data);
+            rt_size_t aligned_end = SDXC_CACHELINE_ALIGN_UP((uint32_t)sdxc_data.rx_data + read_size);
             uint32_t aligned_size = aligned_end - aligned_start;
             rt_base_t level = rt_hw_interrupt_disable();
             l1c_dc_invalidate(aligned_start, aligned_size);

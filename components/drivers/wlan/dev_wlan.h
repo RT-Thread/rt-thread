@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-03     tyx          the first version
+ * 2024-12-25     Evlers       add get_info api for more new sta information
+ * 2025-01-04     Evlers       add ap_get_info api for more ap information
  */
 
 #ifndef __DEV_WLAN_DEVICE_H__
@@ -14,6 +16,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define RT_WLAN_DEV_VERSION   0x10001   /* 1.0.1 */
 
 typedef enum
 {
@@ -34,6 +38,8 @@ typedef enum
     RT_WLAN_CMD_AP_DEAUTH,
     RT_WLAN_CMD_SCAN_STOP,
     RT_WLAN_CMD_GET_RSSI,          /* get sensitivity (dBm) */
+    RT_WLAN_CMD_GET_INFO,          /* get information (rssi, channel, datarate.) */
+    RT_WLAN_CMD_AP_GET_INFO,       /* get ap information (bssid, security, channel.) */
     RT_WLAN_CMD_SET_POWERSAVE,
     RT_WLAN_CMD_GET_POWERSAVE,
     RT_WLAN_CMD_CFG_PROMISC,       /* start/stop minitor */
@@ -497,6 +503,8 @@ struct rt_wlan_dev_ops
     rt_err_t (*wlan_ap_deauth)(struct rt_wlan_device *wlan, rt_uint8_t mac[]);
     rt_err_t (*wlan_scan_stop)(struct rt_wlan_device *wlan);
     int (*wlan_get_rssi)(struct rt_wlan_device *wlan);
+    int (*wlan_get_info)(struct rt_wlan_device *wlan, struct rt_wlan_info *info);
+    int (*wlan_ap_get_info)(struct rt_wlan_device *wlan, struct rt_wlan_info *info);
     rt_err_t (*wlan_set_powersave)(struct rt_wlan_device *wlan, int level);
     int (*wlan_get_powersave)(struct rt_wlan_device *wlan);
     rt_err_t (*wlan_cfg_promisc)(struct rt_wlan_device *wlan, rt_bool_t start);
@@ -527,6 +535,7 @@ rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info 
 rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len);
 rt_err_t rt_wlan_dev_disconnect(struct rt_wlan_device *device);
 int rt_wlan_dev_get_rssi(struct rt_wlan_device *device);
+rt_err_t rt_wlan_dev_get_info(struct rt_wlan_device *device, struct rt_wlan_info *info);
 
 /*
  * wlan device ap interface
@@ -534,6 +543,7 @@ int rt_wlan_dev_get_rssi(struct rt_wlan_device *device);
 rt_err_t rt_wlan_dev_ap_start(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len);
 rt_err_t rt_wlan_dev_ap_stop(struct rt_wlan_device *device);
 rt_err_t rt_wlan_dev_ap_deauth(struct rt_wlan_device *device, rt_uint8_t mac[6]);
+rt_err_t rt_wlan_dev_ap_get_info(struct rt_wlan_device *device, struct rt_wlan_info *info);
 
 /*
  * wlan device scan interface

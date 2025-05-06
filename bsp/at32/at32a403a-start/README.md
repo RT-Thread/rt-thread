@@ -116,7 +116,17 @@ AT32A403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 
 #### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+首先需抓取 HAL-SDK，并生成对应工程，步骤如下：
+
+1. 在 bsp 下打开 env 工具。
+
+2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+
+3. 输入`pkgs --update`命令更新软件包。
+
+4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+
+打开工程文件，如 MDK5 工程 project.uvprojx 文件，，编译并下载程序到开发板。
 
 > 工程默认配置使用AT-LINK SWD下载程序，在通过AT-LINK SWD连接开发板的基础上，点击下载按钮即可下载程序到开发板
 

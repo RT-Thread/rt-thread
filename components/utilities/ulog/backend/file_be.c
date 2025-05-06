@@ -203,7 +203,7 @@ int ulog_file_backend_deinit(struct ulog_file_be *be)
         be->cur_log_file_fd = -1;
     }
 
-    if (!be->file_buf)
+    if (be->file_buf)
     {
         rt_free(be->file_buf);
         be->file_buf = RT_NULL;

@@ -11,9 +11,7 @@
 
 #include <rtdevice.h>
 #include "board_config.h"
-#if defined(RT_USING_CAN)
 #include "tca9539_port.h"
-#endif
 
 /**
  * The below functions will initialize HC32 board.
@@ -157,6 +155,10 @@ void CanPhyEnable(void)
     TCA9539_WritePin(CAN2_STB_PORT, CAN2_STB_PIN, TCA9539_PIN_RESET);
     TCA9539_ConfigPin(CAN2_STB_PORT, CAN2_STB_PIN, TCA9539_DIR_OUT);
 #endif
+#if defined(BSP_USING_CAN3)
+    TCA9539_WritePin(CAN3_STB_PORT, CAN3_STB_PIN, TCA9539_PIN_RESET);
+    TCA9539_ConfigPin(CAN3_STB_PORT, CAN3_STB_PIN, TCA9539_DIR_OUT);
+#endif
 }
 rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx)
 {
@@ -174,6 +176,12 @@ rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx)
     case (rt_uint32_t)CM_CAN2:
         GPIO_SetFunc(CAN2_TX_PORT, CAN2_TX_PIN, CAN2_TX_PIN_FUNC);
         GPIO_SetFunc(CAN2_RX_PORT, CAN2_RX_PIN, CAN2_RX_PIN_FUNC);
+        break;
+#endif
+#if defined(BSP_USING_CAN3)
+    case (rt_uint32_t)CM_CAN3:
+        GPIO_SetFunc(CAN3_TX_PORT, CAN3_TX_PIN, CAN3_TX_PIN_FUNC);
+        GPIO_SetFunc(CAN3_RX_PORT, CAN3_RX_PIN, CAN3_RX_PIN_FUNC);
         break;
 #endif
     default:
@@ -279,7 +287,7 @@ rt_err_t rt_hw_board_pwm_tmr4_init(CM_TMR4_TypeDef *TMR4x)
     switch ((rt_uint32_t)TMR4x)
     {
 #if defined(BSP_USING_PWM_TMR4_1)
-    case (rt_uint32_t)CM_TMR4_1:
+    case (rt_uint32_t)CM_TMR4:
 #ifdef BSP_USING_PWM_TMR4_1_OUH
         GPIO_SetFunc(PWM_TMR4_1_OUH_PORT, PWM_TMR4_1_OUH_PIN, PWM_TMR4_1_OUH_PIN_FUNC);
 #endif
@@ -335,102 +343,7 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
 
 #ifdef RT_USING_PM
-#define EFM_ERASE_TIME_MAX_IN_MILLISECOND                   (20)
 #define PLL_SRC                                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
-
-static void _pm_sleep_common_init(rt_bool_t b_disable_unused_clk)
-{
-    CLK_Xtal32Cmd(ENABLE);
-
-    rt_tick_t tick_start = rt_tick_get_millisecond();
-    rt_err_t rt_stat = RT_EOK;
-    //wait flash idle
-    while (SET != EFM_GetStatus(EFM_FLAG_RDY))
-    {
-        if (rt_tick_get_millisecond() - tick_start > EFM_ERASE_TIME_MAX_IN_MILLISECOND)
-        {
-            rt_stat = RT_ERROR;
-            break;
-        }
-    }
-    RT_ASSERT(rt_stat == RT_EOK);
-
-    if (b_disable_unused_clk)
-    {
-        uint32_t cur_clk_src = READ_REG8_BIT(CM_CMU->CKSWR, CMU_CKSWR_CKSW);
-
-        switch (cur_clk_src)
-        {
-        case CLK_SYSCLK_SRC_HRC:
-            CLK_PLLCmd(DISABLE);
-            CLK_MrcCmd(DISABLE);
-            CLK_LrcCmd(DISABLE);
-            CLK_XtalCmd(DISABLE);
-            PWC_LDO_Cmd(PWC_LDO_PLL, DISABLE);
-            break;
-        case CLK_SYSCLK_SRC_MRC:
-            CLK_PLLCmd(DISABLE);
-            CLK_HrcCmd(DISABLE);
-            CLK_LrcCmd(DISABLE);
-            CLK_XtalCmd(DISABLE);
-            PWC_LDO_Cmd(PWC_LDO_PLL | PWC_LDO_HRC, DISABLE);
-
-            break;
-        case CLK_SYSCLK_SRC_XTAL:
-            CLK_PLLCmd(DISABLE);
-            CLK_HrcCmd(DISABLE);
-            CLK_MrcCmd(DISABLE);
-            CLK_LrcCmd(DISABLE);
-            PWC_LDO_Cmd(PWC_LDO_PLL | PWC_LDO_HRC, DISABLE);
-
-            break;
-        case CLK_SYSCLK_SRC_XTAL32:
-            CLK_PLLCmd(DISABLE);
-            CLK_HrcCmd(DISABLE);
-            CLK_MrcCmd(DISABLE);
-            CLK_LrcCmd(DISABLE);
-            CLK_XtalCmd(DISABLE);
-            PWC_LDO_Cmd(PWC_LDO_PLL | PWC_LDO_HRC, DISABLE);
-
-            break;
-        case CLK_SYSCLK_SRC_PLL:
-            if (CLK_PLL_SRC_XTAL == PLL_SRC)
-            {
-                CLK_HrcCmd(DISABLE);
-            }
-            else
-            {
-                CLK_XtalCmd(DISABLE);
-            }
-            CLK_MrcCmd(DISABLE);
-            CLK_LrcCmd(DISABLE);
-            PWC_LDO_Cmd(PWC_LDO_HRC, DISABLE);
-
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-void rt_hw_board_pm_sleep_deep_init(void)
-{
-#if (PM_SLEEP_DEEP_CFG_CLK   == PWC_STOP_CLK_KEEP)
-    _pm_sleep_common_init(RT_TRUE);
-#else
-    _pm_sleep_common_init(RT_FALSE);
-    CLK_PLLCmd(DISABLE);
-    CLK_HrcCmd(DISABLE);
-    CLK_LrcCmd(DISABLE);
-    CLK_XtalCmd(DISABLE);
-    PWC_LDO_Cmd(PWC_LDO_PLL | PWC_LDO_HRC, DISABLE);
-#endif
-}
-
-void rt_hw_board_pm_sleep_shutdown_init(void)
-{
-    _pm_sleep_common_init(RT_TRUE);
-}
 
 void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode)
 {
@@ -493,6 +406,20 @@ rt_err_t rt_hw_board_pulse_encoder_tmr6_init(void)
 #if defined(BSP_USING_PULSE_ENCODER_TMR6_1)
     GPIO_SetFunc(PULSE_ENCODER_TMR6_1_A_PORT, PULSE_ENCODER_TMR6_1_A_PIN, PULSE_ENCODER_TMR6_1_A_PIN_FUNC);
     GPIO_SetFunc(PULSE_ENCODER_TMR6_1_B_PORT, PULSE_ENCODER_TMR6_1_B_PIN, PULSE_ENCODER_TMR6_1_B_PIN_FUNC);
+#endif
+    return RT_EOK;
+}
+#endif
+
+#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
+rt_err_t rt_hw_usbfs_board_init(void)
+{
+    stc_gpio_init_t stcGpioCfg;
+    (void)GPIO_StructInit(&stcGpioCfg);
+#if defined(BSP_USING_USBFS)
+    stcGpioCfg.u16PinAttr = PIN_ATTR_ANALOG;
+    (void)GPIO_Init(USBF_DM_PORT, USBF_DM_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBF_DP_PORT, USBF_DP_PIN, &stcGpioCfg);
 #endif
     return RT_EOK;
 }

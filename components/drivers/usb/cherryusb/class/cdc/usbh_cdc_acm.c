@@ -267,18 +267,18 @@ const struct usbh_class_driver cdc_data_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_acm_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS,
-    .class = USB_DEVICE_CLASS_CDC,
-    .subclass = CDC_ABSTRACT_CONTROL_MODEL,
-    .protocol = 0x00,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC,
+    .bInterfaceSubClass = CDC_ABSTRACT_CONTROL_MODEL,
+    .bInterfaceProtocol = 0x00,
     .id_table = NULL,
     .class_driver = &cdc_acm_class_driver
 };
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_data_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS,
-    .class = USB_DEVICE_CLASS_CDC_DATA,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC_DATA,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = NULL,
     .class_driver = &cdc_data_class_driver
 };

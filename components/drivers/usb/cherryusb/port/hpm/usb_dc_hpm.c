@@ -128,8 +128,6 @@ int usbd_set_remote_wakeup(uint8_t busid)
     }
 
     usb_force_port_resume(ptr);
-    while (ptr->PORTSC1 & USB_PORTSC1_FPR_MASK) {
-    }
 
     return 0;
 }
@@ -362,18 +360,18 @@ void USBD_IRQHandler(uint8_t busid)
 
 #if !defined(USBD_USE_CUSTOM_ISR) || !USBD_USE_CUSTOM_ISR
 
+SDK_DECLARE_EXT_ISR_M(IRQn_USB0, isr_usbd0)
 void isr_usbd0(void)
 {
     USBD_IRQHandler(_dcd_busid[0]);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_USB0, isr_usbd0)
 
 #ifdef HPM_USB1_BASE
+SDK_DECLARE_EXT_ISR_M(IRQn_USB1, isr_usbd1)
 void isr_usbd1(void)
 {
     USBD_IRQHandler(_dcd_busid[1]);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_USB1, isr_usbd1)
 #endif
 
 #endif

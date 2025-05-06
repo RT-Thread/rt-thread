@@ -63,7 +63,7 @@ static void (*rt_timer_enter_hook)(struct rt_timer *timer);
 static void (*rt_timer_exit_hook)(struct rt_timer *timer);
 
 /**
- * @addtogroup Hook
+ * @addtogroup group_Hook
  */
 
 /**@{*/
@@ -240,7 +240,7 @@ void rt_timer_dump(rt_list_t timer_heads[])
 #endif /* (DBG_LVL == DBG_LOG) */
 
 /**
- * @addtogroup Clock
+ * @addtogroup group_Clock
  */
 
 /**@{*/
@@ -816,7 +816,7 @@ static void _timer_thread_entry(void *parameter)
 #endif /* RT_USING_TIMER_SOFT */
 
 /**
- * @ingroup SystemInit
+ * @ingroup group_SystemInit
  *
  * @brief This function will initialize system timer
  */
@@ -835,7 +835,7 @@ void rt_system_timer_init(void)
 }
 
 /**
- * @ingroup SystemInit
+ * @ingroup group_SystemInit
  *
  * @brief This function will initialize system timer thread
  */

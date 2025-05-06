@@ -118,6 +118,7 @@ int dfs_aspace_mmap_write(struct dfs_file *file, struct rt_varea *varea, void *d
 
 void dfs_pcache_release(size_t count);
 void dfs_pcache_unmount(struct dfs_mnt *mnt);
+void dfs_pcache_clean(struct dfs_mnt *mnt);
 
 #ifdef __cplusplus
 }

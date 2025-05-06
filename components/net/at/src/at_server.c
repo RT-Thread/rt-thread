@@ -591,6 +591,10 @@ int at_server_init(void)
         RT_ASSERT(at_server_local->device->type == RT_Device_Class_Char);
 #if (!defined(RT_USING_SERIAL_V2))
         rt_device_set_rx_indicate(at_server_local->device, at_rx_ind);
+
+#ifdef RT_USING_SERIAL_V2
+        open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_NON_BLOCKING);
+#else
         /* using DMA mode first */
         open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
         /* using interrupt mode when DMA mode not supported */

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_flash.c
- * @version $Rev:: 6657         $
- * @date    $Date:: 2023-01-16 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the FLASH firmware functions.
  *************************************************************************************************************
  * @attention
@@ -92,9 +92,16 @@
 #define IS_WAIT_STATE2(x)   (0)
 #endif
 
+#if (LIBCFG_FMC_WAIT_STATE_3)
+#define IS_WAIT_STATE3(x)   (x == FLASH_WAITSTATE_3)
+#else
+#define IS_WAIT_STATE3(x)   (0)
+#endif
+
 #define IS_FLASH_WAITSTATE(WAIT)      ((WAIT == FLASH_WAITSTATE_0) || \
                                        (WAIT == FLASH_WAITSTATE_1) || \
-                                       (IS_WAIT_STATE2(WAIT)))
+                                       (IS_WAIT_STATE2(WAIT)) || \
+                                       (IS_WAIT_STATE3(WAIT)))
 #endif
 /**
  * @brief Check parameter of the FLASH vector mapping.
@@ -137,6 +144,7 @@
  *     @arg \ref FLASH_WAITSTATE_0 : zero wait state
  *     @arg \ref FLASH_WAITSTATE_1 : one wait state
  *     @arg \ref FLASH_WAITSTATE_2 : two wait state
+ *     @arg \ref FLASH_WAITSTATE_3 : three wait state
  * @retval None
  ************************************************************************************************************/
 void FLASH_SetWaitState(u32 FLASH_WAITSTATE_n)

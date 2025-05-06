@@ -24,7 +24,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_1_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_1,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_1,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_1,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -50,7 +50,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_2_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_2,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_2,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_2,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -76,7 +76,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_3_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_3,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_3,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_3,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -102,7 +102,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_4_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_4,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_4,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_4,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -128,7 +128,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_5_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_5,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_5,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_5,                                   \
        .hw_count =                                                              \
         {                                                                       \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -154,7 +154,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_6_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_6,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_6,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_6,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -180,7 +180,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_7_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_7,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_7,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_7,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -206,7 +206,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_8_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_8,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_8,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_8,                                   \
        .hw_count =                                                              \
         {                                                                       \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -232,7 +232,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_9_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMRA_9,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_9,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_9,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -258,7 +258,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_10_CONFIG                                            \
     {                                                                           \
        .tmr_handler     = CM_TMRA_10,                                           \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_10,                                  \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_10,                                  \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -284,7 +284,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_11_CONFIG                                            \
     {                                                                           \
        .tmr_handler     = CM_TMRA_11,                                           \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_11,                                  \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_11,                                  \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -310,7 +310,7 @@ extern "C" {
 #define PULSE_ENCODER_TMRA_12_CONFIG                                            \
     {                                                                           \
        .tmr_handler     = CM_TMRA_12,                                           \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMRA_12,                                  \
+       .u32PeriphClock  = FCG2_PERIPH_TMRA_12,                                  \
        .hw_count =                                                              \
        {                                                                        \
             .u16CountUpCond     = TMRA_CNT_UP_COND_CLKA_HIGH_CLKB_RISING,       \
@@ -336,7 +336,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_1_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_1,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_1,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_1,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \
@@ -362,7 +362,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_2_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_2,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_2,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_2,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \
@@ -388,7 +388,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_3_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_3,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_3,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_3,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \
@@ -414,7 +414,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_4_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_4,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_4,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_4,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \
@@ -440,7 +440,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_5_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_5,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_5,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_5,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \
@@ -466,7 +466,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_6_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_6,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_6,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_6,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \
@@ -492,7 +492,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_7_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_7,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_7,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_7,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \
@@ -518,7 +518,7 @@ extern "C" {
 #define PULSE_ENCODER_TMR6_8_CONFIG                                             \
     {                                                                           \
        .tmr_handler     = CM_TMR6_8,                                            \
-       .u32Fcg2Periph   = FCG2_PERIPH_TMR6_8,                                   \
+       .u32PeriphClock  = FCG2_PERIPH_TMR6_8,                                   \
        .hw_count =                                                              \
        {                                                                        \
             .u32CountUpCond     = TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING,       \

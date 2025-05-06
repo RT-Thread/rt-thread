@@ -12,6 +12,7 @@
 #define CHERRYUSB_CONFIG_H
 
 #include "rtconfig.h"
+#include <rtthread.h> 
 
 /* ================ USB common Configuration ================ */
 

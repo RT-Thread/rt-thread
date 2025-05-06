@@ -37,23 +37,20 @@ typedef void *eth_mac_handle_t;
 #define DRV_ETH_MAC_ADJUST_LINK         (0x07)      ///< Adjust MAC link state according to phy state; arg: phy handle
 #define DRV_ETH_MAC_CONTROL_IRQ         (0x08)      ///< Interrupt request; arg: 0=disable, 1=enable
 
-#define DW_GMAC_DMA_ALIGN 128
+#define DW_GMAC_DMA_ALIGN               128
 
 #ifndef _DW_ETH_H
 #define _DW_ETH_H
 
-#define GMAC_NULL_PARAM_CHK(para)   CSI_PARAM_CHK(para, -1)
-#define GMAC_NULL_PARAM_CHK_NORETVAL(para)   CSI_PARAM_CHK_NORETVAL(para)
-
-#define CVI_CONFIG_SYS_HZ 1000
-#define CVI_CONFIG_TX_DESCR_NUM 16
-#define CVI_CONFIG_RX_DESCR_NUM 16
-#define CVI_CONFIG_ETH_BUFSIZE  2048
-#define CVI_TX_TOTAL_BUFSIZE    (CVI_CONFIG_ETH_BUFSIZE * CVI_CONFIG_TX_DESCR_NUM)
-#define CVI_RX_TOTAL_BUFSIZE    (CVI_CONFIG_ETH_BUFSIZE * CVI_CONFIG_RX_DESCR_NUM)
+#define CVI_CONFIG_SYS_HZ               1000
+#define CVI_CONFIG_TX_DESCR_NUM         16
+#define CVI_CONFIG_RX_DESCR_NUM         16
+#define CVI_CONFIG_ETH_BUFSIZE          2048
+#define CVI_TX_TOTAL_BUFSIZE            (CVI_CONFIG_ETH_BUFSIZE * CVI_CONFIG_TX_DESCR_NUM)
+#define CVI_RX_TOTAL_BUFSIZE            (CVI_CONFIG_ETH_BUFSIZE * CVI_CONFIG_RX_DESCR_NUM)
 
 #define CVI_CONFIG_MACRESET_TIMEOUT (3 * CVI_CONFIG_SYS_HZ)
-#define CVI_CONFIG_MDIO_TIMEOUT (3 * CVI_CONFIG_SYS_HZ)
+#define CVI_CONFIG_MDIO_TIMEOUT     (3 * CVI_CONFIG_SYS_HZ)
 
 struct dw_gmac_mac_regs {
     volatile uint32_t conf;     /* 0x00 */
@@ -97,7 +94,8 @@ struct dw_gmac_mac_regs {
 #define CVI_MII_ADDRMSK     (0x1F << 11)
 
 typedef uint32_t  reg_type;
-struct dw_gmac_dma_regs {
+struct dw_gmac_dma_regs
+{
     volatile reg_type busmode;      /* 0x00 */
     volatile reg_type txpolldemand; /* 0x04 */
     volatile reg_type rxpolldemand; /* 0x08 */
@@ -118,10 +116,10 @@ struct dw_gmac_dma_regs {
 };
 
 /* Operation mode definitions */
-#define CVI_RXSTART         (1 << 1)
+#define CVI_RXSTART             (1 << 1)
 #define CVI_TXSECONDFRAME       (1 << 2)
-#define CVI_TXSTART         (1 << 13)
-#define CVI_FLUSHTXFIFO     (1 << 20)
+#define CVI_TXSTART             (1 << 13)
+#define CVI_FLUSHTXFIFO         (1 << 20)
 #define CVI_STOREFORWARD        (1 << 21)
 #define CVI_DW_DMA_BASE_OFFSET  (0x1000)
 
@@ -152,7 +150,8 @@ struct dw_gmac_dma_regs {
 /* Descriptior related definitions */
 #define CVI_MAC_MAX_FRAME_SZ    (1600)
 
-struct dmamacdescr {
+struct dmamacdescr
+{
     unsigned int txrx_status;
     unsigned int dmamac_cntl;
     unsigned int dmamac_addr;
@@ -166,46 +165,46 @@ struct dmamacdescr {
 /* tx status bits definitions */
 #if defined(CONFIG_DW_ALTDESCRIPTOR)
 
-#define CVI_DESC_TXSTS_OWNBYDMA     (1 << 31)
-#define CVI_DESC_TXSTS_TXINT        (1 << 30)
-#define CVI_DESC_TXSTS_TXLAST       (1 << 29)
-#define CVI_DESC_TXSTS_TXFIRST      (1 << 28)
-#define CVI_DESC_TXSTS_TXCRCDIS     (1 << 27)
+#define CVI_DESC_TXSTS_OWNBYDMA         (1 << 31)
+#define CVI_DESC_TXSTS_TXINT            (1 << 30)
+#define CVI_DESC_TXSTS_TXLAST           (1 << 29)
+#define CVI_DESC_TXSTS_TXFIRST          (1 << 28)
+#define CVI_DESC_TXSTS_TXCRCDIS         (1 << 27)
 
-#define CVI_DESC_TXSTS_TXPADDIS     (1 << 26)
+#define CVI_DESC_TXSTS_TXPADDIS         (1 << 26)
 #define CVI_DESC_TXSTS_TXCHECKINSCTRL   (3 << 22)
 #define CVI_DESC_TXSTS_TXRINGEND        (1 << 21)
-#define CVI_DESC_TXSTS_TXCHAIN      (1 << 20)
-#define CVI_DESC_TXSTS_MSK          (0x1FFFF << 0)
+#define CVI_DESC_TXSTS_TXCHAIN          (1 << 20)
+#define CVI_DESC_TXSTS_MSK              (0x1FFFF << 0)
 
 #else
 
-#define CVI_DESC_TXSTS_OWNBYDMA     (1 << 31)
-#define CVI_DESC_TXSTS_MSK          (0x1FFFF << 0)
+#define CVI_DESC_TXSTS_OWNBYDMA         (1 << 31)
+#define CVI_DESC_TXSTS_MSK              (0x1FFFF << 0)
 
 #endif
 
 /* rx status bits definitions */
-#define CVI_DESC_RXSTS_OWNBYDMA     (1 << 31)
+#define CVI_DESC_RXSTS_OWNBYDMA         (1 << 31)
 #define CVI_DESC_RXSTS_DAFILTERFAIL     (1 << 30)
 #define CVI_DESC_RXSTS_FRMLENMSK        (0x3FFF << 16)
 #define CVI_DESC_RXSTS_FRMLENSHFT       (16)
 
-#define CVI_DESC_RXSTS_ERROR        (1 << 15)
+#define CVI_DESC_RXSTS_ERROR            (1 << 15)
 #define CVI_DESC_RXSTS_RXTRUNCATED      (1 << 14)
 #define CVI_DESC_RXSTS_SAFILTERFAIL     (1 << 13)
 #define CVI_DESC_RXSTS_RXIPC_GIANTFRAME (1 << 12)
 #define CVI_DESC_RXSTS_RXDAMAGED        (1 << 11)
 #define CVI_DESC_RXSTS_RXVLANTAG        (1 << 10)
-#define CVI_DESC_RXSTS_RXFIRST      (1 << 9)
-#define CVI_DESC_RXSTS_RXLAST       (1 << 8)
+#define CVI_DESC_RXSTS_RXFIRST          (1 << 9)
+#define CVI_DESC_RXSTS_RXLAST           (1 << 8)
 #define CVI_DESC_RXSTS_RXIPC_GIANT      (1 << 7)
 #define CVI_DESC_RXSTS_RXCOLLISION      (1 << 6)
 #define CVI_DESC_RXSTS_RXFRAMEETHER     (1 << 5)
 #define CVI_DESC_RXSTS_RXWATCHDOG       (1 << 4)
 #define CVI_DESC_RXSTS_RXMIIERROR       (1 << 3)
 #define CVI_DESC_RXSTS_RXDRIBBLING      (1 << 2)
-#define CVI_DESC_RXSTS_RXCRC        (1 << 1)
+#define CVI_DESC_RXSTS_RXCRC            (1 << 1)
 
 /*
  * dmamac_cntl definitions
@@ -221,13 +220,13 @@ struct dmamacdescr {
 
 #else
 
-#define CVI_DESC_TXCTRL_TXINT       (1 << 31)
-#define CVI_DESC_TXCTRL_TXLAST      (1 << 30)
-#define CVI_DESC_TXCTRL_TXFIRST     (1 << 29)
+#define CVI_DESC_TXCTRL_TXINT           (1 << 31)
+#define CVI_DESC_TXCTRL_TXLAST          (1 << 30)
+#define CVI_DESC_TXCTRL_TXFIRST         (1 << 29)
 #define CVI_DESC_TXCTRL_TXCHECKINSCTRL  (3 << 27)
 #define CVI_DESC_TXCTRL_TXCRCDIS        (1 << 26)
 #define CVI_DESC_TXCTRL_TXRINGEND       (1 << 25)
-#define CVI_DESC_TXCTRL_TXCHAIN     (1 << 24)
+#define CVI_DESC_TXCTRL_TXCHAIN         (1 << 24)
 
 #define CVI_DESC_TXCTRL_SIZE1MASK       (0x7FF << 0)
 #define CVI_DESC_TXCTRL_SIZE1SHFT       (0)
@@ -241,7 +240,7 @@ struct dmamacdescr {
 
 #define CVI_DESC_RXCTRL_RXINTDIS        (1 << 31)
 #define CVI_DESC_RXCTRL_RXRINGEND       (1 << 15)
-#define CVI_DESC_RXCTRL_RXCHAIN     (1 << 14)
+#define CVI_DESC_RXCTRL_RXCHAIN         (1 << 14)
 
 #define CVI_DESC_RXCTRL_SIZE1MASK       (0x1FFF << 0)
 #define CVI_DESC_RXCTRL_SIZE1SHFT       (0)
@@ -252,7 +251,7 @@ struct dmamacdescr {
 
 #define CVI_DESC_RXCTRL_RXINTDIS        (1 << 31)
 #define CVI_DESC_RXCTRL_RXRINGEND       (1 << 25)
-#define CVI_DESC_RXCTRL_RXCHAIN     (1 << 24)
+#define CVI_DESC_RXCTRL_RXCHAIN         (1 << 24)
 
 #define CVI_DESC_RXCTRL_SIZE1MASK       (0x7FF << 0)
 #define CVI_DESC_RXCTRL_SIZE1SHFT       (0)
@@ -261,7 +260,8 @@ struct dmamacdescr {
 
 #endif
 
-struct dw_gmac_priv {
+struct dw_gmac_priv
+{
     struct dmamacdescr tx_mac_descrtable[CVI_CONFIG_TX_DESCR_NUM] __aligned(DW_GMAC_DMA_ALIGN);
     struct dmamacdescr rx_mac_descrtable[CVI_CONFIG_RX_DESCR_NUM] __aligned(DW_GMAC_DMA_ALIGN);
     char txbuffs[CVI_TX_TOTAL_BUFSIZE] __aligned(DW_GMAC_DMA_ALIGN);
@@ -274,8 +274,6 @@ struct dw_gmac_priv {
 
     struct dw_gmac_mac_regs *mac_regs_p;
     struct dw_gmac_dma_regs *dma_regs_p;
-
-    //struct gpio_desc reset_gpio;
 };
 
 #ifdef CONFIG_DM_ETH
@@ -283,7 +281,8 @@ int designware_eth_ofdata_to_platdata(struct udevice *dev);
 int designware_eth_probe(struct udevice *dev);
 extern const struct eth_ops designware_eth_ops;
 
-struct dw_eth_pdata {
+struct dw_eth_pdata
+{
     struct eth_pdata eth_pdata;
     u32 reset_delays[3];
 };
@@ -300,12 +299,11 @@ int designware_eth_write_hwaddr(struct udevice *dev);
 
 #endif
 
-typedef struct {
-    // csi_dev_t            dev;
+typedef struct
+{
     eth_phy_dev_t       *phy_dev;
-    unsigned long       base;
+    rt_ubase_t          base;
     uint8_t             irq;
-    // eth_event_cb_t      cb_event;
     uint8_t             mac_addr[6];
     struct dw_gmac_priv *priv_unalign;
     struct dw_gmac_priv *priv;
@@ -314,7 +312,8 @@ typedef struct {
 /**
 \brief Ethernet MAC Address
 */
-typedef struct eth_mac_addr {
+typedef struct eth_mac_addr
+{
   uint8_t b[6];                         ///< MAC Address (6 bytes), MSB first
 } eth_mac_addr_t;
 
@@ -415,7 +414,7 @@ int32_t cvi_eth_mac_read_frame(eth_mac_handle_t handle, uint8_t *frame, uint32_t
   \param[in]   cb  callback to handle ethernet event
   \return      return ethernet handle if success
  */
-eth_mac_handle_t cvi_eth_mac_init(unsigned int *base);
+eth_mac_handle_t cvi_eth_mac_init(rt_ubase_t base);
 
 #ifdef __cplusplus
 }

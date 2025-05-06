@@ -1,0 +1,21 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_PCI_DW']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../../include']
+
+src = ['pcie-dw.c', 'pcie-dw_platfrom.c']
+
+if GetDepend(['RT_PCI_DW_HOST']):
+    src += ['pcie-dw_host.c']
+
+if GetDepend(['RT_PCI_DW_EP']):
+    src += ['pcie-dw_ep.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_spi.c
- * @version $Rev:: 2797         $
- * @date    $Date:: 2022-11-28 #$
+ * @version $Rev:: 3086         $
+ * @date    $Date:: 2024-03-28 #$
  * @brief   This file provides all the SPI firmware functions.
  *************************************************************************************************************
  * @attention
@@ -325,6 +325,11 @@ void SPI_SoftwareSELCmd(HT_SPI_TypeDef* SPIx, u32 SPI_SoftwareSEL)
   }
   else
   {
+    /* Inactive SEL pin needs to ensure the transmission has ended. If the program flow cannot guarantee    */
+    /* SPI transmission completion, you can enable the procedure below.                                     */
+    #if 0
+    while (SPIx->SR & SPI_FLAG_BUSY);      /* Wait until SPI NOT BUSY                                       */
+    #endif
     SPIx->CR0 &= SPI_SEL_INACTIVE;
   }
 }
@@ -559,6 +564,8 @@ void SPI_DUALCmd(HT_SPI_TypeDef* SPIx, ControlStatus NewState)
   /* Check the parameters                                                                                   */
   Assert_Param(IS_SPI(SPIx));
   Assert_Param(IS_CONTROL_STATUS(NewState));
+
+  while (SPIx->SR & SPI_FLAG_BUSY);      /* Wait until SPI NOT BUSY                                         */
 
   (NewState == ENABLE)?(SPIx->CR0 |= CR0_DUALEN_SET):(SPIx->CR0 &= CR0_DUALEN_RESET);
 }

@@ -1,8 +1,18 @@
 from building import *
 
 cwd     = GetCurrentDir()
+CPPPATH = [cwd, cwd + '/../include']
 src = Glob('*.c')
-CPPPATH = [cwd + '/../include']
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_PHY'], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_OFW') == False:
+    SrcRemove(src, ['ofw.c'])
+
+if GetDepend('RT_USING_PHY_V2') == False:
+    SrcRemove(src, ['general.c','mdio.c','ofw.c'])
+
+if GetDepend('RT_USING_PHY_V2') == False:
+    if GetDepend('RT_USING_PHY') == False:
+        SrcRemove(src, ['phy.c'])
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

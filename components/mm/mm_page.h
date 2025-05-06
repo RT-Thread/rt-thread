@@ -33,7 +33,10 @@
 
 #define PAGE_ANY_AVAILABLE 0x1ul
 
-#ifdef RT_DEBUGING_PAGE_LEAK
+#define RT_PAGE_PICK_AFFID(ptr) \
+    ((((long)ptr) & (RT_PAGE_AFFINITY_BLOCK_SIZE - 1)) / ARCH_PAGE_SIZE)
+
+#ifdef RT_DEBUGGING_PAGE_LEAK
 #define DEBUG_FIELD struct {    \
     /* trace list */            \
     struct rt_page *tl_next;    \
@@ -57,6 +60,7 @@ DEF_PAGE_T(
 
 #undef GET_FLOOR
 #undef DEF_PAGE_T
+#undef DEBUG_FIELD
 
 typedef struct tag_region
 {
@@ -77,13 +81,17 @@ void *rt_pages_alloc(rt_uint32_t size_bits);
 
 void *rt_pages_alloc_ext(rt_uint32_t size_bits, size_t flags);
 
+void *rt_pages_alloc_tagged(rt_uint32_t size_bits, long tag, size_t flags);
+
+rt_bool_t rt_page_is_member(rt_base_t page_pa);
+
 void rt_page_ref_inc(void *addr, rt_uint32_t size_bits);
 
 int rt_page_ref_get(void *addr, rt_uint32_t size_bits);
 
 int rt_pages_free(void *addr, rt_uint32_t size_bits);
 
-void rt_page_list(void);
+int rt_page_list(void);
 
 rt_size_t rt_page_bits(rt_size_t size);
 

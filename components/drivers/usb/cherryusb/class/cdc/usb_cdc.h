@@ -524,7 +524,7 @@ struct cdc_ncm_ndp16 {
     int_ep,                                                /* bEndpointAddress */              \
     0x03,                                                  /* bmAttributes */                  \
     0x08, 0x00,                                            /* wMaxPacketSize */                \
-    0x10,                                                  /* bInterval */                     \
+    0x05,                                                  /* bInterval */                     \
     0x09,                                                  /* bLength */                       \
     USB_DESCRIPTOR_TYPE_INTERFACE,                         /* bDescriptorType */               \
     (uint8_t)(bFirstInterface + 1),                        /* bInterfaceNumber */              \
@@ -596,7 +596,7 @@ eth_statistics, wMaxSegmentSize, wNumberMCFilters, bNumberPowerFilters, str_idx)
     int_ep,                                                /* bEndpointAddress */              \
     0x03,                                                  /* bmAttributes */                  \
     0x10, 0x00,                                            /* wMaxPacketSize */                \
-    0x10,                                                  /* bInterval */                     \
+    0x05,                                                  /* bInterval */                     \
     0x09,                                                  /* bLength */                       \
     USB_DESCRIPTOR_TYPE_INTERFACE,                         /* bDescriptorType */               \
     (uint8_t)(bFirstInterface + 1),                        /* bInterfaceNumber */              \

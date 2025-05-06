@@ -9,7 +9,7 @@ config RT_USING_FDT
             bool "Using fdt fwnode for device drivers"
             default n
         config FDT_USING_DEBUG
-            bool "Using fdt debug function "
+            bool "Using fdt debug function"
             default n
 
     endif

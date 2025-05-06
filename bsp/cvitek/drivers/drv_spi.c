@@ -17,6 +17,7 @@
 #include "drv_spi.h"
 
 #include "drv_pinmux.h"
+#include "drv_ioremap.h"
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -72,7 +73,6 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-    rt_err_t ret = RT_EOK;
     struct _device_spi *spi = (struct _device_spi *)device->bus->parent.user_data;
     struct dw_spi *dws = &spi->dws;
 
@@ -138,9 +138,6 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
 
 static rt_err_t dw_spi_transfer_one(struct dw_spi *dws, const void *tx_buf, void *rx_buf, uint32_t len, enum transfer_type  tran_type)
 {
-    uint8_t imask = 0;
-    uint16_t txlevel = 0;
-
     dws->tx = NULL;
     dws->tx_end = NULL;
     dws->rx = NULL;
@@ -197,7 +194,7 @@ static rt_ssize_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *
 
     struct _device_spi *spi = (struct _device_spi *)device->bus->parent.user_data;
     struct dw_spi *dws = &spi->dws;
-    int32_t ret = 0;
+    int32_t ret = RT_EOK;
 
     if (message->send_buf && message->recv_buf)
     {
@@ -213,6 +210,14 @@ static rt_ssize_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         ret = dw_spi_transfer_one(dws, RT_NULL, message->recv_buf, message->length, POLL_TRAN);
 
+    } else {
+        return 0;
+    }
+
+    if (ret != RT_EOK)
+    {
+        LOG_E("spi transfer error : %d", ret);
+        return 0;
     }
 
     return message->length;
@@ -224,7 +229,7 @@ static const struct rt_spi_ops _spi_ops =
     .xfer = spi_xfer,
 };
 
-#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR) || defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO256M)
 // For Duo / Duo 256m, only SPI2 are exported on board.
 #ifdef BSP_USING_SPI0
 static const char *pinname_whitelist_spi0_sck[] = {
@@ -328,12 +333,13 @@ static void rt_hw_spi_pinmux_config()
 int rt_hw_spi_init(void)
 {
     rt_err_t ret = RT_EOK;
-    struct dw_spi *dws;
 
     rt_hw_spi_pinmux_config();
 
     for (rt_size_t i = 0; i < sizeof(_spi_obj) / sizeof(struct _device_spi); i++)
     {
+        _spi_obj[i].dws.regs = (void *)DRV_IOREMAP((void *)_spi_obj[i].dws.regs, 0x1000);
+
         _spi_obj[i].spi_bus.parent.user_data = (void *)&_spi_obj[i];
         ret = rt_spi_bus_register(&_spi_obj[i].spi_bus, _spi_obj[i].device_name, &_spi_ops);
     }

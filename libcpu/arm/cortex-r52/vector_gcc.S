@@ -19,7 +19,8 @@
 @ import reference for interrupt routines
 
     .globl Reset_Handler
-    .globl turnon_VFP
+    .globl Undefined_Handler
+    .globl SWI_Handler
     .globl SVC_Handler
     .globl Prefetch_Handler
     .globl Abort_Handler
@@ -28,10 +29,11 @@
     .globl FIQ_Handler
 
 
-.globl system_vectors
-system_vectors:
+.globl system_vector
+system_vector:
         b   Reset_Handler
-        b   turnon_VFP
+        b   Undefined_Handler
+        b   SWI_Handler
         b   SVC_Handler
         b   Prefetch_Handler
         b   Abort_Handler

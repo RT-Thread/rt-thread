@@ -1,0 +1,17 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_MFD']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+src = []
+
+if GetDepend(['RT_MFD_SYSCON']):
+    src += ['mfd-syscon.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

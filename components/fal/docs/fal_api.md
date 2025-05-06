@@ -25,7 +25,7 @@ const struct fal_partition *fal_partition_find(const char *name)
 ## 获取分区表
 
 ```C
-const struct fal_partition *fal_get_partition_table(size_t *len)
+const struct fal_partition *fal_get_partition_table(rt_size_t *len)
 ```
 
 | 参数    | 描述                      |
@@ -38,7 +38,7 @@ const struct fal_partition *fal_get_partition_table(size_t *len)
 FAL 初始化时会自动装载默认分区表。使用该设置将临时修改分区表，重启后会 **丢失** 该设置
 
 ```C
-void fal_set_partition_table_temp(struct fal_partition *table, size_t len)
+void fal_set_partition_table_temp(struct fal_partition *table, rt_size_t len)
 ```
 
 | 参数    | 描述                      |
@@ -49,7 +49,7 @@ void fal_set_partition_table_temp(struct fal_partition *table, size_t len)
 ## 从分区读取数据
 
 ```C
-int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t *buf, size_t size)
+int fal_partition_read(const struct fal_partition *part, rt_uint32_t addr, rt_uint8_t *buf, rt_size_t size)
 ```
 
 | 参数    | 描述                      |
@@ -63,7 +63,7 @@ int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t 
 ## 往分区写入数据
 
 ```C
-int fal_partition_write(const struct fal_partition *part, uint32_t addr, const uint8_t *buf, size_t size)
+int fal_partition_write(const struct fal_partition *part, rt_uint32_t addr, const rt_uint8_t *buf, rt_size_t size)
 ```
 
 | 参数    | 描述                      |
@@ -77,7 +77,7 @@ int fal_partition_write(const struct fal_partition *part, uint32_t addr, const u
 ## 擦除分区数据
 
 ```C
-int fal_partition_erase(const struct fal_partition *part, uint32_t addr, size_t size)
+int fal_partition_erase(const struct fal_partition *part, rt_uint32_t addr, rt_size_t size)
 ```
 
 | 参数    | 描述                      |

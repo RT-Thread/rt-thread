@@ -16,6 +16,8 @@ if rtconfig.CPU in common64_arch :
 else :
     group += SConscript(os.path.join('common', 'SConscript'))
 
+group += SConscript(os.path.join('vector', 'SConscript'))
+
 # cpu porting code files
 if 'VENDOR' in vars(rtconfig) and rtconfig.VENDOR != '':
     group = group + SConscript(os.path.join(rtconfig.VENDOR, rtconfig.CPU, 'SConscript'))

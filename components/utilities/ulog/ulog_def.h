@@ -43,16 +43,10 @@ extern "C" {
 #undef DBG_WARNING
 #undef DBG_INFO
 #undef DBG_LOG
-#undef dbg_log
 #define DBG_ERROR                      LOG_LVL_ERROR
 #define DBG_WARNING                    LOG_LVL_WARNING
 #define DBG_INFO                       LOG_LVL_INFO
 #define DBG_LOG                        LOG_LVL_DBG
-#define dbg_log(level, ...)                                \
-    if ((level) <= LOG_LVL)                                \
-    {                                                      \
-        ulog_output(level, LOG_TAG, RT_FALSE, __VA_ARGS__);\
-    }
 
 #if !defined(LOG_TAG)
     /* compatible for rtdbg */

@@ -167,7 +167,7 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
 }
 
 #ifndef RT_USING_PIC
-void rt_hw_trap_irq(void)
+static void _rt_hw_trap_irq(rt_interrupt_context_t irq_context)
 {
 #ifdef SOC_BCM283x
     extern rt_uint8_t core_timer_flag;
@@ -269,11 +269,23 @@ void rt_hw_trap_irq(void)
 #endif
 }
 #else
-void rt_hw_trap_irq(void)
+static void _rt_hw_trap_irq(struct rt_interrupt_context *this_ctx)
 {
     rt_pic_do_traps();
 }
 #endif
+
+void rt_hw_trap_irq(struct rt_hw_exp_stack *regs)
+{
+    struct rt_interrupt_context this_ctx = {
+        .context = regs,
+        .node = RT_SLIST_OBJECT_INIT(this_ctx.node),
+    };
+
+    rt_interrupt_context_push(&this_ctx);
+    _rt_hw_trap_irq(&this_ctx);
+    rt_interrupt_context_pop();
+}
 
 #ifdef RT_USING_SMART
 #define DBG_CHECK_EVENT(regs, esr) dbg_check_event(regs, esr)

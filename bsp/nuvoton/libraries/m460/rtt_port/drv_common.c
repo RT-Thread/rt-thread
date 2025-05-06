@@ -167,12 +167,12 @@ void devmem(int argc, char *argv[])
 
     if (argc == 3)
     {
-        if (sscanf(argv[2], "0x%x", &value) != 1)
+        if (rt_sscanf(argv[2], "0x%x", &value) != 1)
             goto exit_devmem;
         mode = 1; /*Write*/
     }
 
-    if (sscanf(argv[1], "0x%x", &u32Addr) != 1)
+    if (rt_sscanf(argv[1], "0x%x", &u32Addr) != 1)
         goto exit_devmem;
     else if (!u32Addr || u32Addr & (4 - 1))
         goto exit_devmem;
@@ -203,12 +203,12 @@ void devmem2(int argc, char *argv[])
 
     if (argc == 3)
     {
-        if (sscanf(argv[2], "%u", &value) != 1)
+        if (rt_sscanf(argv[2], "%u", &value) != 1)
             goto exit_devmem;
         word_count = value;
     }
 
-    if (sscanf(argv[1], "0x%x", &u32Addr) != 1)
+    if (rt_sscanf(argv[1], "0x%x", &u32Addr) != 1)
         goto exit_devmem;
     else if (!u32Addr || u32Addr & (4 - 1))
         goto exit_devmem;

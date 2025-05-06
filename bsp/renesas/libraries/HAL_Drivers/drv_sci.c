@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -358,7 +358,11 @@ static int ra_uart_putc(struct rt_serial_device *serial, char c)
     sci_uart_instance_ctrl_t *p_ctrl = (sci_uart_instance_ctrl_t *)param->sci_ctrl;
 
     p_ctrl->p_reg->TDR = c;
+#ifdef SOC_SERIES_R9A07G0
+    while ((p_ctrl->p_reg->CSR_b.TEND) == 0);
+#else
     while ((p_ctrl->p_reg->SSR_b.TEND) == 0);
+#endif
 
     return RT_EOK;
 }
@@ -669,6 +673,8 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     /**< config bitrate */
 #ifdef R_SCI_B_SPI_H
     R_SCI_B_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
+#elif defined(SOC_SERIES_R9A07G0)
+    R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_SPI_CLOCK_SOURCE_PCLKM, false);
 #else
     R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &spi_cfg->clk_div, false);
 #endif

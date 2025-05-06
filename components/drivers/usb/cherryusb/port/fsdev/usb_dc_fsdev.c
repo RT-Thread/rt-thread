@@ -154,7 +154,8 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
 
         case USB_ENDPOINT_TYPE_ISOCHRONOUS:
             wEpRegVal = USB_EP_ISOCHRONOUS;
-            break;
+            USB_LOG_ERR("Do not support iso in fsdev\r\n");
+            return -1;
 
         default:
             break;

@@ -34,6 +34,12 @@
             (((__x) - ((__d) / 2)) / (__d));    \
 })
 
+#define __KEY_PLACEHOLDER_1                     0,
+#define ____KEY_ENABLED(__ignored, val, ...)    val
+#define ___KEY_ENABLED(arg1_or_junk)            ____KEY_ENABLED(arg1_or_junk 1, 0)
+#define __KEY_ENABLED(value)                    ___KEY_ENABLED(__KEY_PLACEHOLDER_##value)
+#define RT_KEY_ENABLED(key)                     __KEY_ENABLED(key)
+
 #define RT_FIELD_PREP(mask, val)    (((rt_uint64_t)(val) << (__rt_ffsl((mask)) - 1)) & (mask))
 #define RT_FIELD_GET(mask, val)     (((val) & (mask)) >> (__rt_ffsl((mask)) - 1))
 
@@ -105,6 +111,22 @@
     if (_rem > _base / 2)               \
         ++(n);                          \
     _rem;                               \
+})
+
+#define rt_abs(x)                       \
+({                                      \
+    long ret;                           \
+    if (sizeof(x) == sizeof(long))      \
+    {                                   \
+        long __x = (x);                 \
+        ret = (__x < 0) ? -__x : __x;   \
+    }                                   \
+    else                                \
+    {                                   \
+        int __x = (x);                  \
+        ret = (__x < 0) ? -__x : __x;   \
+    }                                   \
+    ret;                                \
 })
 
 #ifndef rt_ilog2

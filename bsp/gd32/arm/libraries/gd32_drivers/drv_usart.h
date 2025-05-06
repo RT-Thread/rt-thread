@@ -35,13 +35,20 @@ struct gd32_uart
     uint32_t tx_port;               //Todo: 4bits
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx
     uint16_t tx_af;                 //Todo: 4bits
+#elif defined SOC_SERIES_GD32E50x
+    uint32_t tx_af;                 //alternate1 cfg
 #endif
     uint16_t tx_pin;                //Todo: 4bits
     uint32_t rx_port;               //Todo: 4bits
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx
     uint16_t rx_af;                 //Todo: 4bits
+#elif defined SOC_SERIES_GD32E50x
+    uint32_t rx_af;                 //alternate1 cfg
 #endif
     uint16_t rx_pin;                //Todo: 4bits
+#if defined SOC_SERIES_GD32E50x
+    uint32_t uart_remap;            //remap
+#endif
 
     struct rt_serial_device * serial;
     char *device_name;

@@ -31,7 +31,7 @@ EV_F4A0_LQ176 开发板常用 **板载资源** 如下：
 - 常用接口：USB转串口、SD卡接口、以太网接口、LCD接口、USB HS、USB FS、USB 3300、DVP接口、3.5mm耳机接口、Line in接口、喇叭接口
 - 调试接口：板载DAP调试器、标准JTAG/SWD。
 
-开发板更多详细信息请参考小华半导体半导体[EV_F4A0_LQ176](http://www.xhsc.com.cn)
+开发板更多详细信息请参考小华半导体半导体[EV_F4A0_LQ176](https://www.xhsc.com.cn)
 
 ## 外设支持
 
@@ -136,4 +136,4 @@ msh >
 
 维护人:
 
--  [小华半导体MCU](https://www.xhsc.com.cn)，邮箱：<xhsc_mcu@xhsc.com.cn>
+-  [小华半导体MCU](https://www.xhsc.com.cn)，邮箱：<xhsc_ae_cd_ap@xhsc.com.cn>

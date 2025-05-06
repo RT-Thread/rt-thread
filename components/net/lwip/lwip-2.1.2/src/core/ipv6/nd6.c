@@ -776,14 +776,32 @@ nd6_input(struct pbuf *p, struct netif *inp)
 
             if (htonl(rdnss_opt->lifetime) > 0) {
               /* TODO implement Lifetime > 0 */
+#ifdef RT_USING_NETDEV
+              extern struct netdev *netdev_get_by_name(const char *name);
+              extern void netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
+              /* Here we only need to set the dns server of the corresponding network device,
+              * but do not need to configure all network devices.
+              */
+              netdev_set_dns_server(netdev_get_by_name(inp->name), rdnss_server_idx++, &rdnss_address);
+#else
               dns_setserver(rdnss_server_idx++, &rdnss_address);
+#endif
             } else {
               /* TODO implement DNS removal in dns.c */
               u8_t s;
               for (s = 0; s < DNS_MAX_SERVERS; s++) {
                 const ip_addr_t *addr = dns_getserver(s);
                 if(ip_addr_cmp(addr, &rdnss_address)) {
-                  dns_setserver(s, NULL);
+#ifdef RT_USING_NETDEV
+                  extern struct netdev *netdev_get_by_name(const char *name);
+                  extern void netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
+                  /* Here we only need to set the dns server of the corresponding network device,
+                  * but do not need to configure all network devices.
+                  */
+                  netdev_set_dns_server(netdev_get_by_name(inp->name), s, IP_ADDR_ANY);
+#else
+                  dns_setserver(s, IP_ADDR_ANY);
+#endif
                 }
               }
             }

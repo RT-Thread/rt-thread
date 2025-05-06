@@ -1,0 +1,12 @@
+menu "Partition Types"
+
+config RT_BLK_PARTITION_DFS
+    bool "DFS Partition support"
+    depends on RT_USING_DFS
+    default y
+
+config RT_BLK_PARTITION_EFI
+    bool "EFI Globally Unique Identifier (GUID) Partition support"
+    default y
+
+endmenu

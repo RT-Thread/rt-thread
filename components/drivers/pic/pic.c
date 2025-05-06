@@ -16,7 +16,9 @@
 #include <rtdbg.h>
 
 #include <drivers/pic.h>
+#ifdef RT_USING_PIC_STATISTICS
 #include <ktime.h>
+#endif
 
 struct irq_traps
 {
@@ -31,6 +33,7 @@ static int _ipi_hash[] =
 #ifdef RT_USING_SMP
     [RT_SCHEDULE_IPI] = RT_SCHEDULE_IPI,
     [RT_STOP_IPI] = RT_STOP_IPI,
+    [RT_SMP_CALL_IPI] = RT_SMP_CALL_IPI,
 #endif
 };
 
@@ -48,7 +51,7 @@ static struct rt_pic_irq _pirq_hash[MAX_HANDLERS] =
     }
 };
 
-static struct rt_spinlock _pic_lock = { };
+static RT_DEFINE_SPINLOCK(_pic_lock);
 static rt_size_t _pic_name_max = sizeof("PIC");
 static rt_list_t _pic_nodes = RT_LIST_OBJECT_INIT(_pic_nodes);
 static rt_list_t _traps_nodes = RT_LIST_OBJECT_INIT(_traps_nodes);

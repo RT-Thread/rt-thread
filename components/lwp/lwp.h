@@ -340,6 +340,8 @@ int lwp_session_set_foreground(rt_session_t session, pid_t pgid);
 /* complete the job control related bussiness on process exit */
 void lwp_jobctrl_on_exit(struct rt_lwp *lwp);
 
+sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void));
+
 #ifdef __cplusplus
 }
 #endif

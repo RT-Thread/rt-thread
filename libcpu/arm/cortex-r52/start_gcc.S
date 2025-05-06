@@ -12,8 +12,6 @@
 @ (c) Texas Instruments 2009-2013, All rights reserved.
 @
 
-//#include <rtconfig.h>
-
 .equ Mode_USR,        0x10
 .equ Mode_FIQ,        0x11
 .equ Mode_IRQ,        0x12
@@ -47,7 +45,7 @@ stack_top:
     .text
     .arm
 
-    .globl _c_int00
+    .globl entry
 
 .globl _reset
 _reset:
@@ -122,7 +120,7 @@ next2:
 next3:
         bl    next4
 next4:
-        ldr  lr, =_c_int00
+        ldr  lr, =entry
         bx   lr
 
 .globl data_init
@@ -479,26 +477,38 @@ turnon_VFP:
         str     lr, [r0, #14*4]         @/* Save calling PC                 */
     .endm
 
-    .globl  vector_svc
-vector_svc:
-        push_svc_reg
-        bl      rt_hw_trap_svc
-        b       .
+.globl SWI_Handler
+SWI_Handler:
+    push_svc_reg
+    bl      rt_hw_trap_swi
+    b       .
 
-    .globl  vector_pabort
-vector_pabort:
-        push_svc_reg
-        bl      rt_hw_trap_pabt
-        b       .
+.globl Undefined_Handler
+Undefined_Handler:
+    push_svc_reg
+	bl	rt_hw_trap_undef
+    b   .
 
-    .globl  vector_dabort
-vector_dabort:
-        push_svc_reg
-        bl      rt_hw_trap_dabt
-        b       .
+.globl SVC_Handler
+SVC_Handler:
+	push_svc_reg
+	b	rt_hw_trap_svc
+    b   .
 
-    .globl  vector_resv
-vector_resv:
-        push_svc_reg
-        bl      rt_hw_trap_resv
-        b       .
+.globl Prefetch_Handler
+Prefetch_Handler:
+    push_svc_reg
+	b	rt_hw_trap_pabt
+    b   .
+
+.globl Abort_Handler
+Abort_Handler:
+    push_svc_reg
+	b	rt_hw_trap_dabt
+    b   .
+
+.globl Reserved_Handler
+Reserved_Handler:
+    push_svc_reg
+	b	rt_hw_trap_resv
+    b   .

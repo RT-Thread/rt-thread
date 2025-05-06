@@ -76,10 +76,36 @@ static void ehci_qh_free(struct usbh_bus *bus, struct ehci_qh_hw *qh)
     }
 }
 
+#ifdef CONFIG_USB_DCACHE_ENABLE
+static inline void usb_ehci_qh_qtd_flush(struct ehci_qh_hw *qh)
+{
+    struct ehci_qtd_hw *qtd;
+
+    qtd = EHCI_ADDR2QTD(qh->first_qtd);
+
+    while (qtd) {
+        usb_dcache_clean((uintptr_t)&qtd->hw, USB_ALIGN_UP(SIZEOF_EHCI_QTD, CONFIG_USB_EHCI_ALIGN_SIZE));
+
+        if (!qtd->dir_in) {
+            usb_dcache_clean(qtd->bufaddr, USB_ALIGN_UP(qtd->length, CONFIG_USB_ALIGN_SIZE));
+        }
+        qtd = EHCI_ADDR2QTD(qtd->hw.next_qtd);
+    }
+
+    usb_dcache_clean((uintptr_t)&qh->hw, USB_ALIGN_UP(SIZEOF_EHCI_QH, CONFIG_USB_EHCI_ALIGN_SIZE));
+}
+#else
+#define usb_ehci_qh_qtd_flush(qh)
+#endif
+
 static inline void ehci_qh_add_head(struct ehci_qh_hw *head, struct ehci_qh_hw *n)
 {
     n->hw.hlp = head->hw.hlp;
+    usb_ehci_qh_qtd_flush(n);
+
     head->hw.hlp = QH_HLP_QH(n);
+
+    usb_dcache_clean((uintptr_t)&head->hw, USB_ALIGN_UP(SIZEOF_EHCI_QH, CONFIG_USB_EHCI_ALIGN_SIZE));
 }
 
 static inline void ehci_qh_remove(struct ehci_qh_hw *head, struct ehci_qh_hw *n)
@@ -92,6 +118,7 @@ static inline void ehci_qh_remove(struct ehci_qh_hw *head, struct ehci_qh_hw *n)
 
     if (tmp) {
         tmp->hw.hlp = n->hw.hlp;
+        usb_dcache_clean((uintptr_t)&tmp->hw, USB_ALIGN_UP(SIZEOF_EHCI_QH, CONFIG_USB_EHCI_ALIGN_SIZE));
     }
 }
 
@@ -254,7 +281,9 @@ static void ehci_qtd_fill(struct ehci_qtd_hw *qtd, uint32_t bufaddr, size_t bufl
 
     qtd->hw.token = token;
 
-    ehci_qtd_bpl_fill(qtd, bufaddr, buflen);
+    ehci_qtd_bpl_fill(qtd, usb_phyaddr2ramaddr(bufaddr), buflen);
+    qtd->dir_in = ((token & QTD_TOKEN_PID_MASK) == QTD_TOKEN_PID_IN) ? true : false;
+    qtd->bufaddr = bufaddr;
     qtd->length = buflen;
 }
 
@@ -591,6 +620,9 @@ static void ehci_qh_scan_qtds(struct usbh_bus *bus, struct ehci_qh_hw *qhead, st
     qtd = EHCI_ADDR2QTD(qh->first_qtd);
 
     while (qtd) {
+        if (qtd->dir_in) {
+            usb_dcache_invalidate(qtd->bufaddr, USB_ALIGN_UP(qtd->length - ((qtd->hw.token & QTD_TOKEN_NBYTES_MASK) >> QTD_TOKEN_NBYTES_SHIFT), CONFIG_USB_ALIGN_SIZE));
+        }
         qtd->urb->actual_length += (qtd->length - ((qtd->hw.token & QTD_TOKEN_NBYTES_MASK) >> QTD_TOKEN_NBYTES_SHIFT));
 
         qh->first_qtd = qtd->hw.next_qtd;
@@ -611,6 +643,7 @@ static void ehci_check_qh(struct usbh_bus *bus, struct ehci_qh_hw *qhead, struct
     }
 
     while (qtd) {
+        usb_dcache_invalidate((uintptr_t)&qtd->hw, USB_ALIGN_UP(SIZEOF_EHCI_QTD, CONFIG_USB_EHCI_ALIGN_SIZE));
         token = qtd->hw.token;
 
         if (token & QTD_TOKEN_STATUS_ERRORS) {
@@ -765,6 +798,10 @@ int usb_hc_init(struct usbh_bus *bus)
     for (uint32_t i = 0; i < CONFIG_USB_EHCI_FRAME_LIST_SIZE; i++) {
         g_framelist[bus->hcd.hcd_id][i] = QH_HLP_QH(&g_periodic_qh_head[bus->hcd.hcd_id]);
     }
+
+    usb_dcache_clean((uintptr_t)&g_async_qh_head[bus->hcd.hcd_id].hw, USB_ALIGN_UP(SIZEOF_EHCI_QH, CONFIG_USB_EHCI_ALIGN_SIZE));
+    usb_dcache_clean((uintptr_t)&g_periodic_qh_head[bus->hcd.hcd_id].hw, USB_ALIGN_UP(SIZEOF_EHCI_QH, CONFIG_USB_EHCI_ALIGN_SIZE));
+    usb_dcache_clean((uintptr_t)g_framelist[bus->hcd.hcd_id], sizeof(uint32_t) * CONFIG_USB_EHCI_FRAME_LIST_SIZE);
 
     usb_hc_low_level_init(bus);
 
@@ -952,6 +989,7 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
 
         while (!(EHCI_HCOR->portsc[port - 1] & EHCI_PORTSC_OWNER)) {
         }
+        USB_LOG_INFO("Switch port %u to OHCI\r\n", port);
         return ohci_roothub_control(bus, setup, buf);
     }
 #endif
@@ -1063,7 +1101,9 @@ int usbh_roothub_control(struct usbh_bus *bus, struct usb_setup_packet *setup, u
 
                             while (!(EHCI_HCOR->portsc[port - 1] & EHCI_PORTSC_OWNER)) {
                             }
-                            return ohci_roothub_control(bus, setup, buf);
+
+                            USB_LOG_INFO("Switch port %u to OHCI\r\n", port);
+                            return -USB_ERR_NOTSUPP;
                         }
 #endif
                         break;
@@ -1135,6 +1175,13 @@ int usbh_submit_urb(struct usbh_urb *urb)
         return -USB_ERR_INVAL;
     }
 
+#ifdef CONFIG_USB_DCACHE_ENABLE
+    if (((uintptr_t)urb->setup % CONFIG_USB_ALIGN_SIZE) || ((uintptr_t)urb->transfer_buffer % CONFIG_USB_ALIGN_SIZE)) {
+        USB_LOG_ERR("urb buffer is not align with %d\r\n", CONFIG_USB_ALIGN_SIZE);
+        while (1) {
+        }
+    }
+#endif
     bus = urb->hport->bus;
 
     /* find active hubport in roothub */

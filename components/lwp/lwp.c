@@ -83,87 +83,6 @@ static int lwp_component_init(void)
 }
 INIT_COMPONENT_EXPORT(lwp_component_init);
 
-rt_weak int lwp_startup_debug_request(void)
-{
-    return 0;
-}
-
-#define LATENCY_TIMES (3)
-#define LATENCY_IN_MSEC (128)
-#define LWP_CONSOLE_PATH "CONSOLE=/dev/console"
-const char *init_search_path[] = {
-    "/sbin/init",
-    "/bin/init",
-};
-
-/**
- * Startup process 0 and do the essential works
- * This is the "Hello World" point of RT-Smart
- */
-static int lwp_startup(void)
-{
-    int error;
-
-    const char *init_path;
-    char *argv[] = {0, "&"};
-    char *envp[] = {LWP_CONSOLE_PATH, 0};
-
-#ifdef LWP_DEBUG_INIT
-    int command;
-    int countdown = LATENCY_TIMES;
-    while (countdown)
-    {
-        command = lwp_startup_debug_request();
-        if (command)
-        {
-            return 0;
-        }
-        rt_kprintf("Press any key to stop init process startup ... %d\n", countdown);
-        countdown -= 1;
-        rt_thread_mdelay(LATENCY_IN_MSEC);
-    }
-    rt_kprintf("Starting init ...\n");
-#endif /* LWP_DEBUG_INIT */
-
-    for (size_t i = 0; i < sizeof(init_search_path)/sizeof(init_search_path[0]); i++)
-    {
-        struct stat s;
-        init_path = init_search_path[i];
-        error = stat(init_path, &s);
-        if (error == 0)
-        {
-            argv[0] = (void *)init_path;
-            error = lwp_execve((void *)init_path, 0, sizeof(argv)/sizeof(argv[0]), argv, envp);
-            if (error < 0)
-            {
-                LOG_E("%s: failed to startup process 0 (init)\n"
-                    "Switching to legacy mode...", __func__);
-            }
-            else if (error != 1)
-            {
-                LOG_E("%s: pid 1 is already allocated", __func__);
-                error = -EBUSY;
-            }
-            else
-            {
-                rt_lwp_t p = lwp_from_pid_locked(1);
-                p->sig_protected = 1;
-
-                error = 0;
-            }
-            break;
-        }
-    }
-
-    if (error)
-    {
-        LOG_D("%s: init program not found\n"
-            "Switching to legacy mode...", __func__);
-    }
-    return error;
-}
-INIT_APP_EXPORT(lwp_startup);
-
 void lwp_setcwd(char *buf)
 {
     struct rt_lwp *lwp = RT_NULL;
@@ -447,7 +366,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 
     if (lwp == RT_NULL)
     {
-        dbg_log(DBG_ERROR, "lwp struct out of memory!\n");
+        LOG_E("lwp struct out of memory!\n");
         return -ENOMEM;
     }
     LOG_D("lwp malloc : %p, size: %d!", lwp, sizeof(struct rt_lwp));
@@ -664,12 +583,12 @@ rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *
         argv = lwp_get_command_line_args(lwp);
         if (argv)
         {
-            rt_kprintf("please use: addr2line -e %s -a -f", argv[0]);
+            rt_kprintf("please use: addr2line -e %s -a -f\n", argv[0]);
             lwp_free_command_line_args(argv);
         }
         else
         {
-            rt_kprintf("please use: addr2line -e %s -a -f", lwp->cmd);
+            rt_kprintf("please use: addr2line -e %s -a -f\n", lwp->cmd);
         }
 
         while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)

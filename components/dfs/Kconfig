@@ -162,20 +162,32 @@ endif
         bool "Using devfs for device objects"
         default y
 
-    config RT_USING_DFS_ROMFS
+if RT_USING_DFS_V1
+    config RT_USING_DFS_ISO9660
+        bool "Using ISO9660 filesystem"
+        depends on RT_USING_MEMHEAP
+        default n
+endif
+
+    menuconfig RT_USING_DFS_ROMFS
         bool "Enable ReadOnly file system on flash"
         default n
 
-    config RT_USING_DFS_ROMFS_USER_ROOT
-        bool "Use user's romfs root"
-        depends on RT_USING_DFS_ROMFS
-        default n
+    if RT_USING_DFS_ROMFS
+        config RT_USING_DFS_ROMFS_USER_ROOT
+            bool "Use user's romfs root"
+            depends on RT_USING_DFS_V1
+            default n
+    endif
 
 if RT_USING_SMART
     config RT_USING_DFS_PTYFS
         bool "Using Pseudo-Teletype Filesystem (UNIX98 PTY)"
         depends on RT_USING_DFS_DEVFS
         default y
+    config RT_USING_DFS_PROCFS
+        bool "Enable proc file system"
+        default n
 endif
 
     config RT_USING_DFS_CROMFS

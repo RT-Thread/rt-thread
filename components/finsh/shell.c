@@ -32,6 +32,11 @@
 #include <fcntl.h>
 #endif /* DFS_USING_POSIX */
 
+#ifdef RT_USING_POSIX_STDIO
+#include <unistd.h>
+#include <posix/stdio.h>
+#endif /* RT_USING_POSIX_STDIO */
+
 /* finsh thread */
 #ifndef RT_USING_HEAP
     static struct rt_thread finsh_thread;
@@ -122,7 +127,7 @@ const char *finsh_get_prompt(void)
 }
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This function get the prompt mode of finsh shell.
  *
@@ -135,7 +140,7 @@ rt_uint32_t finsh_get_prompt_mode(void)
 }
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This function set the prompt mode of finsh shell.
  *
@@ -154,7 +159,7 @@ int finsh_getchar(void)
 #ifdef RT_USING_DEVICE
     char ch = 0;
 #ifdef RT_USING_POSIX_STDIO
-    if(read(STDIN_FILENO, &ch, 1) > 0)
+    if(read(rt_posix_stdio_get_console(), &ch, 1) > 0)
     {
         return ch;
     }
@@ -205,7 +210,7 @@ static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 }
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This function sets the input device of finsh shell.
  *
@@ -246,7 +251,7 @@ void finsh_set_device(const char *device_name)
 }
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This function returns current finsh shell input device.
  *
@@ -260,7 +265,7 @@ const char *finsh_get_device()
 #endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This function set the echo mode of finsh shell.
  *
@@ -275,7 +280,7 @@ void finsh_set_echo(rt_uint32_t echo)
 }
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This function gets the echo mode of finsh shell.
  *
@@ -456,7 +461,7 @@ static void shell_push_history(struct finsh_shell *shell)
 static void (*_finsh_thread_entry_hook)(void);
 
 /**
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * @brief This function set a hook function at the entry of finsh thread
  *
@@ -750,7 +755,7 @@ __declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end =
 #endif
 
 /*
- * @ingroup finsh
+ * @ingroup group_finsh
  *
  * This function will initialize finsh shell
  */

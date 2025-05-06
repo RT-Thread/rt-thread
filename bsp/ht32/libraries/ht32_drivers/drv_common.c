@@ -27,7 +27,7 @@ MSH_CMD_EXPORT(reboot, Reboot System);
 void rt_hw_systick_init(void)
 {
     SYSTICK_ClockSourceConfig(SYSTICK_SRC_STCLK);
-    SYSTICK_SetReloadValue(SystemCoreClock / 8 / RT_TICK_PER_SECOND);
+    SYSTICK_SetReloadValue(SystemCoreClock / 10 / RT_TICK_PER_SECOND);
     SYSTICK_IntConfig(ENABLE);
     SYSTICK_CounterCmd(SYSTICK_COUNTER_CLEAR);
     SYSTICK_CounterCmd(SYSTICK_COUNTER_ENABLE);

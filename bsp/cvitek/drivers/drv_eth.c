@@ -32,7 +32,7 @@
 
 struct _dw_eth
 {
-    rt_uint32_t *base;
+    rt_ubase_t base;
     rt_uint32_t irq;
 
     struct eth_device parent;               /* inherit from ethernet device */
@@ -55,20 +55,20 @@ static uint8_t RecvDataBuf[GMAC_BUF_LEN];
 static void cvi_ephy_id_init(void)
 {
     // set rg_ephy_apb_rw_sel 0x0804@[0]=1/APB by using APB interface
-    mmio_write_32(0x03009804, 0x0001);
+    mmio_write_32(ETH_PHY_BASE + 0x804, 0x0001);
 
     // Release 0x0800[0]=0/shutdown
-    mmio_write_32(0x03009800, 0x0900);
+    mmio_write_32(ETH_PHY_BASE + 0x800, 0x0900);
 
     // Release 0x0800[2]=1/dig_rst_n, Let mii_reg can be accessabile
-    mmio_write_32(0x03009800, 0x0904);
+    mmio_write_32(ETH_PHY_BASE + 0x800, 0x0904);
 
     // PHY_ID
-    mmio_write_32(0x03009008, 0x0043);
-    mmio_write_32(0x0300900c, 0x5649);
+    mmio_write_32(ETH_PHY_BASE + 0x008, 0x0043);
+    mmio_write_32(ETH_PHY_BASE + 0x00c, 0x5649);
 
     // switch to MDIO control by ETH_MAC
-    mmio_write_32(0x03009804, 0x0000);
+    mmio_write_32(ETH_PHY_BASE + 0x804, 0x0000);
 }
 
 static int cvi_eth_mac_phy_enable(uint32_t enable)
@@ -256,7 +256,7 @@ static rt_err_t rt_dw_eth_init(rt_device_t dev)
     }
     else
     {
-        err = -RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -431,7 +431,7 @@ static int rthw_eth_init(void)
 {
     rt_err_t ret = RT_EOK;
 
-    dw_eth_device.base = (rt_uint32_t *)DW_MAC_BASE;
+    dw_eth_device.base = (rt_ubase_t)DW_MAC_BASE;
     dw_eth_device.irq = DW_MAC_IRQ;
 
     dw_eth_device.parent.parent.ops = &dw_eth_ops;

@@ -8,6 +8,9 @@ CPPPATH = [cwd]
 if GetDepend(['UTEST_COMPLETION_TC']):
     src += ['completion_tc.c', 'completion_timeout_tc.c']
 
+if GetDepend(['UTEST_WORKQUEUE_TC']):
+    src += ['workqueue_tc.c']
+
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
 Return('group')

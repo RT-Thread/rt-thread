@@ -151,7 +151,7 @@ void _enet_rx_callback(struct rt_imxrt_eth *eth)
 
 void _enet_tx_callback(struct rt_imxrt_eth *eth)
 {
-    dbg_log(DBG_LOG, "_enet_tx_callback\n");
+    LOG_D("_enet_tx_callback\n");
     if (eth->tx_is_waiting == RT_TRUE)
     {
         eth->tx_is_waiting = RT_FALSE;
@@ -181,23 +181,23 @@ static void _enet_callback(ENET_Type *base,
         break;
 
     case kENET_ErrEvent:
-        dbg_log(DBG_LOG, "kENET_ErrEvent\n");
+        LOG_D("kENET_ErrEvent\n");
         break;
 
     case kENET_WakeUpEvent:
-        dbg_log(DBG_LOG, "kENET_WakeUpEvent\n");
+        LOG_D("kENET_WakeUpEvent\n");
         break;
 
     case kENET_TimeStampEvent:
-        dbg_log(DBG_LOG, "kENET_TimeStampEvent\n");
+        LOG_D("kENET_TimeStampEvent\n");
         break;
 
     case kENET_TimeStampAvailEvent:
-        dbg_log(DBG_LOG, "kENET_TimeStampAvailEvent \n");
+        LOG_D("kENET_TimeStampAvailEvent \n");
         break;
 
     default:
-        dbg_log(DBG_LOG, "unknow error\n");
+        LOG_D("unknow error\n");
         break;
     }
 }
@@ -255,7 +255,7 @@ static void *_enet_rx_alloc(ENET_Type *base, void *userData, uint8_t ringId)
     void *buffer = NULL;
     int i;
 
-    // dbg_log(DBG_LOG, "get buff_wait sem in %d\r\n", __LINE__);
+    // LOG_D("get buff_wait sem in %d\r\n", __LINE__);
     rt_sem_take(&imxrt_eth_device.buff_wait, RT_WAITING_FOREVER);
 
     for (i = 0; i < ENET_RXBUFF_NUM; i++)
@@ -269,7 +269,7 @@ static void *_enet_rx_alloc(ENET_Type *base, void *userData, uint8_t ringId)
     }
 
     rt_sem_release(&imxrt_eth_device.buff_wait);
-    // dbg_log(DBG_LOG, "release buff_wait sem in %d\r\n", __LINE__);
+    // LOG_D("release buff_wait sem in %d\r\n", __LINE__);
 
     return buffer;
 }
@@ -282,7 +282,7 @@ static void _enet_rx_free(ENET_Type *base, void *buffer, void *userData, uint8_t
         LOG_E("Freed buffer out of range\r\n");
     }
 
-    // dbg_log(DBG_LOG, "get buff_wait sem in %d\r\n", __LINE__);
+    // LOG_D("get buff_wait sem in %d\r\n", __LINE__);
     rt_sem_take(&imxrt_eth_device.buff_wait, RT_WAITING_FOREVER);
     if (!(imxrt_eth_device.RxPbufs[idx].buffer_used))
     {
@@ -290,7 +290,7 @@ static void _enet_rx_free(ENET_Type *base, void *buffer, void *userData, uint8_t
     }
     imxrt_eth_device.RxPbufs[idx].buffer_used = false;
     rt_sem_release(&imxrt_eth_device.buff_wait);
-    // dbg_log(DBG_LOG, "release buff_wait sem in %d\r\n", __LINE__);
+    // LOG_D("release buff_wait sem in %d\r\n", __LINE__);
 }
 
 /**
@@ -356,13 +356,13 @@ static void _enet_config(void)
 //    /* Set SMI to get PHY link status. */
 //    sysClock = CLOCK_GetFreq(kCLOCK_IpgClk);
 //
-//    dbg_log(DBG_LOG, "deinit\n");
+//    LOG_D("deinit\n");
 //    ENET_Deinit(imxrt_eth_device.enet_base);
-//    dbg_log(DBG_LOG, "init\n");
+//    LOG_D("init\n");
 //    ENET_Init(imxrt_eth_device.enet_base, &imxrt_eth_device.enet_handle, &config, &buffConfig[0], &imxrt_eth_device.dev_addr[0], sysClock);
-////    dbg_log(DBG_LOG, "set call back\n");
+////    LOG_D("set call back\n");
 ////    ENET_SetCallback(&imxrt_eth_device.enet_handle, _enet_callback, &imxrt_eth_device);
-//    dbg_log(DBG_LOG, "active read\n");
+//    LOG_D("active read\n");
 //    ENET_ActiveRead(imxrt_eth_device.enet_base);
 //#else
     int i;
@@ -423,13 +423,13 @@ static void _enet_config(void)
         imxrt_eth_device.RxPbufs[i].buffer_used = false;
     }
 
-    // dbg_log(DBG_LOG, "deinit\n");
+    // LOG_D("deinit\n");
     // ENET_Deinit(imxrt_eth_device.enet_base);
-    dbg_log(DBG_LOG, "init\n");
+    LOG_D("init\n");
     ENET_Init(imxrt_eth_device.enet_base, &imxrt_eth_device.enet_handle, &config, &buffConfig[0], &imxrt_eth_device.dev_addr[0], sysClock);
-    // dbg_log(DBG_LOG, "set call back\n");
+    // LOG_D("set call back\n");
     // ENET_SetCallback(&imxrt_eth_device.enet_handle, _enet_callback, &imxrt_eth_device);
-    dbg_log(DBG_LOG, "active read\n");
+    LOG_D("active read\n");
     ENET_ActiveRead(imxrt_eth_device.enet_base);
 //#endif
 }
@@ -474,7 +474,7 @@ static void packet_dump(const char *msg, const struct pbuf *p)
 /* initialize the interface */
 static rt_err_t rt_imxrt_eth_init(rt_device_t dev)
 {
-    dbg_log(DBG_LOG, "rt_imxrt_eth_init...\n");
+    LOG_D("rt_imxrt_eth_init...\n");
     _enet_config();
 
     return RT_EOK;
@@ -482,33 +482,33 @@ static rt_err_t rt_imxrt_eth_init(rt_device_t dev)
 
 static rt_err_t rt_imxrt_eth_open(rt_device_t dev, rt_uint16_t oflag)
 {
-    dbg_log(DBG_LOG, "rt_imxrt_eth_open...\n");
+    LOG_D("rt_imxrt_eth_open...\n");
     return RT_EOK;
 }
 
 static rt_err_t rt_imxrt_eth_close(rt_device_t dev)
 {
-    dbg_log(DBG_LOG, "rt_imxrt_eth_close...\n");
+    LOG_D("rt_imxrt_eth_close...\n");
     return RT_EOK;
 }
 
 static rt_ssize_t rt_imxrt_eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    dbg_log(DBG_LOG, "rt_imxrt_eth_read...\n");
+    LOG_D("rt_imxrt_eth_read...\n");
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
 static rt_ssize_t rt_imxrt_eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    dbg_log(DBG_LOG, "rt_imxrt_eth_write...\n");
+    LOG_D("rt_imxrt_eth_write...\n");
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
 static rt_err_t rt_imxrt_eth_control(rt_device_t dev, int cmd, void *args)
 {
-    dbg_log(DBG_LOG, "rt_imxrt_eth_control...\n");
+    LOG_D("rt_imxrt_eth_control...\n");
     switch (cmd)
     {
     case NIOCTL_GADDR:
@@ -807,7 +807,7 @@ rt_err_t rt_imxrt_eth_tx(rt_device_t dev, struct pbuf *p)
     RT_ASSERT(p != NULL);
     RT_ASSERT(enet_handle != RT_NULL);
 
-    dbg_log(DBG_LOG, "rt_imxrt_eth_tx: %d\n", p->len);
+    LOG_D("rt_imxrt_eth_tx: %d\n", p->len);
 
 #ifdef ETH_TX_DUMP
     packet_dump("send", p);
@@ -861,18 +861,18 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
             }
             else
             {
-                dbg_log(DBG_LOG, " A frame read failed\n");
+                LOG_D(" A frame read failed\n");
                 pbuf_free(p);
             }
         }
         else
         {
-            dbg_log(DBG_LOG, " pbuf_alloc faild\n");
+            LOG_D(" pbuf_alloc faild\n");
         }
     }
     else if (status == kStatus_ENET_RxFrameError)
     {
-        dbg_log(DBG_WARNING, "ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
+        LOG_W("ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
         /* Update the received buffer when error happened. */
 
         /* Get the error information of the received g_frame. */
@@ -956,24 +956,24 @@ static void phy_monitor_thread_entry(void *parameter)
 
                 if (PHY_SPEED_10M == speed)
                 {
-                    dbg_log(DBG_LOG, "10M\n");
+                    LOG_D("10M\n");
                 }
                 else if (PHY_SPEED_100M == speed)
                 {
-                    dbg_log(DBG_LOG, "100M\n");
+                    LOG_D("100M\n");
                 }
                 else
                 {
-                    dbg_log(DBG_LOG, "1000M\n");
+                    LOG_D("1000M\n");
                 }
 
                 if (PHY_HALF_DUPLEX == duplex)
                 {
-                    dbg_log(DBG_LOG, "half dumplex\n");
+                    LOG_D("half dumplex\n");
                 }
                 else
                 {
-                    dbg_log(DBG_LOG, "full dumplex\n");
+                    LOG_D("full dumplex\n");
                 }
 
                 if ((imxrt_eth_device.speed != (enet_mii_speed_t)speed) || (imxrt_eth_device.duplex != (enet_mii_duplex_t)duplex))
@@ -981,19 +981,19 @@ static void phy_monitor_thread_entry(void *parameter)
                     imxrt_eth_device.speed = (enet_mii_speed_t)speed;
                     imxrt_eth_device.duplex = (enet_mii_duplex_t)duplex;
 
-                    dbg_log(DBG_LOG, "link up, and update eth mode.\n");
+                    LOG_D("link up, and update eth mode.\n");
                     rt_imxrt_eth_init((rt_device_t)&imxrt_eth_device);
                 }
                 else
                 {
-                    dbg_log(DBG_LOG, "link up, eth not need re-config.\n");
+                    LOG_D("link up, eth not need re-config.\n");
                 }
-                dbg_log(DBG_LOG, "link up.\n");
+                LOG_D("link up.\n");
                 eth_device_linkchange(&imxrt_eth_device.parent, RT_TRUE);
             }
             else
             {
-                dbg_log(DBG_LOG, "link down.\n");
+                LOG_D("link down.\n");
                 eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
             }
         }
@@ -1050,24 +1050,24 @@ static int rt_hw_imxrt_eth_init(void)
     imxrt_eth_device.parent.eth_rx = rt_imxrt_eth_rx;
     imxrt_eth_device.parent.eth_tx = rt_imxrt_eth_tx;
 
-    dbg_log(DBG_LOG, "sem init: tx_wait\r\n");
+    LOG_D("sem init: tx_wait\r\n");
     /* init tx semaphore */
     rt_sem_init(&imxrt_eth_device.tx_wait, "tx_wait", 0, RT_IPC_FLAG_FIFO);
 
-    dbg_log(DBG_LOG, "sem init: buff_wait\r\n");
+    LOG_D("sem init: buff_wait\r\n");
     /* init tx semaphore */
     rt_sem_init(&imxrt_eth_device.buff_wait, "buff_wait", 1, RT_IPC_FLAG_FIFO);
 
     /* register eth device */
-    dbg_log(DBG_LOG, "eth_device_init start\r\n");
+    LOG_D("eth_device_init start\r\n");
     state = eth_device_init(&(imxrt_eth_device.parent), "e0");
     if (RT_EOK == state)
     {
-        dbg_log(DBG_LOG, "eth_device_init success\r\n");
+        LOG_D("eth_device_init success\r\n");
     }
     else
     {
-        dbg_log(DBG_LOG, "eth_device_init faild: %d\r\n", state);
+        LOG_D("eth_device_init faild: %d\r\n", state);
     }
 
     eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
