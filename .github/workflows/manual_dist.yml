@@ -75,7 +75,7 @@ jobs:
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-arm' && success() }}
         shell: bash
         run: |
-          source tools/ci/toolchains.sh arm-none-eabi-gcc
+          source tools/ci/toolchain.sh arm-none-eabi-gcc
 
       - name: Install LLVM-Arm ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'llvm-arm' && success() }}
@@ -159,5 +159,5 @@ jobs:
         if:  ${{ github.event.inputs.dist_flag  && success()}} 
         with:
           name: dist_file
-          path: ${{ github.workspace }}/${{ github.event.inputs.bsp_options }}/*
+          path: ${{ github.workspace }}/bsp/${{ github.event.inputs.bsp_options }}/*
 
