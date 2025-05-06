@@ -155,10 +155,11 @@ jobs:
           cat bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP -j$(nproc) 
           ls bsp/$RTT_BSP
+          scons --dist -C bsp/$RTT_BSP
 
       - uses: actions/upload-artifact@main
         if:  ${{ github.event.inputs.dist_flag  && success()}} 
         with:
           name: dist_file
-          path: ${{ github.workspace }}/bsp/${{ github.event.inputs.bsp_options }}/*
+          path: ${{ github.workspace }}/bsp/${{ github.event.inputs.bsp_options }}/dist/*.zip
 
