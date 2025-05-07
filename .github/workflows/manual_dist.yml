@@ -151,7 +151,7 @@ jobs:
       - uses: actions/upload-artifact@main
         if:  ${{ github.event.inputs.dist_flag  && success()}} 
         with:
-          name: rtt_dist_${{ github.event.inputs.bsp_options }}
+          name: rtt_dist_${{ github.event.inputs.bsp_options.replace('/', '_') }}
           path: ${{ github.workspace }}/dist/*.zip
           
       - uses: actions/upload-artifact@main
