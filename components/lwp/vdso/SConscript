@@ -23,11 +23,8 @@ src    +=Glob('kernel/*.S')
 
 
 
-PREFIX  = os.getenv('RTT_CC_PREFIX')
-if PREFIX is None:
-  CPP = 'cpp'
-else:
-  CPP = PREFIX + 'cpp'
+PREFIX  = rtconfig.PREFIX
+CPP = PREFIX + 'cpp'
 CPPFLAGS= ' -E -P -x assembler-with-cpp'
 rtconfig.CPP = CPP
 rtconfig.CPPFLAGS = CPPFLAGS
