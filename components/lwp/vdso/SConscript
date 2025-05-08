@@ -36,14 +36,19 @@ if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"
 # clean = ["xmake", "clean"]
 
 vdso_file = os.path.join(cwd, 'user',"arch", rtconfig.ARCH, 'SConstruct')
-EXEC_PATH_PASS = "EXEC_PATH=" + rtconfig.EXEC_PATH
-command = ["scons", "-f", vdso_file, EXEC_PATH_PASS] 
-clean = ["scons", "-f", vdso_file, "--clean"]
 
-if not GetOption('clean'):
-    result = subprocess.run(command)
+process_env = os.environ.copy()
+if hasattr(rtconfig, 'EXEC_PATH') and rtconfig.EXEC_PATH is not None:
+    process_env['EXEC_PATH'] = rtconfig.EXEC_PATH
+if hasattr(rtconfig, 'PREFIX') and rtconfig.PREFIX is not None:
+    process_env['CC_PREFIX'] = rtconfig.PREFIX
+command = ["scons", "-f", vdso_file]
+clean_command = ["scons", "-f", vdso_file, "--clean"] 
+
+if not GetOption('clean'):    
+    result = subprocess.run(command, env=process_env, check=True)
 else:
-    result = subprocess.run(clean)
+    result = subprocess.run(clean_command, env=process_env, check=True)
 
 if result.returncode == 0:
     print("Command executed successfully")
