@@ -23,9 +23,9 @@ src    +=Glob('kernel/*.S')
 
 
 if not hasattr(rtconfig, 'CPP') or rtconfig.CPP is None:
-    CPP = rtconfig.PREFIX + 'cpp'
+    rtconfig.CPP = rtconfig.PREFIX + 'cpp'
 if not hasattr(rtconfig, 'CPPFLAGS') or rtconfig.CPPFLAGS is None:
-    CPPFLAGS = ' -E -P -x assembler-with-cpp'
+    rtconfig.CPPFLAGS = ' -E -P -x assembler-with-cpp'
 
 if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"):
     Preprocessing("user/arch/" + rtconfig.ARCH + "/vdso.lds.S", ".lds", CPPPATH=[cwd])
@@ -36,7 +36,8 @@ if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"
 # clean = ["xmake", "clean"]
 
 vdso_file = os.path.join(cwd, 'user',"arch", rtconfig.ARCH, 'SConstruct')
-command = ["scons", "-f", vdso_file]
+EXEC_PATH_PASS = "EXEC_PATH=" + rtconfig.EXEC_PATH
+command = ["scons", "-f", vdso_file, EXEC_PATH_PASS] 
 clean = ["scons", "-f", vdso_file, "--clean"]
 
 if not GetOption('clean'):
