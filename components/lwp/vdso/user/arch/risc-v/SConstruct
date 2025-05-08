@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+from PIL.SpiderImagePlugin import iforms
 
 arguments = sys.argv[2]
 vdso_usr = os.path.dirname(arguments)
@@ -11,11 +12,12 @@ rt_root_path = os.path.abspath(os.path.join(vdso_usr, "../../../../../../"))
 include_path = os.path.join(rt_root_path, "include")
 rtconfig_path = os.path.join(rt_root_path, "bsp", "qemu-virt64-riscv")
 
-EXEC_PATH  = ARGUMENTS.get('EXEC_PATH')
+EXEC_PATH  = os.getenv('EXEC_PATH')
 if not EXEC_PATH:
     EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
-PREFIX     = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-linux-gnu-'
-
+PREFIX  = os.getenv('CC_PREFIX')
+if not PREFIX:
+    PREFIX     = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-linux-gnu-'
 CC      = PREFIX + 'gcc'
 CXX     = PREFIX + 'g++'
 CPP     = PREFIX + 'cpp'
