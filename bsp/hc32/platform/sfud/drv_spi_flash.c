@@ -23,7 +23,7 @@
     #include "dev_spi_flash_sfud.h"
 #endif
 
-#if defined(HC32F4A0) || defined(HC32F448)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8)
     #define SPI_BUS_NAME                "spi1"
     #define SPI_FLASH_DEVICE_NAME       "spi10"
     #define SPI_FLASH_CHIP              "w25q64"

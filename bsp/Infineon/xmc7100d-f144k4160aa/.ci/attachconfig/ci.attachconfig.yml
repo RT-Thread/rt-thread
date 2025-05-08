@@ -1,0 +1,16 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+# ------ Drivers CI ------
+Drivers.I2C:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_I2C=y
+      - CONFIG_BSP_USING_HW_I2C1=y
+# ------ Peripheral CI ------
+Peripheral.tfcard:
+    kconfig:
+      - CONFIG_BSP_USING_TF_CARD=y
+Peripheral.qmi8658:
+    kconfig:
+      - CONFIG_BSP_USING_QMI8658=y

@@ -74,6 +74,12 @@ extern "C" {
 /* DMA1 ch7 */
 #define BSP_DMA1_CH7_IRQ_NUM            INT019_IRQn
 #define BSP_DMA1_CH7_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+/* DMA1 ch8 */
+#define BSP_DMA1_CH8_IRQ_NUM            INT020_IRQn
+#define BSP_DMA1_CH8_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+/* DMA1 ch9 */
+#define BSP_DMA1_CH9_IRQ_NUM            INT021_IRQn
+#define BSP_DMA1_CH9_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
 
 /* DMA2 ch0 */
 #define BSP_DMA2_CH0_IRQ_NUM            INT044_IRQn
@@ -233,6 +239,16 @@ extern "C" {
 #if defined(BSP_USING_SPI4)
 #define BSP_SPI4_ERR_IRQ_NUM            INT093_IRQn
 #define BSP_SPI4_ERR_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+#endif
+
+#if defined(BSP_USING_SPI5)
+#define BSP_SPI5_ERR_IRQ_NUM            INT098_IRQn
+#define BSP_SPI5_ERR_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+#endif
+
+#if defined(BSP_USING_SPI6)
+#define BSP_SPI6_ERR_IRQ_NUM            INT099_IRQn
+#define BSP_SPI6_ERR_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
 #endif
 
 #if defined(BSP_USING_UART8)
