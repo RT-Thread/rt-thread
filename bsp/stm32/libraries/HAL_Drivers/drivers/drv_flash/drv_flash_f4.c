@@ -388,6 +388,7 @@ const struct fal_flash_dev stm32_onchip_flash_16k =
         fal_flash_erase_16k,
     },
     8,
+    {},
 };
 const struct fal_flash_dev stm32_onchip_flash_64k =
 {
@@ -402,6 +403,7 @@ const struct fal_flash_dev stm32_onchip_flash_64k =
         fal_flash_erase_64k,
     },
     8,
+    {},
 };
 const struct fal_flash_dev stm32_onchip_flash_128k =
 {
@@ -416,6 +418,7 @@ const struct fal_flash_dev stm32_onchip_flash_128k =
         fal_flash_erase_128k,
     },
     8,
+    {},
 };
 
 static int fal_flash_read_16k(long offset, rt_uint8_t *buf, size_t size)

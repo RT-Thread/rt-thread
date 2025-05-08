@@ -10,7 +10,7 @@
 
 #include <rtdevice.h>
 #include "board_config.h"
-#include "tca9539.h"
+#include "tca9539_port.h"
 
 /**
  * The below functions will initialize HC32 board.
@@ -390,6 +390,36 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
 #endif
 
+#if defined (BSP_USING_INPUT_CAPTURE)
+rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance)
+{
+    rt_err_t result = RT_EOK;
+
+    switch ((rt_uint32_t)tmr_instance)
+    {
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_1)
+    case (rt_uint32_t)CM_TMR6_1:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_1_PORT, INPUT_CAPTURE_TMR6_1_PIN, INPUT_CAPTURE_TMR6_FUNC);
+        break;
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_2)
+    case (rt_uint32_t)CM_TMR6_2:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN, INPUT_CAPTURE_TMR6_FUNC);
+        break;
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_3)
+    case (rt_uint32_t)CM_TMR6_3:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_3_PORT, INPUT_CAPTURE_TMR6_3_PIN, INPUT_CAPTURE_TMR6_FUNC);
+        break;
+#endif
+    default:
+        result = -RT_ERROR;
+        break;
+    }
+    return result;
+}
+#endif
+
 #if defined (BSP_USING_SDRAM)
 rt_err_t rt_hw_board_sdram_init(void)
 {
@@ -518,31 +548,40 @@ void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode)
 }
 #endif
 
-#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
-rt_err_t rt_hw_usb_board_init(void)
+#if defined(BSP_USING_USBFS)
+rt_err_t rt_hw_usbfs_board_init(void)
 {
     stc_gpio_init_t stcGpioCfg;
     (void)GPIO_StructInit(&stcGpioCfg);
-#if defined(BSP_USING_USBFS)
+
     stcGpioCfg.u16PinAttr = PIN_ATTR_ANALOG;
     (void)GPIO_Init(USBF_DM_PORT, USBF_DM_PIN, &stcGpioCfg);
     (void)GPIO_Init(USBF_DP_PORT, USBF_DP_PIN, &stcGpioCfg);
-#if defined(BSP_USING_USBD)
+#if defined(BSP_USING_USBD_FS)
     GPIO_SetFunc(USBF_VBUS_PORT, USBF_VBUS_PIN, USBF_VBUS_FUNC); /* VBUS */
 #endif
-#if defined(BSP_USING_USBH)
+#if defined(BSP_USING_USBH_FS)
     GPIO_SetFunc(USBF_DRVVBUS_PORT, USBF_DRVVBUS_PIN, USBF_DRVVBUS_FUNC); /* DRV VBUS */
 #endif
-#elif defined(BSP_USING_USBHS)
+    return RT_EOK;
+}
+#endif
+
+#if defined(BSP_USING_USBHS)
+rt_err_t rt_hw_usbhs_board_init(void)
+{
+    stc_gpio_init_t stcGpioCfg;
+    (void)GPIO_StructInit(&stcGpioCfg);
+
 #if defined(BSP_USING_USBHS_PHY_EMBED)
     /* USBHS work in embedded PHY */
     stcGpioCfg.u16PinAttr = PIN_ATTR_ANALOG;
     (void)GPIO_Init(USBH_DM_PORT, USBH_DM_PIN, &stcGpioCfg);
     (void)GPIO_Init(USBH_DP_PORT, USBH_DP_PIN, &stcGpioCfg);
-#if defined(BSP_USING_USBD)
+#if defined(BSP_USING_USBD_HS)
     GPIO_SetFunc(USBH_VBUS_PORT, USBH_VBUS_PIN, USBH_VBUS_FUNC);
 #endif
-#if defined(BSP_USING_USBH)
+#if defined(BSP_USING_USBH_HS)
     GPIO_OutputCmd(USBH_DRVVBUS_PORT, USBH_DRVVBUS_PIN, ENABLE);
     GPIO_SetPins(USBH_DRVVBUS_PORT, USBH_DRVVBUS_PIN); /* DRV VBUS with GPIO funciton */
 #endif
@@ -580,7 +619,6 @@ rt_err_t rt_hw_usb_board_init(void)
     TCA9539_WritePin(TCA9539_IO_PORT1, USB_3300_RESET_PIN, TCA9539_PIN_RESET);
 #endif
 
-#endif
     return RT_EOK;
 }
 #endif

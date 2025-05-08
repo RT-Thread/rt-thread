@@ -52,7 +52,12 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
     device->config.parent.mode = cfg->parent.mode;
     device->config.parent.max_hz = cfg->parent.max_hz;
     device->config.parent.data_width = cfg->parent.data_width;
+#ifdef RT_USING_DM
+    device->config.parent.data_width_tx = cfg->parent.data_width_tx;
+    device->config.parent.data_width_rx = cfg->parent.data_width_rx;
+#else
     device->config.parent.reserved = cfg->parent.reserved;
+#endif
     device->config.medium_size = cfg->medium_size;
     device->config.ddr_mode = cfg->ddr_mode;
     device->config.qspi_dl_width = cfg->qspi_dl_width;
@@ -194,6 +199,9 @@ rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_
     message.parent.cs_release = 1;
 
     message.qspi_data_lines = 1;
+    /* set next */
+    /* Ensure correct QSPI message chaining by setting next pointer to NULL, preventing unintended data transmission issues.*/
+    message.parent.next = RT_NULL;
 
     result = rt_qspi_transfer_message(device, &message);
     if (result == 0)
@@ -277,6 +285,9 @@ rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
     message.parent.length = length - count;
     message.parent.cs_take = 1;
     message.parent.cs_release = 1;
+    /* set next */
+    /* Ensure correct QSPI message chaining by setting next pointer to NULL, preventing unintended data transmission issues.*/
+    message.parent.next = RT_NULL;
 
     result = rt_qspi_transfer_message(device, &message);
     if (result == 0)

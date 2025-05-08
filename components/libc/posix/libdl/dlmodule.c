@@ -55,7 +55,7 @@ static void _dlmodule_set_name(struct rt_dlmodule *module, const char *path)
     }
 
     size = end - first + 1;
-    if (size > RT_NAME_MAX) size = RT_NAME_MAX;
+    if (size >= RT_NAME_MAX) size = RT_NAME_MAX - 1;
 
     rt_strncpy(object->name, first, size);
     object->name[size] = '\0';
@@ -837,10 +837,10 @@ void dlmodule_exit(int ret_code)
  * @brief search for a symbol by its name in the kernel symbol table.
  *
  * @param sym_str the symbol name string.
- * @return rt_uint32_t On success, it returns the address of the symbol.
+ * @return rt_ubase_t On success, it returns the address of the symbol.
  *         Otherwise, it returns 0 (indicating the symbol was not found).
  */
-rt_uint32_t dlmodule_symbol_find(const char *sym_str)
+rt_ubase_t dlmodule_symbol_find(const char *sym_str)
 {
     /* find in kernel symbol table */
     struct rt_module_symtab *index;
@@ -848,7 +848,7 @@ rt_uint32_t dlmodule_symbol_find(const char *sym_str)
     for (index = _rt_module_symtab_begin; index != _rt_module_symtab_end; index ++)
     {
         if (rt_strcmp(index->name, sym_str) == 0)
-            return (rt_uint32_t)index->addr;
+            return (rt_ubase_t)index->addr;
     }
 
     return 0;

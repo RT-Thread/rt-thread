@@ -22,7 +22,7 @@
 #endif
 
 /**
- * @addtogroup FsPosixApi
+ * @addtogroup group_FsPosixApi
  * @{
  */
 

@@ -1,0 +1,91 @@
+menu "Hardware Drivers Config"
+
+config SOC_XMC7100D_F144K4160AA
+    bool
+    select SOC_SERIES_IFX_XMC
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart4)"
+        select BSP_USING_GPIO
+        select BSP_USING_UART
+        select BSP_USING_UART4
+        default y
+    menuconfig BSP_USING_TF_CARD
+        bool "Enable TF_CARD"
+        select BSP_USING_SPI
+        select RT_USING_SPI_MSD
+        select RT_USING_DFS
+        select RT_USING_DFS_DEVFS
+        select RT_USING_DFS_ELMFAT
+        default n
+        if BSP_USING_TF_CARD
+            config BSP_USING_SPI_FLASH
+                bool "Using SPI TO SDCARD"
+                default y
+        endif
+    config BSP_USING_QMI8658
+        bool "Enable QMI8658"
+        select BSP_USING_I2C
+        select PKG_USING_QMI8658
+        default n
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
+            config UART_CPU_IRQ_Number
+                int "UART connect CPU Interrupt Number (0-7)"
+                range 0 7
+                default 3
+        endif
+    menuconfig BSP_USING_I2C
+        bool "Enable HW I2C"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_I2C
+            menuconfig BSP_USING_HW_I2C1
+                bool "Enable BSP_USING_HW_I2C1"
+                default y
+                if BSP_USING_HW_I2C1
+                    config BSP_I2C1_SCL_PIN
+                        int "BSP_I2C1_SCL_PIN number(18,2)"
+                        range 0 999
+                        default 146
+                    config BSP_I2C1_SDA_PIN
+                        int "BSP_I2C1_SDA_PIN number(18,1)"
+                        range 0 999
+                        default 145
+                endif
+        endif
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI5
+                bool "Enable BSP_USING_SPI5"
+                default y
+        endif
+endmenu
+
+endmenu

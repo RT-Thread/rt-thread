@@ -15,7 +15,7 @@
 #include <rtdbg.h>
 
 static rt_list_t _ep_nodes = RT_LIST_OBJECT_INIT(_ep_nodes);
-static struct rt_spinlock _ep_lock = { 0 };
+static RT_DEFINE_SPINLOCK(_ep_lock);
 
 rt_err_t rt_pci_ep_write_header(struct rt_pci_ep *ep, rt_uint8_t func_no,
         struct rt_pci_ep_header *hdr)

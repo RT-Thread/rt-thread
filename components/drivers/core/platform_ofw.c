@@ -117,6 +117,12 @@ static rt_err_t platform_ofw_device_probe_once(struct rt_ofw_node *parent_np)
         struct rt_ofw_node_id *id;
         struct rt_ofw_prop *compat_prop = RT_NULL;
 
+        if (np->dev)
+        {
+            /* Check first */
+            continue;
+        }
+
         LOG_D("%s found in %s", np->full_name, parent_np->full_name);
 
         /* Is system node or have driver */
@@ -149,6 +155,12 @@ static rt_err_t platform_ofw_device_probe_once(struct rt_ofw_node *parent_np)
 
                 break;
             }
+        }
+
+        if (np->dev)
+        {
+            /* Maybe the childs have requested this node */
+            continue;
         }
 
         pdev = alloc_ofw_platform_device(np);

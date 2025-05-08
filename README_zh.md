@@ -124,9 +124,9 @@ RT-Thread Studio演示：
 
 RT-Thread BSP可以直接编译并下载到相应的开发板使用。此外，RT-Thread还提供 qemu-vexpress-a9 BSP，无需硬件平台即可使用。有关详细信息，请参阅下面的入门指南。
 
-[QEMU 入门指南(Windows)](documentation/quick-start/quick_start_qemu/quick_start_qemu.md)
+[QEMU 入门指南(Windows)](documentation/2.quick-start/quick_start_qemu/quick_start_qemu_windows.md)
 
-[QEMU 入门指南(Ubuntu)](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md)
+[QEMU 入门指南(Ubuntu)](documentation/2.quick-start/quick_start_qemu/quick_start_qemu_linux.md)
 
 
 ## 文档

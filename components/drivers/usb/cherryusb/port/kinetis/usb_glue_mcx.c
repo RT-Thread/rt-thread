@@ -32,6 +32,13 @@ void USB_ClockInit(void)
     CLOCK_EnableClock(kCLOCK_Usb0Fs);
     CLOCK_EnableUsbfsClock();
 }
+#elif defined(MCXA156_H_)
+#define USBD_IRQ USB0_IRQHandler
+void USB_ClockInit(void)
+{
+    RESET_PeripheralReset(kUSB0_RST_SHIFT_RSTn);
+    CLOCK_EnableUsbfsClock();
+}
 #else
 #error "Unsupported MCU with Kinetis IP"
 #endif
@@ -49,15 +56,14 @@ void usb_dc_low_level_init(uint8_t busid)
     uint8_t irqNumber;
 
     uint8_t usbDeviceKhciIrq[] = USB_IRQS;
-    irqNumber                  = usbDeviceKhciIrq[0];
+    irqNumber = usbDeviceKhciIrq[0];
 
     /* Install isr, set priority, and enable IRQ. */
     NVIC_SetPriority((IRQn_Type)irqNumber, 3);
     EnableIRQ((IRQn_Type)irqNumber);
 
     USB_OTG_DEV->USBTRC0 |= USB_USBTRC0_USBRESET_MASK;
-    while (USB_OTG_DEV->USBTRC0 & USB_USBTRC0_USBRESET_MASK)
-        ;
+    while (USB_OTG_DEV->USBTRC0 & USB_USBTRC0_USBRESET_MASK);
 
     USB_OTG_DEV->USBTRC0 |= USB_USBTRC0_VREGIN_STS(1); /* software must set this bit to 1 */
     USB_OTG_DEV->USBCTRL = 0;
@@ -67,7 +73,11 @@ void usb_dc_low_level_init(uint8_t busid)
 void usb_dc_low_level_deinit(uint8_t busid)
 {
     USB_OTG_DEV->CONTROL &= ~USB_CONTROL_DPPULLUPNONOTG_MASK;
-    DisableIRQ((IRQn_Type)USB0_FS_IRQn);
+    #if defined(MCXN947_CM33_CORE0_H_)
+        DisableIRQ((IRQn_Type)USB0_FS_IRQn);
+    #else
+        DisableIRQ((IRQn_Type)USB0_IRQn);
+    #endif
 }
 
 void usbd_kinetis_delay_ms(uint8_t ms)

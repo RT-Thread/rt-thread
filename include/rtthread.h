@@ -50,7 +50,7 @@ int entry(void);
 #endif
 
 /**
- * @addtogroup KernelObject
+ * @addtogroup group_KernelObject
  * @{
  */
 
@@ -90,7 +90,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 /**@}*/
 
 /**
- * @addtogroup Clock
+ * @addtogroup group_Clock
  * @{
  */
 
@@ -138,7 +138,7 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 /**@}*/
 
 /**
- * @addtogroup Thread
+ * @addtogroup group_Thread
  * @{
  */
 
@@ -247,12 +247,13 @@ void rt_scheduler_ipi_handler(int vector, void *param);
 /**@}*/
 
 /**
- * @addtogroup Signal
+ * @addtogroup group_Signal
  * @{
  */
 #ifdef RT_USING_SIGNALS
 void rt_signal_mask(int signo);
 void rt_signal_unmask(int signo);
+void *rt_signal_check(void* context);
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler);
 int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout);
 int rt_system_signal_init(void);
@@ -260,7 +261,7 @@ int rt_system_signal_init(void);
 /**@}*/
 
 /**
- * @addtogroup MM
+ * @addtogroup group_MM
  * @{
  */
 
@@ -316,7 +317,7 @@ void rt_page_free(void *addr, rt_size_t npages);
 #endif /* defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP) */
 
 /**
- * @ingroup Hook
+ * @ingroup group_Hook
  * @{
  */
 
@@ -386,7 +387,7 @@ void rt_slab_free(rt_slab_t m, void *ptr);
 /**@}*/
 
 /**
- * @addtogroup IPC
+ * @addtogroup group_IPC
  * @{
  */
 
@@ -411,7 +412,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
 rt_err_t rt_susp_list_enqueue(rt_list_t *susp_list, rt_thread_t thread, int ipc_flags);
 
 /**
- * @addtogroup semaphore
+ * @addtogroup group_semaphore Semaphore
  * @{
  */
 
@@ -440,7 +441,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg);
 /**@}*/
 
 /**
- * @addtogroup mutex
+ * @addtogroup group_mutex Mutex
  * @{
  */
 
@@ -479,7 +480,7 @@ rt_inline rt_ubase_t rt_mutex_get_hold(rt_mutex_t mutex)
 /**@}*/
 
 /**
- * @addtogroup event
+ * @addtogroup group_event Event
  * @{
  */
 
@@ -516,7 +517,7 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg);
 /**@}*/
 
 /**
- * @addtogroup mailbox
+ * @addtogroup group_mailbox MailBox
  * @{
  */
 
@@ -557,7 +558,7 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 /**@}*/
 
 /**
- * @addtogroup messagequeue
+ * @addtogroup group_messagequeue Message Queue
  * @{
  */
 #ifdef RT_USING_MESSAGEQUEUE
@@ -661,7 +662,7 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 
 #ifdef RT_USING_DEVICE
 /**
- * @addtogroup Device
+ * @addtogroup group_Device
  * @{
  */
 
@@ -760,7 +761,7 @@ void rt_components_board_init(void);
 #endif /* RT_USING_COMPONENTS_INIT */
 
 /**
- * @addtogroup KernelService
+ * @addtogroup group_KernelService
  * @{
  */
 

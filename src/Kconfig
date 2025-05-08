@@ -224,11 +224,6 @@ menuconfig RT_USING_DEBUG
             bool "Enable debugging of components automatic initialization"
             default n
 
-        config RT_DEBUGING_PAGE_LEAK
-            bool "Enable page leaking tracer"
-            depends on ARCH_MM_MMU
-            default n
-
         config RT_DEBUGING_SPINLOCK
             bool "Enable spinlock debugging"
             depends on RT_USING_SMP
@@ -244,6 +239,8 @@ menuconfig RT_USING_DEBUG
 config RT_USING_CI_ACTION
     bool "Enable CI Action build mode"
     select RT_USING_UTEST
+    select RT_UTEST_USING_AUTO_RUN
+    select RT_UTEST_USING_ALL_CASES
     default n
     help
         Identify that the environment is CI Action.
@@ -286,17 +283,6 @@ menu "Inter-Thread communication"
 endmenu
 
 menu "Memory Management"
-
-    config RT_PAGE_MAX_ORDER
-        int "Max order of pages allocatable by page allocator"
-        default 11
-        depends on ARCH_MM_MMU
-        help
-            For example, A value of 11 means the maximum chunk of contiguous memory
-            allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
-            Large memory requirement can consume all system resource, and should
-            consider reserved memory instead to enhance system endurance.
-            Max order should at least satisfied usage by huge page.
 
     config RT_USING_MEMPOOL
         bool "Using memory pool"
@@ -447,7 +433,7 @@ endif
 
 config RT_VER_NUM
     hex
-    default 0x50200
+    default 0x50201
     help
         RT-Thread version number
 

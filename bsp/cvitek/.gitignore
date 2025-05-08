@@ -1,5 +1,3 @@
-cvitek_bootloader
-fip.bin
-boot.sd
-output
+rttpkgtool/
+output/
 Image.lzma

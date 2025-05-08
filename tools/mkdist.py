@@ -20,6 +20,9 @@
 # Change Logs:
 # Date           Author       Notes
 # 2017-10-04     Bernard      The first version
+# 2025-01-07     ZhaoCake     components copy and gen doc
+# 2025-03-02     ZhaoCake     Add MkDist_Strip
+
 
 import os
 import subprocess
@@ -93,7 +96,7 @@ def walk_kconfig(RTT_ROOT, source_list):
 def bsp_copy_files(bsp_root, dist_dir):
     # copy BSP files
     do_copy_folder(os.path.join(bsp_root), dist_dir,
-        ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
+        ignore_patterns('build', '__pycache__', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
 
 def bsp_update_sconstruct(dist_dir):
     with open(os.path.join(dist_dir, 'SConstruct'), 'r') as f:
@@ -248,3 +251,90 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
         zip_dist(dist_dir, project_name)
 
     print('dist project successfully!')
+
+def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, env, project_name, project_path=None):
+    """Create a minimal distribution based on compile_commands.json but keeping all build system files.
+    First copies everything like MkDist, then only removes unused source files while keeping all headers.
+    """
+    print('Making minimal distribution for project...')
+
+    if project_path == None:
+        dist_dir = os.path.join(BSP_ROOT, 'dist', project_name)
+    else:
+        dist_dir = project_path
+
+    # First do a full distribution copy
+    MkDist(program, BSP_ROOT, RTT_ROOT, env, project_name, project_path)
+    print('\n=> Starting source files cleanup...')
+
+    # Get the minimal required source paths
+    import compile_commands
+    used_paths = compile_commands.get_minimal_dist_paths(
+        os.path.join(BSP_ROOT, 'compile_commands.json'), 
+        RTT_ROOT
+    )
+
+    # Clean up RT-Thread directory except tools and build files
+    rt_thread_dir = os.path.join(dist_dir, 'rt-thread')
+    source_extensions = ('.c', '.cpp', '.cxx', '.cc', '.s', '.S')
+    
+    removed_files = []
+    removed_dirs = []
+    
+    for root, dirs, files in os.walk(rt_thread_dir, topdown=False):
+        rel_path = os.path.relpath(root, rt_thread_dir)
+        
+        if rel_path.startswith('tools') or rel_path.startswith('include'):
+            continue
+            
+        keep_files = {
+            'SConscript',
+            'Kconfig',
+            'Sconscript', 
+            '.config',
+            'rtconfig.h'
+        }
+        
+        for f in files:
+            if f in keep_files:
+                continue
+            
+            if not f.endswith(source_extensions):
+                continue
+                
+            file_path = os.path.join(root, f)
+            rel_file_path = os.path.relpath(file_path, rt_thread_dir)
+            dir_name = os.path.dirname(rel_file_path)
+            
+            if dir_name not in used_paths and rel_file_path not in used_paths:
+                os.remove(file_path)
+                removed_files.append(rel_file_path)
+                
+        # Remove empty directories
+        try:
+            if not os.listdir(root):
+                os.rmdir(root)
+                removed_dirs.append(rel_path)
+        except:
+            pass
+
+    # Output summary
+    if removed_files:
+        print(f"Removed {len(removed_files)} unused source files")
+        log_file = os.path.join(dist_dir, 'cleanup.log')
+        with open(log_file, 'w') as f:
+            f.write("Removed source files:\n")
+            f.write('\n'.join(removed_files))
+            if removed_dirs:
+                f.write("\n\nRemoved empty directories:\n")
+                f.write('\n'.join(removed_dirs))
+        print(f"Details have been written to {log_file}")
+    else:
+        print("No unused source files found")
+
+    # Make zip package like MkDist
+    if project_path is None:
+        zip_dist(dist_dir, project_name)
+        print(f"Distribution package created: {dist_dir}.zip")
+
+    print('=> Distribution stripped successfully')

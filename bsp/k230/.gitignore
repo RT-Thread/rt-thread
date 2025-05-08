@@ -2,8 +2,10 @@
 build/
 packages/
 install/
+rttpkgtool/
 
 rtthread.*
+link.lds.generated
 
 __pycache__
 .config.old

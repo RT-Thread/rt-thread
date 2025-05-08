@@ -136,7 +136,7 @@ int usbd_ep_start_write(uint8_t busid, const uint8_t ep, const uint8_t *data, ui
  */
 int usbd_ep_start_read(uint8_t busid, const uint8_t ep, uint8_t *data, uint32_t data_len);
 
-/* usb dcd irq callback */
+/* usb dcd irq callback, called by user */
 
 /**
  * @brief Usb connect irq callback.
@@ -193,6 +193,9 @@ void usbd_event_ep_out_complete_handler(uint8_t busid, uint8_t ep, uint32_t nbyt
  */
 void usbd_execute_test_mode(uint8_t busid, uint8_t test_mode);
 #endif
+
+/* called by user */
+void USBD_IRQHandler(uint8_t busid);
 
 #ifdef __cplusplus
 }

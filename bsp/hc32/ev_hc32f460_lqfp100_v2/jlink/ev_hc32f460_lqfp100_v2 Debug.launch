@@ -41,7 +41,7 @@
     <intAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.swoEnableTargetCpuFreq" value="0"/>
     <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.swoEnableTargetPortMask" value="0x1"/>
     <intAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.swoEnableTargetSwoFreq" value="0"/>
-    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.svdPath" value="${project_loc}/../libraries/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/GCC/svd/HC32F460.svd"/>
+    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.svdPath" value="${project_loc}/../libraries/hc32f460_ddl/cmsis/Device/HDSC/hc32f4xx/Source/GCC/svd/HC32F460.svd"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.ipAddress" value="localhost"/>

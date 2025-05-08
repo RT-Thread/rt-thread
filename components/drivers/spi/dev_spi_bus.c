@@ -27,7 +27,6 @@ void spi_bus_scan_devices(struct rt_spi_bus *bus)
 
         rt_ofw_foreach_available_child_node(np, spi_dev_np)
         {
-            rt_uint64_t reg_offset;
             struct rt_spi_device *spi_dev;
 
             if (!rt_ofw_prop_read_bool(spi_dev_np, "compatible"))
@@ -45,8 +44,6 @@ void spi_bus_scan_devices(struct rt_spi_bus *bus)
 
                 return;
             }
-
-            rt_ofw_get_address(spi_dev_np, 0, &reg_offset, RT_NULL);
 
             spi_dev->parent.ofw_node = spi_dev_np;
             spi_dev->parent.type = RT_Device_Class_Unknown;
@@ -137,9 +134,9 @@ static rt_err_t spi_probe(rt_device_t dev)
 
     bus = device->bus;
 
-    if (bus->pins)
+    if (bus->cs_pins[0] >= 0)
     {
-        device->cs_pin = bus->pins[device->chip_select];
+        device->cs_pin = bus->cs_pins[device->chip_select[0]];
 
         rt_pin_mode(device->cs_pin, PIN_MODE_OUTPUT);
     }

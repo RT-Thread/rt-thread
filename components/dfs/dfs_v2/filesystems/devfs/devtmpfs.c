@@ -18,6 +18,7 @@
 #include <dfs_dentry.h>
 #include <dfs_file.h>
 #include <dfs_mnt.h>
+#include <dfs_vfs.h>
 #include <devfs.h>
 #include <unistd.h>
 
@@ -34,10 +35,9 @@ struct devtmpfs_file
     char name[DIRENT_NAME_MAX]; /* file name */
 
     rt_uint32_t     type;       /* file type */
-    rt_list_t       subdirs;    /* file subdir list */
-    rt_list_t       sibling;    /* file sibling list */
+    struct dfs_vfs_node node;   /* file node in the devtmpfs */
 
-    struct devtmpfs_sb *sb;    /* superblock ptr */
+    struct devtmpfs_sb *sb;     /* superblock ptr */
 
     rt_uint32_t     mode;
     char *link;
@@ -48,7 +48,6 @@ struct devtmpfs_sb
     rt_uint32_t             magic;      /* TMPFS_MAGIC */
     struct devtmpfs_file    root;       /* root dir */
     rt_size_t               df_size;    /* df size */
-    rt_list_t               sibling;    /* sb sibling list */
     struct rt_spinlock      lock;       /* tmpfs lock */
 };
 
@@ -111,15 +110,13 @@ static int _get_subdir(const char *path, char *name)
 #if 0
 static int _free_subdir(struct devtmpfs_file *dfile)
 {
-    struct devtmpfs_file *file;
-    rt_list_t *list, *temp_list;
+    struct devtmpfs_file *file, *tmp;
     struct devtmpfs_sb *superblock;
 
     RT_ASSERT(dfile->type == TMPFS_TYPE_DIR);
 
-    rt_list_for_each_safe(list, temp_list, &dfile->subdirs)
+    dfs_vfs_for_each_subnode(file, tmp, dfile, node)
     {
-        file = rt_list_entry(list, struct devtmpfs_file, sibling);
         if (file->type == TMPFS_TYPE_DIR)
         {
             _free_subdir(file);
@@ -134,7 +131,7 @@ static int _free_subdir(struct devtmpfs_file *dfile)
         RT_ASSERT(superblock);
 
         rt_spin_lock(&superblock->lock);
-        rt_list_remove(&(file->sibling));
+        dfs_vfs_remove_node(&file->node);
         rt_spin_unlock(&superblock->lock);
 
         rt_free(file);
@@ -152,14 +149,12 @@ static int devtmpfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void 
     {
         superblock->df_size = sizeof(struct devtmpfs_sb);
         superblock->magic = TMPFS_MAGIC;
-        rt_list_init(&superblock->sibling);
 
         superblock->root.name[0] = '/';
         superblock->root.sb = superblock;
         superblock->root.type = TMPFS_TYPE_DIR;
         superblock->root.mode = S_IFDIR | (S_IRUSR | S_IRGRP | S_IROTH) | (S_IXUSR | S_IXGRP | S_IXOTH);
-        rt_list_init(&superblock->root.sibling);
-        rt_list_init(&superblock->root.subdirs);
+        dfs_vfs_init_node(&superblock->root.node);
 
         rt_spin_lock_init(&superblock->lock);
 
@@ -193,8 +188,7 @@ static struct devtmpfs_file *devtmpfs_file_lookup(struct devtmpfs_sb *superblock
 {
     const char *subpath, *curpath, *filename = RT_NULL;
     char subdir_name[DIRENT_NAME_MAX];
-    struct devtmpfs_file *file, *curfile;
-    rt_list_t *list;
+    struct devtmpfs_file *file, *curfile, *tmp;
 
     subpath = path;
     while (*subpath == '/' && *subpath)
@@ -222,9 +216,8 @@ find_subpath:
 
     rt_spin_lock(&superblock->lock);
 
-    rt_list_for_each(list, &curfile->subdirs)
+    dfs_vfs_for_each_subnode(file, tmp, curfile, node)
     {
-        file = rt_list_entry(list, struct devtmpfs_file, sibling);
         if (filename) /* find file */
         {
             if (rt_strcmp(file->name, filename) == 0)
@@ -293,7 +286,9 @@ static int devtmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
 
 static int devtmpfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
 {
-    struct devtmpfs_file *d_file;
+    rt_size_t index, end;
+    struct dirent *d;
+    struct devtmpfs_file *d_file, *n_file = RT_NULL, *tmp;
     struct devtmpfs_sb *superblock;
 
     RT_ASSERT(file);
@@ -306,11 +301,6 @@ static int devtmpfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_
     d_file = devtmpfs_file_lookup(superblock, file->dentry->pathname);
     if (d_file)
     {
-        rt_size_t index, end;
-        struct dirent *d;
-        struct devtmpfs_file *n_file;
-        rt_list_t *list;
-
         /* make integer count */
         count = (count / sizeof(struct dirent));
         if (count == 0)
@@ -322,12 +312,10 @@ static int devtmpfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_
         index = 0;
         count = 0;
 
-        rt_list_for_each(list, &d_file->subdirs)
+        dfs_vfs_for_each_subnode(n_file, tmp, d_file, node)
         {
             if (index >= (rt_size_t)file->fpos)
             {
-                n_file = rt_list_entry(list, struct devtmpfs_file, sibling);
-
                 d = dirp + count;
                 if (n_file->type == TMPFS_TYPE_FILE)
                 {
@@ -378,8 +366,7 @@ static int devtmpfs_symlink(struct dfs_dentry *parent_dentry, const char *target
 
             strncpy(l_file->name, linkpath, DIRENT_NAME_MAX - 1);
 
-            rt_list_init(&(l_file->subdirs));
-            rt_list_init(&(l_file->sibling));
+            dfs_vfs_init_node(&l_file->node);
             l_file->sb = superblock;
             l_file->type = TMPFS_TYPE_FILE;
             l_file->mode = p_file->mode;
@@ -388,7 +375,7 @@ static int devtmpfs_symlink(struct dfs_dentry *parent_dentry, const char *target
             l_file->link = rt_strdup(target);
 
             rt_spin_lock(&superblock->lock);
-            rt_list_insert_after(&(p_file->subdirs), &(l_file->sibling));
+            dfs_vfs_append_node(&p_file->node, &l_file->node);
             rt_spin_unlock(&superblock->lock);
         }
     }
@@ -460,7 +447,7 @@ static int devtmpfs_unlink(struct dfs_dentry *dentry)
         }
 
         rt_spin_lock(&superblock->lock);
-        rt_list_remove(&(d_file->sibling));
+        dfs_vfs_remove_node(&d_file->node);
         rt_spin_unlock(&superblock->lock);
 
         rt_free(d_file);
@@ -537,8 +524,7 @@ static struct dfs_vnode *devtmpfs_create_vnode(struct dfs_dentry *dentry, int ty
 
         strncpy(d_file->name, file_name, DIRENT_NAME_MAX);
 
-        rt_list_init(&(d_file->subdirs));
-        rt_list_init(&(d_file->sibling));
+        dfs_vfs_init_node(&d_file->node);
         d_file->sb = superblock;
 
         vnode->nlink = 1;
@@ -563,7 +549,7 @@ static struct dfs_vnode *devtmpfs_create_vnode(struct dfs_dentry *dentry, int ty
         d_file->mode = vnode->mode;
 
         rt_spin_lock(&superblock->lock);
-        rt_list_insert_after(&(p_file->subdirs), &(d_file->sibling));
+        dfs_vfs_append_node(&p_file->node, &d_file->node);
         rt_spin_unlock(&superblock->lock);
     }
 

@@ -55,7 +55,7 @@ if GetDepend(['BSP_USING_TIM']):
 if GetDepend(['BSP_USING_ETH']):
     src += ['drv_eth.c']
 
-if GetDepend(['BSP_USING_CAN']):
+if GetDepend(['BSP_USING_CAN']) or GetDepend('BSP_USING_CANFD'):
     src += ['drv_can.c']
 
 if GetDepend(['BSP_USING_SDHI']):

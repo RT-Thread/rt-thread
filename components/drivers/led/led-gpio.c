@@ -23,7 +23,7 @@ struct gpio_led
     rt_uint8_t active_val;
 };
 
-#define raw_to_gpio_led(raw) rt_container_of(raw, struct gpio_led, parent);
+#define raw_to_gpio_led(raw) rt_container_of(raw, struct gpio_led, parent)
 
 static rt_err_t gpio_led_set_state(struct rt_led_device *led, enum rt_led_state state)
 {
@@ -108,7 +108,7 @@ static rt_err_t ofw_append_gpio_led(struct rt_ofw_node *np)
 
     gled->parent.ops = &gpio_led_ops;
 
-    if ((err = rt_hw_led_register(&gled->parent)))
+    if ((err = rt_led_register(&gled->parent)))
     {
         goto _fail;
     }
@@ -203,7 +203,7 @@ static rt_err_t gpio_led_remove(struct rt_platform_device *pdev)
 
         rt_ofw_data(led_np) = RT_NULL;
 
-        rt_hw_led_unregister(&gled->parent);
+        rt_led_unregister(&gled->parent);
 
         rt_free(gled);
     }

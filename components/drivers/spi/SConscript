@@ -7,8 +7,9 @@ src = ['dev_spi_core.c', 'dev_spi.c']
 CPPPATH = [cwd, cwd + '/../include']
 LOCAL_CFLAGS = ''
 
-if GetDepend('RT_USING_SPI_BITOPS'):
+if GetDepend('RT_USING_SOFT_SPI'):
     src += ['dev_spi_bit_ops.c']
+    src += ['dev_soft_spi.c']
 
 if GetDepend('RT_USING_QSPI'):
     src += ['dev_qspi_core.c']

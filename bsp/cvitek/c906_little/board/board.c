@@ -11,6 +11,8 @@
 #include <rtthread.h>
 
 #include "board.h"
+#include "tick.h"
+#include "drv_uart.h"
 
 void rt_hw_board_init(void)
 {

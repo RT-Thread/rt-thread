@@ -119,8 +119,6 @@ elif rtconfig.PLATFORM in ['iccarm']:
 
 src = list(set(src))
 
-CPPDEFINES = ['CORE_CM4','NO_ATOMIC_64_SUPPORT','METAL_INTERNAL','METAL_MAX_DEVICE_REGIONS=2','VIRTIO_SLAVE_ONLY','STM32MP157Axx','__LOG_TRACE_IO_']
-
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

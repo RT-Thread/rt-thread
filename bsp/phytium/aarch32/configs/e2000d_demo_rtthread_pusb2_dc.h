@@ -3,6 +3,64 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* rt_vsnprintf options */
+
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
+/* end of klibc options */
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
@@ -10,6 +68,7 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
+#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -20,18 +79,13 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -45,7 +99,7 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
+#define RT_USING_MEMPOOL
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -54,7 +108,6 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
-#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
@@ -147,10 +200,21 @@
 #define RT_SDIO_STACK_SIZE 4096
 #define RT_SDIO_THREAD_PRIORITY 15
 #define RT_MMCSD_STACK_SIZE 4096
-#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
 #define RT_USING_PIN
 #define RT_USING_KTIME
 #define RT_USING_CHERRYUSB
@@ -159,6 +223,7 @@
 #define RT_CHERRYUSB_DEVICE_PUSB2
 #define RT_CHERRYUSB_DEVICE_MSC
 #define RT_CHERRYUSB_DEVICE_TEMPLATE_MSC
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -280,6 +345,16 @@
 #define RT_USING_ADT_REF
 /* end of Utilities */
 
+/* Memory management */
+
+#define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
+#define RT_PAGE_MAX_ORDER 11
+
+/* Debugging */
+
+/* end of Debugging */
+/* end of Memory management */
+
 /* Using USB legacy version */
 
 /* end of Using USB legacy version */
@@ -378,10 +453,6 @@
 /* STM32 HAL & SDK Drivers */
 
 /* end of STM32 HAL & SDK Drivers */
-
-/* Infineon HAL Packages */
-
-/* end of Infineon HAL Packages */
 
 /* Kendryte SDK */
 
@@ -486,7 +557,6 @@
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM2
 #define BSP_USING_I2C
@@ -502,6 +572,10 @@
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1
+#define BSP_USING_I2S
+#define RT_I2S_SAMPLERATE 8000
+#define RT_I2S_SAMPLEBITS 16
+#define RT_USING_I2S0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

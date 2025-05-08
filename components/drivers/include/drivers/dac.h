@@ -12,8 +12,8 @@
 #define __DAC_H__
 #include <rtthread.h>
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    DAC           DAC
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_DAC DAC
  *
  * @brief       DAC driver api
  *
@@ -60,11 +60,11 @@
  *
  * @endcode
  *
- * @ingroup Drivers
+ * @ingroup group_Drivers
  */
 
 /*!
- * @addtogroup DAC
+ * @addtogroup group_DAC
  * @{
  */
 struct rt_dac_device;

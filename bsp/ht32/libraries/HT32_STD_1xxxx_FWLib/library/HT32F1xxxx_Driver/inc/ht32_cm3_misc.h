@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32_cm3_misc.h
- * @version $Rev:: 5            $
- * @date    $Date:: 2017-05-11 #$
+ * @version $Rev:: 3143         $
+ * @date    $Date:: 2024-07-04 #$
  * @brief   All the function prototypes for the miscellaneous firmware library.
  *************************************************************************************************************
  * @attention
@@ -112,6 +112,11 @@ void SYSTICK_ClockSourceConfig(u32 SysTick_ClockSource);
 void SYSTICK_CounterCmd(u32 SysTick_Counter);
 void SYSTICK_IntConfig(ControlStatus NewState);
 void SYSTICK_SetReloadValue(u32 SysTick_Reload);
+#if (HTCFG_STACK_USAGE_ANALYSIS == 1)
+void StackUsageAnalysisInit(u32 addr);
+#else
+#define StackUsageAnalysisInit(...)
+#endif
 /**
   * @}
   */

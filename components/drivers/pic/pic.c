@@ -51,7 +51,7 @@ static struct rt_pic_irq _pirq_hash[MAX_HANDLERS] =
     }
 };
 
-static struct rt_spinlock _pic_lock = { };
+static RT_DEFINE_SPINLOCK(_pic_lock);
 static rt_size_t _pic_name_max = sizeof("PIC");
 static rt_list_t _pic_nodes = RT_LIST_OBJECT_INIT(_pic_nodes);
 static rt_list_t _traps_nodes = RT_LIST_OBJECT_INIT(_traps_nodes);

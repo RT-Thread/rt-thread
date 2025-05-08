@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_MCXN947
+config SOC_MCXA153
     bool
-    select SOC_MCXN947_SERIES
+    select SOC_MCXA153_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -131,10 +131,10 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_PWM0
                     bool "Enable eFlex PWM0"
                     default n
-		config BSP_USING_PWM1
+                config BSP_USING_PWM1
                     bool "Enable eFlex PWM1"
                     default n
-		config BSP_USING_PWM2
+                config BSP_USING_PWM2
                     bool "Enable eFlex PWM2"
                     default n
             endif

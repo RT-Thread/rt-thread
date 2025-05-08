@@ -207,4 +207,12 @@
 
 #define USB_ALIGN_UP(size, align) (((size) + (align)-1) & ~((align)-1))
 
+#ifndef usb_phyaddr2ramaddr
+#define usb_phyaddr2ramaddr(addr) (addr)
+#endif
+
+#ifndef usb_ramaddr2phyaddr
+#define usb_ramaddr2phyaddr(addr) (addr)
+#endif
+
 #endif /* USB_UTIL_H */

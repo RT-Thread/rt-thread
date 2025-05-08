@@ -32,6 +32,7 @@
  * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
  */
 
+#define __RT_IPC_SOURCE__
 #include <rtthread.h>
 #include <rthw.h>
 
@@ -55,7 +56,7 @@ static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 
 /**
- * @addtogroup Hook
+ * @addtogroup group_Hook
  */
 
 /**@{*/
@@ -187,7 +188,7 @@ void rt_system_scheduler_start(void)
 }
 
 /**
- * @addtogroup Thread
+ * @addtogroup group_Thread
  * @cond
  */
 

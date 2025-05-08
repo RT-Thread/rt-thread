@@ -8,49 +8,61 @@
 
 /* klibc options */
 
-/* ------------rt_memset options------------ */
+/* rt_vsnprintf options */
 
+/* end of rt_vsnprintf options */
 
-/* ------------rt_memcpy options------------ */
+/* rt_vsscanf options */
 
+/* end of rt_vsscanf options */
 
-/* ------------rt_memmove options------------ */
+/* rt_memset options */
 
+/* end of rt_memset options */
 
-/* ------------rt_memcmp options------------ */
+/* rt_memcpy options */
 
+/* end of rt_memcpy options */
 
-/* ------------rt_strstr options------------ */
+/* rt_memmove options */
 
+/* end of rt_memmove options */
 
-/* ------------rt_strcasecmp options------------ */
+/* rt_memcmp options */
 
+/* end of rt_memcmp options */
 
-/* ------------rt_strncpy options------------ */
+/* rt_strstr options */
 
+/* end of rt_strstr options */
 
-/* ------------rt_strcpy options------------ */
+/* rt_strcasecmp options */
 
+/* end of rt_strcasecmp options */
 
-/* ------------rt_strncmp options------------ */
+/* rt_strncpy options */
 
+/* end of rt_strncpy options */
 
-/* ------------rt_strcmp options------------ */
+/* rt_strcpy options */
 
+/* end of rt_strcpy options */
 
-/* ------------rt_strlen options------------ */
+/* rt_strncmp options */
 
+/* end of rt_strncmp options */
 
-/* ------------rt_strlen options------------ */
+/* rt_strcmp options */
 
-/* ------------rt_strnlen options------------ */
+/* end of rt_strcmp options */
 
+/* rt_strlen options */
 
-/* ------------rt_vsscanf options------------ */
+/* end of rt_strlen options */
 
+/* rt_strnlen options */
 
-/* ------------rt_vsnprintf options------------ */
-
+/* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 8
 #define RT_CPUS_NR 1
@@ -93,7 +105,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart3"
-#define RT_VER_NUM 0x50200
+#define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_CACHE
@@ -260,6 +272,8 @@
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+#define PKG_USING_CMSIS_CORE
+#define PKG_USING_CMSIS_CORE_LATEST_VERSION
 /* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -273,6 +287,10 @@
 
 /* STM32 HAL & SDK Drivers */
 
+#define PKG_USING_STM32H7_HAL_DRIVER
+#define PKG_USING_STM32H7_HAL_DRIVER_LATEST_VERSION
+#define PKG_USING_STM32H7_CMSIS_DRIVER
+#define PKG_USING_STM32H7_CMSIS_DRIVER_LATEST_VERSION
 /* end of STM32 HAL & SDK Drivers */
 
 /* Infineon HAL Packages */
@@ -282,6 +300,14 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -373,6 +399,7 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
+#define BSP_STM32_UART_V1_TX_TIMEOUT 6000
 #define BSP_USING_UART3
 /* end of On-chip Peripheral Drivers */
 

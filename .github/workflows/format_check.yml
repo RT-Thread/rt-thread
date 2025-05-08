@@ -15,9 +15,9 @@ jobs:
     name: Scan code format and license
     if: github.repository_owner == 'RT-Thread'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@main
         with:
           python-version: 3.8
       

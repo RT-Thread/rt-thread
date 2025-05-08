@@ -20,7 +20,7 @@
 #include <drivers/platform.h>
 #include <drivers/core/dm.h>
 
-static struct rt_spinlock mbox_ops_lock = {};
+static RT_DEFINE_SPINLOCK(mbox_ops_lock);
 static rt_list_t mbox_nodes = RT_LIST_OBJECT_INIT(mbox_nodes);
 
 static void mbox_chan_timeout(void *param);

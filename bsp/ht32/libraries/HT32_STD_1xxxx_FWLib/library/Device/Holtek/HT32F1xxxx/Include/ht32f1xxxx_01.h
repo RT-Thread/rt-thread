@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file    ht32f1xxxx_01.h
  * @brief   CMSIS Cortex-M3 Device Peripheral Access Layer Header File
- * @version $Rev:: 2914         $
- * @date    $Date:: 2023-05-18 #$
+ * @version $Rev:: 3097         $
+ * @date    $Date:: 2024-06-20 #$
  *
  * @note
  * Copyright (C) Holtek Semiconductor Inc. All rights reserved.
@@ -156,14 +156,14 @@ typedef enum IRQn
   #endif
   ADC0_IRQn               = 25,     /*!< ADC Interrupt                                                      */
   #if !defined(USE_HT32F12364)
-  MCTM0BRK_IRQn           = 27,     /*!< MCTM0 BRK interrupt                                                */
-  MCTM0UP_IRQn            = 28,     /*!< MCTM0 UP interrupt                                                 */
-  MCTM0TR_IRQn            = 29,     /*!< MCTM0 TR interrupt                                                 */
-  MCTM0CC_IRQn            = 30,     /*!< MCTM0 CC interrupt                                                 */
-  MCTM1BRK_IRQn           = 31,     /*!< MCTM1 BRK interrupt                                                */
-  MCTM1UP_IRQn            = 32,     /*!< MCTM1 UP interrupt                                                 */
-  MCTM1TR_IRQn            = 33,     /*!< MCTM1 TR interrupt                                                 */
-  MCTM1CC_IRQn            = 34,     /*!< MCTM1 CC interrupt                                                 */
+  MCTM0_BRK_IRQn          = 27,     /*!< MCTM0 BRK interrupt                                                */
+  MCTM0_UP_IRQn           = 28,     /*!< MCTM0 UP interrupt                                                 */
+  MCTM0_TR_IRQn           = 29,     /*!< MCTM0 TR interrupt                                                 */
+  MCTM0_CC_IRQn           = 30,     /*!< MCTM0 CC interrupt                                                 */
+  MCTM1_BRK_IRQn          = 31,     /*!< MCTM1 BRK interrupt                                                */
+  MCTM1_UP_IRQn           = 32,     /*!< MCTM1 UP interrupt                                                 */
+  MCTM1_TR_IRQn           = 33,     /*!< MCTM1 TR interrupt                                                 */
+  MCTM1_CC_IRQn           = 34,     /*!< MCTM1 CC interrupt                                                 */
   #endif
   GPTM0_IRQn              = 35,     /*!< General-Purpose Timer0 Interrupt                                   */
   #if !defined(USE_HT32F12364)
@@ -223,10 +223,10 @@ typedef enum IRQn
   #endif
 } IRQn_Type;
 
-#define MCTM0_IRQn               MCTM0UP_IRQn
-#define MCTM0_IRQHandler         MCTM0UP_IRQHandler
-#define MCTM1_IRQn               MCTM1UP_IRQn
-#define MCTM1_IRQHandler         MCTM1UP_IRQHandler
+#define MCTM0_IRQn               MCTM0_UP_IRQn
+#define MCTM0_IRQHandler         MCTM0_UP_IRQHandler
+#define MCTM1_IRQn               MCTM1_UP_IRQn
+#define MCTM1_IRQHandler         MCTM1_UP_IRQHandler
 
 
 /**
@@ -303,13 +303,18 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 
 #if defined (__CC_ARM)
   #define __ALIGN4 __align(4)
+#elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) && (__ARMCC_VERSION < 6100100)
+  #define __ALIGN4  __attribute__((aligned(4)))
 #elif defined (__ICCARM__)
   #define __ALIGN4 _Pragma("data_alignment = 4")
 #elif defined (__GNUC__)
   #define __ALIGN4  __attribute__((aligned(4)))
 #endif
 
-#if defined (__GNUC__)
+#if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) && (__ARMCC_VERSION < 6100100)
+  #define __PACKED_H
+  #define __PACKED_F __attribute__ ((packed))
+#elif defined (__GNUC__)
   #define __PACKED_H
   #define __PACKED_F __attribute__ ((packed))
 #elif defined (__ICCARM__) || (__CC_ARM)

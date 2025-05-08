@@ -38,7 +38,7 @@
 #if !defined(RT_USING_SMP) && !defined(RT_USING_AMP)
 #define RT_CPUS_NR 1
 #else
-extern rt_uint64_t rt_cpu_mpidr_early[];
+extern rt_uint64_t rt_cpu_mpidr_table[];
 #endif /* RT_USING_SMP */
 
 /* 'ARM_GIC_MAX_NR' is the number of cores */
@@ -417,10 +417,10 @@ static rt_uint64_t gicv3_sgi_init(void)
 
     for (i = 0; i < RT_CPUS_NR; i++)
     {
-        icc_sgi1r_value =  (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 8)  & 0xFF) << 16;
-        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 16) & 0xFF) << 32;
-        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 32) & 0xFF) << 48;
-        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 4)  & 0xF)  << 44;
+        icc_sgi1r_value =  (rt_uint64_t)((rt_cpu_mpidr_table[i] >> 8)  & 0xFF) << 16;
+        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_table[i] >> 16) & 0xFF) << 32;
+        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_table[i] >> 32) & 0xFF) << 48;
+        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_table[i] >> 4)  & 0xF)  << 44;
         sgi_aff_add_table(icc_sgi1r_value, i);
     }
 
@@ -455,7 +455,7 @@ rt_inline void gicv3_sgi_target_list_set(rt_uint64_t array, rt_uint32_t cpu_mask
             {
                 value = __builtin_ctzl(cpu_mask);
                 cpu_mask &= ~(1 << value);
-                sgi_aff_table[i].target_list |= 1 << (rt_cpu_mpidr_early[(array << 5) | value] & 0xF);
+                sgi_aff_table[i].target_list |= 1 << (rt_cpu_mpidr_table[(array << 5) | value] & 0xF);
             }
         }
     }
@@ -629,7 +629,7 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
     arm_gicv3_wait_rwp(0, 32);
 
 #ifdef RT_USING_SMP
-    main_cpu_affinity_val = rt_cpu_mpidr_early[ARM_SPI_BIND_CPU_ID];
+    main_cpu_affinity_val = rt_cpu_mpidr_table[ARM_SPI_BIND_CPU_ID];
 #else
     __asm__ volatile ("mrs %0, mpidr_el1":"=r"(main_cpu_affinity_val));
 #endif

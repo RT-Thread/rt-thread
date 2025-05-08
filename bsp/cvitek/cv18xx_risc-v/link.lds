@@ -8,20 +8,13 @@
  * 2020/12/12     bernard      The first version
  */
 
-INCLUDE "link_stacksize.lds"
+#include "board/mem_layout.h"
 
 OUTPUT_ARCH( "riscv" )
 
-/*
- * Memory layout:
- * 0x10200000 - 0x10201000: Bootloader
- * 0x10201000 - 0x10A00000: Kernel
- * 0x10A00000 - 0x11200000: Heap
- */
-
 MEMORY
 {
-   SRAM(wx): ORIGIN = 0x80200000, LENGTH = 32M
+   SRAM(wx): ORIGIN = KERNEL_START, LENGTH = KERNEL_SIZE
 }
 
 ENTRY(_start)
@@ -29,7 +22,6 @@ SECTIONS
 {
     . = ORIGIN(SRAM) ;
 
-    /* __STACKSIZE__ = 4096; */
     __sram_base = ORIGIN(SRAM);
     __sram_size = LENGTH(SRAM);
     __sram_end = __sram_base + __sram_size;

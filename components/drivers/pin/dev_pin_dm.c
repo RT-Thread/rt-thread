@@ -11,7 +11,7 @@
 #include "dev_pin_dm.h"
 
 static rt_size_t pin_total_nr = 0;
-static struct rt_spinlock pin_lock = {};
+static RT_DEFINE_SPINLOCK(pin_lock);
 static rt_list_t pin_nodes = RT_LIST_OBJECT_INIT(pin_nodes);
 
 static struct rt_device_pin *pin_device_find(rt_ubase_t pin)

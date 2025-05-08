@@ -3,6 +3,75 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* rt_vsnprintf options */
+
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
+/* end of klibc options */
 #define RT_NAME_MAX 16
 #define RT_USING_SMART
 #define RT_USING_SMP
@@ -11,6 +80,7 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
+#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -22,20 +92,14 @@
 #define RT_TIMER_THREAD_STACK_SIZE 8192
 #define RT_USING_CPU_USAGE_TRACER
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
 #define RT_DEBUGING_CRITICAL
-#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -48,7 +112,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 16
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -59,7 +122,6 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_THREADSAFE_PRINTF
-#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
@@ -87,6 +149,8 @@
 #define ARCH_ARM_MMU
 #define KERNEL_VADDR_START 0xffff000000000000
 #define ARCH_ARMV8
+#define ARCH_USING_ASID
+#define ARCH_USING_IRQ_CTX_LIST
 
 /* RT-Thread Components */
 
@@ -159,6 +223,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_BYPASS
 #define RT_USING_CAN
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
@@ -172,10 +237,17 @@
 #define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
 #define RT_MMCSD_STACK_SIZE 8192
-#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
 #define RT_USING_PIN
 #define RT_USING_KTIME
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
@@ -293,21 +365,27 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
+
+/* Memory management */
+
+#define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
+#define RT_PAGE_MAX_ORDER 16
+
+/* Debugging */
+
+/* end of Debugging */
+/* end of Memory management */
 #define RT_USING_LWP
+#define LWP_USING_RUNTIME
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
 #define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
 #define LWP_TID_MAX_NR 64
 #define RT_LWP_SHM_MAX_NR 64
 #define RT_USING_LDSO
 #define LWP_USING_TERMINAL
 #define LWP_PTY_MAX_PARIS_LIMIT 64
 #define RT_USING_VDSO
-
-/* Memory management */
-
-/* end of Memory management */
 
 /* Using USB legacy version */
 
@@ -522,9 +600,6 @@
 #define BSP_USING_SDCARD_FATFS
 #define USING_SDIF0
 #define USE_SDIF0_TF
-#define BSP_USING_DC
-#define RT_USING_DC_CHANNEL0
-#define RT_USING_DC_CHANNEL1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

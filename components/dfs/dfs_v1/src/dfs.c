@@ -38,7 +38,7 @@ static struct dfs_fdtable _fdtab;
 static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 
 /**
- * @addtogroup DFS
+ * @addtogroup group_DFS
  * @{
  */
 
@@ -297,7 +297,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  * This function will allocate a file descriptor.
  *
  * @return -1 on failed or the allocated file descriptor.
@@ -331,7 +331,7 @@ int fd_new(void)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  *
  * This function will return a file descriptor structure according to file
  * descriptor.
@@ -373,7 +373,7 @@ struct dfs_file *fd_get(int fd)
 }
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  *
  * @brief This function will release the file descriptor.
  *
@@ -480,7 +480,7 @@ exit:
 #endif /* DFS_USING_POSIX */
 
 /**
- * @ingroup Fd
+ * @ingroup group_Fd
  *
  * This function will return whether this file has been opend.
  *

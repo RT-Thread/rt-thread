@@ -19,7 +19,7 @@
 #include <mm_aspace.h>
 #include <dt-bindings/size.h>
 
-static struct rt_spinlock dma_pools_lock = {};
+static RT_DEFINE_SPINLOCK(dma_pools_lock);
 static rt_list_t dma_pool_nodes = RT_LIST_OBJECT_INIT(dma_pool_nodes);
 
 static struct rt_dma_pool *dma_pool_install(rt_region_t *region);

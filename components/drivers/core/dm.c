@@ -191,7 +191,7 @@ struct prefix_track
     int uid;
     const char *prefix;
 };
-static struct rt_spinlock _prefix_nodes_lock = { 0 };
+static RT_DEFINE_SPINLOCK(_prefix_nodes_lock);
 static rt_list_t _prefix_nodes = RT_LIST_OBJECT_INIT(_prefix_nodes);
 
 int rt_dm_dev_set_name_auto(rt_device_t dev, const char *prefix)

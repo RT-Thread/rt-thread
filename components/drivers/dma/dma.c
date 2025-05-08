@@ -17,7 +17,7 @@
 #include <rtdbg.h>
 
 static rt_list_t dmac_nodes = RT_LIST_OBJECT_INIT(dmac_nodes);
-static struct rt_spinlock dmac_nodes_lock = {};
+static RT_DEFINE_SPINLOCK(dmac_nodes_lock);
 
 rt_err_t rt_dma_controller_register(struct rt_dma_controller *ctrl)
 {
@@ -278,7 +278,7 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
     {
         rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
 
-        err = ctrl->ops->prep_memcpy(chan, dma_addr_dst, dma_addr_src, len);
+        err = ctrl->ops->prep_memcpy(chan, dma_addr_src, dma_addr_dst, len);
 
         rt_mutex_release(&ctrl->mutex);
     }

@@ -55,6 +55,11 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
+            config BSP_STM32_UART_V1_TX_TIMEOUT
+                int "UART TX timeout"
+                default 6000
+                depends on RT_USING_SERIAL_V1
+                
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
@@ -118,9 +123,6 @@ menu "On-chip Peripheral Drivers"
                     int "I2C1 sda pin number"
                     range 1 176
                     default 117
-                        menuconfig BSP_USING_I2C2
-                    bool "Enable I2C2 BUS (software simulation)"
-                    default n
             endif
 
             menuconfig BSP_USING_I2C2

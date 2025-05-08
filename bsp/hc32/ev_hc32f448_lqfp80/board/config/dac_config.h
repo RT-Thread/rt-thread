@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022-2024, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,15 +25,6 @@ extern "C" {
     }
 #endif /* DAC1_INIT_PARAMS */
 #endif /* BSP_USING_DAC1 */
-
-#ifdef BSP_USING_DAC2
-#ifndef DAC2_INIT_PARAMS
-#define DAC2_INIT_PARAMS                                                    \
-    {                                                                       \
-       .name                      = "dac2",                                 \
-    }
-#endif /* DAC2_INIT_PARAMS */
-#endif /* BSP_USING_DAC2 */
 
 #ifdef __cplusplus
 }

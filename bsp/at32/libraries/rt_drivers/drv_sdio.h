@@ -150,7 +150,9 @@ typedef rt_err_t (*dma_txconfig)(rt_uint32_t *src, rt_uint32_t *dst, int size);
 typedef rt_err_t (*dma_rxconfig)(rt_uint32_t *src, rt_uint32_t *dst, int size);
 typedef rt_uint32_t (*sdio_clk_get)(struct at32_sdio *hw_sdio);
 
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
 #define SDIO_BUS_CONFIG                                  \
     {                                                    \
         .sdio_x = SDIO1,                                 \
@@ -183,7 +185,9 @@ typedef rt_uint32_t (*sdio_clk_get)(struct at32_sdio *hw_sdio);
 struct dma_config {
     dma_type *dma_x;
     dma_channel_type *dma_channel;
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
     dmamux_channel_type *dmamux_channel;
     dmamux_requst_id_sel_type dmamux_id;
 #endif

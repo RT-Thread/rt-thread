@@ -10,13 +10,21 @@
 #include <string.h>
 #include <stdbool.h>
 
+#ifdef __INCLUDE_NUTTX_CONFIG_H
+#define CONFIG_USB_OSAL_THREAD_SET_ARGV int argc, char **argv
+#define CONFIG_USB_OSAL_THREAD_GET_ARGV ((uintptr_t)strtoul(argv[1], NULL, 16))
+#else
+#define CONFIG_USB_OSAL_THREAD_SET_ARGV void *argument
+#define CONFIG_USB_OSAL_THREAD_GET_ARGV ((uintptr_t)argument)
+#endif
+
 #define USB_OSAL_WAITING_FOREVER (0xFFFFFFFFU)
 
 typedef void *usb_osal_thread_t;
 typedef void *usb_osal_sem_t;
 typedef void *usb_osal_mutex_t;
 typedef void *usb_osal_mq_t;
-typedef void (*usb_thread_entry_t)(void *argument);
+typedef void (*usb_thread_entry_t)(CONFIG_USB_OSAL_THREAD_SET_ARGV);
 typedef void (*usb_timer_handler_t)(void *argument);
 struct usb_osal_timer {
     usb_timer_handler_t handler;

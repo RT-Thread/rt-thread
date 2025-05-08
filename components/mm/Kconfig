@@ -1,5 +1,24 @@
 menu "Memory management"
 
+config RT_PAGE_AFFINITY_BLOCK_SIZE
+    hex "Affinity block size in bytes for page management"
+    default 0x1000
+    help
+        Page affinity block can be used to resolve the VIPT aliasing problem.
+        It should be set to `1ul << ((index + block) - page_offset)` in this case.
+        You could also exploit this as a tunning for cache coloring.
+
+config RT_PAGE_MAX_ORDER
+    int "Max order of pages allocatable by page allocator"
+    default 11
+    depends on ARCH_MM_MMU
+    help
+        For example, A value of 11 means the maximum chunk of contiguous memory
+        allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
+        Large memory requirement can consume all system resource, and should
+        consider reserved memory instead to enhance system endurance.
+        Max order should at least satisfied usage by huge page.
+
 config RT_USING_MEMBLOCK
     bool "Using memblock"
     default n
@@ -15,5 +34,19 @@ config RT_INIT_MEMORY_REGIONS
         During the system initialization phase, the kernel divides
         memory into different types of regions. This variable specifies
         the maximum number of regions supported by the system.
+
+menu "Debugging"
+    config RT_DEBUGGING_ALIASING
+        bool "Using aliasing paging debugger"
+        default n
+
+    config RT_DEBUGING_PAGE_LEAK
+        bool "Using page leaking tracer"
+        default n
+
+    config RT_DEBUGGING_PAGE_POISON
+        bool "Using page poisoner to detect illegal usage"
+        default n
+endmenu
 
 endmenu

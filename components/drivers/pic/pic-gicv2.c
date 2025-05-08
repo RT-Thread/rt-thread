@@ -224,7 +224,7 @@ static rt_err_t gicv2_irq_set_affinity(struct rt_pic_irq *pirq, rt_bitmap_t *aff
         rt_uint32_t val;
         rt_ubase_t level;
         rt_ubase_t offset = (rt_ubase_t)io_addr & 3UL, shift = offset * 8;
-        static struct rt_spinlock rmw_lock = {};
+        static RT_DEFINE_SPINLOCK(rmw_lock);
 
         level = rt_spin_lock_irqsave(&rmw_lock);
 

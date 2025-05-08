@@ -3,13 +3,83 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* rt_vsnprintf options */
+
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
+/* end of klibc options */
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
+#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -20,18 +90,12 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
-#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -44,7 +108,7 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 16
+#define RT_USING_MEMPOOL
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -53,7 +117,7 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
-#define RT_USING_SCHED_THREAD_CTX
+#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
@@ -79,6 +143,8 @@
 #define ARCH_ARM
 #define ARCH_ARM_MMU
 #define ARCH_ARMV8
+#define ARCH_USING_ASID
+#define ARCH_USING_IRQ_CTX_LIST
 
 /* RT-Thread Components */
 
@@ -107,9 +173,7 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -127,7 +191,6 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_RAMFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -156,10 +219,14 @@
 #define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
 #define RT_MMCSD_STACK_SIZE 8192
-#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -169,11 +236,6 @@
 /* end of Partition Types */
 #define RT_USING_PIN
 #define RT_USING_KTIME
-#define RT_USING_CHERRYUSB
-#define RT_CHERRYUSB_HOST
-#define RT_CHERRYUSB_HOST_XHCI
-#define RT_CHERRYUSB_HOST_HID
-#define RT_CHERRYUSB_HOST_MSC
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
@@ -285,6 +347,16 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
+
+/* Memory management */
+
+#define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
+#define RT_PAGE_MAX_ORDER 16
+
+/* Debugging */
+
+/* end of Debugging */
+/* end of Memory management */
 
 /* Using USB legacy version */
 
@@ -492,6 +564,7 @@
 #define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
 #define BSP_USING_PWM
+#define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO15
@@ -504,6 +577,10 @@
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1
+#define BSP_USING_I2S
+#define RT_I2S_SAMPLERATE 8000
+#define RT_I2S_SAMPLEBITS 16
+#define RT_USING_I2S0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -512,7 +589,7 @@
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
-#define ARM_SPI_BIND_CPU_ID 0
+#define ARM_SPI_BIND_CPU_ID 2
 
 /* Standalone Setting */
 
@@ -520,10 +597,10 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000D
+#define TARGET_E2000Q
 #define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "d"
-#define SOC_CORE_NUM 2
+#define TARGET_TYPE_NAME "q"
+#define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -534,8 +611,8 @@
 
 /* Board Configuration */
 
-#define E2000D_DEMO_BOARD
 #define BOARD_NAME "demo"
+#define E2000Q_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 

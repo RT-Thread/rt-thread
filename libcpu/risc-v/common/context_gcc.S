@@ -49,6 +49,15 @@ rt_hw_interrupt_enable:
 rt_hw_context_switch_to:
     la t0, __rt_rvstack
 #ifdef SOC_RISCV_FAMILY_CH32
+/* 
+ * if it is an assembly entry code, the SP offset value is determined by the assembly code,
+ * but the C code is determined by the compiler, so we subtract 512 here as a reservation.
+ * When entering the interrupt function of C code, the compiler automatically presses the stack
+ * into the task stack. We can only change the SP value used by the calling function after switching
+ * the interrupt stack.This problem can be solved by modifying the interrupt to the assembly entry,
+ * and there is no need to reserve 512 bytes. You only need to switch the interrupt stack at the
+ * beginning of the interrupt function 
+*/
     addi t0, t0, -512 // for ch32
 #endif /* SOC_RISCV_FAMILY_CH32 */
     csrw mscratch,t0

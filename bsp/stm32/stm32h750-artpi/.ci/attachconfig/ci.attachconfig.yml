@@ -1,0 +1,28 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+# ------ nano CI ------
+nano:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_NANO=y
+      
+# ------ peripheral CI ------
+peripheral.eth:
+    kconfig:
+      - CONFIG_BSP_USING_ETH_H750=y
+
+# ------ on-line package CI ------
+package.iot.zephyr_polling:
+    kconfig:
+      - CONFIG_BSP_USING_UART3=y
+      - CONFIG_PKG_USING_ZEPHYR_POLLING=y
+      - CONFIG_PKG_ZEPHYR_POLLING_CHIPSET_ARTPI_AP6212=y
+      - CONFIG_PKG_ZEPHYR_POLLING_PORT_RTTHREAD_ARTPI=y
+package.iot.btstack:
+    kconfig:
+      - CONFIG_BSP_USING_UART3=y
+      - CONFIG_BSP_USING_SPI_FLASH=y
+      - CONFIG_PKG_USING_BTSTACK=y
+      - CONFIG_PKG_BTSTACK_SAMPLE_LE_COUNTER=y
+      - CONFIG_PKG_USING_BTSTACK_LATEST_VERSION=y

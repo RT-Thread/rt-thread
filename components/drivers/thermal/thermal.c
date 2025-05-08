@@ -23,7 +23,7 @@
 #define device_list(dev)            (dev)->parent.parent.list
 #define device_foreach(dev, nodes)  rt_list_for_each_entry(dev, nodes, parent.parent.list)
 
-static struct rt_spinlock nodes_lock = {};
+static RT_DEFINE_SPINLOCK(nodes_lock);
 static rt_list_t thermal_zone_device_nodes = RT_LIST_OBJECT_INIT(thermal_zone_device_nodes);
 static rt_list_t thermal_cooling_device_nodes = RT_LIST_OBJECT_INIT(thermal_cooling_device_nodes);
 static rt_list_t thermal_cooling_governor_nodes = RT_LIST_OBJECT_INIT(thermal_cooling_governor_nodes);
@@ -48,7 +48,7 @@ static void thermal_ofw_params_parse(struct rt_ofw_node *np,
      * For now, the thermal framework supports only one sensor per thermal zone.
      * Thus, we are considering only the first two values as slope and offset.
      */
-    if (rt_ofw_prop_read_u32_array_index(np, "coefficients", 0, 1, coef) < 0)
+    if (rt_ofw_prop_read_u32_array_index(np, "coefficients", 0, 2, coef) < 0)
     {
         coef[0] = 1;
         coef[1] = 0;
@@ -638,10 +638,6 @@ void rt_thermal_zone_device_update(struct rt_thermal_zone_device *zdev, rt_ubase
             int trip_low;
             rt_bool_t low_set = RT_FALSE;
 
-            if (i >= zdev->trips_nr)
-            {
-                goto _call_notifier;
-            }
             rt_memcpy(&trip, &zdev->trips[i], sizeof(trip));
 
             trip_low = trip.temperature - trip.hysteresis;

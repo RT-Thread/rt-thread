@@ -99,3 +99,12 @@ segger:
     kconfig:
       - CONFIG_PKG_USING_SEGGER_RTT=y
       - CONFIG_RT_USING_SERIAL_V2=y
+# ------ component CI ------
+component.cherryusb_hid_keyboard:
+    kconfig:
+      - CONFIG_RT_USING_CHERRYUSB=y
+      - CONFIG_RT_CHERRYUSB_DEVICE=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_NRF5X=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_HID=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD=y
+      - CONFIG_RT_USING_MESSAGEQUEUE=y

@@ -24,6 +24,7 @@
 #                             group definition.
 # 2024-04-21     Bernard      Add toolchain detection in sdk packages
 # 2025-01-05     Bernard      Add logging as Env['log']
+# 2025-03-02     ZhaoCake     Add MkDist_Strip
 
 import os
 import sys
@@ -33,7 +34,6 @@ import operator
 import rtconfig
 import platform
 import logging
-
 from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
@@ -210,15 +210,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             envm = utils.ImportModule('env_utility')
             # from env import GetSDKPath
             exec_path = envm.GetSDKPath(rtconfig.CC)
-            if 'gcc' in rtconfig.CC:
-                exec_path = os.path.join(exec_path, 'bin')
+            if exec_path != None:
+                if 'gcc' in rtconfig.CC:
+                    exec_path = os.path.join(exec_path, 'bin')
 
-            if os.path.exists(exec_path):
-                Env['log'].debug('set CC to ' + exec_path)
-                rtconfig.EXEC_PATH = exec_path
-                os.environ['RTT_EXEC_PATH'] = exec_path
-            else:
-                Env['log'].debug('No Toolchain found in path(%s).' % exec_path)
+                if os.path.exists(exec_path):
+                    Env['log'].debug('set CC to ' + exec_path)
+                    rtconfig.EXEC_PATH = exec_path
+                    os.environ['RTT_EXEC_PATH'] = exec_path
+                else:
+                    Env['log'].debug('No Toolchain found in path(%s).' % exec_path)
         except Exception as e:
             # detect failed, ignore
             Env['log'].debug(e)
@@ -334,6 +335,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                     print('--global-macros arguments are illegal!')
         else:
             print('--global-macros arguments are illegal!')
+
+    if GetOption('attach'):
+        from attachconfig import GenAttachConfigProject
+        GenAttachConfigProject()
+        exit(0)
 
     if GetOption('genconfig'):
         from env_utility import genconfig
@@ -499,7 +505,7 @@ def GetLocalDepend(options, depend):
     # for list type depend
     for item in depend:
         if item != '':
-            if not item in options or options[item] == 0:
+            if not depend in options or item == 0:
                 building = False
 
     return building
@@ -953,7 +959,7 @@ def GenTargetProject(program = None):
         ZigBuildProject(Env, Projects)
 
 def EndBuilding(target, program = None):
-    from mkdist import MkDist
+    from mkdist import MkDist, MkDist_Strip
 
     need_exit = False
 
@@ -981,17 +987,25 @@ def EndBuilding(target, program = None):
 
     project_name = GetOption('project-name')
     project_path = GetOption('project-path')
-    if GetOption('make-dist') and program != None:
-        MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        need_exit = True
-    if GetOption('make-dist-ide') and program != None:
-        import subprocess
-        if not isinstance(project_path, str) or len(project_path) == 0 :
-            project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
-        MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name), cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = child.communicate()
-        need_exit = True
+
+    # 合并处理打包相关选项
+    if program != None:
+        if GetOption('make-dist'):
+            MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+            need_exit = True
+        elif GetOption('dist_strip'):
+            MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+            need_exit = True
+        elif GetOption('make-dist-ide'):
+            import subprocess
+            if not isinstance(project_path, str) or len(project_path) == 0:
+                project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
+            MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
+            child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name), 
+                                   cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            stdout, stderr = child.communicate()
+            need_exit = True
+
     if GetOption('cscope'):
         from cscope import CscopeDatabase
         CscopeDatabase(Projects)

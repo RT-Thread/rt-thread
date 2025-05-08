@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -53,25 +53,14 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
         if (pin_count > 0)
         {
             pin_count = rt_max_t(int, pin_count, bus->num_chipselect);
-            bus->pins = rt_malloc(sizeof(bus->pins[0]) * pin_count);
-
-            if (!bus->pins)
-            {
-                rt_device_unregister(&bus->parent);
-                return -RT_ENOMEM;
-            }
 
             for (int i = 0; i < pin_count; ++i)
             {
-                bus->pins[i] = rt_pin_get_named_pin(&bus->parent, "cs", i,
-                        RT_NULL, RT_NULL);
+                bus->cs_pins[i] = rt_pin_get_named_pin(&bus->parent, "cs", i,
+                                                       RT_NULL, &bus->cs_active_vals[i]);
             }
         }
-        else if (pin_count == 0)
-        {
-            bus->pins = RT_NULL;
-        }
-        else
+        else if (pin_count < 0)
         {
             result = pin_count;
 
@@ -103,12 +92,15 @@ rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
     {
         device->bus = (struct rt_spi_bus *)bus;
 
+        if (device->bus->owner == RT_NULL)
+            device->bus->owner = device;
+
         /* initialize spidev device */
         result = rt_spidev_device_init(device, name);
         if (result != RT_EOK)
             return result;
 
-        if(cs_pin != PIN_NONE)
+        if (cs_pin != PIN_NONE)
         {
             rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
         }
@@ -157,7 +149,6 @@ rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
                  */
                 result = -RT_EBUSY;
             }
-
             /* release lock */
             rt_mutex_release(&(device->bus->lock));
         }
@@ -451,7 +442,7 @@ rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
     }
 
     len = rt_spi_transfer(device, &senddata, recvdata, 2);
-    if(len < 0)
+    if (len < 0)
     {
         return (rt_err_t)len;
     }
@@ -578,7 +569,7 @@ rt_err_t rt_spi_take(struct rt_spi_device *device)
     message.cs_take = 1;
 
     result = device->bus->ops->xfer(device, &message);
-    if(result < 0)
+    if (result < 0)
     {
         return (rt_err_t)result;
     }
@@ -598,7 +589,7 @@ rt_err_t rt_spi_release(struct rt_spi_device *device)
     message.cs_release = 1;
 
     result = device->bus->ops->xfer(device, &message);
-    if(result < 0)
+    if (result < 0)
     {
         return (rt_err_t)result;
     }

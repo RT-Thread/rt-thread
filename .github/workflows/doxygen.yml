@@ -4,25 +4,29 @@ on:
     branches:
       - master
     paths:
-      - 'documentation/doxygen/**'
+      - 'documentation/**'
       - 'src/**'
       - 'include/**'
-      - 'components/drivers/include/drivers/**'
-      - 'components/dfs/dfs_v2/include/**'
-      - 'components/dfs/dfs_v2/src/**'
       - 'components/finsh/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/drivers/clk/**'
+      - 'components/drivers/audio/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/dfs/dfs_v2/include/**'
       - '.github/workflows/doxygen.yml'
   # Runs at 16:00 UTC (BeiJing 00:00) on the 30st of every month
   push:
     branches: [master]
     paths:
-      - 'documentation/doxygen/**'
+      - 'documentation/**'
       - 'src/**'
       - 'include/**'
-      - 'components/drivers/include/drivers/**'
-      - 'components/dfs/dfs_v2/include/**'
-      - 'components/dfs/dfs_v2/src/**'
       - 'components/finsh/**'
+      - 'components/drivers/include/drivers/**'
+      - 'components/drivers/clk/**'
+      - 'components/drivers/audio/**'
+      - 'components/dfs/dfs_v2/src/**'
+      - 'components/dfs/dfs_v2/include/**'
       - '.github/workflows/doxygen.yml'
   schedule:
     - cron:  '0 16 30 * *'
@@ -50,7 +54,7 @@ jobs:
       - name: generate doxygen html
         shell: bash
         run: |
-          cd documentation/doxygen
+          cd documentation
           doxygen Doxyfile
           cat Doxyfile
           
@@ -58,7 +62,7 @@ jobs:
         id: deployment
         uses: actions/upload-pages-artifact@main # or specific "vX.X.X" version tag for this action
         with:
-          path: documentation/doxygen/html/
+          path: documentation/html/
           
   deploy:
     if: github.event_name == 'push'

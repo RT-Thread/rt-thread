@@ -119,7 +119,7 @@ static void _led_blink_timerout(void *param)
     btimer->toggle = !btimer->toggle;
 }
 
-rt_err_t rt_hw_led_register(struct rt_led_device *led)
+rt_err_t rt_led_register(struct rt_led_device *led)
 {
     rt_err_t err;
     int device_id;
@@ -193,7 +193,7 @@ _fail:
     return err;
 }
 
-rt_err_t rt_hw_led_unregister(struct rt_led_device *led)
+rt_err_t rt_led_unregister(struct rt_led_device *led)
 {
     if (!led)
     {

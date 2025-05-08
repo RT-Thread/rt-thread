@@ -22,11 +22,7 @@
 
 int main(void)
 {
-#ifdef RT_USING_SMART
-    rt_kprintf("Hello RT-Smart!\n");
-#else
-    rt_kprintf("Hello RISC-V!\n");
-#endif
+    rt_kprintf("Hello RISC-V/C906B !\n");
 
     /* LED pin: C24 */
     rt_uint16_t led = rt_pin_get(LED_PIN);

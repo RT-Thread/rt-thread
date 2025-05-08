@@ -121,7 +121,8 @@ static rt_uint32_t lpi_id_bits;
 static void *lpi_table;
 static void *lpi_pending_table;
 static rt_bitmap_t *lpis_vectors = RT_NULL;
-static struct rt_spinlock lpis_lock = {}, map_lock = {};
+static RT_DEFINE_SPINLOCK(lpis_lock);
+static RT_DEFINE_SPINLOCK(map_lock);
 static rt_list_t its_nodes = RT_LIST_OBJECT_INIT(its_nodes);
 static rt_list_t map_nodes = RT_LIST_OBJECT_INIT(map_nodes);
 

@@ -73,7 +73,6 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-    rt_err_t ret = RT_EOK;
     struct _device_spi *spi = (struct _device_spi *)device->bus->parent.user_data;
     struct dw_spi *dws = &spi->dws;
 
@@ -139,9 +138,6 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
 
 static rt_err_t dw_spi_transfer_one(struct dw_spi *dws, const void *tx_buf, void *rx_buf, uint32_t len, enum transfer_type  tran_type)
 {
-    uint8_t imask = 0;
-    uint16_t txlevel = 0;
-
     dws->tx = NULL;
     dws->tx_end = NULL;
     dws->rx = NULL;
@@ -198,7 +194,7 @@ static rt_ssize_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *
 
     struct _device_spi *spi = (struct _device_spi *)device->bus->parent.user_data;
     struct dw_spi *dws = &spi->dws;
-    int32_t ret = 0;
+    int32_t ret = RT_EOK;
 
     if (message->send_buf && message->recv_buf)
     {
@@ -214,6 +210,14 @@ static rt_ssize_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         ret = dw_spi_transfer_one(dws, RT_NULL, message->recv_buf, message->length, POLL_TRAN);
 
+    } else {
+        return 0;
+    }
+
+    if (ret != RT_EOK)
+    {
+        LOG_E("spi transfer error : %d", ret);
+        return 0;
     }
 
     return message->length;
@@ -329,13 +333,12 @@ static void rt_hw_spi_pinmux_config()
 int rt_hw_spi_init(void)
 {
     rt_err_t ret = RT_EOK;
-    struct dw_spi *dws;
 
     rt_hw_spi_pinmux_config();
 
     for (rt_size_t i = 0; i < sizeof(_spi_obj) / sizeof(struct _device_spi); i++)
     {
-        _spi_obj[i].base_addr = (rt_ubase_t)DRV_IOREMAP((void *)_spi_obj[i].base_addr, 0x1000);
+        _spi_obj[i].dws.regs = (void *)DRV_IOREMAP((void *)_spi_obj[i].dws.regs, 0x1000);
 
         _spi_obj[i].spi_bus.parent.user_data = (void *)&_spi_obj[i];
         ret = rt_spi_bus_register(&_spi_obj[i].spi_bus, _spi_obj[i].device_name, &_spi_ops);

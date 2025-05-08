@@ -38,7 +38,7 @@ static void ofw_parse_delay(struct rt_ofw_node *np, struct rt_spi_delay *delay,
 rt_err_t spi_device_ofw_parse(struct rt_spi_device *spi_dev)
 {
     rt_err_t err;
-    rt_uint32_t value;
+    rt_uint32_t value, cs[RT_SPI_CS_CNT_MAX];
     struct rt_spi_bus *spi_bus = spi_dev->bus;
     struct rt_ofw_node *np = spi_dev->parent.ofw_node;
     struct rt_spi_configuration *conf = &spi_dev->config;
@@ -84,13 +84,20 @@ rt_err_t spi_device_ofw_parse(struct rt_spi_device *spi_dev)
         return RT_EOK;
     }
 
-    if ((err = rt_ofw_prop_read_u32(np, "reg", &value)))
+    value = rt_ofw_prop_read_u32_array_index(np, "reg", 0, RT_SPI_CS_CNT_MAX, cs);
+
+    if ((rt_int32_t)value < 0)
     {
+        err = (rt_err_t)value;
         LOG_E("Find 'reg' failed");
 
         return err;
     }
-    spi_dev->chip_select = value;
+
+    for (int i = 0; i < value; ++i)
+    {
+        spi_dev->chip_select[i] = cs[i];
+    }
 
     if (!rt_ofw_prop_read_u32(np, "spi-max-frequency", &value))
     {

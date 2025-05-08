@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_dac.c
- * @version $Rev:: 7081         $
- * @date    $Date:: 2023-08-01 #$
+ * @version $Rev:: 7904         $
+ * @date    $Date:: 2024-07-26 #$
  * @brief   This file provides all the DAC firmware functions.
  *************************************************************************************************************
  * @attention
@@ -37,6 +37,15 @@
   * @{
   */
 
+
+/* Private constants ---------------------------------------------------------------------------------------*/
+/** @defgroup DAC_Private_Define DAC private definitions
+  * @{
+  */
+#define DAC_ENABLE_BIT       (0x00000001)
+/**
+  * @}
+  */
 
 /* Global functions ----------------------------------------------------------------------------------------*/
 /** @defgroup DAC_Exported_Functions DAC exported functions
@@ -185,11 +194,11 @@ void DAC_Cmd(HT_DAC_TypeDef* HT_DACn, u8 DAC_Ch, ControlStatus NewState)
 
   if (NewState != DISABLE)
   {
-    SetBit_BB((u32)&DACnCH->CR, 0);
+    DACnCH->CR |= DAC_ENABLE_BIT;
   }
   else
   {
-    ResetBit_BB((u32)&DACnCH->CR, 0);
+    DACnCH->CR &= ~(DAC_ENABLE_BIT);
   }
 }
 

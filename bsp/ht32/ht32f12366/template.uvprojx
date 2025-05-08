@@ -15,8 +15,8 @@
         <TargetCommonOption>
           <Device>HT32F12366</Device>
           <Vendor>Holtek</Vendor>
-          <PackID>Holtek.HT32_DFP.1.0.19</PackID>
-          <PackURL>http://mcu.holtek.com.tw/pack</PackURL>
+          <PackID>Holtek.HT32_DFP.1.0.55</PackID>
+          <PackURL>https://mcu.holtek.com.tw/pack</PackURL>
           <Cpu>IRAM(0x20000000,0x20000) IROM(0x00000000,0x3FC00) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -332,7 +332,7 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>--gnu</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>

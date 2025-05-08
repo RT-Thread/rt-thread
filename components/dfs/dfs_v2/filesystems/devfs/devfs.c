@@ -77,6 +77,7 @@ static int dfs_devfs_open(struct dfs_file *file)
                 }
             }
         }
+        rt_free(device_name);
     }
 
     return ret;

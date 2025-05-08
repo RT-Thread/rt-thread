@@ -52,6 +52,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
+        select BSP_USING_TCA9539
         default y
 
     menuconfig BSP_USING_UART
@@ -61,7 +62,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             menuconfig BSP_USING_UART1
                 bool "Enable UART1"
-                default y
+                default n
                 if BSP_USING_UART1
                     config BSP_UART1_RX_USING_DMA
                         bool "Enable UART1 RX DMA"
@@ -88,7 +89,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_UART2
                 bool "Enable UART2"
-                default n
+                default y
                 if BSP_USING_UART2
                     config BSP_UART2_RX_USING_DMA
                         bool "Enable UART2 RX DMA"
@@ -216,12 +217,12 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_I2C1_SW
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 scl pin number"
-                        range 1 176
-                        default 51
+                        range 1 100
+                        default 10
                     config BSP_I2C1_SDA_PIN
                         int "I2C1 sda pin number"
-                        range 1 176
-                        default 90
+                        range 1 100
+                        default 9
                 endif
         endif
 
@@ -390,6 +391,12 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_DAC2
                 bool "using dac2"
                 default n
+            config BSP_USING_DAC3
+                bool "using dac3"
+                default n
+            config BSP_USING_DAC4
+                bool "using dac4"
+                default n
         endif
 
     menuconfig BSP_USING_CAN
@@ -404,6 +411,9 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_CAN2
                 bool "using can2"
+                default n
+            config BSP_USING_CAN3
+                bool "using can3"
                 default n
         endif
 
@@ -437,10 +447,17 @@ menu "On-chip Peripheral Drivers"
                 default BSP_RTC_USING_XTAL32
 
                 config BSP_RTC_USING_XTAL32
-                    bool "RTC USING XTAL32"
+                    bool "RTC Using XTAL32"
 
                 config BSP_RTC_USING_LRC
-                    bool "RTC USING LRC"
+                    bool "RTC Using LRC"
+
+                config BSP_RTC_USING_XTAL_DIV
+                    bool "RTC Using XTAL Division"
+
+                config BSP_RTC_USING_EXTCLK
+                    bool "RTC Using EXTCLK input from pin(PA1)"
+                    depends on !BSP_USING_EXMC
             endchoice
         endif
 
@@ -650,6 +667,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_TMRA_5
                 bool "Use Timer_a5 As The Hw Timer"
                 default n
+            config BSP_USING_TMRA_6
+                bool "Use Timer_a6 As The Hw Timer"
+                default n
         endif
 
     menuconfig BSP_USING_SENSOR
@@ -661,6 +681,45 @@ menu "On-chip Peripheral Drivers"
                 bool "Use KEYSCAN"
                 select RT_USING_KEYSCAN
                 default n
+        endif
+
+    menuconfig BSP_USING_USB
+        bool "Enable USB"
+        default n
+        select RT_USING_USB_DEVICE if BSP_USING_USBD
+        select RT_USING_USB_HOST if BSP_USING_USBH
+        if BSP_USING_USB
+            config BSP_USING_USBFS
+                bool
+                default y
+
+            choice
+                prompt "Select USB Mode"
+                default BSP_USING_USBD
+
+                config BSP_USING_USBD
+                    bool "USB Device Mode"
+
+                config BSP_USING_USBH
+                    bool "USB Host Mode"
+            endchoice
+
+            if BSP_USING_USBD
+                config BSP_USING_USBD_VBUS_SENSING
+                    bool "Enable VBUS Sensing"
+                    default y
+            endif
+
+            if BSP_USING_USBH
+                menuconfig RT_USBH_MSTORAGE
+                    bool "Enable Udisk Drivers"
+                    default n
+                    if RT_USBH_MSTORAGE
+                        config UDISK_MOUNTPOINT
+                        string "Udisk mount dir"
+                        default "/"
+                    endif
+            endif
         endif
 endmenu
 

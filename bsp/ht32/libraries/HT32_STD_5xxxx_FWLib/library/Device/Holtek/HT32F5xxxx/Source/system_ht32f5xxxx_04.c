@@ -2,8 +2,8 @@
  * @file    library/Device/Holtek/HT32F5xxxx/Source/system_ht32f5xxxx_04.c
  * @brief   CMSIS Cortex-M0+ Device Peripheral Access Layer Source File
  *          for the Holtek HT32F5xxxx Device Series
- * @version $Rev:: 7119         $
- * @date    $Date:: 2023-08-15 #$
+ * @version $Rev:: 7704         $
+ * @date    $Date:: 2024-05-10 #$
  *
  * @note
  * Copyright (C) Holtek Semiconductor Inc. All rights reserved.
@@ -30,8 +30,8 @@
 //   HT32F59041
 //   HF5032
 //   HT32F61641
-//   HT32F59046
 //   HT32F61041
+//   HT32F61741
 
 //#define USE_HT32F50220_30
 //#define USE_HT32F50231_41
@@ -39,8 +39,8 @@
 //#define USE_HT32F59041
 //#define USE_HF5032
 //#define USE_HT32F61641
-//#define USE_HT32F59046
 //#define USE_HT32F61041
+//#define USE_HT32F61741
 
 /** @addtogroup CMSIS
   * @{

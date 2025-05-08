@@ -42,12 +42,17 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_MTD_NOR
         default n
 
+    config BSP_USING_EXT_IO
+        bool
+        default y
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
+        select BSP_USING_TCA9539
         default y
 
     menuconfig BSP_USING_UART
@@ -212,12 +217,12 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_I2C1_SW
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 scl pin number"
-                        range 1 176
-                        default 51
+                        range 1 80
+                        default 10
                     config BSP_I2C1_SDA_PIN
                         int "I2C1 sda pin number"
-                        range 1 176
-                        default 90
+                        range 1 80
+                        default 9
                 endif
         endif
 
@@ -368,23 +373,20 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_DAC1
                 bool "using dac1"
                 default n
-            config BSP_USING_DAC2
-                bool "using dac2"
-                default n
         endif
 
-    menuconfig BSP_USING_CAN
-        bool "Enable CAN"
+    menuconfig BSP_USING_MCAN
+        bool "Enable MCAN"
         default n
         select RT_USING_CAN
         select RT_CAN_USING_HDR
         select BSP_USING_TCA9539
-        if BSP_USING_CAN
-            config BSP_USING_CAN1
-                bool "using can1"
+        if BSP_USING_MCAN
+            config BSP_USING_MCAN1
+                bool "using mcan1"
                 default n
-            config BSP_USING_CAN2
-                bool "using can2"
+            config BSP_USING_MCAN2
+                bool "using mcan2"
                 default n
         endif
 
@@ -418,10 +420,13 @@ menu "On-chip Peripheral Drivers"
                 default BSP_RTC_USING_XTAL32
 
                 config BSP_RTC_USING_XTAL32
-                    bool "RTC USING XTAL32"
+                    bool "RTC Using XTAL32"
 
                 config BSP_RTC_USING_LRC
-                    bool "RTC USING LRC"
+                    bool "RTC Using LRC"
+
+                config BSP_RTC_USING_XTAL_DIV
+                    bool "RTC Using XTAL Division"
             endchoice
         endif
 

@@ -12,12 +12,23 @@ config SOC_RISCV_SERIES_CH32V2
     select ARCH_RISCV
     select SOC_RISCV_FAMILY_CH32
     select RT_USING_HW_ATOMIC
+    select PKG_USING_CH32V20x_SDK
+
+config SOC_RISCV_SERIES_CH32V20x_D6
+    bool
+
+config SOC_RISCV_SERIES_CH32V20x_D8
+    bool
+
+config SOC_RISCV_SERIES_CH32V20x_D8W
+    bool
 
 config SOC_RISCV_SERIES_CH32V3
     bool
     select ARCH_RISCV
     select SOC_RISCV_FAMILY_CH32
     select RT_USING_HW_ATOMIC
+    select PKG_USING_CH32V307_SDK
 
 config SOC_FAMILY_CH56X
     bool

@@ -40,9 +40,12 @@ rsource "utilities/Kconfig"
 rsource "vbus/Kconfig"
 endif
 
+if ARCH_MM_MMU
+rsource "mm/Kconfig"
+endif
+
 if RT_USING_SMART
 rsource "lwp/Kconfig"
-rsource "mm/Kconfig"
 endif
 
 rsource "legacy/Kconfig"

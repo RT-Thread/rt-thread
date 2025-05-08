@@ -193,7 +193,7 @@ static rt_err_t regulator_gpio_probe(struct rt_platform_device *pdev)
     /* GPIO flags are ignored, we check by enable-active-high */
     rg->enable_pin = rt_pin_get_named_pin(dev, "enable", 0, RT_NULL, RT_NULL);
 
-    if (rg->enable_pin < 0 && rg->enable_pin != -RT_EEMPTY)
+    if (rg->enable_pin < 0 && rg->enable_pin != PIN_NONE)
     {
         err = rg->enable_pin;
         goto _fail;

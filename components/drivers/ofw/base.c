@@ -84,7 +84,7 @@ rt_err_t ofw_phandle_hash_reset(rt_phandle min, rt_phandle max)
 static rt_phandle ofw_phandle_next(void)
 {
     rt_phandle next;
-    static struct rt_spinlock op_lock = {};
+    static RT_DEFINE_SPINLOCK(op_lock);
 
     rt_hw_spin_lock(&op_lock.lock);
 

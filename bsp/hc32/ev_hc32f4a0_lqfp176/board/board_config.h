@@ -56,17 +56,17 @@
 
 /***********  ADC configure *********/
 #if defined(BSP_USING_ADC1)
-    #define ADC1_CH_PORT                    (GPIO_PORT_C)
+    #define ADC1_CH_PORT                    (GPIO_PORT_C)   /* Default ADC123_IN10 */
     #define ADC1_CH_PIN                     (GPIO_PIN_00)
 #endif
 
 #if defined(BSP_USING_ADC2)
-    #define ADC2_CH_PORT                    (GPIO_PORT_C)
+    #define ADC2_CH_PORT                    (GPIO_PORT_C)   /* Default ADC123_IN11 */
     #define ADC2_CH_PIN                     (GPIO_PIN_01)
 #endif
 
 #if defined(BSP_USING_ADC3)
-    #define ADC3_CH_PORT                    (GPIO_PORT_C)
+    #define ADC3_CH_PORT                    (GPIO_PORT_C)   /* Default ADC123_IN12 */
     #define ADC3_CH_PIN                     (GPIO_PIN_02)
 #endif
 
@@ -545,22 +545,37 @@
 
 #endif
 
+#if defined(BSP_USING_INPUT_CAPTURE)
+    #define INPUT_CAPTURE_TMR6_FUNC                 (GPIO_FUNC_3)
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_1)
+        #define INPUT_CAPTURE_TMR6_1_PORT           (GPIO_PORT_B)
+        #define INPUT_CAPTURE_TMR6_1_PIN            (GPIO_PIN_09)
+    #endif
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_2)
+        #define INPUT_CAPTURE_TMR6_2_PORT           (GPIO_PORT_E)
+        #define INPUT_CAPTURE_TMR6_2_PIN            (GPIO_PIN_07)
+    #endif
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_3)
+        #define INPUT_CAPTURE_TMR6_3_PORT           (GPIO_PORT_A)
+        #define INPUT_CAPTURE_TMR6_3_PIN            (GPIO_PIN_00)
+    #endif
+#endif
+
 #if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
     #if defined(BSP_USING_USBFS)
         /* USBFS Core*/
         #define USBF_DP_PORT                    (GPIO_PORT_A)
         #define USBF_DP_PIN                     (GPIO_PIN_12)
-        #define USBF_DP_FUNC                    (GPIO_FUNC_10)
         #define USBF_DM_PORT                    (GPIO_PORT_A)
         #define USBF_DM_PIN                     (GPIO_PIN_11)
-        #define USBF_DM_FUNC                    (GPIO_FUNC_10)
         #define USBF_VBUS_PORT                  (GPIO_PORT_A)
         #define USBF_VBUS_PIN                   (GPIO_PIN_09)
         #define USBF_VBUS_FUNC                  (GPIO_FUNC_10)
         #define USBF_DRVVBUS_PORT               (GPIO_PORT_C)
         #define USBF_DRVVBUS_PIN                (GPIO_PIN_09)
         #define USBF_DRVVBUS_FUNC               (GPIO_FUNC_10)
-    #elif defined(BSP_USING_USBHS)
+    #endif
+    #if defined(BSP_USING_USBHS)
         /* USBHS Core*/
         #if defined(BSP_USING_USBHS_PHY_EMBED)
             #define USBH_DP_PORT                    (GPIO_PORT_B)

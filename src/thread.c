@@ -297,7 +297,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 }
 
 /**
- * @addtogroup Thread
+ * @addtogroup group_Thread
  */
 
 /**@{*/
@@ -398,7 +398,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     LOG_D("startup a thread:%s with priority:%d",
-          thread->parent.name, thread->current_priority);
+          thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 
     /* calculate priority attribute and reset thread stat to suspend */
     rt_sched_thread_startup(thread);
@@ -779,6 +779,8 @@ RTM_EXPORT(rt_thread_mdelay);
  *
  *              RT_THREAD_CTRL_BIND_CPU for bind the thread to a CPU.
  *
+ *              RT_THREAD_CTRL_RESET_PRIORITY for reset priority level of thread.
+ *
  * @param   arg is the argument of control command.
  *
  * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
@@ -798,6 +800,16 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
             rt_sched_lock_level_t slvl;
             rt_sched_lock(&slvl);
             error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
+            rt_sched_unlock(slvl);
+            return error;
+        }
+
+        case RT_THREAD_CTRL_RESET_PRIORITY:
+        {
+            rt_err_t error;
+            rt_sched_lock_level_t slvl;
+            rt_sched_lock(&slvl);
+            error = rt_sched_thread_reset_priority(thread, *(rt_uint8_t *)arg);
             rt_sched_unlock(slvl);
             return error;
         }
@@ -911,7 +923,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     stat = rt_sched_thread_get_stat(thread);
     if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        LOG_D("thread suspend: thread disorder, 0x%2x", thread->stat);
+        LOG_D("thread suspend: thread disorder, 0x%2x", RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
         return -RT_ERROR;
     }

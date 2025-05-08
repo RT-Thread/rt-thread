@@ -16,7 +16,7 @@ config RT_USING_SDIO
             int "The stack size for mmcsd thread"
             default 1024
 
-        config RT_MMCSD_THREAD_PREORITY
+        config RT_MMCSD_THREAD_PRIORITY
             int "The priority level value of mmcsd thread"
             default 22
 

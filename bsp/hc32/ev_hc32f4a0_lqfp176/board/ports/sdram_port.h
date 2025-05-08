@@ -6,8 +6,6 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-24     CDT          first version
- * 2024-02-20     CDT          modify timing configuration for using exclk clock frequency 30MHz
- *                             add t_rcd/t_rfc/t_rp configuration macros-definition
  */
 
 #ifndef __SDRAM_PORT_H__

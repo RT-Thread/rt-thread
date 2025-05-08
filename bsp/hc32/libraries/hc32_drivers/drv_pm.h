@@ -91,7 +91,7 @@ struct pm_sleep_mode_shutdown_config
  ******************************************************************************/
 #if defined(HC32F4A0)
 #define PM_CHECK_EFM()                  ((EFM_GetStatus(EFM_FLAG_RDY) == SET) && (EFM_GetStatus(EFM_FLAG_RDY1) == SET))
-#elif defined(HC32F460)
+#elif defined(HC32F460) || defined (HC32F448) || defined (HC32F472)
 #define PM_CHECK_EFM()                  ((EFM_GetStatus(EFM_FLAG_RDY) == SET))
 #endif
 #define PM_CHECK_XTAL()                 ((CM_CMU->XTALSTDCR & CLK_XTALSTD_ON) == 0)

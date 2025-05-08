@@ -14,8 +14,8 @@
 
 #include <rtthread.h>
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    I2C              I2C
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_I2C I2C
  *
  * @brief       I2C driver api
  *
@@ -169,11 +169,11 @@
  * MSH_CMD_EXPORT(i2c_aht10_sample, i2c aht10 sample);
  * @endcode
  *
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  */
 
 /*!
- * @addtogroup I2C
+ * @addtogroup group_I2C
  * @{
  */
 #ifdef __cplusplus

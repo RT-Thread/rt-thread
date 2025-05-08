@@ -19,7 +19,7 @@
 static struct rt_dm_ida nvme_controller_ida = RT_DM_IDA_INIT(CUSTOM);
 static struct rt_dm_ida nvme_ida = RT_DM_IDA_INIT(NVME);
 
-static struct rt_spinlock nvme_lock = {};
+static RT_DEFINE_SPINLOCK(nvme_lock);
 static rt_list_t nvme_nodes = RT_LIST_OBJECT_INIT(nvme_nodes);
 
 rt_inline rt_uint32_t nvme_readl(struct rt_nvme_controller *nvme, int offset)

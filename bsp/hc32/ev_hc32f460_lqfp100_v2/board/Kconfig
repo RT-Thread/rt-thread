@@ -162,11 +162,11 @@ menu "On-chip Peripheral Drivers"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 scl pin number"
                         range 1 100
-                        default 7
+                        default 36
                     config BSP_I2C1_SDA_PIN
                         int "I2C1 sda pin number"
                         range 1 100
-                        default 36
+                        default 7
                 endif
         endif
 
@@ -318,12 +318,22 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_ADC
         if BSP_USING_ADC
-            config BSP_USING_ADC1
-                bool "using adc1"
+            menuconfig BSP_USING_ADC1
+                bool "Enable ADC1"
                 default n
-            config BSP_USING_ADC2
-                bool "using adc2"
+                if BSP_USING_ADC1
+                    config BSP_ADC1_USING_DMA
+                        bool "using adc1 dma"
+                        default n
+                endif
+            menuconfig BSP_USING_ADC2
+                bool "Enable ADC2"
                 default n
+                if BSP_USING_ADC2
+                    config BSP_ADC2_USING_DMA
+                        bool "using adc2 dma"
+                        default n
+                endif
         endif
 
     menuconfig BSP_USING_CAN
@@ -338,18 +348,17 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_WDT_TMR
-        bool "Enable Watchdog Timer"
+        bool "Enable Watchdog Timer: 10.7s(max)"
         default n
         select RT_USING_WDT
         if BSP_USING_WDT_TMR
             config BSP_USING_WDT
-                bool "Using WDT"
+                bool 
+                default y
+
+            config BSP_WDT_CONTINUE_COUNT
+                bool "Low Power Mode Keeps Counting"
                 default n
-                if BSP_USING_WDT
-                    config BSP_WDT_CONTINUE_COUNT
-                        bool "Low Power Mode Keeps Counting"
-                        default n
-                endif
         endif
 
     menuconfig BSP_USING_RTC
@@ -462,26 +471,21 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable timerA output PWM"
                 default n
                 if BSP_USING_PWM_TMRA
-                    menuconfig BSP_USING_PWM_TMRA_4
-                        bool "Enable timerA-4 output PWM"
+                    menuconfig BSP_USING_PWM_TMRA_1
+                        bool "Enable timerA-1 output PWM"
                         default n
-                        if BSP_USING_PWM_TMRA_4
-                            config BSP_USING_PWM_TMRA_4_CH1
-                                bool "Enable timerA-4 channel1"
+                        if BSP_USING_PWM_TMRA_1
+                            config BSP_USING_PWM_TMRA_1_CH1
+                                bool "Enable timerA-1 channel1"
                                 default n
-                            config BSP_USING_PWM_TMRA_4_CH2
-                                bool "Enable timerA-4 channel2"
+                            config BSP_USING_PWM_TMRA_1_CH2
+                                bool "Enable timerA-1 channel2"
                                 default n
-                        endif
-                    menuconfig BSP_USING_PWM_TMRA_5
-                        bool "Enable timerA-5 output PWM"
-                        default n
-                        if BSP_USING_PWM_TMRA_5
-                            config BSP_USING_PWM_TMRA_5_CH1
-                                bool "Enable timerA-5 channel1"
+                            config BSP_USING_PWM_TMRA_1_CH3
+                                bool "Enable timerA-1 channel3"
                                 default n
-                            config BSP_USING_PWM_TMRA_5_CH2
-                                bool "Enable timerA-5 channel2"
+                            config BSP_USING_PWM_TMRA_1_CH4
+                                bool "Enable timerA-1 channel4"
                                 default n
                         endif
                 endif
@@ -631,7 +635,23 @@ menu "On-chip Peripheral Drivers"
                 bool "Use Timer_a6 As The Hw Timer"
                 default n
         endif
-
+    menuconfig BSP_USING_INPUT_CAPTURE
+        bool "Enable Input Capture"
+        default n
+        select RT_USING_INPUT_CAPTURE
+        if BSP_USING_INPUT_CAPTURE
+            menuconfig BSP_USING_INPUT_CAPTURE_TMR6
+                bool "Use Timer6 As The Input Capture"
+                default n
+                if BSP_USING_INPUT_CAPTURE_TMR6
+                    config BSP_USING_INPUT_CAPTURE_TMR6_1
+                        bool "unit 1"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_2
+                        bool "unit 2"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_3
+                        bool "unit 3"
+                endif
+        endif
 endmenu
 
 menu "Board extended module Drivers"

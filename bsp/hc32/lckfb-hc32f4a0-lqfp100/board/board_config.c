@@ -10,7 +10,7 @@
 
 #include <rtdevice.h>
 #include "board_config.h"
-#include "tca9539.h"
+#include "tca9539_port.h"
 
 /**
  * The below functions will initialize HC32 board.

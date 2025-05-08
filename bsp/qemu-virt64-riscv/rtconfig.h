@@ -519,7 +519,6 @@
 
 /* RISC-V QEMU virt64 configs */
 
-#define RISCV_S_MODE
 #define BSP_USING_VIRTIO
 #define BSP_USING_VIRTIO_BLK
 #define BSP_USING_VIRTIO_NET

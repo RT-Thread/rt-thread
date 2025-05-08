@@ -6,8 +6,8 @@
 /*                                                                                                         */
 /*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f1xxxx_gcc_01.s
-;  Version          : $Rev:: 1578         $
-;  Date             : $Date:: 2019-03-29 #$
+;  Version          : $Rev:: 3030         $
+;  Date             : $Date:: 2024-01-31 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -163,14 +163,14 @@ __interrupt_vector_cortex_m:
                     .long   COMP_IRQHandler                   /*  24, 40, 0x0A0,                            */
                     .long   ADC_IRQHandler                    /*  25, 41, 0x0A4,                            */
                     .long   _RESERVED                         /*  26, 42, 0x0A8,                            */
-                    .long   MCTM0BRK_IRQHandler               /*  27, 43, 0x0AC,                            */
-                    .long   MCTM0UP_IRQHandler                /*  28, 44, 0x0B0,                            */
-                    .long   MCTM0TR_IRQHandler                /*  29, 45, 0x0B4,                            */
-                    .long   MCTM0CC_IRQHandler                /*  30, 46, 0x0B8,                            */
-                    .long   MCTM1BRK_IRQHandler               /*  31, 47, 0x0BC,                            */
-                    .long   MCTM1UP_IRQHandler                /*  32, 48, 0x0C0,                            */
-                    .long   MCTM1TR_IRQHandler                /*  33, 49, 0x0C4,                            */
-                    .long   MCTM1CC_IRQHandler                /*  34, 50, 0x0C8,                            */
+                    .long   MCTM0_BRK_IRQHandler              /*  27, 43, 0x0AC,                            */
+                    .long   MCTM0_UP_IRQHandler               /*  28, 44, 0x0B0,                            */
+                    .long   MCTM0_TR_IRQHandler               /*  29, 45, 0x0B4,                            */
+                    .long   MCTM0_CC_IRQHandler               /*  30, 46, 0x0B8,                            */
+                    .long   MCTM1_BRK_IRQHandler              /*  31, 47, 0x0BC,                            */
+                    .long   MCTM1_UP_IRQHandler               /*  32, 48, 0x0C0,                            */
+                    .long   MCTM1_TR_IRQHandler               /*  33, 49, 0x0C4,                            */
+                    .long   MCTM1_CC_IRQHandler               /*  34, 50, 0x0C8,                            */
                     .long   GPTM0_IRQHandler                  /*  35, 51, 0x0CC,                            */
                     .long   GPTM1_IRQHandler                  /*  36, 52, 0x0D0,                            */
                     .long   _RESERVED                         /*  37, 53, 0x0D4,                            */
@@ -442,14 +442,14 @@ Default_Handler:
     IRQ     EXTI15_IRQHandler
     IRQ     COMP_IRQHandler
     IRQ     ADC_IRQHandler
-    IRQ     MCTM0BRK_IRQHandler
-    IRQ     MCTM0UP_IRQHandler
-    IRQ     MCTM0TR_IRQHandler
-    IRQ     MCTM0CC_IRQHandler
-    IRQ     MCTM1BRK_IRQHandler
-    IRQ     MCTM1UP_IRQHandler
-    IRQ     MCTM1TR_IRQHandler
-    IRQ     MCTM1CC_IRQHandler
+    IRQ     MCTM0_BRK_IRQHandler
+    IRQ     MCTM0_UP_IRQHandler
+    IRQ     MCTM0_TR_IRQHandler
+    IRQ     MCTM0_CC_IRQHandler
+    IRQ     MCTM1_BRK_IRQHandler
+    IRQ     MCTM1_UP_IRQHandler
+    IRQ     MCTM1_TR_IRQHandler
+    IRQ     MCTM1_CC_IRQHandler
     IRQ     GPTM0_IRQHandler
     IRQ     GPTM1_IRQHandler
     IRQ     BFTM0_IRQHandler

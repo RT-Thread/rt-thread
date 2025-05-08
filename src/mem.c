@@ -254,7 +254,7 @@ rt_err_t rt_smem_detach(rt_smem_t m)
 RTM_EXPORT(rt_smem_detach);
 
 /**
- * @addtogroup MM
+ * @addtogroup group_MM
  */
 
 /**@{*/

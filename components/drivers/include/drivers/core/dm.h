@@ -40,6 +40,11 @@ struct rt_dm_ida
 };
 
 #define RT_DM_IDA_INIT(id)  { .master_id = MASTER_ID_##id }
+#define rt_dm_ida_init(ida, id)         \
+do {                                    \
+    (ida)->master_id = MASTER_ID_##id;  \
+    rt_spin_lock_init(&(ida)->lock);    \
+} while (0)
 
 int rt_dm_ida_alloc(struct rt_dm_ida *ida);
 rt_bool_t rt_dm_ida_take(struct rt_dm_ida *ida, int id);

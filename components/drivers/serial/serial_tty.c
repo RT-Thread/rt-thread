@@ -131,7 +131,7 @@ static rt_err_t _serial_ty_bypass(struct rt_serial_device* serial, char ch,void 
 rt_inline void _setup_serial(struct rt_serial_device* serial, lwp_tty_t tp,
                              struct serial_tty_context *softc)
 {
-    rt_bypass_lower_register(serial, "tty",RT_BYPASS_PROTECT_LEVEL_1, _serial_ty_bypass,(void *)tp);
+    rt_bypass_lower_register(serial, "tty", RT_BYPASS_PROTECT_LEVEL_1, _serial_ty_bypass, (void *)tp);
 }
 
 rt_inline void _restore_serial(struct rt_serial_device *serial, lwp_tty_t tp,
@@ -232,7 +232,7 @@ static void serial_tty_close(struct lwp_tty *tp)
 
     LOG_D("%s", __func__);
 
-    _restore_serial(serial, tp, softc);
+    rt_bypass_lower_unregister(serial, RT_BYPASS_PROTECT_LEVEL_1);
     rt_device_close(&serial->parent);
 }
 

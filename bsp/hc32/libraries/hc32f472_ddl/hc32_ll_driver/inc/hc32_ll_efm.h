@@ -243,7 +243,7 @@ typedef struct {
  * @defgroup EFM_Sector_Size EFM Sector Size
  * @{
  */
-#define SECTOR_SIZE                     (0x2000UL)
+#define EFM_SECTOR_SIZE                 (0x2000UL)
 /**
  * @}
  */
@@ -252,7 +252,7 @@ typedef struct {
  * @defgroup EFM_Sector_Address EFM Sector Address
  * @{
  */
-#define EFM_SECTOR_ADDR(x)          (uint32_t)(SECTOR_SIZE * (x))
+#define EFM_SECTOR_ADDR(x)          (uint32_t)(EFM_SECTOR_SIZE * (x))
 /**
  * @}
  */

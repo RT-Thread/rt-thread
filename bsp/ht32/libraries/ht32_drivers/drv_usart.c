@@ -261,11 +261,11 @@ static rt_ssize_t ht32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
 
 static const struct rt_uart_ops ht32_usart_ops =
 {
-    .configure = ht32_configure,
-    .control = ht32_control,
-    .putc = ht32_putc,
-    .getc = ht32_getc,
-    .dma_transmit = ht32_dma_transmit,
+    .configure      = ht32_configure,
+    .control        = ht32_control,
+    .putc           = ht32_putc,
+    .getc           = ht32_getc,
+    .dma_transmit   = ht32_dma_transmit,
 };
 
 int rt_hw_usart_init(void)

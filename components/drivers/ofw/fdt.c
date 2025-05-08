@@ -23,7 +23,7 @@
 
 #include "ofw_internal.h"
 
-struct rt_fdt_earlycon fdt_earlycon rt_section(".bss.noclean.earlycon");
+struct rt_fdt_earlycon fdt_earlycon;
 
 RT_OFW_SYMBOL_TYPE_RANGE(earlycon, struct rt_fdt_earlycon_id, _earlycon_start = {}, _earlycon_end = {});
 
@@ -593,7 +593,7 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
     int len, options_len = 0;
     const char *options = RT_NULL, *con_type = RT_NULL;
 
-    rt_memset(&fdt_earlycon, 0, sizeof(fdt_earlycon) - sizeof(fdt_earlycon.msg));
+    rt_memset(&fdt_earlycon, 0, rt_offsetof(struct rt_fdt_earlycon, msg_idx));
     fdt_earlycon.nodeoffset = -1;
 
     offset = fdt_path_offset(_fdt, "/chosen");

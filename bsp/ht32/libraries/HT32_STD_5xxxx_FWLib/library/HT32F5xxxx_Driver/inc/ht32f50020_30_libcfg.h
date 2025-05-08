@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f50020_30_libcfg.h
- * @version $Rev:: 6386         $
- * @date    $Date:: 2022-10-27 #$
+ * @version $Rev:: 7661         $
+ * @date    $Date:: 2024-03-21 #$
  * @brief   The library configuration file.
  *************************************************************************************************************
 * @attention
@@ -52,6 +52,7 @@
 
 #define LIBCFG_GPIOC                      (1)
 #define LIBCFG_GPIOF                      (1)
+#define LIBCFG_GPIO_SINK_CURRENT_ENHANCED (1)
 #define LIBCFG_LEDC                       (1)
 #define LIBCFG_LSE                        (1)
 #define LIBCFG_SCTM0                      (1)

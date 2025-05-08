@@ -36,6 +36,24 @@ extern "C" {
 #endif /* DAC2_INIT_PARAMS */
 #endif /* BSP_USING_DAC2 */
 
+#ifdef BSP_USING_DAC3
+#ifndef DAC3_INIT_PARAMS
+#define DAC3_INIT_PARAMS                                                    \
+    {                                                                       \
+       .name                      = "dac3",                                 \
+    }
+#endif /* DAC3_INIT_PARAMS */
+#endif /* BSP_USING_DAC3 */
+
+#ifdef BSP_USING_DAC4
+#ifndef DAC4_INIT_PARAMS
+#define DAC4_INIT_PARAMS                                                    \
+    {                                                                       \
+       .name                      = "dac4",                                 \
+    }
+#endif /* DAC4_INIT_PARAMS */
+#endif /* BSP_USING_DAC4 */
+
 #ifdef __cplusplus
 }
 #endif

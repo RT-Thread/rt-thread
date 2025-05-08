@@ -63,7 +63,7 @@ void plic_init(void)
 {
     int i;
 
-    for (i = 0; i < IRQ_MAX_NR / 4; i = i + 4)
+    for (i = 0; i < IRQ_MAX_NR * 4; i = i + 4)
     {
         mmio_write_32(((uintptr_t) PLIC_PRIORITY0 + i), 0);
     }

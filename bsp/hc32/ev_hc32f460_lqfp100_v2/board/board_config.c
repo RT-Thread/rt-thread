@@ -104,6 +104,7 @@ void CanPhyEnable(void)
     GPIO_ResetPins(CAN1_STB_PORT, CAN1_STB_PIN);
     GPIO_OutputCmd(CAN1_STB_PORT, CAN1_STB_PIN, ENABLE);
 }
+
 rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx)
 {
     rt_err_t result = RT_EOK;
@@ -207,38 +208,23 @@ rt_err_t rt_hw_board_pwm_tmra_init(CM_TMRA_TypeDef *TMRAx)
     rt_err_t result = RT_EOK;
     switch ((rt_uint32_t)TMRAx)
     {
-#if defined(BSP_USING_PWM_TMRA_4)
-    case (rt_uint32_t)CM_TMRA_4:
-#ifdef BSP_USING_PWM_TMRA_4_CH1
-        GPIO_SetFunc(PWM_TMRA_4_CH1_PORT, PWM_TMRA_4_CH1_PIN, PWM_TMRA_4_CH1_PIN_FUNC);
+#if defined(BSP_USING_PWM_TMRA_1)
+    case (rt_uint32_t)CM_TMRA_1:
+#ifdef BSP_USING_PWM_TMRA_1_CH1
+        GPIO_SetFunc(PWM_TMRA_1_CH1_PORT, PWM_TMRA_1_CH1_PIN, PWM_TMRA_1_CH1_PIN_FUNC);
 #endif
-#ifdef BSP_USING_PWM_TMRA_4_CH2
-        GPIO_SetFunc(PWM_TMRA_4_CH2_PORT, PWM_TMRA_4_CH2_PIN, PWM_TMRA_4_CH2_PIN_FUNC);
+#ifdef BSP_USING_PWM_TMRA_1_CH2
+        GPIO_SetFunc(PWM_TMRA_1_CH2_PORT, PWM_TMRA_1_CH2_PIN, PWM_TMRA_1_CH2_PIN_FUNC);
 #endif
-#ifdef BSP_USING_PWM_TMRA_4_CH3
-        GPIO_SetFunc(PWM_TMRA_4_CH3_PORT, PWM_TMRA_4_CH3_PIN, PWM_TMRA_4_CH3_PIN_FUNC);
+#ifdef BSP_USING_PWM_TMRA_1_CH3
+        GPIO_SetFunc(PWM_TMRA_1_CH3_PORT, PWM_TMRA_1_CH3_PIN, PWM_TMRA_1_CH3_PIN_FUNC);
 #endif
-#ifdef BSP_USING_PWM_TMRA_4_CH4
-        GPIO_SetFunc(PWM_TMRA_4_CH4_PORT, PWM_TMRA_4_CH4_PIN, PWM_TMRA_4_CH4_PIN_FUNC);
-#endif
-        break;
-#endif
-#if defined(BSP_USING_PWM_TMRA_5)
-    case (rt_uint32_t)CM_TMRA_5:
-#ifdef BSP_USING_PWM_TMRA_5_CH1
-        GPIO_SetFunc(PWM_TMRA_5_CH1_PORT, PWM_TMRA_5_CH1_PIN, PWM_TMRA_5_CH1_PIN_FUNC);
-#endif
-#ifdef BSP_USING_PWM_TMRA_5_CH2
-        GPIO_SetFunc(PWM_TMRA_5_CH2_PORT, PWM_TMRA_5_CH2_PIN, PWM_TMRA_5_CH2_PIN_FUNC);
-#endif
-#ifdef BSP_USING_PWM_TMRA_5_CH3
-        GPIO_SetFunc(PWM_TMRA_5_CH3_PORT, PWM_TMRA_5_CH3_PIN, PWM_TMRA_5_CH3_PIN_FUNC);
-#endif
-#ifdef BSP_USING_PWM_TMRA_5_CH4
-        GPIO_SetFunc(PWM_TMRA_5_CH4_PORT, PWM_TMRA_5_CH4_PIN, PWM_TMRA_5_CH4_PIN_FUNC);
+#ifdef BSP_USING_PWM_TMRA_1_CH4
+        GPIO_SetFunc(PWM_TMRA_1_CH4_PORT, PWM_TMRA_1_CH4_PIN, PWM_TMRA_1_CH4_PIN_FUNC);
 #endif
         break;
 #endif
+
     default:
         result = -RT_ERROR;
         break;
@@ -276,6 +262,7 @@ rt_err_t rt_hw_board_pwm_tmr4_init(CM_TMR4_TypeDef *TMR4x)
 #endif
         break;
 #endif
+
     default:
         result = -RT_ERROR;
         break;
@@ -300,6 +287,7 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
         break;
 #endif
+
     default:
         result = -RT_ERROR;
         break;
@@ -310,6 +298,35 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
 #endif
 
+#if defined (BSP_USING_INPUT_CAPTURE)
+rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance)
+{
+    rt_err_t result = RT_EOK;
+
+    switch ((rt_uint32_t)tmr_instance)
+    {
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_1)
+    case (rt_uint32_t)CM_TMR6_1:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_1_PORT, INPUT_CAPTURE_TMR6_1_PIN, GPIO_FUNC_3);
+        break;
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_2)
+    case (rt_uint32_t)CM_TMR6_2:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN, GPIO_FUNC_3);
+        break;
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_3)
+    case (rt_uint32_t)CM_TMR6_3:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_3_PORT, INPUT_CAPTURE_TMR6_3_PIN, GPIO_FUNC_3);
+        break;
+#endif
+    default:
+        result = -RT_ERROR;
+        break;
+    }
+    return result;
+}
+#endif
 #ifdef RT_USING_PM
 void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode)
 {
@@ -317,12 +334,12 @@ void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode)
     {
     case PM_RUN_MODE_HIGH_SPEED:
     case PM_RUN_MODE_NORMAL_SPEED:
-        SystemClock_Config();
+        CLK_SetSysClockSrc(CLK_SYSCLK_SRC_PLL);
         break;
-
     case PM_RUN_MODE_LOW_SPEED:
+        /* Ensure that system clock less than 8M */
         CLK_SetSysClockSrc(CLK_SYSCLK_SRC_XTAL);
-
+        break;
     default:
         break;
     }
@@ -330,7 +347,7 @@ void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode)
 #endif
 
 #if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
-rt_err_t rt_hw_usb_board_init(void)
+rt_err_t rt_hw_usbfs_board_init(void)
 {
     stc_gpio_init_t stcGpioCfg;
     (void)GPIO_StructInit(&stcGpioCfg);

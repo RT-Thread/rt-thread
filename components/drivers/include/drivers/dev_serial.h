@@ -16,8 +16,8 @@
 
 #include <rtthread.h>
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    Serial           Serial
+ * @addtogroup group_Drivers RTTHREAD Driver
+ * @defgroup group_Serial Serial
  *
  * @brief       Serial driver api
  *
@@ -106,12 +106,12 @@
  * MSH_CMD_EXPORT(uart_sample, uart device sample);
  * @endcode
  *
- * @ingroup     Drivers
+ * @ingroup group_Drivers
  */
 
 
 /*!
- * @addtogroup Serial
+ * @addtogroup group_Serial
  * @{
  */
 #define BAUD_RATE_2400                  2400
@@ -289,7 +289,7 @@ struct rt_uart_ops
  * @brief Serial interrupt service routine
  * @param serial    serial device
  * @param event     event mask
- * @ingroup  Serial
+ * @ingroup group_Serial
  */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
 
@@ -303,7 +303,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
  * @return rt_err_t        error code
  * @note This function will register a serial device to system device list,
  *       and add a device object to system object list.
- * @ingroup  Serial
+ * @ingroup group_Serial
  */
 rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                const char              *name,
@@ -316,7 +316,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
  * @param serial    serial device
  * @return rt_err_t error code
  *
- * @ingroup  Serial
+ * @ingroup group_Serial
  */
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial);
 

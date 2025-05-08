@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup KernelService
+ * @addtogroup group_KernelService
  */
 
 /**@{*/

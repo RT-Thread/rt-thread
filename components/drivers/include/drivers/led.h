@@ -46,8 +46,8 @@ struct rt_led_ops
     rt_err_t (*set_brightness)(struct rt_led_device *led, rt_uint32_t brightness);
 };
 
-rt_err_t rt_hw_led_register(struct rt_led_device *led);
-rt_err_t rt_hw_led_unregister(struct rt_led_device *led);
+rt_err_t rt_led_register(struct rt_led_device *led);
+rt_err_t rt_led_unregister(struct rt_led_device *led);
 
 rt_err_t rt_led_set_state(struct rt_led_device *led, enum rt_led_state state);
 rt_err_t rt_led_get_state(struct rt_led_device *led, enum rt_led_state *out_state);
