@@ -5,6 +5,7 @@
  *
  * Change Logs:
  * Date           Author         Notes
+ * 2024-07-04     rcitach        init ver.
  * 2025-04-22     ScuDays        Add VDSO functionality under the riscv64 architecture.
  */
 
