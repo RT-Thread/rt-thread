@@ -22,12 +22,10 @@ src    = Glob('kernel/*.c')
 src    +=Glob('kernel/*.S')
 
 
-
-PREFIX  = rtconfig.PREFIX
-CPP = PREFIX + 'cpp'
-CPPFLAGS= ' -E -P -x assembler-with-cpp'
-rtconfig.CPP = CPP
-rtconfig.CPPFLAGS = CPPFLAGS
+if not hasattr(rtconfig, 'CPP') or rtconfig.CPP is None:
+    rtconfig.CPP = rtconfig.PREFIX + 'cpp'
+if not hasattr(rtconfig, 'CPPFLAGS') or rtconfig.CPPFLAGS is None:
+    rtconfig.CPPFLAGS = ' -E -P -x assembler-with-cpp'
 
 if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"):
     Preprocessing("user/arch/" + rtconfig.ARCH + "/vdso.lds.S", ".lds", CPPPATH=[cwd])

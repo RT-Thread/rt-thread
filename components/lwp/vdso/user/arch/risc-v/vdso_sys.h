@@ -34,7 +34,7 @@ static inline uint64_t __arch_get_hw_counter()
     arch_counter_enforce_ordering;
     return res;
 }
-
+// 使用了rt_weak弱符号标记该函数，默认为10000000，请根据对应平台实现这个函数。
 rt_weak inline uint64_t __arch_get_hw_frq()
 {
     return 10000000;
