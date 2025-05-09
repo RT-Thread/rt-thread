@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL_bits.h
+ * # CategoryBits
  *
- *  Functions for fiddling with bits and bitmasks.
+ * Functions for fiddling with bits and bitmasks.
  */
 
 #ifndef SDL_bits_h_
@@ -56,6 +56,12 @@ extern __inline int _SDL_bsr_watcom(Uint32);
     modify exact [eax] nomemory;
 #endif
 
+/**
+ * Use this function to get the index of the most significant (set) bit in a
+ *
+ * \param x the number to find the MSB of.
+ * \returns the index of the most significant bit of x, or -1 if x is 0.
+ */
 SDL_FORCE_INLINE int
 SDL_MostSignificantBitIndex32(Uint32 x)
 {

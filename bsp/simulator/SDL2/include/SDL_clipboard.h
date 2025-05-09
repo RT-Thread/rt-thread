@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 */
 
 /**
- * \file SDL_clipboard.h
+ * # CategoryClipboard
  *
  * Include file for SDL clipboard handling
  */
@@ -41,7 +41,7 @@ extern "C" {
 /**
  * Put UTF-8 text into the clipboard.
  *
- * \param text the text to store in the clipboard
+ * \param text the text to store in the clipboard.
  * \returns 0 on success or a negative error code on failure; call
  *          SDL_GetError() for more information.
  *
@@ -81,6 +81,53 @@ extern DECLSPEC char * SDLCALL SDL_GetClipboardText(void);
  * \sa SDL_SetClipboardText
  */
 extern DECLSPEC SDL_bool SDLCALL SDL_HasClipboardText(void);
+
+/**
+ * Put UTF-8 text into the primary selection.
+ *
+ * \param text the text to store in the primary selection.
+ * \returns 0 on success or a negative error code on failure; call
+ *          SDL_GetError() for more information.
+ *
+ * \since This function is available since SDL 2.26.0.
+ *
+ * \sa SDL_GetPrimarySelectionText
+ * \sa SDL_HasPrimarySelectionText
+ */
+extern DECLSPEC int SDLCALL SDL_SetPrimarySelectionText(const char *text);
+
+/**
+ * Get UTF-8 text from the primary selection, which must be freed with
+ * SDL_free().
+ *
+ * This functions returns empty string if there was not enough memory left for
+ * a copy of the primary selection's content.
+ *
+ * \returns the primary selection text on success or an empty string on
+ *          failure; call SDL_GetError() for more information. Caller must
+ *          call SDL_free() on the returned pointer when done with it (even if
+ *          there was an error).
+ *
+ * \since This function is available since SDL 2.26.0.
+ *
+ * \sa SDL_HasPrimarySelectionText
+ * \sa SDL_SetPrimarySelectionText
+ */
+extern DECLSPEC char * SDLCALL SDL_GetPrimarySelectionText(void);
+
+/**
+ * Query whether the primary selection exists and contains a non-empty text
+ * string.
+ *
+ * \returns SDL_TRUE if the primary selection has text, or SDL_FALSE if it
+ *          does not.
+ *
+ * \since This function is available since SDL 2.26.0.
+ *
+ * \sa SDL_GetPrimarySelectionText
+ * \sa SDL_SetPrimarySelectionText
+ */
+extern DECLSPEC SDL_bool SDLCALL SDL_HasPrimarySelectionText(void);
 
 
 /* Ends C function definitions when using C++ */

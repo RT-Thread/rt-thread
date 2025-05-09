@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,10 +19,17 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/**
- *  \file SDL_syswm.h
+/* WIKI CATEGORY: SYSWM */
+
+/*
+ * # CategorySYSWM
  *
- *  Include file for SDL custom system window manager hooks.
+ * Include file for SDL custom system window manager hooks.
+ *
+ * Your application has access to a special type of event SDL_SYSWMEVENT,
+ * which contains window-manager specific information and arrives whenever
+ * an unhandled window event occurs.  This event is ignored by default, but
+ * you can enable it with SDL_EventState().
  */
 
 #ifndef SDL_syswm_h_
@@ -33,14 +40,6 @@
 #include "SDL_video.h"
 #include "SDL_version.h"
 
-/**
- *  \brief SDL_syswm.h
- *
- *  Your application has access to a special type of event ::SDL_SYSWMEVENT,
- *  which contains window-manager specific information and arrives whenever
- *  an unhandled window event occurs.  This event is ignored by default, but
- *  you can enable it with SDL_EventState().
- */
 struct SDL_SysWMinfo;
 
 #if !defined(SDL_PROTOTYPES_ONLY)
@@ -129,10 +128,11 @@ extern "C" {
 #endif
 
 #if !defined(SDL_PROTOTYPES_ONLY)
+
 /**
- *  These are the various supported windowing subsystems
+ * These are the various supported windowing subsystems
  */
-typedef enum
+typedef enum SDL_SYSWM_TYPE
 {
     SDL_SYSWM_UNKNOWN,
     SDL_SYSWM_WINDOWS,
@@ -152,7 +152,7 @@ typedef enum
 } SDL_SYSWM_TYPE;
 
 /**
- *  The custom event structure.
+ * The custom event structure.
  */
 struct SDL_SysWMmsg
 {
@@ -218,10 +218,10 @@ struct SDL_SysWMmsg
 };
 
 /**
- *  The custom window manager information structure.
+ * The custom window manager information structure.
  *
- *  When this structure is returned, it holds information about which
- *  low level system it is using, and will be one of SDL_SYSWM_TYPE.
+ * When this structure is returned, it holds information about which low level
+ * system it is using, and will be one of SDL_SYSWM_TYPE.
  */
 struct SDL_SysWMinfo
 {
@@ -298,6 +298,8 @@ struct SDL_SysWMinfo
             struct wl_egl_window *egl_window;       /**< Wayland EGL window (native window) */
             struct xdg_surface *xdg_surface;        /**< Wayland xdg surface (window manager handle) */
             struct xdg_toplevel *xdg_toplevel;      /**< Wayland xdg toplevel role */
+            struct xdg_popup *xdg_popup;            /**< Wayland xdg popup role */
+            struct xdg_positioner *xdg_positioner;  /**< Wayland xdg positioner, for popup */
         } wl;
 #endif
 #if defined(SDL_VIDEO_DRIVER_MIR)  /* no longer available, left for API/ABI compatibility. Remove in 2.1! */
@@ -361,8 +363,8 @@ typedef struct SDL_SysWMinfo SDL_SysWMinfo;
  * `SDL_VERSION(&info.version)`, and then this function will fill in the rest
  * of the structure with information about the given window.
  *
- * \param window the window about which information is being requested
- * \param info an SDL_SysWMinfo structure filled in with window information
+ * \param window the window about which information is being requested.
+ * \param info an SDL_SysWMinfo structure filled in with window information.
  * \returns SDL_TRUE if the function is implemented and the `version` member
  *          of the `info` struct is valid, or SDL_FALSE if the information
  *          could not be retrieved; call SDL_GetError() for more information.
