@@ -48,7 +48,8 @@ extern "C" {
  * failing result, leading to this idiom:
  *
  * ```c
- * if (error_code) {
+ * if (error_code)
+ {
  *     return SDL_SetError("This operation has failed: %d", error_code);
  * }
  * ```

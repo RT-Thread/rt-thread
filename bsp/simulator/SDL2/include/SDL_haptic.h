@@ -62,7 +62,8 @@
  * Complete example:
  *
  * ```c
- * int test_haptic( SDL_Joystick * joystick ) {
+ * int test_haptic( SDL_Joystick * joystick )
+ {
  *    SDL_Haptic *haptic;
  *    SDL_HapticEffect effect;
  *    int effect_id;
@@ -72,7 +73,8 @@
  *    if (haptic == NULL) return -1; // Most likely joystick isn't haptic
  *
  *    // See if it can do sine waves
- *    if ((SDL_HapticQuery(haptic) & SDL_HAPTIC_SINE)==0) {
+ *    if ((SDL_HapticQuery(haptic) & SDL_HAPTIC_SINE)==0)
+ {
  *       SDL_HapticClose(haptic); // No sine effect
  *       return -1;
  *    }

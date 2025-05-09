@@ -69,7 +69,8 @@ extern DECLSPEC Uint32 SDLCALL SDL_GetTicks(void);
  *
  * ```c
  * const Uint64 timeout = SDL_GetTicks64() + 100;
- * while (SDL_GetTicks64() < timeout) {
+ * while (SDL_GetTicks64() < timeout)
+ {
  *     // ... do work until timeout has elapsed
  * }
  * ```
@@ -94,7 +95,8 @@ extern DECLSPEC Uint64 SDLCALL SDL_GetTicks64(void);
  *
  * ```c
  * const Uint32 timeout = SDL_GetTicks() + 100;
- * while (!SDL_TICKS_PASSED(SDL_GetTicks(), timeout)) {
+ * while (!SDL_TICKS_PASSED(SDL_GetTicks(), timeout))
+ {
  *     // ... do work until timeout has elapsed
  * }
  * ```

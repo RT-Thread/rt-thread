@@ -112,8 +112,10 @@ typedef struct SDL_GameControllerButtonBind
  *  ```c
  *  int nJoysticks = SDL_NumJoysticks();
  *  int nGameControllers = 0;
- *  for (int i = 0; i < nJoysticks; i++) {
- *      if (SDL_IsGameController(i)) {
+ *  for (int i = 0; i < nJoysticks; i++)
+ {
+ *      if (SDL_IsGameController(i))
+ {
  *          nGameControllers++;
  *      }
  *  }

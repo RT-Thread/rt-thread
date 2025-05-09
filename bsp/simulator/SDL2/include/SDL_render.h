@@ -1021,10 +1021,10 @@ extern DECLSPEC void SDLCALL SDL_RenderGetScale(SDL_Renderer * renderer,
  * \sa SDL_RenderGetLogicalSize
  * \sa SDL_RenderSetLogicalSize
  */
-extern DECLSPEC void SDLCALL SDL_RenderWindowToLogical(SDL_Renderer * renderer, 
-                                                            int windowX, int windowY, 
+extern DECLSPEC void SDLCALL SDL_RenderWindowToLogical(SDL_Renderer * renderer,
+                                                            int windowX, int windowY,
                                                             float *logicalX, float *logicalY);
-                                                  
+
 
 /**
  * Get real coordinates of point in window when given logical coordinates of
@@ -1047,7 +1047,7 @@ extern DECLSPEC void SDLCALL SDL_RenderWindowToLogical(SDL_Renderer * renderer,
  * \sa SDL_RenderGetLogicalSize
  * \sa SDL_RenderSetLogicalSize
  */
-extern DECLSPEC void SDLCALL SDL_RenderLogicalToWindow(SDL_Renderer * renderer, 
+extern DECLSPEC void SDLCALL SDL_RenderLogicalToWindow(SDL_Renderer * renderer,
                                                             float logicalX, float logicalY,
                                                             int *windowX, int *windowY);
 

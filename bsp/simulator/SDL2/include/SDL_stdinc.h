@@ -561,10 +561,12 @@ SDL_FORCE_INLINE void SDL_memset4(void *dst, Uint32 val, size_t dwords)
     size_t _n = (dwords + 3) / 4;
     Uint32 *_p = SDL_static_cast(Uint32 *, dst);
     Uint32 _val = (val);
-    if (dwords == 0) {
+    if (dwords == 0)
+    {
         return;
     }
-    switch (dwords % 4) {
+    switch (dwords % 4)
+    {
         case 0: do {    *_p++ = _val;   SDL_FALLTHROUGH;
         case 3:         *_p++ = _val;   SDL_FALLTHROUGH;
         case 2:         *_p++ = _val;   SDL_FALLTHROUGH;
@@ -808,7 +810,8 @@ SDL_FORCE_INLINE int SDL_size_mul_overflow (size_t a,
                                             size_t b,
                                             size_t *ret)
 {
-    if (a != 0 && b > SDL_SIZE_MAX / a) {
+    if (a != 0 && b > SDL_SIZE_MAX / a)
+    {
         return -1;
     }
     *ret = a * b;
@@ -839,7 +842,8 @@ SDL_FORCE_INLINE int SDL_size_add_overflow (size_t a,
                                             size_t b,
                                             size_t *ret)
 {
-    if (b > SDL_SIZE_MAX - a) {
+    if (b > SDL_SIZE_MAX - a)
+    {
         return -1;
     }
     *ret = a + b;

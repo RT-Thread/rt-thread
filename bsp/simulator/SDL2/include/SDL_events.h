@@ -887,9 +887,11 @@ extern DECLSPEC void SDLCALL SDL_FlushEvents(Uint32 minType, Uint32 maxType);
  * usually as a first step before updating the game's state:
  *
  * ```c
- * while (game_is_still_running) {
+ * while (game_is_still_running)
+ {
  *     SDL_Event event;
- *     while (SDL_PollEvent(&event)) {  // poll until all events are handled!
+ *     while (SDL_PollEvent(&event))
+ {  // poll until all events are handled!
  *         // decide what to do with this event.
  *     }
  *

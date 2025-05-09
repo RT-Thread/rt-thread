@@ -64,7 +64,9 @@ assert can have unique static variables associated with it.
 #elif defined(_WIN32) && ((defined(__GNUC__) || defined(__clang__)) && (defined(__arm64__) || defined(__aarch64__)) )
     #define SDL_TriggerBreakpoint() __asm__ __volatile__ ( "brk #0xF000\n\t" )
 #elif defined(__386__) && defined(__WATCOMC__)
-    #define SDL_TriggerBreakpoint() { _asm { int 0x03 } }
+    #define SDL_TriggerBreakpoint()
+    { _asm
+    { int 0x03 } }
 #elif defined(HAVE_SIGNAL_H) && !defined(__WATCOMC__)
     #include <signal.h>
     #define SDL_TriggerBreakpoint() raise(SIGTRAP)
@@ -152,12 +154,15 @@ extern DECLSPEC SDL_AssertState SDLCALL SDL_ReportAssertion(SDL_AssertData *,
 */
 #define SDL_enabled_assert(condition) \
     do { \
-        while ( !(condition) ) { \
+        while ( !(condition) )
+        { \
             static struct SDL_AssertData sdl_assert_data = { 0, 0, #condition, 0, 0, 0, 0 }; \
             const SDL_AssertState sdl_assert_state = SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE); \
-            if (sdl_assert_state == SDL_ASSERTION_RETRY) { \
+            if (sdl_assert_state == SDL_ASSERTION_RETRY)
+            { \
                 continue; /* go again. */ \
-            } else if (sdl_assert_state == SDL_ASSERTION_BREAK) { \
+            } else if (sdl_assert_state == SDL_ASSERTION_BREAK)
+            { \
                 SDL_TriggerBreakpoint(); \
             } \
             break; /* not retrying. */ \
@@ -275,7 +280,8 @@ extern DECLSPEC SDL_AssertionHandler SDLCALL SDL_GetAssertionHandler(void **puse
  *
  * ```c
  * const SDL_AssertData *item = SDL_GetAssertionReport();
- * while (item) {
+ * while (item)
+ {
  *    printf("'%s', %s (%s:%d), triggered %u times, always ignore: %s.\\n",
  *           item->condition, item->function, item->filename,
  *           item->linenum, item->trigger_count,
