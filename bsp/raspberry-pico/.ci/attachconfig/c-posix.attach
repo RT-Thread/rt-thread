@@ -1,2 +1,1 @@
-# scons: --strict
 CONFIG_RT_USING_CPLUSPLUS=y
