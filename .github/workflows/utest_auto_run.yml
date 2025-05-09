@@ -56,7 +56,7 @@ jobs:
       TEST_CONFIG_FILE: ${{ matrix.config_file }}
       TEST_SD_FILE: ${{ matrix.platform.SD_FILE }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
 
       - name: Install Tools
         shell: bash
