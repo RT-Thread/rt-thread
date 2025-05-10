@@ -93,10 +93,11 @@ jobs:
               print tag "|" path "|" github_ids
             }
           ' MAINTAINERS > tag_data.csv
+
       - name: Generate reviewers list
         id: generate_reviewers
         run: |
-          # # 删除旧文件并初始化空文件
+          # 删除旧文件并初始化空文件
           # rm -f triggered_reviewers.txt triggered_tags.txt
           # touch triggered_reviewers.txt triggered_tags.txt  # 确保文件存在
 
@@ -124,12 +125,12 @@ jobs:
               echo "$tag" >> triggered_tags.txt
               echo "Matched: $path → $tag"
             fi
-            done < tag_data.csv
+          done < tag_data.csv
 
-            echo "=== Matched Paths ==="
-            cat triggered_tags.txt
-            echo "=== Matched Reviewers ==="
-            cat triggered_reviewers.txt
+          echo "=== Matched Paths ==="
+          cat triggered_tags.txt
+          echo "=== Matched Reviewers ==="
+          cat triggered_reviewers.txt
 
       - name: Restore Reviewers Cache
         id: reviewers-cache-restore 
