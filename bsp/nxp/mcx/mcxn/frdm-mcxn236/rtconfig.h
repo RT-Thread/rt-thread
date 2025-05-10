@@ -348,7 +348,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_MCXN947
+#define SOC_MCXN236
 
 /* On-chip Peripheral Drivers */
 
