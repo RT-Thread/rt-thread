@@ -108,7 +108,8 @@ jobs:
           while IFS='|' read -r tag path reviewers; do
             escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
             echo "Checking path: '$path' → escaped: '$escaped_path'"  # 调试输出
-            if grep -qxE "$escaped_path(/.*)?" changed_files.txt; then
+            # 修改这行，将(/.*)?改为(/.*)*以支持多级子目录
+            if grep -qxE "$escaped_path(/.*)*" changed_files.txt; then
               echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
               echo "$tag" >> triggered_tags.txt
               echo "Matched! Tag: $tag, Path: $path"  # 调试输出
