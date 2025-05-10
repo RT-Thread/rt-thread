@@ -1,46 +1,33 @@
 import os
 import sys
-import subprocess
-from PIL.SpiderImagePlugin import iforms
 
 arguments = sys.argv[2]
-vdso_usr = os.path.dirname(arguments)
-user_path = os.path.dirname(vdso_usr)
-user_path = os.path.dirname(user_path)
-user_path = os.path.dirname(user_path)
-rt_root_path = os.path.abspath(os.path.join(vdso_usr, "../../../../../../"))
-include_path = os.path.join(rt_root_path, "include")
-rtconfig_path = os.path.join(rt_root_path, "bsp", "qemu-virt64-riscv")
+vdso_usr  = os.path.dirname(arguments)
+vdso_path = os.path.join(vdso_usr, '..', '..', '..')
 
-EXEC_PATH  = os.getenv('EXEC_PATH')
-if not EXEC_PATH:
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
-PREFIX  = os.getenv('CC_PREFIX')
-if not PREFIX:
-    PREFIX     = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-linux-gnu-'
+EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
+PREFIX    = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
+
 CC      = PREFIX + 'gcc'
-CXX     = PREFIX + 'g++'
 CPP     = PREFIX + 'cpp'
 AS      = PREFIX + 'gcc'
 AR      = PREFIX + 'ar'
 LINK    = PREFIX + 'gcc'
-DEVICE   = ' -march=rv64imafdc -mabi=lp64'
-CXXFLAGS = DEVICE + ' -Wall -fdiagnostics-color=always -fPIC -O0 -g'
-AFLAGS   = ' -x assembler-with-cpp'
+
+DEVICE  = ' -march=rv64imafdc -mabi=lp64'
+AFLAGS  = ' -x assembler-with-cpp'
 CFLAGS  = DEVICE + ' -Wall -Wno-cpp -std=gnu99 -fdiagnostics-color=always -fPIC -O2'
 LFLAGS  = DEVICE + ' -Bsymbolic -Wl,--gc-sections -T {path}/vdso.lds'.format(path=vdso_usr)
-CFLAGS += " -I {path} -I {upath} -I {include_path} -I {rtconfig_path} ".format(path=vdso_usr, upath=user_path, include_path=include_path, rtconfig_path=rtconfig_path)
+CFLAGS += " -I . -I {vdso_path} ".format(vdso_path=vdso_path)
 
+src = Glob('*.c')
 env = Environment(tools=['gcc', 'link'],
     AS   = AS,   ASFLAGS = AFLAGS,
     CC   = CC,   CFLAGS = CFLAGS,
-    CXX  = CXX,  CXXFLAGS = CXXFLAGS,
-    AR   = AR,   
+    CPP  = CPP,  AR   = AR,
     LINK = LINK, LINKFLAGS = LFLAGS)
 env.PrependENVPath('PATH', EXEC_PATH)
 
-src = os.path.join(vdso_usr,'vdso_sys.c')
-target_name = 'librtos_vdso.so'
-target = os.path.join(user_path + "/user", "build", target_name)
+target = os.path.join(vdso_path, 'user', 'build', 'libvdso.so')
 shared_lib = env.SharedLibrary(target=target, source=src)
 env.Default(shared_lib)
