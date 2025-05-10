@@ -88,18 +88,34 @@ jobs:
       - name: Generate reviewers list
         id: generate_reviewers
         run: |
-          # 根据变更文件路径匹配维护者规则
-          rm -f triggered_reviewers.txt
-          rm -f triggered_tags.txt
+          # 删除旧文件并初始化空文件
+          rm -f triggered_reviewers.txt triggered_tags.txt
+          touch triggered_reviewers.txt triggered_tags.txt  # 确保文件存在
+
+          # 匹配路径并追加维护者信息
           while IFS='|' read -r tag path reviewers; do
-            # 使用正则匹配路径（支持子目录）
-            if grep -qE "^$path(/|$)" changed_files.txt; then
-              echo "$reviewers" | tr ' ' '\n' >> triggered_reviewers.txt
-              echo "$tag" | tr ' ' '\n' >> triggered_tags.txt
+            # 转义路径中的正则特殊字符
+            escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
+            # 精确匹配路径及其子路径
+            if grep -qxE "$escaped_path(/.*)?" changed_files.txt; then
+              # 清理空格并移除空行后追加到文件
+              echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
+              echo "$tag" >> triggered_tags.txt
             fi
           done < tag_data.csv
-          awk 'NF && !seen[$0]++' triggered_reviewers.txt > unique_reviewers.txt
-          awk 'NF && !seen[$0]++' triggered_tags.txt > unique_tags.txt
+
+          # 处理去重前检查文件是否有内容
+          if [[ -s triggered_reviewers.txt ]]; then
+            awk 'NF && !seen[$0]++' triggered_reviewers.txt > unique_reviewers.txt
+          else
+            echo "No reviewers matched." > unique_reviewers.txt  # 生成占位文件
+          fi
+
+          if [[ -s triggered_tags.txt ]]; then
+            awk 'NF && !seen[$0]++' triggered_tags.txt > unique_tags.txt
+          else
+            echo "No tags matched." > unique_tags.txt  # 生成占位文件
+          fi
       - name: Restore Reviewers Cache
         id: reviewers-cache-restore 
         if: ${{ steps.changed_files.outputs.COMMENT_TIME != '' }}
