@@ -21,7 +21,7 @@ on:
 jobs:
   assign-reviewers:
     runs-on: ubuntu-22.04
-    if: github.repository_owner == 'RT-Thread'
+    if: github.repository_owner == 'RT-Thread' && github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       issues: read
       pull-requests: write
@@ -32,30 +32,59 @@ jobs:
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "DEBUG: Extracted PR number: $PR_NUMBER" >&2
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: master
           sparse-checkout: MAINTAINERS
           persist-credentials: false
+
+      - name: Verify MAINTAINERS file
+        run: |
+          if [[ ! -f $GITHUB_WORKSPACE/MAINTAINERS ]]; then
+            echo "Error: MAINTAINERS file not found"
+            exit 1
+          fi
+          echo "DEBUG: MAINTAINERS file verified" >&2
+
       - name: Get changed files
         id: changed_files
         run: |
-          # Initialize changed_files.txt
           touch $GITHUB_WORKSPACE/changed_files.txt
           
-          # Get changed files via GitHub API
-          changed_files=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.extract-pr.outputs.PR_NUMBER }}/files" | \
-            jq -r '.[].filename')
-          echo "$changed_files" | grep -v '^MAINTAINERS$' > $GITHUB_WORKSPACE/changed_files.txt
+          # Retry API call up to 3 times
+          for attempt in {1..3}; do
+            changed_files=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.extract-pr.outputs.PR_NUMBER }}/files" | \
+              jq -r '.[].filename' || echo "")
+            if [[ -n "$changed_files" ]]; then
+              echo "$changed_files" | grep -v '^MAINTAINERS$' > $GITHUB_WORKSPACE/changed_files.txt
+              break
+            fi
+            echo "Attempt $attempt failed to fetch changed files, retrying..."
+            sleep 2
+          done
+          
+          if [[ -z "$changed_files" ]]; then
+            echo "Error: Failed to fetch changed files after 3 attempts"
+            exit 1
+          fi
           
           # Get existing bot comment
-          existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
-            jq -r '.[] | select(.user.login == "github-actions[bot]") | .body | @base64')
+          for attempt in {1..3}; do
+            existing_comment=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
+              jq -r '.[] | select(.user.login == "github-actions[bot]") | .body | @base64' || echo "")
+            if [[ -n "$existing_comment" || $attempt -eq 3 ]]; then
+              break
+            fi
+            echo "Attempt $attempt failed to fetch comments, retrying..."
+            sleep 2
+          done
           
           echo "=== Changed Files ==="
           cat $GITHUB_WORKSPACE/changed_files.txt
@@ -69,14 +98,13 @@ jobs:
             fi
           fi
           echo "COMMENT_TIME=${comment_time}" >> $GITHUB_OUTPUT
-          
+          echo "DEBUG: Comment time: $comment_time" >&2
+
       - name: Parse MAINTAINERS file
         id: parse_maintainer
         run: |
-          # Initialize tag_data.csv
           touch $GITHUB_WORKSPACE/tag_data.csv
           
-          # Parse MAINTAINERS file
           awk '
             /^tag:/ { 
               tag = substr($0, index($0, $2))
@@ -95,23 +123,27 @@ jobs:
               print tag "|" path "|" github_ids
             }
           ' $GITHUB_WORKSPACE/MAINTAINERS > $GITHUB_WORKSPACE/tag_data.csv
-          
+          echo "DEBUG: MAINTAINERS parsed, tag_data.csv created" >&2
+
       - name: Generate reviewers list
         id: generate_reviewers
         run: |
-          # Initialize output files
           touch $GITHUB_WORKSPACE/triggered_reviewers.txt $GITHUB_WORKSPACE/triggered_tags.txt $GITHUB_WORKSPACE/unique_reviewers.txt $GITHUB_WORKSPACE/unique_tags.txt
           
           while IFS='|' read -r tag path reviewers; do
             escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
-            if grep -qE "^$escaped_path(/.*)*" $GITHUB_WORKSPACE/changed_files.txt; then
+            if [[ "$path" == */ ]]; then
+              grep -qE "^$escaped_path(/.*)?$" $GITHUB_WORKSPACE/changed_files.txt
+            else
+              grep -qE "^$escaped_path$" $GITHUB_WORKSPACE/changed_files.txt
+            fi
+            if [[ $? -eq 0 ]]; then
               echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> $GITHUB_WORKSPACE/triggered_reviewers.txt
               echo "$tag" >> $GITHUB_WORKSPACE/triggered_tags.txt
-              echo "Matched: $path → $tag"
+              echo "DEBUG: Matched: $path → $tag" >&2
             fi
           done < $GITHUB_WORKSPACE/tag_data.csv
           
-          # Generate unique lists
           sort -u $GITHUB_WORKSPACE/triggered_reviewers.txt > $GITHUB_WORKSPACE/unique_reviewers.txt
           sort -u $GITHUB_WORKSPACE/triggered_tags.txt > $GITHUB_WORKSPACE/unique_tags.txt
           
@@ -119,17 +151,26 @@ jobs:
           cat $GITHUB_WORKSPACE/triggered_tags.txt
           echo "=== Matched Reviewers ==="
           cat $GITHUB_WORKSPACE/triggered_reviewers.txt
-          
+
       - name: Restore Reviewers Cache
         id: reviewers-cache-restore
-        if: ${{ steps.changed_files.outputs.COMMENT_TIME != '' }}
+        if: steps.changed_files.outputs.COMMENT_TIME != ''
         uses: actions/cache/restore@v4
         with:
           path: |
             $GITHUB_WORKSPACE/unique_tags_bak.txt
             $GITHUB_WORKSPACE/unique_reviewers_bak.txt
           key: ${{ runner.os }}-auto-assign-reviewers-${{ steps.extract-pr.outputs.PR_NUMBER }}-${{ steps.changed_files.outputs.COMMENT_TIME }}
-          
+
+      - name: Validate Restored Cache
+        if: steps.reviewers-cache-restore.outputs.cache-hit == 'true'
+        run: |
+          if [[ ! -f $GITHUB_WORKSPACE/unique_reviewers_bak.txt || ! -f $GITHUB_WORKSPACE/unique_tags_bak.txt ]]; then
+            echo "Error: Invalid cache data"
+            exit 1
+          fi
+          echo "DEBUG: Cache validated" >&2
+
       - name: Get approval status
         id: get_approval
         run: |
@@ -138,9 +179,21 @@ jobs:
           
           reviewers=$(cat $GITHUB_WORKSPACE/unique_reviewers.txt | tr '\n' '|' | sed 's/|$//')
           
-          comments=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments")
+          for attempt in {1..3}; do
+            comments=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" || echo "")
+            if [[ -n "$comments" || $attempt -eq 3 ]]; then
+              break
+            fi
+            echo "Attempt $attempt failed to fetch comments, retrying..."
+            sleep 2
+          done
+          
+          if [[ -z "$comments" ]]; then
+            echo "Error: Failed to fetch comments after 3 attempts"
+            exit 1
+          fi
           
           echo '#!/bin/bash' > $GITHUB_WORKSPACE/approval_data.sh
           echo 'declare -A approvals=()' >> $GITHUB_WORKSPACE/approval_data.sh
@@ -192,7 +245,8 @@ jobs:
           } > $GITHUB_WORKSPACE/review_status.md
           
           echo "CURRENT_TIME=${current_time}" >> $GITHUB_OUTPUT
-          
+          echo "DEBUG: Approval status generated" >&2
+
       - name: Generate review data
         id: generate_review
         run: |
@@ -217,7 +271,12 @@ jobs:
             echo ""
             while IFS='|' read -r tag path reviewers; do
               escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
-              if grep -qE "^$escaped_path(/|$)" $GITHUB_WORKSPACE/changed_files.txt; then
+              if [[ "$path" == */ ]]; then
+                grep -qE "^$escaped_path(/.*)?$" $GITHUB_WORKSPACE/changed_files.txt
+              else
+                grep -qE "^$escaped_path$" $GITHUB_WORKSPACE/changed_files.txt
+              fi
+              if [[ $? -eq 0 ]]; then
                 echo "### 🏷️ Tag: $tag"
                 echo "**Path:** \`$path\`"
                 if [[ " $existing_tags " =~ " $tag " ]]; then
@@ -229,7 +288,11 @@ jobs:
                 echo "<details>"
                 echo "<summary><b>Changed Files</b> (Click to expand)</summary>"
                 echo ""
-                grep -E "^$escaped_path(/|$)" $GITHUB_WORKSPACE/changed_files.txt | sed 's/^/- /'
+                if [[ "$path" == */ ]]; then
+                  grep -E "^$escaped_path(/.*)?$" $GITHUB_WORKSPACE/changed_files.txt | sed 's/^/- /'
+                else
+                  grep -E "^$escaped_path$" $GITHUB_WORKSPACE/changed_files.txt | sed 's/^/- /'
+                fi
                 echo ""
                 echo "</details>"
                 echo ""
@@ -251,14 +314,37 @@ jobs:
             echo "> ℹ️ **刷新CI状态操作需要具备仓库写入权限。**"
             echo "> ℹ️ **Refresh CI status operation requires repository Write permission.**"
           } > $GITHUB_WORKSPACE/review_data.md
-          
+          echo "DEBUG: Review data generated" >&2
+
       - name: Post/Update comment
         id: post_comment
         run: |
-          existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
-            jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
+          for attempt in {1..3}; do
+            existing_comment=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
+              jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64' || echo "")
+            if [[ -n "$existing_comment" || $attempt -eq 3 ]]; then
+              break
+            fi
+            echo "Attempt $attempt failed to fetch comments, retrying..."
+            sleep 2
+          done
+          
+          new_reviewers=$(cat $GITHUB_WORKSPACE/unique_reviewers.txt | sort | tr '\n' ' ')
+          old_reviewers=""
+          if [[ -f $GITHUB_WORKSPACE/unique_reviewers_bak.txt ]]; then
+            old_reviewers=$(cat $GITHUB_WORKSPACE/unique_reviewers_bak.txt | sort | tr '\n' ' ')
+          fi
+          
+          if [[ "$new_reviewers" != "$old_reviewers" && -n "$existing_comment" ]]; then
+            comment_id=$(echo "$existing_comment" | base64 -d | jq -r .id)
+            echo "Reviewers changed, deleting old comment $comment_id"
+            curl -s -X DELETE \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id"
+            existing_comment=""
+          fi
           
           if [[ -n "$existing_comment" ]]; then
             comment_id=$(echo "$existing_comment" | base64 -d | jq -r .id)
@@ -274,7 +360,8 @@ jobs:
               -d "$(jq -n --arg body "$(cat $GITHUB_WORKSPACE/review_data.md)" '{body: $body}')" \
               "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments"
           fi
-          
+          echo "DEBUG: Comment posted/updated" >&2
+
       - name: Get Comment Time
         id: get_comment_time
         run: |
@@ -282,7 +369,8 @@ jobs:
           echo "CURRENT_TIME=${current_time}" >> $GITHUB_OUTPUT
           cp $GITHUB_WORKSPACE/unique_reviewers.txt $GITHUB_WORKSPACE/unique_reviewers_bak.txt
           cp $GITHUB_WORKSPACE/unique_tags.txt $GITHUB_WORKSPACE/unique_tags_bak.txt
-          
+          echo "DEBUG: Comment time: $current_time" >&2
+
       - name: Save Reviewers Cache
         id: reviewers-cache-save
         uses: actions/cache/save@v4
