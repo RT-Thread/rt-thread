@@ -72,8 +72,10 @@ jobs:
             /^tag:/ { 
               tag = substr($0, index($0, $2))  # 提取标签内容
             }
-            /^path:/ { 
-              path = substr($0, index($0, $2))  # 提取路径内容
+            /^path:/ {
+              # 提取 path 字段并去除前后空格
+              path = substr($0, index($0, $2))
+              gsub(/^[ \t]+|[ \t]+$/, "", path)  # 清理前后空格和制表符
             }
             /^owners:/ {
               owners = substr($0, index($0, $2))  # 提取维护者信息
@@ -93,14 +95,23 @@ jobs:
           touch triggered_reviewers.txt triggered_tags.txt  # 确保文件存在
 
           # 匹配路径并追加维护者信息
+          # while IFS='|' read -r tag path reviewers; do
+          #   # 转义路径中的正则特殊字符
+          #   escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
+          #   # 精确匹配路径及其子路径
+          #   if grep -qxE "$escaped_path(/.*)?" changed_files.txt; then
+          #     # 清理空格并移除空行后追加到文件
+          #     echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
+          #     echo "$tag" >> triggered_tags.txt
+          #   fi
+          # done < tag_data.csv
           while IFS='|' read -r tag path reviewers; do
-            # 转义路径中的正则特殊字符
             escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
-            # 精确匹配路径及其子路径
+            echo "Checking path: '$path' → escaped: '$escaped_path'"  # 调试输出
             if grep -qxE "$escaped_path(/.*)?" changed_files.txt; then
-              # 清理空格并移除空行后追加到文件
               echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
               echo "$tag" >> triggered_tags.txt
+              echo "Matched! Tag: $tag, Path: $path"  # 调试输出
             fi
           done < tag_data.csv
 
