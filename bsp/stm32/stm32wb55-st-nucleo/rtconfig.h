@@ -274,6 +274,8 @@
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+#define PKG_USING_CMSIS_CORE
+#define PKG_USING_CMSIS_CORE_LATEST_VERSION
 /* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -287,6 +289,10 @@
 
 /* STM32 HAL & SDK Drivers */
 
+#define PKG_USING_STM32WB_HAL_DRIVER
+#define PKG_USING_STM32WB_HAL_DRIVER_LATEST_VERSION
+#define PKG_USING_STM32WB_CMSIS_DRIVER
+#define PKG_USING_STM32WB_CMSIS_DRIVER_LATEST_VERSION
 /* end of STM32 HAL & SDK Drivers */
 
 /* Infineon HAL Packages */
@@ -304,6 +310,10 @@
 /* AT32 HAL & SDK Drivers */
 
 /* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
