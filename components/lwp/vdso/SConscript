@@ -24,7 +24,7 @@ else:
     if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"):
         Preprocessing("user/arch/" + rtconfig.ARCH + "/vdso.lds.S", ".lds", CPPPATH=[cwd])
 
-    vdso_file = os.path.join(cwd, 'user',"arch", rtconfig.ARCH, 'SConstruct')
+    vdso_arch = os.path.join(cwd, 'user',"arch", rtconfig.ARCH)
 
     process_env = os.environ.copy()
     if hasattr(rtconfig, 'EXEC_PATH') and rtconfig.EXEC_PATH is not None:
@@ -32,8 +32,8 @@ else:
     if hasattr(rtconfig, 'PREFIX') and rtconfig.PREFIX is not None:
         process_env['CC_PREFIX'] = rtconfig.PREFIX
 
-    command = ["scons", "-f", vdso_file]
-    clean_command = ["scons", "-f", vdso_file, "--clean"] 
+    command = ["scons", "-C", vdso_arch]
+    clean_command = ["scons", "-C", vdso_arch, "--clean"] 
 
     if not GetOption('clean'):    
         result = subprocess.run(command, env=process_env, check=True)

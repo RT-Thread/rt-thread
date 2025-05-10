@@ -2,7 +2,7 @@ import os
 import sys
 
 arguments = sys.argv[2]
-vdso_usr  = os.path.dirname(arguments)
+vdso_usr  = arguments
 vdso_path = os.path.join(vdso_usr, '..', '..', '..')
 
 EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
