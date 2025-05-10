@@ -133,7 +133,6 @@ elif PLATFORM == 'armclang':
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iccarm':
-    # toolchains
     CC = 'iccarm'
     CXX = 'iccarm'
     AS = 'iasmarm'
