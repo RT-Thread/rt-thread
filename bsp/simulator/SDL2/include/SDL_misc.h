@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL_misc.h
+ * # CategoryMisc
  *
- *  \brief Include file for SDL API functions that don't fit elsewhere.
+ * Include file for SDL API functions that don't fit elsewhere.
  */
 
 #ifndef SDL_misc_h_

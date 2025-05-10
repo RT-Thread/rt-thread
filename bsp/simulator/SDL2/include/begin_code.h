@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,23 +19,25 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+/* WIKI CATEGORY: BeginCode */
+
 /**
- *  \file begin_code.h
- *
- *  This file sets things up for C dynamic library function definitions,
- *  static inlined functions, and structures aligned at 4-byte alignment.
- *  If you don't like ugly C preprocessor code, don't look at this file. :)
+ * begin_code.h sets things up for C dynamic library function definitions,
+ * static inlined functions, and structures aligned at 4-byte alignment.
+ * If you don't like ugly C preprocessor code, don't look at this file. :)
  */
 
 /* This shouldn't be nested -- included it around code only. */
-#ifdef _begin_code_h
+#ifdef SDL_begin_code_h
 #error Nested inclusion of begin_code.h
 #endif
-#define _begin_code_h
+#define SDL_begin_code_h
 
 #ifndef SDL_DEPRECATED
-#  if (__GNUC__ >= 4)  /* technically, this arrived in gcc 3.1, but oh well. */
+#  if defined(__GNUC__) && (__GNUC__ >= 4)  /* technically, this arrived in gcc 3.1, but oh well. */
 #    define SDL_DEPRECATED __attribute__((deprecated))
+#  elif defined(_MSC_VER)
+#    define SDL_DEPRECATED __declspec(deprecated)
 #  else
 #    define SDL_DEPRECATED
 #  endif
@@ -51,7 +53,7 @@
 
 /* Some compilers use a special export keyword */
 #ifndef DECLSPEC
-# if defined(__WIN32__) || defined(__WINRT__) || defined(__CYGWIN__)
+# if defined(__WIN32__) || defined(__WINRT__) || defined(__CYGWIN__) || defined(__GDK__)
 #  ifdef DLL_EXPORT
 #   define DECLSPEC __declspec(dllexport)
 #  else
@@ -74,7 +76,7 @@
 
 /* By default SDL uses the C calling convention */
 #ifndef SDLCALL
-#if (defined(__WIN32__) || defined(__WINRT__)) && !defined(__GNUC__)
+#if (defined(__WIN32__) || defined(__WINRT__) || defined(__GDK__)) && !defined(__GNUC__)
 #define SDLCALL __cdecl
 #elif defined(__OS2__) || defined(__EMX__)
 #define SDLCALL _System
@@ -107,7 +109,7 @@
 #ifdef __BORLANDC__
 #pragma nopackwarning
 #endif
-#ifdef _M_X64
+#ifdef _WIN64
 /* Use 8-byte alignment on 64-bit architectures, so pointers are aligned */
 #pragma pack(push,8)
 #else
@@ -170,18 +172,18 @@
     (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202000L)
 #define SDL_FALLTHROUGH [[fallthrough]]
 #else
-#if defined(__has_attribute)
-#define _HAS_FALLTHROUGH __has_attribute(__fallthrough__)
+#if defined(__has_attribute) && !defined(__SUNPRO_C) && !defined(__SUNPRO_CC)
+#define SDL_HAS_FALLTHROUGH __has_attribute(__fallthrough__)
 #else
-#define _HAS_FALLTHROUGH 0
+#define SDL_HAS_FALLTHROUGH 0
 #endif /* __has_attribute */
-#if _HAS_FALLTHROUGH && \
+#if SDL_HAS_FALLTHROUGH && \
    ((defined(__GNUC__) && __GNUC__ >= 7) || \
     (defined(__clang_major__) && __clang_major__ >= 10))
 #define SDL_FALLTHROUGH __attribute__((__fallthrough__))
 #else
 #define SDL_FALLTHROUGH do {} while (0) /* fallthrough */
-#endif /* _HAS_FALLTHROUGH */
-#undef _HAS_FALLTHROUGH
+#endif /* SDL_HAS_FALLTHROUGH */
+#undef SDL_HAS_FALLTHROUGH
 #endif /* C++17 or C2x */
 #endif /* SDL_FALLTHROUGH not defined */

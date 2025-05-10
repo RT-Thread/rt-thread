@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,17 +19,11 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/**
- *  \file SDL_opengl.h
+/*
+ * This is a simple file to encapsulate the OpenGL API headers.
  *
- *  This is a simple file to encapsulate the OpenGL API headers.
- */
-
-/**
- *  \def NO_SDL_GLEXT
- *
- *  Define this if you have your own version of glext.h and want to disable the
- *  version included in SDL_opengl.h.
+ * Define NO_SDL_GLEXT if you have your own version of glext.h and want
+ * to disable the version included in SDL_opengl.h.
  */
 
 #ifndef SDL_opengl_h_
@@ -2104,57 +2098,6 @@ typedef void (APIENTRYP PFNGLMULTITEXCOORD4SVARBPROC) (GLenum target, const GLsh
 #if !defined(NO_SDL_GLEXT) && !defined(GL_GLEXT_LEGACY)
 #include "SDL_opengl_glext.h"
 #endif  /* GL_GLEXT_LEGACY */
-
-
-
-/*
- * ???. GL_MESA_packed_depth_stencil
- * XXX obsolete
- */
-#ifndef GL_MESA_packed_depth_stencil
-#define GL_MESA_packed_depth_stencil 1
-
-#define GL_DEPTH_STENCIL_MESA           0x8750
-#define GL_UNSIGNED_INT_24_8_MESA       0x8751
-#define GL_UNSIGNED_INT_8_24_REV_MESA       0x8752
-#define GL_UNSIGNED_SHORT_15_1_MESA     0x8753
-#define GL_UNSIGNED_SHORT_1_15_REV_MESA     0x8754
-
-#endif /* GL_MESA_packed_depth_stencil */
-
-
-#ifndef GL_ATI_blend_equation_separate
-#define GL_ATI_blend_equation_separate 1
-
-#define GL_ALPHA_BLEND_EQUATION_ATI         0x883D
-
-GLAPI void GLAPIENTRY glBlendEquationSeparateATI( GLenum modeRGB, GLenum modeA );
-typedef void (APIENTRYP PFNGLBLENDEQUATIONSEPARATEATIPROC) (GLenum modeRGB, GLenum modeA);
-
-#endif /* GL_ATI_blend_equation_separate */
-
-
-/* GL_OES_EGL_image */
-#ifndef GL_OES_EGL_image
-typedef void* GLeglImageOES;
-#endif
-
-#ifndef GL_OES_EGL_image
-#define GL_OES_EGL_image 1
-#ifdef GL_GLEXT_PROTOTYPES
-GLAPI void APIENTRY glEGLImageTargetTexture2DOES (GLenum target, GLeglImageOES image);
-GLAPI void APIENTRY glEGLImageTargetRenderbufferStorageOES (GLenum target, GLeglImageOES image);
-#endif
-typedef void (APIENTRYP PFNGLEGLIMAGETARGETTEXTURE2DOESPROC) (GLenum target, GLeglImageOES image);
-typedef void (APIENTRYP PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC) (GLenum target, GLeglImageOES image);
-#endif
-
-
-/**
- ** NOTE!!!!!  If you add new functions to this file, or update
- ** glext.h be sure to regenerate the gl_mangle.h file.  See comments
- ** in that file for details.
- **/
 
 
 

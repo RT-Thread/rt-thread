@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL_blendmode.h
+ * # CategoryBlendmode
  *
- *  Header file declaring the SDL_BlendMode enumeration
+ * Header file declaring the SDL_BlendMode enumeration
  */
 
 #ifndef SDL_blendmode_h_
@@ -35,9 +35,9 @@ extern "C" {
 #endif
 
 /**
- *  \brief The blend mode used in SDL_RenderCopy() and drawing operations.
+ * The blend mode used in SDL_RenderCopy() and drawing operations.
  */
-typedef enum
+typedef enum SDL_BlendMode
 {
     SDL_BLENDMODE_NONE = 0x00000000,     /**< no blending
                                               dstRGBA = srcRGBA */
@@ -52,7 +52,7 @@ typedef enum
                                               dstA = dstA */
     SDL_BLENDMODE_MUL = 0x00000008,      /**< color multiply
                                               dstRGB = (srcRGB * dstRGB) + (dstRGB * (1-srcA))
-                                              dstA = (srcA * dstA) + (dstA * (1-srcA)) */
+                                              dstA = dstA */
     SDL_BLENDMODE_INVALID = 0x7FFFFFFF
 
     /* Additional custom blend modes can be returned by SDL_ComposeCustomBlendMode() */
@@ -60,22 +60,22 @@ typedef enum
 } SDL_BlendMode;
 
 /**
- *  \brief The blend operation used when combining source and destination pixel components
+ * The blend operation used when combining source and destination pixel
+ * components
  */
-typedef enum
+typedef enum SDL_BlendOperation
 {
     SDL_BLENDOPERATION_ADD              = 0x1,  /**< dst + src: supported by all renderers */
-    SDL_BLENDOPERATION_SUBTRACT         = 0x2,  /**< dst - src : supported by D3D9, D3D11, OpenGL, OpenGLES */
-    SDL_BLENDOPERATION_REV_SUBTRACT     = 0x3,  /**< src - dst : supported by D3D9, D3D11, OpenGL, OpenGLES */
-    SDL_BLENDOPERATION_MINIMUM          = 0x4,  /**< min(dst, src) : supported by D3D11 */
-    SDL_BLENDOPERATION_MAXIMUM          = 0x5   /**< max(dst, src) : supported by D3D11 */
-
+    SDL_BLENDOPERATION_SUBTRACT         = 0x2,  /**< src - dst : supported by D3D9, D3D11, OpenGL, OpenGLES */
+    SDL_BLENDOPERATION_REV_SUBTRACT     = 0x3,  /**< dst - src : supported by D3D9, D3D11, OpenGL, OpenGLES */
+    SDL_BLENDOPERATION_MINIMUM          = 0x4,  /**< min(dst, src) : supported by D3D9, D3D11 */
+    SDL_BLENDOPERATION_MAXIMUM          = 0x5   /**< max(dst, src) : supported by D3D9, D3D11 */
 } SDL_BlendOperation;
 
 /**
- *  \brief The normalized factor used to multiply pixel components
+ * The normalized factor used to multiply pixel components
  */
-typedef enum
+typedef enum SDL_BlendFactor
 {
     SDL_BLENDFACTOR_ZERO                = 0x1,  /**< 0, 0, 0, 0 */
     SDL_BLENDFACTOR_ONE                 = 0x2,  /**< 1, 1, 1, 1 */
@@ -87,7 +87,6 @@ typedef enum
     SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR = 0x8,  /**< 1-dstR, 1-dstG, 1-dstB, 1-dstA */
     SDL_BLENDFACTOR_DST_ALPHA           = 0x9,  /**< dstA, dstA, dstA, dstA */
     SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA = 0xA   /**< 1-dstA, 1-dstA, 1-dstA, 1-dstA */
-
 } SDL_BlendFactor;
 
 /**
@@ -135,10 +134,10 @@ typedef enum
  * SDL 2.0.6. All renderers support the four blend modes listed in the
  * SDL_BlendMode enumeration.
  *
- * - **direct3d**: Supports `SDL_BLENDOPERATION_ADD` with all factors.
- * - **direct3d11**: Supports all operations with all factors. However, some
+ * - **direct3d**: Supports all operations with all factors. However, some
  *   factors produce unexpected results with `SDL_BLENDOPERATION_MINIMUM` and
  *   `SDL_BLENDOPERATION_MAXIMUM`.
+ * - **direct3d11**: Same as Direct3D 9.
  * - **opengl**: Supports the `SDL_BLENDOPERATION_ADD` operation with all
  *   factors. OpenGL versions 1.1, 1.2, and 1.3 do not work correctly with SDL
  *   2.0.6.
@@ -160,18 +159,18 @@ typedef enum
  * case.
  *
  * \param srcColorFactor the SDL_BlendFactor applied to the red, green, and
- *                       blue components of the source pixels
+ *                       blue components of the source pixels.
  * \param dstColorFactor the SDL_BlendFactor applied to the red, green, and
- *                       blue components of the destination pixels
+ *                       blue components of the destination pixels.
  * \param colorOperation the SDL_BlendOperation used to combine the red,
  *                       green, and blue components of the source and
- *                       destination pixels
+ *                       destination pixels.
  * \param srcAlphaFactor the SDL_BlendFactor applied to the alpha component of
- *                       the source pixels
+ *                       the source pixels.
  * \param dstAlphaFactor the SDL_BlendFactor applied to the alpha component of
- *                       the destination pixels
+ *                       the destination pixels.
  * \param alphaOperation the SDL_BlendOperation used to combine the alpha
- *                       component of the source and destination pixels
+ *                       component of the source and destination pixels.
  * \returns an SDL_BlendMode that represents the chosen factors and
  *          operations.
  *

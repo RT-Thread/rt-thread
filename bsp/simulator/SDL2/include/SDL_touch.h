@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL_touch.h
+ * # CategoryTouch
  *
- *  Include file for SDL touch event handling.
+ * Include file for SDL touch event handling.
  */
 
 #ifndef SDL_touch_h_
@@ -85,7 +85,7 @@ extern DECLSPEC int SDLCALL SDL_GetNumTouchDevices(void);
 /**
  * Get the touch ID with the given index.
  *
- * \param index the touch device index
+ * \param index the touch device index.
  * \returns the touch ID with the given index on success or 0 if the index is
  *          invalid; call SDL_GetError() for more information.
  *
@@ -94,6 +94,14 @@ extern DECLSPEC int SDLCALL SDL_GetNumTouchDevices(void);
  * \sa SDL_GetNumTouchDevices
  */
 extern DECLSPEC SDL_TouchID SDLCALL SDL_GetTouchDevice(int index);
+
+/**
+ * Get the touch device name as reported from the driver or NULL if the index
+ * is invalid.
+ *
+ * \since This function is available since SDL 2.0.22.
+ */
+extern DECLSPEC const char* SDLCALL SDL_GetTouchName(int index);
 
 /**
  * Get the type of the given touch device.
@@ -105,7 +113,7 @@ extern DECLSPEC SDL_TouchDeviceType SDLCALL SDL_GetTouchDeviceType(SDL_TouchID t
 /**
  * Get the number of active fingers for a given touch device.
  *
- * \param touchID the ID of a touch device
+ * \param touchID the ID of a touch device.
  * \returns the number of active fingers for a given touch device on success
  *          or 0 on failure; call SDL_GetError() for more information.
  *
@@ -120,8 +128,8 @@ extern DECLSPEC int SDLCALL SDL_GetNumTouchFingers(SDL_TouchID touchID);
  *
  * The returned resource is owned by SDL and should not be deallocated.
  *
- * \param touchID the ID of the requested touch device
- * \param index the index of the requested finger
+ * \param touchID the ID of the requested touch device.
+ * \param index the index of the requested finger.
  * \returns a pointer to the SDL_Finger object or NULL if no object at the
  *          given ID and index could be found.
  *

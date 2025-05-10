@@ -32,10 +32,6 @@ if GetDepend('PKG_USING_GUIENGINE') == True:
     src += ['sdl_fb.c']
 else:
     LIBS.append('SDL2')
-    if sys.platform == 'win32':
-        LIBPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2/lib/x86')))
-        CPPPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2/include')))
-
 
 if GetDepend('RT_USING_DFS') == True:
     if GetDepend('RT_USING_DFS_ELMFAT') == True:

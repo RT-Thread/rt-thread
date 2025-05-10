@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL_error.h
+ * # CategoryError
  *
- *  Simple error message routines for SDL.
+ * Simple error message routines for SDL.
  */
 
 #ifndef SDL_error_h_
@@ -48,14 +48,15 @@ extern "C" {
  * failing result, leading to this idiom:
  *
  * ```c
- * if (error_code) {
+ * if (error_code)
+ {
  *     return SDL_SetError("This operation has failed: %d", error_code);
  * }
  * ```
  *
- * \param fmt a printf()-style message format string
+ * \param fmt a printf()-style message format string.
  * \param ... additional parameters matching % tokens in the `fmt` string, if
- *            any
+ *            any.
  * \returns always -1.
  *
  * \since This function is available since SDL 2.0.0.
@@ -109,8 +110,8 @@ extern DECLSPEC const char *SDLCALL SDL_GetError(void);
  * otherwise operates exactly the same as SDL_GetError().
  *
  * \param errstr A buffer to fill with the last error message that was set for
- *               the current thread
- * \param maxlen The size of the buffer pointed to by the errstr parameter
+ *               the current thread.
+ * \param maxlen The size of the buffer pointed to by the errstr parameter.
  * \returns the pointer passed in as the `errstr` parameter.
  *
  * \since This function is available since SDL 2.0.14.
