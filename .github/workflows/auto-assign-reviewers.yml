@@ -7,6 +7,7 @@
 # Date           Author       Notes
 # 2025-01-21     kurisaW      Initial version
 # 2025-03-14     hydevcode
+# 2025-05-10     kurisaW      Fixed file existence, cache, and comment time issues
 
 # Script Function Description: Assign PR reviews based on the MAINTAINERS list.
 
@@ -20,7 +21,7 @@ on:
 jobs:
   assign-reviewers:
     runs-on: ubuntu-22.04
-    if: github.repository_owner == 'RT-Thread'
+    if: github.repository_owner == 'RT-Thread' && github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       issues: read
       pull-requests: write
@@ -31,206 +32,273 @@ jobs:
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "DEBUG: Extracted PR number: $PR_NUMBER" >&2
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: master
           sparse-checkout: MAINTAINERS
           persist-credentials: false
+
+      - name: Verify MAINTAINERS file
+        run: |
+          if [[ ! -f $GITHUB_WORKSPACE/MAINTAINERS ]]; then
+            echo "Error: MAINTAINERS file not found"
+            exit 1
+          fi
+          echo "DEBUG: MAINTAINERS file verified" >&2
+
       - name: Get changed files
         id: changed_files
         run: |
-          # 通过 GitHub API 获取 PR 的变更文件列表
-          changed_files=$(curl -s \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.extract-pr.outputs.PR_NUMBER }}/files" | \
-            jq -r '.[].filename')  # 使用 jq 提取文件名
-          echo "$changed_files" | grep -v '^MAINTAINERS$' > changed_files.txt
+          touch $GITHUB_WORKSPACE/changed_files.txt
           
-          existing_comment=$(curl -s \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
-          jq -r '.[] | select(.user.login == "github-actions[bot]") | {body: .body} | @base64')
-
-          comment_body=""
-          if [[ ! -z "$existing_comment" ]]; then
-            comment_body=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .body|sed -nE 's/.*Last Updated: ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} UTC).*/\1/p')
-
-            comment_time=$(date -d "$comment_body" +%s)
-
-            echo "${comment_body}"
-            echo "COMMENT_TIME=${comment_time}" >> $GITHUB_OUTPUT
-          else
-            comment_time=""
-            echo "COMMENT_TIME=${comment_time}" >> $GITHUB_OUTPUT
+          # Retry API call up to 3 times
+          for attempt in {1..3}; do
+            changed_files=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.extract-pr.outputs.PR_NUMBER }}/files" | \
+              jq -r '.[].filename' || echo "")
+            if [[ -n "$changed_files" ]]; then
+              echo "$changed_files" | grep -v '^MAINTAINERS$' > $GITHUB_WORKSPACE/changed_files.txt
+              break
+            fi
+            echo "Attempt $attempt failed to fetch changed files, retrying..."
+            sleep 2
+          done
+          
+          if [[ -z "$changed_files" ]]; then
+            echo "Error: Failed to fetch changed files after 3 attempts"
+            exit 1
           fi
-          echo "COMMENT_TIME=${comment_time}"
+          
+          # Get existing bot comment
+          for attempt in {1..3}; do
+            existing_comment=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
+              jq -r '.[] | select(.user.login == "github-actions[bot]") | .body | @base64' || echo "")
+            if [[ -n "$existing_comment" || $attempt -eq 3 ]]; then
+              break
+            fi
+            echo "Attempt $attempt failed to fetch comments, retrying..."
+            sleep 2
+          done
+          
+          echo "=== Changed Files ==="
+          cat $GITHUB_WORKSPACE/changed_files.txt
+          echo "====================="
+          
+          comment_time=""
+          if [[ -n "$existing_comment" ]]; then
+            comment_body=$(echo "$existing_comment" | base64 -d | sed -nE 's/.*Last Updated: ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} UTC).*/\1/p')
+            if [[ -n "$comment_body" ]]; then
+              comment_time=$(date -d "$comment_body" +%s 2>/dev/null || echo "")
+            fi
+          fi
+          echo "COMMENT_TIME=${comment_time}" >> $GITHUB_OUTPUT
+          echo "DEBUG: Comment time: $comment_time" >&2
+
       - name: Parse MAINTAINERS file
         id: parse_maintainer
         run: |
-          # 使用 AWK 解析 MAINTAINERS 文件格式：
-          # 提取 tag(标签)、path(路径)和 owners(维护者 GitHub ID)
+          touch $GITHUB_WORKSPACE/tag_data.csv
+          
           awk '
             /^tag:/ { 
-              tag = substr($0, index($0, $2))  # 提取标签内容
+              tag = substr($0, index($0, $2))
             }
-            /^path:/ { 
-              path = substr($0, index($0, $2))  # 提取路径内容
+            /^path:/ {
+              path = substr($0, index($0, $2))
+              gsub(/^[ \t]+|[ \t]+$/, "", path)
             }
             /^owners:/ {
-              owners = substr($0, index($0, $2))  # 提取维护者信息
-              split(owners, parts, /[()]/)       # 拆分出 GitHub ID（括号内内容）
+              owners = substr($0, index($0, $2))
+              split(owners, parts, /[()]/)
               github_ids = ""
               for (i=2; i<=length(parts); i+=2) {
-                github_ids = github_ids "@" parts[i] " "  # 拼接为 @user 格式
+                github_ids = github_ids "@" parts[i] " "
               }
               print tag "|" path "|" github_ids
             }
-          ' MAINTAINERS > tag_data.csv
+          ' $GITHUB_WORKSPACE/MAINTAINERS > $GITHUB_WORKSPACE/tag_data.csv
+          echo "DEBUG: MAINTAINERS parsed, tag_data.csv created" >&2
+
       - name: Generate reviewers list
         id: generate_reviewers
         run: |
-          # 根据变更文件路径匹配维护者规则
-          rm -f triggered_reviewers.txt
-          rm -f triggered_tags.txt
+          touch $GITHUB_WORKSPACE/triggered_reviewers.txt $GITHUB_WORKSPACE/triggered_tags.txt $GITHUB_WORKSPACE/unique_reviewers.txt $GITHUB_WORKSPACE/unique_tags.txt
+          
           while IFS='|' read -r tag path reviewers; do
-            # 使用正则匹配路径（支持子目录）
-            if grep -qE "^$path(/|$)" changed_files.txt; then
-              echo "$reviewers" | tr ' ' '\n' >> triggered_reviewers.txt
-              echo "$tag" | tr ' ' '\n' >> triggered_tags.txt
+            escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
+            if [[ "$path" == */ ]]; then
+              grep -qE "^$escaped_path(/.*)?$" $GITHUB_WORKSPACE/changed_files.txt
+            else
+              grep -qE "^$escaped_path$" $GITHUB_WORKSPACE/changed_files.txt
             fi
-          done < tag_data.csv
-          awk 'NF && !seen[$0]++' triggered_reviewers.txt > unique_reviewers.txt
-          awk 'NF && !seen[$0]++' triggered_tags.txt > unique_tags.txt
+            if [[ $? -eq 0 ]]; then
+              echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> $GITHUB_WORKSPACE/triggered_reviewers.txt
+              echo "$tag" >> $GITHUB_WORKSPACE/triggered_tags.txt
+              echo "DEBUG: Matched: $path → $tag" >&2
+            fi
+          done < $GITHUB_WORKSPACE/tag_data.csv
+          
+          sort -u $GITHUB_WORKSPACE/triggered_reviewers.txt > $GITHUB_WORKSPACE/unique_reviewers.txt
+          sort -u $GITHUB_WORKSPACE/triggered_tags.txt > $GITHUB_WORKSPACE/unique_tags.txt
+          
+          echo "=== Matched Paths ==="
+          cat $GITHUB_WORKSPACE/triggered_tags.txt
+          echo "=== Matched Reviewers ==="
+          cat $GITHUB_WORKSPACE/triggered_reviewers.txt
+
       - name: Restore Reviewers Cache
-        id: reviewers-cache-restore 
-        if: ${{ steps.changed_files.outputs.COMMENT_TIME != '' }}
+        id: reviewers-cache-restore
+        if: steps.changed_files.outputs.COMMENT_TIME != ''
         uses: actions/cache/restore@v4
-        with: 
+        with:
           path: |
-            unique_tags_bak.txt
-            unique_reviewers_bak.txt
+            $GITHUB_WORKSPACE/unique_tags_bak.txt
+            $GITHUB_WORKSPACE/unique_reviewers_bak.txt
           key: ${{ runner.os }}-auto-assign-reviewers-${{ steps.extract-pr.outputs.PR_NUMBER }}-${{ steps.changed_files.outputs.COMMENT_TIME }}
+
+      - name: Validate Restored Cache
+        if: steps.reviewers-cache-restore.outputs.cache-hit == 'true'
+        run: |
+          if [[ ! -f $GITHUB_WORKSPACE/unique_reviewers_bak.txt || ! -f $GITHUB_WORKSPACE/unique_tags_bak.txt ]]; then
+            echo "Error: Invalid cache data"
+            exit 1
+          fi
+          echo "DEBUG: Cache validated" >&2
+
       - name: Get approval status
         id: get_approval
         run: |
           current_time=$(date -u +"%Y-%m-%d %H:%M UTC")
-          reviewers=$(cat unique_reviewers.txt | tr '\n' '|')
+          touch $GITHUB_WORKSPACE/unique_reviewers.txt $GITHUB_WORKSPACE/approval_data.txt $GITHUB_WORKSPACE/review_status.md
           
-          # 获取 PR 的所有评论
-          comments=$(curl -s \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments")
-
-          echo '#!/bin/bash' > approval_data.sh
-          echo 'declare -A approvals=()' >> approval_data.sh
+          reviewers=$(cat $GITHUB_WORKSPACE/unique_reviewers.txt | tr '\n' '|' | sed 's/|$//')
           
-          # 使用 jq 解析包含 LGTM 的有效评论
-          jq -r --arg reviewers "$reviewers" '
-            .[] | 
-            select(.user.login != "github-actions[bot]") |  # 排除 bot 的评论
-            select(.body | test("^\\s*LGTM\\s*$"; "i")) |   # 匹配 LGTM 评论（不区分大小写）
-            .user.login as $user |
-            "@\($user)" as $mention |
-            select($mention | inside($reviewers)) |         # 过滤有效审查者
-            "approvals[\"\($mention)\"]=\"\(.created_at)\""  # 记录审批时间
-          ' <<< "$comments" >> approval_data.sh
+          for attempt in {1..3}; do
+            comments=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" || echo "")
+            if [[ -n "$comments" || $attempt -eq 3 ]]; then
+              break
+            fi
+            echo "Attempt $attempt failed to fetch comments, retrying..."
+            sleep 2
+          done
           
-          # 加载审查数据并生成状态报告
-          chmod +x approval_data.sh
-          source ./approval_data.sh
-
-          jq -r --arg reviewers "$reviewers" '
-            .[] | 
-            select(.user.login != "github-actions[bot]") |  # 排除 bot 的评论
-            select(.body | test("^\\s*LGTM\\s*$"; "i")) |   # 匹配 LGTM 评论（不区分大小写）
-            .user.login as $user |
-            "@\($user)" as $mention |
-            select($mention | inside($reviewers)) |         # 过滤有效审查者
-            "\($mention) \(.created_at)"                   # 输出审查者和时间
-          ' <<< "$comments" >> approval_data.txt
-
-          notified_users=""
-          if [[ -f unique_reviewers_bak.txt ]]; then
-            notified_users=$(cat unique_reviewers_bak.txt | xargs)
-          else
-            notified_users=""
+          if [[ -z "$comments" ]]; then
+            echo "Error: Failed to fetch comments after 3 attempts"
+            exit 1
           fi
-
+          
+          echo '#!/bin/bash' > $GITHUB_WORKSPACE/approval_data.sh
+          echo 'declare -A approvals=()' >> $GITHUB_WORKSPACE/approval_data.sh
+          
+          jq -r --arg reviewers "$reviewers" '
+            .[] | 
+            select(.user.login != "github-actions[bot]") |
+            select(.body | test("^\\s*LGTM\\s*$"; "i")) |
+            .user.login as $user |
+            "@\($user)" as $mention |
+            select($mention | inside($reviewers)) |
+            "approvals[\"\($mention)\"]=\"\(.created_at)\""
+          ' <<< "$comments" >> $GITHUB_WORKSPACE/approval_data.sh
+          
+          jq -r --arg reviewers "$reviewers" '
+            .[] | 
+            select(.user.login != "github-actions[bot]") |
+            select(.body | test("^\\s*LGTM\\s*$"; "i")) |
+            .user.login as $user |
+            "@\($user)" as $mention |
+            select($mention | inside($reviewers)) |
+            "\($mention) \(.created_at)"
+          ' <<< "$comments" >> $GITHUB_WORKSPACE/approval_data.txt
+          
+          chmod +x $GITHUB_WORKSPACE/approval_data.sh
+          source $GITHUB_WORKSPACE/approval_data.sh
+          
+          notified_users=""
+          if [[ -f $GITHUB_WORKSPACE/unique_reviewers_bak.txt ]]; then
+            notified_users=$(cat $GITHUB_WORKSPACE/unique_reviewers_bak.txt | xargs)
+          fi
+          
           {
             echo "---"
             echo "### 📊 Current Review Status (Last Updated: $current_time)"
             while read -r reviewer; do
-              formatted_reviewers=""
-              for r in $reviewers; do
-                if [[ " ${notified_users[@]} " =~ " $reviewer " ]]; then
-                    formatted_reviewers+="${reviewer#@}"
-                else
-                    formatted_reviewers+="$reviewer"
-                fi
-              done
-            
+              formatted_reviewer="${reviewer#@}"
               if [[ -n "${approvals[$reviewer]}" ]]; then
                 timestamp=$(date -d "${approvals[$reviewer]}" -u +"%Y-%m-%d %H:%M UTC")
-                
-                echo "- ✅ **$formatted_reviewers** Reviewed On $timestamp"
+                echo "- ✅ **$formatted_reviewer** Reviewed On $timestamp"
               else
-                echo "- ⌛ **$formatted_reviewers** Pending Review"
+                if [[ " $notified_users " =~ " $reviewer " ]]; then
+                  echo "- ⌛ **$formatted_reviewer** Pending Review"
+                else
+                  echo "- ⌛ **@$formatted_reviewer** Pending Review"
+                fi
               fi
-            done < unique_reviewers.txt
-          } > review_status.md
+            done < $GITHUB_WORKSPACE/unique_reviewers.txt
+          } > $GITHUB_WORKSPACE/review_status.md
           
           echo "CURRENT_TIME=${current_time}" >> $GITHUB_OUTPUT
+          echo "DEBUG: Approval status generated" >&2
+
       - name: Generate review data
         id: generate_review
         run: |
-          unique_tags=""
-          unique_tags=$(cat unique_tags.txt | xargs)
+          touch $GITHUB_WORKSPACE/review_data.md
+          
+          unique_tags=$(cat $GITHUB_WORKSPACE/unique_tags.txt | xargs)
           unique_tags_bak=""
-          if [[ -f unique_tags_bak.txt ]]; then
-            unique_tags_bak=$(cat unique_tags_bak.txt | xargs)
+          if [[ -f $GITHUB_WORKSPACE/unique_tags_bak.txt ]]; then
+            unique_tags_bak=$(cat $GITHUB_WORKSPACE/unique_tags_bak.txt | xargs)
           fi
-
+          
           existing_tags=""
-          for r in $unique_tags; do
-            if [[ " ${unique_tags_bak[@]} " =~ " $r " ]]; then
-              echo "$r 不存在于数组中"
-            else
-              existing_tags+="$r "
+          for tag in $unique_tags; do
+            if [[ ! " $unique_tags_bak " =~ " $tag " ]]; then
+              existing_tags+="$tag "
             fi
           done
-
+          
           current_time=$(date -u +"%Y-%m-%d %H:%M UTC")
           {
-
-            # 生成审查分配信息
             echo "## 📌 Code Review Assignment"
             echo ""
-
             while IFS='|' read -r tag path reviewers; do
-              if grep -qE "^$path(/|$)" changed_files.txt; then
+              escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
+              if [[ "$path" == */ ]]; then
+                grep -qE "^$escaped_path(/.*)?$" $GITHUB_WORKSPACE/changed_files.txt
+              else
+                grep -qE "^$escaped_path$" $GITHUB_WORKSPACE/changed_files.txt
+              fi
+              if [[ $? -eq 0 ]]; then
                 echo "### 🏷️ Tag: $tag"
-                echo "**Path:** \`$path\`  "
-
-                if [[ " ${existing_tags[@]} " =~ " $tag " ]]; then
-                  echo "**Reviewers:** $reviewers  "
+                echo "**Path:** \`$path\`"
+                if [[ " $existing_tags " =~ " $tag " ]]; then
+                  echo "**Reviewers:** $reviewers"
                 else
-                  formatted_reviewers=""
-                  for r in $reviewers; do
-                    formatted_reviewers+="${r#@} "
-                  done
-                  echo "**Reviewers:** $formatted_reviewers  "
+                  formatted_reviewers=$(echo "$reviewers" | sed 's/@//g')
+                  echo "**Reviewers:** $formatted_reviewers"
                 fi
-
                 echo "<details>"
                 echo "<summary><b>Changed Files</b> (Click to expand)</summary>"
                 echo ""
-                grep -E "^$path(/|$)" changed_files.txt | sed 's/^/- /'  # 列出匹配的变更文件
+                if [[ "$path" == */ ]]; then
+                  grep -E "^$escaped_path(/.*)?$" $GITHUB_WORKSPACE/changed_files.txt | sed 's/^/- /'
+                else
+                  grep -E "^$escaped_path$" $GITHUB_WORKSPACE/changed_files.txt | sed 's/^/- /'
+                fi
                 echo ""
                 echo "</details>"
                 echo ""
               fi
-            done < tag_data.csv
-            # 插入审查状态
-            cat review_status.md
-
+            done < $GITHUB_WORKSPACE/tag_data.csv
+            cat $GITHUB_WORKSPACE/review_status.md
             echo "---"
             echo "### 📝 Review Instructions"
             echo ""
@@ -245,48 +313,69 @@ jobs:
             echo ""
             echo "> ℹ️ **刷新CI状态操作需要具备仓库写入权限。**"
             echo "> ℹ️ **Refresh CI status operation requires repository Write permission.**"
-          } > review_data.md
+          } > $GITHUB_WORKSPACE/review_data.md
+          echo "DEBUG: Review data generated" >&2
+
       - name: Post/Update comment
         id: post_comment
         run: |
-          # 查找现有的 bot 评论
-          existing_comment=$(curl -s \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
-            jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
+          for attempt in {1..3}; do
+            existing_comment=$(curl -s -f \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
+              jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64' || echo "")
+            if [[ -n "$existing_comment" || $attempt -eq 3 ]]; then
+              break
+            fi
+            echo "Attempt $attempt failed to fetch comments, retrying..."
+            sleep 2
+          done
+          
+          new_reviewers=$(cat $GITHUB_WORKSPACE/unique_reviewers.txt | sort | tr '\n' ' ')
+          old_reviewers=""
+          if [[ -f $GITHUB_WORKSPACE/unique_reviewers_bak.txt ]]; then
+            old_reviewers=$(cat $GITHUB_WORKSPACE/unique_reviewers_bak.txt | sort | tr '\n' ' ')
+          fi
+          
+          if [[ "$new_reviewers" != "$old_reviewers" && -n "$existing_comment" ]]; then
+            comment_id=$(echo "$existing_comment" | base64 -d | jq -r .id)
+            echo "Reviewers changed, deleting old comment $comment_id"
+            curl -s -X DELETE \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id"
+            existing_comment=""
+          fi
           
           if [[ -n "$existing_comment" ]]; then
-            # 更新现有评论
-            comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
+            comment_id=$(echo "$existing_comment" | base64 -d | jq -r .id)
             echo "Updating existing comment $comment_id"
-            response=$(curl -s -X PATCH \
+            curl -s -X PATCH \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
+              -d "$(jq -n --arg body "$(cat $GITHUB_WORKSPACE/review_data.md)" '{body: $body}')" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id"
           else
-            # 创建新评论
             echo "Creating new comment"
-            response=$(curl -s -X POST \
+            curl -s -X POST \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -d "$(jq -n --arg body "$(cat review_data.md)" '{body: $body}')" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments")
+              -d "$(jq -n --arg body "$(cat $GITHUB_WORKSPACE/review_data.md)" '{body: $body}')" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments"
           fi
+          echo "DEBUG: Comment posted/updated" >&2
+
       - name: Get Comment Time
         id: get_comment_time
         run: |
-          existing_comment=$(curl -s \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
-          jq -r '.[] | select(.user.login == "github-actions[bot]") | {body: .body} | @base64')
-          comment_body="${{ steps.get_approval.outputs.CURRENT_TIME }}"
-          comment_time=$(date -d "$comment_body" +%s)
-          echo "CURRENT_TIME=${comment_time}" >> $GITHUB_OUTPUT
-          cp unique_reviewers.txt unique_reviewers_bak.txt
-          cp unique_tags.txt unique_tags_bak.txt
-      - name: Restore Reviewers Save
+          current_time=$(date -u +"%s")
+          echo "CURRENT_TIME=${current_time}" >> $GITHUB_OUTPUT
+          cp $GITHUB_WORKSPACE/unique_reviewers.txt $GITHUB_WORKSPACE/unique_reviewers_bak.txt
+          cp $GITHUB_WORKSPACE/unique_tags.txt $GITHUB_WORKSPACE/unique_tags_bak.txt
+          echo "DEBUG: Comment time: $current_time" >&2
+
+      - name: Save Reviewers Cache
         id: reviewers-cache-save
         uses: actions/cache/save@v4
         with:
           path: |
-            unique_tags_bak.txt
-            unique_reviewers_bak.txt
+            $GITHUB_WORKSPACE/unique_tags_bak.txt
+            $GITHUB_WORKSPACE/unique_reviewers_bak.txt
           key: ${{ runner.os }}-auto-assign-reviewers-${{ steps.extract-pr.outputs.PR_NUMBER }}-${{ steps.get_comment_time.outputs.CURRENT_TIME }}

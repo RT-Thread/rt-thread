@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, RT-Thread Development Team
+ * Copyright (c) 2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
