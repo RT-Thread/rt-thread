@@ -14,9 +14,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
+
 #include <vdso_config.h>
 #include <vdso_datapage.h>
-#include <rtcompiler.h>
 
 #define __always_unused __attribute__((__unused__))
 #define __maybe_unused  __attribute__((__unused__))
@@ -33,11 +33,6 @@ static inline uint64_t __arch_get_hw_counter()
     __asm__ volatile("rdtime %0" : "=r"(res));
     arch_counter_enforce_ordering;
     return res;
-}
-// 使用了rt_weak弱符号标记该函数，默认为10000000，请根据对应平台实现这个函数。
-rt_weak inline uint64_t __arch_get_hw_frq()
-{
-    return 10000000;
 }
 
 static inline uint32_t

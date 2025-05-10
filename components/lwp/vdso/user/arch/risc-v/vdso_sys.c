@@ -6,12 +6,14 @@
  * Change Logs:
  * Date           Author         Notes
  * 2025-04-22     ScuDays        Add VDSO functionality under the riscv64 architecture.
+ * 2025-05-10     Bernard        Move __arch_get_hw_frq() to vdso_sys.c as a weak function.
  */
 
 #include <stdio.h>
 #include <time.h>
 #include <errno.h>
 #include <stdbool.h>
+
 #include <vdso_sys.h>
 
 #ifndef rt_vdso_cycles_ready
@@ -22,6 +24,12 @@ static inline bool rt_vdso_cycles_ready(uint64_t cycles)
 #endif
 
 #ifndef rt_vdso_get_ns
+/* Implement as a weak function because there is no CPU cycle for RISCV */
+__attribute__((weak)) uint64_t __arch_get_hw_frq()
+{
+    return 10000000;
+}
+
 static inline uint64_t rt_vdso_get_ns(uint64_t cycles, uint64_t last)
 {
     return (cycles - last) * NSEC_PER_SEC / __arch_get_hw_frq();
