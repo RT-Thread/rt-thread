@@ -49,7 +49,7 @@ path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
 tag: stm32f407-rt-spark
-path: bsp/stm32/stm32f407-rt-spark 
+path: bsp/stm32/stm32f407-rt-spark
 owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
 tag: libc
