@@ -22,6 +22,7 @@ RA 系列 BSP 目前支持情况如下表所示：
 | **RZ 系列**                             |                                                  |
 | [rzt2m_rsk](rzt2m_rsk)                   | Renesas 官方 RSK-RZT2M 开发板                    |
 | [rzn2l_rsk](rzn2l_rsk)                   | Renesas 官方 RSK-RZN2L 开发板                    |
+| [rzn2l_etherkit](rzn2l_etherkit)         | Renesas 联合 RT-Thread rzn2l_etherkit 开发板      |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 
