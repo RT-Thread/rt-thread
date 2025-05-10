@@ -50,6 +50,10 @@ jobs:
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
           jq -r '.[] | select(.user.login == "github-actions[bot]") | {body: .body} | @base64')
 
+          echo "=== Changed Files ==="
+          cat changed_files.txt
+          echo "====================="
+
           comment_body=""
           if [[ ! -z "$existing_comment" ]]; then
             comment_body=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .body|sed -nE 's/.*Last Updated: ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} UTC).*/\1/p')
@@ -64,9 +68,6 @@ jobs:
           fi
           echo "COMMENT_TIME=${comment_time}"
 
-          echo "=== Changed Files ==="
-          cat changed_files.txt
-          echo "====================="
 
       - name: Parse MAINTAINERS file
         id: parse_maintainer
@@ -123,12 +124,12 @@ jobs:
               echo "$tag" >> triggered_tags.txt
               echo "Matched: $path → $tag"
             fi
-          done < tag_data.csv
+            done < tag_data.csv
 
-          echo "=== Matched Paths ==="
-          cat triggered_tags.txt
-          echo "=== Matched Reviewers ==="
-          cat triggered_reviewers.txt
+            echo "=== Matched Paths ==="
+            cat triggered_tags.txt
+            echo "=== Matched Reviewers ==="
+            cat triggered_reviewers.txt
 
       - name: Restore Reviewers Cache
         id: reviewers-cache-restore 
