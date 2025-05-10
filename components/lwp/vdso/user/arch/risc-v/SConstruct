@@ -2,11 +2,11 @@ import os
 import sys
 
 arguments = sys.argv[2]
-vdso_usr  = os.path.dirname(arguments)
+vdso_usr  = arguments
 vdso_path = os.path.join(vdso_usr, '..', '..', '..')
 
 EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
-PREFIX    = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
+PREFIX    = os.getenv('RTT_CC_PREFIX') or 'riscv64-none-elf-'
 
 CC      = PREFIX + 'gcc'
 CPP     = PREFIX + 'cpp'
@@ -23,8 +23,8 @@ CFLAGS += " -I . -I {vdso_path} ".format(vdso_path=vdso_path)
 src = Glob('*.c')
 env = Environment(tools=['gcc', 'link'],
     AS   = AS,   ASFLAGS = AFLAGS,
-    CC   = CC,   CFLAGS = CFLAGS,
-    CPP  = CPP,  AR   = AR,
+    CC   = CC,   CFLAGS  = CFLAGS,
+    CPP  = CPP,  AR      = AR,
     LINK = LINK, LINKFLAGS = LFLAGS)
 env.PrependENVPath('PATH', EXEC_PATH)
 
