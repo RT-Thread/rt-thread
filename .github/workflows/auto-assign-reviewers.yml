@@ -107,15 +107,13 @@ jobs:
           # done < tag_data.csv
           while IFS='|' read -r tag path reviewers; do
             escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
-            echo "Checking path: '$path' → escaped: '$escaped_path'"  # 调试输出
-            # 修改这行，将(/.*)?改为(/.*)*以支持多级子目录
-            if grep -qxE "$escaped_path(/.*)*" changed_files.txt; then
+            echo "Checking path: '$path' → escaped: '$escaped_path'"
+            if grep -qE "^$escaped_path(/[^/]+)*/?[^/]*$" changed_files.txt; then
               echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
               echo "$tag" >> triggered_tags.txt
-              echo "Matched! Tag: $tag, Path: $path"  # 调试输出
+              echo "Matched! Tag: $tag, Path: $path"
             fi
-          done < tag_data.csv
-
+            
           # 处理去重前检查文件是否有内容
           if [[ -s triggered_reviewers.txt ]]; then
             awk 'NF && !seen[$0]++' triggered_reviewers.txt > unique_reviewers.txt
