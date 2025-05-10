@@ -126,6 +126,8 @@ jobs:
           else
             echo "No tags matched." > unique_tags.txt  # 生成占位文件
           fi
+          done < tag_data.csv
+          
       - name: Restore Reviewers Cache
         id: reviewers-cache-restore 
         if: ${{ steps.changed_files.outputs.COMMENT_TIME != '' }}
