@@ -63,6 +63,11 @@ jobs:
             echo "COMMENT_TIME=${comment_time}" >> $GITHUB_OUTPUT
           fi
           echo "COMMENT_TIME=${comment_time}"
+
+          echo "=== Changed Files ==="
+          cat changed_files.txt
+          echo "====================="
+
       - name: Parse MAINTAINERS file
         id: parse_maintainer
         run: |
@@ -90,21 +95,40 @@ jobs:
       - name: Generate reviewers list
         id: generate_reviewers
         run: |
-          # 删除旧文件并初始化空文件
-          rm -f triggered_reviewers.txt triggered_tags.txt
-          touch triggered_reviewers.txt triggered_tags.txt  # 确保文件存在
+          # # 删除旧文件并初始化空文件
+          # rm -f triggered_reviewers.txt triggered_tags.txt
+          # touch triggered_reviewers.txt triggered_tags.txt  # 确保文件存在
 
-          # 匹配路径并追加维护者信息
+          # # 匹配路径并追加维护者信息
+          # while IFS='|' read -r tag path reviewers; do
+          #   # 转义路径中的正则特殊字符
+          #   escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
+          #   # 精确匹配路径及其子路径
+          #   if grep -qxE "$escaped_path(/.*)?" changed_files.txt; then
+          #     # 清理空格并移除空行后追加到文件
+          #     echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
+          #     echo "$tag" >> triggered_tags.txt
+          #   fi
+          # done < tag_data.csv
+          rm -f triggered_reviewers.txt triggered_tags.txt
+          touch triggered_reviewers.txt triggered_tags.txt
+
           while IFS='|' read -r tag path reviewers; do
             # 转义路径中的正则特殊字符
             escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
-            # 精确匹配路径及其子路径
-            if grep -qxE "$escaped_path(/.*)?" changed_files.txt; then
-              # 清理空格并移除空行后追加到文件
+            
+            # 使用增强型正则匹配路径及其所有子目录
+            if grep -qE "^$escaped_path(/.*)*" changed_files.txt; then
               echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
               echo "$tag" >> triggered_tags.txt
+              echo "Matched: $path → $tag"
             fi
           done < tag_data.csv
+
+          echo "=== Matched Paths ==="
+          cat triggered_tags.txt
+          echo "=== Matched Reviewers ==="
+          cat triggered_reviewers.txt
 
       - name: Restore Reviewers Cache
         id: reviewers-cache-restore 
