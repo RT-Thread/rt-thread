@@ -253,7 +253,7 @@ struct rt_serial_rx_fifo
     rt_uint16_t rx_cpt_index;
 
     /* software fifo */
-    rt_uint8_t buffer[];
+    rt_align(32) rt_uint8_t buffer[];
 };
 
 /**
@@ -271,7 +271,7 @@ struct rt_serial_tx_fifo
     struct rt_completion tx_cpt;
 
     /* software fifo */
-    rt_uint8_t buffer[];
+    rt_align(32) rt_uint8_t buffer[];
 };
 
 /**
