@@ -28,9 +28,11 @@ else:
 
     process_env = os.environ.copy()
     if hasattr(rtconfig, 'EXEC_PATH') and rtconfig.EXEC_PATH is not None:
-        process_env['EXEC_PATH'] = rtconfig.EXEC_PATH
+        process_env['RTT_EXEC_PATH'] = rtconfig.EXEC_PATH
     if hasattr(rtconfig, 'PREFIX') and rtconfig.PREFIX is not None:
-        process_env['CC_PREFIX'] = rtconfig.PREFIX
+        process_env['RTT_CC_PREFIX'] = rtconfig.PREFIX
+    if hasattr(rtconfig, 'DEVICE') and rtconfig.DEVICE is not None:
+        process_env['RTT_DEVICE'] = rtconfig.DEVICE
 
     command = ["scons", "-C", vdso_arch]
     clean_command = ["scons", "-C", vdso_arch, "--clean"] 

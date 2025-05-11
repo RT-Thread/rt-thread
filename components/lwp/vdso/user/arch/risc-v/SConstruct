@@ -7,6 +7,7 @@ vdso_path = os.path.join(vdso_usr, '..', '..', '..')
 
 EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
 PREFIX    = os.getenv('RTT_CC_PREFIX') or 'riscv64-none-elf-'
+DEVICE    = os.getenv('RTT_DEVICE') or ' -march=rv64imafdc -mabi=lp64'
 
 CC      = PREFIX + 'gcc'
 CPP     = PREFIX + 'cpp'
@@ -14,7 +15,6 @@ AS      = PREFIX + 'gcc'
 AR      = PREFIX + 'ar'
 LINK    = PREFIX + 'gcc'
 
-DEVICE  = ' -march=rv64imafdc -mabi=lp64'
 AFLAGS  = ' -x assembler-with-cpp'
 CFLAGS  = DEVICE + ' -Wall -Wno-cpp -std=gnu99 -fdiagnostics-color=always -fPIC -O2'
 LFLAGS  = DEVICE + ' -Bsymbolic -Wl,--gc-sections -T {path}/vdso.lds'.format(path=vdso_usr)
