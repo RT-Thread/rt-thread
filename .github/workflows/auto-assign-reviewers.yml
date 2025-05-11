@@ -7,6 +7,7 @@
 # Date           Author       Notes
 # 2025-01-21     kurisaW      Initial version
 # 2025-03-14     hydevcode
+# 2025-05-10     kurisaW      Fixed file existence, cache, and comment time issues
 
 # Script Function Description: Assign PR reviews based on the MAINTAINERS list.
 
@@ -50,6 +51,10 @@ jobs:
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
           jq -r '.[] | select(.user.login == "github-actions[bot]") | {body: .body} | @base64')
 
+          echo "=== Changed Files ==="
+          cat changed_files.txt
+          echo "====================="
+
           comment_body=""
           if [[ ! -z "$existing_comment" ]]; then
             comment_body=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .body|sed -nE 's/.*Last Updated: ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} UTC).*/\1/p')
@@ -63,6 +68,8 @@ jobs:
             echo "COMMENT_TIME=${comment_time}" >> $GITHUB_OUTPUT
           fi
           echo "COMMENT_TIME=${comment_time}"
+
+
       - name: Parse MAINTAINERS file
         id: parse_maintainer
         run: |
@@ -72,8 +79,10 @@ jobs:
             /^tag:/ { 
               tag = substr($0, index($0, $2))  # 提取标签内容
             }
-            /^path:/ { 
-              path = substr($0, index($0, $2))  # 提取路径内容
+            /^path:/ {
+              # 提取 path 字段并去除前后空格
+              path = substr($0, index($0, $2))
+              gsub(/^[ \t]+|[ \t]+$/, "", path)  # 清理前后空格和制表符
             }
             /^owners:/ {
               owners = substr($0, index($0, $2))  # 提取维护者信息
@@ -85,21 +94,30 @@ jobs:
               print tag "|" path "|" github_ids
             }
           ' MAINTAINERS > tag_data.csv
+
       - name: Generate reviewers list
         id: generate_reviewers
         run: |
-          # 根据变更文件路径匹配维护者规则
-          rm -f triggered_reviewers.txt
-          rm -f triggered_tags.txt
+          rm -f triggered_reviewers.txt triggered_tags.txt
+          touch triggered_reviewers.txt triggered_tags.txt
+
           while IFS='|' read -r tag path reviewers; do
-            # 使用正则匹配路径（支持子目录）
-            if grep -qE "^$path(/|$)" changed_files.txt; then
-              echo "$reviewers" | tr ' ' '\n' >> triggered_reviewers.txt
-              echo "$tag" | tr ' ' '\n' >> triggered_tags.txt
+            # 转义路径中的正则特殊字符
+            escaped_path=$(sed 's/[.[\*^$]/\\&/g' <<< "$path")
+            
+            # 使用增强型正则匹配路径及其所有子目录
+            if grep -qE "^$escaped_path(/.*)*" changed_files.txt; then
+              echo "$reviewers" | tr -s ' ' '\n' | sed '/^$/d' >> triggered_reviewers.txt
+              echo "$tag" >> triggered_tags.txt
+              echo "Matched: $path → $tag"
             fi
           done < tag_data.csv
-          awk 'NF && !seen[$0]++' triggered_reviewers.txt > unique_reviewers.txt
-          awk 'NF && !seen[$0]++' triggered_tags.txt > unique_tags.txt
+
+          echo "=== Matched Paths ==="
+          cat triggered_tags.txt
+          echo "=== Matched Reviewers ==="
+          cat triggered_reviewers.txt
+
       - name: Restore Reviewers Cache
         id: reviewers-cache-restore 
         if: ${{ steps.changed_files.outputs.COMMENT_TIME != '' }}
