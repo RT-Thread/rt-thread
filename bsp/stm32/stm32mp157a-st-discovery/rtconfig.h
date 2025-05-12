@@ -92,6 +92,9 @@
 
 #define RT_USING_SEMAPHORE
 #define RT_USING_MUTEX
+#define RT_USING_EVENT
+#define RT_USING_MAILBOX
+#define RT_USING_MESSAGEQUEUE
 /* end of Inter-Thread communication */
 
 /* Memory Management */
@@ -250,9 +253,10 @@
 /* AT32 HAL & SDK Drivers */
 
 /* end of AT32 HAL & SDK Drivers */
+
+/* end of HC32 DDL Drivers */
 /* end of HAL & SDK Drivers */
 
-/* sensors drivers */
 
 /* end of sensors drivers */
 

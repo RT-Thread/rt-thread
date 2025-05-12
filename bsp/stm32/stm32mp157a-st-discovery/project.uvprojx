@@ -10,8 +10,14 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+<<<<<<< HEAD
       <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
+=======
+      <pArmCC>6220000::V6.22::ARMCLANG</pArmCC>
+      <pCCUsed>6220000::V6.22::ARMCLANG</pCCUsed>
+      <uAC6>1</uAC6>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32MP157AACx:Cortex-M4</Device>
@@ -138,7 +144,11 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
+<<<<<<< HEAD
           <Flash3></Flash3>
+=======
+          <Flash3>"" ()</Flash3>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -314,7 +324,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -329,8 +339,8 @@
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -338,9 +348,15 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
+<<<<<<< HEAD
               <Define>__RTTHREAD__, USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
               <IncludePath>..\libraries\HAL_Drivers\nano;..\..\..\components\drivers\phy;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\drivers\smp_call;..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include;applications;..\..\..\components\finsh;board\CubeMX_Config\CM4\Inc;.;board\ports\audio;..\..\..\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;board;board\ports;..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</IncludePath>
+=======
+              <Define>METAL_MAX_DEVICE_REGIONS=2, USE_HAL_DRIVER, METAL_INTERNAL, STM32MP157Axx, __LOG_TRACE_IO_, __RTTHREAD__, NO_ATOMIC_64_SUPPORT, VIRTIO_SLAVE_ONLY, CORE_CM4</Define>
+              <Undefine></Undefine>
+              <IncludePath>..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers;.;..\libraries\HAL_Drivers\nano;..\..\..\libcpu\arm\cortex-m4;board;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\finsh;packages\cmsis-device-mp1xxx-m4\Include;..\..\..\include;board\ports;..\libraries\HAL_Drivers\CMSIS\Include;applications;..\..\..\components\drivers\phy;packages\stm32mp1xx-m4-hal-driver\Inc;board\CubeMX_Config\CM4\Inc</IncludePath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,6 +415,19 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
             </File>
+<<<<<<< HEAD
+            <File>
+              <FileName>drv_console.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\nano\drv_console.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\nano\drv_gpio.c</FilePath>
+            </File>
+=======
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
             <File>
               <FileName>drv_console.c</FileName>
               <FileType>1</FileType>
@@ -410,20 +439,18 @@
               <FilePath>..\libraries\HAL_Drivers\nano\drv_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>startup_stm32mp15xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Source\Templates\arm\startup_stm32mp15xx.s</FilePath>
-            </File>
-            <File>
               <FileName>stm32mp1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\CubeMX_Config\CM4\Src\stm32mp1xx_hal_msp.c</FilePath>
             </File>
+<<<<<<< HEAD
             <File>
               <FileName>system_stm32mp1xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\CubeMX_Config\Common\System\system_stm32mp1xx.c</FilePath>
             </File>
+=======
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
@@ -436,14 +463,31 @@
           <Files>
             <File>
               <FileName>cmd.c</FileName>
+<<<<<<< HEAD
+=======
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
+            <File>
+              <FileName>shell.c</FileName>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+<<<<<<< HEAD
+=======
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
             <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
+<<<<<<< HEAD
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
@@ -454,6 +498,8 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
+=======
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
           </Files>
         </Group>
         <Group>
@@ -1305,6 +1351,7 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+<<<<<<< HEAD
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
@@ -1313,13 +1360,7 @@
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
-            </File>
-            <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-            <File>
+=======
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
@@ -1328,6 +1369,33 @@
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
+            </File>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+            <File>
+<<<<<<< HEAD
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+=======
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
             </File>
           </Files>
         </Group>
@@ -1362,9 +1430,10 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Libraries</GroupName>
+          <GroupName>STM32MP-CMSIS</GroupName>
           <Files>
             <File>
+<<<<<<< HEAD
               <FileName>stm32mp1xx_hal_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_exti.c</FilePath>
@@ -1378,10 +1447,16 @@
               <FileName>stm32mp1xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_cortex.c</FilePath>
+=======
+              <FileName>startup_stm32mp15xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\cmsis-device-mp1xxx-m4\Source\Templates\arm\startup_stm32mp15xx.s</FilePath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
             </File>
             <File>
-              <FileName>stm32mp1xx_hal_rcc.c</FileName>
+              <FileName>system_stm32mp1xx.c</FileName>
               <FileType>1</FileType>
+<<<<<<< HEAD
               <FilePath>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_rcc.c</FilePath>
             </File>
             <File>
@@ -1479,11 +1554,138 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal.c</FilePath>
             </File>
+=======
+              <FilePath>packages\cmsis-device-mp1xxx-m4\Source\Templates\system_stm32mp1xx.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>STM32MP-HAL</GroupName>
+          <Files>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
             <File>
               <FileName>stm32mp1xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_dma_ex.c</FilePath>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dma_ex.c</FilePath>
             </File>
+<<<<<<< HEAD
+=======
+            <File>
+              <FileName>stm32mp1xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_adc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_uart_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_rcc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_rcc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_tim_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_tim_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_ipcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_ipcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_dac_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dac_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_pwr_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_pwr_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_hsem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_hsem.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_mdma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_mdma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_i2c_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_cortex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dac.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32mp1xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_i2c.c</FilePath>
+            </File>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
           </Files>
         </Group>
       </Groups>
