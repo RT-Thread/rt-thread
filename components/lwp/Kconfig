@@ -1,5 +1,5 @@
 menuconfig RT_USING_LWP
-    bool "light-weight process"
+    bool "lwP(light weight Process)"
     depends on RT_USING_SMART
     default y
     help
@@ -87,4 +87,3 @@ if RT_USING_LWP
 rsource "terminal/Kconfig"
 rsource "vdso/Kconfig"
 endif
-
