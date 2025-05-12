@@ -145,7 +145,11 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>ST-LINKIII-KEIL_SWO</Key>
+<<<<<<< HEAD
           <Name>-U0666FF343339415043182420 -O206 -SF10000 -C0 -A2 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP") -D00(6BA02477) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD10030000 -FC1000 -FN0 -WA0 -WE0 -WVCE4 -WS2710 -WM0 -WP2</Name>
+=======
+          <Name>-U0666FF343339415043182420 -O206 -SF10000 -C0 -A2 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP") -D00(6BA02477) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD10030000 -FC10000 -FN0 -WA0 -WE0 -WVCE4 -WS2710 -WM0 -WP2 -WK0-R0</Name>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
@@ -266,6 +270,7 @@
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>5</FileNumber>
+<<<<<<< HEAD
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -278,6 +283,8 @@
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>6</FileNumber>
+=======
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -289,6 +296,7 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>7</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -302,6 +310,9 @@
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>8</FileNumber>
+=======
+      <FileNumber>6</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -321,7 +332,11 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>3</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>9</FileNumber>
+=======
+      <FileNumber>7</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -333,6 +348,33 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
+<<<<<<< HEAD
+=======
+      <FileNumber>8</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\finsh\shell.c</PathWithFileName>
+      <FilenameWithoutPath>shell.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>9</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\finsh\msh.c</PathWithFileName>
+      <FilenameWithoutPath>msh.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileNumber>10</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -343,6 +385,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+<<<<<<< HEAD
     <File>
       <GroupNumber>3</GroupNumber>
       <FileNumber>11</FileNumber>
@@ -367,6 +410,8 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+=======
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
   </Group>
 
   <Group>
@@ -377,7 +422,11 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>13</FileNumber>
+=======
+      <FileNumber>11</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -389,7 +438,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>14</FileNumber>
+=======
+      <FileNumber>12</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -401,7 +454,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>15</FileNumber>
+=======
+      <FileNumber>13</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -413,7 +470,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>16</FileNumber>
+=======
+      <FileNumber>14</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -425,7 +486,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>17</FileNumber>
+=======
+      <FileNumber>15</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -437,7 +502,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>18</FileNumber>
+=======
+      <FileNumber>16</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -449,7 +518,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>19</FileNumber>
+=======
+      <FileNumber>17</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -461,7 +534,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>20</FileNumber>
+=======
+      <FileNumber>18</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -473,7 +550,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>21</FileNumber>
+=======
+      <FileNumber>19</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -485,7 +566,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>22</FileNumber>
+=======
+      <FileNumber>20</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -497,7 +582,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>23</FileNumber>
+=======
+      <FileNumber>21</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -509,7 +598,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>24</FileNumber>
+=======
+      <FileNumber>22</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -521,7 +614,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>25</FileNumber>
+=======
+      <FileNumber>23</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -533,7 +630,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>26</FileNumber>
+=======
+      <FileNumber>24</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -545,7 +646,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>27</FileNumber>
+=======
+      <FileNumber>25</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -565,6 +670,33 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
+=======
+      <FileNumber>26</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\src\klibc\kstdio.c</PathWithFileName>
+      <FilenameWithoutPath>kstdio.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>27</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\src\klibc\rt_vsscanf.c</PathWithFileName>
+      <FilenameWithoutPath>rt_vsscanf.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileNumber>28</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -582,8 +714,13 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\..\src\klibc\kstring.c</PathWithFileName>
       <FilenameWithoutPath>kstring.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\..\..\src\klibc\kerrno.c</PathWithFileName>
+      <FilenameWithoutPath>kerrno.c</FilenameWithoutPath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -594,6 +731,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\..\src\klibc\kerrno.c</PathWithFileName>
       <FilenameWithoutPath>kerrno.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -620,6 +758,10 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\src\klibc\rt_vsscanf.c</PathWithFileName>
       <FilenameWithoutPath>rt_vsscanf.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\..\..\src\klibc\kstring.c</PathWithFileName>
+      <FilenameWithoutPath>kstring.c</FilenameWithoutPath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -633,7 +775,11 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>33</FileNumber>
+=======
+      <FileNumber>31</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -645,7 +791,11 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>34</FileNumber>
+=======
+      <FileNumber>32</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -657,7 +807,11 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>35</FileNumber>
+=======
+      <FileNumber>33</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -669,7 +823,11 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>36</FileNumber>
+=======
+      <FileNumber>34</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -681,7 +839,11 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>37</FileNumber>
+=======
+      <FileNumber>35</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -694,30 +856,79 @@
   </Group>
 
   <Group>
+<<<<<<< HEAD
     <GroupName>Libraries</GroupName>
+=======
+    <GroupName>STM32MP-CMSIS</GroupName>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>7</GroupNumber>
-      <FileNumber>38</FileNumber>
-      <FileType>1</FileType>
+<<<<<<< HEAD
+=======
+      <FileNumber>36</FileNumber>
+      <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_exti.c</PathWithFileName>
-      <FilenameWithoutPath>stm32mp1xx_hal_exti.c</FilenameWithoutPath>
+      <PathWithFileName>packages\cmsis-device-mp1xxx-m4\Source\Templates\arm\startup_stm32mp15xx.s</PathWithFileName>
+      <FilenameWithoutPath>startup_stm32mp15xx.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+      <FileNumber>37</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\cmsis-device-mp1xxx-m4\Source\Templates\system_stm32mp1xx.c</PathWithFileName>
+      <FilenameWithoutPath>system_stm32mp1xx.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
+  <Group>
+    <GroupName>STM32MP-HAL</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>8</GroupNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
+      <FileNumber>38</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+<<<<<<< HEAD
+      <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_exti.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_exti.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dma_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_dma_ex.c</FilenameWithoutPath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+<<<<<<< HEAD
+      <GroupNumber>7</GroupNumber>
+=======
+      <GroupNumber>8</GroupNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileNumber>39</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_rcc_ex.c</PathWithFileName>
       <FilenameWithoutPath>stm32mp1xx_hal_rcc_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -911,79 +1122,331 @@
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_gpio.c</PathWithFileName>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_gpio.c</PathWithFileName>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FilenameWithoutPath>stm32mp1xx_hal_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
+<<<<<<< HEAD
       <GroupNumber>7</GroupNumber>
       <FileNumber>56</FileNumber>
+=======
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>40</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_dac_ex.c</PathWithFileName>
       <FilenameWithoutPath>stm32mp1xx_hal_dac_ex.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_exti.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_exti.c</FilenameWithoutPath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
+<<<<<<< HEAD
       <GroupNumber>7</GroupNumber>
       <FileNumber>57</FileNumber>
+=======
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>41</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_ipcc.c</PathWithFileName>
       <FilenameWithoutPath>stm32mp1xx_hal_ipcc.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_spi.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_spi.c</FilenameWithoutPath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
+<<<<<<< HEAD
       <GroupNumber>7</GroupNumber>
       <FileNumber>58</FileNumber>
+=======
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>42</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_dac.c</PathWithFileName>
       <FilenameWithoutPath>stm32mp1xx_hal_dac.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_adc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_adc_ex.c</FilenameWithoutPath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
+<<<<<<< HEAD
       <GroupNumber>7</GroupNumber>
       <FileNumber>59</FileNumber>
+=======
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>43</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_uart.c</PathWithFileName>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_pwr.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_pwr.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>44</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_uart_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_uart_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>45</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_uart.c</PathWithFileName>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FilenameWithoutPath>stm32mp1xx_hal_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
+<<<<<<< HEAD
       <GroupNumber>7</GroupNumber>
       <FileNumber>60</FileNumber>
+=======
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>46</FileNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal.c</PathWithFileName>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_rcc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_rcc_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>47</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dma.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_dma.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>48</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_tim.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_tim.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>49</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal.c</PathWithFileName>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FilenameWithoutPath>stm32mp1xx_hal.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
+<<<<<<< HEAD
       <GroupNumber>7</GroupNumber>
+=======
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>50</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_tim_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_tim_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>51</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_ipcc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_ipcc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>52</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_adc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_adc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>53</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dac_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_dac_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>54</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_pwr_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_pwr_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>55</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_rcc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_rcc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>56</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_hsem.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_hsem.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>57</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_mdma.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_mdma.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>58</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_i2c_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_i2c_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>59</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_cortex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_cortex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>60</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_dac.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_dac.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <FileNumber>61</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal_dma_ex.c</PathWithFileName>
       <FilenameWithoutPath>stm32mp1xx_hal_dma_ex.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>packages\stm32mp1xx-m4-hal-driver\Src\stm32mp1xx_hal_i2c.c</PathWithFileName>
+      <FilenameWithoutPath>stm32mp1xx_hal_i2c.c</FilenameWithoutPath>
+>>>>>>> 0a29131f3b (bsp/stm32:Separate stm32mp1 hal drivers)
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
