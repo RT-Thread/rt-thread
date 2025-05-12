@@ -25,11 +25,14 @@ if platform in platform_file.keys(): # support platforms
     if arch in support_arch.keys() and cpu in support_arch[arch]:
         asm_path = 'arch/' + arch + '/' + cpu + '/*_' + platform_file[platform]
         arch_common = 'arch/' + arch + '/' + 'common/*.c'
+        common = 'arch/common/*.c'
         if not GetDepend('RT_USING_VDSO'):
             vdso_files = ['vdso_data.c', 'vdso.c']
             src += [f for f in Glob(arch_common) if os.path.basename(str(f)) not in vdso_files]
+            src += [f for f in Glob(common) if os.path.basename(str(f)) not in vdso_files]
         else:
             src += Glob(arch_common)
+            src += Glob(common)
         if not GetDepend('ARCH_MM_MMU'):
             excluded_files = ['ioremap.c', 'lwp_futex.c', 'lwp_mm_area.c', 'lwp_pmutex.c', 'lwp_shm.c', 'lwp_user_mm.c']
             src += [f for f in Glob('*.c') if os.path.basename(str(f)) not in excluded_files] + Glob(asm_path)
