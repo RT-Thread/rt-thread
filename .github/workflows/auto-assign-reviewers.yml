@@ -117,6 +117,13 @@ jobs:
           sort -u triggered_reviewers.txt > unique_reviewers.txt
           sort -u triggered_tags.txt > unique_tags.txt
 
+          # 检查是否有匹配的 reviewers
+          if [[ -s unique_reviewers.txt ]]; then
+            echo "HAS_REVIEWERS=true" >> $GITHUB_OUTPUT
+          else
+            echo "HAS_REVIEWERS=false" >> $GITHUB_OUTPUT
+          fi
+
           echo "=== Matched Paths ==="
           cat unique_tags.txt
           echo "=== Matched Reviewers ==="
@@ -210,6 +217,7 @@ jobs:
 
       - name: Generate review data
         id: generate_review
+        if: steps.generate_reviewers.outputs.HAS_REVIEWERS == 'true'
         run: |
           unique_tags=""
           if [[ -s unique_tags.txt ]]; then
@@ -280,6 +288,7 @@ jobs:
 
       - name: Post/Update comment
         id: post_comment
+        if: steps.generate_reviewers.outputs.HAS_REVIEWERS == 'true'
         run: |
           # 查找现有的 bot 评论
           existing_comment=$(curl -s \
@@ -306,6 +315,7 @@ jobs:
 
       - name: Get Comment Time
         id: get_comment_time
+        if: steps.generate_reviewers.outputs.HAS_REVIEWERS == 'true'
         run: |
           existing_comment=$(curl -s \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
@@ -318,6 +328,7 @@ jobs:
 
       - name: Save Reviewers Cache
         id: reviewers-cache-save
+        if: steps.generate_reviewers.outputs.HAS_REVIEWERS == 'true'
         uses: actions/cache/save@v4
         with:
           path: |
