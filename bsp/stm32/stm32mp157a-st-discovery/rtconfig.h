@@ -92,9 +92,6 @@
 
 #define RT_USING_SEMAPHORE
 #define RT_USING_MUTEX
-#define RT_USING_EVENT
-#define RT_USING_MAILBOX
-#define RT_USING_MESSAGEQUEUE
 /* end of Inter-Thread communication */
 
 /* Memory Management */
@@ -223,6 +220,8 @@
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+#define PKG_USING_CMSIS_CORE
+#define PKG_USING_CMSIS_CORE_LATEST_VERSION
 /* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -236,6 +235,10 @@
 
 /* STM32 HAL & SDK Drivers */
 
+#define PKG_USING_STM32MP1_M4_HAL_DRIVER
+#define PKG_USING_STM32MP1_M4_HAL_DRIVER_LATEST_VERSION
+#define PKG_USING_STM32MP1_M4_CMSIS_DRIVER
+#define PKG_USING_STM32MP1_M4_CMSIS_DRIVER_LATEST_VERSION
 /* end of STM32 HAL & SDK Drivers */
 
 /* Infineon HAL Packages */
@@ -254,9 +257,16 @@
 
 /* end of AT32 HAL & SDK Drivers */
 
+/* HC32 DDL Drivers */
+
 /* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
+/* sensors drivers */
 
 /* end of sensors drivers */
 
