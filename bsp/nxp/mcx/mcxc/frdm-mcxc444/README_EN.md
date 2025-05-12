@@ -44,6 +44,14 @@ To run sample programs on the FRDM-MCXC444 board, you need to make the following
 
 ### Compile and Download
 
+**Please note!!!**
+
+Before performing the compilation process, please first open the ENV and execute the following command (this command is used to pull the necessary libraries; otherwise, the compilation will not be successful):
+
+```bash
+pkgs --update
+```
+
 1. Navigate to the `rt-thread\bsp\nxp\mcxc\frdm-mcxc444` folder.
 2. Open the project file in Keil.
 3. Compile the project.

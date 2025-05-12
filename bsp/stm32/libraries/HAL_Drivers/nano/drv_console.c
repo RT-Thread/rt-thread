@@ -16,7 +16,6 @@ static UART_HandleTypeDef console_uart;
 
 void rt_hw_console_init(void)
 {
-    HAL_UART_DeInit(&console_uart);
 #ifdef USART1
     if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart1") == 0)
     {

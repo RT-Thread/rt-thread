@@ -66,6 +66,12 @@ Includes the following hardware features:
     menuconfig
 ```
 
+Then, the necessary libraries should be pulled; otherwise, the compilation will fail.
+
+```bash
+    pkgs --update
+```
+
 On the menuconfig page, configure and select the corresponding chip model, if the development environment is MDK/IAR, you need to generate the project.
 
 4) Build Project (please skip this step under Mac/Linux)

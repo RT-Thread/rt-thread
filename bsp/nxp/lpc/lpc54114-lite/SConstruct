@@ -10,6 +10,23 @@ else:
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
+def bsp_pkg_check():
+    import subprocess
+
+    check_paths = [
+        os.path.join("packages", "nxp-lpc-series-latest"),
+    ]
+
+    need_update = not all(os.path.exists(p) for p in check_paths)
+
+    if need_update:
+        print("\n==============================================================")
+        print("Dependency packages missing, please running 'pkgs --update'...")
+        print("==============================================================")
+        exit(1)
+
+RegisterPreBuildingAction(bsp_pkg_check)
+
 TARGET = 'rtthread-%s.%s' % (rtconfig.BOARD_NAME, rtconfig.TARGET_EXT)
 
 DefaultEnvironment(tools=[])

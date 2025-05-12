@@ -391,11 +391,17 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                     {
                         /* can0 banks 0~13 */
                         can_dev->filter_config.filter_number = i;
+#ifdef RT_CAN_USING_HDR
+                        filter_cfg->items[i].hdr_bank = i;
+#endif
                     }
                     else if (rt_strcmp(can_dev->name, "can1") == 0)
                     {
                         /* can1 banks 14~27 */
                         can_dev->filter_config.filter_number = i + 14;
+#ifdef RT_CAN_USING_HDR
+                        filter_cfg->items[i].hdr_bank = i + 14;
+#endif
                     }
                 }
                 else

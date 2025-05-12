@@ -148,3 +148,5 @@ elif PLATFORM == 'cl':
     LPATH = ''
 
     POST_ACTION = ''
+
+    DEVICE = ''

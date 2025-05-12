@@ -45,7 +45,7 @@ jobs:
       filtered_matrix: ${{ steps.filter.outputs.filtered_matrix }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
         with:
           sparse-checkout: .github/ALL_BSP_COMPILE.json
           persist-credentials: false
@@ -71,8 +71,8 @@ jobs:
             fi
           done
           if [[ $has_bsp == true ]]; then
-            changed_files=$(echo "${changed_files}"| cut -d'/' -f2 | sort -u)
-            echo "CHANGED_FILES=${changed_files}" >> $GITHUB_OUTPUT
+            changed_files=$(echo "${changed_files}"| cut -d'/' -f2 | sort -u| tr '\n' ',' | sed 's/,$//')
+            echo "CHANGED_FILES=[${changed_files}]" >> $GITHUB_OUTPUT
           fi
           #获取修改文件的路径，如果有bsp以外的文件夹则编译全部bsp，否则获取对应文件夹名
 
@@ -82,21 +82,26 @@ jobs:
         run: |
           raw_matrix=$(echo "${{ steps.read-config.outputs.raw_matrix }}" | base64 --decode)
 
-          CHANGED_FILES="${{ steps.changed_files.outputs.CHANGED_FILES }}"
+          CHANGED_FILES=${{ steps.changed_files.outputs.CHANGED_FILES }}
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | sed 's/\[\|\]//g')
           # 将修改的文件路径与ALL_BSP_COMPILE.json文件的SUB_RTT_BSP进行判断，判断是否包含
-          filtered_matrix="${filtered_matrix}"
-          if [[ "$CHANGED_FILES" == "" ]]; then
+          filtered_matrix=[]
+          echo "${CHANGED_FILES}"
+          if [[ -z "$CHANGED_FILES" ]]; then
               FILTER_CONDITION='.legs[]'
               filtered_matrix=$(jq -c "{legs: [$FILTER_CONDITION]}" <<< "$raw_matrix")
           else
-            CONDITIONS=$(echo "$CHANGED_FILES" | awk '{for (i=1; i<=NF; i++) printf "contains(\"%s\") or ", $i}')
+            CONDITIONS=$(echo "$CHANGED_FILES" | awk 'BEGIN { RS="," } { printf "contains(\"%s\") or ", $1 }')
             CONDITIONS=${CONDITIONS% or }
+
             FILTER_CONDITION=".legs[] | select(any(.SUB_RTT_BSP[]; $CONDITIONS))"
+
             filtered_matrix=$(jq -c "{legs: [$FILTER_CONDITION]}" <<< "$raw_matrix")
           fi
+
           echo "filtered_matrix=${filtered_matrix}" >> $GITHUB_OUTPUT
           
-          echo "${filtered_matrix}"
+          echo ${filtered_matrix}
   build:
     runs-on: ubuntu-22.04
     needs: generate-matrix
@@ -106,7 +111,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.filtered_matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Set up Python
         uses: actions/setup-python@main
         with:

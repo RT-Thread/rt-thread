@@ -189,6 +189,11 @@ void rt_hw_board_init()
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_NANO)
+    extern void rt_hw_console_init(void);
+    rt_hw_console_init();
+#endif
+
     /* Board underlying hardware initialization */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();

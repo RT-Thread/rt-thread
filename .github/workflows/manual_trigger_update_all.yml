@@ -43,9 +43,9 @@ jobs:
     runs-on: ubuntu-22.04
     name: update and create pull request
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@main
         with:
           python-version: 3.8
 
