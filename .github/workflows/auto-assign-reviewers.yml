@@ -48,7 +48,7 @@ jobs:
           changed_files=$(curl -s \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.extract-pr.outputs.PR_NUMBER }}/files" | \
             jq -r '.[].filename')  # 使用 jq 提取文件名
-          echo "$changed_files" | grep -v '^MAINTAINERS$' > changed_files.txt
+          echo "$changed_files" > changed_files.txt
           
           existing_comment=$(curl -s \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
