@@ -41,17 +41,18 @@
 # Note: 
 # - Each entry includes a `tag` that identifies the module or functionality, a `path` that points to the relevant code location, and `owners` who are the maintainers for that part of the codebase.
 # - If there are multiple entries, each entry should be separated by a blank line. Within a single entry, there is no need to insert blank lines between the tag, path, and owners.
+# - Each entry must be sorted in alphabetical order with tag as the keyword.
 
 # Below are existing maintainer entries, divided by module:
 
-tag: workflow
-path: .github
-owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
+tag: libc
+path: components/libc
+owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>
 
 tag: stm32f407-rt-spark
 path: bsp/stm32/stm32f407-rt-spark
 owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
-tag: libc
-path: components/libc
-owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>
+tag: workflow
+path: .github
+owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
