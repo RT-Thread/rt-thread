@@ -455,6 +455,13 @@
       "SUB_RTT_BSP": [
         "qemu-vexpress-a9"
       ]
+    },
+    {
+      "RTT_BSP": "xuantie",
+      "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-elf-newlib",
+      "SUB_RTT_BSP": [
+        "xuantie/smartl/e906"
+      ]
     }
   ]
 }

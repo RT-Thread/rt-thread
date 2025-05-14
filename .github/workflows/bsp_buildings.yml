@@ -188,6 +188,14 @@ jobs:
           /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
 
+      - name: Install Xuantie-900-gcc-elf-newlib Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-Xuantie-900-gcc-elf-newlib' && success() }}
+        run: |
+          wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1744884010580/Xuantie-900-gcc-elf-newlib-x86_64-V3.0.2-20250410.tar.gz
+          sudo tar -zxvf Xuantie-900-gcc-elf-newlib-x86_64-V3.0.2-20250410.tar.gz -C /opt
+          /opt/Xuantie-900-gcc-elf-newlib-x86_64-V3.0.2/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V3.0.2/bin" >> $GITHUB_ENV
+
       - name: Install k230 MUSL ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'riscv64-unknown-linux-musl-' && matrix.legs.RTT_BSP == 'K230' && success() }}
         run: |
