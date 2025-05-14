@@ -30,7 +30,7 @@ SECTIONS
     .rela.dyn    : ALIGN(8) { *(.rela .rela*) }
 
     .rodata      : {
-        *(.rodata*) 
+        *(.rodata*)
         *(.got)
         *(.got.plt)
         *(.plt)

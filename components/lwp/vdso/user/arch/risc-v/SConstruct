@@ -30,4 +30,6 @@ env.PrependENVPath('PATH', EXEC_PATH)
 
 target = os.path.join(vdso_path, 'user', 'build', 'libvdso.so')
 shared_lib = env.SharedLibrary(target=target, source=src)
+Clean(shared_lib, '{vdso_usr}/vdso.lds'.format(vdso_usr=vdso_usr))
+Clean(shared_lib, '.sconsign.dblite')
 env.Default(shared_lib)
