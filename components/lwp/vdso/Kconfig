@@ -1,4 +1,4 @@
 config RT_USING_VDSO
-    bool "vDSO (??Virtual Dynamic Shared Object)"
+    bool "vDSO (Virtual Dynamic Shared Object)"
     depends on (ARCH_ARMV8 || ARCH_RISCV)
     default y
