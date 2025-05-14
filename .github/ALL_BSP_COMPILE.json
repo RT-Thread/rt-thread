@@ -227,15 +227,19 @@
         "nxp/lpc/lpc54114-lite",
         "nxp/lpc/lpc176x",
         "nxp/imx/imx6sx/cortex-a9",
+        "nxp/imx/imx6ul",
         "nxp/imx/imxrt/imxrt1052-atk-commander",
         "nxp/imx/imxrt/imxrt1052-fire-pro",
         "nxp/imx/imxrt/imxrt1052-nxp-evk",
         "nxp/imx/imxrt/imxrt1052-seeed-ArchMix",
+        "nxp/imx/imxrt/imxrt1061-forlinx-OK1061-S",
         "nxp/imx/imxrt/imxrt1060-nxp-evk",
         "nxp/imx/imxrt/imxrt1064-nxp-evk",
         "nxp/imx/imxrt/imxrt1021-nxp-evk",
+        "nxp/imx/imxrt/imxrt1170-nxp-evk",
         "nxp/mcx/mcxn/frdm-mcxn947",
         "nxp/mcx/mcxn/frdm-mcxn236",
+        "nxp/mcx/mcxc/frdm-mcxc444",
         "nxp/mcx/mcxa/frdm-mcxa153",
         "nxp/mcx/mcxa/frdm-mcxa156",
         "renesas/ebf_qi_min_6m5",
@@ -453,7 +457,8 @@
       "RTT_TOOL_CHAIN": "sourcery-arm",
       "RTT_SMART_TOOL_CHAIN": "arm-linux-musleabi",
       "SUB_RTT_BSP": [
-        "qemu-vexpress-a9"
+        "qemu-vexpress-a9",
+        "nxp/imx/imx6ull-smart"
       ]
     }
   ]

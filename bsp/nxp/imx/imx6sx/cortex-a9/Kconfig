@@ -15,6 +15,7 @@ config SOC_MCIMX6X4
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select PKG_USING_NXP_IMX6SX_DRIVER
     default y
 
 config RT_USING_UART1
