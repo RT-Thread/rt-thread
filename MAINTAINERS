@@ -72,4 +72,5 @@ owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<75106
 tag: serial_v2
 path: components/drivers/serial/dev_serial_v2.c
 path: components/drivers/include/drivers/dev_serial_v2.h
+path: examples/utest/testcases/drivers/serial_v2
 owners: Chen Bei Dou(Ryan-CW-Code)<1831931681@qq.com>
