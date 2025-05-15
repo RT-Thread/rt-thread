@@ -5,5 +5,5 @@ src     = Glob('*.c')
 CPPPATH = [cwd]
 group   = []
 
-group = DefineGroup('LIBADT', src, depend = ['RT_USING_ADT_AVL'], CPPPATH = CPPPATH)
+group = DefineGroup('Utilities', src, depend = ['RT_USING_ADT_AVL'], CPPPATH = CPPPATH)
 Return('group')
