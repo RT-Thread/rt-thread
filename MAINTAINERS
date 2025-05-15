@@ -45,6 +45,14 @@
 
 # Below are existing maintainer entries, divided by module:
 
+tag: bsp_cvitek
+path: bsp/cvitek
+owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
+
+tag: bsp_k230
+path: bsp/k230
+owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
+
 tag: documentation
 path: documentation
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
