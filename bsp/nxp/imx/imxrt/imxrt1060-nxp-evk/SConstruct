@@ -15,6 +15,23 @@ except:
     print(RTT_ROOT)
     exit(-1)
 
+def bsp_pkg_check():
+    import subprocess
+
+    check_paths = [
+        os.path.join("packages", "nxp-imxrt-sdk-latest"),
+    ]
+
+    need_update = not all(os.path.exists(p) for p in check_paths)
+
+    if need_update:
+        print("\n==============================================================")
+        print("Dependency packages missing, please running 'pkgs --update'...")
+        print("==============================================================")
+        exit(1)
+
+RegisterPreBuildingAction(bsp_pkg_check)
+
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 DefaultEnvironment(tools=[])
 if rtconfig.PLATFORM == 'armcc':
@@ -61,7 +78,7 @@ imxrt_library = 'MIMXRT1060'
 rtconfig.BSP_LIBRARY_TYPE = imxrt_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, imxrt_library, 'SConscript')))
+objs.extend(SConscript(os.path.join("packages/nxp-imxrt-sdk-latest", imxrt_library, 'SConscript')))
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))

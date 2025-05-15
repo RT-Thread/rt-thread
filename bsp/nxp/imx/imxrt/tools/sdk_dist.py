@@ -15,8 +15,6 @@ def dist_do_building(BSP_ROOT, dist_dir=None):
     print("=> copy imxrt bsp library")
     library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
     library_dir  = os.path.join(dist_dir, 'libraries')
-    bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE), 
-                   os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
     
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))

@@ -45,6 +45,12 @@ Each peripheral supporting condition for this BSP is as follows:
 
 This BSP provides MDK 5 and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
+Then, the necessary libraries should be pulled; otherwise, the compilation will fail.
+
+```bash
+    pkgs --update
+```
+
 #### Hardware Connection
 
 Use a USB cable to connect the development board to the PC and turn on the power switch.
