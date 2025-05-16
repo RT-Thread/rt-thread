@@ -1,5 +1,6 @@
 # for module compiling
 import os
+Import('RTT_ROOT')
 Import('env')
 from building import *
 
