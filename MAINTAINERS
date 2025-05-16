@@ -61,6 +61,12 @@ tag: libc
 path: components/libc
 owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>
 
+tag: serial_v2
+path: components/drivers/serial/dev_serial_v2.c
+path: components/drivers/include/drivers/dev_serial_v2.h
+path: examples/utest/testcases/drivers/serial_v2
+owners: Chen Bei Dou(Ryan-CW-Code)<1831931681@qq.com>
+
 tag: stm32f407-rt-spark
 path: bsp/stm32/stm32f407-rt-spark
 owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
@@ -68,9 +74,3 @@ owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441
 tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
-
-tag: serial_v2
-path: components/drivers/serial/dev_serial_v2.c
-path: components/drivers/include/drivers/dev_serial_v2.h
-path: examples/utest/testcases/drivers/serial_v2
-owners: Chen Bei Dou(Ryan-CW-Code)<1831931681@qq.com>
