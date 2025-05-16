@@ -1,0 +1,35 @@
+import os
+import sys
+
+arguments = sys.argv[2]
+vdso_usr  = arguments
+vdso_path = os.path.join(vdso_usr, '..', '..', '..')
+
+EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
+PREFIX    = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
+DEVICE    = os.getenv('RTT_DEVICE') or ' -march=armv8-a -mtune=cortex-a53'
+
+CC      = PREFIX + 'gcc'
+CPP     = PREFIX + 'cpp'
+AS      = PREFIX + 'gcc'
+AR      = PREFIX + 'ar'
+LINK    = PREFIX + 'gcc'
+
+AFLAGS  = ' -x assembler-with-cpp'
+CFLAGS  = DEVICE + '  -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing -Wall -Wno-cpp -std=gnu99 -fdiagnostics-color=always -fPIC -O2'
+LFLAGS  = DEVICE + ' -Bsymbolic -Wl,--gc-sections,-u,system_vectors -T {path}/vdso.lds'.format(path=vdso_usr)
+CFLAGS += " -I . -I {vdso_path} ".format(vdso_path=vdso_path)
+
+src = Glob('*.c')
+env = Environment(tools=['gcc', 'link'],
+    AS   = AS,   ASFLAGS = AFLAGS,
+    CC   = CC,   CFLAGS  = CFLAGS,
+    CPP  = CPP,  AR      = AR,
+    LINK = LINK, LINKFLAGS = LFLAGS)
+env.PrependENVPath('PATH', EXEC_PATH)
+
+target = os.path.join(vdso_path, 'user', 'build', 'libvdso.so')
+shared_lib = env.SharedLibrary(target=target, source=src)
+Clean(shared_lib, '{vdso_usr}/vdso.lds'.format(vdso_usr=vdso_usr))
+Clean(shared_lib, '.sconsign.dblite')
+env.Default(shared_lib)
