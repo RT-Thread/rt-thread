@@ -1,0 +1,13 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('RT_UTEST_USING_AUDIO_DRIVER'):
+    src += Glob('tc_*.c')
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_AUDIO'], CPPPATH = CPPPATH)
+
+Return('group')
