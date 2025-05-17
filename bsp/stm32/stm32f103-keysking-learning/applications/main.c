@@ -17,7 +17,7 @@
 #endif /* RT_USING_NANO */
 
 /* defined the LED0 pin: PC13 */
-#define LED0_PIN    GET_PIN(A, 6)
+#define LED0_PIN    GET_PIN(A, 7)
 
 int main(void)
 {
