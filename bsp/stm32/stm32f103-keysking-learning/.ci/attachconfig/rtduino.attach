@@ -1,0 +1,2 @@
+# scons: --strict
+CONFIG_BSP_USING_ARDUINO=y

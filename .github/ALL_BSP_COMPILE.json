@@ -135,6 +135,7 @@
         "stm32/stm32f103-fire-arbitrary",
         "stm32/stm32f103-gizwits-gokitv21",
         "stm32/stm32f103-hw100k-ibox",
+        "stm32/stm32f103-keysking-learning",
         "stm32/stm32f103-onenet-nbiot",
         "stm32/stm32f103-yf-ufun",
         "stm32/stm32f103-ys-f1pro",
