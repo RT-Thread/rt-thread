@@ -1,0 +1,16 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+system.use_nano:
+  <<: *scons
+  kconfig:
+    CONFIG_RT_USING_NANO=y
+devices.gpio:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_GPIO=y
+devices.uart:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_UART=y
+    - CONFIG_USING_SERIAL=y
