@@ -16,7 +16,7 @@
 #include <rtdevice.h>
 #endif /* RT_USING_NANO */
 
-/* defined the LED0 pin: PC13 */
+/* defined the LED0(GREEN)  pin: PA7 */
 #define LED0_PIN    GET_PIN(A, 7)
 
 int main(void)
