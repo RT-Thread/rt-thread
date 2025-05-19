@@ -13,5 +13,19 @@ if [ $result -ne 0 ]; then
 fi
 
 pushd $BSP_PATH/rttpkgtool > /dev/null
-DPT_PATH_KERNEL=$BSP_PATH ./script/mkpkg.sh
+
+./script/sdcard.sh > /dev/null
+result=$?
+
+if [ $result -eq 1 ]; then
+	echo "ERROR: The kernel file to be flashed does not exist!"
+	exit 1
+fi
+if [ $result -eq 2 ]; then
+	echo "ERROR: The USB/SDcard does not exist!"
+	exit 1
+fi
+
+echo "INFO: The kernel file has been flashed to the USB/SDcard successfully!"
+
 popd > /dev/null
