@@ -320,7 +320,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, env, project_name, project_path=No
 
     # Output summary
     if removed_files:
-        print(f"Removed {len(removed_files)} unused source files")
+        print("Removed {} unused source files".format(len(removed_files)))
         log_file = os.path.join(dist_dir, 'cleanup.log')
         with open(log_file, 'w') as f:
             f.write("Removed source files:\n")
@@ -328,13 +328,12 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, env, project_name, project_path=No
             if removed_dirs:
                 f.write("\n\nRemoved empty directories:\n")
                 f.write('\n'.join(removed_dirs))
-        print(f"Details have been written to {log_file}")
+        print("Details have been written to {}".format(log_file))
     else:
         print("No unused source files found")
 
     # Make zip package like MkDist
     if project_path is None:
         zip_dist(dist_dir, project_name)
-        print(f"Distribution package created: {dist_dir}.zip")
-
+        print("Distribution package created: {}.zip".format(dist_dir))
     print('=> Distribution stripped successfully')

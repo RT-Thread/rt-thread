@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # File      : building.py
 # This file is part of RT-Thread RTOS
