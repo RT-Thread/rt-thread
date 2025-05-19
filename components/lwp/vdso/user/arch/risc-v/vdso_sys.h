@@ -27,7 +27,7 @@
 #define arch_counter_enforce_ordering \
     __asm__ volatile("fence rw, rw" ::: "memory")
 
-static inline uint64_t __arch_get_hw_counter()
+static inline uint64_t __arch_get_hw_counter(void)
 {
     uint64_t res;
     __asm__ volatile("rdtime %0" : "=r"(res));

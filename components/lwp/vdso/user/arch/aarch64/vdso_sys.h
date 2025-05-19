@@ -33,7 +33,7 @@
     : "=r" (tmp) : "r" (_val));                    \
 } while (0)
 
-static inline uint64_t __arch_get_hw_counter()
+static inline uint64_t __arch_get_hw_counter(void)
 {
     uint64_t res;
 

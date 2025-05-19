@@ -53,7 +53,7 @@ __rt_vdso_getcoarse(struct timespec *ts, clockid_t clock, const struct vdso_data
 
     do {
         seq    = rt_vdso_read_begin(vd);
-        cycles = __arch_get_hw_counter(vd->clock_mode, vd);
+        cycles = __arch_get_hw_counter();
         if (unlikely(!rt_vdso_cycles_ready(cycles)))
             return -1;
         ns    = vdso_ts->tv_nsec;
