@@ -368,6 +368,7 @@
 #define RT_USING_LDSO
 #define LWP_USING_TERMINAL
 #define LWP_PTY_MAX_PARIS_LIMIT 64
+#define RT_USING_VDSO
 
 /* Using USB legacy version */
 
@@ -560,9 +561,12 @@
 /* Drivers Configuration */
 
 #define BSP_USING_HARDLOCK
+#define BSP_USING_SDIO
+#define BSP_USING_SDIO0
+#define BSP_SD_MNT_DEVNAME "sd0p1"
 /* end of Drivers Configuration */
 #define BOARD_fpgac908
 #define __STACKSIZE__ 65536
-#define BSP_ROOTFS_TYPE_CROMFS
+#define BSP_ROOTFS_TYPE_ELMFAT
 
 #endif
