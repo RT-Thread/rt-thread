@@ -13,9 +13,10 @@ CanMV-K230 Board Support Package 使用说明
 	- [3.3. 下载 RT-Thread 并更新依赖的软件包](#33-下载-rt-thread-并更新依赖的软件包)
 	- [3.4. 构建](#34-构建)
 - [4. 采用 rttpkgtool 对内核打包](#4-采用-rttpkgtool-对内核打包)
-- [5. 制作基础 SD 卡](#5-制作基础-sd-卡)
-- [6. 单独更新 RT-Thread 内核](#6-单独更新-rt-thread-内核)
-- [7. 上电启动](#7-上电启动)
+- [5. 烧写内核](#5-烧写内核)
+	- [5.1. 制作基础 SD 卡](#51-制作基础-sd-卡)
+	- [5.2. 单独更新 RT-Thread 内核](#52-单独更新-rt-thread-内核)
+- [6. 上电启动](#6-上电启动)
 
 <!-- /TOC -->
 
@@ -156,7 +157,14 @@ The image file is located at /home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool/out
 
 如果希望重新下载 rttpkgtool 以及 opensbi，可以删除 `rt-thread/bsp/k230` 下的 `rttpkgtool` 目录后重新执行 `build.sh` 脚本即可。
 
-# 5. 制作基础 SD 卡
+# 5. 烧写内核
+
+我们采用 SD 卡方式启动开发板，基于 SD 卡烧写内核的步骤可以大致分为两步：
+
+- 制作基础 SD 卡。**注意本步骤只要做一次**，以后只要单独更新 RT-Thread 内核的镜像即可。
+- 单独更新 RT-Thread 内核
+
+## 5.1. 制作基础 SD 卡
 
 在单独更新内核镜像之前，我们需要先制作一个基础的 SD 卡。可以参考 K230 RTOS Only SDK 用户指南中的 “如何编译固件”：<https://developer.canaan-creative.com/k230_rtos/zh/dev/userguide/how_to_build.html> 生成一个完整的 image。
 
@@ -187,27 +195,32 @@ The image file is located at /home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool/out
 
 然后参考 K230 RTOS Only SDK 用户指南中的 “如何烧录固件”：<https://developer.canaan-creative.com/k230_rtos/zh/dev/userguide/how_to_flash.html>, 通过 SD 卡烧录。熟悉 Windows 平台的可以使用 balenaEtcher。烧录后，SD 卡上会自动分区和格式化。
 
-**注意本小节的操作只要做一次**。以后只要单独更新 RT-Thread 内核的镜像即可。
+## 5.2. 单独更新 RT-Thread 内核
 
-# 6. 单独更新 RT-Thread 内核
-
-我们可以利用 rttpkgtool 提供的脚本 `sdcard.sh` 快速更新打包后生成的内核镜像 `opensbi_rtt_system.bin`。
+我们可以利用 rttpkgtool 提供的脚本 `sdcard.sh` 快速更新 SD 卡中打包后生成的内核镜像 `opensbi_rtt_system.bin`。
 
 先将 SD 卡通过 USB 读卡器接入 Ubuntu 机器。以下假设 USB 读卡器设备枚举为 `/dev/sdb`。如果不同请阅读 `sdcard.sh` 脚本代码。
 
+为方便使用，在本 bsp 下提供了一份封装脚本 `flashsd.sh` 封装了对 rttpkgtool 的 `sdcard.sh` 脚本的调用。
+
 ```shell
 $ cd rt-thread/bsp/k230 # 确保在本 bsp 目录下
-$ ./rttpkgtool/script/sdcard.sh
-SRC:  /home/u/ws/canaan/rt-thread/bsp/k230/rttpkgtool/output/k230_rtos_01studio_defconfig/images/opensbi/opensbi_rtt_system.bin
-DEST: /dev/sdb
+$ ./flashsd.sh 
+BSP_PATH: /home/u/ws/canaan/rt-thread/bsp/k230
+rttpkgtool already exists
+~/ws/canaan/rt-thread/bsp/k230/rttpkgtool ~/ws/canaan/rt-thread/bsp/k230
+Already on 'for-k230'
+Your branch is up to date with 'origin/for-k230'.
+Already up to date.
+~/ws/canaan/rt-thread/bsp/k230
 [sudo] password for u: 
-766+1 records in
-766+1 records out
-392569 bytes (393 kB, 383 KiB) copied, 0.0886941 s, 4.4 MB/s
-Done!
+767+1 records in
+767+1 records out
+393140 bytes (393 kB, 384 KiB) copied, 0.121172 s, 3.2 MB/s
+INFO: The kernel file has been flashed to the USB/SDcard successfully!
 ```
 
-# 7. 上电启动
+# 6. 上电启动
 
 将 SD 卡插入 01Studio 开发板的 SD 卡槽。
 

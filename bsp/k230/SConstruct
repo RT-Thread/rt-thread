@@ -56,3 +56,6 @@ generate_ldscript('link.lds', 'link.lds.generated')
 
 # make a building
 DoBuilding(TARGET, objs)
+
+Clean(TARGET, 'link.lds.generated')
+Clean(TARGET, 'build')
