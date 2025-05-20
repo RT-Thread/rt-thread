@@ -25,8 +25,17 @@ config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
 
-config BSP_ROOTFS_TYPE_CROMFS
-    bool "Use CROMFS as ROOTFS"
-    select RT_USING_DFS_CROMFS
-    select PKG_USING_ZLIB
-    default y
+choice BSP_ROOTFS_TYPE
+    prompt "Root File-System type"
+    default BSP_ROOTFS_TYPE_ELMFAT
+
+    config BSP_ROOTFS_TYPE_ELMFAT
+        bool "Use Elm-chan FAT File-System"
+        select RT_USING_DFS_ELMFAT
+
+    config BSP_ROOTFS_TYPE_CROMFS
+        bool "Use Compressed ROM File-System (ReadOnly)"
+        select RT_USING_DFS_CROMFS
+        select PKG_USING_ZLIB
+        select PKG_USING_ZLIB_LATEST_VERSION
+endchoice
