@@ -158,6 +158,11 @@ static int fstab_mnt_init(void)
     msh_exec_script("fstab.sh", 16);
 #endif
 
+#ifdef RT_USING_DFS_PROCFS
+    mkdir("/proc", 0755);
+    dfs_mount(RT_NULL, "/proc", "procfs", 0, RT_NULL);
+#endif
+
     LOG_I("File system initialization done");
 
     return 0;

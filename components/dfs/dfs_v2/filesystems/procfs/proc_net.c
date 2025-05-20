@@ -47,6 +47,7 @@ static void *seq_next(struct dfs_seq_file *seq, void *data, off_t *index)
     return NULL;
 }
 
+#if LWIP_ROUTE
 static void route_show(const char *name, uint32_t ip_addr, uint32_t netmask, void *parameter)
 {
     struct dfs_seq_file *seq = (struct dfs_seq_file *)parameter;
@@ -66,6 +67,7 @@ static void route_show(const char *name, uint32_t ip_addr, uint32_t netmask, voi
     dfs_seq_printf(seq, "%d ", 0);
     dfs_seq_printf(seq, "%d\n", 0);
 }
+#endif
 
 static int seq_show(struct dfs_seq_file *seq, void *data)
 {
