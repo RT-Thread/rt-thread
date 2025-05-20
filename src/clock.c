@@ -74,6 +74,24 @@ rt_tick_t rt_tick_get(void)
 RTM_EXPORT(rt_tick_get);
 
 /**
+ * @brief    This function will return delta tick from last_time.
+ *
+ * @param    last_time to consider
+ * 
+ * @return   Return delta tick.
+ */
+ rt_tick_t rt_delta_tick_get(rt_tick_t last_time)
+ {
+     rt_tick_t tnow = rt_tick_get();
+     if (tnow >= last_time) {
+         return (tnow - last_time);
+     } else {
+         return (UINT32_MAX - last_time + tnow + 1);
+     }
+ }
+ RTM_EXPORT(rt_delta_tick_get);
+
+/**
  * @brief    This function will set current tick.
  *
  * @param    tick is the value that you will set.
