@@ -86,7 +86,7 @@ RTM_EXPORT(rt_tick_get);
      if (tnow >= last_time) {
          return (tnow - last_time);
      } else {
-         return (UINT32_MAX - last_time + tnow + 1);
+         return (RT_TICK_MAX - last_time + tnow + 1);
      }
  }
  RTM_EXPORT(rt_delta_tick_get);
