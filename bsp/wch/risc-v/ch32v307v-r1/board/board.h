@@ -21,6 +21,10 @@
 #define SRAM_SIZE  96
 #define SRAM_END (0x20000000 + SRAM_SIZE * 1024)
 
+#define CH32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
+#define CH32_FLASH_SIZE             (224 * 1024)
+#define CH32_FLASH_END_ADDRESS      ((uint32_t)(CH32_FLASH_START_ADRESS + CH32_FLASH_SIZE))
+
 extern int _ebss, _susrstack;
 #define HEAP_BEGIN  ((void *)&_ebss)
 #define HEAP_END    ((void *)&_susrstack)
