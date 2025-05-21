@@ -149,11 +149,11 @@ def GenerateCFiles(env, project, project_name):
                 if 'LIBS' in group.keys():
                     for f in group['LIBS']:
                         LINKER_LIBS += ' ' + f.replace("\\", "/") + '.lib'
-        cm_file.write("SET(CMAKE_EXE_LINKER_FLAGS \""+ re.sub(LINKER_FLAGS + '(\s*)', LINKER_FLAGS + ' ${CMAKE_SOURCE_DIR}/', LFLAGS) + LINKER_LIBS + "\")\n\n")
+        cm_file.write("SET(CMAKE_EXE_LINKER_FLAGS \""+ re.sub(LINKER_FLAGS + r'(\s*)', LINKER_FLAGS + r' ${CMAKE_SOURCE_DIR}/', LFLAGS) + LINKER_LIBS + "\")\n\n")
 
         # get the c/cpp standard version from compilation flags
         # not support the version with alphabet in `-std` param yet
-        pattern = re.compile('-std=[\w+]+')
+        pattern = re.compile(r'-std=[\w+]+')
         c_standard = 11
         if '-std=' in CFLAGS:
             c_standard = re.search(pattern, CFLAGS).group(0)
