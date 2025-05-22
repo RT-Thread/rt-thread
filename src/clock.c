@@ -85,7 +85,6 @@ rt_tick_t rt_tick_get_delta(rt_tick_t base)
     rt_tick_t tnow = rt_tick_get();
     if (tnow >= base)
         return tnow - base;
-    
     return RT_TICK_MAX - base + tnow + 1;
 }
 RTM_EXPORT(rt_tick_get_delta);
