@@ -411,7 +411,6 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
-    recv_len = 0;
     counter = __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
 
     if (counter <= uart->dma_rx.remaining_cnt)
