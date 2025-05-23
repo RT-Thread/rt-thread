@@ -1,5 +1,15 @@
-#ifndef GD32F450Z_LCD_H
-#define GD32F450Z_LCD_H
+/*
+ * Copyright (c) 2006-2025, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2025-05-23     godmial      Refactor to conform to RT-Thread coding style.
+ */
+
+#ifndef __DRV_LCD_H__
+#define __DRV_LCD_H__
 
 #include <stdint.h>
 #include <string.h>
@@ -12,61 +22,59 @@
  * Definitions
  ******************************************************************************/
 
+/* LCD resolution and pixel format */
 #define LCD_WIDTH             800
 #define LCD_HEIGHT            480
 #define LCD_FB_BYTE_PER_PIXEL 1
 
+/* Timing parameters for horizontal synchronization */
 #define HORIZONTAL_SYNCHRONOUS_PULSE 10
 #define HORIZONTAL_BACK_PORCH        150
 #define ACTIVE_WIDTH                 800
 #define HORIZONTAL_FRONT_PORCH       15
 
+/* Timing parameters for vertical synchronization */
 #define VERTICAL_SYNCHRONOUS_PULSE 10
 #define VERTICAL_BACK_PORCH        140
 #define ACTIVE_HEIGHT              480
 #define VERTICAL_FRONT_PORCH       40
 
+/* Framebuffer address in SDRAM */
+#define LCD_FRAME_BUF_ADDR 0xC0000000 /* SDRAM address for LCD frame buffer */
 
-#define LCD_FRAME_BUF_ADDR 0XC0000000
+/* Pen color definitions (RGB565) */
+#define WHITE   0xFFFF /* White */
+#define BLACK   0x0000 /* Black */
+#define BLUE    0x001F /* Blue */
+#define BRED    0xF81F /* Blue-Red */
+#define GRED    0xFFE0 /* Green-Red */
+#define GBLUE   0x07FF /* Green-Blue */
+#define RED     0xF800 /* Red */
+#define MAGENTA 0xF81F /* Magenta */
+#define GREEN   0x07E0 /* Green */
+#define CYAN    0x7FFF /* Cyan */
+#define YELLOW  0xFFE0 /* Yellow */
+#define BROWN   0xBC40 /* Brown */
+#define BRRED   0xFC07 /* Brownish red */
+#define GRAY    0x8430 /* Gray */
 
-//画笔颜色
-#define WHITE   0xFFFF
-#define BLACK   0x0000
-#define BLUE    0x001F
-#define BRED    0XF81F
-#define GRED    0XFFE0
-#define GBLUE   0X07FF
-#define RED     0xF800
-#define MAGENTA 0xF81F
-#define GREEN   0x07E0
-#define CYAN    0x7FFF
-#define YELLOW  0xFFE0
-#define BROWN   0XBC40 //棕色
-#define BRRED   0XFC07 //棕红色
-#define GRAY    0X8430 //灰色
-//GUI颜色
+/* GUI color definitions */
+#define DARKBLUE   0x01CF /* Dark blue */
+#define LIGHTBLUE  0x7D7C /* Light blue */
+#define GRAYBLUE   0x5458 /* Grayish blue */
+#define LIGHTGREEN 0x841F /* Light green */
+#define LGRAY      0xC618 /* Light gray (panel background) */
+#define LGRAYBLUE  0xA651 /* Light gray-blue (layer color) */
+#define LBBLUE     0x2B12 /* Light brown-blue (selected item reverse color) */
 
-#define DARKBLUE  0X01CF //深蓝色
-#define LIGHTBLUE 0X7D7C //浅蓝色
-#define GRAYBLUE  0X5458 //灰蓝色
-//以上三色为PANEL的颜色
-
-#define LIGHTGREEN 0X841F //浅绿色
-//#define LIGHTGRAY        0XEF5B //浅灰色(PANNEL)
-#define LGRAY 0XC618     //浅灰色(PANNEL),窗体背景色
-
-#define LGRAYBLUE 0XA651 //浅灰蓝色(中间层颜色)
-#define LBBLUE    0X2B12 //浅棕蓝色(选择条目的反色)
-
-
+/* Frame buffer declaration based on compiler */
 #if defined(__CC_ARM) || defined(__ARMCC_VERSION)
-// Keil MDK 编译器
+/* Keil MDK Compiler */
 extern uint16_t ltdc_lcd_framebuf0[800][480] __attribute__((at(LCD_FRAME_BUF_ADDR)));
 #elif defined(__GNUC__)
-// GCC 编译器 (如 RT-Thread 使用的 GCC)
-extern uint16_t ltdc_lcd_framebuf0[10][10];
+/* GCC Compiler (used by RT-Thread) */
+extern uint16_t ltdc_lcd_framebuf0[10][10]; /* Dummy for GCC compilation */
 #endif
-
 
 /*******************************************************************************
  * API
@@ -76,11 +84,15 @@ extern uint16_t ltdc_lcd_framebuf0[10][10];
 extern "C" {
 #endif
 
-
+/**
+ * @brief    Configure the LCD display controller.
+ *
+ * @note     This function initializes display timing and output settings.
+ */
 void lcd_disp_config(void);
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif
 
-#endif /* GD32F450Z_LCD_H */
+#endif /* __DRV_LCD_H__ */
