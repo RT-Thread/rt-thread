@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH        ='risc-v'
-CPU         ='virt64'
+CPU         =''
 CROSS_TOOL  ='gcc'
 
 RTT_ROOT = os.getenv('RTT_ROOT') or os.path.join(os.getcwd(), '..', '..')
@@ -24,6 +24,7 @@ if PLATFORM == 'gcc':
     PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
+    CPP     = PREFIX + 'cpp'
     AS      = PREFIX + 'gcc'
     AR      = PREFIX + 'ar'
     LINK    = PREFIX + 'gcc'
@@ -33,6 +34,7 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     DEVICE  = ' -mcmodel=medany -march=rv64imafdc -mabi=lp64 '
+    CPPFLAGS= ' -nostdinc -undef -E -P -x assembler-with-cpp'
     CFLAGS  = DEVICE + '-ffreestanding -flax-vector-conversions -Wno-cpp -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields -fdiagnostics-color=always'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ '
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds' + ' -lsupc++ -lgcc -static'
