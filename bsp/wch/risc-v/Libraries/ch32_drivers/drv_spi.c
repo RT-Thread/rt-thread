@@ -322,8 +322,9 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
         /*  min prescaler 256 */
         spi_handle->Init.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
     }
+    SystemCoreClockUpdate();
     LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
-        HAL_RCC_GetSysClockFreq(),
+        SystemCoreClock,
         SPI_APB_CLOCK,
         cfg->max_hz,
         spi_handle->Init.SPI_BaudRatePrescaler);
