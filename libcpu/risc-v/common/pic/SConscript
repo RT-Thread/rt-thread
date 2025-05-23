@@ -1,0 +1,23 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_PIC']):
+    Return('group')
+
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+if GetDepend(['RT_PIC_RISCV_AIA']):
+    src += ['pic-riscv-aplic.c', 'pic-riscv-imsic.c']
+
+if GetDepend(['RT_PIC_RISCV_INTC']):
+    src += ['pic-riscv-intc.c']
+
+if GetDepend(['RT_PIC_SIFIVE_PLIC']):
+    src += ['pic-sifive-plic.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

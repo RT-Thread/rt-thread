@@ -2,14 +2,50 @@
 
 from building import *
 
+Import('rtconfig')
+
 cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
-CPPPATH = [cwd]
-ASFLAGS = ' -I ' + cwd
+src     = Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd, cwd + '/include']
 
-if not GetDepend('RT_USING_HW_ATOMIC'):
-    SrcRemove(src, 'atomic_riscv.c')
+if rtconfig.PLATFORM in ['gcc']:
+    src += Glob('*_gcc.S')
 
-group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+if not GetDepend('RT_USING_LWP'):
+    SrcRemove(src, ['syscall.c'])
+
+if GetDepend('ARCH_MM_MMU'):
+    SrcRemove(src, ['mmu_dummy.c'])
+else:
+    SrcRemove(src, ['mmu.c'])
+
+if GetDepend('ARCH_RISCV_M_MODE'):
+    SrcRemove(src, ['console.c', 'cpu_sbi.c', 'sbi.c'])
+
+if GetDepend('RT_USING_DM'):
+    SrcRemove(src, ['interrupt.c', 'console.c'])
+else:
+    SrcRemove(src, ['setup.c'])
+
+    if GetDepend('RT_USING_SMP'):
+        cpus_nr = GetConfigValue('RT_CPUS_NR')
+        hartid_map = open(cwd + '/hartid.map', 'w')
+
+        for cpu in range(int(cpus_nr)):
+            hartid_map.write("[{}] = {},\n".format(cpu, cpu))
+
+        hartid_map.close()
+
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
+
+# build for sub-directory
+list = os.listdir(cwd)
+objs = []
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+group = group + objs
 
 Return('group')

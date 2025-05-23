@@ -479,7 +479,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
             if (debug && rt_dbg_ops)
             {
                 lwp->debug = debug;
-                rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)0);
+                rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)rt_hw_master_cpu_id());
             }
 
             rt_thread_startup(thread);
