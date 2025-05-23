@@ -100,7 +100,7 @@ rt_inline void rt_list_remove(rt_list_t *n)
  */
 rt_inline int rt_list_isempty(const rt_list_t *l)
 {
-    return l->next == l;
+    return l->next == l && l->prev == l;
 }
 
 /**
