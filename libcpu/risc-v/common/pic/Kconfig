@@ -1,0 +1,18 @@
+config RT_PIC_RISCV_AIA
+    bool "RISC-V AIA (Advanced Interrupt Architecture)"
+    depends on RT_USING_PIC
+    help
+      with APLIC (Advanced Platform-Level Interrupt Controller) and
+           IMSIC (Incoming MSI Controller)
+
+config RT_PIC_RISCV_CLIC
+    bool "RISC-V CLIC (Core-Local Interrupt Controller)"
+    depends on RT_USING_PIC
+
+config RT_PIC_RISCV_INTC
+    bool "RISC-V CPU interrupt controller"
+    depends on RT_USING_PIC
+
+config RT_PIC_SIFIVE_PLIC
+    bool "SiFive PLIC (Platform-Level Interrupt Controller)"
+    depends on RT_USING_PIC

@@ -196,6 +196,10 @@ void rt_hw_us_delay(rt_uint32_t us);
 
 int rt_hw_cpu_id(void);
 
+#ifndef rt_hw_master_cpu_id
+#define rt_hw_master_cpu_id() 0
+#endif
+
 #if defined(RT_USING_SMP) || defined(RT_USING_AMP)
 /**
  *  ipi function

@@ -750,8 +750,8 @@ void rt_timer_check(void)
     RT_ASSERT(rt_interrupt_get_nest() > 0);
 
 #ifdef RT_USING_SMP
-    /* Running on core 0 only */
-    if (rt_cpu_get_id() != 0)
+    /* Running on master core only */
+    if (rt_cpu_get_id() != rt_hw_master_cpu_id())
     {
         return;
     }

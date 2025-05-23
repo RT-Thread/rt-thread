@@ -3313,7 +3313,7 @@ rt_thread_t sys_thread_create(void *arg[])
 
     if (lwp->debug)
     {
-        rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)0);
+        rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)rt_hw_master_cpu_id());
     }
 
     LWP_LOCK(lwp);
@@ -3426,7 +3426,7 @@ long _sys_clone(void *arg[])
 
     if (lwp->debug)
     {
-        rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)0);
+        rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)rt_hw_master_cpu_id());
     }
 
     LWP_LOCK(lwp);

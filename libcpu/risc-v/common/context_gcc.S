@@ -1,319 +1,280 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018/10/28     Bernard      The unify RISC-V porting implementation
- * 2018/12/27     Jesven       Add SMP support
- * 2020/11/20     BalanceTWK   Add FPU support
- * 2022/12/28     WangShun     Add macro to distinguish whether FPU is supported
- * 2023/03/19     Flyingcys    Add riscv_32e support
+ * 2018-10-28     Bernard      The unify RISC-V porting implementation
+ * 2018-12-27     Jesven       Add SMP support
+ * 2021-02-02     lizhirui     Add userspace support
+ * 2022-10-22     Shell        Support User mode RVV;
+ *                             Trimming process switch context
+ * 2025-04-20     GuEe-GUI     Support SMP
  */
 
-#define __ASSEMBLY__
-#include "cpuport.h"
+#include "asm.h"
+#include "csr.h"
+
+#define REG_IDX(name)   RT_HW_SWITCH_CONTEXT_##name
+
+.macro SAVE_REG reg, index
+    REG_S   \reg, \index * SZREG(sp)
+.endm
+
+.macro LOAD_REG reg, index
+    REG_L   \reg, \index * SZREG(sp)
+.endm
+
+.macro SAVE_CONTEXT
+    addi        sp, sp, -(RT_HW_SWITCH_CONTEXT_SIZE * SZREG)
+    SAVE_REG    tp, REG_IDX(TP)
+    SAVE_REG    ra, REG_IDX(RA)
+    SAVE_REG    s0, REG_IDX(S0)
+    SAVE_REG    s1, REG_IDX(S1)
+    csrr        s1, CSR_STATUS
+    li          s0, (SR_PP)
+    or          s1, s1, s0
+    SAVE_REG    s1, REG_IDX(XSTATUS)
+.endm
+
+.macro RESTORE_CONTEXT
+    LOAD_REG    s1, REG_IDX(XSTATUS)
+    csrw        CSR_STATUS, s1
+    LOAD_REG    s1, REG_IDX(S1)
+    LOAD_REG    s0, REG_IDX(S0)
+    LOAD_REG    ra, REG_IDX(RA)
+    LOAD_REG    tp, REG_IDX(TP)
+    addi        sp, sp, RT_HW_SWITCH_CONTEXT_SIZE * SZREG
+    csrw        CSR_EPC, ra
+.endm
+
+    .section ".text","ax"
 
 #ifdef RT_USING_SMP
-#define rt_hw_interrupt_disable rt_hw_local_irq_disable
-#define rt_hw_interrupt_enable  rt_hw_local_irq_enable
-#endif
-
 /*
- * rt_base_t rt_hw_interrupt_disable(void);
- */
-    .globl rt_hw_interrupt_disable
-rt_hw_interrupt_disable:
-    csrrci a0, mstatus, 8
-    ret
-
-/*
- * void rt_hw_interrupt_enable(rt_base_t level);
- */
-    .globl rt_hw_interrupt_enable
-rt_hw_interrupt_enable:
-    csrw mstatus, a0
-    ret
-
-/*
- * #ifdef RT_USING_SMP
- * void rt_hw_context_switch_to(rt_ubase_t to, stuct rt_thread *to_thread);
- * #else
- * void rt_hw_context_switch_to(rt_ubase_t to);
- * #endif
- * a0 --> to
+ * void rt_hw_context_switch_to(rt_ubase_t to, struct rt_thread *to_thread);
+ * a0 --> to (thread stack)
  * a1 --> to_thread
  */
-    .globl rt_hw_context_switch_to
+.globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
-    la t0, __rt_rvstack
-#ifdef SOC_RISCV_FAMILY_CH32
-/* 
- * if it is an assembly entry code, the SP offset value is determined by the assembly code,
- * but the C code is determined by the compiler, so we subtract 512 here as a reservation.
- * When entering the interrupt function of C code, the compiler automatically presses the stack
- * into the task stack. We can only change the SP value used by the calling function after switching
- * the interrupt stack.This problem can be solved by modifying the interrupt to the assembly entry,
- * and there is no need to reserve 512 bytes. You only need to switch the interrupt stack at the
- * beginning of the interrupt function 
-*/
-    addi t0, t0, -512 // for ch32
-#endif /* SOC_RISCV_FAMILY_CH32 */
-    csrw mscratch,t0
+    REG_L   sp, (a0)
 
-    LOAD sp, (a0)
+    /* Reserved to_thread */
+    mv      s1, a1
 
-#ifdef RT_USING_SMP
-    mv   a0,   a1
-    call  rt_cpus_lock_status_restore
+    mv      a0, s1
+    call    rt_cpus_lock_status_restore
+#ifdef RT_USING_SMART
+    mv      a0, s1
+    call    lwp_user_setting_restore
 #endif
-    LOAD a0,   2 * REGBYTES(sp)
-    csrw mstatus, a0
-    j    rt_hw_context_switch_exit
+
+    j       _context_switch_exit
 
 /*
- * #ifdef RT_USING_SMP
  * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread);
- * #else
- * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
- * #endif
- *
- * a0 --> from
- * a1 --> to
+ * a0 --> from (from_thread stack)
+ * a1 --> to (to_thread stack)
  * a2 --> to_thread
  */
-    .globl rt_hw_context_switch
+.globl rt_hw_context_switch
 rt_hw_context_switch:
-    /* saved from thread context
-     *     x1/ra       -> sp(0)
-     *     x1/ra       -> sp(1)
-     *     mstatus.mie -> sp(2)
-     *     x(i)        -> sp(i-4)
-     */
-#ifdef ARCH_RISCV_FPU
-    addi    sp, sp, -32 * FREGBYTES
+    SAVE_CONTEXT
+    mv      a3, sp
+    REG_S   a3, (a0)            /* Store sp in preempted tasks TCB */
+    REG_L   a0, (a1)            /* Get new task stack pointer */
+    mv      sp, a0
 
-    FSTORE  f0, 0 * FREGBYTES(sp)
-    FSTORE  f1, 1 * FREGBYTES(sp)
-    FSTORE  f2, 2 * FREGBYTES(sp)
-    FSTORE  f3, 3 * FREGBYTES(sp)
-    FSTORE  f4, 4 * FREGBYTES(sp)
-    FSTORE  f5, 5 * FREGBYTES(sp)
-    FSTORE  f6, 6 * FREGBYTES(sp)
-    FSTORE  f7, 7 * FREGBYTES(sp)
-    FSTORE  f8, 8 * FREGBYTES(sp)
-    FSTORE  f9, 9 * FREGBYTES(sp)
-    FSTORE  f10, 10 * FREGBYTES(sp)
-    FSTORE  f11, 11 * FREGBYTES(sp)
-    FSTORE  f12, 12 * FREGBYTES(sp)
-    FSTORE  f13, 13 * FREGBYTES(sp)
-    FSTORE  f14, 14 * FREGBYTES(sp)
-    FSTORE  f15, 15 * FREGBYTES(sp)
-    FSTORE  f16, 16 * FREGBYTES(sp)
-    FSTORE  f17, 17 * FREGBYTES(sp)
-    FSTORE  f18, 18 * FREGBYTES(sp)
-    FSTORE  f19, 19 * FREGBYTES(sp)
-    FSTORE  f20, 20 * FREGBYTES(sp)
-    FSTORE  f21, 21 * FREGBYTES(sp)
-    FSTORE  f22, 22 * FREGBYTES(sp)
-    FSTORE  f23, 23 * FREGBYTES(sp)
-    FSTORE  f24, 24 * FREGBYTES(sp)
-    FSTORE  f25, 25 * FREGBYTES(sp)
-    FSTORE  f26, 26 * FREGBYTES(sp)
-    FSTORE  f27, 27 * FREGBYTES(sp)
-    FSTORE  f28, 28 * FREGBYTES(sp)
-    FSTORE  f29, 29 * FREGBYTES(sp)
-    FSTORE  f30, 30 * FREGBYTES(sp)
-    FSTORE  f31, 31 * FREGBYTES(sp)
+    /* Backup thread self */
+    mv      s1, a2
 
+    mv      a0, s1
+    call    rt_cpus_lock_status_restore
+#ifdef RT_USING_SMART
+    mv      a0, s1
+    call    lwp_user_setting_restore
 #endif
-#ifndef __riscv_32e
-    addi  sp,  sp, -32 * REGBYTES
-#else
-    addi  sp,  sp, -16 * REGBYTES
-#endif
+    j       _context_switch_exit
 
-    STORE sp,  (a0)
+#define EXP_FRAME   t0
+#define FROM_SPP    t1
+#define TO_SPP      t2
+#define TO_TCB      a4
+#define TMP         a5
 
-    STORE x1,   0 * REGBYTES(sp)
-    STORE x1,   1 * REGBYTES(sp)
-
-    csrr a0, mstatus
-    andi a0, a0, 8
-    beqz a0, save_mpie
-    li   a0, 0x80
-save_mpie:
-    STORE a0,   2 * REGBYTES(sp)
-
-    STORE x4,   4 * REGBYTES(sp)
-    STORE x5,   5 * REGBYTES(sp)
-    STORE x6,   6 * REGBYTES(sp)
-    STORE x7,   7 * REGBYTES(sp)
-    STORE x8,   8 * REGBYTES(sp)
-    STORE x9,   9 * REGBYTES(sp)
-    STORE x10, 10 * REGBYTES(sp)
-    STORE x11, 11 * REGBYTES(sp)
-    STORE x12, 12 * REGBYTES(sp)
-    STORE x13, 13 * REGBYTES(sp)
-    STORE x14, 14 * REGBYTES(sp)
-    STORE x15, 15 * REGBYTES(sp)
-#ifndef __riscv_32e
-    STORE x16, 16 * REGBYTES(sp)
-    STORE x17, 17 * REGBYTES(sp)
-    STORE x18, 18 * REGBYTES(sp)
-    STORE x19, 19 * REGBYTES(sp)
-    STORE x20, 20 * REGBYTES(sp)
-    STORE x21, 21 * REGBYTES(sp)
-    STORE x22, 22 * REGBYTES(sp)
-    STORE x23, 23 * REGBYTES(sp)
-    STORE x24, 24 * REGBYTES(sp)
-    STORE x25, 25 * REGBYTES(sp)
-    STORE x26, 26 * REGBYTES(sp)
-    STORE x27, 27 * REGBYTES(sp)
-    STORE x28, 28 * REGBYTES(sp)
-    STORE x29, 29 * REGBYTES(sp)
-    STORE x30, 30 * REGBYTES(sp)
-    STORE x31, 31 * REGBYTES(sp)
-#endif
-    /* restore to thread context
-     * sp(0) -> epc;
-     * sp(1) -> ra;
-     * sp(i) -> x(i+2)
-     */
-    LOAD sp,  (a1)
-
-#ifdef RT_USING_SMP
-    mv   a0,   a2
-    call  rt_cpus_lock_status_restore
-#endif /*RT_USING_SMP*/
-
-    j rt_hw_context_switch_exit
-
-#ifdef RT_USING_SMP
 /*
- * void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread);
- *
- * a0 --> context
- * a1 --> from
- * a2 --> to
- * a3 --> to_thread
+ * void rt_hw_context_switch_interrupt(rt_ubase_t context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread)
+ * a0 --> interrupt context
+ * a1 --> addr of from_thread's sp
+ * a2 --> addr of to_thread's sp
+ * a3 --> to_thread's tcb
  */
-    .globl rt_hw_context_switch_interrupt
+.globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-
-    STORE a0, 0(a1)
-
-    LOAD  sp, 0(a2)
-    move  a0, a3
-    call rt_cpus_lock_status_restore
-
-    j rt_hw_context_switch_exit
-
-#endif
-
-.global rt_hw_context_switch_exit
-rt_hw_context_switch_exit:
-#ifdef RT_USING_SMP
-#ifdef RT_USING_SIGNALS
-    mv a0, sp
-
-    csrr  t0, mhartid
-    /* switch interrupt stack of current cpu */
-    la    sp, __stack_start__
-    addi  t1, t0, 1
-    li    t2, __STACKSIZE__
-    mul   t1, t1, t2
-    add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
-
-    call rt_signal_check
-    mv sp, a0
-#endif
-#endif
-    /* resw ra to mepc */
-    LOAD a0,   0 * REGBYTES(sp)
-    csrw mepc, a0
-
-    LOAD x1,   1 * REGBYTES(sp)
-#ifdef ARCH_RISCV_FPU
-    li    t0, 0x7800
+#ifdef RT_USING_DEBUG
+    /* Debug frame for backtrace */
+#if __riscv_xlen == 64
+    addi    sp, sp, -(48)
+    sd      ra, 40(sp)
+    sd      s0, 32(sp)
+#elif __riscv_xlen == 32
+    addi    sp, sp, -(32)
+    sw      ra, 28(sp)
+    sw      s0, 24(sp)
 #else
-    li    t0, 0x1800
+#error "Unexpected __riscv_xlen"
 #endif
-    csrw  mstatus, t0
-    LOAD a0,   2 * REGBYTES(sp)
-    csrs mstatus, a0
+#endif /* RT_USING_DEBUG */
 
-    LOAD x4,   4 * REGBYTES(sp)
-    LOAD x5,   5 * REGBYTES(sp)
-    LOAD x6,   6 * REGBYTES(sp)
-    LOAD x7,   7 * REGBYTES(sp)
-    LOAD x8,   8 * REGBYTES(sp)
-    LOAD x9,   9 * REGBYTES(sp)
-    LOAD x10, 10 * REGBYTES(sp)
-    LOAD x11, 11 * REGBYTES(sp)
-    LOAD x12, 12 * REGBYTES(sp)
-    LOAD x13, 13 * REGBYTES(sp)
-    LOAD x14, 14 * REGBYTES(sp)
-    LOAD x15, 15 * REGBYTES(sp)
-#ifndef __riscv_32e
-    LOAD x16, 16 * REGBYTES(sp)
-    LOAD x17, 17 * REGBYTES(sp)
-    LOAD x18, 18 * REGBYTES(sp)
-    LOAD x19, 19 * REGBYTES(sp)
-    LOAD x20, 20 * REGBYTES(sp)
-    LOAD x21, 21 * REGBYTES(sp)
-    LOAD x22, 22 * REGBYTES(sp)
-    LOAD x23, 23 * REGBYTES(sp)
-    LOAD x24, 24 * REGBYTES(sp)
-    LOAD x25, 25 * REGBYTES(sp)
-    LOAD x26, 26 * REGBYTES(sp)
-    LOAD x27, 27 * REGBYTES(sp)
-    LOAD x28, 28 * REGBYTES(sp)
-    LOAD x29, 29 * REGBYTES(sp)
-    LOAD x30, 30 * REGBYTES(sp)
-    LOAD x31, 31 * REGBYTES(sp)
+    /* We can discard all the previous ABI here */
+    mv      EXP_FRAME, a0
+    mv      FROM_SPP, a1
+    mv      TO_SPP, a2
+    mv      TO_TCB, a3
 
-    addi sp,  sp, 32 * REGBYTES
-#else
-    addi sp,  sp, 16 * REGBYTES
+#ifdef RT_USING_SMART
+    PUSH    EXP_FRAME
+    PUSH    FROM_SPP
+    PUSH    TO_SPP
+    PUSH    TO_TCB
+
+    call    rt_thread_self
+    call    lwp_user_setting_save
+
+    POP     TO_TCB
+    POP     TO_SPP
+    POP     FROM_SPP
+    POP     EXP_FRAME
+#endif /* RT_USING_SMART */
+
+    /* Reset SP of from-thread */
+    mv      sp, EXP_FRAME
+
+    addi    sp, sp, -(RT_HW_SWITCH_CONTEXT_SIZE * SZREG)
+    /* Push context for swtich */
+    la      ra, rt_hw_resume_kernel
+    /* Save the entire context */
+    li      TMP, (K_XSTATUS_DEFAULT & ~SR_PIE)
+    REG_S   TMP, REG_IDX(XSTATUS) * SZREG(sp)
+    REG_S   ra, REG_IDX(RA) * SZREG(sp)
+
+    /* Save SP of from-thread */
+    mv      a0, sp
+    REG_S   a0, (FROM_SPP)
+
+    /* Setup SP to to-thread's */
+    REG_L   a0, (TO_SPP)
+    mv      sp, a0
+
+#ifdef RT_USING_SMART
+    PUSH    TO_TCB
+#endif
+    mv      a0, TO_TCB
+    call    rt_cpus_lock_status_restore
+#ifdef RT_USING_SMART
+    POP     a0  /* TO_TCB */
+    call    lwp_user_setting_restore
+#endif
+    j       _context_switch_exit
+
+#else /* !RT_USING_SMP */
+    .section ".data"
+
+    .align RISCV_SZPTR
+/**
+ * @brief from thread used interrupt context switch
+ */
+.globl rt_interrupt_from_thread
+rt_interrupt_from_thread:
+    RISCV_PTR 0
+
+/**
+ * @brief to thread used interrupt context switch
+ */
+.globl rt_interrupt_to_thread
+rt_interrupt_to_thread:
+    RISCV_PTR 0
+
+/**
+ * @brief flag to indicate context switch in interrupt or not
+ */
+.globl rt_thread_switch_interrupt_flag
+rt_thread_switch_interrupt_flag:
+    RISCV_PTR 0
+
+/*
+ * void rt_hw_context_switch_to(rt_ubase_t to);
+ *
+ * a0 --> to SP pointer
+ */
+.globl rt_hw_context_switch_to
+rt_hw_context_switch_to:
+    REG_L   sp, (a0)
+
+    call    rt_thread_self
+    mv      s1, a0
+
+#ifdef RT_USING_SMART
+    call    lwp_aspace_switch
 #endif
 
-#ifdef ARCH_RISCV_FPU
-    FLOAD   f0, 0 * FREGBYTES(sp)
-    FLOAD   f1, 1 * FREGBYTES(sp)
-    FLOAD   f2, 2 * FREGBYTES(sp)
-    FLOAD   f3, 3 * FREGBYTES(sp)
-    FLOAD   f4, 4 * FREGBYTES(sp)
-    FLOAD   f5, 5 * FREGBYTES(sp)
-    FLOAD   f6, 6 * FREGBYTES(sp)
-    FLOAD   f7, 7 * FREGBYTES(sp)
-    FLOAD   f8, 8 * FREGBYTES(sp)
-    FLOAD   f9, 9 * FREGBYTES(sp)
-    FLOAD   f10, 10 * FREGBYTES(sp)
-    FLOAD   f11, 11 * FREGBYTES(sp)
-    FLOAD   f12, 12 * FREGBYTES(sp)
-    FLOAD   f13, 13 * FREGBYTES(sp)
-    FLOAD   f14, 14 * FREGBYTES(sp)
-    FLOAD   f15, 15 * FREGBYTES(sp)
-    FLOAD   f16, 16 * FREGBYTES(sp)
-    FLOAD   f17, 17 * FREGBYTES(sp)
-    FLOAD   f18, 18 * FREGBYTES(sp)
-    FLOAD   f19, 19 * FREGBYTES(sp)
-    FLOAD   f20, 20 * FREGBYTES(sp)
-    FLOAD   f21, 21 * FREGBYTES(sp)
-    FLOAD   f22, 22 * FREGBYTES(sp)
-    FLOAD   f23, 23 * FREGBYTES(sp)
-    FLOAD   f24, 24 * FREGBYTES(sp)
-    FLOAD   f25, 25 * FREGBYTES(sp)
-    FLOAD   f26, 26 * FREGBYTES(sp)
-    FLOAD   f27, 27 * FREGBYTES(sp)
-    FLOAD   f28, 28 * FREGBYTES(sp)
-    FLOAD   f29, 29 * FREGBYTES(sp)
-    FLOAD   f30, 30 * FREGBYTES(sp)
-    FLOAD   f31, 31 * FREGBYTES(sp)
+    j       _context_switch_exit
 
-    addi    sp, sp, 32 * FREGBYTES
+/*
+ * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
+ *
+ * a0 --> from SP pointer
+ * a1 --> to SP pointer
+ *
+ * It should only be used on local interrupt disable
+ */
+.globl rt_hw_context_switch
+rt_hw_context_switch:
+    SAVE_CONTEXT
+    REG_S   sp, (a0)
+
+    /* Restore to thread SP */
+    REG_L   sp, (a1)
+
+    /* Restore Address Space */
+    call    rt_thread_self
+    mv      s1, a0
+
+#ifdef RT_USING_SMART
+    call    lwp_aspace_switch
 #endif
 
-    mret
+    j       _context_switch_exit
+
+/*
+ * void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread)
+ * a0 --> from_thread's sp
+ * a1 --> to_thread's sp
+ * a2 --> from_thread's tcb
+ * a3 --> to_thread's tcb
+ */
+.globl rt_hw_context_switch_interrupt
+rt_hw_context_switch_interrupt:
+    la      t0, rt_thread_switch_interrupt_flag
+    REG_L   t1, (t0)
+    bne     t1, zero, _init_to_thread
+
+    la      t1, rt_interrupt_from_thread
+    REG_S   a0, (t1)
+
+_init_to_thread:
+    la      t1, rt_interrupt_to_thread
+    REG_S   a1, (t1)
+
+    li      t1, 1
+    REG_S   t1, (t0)
+
+    ret
+#endif /* RT_USING_SMP */
+
+.local _context_switch_exit
+_context_switch_exit:
+    RESTORE_CONTEXT
+    XRET
