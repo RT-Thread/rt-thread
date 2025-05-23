@@ -41,66 +41,29 @@ permissions:
 jobs:
   generate-matrix:
     runs-on: ubuntu-22.04
+    name: 🔍 Summary of Git Diff Changes
     outputs:
       filtered_matrix: ${{ steps.filter.outputs.filtered_matrix }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@main
         with:
-          sparse-checkout: .github/ALL_BSP_COMPILE.json
           persist-credentials: false
-      - name: Read matrix config
-        id: read-config
-        run: |
-          #读取ALL_BSP_COMPILE.json文件
-          raw_matrix_base64=$(cat .github/ALL_BSP_COMPILE.json |egrep -v '^//'|base64 -w 0)
-          echo "raw_matrix=$raw_matrix_base64" >> $GITHUB_OUTPUT
-      - name: Get changed files
-        id: changed_files
-        if: github.event_name == 'pull_request'
-        run: |
-          changed_files=$(curl -s \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | \
-            jq -r '.[].filename') 
-          prefix=$(echo "$changed_files" | cut -d'/' -f1 | sort -u )
-          has_bsp=true
-          for r in "$prefix"; do
-            if [[ ! "$r" == "bsp" ]]; then
-                has_bsp=false
-                break
-            fi
-          done
-          if [[ $has_bsp == true ]]; then
-            changed_files=$(echo "${changed_files}"| cut -d'/' -f2 | sort -u| tr '\n' ',' | sed 's/,$//')
-            echo "CHANGED_FILES=[${changed_files}]" >> $GITHUB_OUTPUT
-          fi
-          #获取修改文件的路径，如果有bsp以外的文件夹则编译全部bsp，否则获取对应文件夹名
-
-          echo "${changed_files}"
+          fetch-depth: 0
       - name: Filter matrix
         id: filter
         run: |
-          raw_matrix=$(echo "${{ steps.read-config.outputs.raw_matrix }}" | base64 --decode)
+          git config --global http.postBuffer 524288000
+          git remote -v
+          git fetch origin
+          git branch
+          git branch -a
+          python tools/ci/git_diff_show.py origin/master
+          raw_matrix=$(cat .github/ALL_BSP_COMPILE_TEMP.json)
 
-          CHANGED_FILES=${{ steps.changed_files.outputs.CHANGED_FILES }}
-          CHANGED_FILES=$(echo "$CHANGED_FILES" | sed 's/\[\|\]//g')
-          # 将修改的文件路径与ALL_BSP_COMPILE.json文件的SUB_RTT_BSP进行判断，判断是否包含
-          filtered_matrix=[]
-          echo "${CHANGED_FILES}"
-          if [[ -z "$CHANGED_FILES" ]]; then
-              FILTER_CONDITION='.legs[]'
-              filtered_matrix=$(jq -c "{legs: [$FILTER_CONDITION]}" <<< "$raw_matrix")
-          else
-            CONDITIONS=$(echo "$CHANGED_FILES" | awk 'BEGIN { RS="," } { printf "contains(\"%s\") or ", $1 }')
-            CONDITIONS=${CONDITIONS% or }
-
-            FILTER_CONDITION=".legs[] | select(any(.SUB_RTT_BSP[]; $CONDITIONS))"
-
-            filtered_matrix=$(jq -c "{legs: [$FILTER_CONDITION]}" <<< "$raw_matrix")
-          fi
-
+          FILTER_CONDITION='.legs[]'
+          filtered_matrix=$(jq -c "{legs: [$FILTER_CONDITION]}" <<< "$raw_matrix")
           echo "filtered_matrix=${filtered_matrix}" >> $GITHUB_OUTPUT
-          
           echo ${filtered_matrix}
   build:
     runs-on: ubuntu-22.04
