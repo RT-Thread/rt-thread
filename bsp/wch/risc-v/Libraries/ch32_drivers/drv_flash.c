@@ -20,11 +20,18 @@
 #include "fal.h"
 #endif
 
-//#define DRV_DEBUG
+#define DRV_DEBUG
 #define LOG_TAG                "drv.flash"
 #include <drv_log.h>
 
 #define FLASH_PAGE_SIZE        4096
+
+/* @note If there is no down-frequency processing, the timeout time needs to be modified */
+#ifdef ProgramTimeout
+#undef ProgramTimeout
+#define ProgramTimeout             ((uint32_t)0x00010000)
+#endif
+
 
 /**
   * @brief  Gets the page of a given address
@@ -95,6 +102,23 @@ int ch32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
         return -RT_EINVAL;
     }
 
+    if (((addr & 0x000000FF) == 0) && (size & 0xFFFFFF00)) {
+        rt_uint32_t fast_size = (size & 0xFFFFFF00);
+
+        status = FLASH_ROM_WRITE(addr, (rt_uint32_t *)buf, fast_size);
+        if (status != FLASH_COMPLETE) {
+            LOG_E("FLASH ROM Write Fail\r\n");
+            return -RT_ERROR;
+        }
+
+        addr += fast_size;
+        buf  += fast_size;
+    }
+    if (addr == end_addr) {
+        return size;
+    }
+
+    FLASH_Access_Clock_Cfg(FLASH_Access_SYSTEM_HALF);
     FLASH_Unlock();
     FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_WRPRTERR);
 
@@ -119,6 +143,7 @@ int ch32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     }
 
     FLASH_Lock();
+    FLASH_Access_Clock_Cfg(FLASH_Access_SYSTEM);
 
     if (result != RT_EOK)
     {
@@ -144,6 +169,7 @@ int ch32_flash_erase(rt_uint32_t addr, size_t size)
     FLASH_Status status = 0;
     uint32_t num_page = 0;
     uint32_t i = 0;
+    rt_uint32_t total_size = size;
 
     if ((addr + size) > CH32_FLASH_END_ADDRESS)
     {
@@ -151,9 +177,28 @@ int ch32_flash_erase(rt_uint32_t addr, size_t size)
         return -RT_EINVAL;
     }
 
-    FLASH_Unlock();
+    if (((addr & 0x000000FF) == 0) && (total_size & 0xFFFFFF00)) {
+        rt_uint32_t fast_size = (total_size & 0xFFFFFF00);
 
-    num_page = (size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
+        status = FLASH_ROM_ERASE(addr, fast_size);
+        if (status != FLASH_COMPLETE) {
+            LOG_E("FLASH ROM Erase Fail\r\n");
+            return -RT_ERROR;
+        }
+
+        addr += fast_size;
+        total_size -= fast_size;
+    }
+
+    if (0 == total_size) {
+        return size;
+    }
+
+    FLASH_Access_Clock_Cfg(FLASH_Access_SYSTEM_HALF);
+    FLASH_Unlock();
+    FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_WRPRTERR);
+
+    num_page = (total_size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
 
     FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_WRPRTERR);
 
@@ -171,10 +216,11 @@ int ch32_flash_erase(rt_uint32_t addr, size_t size)
 
 __exit:
     FLASH_Lock();
+    FLASH_Access_Clock_Cfg(FLASH_Access_SYSTEM);
 
     if (result != RT_EOK)
     {
-        return result;
+        return -RT_ERROR;
     }
 
     return size;
