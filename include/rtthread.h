@@ -98,6 +98,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object));
  * clock & timer interface
  */
 rt_tick_t rt_tick_get(void);
+rt_tick_t rt_tick_get_delta(rt_tick_t base);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
 void rt_tick_increase_tick(rt_tick_t tick);

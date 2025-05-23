@@ -74,6 +74,22 @@ rt_tick_t rt_tick_get(void)
 RTM_EXPORT(rt_tick_get);
 
 /**
+ * @brief    This function will return delta tick from base.
+ *
+ * @param    base to consider
+ * 
+ * @return   Return delta tick.
+ */
+rt_tick_t rt_tick_get_delta(rt_tick_t base)
+{
+    rt_tick_t tnow = rt_tick_get();
+    if (tnow >= base)
+        return tnow - base;
+    return RT_TICK_MAX - base + tnow + 1;
+}
+RTM_EXPORT(rt_tick_get_delta);
+
+/**
  * @brief    This function will set current tick.
  *
  * @param    tick is the value that you will set.
