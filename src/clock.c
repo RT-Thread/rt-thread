@@ -28,7 +28,7 @@
 #endif
 
 #ifdef RT_USING_SMP
-#define rt_tick rt_cpu_index(0)->tick
+#define rt_tick rt_cpu_index(rt_hw_master_cpu_id())->tick
 #else
 static volatile rt_atomic_t rt_tick = 0;
 #endif /* RT_USING_SMP */
@@ -155,7 +155,7 @@ void rt_tick_increase(void)
 
     /* check timer */
 #ifdef RT_USING_SMP
-    if (rt_cpu_get_id() != 0)
+    if (rt_cpu_get_id() != rt_hw_master_cpu_id())
     {
         return;
     }
@@ -189,7 +189,7 @@ void rt_tick_increase_tick(rt_tick_t tick)
 
     /* check timer */
 #ifdef RT_USING_SMP
-    if (rt_cpu_get_id() != 0)
+    if (rt_cpu_get_id() != rt_hw_master_cpu_id())
     {
         return;
     }

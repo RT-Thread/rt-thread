@@ -1,0 +1,17 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_SERIAL']):
+    Return('group')
+
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+if GetDepend(['RT_SERIAL_EARLY_SBI']):
+    src += ['serial-early-sbi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

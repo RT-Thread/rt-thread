@@ -3,6 +3,7 @@
 #include <rtthread.h>
 
 #include <board.h>
+#include <riscv_timer.h>
 
 /* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
 
@@ -10,17 +11,13 @@ static uint64_t riscv_cputime_getres(void)
 {
     uint64_t ret = 1000UL * 1000 * 1000;
 
-    ret = (ret * (1000UL * 1000)) / CPUTIME_TIMER_FREQ;
+    ret = (ret * (1000UL * 1000)) / riscv_timer_get_frequency();
     return ret;
 }
 
 static uint64_t riscv_cputime_gettime(void)
 {
-    uint64_t time_elapsed;
-    __asm__ __volatile__(
-        "rdtime %0"
-        : "=r"(time_elapsed));
-    return time_elapsed;
+    return riscv_timer_rdtime();
 }
 
 const static struct rt_clock_cputime_ops _riscv_ops =

@@ -16,6 +16,8 @@
 
 #ifdef ARCH_MM_MMU
 
+#include <cache.h>
+
 #ifdef ARCH_MM_MMU_32BIT_LIMIT
 #define USER_HEAP_VADDR     0xF0000000UL
 #define USER_HEAP_VEND      0xFE000000UL
@@ -77,6 +79,6 @@ void *arch_signal_ucontext_save(int signo, siginfo_t *psiginfo,
 }
 #endif
 
-#endif
+#endif /* ARCH_MM_MMU */
 
 #endif  /*LWP_ARCH_H__*/

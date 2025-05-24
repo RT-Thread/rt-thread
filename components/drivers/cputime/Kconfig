@@ -1,4 +1,4 @@
-config RT_USING_CPUTIME
+menuconfig RT_USING_CPUTIME
     bool "Enable CPU time for high resolution clock counter"
     default n
     help
@@ -25,9 +25,9 @@ if RT_USING_CPUTIME
     config RT_USING_CPUTIME_RISCV
         bool "Use rdtime instructions for CPU time"
         default y
-        depends on ARCH_RISCV64
+        depends on ARCH_RISCV
         help
-            Some RISCV64 MCU Use rdtime instructions read CPU time.
+            Some RISC-V MCU Use rdtime instructions read CPU time.
     config CPUTIME_TIMER_FREQ
         int "CPUTIME timer freq"
         default 0

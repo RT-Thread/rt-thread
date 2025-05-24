@@ -127,7 +127,7 @@ static void idle_thread_entry(void *parameter)
 {
     RT_UNUSED(parameter);
 #ifdef RT_USING_SMP
-    if (rt_cpu_get_id() != 0)
+    if (rt_cpu_get_id() != rt_hw_master_cpu_id())
     {
         while (1)
         {
