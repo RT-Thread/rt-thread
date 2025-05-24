@@ -75,3 +75,6 @@ tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
+tag: gd32470z-lckfb-lcd
+path: bsp/gd32/arm/gd32470z-lckfb/board/ports
+owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
