@@ -647,9 +647,6 @@ static rt_err_t _thread_sleep(rt_tick_t tick)
 
         thread->error = -RT_EINTR;
 
-        /* notify a pending rescheduling */
-        rt_schedule();
-
         /* exit critical and do a rescheduling */
         rt_exit_critical_safe(critical_level);
 
@@ -692,7 +689,6 @@ RTM_EXPORT(rt_thread_delay);
 rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
     struct rt_thread *thread;
-    rt_tick_t cur_tick;
     rt_base_t critical_level;
 
     RT_ASSERT(tick != RT_NULL);
@@ -708,13 +704,11 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     /* disable interrupt */
     critical_level = rt_enter_critical();
 
-    cur_tick = rt_tick_get();
-    if (cur_tick - *tick < inc_tick)
+    if (rt_tick_get_delta(*tick) < inc_tick)
     {
         rt_tick_t left_tick;
 
-        *tick += inc_tick;
-        left_tick = *tick - cur_tick;
+        left_tick = rt_tick_get_left(*tick + inc_tick);
 
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
@@ -735,7 +729,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     }
     else
     {
-        *tick = cur_tick;
+        *tick = rt_tick_get();
         rt_exit_critical_safe(critical_level);
     }
 
