@@ -2650,7 +2650,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
+            tick_delta = rt_tick_get_delta(tick_delta);
             timeout -= tick_delta;
             if (timeout < 0)
                 timeout = 0;
@@ -2930,7 +2930,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
+            tick_delta = rt_tick_get_delta(tick_delta);
             timeout -= tick_delta;
             if (timeout < 0)
                 timeout = 0;
@@ -3475,7 +3475,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
+            tick_delta = rt_tick_get_delta(tick_delta);
             timeout -= tick_delta;
             if (timeout < 0)
                 timeout = 0;
@@ -3855,7 +3855,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
+            tick_delta = rt_tick_get_delta(tick_delta);
             timeout -= tick_delta;
             if (timeout < 0)
                 timeout = 0;
