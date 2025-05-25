@@ -90,6 +90,22 @@ rt_tick_t rt_tick_get_delta(rt_tick_t base)
 RTM_EXPORT(rt_tick_get_delta);
 
 /**
+ * @brief    This function will return left tick from base.
+ *
+ * @param    base to consider
+ * 
+ * @return   Return left tick.
+ */
+rt_tick_t rt_tick_get_left(rt_tick_t base)
+{
+    rt_tick_t left = base - rt_tick_get();
+    if (left <= base)
+        return left;
+    return RT_TICK_MAX - left + 1;
+}
+RTM_EXPORT(rt_tick_get_left);
+
+/**
  * @brief    This function will set current tick.
  *
  * @param    tick is the value that you will set.
