@@ -19,7 +19,6 @@ menu "Drivers Configuration"
 
                 config BSP_USING_SDIO0
                     bool "Enable SDIO0"
-                    default y
 
                     if BSP_USING_SDIO0
                         config BSP_SDIO0_EMMC
@@ -33,7 +32,6 @@ menu "Drivers Configuration"
 
                 config BSP_USING_SDIO1
                     bool "Enable SDIO1"
-                    default n
             endchoice
 
             config BSP_SD_MNT_DEVNAME
