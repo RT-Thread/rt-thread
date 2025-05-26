@@ -37,5 +37,4 @@ choice BSP_ROOTFS_TYPE
         bool "Use Compressed ROM File-System (ReadOnly)"
         select RT_USING_DFS_CROMFS
         select PKG_USING_ZLIB
-        select PKG_USING_ZLIB_LATEST_VERSION
 endchoice
