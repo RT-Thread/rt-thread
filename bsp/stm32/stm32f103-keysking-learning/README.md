@@ -47,13 +47,14 @@ Keysking学习板是B站UP主Keysking推出的一块基于ARM Cortex-M3内核的
 | 旋转编码器      |    支持    | A相(PA8),B相(PA9),按键(PB15)                   |
 | OLED       |          |                                            |
 | LED        |    支持    | GPIO or PWM: Blue(PA6)，Green(PA7)，Red(PB0) |
+| 无源蜂鸣器      |    支持    | PWM4_CH4                                   |
 | **片上外设**   | **支持情况** | **备注**                                     |
 | GPIO       |    支持    |                                            |
 | UART       |    支持    | UART2,3                                    |
 | PWM        |    支持    | PWM3,PWM4                                  |
 | **预留外设接口** | **支持情况** | **备注**                                     |
 | SERVO      |    支持    | PWM4_CH3                                   |
-| 无源蜂鸣器      |    支持    | PWM4_CH4                                   |
+
 ## 使用说明
 
 使用说明分为如下两个章节：
