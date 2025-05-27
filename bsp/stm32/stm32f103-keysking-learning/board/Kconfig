@@ -7,6 +7,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART2
         default y
+    config BSP_USING_SERVO
+        bool "Enable Servo"
+        select BSP_USING_PWM
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH3
+        default n
+
 
 endmenu
 
@@ -39,8 +46,64 @@ menu "On-chip Peripheral Drivers"
             #    depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
             #    default n
 
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        select RT_USING_PWM
+        default n
+
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM3
+                bool "Enable PWM3"
+                default y
+                if BSP_USING_PWM3
+                    config BSP_USING_PWM3_CH1
+                        bool "Enable PWM3_CH1(PA6,Blue LED)"
+                        default y
+                    config BSP_USING_PWM3_CH2
+                        bool "Enable PWM3_CH2(PA7,Green LED)"
+                        default n
+                    config BSP_USING_PWM3_CH3
+                        bool "Enable PWM3_CH3(PB0,Red LED)"
+                        default n
+                    config BSP_USING_PWM3_CH4
+                        bool "Enable PWM3_CH4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM4
+                bool "Enable PWM4"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH1
+                        bool "Enable PWM4_CH1"
+                        default n
+                    config BSP_USING_PWM4_CH2
+                        bool "Enable PWM4_CH2"
+                        default n
+                    config BSP_USING_PWM4_CH3
+                        bool "Enable PWM4_CH3(PB8,Servo)"
+                        default y
+                    config BSP_USING_PWM4_CH4
+                        bool "Enable PWM4_CH4(PB9,Beeper)"
+                        default y
+                endif
 
         endif
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
+        select RT_USING_PULSE_ENCODER
+        default n
+
+        if BSP_USING_PULSE_ENCODER
+            config BSP_USING_PULSE_ENCODER1
+            bool "Enable Pulse Encoder1"
+            default y
+
+        endif
+
+
 
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 

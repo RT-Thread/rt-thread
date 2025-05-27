@@ -15,3 +15,8 @@ devices.servo:
   <<: *scons
   kconfig:
     - CONFIG_BSP_USING_SERVO=y
+devices.pulse_encoder:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_PULSE_ENCODER=y
+    - CONFIG_BSP_USING_PULSE_ENCODER1=y
