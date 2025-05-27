@@ -55,11 +55,13 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f767-st-nucleo](stm32f767-st-nucleo)                     | ST 官方 STM32F767-nucleo 开发板         |
 | [stm32f769-st-disco](stm32f769-st-disco)                       | ST 官方 STM32f769-discovery 开发板      |
 | **G0 系列**                                                      |                                    |
+| [stm32g030-tiny-board](stm32g030-tiny-board)                   | STM32G030-tiny-board 开发板             |
 | [stm32g070-st-nucleo](stm32g070-st-nucleo)                     | ST 官方 STM32G070-nucleo 开发板         |
 | [stm32g071-st-nucleo](stm32g071-st-nucleo)                     | ST 官方 STM32G071-nucleo 开发板         |
 | **G4 系列**                                                      |                                    |
 | [stm32g431-st-nucleo](stm32g431-st-nucleo)                     | ST 官方 STM32G431-nucleo 开发板         |
 | **H7 系列**                                                      |                                    |
+| [stm32h723-st-nucleo](stm32h723-st-nucleo)                     | ST 官方 STM32H723-nucleo 开发板         |
 | [stm32h743-armfly-v7](stm32h743-armfly-v7)                     | 安富莱 STM32H743 v7 开发板               |
 | [stm32h743-atk-apollo](stm32h743-atk-apollo)                   | 正点原子 h743 阿波罗开发板                   |
 | [stm32h743-openmv-h7plus](stm32h743-openmv-h7plus)             | OPENMV 官方 H7-PLUS 开发板              |
