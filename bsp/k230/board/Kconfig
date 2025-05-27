@@ -39,4 +39,25 @@ menu "Drivers Configuration"
                 default "sd0p1"
         endif
 
+    menuconfig BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+        if BSP_USING_WDT
+            config BSP_USING_WDT0
+                bool "Enable WDT0"
+                default n
+
+            config BSP_USING_WDT1
+                bool "Enable WDT1"
+                default n
+
+        endif
+
+    config BSP_UTEST_DRIVERS
+        bool "Enable drivers utest"
+        select RT_USING_UTEST
+        default n
+
 endmenu
