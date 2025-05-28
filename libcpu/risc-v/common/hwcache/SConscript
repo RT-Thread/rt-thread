@@ -1,0 +1,17 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_HWCACHE']):
+    Return('group')
+
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+if GetDepend(['RT_CACHE_SIFIVE_CCACHE']):
+    src += ['hwcache-sifive_ccache.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

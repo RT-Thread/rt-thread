@@ -34,9 +34,9 @@
 #include <page.h>
 
 #include <cpuport.h>
-#include <encoding.h>
 #include <stack.h>
 #include <cache.h>
+#include <csr.h>
 
 extern rt_ubase_t MMUTable[];
 
@@ -113,7 +113,11 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
 void *arch_kernel_mmu_table_get(void)
 {
+#if defined(RT_USING_SMP) && RT_CPUS_NR > 1
+    return (void *)((char *)MMUTable + rt_hw_cpu_id() * ARCH_PAGE_SIZE);
+#else
     return (void *)((char *)MMUTable);
+#endif
 }
 
 void arch_user_space_free(struct rt_lwp *lwp)
@@ -166,13 +170,14 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
     RT_ASSERT(thread_sp != RT_NULL);
     struct rt_hw_stack_frame *syscall_frame;
     struct rt_hw_stack_frame *thread_frame;
+    struct rt_hw_switch_frame *frame;
 
     rt_uint8_t *stk;
     rt_uint8_t *syscall_stk;
 
     stk = (rt_uint8_t *)new_thread_stack;
     /* reserve syscall context, all the registers are copyed from parent */
-    stk -= CTX_REG_NR * REGBYTES;
+    stk -= CTX_ALL_REG_NR * sizeof(void *);
     syscall_stk = stk;
 
     syscall_frame = (struct rt_hw_stack_frame *)stk;
@@ -192,12 +197,17 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
     syscall_frame->tp = (rt_ubase_t)thread->thread_idr;
 
 #ifdef ARCH_USING_NEW_CTX_SWITCH
-    extern void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus);
-    rt_ubase_t sstatus = read_csr(sstatus) | SSTATUS_SPP;
-    sstatus &= ~SSTATUS_SIE;
+    RT_UNUSED(syscall_stk);
+    RT_UNUSED(thread_frame);
+
+    frame = (struct rt_hw_switch_frame *)((rt_ubase_t)stk - sizeof(*frame));
+    rt_memset(frame, 0, sizeof(*frame));
+
+    frame->regs[RT_HW_SWITCH_CONTEXT_RA] = (rt_ubase_t)exit;
+    frame->regs[RT_HW_SWITCH_CONTEXT_XSTATUS] = (csr_read(CSR_STATUS) | SR_PP) & ~SR_IE;
 
     /* compatible to RESTORE_CONTEXT */
-    stk = (void *)_rt_hw_stack_init((rt_ubase_t *)stk, (rt_ubase_t)exit, sstatus);
+    stk = (void *)frame;
 #else
     /* build temp thread context */
     stk -= sizeof(struct rt_hw_stack_frame);
@@ -214,8 +224,8 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
     thread_frame->epc     = (rt_ubase_t)exit;
 
     /* set old exception mode as supervisor, because in kernel */
-    thread_frame->sstatus = read_csr(sstatus) | SSTATUS_SPP;
-    thread_frame->sstatus &= ~SSTATUS_SIE; /* must disable interrupt */
+    thread_frame->xstatus = read_csr(CSR_STATUS) | SR_PP;
+    thread_frame->xstatus &= ~SR_IE; /* must disable interrupt */
 
     /* set stack as syscall stack */
     thread_frame->user_sp_exc_stack = (rt_ubase_t)syscall_stk;

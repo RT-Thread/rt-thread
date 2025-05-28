@@ -5,23 +5,38 @@ from building import *
 
 Import('rtconfig')
 
-common64_arch = ['virt64', 'c906', 'c908']
 cwd   = GetCurrentDir()
 group = []
 list  = os.listdir(cwd)
+bsp_path = Dir('#').abspath
+vender_path = cwd
+
+if not os.path.exists(bsp_path + "/link.lds"):
+    Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('link.lds', cwd + "/link.lds")
+    Preprocessing("link.lds.S", ".lds", CPPPATH=[bsp_path, cwd + '/common/include'])
+
+# fix the linker with crtx.o
+Env['LINKFLAGS'] += ' -nostartfiles'
 
 # add common code files
-if rtconfig.CPU in common64_arch :
-    group += SConscript(os.path.join('common64', 'SConscript'))
-else :
-    group += SConscript(os.path.join('common', 'SConscript'))
-
-group += SConscript(os.path.join('vector', 'SConscript'))
+group += SConscript(os.path.join('common', 'SConscript'))
 
 # cpu porting code files
-if 'VENDOR' in vars(rtconfig) and rtconfig.VENDOR != '':
-    group = group + SConscript(os.path.join(rtconfig.VENDOR, rtconfig.CPU, 'SConscript'))
-elif rtconfig.CPU in list:
+if 'VENDER' in vars(rtconfig) and rtconfig.VENDER != '':
+    group = group + SConscript(os.path.join(rtconfig.VENDER, rtconfig.CPU, 'SConscript'))
+    vender_path += rtconfig.VENDER + "/" + rtconfig.CPU
+elif rtconfig.CPU != '':
     group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
+    vender_path += rtconfig.CPU
+
+if os.path.exists(vender_path + "/mmu_vendor.h"):
+    Env['ASFLAGS']  += '-D__HAS_MMU_VENDOR__'
+    Env['CFLAGS']   += '-D__HAS_MMU_VENDOR__'
+    Env['CXXFLAGS'] += '-D__HAS_MMU_VENDOR__'
+
+if os.path.exists(vender_path + "/opcode_vendor.h"):
+    Env['ASFLAGS']  += '-D__HAS_OPCODE_VENDOR__'
+    Env['CFLAGS']   += '-D__HAS_OPCODE_VENDOR__'
+    Env['CXXFLAGS'] += '-D__HAS_OPCODE_VENDOR__'
 
 Return('group')

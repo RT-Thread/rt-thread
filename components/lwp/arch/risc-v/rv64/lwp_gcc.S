@@ -19,10 +19,8 @@
 #define __ASSEMBLY__
 #endif /* __ASSEMBLY__ */
 
-#include "cpuport.h"
-#include "encoding.h"
-#include "stackframe.h"
-#include "asm-generic.h"
+#include "asm.h"
+#include "csr.h"
 
 .section      .text.lwp
 
@@ -33,13 +31,13 @@
 .type arch_start_umode, % function
 arch_start_umode:
     // load kstack for user process
-    csrw sscratch, a3
-    li t0, SSTATUS_SPP | SSTATUS_SIE    // set as user mode, close interrupt
-    csrc sstatus, t0
-    li t0, SSTATUS_SPIE // enable interrupt when return to user mode
-    csrs sstatus, t0
+    csrw CSR_SCRATCH, a3
+    li t0, SR_PP | SR_IE    // set as user mode, close interrupt
+    csrc CSR_STATUS, t0
+    li t0, SR_PIE // enable interrupt when return to user mode
+    csrs CSR_STATUS, t0
 
-    csrw sepc, a1
+    csrw CSR_EPC, a1
     mv sp, a2
     sret//enter user mode
 
@@ -49,12 +47,12 @@ arch_start_umode:
 .global arch_crt_start_umode
 .type arch_crt_start_umode, % function
 arch_crt_start_umode:
-    li t0, SSTATUS_SPP | SSTATUS_SIE    // set as user mode, close interrupt
-    csrc sstatus, t0
-    li t0, SSTATUS_SPIE // enable interrupt when return to user mode
-    csrs sstatus, t0
+    li t0, SR_PP | SR_IE    // set as user mode, close interrupt
+    csrc CSR_STATUS, t0
+    li t0, SR_PIE // enable interrupt when return to user mode
+    csrs CSR_STATUS, t0
 
-    csrw sepc, a1
+    csrw CSR_EPC, a1
     mv s0, a0
     mv s1, a1
     mv s2, a2
@@ -67,7 +65,7 @@ arch_crt_start_umode:
     mv ra, a0//return address
     mv a0, s0//args
 
-    csrw sscratch, s3
+    csrw CSR_SCRATCH, s3
     sret//enter user mode
 
 /**
@@ -95,7 +93,7 @@ arch_ret_to_user:
 
 ret_to_user_exit:
     RESTORE_ALL
-    // `RESTORE_ALL` also reset sp to user sp, and setup sscratch
+    // `RESTORE_ALL` also reset sp to user sp, and setup xscratch
     sret
 
 /**
@@ -103,18 +101,18 @@ ret_to_user_exit:
  * And handle pending signals;
  */
 arch_signal_quit:
-    LOAD a0, FRAME_OFF_SP(sp)
+    REG_L a0, FRAME_OFF_SP(sp)
     call arch_signal_ucontext_restore
 
     /* reset kernel sp to the stack */
-    addi sp, sp, CTX_REG_NR * REGBYTES
-    STORE sp, FRAME_OFF_SP(a0)
+    addi sp, sp, CTX_ALL_REG_NR * SZREG
+    REG_S sp, FRAME_OFF_SP(a0)
     /* return value is user sp */
     mv sp, a0
 
     /* restore user sp before enter trap */
-    addi a0, sp, CTX_REG_NR * REGBYTES
-    csrw sscratch, a0
+    addi a0, sp, CTX_ALL_REG_NR * SZREG
+    csrw CSR_SCRATCH, a0
 
 
     RESTORE_ALL
@@ -137,19 +135,19 @@ arch_thread_signal_enter:
     mv s2, a0
     mv s1, a3
 
-    LOAD t0, FRAME_OFF_SP(a2)
+    REG_L t0, FRAME_OFF_SP(a2)
     mv a3, t0
     call arch_signal_ucontext_save
 
     /** restore kernel sp */
-    addi sp, s3, CTX_REG_NR * REGBYTES
+    addi sp, s3, CTX_ALL_REG_NR * SZREG
 
     /**
      * set regiter RA to user signal handler
-     * set sp to user sp & save kernel sp in sscratch
+     * set sp to user sp & save kernel sp in xscratch
      */
     mv ra, a0
-    csrw sscratch, sp
+    csrw CSR_SCRATCH, sp
     mv sp, a0
 
     /**
@@ -161,13 +159,13 @@ arch_thread_signal_enter:
 
 1:
     /* enter user mode and enable interrupt when return to user mode */
-    li t0, SSTATUS_SPP
-    csrc sstatus, t0
-    li t0, SSTATUS_SPIE
-    csrs sstatus, t0
+    li t0, SR_PP
+    csrc CSR_STATUS, t0
+    li t0, SR_PIE
+    csrs CSR_STATUS, t0
 
-    /* sepc <- signal_handler */
-    csrw sepc, s1
+    /* xepc <- signal_handler */
+    csrw CSR_EPC, s1
     /* a0 <- signal id */
     mv a0, s2
     /* a1 <- siginfo */
@@ -176,7 +174,7 @@ arch_thread_signal_enter:
     mv a2, a1
 
     /* restore user GP */
-    LOAD gp, FRAME_OFF_GP(s3)
+    REG_L gp, FRAME_OFF_GP(s3)
 
     /**
      * handler(signo, psi, ucontext);
@@ -229,12 +227,12 @@ arch_clone_exit:
 START_POINT(syscall_entry)
 #ifndef ARCH_USING_NEW_CTX_SWITCH
     //swap to thread kernel stack
-    csrr t0, sstatus
+    csrr t0, CSR_STATUS
     andi t0, t0, 0x100
     beqz t0, __restore_sp_from_tcb
 
-__restore_sp_from_sscratch: // from kernel
-    csrr t0, sscratch
+__restore_sp_from_CSR_SCRATCH: // from kernel
+    csrr t0, CSR_SCRATCH
     j __move_stack_context
 
 __restore_sp_from_tcb: // from user
@@ -245,14 +243,14 @@ __restore_sp_from_tcb: // from user
 __move_stack_context:
     mv t1, sp//src
     mv sp, t0//switch stack
-    addi sp, sp, -CTX_REG_NR * REGBYTES
+    addi sp, sp, -CTX_ALL_REG_NR * SZREG
     //copy context
-    li s0, CTX_REG_NR//cnt
+    li s0, CTX_ALL_REG_NR//cnt
     mv t2, sp//dst
 
 copy_context_loop:
-    LOAD t0, 0(t1)
-    STORE t0, 0(t2)
+    REG_L t0, 0(t1)
+    REG_S t0, 0(t2)
     addi s0, s0, -1
     addi t1, t1, 8
     addi t2, t2, 8
@@ -260,7 +258,7 @@ copy_context_loop:
 #endif /* ARCH_USING_NEW_CTX_SWITCH */
 
     /* fetch SYSCALL ID */
-    LOAD a7, 17 * REGBYTES(sp)
+    REG_L a7, 17 * SZREG(sp)
     addi a7, a7, -0xfe
     beqz a7, arch_signal_quit
 
@@ -281,7 +279,7 @@ arch_syscall_exit:
     CLOSE_INTERRUPT
 
     #if defined(ARCH_MM_MMU)
-        LOAD s0, FRAME_OFF_SSTATUS(sp)
+        REG_L s0, FRAME_OFF_XSTATUS(sp)
         andi s0, s0, 0x100
         bnez s0, dont_ret_to_user
         j arch_ret_to_user
@@ -294,10 +292,10 @@ dont_ret_to_user:
     call  lwp_user_setting_restore
 
     /* after restore the reg `tp`, need modify context */
-    STORE tp, 4 * REGBYTES(sp)
+    REG_S tp, 4 * SZREG(sp)
 #endif
 
     //restore context
     RESTORE_ALL
-    csrw sscratch, zero
+    csrw CSR_SCRATCH, zero
     sret
