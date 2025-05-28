@@ -39,6 +39,37 @@ menu "Drivers Configuration"
                 default "sd0p1"
         endif
 
+    menuconfig BSP_USING_TIMERS
+        bool "Enable Hardware Timers"
+        select RT_USING_HWTIMER
+        default n
+
+        if BSP_USING_TIMERS
+            config BSP_USING_TIMER0
+                bool "Enable Timer0"
+                default n
+
+            config BSP_USING_TIMER1
+                bool "Enable Timer1"
+                default n
+
+            config BSP_USING_TIMER2
+                bool "Enable Timer2"
+                default n
+
+            config BSP_USING_TIMER3
+                bool "Enable Timer3"
+                default n
+
+            config BSP_USING_TIMER4
+                bool "Enable Timer4"
+                default n
+
+            config BSP_USING_TIMER5
+                bool "Enable Timer5"
+                default n
+        endif
+
     menuconfig BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
