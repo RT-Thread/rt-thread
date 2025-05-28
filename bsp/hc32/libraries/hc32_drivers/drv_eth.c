@@ -488,7 +488,7 @@ static void hc32_phy_monitor_thread(void *parameter)
     /* phy search */
     while (phy_addr == 0xFF)
     {
-        rt_uint16_t i, temp;
+        rt_uint16_t i, temp=0U;
 
         for (i = 0; i <= 0x1F; i++)
         {
