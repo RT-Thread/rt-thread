@@ -692,6 +692,9 @@ void rt_hw_mem_setup_early(void)
          * PC are still at lower region before relocating to high memory
          */
         rt_ubase_t pg_idx ;
+        /* Round down symb_pc to L1_PAGE_SIZE boundary to ensure proper page alignment.
+         * This is necessary because MMU operations work with page-aligned addresses, and
+         * make sure all the text region is mapped.*/
         ps = (rt_ubase_t)symb_pc & (~(L1_PAGE_SIZE - 1));
         pg_idx = GET_L1(ps);
         early_pgtbl[pg_idx] = COMBINEPTE(ps, MMU_MAP_EARLY);
