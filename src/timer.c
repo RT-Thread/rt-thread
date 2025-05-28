@@ -494,8 +494,6 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
 
     level = rt_spin_lock_irqsave(lock);
 
-    current_tick = rt_tick_get();
-
     rt_list_init(&list);
 
     while (!rt_list_isempty(&timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
@@ -539,8 +537,7 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
                 continue;
             }
             rt_list_remove(&(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
-            if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
-                (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+            if ((t->parent.flag & (RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_ACTIVATED)) == (RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_ACTIVATED))
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
@@ -747,7 +744,6 @@ RTM_EXPORT(rt_timer_control);
  */
 void rt_timer_check(void)
 {
-    RT_ASSERT(rt_interrupt_get_nest() > 0);
 
 #ifdef RT_USING_SMP
     /* Running on core 0 only */
@@ -762,7 +758,7 @@ void rt_timer_check(void)
     rt_tick_t next_timeout;
 
     ret = _timer_list_next_timeout(_soft_timer_list, &next_timeout);
-    if ((ret == RT_EOK) && (next_timeout <= rt_tick_get()))
+    if ((ret == RT_EOK) && ((rt_tick_get() - next_timeout) < RT_TICK_MAX / 2))
     {
         rt_sem_release(&_soft_timer_sem);
     }
