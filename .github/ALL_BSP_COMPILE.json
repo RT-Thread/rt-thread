@@ -468,6 +468,13 @@
       "SUB_RTT_BSP": [
         "xuantie/smartl/e906"
       ]
+    },
+    {
+      "RTT_BSP": "ultrarisc",
+      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
+      "SUB_RTT_BSP": [
+        "ultrarisc/ur_dp1000_evb"
+      ]
     }
   ]
 }
