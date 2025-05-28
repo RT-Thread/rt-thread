@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__RTTHREAD__, RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, USE_HAL_DRIVER</Define>
+              <Define>__STDC_LIMIT_MACROS, USE_HAL_DRIVER, RT_USING_ARMLIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\libraries\HAL_Drivers;.;board\CubeMX_Config\Inc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;packages\stm32f1_hal_driver-latest\Inc;packages\CMSIS-Core-latest\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\drivers;packages\stm32f1_cmsis_driver-latest\Include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\phy;applications;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;board</IncludePath>
+              <IncludePath>packages\CMSIS-Core-latest\Include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;packages\stm32f1_cmsis_driver-latest\Include;..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\cortex-m3;..\..\..\libcpu\arm\common;board;.;packages\stm32f1_hal_driver-latest\Inc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\extension;..\..\..\include;..\..\..\components\finsh;..\libraries\HAL_Drivers\drivers;..\..\..\components\drivers\phy;applications;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -640,44 +640,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>pulse_encoder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\pulse_encoder.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_drv_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\rt_drv_pwm.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
@@ -757,6 +719,13 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
@@ -774,13 +743,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1076,16 +1038,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1097,9 +1059,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1152,16 +1114,16 @@
           <GroupName>STM32F1-CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f1xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\stm32f1_cmsis_driver-latest\Source\Templates\system_stm32f1xx.c</FilePath>
+              <FileName>startup_stm32f103xb.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\stm32f1_cmsis_driver-latest\Source\Templates\arm\startup_stm32f103xb.s</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_stm32f103xb.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>packages\stm32f1_cmsis_driver-latest\Source\Templates\arm\startup_stm32f103xb.s</FilePath>
+              <FileName>system_stm32f1xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32f1_cmsis_driver-latest\Source\Templates\system_stm32f1xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1169,16 +1131,9 @@
           <GroupName>STM32F1-HAL</GroupName>
           <Files>
             <File>
-              <FileName>stm32f1xx_hal_tim_ex.c</FileName>
+              <FileName>stm32f1xx_hal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_tim_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f1xx_hal_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_rcc.c</FilePath>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1190,23 +1145,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32f1xx_hal_uart.c</FileName>
+              <FileName>stm32f1xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f1xx_hal_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f1xx_hal_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_crc.c</FilePath>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_pwr.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1218,23 +1159,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32f1xx_hal_rcc_ex.c</FileName>
+              <FileName>stm32f1xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_rcc_ex.c</FilePath>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stm32f1xx_hal_dma.c</FileName>
+              <FileName>stm32f1xx_hal_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f1xx_hal_gpio_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_gpio_ex.c</FilePath>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_crc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1246,9 +1180,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32f1xx_hal_gpio.c</FileName>
+              <FileName>stm32f1xx_hal_gpio_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_gpio.c</FilePath>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_gpio_ex.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1260,9 +1194,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32f1xx_hal_pwr.c</FileName>
+              <FileName>stm32f1xx_hal_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_pwr.c</FilePath>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f1xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f1xx_hal_rcc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\stm32f1_hal_driver-latest\Src\stm32f1xx_hal_rcc_ex.c</FilePath>
             </File>
           </Files>
         </Group>

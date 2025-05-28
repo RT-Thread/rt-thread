@@ -148,8 +148,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_PWM
-#define RT_USING_PULSE_ENCODER
 #define RT_USING_PIN
 /* end of Device Drivers */
 
