@@ -89,7 +89,7 @@ struct pm_sleep_mode_shutdown_config
 /*******************************************************************************
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#if defined(HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A8)
 #define PM_CHECK_EFM()                  ((EFM_GetStatus(EFM_FLAG_RDY) == SET) && (EFM_GetStatus(EFM_FLAG_RDY1) == SET))
 #elif defined(HC32F460) || defined (HC32F448) || defined (HC32F472)
 #define PM_CHECK_EFM()                  ((EFM_GetStatus(EFM_FLAG_RDY) == SET))

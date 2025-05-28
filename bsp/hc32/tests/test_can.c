@@ -115,7 +115,7 @@ static void can_rx_thread(void *parameter)
         rt_device_read(can_dev, 0, &rxmsg, sizeof(rxmsg));
         /* 打印数据 ID 及内容 */
         rt_kprintf("ID:%x Data:", rxmsg.id);
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < rxmsg.len; i++)
         {
             rt_kprintf("%2x ", rxmsg.data[i]);
         }

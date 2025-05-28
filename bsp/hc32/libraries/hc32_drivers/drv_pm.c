@@ -108,7 +108,7 @@ static void _sleep_enter_deep(void)
 
     (void)PWC_STOP_Config(&sleep_deep_cfg.cfg);
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
     if (PWC_PWRC2_DVS == (READ_REG8(CM_PWC->PWRC2) & PWC_PWRC2_DVS))
     {
         CLR_REG8_BIT(CM_PWC->PWRC1, PWC_PWRC1_STPDAS);
@@ -164,7 +164,7 @@ static void _run_switch_high_to_low(void)
 
     st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_LOW_SPEED);
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
     PWC_HighSpeedToLowSpeed();
 #endif
 }
@@ -173,7 +173,7 @@ static void _run_switch_low_to_high(void)
 {
     struct pm_run_mode_config st_run_mode_cfg = PM_RUN_MODE_CFG;
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448)
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
     PWC_LowSpeedToHighSpeed();
 #endif
 

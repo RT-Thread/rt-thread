@@ -24,6 +24,10 @@
 #define REFER_VOLTAGE                   330     /* 参考电压 3.3V,数据精度乘以100保留2位小数*/
 #define DAC_MAX_OUTPUT_VALUE            4095
 
+#if (defined (HC32F4A8) || defined (HC32F4A0)) && defined (BSP_USING_DAC2)
+    extern void EthPhyDisable(void);
+#endif /* HC32F4A8 && BSP_USING_DAC2 */
+
 static int dac_vol_sample(int argc, char *argv[])
 {
     char dac_device_name[] = "dac1";
@@ -41,7 +45,7 @@ static int dac_vol_sample(int argc, char *argv[])
         {
             rt_strcpy(dac_device_name, "dac1");
         }
-#if defined (HC32F4A0) || defined (HC32F472)
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
         else if (0 == rt_strcmp(argv[1], "dac2"))
         {
             rt_strcpy(dac_device_name, "dac2");
@@ -63,7 +67,9 @@ static int dac_vol_sample(int argc, char *argv[])
             return -RT_ERROR;
         }
     }
-
+#if (defined (HC32F4A8) || defined (HC32F4A0)) && defined (BSP_USING_DAC2)
+    EthPhyDisable();
+#endif
     /* 查找设备 */
     dac_dev = (rt_dac_device_t)rt_device_find(dac_device_name);
     if (dac_dev == RT_NULL)
