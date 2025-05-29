@@ -1237,7 +1237,7 @@ typedef struct rt_mempool *rt_mp_t;
 
 #ifdef RT_USING_DEVICE
 /**
- * @addtogroup group_Device
+ * @addtogroup group_device_driver
  */
 
 /**@{*/
