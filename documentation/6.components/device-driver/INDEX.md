@@ -1,4 +1,4 @@
-@page page_device Device
+@page page_device Device Driver
 
 - @subpage page_device_framework
 - @subpage page_device_pin
