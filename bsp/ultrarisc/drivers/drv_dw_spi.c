@@ -137,8 +137,6 @@ static inline rt_uint32_t tx_max(struct dw_spi *dw_spi_dev)
     {
         return tx_left < tx_room ? tx_left : tx_room;
     }
-
-
 }
 
 static inline rt_uint32_t rx_max(struct dw_spi *dw_spi_dev)

@@ -77,7 +77,9 @@ rt_always_inline void rt_hw_cpu_icache_invalidate_all_local(void)
 
 /** instruction barrier */
 static inline void rt_hw_cpu_sync(void)
-{}
+{
+    __asm__ __volatile__("fence.i" ::: "memory");
+}
 
 /**
  * @brief local cpu icahce & dcache synchronization

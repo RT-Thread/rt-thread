@@ -88,7 +88,6 @@ scons
   ```
 
   成功运行时，串口端的输出如下：
-
   ```shell
   OpenSBI v1.6-66-gbeb27559acd
      ____                    _____ ____ _____
@@ -165,16 +164,5 @@ scons
   msh />
   / # 
   ```
-
   # 6. 联系人信息
-
-  zhangjing@ultrarisc.com。
-
-
-
-
-
-
-
-
-
+  zhangjing@ultrarisc.com
