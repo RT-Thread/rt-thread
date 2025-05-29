@@ -663,7 +663,7 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 
 #ifdef RT_USING_DEVICE
 /**
- * @addtogroup group_Device
+ * @addtogroup group_device_driver
  * @{
  */
 

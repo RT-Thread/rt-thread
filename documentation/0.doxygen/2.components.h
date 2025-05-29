@@ -1,6 +1,12 @@
 /*
  * This file is only used for doxygen document generation.
- */
+ *
+ * Components
+ * - Device Virtual File System
+ * - Device Driver
+ * - Finsh Shell
+ * - Application Module
+  */
 
 /**
  * @defgroup group_kernel_components Components
@@ -31,7 +37,7 @@
  */
 
 /**
- * @defgroup group_Device Device System
+ * @defgroup group_device_driver Device Driver
  * @brief device I/O subsystem
  *
  * The Device System is designed as simple and minimum layer to help communication between
@@ -46,7 +52,7 @@
  */
 
 /**
- * @defgroup group_finsh finsh shell
+ * @defgroup group_finsh Finsh Shell
  *
  * @brief finsh shell is a user command shell in RT-Thread RTOS.
  *
