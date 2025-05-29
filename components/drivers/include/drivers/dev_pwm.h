@@ -14,10 +14,9 @@
 
 #include <rtthread.h>
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_PWM PWM
- *
+ * @defgroup    group_PWM PWM
  * @brief       PWM driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -77,8 +76,6 @@
  *
  * MSH_CMD_EXPORT(pwm_led_sample, pwm sample);
  * @endcode
- *
- * @ingroup group_Drivers
  */
 
 /*!

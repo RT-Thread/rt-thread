@@ -19,10 +19,9 @@
 #include <drivers/core/driver.h>
 
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_SPI SPI
- *
+ * @defgroup    group_SPI SPI
  * @brief       SPI driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -84,8 +83,6 @@
  * // 导出到 msh 命令列表中
  * MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
  * @endcode
- *
- * @ingroup group_Drivers
  */
 
 /*!

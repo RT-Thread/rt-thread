@@ -17,10 +17,9 @@
 #include <drivers/classes/block.h>
 
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_blk blk
+ * @defgroup    group_blk blk
  * @brief       blk driver api
- * @ingroup group_Drivers
+ * @ingroup     group_device_driver
  * @addtogroup  group_blk
  * @{
  */

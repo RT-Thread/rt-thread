@@ -14,10 +14,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_Serial_v2 Serial v2
- *
+ * @defgroup    group_Serial_v2 Serial v2
  * @brief       Serial v2 driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -118,8 +117,6 @@
  * }
  * MSH_CMD_EXPORT(uart_dma_sample, uart device dma sample);
  * @endcode
- *
- * @ingroup group_Drivers
  */
 
 
