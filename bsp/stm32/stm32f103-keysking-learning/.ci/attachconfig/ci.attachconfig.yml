@@ -1,10 +1,9 @@
 scons.args: &scons
     scons_arg:
       - '--strict'
-system.use_nano:
-  <<: *scons
-  kconfig:
-    CONFIG_RT_USING_NANO=y
+
+
+
 devices.uart:
   <<: *scons
   kconfig:
