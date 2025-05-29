@@ -35,28 +35,28 @@ extern "C" {
 /*----- RSA Control Codes: Mode Parameters: Key Bits -----*/
 /****** RSA Key bits Type *****/
 typedef enum {
-    RSA_KEY_BITS_192  = 0U,                    /* 192 Key bits */
-    RSA_KEY_BITS_256,                      /* 256 Key bits */
-    RSA_KEY_BITS_512,                      /* 512 Key bits */
-    RSA_KEY_BITS_1024,                     /* 1024 Key bits */
-    RSA_KEY_BITS_2048,                     /* 2048 Key bits */
-    RSA_KEY_BITS_3072,                     /* 3072 Key bits */
-    RSA_KEY_BITS_4096                      /* 4096 Key bits */
+    RSA_KEY_BITS_192  = 0U,  		           /* 192 Key bits */ 
+    RSA_KEY_BITS_256,                      /* 256 Key bits */ 
+    RSA_KEY_BITS_512,                      /* 512 Key bits */ 
+    RSA_KEY_BITS_1024,                     /* 1024 Key bits */ 
+    RSA_KEY_BITS_2048,                     /* 2048 Key bits */ 
+    RSA_KEY_BITS_3072,                     /* 3072 Key bits */ 
+    RSA_KEY_BITS_4096                      /* 4096 Key bits */ 
 } csi_rsa_key_bits_t;
 
 /****** RSA Padding Type *****/
 typedef enum {
-    RSA_PADDING_MODE_NO  = 0,              /* RSA NO Padding Mode */
-    RSA_PADDING_MODE_PKCS1,                /* RSA PKCS1 Padding Mode */
-    RSA_PADDING_MODE_PKCS1_OAEP,           /* RSA PKCS1 OAEP Padding Mode */
-    RSA_PADDING_MODE_SSLV23,               /* RSA SSLV23 Padding Mode */
-    RSA_PADDING_MODE_X931,                 /* RSA X931 Padding Mode */
-    RSA_PADDING_MODE_PSS                   /* RSA PSS Padding Mode */
+    RSA_PADDING_MODE_NO  = 0,              /* RSA NO Padding Mode */ 
+    RSA_PADDING_MODE_PKCS1,                /* RSA PKCS1 Padding Mode */ 
+    RSA_PADDING_MODE_PKCS1_OAEP,           /* RSA PKCS1 OAEP Padding Mode */ 
+    RSA_PADDING_MODE_SSLV23,               /* RSA SSLV23 Padding Mode */ 
+    RSA_PADDING_MODE_X931,                 /* RSA X931 Padding Mode */ 
+    RSA_PADDING_MODE_PSS                   /* RSA PSS Padding Mode */ 
 } csi_rsa_padding_type_t;
 
 /****** RSA Hash Type *****/
 typedef enum {
-    RSA_HASH_TYPE_MD5  = 0,
+    RSA_HASH_TYPE_MD5  = 0,               
     RSA_HASH_TYPE_SHA1,
     RSA_HASH_TYPE_SHA224,
     RSA_HASH_TYPE_SHA256,

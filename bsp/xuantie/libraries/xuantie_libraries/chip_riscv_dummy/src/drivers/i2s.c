@@ -651,7 +651,7 @@ int32_t csi_i2s_send(csi_i2s_t *i2s, const void *data, uint32_t size)
 
             if ((uint8_t *)i2s->priv) { ///< if dma is stop, then start it
                 soc_dcache_clean_invalid_range((unsigned long)(i2s->tx_buf->buffer + i2s->tx_buf->read), i2s->tx_period);
-
+                
                 ///< TODO：调用csi_dma_ch_start开启DMA通道发送数据
                 i2s->priv = (void *)0U;
             }

@@ -19,7 +19,7 @@
 /*
  * attention: don't modify this file as a suggest
  * you should copy from chip_riscv_dummy/include/asm/riscv_asm_macro.h and keep it newer
- * please contact xuantie-rtos os team if have question
+ * please contact xuantie-rtos os team if have question 
  */
 
 #ifndef __RISCV_ASM_MACRO_H__

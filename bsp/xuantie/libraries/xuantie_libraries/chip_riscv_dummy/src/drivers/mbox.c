@@ -166,7 +166,7 @@ int32_t csi_mbox_receive(csi_mbox_t *mbox, uint32_t channel_id, void *data, uint
             ///< TODO：往指定的CPU以及该CPU的某个通道写数据（0）
         }
 
-        ///< TODO：禁止指定的CPU以及该CPU的某个通道的中断
+        ///< TODO：禁止指定的CPU以及该CPU的某个通道的中断  
         memcpy(data, buf, size);
 
         ///< TODO：往指定的CPU以及该CPU的某个通道写数据（(MBOX_ACK << 16U) | 1U）

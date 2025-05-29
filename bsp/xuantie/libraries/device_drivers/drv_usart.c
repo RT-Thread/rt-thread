@@ -27,7 +27,7 @@
     #include <rtdbg.h>
 
     #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) \
-        && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && !defined(BSP_USING_UART7)
+        && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && !defined(BSP_USING_UART7) 
         #error "Please define at least one BSP_USING_UARTx"
         /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
     #endif
@@ -62,7 +62,7 @@ static rt_err_t xuantie_configure(struct rt_serial_device *serial, struct serial
     ret = csi_uart_baud(&uart->uart, cfg->baud_rate);
     if (ret != CSI_OK)
     {
-        return -RT_ERROR;
+        return RT_ERROR;
     }
 
     csi_uart_data_bits_t data_bits;
@@ -123,7 +123,7 @@ static rt_err_t xuantie_configure(struct rt_serial_device *serial, struct serial
     ret = csi_uart_format(&uart->uart, data_bits, parity, stop_bits);
     if (ret != CSI_OK)
     {
-        return -RT_ERROR;
+        return RT_ERROR;
     }
 
     return RT_EOK;
@@ -136,7 +136,7 @@ static rt_err_t xuantie_control(struct rt_serial_device *serial, int cmd, void *
     case RT_DEVICE_CTRL_CONFIG:
         return xuantie_configure(serial, (struct serial_configure *)arg);
     default:
-        return -RT_ERROR;
+        return RT_ERROR;
     }
 }
 
@@ -148,8 +148,8 @@ static int xuantie_putc(struct rt_serial_device *serial, char c)
     ret = csi_uart_send(&uart->uart, &c, 1, 50);
     if (ret == 1)
         return RT_EOK;
-
-    return -RT_ERROR;
+        
+    return RT_ERROR;
 }
 
 static int xuantie_getc(struct rt_serial_device *serial)
@@ -160,7 +160,7 @@ static int xuantie_getc(struct rt_serial_device *serial)
 
     csi_uart_receive(&uart->uart, &c, 1, 0x5);
     dw_uart_enable_recv_irq(uart_base);
-    return c;
+    return c;  
 }
 
 static const struct rt_uart_ops xuantie_uart_ops =
@@ -192,7 +192,7 @@ int rt_hw_usart_init(void)
         if (result != CSI_OK)
         {
             LOG_E("Failed to initialize UART %d", uart_obj[i].config->idx);
-            return -RT_ERROR;
+            return RT_ERROR;
         }
 
         /* Init UART object */
@@ -210,7 +210,7 @@ int rt_hw_usart_init(void)
         {
             LOG_E("Failed to register UART device %s", uart_obj[i].config->name);
             csi_uart_uninit(&uart_obj[i].uart);
-            return -RT_ERROR;
+            return RT_ERROR;
         }
     }
     return result;

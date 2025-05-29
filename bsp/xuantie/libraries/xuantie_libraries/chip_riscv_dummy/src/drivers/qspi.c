@@ -100,7 +100,7 @@ csi_error_t csi_qspi_mode(csi_qspi_t *qspi, csi_qspi_mode_t mode)
         case QSPI_CLOCK_MODE_2:
             ///< TODO：配置QSPI时钟的极性和相位
             break;
-
+        
         case QSPI_CLOCK_MODE_3:
             ///< TODO：配置QSPI时钟的极性和相位
             break;

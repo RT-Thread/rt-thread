@@ -40,10 +40,10 @@ typedef enum {
     CSI_CURVES_SECP256K1 =  0U, /* SECG curve over a 256 bit prime field */
     CSI_CURVES_SECP384R1,       /* NIST/SECG curve over a 384 bit prime field */
     CSI_CURVES_SECP521R1,       /* NIST/SECG curve over a 521 bit prime field */
-    CSI_CURVES_BRAINPOOL256R1,  /* RFC 5639 curve over a 256 prime field */
-    CSI_CURVES_BRAINPOOL256T1,  /* RFC 5639 curve over a 256 prime field */
-    CSI_CURVES_BRAINPOOL512R1,  /* RFC 5639 curve over a 512 prime field */
-    CSI_CURVES_BRAINPOOL512T1,  /* RFC 5639 curve over a 512 prime field */
+    CSI_CURVES_BRAINPOOL256R1, 	/* RFC 5639 curve over a 256 prime field */
+    CSI_CURVES_BRAINPOOL256T1, 	/* RFC 5639 curve over a 256 prime field */
+    CSI_CURVES_BRAINPOOL512R1, 	/* RFC 5639 curve over a 512 prime field */
+    CSI_CURVES_BRAINPOOL512T1, 	/* RFC 5639 curve over a 512 prime field */
 } csi_curve_type_t;
 
 /**
@@ -88,7 +88,7 @@ csi_error_t csi_ecdsa_load_curve(csi_ecdsa_t *ecdsa, csi_curve_type_t type);
   \param[out]  sig_len      The signature length
   \return      Error code \ref Csi_error_t
 */
-csi_error_t csi_ecdsa_sign(csi_ecdsa_t *ecdsa,  const uint8_t *prikey,  uint32_t prikey_len,
+csi_error_t csi_ecdsa_sign(csi_ecdsa_t *ecdsa,  const uint8_t *prikey,  uint32_t prikey_len, 
                                 const uint8_t *dgst, uint32_t dgst_len, uint8_t *sig, uint32_t *sig_len);
 
 /**
@@ -102,7 +102,7 @@ csi_error_t csi_ecdsa_sign(csi_ecdsa_t *ecdsa,  const uint8_t *prikey,  uint32_t
   \param[in]   sig_len      The signature length
   \return      Error code \ref Csi_error_t
 */
-csi_error_t csi_ecdsa_verify(csi_ecdsa_t *ecdsa, const uint8_t *pubkey, uint32_t pubkey_len,
+csi_error_t csi_ecdsa_verify(csi_ecdsa_t *ecdsa, const uint8_t *pubkey, uint32_t pubkey_len, 
                                 const uint8_t *dgst, uint32_t gst_len,  const uint8_t *sig,  uint32_t sig_len);
 
 #ifdef __cplusplus

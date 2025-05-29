@@ -79,8 +79,8 @@ csi_error_t csi_hmac_set_key(csi_hmac_t *mac, uint8_t *key, uint32_t key_len);
 /**
   \brief       MAC start operation function.
   \param[in]   mac        mac handle to operate.
-  \param[in]   context    mac context pointer.
-  \param[in]   mode       sc_sha_mode_t.
+  \param[in]   context 	  mac context pointer.
+  \param[in]   mode 	  sc_sha_mode_t.
   \return      error code \ref csi_error_t
 */
 csi_error_t csi_hmac_start(csi_hmac_t *mac, csi_hmac_context_t *context, csi_sha_mode_t mode);
@@ -106,7 +106,7 @@ csi_error_t csi_hmac_finish(csi_hmac_t *mac, csi_hmac_context_t *context, uint8_
 /**
   \brief       MAC cacl operation function.
   \param[in]   mac        mac handle to operate.
-  \param[in]   mode       sc_sha_mode_t.
+  \param[in]   mode 	  sc_sha_mode_t.
   \param[in]   msg        Pointer to the mac input message.
   \param[in]   msg_len    Length of msg.
   \param[out]  out        mac buffer, malloc by caller.

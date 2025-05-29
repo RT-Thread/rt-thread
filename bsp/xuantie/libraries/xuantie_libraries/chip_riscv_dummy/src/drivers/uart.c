@@ -461,7 +461,7 @@ int32_t csi_uart_send(csi_uart_t *uart, const void *data, uint32_t size, uint32_
     uint32_t send_start, timeout_flag = 0U;
     uint32_t intr_en_status;
 
-    uart_base = (dw_uart_regs_t *)uart->dev.reg_base;
+    uart_base = (dw_uart_regs_t *)uart->dev.reg_base; // 串口地址 0x1900d000
     /* store the status of intr */
     intr_en_status = dw_uart_get_intr_en_status(uart_base);
     dw_uart_disable_trans_irq(uart_base);

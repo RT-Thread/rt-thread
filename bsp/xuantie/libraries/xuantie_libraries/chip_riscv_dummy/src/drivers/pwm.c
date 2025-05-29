@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *	Copyright (C) 2017-2024 Alibaba Group Holding Limited
  */
 
 /*******************************************************
@@ -100,7 +100,7 @@ csi_error_t csi_pwm_out_start(csi_pwm_t *pwm, uint32_t channel)
 {
     CSI_PARAM_CHK(pwm, CSI_ERROR);
 
-    ///< TODO：打开输出使能
+    ///< TODO：打开输出使能 
 
     return CSI_OK;
 }
