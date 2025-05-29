@@ -12,10 +12,9 @@
 #define __DAC_H__
 #include <rtthread.h>
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_DAC DAC
- *
+ * @defgroup    group_DAC DAC
  * @brief       DAC driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -59,8 +58,6 @@
  * MSH_CMD_EXPORT(dac_vol_sample, dac voltage convert sample);
  *
  * @endcode
- *
- * @ingroup group_Drivers
  */
 
 /*!

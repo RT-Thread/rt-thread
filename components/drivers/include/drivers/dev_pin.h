@@ -15,10 +15,9 @@
 #include <rtthread.h>
 
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_Pin Pin
- *
+ * @defgroup    group_Pin Pin
  * @brief       Pin driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -67,8 +66,6 @@
  *
  * MSH_CMD_EXPORT(pin_beep_sample, pin beep sample);
  * @endcode
- *
- * @ingroup group_Drivers
  */
 
 /*!
