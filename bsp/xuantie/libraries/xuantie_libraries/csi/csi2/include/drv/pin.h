@@ -73,7 +73,7 @@ typedef enum{
     PIN_I2S_SDI,
     PIN_I2S_SDO
 }csi_pin_i2s_t;
- 
+
 typedef struct {
     pin_name_t  pin_name;
     uint8_t     idx;        ///< ctrl idx.    e.g: ADC0 channel 1, idx = 0, channel = 1

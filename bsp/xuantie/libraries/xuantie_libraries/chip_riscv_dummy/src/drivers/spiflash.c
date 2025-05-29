@@ -88,7 +88,7 @@ static int32_t flash_wait_ready(csi_spiflash_t *spiflash)
     uint8_t  cmd;
     uint8_t  status;
     int32_t  ret = CSI_TIMEOUT;
-    int32_t  check; 
+    int32_t  check;
 
     time_start = csi_tick_get_ms();
     cmd        = FLASH_CMD_READ_STATUS1;
@@ -277,7 +277,7 @@ csi_error_t csi_spiflash_erase(csi_spiflash_t *spiflash, uint32_t offset, uint32
         } else if (offset % param->sector_size) {
             ret = CSI_ERROR;
             break;
-        } 
+        }
 
         if (( offset == 0U ) && ( size == param->flash_size )){ /* chip erase */
             ret = spiflash->spi_send(spiflash, FLASH_CMD_WRITE_ENABLE, 0U, 0U, NULL, 0U);
@@ -339,7 +339,7 @@ csi_error_t csi_spiflash_erase(csi_spiflash_t *spiflash, uint32_t offset, uint32
             } while (addr < (offset + size));
         }
     } while(0);
-    
+
     return ( csi_error_t )ret;
 }
 
@@ -650,8 +650,8 @@ int csi_spiflash_is_locked(csi_spiflash_t *spiflash, uint32_t offset, uint32_t s
         ret = spiflash->spi_receive(spiflash, FLASH_CMD_READ_STATUS1, 0U, 0U, &status, 1U);
         if (ret < 0) {
             ret = CSI_ERROR;
-            break;          
-        }                   
+            break;
+        }
 
         /* Calculate bp msk and tb msk */
         bp_bits = param->bp_bits;
@@ -682,7 +682,7 @@ csi_error_t csi_spiflash_config_data_line(csi_spiflash_t *spiflash, csi_spiflash
     temp = status;
 
     do {
-        
+
         /* config spiflash periphrial data line */
         switch (line) {
             case SPIFLASH_DATA_1_LINE:
@@ -695,18 +695,18 @@ csi_error_t csi_spiflash_config_data_line(csi_spiflash_t *spiflash, csi_spiflash
 
                 if (ret < 0) {
                     ret = CSI_ERROR;
-                    break;          
-                }                   
+                    break;
+                }
 
                 ret = spiflash->spi_receive(spiflash, FLASH_CMD_READ_STATUS2, 0U, 0U, &status[1], 1U);
 
                 if (ret < 0) {
                     ret = CSI_ERROR;
-                    break;          
-                }                   
+                    break;
+                }
 
                 if(param->qe_pos == 1U){
-                    // Used to adapte GDxxx series SPIFLASH 
+                    // Used to adapte GDxxx series SPIFLASH
                     status[1] |= ((uint8_t)0x1U << param->qe_pos);
                     ret = csi_spiflash_write_reg(spiflash, 0x31U, &status[1], 1U);
                 } else {

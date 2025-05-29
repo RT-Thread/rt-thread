@@ -5,7 +5,7 @@
 #include <soc.h>
 
 void section_data_copy(void);
-void section_ram_code_copy(void);   
+void section_ram_code_copy(void);
 void section_ram_code_copy(void);
 void section_bss_clear(void);
 

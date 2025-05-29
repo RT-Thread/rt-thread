@@ -124,7 +124,7 @@ csi_error_t csi_spi_init(csi_spi_t *spi, uint32_t idx);
   \brief       De-initialize SPI Interface
                stops Operation and releases the software resources used by the spi instance
   \param[in]   spi    Handle
-  \return      None 
+  \return      None
 */
 void    csi_spi_uninit(csi_spi_t *spi);
 

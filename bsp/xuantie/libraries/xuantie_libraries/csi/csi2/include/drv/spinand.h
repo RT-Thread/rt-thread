@@ -45,7 +45,7 @@ typedef union {
 
 
 typedef struct {
-uint32_t       target;                                                      ///< target in chip 
+uint32_t       target;                                                      ///< target in chip
 uint32_t       lun;                                                         ///< lun in target
 uint32_t       plane;                                                       ///< plane number in lun
 uint32_t       block;                                                       ///< block index in lun
@@ -76,7 +76,7 @@ typedef struct{
     uint8_t nbytes;                                                         ///< dummy bytes
     uint8_t buswidth;                                                       ///< bus width
   }dummy;
-  
+
 
   struct {
     uint8_t buswidth;                                                       ///<  data buswidth
@@ -87,12 +87,12 @@ typedef struct{
       void*  out;                                                           ///<  write datat buf ptr
     }buf;
   }data;
-  
+
 }spi_mem_op_t;
 
 typedef struct  {
-	const uint8_t *id;                                                        ///< point to chip id array
-	const uint8_t len;                                                        ///< id length
+    const uint8_t *id;                                                        ///< point to chip id array
+    const uint8_t len;                                                        ///< id length
 }csi_spinand_id_t;
 
 typedef struct {
@@ -102,63 +102,63 @@ typedef struct {
 
 
 typedef struct{
-  uint16_t strength;                                                        ///< number of hw-ecc engine bits 
+  uint16_t strength;                                                        ///< number of hw-ecc engine bits
   uint16_t step_size;                                                       ///< corect size by ecc per-step
 }csi_nand_ecc_req_t;
 
 typedef struct {
-	uint32_t bits_per_cell;                                                   ///< bit per-cell
-	uint32_t pagesize;                                                        ///< page size
-	uint32_t oobsize;                                                         ///< spare area size
-	uint32_t pages_per_eraseblock;                                            ///< pages per block
-	uint32_t eraseblocks_per_lun;                                             ///< blocks per lun(logic unit number== max block index )
-	uint32_t max_bad_eraseblocks_per_lun;                                     ///< max bad blocks per lun
-	uint32_t planes_per_lun;                                                  ///< planes per-lun 
-	uint32_t luns_per_target;                                                 ///< luns per die
+    uint32_t bits_per_cell;                                                   ///< bit per-cell
+    uint32_t pagesize;                                                        ///< page size
+    uint32_t oobsize;                                                         ///< spare area size
+    uint32_t pages_per_eraseblock;                                            ///< pages per block
+    uint32_t eraseblocks_per_lun;                                             ///< blocks per lun(logic unit number== max block index )
+    uint32_t max_bad_eraseblocks_per_lun;                                     ///< max bad blocks per lun
+    uint32_t planes_per_lun;                                                  ///< planes per-lun
+    uint32_t luns_per_target;                                                 ///< luns per die
   uint32_t ntargets;                                                        ///< target index
 }csi_nand_mem_layout_t;
 
 
 
 typedef struct  {
-	char                        *model;                                       ///<   chip name of vendor
-	uint32_t                     flags;                                       ///<   chip-specific feature bits group
-	csi_spinand_id_t             devid;                                       ///<   devid of chip
-	csi_nand_mem_layout_t        memorg;                                      ///<   mem layout of chip
-	csi_nand_ecc_req_t           eccreq;                                      ///<   ecc capabilty of chip
-	csi_error_t (*select_target)(void *spinand, uint32_t target);             ///<   select target 
+    char                        *model;                                       ///<   chip name of vendor
+    uint32_t                     flags;                                       ///<   chip-specific feature bits group
+    csi_spinand_id_t             devid;                                       ///<   devid of chip
+    csi_nand_mem_layout_t        memorg;                                      ///<   mem layout of chip
+    csi_nand_ecc_req_t           eccreq;                                      ///<   ecc capabilty of chip
+    csi_error_t (*select_target)(void *spinand, uint32_t target);             ///<   select target
   csi_error_t (*check_ecc_status)(void *spinand,uint8_t status);            ///<   check vendor specific ecc status
 }csi_spinand_info_t;
 
 
 typedef struct {
-	csi_error_t (*init)  (void *spinand);                                    ///< vendor chip inition
-	void       (*uninit) (void *spinand);                                    ///< vendor chip uninition
+    csi_error_t (*init)  (void *spinand);                                    ///< vendor chip inition
+    void       (*uninit) (void *spinand);                                    ///< vendor chip uninition
 }csi_spinand_manufacturer_ops_t;
 
 typedef struct {
-	uint8_t                                  id;                              ///< vendor id
-	char                                     *name;                           ///< vendor name
-	const csi_spinand_info_t                 *chips;                          ///< vendor chip param
-	uint32_t                                 nchips;                          ///< chips number supported
-	const csi_spinand_manufacturer_ops_t     *ops;                            ///< vendor specific operations
+    uint8_t                                  id;                              ///< vendor id
+    char                                     *name;                           ///< vendor name
+    const csi_spinand_info_t                 *chips;                          ///< vendor chip param
+    uint32_t                                 nchips;                          ///< chips number supported
+    const csi_spinand_manufacturer_ops_t     *ops;                            ///< vendor specific operations
 }csi_spinand_manufacturer_t;
 
 
 typedef struct {
-  char                                     *model_name;                     ///< name of nand-device module 
+  char                                     *model_name;                     ///< name of nand-device module
   uint16_t                                 page_size;                       ///< page-size of nand-device
   uint16_t                                 oob_size;                        ///< oob-size(spare size) of nand-device
   uint16_t                                 pages_per_block;                 ///< pages-per-block
-  uint16_t                                 max_bad_blocks;                  ///< max possible bad blocks of nand-device 
+  uint16_t                                 max_bad_blocks;                  ///< max possible bad blocks of nand-device
   uint32_t                                 total_blocks;                    ///< total blocks of nand-device
 }csi_spinand_dev_params_t;
 
-typedef struct 
+typedef struct
 {
   void             *xfer_buf;                                             ///<  point to xfer data buf
   uint32_t         xfer_buf_len;                                          ///<  length of xfer buf ,count in byte
-  uint16_t         rxfer_copy_offset;                                     ///<  copy offset from word-aligned buf 
+  uint16_t         rxfer_copy_offset;                                     ///<  copy offset from word-aligned buf
   uint16_t         rxfer_origin_len;                                      ///<  copy length from word-aligned buf
 }csi_xfer_data_buf_t;
 
@@ -171,20 +171,20 @@ typedef struct {
     csi_nand_spi_qspi_t spi_qspi;                                               ///< Spi/qspi handle
     uint8_t        scractbuf[SPINAND_SCRAT_BUF_LEN];                       ///< scracthbuf for read/write id or reg
     uint8_t        cur_target;                                             ///< current target
-	uint16_t       max_tx_size;                                            ///< max tx op size 
-	uint16_t       max_rx_size;                                            ///< max rx op size
+    uint16_t       max_tx_size;                                            ///< max tx op size
+    uint16_t       max_rx_size;                                            ///< max rx op size
     csi_xfer_data_buf_t  xfer;                                             ///< xfer buf
     csi_spinand_info_t *chip_info;                                         ///< Point to vendor private feature struct
-    csi_spinand_manufacturer_t *maf;                                       ///< point to manufacture 
-    void (*spi_cs_callback)(csi_gpio_pin_state_t value);                   ///< gpio chip select for spi or qspi 
+    csi_spinand_manufacturer_t *maf;                                       ///< point to manufacture
+    void (*spi_cs_callback)(csi_gpio_pin_state_t value);                   ///< gpio chip select for spi or qspi
     csi_error_t (*spi_mem)(void *spinand,spi_mem_op_t *op);                ///< spi-mem op function
     void           *priv;                                                  ///< User private param
 } csi_spinand_t;
 
-typedef enum {	
-	XFER_CPU_POLLING,                                                      ///< transfer by qspi with cpu polling mode
-	XFER_DMA,                                                              ///< transfer by qspi with external dma engine
-	XFER_INTR,                                                             ///< transfer by qspi with cpu-interrut
+typedef enum {
+    XFER_CPU_POLLING,                                                      ///< transfer by qspi with cpu polling mode
+    XFER_DMA,                                                              ///< transfer by qspi with external dma engine
+    XFER_INTR,                                                             ///< transfer by qspi with cpu-interrut
 }csi_spinand_xfer_t;
 
 /**
@@ -204,9 +204,9 @@ csi_error_t csi_spinand_qspi_init(csi_spinand_t *spinand, uint32_t qspi_idx,void
 void csi_spinand_qspi_uninit(csi_spinand_t *spinand);
 
 /**
-  \brief       set xfer mode      
+  \brief       set xfer mode
   \param[in]   spinand    NANDFLASH handle to operate
-  \param[in]   xfer_mode  please ref csi_spinand_xfer_t 
+  \param[in]   xfer_mode  please ref csi_spinand_xfer_t
   \return      Error code
 */
 csi_error_t csi_spinand_set_xfer_mode(csi_spinand_t *spinand,csi_spinand_xfer_t xfer_mode);
@@ -234,9 +234,9 @@ int32_t csi_spinand_read(csi_spinand_t *spinand, uint64_t offset, void *data, ui
 
 
 /**
-  \brief       Read spare data from specific page 
+  \brief       Read spare data from specific page
   \param[in]   spinand    NANDFLASH handle to operate
-  \param[in]   page_addr  page addr, address relative to zero, addr need page size aligned  
+  \param[in]   page_addr  page addr, address relative to zero, addr need page size aligned
   \param[in]   spare_offset  offset address within the spare area of the page
   \param[out]  data      Pointer to a buffer storing the data read from Flash
   \param[in]   size       Number of data items to read
@@ -257,7 +257,7 @@ int32_t csi_spinand_read_spare_data(csi_spinand_t *spinand,uint64_t page_addr,ui
 int32_t csi_spinand_write(csi_spinand_t *spinand, uint64_t offset, const void *data, uint64_t size);
 
 /**
-  \brief       write spare data to specific page 
+  \brief       write spare data to specific page
   \param[in]   spinand    NANDFLASH handle to operate
   \param[in]   page_addr page addr, address relative to zero, addr need page size aligned
   \param[in]   spare_offset  offset address within the spare area of the page
@@ -282,7 +282,7 @@ csi_error_t csi_spinand_erase(csi_spinand_t *spinand, uint64_t offset, uint64_t 
 /**
   \brief       check whether the block is bad
   \param[in]   spinand      NANDFLASH handle to operate
-  \param[in]   block_addr  block addr (count in bytes) 
+  \param[in]   block_addr  block addr (count in bytes)
   \return      1: bad      0: not bad    <0  err code
 */
 
@@ -298,7 +298,7 @@ int32_t  csi_spinand_block_is_bad(csi_spinand_t *spinand,uint64_t block_addr);
 csi_error_t  csi_spinand_block_mark_bad(csi_spinand_t *spinand, uint64_t block_addr);
 
 /**
-  \brief       reset spinand device 
+  \brief       reset spinand device
   \param[in]   spinand      NANDFLASH handle to operate
   \return      Error code
 */

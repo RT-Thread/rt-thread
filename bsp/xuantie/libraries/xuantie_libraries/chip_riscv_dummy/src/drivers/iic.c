@@ -71,7 +71,7 @@ void dw_iic_slave_rx_handler(void *arg)
 
     ///< TODO：根据中断状态接收数据
     ///< TODO：根据中断状态处理异常并执行用户回调函数
-    
+
 }
 
 /**
@@ -121,7 +121,7 @@ csi_error_t csi_iic_init(csi_iic_t *iic, uint32_t idx)
         ///< TODO：关闭IIC所有的中断
         ///< TODO：设置IIC从机在接收到来自主机的读取请求时不刷新FIFO中的数据
     }
-   
+
     iic->state.writeable = 1U;
     iic->state.readable  = 1U;
     iic->state.error     = 0U;
@@ -158,8 +158,8 @@ void csi_iic_uninit(csi_iic_t *iic)
     ///< TODO：关闭IIC
 
     // 禁止中断控制器对应的中断，注销中断服务函数
-    csi_irq_disable((uint32_t)iic->dev.irq_num); 
-    csi_irq_detach((uint32_t)iic->dev.irq_num); 
+    csi_irq_disable((uint32_t)iic->dev.irq_num);
+    csi_irq_detach((uint32_t)iic->dev.irq_num);
 }
 
 /**
@@ -238,7 +238,7 @@ csi_error_t csi_iic_speed(csi_iic_t *iic, csi_iic_speed_t speed)
 
         ret = CSI_OK;
     } else if (speed == IIC_BUS_SPEED_FAST) {
-        
+
         ///< TODO：设置IIC为快速模式,400KHz
         ///< TODO：获取IIC使用的频率
         ///< TODO：快速模式设置SCL时钟的高周期计数
@@ -370,7 +370,7 @@ static csi_error_t iic_master_send_intr(csi_iic_t *iic, uint32_t devaddr, const 
             ///< TODO：使能发送中断
             ///< TODO：设置发送FIFO的触发级别
             ///< TODO：打开IIC
-            
+
         }
     }
 
@@ -410,7 +410,7 @@ static csi_error_t iic_master_send_dma(csi_iic_t *iic, uint32_t devaddr, const v
 
     soc_dcache_clean_invalid_range((unsigned long)iic->data, iic->size);
 
-    ///< TODO：调用csi_dma_ch_start开启IIC使用的DMA通道   
+    ///< TODO：调用csi_dma_ch_start开启IIC使用的DMA通道
     ///< TODO：打开IIC
 
     return ret;
@@ -662,7 +662,7 @@ int32_t csi_iic_mem_receive(csi_iic_t *iic, uint32_t devaddr, uint16_t memaddr, 
                     ///< TODO：设置IIC为接收数据模式
                 }
 
-                ///< TODO：等待接收数据，超时则超时退出              
+                ///< TODO：等待接收数据，超时则超时退出
 
                 if (ret == CSI_OK) {
                     for (read_count = 0; read_count < (int32_t)size; read_count++) {
@@ -689,7 +689,7 @@ int32_t csi_iic_mem_receive(csi_iic_t *iic, uint32_t devaddr, uint16_t memaddr, 
                     }
 
                     ///< TODO：IIC读数据寄存器接收数据
-                    
+
                     read_count ++;
 
                     if (cmd_num > 0U) {
@@ -874,7 +874,7 @@ csi_error_t csi_iic_slave_send_async(csi_iic_t *iic, const void *data, uint32_t 
         ///< 注册发送中断服务函数、使能中断控制器对应的中断
         csi_irq_attach((uint32_t)iic->dev.irq_num, &dw_iic_slave_tx_handler, &iic->dev);
         csi_irq_enable((uint32_t)iic->dev.irq_num);
-        
+
         ///< 开始IIC从机模式以中断方式发送数据
         iic_slave_send_intr(iic, data, size);
     }
@@ -972,7 +972,7 @@ csi_error_t csi_iic_slave_receive_async(csi_iic_t *iic, void *data, uint32_t siz
         ///< 初始化接收中断服务函数、使能中断控制器对应的中断
         csi_irq_attach((uint32_t)iic->dev.irq_num, &dw_iic_slave_rx_handler, &iic->dev);
         csi_irq_enable((uint32_t)iic->dev.irq_num);
-        
+
         ///< TODO：开始IIC从机模式以中断方式发送数据
         iic_slave_receive_intr(iic, data, size);
     }

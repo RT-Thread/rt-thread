@@ -19,30 +19,30 @@
 /*
  * attention: don't modify this file as a suggest
  * you should copy from chip_riscv_dummy/include/asm/riscv_csr.h and keep it newer
- * please contact xuantie-rtos os team if have question 
+ * please contact xuantie-rtos os team if have question
  */
 
 #ifndef __RISCV_CSR_H__
 #define __RISCV_CSR_H__
 
 #if __riscv_xlen == 64
-	#define portWORD_SIZE 8
-	#define store_x       sd
-	#define load_x        ld
+    #define portWORD_SIZE 8
+    #define store_x       sd
+    #define load_x        ld
 #elif __riscv_xlen == 32
-	#define store_x       sw
-	#define load_x        lw
-	#define portWORD_SIZE 4
+    #define store_x       sw
+    #define load_x        lw
+    #define portWORD_SIZE 4
 #else
-	#error Assembler did not define __riscv_xlen
+    #error Assembler did not define __riscv_xlen
 #endif
 
 #if __riscv_flen == 64
-	#define fstore_x      fsd
-	#define fload_x       fld
+    #define fstore_x      fsd
+    #define fload_x       fld
 #elif __riscv_flen == 32
-	#define fstore_x      fsw
-	#define fload_x       flw
+    #define fstore_x      fsw
+    #define fload_x       flw
 #endif
 
 #if defined(CONFIG_RISCV_SMODE) && CONFIG_RISCV_SMODE
@@ -136,7 +136,7 @@
 #define MSTATUS_FS_SHIFT                13
 #define MSTATUS_MS_SHIFT                25
 
-#define INSERT_FIELD(val, which, fieldval)	(((val) & ~(which)) | ((fieldval) * ((which) & ~((which)-1))))
+#define INSERT_FIELD(val, which, fieldval)  (((val) & ~(which)) | ((fieldval) * ((which) & ~((which)-1))))
 
 #if CONFIG_CPU_XUANTIE_C906 || CONFIG_CPU_XUANTIE_C906FD || CONFIG_CPU_XUANTIE_C906FDV || CONFIG_CPU_XUANTIE_C908 || CONFIG_CPU_XUANTIE_C908V ||CONFIG_CPU_XUANTIE_C908I || CONFIG_CPU_XUANTIE_R910 || CONFIG_CPU_XUANTIE_R920
 #define ATTR_SO                 (1ull << 4)

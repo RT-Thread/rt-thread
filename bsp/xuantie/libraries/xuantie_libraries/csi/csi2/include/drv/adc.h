@@ -50,7 +50,7 @@ struct csi_adc {
     void (*callback)(csi_adc_t *adc, csi_adc_event_t event, void *arg);  ///< User callback ,signaled by driver event
     void                    *arg;        ///< User private param ,passed to user callback
     uint32_t                *data;       ///< Data buf
-    uint32_t                 num;        ///< Data size by word 
+    uint32_t                 num;        ///< Data size by word
     csi_dma_ch_t            *dma;        ///< Dma channel handle
     csi_error_t             (*start)(csi_adc_t *adc);  ///< Start function
     csi_error_t             (*stop)(csi_adc_t *adc);   ///< Stop function
@@ -69,7 +69,7 @@ csi_error_t csi_adc_init(csi_adc_t *adc, uint32_t idx);
 /**
   \brief       De-initialize adc Interface. stops operation and releases the software resources used by the interface
   \param[in]   handle    ADC handle to operate
-  \return      None 
+  \return      None
 */
 void csi_adc_uninit(csi_adc_t *adc);
 
@@ -119,7 +119,7 @@ csi_error_t csi_adc_stop_async(csi_adc_t *adc);
 csi_error_t csi_adc_channel_enable(csi_adc_t *adc, uint8_t ch_id, bool is_enable);
 
 /**
-  \brief       Set the ADC sampling time for the selected channel  
+  \brief       Set the ADC sampling time for the selected channel
   \param[in]   adc          ADC handle to operate
   \param[in]   ch_id        ADC channel id
   \param[in]   clock_num    Channel sampling clock number
@@ -179,7 +179,7 @@ csi_error_t csi_adc_attach_callback(csi_adc_t *adc, void *callback, void *arg);
 /**
   \brief       Detach the callback handler
   \param[in]   adc    Operate handle
-  \return      None 
+  \return      None
 */
 void        csi_adc_detach_callback(csi_adc_t *adc);
 
@@ -201,7 +201,7 @@ csi_error_t csi_adc_enable_pm(csi_adc_t *adc);
 /**
   \brief       Disable adc low power mode
   \param[in]   adc    ADC handle to operate
-  \return      None 
+  \return      None
 */
 void csi_adc_disable_pm(csi_adc_t *adc);
 

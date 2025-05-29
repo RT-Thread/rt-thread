@@ -47,7 +47,7 @@ csi_error_t csi_rng_get_multi_word(uint32_t *data, uint32_t num)
             ///< TODO：使能trng 模块
 
             ///< TODO：等待trng 模块有效  且未超时，超时设置ret并退出循环
-            
+
             ///< TODO：获取trng值到data[i]
             i++;
             num--;
@@ -69,7 +69,7 @@ csi_error_t csi_rng_get_single_word(uint32_t* data)
 
     ///< TODO：等待trng 模块有效  且未超时，超时设置ret并退出循环
 
-    ///< TODO：获取trng值到*data 
+    ///< TODO：获取trng值到*data
 
     return  ret;
 }

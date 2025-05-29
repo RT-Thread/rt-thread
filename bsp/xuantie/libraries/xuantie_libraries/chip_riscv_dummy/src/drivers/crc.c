@@ -27,7 +27,7 @@
 #include <string.h>
 #include <drv/crc.h>
 #include <drv/common.h>
-#include	<assert.h>
+#include    <assert.h>
 
 /**
 \brief CRC State
@@ -124,7 +124,7 @@ csi_error_t csi_crc_config(csi_crc_t *crc, csi_crc_config_t *config)
             ///< TODO：设置模式
             ///< TODO：设置极性
             ///< TODO：设置初始值
-            
+
             break;
 
         case CRC_STANDARD_IBM:

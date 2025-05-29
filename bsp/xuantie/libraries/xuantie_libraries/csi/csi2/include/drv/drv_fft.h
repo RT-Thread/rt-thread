@@ -38,18 +38,18 @@
 #endif
 
 typedef enum {
-	// 512-point FFT
-	CSKY_MCA_FFT_LEN_512 = 0x1,
-	// 256-point FFT
-	CSKY_MCA_FFT_LEN_256 = 0x2,
-	// 128-point FFT
-	CSKY_MCA_FFT_LEN_128 = 0x4,
-	// 64-point FFT
-	CSKY_MCA_FFT_LEN_64 = 0x8,
-	// 32-point FFT
-	CSKY_MCA_FFT_LEN_32 = 0x10,
-	// 16-point FFT
-	CSKY_MCA_FFT_LEN_16 = 0x20,
+    // 512-point FFT
+    CSKY_MCA_FFT_LEN_512 = 0x1,
+    // 256-point FFT
+    CSKY_MCA_FFT_LEN_256 = 0x2,
+    // 128-point FFT
+    CSKY_MCA_FFT_LEN_128 = 0x4,
+    // 64-point FFT
+    CSKY_MCA_FFT_LEN_64 = 0x8,
+    // 32-point FFT
+    CSKY_MCA_FFT_LEN_32 = 0x10,
+    // 16-point FFT
+    CSKY_MCA_FFT_LEN_16 = 0x20,
 } csky_mca_fft_len_t;
 
 /* 8-bit fixed-point numeric type in user-defined format */

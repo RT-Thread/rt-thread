@@ -36,14 +36,14 @@ extern "C" {
 
 /****** SHA mode ******/
 typedef enum {
-    SHA_MODE_1 = 1U,                     /* SHA_1 mode */ 
-    SHA_MODE_256,                        /* SHA_256 mode */ 
-    SHA_MODE_224,                        /* SHA_224 mode */ 
-    SHA_MODE_512,                        /* SHA_512 mode */ 
-    SHA_MODE_384,                        /* SHA_384 mode */ 
-    SHA_MODE_512_256,                    /* SHA_512_256 mode */ 
-    SHA_MODE_512_224,                    /* SHA_512_224 mode */ 
-    SHA_MODE_MD5                         /* MD5 mode */ 
+    SHA_MODE_1 = 1U,                     /* SHA_1 mode */
+    SHA_MODE_256,                        /* SHA_256 mode */
+    SHA_MODE_224,                        /* SHA_224 mode */
+    SHA_MODE_512,                        /* SHA_512 mode */
+    SHA_MODE_384,                        /* SHA_384 mode */
+    SHA_MODE_512_256,                    /* SHA_512_256 mode */
+    SHA_MODE_512_224,                    /* SHA_512_224 mode */
+    SHA_MODE_MD5                         /* MD5 mode */
 } csi_sha_mode_t;
 
 /****** SHA State ******/
@@ -69,7 +69,7 @@ typedef enum {
 /****** SHA Ctrl ******/
 typedef struct csi_sha csi_sha_t;
 struct csi_sha{
-    csi_dev_t		dev;
+    csi_dev_t       dev;
     void (*callback)(csi_sha_t *sha, csi_sha_event_t event, void *arg);   /* SHA event callback for user */
     void            *arg;                                                 /* SHA custom designed param passed to evt_cb */
     csi_dma_ch_t    *dma_in;                                              /* SHA in dma handle param */

@@ -1,12 +1,12 @@
 /*
- *	Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *  Copyright (C) 2017-2024 Alibaba Group Holding Limited
  */
 
 /*******************************************************
- * @file 	dw_timer_ll.h
- * @brief	header file for timer ll driver
+ * @file    dw_timer_ll.h
+ * @brief   header file for timer ll driver
  * @version V1.0
- * @date	9. April 2020
+ * @date    9. April 2020
  * ******************************************************/
 
 #ifndef _DW_TIMER_LL_H_
@@ -21,7 +21,7 @@ extern "C"
 {
 #endif
 
-/*! Timer1 Control Reg, 	offset: 0x08 */
+/*! Timer1 Control Reg,     offset: 0x08 */
 #define DW_TIMER_CTL_ENABLE_SEL_Pos                                    (0U)
 #define DW_TIMER_CTL_ENABLE_SEL_Msk                                    (0x1U << DW_TIMER_CTL_ENABLE_SEL_Pos)
 #define DW_TIMER_CTL_ENABLE_SEL_EN                                     DW_TIMER_CTL_ENABLE_SEL_Msk

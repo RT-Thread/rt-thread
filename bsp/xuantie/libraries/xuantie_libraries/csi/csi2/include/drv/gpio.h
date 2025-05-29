@@ -189,7 +189,7 @@ csi_error_t  csi_gpio_attach_callback(csi_gpio_t *gpio, void *callback, void *ar
 /**
   \brief       Detach the interrupt callback to the port
   \param[in]   gpio    GPIO port handle
-  \return      None 
+  \return      None
 */
 void         csi_gpio_detach_callback(csi_gpio_t *gpio);
 
@@ -203,7 +203,7 @@ csi_error_t csi_gpio_enable_pm(csi_gpio_t *gpio);
 /**
   \brief       Disable gpio power manage
   \param[in]   gpio    GPIO handle to operate
-  \return      None 
+  \return      None
 */
 void csi_gpio_disable_pm(csi_gpio_t *gpio);
 

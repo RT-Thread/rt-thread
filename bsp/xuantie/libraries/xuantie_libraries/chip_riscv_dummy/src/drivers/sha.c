@@ -1,12 +1,12 @@
 /*
- *	Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *  Copyright (C) 2017-2024 Alibaba Group Holding Limited
  */
 
 /*******************************************************
- * @file 	wj_sha.c
- * @brief	source file for sha csi driver
+ * @file    wj_sha.c
+ * @brief   source file for sha csi driver
  * @version V2.0
- * @date	14. Sept 2020
+ * @date    14. Sept 2020
  * ******************************************************/
 
 #include <drv/sha.h>
@@ -281,7 +281,7 @@ csi_error_t csi_sha_update(csi_sha_t *sha, csi_sha_context_t *context, const voi
     sha->state.busy = 1U;
 
     ///< TODO：设置SHA 模式
-    ///< TODO：用context->state初始化HASH   
+    ///< TODO：用context->state初始化HASH
 
     block_size = SHA_GET_BOLOCK_SIZE_BYTES(context->mode);
 
@@ -378,7 +378,7 @@ csi_error_t csi_sha_finish(csi_sha_t *sha, csi_sha_context_t *context, void *out
     uint64_t pad_bit_len;
 
     ///< TODO：设置SHA 模式
-    ///< TODO：用context->state初始化HASH   
+    ///< TODO：用context->state初始化HASH
 
     block_size = SHA_GET_BOLOCK_SIZE_BYTES(context->mode);
     msg_length = SHA_GET_MSGLEN_TAIL_4BYTES(context->mode);

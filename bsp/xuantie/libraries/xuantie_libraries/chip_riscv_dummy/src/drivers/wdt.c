@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *  Copyright (C) 2017-2024 Alibaba Group Holding Limited
  */
 
 /*******************************************************
@@ -14,7 +14,7 @@
 
 void dw_wdt_irq_handler(void *arg)
 {
-  
+
     ///< TODO：获取WDT的中断状态
     ///< TODO：根据中断状态执行用户回调函数
 
@@ -33,7 +33,7 @@ csi_error_t csi_wdt_init(csi_wdt_t *wdt, uint32_t idx)
 
     ///< 获取中断号、基地址等相关信息
     if (0 == target_get(DEV_DW_WDT_TAG, idx, &wdt->dev)) {
-        
+
         ///< TODO：复位WDT的控制寄存器
         ///< TODO：复位WDT的超时时间范围寄存器
         ///< TODO：复位重启WDT计数器寄存器

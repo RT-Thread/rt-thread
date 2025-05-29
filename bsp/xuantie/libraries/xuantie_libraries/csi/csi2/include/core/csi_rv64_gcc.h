@@ -1621,8 +1621,8 @@ __ALWAYS_STATIC_INLINE void __ICACHE_IALL(void)
 }
 
 /**
-  \brief   Invalid all icache and broadcast to other cores 
-  \details Invalid all icache and broadcast to other cores 
+  \brief   Invalid all icache and broadcast to other cores
+  \details Invalid all icache and broadcast to other cores
  */
 __ALWAYS_STATIC_INLINE void __ICACHE_IALLS(void)
 {

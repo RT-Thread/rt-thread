@@ -36,9 +36,9 @@
 #define GET_KEY_WORD(k) (k >> 5U)
 
 ///< TODO：RSA_KEY_LEN需要根据实际情况进行设置
-#define RSA_KEY_LEN     	2048U    			///< 支持RSA秘钥的最大长度
-#define RSA_KEY_BYTE    	(RSA_KEY_LEN >> 3U)
-#define RSA_KEY_WORD    	(RSA_KEY_LEN >> 5U)
+#define RSA_KEY_LEN         2048U               ///< 支持RSA秘钥的最大长度
+#define RSA_KEY_BYTE        (RSA_KEY_LEN >> 3U)
+#define RSA_KEY_WORD        (RSA_KEY_LEN >> 5U)
 
 #define BN_MAX_BITS         ((RSA_KEY_LEN << 1U) + 32U)
 #define BN_MAX_BYTES        ((BN_MAX_BITS + 7U) >> 3U)

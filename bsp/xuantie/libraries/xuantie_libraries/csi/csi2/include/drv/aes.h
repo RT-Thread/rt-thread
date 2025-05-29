@@ -83,7 +83,7 @@ csi_error_t csi_aes_set_encrypt_key(csi_aes_t *aes, void *key, csi_aes_key_bits_
 csi_error_t csi_aes_set_decrypt_key(csi_aes_t *aes, void *key, csi_aes_key_bits_t key_len);
 /**
   \brief       Set encrypt key2. This API is used for the algorithm which has two keys,
-				such as xts, used for the key of tweak
+                such as xts, used for the key of tweak
   \param[in]   aes        Handle to operate
   \param[in]   key        Pointer to the key buf
   \param[in]   key_len    Pointer to \ref csi_aes_key_bits_t
@@ -93,7 +93,7 @@ csi_error_t csi_aes_set_encrypt_key2(csi_aes_t *aes, void *key, csi_aes_key_bits
 
 /**
   \brief       Set decrypt key2. This API is used for the algorithm which has two keys,
-				such as xts, used for the key of tweak
+                such as xts, used for the key of tweak
   \param[in]   aes        Handle to operate
   \param[in]   key        Pointer to the key buf
   \param[in]   key_len    Pointer to \ref csi_aes_key_bits_t

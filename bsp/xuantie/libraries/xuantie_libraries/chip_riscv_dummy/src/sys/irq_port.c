@@ -50,7 +50,7 @@ void soc_irq_priority(uint32_t irq_num, uint32_t priority)
 }
 
 /**
- * @brief get external irq number only 
+ * @brief get external irq number only
  * @return irq no
  */
 uint32_t soc_irq_get_irq_num(void)

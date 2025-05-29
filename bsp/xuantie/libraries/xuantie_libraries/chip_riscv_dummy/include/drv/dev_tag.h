@@ -90,7 +90,7 @@ typedef enum {
     DEV_RAMBUS_120SI_TAG,
     DEV_RAMBUS_120SII_TAG,
     DEV_RAMBUS_120SIII_TAG,
-	DEV_WJ_AVFS_TAG,
+    DEV_WJ_AVFS_TAG,
     DEV_WJ_BMU_TAG,
 } csi_dev_tag_t;
 
