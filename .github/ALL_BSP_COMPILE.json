@@ -389,7 +389,8 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv64-unknown-elf",
       "SUB_RTT_BSP": [
         "bluetrum/ab32vg1-ab-prougen",
-        "qemu-virt64-riscv"
+        "qemu-virt64-riscv",
+        "ultrarisc/ur_dp1000_evb"
       ]
     },
     {
@@ -467,13 +468,6 @@
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-elf-newlib",
       "SUB_RTT_BSP": [
         "xuantie/smartl/e906"
-      ]
-    },
-    {
-      "RTT_BSP": "ultrarisc",
-      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
-      "SUB_RTT_BSP": [
-        "ultrarisc/ur_dp1000_evb"
       ]
     }
   ]
