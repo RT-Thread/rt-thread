@@ -1,7 +1,8 @@
 @page page_components Components
 
-- @subpage page_component_finsh
 - @subpage page_component_vfs
+- @subpage page_device
+- @subpage page_component_finsh
 - @subpage page_component_utest
 - @subpage page_component_dlmodule
 - @subpage page_component_sal
