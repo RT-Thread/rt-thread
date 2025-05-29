@@ -20,6 +20,11 @@
 typedef __time64_t time_t;
 #endif /* _WIN32 */
 
+#if defined(__GNUC__) 
+typedef long long time_t;
+typedef long suseconds_t;
+#endif/* arm-none-eabi-gcc */
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
