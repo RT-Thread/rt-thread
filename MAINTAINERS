@@ -61,6 +61,10 @@ tag: libc
 path: components/libc
 owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>
 
+tag: rvlibcpu
+path: libcpu/risc-v
+owners: Shun Wang(Yaochenger)<1516081466@qq.com>
+
 tag: serial_v2
 path: components/drivers/serial/dev_serial_v2.c
 path: components/drivers/include/drivers/dev_serial_v2.h
