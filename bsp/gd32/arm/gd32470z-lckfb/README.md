@@ -13,7 +13,7 @@ GD32470Z-LCKFB梁山派是立创开发板推出的一款GD32F470系列的开发�
 - GD32F470ZGT6，主频 240MHz，CPU内核：ARM Cortex-M4，1024KB FLASH ，512KB RAM 
 - 常用外设
   
-  - 用户LED ：4个，LED1 (PE3），LED2（PD7），LED3（PG3），LED4（PA5）
+  - 用户LED ：4个，LED1（PE3），LED2（PD7），LED3（PG3），LED4（PA5）
   - 电源指示灯：一个红色LED
   - 按键：3个，KEY_UP（PA0），RESET(NRST)，BOOT0（PB2）
   - General TM * 10、Advanced TM * 2、Basic TM * 2
@@ -44,14 +44,18 @@ GD32470Z-LCKFB梁山派是立创开发板推出的一款GD32F470系列的开发�
 
 ## 外设支持
 
-本 BSP 目前对外设的支持情况如下：
 
 | **片上外设** | **支持情况** | **备注**                           |
-|:-------- |:--------:|:-------------------------------- |
-| GPIO     | 支持       | PA0, PA1... ---> PIN: 0, 1...113 |
-| UART     | 支持       | UART0 - UART7                    |
-| **扩展模块** | **支持情况** | **备注**                           |
-| LCD+触摸屏      | 支持     | 暂不支持中文显示（因 Keil5 编码限制），使用方法请查看bsp\gd32\arm\gd32470z-lckfb\board\ports\README.md |
+|:------------|:------------:|:----------------------------------|
+| GPIO        | 支持         | PA0, PA1... ---> PIN: 0, 1...113 |
+| UART        | 支持         | UART0 - UART7                    |
+| SPI         | 支持         | 支持 SPI0 ~ SPI4，可配置多个总线 |
+| **扩展模块** | **支持情况** | **备注**                                                                 |
+| LCD+触摸屏  | 支持         | 暂不支持中文显示（因 Keil5 编码限制），使用方法请查看bsp\gd32\arm\gd32470z-lckfb\board\ports\README.md |
+| **板载外设** | **支持情况** | **备注**                                                                 |
+| SPI Flash    | 支持         | 板载 W25Q64，挂载在 SPI4，总线名：spi4，设备名：spi40                    |
+
+
 
 ## 使用说明
 
@@ -107,10 +111,27 @@ msh />
 
 ## 注意事项
 
-暂无
+
+- 目前DFS支持有问题，若需使用板载 SPI Flash，请在 `menuconfig` 中启用以下配置：
+
+```
+RT-Thread Components  --->
+  DFS: device virtual file system  --->
+    [ ] DFS: device virtual file system (RT_USING_DFS)  关闭DFS
+  Device Drivers  --->
+    [*] Enable SPI BUS support (RT_USING_SPI)
+        [*] Enable SFUD for SPI Flash (RT_USING_SFUD)
+
+Hardware Drivers Config  --->
+  On-chip Peripheral Drivers  --->
+    [*] Enable SPI BUS (BSP_USING_SPI)
+        [*] Enable SPI4 BUS (BSP_USING_SPI4)
+```
+
 
 ## 联系人信息
 
 维护人:
 
+- [godmial](https://github.com/godmial), 邮箱：<2633967641@qq.com>
 - [yuanzihao](https://github.com/zihao-yuan/), 邮箱：<y@yzh.email>
