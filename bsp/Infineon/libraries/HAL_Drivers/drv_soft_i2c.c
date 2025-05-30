@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2022-07-20     Rbb666       first version
+ * Date           Author         Notes
+ * 2022-07-20     Rbb666         first version
+ * 2025-05-30     Passionate0424 Rename the initialization function   
  */
 
 #include <board.h>
@@ -164,7 +165,7 @@ static rt_err_t ifx_i2c_bus_unlock(const struct ifx_soft_i2c_config *cfg)
 }
 
 /* I2C initialization function */
-int rt_hw_i2c_init(void)
+int rt_hw_soft_i2c_init(void)
 {
     rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct ifx_i2c);
     rt_err_t result;
@@ -187,6 +188,6 @@ int rt_hw_i2c_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_hw_i2c_init);
+INIT_BOARD_EXPORT(rt_hw_soft_i2c_init);
 
 #endif /* RT_USING_I2C */
