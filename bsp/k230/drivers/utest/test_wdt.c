@@ -71,27 +71,15 @@ static void test_wdt_feed(void)
 
     /* Find the watchdog device according to the name and obtain the handle */
     wdg_dev = rt_device_find(IWDG_DEVICE_NAME);
-    if (!wdg_dev)
-    {
-        LOG_E("find %s failed!\n", IWDG_DEVICE_NAME);
-        return;
-    }
+    uassert_not_null(wdg_dev);
 
     /* Initialize the device */
     ret = rt_device_init(wdg_dev);
-    if (ret != RT_EOK)
-    {
-        LOG_E("initialize %s failed!\n", IWDG_DEVICE_NAME);
-        return;
-    }
+    uassert_int_equal(ret, RT_EOK);
 
     /* Set the watchdog timeout time */
     ret = rt_device_control(wdg_dev, KD_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
-    if (ret != RT_EOK)
-    {
-        LOG_E("set %s timeout failed!\n", IWDG_DEVICE_NAME);
-        return;
-    }
+    uassert_int_equal(ret, RT_EOK);
 
     flag_feed = 1; /* Set feed the dog sign */
 
@@ -118,27 +106,15 @@ static void test_wdt_nofeed(void)
 
     /* Find the watchdog device according to the name and obtain the handle */
     wdg_dev = rt_device_find(IWDG_DEVICE_NAME);
-    if (!wdg_dev)
-    {
-        LOG_E("find %s failed!\n", IWDG_DEVICE_NAME);
-        return;
-    }
+    uassert_not_null(wdg_dev);
 
     /* Initialize the device */
     ret = rt_device_init(wdg_dev);
-    if (ret != RT_EOK)
-    {
-        LOG_E("initialize %s failed!\n", IWDG_DEVICE_NAME);
-        return;
-    }
+    uassert_int_equal(ret, RT_EOK);
 
     /* Set the watchdog timeout time */
     ret = rt_device_control(wdg_dev, KD_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
-    if (ret != RT_EOK)
-    {
-        LOG_E("set %s timeout failed!\n", IWDG_DEVICE_NAME);
-        return;
-    }
+    uassert_int_equal(ret, RT_EOK);
 
     flag_feed = 0; /* Do not feed the dog */
 
