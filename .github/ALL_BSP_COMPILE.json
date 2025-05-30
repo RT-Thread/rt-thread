@@ -466,7 +466,16 @@
       "RTT_BSP": "xuantie",
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-elf-newlib",
       "SUB_RTT_BSP": [
-        "xuantie/smartl/e906"
+        "xuantie/smartl/e902",
+        "xuantie/smartl/e906",
+        "xuantie/smartl/e907",
+        "xuantie/xiaohui/c906",
+        "xuantie/xiaohui/c907",
+        "xuantie/xiaohui/c908",
+        "xuantie/xiaohui/c910",
+        "xuantie/xiaohui/r908",
+        "xuantie/xiaohui/r910",
+        "xuantie/xiaohui/r920"
       ]
     }
   ]

@@ -2,7 +2,6 @@ import os
 import sys
 import rtconfig
 from SCons.Script import *
-from termcolor import colored
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
@@ -20,10 +19,6 @@ except:
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
-print(colored('RT-Thread root directory: %s' % RTT_ROOT, 'green')) 
-print(colored('Building path: %s' % os.path.abspath('.'), 'green')) 
-print(colored('Building target: %s' % TARGET, 'green'))
-
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
@@ -37,14 +32,12 @@ Export('RTT_ROOT')
 Export('rtconfig')
 
 SDK_ROOT = os.path.abspath('./')
-print(colored('SDK_ROOT: %s' % SDK_ROOT, 'green'))
 
 if os.path.exists(SDK_ROOT + '/libraries'):
     libraries_path_prefix = SDK_ROOT + '../libraries'
 else:
     libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/../libraries'
 
-print(colored('libraries_path_prefix: %s' % libraries_path_prefix, 'green'))
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
 
