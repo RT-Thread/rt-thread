@@ -82,3 +82,7 @@ owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441
 tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
+tag: bsp_ultrarisc
+path: bsp/ultrarisc/ur_dp1000_evb
+owners: Zhang Jing(zhangjing0303)<zhangjing@ultrarisc.com>

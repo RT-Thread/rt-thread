@@ -5,7 +5,7 @@ from building import *
 
 Import('rtconfig')
 
-common64_arch = ['virt64', 'c906', 'c908']
+common64_arch = ['virt64', 'c906', 'c908','ur-cp100']
 cwd   = GetCurrentDir()
 group = []
 list  = os.listdir(cwd)
