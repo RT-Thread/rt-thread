@@ -49,10 +49,15 @@ if os.path.exists(SDK_ROOT + '/drivers'):
 else:
     drivers_path_prefix = os.path.dirname(SDK_ROOT) + '/drivers'
 
-
+if os.path.exists(SDK_ROOT + '/arch/ur-cp100'):
+    arch_path_prefix = SDK_ROOT + '/arch/ur-cp100'
+else:
+    arch_path_prefix = os.path.dirname(SDK_ROOT) + '/arch/ur-cp100'
 
 # include libraries
 objs.extend(SConscript(drivers_path_prefix + '/SConscript', variant_dir='build/drivers', duplicate=0))
+
+objs.extend(SConscript(arch_path_prefix + '/SConscript', variant_dir='build/arch/ur-cp100', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

@@ -2,7 +2,6 @@ import os
 
 # toolchains options
 ARCH        ='risc-v'
-VENDOR      ='ultrarisc'
 CPU         ='ur-cp100'
 CROSS_TOOL  ='gcc'
 
