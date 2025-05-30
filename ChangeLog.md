@@ -1,3 +1,91 @@
+# RT-Thread v5.2.1 Released
+
+Change Log Since v5.2.0 Release
+
+## Kernel
+
+* src/clock: add rt_tick_get_delta function
+* Update include/rtdef.h version to 5.2.1
+
+## Components
+
+* **drivers**
+  * **fdt:** 
+      * Fix garble when booting
+  * **wlan:** 
+      * Fixing comments errors of RT_WLAN_EVT_SCAN_DONE and RT_WLAN_EVT_SCAN_REPORT
+  * **pcl:** 
+      * Add /proc access in RT-Smart user
+  * **serial_v2:**
+      * The handling of dma_ping_buf in the full discard policy is incorrect; details adjusted
+      * Allowed blocking reception of data exceeding the RX buffer size, increased timeout duration, added flush command, added command to get buffer data length, fixed data overflow handling logic, optimized stability details, and added more serial_v2 test cases[(#10187)](https://github.com/RT-Thread/rt-thread/pull/10187)
+  * **audio:** 
+      * Add audio driver test framework
+* **lwp**
+  * Add vDSO support for RISC-V architecture and refactor related components
+  * Fix parameter issue when calling the __arch_get_hw_counter function
+  * Enhance build script with additional cleanup steps
+* **dfs**
+  * **dfs v2**:
+    * enable procfs and tempfs in default when using smart; fix LWIP_ROUTE warning issue
+* **utilities**
+  * rename the group name: LIBADT to Utilities[(#10267)](https://github.com/RT-Thread/rt-thread/pull/10267)
+* **finsh**
+  * Fixed error logging when the list_mutex mutex is not held by any thread
+* **fal**
+    * add new example for norflash
+
+## Libcpu
+
+* **aarch64:** 
+    * Fix Aarch64 architecture runtime issues
+    * Fix NORMAL_NOCACHE_MEM attr[(#10180)](https://github.com/RT-Thread/rt-thread/pull/10180)
+    * cleanup undefined rt_hw_mmu_kernel_map_init[(#10177)](https://github.com/RT-Thread/rt-thread/pull/10177)
+    * fix gicv3 mpidr table[(#9284)](https://github.com/RT-Thread/rt-thread/pull/9284)
+* **riscv:** 
+  * declare external symbols inside
+  * add ultrarisc ur-cp100 core support[(#10338)](https://github.com/RT-Thread/rt-thread/pull/10338)
+
+## Tools
+
+* fix scons --target=cmake command failure[(#10276)](https://github.com/RT-Thread/rt-thread/pull/10276)
+* fixed the issue where RT-Studio could not import the BSP[(#10290)](https://github.com/RT-Thread/rt-thread/pull/10290)
+* fixed missing unique files creation and cache logic
+* fixed an error by running scons --tartget=cmake under LINUX[(#10164)](https://github.com/RT-Thread/rt-thread/pull/10164)
+* fix mannual trigger to create dist zip file
+
+## Action
+
+* Replace the judgment file modification mechanism of bsp_building[(#10314)](https://github.com/RT-Thread/rt-thread/pull/10314)
+* show the PR status for Pull request
+* cancel the filtering rules for the MAINTAINER file
+* optimize the logic for generating comments for the maintainer robot
+* fixed the abnormal operation of ci files[(#10259)](https://github.com/RT-Thread/rt-thread/pull/10259)
+* ci script assigns PR reviews based on the list of maintainers[(#9913)](https://github.com/RT-Thread/rt-thread/pull/9913)
+* fixed the parameter passing issue in bsp_buildings[(#10254)](https://github.com/RT-Thread/rt-thread/pull/10254)
+* add qemu-pre-build-and-post-build for RT_SMART  build [(#10203)
+* separated BSPs to be compiled, and compiled corresponding BSPs based on modified files.[(#10159)](https://github.com/RT-Thread/rt-thread/pull/10159)
+* Integrated all outputs into a single package.[(#10136)](https://github.com/RT-Thread/rt-thread/pull/10136)
+* Upload compilation results to GitHub after each build.[(#10135)](https://github.com/RT-Thread/rt-thread/pull/10135)
+
+## Documents
+
+* doxygen
+    * re-org module groups[(#10197)](https://github.com/RT-Thread/rt-thread/pull/10197)
+    * cleanup and re-org files
+
+## BSP
+
+* Some driver issues have been resolved and some driver support has been added
+* approve the master branch slimming process, reducing the main compartment size by approximately 1G.
+* Added some new BSPs
+  * ST: 
+      * stm32f103-keysking
+  * Infineon: 
+      * XMC7100D-F144K4160AA
+  * ultrarisc
+      * dp1000 evb
+
 # RT-Thread v5.2.0 Released
 
 Change Log Since v5.1.0 Release

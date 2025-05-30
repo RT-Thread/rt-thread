@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>HK32F030x8, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, USE_STDPERIPH_DRIVER, __RTTHREAD__, HK32F030x8, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>board;..\..\..\libcpu\arm\cortex-m0;..\libraries\HK32F0xx_StdPeriph_Driver\inc;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include;board\msp;..\libraries\rt_drivers;applications;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;.</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension;board\msp;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core;.;..\libraries\rt_drivers;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\eventfd;board;..\..\..\libcpu\arm\common;..\libraries\HK32F0xx_StdPeriph_Driver\inc;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;applications;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -491,9 +491,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c-bit-ops.c</FileName>
+              <FileName>dev_i2c_bit_ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+              <FilePath>..\..\..\components\drivers\i2c\dev_i2c_bit_ops.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -510,9 +510,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c_core.c</FileName>
+              <FileName>dev_i2c_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+              <FilePath>..\..\..\components\drivers\i2c\dev_i2c_core.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -529,9 +529,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c_dev.c</FileName>
+              <FileName>dev_i2c_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+              <FilePath>..\..\..\components\drivers\i2c\dev_i2c_dev.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -548,9 +548,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -681,9 +719,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -700,9 +738,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -774,20 +812,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
@@ -798,6 +822,20 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -827,6 +865,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -884,44 +960,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1071,6 +1109,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1105,79 +1181,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>hk32f0xx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_syscfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_syscfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>hk32f0xx_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_divsqrt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_divsqrt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_crc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1189,16 +1195,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_pwr.c</FileName>
+              <FileName>hk32f0xx_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_pwr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_dma.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1210,16 +1209,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_rcc.c</FileName>
+              <FileName>hk32f0xx_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rcc.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_tim.c</FileName>
+              <FileName>hk32f0xx_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_tim.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_iwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_syscfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_divsqrt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_divsqrt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1231,9 +1265,51 @@
           </Files>
           <Files>
             <File>
+              <FileName>hk32f0xx_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>hk32f0xx_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_tim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_crc.c</FilePath>
             </File>
           </Files>
         </Group>
