@@ -1,0 +1,11 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../../..
+
+PKGS_DIR := packages
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+rsource "board/Kconfig"

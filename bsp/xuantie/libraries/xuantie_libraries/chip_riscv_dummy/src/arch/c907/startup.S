@@ -23,7 +23,9 @@
 #endif
 
 .globl  Reset_Handler
-
+.global __rt_rvstack
+.equ    Mcoret_Handler, SW_handler
+.equ    Mirq_Handler, SW_handler 
 .section .vectors
     .align  6
     .globl  __Vectors
@@ -132,7 +134,7 @@ Reset_Handler:
 #endif
 #endif
 
-    la   a0, pre_main
+    la   a0, rtthread_startup
     jalr a0
 
 .size   Reset_Handler, . - Reset_Handler
@@ -169,6 +171,7 @@ hart_out_of_bounds_loop:
 g_base_irqstack:
     .space CONFIG_ARCH_INTERRUPTSTACK * CONFIG_NR_CPUS
 g_top_irqstack:
+__rt_rvstack:
 
 #ifdef CONFIG_KERNEL_NONE
     .align  4
@@ -177,6 +180,7 @@ g_top_irqstack:
 g_base_mainstack:
     .space CONFIG_ARCH_MAINSTACK * CONFIG_NR_CPUS
 g_top_mainstack:
+
 #endif
 
 #if defined(CONFIG_SMP) && CONFIG_SMP

@@ -21,7 +21,7 @@
 #ifndef CONFIG_NR_CPUS
 #define CONFIG_NR_CPUS 1
 #endif
-
+.global __rt_rvstack 
 .globl  Reset_Handler
 
 .section .vectors
@@ -236,7 +236,7 @@ Reset_Handler:
 #endif
 #endif
 
-    la   a0, pre_main
+    la   a0, rtthread_startup
     jalr a0
 
 .size   Reset_Handler, . - Reset_Handler
@@ -273,6 +273,7 @@ hart_out_of_bounds_loop:
 g_base_irqstack:
     .space CONFIG_ARCH_INTERRUPTSTACK * CONFIG_NR_CPUS
 g_top_irqstack:
+__rt_rvstack:
 
 #ifdef CONFIG_KERNEL_NONE
     .align  4

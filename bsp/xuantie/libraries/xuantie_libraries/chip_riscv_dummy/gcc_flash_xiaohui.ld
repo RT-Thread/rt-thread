@@ -21,7 +21,7 @@ MEMORY
 	DRAM   : ORIGIN = 0x50000000, LENGTH = 0x100000   /* on-chip DRAM 1*1MB */
 }
 
-__min_heap_size = 0x200;
+__min_heap_size = 0x20000;
 PROVIDE (__ram_end  = 0x50100000 - 0x8);
 PROVIDE (__heap_end = __ram_end);
 
