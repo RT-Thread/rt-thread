@@ -327,15 +327,12 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         /* enable interrupt */
         rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
-        /* do a schedule */
-        rt_schedule();
-
         if (thread->error != RT_EOK)
             return RT_NULL;
 
         if (time > 0)
         {
-            time -= rt_tick_get() - before_sleep;
+            time -= rt_tick_get_delta(before_sleep);
             if (time < 0)
                 time = 0;
         }
@@ -396,9 +393,6 @@ void rt_mp_free(void *block)
     if (rt_susp_list_dequeue(&mp->suspend_thread, RT_EOK))
     {
         rt_spin_unlock_irqrestore(&(mp->spinlock), level);
-
-        /* do a schedule */
-        rt_schedule();
 
         return;
     }

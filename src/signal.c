@@ -118,8 +118,6 @@ static void _signal_deliver(rt_thread_t tid)
 
         rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
-        /* re-schedule */
-        rt_schedule();
     }
     else
     {
@@ -165,8 +163,6 @@ static void _signal_deliver(rt_thread_t tid)
             rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
             LOG_D("signal stack pointer @ 0x%08x", tid->sp);
 
-            /* re-schedule */
-            rt_schedule();
         }
         else
         {
@@ -376,9 +372,6 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
         rt_timer_start(&(tid->thread_timer));
     }
     rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
-
-    /* do thread scheduling */
-    rt_schedule();
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
