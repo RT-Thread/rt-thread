@@ -44,7 +44,6 @@ if PLATFORM == 'gcc':
     MCPU_DEFINE = ' -DCONFIG_CPU_XUANTIE_E902=1 ' # Modify here based on CPU architecture.
     DEVICE = MCPU + MCPU_DEFINE + ' -Wno-main -mcmodel=medlow'
 
-    # 提取全局宏定义
     GLOBAL_DEFINES = (
         '-DCONFIG_KERNEL_RTTHREAD=1 '
         '-D__RT_KERNEL_SOURCE__=1 '

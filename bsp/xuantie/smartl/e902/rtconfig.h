@@ -1,6 +1,8 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define XUANTIAN_XIAOHUI_E902
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -108,6 +110,8 @@
 #define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+#define ARCH_RISCV
+#define ARCH_RISCV32
 
 /* RT-Thread Components */
 

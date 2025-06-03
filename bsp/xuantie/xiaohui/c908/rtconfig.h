@@ -1,7 +1,7 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
-#define XUANTIAN_XIAOHUI_C907
+#define XUANTIAN_XIAOHUI_C908
 
 /* RT-Thread Kernel */
 

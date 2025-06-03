@@ -1,7 +1,7 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
-#define XUANTIAN_XIAOHUI_R920
+#define XUANTIAN_XIAOHUI_C906
 
 /* RT-Thread Kernel */
 
@@ -112,6 +112,8 @@
 /* end of RT-Thread Kernel */
 #define ARCH_CPU_64BIT
 #define ARCH_RISCV
+#define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
 #define ARCH_USING_NEW_CTX_SWITCH
 
@@ -389,6 +391,7 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define ENABLE_FPU
 /* end of On-chip Peripheral Drivers */
 /* end of Hardware Drivers Config */
 

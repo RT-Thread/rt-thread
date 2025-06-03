@@ -1,4 +1,6 @@
-# XuanTie - C910 Series
+# XuanTie - C910/C920MP Series
+
+当前BSP同时支持C910/C920MP！
 
 ## 一 简介
 
