@@ -281,6 +281,8 @@ rt_inline void _rt_sched_remove_thread(struct rt_thread *thread)
 void rt_schedule(void)
 {
     rt_base_t level;
+    /* need_insert_from_thread: need to insert from_thread to ready queue */
+    rt_bool_t need_insert_from_thread;
     /* using local variable to avoid unecessary function call */
     struct rt_thread *curr_thread;
     struct rt_thread *to_thread;
@@ -291,9 +293,8 @@ void rt_schedule(void)
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0 && rt_thread_ready_priority_group)
     {
-        /* need_insert_from_thread: need to insert from_thread to ready queue */
-        rt_bool_t need_insert_from_thread = RT_FALSE;
 
+        need_insert_from_thread = RT_FALSE;
         curr_thread = rt_thread_self();
 
         if ((RT_SCHED_CTX(curr_thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
