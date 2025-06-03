@@ -89,7 +89,7 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 /**@}*/
 #endif /* RT_USING_HOOK */
 
-static inline void _scheduler_update_highest_priority(void)
+rt_inline void _scheduler_update_highest_priority(void)
 {
 #if RT_THREAD_PRIORITY_MAX > 32
     rt_ubase_t number;
@@ -102,7 +102,7 @@ static inline void _scheduler_update_highest_priority(void)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 }
 
-static inline struct rt_thread *
+rt_inline struct rt_thread *
 _scheduler_get_priority_thread(rt_ubase_t priority)
 {
     /* get highest ready priority thread */
@@ -198,7 +198,7 @@ void rt_system_scheduler_start(void)
  *
  * @note  Please do not invoke this function in user application.
  */
-static inline void _rt_sched_insert_thread(struct rt_thread *thread)
+rt_inline void _rt_sched_insert_thread(struct rt_thread *thread)
 {
     /* READY thread, insert to ready queue */
     RT_SCHED_CTX(thread).stat =
@@ -239,7 +239,7 @@ static inline void _rt_sched_insert_thread(struct rt_thread *thread)
  *
  * @note  Please do not invoke this function in user application.
  */
-static inline void _rt_sched_remove_thread(struct rt_thread *thread)
+rt_inline void _rt_sched_remove_thread(struct rt_thread *thread)
 {
     LOG_D("remove thread[%.*s], the priority: %d", RT_NAME_MAX,
           thread->parent.name,
