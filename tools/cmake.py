@@ -45,7 +45,7 @@ def GenerateCFiles(env, project, project_name):
     tool_path_conv["CMAKE_ASM_COMPILER"] = tool_path_conv_helper(rtconfig.AS)
     tool_path_conv["CMAKE_AR"] = tool_path_conv_helper(rtconfig.AR)
     tool_path_conv["CMAKE_LINKER"] = tool_path_conv_helper(rtconfig.LINK)
-    if rtconfig.PLATFORM in ['gcc','llvm-arm']:
+    if rtconfig.PLATFORM in ['gcc']:
         tool_path_conv["CMAKE_SIZE"] = tool_path_conv_helper(rtconfig.SIZE)
         tool_path_conv["CMAKE_OBJDUMP"] = tool_path_conv_helper(rtconfig.OBJDUMP)
         tool_path_conv["CMAKE_OBJCOPY"] = tool_path_conv_helper(rtconfig.OBJCPY)
@@ -99,7 +99,7 @@ def GenerateCFiles(env, project, project_name):
         AS += ".exe"
         AR += ".exe"
         LINK += ".exe"
-        if rtconfig.PLATFORM in ['gcc','llvm-arm']:
+        if rtconfig.PLATFORM in ['gcc']:
             SIZE += ".exe"
             OBJDUMP += ".exe"
             OBJCOPY += ".exe"
@@ -129,7 +129,7 @@ def GenerateCFiles(env, project, project_name):
             cm_file.write("SET(CMAKE_CXX_FLAGS \""+ CXXFLAGS + "\")\n")
             cm_file.write("SET(CMAKE_CXX_COMPILER_WORKS TRUE)\n\n")
 
-        if rtconfig.PLATFORM in ['gcc','llvm-arm']:
+        if rtconfig.PLATFORM in ['gcc']:
             cm_file.write("SET(CMAKE_OBJCOPY \""+ OBJCOPY + "\")\n")
             cm_file.write("SET(CMAKE_SIZE \""+ SIZE + "\")\n\n")
         elif rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -137,7 +137,7 @@ def GenerateCFiles(env, project, project_name):
 
         LINKER_FLAGS = ''
         LINKER_LIBS = ''
-        if rtconfig.PLATFORM in ['gcc','llvm-arm']:
+        if rtconfig.PLATFORM in ['gcc']:
             LINKER_FLAGS += '-T'
         elif rtconfig.PLATFORM in ['armcc', 'armclang']:
             LINKER_FLAGS += '--scatter'
@@ -186,7 +186,7 @@ def GenerateCFiles(env, project, project_name):
 
         cm_file.write("ADD_DEFINITIONS(\n")
         for i in env['CPPDEFINES']:
-            cm_file.write("\t-D" + str(i).replace("(", "").replace(")", "").replace(",", " ") + "\n")
+            cm_file.write("\t-D" + i + "\n")
         cm_file.write(")\n\n")
 
         libgroups = []
@@ -290,7 +290,7 @@ def GenerateCFiles(env, project, project_name):
         cm_file.write("\n")
 
         cm_file.write("# Interface library search paths\n")
-        if rtconfig.PLATFORM in ['gcc','llvm-arm']:
+        if rtconfig.PLATFORM in ['gcc']:
             for group in libgroups:
                 if not 'LIBPATH' in group.keys():
                     continue
