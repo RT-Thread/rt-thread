@@ -17,6 +17,8 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to mempool.c
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix spinlock assert
+ * 2025-06-01     htl5241      remove redundancy  rt_schedule()
+ *                             fix timer overflow
  */
 
 #include <rthw.h>
@@ -327,15 +329,12 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         /* enable interrupt */
         rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
-        /* do a schedule */
-        rt_schedule();
-
         if (thread->error != RT_EOK)
             return RT_NULL;
 
         if (time > 0)
         {
-            time -= rt_tick_get() - before_sleep;
+            time -= rt_tick_get_delta(before_sleep);
             if (time < 0)
                 time = 0;
         }
@@ -396,9 +395,6 @@ void rt_mp_free(void *block)
     if (rt_susp_list_dequeue(&mp->suspend_thread, RT_EOK))
     {
         rt_spin_unlock_irqrestore(&(mp->spinlock), level);
-
-        /* do a schedule */
-        rt_schedule();
 
         return;
     }
