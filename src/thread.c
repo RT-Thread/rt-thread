@@ -35,6 +35,8 @@
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix thread_exit/detach/delete
  *                             fix rt_thread_delay
+ * 2025-06-01     htl5241      remove redundancy  rt_schedule()
+ *                             fix timer overflow
  */
 
 #include <rthw.h>
@@ -133,8 +135,6 @@ static void _thread_exit(void)
 
     rt_exit_critical_safe(critical_level);
 
-    /* switch to next task */
-    rt_schedule();
 }
 
 /**
@@ -647,9 +647,6 @@ static rt_err_t _thread_sleep(rt_tick_t tick)
 
         thread->error = -RT_EINTR;
 
-        /* notify a pending rescheduling */
-        rt_schedule();
-
         /* exit critical and do a rescheduling */
         rt_exit_critical_safe(critical_level);
 
@@ -692,7 +689,6 @@ RTM_EXPORT(rt_thread_delay);
 rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
     struct rt_thread *thread;
-    rt_tick_t cur_tick;
     rt_base_t critical_level;
 
     RT_ASSERT(tick != RT_NULL);
@@ -708,13 +704,15 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     /* disable interrupt */
     critical_level = rt_enter_critical();
 
-    cur_tick = rt_tick_get();
-    if (cur_tick - *tick < inc_tick)
+    if (rt_tick_get_delta(*tick) < inc_tick)
     {
         rt_tick_t left_tick;
+        rt_tick_t target_tick;
+        target_tick = *tick + inc_tick;
+        left_tick   = target_tick - rt_tick_get();
 
-        *tick += inc_tick;
-        left_tick = *tick - cur_tick;
+        if (left_tick > target_tick)
+            left_tick = RT_TICK_MAX - left_tick + 1;
 
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
@@ -725,8 +723,6 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
         rt_exit_critical_safe(critical_level);
 
-        rt_schedule();
-
         /* clear error number of this thread to RT_EOK */
         if (thread->error == -RT_ETIMEOUT)
         {
@@ -735,7 +731,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     }
     else
     {
-        *tick = cur_tick;
+        *tick = rt_tick_get();
         rt_exit_critical_safe(critical_level);
     }
 
