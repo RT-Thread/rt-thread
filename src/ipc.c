@@ -46,6 +46,8 @@
  * 2022-10-16     Bernard      add prioceiling feature in mutex
  * 2023-04-16     Xin-zheqi    redesigen queue recv and send function return real message size
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2025-06-01     htl5241      fix timer overflow
+ *                             
  */
 
 #include <rtthread.h>
@@ -2567,7 +2569,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
 {
     struct rt_thread *thread;
     rt_base_t level;
-    rt_uint32_t tick_delta;
+    rt_uint32_t tick_stamp;
     rt_err_t ret;
 
     /* parameter check */
@@ -2578,7 +2580,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* initialize delta tick */
-    tick_delta = 0;
+    tick_stamp = 0;
     /* get current thread */
     thread = rt_thread_self();
 
@@ -2622,7 +2624,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         if (timeout > 0)
         {
             /* get the start tick of timer */
-            tick_delta = rt_tick_get();
+            tick_stamp = rt_tick_get();
 
             LOG_D("mb_send_wait: start timer of thread:%s",
                   thread->parent.name);
@@ -2650,8 +2652,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
-            timeout -= tick_delta;
+            timeout -= rt_tick_get_delta(tick_stamp);
             if (timeout < 0)
                 timeout = 0;
         }
@@ -2846,7 +2847,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
 {
     struct rt_thread *thread;
     rt_base_t level;
-    rt_uint32_t tick_delta;
+    rt_uint32_t tick_stamp;
     rt_err_t ret;
 
     /* parameter check */
@@ -2857,7 +2858,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
     RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* initialize delta tick */
-    tick_delta = 0;
+    tick_stamp = 0;
     /* get current thread */
     thread = rt_thread_self();
 
@@ -2902,7 +2903,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
         if (timeout > 0)
         {
             /* get the start tick of timer */
-            tick_delta = rt_tick_get();
+            tick_stamp = rt_tick_get();
 
             LOG_D("mb_recv: start timer of thread:%s",
                   thread->parent.name);
@@ -2930,8 +2931,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
-            timeout -= tick_delta;
+            timeout -= rt_tick_get_delta(tick_stamp);
             if (timeout < 0)
                 timeout = 0;
         }
@@ -3382,7 +3382,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
 {
     rt_base_t level;
     struct rt_mq_message *msg;
-    rt_uint32_t tick_delta;
+    rt_uint32_t tick_stamp;
     struct rt_thread *thread;
     rt_err_t ret;
 
@@ -3402,7 +3402,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         return -RT_ERROR;
 
     /* initialize delta tick */
-    tick_delta = 0;
+    tick_stamp = 0;
     /* get current thread */
     thread = rt_thread_self();
 
@@ -3447,7 +3447,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         if (timeout > 0)
         {
             /* get the start tick of timer */
-            tick_delta = rt_tick_get();
+            tick_stamp = rt_tick_get();
 
             LOG_D("mq_send_wait: start timer of thread:%s",
                   thread->parent.name);
@@ -3475,8 +3475,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
-            timeout -= tick_delta;
+            timeout -= rt_tick_get_delta(tick_stamp);
             if (timeout < 0)
                 timeout = 0;
         }
@@ -3765,7 +3764,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     struct rt_thread *thread;
     rt_base_t level;
     struct rt_mq_message *msg;
-    rt_uint32_t tick_delta;
+    rt_uint32_t tick_stamp;
     rt_err_t ret;
     rt_size_t len;
 
@@ -3781,7 +3780,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* initialize delta tick */
-    tick_delta = 0;
+    tick_stamp = 0;
     /* get current thread */
     thread = rt_thread_self();
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mq->parent.parent)));
@@ -3826,7 +3825,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         if (timeout > 0)
         {
             /* get the start tick of timer */
-            tick_delta = rt_tick_get();
+            tick_stamp = rt_tick_get();
 
             LOG_D("set thread:%s to timer list",
                   thread->parent.name);
@@ -3855,8 +3854,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
-            tick_delta = rt_tick_get() - tick_delta;
-            timeout -= tick_delta;
+            timeout -= rt_tick_get_delta(tick_stamp);
             if (timeout < 0)
                 timeout = 0;
         }
