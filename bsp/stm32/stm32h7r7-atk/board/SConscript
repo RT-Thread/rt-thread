@@ -1,0 +1,23 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+
+src = Glob('*.c')
+
+src += Split('''
+CubeMX_Config/Appli/Core/Src/stm32h7rsxx_hal_msp.c
+''')
+
+path = [cwd]
+path += [cwd + '/port']
+path += [cwd + '/CubeMX_Config/Appli/Core/Inc']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

@@ -1,0 +1,78 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+# add general drivers
+src = Split('''
+drv_common.c
+drv_gpio.c
+drv_spi.c
+drv_psram.c
+''')
+#CubeMX_Config/Src/stm32h7xx_hal_msp.c
+
+if GetDepend(['RT_USING_SERIAL']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_usart_v2.c']
+    else:
+        src += ['drv_usart.c']
+
+if GetDepend(['BSP_USING_SDIO']):
+    src += Glob('drv_sdmmc.c')
+
+if GetDepend(['BSP_USING_ETH']):
+    src += Glob('drv_eth.c')
+
+if GetDepend(['BSP_USING_DCMI']):
+    src += Glob('drv_dcmi.c')
+
+if GetDepend(['BSP_USING_LCD']):
+    src += Glob('drv_lcd.c')
+
+if GetDepend(['BSP_USING_TIM']):
+    src += Glob('drv_hwtimer.c')
+
+if GetDepend(['RT_USING_PM']):
+    src += ['drv_pm.c']
+    src += ['drv_lptim.c']
+    
+if GetDepend(['BSP_USING_SPI_LCD_ILI9488']):
+    src += Glob('drv_spi_ili9488.c')
+
+if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c'] 
+
+if GetDepend(['BSP_USING_ONCHIP_RTC']):
+    src += Glob('drv_rtc.c')
+	
+if GetDepend(['BSP_USING_USBD']):
+    src += Glob('drv_usbd.c')
+    
+if GetDepend(['BSP_USING_USBH']):
+    src += ['drv_usbh.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_fdcan.c']
+
+if GetDepend(['RT_USING_PWM']):
+    src += ['drv_pwm.c']
+
+if GetDepend(['BSP_USING_XSPI_NORFLASH']):
+    src += ['drv_xspi_norflash.c']
+
+path = [cwd]
+path += [cwd + '/include']
+path += [cwd + '/include/config']
+
+startup_path_prefix = SDK_LIB
+
+# STM32H7S7xx
+# You can select chips from the list above
+CPPDEFINES = ['STM32H7S7xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
