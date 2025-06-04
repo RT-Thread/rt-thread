@@ -139,33 +139,6 @@ SECTIONS
     } > RAM
     __bss_end = .;
 
-    .RxDecripSection (NOLOAD) : ALIGN(4)
-    {
-    . = ALIGN(4);
-    *(.RxDecripSection)
-    *(.RxDecripSection.*)
-    . = ALIGN(4);
-    __RxDecripSection_free__ = .;
-    } > RxDecripSection
-
-    .TxDecripSection (NOLOAD) : ALIGN(4)
-    {
-    . = ALIGN(4);
-    *(.TxDecripSection)
-    *(.TxDecripSection.*)
-    . = ALIGN(4);
-    __TxDecripSection_free__ = .;
-    } > TxDecripSection
-
-    .RxArraySection (NOLOAD) : ALIGN(4)
-    {
-    . = ALIGN(4);
-    *(.RxArraySection)
-    *(.RxArraySection.*)
-    . = ALIGN(4);
-    __RxArraySection_free__ = .;
-    } > RxArraySection
-
     _end = .;
 
     /* Stabs debugging sections.  */
