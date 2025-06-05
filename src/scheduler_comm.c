@@ -137,7 +137,7 @@ rt_uint8_t rt_sched_thread_get_curr_prio(struct rt_thread *thread)
  */
 rt_uint8_t rt_sched_thread_get_init_prio(struct rt_thread *thread)
 {
-    /* read only fields, so lock is unecessary */
+    /* read only fields, so lock is unnecessary */
     return RT_SCHED_PRIV(thread).init_priority;
 }
 
