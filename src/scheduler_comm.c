@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,20 @@
 
 #include <rtthread.h>
 
+/**
+ * @brief Initialize thread scheduling context
+ *
+ * @param thread The thread to be initialized
+ * @param tick Initial time slice value for the thread
+ * @param priority Initial priority of the thread
+ *
+ * @details This function performs the following initialization:
+ *   - Sets thread status to INIT
+ *   - For SMP systems:
+ *     * Sets bind CPU to none (RT_CPUS_NR)
+ *     * Marks CPU as detached (RT_CPU_DETACHED)
+ *   - Calls rt_sched_thread_init_priv() for private scheduling data initialization
+ */
 void rt_sched_thread_init_ctx(struct rt_thread *thread, rt_uint32_t tick, rt_uint8_t priority)
 {
     /* setup thread status */
@@ -30,6 +44,17 @@ void rt_sched_thread_init_ctx(struct rt_thread *thread, rt_uint32_t tick, rt_uin
     rt_sched_thread_init_priv(thread, tick, priority);
 }
 
+/**
+ * @brief Start the thread timer for scheduling
+ *
+ * @param thread The thread whose timer needs to be started
+ *
+ * @return rt_err_t Always returns RT_EOK on success
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held.
+ *   - Sets the thread's timer flag (sched_flag_ttmr_set) to indicate timer is active
+ */
 rt_err_t rt_sched_thread_timer_start(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
@@ -37,6 +62,15 @@ rt_err_t rt_sched_thread_timer_start(struct rt_thread *thread)
     return RT_EOK;
 }
 
+/**
+ * @brief Stop the thread timer for scheduling
+ *
+ * @param thread The thread whose timer needs to be stopped
+ *
+ * @return rt_err_t
+ *   - RT_EOK if timer was successfully stopped or not active
+ *   - Other error codes from rt_timer_stop() if stop operation failed
+ */
 rt_err_t rt_sched_thread_timer_stop(struct rt_thread *thread)
 {
     rt_err_t error;
@@ -56,26 +90,71 @@ rt_err_t rt_sched_thread_timer_stop(struct rt_thread *thread)
     return error;
 }
 
+/**
+ * @brief Get the current status of a thread
+ *
+ * @param thread The thread to get status from
+ *
+ * @return rt_uint8_t The thread status masked with RT_THREAD_STAT_MASK
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held (RT_SCHED_DEBUG_IS_LOCKED)
+ *   - Returns the thread's status field masked with RT_THREAD_STAT_MASK
+ */
 rt_uint8_t rt_sched_thread_get_stat(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
     return RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK;
 }
 
+/**
+ * @brief Get the current priority of a thread
+ *
+ * @param thread The thread to get priority from
+ *
+ * @return rt_uint8_t The current priority value of the thread
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held (RT_SCHED_DEBUG_IS_LOCKED)
+ *   - Returns the thread's current priority field from its private scheduling data
+ */
 rt_uint8_t rt_sched_thread_get_curr_prio(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
     return RT_SCHED_PRIV(thread).current_priority;
 }
 
+/**
+ * @brief Get the initial priority of a thread
+ *
+ * @param thread The thread to get priority from
+ *
+ * @return rt_uint8_t The initial priority value of the thread
+ *
+ * @details This function:
+ *   - Returns the thread's initial priority field from its private scheduling data
+ *   - Does not require scheduler lock as it accesses read-only fields
+ */
 rt_uint8_t rt_sched_thread_get_init_prio(struct rt_thread *thread)
 {
-    /* read only fields, so lock is unecessary */
+    /* read only fields, so lock is unnecessary */
     return RT_SCHED_PRIV(thread).init_priority;
 }
 
 /**
- * @note Caller must hold the scheduler lock
+ * @brief Check if a thread is in suspended state
+ *
+ * @param thread The thread to check
+ *
+ * @return rt_uint8_t
+ *   - 1 if thread is suspended (matches RT_THREAD_SUSPEND_MASK)
+ *   - 0 otherwise
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held (RT_SCHED_DEBUG_IS_LOCKED)
+ *   - Checks thread's status field against RT_THREAD_SUSPEND_MASK
+ *
+ * @note Caller must hold the scheduler lock before calling this function
  */
 rt_uint8_t rt_sched_thread_is_suspended(struct rt_thread *thread)
 {
@@ -83,6 +162,18 @@ rt_uint8_t rt_sched_thread_is_suspended(struct rt_thread *thread)
     return (RT_SCHED_CTX(thread).stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK;
 }
 
+/**
+ * @brief Close a thread by setting its status to CLOSED
+ *
+ * @param thread The thread to be closed
+ * @return rt_err_t Always returns RT_EOK on success
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held (RT_SCHED_DEBUG_IS_LOCKED)
+ *   - Sets the thread's status to RT_THREAD_CLOSE
+ *
+ * @note Must be called with scheduler lock held
+ */
 rt_err_t rt_sched_thread_close(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
@@ -90,6 +181,19 @@ rt_err_t rt_sched_thread_close(struct rt_thread *thread)
     return RT_EOK;
 }
 
+/**
+ * @brief Yield the current thread's remaining time slice
+ *
+ * @param thread The thread to yield
+ * @return rt_err_t Always returns RT_EOK on success
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held (RT_SCHED_DEBUG_IS_LOCKED)
+ *   - Resets the thread's remaining tick count to its initial value
+ *   - Sets the thread's status to YIELD state
+ *
+ * @note Must be called with scheduler lock held
+ */
 rt_err_t rt_sched_thread_yield(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
@@ -100,6 +204,27 @@ rt_err_t rt_sched_thread_yield(struct rt_thread *thread)
     return RT_EOK;
 }
 
+/**
+ * @brief Make a suspended thread ready for scheduling
+ *
+ * @param thread The thread to be made ready
+ *
+ * @return rt_err_t
+ *   - RT_EOK if operation succeeded
+ *   - -RT_EINVAL if thread is not suspended
+ *   - Other error codes from rt_sched_thread_timer_stop() if timer stop failed
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held (RT_SCHED_DEBUG_IS_LOCKED)
+ *   - Checks if thread is suspended (returns -RT_EINVAL if not)
+ *   - Stops thread timer if active
+ *   - Removes thread from suspend list
+ *   - Clears wakeup handler (if RT_USING_SMART is defined)
+ *   - Inserts thread into ready queue
+ *
+ * @note Must be called with scheduler lock held
+ *       May fail due to racing conditions with timeout ISR
+ */
 rt_err_t rt_sched_thread_ready(struct rt_thread *thread)
 {
     rt_err_t error;
@@ -144,6 +269,24 @@ rt_err_t rt_sched_thread_ready(struct rt_thread *thread)
     return error;
 }
 
+/**
+ * @brief Increase the system tick and update thread's remaining time slice
+ *
+ * @param tick The number of ticks to increase
+ * @return rt_err_t Always returns RT_EOK
+ *
+ * @details This function:
+ *   - Gets the current thread
+ *   - Locks the scheduler
+ *   - Decreases the thread's remaining tick count by the specified amount
+ *   - If remaining ticks reach zero:
+ *     * Calls rt_sched_thread_yield() to yield the thread
+ *     * Requests a reschedule with rt_sched_unlock_n_resched()
+ *   - Otherwise simply unlocks the scheduler
+ *
+ * @note This function is typically called from timer interrupt context
+ *       It handles both SMP and non-SMP cases
+ */
 rt_err_t rt_sched_tick_increase(rt_tick_t tick)
 {
     struct rt_thread *thread;
@@ -178,7 +321,26 @@ rt_err_t rt_sched_tick_increase(rt_tick_t tick)
 }
 
 /**
- * @brief Update priority of the target thread
+ * @brief Update thread priority and adjust scheduling attributes
+ *
+ * @param thread The thread to update priority for
+ * @param priority New priority value to set
+ * @param update_init_prio Flag to determine if initial priority should also be updated
+ * @return rt_err_t Always returns RT_EOK on success
+ *
+ * @details This function:
+ *   - Requires scheduler lock to be held (RT_SCHED_DEBUG_IS_LOCKED)
+ *   - For ready threads:
+ *     * Removes from ready queue
+ *     * Updates priority values
+ *     * Recalculates priority attributes (number, mask, etc.)
+ *     * Reinserts into ready queue with new priority
+ *   - For non-ready threads:
+ *     * Only updates priority values and attributes
+ *   - Handles both 32-bit and >32-bit priority systems
+ *
+ * @note Must be called with scheduler lock held
+ *       Thread status must be valid before calling
  */
 static rt_err_t _rt_sched_update_priority(struct rt_thread *thread, rt_uint8_t priority, rt_bool_t update_init_prio)
 {
@@ -249,6 +411,19 @@ rt_err_t rt_sched_thread_reset_priority(struct rt_thread *thread, rt_uint8_t pri
 }
 
 #ifdef RT_USING_OVERFLOW_CHECK
+/**
+ * @brief Check thread stack for overflow or near-overflow conditions
+ *
+ * @param thread The thread to check stack for
+ *
+ * @details This function performs the following checks:
+ *   - For SMART mode without MMU: skips check if SP is in user data section
+ *   - Without hardware stack guard:
+ *     * For upward-growing stacks: checks magic number at top and SP range
+ *     * For downward-growing stacks: checks magic number at bottom and SP range
+ *     * Triggers error and infinite loop on overflow
+ *   - Additional warnings when stack pointer is near boundaries
+ */
 void rt_scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
