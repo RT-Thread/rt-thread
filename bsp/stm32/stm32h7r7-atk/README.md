@@ -18,7 +18,7 @@
 
 开发板外观如下图所示：
 
-![board](figures/board.png)
+![board](figures/board.jpg)
 
 该开发板常用 **板载资源** 如下：
 
