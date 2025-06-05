@@ -17,6 +17,7 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to mempool.c
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix spinlock assert
+ * 2025-06-01     htl5241      fix timer overflow
  */
 
 #include <rthw.h>
@@ -335,7 +336,7 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
 
         if (time > 0)
         {
-            time -= rt_tick_get() - before_sleep;
+            time -= rt_tick_get_delta(before_sleep);
             if (time < 0)
                 time = 0;
         }
