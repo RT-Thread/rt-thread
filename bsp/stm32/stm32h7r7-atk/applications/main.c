@@ -1,10 +1,10 @@
 /*
  * @Author       : wenshan
  * @Date         : 2025-05-14 20:21:24
- * @LastEditors  : wenshan
- * @LastEditTime : 2025-06-02 21:53:35
- * @Description  : 
- * @FilePath     : \rtthread-atk\applications\main.c
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2025-06-05 14:32:18
+ * @Description  :
+ * @FilePath: \undefinedf:\github\rtthread\rt-thread\bsp\stm32\stm32h7r7-atk\applications\main.c
  */
 
 #include <rtthread.h>

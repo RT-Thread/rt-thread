@@ -1,4 +1,12 @@
 /*
+ * @Author: xx
+ * @Date: 2025-06-04 20:15:23
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2025-06-05 14:32:32
+ * @Description: 
+ * @FilePath: \undefinedf:\github\rtthread\rt-thread\bsp\stm32\stm32h7r7-atk\board\board.c
+ */
+/*
  * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -13,7 +21,7 @@
 #define DBG_TAG "board"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
- 
+
 #ifdef RT_USING_INDEPENDENT_INTERRUPT_MANAGEMENT
 #define RT_NVIC_PRO_BITS    __NVIC_PRIO_BITS
 

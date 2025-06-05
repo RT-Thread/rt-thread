@@ -188,12 +188,12 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
 #else/* If HDR support is not enabled, it will be accepted by default */
 
     /* Configure the CAN filter */
-    canx_rxfilter.IdType = FDCAN_STANDARD_ID;                           
-    canx_rxfilter.FilterIndex = 0;                                     
-    canx_rxfilter.FilterType = FDCAN_FILTER_MASK;                      
-    canx_rxfilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;               
-    canx_rxfilter.FilterID1 = 0x0000;                                   
-    canx_rxfilter.FilterID2 = 0x0000;                                   
+    canx_rxfilter.IdType = FDCAN_STANDARD_ID;
+    canx_rxfilter.FilterIndex = 0;
+    canx_rxfilter.FilterType = FDCAN_FILTER_MASK;
+    canx_rxfilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+    canx_rxfilter.FilterID1 = 0x0000;
+    canx_rxfilter.FilterID2 = 0x0000;
     /* Filter configuration */
     if (HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle, &canx_rxfilter) != HAL_OK)
     {
@@ -867,7 +867,7 @@ static int rt_hw_can_init(void)
 #ifdef RT_CAN_USING_HDR
     st_DrvCan2.FilterConfig = sFilterConfig;
 #endif
-	st_DrvCan2.name = "can2";
+    st_DrvCan2.name = "can2";
     st_DrvCan2.fdcanHandle.Instance = FDCAN2;
     st_DrvCan2.device.config = config;
 

@@ -2,16 +2,15 @@ import os
 import sys
 import rtconfig
 
-if os.path.exists('rt-thread'):
-    RTT_ROOT = os.path.normpath(os.getcwd() + '/rt-thread')
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.path.normpath(os.getcwd() + '../../../rt-thread')
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
     from building import *
 except Exception as e:
-    print("Error message:", e.message)
     print('Cannot found RT-Thread root directory, please check RTT_ROOT')
     print(RTT_ROOT)
     sys.exit(-1)

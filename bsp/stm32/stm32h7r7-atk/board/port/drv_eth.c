@@ -343,7 +343,6 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
         {
             for (q = pStart, l = 0; q != NULL; q = (RxBuff_t *)q->pbuf.next)
             {
-                
                 rt_memcpy(&(((rt_uint8_t*)(p->payload))[l]), q->buff, q->pbuf.len);
                 l = l + q->pbuf.len;
             }
