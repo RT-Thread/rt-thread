@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,7 @@
  * 2020-10-15     zhangsz           add alarm flags hour minute second.
  * 2020-11-09     zhangsz           fix alarm set when modify rtc time.
  * 2024-09-29     milo              make internal thread's attributes configurable.
+ * 2025-6-4       RCSN              support the alarm using local time for calculation
  */
 
 #include <rtthread.h>
@@ -108,8 +109,13 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         {
         case RT_ALARM_ONESHOT:
         {
+#ifdef RT_ALARM_USING_LOCAL_TIME
+            sec_alarm = mktime(&alarm->wktime);
+            sec_now = mktime(now);
+#else
             sec_alarm = timegm(&alarm->wktime);
             sec_now = timegm(now);
+#endif
             if (((sec_now - sec_alarm) <= RT_ALARM_DELAY) && (sec_now >= sec_alarm))
             {
                 /* stop alarm */
@@ -239,7 +245,11 @@ static void alarm_update(rt_uint32_t event)
     {
         /* get time of now */
         get_timestamp(&timestamp);
+#ifdef RT_ALARM_USING_LOCAL_TIME
+        localtime_r(&timestamp, &now);
+#else
         gmtime_r(&timestamp, &now);
+#endif
 
         for (next = _container.head.next; next != &_container.head; next = next->next)
         {
@@ -250,7 +260,11 @@ static void alarm_update(rt_uint32_t event)
 
         /* get time of now */
         get_timestamp(&timestamp);
+#ifdef RT_ALARM_USING_LOCAL_TIME
+        localtime_r(&timestamp, &now);
+#else
         gmtime_r(&timestamp, &now);
+#endif
         sec_now = alarm_mkdaysec(&now);
 
         for (next = _container.head.next; next != &_container.head; next = next->next)
@@ -359,7 +373,11 @@ static rt_err_t alarm_setup(rt_alarm_t alarm, struct tm *wktime)
     *setup = *wktime;
     /* get time of now */
     get_timestamp(&timestamp);
+#ifdef RT_ALARM_USING_LOCAL_TIME
+    localtime_r(&timestamp, &now);
+#else
     gmtime_r(&timestamp, &now);
+#endif
 
     /* if these are a "don't care" value,we set them to now*/
     if ((setup->tm_sec > 59) || (setup->tm_sec < 0))
@@ -574,7 +592,11 @@ rt_err_t rt_alarm_start(rt_alarm_t alarm)
 
         /* get time of now */
         get_timestamp(&timestamp);
+#ifdef RT_ALARM_USING_LOCAL_TIME
+        localtime_r(&timestamp, &now);
+#else
         gmtime_r(&timestamp, &now);
+#endif
 
         alarm->flag |= RT_ALARM_STATE_START;
 
@@ -768,18 +790,26 @@ void rt_alarm_dump(void)
 {
     rt_list_t *next;
     rt_alarm_t alarm;
-
-    rt_kprintf("| hh:mm:ss | week | flag | en |\n");
-    rt_kprintf("+----------+------+------+----+\n");
+    int32_t tz_offset_sec = 0;
+    uint32_t abs_tz_offset_sec = 0U;
+#ifdef RT_ALARM_USING_LOCAL_TIME
+#if defined(RT_LIBC_USING_LIGHT_TZ_DST)
+    tz_offset_sec = rt_tz_get();
+#endif /* RT_LIBC_USING_LIGHT_TZ_DST */
+    abs_tz_offset_sec = tz_offset_sec > 0 ? tz_offset_sec : -tz_offset_sec;
+#endif
+    rt_kprintf("| hh:mm:ss | week | flag | en | timezone     |\n");
+    rt_kprintf("+----------+------+------+----+--------------+\n");
     for (next = _container.head.next; next != &_container.head; next = next->next)
     {
         alarm = rt_list_entry(next, struct rt_alarm, list);
         rt_uint8_t flag_index = get_alarm_flag_index(alarm->flag);
-        rt_kprintf("| %02d:%02d:%02d |  %2d  |  %2s  | %2d |\n",
+        rt_kprintf("| %02d:%02d:%02d |  %2d  |  %2s  | %2d | UTC%c%02d:%02d:%02d |\n",
             alarm->wktime.tm_hour, alarm->wktime.tm_min, alarm->wktime.tm_sec,
-            alarm->wktime.tm_wday, _alarm_flag_tbl[flag_index].name, alarm->flag & RT_ALARM_STATE_START);
+            alarm->wktime.tm_wday, _alarm_flag_tbl[flag_index].name, alarm->flag & RT_ALARM_STATE_START,
+            tz_offset_sec > 0 ? '+' : '-', abs_tz_offset_sec / 3600U, abs_tz_offset_sec % 3600U / 60U, abs_tz_offset_sec % 3600U % 60U);
     }
-    rt_kprintf("+----------+------+------+----+\n");
+    rt_kprintf("+----------+------+------+----+--------------+\n");
 }
 
 MSH_CMD_EXPORT_ALIAS(rt_alarm_dump, list_alarm, list alarm info);
