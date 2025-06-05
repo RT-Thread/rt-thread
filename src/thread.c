@@ -712,11 +712,10 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     if (rt_tick_get_delta(*tick) < inc_tick)
     {
         rt_tick_t left_tick;
-        rt_tick_t target_tick;
-        target_tick = *tick + inc_tick;
-        left_tick   = target_tick - rt_tick_get();
+        *tick = *tick + inc_tick;
+        left_tick   = *tick - rt_tick_get();
 
-        if (left_tick > target_tick)
+        if (left_tick > *tick)
             left_tick = RT_TICK_MAX - left_tick + 1;
 
         /* suspend thread */
