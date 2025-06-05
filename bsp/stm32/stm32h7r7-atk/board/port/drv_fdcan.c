@@ -33,16 +33,16 @@ static _stm32_fdcan_t st_DrvCan2 = {0};
 
 
 /*
- * note:经过分频后，fdcan工作时钟为100mhz
+ * note:After frequency division, the working clock of the fdcan is 100mhz
  */
 static const _stm32_fdcan_NTconfig_t st_CanNTconfig[]=
 /*baud brp sjw tseg1 tseg2*/
 {
-    {BSP_FDCAN_BAUD_DATA_5M,   1,8,15,4},  /* 这四个只有数据段可以使用 */
+    {BSP_FDCAN_BAUD_DATA_5M,   1,8,15,4},  /* Only the data segments of these four can be used */
     {BSP_FDCAN_BAUD_DATA_4M,   1,8,19,5},
     {BSP_FDCAN_BAUD_DATA_2M5,  2,8,15,4},
     {BSP_FDCAN_BAUD_DATA_2M,   2,8,19,5},
-    {CAN1MBaud,     5,8,15,4},  /* 下面都可以 */
+    {CAN1MBaud,     5,8,15,4},  /* All of the following are fine. */
     {CAN800kBaud,   1,8,99,25},
     {CAN500kBaud,   10,8,15,4},
     {CAN250kBaud,   10,8,35,4},
@@ -55,12 +55,12 @@ static const _stm32_fdcan_NTconfig_t st_CanNTconfig[]=
 
 /*
 *function name:_inline_get_NTbaud_index
-*Inf: 根据传入的波特率大小返回上面st_CanNTconfig这个
-*Inf: timing配置结构体数组的索引值。
+*Inf: Return the index value of the above st_CanNTconfig timing configuration
+*     structure array based on the passed-in baud rate size.
 *
-*#param: 波特率:十进制数字
+*#param: Baud rate: Decimal number
 *
-*#return: 索引值;如果没找到就返回0xff
+*#return: Index value If not found, return 0xff
 */
 static uint32_t _inline_get_NTbaud_index(uint32_t baud_rate)
 {
@@ -94,7 +94,8 @@ static void _inline_can_tx_header_init(_stm32_fdcan_t *pCan)
 
 
 /*
- * note:这里输入时钟时pll1q，600mhz，进去先分频到100m，正点原子说最大125m，但没翻到，暂且相信
+ * note:When the clock is input here, it is pll1q, 600mhz. First, it is divided to 100m. The atk
+ *           says the maximum is 125m, but I haven't found it. For now, I believe it
  */
 static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configure *cfg)
 {
@@ -108,10 +109,10 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
     pdrv_can = (_stm32_fdcan_t *)can->parent.user_data;
 
     RT_ASSERT(pdrv_can);
-    /* 外设时钟输入600MHZ，经过6分频为100MHZ */
+    /* The peripheral clock input is 600MHZ, and after 6 frequency divisions, it becomes 100MHZ */
     pdrv_can->fdcanHandle.Init.ClockDivider = FDCAN_CLOCK_DIV6;
 
-    /* 配置FrameFormat */
+    /* config FrameFormat */
     if (cfg->enable_canfd == BSP_FDCAN_FRAMEFORMAT_CLASSIC)
     {
         pdrv_can->fdcanHandle.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
@@ -146,10 +147,10 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
         break;
     }
 
-    /* 配置经典CAN或者仲裁段速率 */
+    /* Configure the classic CAN or arbitration segment rate */
     tmp_u32Index = _inline_get_NTbaud_index(cfg->baud_rate);
 
-    /* 数据段速率不能超过1M */
+    /* The data segment rate cannot exceed 1M */
     if(tmp_u32Index <= 3 || tmp_u32Index == 0xff)
         return -RT_ERROR;
 
@@ -158,11 +159,11 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
     pdrv_can->fdcanHandle.Init.NominalTimeSeg1 = st_CanNTconfig[tmp_u32Index].u8Ntseg1;
     pdrv_can->fdcanHandle.Init.NominalTimeSeg2 = st_CanNTconfig[tmp_u32Index].u8Ntseg2;
 
-    /* 配置数据段速率 */
+    /* Configure the data segment rate */
     if(cfg->enable_canfd == BSP_FDCAN_FRAMEFORMAT_FD_BRS)
     {
         tmp_u32Index = _inline_get_NTbaud_index(cfg->baud_rate_fd);
-        /* 数据段速率因为当前timing设置的问题，速率不能1M以下 */
+        /* The data segment rate cannot be lower than 1M due to the current timing setting issue */
         if(tmp_u32Index > 4 || tmp_u32Index == 0xff)
             return -RT_ERROR;
 
@@ -172,7 +173,7 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
         pdrv_can->fdcanHandle.Init.DataTimeSeg2 = st_CanNTconfig[tmp_u32Index].u8Ntseg2;
     }
 
-    /* h7r的fdcan和h7用的有些不一样,消息ram被砍了不少,这里可以直接配置成最大 */
+    /* Filter */
     pdrv_can->fdcanHandle.Init.StdFiltersNbr = 28;
     pdrv_can->fdcanHandle.Init.ExtFiltersNbr = 8;
 
@@ -181,25 +182,25 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
         return -RT_ERROR;
     }
 
-    /* 安装过滤器 */
+    /* Install the filter */
 #if defined(RT_CAN_USING_HDR)
     HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle , &pdrv_can->FilterConfig);
-#else/* 没开HDR支持，就默认全收 */
+#else/* If HDR support is not enabled, it will be accepted by default */
 
-    /* 配置CAN过滤器 */
-    canx_rxfilter.IdType = FDCAN_STANDARD_ID;                           /* 标准ID */
-    canx_rxfilter.FilterIndex = 0;                                      /* 滤波器索引 */
-    canx_rxfilter.FilterType = FDCAN_FILTER_MASK;                       /* 滤波器类型 */
-    canx_rxfilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;               /* 过滤器0关联到FIFO0 */
-    canx_rxfilter.FilterID1 = 0x0000;                                   /* 第一个可被接受的32位ID */
-    canx_rxfilter.FilterID2 = 0x0000;                                   /* 第二个可被接受的32位ID，如果FDCAN配置为传统模式的话，这里是32位掩码 */
-    /* 过滤器配置 */
+    /* Configure the CAN filter */
+    canx_rxfilter.IdType = FDCAN_STANDARD_ID;                           
+    canx_rxfilter.FilterIndex = 0;                                     
+    canx_rxfilter.FilterType = FDCAN_FILTER_MASK;                      
+    canx_rxfilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;               
+    canx_rxfilter.FilterID1 = 0x0000;                                   
+    canx_rxfilter.FilterID2 = 0x0000;                                   
+    /* Filter configuration */
     if (HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle, &canx_rxfilter) != HAL_OK)
     {
         return -RT_ERROR;
     }
 
-    /* 扩展ID */
+    /* Extended ID */
     canx_rxfilter.IdType = FDCAN_EXTENDED_ID;
     if (HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle, &canx_rxfilter) != HAL_OK)
     {
@@ -212,23 +213,15 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
         return -RT_ERROR;
     }
 
-    /* 初始化发送头 */
+    /* Initialize the sending head */
     _inline_can_tx_header_init(pdrv_can);
 
-    /* 启动外围设备 */
+    /* Start peripheral devices */
     HAL_FDCAN_Start(&pdrv_can->fdcanHandle);
     return RT_EOK;
 }
 
-/*
- * brief: 这个函数的过滤表模式只做了掩码mask模式，
- *      stm32还支持范围和双值模式，这里没做支持,
- *      默认就是掩码模式
- *
- *      暂不支持hdr-bank为负,IdType不一样用的是
- *      两套索引//hdr暂未支持
- */
-/* 暂时有问题 */
+/* There is a temporary problem with HDR, can't use */
 #ifdef RT_CAN_USING_HDR
 static rt_err_t _inline_can_filter_config(_stm32_fdcan_t *pdrv_can,struct rt_can_filter_config *puser_can_filter_config)
 {
@@ -243,9 +236,7 @@ static rt_err_t _inline_can_filter_config(_stm32_fdcan_t *pdrv_can,struct rt_can
     /* get default filter */
     for (tmp_i32IndexCount = 0; tmp_i32IndexCount < puser_can_filter_config->count; tmp_i32IndexCount++)
     {
-
         if(puser_can_filter_config->items[tmp_i32IndexCount].hdr_bank < 0) continue;
-
 
         _FilterIndex = (rt_uint32_t)puser_can_filter_config->items[tmp_i32IndexCount].hdr_bank;
 
@@ -260,15 +251,10 @@ static rt_err_t _inline_can_filter_config(_stm32_fdcan_t *pdrv_can,struct rt_can
             if(_FilterIndex > 27) return -RT_ERROR;
         }
 
-
-
-
         pdrv_can->FilterConfig.FilterIndex = _FilterIndex;
         pdrv_can->FilterConfig.FilterID1 = puser_can_filter_config->items[tmp_i32IndexCount].id;
         pdrv_can->FilterConfig.FilterID2 = puser_can_filter_config->items[tmp_i32IndexCount].mask;
 
-
-        /* filter-item里面的rtr过滤stm32不能设置 */
         pdrv_can->FilterConfig.FilterType = FDCAN_FILTER_MASK;
         pdrv_can->FilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
         if(HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle , &pdrv_can->FilterConfig) != HAL_OK)
@@ -287,7 +273,6 @@ static rt_err_t _inline_can_control(struct rt_can_device *can, int cmd, void *ar
     _stm32_fdcan_t *pdrv_can;
     rt_uint32_t tmp_u32Errcount;
     rt_uint32_t tmp_u32status;
-//    struct rt_can_filter_config *filter_cfg;
 
     RT_ASSERT(can != RT_NULL);
     pdrv_can = (_stm32_fdcan_t *)can->parent.user_data;
@@ -614,7 +599,7 @@ static rt_ssize_t _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_u
             pmsg->rtr = RT_CAN_RTR;
         }
 
-        /* 长度 */
+        /* length */
         if(pdrv_can->RxHeader.DataLength <= 8)
         {
             pmsg->len = pdrv_can->RxHeader.DataLength;
@@ -711,13 +696,11 @@ void HAL_FDCAN_TxBufferCompleteCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t Bu
     {
 #ifdef BSP_USING_FDCAN1
         //can1
-        // LOG_D("tx buffer can1 complete,buffer index:%x", BufferIndexes);
         rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_TX_DONE | (((0) << 8)));
 #endif
     }
     else
     {
-        // LOG_D("tx buffer can2 complete");
 #ifdef BSP_USING_FDCAN2
         //can2
         rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_TX_DONE | ((BufferIndexes-1) << 8));
@@ -732,12 +715,10 @@ void HAL_FDCAN_TxFifoEmptyCallback(FDCAN_HandleTypeDef *hfdcan)
     if(hfdcan->Instance == FDCAN1)
     {
         //can1
-        // LOG_D("tx fifo can1 empty");
     }
     else
     {
         //can2
-        // LOG_D("tx fifo can2 empty");
     }
 }
 
@@ -759,7 +740,6 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
         if( (ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
             (hfdcan->Instance->CCCR & FDCAN_CCCR_INIT_Msk))
         {
-            //hfdcan->Instance->CCCR |= FDCAN_CCCR_CCE_Msk;
             hfdcan->Instance->CCCR &= ~FDCAN_CCCR_INIT_Msk;
             st_DrvCan1.device.status.errcode = 0xff;
         }
@@ -780,7 +760,6 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
         if( (ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
             (hfdcan->Instance->CCCR & FDCAN_CCCR_INIT_Msk))
         {
-            //hfdcan->Instance->CCCR |= FDCAN_CCCR_CCE_Msk;
             hfdcan->Instance->CCCR &= ~FDCAN_CCCR_INIT_Msk;
             st_DrvCan2.device.status.errcode = 0xff;
         }
@@ -842,13 +821,10 @@ static int rt_hw_can_init(void)
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.ticks = 50;
     config.baud_rate_fd = BSP_FDCAN_BAUD_DATA_2M;
-    config.use_bit_timing = 0;  // 不用config里面的timing
+    config.use_bit_timing = 0;  // does not use the timing in config
 
 #ifdef RT_CAN_USING_HDR
-    /* 这个成员不知道咋整，扩展过滤8个 ，普通的28个*/
     config.maxhdr = 36;
-
-    /* 配置默认过滤器，标准id全放fifo1 */
     FDCAN_FilterTypeDef sFilterConfig;
     sFilterConfig.IdType = FDCAN_STANDARD_ID;
     sFilterConfig.FilterIndex = 0;

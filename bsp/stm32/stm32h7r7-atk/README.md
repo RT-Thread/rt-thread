@@ -123,7 +123,7 @@ pkgs --update
 3. 正点原子暂未提供可以用在rtthread studio上的stldr下载文件，故在rtthread studio上只能编译还不能下载，现在只有在keil上用的flm下载文件。
 4. 如果使用eth的话，hal库一定要是1.3版本以上！
 5. 核心板有四种，这里使用的是正点原子的h7r7的高配板。
-6. 需要先下载对应的bootloader，在[Wenshan-736/stm32h7r7-atk](https://github.com/Wenshan-736/stm32h7r7-atk/tree/main)里面
+6. 需要先下载对应的bootloader，在[Wenshan-736/stm32h7r7-atk](https://github.com/Wenshan-736/stm32h7r7-atk/tree/main)里面有工程，文件atk-bootloader.bin是编译后的二进制文件
 
 ## 联系人信息
 

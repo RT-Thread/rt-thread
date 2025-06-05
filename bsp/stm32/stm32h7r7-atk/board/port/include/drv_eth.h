@@ -99,13 +99,13 @@
 #ifdef PHY_USING_YT8512C
 /*  The PHY status register. */
 #define PHY_Status_REG              0x11U
-/* 10M这个对应的函数实际上是没有被使用的，所以下面的10M的掩码可以先随便设 */
-/* 下面定义几个的都是特殊状态寄存器的内容 */
+/* The function corresponding to the 10m mask has not been used and can be ignored */
+/* The following several masks are all in the special state register */
 #define PHY_10M_MASK                (1<<14)
 #define PHY_100M_MASK               (1<<14)
 #define PHY_FULL_DUPLEX_MASK        (1<<13)
 #define PHY_LINK_STATUS_MASK        (1<<10)
-/*  中断掩码寄存器. */
+/* The PHY interrupt mask register */
 //#define PHY_INTERRUPT_MASK_REG      0x12U
 //#define PHY_LINK_CHANGE_FLAG        (1<<2)
 //#define PHY_LINK_CHANGE_MASK        (1<<9)

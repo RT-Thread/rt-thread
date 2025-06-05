@@ -16,9 +16,7 @@
 
 int main(void)
 {
-    rt_uint32_t count = 1;
-    
-    while(count++)
+    while(1)
     {
         rt_thread_mdelay(500);
         rt_pin_write(LED_PIN, PIN_HIGH);

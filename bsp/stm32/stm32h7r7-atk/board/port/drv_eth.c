@@ -158,34 +158,11 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
     TxConfig.CRCPadCtrl   = ETH_CRC_PAD_INSERT;
 
-//    for (int idx = 0; idx < ETH_RX_DESC_CNT; idx++)
-//    {
-//        HAL_ETH_DescAssignMemory(&EthHandle, idx, &Rx_Buff[idx][0], NULL);
-//    }
-
     HAL_ETH_SetMDIOClockRange(&EthHandle);
 
-    /* 自己找phy的地址 */
-//     for(int i = 0; i <= PHY_ADDR; i ++)
-//     {
-//       if(HAL_ETH_ReadPHYRegister(&EthHandle, i, PHY_SPECIAL_MODES_REG, &regvalue) != HAL_OK)
-//       {
-//         status = RT_ERROR;
-//         /* Can't read from this device address continue with next address */
-//         continue;
-//       }
-//
-//       if((regvalue & PHY_BASIC_STATUS_REG) == i)
-//       {
-//         PHY_ADDR = i;
-//         status = RT_EOK;
-//         LOG_D("Found a phy, address:0x%02X", PHY_ADDR);
-//         break;
-//       }
-//     }
     PHY_ADDR = BSP_ETH_PHY_ADDR;
 
-    /* 软复位 */
+    /* soft reset */
      if(HAL_ETH_WritePHYRegister(&EthHandle, PHY_ADDR, PHY_BASIC_CONTROL_REG, PHY_RESET_MASK) == HAL_OK)
      {
          HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ADDR, PHY_BASIC_CONTROL_REG, &regvalue);
@@ -212,7 +189,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 
     rt_thread_delay(2000);
 
-    /* 启动自动协商 */
+    /* Enable automatic negotiation */
      if(HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ADDR, PHY_BASIC_CONTROL_REG, &regvalue) == HAL_OK)
      {
          regvalue |= PHY_AUTO_NEGOTIATION_MASK;
@@ -352,13 +329,13 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
     RxBuff_t *pStart = RT_NULL, *q;
 
     SCB_CleanInvalidateDCache_by_Addr(&DMARxDscrTab, ETH_RX_DESC_CNT * sizeof(ETH_DMADescTypeDef));
-    /* 这里pStart指向的其实是RxBuff_t的地址 */
+    /* Here, pStart actually points to the address of RxBuff_t */
     if(HAL_ETH_ReadData(&EthHandle, (void**)&pStart) == HAL_OK)
     {
         SCB_CleanInvalidateDCache_by_Addr(&DMARxDscrTab, ETH_RX_DESC_CNT * sizeof(ETH_DMADescTypeDef));
         framelength = EthHandle.RxDescList.RxDataLength;
         /* Invalidate data cache for ETH Rx Buffers */
-        /* pStart指向的Rx_Buff定义时候已经是32对齐过了 */
+        /* The Rx_Buff pointed to by pStart was already 32 aligned when defined */
         SCB_InvalidateDCache_by_Addr((uint32_t *)pStart->buff, framelength);
 
         p = pbuf_alloc(PBUF_RAW, framelength, PBUF_RAM);
@@ -367,14 +344,9 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
             for (q = pStart, l = 0; q != NULL; q = (RxBuff_t *)q->pbuf.next)
             {
                 
-                // memcpy((rt_uint8_t *)q->payload, (rt_uint8_t *)&RxBuff.buffer[l], q->len);
                 rt_memcpy(&(((rt_uint8_t*)(p->payload))[l]), q->buff, q->pbuf.len);
                 l = l + q->pbuf.len;
             }
-#ifdef BSP_ETH_USING_DEBUG
-            // memcpy((rt_uint8_t *)p->payload, (rt_uint8_t *)pStart->buff, framelength);
-            LOG_I("eth_rx rece data = %d", framelength);
-#endif
         }
     }
 
@@ -405,10 +377,10 @@ void HAL_ETH_TxFreeCallback(uint32_t * buff)
 void HAL_ETH_RxLinkCallback(void **pStart, void **pEnd, uint8_t *buff, uint16_t Length)
 {
     /* *
-     * ppstart是描述符列表里的pRxStart成员，在这里
-     * 定义为pbuf的地址也是RxBuff_t的地址，buff是
-     * 以太网frame保存的地址，这个函数主要是把相关
-     * 的pbuf都连接起来。
+     *  ppstart is a member of pRxStart in the descriptor list, here
+     *  The address defined as pbuf is also the address of RxBuff_t, and buff is
+     *  The address saved by the Ethernet frame. This function is mainly to link the relevant
+     *  All the pbuf of * are connected.
      */
     struct pbuf **ppStart = (struct pbuf **)pStart;
     struct pbuf **ppEnd = (struct pbuf **)pEnd;
@@ -421,18 +393,19 @@ void HAL_ETH_RxLinkCallback(void **pStart, void **pEnd, uint8_t *buff, uint16_t 
     p->len = Length;
 
     /* Chain the buffer. */
-    /* 正常来说新包的第一次进这里pstart都应该是空的 */
+    /* Normally, the first time you enter a new package, pstart should be empty */
     if (!*ppStart)
     {
-        /* 第一个buffer设置pstart. */
+        /* The first buffer sets pstart. */
         *ppStart = p;
     }
     else
     {
-        /* 这里的pEnd指向上次进HAL_ETH_RxLinkCallback的pbuf，也是RX_BUFF_T */
+        /* Here, "pEnd" points to the "pbuf" that entered the HAL_ETH_RxLinkCallback
+         last time, which is also "RX_BUFF_T" */
         (*ppEnd)->next = p;
     }
-    /* pEnd设置为当前pbuf */
+    /* Set pEnd to the current pbuf */
     *ppEnd  = p;
 
     /* Update the total length of all the buffers of the chain. Each pbuf in the chain should have its tot_len
@@ -469,39 +442,16 @@ void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
     LOG_E("eth err");
 }
 
-
-/* -----------------------------------以下皆为测试----------------------------------------- */
-
 void HAL_ETH_RxAllocateCallback(uint8_t **buff)
 {
-//    static uint16_t buf_index = 0;
-//    *buff = Rx_Buff[buf_index];
-//    buf_index++;
-//    if(buf_index >= ETH_RX_DESC_CNT) buf_index = 0;
 
-    /* 使用环形缓冲区索引 */
+    /* Use the circular buffer index */
     static uint16_t buf_index = 0;
-#ifdef BSP_ETH_USING_DEBUG
-    uint16_t i = 0,j = 0;
-#endif
 
-    /* 更新索引前检查描述符所有权 */
+    /* Check the descriptor ownership before updating the index */
     if((DMARxDscrTab[buf_index].DESC3 & ETH_DMARXNDESCRF_OWN) == 0) {
         *buff = Rx_Buff[buf_index].buff;
         buf_index = (buf_index + 1) % ETH_RX_DESC_CNT;
-
-#ifdef BSP_ETH_USING_DEBUG
-        LOG_I("RxAlloCB buf_index = %d", buf_index);
-        for(i=0;i<ETH_RX_DESC_CNT;i++)
-        {
-            if((DMARxDscrTab[i].DESC3 & ETH_DMARXNDESCWBF_OWN) == 0)
-            {
-                j++;
-            }
-        }
-        LOG_I("rx desc owned by app num : %d", j);
-#endif
-
     } else {
         LOG_W("Buffer %d not released!", buf_index);
         *buff = RT_NULL;
@@ -523,14 +473,14 @@ static void phy_linkchange()
     HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ADDR, PHY_BASIC_STATUS_REG, (uint32_t *)&status);
     LOG_D("phy basic status reg is 0x%X", status);
 
-    /* 如果自动协商完成或连接建立 */
+    /* If the automatic negotiation is completed or the connection is established */
     if (status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
     {
         rt_uint32_t SR = 0;
 
 
 
-        /* 读特殊状态寄存器，看网速和双工状态 */
+        /* Read the special status register to check the network speed and duplex status */
         HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ADDR, PHY_Status_REG, (uint32_t *)&SR);
         LOG_D("phy control status reg is 0x%X", SR);
 
@@ -550,12 +500,12 @@ static void phy_linkchange()
         }
     }
 
-    /* 如果链接上或百兆，全双工状态，准备设置 */
+    /* If the link is on or 100 megabits, it is in full-duplex mode and ready to be set up */
     if (phy_speed != phy_speed_new)
     {
         phy_speed = phy_speed_new;
 
-        /* 链接建立 */
+        /* Link establishment */
         if (phy_speed & PHY_LINK)
         {
             LOG_D("link up");
@@ -661,7 +611,7 @@ static int rt_hw_stm32_eth_init(void)
     stm32_eth_device.parent.eth_tx = rt_stm32_eth_tx;
 
     /* register eth device */
-    // netif的设备名格式是rtthread_e0，取前两个字符
+    /* The device name format of netif is rtthread_e0, and the first two characters are taken */
     state = eth_device_init(&(stm32_eth_device.parent), "e0");
     if (RT_EOK == state)
     {

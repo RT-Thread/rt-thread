@@ -52,7 +52,7 @@ typedef struct
     struct rt_can_device device;      /* inherit from can device */
 } _stm32_fdcan_t;
 
-/* h7r，前面范围时仲裁/经典CAN范围，后面时数据段范围 */
+/* h7r The first one is the arbitration period time element, and the second one is the data period time element  */
 typedef struct
 {
     uint32_t u32NBaudrate;  /* <1M, ? */
