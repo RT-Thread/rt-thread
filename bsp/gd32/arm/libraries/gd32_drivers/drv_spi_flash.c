@@ -33,52 +33,53 @@ struct spi_flash_config
 };
 
 static const struct spi_flash_config flash_configs[] =
-    {
+{
 #ifdef BSP_USING_SPI0
-        {
-                             .bus_name    = "spi0",
-                             .device_name = "spi00",
-                             .flash_name  = "gd25q_spi0",
-                             .cs_pin      = GET_PIN(A,  4),
-                             },
+    {
+        .bus_name    = "spi0",
+        .device_name = "spi00",
+        .flash_name  = "gd25q_spi0",
+        .cs_pin      = GET_PIN(A, 4),
+    },
 #endif
 
 #ifdef BSP_USING_SPI1
-        {
-                             .bus_name    = "spi1",
-                             .device_name = "spi10",
-                             .flash_name  = "gd25q_spi1",
-                             .cs_pin      = GET_PIN(B,  9),
-                             },
+    {
+        .bus_name    = "spi1",
+        .device_name = "spi10",
+        .flash_name  = "gd25q_spi1",
+        .cs_pin      = GET_PIN(B, 9),
+    },
 #endif
 
 #ifdef BSP_USING_SPI2
-        {
-                             .bus_name    = "spi2",
-                             .device_name = "spi20",
-                             .flash_name  = "gd25q_spi2",
-                             .cs_pin      = GET_PIN(B, 12),
-                             },
+    {
+        .bus_name    = "spi2",
+        .device_name = "spi20",
+        .flash_name  = "gd25q_spi2",
+        .cs_pin      = GET_PIN(B, 12),
+    },
 #endif
 
 #ifdef BSP_USING_SPI3
-        {
-                             .bus_name    = "spi3",
-                             .device_name = "spi30",
-                             .flash_name  = "gd25q_spi3",
-                             .cs_pin      = GET_PIN(E,  4),
-                             },
+    {
+        .bus_name    = "spi3",
+        .device_name = "spi30",
+        .flash_name  = "gd25q_spi3",
+        .cs_pin      = GET_PIN(E, 4),
+    },
 #endif
 
 #ifdef BSP_USING_SPI4
-        {
-                             .bus_name    = "spi4",
-                             .device_name = "spi40",
-                             .flash_name  = "gd25qsp",
-                             .cs_pin      = GET_PIN(F,  6),
-                             },
+    {
+        .bus_name    = "spi4",
+        .device_name = "spi40",
+        .flash_name  = "gd25q_spi4",
+        .cs_pin      = GET_PIN(F, 6),
+    },
 #endif
 };
+
 
 static int spi_flash_init(void)
 {
