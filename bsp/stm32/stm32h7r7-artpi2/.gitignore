@@ -40,3 +40,4 @@ RTE/
 settings/
 *.uvguix*
 cconfig.h
+.xmake

@@ -64,6 +64,3 @@ vdso.lds
 # stm32cubemx
 **/CubeMX_Config/Drivers/
 **/CubeMX_Config/MDK-ARM/
-bsp/stm32/stm32h7r7-artpi2/.xmake/windows/x64/cache/
-bsp/stm32/stm32h7r7-artpi2/.xmake/windows/x64/project.lock
-bsp/stm32/stm32h7r7-artpi2/.xmake/windows/x64/
