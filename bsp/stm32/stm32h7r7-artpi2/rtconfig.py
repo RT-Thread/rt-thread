@@ -21,9 +21,6 @@ if  CROSS_TOOL == 'gcc':
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
-elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iccarm'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -127,55 +124,6 @@ elif PLATFORM == 'armclang':
     CFLAGS += ' -std=gnu99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-
-elif PLATFORM == 'iccarm':
-    # toolchains
-    CC = 'iccarm'
-    CXX = 'iccarm'
-    AS = 'iasmarm'
-    AR = 'iarchive'
-    LINK = 'ilinkarm'
-    TARGET_EXT = 'out'
-
-    DEVICE = '-Dewarm'
-
-    CFLAGS = DEVICE
-    CFLAGS += ' --diag_suppress Pa050'
-    CFLAGS += ' --no_cse'
-    CFLAGS += ' --no_unroll'
-    CFLAGS += ' --no_inline'
-    CFLAGS += ' --no_code_motion'
-    CFLAGS += ' --no_tbaa'
-    CFLAGS += ' --no_clustering'
-    CFLAGS += ' --no_scheduling'
-    CFLAGS += ' --endian=little'
-    CFLAGS += ' --cpu=Cortex-M7' 
-    CFLAGS += ' -e' 
-    CFLAGS += ' --fpu=VFPv5_sp'
-    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
-    CFLAGS += ' --silent'
-    
-    AFLAGS = DEVICE
-    AFLAGS += ' -s+' 
-    AFLAGS += ' -w+' 
-    AFLAGS += ' -r' 
-    AFLAGS += ' --cpu Cortex-M7' 
-    AFLAGS += ' --fpu VFPv5_sp' 
-    AFLAGS += ' -S' 
-    
-    if BUILD == 'debug':
-        CFLAGS += ' --debug'
-        CFLAGS += ' -On'
-    else:
-        CFLAGS += ' -Oh'
-
-    LFLAGS = ' --config "board/linker_scripts/link.icf"'
-    LFLAGS += ' --entry __iar_program_start'
-
-    CXXFLAGS = CFLAGS
-    
-    EXEC_PATH = EXEC_PATH + '/arm/bin/'
-    POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
 
 def dist_handle(BSP_ROOT, dist_dir):
     import sys
