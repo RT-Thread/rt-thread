@@ -1,5 +1,10 @@
 menu "Drivers Configuration"
 
+    config BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
     config BSP_USING_HARDLOCK
         bool "Enable Hard-Lock"
         default y
