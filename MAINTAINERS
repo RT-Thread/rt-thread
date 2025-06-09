@@ -49,6 +49,10 @@ tag: bsp_cvitek
 path: bsp/cvitek
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
 
+tag: bsp_gd32470z-lckfb
+path: bsp/gd32/arm/gd32470z-lckfb
+owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
+
 tag: bsp_k230
 path: bsp/k230
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
@@ -78,10 +82,6 @@ owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441
 tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
-
-tag: gd32470z-lckfb-lcd
-path: bsp/gd32/arm/gd32470z-lckfb/board/ports
-owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
 
 tag: bsp_ultrarisc
 path: bsp/ultrarisc/ur_dp1000_evb
