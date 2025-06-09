@@ -45,14 +45,13 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
     rt_adc_device_t adc = (struct rt_adc_device *)dev;
     rt_err_t        result;
 
-
     if (cmd == RT_ADC_CMD_ENABLE && adc->ops->enabled)
     {
-        result = adc->ops->enabled(adc, (rt_uint32_t)args, RT_TRUE);
+        result = adc->ops->enabled(adc, (rt_int8_t)(rt_base_t)args, RT_TRUE);
     }
     else if (cmd == RT_ADC_CMD_DISABLE && adc->ops->enabled)
     {
-        result = adc->ops->enabled(adc, (rt_uint32_t)args, RT_FALSE);
+        result = adc->ops->enabled(adc, (rt_int8_t)(rt_base_t)args, RT_FALSE);
     }
     else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution && args)
     {
