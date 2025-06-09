@@ -47,7 +47,6 @@
  * 2023-04-16     Xin-zheqi    redesigen queue recv and send function return real message size
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2025-06-01     htl5241      fix timer overflow
- *                             
  */
 
 #include <rtthread.h>

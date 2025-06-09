@@ -22,8 +22,7 @@
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2024-01-25     Shell        add RT_TIMER_FLAG_THREAD_TIMER for timer to sync with sched
  * 2024-05-01     wdfk-prog    The rt_timer_check and _soft_timer_check functions are merged
- * 2025-06-01     htl5241      remove redundancy 
- *                             fix timer overflow
+ * 2025-06-01     htl5241      remove redundancy and fix timer overflow
  */
 
 #include <rtthread.h>
