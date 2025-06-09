@@ -43,7 +43,7 @@ static rt_ssize_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size
 static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
 {
     rt_adc_device_t adc = (struct rt_adc_device *)dev;
-    rt_err_t        result;
+    rt_err_t        result = RT_ERROR;
 
     if (cmd == RT_ADC_CMD_ENABLE && adc->ops->enabled)
     {
