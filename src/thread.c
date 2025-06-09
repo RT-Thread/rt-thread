@@ -35,7 +35,7 @@
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix thread_exit/detach/delete
  *                             fix rt_thread_delay
- * 2025-06-01     htl5241      fix timer overflow          
+ * 2025-06-01     htl5241      fix timer overflow
  */
 
 #include <rthw.h>
