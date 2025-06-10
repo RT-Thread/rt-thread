@@ -217,8 +217,13 @@ static void utest_do_run(const char *utest_name)
                 if (utest_name[len - 1] == '*')
                 {
                     len -= 1;
+                    if (rt_memcmp(tc_table[i].name, utest_name, len) != 0)
+                    {
+                        i++;
+                        continue;
+                    }
                 }
-                if (rt_memcmp(tc_table[i].name, utest_name, len) != 0)
+                else if (rt_strcmp(tc_table[i].name, utest_name) != 0)
                 {
                     i++;
                     continue;
