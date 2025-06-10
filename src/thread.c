@@ -35,7 +35,6 @@
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix thread_exit/detach/delete
  *                             fix rt_thread_delay
- * 2025-06-01     htl5241      fix timer overflow
  */
 
 #include <rthw.h>
@@ -693,6 +692,7 @@ RTM_EXPORT(rt_thread_delay);
 rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
     struct rt_thread *thread;
+    rt_tick_t cur_tick;
     rt_base_t critical_level;
 
     RT_ASSERT(tick != RT_NULL);
@@ -708,14 +708,13 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     /* disable interrupt */
     critical_level = rt_enter_critical();
 
-    if (rt_tick_get_delta(*tick) < inc_tick)
+    cur_tick = rt_tick_get();
+    if (cur_tick - *tick < inc_tick)
     {
         rt_tick_t left_tick;
 
         *tick += inc_tick;
-        left_tick   = *tick - rt_tick_get();
-        if (left_tick > *tick)
-            left_tick = RT_TICK_MAX - left_tick + 1;
+        left_tick = *tick - cur_tick;
 
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
@@ -736,7 +735,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     }
     else
     {
-        *tick = rt_tick_get();
+        *tick = cur_tick;
         rt_exit_critical_safe(critical_level);
     }
 
