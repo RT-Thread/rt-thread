@@ -433,6 +433,19 @@ void rt_sched_thread_startup(struct rt_thread *thread)
     RT_SCHED_CTX(thread).stat = RT_THREAD_SUSPEND;
 }
 
+/**
+ * @brief Initialize thread's scheduling private data
+ *
+ * @param thread Pointer to the thread control block
+ * @param tick Initial time slice value for the thread
+ * @param priority Initial priority of the thread
+ *
+ * @details This function:
+ *   - Initializes the thread's list node
+ *   - Sets initial and current priority (must be < RT_THREAD_PRIORITY_MAX)
+ *   - Initializes priority masks (number_mask, number, high_mask for >32 priorities)
+ *   - Sets initial and remaining time slice ticks
+ */
 void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick,
                                rt_uint8_t priority)
 {
