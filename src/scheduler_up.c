@@ -71,7 +71,7 @@ static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
  * @param hook is the hook function.
  */
 void rt_scheduler_sethook(void (*hook)(struct rt_thread *from,
-				       struct rt_thread *to))
+									   struct rt_thread *to))
 {
 	rt_scheduler_hook = hook;
 }
@@ -106,8 +106,7 @@ rt_inline void _scheduler_update_highest_priority(void)
 rt_inline struct rt_thread *_scheduler_get_priority_thread(rt_ubase_t priority)
 {
 	/* get highest ready priority thread */
-	return RT_THREAD_LIST_NODE_ENTRY(
-		rt_thread_priority_table[priority].next);
+	return RT_THREAD_LIST_NODE_ENTRY(rt_thread_priority_table[priority].next);
 }
 
 rt_err_t rt_sched_lock(rt_sched_lock_level_t *plvl)
@@ -172,8 +171,8 @@ void rt_system_scheduler_start(void)
 	struct rt_thread *to_thread;
 
 	_scheduler_update_highest_priority();
-	to_thread = _scheduler_get_priority_thread(
-		rt_thread_ready_highest_priority);
+	to_thread =
+		_scheduler_get_priority_thread(rt_thread_ready_highest_priority);
 
 	rt_cpu_self()->current_thread = to_thread;
 
@@ -200,26 +199,23 @@ rt_inline void _rt_sched_insert_thread(struct rt_thread *thread)
 {
 	/* READY thread, insert to ready queue */
 	RT_SCHED_CTX(thread).stat =
-		RT_THREAD_READY |
-		(RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
+		RT_THREAD_READY | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
 	/* there is no time slices left(YIELD), inserting thread before ready list*/
 	if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_YIELD_MASK) != 0) {
 		rt_list_insert_before(
-			&(rt_thread_priority_table[RT_SCHED_PRIV(thread)
-							   .current_priority]),
+			&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]),
 			&RT_THREAD_LIST_NODE(thread));
 	}
 	/* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
 	else {
 		rt_list_insert_after(
-			&(rt_thread_priority_table[RT_SCHED_PRIV(thread)
-							   .current_priority]),
+			&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]),
 			&RT_THREAD_LIST_NODE(thread));
 	}
 
 	LOG_D("insert thread[%.*s], the priority: %d", RT_NAME_MAX,
-	      thread->parent.name,
-	      RT_SCHED_PRIV(rt_current_thread).current_priority);
+		  thread->parent.name,
+		  RT_SCHED_PRIV(rt_current_thread).current_priority);
 
 	/* set priority mask */
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -239,14 +235,13 @@ rt_inline void _rt_sched_insert_thread(struct rt_thread *thread)
 rt_inline void _rt_sched_remove_thread(struct rt_thread *thread)
 {
 	LOG_D("remove thread[%.*s], the priority: %d", RT_NAME_MAX,
-	      thread->parent.name,
-	      RT_SCHED_PRIV(rt_current_thread).current_priority);
+		  thread->parent.name,
+		  RT_SCHED_PRIV(rt_current_thread).current_priority);
 
 	/* remove thread from ready list */
 	rt_list_remove(&RT_THREAD_LIST_NODE(thread));
-	if (rt_list_isempty(
-		    &(rt_thread_priority_table[RT_SCHED_PRIV(thread)
-						       .current_priority]))) {
+	if (rt_list_isempty(&(
+			rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]))) {
 #if RT_THREAD_PRIORITY_MAX > 32
 		rt_thread_ready_table[RT_SCHED_PRIV(thread).number] &=
 			~RT_SCHED_PRIV(thread).high_mask;
@@ -255,8 +250,7 @@ rt_inline void _rt_sched_remove_thread(struct rt_thread *thread)
 				~RT_SCHED_PRIV(thread).number_mask;
 		}
 #else
-		rt_thread_ready_priority_group &=
-			~RT_SCHED_PRIV(thread).number_mask;
+		rt_thread_ready_priority_group &= ~RT_SCHED_PRIV(thread).number_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 	}
 }
@@ -290,14 +284,14 @@ void rt_schedule(void)
 		curr_thread = rt_thread_self();
 
 		if ((RT_SCHED_CTX(curr_thread).stat & RT_THREAD_STAT_MASK) ==
-		    RT_THREAD_RUNNING) {
+			RT_THREAD_RUNNING) {
 			if (RT_SCHED_PRIV(curr_thread).current_priority <
-			    rt_thread_ready_highest_priority) {
+				rt_thread_ready_highest_priority) {
 				to_thread = curr_thread;
 			} else if (RT_SCHED_PRIV(curr_thread).current_priority ==
-					   rt_thread_ready_highest_priority &&
-				   (RT_SCHED_CTX(curr_thread).stat &
-				    RT_THREAD_STAT_YIELD_MASK) == 0) {
+						   rt_thread_ready_highest_priority &&
+					   (RT_SCHED_CTX(curr_thread).stat &
+						RT_THREAD_STAT_YIELD_MASK) == 0) {
 				to_thread = curr_thread;
 			} else {
 				to_thread = _scheduler_get_priority_thread(
@@ -311,54 +305,46 @@ void rt_schedule(void)
 
 		if (to_thread != curr_thread) {
 			/* if the destination thread is not the same as current thread */
-			rt_current_priority =
-				(rt_uint8_t)rt_thread_ready_highest_priority;
+			rt_current_priority = (rt_uint8_t)rt_thread_ready_highest_priority;
 			from_thread = curr_thread;
 			rt_cpu_self()->current_thread = to_thread;
 
-			RT_OBJECT_HOOK_CALL(rt_scheduler_hook,
-					    (from_thread, to_thread));
+			RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (from_thread, to_thread));
 
 			if (need_insert_from_thread) {
 				_rt_sched_remove_thread(from_thread);
 				_rt_sched_insert_thread(from_thread);
 			}
 
-			if ((RT_SCHED_CTX(from_thread).stat &
-			     RT_THREAD_STAT_YIELD_MASK) != 0) {
-				RT_SCHED_CTX(from_thread).stat &=
-					~RT_THREAD_STAT_YIELD_MASK;
+			if ((RT_SCHED_CTX(from_thread).stat & RT_THREAD_STAT_YIELD_MASK) !=
+				0) {
+				RT_SCHED_CTX(from_thread).stat &= ~RT_THREAD_STAT_YIELD_MASK;
 			}
 
 			_rt_sched_remove_thread(to_thread);
 			RT_SCHED_CTX(to_thread).stat =
 				RT_THREAD_RUNNING |
-				(RT_SCHED_CTX(to_thread).stat &
-				 ~RT_THREAD_STAT_MASK);
+				(RT_SCHED_CTX(to_thread).stat & ~RT_THREAD_STAT_MASK);
 
 			_scheduler_update_highest_priority();
 
 			/* switch to new thread */
 			LOG_D("[%d]switch to priority#%d "
-			      "thread:%.*s(sp:0x%08x), "
-			      "from thread:%.*s(sp: 0x%08x)",
-			      rt_interrupt_nest, highest_ready_priority,
-			      RT_NAME_MAX, to_thread->parent.name,
-			      to_thread->sp, RT_NAME_MAX,
-			      from_thread->parent.name, from_thread->sp);
+				  "thread:%.*s(sp:0x%08x), "
+				  "from thread:%.*s(sp: 0x%08x)",
+				  rt_interrupt_nest, highest_ready_priority, RT_NAME_MAX,
+				  to_thread->parent.name, to_thread->sp, RT_NAME_MAX,
+				  from_thread->parent.name, from_thread->sp);
 
 			RT_SCHEDULER_STACK_CHECK(to_thread);
 
 			if (rt_interrupt_nest == 0) {
-				extern void rt_thread_handle_sig(
-					rt_bool_t clean_state);
+				extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
-				RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook,
-						    (from_thread));
+				RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (from_thread));
 
-				rt_hw_context_switch(
-					(rt_uintptr_t)&from_thread->sp,
-					(rt_uintptr_t)&to_thread->sp);
+				rt_hw_context_switch((rt_uintptr_t)&from_thread->sp,
+									 (rt_uintptr_t)&to_thread->sp);
 
 				/* enable interrupt */
 				rt_hw_interrupt_enable(level);
@@ -367,9 +353,8 @@ void rt_schedule(void)
 				/* check stat of thread for signal */
 				level = rt_hw_interrupt_disable();
 				if (RT_SCHED_CTX(curr_thread).stat &
-				    RT_THREAD_STAT_SIGNAL_PENDING) {
-					extern void rt_thread_handle_sig(
-						rt_bool_t clean_state);
+					RT_THREAD_STAT_SIGNAL_PENDING) {
+					extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
 					RT_SCHED_CTX(curr_thread).stat &=
 						~RT_THREAD_STAT_SIGNAL_PENDING;
@@ -386,10 +371,9 @@ void rt_schedule(void)
 			} else {
 				LOG_D("switch in interrupt");
 
-				rt_hw_context_switch_interrupt(
-					(rt_uintptr_t)&from_thread->sp,
-					(rt_uintptr_t)&to_thread->sp,
-					from_thread, to_thread);
+				rt_hw_context_switch_interrupt((rt_uintptr_t)&from_thread->sp,
+											   (rt_uintptr_t)&to_thread->sp,
+											   from_thread, to_thread);
 			}
 		}
 	}
@@ -404,11 +388,10 @@ void rt_sched_thread_startup(struct rt_thread *thread)
 {
 #if RT_THREAD_PRIORITY_MAX > 32
 	RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >>
-				       3; /* 5bit */
+								   3; /* 5bit */
 	RT_SCHED_PRIV(thread).number_mask = 1L << RT_SCHED_PRIV(thread).number;
 	RT_SCHED_PRIV(thread).high_mask =
-		1L
-		<< (RT_SCHED_PRIV(thread).current_priority & 0x07); /* 3bit */
+		1L << (RT_SCHED_PRIV(thread).current_priority & 0x07); /* 3bit */
 #else
 	RT_SCHED_PRIV(thread).number_mask =
 		1L << RT_SCHED_PRIV(thread).current_priority;
@@ -432,7 +415,7 @@ void rt_sched_thread_startup(struct rt_thread *thread)
  *   - Sets initial and remaining time slice ticks
  */
 void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick,
-			       rt_uint8_t priority)
+							   rt_uint8_t priority)
 {
 	rt_list_init(&RT_THREAD_LIST_NODE(thread));
 
@@ -527,9 +510,8 @@ void rt_exit_critical_safe(rt_base_t critical_level)
 			_critical_error_occurred = 1;
 
 			rt_kprintf("%s: un-compatible critical level\n"
-				   "\tCurrent %d\n\tCaller %d\n",
-				   __func__, rt_scheduler_lock_nest,
-				   critical_level);
+					   "\tCurrent %d\n\tCaller %d\n",
+					   __func__, rt_scheduler_lock_nest, critical_level);
 			rt_backtrace();
 
 			while (dummy)
