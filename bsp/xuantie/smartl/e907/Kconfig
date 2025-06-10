@@ -6,7 +6,7 @@ RTT_DIR := ../../../..
 
 PKGS_DIR := packages
 
-config XUANTIAN_XIAOHUI_E907
+config XUANTIAN_SMARTL_E907
     bool
     select ARCH_RISCV32
     select RT_USING_COMPONENTS_INIT
