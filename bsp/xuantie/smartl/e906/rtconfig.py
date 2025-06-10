@@ -1,6 +1,6 @@
 import os
 ARCH     = 'risc-v'
-CPU      = 'e906fd'
+CPU      = 'e906'
 # toolchains options
 CROSS_TOOL  = 'gcc'
 
@@ -40,10 +40,10 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
     
-    MCPU = ' -mcpu=e906fd '
-    DEVICE = MCPU + ' -Wno-main -mcmodel=medlow'
+    MCPU = ' -mcpu=e906fd ' # Modify here based on CPU architecture.
+    MCPU_DEFINE = ' -DCONFIG_CPU_XUANTIE_E906FD=1 ' # Modify here based on CPU architecture.
+    DEVICE = MCPU + MCPU_DEFINE + ' -Wno-main -mcmodel=medlow'
 
-    # 提取全局宏定义
     GLOBAL_DEFINES = (
         '-DCONFIG_KERNEL_RTTHREAD=1 '
         '-D__RT_KERNEL_SOURCE__=1 '
@@ -54,7 +54,6 @@ if PLATFORM == 'gcc':
         '-DCONFIG_XIP=1 '
         '-DCONFIG_ARCH_MAINSTACK=4096 '
         '-DCONFIG_ARCH_INTERRUPTSTACK=4096 '
-        '-DCONFIG_CPU_XUANTIE_E906FD=1 '
         '-DCONFIG_BOARD_SMARTL_EVB=1 '
         '-DCLI_CONFIG_STACK_SIZE=4096 '
     )
