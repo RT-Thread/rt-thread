@@ -310,7 +310,8 @@ void rt_schedule(void)
             LOG_D("[%d]switch to priority#%d "
                   "thread:%.*s(sp:0x%08x), "
                   "from thread:%.*s(sp: 0x%08x)",
-                  rt_interrupt_nest, highest_ready_priority, RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
+                  rt_interrupt_nest, highest_ready_priority, 
+                  RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, from_thread->parent.name, from_thread->sp);
 
             RT_SCHEDULER_STACK_CHECK(to_thread);
