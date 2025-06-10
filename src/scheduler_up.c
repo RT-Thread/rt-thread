@@ -46,8 +46,8 @@ rt_list_t   rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 rt_uint32_t rt_thread_ready_priority_group;
 rt_base_t   rt_thread_ready_highest_priority;
 #if RT_THREAD_PRIORITY_MAX > 32
-    /* Maximum priority level, 256 */
-    rt_uint8_t rt_thread_ready_table[32];
+/* Maximum priority level, 256 */
+rt_uint8_t rt_thread_ready_table[32];
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
 extern volatile rt_atomic_t rt_interrupt_nest;
@@ -108,7 +108,7 @@ _scheduler_get_priority_thread(rt_ubase_t priority)
 {
     /* get highest ready priority thread */
     return RT_THREAD_LIST_NODE_ENTRY(
-               rt_thread_priority_table[priority].next);
+        rt_thread_priority_table[priority].next);
 }
 
 rt_err_t rt_sched_lock(rt_sched_lock_level_t *plvl)
@@ -176,7 +176,7 @@ void rt_system_scheduler_start(void)
 
     _scheduler_update_highest_priority();
     to_thread = _scheduler_get_priority_thread(
-                    rt_thread_ready_highest_priority);
+        rt_thread_ready_highest_priority);
 
     rt_cpu_self()->current_thread = to_thread;
 
@@ -209,7 +209,7 @@ rt_inline void _rt_sched_insert_thread(struct rt_thread *thread)
     {
         rt_list_insert_before(
             &(rt_thread_priority_table[RT_SCHED_PRIV(thread)
-                                       .current_priority]),
+                                           .current_priority]),
             &RT_THREAD_LIST_NODE(thread));
     }
     /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
@@ -217,7 +217,7 @@ rt_inline void _rt_sched_insert_thread(struct rt_thread *thread)
     {
         rt_list_insert_after(
             &(rt_thread_priority_table[RT_SCHED_PRIV(thread)
-                                       .current_priority]),
+                                           .current_priority]),
             &RT_THREAD_LIST_NODE(thread));
     }
 
@@ -249,7 +249,7 @@ rt_inline void _rt_sched_remove_thread(struct rt_thread *thread)
     /* remove thread from ready list */
     rt_list_remove(&RT_THREAD_LIST_NODE(thread));
     if (rt_list_isempty(
-                &(rt_thread_priority_table[RT_SCHED_PRIV(thread)
+            &(rt_thread_priority_table[RT_SCHED_PRIV(thread)
                                            .current_priority])))
     {
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -293,9 +293,8 @@ void rt_schedule(void)
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0 && rt_thread_ready_priority_group)
     {
-
         need_insert_from_thread = RT_FALSE;
-        curr_thread = rt_thread_self();
+        curr_thread             = rt_thread_self();
 
         if ((RT_SCHED_CTX(curr_thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
         {
@@ -310,14 +309,14 @@ void rt_schedule(void)
             else
             {
                 to_thread = _scheduler_get_priority_thread(
-                                rt_thread_ready_highest_priority);
+                    rt_thread_ready_highest_priority);
                 need_insert_from_thread = RT_TRUE;
             }
         }
         else
         {
             to_thread = _scheduler_get_priority_thread(
-                            rt_thread_ready_highest_priority);
+                rt_thread_ready_highest_priority);
         }
 
         if (to_thread != curr_thread)
@@ -446,8 +445,7 @@ void rt_sched_thread_startup(struct rt_thread *thread)
  *   - Initializes priority masks (number_mask, number, high_mask for >32 priorities)
  *   - Sets initial and remaining time slice ticks
  */
-void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick,
-                               rt_uint8_t priority)
+void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick, rt_uint8_t priority)
 {
     rt_list_init(&RT_THREAD_LIST_NODE(thread));
 
