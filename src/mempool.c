@@ -335,7 +335,7 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
 
         if (time > 0)
         {
-            time -= rt_tick_get() - before_sleep;
+            time -= rt_tick_get_delta(before_sleep);
             if (time < 0)
                 time = 0;
         }
