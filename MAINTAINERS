@@ -57,6 +57,18 @@ tag: bsp_k230
 path: bsp/k230
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
 
+tag: bsp_rt-spark
+path: bsp/stm32/stm32f407-rt-spark
+owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
+tag: bsp_ultrarisc
+path: bsp/ultrarisc/ur_dp1000_evb
+owners: Zhang Jing(zhangjing0303)<zhangjing@ultrarisc.com>
+
+tag: bsp_renesas
+path: bsp/renesas
+owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
 tag: documentation
 path: documentation
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
@@ -64,6 +76,10 @@ owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
 tag: libc
 path: components/libc
 owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>
+
+tag: maintainers
+path: MAINTAINERS
+owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
 tag: rvlibcpu
 path: libcpu/risc-v
@@ -75,14 +91,6 @@ path: components/drivers/include/drivers/dev_serial_v2.h
 path: examples/utest/testcases/drivers/serial_v2
 owners: Chen Bei Dou(Ryan-CW-Code)<1831931681@qq.com>
 
-tag: stm32f407-rt-spark
-path: bsp/stm32/stm32f407-rt-spark
-owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
-
 tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
-
-tag: bsp_ultrarisc
-path: bsp/ultrarisc/ur_dp1000_evb
-owners: Zhang Jing(zhangjing0303)<zhangjing@ultrarisc.com>
