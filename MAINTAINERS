@@ -69,13 +69,37 @@ tag: bsp_renesas
 path: bsp/renesas
 owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
+tag: bsp_stm32
+path: bsp/stm32
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
 tag: documentation
 path: documentation
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>
 
+tag: driver_can
+path: components/drivers/can
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: driver_i2c
+path: components/drivers/i2c
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: driver_pm
+path: components/drivers/pm
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: driver_spi
+path: components/drivers/spi
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: driver_ymodem
+path: components/utilities/ymodem
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
 tag: kernel
 path: src
-owners: Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>
+owners: Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>
 
 tag: libc
 path: components/libc
