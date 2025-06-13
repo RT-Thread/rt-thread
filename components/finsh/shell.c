@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -457,6 +457,37 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
+#if defined(FINSH_USING_WORD_OPERATION)
+static int find_prev_word_start(const char *line, int curpos)
+{
+    if (curpos <= 0) return 0;
+
+    /* Skip whitespace */
+    while (--curpos > 0 && (line[curpos] == ' ' || line[curpos] == '\t'));
+
+    /* Find word start */
+    while (curpos > 0 && !(line[curpos] == ' ' || line[curpos] == '\t'))
+        curpos--;
+
+    return (curpos <= 0) ? 0 : curpos + 1;
+}
+
+static int find_next_word_end(const char *line, int curpos, int max)
+{
+    if (curpos >= max) return max;
+
+    /* Skip to next word */
+    while (curpos < max && (line[curpos] == ' ' || line[curpos] == '\t'))
+        curpos++;
+
+    /* Find word end */
+    while (curpos < max && !(line[curpos] == ' ' || line[curpos] == '\t'))
+        curpos++;
+
+    return curpos;
+}
+#endif /* defined(FINSH_USING_WORD_OPERATION) */
+
 #ifdef RT_USING_HOOK
 static void (*_finsh_thread_entry_hook)(void);
 
@@ -609,6 +640,42 @@ static void finsh_thread_entry(void *parameter)
 
                 continue;
             }
+#if defined(FINSH_USING_WORD_OPERATION)
+            /* Add Ctrl+Left/Right handling */
+            else if (ch == '1')
+            {
+                /* Read modifier sequence [1;5D/C] */
+                int next_ch = finsh_getchar();
+                if (next_ch == ';')
+                {
+                    next_ch = finsh_getchar();
+                    if (next_ch == '5')
+                    {
+                        next_ch = finsh_getchar();
+                        if (next_ch == 'D') /* Ctrl+Left */
+                        {
+                            int new_pos = find_prev_word_start(shell->line, shell->line_curpos);
+                            if (new_pos != shell->line_curpos)
+                            {
+                                rt_kprintf("\033[%dD", shell->line_curpos - new_pos);
+                                shell->line_curpos = new_pos;
+                            }
+                            continue;
+                        }
+                        else if (next_ch == 'C') /* Ctrl+Right */
+                        {
+                            int new_pos = find_next_word_end(shell->line, shell->line_curpos, shell->line_position);
+                            if (new_pos != shell->line_curpos)
+                            {
+                                rt_kprintf("\033[%dC", new_pos - shell->line_curpos);
+                                shell->line_curpos = new_pos;
+                            }
+                            continue;
+                        }
+                    }
+                }
+            }
+#endif /*defined(FINSH_USING_WORD_OPERATION) */
         }
 
         /* received null or error */
@@ -661,7 +728,43 @@ static void finsh_thread_entry(void *parameter)
 
             continue;
         }
+#if defined(FINSH_USING_WORD_OPERATION)
+        /* Add Ctrl+Backspace handling */
+        else if (ch == 0x17) /* Ctrl+Backspace (typically ^W) */
+        {
+            if (shell->line_curpos == 0) continue;
 
+            int start = find_prev_word_start(shell->line, shell->line_curpos);
+            int del_count = shell->line_curpos - start;
+            int new_len = shell->line_position - del_count;
+
+            /* Delete characters and properly add RT_NULL termination */
+            rt_memmove(&shell->line[start],
+                       &shell->line[start + del_count],
+                       new_len - start + 1);
+
+            /* Clear residual data */
+            rt_memset(&shell->line[new_len], 0, shell->line_position - new_len);
+
+            /* Update positions */
+            shell->line_position = new_len;
+            shell->line_curpos = start;
+
+            /* Redraw the affected line section */
+            rt_kprintf("\033[%dD", del_count);
+            /* Rewrite the remaining content */
+            rt_kprintf("%.*s", shell->line_position - start, &shell->line[start]);
+            /* Clear trailing artifacts */
+            rt_kprintf("\033[K");
+            if (shell->line_position > start)
+            {
+                /* Reset cursor */
+                rt_kprintf("\033[%dD", shell->line_position - start);
+            }
+
+            continue;
+        }
+#endif /*defined(FINSH_USING_WORD_OPERATION) */
         /* handle end of line, break */
         if (ch == '\r' || ch == '\n')
         {
