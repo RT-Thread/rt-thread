@@ -69,6 +69,22 @@ tag: bsp_renesas
 path: bsp/renesas
 owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
+tag: bsp_stm32h723-st-nucleo
+path: bsp/stm32/stm32h723-st-nucleo
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_stm32g030-tiny-board
+path: bsp/stm32/stm32g030-tiny-board
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_mcxa
+path: bsp/nxp/mcx/mcxa
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_mcxn
+path: bsp/nxp/mcx/mcxn
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
 tag: documentation
 path: documentation
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>
