@@ -109,6 +109,27 @@
     #define DAC1_CH2_PIN                    (GPIO_PIN_05)
 #endif
 
+#if defined(BSP_USING_DAC2)
+    #define DAC2_CH1_PORT                   (GPIO_PORT_A)
+    #define DAC2_CH1_PIN                    (GPIO_PIN_06)
+    #define DAC2_CH2_PORT                   (GPIO_PORT_A)
+    #define DAC2_CH2_PIN                    (GPIO_PIN_07)
+#endif
+
+#if defined(BSP_USING_DAC3)
+    #define DAC3_CH1_PORT                   (GPIO_PORT_C)
+    #define DAC3_CH1_PIN                    (GPIO_PIN_04)
+    #define DAC3_CH2_PORT                   (GPIO_PORT_C)
+    #define DAC3_CH2_PIN                    (GPIO_PIN_05)
+#endif
+
+#if defined(BSP_USING_DAC4)
+    #define DAC4_CH1_PORT                   (GPIO_PORT_E)
+    #define DAC4_CH1_PIN                    (GPIO_PIN_07)
+    #define DAC4_CH2_PORT                   (GPIO_PORT_E)
+    #define DAC4_CH2_PIN                    (GPIO_PIN_08)
+#endif
+
 /***********  CAN configure *********/
 #if defined(BSP_USING_CAN1)
     #define CAN1_TX_PORT                    (GPIO_PORT_D)
