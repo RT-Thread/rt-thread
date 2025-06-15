@@ -26,7 +26,7 @@ STM32F103C8T6最小系统，采用SWD调试接口，可以用3个接口就能完
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32F103C8T6，主频 72MHz，64KB FLASH ，20KB RAM
+- MCU：STM32F103C8T6，主频 72MHz，64KB FLASH(实际可烧录128KB) ，20KB RAM
 - 外部 RAM：无
 - 外部 FLASH：无
 - 常用外设
@@ -116,6 +116,9 @@ msh >
 ## 注意事项
 
 - 只能用USB转TTL连接PC机 ;
+- 
+### 关于Flash
+STM32F103C8T6和STM32F103CBT6（128KB Flash）是基于同一芯片制造的，但在出厂时，STM32F103C8T6仅对前64KB进行了测试和认证，因此官方文档中仅标注为64KB。链接脚本故意改成128kb的，解锁高64kb。
 
 
 
