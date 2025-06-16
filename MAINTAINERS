@@ -57,6 +57,14 @@ tag: bsp_k230
 path: bsp/k230
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
 
+tag: bsp_mcxa
+path: bsp/nxp/mcx/mcxa
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_mcxn
+path: bsp/nxp/mcx/mcxn
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
 tag: bsp_rt-spark
 path: bsp/stm32/stm32f407-rt-spark
 owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
@@ -75,14 +83,6 @@ owners: 下里巴人(hywing)<hywing.sir@qq.com>
 
 tag: bsp_stm32g030-tiny-board
 path: bsp/stm32/stm32g030-tiny-board
-owners: 下里巴人(hywing)<hywing.sir@qq.com>
-
-tag: bsp_mcxa
-path: bsp/nxp/mcx/mcxa
-owners: 下里巴人(hywing)<hywing.sir@qq.com>
-
-tag: bsp_mcxn
-path: bsp/nxp/mcx/mcxn
 owners: 下里巴人(hywing)<hywing.sir@qq.com>
 
 tag: documentation
