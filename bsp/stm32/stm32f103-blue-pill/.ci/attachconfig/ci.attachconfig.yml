@@ -5,7 +5,7 @@ scons.args: &scons
 nano:
   <<: *scons
   kconfig:
-    - CONFIG_USING_NANO=y
+    - CONFIG_RT_USING_NANO=y
 # ------ peripheral ------
 peripheral.arduino:
   <<: *scons
