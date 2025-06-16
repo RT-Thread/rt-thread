@@ -5,7 +5,9 @@ scons.args: &scons
 nano:
   <<: *scons
   kconfig:
-    - CONFIG_USING_NANO=y
+    - CONFIG_RT_USING_NANO=y
+    - CONFIG_BSP_USING_GPIO=y
+    - CONFIG_BSP_USING_UART=y
 # ------ peripheral ------
 peripheral.arduino:
   <<: *scons
@@ -21,7 +23,6 @@ devices.uart1:
   kconfig:
     - CONFIG_BSP_USING_GPIO=y
     - CONFIG_BSP_USING_UART=y
-    - CONFIG_USING_SERIAL=y
 devices.i2c1:
   <<: *scons
   kconfig:
