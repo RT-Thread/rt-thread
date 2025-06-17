@@ -8,7 +8,6 @@ from rtconfig import RTT_ROOT
 import sys
 
 def generate_ldscript(input, output):
-
     if not os.path.exists(input):
         print('Error: file', input, 'not found')
         return
@@ -30,11 +29,19 @@ def generate_ldscript(input, output):
 
         print(output, 'is generated from', input)
 
-
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+
+# apply soft-FPU config
+options = LocalOptions("rtconfig.h")
+soft_fpu = GetLocalDepend(options, 'BSP_RISCV_FPU_SOFT')
+if soft_fpu:
+    rtconfig.DEVICE = rtconfig.DEVICE.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
+    rtconfig.CFLAGS = rtconfig.CFLAGS.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
+    rtconfig.LFLAGS = rtconfig.LFLAGS.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
+    rtconfig.AFLAGS = rtconfig.AFLAGS.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
