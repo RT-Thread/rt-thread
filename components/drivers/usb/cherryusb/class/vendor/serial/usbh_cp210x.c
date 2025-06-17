@@ -8,7 +8,7 @@
 
 #define DEV_FORMAT "/dev/ttyUSB%d"
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cp210x_buf[64];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cp210x_buf[USB_ALIGN_UP(64, CONFIG_USB_ALIGN_SIZE)];
 
 #define CONFIG_USBHOST_MAX_CP210X_CLASS 1
 
@@ -260,6 +260,7 @@ static int usbh_cp210x_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister CP210X Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_cp210x_stop(cp210x_class);
         }

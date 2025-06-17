@@ -6,6 +6,10 @@
 #include "usbd_core.h"
 #include "usbd_cdc_acm.h"
 
+#if CONFIG_USBDEV_EP_NUM < 8
+#error endpoint number is too small for this demo, please try other chips
+#endif
+
 /*!< endpoint address */
 #define CDC_IN_EP  0x81
 #define CDC_OUT_EP 0x01
@@ -224,14 +228,14 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
 
 void usbd_cdc_acm_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%d\r\n", (unsigned int)nbytes);
     /* setup next out ep read transfer */
     usbd_ep_start_read(busid, CDC_OUT_EP, read_buffer, 2048);
 }
 
 void usbd_cdc_acm_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual in len:%d\r\n", (unsigned int)nbytes);
 
     if ((nbytes % CDC_MAX_MPS) == 0 && nbytes) {
         /* send zlp */

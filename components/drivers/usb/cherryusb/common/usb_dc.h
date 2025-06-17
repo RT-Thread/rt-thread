@@ -139,6 +139,11 @@ int usbd_ep_start_read(uint8_t busid, const uint8_t ep, uint8_t *data, uint32_t 
 /* usb dcd irq callback, called by user */
 
 /**
+ * @brief Usb sof irq callback.
+ */
+void usbd_event_sof_handler(uint8_t busid);
+
+/**
  * @brief Usb connect irq callback.
  */
 void usbd_event_connect_handler(uint8_t busid);

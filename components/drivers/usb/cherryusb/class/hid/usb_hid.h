@@ -169,14 +169,14 @@
 #define HID_LOCAL_ITEM_DELIMITER_PREFIX     0xa8 /* Delimiter */
 
 /* Modifier Keys (HID 8.3) */
-#define HID_MODIFER_LCTRL  (1 << 0) /* Left Ctrl */
-#define HID_MODIFER_LSHIFT (1 << 1) /* Left Shift */
-#define HID_MODIFER_LALT   (1 << 2) /* Left Alt */
-#define HID_MODIFER_LGUI   (1 << 3) /* Left GUI */
-#define HID_MODIFER_RCTRL  (1 << 4) /* Right Ctrl */
-#define HID_MODIFER_RSHIFT (1 << 5) /* Right Shift */
-#define HID_MODIFER_RALT   (1 << 6) /* Right Alt */
-#define HID_MODIFER_RGUI   (1 << 7) /* Right GUI */
+#define HID_MODIFIER_LCTRL  (1 << 0) /* Left Ctrl */
+#define HID_MODIFIER_LSHIFT (1 << 1) /* Left Shift */
+#define HID_MODIFIER_LALT   (1 << 2) /* Left Alt */
+#define HID_MODIFIER_LGUI   (1 << 3) /* Left GUI */
+#define HID_MODIFIER_RCTRL  (1 << 4) /* Right Ctrl */
+#define HID_MODIFIER_RSHIFT (1 << 5) /* Right Shift */
+#define HID_MODIFIER_RALT   (1 << 6) /* Right Alt */
+#define HID_MODIFIER_RGUI   (1 << 7) /* Right GUI */
 
 /* Keyboard output report (1 byte) (HID B.1) */
 #define HID_KBD_OUTPUT_REPORT_NUMLOCK    (1 << 0)

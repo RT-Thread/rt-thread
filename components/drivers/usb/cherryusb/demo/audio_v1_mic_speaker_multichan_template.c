@@ -258,6 +258,8 @@ USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t s_speaker_feedback_buffer[4];
 volatile bool tx_flag = 0;
 volatile bool rx_flag = 0;
 volatile bool ep_tx_busy_flag = false;
+volatile uint32_t s_mic_sample_rate;
+volatile uint32_t s_speaker_sample_rate;
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
 {
@@ -290,9 +292,11 @@ void usbd_audio_open(uint8_t busid, uint8_t intf)
         rx_flag = 1;
         /* setup first out ep read transfer */
         usbd_ep_start_read(busid, AUDIO_OUT_EP, read_buffer, AUDIO_OUT_PACKET);
-        uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(AUDIO_SPEAKER_FREQ);
+#if USING_FEEDBACK == 1
+        uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(s_speaker_sample_rate);
         AUDIO_FEEDBACK_TO_BUF_FS(s_speaker_feedback_buffer, feedback_value); /* uac1 can only use 10.14 */
         usbd_ep_start_write(busid, AUDIO_OUT_FEEDBACK_EP, s_speaker_feedback_buffer, FEEDBACK_ENDP_PACKET_SIZE);
+#endif
         printf("OPEN1\r\n");
     } else {
         tx_flag = 1;
@@ -313,23 +317,47 @@ void usbd_audio_close(uint8_t busid, uint8_t intf)
     }
 }
 
+void usbd_audio_set_sampling_freq(uint8_t busid, uint8_t ep, uint32_t sampling_freq)
+{
+    if (ep == AUDIO_OUT_EP) {
+        s_speaker_sample_rate = sampling_freq;
+    } else if (ep == AUDIO_IN_EP) {
+        s_mic_sample_rate = sampling_freq;
+    }
+}
+
+uint32_t usbd_audio_get_sampling_freq(uint8_t busid, uint8_t ep)
+{
+    (void)busid;
+
+    uint32_t freq = 0;
+
+    if (ep == AUDIO_OUT_EP) {
+        freq = s_speaker_sample_rate;
+    } else if (ep == AUDIO_IN_EP) {
+        freq = s_mic_sample_rate;
+    }
+
+    return freq;
+}
+
 void usbd_audio_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%d\r\n", (unsigned int)nbytes);
     usbd_ep_start_read(busid, AUDIO_OUT_EP, read_buffer, AUDIO_OUT_PACKET);
 }
 
 void usbd_audio_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual in len:%d\r\n", (unsigned int)nbytes);
     ep_tx_busy_flag = false;
 }
 
 #if USING_FEEDBACK == 1
 void usbd_audio_iso_out_feedback_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual feedback len:%d\r\n", nbytes);
-    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(AUDIO_SPEAKER_FREQ);
+    USB_LOG_RAW("actual feedback len:%d\r\n", (unsigned int)nbytes);
+    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(s_speaker_sample_rate);
     AUDIO_FEEDBACK_TO_BUF_FS(s_speaker_feedback_buffer, feedback_value);
     usbd_ep_start_write(busid, AUDIO_OUT_FEEDBACK_EP, s_speaker_feedback_buffer, FEEDBACK_ENDP_PACKET_SIZE);
 }

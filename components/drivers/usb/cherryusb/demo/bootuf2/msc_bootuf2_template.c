@@ -196,7 +196,7 @@ void usbd_msc_get_cap(uint8_t busid, uint8_t lun, uint32_t *block_num, uint32_t 
     *block_num = bootuf2_get_sector_count();
     *block_size = bootuf2_get_sector_size();
 
-    USB_LOG_INFO("sector count:%d, sector size:%d\n", *block_num, *block_size);
+    USB_LOG_INFO("sector count:%d, sector size:%d\n", (unsigned int)*block_num, (unsigned int)*block_size);
 }
 int usbd_msc_sector_read(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *buffer, uint32_t length)
 {
@@ -231,6 +231,6 @@ void boot2uf2_flash_init(void)
 
 int bootuf2_flash_write(uint32_t address, const uint8_t *data, size_t size)
 {
-    USB_LOG_INFO("address:%08x, size:%d\n", address, size);
+    USB_LOG_INFO("address:%08x, size:%d\n", (unsigned int)address, (unsigned int)size);
     return 0;
 }

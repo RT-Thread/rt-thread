@@ -25,7 +25,7 @@
 #define INTF_DESC_bInterfaceNumber  2 /** Interface number offset */
 #define INTF_DESC_bAlternateSetting 3 /** Alternate setting offset */
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_video_buf[128];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_video_buf[USB_ALIGN_UP(128, CONFIG_USB_ALIGN_SIZE)];
 
 static const char *format_type[] = { "uncompressed", "mjpeg" };
 
@@ -483,6 +483,7 @@ static int usbh_video_ctrl_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister Video Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_video_stop(video_class);
         }

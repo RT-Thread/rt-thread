@@ -266,16 +266,16 @@ int usb_dc_init(uint8_t busid)
         offset = usbd_musb_fifo_config(&cfg[i], offset);
     }
 
-    if (offset > usb_get_musb_ram_size()) {
-        USB_LOG_ERR("offset:%d is overflow, please check your table\r\n", offset);
-        while (1) {
-        }
-    }
+    USB_ASSERT_MSG(offset <= usb_get_musb_ram_size(), "Your fifo config is overflow, please check");
 
     /* Enable USB interrupts */
     HWREGB(USB_BASE + MUSB_IE_OFFSET) = USB_IE_RESET | USB_IE_SUSPND | USB_IE_RESUME;
     HWREGH(USB_BASE + MUSB_TXIE_OFFSET) = USB_TXIE_EP0;
     HWREGH(USB_BASE + MUSB_RXIE_OFFSET) = 0;
+
+#ifdef CONFIG_USBDEV_SOF_ENABLE
+    HWREGB(USB_BASE + MUSB_IE_OFFSET) |= USB_IE_SOF;
+#endif
 
     HWREGB(USB_BASE + MUSB_POWER_OFFSET) |= USB_POWER_SOFTCONN;
     return 0;
@@ -335,10 +335,7 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
         return 0;
     }
 
-    if (ep_idx > (CONFIG_USBDEV_EP_NUM - 1)) {
-        USB_LOG_ERR("Ep addr %02x overflow\r\n", ep->bEndpointAddress);
-        return -1;
-    }
+    USB_ASSERT_MSG(ep_idx < CONFIG_USBDEV_EP_NUM, "Ep addr %02x overflow", ep->bEndpointAddress);
 
     old_ep_idx = musb_get_active_ep();
     musb_set_active_ep(ep_idx);
@@ -348,10 +345,8 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
         g_musb_udc.out_ep[ep_idx].ep_type = USB_GET_ENDPOINT_TYPE(ep->bmAttributes);
         g_musb_udc.out_ep[ep_idx].ep_enable = true;
 
-        if ((8 << HWREGB(USB_BASE + MUSB_RXFIFOSZ_OFFSET)) < g_musb_udc.out_ep[ep_idx].ep_mps) {
-            USB_LOG_ERR("Ep %02x fifo is overflow\r\n", ep->bEndpointAddress);
-            return -2;
-        }
+        USB_ASSERT_MSG((8 << HWREGB(USB_BASE + MUSB_RXFIFOSZ_OFFSET)) >= g_musb_udc.out_ep[ep_idx].ep_mps,
+                       "Ep %02x fifo is overflow", ep->bEndpointAddress);
 
         HWREGH(USB_BASE + MUSB_IND_RXMAP_OFFSET) = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
 
@@ -392,15 +387,15 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
             HWREGB(USB_BASE + MUSB_IND_RXCSRL_OFFSET) = (USB_RXCSRL1_CLRDT | USB_RXCSRL1_FLUSH);
         else
             HWREGB(USB_BASE + MUSB_IND_RXCSRL_OFFSET) = USB_RXCSRL1_CLRDT;
+
+        HWREGB(USB_BASE + MUSB_IND_TXCSRH_OFFSET) &= ~USB_TXCSRH1_MODE;
     } else {
         g_musb_udc.in_ep[ep_idx].ep_mps = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
         g_musb_udc.in_ep[ep_idx].ep_type = USB_GET_ENDPOINT_TYPE(ep->bmAttributes);
         g_musb_udc.in_ep[ep_idx].ep_enable = true;
 
-        if ((8 << HWREGB(USB_BASE + MUSB_TXFIFOSZ_OFFSET)) < g_musb_udc.in_ep[ep_idx].ep_mps) {
-            USB_LOG_ERR("Ep %02x fifo is overflow\r\n", ep->bEndpointAddress);
-            return -2;
-        }
+        USB_ASSERT_MSG((8 << HWREGB(USB_BASE + MUSB_TXFIFOSZ_OFFSET)) >= g_musb_udc.in_ep[ep_idx].ep_mps,
+                       "Ep %02x fifo is overflow", ep->bEndpointAddress);
 
         HWREGH(USB_BASE + MUSB_IND_TXMAP_OFFSET) = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
 
@@ -428,7 +423,7 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
             ui32Register |= USB_TXCSRH1_ISO;
         }
 
-        HWREGB(USB_BASE + MUSB_IND_TXCSRH_OFFSET) = ui32Register;
+        HWREGB(USB_BASE + MUSB_IND_TXCSRH_OFFSET) = ui32Register | USB_TXCSRH1_MODE;
 
         // Reset the Data toggle to zero.
         if (HWREGB(USB_BASE + MUSB_IND_TXCSRL_OFFSET) & USB_TXCSRL1_TXRDY)
@@ -516,13 +511,13 @@ int usbd_ep_is_stalled(uint8_t busid, const uint8_t ep, uint8_t *stalled)
     musb_set_active_ep(ep_idx);
 
     if (USB_EP_DIR_IS_OUT(ep)) {
-        if(HWREGB(USB_BASE + MUSB_IND_RXCSRL_OFFSET) & USB_RXCSRL1_STALL) {
+        if (HWREGB(USB_BASE + MUSB_IND_RXCSRL_OFFSET) & USB_RXCSRL1_STALL) {
             *stalled = 1;
         } else {
             *stalled = 0;
         }
     } else {
-        if(HWREGB(USB_BASE + MUSB_IND_TXCSRL_OFFSET) & USB_TXCSRL1_STALL) {
+        if (HWREGB(USB_BASE + MUSB_IND_TXCSRL_OFFSET) & USB_TXCSRL1_STALL) {
             *stalled = 1;
         } else {
             *stalled = 0;
@@ -730,8 +725,11 @@ void USBD_IRQHandler(uint8_t busid)
         usb_ep0_state = USB_EP0_STATE_SETUP;
     }
 
+#ifdef CONFIG_USBDEV_SOF_ENABLE
     if (is & USB_IS_SOF) {
+        usbd_event_sof_handler(0);
     }
+#endif
 
     if (is & USB_IS_RESUME) {
         usbd_event_resume_handler(0);

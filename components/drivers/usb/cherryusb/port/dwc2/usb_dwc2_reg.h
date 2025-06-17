@@ -460,7 +460,9 @@ typedef struct
 #define USB_OTG_GRSTCTL_TXFFLSH_Pos              (5U)
 #define USB_OTG_GRSTCTL_TXFFLSH_Msk              (0x1UL << USB_OTG_GRSTCTL_TXFFLSH_Pos) /*!< 0x00000020 */
 #define USB_OTG_GRSTCTL_TXFFLSH                  USB_OTG_GRSTCTL_TXFFLSH_Msk   /*!< TxFIFO flush             */
-
+#define USB_OTG_GRSTCTL_CSRSTDONE_Pos            (29U)
+#define USB_OTG_GRSTCTL_CSRSTDONE_Msk            (0x1UL << USB_OTG_GRSTCTL_CSRSTDONE_Pos) /*!< 0x20000000 */
+#define USB_OTG_GRSTCTL_CSRSTDONE                USB_OTG_GRSTCTL_CSRSTDONE_Msk     /*!< Core soft reset done        */
 
 #define USB_OTG_GRSTCTL_TXFNUM_Pos               (6U)
 #define USB_OTG_GRSTCTL_TXFNUM_Msk               (0x1FUL << USB_OTG_GRSTCTL_TXFNUM_Pos) /*!< 0x000007C0 */

@@ -17,10 +17,10 @@
 static struct usbd_endpoint cdc_ecm_ep_data[3];
 
 #ifdef CONFIG_USBDEV_CDC_ECM_USING_LWIP
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_rx_buffer[CONFIG_CDC_ECM_ETH_MAX_SEGSZE];
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_tx_buffer[CONFIG_CDC_ECM_ETH_MAX_SEGSZE];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_rx_buffer[USB_ALIGN_UP(CONFIG_CDC_ECM_ETH_MAX_SEGSZE, CONFIG_USB_ALIGN_SIZE)];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_tx_buffer[USB_ALIGN_UP(CONFIG_CDC_ECM_ETH_MAX_SEGSZE, CONFIG_USB_ALIGN_SIZE)];
 #endif
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_notify_buf[16];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_notify_buf[USB_ALIGN_UP(16, CONFIG_USB_ALIGN_SIZE)];
 
 volatile uint32_t g_cdc_ecm_rx_data_length = 0;
 volatile uint32_t g_cdc_ecm_tx_data_length = 0;
@@ -173,7 +173,7 @@ void cdc_ecm_int_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 int usbd_cdc_ecm_start_write(uint8_t *buf, uint32_t len)
 {
     if (!usb_device_is_configured(0)) {
-        return -USB_ERR_NODEV;
+        return -USB_ERR_NOTCONN;
     }
 
     if (g_cdc_ecm_tx_data_length > 0) {
@@ -189,7 +189,7 @@ int usbd_cdc_ecm_start_write(uint8_t *buf, uint32_t len)
 int usbd_cdc_ecm_start_read(uint8_t *buf, uint32_t len)
 {
     if (!usb_device_is_configured(0)) {
-        return -USB_ERR_NODEV;
+        return -USB_ERR_NOTCONN;
     }
 
     g_cdc_ecm_rx_data_length = 0;
@@ -221,6 +221,10 @@ int usbd_cdc_ecm_eth_tx(struct pbuf *p)
 {
     struct pbuf *q;
     uint8_t *buffer;
+
+    if (!usb_device_is_configured(0)) {
+        return -USB_ERR_NOTCONN;
+    }
 
     if (g_cdc_ecm_tx_data_length > 0) {
         return -USB_ERR_BUSY;
@@ -261,8 +265,12 @@ struct usbd_interface *usbd_cdc_ecm_init_intf(struct usbd_interface *intf, const
     return intf;
 }
 
-void usbd_cdc_ecm_set_connect(bool connect, uint32_t speed[2])
+int usbd_cdc_ecm_set_connect(bool connect, uint32_t speed[2])
 {
+    if (!usb_device_is_configured(0)) {
+        return -USB_ERR_NOTCONN;
+    }
+
     if (connect) {
         g_current_net_status = 2;
         memcpy(g_connect_speed_table, speed, 8);
@@ -271,6 +279,8 @@ void usbd_cdc_ecm_set_connect(bool connect, uint32_t speed[2])
         g_current_net_status = 1;
         usbd_cdc_ecm_send_notify(CDC_ECM_NOTIFY_CODE_NETWORK_CONNECTION, CDC_ECM_NET_DISCONNECTED, NULL);
     }
+
+    return 0;
 }
 
 __WEAK void usbd_cdc_ecm_data_recv_done(uint32_t len)

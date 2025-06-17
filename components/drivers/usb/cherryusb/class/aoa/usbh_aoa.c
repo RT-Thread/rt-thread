@@ -12,7 +12,7 @@
 
 #define DEV_FORMAT "/dev/aoa"
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_aoa_buffer[128];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_aoa_buffer[USB_ALIGN_UP(128, CONFIG_USB_ALIGN_SIZE)];
 
 static struct usbh_aoa g_aoa_class;
 
