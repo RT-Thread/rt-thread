@@ -347,9 +347,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>__RTTHREAD__, USE_SPIFI, CORE_M0, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, USE_SPIFI, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CORE_M0, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\drivers\phy;applications;.;..\drivers;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\vbus;..\..\..\..\..\components\finsh;..\Libraries\Device\NXP\LPC43xx\Include;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\drivers\include;..\Libraries\CMSIS\Include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\..\components\vbus\share_hdr;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\libc\compilers\common\include</IncludePath>
+              <IncludePath>..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\include;..\..\..\..\..\components\vbus;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\libc\posix\ipc;..\Libraries\CMSIS\Include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\common;..\Libraries\Device\NXP\LPC43xx\Include;..\..\..\..\..\components\drivers\include;..\drivers;applications;..\..\..\..\..\components\vbus\share_hdr;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\..\components\drivers\phy;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\libc\posix\io\epoll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,6 +399,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>vbus_drv.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\vbus_drv.c</FilePath>
@@ -411,28 +418,21 @@
               <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_LPC43xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
+              <FileName>startup_LPC43xx_M0.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_LPC43xx_M0.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
+              <FileName>system_LPC43xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1066,20 +1066,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
@@ -1087,9 +1073,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1128,9 +1128,9 @@
           <GroupName>VBus</GroupName>
           <Files>
             <File>
-              <FileName>vbus.c</FileName>
+              <FileName>watermark_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\vbus.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\watermark_queue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1142,16 +1142,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>watermark_queue.c</FileName>
+              <FileName>prio_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\watermark_queue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\prio_queue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>prio_queue.c</FileName>
+              <FileName>vbus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\prio_queue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\vbus.c</FilePath>
             </File>
           </Files>
         </Group>

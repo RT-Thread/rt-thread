@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\include;.;..\..\components\libc\compilers\common\extension;..\..\include;..\..\components\drivers\include;libraries\mss_gpio;..\..\libcpu\arm\cortex-m3;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;libraries\sys_config;..\..\components\drivers\include;drivers;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;CMSIS;applications;..\..\components\drivers\include;board;..\..\components\drivers\phy;libraries\mss_uart;..\..\libcpu\arm\common;..\..\components\finsh</IncludePath>
+              <IncludePath>drivers;..\..\components\drivers\include;..\..\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\include;..\..\components\drivers\smp_call;..\..\components\libc\posix\io\eventfd;applications;..\..\components\libc\compilers\common\extension\fcntl\octal;board;CMSIS;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\libc\posix\ipc;libraries\sys_config;..\..\libcpu\arm\cortex-m3;..\..\components\libc\compilers\common\extension;.;..\..\components\drivers\include;libraries\mss_uart;libraries\mss_gpio;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\finsh;..\..\components\libc\posix\io\poll;..\..\components\drivers\phy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -405,9 +405,9 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>startup_m2sxxx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\startup_arm\startup_m2sxxx.s</FilePath>
+              <FileName>core_cm3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\core_cm3.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -419,9 +419,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\core_cm3.c</FilePath>
+              <FileName>startup_m2sxxx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>CMSIS\startup_arm\startup_m2sxxx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -719,16 +719,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_gpio.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
+              <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -736,9 +736,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -750,16 +750,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1055,13 +1055,6 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
@@ -1076,16 +1069,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
         </Group>

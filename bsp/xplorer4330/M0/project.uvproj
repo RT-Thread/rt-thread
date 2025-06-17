@@ -346,9 +346,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_SPIFI, __STDC_LIMIT_MACROS, CORE_M0, RT_USING_LIBC</Define>
+              <Define>USE_SPIFI, CORE_M0, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\libcpu\arm\common;..\..\..\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\drivers;..\..\..\components\libc\posix\io\eventfd;..\Libraries\Device\NXP\LPC43xx\Include;..\Libraries\CMSIS\Include;..\applications;.;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\extension;.;..\applications;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\drivers;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\Libraries\CMSIS\Include;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\phy;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m0;..\Libraries\Device\NXP\LPC43xx\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,16 +390,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\applications\application.c</FilePath>
+              <FilePath>..\applications\startup.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\applications\startup.c</FilePath>
+              <FilePath>..\applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -407,16 +407,16 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>startup_LPC43xx_M0.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
+              <FileName>system_LPC43xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>system_LPC43xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
+              <FileName>startup_LPC43xx_M0.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -702,16 +702,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_led.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\drv_led.c</FilePath>
+              <FilePath>..\drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\board.c</FilePath>
+              <FilePath>..\drivers\drv_led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -719,9 +719,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -733,9 +733,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1050,16 +1050,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1071,16 +1071,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>

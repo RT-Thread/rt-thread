@@ -361,33 +361,34 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\nboot</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\runbootloader</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\smp</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\flash</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\mem_interface</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
-          <state>$PROJ_DIR$\..\Libraries\CMSIS\Core\Include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\mem_interface</state>
           <state>$PROJ_DIR$\..\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-cmsis-latest\Core\Include</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\runbootloader</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\nboot</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\flash</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1496,33 +1497,34 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\nboot</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\runbootloader</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\smp</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\flash</state>
-          <state>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\mem_interface</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
-          <state>$PROJ_DIR$\..\Libraries\CMSIS\Core\Include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\mem_interface</state>
           <state>$PROJ_DIR$\..\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-cmsis-latest\Core\Include</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\runbootloader</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\board\MCUX_Config\board</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\nboot</state>
+          <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\flash</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2396,13 +2398,13 @@
       <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\shell.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\shell.c</name>
     </file>
   </group>
   <group>
@@ -2429,15 +2431,6 @@
       <name>$PROJ_DIR$\..\..\..\..\..\src\irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kerrno.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kstdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kstring.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\kservice.c</name>
     </file>
     <file>
@@ -2460,6 +2453,24 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>klibc</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\rt_vsscanf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kerrno.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\rt_vsnprintf_std.c</name>
     </file>
   </group>
   <group>
@@ -2489,304 +2500,304 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\nboot\src\fsl_nboot.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_gdet.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_cache_lpcac.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_pint.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_cdog.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_reset.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_cmc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_spc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_tsi_v6.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_common_arm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_puf_v3.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_ctimer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_qdc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_dac.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_sinc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_dac14.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_common.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_syspm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_edma_soc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\runbootloader\src\fsl_runbootloader.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_eim.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_enet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_trdc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_erm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_intm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_evtg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_ewm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexcan.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexcan_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpcmp.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_i2c_master.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_mculcd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_dac14.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_mculcd_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_smartdma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_mculcd_smartdma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_sai.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_spi_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_dac.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexio_uart_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_irtc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexspi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_flexspi_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_basic.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_freqme.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lptmr.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_gdet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_pwm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_utick.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_i3c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_wwdt.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_i3c_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_inputmux.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\flash\src\fsl_flash.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_intm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_irtc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_ctimer.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_itrc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_sctimer.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpadc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_mrt.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpcmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpflexcomm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_plu.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpi2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpi2c_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_matrix.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpspi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_vref.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpspi_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lptmr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_edma_soc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpuart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_opamp.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_lpuart_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_smartcard_emvsim.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_mrt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_ostimer.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_opamp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_ostimer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_pdm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_sai_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_pdm_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_eim.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_pint.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_wuu.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_plu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpadc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_power.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_itrc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_powerquad_basic.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_powerquad_data.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_data.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_powerquad_filter.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\romapi\mem_interface\src\fsl_mem_interface.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_powerquad_math.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_i2c_master.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_powerquad_matrix.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_gpio.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_powerquad_transform.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_math.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_puf_v3.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_common_arm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_pwm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_qdc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_ewm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_reset.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_cache_lpcac.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_sai.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_cdog.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_sai_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_cache.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_sctimer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_pdm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_sema42.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_power.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_sinc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_filter.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_smartcard_emvsim.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\system_MCXN947_cm33_core0.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_smartcard_phy_emvsim.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma_mcxn.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_smartdma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_pdm_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_smartdma_mcxn.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_erm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_smartdma_rt500.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_usdhc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_spc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_evtg.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_syspm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma_rt500.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_tdet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_enet.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_trdc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_tdet.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_tsi_v6.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_smartcard_phy_emvsim.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_usdhc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_inputmux.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_utick.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_crc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_vbat.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_transform.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_vref.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_vbat.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_wuu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart_edma.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\fsl_wwdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_sema42.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\flash\src\fsl_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_cmc.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\mem_interface\src\fsl_mem_interface.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\iar\startup_MCXN947_cm33_core0.s</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\nboot\src\fsl_nboot.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_lpflexcomm.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\runbootloader\src\fsl_runbootloader.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_clock.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\iar\startup_MCXN947_cm33_core0.s</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MCXN947\MCXN947\drivers\fsl_freqme.c</name>
+      <name>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\system_MCXN947_cm33_core0.c</name>
     </file>
   </group>
   <group>
     <name>POSIX</name>
   </group>
   <group>
-    <name>smp</name>
+    <name>utestcases</name>
   </group>
   <group>
     <name>Utilities</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\backend\console_be.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\ulog.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\ulog.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\utilities\ulog\backend\console_be.c</name>
     </file>
   </group>
 </project>

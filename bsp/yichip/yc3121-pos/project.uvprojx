@@ -332,9 +332,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;Libraries\core;..\..\..\components\drivers\include;applications;.;..\..\..\components\drivers\smp_call;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;drivers;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;Libraries\sdk;..\..\..\components\finsh</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;.;Libraries;applications;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;..\..\..\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;drivers;Libraries\core;..\..\..\components\finsh;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;Libraries\sdk;..\..\..\components\libc\compilers\common\extension</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -679,6 +679,13 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
+              <FileName>drv_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
@@ -691,21 +698,14 @@
               <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>drv_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -717,9 +717,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1041,9 +1041,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1062,16 +1069,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1110,9 +1110,30 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>yc_gpio.c</FileName>
+              <FileName>system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
+              <FilePath>Libraries\core\system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>flash_start.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\startup\flash_start.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yc_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yc_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\sdk\yc_dma.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1131,34 +1152,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>yc_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\startup\startup.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\core\system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>flash_start.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\startup\flash_start.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\core\misc.c</FilePath>
@@ -1166,9 +1159,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>yc_dma.c</FileName>
+              <FileName>yc_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_dma.c</FilePath>
+              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\startup\startup.s</FilePath>
             </File>
           </Files>
         </Group>

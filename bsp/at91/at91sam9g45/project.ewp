@@ -315,32 +315,32 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\pthreads</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\arm926</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\tls</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\platform</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\cplusplus</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\pthreads</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\delay</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\tls</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\cplusplus</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\arm926</state>
           <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1303,32 +1303,32 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\pthreads</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\arm926</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\tls</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\platform</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\cplusplus</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\pthreads</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\delay</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\tls</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\cplusplus</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\arm926</state>
           <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\ktime</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2083,10 +2083,10 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\led.c</name>
+      <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
+      <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\usart.c</name>
@@ -2113,19 +2113,19 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
   </group>
   <group>
@@ -2179,28 +2179,28 @@
   <group>
     <name>klibc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
     </file>
   </group>
   <group>
     <name>ktime</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ktime\src\hrtimer.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ktime\src\boottime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ktime\src\boottime.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ktime\src\hrtimer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ktime\src\cputimer.c</name>
@@ -2239,16 +2239,16 @@
   <group>
     <name>Platform</name>
     <file>
-      <name>$PROJ_DIR$\platform\interrupt.c</name>
+      <name>$PROJ_DIR$\platform\reset.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\platform\rt_low_level_init.c</name>
+      <name>$PROJ_DIR$\platform\interrupt.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\platform\system_clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\platform\reset.c</name>
+      <name>$PROJ_DIR$\platform\rt_low_level_init.c</name>
     </file>
   </group>
   <group>

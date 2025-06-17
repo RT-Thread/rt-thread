@@ -370,9 +370,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__, GD32F10X_HD, USE_STDPERIPH_DRIVER, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, USE_STDPERIPH_DRIVER, GD32F10X_HD</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\libcpu\arm\common;board;..\..\..\..\components\drivers\include;..\libraries\GD32F10x_Firmware_Library\CMSIS;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m3;.;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;applications;..\libraries\gd32_drivers;..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include;..\..\..\..\components\drivers\smp_call;..\..\..\..\include;..\..\..\..\components\drivers\phy;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include</IncludePath>
+              <IncludePath>..\libraries\gd32_drivers;..\..\..\..\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\libraries\GD32F10x_Firmware_Library\CMSIS;..\..\..\..\components\libc\posix\ipc;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\compilers\common\include;..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\phy;..\..\..\..\components\finsh;board;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include;applications;..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include;..\..\..\..\components\drivers\smp_call;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1067,16 +1067,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1088,16 +1088,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1136,30 +1136,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f10x_rcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Source\gd32f10x_rcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>system_gd32f10x.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Source\system_gd32f10x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Source\gd32f10x_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Source\gd32f10x_exti.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1171,9 +1150,30 @@
           </Files>
           <Files>
             <File>
+              <FileName>gd32f10x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Source\gd32f10x_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gd32f10x_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Source\gd32f10x_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Source\gd32f10x_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Source\gd32f10x_rcu.c</FilePath>
             </File>
           </Files>
         </Group>

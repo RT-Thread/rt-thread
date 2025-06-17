@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\phy;..\..\..\examples\utest\testcases\mm;board\nutool_pincfg;..\libraries\ma35\Device\Nuvoton\MA35D1\Include;..\..\..\examples\utest\testcases\drivers\ipc;applications;..\..\..\components\libc\posix\io\eventfd;..\libraries\ma35\StdDriver\inc;.;..\..\..\components\drivers\include;..\..\..\components\utilities\utest;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\nu_packages\TPC;..\..\..\components\finsh;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\common;..\..\..\examples\utest\testcases\lwp;..\libraries\nu_packages\Demo;..\libraries\ma35\CMSIS\Include;..\libraries\ma35\rtt_port;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\ma35\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\extension;..\..\..\components\utilities\ulog;..\..\..\examples\utest\testcases\kernel\smp;..\..\..\examples\utest\testcases\utest;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m4;..\..\..\include;..\libraries\nu_packages\NuUtils\inc;..\..\..\examples\utest\testcases\tmpfs;board;..\..\..\components\libc\compilers\common\include;..\..\..\examples\utest\testcases\smp_call;..\..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>..\..\..\examples\utest\testcases\tmpfs;..\libraries\nu_packages\Demo;..\libraries\ma35\StdDriver\inc;..\..\..\libcpu\arm\common;..\..\..\examples\utest\testcases\mm;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\utilities\utest;..\..\..\examples\utest\testcases\utest;..\..\..\examples\utest\testcases\smp_call;.;..\..\..\components\libc\posix\io\poll;..\libraries\nu_packages\TPC;..\libraries\ma35\Device\Nuvoton\MA35D1\Include;..\..\..\components\drivers\include;..\libraries\nu_packages\NuUtils\inc;board;..\..\..\components\libc\compilers\common\include;..\libraries\ma35\rtt_port;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\examples\utest\testcases\kernel;..\..\..\include;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\phy;..\..\..\examples\utest\testcases\lwp;..\..\..\components\drivers\include;..\..\..\components\utilities\ulog;board\nutool_pincfg;..\libraries\ma35\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\ipc;..\libraries\ma35\CMSIS\Include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\examples\utest\testcases\drivers\ipc;applications;..\..\..\examples\utest\testcases\kernel\smp;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -983,9 +983,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1004,9 +1004,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1302,9 +1302,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1316,23 +1323,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1378,16 +1378,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>nu_eadc.c</FileName>
+              <FileName>nu_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_eadc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_epwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_epwm.c</FilePath>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_timer.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1399,156 +1392,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_whc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_whc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_ssmcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_ssmcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_qei.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_qei.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_i2s.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_wwdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_wwdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_ecap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_ecap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_scuart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_scuart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_timer_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_timer_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_sc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_sc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>nu_ebi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\ma35\StdDriver\src\nu_ebi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_canfd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_canfd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_kpi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_kpi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_sspcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_sspcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_sdh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_sdh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1560,9 +1406,100 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_spi.c</FileName>
+              <FileName>nu_ssmcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_spi.c</FilePath>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_ssmcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_eadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_eadc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_whc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_whc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_sc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_sc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_timer_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_timer_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_epwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_epwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_sspcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_sspcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_wwdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_wwdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_scuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_scuart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_sdh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_sdh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1574,9 +1511,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_ccap.c</FileName>
+              <FileName>nu_ecap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\ma35\StdDriver\src\nu_ccap.c</FilePath>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_ecap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_i2s.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_i2s.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_sys.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1586,9 +1537,79 @@
               <FilePath>..\libraries\ma35\StdDriver\src\nu_clk.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>nu_canfd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_canfd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_ccap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_ccap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_qspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_kpi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_kpi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_qei.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\ma35\StdDriver\src\nu_qei.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>nu_pkgs_demo</GroupName>
+          <Files>
+            <File>
+              <FileName>ccap_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\ccap_demo.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>slcd_show_tick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\slcd_show_tick.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ccap_saver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\ccap_saver.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>smp_demo.c</FileName>
@@ -1605,30 +1626,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>slcd_show_tick.c</FileName>
+              <FileName>hwsem_counter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\slcd_show_tick.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ccap_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\ccap_demo.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ccap_saver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\ccap_saver.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>usbd_cdc_vcom_echo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\usbd_cdc_vcom_echo.c</FilePath>
+              <FilePath>..\libraries\nu_packages\Demo\hwsem_counter.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1640,16 +1640,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>atdev_utils.c</FileName>
+              <FileName>usbd_cdc_vcom_echo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\atdev_utils.c</FilePath>
+              <FilePath>..\libraries\nu_packages\Demo\usbd_cdc_vcom_echo.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hwsem_counter.c</FileName>
+              <FileName>atdev_utils.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\hwsem_counter.c</FilePath>
+              <FilePath>..\libraries\nu_packages\Demo\atdev_utils.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1691,16 +1691,16 @@
           <GroupName>Utilities</GroupName>
           <Files>
             <File>
-              <FileName>console_be.c</FileName>
+              <FileName>ulog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\utilities\ulog\backend\console_be.c</FilePath>
+              <FilePath>..\..\..\components\utilities\ulog\ulog.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ulog.c</FileName>
+              <FileName>console_be.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\utilities\ulog\ulog.c</FilePath>
+              <FilePath>..\..\..\components\utilities\ulog\backend\console_be.c</FilePath>
             </File>
           </Files>
         </Group>
