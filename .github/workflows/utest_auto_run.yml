@@ -38,6 +38,7 @@ jobs:
           - { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
           - { UTEST: "RISCV-rtsmart", RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "rtsmart",  "SMP_RUN":"" }
           # - { UTEST: "RISCV-smp",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"smp" }
+          - { UTEST: "XUANTIE-rtsmart",       RTT_BSP: "bsp/xuantie/virt64/c906",   QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
 
           - { UTEST: "AARCH64",       RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"" }
           - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
@@ -113,6 +114,17 @@ jobs:
             echo "TOOLCHAIN_INSTALLED=riscv-musl" >> $GITHUB_ENV
           fi
 
+          # Install RISC-V XUANTIE Musl ToolChains
+          if [[ "${{ matrix.platform.UTEST }}" == "XUANTIE-rtsmart" && "${{ matrix.platform.QEMU_ARCH }}" == "riscv64" && "${{ matrix.platform.KERNEL }}" == "rtsmart" ]]; then
+            echo "Starting install RISC-V XUANTIE Musl ToolChains"
+            wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.9/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2.tar.gz
+            sudo tar zxvf Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2.tar.gz -C /opt
+            /opt/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2/bin/riscv64-unknown-linux-musl-gcc --version
+            echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2/bin" >> $GITHUB_ENV
+            echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
+            echo "TOOLCHAIN_INSTALLED=riscv-musl" >> $GITHUB_ENV
+          fi
+
           # Install AARCH64 ToolChains
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "aarch64" && "${{ matrix.platform.KERNEL }}" == "standard" ]]; then
             echo "Starting install AARCH64 ToolChains"
@@ -180,6 +192,32 @@ jobs:
             qemu-system-$TEST_QEMU_ARCH -M virt,gic-version=2 -cpu cortex-a53 -smp 4 -kernel $TEST_BSP_ROOT/rtthread.bin  -nographic \
             -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
             -netdev user,id=net0 -device virtio-net-device,netdev=net0,bus=virtio-mmio-bus.1 \
+            > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
+          elif [[ "${{ matrix.platform.UTEST }}"  == "XUANTIE-rtsmart" ]]; then
+            sudo apt-get install -y dos2unix libcapstone-dev libbrlapi-dev
+            wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1736318325160/Xuantie-qemu-x86_64-Ubuntu-20.04-V5.0.5-B20250108-0335.tar.gz
+            tar zxvf  Xuantie-qemu-x86_64-Ubuntu-20.04-V5.0.5-B20250108-0335.tar.gz
+            dos2unix ./install/qemu_post_install_small.sh
+            sudo chmod +x ./install/qemu_post_install_small.sh
+            sudo ./install/qemu_post_install_small.sh
+
+            QEMU_BIN="./install/bin/qemu-system-$TEST_QEMU_ARCH"
+            [ ! -f "$QEMU_BIN" ] && echo "ERROR: $QEMU_BIN not found." && exit 1
+
+            tmp_output=$(mktemp)
+            ldd "$QEMU_BIN" > "$tmp_output" 2>&1
+            missing_libs=$(grep "not found" "$tmp_output" | awk '{print $1}')
+
+            for lib in $missing_libs; do
+              base_lib=$(echo "$lib" | sed -E 's/\.so.*/\.so/')
+
+              echo "🔍 修复基础库：$base_lib ..."
+              sudo ln -s /usr/lib/x86_64-linux-gnu/$base_lib  /usr/lib/x86_64-linux-gnu/$lib
+            done
+            echo "✅ 所有缺失库已处理。"
+
+            $QEMU_BIN -cpu c906fd -M $TEST_QEMU_MACHINE -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
+            -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
             > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
           elif [[ "${{ matrix.platform.QEMU_ARCH }}"  == "arm" ]]; then 
             qemu-system-$TEST_QEMU_ARCH \
