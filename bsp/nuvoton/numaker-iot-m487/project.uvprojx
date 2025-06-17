@@ -332,9 +332,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__</Define>
+              <Define>__RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\net\sal\include\dfs_net;board\NuPinConfig;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\drivers\hwcrypto;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\m480\USBHostLib\inc;..\..\..\components\drivers\sdio\sdhci\include;..\..\..\components\drivers\spi;..\libraries\m480\rtt_port;..\..\..\components\net\sal\include\socket;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\drivers\phy;..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\net\at\include;..\..\..\components\utilities\utest;..\libraries\nu_packages\AudioCodec;..\..\..\components\drivers\smp_call;..\..\..\include;..\libraries\nu_packages\NuUtils\inc;board;..\..\..\components\libc\posix\io\epoll;.;applications;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\net\lwip\port;..\..\..\components\finsh;..\..\..\components\net\sal\include\socket\sys_socket;..\libraries\nu_packages\Demo;..\..\..\components\libc\posix\io\eventfd;..\libraries\m480\StdDriver\inc;..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\..\components\fal\inc;..\libraries\m480\CMSIS\Include;..\..\..\components\legacy\usb\usbhost;..\..\..\components\drivers\audio;..\..\..\components\libc\posix\io\poll;..\..\..\components\net\sal\impl;..\..\..\components\libc\posix\ipc;board\NuClockConfig;..\..\..\components\dfs\dfs_v1\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\net\netdev\include;..\..\..\components\drivers\include;..\..\..\components\net\at\at_socket;..\..\..\components\drivers\include;..\..\..\components\net\lwip\lwip-2.0.3\src\include;..\libraries\nu_packages\TPC;..\..\..\components\legacy\usb\usbhost\include;..\..\..\components\legacy\include;..\..\..\components\drivers\include;..\..\..\components\legacy\usb\usbhost\class;..\..\..\components\net\sal\include;..\..\..\components\drivers\include;..\libraries\m480\Device\Nuvoton\M480\Include;..\..\..\components\legacy\usb\usbdevice;..\..\..\components\drivers\include;..\..\..\components\legacy\usb\usbhost\core;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;board\NuPinConfig;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\drivers\include;..\libraries\nu_packages\NuUtils\inc;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\net\at\include;..\..\..\components\net\sal\include\socket;..\libraries\m480\rtt_port;..\..\..\components\drivers\spi;..\..\..\components\legacy\usb\usbhost;..\..\..\libcpu\arm\cortex-m4;..\libraries\nu_packages\Demo;..\..\..\components\drivers\include;..\libraries\m480\StdDriver\inc;..\..\..\components\legacy\include;..\..\..\components\legacy\usb\usbhost\include;..\..\..\components\legacy\usb\usbdevice;..\..\..\components\net\sal\include\socket\sys_socket;..\libraries\m480\CMSIS\Include;..\..\..\components\drivers\audio;..\..\..\components\drivers\hwcrypto;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\legacy\usb\usbhost\class;..\..\..\components\drivers\sdio\sdhci\include;..\..\..\components\fal\inc;..\libraries\m480\Device\Nuvoton\M480\Include;..\..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\net\at\at_socket;..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\libcpu\arm\common;..\..\..\components\drivers\phy;..\..\..\components\drivers\smp_call;..\..\..\components\net\lwip\port;..\libraries\m480\USBHostLib\inc;..\..\..\components\net\netdev\include;..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\..\components\legacy\usb\usbhost\core;..\..\..\components\drivers\include;..\..\..\components\utilities\utest;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\libraries\nu_packages\AudioCodec;..\..\..\components\drivers\include;..\..\..\components\net\sal\include\dfs_net;..\libraries\nu_packages\TPC;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\components\libc\posix\ipc;..\..\..\components\net\sal\impl;board;board\NuClockConfig;..\..\..\components\net\sal\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -396,20 +396,6 @@
           <GroupName>AT</GroupName>
           <Files>
             <File>
-              <FileName>at_utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\at\src\at_utils.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at_socket.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\at\at_socket\at_socket.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>at_cli.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\net\at\src\at_cli.c</FilePath>
@@ -417,9 +403,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>at_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\at\src\at_utils.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>at_client.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\net\at\src\at_client.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>at_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\at\at_socket\at_socket.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -508,6 +508,120 @@
               <FileName>dev_audio_pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\audio\dev_audio_pipe.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>blk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\block\blk.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>blk_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\block\blk_dev.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>blk_dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\block\blk_dfs.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>blk_partition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\block\blk_partition.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\block\partitions\dfs.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>efi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\block\partitions\efi.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1624,9 +1738,16 @@
           <GroupName>Fal</GroupName>
           <Files>
             <File>
-              <FileName>fal_partition.c</FileName>
+              <FileName>fal_rtt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal_partition.c</FilePath>
+              <FilePath>..\..\..\components\fal\src\fal_rtt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fal\src\fal_flash.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1638,16 +1759,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fal_rtt.c</FileName>
+              <FileName>fal_partition.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal_rtt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fal_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal_flash.c</FilePath>
+              <FilePath>..\..\..\components\fal\src\fal_partition.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1731,7 +1845,7 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs.c</FileName>
+              <FileName>src_dfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
               <FileOption>
@@ -1817,16 +1931,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh_file.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2155,9 +2269,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2169,13 +2283,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
@@ -2183,9 +2290,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2231,44 +2345,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>nu_sc.c</FileName>
+              <FileName>nu_wwdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_sc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_usci_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_usci_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_i2s.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_spim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_spim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_epwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_epwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_bpwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_bpwm.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_wwdt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2280,34 +2359,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>nu_eadc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\m480\StdDriver\src\nu_eadc.c</FilePath>
@@ -2315,16 +2366,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_sdh.c</FileName>
+              <FileName>nu_sc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_sdh.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_sc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>nu_usci_i2c.c</FileName>
+              <FileName>nu_spim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_usci_i2c.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_spim.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2336,107 +2387,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_qei.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_qei.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_ccap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_ccap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_usci_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_usci_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_trng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_trng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_acmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_acmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_ecap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_ecap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_emac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>nu_fmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\m480\StdDriver\src\nu_fmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_timer_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_timer_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_pdma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_pdma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_usbd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_usbd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2448,9 +2401,128 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_clk.c</FileName>
+              <FileName>nu_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_clk.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_timer_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_timer_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_ccap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_ccap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_ecap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_ecap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_sys.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_epwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_epwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_scuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_scuart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_usbd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_usbd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_acmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_acmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_usci_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_usci_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_sdh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_sdh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_trng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_bpwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_bpwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_dac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2469,30 +2541,72 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_gpio.c</FileName>
+              <FileName>nu_i2s.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_gpio.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_i2s.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>nu_wwdt.c</FileName>
+              <FileName>nu_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_wwdt.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>nu_crc.c</FileName>
+              <FileName>nu_qei.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_crc.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_qei.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>nu_scuart.c</FileName>
+              <FileName>nu_pdma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\StdDriver\src\nu_scuart.c</FilePath>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_pdma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_usci_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_usci_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_clk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_emac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_usci_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\m480\StdDriver\src\nu_usci_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2762,16 +2876,16 @@
           <GroupName>m480_usbhostlib</GroupName>
           <Files>
             <File>
-              <FileName>ehci.c</FileName>
+              <FileName>mem_alloc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\USBHostLib\src\ehci.c</FilePath>
+              <FilePath>..\libraries\m480\USBHostLib\src\mem_alloc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mem_alloc.c</FileName>
+              <FileName>ohci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\USBHostLib\src\mem_alloc.c</FilePath>
+              <FilePath>..\libraries\m480\USBHostLib\src\ohci.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2783,16 +2897,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>usb_core.c</FileName>
+              <FileName>ehci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\USBHostLib\src\usb_core.c</FilePath>
+              <FilePath>..\libraries\m480\USBHostLib\src\ehci.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ohci.c</FileName>
+              <FileName>usb_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\m480\USBHostLib\src\ohci.c</FilePath>
+              <FilePath>..\libraries\m480\USBHostLib\src\usb_core.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2807,23 +2921,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>slcd_show_tick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\slcd_show_tick.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>wormhole_demo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\nu_packages\Demo\wormhole_demo.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ccap_saver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\ccap_saver.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2835,9 +2935,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>usbd_hid_dance_mouse.c</FileName>
+              <FileName>ccap_saver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\usbd_hid_dance_mouse.c</FilePath>
+              <FilePath>..\libraries\nu_packages\Demo\ccap_saver.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>slcd_show_tick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\slcd_show_tick.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2849,6 +2956,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>ccap_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\ccap_demo.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>usbd_cdc_vcom_echo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\nu_packages\Demo\usbd_cdc_vcom_echo.c</FilePath>
@@ -2856,9 +2970,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ccap_demo.c</FileName>
+              <FileName>usbd_hid_dance_mouse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\ccap_demo.c</FilePath>
+              <FilePath>..\libraries\nu_packages\Demo\usbd_hid_dance_mouse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2866,16 +2980,16 @@
           <GroupName>nu_pkgs_nau88l25</GroupName>
           <Files>
             <File>
-              <FileName>acodec_nau88l25.c</FileName>
+              <FileName>audio_test.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\AudioCodec\acodec_nau88l25.c</FilePath>
+              <FilePath>..\libraries\nu_packages\AudioCodec\audio_test.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>audio_test.c</FileName>
+              <FileName>acodec_nau88l25.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\AudioCodec\audio_test.c</FilePath>
+              <FilePath>..\libraries\nu_packages\AudioCodec\acodec_nau88l25.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2924,16 +3038,9 @@
           <GroupName>rt_usbh</GroupName>
           <Files>
             <File>
-              <FileName>driver.c</FileName>
+              <FileName>hub.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\legacy\usb\usbhost\core\driver.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>usbhost.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\legacy\usb\usbhost\core\usbhost.c</FilePath>
+              <FilePath>..\..\..\components\legacy\usb\usbhost\core\hub.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2945,9 +3052,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hub.c</FileName>
+              <FileName>usbhost_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\legacy\usb\usbhost\core\hub.c</FilePath>
+              <FilePath>..\..\..\components\legacy\usb\usbhost\core\usbhost_core.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2959,9 +3066,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>usbhost_core.c</FileName>
+              <FileName>usbhost.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\legacy\usb\usbhost\core\usbhost_core.c</FilePath>
+              <FilePath>..\..\..\components\legacy\usb\usbhost\core\usbhost.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\legacy\usb\usbhost\core\driver.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\finsh;..\..\..\..\components\net\lwip\port;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\..\components\legacy\usb\usbhost\class;..\..\..\..\components\drivers\phy;board;..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;libraries\CMSIS\Include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc;libraries\StdPeriphDriver\inc;..\..\..\..\components\drivers\include;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\..\components\legacy\usb\usbhost\include;..\..\..\..\components\drivers\include;..\..\..\..\components\net\netdev\include;..\..\..\..\components\legacy\usb\usbhost;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\compat\posix;.;..\..\..\..\components\legacy\usb\usbhost\core;..\..\..\..\components\libc\compilers\common\extension;applications;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\legacy\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\smp_call</IncludePath>
+              <IncludePath>libraries\CMSIS\Include;libraries\StdPeriphDriver\inc;..\..\..\..\components\drivers\include;..\..\..\..\components\legacy\usb\usbhost\core;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\legacy\usb\usbhost;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include;board;..\..\..\..\components\legacy\usb\usbhost\include;..\..\..\..\components\net\lwip\port;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\legacy\usb\usbhost\class;..\..\..\..\components\net\netdev\include;..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\compat\posix;.;..\..\..\..\components\legacy\include;..\..\..\..\components\drivers\phy;..\..\..\..\components\drivers\smp_call;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;applications</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -661,13 +661,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_eth.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\drv_eth.c</FilePath>
@@ -682,6 +675,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_usbh.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\drv_usbh.c</FilePath>
@@ -692,16 +692,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -713,9 +713,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -992,9 +992,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1006,16 +1006,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1061,62 +1061,6 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>CH57x_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_timer0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_uart2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart2.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_timer3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer3.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_uart1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart1.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_ARMCM0.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\Startup\startup_ARMCM0.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>CH57x_uart0.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\StdPeriphDriver\CH57x_uart0.c</FilePath>
@@ -1124,16 +1068,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_flash.c</FileName>
+              <FileName>CH57x_timer2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_flash.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer2.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_gpio.c</FileName>
+              <FileName>CH57x_int.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_gpio.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_int.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1145,9 +1089,58 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_spi0.c</FileName>
+              <FileName>CH57x_uart1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_spi0.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart1.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_clk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_sys.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_uart2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_ARMCM0.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\Startup\startup_ARMCM0.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_timer1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer1.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1166,37 +1159,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_int.c</FileName>
+              <FileName>CH57x_timer0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_int.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_timer1.c</FileName>
+              <FileName>CH57x_spi0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer1.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_spi0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_clk.c</FileName>
+              <FileName>CH57x_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_clk.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_lcd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_timer2.c</FileName>
+              <FileName>CH57x_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer2.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_sys.c</FileName>
+              <FileName>CH57x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_sys.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_timer3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer3.c</FilePath>
             </File>
           </Files>
         </Group>

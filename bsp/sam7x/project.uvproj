@@ -341,9 +341,9 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC</Define>
+              <Define>RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\drivers\include;..\..\include;..\..\components\libc\compilers\common\extension;.;..\..\components\drivers\phy;..\..\components\drivers\include;..\..\components\finsh;..\..\components\drivers\include;..\..\components\drivers\smp_call;..\..\components\libc\posix\io\epoll;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\libcpu\arm\AT91SAM7X;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;drivers;applications;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common</IncludePath>
+              <IncludePath>.;..\..\components\libc\posix\io\epoll;..\..\components\drivers\smp_call;..\..\components\drivers\include;..\..\components\libc\posix\io\eventfd;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\finsh;..\..\components\libc\posix\io\poll;applications;drivers;..\..\libcpu\arm\AT91SAM7X;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\drivers\phy;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -708,16 +708,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1027,13 +1027,6 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
@@ -1048,9 +1041,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1058,6 +1051,13 @@
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>

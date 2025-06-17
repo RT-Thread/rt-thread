@@ -331,9 +331,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_HAL_DRIVER, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __STDC_LIMIT_MACROS, FM33LC0XX, __RTTHREAD__, RT_USING_ARMLIBC</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, USE_HAL_DRIVER, FM33LC0XX, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>libraries\FM33LC0xx_FL_Driver\CMSIS\Include;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;.;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;board;..\..\components\drivers\include;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\include;..\..\components\drivers\phy;..\..\components\drivers\include;applications;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;..\..\components\drivers\include;libraries\HAL_Drivers;..\..\components\drivers\smp_call;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\HAL_Drivers\config;libraries\FM33LC0xx_FL_Driver\Inc;..\..\components\finsh;..\..\components\libc\posix\io\poll</IncludePath>
+              <IncludePath>applications;.;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;libraries\HAL_Drivers\config;..\..\libcpu\arm\cortex-m0;..\..\components\finsh;..\..\components\libc\posix\ipc;..\..\include;..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\HAL_Drivers;..\..\components\libc\posix\io\eventfd;libraries\FM33LC0xx_FL_Driver\CMSIS\Include;..\..\components\libc\posix\io\poll;libraries\FM33LC0xx_FL_Driver\Inc;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\drivers\phy;..\..\components\drivers\include;..\..\components\drivers\smp_call;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;board</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -773,13 +773,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh.c</FilePath>
@@ -799,9 +792,23 @@
               <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>FM33LC0xx_FL_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>fm33lc0xx_fl_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\FM33LC0xx_FL_Driver\Src\fm33lc0xx_fl_rcc.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>fm33lc0xx_fl_uart.c</FileName>
@@ -814,20 +821,6 @@
               <FileName>fm33lc0xx_fl_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\FM33LC0xx_FL_Driver\Src\fm33lc0xx_fl_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_fm33lc0xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\FM33LC0xx_FL_Driver\CMSIS\system_fm33lc0xx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fm33lc0xx_fl_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\FM33LC0xx_FL_Driver\Src\fm33lc0xx_fl_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -846,9 +839,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fm33lc0xx_fl_rcc.c</FileName>
+              <FileName>fm33lc0xx_fl_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LC0xx_FL_Driver\Src\fm33lc0xx_fl_rcc.c</FilePath>
+              <FilePath>libraries\FM33LC0xx_FL_Driver\Src\fm33lc0xx_fl_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -856,6 +849,13 @@
               <FileName>fm33lc0xx_fl_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\FM33LC0xx_FL_Driver\Src\fm33lc0xx_fl_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_fm33lc0xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\FM33LC0xx_FL_Driver\CMSIS\system_fm33lc0xx.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1158,9 +1158,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1172,9 +1172,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1182,13 +1189,6 @@
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
