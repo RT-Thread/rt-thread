@@ -113,6 +113,10 @@ tag: driver_ymodem
 path: components/utilities/ymodem
 owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
 
+tag: fal
+path: components/fal
+owners: Yucai Liu(illustriousness)<1486344514@qq.com>
+
 tag: kernel
 path: src
 owners: Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>
