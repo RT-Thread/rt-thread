@@ -27,9 +27,10 @@ def bsp_pkg_check():
     need_update = not all(os.path.exists(p) for p in check_paths)
 
     if need_update:
-        print("\n==============================================================")
+        print("\n===============================================================================")
         print("Dependency packages missing, please running 'pkgs --update'...")
-        print("==============================================================")
+        print("If no packages are fetched, run 'pkgs --upgrade' first, then 'pkgs --update'...")
+        print("===============================================================================")
         exit(1)
 
 RegisterPreBuildingAction(bsp_pkg_check)   
