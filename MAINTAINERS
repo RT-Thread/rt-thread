@@ -89,6 +89,11 @@ tag: bsp_stm32g030-tiny-board
 path: bsp/stm32/stm32g030-tiny-board
 owners: 下里巴人(hywing)<hywing.sir@qq.com>
 
+tag: bsp_stm32
+path: bsp\stm32\stm32h743-st-nucleo
+path: bsp\stm32\stm32h750-artpi
+owners: Xu Peng(LittleGreyG)<18825981694@163.com>
+
 tag: documentation
 path: documentation
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>
