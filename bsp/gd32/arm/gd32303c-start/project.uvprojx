@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, GD32F30X_XD, USE_STDPERIPH_DRIVER, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
+              <Define>__RTTHREAD__, RT_USING_LIBC, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, GD32F30X_XD, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\libraries\GD32F30x_Firmware_Library\CMSIS\GD\GD32F30x\Include;..\libraries\GD32F30x_Firmware_Library\CMSIS;..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;.;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\phy;board;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;applications;..\..\..\..\include</IncludePath>
+              <IncludePath>..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include;..\libraries\GD32F30x_Firmware_Library\CMSIS\GD\GD32F30x\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;applications;..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;.;..\..\..\..\components\drivers\smp_call;..\libraries\gd32_drivers;..\libraries\GD32F30x_Firmware_Library\CMSIS;board;..\..\..\..\components\libc\posix\ipc;..\..\..\..\include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\phy;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -711,9 +711,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -725,16 +725,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1030,16 +1030,23 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1054,13 +1061,6 @@
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1099,20 +1099,6 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f30x_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f30x_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Source\gd32f30x_exti.c</FilePath>
@@ -1137,6 +1123,20 @@
               <FileName>gd32f30x_rcu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F30x_Firmware_Library\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</FilePath>
             </File>
           </Files>
         </Group>

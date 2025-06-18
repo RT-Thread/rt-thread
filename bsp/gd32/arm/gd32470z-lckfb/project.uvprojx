@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_STDPERIPH_DRIVER, RT_USING_LIBC, GD32F470, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS</Define>
+              <Define>GD32F470, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\io\poll;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\drivers\include;.;board\ports;..\libraries\gd32_drivers;..\..\..\..\components\finsh;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\phy;board;..\libraries\GD32F4xx_Firmware_Library\CMSIS;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;applications;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\libcpu\arm\common;..\..\..\..\components\dfs\dfs_v1\include</IncludePath>
+              <IncludePath>..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\io\epoll;..\libraries\gd32_drivers;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\phy;..\..\..\..\include;applications;..\..\..\..\components\drivers\include;board;board\ports;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;.;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\libcpu\arm\cortex-m4;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include;..\libraries\GD32F4xx_Firmware_Library\CMSIS;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -730,25 +730,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  --c99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
@@ -785,6 +766,25 @@
               </FileOption>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
@@ -804,6 +804,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
@@ -814,13 +821,6 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1116,9 +1116,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1130,23 +1137,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1185,16 +1185,30 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f4xx_exti.c</FileName>
+              <FileName>gd32f4xx_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_exti.c</FilePath>
+              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_dma.c</FileName>
+              <FileName>gd32f4xx_syscfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
+              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1213,30 +1227,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_gpio.c</FileName>
+              <FileName>gd32f4xx_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</FilePath>
+              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_exti.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_syscfg.c</FileName>
+              <FileName>gd32f4xx_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</FilePath>
+              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
             </File>
           </Files>
         </Group>

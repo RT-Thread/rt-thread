@@ -3,6 +3,75 @@
 
 /* RT-Thread Kernel */
 
+/* klibc options */
+
+/* rt_vsnprintf options */
+
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
+/* end of rt_vsnprintf options */
+
+/* rt_vsscanf options */
+
+/* end of rt_vsscanf options */
+
+/* rt_memset options */
+
+/* end of rt_memset options */
+
+/* rt_memcpy options */
+
+/* end of rt_memcpy options */
+
+/* rt_memmove options */
+
+/* end of rt_memmove options */
+
+/* rt_memcmp options */
+
+/* end of rt_memcmp options */
+
+/* rt_strstr options */
+
+/* end of rt_strstr options */
+
+/* rt_strcasecmp options */
+
+/* end of rt_strcasecmp options */
+
+/* rt_strncpy options */
+
+/* end of rt_strncpy options */
+
+/* rt_strcpy options */
+
+/* end of rt_strcpy options */
+
+/* rt_strncmp options */
+
+/* end of rt_strncmp options */
+
+/* rt_strcmp options */
+
+/* end of rt_strcmp options */
+
+/* rt_strlen options */
+
+/* end of rt_strlen options */
+
+/* rt_strnlen options */
+
+/* end of rt_strnlen options */
+/* end of klibc options */
 #define RT_NAME_MAX 20
 #define RT_USING_SMART
 #define RT_CPUS_NR 1
@@ -20,14 +89,9 @@
 #define RT_TIMER_THREAD_STACK_SIZE 16384
 #define RT_USING_CPU_USAGE_TRACER
 
-/* kservice optimization */
+/* kservice options */
 
-/* end of kservice optimization */
-
-/* klibc optimization */
-
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-/* end of klibc optimization */
+/* end of kservice options */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
@@ -44,7 +108,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
 #define RT_USING_MEMHEAP_AS_HEAP
@@ -54,11 +117,10 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
-#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50200
+#define RT_VER_NUM 0x50201
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -68,6 +130,7 @@
 #define KERNEL_VADDR_START 0x40000000
 #define ARCH_RISCV
 #define ARCH_RISCV64
+#define ARCH_USING_NEW_CTX_SWITCH
 #define ARCH_USING_RISCV_COMMON64
 
 /* RT-Thread Components */
@@ -116,6 +179,7 @@
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_PTYFS
+#define RT_USING_DFS_PROCFS
 #define RT_USING_DFS_TMPFS
 #define RT_USING_PAGECACHE
 
@@ -130,8 +194,7 @@
 /* end of page cache config */
 /* end of DFS: device virtual file system */
 #define RT_USING_FAL
-#define FAL_DEBUG_CONFIG
-#define FAL_DEBUG 1
+#define FAL_USING_DEBUG
 #define FAL_PART_HAS_TABLE_CFG
 
 /* Device Drivers */
@@ -144,6 +207,8 @@
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V2
+#define RT_SERIAL_BUF_STRATEGY_OVERWRITE
+#define RT_USING_SERIAL_BYPASS
 #define RT_USING_CPUTIME
 #define RT_USING_CPUTIME_RISCV
 #define CPUTIME_TIMER_FREQ 24000000
@@ -209,20 +274,27 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
+
+/* Memory management */
+
+#define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
+#define RT_PAGE_MAX_ORDER 11
+
+/* Debugging */
+
+/* end of Debugging */
+/* end of Memory management */
 #define RT_USING_LWP
+#define LWP_USING_RUNTIME
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
 #define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
 #define LWP_TID_MAX_NR 64
 #define RT_LWP_SHM_MAX_NR 64
 #define RT_USING_LDSO
 #define LWP_USING_TERMINAL
 #define LWP_PTY_MAX_PARIS_LIMIT 64
-
-/* Memory management */
-
-/* end of Memory management */
+#define RT_USING_VDSO
 
 /* Using USB legacy version */
 
@@ -313,6 +385,7 @@
 /* Micrium: Micrium software products porting for RT-Thread */
 
 /* end of Micrium: Micrium software products porting for RT-Thread */
+#define FAL_DEBUG_CONFIG
 /* end of system packages */
 
 /* peripheral libraries and drivers */
@@ -323,9 +396,29 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
+
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

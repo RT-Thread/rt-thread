@@ -151,6 +151,7 @@
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V2
+#define RT_SERIAL_BUF_STRATEGY_OVERWRITE
 #define RT_SERIAL_USING_DMA
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -316,6 +317,14 @@
 /* AT32 HAL & SDK Drivers */
 
 /* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

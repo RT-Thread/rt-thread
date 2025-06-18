@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, __RTTHREAD__, AT32F425C8T7</Define>
+              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, AT32F425C8T7</Define>
               <Undefine />
-              <IncludePath>..\..\..\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\libraries\usbotg_library\inc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension;..\..\..\components\finsh;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\epoll;.;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;board;..\libraries\rt_drivers\config;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;board\inc;..\libraries\rt_drivers;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;applications;..\..\..\libcpu\arm\cortex-m4</IncludePath>
+              <IncludePath>..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\libraries\rt_drivers;..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include;..\libraries\rt_drivers\config;..\libraries\usbotg_library\inc;..\..\..\components\drivers\smp_call;board\inc;board;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -718,9 +718,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -732,16 +732,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1063,6 +1063,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
@@ -1073,13 +1080,6 @@
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -319,27 +319,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L136\Include</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\inc</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L136\Include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1313,27 +1313,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L136\Include</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\inc</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L136\Include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2102,16 +2102,28 @@
       <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
   </group>
   <group>
     <name>HC32_StdPeriph</name>
     <file>
+      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\gpio.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\sysctrl.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\timer3.c</name>
@@ -2120,34 +2132,22 @@
       <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\ddl.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\trim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\uart.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L136\Source\interrupts_hc32l136.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L136\Source\IAR\startup_hc32l136.s</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\rtc.c</name>
+      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\trim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</name>
     </file>
   </group>
   <group>
@@ -2204,13 +2204,13 @@
       <name>$PROJ_DIR$\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\klibc\kstring.c</name>
+      <name>$PROJ_DIR$\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\klibc\kerrno.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
+      <name>$PROJ_DIR$\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\klibc\kstdio.c</name>

@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, RT_USING_LIBC, USE_STDPERIPH_DRIVER, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\libcpu\arm\common;.;..\..\components\libc\posix\io\epoll;..\..\libcpu\arm\cortex-m3;drivers;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;Libraries\MM32F103\HAL_lib\inc;Libraries\MM32F103\Include;..\..\components\drivers\smp_call;applications;..\..\include;Libraries\CMSIS\KEIL_CORE;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\drivers\phy;..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries\MM32F103\Source;..\..\components\finsh</IncludePath>
+              <IncludePath>..\..\components\libc\posix\io\eventfd;Libraries\CMSIS\KEIL_CORE;.;applications;..\..\components\drivers\include;..\..\libcpu\arm\cortex-m3;drivers;..\..\components\drivers\include;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\finsh;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\include;..\..\components\drivers\smp_call;Libraries\MM32F103\Source;..\..\components\libc\posix\io\poll;Libraries\MM32F103\HAL_lib\inc;..\..\components\libc\posix\io\epoll;..\..\components\drivers\phy;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension;Libraries\MM32F103\Include;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -671,13 +671,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_uart.c</FilePath>
@@ -688,6 +681,13 @@
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -702,9 +702,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -716,9 +716,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1033,20 +1033,6 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\kstring.c</FilePath>
@@ -1054,9 +1040,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1102,37 +1102,16 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>HAL_exti.c</FileName>
+              <FileName>HAL_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_exti.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_spi.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_tim.c</FileName>
+              <FileName>HAL_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_MM32F103.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\MM32F103\Source\KEIL_StartAsm\startup_MM32F103.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_pwr.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_misc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1144,6 +1123,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>startup_MM32F103.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\MM32F103\Source\KEIL_StartAsm\startup_MM32F103.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_adc.c</FilePath>
@@ -1151,9 +1137,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_dma.c</FileName>
+              <FileName>HAL_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_dma.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_iwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_tim.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1165,9 +1179,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_bkp.c</FileName>
+              <FileName>HAL_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_bkp.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_can.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1179,9 +1214,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_gpio.c</FileName>
+              <FileName>HAL_bkp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_bkp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1200,44 +1235,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>HAL_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_can.c</FilePath>
             </File>
           </Files>
         </Group>

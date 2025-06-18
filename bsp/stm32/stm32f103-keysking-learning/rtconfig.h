@@ -411,6 +411,7 @@
 #define BSP_USING_UART
 #define BSP_STM32_UART_V1_TX_TIMEOUT 2000
 #define BSP_USING_UART2
+#define BSP_USING_UART3
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
