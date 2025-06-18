@@ -246,7 +246,7 @@ pkgs --update
 
 Save and recompile the kernel.
 
-For more information on how to make a root filesystem, please refer to <https://github.com/RT-Thread/userapps/blob/main/README.md>, which will not be repeated here.
+For more information on how to make a root filesystem, please refer to <https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-smart/quick-start/qemu-xuantie/quickstart>, which will not be repeated here.
 
 The example is as follows:
 

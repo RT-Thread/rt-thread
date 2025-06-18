@@ -248,7 +248,7 @@ pkgs --update
 
 保存后重新编译内核。
 
-有关如何制作根文件系统，请参考 <https://github.com/RT-Thread/userapps/blob/main/README.md>，这里不再赘述。
+有关如何制作根文件系统,以及更多详细内容，请参考 <https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-smart/quick-start/qemu-xuantie/quickstart>，这里不再赘述。
 
 示例如下：
 
