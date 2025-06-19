@@ -57,7 +57,7 @@ objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConsc
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript')))
 
 # include lcd and drivers 
-objs.extend(SConscript(os.path.join(RTT_ROOT, 'bsp', 'gd32', 'arm', 'gd32470z-lckfb', 'board', 'ports', 'SConscript')))
+objs.extend(SConscript(os.path.join(SDK_ROOT, 'board', 'ports', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
