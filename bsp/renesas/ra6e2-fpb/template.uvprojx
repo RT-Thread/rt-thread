@@ -70,20 +70,20 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>cmd /c "start "Renesas" /w cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --generate --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" 2&gt; "%%TEMP%%\rasc_stderr.out"""</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
-            <nStopB1X>2</nStopB1X>
+            <nStopB1X>0</nStopB1X>
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>cmd /c "start "Renesas" /w cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --gensmartbundle --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out"""</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name>cmd /c "start "Renesas" /w cmd /c ""$Slauncher\rasc_launcher.bat" "5.1.0" --gensecurebundle --compiler ARMv6 "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out"""</UserProg1Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>2</nStopA1X>
@@ -355,7 +355,6 @@
             <useXO>0</useXO>
             <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
-              <MiscControls>--via=via/rasc_armasm.via</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>

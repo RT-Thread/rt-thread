@@ -3,7 +3,7 @@ import sys
 
 # toolchains options
 ARCH='arm'
-CPU='cortex-m4'
+CPU='cortex-m33'
 CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
