@@ -152,6 +152,7 @@ static int _usbh_hub_clear_feature(struct usbh_hub *hub, uint8_t port, uint8_t f
     return usbh_control_transfer(hub->parent, setup, NULL);
 }
 
+#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int _usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
 {
     struct usb_setup_packet *setup;
@@ -167,7 +168,6 @@ static int _usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
     return usbh_control_transfer(hub->parent, setup, NULL);
 }
 
-#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int parse_hub_descriptor(struct usb_hub_descriptor *desc, uint16_t length)
 {
     (void)length;
@@ -270,6 +270,7 @@ int usbh_hub_clear_feature(struct usbh_hub *hub, uint8_t port, uint8_t feature)
     }
 }
 
+#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
 {
     struct usb_setup_packet roothub_setup;
@@ -288,7 +289,6 @@ static int usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
     }
 }
 
-#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static void hub_int_complete_callback(void *arg, int nbytes)
 {
     struct usbh_hub *hub = (struct usbh_hub *)arg;
@@ -706,14 +706,14 @@ int usbh_hub_deinitialize(struct usbh_bus *bus)
     struct usbh_hub *hub;
     size_t flags;
 
-    flags = usb_osal_enter_critical_section();
-
     hub = &bus->hcd.roothub;
     for (uint8_t port = 0; port < hub->nports; port++) {
         hport = &hub->child[port];
 
         usbh_hubport_release(hport);
     }
+
+    flags = usb_osal_enter_critical_section();
 
     usb_hc_deinit(bus);
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2022, Artinchip Technology Co., Ltd
+ * Copyright (c) 2022-2024, ArtInChip Technology Co., Ltd
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -13,12 +13,19 @@
 extern irqreturn_t USBD_IRQHandler(int irq, void * data);
 
 uint32_t usbd_clk;
+static unsigned char dma_sync_buffer[CACHE_LINE_SIZE] __attribute__((aligned(CACHE_LINE_SIZE)));
+
+void usb_dc_sync_dma(void)
+{
+    asm volatile("sw t0, (%0)" : : "r"(dma_sync_buffer));
+    csi_dcache_clean_range((phy_addr_t)(ptr_t)dma_sync_buffer, CACHE_LINE_SIZE);
+}
 
 void usb_dc_low_level_init(void)
 {
     /* set usb0 phy switch: Host/Device */
-#ifdef AIC_USING_USB0_DEVICE
-    syscfg_usb_phy0_sw_host(0);
+#if defined(AIC_USING_USB0_DEVICE) || defined(AIC_USING_USB0_OTG)
+    hal_syscfg_usb_phy0_sw_host(0);
 #endif
     /* set pin-mux */
 
@@ -39,5 +46,15 @@ void usb_dc_low_level_init(void)
     aicos_request_irq(CONFIG_USB_AIC_DC_IRQ_NUM, USBD_IRQHandler,
                       0, "usb_device", NULL);
     aicos_irq_enable(CONFIG_USB_AIC_DC_IRQ_NUM);
+}
+
+void usb_dc_low_level_deinit(void)
+{
+    aicos_irq_disable(CONFIG_USB_AIC_DC_IRQ_NUM);
+
+    hal_reset_assert(CONFIG_USB_AIC_DC_PHY_RESET);
+    hal_reset_assert(CONFIG_USB_AIC_DC_RESET);
+    hal_clk_disable(CONFIG_USB_AIC_DC_PHY_CLK);
+    hal_clk_disable(CONFIG_USB_AIC_DC_CLK);
 }
 

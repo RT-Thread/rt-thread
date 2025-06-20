@@ -1,0 +1,364 @@
+# Kconfig file for package CherryUSB
+menuconfig RT_USING_CHERRYUSB
+    bool "Using USB with CherryUSB"
+    default n
+
+if RT_USING_CHERRYUSB
+
+    menuconfig RT_CHERRYUSB_DEVICE
+        bool "Enable usb device mode"
+        default n
+
+    if RT_CHERRYUSB_DEVICE
+        choice
+            prompt "Select usb device speed"
+            default RT_CHERRYUSB_DEVICE_SPEED_FS
+            config RT_CHERRYUSB_DEVICE_SPEED_FS
+                bool "FS"
+            config RT_CHERRYUSB_DEVICE_SPEED_HS
+                bool "HS"
+            config RT_CHERRYUSB_DEVICE_SPEED_AUTO
+                bool "AUTO"
+        endchoice
+
+        choice
+            prompt "Select usb device ip, and some ip need config in usb_config.h, please check"
+            default RT_CHERRYUSB_DEVICE_CUSTOM
+            config RT_CHERRYUSB_DEVICE_CUSTOM
+                bool "CUSTOM (Implement it yourself)"
+            config RT_CHERRYUSB_DEVICE_FSDEV_ST
+                bool "fsdev_st"
+            config RT_CHERRYUSB_DEVICE_FSDEV_CUSTOM
+                bool "fsdev_custom"
+            config RT_CHERRYUSB_DEVICE_DWC2_ST
+                bool "dwc2_st"
+            config RT_CHERRYUSB_DEVICE_DWC2_ESP
+                bool "dwc2_esp"
+            config RT_CHERRYUSB_DEVICE_DWC2_KENDRYTE
+                bool "dwc2_kendryte"
+            config RT_CHERRYUSB_DEVICE_DWC2_AT
+                bool "dwc2_at"
+            config RT_CHERRYUSB_DEVICE_DWC2_HC
+                bool "dwc2_hc"
+            config RT_CHERRYUSB_DEVICE_DWC2_NATION
+                bool "dwc2_nation"
+            config RT_CHERRYUSB_DEVICE_DWC2_GD
+                bool "dwc2_gd"
+            config RT_CHERRYUSB_DEVICE_DWC2_CUSTOM
+                bool "dwc2_custom"
+            config RT_CHERRYUSB_DEVICE_MUSB_ES
+                bool "musb_es"
+            config RT_CHERRYUSB_DEVICE_MUSB_SUNXI
+                bool "musb_sunxi"
+            config RT_CHERRYUSB_DEVICE_MUSB_BK
+                bool "musb_bk"
+            config RT_CHERRYUSB_DEVICE_MUSB_CUSTOM
+                bool "musb_custom"
+            config RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX
+                bool "chipidea_mcx"
+            config RT_CHERRYUSB_DEVICE_CHIPIDEA_CUSTOM
+                bool "chipidea_custom"
+            config RT_CHERRYUSB_DEVICE_KINETIS_MCX
+                bool "kinetis_mcx"
+            config RT_CHERRYUSB_DEVICE_KINETIS_MM32
+                bool "kinetis_mm32"
+            config RT_CHERRYUSB_DEVICE_KINETIS_CUSTOM
+                bool "kinetis_custom"
+            config RT_CHERRYUSB_DEVICE_BL
+                bool "bouffalo"
+            config RT_CHERRYUSB_DEVICE_HPM
+                bool "hpm"
+            config RT_CHERRYUSB_DEVICE_AIC
+                bool "aic"
+            config RT_CHERRYUSB_DEVICE_RP2040
+                bool "rp2040"
+            config RT_CHERRYUSB_DEVICE_CH32
+                bool "ch32"
+            config RT_CHERRYUSB_DEVICE_PUSB2
+                bool "pusb2"
+            config RT_CHERRYUSB_DEVICE_NRF5X
+                bool "nrf5x"
+        endchoice
+
+        config RT_CHERRYUSB_DEVICE_CDC_ACM
+            bool
+            prompt "Enable usb cdc acm device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_HID
+            bool
+            prompt "Enable usb hid device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_MSC
+            bool
+            prompt "Enable usb msc device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_AUDIO
+            bool
+            prompt "Enable usb audio device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_VIDEO
+            bool
+            prompt "Enable usb video device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_CDC_RNDIS
+            bool
+            prompt "Enable usb cdc rndis device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_CDC_ECM
+            bool
+            prompt "Enable usb cdc ecm device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_CDC_NCM
+            bool
+            prompt "Enable usb cdc ncm device"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_MTP
+            bool
+            prompt "Enable usb mtp device, it is commercial charge"
+            default n
+
+        config RT_CHERRYUSB_DEVICE_DFU
+            bool
+            prompt "Enable usb dfu device"
+            default n
+
+        choice
+            prompt "Select usb device template"
+            default RT_CHERRYUSB_DEVICE_TEMPLATE_NONE
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_NONE
+                bool "none (Implement it yourself)"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
+                bool "cdc_acm"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_MSC
+                bool "msc_ram"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV
+                bool "msc_blkdev"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD
+                bool "hid_keyboard"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_MOUSE
+                bool "hid_mouse"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_CUSTOM
+                bool "hid_custom"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_VIDEO
+                bool "video"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_AUDIO_V1_MIC_SPEAKER
+                bool "audio_v1_mic_speaker_multichan"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_AUDIO_V2_MIC_SPEAKER
+                bool "audio_v2_mic_speaker_multichan"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_RNDIS
+                bool "cdc_rndis"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ECM
+                bool "cdc_ecm"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_NCM
+                bool "cdc_ncm"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_MSC
+                bool "cdc_acm_msc"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_MSC_HID
+                bool "cdc_acm_msc_hid"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_WINUSBV1
+                bool "winusbv1"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_WINUSBV2_CDC
+                bool "winusbv2_cdc"
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_WINUSBV2_HID
+                bool "winusbv2_hid"
+        endchoice
+
+        config CONFIG_USBDEV_MSC_BLOCK_DEV_NAME
+            string "usb device msc block device name"
+            depends on RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV
+            default "sd0"
+
+    endif
+
+    menuconfig RT_CHERRYUSB_HOST
+        bool "Enable usb host mode"
+        default n
+
+    if RT_CHERRYUSB_HOST
+        choice
+            prompt "Select usb host ip, and some ip need config in usb_config.h, please check"
+            default RT_CHERRYUSB_HOST_CUSTOM
+            config RT_CHERRYUSB_HOST_CUSTOM
+                bool "CUSTOM (Implement it yourself)"
+            config RT_CHERRYUSB_HOST_EHCI_BL
+                bool "ehci_bouffalo"
+            config RT_CHERRYUSB_HOST_EHCI_HPM
+                bool "ehci_hpm"
+            config RT_CHERRYUSB_HOST_EHCI_AIC
+                bool "ehci_aic"
+            config RT_CHERRYUSB_HOST_EHCI_MCX
+                bool "ehci_mcx"
+            config RT_CHERRYUSB_HOST_EHCI_NUC980
+                bool "ehci_nuc980"
+            config RT_CHERRYUSB_HOST_EHCI_MA35D0
+                bool "ehci_ma35d0"
+            config RT_CHERRYUSB_HOST_EHCI_CUSTOM
+                bool "ehci_custom"
+            config RT_CHERRYUSB_HOST_DWC2_ST
+                bool "dwc2_st"
+            config RT_CHERRYUSB_HOST_DWC2_ESP
+                bool "dwc2_esp"
+            config RT_CHERRYUSB_HOST_DWC2_KENDRYTE
+                bool "dwc2_kendryte"
+            config RT_CHERRYUSB_HOST_DWC2_HC
+                bool "dwc2_hc"
+            config RT_CHERRYUSB_HOST_DWC2_NATION
+                bool "dwc2_nation"
+            config RT_CHERRYUSB_HOST_DWC2_CUSTOM
+                bool "dwc2_custom"
+            config RT_CHERRYUSB_HOST_MUSB_ES
+                bool "musb_es"
+            config RT_CHERRYUSB_HOST_MUSB_SUNXI
+                bool "musb_sunxi"
+            config RT_CHERRYUSB_HOST_MUSB_BK
+                bool "musb_bk"
+            config RT_CHERRYUSB_HOST_MUSB_CUSTOM
+                bool "musb_custom"
+            config RT_CHERRYUSB_HOST_PUSB2
+                bool "pusb2"
+            config RT_CHERRYUSB_HOST_XHCI
+                bool "xhci"
+            config RT_CHERRYUSB_HOST_RP2040
+                bool "rp2040"
+        endchoice
+
+        config RT_CHERRYUSB_HOST_CDC_ACM
+            bool
+            prompt "Enable usb cdc acm driver"
+            default n
+
+        config RT_CHERRYUSB_HOST_HID
+            bool
+            prompt "Enable usb hid driver"
+            default n
+
+        config RT_CHERRYUSB_HOST_MSC
+            bool
+            prompt "Enable usb msc driver"
+            default n
+            select RT_USING_DFS
+            select RT_USING_DFS_ELMFAT
+
+        config RT_CHERRYUSB_HOST_CDC_ECM
+            bool
+            prompt "Enable usb cdc ecm driver"
+            select RT_USING_LWIP
+            select CONFIG_USBHOST_PLATFORM_CDC_ECM
+            default n
+
+        config RT_CHERRYUSB_HOST_CDC_RNDIS
+            bool
+            prompt "Enable usb rndis driver"
+            select RT_USING_LWIP
+            select CONFIG_USBHOST_PLATFORM_CDC_RNDIS
+            default n
+
+        config RT_CHERRYUSB_HOST_CDC_NCM
+            bool
+            prompt "Enable usb cdc ncm driver"
+            select RT_USING_LWIP
+            select CONFIG_USBHOST_PLATFORM_CDC_NCM
+            default n
+
+        config RT_CHERRYUSB_HOST_VIDEO
+            bool
+            prompt "Enable usb video driver, it is commercial charge"
+            default n
+
+        config RT_CHERRYUSB_HOST_AUDIO
+            bool
+            prompt "Enable usb audio driver, it is commercial charge"
+            default n
+
+        config RT_CHERRYUSB_HOST_BLUETOOTH
+            bool
+            prompt "Enable usb bluetooth driver"
+            default n
+
+        config RT_CHERRYUSB_HOST_ASIX
+            bool
+            prompt "Enable usb asix driver"
+            select RT_USING_LWIP
+            select CONFIG_USBHOST_PLATFORM_ASIX
+            default n
+
+        config RT_CHERRYUSB_HOST_RTL8152
+            bool
+            prompt "Enable usb rtl8152 driver"
+            select RT_USING_LWIP
+            select CONFIG_USBHOST_PLATFORM_RTL8152
+            default n
+
+        config RT_CHERRYUSB_HOST_FTDI
+            bool
+            prompt "Enable usb ftdi driver"
+            default n
+
+        config RT_CHERRYUSB_HOST_CH34X
+            bool
+            prompt "Enable usb ch34x driver"
+            default n
+
+        config RT_CHERRYUSB_HOST_CP210X
+            bool
+            prompt "Enable usb cp210x driver"
+            default n
+
+        config RT_CHERRYUSB_HOST_PL2303
+            bool
+            prompt "Enable usb pl2303 driver"
+            default n
+
+        config CONFIG_USBHOST_PLATFORM_CDC_ECM
+            bool
+
+        config CONFIG_USBHOST_PLATFORM_CDC_RNDIS
+            bool
+
+        config CONFIG_USBHOST_PLATFORM_CDC_NCM
+            bool
+
+        config CONFIG_USBHOST_PLATFORM_ASIX
+            bool
+
+        config CONFIG_USBHOST_PLATFORM_RTL8152
+            bool
+
+        config RT_LWIP_PBUF_POOL_BUFSIZE
+            int "The size of each pbuf in the pbuf pool"
+            range 1500 2000
+            default 1600
+
+        config CONFIG_USB_DFS_MOUNT_POINT
+            string "usb host dfs mount point"
+            depends on RT_CHERRYUSB_HOST_MSC
+            default "/"
+
+        config RT_CHERRYUSB_HOST_TEMPLATE
+            bool
+            prompt "Use usb host template"
+            default n
+
+        if RT_CHERRYUSB_HOST_TEMPLATE
+            config TEST_USBH_CDC_ACM
+                int
+                prompt "demo for test cdc acm"
+                default 0
+                depends on CHERRYUSB_HOST_CDC_ACM
+            config TEST_USBH_HID
+                int
+                prompt "demo for test hid"
+                default 0
+                depends on CHERRYUSB_HOST_HID
+        endif
+    endif
+
+endif
