@@ -980,6 +980,11 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     rt_sched_unlock(slvl);
 
     RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
+
+    /* if suspend by self, we need schedule anyway */
+    if (rt_thread_self() == thread)
+        rt_schedule();
+
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_suspend_to_list);
