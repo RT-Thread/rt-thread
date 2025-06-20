@@ -17,6 +17,7 @@
 #include "rtdevice.h"
 #include "hc32_ll.h"
 #include <drv_log.h>
+#include "board_config.h"
 
 /* DAC features */
 #define DAC_CHANNEL_ID_MAX              (DAC_CH2 + 1U)
@@ -36,7 +37,7 @@ static dac_device _g_dac_dev_array[] =
 #ifdef BSP_USING_DAC1
     {
         {0},
-#if defined (HC32F4A0) || defined (HC32F472)
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
         CM_DAC1,
 #elif defined (HC32F448)
         CM_DAC,
@@ -147,7 +148,7 @@ static const struct rt_dac_ops g_dac_ops =
 static void _dac_clock_enable(void)
 {
 #if defined(BSP_USING_DAC1)
-#if defined (HC32F4A0) || defined (HC32F472)
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
     FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_DAC1, ENABLE);
 #elif defined (HC32F448)
     FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_DAC, ENABLE);
@@ -170,12 +171,42 @@ int rt_hw_dac_init(void)
     int result = RT_EOK;
     rt_err_t ret;
     int i = 0;
+    stc_dac_init_t stcDacInit = {0};
+    int32_t ll_ret = 0;
 
     _dac_clock_enable();
     uint32_t dev_cnt = sizeof(_g_dac_dev_array) / sizeof(_g_dac_dev_array[0]);
     for (; i < dev_cnt; i++)
     {
         DAC_DeInit(_g_dac_dev_array[i].instance);
+        stcDacInit.enOutput = _g_dac_dev_array[i].init.ch1_output_enable;
+#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8)
+        stcDacInit.u16Src = _g_dac_dev_array[i].init.ch1_data_src;
+#endif
+        ll_ret = DAC_Init((void *)_g_dac_dev_array[i].instance, DAC_CH1, &stcDacInit);
+#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8)
+        stcDacInit.u16Src = _g_dac_dev_array[i].init.ch2_data_src;
+#endif
+        stcDacInit.enOutput = _g_dac_dev_array[i].init.ch2_output_enable;
+        ll_ret = DAC_Init((void *)_g_dac_dev_array[i].instance, DAC_CH2, &stcDacInit);
+        DAC_DataRegAlignConfig(_g_dac_dev_array[i].instance, _g_dac_dev_array[i].init.data_align);
+
+        if (ll_ret != LL_OK)
+        {
+            ret = -RT_ERROR;
+            break;
+        }
+
+        DAC_ADCPrioConfig(_g_dac_dev_array[i].instance, _g_dac_dev_array[i].init.dac_adp_sel, ENABLE);
+        DAC_ADCPrioCmd(_g_dac_dev_array[i].instance, _g_dac_dev_array[i].init.dac_adp_enable);
+
+#if defined (HC32F472)
+        DAC_SetAmpGain(_g_dac_dev_array[i].instance, DAC_CH1, _g_dac_dev_array[i].init.ch1_amp_gain);
+        DAC_SetAmpGain(_g_dac_dev_array[i].instance, DAC_CH2, _g_dac_dev_array[i].init.ch2_amp_gain);
+#endif
+        DAC_AMPCmd(_g_dac_dev_array[i].instance, DAC_CH1, _g_dac_dev_array[i].init.ch1_amp_enable);
+        DAC_AMPCmd(_g_dac_dev_array[i].instance, DAC_CH2, _g_dac_dev_array[i].init.ch2_amp_enable);
+
         rt_hw_board_dac_init(_g_dac_dev_array[i].instance);
         ret = rt_hw_dac_register(&_g_dac_dev_array[i].rt_dac, \
                                  (const char *)_g_dac_dev_array[i].init.name, \
