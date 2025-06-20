@@ -1,0 +1,34 @@
+import os
+from building import *
+Import('rtconfig')
+
+group = []
+
+if rtconfig.PLATFORM == 'gcc':
+  from gcc import *
+else:
+  Return('group')
+
+mlibc_version = "0.0.1"
+
+if mlibc_version and GetDepend('PKG_USING_MLIBC'):
+    print('mlibc version: ' + mlibc_version)
+
+    cwd = GetCurrentDir()
+    src = Glob('*.c')
+
+    CPPPATH = [cwd]
+    if GetDepend("RT_USING_SMART"):
+        CPPPATH += [cwd + '/smart']
+        CPPPATH += [cwd + '/smart/sys']
+    CPPDEFINES = ['RT_USING_MLIBC', 'RT_USING_LIBC']
+    AddDepend(['RT_USING_LIBC'])
+    group = group + DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+    list = os.listdir(cwd)
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            group = group + SConscript(os.path.join(d, 'SConscript'))
+
+Return('group')
