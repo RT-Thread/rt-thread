@@ -159,7 +159,7 @@ pthread_t _pthread_data_create(void)
  *   - Designed to be called during thread cleanup or explicit TLS destruction
  *   - Matches POSIX thread standard requirements for TLS destructor invocation
  */
-static inline void git status(int index, _pthread_data_t *ptd)
+static inline void _destroy_item(int index, _pthread_data_t *ptd)
 {
     extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
     void *data;
