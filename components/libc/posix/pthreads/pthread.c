@@ -506,6 +506,8 @@ __exit:
 }
 RTM_EXPORT(pthread_create);
 
+
+
 /**
  * @brief Marks a thread as detached, allowing its resources to be automatically released upon termination.
  *
