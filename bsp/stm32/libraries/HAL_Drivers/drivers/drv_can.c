@@ -718,7 +718,8 @@ static void _can_check_tx_complete(struct rt_can_device *can)
         }
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP0);
     }
-    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
+
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
     {
         if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK1))
         {
@@ -726,7 +727,8 @@ static void _can_check_tx_complete(struct rt_can_device *can)
         }
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP1);
     }
-    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
+
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
     {
         if (!__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK2))
         {
@@ -734,20 +736,20 @@ static void _can_check_tx_complete(struct rt_can_device *can)
         }
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
     }
-    else
+
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
     {
-        if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
-        {
-            SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ0);/*Abort the send request, trigger the TX interrupt,release completion quantity*/
-        }
-        else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR1))
-        {
-            SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ1);
-        }
-        else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR2))
-        {
-            SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ2);
-        }
+        SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ0);/*Abort the send request, trigger the TX interrupt,release completion quantity*/
+    }
+
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR1))
+    {
+        SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ1);
+    }
+
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR2))
+    {
+        SET_BIT(hcan->Instance->TSR, CAN_TSR_ABRQ2);
     }
 }
 
@@ -762,14 +764,12 @@ static void _can_sce_isr(struct rt_can_device *can)
     {
         case RT_CAN_BUS_BIT_PAD_ERR:
             can->status.bitpaderrcnt++;
-            _can_check_tx_complete(can);
             break;
         case RT_CAN_BUS_FORMAT_ERR:
             can->status.formaterrcnt++;
             break;
         case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
             can->status.ackerrcnt++;
-            _can_check_tx_complete(can);
             break;
         case RT_CAN_BUS_IMPLICIT_BIT_ERR:
         case RT_CAN_BUS_EXPLICIT_BIT_ERR:
@@ -779,6 +779,7 @@ static void _can_sce_isr(struct rt_can_device *can)
             can->status.crcerrcnt++;
             break;
     }
+    _can_check_tx_complete(can);
 
     can->status.lasterrtype = errtype & 0x70;
     can->status.rcverrcnt = errtype >> 24;
@@ -917,28 +918,6 @@ void CAN2_SCE_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif /* BSP_USING_CAN2 */
-
-/**
- * @brief  Error CAN callback.
- * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
- *         the configuration information for the specified CAN.
- * @retval None
- */
-void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
-{
-    __HAL_CAN_ENABLE_IT(hcan, CAN_IT_ERROR_WARNING |
-                        CAN_IT_ERROR_PASSIVE |
-                        CAN_IT_BUSOFF |
-                        CAN_IT_LAST_ERROR_CODE |
-                        CAN_IT_ERROR |
-                        CAN_IT_RX_FIFO0_MSG_PENDING |
-                        CAN_IT_RX_FIFO0_OVERRUN |
-                        CAN_IT_RX_FIFO0_FULL |
-                        CAN_IT_RX_FIFO1_MSG_PENDING |
-                        CAN_IT_RX_FIFO1_OVERRUN |
-                        CAN_IT_RX_FIFO1_FULL |
-                        CAN_IT_TX_MAILBOX_EMPTY);
-}
 
 int rt_hw_can_init(void)
 {
