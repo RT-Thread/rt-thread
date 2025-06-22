@@ -8,7 +8,7 @@ CanMV-K230 Board Support Package 使用说明
 	- [3.1. 安装 GCC 工具链](#31-安装-gcc-工具链)
 	- [3.2. 安装依赖](#32-安装依赖)
 		- [3.2.1. apt 软件包](#321-apt-软件包)
-		- [3.2.2. kconfiglib](#322-kconfiglib)
+		- [3.2.2. 一些 python 软件包](#322-一些-python-软件包)
 		- [3.2.3. Env](#323-env)
 	- [3.3. 下载 RT-Thread 并更新依赖的软件包](#33-下载-rt-thread-并更新依赖的软件包)
 	- [3.4. 构建](#34-构建)
@@ -66,21 +66,38 @@ export RTT_EXEC_PATH="$USER/toolchain/riscv64-linux-musleabi_for_x86_64-pc-linux
 ### 3.2.1. apt 软件包
 
 ```shell
-$ sudo apt install -y scons python3-pip
+$ sudo apt install -y scons python3-pip u-boot-tools patch
 ```
 
-### 3.2.2. kconfiglib
+其中 scons 是 RT-Thread 需要的构建工具；python3-pip 用于后续下载安装一些 python 软件包；而 u-boot-tools 和 patch 用于 rttpkgtool 打包。
 
-因为本 BSP 只在 RT-Thread v5.1.0 以上才支持，所以需要确保本地已经安装过 kconfiglib。
+### 3.2.2. 一些 python 软件包
+
+因为本 BSP 只在 RT-Thread v5.1.0 以上才支持，所以需要确保本地已经安装过 kconfiglib。采用清华源是为了加快安装速度。
 
 ```shell
-$ pip3 install kconfiglib i https://pypi.tuna.tsinghua.edu.cn/simple
+$ pip3 install kconfiglib -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
-采用清华源是为了加快安装速度。
+
+另外还需要一些软件包用于 rttpkgtool 打包。
+
+```shell
+$ pip3 install pycryptodome -i https://pypi.tuna.tsinghua.edu.cn/simple
+$ pip3 install gmssl -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
 
 ### 3.2.3. Env
 
-安装 env，具体参考 <https://github.com/RT-Thread/env>
+安装 env，具体参考 <https://github.com/RT-Thread/env>。
+
+注意对于中国大陆用户，为加快速度，请使用以下命令，同时避免在 RT-Thread 内核仓库代码路径下执行以下命令，以免中间过程出现问题导致一些残余文件没有及时清理而污染内核代码仓库：
+
+```shell
+wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_ubuntu.sh
+chmod 777 install_ubuntu.sh
+./install_ubuntu.sh --gitee
+rm install_ubuntu.sh
+```
 
 ## 3.3. 下载 RT-Thread 并更新依赖的软件包
 
@@ -116,6 +133,8 @@ $ scons -j$(nproc)
 为方便使用，在本 bsp 下提供了一份封装脚本 `build.sh`，可以直接执行后打包生成最终可以烧录的 `opensbi_rtt_system.bin` 文件。
 
 但需要注意是，`build.sh` 只负责下载 rttpkgtool 并运行 rttpkgtool，但不会自动安装 rttpkgtool 依赖的工具软件，所以在使用 `build.sh` 前请仔细阅读 rttpkgtool 仓库的 “for-k230” 分支上的 `README.md` 文件。提前安装好一些额外的依赖和用于编译 opensbi 的交叉工具链（**注意这个编译 opensbi 的交叉工具链和编译 RTT 的 工具链是不同的**）。
+
+本 README 的 “安装依赖” 部分已经尽量列出了 rttpkgtool 打包需要的依赖，如果按照其描述安装依赖后仍然遇到问题请参考 rttpkgtool 的 README 自行解决或者给 rttpkgtool 提 issue: <https://github.com/plctlab/rttpkgtool/issues>。
 
 以上依赖和交叉工具链安装好后，可以执行如下命令进行打包：
 
