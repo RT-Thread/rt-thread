@@ -487,13 +487,13 @@ void usbd_audio_close(uint8_t busid, uint8_t intf)
 
 void usbd_audio_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%d\r\n", (unsigned int)nbytes);
     usbd_ep_start_read(busid, AUDIO_OUT_EP, audio_read_buffer, AUDIO_OUT_PACKET);
 }
 
 void usbd_audio_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual in len:%d\r\n", (unsigned int)nbytes);
     audio_iso_tx_busy = false;
 }
 

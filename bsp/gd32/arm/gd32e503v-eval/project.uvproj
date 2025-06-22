@@ -370,9 +370,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>GD32E50X, USE_STDPERIPH_DRIVER, RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, GD32E50X_HD</Define>
+              <Define>GD32E50X, RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, GD32E50X_HD, __STDC_LIMIT_MACROS, __RTTHREAD__, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\posix\ipc;..\libraries\GD32E50x_Firmware_Library\CMSIS;..\..\..\..\components\libc\posix\io\epoll;board;..\..\..\..\components\finsh;..\..\..\..\libcpu\arm\cortex-m4;..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\phy;.;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\libraries\GD32E50x_Firmware_Library\CMSIS\GD\GD32E50x\Include;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;applications;..\..\..\..\include</IncludePath>
+              <IncludePath>..\libraries\GD32E50x_Firmware_Library\CMSIS\GD\GD32E50x\Include;..\..\..\..\components\drivers\smp_call;..\..\..\..\include;board;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;applications;.;..\libraries\GD32E50x_Firmware_Library\CMSIS;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\phy;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;..\libraries\gd32_drivers;..\..\..\..\libcpu\arm\cortex-m4</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -748,16 +748,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -769,9 +769,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1067,6 +1067,13 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
@@ -1074,16 +1081,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1095,9 +1095,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1143,16 +1143,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>system_gd32e50x.c</FileName>
+              <FileName>gd32e50x_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32E50x_Firmware_Library\CMSIS\GD\GD32E50x\Source\system_gd32e50x.c</FilePath>
+              <FilePath>..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Source\gd32e50x_usart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32e50x_gpio.c</FileName>
+              <FileName>system_gd32e50x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Source\gd32e50x_gpio.c</FilePath>
+              <FilePath>..\libraries\GD32E50x_Firmware_Library\CMSIS\GD\GD32E50x\Source\system_gd32e50x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1164,16 +1164,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32e50x_usart.c</FileName>
+              <FileName>gd32e50x_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Source\gd32e50x_usart.c</FilePath>
+              <FilePath>..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Source\gd32e50x_exti.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32e50x_exti.c</FileName>
+              <FileName>gd32e50x_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Source\gd32e50x_exti.c</FilePath>
+              <FilePath>..\libraries\GD32E50x_Firmware_Library\GD32E50x_standard_peripheral\Source\gd32e50x_gpio.c</FilePath>
             </File>
           </Files>
         </Group>

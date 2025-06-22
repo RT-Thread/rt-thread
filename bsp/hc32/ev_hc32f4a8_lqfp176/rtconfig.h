@@ -105,7 +105,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50200
+#define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
@@ -150,8 +150,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_CAN
-#define RT_CAN_USING_HDR
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
@@ -301,11 +299,23 @@
 
 /* end of Kendryte SDK */
 
-/* HC32_DDL: DDL library file for HC32 */
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
 
 #define PKG_USING_HC32F4A8_DDL
 #define PKG_USING_HC32F4A8_DDL_LATEST_VERSION
-/* end of HC32_DDL: DDL library file for HC32 */
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -414,10 +424,6 @@
 #define BSP_USING_I2C
 #define BSP_USING_I2C_HW
 #define BSP_USING_I2C1
-#define RT_USING_CAN_MCAN
-#define BSP_USING_MCAN
-#define BSP_USING_MCAN1
-#define BSP_USING_MCAN2
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

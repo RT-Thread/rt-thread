@@ -6,6 +6,10 @@
 #include "usbd_core.h"
 #include "usbd_hid.h"
 
+#if CONFIG_USBDEV_EP_NUM < 4
+#error endpoint number is too small for this demo, please try other chips
+#endif
+
 #define WINUSB_IN_EP  0x81
 #define WINUSB_OUT_EP 0x02
 
@@ -413,7 +417,7 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
 
 void usbd_winusb_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%d\r\n", (unsigned int)nbytes);
     // for (int i = 0; i < 100; i++) {
     //     printf("%02x ", read_buffer[i]);
     // }
@@ -425,7 +429,7 @@ void usbd_winusb_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 
 void usbd_winusb_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual in len:%d\r\n", (unsigned int)nbytes);
 
     if ((nbytes % usbd_get_ep_mps(busid, ep)) == 0 && nbytes) {
         /* send zlp */

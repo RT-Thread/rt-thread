@@ -9,19 +9,6 @@
  */
 #include "board.h"
 #include "rtthread.h"
-#include "drv_config.h"
-
-static PCD_HandleTypeDef hpcd_USB_OTG_FS;
-void usb_dc_low_level_init(uint8_t busid)
-{
-    hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
-    HAL_PCD_MspInit(&hpcd_USB_OTG_FS);
-}
-
-void usb_dc_low_level_deinit(uint8_t busid)
-{
-    HAL_PCD_MspDeInit(&hpcd_USB_OTG_FS);
-}
 
 #ifdef RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
 /* Register the EMAC device */
@@ -40,15 +27,5 @@ static int cherry_usb_cdc_send(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT(cherry_usb_cdc_send, send the cdc data for test)
-#endif
-
-#ifdef USBD_IRQ_HANDLER
-    void USBD_IRQ_HANDLER(void)
-{
-    extern void USBD_IRQHandler(uint8_t busid);
-    USBD_IRQHandler(0);
-}
-#else
-#error USBD_IRQ_HANDLER need to USB IRQ like #define USBD_IRQ_HANDLER  OTG_HS_IRQHandler
 #endif
 

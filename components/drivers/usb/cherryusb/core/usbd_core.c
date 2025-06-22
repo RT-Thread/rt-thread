@@ -41,7 +41,7 @@ USB_NOCACHE_RAM_SECTION struct usbd_core_priv {
     /** Setup packet */
     USB_MEM_ALIGNX struct usb_setup_packet setup;
     /** Pointer to data buffer */
-    uint8_t *ep0_data_buf;
+    USB_MEM_ALIGNX uint8_t *ep0_data_buf;
     /** Remaining bytes in buffer */
     uint32_t ep0_data_buf_residue;
     /** Total length of control transfer */
@@ -59,11 +59,12 @@ USB_NOCACHE_RAM_SECTION struct usbd_core_priv {
     struct usb_webusb_descriptor *webusb_url_desc;
 #endif
     /* Buffer used for storing standard, class and vendor request data */
-    USB_MEM_ALIGNX uint8_t req_data[CONFIG_USBDEV_REQUEST_BUFFER_LEN];
+    USB_MEM_ALIGNX uint8_t req_data[USB_ALIGN_UP(CONFIG_USBDEV_REQUEST_BUFFER_LEN, CONFIG_USB_ALIGN_SIZE)];
 
     /** Currently selected configuration */
     uint8_t configuration;
     uint8_t device_address;
+    uint8_t ep0_next_state;
     bool self_powered;
     bool remote_wakeup_support;
     bool remote_wakeup_enabled;
@@ -185,6 +186,11 @@ static bool usbd_get_descriptor(uint8_t busid, uint16_t type_index, uint8_t **da
     switch (type) {
         case USB_DESCRIPTOR_TYPE_DEVICE:
             g_usbd_core[busid].speed = usbd_get_port_speed(busid); /* before we get device descriptor, we have known steady port speed */
+
+            if (g_usbd_core[busid].descriptors->device_descriptor_callback == NULL) {
+                found = false;
+                break;
+            }
             desc = g_usbd_core[busid].descriptors->device_descriptor_callback(g_usbd_core[busid].speed);
             if (desc == NULL) {
                 found = false;
@@ -193,6 +199,10 @@ static bool usbd_get_descriptor(uint8_t busid, uint16_t type_index, uint8_t **da
             desc_len = desc[0];
             break;
         case USB_DESCRIPTOR_TYPE_CONFIGURATION:
+            if (g_usbd_core[busid].descriptors->config_descriptor_callback == NULL) {
+                found = false;
+                break;
+            }
             desc = g_usbd_core[busid].descriptors->config_descriptor_callback(g_usbd_core[busid].speed);
             if (desc == NULL) {
                 found = false;
@@ -213,6 +223,10 @@ static bool usbd_get_descriptor(uint8_t busid, uint16_t type_index, uint8_t **da
                 desc = (uint8_t *)g_usbd_core[busid].descriptors->msosv1_descriptor->string;
                 desc_len = g_usbd_core[busid].descriptors->msosv1_descriptor->string[0];
             } else {
+                if (g_usbd_core[busid].descriptors->string_descriptor_callback == NULL) {
+                    found = false;
+                    break;
+                }
                 string = g_usbd_core[busid].descriptors->string_descriptor_callback(g_usbd_core[busid].speed, index);
                 if (string == NULL) {
                     found = false;
@@ -252,6 +266,10 @@ static bool usbd_get_descriptor(uint8_t busid, uint16_t type_index, uint8_t **da
 #ifndef CONFIG_USB_HS
             return false;
 #else
+            if (g_usbd_core[busid].descriptors->device_quality_descriptor_callback == NULL) {
+                found = false;
+                break;
+            }
             desc = g_usbd_core[busid].descriptors->device_quality_descriptor_callback(g_usbd_core[busid].speed);
             if (desc == NULL) {
                 found = false;
@@ -261,6 +279,10 @@ static bool usbd_get_descriptor(uint8_t busid, uint16_t type_index, uint8_t **da
             break;
 #endif
         case USB_DESCRIPTOR_TYPE_OTHER_SPEED:
+            if (g_usbd_core[busid].descriptors->other_speed_descriptor_callback == NULL) {
+                found = false;
+                break;
+            }
             desc = g_usbd_core[busid].descriptors->other_speed_descriptor_callback(g_usbd_core[busid].speed);
             if (desc == NULL) {
                 found = false;
@@ -1089,6 +1111,11 @@ static void usbd_class_event_notify_handler(uint8_t busid, uint8_t event, void *
     }
 }
 
+void usbd_event_sof_handler(uint8_t busid)
+{
+    g_usbd_core[busid].event_handler(busid, USBD_EVENT_SOF);
+}
+
 void usbd_event_connect_handler(uint8_t busid)
 {
     g_usbd_core[busid].event_handler(busid, USBD_EVENT_CONNECTED);
@@ -1096,6 +1123,7 @@ void usbd_event_connect_handler(uint8_t busid)
 
 void usbd_event_disconnect_handler(uint8_t busid)
 {
+    g_usbd_core[busid].configuration = 0;
     g_usbd_core[busid].event_handler(busid, USBD_EVENT_DISCONNECTED);
 }
 
@@ -1118,6 +1146,7 @@ void usbd_event_reset_handler(uint8_t busid)
     usbd_set_address(busid, 0);
     g_usbd_core[busid].device_address = 0;
     g_usbd_core[busid].configuration = 0;
+    g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_SETUP;
 #ifdef CONFIG_USBDEV_ADVANCE_DESC
     g_usbd_core[busid].speed = USB_SPEED_UNKNOWN;
 #endif
@@ -1162,12 +1191,14 @@ static void __usbd_event_ep0_setup_complete_handler(uint8_t busid, struct usb_se
     /* handle class request when all the data is received */
     if (setup->wLength && ((setup->bmRequestType & USB_REQUEST_DIR_MASK) == USB_REQUEST_DIR_OUT)) {
         USB_LOG_DBG("Start reading %d bytes from ep0\r\n", setup->wLength);
+        g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_OUT_DATA;
         usbd_ep_start_read(busid, USB_CONTROL_OUT_EP0, g_usbd_core[busid].ep0_data_buf, setup->wLength);
         return;
     }
 
     /* Ask installed handler to process request */
     if (!usbd_setup_request_handler(busid, setup, &buf, &g_usbd_core[busid].ep0_data_buf_len)) {
+        g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_SETUP;
         usbd_ep_set_stall(busid, USB_CONTROL_IN_EP0);
         return;
     }
@@ -1176,6 +1207,7 @@ static void __usbd_event_ep0_setup_complete_handler(uint8_t busid, struct usb_se
     g_usbd_core[busid].ep0_data_buf_residue = MIN(g_usbd_core[busid].ep0_data_buf_len, setup->wLength);
     if (g_usbd_core[busid].ep0_data_buf_residue > CONFIG_USBDEV_REQUEST_BUFFER_LEN) {
         USB_LOG_ERR("Request buffer too small\r\n");
+        g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_SETUP;
         usbd_ep_set_stall(busid, USB_CONTROL_IN_EP0);
         return;
     }
@@ -1191,6 +1223,12 @@ static void __usbd_event_ep0_setup_complete_handler(uint8_t busid, struct usb_se
 #endif
     } else {
         /* use memcpy(*data, xxx, len); has copied into ep0 buffer, we do nothing */
+    }
+
+    if (g_usbd_core[busid].ep0_data_buf_residue > 0) {
+        g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_IN_DATA;
+    } else {
+        g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_IN_STATUS;
     }
 
     /* Send data or status to host */
@@ -1228,7 +1266,7 @@ static void usbd_event_ep0_in_complete_handler(uint8_t busid, uint8_t ep, uint32
     g_usbd_core[busid].ep0_data_buf += nbytes;
     g_usbd_core[busid].ep0_data_buf_residue -= nbytes;
 
-    USB_LOG_DBG("EP0 send %d bytes, %d remained\r\n", nbytes, g_usbd_core[busid].ep0_data_buf_residue);
+    USB_LOG_DBG("EP0 send %d bytes, %d remained\r\n", (unsigned int)nbytes, (unsigned int)g_usbd_core[busid].ep0_data_buf_residue);
 
     if (g_usbd_core[busid].ep0_data_buf_residue != 0) {
         /* Start sending the remain data */
@@ -1247,7 +1285,13 @@ static void usbd_event_ep0_in_complete_handler(uint8_t busid, uint8_t ep, uint32
                 */
             if (setup->wLength && ((setup->bmRequestType & USB_REQUEST_DIR_MASK) == USB_REQUEST_DIR_IN)) {
                 /* if all data has sent completely, start reading out status */
+                g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_OUT_STATUS;
                 usbd_ep_start_read(busid, USB_CONTROL_OUT_EP0, NULL, 0);
+                return;
+            }
+
+            if (g_usbd_core[busid].ep0_next_state == USBD_EP0_STATE_IN_STATUS) {
+                g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_SETUP;
             }
 
 #ifdef CONFIG_USBDEV_TEST_MODE
@@ -1271,7 +1315,7 @@ static void usbd_event_ep0_out_complete_handler(uint8_t busid, uint8_t ep, uint3
         g_usbd_core[busid].ep0_data_buf += nbytes;
         g_usbd_core[busid].ep0_data_buf_residue -= nbytes;
 
-        USB_LOG_DBG("EP0 recv %d bytes, %d remained\r\n", nbytes, g_usbd_core[busid].ep0_data_buf_residue);
+        USB_LOG_DBG("EP0 recv %d bytes, %d remained\r\n", (unsigned int)nbytes, (unsigned int)g_usbd_core[busid].ep0_data_buf_residue);
 
         if (g_usbd_core[busid].ep0_data_buf_residue == 0) {
 #ifdef CONFIG_USBDEV_EP0_THREAD
@@ -1280,10 +1324,12 @@ static void usbd_event_ep0_out_complete_handler(uint8_t busid, uint8_t ep, uint3
             /* Received all, send data to handler */
             g_usbd_core[busid].ep0_data_buf = g_usbd_core[busid].req_data;
             if (!usbd_setup_request_handler(busid, setup, &g_usbd_core[busid].ep0_data_buf, &g_usbd_core[busid].ep0_data_buf_len)) {
+                g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_SETUP;
                 usbd_ep_set_stall(busid, USB_CONTROL_IN_EP0);
                 return;
             }
 
+            g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_IN_STATUS;
             /*Send status to host*/
             usbd_ep_start_write(busid, USB_CONTROL_IN_EP0, NULL, 0);
 #endif
@@ -1292,6 +1338,7 @@ static void usbd_event_ep0_out_complete_handler(uint8_t busid, uint8_t ep, uint3
             usbd_ep_start_read(busid, USB_CONTROL_OUT_EP0, g_usbd_core[busid].ep0_data_buf, g_usbd_core[busid].ep0_data_buf_residue);
         }
     } else {
+        g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_SETUP;
         /* Read out status completely, do nothing */
         USB_LOG_DBG("EP0 recv out status\r\n");
     }
@@ -1425,6 +1472,11 @@ int usbd_send_remote_wakeup(uint8_t busid)
     }
 }
 
+uint8_t usbd_get_ep0_next_state(uint8_t busid)
+{
+    return g_usbd_core[busid].ep0_next_state;
+}
+
 #ifdef CONFIG_USBDEV_EP0_THREAD
 static void usbdev_ep0_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
@@ -1438,7 +1490,7 @@ static void usbdev_ep0_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
         if (ret < 0) {
             continue;
         }
-        USB_LOG_DBG("event:%d\r\n", event);
+        USB_LOG_DBG("event:%d\r\n", (unsigned int)event);
 
         switch (event) {
             case USB_EP0_STATE_SETUP:
@@ -1451,10 +1503,12 @@ static void usbdev_ep0_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
                 /* Received all, send data to handler */
                 g_usbd_core[busid].ep0_data_buf = g_usbd_core[busid].req_data;
                 if (!usbd_setup_request_handler(busid, setup, &g_usbd_core[busid].ep0_data_buf, &g_usbd_core[busid].ep0_data_buf_len)) {
+                    g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_SETUP;
                     usbd_ep_set_stall(busid, USB_CONTROL_IN_EP0);
                     continue;
                 }
 
+                g_usbd_core[busid].ep0_next_state = USBD_EP0_STATE_IN_STATUS;
                 /*Send status to host*/
                 usbd_ep_start_write(busid, USB_CONTROL_IN_EP0, NULL, 0);
                 break;

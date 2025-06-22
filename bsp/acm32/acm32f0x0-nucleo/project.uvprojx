@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;libraries\CMSIS;libraries\HAL_Driver\Inc;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\eventfd;..\..\..\include;libraries\Device;drivers;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\poll;applications;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\posix\io\eventfd;libraries\CMSIS;drivers;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\drivers\include;libraries\Device;applications;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;libraries\HAL_Driver\Inc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\..\..\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,16 +381,9 @@
           <GroupName>ACM32_HAL</GroupName>
           <Files>
             <File>
-              <FileName>Startup_ACM32F0x0.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\Device\Startup_ACM32F0x0.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>System_ACM32F0x0.c</FileName>
+              <FileName>HAL_WDT.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\Device\System_ACM32F0x0.c</FilePath>
+              <FilePath>libraries\HAL_Driver\Src\HAL_WDT.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -398,6 +391,20 @@
               <FileName>HAL_GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\HAL_Driver\Src\HAL_GPIO.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_TIMER.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\HAL_Driver\Src\HAL_TIMER.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\HAL_Driver\Src\HAL_UART.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -416,20 +423,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_I2C.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_I2C.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_EXTI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_EXTI.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>HAL_DMA.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\HAL_Driver\Src\HAL_DMA.c</FilePath>
@@ -437,16 +430,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_WDT.c</FileName>
+              <FileName>HAL_ADC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_WDT.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_UART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_UART.c</FilePath>
+              <FilePath>libraries\HAL_Driver\Src\HAL_ADC.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -465,16 +451,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_ADC.c</FileName>
+              <FileName>System_ACM32F0x0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_ADC.c</FilePath>
+              <FilePath>libraries\Device\System_ACM32F0x0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_TIMER.c</FileName>
+              <FileName>HAL_EXTI.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_TIMER.c</FilePath>
+              <FilePath>libraries\HAL_Driver\Src\HAL_EXTI.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\HAL_Driver\Src\HAL_I2C.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>Startup_ACM32F0x0.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\Device\Startup_ACM32F0x0.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -839,16 +839,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_gpio.c</FileName>
+              <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_soft_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_soft_i2c.c</FilePath>
+              <FilePath>drivers\drv_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -860,9 +853,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_adc.c</FileName>
+              <FileName>drv_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_adc.c</FilePath>
+              <FilePath>drivers\drv_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -874,16 +867,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_spi.c</FileName>
+              <FileName>drv_pm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_spi.c</FilePath>
+              <FilePath>drivers\drv_pm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\drv_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -895,28 +895,35 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_pm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_pm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_hwtimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_hwtimer.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>drv_soft_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_soft_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>msh.c</FileName>
@@ -936,13 +943,6 @@
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1238,23 +1238,23 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1266,9 +1266,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -15,13 +15,13 @@
 static struct usbh_bluetooth g_bluetooth_class;
 
 #ifdef CONFIG_USBHOST_BLUETOOTH_HCI_H4
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_tx_buf[1 + CONFIG_USBHOST_BLUETOOTH_TX_SIZE];
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_rx_buf[1 + CONFIG_USBHOST_BLUETOOTH_RX_SIZE];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_tx_buf[USB_ALIGN_UP(CONFIG_USBHOST_BLUETOOTH_TX_SIZE, CONFIG_USB_ALIGN_SIZE)];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_rx_buf[USB_ALIGN_UP(CONFIG_USBHOST_BLUETOOTH_RX_SIZE, CONFIG_USB_ALIGN_SIZE)];
 #else
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_cmd_buf[1 + 256];
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_evt_buf[1 + 256];
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_tx_buf[1 + CONFIG_USBHOST_BLUETOOTH_TX_SIZE];
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_rx_buf[1 + CONFIG_USBHOST_BLUETOOTH_RX_SIZE];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_cmd_buf[USB_ALIGN_UP(256, CONFIG_USB_ALIGN_SIZE)];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_evt_buf[USB_ALIGN_UP(256, CONFIG_USB_ALIGN_SIZE)];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_tx_buf[USB_ALIGN_UP(CONFIG_USBHOST_BLUETOOTH_TX_SIZE, CONFIG_USB_ALIGN_SIZE)];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_bluetooth_rx_buf[USB_ALIGN_UP(CONFIG_USBHOST_BLUETOOTH_RX_SIZE, CONFIG_USB_ALIGN_SIZE)];
 #endif
 
 static int usbh_bluetooth_connect(struct usbh_hubport *hport, uint8_t intf)
@@ -134,6 +134,7 @@ static int usbh_bluetooth_disconnect(struct usbh_hubport *hport, uint8_t intf)
         // }
 #endif
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister Bluetooth Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_bluetooth_stop(bluetooth_class);
         }

@@ -5,7 +5,7 @@
  */
 #include "rtthread.h"
 
-#ifdef RT_CHERRYUSB_HOST
+#if defined(PKG_CHERRYUSB_HOST) || defined(RT_CHERRYUSB_HOST)
 
 #include "usbh_core.h"
 

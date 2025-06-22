@@ -330,9 +330,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, RT_USING_LIBC, ES32F065x, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC, ES32F065x, RT_USING_LIBC, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\include;..\..\..\components\libc\posix\io\epoll;libraries\CMSIS\Include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;drivers\ES;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;drivers;applications;libraries\CMSIS\Device\EastSoft\ES32F065x\Include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\ES32F065x_ALD_StdPeriph_Driver\Include;..\..\..\libcpu\arm\cortex-m0;.;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\include;libraries\CMSIS\Include;..\..\..\components\drivers\phy;..\..\..\libcpu\arm\cortex-m0;applications;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;.;..\..\..\components\libc\compilers\common\extension;libraries\CMSIS\Device\EastSoft\ES32F065x\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\components\finsh;drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;libraries\ES32F065x_ALD_StdPeriph_Driver\Include;..\..\..\components\libc\compilers\common\include;drivers\ES</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -677,16 +677,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_gpio.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -701,16 +701,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -722,9 +715,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1034,6 +1034,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
@@ -1044,13 +1051,6 @@
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1089,37 +1089,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>ald_bkpc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_bkpc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ald_smartcard.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_smartcard.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\utils.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_calc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_calc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1131,9 +1103,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_iap.c</FileName>
+              <FileName>ald_acmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_iap.c</FilePath>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_acmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_calc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_calc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1145,72 +1131,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_acmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_acmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ald_tsense.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_tsense.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_cmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_cmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_trng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_trng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_crypt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_crypt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1222,6 +1145,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>ald_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ald_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_uart.c</FilePath>
@@ -1229,9 +1159,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_flash_ext.c</FileName>
+              <FileName>ald_pmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</FilePath>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_pmu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1243,23 +1173,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_es32f065x.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\CMSIS\Device\EastSoft\ES32F065x\Startup\keil\startup_es32f065x.s</FilePath>
+              <FileName>ald_cmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_cmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ald_adc.c</FileName>
+              <FileName>ald_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_adc.c</FilePath>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ald_pis.c</FileName>
+              <FileName>ald_wdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_pis.c</FilePath>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_flash_ext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_iap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_iap.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1271,9 +1222,58 @@
           </Files>
           <Files>
             <File>
-              <FileName>ald_spi.c</FileName>
+              <FileName>utils.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_spi.c</FilePath>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\utils.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_pis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_pis.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_trng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_crypt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_crypt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_bkpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_bkpc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\ES32F065x_ALD_StdPeriph_Driver\Source\ald_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_es32f065x.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\CMSIS\Device\EastSoft\ES32F065x\Startup\keil\startup_es32f065x.s</FilePath>
             </File>
           </Files>
           <Files>

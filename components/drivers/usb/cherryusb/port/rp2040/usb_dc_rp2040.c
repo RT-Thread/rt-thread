@@ -181,6 +181,10 @@ int usb_dc_init(uint8_t busid)
                    USB_INTS_DEV_SUSPEND_BITS | USB_INTS_DEV_RESUME_FROM_HOST_BITS |
                    (FORCE_VBUS_DETECT ? 0 : USB_INTS_DEV_CONN_DIS_BITS);
 
+#ifdef CONFIG_USBDEV_SOF_ENABLE
+    usb_hw->inte |= USB_INTS_DEV_SOF_BITS;
+#endif
+
     // Enable USB interrupt at processor
     irq_set_enabled(USBCTRL_IRQ, true);
 
@@ -576,6 +580,13 @@ void USBD_IRQHandler(uint8_t busid)
         usb_hw_clear->sie_status = USB_SIE_STATUS_RESUME_BITS;
         usbd_event_resume_handler(0);
     }
+
+#ifdef CONFIG_USBDEV_SOF_ENABLE
+    if (status & USB_INTS_DEV_SOF_BITS) {
+        handled |= USB_INTS_DEV_SOF_BITS;
+        usbd_event_sof_handler(0);
+    }
+#endif
 
     if (status ^ handled) {
         USB_LOG_INFO("Unhandled IRQ 0x%x\n", (uint32_t)(status ^ handled));

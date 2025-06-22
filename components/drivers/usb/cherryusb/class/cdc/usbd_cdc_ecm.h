@@ -15,7 +15,7 @@ extern "C" {
 /* Init cdc ecm interface driver */
 struct usbd_interface *usbd_cdc_ecm_init_intf(struct usbd_interface *intf, const uint8_t int_ep, const uint8_t out_ep, const uint8_t in_ep);
 
-void usbd_cdc_ecm_set_connect(bool connect, uint32_t speed[2]);
+int usbd_cdc_ecm_set_connect(bool connect, uint32_t speed[2]);
 
 void usbd_cdc_ecm_data_recv_done(uint32_t len);
 void usbd_cdc_ecm_data_send_done(uint32_t len);

@@ -33,9 +33,10 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
     if GetDepend(['RT_CHERRYUSB_DEVICE_SPEED_HS']):
         CPPDEFINES+=['CONFIG_USB_HS']
 
-    if GetDepend(['RT_CHERRYUSB_DEVICE_NRF5X']):
-        src += Glob('port/nrf5x/usb_dc_nrf5x.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_FSDEV']):
+    if GetDepend(['RT_CHERRYUSB_DEVICE_FSDEV_ST']):
+        src += Glob('port/fsdev/usb_dc_fsdev.c')
+        src += Glob('port/fsdev/usb_glue_st.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_FSDEV_CUSTOM']):
         src += Glob('port/fsdev/usb_dc_fsdev.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_ST']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
@@ -43,18 +44,21 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_ESP']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
         src += Glob('port/dwc2/usb_glue_esp.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_AT']):
-        src += Glob('port/dwc2/usb_dc_dwc2.c')
-        src += Glob('port/dwc2/usb_glue_at.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_GD']):
-        src += Glob('port/dwc2/usb_dc_dwc2.c')
-        src += Glob('port/dwc2/usb_glue_gd.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_HC']):
-        src += Glob('port/dwc2/usb_dc_dwc2.c')
-        src += Glob('port/dwc2/usb_glue_hc.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_KENDRYTE']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
         src += Glob('port/dwc2/usb_glue_kendryte.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_AT']):
+        src += Glob('port/dwc2/usb_dc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_at.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_HC']):
+        src += Glob('port/dwc2/usb_dc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_hc.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_NATION']):
+        src += Glob('port/dwc2/usb_dc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_nation.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_GD']):
+        src += Glob('port/dwc2/usb_dc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_gd.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_CUSTOM']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_ES']):
@@ -68,23 +72,28 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('port/musb/usb_glue_bk.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_CUSTOM']):
         src += Glob('port/musb/usb_dc_musb.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX']):
+        path += [cwd + '/port/chipidea']
+        src += Glob('port/chipidea/usb_dc_chipidea.c')
+        src += Glob('port/nxp/usb_glue_mcx.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_CHIPIDEA_CUSTOM']):
+        path += [cwd + '/port/chipidea']
+        src += Glob('port/chipidea/usb_dc_chipidea.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_KINETIS_MCX']):
         src += Glob('port/kinetis/usb_dc_kinetis.c')
         src += Glob('port/kinetis/usb_glue_mcx.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_KINETIS_CUSTOM']):
         src += Glob('port/kinetis/usb_dc_kinetis.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_CHIPIDEA_MCX']):
-        src += Glob('port/chipidea/usb_dc_chipidea.c')
-        src += Glob('port/chipidea/usb_glue_mcx.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_BL']):
         src += Glob('port/bouffalolab/usb_dc_bl.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_HPM']):
-        src += Glob('port/hpm/usb_dc_hpm.c')
+        src += Glob('port/hpmicro/usb_dc_hpm.c')
+        src += Glob('port/hpmicro/usb_glue_hpm.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_AIC']):
         src += Glob('port/aic/usb_dc_aic.c')
         src += Glob('port/aic/usb_dc_aic_ll.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_CH32']):
-        if GetDepend(['RT_CHERRYUSB_DEVICE_SPEED_HS']):
+        if GetDepend(['RT_CHERRYUSB_DEVICE_HS']):
             src += Glob('port/ch32/usb_dc_usbhs.c')
         else:
             src += Glob('port/ch32/usb_dc_usbfs.c')
@@ -97,6 +106,8 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         if GetDepend(['ARCH_ARM_CORTEX_A']):
             LIBPATH = [cwd + '/port/pusb2']
             LIBS = ['libpusb2_dc_a32_softfp_neon.a']
+    if GetDepend(['RT_CHERRYUSB_DEVICE_NRF5X']):
+        src += Glob('port/nrf5x/usb_dc_nrf5x.c')
 
     if GetDepend(['RT_CHERRYUSB_DEVICE_CDC_ACM']):
         src += Glob('class/cdc/usbd_cdc_acm.c')
@@ -163,7 +174,8 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('port/ehci/usb_glue_bouffalo.c')
     if GetDepend(['RT_CHERRYUSB_HOST_EHCI_HPM']):
         src += Glob('port/ehci/usb_hc_ehci.c')
-        src += Glob('port/ehci/usb_glue_hpm.c')
+        src += Glob('port/hpmicro/usb_hc_hpm.c')
+        src += Glob('port/hpmicro/usb_glue_hpm.c')
     if GetDepend(['RT_CHERRYUSB_HOST_EHCI_AIC']):
         path += [cwd + '/port/ehci']
         path += [cwd + '/port/ohci']
@@ -173,7 +185,7 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
     if GetDepend(['RT_CHERRYUSB_HOST_EHCI_MCX']):
         path += [cwd + '/port/chipidea']
         src += Glob('port/ehci/usb_hc_ehci.c')
-        src += Glob('port/ehci/usb_glue_mcx.c')
+        src += Glob('port/nxp/usb_glue_mcx.c')
     if GetDepend(['RT_CHERRYUSB_HOST_EHCI_NUC980']):
         src += Glob('port/ehci/usb_hc_ehci.c')
         src += Glob('port/ehci/usb_glue_nuc980.c')
@@ -191,6 +203,12 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
     if GetDepend(['RT_CHERRYUSB_HOST_DWC2_KENDRYTE']):
         src += Glob('port/dwc2/usb_hc_dwc2.c')
         src += Glob('port/dwc2/usb_glue_kendryte.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_DWC2_HC']):
+        src += Glob('port/dwc2/usb_hc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_hc.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_DWC2_NATION']):
+        src += Glob('port/dwc2/usb_hc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_nation.c')
     if GetDepend(['RT_CHERRYUSB_HOST_DWC2_CUSTOM']):
         src += Glob('port/dwc2/usb_hc_dwc2.c')
     if GetDepend(['RT_CHERRYUSB_HOST_MUSB_STANDARD']):
@@ -264,6 +282,7 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('class/vendor/serial/usbh_pl2303.c')
 
     if GetDepend(['RT_CHERRYUSB_HOST_TEMPLATE']):
+        CPPDEFINES+=['TEST_USBH_MSC=0']
         src += Glob('demo/usb_host.c')
 
     if GetDepend('RT_USING_DFS') and GetDepend(['RT_CHERRYUSB_HOST_MSC']):
@@ -274,7 +293,7 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         or GetDepend('RT_CHERRYUSB_HOST_CDC_NCM') \
         or GetDepend('RT_CHERRYUSB_HOST_ASIX') \
         or GetDepend('RT_CHERRYUSB_HOST_RTL8152'):
-        src += Glob('platform/rtthread/usbh_lwip.c')
+       src += Glob('platform/rtthread/usbh_lwip.c')
 
 src += Glob('platform/rtthread/usb_msh.c')
 src += Glob('platform/rtthread/usb_check.c')

@@ -337,6 +337,7 @@ static int usbh_bl616_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister BL616 WIFI Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_bl616_stop(bl616_class);
         }
