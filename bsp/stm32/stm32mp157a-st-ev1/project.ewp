@@ -365,20 +365,20 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\board\CubeMX_Config\CM4\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\nano</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\board\CubeMX_Config\CM4\Inc</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\board\ports</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\nano</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1446,20 +1446,20 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\board\CubeMX_Config\CM4\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\nano</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\board\CubeMX_Config\CM4\Inc</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\board\ports</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\nano</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2192,6 +2192,9 @@
   <group>
     <name>Finsh</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
@@ -2199,9 +2202,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
   </group>
   <group>
@@ -2255,19 +2255,19 @@
   <group>
     <name>klibc</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
   </group>
   <group>

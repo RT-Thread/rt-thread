@@ -1,0 +1,29 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+PKGS_DIR := packages
+
+config SOC_STM32H7RS
+    bool
+    select SOC_SERIES_STM32H7RS
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+    default y
+
+config SOC_SERIES_STM32H7RS
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select SOC_FAMILY_STM32
+    default y
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+rsource "../libraries/Kconfig"
+
+if !RT_USING_NANO
+rsource "board/Kconfig"
+endif

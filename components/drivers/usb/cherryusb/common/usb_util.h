@@ -206,6 +206,7 @@
 #define USB_MEM_ALIGNX __attribute__((aligned(CONFIG_USB_ALIGN_SIZE)))
 
 #define USB_ALIGN_UP(size, align) (((size) + (align)-1) & ~((align)-1))
+#define USB_ALIGN_DOWN(size, align) ((size) & ~((align)-1))
 
 #ifndef usb_phyaddr2ramaddr
 #define usb_phyaddr2ramaddr(addr) (addr)

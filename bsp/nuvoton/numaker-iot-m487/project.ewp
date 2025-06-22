@@ -357,62 +357,62 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\legacy\include</state>
-          <state>$PROJ_DIR$\..\libraries\m480\USBHostLib\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\sdio\sdhci\include</state>
-          <state>$PROJ_DIR$\..\libraries\m480\rtt_port</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\class</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\hwcrypto</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\audio</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\dfs_net</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\port</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\at\at_socket</state>
-          <state>$PROJ_DIR$\..\libraries\nu_packages\NuUtils\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\utilities\utest</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\core</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost</state>
-          <state>$PROJ_DIR$\..\libraries\m480\Device\Nuvoton\M480\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\netdev\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\fal\inc</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\libraries\m480\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\impl</state>
-          <state>$PROJ_DIR$\..\libraries\nu_packages\Demo</state>
-          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbdevice</state>
-          <state>$PROJ_DIR$\..\libraries\m480\StdDriver\inc</state>
-          <state>$PROJ_DIR$\board\NuPinConfig</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\elmfat</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\at\include</state>
-          <state>$PROJ_DIR$\board\NuClockConfig</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\socket\sys_socket</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\libraries\nu_packages\AudioCodec</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\netdev\include</state>
+          <state>$PROJ_DIR$\..\libraries\m480\rtt_port</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\libraries\nu_packages\AudioCodec</state>
+          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbdevice</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\sal\impl</state>
+          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\core</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\dfs_net</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\libraries\m480\USBHostLib\inc</state>
+          <state>$PROJ_DIR$\board\NuPinConfig</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\audio</state>
+          <state>$PROJ_DIR$\board\NuClockConfig</state>
+          <state>$PROJ_DIR$\..\libraries\m480\StdDriver\inc</state>
+          <state>$PROJ_DIR$\..\libraries\nu_packages\NuUtils\inc</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\elmfat</state>
+          <state>$PROJ_DIR$\..\..\..\components\legacy\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\at\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\socket\sys_socket</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\fal\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\sal\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\class</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\libraries\m480\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\components\net\sal\include\socket</state>
+          <state>$PROJ_DIR$\..\libraries\m480\Device\Nuvoton\M480\Include</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\utilities\utest</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\at\at_socket</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\libraries\nu_packages\Demo</state>
+          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\sdio\sdhci\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\hwcrypto</state>
+          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
           <state>$PROJ_DIR$\..\libraries\nu_packages\TPC</state>
+          <state>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1114,13 +1114,13 @@
       <name>$PROJ_DIR$\..\..\..\components\net\at\src\at_client.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\at\src\at_cli.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\net\at\at_socket\at_socket.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\net\at\src\at_utils.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\at\at_socket\at_socket.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\net\at\src\at_cli.c</name>
     </file>
   </group>
   <group>
@@ -1181,6 +1181,24 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\audio\dev_audio_pipe.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\block\blk.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\block\blk_dev.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\block\blk_dfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\block\blk_partition.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\block\partitions\dfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\block\partitions\efi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\can\dev_can.c</name>
@@ -1447,16 +1465,16 @@
   <group>
     <name>Fal</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_partition.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_rtt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_rtt.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_flash.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\fal\src\fal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_flash.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_partition.c</name>
     </file>
   </group>
   <group>
@@ -1489,16 +1507,16 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
@@ -1561,16 +1579,16 @@
       <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
     </file>
   </group>
   <group>
@@ -1594,7 +1612,13 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_sc.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_timer_pwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_dac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_bpwm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_i2s.c</name>
@@ -1603,109 +1627,103 @@
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_scuart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_bpwm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_sys.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_pdma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_ebi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_hsusbd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_crypto.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_sdh.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_usci_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_trng.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_epwm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_ecap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_spim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_acmp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_qspi.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_eadc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_wdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_usbd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_ccap.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_usci_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_hsusbd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_pdma.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_clk.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_fmc.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_qspi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_timer_pwm.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_sc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_emac.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_qei.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_acmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_uart.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_spim.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_eadc.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_sys.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_usci_spi.c</name>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_ebi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_wwdt.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_usci_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_qei.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_usbd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_trng.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_epwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_ecap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_sdh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_crypto.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_usci_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_fmc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_ccap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\StdDriver\src\nu_uart.c</name>
     </file>
   </group>
   <group>
@@ -1825,12 +1843,6 @@
   <group>
     <name>m480_usbhostlib</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\m480\USBHostLib\src\ehci.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\m480\USBHostLib\src\ehci_iso.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\m480\USBHostLib\src\mem_alloc.c</name>
     </file>
     <file>
@@ -1839,35 +1851,41 @@
     <file>
       <name>$PROJ_DIR$\..\libraries\m480\USBHostLib\src\usb_core.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\USBHostLib\src\ehci_iso.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\m480\USBHostLib\src\ehci.c</name>
+    </file>
   </group>
   <group>
     <name>nu_pkgs_demo</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\atdev_utils.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\usbd_hid_dance_mouse.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\ccap_demo.c</name>
+      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\wormhole_demo.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\ccap_saver.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\hwsem_counter.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\smp_demo.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\wormhole_demo.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\usbd_cdc_vcom_echo.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\slcd_show_tick.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\atdev_utils.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\ccap_demo.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\usbd_hid_dance_mouse.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\hwsem_counter.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\nu_packages\Demo\smp_demo.c</name>
     </file>
   </group>
   <group>
@@ -1900,16 +1918,16 @@
       <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbdevice\class\hid.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbdevice\core\usbdevice.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbdevice\core\usbdevice_core.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbdevice\core\usbdevice_core.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbdevice\core\usbdevice.c</name>
     </file>
   </group>
   <group>
     <name>rt_usbh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\class\mass.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\core\usbhost_core.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\core\hub.c</name>
@@ -1918,7 +1936,7 @@
       <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\core\driver.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\core\usbhost_core.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\class\mass.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\legacy\usb\usbhost\class\udisk.c</name>

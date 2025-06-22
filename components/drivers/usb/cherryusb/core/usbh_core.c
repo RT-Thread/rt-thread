@@ -14,8 +14,12 @@ struct usbh_class_info *usbh_class_info_table_end = NULL;
 
 usb_slist_t g_bus_head = USB_SLIST_OBJECT_INIT(g_bus_head);
 
+struct setup_align_buffer {
+    uint8_t buffer[USB_ALIGN_UP(8, CONFIG_USB_ALIGN_SIZE)];
+};
+
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t ep0_request_buffer[CONFIG_USBHOST_MAX_BUS][USB_ALIGN_UP(CONFIG_USBHOST_REQUEST_BUFFER_LEN, CONFIG_USB_ALIGN_SIZE)];
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX struct usb_setup_packet g_setup_buffer[CONFIG_USBHOST_MAX_BUS][CONFIG_USBHOST_MAX_EXTHUBS + 1][CONFIG_USBHOST_MAX_EHPORTS];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX struct setup_align_buffer g_setup_buffer[CONFIG_USBHOST_MAX_BUS][CONFIG_USBHOST_MAX_EXTHUBS + 1][CONFIG_USBHOST_MAX_EHPORTS];
 
 struct usbh_bus g_usbhost_bus[CONFIG_USBHOST_MAX_BUS];
 
@@ -223,21 +227,13 @@ static int parse_config_descriptor(struct usbh_hubport *hport, struct usb_config
                     cur_alt_setting = intf_desc->bAlternateSetting;
                     cur_ep_num = intf_desc->bNumEndpoints;
                     cur_ep = 0;
-                    if (cur_iface > (CONFIG_USBHOST_MAX_INTERFACES - 1)) {
-                        USB_LOG_ERR("Interface num overflow\r\n");
-                        while (1) {
-                        }
-                    }
-                    if (cur_alt_setting > (CONFIG_USBHOST_MAX_INTF_ALTSETTINGS - 1)) {
-                        USB_LOG_ERR("Interface altsetting num overflow\r\n");
-                        while (1) {
-                        }
-                    }
-                    if (cur_ep_num > CONFIG_USBHOST_MAX_ENDPOINTS) {
-                        USB_LOG_ERR("Endpoint num overflow\r\n");
-                        while (1) {
-                        }
-                    }
+
+                    USB_ASSERT_MSG(cur_iface < CONFIG_USBHOST_MAX_INTERFACES,
+                                   "Interface num %d overflow", cur_iface);
+                    USB_ASSERT_MSG(cur_alt_setting < CONFIG_USBHOST_MAX_INTF_ALTSETTINGS,
+                                   "Interface altsetting num %d overflow", cur_alt_setting);
+                    USB_ASSERT_MSG(cur_ep_num <= CONFIG_USBHOST_MAX_ENDPOINTS,
+                                   "Endpoint num %d overflow", cur_ep_num);
 #if 0
                     USB_LOG_DBG("Interface Descriptor:\r\n");
                     USB_LOG_DBG("bLength: 0x%02x            \r\n", intf_desc->bLength);
@@ -326,6 +322,8 @@ static void usbh_print_hubport_info(struct usbh_hubport *hport)
 
 static void usbh_print_setup(struct usb_setup_packet *setup)
 {
+    (void)setup;
+
     USB_LOG_DBG("Setup: "
                 "bmRequestType 0x%02x, bRequest 0x%02x, wValue 0x%04x, wIndex 0x%04x, wLength 0x%04x\r\n",
                 setup->bmRequestType,
@@ -363,7 +361,7 @@ int usbh_enumerate(struct usbh_hubport *hport)
     uint8_t config_index;
     int ret;
 
-    hport->setup = &g_setup_buffer[hport->bus->busid][hport->parent->index - 1][hport->port - 1];
+    hport->setup = (struct usb_setup_packet *)&g_setup_buffer[hport->bus->busid][hport->parent->index - 1][hport->port - 1];
     setup = hport->setup;
     ep = &hport->ep0;
 
@@ -478,7 +476,7 @@ int usbh_enumerate(struct usbh_hubport *hport)
 
     if (wTotalLength > CONFIG_USBHOST_REQUEST_BUFFER_LEN) {
         ret = -USB_ERR_NOMEM;
-        USB_LOG_ERR("wTotalLength %d is overflow, default is %d\r\n", wTotalLength, CONFIG_USBHOST_REQUEST_BUFFER_LEN);
+        USB_LOG_ERR("wTotalLength %d is overflow, default is %d\r\n", wTotalLength, (unsigned int)CONFIG_USBHOST_REQUEST_BUFFER_LEN);
         goto errout;
     }
 

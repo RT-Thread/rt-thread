@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>AT32M416CBT7, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_LIBC, RT_USING_ARMLIBC</Define>
+              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, AT32M416CBT7, __STDC_LIMIT_MACROS, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\rt_drivers\config;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;applications;board\inc;..\..\..\libcpu\arm\cortex-m4;board;..\..\..\include;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;.;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\smp_call;..\..\..\components\libc\compilers\common\include;..\libraries\rt_drivers</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\libraries\rt_drivers\config;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\smp_call;.;board;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\eventfd;..\..\..\include;..\..\..\libcpu\arm\cortex-m4;applications;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\libraries\rt_drivers;board\inc;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\drivers\phy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -718,16 +718,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -739,9 +739,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1056,9 +1056,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1077,16 +1084,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>

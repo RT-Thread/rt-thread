@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--diag_suppress=186,66</MiscControls>
-              <Define>__DEBUG, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __STDC_LIMIT_MACROS, USE_DDL_DRIVER, RT_USING_ARMLIBC, HC32L136</Define>
+              <Define>__RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, __DEBUG, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, HC32L136, USE_DDL_DRIVER</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\compilers\common\include;..\..\components\drivers\include;Libraries\HC32L136_StdPeriph_Driver\inc;Libraries\CMSIS\Device\HDSC\HC32L136\Include;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\io\poll;drivers;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension;board;..\..\components\finsh;..\..\components\drivers\include;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;applications;..\..\components\drivers\smp_call;..\..\components\drivers\phy;..\..\include;Libraries\CMSIS\Include</IncludePath>
+              <IncludePath>..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\components\drivers\phy;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\components\finsh;..\..\components\drivers\include;..\..\components\drivers\include;board;..\..\components\libc\posix\ipc;Libraries\CMSIS\Device\HDSC\HC32L136\Include;..\..\components\libc\posix\io\epoll;.;..\..\components\drivers\smp_call;drivers;Libraries\CMSIS\Include;applications;..\..\libcpu\arm\cortex-m0;Libraries\HC32L136_StdPeriph_Driver\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -736,6 +736,62 @@
           <GroupName>HC32_StdPeriph</GroupName>
           <Files>
             <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ddl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\ddl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_hc32l136.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>trim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sysctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\sysctrl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>timer3.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\timer3.c</FilePath>
@@ -757,41 +813,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>ddl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\ddl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_hc32l13x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\uart.c</FilePath>
@@ -799,30 +820,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_hc32l136.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sysctrl.c</FileName>
+              <FileName>system_hc32l13x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\sysctrl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\gpio.c</FilePath>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1118,9 +1118,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1132,16 +1132,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>

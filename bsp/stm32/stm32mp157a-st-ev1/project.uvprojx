@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>STM32MP157Axx, __LOG_TRACE_IO_, VIRTIO_SLAVE_ONLY, METAL_MAX_DEVICE_REGIONS=2, METAL_INTERNAL, CORE_CM4, NO_ATOMIC_64_SUPPORT, __RTTHREAD__</Define>
+              <Define>METAL_MAX_DEVICE_REGIONS=2, VIRTIO_SLAVE_ONLY, STM32MP157Axx, __LOG_TRACE_IO_, CORE_CM4, METAL_INTERNAL, NO_ATOMIC_64_SUPPORT, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\smp_call;board\ports;.;..\..\..\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\phy;..\libraries\HAL_Drivers;board;board\CubeMX_Config\CM4\Inc;..\libraries\HAL_Drivers\nano;..\..\..\libcpu\arm\common;..\..\..\components\finsh;..\..\..\components\drivers\include;applications</IncludePath>
+              <IncludePath>..\..\..\libcpu\arm\common;..\..\..\components\drivers\phy;.;board\CubeMX_Config\CM4\Inc;..\libraries\HAL_Drivers;board;applications;board\ports;..\..\..\components\finsh;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\cortex-m4;..\libraries\HAL_Drivers\nano</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -429,16 +429,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -450,9 +443,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -748,9 +748,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -769,16 +776,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>

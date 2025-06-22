@@ -371,9 +371,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC</Define>
+              <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\legacy\usb\usbhost\class;.;..\..\..\components\utilities\libadt\avl;..\libraries\nuc980\Driver\Include;..\libraries\nuc980\UsbHostLib\inc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\net\lwip\port;..\..\..\components\net\sal\include\socket;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\include;..\..\..\libcpu\arm\arm926;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\spi;..\..\..\components\libc\posix\ipc;..\libraries\nu_packages\AudioCodec;..\..\..\components\net\sal\include\dfs_net;..\..\..\components\finsh;..\..\..\include;..\..\..\components\utilities\libadt\uthash;..\..\..\components\utilities\utest;..\..\..\components\net\netdev\include;..\..\..\components\legacy\usb\usbdevice;..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\hwcrypto;..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\components\drivers\include;..\..\..\components\drivers\audio;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\utilities\libadt\ref;..\..\..\components\drivers\include;applications;..\..\..\components\legacy\include;..\..\..\components\legacy\usb\usbhost;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\net\sal\impl;..\libraries\nuc980\rtt_port;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\libc\posix\io\poll;..\..\..\components\legacy\usb\usbhost\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\epoll;..\..\..\components\net\sal\include;..\libraries\nu_packages\TPC;..\..\..\components\utilities\libadt\hashmap;..\libraries\nu_packages\SPINAND;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\legacy\usb\usbhost\core;..\..\..\components\drivers\include;..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\libraries\nu_packages\Demo;..\..\..\components\drivers\include;..\..\..\components\utilities\libadt\bitmap;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\libraries\nu_packages\NuUtils\inc;board</IncludePath>
+              <IncludePath>..\..\..\components\drivers\smp_call;..\..\..\components\legacy\usb\usbhost;..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\components\dfs\dfs_v1\include;..\libraries\nuc980\Driver\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\epoll;..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\components\utilities\libadt\uthash;..\..\..\components\net\sal\include;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\net\sal\include\dfs_net;..\..\..\components\drivers\spi;..\..\..\components\utilities\utest;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\components\drivers\include;..\..\..\components\net\sal\include\socket;..\libraries\nu_packages\NuUtils\inc;..\..\..\components\drivers\hwcrypto;..\..\..\components\drivers\include;applications;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\net\netdev\include;..\libraries\nu_packages\TPC;..\..\..\libcpu\arm\arm926;..\..\..\components\utilities\libadt\ref;..\..\..\components\legacy\usb\usbhost\core;..\..\..\components\finsh;..\..\..\components\net\sal\impl;..\..\..\components\legacy\usb\usbhost\include;..\..\..\components\libc\posix\ipc;..\..\..\components\utilities\libadt\hashmap;.;..\..\..\components\legacy\usb\usbhost\class;..\..\..\components\drivers\include;..\libraries\nuc980\UsbHostLib\inc;board;..\libraries\nuc980\rtt_port;..\..\..\components\drivers\audio;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\utilities\libadt\avl;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\nu_packages\Demo;..\..\..\components\legacy\usb\usbdevice;..\..\..\libcpu\arm\common;..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\components\libc\compilers\common\include;..\..\..\components\legacy\include;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\net\lwip\port;..\..\..\components\drivers\include;..\libraries\nu_packages\SPINAND;..\..\..\components\utilities\libadt\bitmap;..\..\..\include;..\..\..\components\drivers\include;..\libraries\nu_packages\AudioCodec;..\..\..\components\libc\compilers\common\extension</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -418,16 +418,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>mnt.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>mnt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\mnt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1160,114 +1160,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_emac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_scuart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_scuart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_softi2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\nuc980\rtt_port\drv_softi2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_etimer_capture.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_etimer_capture.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_crypto.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_crypto.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_i2s.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_sdh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_sdh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1279,37 +1174,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_ebi.c</FileName>
+              <FileName>drv_etimer_capture.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_ebi.c</FilePath>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_etimer_capture.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_usbd.c</FileName>
+              <FileName>drv_usbhost.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_usbd.c</FilePath>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_usbhost.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_etimer.c</FileName>
+              <FileName>drv_i2s.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_etimer.c</FilePath>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_i2s.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_systick.c</FileName>
+              <FileName>drv_crypto.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_systick.c</FilePath>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_crypto.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_qspi.c</FileName>
+              <FileName>drv_scuart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_qspi.c</FilePath>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_scuart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_emac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1321,6 +1223,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>drv_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_systick.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_pdma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\nuc980\rtt_port\drv_pdma.c</FilePath>
@@ -1328,9 +1237,100 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_usbhost.c</FileName>
+              <FileName>drv_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\rtt_port\drv_usbhost.c</FilePath>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_etimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_etimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_usbd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_usbd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_sdh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_sdh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_qspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_ebi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_ebi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\rtt_port\drv_pwm.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1493,20 +1493,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
@@ -1521,9 +1507,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1857,16 +1857,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1878,16 +1878,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1961,37 +1961,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>nu_pdma.c</FileName>
+              <FileName>nu_sdh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_pdma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_etimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_etimer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_i2s.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_scuart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_scuart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_uart.c</FilePath>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_sdh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2003,9 +1975,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_sys.c</FileName>
+              <FileName>nu_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_sys.c</FilePath>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2017,9 +1989,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_wwdt.c</FileName>
+              <FileName>nu_sys.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_wwdt.c</FilePath>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_sys.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_crypto.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_crypto.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_ebi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_ebi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_emac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2031,16 +2031,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_sdh.c</FileName>
+              <FileName>nu_wwdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_sdh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_cap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_cap.c</FilePath>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_wwdt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2048,6 +2041,27 @@
               <FileName>nu_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\nuc980\Driver\Source\nu_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_etimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_etimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nu_scuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_scuart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2066,37 +2080,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>nu_ebi.c</FileName>
+              <FileName>nu_cap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_ebi.c</FilePath>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_cap.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>nu_crypto.c</FileName>
+              <FileName>nu_pdma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_crypto.c</FilePath>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_pdma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>nu_i2c.c</FileName>
+              <FileName>nu_i2s.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_emac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nu_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\Driver\Source\nu_rtc.c</FilePath>
+              <FilePath>..\libraries\nuc980\Driver\Source\nu_i2s.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2394,37 +2394,16 @@
           <GroupName>nu_pkgs_demo</GroupName>
           <Files>
             <File>
-              <FileName>atdev_utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\atdev_utils.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hwsem_counter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\hwsem_counter.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>usbd_hid_dance_mouse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\usbd_hid_dance_mouse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>usbd_cdc_vcom_echo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\usbd_cdc_vcom_echo.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ccap_saver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\nu_packages\Demo\ccap_saver.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>atdev_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\atdev_utils.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2443,9 +2422,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>slcd_show_tick.c</FileName>
+              <FileName>hwsem_counter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\Demo\slcd_show_tick.c</FilePath>
+              <FilePath>..\libraries\nu_packages\Demo\hwsem_counter.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2455,16 +2434,30 @@
               <FilePath>..\libraries\nu_packages\Demo\wormhole_demo.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>usbd_hid_dance_mouse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\usbd_hid_dance_mouse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>slcd_show_tick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\slcd_show_tick.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usbd_cdc_vcom_echo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\Demo\usbd_cdc_vcom_echo.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>nu_pkgs_nau8822</GroupName>
-          <Files>
-            <File>
-              <FileName>audio_test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\AudioCodec\audio_test.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>acodec_nau8822.c</FileName>
@@ -2472,16 +2465,16 @@
               <FilePath>..\libraries\nu_packages\AudioCodec\acodec_nau8822.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>audio_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\AudioCodec\audio_test.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>nu_pkgs_spinand</GroupName>
-          <Files>
-            <File>
-              <FileName>spinand.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nu_packages\SPINAND\spinand.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>drv_spinand.c</FileName>
@@ -2489,14 +2482,21 @@
               <FilePath>..\libraries\nu_packages\SPINAND\drv_spinand.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>spinand.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nu_packages\SPINAND\spinand.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>nuc980_usbhostlib</GroupName>
           <Files>
             <File>
-              <FileName>mem_alloc.c</FileName>
+              <FileName>ehci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\UsbHostLib\src\mem_alloc.c</FilePath>
+              <FilePath>..\libraries\nuc980\UsbHostLib\src\ehci.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2508,16 +2508,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ehci.c</FileName>
+              <FileName>usb_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\UsbHostLib\src\ehci.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>support.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\UsbHostLib\src\support.c</FilePath>
+              <FilePath>..\libraries\nuc980\UsbHostLib\src\usb_core.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -2529,9 +2522,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>usb_core.c</FileName>
+              <FileName>mem_alloc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\nuc980\UsbHostLib\src\usb_core.c</FilePath>
+              <FilePath>..\libraries\nuc980\UsbHostLib\src\mem_alloc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>support.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\nuc980\UsbHostLib\src\support.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2570,35 +2570,21 @@
           </Files>
           <Files>
             <File>
-              <FileName>mstorage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\legacy\usb\usbdevice\class\mstorage.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>usbdevice_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\legacy\usb\usbdevice\core\usbdevice_core.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>mstorage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\legacy\usb\usbdevice\class\mstorage.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>rt_usbh</GroupName>
-          <Files>
-            <File>
-              <FileName>hub.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\legacy\usb\usbhost\core\hub.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mass.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\legacy\usb\usbhost\class\mass.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>usbhost_core.c</FileName>
@@ -2622,9 +2608,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>hub.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\legacy\usb\usbhost\core\hub.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\legacy\usb\usbhost\core\driver.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mass.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\legacy\usb\usbhost\class\mass.c</FilePath>
             </File>
           </Files>
         </Group>

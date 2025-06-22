@@ -27,9 +27,9 @@
 #define AUDIO_OUT_CLOCK_ID 0x01
 #define AUDIO_OUT_FU_ID    0x03
 
-#define AUDIO_FREQ      48000
-#define HALF_WORD_BYTES 2  //2 half word (one channel)
-#define SAMPLE_BITS     16 //16 bit per channel
+#define AUDIO_OUT_MAX_FREQ 96000
+#define HALF_WORD_BYTES    2  //2 half word (one channel)
+#define SAMPLE_BITS        16 //16 bit per channel
 
 #define BMCONTROL (AUDIO_V2_FU_CONTROL_MUTE | AUDIO_V2_FU_CONTROL_VOLUME)
 
@@ -61,7 +61,7 @@
 #define OUTPUT_CH_ENABLE 0x000000ff
 #endif
 
-#define AUDIO_OUT_PACKET ((uint32_t)((AUDIO_FREQ * HALF_WORD_BYTES * OUT_CHANNEL_NUM) / 1000))
+#define AUDIO_OUT_PACKET ((uint32_t)((AUDIO_OUT_MAX_FREQ * HALF_WORD_BYTES * OUT_CHANNEL_NUM) / 1000))
 
 #if USING_FEEDBACK == 0
 #define USB_AUDIO_CONFIG_DESC_SIZ (9 +                                                     \
@@ -228,7 +228,7 @@ const uint8_t audio_v2_descriptor[] = {
     '0', 0x00,                  /* wcChar7 */
     '0', 0x00,                  /* wcChar8 */
 #if USING_FEEDBACK == 0
-    '3', 0x00, /* wcChar9 */
+    '3', 0x00,                  /* wcChar9 */
 #else
     '4', 0x00, /* wcChar9 */
 #endif
@@ -274,6 +274,7 @@ USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_buffer[AUDIO_OUT_PACKET];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t s_speaker_feedback_buffer[4];
 
 volatile bool rx_flag = 0;
+volatile uint32_t s_speaker_sample_rate;
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
 {
@@ -305,14 +306,16 @@ void usbd_audio_open(uint8_t busid, uint8_t intf)
     rx_flag = 1;
     /* setup first out ep read transfer */
     usbd_ep_start_read(busid, AUDIO_OUT_EP, read_buffer, AUDIO_OUT_PACKET);
+#if USING_FEEDBACK == 1
 #ifdef CONFIG_USB_HS
-    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_HS(AUDIO_FREQ);
+    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_HS(s_speaker_sample_rate);
     AUDIO_FEEDBACK_TO_BUF_HS(s_speaker_feedback_buffer, feedback_value);
 #else
-    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(AUDIO_FREQ);
+    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(s_speaker_sample_rate);
     AUDIO_FEEDBACK_TO_BUF_FS(s_speaker_feedback_buffer, feedback_value);
 #endif
     usbd_ep_start_write(busid, AUDIO_OUT_FEEDBACK_EP, s_speaker_feedback_buffer, FEEDBACK_ENDP_PACKET_SIZE);
+#endif
     USB_LOG_RAW("OPEN\r\n");
 }
 
@@ -320,6 +323,26 @@ void usbd_audio_close(uint8_t busid, uint8_t intf)
 {
     USB_LOG_RAW("CLOSE\r\n");
     rx_flag = 0;
+}
+
+void usbd_audio_set_sampling_freq(uint8_t busid, uint8_t ep, uint32_t sampling_freq)
+{
+    if (ep == AUDIO_OUT_EP) {
+        s_speaker_sample_rate = sampling_freq;
+    }
+}
+
+uint32_t usbd_audio_get_sampling_freq(uint8_t busid, uint8_t ep)
+{
+    (void)busid;
+
+    uint32_t freq = 0;
+
+    if (ep == AUDIO_OUT_EP) {
+        freq = s_speaker_sample_rate;
+    }
+
+    return freq;
 }
 
 void usbd_audio_get_sampling_freq_table(uint8_t busid, uint8_t ep, uint8_t **sampling_freq_table)
@@ -331,19 +354,19 @@ void usbd_audio_get_sampling_freq_table(uint8_t busid, uint8_t ep, uint8_t **sam
 
 void usbd_audio_iso_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%d\r\n", (unsigned int)nbytes);
     usbd_ep_start_read(busid, AUDIO_OUT_EP, read_buffer, AUDIO_OUT_PACKET);
 }
 
 #if USING_FEEDBACK == 1
 void usbd_audio_iso_out_feedback_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual feedback len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual feedback len:%d\r\n", (unsigned int)nbytes);
 #ifdef CONFIG_USB_HS
-    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_HS(AUDIO_FREQ);
+    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_HS(s_speaker_sample_rate);
     AUDIO_FEEDBACK_TO_BUF_HS(s_speaker_feedback_buffer, feedback_value);
 #else
-    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(AUDIO_FREQ);
+    uint32_t feedback_value = AUDIO_FREQ_TO_FEEDBACK_FS(s_speaker_sample_rate);
     AUDIO_FEEDBACK_TO_BUF_FS(s_speaker_feedback_buffer, feedback_value);
 #endif
     usbd_ep_start_write(busid, AUDIO_OUT_FEEDBACK_EP, s_speaker_feedback_buffer, FEEDBACK_ENDP_PACKET_SIZE);

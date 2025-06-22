@@ -118,7 +118,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50200
+#define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
@@ -325,6 +325,22 @@
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+#define PKG_USING_NXP_MCX_CMSIS_DRIVER
+#define PKG_USING_NXP_MCX_CMSIS_DRIVER_LATEST_VERSION
+#define PKG_USING_NXP_MCX_SERIES_DRIVER
+#define PKG_USING_NXP_MCX_SERIES_DRIVER_LATEST_VERSION
+/* end of NXP HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -418,6 +434,7 @@
 
 /* Board extended module Drivers */
 
+/* end of Board extended module Drivers */
 /* end of Hardware Drivers Config */
 
 #endif

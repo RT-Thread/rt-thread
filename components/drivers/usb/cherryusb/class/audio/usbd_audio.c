@@ -375,3 +375,15 @@ __WEAK void usbd_audio_get_sampling_freq_table(uint8_t busid, uint8_t ep, uint8_
     (void)ep;
     (void)sampling_freq_table;
 }
+
+__WEAK void usbd_audio_open(uint8_t busid, uint8_t intf)
+{
+    (void)busid;
+    (void)intf;
+}
+
+__WEAK void usbd_audio_close(uint8_t busid, uint8_t intf)
+{
+    (void)busid;
+    (void)intf;
+}
