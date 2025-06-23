@@ -1,0 +1,4 @@
+from package import *
+
+objs = BuildPackage()
+Return('objs')
