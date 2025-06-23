@@ -283,19 +283,13 @@ def MDK45Project(tree, target, script):
 
         # get each group's LIBS flags
         if 'LIBS' in group and group['LIBS']:
-            for item in group['LIBS']:
-                lib_path = ''
-                for path_item in group['LIBPATH']:
-                    full_path = os.path.join(path_item, item + '.lib')
-                    if os.path.isfile(full_path): # has this library
-                        lib_path = full_path
-                        break
-
-                if lib_path != '':
+            for item in group['LIBPATH']:
+                full_path = os.path.join(item, group['name'] + '.lib')
+                if os.path.isfile(full_path): # has this library
                     if group_tree != None:
-                        MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], lib_path, project_path)
+                        MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], full_path, project_path)
                     else:
-                        group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
+                        group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], full_path, project_path)
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
@@ -394,7 +388,7 @@ def MDK5Project(target, script):
             print('UV4.exe is not available, please check your keil installation')
 
 def MDK2Project(target, script):
-    template = open('template.Uv2', "r")
+    template = open(os.path.join(os.path.dirname(__file__), 'template.Uv2'), 'r')
     lines = template.readlines()
 
     project = open(target, "w")

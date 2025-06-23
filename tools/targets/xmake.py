@@ -69,14 +69,14 @@ class XmakeProject:
         else:
             RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
 
-        template_path = os.path.join(RTT_ROOT, "tools", "xmake.lua")
+        template_path = os.path.join(RTT_ROOT, "tools", "targets", "xmake.lua")
         with open(template_path, "r") as f:
             data = f.read()
         data = Template(data)
         data = data.safe_substitute(toolchain=self.toolchain, sdkdir=self.sdkdir, bindir=self.bindir, src_path=self.src_path, inc_path=self.inc_path,
                                     define=self.define, cflags=self.cflags, cxxflags=self.cxxflags, asflags=self.asflags,
                                     ldflags=self.ldflags, target="rt-thread")
-        with open("xmake.lua", "w") as f:
+        with open(os.path.join(os.path.dirname(__file__), "xmake.lua"), "w") as f:
             f.write(data)
 
 

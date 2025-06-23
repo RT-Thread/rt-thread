@@ -25,13 +25,17 @@
 import os
 import sys
 import string
-import building
+import uuid
 import utils
-
-import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
+
+# Add parent directory to path to import building
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import building
+
+import xml.etree.ElementTree as etree
 fs_encoding = sys.getfilesystemencoding()
 
 def VS_AddGroup(ProjectFiles, parent, name, files, libs, project_path):
