@@ -17,7 +17,7 @@ extern "C" {
 
 /**
  * @brief Hello world function
- * 
+ *
  * This function prints "Hello World!" to the console
  */
 void hello_world(void);

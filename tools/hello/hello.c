@@ -13,7 +13,7 @@
 
 /**
  * @brief Hello world function implementation
- * 
+ *
  * This function prints "Hello World!" to the console using rt_kprintf
  */
 void hello_world(void)
