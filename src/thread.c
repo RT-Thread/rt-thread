@@ -297,7 +297,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 }
 
 /**
- * @addtogroup group_Thread
+ * @addtogroup group_thread_management
  */
 
 /**@{*/

@@ -469,7 +469,7 @@ rt_inline int zoneindex(rt_size_t *bytes)
 }
 
 /**
- * @addtogroup group_MM
+ * @addtogroup group_memory_management
  */
 
 /**@{*/
