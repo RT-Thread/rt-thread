@@ -3,7 +3,7 @@
  */
 
 /**
- * @ingroup group_SystemInit
+ * @ingroup group_system_init
  *
  * This function will initialize user application.
  *
@@ -14,6 +14,6 @@
 void rt_application_init();
 
 /**
- * @ingroup group_SystemInit
+ * @ingroup group_system_init
  */
 void rt_system_heap_init(void* begin_addr, void* end_addr);

@@ -37,7 +37,7 @@ static volatile rt_atomic_t rt_tick = 0;
 static void (*rt_tick_hook)(void);
 
 /**
- * @addtogroup group_Hook
+ * @addtogroup group_hook
  */
 
 /**@{*/
@@ -56,7 +56,7 @@ void rt_tick_sethook(void (*hook)(void))
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup group_Clock
+ * @addtogroup group_clock_management
  */
 
 /**@{*/

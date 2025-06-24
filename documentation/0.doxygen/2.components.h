@@ -20,7 +20,7 @@
  */
 
 /**
- * @defgroup group_DFS Device Virtual File System
+ * @defgroup group_device_virtual_file_system Device Virtual File System
  *
  * @brief DFS is a virtual file system in RT-Thread RTOS.
  *
@@ -68,7 +68,7 @@
  */
 
 /**
- * @defgroup group_Module Application Module
+ * @defgroup group_module Application Module
  *
  * @brief Application Module is a feature let user to execute application in RT-Thread RTOS.
  *

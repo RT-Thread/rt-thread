@@ -14,7 +14,7 @@
  */
 
 /**
- * @defgroup group_KernelObject Kernel Object Management
+ * @defgroup group_kernel_object Kernel Object Management
  * @brief See @ref section_kernel_object_model
  *
  * The Kernel object system can access and manage all of the kernel objects.
@@ -34,22 +34,22 @@
  */
 
 /**
- * @defgroup group_Thread Thread Management
+ * @defgroup group_thread_management Thread Management
  * @brief See @ref page_thread_management
  */
 
 /**
- * @defgroup group_Clock Clock and Timer Management
+ * @defgroup group_clock_management Clock and Timer Management
  * @brief See @ref page_clock_management
  */
 
 /**
- * @defgroup group_IPC Inter-Thread Communication
+ * @defgroup group_thread_comm Inter-Thread Communication
  * @brief See @ref page_thread_comm
  */
 
 /**
- * @defgroup group_MM Memory Management
+ * @defgroup group_memory_management Memory Management
  * @brief memory management for memory pool and heap memory
  *
  * RT-Thread operating system supports two types memory management:
@@ -68,7 +68,7 @@
  */
 
 /**
- * @defgroup group_Hook Runtime Trace and Record
+ * @defgroup group_hook Runtime Trace and Record
  * @brief the hook function set in runtime
  *
  * In order to trace and record RT-Thread activity in runtime, a hook mechanism
@@ -83,12 +83,12 @@
  */
 
 /**
- * @defgroup group_KernelService Other useful kernel service
+ * @defgroup group_kernel_service Other useful kernel service
  * @brief other useful service in the kernel
  */
 
 /**
- * @defgroup group_Error Error Code
+ * @defgroup group_error Error Code
  * @brief error code
  *
  * The error code is defined to identify which kind of error occurs. When some
@@ -96,7 +96,7 @@
  */
 
 /**
- * @defgroup group_SystemInit System Initialization
+ * @defgroup group_system_init System Initialization
  *
  * @brief System initialization procedure.
  *
