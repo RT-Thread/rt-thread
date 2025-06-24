@@ -11,6 +11,7 @@
 *.ilk
 *.old
 *.crf
+*.dtb*
 build
 Debug
 .vs
