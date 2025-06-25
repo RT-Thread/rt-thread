@@ -18,10 +18,11 @@ def get_riscv64_default_arch_abi(gcc_bin):
         arch = None
         abi = None
         for line in result.splitlines():
-            if '-march=' in line and '[default]' in line:
-                arch = line.strip().split()[0]
-            if '-mabi=' in line and '[default]' in line:
-                abi = line.strip().split()[0]
+            if '-march=' in line:
+                arch = line.strip().split()[1]
+                arch = arch.split('_')[0]  # Get the base architecture, e.g., rv64imafdc
+            if '-mabi=' in line and 'option' not in line:
+                abi = line.strip().split()[1]
         return arch, abi
     except Exception as e:
         print("Error getting arch/abi:", e)
@@ -31,7 +32,7 @@ def get_riscv64_default_arch_abi(gcc_bin):
 CC_BIN = PREFIX + 'gcc'
 arch, abi = get_riscv64_default_arch_abi(CC_BIN)
 if arch and abi:
-    DEVICE = f' {arch} {abi} '
+    DEVICE = f' -march={arch} -mabi={abi} '
 else:
     DEVICE = ' -march=rv64imafdc -mabi=lp64'  # fallback
 
