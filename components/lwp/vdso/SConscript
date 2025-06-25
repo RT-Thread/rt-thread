@@ -35,12 +35,15 @@ else:
         process_env['RTT_DEVICE'] = rtconfig.DEVICE
 
     command = ["scons", "-C", vdso_arch]
-    clean_command = ["scons", "-C", vdso_arch, "--clean"] 
+    if GetOption('clean'):
+        command = ["scons", "-C", vdso_arch, "--clean"] 
 
-    if not GetOption('clean'):    
+    try:
         result = subprocess.run(command, env=process_env, check=True)
-    else:
-        result = subprocess.run(clean_command, env=process_env, check=True)
+    # generic error handle
+    except :
+        print('exec command: "%s" failed.' % ' '.join(command))
+        exit(1)
 
     if result.returncode == 0:
         print("Command executed successfully")
@@ -48,5 +51,5 @@ else:
         print("Command failed with exit code:", result.returncode)
         exit(1)
 
-group = DefineGroup('vDSO', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
+group = DefineGroup('lwProcess', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
 Return('group')
