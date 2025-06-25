@@ -471,6 +471,12 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+#define PKG_USING_NUVOTON_ARM926_LIB
+#define PKG_USING_NUVOTON_ARM926_LIB_LATEST_VERSION
+/* end of NUVOTON Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
