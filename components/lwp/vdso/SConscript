@@ -45,11 +45,7 @@ else:
         print('exec command: "%s" failed.' % ' '.join(command))
         exit(1)
 
-    if result.returncode == 0:
-        print("Command executed successfully")
-    else:
-        print("Command failed with exit code:", result.returncode)
-        exit(1)
+    print("Command executed successfully")
 
 group = DefineGroup('lwProcess', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
 Return('group')
