@@ -25,15 +25,17 @@
 import os
 import sys
 import string
-import building
-import rtconfig
-
-import xml.etree.ElementTree as etree
+import uuid
+import utils
 from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
 
-import utils
+# Add parent directory to path to import building
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import building
+
+import xml.etree.ElementTree as etree
 
 fs_encoding = sys.getfilesystemencoding()
 

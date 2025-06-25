@@ -1,0 +1,20 @@
+{
+    "name": "hello",
+    "version": "1.0.0",
+    "description": "Hello World component for RT-Thread",
+    "author": "RT-Thread Development Team",
+    "license": "Apache-2.0",
+    "type": "rt-package",
+    "source_files": [
+        "hello.c"
+    ],
+    "CPPPATH": [
+        "."
+    ],
+    "CPPDEFINES": [
+        "HELLO"
+    ],
+    "depends": [
+        ""
+    ]
+}

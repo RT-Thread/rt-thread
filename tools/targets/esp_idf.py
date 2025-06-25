@@ -22,8 +22,8 @@ def GenerateCFiles(env,project):
                 cm_file.write( "\t" + path.replace("\\", "/") + "\n" ) 
                 src = open(f.rfile().abspath, 'r')
                 for line in src.readlines():
-                    if re.match('INIT_(BOARD|PREV|DEVICE|COMPONENT|ENV|APP)_EXPORT\(.+\)', line):
-                        init_export.append(re.search('\(.+\)', line).group(0)[1:-1])
+                    if re.match(r'INIT_(BOARD|PREV|DEVICE|COMPONENT|ENV|APP)_EXPORT\(.+\)', line):
+                        init_export.append(re.search(r'\(.+\)', line).group(0)[1:-1])
                 src.close()
 
         cm_file.write("\n")

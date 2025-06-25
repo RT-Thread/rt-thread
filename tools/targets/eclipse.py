@@ -13,7 +13,12 @@ import glob
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
-import rt_studio
+from . import rt_studio
+import sys
+import os
+
+# Add parent directory to path to import building and utils
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from building import *
 from utils import *
 from utils import _make_path_relative

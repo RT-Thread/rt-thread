@@ -33,7 +33,6 @@ def update_project_file(project_dir):
         command = ' --target=iar -s'
         os.system('scons --directory=' + project_dir + command + ' > 1.txt')
 
-
 def update_all_project_files(root_path):
     # current path is dir
     if os.path.isdir(root_path):

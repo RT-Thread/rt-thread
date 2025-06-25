@@ -36,7 +36,7 @@ from utils import xml_indent
 
 fs_encoding = sys.getfilesystemencoding()
 
-iar_workspace = '''<?xml version="1.0" encoding="iso-8859-1"?>
+iar_workspace = r'''<?xml version="1.0" encoding="iso-8859-1"?>
 
 <workspace>
   <project>
@@ -208,5 +208,5 @@ def IARVersion():
     if not isinstance(stdout, str):
         stdout = str(stdout, 'utf8') # Patch for Python 3
     # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
-    iar_version = re.search('[\d\.]+', stdout).group(0)
+    iar_version = re.search(r'[\d\.]+', stdout).group(0)
     return iar_version
