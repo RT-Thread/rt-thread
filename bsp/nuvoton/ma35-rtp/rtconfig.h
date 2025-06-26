@@ -371,6 +371,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+#define PKG_USING_NUVOTON_CMSIS_DRIVER
+#define PKG_USING_NUVOTON_CMSIS_DRIVER_LATEST_VERSION
+#define PKG_USING_NUVOTON_SERIES_DRIVER
+#define PKG_USING_NUVOTON_SERIES_DRIVER_LATEST_VERSION
+/* end of NUVOTON Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
