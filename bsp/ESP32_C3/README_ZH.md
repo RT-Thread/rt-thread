@@ -48,6 +48,8 @@
 | :----------------- | :----------: | :------------------------------------- |
 | GPIO              |     支持     |  |
 | UART              |     支持     | 使用LUATOS_ESP32C3开发板需要在UART0_TX和UART0_RX连接串口转USB芯片（如CP2102）|
+| I2C              |     支持     | 硬件I2C会产生传输错误，推荐使用软件I2C，但使用软件I2C会占用一个硬件通用定时器 |
+| SPI              |     支持     | 支持自定义配置|
 | JTAG调试          |     支持     | ESP32C3采用USB方式和PC链接的开发板可以调试                                |
 | WIFI              | 部分支持 | 目前存在一些问题，例如不能在ISR中使用`rt_mq_recive`等 |
 | BLE             | 部分支持 | 目前存在一些问题，例如`NimBLE`启动一段时间后运行错误 |
@@ -99,12 +101,55 @@ Type "apropos word" to search for commands related to "word".
 
 ## 环境搭建及编译
 
+### Docker
+
+如果想要通轻度尝鲜esp32c3，推荐使用docker快速搭建环境，否则请使用原生环境搭建
+
+  1. 在确保已经安装 docker 并配置docker内部网络环境的基础上可以通过 docker image 或 dockerfile 获取镜像，docker image 不保证时效性，而 dockerfile 可以获取最新的主线分支，下面是对应的搭建命令
+      * 通过 dockerfile 搭建开发环境
+
+      ```sh
+      cd docker
+      sudo docker build --build-arg HTTP_PROXY=http://ip:port --build-arg HTTPS_PROXY=http://ip:port -t image_name .
+      ``` 
+      这里的 ip:port 需要修改为代理服务器 ip 和端口号，否则拉取仓库时可能会出现网络问题
+
+      * 通过docker image搭建开发环境
+
+      ```sh
+      sudo docker pull 1078249029/rtthread_esp32c3:latest
+      ```
+
+  2. 进入 docker 
+  
+      ```sh
+      sudo docker run -it --device=/dev/ttyUSB* image_name
+      ```
+
+      device 参数用于调试、烧录代码，通过在宿主机内执行`ls /dev/ttyUSB*`即可获得对应端口，如果是通过 docker image 搭建环境的需要将 image_name 替换为`1078249029/rtthread_esp32c3`
+
+  3. 环境使用
+   
+      使用下列命令烧录
+
+        ```sh
+        sudo esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
+        ```
+
+      使用下列命令调试
+
+        ```sh
+        sudo minicom -c on -D /dev/ttyUSB*
+        ```
+
+### 原生环境搭建
+
 1. 下载 RISC-V 工具链：
 
-    ```sh
-    wget https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
-    tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
-    ```
+ ```sh
+ wget https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+ tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+ ```
 
   2. 配置工具链的路径：
 
@@ -190,6 +235,7 @@ Linux 下可以使用先前下载的 esptool 进行烧录
 
 -  [supperthomas](https://github.com/supperthomas) 邮箱：<78900636@qq.com>
 -  [tangzz98](https://github.com/tangzz98) 邮箱：<tangz98@outlook.com>
+-  [wumingzi](https://github.com/1078249029) 邮箱：<1078249029@qq.com>
 
 ## 特别感谢
 

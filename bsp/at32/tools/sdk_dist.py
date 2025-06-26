@@ -35,6 +35,7 @@ def dist_do_building(BSP_ROOT, dist_dir):
         )
 
     print("=> copy bsp drivers")
+    bsp_copy_files(os.path.join(library_path, 'CMSIS'), os.path.join(library_dir, 'CMSIS'))
     bsp_copy_files(os.path.join(library_path, 'rt_drivers'), os.path.join(library_dir, 'rt_drivers'))
     bsp_copy_files(os.path.join(library_path, 'usbd_library'), os.path.join(library_dir, 'usbd_library'))
     bsp_copy_files(os.path.join(library_path, 'usbotg_library'), os.path.join(library_dir, 'usbotg_library'))

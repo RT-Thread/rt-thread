@@ -225,7 +225,6 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>AT32F457ZET7</state>
           <state>__RTTHREAD__</state>
-          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -353,30 +352,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\device_support</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\inc</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\core_support</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\libraries\usbotg_library\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\board\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\applications</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1276,7 +1272,6 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>AT32F457ZET7</state>
           <state>__RTTHREAD__</state>
-          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -1404,30 +1399,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\device_support</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\inc</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\core_support</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\libraries\usbotg_library\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\board\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\applications</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2109,6 +2101,9 @@
     </file>
   </group>
   <group>
+    <name>cmsis</name>
+  </group>
+  <group>
     <name>Compiler</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
@@ -2204,9 +2199,6 @@
       <name>$PROJ_DIR$\board\src\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\device_support\startup\iar\startup_at32f45x.s</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\rt_drivers\drv_common.c</name>
     </file>
     <file>
@@ -2219,16 +2211,16 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
   </group>
   <group>
@@ -2285,19 +2277,19 @@
   <group>
     <name>klibc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
     </file>
   </group>
   <group>
@@ -2319,100 +2311,7 @@
     </file>
   </group>
   <group>
-    <name>Libraries</name>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_pwc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_trng.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_acc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_emac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_qspi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_scfg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_aes.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_tmr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\device_support\system_at32f45x.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_xmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_wwdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_usb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_exint.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_crm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_ertc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_debug.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_i2c.c</name>
-    </file>
-  </group>
-  <group>
     <name>POSIX</name>
-  </group>
-  <group>
-    <name>smp</name>
   </group>
   <group>
     <name>usbotg_library</name>

@@ -13,14 +13,7 @@ path =  [cwd]
 path += [os.path.join(cwd, 'CubeMX_Config', 'Inc')]
 
 
-# STM32F030x6 || STM32F030x8 || STM32F031x6
-# STM32F038xx || STM32F042x6 || STM32F048xx
-# STM32F070x6 || STM32F051x8 || STM32F058xx
-# STM32F071xB || STM32F072xB || STM32F078xx
-# STM32F070xB || STM32F091xC || STM32F098xx || STM32F030xC
-# You can select chips from the list above
-CPPDEFINES = ['STM32F091xC']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 # if os.path.isfile(os.path.join(cwd, "ports", 'SConscript')):
 #     group = group + SConscript(os.path.join("ports", 'SConscript'))

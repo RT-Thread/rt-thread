@@ -1,0 +1,11 @@
+from building import *
+import os
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+src = ['pre_main.c']
+src += ['libcpu.S']
+
+group = DefineGroup('pre_main', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -14,6 +14,26 @@ except:
     print('Cannot found RT-Thread root directory, please check RTT_ROOT')
     print(RTT_ROOT)
     exit(-1)
+    
+def bsp_pkg_check():
+    import subprocess
+
+    check_paths = [
+        os.path.join("packages", "CMSIS-Core-latest"),
+        os.path.join("packages", "stm32f0_cmsis_driver-latest"),
+        os.path.join("packages", "stm32f0_hal_driver-latest")
+    ]
+
+    need_update = not all(os.path.exists(p) for p in check_paths)
+
+    if need_update:
+        print("\n===============================================================================")
+        print("Dependency packages missing, please running 'pkgs --update'...")
+        print("If no packages are fetched, run 'pkgs --upgrade' first, then 'pkgs --update'...")
+        print("===============================================================================")
+        exit(1)
+
+RegisterPreBuildingAction(bsp_pkg_check)
 
 TARGET = 'rt-thread.' + rtconfig.TARGET_EXT
 

@@ -64,10 +64,9 @@ enum CANBAUD
 #define RT_CAN_MODE_NOPRIV              0x00
 
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_CAN_Device CAN Driver
- *
+ * @defgroup    group_CAN_Device CAN Driver
  * @brief       CAN driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -198,9 +197,6 @@ enum CANBAUD
  * // 导出到 msh 命令列表中
  * MSH_CMD_EXPORT(can_sample, can device sample);
  * @endcode
- *
- * @ingroup group_Drivers
- *
  */
 
 

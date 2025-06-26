@@ -9,7 +9,6 @@
  */
 
 #include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
 
 /* defined the LD4 pin: PD8 */

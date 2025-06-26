@@ -50,7 +50,7 @@ int entry(void);
 #endif
 
 /**
- * @addtogroup group_KernelObject
+ * @addtogroup group_kernel_object
  * @{
  */
 
@@ -90,7 +90,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 /**@}*/
 
 /**
- * @addtogroup group_Clock
+ * @addtogroup group_clock_management
  * @{
  */
 
@@ -98,6 +98,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object));
  * clock & timer interface
  */
 rt_tick_t rt_tick_get(void);
+rt_tick_t rt_tick_get_delta(rt_tick_t base);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
 void rt_tick_increase_tick(rt_tick_t tick);
@@ -138,7 +139,7 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 /**@}*/
 
 /**
- * @addtogroup group_Thread
+ * @addtogroup group_thread_management
  * @{
  */
 
@@ -261,7 +262,7 @@ int rt_system_signal_init(void);
 /**@}*/
 
 /**
- * @addtogroup group_MM
+ * @addtogroup group_memory_management
  * @{
  */
 
@@ -317,7 +318,7 @@ void rt_page_free(void *addr, rt_size_t npages);
 #endif /* defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP) */
 
 /**
- * @ingroup group_Hook
+ * @ingroup group_hook
  * @{
  */
 
@@ -387,7 +388,7 @@ void rt_slab_free(rt_slab_t m, void *ptr);
 /**@}*/
 
 /**
- * @addtogroup group_IPC
+ * @addtogroup group_thread_comm
  * @{
  */
 
@@ -662,7 +663,7 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 
 #ifdef RT_USING_DEVICE
 /**
- * @addtogroup group_Device
+ * @addtogroup group_device_driver
  * @{
  */
 
@@ -761,7 +762,7 @@ void rt_components_board_init(void);
 #endif /* RT_USING_COMPONENTS_INIT */
 
 /**
- * @addtogroup group_KernelService
+ * @addtogroup group_kernel_service
  * @{
  */
 

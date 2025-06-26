@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, APM32F051x8, __RTTHREAD__</Define>
+              <Define>__RTTHREAD__, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, APM32F051x8, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\libcpu\arm\cortex-m0;..\libraries\APM32F0xx_Library\CMSIS\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\Drivers;..\..\..\components\libc\compilers\common\include;..\libraries\Drivers\config;applications;.;board;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\poll;board\ports;..\..\..\components\drivers\include;..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\inc;..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\poll;.;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\inc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\Drivers\config;..\..\..\components\drivers\include;board;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Include;applications;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;..\..\..\components\drivers\smp_call;board\ports;..\..\..\libcpu\arm\cortex-m0;..\libraries\APM32F0xx_Library\CMSIS\Include;..\libraries\Drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -469,9 +469,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -602,9 +640,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -621,9 +659,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -750,6 +788,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\defunct.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
@@ -791,44 +867,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -997,6 +1035,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1031,13 +1107,6 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>apm32f0xx_eint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_eint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>apm32f0xx_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_misc.c</FilePath>
@@ -1052,6 +1121,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>apm32f0xx_eint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_eint.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>system_apm32f0xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Source\system_apm32f0xx.c</FilePath>
@@ -1059,9 +1135,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>apm32f0xx_usart.c</FileName>
+              <FileName>apm32f0xx_rcm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_usart.c</FilePath>
+              <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_rcm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1073,9 +1149,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>apm32f0xx_rcm.c</FileName>
+              <FileName>apm32f0xx_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_rcm.c</FilePath>
+              <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_usart.c</FilePath>
             </File>
           </Files>
         </Group>

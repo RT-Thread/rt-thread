@@ -29,7 +29,7 @@ static void (*rt_mp_alloc_hook)(struct rt_mempool *mp, void *block);
 static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);
 
 /**
- * @addtogroup group_Hook
+ * @addtogroup group_hook
  */
 
 /**@{*/
@@ -60,7 +60,7 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup group_MM
+ * @addtogroup group_memory_management
  */
 
 /**@{*/

@@ -105,7 +105,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart3"
-#define RT_VER_NUM 0x50200
+#define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -145,6 +145,12 @@
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_SOFT_I2C
+#define RT_USING_SOFT_I2C0
+#define RT_SOFT_I2C0_SCL_PIN 1
+#define RT_SOFT_I2C0_SDA_PIN 2
+#define RT_SOFT_I2C0_BUS_NAME "i2c0"
+#define RT_SOFT_I2C0_TIMING_DELAY 10
+#define RT_SOFT_I2C0_TIMING_TIMEOUT 10
 #define RT_USING_SOFT_I2C1
 #define RT_SOFT_I2C1_SCL_PIN 38
 #define RT_SOFT_I2C1_SDA_PIN 39
@@ -298,6 +304,24 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+#define PKG_USING_MM32
+#define PKG_USING_MM32_LATEST_VERSION
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -309,9 +333,6 @@
 /* end of touch drivers */
 #define PKG_USING_AT24CXX
 #define PKG_USING_AT24CXX_LATEST_VERSION
-#define PKG_AT24CXX_FINSH
-#define PKG_USING_MM32
-#define PKG_USING_MM32_LATEST_VERSION
 /* end of peripheral libraries and drivers */
 
 /* AI packages */

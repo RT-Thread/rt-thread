@@ -269,7 +269,11 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
         hsd->DTIMER = HW_SDIO_DATATIMEOUT;
         hsd->DLEN = data->blks * data->blksize;
         hsd->DCTRL = (get_order(data->blksize) << 4) | (data->flags & DATA_DIR_READ ? SDMMC_DCTRL_DTDIR : 0);
-        hsd->IDMABASE0 = (rt_uint32_t)cache_buf;
+        #ifndef SOC_SERIES_STM32H7RS
+            hsd->IDMABASE0 = (rt_uint32_t)cache_buf;
+        #else
+            hsd->IDMABASER = (rt_uint32_t)cache_buf;
+        #endif
         hsd->IDMACTRL = SDMMC_IDMA_IDMAEN;
     }
      /* config cmd reg */
@@ -648,7 +652,11 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
   */
 static rt_uint32_t stm32_sdio_clock_get(void)
 {
-    return HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SDMMC);
+    #ifndef SOC_SERIES_STM32H7RS
+        return HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SDMMC);
+    #else
+        return HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SDMMC12);
+    #endif
 }
 
 void SDMMC1_IRQHandler(void)

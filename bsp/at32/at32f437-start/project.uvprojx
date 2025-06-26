@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_ARMLIBC, __RTTHREAD__, USE_STDPERIPH_DRIVER, AT32F437ZMT7, RT_USING_LIBC, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>AT32F437ZMT7, RT_USING_LIBC, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\epoll;.;..\..\..\components\drivers\include;board\inc;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\usbotg_library\inc;..\..\..\components\finsh;..\..\..\components\drivers\include;applications;..\libraries\rt_drivers;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\include;..\..\..\components\libc\compilers\common\extension;..\libraries\AT32F435_437_Firmware_Library\cmsis\cm4\core_support;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;board;..\..\..\components\libc\posix\io\eventfd;..\libraries\rt_drivers\config;..\libraries\AT32F435_437_Firmware_Library\cmsis\cm4\device_support;..\..\..\components\drivers\include;..\libraries\AT32F435_437_Firmware_Library\drivers\inc</IncludePath>
+              <IncludePath>..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\finsh;..\..\..\components\drivers\smp_call;board\inc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;board;applications;.;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\epoll;..\libraries\usbotg_library\inc;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\libraries\rt_drivers\config;..\libraries\rt_drivers;..\..\..\components\libc\posix\io\eventfd;..\..\..\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -694,13 +694,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_at32f435_437.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\cmsis\cm4\device_support\startup\mdk\startup_at32f435_437.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\rt_drivers\drv_common.c</FilePath>
@@ -725,9 +718,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_parse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -739,16 +739,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1063,9 +1056,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1077,9 +1070,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1091,9 +1084,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1132,212 +1125,6 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>at32f435_437_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_tmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_edma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_scfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_scfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_usb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_debug.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_exint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_exint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_xmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_xmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_pwc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_pwc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_at32f435_437.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\cmsis\cm4\device_support\system_at32f435_437.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_ertc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_ertc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_acc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_acc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_emac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_wwdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_wwdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_crm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_crm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_dvp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_dvp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f435_437_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F435_437_Firmware_Library\drivers\src\at32f435_437_dma.c</FilePath>
             </File>
           </Files>
         </Group>

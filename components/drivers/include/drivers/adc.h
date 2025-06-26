@@ -15,10 +15,10 @@
 
 #include <rtthread.h>
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_ADC ADC
- *
+ * @defgroup    group_ADC ADC
  * @brief       ADC driver api
+ * @ingroup     group_device_driver
+ *
  *
  * <b>Example</b>
  * @code {.c}
@@ -56,8 +56,6 @@
  * MSH_CMD_EXPORT(adc_vol_sample, adc voltage convert sample);
  *
  * @endcode
- *
- * @ingroup group_Drivers
  */
 
 

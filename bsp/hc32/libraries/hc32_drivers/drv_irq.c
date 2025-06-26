@@ -67,7 +67,7 @@ rt_err_t hc32_install_irq_handler(struct hc32_irq_config *irq_config,
     stcIrqSignConfig.pfnCallback = irq_hdr;
     if (LL_OK == INTC_IrqSignIn(&stcIrqSignConfig))
 nvic_config:
-#elif defined (HC32F460) || defined (HC32F4A0)
+#elif defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
     stcIrqSignConfig.enIRQn      = irq_config->irq_num;
     stcIrqSignConfig.enIntSrc    = irq_config->int_src;
     stcIrqSignConfig.pfnCallback = irq_hdr;

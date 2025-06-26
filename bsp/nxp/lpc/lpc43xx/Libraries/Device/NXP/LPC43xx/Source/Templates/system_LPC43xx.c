@@ -105,7 +105,7 @@
 
 
 /*----------------------------------------------------------------------------
- * Configure PLL1                                                                 
+ * Configure PLL1
  *----------------------------------------------------------------------------
  * Integer mode:
  *    - PLL1_DIRECT = 0 (Post divider enabled)
@@ -183,7 +183,7 @@
  *
  *   Normal operating mode without post-divider and with pre-divider
  *    - PLL0USB_DIRECTI = 0
- *    - PLL0USB_DIRECTO = 1 
+ *    - PLL0USB_DIRECTO = 1
  *    - PLL0USB_BYPASS  = 0
  *    - Output frequency:
  *                        FOUT = FIN * 2 * M / N
@@ -367,7 +367,7 @@ void SetClock (void) {
 /*----------------------------------------------------------------------------
   PLL0USB Setup
  *----------------------------------------------------------------------------*/
-  
+
   /* Power down PLL0USB                                                       */
   LPC_CGU->PLL0USB_CTRL  |= 1;
 
@@ -385,10 +385,10 @@ void SetClock (void) {
         x = (((x ^ (x >> 1)) & 1) << 14) | ((x >> 1) & 0x3FFF);
       }
   }
-  
+
   if (PLL0USB_M < 60) selp = (PLL0USB_M >> 1) + 1;
   else        selp = 31;
-  
+
   if      (PLL0USB_M > 16384) seli = 1;
   else if (PLL0USB_M >  8192) seli = 2;
   else if (PLL0USB_M >  2048) seli = 4;
@@ -408,13 +408,13 @@ void SetClock (void) {
       break;
     case 2:  x = 0x00000202;
       break;
-    default: 
+    default:
       for (i = PLL0USB_N; i <= 0x0100; i++) {
         x =(((x ^ (x >> 2) ^ (x >> 3) ^ (x >> 4)) & 1) << 7) | ((x >> 1) & 0x7F);
       }
   }
   LPC_CGU->PLL0USB_NP_DIV = (x << 12);
-  
+
   /* P divider                                                                */
   x = 0x10;
   switch (PLL0USB_P) {
@@ -428,10 +428,10 @@ void SetClock (void) {
       for (i = PLL0USB_P; i <= 0x200; i++) {
         x = (((x ^ (x >> 2)) & 1) << 4) | ((x >> 1) &0x0F);
       }
-  } 
+  }
   LPC_CGU->PLL0USB_NP_DIV |= x;
-  
-  LPC_CGU->PLL0USB_CTRL  = (PLL0USB_CLK_SEL   << 24) | /* Clock source sel    */                             
+
+  LPC_CGU->PLL0USB_CTRL  = (PLL0USB_CLK_SEL   << 24) | /* Clock source sel    */
                            (1                 << 11) | /* Autoblock En        */
                            (1                 << 4 ) | /* PLL0USB clock en    */
                            (PLL0USB_DIRECTO   << 3 ) | /* Direct output       */
@@ -444,7 +444,7 @@ void SetClock (void) {
 /*----------------------------------------------------------------------------
   Integer divider Setup
  *----------------------------------------------------------------------------*/
-  
+
   /* Configure integer dividers                                               */
   LPC_CGU->IDIVA_CTRL = (0              <<  0) |  /* Disable Power-down       */
                         (IDIVA_IDIV     <<  2) |  /* IDIV                     */
@@ -527,7 +527,7 @@ void SystemInit_ExtMemCtl (void) {
   LPC_CCU1->CLK_M4_EMC_CFG = (1 << 2) | (1 << 1) | 1;
   while (!(LPC_CCU1->CLK_M4_EMC_STAT & 1));
 
-  /* Set EMC clock output delay */  
+  /* Set EMC clock output delay */
   if (SystemCoreClock < 80000000UL) {
     LPC_SCU->EMCDELAYCLK = EMC_CLK_DLY_TIM_0; /* No EMC clock out delay       */
   }
@@ -595,7 +595,7 @@ void SystemInit_ExtMemCtl (void) {
   LPC_SCU->SFSPD_4  = EMC_PIN_SET | 2;  /* PD_4:  D18                         */
   LPC_SCU->SFSPD_5  = EMC_PIN_SET | 2;  /* PD_5:  D19                         */
   LPC_SCU->SFSPD_6  = EMC_PIN_SET | 2;  /* PD_6:  D20                         */
-  LPC_SCU->SFSPD_7  = EMC_PIN_SET | 2;  /* PD_7:  D21                         */ 
+  LPC_SCU->SFSPD_7  = EMC_PIN_SET | 2;  /* PD_7:  D21                         */
   LPC_SCU->SFSPD_8  = EMC_PIN_SET | 2;  /* PD_8:  D22                         */
   LPC_SCU->SFSPD_9  = EMC_PIN_SET | 2;  /* PD_9:  D23                         */
   LPC_SCU->SFSPD_10 = EMC_PIN_SET | 2;  /* PD_10: BLS3                        */
@@ -652,7 +652,7 @@ void SystemInit_ExtMemCtl (void) {
   LPC_SCU->SFSCLK_1 = EMC_PIN_SET | 0;  /* CLK1                               */
   LPC_SCU->SFSCLK_2 = EMC_PIN_SET | 0;  /* CLK2                               */
   LPC_SCU->SFSCLK_3 = EMC_PIN_SET | 0;  /* CLK3                               */
-  
+
   /* Static memory configuration (chip select 0)                              */
 #if (USE_EXT_STAT_MEM_CS0)
   LPC_EMC->STATICCONFIG0  = (1 <<  7) | /* Byte lane state: use WE signal     */
@@ -663,7 +663,7 @@ void SystemInit_ExtMemCtl (void) {
   LPC_EMC->STATICWAITRD0  = EMC_NANOSEC(90, SystemCoreClock, div);
   LPC_EMC->STATICCONFIG0 |= (1 << 19) ; /* Enable buffer                      */
 #endif
-  
+
   /* Dynamic memory configuration (chip select 0)                             */
 #if (USE_EXT_DYN_MEM_CS0)
 
@@ -738,6 +738,7 @@ uint32_t MeasureFreq (uint32_t clk_sel) {
 /*----------------------------------------------------------------------------
   Get PLL1 (divider and multiplier) parameters
  *----------------------------------------------------------------------------*/
+uint32_t GetPLL1Param (void);
 __inline uint32_t GetPLL1Param (void) {
   uint32_t ctrl;
   uint32_t p;
@@ -761,7 +762,7 @@ __inline uint32_t GetPLL1Param (void) {
       div *= (2*p);
     }
   }
-  return ((div << 8) | (mul)); 
+  return ((div << 8) | (mul));
 }
 
 
@@ -783,7 +784,7 @@ int32_t GetClkSel (uint32_t clk_src) {
       return ((LPC_CREG->CREG0 & 0x0A) != 0x02) ? (-1) : (CLK_SRC_32KHZ);
     case CLK_SRC_XTAL:
      return  (LPC_CGU->XTAL_OSC_CTRL & 1)       ? (-1) : (CLK_SRC_XTAL);
-    
+
     case CLK_SRC_PLL0U: reg = LPC_CGU->PLL0USB_CTRL;    break;
     case CLK_SRC_PLL0A: reg = LPC_CGU->PLL0AUDIO_CTRL;  break;
     case CLK_SRC_PLL1:  reg = (LPC_CGU->PLL1_STAT & 1) ? (LPC_CGU->PLL1_CTRL) : (0); break;
@@ -793,7 +794,7 @@ int32_t GetClkSel (uint32_t clk_src) {
     case CLK_SRC_IDIVC: reg = LPC_CGU->IDIVC_CTRL;      break;
     case CLK_SRC_IDIVD: reg = LPC_CGU->IDIVD_CTRL;      break;
     case CLK_SRC_IDIVE: reg = LPC_CGU->IDIVE_CTRL;      break;
-    
+
     default:
       return (clk_sel);
   }
@@ -815,29 +816,29 @@ uint32_t GetClockFreq (uint32_t clk_src) {
   int32_t  clk_sel    = clk_src;
 
   do {
-    switch (clk_sel) {      
-      case CLK_SRC_32KHZ:    main_freq = CLK_32KHZ;     break; 
+    switch (clk_sel) {
+      case CLK_SRC_32KHZ:    main_freq = CLK_32KHZ;     break;
       case CLK_SRC_IRC:      main_freq = CLK_IRC;       break;
-      case CLK_SRC_ENET_RX:  main_freq = CLK_ENET_RX;   break; 
-      case CLK_SRC_ENET_TX:  main_freq = CLK_ENET_TX;   break; 
-      case CLK_SRC_GP_CLKIN: main_freq = CLK_GP_CLKIN;  break; 
+      case CLK_SRC_ENET_RX:  main_freq = CLK_ENET_RX;   break;
+      case CLK_SRC_ENET_TX:  main_freq = CLK_ENET_TX;   break;
+      case CLK_SRC_GP_CLKIN: main_freq = CLK_GP_CLKIN;  break;
       case CLK_SRC_XTAL:     main_freq = CLK_XTAL;      break;
-  
+
       case CLK_SRC_IDIVA: div *= ((LPC_CGU->IDIVA_CTRL >> 2) & 0x3) + 1; break;
       case CLK_SRC_IDIVB: div *= ((LPC_CGU->IDIVB_CTRL >> 2) & 0x3) + 1; break;
       case CLK_SRC_IDIVC: div *= ((LPC_CGU->IDIVC_CTRL >> 2) & 0x3) + 1; break;
       case CLK_SRC_IDIVD: div *= ((LPC_CGU->IDIVD_CTRL >> 2) & 0x3) + 1; break;
       case CLK_SRC_IDIVE: div *= ((LPC_CGU->IDIVE_CTRL >> 2) & 0x3) + 1; break;
-  
+
       case CLK_SRC_PLL0U: /* Not implemented */  break;
       case CLK_SRC_PLL0A: /* Not implemented */  break;
-      
+
       case CLK_SRC_PLL1:
         tmp = GetPLL1Param ();
         mul *= (tmp     ) & 0xFF;       /* PLL input clock multiplier         */
         div *= (tmp >> 8) & 0xFF;       /* PLL input clock divider            */
         break;
-      
+
       default:
         return (0);                     /* Clock not running or not supported */
     }

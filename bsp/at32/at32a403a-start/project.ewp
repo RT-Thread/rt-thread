@@ -225,7 +225,6 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>AT32A403AVGT7</state>
           <state>__RTTHREAD__</state>
-          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -353,30 +352,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\cmsis\cm4\device_support</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
-          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\cmsis\cm4\core_support</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\libraries\usbd_library\inc</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\libraries\usbd_library\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\board\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1276,7 +1272,6 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>AT32A403AVGT7</state>
           <state>__RTTHREAD__</state>
-          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -1404,30 +1399,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\cmsis\cm4\device_support</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
-          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\cmsis\cm4\core_support</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\libraries\usbd_library\inc</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\libraries\usbd_library\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\board\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2109,6 +2101,9 @@
     </file>
   </group>
   <group>
+    <name>cmsis</name>
+  </group>
+  <group>
     <name>Compiler</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
@@ -2204,9 +2199,6 @@
       <name>$PROJ_DIR$\board\src\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\cmsis\cm4\device_support\startup\iar\startup_at32a403a.s</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\rt_drivers\drv_common.c</name>
     </file>
     <file>
@@ -2219,16 +2211,16 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
   </group>
   <group>
@@ -2285,19 +2277,19 @@
   <group>
     <name>klibc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
     </file>
   </group>
   <group>
@@ -2319,91 +2311,7 @@
     </file>
   </group>
   <group>
-    <name>Libraries</name>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_xmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_pwc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_bpr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_acc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\cmsis\cm4\device_support\system_at32a403a.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_usb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_crm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_debug.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_wwdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_exint.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_tmr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_emac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32A403A_Firmware_Library\drivers\src\at32a403a_adc.c</name>
-    </file>
-  </group>
-  <group>
     <name>POSIX</name>
-  </group>
-  <group>
-    <name>smp</name>
   </group>
   <group>
     <name>usbd_library</name>

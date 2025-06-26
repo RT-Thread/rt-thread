@@ -21,16 +21,10 @@
 struct ifx_uart_config
 {
     cyhal_uart_t *uart_obj;
-
     const char *name;
     rt_uint32_t tx_pin;
     rt_uint32_t rx_pin;
     CySCB_Type *usart_x;
-#if defined(SOC_SERIES_IFX_XMC)
-    rt_uint32_t intrSrc;
-#else
-    IRQn_Type intrSrc;
-#endif
     cy_israddress userIsr;
     cy_stc_sysint_t *UART_SCB_IRQ_cfg;
 };

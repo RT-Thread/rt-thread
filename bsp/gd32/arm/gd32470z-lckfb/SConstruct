@@ -20,7 +20,7 @@ TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-    CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc',
     CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
@@ -55,6 +55,9 @@ objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConsc
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript')))
+
+# include lcd and drivers 
+objs.extend(SConscript(os.path.join(SDK_ROOT, 'board', 'ports', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

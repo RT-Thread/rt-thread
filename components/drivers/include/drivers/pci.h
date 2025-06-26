@@ -157,7 +157,10 @@ struct rt_pci_device
     rt_uint8_t pin;
     struct rt_pic *intx_pic;
 
+    rt_bool_t pm_enabled;
+
     struct rt_pci_bus_resource resource[RT_PCI_BAR_NR_MAX];
+    struct rt_pci_bus_resource rom;
 
     rt_uint8_t pme_cap;
     rt_uint8_t msi_cap;

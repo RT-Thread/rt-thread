@@ -1,0 +1,18 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../../..
+
+PKGS_DIR := packages
+
+config XUANTIAN_SMARTL_E907
+    bool
+    select ARCH_RISCV32
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+rsource "board/Kconfig"

@@ -1,0 +1,58 @@
+{
+    "core": {
+        "version": "2.3.0.44500"
+    },
+    "opt": {
+        "props": {
+            "capabilities": [
+                "adc",
+                "arduino",
+                "bsp_gen5",
+                "can",
+                "cat1",
+                "cat1c",
+                "dma",
+                "ethernet",
+                "flash_4160k",
+                "hal",
+                "i2c",
+                "i2s",
+                "kit_xmc71_evk_lite_v2",
+                "led",
+                "low_power",
+                "lptimer",
+                "mcu_gp",
+                "memory",
+                "memory_qspi",
+                "multi_core",
+                "nor_flash",
+                "qspi",
+                "rtc",
+                "sdhc",
+                "sdio",
+                "smart_io",
+                "spi",
+                "sram_768k",
+                "std_crypto",
+                "switch",
+                "uart",
+                "xmc7000"
+            ],
+            "dependencies": {
+                "cat1cm0p": "release-v1.8.0",
+                "core-lib": "release-v1.4.3",
+                "core-make": "release-v3.4.1",
+                "mtb-hal-cat1": "release-v2.6.2",
+                "mtb-pdl-cat1": "release-v3.15.0",
+                "recipe-make-cat1c": "release-v1.4.1"
+            },
+            "docs_dir": "docs",
+            "flow_version": "2.0",
+            "min_tools": "3.0.0",
+            "template": {
+                "id": "mtb-template-cat1",
+                "version": "release-v1.6.0"
+            }
+        }
+    }
+}

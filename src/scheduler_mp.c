@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -145,7 +145,7 @@ static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 
 /**
- * @addtogroup group_Hook
+ * @addtogroup group_hook
  */
 
 /**@{*/
@@ -398,7 +398,20 @@ static void _sched_remove_thread_locked(struct rt_thread *thread)
 }
 
 /**
- * @brief This function will initialize the system scheduler.
+ * @brief Initialize the system scheduler.
+ *
+ * @details This function performs the following initialization tasks:
+ *          - Initializes the global scheduler spinlock for multi-core synchronization.
+ *          - Initializes the global priority table for saving ready threads of all priority levels.
+ *          - For each CPU core:
+ *            * Initializes per-CPU priority tables
+ *            * Sets initial CPU state (irq_switch_flag, current_priority, etc.)
+ *            * Initializes per-CPU ready tables (if priority > 32)
+ *            * Initializes per-CPU spinlock (if RT_USING_SMART is defined)
+ *          - Initializes the global ready priority group and tables (if priority > 32) as bitmaps for all priorities.
+ *
+ * @note This function must be called before any thread scheduling can occur.
+ *       It prepares the scheduler data structures for multi-core operation.
  */
 void rt_system_scheduler_init(void)
 {
@@ -447,8 +460,20 @@ void rt_system_scheduler_init(void)
 }
 
 /**
- * @brief This function will startup the scheduler. It will select one thread
- *        with the highest priority level, then switch to it.
+ * @brief Start the system scheduler and switch to the highest priority thread.
+ *
+ * @details This function performs the following operations:
+ *          - Releases legacy CPU lock (if any)
+ *          - Disables interrupts to ensure atomic operation
+ *          - Acquires scheduler lock for thread safety
+ *          - Selects the highest priority thread from ready queue
+ *          - Removes the selected thread from ready queue
+ *          - Assigns current CPU core to the selected thread
+ *          - Performs context switch to the selected thread
+ *
+ * @note This function will not return after successful execution.
+ *       It performs the initial thread switch during system startup.
+ *       The scheduler must be initialized before calling this function.
  */
 void rt_system_scheduler_start(void)
 {
@@ -495,7 +520,7 @@ void rt_system_scheduler_start(void)
 }
 
 /**
- * @addtogroup group_Thread
+ * @addtogroup group_thread_management
  * @cond
  */
 
@@ -549,6 +574,14 @@ rt_err_t rt_sched_unlock(rt_sched_lock_level_t level)
     return RT_EOK;
 }
 
+/**
+ * @brief Check if the scheduler is currently locked
+ *
+ * @return rt_bool_t Returns RT_TRUE if scheduler is locked, RT_FALSE otherwise
+ *
+ * @note This function checks the scheduler lock status in a thread-safe manner
+ *       by temporarily disabling interrupts to get consistent state.
+ */
 rt_bool_t rt_sched_is_locked(void)
 {
     rt_bool_t rc;
@@ -662,6 +695,14 @@ static rt_thread_t _prepare_context_switch_locked(int cpu_id,
 }
 
 #ifdef RT_USING_SIGNALS
+/**
+ * @brief Preprocess pending signals for a suspended thread
+ *
+ * @param current_thread The thread to check for pending signals
+ *
+ * @details This function checks if the specified thread is suspended and has pending signals.
+ *          If both conditions are met, it will wake up/resume the thread to process the signals.
+ */
 static void _sched_thread_preprocess_signal(struct rt_thread *current_thread)
 {
     /* should process signal? */
@@ -679,6 +720,20 @@ static void _sched_thread_preprocess_signal(struct rt_thread *current_thread)
     }
 }
 
+/**
+ * @brief Process pending signals for the current thread
+ *
+ * @param current_thread The thread to process signals for
+ *
+ * @details This function:
+ *          - Locks the scheduler to ensure thread safety
+ *          - Checks if the thread has pending signals
+ *          - If signals are pending:
+ *            * Clears the pending flag
+ *            * Unlocks the scheduler
+ *            * Calls signal handler to process the signals
+ *          - If no signals pending, simply unlocks the scheduler
+ */
 static void _sched_thread_process_signal(struct rt_thread *current_thread)
 {
     rt_base_t level;
@@ -722,6 +777,27 @@ static void _sched_thread_process_signal(struct rt_thread *current_thread)
 #define SCHED_THREAD_PROCESS_SIGNAL(curthr)
 #endif /* RT_USING_SIGNALS */
 
+/**
+ * @brief Unlock scheduler and perform rescheduling if needed
+ *
+ * @param level The scheduler lock level obtained from rt_sched_lock()
+ *
+ * @return rt_err_t
+ *   - RT_EOK: Success
+ *   - -RT_EBUSY: Scheduler not available
+ *   - -RT_ESCHEDISR: Called in interrupt context
+ *   - -RT_ESCHEDLOCKED: Scheduler still locked by others
+ *
+ * @details This function:
+ *   - Releases scheduler lock at specified level
+ *   - Checks if rescheduling is needed
+ *   - If needed, finds highest priority thread and switches to it
+ *   - Processes pending signals for current thread
+ *   - Handles various error conditions
+ *
+ * @note Must be called in pair with rt_sched_lock()
+ *       May trigger context switch if conditions met
+ */
 rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
 {
     struct rt_thread *to_thread;
@@ -807,6 +883,15 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
  * @brief This function will perform one scheduling. It will select one thread
  *        with the highest priority level in global ready queue or local ready queue,
  *        then switch to it.
+ *
+ * @details This function performs the following operations:
+ *   - Disables interrupts to enter critical section
+ *   - Gets current CPU and thread context
+ *   - Checks if called from interrupt context
+ *   - Finds highest priority ready thread
+ *   - Performs context switch if needed
+ *   - Processes pending signals
+ *   - Restores interrupt state
  */
 void rt_schedule(void)
 {
@@ -890,9 +975,16 @@ void rt_schedule(void)
 }
 
 /**
- * @brief This function checks whether a scheduling is needed after an IRQ context switching. If yes,
- *        it will select one thread with the highest priority level, and then switch
- *        to it.
+ * @brief Perform thread scheduling after an interrupt context switch
+ *
+ * @param context The interrupt context pointer
+ *
+ * @details This function handles scheduling when returning from interrupt context:
+ *   - Checks if scheduling is needed (irq_switch_flag set)
+ *   - If needed, finds highest priority ready thread
+ *   - Performs context switch to new thread if available
+ *   - Handles cases where scheduler is locked or still in interrupt context
+ *   - Processes pending signals before scheduling
  */
 void rt_scheduler_do_irq_switch(void *context)
 {
@@ -1002,8 +1094,20 @@ void rt_sched_remove_thread(struct rt_thread *thread)
     RT_SCHED_CTX(thread).stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
 }
 
-/* thread status initialization and setting up on startup */
-
+/**
+ * @brief Initialize thread's scheduling private data
+ *
+ * @param thread The thread to be initialized
+ * @param tick Initial time slice value for the thread
+ * @param priority Initial priority of the thread
+ *
+ * @details This function performs the following initialization:
+ *   - Initializes thread's ready list node
+ *   - Sets initial and current priority (must be < RT_THREAD_PRIORITY_MAX)
+ *   - Initializes priority bitmasks (handles >32 priorities if needed)
+ *   - Sets initial time slice values
+ *   - For SMP systems, initializes critical section nesting counter
+ */
 void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick, rt_uint8_t priority)
 {
     rt_list_init(&RT_THREAD_LIST_NODE(thread));
@@ -1032,7 +1136,22 @@ void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick, rt_ui
 
 }
 
-/* Normally, there isn't anyone racing with us so this operation is lockless */
+/**
+ * @brief Initialize thread scheduling attributes for startup
+ *
+ * @param thread The thread to be initialized
+ *
+ * @details This function:
+ *   - For systems with >32 priorities:
+ *     * Sets priority number (5 bits)
+ *     * Initializes number_mask and high_mask (3 bits)
+ *   - For systems with <=32 priorities:
+ *     * Initializes number_mask
+ *   - Sets thread state to SUSPEND
+ *
+ * @note This is a lockless operation as it's called during thread creation
+ *       when no concurrent access is possible
+ */
 void rt_sched_thread_startup(struct rt_thread *thread)
 {
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -1048,9 +1167,19 @@ void rt_sched_thread_startup(struct rt_thread *thread)
 }
 
 /**
- * @brief Update scheduling status of thread. this operation is taken as an
- *        atomic operation of the update of SP. Since the local irq is disabled,
- *        it's okay to assume that the stack will not be modified meanwhile.
+ * @brief Update thread scheduling status after context switch
+ *
+ * @param thread The thread that will be running after the context switch
+ *
+ * @details This function performs critical post-context-switch operations:
+ *   - Verifies interrupts are disabled (RT_ASSERT)
+ *   - Releases scheduler lock from previous thread if exists
+ *   - Updates current thread pointer for the CPU
+ *   - Must be called with interrupts disabled
+ *
+ * @note this operation is taken as an atomic operation of the update of SP.
+ *       Since the local irq is disabled, it's okay to assume that the stack
+ *       will not be modified meanwhile.
  */
 void rt_sched_post_ctx_switch(struct rt_thread *thread)
 {
@@ -1075,6 +1204,21 @@ void rt_sched_post_ctx_switch(struct rt_thread *thread)
 
 static volatile int _critical_error_occurred = 0;
 
+/**
+ * @brief Safely exit critical section with level checking
+ *
+ * @param critical_level The expected critical level to match
+ *
+ * @details This function provides a safe way to exit critical sections by:
+ *   - Verifying the current critical level matches the expected level
+ *   - If mismatch detected (debug build only):
+ *     * Prints error message with current and expected levels
+ *     * Triggers backtrace for debugging
+ *     * Enters infinite loop to halt execution
+ *   - Always calls rt_exit_critical() to ensure critical section is exited
+ *
+ * @note This is primarily used for debugging critical section mismatches.
+ */
 void rt_exit_critical_safe(rt_base_t critical_level)
 {
     struct rt_cpu *pcpu = rt_cpu_self();
@@ -1100,6 +1244,14 @@ void rt_exit_critical_safe(rt_base_t critical_level)
 
 #else /* !RT_DEBUGING_CRITICAL */
 
+/**
+ * @brief Safely exit critical section (non-debug version)
+ *
+ * @param critical_level The expected critical level (unused in non-debug build)
+ *
+ * @details This is the non-debug version that simply calls rt_exit_critical().
+ *          The critical_level parameter is ignored in this implementation.
+ */
 void rt_exit_critical_safe(rt_base_t critical_level)
 {
     RT_UNUSED(critical_level);
@@ -1122,7 +1274,20 @@ RTM_EXPORT(rt_exit_critical_safe);
 #endif /* ARCH_USING_HW_THREAD_SELF */
 
 /**
- * @brief This function will lock the thread scheduler.
+ * @brief Enter a critical section and lock the scheduler
+ *
+ * @return The critical level after entering (nesting count)
+ *         Returns -RT_EINVAL if scheduler is unavailable
+ *
+ * @details This function:
+ *   - Disables interrupts to ensure atomic operation
+ *   - Gets current thread context
+ *   - Increments critical section nesting counter
+ *   - Returns the new nesting level
+ *   - Handles both hardware-assisted and software thread context cases
+ *
+ * @note Must be paired with rt_exit_critical()
+ *       Can be nested, each call must have matching exit call
  */
 rt_base_t rt_enter_critical(void)
 {
@@ -1162,7 +1327,21 @@ rt_base_t rt_enter_critical(void)
 RTM_EXPORT(rt_enter_critical);
 
 /**
- * @brief This function will unlock the thread scheduler.
+ * @brief Exit a critical section and unlock the scheduler
+ *
+ * @details This function performs the following operations:
+ *   - Gets current thread context (using hardware-assisted or software method)
+ *   - Decrements critical section nesting counter
+ *   - If nesting level reaches 0:
+ *     * Checks if rescheduling is needed
+ *     * Clears critical switch flag
+ *     * Performs rescheduling if needed
+ *   - Verifies critical section nesting is valid (debug assertion)
+ *   - Restores interrupt state
+ *
+ * @note Must be called in pair with rt_enter_critical()
+ *       Handles both hardware-assisted and software thread context cases
+ *       May trigger rescheduling if conditions met
  */
 void rt_exit_critical(void)
 {
@@ -1245,6 +1424,30 @@ rt_uint16_t rt_critical_level(void)
 }
 RTM_EXPORT(rt_critical_level);
 
+/**
+ * @brief Bind a thread to a specific CPU core
+ *
+ * @param thread The thread to be bound
+ * @param cpu The target CPU core index (RT_CPUS_NR for no binding)
+ *
+ * @return rt_err_t
+ *   - RT_EOK: Operation successful
+ *
+ * @details This function handles thread-CPU binding with the following logic:
+ *   - If thread is READY:
+ *     * Removes from current ready queue
+ *     * Updates bind CPU information
+ *     * Inserts to new ready queue
+ *     * Triggers rescheduling if needed
+ *   - If thread is RUNNING:
+ *     * Updates bind CPU information
+ *     * Sends IPI to target CPU if binding changed
+ *     * Triggers rescheduling if needed
+ *   - For other states, just updates bind CPU info
+ *
+ * @note Caller must ensure scheduler is not locked before calling
+ *       This function will acquire scheduler lock internally
+ */
 rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
 {
     rt_sched_lock_level_t slvl;

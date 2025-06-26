@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_ARMLIBC, RT_USING_LIBC, AT32F402RCT7, __CLK_TCK=RT_TICK_PER_SECOND, USE_STDPERIPH_DRIVER, __STDC_LIMIT_MACROS, __RTTHREAD__</Define>
+              <Define>RT_USING_ARMLIBC, AT32F402RCT7, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\libraries\AT32F402_405_Firmware_Library\cmsis\cm4\device_support;..\libraries\AT32F402_405_Firmware_Library\drivers\inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;applications;..\libraries\rt_drivers\config;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common;..\libraries\AT32F402_405_Firmware_Library\cmsis\cm4\core_support;..\libraries\usbotg_library\inc;.;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\rt_drivers;..\..\..\include;..\..\..\components\drivers\smp_call;board;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;board\inc;..\..\..\components\drivers\phy;..\..\..\components\finsh</IncludePath>
+              <IncludePath>..\libraries\rt_drivers\config;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\include;.;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\libraries\rt_drivers;board;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\libraries\usbotg_library\inc;board\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -694,13 +694,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_at32f402_405.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\cmsis\cm4\device_support\startup\mdk\startup_at32f402_405.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\rt_drivers\drv_common.c</FilePath>
@@ -725,16 +718,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -746,9 +739,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1063,6 +1056,20 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
@@ -1077,23 +1084,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1132,170 +1125,6 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>at32f402_405_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_at32f402_405.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\cmsis\cm4\device_support\system_at32f402_405.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_scfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_scfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_pwc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_pwc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_wwdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_wwdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_ertc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_ertc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_debug.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_crm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_crm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_usb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_acc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_acc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_tmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_exint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_exint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f402_405_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F402_405_Firmware_Library\drivers\src\at32f402_405_usart.c</FilePath>
             </File>
           </Files>
         </Group>

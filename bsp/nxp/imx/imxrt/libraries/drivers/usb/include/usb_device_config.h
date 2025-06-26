@@ -176,10 +176,10 @@
 /* @} */
 /*! @brief rt-thread port alloc */
 #include <rtthread.h>
-#define USB_OSA_SR_ALLOC(...)
+#define USB_OSA_SR_ALLOC(...)   rt_base_t level
 /*! @brief rt-thread port enter critical */
-#define USB_OSA_ENTER_CRITICAL  rt_enter_critical
+#define USB_OSA_ENTER_CRITICAL()  level = rt_hw_interrupt_disable()
 /*! @brief rt-thread port exit critical */
-#define USB_OSA_EXIT_CRITICAL   rt_exit_critical
+#define USB_OSA_EXIT_CRITICAL()   rt_hw_interrupt_enable(level)
 
 #endif /* _USB_DEVICE_CONFIG_H_ */

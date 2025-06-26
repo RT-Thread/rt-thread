@@ -15,11 +15,11 @@
 extern "C" {
 #endif
 
-#define __VVAR_PAGES    2
+#define __VVAR_PAGES        2
 #define VDSO_PAGE_SHIFT     12
 #define VDSO_PAGE_SIZE      (1 << VDSO_PAGE_SHIFT)
 
-#define BIT_MASK(nr)         ((1) << (nr))
+#define BIT_MASK(nr)        ((1) << (nr))
 
 #ifndef read_barrier_depends
 #define read_barrier_depends()      do { } while (0)
@@ -29,7 +29,7 @@ extern "C" {
 #define smp_read_barrier_depends()  read_barrier_depends()
 #endif
 
-#define VDSO_PATH "../user/build/librtos_vdso.so"
+#define VDSO_PATH "../user/build/libvdso.so"
 
 #ifdef __cplusplus
 }

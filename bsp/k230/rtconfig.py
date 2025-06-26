@@ -1,4 +1,5 @@
 import os
+import re
 
 # toolchains options
 ARCH        ='risc-v'
@@ -13,14 +14,18 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin'
+    EXEC_PATH   = r'/opt/toolchain/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_rtt/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
 
-EXEC_PATH = os.getenv('RTT_EXEC_PATH', EXEC_PATH)
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
+if re.match("-DDBGLV=0", os.getenv('KCFLAGS', '-DDBGLV=0')):
+    BUILD = 'release'
+else:
+    BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -36,18 +41,19 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE  = ' -mcmodel=medany -march=rv64imafdc -mabi=lp64'
+    DEVICE  = ' -mcmodel=medany -march=rv64imafdcv -mabi=lp64d'
     CFLAGS  = DEVICE + ' -Wno-cpp -fvar-tracking -ffreestanding -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields -D_POSIX_SOURCE '
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds' + ' -lsupc++ -lgcc -static'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds.generated' + ' -lsupc++ -lgcc -static'
     CPATH   = ''
     LPATH   = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O2 -g -gdwarf-2'
-        AFLAGS += ' -g -gdwarf-2'
+        CFLAGS += ' -O0 -gdwarf-2'
+        AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2 -g -gdwarf-2'
+    CFLAGS += ' ' +  os.getenv('KCFLAGS', '-DDBGLV=0')
 
     CXXFLAGS = CFLAGS
 

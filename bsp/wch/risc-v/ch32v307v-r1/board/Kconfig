@@ -286,6 +286,10 @@ menu "On-chip Peripheral Drivers"
         select LSI_VALUE
         default n
 
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
     menuconfig BSP_USING_CAN
             bool "Enable CAN"
             default n

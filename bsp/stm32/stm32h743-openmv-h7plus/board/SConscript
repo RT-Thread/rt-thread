@@ -1,39 +1,23 @@
 import os
-import rtconfig
 from building import *
 
-Import('SDK_LIB')
-
-startup_path_prefix = SDK_LIB
 cwd = GetCurrentDir()
 
-# add general drivers
-src = Split('''
-board.c
-CubeMX_Config/Core/Src/stm32h7xx_hal_msp.c
-''')
+# add the general drivers.
+src = Glob('board.c')
+src += Glob('CubeMX_Config/Core/Src/stm32h7xx_hal_msp.c')
 
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Core/Inc']
-path += [cwd + '/ports']
 
-if GetDepend(['BSP_USING_QSPI_FLASH']):
-    src += ['ports/drv_qspi_flash.c']
-if GetDepend(['BSP_USING_SDMMC']):
-    src += ['ports/drv_sdio.c']
-if GetDepend(['BSP_USING_OV5640']):
-    src += ['ports/drv_ov5640.c']
-if GetDepend(['BSP_USING_DCMI']):
-    src += ['ports/drv_dcmi.c']
-
-if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h743xx.s']
-elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h743xx.s']
-elif rtconfig.PLATFORM in ['iccarm']:
-    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32h743xx.s']
-
+# STM32H743xx || STM32H750xx || STM32F753xx
+# You can select chips from the list above
 CPPDEFINES = ['STM32H743xx']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

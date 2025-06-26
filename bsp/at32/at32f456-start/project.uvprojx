@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_STDPERIPH_DRIVER, AT32F456ZET7, RT_USING_ARMLIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, AT32F456ZET7, RT_USING_ARMLIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\phy;..\..\..\components\drivers\smp_call;.;..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\core_support;applications;..\libraries\rt_drivers\config;..\..\..\components\libc\compilers\common\extension;..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\device_support;..\..\..\components\drivers\include;..\libraries\AT32F45x_Firmware_Library\drivers\inc;board;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;..\libraries\rt_drivers;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\eventfd;..\libraries\usbotg_library\inc;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;board\inc;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\libcpu\arm\cortex-m4;applications;.;board;..\libraries\usbotg_library\inc;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\libraries\rt_drivers\config;..\..\..\libcpu\arm\common;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\libraries\rt_drivers;..\..\..\components\drivers\include;board\inc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -694,13 +694,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_at32f45x.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\device_support\startup\mdk\startup_at32f45x.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\rt_drivers\drv_common.c</FilePath>
@@ -725,20 +718,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
@@ -749,6 +728,20 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1063,9 +1056,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1077,9 +1070,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1132,212 +1125,6 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>at32f45x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_exint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_exint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_usb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_tmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_crm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_crm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_xmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_xmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_wwdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_wwdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_debug.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_aes.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_aes.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_emac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_trng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_trng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_pwc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_pwc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_at32f45x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\cmsis\cm4\device_support\system_at32f45x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_ertc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_ertc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_scfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_scfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>at32f45x_acc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\AT32F45x_Firmware_Library\drivers\src\at32f45x_acc.c</FilePath>
             </File>
           </Files>
         </Group>

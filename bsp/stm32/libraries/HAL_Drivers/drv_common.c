@@ -111,7 +111,9 @@ void HAL_Delay(__IO uint32_t Delay)
 /* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
-    rt_hw_systick_init();
+    #ifndef SOC_SERIES_STM32MP1
+        rt_hw_systick_init();
+    #endif
 
     /* Return function status */
     return HAL_OK;

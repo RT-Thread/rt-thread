@@ -11,6 +11,7 @@
  * 2021-03-17     Meco Man     fix a buf of leaking memory
  * 2021-07-14     Sszl         fix a buf of leaking memory
  * 2025-01-02     dongly       support SERIAL_V2
+ * 2025-04-18     RyanCw       support New SERIAL_V2
  */
 
 #include <at.h>
@@ -225,7 +226,8 @@ int at_resp_parse_line_args(at_response_t resp, rt_size_t resp_line, const char 
     RT_ASSERT(resp);
     RT_ASSERT(resp_expr);
 
-    if ((resp_line_buf = at_resp_get_line(resp, resp_line)) == RT_NULL)
+    resp_line_buf = at_resp_get_line(resp, resp_line);
+    if (resp_line_buf == RT_NULL)
     {
         return -1;
     }
@@ -259,7 +261,8 @@ int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const
     RT_ASSERT(resp);
     RT_ASSERT(resp_expr);
 
-    if ((resp_line_buf = at_resp_get_line_by_kw(resp, keyword)) == RT_NULL)
+    resp_line_buf = at_resp_get_line_by_kw(resp, keyword);
+    if (resp_line_buf == RT_NULL)
     {
         return -1;
     }
@@ -541,6 +544,7 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
 {
     rt_err_t result = RT_EOK;
 
+#if (!defined(RT_USING_SERIAL_V2))
     while (rt_device_read(client->device, 0, ch, 1) == 0)
     {
         result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
@@ -551,8 +555,19 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
 
         rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
     }
+#else
+    rt_int32_t rx_timeout = rt_tick_from_millisecond(timeout);
+    rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
+    result = rt_device_read(client->device, 0, ch, 1);
+    if(result <= 0)
+    {
+        result = -RT_ERROR;
+    }
+    rx_timeout = RT_WAITING_FOREVER;
+    rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timeout);
+#endif
 
-    return RT_EOK;
+    return result;
 }
 
 /**
@@ -570,7 +585,7 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
  */
 rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_int32_t timeout)
 {
-    rt_size_t len = 0;
+    rt_size_t read_idx = 0;
 
     RT_ASSERT(buf);
 
@@ -580,16 +595,17 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
         return 0;
     }
 
+#if (!defined(RT_USING_SERIAL_V2))
     while (size)
     {
         rt_size_t read_len;
 
         rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
 
-        read_len = rt_device_read(client->device, 0, buf + len, size);
+        read_len = rt_device_read(client->device, 0, buf + read_idx, size);
         if (read_len > 0)
         {
-            len += read_len;
+            read_idx += read_len;
             size -= read_len;
         }
         else
@@ -598,12 +614,19 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
                 break;
         }
     }
-
-#ifdef AT_PRINT_RAW_CMD
-    at_print_raw_cmd("urc_recv", buf, len);
+#else
+    rt_int32_t rx_timeout = rt_tick_from_millisecond(timeout);
+    rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
+    read_idx = rt_device_read(client->device, 0, buf, size);
+    rx_timeout = RT_WAITING_FOREVER;
+    rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timeout);
 #endif
 
-    return len;
+#ifdef AT_PRINT_RAW_CMD
+    at_print_raw_cmd("urc_recv", buf, read_idx);
+#endif
+
+    return read_idx;
 }
 
 /**
@@ -780,7 +803,8 @@ static int at_recv_readline(at_client_t client)
         }
 
         /* is newline or URC data */
-        if ((client->urc = get_urc_obj(client)) != RT_NULL || (ch == '\n' && last_ch == '\r')
+        client->urc = get_urc_obj(client);
+        if (client->urc != RT_NULL || (ch == '\n' && last_ch == '\r')
                 || (client->end_sign != 0 && ch == client->end_sign))
         {
             if (is_full)
@@ -877,6 +901,7 @@ static void client_parser(at_client_t client)
     }
 }
 
+#if (!defined(RT_USING_SERIAL_V2))
 static rt_err_t at_client_rx_ind(rt_device_t dev, rt_size_t size)
 {
     int idx = 0;
@@ -891,6 +916,7 @@ static rt_err_t at_client_rx_ind(rt_device_t dev, rt_size_t size)
 
     return RT_EOK;
 }
+#endif
 
 /* initialize the client object parameters */
 static int at_client_para_init(at_client_t client)
@@ -933,6 +959,7 @@ static int at_client_para_init(at_client_t client)
         goto __exit;
     }
 
+#if (!defined(RT_USING_SERIAL_V2))
     rt_snprintf(name, RT_NAME_MAX, "%s%d", AT_CLIENT_SEM_NAME, at_client_num);
     client->rx_notice = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO);
     if (client->rx_notice == RT_NULL)
@@ -941,6 +968,7 @@ static int at_client_para_init(at_client_t client)
         result = -RT_ENOMEM;
         goto __exit;
     }
+#endif
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", AT_CLIENT_RESP_NAME, at_client_num);
     client->resp_notice = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO);
@@ -974,10 +1002,12 @@ __exit:
             rt_mutex_delete(client->lock);
         }
 
+#if (!defined(RT_USING_SERIAL_V2))
         if (client->rx_notice)
         {
             rt_sem_delete(client->rx_notice);
         }
+#endif
 
         if (client->resp_notice)
         {
@@ -1055,12 +1085,8 @@ int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bu
     if (client->device)
     {
         RT_ASSERT(client->device->type == RT_Device_Class_Char);
-
+#if (!defined(RT_USING_SERIAL_V2))
         rt_device_set_rx_indicate(client->device, at_client_rx_ind);
-
-#ifdef RT_USING_SERIAL_V2
-        open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_NON_BLOCKING);
-#else
         /* using DMA mode first */
         open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
         /* using interrupt mode when DMA mode not supported */
@@ -1068,8 +1094,11 @@ int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bu
         {
             open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
         }
-#endif /* RT_USING_SERIAL_V2 */
         RT_ASSERT(open_result == RT_EOK);
+#else
+        open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
+        RT_ASSERT(open_result == RT_EOK);
+#endif
     }
     else
     {

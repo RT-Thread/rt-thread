@@ -22,9 +22,9 @@
 #define AUDIO_IN_CLOCK_ID 0x01
 #define AUDIO_IN_FU_ID    0x03
 
-#define AUDIO_FREQ      48000
-#define HALF_WORD_BYTES 2  //2 half word (one channel)
-#define SAMPLE_BITS     16 //16 bit per channel
+#define AUDIO_IN_MAX_FREQ 16000
+#define HALF_WORD_BYTES   2  //2 half word (one channel)
+#define SAMPLE_BITS       16 //16 bit per channel
 
 #define BMCONTROL (AUDIO_V2_FU_CONTROL_MUTE | AUDIO_V2_FU_CONTROL_VOLUME)
 
@@ -56,7 +56,7 @@
 #define INPUT_CH_ENABLE 0x000000ff
 #endif
 
-#define AUDIO_IN_PACKET ((uint32_t)((AUDIO_FREQ * HALF_WORD_BYTES * IN_CHANNEL_NUM) / 1000))
+#define AUDIO_IN_PACKET ((uint32_t)((AUDIO_IN_MAX_FREQ * HALF_WORD_BYTES * IN_CHANNEL_NUM) / 1000))
 
 #define USB_AUDIO_CONFIG_DESC_SIZ (9 +                                                    \
                                    AUDIO_V2_AC_DESCRIPTOR_INIT_LEN +                      \
@@ -235,6 +235,7 @@ USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t write_buffer[AUDIO_IN_PACKET];
 
 volatile bool tx_flag = 0;
 volatile bool ep_tx_busy_flag = false;
+volatile uint32_t s_mic_sample_rate;
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
 {
@@ -271,6 +272,26 @@ void usbd_audio_close(uint8_t busid, uint8_t intf)
 {
     USB_LOG_RAW("CLOSE\r\n");
     tx_flag = 0;
+}
+
+void usbd_audio_set_sampling_freq(uint8_t busid, uint8_t ep, uint32_t sampling_freq)
+{
+    if (ep == AUDIO_IN_EP) {
+        s_mic_sample_rate = sampling_freq;
+    }
+}
+
+uint32_t usbd_audio_get_sampling_freq(uint8_t busid, uint8_t ep)
+{
+    (void)busid;
+
+    uint32_t freq = 0;
+
+    if (ep == AUDIO_IN_EP) {
+        freq = s_mic_sample_rate;
+    }
+
+    return freq;
 }
 
 void usbd_audio_get_sampling_freq_table(uint8_t busid, uint8_t ep, uint8_t **sampling_freq_table)

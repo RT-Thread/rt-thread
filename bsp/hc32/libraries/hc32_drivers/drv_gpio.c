@@ -24,7 +24,7 @@
 #define GPIO_PORT(pin)                  ((uint8_t)(((pin) >> 4) & 0x0F))
 #define GPIO_PIN(pin)                   ((uint16_t)(0x01U << GPIO_PIN_INDEX(pin)))
 
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A8)
     #define PIN_MAX_NUM                     ((GPIO_PORT_I * 16) + (__CLZ(__RBIT(GPIO_PIN_13))) + 1)
 #elif defined (HC32F460)
     #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)

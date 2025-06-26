@@ -8,7 +8,7 @@
  * 2024-07-04     rcitach        init ver.
  */
  
-#include <vdso_config.h>    
+#include <vdso_config.h>
 
     .globl __vdso_text_start, __vdso_text_end
     .section .rodata

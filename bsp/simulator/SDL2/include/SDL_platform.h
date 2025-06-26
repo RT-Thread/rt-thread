@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL_platform.h
+ * # CategoryPlatform
  *
- *  Try to get a standard set of platform defines.
+ * Try to get a standard set of platform defines.
  */
 
 #ifndef SDL_platform_h_
@@ -65,11 +65,21 @@
 #undef __LINUX__ /* do we need to do this? */
 #define __ANDROID__ 1
 #endif
+#if defined(__NGAGE__)
+#undef __NGAGE__
+#define __NGAGE__ 1
+#endif
 
 #if defined(__APPLE__)
 /* lets us know what version of Mac OS X we're compiling on */
-#include "AvailabilityMacros.h"
-#include "TargetConditionals.h"
+#include <AvailabilityMacros.h>
+#ifndef __has_extension /* Older compilers don't support this */
+#define __has_extension(x) 0
+#include <TargetConditionals.h>
+#undef __has_extension
+#else
+#include <TargetConditionals.h>
+#endif
 
 /* Fix building with older SDKs that don't define these
    See this for more information:
@@ -104,9 +114,9 @@
 /* if not compiling for iOS */
 #undef __MACOSX__
 #define __MACOSX__  1
-#if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
-# error SDL for Mac OS X only supports deploying on 10.6 and above.
-#endif /* MAC_OS_X_VERSION_MIN_REQUIRED < 1060 */
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 1070
+# error SDL for Mac OS X only supports deploying on 10.7 and above.
+#endif /* MAC_OS_X_VERSION_MIN_REQUIRED < 1070 */
 #endif /* TARGET_OS_IPHONE */
 #endif /* defined(__APPLE__) */
 
@@ -140,7 +150,7 @@
 #endif
 
 #if defined(WIN32) || defined(_WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
-/* Try to find out if we're compiling for WinRT or non-WinRT */
+/* Try to find out if we're compiling for WinRT, GDK or non-WinRT/GDK */
 #if defined(_MSC_VER) && defined(__has_include)
 #if __has_include(<winapifamily.h>)
 #define HAVE_WINAPIFAMILY_H 1
@@ -162,9 +172,24 @@
 #define WINAPI_FAMILY_WINRT 0
 #endif /* HAVE_WINAPIFAMILY_H */
 
+#if (HAVE_WINAPIFAMILY_H) && defined(WINAPI_FAMILY_PHONE_APP)
+#define SDL_WINAPI_FAMILY_PHONE (WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+#else
+#define SDL_WINAPI_FAMILY_PHONE 0
+#endif
+
 #if WINAPI_FAMILY_WINRT
 #undef __WINRT__
 #define __WINRT__ 1
+#elif defined(_GAMING_DESKTOP) /* GDK project configuration always defines _GAMING_XXX */
+#undef __WINGDK__
+#define __WINGDK__ 1
+#elif defined(_GAMING_XBOX_XBOXONE)
+#undef __XBOXONE__
+#define __XBOXONE__ 1
+#elif defined(_GAMING_XBOX_SCARLETT)
+#undef __XBOXSERIES__
+#define __XBOXSERIES__ 1
 #else
 #undef __WINDOWS__
 #define __WINDOWS__ 1
@@ -175,9 +200,19 @@
 #undef __WIN32__
 #define __WIN32__ 1
 #endif
-#if defined(__PSP__)
+/* This is to support generic "any GDK" separate from a platform-specific GDK */
+#if defined(__WINGDK__) || defined(__XBOXONE__) || defined(__XBOXSERIES__)
+#undef __GDK__
+#define __GDK__ 1
+#endif
+#if defined(__PSP__) || defined(__psp__)
+#ifdef __PSP__
 #undef __PSP__
+#endif
 #define __PSP__ 1
+#endif
+#if defined(PS2)
+#define __PS2__ 1
 #endif
 
 /* The NACL compiler defines __native_client__ and __pnacl__
@@ -198,6 +233,11 @@
 
 #if defined(__vita__)
 #define __VITA__ 1
+#endif
+
+#if defined(__3DS__)
+#undef __3DS__
+#define __3DS__ 1
 #endif
 
 #include "begin_code.h"

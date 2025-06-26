@@ -39,6 +39,25 @@
 
 #define SIO_RTS_CTS_HS (0x1 << 8)
 
+enum ftdi_chip_type {
+    SIO,
+    FT232A,
+    FT232B,
+    FT2232C,
+    FT232R,
+    FT232H,
+    FT2232H,
+    FT4232H,
+    FT4232HA,
+    FT232HP,
+    FT233HP,
+    FT2232HP,
+    FT2233HP,
+    FT4232HP,
+    FT4233HP,
+    FTX,
+};
+
 struct usbh_ftdi {
     struct usbh_hubport *hport;
     struct usb_endpoint_descriptor *bulkin;  /* Bulk IN endpoint */
@@ -51,6 +70,7 @@ struct usbh_ftdi {
     uint8_t intf;
     uint8_t minor;
     uint8_t modem_status[2];
+    enum ftdi_chip_type chip_type;
 
     void *user_data;
 };

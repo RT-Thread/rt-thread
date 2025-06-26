@@ -157,7 +157,7 @@ void CanPhyEnable(void)
     TCA9539_ConfigPin(CAN2_STB_PORT, CAN2_STB_PIN, TCA9539_DIR_OUT);
 #endif
 }
-rt_err_t rt_hw_board_can_init(CM_MCAN_TypeDef *MCANx)
+rt_err_t rt_hw_board_mcan_init(CM_MCAN_TypeDef *MCANx)
 {
     rt_err_t result = RT_EOK;
 

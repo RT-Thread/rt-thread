@@ -1,4 +1,4 @@
-@page page_kernel Kenrel
+@page page_kernel_core Kernel
 
 - @subpage page_kernel_basics
 - @subpage page_thread_management

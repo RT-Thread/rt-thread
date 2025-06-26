@@ -474,7 +474,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
             attr = MMU_MAP_K_RWCB;
             break;
         case NORMAL_NOCACHE_MEM:
-            attr = MMU_MAP_K_RWCB;
+            attr = MMU_MAP_K_RW;
             break;
         case DEVICE_MEM:
             attr = MMU_MAP_K_DEVICE;

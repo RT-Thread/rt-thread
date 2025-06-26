@@ -71,6 +71,14 @@ The user manual is divided into the following two sections:
 
 This BSP provides MDK5 and IAR projects for developers. Also support GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
+**Attention please！！！**
+
+Before the compilation work, please open ENV and execute the following command (this command is used to pull the necessary HAL library and CMSIS library, otherwise it cannot be compiled)：
+
+```bash
+pkgs --update
+```
+
 #### Hardware Connection
 
 Connect the development board to the PC using a Type-C data cable.

@@ -225,7 +225,6 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>AT32F421C8T7</state>
           <state>__RTTHREAD__</state>
-          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -353,29 +352,26 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\cmsis\cm4\device_support</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\board\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\cmsis\cm4\core_support</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
-          <state>$PROJ_DIR$\board\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1275,7 +1271,6 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>AT32F421C8T7</state>
           <state>__RTTHREAD__</state>
-          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -1403,29 +1398,26 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\cmsis\cm4\device_support</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\board\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\cmsis\cm4\core_support</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
-          <state>$PROJ_DIR$\board\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2107,6 +2099,9 @@
     </file>
   </group>
   <group>
+    <name>cmsis</name>
+  </group>
+  <group>
     <name>Compiler</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
@@ -2202,9 +2197,6 @@
       <name>$PROJ_DIR$\board\src\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\cmsis\cm4\device_support\startup\iar\startup_at32f421.s</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\rt_drivers\drv_common.c</name>
     </file>
     <file>
@@ -2217,10 +2209,10 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
@@ -2286,13 +2278,13 @@
       <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
@@ -2317,73 +2309,7 @@
     </file>
   </group>
   <group>
-    <name>Libraries</name>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_pwc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_scfg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_exint.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_debug.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_ertc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_cmp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_crm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_tmr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_wwdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\drivers\src\at32f421_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\AT32F421_Firmware_Library\cmsis\cm4\device_support\system_at32f421.c</name>
-    </file>
-  </group>
-  <group>
     <name>POSIX</name>
-  </group>
-  <group>
-    <name>smp</name>
   </group>
   <group>
     <name>utestcases</name>

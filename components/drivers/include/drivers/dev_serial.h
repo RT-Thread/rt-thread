@@ -16,10 +16,9 @@
 
 #include <rtthread.h>
 /**
- * @addtogroup group_Drivers RTTHREAD Driver
- * @defgroup group_Serial Serial
- *
+ * @defgroup    group_Serial Serial
  * @brief       Serial driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -105,8 +104,6 @@
  *
  * MSH_CMD_EXPORT(uart_sample, uart device sample);
  * @endcode
- *
- * @ingroup group_Drivers
  */
 
 

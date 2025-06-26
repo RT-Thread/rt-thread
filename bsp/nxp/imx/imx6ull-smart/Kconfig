@@ -18,6 +18,7 @@ config SOC_IMX6ULL
     select RT_USING_USER_MAIN
     select RT_USING_FPU
     select RT_USING_GIC_V2
+    select PKG_USING_NXP_IMX6UL_DRIVER
     default y
 
     if SOC_IMX6ULL

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-29     Rbb666       first version
+ * 2025-04-21     hydevcode    modify xmc7100d uart
  */
 
 #include <rtthread.h>
@@ -228,9 +229,10 @@ static rt_err_t ifx_control(struct rt_serial_device *serial, int cmd, void *arg)
 
         /* Enable the interrupt */
 #if defined(SOC_SERIES_IFX_XMC)
+        NVIC_DisableIRQ(UART_NvicMuxN_IRQn);
         NVIC_EnableIRQ(UART_NvicMuxN_IRQn);
 #else
-        NVIC_EnableIRQ(uart->config->intrSrc);
+        NVIC_EnableIRQ(uart->config->UART_SCB_IRQ_cfg->intrSrc);
 #endif
         break;
     }

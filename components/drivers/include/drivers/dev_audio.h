@@ -16,11 +16,9 @@
 #include "dev_audio_pipe.h"
 
 /**
- * @defgroup group_Audio Audio
- *
- * @ingroup group_Drivers RT-Thread Drivers
- *
- * @brief Audio driver API.
+ * @defgroup    group_Audio Audio
+ * @brief       Audio driver API.
+ * @ingroup     group_device_driver
  *
  * @{
  */

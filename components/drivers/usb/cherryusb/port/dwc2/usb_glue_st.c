@@ -3,10 +3,98 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#include "usb_config.h"
-#include "stdint.h"
-#include "usb_dwc2_reg.h"
+#include "usbd_core.h"
+#include "usbh_core.h"
 
+#if __has_include("stm32f1xx_hal.h")
+#include "stm32f1xx_hal.h"
+#elif __has_include("stm32f2xx_hal.h")
+#include "stm32f2xx_hal.h"
+#elif __has_include("stm32f4xx_hal.h")
+#include "stm32f4xx_hal.h"
+#elif __has_include("stm32f7xx_hal.h")
+#include "stm32f7xx_hal.h"
+#elif __has_include("stm32h7xx_hal.h")
+#include "stm32h7xx_hal.h"
+#elif __has_include("stm32h7rsxx_hal.h")
+#include "stm32h7rsxx_hal.h"
+#elif __has_include("stm32l4xx_hal.h")
+#include "stm32l4xx_hal.h"
+#endif
+
+#if !defined(HAL_HCD_MODULE_ENABLED) && !defined(HAL_PCD_MODULE_ENABLED)
+#error please define HAL_HCD_MODULE_ENABLED or HAL_PCD_MODULE_ENABLED in stm32xxx_hal_conf.h
+#endif
+
+typedef void (*usb_dwc2_irq)(uint8_t busid);
+
+struct dwc2_instance {
+    USB_OTG_GlobalTypeDef *Instance;
+};
+
+static usb_dwc2_irq g_usb_dwc2_irq[2];
+static uint8_t g_usb_dwc2_busid[2] = { 0, 0 };
+static struct dwc2_instance g_dwc2_instance;
+
+#ifdef HAL_PCD_MODULE_ENABLED
+void usb_dc_low_level_init(uint8_t busid)
+{
+    if (g_usbdev_bus[busid].reg_base == 0x40040000UL) { // USB_OTG_HS_PERIPH_BASE
+        g_usb_dwc2_busid[1] = busid;
+        g_usb_dwc2_irq[1] = USBD_IRQHandler;
+    } else {
+        g_usb_dwc2_busid[0] = busid;
+        g_usb_dwc2_irq[0] = USBD_IRQHandler;
+    }
+
+    g_dwc2_instance.Instance = (USB_OTG_GlobalTypeDef *)g_usbdev_bus[busid].reg_base;
+    HAL_PCD_MspInit((PCD_HandleTypeDef *)&g_dwc2_instance);
+}
+
+void usb_dc_low_level_deinit(uint8_t busid)
+{
+    if (g_usbdev_bus[busid].reg_base == 0x40040000UL) { // USB_OTG_HS_PERIPH_BASE
+        g_usb_dwc2_busid[1] = 0;
+        g_usb_dwc2_irq[1] = NULL;
+    } else {
+        g_usb_dwc2_busid[0] = 0;
+        g_usb_dwc2_irq[0] = NULL;
+    }
+
+    g_dwc2_instance.Instance = (USB_OTG_GlobalTypeDef *)g_usbdev_bus[busid].reg_base;
+    HAL_PCD_MspDeInit((PCD_HandleTypeDef *)&g_dwc2_instance);
+}
+#endif
+
+#ifdef HAL_HCD_MODULE_ENABLED
+void usb_hc_low_level_init(struct usbh_bus *bus)
+{
+    if (bus->hcd.reg_base == 0x40040000UL) { // USB_OTG_HS_PERIPH_BASE
+        g_usb_dwc2_busid[1] = bus->hcd.hcd_id;
+        g_usb_dwc2_irq[1] = USBH_IRQHandler;
+    } else {
+        g_usb_dwc2_busid[0] = bus->hcd.hcd_id;
+        g_usb_dwc2_irq[0] = USBH_IRQHandler;
+    }
+
+    g_dwc2_instance.Instance = (USB_OTG_GlobalTypeDef *)bus->hcd.reg_base;
+    HAL_HCD_MspInit((HCD_HandleTypeDef *)&g_dwc2_instance);
+}
+
+void usb_hc_low_level_deinit(struct usbh_bus *bus)
+{
+    if (bus->hcd.reg_base == 0x40040000UL) { // USB_OTG_HS_PERIPH_BASE
+        g_usb_dwc2_busid[1] = 0;
+        g_usb_dwc2_irq[1] = NULL;
+    } else {
+        g_usb_dwc2_busid[0] = 0;
+        g_usb_dwc2_irq[0] = NULL;
+    }
+
+    g_dwc2_instance.Instance = (USB_OTG_GlobalTypeDef *)bus->hcd.reg_base;
+    HAL_HCD_MspDeInit((HCD_HandleTypeDef *)&g_dwc2_instance);
+}
+#endif
 /* you can find this config in function: USB_DevInit, file:stm32xxx_ll_usb.c, for example:
  *
  *  USBx->GCCFG |= USB_OTG_GCCFG_PWRDWN;
@@ -16,73 +104,7 @@
  *
 */
 
-extern void HAL_Delay(uint32_t Delay);
-
 #if defined(STM32F722xx) || defined(STM32F723xx) || defined(STM32F730xx) || defined(STM32F732xx) || defined(STM32F733xx)
-/**
-  * @brief USB_HS_PHY_Registers
-  */
-typedef struct
-{
-
-__IO uint32_t USB_HS_PHYC_PLL;         /*!< This register is used to control the PLL of the HS PHY.                       000h */
-__IO uint32_t Reserved04;              /*!< Reserved                                                                      004h */
-__IO uint32_t Reserved08;              /*!< Reserved                                                                      008h */
-__IO uint32_t USB_HS_PHYC_TUNE;        /*!< This register is used to control the tuning interface of the High Speed PHY.  00Ch */
-__IO uint32_t Reserved10;              /*!< Reserved                                                                      010h */
-__IO uint32_t Reserved14;              /*!< Reserved                                                                      014h */
-__IO uint32_t USB_HS_PHYC_LDO;         /*!< This register is used to control the regulator (LDO).                         018h */
-} USB_HS_PHYC_GlobalTypeDef;
-
-#define USB_HS_PHYC_CONTROLLER_BASE          0x40017C00UL
-#define USB_HS_PHYC         ((USB_HS_PHYC_GlobalTypeDef *) USB_HS_PHYC_CONTROLLER_BASE)
-
-/********************  Bit definition for USBPHYC_PLL1 register  ********************/
-#define USB_HS_PHYC_PLL1_PLLEN_Pos                (0U)
-#define USB_HS_PHYC_PLL1_PLLEN_Msk                (0x1UL << USB_HS_PHYC_PLL1_PLLEN_Pos) /*!< 0x00000001 */
-#define USB_HS_PHYC_PLL1_PLLEN                    USB_HS_PHYC_PLL1_PLLEN_Msk     /*!< Enable PLL */
-#define USB_HS_PHYC_PLL1_PLLSEL_Pos               (1U)
-#define USB_HS_PHYC_PLL1_PLLSEL_Msk               (0x7UL << USB_HS_PHYC_PLL1_PLLSEL_Pos) /*!< 0x0000000E */
-#define USB_HS_PHYC_PLL1_PLLSEL                   USB_HS_PHYC_PLL1_PLLSEL_Msk    /*!< Controls PHY frequency operation selection */
-#define USB_HS_PHYC_PLL1_PLLSEL_1                 (0x1UL << USB_HS_PHYC_PLL1_PLLSEL_Pos) /*!< 0x00000002 */
-#define USB_HS_PHYC_PLL1_PLLSEL_2                 (0x2UL << USB_HS_PHYC_PLL1_PLLSEL_Pos) /*!< 0x00000004 */
-#define USB_HS_PHYC_PLL1_PLLSEL_3                 (0x4UL << USB_HS_PHYC_PLL1_PLLSEL_Pos) /*!< 0x00000008 */
-
-#define USB_HS_PHYC_PLL1_PLLSEL_12MHZ             0x00000000U                                                       /*!< PHY PLL1 input clock frequency 12 MHz   */
-#define USB_HS_PHYC_PLL1_PLLSEL_12_5MHZ           USB_HS_PHYC_PLL1_PLLSEL_1                                         /*!< PHY PLL1 input clock frequency 12.5 MHz */
-#define USB_HS_PHYC_PLL1_PLLSEL_16MHZ             (uint32_t)(USB_HS_PHYC_PLL1_PLLSEL_1 | USB_HS_PHYC_PLL1_PLLSEL_2) /*!< PHY PLL1 input clock frequency 16 MHz   */
-#define USB_HS_PHYC_PLL1_PLLSEL_24MHZ             USB_HS_PHYC_PLL1_PLLSEL_3                                         /*!< PHY PLL1 input clock frequency 24 MHz   */
-#define USB_HS_PHYC_PLL1_PLLSEL_25MHZ             (uint32_t)(USB_HS_PHYC_PLL1_PLLSEL_2 | USB_HS_PHYC_PLL1_PLLSEL_3) /*!< PHY PLL1 input clock frequency 25 MHz   */
-
-/********************  Bit definition for USBPHYC_LDO register  ********************/
-#define USB_HS_PHYC_LDO_USED_Pos                 (0U)
-#define USB_HS_PHYC_LDO_USED_Msk                 (0x1UL << USB_HS_PHYC_LDO_USED_Pos) /*!< 0x00000001 */
-#define USB_HS_PHYC_LDO_USED                     USB_HS_PHYC_LDO_USED_Msk      /*!< Monitors the usage status of the PHY's LDO   */
-#define USB_HS_PHYC_LDO_STATUS_Pos               (1U)
-#define USB_HS_PHYC_LDO_STATUS_Msk               (0x1UL << USB_HS_PHYC_LDO_STATUS_Pos) /*!< 0x00000002 */
-#define USB_HS_PHYC_LDO_STATUS                   USB_HS_PHYC_LDO_STATUS_Msk    /*!< Monitors the status of the PHY's LDO.        */
-#define USB_HS_PHYC_LDO_DISABLE_Pos              (2U)
-#define USB_HS_PHYC_LDO_DISABLE_Msk              (0x1UL << USB_HS_PHYC_LDO_DISABLE_Pos) /*!< 0x00000004 */
-#define USB_HS_PHYC_LDO_DISABLE                  USB_HS_PHYC_LDO_DISABLE_Msk    /*!< Controls disable of the High Speed PHY's LDO */
-
-/* Legacy */
-#define USB_HS_PHYC_PLL_PLLEN_Pos               USB_HS_PHYC_PLL1_PLLEN_Pos
-#define USB_HS_PHYC_PLL_PLLEN_Msk               USB_HS_PHYC_PLL1_PLLEN_Msk
-#define USB_HS_PHYC_PLL_PLLEN                   USB_HS_PHYC_PLL1_PLLEN
-#define USB_HS_PHYC_PLL_PLLSEL_Pos              USB_HS_PHYC_PLL1_PLLSEL_Pos
-#define USB_HS_PHYC_PLL_PLLSEL_Msk              USB_HS_PHYC_PLL1_PLLSEL_Msk
-#define USB_HS_PHYC_PLL_PLLSEL                  USB_HS_PHYC_PLL1_PLLSEL
-#define USB_HS_PHYC_PLL_PLLSEL_1                USB_HS_PHYC_PLL1_PLLSEL_1
-#define USB_HS_PHYC_PLL_PLLSEL_2                USB_HS_PHYC_PLL1_PLLSEL_2
-#define USB_HS_PHYC_PLL_PLLSEL_3                USB_HS_PHYC_PLL1_PLLSEL_3
-
-#define USB_HS_PHYC_LDO_ENABLE_Pos               USB_HS_PHYC_LDO_DISABLE_Pos
-#define USB_HS_PHYC_LDO_ENABLE_Msk               USB_HS_PHYC_LDO_DISABLE_Msk
-#define USB_HS_PHYC_LDO_ENABLE                   USB_HS_PHYC_LDO_DISABLE
-
-#if !defined  (USB_HS_PHYC_TUNE_VALUE)
-#define USB_HS_PHYC_TUNE_VALUE        0x00000F13U /*!< Value of USB HS PHY Tune */
-#endif /* USB_HS_PHYC_TUNE_VALUE */
 /**
   * @brief  Enables control of a High Speed USB PHY
   *         Init the low level hardware : GPIO, CLOCK, NVIC...
@@ -91,71 +113,60 @@ __IO uint32_t USB_HS_PHYC_LDO;         /*!< This register is used to control the
   */
 static int usb_hsphy_init(uint32_t hse_value)
 {
-  __IO uint32_t count = 0U;
+    __IO uint32_t count = 0U;
 
-  /* Enable LDO */
-  USB_HS_PHYC->USB_HS_PHYC_LDO |= USB_HS_PHYC_LDO_ENABLE;
+    /* Enable LDO */
+    USB_HS_PHYC->USB_HS_PHYC_LDO |= USB_HS_PHYC_LDO_ENABLE;
 
-  /* wait for LDO Ready */
-  while ((USB_HS_PHYC->USB_HS_PHYC_LDO & USB_HS_PHYC_LDO_STATUS) == 0U)
-  {
-    count++;
+    /* wait for LDO Ready */
+    while ((USB_HS_PHYC->USB_HS_PHYC_LDO & USB_HS_PHYC_LDO_STATUS) == 0U) {
+        count++;
 
-    if (count > 200000U)
-    {
-      return -1;
+        if (count > 200000U) {
+            return -1;
+        }
     }
-  }
 
-  /* Controls PHY frequency operation selection */
-  if (hse_value == 12000000U) /* HSE = 12MHz */
-  {
-    USB_HS_PHYC->USB_HS_PHYC_PLL = (0x0U << 1);
-  }
-  else if (hse_value == 12500000U) /* HSE = 12.5MHz */
-  {
-    USB_HS_PHYC->USB_HS_PHYC_PLL = (0x2U << 1);
-  }
-  else if (hse_value == 16000000U) /* HSE = 16MHz */
-  {
-    USB_HS_PHYC->USB_HS_PHYC_PLL = (0x3U << 1);
-  }
-  else if (hse_value == 24000000U) /* HSE = 24MHz */
-  {
-    USB_HS_PHYC->USB_HS_PHYC_PLL = (0x4U << 1);
-  }
-  else if (hse_value == 25000000U) /* HSE = 25MHz */
-  {
-    USB_HS_PHYC->USB_HS_PHYC_PLL = (0x5U << 1);
-  }
-  else if (hse_value == 32000000U) /* HSE = 32MHz */
-  {
-    USB_HS_PHYC->USB_HS_PHYC_PLL = (0x7U << 1);
-  }
-  else
-  {
-    /* ... */
-  }
+    /* Controls PHY frequency operation selection */
+    if (hse_value == 12000000U) /* HSE = 12MHz */
+    {
+        USB_HS_PHYC->USB_HS_PHYC_PLL = (0x0U << 1);
+    } else if (hse_value == 12500000U) /* HSE = 12.5MHz */
+    {
+        USB_HS_PHYC->USB_HS_PHYC_PLL = (0x2U << 1);
+    } else if (hse_value == 16000000U) /* HSE = 16MHz */
+    {
+        USB_HS_PHYC->USB_HS_PHYC_PLL = (0x3U << 1);
+    } else if (hse_value == 24000000U) /* HSE = 24MHz */
+    {
+        USB_HS_PHYC->USB_HS_PHYC_PLL = (0x4U << 1);
+    } else if (hse_value == 25000000U) /* HSE = 25MHz */
+    {
+        USB_HS_PHYC->USB_HS_PHYC_PLL = (0x5U << 1);
+    } else if (hse_value == 32000000U) /* HSE = 32MHz */
+    {
+        USB_HS_PHYC->USB_HS_PHYC_PLL = (0x7U << 1);
+    } else {
+        /* ... */
+    }
 
-  /* Control the tuning interface of the High Speed PHY */
-  USB_HS_PHYC->USB_HS_PHYC_TUNE |= USB_HS_PHYC_TUNE_VALUE;
+    /* Control the tuning interface of the High Speed PHY */
+    USB_HS_PHYC->USB_HS_PHYC_TUNE |= USB_HS_PHYC_TUNE_VALUE;
 
-  /* Enable PLL internal PHY */
-  USB_HS_PHYC->USB_HS_PHYC_PLL |= USB_HS_PHYC_PLL_PLLEN;
+    /* Enable PLL internal PHY */
+    USB_HS_PHYC->USB_HS_PHYC_PLL |= USB_HS_PHYC_PLL_PLLEN;
 
+    /* 2ms Delay required to get internal phy clock stable */
+    HAL_Delay(2U);
 
-  /* 2ms Delay required to get internal phy clock stable */
-  HAL_Delay(2U);
-
-  return 0;
+    return 0;
 }
-
 #endif
 
 uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base)
 {
 #if __has_include("stm32h7xx.h") || __has_include("stm32f7xx.h") || __has_include("stm32l4xx.h")
-#define USB_OTG_GLB ((DWC2_GlobalTypeDef *)(reg_base))
+#define USB_OTG_GLB ((USB_OTG_GlobalTypeDef *)(reg_base))
     /* B-peripheral session valid override enable */
     USB_OTG_GLB->GOTGCTL |= USB_OTG_GOTGCTL_BVALOEN;
     USB_OTG_GLB->GOTGCTL |= USB_OTG_GOTGCTL_BVALOVAL;
@@ -165,7 +176,7 @@ uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base)
 #if defined(STM32F722xx) || defined(STM32F723xx) || defined(STM32F730xx) || defined(STM32F732xx) || defined(STM32F733xx)
     USB_OTG_GLB->GCCFG = (1 << 23);
     usb_hsphy_init(25000000U);
-    return (1 << 23);    /* Enable USB HS PHY USBx->GCCFG |= USB_OTG_GCCFG_PHYHSEN;*/
+    return (1 << 23); /* Enable USB HS PHY USBx->GCCFG |= USB_OTG_GCCFG_PHYHSEN;*/
 #elif __has_include("stm32h7rsxx.h")
     return (1 << 21);
 #else
@@ -183,7 +194,7 @@ uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base)
 uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base)
 {
 #if __has_include("stm32h7xx.h") || __has_include("stm32f7xx.h") || __has_include("stm32l4xx.h")
-#define USB_OTG_GLB ((DWC2_GlobalTypeDef *)(reg_base))
+#define USB_OTG_GLB ((USB_OTG_GlobalTypeDef *)(reg_base))
     /* B-peripheral session valid override enable */
     USB_OTG_GLB->GOTGCTL &= ~USB_OTG_GOTGCTL_BVALOEN;
     USB_OTG_GLB->GOTGCTL &= ~USB_OTG_GOTGCTL_BVALOVAL;
@@ -206,7 +217,39 @@ uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base)
 #endif
 }
 
+extern uint32_t SystemCoreClock;
+
 void usbd_dwc2_delay_ms(uint8_t ms)
 {
-    HAL_Delay(ms);
+    uint32_t count = SystemCoreClock / 1000 * ms;
+    while (count--) {
+        __asm volatile("nop");
+    }
 }
+
+void OTG_FS_IRQHandler(void)
+{
+    g_usb_dwc2_irq[0](g_usb_dwc2_busid[0]);
+}
+
+void OTG_HS_IRQHandler(void)
+{
+    g_usb_dwc2_irq[1](g_usb_dwc2_busid[1]);
+}
+
+#ifdef CONFIG_USB_DCACHE_ENABLE
+void usb_dcache_clean(uintptr_t addr, size_t size)
+{
+    SCB_CleanDCache_by_Addr((void *)addr, size);
+}
+
+void usb_dcache_invalidate(uintptr_t addr, size_t size)
+{
+    SCB_InvalidateDCache_by_Addr((void *)addr, size);
+}
+
+void usb_dcache_flush(uintptr_t addr, size_t size)
+{
+    SCB_CleanInvalidateDCache_by_Addr((void *)addr, size);
+}
+#endif
