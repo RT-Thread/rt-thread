@@ -111,6 +111,7 @@
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_SECURE
 #define ARCH_ARM_CORTEX_M33
 
 /* RT-Thread Components */

@@ -38,7 +38,7 @@ static struct dfs_fdtable _fdtab;
 static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 
 /**
- * @addtogroup group_DFS
+ * @addtogroup group_device_virtual_file_system
  * @{
  */
 

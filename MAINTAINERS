@@ -49,6 +49,10 @@ tag: bsp_cvitek
 path: bsp/cvitek
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
 
+tag: bsp_gd32105c-eval
+path: bsp/gd32/arm/gd32105c-eval
+owners: Xiansong Cao(CXSforHPU)<19511928573@163.com>
+
 tag: bsp_gd32470z-lckfb
 path: bsp/gd32/arm/gd32470z-lckfb
 owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
@@ -99,7 +103,7 @@ owners: PengXu(LittleGreyG)<18825981694@163.com>
 
 tag: documentation
 path: documentation
-owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>
+owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Xiansong Cao(CXSforHPU)<19511928573@163.com>
 
 tag: driver_can
 path: components/drivers/can

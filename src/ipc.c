@@ -63,7 +63,7 @@ extern void (*rt_object_put_hook)(struct rt_object *object);
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup group_IPC
+ * @addtogroup group_thread_comm
  * @{
  */
 

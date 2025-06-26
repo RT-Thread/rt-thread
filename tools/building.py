@@ -26,6 +26,7 @@
 # 2024-04-21     Bernard      Add toolchain detection in sdk packages
 # 2025-01-05     Bernard      Add logging as Env['log']
 # 2025-03-02     ZhaoCake     Add MkDist_Strip
+# 2025-01-05     Assistant    Refactor SCons PreProcessor patch to independent class
 
 import os
 import sys
@@ -39,89 +40,13 @@ from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
 from options import AddOptions
+from preprocessor import create_preprocessor_instance
+from win32spawn import Win32Spawn
 
 BuildOptions = {}
 Projects = []
 Rtt_Root = ''
 Env = None
-
-# SCons PreProcessor patch
-def start_handling_includes(self, t=None):
-    """
-    Causes the PreProcessor object to start processing #import,
-    #include and #include_next lines.
-
-    This method will be called when a #if, #ifdef, #ifndef or #elif
-    evaluates True, or when we reach the #else in a #if, #ifdef,
-    #ifndef or #elif block where a condition already evaluated
-    False.
-
-    """
-    d = self.dispatch_table
-    p = self.stack[-1] if self.stack else self.default_table
-
-    for k in ('import', 'include', 'include_next', 'define'):
-        d[k] = p[k]
-
-def stop_handling_includes(self, t=None):
-    """
-    Causes the PreProcessor object to stop processing #import,
-    #include and #include_next lines.
-
-    This method will be called when a #if, #ifdef, #ifndef or #elif
-    evaluates False, or when we reach the #else in a #if, #ifdef,
-    #ifndef or #elif block where a condition already evaluated True.
-    """
-    d = self.dispatch_table
-    d['import'] = self.do_nothing
-    d['include'] =  self.do_nothing
-    d['include_next'] =  self.do_nothing
-    d['define'] =  self.do_nothing
-
-PatchedPreProcessor = SCons.cpp.PreProcessor
-PatchedPreProcessor.start_handling_includes = start_handling_includes
-PatchedPreProcessor.stop_handling_includes = stop_handling_includes
-
-class Win32Spawn:
-    def spawn(self, sh, escape, cmd, args, env):
-        # deal with the cmd build-in commands which cannot be used in
-        # subprocess.Popen
-        if cmd == 'del':
-            for f in args[1:]:
-                try:
-                    os.remove(f)
-                except Exception as e:
-                    print('Error removing file: ' + e)
-                    return -1
-            return 0
-
-        import subprocess
-
-        newargs = ' '.join(args[1:])
-        cmdline = cmd + " " + newargs
-
-        # Make sure the env is constructed by strings
-        _e = dict([(k, str(v)) for k, v in env.items()])
-
-        # Windows(tm) CreateProcess does not use the env passed to it to find
-        # the executables. So we have to modify our own PATH to make Popen
-        # work.
-        old_path = os.environ['PATH']
-        os.environ['PATH'] = _e['PATH']
-
-        try:
-            proc = subprocess.Popen(cmdline, env=_e, shell=False)
-        except Exception as e:
-            print('Error in calling command:' + cmdline.split(' ')[0])
-            print('Exception: ' + os.strerror(e.errno))
-            if (os.strerror(e.errno) == "No such file or directory"):
-                print ("\nPlease check Toolchains PATH setting.\n")
-
-            return e.errno
-        finally:
-            os.environ['PATH'] = old_path
-
-        return proc.wait()
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
@@ -294,7 +219,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     Env.Append(BUILDERS = {'BuildLib': bld})
 
     # parse rtconfig.h to get used component
-    PreProcessor = PatchedPreProcessor()
+    PreProcessor = create_preprocessor_instance()
     f = open('rtconfig.h', 'r')
     contents = f.read()
     f.close()
@@ -433,7 +358,7 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     Rtt_Root = root_directory
 
     # parse bsp rtconfig.h to get used component
-    PreProcessor = PatchedPreProcessor()
+    PreProcessor = create_preprocessor_instance()
     f = open(bsp_directory + '/rtconfig.h', 'r')
     contents = f.read()
     f.close()
@@ -877,7 +802,7 @@ def DoBuilding(target, objects):
 def GenTargetProject(program = None):
 
     if GetOption('target') in ['mdk', 'mdk4', 'mdk5']:
-        from keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
+        from targets.keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
         if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
             MDK5Project(GetOption('project-name') + '.uvprojx', Projects)
@@ -895,68 +820,68 @@ def GenTargetProject(program = None):
         print("Keil-MDK project has generated successfully!")
 
     if GetOption('target') == 'iar':
-        from iar import IARProject, IARVersion
+        from targets.iar import IARProject, IARVersion
         print("IAR Version: " + IARVersion())
         IARProject(GetOption('project-name') + '.ewp', Projects)
         print("IAR project has generated successfully!")
 
     if GetOption('target') == 'vs':
-        from vs import VSProject
+        from targets.vs import VSProject
         VSProject(GetOption('project-name') + '.vcproj', Projects, program)
 
     if GetOption('target') == 'vs2012':
-        from vs2012 import VS2012Project
+        from targets.vs2012 import VS2012Project
         VS2012Project(GetOption('project-name') + '.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
-        from codeblocks import CBProject
+        from targets.codeblocks import CBProject
         CBProject(GetOption('project-name') + '.cbp', Projects, program)
 
     if GetOption('target') == 'ua':
-        from ua import PrepareUA
+        from targets.ua import PrepareUA
         PrepareUA(Projects, Rtt_Root, str(Dir('#')))
 
     if GetOption('target') == 'vsc':
-        from vsc import GenerateVSCode
+        from targets.vsc import GenerateVSCode
         GenerateVSCode(Env)
         if GetOption('cmsispack'):
             from vscpyocd import GenerateVSCodePyocdConfig
             GenerateVSCodePyocdConfig(GetOption('cmsispack'))
 
     if GetOption('target') == 'cdk':
-        from cdk import CDKProject
+        from targets.cdk import CDKProject
         CDKProject(GetOption('project-name') + '.cdkproj', Projects)
 
     if GetOption('target') == 'ses':
-        from ses import SESProject
+        from targets.ses import SESProject
         SESProject(Env)
 
     if GetOption('target') == 'makefile':
-        from makefile import TargetMakefile
+        from targets.makefile import TargetMakefile
         TargetMakefile(Env)
 
     if GetOption('target') == 'eclipse':
-        from eclipse import TargetEclipse
+        from targets.eclipse import TargetEclipse
         TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
 
     if GetOption('target') == 'codelite':
-        from codelite import TargetCodelite
+        from targets.codelite import TargetCodelite
         TargetCodelite(Projects, program)
 
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
-        from cmake import CMakeProject
+        from targets.cmake import CMakeProject
         CMakeProject(Env, Projects, GetOption('project-name'))
 
     if GetOption('target') == 'xmake':
-        from xmake import XMakeProject
+        from targets.xmake import XMakeProject
         XMakeProject(Env, Projects)
 
     if GetOption('target') == 'esp-idf':
-        from esp_idf import ESPIDFProject
+        from targets.esp_idf import ESPIDFProject
         ESPIDFProject(Env, Projects)
 
     if GetOption('target') == 'zig':
-        from zigbuild import ZigBuildProject
+        from targets.zigbuild import ZigBuildProject
         ZigBuildProject(Env, Projects)
 
 def EndBuilding(target, program = None):
@@ -1069,7 +994,7 @@ def GetVersion():
     rtdef = os.path.join(Rtt_Root, 'include', 'rtdef.h')
 
     # parse rtdef.h to get RT-Thread version
-    prepcessor = PatchedPreProcessor()
+    prepcessor = create_preprocessor_instance()
     f = open(rtdef, 'r')
     contents = f.read()
     f.close()
@@ -1109,4 +1034,3 @@ def PackageSConscript(package):
     from package import BuildPackage
 
     return BuildPackage(package)
-
