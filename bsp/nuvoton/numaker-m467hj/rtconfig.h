@@ -684,7 +684,7 @@
 
 /* Board extended module drivers */
 
-#define BOARD_USING_SENSON0_ID 
+#define BOARD_USING_SENSON0_ID
 /* end of Board extended module drivers */
 
 /* Nuvoton Packages Config */
