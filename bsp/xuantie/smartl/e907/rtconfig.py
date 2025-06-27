@@ -24,6 +24,8 @@ BUILD = 'debug'
 CORE = 'risc-v'
 MAP_FILE = 'rtthread.map'
 LINK_FILE = '../../libraries/xuantie_libraries/chip_riscv_dummy/gcc_flash_smartl.ld'
+if os.path.exists('./libraries'):
+    LINK_FILE = './libraries/xuantie_libraries/chip_riscv_dummy/gcc_flash_smartl.ld'
 TARGET_NAME = 'rtthread.bin'
 
 #------- GCC settings ----------------------------------------------------------
@@ -85,6 +87,6 @@ if PLATFORM == 'gcc':
 def dist_handle(BSP_ROOT, dist_dir):
     import sys
     cwd_path = os.getcwd()
-    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), '../tools'))
     from sdk_dist import dist_do_building
     dist_do_building(BSP_ROOT, dist_dir)
