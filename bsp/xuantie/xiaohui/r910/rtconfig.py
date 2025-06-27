@@ -24,6 +24,8 @@ BUILD = 'debug'
 CORE = 'risc-v'
 MAP_FILE = 'rtthread.map'
 LINK_FILE = '../../libraries/xuantie_libraries/chip_riscv_dummy/gcc_flash_xiaohui.ld'
+if os.path.exists('./libraries'):
+    LINK_FILE = './libraries/xuantie_libraries/chip_riscv_dummy/gcc_flash_xiaohui.ld'
 TARGET_NAME = 'rtthread.bin'
 
 #------- GCC settings ----------------------------------------------------------

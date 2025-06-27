@@ -7,9 +7,13 @@ cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+for item in list:
+    path = os.path.join(cwd, item)
+    if item == 'libraries' or not os.path.isdir(path):
+        continue
+
+    sconscript_path = os.path.join(path, 'SConscript')
+    if os.path.isfile(sconscript_path):
+        objs.extend(SConscript(os.path.join(item, 'SConscript')))
 
 Return('objs')
