@@ -46,17 +46,17 @@
 #define m_interrupts_ram_start         0x80000000
 #define m_interrupts_ram_size          __ram_vector_table_size__
 
-#define  m_data_start                  (m_interrupts_ram_start + m_interrupts_ram_size)
-#define  m_data_size                   (0x03000000 - m_interrupts_ram_size)
+#define m_ncache_start                 0x20240000 //OCRAM1
+#define m_ncache_size                  0x00010000
 
-#define m_ncache_start                 0x83000000
-#define m_ncache_size                  0x01000000
+#define  m_data_start                  (m_ncache_start + m_ncache_size)
+#define  m_data_size                   (0x00080000 - m_ncache_size)
 
-#define m_data2_start                  0x20000000
-#define m_data2_size                   0x00040000
+#define m_data2_start                  0x20000000 //DTCAM
+#define m_data2_size                   0x00040000 //256K
 
-#define m_data3_start                  0x202C0000
-#define m_data3_size                   0x00080000
+#define m_data3_start                  0x202C0000 //OCRAM2
+#define m_data3_size                   0x00080000 //512K
 
 /* Sizes */
 #if (defined(__stack_size__))

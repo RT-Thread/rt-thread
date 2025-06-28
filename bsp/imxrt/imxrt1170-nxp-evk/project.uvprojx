@@ -10,7 +10,7 @@
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6150000::V6.15::ARMCLANG</pCCUsed>
+      <pCCUsed>6120000::V6.12::.\ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-xc -std=gnu99 -mimplicit-float </MiscControls>
-              <Define>CPU_MIMXRT1176DVMAA_cm7, USE_SDRAM, __STDC_LIMIT_MACROS, __RTTHREAD__, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, SOC_IMXRT1170_SERIES, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, RT_USING_ARM_LIBC</Define>
+              <Define>CPU_MIMXRT1176DVMAA_cm7, __STDC_LIMIT_MACROS, __RTTHREAD__, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, SOC_IMXRT1170_SERIES, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
               <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1170\CMSIS\Include;..\libraries\MIMXRT1170\MIMXRT1176;..\libraries\MIMXRT1170\MIMXRT1176\drivers;..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7;..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\components\net\lwip\lwip-2.1.2\src\include\compat\posix;..\..\..\components\net\lwip\port;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\net\netdev\include;xip</IncludePath>
             </VariousControls>
@@ -383,14 +383,14 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>mnt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>mnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\mnt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -963,14 +963,14 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev_ipaddr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
-            </File>
-            <File>
               <FileName>netdev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\net\netdev\src\netdev.c</FilePath>
+            </File>
+            <File>
+              <FileName>netdev_ipaddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
             </File>
           </Files>
         </Group>
