@@ -21,7 +21,7 @@
 
 RT_DEFINE_HW_SPINLOCK(pth_lock);
 _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
-static int concurrency_level;
+static int       concurrency_level;
 
 _pthread_data_t *_pthread_get_data(pthread_t thread)
 {
@@ -43,7 +43,7 @@ pthread_t _pthread_data_get_pth(_pthread_data_t *ptd)
     int index;
 
     rt_hw_spin_lock(&pth_lock);
-    for (index = 0; index < PTHREAD_NUM_MAX; index ++)
+    for (index = 0; index < PTHREAD_NUM_MAX; index++)
     {
         if (pth_table[index] == ptd) break;
     }
@@ -54,20 +54,20 @@ pthread_t _pthread_data_get_pth(_pthread_data_t *ptd)
 
 pthread_t _pthread_data_create(void)
 {
-    int index;
+    int              index;
     _pthread_data_t *ptd = NULL;
 
-    ptd = (_pthread_data_t*)rt_malloc(sizeof(_pthread_data_t));
+    ptd = (_pthread_data_t *)rt_malloc(sizeof(_pthread_data_t));
     if (!ptd) return PTHREAD_NUM_MAX;
 
     memset(ptd, 0x0, sizeof(_pthread_data_t));
-    ptd->canceled = 0;
+    ptd->canceled    = 0;
     ptd->cancelstate = PTHREAD_CANCEL_DISABLE;
-    ptd->canceltype = PTHREAD_CANCEL_DEFERRED;
-    ptd->magic = PTHREAD_MAGIC;
+    ptd->canceltype  = PTHREAD_CANCEL_DEFERRED;
+    ptd->magic       = PTHREAD_MAGIC;
 
     rt_hw_spin_lock(&pth_lock);
-    for (index = 0; index < PTHREAD_NUM_MAX; index ++)
+    for (index = 0; index < PTHREAD_NUM_MAX; index++)
     {
         if (pth_table[index] == NULL)
         {
@@ -90,7 +90,7 @@ pthread_t _pthread_data_create(void)
 static inline void _destroy_item(int index, _pthread_data_t *ptd)
 {
     extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
-    void *data;
+    void                      *data;
 
     if (_thread_keys[index].is_used)
     {
@@ -103,7 +103,7 @@ static inline void _destroy_item(int index, _pthread_data_t *ptd)
 }
 
 #ifdef RT_USING_CPLUSPLUS11
-    #define NOT_USE_CXX_TLS -1
+#define NOT_USE_CXX_TLS -1
 #endif
 
 void _pthread_data_destroy(_pthread_data_t *ptd)
@@ -123,7 +123,7 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
              * destructors of C++ object must be called safely.
              */
             extern pthread_key_t emutls_get_pthread_key(void);
-            pthread_key_t emutls_pthread_key = emutls_get_pthread_key();
+            pthread_key_t        emutls_pthread_key = emutls_get_pthread_key();
 
             if (emutls_pthread_key != NOT_USE_CXX_TLS)
             {
@@ -131,8 +131,8 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
                  * Destructors of c++ class object must be called before emutls_key_destructor.
                  */
                 int start = ((emutls_pthread_key - 1 + PTHREAD_KEY_MAX) % PTHREAD_KEY_MAX);
-                int i = 0;
-                for (index = start; i < PTHREAD_KEY_MAX; index = (index - 1 + PTHREAD_KEY_MAX) % PTHREAD_KEY_MAX, i ++)
+                int i     = 0;
+                for (index = start; i < PTHREAD_KEY_MAX; index = (index - 1 + PTHREAD_KEY_MAX) % PTHREAD_KEY_MAX, i++)
                 {
                     _destroy_item(index, ptd);
                 }
@@ -143,7 +143,7 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
                 /* If only C TLS is used, that is, POSIX TLS or __Thread_local,
                  * just iterate the _thread_keys from index 0.
                  */
-                for (index = 0; index < PTHREAD_KEY_MAX; index ++)
+                for (index = 0; index < PTHREAD_KEY_MAX; index++)
                 {
                     _destroy_item(index, ptd);
                 }
@@ -153,7 +153,7 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
             ptd->tls = RT_NULL;
         }
 
-        pth  = _pthread_data_get_pth(ptd);
+        pth = _pthread_data_get_pth(ptd);
         /* remove from pthread table */
         rt_hw_spin_lock(&pth_lock);
         pth_table[pth] = NULL;
@@ -191,7 +191,7 @@ static void _pthread_cleanup(rt_thread_t tid)
 
 static void pthread_entry_stub(void *parameter)
 {
-    void *value;
+    void            *value;
     _pthread_data_t *ptd;
 
     ptd = (_pthread_data_t *)parameter;
@@ -253,12 +253,12 @@ int pthread_create(pthread_t            *pid,
                    const pthread_attr_t *attr,
                    void *(*start)(void *), void *parameter)
 {
-    int ret = 0;
-    void *stack;
-    char name[RT_NAME_MAX];
+    int                ret = 0;
+    void              *stack;
+    char               name[RT_NAME_MAX];
     static rt_uint16_t pthread_number = 0;
 
-    pthread_t pth_id;
+    pthread_t        pth_id;
     _pthread_data_t *ptd;
 
     /* pid shall be provided */
@@ -292,10 +292,10 @@ int pthread_create(pthread_t            *pid,
         goto __exit;
     }
 
-    rt_snprintf(name, sizeof(name), "pth%02d", pthread_number ++);
+    rt_snprintf(name, sizeof(name), "pth%02d", pthread_number++);
 
     /* pthread is a static thread object */
-    ptd->tid = (rt_thread_t) rt_malloc(sizeof(struct rt_thread));
+    ptd->tid = (rt_thread_t)rt_malloc(sizeof(struct rt_thread));
     if (ptd->tid == RT_NULL)
     {
         ret = ENOMEM;
@@ -318,7 +318,7 @@ int pthread_create(pthread_t            *pid,
     }
 
     /* set parameter */
-    ptd->thread_entry = start;
+    ptd->thread_entry     = start;
     ptd->thread_parameter = parameter;
 
     /* stack */
@@ -340,7 +340,8 @@ int pthread_create(pthread_t            *pid,
     /* initial this pthread to system */
     if (rt_thread_init(ptd->tid, name, pthread_entry_stub, ptd,
                        stack, ptd->attr.stacksize,
-                       ptd->attr.schedparam.sched_priority, 20) != RT_EOK)
+                       ptd->attr.schedparam.sched_priority, 20)
+        != RT_EOK)
     {
         ret = EINVAL;
         goto __exit;
@@ -350,7 +351,7 @@ int pthread_create(pthread_t            *pid,
     *pid = pth_id;
 
     /* set pthread cleanup function and ptd data */
-    ptd->tid->cleanup = _pthread_cleanup;
+    ptd->tid->cleanup      = _pthread_cleanup;
     ptd->tid->pthread_data = (void *)ptd;
 
     /* start thread */
@@ -394,7 +395,7 @@ RTM_EXPORT(pthread_create);
  */
 int pthread_detach(pthread_t thread)
 {
-    int ret = 0;
+    int              ret = 0;
     _pthread_data_t *ptd = _pthread_get_data(thread);
     if (ptd == RT_NULL)
     {
@@ -466,7 +467,7 @@ RTM_EXPORT(pthread_detach);
 int pthread_join(pthread_t thread, void **value_ptr)
 {
     _pthread_data_t *ptd;
-    rt_err_t result;
+    rt_err_t         result;
 
     ptd = _pthread_get_data(thread);
 
@@ -524,9 +525,9 @@ RTM_EXPORT(pthread_join);
  *
  * @see pthread_create, pthread_equal, pthread_join
  */
-pthread_t pthread_self (void)
+pthread_t pthread_self(void)
 {
-    rt_thread_t tid;
+    rt_thread_t      tid;
     _pthread_data_t *ptd;
 
     tid = rt_thread_self();
@@ -568,7 +569,7 @@ RTM_EXPORT(pthread_self);
  */
 int pthread_getcpuclockid(pthread_t thread, clockid_t *clock_id)
 {
-    if(_pthread_get_data(thread) == NULL)
+    if (_pthread_get_data(thread) == NULL)
     {
         return EINVAL;
     }
@@ -777,10 +778,10 @@ RTM_EXPORT(pthread_setschedparam);
  */
 int pthread_setschedprio(pthread_t thread, int prio)
 {
-    _pthread_data_t *ptd;
+    _pthread_data_t   *ptd;
     struct sched_param param;
 
-    ptd = _pthread_get_data(thread);
+    ptd                  = _pthread_get_data(thread);
     param.sched_priority = prio;
     pthread_attr_setschedparam(&ptd->attr, &param);
 
@@ -808,9 +809,9 @@ RTM_EXPORT(pthread_setschedprio);
  */
 void pthread_exit(void *value)
 {
-    _pthread_data_t *ptd;
+    _pthread_data_t    *ptd;
     _pthread_cleanup_t *cleanup;
-    rt_thread_t tid;
+    rt_thread_t         tid;
 
     if (rt_thread_self() == RT_NULL)
     {
@@ -833,7 +834,7 @@ void pthread_exit(void *value)
     */
     while (ptd->cleanup != RT_NULL)
     {
-        cleanup = ptd->cleanup;
+        cleanup      = ptd->cleanup;
         ptd->cleanup = cleanup->next;
 
         cleanup->cleanup_func(cleanup->parameter);
@@ -956,7 +957,7 @@ int pthread_kill(pthread_t thread, int sig)
 {
 #ifdef RT_USING_SIGNALS
     _pthread_data_t *ptd;
-    int ret;
+    int              ret;
 
     ptd = _pthread_get_data(thread);
     if (ptd)
@@ -1036,7 +1037,7 @@ int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset)
  */
 void pthread_cleanup_pop(int execute)
 {
-    _pthread_data_t *ptd;
+    _pthread_data_t    *ptd;
     _pthread_cleanup_t *cleanup;
 
     if (rt_thread_self() == NULL) return;
@@ -1092,7 +1093,7 @@ RTM_EXPORT(pthread_cleanup_pop);
  */
 void pthread_cleanup_push(void (*routine)(void *), void *arg)
 {
-    _pthread_data_t *ptd;
+    _pthread_data_t    *ptd;
     _pthread_cleanup_t *cleanup;
 
     if (rt_thread_self() == NULL) return;
@@ -1105,11 +1106,11 @@ void pthread_cleanup_push(void (*routine)(void *), void *arg)
     if (cleanup != RT_NULL)
     {
         cleanup->cleanup_func = routine;
-        cleanup->parameter = arg;
+        cleanup->parameter    = arg;
 
         rt_enter_critical();
         cleanup->next = ptd->cleanup;
-        ptd->cleanup = cleanup;
+        ptd->cleanup  = cleanup;
         rt_exit_critical();
     }
 }
@@ -1261,7 +1262,7 @@ RTM_EXPORT(pthread_setcanceltype);
  */
 void pthread_testcancel(void)
 {
-    int cancel = 0;
+    int              cancel = 0;
     _pthread_data_t *ptd;
 
     if (rt_thread_self() == NULL) return;
@@ -1303,9 +1304,9 @@ RTM_EXPORT(pthread_testcancel);
  */
 int pthread_cancel(pthread_t thread)
 {
-    _pthread_data_t *ptd;
+    _pthread_data_t    *ptd;
     _pthread_cleanup_t *cleanup;
-    rt_thread_t tid;
+    rt_thread_t         tid;
 
     /* get posix thread data */
     ptd = _pthread_get_data(thread);
@@ -1331,7 +1332,7 @@ int pthread_cancel(pthread_t thread)
              */
             while (ptd->cleanup != RT_NULL)
             {
-                cleanup = ptd->cleanup;
+                cleanup      = ptd->cleanup;
                 ptd->cleanup = cleanup->next;
 
                 cleanup->cleanup_func(cleanup->parameter);
