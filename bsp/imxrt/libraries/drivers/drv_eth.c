@@ -451,6 +451,277 @@ static rt_err_t rt_imxrt_eth_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+static bool _ENET_TxDirtyRingAvailable(enet_tx_dirty_ring_t *txDirtyRing)
+{
+    return !txDirtyRing->isFull;
+}
+
+static uint16_t _ENET_IncreaseIndex(uint16_t index, uint16_t max)
+{
+    assert(index < max);
+
+    /* Increase the index. */
+    index++;
+    if (index >= max)
+    {
+        index = 0;
+    }
+    return index;
+}
+
+static void _ENET_ActiveSendRing(ENET_Type *base, uint8_t ringId)
+{
+    assert(ringId < (uint8_t)FSL_FEATURE_ENET_INSTANCE_QUEUEn(base));
+
+    volatile uint32_t *txDesActive = NULL;
+
+    /* Ensure previous data update is completed with Data Synchronization Barrier before activing Tx BD. */
+    __DSB();
+
+    switch (ringId)
+    {
+    case 0:
+        txDesActive = &(base->TDAR);
+        break;
+#if FSL_FEATURE_ENET_QUEUE > 1
+    case 1:
+        txDesActive = &(base->TDAR1);
+        break;
+    case 2:
+        txDesActive = &(base->TDAR2);
+        break;
+#endif /* FSL_FEATURE_ENET_QUEUE > 1 */
+    default:
+        txDesActive = &(base->TDAR);
+        break;
+    }
+
+#if defined(FSL_FEATURE_ENET_HAS_ERRATA_007885) && FSL_FEATURE_ENET_HAS_ERRATA_007885
+    /* There is a TDAR race condition for mutliQ when the software sets TDAR
+     * and the UDMA clears TDAR simultaneously or in a small window (2-4 cycles).
+     * This will cause the udma_tx and udma_tx_arbiter state machines to hang.
+     * Software workaround: introduces a delay by reading the relevant ENET_TDARn_TDAR 4 times
+     */
+    for (uint8_t i = 0; i < 4U; i++)
+    {
+        if (*txDesActive == 0U)
+        {
+            break;
+        }
+    }
+#endif
+
+    /* Write to active tx descriptor */
+    *txDesActive = 0;
+}
+
+static status_t _ENET_SendFrame(ENET_Type *base,
+                                enet_handle_t *handle,
+                                const uint8_t *data,
+                                uint32_t length,
+                                uint8_t ringId,
+                                bool tsFlag,
+                                void *context)
+{
+    assert(handle != NULL);
+    assert(data != NULL);
+    assert(FSL_FEATURE_ENET_INSTANCE_QUEUEn(base) != -1);
+    assert(ringId < (uint8_t)FSL_FEATURE_ENET_INSTANCE_QUEUEn(base));
+
+    volatile enet_tx_bd_struct_t *curBuffDescrip;
+    enet_tx_bd_ring_t *txBdRing = &handle->txBdRing[ringId];
+    enet_tx_dirty_ring_t *txDirtyRing = &handle->txDirtyRing[ringId];
+    enet_frame_info_t *txDirty = NULL;
+    uint32_t len = 0;
+    uint32_t sizeleft = 0;
+    uint32_t address;
+    status_t result = kStatus_Success;
+    uint32_t src;
+    uint32_t configVal;
+    bool isReturn = false;
+    uint32_t primask;
+
+    /* Check the frame length. */
+    if (length > ENET_FRAME_TX_LEN_LIMITATION(base))
+    {
+        result = kStatus_ENET_TxFrameOverLen;
+    }
+    else
+    {
+        /* Check if the transmit buffer is ready. */
+        curBuffDescrip = txBdRing->txBdBase + txBdRing->txGenIdx;
+        if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_TX_READY_MASK))
+        {
+            result = kStatus_ENET_TxFrameBusy;
+        }
+        /* Check txDirtyRing if need frameinfo in tx interrupt callback. */
+        else if ((handle->txReclaimEnable[ringId]) && !_ENET_TxDirtyRingAvailable(txDirtyRing))
+        {
+            result = kStatus_ENET_TxFrameBusy;
+        }
+        else
+        {
+            /* One transmit buffer is enough for one frame. */
+            if (handle->txBuffSizeAlign[ringId] >= length)
+            {
+                /* Copy data to the buffer for uDMA transfer. */
+#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
+                address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer, kMEMORY_DMA2Local);
+#else
+                address = (uint32_t)curBuffDescrip->buffer;
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+                pbuf_copy_partial((const struct pbuf *)data, (void *)address, length, 0);
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
+                if (handle->txMaintainEnable[ringId])
+                {
+                    DCACHE_CleanByRange(address, length);
+                }
+#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
+                /* Set data length. */
+                curBuffDescrip->length = (uint16_t)length;
+#ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
+                /* For enable the timestamp. */
+                if (tsFlag)
+                {
+                    curBuffDescrip->controlExtend1 |= ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK;
+                }
+                else
+                {
+                    curBuffDescrip->controlExtend1 &= (uint16_t)(~ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK);
+                }
+
+#endif /* ENET_ENHANCEDBUFFERDESCRIPTOR_MODE */
+                curBuffDescrip->control |= (ENET_BUFFDESCRIPTOR_TX_READY_MASK | ENET_BUFFDESCRIPTOR_TX_LAST_MASK);
+
+                /* Increase the buffer descriptor address. */
+                txBdRing->txGenIdx = _ENET_IncreaseIndex(txBdRing->txGenIdx, txBdRing->txRingLen);
+
+                /* Add context to frame info ring */
+                if (handle->txReclaimEnable[ringId])
+                {
+                    txDirty = txDirtyRing->txDirtyBase + txDirtyRing->txGenIdx;
+                    txDirty->context = context;
+                    txDirtyRing->txGenIdx = _ENET_IncreaseIndex(txDirtyRing->txGenIdx, txDirtyRing->txRingLen);
+                    if (txDirtyRing->txGenIdx == txDirtyRing->txConsumIdx)
+                    {
+                        txDirtyRing->isFull = true;
+                    }
+                    primask = DisableGlobalIRQ();
+                    txBdRing->txDescUsed++;
+                    EnableGlobalIRQ(primask);
+                }
+
+                /* Active the transmit buffer descriptor. */
+                _ENET_ActiveSendRing(base, ringId);
+            }
+            else
+            {
+                /* One frame requires more than one transmit buffers. */
+                do
+                {
+#ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
+                    /* For enable the timestamp. */
+                    if (tsFlag)
+                    {
+                        curBuffDescrip->controlExtend1 |= ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK;
+                    }
+                    else
+                    {
+                        curBuffDescrip->controlExtend1 &= (uint16_t)(~ENET_BUFFDESCRIPTOR_TX_TIMESTAMP_MASK);
+                    }
+#endif /* ENET_ENHANCEDBUFFERDESCRIPTOR_MODE */
+
+                    /* Update the size left to be transmit. */
+                    sizeleft = length - len;
+#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
+                    address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer, kMEMORY_DMA2Local);
+#else
+                    address = (uint32_t)curBuffDescrip->buffer;
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+                    src = (uint32_t)data + len;
+
+                    /* Increase the current software index of BD */
+                    txBdRing->txGenIdx = _ENET_IncreaseIndex(txBdRing->txGenIdx, txBdRing->txRingLen);
+
+                    if (sizeleft > handle->txBuffSizeAlign[ringId])
+                    {
+                        /* Data copy. */
+                        (void)memcpy((void *)(uint32_t *)address, (void *)(uint32_t *)src,
+                                     handle->txBuffSizeAlign[ringId]);
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
+                        if (handle->txMaintainEnable[ringId])
+                        {
+                            /* Add the cache clean maintain. */
+                            DCACHE_CleanByRange(address, handle->txBuffSizeAlign[ringId]);
+                        }
+#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
+                        /* Data length update. */
+                        curBuffDescrip->length = handle->txBuffSizeAlign[ringId];
+                        len += handle->txBuffSizeAlign[ringId];
+                        /* Sets the control flag. */
+                        configVal = (uint32_t)curBuffDescrip->control;
+                        configVal &= ~ENET_BUFFDESCRIPTOR_TX_LAST_MASK;
+                        configVal |= ENET_BUFFDESCRIPTOR_TX_READY_MASK;
+                        curBuffDescrip->control = (uint16_t)configVal;
+
+                        if (handle->txReclaimEnable[ringId])
+                        {
+                            primask = DisableGlobalIRQ();
+                            txBdRing->txDescUsed++;
+                            EnableGlobalIRQ(primask);
+                        }
+
+                        /* Active the transmit buffer descriptor*/
+                        _ENET_ActiveSendRing(base, ringId);
+                    }
+                    else
+                    {
+                        (void)memcpy((void *)(uint32_t *)address, (void *)(uint32_t *)src, sizeleft);
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
+                        if (handle->txMaintainEnable[ringId])
+                        {
+                            /* Add the cache clean maintain. */
+                            DCACHE_CleanByRange(address, sizeleft);
+                        }
+#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
+                        curBuffDescrip->length = (uint16_t)sizeleft;
+                        /* Set Last buffer wrap flag. */
+                        curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_TX_READY_MASK | ENET_BUFFDESCRIPTOR_TX_LAST_MASK;
+
+                        if (handle->txReclaimEnable[ringId])
+                        {
+                            /* Add context to frame info ring */
+                            txDirty = txDirtyRing->txDirtyBase + txDirtyRing->txGenIdx;
+                            txDirty->context = context;
+                            txDirtyRing->txGenIdx = _ENET_IncreaseIndex(txDirtyRing->txGenIdx, txDirtyRing->txRingLen);
+                            if (txDirtyRing->txGenIdx == txDirtyRing->txConsumIdx)
+                            {
+                                txDirtyRing->isFull = true;
+                            }
+                            primask = DisableGlobalIRQ();
+                            txBdRing->txDescUsed++;
+                            EnableGlobalIRQ(primask);
+                        }
+
+                        /* Active the transmit buffer descriptor. */
+                        _ENET_ActiveSendRing(base, ringId);
+                        isReturn = true;
+                        break;
+                    }
+                    /* Update the buffer descriptor address. */
+                    curBuffDescrip = txBdRing->txBdBase + txBdRing->txGenIdx;
+                } while (0U == (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_TX_READY_MASK));
+
+                if (isReturn == false)
+                {
+                    result = kStatus_ENET_TxFrameBusy;
+                }
+            }
+        }
+    }
+    return result;
+}
+
 /* ethernet device interface */
 /* transmit packet. */
 rt_err_t rt_imxrt_eth_tx(rt_device_t dev, struct pbuf *p)
@@ -469,7 +740,7 @@ rt_err_t rt_imxrt_eth_tx(rt_device_t dev, struct pbuf *p)
 
     do
     {
-        result = ENET_SendFrame(imxrt_eth_device.enet_base, enet_handle, (const uint8_t *)p, p->tot_len, RING_ID, false, NULL);
+        result = _ENET_SendFrame(imxrt_eth_device.enet_base, enet_handle, (const uint8_t *)p, p->tot_len, RING_ID, false, NULL);
 
         if (result == kStatus_ENET_TxFrameBusy)
         {

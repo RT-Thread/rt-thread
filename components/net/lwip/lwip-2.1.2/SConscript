@@ -234,6 +234,8 @@ src += lwipsixlowpan_SRCS
 
 src += lwipcore4_SRCS
 
+src += lwipiperf_SRCS
+
 path = [cwd + '/src/include',
     cwd + '/src/include/netif']
 

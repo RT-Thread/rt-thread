@@ -103,6 +103,46 @@
 #define NETDEV_USING_AUTO_DEFAULT
 #define NETDEV_IPV4 1
 #define NETDEV_IPV6 0
+#define RT_USING_LWIP
+#define RT_USING_LWIP212
+#define RT_USING_LWIP_VER_NUM 0x20102
+#define RT_LWIP_MEM_ALIGNMENT 4
+#define RT_LWIP_IGMP
+#define RT_LWIP_ICMP
+#define RT_LWIP_DNS
+
+/* Static IPv4 Address */
+
+#define RT_LWIP_IPADDR "192.168.2.30"
+#define RT_LWIP_GWADDR "192.168.1.1"
+#define RT_LWIP_MSKADDR "255.255.255.0"
+#define RT_LWIP_UDP
+#define RT_LWIP_TCP
+#define RT_LWIP_RAW
+#define RT_MEMP_NUM_NETCONN 8
+#define RT_LWIP_PBUF_NUM 16
+#define RT_LWIP_RAW_PCB_NUM 4
+#define RT_LWIP_UDP_PCB_NUM 4
+#define RT_LWIP_TCP_PCB_NUM 4
+#define RT_LWIP_TCP_SEG_NUM 40
+#define RT_LWIP_TCP_SND_BUF 8196
+#define RT_LWIP_TCP_WND 8196
+#define RT_LWIP_TCPTHREAD_PRIORITY 10
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
+#define RT_LWIP_TCPTHREAD_STACKSIZE 1024
+#define LWIP_NO_TX_THREAD
+#define RT_LWIP_ETHTHREAD_PRIORITY 12
+#define RT_LWIP_ETHTHREAD_STACKSIZE 1024
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
+#define LWIP_NETIF_STATUS_CALLBACK 1
+#define LWIP_NETIF_LINK_CALLBACK 1
+#define SO_REUSE 1
+#define LWIP_SO_RCVTIMEO 1
+#define LWIP_SO_SNDTIMEO 1
+#define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
+#define LWIP_NETIF_LOOPBACK 0
+#define RT_LWIP_USING_PING
 
 /* Utilities */
 
@@ -121,6 +161,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -145,9 +194,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -167,11 +213,24 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
 
 /* Kendryte SDK */
 
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
+
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -184,14 +243,39 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
+/* Arduino libraries */
 
 
-/* Network Utilities */
+/* Projects and Demos */
 
 
-/* RT-Thread Smart */
+/* Sensors */
 
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 /* Hardware Drivers Config */
 
@@ -200,12 +284,20 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_DMA
 #define BSP_USING_GPIO
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_ETH
+#define BSP_USING_PHY
+#define PHY_USING_KSZ8081
+#define PHY_KSZ8081_ADDRESS 2
+#define PHY_RESET_KSZ8081_PORT 6
+#define PHY_RESET_KSZ8081_PIN 12
+#define FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
 
 /* Board extended module Drivers */
 

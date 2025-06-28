@@ -71,7 +71,8 @@
 #define PHY_TIMEOUT_COUNT 0x3FFFFFFU
 
 /* defined the Reset pin, PORT and PIN config by menuconfig */
-#define RESET_PIN GET_PIN(PHY_RESET_PORT, PHY_RESET_PIN)
+//#define RESET_PIN GET_PIN(PHY_RESET_PORT, PHY_RESET_PIN)
+#define RESET_PIN GET_PIN(PHY_RESET_KSZ8081_PORT, PHY_RESET_KSZ8081_PIN)
 
 /*******************************************************************************
  * Prototypes

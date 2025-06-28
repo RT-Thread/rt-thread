@@ -352,9 +352,9 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>1</ClangAsOpt>
+            <uClangAs>1</uClangAs>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>-masm=auto</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>
