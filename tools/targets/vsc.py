@@ -30,6 +30,7 @@ import os
 import json
 import utils
 import rtconfig
+from SCons.Script import *
 
 from utils import _make_path_relative
 def find_first_node_with_two_children(tree):
@@ -216,14 +217,14 @@ def GenerateCFiles(env):
         cc = os.path.abspath(cc).replace('\\', '/')
 
         config_obj = {}
-        config_obj['name'] = 'rt-thread'
+        config_obj['name'] = 'Linux'
         config_obj['defines'] = info['CPPDEFINES']
 
-        intelliSenseMode = 'gcc-arm'
+        intelliSenseMode = 'linux-gcc-arm'
         if cc.find('aarch64') != -1:
-            intelliSenseMode = 'gcc-arm64'
+            intelliSenseMode = 'linux-gcc-arm64'
         elif cc.find('arm') != -1:
-            intelliSenseMode = 'gcc-arm'
+            intelliSenseMode = 'linux-gcc-arm'
         config_obj['intelliSenseMode'] = intelliSenseMode
         config_obj['compilerPath'] = cc
         config_obj['cStandard'] = "c99"
@@ -335,6 +336,61 @@ def GenerateVSCode(env):
 
     GenerateProjectFiles(env)
     GenerateCFiles(env)
+    print('Done!')
+
+    return
+
+def GenerateVSCodeWorkspace(env):
+    """
+    Generate vscode.code files
+    """
+    print('Update workspace files for VSCode...')
+
+    # get the launch directory
+    cwd = GetLaunchDir()
+
+    # check if .vscode folder exists, if not, create it
+    if not os.path.exists(os.path.join(cwd, '.vscode')):
+        os.mkdir(os.path.join(cwd, '.vscode'))
+
+    vsc_file = open(os.path.join(cwd, '.vscode/c_cpp_properties.json'), 'w')
+    if vsc_file:
+        info = utils.ProjectInfo(env)
+
+        cc = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
+        cc = os.path.abspath(cc).replace('\\', '/')
+
+        config_obj = {}
+        config_obj['name'] = 'Linux'
+        config_obj['defines'] = info['CPPDEFINES']
+
+        intelliSenseMode = 'linux-gcc-arm'
+        if cc.find('aarch64') != -1:
+            intelliSenseMode = 'linux-gcc-arm64'
+        elif cc.find('arm') != -1:
+            intelliSenseMode = 'linux-gcc-arm'
+        config_obj['intelliSenseMode'] = intelliSenseMode
+        config_obj['compilerPath'] = cc
+        config_obj['cStandard'] = "c99"
+        config_obj['cppStandard'] = "c++11"
+
+        # format "a/b," to a/b. remove first quotation mark("),and remove end (",)
+        includePath = []
+        for i in info['CPPPATH']:
+            if i[0] == '\"' and i[len(i) - 2:len(i)] == '\",':
+                includePath.append(_make_path_relative(cwd, i[1:len(i) - 2]))
+            else:
+                includePath.append(_make_path_relative(cwd, i))
+        # make sort for includePath
+        includePath = sorted(includePath, key=lambda x: x.lower())
+        config_obj['includePath'] = includePath
+
+        json_obj = {}
+        json_obj['configurations'] = [config_obj]
+
+        vsc_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
+        vsc_file.close()
+
     print('Done!')
 
     return
