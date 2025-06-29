@@ -58,6 +58,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOptions()
 
     Env = env
+    # export the default environment
+    Export('env')
 
     # prepare logging and set log
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -89,6 +91,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
                 'vsc' : ('gcc', 'gcc'),
+                'vsc_workspace':('gcc', 'gcc'),
                 'cb':('keil', 'armcc'),
                 'ua':('gcc', 'gcc'),
                 'cdk':('gcc', 'gcc'),
@@ -847,6 +850,10 @@ def GenTargetProject(program = None):
         if GetOption('cmsispack'):
             from vscpyocd import GenerateVSCodePyocdConfig
             GenerateVSCodePyocdConfig(GetOption('cmsispack'))
+
+    if GetOption('target') == 'vsc_workspace':
+        from targets.vsc import GenerateVSCodeWorkspace
+        GenerateVSCodeWorkspace(Env)
 
     if GetOption('target') == 'cdk':
         from targets.cdk import CDKProject
