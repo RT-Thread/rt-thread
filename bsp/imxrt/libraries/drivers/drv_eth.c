@@ -796,7 +796,7 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
     }
     else if (status == kStatus_ENET_RxFrameError)
     {
-        dbg_log(DBG_WARNING, "ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
+        dbg_log(DBG_LOG, "ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
         /* Update the received buffer when error happened. */
         /* Get the error information of the received g_frame. */
         ENET_GetRxErrBeforeReadFrame(enet_handle, error_statistic, RING_ID);
