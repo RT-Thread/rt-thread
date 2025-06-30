@@ -54,7 +54,7 @@
 
 /* restrict virtual address on usage of RT_NULL */
 #ifndef KERNEL_VADDR_START
-#define KERNEL_VADDR_START 0x1000
+#define KERNEL_VADDR_START (ARCH_RAM_OFFSET + ARCH_TEXT_OFFSET)
 #endif
 
 volatile unsigned long MMUTable[512] __attribute__((aligned(4 * 1024)));
@@ -283,7 +283,9 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
 
     while (remaining_sz)
     {
-        if (((rt_ubase_t)v_addr & ARCH_SECTION_MASK) || (remaining_sz < ARCH_SECTION_SIZE))
+        if (((rt_ubase_t)v_addr & ARCH_SECTION_MASK) ||
+            ((rt_ubase_t)p_addr & ARCH_SECTION_MASK) ||
+            (remaining_sz < ARCH_SECTION_SIZE))
         {
             /* legacy 4k mapping */
             stride = ARCH_PAGE_SIZE;
