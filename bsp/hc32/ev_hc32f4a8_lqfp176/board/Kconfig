@@ -53,16 +53,6 @@ menu "Onboard Peripheral Drivers"
                 config ETH_INTERFACE_USING_RMII
                     bool "ETH Communication USING RMII"
             endchoice
-
-            menuconfig ETH_PHY_USING_INTERRUPT_MODE
-                bool "Enable ETH PHY interrupt mode"
-                default n
-                if ETH_PHY_USING_INTERRUPT_MODE
-                    config ETH_PHY_INTERRUPT_PIN
-                        int "ETH PHY Interrupt pin number"
-                        range 1 176
-                        default 16
-                endif
         endif
 
     config BSP_USING_EXMC
@@ -142,6 +132,12 @@ menu "On-chip Peripheral Drivers"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 0
+
+                    config BSP_UART1_DMA_PING_BUFSIZE
+                        int "Set UART1 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART2
@@ -169,6 +165,12 @@ menu "On-chip Peripheral Drivers"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 256
+
+                    config BSP_UART2_DMA_PING_BUFSIZE
+                        int "Set UART2 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART2_RX_USING_DMA
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART3
@@ -247,6 +249,12 @@ menu "On-chip Peripheral Drivers"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 256
+
+                    config BSP_UART6_DMA_PING_BUFSIZE
+                        int "Set UART6 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART6_RX_USING_DMA
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART7
@@ -274,8 +282,13 @@ menu "On-chip Peripheral Drivers"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 256
-                endif
 
+                    config BSP_UART7_DMA_PING_BUFSIZE
+                        int "Set UART7 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART7_RX_USING_DMA
+                        default 64
+                endif
 
             menuconfig BSP_USING_UART8
                 bool "Enable UART8"
@@ -600,7 +613,7 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig RT_USING_CAN_MCAN
-        bool "Enable CAN/MAN"
+        bool "Enable CAN/MCAN"
         select RT_USING_CAN
         select RT_CAN_USING_HDR
         select BSP_USING_TCA9539
@@ -664,6 +677,9 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_RTC_USING_LRC
                     bool "RTC USING LRC"
+
+                config BSP_RTC_USING_XTAL_DIV
+                    bool "RTC Using XTAL Division"
             endchoice
         endif
 
