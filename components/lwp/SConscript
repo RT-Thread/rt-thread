@@ -52,7 +52,7 @@ CPPPATH += ['./terminal/']
 if not GetDepend(['LWP_USING_RUNTIME']):
     SrcRemove(src, 'lwp_runtime.c')
 
-group = DefineGroup('lwP', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
+group = DefineGroup('lwProcess', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 
 group = group + SConscript(os.path.join('vdso', 'SConscript'))
 Return('group')
