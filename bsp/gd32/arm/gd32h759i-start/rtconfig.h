@@ -108,6 +108,12 @@
 #define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+#define RT_USING_CACHE
+#define RT_USING_HW_ATOMIC
+#define RT_USING_CPU_FFS
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M7
 
 /* RT-Thread Components */
 
@@ -312,6 +318,18 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+#define PKG_USING_GD32_ARM_CMSIS_DRIVER
+#define PKG_USING_GD32_ARM_CMSIS_DRIVER_LATEST_VERSION
+#define PKG_USING_GD32_ARM_SERIES_DRIVER
+#define PKG_USING_GD32_ARM_SERIES_DRIVER_LATEST_VERSION
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -391,10 +409,11 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
+#define SOC_FAMILY_GD32
+#define SOC_SERIES_GD32H7xx
 
 /* Hardware Drivers Config */
 
-#define SOC_SERIES_GD32H7xx
 #define SOC_GD32H759I
 
 /* Onboard Peripheral Drivers */
