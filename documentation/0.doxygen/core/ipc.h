@@ -3,7 +3,7 @@
  */
 
 /**
- * @addtogroup group_IPC
+ * @addtogroup group_thread_comm
  * @{
  */
 

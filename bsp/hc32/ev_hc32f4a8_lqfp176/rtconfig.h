@@ -309,13 +309,23 @@
 
 /* HC32 DDL Drivers */
 
-#define PKG_USING_HC32F4A8_DDL
-#define PKG_USING_HC32F4A8_DDL_LATEST_VERSION
+#define PKG_USING_HC32F4_CMSIS_DRIVER
+#define PKG_USING_HC32F4_CMSIS_DRIVER_LATEST_VERSION
+#define PKG_USING_HC32F4_SERIES_DRIVER
+#define PKG_USING_HC32F4_SERIES_DRIVER_LATEST_VERSION
 /* end of HC32 DDL Drivers */
 
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

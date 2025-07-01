@@ -4,6 +4,7 @@ config SOC_SERIES_M480
     select SOC_FAMILY_NUMICRO
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select PKG_USING_NUVOTON_SERIES_DRIVER
     default y
 
     config BSP_USE_STDDRIVER_SOURCE

@@ -15,6 +15,25 @@ except:
     print(RTT_ROOT)
     exit(-1)
 
+def bsp_pkg_check():
+    import subprocess
+
+    check_paths = [
+        os.path.join("packages", "gd32-arm-cmsis-latest"),
+        os.path.join("packages", "gd32-arm-series-latest")
+    ]
+
+    need_update = not all(os.path.exists(p) for p in check_paths)
+
+    if need_update:
+        print("\n===============================================================================")
+        print("Dependency packages missing, please running 'pkgs --update'...")
+        print("If no packages are fetched, run 'pkgs --upgrade' first, then 'pkgs --update'...")
+        print("===============================================================================")
+        exit(1)
+
+RegisterPreBuildingAction(bsp_pkg_check) 
+
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
@@ -31,6 +50,7 @@ if rtconfig.PLATFORM in ['iccarm']:
     env.Replace(ARFLAGS = [''])
     env.Replace(LINKCOM = env["LINKCOM"] + ' --map rtthread.map')
 
+Export('env')
 Export('RTT_ROOT')
 Export('rtconfig')
 
@@ -46,12 +66,6 @@ Export('SDK_LIB')
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
-
-gd32_library = 'GD32F10x_Firmware_Library'
-rtconfig.BSP_LIBRARY_TYPE = gd32_library
-
-# include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConscript')))
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript')))

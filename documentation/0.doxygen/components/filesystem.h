@@ -3,7 +3,7 @@
  */
 
 /**
- * @addtogroup group_DFS
+ * @addtogroup group_device_virtual_file_system
  * @{
  */
 

@@ -13,3 +13,4 @@
 - @subpage page_device_wlan
 - @subpage page_device_sensor
 - @subpage page_device_audio
+- @subpage page_device_dtc

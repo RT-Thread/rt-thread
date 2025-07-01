@@ -4,6 +4,7 @@ config SOC_SERIES_NUC980
     select SOC_FAMILY_NUMICRO
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select PKG_USING_NUVOTON_ARM926_LIB
     default y
 
     config BSP_USE_STDDRIVER_SOURCE

@@ -103,17 +103,6 @@ static int spi_flash_init(void)
             continue;
         }
 #endif
-
-#ifdef RT_USING_DFS
-        if (dfs_mount(cfg->flash_name, "/", "elm", 0, 0) == RT_EOK)
-        {
-            rt_kprintf("SPI flash %s mount success!\n", cfg->flash_name);
-        }
-        else
-        {
-            rt_kprintf("SPI flash %s mount failed!\n", cfg->flash_name);
-        }
-#endif
     }
 
     return result;
