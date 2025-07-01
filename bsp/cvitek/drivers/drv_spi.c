@@ -80,9 +80,6 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
 
     LOG_D("spi_configure input");
 
-    /* set cs low when spi idle */
-    writel(0, (void *)0x030001d0);
-
     if (cfg->mode & RT_SPI_SLAVE)
     {
         LOG_E("invalid mode: %d", cfg->mode);
