@@ -164,7 +164,7 @@ static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
     return string_descriptors[index];
 }
 
-const struct usb_descriptor msc_bootuf2_descriptor = {
+const struct usb_descriptor adb_descriptor = {
     .device_descriptor_callback = device_descriptor_callback,
     .config_descriptor_callback = config_descriptor_callback,
     .device_quality_descriptor_callback = device_quality_descriptor_callback,
@@ -274,9 +274,16 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
 
 static struct usbd_interface intf0;
 
+#ifdef RT_USING_MSH
+extern void usbd_adb_shell_init(uint8_t in_ep, uint8_t out_ep);
+#else
 extern int shell_init(bool need_login);
+#endif
 void cherryadb_init(uint8_t busid, uint32_t reg_base)
 {
+#ifdef RT_USING_MSH
+    usbd_adb_shell_init(WINUSB_IN_EP, WINUSB_OUT_EP);
+#else
     /* default password is : 12345678 */
     /* shell_init() must be called in-task */
     if (0 != shell_init(false)) {
@@ -286,7 +293,7 @@ void cherryadb_init(uint8_t busid, uint32_t reg_base)
             ;
         }
     }
-
+#endif
 #ifdef CONFIG_USBDEV_ADVANCE_DESC
     usbd_desc_register(busid, &adb_descriptor);
 #else

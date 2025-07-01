@@ -324,16 +324,11 @@ static inline void dwc2_chan_transfer(struct usbh_bus *bus, uint8_t ch_num, uint
 static void dwc2_halt(struct usbh_bus *bus, uint8_t ch_num)
 {
     volatile uint32_t ChannelEna = (USB_OTG_HC(ch_num)->HCCHAR & USB_OTG_HCCHAR_CHENA) >> 31;
-    volatile uint32_t HcEpType = (USB_OTG_HC(ch_num)->HCCHAR & USB_OTG_HCCHAR_EPTYP) >> 18;
-    volatile uint32_t SplitEna = (USB_OTG_HC(ch_num)->HCSPLT & USB_OTG_HCSPLT_SPLITEN) >> 31;
     volatile uint32_t count = 0U;
     volatile uint32_t value;
 
-    /* In buffer DMA, Channel disable must not be programmed for non-split periodic channels.
-     At the end of the next uframe/frame (in the worst case), the core generates a channel halted
-     and disables the channel automatically. */
-    if ((((USB_OTG_GLB->GAHBCFG & USB_OTG_GAHBCFG_DMAEN) == USB_OTG_GAHBCFG_DMAEN) && (SplitEna == 0U)) &&
-        ((ChannelEna == 0U) || (((HcEpType == HCCHAR_ISOC) || (HcEpType == HCCHAR_INTR))))) {
+    if (((USB_OTG_GLB->GAHBCFG & USB_OTG_GAHBCFG_DMAEN) == USB_OTG_GAHBCFG_DMAEN) &&
+        (ChannelEna == 0U)) {
         return;
     }
 

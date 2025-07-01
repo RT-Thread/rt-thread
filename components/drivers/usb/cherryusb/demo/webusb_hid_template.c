@@ -135,7 +135,7 @@ uint8_t USBD_BinaryObjectStoreDescriptor[USBD_BOS_WTOTALLENGTH] = {
 struct usb_webusb_descriptor webusb_url_desc = {
     .vendor_code = USBD_WEBUSB_VENDOR_CODE,
     .string = USBD_WebUSBURLDescriptor,
-    .string_len = USBD_WINUSB_DESC_SET_LEN
+    .string_len = URL_DESCRIPTOR_LENGTH
 };
 
 struct usb_msosv2_descriptor msosv2_desc = {
