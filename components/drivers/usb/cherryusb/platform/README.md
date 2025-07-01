@@ -18,7 +18,8 @@ lwip support with usb host net class(cdc_ecm/cdc_ncm/cdc_rndis/asix/rtl8152/bl61
 - DFS support with usb host msc.
 - lwip support with usb host net class(cdc_ecm/cdc_ncm/cdc_rndis/asix/rtl8152/bl616_wifi).
 - msh support with lsusb
-
+- device char support with host cdc_acm/ftdi/ch34x/cp210x/pl2303
+- shell support with adb
 
 ## Nuttx
 

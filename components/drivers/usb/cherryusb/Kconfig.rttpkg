@@ -124,9 +124,19 @@ if PKG_USING_CHERRYUSB
             prompt "Enable usb mtp device, it is commercial charge"
             default n
 
+        config PKG_CHERRYUSB_DEVICE_ADB
+            bool
+            prompt "Enable usb adb device"
+            default n
+
         config PKG_CHERRYUSB_DEVICE_DFU
             bool
             prompt "Enable usb dfu device"
+            default n
+
+        config PKG_CHERRYUSB_DEVICE_CDC_ACM_CHARDEV
+            bool
+            prompt "Enable chardev for cdc acm device"
             default n
 
         choice
@@ -168,6 +178,10 @@ if PKG_USING_CHERRYUSB
                 bool "winusbv2_cdc"
             config PKG_CHERRYUSB_DEVICE_TEMPLATE_WINUSBV2_HID
                 bool "winusbv2_hid"
+            config PKG_CHERRYUSB_DEVICE_TEMPLATE_ADB
+                bool "adb"
+            config PKG_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_CHARDEV
+                bool "cdc_acm_chardev"
         endchoice
 
         config CONFIG_USBDEV_MSC_BLOCK_DEV_NAME

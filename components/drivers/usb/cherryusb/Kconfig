@@ -123,14 +123,15 @@ if CHERRYUSB
             prompt "Enable usb mtp device, it is commercial charge"
             default n
 
-        config CHERRYUSB_DEVICE_DFU
-            bool
-            prompt "Enable usb dfu device"
-            default n
 
         config CHERRYUSB_DEVICE_ADB
             bool
             prompt "Enable usb adb device"
+            default n
+
+        config CHERRYUSB_DEVICE_DFU
+            bool
+            prompt "Enable usb dfu device"
             default n
 
         choice
