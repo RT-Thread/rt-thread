@@ -1,13 +1,13 @@
 /*
- * linker script for GD32F4xx with GNU ld
+ * linker script for GD32F5xx with GNU ld
  * BruceOu 2021-12-14
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
-    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  448k /* 448KB sram */
+    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 2048k /* 1024KB flash */
+    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  512k /* 448KB sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;

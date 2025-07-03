@@ -2,9 +2,10 @@ menu "Hardware Drivers Config"
 
 config SOC_SERIES_GD32F5xx
     bool
+    select ARCH_ARM_CORTEX_SECURE
     default y
 
-config SOC_GD32527I
+config SOC_GD32527
     bool
     select SOC_SERIES_GD32F5xx
     select RT_USING_COMPONENTS_INIT
