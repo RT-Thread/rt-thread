@@ -379,7 +379,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_HC32F472PE
+#define SOC_HC32F472MC
 
 /* On-chip Drivers */
 
