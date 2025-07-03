@@ -115,11 +115,11 @@ static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
 
     tim = (struct ra_hwtimer *)timer->parent.user_data;
 
-    timer_info_t info;
-    if (R_GPT_InfoGet(tim->g_ctrl, &info) != FSP_SUCCESS)
+    timer_status_t status;
+    if (R_GPT_StatusGet(tim->g_ctrl, &status) != FSP_SUCCESS)
         return -RT_ERROR;
 
-    return info.period_counts;
+    return status.counter;
 }
 
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
