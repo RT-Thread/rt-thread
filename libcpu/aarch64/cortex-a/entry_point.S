@@ -180,13 +180,12 @@ init_cpu_el:
 
     /* running at EL3? */
     cmp     x0, #3
-    bne     .init_cpu_hyp
+    bne     .init_cpu_hyp_test
 
     /* should never be executed, just for completeness. (EL3) */
     mov     x1, #(1 << 0)           /* EL0 and EL1 are in Non-Secure state */
     orr     x1, x1, #(1 << 4)       /* RES1 */
     orr     x1, x1, #(1 << 5)       /* RES1 */
-    /* bic  x1, x1, #(1 << 7)          disable Secure Monitor Call */
     orr     x1, x1, #(1 << 10)      /* The next lower level is AArch64 */
     msr     scr_el3, x1
 
@@ -201,11 +200,12 @@ init_cpu_el:
     msr     elr_el3, x1
     eret
 
-.init_cpu_hyp:
+.init_cpu_hyp_test:
     /* running at EL2? */
     cmp     x0, #2                  /* EL2 = 0b10  */
     bne     .init_cpu_sys
 
+.init_cpu_hyp:
     /* Enable CNTP for EL1 */
     mrs     x0, cnthctl_el2         /* Counter-timer Hypervisor Control register */
     orr     x0, x0, #(1 << 0)       /* Don't traps NS EL0/1 accesses to the physical counter */
