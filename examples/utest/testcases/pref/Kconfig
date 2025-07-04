@@ -1,0 +1,41 @@
+menu "System Performance Testcase"
+
+config UTEST_SYS_PREF_TC
+    bool "system performance test"
+    default n
+
+choice
+    prompt "Select time reference for System Performance Testcase"
+    default USING_TICK_AS_TIME_REF
+    depends on UTEST_SYS_PREF_TC
+
+config USING_HWTIME_AS_TIME_REF
+    bool "Use hardware timer as time reference"
+    depends on RT_USING_HWTIMER
+
+config USING_TICK_AS_TIME_REF
+    bool "Use system tick as time reference"
+
+endchoice
+
+config UTEST_HWTIMER_DEV_NAME
+    string "Hardware timer device name"
+    default "timer0"
+    depends on USING_HWTIME_AS_TIME_REF
+    help
+        Specify the hardware timer device name used for context switch testing (e.g., timer11).
+
+config UTEST_SYS_CONTEXT_SWITCH
+    bool "system context switch test"
+    default n
+
+config UTEST_SYS_IRQ_LATENCY
+    bool "system IRQ LATENCY test"
+    default n
+    depends on RT_USING_HWTIMER && USING_HWTIME_AS_TIME_REF
+
+config UTEST_SYS_EVENT
+    bool "system thread event tests"
+    default n
+
+endmenu
