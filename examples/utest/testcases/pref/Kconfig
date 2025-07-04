@@ -29,4 +29,13 @@ config UTEST_SYS_CONTEXT_SWITCH
     bool "system context switch test"
     default n
 
+config UTEST_SYS_IRQ_LATENCY
+    bool "system IRQ LATENCY test"
+    default n
+    depends on RT_USING_HWTIMER
+
+config UTEST_SYS_EVENT
+    bool "system thread event tests"
+    default n
+
 endmenu

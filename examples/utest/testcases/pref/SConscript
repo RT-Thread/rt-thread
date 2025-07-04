@@ -8,6 +8,12 @@ CPPPATH = [cwd]
 if GetDepend(['UTEST_SYS_CONTEXT_SWITCH']):
     src += ['context_switch.c']
 
+if GetDepend(['UTEST_SYS_IRQ_LATENCY']):
+    src += ['irq_latency.c']
+
+if GetDepend(['UTEST_SYS_EVENT']):
+    src += ['rt_perf_thread_event.c']
+
 group = DefineGroup('utestcases', src, depend = ['UTEST_SYS_PREF_TC'], CPPPATH = CPPPATH)
 
 Return('group')
