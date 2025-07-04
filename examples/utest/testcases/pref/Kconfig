@@ -32,7 +32,7 @@ config UTEST_SYS_CONTEXT_SWITCH
 config UTEST_SYS_IRQ_LATENCY
     bool "system IRQ LATENCY test"
     default n
-    depends on RT_USING_HWTIMER
+    depends on RT_USING_HWTIMER && USING_HWTIME_AS_TIME_REF
 
 config UTEST_SYS_EVENT
     bool "system thread event tests"
