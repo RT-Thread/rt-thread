@@ -216,7 +216,7 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
     return group
 
 # The common part of making MDK4/5 project
-def MDK45Project(tree, target, script):
+def MDK45Project(env, tree, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
     root = tree.getroot()
@@ -224,7 +224,7 @@ def MDK45Project(tree, target, script):
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
 
     CPPPATH = []
-    CPPDEFINES = []
+    CPPDEFINES = env.get('CPPDEFINES', [])
     LINKFLAGS = ''
     CXXFLAGS = ''
     CCFLAGS = ''
@@ -245,13 +245,6 @@ def MDK45Project(tree, target, script):
                 CPPPATH += group['CPPPATH']
             else:
                 CPPPATH += group['CPPPATH']
-
-        # get each group's definitions
-        if 'CPPDEFINES' in group and group['CPPDEFINES']:
-            if CPPDEFINES:
-                CPPDEFINES += group['CPPDEFINES']
-            else:
-                CPPDEFINES = group['CPPDEFINES']
 
         # get each group's link flags
         if 'LINKFLAGS' in group and group['LINKFLAGS']:
@@ -313,7 +306,7 @@ def MDK45Project(tree, target, script):
     out.write(etree.tostring(root, encoding='utf-8').decode())
     out.close()
 
-def MDK4Project(target, script):
+def MDK4Project(env, target, script):
 
     if os.path.isfile('template.uvproj') is False:
         print ('Warning: The template project file [template.uvproj] not found!')
@@ -321,7 +314,7 @@ def MDK4Project(target, script):
 
     template_tree = etree.parse('template.uvproj')
 
-    MDK45Project(template_tree, target, script)
+    MDK45Project(env, template_tree, target, script)
 
     # remove project.uvopt file
     project_uvopt = os.path.abspath(target).replace('uvproj', 'uvopt')
@@ -352,7 +345,7 @@ def monitor_log_file(log_file_path):
             if empty_line_count > 30:
                 print("Timeout reached or too many empty lines, exiting log monitoring thread.")
                 break
-def MDK5Project(target, script):
+def MDK5Project(env, target, script):
 
     if os.path.isfile('template.uvprojx') is False:
         print ('Warning: The template project file [template.uvprojx] not found!')
@@ -360,7 +353,7 @@ def MDK5Project(target, script):
 
     template_tree = etree.parse('template.uvprojx')
 
-    MDK45Project(template_tree, target, script)
+    MDK45Project(env, template_tree, target, script)
 
     # remove project.uvopt file
     project_uvopt = os.path.abspath(target).replace('uvprojx', 'uvoptx')
@@ -387,7 +380,7 @@ def MDK5Project(target, script):
         else:
             print('UV4.exe is not available, please check your keil installation')
 
-def MDK2Project(target, script):
+def MDK2Project(env, target, script):
     template = open(os.path.join(os.path.dirname(__file__), 'template.Uv2'), 'r')
     lines = template.readlines()
 
@@ -407,7 +400,7 @@ def MDK2Project(target, script):
 
     ProjectFiles = []
     CPPPATH = []
-    CPPDEFINES = []
+    CPPDEFINES = env.get('CPPDEFINES', [])
     LINKFLAGS = ''
     CFLAGS = ''
 
@@ -422,13 +415,6 @@ def MDK2Project(target, script):
                 CPPPATH += group['CPPPATH']
             else:
                 CPPPATH += group['CPPPATH']
-
-        # get each group's definitions
-        if 'CPPDEFINES' in group and group['CPPDEFINES']:
-            if CPPDEFINES:
-                CPPDEFINES += group['CPPDEFINES']
-            else:
-                CPPDEFINES = group['CPPDEFINES']
 
         # get each group's link flags
         if 'LINKFLAGS' in group and group['LINKFLAGS']:

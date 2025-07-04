@@ -805,13 +805,13 @@ def GenTargetProject(program = None):
         from targets.keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
         if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
-            MDK5Project(GetOption('project-name') + '.uvprojx', Projects)
+            MDK5Project(Env, GetOption('project-name') + '.uvprojx', Projects)
             print("Keil5 project is generating...")
         elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']: # Keil4
-            MDK4Project(GetOption('project-name') + '.uvproj', Projects)
+            MDK4Project(Env, GetOption('project-name') + '.uvproj', Projects)
             print("Keil4 project is generating...")
         elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
-            MDK2Project(GetOption('project-name') + '.Uv2', Projects)
+            MDK2Project(Env, GetOption('project-name') + '.Uv2', Projects)
             print("Keil2 project is generating...")
         else:
             print ('No template project file found.')
