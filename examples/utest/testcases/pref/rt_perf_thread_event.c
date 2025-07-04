@@ -74,12 +74,11 @@ static void perf_thread_event1(void *parameter)
         thread_event_count ++;
         if (thread_event_count >= PERF_COUNT)
         {
-            
             LOG_I("Event test completed: %d iterations, total time = %lu us, average = %lu us per event",
                 PERF_COUNT, total_time, total_time / PERF_COUNT);
 
             rt_event_delete(perf_thread_event);
-            rt_sem_delete(sem1); 
+            rt_sem_delete(sem1);
             return;
         }
         rt_sem_release(sem1);
