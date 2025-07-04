@@ -859,7 +859,7 @@ static rt_uint32_t mcan_get_rx_buffer_num(rt_uint32_t new_data)
     return num++;
 }
 
-rt_inline void mcan_isr(hc32_mcan_driver_t *driver)
+rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
 {
     struct rt_can_device *device = &driver->can_device;
     CM_MCAN_TypeDef *MCANx = driver->mcan.instance;
@@ -869,7 +869,7 @@ rt_inline void mcan_isr(hc32_mcan_driver_t *driver)
     uint32_t ndat2 = MCANx->NDAT2;
     int rx_buf_index;
 
-    MCAN_ClearStatus(MCANx, ir_status);
+    MCAN_ClearStatus(MCANx, ir_status & int_sel);
 
     /* Check normal status flag */
     /* Transmission completed */
@@ -974,7 +974,7 @@ void MCAN1_INT0_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    mcan_isr(&m_mcan_driver_list[MCAN1_INDEX]);
+    mcan_isr(&m_mcan_driver_list[MCAN1_INDEX], m_mcan_driver_list[MCAN1_INDEX].mcan.int0_sel);
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -985,7 +985,7 @@ void MCAN1_INT1_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    mcan_isr(&m_mcan_driver_list[MCAN1_INDEX]);
+    mcan_isr(&m_mcan_driver_list[MCAN1_INDEX], m_mcan_driver_list[MCAN1_INDEX].mcan.int1_sel);
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -998,7 +998,7 @@ void MCAN2_INT0_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    mcan_isr(&m_mcan_driver_list[MCAN2_INDEX]);
+    mcan_isr(&m_mcan_driver_list[MCAN2_INDEX], m_mcan_driver_list[MCAN2_INDEX].mcan.int0_sel);
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -1009,7 +1009,7 @@ void MCAN2_INT1_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    mcan_isr(&m_mcan_driver_list[MCAN2_INDEX]);
+    mcan_isr(&m_mcan_driver_list[MCAN2_INDEX], m_mcan_driver_list[MCAN2_INDEX].mcan.int1_sel);
 
     /* leave interrupt */
     rt_interrupt_leave();

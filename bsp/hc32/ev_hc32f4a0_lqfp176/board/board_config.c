@@ -105,6 +105,13 @@ rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx)
 #endif
 
 #if defined(RT_USING_DAC)
+#if defined(BSP_USING_DAC2)
+void EthPhyDisable(void)
+{
+    TCA9539_WritePin(ETH_RST_PORT, ETH_RST_PIN, TCA9539_PIN_RESET);
+    TCA9539_ConfigPin(ETH_RST_PORT, ETH_RST_PIN, TCA9539_DIR_OUT);
+}
+#endif
 rt_err_t rt_hw_board_dac_init(CM_DAC_TypeDef *DACx)
 {
     rt_err_t result = RT_EOK;

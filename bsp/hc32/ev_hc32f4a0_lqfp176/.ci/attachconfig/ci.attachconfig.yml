@@ -1,0 +1,48 @@
+devices.adc:
+    kconfig:
+      - CONFIG_BSP_USING_ADC=y
+      - CONFIG_BSP_USING_ADC1=y
+devices.flash:
+    kconfig:
+      - CONFIG_BSP_USING_ON_CHIP_FLASH=y
+devices.gpio:
+    kconfig: 
+      - CONFIG_BSP_USING_GPIO=y
+      - CONFIG_BSP_USING_I2C=y
+      - CONFIG_BSP_USING_I2C_HW=y
+      - CONFIG_BSP_USING_I2C1=y
+devices.hwtimer:
+    kconfig:
+      - CONFIG_BSP_USING_HWTIMER=y
+      - CONFIG_BSP_USING_TMRA_1=y
+devices.i2c:
+    kconfig:
+      - CONFIG_BSP_USING_I2C=y
+devices.pwm:
+    kconfig:
+      - CONFIG_BSP_USING_PWM=y
+      - CONFIG_BSP_USING_PWM_TMRA=y
+      - CONFIG_BSP_USING_PWM_TMRA_1=y
+      - CONFIG_BSP_USING_PWM_TMRA_1_CH1=y
+      - CONFIG_BSP_USING_PWM_TMRA_1_CH2=y
+devices.rtc:
+    kconfig:
+      - CONFIG_BSP_USING_RTC=y
+      - CONFIG_BSP_RTC_USING_XTAL32=y
+devices.spi:
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI1=y
+devices.uart:
+    kconfig:
+      - CONFIG_BSP_USING_UART=y
+      - CONFIG_BSP_USING_UART1=y
+devices.watchdog:
+    kconfig:
+      - CONFIG_BSP_USING_WDT_TMR=y
+      - CONFIG_BSP_USING_SWDT=y
+# ------ SEGGER CI ------
+segger:
+    kconfig:
+      - CONFIG_PKG_USING_SEGGER_RTT=y
+      - CONFIG_RT_USING_SERIAL_V1=y
