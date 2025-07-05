@@ -350,6 +350,7 @@ static int usbh_ftdi_connect(struct usbh_hubport *hport, uint8_t intf)
     switch (version) {
         case 0x400:
             ftdi_class->chip_type = FT232B;
+            break;
         case 0x500:
             ftdi_class->chip_type = FT2232C;
             break;

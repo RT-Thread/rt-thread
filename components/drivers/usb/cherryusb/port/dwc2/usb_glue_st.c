@@ -178,7 +178,7 @@ uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base)
     usb_hsphy_init(25000000U);
     return (1 << 23); /* Enable USB HS PHY USBx->GCCFG |= USB_OTG_GCCFG_PHYHSEN;*/
 #elif __has_include("stm32h7rsxx.h")
-    return (1 << 21);
+    return ((1 << 23) | (1 << 24));
 #else
     return 0;
 #endif
@@ -205,6 +205,8 @@ uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base)
     USB_OTG_GLB->GCCFG = (1 << 23);
     usb_hsphy_init(25000000U);
     return (1 << 23); /* Enable USB HS PHY USBx->GCCFG |= USB_OTG_GCCFG_PHYHSEN;*/
+#elif __has_include("stm32h7rsxx.h")
+    return (1 << 25);
 #else
     return 0;
 #endif

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022 ~ 2025, sakumisu
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include "rtthread.h"
 #include "usb_config.h"
 

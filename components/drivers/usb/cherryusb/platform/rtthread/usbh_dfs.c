@@ -30,15 +30,15 @@ static rt_err_t rt_udisk_init(rt_device_t dev)
     return RT_EOK;
 }
 
-static ssize_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void *buffer,
-                             rt_size_t size)
+static rt_ssize_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void *buffer,
+                                rt_size_t size)
 {
     struct usbh_msc *msc_class = (struct usbh_msc *)dev->user_data;
     int ret;
     rt_uint8_t *align_buf;
 
     align_buf = (rt_uint8_t *)buffer;
-#ifdef RT_USING_CACHE
+#ifdef CONFIG_USB_DCACHE_ENABLE
     if ((uint32_t)buffer & (CONFIG_USB_ALIGN_SIZE - 1)) {
         align_buf = rt_malloc_align(size * msc_class->blocksize, CONFIG_USB_ALIGN_SIZE);
         if (!align_buf) {
@@ -53,7 +53,7 @@ static ssize_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void *buffer,
         rt_kprintf("usb mass_storage read failed\n");
         return 0;
     }
-#ifdef RT_USING_CACHE
+#ifdef CONFIG_USB_DCACHE_ENABLE
     if ((uint32_t)buffer & (CONFIG_USB_ALIGN_SIZE - 1)) {
         usb_memcpy(buffer, align_buf, size * msc_class->blocksize);
         rt_free_align(align_buf);
@@ -62,15 +62,15 @@ static ssize_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void *buffer,
     return size;
 }
 
-static ssize_t rt_udisk_write(rt_device_t dev, rt_off_t pos, const void *buffer,
-                              rt_size_t size)
+static rt_ssize_t rt_udisk_write(rt_device_t dev, rt_off_t pos, const void *buffer,
+                                 rt_size_t size)
 {
     struct usbh_msc *msc_class = (struct usbh_msc *)dev->user_data;
     int ret;
     rt_uint8_t *align_buf;
 
     align_buf = (rt_uint8_t *)buffer;
-#ifdef RT_USING_CACHE
+#ifdef CONFIG_USB_DCACHE_ENABLE
     if ((uint32_t)buffer & (CONFIG_USB_ALIGN_SIZE - 1)) {
         align_buf = rt_malloc_align(size * msc_class->blocksize, CONFIG_USB_ALIGN_SIZE);
         if (!align_buf) {
@@ -86,7 +86,7 @@ static ssize_t rt_udisk_write(rt_device_t dev, rt_off_t pos, const void *buffer,
         rt_kprintf("usb mass_storage write failed\n");
         return 0;
     }
-#ifdef RT_USING_CACHE
+#ifdef CONFIG_USB_DCACHE_ENABLE
     if ((uint32_t)buffer & (CONFIG_USB_ALIGN_SIZE - 1)) {
         rt_free_align(align_buf);
     }

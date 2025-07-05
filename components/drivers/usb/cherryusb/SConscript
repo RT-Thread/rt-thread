@@ -127,13 +127,17 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('class/cdc/usbd_cdc_ncm.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DFU']):
         src += Glob('class/dfu/usbd_dfu.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_ADB']):
+        src += Glob('class/adb/usbd_adb.c')
+        src += Glob('platform/rtthread/usbd_adb_shell.c')
+
+    if GetDepend(['RT_CHERRYUSB_DEVICE_CDC_ACM_CHARDEV']):
+        src += Glob('platform/rtthread/usbd_serial.c')
 
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM']):
         src += Glob('demo/cdc_acm_template.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC']):
+    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC']) or GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV']):
         src += Glob('demo/msc_ram_template.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV']):
-        src += Glob('platform/rtthread/usbd_msc_blkdev.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_HID_MOUSE']):
         src += Glob('demo/hid_mouse_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD']):
@@ -162,6 +166,10 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('demo/winusb2.0_cdc_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_WINUSBV2_HID']):
         src += Glob('demo/winusb2.0_hid_template.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_ADB']):
+        src += Glob('demo/adb/usbd_adb_template.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_CHARDEV']):
+        src += Glob('demo/cdc_acm_rttchardev_template.c')
 
 # USB HOST
 if GetDepend(['RT_CHERRYUSB_HOST']):
@@ -284,6 +292,13 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
     if GetDepend(['RT_CHERRYUSB_HOST_TEMPLATE']):
         CPPDEFINES+=['TEST_USBH_MSC=0']
         src += Glob('demo/usb_host.c')
+
+    if GetDepend(['RT_CHERRYUSB_HOST_CDC_ACM'])    \
+        or GetDepend(['RT_CHERRYUSB_HOST_FTDI'])   \
+        or GetDepend(['RT_CHERRYUSB_HOST_CH34X'])  \
+        or GetDepend(['RT_CHERRYUSB_HOST_CP210X']) \
+        or GetDepend(['RT_CHERRYUSB_HOST_PL2303']):
+        src += Glob('platform/rtthread/usbh_serial.c')
 
     if GetDepend('RT_USING_DFS') and GetDepend(['RT_CHERRYUSB_HOST_MSC']):
        src += Glob('platform/rtthread/usbh_dfs.c')
