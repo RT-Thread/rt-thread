@@ -73,7 +73,7 @@ def AddOptions():
     AddOption('--target',
                 dest = 'target',
                 type = 'string',
-                help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+                help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake/vsc_workspace')
     AddOption('--cmsispack',
                 dest = 'cmsispack',
                 type = 'string',
