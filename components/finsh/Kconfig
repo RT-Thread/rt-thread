@@ -35,6 +35,12 @@ if RT_USING_MSH
             default 5
     endif
 
+    config FINSH_USING_WORD_OPERATION
+        bool "Enable word-based cursor operations"
+        default n
+        help
+            Enable Ctrl+Backspace to delete words and Ctrl+Arrow to move cursor by word
+        
     config FINSH_USING_SYMTAB
         bool "Using symbol table for commands"
         default y
