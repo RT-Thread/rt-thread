@@ -22,6 +22,8 @@
 # 2018-05-30     Bernard      The first version
 # 2023-03-03     Supperthomas Add the vscode workspace config file
 # 2024-12-13     Supperthomas covert compile_commands.json to vscode workspace file
+# 2025-07-05     Bernard      Add support for generating .vscode/c_cpp_properties.json 
+#                             and .vscode/settings.json files
 """
 Utils for VSCode
 """
@@ -63,7 +65,7 @@ def build_tree(paths):
     tree = {}
     current_working_directory = os.getcwd()
     current_folder_name = os.path.basename(current_working_directory)
-    #过滤异常和不存在的路径
+    # Filter out invalid and non-existent paths
     relative_dirs = []
     for path in paths:
         normalized_path = os.path.normpath(path)
@@ -90,7 +92,7 @@ def extract_source_dirs(compile_commands):
         if file_path.endswith('.c'):
             dir_path = os.path.dirname(file_path)
             source_dirs.add(dir_path)
-            # command 或者arguments
+            # command or arguments
             command = entry.get('command') or entry.get('arguments')
 
             if isinstance(command, str):
@@ -105,7 +107,7 @@ def extract_source_dirs(compile_commands):
                 elif part.startswith('/I'):
                     include_dir = part[2:] if len(part) > 2 else parts[i + 1]
                     source_dirs.add(os.path.abspath(include_dir))
-    #print(f"Source Directories: {source_dirs}")
+
     return sorted(source_dirs)
 
 
@@ -114,8 +116,7 @@ def is_path_in_tree(path, tree):
     current_level = tree
     found_first_node = False
     root_key = list(tree.keys())[0]
-    #print(root_key)
-    #print(path)
+
     index_start = parts.index(root_key)
     length = len(parts)
     try:
@@ -155,7 +156,6 @@ def generate_code_workspace_file(source_dirs,command_json_path,root_path):
         }
     }
     workspace_filename = f'{current_folder_name}.code-workspace'
-    # print(workspace_data)
     with open(workspace_filename, 'w') as f:
         json.dump(workspace_data, f, indent=4)
 
@@ -193,8 +193,6 @@ def command_json_to_workspace(root_path,command_json_path):
             if not is_path_in_tree(dir_path, filtered_tree):
                 exclude_fold.add(dir_path)
 
-    #print("Excluded Folders:")
-    #print(exclude_fold)
     generate_code_workspace_file(exclude_fold,command_json_path,root_path)
 
 def delete_repeatelist(data):
@@ -340,6 +338,51 @@ def GenerateVSCode(env):
 
     return
 
+import os
+
+def find_rtconfig_dirs(bsp_dir, project_dir):
+    """
+    Search for subdirectories containing 'rtconfig.h' under 'bsp_dir' (up to 4 levels deep), excluding 'project_dir'.
+
+    Args:
+        bsp_dir (str): The root directory to search (absolute path).
+        project_dir (str): The subdirectory to exclude from the search (absolute path).
+
+    Returns
+        list: A list of absolute paths to subdirectories containing 'rtconfig.h'.
+    """
+
+    result = []
+    project_dir = os.path.normpath(project_dir)
+
+    # list the bsp_dir to add result
+    list = os.listdir(bsp_dir)
+    for item in list:
+        item = os.path.join(bsp_dir, item)
+
+        # if item is a directory
+        if not os.path.isdir(item):
+            continue
+
+        # print(item, project_dir)
+        if not project_dir.startswith(item):
+            result.append(os.path.abspath(item))
+
+    parent_dir = os.path.dirname(project_dir)
+    
+    if parent_dir != bsp_dir:
+        list = os.listdir(parent_dir)
+        for item in list:
+            item = os.path.join(parent_dir, item)
+            rtconfig_path = os.path.join(item, 'rtconfig.h')
+            if os.path.isfile(rtconfig_path):
+                abs_path = os.path.abspath(item)
+                if abs_path != project_dir:
+                    result.append(abs_path)
+
+    # print(result)
+    return result
+
 def GenerateVSCodeWorkspace(env):
     """
     Generate vscode.code files
@@ -348,6 +391,26 @@ def GenerateVSCodeWorkspace(env):
 
     # get the launch directory
     cwd = GetLaunchDir()
+
+    # get .vscode/workspace.json file
+    workspace_file = os.path.join(cwd, '.vscode', 'workspace.json')
+    if not os.path.exists(workspace_file):
+        print('Workspace file not found, skip generating.')
+        return
+
+    try:
+        # read the workspace file
+        with open(workspace_file, 'r') as f:
+            workspace_data = json.load(f)
+        
+        # get the bsp directories from the workspace data, bsps/folder
+        bsp_dir = os.path.join(cwd, workspace_data.get('bsps', {}).get('folder', ''))
+        if not bsp_dir:
+            print('No BSP directories found in the workspace file, skip generating.')
+            return
+    except Exception as e:
+        print('Error reading workspace file, skip generating.')
+        return
 
     # check if .vscode folder exists, if not, create it
     if not os.path.exists(os.path.join(cwd, '.vscode')):
@@ -389,6 +452,36 @@ def GenerateVSCodeWorkspace(env):
         json_obj['configurations'] = [config_obj]
 
         vsc_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
+        vsc_file.close()
+
+    # generate .vscode/settings.json
+    vsc_settings = {}
+    settings_path = os.path.join(cwd, '.vscode/settings.json')
+    if os.path.exists(settings_path):
+        with open(settings_path, 'r') as f:
+            # read the existing settings file and load to vsc_settings
+            vsc_settings = json.load(f)
+
+    vsc_file = open(settings_path, 'w')
+    if vsc_file:
+        vsc_settings['files.exclude'] = {
+            "**/__pycache__": True,
+            "tools/kconfig-frontends": True,
+        }
+
+        result = find_rtconfig_dirs(bsp_dir, os.getcwd())
+        if result:
+            # sort the result
+            result = sorted(result, key=lambda x: x.lower())
+            for item in result:
+                # make the path relative to the current working directory
+                rel_path = os.path.relpath(item, cwd)
+                # add the path to files.exclude
+                vsc_settings['files.exclude'][rel_path] = True
+
+        vsc_settings['search.exclude'] = vsc_settings['files.exclude']
+        # write the settings to the file
+        vsc_file.write(json.dumps(vsc_settings, ensure_ascii=False, indent=4))
         vsc_file.close()
 
     print('Done!')
