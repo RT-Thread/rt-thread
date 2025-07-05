@@ -499,6 +499,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
             }
             else
             {
+                rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
                 return;
             }
         }
