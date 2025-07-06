@@ -32,7 +32,7 @@ import os
 import json
 import utils
 import rtconfig
-from SCons.Script import *
+from SCons.Script import GetLaunchDir
 
 from utils import _make_path_relative
 def find_first_node_with_two_children(tree):
@@ -81,7 +81,6 @@ def print_tree(tree, indent=''):
     for key, subtree in sorted(tree.items()):
         print(indent + key)
         print_tree(subtree, indent + '  ')
-
 
 def extract_source_dirs(compile_commands):
     source_dirs = set()
@@ -207,8 +206,7 @@ def GenerateCFiles(env):
     if not os.path.exists('.vscode'):
         os.mkdir('.vscode')
 
-    vsc_file = open('.vscode/c_cpp_properties.json', 'w')
-    if vsc_file:
+    with open('.vscode/c_cpp_properties.json', 'w') as vsc_file:
         info = utils.ProjectInfo(env)
 
         cc = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
@@ -242,7 +240,6 @@ def GenerateCFiles(env):
         json_obj['configurations'] = [config_obj]
 
         vsc_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
-        vsc_file.close()
 
     """
     Generate vscode.code-workspace files by build/compile_commands.json
@@ -254,8 +251,7 @@ def GenerateCFiles(env):
     """
     Generate vscode.code-workspace files
     """
-    vsc_space_file = open('vscode.code-workspace', 'w')
-    if vsc_space_file:
+    with open('vscode.code-workspace', 'w') as vsc_space_file:
         info = utils.ProjectInfo(env)
         path_list = []
         for i in info['CPPPATH']:
@@ -274,7 +270,6 @@ def GenerateCFiles(env):
         json_obj = {}
         path_list = delete_repeatelist(path_list)
         path_list = sorted(path_list, key=lambda x: x["path"])
-        target_path_list = []
         for path in path_list:
             if path['path'] != '.':
                 normalized_path = path['path'].replace('\\', os.path.sep)
@@ -289,7 +284,7 @@ def GenerateCFiles(env):
             ]
             }
         vsc_space_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
-        vsc_space_file.close()    
+
     return
 
 def GenerateProjectFiles(env):
@@ -300,8 +295,7 @@ def GenerateProjectFiles(env):
         os.mkdir('.vscode')
 
     project = env['project']
-    vsc_file = open('.vscode/project.json', 'w')
-    if vsc_file:
+    with open('.vscode/project.json', 'w') as vsc_file:
         groups = []
         for group in project:
             if len(group['src']) > 0:
@@ -325,7 +319,6 @@ def GenerateProjectFiles(env):
 
         # write groups to project.json
         vsc_file.write(json.dumps(json_dict, ensure_ascii=False, indent=4))
-        vsc_file.close()
 
     return
 
@@ -416,8 +409,7 @@ def GenerateVSCodeWorkspace(env):
     if not os.path.exists(os.path.join(cwd, '.vscode')):
         os.mkdir(os.path.join(cwd, '.vscode'))
 
-    vsc_file = open(os.path.join(cwd, '.vscode/c_cpp_properties.json'), 'w')
-    if vsc_file:
+    with open(os.path.join(cwd, '.vscode/c_cpp_properties.json'), 'w') as vsc_file:
         info = utils.ProjectInfo(env)
 
         cc = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
@@ -452,7 +444,6 @@ def GenerateVSCodeWorkspace(env):
         json_obj['configurations'] = [config_obj]
 
         vsc_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
-        vsc_file.close()
 
     # generate .vscode/settings.json
     vsc_settings = {}
@@ -462,8 +453,7 @@ def GenerateVSCodeWorkspace(env):
             # read the existing settings file and load to vsc_settings
             vsc_settings = json.load(f)
 
-    vsc_file = open(settings_path, 'w')
-    if vsc_file:
+    with open(settings_path, 'w') as vsc_file:
         vsc_settings['files.exclude'] = {
             "**/__pycache__": True,
             "tools/kconfig-frontends": True,
@@ -482,7 +472,6 @@ def GenerateVSCodeWorkspace(env):
         vsc_settings['search.exclude'] = vsc_settings['files.exclude']
         # write the settings to the file
         vsc_file.write(json.dumps(vsc_settings, ensure_ascii=False, indent=4))
-        vsc_file.close()
 
     print('Done!')
 
