@@ -77,6 +77,11 @@ tag: bsp_ultrarisc
 path: bsp/ultrarisc/ur_dp1000_evb
 owners: Zhang Jing(zhangjing0303)<zhangjing@ultrarisc.com>
 
+tag: bsp_ESP32_C3
+path: bsp/ESP32_C3/builtin_imgs
+path: bsp/ESP32_C3/drivers
+owners: Damoshed_Xu(xu18838022837)<xu18838022837@gmail.com> <496121493@qq.com>
+
 tag: bsp_renesas
 path: bsp/renesas
 owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
@@ -131,11 +136,15 @@ owners: Yucai Liu(illustriousness)<1486344514@qq.com>
 
 tag: kernel
 path: src
-owners: Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>
+owners: Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>, Damoshed_Xu(xu18838022837)<496121493@qq.com>
 
 tag: libc
 path: components/libc
 owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>
+
+tag: lwp
+path: components/lwp
+owners: Damoshed_Xu(xu18838022837)<xu18838022837@gmail.com> <496121493@qq.com>
 
 tag: maintainers
 path: MAINTAINERS
