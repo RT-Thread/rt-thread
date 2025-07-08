@@ -69,6 +69,10 @@ tag: bsp_mcxn
 path: bsp/nxp/mcx/mcxn
 owners: 下里巴人(hywing)<hywing.sir@qq.com>
 
+tag: bsp_mm32f526x
+path: bsp/mm32f526x
+owners: Huanyi Mai(Chasel)<m19825309307@163.com>
+
 tag: bsp_rt-spark
 path: bsp/stm32/stm32f407-rt-spark
 owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
@@ -100,6 +104,14 @@ owners: PengXu(LittleGreyG)<18825981694@163.com>
 tag: bsp_stm32h750-artpi
 path: bsp/stm32/stm32h750-artpi
 owners: PengXu(LittleGreyG)<18825981694@163.com>
+
+tag: bsp_wch
+path: bsp/wch
+owners: Huanyi Mai(Chasel)<m19825309307@163.com>
+
+tag: components
+path: components
+owners: Huanyi Mai(Chasel)<m19825309307@163.com>
 
 tag: documentation
 path: documentation
@@ -155,15 +167,4 @@ tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
-tag: bsp_mm32f526x
-path: bsp/mm32f526x
-owners: Huanyi Mai(Chasel)<m19825309307@163.com>
-
-tag: bsp_wch
-path: bsp/wch
-owners: Huanyi Mai(Chasel)<m19825309307@163.com>
-
-tag: components
-path: components
-owners: Huanyi Mai(Chasel)<m19825309307@163.com>
 
