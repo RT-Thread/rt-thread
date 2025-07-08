@@ -45,6 +45,10 @@
 
 # Below are existing maintainer entries, divided by module:
 
+tag: at
+path: components/net/at
+owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>
+
 tag: bsp_cvitek
 path: bsp/cvitek
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
@@ -170,7 +174,7 @@ tag: serial_v2
 path: components/drivers/serial/dev_serial_v2.c
 path: components/drivers/include/drivers/dev_serial_v2.h
 path: examples/utest/testcases/drivers/serial_v2
-owners: Chen Bei Dou(Ryan-CW-Code)<1831931681@qq.com>
+owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>
 
 tag: workflow
 path: .github
