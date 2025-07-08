@@ -163,6 +163,14 @@ path: components/drivers/include/drivers/dev_serial_v2.h
 path: examples/utest/testcases/drivers/serial_v2
 owners: Chen Bei Dou(Ryan-CW-Code)<1831931681@qq.com>
 
+tag: bsp_stm32_stm32f429-atk-apollo
+path: bsp/stm32/stm32f429-atk-apollo
+owners: lizhen9880(lizhen9880)<lizhen9880@126.com>
+
+tag: at
+path: components/net/at
+owners: lizhen9880(lizhen9880)<lizhen9880@126.com>
+
 tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
