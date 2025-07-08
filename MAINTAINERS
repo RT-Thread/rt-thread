@@ -80,7 +80,7 @@ owners: Zhang Jing(zhangjing0303)<zhangjing@ultrarisc.com>
 tag: bsp_ESP32_C3
 path: bsp/ESP32_C3/builtin_imgs
 path: bsp/ESP32_C3/drivers
-owners: Damoshed_Xu(xu18838022837)<xu18838022837@gmail.com> <496121493@qq.com>
+owners: Damoshed_Xu(xu18838022837)<496121493@qq.com>
 
 tag: bsp_renesas
 path: bsp/renesas
@@ -144,7 +144,7 @@ owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>, Guorui Li(GorrayLi)<li
 
 tag: lwp
 path: components/lwp
-owners: Damoshed_Xu(xu18838022837)<xu18838022837@gmail.com> <496121493@qq.com>
+owners: Damoshed_Xu(xu18838022837)<496121493@qq.com>
 
 tag: maintainers
 path: MAINTAINERS
