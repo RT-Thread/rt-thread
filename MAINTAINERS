@@ -154,3 +154,16 @@ owners: Chen Bei Dou(Ryan-CW-Code)<1831931681@qq.com>
 tag: workflow
 path: .github
 owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
+tag: bsp_mm32f526x
+path: bsp/mm32f526x
+owners: Huanyi Mai(Chasel)<m19825309307@163.com>
+
+tag: bsp_wch
+path: bsp/wch
+owners: Huanyi Mai(Chasel)<m19825309307@163.com>
+
+tag: components
+path: components
+owners: Huanyi Mai(Chasel)<m19825309307@163.com>
+
