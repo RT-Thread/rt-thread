@@ -10,6 +10,10 @@
 
 #include "drivers/dev_spi.h"
 
+extern rt_err_t spi_bus_register(struct rt_spi_bus       *bus,
+                                 const char              *name,
+                                 const struct rt_spi_ops *ops);
+
 rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configuration *cfg)
 {
     RT_ASSERT(device != RT_NULL);
@@ -67,16 +71,10 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
 
 rt_err_t rt_qspi_bus_register(struct rt_spi_bus *bus, const char *name, const struct rt_spi_ops *ops)
 {
-    rt_err_t result = RT_EOK;
+    /* set SPI bus to qspi modes */
+    bus->mode = RT_SPI_BUS_MODE_QSPI;
 
-    result = rt_spi_bus_register(bus, name, ops);
-    if(result == RT_EOK)
-    {
-        /* set SPI bus to qspi modes */
-        bus->mode = RT_SPI_BUS_MODE_QSPI;
-    }
-
-    return result;
+    return spi_bus_register(bus, name, ops);
 }
 
 rt_size_t rt_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qspi_message *message)
