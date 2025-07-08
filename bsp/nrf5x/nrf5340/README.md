@@ -93,6 +93,32 @@ PCA10143-nrf7002 开发板常用 **板载资源** 如下：
 4. 输入`scons --target=mdk5` 命令重新生成工程。
 
 
+### 启用Openocd调试
+
+```
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "nRF5340_Debug-RT-Thread",
+            "executable": "${workspaceRoot}/rt-thread.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "targetId": "nRF5340_xxAA_APP",//填device名
+            "servertype": "jlink",
+            "device": "nRF5340_xxAA_APP",//填device名
+            "interface": "swd",
+            "svdFile": "${workspaceRoot}/packages/nrfx-latest/mdk/nrf5340_application.svd",
+            "armToolchainPath": "D:/bin/env-windows/tools/gnu_gcc/arm_gcc/mingw/bin", // 这里填入GCC 工具链路径,我用的是env的gcc
+            "serverpath": "D:/RT-ThreadStudio/repo/Extract/Debugger_Support_Packages/SEGGER/J-Link/v7.92/JLinkGDBServerCL.exe" // 这里填入GDB 路径,我用的是RT-ThreadStudio,注意你的jlink路径跟我的不一样一样，可以参考
+        }
+    ]
+}
+
+```
+
 
 ## 支持其他开发板
 
