@@ -20,6 +20,13 @@ OUTPUT_ARCH(aarch64)
 #define ARCH_RAM_OFFSET 0
 #endif
 
+PHDRS
+{
+    text PT_LOAD FLAGS(5);   /* PF_R(4) | PF_X(1) = 0x5 (RX) */
+    data PT_LOAD FLAGS(6);   /* PF_R(4) | PF_W(2) = 0x6 (RW) */
+    stack PT_LOAD FLAGS(6);  /* PF_R | PF_W */
+}
+
 SECTIONS
 {
     _text_offset = ARCH_TEXT_OFFSET;
@@ -89,7 +96,7 @@ SECTIONS
         __usbh_class_info_end__ = .;
 
         PROVIDE(__text_end = .);
-    }
+    } :text
 
     .eh_frame_hdr :
     {
@@ -113,7 +120,7 @@ SECTIONS
         *(.sdata)
         *(.sdata.*)
         *(.rel.local)
-    }
+    } :data
 
     . = ALIGN(8);
     .ctors :
