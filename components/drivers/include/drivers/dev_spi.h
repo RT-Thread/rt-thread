@@ -313,6 +313,11 @@ rt_err_t rt_spi_driver_register(struct rt_spi_driver *driver);
 rt_err_t rt_spi_device_register(struct rt_spi_device *device);
 
 #define RT_SPI_DRIVER_EXPORT(driver)  RT_DRIVER_EXPORT(driver, spi, BUILIN)
+
+rt_inline const void *rt_spi_device_id_data(struct rt_spi_device *device)
+{
+    return device->id ? device->id->data : (device->ofw_id ? device->ofw_id->data : RT_NULL);
+}
 #endif /* RT_USING_DM */
 
 /**
