@@ -38,7 +38,7 @@
 # path: example/module/path
 # owners: John Doe(johndoe)<johndoe@example.com>, Jane Smith(janesmith)<janesmith@example.com>
 
-# Note: 
+# Note:
 # - Each entry includes a `tag` that identifies the module or functionality, a `path` that points to the relevant code location, and `owners` who are the maintainers for that part of the codebase.
 # - If there are multiple entries, each entry should be separated by a blank line. Within a single entry, there is no need to insert blank lines between the tag, path, and owners.
 # - Each entry must be sorted in alphabetical order with tag as the keyword.
@@ -61,9 +61,17 @@ tag: bsp_gd32470z-lckfb
 path: bsp/gd32/arm/gd32470z-lckfb
 owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
 
+tag: bsp_gd32e503v-eval
+path: bsp/gd32/arm/gd32e503v-eval
+owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
+
 tag: bsp_k230
 path: bsp/k230
 owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
+
+tag: bsp_lpc4088
+path: bsp/nxp/lpc/lpc408x
+owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
 
 tag: bsp_mcxa
 path: bsp/nxp/mcx/mcxa
