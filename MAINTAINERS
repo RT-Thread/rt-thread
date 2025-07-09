@@ -47,7 +47,7 @@
 
 tag: at
 path: components/net/at
-owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>
+owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>, lizhen9880(lizhen9880)<lizhen9880@126.com>
 
 tag: bsp_cvitek
 path: bsp/cvitek
@@ -109,6 +109,10 @@ owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
 tag: bsp_stm32
 path: bsp/stm32
 owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: bsp_stm32f429-atk-apollo
+path: bsp/stm32/stm32f429-atk-apollo
+owners: lizhen9880(lizhen9880)<lizhen9880@126.com>
 
 tag: bsp_stm32h723-st-nucleo
 path: bsp/stm32/stm32h723-st-nucleo
