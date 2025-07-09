@@ -108,11 +108,19 @@ owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
 tag: bsp_stm32
 path: bsp/stm32
-owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>,Liang He(Liang1795)<111111000@163.com>
 
 tag: bsp_stm32f429-atk-apollo
 path: bsp/stm32/stm32f429-atk-apollo
 owners: lizhen9880(lizhen9880)<lizhen9880@126.com>
+
+tag: bsp_stm32f103-blue-pill
+path: bsp/stm32/stm32f103-blue-pill
+owners: Liang He(Liang1795)<111111000@163.com>
+
+tag: bsp_stm32f412-st-nucleo
+path: bsp/stm32/stm32f412-st-nucleo
+owners: Liang He(Liang1795)<111111000@163.com>
 
 tag: bsp_stm32h723-st-nucleo
 path: bsp/stm32/stm32h723-st-nucleo
@@ -156,7 +164,7 @@ owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
 
 tag: driver_spi
 path: components/drivers/spi
-owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>,Liang He(Liang1795)<111111000@163.com>
 
 tag: driver_ymodem
 path: components/utilities/ymodem
@@ -191,6 +199,10 @@ path: components/drivers/serial/dev_serial_v2.c
 path: components/drivers/include/drivers/dev_serial_v2.h
 path: examples/utest/testcases/drivers/serial_v2
 owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>
+
+tag: tools
+path: tools/targets/keil.py
+owners: Liang He(Liang1795)<111111000@163.com>
 
 tag: workflow
 path: .github
