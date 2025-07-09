@@ -73,6 +73,10 @@ tag: bsp_lpc4088
 path: bsp/nxp/lpc/lpc408x
 owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
 
+tag: bsp_stm32f429-armfly-v6
+path: bsp/stm32/stm32f429-armfly-v6
+owners: wenguang Dong(Knowbie-dwg)1429308954@qq.com
+
 tag: bsp_mcxa
 path: bsp/nxp/mcx/mcxa
 owners: 下里巴人(hywing)<hywing.sir@qq.com>
