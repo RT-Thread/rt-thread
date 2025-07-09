@@ -110,6 +110,10 @@ tag: bsp_stm32
 path: bsp/stm32
 owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
 
+tag: bsp_stm32f429-armfly-v6
+path: bsp/stm32/stm32f429-armfly-v6
+owners: wenguang Dong(Knowbie-dwg)1429308954@qq.com
+
 tag: bsp_stm32f429-atk-apollo
 path: bsp/stm32/stm32f429-atk-apollo
 owners: lizhen9880(lizhen9880)<lizhen9880@126.com>
