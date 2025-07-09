@@ -254,6 +254,9 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
         {
         }
     }
+#if defined(SOC_NRF5340)
+    return 1;
+#endif /* SOC_NRF5340*/
     return rtn;
 }
 
@@ -299,6 +302,9 @@ int rt_hw_uart_init(void)
 
 #ifdef BSP_USING_UART1
     m_serial_1.config = config;
+#if defined(SOC_NRF5340)
+    m_serial_1.config.baud_rate =  1000000;
+#endif /* SOC_NRF5340*/
     m_serial_1.ops = &_uart_ops;
     m_uarte1_cb.serial = &m_serial_1;
     rt_hw_serial_register(&m_serial_1, "uart1", \
