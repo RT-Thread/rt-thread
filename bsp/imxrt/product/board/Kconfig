@@ -1,0 +1,203 @@
+menu "Hardware Drivers Config"
+
+config BSP_USING_QSPIFLASH
+    bool
+    default n
+
+config SOC_MIMXRT1176DVMAA
+    bool
+    select SOC_MIMXRT1170_SERIES
+    select BSP_USING_QSPIFLASH
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        default n
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_LPUART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_LPUART
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+
+                config BSP_LPUART1_RX_USING_DMA
+                    bool "Enable LPUART1 RX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_RX_DMA_CHANNEL
+                        depends on BSP_LPUART1_RX_USING_DMA
+                        int "Set LPUART1 RX DMA channel (0-32)"
+                        default 0
+
+                config BSP_LPUART1_TX_USING_DMA
+                    bool "Enable LPUART1 TX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_TX_DMA_CHANNEL
+                        depends on BSP_LPUART1_TX_USING_DMA
+                        int "Set LPUART1 TX DMA channel (0-32)"
+                        default 1
+
+            config BSP_USING_LPUART3
+                bool "Enable LPUART3"
+                default n
+
+                config BSP_LPUART3_RX_USING_DMA
+                    bool "Enable LPUART3 RX DMA"
+                    depends on BSP_USING_LPUART3
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART3_RX_DMA_CHANNEL
+                        depends on BSP_LPUART3_RX_USING_DMA
+                        int "Set LPUART3 RX DMA channel (0-32)"
+                        default 0
+
+                config BSP_LPUART3_TX_USING_DMA
+                    bool "Enable LPUART3 TX DMA"
+                    depends on BSP_USING_LPUART3
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART3_TX_DMA_CHANNEL
+                        depends on BSP_LPUART3_TX_USING_DMA
+                        int "Set LPUART3 TX DMA channel (0-32)"
+                        default 1
+        endif
+	menuconfig BSP_USING_FLEXSPI
+		bool "Enable FlexSPI"
+		default y
+
+		if BSP_USING_FLEXSPI
+			config BSP_USING_FLEXSPI1
+				bool "Enable FlexSPI1"
+				default y
+		endif
+	menuconfig BSP_USING_SPI
+		bool "Enable SPI"	
+		default y
+
+		if BSP_USING_SPI
+			config BSP_USING_SPI1
+				bool "Enable SPI1"
+				default y
+
+			config BSP_USING_SPI4
+				bool "Enable SPI4"
+				default n
+			
+			config BSP_USING_BLOCKING_SPI
+				bool "Enable BLOCKING SPI"
+				default y
+		endif
+	
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
+    menuconfig BSP_USING_ETH
+    bool "Enable Ethernet"
+    select RT_USING_NETDEV
+    select RT_USING_LWIP
+    default n
+
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1176EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
+                    int "indicate port of reset"
+                    default 6
+
+                config PHY_RESET_KSZ8081_PIN
+                    int "indicate pin of reset"
+                    default 12
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+        endif
+
+        if BSP_USING_PHY
+                config PHY_USING_RTL8211F
+                    bool "i.MX RT1176EVK uses rtl8211f phy"
+                    default y
+
+                if PHY_USING_RTL8211F
+                    config PHY_RTL8211F_ADDRESS
+                    int "Specify address of phy device"
+                    default 1
+
+                    config PHY_RESET_RTL8211F_PORT
+                        int "indicate port of reset"
+                        default 5
+
+                    config PHY_RESET_RTL8211F_PIN
+                        int "indicate pin of reset"
+                        default 14
+
+                endif
+        endif
+    endif
+	
+	menuconfig BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH Support"
+        default y        
+        if BSP_USING_SPI_FLASH
+            config BSP_SPI_FLASH_SPI_BUS
+                string "SPI Bus Used By SPI FLASH"
+                default "spi1"
+            config BSP_SPI_FLASH_BUS_NAME
+                string "Set FLASH SPI Bus Name"
+                default "spiflash"
+            config BSP_SPI_FLASH_DEV_NAME
+                string "Set SPI Flash Device Name"
+                default "w25q16"            
+        endif
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

@@ -2,49 +2,53 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/CMSIS/Include',cwd + '/MIMXRT1176', cwd + '/MIMXRT1176/drivers', cwd + '/MIMXRT1176/drivers/cm7']
+path = [cwd + '/CMSIS/Include',cwd + '/MIMXRT1171', cwd + '/MIMXRT1171/drivers', cwd + '/MIMXRT1171/periph']
 src = Split('''
-            MIMXRT1176/drivers/fsl_anatop_ai.c
-            MIMXRT1176/system_MIMXRT1176_cm7.c
-            MIMXRT1176/drivers/fsl_common.c
-            MIMXRT1176/drivers/fsl_common_arm.c
-            MIMXRT1176/drivers/fsl_dcdc.c
-            MIMXRT1176/drivers/fsl_pmu.c
-            MIMXRT1176/drivers/fsl_clock.c
-            MIMXRT1176/drivers/cm7/fsl_cache.c
+            MIMXRT1171/drivers/fsl_anatop_ai.c
+            MIMXRT1171/system_MIMXRT1171.c
+            MIMXRT1171/drivers/fsl_common.c
+            MIMXRT1171/drivers/fsl_common_arm.c
+            MIMXRT1171/drivers/fsl_dcdc.c
+            MIMXRT1171/drivers/fsl_pmu.c
+            MIMXRT1171/drivers/fsl_clock.c
+            MIMXRT1171/drivers/fsl_cache.c
+            MIMXRT1171/drivers/fsl_lpspi.c
             ''')
 
 if rtconfig.PLATFORM in ['gcc']:
-    src += ['MIMXRT1176/gcc/startup_MIMXRT1176_cm7.S']
+    src += ['MIMXRT1171/gcc/startup_MIMXRT1171.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += ['MIMXRT1176/arm/startup_MIMXRT1176_cm7.s']
+    src += ['MIMXRT1171/arm/startup_MIMXRT1171.s']
 elif rtconfig.PLATFORM in ['iccarm']:
-    src += ['MIMXRT1176/iar/startup_MIMXRT1176_cm7.s']
+    src += ['MIMXRT1171/iar/startup_MIMXRT1171.s']
 
 if GetDepend(['BSP_USING_GPIO']):
-    src += ['MIMXRT1176/drivers/fsl_gpio.c']
+    src += ['MIMXRT1171/drivers/fsl_gpio.c']
 
 if GetDepend(['BSP_USING_LPUART']):
-    src += ['MIMXRT1176/drivers/fsl_lpuart.c']
+    src += ['MIMXRT1171/drivers/fsl_lpuart.c']
 
 if GetDepend(['BSP_USING_RTC']):
-    src += ['MIMXRT1176/drivers/fsl_snvs_hp.c']
-    src += ['MIMXRT1176/drivers/fsl_snvs_lp.c']
+    src += ['MIMXRT1171/drivers/fsl_snvs_hp.c']
+    src += ['MIMXRT1171/drivers/fsl_snvs_lp.c']
 
 if GetDepend(['BSP_USING_HWTIMER']) or GetDepend(['BSP_USING_PWM']):
-    src += ['MIMXRT1176/drivers/fsl_gpt.c']
+    src += ['MIMXRT1171/drivers/fsl_gpt.c']
 
 if GetDepend(['BSP_USING_PWM']):
-    src += ['MIMXRT1176/drivers/fsl_pwm.c']
+    src += ['MIMXRT1171/drivers/fsl_pwm.c']
 
 if GetDepend(['BSP_USING_SDIO']):
-    src += ['MIMXRT1176/drivers/fsl_usdhc.c']
+    src += ['MIMXRT1171/drivers/fsl_usdhc.c']
 
 if GetDepend(['BSP_USING_SDRAM']):
-    src += ['MIMXRT1176/drivers/fsl_semc.c']
+    src += ['MIMXRT1171/drivers/fsl_semc.c']
 
 if GetDepend(['BSP_USING_ETH']):
-    src += ['MIMXRT1176/drivers/fsl_enet.c']
+    src += ['MIMXRT1171/drivers/fsl_enet.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['MIMXRT1171/drivers/fsl_lpspi.c']
 
 if rtconfig.PLATFORM in ['gcc']:
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')

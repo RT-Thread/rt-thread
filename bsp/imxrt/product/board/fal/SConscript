@@ -1,0 +1,16 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+path = [cwd + '/CMSIS/Include']
+
+src = Split('''
+''')
+
+if GetDepend(['PKG_USING_FAL']):
+    src += ['fal_flash_sfud_port.c']
+
+
+group = DefineGroup('fal', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

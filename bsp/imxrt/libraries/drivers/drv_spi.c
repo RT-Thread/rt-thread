@@ -198,7 +198,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 
     return ret;
 }
-
+#if !defined(SOC_IMXRT1170_SERIES)
 static uint32_t imxrt_get_lpspi_freq(void)
 {
     uint32_t freq = 0;
@@ -232,7 +232,7 @@ static uint32_t imxrt_get_lpspi_freq(void)
 
     return freq;
 }
-
+#endif
 static void lpspi_normal_config(struct imxrt_spi *spi)
 {
     RT_ASSERT(spi != RT_NULL);
@@ -246,6 +246,9 @@ static void lpspi_normal_config(struct imxrt_spi *spi)
 
 static void lpspi_dma_config(struct imxrt_spi *spi)
 {
+#if defined(BSP_SPI1_USING_DMA) || defined(BSP_SPI2_USING_DMA) ||   \
+    defined(BSP_SPI3_USING_DMA) || defined(BSP_SPI4_USING_DMA)
+	
     RT_ASSERT(spi != RT_NULL);
 
     DMAMUX_SetSource(DMAMUX, spi->dma->rx_channel, spi->dma->rx_request);
@@ -264,6 +267,7 @@ static void lpspi_dma_config(struct imxrt_spi *spi)
                                         &spi->dma->tx_edma);
 
     LOG_D("%s dma config done\n", spi->bus_name);
+#endif
 }
 
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
@@ -320,7 +324,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     masterConfig.whichPcs = kLPSPI_Pcs0;
 
 #if defined(SOC_IMXRT1170_SERIES)
-       freq = CLOCK_GetFreqFromObs(spi->masterclock, 2);
+       uint32_t freq = CLOCK_GetFreqFromObs(spi->masterclock, 2);
        LPSPI_MasterInit(spi->base, &masterConfig, freq);
 #else
     masterConfig.pinCfg                        = kLPSPI_SdiInSdoOut;
@@ -366,11 +370,15 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         status = LPSPI_MasterTransferNonBlocking(spi->base, &spi->spi_normal, &transfer);
 #endif
     }
+#if defined(BSP_SPI1_USING_DMA) || defined(BSP_SPI2_USING_DMA) ||   \
+    defined(BSP_SPI3_USING_DMA) || defined(BSP_SPI4_USING_DMA)
     else
     {
         status = LPSPI_MasterTransferEDMA(spi->base,&spi->dma->spi_edma,&transfer);
+	    rt_sem_take(spi->xfer_sem, RT_WAITING_FOREVER);
     }
-    rt_sem_take(spi->xfer_sem, RT_WAITING_FOREVER);
+#endif
+    
 
     if(message->cs_release)
     {

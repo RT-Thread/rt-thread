@@ -1,0 +1,1724 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<configuration name="MIMXRT1171xxxxx" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_17 http://mcuxpresso.nxp.com/XSD/mex_configuration_17.xsd" uuid="205299a7-233f-4251-a7eb-dc41305c44c1" version="17" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_17" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <common>
+      <processor>MIMXRT1171xxxxx</processor>
+      <package>MIMXRT1171CVM8A</package>
+      <mcu_data>ksdk2_0</mcu_data>
+      <cores selected="cm7">
+         <core name="Cortex-M7F" id="cm7" description=""/>
+      </cores>
+      <description></description>
+   </common>
+   <preferences>
+      <validate_boot_init_only>true</validate_boot_init_only>
+      <generate_code_modified_registers_only>false</generate_code_modified_registers_only>
+      <update_include_paths>true</update_include_paths>
+      <generate_registers_defines>false</generate_registers_defines>
+   </preferences>
+   <tools>
+      <pins name="Pins" version="17.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/pin_mux.c" update_enabled="true"/>
+            <file path="board/pin_mux.h" update_enabled="true"/>
+         </generated_project_files>
+         <pins_profile>
+            <processor_version>25.03.10</processor_version>
+            <power_domains/>
+         </pins_profile>
+         <functions_list>
+            <function name="BOARD_InitPins">
+               <description>Configures pin routing and optionally pin electrical features.</description>
+               <options>
+                  <callFromInitBoot>true</callFromInitBoot>
+                  <coreID>cm7</coreID>
+                  <enableClock>true</enableClock>
+               </options>
+               <dependencies>
+                  <dependency resourceType="Peripheral" resourceId="FLEXSPI1" description="Peripheral FLEXSPI1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPSPI1" description="Peripheral LPSPI1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="USDHC1" description="Peripheral USDHC1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="ENET" description="Peripheral ENET signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPUART1" description="Peripheral LPUART1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPUART2" description="Peripheral LPUART2 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPSPI4" description="Peripheral LPSPI4 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPUART8" description="Peripheral LPUART8 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPUART7" description="Peripheral LPUART7 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPUART10" description="Peripheral LPUART10 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPUART12" description="Peripheral LPUART12 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="LPI2C5" description="Peripheral LPI2C5 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="WDOG1" description="Peripheral WDOG1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Pins initialization requires the IOMUXC Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <pins>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA0" pin_num="F15" pin_signal="GPIO_SD_B2_08"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA1" pin_num="H15" pin_signal="GPIO_SD_B2_09"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA2" pin_num="H14" pin_signal="GPIO_SD_B2_10"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA3" pin_num="F16" pin_signal="GPIO_SD_B2_11"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_SS0_B" pin_num="F17" pin_signal="GPIO_SD_B2_06"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_SCLK" pin_num="G14" pin_signal="GPIO_SD_B2_07"/>
+                  <pin peripheral="LPSPI1" signal="PCS0" pin_num="M17" pin_signal="GPIO_AD_29"/>
+                  <pin peripheral="LPSPI1" signal="SCK" pin_num="L17" pin_signal="GPIO_AD_28"/>
+                  <pin peripheral="LPSPI1" signal="SIN" pin_num="J17" pin_signal="GPIO_AD_31"/>
+                  <pin peripheral="LPSPI1" signal="SOUT" pin_num="K17" pin_signal="GPIO_AD_30"/>
+                  <pin peripheral="USDHC1" signal="usdhc_cmd" pin_num="B16" pin_signal="GPIO_SD_B1_00"/>
+                  <pin peripheral="USDHC1" signal="usdhc_clk" pin_num="D15" pin_signal="GPIO_SD_B1_01"/>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 0" pin_num="C15" pin_signal="GPIO_SD_B1_02"/>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 1" pin_num="B17" pin_signal="GPIO_SD_B1_03"/>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 2" pin_num="B15" pin_signal="GPIO_SD_B1_04"/>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 3" pin_num="A16" pin_signal="GPIO_SD_B1_05"/>
+                  <pin peripheral="ENET" signal="enet_mdc" pin_num="K16" pin_signal="GPIO_AD_32"/>
+                  <pin peripheral="ENET" signal="enet_mdio" pin_num="H17" pin_signal="GPIO_AD_33"/>
+                  <pin peripheral="ENET" signal="enet_tdata, 00" pin_num="E9" pin_signal="GPIO_DISP_B2_02"/>
+                  <pin peripheral="ENET" signal="enet_tdata, 01" pin_num="D7" pin_signal="GPIO_DISP_B2_03"/>
+                  <pin peripheral="ENET" signal="enet_tx_en" pin_num="C7" pin_signal="GPIO_DISP_B2_04"/>
+                  <pin peripheral="ENET" signal="enet_ref_clk" pin_num="C9" pin_signal="GPIO_DISP_B2_05"/>
+                  <pin peripheral="ENET" signal="enet_rdata, 00" pin_num="C6" pin_signal="GPIO_DISP_B2_06"/>
+                  <pin peripheral="ENET" signal="enet_rdata, 01" pin_num="D6" pin_signal="GPIO_DISP_B2_07"/>
+                  <pin peripheral="ENET" signal="enet_rx_er" pin_num="D8" pin_signal="GPIO_DISP_B2_09"/>
+                  <pin peripheral="ENET" signal="enet_rx_en" pin_num="B5" pin_signal="GPIO_DISP_B2_08"/>
+                  <pin peripheral="LPUART1" signal="RXD" pin_num="M15" pin_signal="GPIO_AD_25"/>
+                  <pin peripheral="LPUART1" signal="TXD" pin_num="L13" pin_signal="GPIO_AD_24"/>
+                  <pin peripheral="LPUART2" signal="CTS_B" pin_num="B6" pin_signal="GPIO_DISP_B2_12"/>
+                  <pin peripheral="LPUART2" signal="RTS_B" pin_num="A5" pin_signal="GPIO_DISP_B2_13"/>
+                  <pin peripheral="LPUART2" signal="RXD" pin_num="A6" pin_signal="GPIO_DISP_B2_11"/>
+                  <pin peripheral="LPUART2" signal="TXD" pin_num="D9" pin_signal="GPIO_DISP_B2_10"/>
+                  <pin peripheral="LPSPI4" signal="SCK" pin_num="J15" pin_signal="GPIO_SD_B2_00"/>
+                  <pin peripheral="LPSPI4" signal="SIN" pin_num="E15" pin_signal="GPIO_SD_B2_03"/>
+                  <pin peripheral="LPSPI4" signal="SOUT" pin_num="H13" pin_signal="GPIO_SD_B2_02"/>
+                  <pin peripheral="LPSPI4" signal="PCS0" pin_num="J14" pin_signal="GPIO_SD_B2_01"/>
+                  <pin peripheral="LPUART8" signal="RXD" pin_num="P15" pin_signal="GPIO_AD_03"/>
+                  <pin peripheral="LPUART8" signal="TXD" pin_num="R13" pin_signal="GPIO_AD_02"/>
+                  <pin peripheral="LPUART7" signal="RXD" pin_num="R14" pin_signal="GPIO_AD_01"/>
+                  <pin peripheral="LPUART7" signal="TXD" pin_num="N12" pin_signal="GPIO_AD_00"/>
+                  <pin peripheral="LPUART10" signal="TXD" pin_num="M14" pin_signal="GPIO_AD_15"/>
+                  <pin peripheral="LPUART10" signal="CTS_B" pin_num="J16" pin_signal="GPIO_AD_34"/>
+                  <pin peripheral="LPUART10" signal="RTS_B" pin_num="G17" pin_signal="GPIO_AD_35"/>
+                  <pin peripheral="LPUART12" signal="RXD" pin_num="R6" pin_signal="GPIO_LPSR_01"/>
+                  <pin peripheral="LPUART12" signal="TXD" pin_num="N6" pin_signal="GPIO_LPSR_00"/>
+                  <pin peripheral="LPI2C5" signal="SCL" pin_num="N8" pin_signal="GPIO_LPSR_05"/>
+                  <pin peripheral="LPI2C5" signal="SDA" pin_num="N7" pin_signal="GPIO_LPSR_04"/>
+                  <pin peripheral="WDOG1" signal="wdog_wdog_b" pin_num="M13" pin_signal="GPIO_AD_04"/>
+                  <pin peripheral="LPUART10" signal="RXD" pin_num="N17" pin_signal="GPIO_AD_16"/>
+                  <pin peripheral="GPIO6" signal="gpio_mux_io, 08" pin_num="U8" pin_signal="GPIO_LPSR_08"/>
+                  <pin peripheral="GPIO6" signal="gpio_mux_io, 09" pin_num="P5" pin_signal="GPIO_LPSR_09"/>
+                  <pin peripheral="GPIO6" signal="gpio_mux_io, 06" pin_num="P8" pin_signal="GPIO_LPSR_06"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 05" pin_num="N13" pin_signal="GPIO_AD_06"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 06" pin_num="T17" pin_signal="GPIO_AD_07"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 07" pin_num="R15" pin_signal="GPIO_AD_08"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 08" pin_num="R16" pin_signal="GPIO_AD_09"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 09" pin_num="R17" pin_signal="GPIO_AD_10"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 10" pin_num="P16" pin_signal="GPIO_AD_11"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 11" pin_num="P17" pin_signal="GPIO_AD_12"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 12" pin_num="L12" pin_signal="GPIO_AD_13"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 13" pin_num="N14" pin_signal="GPIO_AD_14"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 16" pin_num="N15" pin_signal="GPIO_AD_17"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 17" pin_num="M16" pin_signal="GPIO_AD_18"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 18" pin_num="L16" pin_signal="GPIO_AD_19"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 19" pin_num="K13" pin_signal="GPIO_AD_20"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 20" pin_num="K14" pin_signal="GPIO_AD_21"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 21" pin_num="K12" pin_signal="GPIO_AD_22"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 22" pin_num="J12" pin_signal="GPIO_AD_23"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 25" pin_num="L14" pin_signal="GPIO_AD_26"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 26" pin_num="N16" pin_signal="GPIO_AD_27"/>
+                  <pin peripheral="GPIO11" signal="gpio_io, 15" pin_num="A7" pin_signal="GPIO_DISP_B2_14"/>
+                  <pin peripheral="GPIO11" signal="gpio_io, 16" pin_num="A4" pin_signal="GPIO_DISP_B2_15"/>
+                  <pin peripheral="GPIO3" signal="gpio_mux_io, 04" pin_num="P13" pin_signal="GPIO_AD_05"/>
+               </pins>
+            </function>
+         </functions_list>
+      </pins>
+      <clocks name="Clocks" version="16.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/clock_config.c" update_enabled="true"/>
+            <file path="board/clock_config.h" update_enabled="true"/>
+         </generated_project_files>
+         <clocks_profile>
+            <processor_version>25.03.10</processor_version>
+         </clocks_profile>
+         <clock_configurations>
+            <clock_configuration name="BOARD_BootClockRUN" id_prefix="" prefix_user_defined="false">
+               <description></description>
+               <options/>
+               <dependencies>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtali" description="&apos;RTC_XTALI&apos; (Pins tool id: ANADIG.rtc_xtali, Clocks tool id: ANADIG_OSC.RTC_XTALI) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtali" description="&apos;RTC_XTALI&apos; (Pins tool id: ANADIG.rtc_xtali, Clocks tool id: ANADIG_OSC.RTC_XTALI) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtalo" description="&apos;RTC_XTALO&apos; (Pins tool id: ANADIG.rtc_xtalo, Clocks tool id: ANADIG_OSC.RTC_XTALO) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtalo" description="&apos;RTC_XTALO&apos; (Pins tool id: ANADIG.rtc_xtalo, Clocks tool id: ANADIG_OSC.RTC_XTALO) needs to have &apos;OUTPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>OUTPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Clocks initialization requires the IOMUXC Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.dcdc_soc" description="Clocks initialization requires the DCDC_SOC Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.pmu_1" description="Clocks initialization requires the PMU_1 Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.clock" description="Clocks initialization requires the CLOCK Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <clock_sources/>
+               <clock_outputs>
+                  <clock_output id="ACMP_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ADC1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ADC2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ARM_PLL_CLK.outFreq" value="996 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ASRC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="AXI_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="BUS_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="BUS_LPSR_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CAN1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CAN2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CAN3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CCM_CLKO1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CCM_CLKO2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CLK_1M.outFreq" value="1 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI2_ESC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI2_UI_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSSYS_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSTRACE_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ELCDIF_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="EMV1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="EMV2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_1G_TX_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_25M_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_TIMER1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_TIMER2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_TIMER3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXIO1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXIO2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXSPI1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXSPI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GC355_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT1_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT2_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT3_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT4_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT5_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT6_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LCDIFV2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART10_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART11_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART12_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART7_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART8_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART9_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M4_SYSTICK_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M7_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M7_SYSTICK_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MIC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MIPI_DSI_TX_CLK_ESC_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MIPI_ESC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MIPI_REF_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MQS_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MQS_MCLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_24M.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_32K.outFreq" value="32.768 kHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_16M.outFreq" value="16 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_400M.outFreq" value="400 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_48M.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_48M_DIV2.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PLL_AUDIO_CLK.outFreq" value="672.000025 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PLL_VIDEO_CLK.outFreq" value="672.000025 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI1_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI1_MCLK3.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI2_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI2_MCLK3.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI3_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI3_MCLK3.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI4_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SEMC_CLK_ROOT.outFreq" value="198 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SPDIF_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL1_CLK.outFreq" value="1 GHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_CLK.outFreq" value="528 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD0_CLK.outFreq" value="352 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD1_CLK.outFreq" value="594 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD2_CLK.outFreq" value="396 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD3_CLK.outFreq" value="297 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_CLK.outFreq" value="480 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD0_CLK.outFreq" value="8640/13 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD1_CLK.outFreq" value="8640/17 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD2_CLK.outFreq" value="270 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD3_CLK.outFreq" value="8640/13 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USDHC1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USDHC2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+               </clock_outputs>
+               <clock_settings>
+                  <setting id="ANADIG_PLL.PLL_AUDIO.denom" value="960000" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_AUDIO.div" value="28" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_AUDIO.num" value="1" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_VIDEO.denom" value="960000" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_VIDEO.div" value="28" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_VIDEO.num" value="1" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL2.denom" value="60000" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL2.div" value="22" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL2.num" value="0" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL3_PFD3_DIV.scale" value="13" locked="false"/>
+                  <setting id="ANADIG_PLL_ARM_PLL_CTRL_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_PLL_AUDIO_CTRL0_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_PLL_VIDEO_CTRL0_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_SYS_PLL2_CTRL_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_SYS_PLL3_CTRL_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT4.DIV.scale" value="3" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT4.MUX.sel" value="ANADIG_PLL.SYS_PLL2_PFD1_CLK" locked="false"/>
+               </clock_settings>
+               <called_from_default_init>true</called_from_default_init>
+            </clock_configuration>
+         </clock_configurations>
+      </clocks>
+      <ddr name="DDR" version="" enabled="false" update_project_code="true">
+         <components/>
+      </ddr>
+      <dcdx name="DCDx" version="4.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/dcd.c" update_enabled="true"/>
+            <file path="board/dcd.h" update_enabled="true"/>
+         </generated_project_files>
+         <dcdx_profile>
+            <processor_version>25.03.10</processor_version>
+            <output_format>c_array</output_format>
+         </dcdx_profile>
+         <dcdx_configurations>
+            <dcdx_configuration name="Device_configuration">
+               <description></description>
+               <options/>
+               <command_groups/>
+            </dcdx_configuration>
+         </dcdx_configurations>
+      </dcdx>
+      <periphs name="Peripherals" version="15.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/peripherals.c" update_enabled="true"/>
+            <file path="board/peripherals.h" update_enabled="true"/>
+         </generated_project_files>
+         <peripherals_profile>
+            <processor_version>25.03.10</processor_version>
+         </peripherals_profile>
+         <functional_groups>
+            <functional_group name="BOARD_InitPeripherals" uuid="022b9c2c-7d81-4218-a9c8-40825a8a7099" called_from_default_init="true" id_prefix="" core="cm7">
+               <description></description>
+               <options/>
+               <dependencies/>
+               <instances>
+                  <instance name="CM7_NVIC" uuid="3b6ae8dc-c868-4902-9700-ce2e36ca59f7" type="nvic" type_id="nvic" mode="general" peripheral="CM7_NVIC" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="nvic">
+                        <array name="interrupt_table"/>
+                        <array name="interrupts"/>
+                     </config_set>
+                  </instance>
+               </instances>
+            </functional_group>
+         </functional_groups>
+         <components>
+            <component name="system" uuid="e7bb805b-8f45-49c8-ad78-d6f58c4aa79c" type_id="system_54b53072540eeeb8f8e9343e71f28176">
+               <config_set_global name="global_system_definitions">
+                  <setting name="user_definitions" value=""/>
+                  <setting name="user_includes" value=""/>
+                  <setting name="global_init" value=""/>
+               </config_set_global>
+            </component>
+            <component name="msg" uuid="e4805593-ff01-43ce-bf92-690f146f2be7" type_id="msg_6e2baaf3b97dbeef01c0043275f9a0e7">
+               <config_set_global name="global_messages"/>
+            </component>
+            <component name="generic_uart" uuid="2864aa63-9a94-43a5-b967-870887d175ba" type_id="generic_uart_8cae00565451cf2346eb1b8c624e73a6">
+               <config_set_global name="global_uart"/>
+            </component>
+            <component name="generic_can" uuid="8fa45317-b94b-4de8-90d2-5822d6b884eb" type_id="generic_can_1bfdd78b1af214566c1f23cf6a582d80">
+               <config_set_global name="global_can"/>
+            </component>
+            <component name="uart_cmsis_common" uuid="a820b814-a103-4bf6-8511-2f50ca07131b" type_id="uart_cmsis_common">
+               <config_set_global name="global_USART_CMSIS_common" quick_selection="default"/>
+            </component>
+            <component name="gpio_adapter_common" uuid="a902fd0d-4356-4d78-abcd-896f4937ffd5" type_id="gpio_adapter_common">
+               <config_set_global name="global_gpio_adapter_common" quick_selection="default"/>
+            </component>
+            <component name="generic_enet" uuid="9162674f-bd1c-44cc-aa85-a43e553bf9f6" type_id="generic_enet">
+               <config_set_global name="global_enet"/>
+            </component>
+         </components>
+      </periphs>
+      <tee name="TEE" version="3.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
+         <tee_profile>
+            <processor_version>0.0.0</processor_version>
+            <tool_options>
+               <option id="_legacy_source_names_" value="no"/>
+            </tool_options>
+         </tee_profile>
+         <functional_group name="BOARD_InitTEE" called_from_default_init="true" id_prefix="" prefix_user_defined="true">
+            <description></description>
+            <options/>
+            <rdc>
+               <masters>
+                  <master id="enet_1g_tx">
+                     <domain_assignment locked="false" domain_id="0"/>
+                  </master>
+                  <master id="enet_1g_rx">
+                     <domain_assignment locked="false" domain_id="0"/>
+                  </master>
+                  <master id="enet">
+                     <domain_assignment locked="false" domain_id="0"/>
+                  </master>
+                  <master id="usdhc1">
+                     <domain_assignment locked="false" domain_id="0"/>
+                  </master>
+                  <master id="usdhc2">
+                     <domain_assignment locked="false" domain_id="0"/>
+                  </master>
+                  <master id="usb">
+                     <domain_assignment locked="false" domain_id="0"/>
+                  </master>
+                  <master id="gc355">
+                     <domain_assignment locked="false" domain_id="0"/>
+                  </master>
+               </masters>
+               <pdaps>
+                  <pdap checker_id="PDAP">
+                     <slaves>
+                        <slave id="MECC1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="MECC2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="XECC_FLEXSPI1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="XECC_FLEXSPI2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="XECC_SEMC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="FLEXRAM" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="EWM" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="WDOG1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="WDOG2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="RTWDOG3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="AOI2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ADC_ETC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPADC1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPADC2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="DAC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="IEE_APC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="DMAMUX0" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART5" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART6" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART7" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART8" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART9" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART10" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="FLEXIO1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="FLEXIO2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CAN1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CAN2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PIT1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="KPP" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="IOMUXC_GPR" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="IOMUXC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPT1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPT2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPT3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPT4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPT5" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPT6" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPI2C1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPI2C2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPI2C3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPI2C4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPSPI1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPSPI2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPSPI3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPSPI4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPIO1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CCM_OBS" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="EMVSIM1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="EMVSIM2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="TMR1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="TMR2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="TMR3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="TMR4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ENC1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ENC2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ENC3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ENC4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PWM1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PWM2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PWM3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PWM4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CMP1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CMP2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CMP3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CMP4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SPDIF" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SAI1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SAI2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SAI3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ASRC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="USDHC1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="USDHC2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ENET_1G" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ENET" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="USBHSDCD1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="USB_OTG2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="USB_OTG1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CAAM" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LCDIFV2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="DSI_HOST" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="VIDEO_MUX" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PGMC_PPC0" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="IOMUXC_LPSR" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="IOMUXC_LPSR_GPR" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="RTWDOG4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="DMAMUX1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PDM" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART11" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPUART12" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPSPI5" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPSPI6" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPI2C5" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="LPI2C6" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CAN3" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SAI4" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="XRDC2_D1" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPIO7" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="KEY_MANAGER" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ANADIG_MISC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SNVS" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="IOMUXC_SNVS" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="IOMUXC_SNVS_GPR" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SRAM" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="GPIO13" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="ROMCP" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="DCDC" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="OCOTP" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="PIT2" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="SSARC_HP" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                        <slave id="CCM" locked="false" semaphore_required="false">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                        </slave>
+                     </slaves>
+                  </pdap>
+               </pdaps>
+               <mrcs>
+                  <mrc checker_id="MRC_RDC">
+                     <slaves>
+                        <slave id="SIM_DISP" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="1048576"/>
+                        </slave>
+                        <slave id="SRAM_OC_ECC1" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="128"/>
+                        </slave>
+                        <slave id="SIM_M4" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="1048576"/>
+                        </slave>
+                        <slave id="SRAM_OC_ECC2" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="128"/>
+                        </slave>
+                        <slave id="SEMC" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="4096"/>
+                        </slave>
+                        <slave id="FLEXSPI2_REGION" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="4096"/>
+                        </slave>
+                        <slave id="SRAM_OC_cm7" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="128"/>
+                        </slave>
+                        <slave id="CAAM" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="8192"/>
+                        </slave>
+                        <slave id="SIM_M7" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="1048576"/>
+                        </slave>
+                        <slave id="FLEXSPI1_REGION_cm7" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="4096"/>
+                        </slave>
+                        <slave id="SRAM_OC1" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="128"/>
+                        </slave>
+                        <slave id="SRAM_OC2" enabled="false" locked="false" index="0">
+                           <domain template="rw"/>
+                           <domain template="rw"/>
+                           <base_region start="0" size="128"/>
+                        </slave>
+                     </slaves>
+                  </mrc>
+               </mrcs>
+               <xrdc2 id="0">
+                  <domains>
+                     <domain name="Domain 0"/>
+                  </domains>
+                  <masters>
+                     <master id="cm7_ahb">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="cm7_axi">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="caam">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="cm7_dma">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="enet">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="enet_1g_rx">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="enet_1g_tx">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="gc355">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="lcdifv2">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="ssarc">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0"/>
+                     </master>
+                     <master id="usb">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="usdhc1">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                     <master id="usdhc2">
+                        <domain_assignment secure="bypass" privileged="bypass" enabled="false" locked="false" domain_id="0" match_input="0" mask_input="0"/>
+                     </master>
+                  </masters>
+                  <pacs>
+                     <pac checker_id="PAC">
+                        <slaves>
+                           <slave id="MECC1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="MECC2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XECC_FLEXSPI1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XECC_FLEXSPI2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XECC_SEMC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="FLEXRAM" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="EWM" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="WDOG1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="WDOG2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="RTWDOG3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XBARA1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XBARB2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XBARB3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ADC_ETC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPADC1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPADC2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="DAC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IEE__IEE_RT1170" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IEE_APC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="DMA0" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="DMAMUX0" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART5" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART6" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART7" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART8" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART9" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART10" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="FLEXIO1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="FLEXIO2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="AOI1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="AOI2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CAN1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CAN2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="FLEXSPI1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="FLEXSPI2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SEMC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PIT1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="KPP" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IOMUXC_GPR" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IOMUXC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPT1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPT2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPT3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPT4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPT5" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPT6" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPI2C1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPI2C2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPI2C3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPI2C4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPSPI1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPSPI2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPSPI3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPSPI4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO5" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO6" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="EMVSIM1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="EMVSIM2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="TMR1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="TMR2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="TMR3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="TMR4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ENC1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ENC2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ENC3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ENC4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PWM1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PWM2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PWM3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PWM4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CMP1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CMP2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CMP3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CMP4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SPDIF" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SAI1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SAI2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SAI3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ASRC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="USDHC1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="USDHC2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ENET_1G" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ENET" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="USBHSDCD1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="USB_OTG2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="USB_OTG1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="USBPHY1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="USBPHY2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LCDIFV2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="DSI_HOST" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="VIDEO_MUX" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPC_SET_POINT_CTRL" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SRC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IOMUXC_LPSR" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IOMUXC_LPSR_GPR" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="RTWDOG4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="DMA1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="DMAMUX1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PDM" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART11" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPUART12" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPSPI5" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPSPI6" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPI2C5" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="LPI2C6" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CAN3" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SAI4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="RDC_SEMAPHORE1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="MUA" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="MUB" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO7" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO8" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO9" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO10" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO11" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO12" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="RDC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="KEY_MANAGER" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ANADIG_MISC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PGMC_PPC0" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SNVS" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IOMUXC_SNVS" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="IOMUXC_SNVS_GPR" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SRAM" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPIO13" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ROMCP" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="DCDC" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="OCOTP" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="PIT2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SSARC_HP" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SSARC_LP" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CCM" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CCM_OBS" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="SEMA4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="RDC_SEMAPHORE2" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XRDC2_D1" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="XRDC2_D0" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="GPU" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="CDOG" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                           </slave>
+                        </slaves>
+                     </pac>
+                  </pacs>
+                  <mrcs>
+                     <mrc checker_id="MRC">
+                        <slaves>
+                           <slave id="SRAM_OC_ECC1" enabled="false" locked="unlock" eal="disabled" index="0">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="4096"/>
+                           </slave>
+                           <slave id="SRAM_OC_cm7" enabled="false" locked="unlock" eal="disabled" index="0">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="8192"/>
+                           </slave>
+                           <slave id="SRAM_OC_ECC2" enabled="false" locked="unlock" eal="disabled" index="0">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="4096"/>
+                           </slave>
+                           <slave id="CAAM" enabled="false" locked="unlock" eal="disabled" index="0">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="4096"/>
+                           </slave>
+                           <slave id="SRAM_OC1" enabled="false" locked="unlock" eal="disabled" index="0">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="4096"/>
+                           </slave>
+                           <slave id="SEMC" enabled="false" locked="unlock" eal="disabled" index="0">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="100663296"/>
+                           </slave>
+                           <slave id="SRAM_OC2" enabled="false" locked="unlock" eal="disabled" index="0">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="4096"/>
+                           </slave>
+                        </slaves>
+                     </mrc>
+                  </mrcs>
+                  <mscs>
+                     <msc checker_id="MSC">
+                        <slaves>
+                           <slave id="ROMCP" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="262144"/>
+                           </slave>
+                           <slave id="SIM_DISP" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="1048576"/>
+                           </slave>
+                           <slave id="SIM_M4" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="1048576"/>
+                           </slave>
+                           <slave id="SIM_M7" enabled="false" locked="unlock" eal="disabled">
+                              <domain template="NO_ACCESS"/>
+                              <base_region start="0" size="1048576"/>
+                           </slave>
+                        </slaves>
+                     </msc>
+                  </mscs>
+               </xrdc2>
+            </rdc>
+            <global_options>
+               <option id="XRDC2_D0_MCR_GCL" value="0"/>
+               <option id="XRDC2_D0_MCR_GVLDC" value="no"/>
+               <option id="XRDC2_D0_MCR_GVLDM" value="no"/>
+            </global_options>
+            <mpus>
+               <mpu enabled="false" priv_default_map="false" handler_enabled="false" generate_code_for_disabled_regions="false" masters="cm7_ahb cm7_axi">
+                  <attributes>
+                     <group index="0" id="0" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="1" id="1" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="2" id="2" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="3" id="3" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="4" id="4" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="5" id="5" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="6" id="6" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="7" id="7" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="8" id="8" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="9" id="9" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="10" id="10" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="11" id="11" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="12" id="12" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="13" id="13" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="14" id="14" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                     <group index="15" id="15" memory_type="device">
+                        <regions_properties>
+                           <region_properties id="inner" cacheable="false" write_back="false" write_allocation="false"/>
+                           <region_properties id="outer" cacheable="false" write_back="false" write_allocation="false"/>
+                        </regions_properties>
+                     </group>
+                  </attributes>
+                  <regions>
+                     <region start="0" size="32" security="priv" enabled="false" index="0" executable="false" read_only="false" shareability="non_shareable" attributes_index="0" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="1" executable="false" read_only="false" shareability="non_shareable" attributes_index="1" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="2" executable="false" read_only="false" shareability="non_shareable" attributes_index="2" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="3" executable="false" read_only="false" shareability="non_shareable" attributes_index="3" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="4" executable="false" read_only="false" shareability="non_shareable" attributes_index="4" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="5" executable="false" read_only="false" shareability="non_shareable" attributes_index="5" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="6" executable="false" read_only="false" shareability="non_shareable" attributes_index="6" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="7" executable="false" read_only="false" shareability="non_shareable" attributes_index="7" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="8" executable="false" read_only="false" shareability="non_shareable" attributes_index="8" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="9" executable="false" read_only="false" shareability="non_shareable" attributes_index="9" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="10" executable="false" read_only="false" shareability="non_shareable" attributes_index="10" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="11" executable="false" read_only="false" shareability="non_shareable" attributes_index="11" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="12" executable="false" read_only="false" shareability="non_shareable" attributes_index="12" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="13" executable="false" read_only="false" shareability="non_shareable" attributes_index="13" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="14" executable="false" read_only="false" shareability="non_shareable" attributes_index="14" srd="0"/>
+                     <region start="0" size="32" security="priv" enabled="false" index="15" executable="false" read_only="false" shareability="non_shareable" attributes_index="15" srd="0"/>
+                  </regions>
+               </mpu>
+            </mpus>
+            <apus>
+               <apu enabled="false" id="apc">
+                  <regions>
+                     <region start="0" size="8" locked="false" index="0" encrypt_enabled="false"/>
+                     <region start="0" size="8" locked="false" index="1" encrypt_enabled="false"/>
+                     <region start="0" size="8" locked="false" index="2" encrypt_enabled="false"/>
+                     <region start="0" size="8" locked="false" index="3" encrypt_enabled="false"/>
+                     <region start="0" size="8" locked="false" index="4" encrypt_enabled="false"/>
+                     <region start="0" size="8" locked="false" index="5" encrypt_enabled="false"/>
+                     <region start="0" size="8" locked="false" index="6" encrypt_enabled="false"/>
+                     <region start="0" size="8" locked="false" index="7" encrypt_enabled="false"/>
+                  </regions>
+               </apu>
+            </apus>
+         </functional_group>
+      </tee>
+      <pbl name="PBL" version="" enabled="false" update_project_code="true">
+         <pbl_configuration/>
+      </pbl>
+      <serdes name="SERDES" version="" enabled="false" update_project_code="true">
+         <components/>
+      </serdes>
+   </tools>
+</configuration>

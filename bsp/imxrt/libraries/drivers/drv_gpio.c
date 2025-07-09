@@ -17,6 +17,8 @@
 #include "board.h"
 #include "fsl_gpio.h"
 #include "fsl_iomuxc.h"
+#include <stdio.h>
+
 
 #define LOG_TAG             "drv.gpio"
 #include <drv_log.h>
@@ -774,6 +776,15 @@ static rt_base_t imxrt_pin_get(const char *name)
     int hw_port_num, hw_pin_num = 0;
     int i, name_len;
 
+#ifdef SOC_IMXRT1170_SERIES
+    
+        if(sscanf(name,"P%d.%d",&hw_port_num,&hw_pin_num) != 2)
+        {
+            return -RT_EINVAL;
+        }
+        pin = GET_PIN(hw_port_num, hw_pin_num);
+#else
+
     name_len = rt_strlen(name);
 
     if ((name_len < 4) || (name_len >= 6))
@@ -801,7 +812,7 @@ static rt_base_t imxrt_pin_get(const char *name)
     }
 
     pin = IMX_PIN_NUM(hw_port_num, hw_pin_num);
-
+#endif
     return pin;
 }
 
