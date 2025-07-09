@@ -1,0 +1,27 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+trap_gcc.S
+''')
+
+path =  [cwd]
+
+# add startup txt path
+startup_path_prefix = os.getcwd() + '/../'
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/start.S']
+    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/entry.S']
+
+CPPDEFINES = ['GD32VW553H_EVAL']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
