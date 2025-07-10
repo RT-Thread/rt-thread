@@ -1,0 +1,7 @@
+[
+ {
+  "path": "/packages/system/littlefs", 
+  "ver": "littlefs-v2.5.0", 
+  "name": "LITTLEFS"
+ }
+]
