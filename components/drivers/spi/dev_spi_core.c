@@ -26,9 +26,9 @@
 extern rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name);
 extern rt_err_t rt_spidev_device_init(struct rt_spi_device *dev, const char *name);
 
-rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
-                             const char              *name,
-                             const struct rt_spi_ops *ops)
+rt_err_t spi_bus_register(struct rt_spi_bus       *bus,
+                          const char              *name,
+                          const struct rt_spi_ops *ops)
 {
     rt_err_t result;
 
@@ -42,8 +42,6 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
     bus->ops = ops;
     /* initialize owner */
     bus->owner = RT_NULL;
-    /* set bus mode */
-    bus->mode = RT_SPI_BUS_MODE_SPI;
 
 #ifdef RT_USING_DM
     if (!bus->slave)
@@ -75,6 +73,16 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
 #endif
 
     return RT_EOK;
+}
+
+rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
+                             const char              *name,
+                             const struct rt_spi_ops *ops)
+{
+    /* set bus mode */
+    bus->mode = RT_SPI_BUS_MODE_SPI;
+
+    return spi_bus_register(bus, name, ops);
 }
 
 rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
