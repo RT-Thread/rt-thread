@@ -11,6 +11,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['dev_watchdog.c']
 
+if GetDepend(['RT_WDT_DW']):
+    src += ['watchdog-dw.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
