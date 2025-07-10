@@ -22,8 +22,8 @@
 #include <drv_log.h>
 
 #define MAX_PERIOD 65535
-#define MIN_PERIOD 3
-#define MIN_PULSE 2
+#define MIN_PERIOD 1
+#define MIN_PULSE 1
 
 enum
 {
