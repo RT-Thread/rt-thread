@@ -661,6 +661,7 @@ rt_err_t eth_device_ready(struct eth_device* dev)
         return -RT_ERROR; /* netif is not initialized yet, just return. */
 }
 
+#ifndef PHY_USING_RTL8304
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 {
     rt_base_t level;
@@ -678,6 +679,32 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
     /* post message to ethernet thread */
     return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
 }
+#else
+rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t port0_link_status, rt_bool_t port1_link_status)
+{
+    rt_uint32_t level;
+    rt_uint8_t link_status = 0;
+
+    RT_ASSERT(dev != RT_NULL);
+    
+    if(port0_link_status) {
+        link_status |= 0x01;
+    }
+    if(port1_link_status) {
+        link_status |= 0x02;
+    }
+    
+    level = rt_hw_interrupt_disable();
+    dev->link_changed = 0x01;
+    dev->link_status = link_status;
+    rt_hw_interrupt_enable(level);
+
+    /* post message to ethernet thread */
+    return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
+}
+#endif
+
+
 #else
 /* NOTE: please not use it in interrupt when no RxThread exist */
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)

@@ -23,6 +23,7 @@
 #include "fsl_cache.h"
 #include "fsl_iomuxc.h"
 #include "fsl_common.h"
+#include "drv_rtl8304.h"
 
 #ifdef RT_USING_LWIP
 
@@ -809,122 +810,70 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
 }
 
 #ifdef BSP_USING_PHY
-static struct rt_phy_device *phy_dev = RT_NULL;
 static void phy_monitor_thread_entry(void *parameter)
-{
-    rt_uint32_t speed;
-    rt_uint32_t duplex;
-    rt_bool_t link = RT_FALSE;
-
-#ifdef SOC_IMXRT1170_SERIES
-#ifdef PHY_USING_RTL8211F
-    phy_dev = (struct rt_phy_device *)rt_device_find("rtl8211f");
-    if ((RT_NULL == phy_dev) || (RT_NULL == phy_dev->ops))
-    {
-        // TODO print warning information
-        LOG_E("Can not find phy device called \"rtl8211f\"");
-        return;
-    }
-#else
-    phy_dev = (struct rt_phy_device *)rt_device_find("ksz8081");
-    if ((RT_NULL == phy_dev) || (RT_NULL == phy_dev->ops))
-    {
-        // TODO print warning information
-        LOG_E("Can not find phy device called \"ksz8081\"");
-        return;
-    }
-#endif
-#else
-    phy_dev = (struct rt_phy_device *)rt_device_find("rtt-phy");
-    if ((RT_NULL == phy_dev) || (RT_NULL == phy_dev->ops))
-    {
-        // TODO print warning information
-        LOG_E("Can not find phy device called \"rtt-phy\"");
-        return;
-    }
-#endif
-
-    if (RT_NULL == phy_dev->ops->init)
-    {
-        LOG_E("phy driver error!");
-        return;
-    }
-#ifdef SOC_IMXRT1170_SERIES
-#ifdef PHY_USING_RTL8211F
-    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_RTL8211F_ADDRESS, CLOCK_GetRootClockFreq(kCLOCK_Root_Bus));
-#else
-    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_KSZ8081_ADDRESS, CLOCK_GetRootClockFreq(kCLOCK_Root_Bus));
-#endif
-#else
-    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_DEVICE_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
-#endif
-    if (PHY_STATUS_OK != status)
-    {
-        LOG_E("Phy device initialize unsuccessful!\n");
-        return;
-    }
-    LOG_I("Phy device initialize successfully!\n");
+{    
+    static rt_uint16_t port_1_cur_link_status = RT_FALSE;
+    static rt_uint16_t port_2_cur_link_status = RT_FALSE;
+    static rt_uint16_t port_1_pre_link_status = RT_FALSE;
+    static rt_uint16_t port_2_pre_link_status = RT_FALSE;    
+    int status_phy_changed = 0;  
     while (1)
     {
-        rt_bool_t new_link = RT_FALSE;
-        rt_phy_status status = phy_dev->ops->get_link_status(&new_link);
-
-        if ((PHY_STATUS_OK == status) && (link != new_link))
+        /* check  port1/2 link status */
+        status_phy_changed = 0;
+        port_1_cur_link_status = rtl_get_link_status(RTL_PORT_0);
+        port_2_cur_link_status = rtl_get_link_status(RTL_PORT_1);
+        if(port_1_pre_link_status != port_1_cur_link_status)
         {
-            link = new_link;
-
-            if (link) // link up
-            {
-                phy_dev->ops->get_link_speed_duplex(&speed, &duplex);
-
-                if (PHY_SPEED_10M == speed)
-                {
-                    dbg_log(DBG_LOG, "10M\n");
-                }
-                else if (PHY_SPEED_100M == speed)
-                {
-                    dbg_log(DBG_LOG, "100M\n");
-                }
-                else
-                {
-                    dbg_log(DBG_LOG, "1000M\n");
-                }
-
-                if (PHY_HALF_DUPLEX == duplex)
-                {
-                    dbg_log(DBG_LOG, "half dumplex\n");
-                }
-                else
-                {
-                    dbg_log(DBG_LOG, "full dumplex\n");
-                }
-
-                if ((imxrt_eth_device.speed != (enet_mii_speed_t)speed) || (imxrt_eth_device.duplex != (enet_mii_duplex_t)duplex))
-                {
-                    imxrt_eth_device.speed = (enet_mii_speed_t)speed;
-                    imxrt_eth_device.duplex = (enet_mii_duplex_t)duplex;
-
-                    dbg_log(DBG_LOG, "link up, and update eth mode.\n");
-                    rt_imxrt_eth_init((rt_device_t)&imxrt_eth_device);
-                }
-                else
-                {
-                    dbg_log(DBG_LOG, "link up, eth not need re-config.\n");
-                }
-                dbg_log(DBG_LOG, "link up.\n");
-                eth_device_linkchange(&imxrt_eth_device.parent, RT_TRUE);
+            port_1_pre_link_status = port_1_cur_link_status;
+            if(port_1_cur_link_status)
+            {               
+                dbg_log(DBG_INFO,"PHY Port1 Link up\n");
             }
             else
             {
-                dbg_log(DBG_LOG, "link down.\n");
-                eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
+                dbg_log(DBG_INFO,"PHY Port1 Link down\n");
             }
+            status_phy_changed = 1;
         }
+
+        if(port_2_pre_link_status != port_2_cur_link_status)
+        {
+            port_2_pre_link_status = port_2_cur_link_status;
+            if(port_2_cur_link_status)
+            {                
+                dbg_log(DBG_INFO,"PHY Port2 Link up\n");
+            }
+            else
+            {
+                dbg_log(DBG_INFO,"PHY Port2 Link down\n");
+            }
+            status_phy_changed = 1;
+        }
+        
+        if (status_phy_changed == 1)
+        {
+            eth_device_linkchange(&imxrt_eth_device.parent, port_1_cur_link_status, port_2_cur_link_status);
+        } 
 
         rt_thread_delay(RT_TICK_PER_SECOND * 2);
     }
 }
+
 #endif
+
+static void rt_imxrt_enet_phy_reset_by_gpio(void)
+{
+    gpio_pin_config_t gpio_config = {kGPIO_DigitalOutput, 0, kGPIO_NoIntmode};
+    GPIO_PinInit(GPIO3, BSP_USING_PHY_RST_PIN, &gpio_config);
+    GPIO_PinInit(GPIO3, BSP_USING_ETH_INT_PIN, &gpio_config);
+    /* pull up the ENET_INT before RESET. */
+    GPIO_WritePinOutput(GPIO3, BSP_USING_ETH_INT_PIN, 1);
+    GPIO_WritePinOutput(GPIO3, BSP_USING_PHY_RST_PIN, 0);
+    rt_thread_delay(100);
+    GPIO_WritePinOutput(GPIO3, BSP_USING_PHY_RST_PIN, 1);
+}
+
 
 static int rt_hw_imxrt_eth_init(void)
 {
@@ -932,7 +881,18 @@ static int rt_hw_imxrt_eth_init(void)
 
     _enet_clk_init();
 
-#ifdef PHY_USING_RTL8211F
+    /* Set PHY */
+    rt_imxrt_enet_phy_reset_by_gpio();
+    if (rtl_init(ETH_SWITCH))
+    {       
+        rt_kprintf("init rtl8304 success\r\n");
+    }
+    else
+    {
+        rt_kprintf("try init rtl8304 failed\r\n");
+    }
+
+#ifndef PHY_USING_RTL8304
     /* NXP (Freescale) MAC OUI */
     imxrt_eth_device.dev_addr[0] = 0x54;
     imxrt_eth_device.dev_addr[1] = 0x27;
@@ -992,7 +952,7 @@ static int rt_hw_imxrt_eth_init(void)
         dbg_log(DBG_LOG, "eth_device_init faild: %d\r\n", state);
     }
 
-    eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
+    eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE, RT_FALSE);
 
     /* start phy monitor */
     {
@@ -1014,6 +974,7 @@ static int rt_hw_imxrt_eth_init(void)
 INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
 #endif
 
+#ifndef PHY_USING_RTL8304
 #if defined(RT_USING_FINSH) && defined(RT_USING_PHY)
 #include <finsh.h>
 
@@ -1070,6 +1031,7 @@ void phy_dump(void)
         }
     }
 }
+#endif
 #endif
 
 #if defined(RT_USING_FINSH) && defined(RT_USING_LWIP)

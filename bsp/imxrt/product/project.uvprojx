@@ -385,9 +385,9 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>mnt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\mnt.c</FilePath>
             </File>
             <File>
               <FileName>sysinit.c</FileName>
@@ -395,9 +395,9 @@
               <FilePath>applications\sysinit.c</FilePath>
             </File>
             <File>
-              <FileName>mnt.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1518,9 +1518,24 @@
               <FilePath>board\dcd.c</FilePath>
             </File>
             <File>
+              <FileName>drv_eth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_eth.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\drv_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_mdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_mdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_rtl8304.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_rtl8304.c</FilePath>
             </File>
             <File>
               <FileName>drv_spi.c</FileName>
@@ -1538,16 +1553,6 @@
           <GroupName>Fal</GroupName>
           <Files>
             <File>
-              <FileName>fal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal.c</FilePath>
-            </File>
-            <File>
-              <FileName>fal_rtt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal_rtt.c</FilePath>
-            </File>
-            <File>
               <FileName>fal_flash_sfud_port.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fal\samples\porting\fal_flash_sfud_port.c</FilePath>
@@ -1561,6 +1566,16 @@
               <FileName>fal_partition.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fal\src\fal_partition.c</FilePath>
+            </File>
+            <File>
+              <FileName>fal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fal\src\fal.c</FilePath>
+            </File>
+            <File>
+              <FileName>fal_rtt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fal\src\fal_rtt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1763,6 +1778,11 @@
               <FilePath>..\libraries\MIMXRT1170\MIMXRT1171\drivers\fsl_common.c</FilePath>
             </File>
             <File>
+              <FileName>fsl_enet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1170\MIMXRT1171\drivers\fsl_enet.c</FilePath>
+            </File>
+            <File>
               <FileName>fsl_lpspi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1170\MIMXRT1171\drivers\fsl_lpspi.c</FilePath>
@@ -1778,16 +1798,6 @@
           <GroupName>littlefs</GroupName>
           <Files>
             <File>
-              <FileName>lfs_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\littlefs-v2.5.0\lfs_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>lfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\littlefs-v2.5.0\lfs.c</FilePath>
-            </File>
-            <File>
               <FileName>lfs_util.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\littlefs-v2.5.0\lfs_util.c</FilePath>
@@ -1796,6 +1806,16 @@
               <FileName>dfs_lfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\littlefs-v2.5.0\dfs_lfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>lfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\littlefs-v2.5.0\lfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>lfs_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\littlefs-v2.5.0\lfs_crc.c</FilePath>
             </File>
           </Files>
         </Group>

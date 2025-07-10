@@ -52,7 +52,8 @@ void eth_device_deinit(struct eth_device *dev);
 rt_err_t eth_device_ready(struct eth_device* dev);
 rt_err_t eth_device_init(struct eth_device * dev, const char *name);
 rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flag);
-rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up);
+//rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up);
+rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t port0_link_status, rt_bool_t port1_link_status);
 
 #ifdef __cplusplus
 }

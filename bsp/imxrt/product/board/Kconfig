@@ -134,50 +134,109 @@ menu "Onboard Peripheral Drivers"
             default y
 
         if BSP_USING_PHY
-            config PHY_USING_KSZ8081
-                bool "i.MX RT1176EVK uses ksz8081 phy"
-                default y
+			choice BSP_USING_PHY_TYPE
+				prompt "Select PHY type"
+				default PHY_USING_RTL8201F
+				help
+					Select the PHY type.
+				config PHY_USING_RTL8201F
+					bool "RTL8201F"
+					help
+						Select RTL8201F PHY.
+				config PHY_USING_RTL8304
+					bool "RTL8304"
+					help
+						Select RTL8304 PHY.
+		    endchoice
+			
+			if PHY_USING_RTL8304
+				config RTL8304_MDCS_PORT
+					int "Set RTL8304 MDCS PORT"
+					default 3
+				config RTL8304_MDCS_PIN
+					int "Set RTL8304 MDC PIN"
+					default 31
+				config RTL8304_MDIO_PORT
+					int "Set RTL8304 MDIO PORT"
+					default 4
+				config RTL8304_MDIO_PIN
+					int "Set RTL8304 MDIO PIN"
+					default 0
+					
+				config PHY_ADDRESS
+					int "Set PHY address"
+					default 1
 
-            if PHY_USING_KSZ8081
-                config PHY_KSZ8081_ADDRESS
-                int "Specify address of phy device"
-                default 2
+				config PHY_NAME
+					string "Set PHY name"
+					default "realtek"
+					
+				menuconfig BSP_USING_PHY_LED
+					bool "Enable PHY LED"
+					default n
 
-                config PHY_RESET_KSZ8081_PORT
-                    int "indicate port of reset"
-                    default 6
+					if BSP_USING_PHY_LED
+						menuconfig BSP_USING_PHY_LED_PORT1
+							bool "Enable PHY LED PORT1"
+							default n
 
-                config PHY_RESET_KSZ8081_PIN
-                    int "indicate pin of reset"
-                    default 12
+							if BSP_USING_PHY_LED_PORT1
+								config BSP_USING_PHY_LED_PORT1_PORT
+									int "Set PHY LED PORT1 PORT"
+									default 6
+								config BSP_USING_PHY_LED_PORT1_PIN
+									int "Set PHY LED PORT1 PIN"
+									default 8
+							endif
 
-                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
-                    bool "Enable the PHY ksz8081 RMII50M mode"
-                    depends on PHY_USING_KSZ8081
-                    default y
-            endif
+						menuconfig BSP_USING_PHY_LED_PORT2
+							bool "Enable PHY LED PORT2"
+							default n
+
+							if BSP_USING_PHY_LED_PORT2
+								config BSP_USING_PHY_LED_PORT2_PORT
+									int "Set PHY LED PORT2 PORT"
+									default 6
+								config BSP_USING_PHY_LED_PORT2_PIN
+									int "Set PHY LED PORT2 PIN"
+									default 9
+							endif
+					endif
+						
+				menuconfig BSP_USING_PHY_RST
+					bool "Enable PHY RST"
+					default n
+
+					if BSP_USING_PHY_RST
+						config BSP_USING_PHY_RST_PORT
+							int "Set PHY RST PORT"
+							default 3
+						config BSP_USING_PHY_RST_PIN
+							int "Set PHY RST PIN"
+							default 12
+					endif
+			endif	
+			
+			menuconfig BSP_USING_ETH_INT
+				bool "Enable ETH INT"
+				default n
+
+				if BSP_USING_ETH_INT
+					config BSP_USING_ETH_INT_PORT
+						int "Set ETH INT PORT"
+						default 3
+					config BSP_USING_ETH_INT_PIN
+						int "Set ETH INT PIN"
+						default 11
+				endif
+
+			config BSP_USING_ENET
+				bool "Enable ENET"
+				default n
+            
         endif
 
-        if BSP_USING_PHY
-                config PHY_USING_RTL8211F
-                    bool "i.MX RT1176EVK uses rtl8211f phy"
-                    default y
-
-                if PHY_USING_RTL8211F
-                    config PHY_RTL8211F_ADDRESS
-                    int "Specify address of phy device"
-                    default 1
-
-                    config PHY_RESET_RTL8211F_PORT
-                        int "indicate port of reset"
-                        default 5
-
-                    config PHY_RESET_RTL8211F_PIN
-                        int "indicate pin of reset"
-                        default 14
-
-                endif
-        endif
+        
     endif
 	
 	menuconfig BSP_USING_SPI_FLASH

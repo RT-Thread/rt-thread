@@ -77,6 +77,9 @@ if GetDepend('RT_USING_USB_HOST'):
 if GetDepend('BSP_USING_PULSE_ENCODER'):
     src += ['drv_pulse_encoder.c']
 
+if GetDepend('PHY_USING_RTL8304'):
+    src += ['drv_rtl8304.c']
+
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
