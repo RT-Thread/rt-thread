@@ -108,7 +108,7 @@ owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
 tag: bsp_stm32
 path: bsp/stm32
-owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+owners: Han Lv(hamburger-os)<296570182@qq.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>
 
 tag: bsp_stm32f429-atk-apollo
 path: bsp/stm32/stm32f429-atk-apollo
@@ -168,7 +168,7 @@ owners: Yucai Liu(illustriousness)<1486344514@qq.com>
 
 tag: kernel
 path: src
-owners: Damoshed_Xu(xu18838022837)<496121493@qq.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>, Xiaowei Swenson(ReviewSun)<Sxw1204814381@outlook.com>
+owners: Damoshed_Xu(xu18838022837)<496121493@qq.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Han Lv(hamburger-os)<296570182@qq.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>, Xiaowei Swenson(ReviewSun)<Sxw1204814381@outlook.com>
 
 tag: libc
 path: components/libc
