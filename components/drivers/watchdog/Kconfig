@@ -1,3 +1,7 @@
-config RT_USING_WDT
+menuconfig RT_USING_WDT
     bool "Using Watch Dog device drivers"
     default n
+
+if RT_USING_DM && RT_USING_WDT
+    osource "$(SOC_DM_WDT_DIR)/Kconfig"
+endif
