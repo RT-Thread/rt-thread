@@ -368,6 +368,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         status = LPSPI_MasterTransferBlocking(spi->base, &transfer);
 #else
         status = LPSPI_MasterTransferNonBlocking(spi->base, &spi->spi_normal, &transfer);
+        rt_sem_take(spi->xfer_sem, RT_WAITING_FOREVER);
 #endif
     }
 #if defined(BSP_SPI1_USING_DMA) || defined(BSP_SPI2_USING_DMA) ||   \
@@ -412,7 +413,7 @@ int rt_hw_spi_bus_init(void)
         lpspis[i].spi_bus.parent.user_data = &lpspis[i];
 
         ret = rt_spi_bus_register(&lpspis[i].spi_bus, lpspis[i].bus_name, &imxrt_spi_ops);
-
+#ifndef BSP_USING_BLOCKING_SPI
         if(RT_TRUE == lpspis[i].dma_flag)
         {
             lpspi_dma_config(&lpspis[i]);
@@ -421,6 +422,7 @@ int rt_hw_spi_bus_init(void)
         {
             lpspi_normal_config(&lpspis[i]);
         }
+#endif
         char sem_name[RT_NAME_MAX];
         rt_sprintf(sem_name, "%s_s", lpspis[i].bus_name);
         lpspis[i].xfer_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);

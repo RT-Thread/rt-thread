@@ -52,11 +52,9 @@
 #define  m_data_start                  (m_ncache_start + m_ncache_size)
 #define  m_data_size                   (0x00180000 - m_ncache_size)
 
-#define m_data2_start                  0x20000000 //DTCAM
+#define m_data2_start                  0x00000000 //ITCAM
 #define m_data2_size                   0x00040000 //256K
 
-#define m_data3_start                  0x20300000 //OCRAM2
-#define m_data3_size                   0x00080000 //512K
 
 /* Sizes */
 #if (defined(__stack_size__))
@@ -71,7 +69,7 @@
   #define Heap_Size                    0x0400
 #endif
 #include "../../rtconfig.h"
-#define RTT_HEAP_SIZE (m_data_size+m_data3_size-ImageLength(RW_m_data)-ImageLength(ARM_LIB_HEAP)-ImageLength(ARM_LIB_STACK))
+#define RTT_HEAP_SIZE (m_data_size-ImageLength(RW_m_data)-ImageLength(ARM_LIB_HEAP)-ImageLength(ARM_LIB_STACK))
 
 #if defined(XIP_BOOT_HEADER_ENABLE) && (XIP_BOOT_HEADER_ENABLE == 1)
 LR_m_text m_flash_config_start m_text_start+m_text_size-m_flash_config_start {   ; load region size_region
@@ -103,11 +101,8 @@ LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start {   ; l
 #endif
   RW_m_data2 m_data2_start m_data2_size {
     * (RamFunction)
-  }
-  
-//  RW_m_data3 m_data3_start m_data3_size { ; RW data
-//    .ANY (+RW +ZI)
-//  }
+  }  
+
 #if (defined(__heap_noncacheable__))
   RW_m_data m_data_start m_data_size-Stack_Size { ; RW data
 #else

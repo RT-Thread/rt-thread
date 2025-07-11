@@ -335,7 +335,6 @@
 #define BSP_USING_FLEXSPI1
 #define BSP_USING_SPI
 #define BSP_USING_SPI1
-#define BSP_USING_BLOCKING_SPI
 
 /* Onboard Peripheral Drivers */
 
