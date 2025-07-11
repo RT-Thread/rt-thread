@@ -225,6 +225,7 @@
 #define RT_SERIAL_FLOWCONTROL_NONE      0
 
 /* Default config for serial_configure structure */
+#ifdef RT_SERIAL_USING_DMA
 #define RT_SERIAL_CONFIG_DEFAULT                      \
 {                                                     \
     BAUD_RATE_115200,           /* 115200 bits/s */   \
@@ -237,8 +238,23 @@
     RT_SERIAL_TX_MINBUFSZ,      /* txBuf size */      \
     RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
     0,                          /* reserved */        \
-    0,                          /* dma_ping_bufsz */  \
+    RT_SERIAL_RX_MINBUFSZ / 2,  /* dma_ping_bufsz */  \
 }
+#else
+#define RT_SERIAL_CONFIG_DEFAULT                      \
+{                                                     \
+    BAUD_RATE_115200,           /* 115200 bits/s */   \
+    DATA_BITS_8,                /* 8 databits */      \
+    STOP_BITS_1,                /* 1 stopbit */       \
+    PARITY_NONE,                /* No parity  */      \
+    BIT_ORDER_LSB,              /* LSB first sent */  \
+    NRZ_NORMAL,                 /* Normal mode */     \
+    RT_SERIAL_RX_MINBUFSZ,      /* rxBuf size */      \
+    RT_SERIAL_TX_MINBUFSZ,      /* txBuf size */      \
+    RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
+    0,                          /* reserved */        \
+}
+#endif
 
 /**
  * @brief Serial receive indicate hook function type
