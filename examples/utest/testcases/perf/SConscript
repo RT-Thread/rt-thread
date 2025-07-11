@@ -2,26 +2,11 @@ Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
-src     = []
+src     = Glob('*.c')
 CPPPATH = [cwd]
 
-if GetDepend(['UTEST_SYS_CONTEXT_SWITCH']):
-    src += ['context_switch_tc.c']
-
-if GetDepend(['UTEST_SYS_IRQ_LATENCY']):
-    src += ['irq_latency_tc.c']
-
-if GetDepend(['UTEST_SYS_THREAD_SEM']):
-    src += ['thread_sem_tc.c']
-
-if GetDepend(['UTEST_SYS_THREAD_EVENT']):
-    src += ['thread_event_tc.c']
-
-if GetDepend(['UTEST_SYS_THREAD_MBOX']):
-    src += ['thread_mbox_tc.c']
-
-if GetDepend(['UTEST_SYS_THREAD_MQ']):
-    src += ['thread_mq_tc.c']
+# if GetDepend(['UTEST_SYS_IRQ_LATENCY']):
+#     src += ['irq_latency_tc.c']
 
 group = DefineGroup('utestcases', src, depend = ['UTEST_SYS_PERF_TC'], CPPPATH = CPPPATH)
 
