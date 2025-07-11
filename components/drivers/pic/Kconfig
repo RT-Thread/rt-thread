@@ -55,3 +55,7 @@ config RT_PIC_ARM_GIC_MAX_NR
     depends on RT_PIC_ARM_GIC
     default 2 if SOC_REALVIEW
     default 1
+
+if RT_USING_PIC
+    osource "$(SOC_DM_PIC_DIR)/Kconfig"
+endif
