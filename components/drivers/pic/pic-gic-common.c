@@ -62,20 +62,16 @@ void gic_common_init_quirk_hw(rt_uint32_t iidr, const struct gic_quirk *quirks, 
 void gic_common_sgi_config(void *base, void *data, int irq_base)
 {
 #ifdef RT_USING_SMP
-    if (irq_base < 2)
+    if (irq_base < RT_MAX_IPI)
     {
         struct rt_pic_irq *pirq;
 
-#define DECLARE_GIC_IPI(ipi, hwirq)             \
-        rt_pic_config_ipi(data, ipi, hwirq);    \
-        pirq = rt_pic_find_ipi(data, ipi);      \
-        pirq->mode = RT_IRQ_MODE_EDGE_RISING;   \
-
-        DECLARE_GIC_IPI(RT_SCHEDULE_IPI, RT_SCHEDULE_IPI);
-        DECLARE_GIC_IPI(RT_STOP_IPI, RT_STOP_IPI);
-        DECLARE_GIC_IPI(RT_SMP_CALL_IPI, RT_SMP_CALL_IPI);
-
-#undef DECLARE_GIC_IPI
+        for (int ipi = 0; ipi < RT_MAX_IPI; ++ipi)
+        {
+            rt_pic_config_ipi(data, ipi, ipi);
+            pirq = rt_pic_find_ipi(data, ipi);
+            pirq->mode = RT_IRQ_MODE_EDGE_RISING;
+        }
     }
 #endif /* RT_USING_SMP */
 }
