@@ -1281,7 +1281,7 @@ static int list_irq(int argc, char**argv)
             #ifdef RT_USING_SMP
                 rt_kputs(cpumask);
             #endif
-                rt_kprintf("%-10d ", repeat_isr->action.counter);
+                rt_kprintf(" %-10d ", repeat_isr->action.counter);
                 rt_kprintf("%-*.s", 10, repeat_isr->action.name);
             #ifdef RT_USING_SMP
                 for (int cpuid = 0; cpuid < RT_CPUS_NR; cpuid++)
