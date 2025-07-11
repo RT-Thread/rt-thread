@@ -27,6 +27,10 @@
 extern int rt_hw_cpu_id(void);
 #endif
 
+#ifndef RT_MAX_IPI
+#define RT_MAX_IPI 0
+#endif
+
 void rt_dm_secondary_cpu_init(void);
 
 /* ID Allocation */
