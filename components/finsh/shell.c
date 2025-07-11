@@ -193,7 +193,7 @@ int finsh_getchar(void)
     return ch;
 #endif /* RT_USING_POSIX_STDIO */
 #else
-    extern char rt_hw_console_getchar(void);
+    extern signed char rt_hw_console_getchar(void);
     return rt_hw_console_getchar();
 #endif /* RT_USING_DEVICE */
 }
