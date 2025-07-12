@@ -1236,7 +1236,7 @@ int rtl_init(eEthMode eth_mode)
     rtl_set_led_status(RTL_LED_LINK_ACT_SPEED);
     /* set egress rate */
     rtl_qos_init(4);
-    rtl_set_egr_rate(RTL_PORT_3, 0x50);
+    rtl_set_egr_rate(RTL_PORT_3, 320); //rx bandwidth control:320*64 = 20M bps
 
     rtl_l2_unkownDaDropEnable_set(1);
     

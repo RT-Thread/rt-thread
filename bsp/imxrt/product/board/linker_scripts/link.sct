@@ -52,8 +52,8 @@
 #define  m_data_start                  (m_ncache_start + m_ncache_size)
 #define  m_data_size                   (0x00180000 - m_ncache_size)
 
-#define m_data2_start                  0x00000000 //ITCAM
-#define m_data2_size                   0x00040000 //256K
+#define m_itcam_start                  0x00000000 //ITCAM
+#define m_itcam_size                   0x00040000 //256K
 
 
 /* Sizes */
@@ -99,8 +99,17 @@ LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start {   ; l
   VECTOR_RAM m_interrupts_start EMPTY 0 {
   }
 #endif
-  RW_m_data2 m_data2_start m_data2_size {
-    * (RamFunction)
+  RW_m_itcam m_itcam_start m_itcam_size {
+    context rvds.o(+RO)
+    cpuport.o(+RO)
+    scheduler.o(+RO)
+    thread.o(+RO)
+    tcp.o(+RO)
+    tcp in.o(+RO)
+    tcp out.o(+RO)
+    pbuf.o(+RO)
+    memp.o(+RO)
+    ethernetif.o(+RO)
   }  
 
 #if (defined(__heap_noncacheable__))
