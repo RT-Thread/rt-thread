@@ -178,6 +178,9 @@ arch_thread_signal_enter:
     /* restore user GP */
     LOAD gp, FRAME_OFF_GP(s3)
 
+    /* restore user TP */
+    LOAD tp, FRAME_OFF_TP(s3)
+
     /**
      * handler(signo, psi, ucontext);
      */
