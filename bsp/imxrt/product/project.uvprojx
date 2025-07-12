@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>5</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls>-xc -std=gnu99 -mimplicit-float</MiscControls>
               <Define>CPU_MIMXRT1171CVM8A, __STDC_LIMIT_MACROS, LFS_CONFIG=lfs_config.h, __RTTHREAD__, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, SOC_IMXRT1170_SERIES, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;board\fal;..\libraries\drivers;..\..\..\components\fal\inc;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\legacy;..\..\..\components\legacy\dfs;..\libraries\MIMXRT1170\CMSIS\Include;..\libraries\MIMXRT1170\MIMXRT1171;..\libraries\MIMXRT1170\MIMXRT1171\drivers;..\libraries\MIMXRT1170\MIMXRT1171\periph;packages\littlefs-v2.5.0;..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\components\net\lwip\port;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\net\netdev\include;..\..\..\components\net\sal\include;..\..\..\components\net\sal\include\socket;..\..\..\components\net\sal\impl;..\..\..\components\net\sal\include\dfs_net;..\..\..\components\net\sal\include\socket\sys_socket;xip</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;packages\cpu_usage-latest;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;board\fal;..\libraries\drivers;..\..\..\components\fal\inc;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\legacy;..\..\..\components\legacy\dfs;..\libraries\MIMXRT1170\CMSIS\Include;..\libraries\MIMXRT1170\MIMXRT1171;..\libraries\MIMXRT1170\MIMXRT1171\drivers;..\libraries\MIMXRT1170\MIMXRT1171\periph;packages\littlefs-v2.5.0;..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\components\net\lwip\port;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\net\netdev\include;..\..\..\components\net\sal\include;..\..\..\components\net\sal\include\socket;..\..\..\components\net\sal\impl;..\..\..\components\net\sal\include\dfs_net;..\..\..\components\net\sal\include\socket\sys_socket;xip</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -385,6 +385,11 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\main.c</FilePath>
+            </File>
+            <File>
               <FileName>mnt.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\mnt.c</FilePath>
@@ -393,11 +398,6 @@
               <FileName>sysinit.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\sysinit.c</FilePath>
-            </File>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -478,6 +478,21 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cpu_usage</GroupName>
+          <Files>
+            <File>
+              <FileName>cpu_usage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\cpu_usage-latest\cpu_usage.c</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_usage_cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\cpu_usage-latest\cpu_usage_cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1553,6 +1568,21 @@
           <GroupName>Fal</GroupName>
           <Files>
             <File>
+              <FileName>fal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fal\src\fal.c</FilePath>
+            </File>
+            <File>
+              <FileName>fal_partition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fal\src\fal_partition.c</FilePath>
+            </File>
+            <File>
+              <FileName>fal_rtt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fal\src\fal_rtt.c</FilePath>
+            </File>
+            <File>
               <FileName>fal_flash_sfud_port.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fal\samples\porting\fal_flash_sfud_port.c</FilePath>
@@ -1561,21 +1591,6 @@
               <FileName>fal_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fal\src\fal_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>fal_partition.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal_partition.c</FilePath>
-            </File>
-            <File>
-              <FileName>fal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal.c</FilePath>
-            </File>
-            <File>
-              <FileName>fal_rtt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fal\src\fal_rtt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1803,6 +1818,11 @@
               <FilePath>packages\littlefs-v2.5.0\lfs_util.c</FilePath>
             </File>
             <File>
+              <FileName>lfs_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\littlefs-v2.5.0\lfs_crc.c</FilePath>
+            </File>
+            <File>
               <FileName>dfs_lfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\littlefs-v2.5.0\dfs_lfs.c</FilePath>
@@ -1811,11 +1831,6 @@
               <FileName>lfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\littlefs-v2.5.0\lfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>lfs_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\littlefs-v2.5.0\lfs_crc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2093,14 +2108,14 @@
           <GroupName>xip</GroupName>
           <Files>
             <File>
-              <FileName>evkmimxrt1170_flexspi_nor_config.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>xip\evkmimxrt1170_flexspi_nor_config.c</FilePath>
-            </File>
-            <File>
               <FileName>fsl_flexspi_nor_boot.c</FileName>
               <FileType>1</FileType>
               <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
+            </File>
+            <File>
+              <FileName>evkmimxrt1170_flexspi_nor_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>xip\evkmimxrt1170_flexspi_nor_config.c</FilePath>
             </File>
           </Files>
         </Group>

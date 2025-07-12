@@ -1,5 +1,10 @@
 [
  {
+  "path": "/packages/tools/cpu_usage", 
+  "ver": "latest", 
+  "name": "CPU_USAGE"
+ }, 
+ {
   "path": "/packages/system/littlefs", 
   "ver": "v2.5.0", 
   "name": "LITTLEFS"
