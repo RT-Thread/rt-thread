@@ -883,7 +883,7 @@ static int rt_hw_imxrt_eth_init(void)
 
     /* Set PHY */
     rt_imxrt_enet_phy_reset_by_gpio();
-    if (rtl_init(ETH_SWITCH))
+    if (RT_EOK == rtl_init(ETH_SWITCH))
     {       
         rt_kprintf("init rtl8304 success\r\n");
     }

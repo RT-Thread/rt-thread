@@ -191,6 +191,9 @@ extern "C" {
  */
 void BOARD_BootClockRUN(void);
 
+void BOARD_BootClockRUN_800M(void);
+
+
 #if defined(__cplusplus)
 }
 #endif /* __cplusplus*/

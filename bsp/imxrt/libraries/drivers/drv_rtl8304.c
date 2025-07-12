@@ -116,7 +116,7 @@ static int rtl_smi_init(void)
     RTL_SMI_MODES(RTL_MDIO_GPIO, PIN_MODE_OUTPUT);
     return RT_EOK;
 }
-INIT_APP_EXPORT(rtl_smi_init);
+//INIT_APP_EXPORT(rtl_smi_init);
 
 /**
  * @brief disable interrupt
@@ -945,7 +945,7 @@ void rtl_hard_reset(void)
     rt_pin_write(GET_PIN(BSP_USING_PHY_RST_PORT, BSP_USING_PHY_RST_PIN), PIN_LOW);
     rt_thread_mdelay(100);
     rt_pin_write(GET_PIN(BSP_USING_PHY_RST_PORT, BSP_USING_PHY_RST_PIN), PIN_HIGH);
-    rt_thread_mdelay(1000);
+    rt_thread_mdelay(100);
 }
 void rtl_rma_entry_set(uint32_t type, rtl_rma_entry_t *pRmaentry)
 {
@@ -1210,9 +1210,11 @@ void rtl_external_cpu_tag_remove_en(uint32_t enabled)
  */
 int rtl_init(eEthMode eth_mode)
 {
-    rt_uint16_t get_id[2] = {0};
+    rt_uint16_t id[2] = {0};
     
     rtl_hard_reset();
+
+    rtl_smi_init();
 
     /* set gpio for link led */    
     rt_pin_mode(RTL_PORT0_LED, PIN_MODE_OUTPUT);
@@ -1221,13 +1223,11 @@ int rtl_init(eEthMode eth_mode)
     rt_pin_write(RTL_PORT1_LED, RTL_LED_OFF);
 
     /* check phy id1 & id2 */
-    get_id[0] = rtl_get_id1((rtl_phy_t)RTL_PORT_0);
-    get_id[1] = rtl_get_id1((rtl_phy_t)RTL_PORT_1);
-    rt_kprintf("id0=0x%x,id1=0x%x\n",get_id[0],get_id[1]);
-    if (RTL_PHY_ID1 != rtl_get_id1((rtl_phy_t)RTL_PORT_0) ||
-        RTL_PHY_ID2 != rtl_get_id2((rtl_phy_t)RTL_PORT_0))
+    id[0] = rtl_get_id1((rtl_phy_t)RTL_PORT_0);
+    id[1] = rtl_get_id2((rtl_phy_t)RTL_PORT_1);   
+    if (RTL_PHY_ID1 != id[0] || RTL_PHY_ID2 != id[1])
     {
-        rt_kprintf("check rtl8304 phy id failed\r\n");
+        rt_kprintf("check rtl8304 phy id failed! id0=%04x,id1=%04x\r\n",id[0],id[1]);
         return -RT_ERROR;
     }
     /* set storm filter */

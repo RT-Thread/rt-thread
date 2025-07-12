@@ -250,7 +250,7 @@ void rt_hw_board_init()
 {
     BOARD_ConfigMPU();
     BOARD_InitPins();
-    BOARD_BootClockRUN();
+    BOARD_BootClockRUN_800M();
 
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
