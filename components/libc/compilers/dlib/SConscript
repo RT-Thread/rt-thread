@@ -10,7 +10,7 @@ if rtconfig.PLATFORM in ['iccarm']:
 
     if GetDepend('DFS_USING_POSIX'):
         from distutils.version import LooseVersion
-        from iar import IARVersion
+        from targets.iar import IARVersion
 
         CPPDEFINES = CPPDEFINES + ['_DLIB_FILE_DESCRIPTOR']
         iar_version = LooseVersion(IARVersion())
