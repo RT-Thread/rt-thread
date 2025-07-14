@@ -108,7 +108,15 @@ owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
 
 tag: bsp_stm32
 path: bsp/stm32
-owners: Han Lv(hamburger-os)<296570182@qq.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>
+owners: Han Lv(hamburger-os)<296570182@qq.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>, Liang He(Liang1795)<111111000@163.com>
+
+tag: bsp_stm32f103-blue-pill
+path: bsp/stm32/stm32f103-blue-pill
+owners: Liang He(Liang1795)<111111000@163.com>
+
+tag: bsp_stm32f412-st-nucleo
+path: bsp/stm32/stm32f412-st-nucleo
+owners: Liang He(Liang1795)<111111000@163.com>
 
 tag: bsp_stm32f429-armfly-v6
 path: bsp/stm32/stm32f429-armfly-v6
@@ -160,7 +168,7 @@ owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
 
 tag: driver_spi
 path: components/drivers/spi
-owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>, Liang He(Liang1795)<111111000@163.com>
 
 tag: driver_ymodem
 path: components/utilities/ymodem
