@@ -77,7 +77,7 @@ def IARWorkspace(target):
     out.write(xml)
     out.close()
 
-def IARProject(target, script):
+def IARProject(env, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
     tree = etree.parse('template.ewp')
@@ -86,7 +86,7 @@ def IARProject(target, script):
     out = open(target, 'w')
 
     CPPPATH = []
-    CPPDEFINES = []
+    CPPDEFINES = env.get('CPPDEFINES', [])
     LOCAL_CPPDEFINES = []
     LINKFLAGS = ''
     CFLAGS = ''
@@ -112,9 +112,6 @@ def IARProject(target, script):
         if 'CPPPATH' in group and group['CPPPATH']:
             CPPPATH += group['CPPPATH']
 
-        # get each group's definitions
-        if 'CPPDEFINES' in group and group['CPPDEFINES']:
-            CPPDEFINES += group['CPPDEFINES']
 
         if 'LOCAL_CPPDEFINES' in group and group['LOCAL_CPPDEFINES']:
             LOCAL_CPPDEFINES += group['LOCAL_CPPDEFINES']
