@@ -657,12 +657,12 @@ int socket(int domain, int type, int protocol)
         rt_set_errno(-ENOMEM);
         return -1;
     }
+    dfs_vnode_init(d->vnode, FT_SOCKET, dfs_net_get_fops());
 
     /* create socket  and then put it to the dfs_file */
     socket = sal_socket(domain, type, protocol);
     if (socket >= 0)
     {
-        dfs_vnode_init(d->vnode, FT_SOCKET, dfs_net_get_fops());
         d->flags = O_RDWR; /* set flags as read and write */
 
         /* set socket to the data of dfs_file */
