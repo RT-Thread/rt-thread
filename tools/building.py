@@ -825,7 +825,7 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'iar':
         from targets.iar import IARProject, IARVersion
         print("IAR Version: " + IARVersion())
-        IARProject(GetOption('project-name') + '.ewp', Projects)
+        IARProject(Env, GetOption('project-name') + '.ewp', Projects)
         print("IAR project has generated successfully!")
 
     if GetOption('target') == 'vs':
@@ -934,7 +934,7 @@ def EndBuilding(target, program = None):
             if not isinstance(project_path, str) or len(project_path) == 0:
                 project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
             MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-            child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name), 
+            child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name),
                                    cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout, stderr = child.communicate()
             need_exit = True
