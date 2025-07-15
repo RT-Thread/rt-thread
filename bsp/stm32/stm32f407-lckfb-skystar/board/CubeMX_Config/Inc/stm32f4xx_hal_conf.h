@@ -76,10 +76,6 @@
 #define HAL_WWDG_MODULE_ENABLED
 #endif
 
-/*#ifdef BSP_USING_SDIO*/
-#define HAL_SD_MODULE_ENABLED
-/*#endif*/
-
 #ifdef BSP_USING_USBD
 #define HAL_PCD_MODULE_ENABLED
 #endif
@@ -136,6 +132,7 @@
 #define HAL_RCC_MODULE_ENABLED
 #define HAL_PWR_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
+#define HAL_SD_MODULE_ENABLED
 
 /* ########################## HSE/HSI Values adaptation ##################### */
 /**
