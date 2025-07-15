@@ -416,7 +416,7 @@ static int usbh_hub_connect(struct usbh_hubport *hport, uint8_t intf)
 
     hub->int_buffer = g_hub_intbuf[hub->bus->busid][hub->index - 1];
 
-    hub->int_timer = usb_osal_timer_create("hubint_tim", USBH_GET_URB_INTERVAL(hub->intin->bInterval, hport->speed), hub_int_timeout, hub, 0);
+    hub->int_timer = usb_osal_timer_create("hubint_tim", USBH_GET_URB_INTERVAL(hub->intin->bInterval, hport->speed) / 1000, hub_int_timeout, hub, 0);
     if (hub->int_timer == NULL) {
         USB_LOG_ERR("No memory to alloc int_timer\r\n");
         return -USB_ERR_NOMEM;

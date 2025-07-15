@@ -429,9 +429,18 @@ static int usbh_reset_port(struct usbh_bus *bus, const uint8_t port)
 {
     g_musb_hcd[bus->hcd.hcd_id].port_pe = 0;
     HWREGB(USB_BASE + MUSB_POWER_OFFSET) |= USB_POWER_RESET;
+
+#ifdef CONFIG_USB_MUSB_SIFLI
+    extern void musb_reset_prev(void);
+    musb_reset_prev();
+#endif
     usb_osal_msleep(20);
     HWREGB(USB_BASE + MUSB_POWER_OFFSET) &= ~(USB_POWER_RESET);
     usb_osal_msleep(20);
+#ifdef CONFIG_USB_MUSB_SIFLI
+    extern void musb_reset_post(void);
+    musb_reset_post();
+#endif
     g_musb_hcd[bus->hcd.hcd_id].port_pe = 1;
     return 0;
 }

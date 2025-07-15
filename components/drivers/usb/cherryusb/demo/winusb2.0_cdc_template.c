@@ -6,10 +6,6 @@
 #include "usbd_core.h"
 #include "usbd_cdc_acm.h"
 
-#if CONFIG_USBDEV_EP_NUM < 6
-#error endpoint number is too small for this demo, please try other chips
-#endif
-
 #define WINUSB_IN_EP  0x81
 #define WINUSB_OUT_EP 0x02
 

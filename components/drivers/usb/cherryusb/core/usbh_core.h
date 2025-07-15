@@ -47,7 +47,7 @@ extern "C" {
 #define CLASS_INFO_DEFINE __attribute__((section(".usbh_class_info"))) __USED __ALIGNED(1)
 #endif
 
-#define USBH_GET_URB_INTERVAL(interval, speed) (speed < USB_SPEED_HIGH ? interval : (1 << (interval - 1)))
+#define USBH_GET_URB_INTERVAL(interval, speed) (speed < USB_SPEED_HIGH ? (interval * 1000) : ((1 << (interval - 1)) * 125))
 
 #define USBH_EP_INIT(ep, ep_desc)                                            \
     do {                                                                     \

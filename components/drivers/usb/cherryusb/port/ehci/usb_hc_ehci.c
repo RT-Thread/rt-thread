@@ -336,10 +336,8 @@ static struct ehci_qh_hw *ehci_control_urb_init(struct usbh_bus *bus, struct usb
     }
 
     qtd_setup = ehci_qtd_alloc(bus);
-    qtd_data = ehci_qtd_alloc(bus);
     qtd_status = ehci_qtd_alloc(bus);
-
-    USB_ASSERT_MSG(qtd_setup && qtd_data && qtd_status, "ctrl qtd alloc failed");
+    USB_ASSERT_MSG(qtd_setup && qtd_status, "ctrl qtd alloc failed");
 
     ehci_qh_fill(qh,
                  urb->hport->dev_addr,
@@ -363,6 +361,9 @@ static struct ehci_qh_hw *ehci_control_urb_init(struct usbh_bus *bus, struct usb
 
     /* fill data qtd */
     if (setup->wLength > 0) {
+        qtd_data = ehci_qtd_alloc(bus);
+        USB_ASSERT_MSG(qtd_data, "ctrl qtd alloc failed");
+
         if ((setup->bmRequestType & 0x80) == 0x80) {
             token = QTD_TOKEN_PID_IN;
         } else {

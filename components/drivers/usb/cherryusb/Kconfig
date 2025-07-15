@@ -52,6 +52,8 @@ if CHERRYUSB
                 bool "musb_sunxi"
             config CHERRYUSB_DEVICE_MUSB_BK
                 bool "musb_bk"
+            config CHERRYUSB_DEVICE_MUSB_SIFLI
+                bool "musb_sifli"
             config CHERRYUSB_DEVICE_MUSB_CUSTOM
                 bool "musb_custom"
             config CHERRYUSB_DEVICE_CHIPIDEA_MCX
@@ -123,7 +125,6 @@ if CHERRYUSB
             prompt "Enable usb mtp device, it is commercial charge"
             default n
 
-
         config CHERRYUSB_DEVICE_ADB
             bool
             prompt "Enable usb adb device"
@@ -134,45 +135,99 @@ if CHERRYUSB
             prompt "Enable usb dfu device"
             default n
 
+        config USBDEV_REQUEST_BUFFER_LEN
+            int
+            prompt "Set device control transfer max buffer size"
+            default 512
+
+        config USBDEV_MSC_MAX_BUFSIZE
+            int
+            prompt "Set usb msc device max buffer size"
+            default 512
+            help
+                Set the maximum buffer size for usb msc device, it is used to transfer data.
+                you can change it to a larger value if you need larger speed but must be a power of blocksize.
+
+        config USBDEV_RNDIS_USING_LWIP
+            bool
+            prompt "Enable usb rndis device with lwip for lan"
+            default n
+
+        config USBDEV_CDC_ECM_USING_LWIP
+            bool
+            prompt "Enable usb cdc ecm device with lwip for lan"
+            default n
+
         choice
-            prompt "Select usb device template"
+            prompt "Select usb device template, please select class driver first"
             default CHERRYUSB_DEVICE_TEMPLATE_NONE
             config CHERRYUSB_DEVICE_TEMPLATE_NONE
-                bool "none (Implement it yourself)"
+                bool
+                prompt "none (Implement it yourself)"
             config CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
-                bool "cdc_acm"
+                bool
+                prompt "cdc_acm"
+                depends on CHERRYUSB_DEVICE_CDC_ACM
             config CHERRYUSB_DEVICE_TEMPLATE_MSC
-                bool "msc"
+                bool
+                prompt "msc_ram"
+                depends on CHERRYUSB_DEVICE_MSC
             config CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD
-                bool "hid_keyboard"
+                bool
+                prompt "hid_keyboard"
+                depends on CHERRYUSB_DEVICE_HID
             config CHERRYUSB_DEVICE_TEMPLATE_HID_MOUSE
-                bool "hid_mouse"
+                bool
+                prompt "hid_mouse"
+                depends on CHERRYUSB_DEVICE_HID
             config CHERRYUSB_DEVICE_TEMPLATE_HID_CUSTOM
-                bool "hid_custom"
+                bool
+                prompt "hid_custom"
+                depends on CHERRYUSB_DEVICE_HID
             config CHERRYUSB_DEVICE_TEMPLATE_VIDEO
-                bool "video"
+                bool
+                prompt "video"
+                depends on CHERRYUSB_DEVICE_VIDEO
             config CHERRYUSB_DEVICE_TEMPLATE_AUDIO_V1_MIC_SPEAKER
-                bool "audio_v1_mic_speaker_multichan"
+                bool
+                prompt "audio_v1_mic_speaker_multichan"
+                depends on CHERRYUSB_DEVICE_AUDIO
             config CHERRYUSB_DEVICE_TEMPLATE_AUDIO_V2_MIC_SPEAKER
-                bool "audio_v2_mic_speaker_multichan"
+                bool
+                prompt "audio_v2_mic_speaker_multichan"
+                depends on CHERRYUSB_DEVICE_AUDIO
             config CHERRYUSB_DEVICE_TEMPLATE_CDC_RNDIS
-                bool "cdc_rndis"
+                bool
+                prompt "cdc_rndis"
+                depends on CHERRYUSB_DEVICE_CDC_RNDIS
             config CHERRYUSB_DEVICE_TEMPLATE_CDC_ECM
-                bool "cdc_ecm"
+                bool
+                prompt "cdc_ecm"
+                depends on CHERRYUSB_DEVICE_CDC_ECM
             config CHERRYUSB_DEVICE_TEMPLATE_CDC_NCM
-                bool "cdc_ncm"
+                bool
+                prompt "cdc_ncm"
+                depends on CHERRYUSB_DEVICE_CDC_NCM
             config CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_MSC
-                bool "cdc_acm_msc"
+                bool
+                prompt "cdc_acm_msc"
+                depends on CHERRYUSB_DEVICE_CDC_ACM && CHERRYUSB_DEVICE_MSC
             config CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_MSC_HID
-                bool "cdc_acm_msc_hid"
+                bool
+                prompt "cdc_acm_msc_hid"
+                depends on CHERRYUSB_DEVICE_CDC_ACM && CHERRYUSB_DEVICE_MSC && CHERRYUSB_DEVICE_HID
             config CHERRYUSB_DEVICE_TEMPLATE_WINUSBV1
-                bool "winusbv1"
+                bool
+                prompt "winusbv1"
             config CHERRYUSB_DEVICE_TEMPLATE_WINUSBV2_CDC
-                bool "winusbv2_cdc"
+                bool
+                prompt "winusbv2_cdc"
+                depends on CHERRYUSB_DEVICE_CDC_ACM
             config CHERRYUSB_DEVICE_TEMPLATE_WINUSBV2_HID
-                bool "winusbv2_hid"
+                bool
+                prompt "winusbv2_hid"
+                depends on CHERRYUSB_DEVICE_HID
         endchoice
-
     endif
 
     menuconfig CHERRYUSB_HOST
@@ -217,6 +272,8 @@ if CHERRYUSB
                 bool "musb_sunxi"
             config CHERRYUSB_HOST_MUSB_BK
                 bool "musb_bk"
+            config CHERRYUSB_HOST_MUSB_SIFLI
+                bool "musb_sifli"
             config CHERRYUSB_HOST_MUSB_CUSTOM
                 bool "musb_custom"
             config CHERRYUSB_HOST_PUSB2
@@ -335,12 +392,27 @@ if CHERRYUSB
         config USBHOST_PLATFORM_RTL8152
             bool
 
-        config CHERRYUSB_HOST_TEMPLATE
-            bool
-            prompt "Use usb host template"
-            default n
+        config USBHOST_PSC_PRIO
+            int
+            prompt "Set hubport change thread priority, 0 is the max priority"
+            default 0
 
-        if CHERRYUSB_HOST_TEMPLATE
+        config USBHOST_PSC_STACKSIZE
+            int
+            prompt "Set hubport change thread stacksize"
+            default 4096
+
+        config USBHOST_REQUEST_BUFFER_LEN
+            int
+            prompt "Set host control transfer max buffer size"
+            default 512
+
+        config USBHOST_CONTROL_TRANSFER_TIMEOUT
+            int
+            prompt "Set host control transfer timeout, unit is ms"
+            default 500
+
+        menu "Select USB host template, please select class driver first"
             config TEST_USBH_CDC_ACM
                 int
                 prompt "demo for test cdc acm"
@@ -356,7 +428,6 @@ if CHERRYUSB
                 prompt "demo for test msc"
                 default 0
                 depends on CHERRYUSB_HOST_MSC
-        endif
+        endmenu
     endif
-
 endif

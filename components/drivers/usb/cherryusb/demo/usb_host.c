@@ -10,17 +10,17 @@
 #include "usbh_video.h"
 #include "usbh_audio.h"
 
-#ifndef TEST_USBH_CDC_ACM
-#define TEST_USBH_CDC_ACM 1
+#ifndef CONFIG_TEST_USBH_CDC_ACM
+#define CONFIG_TEST_USBH_CDC_ACM 1
 #endif
 #ifndef TEST_USBH_CDC_SPEED
 #define TEST_USBH_CDC_SPEED 0
 #endif
-#ifndef TEST_USBH_HID
-#define TEST_USBH_HID 1
+#ifndef CONFIG_TEST_USBH_HID
+#define CONFIG_TEST_USBH_HID 1
 #endif
-#ifndef TEST_USBH_MSC
-#define TEST_USBH_MSC 1
+#ifndef CONFIG_TEST_USBH_MSC
+#define CONFIG_TEST_USBH_MSC 1
 #endif
 #ifndef TEST_USBH_MSC_FATFS
 #define TEST_USBH_MSC_FATFS 0
@@ -28,18 +28,18 @@
 #ifndef TEST_USBH_MSC_FATFS_SPEED
 #define TEST_USBH_MSC_FATFS_SPEED 0
 #endif
-#ifndef TEST_USBH_AUDIO
-#define TEST_USBH_AUDIO 0
+#ifndef CONFIG_TEST_USBH_AUDIO
+#define CONFIG_TEST_USBH_AUDIO 0
 #endif
-#ifndef TEST_USBH_VIDEO
-#define TEST_USBH_VIDEO 0
+#ifndef CONFIG_TEST_USBH_VIDEO
+#define CONFIG_TEST_USBH_VIDEO 0
 #endif
 
 #if defined(TEST_USBH_CDC_ECM) || defined(TEST_USBH_CDC_RNDIS) || defined(TEST_USBH_ASIX) || defined(TEST_USBH_RTL8152)
 #error we have move those class implements into platform/none/usbh_lwip.c, and you should call tcpip_init(NULL, NULL) in your app
 #endif
 
-#if TEST_USBH_CDC_ACM
+#if CONFIG_TEST_USBH_CDC_ACM
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t cdc_buffer[4096];
 
 #if TEST_USBH_CDC_SPEED
@@ -115,7 +115,7 @@ delete:
 }
 #endif
 
-#if TEST_USBH_HID
+#if CONFIG_TEST_USBH_HID
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t hid_buffer[128];
 
 void usbh_hid_callback(void *arg, int nbytes)
@@ -157,7 +157,7 @@ delete:
 }
 #endif
 
-#if TEST_USBH_MSC
+#if CONFIG_TEST_USBH_MSC
 
 #if TEST_USBH_MSC_FATFS
 #include "ff.h"
@@ -326,7 +326,7 @@ delete:
 }
 #endif
 
-#if TEST_USBH_CDC_ACM
+#if CONFIG_TEST_USBH_CDC_ACM
 void usbh_cdc_acm_run(struct usbh_cdc_acm *cdc_acm_class)
 {
     usb_osal_thread_create("usbh_cdc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_cdc_acm_thread, cdc_acm_class);
@@ -337,7 +337,7 @@ void usbh_cdc_acm_stop(struct usbh_cdc_acm *cdc_acm_class)
 }
 #endif
 
-#if TEST_USBH_HID
+#if CONFIG_TEST_USBH_HID
 void usbh_hid_run(struct usbh_hid *hid_class)
 {
     usb_osal_thread_create("usbh_hid", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_hid_thread, hid_class);
@@ -348,7 +348,7 @@ void usbh_hid_stop(struct usbh_hid *hid_class)
 }
 #endif
 
-#if TEST_USBH_MSC
+#if CONFIG_TEST_USBH_MSC
 void usbh_msc_run(struct usbh_msc *msc_class)
 {
     usb_osal_thread_create("usbh_msc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_msc_thread, msc_class);
@@ -359,11 +359,11 @@ void usbh_msc_stop(struct usbh_msc *msc_class)
 }
 #endif
 
-#if TEST_USBH_AUDIO
+#if CONFIG_TEST_USBH_AUDIO
 #error "commercial charge"
 #endif
 
-#if TEST_USBH_VIDEO
+#if CONFIG_TEST_USBH_VIDEO
 #error "commercial charge"
 #endif
 
