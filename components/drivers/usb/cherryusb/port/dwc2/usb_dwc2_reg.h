@@ -209,12 +209,15 @@ typedef struct
 #define USB_OTG_HCFG_FSLSPCS_Pos                 (0U)
 #define USB_OTG_HCFG_FSLSPCS_Msk                 (0x3UL << USB_OTG_HCFG_FSLSPCS_Pos) /*!< 0x00000003 */
 #define USB_OTG_HCFG_FSLSPCS                     USB_OTG_HCFG_FSLSPCS_Msk      /*!< FS/LS PHY clock select  */
-#define USB_OTG_HCFG_FSLSPCS_0                   (0x1UL << USB_OTG_HCFG_FSLSPCS_Pos) /*!< 0x00000001 */
-#define USB_OTG_HCFG_FSLSPCS_1                   (0x2UL << USB_OTG_HCFG_FSLSPCS_Pos) /*!< 0x00000002 */
+#define USB_OTG_HCFG_FSLSPCLKSEL_30_60_MHZ       (0x0UL << USB_OTG_HCFG_FSLSPCS_Pos) /*!< 0x00000000 */
+#define USB_OTG_HCFG_FSLSPCLKSEL_48_MHZ          (0x1UL << USB_OTG_HCFG_FSLSPCS_Pos) /*!< 0x00000001 */
+#define USB_OTG_HCFG_FSLSPCLKSEL_6_MHZ           (0x2UL << USB_OTG_HCFG_FSLSPCS_Pos) /*!< 0x00000002 */
 #define USB_OTG_HCFG_FSLSS_Pos                   (2U)
 #define USB_OTG_HCFG_FSLSS_Msk                   (0x1UL << USB_OTG_HCFG_FSLSS_Pos) /*!< 0x00000004 */
 #define USB_OTG_HCFG_FSLSS                       USB_OTG_HCFG_FSLSS_Msk        /*!< FS- and LS-only support */
-
+#define USB_OTG_HFIR_RELOAD_CTRL_Pos             (16U)
+#define USB_OTG_HFIR_RELOAD_CTRL_Msk             (0x1UL << USB_OTG_HFIR_RELOAD_CTRL_Pos)
+#define USB_OTG_HFIR_RELOAD_CTRL                 USB_OTG_HFIR_RELOAD_CTRL_Msk
 /********************  Bit definition for USB_OTG_DCFG register  ********************/
 
 #define USB_OTG_DCFG_DSPD_Pos                    (0U)
@@ -385,12 +388,20 @@ typedef struct
 #define USB_OTG_GUSBCFG_TOCAL_Pos                (0U)
 #define USB_OTG_GUSBCFG_TOCAL_Msk                (0x7UL << USB_OTG_GUSBCFG_TOCAL_Pos) /*!< 0x00000007 */
 #define USB_OTG_GUSBCFG_TOCAL                    USB_OTG_GUSBCFG_TOCAL_Msk     /*!< FS timeout calibration */
-#define USB_OTG_GUSBCFG_TOCAL_0                  (0x1UL << USB_OTG_GUSBCFG_TOCAL_Pos) /*!< 0x00000001 */
-#define USB_OTG_GUSBCFG_TOCAL_1                  (0x2UL << USB_OTG_GUSBCFG_TOCAL_Pos) /*!< 0x00000002 */
-#define USB_OTG_GUSBCFG_TOCAL_2                  (0x4UL << USB_OTG_GUSBCFG_TOCAL_Pos) /*!< 0x00000004 */
+#define USB_OTG_GUSBCFG_PHYIF_Pos                (3U)
+#define USB_OTG_GUSBCFG_PHYIF_Msk                (0x1UL << USB_OTG_GUSBCFG_PHYIF_Pos)
+#define USB_OTG_GUSBCFG_PHYIF                    USB_OTG_GUSBCFG_PHYIF_Msk
+#define USB_OTG_GUSBCFG_PHYIF8                   (0x0UL << USB_OTG_GUSBCFG_PHYIF_Pos)
+#define USB_OTG_GUSBCFG_PHYIF16                  (0x1UL << USB_OTG_GUSBCFG_PHYIF_Pos)
+#define USB_OTG_GUSBCFG_ULPI_UTMI_SEL_Pos        (4U)
+#define USB_OTG_GUSBCFG_ULPI_UTMI_SEL_Msk        (0x1UL << USB_OTG_GUSBCFG_ULPI_UTMI_SEL_Pos)
+#define USB_OTG_GUSBCFG_ULPI_UTMI_SEL            USB_OTG_GUSBCFG_ULPI_UTMI_SEL_Msk
 #define USB_OTG_GUSBCFG_PHYSEL_Pos               (6U)
 #define USB_OTG_GUSBCFG_PHYSEL_Msk               (0x1UL << USB_OTG_GUSBCFG_PHYSEL_Pos) /*!< 0x00000040 */
 #define USB_OTG_GUSBCFG_PHYSEL                   USB_OTG_GUSBCFG_PHYSEL_Msk    /*!< USB 2.0 high-speed ULPI PHY or USB 1.1 full-speed serial transceiver select */
+#define USB_OTG_GUSBCFG_DDR_SEL_Pos              (7U)
+#define USB_OTG_GUSBCFG_DDR_SEL_Msk              (0x1UL << USB_OTG_GUSBCFG_DDR_SEL_Pos)
+#define USB_OTG_GUSBCFG_DDR_SEL                  USB_OTG_GUSBCFG_DDR_SEL_Msk
 #define USB_OTG_GUSBCFG_SRPCAP_Pos               (8U)
 #define USB_OTG_GUSBCFG_SRPCAP_Msk               (0x1UL << USB_OTG_GUSBCFG_SRPCAP_Pos) /*!< 0x00000100 */
 #define USB_OTG_GUSBCFG_SRPCAP                   USB_OTG_GUSBCFG_SRPCAP_Msk    /*!< SRP-capable */
@@ -1720,7 +1731,5 @@ typedef struct
 
 void usb_dc_low_level_init(uint8_t busid);
 void usb_dc_low_level_deinit(uint8_t busid);
-uint32_t usbd_get_dwc2_gccfg_conf(uint32_t reg_base);
-uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base);
 void usbd_dwc2_delay_ms(uint8_t ms);
 #endif

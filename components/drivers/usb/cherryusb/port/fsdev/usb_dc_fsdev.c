@@ -5,6 +5,10 @@
  */
 #include "usbd_core.h"
 
+#if (CONFIG_USB_DBG_LEVEL >= USB_DBG_LOG)
+#error "fsdev cannot enable USB_DBG_LOG"
+#endif
+
 #ifndef CONFIG_USBDEV_FSDEV_PMA_ACCESS
 #error "please define CONFIG_USBDEV_FSDEV_PMA_ACCESS in usb_config.h"
 #endif

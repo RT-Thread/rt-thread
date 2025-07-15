@@ -6,28 +6,7 @@
 #include "usbh_core.h"
 #include "usbh_hub.h"
 #include "usb_dwc2_reg.h"
-
-#ifndef CONFIG_USBHOST_PIPE_NUM
-#define CONFIG_USBHOST_PIPE_NUM 12
-#endif
-
-/* largest non-periodic USB packet used / 4 */
-#ifndef CONFIG_USB_DWC2_NPTX_FIFO_SIZE
-#define CONFIG_USB_DWC2_NPTX_FIFO_SIZE (512 / 4)
-#endif
-
-/* largest periodic USB packet used / 4 */
-#ifndef CONFIG_USB_DWC2_PTX_FIFO_SIZE
-#define CONFIG_USB_DWC2_PTX_FIFO_SIZE (1024 / 4)
-#endif
-
-/*
- * (largest USB packet used / 4) + 1 for status information + 1 transfer complete +
- * 1 location each for Bulk/Control endpoint for handling NAK/NYET scenario
- */
-#ifndef CONFIG_USB_DWC2_RX_FIFO_SIZE
-#define CONFIG_USB_DWC2_RX_FIFO_SIZE ((1012 - CONFIG_USB_DWC2_NPTX_FIFO_SIZE - CONFIG_USB_DWC2_PTX_FIFO_SIZE))
-#endif
+#include "usb_dwc2_param.h"
 
 #define USB_OTG_GLB     ((DWC2_GlobalTypeDef *)(bus->hcd.reg_base))
 #define USB_OTG_PCGCCTL *(__IO uint32_t *)((uint32_t)bus->hcd.reg_base + USB_OTG_PCGCCTL_BASE)
@@ -56,8 +35,9 @@ struct dwc2_hcd {
     volatile bool port_csc;
     volatile bool port_pec;
     volatile bool port_occ;
-    uint32_t GSNPSID;
-    struct dwc2_chan chan_pool[CONFIG_USBHOST_PIPE_NUM];
+    struct dwc2_hw_params hw_params;
+    struct dwc2_user_params user_params;
+    struct dwc2_chan chan_pool[16];
 } g_dwc2_hcd[CONFIG_USBHOST_MAX_BUS];
 
 #define DWC2_EP0_STATE_SETUP     0
@@ -81,7 +61,7 @@ static inline int dwc2_reset(struct usbh_bus *bus)
     count = 0U;
     USB_OTG_GLB->GRSTCTL |= USB_OTG_GRSTCTL_CSRST;
 
-    if (g_dwc2_hcd[bus->hcd.hcd_id].GSNPSID < 0x4F54420AU) {
+    if (g_dwc2_hcd[bus->hcd.hcd_id].hw_params.snpsid < 0x4F54420AU) {
         do {
             if (++count > 200000U) {
                 USB_LOG_ERR("DWC2 reset timeout\r\n");
@@ -106,22 +86,43 @@ static inline int dwc2_reset(struct usbh_bus *bus)
 static inline int dwc2_core_init(struct usbh_bus *bus)
 {
     int ret;
-#if defined(CONFIG_USB_HS)
-    /* Init The ULPI Interface */
-    USB_OTG_GLB->GUSBCFG &= ~(USB_OTG_GUSBCFG_TSDPS | USB_OTG_GUSBCFG_ULPIFSLS | USB_OTG_GUSBCFG_PHYSEL);
+    uint32_t regval;
 
-    /* Select vbus source */
-    USB_OTG_GLB->GUSBCFG &= ~(USB_OTG_GUSBCFG_ULPIEVBUSD | USB_OTG_GUSBCFG_ULPIEVBUSI);
+    if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_type == DWC2_PHY_TYPE_PARAM_FS) {
+        /* Select FS Embedded PHY */
+        USB_OTG_GLB->GUSBCFG |= USB_OTG_GUSBCFG_PHYSEL;
+    } else {
+        regval = USB_OTG_GLB->GUSBCFG;
+        regval &= ~USB_OTG_GUSBCFG_PHYSEL;
+        /* disable external vbus source */
+        regval &= ~(USB_OTG_GUSBCFG_ULPIEVBUSD | USB_OTG_GUSBCFG_ULPIEVBUSI);
+        /* disable ULPI FS/LS */
+        regval &= ~(USB_OTG_GUSBCFG_ULPIFSLS | USB_OTG_GUSBCFG_ULPICSM);
 
-    //USB_OTG_GLB->GUSBCFG |= USB_OTG_GUSBCFG_ULPIEVBUSD;
+        switch (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_type) {
+            case DWC2_PHY_TYPE_PARAM_ULPI:
+                regval |= USB_OTG_GUSBCFG_ULPI_UTMI_SEL;
+                regval &= ~USB_OTG_GUSBCFG_PHYIF16;
+                regval &= ~USB_OTG_GUSBCFG_DDR_SEL;
+
+                break;
+            case DWC2_PHY_TYPE_PARAM_UTMI:
+                regval &= ~USB_OTG_GUSBCFG_ULPI_UTMI_SEL;
+                regval &= ~USB_OTG_GUSBCFG_PHYIF16;
+
+                if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_utmi_width == 16) {
+                    regval |= USB_OTG_GUSBCFG_PHYIF16;
+                }
+                break;
+
+            default:
+                break;
+        }
+        USB_OTG_GLB->GUSBCFG = regval;
+    }
+
     /* Reset after a PHY select */
     ret = dwc2_reset(bus);
-#else
-    /* Select FS Embedded PHY */
-    USB_OTG_GLB->GUSBCFG |= USB_OTG_GUSBCFG_PHYSEL;
-    /* Reset after a PHY select */
-    ret = dwc2_reset(bus);
-#endif
     return ret;
 }
 
@@ -390,13 +391,60 @@ static inline uint16_t dwc2_get_full_frame_num(struct usbh_bus *bus)
     return ((frame & 0x3FFF) >> 3);
 }
 
+/**
+ * dwc2_calc_frame_interval() - Calculates the correct frame Interval value for
+ * the HFIR register according to PHY type and speed
+ *
+ * NOTE: The caller can modify the value of the HFIR register only after the
+ * Port Enable bit of the Host Port Control and Status register (HPRT.EnaPort)
+ * has been set
+ */
+uint32_t dwc2_calc_frame_interval(struct usbh_bus *bus)
+{
+    uint32_t usbcfg;
+    uint32_t hprt0;
+    int clock = 60; /* default value */
+
+    usbcfg = USB_OTG_GLB->GUSBCFG;
+    hprt0 = USB_OTG_HPRT;
+
+    if (!(usbcfg & USB_OTG_GUSBCFG_PHYSEL) && (usbcfg & USB_OTG_GUSBCFG_ULPI_UTMI_SEL) &&
+        !(usbcfg & USB_OTG_GUSBCFG_PHYIF16))
+        clock = 60;
+    if ((usbcfg & USB_OTG_GUSBCFG_PHYSEL) && g_dwc2_hcd[bus->hcd.hcd_id].hw_params.fs_phy_type ==
+                                                 GHWCFG2_FS_PHY_TYPE_SHARED_ULPI)
+        clock = 48;
+    if (!(usbcfg & USB_OTG_GUSBCFG_PHYLPCS) && !(usbcfg & USB_OTG_GUSBCFG_PHYSEL) &&
+        !(usbcfg & USB_OTG_GUSBCFG_ULPI_UTMI_SEL) && (usbcfg & USB_OTG_GUSBCFG_PHYIF16))
+        clock = 30;
+    if (!(usbcfg & USB_OTG_GUSBCFG_PHYLPCS) && !(usbcfg & USB_OTG_GUSBCFG_PHYSEL) &&
+        !(usbcfg & USB_OTG_GUSBCFG_ULPI_UTMI_SEL) && !(usbcfg & USB_OTG_GUSBCFG_PHYIF16))
+        clock = 60;
+    if ((usbcfg & USB_OTG_GUSBCFG_PHYLPCS) && !(usbcfg & USB_OTG_GUSBCFG_PHYSEL) &&
+        !(usbcfg & USB_OTG_GUSBCFG_ULPI_UTMI_SEL) && (usbcfg & USB_OTG_GUSBCFG_PHYIF16))
+        clock = 48;
+    if ((usbcfg & USB_OTG_GUSBCFG_PHYSEL) && !(usbcfg & USB_OTG_GUSBCFG_PHYIF16) &&
+        g_dwc2_hcd[bus->hcd.hcd_id].hw_params.fs_phy_type == GHWCFG2_FS_PHY_TYPE_SHARED_UTMI)
+        clock = 48;
+    if ((usbcfg & USB_OTG_GUSBCFG_PHYSEL) &&
+        g_dwc2_hcd[bus->hcd.hcd_id].hw_params.fs_phy_type == GHWCFG2_FS_PHY_TYPE_DEDICATED)
+        clock = 48;
+
+    if ((hprt0 & USB_OTG_HPRT_PSPD) >> USB_OTG_HPRT_PSPD_Pos == HPRT0_PRTSPD_HIGH_SPEED)
+        /* High speed case */
+        return 125 * clock - 1;
+
+    /* FS/LS case */
+    return 1000 * clock - 1;
+}
+
 static int dwc2_chan_alloc(struct usbh_bus *bus)
 {
     size_t flags;
     int chidx;
 
     flags = usb_osal_enter_critical_section();
-    for (chidx = 0; chidx < CONFIG_USBHOST_PIPE_NUM; chidx++) {
+    for (chidx = 0; chidx < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; chidx++) {
         if (!g_dwc2_hcd[bus->hcd.hcd_id].chan_pool[chidx].inuse) {
             g_dwc2_hcd[bus->hcd.hcd_id].chan_pool[chidx].inuse = true;
             usb_osal_leave_critical_section(flags);
@@ -544,17 +592,10 @@ __WEAK void usb_hc_low_level_deinit(struct usbh_bus *bus)
 int usb_hc_init(struct usbh_bus *bus)
 {
     int ret;
-    uint8_t channels;
 
     memset(&g_dwc2_hcd[bus->hcd.hcd_id], 0, sizeof(struct dwc2_hcd));
 
-    for (uint8_t chidx = 0; chidx < CONFIG_USBHOST_PIPE_NUM; chidx++) {
-        g_dwc2_hcd[bus->hcd.hcd_id].chan_pool[chidx].waitsem = usb_osal_sem_create(0);
-    }
-
     usb_hc_low_level_init(bus);
-
-    channels = ((USB_OTG_GLB->GHWCFG2 & (0x0f << 14)) >> 14) + 1;
 
     USB_LOG_INFO("========== dwc2 hcd params ==========\r\n");
     USB_LOG_INFO("CID:%08x\r\n", (unsigned int)USB_OTG_GLB->CID);
@@ -564,34 +605,70 @@ int usb_hc_init(struct usbh_bus *bus)
     USB_LOG_INFO("GHWCFG3:%08x\r\n", (unsigned int)USB_OTG_GLB->GHWCFG3);
     USB_LOG_INFO("GHWCFG4:%08x\r\n", (unsigned int)USB_OTG_GLB->GHWCFG4);
 
-    USB_LOG_INFO("dwc2 has %d channels and dfifo depth(32-bit words) is %d\r\n", channels, (USB_OTG_GLB->GHWCFG3 >> 16));
+    dwc2_get_hwparams(bus->hcd.reg_base, &g_dwc2_hcd[bus->hcd.hcd_id].hw_params);
+    dwc2_get_user_params(bus->hcd.reg_base, &g_dwc2_hcd[bus->hcd.hcd_id].user_params);
 
-    USB_ASSERT_MSG(((USB_OTG_GLB->GHWCFG2 & (0x3U << 3)) >> 3) == 2, "This dwc2 version does not support dma mode, so stop working");
-    USB_ASSERT_MSG(channels >= CONFIG_USBHOST_PIPE_NUM, "dwc2 has less channels than config, please check");
-    USB_ASSERT_MSG((CONFIG_USB_DWC2_RX_FIFO_SIZE + CONFIG_USB_DWC2_NPTX_FIFO_SIZE + CONFIG_USB_DWC2_PTX_FIFO_SIZE) <= (USB_OTG_GLB->GHWCFG3 >> 16),
+    if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_utmi_width == 0) {
+        g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_utmi_width = 8;
+    }
+    if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.total_fifo_size == 0) {
+        g_dwc2_hcd[bus->hcd.hcd_id].user_params.total_fifo_size = g_dwc2_hcd[bus->hcd.hcd_id].hw_params.total_fifo_size;
+    }
+
+    for (uint8_t chidx = 0; chidx < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; chidx++) {
+        g_dwc2_hcd[bus->hcd.hcd_id].chan_pool[chidx].waitsem = usb_osal_sem_create(0);
+    }
+
+    USB_LOG_INFO("dwc2 has %d channels and dfifo depth(32-bit words) is %d\r\n",
+                 g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels,
+                 g_dwc2_hcd[bus->hcd.hcd_id].user_params.total_fifo_size);
+
+    USB_ASSERT_MSG(g_dwc2_hcd[bus->hcd.hcd_id].hw_params.arch == GHWCFG2_INT_DMA_ARCH, "This dwc2 version does not support dma mode, so stop working");
+    USB_ASSERT_MSG((g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size +
+                    g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size +
+                    g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_perio_tx_fifo_size) <=
+                       g_dwc2_hcd[bus->hcd.hcd_id].user_params.total_fifo_size,
                    "Your fifo config is overflow, please check");
-
-    g_dwc2_hcd[bus->hcd.hcd_id].GSNPSID = USB_OTG_GLB->GSNPSID;
 
     USB_OTG_GLB->GAHBCFG &= ~USB_OTG_GAHBCFG_GINT;
 
     /* This is vendor register */
-    USB_OTG_GLB->GCCFG = usbh_get_dwc2_gccfg_conf(bus->hcd.reg_base);
+    USB_OTG_GLB->GCCFG = g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_gccfg;
+
+    if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_type != DWC2_PHY_TYPE_PARAM_FS) {
+        USB_ASSERT_MSG(g_dwc2_hcd[bus->hcd.hcd_id].hw_params.hs_phy_type != 0, "This dwc2 version does not support hs, so stop working");
+    }
 
     ret = dwc2_core_init(bus);
 
     /* Force Host Mode*/
     dwc2_set_mode(bus, USB_OTG_MODE_HOST);
-    usb_osal_msleep(50);
+
+    /* B-peripheral session valid override enable */
+    USB_OTG_GLB->GOTGCTL &= ~USB_OTG_GOTGCTL_BVALOEN;
+    USB_OTG_GLB->GOTGCTL &= ~USB_OTG_GOTGCTL_BVALOVAL;
+
+    USB_OTG_GLB->GUSBCFG |= USB_OTG_GUSBCFG_TOCAL;
 
     /* Restart the Phy Clock */
     USB_OTG_PCGCCTL = 0U;
 
     /* Set default Max speed support */
-    USB_OTG_HOST->HCFG &= ~(USB_OTG_HCFG_FSLSS);
+    USB_OTG_HOST->HCFG &= ~USB_OTG_HCFG_FSLSS;
+
+    USB_OTG_HOST->HCFG &= ~USB_OTG_HCFG_FSLSPCS;
+    if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_type == DWC2_PHY_TYPE_PARAM_FS) {
+        USB_OTG_HOST->HCFG |= USB_OTG_HCFG_FSLSPCLKSEL_48_MHZ;
+    } else {
+        USB_OTG_HOST->HCFG |= USB_OTG_HCFG_FSLSPCLKSEL_30_60_MHZ;
+    }
+
+    if (g_dwc2_hcd[bus->hcd.hcd_id].hw_params.snpsid > 0x4F54292AU) {
+        USB_OTG_HOST->HCFG |= USB_OTG_HFIR_RELOAD_CTRL;
+    }
 
     /* Clear all pending HC Interrupts */
-    for (uint8_t i = 0U; i < CONFIG_USBHOST_PIPE_NUM; i++) {
+    for (uint8_t i = 0U; i < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; i++) {
         USB_OTG_HC(i)->HCINT = 0xFFFFFFFFU;
         USB_OTG_HC(i)->HCINTMSK = 0U;
     }
@@ -603,9 +680,11 @@ int usb_hc_init(struct usbh_bus *bus)
     USB_OTG_GLB->GINTSTS = 0xFFFFFFFFU;
 
     /* set Rx FIFO size */
-    USB_OTG_GLB->GRXFSIZ = CONFIG_USB_DWC2_RX_FIFO_SIZE;
-    USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ = (uint32_t)(((CONFIG_USB_DWC2_NPTX_FIFO_SIZE << 16) & USB_OTG_NPTXFD) | CONFIG_USB_DWC2_RX_FIFO_SIZE);
-    USB_OTG_GLB->HPTXFSIZ = (uint32_t)(((CONFIG_USB_DWC2_PTX_FIFO_SIZE << 16) & USB_OTG_HPTXFSIZ_PTXFD) | (CONFIG_USB_DWC2_RX_FIFO_SIZE + CONFIG_USB_DWC2_NPTX_FIFO_SIZE));
+    USB_OTG_GLB->GRXFSIZ = g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size;
+    USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ = (uint32_t)(((g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size << 16) & USB_OTG_NPTXFD) |
+                                                 g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size);
+    USB_OTG_GLB->HPTXFSIZ = (uint32_t)(((g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_perio_tx_fifo_size << 16) & USB_OTG_HPTXFSIZ_PTXFD) |
+                                       (g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size + g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size));
 
     ret = dwc2_flush_txfifo(bus, 0x10U);
     ret = dwc2_flush_rxfifo(bus);
@@ -637,7 +716,7 @@ int usb_hc_deinit(struct usbh_bus *bus)
     dwc2_flush_rxfifo(bus);
 
     /* Flush out any leftover queued requests. */
-    for (uint32_t i = 0U; i <= 15U; i++) {
+    for (uint32_t i = 0U; i < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; i++) {
         value = USB_OTG_HC(i)->HCCHAR;
         value |= USB_OTG_HCCHAR_CHDIS;
         value &= ~USB_OTG_HCCHAR_CHENA;
@@ -646,7 +725,7 @@ int usb_hc_deinit(struct usbh_bus *bus)
     }
 
     /* Halt all channels to put them into a known state. */
-    for (uint32_t i = 0U; i <= 15U; i++) {
+    for (uint32_t i = 0U; i < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; i++) {
         value = USB_OTG_HC(i)->HCCHAR;
         value |= USB_OTG_HCCHAR_CHDIS;
         value |= USB_OTG_HCCHAR_CHENA;
@@ -670,7 +749,7 @@ int usb_hc_deinit(struct usbh_bus *bus)
     dwc2_drivebus(bus, 0);
     usb_osal_msleep(200);
 
-    for (uint8_t chidx = 0; chidx < CONFIG_USBHOST_PIPE_NUM; chidx++) {
+    for (uint8_t chidx = 0; chidx < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; chidx++) {
         usb_osal_sem_delete(g_dwc2_hcd[bus->hcd.hcd_id].chan_pool[chidx].waitsem);
     }
 
@@ -858,18 +937,18 @@ int usbh_submit_urb(struct usbh_urb *urb)
 
     if (urb->ep->bEndpointAddress & 0x80) {
         /* Check if pipe rx fifo is overflow */
-        if (USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) > (CONFIG_USB_DWC2_RX_FIFO_SIZE * 4)) {
+        if (USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) > (g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size * 4)) {
             return -USB_ERR_RANGE;
         }
     } else {
         /* Check if intr and iso pipe tx fifo is overflow */
         if (((USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes) == USB_ENDPOINT_TYPE_ISOCHRONOUS) ||
              (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes) == USB_ENDPOINT_TYPE_INTERRUPT)) &&
-            USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) > (CONFIG_USB_DWC2_PTX_FIFO_SIZE * 4)) {
+            USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) > (g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_perio_tx_fifo_size * 4)) {
             return -USB_ERR_RANGE;
         } else {
             /* Check if control and bulk pipe tx fifo is overflow */
-            if (USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) > (CONFIG_USB_DWC2_NPTX_FIFO_SIZE * 4)) {
+            if (USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize) > (g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size * 4)) {
                 return -USB_ERR_RANGE;
             }
         }
@@ -1297,7 +1376,7 @@ static void dwc2_outchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
 
 static void dwc2_port_irq_handler(struct usbh_bus *bus)
 {
-    __IO uint32_t hprt0, hprt0_dup;
+    __IO uint32_t hprt0, hprt0_dup, regval;
 
     /* Handle Host Port Interrupts */
     hprt0 = USB_OTG_HPRT;
@@ -1322,26 +1401,28 @@ static void dwc2_port_irq_handler(struct usbh_bus *bus)
         g_dwc2_hcd[bus->hcd.hcd_id].port_pec = 1;
 
         if ((hprt0 & USB_OTG_HPRT_PENA) == USB_OTG_HPRT_PENA) {
-#if defined(CONFIG_USB_HS)
-#else
-            if ((hprt0 & USB_OTG_HPRT_PSPD) == (HPRT0_PRTSPD_LOW_SPEED << 17)) {
-                USB_OTG_HOST->HFIR = 6000U;
-                if ((USB_OTG_HOST->HCFG & USB_OTG_HCFG_FSLSPCS) != USB_OTG_HCFG_FSLSPCS_1) {
-                    uint32_t regval = USB_OTG_HOST->HCFG;
-                    regval &= ~USB_OTG_HCFG_FSLSPCS;
-                    regval |= USB_OTG_HCFG_FSLSPCS_1;
-                    USB_OTG_HOST->HCFG = regval;
-                }
-            } else {
-                USB_OTG_HOST->HFIR = 48000U;
-                if ((USB_OTG_HOST->HCFG & USB_OTG_HCFG_FSLSPCS) != USB_OTG_HCFG_FSLSPCS_0) {
-                    uint32_t regval = USB_OTG_HOST->HCFG;
-                    regval &= ~USB_OTG_HCFG_FSLSPCS;
-                    regval |= USB_OTG_HCFG_FSLSPCS_0;
-                    USB_OTG_HOST->HCFG = regval;
+            regval = USB_OTG_HOST->HFIR;
+            regval &= ~USB_OTG_HFIR_FRIVL;
+            regval |= dwc2_calc_frame_interval(bus) & USB_OTG_HFIR_FRIVL;
+            USB_OTG_HOST->HFIR = regval;
+
+            if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_type == DWC2_PHY_TYPE_PARAM_FS) {
+                if ((hprt0 & USB_OTG_HPRT_PSPD) == (HPRT0_PRTSPD_LOW_SPEED << 17)) {
+                    if ((USB_OTG_HOST->HCFG & USB_OTG_HCFG_FSLSPCS) != USB_OTG_HCFG_FSLSPCLKSEL_6_MHZ) {
+                        regval = USB_OTG_HOST->HCFG;
+                        regval &= ~USB_OTG_HCFG_FSLSPCS;
+                        regval |= USB_OTG_HCFG_FSLSPCLKSEL_6_MHZ;
+                        USB_OTG_HOST->HCFG = regval;
+                    }
+                } else {
+                    if ((USB_OTG_HOST->HCFG & USB_OTG_HCFG_FSLSPCS) != USB_OTG_HCFG_FSLSPCLKSEL_48_MHZ) {
+                        regval = USB_OTG_HOST->HCFG;
+                        regval &= ~USB_OTG_HCFG_FSLSPCS;
+                        regval |= USB_OTG_HCFG_FSLSPCLKSEL_48_MHZ;
+                        USB_OTG_HOST->HCFG = regval;
+                    }
                 }
             }
-#endif
         } else {
         }
     }
@@ -1380,7 +1461,7 @@ void USBH_IRQHandler(uint8_t busid)
         }
         if (gint_status & USB_OTG_GINTSTS_HCINT) {
             chan_int = (USB_OTG_HOST->HAINT & USB_OTG_HOST->HAINTMSK) & 0xFFFFU;
-            for (uint8_t i = 0U; i < CONFIG_USBHOST_PIPE_NUM; i++) {
+            for (uint8_t i = 0U; i < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; i++) {
                 if ((chan_int & (1UL << (i & 0xFU))) != 0U) {
                     if ((USB_OTG_HC(i)->HCCHAR & USB_OTG_HCCHAR_EPDIR) == USB_OTG_HCCHAR_EPDIR) {
                         dwc2_inchan_irq_handler(bus, i);

@@ -675,9 +675,8 @@ struct mtp_object {
     USB_DESCRIPTOR_TYPE_ENDPOINT,  /* bDescriptorType */                 \
     int_ep,                        /* bEndpointAddress */                \
     0x03,                          /* bmAttributes */                    \
-    0x1c,                          /* wMaxPacketSize */                  \
-    0x00,                          /* bInterval */                       \
-    0x06                           /* bLength */
+    WBVAL(0x1c),                   /* wMaxPacketSize */                  \
+    0x06                           /* bInterval */
 // clang-format on
 
 #endif

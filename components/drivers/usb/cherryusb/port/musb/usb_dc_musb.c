@@ -283,6 +283,13 @@ int usb_dc_init(uint8_t busid)
 
 int usb_dc_deinit(uint8_t busid)
 {
+    HWREGB(USB_BASE + MUSB_IE_OFFSET) = 0;
+    HWREGH(USB_BASE + MUSB_TXIE_OFFSET) = 0;
+    HWREGH(USB_BASE + MUSB_RXIE_OFFSET) = 0;
+
+    HWREGB(USB_BASE + MUSB_POWER_OFFSET) &= ~USB_POWER_SOFTCONN;
+
+    usb_dc_low_level_deinit();
     return 0;
 }
 
@@ -345,8 +352,10 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
         g_musb_udc.out_ep[ep_idx].ep_type = USB_GET_ENDPOINT_TYPE(ep->bmAttributes);
         g_musb_udc.out_ep[ep_idx].ep_enable = true;
 
+#ifndef CONFIG_USB_MUSB_SIFLI
         USB_ASSERT_MSG((8 << HWREGB(USB_BASE + MUSB_RXFIFOSZ_OFFSET)) >= g_musb_udc.out_ep[ep_idx].ep_mps,
                        "Ep %02x fifo is overflow", ep->bEndpointAddress);
+#endif
 
         HWREGH(USB_BASE + MUSB_IND_RXMAP_OFFSET) = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
 
@@ -394,8 +403,10 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
         g_musb_udc.in_ep[ep_idx].ep_type = USB_GET_ENDPOINT_TYPE(ep->bmAttributes);
         g_musb_udc.in_ep[ep_idx].ep_enable = true;
 
+#ifndef CONFIG_USB_MUSB_SIFLI
         USB_ASSERT_MSG((8 << HWREGB(USB_BASE + MUSB_TXFIFOSZ_OFFSET)) >= g_musb_udc.in_ep[ep_idx].ep_mps,
                        "Ep %02x fifo is overflow", ep->bEndpointAddress);
+#endif
 
         HWREGH(USB_BASE + MUSB_IND_TXMAP_OFFSET) = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
 

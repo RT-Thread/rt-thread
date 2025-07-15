@@ -6,10 +6,6 @@
 #include "usbd_core.h"
 #include "usbd_cdc_acm.h"
 
-#if CONFIG_USBDEV_EP_NUM < 8
-#error endpoint number is too small for this demo, please try other chips
-#endif
-
 /*!< endpoint address */
 #define CDC_IN_EP  0x81
 #define CDC_OUT_EP 0x01
