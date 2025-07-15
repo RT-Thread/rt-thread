@@ -20,16 +20,28 @@ on:
     branches:
       - master
     paths-ignore:
+      - .github/**
+      - .gitee/**
+      - .hook/**
       - documentation/**
+      - examples/**
       - '**/README.md'
       - '**/README_zh.md'
+      - ChangeLog.md
+      - MAINTAINERS
   pull_request:
     branches:
       - master
     paths-ignore:
+      - .github/**
+      - .gitee/**
+      - .hook/**
       - documentation/**
+      - examples/**
       - '**/README.md'
       - '**/README_zh.md'
+      - ChangeLog.md
+      - MAINTAINERS
   repository_dispatch:
     types:
       - online-pkgs-static-building-trigger-event
