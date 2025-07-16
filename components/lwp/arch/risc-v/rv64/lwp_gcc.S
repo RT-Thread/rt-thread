@@ -98,6 +98,25 @@ ret_to_user_exit:
     // `RESTORE_ALL` also reset sp to user sp, and setup sscratch
     sret
 
+.global arch_syscall_restart
+arch_syscall_restart:
+    /* discard kernel context by moving stack pointer */
+    addi sp, sp, CTX_REG_NR * REGBYTES
+
+    /* store kernel stack pointer in exception frame (a0 points to frame) */
+    STORE sp, FRAME_OFF_SP(a0)
+
+    /* switch to user exception frame */
+    mv sp, a0
+
+    /* restore all user registers from exception frame (except sp) */
+    RESTORE_ALL
+
+    /* exchange sp and sscratch */
+    csrrw sp, sscratch, sp
+
+    j trap_entry
+
 /**
  * Restore user context from exception frame stroraged in ustack
  * And handle pending signals;
