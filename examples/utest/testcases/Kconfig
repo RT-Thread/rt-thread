@@ -17,6 +17,7 @@ rsource "posix/Kconfig"
 rsource "mm/Kconfig"
 rsource "tmpfs/Kconfig"
 rsource "smp_call/Kconfig"
+rsource "perf/Kconfig"
 endif
 
 endmenu
