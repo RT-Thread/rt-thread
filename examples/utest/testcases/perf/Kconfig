@@ -1,7 +1,7 @@
-menu "System Performance Testcase"
+menu "SyStem Performance Testcase"
 
 config UTEST_SYS_PERF_TC
-    bool "system performance test"
+    bool "SyStem Performance test"
     default n
 
 config UTEST_SYS_PERF_TC_COUNT
@@ -17,7 +17,7 @@ config UTEST_HWTIMER_DEV_NAME
         Specify the hardware timer device name used for context switch testing (e.g., timer0).
 
 config UTEST_SYS_IRQ_LATENCY
-    bool "system IRQ LATENCY test"
+    bool "SyStem IRQ LATENCY test"
     default n
     depends on RT_USING_HWTIMER && UTEST_SYS_PERF_TC
 
