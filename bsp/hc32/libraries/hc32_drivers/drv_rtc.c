@@ -22,7 +22,7 @@
 #define LOG_TAG             "drv.rtc"
 #include <drv_log.h>
 
-#if defined(HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A8)
 /* BACKUP REG: 96~127 for RTC used */
 #define RTC_BACKUP_DATA_SIZE        (32U)
 #define RTC_BACKUP_REG_OFFSET       (128U - RTC_BACKUP_DATA_SIZE)
@@ -60,7 +60,7 @@ static struct stc_hc32_alarm_irq hc32_alarm_irq =
 };
 #endif
 
-#if defined(HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A8)
 static void _bakup_reg_write(void)
 {
     uint8_t u8Num;
@@ -178,7 +178,7 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     #else
         #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
     #endif
-#elif defined(HC32F448)
+#elif defined(HC32F448) || defined(HC32F4A8)
     #if defined(BSP_RTC_USING_XTAL32)
         #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
     #elif defined(BSP_RTC_USING_XTAL_DIV)
@@ -198,11 +198,26 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     #endif
 #endif
 
+#if defined(HC32F4A8)
+static en_flag_status_t VBAT_PowerDownCheck(void)
+{
+    en_flag_status_t ret;
+    ret = PWC_VBAT_GetStatus(PWC_FLAG_VBAT_POR);
+    if (SET == ret)
+    {
+        PWC_VBAT_ClearStatus(PWC_FLAG_VBAT_POR);
+    }
+    return ret;
+}
+#endif
+
 static rt_err_t _rtc_init(void)
 {
     stc_rtc_init_t stcRtcInit;
 
-#if defined(HC32F4A0)
+#if defined(HC32F4A8)
+    if ((SET == VBAT_PowerDownCheck()) || (LL_OK != _bakup_reg_check()) || (LL_OK != _hc32_rtc_rw_check()))
+#elif defined(HC32F4A0)
     if ((LL_OK != _bakup_reg_check()) || (LL_OK != _hc32_rtc_rw_check()))
 #elif  defined(HC32F460) || defined(HC32F448) || defined(HC32F472)
     if (DISABLE == RTC_GetCounterState())
@@ -231,7 +246,7 @@ static rt_err_t _rtc_init(void)
             /* Startup RTC count */
             RTC_Cmd(ENABLE);
 
-#if defined(HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A8)
             /* Write sequence flag to backup register  */
             _bakup_reg_write();
 #endif

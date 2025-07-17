@@ -11,7 +11,7 @@
 /*
 * 功能
 *   展示捕获单元 ic1、ic2、ic3 的捕获输入功能
-*   当捕获单元捕获到设定数量（watermark）的数据(微秒级别的电平宽度)后，终端将输出这些已捕获的数据
+*   当捕获单元捕获到设定数量（watermark）的数据(电平宽度-单位为us)后，终端将输出这些已捕获的数据
 *
 * 默认配置
 *   input pin：
@@ -19,9 +19,7 @@
 *       ic2: INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN
 *       ic3: INPUT_CAPTURE_TMR6_3_PORT, INPUT_CAPTURE_TMR6_3_PIN
 *   watermark：
-*       ic1：5
-*       ic2：5
-*       ic3: 5
+*       默认值为 5
 *
 * 命令行命令
 *   1）开启捕获单元：
@@ -61,7 +59,7 @@
 #define MSH_USAGE_IC_SET_WM             "  ic wm <unit> <wm>  - e.g., set warter mark of ic3 to 11: ic wm 3 11\n"
 #define MSH_USAGE_IC_CLR                "  ic clr <unit>      - e.g., clear data buffer of ic3: ic clr 3 \n"
 
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A8)
     #define IC_DEV_CNT                  (8)
 #elif defined (HC32F460)
     #define IC_DEV_CNT                  (3)
@@ -140,7 +138,6 @@ static void ic_rx_thread(void *parameter)
             pData = RT_NULL;
         }
         rt_kprintf("-------------------\n");
-
     }
 }
 

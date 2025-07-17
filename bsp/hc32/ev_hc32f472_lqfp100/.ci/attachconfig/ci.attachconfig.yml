@@ -1,0 +1,12 @@
+devices.gpio:
+    kconfig: 
+      - CONFIG_BSP_USING_GPIO=y
+      - CONFIG_BSP_USING_I2C=y
+      - CONFIG_BSP_USING_I2C_HW=y
+      - CONFIG_BSP_USING_I2C1=y
+      - CONFIG_BSP_USING_TCA9539=y
+      - CONFIG_BSP_USING_EXT_IO=y
+devices.uart:
+    kconfig:
+      - CONFIG_BSP_USING_UART=y
+      - CONFIG_BSP_USING_UART2=y
