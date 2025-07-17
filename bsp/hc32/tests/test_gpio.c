@@ -38,6 +38,9 @@
 #elif defined(HC32F472)
     #define LED1_PIN_NUM                GET_PIN(C, 9)   /* LED5 */
     #define KEY1_PIN_NUM                GET_PIN(B, 5)   /* K10  */
+#elif defined(HC32F334)
+    #define LED1_PIN_NUM                GET_PIN(C, 13)  /* LED1 */
+    #define KEY1_PIN_NUM                GET_PIN(C, 3)   /* K1  */
 #endif
 
 static uint8_t u8LedState = 1;

@@ -34,25 +34,15 @@ if(isdefinedsymbol(_LINK_RAM_)) {
   define symbol rom2_base_address = 0x0;
   define symbol rom2_end_address  = 0x0;
   define symbol rom3_base_address = 0x0;
-  define symbol rom3_end_address = 0x0;
+  define symbol rom3_end_address  = 0x0;
 } else {
   define symbol ram_start_reserve = 0x0;
   define symbol rom1_base_address = 0x0;
   define symbol rom3_base_address = 0x03000000;
-  define symbol rom3_end_address = 0x030017FF;
-  if (isdefinedsymbol(_HC32F4A8_2M_)) {
-    define symbol rom1_end_address  = 0x001FFFFF;
-    define symbol rom2_base_address = 0x0;
-    define symbol rom2_end_address  = 0x0;
-  } else if (isdefinedsymbol(_HC32F4A8_1M_SINGLE_)) {
-    define symbol rom1_end_address  = 0x000FFFFF;
-    define symbol rom2_base_address = 0x0;
-    define symbol rom2_end_address  = 0x0;
-  } else if (isdefinedsymbol(_HC32F4A8_1M_DUAL_)) {
-    define symbol rom1_end_address  = 0x0007FFFF;
-    define symbol rom2_base_address = 0x00100000;
-    define symbol rom2_end_address  = 0x0017FFFF;
-  }
+  define symbol rom3_end_address  = 0x030017FF;
+  define symbol rom1_end_address  = 0x001FFFFF;
+  define symbol rom2_base_address = 0x0;
+  define symbol rom2_end_address  = 0x0;
 }
 
 /*-Specials-*/

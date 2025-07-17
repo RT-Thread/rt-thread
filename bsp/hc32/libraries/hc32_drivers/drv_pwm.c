@@ -27,7 +27,7 @@
 
 #if defined(HC32F460) || defined(HC32F448)
     #define TMRA_CHANNEL_NUM_MAX     8U
-#elif defined(HC32F4A0) || defined(HC32F472)
+#elif defined(HC32F4A0) || defined(HC32F472) || defined(HC32F4A8)
     #define TMRA_CHANNEL_NUM_MAX     4U
 #endif
 
@@ -129,7 +129,7 @@ static rt_uint32_t tmra_get_clk_notdiv(CM_TMRA_TypeDef *TMRAx)
     rt_uint32_t u32clkFreq;
     rt_uint32_t u32BusName;
 
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8)
     switch ((rt_uint32_t)TMRAx)
     {
     case (rt_uint32_t)CM_TMRA_1:
@@ -728,7 +728,7 @@ static struct hc32_pwm_tmr4 g_pwm_tmr4_array[] =
 static rt_uint32_t tmr4_get_clk_notdiv(CM_TMR4_TypeDef *TMR4x)
 {
     rt_uint32_t u32clkFreq;
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8)
     u32clkFreq = CLK_GetBusClockFreq(CLK_BUS_PCLK0);
 #elif defined(HC32F460)
     u32clkFreq = CLK_GetBusClockFreq(CLK_BUS_PCLK1);
@@ -960,13 +960,13 @@ static rt_err_t pwm_tmr4_init(struct hc32_pwm_tmr4 *device)
         {
             TMR4_OC_Init(TMR4x, i, &device->stcTmr4OcInit);
             TMR4_PWM_Init(TMR4x, (i >> 1), &device->stcTmr4PwmInit);
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8)
             TMR4_PWM_SetPortOutputMode(TMR4x, i, TMR4_PWM_PIN_OUTPUT_NORMAL);
 #endif
             tmr4_pwm_set_cmpmode(TMR4x, i);
         }
     }
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8)
     TMR4_PWM_MainOutputCmd(TMR4x, ENABLE);
 #endif
     TMR4_Start(TMR4x);
@@ -1196,7 +1196,7 @@ static rt_uint32_t tmr6_get_clk_bydiv(CM_TMR6_TypeDef *TMR6x)
     case (TMR6_CLK_DIV1024):
         u32clkFreq /= 1024;
         break;
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8)
     case (TMR6_CLK_DIV32):
         u32clkFreq /= 32;
         break;
@@ -1217,7 +1217,7 @@ static void tmr6_duyt100or0_output(CM_TMR6_TypeDef *TMR6x, rt_uint32_t channel, 
 {
     if (compare_value <= 1)
     {
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8)
         TMR6_PWM_SetPolarity(TMR6x, channel, TMR6_STAT_OVF, TMR6_PWM_LOW);
 #elif defined(HC32F460)
         TMR6_PWM_SetPolarity(TMR6x, channel, TMR6_STAT_MATCH_PERIOD, TMR6_PWM_LOW);
@@ -1225,7 +1225,7 @@ static void tmr6_duyt100or0_output(CM_TMR6_TypeDef *TMR6x, rt_uint32_t channel, 
     }
     else
     {
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8)
         TMR6_PWM_SetPolarity(TMR6x, channel, TMR6_STAT_OVF, TMR6_PWM_HIGH);
 #elif defined(HC32F460)
         TMR6_PWM_SetPolarity(TMR6x, channel, TMR6_STAT_MATCH_PERIOD, TMR6_PWM_HIGH);

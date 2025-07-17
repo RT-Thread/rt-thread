@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-config SOC_HC32F472MC
+config SOC_HC32F472PE
     bool
     select SOC_SERIES_HC32F4
     select RT_USING_COMPONENTS_INIT

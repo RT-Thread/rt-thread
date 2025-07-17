@@ -6,7 +6,7 @@
  *
 ********************************************************************************
 * \copyright
- * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -73,9 +73,9 @@ define symbol __ICFEDIT_region_ERAM3_start__ = 0x0;
 define symbol __ICFEDIT_region_ERAM3_end__   = 0x0;
 
 /*-Sizes-*/
-define symbol __ICFEDIT_size_cstack__ = 0xC00;
+define symbol __ICFEDIT_size_cstack__ = 0x2000;
 define symbol __ICFEDIT_size_proc_stack__ = 0x0;
-define symbol __ICFEDIT_size_heap__   = 0x400;
+define symbol __ICFEDIT_size_heap__   = 0x2000;
 /**** End of ICF editor section. ###ICF###*/
 
 /*******************************************************************************

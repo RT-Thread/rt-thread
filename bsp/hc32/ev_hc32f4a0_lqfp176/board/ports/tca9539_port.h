@@ -61,5 +61,13 @@
 /**
  * @}
  */
-
+/**
+ * @defgroup BSP_ETH_PortPin_Sel BSP ETH port/pin definition
+ * @{
+ */
+#define ETH_RST_PORT                   (TCA9539_IO_PORT1)
+#define ETH_RST_PIN                    (EIO_ETH_RST)
+/**
+ * @}
+ */
 #endif

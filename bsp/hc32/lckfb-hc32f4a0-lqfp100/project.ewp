@@ -186,9 +186,7 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>HC32F4A0</state>
           <state>__DEBUG</state>
-          <state>USE_DDL_DRIVER</state>
           <state>__RTTHREAD__</state>
-          <state>USE_DDL_DRIVER</state>
           <state>USE_DDL_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
@@ -1187,9 +1185,7 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>HC32F4A0</state>
           <state>__DEBUG</state>
-          <state>USE_DDL_DRIVER</state>
           <state>__RTTHREAD__</state>
-          <state>USE_DDL_DRIVER</state>
           <state>USE_DDL_DRIVER</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>

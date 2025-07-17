@@ -32,7 +32,7 @@ def bsp_pkg_check():
         print("===============================================================================")
         exit(1)
 
-RegisterPreBuildingAction(bsp_pkg_check)  
+RegisterPreBuildingAction(bsp_pkg_check)
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
