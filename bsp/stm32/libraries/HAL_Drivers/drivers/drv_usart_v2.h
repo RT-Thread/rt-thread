@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-06-01     KyleChan     first version
+ * 2024-08-15     Macro        add stm32h5
  */
 
 #ifndef __DRV_USART_V2_H__
@@ -22,7 +23,7 @@ int rt_hw_usart_init(void);
 
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32G4)
+    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32H5)
 #define UART_SET_TDR(__HANDLE__, __DATA__)  ((__HANDLE__)->Instance->TDR = (__DATA__))
 #define UART_GET_RDR(__HANDLE__, MASK)            ((__HANDLE__)->Instance->RDR & MASK)
 
@@ -34,7 +35,7 @@ int rt_hw_usart_init(void);
 
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F2) \
     || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)
+    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H5)
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
 #elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) \
     || defined(SOC_SERIES_STM32MP1)
