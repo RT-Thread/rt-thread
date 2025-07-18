@@ -83,13 +83,13 @@ tag: bsp_gd32470z-lckfb
 path: bsp/gd32/arm/gd32470z-lckfb
 owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
 
-tag: bsp_hc32
-path: bsp/hc32
-owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
-
 tag: bsp_gd32e503v-eval
 path: bsp/gd32/arm/gd32e503v-eval
 owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
+
+tag: bsp_hc32
+path: bsp/hc32
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
 
 tag: bsp_k230
 path: bsp/k230
