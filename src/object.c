@@ -355,6 +355,7 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
+    rt_size_t len;
 #ifdef RT_DEBUGING_ASSERT
     struct rt_list_node *node = RT_NULL;
 #endif /* RT_DEBUGING_ASSERT */
@@ -390,10 +391,20 @@ void rt_object_init(struct rt_object         *object,
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
 #if RT_NAME_MAX > 0
-    rt_strncpy(object->name, name, RT_NAME_MAX);  /* copy name */
+    if (name)
+    {
+        len = rt_strlen(name);
+        len = len > RT_NAME_MAX - 1 ? RT_NAME_MAX - 1 : len;
+        rt_memcpy(object->name, name, len);
+        object->name[len] = '\0';
+    }
+    else
+    {
+        object->name[0] = '\0';
+    }
 #else
     object->name = name;
-#endif /* RT_NAME_MAX > 0 */
+#endif
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
@@ -461,6 +472,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
     struct rt_object *object;
     rt_base_t level;
+    rt_size_t len;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -491,10 +503,20 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     object->flag = 0;
 
 #if RT_NAME_MAX > 0
-    rt_strncpy(object->name, name, RT_NAME_MAX - 1); /* copy name */
+    if (name)
+    {
+        len = rt_strlen(name);
+        len = len > RT_NAME_MAX - 1 ? RT_NAME_MAX - 1 : len;
+        rt_memcpy(object->name, name, len);
+        object->name[len] = '\0';
+    }
+    else
+    {
+        object->name[0] = '\0';
+    }
 #else
     object->name = name;
-#endif /* RT_NAME_MAX > 0 */
+#endif
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
