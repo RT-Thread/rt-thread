@@ -333,6 +333,9 @@ struct rt_serial_device
 
     struct rt_spinlock spinlock;
 
+#ifdef RT_USING_SERIAL_BYPASS
+    struct rt_serial_bypass* bypass;
+#endif
     struct rt_device_notify rx_notify;
 };
 
