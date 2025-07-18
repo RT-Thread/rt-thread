@@ -83,6 +83,30 @@ tag: bsp_gd32470z-lckfb
 path: bsp/gd32/arm/gd32470z-lckfb
 owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
 
+tag: bsp_ev_hc32f4a0_lqfp176
+path: bsp/hc32/ev_hc32f4a0_lqfp176
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
+
+tag: bsp_ev_hc32f4a8_lqfp176
+path: bsp/hc32/ev_hc32f4a8_lqfp176
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
+
+tag: bsp_ev_hc32f334_lqfp64
+path: bsp/hc32/ev_hc32f334_lqfp64
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
+
+tag: bsp_ev_hc32f448_lqfp80
+path: bsp/hc32/ev_hc32f448_lqfp80
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
+
+tag: bsp_ev_hc32f460_lqfp100_v2
+path: bsp/hc32/ev_hc32f460_lqfp100_v2
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
+
+tag: bsp_ev_hc32f472_lqfp100
+path: bsp/hc32/ev_hc32f472_lqfp100
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
+
 tag: bsp_gd32e503v-eval
 path: bsp/gd32/arm/gd32e503v-eval
 owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
