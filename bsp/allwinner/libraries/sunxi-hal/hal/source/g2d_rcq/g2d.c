@@ -19,7 +19,7 @@
 #include <hal_cache.h>
 #include <stdlib.h>
 #include <string.h>
-#include <interrupt.h>
+#include <hal_interrupt.h>
 #include <init.h>
 #include <hal_clk.h>
 #include <hal_reset.h>
