@@ -21,7 +21,16 @@ extern "C" {
 #ifndef DAC1_INIT_PARAMS
 #define DAC1_INIT_PARAMS                                                    \
     {                                                                       \
-       .name                      = "dac1",                                 \
+        .name                      = "dac1",                                \
+        .vref                      = 3300,                                  \
+        .dac_adp_enable            = RT_FALSE,                              \
+        .dac_adp_sel               = DAC_ADP_SEL_ALL,                       \
+        .ch1_output_enable         = RT_TRUE,                               \
+        .ch2_output_enable         = RT_TRUE,                               \
+        .ch1_data_src              = DAC_DATA_SRC_DATAREG,                  \
+        .ch2_data_src              = DAC_DATA_SRC_DATAREG,                  \
+        .ch1_amp_enable            = RT_TRUE,                               \
+        .ch2_amp_enable            = RT_TRUE,                               \
     }
 #endif /* DAC1_INIT_PARAMS */
 #endif /* BSP_USING_DAC1 */

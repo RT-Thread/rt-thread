@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -12,22 +12,30 @@
 /*  Abstract    Linker script for HC32F4A8 Device with                       */
 /*              2MByte FLASH, 516KByte RAM                                   */
 /*  Version     V1.0                                                         */
-/*  Date        2022-03-31                                                   */
+/*  Date        2024-09-13                                                   */
 /*****************************************************************************/
-
-/* Custom defines, according to section 7.7 of the user manual.
-   Take OTP sector 16 for example. */
-__OTP_DATA_START = 0x03000000;
-__OTP_DATA_SIZE  = 2048;
-__OTP_LOCK_START = 0x03001840;
-__OTP_LOCK_SIZE  = 4;
+/* OTP section(data sections are not flash multiplexed region) implementation.
+   You need to pay attention to the size of the specified OTP block.
+   Take two OTP blocks for example. */
+__OTP_DATA_BASE = 0x03000000;
+__OTP_LOCK_BASE = 0x03001800;
+/* OTP block 16 */
+__OTP_DATA_B16_START  = 0x03000000;
+__OTP_LOCK_B16_START  = 0x03001900;
+__OTP_DATA_B16_OFFSET = __OTP_DATA_B16_START - __OTP_DATA_BASE;
+__OTP_LOCK_B16_OFFSET = __OTP_LOCK_B16_START - __OTP_LOCK_BASE;
+/* OTP block 17 */
+__OTP_DATA_B17_START  = 0x03000010;
+__OTP_LOCK_B17_START  = 0x03001910;
+__OTP_DATA_B17_OFFSET = __OTP_DATA_B17_START - __OTP_DATA_BASE;
+__OTP_LOCK_B17_OFFSET = __OTP_LOCK_B17_START - __OTP_LOCK_BASE;
 
 /* Use contiguous memory regions for simple. */
 MEMORY
 {
     FLASH       (rx): ORIGIN = 0x00000000, LENGTH = 2M
-    OTP_DATA    (rx): ORIGIN = __OTP_DATA_START, LENGTH = __OTP_DATA_SIZE
-    OTP_LOCK    (rx): ORIGIN = __OTP_LOCK_START, LENGTH = __OTP_LOCK_SIZE
+    OTP_DATA    (rx): ORIGIN = 0x03000000, LENGTH = 6K
+    OTP_LOCK    (rx): ORIGIN = 0x03001800, LENGTH = 1904
     RAM        (rwx): ORIGIN = 0x1FFE0000, LENGTH = 512K
     RAMB       (rwx): ORIGIN = 0x200F0000, LENGTH = 4K
 }
@@ -138,14 +146,24 @@ SECTIONS
 
     __etext = ALIGN(4);
 
-    .otp_data_sec :
+    .otp_data :
     {
-        KEEP(*(.otp_data_sec))
+        . = ALIGN(4);
+        . = ORIGIN(OTP_DATA) + __OTP_DATA_B16_OFFSET;
+        KEEP(*(.otp_b16_data*))
+        . = ORIGIN(OTP_DATA) + __OTP_DATA_B17_OFFSET;
+        KEEP(*(.otp_b17_data*))
+        . = ALIGN(4);
     } >OTP_DATA
 
-    .otp_lock_sec :
+    .otp_lock :
     {
-        KEEP(*(.otp_lock_sec))
+        . = ALIGN(4);
+        . = ORIGIN(OTP_LOCK) + __OTP_LOCK_B16_OFFSET;
+        KEEP(*(.otp_b16_lock*))
+        . = ORIGIN(OTP_LOCK) + __OTP_LOCK_B17_OFFSET;
+        KEEP(*(.otp_b17_lock*))
+        . = ALIGN(4);
     } >OTP_LOCK
 
     .data : AT (__etext)

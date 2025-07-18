@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2022-04-28     CDT          first version
- * 2023-10-09     CDT          support HC32F448
- * 2024-06-12     CDT          support external interrupt for HC32F448/HC32F472
+ * Date             Author      Notes
+ * 2022-04-28       CDT         first version
+ * 2023-10-09       CDT         support HC32F448
+ * 2024-06-12       CDT         support external interrupt for HC32F448/HC32F472
+ * 2025-07-16       CDT         Support HC32F334
  */
 
 #include <rtthread.h>
@@ -32,6 +33,8 @@
     #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
 #elif defined (HC32F472)
     #define PIN_MAX_NUM                     ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_08))) + 1)
+#elif defined (HC32F334)
+    #define PIN_MAX_NUM                     ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_03))) + 1)
 #endif
 
 #define ITEM_NUM(items)                 sizeof(items) / sizeof(items[0])
@@ -229,7 +232,7 @@ static void extint15_irq_handler(void)
     rt_interrupt_leave();
 }
 
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void EXTINT00_SWINT16_Handler(void)
 {
     extint0_irq_handler();
@@ -337,7 +340,7 @@ static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mo
     case PIN_MODE_INPUT_PULLDOWN:
         stcGpioInit.u16PinDir   = PIN_DIR_IN;
         stcGpioInit.u16PullUp   = PIN_PU_OFF;
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
         stcGpioInit.u16PullDown = PIN_PD_ON;
 #endif
         break;

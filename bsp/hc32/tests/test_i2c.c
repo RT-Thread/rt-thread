@@ -30,13 +30,14 @@
 #define USING_RT_I2C_TRANSFER
 
 /* defined EEPROM */
-#if defined(HC32F472) || defined(HC32F460) || defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8)
+#if defined(HC32F472) || defined(HC32F460) || defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8) || \
+    defined(HC32F334)
     #define EE_DEV_ADDR                 0x50
     #define EE_TEST_PAGE_CNT            8       // Test 8 pages
 #endif
 
 /* define EEPROM hardware */
-#if defined(HC32F472) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
+#if defined(HC32F472) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F334)
     #define EE24C256
 #elif defined(HC32F4A0)
     #define EE24C02
@@ -54,7 +55,7 @@
 #endif
 
 /* device information */
-#if defined(HC32F472) || defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8)
+#if defined(HC32F472) || defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F334)
     #define HW_I2C_DEV                  "i2c1"
     #define SW_I2C_DEV                  "i2c1_sw"
 #elif defined(HC32F460)

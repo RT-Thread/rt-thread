@@ -162,11 +162,7 @@ static rt_err_t _wdt_init(rt_watchdog_t *wdt)
     wdt_match_sort();
     hc32_wdt.stcwdg.u32RefreshRange  = WDT_RANGE_0TO100PCT;
 #ifdef BSP_WDT_CONTINUE_COUNT
-#if defined(HC32F4A0) || defined(HC32F460)  /* todo: ddl version update need to delete */
-    hc32_wdt.stcwdg.u32LPMCount      = WDT_LPM_CNT_CONTINUE;
-#else
     hc32_wdt.stcwdg.u32LPMCount      = WDT_LPM_CNT_CONT;
-#endif
 #else
     hc32_wdt.stcwdg.u32LPMCount      = WDT_LPM_CNT_STOP;
 #endif
@@ -371,11 +367,7 @@ static rt_err_t swdt_init(rt_watchdog_t *swdt)
     swdt_match_sort();
     hc32_swdt.stcwdg.u32RefreshRange  = SWDT_RANGE_0TO100PCT;
 #ifdef BSP_WDT_CONTINUE_COUNT
-#if defined(HC32F4A0) || defined(HC32F460)  /* todo: ddl version update need to delete */
-    hc32_swdt.stcwdg.u32LPMCount      = SWDT_LPM_CNT_CONTINUE;
-#else
     hc32_swdt.stcwdg.u32LPMCount      = SWDT_LPM_CNT_CONT;
-#endif
 #else
     hc32_swdt.stcwdg.u32LPMCount      = SWDT_LPM_CNT_STOP;
 #endif

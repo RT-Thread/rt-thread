@@ -677,21 +677,17 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 
 static void hc32_spi_err_irq_handle(struct hc32_spi *spi)
 {
-#if defined (HC32F448) ||defined (HC32F472) || defined (HC32F4A8)
-#define SPI_FLAG_OVERLOAD       SPI_FLAG_OVERRUN
-#define SPI_FLAG_UNDERLOAD      SPI_FLAG_UNDERRUN
-#endif
     __UNUSED uint32_t UnusedData;
     CM_SPI_TypeDef *spi_instance = spi->config->Instance;
 
-    if (RESET != SPI_GetStatus(spi_instance, SPI_FLAG_OVERLOAD))
+    if (RESET != SPI_GetStatus(spi_instance, SPI_FLAG_OVERRUN))
     {
         UnusedData = SPI_ReadData(spi_instance);
-        SPI_ClearStatus(spi_instance, SPI_FLAG_OVERLOAD);
+        SPI_ClearStatus(spi_instance, SPI_FLAG_OVERRUN);
     }
-    if (RESET != SPI_GetStatus(spi_instance, SPI_FLAG_UNDERLOAD))
+    if (RESET != SPI_GetStatus(spi_instance, SPI_FLAG_UNDERRUN))
     {
-        SPI_ClearStatus(spi_instance, SPI_FLAG_UNDERLOAD);
+        SPI_ClearStatus(spi_instance, SPI_FLAG_UNDERRUN);
     }
     if (RESET != SPI_GetStatus(spi_instance, SPI_FLAG_MD_FAULT))
     {

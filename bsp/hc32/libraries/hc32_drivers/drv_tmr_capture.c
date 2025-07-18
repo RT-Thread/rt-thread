@@ -109,7 +109,7 @@ static rt_err_t _tmr_capture_get_pulsewidth(struct rt_inputcapture_device *input
 
 /* Private define ---------------------------------------------------------------*/
 #define TMR6_INSTANCE_MIN                                   ((uint32_t)CM_TMR6_1)
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A8)
     #define TMR6_INSTANCE_MAX                               ((uint32_t)CM_TMR6_8)
 #elif defined (HC32F460)
     #define TMR6_INSTANCE_MAX                               ((uint32_t)CM_TMR6_3)
@@ -120,7 +120,7 @@ static rt_err_t _tmr_capture_get_pulsewidth(struct rt_inputcapture_device *input
 
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6)
     #define IS_CAPTURE_COND_RASING_EDGE(bit_pos)            ((bit_pos) % 2U == 0U)
-    #if defined (HC32F4A0)
+    #if defined (HC32F4A0) || defined (HC32F4A8)
         #define VALID_CAPTURE_COND                          (TMR6_CAPT_COND_ALL & (~(TMR6_CAPT_COND_EVT0 | TMR6_CAPT_COND_EVT1 | TMR6_CAPT_COND_EVT2 | TMR6_CAPT_COND_EVT3)))
     #elif defined (HC32F460)
         #define VALID_CAPTURE_COND                          (TMR6_CAPT_COND_ALL & (~(TMR6_CAPT_COND_EVT0 | TMR6_CAPT_COND_EVT1)))
@@ -323,7 +323,7 @@ static void _tmr_capture_init_tmr6(tmr_capture_t *p_capture, CM_TMR6_TypeDef *in
 
     uint32_t pin;
     uint32_t bit_pos = _get_capture_cond_bit_pos(init_params->first_edge);
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A8)
     if (bit_pos <= TMR6_HCPAR_HCPA3_POS)
     {
         pin = TMR6_IO_PWMA + (bit_pos / 2U);

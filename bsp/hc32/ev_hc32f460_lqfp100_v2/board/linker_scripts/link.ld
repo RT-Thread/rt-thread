@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -14,20 +14,28 @@
 /*  Version     V1.0                                                         */
 /*  Date        2022-03-31                                                   */
 /*****************************************************************************/
-
-/* Custom defines, according to section 7.7 of the user manual.
-   Take OTP sector 0 for example. */
-__OTP_DATA_START = 0x03000C00;
-__OTP_DATA_SIZE  = 64;
-__OTP_LOCK_START = 0x03000FC0;
-__OTP_LOCK_SIZE  = 4;
+/* OTP section implementation.
+   You need to pay attention to the size of the specified OTP block.
+   Take two OTP blocks for example. */
+__OTP_DATA_BASE = 0x03000C00;
+__OTP_LOCK_BASE = 0x03000FC0;
+/* OTP block 0 */
+__OTP_DATA_B0_START  = 0x03000C00;
+__OTP_LOCK_B0_START  = 0x03000FC0;
+__OTP_DATA_B0_OFFSET = __OTP_DATA_B0_START - __OTP_DATA_BASE;
+__OTP_LOCK_B0_OFFSET = __OTP_LOCK_B0_START - __OTP_LOCK_BASE;
+/* OTP block 1 */
+__OTP_DATA_B1_START  = 0x03000C40;
+__OTP_LOCK_B1_START  = 0x03000FC4;
+__OTP_DATA_B1_OFFSET = __OTP_DATA_B1_START - __OTP_DATA_BASE;
+__OTP_LOCK_B1_OFFSET = __OTP_LOCK_B1_START - __OTP_LOCK_BASE;
 
 /* Use contiguous memory regions for simple. */
 MEMORY
 {
     FLASH       (rx): ORIGIN = 0x00000000, LENGTH = 512K
-    OTP_DATA    (rx): ORIGIN = __OTP_DATA_START, LENGTH = __OTP_DATA_SIZE
-    OTP_LOCK    (rx): ORIGIN = __OTP_LOCK_START, LENGTH = __OTP_LOCK_SIZE
+    OTP_DATA    (rx): ORIGIN = 0x03000C00, LENGTH = 960
+    OTP_LOCK    (rx): ORIGIN = 0x03000FC0, LENGTH = 60
     RAM        (rwx): ORIGIN = 0x1FFF8000, LENGTH = 188K
     RET_RAM    (rwx): ORIGIN = 0x200F0000, LENGTH = 4K
 }
@@ -138,14 +146,24 @@ SECTIONS
 
     __etext = ALIGN(4);
 
-    .otp_data_sec :
+    .otp_data :
     {
-        KEEP(*(.otp_data_sec))
+        . = ALIGN(4);
+        . = ORIGIN(OTP_DATA) + __OTP_DATA_B0_OFFSET;
+        KEEP(*(.otp_b0_data*))
+        . = ORIGIN(OTP_DATA) + __OTP_DATA_B1_OFFSET;
+        KEEP(*(.otp_b1_data*))
+        . = ALIGN(4);
     } >OTP_DATA
 
-    .otp_lock_sec :
+    .otp_lock :
     {
-        KEEP(*(.otp_lock_sec))
+        . = ALIGN(4);
+        . = ORIGIN(OTP_LOCK) + __OTP_LOCK_B0_OFFSET;
+        KEEP(*(.otp_b0_lock*))
+        . = ORIGIN(OTP_LOCK) + __OTP_LOCK_B1_OFFSET;
+        KEEP(*(.otp_b1_lock*))
+        . = ALIGN(4);
     } >OTP_LOCK
 
     .data : AT (__etext)
@@ -180,12 +198,12 @@ SECTIONS
     } >RAM
 
     __etext_ret_ram = __etext + ALIGN (SIZEOF(.data), 4);
-    .ramb_data : AT (__etext_ret_ram)
+    .ret_ram_data : AT (__etext_ret_ram)
     {
         . = ALIGN(4);
         __data_start_ret_ram__ = .;
-        *(.ramb_data)
-        *(.ramb_data*)
+        *(.ret_ram_data)
+        *(.ret_ram_data*)
         . = ALIGN(4);
         __data_end_ret_ram__ = .;
     } >RET_RAM
@@ -208,12 +226,12 @@ SECTIONS
     } >RAM
     __bss_end = .;
 
-    .ramb_bss :
+    .ret_ram_bss :
     {
         . = ALIGN(4);
         __bss_start_ret_ram__ = .;
-        *(.ramb_bss)
-        *(.ramb_bss*)
+        *(.ret_ram_bss)
+        *(.ret_ram_bss*)
         . = ALIGN(4);
         __bss_end_ret_ram__ = .;
     } >RET_RAM

@@ -20,6 +20,7 @@
 #if defined(BSP_RTC_USING_XTAL32) || defined(RT_USING_PM)
 
 #define XTAL32_FCM_THREAD_STACK_SIZE    (1024)
+#define XTAL32_FCM_UNIT                 (CM_FCM)
 
 /**
  * @brief This thread is used to monitor whether XTAL32 is stable.
@@ -41,24 +42,24 @@ void xtal32_fcm_thread_entry(void *parameter)
     stcFcmInit.u32RefClockEdge   = FCM_REF_CLK_RISING;
     stcFcmInit.u32TargetClock    = FCM_TARGET_CLK_XTAL32;
     stcFcmInit.u32TargetClockDiv = FCM_TARGET_CLK_DIV1;
-    stcFcmInit.u16LowerLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 90UL / 100UL);
-    stcFcmInit.u16UpperLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 110UL / 100UL);
-    (void)FCM_Init(&stcFcmInit);
+    stcFcmInit.u16LowerLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 96UL / 100UL);
+    stcFcmInit.u16UpperLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 104UL / 100UL);
+    (void)FCM_Init(XTAL32_FCM_UNIT, &stcFcmInit);
     /* Enable FCM, to ensure xtal32 stable */
-    FCM_Cmd(ENABLE);
+    FCM_Cmd(XTAL32_FCM_UNIT, ENABLE);
 
     while (1)
     {
-        if (SET == FCM_GetStatus(FCM_FLAG_END))
+        if (SET == FCM_GetStatus(XTAL32_FCM_UNIT, FCM_FLAG_END))
         {
-            FCM_ClearStatus(FCM_FLAG_END);
-            if ((SET == FCM_GetStatus(FCM_FLAG_ERR)) || (SET == FCM_GetStatus(FCM_FLAG_OVF)))
+            FCM_ClearStatus(XTAL32_FCM_UNIT, FCM_FLAG_END);
+            if ((SET == FCM_GetStatus(XTAL32_FCM_UNIT, FCM_FLAG_ERR)) || (SET == FCM_GetStatus(XTAL32_FCM_UNIT, FCM_FLAG_OVF)))
             {
-                FCM_ClearStatus(FCM_FLAG_ERR | FCM_FLAG_OVF);
+                FCM_ClearStatus(XTAL32_FCM_UNIT, FCM_FLAG_ERR | FCM_FLAG_OVF);
             }
             else
             {
-                (void)FCM_DeInit();
+                (void)FCM_DeInit(XTAL32_FCM_UNIT);
                 FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_FCM, DISABLE);
                 /* XTAL32 stabled */
                 break;
@@ -67,7 +68,7 @@ void xtal32_fcm_thread_entry(void *parameter)
         u32TimeOut++;
         if (u32TimeOut > u32Time)
         {
-            (void)FCM_DeInit();
+            (void)FCM_DeInit(XTAL32_FCM_UNIT);
             FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_FCM, DISABLE);
             rt_kprintf("Error: XTAL32 still unstable, timeout.\n");
             break;

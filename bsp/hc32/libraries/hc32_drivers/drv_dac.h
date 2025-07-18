@@ -28,6 +28,24 @@ extern "C"
 struct dac_dev_init_params
 {
     char name[8];
+    uint16_t vref;       /*!< Specifies the ADC reference voltage, unit is mv */
+    uint16_t data_align; /*!<Specify the data alignment.
+             This parameter can be a value of @ref DAC_DATAREG_ALIGN_PATTERN */
+    rt_bool_t dac_adp_enable;
+    uint16_t dac_adp_sel; /*!<Specify the ADCx priority to be enabled.
+             This parameter can be a value of @ref DAC_ADP_SELECT */
+    rt_bool_t ch1_output_enable;
+    rt_bool_t ch2_output_enable;
+#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8)
+    uint16_t ch1_data_src;
+    uint16_t ch2_data_src;
+#endif
+    rt_bool_t ch1_amp_enable;
+    rt_bool_t ch2_amp_enable;
+#if defined (HC32F472)
+    uint16_t ch1_amp_gain;
+    uint16_t ch2_amp_gain;
+#endif
 };
 
 /*******************************************************************************
