@@ -367,30 +367,27 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
     }
 
     {
-        register rt_base_t temp;
         struct rt_thread *thread;
 
         /* parameter check */
         RT_ASSERT(sem != RT_NULL);
         RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
 
-        /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        rt_enter_critical();
 
         if (sem->value > 0)
         {
             /* semaphore is available */
             sem->value--;
 
-            /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
+            rt_exit_critical();
         }
         else
         {
             /* no waiting, return with timeout */
             if (time == 0)
             {
-                rt_hw_interrupt_enable(temp);
+                rt_exit_critical();
 
                 return -RT_ETIMEOUT;
             }
@@ -434,11 +431,8 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
                     return -RT_ERROR;
                 }
 
-                /* enable interrupt */
-                rt_hw_interrupt_enable(temp);
-
-                /* do schedule */
-                rt_schedule();
+                /* exit critical and do schedule */
+                rt_exit_critical();
 
                 result = thread->error;
 
