@@ -141,7 +141,7 @@ static struct dfs_vnode *dfs_vnode_find(const char *path, rt_list_t **hash_head)
 }
 
 /**
- * @addtogroup group_FileApi
+ * @addtogroup group_fs_file_api
  * @{
  */
 

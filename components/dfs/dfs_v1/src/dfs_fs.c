@@ -17,7 +17,7 @@
 #include "dfs_private.h"
 
 /**
- * @addtogroup group_FsApi
+ * @addtogroup group_fs_api
  * @{
  */
 

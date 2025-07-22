@@ -31,7 +31,7 @@ static struct dfs_filesystem_type *file_systems = NULL;
 extern rt_list_t _mnt_list;
 
 /**
- * @addtogroup group_FsApi
+ * @addtogroup group_fs_api
  */
 /*@{*/
 
