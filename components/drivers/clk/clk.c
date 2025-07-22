@@ -14,10 +14,7 @@
 #include <rtdevice.h>
 
 /**
- * @defgroup    group_clk clk
- * @brief       clk driver api
- * @ingroup     group_device_driver
- * @addtogroup  group_clk
+ * @addtogroup group_driver_clock
  * @{
  */
 
