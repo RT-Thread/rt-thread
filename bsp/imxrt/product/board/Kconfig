@@ -84,6 +84,33 @@ menu "On-chip Peripheral Drivers"
                         depends on BSP_LPUART3_TX_USING_DMA
                         int "Set LPUART3 TX DMA channel (0-32)"
                         default 1
+						
+			config BSP_USING_LPUART10
+                bool "Enable LPUART10"
+                default n
+
+                config BSP_LPUART10_RX_USING_DMA
+                    bool "Enable LPUART10 RX DMA"
+                    depends on BSP_USING_LPUART10                    
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART10_RX_DMA_CHANNEL
+                        depends on BSP_LPUART10_RX_USING_DMA
+                        int "Set LPUART3 RX DMA channel (0-32)"
+                        default 8
+
+                config BSP_LPUART10_TX_USING_DMA
+                    bool "Enable LPUART10 TX DMA"
+                    depends on BSP_USING_LPUART10
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART10_TX_DMA_CHANNEL
+                        depends on BSP_LPUART10_TX_USING_DMA
+                        int "Set LPUART10 TX DMA channel (0-32)"
+                        default 9
         endif
 	menuconfig BSP_USING_FLEXSPI
 		bool "Enable FlexSPI"
@@ -253,6 +280,16 @@ menu "Onboard Peripheral Drivers"
                 string "Set SPI Flash Device Name"
                 default "w25q16"            
         endif
+	config BSP_USING_ESP32
+        bool "Enable ESP32"
+		default y
+        select RT_USING_AT
+        select AT_USING_CLIENT
+        select AT_USING_SOCKET
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP32
+		select AT_DEVICE_ESP32_INIT_ASYN
+       
 endmenu
 
 menu "Board extended module Drivers"

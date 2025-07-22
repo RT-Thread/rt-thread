@@ -6,7 +6,7 @@
 
 /* RT-Thread Kernel */
 
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -91,6 +91,7 @@
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
+#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CPUTIME
 #define RT_USING_PHY
@@ -101,7 +102,6 @@
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_SFUD_SPI_MAX_HZ 50000000
-#define RT_USING_WDT
 
 /* Using USB */
 
@@ -130,6 +130,7 @@
 /* Docking with protocol stacks */
 
 #define SAL_USING_LWIP
+#define SAL_USING_AT
 #define SAL_USING_POSIX
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
@@ -177,6 +178,15 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
+#define RT_USING_AT
+#define AT_USING_CLIENT
+#define AT_CLIENT_NUM_MAX 1
+#define AT_USING_SOCKET
+#define AT_USING_SOCKET_SERVER
+#define AT_USING_CLI
+#define AT_PRINT_RAW_CMD
+#define AT_CMD_MAX_LEN 128
+#define AT_SW_VERSION_NUM 0x10301
 
 /* Utilities */
 
@@ -205,6 +215,12 @@
 
 /* CYW43439 WiFi */
 
+#define PKG_USING_AT_DEVICE
+#define AT_DEVICE_USING_ESP32
+#define AT_DEVICE_ESP32_INIT_ASYN
+#define AT_DEVICE_ESP32_SOCKET
+#define PKG_USING_AT_DEVICE_LATEST_VERSION
+#define PKG_AT_DEVICE_VER_NUM 0x99999
 
 /* IoT Cloud */
 
@@ -333,6 +349,7 @@
 #define BSP_USING_GPIO
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
+#define BSP_USING_LPUART10
 #define BSP_USING_FLEXSPI
 #define BSP_USING_FLEXSPI1
 #define BSP_USING_SPI
@@ -367,6 +384,7 @@
 #define BSP_SPI_FLASH_SPI_BUS "spi1"
 #define BSP_SPI_FLASH_BUS_NAME "spiflash"
 #define BSP_SPI_FLASH_DEV_NAME "W25Q128JVSSIQ"
+#define BSP_USING_ESP32
 
 /* Board extended module Drivers */
 

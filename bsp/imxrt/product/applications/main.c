@@ -15,11 +15,6 @@
 #include <fsl_gpio.h>
 #include <stdio.h>
 #include "lwip/apps/lwiperf.h"
-#include "drv_spi.h"
-#include "spi_flash_sfud.h"
-
-#define EXAMPLE_LED_GPIO     GPIO9
-#define EXAMPLE_LED_GPIO_PIN (3U)
 
 const char *report_type_str[] = {
     "TCP_DONE_SERVER (RX)",        /* LWIPERF_TCP_DONE_SERVER_RX,*/
@@ -75,14 +70,13 @@ static void lwiperf_report(void *arg,
     printf("\r\n");
 }
 
-int main(void)
-{
-    bool server_mode;
-    bool tcp;
-    enum lwiperf_client_type client_type;
-    void *iperf_session;
+extern int eps32_init(void);
 
-    iperf_session = lwiperf_start_tcp_server(IP_ADDR_ANY, 5001, lwiperf_report, 0);    
+int main(void)
+{    
+
+    (void)lwiperf_start_tcp_server(IP_ADDR_ANY, 5001, lwiperf_report, 0);   
+    eps32_init();
     while (1)
     {
         rt_thread_mdelay(1000);

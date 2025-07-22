@@ -55,6 +55,8 @@
 #define m_itcam_start                  0x00000000 //ITCAM
 #define m_itcam_size                   0x00040000 //256K
 
+#define m_dtcam_start                  0x20000000 //DTCAM
+#define m_dtcam_size                   0x00040000 //256K
 
 /* Sizes */
 #if (defined(__stack_size__))
@@ -111,6 +113,10 @@ LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start {   ; l
     memp.o(+RO)
     ethernetif.o(+RO)
   }  
+
+   RW_m_dtcam m_dtcam_start m_dtcam_size {
+      *(.RAM_DTCAM)
+   }
 
 #if (defined(__heap_noncacheable__))
   RW_m_data m_data_start m_data_size-Stack_Size { ; RW data

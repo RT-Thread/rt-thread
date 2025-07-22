@@ -1,5 +1,15 @@
 [
  {
+  "path": "/packages/iot/at_device", 
+  "ver": "latest", 
+  "name": "AT_DEVICE"
+ }, 
+ {
+  "path": "/packages/iot/atsrv_socket", 
+  "ver": "latest", 
+  "name": "ATSRV_SOCKET"
+ }, 
+ {
   "path": "/packages/tools/cpu_usage", 
   "ver": "latest", 
   "name": "CPU_USAGE"

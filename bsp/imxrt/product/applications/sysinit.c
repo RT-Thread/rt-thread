@@ -15,6 +15,9 @@
 #include "drv_gpio.h"
 #include "drv_spi.h"
 #include "fal.h"
+#include "at_device_esp32.h"
+
+
 
 
 
@@ -28,6 +31,7 @@
 /******************************************************************************/
 #define DEFAULT_WDT_TIMEOUT_S                   60
 #define GET_SPI_FLASH_CS_PIN()                  GET_PIN(3, 28)// GPIO_SD_B0_01_GPIO3_IO13
+
 
 /******************************************************************************/
 /******************************************************************************/
@@ -116,6 +120,47 @@ int __init_lfs(void)
     return ret;
 }
 INIT_APP_EXPORT(__init_lfs);
+
+#ifdef AT_DEVICE_USING_ESP32
+#define ESP32_DEVICE_NAME                   "esp32"
+#define ESP32_CLIENT_NAME                   "uart10"
+#define ESP32_RECV_BUFF_LEN                 4096
+#define ESP32_EN_PIN                GET_PIN(3, 5)
+#define ESP32_RF_PIN                GET_PIN(3, 9)
+
+
+static struct at_device_esp32 device_esp32 = {0};
+int eps32_init(void)
+{
+    int rc = RT_EOK;
+    
+    rt_pin_mode(ESP32_RF_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(ESP32_EN_PIN, PIN_MODE_OUTPUT);
+    rt_pin_write(ESP32_EN_PIN, PIN_HIGH);
+    rt_thread_mdelay(100);
+    rt_pin_write(ESP32_EN_PIN, PIN_LOW);
+    rt_thread_mdelay(100);
+    rt_pin_write(ESP32_EN_PIN, PIN_HIGH);
+    rt_thread_mdelay(100);
+    rt_pin_write(ESP32_RF_PIN, PIN_LOW);
+    
+    device_esp32.device_name = ESP32_DEVICE_NAME;
+    device_esp32.client_name = ESP32_CLIENT_NAME;
+    device_esp32.wifi_ssid = "DTLAB";
+    device_esp32.wifi_password = "@12345678@";
+    device_esp32.recv_line_num = ESP32_RECV_BUFF_LEN;
+    
+    rc = at_device_register(&(device_esp32.device), device_esp32.device_name, device_esp32.client_name, AT_DEVICE_CLASS_ESP32, (void *)&device_esp32);    
+    if(rc != RT_EOK)
+    {
+        LOG_E("ESP32 at device register error.");        
+    } 
+    return rc;
+}
+//INIT_APP_EXPORT(eps32_init);
+#endif // USING_ESP32
+
+
 
 
 
