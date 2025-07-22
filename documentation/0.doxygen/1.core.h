@@ -14,8 +14,8 @@
  */
 
 /**
- * @defgroup group_kernel_object Kernel Object Management
- * @brief See @ref section_kernel_object_model
+ * @defgroup group_object_management Object Management
+ * @brief See @ref page_object_management
  *
  * The Kernel object system can access and manage all of the kernel objects.
  *

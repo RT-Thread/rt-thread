@@ -231,7 +231,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup group_kernel_object
+ * @addtogroup group_object_management
  */
 
 /**@{*/

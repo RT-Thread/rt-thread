@@ -266,7 +266,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ALIGN_DOWN(size, align)      ((size) & ~((align) - 1))
 
 /**
- * @addtogroup group_kernel_object
+ * @addtogroup group_object_management
  */
 
 /**@{*/

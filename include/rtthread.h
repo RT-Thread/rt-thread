@@ -50,7 +50,7 @@ int entry(void);
 #endif
 
 /**
- * @addtogroup group_kernel_object
+ * @addtogroup group_object_management
  * @{
  */
 
