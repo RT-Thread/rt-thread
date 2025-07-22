@@ -42,7 +42,7 @@ extern rt_list_t _mnt_list;
  * matching the given name. It returns a pointer to the pointer that holds
  * the matching filesystem type (or the end-of-list pointer if not found).
  *
- * @param name The name of the filesystem type to find
+ * @param[in] name The name of the filesystem type to find
  * @return struct dfs_filesystem_type** Pointer to the pointer containing
  *         the matching filesystem type, or the end-of-list pointer if not found
  */
@@ -75,7 +75,7 @@ struct dfs_filesystem_type *dfs_filesystems(void)
  *
  * This function registers a new filesystem type with the global filesystem type list.
  *
- * @param fs Pointer to the filesystem type to register
+ * @param[in] fs Pointer to the filesystem type to register
  * @return int 0 on success, or a negative error code on failure
  */
 int dfs_register(struct dfs_filesystem_type *fs)
@@ -102,7 +102,7 @@ int dfs_register(struct dfs_filesystem_type *fs)
  *
  * This function unregisters a filesystem type from the global filesystem type list.
  *
- * @param fs Pointer to the filesystem type to unregister
+ * @param[in] fs Pointer to the filesystem type to unregister
  * @return int 0 on success, or a negative error code on failure
  */
 int dfs_unregister(struct dfs_filesystem_type *fs)
@@ -136,9 +136,9 @@ int dfs_unregister(struct dfs_filesystem_type *fs)
  *
  * This function remounts a filesystem at the specified path with the given flags.
  *
- * @param path The path of the filesystem to remount
- * @param flags The remount flags (see MS_REMOUNT and MS_RMT_MASK)
- * @param data Pointer to additional data required for remounting
+ * @param[in] path The path of the filesystem to remount
+ * @param[in] flags The remount flags (see MS_REMOUNT and MS_RMT_MASK)
+ * @param[in] data Pointer to additional data required for remounting
  * @return int 0 on success, or a negative error code on failure
  */
 int dfs_remount(const char *path, rt_ubase_t flags, void *data)
@@ -201,11 +201,11 @@ int dfs_remount(const char *path, rt_ubase_t flags, void *data)
  * This function mounts a filesystem of the specified type at the given path with optional device.
  * It handles both root filesystem mounting and regular filesystem mounting scenarios.
  *
- * @param device_name The name of the device to mount (optional)
- * @param path The path of the mount point
- * @param filesystemtype The type of the filesystem to mount
- * @param rwflag The read/write flags (see MS_RDONLY, MS_RDWR, etc.)
- * @param data Pointer to additional data required for mounting
+ * @param[in] device_name The name of the device to mount (optional)
+ * @param[in] path The path of the mount point
+ * @param[in] filesystemtype The type of the filesystem to mount
+ * @param[in] rwflag The read/write flags (see MS_RDONLY, MS_RDWR, etc.)
+ * @param[in] data Pointer to additional data required for mounting
  *
  * @return int RT_EOK on success, negative error code on failure:
  *             - EPERM: Path normalization failed or mount operation failed
@@ -428,8 +428,8 @@ int dfs_mount(const char *device_name,
  * 3. Checks if the filesystem can be safely unmounted
  * 4. Performs cleanup operations if unmounting is successful
  *
- * @param specialfile The path of the filesystem to unmount
- * @param flags Unmount flags (MNT_FORCE for forced unmount)
+ * @param[in] specialfile The path of the filesystem to unmount
+ * @param[in] flags Unmount flags (MNT_FORCE for forced unmount)
  *
  * @return int RT_EOK on success, negative error code on failure:
  *             - EBUSY: Filesystem is busy (in use or has child mounts)
@@ -508,7 +508,7 @@ int dfs_unmount(const char *specialfile)
  * This function checks if the given mount point is mounted. It returns 0 if the mount point is mounted,
  * and -1 otherwise.
  *
- * @param mnt The mount point to check
+ * @param[in] mnt The mount point to check
  *
  * @return int 0 if mounted, -1 otherwise
  */
@@ -534,8 +534,8 @@ int dfs_is_mounted(struct dfs_mnt *mnt)
  * 3. Calls the filesystem-specific mkfs operation
  * 4. Handles page cache cleanup if successful (when RT_USING_PAGECACHE is enabled)
  *
- * @param fs_name Name of the filesystem type to create (e.g., "elm", "romfs")
- * @param device_name Name of the device to create filesystem on (optional)
+ * @param[in] fs_name Name of the filesystem type to create (e.g., "elm", "romfs")
+ * @param[in] device_name Name of the device to create filesystem on (optional)
  *
  * @return int RT_EOK on success, negative error code on failure:
  *             - RT_ERROR: General error
@@ -612,8 +612,8 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
  * 2. Looks up the mount point for the path
  * 3. Calls the filesystem-specific statfs operation if available
  *
- * @param path The path to query filesystem statistics for
- * @param buffer Pointer to statfs structure to store the results
+ * @param[in] path The path to query filesystem statistics for
+ * @param[out] buffer Pointer to statfs structure to store the results
  *
  * @return int RT_EOK on success, negative error code on failure:
  *             - RT_ERROR: General error (invalid path or filesystem not found)
@@ -656,7 +656,7 @@ int dfs_statfs(const char *path, struct statfs *buffer)
 /**
  * this function will return the mounted path for specified device.
  *
- * @param device the device object which is mounted.
+ * @param[in] device the device object which is mounted.
  *
  * @return the mounted path or NULL if none device mounted.
  */
@@ -670,9 +670,9 @@ const char *dfs_filesystem_get_mounted_path(struct rt_device *device)
 /**
  * this function will fetch the partition table on specified buffer.
  *
- * @param part the returned partition structure.
- * @param buf the buffer contains partition table.
- * @param pindex the index of partition table to fetch.
+ * @param[out] part the returned partition structure.
+ * @param[in] buf the buffer contains partition table.
+ * @param[in] pindex the index of partition table to fetch.
  *
  * @return RT_EOK on successful or -RT_ERROR on failed.
  */
