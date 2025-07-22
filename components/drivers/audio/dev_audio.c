@@ -24,7 +24,7 @@
 #endif
 
 /**
- * @addtogroup group_Audio
+ * @addtogroup group_drivers_audio
  */
 
 /** @{ */
@@ -781,4 +781,4 @@ void rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t
         audio->parent.rx_indicate(&audio->parent, len);
 }
 
-/** @} group_Audio */
+/** @} group_drivers_audio */

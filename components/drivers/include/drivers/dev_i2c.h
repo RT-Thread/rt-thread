@@ -14,7 +14,7 @@
 
 #include <rtthread.h>
 /**
- * @defgroup    group_I2C I2C
+ * @defgroup    group_drivers_i2c I2C
  * @brief       I2C driver api
  * @ingroup     group_device_driver
  *
@@ -170,7 +170,7 @@
  */
 
 /*!
- * @addtogroup group_I2C
+ * @addtogroup group_drivers_i2c
  * @{
  */
 #ifdef __cplusplus

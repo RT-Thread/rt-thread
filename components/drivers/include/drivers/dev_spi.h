@@ -19,7 +19,7 @@
 #include <drivers/core/driver.h>
 
 /**
- * @defgroup    group_SPI SPI
+ * @defgroup    group_drivers_spi SPI
  * @brief       SPI driver api
  * @ingroup     group_device_driver
  *
@@ -86,7 +86,7 @@
  */
 
 /*!
- * @addtogroup group_SPI
+ * @addtogroup group_drivers_spi
  * @{
  */
 #ifdef __cplusplus
