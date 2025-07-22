@@ -8,20 +8,20 @@
  */
 
 /**
- * @defgroup group_Fd File Descriptor
+ * @defgroup group_fs_file_descriptor File Descriptor
  *
  */
 
 /**
- * @defgroup group_FsApi File System API
+ * @defgroup group_fs_api File System API
  */
 
 /**
- * @defgroup group_FileApi File API
+ * @defgroup group_fs_file_api File API
  */
 
 /**
- * @defgroup group_FsPosixApi File POSIX API
+ * @defgroup group_fs_posix_api File POSIX API
  */
 
 /**@}*/

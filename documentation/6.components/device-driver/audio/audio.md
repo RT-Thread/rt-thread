@@ -6,7 +6,7 @@ The Audio device is a crucial component in embedded systems, responsible for aud
 
 ## API List
 
-For more details, see @ref group_Audio
+For more details, see @ref group_drivers_audio
 
 ## Audio Device Features
 

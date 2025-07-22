@@ -218,7 +218,7 @@ void dfs_file_destroy(struct dfs_file *file)
 }
 
 /**
- * @ingroup group_Fd
+ * @ingroup group_fs_file_descriptor
  * This function will allocate a file descriptor.
  *
  * @return -1 on failed or the allocated file descriptor.
@@ -291,7 +291,7 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 }
 
 /**
- * @ingroup group_Fd
+ * @ingroup group_fs_file_descriptor
  *
  * This function will return a file descriptor structure according to file
  * descriptor.
@@ -369,7 +369,7 @@ int fd_new(void)
 }
 
 /**
- * @ingroup group_Fd
+ * @ingroup group_fs_file_descriptor
  *
  * This function will put the file descriptor.
  */

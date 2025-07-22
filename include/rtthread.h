@@ -248,7 +248,7 @@ void rt_scheduler_ipi_handler(int vector, void *param);
 /**@}*/
 
 /**
- * @addtogroup group_Signal
+ * @addtogroup group_signal
  * @{
  */
 #ifdef RT_USING_SIGNALS
