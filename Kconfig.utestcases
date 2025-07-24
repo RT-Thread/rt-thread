@@ -19,6 +19,8 @@ rsource "examples/utest/testcases/tmpfs/Kconfig"
 rsource "examples/utest/testcases/smp_call/Kconfig"
 rsource "examples/utest/testcases/perf/Kconfig"
 
+rsource "src/klibc/utest/Kconfig"
+
 endif
 
 endmenu
