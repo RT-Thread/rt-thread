@@ -609,6 +609,33 @@ static void finsh_thread_entry(void *parameter)
 
                 continue;
             }
+            else if (ch == 0x33) /* delete key */
+            {
+                /* note that shell->line_curpos >= 0 */
+                if (shell->line_curpos < 0)
+                    continue;
+
+                if (shell->line_position > shell->line_curpos)
+                {
+                    rt_kprintf("%c", shell->line[shell->line_curpos]);
+                    shell->line_position--;
+
+                    int i;
+
+                    rt_memmove(&shell->line[shell->line_curpos],
+                               &shell->line[shell->line_curpos + 1],
+                               shell->line_position - shell->line_curpos);
+                    shell->line[shell->line_position] = 0;
+
+                    rt_kprintf("\b%s  \b", &shell->line[shell->line_curpos]);
+
+                    /* move the cursor to the origin position */
+                    for (i = shell->line_curpos; i <= shell->line_position; i++)
+                        rt_kprintf("\b");
+                }
+
+                continue;
+            }
         }
 
         /* received null or error */
