@@ -21,6 +21,8 @@ rsource "examples/utest/testcases/perf/Kconfig"
 
 rsource "src/klibc/utest/Kconfig"
 
+rsource "components/drivers/audio/utest/Kconfig"
+
 endif
 
 endmenu
