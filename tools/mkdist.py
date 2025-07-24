@@ -118,7 +118,7 @@ def bsp_update_kconfig_testcases(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'rt-thread/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('examples/utest/testcases/Kconfig') == -1:
+            if line.find('Kconfig.utestcases') == -1:
                 f.write(line)
 
 def bsp_update_kconfig(dist_dir):
