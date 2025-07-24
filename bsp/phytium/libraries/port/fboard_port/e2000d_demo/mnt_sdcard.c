@@ -113,7 +113,7 @@ static void sd_mount(void)
     rt_thread_t tid;
 
     tid = rt_thread_create("sd_mount", sd_auto_mount, RT_NULL,
-                           4096, RT_THREAD_PRIORITY_MAX - 2, 20);
+                           8192, RT_THREAD_PRIORITY_MAX - 2, 20);
     if (tid != RT_NULL)
     {
         rt_thread_startup(tid);
