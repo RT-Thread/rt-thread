@@ -19,7 +19,7 @@
 #if __ARMCC_VERSION >= 6010050
 #define rt_packed(declare)          declare __attribute__((packed))
 #else
-#define rt_packed(declare)          declare
+#define rt_packed(declare)          __packed declare
 #endif
 #define rt_weak                     __attribute__((weak))
 #define rt_typeof                   __typeof

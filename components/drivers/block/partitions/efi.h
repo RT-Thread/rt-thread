@@ -30,7 +30,7 @@
 #ifndef __UUID_H__
 #define UUID_SIZE 16
 
-typedef struct
+typedef struct rt_packed
 {
     rt_uint8_t b[UUID_SIZE];
 } guid_t;
