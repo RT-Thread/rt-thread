@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -50,21 +50,34 @@ static int _get_parent_path(const char *fullpath, char *path)
     int len = 0;
     char *str = 0;
 
-    str = strrchr(fullpath, '/');
+    char *full_path = strdup(fullpath);
+    if (full_path == NULL)
+    {
+        rt_set_errno(ENOMEM);
+        return -1;
+    }
+
+    str = strrchr(full_path, '/');
 
     /* skip last '/' */
     if (str && *(str + 1) == '\0')
     {
-        str = strrchr(str - 1, '/');
+        *str = '\0';
+        str = strrchr(full_path, '/');
     }
 
     if (str)
     {
-        len = str - fullpath;
+        len = str - full_path;
         if (len > 0)
         {
-            rt_memcpy(path, fullpath, len);
+            rt_memcpy(path, full_path, len);
             path[len] = '\0';
+        }
+        else if (len == 0) /* parent path is root path. */
+        {
+            rt_memcpy(path, "/", 1);
+            len = 1;
         }
     }
 
@@ -260,7 +273,7 @@ char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
     {
         int len, link_len;
 
-        path = (char *)rt_malloc((DFS_PATH_MAX * 3) + 3); // path + \0 + link_fn + \0 + tmp_path + \0
+        path = (char *)rt_malloc((DFS_PATH_MAX * 3) + 3); /* path + \0 + link_fn + \0 + tmp_path + \0 */
         if (!path)
         {
             return RT_NULL;
@@ -2356,14 +2369,14 @@ void copy(const char *src, const char *dst)
             flag |= FLAG_DST_IS_FILE;
     }
 
-    //2. check status
+    /* 2. check status */
     if ((flag & FLAG_SRC_IS_DIR) && (flag & FLAG_DST_IS_FILE))
     {
         rt_kprintf("cp faild, cp dir to file is not permitted!\n");
         return ;
     }
 
-    //3. do copy
+    /* 3. do copy */
     if (flag & FLAG_SRC_IS_FILE)
     {
         if (flag & FLAG_DST_IS_DIR)
@@ -2383,7 +2396,7 @@ void copy(const char *src, const char *dst)
             copyfile(src, dst);
         }
     }
-    else //flag & FLAG_SRC_IS_DIR
+    else /* flag & FLAG_SRC_IS_DIR */
     {
         if (flag & FLAG_DST_IS_DIR)
         {
