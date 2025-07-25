@@ -41,7 +41,11 @@ rt_err_t rt_serial_bypass_init(struct rt_serial_device* serial)
 {
     serial->bypass = rt_malloc(sizeof(struct rt_serial_bypass));
     rt_memset(serial->bypass, 0, sizeof(struct rt_serial_bypass));
+#ifdef RT_USING_SERIAL_V2
+    serial->bypass->pipe = rt_ringbuffer_create(serial->config.rx_bufsz);
+#else
     serial->bypass->pipe = rt_ringbuffer_create(serial->config.bufsz);
+#endif
     serial->bypass->mutex = rt_mutex_create("serial_bypass", RT_IPC_FLAG_FIFO);
 
     return RT_EOK;
@@ -140,6 +144,22 @@ static inline rt_err_t _bypass_getchar_form_serial_fifo(struct rt_serial_device*
     level = rt_spin_lock_irqsave(&(serial->spinlock));
 
     /* there's no data: */
+#ifdef RT_USING_SERIAL_V2
+    rt_size_t  ringbuf_date_stat;
+    ringbuf_date_stat = rt_ringbuffer_data_len(&rx_fifo->rb);
+    if(!ringbuf_date_stat)
+    {
+        /* no data, enable interrupt and break out */
+        rt_spin_unlock_irqrestore(&(serial->spinlock), level);
+        return -RT_EEMPTY;
+    }
+    if(!rt_ringbuffer_getchar(&rx_fifo->rb, (rt_uint8_t *)ch))
+    {
+        /* Failed to read data */
+        rt_spin_unlock_irqrestore(&(serial->spinlock), level);
+        return -RT_EOK;
+    }
+#else
     if ((rx_fifo->get_index == rx_fifo->put_index) && (rx_fifo->is_full == RT_FALSE))
     {
         /* no data, enable interrupt and break out */
@@ -156,7 +176,7 @@ static inline rt_err_t _bypass_getchar_form_serial_fifo(struct rt_serial_device*
     {
         rx_fifo->is_full = RT_FALSE;
     }
-
+#endif
     /* enable interrupt */
     rt_spin_unlock_irqrestore(&(serial->spinlock), level);
 
