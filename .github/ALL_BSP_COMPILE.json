@@ -303,6 +303,7 @@
         "gd32/arm/gd32h759i-start",
         "gd32/arm/gd32e503v-eval",
         "gd32/arm/gd32527I-eval",
+        "gd32/arm/gd32e230-lckfb",
         "n32/n32g43xcl-stb",
         "n32/n32g45xcl-stb",
         "n32/n32g45xml-stb",

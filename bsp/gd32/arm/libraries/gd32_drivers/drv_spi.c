@@ -45,6 +45,9 @@ static const struct gd32_spi spi_bus_obj[] = {
 #if defined SOC_SERIES_GD32F4xx
         GPIO_AF_5,
 #endif
+#if defined SOC_SERIES_GD32E23x
+        GPIO_AF_0,
+#endif
         GPIO_PIN_5,
         GPIO_PIN_6,
         GPIO_PIN_7,
@@ -62,7 +65,15 @@ static const struct gd32_spi spi_bus_obj[] = {
 #if defined SOC_SERIES_GD32F4xx
         GPIO_AF_5,
 #endif
+#if defined SOC_SERIES_GD32E23x
+        GPIO_AF_0,
+#endif
+
+#if defined SOC_SERIES_GD32E23x
+        GPIO_PIN_13,
+#else
         GPIO_PIN_12,
+#endif
         GPIO_PIN_14,
         GPIO_PIN_15,
     },
@@ -141,12 +152,16 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     rcu_periph_clock_enable(gd32_spi->spi_clk);
     rcu_periph_clock_enable(gd32_spi->gpio_clk);
 
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32E23x
     /*GPIO pin configuration*/
     gpio_af_set(gd32_spi->spi_port, gd32_spi->alt_func_num, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
 
     gpio_mode_set(gd32_spi->spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
+    #if defined SOC_SERIES_GD32E23x
+    gpio_output_options_set(gd32_spi->spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
+    #else
     gpio_output_options_set(gd32_spi->spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
+    #endif
 #else
     /* Init SPI SCK MOSI */
     gpio_init(gd32_spi->spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin | gd32_spi->mosi_pin);
@@ -197,6 +212,9 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         LOG_D("CK_APB2 freq: %d\n", rcu_clock_freq_get(CK_APB2));
         LOG_D("max   freq: %d\n", max_hz);
 
+        #if defined SOC_SERIES_GD32E23x
+        spi_src = CK_APB2;
+        #else
         if (spi_periph == SPI1 || spi_periph == SPI2)
         {
             spi_src = CK_APB1;
@@ -205,6 +223,7 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         {
             spi_src = CK_APB2;
         }
+        #endif
         spi_apb_clock = rcu_clock_freq_get(spi_src);
 
         if(max_hz >= spi_apb_clock/2)

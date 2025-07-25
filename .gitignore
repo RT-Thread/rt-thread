@@ -65,3 +65,6 @@ vdso.lds
 # stm32cubemx
 **/CubeMX_Config/Drivers/
 **/CubeMX_Config/MDK-ARM/
+
+# mac
+.DS_Store

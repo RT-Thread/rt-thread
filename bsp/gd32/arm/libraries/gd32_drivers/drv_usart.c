@@ -171,6 +171,10 @@ static const struct gd32_uart uart_obj[] = {
         GPIOA, 0, GPIO_PIN_9,                  // tx port, tx alternate, tx pin
         GPIOA, 0, GPIO_PIN_10,                 // rx port, rx alternate, rx pin
         0,                                     // afio remap cfg
+#elif defined SOC_SERIES_GD32E23x
+        RCU_GPIOA, RCU_GPIOA,                  
+        GPIOA, GPIO_AF_1, GPIO_PIN_9,         
+        GPIOA, GPIO_AF_1, GPIO_PIN_10,
 #else
         RCU_GPIOA, RCU_GPIOA,                  // tx gpio clock, rx gpio clock
         GPIOA, GPIO_PIN_9,                     // tx port, tx pin
@@ -195,6 +199,10 @@ static const struct gd32_uart uart_obj[] = {
         GPIOA, 0, GPIO_PIN_2,                   // tx port, tx alternate, tx pin
         GPIOA, 0, GPIO_PIN_3,                   // rx port, rx alternate, rx pin
         0,                                      // afio remap cfg
+#elif defined SOC_SERIES_GD32E23x
+        RCU_GPIOA, RCU_GPIOA,                   
+        GPIOA, GPIO_AF_1, GPIO_PIN_14,          
+        GPIOA, GPIO_AF_1, GPIO_PIN_15,          
 #else
         RCU_GPIOA, RCU_GPIOA,                   // periph clock, tx gpio clock, rt gpio clock
         GPIOA, GPIO_PIN_2,                      // tx port, tx pin
@@ -347,7 +355,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     rcu_periph_clock_enable(uart->rx_gpio_clk);
     rcu_periph_clock_enable(uart->per_clk);
 
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x
     /* connect port to USARTx_Tx */
     gpio_af_set(uart->tx_port, uart->tx_af, uart->tx_pin);
 
