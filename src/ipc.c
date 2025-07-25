@@ -1578,15 +1578,15 @@ RTM_EXPORT(rt_mutex_trytake);
  * @brief    This function will release a mutex. If there is thread suspended on the mutex, the thread will be resumed.
  *
  * @note     If there are threads suspended on this mutex, the first thread in the list of this mutex object
- *           will be resumed, and a thread scheduling (rt_schedule) will be executed.
+ *           will be resumed.
  *           If no threads are suspended on this mutex, the count value mutex->value of this mutex will increase by 1.
+ *           This operation requires mutex->spinlock to be held.
  *
  * @param    mutex is a pointer to a mutex object.
  *
- * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
- *           If the return value is any other values, it means that the mutex release failed.
+ * @return   Return RT_TRUE if scheduling is needed, RT_FALSE otherwise.
  */
-rt_err_t rt_mutex_release(rt_mutex_t mutex)
+static rt_bool_t _rt_mutex_release(rt_mutex_t mutex)
 {
     rt_sched_lock_level_t slvl;
     struct rt_thread *thread;
@@ -1601,24 +1601,13 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     /* only thread could release mutex because we need test the ownership */
     RT_DEBUG_IN_THREAD_CONTEXT;
 
-    /* get current thread */
-    thread = rt_thread_self();
+    /* get the current owner thread of the mutex */
+    thread = mutex->owner;
 
-    rt_spin_lock(&(mutex->spinlock));
-
-    LOG_D("mutex_release:current thread %s, hold: %d",
-          thread->parent.name, mutex->hold);
+    LOG_D("mutex_release: mutex owner thread %s, hold count: %d",
+      thread->parent.name, mutex->hold);
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
-
-    /* mutex only can be released by owner */
-    if (thread != mutex->owner)
-    {
-        thread->error = -RT_ERROR;
-        rt_spin_unlock(&(mutex->spinlock));
-
-        return -RT_ERROR;
-    }
 
     /* decrease hold */
     mutex->hold --;
@@ -1705,15 +1694,111 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         }
     }
 
+    return need_schedule;
+}
+
+
+/**
+ * @brief    Release a mutex owned by current thread.
+ *
+ * @note     Resumes first suspended thread if any (requires scheduling).
+ *           Increases mutex->value if no threads waiting.
+ *           Must be called by mutex owner with spinlock held.
+ *
+ * @param    mutex Pointer to the mutex object.
+ *
+ * @return   RT_EOK on success, -RT_ERROR if not owner.
+ */
+rt_err_t rt_mutex_release(rt_mutex_t mutex)
+{
+    struct rt_thread *thread;
+    rt_bool_t need_schedule;
+
+    /* parameter check */
+    RT_ASSERT(mutex != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
+
+    need_schedule = RT_FALSE;
+
+    /* only thread could release mutex because we need test the ownership */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
+    /* get current thread */
+    thread = rt_thread_self();
+
+    rt_spin_lock(&(mutex->spinlock));
+
+    if (thread != mutex->owner)
+    {
+        thread->error = -RT_ERROR;
+        rt_spin_unlock(&(mutex->spinlock));
+
+        return -RT_ERROR;
+    }
+
+    need_schedule= _rt_mutex_release(mutex);
+
     rt_spin_unlock(&(mutex->spinlock));
 
     /* perform a schedule */
     if (need_schedule == RT_TRUE)
+    {
         rt_schedule();
+    }
 
     return RT_EOK;
 }
 RTM_EXPORT(rt_mutex_release);
+
+
+/**
+ * @brief    Forcefully release a mutex (Internal API).
+ *
+ * @warning  This is an internal function that bypasses normal ownership checks.
+ *           When called by a thread different from the mutex owner:
+ *             The owner thread MUST have been closed (rt_thread_close).
+ *             The owner thread MUST be completely off CPU.
+ *           Violating these conditions will cause undefined behavior.
+ *
+ * @note     Key differences from rt_mutex_release():
+ *             Ownership check is skipped (caller can be non-owner).
+ *             Forces hold count to 1 before release (handles recursive locks).
+ *             Requires manual validation that owner thread is closed and off CPU
+ *             when caller is not the owner.
+ *
+ * @param    mutex Pointer to the mutex object to be force-released.
+ *
+ * @return   Operation status (RT_EOK on success, -RT_ERROR on failure).
+ */
+rt_err_t rt_mutex_force_release(rt_mutex_t mutex)
+{
+    rt_bool_t need_schedule;
+
+    /* parameter check */
+    RT_ASSERT(mutex != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
+
+    need_schedule = RT_FALSE;
+
+    /* only thread could release mutex because we need test the ownership */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
+    rt_spin_lock(&mutex->spinlock);
+
+    /* Force set hold=1 to handle recursive mutex */
+    mutex->hold=1;
+    need_schedule = _rt_mutex_release(mutex);
+
+    rt_spin_unlock(&mutex->spinlock);
+
+    /* perform a schedule */
+    if (need_schedule == RT_TRUE)
+    {
+        rt_schedule();
+    }
+
+    return RT_EOK;
+}
 
 
 /**

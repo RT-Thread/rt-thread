@@ -101,9 +101,7 @@ static void _thread_detach_from_mutex(rt_thread_t thread)
     {
         mutex = rt_list_entry(node, struct rt_mutex, taken_list);
         LOG_D("Thread [%s] exits while holding mutex [%s].\n", thread->parent.name, mutex->parent.parent.name);
-        /* recursively take */
-        mutex->hold = 1;
-        rt_mutex_release(mutex);
+        rt_mutex_force_release(mutex);
     }
 
     rt_spin_unlock_irqrestore(&thread->spinlock, level);
