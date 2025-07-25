@@ -11,9 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-#ifdef RT_USING_SMART
-#include <ioremap.h>
-#endif
+#include "drv_ioremap.h"
 
 #ifdef RT_USING_PIN
 #include "drv_gpio.h"
@@ -303,6 +301,9 @@ static void rt_hw_gpio_isr(int irqno, void *param)
 
 int rt_hw_gpio_init(void)
 {
+    dwapb_gpio_base = (rt_ubase_t)DRV_IOREMAP((void *)dwapb_gpio_base, 0x1000);
+    dwapb_gpio_base_e = (rt_ubase_t)DRV_IOREMAP((void *)dwapb_gpio_base_e, 0x1000);
+
     rt_device_pin_register("gpio", &_dwapb_ops, RT_NULL);
 
 #define INT_INSTALL_GPIO_DEVICE(no)     \

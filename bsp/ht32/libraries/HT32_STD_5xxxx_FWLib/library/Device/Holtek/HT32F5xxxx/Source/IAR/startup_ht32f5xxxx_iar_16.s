@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_iar_16.s
-;  Version          : $Rev:: 7212         $
-;  Date             : $Date:: 2023-09-11 #$
+;  Version          : $Rev:: 8260         $
+;  Date             : $Date:: 2024-11-05 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -105,7 +105,7 @@ __vector_table
                     DCD  BFTM1_IRQHandler                   ;  17, 33, 0x084,
                     DCD  CMP0_IRQHandler                    ;  18, 34, 0x088,
                     DCD  CMP1_IRQHandler                    ;  19, 35, 0x08C,
-                    DCD  PID_IRQHandler                     ;  20, 36, 0x090,
+                    DCD  PID0_IRQHandler                    ;  20, 36, 0x090,
                     DCD  I2C0_IRQHandler                    ;  21, 37, 0x094,
                     DCD  SPI0_IRQHandler                    ;  22, 38, 0x098,
                     DCD  USART0_IRQHandler                  ;  23, 39, 0x09C,
@@ -174,7 +174,7 @@ SysTick_Handler
         PUBWEAK BFTM1_IRQHandler
         PUBWEAK CMP0_IRQHandler
         PUBWEAK CMP1_IRQHandler
-        PUBWEAK PID_IRQHandler
+        PUBWEAK PID0_IRQHandler
         PUBWEAK I2C0_IRQHandler
         PUBWEAK SPI0_IRQHandler
         PUBWEAK USART0_IRQHandler
@@ -207,7 +207,7 @@ BFTM0_IRQHandler
 BFTM1_IRQHandler
 CMP0_IRQHandler
 CMP1_IRQHandler
-PID_IRQHandler
+PID0_IRQHandler
 I2C0_IRQHandler
 SPI0_IRQHandler
 USART0_IRQHandler

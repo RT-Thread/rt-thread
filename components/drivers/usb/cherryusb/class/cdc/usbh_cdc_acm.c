@@ -19,11 +19,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_cdc_acm *usbh_cdc_acm_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_CDC_ACM_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_cdc_acm_class[devno], 0, sizeof(struct usbh_cdc_acm));
             g_cdc_acm_class[devno].minor = devno;
             return &g_cdc_acm_class[devno];
@@ -34,10 +34,10 @@ static struct usbh_cdc_acm *usbh_cdc_acm_class_alloc(void)
 
 static void usbh_cdc_acm_class_free(struct usbh_cdc_acm *cdc_acm_class)
 {
-    int devno = cdc_acm_class->minor;
+    uint8_t devno = cdc_acm_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(cdc_acm_class, 0, sizeof(struct usbh_cdc_acm));
 }
@@ -193,6 +193,7 @@ static int usbh_cdc_acm_disconnect(struct usbh_hubport *hport, uint8_t intf)
 #endif
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister CDC ACM Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_cdc_acm_stop(cdc_acm_class);
         }
@@ -266,19 +267,19 @@ const struct usbh_class_driver cdc_data_class_driver = {
 };
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_acm_class_info = {
-    .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_CDC,
-    .subclass = CDC_ABSTRACT_CONTROL_MODEL,
-    .protocol = CDC_COMMON_PROTOCOL_AT_COMMANDS,
+    .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC,
+    .bInterfaceSubClass = CDC_ABSTRACT_CONTROL_MODEL,
+    .bInterfaceProtocol = 0x00,
     .id_table = NULL,
     .class_driver = &cdc_acm_class_driver
 };
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_data_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS,
-    .class = USB_DEVICE_CLASS_CDC_DATA,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC_DATA,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = NULL,
     .class_driver = &cdc_data_class_driver
 };

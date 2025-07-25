@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2016-09-28     armink       first version.
+ * 2024-10-24     yekai        Add C++ support
  */
 
 #ifndef __DEV_SPI_FLASH_SFUD_H__
@@ -15,6 +16,10 @@
 #include <rtdevice.h>
 #include "./sfud/inc/sfud.h"
 #include "dev_spi_flash.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
@@ -65,5 +70,9 @@ sfud_flash_t rt_sfud_flash_find(const char *spi_dev_name);
  * @return sfud flash device if success, otherwise return RT_NULL
  */
 sfud_flash_t rt_sfud_flash_find_by_dev_name(const char *flash_dev_name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __DEV_SPI_FLASH_SFUD_H__ */

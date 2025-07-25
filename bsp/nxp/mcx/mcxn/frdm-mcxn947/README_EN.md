@@ -36,6 +36,14 @@ Currently, the FRDM-MCXN947 board-level support package provides MDK5 and suppor
 
 ### Compile the Download
 
+**Please note!!!**
+
+Before performing the compilation process, please first open the ENV and execute the following command (this command is used to pull the necessary libraries; otherwise, the compilation will not be successful):
+
+```bash
+pkgs --update
+```
+
 Go to the `rt-thread\bsp\nxp\mcxn\frdm-mcxn947` folder and double click on the project.uvprojx file to open the MDK5 project.
 
 ![dir](figures/dir.png)

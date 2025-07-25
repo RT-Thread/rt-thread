@@ -92,6 +92,11 @@ static rt_err_t ofw_pin_ctrl_confs_apply(struct rt_ofw_node *np, int index)
 
         if (pinctrl_np)
         {
+            if (!rt_ofw_data(pinctrl_np))
+            {
+                rt_platform_ofw_request(pinctrl_np);
+            }
+
             pinctrl = rt_ofw_data(pinctrl_np);
 
             rt_ofw_node_put(pinctrl_np);
@@ -217,6 +222,8 @@ rt_err_t rt_pin_ctrl_confs_apply_by_name(struct rt_device *device, const char *n
             err = ofw_pin_ctrl_confs_apply_by_name(device->ofw_node, name);
         }
     #endif /* RT_USING_OFW */
+
+        RT_UNUSED(name);
     }
     else
     {

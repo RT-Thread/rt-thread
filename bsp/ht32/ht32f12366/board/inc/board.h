@@ -23,6 +23,10 @@
     #include "drv_spi.h"
 #endif
 
+#ifdef BSP_USING_SDIO
+#include "dfs_fs.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

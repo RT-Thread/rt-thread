@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,7 +29,7 @@ static struct ra_hwtimer ra_hwtimer_obj[BSP_TIMERS_NUM] =
 
 const rt_uint32_t PLCKD_FREQ_PRESCALER[PLCKD_PRESCALER_MAX_SELECT] =
 {
-#ifdef SOC_SERIES_R7FA6M3
+#if defined(SOC_SERIES_R7FA6M3)
     PLCKD_PRESCALER_120M,
     PLCKD_PRESCALER_60M,
     PLCKD_PRESCALER_30M,
@@ -37,6 +37,14 @@ const rt_uint32_t PLCKD_FREQ_PRESCALER[PLCKD_PRESCALER_MAX_SELECT] =
     PLCKD_PRESCALER_7_5M,
     PLCKD_PRESCALER_3_75M,
     PLCKD_PRESCALER_1_875M,
+#elif defined(SOC_SERIES_R9A07G0)
+    PLCKD_PRESCALER_100M,
+    PLCKD_PRESCALER_50M,
+    PLCKD_PRESCALER_25M,
+    PLCKD_PRESCALER_12_5M,
+    PLCKD_PRESCALER_6_25M,
+    PLCKD_PRESCALER_3_125M,
+    PLCKD_PRESCALER_1_5625M
 #endif
 };
 
@@ -107,11 +115,11 @@ static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
 
     tim = (struct ra_hwtimer *)timer->parent.user_data;
 
-    timer_info_t info;
-    if (R_GPT_InfoGet(tim->g_ctrl, &info) != FSP_SUCCESS)
+    timer_status_t status;
+    if (R_GPT_StatusGet(tim->g_ctrl, &status) != FSP_SUCCESS)
         return -RT_ERROR;
 
-    return info.period_counts;
+    return status.counter;
 }
 
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)

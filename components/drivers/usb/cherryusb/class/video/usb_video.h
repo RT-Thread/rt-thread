@@ -1237,7 +1237,7 @@ struct video_autoexposure_mode {
     USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType : INTERFACE */                        \
     bInterfaceNumber,              /* bInterfaceNumber: Index of this interface */          \
     bAlternateSetting,             /* bAlternateSetting: Index of this alternate setting */ \
-    bNumEndpoints,                 /* bNumEndpoints : 0 endpoints – no bandwidth used*/     \
+    bNumEndpoints,                 /* bNumEndpoints : 0 endpoints,  no bandwidth used*/     \
     0x0e,                          /* bInterfaceClass : CC_VIDEO */                         \
     0x02,                          /* bInterfaceSubClass : SC_VIDEOSTREAMING */             \
     0x00,                          /* bInterfaceProtocol : PC_PROTOCOL_UNDEFINED */         \
@@ -1315,8 +1315,8 @@ struct video_autoexposure_mode {
     bNumFrameDescriptors, /* bNumFrameDescriptors : One frame descriptor for this format follows. */ \
     0x00,                 /* bmFlags : Uses fixed size samples.. */                                  \
     0x01,                 /* bDefaultFrameIndex : Default frame index is 1. */                       \
-    0x00,                 /* bAspectRatioX : Non-interlaced stream – not required. */                \
-    0x00,                 /* bAspectRatioY : Non-interlaced stream – not required. */                \
+    0x00,                 /* bAspectRatioX : Non-interlaced stream,  not required. */                \
+    0x00,                 /* bAspectRatioY : Non-interlaced stream,  not required. */                \
     0x00,                 /* bmInterlaceFlags : Non-interlaced stream */                             \
     0x00                  /* bCopyProtect : No restrictions imposed on the duplication of this video stream. */
 
@@ -1346,8 +1346,8 @@ struct video_autoexposure_mode {
     VIDEO_GUID_H264,                                                                                 \
     0x00,                 /* bmFlags : Uses fixed size samples.. */                                  \
     0x01,                 /* bDefaultFrameIndex : Default frame index is 1. */                       \
-    0x00,                 /* bAspectRatioX : Non-interlaced stream – not required. */                \
-    0x00,                 /* bAspectRatioY : Non-interlaced stream – not required. */                \
+    0x00,                 /* bAspectRatioX : Non-interlaced stream,  not required. */                \
+    0x00,                 /* bAspectRatioY : Non-interlaced stream,  not required. */                \
     0x00,                 /* bmInterlaceFlags : Non-interlaced stream */                             \
     0x00,                 /* bCopyProtect : No restrictions imposed on the duplication of this video stream. */ \
     0x00                  /* Variable size: False */

@@ -39,8 +39,8 @@ struct adb_msg {
 };
 
 struct adb_packet {
-    struct adb_msg msg;
-    uint8_t payload[MAX_PAYLOAD];
+    USB_MEM_ALIGNX struct adb_msg msg;
+    USB_MEM_ALIGNX uint8_t payload[USB_ALIGN_UP(MAX_PAYLOAD, CONFIG_USB_ALIGN_SIZE)];
 };
 
 struct usbd_adb {
@@ -115,7 +115,7 @@ void usbd_adb_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 
     if (adb_client.common_state == ADB_STATE_READ_MSG) {
         if (nbytes != sizeof(struct adb_msg)) {
-            USB_LOG_ERR("invalid adb msg size:%d\r\n", nbytes);
+            USB_LOG_ERR("invalid adb msg size:%d\r\n", (unsigned int)nbytes);
             return;
         }
 

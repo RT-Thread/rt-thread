@@ -429,9 +429,18 @@ static int usbh_reset_port(struct usbh_bus *bus, const uint8_t port)
 {
     g_musb_hcd[bus->hcd.hcd_id].port_pe = 0;
     HWREGB(USB_BASE + MUSB_POWER_OFFSET) |= USB_POWER_RESET;
+
+#ifdef CONFIG_USB_MUSB_SIFLI
+    extern void musb_reset_prev(void);
+    musb_reset_prev();
+#endif
     usb_osal_msleep(20);
     HWREGB(USB_BASE + MUSB_POWER_OFFSET) &= ~(USB_POWER_RESET);
     usb_osal_msleep(20);
+#ifdef CONFIG_USB_MUSB_SIFLI
+    extern void musb_reset_post(void);
+    musb_reset_post();
+#endif
     g_musb_hcd[bus->hcd.hcd_id].port_pe = 1;
     return 0;
 }
@@ -504,11 +513,7 @@ int usb_hc_init(struct usbh_bus *bus)
         offset = usbh_musb_fifo_config(bus, &cfg[i], offset);
     }
 
-    if (offset > usb_get_musb_ram_size()) {
-        USB_LOG_ERR("offset:%d is overflow, please check your table\r\n", offset);
-        while (1) {
-        }
-    }
+    USB_ASSERT_MSG(offset <= usb_get_musb_ram_size(), "Your fifo config is overflow, please check");
 
     /* Enable USB interrupts */
     regval = USB_IE_RESET | USB_IE_CONN | USB_IE_DISCON |
@@ -770,6 +775,16 @@ int usbh_kill_urb(struct usbh_urb *urb)
     urb->errorcode = -USB_ERR_SHUTDOWN;
     pipe->urb = NULL;
 
+    if (urb->ep->bEndpointAddress & 0x80) {
+        HWREGH(USB_BASE + MUSB_RXIE_OFFSET) &= ~(1 << (urb->ep->bEndpointAddress & 0x0f));
+        HWREGH(USB_BASE + MUSB_RXIS_OFFSET) = (1 << (urb->ep->bEndpointAddress & 0x0f));
+    } else {
+        HWREGH(USB_BASE + MUSB_TXIE_OFFSET) &= ~(1 << (urb->ep->bEndpointAddress & 0x0f));
+        HWREGH(USB_BASE + MUSB_TXIS_OFFSET) = (1 << (urb->ep->bEndpointAddress & 0x0f));
+    }
+
+    musb_fifo_flush(bus, urb->ep->bEndpointAddress);
+
     if (urb->timeout) {
         usb_osal_sem_give(pipe->waitsem);
     } else {
@@ -869,12 +884,7 @@ void handle_ep0(struct usbh_bus *bus)
             break;
         case USB_EP0_STATE_IN_DATA:
             if (ep0_status & USB_CSRL0_RXRDY) {
-                size = urb->transfer_buffer_length;
-                if (size > USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize)) {
-                    size = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
-                }
-
-                size = MIN(size, HWREGH(USB_BASE + MUSB_IND_RXCOUNT_OFFSET));
+                size = HWREGH(USB_BASE + MUSB_IND_RXCOUNT_OFFSET);
                 musb_read_packet(bus, 0, urb->transfer_buffer, size);
                 HWREGB(USB_BASE + MUSB_IND_TXCSRL_OFFSET) &= ~USB_CSRL0_RXRDY;
                 urb->transfer_buffer += size;
@@ -933,6 +943,7 @@ void USBH_IRQHandler(uint8_t busid)
     uint8_t ep_idx;
     uint8_t old_ep_idx;
     struct usbh_bus *bus;
+    uint32_t size;
 
     bus = &g_usbhost_bus[busid];
 
@@ -1024,7 +1035,7 @@ void USBH_IRQHandler(uint8_t busid)
                     urb->errorcode = 0;
                     musb_urb_waitup(urb);
                 } else {
-                    musb_write_packet(bus, ep_idx, urb->transfer_buffer, size);
+                    musb_write_packet(bus, ep_idx, urb->transfer_buffer, MIN(urb->transfer_buffer_length, USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize)));
                     HWREGB(USB_BASE + MUSB_IND_TXCSRL_OFFSET) = USB_TXCSRL1_TXRDY;
                 }
             }
@@ -1056,11 +1067,7 @@ void USBH_IRQHandler(uint8_t busid)
                 urb->errorcode = -USB_ERR_STALL;
                 musb_urb_waitup(urb);
             } else if (ep_csrl_status & USB_RXCSRL1_RXRDY) {
-                uint32_t size = urb->transfer_buffer_length;
-                if (size > USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize)) {
-                    size = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
-                }
-                size = MIN(size, HWREGH(USB_BASE + MUSB_IND_RXCOUNT_OFFSET));
+                size = HWREGH(USB_BASE + MUSB_IND_RXCOUNT_OFFSET);
 
                 musb_read_packet(bus, ep_idx, urb->transfer_buffer, size);
 

@@ -1,0 +1,23 @@
+menuconfig RT_USING_REGULATOR
+    bool "Using Voltage and Current Regulator"
+    select RT_USING_ADT
+    select RT_USING_ADT_REF
+    depends on RT_USING_DM
+    default n
+
+config RT_REGULATOR_FIXED
+    bool "Fixed regulator support"
+    depends on RT_USING_REGULATOR
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    default y
+
+config RT_REGULATOR_GPIO
+    bool "GPIO regulator support"
+    depends on RT_USING_REGULATOR
+    depends on RT_USING_PIN
+    default y
+
+if RT_USING_REGULATOR
+    osource "$(SOC_DM_REGULATOR_DIR)/Kconfig"
+endif

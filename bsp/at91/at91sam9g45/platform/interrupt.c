@@ -15,7 +15,7 @@
 #define AIC_IRQS    32
 #define MAX_HANDLERS    (AIC_IRQS + PIN_IRQS)
 
-extern rt_uint32_t rt_interrupt_nest;
+extern rt_atomic_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
 struct rt_irq_desc irq_desc[MAX_HANDLERS];

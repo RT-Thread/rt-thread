@@ -1,0 +1,18 @@
+import os
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+src/board.c
+src/at32_msp.c
+''')
+
+path = [cwd]
+path += [cwd + '/inc']
+
+CPPDEFINES = ['AT32F456ZET7']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

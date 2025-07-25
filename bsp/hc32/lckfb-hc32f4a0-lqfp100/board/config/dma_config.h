@@ -231,6 +231,30 @@ extern "C" {
 #define I2C4_RX_DMA_INT_SRC             INT_SRC_DMA1_TC7
 #endif
 
+/* DMA1 ch8 */
+#if defined(BSP_SPI5_TX_USING_DMA) && !defined(SPI5_TX_DMA_INSTANCE)
+#define SPI5_TX_DMA_INSTANCE            CM_DMA1
+#define SPI5_TX_DMA_CHANNEL             DMA_CH8
+#define SPI5_TX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
+#define SPI5_TX_DMA_TRIG_SELECT         AOS_DMA1_8
+#define SPI5_TX_DMA_TRANS_FLAG          DMA_FLAG_TC_CH8
+#define SPI5_TX_DMA_IRQn                BSP_DMA1_CH8_IRQ_NUM
+#define SPI5_TX_DMA_INT_PRIO            BSP_DMA1_CH8_IRQ_PRIO
+#define SPI5_TX_DMA_INT_SRC             INT_SRC_DMA1_TC8
+#endif
+
+/* DMA1 ch9 */
+#if defined(BSP_SPI6_TX_USING_DMA) && !defined(SPI6_TX_DMA_INSTANCE)
+#define SPI6_TX_DMA_INSTANCE            CM_DMA1
+#define SPI6_TX_DMA_CHANNEL             DMA_CH9
+#define SPI6_TX_DMA_CLOCK               (PWC_FCG0_DMA1 | PWC_FCG0_AOS)
+#define SPI6_TX_DMA_TRIG_SELECT         AOS_DMA1_9
+#define SPI6_TX_DMA_TRANS_FLAG          DMA_FLAG_TC_CH9
+#define SPI6_TX_DMA_IRQn                BSP_DMA1_CH9_IRQ_NUM
+#define SPI6_TX_DMA_INT_PRIO            BSP_DMA1_CH9_IRQ_PRIO
+#define SPI6_TX_DMA_INT_SRC             INT_SRC_DMA1_TC9
+#endif
+
 /* DMA2 ch0 */
 #if defined(BSP_UART1_RX_USING_DMA) && !defined(UART1_RX_DMA_INSTANCE)
 #define UART1_RX_DMA_INSTANCE           CM_DMA2

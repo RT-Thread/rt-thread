@@ -19,7 +19,7 @@
 
 #define ENTER_INTERRUPT()  ICU.SWINTR.BIT.SWINT = 1;
 
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 
 
 /* switch flag on interrupt and thread pointer to save switch record */

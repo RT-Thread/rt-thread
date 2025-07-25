@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_wdt.h
- * @version $Rev:: 1704         $
- * @date    $Date:: 2017-08-17 #$
+ * @version $Rev:: 7779         $
+ * @date    $Date:: 2024-06-24 #$
  * @brief   The header file of the WDT library.
  *************************************************************************************************************
  * @attention
@@ -72,14 +72,17 @@
 
 /* WDT runs or halts in sleep and deep sleep1 mode                                                          */
 /* WDT WDTSHLT mask                                                                                         */
-#define MODE0_WDTSHLT_BOTH                        ((u32)0x00000000)
-#define MODE0_WDTSHLT_SLEEP                       ((u32)0x00004000)
-#define MODE0_WDTSHLT_HALT                        ((u32)0x00008000)
+#define WDT_SLEEP_HALT_NONE                       ((u32)0x00000000)
+#define WDT_SLEEP_HALT_DEEPSLEEP                  ((u32)0x00004000)
+#define WDT_SLEEP_HALT_ALL                        ((u32)0x00008000)
 
-#define IS_WDT_WDTSHLT_MODE(WDT_Mode)             ((WDT_Mode == MODE0_WDTSHLT_BOTH) || \
-                                                   (WDT_Mode == MODE0_WDTSHLT_SLEEP) || \
-                                                   (WDT_Mode == MODE0_WDTSHLT_HALT))
+#define MODE0_WDTSHLT_BOTH                        WDT_SLEEP_HALT_NONE
+#define MODE0_WDTSHLT_SLEEP                       WDT_SLEEP_HALT_DEEPSLEEP
+#define MODE0_WDTSHLT_HALT                        WDT_SLEEP_HALT_ALL
 
+#define IS_WDT_WDTSHLT_MODE(WDT_Mode)             ((WDT_Mode == WDT_SLEEP_HALT_NONE)      || \
+                                                   (WDT_Mode == WDT_SLEEP_HALT_DEEPSLEEP) || \
+                                                   (WDT_Mode == WDT_SLEEP_HALT_ALL))
 
 
 /* WDT Flag                                                                                                 */

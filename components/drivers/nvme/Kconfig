@@ -1,0 +1,23 @@
+menuconfig RT_USING_NVME
+    bool "Using Non-Volatile Memory Express (NVME) device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_BLK
+    depends on RT_USING_DMA
+    default n
+
+config RT_USING_NVME_IO_QUEUE
+    int "Number of I/O Command queue"
+    depends on RT_USING_NVME
+    default 2 if RT_THREAD_PRIORITY_8
+    default 4 if RT_THREAD_PRIORITY_32
+    default 8 if RT_THREAD_PRIORITY_256
+
+config RT_NVME_PCI
+    bool "NVME support on PCI bus"
+    depends on RT_USING_NVME
+    depends on RT_USING_PCI
+    default y
+
+if RT_USING_NVME
+    osource "$(SOC_DM_NVME_DIR)/Kconfig"
+endif

@@ -1,14 +1,16 @@
 /*
- * Copyright (c) 2021-2022, RT-Thread Development Team
+ * Copyright (c) 2021-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-02     supperthomas first version
+ * 2024-12-08     wumingzi     support rt_hw_us_delay
  */
 
 #include <rtthread.h>
+#include "rttypes.h"
 #include "hal/systimer_hal.h"
 #include "hal/systimer_ll.h"
 #include "esp_private/panic_internal.h"
@@ -16,6 +18,8 @@
 #include "esp_private/periph_ctrl.h"
 #include "esp_intr_alloc.h"
 #include "esp_attr.h"
+#include "esp_timer.h"
+#include "driver/gptimer.h"
 
 static systimer_hal_context_t systimer_hal;
 IRAM_ATTR void rt_SysTickIsrHandler(void *arg)
@@ -56,4 +60,32 @@ void rt_hw_board_init(void)
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+}
+
+static gptimer_handle_t gptimer_hw_us = NULL;
+
+static int delay_us_init(void)
+{
+    gptimer_config_t timer_config = {
+        .clk_src = GPTIMER_CLK_SRC_DEFAULT,
+        .direction = GPTIMER_COUNT_UP,
+        .resolution_hz = 1 * 1000 * 1000, /* 1MHz, 1 tick = 1us*/
+    };
+    ESP_ERROR_CHECK(gptimer_new_timer(&timer_config, &gptimer_hw_us));
+    ESP_ERROR_CHECK(gptimer_enable(gptimer_hw_us));
+    return RT_EOK;
+}
+INIT_DEVICE_EXPORT(delay_us_init);
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    uint64_t count = 0;
+    ESP_ERROR_CHECK(gptimer_start(gptimer_hw_us));
+    ESP_ERROR_CHECK(gptimer_set_raw_count(gptimer_hw_us, 0));
+    /* Retrieve the timestamp at anytime*/
+    while(count < (uint64_t)us)
+    {
+        ESP_ERROR_CHECK(gptimer_get_raw_count(gptimer_hw_us, &count));
+    }
+    ESP_ERROR_CHECK(gptimer_stop(gptimer_hw_us));
 }

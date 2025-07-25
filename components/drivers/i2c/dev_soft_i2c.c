@@ -11,7 +11,8 @@
 #include <rtdevice.h>
 
 #ifdef RT_USING_SOFT_I2C
-#if !defined(RT_USING_SOFT_I2C1) && !defined(RT_USING_SOFT_I2C2) &&\
+#if !defined(RT_USING_SOFT_I2C0) &&\
+    !defined(RT_USING_SOFT_I2C1) && !defined(RT_USING_SOFT_I2C2) &&\
     !defined(RT_USING_SOFT_I2C3) && !defined(RT_USING_SOFT_I2C4) &&\
     !defined(RT_USING_SOFT_I2C5) && !defined(RT_USING_SOFT_I2C6) &&\
     !defined(RT_USING_SOFT_I2C7) && !defined(RT_USING_SOFT_I2C8)
@@ -48,6 +49,15 @@ struct rt_soft_i2c
 
 struct soft_i2c_config i2c_cfg[] =
 {
+    #ifdef RT_USING_SOFT_I2C0
+    {
+        .scl_pin        = RT_SOFT_I2C0_SCL_PIN,
+        .sda_pin        = RT_SOFT_I2C0_SDA_PIN,
+        .bus_name       = RT_SOFT_I2C0_BUS_NAME,
+        .timing_delay   = RT_SOFT_I2C0_TIMING_DELAY,
+        .timing_timeout = RT_SOFT_I2C0_TIMING_TIMEOUT,
+    },
+    #endif  //RT_USING_SOFT_I2C0
     #ifdef RT_USING_SOFT_I2C1
     {
         .scl_pin        = RT_SOFT_I2C1_SCL_PIN,

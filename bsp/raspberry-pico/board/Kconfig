@@ -154,7 +154,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable soft SPI BUS"
         default n
         select RT_USING_PIN
-        select RT_USING_SPI_BITOPS
+        select RT_USING_SOFT_SPI
         select RT_USING_SPI
         if BSP_USING_SOFT_SPI
             config BSP_USING_SOFT_SPI0
@@ -328,8 +328,8 @@ menu "On-chip Peripheral Drivers"
                 endchoice
                 config BSP_SPI1_MISO_PIN
                     int
-                    default 8 if BSP_SPI0_MISO_PIN_8
-                    default 12 if BSP_SPI0_MISO_PIN_12
+                    default 8 if BSP_SPI1_MISO_PIN_8
+                    default 12 if BSP_SPI1_MISO_PIN_12
 
                 choice
                     prompt "spi1 SCK pin number (GP)"
@@ -347,7 +347,7 @@ menu "On-chip Peripheral Drivers"
 
                 choice
                     prompt "spi1 CS pin number (GP)"
-                    depends on BSP_USING_SPI0
+                    depends on BSP_USING_SPI1
                     default BSP_SPI1_CS_PIN_13 if BSP_USING_ARDUINO
                     config BSP_SPI1_CS_PIN_13
                         bool "13"

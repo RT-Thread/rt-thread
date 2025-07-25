@@ -30,6 +30,7 @@ typedef enum
     IRQ_HSUART_VECTOR               = 15,
     IRQ_RTC_VECTOR                  = 16,   /*!< RTC, LVD and WDT Interrupt         */
     IRQ_I2S_VECTOR                  = 17,
+    IRQ_GPIO_IRQ                    = 18,
     IRQ_TOTAL_NUM                   = 23,
 } irq_type;
 #endif // __ASSEMBLER__

@@ -14,15 +14,15 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>-AT32F4212C8T7</Device>
+          <Device>-AT32F421C8T7</Device>
           <Vendor>ArteryTek</Vendor>
-          <PackID>ArteryTek.AT32F421_DFP.2.0.9</PackID>
+          <PackID>ArteryTek.AT32F421_DFP.2.0.0</PackID>
           <Cpu>IRAM(0x20000000,0x4000) IROM(0x08000000,0x10000) CPUTYPE("Cortex-M4") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0AT32F4212_64 -FS08000000 -FL010000 -FP0($$Device:-AT32F4212C8T7$Flash\AT32F4212_64.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0AT32F421_64 -FS08000000 -FL010000 -FP0($$Device:-AT32F421C8T7$Flash\AT32F421_64.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:-AT32F4212C8T7$Device\Include\at32f421.h</RegisterFile>
+          <RegisterFile>$$Device:-AT32F421C8T7$Device\Include\at32f421.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -32,7 +32,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:-AT32F4212C8T7$SVD\AT32F421xx_v2.svd</SFDFile>
+          <SFDFile>$$Device:-AT32F421C8T7$SVD\AT32F421xx_v2.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
+ * 2025-03-04     wumingzi     add doxygen comments.
  */
 
 #include <rthw.h>
@@ -30,6 +31,22 @@ static void _rt_audio_pipe_resume_writer(struct rt_audio_pipe *pipe)
     }
 }
 
+/**
+ * @brief Read audio pipe
+ *
+ * @param[in] dev pointer to audio device will be read
+ *
+ * @param[in] pos useless param
+ *
+ * @param[in] buffer pointer to ringbuffer of audio pipe to be read
+ *
+ * @param[in] size number of bytes will be read
+ *
+ * @return number of read bytes
+ *
+ * @note This function will execute time-consuming or affecting the
+ *       system operations like memcpy and disable interrupt.
+ */
 static rt_ssize_t rt_audio_pipe_read(rt_device_t dev,
                               rt_off_t    pos,
                               void       *buffer,
@@ -88,6 +105,11 @@ static rt_ssize_t rt_audio_pipe_read(rt_device_t dev,
     return read_nbytes;
 }
 
+/**
+ * @brief Resume audio pipe reader thread
+ *
+ * @param[in] pipe pointer to suspended audio pipe thread
+ */
 static void _rt_audio_pipe_resume_reader(struct rt_audio_pipe *pipe)
 {
     if (pipe->parent.rx_indicate)
@@ -110,6 +132,21 @@ static void _rt_audio_pipe_resume_reader(struct rt_audio_pipe *pipe)
     }
 }
 
+/**
+ * @brief Write data into audio pipe
+ *
+ * @param[in] dev pointer to audio pipe that has been configured
+ *
+ * @param[in] pos useless param
+ *
+ * @param[in] buffer pointer to buffer of ringbuffer
+ *
+ * @param[in] size size of data will be written
+ *
+ * @return number of written bytes
+ *
+ * @note The function will disable interrupt and may suspend current thread
+ */
 static rt_ssize_t rt_audio_pipe_write(rt_device_t dev,
                                rt_off_t    pos,
                                const void *buffer,
@@ -174,6 +211,17 @@ static rt_ssize_t rt_audio_pipe_write(rt_device_t dev,
     return write_nbytes;
 }
 
+/**
+ * @brief Control audio pipe
+ *
+ * @param[in] dev pointer to pipe
+ *
+ * @param[in] cmd control command
+ *
+ * @param[in] args control argument
+ *
+ * @return error code, RT_EOK is successful otherwise means failure
+ */
 static rt_err_t rt_audio_pipe_control(rt_device_t dev, int cmd, void *args)
 {
     struct rt_audio_pipe *pipe;
@@ -198,13 +246,19 @@ const static struct rt_device_ops audio_pipe_ops =
 #endif
 
 /**
+ * @brief Init audio pipe
+ *
  * This function will initialize a pipe device and put it under control of
  * resource management.
  *
  * @param pipe the pipe device
+ *
  * @param name the name of pipe device
+ *
  * @param flag the attribute of the pipe device
+ *
  * @param buf  the buffer of pipe device
+ *
  * @param size the size of pipe device buffer
  *
  * @return the operation status, RT_EOK on successful
@@ -244,7 +298,7 @@ rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
 }
 
 /**
- * This function will detach a pipe device from resource management
+ * @brief This function will detach a pipe device from resource management
  *
  * @param pipe the pipe device
  *
@@ -255,6 +309,19 @@ rt_err_t rt_audio_pipe_detach(struct rt_audio_pipe *pipe)
     return rt_device_unregister(&pipe->parent);
 }
 
+/**
+ * @brief Creat audio pipe
+ *
+ * @param[in] name pipe name
+ *
+ * @param[in] flag pipe flags, it can be one of enum rt_audio_pipe_flag items
+ *
+ * @param[in] size ringbuffer size
+ *
+ * @return error code, RT_EOK on initialization successfully
+ *
+ * @note depend on RT_USING_HEAP
+ */
 #ifdef RT_USING_HEAP
 rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
 {
@@ -278,6 +345,13 @@ rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
     return rt_audio_pipe_init(pipe, name, flag, rb_memptr, size);
 }
 
+/**
+ * @brief Detachaudio pipe and free its ringbuffer
+ *
+ * @param[in] pipe pointer to the pipe will be destory
+ *
+ * @note depend on RT_USING_HEAP
+ */
 void rt_audio_pipe_destroy(struct rt_audio_pipe *pipe)
 {
     if (pipe == RT_NULL)

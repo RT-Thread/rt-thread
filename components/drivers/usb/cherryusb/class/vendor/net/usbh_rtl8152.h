@@ -59,7 +59,7 @@ void usbh_rtl8152_stop(struct usbh_rtl8152 *rtl8152_class);
 uint8_t *usbh_rtl8152_get_eth_txbuf(void);
 int usbh_rtl8152_eth_output(uint32_t buflen);
 void usbh_rtl8152_eth_input(uint8_t *buf, uint32_t buflen);
-void usbh_rtl8152_rx_thread(void *argument);
+void usbh_rtl8152_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV);
 
 #ifdef __cplusplus
 }

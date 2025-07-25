@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f54243_53_libcfg.h
- * @version $Rev:: 6896         $
- * @date    $Date:: 2023-05-08 #$
+ * @version $Rev:: 7664         $
+ * @date    $Date:: 2024-03-26 #$
  * @brief   The library configuration file.
  *************************************************************************************************************
 * @attention
@@ -66,7 +66,6 @@
 #define LIBCFG_FMC_WAIT_STATE_2           (1)
 #define LIBCFG_GPIOC                      (1)
 #define LIBCFG_GPIOD                      (1)
-#define LIBCFG_GPIO_SINK_CURRENT_ENHANCED (1)
 #define LIBCFG_I2C1                       (1)
 #define LIBCFG_I2C2                       (1)
 #define LIBCFG_LEDC                       (1)

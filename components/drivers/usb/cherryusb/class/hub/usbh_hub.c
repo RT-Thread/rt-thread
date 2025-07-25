@@ -33,11 +33,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_hub *usbh_hub_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_EXTHUBS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_hub_class[devno], 0, sizeof(struct usbh_hub));
             g_hub_class[devno].index = EXTHUB_FIRST_INDEX + devno;
             return &g_hub_class[devno];
@@ -48,10 +48,10 @@ static struct usbh_hub *usbh_hub_class_alloc(void)
 
 static void usbh_hub_class_free(struct usbh_hub *hub_class)
 {
-    int devno = hub_class->index - EXTHUB_FIRST_INDEX;
+    uint8_t devno = hub_class->index - EXTHUB_FIRST_INDEX;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(hub_class, 0, sizeof(struct usbh_hub));
 }
@@ -152,6 +152,7 @@ static int _usbh_hub_clear_feature(struct usbh_hub *hub, uint8_t port, uint8_t f
     return usbh_control_transfer(hub->parent, setup, NULL);
 }
 
+#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int _usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
 {
     struct usb_setup_packet *setup;
@@ -167,7 +168,6 @@ static int _usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
     return usbh_control_transfer(hub->parent, setup, NULL);
 }
 
-#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int parse_hub_descriptor(struct usb_hub_descriptor *desc, uint16_t length)
 {
     (void)length;
@@ -270,6 +270,7 @@ int usbh_hub_clear_feature(struct usbh_hub *hub, uint8_t port, uint8_t feature)
     }
 }
 
+#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static int usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
 {
     struct usb_setup_packet roothub_setup;
@@ -288,7 +289,6 @@ static int usbh_hub_set_depth(struct usbh_hub *hub, uint16_t depth)
     }
 }
 
-#if CONFIG_USBHOST_MAX_EXTHUBS > 0
 static void hub_int_complete_callback(void *arg, int nbytes)
 {
     struct usbh_hub *hub = (struct usbh_hub *)arg;
@@ -416,7 +416,7 @@ static int usbh_hub_connect(struct usbh_hubport *hport, uint8_t intf)
 
     hub->int_buffer = g_hub_intbuf[hub->bus->busid][hub->index - 1];
 
-    hub->int_timer = usb_osal_timer_create("hubint_tim", USBH_GET_URB_INTERVAL(hub->intin->bInterval, hport->speed), hub_int_timeout, hub, 0);
+    hub->int_timer = usb_osal_timer_create("hubint_tim", USBH_GET_URB_INTERVAL(hub->intin->bInterval, hport->speed) / 1000, hub_int_timeout, hub, 0);
     if (hub->int_timer == NULL) {
         USB_LOG_ERR("No memory to alloc int_timer\r\n");
         return -USB_ERR_NOMEM;
@@ -648,12 +648,12 @@ static void usbh_hub_events(struct usbh_hub *hub)
     }
 }
 
-static void usbh_hub_thread(void *argument)
+static void usbh_hub_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     struct usbh_hub *hub;
     int ret = 0;
 
-    struct usbh_bus *bus = (struct usbh_bus *)argument;
+    struct usbh_bus *bus = (struct usbh_bus *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
     usb_hc_init(bus);
     while (1) {
@@ -706,14 +706,14 @@ int usbh_hub_deinitialize(struct usbh_bus *bus)
     struct usbh_hub *hub;
     size_t flags;
 
-    flags = usb_osal_enter_critical_section();
-
     hub = &bus->hcd.roothub;
     for (uint8_t port = 0; port < hub->nports; port++) {
         hport = &hub->child[port];
 
         usbh_hubport_release(hport);
     }
+
+    flags = usb_osal_enter_critical_section();
 
     usb_hc_deinit(bus);
 
@@ -734,9 +734,9 @@ const struct usbh_class_driver hub_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info hub_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS,
-    .class = USB_DEVICE_CLASS_HUB,
-    .subclass = 0,
-    .protocol = 0,
+    .bInterfaceClass = USB_DEVICE_CLASS_HUB,
+    .bInterfaceSubClass = 0,
+    .bInterfaceProtocol = 0,
     .id_table = NULL,
     .class_driver = &hub_class_driver
 };

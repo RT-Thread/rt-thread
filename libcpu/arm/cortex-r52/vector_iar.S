@@ -20,6 +20,7 @@
 
     IMPORT Reset_Handler
     IMPORT Undefined_Handler
+    IMPORT SWI_Handler
     IMPORT SVC_Handler
     IMPORT Prefetch_Handler
     IMPORT Abort_Handler
@@ -35,6 +36,7 @@
 system_vectors:
         b   Reset_Handler
         b   Undefined_Handler
+        b   SWI_Handler
         b   SVC_Handler
         b   Prefetch_Handler
         b   Abort_Handler

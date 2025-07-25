@@ -24,6 +24,14 @@ LPCXpresso54608板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | IAR        | IAR 7.60~IAR8.20             |
 | GCC        | GCC 5.4.1 20160919 (release) |
 
+**请注意！！！**
+
+在执行编译工作前请先打开ENV执行以下指令（该指令用于拉取必要的库，否则无法通过编译）：
+
+```bash
+pkgs --update
+```
+
 ## 烧写及执行
 
 供电方式：使用 Micro USB 连接电脑和板子上的J8(Debug Link)。

@@ -64,5 +64,15 @@
       <type>2</type>
       <locationURI>$%7BPARENT-1-PROJECT_LOC%7D/libraries</locationURI>
     </link>
+    <link>
+      <name>rt-thread/bsp/hc32/platform</name>
+      <type>2</type>
+      <locationURI>PARENT-1-PROJECT_LOC/platform</locationURI>
+    </link>
+    <link>
+      <name>rt-thread/bsp/hc32/tests</name>
+      <type>2</type>
+      <locationURI>PARENT-1-PROJECT_LOC/tests</locationURI>
+    </link>
   </linkedResources>
 </projectDescription>

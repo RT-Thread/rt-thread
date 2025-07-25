@@ -156,7 +156,7 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         _ebss = .;
-        __bss_end__ = _ebss;
+        __bss_end = _ebss;
     } >RAM
 
     .ramb_bss :

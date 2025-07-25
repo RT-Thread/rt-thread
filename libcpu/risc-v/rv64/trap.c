@@ -92,6 +92,15 @@ rt_weak void rt_hw_soft_irq_isr(void)
 
 }
 
+rt_weak int rt_hw_tick_isr(void)
+{
+    return 0;
+}
+
+rt_weak void rt_hw_irq_isr(void)
+{
+
+}
 
 rt_weak rt_size_t handle_trap(rt_size_t cause, rt_size_t epc, rt_size_t *sp)
 {

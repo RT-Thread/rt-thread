@@ -1,11 +1,17 @@
 # for module compiling
 import os
 Import('RTT_ROOT')
+Import('env')
 from building import *
 
 cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
+
+# STM32F205xx || STM32F207xx || STM32F215xx
+# STM32F217xx
+# You can select chips from the list above
+env.Append(CPPDEFINES = ['STM32F207xx'])
 
 for d in list:
     path = os.path.join(cwd, d)

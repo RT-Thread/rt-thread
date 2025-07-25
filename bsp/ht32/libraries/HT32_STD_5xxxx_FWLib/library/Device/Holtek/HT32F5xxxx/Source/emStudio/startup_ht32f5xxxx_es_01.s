@@ -6,8 +6,8 @@
 /*                                                                                                         */
 /*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_es_01.s
-;  Version          : $Rev:: 6953         $
-;  Date             : $Date:: 2023-05-30 #$
+;  Version          : $Rev:: 7848         $
+;  Date             : $Date:: 2024-07-16 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -24,10 +24,15 @@
 ;   HT32F0006
 ;   HT32F61352
 ;   HT50F32003
+;   HT50F3200U
 ;   HT32F62030, HT32F62040, HT32F62050
+;   HT32F62140
 ;   HT32F67741
 ;   HT32F67232
 ;   HT32F67233
+;   HT32F59045
+;   MXTX52231
+;   MXTX52352
 */
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
@@ -44,12 +49,17 @@
 ;//      <10=> HT32F0006
 ;//      <10=> HT32F61352
 ;//      <4=> HT50F32003
+;//      <2=> HT50F3200U
 ;//      <2=> HT32F67741
 ;//      <1=> HT32F67232
 ;//      <1=> HT32F67233
 ;//      <1=> HT32F62030
 ;//      <2=> HT32F62040
 ;//      <5=> HT32F62050
+;//      <2=> HT32F62140
+;//      <2=> HT32F59045
+;//      <2=> MXTX52231
+;//      <4=> MXTX52352
 */
     .equ    USE_HT32_CHIP_SET, 0
 
@@ -71,12 +81,15 @@
     .equ _HT32FWID, 0x00000006
     .equ _HT32FWID, 0x00061352
     .equ _HT32FWID, 0x00032003
+    .equ _HT32FWID, 0x0003200F
     .equ _HT32FWID, 0x00062030
     .equ _HT32FWID, 0x00062040
     .equ _HT32FWID, 0x00062050
+    .equ _HT32FWID, 0x00062140
     .equ _HT32FWID, 0x00067741
     .equ _HT32FWID, 0x00067232
-    .equ _HT32FWID, 0x00067233    
+    .equ _HT32FWID, 0x00067233
+    .equ _HT32FWID, 0x00059045
 */
 
     .equ HT32F52220_30, 1
@@ -89,12 +102,17 @@
     .equ HT32F0006,     10
     .equ HT32F61352,    10
     .equ HT50F32003,    4
+    .equ HT50F3200U,    2
     .equ HT32F62030,    1
     .equ HT32F62040,    2
     .equ HT32F62050,    5
+    .equ HT32F62140,    2
     .equ HT32F67741,    2
     .equ HT32F67232,    1
     .equ HT32F67233,    1
+    .equ HT32F59045,    2
+    .equ MXTX52231,     2
+    .equ MXTX52352,     4
 
   .if USE_HT32_CHIP_SET == 0
   .else

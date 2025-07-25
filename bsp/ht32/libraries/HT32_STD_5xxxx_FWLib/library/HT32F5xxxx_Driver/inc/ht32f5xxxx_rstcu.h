@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_rstcu.h
- * @version $Rev:: 7115         $
- * @date    $Date:: 2023-08-11 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the Reset Control Unit library.
  *************************************************************************************************************
  * @attention
@@ -87,7 +87,7 @@ typedef union
     unsigned long            :1;    // Bit 14
     unsigned long AES        :1;    // Bit 15
 
-    #ifdef USE_HT32F65230_40
+    #if defined(USE_HT32F65230_40) || defined(USE_HT32F65232)
     unsigned long DIV        :1;    // Bit 16
     #else
     unsigned long            :1;    // Bit 16
@@ -100,7 +100,7 @@ typedef union
     unsigned long            :1;    // Bit 22
     unsigned long            :1;    // Bit 23
 
-    #ifndef USE_HT32F65230_40
+    #if !defined(USE_HT32F65230_40) && !defined(USE_HT32F65232)
     unsigned long DIV        :1;    // Bit 24
     #else
     unsigned long            :1;    // Bit 24
@@ -108,8 +108,8 @@ typedef union
     unsigned long QSPI       :1;    // Bit 25
     unsigned long RF         :1;    // Bit 26
     unsigned long            :1;    // Bit 27
-    unsigned long            :1;    // Bit 28
-    unsigned long            :1;    // Bit 29
+    unsigned long CORDIC     :1;    // Bit 28
+    unsigned long PID0       :1;    // Bit 29
     unsigned long            :1;    // Bit 30
     unsigned long            :1;    // Bit 31
 
@@ -176,8 +176,11 @@ typedef union
     unsigned long            :1;    // Bit 20
     unsigned long DAC0       :1;    // Bit 21
     unsigned long CMP        :1;    // Bit 22
+    #if defined(USE_HT32F66242) || defined(USE_HT32F66246)
+    unsigned long PGA        :1;    // Bit 23
+    #else
     unsigned long OPA        :1;    // Bit 23
-
+    #endif
     unsigned long ADC0       :1;    // Bit 24
     unsigned long ADC1       :1;    // Bit 25
     unsigned long            :1;    // Bit 26

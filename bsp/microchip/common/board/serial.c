@@ -34,7 +34,7 @@ static void serial_rxcallback(const struct usart_async_descriptor *const io_desc
 
     do {
         ringbuffer_get((struct ringbuffer *const)&io_descr->rx, &data);
-        rt_ringbuffer_putchar(&(rx_fifo->rb), data);
+        rt_ringbuffer_putchar_force(&rx_fifo->rb, data);
     } while (0); // maybe not only one byte
 
 #endif

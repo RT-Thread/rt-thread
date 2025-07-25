@@ -5,36 +5,43 @@ config SOC_SERIES_STM32F0
     bool
     select ARCH_ARM_CORTEX_M0
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32F0_HAL_DRIVER
 
 config SOC_SERIES_STM32F1
     bool
     select ARCH_ARM_CORTEX_M3
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32F1_HAL_DRIVER
 
 config SOC_SERIES_STM32F2
     bool
     select ARCH_ARM_CORTEX_M3
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32F2_HAL_DRIVER
 
 config SOC_SERIES_STM32F3
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32F3_HAL_DRIVER
 
 config SOC_SERIES_STM32F4
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32F4_HAL_DRIVER
 
 config SOC_SERIES_STM32F7
     bool
     select ARCH_ARM_CORTEX_M7
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32F7_HAL_DRIVER
 
 config SOC_SERIES_STM32L0
     bool
     select ARCH_ARM_CORTEX_M0
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32L0_HAL_DRIVER
 
 config SOC_SERIES_STM32L1
     bool
@@ -51,46 +58,61 @@ config SOC_SERIES_STM32L5
     bool
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32L5_HAL_DRIVER
 
 config SOC_SERIES_STM32G0
     bool
     select ARCH_ARM_CORTEX_M0
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32G0_HAL_DRIVER
 
 config SOC_SERIES_STM32G4
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32G4_HAL_DRIVER
 
 config SOC_SERIES_STM32H7
     bool
     select ARCH_ARM_CORTEX_M7
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32H7_HAL_DRIVER
+
+config SOC_SERIES_STM32H7RS
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select SOC_FAMILY_STM32
+    select PKG_USING_STM32H7RS_HAL_DRIVER
 
 config SOC_SERIES_STM32U5
     bool
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32U5_HAL_DRIVER
 
 config SOC_SERIES_STM32H5
     bool
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32H5_HAL_DRIVER
 
 config SOC_SERIES_STM32MP1
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32MP1_M4_HAL_DRIVER
 
 config SOC_SERIES_STM32WL
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32WL_HAL_DRIVER
 
 config SOC_SERIES_STM32WB
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32WB_HAL_DRIVER
 
 config BOARD_SERIES_STM32_NUCLEO_32
     bool

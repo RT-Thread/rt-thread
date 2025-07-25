@@ -10,6 +10,6 @@ if RT_USING_SENSOR
 
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
-        select PKG_USING_RT_VSNPRINTF_FULL if RT_USING_SENSOR_V2
+        select RT_KLIBC_USING_VSNPRINTF_STANDARD if RT_USING_SENSOR_V2
         default y
 endif

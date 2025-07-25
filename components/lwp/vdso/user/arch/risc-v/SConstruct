@@ -1,0 +1,62 @@
+import os
+import sys
+import subprocess
+
+arguments = sys.argv[2]
+vdso_usr  = arguments
+vdso_path = os.path.join(vdso_usr, '..', '..', '..')
+
+EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
+PREFIX    = os.getenv('RTT_CC_PREFIX') or 'riscv64-none-elf-'
+
+def get_riscv64_default_arch_abi(gcc_bin):
+    try:
+        result = subprocess.check_output(
+            [gcc_bin, '-Q', '--help=target'],
+            universal_newlines=True
+        )
+        arch = None
+        abi = None
+        for line in result.splitlines():
+            if '-march=' in line:
+                arch = line.strip().split()[1]
+                arch = arch.split('_')[0]  # Get the base architecture, e.g., rv64imafdc
+            if '-mabi=' in line and 'option' not in line:
+                abi = line.strip().split()[1]
+        return arch, abi
+    except Exception as e:
+        print("Error getting arch/abi:", e)
+        return None, None
+
+# get the gcc path
+CC_BIN = PREFIX + 'gcc'
+arch, abi = get_riscv64_default_arch_abi(CC_BIN)
+if arch and abi:
+    DEVICE = f' -march={arch} -mabi={abi} '
+else:
+    DEVICE = ' -march=rv64imafdc -mabi=lp64'  # fallback
+
+CC      = PREFIX + 'gcc'
+CPP     = PREFIX + 'cpp'
+AS      = PREFIX + 'gcc'
+AR      = PREFIX + 'ar'
+LINK    = PREFIX + 'gcc'
+
+AFLAGS  = ' -x assembler-with-cpp'
+CFLAGS  = DEVICE + ' -Wall -Wno-cpp -std=gnu99 -fdiagnostics-color=always -fPIC -O2'
+LFLAGS  = DEVICE + ' -Bsymbolic -Wl,--gc-sections -T {path}/vdso.lds'.format(path=vdso_usr)
+CFLAGS += " -I . -I {vdso_path} ".format(vdso_path=vdso_path)
+
+src = Glob('*.c')
+env = Environment(tools=['gcc', 'link'],
+    AS   = AS,   ASFLAGS = AFLAGS,
+    CC   = CC,   CFLAGS  = CFLAGS,
+    CPP  = CPP,  AR      = AR,
+    LINK = LINK, LINKFLAGS = LFLAGS)
+env.PrependENVPath('PATH', EXEC_PATH)
+
+target = os.path.join(vdso_path, 'user', 'build', 'libvdso.so')
+shared_lib = env.SharedLibrary(target=target, source=src)
+Clean(shared_lib, '{vdso_usr}/vdso.lds'.format(vdso_usr=vdso_usr))
+Clean(shared_lib, '.sconsign.dblite')
+env.Default(shared_lib)

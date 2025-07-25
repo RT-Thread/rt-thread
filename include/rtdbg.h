@@ -113,32 +113,6 @@ extern "C" {
     rt_kprintf("\n")
 #endif /* DBG_COLOR */
 
-/*
- * static debug routine
- * NOTE: This is a NOT RECOMMENDED API. Please using LOG_X API.
- *       It will be DISCARDED later. Because it will take up more resources.
- */
-#define dbg_log(level, fmt, ...)                            \
-    if ((level) <= DBG_LEVEL)                               \
-    {                                                       \
-        switch(level)                                       \
-        {                                                   \
-            case DBG_ERROR:   _DBG_LOG_HDR("E", 31); break; \
-            case DBG_WARNING: _DBG_LOG_HDR("W", 33); break; \
-            case DBG_INFO:    _DBG_LOG_HDR("I", 32); break; \
-            case DBG_LOG:     _DBG_LOG_HDR("D", 0); break;  \
-            default: break;                                 \
-        }                                                   \
-        rt_kprintf(fmt, ##__VA_ARGS__);                     \
-        _DBG_COLOR(0);                                      \
-    }
-
-#define dbg_here                                            \
-    if ((DBG_LEVEL) <= DBG_LOG){                            \
-        rt_kprintf(DBG_SECTION_NAME " Here %s:%d\n",        \
-            __FUNCTION__, __LINE__);                        \
-    }
-
 #define dbg_log_line(lvl, color_n, fmt, ...)                \
     do                                                      \
     {                                                       \
@@ -151,10 +125,6 @@ extern "C" {
 #define dbg_raw(...)         rt_kprintf(__VA_ARGS__);
 
 #else
-#define dbg_log(level, fmt, ...)
-#define dbg_here
-#define dbg_enter
-#define dbg_exit
 #define dbg_log_line(lvl, color_n, fmt, ...)
 #define dbg_raw(...)
 #endif /* DBG_ENABLE */

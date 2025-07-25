@@ -1,0 +1,11 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('bypass*.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = ['UTEST_SERIAL_BYPASS'], CPPPATH = CPPPATH)
+
+Return('group')

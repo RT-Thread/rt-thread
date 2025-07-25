@@ -30,6 +30,7 @@ extern "C" {
 #include "qspi_config.h"
 #include "pulse_encoder_config.h"
 #include "timer_config.h"
+#include "tmr_capture_config.h"
 
 #ifdef __cplusplus
 }

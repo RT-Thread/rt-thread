@@ -1,0 +1,7 @@
+devices.gpio:
+    kconfig: 
+      - CONFIG_BSP_USING_GPIO=y
+devices.uart:
+    kconfig:
+      - CONFIG_BSP_USING_UART=y
+      - CONFIG_BSP_USING_UART2=y

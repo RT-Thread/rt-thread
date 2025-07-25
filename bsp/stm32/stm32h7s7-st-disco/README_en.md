@@ -57,7 +57,15 @@ This section is for developers who need to use more development board resources 
 
 This BSP provides an MDK5 project for developers and supports the GCC development environment. Below is an example using the MDK5 development environment to start the system.
 
-#### Hardware Connection 
+**Attention please！！！**
+
+Before the compilation work, please open ENV and execute the following command (this command is used to pull the necessary HAL library and CMSIS library, otherwise it cannot be compiled)：
+
+```bash
+pkgs --update
+```
+
+#### Hardware Connection
 
 Connect the ST-Link port of the development board to the PC using a data cable and ensure that the power supply jumpers on the board are properly configured.
 

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include "drv_ioremap.h"
 
 #define TOP_BASE        0x03000000
 #define DW_SDIO0_BASE               0x04320000
@@ -58,9 +59,9 @@ static inline int mmc_op_multi(uint32_t opcode)
 #define SDIO0_IRQ           36
 #define SDIO1_IRQ           38
 #define SDIO2_IRQ           34
-#define SDIO0_BASE          DW_SDIO1_BASE
-#define SDIO1_BASE          DW_SDIO0_BASE
-#define SDIO2_BASE          DW_SDIO2_BASE
+#define SDIO0_BASE          DRV_IOREMAP((void *)DW_SDIO1_BASE, 0x1000)
+#define SDIO1_BASE          DRV_IOREMAP((void *)DW_SDIO0_BASE, 0x1000)
+#define SDIO2_BASE          DRV_IOREMAP((void *)DW_SDIO2_BASE, 0x1000)
 
 #define SDIF_DMA_ADDRESS               0x00
 #define SDIF_BLOCK_SIZE                0x04
@@ -271,7 +272,7 @@ static inline int mmc_op_multi(uint32_t opcode)
 #define REG_SDIO0_DAT3_PIO_VALUE    (0x0)
 
 /*SDIO 1 register and bit flag*/
-#define RTCIO_BASE (0x5027000)
+#define RTCIO_BASE                 (uintptr_t)DRV_IOREMAP((void *)0x5027000, 0x1000)
 #define REG_SDIO1_PAD_MASK      (0xFFFFFFF3)
 #define REG_SDIO1_PAD_SHIFT     (2)
 
@@ -311,13 +312,13 @@ static inline int mmc_op_multi(uint32_t opcode)
 #define REG_SDIO1_DAT3_PIO_REG      (PINMUX_BASE + 0xD0)
 #define REG_SDIO1_DAT3_PIO_VALUE    (0x0)
 
-#define RTC_CTRL_BASE       0x5025000
+#define RTC_CTRL_BASE       (uintptr_t)DRV_IOREMAP((void *)0x5025000, 0x1000)
 #define RTCSYS_CLKMUX       (RTC_CTRL_BASE + 0x1C)
 #define RTCSYS_CLKBYP       (RTC_CTRL_BASE + 0x30)
 #define RTCSYS_MCU51_ICTRL1 (RTC_CTRL_BASE + 0x7C)
 
-#define RTCSYS_CTRL_BASE    0x03000000
-#define RTCSYS_CTRL     (RTCSYS_CTRL_BASE + 0x248)
+#define RTCSYS_CTRL_BASE    (uintptr_t)DRV_IOREMAP((void *)0x03000000, 0x1000)
+#define RTCSYS_CTRL         (RTCSYS_CTRL_BASE + 0x248)
 
 /*SDIO 2 register and bit flag*/
 #define REG_SDIO2_PAD_MASK (0xFFFFFFF3)
@@ -365,10 +366,10 @@ static inline int mmc_op_multi(uint32_t opcode)
 #define REG_SDIO2_DAT3_PIO_REG (PINMUX_BASE + 0x58)
 #define REG_SDIO2_DAT3_PIO_VALUE (0x0)
 
-
-#define MMC_SDIO0_PLL_REGISTER 0x3002070
-#define MMC_SDIO1_PLL_REGISTER 0x300207C
-#define MMC_SDIO2_PLL_REGISTER 0x3002064
+#define CLK_DIV_BASE           (uintptr_t)DRV_IOREMAP((void *)0x3002000, 0x1000)
+#define MMC_SDIO0_PLL_REGISTER (CLK_DIV_BASE + 0x70)
+#define MMC_SDIO1_PLL_REGISTER (CLK_DIV_BASE + 0x7C)
+#define MMC_SDIO2_PLL_REGISTER (CLK_DIV_BASE + 0x64)
 #define MMC_MAX_CLOCK_DIV_VALUE (0x40009)
 #define CLOCK_BYPASS_SELECT_REGISTER (0x3002030)
 

@@ -5,5 +5,5 @@ src     = list()
 CPPPATH = [cwd]
 group   = []
 
-group = DefineGroup('LIBADT', src, depend = ['RT_USING_ADT_BITMAP'], CPPPATH = CPPPATH)
+group = DefineGroup('Utilities', src, depend = ['RT_USING_ADT_BITMAP'], CPPPATH = CPPPATH)
 Return('group')

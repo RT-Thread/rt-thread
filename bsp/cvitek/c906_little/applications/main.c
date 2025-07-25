@@ -12,7 +12,7 @@
 
 int main(void)
 {
-    rt_kprintf("Hello, RISC-V!\n");
+    rt_kprintf("Hello, RISC-V/C906L !\n");
 
     return 0;
 }

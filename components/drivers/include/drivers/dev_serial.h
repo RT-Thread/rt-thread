@@ -16,10 +16,9 @@
 
 #include <rtthread.h>
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    Serial           Serial
- *
+ * @defgroup    group_drivers_serial Serial
  * @brief       Serial driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -76,7 +75,7 @@
  *     if (!serial)
  *     {
  *         rt_kprintf("find %s failed!\n", uart_name);
- *         return RT_ERROR;
+ *         return -RT_ERROR;
  *     }
  *
  *
@@ -97,7 +96,7 @@
  *     }
  *     else
  *     {
- *         ret = RT_ERROR;
+ *         ret = -RT_ERROR;
  *     }
  *
  *     return ret;
@@ -105,13 +104,11 @@
  *
  * MSH_CMD_EXPORT(uart_sample, uart device sample);
  * @endcode
- *
- * @ingroup     Drivers
  */
 
 
 /*!
- * @addtogroup Serial
+ * @addtogroup group_drivers_serial
  * @{
  */
 #define BAUD_RATE_2400                  2400
@@ -264,7 +261,9 @@ struct rt_serial_device
     void *serial_tx;
 
     struct rt_spinlock spinlock;
-
+#ifdef RT_USING_SERIAL_BYPASS
+    struct rt_serial_bypass* bypass;
+#endif
     struct rt_device_notify rx_notify;
 };
 typedef struct rt_serial_device rt_serial_t;
@@ -287,7 +286,7 @@ struct rt_uart_ops
  * @brief Serial interrupt service routine
  * @param serial    serial device
  * @param event     event mask
- * @ingroup  Serial
+ * @ingroup group_drivers_serial
  */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
 
@@ -301,7 +300,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
  * @return rt_err_t        error code
  * @note This function will register a serial device to system device list,
  *       and add a device object to system object list.
- * @ingroup  Serial
+ * @ingroup group_drivers_serial
  */
 rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                const char              *name,
@@ -314,7 +313,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
  * @param serial    serial device
  * @return rt_err_t error code
  *
- * @ingroup  Serial
+ * @ingroup group_drivers_serial
  */
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial);
 

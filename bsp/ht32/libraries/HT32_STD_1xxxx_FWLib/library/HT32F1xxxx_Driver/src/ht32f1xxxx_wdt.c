@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_wdt.c
- * @version $Rev:: 2797         $
- * @date    $Date:: 2022-11-28 #$
+ * @version $Rev:: 3103         $
+ * @date    $Date:: 2024-06-24 #$
  * @brief   This file provides all the WDT firmware functions.
  *************************************************************************************************************
  * @attention
@@ -109,9 +109,9 @@ void WDT_Cmd(ControlStatus NewState)
  * @brief Configure the WDT to run or halt in sleep and deep sleep1 mode.
  * @param WDT_Mode:
  *   This parameter can be one of the following values:
- *     @arg MODE0_WDTSHLT_BOTH  : WDT runs in sleep and deep sleep1 mode
- *     @arg MODE0_WDTSHLT_SLEEP : WDT runs in sleep mode
- *     @arg MODE0_WDTSHLT_HALT  : WDT halts in sleep and deep sleep1 mode
+ *     @arg WDT_SLEEP_HALT_NONE      : WDT no halt
+ *     @arg WDT_SLEEP_HALT_DEEPSLEEP : WDT halts in deep sleep1 mode
+ *     @arg WDT_SLEEP_HALT_ALL       : WDT halts in sleep and deep sleep1 mode
  * @retval None
  ************************************************************************************************************/
 void WDT_HaltConfig(u32 WDT_Mode)

@@ -8,7 +8,7 @@
 
 #define DEV_FORMAT "/dev/ttyUSB%d"
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_ch34x_buf[64];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_ch34x_buf[USB_ALIGN_UP(64, CONFIG_USB_ALIGN_SIZE)];
 
 #define CONFIG_USBHOST_MAX_CP210X_CLASS 1
 
@@ -17,11 +17,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_ch34x *usbh_ch34x_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_CP210X_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_ch34x_class[devno], 0, sizeof(struct usbh_ch34x));
             g_ch34x_class[devno].minor = devno;
             return &g_ch34x_class[devno];
@@ -32,10 +32,10 @@ static struct usbh_ch34x *usbh_ch34x_class_alloc(void)
 
 static void usbh_ch34x_class_free(struct usbh_ch34x *ch34x_class)
 {
-    int devno = ch34x_class->minor;
+    uint8_t devno = ch34x_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(ch34x_class, 0, sizeof(struct usbh_ch34x));
 }
@@ -311,6 +311,7 @@ static int usbh_ch34x_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister CH34X Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_ch34x_stop(ch34x_class);
         }
@@ -370,9 +371,9 @@ const struct usbh_class_driver ch34x_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info ch34x_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS,
-    .class = 0xff,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = 0xff,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = ch34x_id_table,
     .class_driver = &ch34x_class_driver
 };

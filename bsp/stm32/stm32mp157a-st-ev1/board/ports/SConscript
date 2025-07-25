@@ -1,0 +1,88 @@
+import os
+from building import *
+
+objs = []
+cwd  = GetCurrentDir()
+
+# add general drivers
+src = []
+path =  [cwd]
+
+if GetDepend(['BSP_USING_SPI1']):
+    src += Glob('spi_sample.c')
+
+if GetDepend(['BSP_USING_PMIC']):
+    src += Glob('drv_pmic.c')
+
+if GetDepend(['BSP_USING_NAND']):
+    src += Glob('drv_nand.c')
+
+if GetDepend(['BSP_USING_GBE']):
+    src += Glob('eth/drv_eth.c')
+    path += [cwd + '/eth']
+
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('drv_sdcard.c')
+
+if GetDepend(['BSP_USING_EMMC']):
+    src += Glob('drv_emmc.c')
+
+if GetDepend(['BSP_USING_AUDIO']):
+    src += Glob('drv_wm8994.c')
+    src += Glob('drv_sound.c')
+
+if GetDepend(['BSP_USING_DCMI']):
+    src += Glob('drv_dcmi.c')
+    src += Glob('drv_ov5640.c')
+
+if GetDepend(['BSP_USING_MFX']):
+    src += Glob('drv_mfx.c')
+    src += Glob('mfxstm32l152.c')
+
+if GetDepend(['BSP_USING_FDCAN']):
+    src += Glob('drv_fdcan.c')
+
+if GetDepend(['BSP_USING_QSPI']):
+    src += Glob('drv_qspi_flash.c')
+
+if GetDepend(['BSP_USING_SPDIFRX']):
+    src += Glob('drv_spdifrx.c')
+
+if GetDepend(['BSP_USING_DFSDM']):
+    src += Glob('drv_dfsdm.c')
+
+if GetDepend(['BSP_USING_WWDG']):
+    src += Glob('drv_wwdg.c')
+
+if GetDepend(['BSP_USING_EXTI']):
+    src += Glob('drv_exti.c')
+
+if GetDepend(['BSP_USING_RNG']) or GetDepend(['BSP_USING_HASH']) or GetDepend(['BSP_USING_CRC']) or GetDepend(['BSP_USING_CRYP']):
+    src += Glob('crypto_sample.c')
+
+if GetDepend(['BSP_USING_PWR']):
+    src += Glob('drv_pwr.c')
+
+if GetDepend(['BSP_USING_LPTIM1']):
+    src += Glob('drv_lptim.c')
+
+if GetDepend(['BSP_USING_RS485']):
+    src += Glob('drv_rs485.c')
+
+if GetDepend(['BSP_USING_TIM14']):
+    src += Glob('timer_sample.c')
+
+if GetDepend(['BSP_USING_DMA']):
+    src += Glob('dma_sample.c')
+
+
+
+CPPDEFINES = ['CORE_CM4','NO_ATOMIC_64_SUPPORT','METAL_INTERNAL','METAL_MAX_DEVICE_REGIONS=2','VIRTIO_SLAVE_ONLY','STM32MP157Axx','__LOG_TRACE_IO_']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

@@ -30,7 +30,11 @@
 #define DBG_LVL     DBG_WARNING
 #include <rtdbg.h>
 
-#define sig_mask(sig_no)    (1u << sig_no)
+#ifdef RT_USING_MUSLLIBC
+    #define sig_mask(sig_no)    (1u << (sig_no - 1))
+#else
+    #define sig_mask(sig_no)    (1u << sig_no)
+#endif
 #define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)
 
 static struct rt_spinlock _thread_signal_lock = RT_SPINLOCK_INIT;
@@ -495,6 +499,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
             }
             else
             {
+                rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
                 return;
             }
         }

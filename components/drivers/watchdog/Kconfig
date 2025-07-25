@@ -1,3 +1,20 @@
-config RT_USING_WDT
+menuconfig RT_USING_WDT
     bool "Using Watch Dog device drivers"
     default n
+
+config RT_WDT_DW
+    bool "Synopsys DesignWare watchdog"
+    depends on RT_USING_DM
+    depends on RT_USING_WDT
+    depends on RT_USING_RESET
+    default n
+
+config RT_WDT_I6300ESB
+    bool "Intel 6300ESB Timer/Watchdog"
+    depends on RT_USING_DM
+    depends on RT_USING_WDT
+    depends on RT_USING_PCI
+
+if RT_USING_DM && RT_USING_WDT
+    osource "$(SOC_DM_WDT_DIR)/Kconfig"
+endif

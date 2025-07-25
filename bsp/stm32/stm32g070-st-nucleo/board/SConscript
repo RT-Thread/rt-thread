@@ -1,8 +1,5 @@
 import os
-import rtconfig
 from building import *
-
-Import('SDK_LIB')
 
 cwd = GetCurrentDir()
 
@@ -16,15 +13,7 @@ path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
 
-startup_path_prefix = SDK_LIB
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
-if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/Device/ST/STM32G0xx/Source/Templates/gcc/startup_stm32g070xx.s']
-elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/Device/ST/STM32G0xx/Source/Templates/arm/startup_stm32g070xx.s']
-elif rtconfig.PLATFORM in ['iccarm']:
-    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/Device/ST/STM32G0xx/Source/Templates/iar/startup_stm32g070xx.s']
 
-CPPDEFINES = ['STM32G070xx']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 Return('group')

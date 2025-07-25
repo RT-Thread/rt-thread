@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_flash.h
- * @version $Rev:: 5496         $
- * @date    $Date:: 2021-07-19 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the FLASH library.
  *************************************************************************************************************
  * @attention
@@ -97,8 +97,13 @@ typedef struct
 #if (LIBCFG_FMC_WAIT_STATE_2)
 #define FLASH_WAITSTATE_2             (0x00000003)   /* FLASH two wait state                                */
 #endif
+#if (LIBCFG_FMC_WAIT_STATE_3)
+#define FLASH_WAITSTATE_3             (0x00000004)   /* FLASH three wait state                              */
+#endif
 
-#if (LIBCFG_FMC_WAIT_STATE_2)
+#if (LIBCFG_FMC_WAIT_STATE_3)
+#define FLASH_WAITSTATE_MAX           (FLASH_WAITSTATE_3)
+#elif (LIBCFG_FMC_WAIT_STATE_2)
 #define FLASH_WAITSTATE_MAX           (FLASH_WAITSTATE_2)
 #else
 #define FLASH_WAITSTATE_MAX           (FLASH_WAITSTATE_1)
@@ -159,7 +164,7 @@ void FLASH_PrefetchBufferCmd(ControlStatus NewState);
 #if (LIBCFG_FMC_BRANCHCACHE)
 void FLASH_BranchCacheCmd(ControlStatus NewState);
 #endif
-void FLASH_SetRemappingMode(FLASH_Vector RemapMode);
+void FLASH_SetRemappingMode(FLASH_Vector FLASH_BOOT_x);
 FLASH_State FLASH_ErasePage(u32 PageAddress);
 FLASH_State FLASH_EraseOptionByte(void);
 FLASH_State FLASH_MassErase(void);

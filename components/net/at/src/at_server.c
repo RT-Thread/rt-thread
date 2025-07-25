@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,8 @@
  * Date           Author       Notes
  * 2018-03-30     chenyong     first version
  * 2018-04-14     chenyong     modify parse arguments
+ * 2025-01-02     dongly       support SERIAL_V2
+ * 2025-04-18     RyanCw       support New SERIAL_V2
  */
 
 #include <at.h>
@@ -222,6 +224,7 @@ rt_size_t at_server_recv(at_server_t server, char *buf, rt_size_t size, rt_int32
         return 0;
     }
 
+#if (!defined(RT_USING_SERIAL_V2))
     while (1)
     {
         if (read_idx < size)
@@ -241,6 +244,13 @@ rt_size_t at_server_recv(at_server_t server, char *buf, rt_size_t size, rt_int32
             break;
         }
     }
+#else
+    rt_int32_t rx_timout = rt_tick_from_millisecond(timeout);
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timout);
+    read_idx = rt_device_read(server->device, 0, buf, size);
+    rx_timeout = RT_WAITING_FOREVER;
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timeout);
+#endif
 
     return read_idx;
 }
@@ -410,15 +420,27 @@ static rt_err_t at_server_getchar(at_server_t server, char *ch, rt_int32_t timeo
 {
     rt_err_t result = RT_EOK;
 
+#if (!defined(RT_USING_SERIAL_V2))
     while (rt_device_read(at_server_local->device, 0, ch, 1) == 0)
     {
-        rt_sem_control(at_server_local->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
         result = rt_sem_take(at_server_local->rx_notice, rt_tick_from_millisecond(timeout));
         if (result != RT_EOK)
         {
             return result;
         }
+        rt_sem_control(at_server_local->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
     }
+#else
+    rt_int32_t rx_timout = rt_tick_from_millisecond(timeout);
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timout);
+    result = rt_device_read(server->device, 0, ch, 1);
+    if(result <= 0)
+    {
+        result = -RT_ERROR;
+    }
+    rx_timeout = RT_WAITING_FOREVER;
+    rt_device_control(server->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void*)&rx_timeout);
+#endif
 
     return result;
 }
@@ -496,6 +518,7 @@ static void server_parser(at_server_t server)
     }
 }
 
+#if (!defined(RT_USING_SERIAL_V2))
 static rt_err_t at_rx_ind(rt_device_t dev, rt_size_t size)
 {
     if (size > 0)
@@ -505,6 +528,7 @@ static rt_err_t at_rx_ind(rt_device_t dev, rt_size_t size)
 
     return RT_EOK;
 }
+#endif
 
 #if defined(__ICCARM__) || defined(__ICCRX__)               /* for IAR compiler */
 #pragma section="RtAtCmdTab"
@@ -550,6 +574,7 @@ int at_server_init(void)
     rt_memset(at_server_local->recv_buffer, 0x00, AT_SERVER_RECV_BUFF_LEN);
     at_server_local->cur_recv_len = 0;
 
+#if (!defined(RT_USING_SERIAL_V2))
     at_server_local->rx_notice = rt_sem_create("at_svr", 0, RT_IPC_FLAG_FIFO);
     if (!at_server_local->rx_notice)
     {
@@ -557,13 +582,14 @@ int at_server_init(void)
         result = -RT_ENOMEM;
         goto __exit;
     }
+#endif
 
     /* Find and open command device */
     at_server_local->device = rt_device_find(AT_SERVER_DEVICE);
     if (at_server_local->device)
     {
         RT_ASSERT(at_server_local->device->type == RT_Device_Class_Char);
-
+#if (!defined(RT_USING_SERIAL_V2))
         rt_device_set_rx_indicate(at_server_local->device, at_rx_ind);
         /* using DMA mode first */
         open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
@@ -573,6 +599,10 @@ int at_server_init(void)
             open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
         }
         RT_ASSERT(open_result == RT_EOK);
+#else
+        open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
+        RT_ASSERT(open_result == RT_EOK);
+#endif
     }
     else
     {
@@ -608,10 +638,14 @@ __exit:
     {
         if (at_server_local)
         {
+
+#if (!defined(RT_USING_SERIAL_V2))
             if (at_server_local->rx_notice)
             {
                 rt_sem_delete(at_server_local->rx_notice);
             }
+#endif
+
             if (at_server_local->device)
             {
                 rt_device_close(at_server_local->device);

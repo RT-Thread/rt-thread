@@ -41,6 +41,8 @@ Each peripheral supporting condition for this BSP is as follows:
 | ------------------------ | --------------- | ------------------------------------------------------------ |
 | GPIO                     | Support         |                                                              |
 | UART                     | Support         | Using LUATOS_ESP32C3 development board requires connecting serial port to USB chip UART0_TX and UART0_RX (such as CP2102) |
+| I2C              | Supported     | Hardware I2C may encounter transmission errors. Software I2C is recommended, but it occupies a general hardware system timer. |
+| SPI              | Supported     | Supports custom configuration |
 | JTAG debug               | Support         | ESP32C3 usb-linked development boards can be debugged        |
 | WIFI | Partial support | There are currently some problems, such as `rt_mq_recive` cannot be used in ISR, etc. |
 | BLE | Partially supported | There are currently some problems, such as `NimBLE` running errors after starting for a while |
@@ -90,6 +92,48 @@ Type "apropos word" to search for commands related to "word".
 ```
 
 ## Environment construction and compilation
+
+### Docker deploy
+
+If you want to lightly experiment with the ESP32-C3, it is recommended to quickly set up the environment using Docker. Otherwise, use a native environment setup.
+
+  1. Ensure Docker is installed and the inner network environment is properly configured. You can obtain the Docker image either via a pre-built docker image or by building it from a Dockerfile. Note that the docker image may not always be up-to-date, while the Dockerfile allows you to fetch the latest main branch. Below are the setup commands:
+      * Setting up the development environment using a Dockerfile:
+
+      ```sh
+      cd docker
+      sudo docker build --build-arg HTTP_PROXY=http://ip:port --build-arg HTTPS_PROXY=http://ip:port -t image_name .
+      ``` 
+      Replace ip:port with your proxy server's IP and port. Otherwise, network issues may occur when pulling repositories.
+
+      * Setting up the development environment using a pre-built Docker image:
+
+      ```sh
+      sudo docker pull 1078249029/rtthread_esp32c3:latest
+      ```
+
+  2. Enter the Docker container:
+  
+      ```sh
+      sudo docker run -it --device=/dev/ttyUSB* image_name
+      ```
+
+      The --device parameter is used for debugging and flashing code. You can obtain the corresponding port by running ls /dev/ttyUSB* on the host machine. If you used the pre-built Docker image, replace image_name with 1078249029/rtthread_esp32c3.
+
+  3. Using the Environment:
+   
+      Flashing firmware:
+
+        ```sh
+        sudo esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
+        ```
+
+      Debugging:
+
+        ```sh
+        sudo minicom -c on -D /dev/ttyUSB*
+        ```
+### Native setup
 
 1. Download the RISC-V toolchain:
 
@@ -180,7 +224,8 @@ or we can check ESPRESSIF's [Troubleshooting](https://docs.espressif.com/project
 Maintainer: 
 
 - [supperthomas](https://github.com/supperthomas) email address: [78900636@qq.com](mailto:78900636@qq.com)
--  [tangzz98](https://github.com/tangzz98) email address: [tangz98@outlook.com](tangz98@outlook.com)
+- [tangzz98](https://github.com/tangzz98) email address: [tangz98@outlook.com](tangz98@outlook.com)
+- [wumingzi](https://github.com/1078249029) email address: [1078249029@qq.com](1078249029@qq.com)
 
 Special thanks to [chenyingchun0312](https://github.com/chenyingchun0312) for providing support on the RISC-V part working.
 

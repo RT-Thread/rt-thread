@@ -1,6 +1,0 @@
-menu "SMP Testcase"
-
-config UTEST_SMP_CALL_FUNC
-    bool "Call random cpu to run func"
-    default n
-endmenu

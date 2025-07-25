@@ -2,47 +2,50 @@ import os
 import rtconfig
 import subprocess
 from building import *
-Import('RTT_ROOT')
 
-group = []
-
-cwd = GetCurrentDir()
+group   = []
+cwd     = GetCurrentDir()
 CPPPATH = [cwd, cwd + "/kernel"]
+list    = os.listdir(cwd)
+src     = Glob('kernel/*.c') + Glob('kernel/*.S')
 
 if not GetDepend(['RT_USING_VDSO']):
     Return('group')
 
-if rtconfig.ARCH != "aarch64":
-    src = Glob('*.c')
-    group = DefineGroup('VDSO', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
-    Return('group')
-
-list = os.listdir(cwd)
-src    = Glob('kernel/*.c')
-src    +=Glob('kernel/*.S')
-
-if not os.path.exists(cwd + "/user/vdso.lds"):
-    Preprocessing("user/vdso.lds.S", ".lds", CPPPATH=[cwd])
-
-#aarch64 vdso xmake
-# vdso_file = os.path.join(cwd, 'usr', 'xmake.lua')
-# command = ["xmake", "-F", vdso_file]
-# clean = ["xmake", "clean"]
-
-vdso_file = os.path.join(cwd, 'user', 'SConstruct')
-command = ["scons", "-f", vdso_file]
-clean = ["scons", "-f", vdso_file, "--clean"]
-
-if not GetOption('clean'):
-    result = subprocess.run(command)
+if rtconfig.ARCH != "aarch64" and rtconfig.ARCH != "risc-v":
+    # not supported arch
+    src = []
 else:
-    result = subprocess.run(clean)
+    if not hasattr(rtconfig, 'CPP') or rtconfig.CPP is None:
+        rtconfig.CPP = rtconfig.PREFIX + 'cpp'
+    if not hasattr(rtconfig, 'CPPFLAGS') or rtconfig.CPPFLAGS is None:
+        rtconfig.CPPFLAGS = ' -E -P -x assembler-with-cpp'
 
-if result.returncode == 0:
+    if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"):
+        Preprocessing("user/arch/" + rtconfig.ARCH + "/vdso.lds.S", ".lds", CPPPATH=[cwd])
+
+    vdso_arch = os.path.join(cwd, 'user',"arch", rtconfig.ARCH)
+
+    process_env = os.environ.copy()
+    if hasattr(rtconfig, 'EXEC_PATH') and rtconfig.EXEC_PATH is not None:
+        process_env['RTT_EXEC_PATH'] = rtconfig.EXEC_PATH
+    if hasattr(rtconfig, 'PREFIX') and rtconfig.PREFIX is not None:
+        process_env['RTT_CC_PREFIX'] = rtconfig.PREFIX
+    if hasattr(rtconfig, 'DEVICE') and rtconfig.DEVICE is not None:
+        process_env['RTT_DEVICE'] = rtconfig.DEVICE
+
+    command = ["scons", "-C", vdso_arch]
+    if GetOption('clean'):
+        command = ["scons", "-C", vdso_arch, "--clean"] 
+
+    try:
+        result = subprocess.run(command, env=process_env, check=True)
+    # generic error handle
+    except :
+        print('exec command: "%s" failed.' % ' '.join(command))
+        exit(1)
+
     print("Command executed successfully")
-else:
-    print("Command failed with exit code:", result.returncode)
-    exit(1)
 
-group = DefineGroup('VDSO', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
+group = DefineGroup('lwProcess', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
 Return('group')

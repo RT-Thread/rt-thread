@@ -20,6 +20,7 @@
 #include "fparameters.h"
 #include "fio.h"
 #include "faarch.h"
+#include "tlb.h"
 
 #ifdef RT_USING_SMART
 #include"ioremap.h"
@@ -56,6 +57,7 @@ rt_inline uintptr_t platform_get_gic_redist_base(void)
     {
 #ifdef RT_USING_SMART
         uintptr_t redis_base_virtual = (uintptr_t)rt_ioremap((void *)redis_base, GICV3_RD_OFFSET);
+        rt_hw_tlb_invalidate_all();
         if (redis_base_virtual == 0)
         {
             continue;

@@ -1,5 +1,9 @@
 menu "Kernel Testcase"
 
+config UTEST_OBJECT_TC
+    bool "object test"
+    default y
+
 config UTEST_MEMHEAP_TC
     bool "memheap stability test"
     default y

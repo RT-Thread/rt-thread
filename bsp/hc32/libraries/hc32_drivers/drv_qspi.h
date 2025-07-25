@@ -39,7 +39,7 @@ struct hc32_qspi_config
     struct hc32_qspi_irq_config err_irq;
 #ifdef BSP_QSPI_USING_DMA
     struct dma_config           *dma_qspi;
-#if defined (HC32F448)
+#if defined (HC32F448) || defined (HC32F4A8)
     rt_uint16_t                 *dma_tx_buf;
     rt_uint16_t                 dma_tx_buf_size;    /* unit: half-word, DMA data width of QSPI transmitting is 16bit */
 #endif

@@ -1,0 +1,236 @@
+# List of maintainers of the RT-Thread open-source community
+#
+# This file manages the maintainers and their associated sections in the repository.
+# Developers should update this file according to project needs.
+# The following are explanations of each field and guidelines for adding new
+# maintainer entries.
+#
+# When adding new entries, please follow the format:
+#
+# 1. **tag** - Assign a unique tag to each entry for identifying the code module
+#    or functionality.
+#    - The tag should be concise and descriptive, such as `workflow`, `libc`...
+#    - **Rule for Adding**: Use a new tag when adding a new functionality or
+#      module to ensure it clearly describes the area of responsibility.
+#
+# 2. **path** - Specify the directory or file path that the maintainer is responsible for.
+#    - The path must be relative to the repository's root directory and can
+#      refer to either a single file or a folder.
+#    - If the maintainer is responsible for all files in a directory, use the
+#      directory path; if it's for a specific file, provide the full file path.
+#    - **Rule for Adding**: Ensure that the path correctly points to the relevant
+#      code location. Please note that a tag should correspond to only one path.
+#      Currently, multiple paths are not supported.
+#
+# 3. **owners** - List the maintainers responsible for the section, including
+#    their GitHub usernames and contact information.
+#    - The owners should be listed as a comma-separated list if there are multiple
+#      maintainers.
+#    - Format: `Name(GitHub username)<email address>`.
+#    - **Rule for Adding**: Ensure that the listed GitHub usernames are correct,
+#      and the maintainers are aware of their responsibilities and duties.
+#
+# Example: How to Add a Maintainer Entry
+#
+# The following is a template for adding new entries in the MAINTAINER file:
+#
+# tag: <module-name>
+# path: <file-or-directory-path>
+# owners: <maintainer1>, <maintainer2>, ...
+#
+# When adding entries, please follow these guidelines:
+# - Ensure the `tag` is unique and descriptive.
+# - Ensure the `path` points to the correct location in the repository.
+# - Ensure the `owners` are accurate and that all new maintainers are aware of
+#   their responsibilities.
+#
+# Example Entry:
+# tag: example-module
+# path: example/module/path
+# owners: John Doe(johndoe)<johndoe@example.com>, Jane Smith(janesmith)<janesmith@example.com>
+
+# Note:
+# - Each entry includes a `tag` that identifies the module or functionality, a
+#   `path` that points to the relevant code location, and `owners` who are the
+#   maintainers for that part of the codebase.
+#
+# - If there are multiple entries, each entry should be separated by a blank line.
+#   Within a single entry, there is no need to insert blank lines between the
+#   tag, path, and owners.
+#
+# - Each entry must be sorted in alphabetical order with tag as the keyword.
+#   It is recommended that the tag naming method follow the directory path in
+#   the code tree. For example, if the entry path is 'bsp/cvitek', then the tag
+#   name is 'bsp_cvitek'. It is recommended to use all lowercase letters and not
+#   mix uppercase and lowercase letters.
+
+# Below are existing maintainer entries, divided by module:
+
+tag: bsp_cvitek
+path: bsp/cvitek
+owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
+
+tag: bsp_esp32_c3
+path: bsp/ESP32_C3/builtin_imgs
+path: bsp/ESP32_C3/drivers
+owners: Damoshed_Xu(xu18838022837)<496121493@qq.com>
+
+tag: bsp_gd32105c-eval
+path: bsp/gd32/arm/gd32105c-eval
+owners: Xiansong Cao(CXSforHPU)<19511928573@163.com>
+
+tag: bsp_gd32470z-lckfb
+path: bsp/gd32/arm/gd32470z-lckfb
+owners: Wu Ying Xiang(godmial)<2633967641@qq.com>
+
+tag: bsp_gd32e503v-eval
+path: bsp/gd32/arm/gd32e503v-eval
+owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
+
+tag: bsp_hc32
+path: bsp/hc32
+owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
+
+tag: bsp_k230
+path: bsp/k230
+owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
+
+tag: bsp_lpc4088
+path: bsp/nxp/lpc/lpc408x
+owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
+
+tag: bsp_mcxa
+path: bsp/nxp/mcx/mcxa
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_mcxn
+path: bsp/nxp/mcx/mcxn
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_mm32f526x
+path: bsp/mm32f526x
+owners: Huanyi Mai(Maihuanyi)<m19825309307@163.com>
+
+tag: bsp_nrf5x
+path: bsp/nrf5x
+owners: Xiaowei Swenson(ReviewSun)<Sxw1204814381@outlook.com>
+
+tag: bsp_rt-spark
+path: bsp/stm32/stm32f407-rt-spark
+owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
+tag: bsp_ultrarisc
+path: bsp/ultrarisc/ur_dp1000_evb
+owners: Zhang Jing(zhangjing0303)<zhangjing@ultrarisc.com>
+
+tag: bsp_renesas
+path: bsp/renesas
+owners: Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
+tag: bsp_stm32
+path: bsp/stm32
+owners: Han Lv(hamburger-os)<296570182@qq.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>, Liang He(Liang1795)<111111000@163.com>
+
+tag: bsp_stm32f103-blue-pill
+path: bsp/stm32/stm32f103-blue-pill
+owners: Liang He(Liang1795)<111111000@163.com>
+
+tag: bsp_stm32f412-st-nucleo
+path: bsp/stm32/stm32f412-st-nucleo
+owners: Liang He(Liang1795)<111111000@163.com>
+
+tag: bsp_stm32f429-armfly-v6
+path: bsp/stm32/stm32f429-armfly-v6
+owners: wenguang Dong(Knowbie-dwg)1429308954@qq.com
+
+tag: bsp_stm32f429-atk-apollo
+path: bsp/stm32/stm32f429-atk-apollo
+owners: lizhen9880(lizhen9880)<lizhen9880@126.com>
+
+tag: bsp_stm32h723-st-nucleo
+path: bsp/stm32/stm32h723-st-nucleo
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_stm32g030-tiny-board
+path: bsp/stm32/stm32g030-tiny-board
+owners: 下里巴人(hywing)<hywing.sir@qq.com>
+
+tag: bsp_stm32h743-st-nucleo
+path: bsp/stm32/stm32h743-st-nucleo
+owners: PengXu(LittleGreyG)<18825981694@163.com>
+
+tag: bsp_stm32h750-artpi
+path: bsp/stm32/stm32h750-artpi
+owners: PengXu(LittleGreyG)<18825981694@163.com>
+
+tag: bsp_wch
+path: bsp/wch
+owners: Huanyi Mai(Maihuanyi)<m19825309307@163.com>
+
+tag: components
+path: components
+owners: Huanyi Mai(Maihuanyi)<m19825309307@163.com>
+
+tag: components_driver_can
+path: components/drivers/can
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: components_driver_i2c
+path: components/drivers/i2c
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: components_driver_pm
+path: components/drivers/pm
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: components_driver_serial_v2
+path: components/drivers/serial/dev_serial_v2.c
+path: components/drivers/include/drivers/dev_serial_v2.h
+path: examples/utest/testcases/drivers/serial_v2
+owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>
+
+tag: components_driver_spi
+path: components/drivers/spi
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>, Liang He(Liang1795)<111111000@163.com>
+
+tag: components_fal
+path: components/fal
+owners: Yucai Liu(illustriousness)<1486344514@qq.com>
+
+tag: components_libc
+path: components/libc
+owners: Meco Jianting Man(mysterywolf)<920369182@qq.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>
+
+tag: components_lwp
+path: components/lwp
+owners: Damoshed_Xu(xu18838022837)<496121493@qq.com>
+
+tag: components_net_at
+path: components/net/at
+owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>, lizhen9880(lizhen9880)<lizhen9880@126.com>
+
+tag: components_utilities_ymodem
+path: components/utilities/ymodem
+owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
+
+tag: documentation
+path: documentation
+owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Xiansong Cao(CXSforHPU)<19511928573@163.com>
+
+tag: kernel
+path: src
+owners: Damoshed_Xu(xu18838022837)<496121493@qq.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Han Lv(hamburger-os)<296570182@qq.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Liya Huang(wdfk-prog)<1425075683@qq.com>, Xiaowei Swenson(ReviewSun)<Sxw1204814381@outlook.com>
+
+tag: libcpu_riscv
+path: libcpu/risc-v
+owners: Shun Wang(Yaochenger)<1516081466@qq.com>
+
+tag: maintainers
+path: MAINTAINERS
+owners: Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
+tag: workflow
+path: .github
+owners: supper thomas(supperthomas)<78900636@qq.com>, Bingru Zhang(Rbb666)<751061401@qq.com>, Yuqiang Wang(kurisaW)<2053731441@qq.com>
+
+

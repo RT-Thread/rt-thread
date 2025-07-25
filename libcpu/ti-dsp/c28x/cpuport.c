@@ -17,7 +17,7 @@
 #define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
 rt_uint32_t rt_interrupt_from_thread;

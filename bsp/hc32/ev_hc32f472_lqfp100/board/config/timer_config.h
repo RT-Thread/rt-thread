@@ -112,4 +112,23 @@ extern "C" {
     }
 #endif /* TMRA_5_CONFIG */
 #endif /* BSP_USING_TMRA_5 */
+
+#ifdef BSP_USING_TMRA_6
+#ifndef TMRA_6_CONFIG
+#define TMRA_6_CONFIG                                       \
+    {                                                       \
+       .tmr_handle      = CM_TMRA_6,                        \
+       .clock_source    = CLK_BUS_PCLK1,                    \
+       .clock           = FCG2_PERIPH_TMRA_6,               \
+       .flag            = TMRA_FLAG_OVF,                    \
+       .isr             =                                   \
+       {                                                    \
+            .enIntSrc   = INT_SRC_TMRA_6_OVF,               \
+            .enIRQn     = BSP_USING_TMRA_6_IRQ_NUM,         \
+            .u8Int_Prio = BSP_USING_TMRA_6_IRQ_PRIO,        \
+       },                                                   \
+       .name            = "tmra_6"                          \
+    }
+#endif /* TMRA_6_CONFIG */
+#endif /* BSP_USING_TMRA_6 */
 #endif /* __TMR_CONFIG_H__ */

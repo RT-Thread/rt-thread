@@ -9,7 +9,6 @@
  * 2024-02-20     CDT          add structure for associating with the dma
  */
 
-
 #ifndef __DRV_ADC_H__
 #define __DRV_ADC_H__
 

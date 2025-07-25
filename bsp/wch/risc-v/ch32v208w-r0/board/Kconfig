@@ -3,6 +3,7 @@ menu "Hardware Drivers Config"
 config SOC_CH32V208WBU6
     bool
     select SOC_RISCV_SERIES_CH32V2
+    select SOC_RISCV_SERIES_CH32V20x_D8W
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -164,7 +165,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
-        select RT_USING_SPI_BITOPS
+        select RT_USING_SOFT_SPI
         select RT_USING_SPI
 
         if BSP_USING_SPI

@@ -22,9 +22,8 @@ path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports/include']
 
-CPPDEFINES = ['STM32L4R9xx']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')
 

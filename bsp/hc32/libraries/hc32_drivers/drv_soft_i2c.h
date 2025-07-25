@@ -8,7 +8,6 @@
  * 2022-04-28     CDT          first version
  */
 
-
 #ifndef __DRV_I2C_SOFT_H__
 #define __DRV_I2C_SOFT_H__
 

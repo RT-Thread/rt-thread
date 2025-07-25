@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f65xxx_66xxx_adc.h
- * @version $Rev:: 7058         $
- * @date    $Date:: 2023-07-27 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the ADC library.
  *************************************************************************************************************
  * @attention
@@ -67,6 +67,7 @@
                                                  ((HP_MODE) == CONTINUOUS_MODE) || \
                                                  ((HP_MODE) == DISCONTINUOUS_MODE))
 
+#if (LIBCFG_ADC1)
 #define DUAL_INDEPENDENT                        (0x00000000)
 #define DUAL_CASCADE_REGULAR                    (0x00000001)
 #define DUAL_CASCADE_REGULAR_H_PRIORITY         (0x00000003)
@@ -74,6 +75,7 @@
 #define IS_ADC_DUAL_MODE(DUAL_MODE)             (((DUAL_MODE) == DUAL_INDEPENDENT)   || \
                                                  ((DUAL_MODE) == DUAL_CASCADE_REGULAR) || \
                                                  ((DUAL_MODE) == DUAL_CASCADE_REGULAR_H_PRIORITY))
+#endif
 
 #if (LIBCFG_ADC_CH_65232)
 #define ADC_CH_0                                (0)
@@ -106,6 +108,44 @@
                                                  ((CHANNEL) == ADC_CH_4) || ((CHANNEL) == ADC_CH_5) || \
                                                  ((CHANNEL) == ADC_CH_6) || ((CHANNEL) == ADC_CH_7) || \
                                                  ((CHANNEL) == ADC_CH_OPA0))
+#elif (LIBCFG_ADC_CH_66XXX_V1)
+#define ADC_CH_0                                (0)
+#define ADC_CH_1                                (1)
+#define ADC_CH_2                                (2)
+#define ADC_CH_3                                (3)
+#define ADC_CH_4                                (4)
+#define ADC_CH_5                                (5)
+#define ADC_CH_6                                (6)
+#define ADC_CH_7                                (7)
+#define ADC_CH_8                                (8)
+#define ADC_CH_9                                (9)
+#define ADC_CH_10                               (10)
+#define ADC_CH_11                               (11)
+#define ADC_CH_PGA0O                            (12)
+#define ADC_CH_PGA1O                            (13)
+#define ADC_CH_PGA2O                            (14)
+#define ADC_CH_PGA3O                            (15)
+#define ADC_CH_BANDGAP                          (16)
+#define ADC_CH_MVDDA                            (17)
+
+#define IS_ADC_CHANNEL(CHANNEL)                 (((CHANNEL) == ADC_CH_0) || ((CHANNEL) == ADC_CH_1) || \
+                                                 ((CHANNEL) == ADC_CH_2) || ((CHANNEL) == ADC_CH_3) || \
+                                                 ((CHANNEL) == ADC_CH_4) || ((CHANNEL) == ADC_CH_5) || \
+                                                 ((CHANNEL) == ADC_CH_6) || ((CHANNEL) == ADC_CH_7) || \
+                                                 ((CHANNEL) == ADC_CH_8) || ((CHANNEL) == ADC_CH_9) || \
+                                                 ((CHANNEL) == ADC_CH_10) || ((CHANNEL) == ADC_CH_11) || \
+                                                 ((CHANNEL) == ADC_CH_PGA0O) || ((CHANNEL) == ADC_CH_PGA1O) || \
+                                                 ((CHANNEL) == ADC_CH_PGA2O) || ((CHANNEL) == ADC_CH_PGA3O) || \
+                                                 ((CHANNEL) == ADC_CH_BANDGAP) || ((CHANNEL) == ADC_CH_MVDDA))
+
+#define IS_ADC_INPUT_CHANNEL(CHANNEL)           (((CHANNEL) == ADC_CH_0) || ((CHANNEL) == ADC_CH_1) || \
+                                                 ((CHANNEL) == ADC_CH_2) || ((CHANNEL) == ADC_CH_3) || \
+                                                 ((CHANNEL) == ADC_CH_4) || ((CHANNEL) == ADC_CH_5) || \
+                                                 ((CHANNEL) == ADC_CH_6) || ((CHANNEL) == ADC_CH_7) || \
+                                                 ((CHANNEL) == ADC_CH_8) || ((CHANNEL) == ADC_CH_9) || \
+                                                 ((CHANNEL) == ADC_CH_10) || ((CHANNEL) == ADC_CH_11) || \
+                                                 ((CHANNEL) == ADC_CH_PGA0O) || ((CHANNEL) == ADC_CH_PGA1O) || \
+                                                 ((CHANNEL) == ADC_CH_PGA2O) || ((CHANNEL) == ADC_CH_PGA3O))
 #else
 #define ADC_CH_0                                (0)
 #define ADC_CH_1                                (1)
@@ -170,7 +210,13 @@
 
 #define ADC_TRIG_CMP0                           ((1UL << 4) | (0UL << 20))
 #define ADC_TRIG_CMP1                           ((1UL << 4) | (1UL << 20))
+#if (LIBCFG_CMP2)
 #define ADC_TRIG_CMP2                           ((1UL << 4) | (2UL << 20))
+
+#define IS_ADC_TRIG_CMP2(REGTRIG)               ((REGTRIG == ADC_TRIG_CMP2))
+#else
+#define IS_ADC_TRIG_CMP2(REGTRIG)               (0)
+#endif
 
 #define ADC_TRIG_BFTM0                          ((1UL << 3) | (0UL << 22) | (0UL << 19))
 #define ADC_TRIG_BFTM1                          ((1UL << 3) | (0UL << 22) | (1UL << 19))
@@ -225,7 +271,7 @@
                                                  ((REGTRIG) == ADC_TRIG_BFTM1)         || \
                                                  ((REGTRIG) == ADC_TRIG_CMP0)          || \
                                                  ((REGTRIG) == ADC_TRIG_CMP1)          || \
-                                                 ((REGTRIG) == ADC_TRIG_CMP2)          || \
+                                                 (IS_ADC_TRIG_CMP2(REGTRIG))           || \
                                                  ((REGTRIG) == ADC_TRIG_EXTI_0)        || \
                                                  ((REGTRIG) == ADC_TRIG_EXTI_1)        || \
                                                  ((REGTRIG) == ADC_TRIG_EXTI_2)        || \
@@ -256,7 +302,7 @@
 #define ADC_INT_DATA_OVERWRITE                  (0x01000000)
 #define ADC_INT_HP_DATA_OVERWRITE               (0x02000000)
 
-#define IS_ADC_INT(INT)                         ((((INT) & 0xFCFCFF88) == 0) && ((INT) != 0))
+#define IS_ADC_INT(INT)                         ((((INT) & 0xFCFCF8F8) == 0) && ((INT) != 0))
 
 
 #define ADC_FLAG_SINGLE_EOC                     (0x00000001)
@@ -270,7 +316,7 @@
 #define ADC_FLAG_DATA_OVERWRITE                 (0x01000000)
 #define ADC_FLAG_HP_DATA_OVERWRITE              (0x02000000)
 
-#define IS_ADC_FLAG(FLAG)                       ((((FLAG) & 0xFCFCFF88) == 0) && ((FLAG) != 0))
+#define IS_ADC_FLAG(FLAG)                       ((((FLAG) & 0xFCFCF8F8) == 0) && ((FLAG) != 0))
 
 
 #define ADC_REGULAR_DATA0                       (0)
@@ -289,8 +335,22 @@
 #define ADC_HP_DATA1                            (1)
 #define ADC_HP_DATA2                            (2)
 #define ADC_HP_DATA3                            (3)
+#if (LIBCFG_ADC_HDR_4_11)
+#define ADC_HP_DATA4                            (4)
+#define ADC_HP_DATA5                            (5)
+#define ADC_HP_DATA6                            (6)
+#define ADC_HP_DATA7                            (7)
+#define ADC_HP_DATA8                            (8)
+#define ADC_HP_DATA9                            (9)
+#define ADC_HP_DATA10                           (10)
+#define ADC_HP_DATA11                           (11)
+#endif
 
+#if (LIBCFG_ADC_HDR_4_11)
+#define IS_ADC_HP_DATA(DATA)                    ((DATA) < 12)
+#else
 #define IS_ADC_HP_DATA(DATA)                    ((DATA) < 4)
+#endif
 
 
 #define ADC_AWD_DISABLE                         (u8)0x00
@@ -329,20 +389,34 @@
 
 #define IS_ADC_INPUT_SAMPLING_TIME(TIME)        ((TIME) <= 255)
 
+#if (!LIBCFG_ADC_NO_OFFSET_REG)
 #define IS_ADC_OFFSET(OFFSET)                   ((OFFSET) < 4096)
+#endif
 
 #define IS_ADC_REGULAR_RANK(RANK)               ((RANK) < 8)
 
+#if (LIBCFG_ADC_HDR_4_11)
+#define IS_ADC_HP_RANK(RANK)                    ((RANK) < 12)
+#else
 #define IS_ADC_HP_RANK(RANK)                    ((RANK) < 4)
+#endif
 
 #define IS_ADC_REGULAR_LENGTH(LENGTH)           (((LENGTH) >= 1) && ((LENGTH) <= 8))
 #define IS_ADC_REGULAR_SUB_LENGTH(SUB_LENGTH)   (((SUB_LENGTH) >= 1) && ((SUB_LENGTH) <= 8))
 
+#if (LIBCFG_ADC_HCONV_LENGTH_V2)
+#define IS_ADC_HP_LENGTH(LENGTH)                (((LENGTH) >= 1) && ((LENGTH) <= 8))
+#define IS_ADC_HP_SUB_LENGTH(SUB_LENGTH)        (((SUB_LENGTH) >= 1) && ((SUB_LENGTH) <= 8))
+#else
 #define IS_ADC_HP_LENGTH(LENGTH)                (((LENGTH) >= 1) && ((LENGTH) <= 4))
 #define IS_ADC_HP_SUB_LENGTH(SUB_LENGTH)        (((SUB_LENGTH) >= 1) && ((SUB_LENGTH) <= 4))
+#endif
 
+#if (LIBCFG_ADC_TRIG_DELAY)
 #define IS_ADC_TRIG_DELAY(DELAY)                ((DELAY) < 256)
+#endif
 
+#if (!LIBCFG_ADC_NO_OFFSET_REG)
 typedef enum
 {
   ADC_ALIGN_RIGHT = (0 << 14),
@@ -350,6 +424,7 @@ typedef enum
 } ADC_ALIGN_Enum;
 
 #define IS_ADC_ALIGN(ALIGN)                     (((ALIGN) == ADC_ALIGN_RIGHT) || ((ALIGN) == ADC_ALIGN_LEFT))
+#endif
 /**
   * @}
   */
@@ -373,9 +448,11 @@ void ADC_HPChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u8 Rank, u8 Sampl
 void ADC_HPGroupConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_MODE, u8 Length, u8 SubLength);
 void ADC_HPTrigConfig(HT_ADC_TypeDef* HT_ADCn, u32 ADC_TRIG_x);
 
+#if (!LIBCFG_ADC_NO_OFFSET_REG)
 void ADC_ChannelDataAlign(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, ADC_ALIGN_Enum ADC_ALIGN_x);
 void ADC_ChannelOffsetValue(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u16 OffsetValue);
 void ADC_ChannelOffsetCmd(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, ControlStatus NewState);
+#endif
 
 #if (LIBCFG_ADC_TRIG_DELAY)
 void ADC_TrigDelayConfig(HT_ADC_TypeDef* HT_ADCn, u8 HDelayTime, u8 DelayTime);
@@ -397,6 +474,14 @@ void ADC_AWDSingleChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n);
 void ADC_AWDThresholdsConfig(HT_ADC_TypeDef* HT_ADCn, u16 UPPER, u16 LOWER);
 
 void ADC_PDMAConfig(HT_ADC_TypeDef* HT_ADCn, u32 ADC_PDMA_x, ControlStatus NewState);
+
+#if (LIBCFG_ADC_IVREF)
+void ADC_VREFCmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState);
+#endif
+
+#if (LIBCFG_ADC_MVDDA)
+void ADC_MVDDACmd(HT_ADC_TypeDef* HT_ADCn, ControlStatus NewState);
+#endif
 /**
   * @}
   */

@@ -6,7 +6,6 @@ cwd = GetCurrentDir()
 src = Split("""
 board.c
 cherryusb_port.c
-usb_phy.c
 MCUX_Config/board/clock_config.c
 MCUX_Config/board/pin_mux.c
 """)

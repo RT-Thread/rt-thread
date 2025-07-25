@@ -71,7 +71,7 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
             IWDG_SetPrescaler(wdt_dev->prescaler);
             IWDG_SetReload(wdt_dev->reload);
-            IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
+            IWDG_ReloadCounter();
             IWDG_Enable();
         }
         break;
@@ -89,7 +89,7 @@ static rt_err_t ch32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
         IWDG_SetPrescaler(wdt_dev->prescaler);
         IWDG_SetReload(wdt_dev->reload);
-        IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
+        IWDG_ReloadCounter();
         IWDG_Enable();
         wdt_dev->is_start = 1;
         break;

@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_iar_02.s
-;  Version          : $Rev:: 7119         $
-;  Date             : $Date:: 2023-08-15 #$
+;  Version          : $Rev:: 7704         $
+;  Date             : $Date:: 2024-05-10 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -19,8 +19,8 @@
 ;   HT32F59041
 ;   HF5032
 ;   HT32F61641
-;   HT32F59046
 ;   HT32F61041
+;   HT32F61741
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
 
@@ -32,8 +32,8 @@
 ;//      <8=> HT32F59041
 ;//      <7=> HF5032
 ;//      <8=> HT32F61641
-;//      <8=> HT32F59046
 ;//      <8=> HT32F61041
+;//      <8=> HT32F61741
 USE_HT32_CHIP_SET   EQU     0
 
 _HT32FWID           EQU     0xFFFFFFFF
@@ -45,8 +45,8 @@ _HT32FWID           EQU     0xFFFFFFFF
 ;_HT32FWID           EQU     0x00059041
 ;_HT32FWID           EQU     0x000F5032
 ;_HT32FWID           EQU     0x00061641
-;_HT32FWID           EQU     0x00059046
 ;_HT32FWID           EQU     0x00061041
+;_HT32FWID           EQU     0x00061741
 
 HT32F50220_30       EQU     7
 HT32F50231_41       EQU     8
@@ -54,8 +54,8 @@ HT50F32002          EQU     7
 HT32F59041          EQU     8
 HF5032              EQU     7
 HT32F61641          EQU     8
-HT32F59046          EQU     8
 HT32F61041          EQU     8
+HT32F61741          EQU     8
 
   IF USE_HT32_CHIP_SET=0
   ELSE

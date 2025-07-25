@@ -10,7 +10,7 @@
     <aExt>*.s*; *.src; *.a*</aExt>
     <oExt>*.obj; *.o</oExt>
     <lExt>*.lib</lExt>
-    <tExt>*.txt; *.h; *.inc; *.md</tExt>
+    <tExt>*.txt; *.h; *.inc</tExt>
     <pExt>*.plm</pExt>
     <CppX>*.cpp</CppX>
     <nMigrate>0</nMigrate>
@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"" -O206 -S0 -C0 -P00 -FO7 -FD1FFF8000 -FC1000 -FN2 -FF0HC32F460_512K -FS00 -FL080000 -FP0($$Device:HC32F460PETB$FlashARM\HC32F460_512K.FLM) -FF1HC32F460_otp -FS13000C00 -FL13FC -FP1($$Device:HC32F460PETB$FlashARM\HC32F460_otp.FLM)</Name>
+          <Name>-X"Any" -UAny -O206 -S0 -C0 -P00 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD1FFF8000 -FC1000 -FN2 -FF0HC32F460_512K.FLM -FS00 -FL080000 -FP0($$Device:HC32F460PETB$FlashARM\HC32F460_512K.FLM) -FF1HC32F460_otp.FLM -FS13000C00 -FL13FC -FP1($$Device:HC32F460PETB$FlashARM\HC32F460_otp.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -129,7 +129,7 @@
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>JL2CM3</Key>
+          <Key>CMSIS_AGDI</Key>
           <Name>-U261009725 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST2 -TO18 -TC10000000 -TP21 -TDS8000 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD1FFF8000 -FC1000 -FN1 -FF0HC32F460_512K.FLM -FS00 -FL080000 -FP0($$Device:HC32F460PETB$FlashARM\HC32F460_512K.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>

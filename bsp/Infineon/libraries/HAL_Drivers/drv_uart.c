@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2022-06-29     Rbb666       first version
+ * Date           Author          Notes
+ * 2022-06-29     Rbb666          first version
+ * 2025-04-21     hydevcode       modify xmc7100d uart
+ * 2025-05-12     Passionate0424  update ifx_control
  */
 
 #include <rtthread.h>
@@ -64,7 +66,8 @@ static struct ifx_uart_config uart_config[] =
 #endif
 };
 
-static struct ifx_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
+static struct ifx_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] =
+{0};
 
 static void uart_isr(struct rt_serial_device *serial)
 {
@@ -215,7 +218,7 @@ static rt_err_t ifx_control(struct rt_serial_device *serial, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-
+        NVIC_DisableIRQ(uart->config->UART_SCB_IRQ_cfg->intrSrc);
         break;
 
     case RT_DEVICE_CTRL_SET_INT:
@@ -227,9 +230,10 @@ static rt_err_t ifx_control(struct rt_serial_device *serial, int cmd, void *arg)
 
         /* Enable the interrupt */
 #if defined(SOC_SERIES_IFX_XMC)
+        NVIC_DisableIRQ(UART_NvicMuxN_IRQn);
         NVIC_EnableIRQ(UART_NvicMuxN_IRQn);
 #else
-        NVIC_EnableIRQ(uart->config->intrSrc);
+        NVIC_EnableIRQ(uart->config->UART_SCB_IRQ_cfg->intrSrc);
 #endif
         break;
     }

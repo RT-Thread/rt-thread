@@ -105,7 +105,7 @@ static void gd32_adc_gpio_init(rcu_periph_enum adc_clk, rt_base_t pin)
 * @param device, channel, enabled
 * @retval None
 */
-static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     uint32_t adc_periph;
     struct gd32_adc *adc = (struct gd32_adc *)device->parent.user_data;
@@ -153,7 +153,7 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 * @param device, channel, value
 * @retval None
 */
-static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     uint32_t adc_periph;
     uint32_t timeout = 0;

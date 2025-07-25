@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    Release_Notes.txt
- * @version V1.4.1
- * @date    2023-10-31
+ * @version V1.5.1
+ * @date    2023-11-08
  * @brief   The Release notes of HT32 Firmware Library.
  *************************************************************************************************************
  * @attention
@@ -35,6 +35,83 @@
 //   HT32F22366
 
 /*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.5.1_3190                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2024-11-08
+
+  Main Changes
+  + Add new examples:
+    - "Tips/Checksum_CRC16"
+    - "Tips/StackOnTop"
+  + Add HT32 Stack Usage Analysis feature.
+    - Modify "ht32f1xxxx_conf.h", add "HTCFG_STACK_USAGE_ANALYSIS" setting for enabling HT32 Stack Usage
+      Analysis.
+    - Update project templates and "ht32_cm3_misc.c/.h", add "StackUsageAnalysisInit()" function to
+      initialize stack.
+    - Update project files, add HT32 Stack Usage Analysis component viewer.
+    - Update and sync "startup_ht32f1xxxx_nn.s" for the "Stack On Top" and "Stack Usage Analysis" feature."
+    - Add "USE_LIBCFG_RAM_SIZE" define in Keil project files for the "Stack On Top" feature.
+  + Rename WDT parameters.
+    - Old Name                          | New Name
+    - --------------------------------- | ----------------------------
+    - "MODE0_WDTSHLT_BOTH"              | "WDT_SLEEP_HALT_NONE"
+    - "MODE0_WDTSHLT_SLEEP"             | "WDT_SLEEP_HALT_DEEPSLEEP"
+    - "MODE0_WDTSHLT_SLEEP"             | "WDT_SLEEP_HALT_ALL"
+  + Fix "AES_SetKeyTable()" and "AES_SetVectorTable()" Key and Vector index errors, which cause incorrect AES
+    encryption and decryption.
+  + Update example, add "__ALIGN4" to variables and enforced type conversion for 4 bytes read/write API calls.
+    - "AES/CBC"
+    - "AES/CTR"
+    - "AES/ECB"
+  + Modify "ht32f5xxxx_01.h", fix the MCTM alias mismatch.
+    - "MCTMn_IRQHandler" alias from "MCTM0_G_IRQHandler" to "MCTM0_UP_IRQHandler"
+  + Update USB example, add the process of detecting USB bus status before USBDCore_LowPower().
+    - "CKCU/HSI_AutoTrim_By_USB"
+    - "USBD/*"
+  + Improve the thread-safe capability of "utilities/common/ring_buffer.c".
+  + Modify "ht32f1xxxx_01.h" to add alignment and packing attributes for ARM compiler versions, with GCC fallback.
+  + Update "ht32f1xxxx_rtc.c", modify the RTC_LSECmd() related flow.
+  + Modify "WDT/Auto_Enable" example to change the mechanism of the example.
+  + Update "ht32f12366_sk.h" to share EBI_BL pin with LED3.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update project related file and setting.
+  + Update CKCU API. Enhanced program stability with robustness settings for parameter "PCLKPrescaler"
+    in "CKCU_SetPeripPrescaler(..., CKCU_APBCLKPRE_TypeDef PCLKPrescaler)".
+  + Modify "void FLASH_SetRemappingMode(FLASH_Vector FLASH_BOOT_x);". Changed parameter name from
+    "RemapMode" to "FLASH_BOOT_x".
+  + Update "SPI_DUALCmd()" and "SPI_SoftwareSELCmd()" make sure the SPI Bus is not busy
+    before changing the settings.
+  + Modify "ht32_dependency.h",to change the preprocessors for dependency check.
+  + Update the following middleware.
+    "utilities/middleware/eeprom_emulation.c"
+    "utilities/middleware/i2c_master.c"
+    "utilities/middleware/i2c_master.h"
+    "utilities/middleware/spi_module.c"
+    "utilities/middleware/spi_module.h"
+    "utilities/middleware/spi_module_config_templet.h"
+    "utilities/middleware/uart_module.c"
+    "utilities/middleware/uart_module.h"
+  + Update AES examples.
+    - Change the key, IV, and plain text from hex array to string, making the result easier to compare with
+      online tools.
+    - Add expected cipher text and compare it with the MCU's H/W AES result as an error-proofing mechanism."
+  + Update the following readme file.
+    - "CKCU/CKCU_HSI_AutoTrim_By_USB"
+    - "CKCU/CKCU_HSI_AutoTrim_By_LSE"
+    - "USBD/*"
+  + Modify "afterbuild.bat" to add logic to use ARMCC or ARMCLANG fromelf tool based on available toolchain.
+  + Add "_ProjectConfig.ini" in the "CKCU/HSI_AutoTrim_By_LSE" example.
+  + Update "project_template/Script" for improving script mechanism.
+    - "Script/_CreateProjectConfScript.bat"
+    - "Script/_CreateProjectScript.bat"
+    - "Script/_ht32_ic_name.ini"
+  + Update e-Link32 Pro/Lite Command line tool as "V1.20" ("utilities/elink32pro/eLink32pro.exe").
+ + Change path of the "Holtek.HT32_DFP.latest.pack".
+
+
+/*----------------------------------------------------------------------------------------------------------*/
 /* HT32_STD_1xxxx_FWLib_V1.4.1_2982                                                                         */
 /*----------------------------------------------------------------------------------------------------------*/
   Release Date: 2023-10-31
@@ -45,9 +122,9 @@
   + Modify examples below, add volatile qualifiers on some variables (in the for loop usage)
     to fix the Arm Compiler Version 6 optimization issue.
     ("u32" to "vu32", unsigned int to volatile unsigned int).
-    - “PWRCU/PowerDown_WAKEUPPin”
-    - “PWRCU/PowerDown_RTC”
-    - “TM/PWM”
+    - "PWRCU/PowerDown_WAKEUPPin"
+    - "PWRCU/PowerDown_RTC"
+    - "TM/PWM"
   + Modify examples below, use separate "if" statements instead of "if-else" to avoid double-entry ISR.
     - "PWRCU/DeepSleepMode1"
     - "PWRCU/DeepSleepMode2"

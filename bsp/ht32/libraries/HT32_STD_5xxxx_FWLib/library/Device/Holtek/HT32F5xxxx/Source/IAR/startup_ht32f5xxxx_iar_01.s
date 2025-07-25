@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_iar_01.s
-;  Version          : $Rev:: 6953         $
-;  Date             : $Date:: 2023-05-30 #$
+;  Version          : $Rev:: 7848         $
+;  Date             : $Date:: 2024-07-16 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -23,10 +23,15 @@
 ;   HT32F0006
 ;   HT32F61352
 ;   HT50F32003
+;   HT50F3200U
 ;   HT32F62030, HT32F62040, HT32F62050
+;   HT32F62140
 ;   HT32F67741
 ;   HT32F67232
 ;   HT32F67233
+;   HT32F59045
+;   MXTX52231
+;   MXTX52352
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
 
@@ -42,12 +47,17 @@
 ;//      <10=> HT32F0006
 ;//      <10=> HT32F61352
 ;//      <4=> HT50F32003
+;//      <2=> HT50F3200U
 ;//      <2=> HT32F67741
 ;//      <1=> HT32F67232
 ;//      <1=> HT32F67233
 ;//      <1=> HT32F62030
 ;//      <2=> HT32F62040
 ;//      <5=> HT32F62050
+;//      <2=> HT32F62140
+;//      <2=> HT32F59045
+;//      <2=> MXTX52231
+;//      <4=> MXTX52352
 USE_HT32_CHIP_SET   EQU     0
 
 _HT32FWID           EQU     0xFFFFFFFF
@@ -67,12 +77,15 @@ _HT32FWID           EQU     0xFFFFFFFF
 ;_HT32FWID           EQU     0x00000006
 ;_HT32FWID           EQU     0x00061352
 ;_HT32FWID           EQU     0x00032003
+;_HT32FWID           EQU     0x0003200F
 ;_HT32FWID           EQU     0x00062030
 ;_HT32FWID           EQU     0x00062040
 ;_HT32FWID           EQU     0x00062050
+;_HT32FWID           EQU     0x00062140
 ;_HT32FWID           EQU     0x00067741
 ;_HT32FWID           EQU     0x00067232
 ;_HT32FWID           EQU     0x00067233
+;_HT32FWID           EQU     0x00059045
 
 HT32F52220_30       EQU     1
 HT32F52231_41       EQU     2
@@ -84,12 +97,17 @@ HT32F52344_54       EQU     9
 HT32F0006           EQU     10
 HT32F61352          EQU     10
 HT50F32003          EQU     4
+HT50F3200U          EQU     2
 HT32F62030          EQU     1
 HT32F62040          EQU     2
 HT32F62050          EQU     5
+HT32F62140          EQU     2
 HT32F67741          EQU     2
 HT32F67232          EQU     1
 HT32F67233          EQU     1
+HT32F59045          EQU     2
+MXTX52231           EQU     2
+MXTX52352           EQU     4
 
   IF USE_HT32_CHIP_SET=0
   ELSE

@@ -10,16 +10,20 @@
 
 #include <rtthread.h>
 
-#include "dfs.h"
-#include "dfs_mnt.h"
-#include "dfs_dentry.h"
 #include "dfs_private.h"
+
+#include <dfs.h>
+#include <dfs_dentry.h>
+#include <dfs_mnt.h>
+#include <dfs_pcache.h>
 
 #define DBG_TAG "DFS.mnt"
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
 static struct dfs_mnt *_root_mnt = RT_NULL;
+
+RT_OBJECT_HOOKLIST_DEFINE(dfs_mnt_umnt);
 
 /*
  * mnt tree structure
@@ -75,6 +79,7 @@ int dfs_mnt_insert(struct dfs_mnt* mnt, struct dfs_mnt* child)
                     child = _root_mnt;
                     rt_atomic_sub(&(_root_mnt->parent->ref_count), 1);
                     rt_atomic_sub(&(_root_mnt->ref_count), 1);
+                    _root_mnt->flags &= ~MNT_IS_LOCKED;
 
                     _root_mnt = dfs_mnt_ref(mnt);
                     mnt->parent = dfs_mnt_ref(mnt);
@@ -242,21 +247,24 @@ struct dfs_mnt* dfs_mnt_ref(struct dfs_mnt* mnt)
     return mnt;
 }
 
-int dfs_mnt_unref(struct dfs_mnt* mnt)
+int dfs_mnt_unref(struct dfs_mnt *mnt)
 {
     rt_err_t ret = RT_EOK;
+    rt_base_t ref_count;
 
     if (mnt)
     {
-        rt_atomic_sub(&(mnt->ref_count), 1);
+        ref_count = rt_atomic_sub(&(mnt->ref_count), 1) - 1;
 
-        if (rt_atomic_load(&(mnt->ref_count)) == 0)
+        if (ref_count == 0)
         {
             dfs_lock();
 
             if (mnt->flags & MNT_IS_UMOUNT)
             {
                 mnt->fs_ops->umount(mnt);
+
+                RT_OBJECT_HOOKLIST_CALL(dfs_mnt_umnt, (mnt));
             }
 
             /* free full path */
@@ -276,6 +284,21 @@ int dfs_mnt_unref(struct dfs_mnt* mnt)
     }
 
     return ret;
+}
+
+int dfs_mnt_setflags(struct dfs_mnt *mnt, int flags)
+{
+    int error = 0;
+
+    if (flags & MS_RDONLY)
+    {
+        mnt->flags |= MNT_RDONLY;
+#ifdef RT_USING_PAGECACHE
+        dfs_pcache_clean(mnt);
+#endif
+    }
+
+    return error;
 }
 
 int dfs_mnt_destroy(struct dfs_mnt* mnt)

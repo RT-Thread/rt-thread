@@ -17,21 +17,35 @@
 
 #include "drv_uart.h"
 
-#include <sbi.h>
+#include "sysctl_boot.h"
 
 #ifdef RT_USING_SMART
 #include <mmu.h>
 #include "page.h"
+#endif
 
-/* respect to boot loader, must be 0xFFFFFFC000200000 */
-RT_STATIC_ASSERT(kmem_region, KERNEL_VADDR_START == 0xFFFFFFC000220000);
+extern unsigned int __sram_size;
+extern unsigned int __sram_base;
+extern unsigned int __sram_end;
+#define RAM_END (rt_size_t)((void *)&__sram_end)
+
+extern unsigned int __bss_start;
+extern unsigned int __bss_end;
+
+#define RT_HW_HEAP_BEGIN    ((void *)&__bss_end)
+#define RT_HW_HEAP_END ((void *)(((rt_size_t)RT_HW_HEAP_BEGIN) + CONFIG_MEM_RTSMART_HEAP_SIZE))
+
+#define RT_HW_PAGE_START    ((void *)((rt_size_t)RT_HW_HEAP_END + sizeof(rt_size_t)))
+#define RT_HW_PAGE_END      ((void *)(RAM_END))
+
+#ifdef RT_USING_SMART
 
 rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
 
 extern size_t MMUTable[];
 
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
+    {KERNEL_VADDR_START, (rt_size_t)(KERNEL_VADDR_START + CONFIG_MEM_MMZ_BASE + CONFIG_MEM_MMZ_SIZE - 1), (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
 };
 
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
@@ -50,7 +64,7 @@ void init_bss(void)
     unsigned int *dst;
 
     dst = &__bss_start;
-    while (dst < &__bss_end)
+    while ((rt_ubase_t)dst < (rt_ubase_t)&__bss_end)
     {
         *dst++ = 0;
     }
@@ -112,7 +126,7 @@ void rt_hw_board_init(void)
 
 void rt_hw_cpu_reset(void)
 {
-    sbi_shutdown();
+    sysctl_boot_reset_soc();
     while(1);
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);

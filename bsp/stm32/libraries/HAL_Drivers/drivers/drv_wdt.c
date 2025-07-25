@@ -9,8 +9,10 @@
  */
 
 #include <board.h>
+#include <rtthread.h>
 
 #ifdef RT_USING_WDT
+#include "drv_config.h"
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.wdt"

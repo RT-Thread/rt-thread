@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2021, RT-Thread Development Team
+* Copyright (c) 2006-2025, RT-Thread Development Team
 *
 * SPDX-License-Identifier: Apache-2.0
 *
@@ -181,9 +181,14 @@ void rt_hw_board_init()
     rt_hw_usart_init();
 #endif
 
-    /* Set the shell console output device */
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    /* Set the shell console output device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_NANO)
+    extern void rt_hw_console_init(void);
+    rt_hw_console_init();
 #endif
 
     /* Board underlying hardware initialization */

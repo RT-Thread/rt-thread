@@ -1,0 +1,13 @@
+from building import *
+import os
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+CPPPATH += [cwd + '/asm']
+CPPPATH += [cwd + '/drv']
+
+src = Split("""
+""")
+
+group = DefineGroup('dummy_inc', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

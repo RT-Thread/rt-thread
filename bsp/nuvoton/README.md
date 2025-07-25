@@ -9,7 +9,7 @@ Current supported BSP shown in below table:
 | NK-980IOT | ARM926EJS | [nk-980iot](nk-980iot) |
 | NuMaker-M2354 | CORTEX-M23 | [numaker-m2354](numaker-m2354) |
 | NK-RTU980 | ARM926EJS | [nk-rtu980](nk-rtu980) |
-| NK-N9H30 | CORTEX-M4 | [nk-n9h30](nk-n9h30) |
+| NK-N9H30 | ARM926EJS | [nk-n9h30](nk-n9h30) |
 | NuMaker-M032KI | CORTEX-M0 | [numaker-m032ki](numaker-m032ki) |
 | NuMaker-M467HJ | CORTEX-M4 | [numaker-m467hj](numaker-m467hj) |
 | NuMaker-IoT-M467 | CORTEX-M4 | [numaker-iot-m467](numaker-iot-m467) |

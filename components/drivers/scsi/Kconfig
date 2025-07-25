@@ -1,0 +1,20 @@
+menuconfig RT_USING_SCSI
+    bool "Using Small Computer System Interface (SCSI)"
+    depends on RT_USING_DM
+    default n
+
+config RT_SCSI_SD
+    bool "SD device on SCSI"
+    depends on RT_USING_SCSI
+    depends on RT_USING_BLK
+    default y
+
+config RT_SCSI_CDROM
+    bool "CD-ROM device on SCSI"
+    depends on RT_USING_SCSI
+    depends on RT_USING_BLK
+    default y
+
+if RT_USING_SCSI
+    osource "$(SOC_DM_SCSI_DIR)/Kconfig"
+endif

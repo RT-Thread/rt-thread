@@ -229,6 +229,8 @@ rt_err_t lwp_signal_setitimer(struct rt_lwp *lwp, int which,
 
 rt_bool_t lwp_signal_restart_syscall(struct rt_lwp *lwp, int error_code);
 
+rt_err_t lwp_signal_kill_all(long signo, long code, lwp_siginfo_ext_t value);
+
 #ifdef __cplusplus
 }
 #endif

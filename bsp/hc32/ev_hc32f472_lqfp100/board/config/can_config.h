@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022-2024, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,9 +20,6 @@ extern "C" {
 
 #ifdef BSP_USING_CAN1
 #define CAN1_CLOCK_SEL                  (CAN_CLOCK_SRC_40M)
-#ifdef RT_CAN_USING_CANFD
-#define CAN1_CANFD_MODE                 (CAN_FD_MD_ISO)
-#endif
 #define CAN1_NAME                       ("can1")
 #ifndef CAN1_INIT_PARAMS
 #define CAN1_INIT_PARAMS                                    \
@@ -36,9 +32,6 @@ extern "C" {
 
 #ifdef BSP_USING_CAN2
 #define CAN2_CLOCK_SEL                  (CAN_CLOCK_SRC_40M)
-#ifdef RT_CAN_USING_CANFD
-#define CAN2_CANFD_MODE                 (CAN_FD_MD_ISO)
-#endif
 #define CAN2_NAME                       ("can2")
 #ifndef CAN2_INIT_PARAMS
 #define CAN2_INIT_PARAMS                                    \
@@ -48,6 +41,18 @@ extern "C" {
     }
 #endif /* CAN2_INIT_PARAMS */
 #endif /* BSP_USING_CAN2 */
+
+#ifdef BSP_USING_CAN3
+#define CAN3_CLOCK_SEL                  (CAN_CLOCK_SRC_40M)
+#define CAN3_NAME                       ("can3")
+#ifndef CAN3_INIT_PARAMS
+#define CAN3_INIT_PARAMS                                    \
+    {                                                       \
+       .name = CAN3_NAME,                                   \
+       .single_trans_mode = RT_FALSE                        \
+    }
+#endif /* CAN3_INIT_PARAMS */
+#endif /* BSP_USING_CAN3 */
 
 /* Bit time config
   Restrictions: u32TimeSeg1 >= u32TimeSeg2 + 1, u32TimeSeg2 >= u32SJW.

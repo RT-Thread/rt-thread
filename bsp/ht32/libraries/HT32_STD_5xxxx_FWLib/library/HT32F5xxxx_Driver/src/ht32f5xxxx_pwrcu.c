@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_pwrcu.c
- * @version $Rev:: 6386         $
- * @date    $Date:: 2022-10-27 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the Power Control Unit firmware functions.
  *************************************************************************************************************
  * @attention
@@ -68,9 +68,11 @@
 #define Reset_V15RDYSC    ResetBit_BB((u32)&HT_PWRCU->CR, 12)
 #endif
 
+#if (!LIBCFG_PWRCU_NO_DS2_MODE)
 #define Set_DMOSSTS       SetBit_BB((u32)&HT_PWRCU->CR, 15)
 #define Reset_DMOSSTS     ResetBit_BB((u32)&HT_PWRCU->CR, 15)
 #define Get_DMOSSTS       GetBit_BB((u32)&HT_PWRCU->CR, 15)
+#endif
 
 #define Set_BODEN         SetBit_BB((u32)&HT_PWRCU->LVDCSR, 0)
 #define Reset_BODEN       ResetBit_BB((u32)&HT_PWRCU->LVDCSR, 0)
@@ -105,7 +107,6 @@
 #define LVDS_MASK         0xFFB9FFFF
 #define VREG_V_MASK       0xF3FFFFFF
 #define VREG_M_MASK       0xFCFFFFFF
-#define PWRRST_SET        0x1
 /**
   * @}
   */
@@ -266,6 +267,7 @@ void PWRCU_DeepSleep1(PWRCU_SLEEP_ENTRY_Enum SleepEntry)
   SCB->SCR &= ~(u32)SLEEPDEEP_SET;
 }
 
+#if (!LIBCFG_PWRCU_NO_DS2_MODE)
 /*********************************************************************************************************//**
  * @brief Enter DEEP-SLEEP Mode 2.
  * @param SleepEntry : Enters sleep mode instruction that is used to WFI or WFE.
@@ -384,6 +386,7 @@ void PWRCU_DeepSleep2Ex(PWRCU_SLEEP_ENTRY_Enum SleepEntry)
     Reset_RTCEN;
   }
 }
+#endif
 #endif
 
 #if (!LIBCFG_PWRCU_NO_PD_MODE)
@@ -561,6 +564,7 @@ FlagStatus PWRCU_GetBODFlagStatus(void)
   return (FlagStatus)Get_BODF;
 }
 
+#if (!LIBCFG_PWRCU_NO_DS2_MODE)
 /*********************************************************************************************************//**
  * @brief Return the DMOS status.
  * @retval This function will return one of the following values:
@@ -610,6 +614,7 @@ void PWRCU_DMOSCmd(ControlStatus NewState)
     Reset_DMOSON;
   }
 }
+#endif
 
 /*********************************************************************************************************//**
  * @brief Configure the LDO operation mode.

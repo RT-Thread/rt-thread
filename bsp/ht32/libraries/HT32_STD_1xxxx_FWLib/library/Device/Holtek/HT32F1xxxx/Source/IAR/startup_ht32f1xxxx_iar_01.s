@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f1xxxx_iar_01.s
-;  Version          : $Rev:: 1774         $
-;  Date             : $Date:: 2019-07-25 #$
+;  Version          : $Rev:: 3030         $
+;  Date             : $Date:: 2024-01-31 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -104,14 +104,14 @@ __vector_table
                     DCD  COMP_IRQHandler                    ;  24, 40, 0x0A0,
                     DCD  ADC_IRQHandler                     ;  25, 41, 0x0A4,
                     DCD  _RESERVED                          ;  26, 42, 0x0A8,
-                    DCD  MCTM0BRK_IRQHandler                ;  27, 43, 0x0AC,
-                    DCD  MCTM0UP_IRQHandler                 ;  28, 44, 0x0B0,
-                    DCD  MCTM0TR_IRQHandler                 ;  29, 45, 0x0B4,
-                    DCD  MCTM0CC_IRQHandler                 ;  30, 46, 0x0B8,
-                    DCD  MCTM1BRK_IRQHandler                ;  31, 47, 0x0BC,
-                    DCD  MCTM1UP_IRQHandler                 ;  32, 48, 0x0C0,
-                    DCD  MCTM1TR_IRQHandler                 ;  33, 49, 0x0C4,
-                    DCD  MCTM1CC_IRQHandler                 ;  34, 50, 0x0C8,
+                    DCD  MCTM0_BRK_IRQHandler               ;  27, 43, 0x0AC,
+                    DCD  MCTM0_UP_IRQHandler                ;  28, 44, 0x0B0,
+                    DCD  MCTM0_TR_IRQHandler                ;  29, 45, 0x0B4,
+                    DCD  MCTM0_CC_IRQHandler                ;  30, 46, 0x0B8,
+                    DCD  MCTM1_BRK_IRQHandler               ;  31, 47, 0x0BC,
+                    DCD  MCTM1_UP_IRQHandler                ;  32, 48, 0x0C0,
+                    DCD  MCTM1_TR_IRQHandler                ;  33, 49, 0x0C4,
+                    DCD  MCTM1_CC_IRQHandler                ;  34, 50, 0x0C8,
                     DCD  GPTM0_IRQHandler                   ;  35, 51, 0x0CC,
                     DCD  GPTM1_IRQHandler                   ;  36, 52, 0x0D0,
                     DCD  _RESERVED                          ;  37, 53, 0x0D4,
@@ -306,14 +306,14 @@ SysTick_Handler
         PUBWEAK EXTI15_IRQHandler
         PUBWEAK COMP_IRQHandler
         PUBWEAK ADC_IRQHandler
-        PUBWEAK MCTM0BRK_IRQHandler
-        PUBWEAK MCTM0UP_IRQHandler
-        PUBWEAK MCTM0TR_IRQHandler
-        PUBWEAK MCTM0CC_IRQHandler
-        PUBWEAK MCTM1BRK_IRQHandler
-        PUBWEAK MCTM1UP_IRQHandler
-        PUBWEAK MCTM1TR_IRQHandler
-        PUBWEAK MCTM1CC_IRQHandler
+        PUBWEAK MCTM0_BRK_IRQHandler
+        PUBWEAK MCTM0_UP_IRQHandler
+        PUBWEAK MCTM0_TR_IRQHandler
+        PUBWEAK MCTM0_CC_IRQHandler
+        PUBWEAK MCTM1_BRK_IRQHandler
+        PUBWEAK MCTM1_UP_IRQHandler
+        PUBWEAK MCTM1_TR_IRQHandler
+        PUBWEAK MCTM1_CC_IRQHandler
         PUBWEAK GPTM0_IRQHandler
         PUBWEAK GPTM1_IRQHandler
         PUBWEAK BFTM0_IRQHandler
@@ -372,14 +372,14 @@ EXTI14_IRQHandler
 EXTI15_IRQHandler
 COMP_IRQHandler
 ADC_IRQHandler
-MCTM0BRK_IRQHandler
-MCTM0UP_IRQHandler
-MCTM0TR_IRQHandler
-MCTM0CC_IRQHandler
-MCTM1BRK_IRQHandler
-MCTM1UP_IRQHandler
-MCTM1TR_IRQHandler
-MCTM1CC_IRQHandler
+MCTM0_BRK_IRQHandler
+MCTM0_UP_IRQHandler
+MCTM0_TR_IRQHandler
+MCTM0_CC_IRQHandler
+MCTM1_BRK_IRQHandler
+MCTM1_UP_IRQHandler
+MCTM1_TR_IRQHandler
+MCTM1_CC_IRQHandler
 GPTM0_IRQHandler
 GPTM1_IRQHandler
 BFTM0_IRQHandler

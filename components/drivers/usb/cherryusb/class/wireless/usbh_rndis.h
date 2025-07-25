@@ -46,7 +46,7 @@ void usbh_rndis_stop(struct usbh_rndis *rndis_class);
 uint8_t *usbh_rndis_get_eth_txbuf(void);
 int usbh_rndis_eth_output(uint32_t buflen);
 void usbh_rndis_eth_input(uint8_t *buf, uint32_t buflen);
-void usbh_rndis_rx_thread(void *argument);
+void usbh_rndis_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV);
 
 #ifdef __cplusplus
 }

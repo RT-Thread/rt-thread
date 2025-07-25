@@ -84,7 +84,7 @@ rt_err_t ofw_phandle_hash_reset(rt_phandle min, rt_phandle max)
 static rt_phandle ofw_phandle_next(void)
 {
     rt_phandle next;
-    static struct rt_spinlock op_lock = {};
+    static RT_DEFINE_SPINLOCK(op_lock);
 
     rt_hw_spin_lock(&op_lock.lock);
 
@@ -333,8 +333,6 @@ static int ofw_prop_index_of_string(struct rt_ofw_prop *prop, const char *string
 
 static rt_int32_t ofw_strcasecmp(const char *cs, const char *ct)
 {
-    extern rt_int32_t strcasecmp(const char *cs, const char *ct);
-
     return rt_strcasecmp(cs, ct);
 }
 

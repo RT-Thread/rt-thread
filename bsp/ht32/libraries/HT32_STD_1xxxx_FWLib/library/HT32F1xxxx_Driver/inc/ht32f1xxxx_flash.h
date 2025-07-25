@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_flash.h
- * @version $Rev:: 2971         $
- * @date    $Date:: 2023-10-25 #$
+ * @version $Rev:: 3145         $
+ * @date    $Date:: 2024-07-05 #$
  * @brief   The header file of the FLASH library.
  *************************************************************************************************************
  * @attention
@@ -160,7 +160,7 @@ ErrStatus FLASH_FlashHalfCycleCmd(ControlStatus NewState);
 #if (LIBCFG_FLASH_ZWPWESAVING)
 ErrStatus FLASH_FlashZwPwrSavingCmd(ControlStatus NewState);
 #endif
-void FLASH_SetRemappingMode(FLASH_Vector RemapMode);
+void FLASH_SetRemappingMode(FLASH_Vector FLASH_BOOT_x);
 FLASH_State FLASH_ErasePage(u32 PageAddress);
 FLASH_State FLASH_EraseOptionByte(void);
 FLASH_State FLASH_MassErase(void);

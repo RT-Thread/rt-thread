@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_cmp.c
- * @version $Rev:: 6932         $
- * @date    $Date:: 2023-05-11 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the CMP firmware functions.
  *************************************************************************************************************
  * @attention
@@ -90,7 +90,7 @@ void CMP_Init(HT_CMP_TypeDef* HT_CMPn, CMP_InitTypeDef* CMP_InitStruct)
   Assert_Param(IS_CMP_ScalerEnable(CMP_InitStruct->CMP_ScalerEnable));
   Assert_Param(IS_CMP_CoutSynchronized(CMP_InitStruct->CMP_CoutSync));
   Assert_Param(IS_CMP_OutputPol_Set(CMP_InitStruct->CMP_OutputPol));
-  #if (LIBCFG_CMP_65x_VER)
+  #if (LIBCFG_CMP_65x_66x_VER)
   Assert_Param(IS_CMP_InputSelection(CMP_InitStruct->CMP_InputSelection));
   #endif
   Assert_Param(IS_CMP_InvInputSelection(CMP_InitStruct->CMP_InvInputSelection));
@@ -102,7 +102,7 @@ void CMP_Init(HT_CMP_TypeDef* HT_CMPn, CMP_InitTypeDef* CMP_InitStruct)
                  CMP_InitStruct->CMP_OutputPol | CMP_InitStruct->CMP_InvInputSelection | CMP_InitStruct->CMP_Hysteresis | \
                  CMP_InitStruct->CMP_Speed;
 
-  #if (LIBCFG_CMP_65x_VER)
+  #if (LIBCFG_CMP_65x_66x_VER)
   HT_CMPn->CI = CMP_InitStruct->CMP_InputSelection;
   #endif
 }

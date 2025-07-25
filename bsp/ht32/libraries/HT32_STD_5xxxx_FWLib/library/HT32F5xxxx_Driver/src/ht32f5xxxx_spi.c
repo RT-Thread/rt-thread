@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_spi.c
- * @version $Rev:: 7322         $
- * @date    $Date:: 2023-10-28 #$
+ * @version $Rev:: 7674         $
+ * @date    $Date:: 2024-03-28 #$
  * @brief   This file provides all the SPI firmware functions.
  *************************************************************************************************************
  * @attention
@@ -364,6 +364,11 @@ void SPI_SoftwareSELCmd(HT_SPI_TypeDef* SPIx, u32 SPI_SoftwareSEL)
   }
   else
   {
+    /* Inactive SEL pin needs to ensure the transmission has ended. If the program flow cannot guarantee    */
+    /* SPI transmission completion, you can enable the procedure below.                                     */
+    #if 0
+    while (SPIx->SR & SPI_FLAG_BUSY);      /* Wait until SPI NOT BUSY                                       */
+    #endif
     SPIx->CR0 &= SPI_SEL_INACTIVE;
   }
 }
@@ -602,6 +607,8 @@ void SPI_DUALCmd(HT_SPI_TypeDef* SPIx, ControlStatus NewState)
   Assert_Param(IS_SPI(SPIx));
   Assert_Param(IS_CONTROL_STATUS(NewState));
 
+  while (SPIx->SR & SPI_FLAG_BUSY);      /* Wait until SPI NOT BUSY                                         */
+
   (NewState == ENABLE)?(SPIx->CR0 |= CR0_DUALEN_SET):(SPIx->CR0 &= CR0_DUALEN_RESET);
 }
 #endif
@@ -618,6 +625,8 @@ void QSPI_QuadCmd(HT_SPI_TypeDef* SPIx, ControlStatus NewState)
   /* Check the parameters                                                                                   */
   Assert_Param(IS_QSPI(SPIx));
   Assert_Param(IS_CONTROL_STATUS(NewState));
+
+  while (SPIx->SR & SPI_FLAG_BUSY);      /* Wait until SPI NOT BUSY                                         */
 
   if (NewState == DISABLE)
   {
@@ -644,6 +653,8 @@ void QSPI_DirectionConfig(HT_SPI_TypeDef* SPIx, SIO_DIR_Enum SIO_DIR_INorOUT)
   /* Check the parameters                                                                                   */
   Assert_Param(IS_QSPI(SPIx));
   Assert_Param(IS_SIO_DIR(SIO_DIR_INorOUT));
+
+  while (SPIx->SR & SPI_FLAG_BUSY);      /* Wait until SPI NOT BUSY                                         */
 
   if (SIO_DIR_INorOUT != SIO_DIR_IN)
     SPIx->CR0 |= CR0_QDIODIR_OUT;

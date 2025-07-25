@@ -19,6 +19,11 @@ config RT_USING_RTC
             config RT_ALARM_PRIORITY
                 int "priority for alarm thread"
                 default 10
+
+            config RT_ALARM_USING_LOCAL_TIME
+                bool "Using local time for the alarm calculation"
+                default n
+                depends on RT_USING_ALARM
         endif
 
         config RT_USING_SOFT_RTC

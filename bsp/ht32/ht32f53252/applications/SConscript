@@ -1,0 +1,26 @@
+#导入其他模块的变量
+Import('RTT_ROOT')
+Import('rtconfig')
+
+#导入使用到的模块
+from building import *
+
+#获取当前目录的路径
+cwd = GetCurrentDir()
+
+#创建一个列表，用于保存需要使用到的C文件路径
+#src = Glob('*.c')
+src = Split("""
+main.c
+""")
+if GetDepend(['BSP_USING_TEST']):
+    src += ['test.c']
+
+#创建一个列表，用于保存需要包含的H文件路径
+path = [cwd]
+
+#创建一个组别
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = path)
+
+#返回创建好的组别
+Return('group')

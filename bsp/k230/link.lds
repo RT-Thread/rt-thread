@@ -8,21 +8,18 @@
  * 2020/12/12     bernard      The first version
  */
 
-INCLUDE "link_stacksize.lds"
+#include "board/mem_layout.h"
 
 OUTPUT_ARCH( "riscv" )
 
 /*
  * Memory layout:
- * 2M ==> +128K: Bootloader(sbi)
- * 2M+128K ==> +sizeof(rtthread.bin): Kernel
- * ~ ==> 32M: Heap
- * 32M - 66M: Page
+ * See mem_layout.h
  */
 
 MEMORY
 {
-   SRAM(wx) : ORIGIN = 0xFFFFFFC000220000, LENGTH = 64M - 128K
+   SRAM : ORIGIN = KERNEL_VADDR_START + MEM_OPENSBI_SIZE, LENGTH = MEM_KERNEL_SIZE
 }
 
 ENTRY(_start)

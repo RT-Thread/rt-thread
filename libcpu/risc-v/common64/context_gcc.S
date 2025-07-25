@@ -77,11 +77,11 @@
 rt_hw_context_switch_to:
     LOAD sp, (a0)
 
-    jal rt_thread_self
+    call rt_thread_self
     mv s1, a0
 
     #ifdef RT_USING_SMART
-        jal lwp_aspace_switch
+        call lwp_aspace_switch
     #endif
 
     RESTORE_CONTEXT
@@ -104,11 +104,11 @@ rt_hw_context_switch:
     LOAD sp, (a1)
 
     // restore Address Space
-    jal rt_thread_self
+    call rt_thread_self
     mv s1, a0
 
     #ifdef RT_USING_SMART
-        jal lwp_aspace_switch
+        call lwp_aspace_switch
     #endif
 
     RESTORE_CONTEXT

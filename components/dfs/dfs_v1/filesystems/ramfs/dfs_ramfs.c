@@ -92,7 +92,7 @@ struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs *ramfs,
     return NULL;
 }
 
-int dfs_ramfs_read(struct dfs_file *file, void *buf, size_t count)
+ssize_t dfs_ramfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     rt_size_t length;
     struct ramfs_dirent *dirent;
@@ -114,7 +114,7 @@ int dfs_ramfs_read(struct dfs_file *file, void *buf, size_t count)
     return length;
 }
 
-int dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
+ssize_t dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
@@ -151,7 +151,7 @@ int dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
     return count;
 }
 
-int dfs_ramfs_lseek(struct dfs_file *file, off_t offset)
+off_t dfs_ramfs_lseek(struct dfs_file *file, off_t offset)
 {
     if (offset <= (off_t)file->vnode->size)
     {

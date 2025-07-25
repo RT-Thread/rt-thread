@@ -8,7 +8,7 @@ Description  : systick encapsulation.
 
 #ifndef __YC_SYSTICK_H__
 #define __YC_SYSTICK_H__
-#include "..\core\yc3121.h"
+#include "../core/yc3121.h"
 
 #define SYSTICK_SYSCLOCK			1
 #define SYSTICK_HALF_SYSCLOCK		0

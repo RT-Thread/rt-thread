@@ -54,11 +54,11 @@ static const uint8_t device_quality_descriptor[] = {
     USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
     0x00,
     0x02,
-    0x02,
-    0x02,
-    0x01,
+    0x00,
+    0x00,
+    0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 };
 
@@ -169,11 +169,11 @@ static const uint8_t cdc_msc_descriptor[] = {
     USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
     0x00,
     0x02,
-    0x02,
-    0x02,
-    0x01,
+    0x00,
+    0x00,
+    0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -215,14 +215,14 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
 
 void usbd_cdc_acm_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%d\r\n", (unsigned int)nbytes);
     /* setup next out ep read transfer */
     usbd_ep_start_read(busid, CDC_OUT_EP, read_buffer, 2048);
 }
 
 void usbd_cdc_acm_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual in len:%d\r\n", (unsigned int)nbytes);
 
     if ((nbytes % usbd_get_ep_mps(busid, ep)) == 0 && nbytes) {
         /* send zlp */

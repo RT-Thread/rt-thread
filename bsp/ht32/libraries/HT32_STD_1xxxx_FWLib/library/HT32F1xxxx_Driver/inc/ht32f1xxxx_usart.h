@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_usart.h
- * @version $Rev:: 2797         $
- * @date    $Date:: 2022-11-28 #$
+ * @version $Rev:: 3180         $
+ * @date    $Date:: 2024-10-15 #$
  * @brief   The header file of the USART library.
  *************************************************************************************************************
  * @attention
@@ -459,7 +459,7 @@ typedef struct
 #define IS_USART_PDMA_REQ(REQ)                  ((REQ == USART_PDMAREQ_TX) || (REQ == USART_PDMAREQ_RX))
 
 #define IS_USART(USART)                         ((USART == HT_USART0) || \
-                                                 (IS_USART1(USART)) || \
+                                                 (IS_USART1(USART))   || \
                                                  (USART == HT_UART0)  || \
                                                  (USART == HT_UART1))
 

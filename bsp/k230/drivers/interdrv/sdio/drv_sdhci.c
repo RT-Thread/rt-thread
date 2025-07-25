@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,6 +20,7 @@
 #include <string.h>
 #include <ioremap.h>
 #include <cache.h>
+#include <mm_aspace.h>
 
 #ifdef RT_USING_SDIO
 
@@ -194,9 +195,11 @@ static void dwcmshc_phy_3_3v_init(struct sdhci_host* host)
 static void dwcmshc_phy_delay_config(struct sdhci_host* host)
 {
     sdhci_writeb(host, 1, DWC_MSHC_COMMDL_CNFG);
-    if (host->tx_delay_line > 256) {
+    if (host->tx_delay_line > 256)
+    {
         LOG_E("host%d: tx_delay_line err\n", host->index);
-    } else if (host->tx_delay_line > 128) {
+    } else if (host->tx_delay_line > 128)
+    {
         sdhci_writeb(host, 0x1, DWC_MSHC_SDCLKDL_CNFG);
         sdhci_writeb(host, host->tx_delay_line - 128, DWC_MSHC_SDCLKDL_DC);
     } else {
@@ -219,7 +222,8 @@ static int dwcmshc_phy_init(struct sdhci_host* host)
     /* Disable the clock */
     sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
 
-    if (host->io_fixed_1v8) {
+    if (host->io_fixed_1v8)
+    {
         uint32_t data = sdhci_readw(host, SDHCI_HOST_CONTROL2);
         data |= SDHCI_CTRL_VDD_180;
         sdhci_writew(host, data, SDHCI_HOST_CONTROL2);
@@ -231,11 +235,13 @@ static int dwcmshc_phy_init(struct sdhci_host* host)
     dwcmshc_phy_delay_config(host);
 
     /* Wait max 150 ms */
-    while (1) {
+    while (1)
+    {
         reg = sdhci_readl(host, DWC_MSHC_PHY_CNFG);
         if (reg & PHY_PWRGOOD)
             break;
-        if (!timeout) {
+        if (!timeout)
+        {
             return -1;
         }
         timeout--;
@@ -260,8 +266,10 @@ static void sdhci_reset(struct sdhci_host* host, uint8_t mask)
     /* Wait max 100 ms */
     timeout = 100;
     sdhci_writeb(host, mask, SDHCI_SOFTWARE_RESET);
-    while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
-        if (timeout == 0) {
+    while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask)
+    {
+        if (timeout == 0)
+        {
             LOG_E("%s: Reset 0x%x never completed.\n",
                 __func__, (int)mask);
             return;
@@ -269,8 +277,10 @@ static void sdhci_reset(struct sdhci_host* host, uint8_t mask)
         timeout--;
         delay_1k(1);
     }
-    if (mask == SDHCI_RESET_ALL) {
-        if (host->index == 0) {
+    if (mask == SDHCI_RESET_ALL)
+    {
+        if (host->index == 0)
+        {
             uint16_t emmc_ctl = sdhci_readw(host, EMMC_CTRL_R);
             if (host->is_emmc_card)
                 emmc_ctl |= (1 << CARD_IS_EMMC);
@@ -306,12 +316,14 @@ static void sdhic_error_recovery(struct sdhci_host* sdhci_host)
     /* get host present status */
     status = sdhci_get_present_status_flag(sdhci_host);
     /* check command inhibit status flag */
-    if ((status & SDHCI_CMD_INHIBIT) != 0U) {
+    if ((status & SDHCI_CMD_INHIBIT) != 0U)
+    {
         /* reset command line */
         sdhci_reset(sdhci_host, SDHCI_RESET_CMD);
     }
     /* check data inhibit status flag */
-    if ((status & SDHCI_DATA_INHIBIT) != 0U) {
+    if ((status & SDHCI_DATA_INHIBIT) != 0U)
+    {
         /* reset data line */
         sdhci_reset(sdhci_host, SDHCI_RESET_DATA);
     }
@@ -319,9 +331,11 @@ static void sdhic_error_recovery(struct sdhci_host* sdhci_host)
 
 static rt_err_t sdhci_receive_command_response(struct sdhci_host* sdhci_host, struct sdhci_command* command)
 {
-    if (command->responseType == card_response_type_r2) {
+    if (command->responseType == card_response_type_r2)
+    {
         /* CRC is stripped so we need to do some shifting. */
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++)
+        {
             command->response[3 - i] = sdhci_readl(sdhci_host, SDHCI_RESPONSE + (3 - i) * 4) << 8;
             if (i != 3)
                 command->response[3 - i] |= sdhci_readb(sdhci_host, SDHCI_RESPONSE + (3 - i) * 4 - 1);
@@ -330,9 +344,10 @@ static rt_err_t sdhci_receive_command_response(struct sdhci_host* sdhci_host, st
         command->response[0] = sdhci_readl(sdhci_host, SDHCI_RESPONSE);
     }
     /* check response error flag */
-    if ((command->responseErrorFlags != 0U) && ((command->responseType == card_response_type_r1) || (command->responseType == card_response_type_r1b) || (command->responseType == card_response_type_r6) || (command->responseType == card_response_type_r5))) {
+    if ((command->responseErrorFlags != 0U) && ((command->responseType == card_response_type_r1) || (command->responseType == card_response_type_r1b) || (command->responseType == card_response_type_r6) || (command->responseType == card_response_type_r5)))
+    {
         if (((command->responseErrorFlags) & (command->response[0U])) != 0U)
-            return -1; // kStatus_USDHC_SendCommandFailed;
+            return -1; /* kStatus_USDHC_SendCommandFailed; */
     }
 
     return 0;
@@ -347,7 +362,8 @@ static void sdhci_send_command(struct sdhci_host* sdhci_host, struct sdhci_comma
 
     cmd_r = SDHCI_MAKE_CMD(command->index, command->flags);
 
-    if (sdhci_data != RT_NULL) {
+    if (sdhci_data != RT_NULL)
+    {
 #ifdef SDHCI_SDMA_ENABLE
         rt_ubase_t start_addr, dma_addr;
         if (sdhci_data->rxData)
@@ -356,7 +372,7 @@ static void sdhci_send_command(struct sdhci_host* sdhci_host, struct sdhci_comma
             start_addr = (rt_ubase_t)((uint8_t*)sdhci_data->txData);
         rt_hw_cpu_dcache_clean((void*)start_addr, sdhci_data->blockSize * sdhci_data->blockCount);
         command->flags2 |= sdhci_enable_dma_flag;
-        dma_addr = rt_kmem_v2p((void*)start_addr);
+        dma_addr = (rt_ubase_t)rt_kmem_v2p((void*)start_addr);
         sdhci_writel(sdhci_host, dma_addr, SDHCI_DMA_ADDRESS);
 #endif
         sdhci_writew(sdhci_host, SDHCI_MAKE_BLKSZ(7, sdhci_data->blockSize), SDHCI_BLOCK_SIZE);
@@ -378,7 +394,8 @@ static rt_err_t sdhci_wait_command_done(struct sdhci_host* sdhci_host, struct sd
     /* Wait command complete or USDHC encounters error. */
     rt_event_recv(&sdhci_host->event, SDHCI_INT_ERROR | SDHCI_INT_RESPONSE,
         RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, RT_WAITING_FOREVER, &event);
-    if (event & SDHCI_INT_ERROR) {
+    if (event & SDHCI_INT_ERROR)
+    {
         LOG_D("%s: Error detected in status(0x%X)!\n", __func__, sdhci_host->error_code);
         return -1;
     }
@@ -391,23 +408,28 @@ static rt_err_t sdhci_transfer_data_blocking(struct sdhci_host* sdhci_host, stru
     rt_err_t err;
     rt_uint32_t event;
 
-    while (1) {
+    while (1)
+    {
         err = rt_event_recv(&sdhci_host->event, SDHCI_INT_ERROR | SDHCI_INT_DATA_END | SDHCI_INT_DMA_END,
             RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, 1000, &event);
-        if (err == -RT_ETIMEOUT) {
+        if (err == -RT_ETIMEOUT)
+        {
             rt_kprintf("%s: Transfer data timeout\n", __func__);
             return -1;
         }
-        if (event & SDHCI_INT_ERROR) {
+        if (event & SDHCI_INT_ERROR)
+        {
             LOG_D("%s: Error detected in status(0x%X)!\n", __func__, sdhci_host->error_code);
             emmc_reg_display(sdhci_host);
             return -1;
         }
-        if (event & SDHCI_INT_DMA_END) {
+        if (event & SDHCI_INT_DMA_END)
+        {
             sdhci_writel(sdhci_host, SDHCI_INT_DMA_END, SDHCI_INT_STATUS);
             sdhci_writel(sdhci_host, sdhci_readl(sdhci_host, SDHCI_DMA_ADDRESS), SDHCI_DMA_ADDRESS);
         }
-        if (event & SDHCI_INT_DATA_END) {
+        if (event & SDHCI_INT_DATA_END)
+        {
             if (data && data->rxData)
                 rt_hw_cpu_dcache_invalidate((void*)data->rxData, data->blockSize * data->blockCount);
             return 0;
@@ -421,19 +443,24 @@ static rt_err_t sdhci_transfer_data_blocking(struct sdhci_host* sdhci_host, stru
     rdy = SDHCI_INT_SPACE_AVAIL | SDHCI_INT_DATA_AVAIL;
     mask = SDHCI_DATA_AVAILABLE | SDHCI_SPACE_AVAILABLE;
 
-    while (1) {
+    while (1)
+    {
         stat = sdhci_get_int_status_flag(sdhci_host);
-        if (stat & SDHCI_INT_ERROR) {
+        if (stat & SDHCI_INT_ERROR)
+        {
             LOG_D("%s: Error detected in status(0x%X)!\n", __func__, stat);
             emmc_reg_display(sdhci_host);
             return -1;
         }
-        if (stat & rdy) {
-            if (!(sdhci_readl(sdhci_host, SDHCI_PRESENT_STATE) & mask)) {
+        if (stat & rdy)
+        {
+            if (!(sdhci_readl(sdhci_host, SDHCI_PRESENT_STATE) & mask))
+            {
                 continue;
             }
             sdhci_clear_int_status_flag(sdhci_host, rdy);
-            if (data->rxData) {
+            if (data->rxData)
+            {
                 for (int i = 0; i < data->blockSize / 4; i++)
                     data->rxData[i + block * data->blockSize] = sdhci_readl(sdhci_host, SDHCI_BUFFER);
             } else {
@@ -444,7 +471,8 @@ static rt_err_t sdhci_transfer_data_blocking(struct sdhci_host* sdhci_host, stru
             if (block >= data->blockCount)
                 return 0;
         }
-        if (timeout == 0) {
+        if (timeout == 0)
+        {
             rt_kprintf("%s: Transfer data timeout\n", __func__);
             return -1;
         }
@@ -458,7 +486,8 @@ static rt_err_t sdhci_set_transfer_config(struct sdhci_host* sdhci_host, struct 
 {
     RT_ASSERT(sdhci_command);
     /* Define the flag corresponding to each response type. */
-    switch (sdhci_command->responseType) {
+    switch (sdhci_command->responseType)
+    {
     case card_response_type_none:
         break;
     case card_response_type_r1: /* Response 1 */
@@ -487,32 +516,41 @@ static rt_err_t sdhci_set_transfer_config(struct sdhci_host* sdhci_host, struct 
         break;
     }
 
-    if (sdhci_command->type == card_command_type_abort) {
+    if (sdhci_command->type == card_command_type_abort)
+    {
         sdhci_command->flags |= sdhci_enable_command_type_abort;
-    } else if (sdhci_command->type == card_command_type_resume) {
+    } else if (sdhci_command->type == card_command_type_resume)
+    {
         sdhci_command->flags |= sdhci_enable_command_type_resume;
-    } else if (sdhci_command->type == card_command_type_suspend) {
+    } else if (sdhci_command->type == card_command_type_suspend)
+    {
         sdhci_command->flags |= sdhci_enable_command_type_suspend;
-    } else if (sdhci_command->type == card_command_type_normal) {
+    } else if (sdhci_command->type == card_command_type_normal)
+    {
         sdhci_command->flags |= sdhci_enable_command_type_normal;
     }
 
-    if (sdhci_data) {
+    if (sdhci_data)
+    {
         sdhci_command->flags |= sdhci_enable_cmd_data_present_flag;
         sdhci_command->flags2 |= sdhci_enable_block_count_flag;
 
-        if (sdhci_data->rxData) {
+        if (sdhci_data->rxData)
+        {
             sdhci_command->flags2 |= sdhci_data_read_flag;
         }
-        if (sdhci_data->blockCount > 1U) {
+        if (sdhci_data->blockCount > 1U)
+        {
             sdhci_command->flags2 |= (sdhci_multiple_block_flag);
             /* auto command 12 */
-            if (sdhci_data->enableAutoCommand12) {
+            if (sdhci_data->enableAutoCommand12)
+            {
                 /* Enable Auto command 12. */
                 sdhci_command->flags2 |= sdhci_enable_auto_command12_flag;
             }
             /* auto command 23 */
-            if (sdhci_data->enableAutoCommand23) {
+            if (sdhci_data->enableAutoCommand23)
+            {
                 sdhci_command->flags2 |= sdhci_enable_auto_command23_flag;
             }
         }
@@ -529,14 +567,17 @@ static rt_err_t sdhci_transfer_blocking(struct sdhci_host* sdhci_host)
     int ret = RT_EOK;
 
     /* Wait until command/data bus out of busy status. */
-    while (sdhci_get_present_status_flag(sdhci_host) & sdhci_command_inhibit_flag) {
+    while (sdhci_get_present_status_flag(sdhci_host) & sdhci_command_inhibit_flag)
+    {
     }
-    while (sdhci_data && (sdhci_get_present_status_flag(sdhci_host) & sdhci_data_inhibit_flag)) {
+    while (sdhci_data && (sdhci_get_present_status_flag(sdhci_host) & sdhci_data_inhibit_flag))
+    {
     }
     sdhci_writel(sdhci_host, SDHCI_INT_ALL_MASK, SDHCI_INT_STATUS);
 
     ret = sdhci_set_transfer_config(sdhci_host, sdhci_command, sdhci_data);
-    if (ret != 0) {
+    if (ret != 0)
+    {
         return ret;
     }
     sdhci_writel(sdhci_host, sdhci_readl(sdhci_host, SDHCI_SIGNAL_ENABLE) |
@@ -546,7 +587,8 @@ static rt_err_t sdhci_transfer_blocking(struct sdhci_host* sdhci_host)
     /* wait command done */
     ret = sdhci_wait_command_done(sdhci_host, sdhci_command, ((sdhci_data == RT_NULL) ? false : sdhci_data->executeTuning));
     /* transfer data */
-    if ((sdhci_data != RT_NULL) && (ret == 0)) {
+    if ((sdhci_data != RT_NULL) && (ret == 0))
+    {
         ret = sdhci_transfer_data_blocking(sdhci_host, sdhci_data, enDMA);
     }
     sdhci_writel(sdhci_host, sdhci_readl(sdhci_host, SDHCI_SIGNAL_ENABLE) &
@@ -575,7 +617,8 @@ static void sdhci_irq(int vector, void* param)
     struct sdhci_host* host = param;
     uint32_t status = sdhci_get_int_status_flag(host);
 
-    if (status & (SDHCI_INT_ERROR | SDHCI_INT_DATA_END | SDHCI_INT_DMA_END | SDHCI_INT_RESPONSE)) {
+    if (status & (SDHCI_INT_ERROR | SDHCI_INT_DATA_END | SDHCI_INT_DMA_END | SDHCI_INT_RESPONSE))
+    {
         host->error_code = (status >> 16) & 0xffff;
         rt_event_send(&host->event, status & (SDHCI_INT_ERROR | SDHCI_INT_DATA_END | SDHCI_INT_DMA_END | SDHCI_INT_RESPONSE));
     }
@@ -614,7 +657,8 @@ static void kd_mmc_request(struct rt_mmcsd_host* host, struct rt_mmcsd_req* req)
     else
         sdhci_command.type = card_command_type_normal;
 
-    switch (cmd->flags & RESP_MASK) {
+    switch (cmd->flags & RESP_MASK)
+    {
     case RESP_NONE:
         sdhci_command.responseType = card_response_type_none;
         break;
@@ -651,7 +695,8 @@ static void kd_mmc_request(struct rt_mmcsd_host* host, struct rt_mmcsd_req* req)
     sdhci_command.responseErrorFlags = 0;
     mmcsd->sdhci_command = &sdhci_command;
 
-    if (data) {
+    if (data)
+    {
         if (req->stop != RT_NULL)
             sdhci_data.enableAutoCommand12 = true;
         else
@@ -662,7 +707,8 @@ static void kd_mmc_request(struct rt_mmcsd_host* host, struct rt_mmcsd_req* req)
         sdhci_data.blockSize = data->blksize;
         sdhci_data.blockCount = data->blks;
 
-        if (data->flags == DATA_DIR_WRITE) {
+        if (data->flags == DATA_DIR_WRITE)
+        {
             sdhci_data.txData = data->buf;
             sdhci_data.rxData = RT_NULL;
         } else {
@@ -674,11 +720,13 @@ static void kd_mmc_request(struct rt_mmcsd_host* host, struct rt_mmcsd_req* req)
         uint32_t pad = 0;
         if (sz & (CACHE_LINESIZE - 1))
             pad = (sz + (CACHE_LINESIZE - 1)) & ~(CACHE_LINESIZE - 1);
-        if (sdhci_data.rxData && (((uint64_t)(sdhci_data.rxData) & (CACHE_LINESIZE - 1)) || pad)) {
+        if (sdhci_data.rxData && (((uint64_t)(sdhci_data.rxData) & (CACHE_LINESIZE - 1)) || pad))
+        {
             sdhci_data.rxData = rt_malloc_align(pad ? pad : sz, CACHE_LINESIZE);
-        } else if (((uint64_t)(sdhci_data.txData) & (CACHE_LINESIZE - 1)) || pad) {
+        } else if (((uint64_t)(sdhci_data.txData) & (CACHE_LINESIZE - 1)) || pad)
+        {
             sdhci_data.txData = rt_malloc_align(pad ? pad : sz, CACHE_LINESIZE);
-            rt_memcpy(sdhci_data.txData, data->buf, sz);
+            rt_memcpy((void *)sdhci_data.txData, data->buf, sz);
         }
 #endif
         mmcsd->sdhci_data = &sdhci_data;
@@ -687,19 +735,23 @@ static void kd_mmc_request(struct rt_mmcsd_host* host, struct rt_mmcsd_req* req)
     }
     error = sdhci_transfer_blocking(mmcsd);
 #ifdef SDHCI_SDMA_ENABLE
-    if (data && sdhci_data.rxData && sdhci_data.rxData != data->buf) {
+    if (data && sdhci_data.rxData && sdhci_data.rxData != data->buf)
+    {
         rt_memcpy(data->buf, sdhci_data.rxData, sdhci_data.blockSize * sdhci_data.blockCount);
         rt_free_align(sdhci_data.rxData);
-    } else if (data && sdhci_data.txData && sdhci_data.txData != data->buf) {
-        rt_free_align(sdhci_data.txData);
+    } else if (data && sdhci_data.txData && sdhci_data.txData != data->buf)
+    {
+        rt_free_align((void *)sdhci_data.txData);
     }
 #endif
-    if (error == -1) {
+    if (error == -1)
+    {
         LOG_D(" ***USDHC_TransferBlocking error: %d*** --> \n", error);
         cmd->err = -RT_ERROR;
     }
 
-    if ((cmd->flags & RESP_MASK) == RESP_R2) {
+    if ((cmd->flags & RESP_MASK) == RESP_R2)
+    {
         cmd->resp[3] = sdhci_command.response[0];
         cmd->resp[2] = sdhci_command.response[1];
         cmd->resp[1] = sdhci_command.response[2];
@@ -724,10 +776,12 @@ static void kd_mmc_clock_freq_change(struct sdhci_host* host, uint32_t clock)
     if (clock == 0)
         return;
 
-    if (host->max_clk <= clock) {
+    if (host->max_clk <= clock)
+    {
         div = 1;
     } else {
-        for (div = 2; div < SDHCI_MAX_DIV_SPEC_300; div += 2) {
+        for (div = 2; div < SDHCI_MAX_DIV_SPEC_300; div += 2)
+        {
             if ((host->max_clk / div) <= clock)
                 break;
         }
@@ -803,12 +857,15 @@ void kd_sdhci0_reset(int value)
     sdhci_writeb(host, emmc_ctl, EMMC_CTRL_R);
 }
 
-void kd_sdhci_change(int id)
+void kd_sdhci_change(void)
 {
-    if (id == 0)
+#ifdef BSP_USING_SDIO0
         mmcsd_change(sdhci_host0->host);
-    else if (id == 1)
+#endif
+
+#ifdef BSP_USING_SDIO1
         mmcsd_change(sdhci_host1->host);
+#endif
 }
 
 rt_int32_t kd_sdhci_init(void)
@@ -850,7 +907,8 @@ rt_int32_t kd_sdhci_init(void)
     rt_hw_interrupt_umask(IRQN_SD0);
 
     struct rt_mmcsd_host* mmcsd_host0 = mmcsd_alloc_host();
-    if (!mmcsd_host0) {
+    if (!mmcsd_host0)
+    {
         rt_free(sdhci_host0);
         return -1;
     }
@@ -900,7 +958,8 @@ rt_int32_t kd_sdhci_init(void)
     rt_hw_interrupt_umask(IRQN_SD1);
 
     struct rt_mmcsd_host* mmcsd_host1 = mmcsd_alloc_host();
-    if (!mmcsd_host1) {
+    if (!mmcsd_host1)
+    {
         rt_free(sdhci_host1);
         return -2;
     }
@@ -917,9 +976,9 @@ rt_int32_t kd_sdhci_init(void)
     mmcsd_host1->private_data = sdhci_host1;
     sdhci_host1->host = mmcsd_host1;
 #endif
-#ifdef BSP_SD_SDIO_DEV
-    kd_sdhci_change(BSP_SD_SDIO_DEV);
-#endif
+
+    kd_sdhci_change();
+
     rt_iounmap(hi_sys_virt_addr);
     return 0;
 }

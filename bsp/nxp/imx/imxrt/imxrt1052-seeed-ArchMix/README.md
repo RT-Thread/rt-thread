@@ -32,6 +32,7 @@ Arch Mix 板级包支持MDK5﹑IAR开发环境和GCC编译器，以下是具体�
 
 - 在 bsp 下打开 env 工具
 - 输入`menuconfig`命令配置工程，配置好之后保存退出。
+- 输入`pkgs --update`命令拉取对应的sdk，否则无法通过编译
 - 输入`scons --target=mdk5 -s`或`scons --target=iar`来生成需要的工程
 
 ### 下载和仿真

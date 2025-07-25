@@ -1,0 +1,18 @@
+from building import *
+
+group = []
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src = []
+
+if GetDepend(['RT_BLK_PARTITION_DFS']):
+    src += ['dfs.c']
+
+if GetDepend(['RT_BLK_PARTITION_EFI']):
+    src += ['efi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -15,11 +15,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_xbox *usbh_xbox_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_XBOX_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_xbox_class[devno], 0, sizeof(struct usbh_xbox));
             g_xbox_class[devno].minor = devno;
             return &g_xbox_class[devno];
@@ -30,10 +30,10 @@ static struct usbh_xbox *usbh_xbox_class_alloc(void)
 
 static void usbh_xbox_class_free(struct usbh_xbox *xbox_class)
 {
-    int devno = xbox_class->minor;
+    uint8_t devno = xbox_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(xbox_class, 0, sizeof(struct usbh_xbox));
 }
@@ -86,6 +86,7 @@ int usbh_xbox_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister XBOX Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_xbox_stop(xbox_class);
         }
@@ -220,9 +221,9 @@ static const uint16_t xbox_id_table[][2] = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info xbox_custom_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_VEND_SPECIFIC,
-    .subclass = 0x5d,
-    .protocol = 0x01,
+    .bInterfaceClass = USB_DEVICE_CLASS_VEND_SPECIFIC,
+    .bInterfaceSubClass = 0x5d,
+    .bInterfaceProtocol = 0x01,
     .id_table =  xbox_id_table,
     .class_driver = &xbox_class_driver
 };

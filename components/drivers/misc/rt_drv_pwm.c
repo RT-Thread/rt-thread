@@ -331,10 +331,12 @@ static int pwm_list(int argc, char **argv)
                 pwm_device = (struct rt_device_pwm *)rt_device_find(argv[2]);
                 result_str = (pwm_device == RT_NULL) ? "failure" : "success";
                 rt_kprintf("probe %s %s\n", argv[2], result_str);
+                return (pwm_device == RT_NULL) ? -RT_ERROR : RT_EOK;
             }
             else
             {
                 rt_kprintf("pwm probe <device name>                  - probe pwm by name\n");
+                return -RT_EINVAL;
             }
         }
         else if (pwm_device == RT_NULL)

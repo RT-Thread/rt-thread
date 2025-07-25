@@ -1,0 +1,16 @@
+devices.strict:
+    depend_scons_arg:
+      - '--strict'
+devices.gpio:
+    depends:
+      - devices.strict
+    kconfig:
+      - CONFIG_BSP_USING_GPIO=y
+devices.uart:
+    kconfig:
+      - CONFIG_BSP_USING_UART=y
+devices.soft_i2c:
+    kconfig:
+      - CONFIG_RT_USING_I2C=y
+      - CONFIG_RT_USING_SOFT_I2C=y
+      - CONFIG_RT_USING_SOFT_I2C0=y

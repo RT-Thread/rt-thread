@@ -26,10 +26,29 @@ usb_osal_thread_t usb_osal_thread_create(const char *name, uint32_t stack_size, 
 void usb_osal_thread_delete(usb_osal_thread_t thread)
 {
     if (thread == NULL) {
+        rt_thread_t self = rt_thread_self();
+        rt_thread_control(self, RT_THREAD_CTRL_CLOSE, RT_NULL);
         return;
     }
 
     rt_thread_delete(thread);
+}
+
+void usb_osal_thread_schedule_other(void)
+{
+    rt_thread_t self = rt_thread_self();
+    rt_uint8_t priority;
+#if (RTTHREAD_VERSION >= RT_VERSION_CHECK(5, 2, 0))
+    const rt_uint8_t old_priority = RT_SCHED_PRIV(self).current_priority;
+#else
+    const rt_uint8_t old_priority = self->current_priority;
+#endif
+    priority = RT_THREAD_PRIORITY_MAX - 1;
+    rt_thread_control(self, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&priority);
+
+    rt_thread_yield();
+
+    rt_thread_control(self, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&old_priority);
 }
 
 usb_osal_sem_t usb_osal_sem_create(uint32_t initial_count)

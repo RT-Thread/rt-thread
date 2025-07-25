@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -100,7 +100,7 @@ extern "C" {
     #define HTCFG_UART1_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART1_RX_GPION)
 
 #endif
-#endif
+#endif  /* BSP_USING_UART */
 
 /* SPI gpio */
 #ifdef BSP_USING_SPI
@@ -156,7 +156,7 @@ extern "C" {
     #define HTCFG_SPI1_MOSI_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI1_MOSI_GPION)
 
 #endif
-#endif
+#endif  /* BSP_USING_SPI */
 
 /* I2C gpio */
 #ifdef BSP_USING_I2C_HW
@@ -198,7 +198,8 @@ extern "C" {
     #define HTCFG_I2C1_SDA_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C1_SDA_GPION)
 
 #endif
-#endif
+#endif  /* BSP_USING_I2C_HW */
+
 /* ADC gpio */
 #ifdef BSP_USING_ADC
 #ifdef BSP_USING_ADC0
@@ -335,12 +336,66 @@ extern "C" {
 #define HTCFG_ADC1CH7_AFIO_PIN                   STRCAT2(AFIO_PIN_,      _HTCFG_ADC1CH7_AFION)
 
 #endif
-#endif
+#endif  /* BSP_USING_ADC */
 
+/* SDIO gpio */
+#ifdef BSP_USING_SDIO
+    #define HTCFG_SDIO_IPN                           SDIO
+
+    #define _HTCFG_SDIO_CLK_GPIOX                    A
+    #define _HTCFG_SDIO_CLK_GPION                    5
+
+    #define _HTCFG_SDIO_CMD_GPIOX                    A
+    #define _HTCFG_SDIO_CMD_GPION                    4
+
+    #define _HTCFG_SDIO_DAT0_GPIOX                   C
+    #define _HTCFG_SDIO_DAT0_GPION                   9
+
+    #define _HTCFG_SDIO_DAT1_GPIOX                   C
+    #define _HTCFG_SDIO_DAT1_GPION                   10
+
+    #define _HTCFG_SDIO_DAT2_GPIOX                   C
+    #define _HTCFG_SDIO_DAT2_GPION                   11
+
+    #define _HTCFG_SDIO_DAT3_GPIOX                   C
+    #define _HTCFG_SDIO_DAT3_GPION                   12
+
+    #define HTCFG_SDIO_CLK_GPIO_CLK                  STRCAT2(P,              _HTCFG_SDIO_CLK_GPIOX)
+    #define HTCFG_SDIO_CLK_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_SDIO_CLK_GPIOX)
+    #define HTCFG_SDIO_CLK_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_SDIO_CLK_GPIOX)
+    #define HTCFG_SDIO_CLK_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_SDIO_CLK_GPION)
+
+    #define HTCFG_SDIO_CMD_GPIO_CLK                  STRCAT2(P,              _HTCFG_SDIO_CMD_GPIOX)
+    #define HTCFG_SDIO_CMD_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_SDIO_CMD_GPIOX)
+    #define HTCFG_SDIO_CMD_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_SDIO_CMD_GPIOX)
+    #define HTCFG_SDIO_CMD_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_SDIO_CMD_GPION)
+
+    #define HTCFG_SDIO_DAT0_GPIO_CLK                 STRCAT2(P,              _HTCFG_SDIO_DAT0_GPIOX)
+    #define HTCFG_SDIO_DAT0_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SDIO_DAT0_GPIOX)
+    #define HTCFG_SDIO_DAT0_GPIO_PORT                STRCAT2(HT_GPIO,        _HTCFG_SDIO_DAT0_GPIOX)
+    #define HTCFG_SDIO_DAT0_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SDIO_DAT0_GPION)
+
+    #define HTCFG_SDIO_DAT1_GPIO_CLK                 STRCAT2(P,              _HTCFG_SDIO_DAT1_GPIOX)
+    #define HTCFG_SDIO_DAT1_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SDIO_DAT1_GPIOX)
+    #define HTCFG_SDIO_DAT1_GPIO_PORT                STRCAT2(HT_GPIO,        _HTCFG_SDIO_DAT1_GPIOX)
+    #define HTCFG_SDIO_DAT1_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SDIO_DAT1_GPION)
+
+    #define HTCFG_SDIO_DAT2_GPIO_CLK                 STRCAT2(P,              _HTCFG_SDIO_DAT2_GPIOX)
+    #define HTCFG_SDIO_DAT2_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SDIO_DAT2_GPIOX)
+    #define HTCFG_SDIO_DAT2_GPIO_PORT                STRCAT2(HT_GPIO,        _HTCFG_SDIO_DAT2_GPIOX)
+    #define HTCFG_SDIO_DAT2_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SDIO_DAT2_GPION)
+
+    #define HTCFG_SDIO_DAT3_GPIO_CLK                 STRCAT2(P,              _HTCFG_SDIO_DAT3_GPIOX)
+    #define HTCFG_SDIO_DAT3_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SDIO_DAT3_GPIOX)
+    #define HTCFG_SDIO_DAT3_GPIO_PORT                STRCAT2(HT_GPIO,        _HTCFG_SDIO_DAT3_GPIOX)
+    #define HTCFG_SDIO_DAT3_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SDIO_DAT3_GPION)
+
+#endif  /* BSP_USING_SDIO */
 void ht32_usart_gpio_init(void *instance);
 void ht32_spi_gpio_init(void *instance);
 void ht32_hardware_i2c_gpio_init(void *instance);
 void ht32_adc_gpio_init(void *instance,int8_t channel);
+void ht32_sdio_gpio_init(void *instance);
 
 #ifdef __cplusplus
 }

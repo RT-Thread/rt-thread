@@ -25,7 +25,12 @@ uint32_t usbh_get_dwc2_gccfg_conf(uint32_t reg_base)
     return 0;
 }
 
+extern uint32_t SystemCoreClock;
+
 void usbd_dwc2_delay_ms(uint8_t ms)
 {
-    /* implement later */
+    uint32_t count = SystemCoreClock / 1000 * ms;
+    while (count--) {
+        __asm volatile("nop");
+    }
 }

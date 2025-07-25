@@ -13,31 +13,18 @@ name: BSP compilation with more drivers
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
-  pull_request:
-    branches:
-      - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
+  workflow_dispatch: #disable
 
 permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: BSP Compilation with More Drivers
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Set up Python
         uses: actions/setup-python@v3
         with:

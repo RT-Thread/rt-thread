@@ -16,7 +16,9 @@
 #include <rtdbg.h>
 
 #include <drivers/pic.h>
+#ifdef RT_USING_PIC_STATISTICS
 #include <ktime.h>
+#endif
 
 struct irq_traps
 {
@@ -26,16 +28,8 @@ struct irq_traps
     rt_bool_t (*handler)(void *);
 };
 
-static int _ipi_hash[] =
-{
-#ifdef RT_USING_SMP
-    [RT_SCHEDULE_IPI] = RT_SCHEDULE_IPI,
-    [RT_STOP_IPI] = RT_STOP_IPI,
-#endif
-};
-
 /* reserved ipi */
-static int _pirq_hash_idx = RT_ARRAY_SIZE(_ipi_hash);
+static int _pirq_hash_idx = RT_MAX_IPI;
 static struct rt_pic_irq _pirq_hash[MAX_HANDLERS] =
 {
     [0 ... MAX_HANDLERS - 1] =
@@ -48,7 +42,7 @@ static struct rt_pic_irq _pirq_hash[MAX_HANDLERS] =
     }
 };
 
-static struct rt_spinlock _pic_lock = { };
+static RT_DEFINE_SPINLOCK(_pic_lock);
 static rt_size_t _pic_name_max = sizeof("PIC");
 static rt_list_t _pic_nodes = RT_LIST_OBJECT_INIT(_pic_nodes);
 static rt_list_t _traps_nodes = RT_LIST_OBJECT_INIT(_traps_nodes);
@@ -227,7 +221,7 @@ int rt_pic_config_ipi(struct rt_pic *pic, int ipi_index, int hwirq)
     int ipi = ipi_index;
     struct rt_pic_irq *pirq;
 
-    if (pic && ipi < RT_ARRAY_SIZE(_ipi_hash) && hwirq >= 0 && pic->ops->irq_send_ipi)
+    if (pic && ipi < RT_MAX_IPI && hwirq >= 0 && pic->ops->irq_send_ipi)
     {
         pirq = &_pirq_hash[ipi];
         config_pirq(pic, pirq, ipi, hwirq);
@@ -278,7 +272,7 @@ struct rt_pic_irq *rt_pic_find_ipi(struct rt_pic *pic, int ipi_index)
 {
     struct rt_pic_irq *pirq = &_pirq_hash[ipi_index];
 
-    RT_ASSERT(ipi_index < RT_ARRAY_SIZE(_ipi_hash));
+    RT_ASSERT(ipi_index < RT_MAX_IPI);
     RT_ASSERT(pirq->pic == pic);
 
     return pirq;
@@ -1287,7 +1281,7 @@ static int list_irq(int argc, char**argv)
             #ifdef RT_USING_SMP
                 rt_kputs(cpumask);
             #endif
-                rt_kprintf("%-10d ", repeat_isr->action.counter);
+                rt_kprintf(" %-10d ", repeat_isr->action.counter);
                 rt_kprintf("%-*.s", 10, repeat_isr->action.name);
             #ifdef RT_USING_SMP
                 for (int cpuid = 0; cpuid < RT_CPUS_NR; cpuid++)

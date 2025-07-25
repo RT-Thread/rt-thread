@@ -14,6 +14,9 @@ src = ['access.c', 'host-bridge.c', 'irq.c', 'pci.c', 'pme.c', 'probe.c']
 if GetDepend(['RT_USING_OFW']):
     src += ['ofw.c']
 
+if GetDepend(['RT_USING_DFS_PROCFS']):
+    src += ['procfs.c']
+
 if GetDepend(['RT_PCI_ECAM']):
     src += ['ecam.c']
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_tm.c
- * @version $Rev:: 7059         $
- * @date    $Date:: 2023-07-27 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   This file provides all the TM firmware functions.
  *************************************************************************************************************
  * @attention
@@ -67,7 +67,8 @@
 #define CTR_CHCCDS          0x00010000ul
 
 #define CH0ICFR_CH0SRC      0x80000000ul
-#define CHICFR_CHF_MASK     ~0x000000FFul
+#define CHICFR_CHF_MASK     ~0x000000FFul   /* CHF Mask for CHICFR, varies by model.
+                                               Using ~0x000000FFul for all model.                           */
 #define CHICFR_CHCCS_MASK   ~0x00030000ul
 #define CHICFR_CHPSC_MASK   ~0x000C0000ul
 
@@ -335,12 +336,12 @@ void TM_CaptureInit(HT_TM_TypeDef* TMx, TM_CaptureInitTypeDef* CapInit)
   Assert_Param(IS_TM_CHP(CapInit->Polarity));
   Assert_Param(IS_TM_CHCCS(CapInit->Selection));
   Assert_Param(IS_TM_CHPSC(CapInit->Prescaler));
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   #else
   Assert_Param(IS_TM_FILTER(CapInit->Filter));
   #endif
 
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   Filter = FILTER_PROCESS(CapInit);
   #else
   Filter = CapInit->Filter;
@@ -373,7 +374,7 @@ void TM_PwmInputInit(HT_TM_TypeDef* TMx, TM_CaptureInitTypeDef* CapInit)
   Assert_Param(IS_TM_CHP(CapInit->Polarity));
   Assert_Param(IS_TM_CHCCS(CapInit->Selection));
   Assert_Param(IS_TM_CHPSC(CapInit->Prescaler));
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   #else
   Assert_Param(IS_TM_FILTER(CapInit->Filter));
   #endif
@@ -409,7 +410,7 @@ void TM_PwmInputInit(HT_TM_TypeDef* TMx, TM_CaptureInitTypeDef* CapInit)
     OppositeChannel = TM_CH_0;
   }
 
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   Filter = FILTER_PROCESS(CapInit);
   #else
   Filter = CapInit->Filter;
@@ -479,7 +480,7 @@ void TM_CaptureStructInit(TM_CaptureInitTypeDef* CapInit)
   CapInit->Polarity = TM_CHP_NONINVERTED;
   CapInit->Selection = TM_CHCCS_DIRECT;
   CapInit->Prescaler = TM_CHPSC_OFF;
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   CapInit->Fsampling = TM_CHFDIV_1;
   CapInit->Event = TM_CHFEV_OFF;
   #else
@@ -559,7 +560,7 @@ void TM_ChExternalClockConfig(HT_TM_TypeDef* TMx, TM_TRSEL_Enum Sel, TM_CHP_Enum
   Assert_Param(IS_TM(TMx));
   Assert_Param(IS_TM_TRSEL_CH(Sel));
   Assert_Param(IS_TM_CHP(Pol));
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   #else
   Assert_Param(IS_TM_FILTER(Filter));
   #endif
@@ -903,6 +904,7 @@ void TM_CHCCRPreloadConfig(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, ControlStatus
   }
 }
 
+#if 0
 /*********************************************************************************************************//**
  * @brief Clear or Safeguard the CHxOREF signal when ETI is active.
  * @param TMx: where TMx is the selected TM from the TM peripheral.
@@ -934,6 +936,7 @@ void TM_ClearOREFConfig(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, ControlStatus Ne
     *pOcfr &= ~CHOCFR_REFCE;
   }
 }
+#endif
 
 /*********************************************************************************************************//**
  * @brief Configure polarity of the TMx channel N.

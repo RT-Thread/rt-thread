@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_tm.h
- * @version $Rev:: 7319         $
- * @date    $Date:: 2023-10-28 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the TM library.
  *************************************************************************************************************
  * @attention
@@ -103,7 +103,7 @@ typedef enum
   TM_CHPSC_4   = 0x00080000,     /*!< TM channel capture is done once every 4 event                         */
   TM_CHPSC_8   = 0x000C0000      /*!< TM channel capture is done once every 8 event                         */
 } TM_CHPSC_Enum;
-#if (LIBCFG_TM_652XX_V1)
+#if (LIBCFG_TM_65X_66X_V1)
 /**
  * @brief Enumeration of TM channel Filter (Fsampling) Clock Divider.
  */
@@ -176,7 +176,7 @@ typedef enum
   TM_CKDIV_OFF = 0x0000,          /*!< fDTS = fCLKIN                                                        */
   TM_CKDIV_2   = 0x0100,          /*!< fDTS = fCLKIN / 2                                                    */
   TM_CKDIV_4   = 0x0200,          /*!< fDTS = fCLKIN / 4                                                    */
-  #if (LIBCFG_TM_652XX_V1 || LIBCFG_TM_CKDIV_8)
+  #if (LIBCFG_TM_65X_66X_V1 || LIBCFG_TM_CKDIV_8)
   TM_CKDIV_8   = 0x0300,          /*!< fDTS = fCLKIN / 8                                                    */
   #endif
 } TM_CKDIV_Enum;
@@ -237,7 +237,7 @@ typedef enum
   TM_SMSEL_PAUSE    = 0x0500,     /*!< Slave pause mode                                                     */
   TM_SMSEL_TRIGGER  = 0x0600,     /*!< Slave trigger mode                                                   */
   TM_SMSEL_STIED    = 0x0700,     /*!< Rising edge of the selected trigger(STI) clock the counter           */
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   TM_SMSEL_DECODER4 = 0x0800,     /*!< Pluse/Direction mode(Counter counts on Ch0, Count up/down on Ch1     */
   #endif
 } TM_SMSEL_Enum;
@@ -254,7 +254,7 @@ typedef enum
   TM_MMSEL_CH1OREF = 0x00050000,  /*!< The CH1OREF signal is used as trigger output.                        */
   TM_MMSEL_CH2OREF = 0x00060000,  /*!< The CH2OREF signal is used as trigger output.                        */
   TM_MMSEL_CH3OREF = 0x00070000,  /*!< The CH3OREF signal is used as trigger output.                        */
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   TM_MMSEL_VCLK    = 0x000C0000   /*!< The VCLK signal is used as trigger output.                           */
   #endif
   #if (LIBCFG_PWM_8_CHANNEL)
@@ -314,7 +314,7 @@ typedef struct
   TM_CHP_Enum   Polarity;        /*!< Channel input polarity refer to \ref TM_CHP_Enum                      */
   TM_CHCCS_Enum Selection;       /*!< Channel capture source selection refer to \ref TM_CHCCS_Enum          */
   TM_CHPSC_Enum Prescaler;       /*!< Channel Capture prescaler refer to \ref TM_CHPSC_Enum                 */
-  #if (LIBCFG_TM_652XX_V1)
+  #if (LIBCFG_TM_65X_66X_V1)
   TM_CHFDIV_Enum  Fsampling;     /*!< Digital filter Fsampling Frequency, it must fDTS/1 ~ fDTS/64          */
   #if (LIBCFG_TM_TIFN_5BIT)
   u8              Event;         /*!< Digital filter N-event counter Setting, it must be 0 ~ 31             */
@@ -352,7 +352,7 @@ typedef struct
 #define TM_INT_TEV          0x0400  /*!< Trigger interrupt                                                  */
 #define TM_INT_BRKEV        0x0800  /*!< Break interrupt                                                    */
 
-#if (LIBCFG_TM_652XX_V1)
+#if (LIBCFG_TM_65X_66X_V1)
 #define MCTM_INT_CH0CD      0x100000  /*!< Channel 0 Count-Down compare interrupt                           */
 #define MCTM_INT_CH1CD      0x200000  /*!< Channel 1 Count-Down compare interrupt                           */
 #define MCTM_INT_CH2CD      0x400000  /*!< Channel 2 Count-Down compare interrupt                           */
@@ -365,7 +365,7 @@ typedef struct
 
 #define MCTM_INT_OVER       0x2000  /*!< Counter overflow interrupt                                         */
 #define MCTM_INT_UNDER      0x4000  /*!< Counter underflow Interrupt                                        */
-#if (LIBCFG_TM_65232)
+#if (LIBCFG_TM_RECCDI)
 #define MCTM_INT_RECCDIF    0x8000  /*!< CCIF or CDIF Interrupt flag control by REPR                        */
 #endif
 
@@ -512,11 +512,11 @@ typedef struct
  * @brief Used to check parameter of the output compare mode.
  */
 #define IS_TM_OM_CMP(x) (((x) == TM_OM_MATCH_NOCHANGE) || \
-                           ((x) == TM_OM_MATCH_INACTIVE) || \
-                           ((x) == TM_OM_MATCH_ACTIVE) || \
-                           ((x) == TM_OM_MATCH_TOGGLE) || \
-                           ((x) == TM_OM_PWM1) || \
-                           ((x) == TM_OM_PWM2))
+                         ((x) == TM_OM_MATCH_INACTIVE) || \
+                         ((x) == TM_OM_MATCH_ACTIVE)   || \
+                         ((x) == TM_OM_MATCH_TOGGLE)   || \
+                         ((x) == TM_OM_PWM1)           || \
+                         ((x) == TM_OM_PWM2))
 /**
  * @brief Used to check parameter of the output mode.
  */
@@ -586,7 +586,7 @@ typedef struct
 /**
  * @brief Used to check parameter of the counter mode.
  */
-#define IS_TM_CNT_MODE(x)   ((x == TM_CNT_MODE_UP) ||  \
+#define IS_TM_CNT_MODE(x)   ((x == TM_CNT_MODE_UP)  ||  \
                              (x == TM_CNT_MODE_CA1) || \
                              (x == TM_CNT_MODE_CA2) || \
                              (x == TM_CNT_MODE_CA3) || \
@@ -606,24 +606,24 @@ typedef struct
 /**
  * @brief Used to check parameter of the channel input selection.
  */
-#define IS_TM_CHCCS(x)  ((x == TM_CHCCS_DIRECT) || \
-                           (x == TM_CHCCS_INDIRECT) || \
-                           (x == TM_CHCCS_TRCED))
+#define IS_TM_CHCCS(x)  ((x == TM_CHCCS_DIRECT)   || \
+                         (x == TM_CHCCS_INDIRECT) || \
+                         (x == TM_CHCCS_TRCED))
 /**
  * @brief Used to check parameter of the channel capture prescaler.
  */
 #define IS_TM_CHPSC(x)  ((x == TM_CHPSC_OFF) || \
-                           (x == TM_CHPSC_2) || \
-                           (x == TM_CHPSC_4) || \
-                           (x == TM_CHPSC_8))
+                         (x == TM_CHPSC_2)   || \
+                         (x == TM_CHPSC_4)   || \
+                         (x == TM_CHPSC_8))
 #if 0
 /**
  * @brief Used to check parameter of the ETI prescaler.
  */
 #define IS_TM_ETIPSC(x) ((x == TM_ETIPSC_OFF) || \
-                           (x == TM_ETIPSC_2) || \
-                           (x == TM_ETIPSC_4) || \
-                           (x == TM_ETIPSC_8))
+                         (x == TM_ETIPSC_2)   || \
+                         (x == TM_ETIPSC_4)   || \
+                         (x == TM_ETIPSC_8))
 #endif
 /**
  * @brief Used to check parameter of the TM interrupt.
@@ -804,7 +804,7 @@ typedef struct
 /**
  * @brief Used to check value of TM digital filter.
  */
-#if (LIBCFG_TM_652XX_V1)
+#if (LIBCFG_TM_65X_66X_V1)
 #define IS_TM_FILTER(x) (x <= 0xFF)
 #else
 #define IS_TM_FILTER(x) (x <= 0xF)
@@ -886,7 +886,9 @@ void TM_DecoderConfig(HT_TM_TypeDef* TMx, TM_SMSEL_Enum DecoderMod, TM_CHP_Enum 
 void TM_ForcedOREF(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n, TM_OM_Enum ForcedAction);
 void TM_CRRPreloadCmd(HT_TM_TypeDef* TMx, ControlStatus NewState);
 void TM_CHCCRPreloadConfig(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, ControlStatus NewState);
+#if 0 // M0+ not supported
 void TM_ClearOREFConfig(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, ControlStatus NewState);
+#endif
 void TM_ChPolarityConfig(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, TM_CHP_Enum Pol);
 
 void TM_ImmActiveConfig(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, ControlStatus NewState);

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL_endian.h
+ * # CategoryEndian
  *
- *  Functions for reading and writing endian-specific values
+ * Functions for reading and writing endian-specific values
  */
 
 #ifndef SDL_endian_h_
@@ -39,7 +39,7 @@
 static __inline__ void __attribute__((__always_inline__, __nodebug__))
 _m_prefetch(void *__P)
 {
-  __builtin_prefetch (__P, 0, 3 /* _MM_HINT_T0 */);
+  __builtin_prefetch(__P, 0, 3 /* _MM_HINT_T0 */);
 }
 #endif /* __PRFCHWINTRIN_H */
 #endif /* __clang__ */
@@ -59,24 +59,64 @@ _m_prefetch(void *__P)
 #ifdef __linux__
 #include <endian.h>
 #define SDL_BYTEORDER  __BYTE_ORDER
-#elif defined(__OpenBSD__)
+#elif defined(__sun) && defined(__SVR4)  /* Solaris */
+#include <sys/byteorder.h>
+#if defined(_LITTLE_ENDIAN)
+#define SDL_BYTEORDER   SDL_LIL_ENDIAN
+#elif defined(_BIG_ENDIAN)
+#define SDL_BYTEORDER   SDL_BIG_ENDIAN
+#else
+#error Unsupported endianness
+#endif
+#elif defined(__OpenBSD__) || defined(__DragonFly__)
 #include <endian.h>
 #define SDL_BYTEORDER  BYTE_ORDER
 #elif defined(__FreeBSD__) || defined(__NetBSD__)
 #include <sys/endian.h>
 #define SDL_BYTEORDER  BYTE_ORDER
+/* predefs from newer gcc and clang versions: */
+#elif defined(__ORDER_LITTLE_ENDIAN__) && defined(__ORDER_BIG_ENDIAN__) && defined(__BYTE_ORDER__)
+#if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#define SDL_BYTEORDER   SDL_LIL_ENDIAN
+#elif (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define SDL_BYTEORDER   SDL_BIG_ENDIAN
+#else
+#error Unsupported endianness
+#endif /**/
 #else
 #if defined(__hppa__) || \
     defined(__m68k__) || defined(mc68000) || defined(_M_M68K) || \
     (defined(__MIPS__) && defined(__MIPSEB__)) || \
-    defined(__ppc__) || defined(__POWERPC__) || defined(_M_PPC) || \
-    defined(__sparc__)
+    defined(__ppc__) || defined(__POWERPC__) || defined(__powerpc__) || defined(__PPC__) || \
+    defined(__sparc__) || defined(__sparc)
 #define SDL_BYTEORDER   SDL_BIG_ENDIAN
 #else
 #define SDL_BYTEORDER   SDL_LIL_ENDIAN
 #endif
 #endif /* __linux__ */
 #endif /* !SDL_BYTEORDER */
+
+#ifndef SDL_FLOATWORDORDER           /* Not defined in SDL_config.h? */
+/* predefs from newer gcc versions: */
+#if defined(__ORDER_LITTLE_ENDIAN__) && defined(__ORDER_BIG_ENDIAN__) && defined(__FLOAT_WORD_ORDER__)
+#if (__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#define SDL_FLOATWORDORDER   SDL_LIL_ENDIAN
+#elif (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define SDL_FLOATWORDORDER   SDL_BIG_ENDIAN
+#else
+#error Unsupported endianness
+#endif /**/
+#elif defined(__MAVERICK__)
+/* For Maverick, float words are always little-endian. */
+#define SDL_FLOATWORDORDER   SDL_LIL_ENDIAN
+#elif (defined(__arm__) || defined(__thumb__)) && !defined(__VFP_FP__) && !defined(__ARM_EABI__)
+/* For FPA, float words are always big-endian. */
+#define SDL_FLOATWORDORDER   SDL_BIG_ENDIAN
+#else
+/* By default, assume that floats words follow the memory system mode. */
+#define SDL_FLOATWORDORDER   SDL_BYTEORDER
+#endif /* __FLOAT_WORD_ORDER__ */
+#endif /* !SDL_FLOATWORDORDER */
 
 
 #include "begin_code.h"
@@ -109,7 +149,7 @@ extern "C" {
 
 #if HAS_BUILTIN_BSWAP16
 #define SDL_Swap16(x) __builtin_bswap16(x)
-#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+#elif (defined(_MSC_VER) && (_MSC_VER >= 1400)) && !defined(__ICL)
 #pragma intrinsic(_byteswap_ushort)
 #define SDL_Swap16(x) _byteswap_ushort(x)
 #elif defined(__i386__) && !HAS_BROKEN_BSWAP
@@ -149,6 +189,16 @@ extern __inline Uint16 SDL_Swap16(Uint16);
   parm   [ax]   \
   modify [ax];
 #else
+
+/**
+ * Use this function to swap the byte order of a 16-bit value.
+ *
+ * \param x the value to be swapped.
+ * \returns the swapped value.
+ *
+ * \sa SDL_SwapBE16
+ * \sa SDL_SwapLE16
+ */
 SDL_FORCE_INLINE Uint16
 SDL_Swap16(Uint16 x)
 {
@@ -158,7 +208,7 @@ SDL_Swap16(Uint16 x)
 
 #if HAS_BUILTIN_BSWAP32
 #define SDL_Swap32(x) __builtin_bswap32(x)
-#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+#elif (defined(_MSC_VER) && (_MSC_VER >= 1400)) && !defined(__ICL)
 #pragma intrinsic(_byteswap_ulong)
 #define SDL_Swap32(x) _byteswap_ulong(x)
 #elif defined(__i386__) && !HAS_BROKEN_BSWAP
@@ -200,6 +250,16 @@ extern __inline Uint32 SDL_Swap32(Uint32);
   parm   [eax] \
   modify [eax];
 #else
+
+/**
+ * Use this function to swap the byte order of a 32-bit value.
+ *
+ * \param x the value to be swapped.
+ * \returns the swapped value.
+ *
+ * \sa SDL_SwapBE32
+ * \sa SDL_SwapLE32
+ */
 SDL_FORCE_INLINE Uint32
 SDL_Swap32(Uint32 x)
 {
@@ -210,7 +270,7 @@ SDL_Swap32(Uint32 x)
 
 #if HAS_BUILTIN_BSWAP64
 #define SDL_Swap64(x) __builtin_bswap64(x)
-#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+#elif (defined(_MSC_VER) && (_MSC_VER >= 1400)) && !defined(__ICL)
 #pragma intrinsic(_byteswap_uint64)
 #define SDL_Swap64(x) _byteswap_uint64(x)
 #elif defined(__i386__) && !HAS_BROKEN_BSWAP
@@ -245,6 +305,16 @@ extern __inline Uint64 SDL_Swap64(Uint64);
   parm [eax edx]  \
   modify [eax edx];
 #else
+
+/**
+ * Use this function to swap the byte order of a 64-bit value.
+ *
+ * \param x the value to be swapped.
+ * \returns the swapped value.
+ *
+ * \sa SDL_SwapBE64
+ * \sa SDL_SwapLE64
+ */
 SDL_FORCE_INLINE Uint64
 SDL_Swap64(Uint64 x)
 {
@@ -262,6 +332,15 @@ SDL_Swap64(Uint64 x)
 #endif
 
 
+/**
+ * Use this function to swap the byte order of a floating point value.
+ *
+ * \param x the value to be swapped.
+ * \returns the swapped value.
+ *
+ * \sa SDL_SwapFloatBE
+ * \sa SDL_SwapFloatLE
+ */
 SDL_FORCE_INLINE float
 SDL_SwapFloat(float x)
 {

@@ -36,9 +36,8 @@ extern int Image$$ARM_LIB_STACK$$ZI$$Base;
 #define HEAP_END    ((void*)&Image$$ARM_LIB_STACK$$ZI$$Base)
 #elif defined(__ICCARM__)
 #pragma section="HEAP"
-#define HEAP_BEGIN          (__segment_end("HEAP"))
-extern void __RTT_HEAP_END;
-#define HEAP_END            (&__RTT_HEAP_END)
+#define HEAP_BEGIN          (__section_begin("HEAP"))
+#define HEAP_END            (__section_end("HEAP"))
 #elif defined(__GNUC__)
 extern int __HeapBase;
 extern int __HeapLimit;

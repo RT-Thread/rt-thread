@@ -24,9 +24,9 @@
 #define CONFIG_USBHOST_CDC_ECM_PKT_FILTER   0x000C
 #define CONFIG_USBHOST_CDC_ECM_ETH_MAX_SIZE 1514U
 
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_rx_buffer[CONFIG_USBHOST_CDC_ECM_ETH_MAX_SIZE];
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_tx_buffer[CONFIG_USBHOST_CDC_ECM_ETH_MAX_SIZE];
-static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_inttx_buffer[16];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_rx_buffer[USB_ALIGN_UP(CONFIG_USBHOST_CDC_ECM_ETH_MAX_SIZE, CONFIG_USB_ALIGN_SIZE)];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_tx_buffer[USB_ALIGN_UP(CONFIG_USBHOST_CDC_ECM_ETH_MAX_SIZE, CONFIG_USB_ALIGN_SIZE)];
+static USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cdc_ecm_inttx_buffer[USB_ALIGN_UP(16, CONFIG_USB_ALIGN_SIZE)];
 
 static struct usbh_cdc_ecm g_cdc_ecm_class;
 
@@ -221,6 +221,7 @@ static int usbh_cdc_ecm_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister CDC ECM Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_cdc_ecm_stop(cdc_ecm_class);
         }
@@ -231,12 +232,12 @@ static int usbh_cdc_ecm_disconnect(struct usbh_hubport *hport, uint8_t intf)
     return ret;
 }
 
-void usbh_cdc_ecm_rx_thread(void *argument)
+void usbh_cdc_ecm_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     uint32_t g_cdc_ecm_rx_length;
     int ret;
 
-    (void)argument;
+    (void)CONFIG_USB_OSAL_THREAD_GET_ARGV;
     USB_LOG_INFO("Create cdc ecm rx thread\r\n");
     // clang-format off
 find_class:
@@ -323,9 +324,9 @@ const struct usbh_class_driver cdc_ecm_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info cdc_ecm_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_CDC,
-    .subclass = CDC_ETHERNET_NETWORKING_CONTROL_MODEL,
-    .protocol = CDC_COMMON_PROTOCOL_NONE,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC,
+    .bInterfaceSubClass = CDC_ETHERNET_NETWORKING_CONTROL_MODEL,
+    .bInterfaceProtocol = CDC_COMMON_PROTOCOL_NONE,
     .id_table = NULL,
     .class_driver = &cdc_ecm_class_driver
 };

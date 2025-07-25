@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1262,6 +1262,24 @@ MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
 #endif /* RT_USING_FINSH */
 #endif /* ULOG_USING_FILTER */
 
+/**
+ * @brief register the backend device into the ulog.
+ *
+ * @param backend Backend device handle, a pointer to a "struct ulog_backend" obj.
+ * @param name Backend device name.
+ * @param support_color Whether it supports color logs.
+ * @return rt_err_t - return 0 on success.
+ *
+ * @note - This function is used to register the backend device into the ulog,
+ *       ensuring that the function members in the backend device structure are set before registration.
+ *       - about struct ulog_backend:
+ *        1. The name and support_color properties can be passed in through the ulog_backend_register() function.
+ *        2. output is the back-end specific output function, and all backends must implement the interface.
+ *        3. init/deinit is optional, init is called at register, and deinit is called at unregister or ulog_deinit.
+ *        4. flush is also optional, and some internal output cached backends need to implement this interface.
+ *           For example, some file systems with RAM cache. The flush of the backend is usually called by
+ *           ulog_flush in the case of an exception such as assertion or hardfault.
+ */
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color)
 {
     rt_base_t level;
@@ -1287,6 +1305,13 @@ rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool
     return RT_EOK;
 }
 
+/**
+ * @brief unregister a backend device that has already been registered.
+ *
+ * @param backend Backend device handle
+ * @return rt_err_t - return 0 on success.
+ * @note deinit function will be called at unregister.
+ */
 rt_err_t ulog_backend_unregister(ulog_backend_t backend)
 {
     rt_base_t level;
@@ -1460,6 +1485,14 @@ void ulog_flush(void)
     }
 }
 
+/**
+ * @brief ulog initialization
+ *
+ * @return int return 0 on success, return -5 when failed of insufficient memory.
+ *
+ * @note This function must be called to complete ulog initialization before using ulog.
+ *       This function will also be called automatically if component auto-initialization is turned on.
+ */
 int ulog_init(void)
 {
     if (ulog.init_ok)
@@ -1518,6 +1551,11 @@ int ulog_async_init(void)
 INIT_PREV_EXPORT(ulog_async_init);
 #endif /* ULOG_USING_ASYNC_OUTPUT */
 
+/**
+ * @brief ulog deinitialization
+ *
+ * @note This deinit release resource can be executed when ulog is no longer used.
+ */
 void ulog_deinit(void)
 {
     rt_slist_t *node;

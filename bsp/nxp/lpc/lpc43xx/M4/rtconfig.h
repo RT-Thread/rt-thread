@@ -90,8 +90,8 @@
 //#define RT_USING_I2C
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
 //#define RT_USING_RTC
-// <integer name="RT_MMCSD_THREAD_PREORITY" description="The prority of mmcsd thread" default="15" />
-#define RT_MMCSD_THREAD_PREORITY    15
+// <integer name="RT_MMCSD_THREAD_PRIORITY" description="The prority of mmcsd thread" default="15" />
+#define RT_MMCSD_THREAD_PRIORITY    15
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
@@ -223,7 +223,11 @@
 // </section>
 
 #define RT_USING_VBUS
-// </RDTConfigurator>
 
+#define RT_VBUS_GUEST_VIRQ 0
+#define _RT_VBUS_RING_SZ 64
+// </RDTConfigurator>
+#define RT_CPUS_NR 1
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 #endif

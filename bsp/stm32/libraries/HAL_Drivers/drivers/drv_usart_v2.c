@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 
 #ifdef RT_USING_SERIAL_V2
 
-//#define DRV_DEBUG
+// #define DRV_DEBUG
 #define DBG_TAG              "drv.usart"
 #ifdef DRV_DEBUG
 #define DBG_LVL               DBG_LOG
@@ -189,7 +189,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     }
 
 #ifdef RT_SERIAL_USING_DMA
-    uart->dma_rx.remaining_cnt = serial->config.rx_bufsz;
+    uart->dma_rx.remaining_cnt = serial->config.dma_ping_bufsz;
 #endif
 
     if (HAL_UART_Init(&uart->handle) != HAL_OK)
@@ -255,6 +255,9 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
             __HAL_UART_DISABLE_IT(&(uart->handle), UART_IT_TC);
 
             HAL_NVIC_DisableIRQ(uart->config->dma_tx->dma_irq);
+
+            HAL_DMA_Abort(&(uart->dma_tx.handle));
+
             if (HAL_DMA_DeInit(&(uart->dma_tx.handle)) != HAL_OK)
             {
                 RT_ASSERT(0);
@@ -408,18 +411,18 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
-    recv_len = 0;
     counter = __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
 
     if (counter <= uart->dma_rx.remaining_cnt)
         recv_len = uart->dma_rx.remaining_cnt - counter;
     else
-        recv_len = serial->config.rx_bufsz + uart->dma_rx.remaining_cnt - counter;
+        recv_len = serial->config.dma_ping_bufsz + uart->dma_rx.remaining_cnt - counter;
     if (recv_len)
     {
 #if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-        struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        SCB_InvalidateDCache_by_Addr((uint32_t *)rx_fifo->buffer, serial->config.rx_bufsz);
+        rt_uint8_t *ptr = NULL;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, &ptr);
+        SCB_InvalidateDCache_by_Addr((uint32_t *)ptr, serial->config.dma_ping_bufsz);
 #endif
         uart->dma_rx.remaining_cnt = counter;
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
@@ -442,24 +445,16 @@ static void uart_isr(struct rt_serial_device *serial)
     if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET) &&
             (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar(&(rx_fifo->rb), UART_GET_RDR(&uart->handle, stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity)));
-
+        char chr = UART_GET_RDR(&uart->handle, stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity));
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
     /* If the Transmit data register is empty and the TXE interrupt enable is enabled  (TDR) */
     else if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TXE) != RESET) &&
                 (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_TXE)) != RESET)
     {
-        struct rt_serial_tx_fifo *tx_fifo;
-        tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
-        RT_ASSERT(tx_fifo != RT_NULL);
-
         rt_uint8_t put_char = 0;
-        if (rt_ringbuffer_getchar(&(tx_fifo->rb), &put_char))
+        if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, &put_char) == RT_EOK)
         {
             UART_SET_TDR(&uart->handle, put_char);
         }
@@ -516,11 +511,19 @@ static void uart_isr(struct rt_serial_device *serial)
         }
 #if !defined(SOC_SERIES_STM32L4) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32F7) && !defined(SOC_SERIES_STM32F0) \
     && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0) && !defined(SOC_SERIES_STM32H7) \
-    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB)
+    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB) \
+    && !defined(SOC_SERIES_STM32L5) && !defined(SOC_SERIES_STM32U5) && !defined(SOC_SERIES_STM32H5) && !defined(SOC_SERIES_STM32H7RS)
+#ifdef SOC_SERIES_STM32F3
+        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBDF) != RESET)
+        {
+            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBDF);
+        }
+#else
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBD);
         }
+#endif
 #endif
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_CTS) != RESET)
         {
@@ -931,6 +934,7 @@ static void stm32_uart_get_config(void)
     uart_obj[UART1_INDEX].serial.config.tx_bufsz = BSP_UART1_TX_BUFSIZE;
 
 #ifdef BSP_UART1_RX_USING_DMA
+    uart_obj[UART1_INDEX].serial.config.dma_ping_bufsz = BSP_UART1_DMA_PING_BUFSIZE;
     uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart1_dma_rx = UART1_DMA_RX_CONFIG;
     uart_config[UART1_INDEX].dma_rx = &uart1_dma_rx;
@@ -951,6 +955,7 @@ static void stm32_uart_get_config(void)
     uart_obj[UART2_INDEX].serial.config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
 
 #ifdef BSP_UART2_RX_USING_DMA
+    uart_obj[UART2_INDEX].serial.config.dma_ping_bufsz = BSP_UART2_DMA_PING_BUFSIZE;
     uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart2_dma_rx = UART2_DMA_RX_CONFIG;
     uart_config[UART2_INDEX].dma_rx = &uart2_dma_rx;
@@ -971,6 +976,7 @@ static void stm32_uart_get_config(void)
     uart_obj[UART3_INDEX].serial.config.tx_bufsz = BSP_UART3_TX_BUFSIZE;
 
 #ifdef BSP_UART3_RX_USING_DMA
+    uart_obj[UART3_INDEX].serial.config.dma_ping_bufsz = BSP_UART3_DMA_PING_BUFSIZE;
     uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart3_dma_rx = UART3_DMA_RX_CONFIG;
     uart_config[UART3_INDEX].dma_rx = &uart3_dma_rx;
@@ -991,6 +997,7 @@ static void stm32_uart_get_config(void)
     uart_obj[UART4_INDEX].serial.config.tx_bufsz = BSP_UART4_TX_BUFSIZE;
 
 #ifdef BSP_UART4_RX_USING_DMA
+    uart_obj[UART4_INDEX].serial.config.dma_ping_bufsz = BSP_UART4_DMA_PING_BUFSIZE;
     uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart4_dma_rx = UART4_DMA_RX_CONFIG;
     uart_config[UART4_INDEX].dma_rx = &uart4_dma_rx;
@@ -1011,6 +1018,7 @@ static void stm32_uart_get_config(void)
     uart_obj[UART5_INDEX].serial.config.tx_bufsz = BSP_UART5_TX_BUFSIZE;
 
 #ifdef BSP_UART5_RX_USING_DMA
+    uart_obj[UART5_INDEX].serial.config.dma_ping_bufsz = BSP_UART5_DMA_PING_BUFSIZE;
     uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart5_dma_rx = UART5_DMA_RX_CONFIG;
     uart_config[UART5_INDEX].dma_rx = &uart5_dma_rx;
@@ -1031,6 +1039,7 @@ static void stm32_uart_get_config(void)
     uart_obj[UART6_INDEX].serial.config.tx_bufsz = BSP_UART6_TX_BUFSIZE;
 
 #ifdef BSP_UART6_RX_USING_DMA
+    uart_obj[UART6_INDEX].serial.config.dma_ping_bufsz = BSP_UART6_DMA_PING_BUFSIZE;
     uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart6_dma_rx = UART6_DMA_RX_CONFIG;
     uart_config[UART6_INDEX].dma_rx = &uart6_dma_rx;
@@ -1051,6 +1060,7 @@ static void stm32_uart_get_config(void)
     uart_obj[UART7_INDEX].serial.config.tx_bufsz = BSP_UART7_TX_BUFSIZE;
 
 #ifdef BSP_UART7_RX_USING_DMA
+    uart_obj[UART7_INDEX].serial.config.dma_ping_bufsz = BSP_UART7_DMA_PING_BUFSIZE;
     uart_obj[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart7_dma_rx = UART7_DMA_RX_CONFIG;
     uart_config[UART7_INDEX].dma_rx = &uart7_dma_rx;
@@ -1077,6 +1087,7 @@ static void stm32_uart_get_config(void)
 #endif
 
 #ifdef BSP_UART8_TX_USING_DMA
+    uart_obj[UART8_INDEX].serial.config.dma_ping_bufsz = BSP_UART8_DMA_PING_BUFSIZE;
     uart_obj[UART8_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static struct dma_config uart8_dma_tx = UART8_DMA_TX_CONFIG;
     uart_config[UART8_INDEX].dma_tx = &uart8_dma_tx;
@@ -1091,6 +1102,7 @@ static void stm32_uart_get_config(void)
     uart_obj[LPUART1_INDEX].serial.config.tx_bufsz = BSP_LPUART1_TX_BUFSIZE;
 
 #ifdef BSP_LPUART1_RX_USING_DMA
+    uart_obj[LPUART1_INDEX].serial.config.dma_ping_bufsz = BSP_LPUART1_DMA_PING_BUFSIZE;
     uart_obj[LPUART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config lpuart1_dma_rx = LPUART1_DMA_CONFIG;
     uart_config[LPUART1_INDEX].dma_rx = &lpuart1_dma_rx;
@@ -1101,7 +1113,6 @@ static void stm32_uart_get_config(void)
 #ifdef RT_SERIAL_USING_DMA
 static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
-    struct rt_serial_rx_fifo *rx_fifo;
     DMA_HandleTypeDef *DMA_Handle;
     struct dma_config *dma_config;
     struct stm32_uart *uart;
@@ -1159,7 +1170,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         __HAL_LINKDMA(&(uart->handle), hdmatx, uart->dma_tx.handle);
     }
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5)
     DMA_Handle->Instance                 = dma_config->Instance;
 #elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Instance                 = dma_config->Instance;
@@ -1202,10 +1213,11 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     /* enable interrupt */
     if (flag == RT_DEVICE_FLAG_DMA_RX)
     {
-        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
+        rt_uint8_t *ptr = NULL;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, &ptr);
+
         /* Start DMA transfer */
-        if (HAL_UART_Receive_DMA(&(uart->handle), rx_fifo->buffer, serial->config.rx_bufsz) != HAL_OK)
+        if (HAL_UART_Receive_DMA(&(uart->handle), ptr, serial->config.dma_ping_bufsz) != HAL_OK)
         {
             /* Transfer error in reception process */
             RT_ASSERT(0);
@@ -1315,7 +1327,7 @@ int rt_hw_usart_init(void)
     rt_size_t obj_num = sizeof(uart_obj) / sizeof(struct stm32_uart);
 
     stm32_uart_get_config();
-    for (int i = 0; i < obj_num; i++)
+    for (rt_uint32_t i = 0; i < obj_num; i++)
     {
         /* init UART object */
         uart_obj[i].config = &uart_config[i];

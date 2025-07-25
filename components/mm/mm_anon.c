@@ -134,7 +134,7 @@ static void _pgmgr_pop_all(rt_varea_t varea)
         char *page_va = rt_kmem_p2v(page_pa);
         if (page_pa != ARCH_MAP_FAILED && page_va)
         {
-            rt_hw_mmu_unmap(aspace, iter, ARCH_PAGE_SIZE);
+            rt_varea_unmap_page(varea, iter);
             rt_pages_free(page_va, 0);
         }
     }
@@ -581,7 +581,7 @@ int rt_varea_fix_private_locked(rt_varea_t ex_varea, void *pa,
         }
         else if (ex_obj->page_read)
         {
-            page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+            page = rt_pages_alloc_tagged(0, RT_PAGE_PICK_AFFID(fault_vaddr), PAGE_ANY_AVAILABLE);
             if (page)
             {
                 /** setup message & fetch the data from source object */

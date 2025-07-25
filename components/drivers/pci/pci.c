@@ -695,6 +695,10 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
                 rt_pci_write_config_u32(pdev, rom_addr, addr);
             }
             command |= PCIM_CMD_MEMEN;
+
+            pdev->rom.base = addr;
+            pdev->rom.size = size;
+            pdev->rom.flags = PCI_BUS_REGION_F_MEM;
         }
     }
 

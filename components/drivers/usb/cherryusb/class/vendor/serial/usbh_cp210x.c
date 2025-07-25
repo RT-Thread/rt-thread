@@ -8,7 +8,7 @@
 
 #define DEV_FORMAT "/dev/ttyUSB%d"
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cp210x_buf[64];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_cp210x_buf[USB_ALIGN_UP(64, CONFIG_USB_ALIGN_SIZE)];
 
 #define CONFIG_USBHOST_MAX_CP210X_CLASS 1
 
@@ -17,11 +17,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_cp210x *usbh_cp210x_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_CP210X_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_cp210x_class[devno], 0, sizeof(struct usbh_cp210x));
             g_cp210x_class[devno].minor = devno;
             return &g_cp210x_class[devno];
@@ -32,10 +32,10 @@ static struct usbh_cp210x *usbh_cp210x_class_alloc(void)
 
 static void usbh_cp210x_class_free(struct usbh_cp210x *cp210x_class)
 {
-    int devno = cp210x_class->minor;
+    uint8_t devno = cp210x_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(cp210x_class, 0, sizeof(struct usbh_cp210x));
 }
@@ -260,6 +260,7 @@ static int usbh_cp210x_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister CP210X Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_cp210x_stop(cp210x_class);
         }
@@ -319,9 +320,9 @@ const struct usbh_class_driver cp210x_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info cp210x_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS,
-    .class = 0xff,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = 0xff,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = cp210x_id_table,
     .class_driver = &cp210x_class_driver
 };

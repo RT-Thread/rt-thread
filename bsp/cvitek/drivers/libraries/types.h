@@ -1,6 +1,7 @@
-/* SPDX-License-Identifier: GPL-2.0 */
-#ifndef _LINUX_TYPES_H
-#define _LINUX_TYPES_H
+/* SPDX-License-Identifier: Apache-2.0 */
+
+#ifndef __TYPES_H
+#define __TYPES_H
 
 #ifndef __ASSEMBLY__
 #ifdef CONFIG_64BIT
@@ -40,4 +41,4 @@ typedef unsigned long       __u64;
 
 #endif /*  CONFIG_64BIT */
 #endif /*  __ASSEMBLY__ */
-#endif /* _LINUX_TYPES_H */
+#endif /* __TYPES_H */

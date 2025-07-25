@@ -136,27 +136,26 @@ static int audio_class_interface_request_handler(uint8_t busid, struct usb_setup
                                 memcpy(&volume, *data, *len);
                                 if (volume < 0x8000) {
                                     volume_db = volume / 256;
-                                } else if (volume > 0x8000) {
-                                    volume_db = (0xffff - volume + 1) / -256;
+                                } else {
+                                    volume_db = (volume - 0x10000) / 256;
                                 }
-                                volume_db += 128; /* 0 ~ 255 */
-                                USB_LOG_DBG("Set ep:0x%02x ch:%d volume:0x%04x\r\n", ep, ch, volume);
+                                USB_LOG_DBG("Set ep:0x%02x ch:%d vol_hex:0x%04x, vol_db:%d dB\r\n", ep, ch, volume, volume_db);
                                 usbd_audio_set_volume(busid, ep, ch, volume_db);
                                 break;
                             case AUDIO_REQUEST_GET_CUR:
                                 volume_db = usbd_audio_get_volume(busid, ep, ch);
-                                volume_db -= 128;
                                 if (volume_db >= 0) {
                                     volume = volume_db * 256;
                                 } else {
-                                    volume = volume_db * 256 + 0xffff + 1;
+                                    volume = volume_db * 256 + 0x10000;
                                 }
+                                USB_LOG_DBG("Get ep:0x%02x ch:%d vol_hex:0x%04x, vol_db:%d dB\r\n", ep, ch, volume, volume_db);
                                 memcpy(*data, &volume, 2);
                                 *len = 2;
                                 break;
                             case AUDIO_REQUEST_GET_MIN:
-                                (*data)[0] = 0x00; /* -2560/256 dB */
-                                (*data)[1] = 0xdb;
+                                (*data)[0] = 0x00; /* -100 dB */
+                                (*data)[1] = 0x9c;
                                 *len = 2;
                                 break;
                             case AUDIO_REQUEST_GET_MAX:
@@ -165,7 +164,7 @@ static int audio_class_interface_request_handler(uint8_t busid, struct usb_setup
                                 *len = 2;
                                 break;
                             case AUDIO_REQUEST_GET_RES:
-                                (*data)[0] = 0x00; /* -256/256 dB */
+                                (*data)[0] = 0x00; /* 1 dB */
                                 (*data)[1] = 0x01;
                                 *len = 2;
                                 break;
@@ -178,22 +177,31 @@ static int audio_class_interface_request_handler(uint8_t busid, struct usb_setup
                             case AUDIO_REQUEST_CUR:
                                 if (setup->bmRequestType & USB_REQUEST_DIR_MASK) {
                                     volume_db = usbd_audio_get_volume(busid, ep, ch);
-                                    volume = volume_db;
+                                    if (volume_db >= 0) {
+                                        volume = volume_db * 256;
+                                    } else {
+                                        volume = volume_db * 256 + 0x10000;
+                                    }
+                                    USB_LOG_DBG("Get ep:0x%02x ch:%d vol_hex:0x%04x, vol_db:%d dB\r\n", ep, ch, volume, volume_db);
                                     memcpy(*data, &volume, 2);
                                     *len = 2;
                                 } else {
                                     memcpy(&volume, *data, *len);
-                                    volume_db = volume;
-                                    USB_LOG_DBG("Set ep:0x%02x ch:%d volume:0x%02x\r\n", ep, ch, volume);
+                                    if (volume < 0x8000) {
+                                        volume_db = volume / 256;
+                                    } else {
+                                        volume_db = (volume - 0x10000) / 256;
+                                    }
+                                    USB_LOG_DBG("Set ep:0x%02x ch:%d vol_hex:0x%04x, vol_db:%d dB\r\n", ep, ch, volume, volume_db);
                                     usbd_audio_set_volume(busid, ep, ch, volume_db);
                                 }
                                 break;
                             case AUDIO_REQUEST_RANGE:
                                 if (setup->bmRequestType & USB_REQUEST_DIR_MASK) {
                                     *((uint16_t *)(*data + 0)) = 1;
-                                    *((uint16_t *)(*data + 2)) = 0;
-                                    *((uint16_t *)(*data + 4)) = 100;
-                                    *((uint16_t *)(*data + 6)) = 1;
+                                    *((uint16_t *)(*data + 2)) = 0x9c00; /* MIN -100 dB */
+                                    *((uint16_t *)(*data + 4)) = 0x0000; /* MAX 0 dB */
+                                    *((uint16_t *)(*data + 6)) = 0x100;  /* RES 1 dB */
                                     *len = 8;
                                 } else {
                                 }
@@ -312,12 +320,12 @@ struct usbd_interface *usbd_audio_init_intf(uint8_t busid,
     return intf;
 }
 
-__WEAK void usbd_audio_set_volume(uint8_t busid, uint8_t ep, uint8_t ch, int volume)
+__WEAK void usbd_audio_set_volume(uint8_t busid, uint8_t ep, uint8_t ch, int volume_db)
 {
     (void)busid;
     (void)ep;
     (void)ch;
-    (void)volume;
+    (void)volume_db;
 }
 
 __WEAK int usbd_audio_get_volume(uint8_t busid, uint8_t ep, uint8_t ch)
@@ -366,4 +374,16 @@ __WEAK void usbd_audio_get_sampling_freq_table(uint8_t busid, uint8_t ep, uint8_
     (void)busid;
     (void)ep;
     (void)sampling_freq_table;
+}
+
+__WEAK void usbd_audio_open(uint8_t busid, uint8_t intf)
+{
+    (void)busid;
+    (void)intf;
+}
+
+__WEAK void usbd_audio_close(uint8_t busid, uint8_t intf)
+{
+    (void)busid;
+    (void)intf;
 }

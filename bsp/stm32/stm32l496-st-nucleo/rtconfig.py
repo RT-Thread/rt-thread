@@ -19,13 +19,14 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = r'.'
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
+    PLATFORM    = 'armclang'  #KEIL A6
+    #PLATFORM    = 'armcc'    #KEIL A5
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iccarm'
     EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
-if os.getenv('RTT_EXEC_PATH'):
+if os.getenv('RTT_EXEC_PATH') and CROSS_TOOL == 'gcc':
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
@@ -60,6 +61,7 @@ if PLATFORM == 'gcc':
     CXXFLAGS = CFLAGS 
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION += OBJCPY + ' -O ihex $TARGET rt-thread.hex\n'
 
 elif PLATFORM == 'armcc':
     # toolchains

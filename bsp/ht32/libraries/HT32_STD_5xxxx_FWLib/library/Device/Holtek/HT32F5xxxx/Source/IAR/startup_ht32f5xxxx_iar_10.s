@@ -6,27 +6,31 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_iar_10.s
-;  Version          : $Rev:: 5780         $
-;  Date             : $Date:: 2022-03-28 #$
+;  Version          : $Rev:: 8101         $
+;  Date             : $Date:: 2024-09-04 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
 ;  Supported Device
 ;  ========================================
 ;   HT32F61244, HT32F61245
+;   NW32F61242
 
 ;/* <<< Use Configuration Wizard in Context Menu >>>                                                        */
 
 ;// <o>  HT32 Device
 ;//      <0=> By Project Asm Define
 ;//      <24=> HT32F61244/45
+;//      <24=> NW32F61242
 USE_HT32_CHIP_SET   EQU     0
 
 _HT32FWID           EQU     0xFFFFFFFF
 ;_HT32FWID           EQU     0x00061244
 ;_HT32FWID           EQU     0x00061245
+;_HT32FWID           EQU     0x00061242
 
 HT32F61244_45       EQU     24
+HT32F61242          EQU     24
 
   IF USE_HT32_CHIP_SET=0
   ELSE

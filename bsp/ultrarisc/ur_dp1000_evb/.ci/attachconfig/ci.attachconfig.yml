@@ -1,0 +1,7 @@
+peripheral.MMC:
+    kconfig:
+      - CONFIG_BSP_USING_DW_SPI=y
+      - CONFIG_DW_SPI_IRQ_BASE=19
+      - CONFIG_DW_SPI_BASE_ADDR=0x20320000
+      - CONFIG_DW_SPI_MAX_FREQ=62500000
+      - CONFIG_BSP_USING_MMC=y

@@ -30,7 +30,7 @@ if GetDepend(['RT_USING_WDT']):
 
 #add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-    src = src + ['CMSIS/Device/HDSC/HC32L136/Source/GCC/startup_hc32l136.S']
+    src = src + ['CMSIS/Device/HDSC/HC32L136/Source/GCC/startup_hc32l136.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src = src + ['CMSIS/Device/HDSC/HC32L136/Source/ARM/startup_hc32l136.s']
 elif rtconfig.PLATFORM in ['iccarm']:

@@ -99,15 +99,13 @@ static int _get_subdir(const char *path, char *name)
 
 static int _free_subdir(struct tmpfs_file *dfile)
 {
-    struct tmpfs_file *file;
-    rt_list_t *list, *temp_list;
+    struct tmpfs_file *file = RT_NULL, *tmp;
     struct tmpfs_sb *superblock;
 
     RT_ASSERT(dfile->type == TMPFS_TYPE_DIR);
 
-    rt_list_for_each_safe(list, temp_list, &dfile->subdirs)
+    dfs_vfs_for_each_subnode(file, tmp, dfile, node)
     {
-        file = rt_list_entry(list, struct tmpfs_file, sibling);
         if (file->type == TMPFS_TYPE_DIR)
         {
             _free_subdir(file);
@@ -122,7 +120,7 @@ static int _free_subdir(struct tmpfs_file *dfile)
         RT_ASSERT(superblock != NULL);
 
         rt_spin_lock(&superblock->lock);
-        rt_list_remove(&(file->sibling));
+        dfs_vfs_remove_node(&file->node);
         rt_spin_unlock(&superblock->lock);
 
         rt_free(file);
@@ -141,13 +139,11 @@ static int dfs_tmpfs_mount(struct dfs_mnt *mnt,
     {
         superblock->df_size = sizeof(struct tmpfs_sb);
         superblock->magic = TMPFS_MAGIC;
-        rt_list_init(&superblock->sibling);
 
         superblock->root.name[0] = '/';
         superblock->root.sb = superblock;
         superblock->root.type = TMPFS_TYPE_DIR;
-        rt_list_init(&superblock->root.sibling);
-        rt_list_init(&superblock->root.subdirs);
+        dfs_vfs_init_node(&superblock->root.node);
 
         rt_spin_lock_init(&superblock->lock);
 
@@ -236,8 +232,7 @@ struct tmpfs_file *dfs_tmpfs_lookup(struct tmpfs_sb  *superblock,
 {
     const char *subpath, *curpath, *filename = RT_NULL;
     char subdir_name[TMPFS_NAME_MAX];
-    struct tmpfs_file *file, *curfile;
-    rt_list_t *list;
+    struct tmpfs_file *file, *curfile, *tmp;
 
     subpath = path;
     while (*subpath == '/' && *subpath)
@@ -265,9 +260,8 @@ find_subpath:
 
     rt_spin_lock(&superblock->lock);
 
-    rt_list_for_each(list, &curfile->subdirs)
+    dfs_vfs_for_each_subnode(file, tmp, curfile, node)
     {
-        file = rt_list_entry(list, struct tmpfs_file, sibling);
         if (filename) /* find file */
         {
             if (rt_strcmp(file->name, filename) == 0)
@@ -503,8 +497,7 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
 {
     rt_size_t index, end;
     struct dirent *d;
-    struct tmpfs_file *d_file, *n_file;
-    rt_list_t *list;
+    struct tmpfs_file *d_file, *n_file, *tmp;
     struct tmpfs_sb *superblock;
 
     d_file = (struct tmpfs_file *)file->vnode->data;
@@ -527,9 +520,8 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
     index = 0;
     count = 0;
 
-    rt_list_for_each(list, &d_file->subdirs)
+    dfs_vfs_for_each_subnode(n_file, tmp, d_file, node)
     {
-        n_file = rt_list_entry(list, struct tmpfs_file, sibling);
         if (index >= (rt_size_t)file->fpos)
         {
             d = dirp + count;
@@ -573,7 +565,7 @@ static int dfs_tmpfs_unlink(struct dfs_dentry *dentry)
         return -ENOENT;
 
     rt_spin_lock(&superblock->lock);
-    rt_list_remove(&(d_file->sibling));
+    dfs_vfs_remove_node(&d_file->node);
     rt_spin_unlock(&superblock->lock);
 
     if (rt_atomic_load(&(dentry->ref_count)) == 1)
@@ -631,13 +623,13 @@ static int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *ne
     RT_ASSERT(p_file != NULL);
 
     rt_spin_lock(&superblock->lock);
-    rt_list_remove(&(d_file->sibling));
+    dfs_vfs_remove_node(&d_file->node);
     rt_spin_unlock(&superblock->lock);
 
     strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
 
     rt_spin_lock(&superblock->lock);
-    rt_list_insert_after(&(p_file->subdirs), &(d_file->sibling));
+    dfs_vfs_append_node(&p_file->node, &d_file->node);
     rt_spin_unlock(&superblock->lock);
 
     rt_free(parent_path);
@@ -745,8 +737,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
 
         strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
 
-        rt_list_init(&(d_file->subdirs));
-        rt_list_init(&(d_file->sibling));
+        dfs_vfs_init_node(&d_file->node);
         d_file->data = NULL;
         d_file->size = 0;
         d_file->sb = superblock;
@@ -767,7 +758,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
 #endif
         }
         rt_spin_lock(&superblock->lock);
-        rt_list_insert_after(&(p_file->subdirs), &(d_file->sibling));
+        dfs_vfs_append_node(&p_file->node, &d_file->node);
         rt_spin_unlock(&superblock->lock);
 
         vnode->mnt = dentry->mnt;

@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\components\drivers\include;libraries\CMSIS\Include;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\usb\usbhost\include;..\..\..\..\components\drivers\usb\usbhost\class;.;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;applications;..\..\..\..\include;..\..\..\..\components\net\netdev\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\compat\posix;libraries\StdPeriphDriver\inc;..\..\..\..\components\drivers\usb\usbhost\core;board;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\usb\usbhost;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\net\lwip\port</IncludePath>
+              <IncludePath>libraries\CMSIS\Include;libraries\StdPeriphDriver\inc;..\..\..\..\components\drivers\include;..\..\..\..\components\legacy\usb\usbhost\core;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\legacy\usb\usbhost;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include;board;..\..\..\..\components\legacy\usb\usbhost\include;..\..\..\..\components\net\lwip\port;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\legacy\usb\usbhost\class;..\..\..\..\components\net\netdev\include;..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\compat\posix;.;..\..\..\..\components\legacy\include;..\..\..\..\components\drivers\phy;..\..\..\..\components\drivers\smp_call;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;applications</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -468,9 +468,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -601,9 +639,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -623,9 +661,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_usbh.c</FileName>
+              <FileName>drv_eth.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\drv_usbh.c</FilePath>
+              <FilePath>board\drv_eth.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -644,9 +682,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_eth.c</FileName>
+              <FileName>drv_usbh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\drv_eth.c</FilePath>
+              <FilePath>board\drv_usbh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -661,9 +699,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -675,9 +713,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -707,6 +745,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -764,44 +840,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -951,6 +989,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -985,6 +1061,27 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>CH57x_uart0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_timer2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_int.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_int.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>CH57x_spi1.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\StdPeriphDriver\CH57x_spi1.c</FilePath>
@@ -992,9 +1089,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_timer0.c</FileName>
+              <FileName>CH57x_uart1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer0.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart1.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_clk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_sys.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1013,23 +1124,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_adc.c</FileName>
+              <FileName>CH57x_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_uart3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart3.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_clk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_clk.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1041,30 +1138,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_timer3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer3.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>CH57x_pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\StdPeriphDriver\CH57x_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_uart3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart3.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_timer0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1076,20 +1173,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_timer2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer2.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>CH57x_lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\StdPeriphDriver\CH57x_lcd.c</FilePath>
@@ -1097,30 +1180,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_uart0.c</FileName>
+              <FileName>CH57x_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart0.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_int.c</FileName>
+              <FileName>CH57x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_int.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_uart1.c</FileName>
+              <FileName>CH57x_timer3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart1.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_pwr.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer3.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1418,30 +1494,30 @@
           <GroupName>rt_usbh</GroupName>
           <Files>
             <File>
-              <FileName>hub.c</FileName>
+              <FileName>usbhost_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\usb\usbhost\core\hub.c</FilePath>
+              <FilePath>..\..\..\..\components\legacy\usb\usbhost\core\usbhost_core.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>usbhost.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\usb\usbhost\core\usbhost.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>usbhost_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\usb\usbhost\core\usbhost_core.c</FilePath>
+              <FilePath>..\..\..\..\components\legacy\usb\usbhost\core\usbhost.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\usb\usbhost\core\driver.c</FilePath>
+              <FilePath>..\..\..\..\components\legacy\usb\usbhost\core\driver.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hub.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\legacy\usb\usbhost\core\hub.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1449,16 +1525,16 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev_ipaddr.c</FileName>
+              <FileName>netdev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+              <FilePath>..\..\..\..\components\net\netdev\src\netdev.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
+              <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\net\netdev\src\netdev.c</FilePath>
+              <FilePath>..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m4'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 # bsp lib config
 BSP_LIBRARY_TYPE = None
@@ -19,7 +19,7 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = r'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
+    PLATFORM    = 'armclang'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM = 'iccarm'
@@ -61,10 +61,10 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'armcc':
+elif PLATFORM == 'armclang':
     # toolchains
-    CC = 'armcc'
-    CXX = 'armcc'
+    CC = 'armclang'
+    CXX = 'armclang'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'

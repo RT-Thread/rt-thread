@@ -5,22 +5,27 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2024-08-1      hywing       Initial version.
+ * 2024-12-18     hywing       Initial version.
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "fsl_ctimer.h"
+#include "fsl_pwm.h"
 
 #ifdef RT_USING_PWM
+
+#define BOARD_PWM_BASEADDR      (FLEXPWM0)
+#define PWM_SRC_CLK_FREQ        (CLOCK_GetFreq(kCLOCK_BusClk))
+#define FLEX_PWM_CLOCK_DEVIDER  (kPWM_Prescale_Divide_2)
+#define FLEX_PWM_FAULT_LEVEL    true
 
 typedef struct
 {
     struct rt_device_pwm pwm_device;
-    CTIMER_Type *ct_instance;
-    uint32_t timerClock;
-    const ctimer_match_t pwmPeriodChannel;
-    ctimer_match_t matchChannel;
+    pwm_submodule_t submodule;
+    pwm_module_control_t control;
+    pwm_channels_t channel;
+    pwm_clock_prescale_t prescale;
     char *name;
 } mcx_pwm_obj_t;
 
@@ -28,49 +33,67 @@ static mcx_pwm_obj_t mcx_pwm_list[]=
 {
 #ifdef BSP_USING_PWM0
     {
-        .ct_instance = CTIMER1,
-        .timerClock = 0,
-        .pwmPeriodChannel = kCTIMER_Match_3,
-        .matchChannel = kCTIMER_Match_2,
+        .submodule = kPWM_Module_0,
+        .control = kPWM_Control_Module_0,
+        .channel = kPWM_PwmA,
+        .prescale = FLEX_PWM_CLOCK_DEVIDER,
         .name = "pwm0",
-    }
+    },
+#endif
+#ifdef BSP_USING_PWM1
+    {
+        .submodule = kPWM_Module_1,
+        .control = kPWM_Control_Module_1,
+        .channel = kPWM_PwmA,
+        .prescale = FLEX_PWM_CLOCK_DEVIDER,
+        .name = "pwm1",
+    },
+#endif
+#ifdef BSP_USING_PWM2
+    {
+        .submodule = kPWM_Module_2,
+        .control = kPWM_Control_Module_2,
+        .channel = kPWM_PwmA,
+        .prescale = FLEX_PWM_CLOCK_DEVIDER,
+        .name = "pwm2",
+    },
 #endif
 };
-
-volatile uint32_t g_pwmPeriod   = 0U;
-volatile uint32_t g_pulsePeriod = 0U;
 
 static rt_err_t mcx_drv_pwm_get(mcx_pwm_obj_t *pwm, struct rt_pwm_configuration *configuration)
 {
     return RT_EOK;
 }
 
-status_t CTIMER_GetPwmPeriodValue(uint32_t pwmFreqHz, uint8_t dutyCyclePercent, uint32_t timerClock_Hz)
-{
-    g_pwmPeriod = (timerClock_Hz / pwmFreqHz) - 1U;
-    g_pulsePeriod = (g_pwmPeriod + 1U) * (100 - dutyCyclePercent) / 100;
-    return kStatus_Success;
-}
-
 static rt_err_t mcx_drv_pwm_set(mcx_pwm_obj_t *pwm, struct rt_pwm_configuration *configuration)
 {
-    CTIMER_Type *ct = pwm->ct_instance;
-    uint32_t pwmFreqHz = 1000000000 / configuration->period;
     uint8_t dutyCyclePercent = configuration->pulse * 100 / configuration->period;
-    CTIMER_GetPwmPeriodValue(pwmFreqHz, dutyCyclePercent, pwm->timerClock);
-    CTIMER_SetupPwmPeriod(ct, kCTIMER_Match_3, kCTIMER_Match_2, g_pwmPeriod, g_pulsePeriod, false);
+    pwm_signal_param_t pwmSignal[1];
+    uint32_t pwmFrequencyInHz = 1000000000 / configuration->period;
+
+    pwmSignal[0].pwmChannel       = pwm->channel;
+    pwmSignal[0].level            = kPWM_HighTrue;
+    pwmSignal[0].dutyCyclePercent = dutyCyclePercent;
+    pwmSignal[0].deadtimeValue    = 0;
+    pwmSignal[0].faultState       = kPWM_PwmFaultState0;
+    pwmSignal[0].pwmchannelenable = true;
+
+    PWM_SetupPwm(BOARD_PWM_BASEADDR, pwm->submodule, pwmSignal, 1, kPWM_SignedCenterAligned, pwmFrequencyInHz, PWM_SRC_CLK_FREQ);
+    PWM_UpdatePwmDutycycle(BOARD_PWM_BASEADDR, pwm->submodule, pwm->channel, kPWM_SignedCenterAligned, dutyCyclePercent);
+    PWM_SetPwmLdok(BOARD_PWM_BASEADDR, pwm->control, true);
+
     return 0;
 }
 
 static rt_err_t mcx_drv_pwm_enable(mcx_pwm_obj_t *pwm, struct rt_pwm_configuration *configuration)
 {
-    CTIMER_StartTimer(pwm->ct_instance);
+    PWM_StartTimer(BOARD_PWM_BASEADDR, pwm->control);
     return 0;
 }
 
 static rt_err_t mcx_drv_pwm_disable(mcx_pwm_obj_t *pwm, struct rt_pwm_configuration *configuration)
 {
-    CTIMER_StopTimer(pwm->ct_instance);
+    PWM_StopTimer(BOARD_PWM_BASEADDR, pwm->control);
     return 0;
 }
 
@@ -108,21 +131,55 @@ static struct rt_pwm_ops mcx_pwm_ops =
 int mcx_pwm_init(void)
 {
     rt_err_t ret;
-    char name_buf[8];
+    pwm_config_t pwmConfig;
+    pwm_fault_param_t faultConfig;
+    PWM_GetDefaultConfig(&pwmConfig);
+    pwmConfig.prescale = FLEX_PWM_CLOCK_DEVIDER;
+    pwmConfig.reloadLogic = kPWM_ReloadPwmFullCycle;
 
-    ctimer_config_t config;
-    CTIMER_GetDefaultConfig(&config);
-    for (uint8_t i = 0; i < ARRAY_SIZE(mcx_pwm_list); i++)
+    int i;
+    for (i = 0; i < sizeof(mcx_pwm_list) / sizeof(mcx_pwm_list[0]); i++)
     {
-        mcx_pwm_list[i].timerClock = CLOCK_GetCTimerClkFreq(1U) / (config.prescale + 1);
-        CTIMER_Init(mcx_pwm_list[i].ct_instance, &config);
-        ret = rt_device_pwm_register(&mcx_pwm_list[i].pwm_device, mcx_pwm_list[i].name, &mcx_pwm_ops, &mcx_pwm_list[i]);
-        if (ret != RT_EOK)
+        pwm_config_t pwmConfig;
+        pwm_fault_param_t faultConfig;
+        PWM_GetDefaultConfig(&pwmConfig);
+        pwmConfig.prescale = mcx_pwm_list[i].prescale;
+        pwmConfig.reloadLogic = kPWM_ReloadPwmFullCycle;
+        if (PWM_Init(BOARD_PWM_BASEADDR, mcx_pwm_list[i].submodule, &pwmConfig) == kStatus_Fail)
         {
-            return ret;
+            rt_kprintf("PWM Init Failed\n");
         }
+        ret = rt_device_pwm_register(&mcx_pwm_list[i].pwm_device, mcx_pwm_list[i].name, &mcx_pwm_ops, &mcx_pwm_list[i]);
     }
-    return RT_EOK;
+
+    /*
+     *   config->faultClearingMode = kPWM_Automatic;
+     *   config->faultLevel = false;
+     *   config->enableCombinationalPath = true;
+     *   config->recoverMode = kPWM_NoRecovery;
+     */
+    PWM_FaultDefaultConfig(&faultConfig);
+    faultConfig.faultLevel = FLEX_PWM_FAULT_LEVEL;
+
+    /* Sets up the PWM fault protection */
+    PWM_SetupFaults(BOARD_PWM_BASEADDR, kPWM_Fault_0, &faultConfig);
+    PWM_SetupFaults(BOARD_PWM_BASEADDR, kPWM_Fault_1, &faultConfig);
+    PWM_SetupFaults(BOARD_PWM_BASEADDR, kPWM_Fault_2, &faultConfig);
+    PWM_SetupFaults(BOARD_PWM_BASEADDR, kPWM_Fault_3, &faultConfig);
+
+    /* Set PWM fault disable mapping for submodule 0/1/2 */
+    PWM_SetupFaultDisableMap(BOARD_PWM_BASEADDR, kPWM_Module_0, kPWM_PwmA, kPWM_faultchannel_0,
+                             kPWM_FaultDisable_0 | kPWM_FaultDisable_1 | kPWM_FaultDisable_2 | kPWM_FaultDisable_3);
+    PWM_SetupFaultDisableMap(BOARD_PWM_BASEADDR, kPWM_Module_1, kPWM_PwmA, kPWM_faultchannel_0,
+                             kPWM_FaultDisable_0 | kPWM_FaultDisable_1 | kPWM_FaultDisable_2 | kPWM_FaultDisable_3);
+    PWM_SetupFaultDisableMap(BOARD_PWM_BASEADDR, kPWM_Module_2, kPWM_PwmA, kPWM_faultchannel_0,
+                             kPWM_FaultDisable_0 | kPWM_FaultDisable_1 | kPWM_FaultDisable_2 | kPWM_FaultDisable_3);
+
+
+    /* Set the load okay bit for all submodules to load registers from their buffer */
+    PWM_SetPwmLdok(BOARD_PWM_BASEADDR, kPWM_Control_Module_0 | kPWM_Control_Module_1 | kPWM_Control_Module_2, true);
+
+    return ret;
 }
 
 INIT_DEVICE_EXPORT(mcx_pwm_init);

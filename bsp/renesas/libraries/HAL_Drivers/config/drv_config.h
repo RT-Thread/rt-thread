@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author            Notes
- * 2021-07-29     KyleChan          first version
- * 2022-12-7      Vandoul           ADD ra4m2
- */
+* Copyright (c) 2006-2025, RT-Thread Development Team
+*
+* SPDX-License-Identifier: Apache-2.0
+*
+* Change Logs:
+* Date           Author            Notes
+* 2021-07-29     KyleChan          first version
+* 2022-12-7      Vandoul           ADD ra4m2
+*/
 
 #ifndef __DRV_CONFIG_H__
 #define __DRV_CONFIG_H__
@@ -104,6 +104,26 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA2L1 */
 
+#ifdef SOC_SERIES_R7FA4E2
+#include "ra4e2/uart_config.h"
+
+#ifdef BSP_USING_ADC
+#include "ra4e2/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra4ra4e2m2/dac_config.h"
+#endif
+
+#ifdef BSP_USING_PWM
+#include "ra4e2/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_CAN
+#include "ra4e2/can_config.h"
+#endif
+#endif /* SOC_SERIES_R7FA4E2 */
+
 #ifdef SOC_SERIES_R7FA4M2
 #include "ra4m2/uart_config.h"
 
@@ -145,6 +165,10 @@ extern "C"
 #include "rzt/uart_config.h"
 #include "rzt/timer_config.h"
 
+#ifdef BSP_USING_CANFD
+#include "rzt/canfd_config.h"
+#endif
+
 #ifdef BSP_USING_PWM
 #include "rzt/pwm_config.h"
 #endif
@@ -155,8 +179,33 @@ extern "C"
 
 #endif /* SOC_SERIES_R9A07G0 */
 
+#if defined(SOC_SERIES_R7FA6E2)
+#include "ra6e2/uart_config.h"
+
+#ifdef BSP_USING_ADC
+#include "ra6e2/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra6e2/dac_config.h"
+#endif
+
+#ifdef BSP_USING_PWM
+#include "ra6e2/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_TIM
+#include "ra6e2/timer_config.h"
+#endif
+
+#ifdef BSP_USING_CAN
+#include "ra6e2/can_config.h"
+#endif
+#endif /* SOC_SERIES_R7FA6E2 */
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __DRV_CONFIG_H__ */
+

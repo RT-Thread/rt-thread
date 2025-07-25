@@ -25,11 +25,11 @@ Export('rtconfig')
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
-
+import glob
 if rtconfig.PLATFORM in ['gcc']:
     print('build M0 code first')
     if sys.platform.startswith('linux'):
-        import glob
+
         ocwd = os.getcwd()
         os.chdir('../M0')
         res = os.system('scons')

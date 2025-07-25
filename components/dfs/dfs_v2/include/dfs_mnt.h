@@ -39,6 +39,8 @@ struct dfs_mnt
 #define MNT_IS_UMOUNT  0x8          /* the mnt is unmount */
 #define MNT_IS_LOCKED  0x10         /* the mnt is locked */
 #define MNT_FORCE      0x20         /* the mnt force unmount */
+#define MNT_LAZY_UMNT  0x40         /* the mnt has pending umount */
+#define MNT_RDONLY     0x80         /* the mnt is read only */
 
     rt_atomic_t ref_count;          /* reference count */
 
@@ -60,9 +62,16 @@ const char *dfs_mnt_get_mounted_path(struct rt_device *device);
 struct dfs_mnt* dfs_mnt_ref(struct dfs_mnt* mnt);
 int dfs_mnt_unref(struct dfs_mnt* mnt);
 
+int dfs_mnt_umount(struct dfs_mnt *mnt, int flags);
+int dfs_mnt_setflags(struct dfs_mnt *mnt, int flags);
+
 rt_bool_t dfs_mnt_has_child_mnt(struct dfs_mnt *mnt, const char* fullpath);
 
 int dfs_mnt_foreach(struct dfs_mnt* (*func)(struct dfs_mnt *mnt, void *parameter), void *parameter);
+int dfs_mnt_umount_iter(rt_bool_t (*filter)(struct dfs_mnt *mnt, void *parameter), void *parameter);
+
+typedef void (*dfs_mnt_umnt_cb_t)(struct dfs_mnt *mnt);
+RT_OBJECT_HOOKLIST_DECLARE(dfs_mnt_umnt_cb_t, dfs_mnt_umnt);
 
 #ifdef __cplusplus
 }

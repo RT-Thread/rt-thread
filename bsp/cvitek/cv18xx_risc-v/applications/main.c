@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <drivers/dev_pin.h>
 
-#if defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#if defined(BOARD_TYPE_MILKV_DUO256M)
 #define LED_PIN     "E02" /* Onboard LED pins */
-#elif defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#elif defined(BOARD_TYPE_MILKV_DUO)
 #define LED_PIN     "C24" /* Onboard LED pins */
 #elif defined(BOARD_TYPE_MILKV_DUOS)
 #define LED_PIN     "A29" /* Onboard LED pins */
@@ -22,11 +22,7 @@
 
 int main(void)
 {
-#ifdef RT_USING_SMART
-    rt_kprintf("Hello RT-Smart!\n");
-#else
-    rt_kprintf("Hello RISC-V!\n");
-#endif
+    rt_kprintf("Hello RISC-V/C906B !\n");
 
     /* LED pin: C24 */
     rt_uint16_t led = rt_pin_get(LED_PIN);

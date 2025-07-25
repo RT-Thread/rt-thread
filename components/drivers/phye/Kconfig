@@ -1,0 +1,11 @@
+menuconfig RT_USING_PHYE
+    bool "Using External Port Physical Layer (PHY) device drivers"
+    depends on RT_USING_DM
+    default n
+    help
+      This framework will be of use only to devices that use
+      external PHY (PHY functionality is not embedded within the controller).
+
+if RT_USING_PHYE
+    osource "$(SOC_DM_PHYE_DIR)/Kconfig"
+endif

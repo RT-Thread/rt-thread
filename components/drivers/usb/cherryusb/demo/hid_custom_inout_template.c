@@ -39,6 +39,103 @@
 /*!< custom hid report descriptor size */
 #define HID_CUSTOM_REPORT_DESC_SIZE 38
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+static const uint8_t device_descriptor[] = {
+    USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0002, 0x01)
+};
+
+static const uint8_t config_descriptor[] = {
+    USB_CONFIG_DESCRIPTOR_INIT(USB_HID_CONFIG_DESC_SIZ, 0x01, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+    /************** Descriptor of Custom interface *****************/
+    0x09,                          /* bLength: Interface Descriptor size */
+    USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType: Interface descriptor type */
+    0x00,                          /* bInterfaceNumber: Number of Interface */
+    0x00,                          /* bAlternateSetting: Alternate setting */
+    0x02,                          /* bNumEndpoints */
+    0x03,                          /* bInterfaceClass: HID */
+    0x01,                          /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+    0x00,                          /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+    0,                             /* iInterface: Index of string descriptor */
+    /******************** Descriptor of Custom HID ********************/
+    0x09,                    /* bLength: HID Descriptor size */
+    HID_DESCRIPTOR_TYPE_HID, /* bDescriptorType: HID */
+    0x11,                    /* bcdHID: HID Class Spec release number */
+    0x01,
+    0x00,                        /* bCountryCode: Hardware target country */
+    0x01,                        /* bNumDescriptors: Number of HID class descriptors to follow */
+    0x22,                        /* bDescriptorType */
+    HID_CUSTOM_REPORT_DESC_SIZE, /* wItemLength: Total length of Report descriptor */
+    0x00,
+    /******************** Descriptor of Custom in endpoint ********************/
+    0x07,                         /* bLength: Endpoint Descriptor size */
+    USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */
+    HIDRAW_IN_EP,                 /* bEndpointAddress: Endpoint Address (IN) */
+    0x03,                         /* bmAttributes: Interrupt endpoint */
+    WBVAL(HIDRAW_IN_EP_SIZE),     /* wMaxPacketSize: 4 Byte max */
+    HIDRAW_IN_INTERVAL,           /* bInterval: Polling Interval */
+    /******************** Descriptor of Custom out endpoint ********************/
+    0x07,                         /* bLength: Endpoint Descriptor size */
+    USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */
+    HIDRAW_OUT_EP,                /* bEndpointAddress: Endpoint Address (IN) */
+    0x03,                         /* bmAttributes: Interrupt endpoint */
+    WBVAL(HIDRAW_OUT_EP_SIZE),    /* wMaxPacketSize: 4 Byte max */
+    HIDRAW_OUT_EP_INTERVAL,       /* bInterval: Polling Interval */
+    /* 73 */
+};
+
+static const uint8_t device_quality_descriptor[] = {
+    ///////////////////////////////////////
+    /// device qualifier descriptor
+    ///////////////////////////////////////
+    0x0a,
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x00,
+    0x00,
+};
+
+static const char *string_descriptors[] = {
+    (const char[]){ 0x09, 0x04 }, /* Langid */
+    "CherryUSB",                  /* Manufacturer */
+    "CherryUSB HID DEMO",         /* Product */
+    "2022123456",                 /* Serial Number */
+};
+
+static const uint8_t *device_descriptor_callback(uint8_t speed)
+{
+    return device_descriptor;
+}
+
+static const uint8_t *config_descriptor_callback(uint8_t speed)
+{
+    return config_descriptor;
+}
+
+static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
+{
+    return device_quality_descriptor;
+}
+
+static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
+{
+    if (index > 3) {
+        return NULL;
+    }
+    return string_descriptors[index];
+}
+
+const struct usb_descriptor hid_descriptor = {
+    .device_descriptor_callback = device_descriptor_callback,
+    .config_descriptor_callback = config_descriptor_callback,
+    .device_quality_descriptor_callback = device_quality_descriptor_callback,
+    .string_descriptor_callback = string_descriptor_callback
+};
+#else
 /*!< global descriptor */
 static const uint8_t hid_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0002, 0x01),
@@ -146,11 +243,12 @@ static const uint8_t hid_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
 };
+#endif
 
 /*!< custom hid report descriptor */
 static const uint8_t hid_custom_report_desc[HID_CUSTOM_REPORT_DESC_SIZE] = {
@@ -241,13 +339,13 @@ static void usbd_hid_custom_in_callback(uint8_t busid, uint8_t ep, uint32_t nbyt
 {
     (void)busid;
     (void)ep;
-    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual in len:%d\r\n", (unsigned int)nbytes);
     custom_state = HID_STATE_IDLE;
 }
 
 static void usbd_hid_custom_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%d\r\n", (unsigned int)nbytes);
     usbd_ep_start_read(busid, ep, read_buffer, HIDRAW_IN_EP_SIZE);
     read_buffer[0] = 0x02; /* IN: report id */
     usbd_ep_start_write(busid, HIDRAW_IN_EP, read_buffer, nbytes);
@@ -274,7 +372,11 @@ struct usbd_interface intf0;
 
 void hid_custom_init(uint8_t busid, uintptr_t reg_base)
 {
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_desc_register(busid, &hid_descriptor);
+#else
     usbd_desc_register(busid, hid_descriptor);
+#endif
     usbd_add_interface(busid, usbd_hid_init_intf(busid, &intf0, hid_custom_report_desc, HID_CUSTOM_REPORT_DESC_SIZE));
     usbd_add_endpoint(busid, &custom_in_ep);
     usbd_add_endpoint(busid, &custom_out_ep);

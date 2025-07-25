@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m4'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 # bsp lib config
 BSP_LIBRARY_TYPE = None

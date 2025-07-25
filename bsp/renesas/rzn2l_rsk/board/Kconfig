@@ -82,7 +82,7 @@ menu "Hardware Drivers Config"
             select RT_USING_CAN
             select RT_CAN_USING_CANFD
             if BSP_USING_CANFD
-                config BSP_USING_CANFD0
+                config BSP_USING_CAN0
                     bool "Enable CANFD0"
                     default n
             endif

@@ -64,6 +64,14 @@ The instructions for use are divided into two sections as follows:
 
 This BSP provides developers with MDK5 and IAR projects and supports GCC development environment. The following is an example of how to get the system up and running using the MDK5 development environment.
 
+**Attention please！！！**
+
+Before the compilation work, please open ENV and execute the following command (this command is used to pull the necessary HAL library and CMSIS library, otherwise it cannot be compiled)：
+
+```bash
+pkgs --update
+```
+
 #### Hardware Connection
 
 Connect the board to the PC with a cable and turn on the power switch.

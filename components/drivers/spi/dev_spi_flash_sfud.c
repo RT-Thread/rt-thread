@@ -214,7 +214,9 @@ static sfud_err qspi_read(const struct __sfud_spi *spi, uint32_t addr, sfud_qspi
     message.parent.cs_release = 1;
     message.parent.cs_take = 1;
     message.qspi_data_lines = qspi_read_cmd_format->data_lines;
-
+    /* set next */
+    /* Ensure correct QSPI message chaining by setting next pointer to NULL, preventing unintended data transmission issues.*/
+    message.parent.next = RT_NULL;
     if (rt_qspi_transfer_message(qspi_dev, &message) != read_size) {
         result = SFUD_ERR_TIMEOUT;
     }

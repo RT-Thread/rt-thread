@@ -16,7 +16,6 @@
 
 #include <rtconfig.h>
 #include "encoding.h"
-#include "ext_context.h"
 
 /* bytes of register width */
 #ifdef ARCH_CPU_64BIT
@@ -30,6 +29,8 @@
 #error "Not supported XLEN"
 #endif
 
+#include "ext_context.h"
+
 /* 33 general register + 1 padding */
 #define CTX_GENERAL_REG_NR  34
 
@@ -40,6 +41,7 @@
 #define FRAME_OFF_SSTATUS   BYTES(2)
 #define FRAME_OFF_SP        BYTES(32)
 #define FRAME_OFF_GP        BYTES(3)
+#define FRAME_OFF_TP        BYTES(4)
 
 /* switch frame */
 #define RT_HW_SWITCH_CONTEXT_SSTATUS    0

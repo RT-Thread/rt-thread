@@ -34,9 +34,12 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 # include libraries
 objs.extend(SConscript(drivers_path_prefix + '/SConscript', variant_dir='build/drivers', duplicate=0))
 
-if GetDepend('BOARD_TYPE_MILKV_DUO256M') or GetDepend('BOARD_TYPE_MILKV_DUOS'):
+if GetDepend('BOARD_TYPE_MILKV_DUO256M'):
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('cv180x_lscript.ld', 'cv181x_lscript.ld')
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('-L board/script/cv180x', '-L board/script/cv181x')
+elif GetDepend('BOARD_TYPE_MILKV_DUOS'):
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('cv180x_lscript.ld', 'cv1813h_lscript.ld')
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('-L board/script/cv180x', '-L board/script/cv1813h')
 
 # make a building
 DoBuilding(TARGET, objs)

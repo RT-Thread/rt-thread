@@ -73,8 +73,9 @@
 /** __FPU_USED indicates whether an FPU is used or not.
     This core does not support an FPU at all
 */
+#ifndef __FPU_USED
 #define __FPU_USED       0U
-
+#endif
 #if defined ( __CC_ARM )
   #if defined __TARGET_FPU_VFP
     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"

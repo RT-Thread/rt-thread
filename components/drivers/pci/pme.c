@@ -107,6 +107,7 @@ static void pci_pme_active(struct rt_pci_device *pdev, rt_bool_t enable)
     }
 
     rt_pci_write_config_u16(pdev, pdev->pme_cap + PCIR_POWER_STATUS, pmcsr);
+    pdev->pm_enabled = enable;
 }
 
 void rt_pci_pme_active(struct rt_pci_device *pdev, rt_bool_t enable)

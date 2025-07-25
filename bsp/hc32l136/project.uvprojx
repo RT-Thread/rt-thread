@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--diag_suppress=186,66</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, HC32L136, __CLK_TCK=RT_TICK_PER_SECOND, USE_DDL_DRIVER, __RTTHREAD__, __DEBUG</Define>
+              <Define>__RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, __DEBUG, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, HC32L136, USE_DDL_DRIVER</Define>
               <Undefine />
-              <IncludePath>..\..\libcpu\arm\cortex-m0;..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries\HC32L136_StdPeriph_Driver\inc;..\..\components\libc\compilers\common\include;.;drivers;..\..\components\finsh;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\include;..\..\components\libc\posix\io\eventfd;board;applications;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;Libraries\CMSIS\Device\HDSC\HC32L136\Include;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;Libraries\CMSIS\Include;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\components\drivers\phy;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\components\finsh;..\..\components\drivers\include;..\..\components\drivers\include;board;..\..\components\libc\posix\ipc;Libraries\CMSIS\Device\HDSC\HC32L136\Include;..\..\components\libc\posix\io\epoll;.;..\..\components\drivers\smp_call;drivers;Libraries\CMSIS\Include;applications;..\..\libcpu\arm\cortex-m0;Libraries\HC32L136_StdPeriph_Driver\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -469,9 +469,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -602,9 +640,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -621,9 +659,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -667,13 +705,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh.c</FilePath>
@@ -688,6 +719,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
@@ -698,51 +736,9 @@
           <GroupName>HC32_StdPeriph</GroupName>
           <Files>
             <File>
-              <FileName>startup_hc32l136.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trim.c</FileName>
+              <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_hc32l13x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupts_hc32l136.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\interrupts_hc32l136.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sysctrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\sysctrl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\gpio.c</FilePath>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -754,9 +750,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>timer3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\timer3.c</FilePath>
+              <FileName>startup_hc32l136.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
             </File>
           </Files>
           <Files>
@@ -768,9 +764,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>lpuart.c</FileName>
+              <FileName>trim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</FilePath>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -782,9 +785,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>adc.c</FileName>
+              <FileName>sysctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\adc.c</FilePath>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\sysctrl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\timer3.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>interrupts_hc32l136.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\interrupts_hc32l136.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lpuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_hc32l13x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -814,6 +852,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -871,44 +947,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1073,6 +1111,44 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>

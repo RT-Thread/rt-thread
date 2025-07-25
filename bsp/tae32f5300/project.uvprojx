@@ -330,9 +330,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_TAE_DRIVER, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, TAE32F53xx, __RTTHREAD__, __DEBUG</Define>
+              <Define>__DEBUG, RT_USING_ARMLIBC, RT_USING_LIBC, TAE32F53xx, __RTTHREAD__, USE_TAE_DRIVER, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\cortex-m3;Libraries\TAE32F53xx_StdPeriph_Driver\inc;Libraries\CMSIS\Include;..\..\components\libc\compilers\common\include;drivers;..\..\components\finsh;..\..\components\libc\posix\io\epoll;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\include;.;..\..\components\libc\posix\io\eventfd;board;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\drivers\include;application;..\..\components\libc\compilers\common\extension;Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;..\..\components\drivers\include;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\include;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;Libraries\TAE32F53xx_StdPeriph_Driver\inc;.;..\..\components\finsh;..\..\components\libc\posix\io\eventfd;Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;..\..\components\libc\compilers\common\include;..\..\libcpu\arm\common;drivers;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;application;board;Libraries\CMSIS\Include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\phy;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\smp_call</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,16 +387,16 @@
           <GroupName>Board</GroupName>
           <Files>
             <File>
-              <FileName>tae32f53xx_ll_msp.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\tae32f53xx_ll_msp.c</FilePath>
+              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>tae32f53xx_ll_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FilePath>board\tae32f53xx_ll_msp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -482,9 +482,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c-bit-ops.c</FileName>
+              <FileName>dev_i2c_bit_ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+              <FilePath>..\..\components\drivers\i2c\dev_i2c_bit_ops.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -501,9 +501,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c_core.c</FileName>
+              <FileName>dev_i2c_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\i2c\i2c_core.c</FilePath>
+              <FilePath>..\..\components\drivers\i2c\dev_i2c_core.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -520,9 +520,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c_dev.c</FileName>
+              <FileName>dev_i2c_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+              <FilePath>..\..\components\drivers\i2c\dev_i2c_dev.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -539,9 +539,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -672,9 +710,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -691,9 +729,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -713,21 +751,28 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_gpio.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>shell.c</FileName>
@@ -747,13 +792,6 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -783,6 +821,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -840,44 +916,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1046,6 +1084,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1087,27 +1163,6 @@
           <GroupName>TAE32_StdPeriph</GroupName>
           <Files>
             <File>
-              <FileName>system_tae32f53xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\system_tae32f53xx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_sysctrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_sysctrl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_fpll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_fpll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>tae32f53xx_ll_tmr.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_tmr.c</FilePath>
@@ -1115,30 +1170,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>tae32f53xx_ll_i2c.c</FileName>
+              <FileName>system_tae32f53xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_tae32f53xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\startup_tae32f53xx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_cortex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_dma.c</FilePath>
+              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\system_tae32f53xx.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1157,9 +1191,51 @@
           </Files>
           <Files>
             <File>
+              <FileName>startup_tae32f53xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\startup_tae32f53xx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_cortex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_fpll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_fpll.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>tae32f53xx_ll_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_sysctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_sysctrl.c</FilePath>
             </File>
           </Files>
         </Group>

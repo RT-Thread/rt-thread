@@ -685,7 +685,7 @@ static rt_uint32_t _sdio_clock_get(CM_SDIOC_TypeDef *SDIOCx)
     rt_uint32_t clk;
 
     (void)SDIOCx;
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A8)
     clk = CLK_GetBusClockFreq(CLK_BUS_PCLK1);
 #elif defined (HC32F460)
     clk = CLK_GetBusClockFreq(CLK_BUS_EXCLK);

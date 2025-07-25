@@ -1,0 +1,17 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+# you can change the RTT_ROOT default "rt-thread"
+# example : default "F:/git_repositories/rt-thread"
+
+PKGS_DIR := packages
+
+ENV_DIR := /
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+rsource "../libraries/Kconfig"
+source "$(BSP_DIR)/board/Kconfig"

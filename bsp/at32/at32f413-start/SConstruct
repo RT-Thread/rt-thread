@@ -30,6 +30,7 @@ if rtconfig.PLATFORM in ['iccarm']:
     env.Replace(ARFLAGS = [''])
     env.Replace(LINKCOM = env["LINKCOM"] + ' --map project.map')
 
+Export('env')
 Export('RTT_ROOT')
 Export('rtconfig')
 
@@ -46,11 +47,8 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-at32_library = 'AT32F413_Firmware_Library'
-rtconfig.BSP_LIBRARY_TYPE = at32_library
-
-# include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, at32_library, 'SConscript')))
+# include cmsis
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'CMSIS', 'SConscript')))
 
 # include usb libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'usbd_library', 'SConscript')))

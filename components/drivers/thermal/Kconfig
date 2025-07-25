@@ -1,0 +1,28 @@
+menuconfig RT_USING_THERMAL
+    bool "Using Thermal Management device drivers"
+    depends on RT_USING_DM
+    default n
+
+if RT_USING_THERMAL
+    comment "Thermal Sensors Drivers"
+endif
+
+if RT_USING_THERMAL
+    osource "$(SOC_DM_THERMAL_DIR)/Kconfig"
+endif
+
+if RT_USING_THERMAL
+    comment "Thermal Cool Drivers"
+endif
+
+config RT_THERMAL_COOL_PWM_FAN
+    bool "PWM Fan"
+    depends on RT_USING_THERMAL
+    depends on RT_USING_PWM
+    depends on RT_USING_REGULATOR
+    depends on RT_USING_OFW
+    default n
+
+if RT_USING_THERMAL
+    osource "$(SOC_DM_THERMAL_COOL_DIR)/Kconfig"
+endif

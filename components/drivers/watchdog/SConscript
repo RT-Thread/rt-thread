@@ -1,8 +1,22 @@
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Glob('*.c')
+group = []
+
+if not GetDepend(['RT_USING_WDT']):
+    Return('group')
+
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
 CPPPATH = [cwd + '/../include']
-group   = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_WDT'], CPPPATH = CPPPATH)
+
+src = ['dev_watchdog.c']
+
+if GetDepend(['RT_WDT_DW']):
+    src += ['watchdog-dw.c']
+
+if GetDepend(['RT_WDT_I6300ESB']):
+    src += ['watchdog-i6300esb.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,27 +13,22 @@
 #include <rtdevice.h>
 #include <stdlib.h>
 
-#define TC_UART_DEVICE_NAME "uart2"
-#define TC_UART_SEND_TIMES 100
-
 
 #ifdef UTEST_SERIAL_TC
 
-#define TEST_UART_NAME            TC_UART_DEVICE_NAME
-
 static struct rt_serial_device *serial;
-static rt_sem_t tx_sem;
-static rt_sem_t rx_sem;
-static rt_uint8_t uart_over_flag;
-static rt_bool_t uart_result = RT_TRUE;
+static rt_sem_t                 tx_sem;
+static rt_sem_t                 rx_sem;
+static rt_uint8_t               uart_over_flag;
+static rt_bool_t                uart_result = RT_TRUE;
 
 static rt_err_t uart_find(void)
 {
-    serial = (struct rt_serial_device *)rt_device_find(TEST_UART_NAME);
+    serial = (struct rt_serial_device *)rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
 
     if (serial == RT_NULL)
     {
-        LOG_E("find %s device failed!\n", TEST_UART_NAME);
+        LOG_E("find %s device failed!\n", RT_SERIAL_TC_DEVICE_NAME);
         return -RT_ERROR;
     }
 
@@ -56,10 +51,10 @@ static void uart_send_entry(void *parameter)
 {
     rt_uint8_t *uart_write_buffer;
     rt_uint16_t send_len, len = 0;
-    rt_err_t result;
+    rt_err_t    result;
 
     rt_uint32_t i = 0;
-    send_len = *(rt_uint16_t *)parameter;
+    send_len      = *(rt_uint16_t *)parameter;
     /* assign send buffer */
     uart_write_buffer = (rt_uint8_t *)rt_malloc(send_len);
     if (uart_write_buffer == RT_NULL)
@@ -78,15 +73,14 @@ static void uart_send_entry(void *parameter)
     /* send buffer */
     while (send_len - len)
     {
-        len += rt_device_write(&serial->parent, 0, uart_write_buffer + len, send_len - len);
-        result = rt_sem_take(tx_sem, RT_WAITING_FOREVER);
+        len    += rt_device_write(&serial->parent, 0, uart_write_buffer + len, send_len - len);
+        result  = rt_sem_take(tx_sem, RT_WAITING_FOREVER);
         if (result != RT_EOK)
         {
             LOG_E("take sem err in send.");
         }
     }
     rt_free(uart_write_buffer);
-
 }
 
 static void uart_rec_entry(void *parameter)
@@ -94,11 +88,11 @@ static void uart_rec_entry(void *parameter)
     rt_uint16_t rev_len;
 
     rev_len = *(rt_uint16_t *)parameter;
-    rt_uint8_t *ch;
-    ch = (rt_uint8_t *)rt_calloc(1, sizeof(rt_uint8_t) * (rev_len + 1));
-    rt_int32_t cnt, i;
-    rt_uint8_t last_old_data;
-    rt_bool_t fisrt_flag = RT_TRUE;
+    rt_uint8_t *uart_write_buffer;
+    uart_write_buffer = (rt_uint8_t *)rt_calloc(1, sizeof(rt_uint8_t) * (rev_len + 1));
+    rt_int32_t  cnt, i;
+    rt_uint8_t  last_old_data;
+    rt_bool_t   fisrt_flag         = RT_TRUE;
     rt_uint32_t all_receive_length = 0;
 
     while (1)
@@ -111,7 +105,7 @@ static void uart_rec_entry(void *parameter)
             LOG_E("take sem err in recv.");
         }
 
-        cnt = rt_device_read(&serial->parent, 0, (void *)ch, rev_len);
+        cnt = rt_device_read(&serial->parent, 0, (void *)uart_write_buffer, rev_len);
         if (cnt == 0)
         {
             continue;
@@ -119,11 +113,11 @@ static void uart_rec_entry(void *parameter)
 
         if (fisrt_flag != RT_TRUE)
         {
-            if ((rt_uint8_t)(last_old_data + 1) != ch[0])
+            if ((rt_uint8_t)(last_old_data + 1) != uart_write_buffer[0])
             {
-                LOG_E("_Read Different data -> former data: %x, current data: %x.", last_old_data, ch[0]);
+                LOG_E("_Read Different data -> former data: %x, current data: %x.", last_old_data, uart_write_buffer[0]);
                 uart_result = RT_FALSE;
-                rt_free(ch);
+                rt_free(uart_write_buffer);
                 return;
             }
         }
@@ -134,12 +128,12 @@ static void uart_rec_entry(void *parameter)
 
         for (i = 0; i < cnt - 1; i++)
         {
-            if ((rt_uint8_t)(ch[i] + 1) != ch[i + 1])
+            if ((rt_uint8_t)(uart_write_buffer[i] + 1) != uart_write_buffer[i + 1])
             {
-                LOG_E("Read Different data -> former data: %x, current data: %x.", ch[i], ch[i + 1]);
+                LOG_E("Read Different data -> former data: %x, current data: %x.", uart_write_buffer[i], uart_write_buffer[i + 1]);
 
                 uart_result = RT_FALSE;
-                rt_free(ch);
+                rt_free(uart_write_buffer);
                 return;
             }
         }
@@ -147,9 +141,9 @@ static void uart_rec_entry(void *parameter)
         if (all_receive_length >= rev_len)
             break;
         else
-            last_old_data = ch[cnt - 1];
+            last_old_data = uart_write_buffer[cnt - 1];
     }
-    rt_free(ch);
+    rt_free(uart_write_buffer);
     uart_over_flag = RT_TRUE;
 }
 
@@ -157,8 +151,8 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
 {
     rt_thread_t thread_send = RT_NULL;
     rt_thread_t thread_recv = RT_NULL;
-    rt_err_t result = RT_EOK;
-    uart_over_flag = RT_FALSE;
+    rt_err_t    result      = RT_EOK;
+    uart_over_flag          = RT_FALSE;
 
     result = uart_find();
     if (result != RT_EOK)
@@ -184,19 +178,25 @@ static rt_err_t uart_api(rt_uint16_t test_buf)
 
     /* reinitialize */
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    config.baud_rate = BAUD_RATE_115200;
-    config.rx_bufsz = BSP_UART2_RX_BUFSIZE;
-    config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
+    config.baud_rate               = BAUD_RATE_115200;
+    config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
+    config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE;
+
+#ifdef RT_SERIAL_USING_DMA
+    config.dma_ping_bufsz = RT_SERIAL_TC_RXBUF_SIZE / 2;
+#endif
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
     result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING);
-
     if (result != RT_EOK)
     {
         LOG_E("Open uart device failed.");
         uart_result = RT_FALSE;
         return -RT_ERROR;
     }
+
+    rt_int32_t timeout = 5000;
+    rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&timeout);
 
     /* set receive callback function */
     result = rt_device_set_tx_complete(&serial->parent, uart_tx_completion);
@@ -248,25 +248,53 @@ __exit:
         rt_sem_delete(rx_sem);
 
     rt_device_close(&serial->parent);
+    rt_thread_mdelay(5);
+    uart_over_flag = RT_FALSE;
     return result;
 }
 
 static void tc_uart_api(void)
 {
-    rt_uint32_t times = 0;
-    rt_uint16_t num = 0;
-    while (TC_UART_SEND_TIMES - times)
+    rt_uint32_t count = 0;
+    rt_uint16_t num   = 0;
+    rt_uint32_t i     = 0;
+    for (i = 1; i < 10; i++)
+    {
+        if (uart_api(RT_SERIAL_TC_TXBUF_SIZE * i + i % 2) == RT_EOK)
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", RT_SERIAL_TC_TXBUF_SIZE * i + i % 2, ++count);
+        else
+        {
+            LOG_E("uart test error");
+            goto __exit;
+        }
+    }
+
+    for (i = 1; i < 10; i++)
+    {
+        if (uart_api(RT_SERIAL_TC_RXBUF_SIZE * i + i % 2) == RT_EOK)
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", RT_SERIAL_TC_RXBUF_SIZE * i + i % 2, ++count);
+        else
+        {
+            LOG_E("uart test error");
+            goto __exit;
+        }
+    }
+
+    srand(rt_tick_get());
+    while (RT_SERIAL_TC_SEND_ITERATIONS - count)
     {
         num = (rand() % 1000) + 1;
-        if(uart_api(num) == RT_EOK)
-           LOG_I("data_lens [%3d], it is correct to read and write data. [%d] times testing.", num, ++times);
+        if (uart_api(num) == RT_EOK)
+            LOG_I("data_lens [%4d], it is correct to read and write data. [%d] count testing.", num, ++count);
         else
         {
             LOG_E("uart test error");
             break;
         }
     }
-    uassert_true(uart_over_flag == RT_TRUE);
+
+__exit:
+    uassert_true(uart_result == RT_TRUE);
 }
 
 static rt_err_t utest_tc_init(void)
@@ -277,10 +305,11 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    tx_sem = RT_NULL;
-    uart_result = RT_TRUE;
-    uart_over_flag = RT_FALSE;
-
+    tx_sem               = RT_NULL;
+    uart_result          = RT_TRUE;
+    uart_over_flag       = RT_FALSE;
+    rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
+    while (rt_device_close(uart_dev) != -RT_ERROR);
     return RT_EOK;
 }
 

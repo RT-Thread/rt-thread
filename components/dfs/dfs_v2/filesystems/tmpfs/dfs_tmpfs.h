@@ -12,6 +12,7 @@
 #define __DFS_TMPFS_H__
 
 #include <rtthread.h>
+#include <dfs_vfs.h>
 
 #define TMPFS_NAME_MAX  32
 #define TMPFS_MAGIC     0x0B0B0B0B
@@ -25,8 +26,7 @@ struct tmpfs_file
 {
     rt_uint32_t      type;     /* file type */
     char name[TMPFS_NAME_MAX]; /* file name */
-    rt_list_t     subdirs;     /* file subdir list */
-    rt_list_t     sibling;     /* file sibling list */
+    struct dfs_vfs_node node;  /* file node in the tmpfs */
     struct tmpfs_sb *sb;       /* superblock ptr */
     rt_uint8_t      *data;     /* file date ptr */
     rt_size_t        size;     /* file size */

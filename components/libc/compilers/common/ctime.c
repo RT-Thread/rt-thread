@@ -602,9 +602,9 @@ int clock_getres(clockid_t clockid, struct timespec *res)
 
     switch (clockid)
     {
-#ifdef RT_USING_RTC
         case CLOCK_REALTIME:  // use RTC
         case CLOCK_REALTIME_COARSE:
+#ifdef RT_USING_RTC
             return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMERES, res);
 #endif /* RT_USING_RTC */
 
@@ -635,9 +635,9 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
 
     switch (clockid)
     {
-#ifdef RT_USING_RTC
         case CLOCK_REALTIME:  // use RTC
         case CLOCK_REALTIME_COARSE:
+#ifdef RT_USING_RTC
             return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, tp);
 #endif /* RT_USING_RTC */
 
@@ -679,8 +679,8 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 
     switch (clockid)
     {
-#ifdef RT_USING_RTC
         case CLOCK_REALTIME:  // use RTC
+#ifdef RT_USING_RTC
             if (flags & TIMER_ABSTIME)
                 err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
             break;
@@ -801,7 +801,7 @@ RTM_EXPORT(rt_timespec_to_tick);
 struct timer_obj
 {
     struct rt_ktime_hrtimer hrtimer;
-    void (*sigev_notify_function)(union sigval val);
+    void (*sigev_notify_func)(union sigval val);
     union sigval val;
     struct timespec interval;              /* Reload value */
     struct timespec value;                 /* Reload value */
@@ -903,7 +903,7 @@ static void rtthread_timer_wrapper(void *timerobj)
     }
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
-    void *ptid = &timer->sigev_notify_function;
+    void *ptid = &timer->sigev_notify_func;
     int tid = *(int *)ptid;
     struct lwp_timer_event_param *data = rt_container_of(timer->work, struct lwp_timer_event_param, work);
     data->signo = timer->sigev_signo;
@@ -922,9 +922,9 @@ static void rtthread_timer_wrapper(void *timerobj)
     if (rt_work_submit(timer->work, 0))
         RT_ASSERT(0);
 #else
-    if(timer->sigev_notify_function != RT_NULL)
+    if(timer->sigev_notify_func != RT_NULL)
     {
-        (timer->sigev_notify_function)(timer->val);
+        (timer->sigev_notify_func)(timer->val);
     }
 #endif /* RT_USING_SMART */
 }
@@ -1012,7 +1012,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 
     timer->work = work;
 #endif /* RT_USING_SMART */
-    timer->sigev_notify_function = evp->sigev_notify_function;
+    timer->sigev_notify_func = evp->sigev_notify_function;
     timer->val = evp->sigev_value;
     timer->interval.tv_sec = 0;
     timer->interval.tv_nsec = 0;

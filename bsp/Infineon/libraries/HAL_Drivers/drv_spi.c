@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,13 +7,14 @@
  * Date           Author       Notes
  * 2022-07-18     Rbb666       first version
  * 2023-03-30     Rbb666       update spi driver
+ * 2025-04-27     Hydevcode    update spi driver
  */
 
 #include <drv_spi.h>
 
 #ifdef RT_USING_SPI
 
-//#define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define DBG_TAG              "drv.spi"
 #ifdef DRV_DEBUG
     #define DBG_LVL               DBG_LOG
@@ -27,6 +28,9 @@
 #endif
 #ifdef BSP_USING_SPI3
     static struct rt_spi_bus spi_bus3;
+#endif
+#ifdef BSP_USING_SPI5
+    static struct rt_spi_bus spi_bus5;
 #endif
 #ifdef BSP_USING_SPI6
     static struct rt_spi_bus spi_bus6;
@@ -50,6 +54,14 @@ static struct ifx_spi_handle spi_bus_obj[] =
         .mosi_pin = GET_PIN(6, 0),
     },
 #endif
+#if defined(BSP_USING_SPI5)
+    {
+        .bus_name = "spi5",
+        .sck_pin = GET_PIN(7, 2),
+        .miso_pin = GET_PIN(7, 0),
+        .mosi_pin = GET_PIN(7, 1),
+    },
+#endif
 #if defined(BSP_USING_SPI6)
     {
         .bus_name = "spi6",
@@ -60,7 +72,8 @@ static struct ifx_spi_handle spi_bus_obj[] =
 #endif
 };
 
-static struct ifx_spi spi_config[sizeof(spi_bus_obj) / sizeof(spi_bus_obj[0])] = {0};
+static struct ifx_spi spi_config[sizeof(spi_bus_obj) / sizeof(spi_bus_obj[0])] =
+{0};
 
 /* private rt-thread spi ops function */
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);

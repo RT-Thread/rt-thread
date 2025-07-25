@@ -15,7 +15,7 @@
 
 #define MAX_HANDLERS    64
 
-extern rt_uint32_t rt_interrupt_nest;
+extern rt_atomic_t rt_interrupt_nest;
 
 struct rt_irq_desc irq_desc[MAX_HANDLERS];
 

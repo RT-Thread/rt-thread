@@ -1,0 +1,20 @@
+from building import *
+
+src = []
+
+if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('BSP_UTEST_DRIVERS'):
+    src += ['test_gpio.c']
+    src += ['test_gpio_irq.c']
+
+    if GetDepend('BSP_USING_ADC'):
+        src += ['test_adc.c']
+
+    if GetDepend('BSP_USING_TIMERS'):
+        src += ['test_timer.c']
+
+    if GetDepend('BSP_USING_WDT'):
+        src += ['test_wdt.c']
+
+group = DefineGroup('utestcases', src, depend = [''])
+
+Return('group')

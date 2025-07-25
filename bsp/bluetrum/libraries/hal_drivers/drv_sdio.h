@@ -19,10 +19,6 @@
 #define SDIO_BUFF_SIZE       1024
 #define SDIO_ALIGN_LEN       32
 
-#ifndef SDIO_MAX_FREQ
-#define SDIO_MAX_FREQ        (1000000)
-#endif
-
 #ifndef SDIO_BASE_ADDRESS
 #define SDIO_BASE_ADDRESS    (0x40012800U)
 #endif

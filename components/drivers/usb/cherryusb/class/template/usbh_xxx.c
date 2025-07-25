@@ -9,11 +9,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_xxx *usbh_xxx_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_CUSTOM_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_xxx_class[devno], 0, sizeof(struct usbh_xxx));
             g_xxx_class[devno].minor = devno;
             return &g_xxx_class[devno];
@@ -24,10 +24,10 @@ static struct usbh_xxx *usbh_xxx_class_alloc(void)
 
 static void usbh_xxx_class_free(struct usbh_xxx *xxx_class)
 {
-    int devno = xxx_class->minor;
+    uint8_t devno = xxx_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(xxx_class, 0, sizeof(struct usbh_xxx));
 }
@@ -89,9 +89,9 @@ static const struct usbh_class_driver xxx_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info xxx_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = 0,
-    .subclass = 0,
-    .protocol = 0,
+    .bInterfaceClass = 0,
+    .bInterfaceSubClass = 0,
+    .bInterfaceProtocol = 0,
     .id_table = NULL,
     .class_driver = &xxx_class_driver
 };

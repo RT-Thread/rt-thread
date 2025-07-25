@@ -78,21 +78,21 @@ static rt_bool_t platform_match(rt_driver_t drv, rt_device_t dev)
 {
     struct rt_platform_driver *pdrv = rt_container_of(drv, struct rt_platform_driver, parent);
     struct rt_platform_device *pdev = rt_container_of(dev, struct rt_platform_device, parent);
-
-#ifdef RT_USING_OFW
     struct rt_ofw_node *np = dev->ofw_node;
 
     /* 1、match with ofw node */
     if (np)
     {
+    #ifdef RT_USING_OFW
         pdev->id = rt_ofw_node_match(np, pdrv->ids);
-
+    #else
+        pdev->id = RT_NULL;
+    #endif
         if (pdev->id)
         {
             return RT_TRUE;
         }
     }
-#endif
 
     /* 2、match with name */
     if (pdev->name && pdrv->name)
@@ -123,7 +123,13 @@ static rt_err_t platform_probe(rt_device_t dev)
 
     if (err && err != -RT_EEMPTY)
     {
-        LOG_E("Attach power domain error = %s in device %s", pdev->name, rt_strerror(err));
+        LOG_E("Attach power domain error = %s in device %s", rt_strerror(err),
+        #ifdef RT_USING_OFW
+            (pdev->name && pdev->name[0]) ? pdev->name : rt_ofw_node_full_name(np)
+        #else
+            pdev->name
+        #endif
+            );
 
         return err;
     }

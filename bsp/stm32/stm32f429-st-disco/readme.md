@@ -31,6 +31,14 @@ STM32F429-DISCO 板级包支持 MDK4﹑MDK5﹑IAR 开发环境和 GCC 编译器�
 | IAR        | 未测试                        |
 | GCC        | GCC 5.4.1 20160919 (release) |
 
+**请注意！！！**
+
+在执行编译工作前请先打开ENV执行以下指令（该指令用于拉取必要的HAL库及CMSIS库，否则无法通过编译）：
+
+```bash
+pkgs --update
+```
+
 ## 3. 烧写及执行
 
 供电方式：使用 Mini USB 线连接电脑和板子的 USB ST-LINK 口。

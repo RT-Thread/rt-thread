@@ -10,7 +10,7 @@
     <aExt>*.s*; *.src; *.a*</aExt>
     <oExt>*.obj; *.o</oExt>
     <lExt>*.lib</lExt>
-    <tExt>*.txt; *.h; *.inc; *.md</tExt>
+    <tExt>*.txt; *.h; *.inc</tExt>
     <pExt>*.plm</pExt>
     <CppX>*.cpp</CppX>
     <nMigrate>0</nMigrate>
@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"" -O206 -S0 -C0 -P00 -FO15 -FD1FFF8000 -FC4000 -FN2 -FF0HC32F448_256K -FS00 -FL080000 -FP0($$Device:HC32F448MCTI$FlashARM\HC32F448_256K.FLM) -FF1HC32F448_otp -FS13000C00 -FL1400 -FP1($$Device:HC32F448MCTI$FlashARM\HC32F448_otp.FLM)</Name>
+          <Name>-X"" -O206 -S0 -C0 -P00 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD1FFF8000 -FC4000 -FN2 -FF0HC32F448_256K.FLM -FS00 -FL080000 -FP0($$Device:HC32F448MCTI$FlashARM\HC32F448_256K.FLM) -FF1HC32F448_otp.FLM -FS13000C00 -FL1400 -FP1($$Device:HC32F448MCTI$FlashARM\HC32F448_otp.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -140,12 +140,12 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
         <aPa>0</aPa>
-        <viewmode>0</viewmode>
+        <viewmode>1</viewmode>
         <vrSel>0</vrSel>
         <aSym>0</aSym>
         <aTbox>0</aTbox>

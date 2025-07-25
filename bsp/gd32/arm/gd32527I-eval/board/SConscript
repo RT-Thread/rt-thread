@@ -1,0 +1,19 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+CPPDEFINES = ['GD32F527']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

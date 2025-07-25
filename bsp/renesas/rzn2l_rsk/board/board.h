@@ -19,7 +19,7 @@ extern "C" {
 #include <cp15.h>
 #include <hal_data.h>
 
-#define RZ_SRAM_SIZE    512 /* The SRAM size of the chip needs to be modified */
+#define RZ_SRAM_SIZE    1536 /* The SRAM size of the chip needs to be modified */
 #define RZ_SRAM_END     (0x10000000 + RZ_SRAM_SIZE * 1024 - 1)
 
 #ifdef __ARMCC_VERSION
@@ -29,7 +29,8 @@ extern int Image$$RAM_END$$ZI$$Base;
 #pragma section="CSTACK"
 #define HEAP_BEGIN      (__segment_end("CSTACK"))
 #else
-#define HEAP_BEGIN      (0x10000000)
+extern int __bss_end__;
+#define HEAP_BEGIN      ((void *)&__bss_end__)
 #endif
 
 #define HEAP_END        RZ_SRAM_END
@@ -37,7 +38,7 @@ extern int Image$$RAM_END$$ZI$$Base;
 /***********************************************************************************************************************
  * Macro definitions
  **********************************************************************************************************************/
-#define MAX_HANDLERS    (512)
+#define MAX_HANDLERS BSP_VECTOR_TABLE_MAX_ENTRIES
 #define GIC_IRQ_START   0
 #define GIC_ACK_INTID_MASK  (0x000003FFU)
 /* number of interrupts on board */

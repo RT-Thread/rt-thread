@@ -218,7 +218,7 @@ struct rt_mmcsd_card {
     struct rt_sdio_cccr    cccr;  /* common card info */
     struct rt_sdio_cis     cis;  /* common tuple info */
     struct rt_sdio_function *sdio_function[SDIO_MAX_FUNCTIONS + 1]; /* SDIO functions (devices) */
-    rt_list_t blk_devices;  /* for block device list */
+    void *blk_dev;
 
     struct rt_mmc_ext_csd ext_csd;
 };

@@ -1,0 +1,8 @@
+{
+    "bsps": {
+        "folder": "bsp",
+        "stars": [
+            "qemu-vexpress-a9"
+        ]
+    }
+}

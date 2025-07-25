@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_can.c
- * @version $Rev:: 7187         $
- * @date    $Date:: 2023-08-31 #$
+ * @version $Rev:: 8284         $
+ * @date    $Date:: 2024-11-22 #$
  * @brief   This file provides all the CAN firmware functions.
  *************************************************************************************************************
  * @attention
@@ -37,6 +37,7 @@
   * @{
   */
 
+
 /* Private types -------------------------------------------------------------------------------------------*/
 typedef enum
 {
@@ -45,9 +46,18 @@ typedef enum
   IF_TOTAL_NUM
 } CANIF_NUMBER_Enum;
 
-
 /* Private function prototypes -----------------------------------------------------------------------------*/
-static CANIF_NUMBER_Enum GetFreeIF(HT_CAN_TypeDef  *CANx);
+static HT_CANIF_TypeDef *_GetFreeIF(HT_CAN_TypeDef  *CANx);
+static void _CAN_EnterInitMode(HT_CAN_TypeDef *CANx);
+static void _CAN_LeaveInitMode(HT_CAN_TypeDef *CANx);
+static void _CAN_SetRxMsgObj(HT_CAN_TypeDef  *CANx, u32 MsgNum, CAN_MSG_TypeDef* pCanMsg, u32 uSingleOrFifoLast);
+static s32 _CAN_ReadMsgObj(HT_CAN_TypeDef *CANx, u32 MsgNum, u32 Release, CAN_MSG_TypeDef* pCanMsg, u8* data, u32* len);
+static ErrStatus _CAN_SetTxMsg(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u8* data, u8 len);
+static int _CAN_GetValidMsg(HT_CAN_TypeDef *CANx);
+static bool _CAN_GetNewData(HT_CAN_TypeDef *CANx, u32 MsgNum);
+static bool _CAN_CheckMsgIsValid(HT_CAN_TypeDef *CANx, u32 MsgNum);
+static void _CAN_ClearMsgPendingFlag(HT_CAN_TypeDef *CANx, u32 MsgNum);
+static volatile bool gIsBusOff = FALSE;
 
 /* Global functions ----------------------------------------------------------------------------------------*/
 /** @defgroup CAN_Exported_Functions CAN exported functions
@@ -73,952 +83,1054 @@ void CAN_DeInit(HT_CAN_TypeDef* CANx)
 }
 
 /*********************************************************************************************************//**
- * @brief  This function is used to set CAN to enter initialization mode and enable access bit timing
- *         register.After bit timing configuration ready, user must call CAN_LeaveInitMode()
- *         to leave initialization mode and lock bit timing register to let new configuration
- *         take effect.
- * @param  CANx: The pointer to CAN module base address.
+ * @brief  Set CAN operation mode and target baud-rate.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  CAN_InitStruct: pointer to a CAN_InitTypeDef structure.
  * @retval None
   ***********************************************************************************************************/
-void CAN_EnterInitMode(HT_CAN_TypeDef *CANx)
+void CAN_Init(HT_CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
 {
-  CANx->CR |= CAN_CR_INIT_Msk;
-  CANx->CR |= CAN_CR_CCE_Msk;
-}
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
 
-/*********************************************************************************************************//**
- * @brief  Leave initialization mode
- * @param  CANx: The pointer to CAN module base address.
- * @retval None
-  ***********************************************************************************************************/
-void CAN_LeaveInitMode(HT_CAN_TypeDef *CANx)
-{
-  CANx->CR &= (~(CAN_CR_INIT_Msk | CAN_CR_CCE_Msk));
+  _CAN_EnterInitMode(CANx);
 
-  while(CANx->CR & CAN_CR_INIT_Msk); /* Check INIT bit is released */
-}
+  CANx->BTR = (((u32)(CAN_InitStruct->CAN_TSEG1      - 1) << CAN_BTR_TSEG1_Pos) & CAN_BTR_TSEG1_Msk)|
+              (((u32)(CAN_InitStruct->CAN_TSEG0       -1) << CAN_BTR_TSEG0_Pos) & CAN_BTR_TSEG0_Msk)|
+              (((u32)(CAN_InitStruct->CAN_BRPrescaler -1) << CAN_BTR_BRP_Pos)   & CAN_BTR_BRP_Msk)  |
+              (((u32)(CAN_InitStruct->CAN_SJW         -1) << CAN_BTR_SJW_Pos)   & CAN_BTR_SJW_Msk);
 
-/*********************************************************************************************************//**
- * @brief  This function is used to Wait message into message buffer in basic mode. Please notice the
- *         function is polling NEWDAT bit of MCR register by while loop and it is used in basic mode.
- * @param  CANx: The pointer to CAN module base address.
- * @retval None
-  ***********************************************************************************************************/
-void CAN_WaitMsg(HT_CAN_TypeDef *CANx)
-{
-  CANx->SR = 0x0; /* clr status */
+  CANx->BRPER = (CAN_InitStruct->CAN_BRPrescaler >> 6) & CAN_BRPE_BRPE_Msk;
+  _CAN_LeaveInitMode(CANx);
 
-  while(1)
+  if (CAN_InitStruct->CAN_NART)
+    HT_CAN0->CR |= CAN_CR_DAR;
+
+  if (CAN_InitStruct->CAN_Mode)
   {
-    if(CANx->IF1.MCR & CAN_IF_MCR_NEWDAT_Msk)   /* check new data */
-    {
-      /*DEBUG_PRINTF("New Data IN\n");*/
-      break;
-    }
-    if(CANx->SR & CAN_SR_RXOK_Msk)
-    {
-      /*DEBUG_PRINTF("Rx OK\n");*/
-    }
-    if(CANx->SR & CAN_SR_LEC_Msk)
-    {
-      /*DEBUG_PRINTF("Error\n");*/
-    }
+    CAN_EnterTestMode(CANx, CAN_InitStruct->CAN_Mode);
+  }
+  CAN_IntConfig(CANx, CAN_INT_EIE | CAN_INT_IE , ENABLE);
+
+  return;
+}
+
+/**********************************************************************************************************//**
+ * @brief  Enable or Disable the specified CAN interrupt.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  CAN_Int: specify if the CAN interrupt source to be enabled or disabled.
+ *   This parameter can be any combination of the following values:
+ *     @arg CAN_INT_IE     : Module interrupt enable.
+ *     @arg CAN_INT_SIE    : Status change interrupt enable.
+ *     @arg CAN_INT_EIE    : Error interrupt enable.
+ *     @arg CAN_INT_ALL    : All CAN interrupt
+ * @param NewState: this parameter can be ENABLE or DISABLE.
+ * @retval None
+  ***********************************************************************************************************/
+void CAN_IntConfig(HT_CAN_TypeDef *CANx, u32 CAN_Int, ControlStatus NewState)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+  Assert_Param(IS_CONTROL_STATUS(NewState));
+  CAN_Int = CAN_Int & CAN_INT_ALL;
+
+  _CAN_EnterInitMode(CANx);
+  if (NewState != DISABLE)
+  {
+    CANx->CR |= CAN_Int;
+  }
+   else
+  {
+    CANx->CR = CANx->CR & ~(CAN_Int);
+  }
+  _CAN_LeaveInitMode(CANx);
+}
+
+/**********************************************************************************************************//**
+ * @brief  Get the specified CAN INT status.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  CAN_Int: the CAN interrupt source.
+ *   This parameter can be one of the following values:
+ *     @arg CAN_INT_IE     : Module interrupt enable.
+ *     @arg CAN_INT_SIE    : Status change interrupt enable.
+ *     @arg CAN_INT_EIE    : Error interrupt enable.
+ * @retval SET or RESET
+  ***********************************************************************************************************/
+FlagStatus CAN_GetIntStatus(HT_CAN_TypeDef* CANx, u32 CAN_Int)
+{
+  FlagStatus Status;
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+  if ((CANx->CR & CAN_Int) != RESET)
+  {
+    Status = SET;
+  }
+  else
+  {
+    Status = RESET;
+  }
+  return Status;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Check whether the specified CAN flag has been set.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  CAN_Flag: specify the flag to be check.
+ *   This parameter can be one of the following values:
+ *     @arg CAN_FLAG_BOFF  : Busoff Status
+ *     @arg CAN_FLAG_EWARN : Warning Status
+ *     @arg CAN_FLAG_EPASS : Error Passive
+ *     @arg CAN_FLAG_RXOK  : Received a Message Successfully
+ *     @arg CAN_FLAG_TXOK  : Transmitted a Message Successfully
+ * @retval SET or RESET
+ ************************************************************************************************************/
+FlagStatus CAN_GetFlagStatus(HT_CAN_TypeDef* CANx, uint32_t CAN_Flag)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  if (CANx->SR & CAN_Flag)
+  {
+    return SET;
+  }
+  else
+  {
+    return RESET;
   }
 }
 
-/*********************************************************************************************************//**
- * @brief  Get current bit rate
- * @param  CANx: The pointer to CAN module base address.
- * @retval Current Bit-Rate (kilo bit per second)
+/**********************************************************************************************************//**
+ * @brief  Clear the interrupt flag of the specified CAN.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  CAN_Flag: specify the flag that is to be cleared.
+ *     @arg CAN_FLAG_RXOK  : Received a Message Successfully
+ *     @arg CAN_FLAG_TXOK  : Transmitted a Message Successfully
+ * @retval None
   ***********************************************************************************************************/
-u32 CAN_GetCANBitRate(HT_CAN_TypeDef  *CANx)
+void CAN_ClearFlag(HT_CAN_TypeDef* CANx, uint32_t CAN_Flag)
 {
-  u32 wTseg1, wTseg2;
-  u32 wBpr;
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
 
-  wTseg1 = (CANx->BTR & CAN_BTR_TSEG0_Msk) >> CAN_BTR_TSEG0_Pos;
-  wTseg2 = (CANx->BTR & CAN_BTR_TSEG1_Msk) >> CAN_BTR_TSEG1_Pos;
-  wBpr  = CANx->BTR & CAN_BTR_BRP_Msk;
-  wBpr |= CANx->BRPER << 6;
+  CANx->SR &= ~CAN_Flag;
+}
 
-  return (SystemCoreClock / (wBpr + 1) / (wTseg1 + wTseg2 + 3));
+/**********************************************************************************************************//**
+ * @brief  Returns the CANx's last error code (LEC).
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval This function will return the CAN_ErrorCode following values:
+ *    - NO_ERROR    : No Error
+ *    - STUFF_ERROR : Stuff Error
+ *    - FORM_ERROR  : Form Error
+ *    - ACK_ERROR   : Acknowledgment Error
+ *    - BIT1_EROR   : Bit Recessive Error
+ *    - BIT0_ERROR  : Bit Dominant Error
+ *    - CRC_ERROR   : CRC Error
+ *    - NO_CHANGE   : Software Set Error
+  ***********************************************************************************************************/
+CAN_LastErrorCode_TypeDef CAN_GetLastErrorCode(HT_CAN_TypeDef* CANx)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+  return (CAN_LastErrorCode_TypeDef)(CANx->SR & CAN_LEC_Msk);
+}
+
+/**********************************************************************************************************//**
+ * @brief  Returns the CANx Receive Error Counter (REC).
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval CAN Receive Error Counter.
+  ***********************************************************************************************************/
+u32 CAN_GetReceiveErrorCounter(HT_CAN_TypeDef* CANx)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  return ((CANx->ECR & CAN_ECR_REC_MsK) >> CAN_ECR_REC_Pos);
+}
+
+/*********************************************************************************************************//**
+ * @brief  Returns the LSB of the 9-bit CANx Transmit Error Counter(TEC).
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval LSB of the 9-bit CAN Transmit Error Counter.
+  ***********************************************************************************************************/
+u32 CAN_GetLSBTransmitErrorCounter(HT_CAN_TypeDef* CANx)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  return (CANx->ECR & CAN_ECR_TEC_MsK);
+}
+
+/*********************************************************************************************************//**
+ * @brief  Monitor CAN BusOff status.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval None
+  ***********************************************************************************************************/
+void CAN_BusOffRecovery(HT_CAN_TypeDef *CANx)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  /* Get BusOff Flag                                                                                        */
+  if (CANx->SR & CAN_FLAG_BOFF)
+  {
+    _CAN_LeaveInitMode(CANx);
+  }
+  return;
 }
 
 /**********************************************************************************************************//**
  * @brief  Switch the CAN into test mode.
- * @param  CANx: The pointer to CAN module base address.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
  * @param  u8TestMask Specifies the configuration in test modes
- *         @arg CAN_TEST_BASIC_Msk               : Enable basic mode of test mode
- *         @arg CAN_TEST_SILENT_Msk              : Enable silent mode of test mode
- *         @arg CAN_TEST_LBACK_Msk               : Enable Loop Back Mode of test mode
- *         @arg CAN_TEST_TX0_Msk/CAN_TEST_TX1_Msk: Control CAN_TX pin bit field
+ *         @arg CAN_MODE_BASIC              : Enable basic mode of test mode
+ *         @arg CAN_MODE_SILENT             : Enable silent mode of test mode
+ *         @arg CAN_MODE_LBACK              : Enable Loop Back Mode of test mode
+ *         @arg CAN_MODE_MONITORER          : Sample Point can be monitored at CAN_TX pin.
+ *         @arg CAN_MODE_TX_DOMINANT        : CAN_TX pin drives a dominant ('0') value
+ *         @arg CAN_MODE_TX_RECESSIVE       : CAN_TX pin drives a recessive ('1') value
  * @retval None
   ***********************************************************************************************************/
 void CAN_EnterTestMode(HT_CAN_TypeDef *CANx, u32 u8TestMask)
 {
-  CANx->CR |= CAN_CR_TEST_Msk;
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  CANx->CR |= CAN_CR_TEST;
   CANx->TR = u8TestMask;
 }
 
 /*********************************************************************************************************//**
  * @brief  Leave the test mode
- * @param  CANx: The pointer to CAN module base address.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
  * @retval None
   ***********************************************************************************************************/
 void CAN_LeaveTestMode(HT_CAN_TypeDef *CANx)
 {
-  CANx->CR |= CAN_CR_TEST_Msk;
-  CANx->TR &= ~(CAN_TEST_LBACK_Msk | CAN_TEST_SILENT_Msk | CAN_TEST_BASIC_Msk);
-  CANx->CR &= (~CAN_CR_TEST_Msk);
-}
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
 
-/*********************************************************************************************************//**
- * @brief  Get the waiting status of a received message.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgObj: Specifies the Message object number, from 0 to 31. 0 No message object has new data.
-  ***********************************************************************************************************/
-u32 CAN_IsNewDataReceived(HT_CAN_TypeDef *CANx, u32 MsgObj)
-{
-  MsgObj--;
-  return (MsgObj < 16 ? CANx->NDR0 & (1 << MsgObj) : CANx->NDR1 & (1 << (MsgObj - 16)));
+  CANx->CR |= CAN_CR_TEST;
+  CANx->TR &= ~(CAN_MODE_LBACK | CAN_MODE_SILENT | CAN_MODE_BASIC | CAN_MODE_TX_RECESSIVE);
+  CANx->CR &= (~CAN_CR_TEST);
 }
 
 /*********************************************************************************************************//**
  * @brief  The function is used to Send CAN message in BASIC mode of test mode. Before call the API,
  *         the user should be call CAN_EnterTestMode(CAN_TEST_BASIC) and let CAN controller enter
  *         basic mode of test mode. Please notice IF0 Registers used as Tx Buffer in basic mode.
- * @param  CANx: The pointer to CAN module base address.
- * @param  pCanMsg: Pointer to the message structure containing data to transmit.
- * @retval TRUE:  Transmission OK, FALSE: Check busy flag of interface 0 is timeout
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  data: Pointer to the data buffer to be transmitted.
+ * @param  len: Length of the data to be transmitted.
+ * @retval SUCCESS or ERROR
   ***********************************************************************************************************/
-s32 CAN_BasicSendMsg(HT_CAN_TypeDef *CANx, STR_CANMSG_T_TypeDef* pCanMsg)
+ErrStatus CAN_BasicSendMsg(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u8* data, u8 len)
 {
-  u32 i = 0;
-  while(CANx->IF0.CREQ & CAN_IF_CREQ_BUSY_Msk);
-
-  CANx->SR &= (~CAN_SR_TXOK_Msk);
-
-  if(pCanMsg->IdType == CAN_STD_ID)
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+  if (CANx->SR & CAN_FLAG_BOFF)
   {
-    /* standard ID*/
+    return ERROR;
+  }
+  while (CANx->IF0.CREQ & CAN_FLAG_IF_BUSY)
+  {
+  }
+
+  CANx->SR &= (~CAN_FLAG_TXOK);
+
+  if (pCanMsg->IdType == CAN_STD_ID)
+  {
+    /* standard ID                                                                                          */
     CANx->IF0.ARB0 = 0;
-    CANx->IF0.ARB1 = (((pCanMsg->Id) & 0x7FF) << 2) ;
+    CANx->IF0.ARB1 = (((pCanMsg->Id) & CAN_STD_FRAME_Msk) << 2);
   }
   else
   {
-    /* extended ID*/
-    CANx->IF0.ARB0 = (pCanMsg->Id) & 0xFFFF;
-    CANx->IF0.ARB1 = ((pCanMsg->Id) & 0x1FFF0000) >> 16  | CAN_IF_ARB1_XTD_Msk;
+    /* extended ID                                                                                          */
+    CANx->IF0.ARB0 = (pCanMsg->Id)          & CAN_EXT_FRAME_LSB_Msk;
+    CANx->IF0.ARB1 = (((pCanMsg->Id) >> 16) & CAN_EXT_FRAME_MSB_Msk) | CAN_IF_ARB1_XTD;
   }
 
-  if(pCanMsg->FrameType)
-    CANx->IF0.ARB1 |= CAN_IF_ARB1_DIR_Msk;
+  if (pCanMsg->FrameType)
+    CANx->IF0.ARB1 |= CAN_IF_ARB1_DIR;
   else
-    CANx->IF0.ARB1 &= (~CAN_IF_ARB1_DIR_Msk);
+    CANx->IF0.ARB1 &= (~CAN_IF_ARB1_DIR);
 
-  CANx->IF0.MCR = (CANx->IF0.MCR & (~CAN_IF_MCR_DLC_Msk)) | pCanMsg->DLC;
-  CANx->IF0.DA0R = ((u16)pCanMsg->Data[1] << 8) | pCanMsg->Data[0];
-  CANx->IF0.DA1R = ((u16)pCanMsg->Data[3] << 8) | pCanMsg->Data[2];
-  CANx->IF0.DB0R = ((u16)pCanMsg->Data[5] << 8) | pCanMsg->Data[4];
-  CANx->IF0.DB1R = ((u16)pCanMsg->Data[7] << 8) | pCanMsg->Data[6];
+  CANx->IF0.MCR  = (CANx->IF0.MCR & (~CAN_IF_MCR_DLC_Msk)) | len;
+  CANx->IF0.DA0R = ((u16)data[1] << 8) | data[0];
+  CANx->IF0.DA1R = ((u16)data[3] << 8) | data[2];
+  CANx->IF0.DB0R = ((u16)data[5] << 8) | data[4];
+  CANx->IF0.DB1R = ((u16)data[7] << 8) | data[6];
 
-  /* request transmission*/
-  CANx->IF0.CREQ &= (~CAN_IF_CREQ_BUSY_Msk);
-  if(CANx->IF0.CREQ & CAN_IF_CREQ_BUSY_Msk)
+  /* request transmission                                                                                   */
+  CANx->IF0.CREQ &= (~CAN_FLAG_IF_BUSY);
+  if (CANx->IF0.CREQ & CAN_FLAG_IF_BUSY)
   {
-    return FALSE;
+    return ERROR;
   }
 
-  CANx->IF0.CREQ |= CAN_IF_CREQ_BUSY_Msk; /* Sending */
+  CANx->IF0.CREQ |= CAN_FLAG_IF_BUSY; /* Sending                                                            */
 
-  for(i = 0; i < 0xFFFFF; i++)
-  {
-    if((CANx->IF0.CREQ & CAN_IF_CREQ_BUSY_Msk) == 0)
-      break;
-  }
-
-  if(i >= 0xFFFFFFF)
-  {
-    return FALSE;
-  }
-  return TRUE;
+  return SUCCESS;
 }
 
 /*********************************************************************************************************//**
  * @brief  Get a message information in BASIC mode.
- * @param  CANx: The pointer to CAN module base address.
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- * @retval FALSE: No any message received, TRUE: Receive a message success.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  data: Pointer to the buffer where received data will be stored.
+ * @param  len: Pointer to a variable that will store the length of the received data.
+ * @retval SUCCESS or ERROR
   ***********************************************************************************************************/
-s32 CAN_BasicReceiveMsg(HT_CAN_TypeDef *CANx, STR_CANMSG_T_TypeDef* pCanMsg)
+ErrStatus CAN_BasicReceiveMsg(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u8* data, u8* len)
 {
-  if((CANx->IF1.MCR & CAN_IF_MCR_NEWDAT_Msk) == 0)   /* In basic mode, receive data always save in IF1 */
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  if ((CANx->IF1.MCR & CAN_IF_MCR_NEWDAT) == 0)   /* In basic mode, receive data always save in IF1         */
   {
-      return FALSE;
+      return ERROR;
   }
 
-  CANx->SR &= (~CAN_SR_RXOK_Msk);
+  CANx->SR &= (~CAN_FLAG_RXOK);
 
-  CANx->IF1.CMASK = CAN_IF_CMASK_ARB_Msk
-                  | CAN_IF_CMASK_CONTROL_Msk
-                  | CAN_IF_CMASK_DATAA_Msk
-                  | CAN_IF_CMASK_DATAB_Msk;
+  CANx->IF1.CMASK = CAN_IF_CMASK_ARB
+                  | CAN_IF_CMASK_CONTROL
+                  | CAN_IF_CMASK_DATAA
+                  | CAN_IF_CMASK_DATAB;
 
-  if((CANx->IF1.MASK1 & CAN_IF_ARB1_XTD_Msk) == 0)
+  if ((CANx->IF1.MASK1 & CAN_IF_ARB1_XTD) == 0)
   {
-    /* standard ID*/
+    /* standard ID                                                                                          */
     pCanMsg->IdType = CAN_STD_ID;
-    pCanMsg->Id = (CANx->IF1.MASK1 >> 2) & 0x07FF;
+    pCanMsg->Id = (CANx->IF1.MASK1 >> 2) & CAN_STD_FRAME_Msk;
   }
   else
   {
-    /* extended ID*/
+    /* extended ID                                                                                          */
     pCanMsg->IdType = CAN_EXT_ID;
-    pCanMsg->Id  = (CANx->IF1.ARB1 & 0x1FFF) << 16;
-    pCanMsg->Id |= (u32)CANx->IF1.ARB0;
+    pCanMsg->Id     = (CANx->IF1.ARB1 & CAN_EXT_FRAME_MSB_Msk) << 16;
+    pCanMsg->Id     |= (u32)CANx->IF1.ARB0;
   }
 
-  pCanMsg->FrameType = !((CANx->IF1.ARB1 & CAN_IF_ARB1_DIR_Msk) >> CAN_IF_ARB1_DIR_Pos);
-
-  pCanMsg->DLC     = CANx->IF1.MCR & CAN_IF_MCR_DLC_Msk;
-  pCanMsg->Data[0] = CANx->IF1.DA0R & CAN_IF_DAT_A0_DATA0_Msk;
-  pCanMsg->Data[1] = (CANx->IF1.DA0R & CAN_IF_DAT_A0_DATA1_Msk) >> CAN_IF_DAT_A0_DATA1_Pos;
-  pCanMsg->Data[2] = CANx->IF1.DA1R & CAN_IF_DAT_A1_DATA2_Msk;
-  pCanMsg->Data[3] = (CANx->IF1.DA1R & CAN_IF_DAT_A1_DATA3_Msk) >> CAN_IF_DAT_A1_DATA3_Pos;
-  pCanMsg->Data[4] = CANx->IF1.DB0R & CAN_IF_DAT_B0_DATA4_Msk;
-  pCanMsg->Data[5] = (CANx->IF1.DB0R & CAN_IF_DAT_B0_DATA5_Msk) >> CAN_IF_DAT_B0_DATA5_Pos;
-  pCanMsg->Data[6] = CANx->IF1.DB1R & CAN_IF_DAT_B1_DATA6_Msk;
-  pCanMsg->Data[7] = (CANx->IF1.DB1R & CAN_IF_DAT_B1_DATA7_Msk) >> CAN_IF_DAT_B1_DATA7_Pos;
-
-  return TRUE;
-}
-
-/*********************************************************************************************************//**
- * @brief  Set Rx message object
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgObj: Specifies the Message object number, from 0 to 31.
- *         @arg CAN_STD_ID (standard ID, 11-bit)
- *         @arg CAN_EXT_ID (extended ID, 29-bit)
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- * @retval TRUE: SUCCESS, FALSE: No useful interface.
-  ***********************************************************************************************************/
-s32 CAN_SetRxMsgObj(HT_CAN_TypeDef  *CANx, u32 MsgObj, STR_CANMSG_R_TypeDef* pCanMsg)
-{
-  u32 u8MsgIfNum = 0;
-
-  if((u8MsgIfNum = GetFreeIF(CANx)) == 2)                         /* Check Free Interface for configure */
-  {
-      return FALSE;
-  }
-
-  if (u8MsgIfNum == 1)
-  {
-    /* Command Setting */
-    CANx->IF1.CMASK = CAN_IF_CMASK_WRRD_Msk | CAN_IF_CMASK_MASK_Msk | CAN_IF_CMASK_ARB_Msk |
-                      CAN_IF_CMASK_CONTROL_Msk | CAN_IF_CMASK_DATAA_Msk | CAN_IF_CMASK_DATAB_Msk;
-
-    if(pCanMsg->IdType == CAN_STD_ID)    /* According STD/EXT ID format,Configure Mask and Arbitration register */
-    {
-      CANx->IF1.ARB0 = 0;
-      CANx->IF1.ARB1 = CAN_IF_ARB1_MSGVAL_Msk | (pCanMsg->Id & 0x7FF) << 2;
-      CANx->IF1.MASK0 = pCanMsg->MASK0;
-      CANx->IF1.MASK1 = pCanMsg->MASK1;
-    }
-    else
-    {
-      CANx->IF1.ARB0 = pCanMsg->Id & 0xFFFF;
-      CANx->IF1.ARB1 = CAN_IF_ARB1_MSGVAL_Msk | CAN_IF_ARB1_XTD_Msk | (pCanMsg->Id & 0x1FFF0000) >> 16;
-    }
-
-    CANx->IF1.MCR |= CAN_IF_MCR_RXIE_Msk | pCanMsg->MCR ;
-
-    if(pCanMsg->UMASK)
-    {
-      CANx->IF1.MCR |= CAN_IF_MCR_UMASK_Msk;
-      CANx->IF1.MASK0 = pCanMsg->MASK0;
-      CANx->IF1.MASK1 = pCanMsg->MASK1;
-    }
-
-    if(pCanMsg->RMTEN)
-      CANx->IF1.MCR |= CAN_IF_MCR_RMTEN_Msk;
-    else
-      CANx->IF1.MCR &= (~CAN_IF_MCR_RMTEN_Msk);
-
-    if(pCanMsg->EOB)
-      CANx->IF1.MCR |= CAN_IF_MCR_EOB_Msk;
-    else
-      CANx->IF1.MCR &= (~CAN_IF_MCR_EOB_Msk);
-
-    CANx->IF1.MCR &= (~CAN_IF_MCR_INTPND_Msk);
-    CANx->IF1.MCR &= (~CAN_IF_MCR_NEWDAT_Msk);
-    CANx->IF1.DA0R  = 0;
-    CANx->IF1.DA1R  = 0;
-    CANx->IF1.DB0R  = 0;
-    CANx->IF1.DB1R  = 0;
-    CANx->IF1.CREQ = MsgObj+1;
-  }
-  else
-  {
-    /* Command Setting */
-    CANx->IF0.CMASK = CAN_IF_CMASK_WRRD_Msk | CAN_IF_CMASK_MASK_Msk | CAN_IF_CMASK_ARB_Msk |
-                      CAN_IF_CMASK_CONTROL_Msk | CAN_IF_CMASK_DATAA_Msk | CAN_IF_CMASK_DATAB_Msk;
-
-    if(pCanMsg->IdType == CAN_STD_ID)    /* According STD/EXT ID format,Configure Mask and Arbitration register */
-    {
-      CANx->IF0.ARB0 = 0;
-      CANx->IF0.ARB1 = CAN_IF_ARB1_MSGVAL_Msk | (pCanMsg->Id & 0x7FF) << 2;
-      CANx->IF0.MASK0 = pCanMsg->MASK0;
-      CANx->IF0.MASK1 = pCanMsg->MASK1;
-    }
-    else
-    {
-      CANx->IF0.ARB0 = pCanMsg->Id & 0xFFFF;
-      CANx->IF0.ARB1 = CAN_IF_ARB1_MSGVAL_Msk | CAN_IF_ARB1_XTD_Msk | (pCanMsg->Id & 0x1FFF0000) >> 16;
-    }
-
-    CANx->IF0.MCR |= CAN_IF_MCR_RXIE_Msk | pCanMsg->MCR ;
-
-    if(pCanMsg->UMASK)
-    {
-      CANx->IF0.MCR |= CAN_IF_MCR_UMASK_Msk;
-      CANx->IF0.MASK0 = pCanMsg->MASK0;
-      CANx->IF0.MASK1 = pCanMsg->MASK1;
-    }
-
-    if(pCanMsg->RMTEN)
-      CANx->IF0.MCR |= CAN_IF_MCR_RMTEN_Msk;
-    else
-      CANx->IF0.MCR &= (~CAN_IF_MCR_RMTEN_Msk);
-
-    if(pCanMsg->EOB)
-      CANx->IF0.MCR |= CAN_IF_MCR_EOB_Msk;
-    else
-      CANx->IF0.MCR &= (~CAN_IF_MCR_EOB_Msk);
-
-    CANx->IF0.MCR &= (~CAN_IF_MCR_INTPND_Msk);
-    CANx->IF0.MCR &= (~CAN_IF_MCR_NEWDAT_Msk);
-    CANx->IF0.DA0R  = 0;
-    CANx->IF0.DA1R  = 0;
-    CANx->IF0.DB0R  = 0;
-    CANx->IF0.DB1R  = 0;
-    CANx->IF0.CREQ = MsgObj+1;
-  }
-  return TRUE;
-}
-
-/*********************************************************************************************************//**
- * @brief  Gets the message
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgObj: Specifies the Message object number, from 0 to 31.
- * @param  Release: Specifies the message release indicator.
- *         @arg TRUE : the message object is released when getting the data.
- *         @arg FALSE: the message object is not released.
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- * @retval TRUE Success, FALSE No any message received
-  ***********************************************************************************************************/
-s32 CAN_ReadMsgObj(HT_CAN_TypeDef *CANx, u32 MsgObj, u32 Release, STR_CANMSG_T_TypeDef* pCanMsg)
-{
-  u32 u8MsgIfNum = 0;
-
-  if(!CAN_IsNewDataReceived(CANx, MsgObj))
-  {
-    return FALSE;
-  }
-
-  if((u8MsgIfNum = GetFreeIF(CANx)) == 2)                         /* Check Free Interface for configure */
-  {
-    return FALSE;
-  }
-
-  CANx->SR &= (~CAN_SR_RXOK_Msk);
-
-  if (u8MsgIfNum == 1)
-  {
-  /* read the message contents*/
-    CANx->IF1.CMASK = CAN_IF_CMASK_MASK_Msk
-                    | CAN_IF_CMASK_ARB_Msk
-                    | CAN_IF_CMASK_CONTROL_Msk
-                    | CAN_IF_CMASK_CLRINTPND_Msk
-                    | (Release ? CAN_IF_CMASK_TXRQSTNEWDAT_Msk : 0)
-                    | CAN_IF_CMASK_DATAA_Msk
-                    | CAN_IF_CMASK_DATAB_Msk;
-
-    CANx->IF1.CREQ = MsgObj;
-
-    while(CANx->IF1.CREQ & CAN_IF_CREQ_BUSY_Msk)
-    {
-      /*Wait*/
-    }
-
-    if((CANx->IF1.ARB1 & CAN_IF_ARB1_XTD_Msk) == 0)
-    {
-      /* standard ID*/
-      pCanMsg->IdType = CAN_STD_ID;
-      pCanMsg->Id     = (CANx->IF1.ARB1 & CAN_IF_ARB1_ID_Msk) >> 2;
-    }
-    else
-    {
-      /* extended ID*/
-      pCanMsg->IdType = CAN_EXT_ID;
-      pCanMsg->Id  = (CANx->IF1.ARB1 & 0x1FFF) << 16 ;
-      pCanMsg->Id |= CANx->IF1.ARB0;
-    }
-    pCanMsg->MCR     = CANx->IF1.MCR;
-    pCanMsg->DLC     = CANx->IF1.MCR & CAN_IF_MCR_DLC_Msk;
-    pCanMsg->EOB     = CANx->IF1.MCR & CAN_IF_MCR_EOB_Msk;
-    pCanMsg->Data[0] = CANx->IF1.DA0R & CAN_IF_DAT_A0_DATA0_Msk;
-    pCanMsg->Data[1] = (CANx->IF1.DA0R & CAN_IF_DAT_A0_DATA1_Msk) >> CAN_IF_DAT_A0_DATA1_Pos;
-    pCanMsg->Data[2] = CANx->IF1.DA1R & CAN_IF_DAT_A1_DATA2_Msk;
-    pCanMsg->Data[3] = (CANx->IF1.DA1R & CAN_IF_DAT_A1_DATA3_Msk) >> CAN_IF_DAT_A1_DATA3_Pos;
-    pCanMsg->Data[4] = CANx->IF1.DB0R & CAN_IF_DAT_B0_DATA4_Msk;
-    pCanMsg->Data[5] = (CANx->IF1.DB0R & CAN_IF_DAT_B0_DATA5_Msk) >> CAN_IF_DAT_B0_DATA5_Pos;
-    pCanMsg->Data[6] = CANx->IF1.DB1R & CAN_IF_DAT_B1_DATA6_Msk;
-    pCanMsg->Data[7] = (CANx->IF1.DB1R & CAN_IF_DAT_B1_DATA7_Msk) >> CAN_IF_DAT_B1_DATA7_Pos;
-  }
-  else
-  {
-    /* read the message contents*/
-    CANx->IF0.CMASK = CAN_IF_CMASK_MASK_Msk
-                    | CAN_IF_CMASK_ARB_Msk
-                    | CAN_IF_CMASK_CONTROL_Msk
-                    | CAN_IF_CMASK_CLRINTPND_Msk
-                    | (Release ? CAN_IF_CMASK_TXRQSTNEWDAT_Msk : 0)
-                    | CAN_IF_CMASK_DATAA_Msk
-                    | CAN_IF_CMASK_DATAB_Msk;
-
-    CANx->IF0.CREQ = MsgObj;
-
-    while(CANx->IF0.CREQ & CAN_IF_CREQ_BUSY_Msk)
-    {
-      /*Wait*/
-    }
-
-    if((CANx->IF0.ARB1 & CAN_IF_ARB1_XTD_Msk) == 0)
-    {
-      /* standard ID*/
-      pCanMsg->IdType = CAN_STD_ID;
-      pCanMsg->Id     = (CANx->IF0.ARB1 & CAN_IF_ARB1_ID_Msk) >> 2;
-    }
-    else
-    {
-      /* extended ID*/
-      pCanMsg->IdType = CAN_EXT_ID;
-      pCanMsg->Id  = (CANx->IF0.ARB1 & 0x1FFF) << 16;
-      pCanMsg->Id |= CANx->IF0.ARB0;
-    }
-
-    pCanMsg->MCR     = CANx->IF0.MCR;
-    pCanMsg->DLC     = CANx->IF0.MCR & CAN_IF_MCR_DLC_Msk;
-    pCanMsg->EOB     = CANx->IF0.MCR & CAN_IF_MCR_EOB_Msk;
-    pCanMsg->Data[0] = CANx->IF0.DA0R & CAN_IF_DAT_A0_DATA0_Msk;
-    pCanMsg->Data[1] = (CANx->IF0.DA0R & CAN_IF_DAT_A0_DATA1_Msk) >> CAN_IF_DAT_A0_DATA1_Pos;
-    pCanMsg->Data[2] = CANx->IF0.DA1R & CAN_IF_DAT_A1_DATA2_Msk;
-    pCanMsg->Data[3] = (CANx->IF0.DA1R & CAN_IF_DAT_A1_DATA3_Msk) >> CAN_IF_DAT_A1_DATA3_Pos;
-    pCanMsg->Data[4] = CANx->IF0.DB0R & CAN_IF_DAT_B0_DATA4_Msk;
-    pCanMsg->Data[5] = (CANx->IF0.DB0R & CAN_IF_DAT_B0_DATA5_Msk) >> CAN_IF_DAT_B0_DATA5_Pos;
-    pCanMsg->Data[6] = CANx->IF0.DB1R & CAN_IF_DAT_B1_DATA6_Msk;
-    pCanMsg->Data[7] = (CANx->IF0.DB1R & CAN_IF_DAT_B1_DATA7_Msk) >> CAN_IF_DAT_B1_DATA7_Pos;
-  }
-  return TRUE;
-}
-
-/*********************************************************************************************************//**
- * @brief  Set bus baud-rate.
- * @param  CANx: The pointer to CAN module base address.
- * @param  wBaudRate: The target CAN baud-rate. The range of u32BaudRate is 1~1000KHz.
- * @retval CurrentBitRate: Real baud-rate value.
-  ***********************************************************************************************************/
-u32 CAN_SetBaudRate(HT_CAN_TypeDef *CANx, u32 wBaudRate)
-{
-  u32 wTseg0, wTseg1;
-  u32 wBrp;
-  u32 wValue;
-
-  CAN_EnterInitMode(CANx);
-
-  SystemCoreClockUpdate();
-
-  wTseg0 = 2;
-  wTseg1 = 1;
-
-  wValue = SystemCoreClock / wBaudRate;
-
-  while(1)
-  {
-    if(((wValue % (wTseg0 + wTseg1 + 3)) == 0))
-      break;
-    if(wTseg1 < 7)
-      wTseg1++;
-
-    if((wValue % (wTseg0 + wTseg1 + 3)) == 0)
-      break;
-    if(wTseg0 < 15)
-      wTseg0++;
-    else
-    {
-      wTseg0 = 2;
-      wTseg1 = 1;
-      break;
-    }
-  }
-
-  wBrp  = SystemCoreClock / (wBaudRate) / (wTseg0 + wTseg1 + 3) - 1;
-
-  wValue = ((u32)wTseg1 << CAN_BTR_TSEG1_Pos) | ((u32)wTseg0 << CAN_BTR_TSEG0_Pos) |
-            (wBrp & CAN_BTR_BRP_Msk) | (CANx->BTR & CAN_BTR_SJW_Msk);
-  CANx->BTR = wValue;
-  CANx->BRPER = (wBrp >> 6) & 0x0F;
-
-  CAN_LeaveInitMode(CANx);
-
-  return (CAN_GetCANBitRate(CANx));
-}
-
-/*********************************************************************************************************//**
- * @brief  The function is used to disable all CAN interrupt.
- * @param  CANx: The pointer to CAN module base address.
- * @retval None
-  ***********************************************************************************************************/
-void CAN_Close(HT_CAN_TypeDef *CANx)
-{
-  CAN_DisableInt(CANx, (CAN_CR_IE_Msk | CAN_CR_SIE_Msk | CAN_CR_EIE_Msk));
-}
-
-/*********************************************************************************************************//**
- * @brief  Set CAN operation mode and target baud-rate.
- * @param  CANx: The pointer to CAN module base address.
- * @param  wBaudRate The target CAN baud-rate. The range of u32BaudRate is 1~1000KHz.
- * @param  wMode The CAN operation mode.
- *         @arg  CAN_NORMAL_MODE : Normal operation.
- *         @arg  CAN_BASIC_MODE  : Basic operation.
- *         @arg  CAN_SILENT_MODE : Silent operation.
- *         @arg  CAN_LBACK_MODE  : Loop Back operation.
- *         @arg  CAN_LBS_MODE    : Loop Back combined with Silent  operation.
- * @retval u32CurrentBitRate Real baud-rate value.
-  ***********************************************************************************************************/
-u32 CAN_Open(HT_CAN_TypeDef *CANx, u32 wBaudRate, u32 wMode)
-{
-  u32 CurrentBitRate;
-
-  CurrentBitRate = CAN_SetBaudRate(CANx, wBaudRate);
-
-  if(wMode)
-    CAN_EnterTestMode(CANx, wMode);
-
-  return CurrentBitRate;
-}
-
-/*********************************************************************************************************//**
- * @brief  The function is used to configure a transmit object.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgNum: Specifies the Message object number, from 0 to 31.
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- * @retval FALSE No useful interface, TRUE Config message object success.
-  ***********************************************************************************************************/
-s32 CAN_SetTxMsg(HT_CAN_TypeDef *CANx, u32 MsgNum , STR_CANMSG_T_TypeDef* pCanMsg)
-{
-  u32 MsgIfNum = 0;
-  u32 i = 0;
-
-  while((MsgIfNum = GetFreeIF(CANx)) == 2)
-  {
-    i++;
-    if(i > 0x10000000)
-    return FALSE;
-  }
-
-  /* update the contents needed for transmission*/
-  if(MsgIfNum ==0)
-  {
-    CANx->IF0.CMASK = 0xF3;  /* CAN_CMASK_WRRD_Msk | CAN_CMASK_MASK_Msk | CAN_CMASK_ARB_Msk
-                                         | CAN_CMASK_CONTROL_Msk | CAN_CMASK_DATAA_Msk  | CAN_CMASK_DATAB_Msk ; */
-
-    if(pCanMsg->IdType == CAN_STD_ID)
-    {
-      /* standard ID*/
-      CANx->IF0.ARB0 = 0;
-      CANx->IF0.ARB1 = (((pCanMsg->Id) & 0x7FF) << 2) | CAN_IF_ARB1_DIR_Msk | CAN_IF_ARB1_MSGVAL_Msk;
-    }
-    else
-    {
-      /* extended ID*/
-      CANx->IF0.ARB0 = (pCanMsg->Id) & 0xFFFF;
-      CANx->IF0.ARB1 = ((pCanMsg->Id) & 0x1FFF0000) >> 16 | CAN_IF_ARB1_DIR_Msk
-                                    | CAN_IF_ARB1_XTD_Msk | CAN_IF_ARB1_MSGVAL_Msk;
-    }
-
-    if(pCanMsg->FrameType)
-      CANx->IF0.ARB1 |=   CAN_IF_ARB1_DIR_Msk;
-    else
-      CANx->IF0.ARB1 &= (~CAN_IF_ARB1_DIR_Msk);
-
-    CANx->IF0.DA0R = ((u16)pCanMsg->Data[1] << 8) | pCanMsg->Data[0];
-    CANx->IF0.DA1R = ((u16)pCanMsg->Data[3] << 8) | pCanMsg->Data[2];
-    CANx->IF0.DB0R = ((u16)pCanMsg->Data[5] << 8) | pCanMsg->Data[4];
-    CANx->IF0.DB1R = ((u16)pCanMsg->Data[7] << 8) | pCanMsg->Data[6];
-    CANx->IF0.MCR = 0;
-    if(pCanMsg->RMTEN)
-      CANx->IF0.MCR |= CAN_IF_MCR_RMTEN_Msk;
-    else
-      CANx->IF0.MCR &= (~CAN_IF_MCR_RMTEN_Msk);
-    if(pCanMsg->EOB)
-      CANx->IF0.MCR |= CAN_IF_MCR_EOB_Msk;
-    else
-      CANx->IF0.MCR &= (~CAN_IF_MCR_EOB_Msk);
-
-    CANx->IF0.MCR   |=  CAN_IF_MCR_NEWDAT_Msk | pCanMsg->DLC | CAN_IF_MCR_TXIE_Msk  ;
-    CANx->IF0.CREQ   = MsgNum +1;
-  }
-  else
-  {
-    CANx->IF1.CMASK = 0xF3;  /* CAN_CMASK_WRRD_Msk | CAN_CMASK_MASK_Msk | CAN_CMASK_ARB_Msk
-                                         | CAN_CMASK_CONTROL_Msk | CAN_CMASK_DATAA_Msk  | CAN_CMASK_DATAB_Msk ; */
-
-    if(pCanMsg->IdType == CAN_STD_ID)
-    {
-      /* standard ID*/
-      CANx->IF1.ARB0 = 0;
-      CANx->IF1.ARB1 = (((pCanMsg->Id) & 0x7FF) << 2) | CAN_IF_ARB1_DIR_Msk | CAN_IF_ARB1_MSGVAL_Msk;
-    }
-    else
-    {
-      /* extended ID*/
-      CANx->IF1.ARB0 = (pCanMsg->Id) & 0xFFFF;
-      CANx->IF1.ARB1 = ((pCanMsg->Id) & 0x1FFF0000) >> 16 | CAN_IF_ARB1_DIR_Msk
-                                    | CAN_IF_ARB1_XTD_Msk | CAN_IF_ARB1_MSGVAL_Msk;
-    }
-
-    if(pCanMsg->FrameType)
-      CANx->IF1.ARB1 |=   CAN_IF_ARB1_DIR_Msk;
-    else
-      CANx->IF1.ARB1 &= (~CAN_IF_ARB1_DIR_Msk);
-
-    CANx->IF1.DA0R = ((u16)pCanMsg->Data[1] << 8) | pCanMsg->Data[0];
-    CANx->IF1.DA1R = ((u16)pCanMsg->Data[3] << 8) | pCanMsg->Data[2];
-    CANx->IF1.DB0R = ((u16)pCanMsg->Data[5] << 8) | pCanMsg->Data[4];
-    CANx->IF1.DB1R = ((u16)pCanMsg->Data[7] << 8) | pCanMsg->Data[6];
-
-    CANx->IF1.MCR = 0;
-
-    if(pCanMsg->RMTEN)
-      CANx->IF1.MCR |= CAN_IF_MCR_RMTEN_Msk;
-    else
-      CANx->IF1.MCR &= (~CAN_IF_MCR_RMTEN_Msk);
-
-    if(pCanMsg->EOB)
-      CANx->IF1.MCR |= CAN_IF_MCR_EOB_Msk;
-    else
-      CANx->IF1.MCR &= (~CAN_IF_MCR_EOB_Msk);
-
-    CANx->IF1.MCR   |=  CAN_IF_MCR_NEWDAT_Msk | pCanMsg->DLC | CAN_IF_MCR_TXIE_Msk  ;
-    CANx->IF1.CREQ   = MsgNum +1;
-  }
-  return TRUE;
-}
-
-/*********************************************************************************************************//**
- * @brief  Set transmit request bit.
- *         If a transmission is requested by programming bit TxRqst/NewDat (IFn_CMASK[2]), the TxRqst
- *         (IFn_MCON[8]) will be ignored.
- * @param  CANx: The pointer to CAN module base address.
- * @param  u32MsgNum: Specifies the Message object number, from 0 to 31.
- * @retval TRUE: Start transmit message.
-  ***********************************************************************************************************/
-s32 CAN_TriggerTxMsg(HT_CAN_TypeDef  *CANx, u32 u32MsgNum)
-{
-  CANx->SR &= (~CAN_SR_TXOK_Msk);
-
-  /* read the message contents*/
-  CANx->IF1.CMASK = CAN_IF_CMASK_CLRINTPND_Msk
-                  | CAN_IF_CMASK_TXRQSTNEWDAT_Msk;
-
-  CANx->IF1.CREQ =  u32MsgNum+1;
-
-  while(CANx->IF1.CREQ & CAN_IF_CREQ_BUSY_Msk)
-  {
-      /*Wait*/
-  }
-  CANx->IF0.CMASK  = CAN_IF_CMASK_WRRD_Msk | CAN_IF_CMASK_TXRQSTNEWDAT_Msk;
-  CANx->IF0.CREQ  = u32MsgNum+1;
-
-  return TRUE;
-}
-
-/*********************************************************************************************************//**
- * @brief  Enable CAN interrupt.
- *         The application software has two possibilities to follow the source of a message interrupt.
- *         First, it can follow the IntId in the Interrupt Register and second it can poll the Interrupt Pending Register.
- * @param  CANx: The pointer to CAN module base address.
- * @param  u32Mask: Interrupt Mask.
- *         @arg CAN_CR_IE_Msk : Module interrupt enable.
- *         @arg CAN_CR_SIE_Msk: Status change interrupt enable.
- *         @arg CAN_CR_EIE_Msk: Error interrupt enable.
- * @retval None
-  ***********************************************************************************************************/
-void CAN_EnableInt(HT_CAN_TypeDef *CANx, u32 u32Mask)
-{
-  CAN_EnterInitMode(CANx);
-
-  CANx->CR = (CANx->CR & 0xF1) | ((u32Mask & CAN_CR_IE_Msk) ? CAN_CR_IE_Msk : 0)
-              | ((u32Mask & CAN_CR_SIE_Msk) ? CAN_CR_SIE_Msk : 0)
-              | ((u32Mask & CAN_CR_EIE_Msk) ? CAN_CR_EIE_Msk : 0);
-
-
-  CAN_LeaveInitMode(CANx);
-}
-
-/*********************************************************************************************************//**
- * @brief  Disable CAN interrupt.
- * @param  CANx: The pointer to CAN module base address.
- * @param  Mask: Interrupt Mask. (CAN_CR_IE_Msk / CAN_CR_SIE_Msk / CAN_CR_EIE_Msk).
- * @retval None
-  ***********************************************************************************************************/
-void CAN_DisableInt(HT_CAN_TypeDef *CANx, u32 Mask)
-{
-  CAN_EnterInitMode(CANx);
-
-  CANx->CR = CANx->CR & ~(CAN_CR_IE_Msk | ((Mask & CAN_CR_SIE_Msk) ? CAN_CR_SIE_Msk : 0)
-                            | ((Mask & CAN_CR_EIE_Msk) ? CAN_CR_EIE_Msk : 0));
-
-  CAN_LeaveInitMode(CANx);
-}
-
-
-/*********************************************************************************************************//**
- * @brief  The function is used to configure a receive message object.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgNum: Specifies the Message object number, from 0 to 31.
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- *     @arg CAN_STD_ID: The 11-bit identifier.
- *     @arg CAN_EXT_ID: The 29-bit identifier.
- * @retval FALSE No useful interface, TRUE Configure a receive message object success.
-  ***********************************************************************************************************/
-s32 CAN_SetRxMsg(HT_CAN_TypeDef *CANx, u32 MsgNum , STR_CANMSG_R_TypeDef* pCanMsg)
-{
-  u32 TimeOutCount = 0;
-
-  while(CAN_SetRxMsgObj(CANx, MsgNum, pCanMsg) == FALSE)
-  {
-    TimeOutCount++;
-
-    if(TimeOutCount >= 0x10000000) return FALSE;
-  }
-
-  return TRUE;
-}
-
-/*********************************************************************************************************//**
- * @brief  The function is used to configure several receive message objects.
- *         The Interface Registers avoid conflict between the CPU accesses to the Message RAM and CAN message
- *         reception and transmission by buffering the data to be transferred.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgNum: The starting MSG RAM number(0 ~ 31).
- * @param  MsgCount: the number of MSG RAM of the FIFO.
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- *         @arg CAN_STD_ID: The 11-bit identifier.
- *         @arg CAN_EXT_ID: The 29-bit identifier.
- * @retval FALSE No useful interface, TRUE Configure receive message objects success.
-  ***********************************************************************************************************/
-s32 CAN_SetMultiRxMsg(HT_CAN_TypeDef *CANx, u32 MsgNum , u32 MsgCount, STR_CANMSG_R_TypeDef* pCanMsg)
-{
-  u32 i = 0;
-  u32 TimeOutCount;
-
-  for(i = 1; i < MsgCount+1; i++)
-  {
-    TimeOutCount = 0;
-    pCanMsg->EOB = 0;
-
-    if(i == MsgCount)
-      pCanMsg->EOB=1;
-
-    while(CAN_SetRxMsgObj(CANx, MsgNum, pCanMsg) == FALSE)
-    {
-      TimeOutCount++;
-
-      if(TimeOutCount >= 0x10000000)
-        return FALSE;
-    }
-    MsgNum ++;
-  }
-
-  return TRUE;
+  *len     = CANx->IF1.MCR & CAN_IF_MCR_DLC_Msk;
+  data[0] = CANx->IF1.DA0R & CAN_IF_DAT_A0_DATA0_Msk;
+  data[1] = (CANx->IF1.DA0R & CAN_IF_DAT_A0_DATA1_Msk) >> CAN_IF_DAT_A0_DATA1_Pos;
+  data[2] = CANx->IF1.DA1R & CAN_IF_DAT_A1_DATA2_Msk;
+  data[3] = (CANx->IF1.DA1R & CAN_IF_DAT_A1_DATA3_Msk) >> CAN_IF_DAT_A1_DATA3_Pos;
+  data[4] = CANx->IF1.DB0R & CAN_IF_DAT_B0_DATA4_Msk;
+  data[5] = (CANx->IF1.DB0R & CAN_IF_DAT_B0_DATA5_Msk) >> CAN_IF_DAT_B0_DATA5_Pos;
+  data[6] = CANx->IF1.DB1R & CAN_IF_DAT_B1_DATA6_Msk;
+  data[7] = (CANx->IF1.DB1R & CAN_IF_DAT_B1_DATA7_Msk) >> CAN_IF_DAT_B1_DATA7_Pos;
+
+  return SUCCESS;
 }
 
 /*********************************************************************************************************//**
  * @brief  Send CAN message.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgNum: Specifies the Message object number, from 0 to 31.
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- * @retval FALSE: 1. When operation in basic mode: Transmit message time out.
- *                2. When operation in normal mode: No useful interface.
- *         TRUE: Transmit Message success.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  data: Pointer to the data buffer to be transmitted.
+ * @param  len: Length of the data to be transmitted.
+ * @retval SUCCESS or ERROR
   ***********************************************************************************************************/
-s32 CAN_Transmit(HT_CAN_TypeDef *CANx, u32 MsgNum , STR_CANMSG_T_TypeDef* pCanMsg)
+ErrStatus CAN_Transmit(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u8* data, u8 len)
 {
-  if((CANx->CR & CAN_CR_TEST_Msk) && (CANx->TR & CAN_TEST_BASIC_Msk))
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+  if (_CAN_SetTxMsg(CANx, pCanMsg, data, len) == ERROR)
   {
-    return (CAN_BasicSendMsg(CANx, pCanMsg));
+    return ERROR;
   }
-  else
-  {
-    if(CAN_SetTxMsg(CANx, MsgNum, pCanMsg) == FALSE)
-        return FALSE;
-
-    CANx->SR &= (~CAN_SR_TXOK_Msk);
-
-    /* read the message contents*/
-    CANx->IF1.CMASK = CAN_IF_CMASK_CLRINTPND_Msk
-                    | CAN_IF_CMASK_TXRQSTNEWDAT_Msk;
-
-    CANx->IF1.CREQ =  MsgNum+1;
-
-    while(CANx->IF1.CREQ & CAN_IF_CREQ_BUSY_Msk)
-    {
-      /*Wait*/
-    }
-    CANx->IF0.CMASK  = CAN_IF_CMASK_WRRD_Msk | CAN_IF_CMASK_TXRQSTNEWDAT_Msk;
-    CANx->IF0.CREQ   = MsgNum+1;
-  }
-
-  return TRUE;
+  return (CAN_TriggerTxMsg(CANx, pCanMsg));
 }
 
 /*********************************************************************************************************//**
  * @brief  Gets the message, if received.
  *         The Interface Registers avoid conflict between the CPU accesses to the Message RAM and CAN message
  *         reception and transmission by buffering the data to be transferred.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgNum: Specifies the Message object number, from 0 to 31.
- * @param  pCanMsg: Pointer to the message structure where received data is copied.
- * @retval FALSE: No any message received, TRUE: Receive Message success.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  data: Pointer to the buffer where received data will be stored.
+ * @param  len: Pointer to a variable that will store the length of the received data.
+ * @retval RxStatus_TypeDef: Returns the status of the message reception. Possible values are:
+ *    - MSG_OBJ_NOT_SET
+ *    - MSG_NOT_RECEIVED
+ *    - MSG_OVER_RUN
   ***********************************************************************************************************/
-s32 CAN_Receive(HT_CAN_TypeDef *CANx, u32 MsgNum , STR_CANMSG_T_TypeDef* pCanMsg)
+CAN_RxStatus_TypeDef CAN_Receive(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u8* data, u32* len)
 {
-  if((CANx->CR & CAN_CR_TEST_Msk) && (CANx->TR & CAN_TEST_BASIC_Msk))
+  u32 _MsgNum = pCanMsg->MsgNum;
+  CAN_RxStatus_TypeDef status = MSG_OBJ_NOT_SET;
+  bool firstMsg = TRUE;
+  *len = 0;
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) != FALSE)
   {
-    return (CAN_BasicReceiveMsg(CANx, pCanMsg));
+    while (1)
+    {
+      s32 ReadMsgStatus;
+      if (_CAN_GetNewData(CANx, _MsgNum) == FALSE)
+      {
+        if (firstMsg == TRUE)
+          status = MSG_NOT_RECEIVED;
+        else
+          status = MSG_RX_FINISH;
+        break;
+      }
+      firstMsg = FALSE;
+      ReadMsgStatus = _CAN_ReadMsgObj(CANx, _MsgNum, TRUE, pCanMsg, &data[*len], len);
+      if (ReadMsgStatus != 0)
+      {
+        if (ReadMsgStatus == 2)
+        {
+          status = MSG_OVER_RUN;
+          break;
+        }
+        status = MSG_RX_FINISH;
+        break;
+      }
+      _MsgNum++;
+    }
+  }
+  return status;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Cancels a transmit request.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @retval SUCCESS or ERROR
+  ***********************************************************************************************************/
+ErrStatus CAN_CancelTransmit(HT_CAN_TypeDef* CANx, CAN_MSG_TypeDef* pCanMsg)
+{
+  HT_CANIF_TypeDef *IFx = NULL;
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
+  {
+    return ERROR;
+  }
+
+  while (IFx == NULL)
+  {
+    IFx = _GetFreeIF(CANx);
+  }
+  if ((IFx->CREQ & CAN_FLAG_IF_BUSY) == 0)
+  {
+    IFx->CMASK = CAN_IF_CMASK_WRRD | CAN_IF_CMASK_CLRINTPND;
+    IFx->MCR   = 0;
+    IFx->CREQ = pCanMsg->MsgNum;
+  }
+
+  return SUCCESS;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Discard the specified FIFO.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @retval SUCCESS or ERROR
+  ***********************************************************************************************************/
+ErrStatus CAN_DiscardRxMsg(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
+  {
+    return ERROR;
+  }
+  while (1)
+  {
+    HT_CANIF_TypeDef *IFx = NULL;
+    while (IFx == NULL)
+    {
+      IFx = _GetFreeIF(CANx);
+    }
+    IFx->CMASK = CAN_IF_CMASK_TXRQSTNEWDAT | CAN_IF_CMASK_CONTROL;
+    IFx->CREQ = pCanMsg->MsgNum;
+    if (IFx->MCR & CAN_IF_MCR_EOB)
+    {
+      break;
+    }
+  }
+  return SUCCESS;
+}
+
+/*********************************************************************************************************//**
+ * @brief  The function is used to configure several receive message objects.
+ *         The Interface Registers avoid conflict between the CPU accesses to the Message RAM and CAN message
+ *         reception and transmission by buffering the data to be transferred.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  FifoDepth: the number of MSG RAM of the FIFO.
+ * @retval SUCCESS or ERROR
+  ***********************************************************************************************************/
+ErrStatus CAN_SetRxMsg(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u32 FifoDepth)
+{
+  s32 i = 0;
+  u32 _MsgNum;
+
+  u32 eob;
+  if (pCanMsg->MsgNum == 0)
+  {
+    _MsgNum = _CAN_GetValidMsg(CANx);
   }
   else
   {
-    return CAN_ReadMsgObj(CANx, MsgNum, TRUE, pCanMsg);
+    _MsgNum = pCanMsg->MsgNum;
   }
+  if ((_MsgNum + FifoDepth) > MSG_OBJ_TOTAL_NUM)
+  {
+    return ERROR;
+  }
+  pCanMsg->MsgNum = _MsgNum;
+  eob = 0;
+  for (i = _MsgNum; i < FifoDepth + _MsgNum + 1; i++)
+  {
+    if (i == FifoDepth + _MsgNum)
+    {
+      eob = 1;
+    }
+    _CAN_SetRxMsgObj(CANx, i, pCanMsg, eob);
+  }
+  return SUCCESS;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Get the waiting status of a received message.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @retval TRUE: The corresponding message object has a new data bit is set, FALSE otherwise.
+  ***********************************************************************************************************/
+bool CAN_NewDataReceived(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg)
+{
+
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
+  {
+    return FALSE;
+  }
+  return _CAN_GetNewData(CANx, pCanMsg->MsgNum);
+}
+
+/*********************************************************************************************************//**
+ * @brief  Get the interrupt pending status of a message object.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @retval TRUE: The corresponding message object has a interrupt pending bit is set, FALSE otherwise.
+  ***********************************************************************************************************/
+bool CAN_GetMsgPending(HT_CAN_TypeDef* CANx, CAN_MSG_TypeDef* pCanMsg)
+{
+  u32 Pending =  CANx->IPR0;
+  Pending    |=  CANx->IPR1 << 16;
+
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
+  {
+    return FALSE;
+  }
+
+  if ((Pending & 1 << (pCanMsg->MsgNum - 1)) == 0)
+  {
+    return FALSE;
+  }
+  return TRUE;
 }
 
 /*********************************************************************************************************//**
  * @brief  Clear interrupt pending bit.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgNum: Specifies the Message object number, from 0 to 31.
- * @retval None
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @retval SUCCESS or ERROR
   ***********************************************************************************************************/
-void CAN_CLR_INT_PENDING_BIT(HT_CAN_TypeDef *CANx, u32 MsgNum)
+ErrStatus CAN_ClearMsgPendingFlag(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg)
 {
-  u32 u32IFBusyCount = 0;
-
-  while(u32IFBusyCount < 0x10000000)
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
   {
-    if((CANx->IF0.CREQ & CAN_IF_CREQ_BUSY_Msk) == 0)
-    {
-      CANx->IF0.CMASK = CAN_IF_CMASK_CLRINTPND_Msk | CAN_IF_CMASK_TXRQSTNEWDAT_Msk;
-      CANx->IF0.CREQ = MsgNum+1;
-      break;
-    }
-    else if((CANx->IF1.CREQ  & CAN_IF_CREQ_BUSY_Msk) == 0)
-    {
-      CANx->IF1.CMASK = CAN_IF_CMASK_CLRINTPND_Msk | CAN_IF_CMASK_TXRQSTNEWDAT_Msk;
-      CANx->IF1.CREQ = MsgNum+1;
-      break;
-    }
-
-    u32IFBusyCount++;
+    return ERROR;
   }
+  _CAN_ClearMsgPendingFlag(CANx, pCanMsg->MsgNum);
+
+  return SUCCESS;
 }
 
 /*********************************************************************************************************//**
- * @brief  The function is used to configure Mask as the message object.
- * @param  CANx: The pointer to CAN module base address.
- * @param  MsgObj: Specifies the Message object number, from 0 to 31.
- * @param  MaskMsg: Pointer to the message structure where received data is copied.
- *         @arg CAN_STD_ID: The 11-bit identifier.
- *         @arg CAN_EXT_ID: The 29-bit identifier.
- * @retval FALSE No useful interface, TRUE Configure a receive message object success.
+ * @brief  Checks the transmission of a message object.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @retval 0: Transmitting, 1: Transmission successful, -1: Transmission failed.
   ***********************************************************************************************************/
-s32 CAN_MsgObjMaskConfig(HT_CAN_TypeDef *CANx, u32 MsgObj, STR_CANMSG_R_TypeDef* MaskMsg)
+s32 CAN_TransmitStatus(HT_CAN_TypeDef* CANx, CAN_MSG_TypeDef* pCanMsg)
 {
-  if(MaskMsg->IdType == CAN_STD_ID)
-  {
-    /* standard ID*/
-    CANx->IF0.ARB0 = 0;
-    CANx->IF0.ARB1 = (((MaskMsg->Id) & 0x7FF) << 2)  | CAN_IF_ARB1_MSGVAL_Msk ;
+  s32 TxStatus = 0;
+  u32 u32Reg;
+  s32 MsgNum = pCanMsg->MsgNum -1;
 
-    /* Set the Mask Standard ID(11-bit) for IFn Mask Register is used for acceptance filtering*/
-    CANx->IF0.MASK0 =  0;
-    CANx->IF0.MASK1 = ((MaskMsg->Id & 0x7FF) << 2) ;
-  }
-  else
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
   {
-    /* extended ID*/
-    CANx->IF0.ARB0 = (MaskMsg->Id) & 0xFFFF;
-    CANx->IF0.ARB1 = ((MaskMsg->Id) & 0x1FFF0000) >> 16 | CAN_IF_ARB1_DIR_Msk
-                   | CAN_IF_ARB1_XTD_Msk | CAN_IF_ARB1_MSGVAL_Msk;
-    /* Set the Mask Extended ID(29-bit) for IFn Mask Register is used for acceptance filtering*/
-    CANx->IF0.MASK0 = (MaskMsg->Id) & 0xFFFF;
-    CANx->IF0.MASK1 = ((MaskMsg->Id) & 0x1FFF0000) >> 16 ;
+    return -1;
   }
 
-  if(MaskMsg->u8Xtd)
-    CANx->IF0.MASK1 |= CAN_IF_MASK1_MXTD_Msk;            /* The extended identifier bit (IDE) is used for acceptance filtering */
-  else
-    CANx->IF0.MASK1 &= (~CAN_IF_MASK1_MXTD_Msk);  /* The extended identifier bit (IDE) has no effect on the acceptance filtering */
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
 
-  if(MaskMsg->u8Dir)
-    CANx->IF0.MASK1 |= CAN_IF_MASK1_MDIR_Msk;     /* The message direction bit (Dir) is used for acceptance filtering */
-  else
-    CANx->IF0.MASK1 &= (~CAN_IF_MASK1_MDIR_Msk);  /* The message direction bit (Dir) has no effect on the acceptance filtering */
+  u32Reg = CANx->TRR0;
+  u32Reg |= (CANx->TRR1 << 16);
+  MsgNum = 1 << (MsgNum);
+  if ((u32Reg & (MsgNum)) == 0)
+  {
+    TxStatus = 1;
+  }
 
-  CANx->IF0.MCR |= CAN_IF_MCR_UMASK_Msk;                 /* Use Mask (Msk28-0, MXtd, and MDir) for acceptance filtering */
-
-  /* Update the contents needed for transmission*/
-  CANx->IF0.CMASK = CAN_IF_CMASK_WRRD_Msk      /* Transfer data from the selected Message Buffer Registers to the Message Object addressed */
-                  | CAN_IF_CMASK_MASK_Msk;     /* Transfer Identifier Mask + MDir + MXtd to Message Object  */
-
-  CANx->IF0.DA0R  = 0;
-  CANx->IF0.DA1R  = 0;
-  CANx->IF0.DB0R  = 0;
-  CANx->IF0.DB1R  = 0;
-
-  /* Set the Message Object in the Message RAM is selected for data transfer */
-  CANx->IF0.CREQ  = 1 + MsgObj;
-
-  return TRUE;
+  u32Reg = CANx->NDR0;
+  u32Reg |= (CANx->NDR1 << 16);
+  if ((u32Reg & (MsgNum)) > 0)
+  {
+    TxStatus = -1;
+  }
+  return TxStatus;
 }
 
-/* Private functions ----------------------------------------------------------------------------------------*/
+/*********************************************************************************************************//**
+ * @brief  Updates the data of a specified CAN message object.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  data: Pointer to the data array.
+ * @param  len: Length of the data to be sent, in bytes (maximum 8 bytes).
+ * @retval SUCCESS or ERROR
+  ***********************************************************************************************************/
+ErrStatus CAN_UpdateTxMsgData(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u8* data, u8 len)
+{
+  HT_CANIF_TypeDef *IFx = NULL;
+
+  len  &= CAN_IF_MCR_DLC_Msk;
+  while (IFx == NULL)
+  {
+    IFx = _GetFreeIF(CANx);
+  }
+
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
+  {
+    return ERROR;
+  }
+
+  IFx->CMASK = CAN_IF_CMASK_WRRD | CAN_IF_CMASK_DATAA | CAN_IF_CMASK_DATAB | CAN_IF_CMASK_CONTROL;
+
+  IFx->MCR   &=  (~CAN_IF_MCR_DLC_Msk);
+  IFx->MCR   |=  (len & CAN_IF_MCR_DLC_Msk);
+  IFx->DA0R  = ((u16)(data[1] << 8) | data[0]);
+  IFx->DA1R  = ((u16)(data[3] << 8) | data[2]);
+  IFx->DB0R  = ((u16)(data[5] << 8) | data[4]);
+  IFx->DB1R  = ((u16)(data[7] << 8) | data[6]);
+
+  IFx->CREQ = pCanMsg->MsgNum;
+
+  return SUCCESS;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Set transmit request bit.
+ *         If a transmission is requested by programming bit TxRqst/NewDat, the TxRqst will be ignored.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @retval SUCCESS or ERROR
+  ***********************************************************************************************************/
+ErrStatus CAN_TriggerTxMsg(HT_CAN_TypeDef  *CANx, CAN_MSG_TypeDef* pCanMsg)
+{
+  HT_CANIF_TypeDef *IFx = NULL;
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  if (CANx->SR & CAN_FLAG_BOFF)
+  {
+    return ERROR;
+  }
+
+  if (_CAN_CheckMsgIsValid(CANx, pCanMsg->MsgNum) == FALSE)
+  {
+    return ERROR;
+  }
+
+  while (IFx == NULL)
+  {
+    IFx = _GetFreeIF(CANx);
+  }
+
+  IFx->CMASK  = CAN_IF_CMASK_WRRD | CAN_IF_CMASK_CONTROL;
+  IFx->MCR    |= CAN_IF_MCR_NEWDAT | CAN_IF_MCR_TXRQST;
+  IFx->CREQ   = pCanMsg->MsgNum;
+
+  return SUCCESS;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Clears all pending message flags.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval None
+  ***********************************************************************************************************/
+void CAN_ClearAllMsgPendingFlag(HT_CAN_TypeDef *CANx)
+{
+  int i;
+  u32 Pending =  CANx->IPR0;
+  Pending    |=  CANx->IPR1 << 16;
+  for (i = 0 ; i < MSG_OBJ_TOTAL_NUM ; i++)
+  {
+    if ((Pending & 1) == 1)
+    {
+      _CAN_ClearMsgPendingFlag(CANx, i + 1);
+    }
+
+    Pending = Pending >> 1;
+    if (Pending == 0)
+    {
+      break;
+    }
+  }
+}
+/**
+  * @}
+  */
+
+/* Private functions ---------------------------------------------------------------------------------------*/
 /** @defgroup CAN_Private_Functions CAN private functions
   * @{
   */
 /*********************************************************************************************************//**
- * @brief  Check if SmartCard slot is presented.
- * @param  CANx: The pointer to CAN module base address.
-* @retval Free IF number. IF0_NUM or IF1_NUM or IF_TOTAL_NUM (No IF is free)
+ * @brief  The function is used to configure a transmit object.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  data: Pointer to the data buffer to be transmitted.
+ * @param  len: Length of the data to be transmitted.
+ * @retval SUCCESS or ERROR
   ***********************************************************************************************************/
-static CANIF_NUMBER_Enum GetFreeIF(HT_CAN_TypeDef  *CANx)
+ErrStatus _CAN_SetTxMsg(HT_CAN_TypeDef *CANx, CAN_MSG_TypeDef* pCanMsg, u8* data, u8 len)
 {
-  if((CANx->IF0.CREQ & CAN_IF_CREQ_BUSY_Msk) == 0)
-      return IF0_NUM;
-  else if((CANx->IF1.CREQ  & CAN_IF_CREQ_BUSY_Msk) == 0)
-      return IF1_NUM;
+  HT_CANIF_TypeDef *IFx = NULL;
+  if (pCanMsg->MsgNum == 0)
+  {
+    pCanMsg->MsgNum = _CAN_GetValidMsg(CANx);
+  }
+  if (pCanMsg->MsgNum > MSG_OBJ_TOTAL_NUM)
+  {
+    return ERROR;
+  }
+
+  while (IFx == NULL)
+  {
+    IFx = _GetFreeIF(CANx);
+  }
+
+  /* update the contents needed for transmission                                                            */
+  IFx->CMASK = CAN_IF_CMASK_WRRD | CAN_IF_CMASK_MASK | CAN_IF_CMASK_ARB
+             | CAN_IF_CMASK_CONTROL | CAN_IF_CMASK_DATAA  | CAN_IF_CMASK_DATAB;
+
+  if (pCanMsg->IdType == CAN_STD_ID)
+  {
+    /* standard ID                                                                                          */
+    IFx->ARB0 = 0;
+    IFx->ARB1 = (((pCanMsg->Id) & CAN_STD_FRAME_Msk) << 2) | CAN_IF_ARB1_DIR | CAN_IF_ARB1_MSGVAL;
+  }
   else
-      return IF_TOTAL_NUM;
+  {
+    /* extended ID                                                                                          */
+    IFx->ARB0 = (pCanMsg->Id) & CAN_EXT_FRAME_LSB_Msk;
+    IFx->ARB1 = (((pCanMsg->Id)  >> 16) & CAN_EXT_FRAME_MSB_Msk)
+              | CAN_IF_ARB1_DIR | CAN_IF_ARB1_XTD | CAN_IF_ARB1_MSGVAL;
+  }
+
+  if (pCanMsg->FrameType)
+    IFx->ARB1 |=   CAN_IF_ARB1_DIR;
+  else
+    IFx->ARB1 &= (~CAN_IF_ARB1_DIR);
+
+  IFx->DA0R = ((u16)data[1] << 8) | data[0];
+  IFx->DA1R = ((u16)data[3] << 8) | data[2];
+  IFx->DB0R = ((u16)data[5] << 8) | data[4];
+  IFx->DB1R = ((u16)data[7] << 8) | data[6];
+
+  IFx->MCR = 0;
+
+  IFx->MCR &= (~CAN_IF_MCR_RMTEN);
+
+  IFx->MCR   |=  CAN_IF_MCR_NEWDAT | len | CAN_IF_MCR_TXIE;
+  IFx->CREQ  = pCanMsg->MsgNum;
+  return SUCCESS;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Get the waiting status of a received message.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  MsgNum: Specifies the Message object number, from 1 to 32.
+ * @retval TRUE: The corresponding message object has a new data bit is set, FALSE otherwise.
+  ***********************************************************************************************************/
+bool _CAN_GetNewData(HT_CAN_TypeDef *CANx, u32 MsgNum)
+{
+  u32 NewData =  CANx->NDR0;
+  NewData    |=  CANx->NDR1 << 16;
+
+  if ((NewData & 1 << (MsgNum - 1)) == 0)
+  {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Get free interface.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval Free IF pointer. NULL: No IF is free
+  ***********************************************************************************************************/
+static HT_CANIF_TypeDef *_GetFreeIF(HT_CAN_TypeDef  *CANx)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  if ((CANx->IF0.CREQ & CAN_FLAG_IF_BUSY) == 0)
+  {
+    return &CANx->IF0;
+  }
+  else if ((CANx->IF1.CREQ  & CAN_FLAG_IF_BUSY) == 0)
+  {
+    return &CANx->IF1;
+  }
+  else
+  {
+    return NULL;
+   }
+}
+
+/*********************************************************************************************************//**
+ * @brief  This function is used to set CAN to enter initialization mode and enable access bit timing
+ *         register.After bit timing configuration ready, user must call CAN_LeaveInitMode() to leave
+ *         initialization mode and lock bit timing register to let new configuration take effect.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval None
+  ***********************************************************************************************************/
+static void _CAN_EnterInitMode(HT_CAN_TypeDef *CANx)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  CANx->CR |= CAN_CR_INIT;
+  CANx->CR |= CAN_CR_CCE;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Leave initialization mode
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval None
+  ***********************************************************************************************************/
+static void _CAN_LeaveInitMode(HT_CAN_TypeDef *CANx)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  CANx->CR &= (~(CAN_CR_INIT | CAN_CR_CCE));
+
+  while (CANx->CR & CAN_CR_INIT); /* Check INIT bit is released                                             */
+}
+
+/*********************************************************************************************************//**
+ * @brief  Set Rx message object
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  MsgNum: Specifies the Message object number, from 1 to 32.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  uSingleOrFifoLast: Specifies the end-of-buffer indicator.
+ * @retval None
+  ***********************************************************************************************************/
+static void _CAN_SetRxMsgObj(HT_CAN_TypeDef  *CANx, u32 MsgNum, CAN_MSG_TypeDef* pCanMsg, u32 uSingleOrFifoLast)
+{
+  HT_CANIF_TypeDef *IFx = NULL;
+
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+  while (IFx == NULL)
+  {
+    IFx = _GetFreeIF(CANx);
+  }
+  /* Command Setting                                                                                        */
+  IFx->CMASK = CAN_IF_CMASK_WRRD    | CAN_IF_CMASK_MASK  | CAN_IF_CMASK_ARB |
+               CAN_IF_CMASK_CONTROL | CAN_IF_CMASK_DATAA | CAN_IF_CMASK_DATAB;
+
+  if (pCanMsg->IdType == CAN_STD_ID)  /* According STD/EXT ID format, Configure Mask and Arbitration register */
+  {
+    /* Standard Mask.(bit28..bit18).                                                                        */
+    IFx->ARB0   = 0;
+    IFx->ARB1   = CAN_IF_ARB1_MSGVAL | (pCanMsg->Id     & CAN_STD_FRAME_Msk) << 2;
+    IFx->MASK0  = 0;
+    IFx->MASK1  = CAN_IF_MASK1_MDIR  | (pCanMsg->IdMask & CAN_STD_FRAME_Msk) << 2;
+  }
+  else
+  {
+    IFx->ARB0   = pCanMsg->Id & CAN_EXT_FRAME_LSB_Msk;
+    IFx->ARB1   = CAN_IF_ARB1_MSGVAL | CAN_IF_ARB1_XTD   | ((pCanMsg->Id >> 16) & CAN_EXT_FRAME_MSB_Msk);
+    IFx->MASK0  = pCanMsg->IdMask & CAN_EXT_FRAME_LSB_Msk;
+    IFx->MASK1  = CAN_IF_MASK1_MXTD  | CAN_IF_MASK1_MDIR | ((pCanMsg->IdMask>> 16) & CAN_EXT_FRAME_MSB_Msk);
+  }
+
+  IFx->MCR = CAN_IF_MCR_RXIE | CAN_IF_MCR_UMASK;
+
+  if (pCanMsg->FrameType == CAN_REMOTE_FRAME)
+  {
+
+    IFx->ARB1  |= CAN_IF_ARB1_DIR;
+    IFx->MCR   |= CAN_IF_MCR_RMTEN;
+  }
+
+  if (uSingleOrFifoLast)
+    IFx->MCR |= CAN_IF_MCR_EOB;
+
+  IFx->MCR &= (~CAN_IF_MCR_INTPND);
+  IFx->MCR &= (~CAN_IF_MCR_NEWDAT);
+  IFx->CREQ = MsgNum;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Gets the message
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  MsgNum: Specifies the Message object number, from 1 to 32.
+ * @param  Release: Specifies the message release indicator.
+ *         @arg TRUE : the message object is released when getting the data.
+ *         @arg FALSE: the message object is not released.
+ * @param  pCanMsg: Pointer to the message structure for transmitting or receiving data.
+ * @param  data: Pointer to the buffer where received data will be stored.
+ * @param  len: Pointer to a variable that will store the length of the received data.
+* @retval  0: Data not empty, 1: Finish, 2: data over run
+  ***********************************************************************************************************/
+static s32 _CAN_ReadMsgObj(HT_CAN_TypeDef *CANx, u32 MsgNum, u32 Release, CAN_MSG_TypeDef* pCanMsg, u8* data, u32* len)
+{
+  HT_CANIF_TypeDef *IFx = NULL;
+
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_CAN(CANx));
+
+  while (IFx == NULL)
+  {
+    IFx = _GetFreeIF(CANx);
+  }
+
+  /* read the message contents                                                                              */
+  IFx->CMASK = CAN_IF_CMASK_MASK
+             | CAN_IF_CMASK_ARB
+             | CAN_IF_CMASK_CONTROL
+             | CAN_IF_CMASK_CLRINTPND
+             | (Release ? CAN_IF_CMASK_TXRQSTNEWDAT : 0)
+             | CAN_IF_CMASK_DATAA
+             | CAN_IF_CMASK_DATAB;
+
+  IFx->CREQ = MsgNum;
+
+  while (IFx->CREQ & CAN_FLAG_IF_BUSY)
+  {
+    /*Wait                                                                                                  */
+  }
+
+  if ((IFx->ARB1 & CAN_IF_ARB1_XTD) == 0)
+  {
+    /* standard ID                                                                                          */
+    pCanMsg->Id     = (IFx->ARB1 & CAN_IF_ARB1_ID_Msk) >> 2;
+  }
+  else
+  {
+    /* extended ID                                                                                          */
+    pCanMsg->Id  = (IFx->ARB1 & CAN_EXT_FRAME_MSB_Msk) << 16;
+    pCanMsg->Id |= IFx->ARB0;
+  }
+  if ((IFx->MCR & CAN_IF_MCR_RMTEN) == 0)
+  {
+    pCanMsg->FrameType     = CAN_DATA_FRAME;
+  }
+  else
+  {
+    pCanMsg->FrameType     = CAN_REMOTE_FRAME;
+  }
+
+  *len += IFx->MCR & CAN_IF_MCR_DLC_Msk;
+  data[0] = IFx->DA0R & CAN_IF_DAT_A0_DATA0_Msk;
+  data[1] = (IFx->DA0R & CAN_IF_DAT_A0_DATA1_Msk) >> CAN_IF_DAT_A0_DATA1_Pos;
+  data[2] = IFx->DA1R & CAN_IF_DAT_A1_DATA2_Msk;
+  data[3] = (IFx->DA1R & CAN_IF_DAT_A1_DATA3_Msk) >> CAN_IF_DAT_A1_DATA3_Pos;
+  data[4] = IFx->DB0R & CAN_IF_DAT_B0_DATA4_Msk;
+  data[5] = (IFx->DB0R & CAN_IF_DAT_B0_DATA5_Msk) >> CAN_IF_DAT_B0_DATA5_Pos;
+  data[6] = IFx->DB1R & CAN_IF_DAT_B1_DATA6_Msk;
+  data[7] = (IFx->DB1R & CAN_IF_DAT_B1_DATA7_Msk) >> CAN_IF_DAT_B1_DATA7_Pos;
+  if ((IFx->MCR & CAN_IF_MCR_MSGLST) > 0)
+  {
+    IFx->CMASK =CAN_IF_CMASK_WRRD | CAN_IF_CMASK_CONTROL;
+    IFx->MCR &= ~CAN_IF_MCR_MSGLST;
+    IFx->CREQ = MsgNum;
+    IFx->CMASK =  CAN_IF_CMASK_TXRQSTNEWDAT;
+    IFx->CREQ = MsgNum;
+    return 2;
+  }
+  if ((IFx->MCR & CAN_IF_MCR_EOB) > 0)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+/*********************************************************************************************************//**
+ * @brief  Gets the first valid message object number from the CAN message valid registers (MVR0 and MVR1).
+ *         This function scans through the message object table to find the first valid message object that is
+ *         not set (i.e., where the corresponding bit in the message valid register is 0).
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @retval The index of the first valid message object that is not set.
+ ***********************************************************************************************************/
+static int _CAN_GetValidMsg(HT_CAN_TypeDef *CANx)
+{
+  s32 _MsgNum;
+  u32 msgNumTable = CANx->MVR0;
+  msgNumTable |=  CANx->MVR1 << 16;
+  for (_MsgNum = 0 ; _MsgNum < MSG_OBJ_TOTAL_NUM ; _MsgNum++)
+  {
+    if ((msgNumTable & 1) == 0)
+    {
+      break;
+    }
+    msgNumTable = msgNumTable >> 1;
+  }
+  return _MsgNum + 1;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Checks if the specified message number is valid.
+ * @param  CANx: Pointer to the CAN peripheral.
+ * @param  MsgNum: The message number.
+ * @retval TRUE if the message number is valid, FALSE otherwise.
+ ***********************************************************************************************************/
+static bool _CAN_CheckMsgIsValid(HT_CAN_TypeDef *CANx, u32 MsgNum)
+{
+  if ((MsgNum == 0) || (MsgNum > MSG_OBJ_TOTAL_NUM))
+  {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+/*********************************************************************************************************//**
+ * @brief  Clears the pending flag for a specific CAN message object.
+ * @param  CANx: where the CANx is the selected CAN from the CAN peripherals.
+ * @param  MsgNum: The message number.
+ * @retval None.
+ ***********************************************************************************************************/
+static void _CAN_ClearMsgPendingFlag(HT_CAN_TypeDef *CANx, u32 MsgNum)
+{
+  HT_CANIF_TypeDef *IFx = NULL;
+  while (IFx == NULL)
+  {
+    IFx = _GetFreeIF(CANx);
+  }
+  IFx->CMASK = CAN_IF_CMASK_CLRINTPND;
+  IFx->CREQ = MsgNum;
 }
 /**
   * @}
   */
 
-
-/**
-  * @}
-  */
 
 /**
   * @}

@@ -13,7 +13,7 @@
 
 #define DEV_FORMAT "/dev/ttyUSB%d"
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_pl2303_buf[64];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_pl2303_buf[USB_ALIGN_UP(64, CONFIG_USB_ALIGN_SIZE)];
 
 #define CONFIG_USBHOST_MAX_PL2303_CLASS 1
 
@@ -25,11 +25,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_pl2303 *usbh_pl2303_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_PL2303_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_pl2303_class[devno], 0, sizeof(struct usbh_pl2303));
             g_pl2303_class[devno].minor = devno;
             return &g_pl2303_class[devno];
@@ -40,10 +40,10 @@ static struct usbh_pl2303 *usbh_pl2303_class_alloc(void)
 
 static void usbh_pl2303_class_free(struct usbh_pl2303 *pl2303_class)
 {
-    int devno = pl2303_class->minor;
+    uint8_t devno = pl2303_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(pl2303_class, 0, sizeof(struct usbh_pl2303));
 }
@@ -375,6 +375,7 @@ static int usbh_pl2303_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister PL2303 Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_pl2303_stop(pl2303_class);
         }
@@ -440,9 +441,9 @@ const struct usbh_class_driver pl2303_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info pl2303_class_info = {
     .match_flags = USB_CLASS_MATCH_VID_PID | USB_CLASS_MATCH_INTF_CLASS,
-    .class = 0xff,
-    .subclass = 0x00,
-    .protocol = 0x00,
+    .bInterfaceClass = 0xff,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
     .id_table = pl2303_id_table,
     .class_driver = &pl2303_class_driver
 };

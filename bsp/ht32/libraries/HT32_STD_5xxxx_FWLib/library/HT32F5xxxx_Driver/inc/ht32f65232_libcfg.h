@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f65232_libcfg.h
- * @version $Rev:: 6932         $
- * @date    $Date:: 2023-05-11 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The library configuration file.
  *************************************************************************************************************
 * @attention
@@ -52,11 +52,12 @@
 #define LIBCFG_BFTM1                      (1)
 #define LIBCFG_CKCU_ATM_V01               (1)
 #define LIBCFG_CKCU_NO_ADCPRE_DIV1        (1)
+#define LIBCFG_CKCU_NO_LPCR               (1)
 #define LIBCFG_CKCU_PLLSRCDIV             (1)
 #define LIBCFG_CKCU_SYS_CK_60M            (1)
 #define LIBCFG_CMP                        (1)
 #define LIBCFG_CMP_NOSCALER_SRC           (1)
-#define LIBCFG_CMP_65x_VER                (1)
+#define LIBCFG_CMP_65x_66x_VER            (1)
 #define LIBCFG_CMP_POS_INPUT_SEL_V2       (1)
 #define LIBCFG_CMP_CO                     (1)
 #define LIBCFG_CMP_SCALER_8BIT            (1)
@@ -72,6 +73,7 @@
 #define LIBCFG_MCTM_UEV1DIS               (1)
 #define LIBCFG_PWRCU_NO_PD_MODE           (1)
 #define LIBCFG_PWRCU_NO_PDF               (1)
+#define LIBCFG_PWRCU_NO_DS2_MODE          (1)
 #define LIBCFG_PWRCU_NO_VDDPORF           (1)
 #define LIBCFG_NO_PWRCU_TEST_REG          (1)
 #define LIBCFG_OPA                        (1)
@@ -81,10 +83,9 @@
 #define LIBCFG_SCTM1                      (1)
 #define LIBCFG_SCTM2                      (1)
 #define LIBCFG_SCTM3                      (1)
-#define LIBCFG_TM_652XX_V1                (1)
-#define LIBCFG_TM_65232                   (1)
+#define LIBCFG_TM_65X_66X_V1              (1)
+#define LIBCFG_TM_BK_FROM_CMP             (1)
 #define LIBCFG_TM_TIFN_5BIT               (1)
 #define LIBCFG_PWRCU_VDD_5V               (1)
-#define LIBCFG_PWRCU_NO_PORF              (1)
 
 #endif

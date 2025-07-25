@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_mctm.h
- * @version $Rev:: 5258         $
- * @date    $Date:: 2021-02-04 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the MCTM library.
  *************************************************************************************************************
  * @attention
@@ -75,7 +75,7 @@ typedef union
     /* Definitions of CHBRKCTR                                                                              */
     unsigned long Break0           :1; // BK0E
     unsigned long Break0Polarity   :1; // BK0P
-    #if (LIBCFG_TM_652XX_V1)
+    #if (LIBCFG_TM_65X_66X_V1)
     unsigned long Break1           :1; // BK1E
     unsigned long Break1Polarity   :1; // BK1E
     #else
@@ -84,7 +84,7 @@ typedef union
     #endif
     unsigned long                  :1; // CHMOE
     unsigned long AutomaticOutput  :1; // CHAOE
-    #if (LIBCFG_TM_65232)
+    #if (LIBCFG_TM_BK_FROM_CMP)
     unsigned long Break0FromCMP0   :1; // BK0CMP0
     unsigned long Break0FromCMP1   :1; // BK0CMP1
     #else
@@ -92,7 +92,7 @@ typedef union
     unsigned long                  :1;
     #endif
 
-    #if (LIBCFG_TM_652XX_V1)
+    #if (LIBCFG_TM_65X_66X_V1)
     unsigned long Break0EventCount :2; // BK0FN
     unsigned long Break0FDiv       :2; // BK0FF
     unsigned long Break1EventCount :2; // BK1FN
@@ -103,11 +103,11 @@ typedef union
     #endif
 
     unsigned long LockLevel        :2; // LOCKLV
-    unsigned long DeglitchFilte    :1; // GFSEL
+    unsigned long DeglitchFilter   :1; // GFSEL
     unsigned long                  :1;
     unsigned long OSSIState        :1; // CHOSSI
     unsigned long OSSRState        :1; // CHOSSR
-    #if (LIBCFG_TM_65232)
+    #if (LIBCFG_TM_BK_FROM_CMP)
     unsigned long Break1FromCMP0   :1; // BK1CMP0
     unsigned long Break1FromCMP1   :1; // BK1CMP1
     #else

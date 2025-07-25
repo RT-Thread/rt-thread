@@ -26,6 +26,7 @@ config PHYTIUM_ARCH_AARCH64
     select RT_USING_CACHE
     select TARGET_ARMV8_AARCH64
     select ARCH_ARM_BOOTWITH_FLUSH_CACHE
+    select ARCH_USING_IRQ_CTX_LIST
     select RT_USING_HW_ATOMIC
     default y
     

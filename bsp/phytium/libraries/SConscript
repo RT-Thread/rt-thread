@@ -5,6 +5,7 @@ objs = []
 cwd  = GetCurrentDir()
 
 PORT_DRV_DIR = cwd + '/drivers'
+DRIVERS_EXAMPLE_DIR = cwd + '/drivers_example'
 PHYTIUM_SDK_DIR = cwd + '/phytium_standalone_sdk'
 COMMON_DIR = cwd + '/common'
 
@@ -114,6 +115,18 @@ if GetDepend(['BSP_USING_GPIO']):
         src +=  Glob(PHYTIUM_SDK_DIR+'/soc/e2000/fgpio_table.c')
     if GetDepend(['TARGET_PHYTIUMPI']):
         src +=  Glob(PHYTIUM_SDK_DIR+'/soc/phytiumpi/fgpio_table.c')
+        
+## i2s
+if GetDepend(['BSP_USING_I2S']):
+    src += Glob(PHYTIUM_SDK_DIR+'/drivers/i2s/fi2s/*.c') \
+           + Glob(PHYTIUM_SDK_DIR+'/drivers/dma/fddma/*.c') \
+           + Glob(PHYTIUM_SDK_DIR+'/drivers/i2s/fes8388/*.c') \
+           + Glob(PHYTIUM_SDK_DIR+'/drivers/i2s/fes8336/*.c')  \
+           + Glob(PORT_DRV_DIR+'/drv_i2s.c') 
+    path += [PHYTIUM_SDK_DIR + '/drivers/i2s/fi2s/'] \
+           + [PHYTIUM_SDK_DIR + '/drivers/i2s/fes8336/'] \
+           + [PHYTIUM_SDK_DIR + '/drivers/i2s/fes8388/'] \
+           + [PHYTIUM_SDK_DIR + '/drivers/dma/fddma/'] 
 
 ## pwm
 if GetDepend(['BSP_USING_PWM']):
@@ -125,6 +138,11 @@ if GetDepend(['BSP_USING_I2C']):
     src += Glob(PHYTIUM_SDK_DIR+'/drivers/i2c/fi2c/*.c') + Glob(PORT_DRV_DIR+'/drv_i2c.c')
     path += [PHYTIUM_SDK_DIR + '/drivers/i2c/fi2c/']
 
+# fdriver dc
+if GetDepend(['BSP_USING_DC']):
+     src += Glob(PHYTIUM_SDK_DIR+'/drivers/media/fdcdp/*.c') + Glob(PORT_DRV_DIR+'/drv_dc.c')
+     path += [PHYTIUM_SDK_DIR + '/drivers/media/fdcdp/']
+
 ## iopad
 if GetDepend(['BSP_USING_IOPAD']):
     src += Glob(PHYTIUM_SDK_DIR+'/drivers/iomux/fiopad/*.c')
@@ -134,6 +152,10 @@ if GetDepend(['BSP_USING_IOPAD']):
 if GetDepend(['I2C_USE_MIO']):
     src += Glob(PHYTIUM_SDK_DIR+'/drivers/mio/fmio/*.c')
     path += [PHYTIUM_SDK_DIR + '/drivers/mio/fmio/']
+
+## drivers_example
+if GetDepend(['BSP_USING_DRIVERS_EXAMPLE']):
+    src += Glob(DRIVERS_EXAMPLE_DIR+'/*.c')
 
 ## board
 if GetDepend(['E2000D_DEMO_BOARD']):
@@ -160,17 +182,7 @@ if GetDepend(['FIREFLY_DEMO_BOARD']):
 
 LIBS    = []
 LIBPATH = []
-# fdriver dc
-if GetDepend(['BSP_USING_DC']):
-     src += Glob(PORT_DRV_DIR+'/drv_dc.c')
-     path += [PHYTIUM_SDK_DIR + '/drivers/media/fdcdp_lib/inc']
-     if GetDepend(['TARGET_ARMV8_AARCH64']):
-        LIBPATH = [PHYTIUM_SDK_DIR + '/drivers/media/fdcdp_lib/']
-        LIBS = ['libfdcdp_standalone_a64.a']
 
-     elif GetDepend(['TARGET_ARMV8_AARCH32']):
-        LIBPATH = [PHYTIUM_SDK_DIR + '/drivers/media/fdcdp_lib/']
-        LIBS = ['libfdcdp_standalone_soft_a32.a']  
 ## fdriver port
 src += Glob(cwd+'/port/fdriver_port/*.c')
 path += [cwd + '/port/fdriver_port']

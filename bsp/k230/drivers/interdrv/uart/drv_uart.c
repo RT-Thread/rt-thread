@@ -13,12 +13,11 @@
 #include "board.h"
 #include "drv_uart.h"
 #include "riscv_io.h"
-#include "board.h"
 
 #define UART_DEFAULT_BAUDRATE       115200
 #define UART_CLK                    50000000
-#define UART_ADDR 0x91403000UL
-#define UART_IRQ 0x13
+#define UART_ADDR UART0_BASE_ADDR
+#define UART_IRQ 0x10
 
 
 #define UART_RBR (0x00)       /* receive buffer register */
@@ -94,6 +93,7 @@
 struct device_uart
 {
     rt_ubase_t  hw_base;
+    void*  pa_base;
     rt_uint32_t irqno;
 };
 
@@ -129,7 +129,17 @@ static void _uart_init(void *uart_base)
     dlh = bdiv >> 12;
     dll = (bdiv - (dlh << 12)) / 16;
     dlf = bdiv - (dlh << 12)  - dll * 16;
-    if(dlh == 0 && dll == 0)
+    // dlh can be 0 only if bdiv < 4096 (since we're shifting right by 12 bits)
+    // bdiv = UART_CLK / UART_DEFAULT_BAUDRATE
+    //      = 50000000 / 115200
+    //      = 434.027
+    // so when dlh is 0,
+    // dll = (bdiv - (dlh << 12)) / 16
+    //     = (434.027 - 0) / 16
+    //     = 27.626
+    // which means dll can not reach 0,
+    // so we use 1 as the minimum value for dll
+    if((dlh == 0) && (dll < 1))
     {
         dll = 1;
         dlf = 0;
@@ -251,7 +261,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
                 return -RT_ENOMEM;
             }
 
-            mmap2->ret = lwp_map_user_phy(lwp_self(), RT_NULL, (void*)(uart->hw_base), mmap2->length, 0);
+            mmap2->ret = lwp_map_user_phy(lwp_self(), RT_NULL, uart->pa_base, mmap2->length, 0);
         }
         break;
     }
@@ -311,12 +321,16 @@ static void rt_hw_uart_isr(int irq, void *param)
     }
     else if (lsr & (UART_LSR_DR | UART_LSR_BI))
     {
-    #ifdef RT_USING_SERIAL_V2
         struct rt_serial_rx_fifo *rx_fifo;
-        uint8_t data;
-
         rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
+
+        if (rx_fifo == NULL)
+        {
+            readb((void*)(uart_base + UART_RBR));
+            return;
+        }
+    #ifdef RT_USING_SERIAL_V2
+        uint8_t data;
 
         do {
             data = readb((void*)(uart_base + UART_RBR));
@@ -352,7 +366,8 @@ int rt_hw_uart_init(void)
         serial->config           = config;
         serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
 
-        uart->hw_base = (rt_base_t)rt_ioremap((void *)UART_ADDR, 0x1000);
+        uart->pa_base = (void *)UART_ADDR;
+        uart->hw_base = (rt_base_t)rt_ioremap(uart->pa_base, 0x1000);
         uart->irqno     = UART_IRQ;
 
         _uart_init((void*)(uart->hw_base));

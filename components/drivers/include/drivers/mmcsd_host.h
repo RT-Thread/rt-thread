@@ -134,6 +134,7 @@ struct rt_mmcsd_host
 #define MMCSD_SUP_HS200_1V2  (1 << 10)
 #define MMCSD_SUP_HS200     (MMCSD_SUP_HS200_1V2 | MMCSD_SUP_HS200_1V8) /* hs200 sdr */
 #define MMCSD_SUP_NONREMOVABLE  (1 << 11)
+#define controller_is_removable(host) (!(host->flags & MMCSD_SUP_NONREMOVABLE))
 #define MMCSD_SUP_HS400_1V8  (1 << 12)
 #define MMCSD_SUP_HS400_1V2  (1 << 13)
 #define MMCSD_SUP_HS400      (MMCSD_SUP_HS400_1V2 | MMCSD_SUP_HS400_1V8) /* hs400 ddr */

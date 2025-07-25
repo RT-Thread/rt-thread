@@ -538,7 +538,16 @@ dhcp6_handle_config_reply(struct netif *netif, struct pbuf *p_msg_in)
       }
       ip6_addr_assign_zone(dns_addr6, IP6_UNKNOWN, netif);
       /* @todo: do we need a different offset than DHCP(v4)? */
+#ifdef RT_USING_NETDEV
+      extern struct netdev *netdev_get_by_name(const char *name);
+      extern void netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
+      /* Here we only need to set the dns server of the corresponding network device,
+      * but do not need to configure all network devices.
+      */
+      netdev_set_dns_server(netdev_get_by_name(netif->name), n, &dns_addr);
+#else
       dns_setserver(n, &dns_addr);
+#endif
     }
   }
   /* @ todo: parse and set Domain Search List */

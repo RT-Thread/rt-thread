@@ -135,7 +135,7 @@ uint8_t USBD_BinaryObjectStoreDescriptor[USBD_BOS_WTOTALLENGTH] = {
 struct usb_webusb_descriptor webusb_url_desc = {
     .vendor_code = USBD_WEBUSB_VENDOR_CODE,
     .string = USBD_WebUSBURLDescriptor,
-    .string_len = USBD_WINUSB_DESC_SET_LEN
+    .string_len = URL_DESCRIPTOR_LENGTH
 };
 
 struct usb_msosv2_descriptor msosv2_desc = {
@@ -149,6 +149,105 @@ struct usb_bos_descriptor bos_desc = {
     .string_len = USBD_BOS_WTOTALLENGTH
 };
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+static const uint8_t device_descriptor[] = {
+    USB_DEVICE_DESCRIPTOR_INIT(USB_2_1, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0002, 0x01)
+};
+
+static const uint8_t config_descriptor[] = {
+    USB_CONFIG_DESCRIPTOR_INIT(USB_HID_CONFIG_DESC_SIZ, 0x02, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+
+    /************** Descriptor of Joystick Mouse interface ****************/
+    /* 09 */
+    0x09,                          /* bLength: Interface Descriptor size */
+    USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType: Interface descriptor type */
+    0x00,                          /* bInterfaceNumber: Number of Interface */
+    0x00,                          /* bAlternateSetting: Alternate setting */
+    0x01,                          /* bNumEndpoints */
+    0x03,                          /* bInterfaceClass: HID */
+    0x01,                          /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+    0x01,                          /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+    0,                             /* iInterface: Index of string descriptor */
+    /******************** Descriptor of Joystick Mouse HID ********************/
+    /* 18 */
+    0x09,                    /* bLength: HID Descriptor size */
+    HID_DESCRIPTOR_TYPE_HID, /* bDescriptorType: HID */
+    0x11,                    /* bcdHID: HID Class Spec release number */
+    0x01,
+    0x00,                          /* bCountryCode: Hardware target country */
+    0x01,                          /* bNumDescriptors: Number of HID class descriptors to follow */
+    0x22,                          /* bDescriptorType */
+    HID_KEYBOARD_REPORT_DESC_SIZE, /* wItemLength: Total length of Report descriptor */
+    0x00,
+    /******************** Descriptor of Mouse endpoint ********************/
+    /* 27 */
+    0x07,                         /* bLength: Endpoint Descriptor size */
+    USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */
+    HID_INT_EP,                   /* bEndpointAddress: Endpoint Address (IN) */
+    0x03,                         /* bmAttributes: Interrupt endpoint */
+    HID_INT_EP_SIZE,              /* wMaxPacketSize: 4 Byte max */
+    0x00,
+    HID_INT_EP_INTERVAL, /* bInterval: Polling Interval */
+    /* 34 */
+    USB_INTERFACE_DESCRIPTOR_INIT(USBD_WEBUSB_INTF_NUM, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00)
+};
+
+static const uint8_t device_quality_descriptor[] = {
+    ///////////////////////////////////////
+    /// device qualifier descriptor
+    ///////////////////////////////////////
+    0x0a,
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x00,
+    0x00,
+};
+
+static const char *string_descriptors[] = {
+    (const char[]){ 0x09, 0x04 }, /* Langid */
+    "CherryUSB",                  /* Manufacturer */
+    "CherryUSB WEBUSB HID DEMO",  /* Product */
+    "2022123456",                 /* Serial Number */
+};
+
+static const uint8_t *device_descriptor_callback(uint8_t speed)
+{
+    return device_descriptor;
+}
+
+static const uint8_t *config_descriptor_callback(uint8_t speed)
+{
+    return config_descriptor;
+}
+
+static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
+{
+    return device_quality_descriptor;
+}
+
+static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
+{
+    if (index > 3) {
+        return NULL;
+    }
+    return string_descriptors[index];
+}
+
+const struct usb_descriptor webusb_hid_descriptor = {
+    .device_descriptor_callback = device_descriptor_callback,
+    .config_descriptor_callback = config_descriptor_callback,
+    .device_quality_descriptor_callback = device_quality_descriptor_callback,
+    .string_descriptor_callback = string_descriptor_callback,
+    .msosv2_descriptor = &msosv2_desc,
+    .webusb_url_descriptor = &webusb_url_desc,
+    .bos_descriptor = &bos_desc
+};
+#else
 static const uint8_t webusb_hid_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_1, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0002, 0x01),
     USB_CONFIG_DESCRIPTOR_INIT(USB_HID_CONFIG_DESC_SIZ, 0x02, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
@@ -207,7 +306,7 @@ static const uint8_t webusb_hid_descriptor[] = {
     ///////////////////////////////////////
     /// string2 descriptor
     ///////////////////////////////////////
-    0x26,                       /* bLength */
+    0x2C,                       /* bLength */
     USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
     'C', 0x00,                  /* wcChar0 */
     'h', 0x00,                  /* wcChar1 */
@@ -219,14 +318,17 @@ static const uint8_t webusb_hid_descriptor[] = {
     'S', 0x00,                  /* wcChar7 */
     'B', 0x00,                  /* wcChar8 */
     ' ', 0x00,                  /* wcChar9 */
-    'H', 0x00,                  /* wcChar10 */
-    'I', 0x00,                  /* wcChar11 */
-    'D', 0x00,                  /* wcChar12 */
-    ' ', 0x00,                  /* wcChar13 */
-    'D', 0x00,                  /* wcChar14 */
-    'E', 0x00,                  /* wcChar15 */
-    'M', 0x00,                  /* wcChar16 */
-    'O', 0x00,                  /* wcChar17 */
+    'W', 0x00,                  /* wcChar10 */
+    'E', 0x00,                  /* wcChar11 */
+    'B', 0x00,                  /* wcChar12 */
+    'U', 0x00,                  /* wcChar13 */
+    'S', 0x00,                  /* wcChar14 */
+    'B', 0x00,                  /* wcChar15 */
+    ' ', 0x00,                  /* wcChar16 */
+    'D', 0x00,                  /* wcChar17 */
+    'E', 0x00,                  /* wcChar18 */
+    'M', 0x00,                  /* wcChar19 */
+    'O', 0x00,                  /* wcChar20 */
     ///////////////////////////////////////
     /// string3 descriptor
     ///////////////////////////////////////
@@ -254,11 +356,12 @@ static const uint8_t webusb_hid_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
 };
+#endif
 
 /* USB HID device Configuration Descriptor */
 static uint8_t hid_desc[9] __ALIGN_END = {
@@ -355,10 +458,16 @@ static struct usbd_interface intf0;
 
 void webusb_hid_keyboard_init(uint8_t busid, uintptr_t reg_base)
 {
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_desc_register(busid, &webusb_hid_descriptor);
+#else
     usbd_desc_register(busid, webusb_hid_descriptor);
+#endif
+#ifndef CONFIG_USBDEV_ADVANCE_DESC
     usbd_bos_desc_register(busid, &bos_desc);
     usbd_msosv2_desc_register(busid, &msosv2_desc);
     usbd_webusb_desc_register(busid, &webusb_url_desc);
+#endif
     usbd_add_interface(busid, usbd_hid_init_intf(busid, &intf0, hid_keyboard_report_desc, HID_KEYBOARD_REPORT_DESC_SIZE));
     usbd_add_endpoint(busid, &hid_in_ep);
 
@@ -371,12 +480,13 @@ void hid_keyboard_test(uint8_t busid)
 {
     const uint8_t sendbuffer[8] = { 0x00, 0x00, HID_KBD_USAGE_A, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-    memcpy(write_buffer, sendbuffer, 8);
-    int ret = usbd_ep_start_write(busid, HID_INT_EP, write_buffer, 8);
-    if (ret < 0) {
+    if(usb_device_is_configured(busid) == false) {
         return;
     }
+
+    memcpy(write_buffer, sendbuffer, 8);
     hid_state = HID_STATE_BUSY;
+    usbd_ep_start_write(busid, HID_INT_EP, write_buffer, 8);
     while (hid_state == HID_STATE_BUSY) {
     }
 }

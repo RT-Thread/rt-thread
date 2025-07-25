@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <errno.h>
+#include <rtthread.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -23,9 +24,12 @@
 #include <rthw.h>
 
 #ifdef SPI_DEBUG
-#define SP_DEBUG_LOG    printf
+#define SP_DEBUG_LOG(fmt, ...) \
+    do { \
+        rt_kprintf(fmt, ##__VA_ARGS__); \
+    } while(0)
 #else
-#define SP_DEBUG_LOG
+#define SP_DEBUG_LOG(fmt, ...)
 #endif
 
 /* Restart the controller, disable all interrupts, clean rx fifo */

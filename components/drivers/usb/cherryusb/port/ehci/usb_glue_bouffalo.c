@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "bflb_core.h"
+#include "bflb_l1c.h"
 #include "usbh_core.h"
 #include "hardware/usb_v2_reg.h"
 
@@ -141,3 +142,20 @@ uint8_t usbh_get_port_speed(struct usbh_bus *bus, const uint8_t port)
     }
     return USB_SPEED_HIGH;
 }
+
+#ifdef CONFIG_USB_DCACHE_ENABLE
+void usb_dcache_clean(uintptr_t addr, size_t size)
+{
+    bflb_l1c_dcache_clean_range((void *)addr, size);
+}
+
+void usb_dcache_invalidate(uintptr_t addr, size_t size)
+{
+    bflb_l1c_dcache_invalidate_range((void *)addr, size);
+}
+
+void usb_dcache_flush(uintptr_t addr, size_t size)
+{
+    bflb_l1c_dcache_clean_invalidate_range((void *)addr, size);
+}
+#endif

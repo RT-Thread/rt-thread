@@ -60,8 +60,8 @@ extern "C" {
 typedef enum
 {
     RT_WLAN_EVT_READY = 0,              /* connect and prot is ok, You can send data*/
-    RT_WLAN_EVT_SCAN_DONE,              /* Scan a info */
-    RT_WLAN_EVT_SCAN_REPORT,            /* Scan end */
+    RT_WLAN_EVT_SCAN_DONE,              /* Scan end */
+    RT_WLAN_EVT_SCAN_REPORT,            /* Scan a info */
     RT_WLAN_EVT_STA_CONNECTED,          /* connect success */
     RT_WLAN_EVT_STA_CONNECTED_FAIL,     /* connection failed */
     RT_WLAN_EVT_STA_DISCONNECTED,       /* disconnect */

@@ -14,7 +14,7 @@
 
 #define MAX_HANDLERS 128
 
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 struct rt_irq_desc isr_table[MAX_HANDLERS];
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;

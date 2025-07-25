@@ -4,10 +4,14 @@
 #ifdef BSP_USING_FS
 
 #include <dfs_fs.h>
+#include <rtdbg.h>
 
 #define DBG_TAG "app.filesystem"
 #define DBG_LVL DBG_INFO
-#include <rtdbg.h>
+
+#ifdef BSP_USING_OPENMV
+#include "led.h"
+#endif /* BSP_USING_OPENMV */
 
 #ifdef BSP_USING_ONCHIP_FS
 #include "fal.h"
@@ -47,10 +51,11 @@ static void sd_mount(void)
 #elif defined(BSP_USING_SDCARD_FS)
 #include <drv_sdhi.h>
 
+#ifdef SDHI_USING_CD
 /* SD Card hot plug detection pin */
-#define SD_CHECK_PIN  "p405"
-
+#define SD_CHECK_PIN  RA_SDHI_CD_PIN
 static rt_base_t sd_check_pin = 0;
+#endif
 
 static void _sdcard_mount(void)
 {
@@ -92,10 +97,11 @@ static void _sdcard_unmount(void)
 
 static void sd_auto_mount(void *parameter)
 {
-    rt_uint8_t re_sd_check_pin = 1;
-    rt_thread_mdelay(20);
+    rt_uint8_t re_sd_check_pin = 0;
+    rt_thread_mdelay(500);
 
-    if (!rt_pin_read(sd_check_pin))
+#ifdef SDHI_USING_CD
+    if (re_sd_check_pin = rt_pin_read(sd_check_pin))
     {
         _sdcard_mount();
     }
@@ -103,28 +109,36 @@ static void sd_auto_mount(void *parameter)
     while (1)
     {
         rt_thread_mdelay(200);
-
-        if (re_sd_check_pin && (re_sd_check_pin = rt_pin_read(sd_check_pin)) == 0)
+        if (!re_sd_check_pin && (re_sd_check_pin = rt_pin_read(sd_check_pin)) != 0)
         {
+#ifdef BSP_USING_OPENMV
+            led_state(LED_RED, 1);
+#endif  /* BSP_USING_OPENMV */
             _sdcard_mount();
+#ifdef BSP_USING_OPENMV
+            led_state(LED_RED, 0);
+#endif  /* BSP_USING_OPENMV */
         }
 
-        if (!re_sd_check_pin && (re_sd_check_pin = rt_pin_read(sd_check_pin)) != 0)
+        if (re_sd_check_pin && (re_sd_check_pin = rt_pin_read(sd_check_pin)) == 0)
         {
             _sdcard_unmount();
         }
     }
+#else
+    _sdcard_mount();
+#endif  /* SDHI_USING_CD */
 }
 
 static void sd_mount(void)
 {
     rt_thread_t tid;
-
+#ifdef SDHI_USING_CD
     sd_check_pin = rt_pin_get(SD_CHECK_PIN);
     rt_pin_mode(sd_check_pin, PIN_MODE_INPUT_PULLUP);
-
+#endif  /* SDHI_USING_CD */
     tid = rt_thread_create("sd_mount", sd_auto_mount, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX - 2, 20);
+                           2048, RT_THREAD_PRIORITY_MAX - 12, 20);
     if (tid != RT_NULL)
     {
         rt_thread_startup(tid);
@@ -137,12 +151,12 @@ static void sd_mount(void)
 }
 
 #else
-#include <dev_spi_msd.h>
-#include "drv_sci.h"
+#include <spi_msd.h>
+#include "drv_sci_spi.h"
 int sd_mount(void)
 {
     uint32_t cs_pin = BSP_IO_PORT_10_PIN_05;
-    rt_hw_sci_spi_device_attach("sci2s", "scpi20", cs_pin);
+    rt_hw_sci_spi_device_attach("scpi2", "scpi20", cs_pin);
     msd_init("sd0", "scpi20");
     if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
     {
@@ -158,8 +172,9 @@ int sd_mount(void)
 
 int mount_init(void)
 {
+    rt_thread_mdelay(200);
     sd_mount();
     return RT_EOK;
 }
-// INIT_ENV_EXPORT(mount_init);
+INIT_ENV_EXPORT(mount_init);
 #endif

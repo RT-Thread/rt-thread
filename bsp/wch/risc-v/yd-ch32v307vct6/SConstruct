@@ -49,14 +49,8 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-ch32_library = 'ch32v30x_libraries'
-rtconfig.BSP_LIBRARY_TYPE = ch32_library
-
 bsp_vdir = 'build'
 library_vdir = 'build/libraries'
-
-# include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, ch32_library, 'SConscript'), variant_dir=library_vdir + '/ch32_library', duplicate=0))
 
 # common include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ch32_drivers', 'SConscript'), variant_dir=library_vdir + '/ch32_drivers', duplicate=0))

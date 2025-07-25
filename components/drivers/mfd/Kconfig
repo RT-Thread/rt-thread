@@ -1,0 +1,10 @@
+menuconfig RT_USING_MFD
+    bool "Using Multifunction device drivers"
+    depends on RT_USING_DM
+    default n
+
+config RT_MFD_SYSCON
+    bool "System Controller Register R/W"
+    depends on RT_USING_MFD
+    depends on RT_USING_OFW
+    default y

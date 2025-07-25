@@ -337,8 +337,8 @@ trap_entry:
 
     /* need to switch new thread */
     la    s0, rt_thread_switch_interrupt_flag
-    lw    s2, 0(s0)
-    beqz  s2, spurious_interrupt
+    lw    s1, 0(s0)
+    beqz  s1, spurious_interrupt
     sw    zero, 0(s0)
 
     la    s0, rt_interrupt_from_thread

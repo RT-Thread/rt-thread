@@ -10,6 +10,7 @@
  * 2023-11-16     shelton      add support at32f402/405 series
  * 2024-04-12     shelton      add support a403a and a423
  * 2024-08-30     shelton      add support m412 and m416
+ * 2024-12-18     shelton      add support f455/f456 and f457
  */
 
 #include "drv_common.h"
@@ -152,7 +153,7 @@ static rt_err_t at32_configure(struct rt_serial_device *serial,
     }
 #ifdef RT_SERIAL_USING_DMA
     if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN)) {
-        instance->last_index = serial->config.rx_bufsz;
+        instance->last_index = serial->config.dma_ping_bufsz;
     }
 #endif
     usart_hardware_flow_control_set(instance->uart_x, flow_control);
@@ -320,7 +321,6 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
     dma_init_type dma_init_struct;
     dma_channel_type *dma_channel = NULL;
-    struct rt_serial_rx_fifo *rx_fifo;
     struct at32_uart *instance;
     struct dma_config *dma_config;
 
@@ -370,16 +370,20 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
     defined (SOC_SERIES_AT32F405) || defined (SOC_SERIES_AT32A423) || \
-    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416)
+    defined (SOC_SERIES_AT32M412) || defined (SOC_SERIES_AT32M416) || \
+    defined (SOC_SERIES_AT32F455) || defined (SOC_SERIES_AT32F456) || \
+    defined (SOC_SERIES_AT32F457)
     dmamux_enable(dma_config->dma_x, TRUE);
     dmamux_init(dma_config->dmamux_channel, (dmamux_requst_id_sel_type)dma_config->request_id);
 #endif
     /* enable interrupt */
     if (flag == RT_DEVICE_FLAG_DMA_RX)
     {
-        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+        rt_uint8_t *ptr = NULL;
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, &ptr);
+
         /* start dma transfer */
-        _uart_dma_receive(instance, rx_fifo->buffer, serial->config.rx_bufsz);
+        _uart_dma_receive(instance, ptr, serial->config.dma_ping_bufsz);
     }
 
     /* dma irq should set in dma tx mode */
@@ -438,7 +442,7 @@ void dma_rx_isr(struct rt_serial_device *serial)
     if (counter <= instance->last_index)
         recv_len = instance->last_index - counter;
     else
-        recv_len = serial->config.rx_bufsz + instance->last_index - counter;
+        recv_len = serial->config.dma_ping_bufsz + instance->last_index - counter;
 
     if (recv_len)
     {
@@ -489,22 +493,14 @@ static void usart_isr(struct rt_serial_device *serial)
 
     if (usart_flag_get(instance->uart_x, USART_RDBF_FLAG) != RESET)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        rt_ringbuffer_putchar(&(rx_fifo->rb), usart_data_receive(instance->uart_x));
-
+        char chr = usart_data_receive(instance->uart_x);
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
     else if ((usart_flag_get(instance->uart_x, USART_TDBE_FLAG) != RESET) && (instance->uart_x->ctrl1_bit.tdbeien))
     {
-        struct rt_serial_tx_fifo *tx_fifo;
-        tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
-        RT_ASSERT(tx_fifo != RT_NULL);
-
         rt_uint8_t put_char = 0;
-        if (rt_ringbuffer_getchar(&(tx_fifo->rb), &put_char))
+        if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, &put_char) == RT_EOK)
         {
             usart_data_transmit(instance->uart_x, put_char);
         }
@@ -924,6 +920,7 @@ static void at32_uart_get_config(void)
     uart_config[UART1_INDEX].serial.config.rx_bufsz = BSP_UART1_RX_BUFSIZE;
     uart_config[UART1_INDEX].serial.config.tx_bufsz = BSP_UART1_TX_BUFSIZE;
 #ifdef BSP_UART1_RX_USING_DMA
+    uart_config[UART1_INDEX].serial.config.dma_ping_bufsz = BSP_UART1_DMA_PING_BUFSIZE;
     uart_config[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart1_dma_rx = UART1_RX_DMA_CONFIG;
     uart_config[UART1_INDEX].dma_rx = &uart1_dma_rx;
@@ -941,6 +938,7 @@ static void at32_uart_get_config(void)
     uart_config[UART2_INDEX].serial.config.rx_bufsz = BSP_UART2_RX_BUFSIZE;
     uart_config[UART2_INDEX].serial.config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
 #ifdef BSP_UART2_RX_USING_DMA
+    uart_config[UART2_INDEX].serial.config.dma_ping_bufsz = BSP_UART2_DMA_PING_BUFSIZE;
     uart_config[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart2_dma_rx = UART2_RX_DMA_CONFIG;
     uart_config[UART2_INDEX].dma_rx = &uart2_dma_rx;
@@ -958,6 +956,7 @@ static void at32_uart_get_config(void)
     uart_config[UART3_INDEX].serial.config.rx_bufsz = BSP_UART3_RX_BUFSIZE;
     uart_config[UART3_INDEX].serial.config.tx_bufsz = BSP_UART3_TX_BUFSIZE;
 #ifdef BSP_UART3_RX_USING_DMA
+    uart_config[UART3_INDEX].serial.config.dma_ping_bufsz = BSP_UART3_DMA_PING_BUFSIZE;
     uart_config[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart3_dma_rx = UART3_RX_DMA_CONFIG;
     uart_config[UART3_INDEX].dma_rx = &uart3_dma_rx;
@@ -975,6 +974,7 @@ static void at32_uart_get_config(void)
     uart_config[UART4_INDEX].serial.config.rx_bufsz = BSP_UART4_RX_BUFSIZE;
     uart_config[UART4_INDEX].serial.config.tx_bufsz = BSP_UART4_TX_BUFSIZE;
 #ifdef BSP_UART4_RX_USING_DMA
+    uart_config[UART4_INDEX].serial.config.dma_ping_bufsz = BSP_UART4_DMA_PING_BUFSIZE;
     uart_config[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart4_dma_rx = UART4_RX_DMA_CONFIG;
     uart_config[UART4_INDEX].dma_rx = &uart4_dma_rx;
@@ -992,6 +992,7 @@ static void at32_uart_get_config(void)
     uart_config[UART5_INDEX].serial.config.rx_bufsz = BSP_UART5_RX_BUFSIZE;
     uart_config[UART5_INDEX].serial.config.tx_bufsz = BSP_UART5_TX_BUFSIZE;
 #ifdef BSP_UART5_RX_USING_DMA
+    uart_config[UART5_INDEX].serial.config.dma_ping_bufsz = BSP_UART5_DMA_PING_BUFSIZE;
     uart_config[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart5_dma_rx = UART5_RX_DMA_CONFIG;
     uart_config[UART5_INDEX].dma_rx = &uart5_dma_rx;
@@ -1009,6 +1010,7 @@ static void at32_uart_get_config(void)
     uart_config[UART6_INDEX].serial.config.rx_bufsz = BSP_UART6_RX_BUFSIZE;
     uart_config[UART6_INDEX].serial.config.tx_bufsz = BSP_UART6_TX_BUFSIZE;
 #ifdef BSP_UART6_RX_USING_DMA
+    uart_config[UART6_INDEX].serial.config.dma_ping_bufsz = BSP_UART6_DMA_PING_BUFSIZE;
     uart_config[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart6_dma_rx = UART6_RX_DMA_CONFIG;
     uart_config[UART6_INDEX].dma_rx = &uart6_dma_rx;
@@ -1026,6 +1028,7 @@ static void at32_uart_get_config(void)
     uart_config[UART7_INDEX].serial.config.rx_bufsz = BSP_UART7_RX_BUFSIZE;
     uart_config[UART7_INDEX].serial.config.tx_bufsz = BSP_UART7_TX_BUFSIZE;
 #ifdef BSP_UART7_RX_USING_DMA
+    uart_config[UART7_INDEX].serial.config.dma_ping_bufsz = BSP_UART7_DMA_PING_BUFSIZE;
     uart_config[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart7_dma_rx = UART7_RX_DMA_CONFIG;
     uart_config[UART7_INDEX].dma_rx = &uart7_dma_rx;
@@ -1043,6 +1046,7 @@ static void at32_uart_get_config(void)
     uart_config[UART8_INDEX].serial.config.rx_bufsz = BSP_UART8_RX_BUFSIZE;
     uart_config[UART8_INDEX].serial.config.tx_bufsz = BSP_UART8_TX_BUFSIZE;
 #ifdef BSP_UART8_RX_USING_DMA
+    uart_config[UART8_INDEX].serial.config.dma_ping_bufsz = BSP_UART8_DMA_PING_BUFSIZE;
     uart_config[UART8_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config uart8_dma_rx = UART8_RX_DMA_CONFIG;
     uart_config[UART8_INDEX].dma_rx = &uart8_dma_rx;

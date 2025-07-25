@@ -15,7 +15,7 @@
 #include "encoding.h"
 #include "mmio.h"
 
-extern rt_uint32_t rt_interrupt_nest;
+extern rt_atomic_t rt_interrupt_nest;
 extern rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 extern rt_uint32_t rt_thread_switch_interrupt_flag;
 
@@ -63,7 +63,7 @@ void plic_init(void)
 {
     int i;
 
-    for (i = 0; i < IRQ_MAX_NR / 4; i = i + 4)
+    for (i = 0; i < IRQ_MAX_NR * 4; i = i + 4)
     {
         mmio_write_32(((uintptr_t) PLIC_PRIORITY0 + i), 0);
     }

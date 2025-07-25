@@ -216,6 +216,11 @@ static void gicv3_dist_init(void)
     LOG_D("%d SPIs implemented", _gic.line_nr - 32);
     LOG_D("%d Extended SPIs implemented", _gic.espi_nr);
 
+    if (_gic.skip_init)
+    {
+        goto _get_max_irq;
+    }
+
     /* Disable the distributor */
     HWREG32(base + GICD_CTLR) = 0;
     gicv3_dist_wait_for_rwp();
@@ -266,6 +271,7 @@ static void gicv3_dist_init(void)
         HWREG64(base + GICD_IROUTERnE + i * 8) = affinity;
     }
 
+_get_max_irq:
     if (GICD_TYPER_NUM_LPIS(_gic.gicd_typer) > 1)
     {
         /* Max LPI = 8192 + Math.pow(2, num_LPIs + 1) - 1 */
@@ -1063,6 +1069,7 @@ static rt_err_t gicv3_ofw_init(struct rt_ofw_node *np, const struct rt_ofw_node_
             redist_stride = 0;
         }
         _gic.redist_stride = redist_stride;
+        _gic.skip_init = rt_ofw_prop_read_bool(np, "skip-init");
 
         gic_common_init_quirk_ofw(np, _gicv3_quirks, &_gic.parent);
         gicv3_init();

@@ -11,6 +11,7 @@
  * 2022-10-15     shelton      optimize code
  * 2023-10-18     shelton      optimize code
  * 2024-09-02     shelton      add support phy lan8720 and yt8512
+ * 2024-12-18     shelton      add support f457
  */
 
 #include "drv_emac.h"
@@ -101,7 +102,7 @@ static void phy_reset(void)
 {
     gpio_init_type gpio_init_struct;
 
-#if defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F437) || defined (SOC_SERIES_AT32F457)
     crm_periph_clock_enable(CRM_GPIOE_PERIPH_CLOCK, TRUE);
     crm_periph_clock_enable(CRM_GPIOG_PERIPH_CLOCK, TRUE);
 
@@ -1000,7 +1001,7 @@ static int rt_hw_at32_emac_init(void)
 #if defined (SOC_SERIES_AT32F407)
     gpio_pin_remap_config(MII_RMII_SEL_GMUX, TRUE);
 #endif
-#if defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F437) || defined (SOC_SERIES_AT32F457)
     scfg_emac_interface_set(SCFG_EMAC_SELECT_RMII);
 #endif
 

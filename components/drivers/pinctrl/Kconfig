@@ -4,3 +4,6 @@ menuconfig RT_USING_PINCTRL
     depends on RT_USING_PIN
     default n
 
+if RT_USING_PINCTRL
+    osource "$(SOC_DM_PINCTRL_DIR)/Kconfig"
+endif

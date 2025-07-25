@@ -21,11 +21,11 @@ on:
 
 jobs:
   scancode_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Static code analysis
     if: github.repository_owner == 'RT-Thread'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Set up Python
         uses: actions/setup-python@main
         with:

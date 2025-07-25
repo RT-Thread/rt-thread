@@ -1,5 +1,8 @@
 menu "Hardware Drivers Config"
-
+    config SOC_STM32H750_ARTPI
+        bool 
+        default y
+        
 menu "Board extended module"
 
     menuconfig ART_PI_USING_MEDIA_IO
@@ -143,6 +146,11 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         select RT_SERIAL_USING_DMA
         if BSP_USING_UART
+            config BSP_STM32_UART_V1_TX_TIMEOUT
+                int "UART TX timeout"
+                default 6000
+                depends on RT_USING_SERIAL_V1
+                
             menuconfig BSP_USING_UART1
                 bool "Enable UART1"
                 default n
@@ -168,6 +176,12 @@ menu "On-chip Peripheral Drivers"
                         range 0 65535
                         depends on BSP_USING_UART1
                         default 0
+
+                    config BSP_UART1_DMA_PING_BUFSIZE
+                        int "Set UART1 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
+                        default 64                        
 
                 endif
 

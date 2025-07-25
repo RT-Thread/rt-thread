@@ -23,7 +23,7 @@
 #endif
 
 static const unsigned char _M0_CODE[] rt_section("M0_CODE") = {
-#include "M0_CODE.h"
+// #include "M0_CODE.h"
 };
 
 static void _boot_M0(void)

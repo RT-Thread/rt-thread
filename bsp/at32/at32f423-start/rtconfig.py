@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
@@ -84,6 +84,40 @@ elif PLATFORM == 'armcc':
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
+        AFLAGS += ' -g'
+    else:
+        CFLAGS += ' -O2'
+
+    CXXFLAGS = CFLAGS
+    CFLAGS += ' -std=c99'
+
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+
+elif PLATFORM == 'armclang':
+    # toolchains
+    CC = 'armclang'
+    CXX = 'armclang'
+    AS = 'armasm'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    DEVICE = ' --cpu Cortex-M4.fp '
+    CFLAGS = ' --target=arm-arm-none-eabi -mcpu=cortex-m4 '
+    CFLAGS += ' -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 '
+    CFLAGS += ' -mfloat-abi=hard -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
+    CFLAGS += ' -gdwarf-3 -ffunction-sections '
+    AFLAGS = DEVICE + ' --apcs=interwork '
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
+    LFLAGS += ' --list rt-thread.map '
+    LFLAGS += r' --strict --scatter "board\linker_scripts\link.sct" '
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
+    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
+
+    EXEC_PATH += '/ARM/ARMCLANG/bin/'
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O1' # armclang recommend
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'

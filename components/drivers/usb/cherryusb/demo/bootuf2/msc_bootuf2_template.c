@@ -23,6 +23,69 @@
 #define MSC_MAX_MPS 64
 #endif
 
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+static const uint8_t device_descriptor[] = {
+    USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0200, 0x01)
+};
+
+static const uint8_t config_descriptor[] = {
+    USB_CONFIG_DESCRIPTOR_INIT(USB_CONFIG_SIZE, 0x01, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+    MSC_DESCRIPTOR_INIT(0x00, MSC_OUT_EP, MSC_IN_EP, MSC_MAX_MPS, 0x02)
+};
+
+static const uint8_t device_quality_descriptor[] = {
+    ///////////////////////////////////////
+    /// device qualifier descriptor
+    ///////////////////////////////////////
+    0x0a,
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x00,
+    0x00,
+};
+
+static const char *string_descriptors[] = {
+    (const char[]){ 0x09, 0x04 }, /* Langid */
+    "CherryUSB",                  /* Manufacturer */
+    "CherryUSB UF2 DEMO",         /* Product */
+    "2022123456",                 /* Serial Number */
+};
+
+static const uint8_t *device_descriptor_callback(uint8_t speed)
+{
+    return device_descriptor;
+}
+
+static const uint8_t *config_descriptor_callback(uint8_t speed)
+{
+    return config_descriptor;
+}
+
+static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
+{
+    return device_quality_descriptor;
+}
+
+static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
+{
+    if (index > 3) {
+        return NULL;
+    }
+    return string_descriptors[index];
+}
+
+const struct usb_descriptor msc_bootuf2_descriptor = {
+    .device_descriptor_callback = device_descriptor_callback,
+    .config_descriptor_callback = config_descriptor_callback,
+    .device_quality_descriptor_callback = device_quality_descriptor_callback,
+    .string_descriptor_callback = string_descriptor_callback
+};
+#else
 const uint8_t msc_bootuf2_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0200, 0x01),
     USB_CONFIG_DESCRIPTOR_INIT(USB_CONFIG_SIZE, 0x01, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
@@ -95,11 +158,12 @@ const uint8_t msc_bootuf2_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
 };
+#endif
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
 {
@@ -132,7 +196,7 @@ void usbd_msc_get_cap(uint8_t busid, uint8_t lun, uint32_t *block_num, uint32_t 
     *block_num = bootuf2_get_sector_count();
     *block_size = bootuf2_get_sector_size();
 
-    USB_LOG_INFO("sector count:%d, sector size:%d\n", *block_num, *block_size);
+    USB_LOG_INFO("sector count:%d, sector size:%d\n", (unsigned int)*block_num, (unsigned int)*block_size);
 }
 int usbd_msc_sector_read(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *buffer, uint32_t length)
 {
@@ -151,7 +215,11 @@ static struct usbd_interface intf0;
 void msc_bootuf2_init(uint8_t busid, uintptr_t reg_base)
 {
     boot2uf2_flash_init();
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_desc_register(busid, &msc_bootuf2_descriptor);
+#else
     usbd_desc_register(busid, msc_bootuf2_descriptor);
+#endif
     usbd_add_interface(busid, usbd_msc_init_intf(busid, &intf0, MSC_OUT_EP, MSC_IN_EP));
 
     usbd_initialize(busid, reg_base, usbd_event_handler);
@@ -163,6 +231,6 @@ void boot2uf2_flash_init(void)
 
 int bootuf2_flash_write(uint32_t address, const uint8_t *data, size_t size)
 {
-    USB_LOG_INFO("address:%08x, size:%d\n", address, size);
+    USB_LOG_INFO("address:%08x, size:%d\n", (unsigned int)address, (unsigned int)size);
     return 0;
 }

@@ -10,14 +10,6 @@
 
 #include <rtthread.h>
 
-#define DBG_TAG           "kernel.errno"
-#ifdef RT_DEBUG_DEVICE
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_DEVICE) */
-#include <rtdbg.h>
-
 /**
  * @brief A global variable used to store the error code.
  *

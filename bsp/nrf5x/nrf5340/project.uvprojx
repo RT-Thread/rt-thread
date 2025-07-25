@@ -13,7 +13,7 @@
         <TargetCommonOption>
           <Device>nRF5340_xxAA:Application</Device>
           <Vendor>Nordic Semiconductor</Vendor>
-          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.40.3</PackID>
+          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.44.1</PackID>
           <PackURL>http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00040000) IRAM2(0x20040000,0x00040000) IROM(0x00000000,0x00100000) IROM2(0x10000000,0x08000000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec />
@@ -131,7 +131,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4101</DriverSelection>
+            <DriverSelection>4102</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
@@ -310,7 +310,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-fshort-enums</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, NRF5340_XXAA_APPLICATION</Define>
+              <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\extension\fcntl\octal;packages\nrfx-latest\drivers;packages\nrfx-latest\drivers\src;..\..\..\components\drivers\include;packages\nrfx-latest\mdk;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\finsh;applications;..\..\..\components\libc\posix\io\epoll;packages\nrfx-latest\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;packages\nrfx-latest;.;board;..\..\..\components\libc\compilers\common\extension;..\libraries\drivers;..\..\..\components\drivers\include;packages\nrfx-latest\hal;..\..\..\components\drivers\include;..\libraries\cmsis\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\include;..\libraries\drivers;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension;.;..\..\..\components\drivers\include;..\libraries\cmsis\include;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;applications;board;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\epoll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -469,9 +469,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hwtimer.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -488,9 +488,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c-bit-ops.c</FileName>
+              <FileName>completion_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\completion_up.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -507,47 +507,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c_core.c</FileName>
+              <FileName>condvar.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -678,9 +640,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>adc.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\adc.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -697,123 +659,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_drv_pwm.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\rt_drv_pwm.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\rtc\rtc.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>watchdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\watchdog\watchdog.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -857,16 +705,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -926,6 +774,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\defunct.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
@@ -967,44 +853,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1173,6 +1021,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1203,107 +1089,6 @@
             </File>
           </Files>
         </Group>
-        <Group>
-          <GroupName>nrf_Drivers</GroupName>
-          <Files>
-            <File>
-              <FileName>arm_startup_nrf5340_application.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>packages\nrfx-latest\mdk\arm_startup_nrf5340_application.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_gpiote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_gpiote.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_spim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_spim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_nrf5340_application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\mdk\system_nrf5340_application.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_saadc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_saadc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_twi_twim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_twi_twim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_twim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_twim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_uarte.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_uarte.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
       </Groups>
     </Target>
   </Targets>
@@ -1324,20 +1109,7 @@
       </package>
     </packages>
     <apis />
-    <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.3.0" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.6.0" />
-        <targetInfos>
-          <targetInfo name="nrf5340_xxaa" versionMatchMode="fixed" />
-        </targetInfos>
-      </component>
-      <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.40.3" condition="nRF5340 Device application core and CMSIS">
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.40.3" />
-        <targetInfos>
-          <targetInfo name="nrf5340_xxaa" />
-        </targetInfos>
-      </component>
-    </components>
+    <components />
     <files>
       <file attr="config" category="source" condition="ARM Compiler" name="Device\Source\arm\arm_startup_nrf52840.s">
         <instance index="0" removed="1">RTE\Device\nRF52840_xxAA\arm_startup_nrf52840.s</instance>
@@ -1352,20 +1124,16 @@
         <targetInfos />
       </file>
       <file attr="config" category="source" condition="ARM Compiler" name="Device\Source\arm\arm_startup_nrf5340_application.s">
-        <instance index="0">RTE\Device\nRF5340_xxAA_Application\arm_startup_nrf5340_application.s</instance>
+        <instance index="0" removed="1">RTE\Device\nRF5340_xxAA_Application\arm_startup_nrf5340_application.s</instance>
         <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.40.3" condition="nRF5340 Device application core and CMSIS" />
         <package name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.40.3" />
-        <targetInfos>
-          <targetInfo name="nrf5340_xxaa" />
-        </targetInfos>
+        <targetInfos />
       </file>
       <file attr="config" category="source" name="Device\Source\system_nrf5340_application.c">
-        <instance index="0">RTE\Device\nRF5340_xxAA_Application\system_nrf5340_application.c</instance>
+        <instance index="0" removed="1">RTE\Device\nRF5340_xxAA_Application\system_nrf5340_application.c</instance>
         <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.40.3" condition="nRF5340 Device application core and CMSIS" />
         <package name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.40.3" />
-        <targetInfos>
-          <targetInfo name="nrf5340_xxaa" />
-        </targetInfos>
+        <targetInfos />
       </file>
     </files>
   </RTE>

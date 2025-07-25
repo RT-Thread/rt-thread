@@ -6,8 +6,8 @@
 ;/*                                                                                                         */
 ;/*-----------------------------------------------------------------------------------------------------------
 ;  File Name        : startup_ht32f5xxxx_iar_17.s
-;  Version          : $Rev:: 7212         $
-;  Date             : $Date:: 2023-09-11 #$
+;  Version          : $Rev:: 7718         $
+;  Date             : $Date:: 2024-05-13 #$
 ;  Description      : Startup code.
 ;-----------------------------------------------------------------------------------------------------------*/
 
@@ -19,14 +19,14 @@
 
 ;// <o>  HT32 Device
 ;//      <0=> By Project Asm Define
-;//      <33=> HT32F52234/44
+;//      <35=> HT32F52234/44
 USE_HT32_CHIP_SET   EQU     0
 
 _HT32FWID           EQU     0xFFFFFFFF
 ;_HT32FWID           EQU     0x00052234
 ;_HT32FWID           EQU     0x00052244
 
-HT32F52234_44        EQU     33
+HT32F52234_44        EQU     35
 
   IF USE_HT32_CHIP_SET=0
   ELSE

@@ -168,7 +168,7 @@ void usbh_asix_stop(struct usbh_asix *asix_class);
 uint8_t *usbh_asix_get_eth_txbuf(void);
 int usbh_asix_eth_output(uint32_t buflen);
 void usbh_asix_eth_input(uint8_t *buf, uint32_t buflen);
-void usbh_asix_rx_thread(void *argument);
+void usbh_asix_rx_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV);
 
 #ifdef __cplusplus
 }

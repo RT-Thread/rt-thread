@@ -16,7 +16,6 @@ static UART_HandleTypeDef console_uart;
 
 void rt_hw_console_init(void)
 {
-    HAL_UART_DeInit(&console_uart);
 #ifdef USART1
     if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart1") == 0)
     {
@@ -35,30 +34,36 @@ void rt_hw_console_init(void)
         console_uart.Instance = USART3;
     }
 #endif /* USART3 */
-#ifdef USART4
+#ifdef UART4
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart4") == 0)
     {
-        console_uart.Instance = USART4;
+        console_uart.Instance = UART4;
     }
-#endif /* USART4 */
-#ifdef USART5
+#endif /* UART4 */
+#ifdef UART5
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart5") == 0)
     {
-        console_uart.Instance = USART5;
+        console_uart.Instance = UART5;
     }
-#endif /* USART5 */
+#endif /* UART5 */
 #ifdef USART6
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart6") == 0)
     {
         console_uart.Instance = USART6;
     }
 #endif /* USART6 */
-#ifdef USART7
+#ifdef UART7
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart7") == 0)
     {
-        console_uart.Instance = USART7;
+        console_uart.Instance = UART7;
     }
 #endif /* USART7 */
+#ifdef UART8
+    else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart8") == 0)
+    {
+        console_uart.Instance = UART8;
+    }
+#endif /* USART8 */
     else
     {
         RT_ASSERT(0);

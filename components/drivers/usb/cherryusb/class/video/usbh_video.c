@@ -25,7 +25,7 @@
 #define INTF_DESC_bInterfaceNumber  2 /** Interface number offset */
 #define INTF_DESC_bAlternateSetting 3 /** Alternate setting offset */
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_video_buf[128];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_video_buf[USB_ALIGN_UP(128, CONFIG_USB_ALIGN_SIZE)];
 
 static const char *format_type[] = { "uncompressed", "mjpeg" };
 
@@ -34,11 +34,11 @@ static uint32_t g_devinuse = 0;
 
 static struct usbh_video *usbh_video_class_alloc(void)
 {
-    int devno;
+    uint8_t devno;
 
     for (devno = 0; devno < CONFIG_USBHOST_MAX_VIDEO_CLASS; devno++) {
-        if ((g_devinuse & (1 << devno)) == 0) {
-            g_devinuse |= (1 << devno);
+        if ((g_devinuse & (1U << devno)) == 0) {
+            g_devinuse |= (1U << devno);
             memset(&g_video_class[devno], 0, sizeof(struct usbh_video));
             g_video_class[devno].minor = devno;
             return &g_video_class[devno];
@@ -49,10 +49,10 @@ static struct usbh_video *usbh_video_class_alloc(void)
 
 static void usbh_video_class_free(struct usbh_video *video_class)
 {
-    int devno = video_class->minor;
+    uint8_t devno = video_class->minor;
 
-    if (devno >= 0 && devno < 32) {
-        g_devinuse &= ~(1 << devno);
+    if (devno < 32) {
+        g_devinuse &= ~(1U << devno);
     }
     memset(video_class, 0, sizeof(struct usbh_video));
 }
@@ -483,6 +483,7 @@ static int usbh_video_ctrl_disconnect(struct usbh_hubport *hport, uint8_t intf)
         }
 
         if (hport->config.intf[intf].devname[0] != '\0') {
+            usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister Video Class:%s\r\n", hport->config.intf[intf].devname);
             usbh_video_stop(video_class);
         }
@@ -531,18 +532,18 @@ const struct usbh_class_driver video_streaming_class_driver = {
 
 CLASS_INFO_DEFINE const struct usbh_class_info video_ctrl_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_VIDEO,
-    .subclass = VIDEO_SC_VIDEOCONTROL,
-    .protocol = VIDEO_PC_PROTOCOL_UNDEFINED,
+    .bInterfaceClass = USB_DEVICE_CLASS_VIDEO,
+    .bInterfaceSubClass = VIDEO_SC_VIDEOCONTROL,
+    .bInterfaceProtocol = VIDEO_PC_PROTOCOL_UNDEFINED,
     .id_table = NULL,
     .class_driver = &video_ctrl_class_driver
 };
 
 CLASS_INFO_DEFINE const struct usbh_class_info video_streaming_class_info = {
     .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
-    .class = USB_DEVICE_CLASS_VIDEO,
-    .subclass = VIDEO_SC_VIDEOSTREAMING,
-    .protocol = VIDEO_PC_PROTOCOL_UNDEFINED,
+    .bInterfaceClass = USB_DEVICE_CLASS_VIDEO,
+    .bInterfaceSubClass = VIDEO_SC_VIDEOSTREAMING,
+    .bInterfaceProtocol = VIDEO_PC_PROTOCOL_UNDEFINED,
     .id_table = NULL,
     .class_driver = &video_streaming_class_driver
 };

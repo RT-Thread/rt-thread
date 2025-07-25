@@ -132,6 +132,16 @@ rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint8_t enabled)
     return -RT_ENOSYS;
 }
 
+rt_err_t rt_pin_debounce(rt_base_t pin, rt_uint32_t debounce)
+{
+    RT_ASSERT(_hw_pin.ops != RT_NULL);
+    if (_hw_pin.ops->pin_debounce)
+    {
+        return _hw_pin.ops->pin_debounce(&_hw_pin.parent, pin, debounce);
+    }
+    return -RT_ENOSYS;
+}
+
 /* RT-Thread Hardware PIN APIs */
 void rt_pin_mode(rt_base_t pin, rt_uint8_t mode)
 {

@@ -11,6 +11,7 @@
  * 2012-03-22     Bernard      rename kservice.h to rtservice.h
  * 2017-11-15     JasonJia     Modify rt_slist_foreach to rt_slist_for_each_entry.
  *                             Make code cleanup.
+ * 2024-01-03     Shell        add rt_slist_pop()
  */
 
 #ifndef __RT_SERVICE_H__
@@ -23,7 +24,7 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup KernelService
+ * @addtogroup group_kernel_service
  */
 
 /**@{*/
@@ -224,6 +225,21 @@ rt_inline unsigned int rt_slist_len(const rt_slist_t *l)
     return len;
 }
 
+rt_inline rt_slist_t *rt_slist_pop(rt_slist_t *l)
+{
+    struct rt_slist_node *node = l;
+
+    /* remove node */
+    node = node->next;
+    if (node != (rt_slist_t *)0)
+    {
+        ((struct rt_slist_node *)l)->next = node->next;
+        node->next = RT_NULL;
+    }
+
+    return node;
+}
+
 rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
 {
     /* remove slist head */
@@ -231,7 +247,11 @@ rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
     while (node->next && node->next != n) node = node->next;
 
     /* remove node */
-    if (node->next != (rt_slist_t *)0) node->next = node->next->next;
+    if (node->next != (rt_slist_t *)0)
+    {
+        node->next = node->next->next;
+        n->next = RT_NULL;
+    }
 
     return l;
 }

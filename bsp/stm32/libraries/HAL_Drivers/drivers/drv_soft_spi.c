@@ -12,7 +12,7 @@
 #include "drv_soft_spi.h"
 #include "drv_config.h"
 
-#if defined(RT_USING_SPI) && defined(RT_USING_SPI_BITOPS) && defined(RT_USING_PIN)
+#if defined(RT_USING_SPI) && defined(RT_USING_SOFT_SPI) && defined(RT_USING_PIN)
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.soft_spi"
@@ -203,4 +203,4 @@ int rt_hw_softspi_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_softspi_init);
 
-#endif /* defined(RT_USING_SPI) && defined(RT_USING_SPI_BITOPS) && defined(RT_USING_PIN) */
+#endif /* defined(RT_USING_SPI) && defined(RT_USING_SOFT_SPI) && defined(RT_USING_PIN) */

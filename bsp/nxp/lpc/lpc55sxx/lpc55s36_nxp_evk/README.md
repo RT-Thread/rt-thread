@@ -61,6 +61,12 @@ LPC55S36 是由恩智浦NXP半导体推出的基于Cortex-M33内核的高性能�
     menuconfig
 ```
 
+随后拉取必要的库，否则无法通过编译
+
+```bash
+    pkgs --update
+```
+
 在menuconfig页面配置并选择对应的芯片型号，若开发环境为MDK/IAR，则需要生成工程
 
 4) 生成工程

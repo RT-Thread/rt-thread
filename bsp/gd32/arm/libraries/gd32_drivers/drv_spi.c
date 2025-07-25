@@ -87,8 +87,8 @@ static const struct gd32_spi spi_bus_obj[] = {
 
 #ifdef BSP_USING_SPI3
     {
-        SPI2,
-        "spi2",
+        SPI3,
+        "spi3",
         RCU_SPI3,
         RCU_GPIOE,
         &spi_bus3,
@@ -146,7 +146,7 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     gpio_af_set(gd32_spi->spi_port, gd32_spi->alt_func_num, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
 
     gpio_mode_set(gd32_spi->spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
-    gpio_output_options_set(gd32_spi->spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
+    gpio_output_options_set(gd32_spi->spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
 #else
     /* Init SPI SCK MOSI */
     gpio_init(gd32_spi->spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin | gd32_spi->mosi_pin);
@@ -287,7 +287,7 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
     struct rt_spi_bus * gd32_spi_bus = (struct rt_spi_bus *)device->bus;
     struct gd32_spi *spi_device = (struct gd32_spi *)gd32_spi_bus->parent.user_data;
     struct rt_spi_configuration * config = &device->config;
-    struct gd32_spi_cs * gd32_spi_cs = device->parent.user_data;
+    rt_base_t cs_pin = (rt_base_t)device->parent.user_data;
     uint32_t spi_periph = spi_device->spi_periph;
 
     RT_ASSERT(device != NULL);
@@ -296,7 +296,7 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
     /* take CS */
     if(message->cs_take)
     {
-        gpio_bit_reset(gd32_spi_cs->GPIOx, gd32_spi_cs->GPIO_Pin);
+        rt_pin_write(cs_pin, PIN_LOW);
         LOG_D("spi take cs\n");
     }
 
@@ -372,7 +372,7 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
     /* release CS */
     if(message->cs_release)
     {
-        gpio_bit_set(gd32_spi_cs->GPIOx, gd32_spi_cs->GPIO_Pin);
+        rt_pin_write(cs_pin, PIN_HIGH);
         LOG_D("spi release cs\n");
     }
 

@@ -1,6 +1,7 @@
 # RT-Thread building script for bridge
 
 import os
+import re
 from building import *
 
 Import('rtconfig')
@@ -24,4 +25,12 @@ group = group + SConscript(os.path.join('common', 'SConscript'))
 if rtconfig.CPU != 'common':
     group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
 
+def del_gnu99():
+    for g in Projects:
+        if g["name"] == "Kernel":
+            flags = re.sub(r'\s+', ' ', re.sub(r'\s*-std=gnu99\s*', ' ', g["LOCAL_CFLAGS"])).strip()
+            flags = re.sub(r'(?<!\s)(-Wunused)', r' \1', flags)
+            g["LOCAL_CFLAGS"] = flags
+
+RegisterPreBuildingAction(del_gnu99)
 Return('group')

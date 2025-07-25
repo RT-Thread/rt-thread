@@ -1,0 +1,50 @@
+import os
+from building import *
+
+objs = []
+cwd  = GetCurrentDir()
+
+# add general drivers
+src = []
+path =  [cwd]
+
+if GetDepend(['BSP_USING_FS']):
+    src += Glob('drv_filesystem.c')
+    if GetDepend(['BSP_USING_SPI_FLASH_LITTLEFS']):
+        src += Glob('fal/fal_spi_flash_sfud_port.c')
+        path += [cwd + '/fal']
+
+if GetDepend(['BSP_USING_TOUCH_CAP']):
+    src += Glob('touch/drv_touch_ft.c')
+    src += Glob('touch/drv_touch.c')
+    path += [cwd + '/touch']
+
+if GetDepend(['BSP_USING_TOUCH_RES']):
+    src += Glob('touch/drv_touch_xpt.c')
+    src += Glob('touch/drv_xpt2046_init.c')
+    path += [cwd + '/touch']
+
+if GetDepend(['BSP_USING_ONBOARD_LCD']):
+    src += Glob('drv_lcd.c')
+
+if GetDepend(['BSP_USING_SRAM']):
+    src += Glob('drv_sram.c')
+
+if GetDepend(['BSP_USING_ETH']):
+    src += Glob('phy_reset.c')
+
+if GetDepend(['BSP_USING_SOFT_SPI_FLASH']):
+    src += Glob('soft_spi_flash_init.c')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('spi_flash_init.c')
+
+CPPDEFINES = ['STM32F407xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

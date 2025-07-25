@@ -42,20 +42,22 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu='+CPU + ' -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__START=entry -D__STARTUP_CLEAR_BSS'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
+        CFLAGS += ' -Og -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rt-thread.bin\n'
+    POST_ACTION += OBJCPY + ' -O ihex $TARGET rt-thread.hex\n'
+    POST_ACTION += SIZE + ' $TARGET \n'
+    
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'

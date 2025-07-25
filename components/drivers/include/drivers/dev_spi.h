@@ -16,11 +16,12 @@
 #include <stdlib.h>
 #include <rtthread.h>
 #include <drivers/dev_pin.h>
+#include <drivers/core/driver.h>
+
 /**
- * @addtogroup  Drivers          RTTHREAD Driver
- * @defgroup    SPI              SPI
- *
+ * @defgroup    group_drivers_spi SPI
  * @brief       SPI driver api
+ * @ingroup     group_device_driver
  *
  * <b>Example</b>
  * @code {.c}
@@ -82,12 +83,10 @@
  * // 导出到 msh 命令列表中
  * MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
  * @endcode
- *
- * @ingroup     Drivers
  */
 
 /*!
- * @addtogroup SPI
+ * @addtogroup group_drivers_spi
  * @{
  */
 #ifdef __cplusplus
@@ -130,6 +129,8 @@ extern "C"{
 #define RT_SPI_BUS_MODE_SPI         (1<<0)
 #define RT_SPI_BUS_MODE_QSPI        (1<<1)
 
+#define RT_SPI_CS_CNT_MAX           16
+
 /**
  * @brief SPI message structure
  */
@@ -151,7 +152,12 @@ struct rt_spi_configuration
 {
     rt_uint8_t mode;
     rt_uint8_t data_width;
+#ifdef RT_USING_DM
+    rt_uint8_t data_width_tx;
+    rt_uint8_t data_width_rx;
+#else
     rt_uint16_t reserved;
+#endif
 
     rt_uint32_t max_hz;
 };
@@ -167,6 +173,13 @@ struct rt_spi_bus
     rt_uint8_t mode;
     const struct rt_spi_ops *ops;
 
+#ifdef RT_USING_DM
+    rt_base_t cs_pins[RT_SPI_CS_CNT_MAX];
+    rt_uint8_t cs_active_vals[RT_SPI_CS_CNT_MAX];
+    rt_bool_t slave;
+    int num_chipselect;
+#endif /* RT_USING_DM */
+
     struct rt_mutex lock;
     struct rt_spi_device *owner;
 };
@@ -180,6 +193,20 @@ struct rt_spi_ops
     rt_ssize_t (*xfer)(struct rt_spi_device *device, struct rt_spi_message *message);
 };
 
+#ifdef RT_USING_DM
+/**
+ * @brief SPI delay info
+ */
+struct rt_spi_delay
+{
+#define RT_SPI_DELAY_UNIT_USECS 0
+#define RT_SPI_DELAY_UNIT_NSECS 1
+#define RT_SPI_DELAY_UNIT_SCK   2
+    rt_uint16_t value;
+    rt_uint8_t  unit;
+};
+#endif /* RT_USING_DM */
+
 /**
  * @brief SPI Virtual BUS, one device must connected to a virtual BUS
  */
@@ -187,6 +214,17 @@ struct rt_spi_device
 {
     struct rt_device parent;
     struct rt_spi_bus *bus;
+
+#ifdef RT_USING_DM
+    const char *name;
+    const struct rt_spi_device_id *id;
+    const struct rt_ofw_node_id *ofw_id;
+
+    rt_uint8_t chip_select[RT_SPI_CS_CNT_MAX];
+    struct rt_spi_delay cs_setup;
+    struct rt_spi_delay cs_hold;
+    struct rt_spi_delay cs_inactive;
+#endif
 
     struct rt_spi_configuration config;
     rt_base_t cs_pin;
@@ -251,6 +289,36 @@ struct rt_qspi_device
 };
 
 #define SPI_DEVICE(dev) ((struct rt_spi_device *)(dev))
+
+#ifdef RT_USING_DM
+struct rt_spi_device_id
+{
+    char name[20];
+    void *data;
+};
+
+struct rt_spi_driver
+{
+    struct rt_driver parent;
+
+    const struct rt_spi_device_id *ids;
+    const struct rt_ofw_node_id *ofw_ids;
+
+    rt_err_t (*probe)(struct rt_spi_device *device);
+    rt_err_t (*remove)(struct rt_spi_device *device);
+    rt_err_t (*shutdown)(struct rt_spi_device *device);
+};
+
+rt_err_t rt_spi_driver_register(struct rt_spi_driver *driver);
+rt_err_t rt_spi_device_register(struct rt_spi_device *device);
+
+#define RT_SPI_DRIVER_EXPORT(driver)  RT_DRIVER_EXPORT(driver, spi, BUILIN)
+
+rt_inline const void *rt_spi_device_id_data(struct rt_spi_device *device)
+{
+    return device->id ? device->id->data : (device->ofw_id ? device->ofw_id->data : RT_NULL);
+}
+#endif /* RT_USING_DM */
 
 /**
  * @brief register a SPI bus
@@ -535,7 +603,7 @@ rt_err_t rt_qspi_bus_register(struct rt_spi_bus *bus, const char *name, const st
  *
  * @return the actual length of transmitted.
  */
-rt_size_t rt_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qspi_message *message);
+rt_ssize_t rt_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qspi_message *message);
 
 /**
  * @brief This function can send data then receive data from QSPI device
@@ -548,18 +616,18 @@ rt_size_t rt_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qsp
  *
  * @return the status of transmit.
  */
-rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_buf, rt_size_t send_length,void *recv_buf, rt_size_t recv_length);
+rt_ssize_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_buf, rt_size_t send_length,void *recv_buf, rt_size_t recv_length);
 
 /**
  * @brief This function can send data to QSPI device
  *
  * @param device the QSPI device attached to QSPI bus.
  * @param send_buf the buffer to be transmitted to QSPI device.
- * @param send_length the number of data to be transmitted.
+ * @param length the number of data to be transmitted.
  *
  * @return the status of transmit.
  */
-rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_size_t length);
+rt_ssize_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_size_t length);
 
 #ifdef __cplusplus
 }

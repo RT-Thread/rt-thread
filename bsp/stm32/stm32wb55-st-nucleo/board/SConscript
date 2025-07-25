@@ -1,8 +1,5 @@
 import os
-import rtconfig
 from building import *
-
-Import('SDK_LIB')
 
 cwd = GetCurrentDir()
 
@@ -16,18 +13,13 @@ path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
 
-startup_path_prefix = SDK_LIB
 
-if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix + '/STM32WBxx_HAL/CMSIS/Device/ST/STM32WBxx/Source/Templates/gcc/startup_stm32wb55xx_cm4.s']
-elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += [startup_path_prefix + '/STM32WBxx_HAL/CMSIS/Device/ST/STM32WBxx/Source/Templates/arm/startup_stm32wb55xx_cm4.s']
-elif rtconfig.PLATFORM in ['iccarm']:
-    src += [startup_path_prefix + '/STM32WBxx_HAL/CMSIS/Device/ST/STM32WBxx/Source/Templates/iar/startup_stm32wb55xx_cm4.s']
 
-# You can select chips from the list above
-CPPDEFINES = ['STM32WB55xx']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32_config.h
- * @version $Rev:: 7125         $
- * @date    $Date:: 2023-08-16 #$
+ * @version $Rev:: 8288         $
+ * @date    $Date:: 2024-11-27 #$
  * @brief   Configuration file of HT32.
  *************************************************************************************************************
  * @attention
@@ -200,6 +200,16 @@
   #define USE_MEM_HT32F52367
 #endif
 
+#ifdef USE_HT50F3200U_SK
+  #define USE_HT32F62140_SK
+#endif
+#ifdef USE_HT50F3200U
+  #define USE_HT32F62140
+#endif
+#ifdef USE_MEM_HT50F3200U
+  #define USE_MEM_HT32F62140
+#endif
+
 #ifdef USE_HT32F62030_SK
   #define USE_HT32F52230_SK
 #endif
@@ -217,6 +227,16 @@
   #define USE_HT32F52231_41
 #endif
 #ifdef USE_MEM_HT32F62040
+  #define USE_MEM_HT32F52241
+#endif
+
+#ifdef USE_HT32F62140_SK
+  #define USE_HT32F52241_SK
+#endif
+#ifdef USE_HT32F62140
+  #define USE_HT32F52231_41
+#endif
+#ifdef USE_MEM_HT32F62140
   #define USE_MEM_HT32F52241
 #endif
 
@@ -260,14 +280,14 @@
   #define USE_MEM_HT32F57341
 #endif
 
-#ifdef USE_HT32F59046_SK
-  #define USE_HT32F50241_SK
+#ifdef USE_HT32F59045_SK
+  #define USE_HT32F52241_SK
 #endif
-#ifdef USE_HT32F59046
-  #define USE_HT32F50231_41
+#ifdef USE_HT32F59045
+  #define USE_HT32F52231_41
 #endif
-#ifdef USE_MEM_HT32F59046
-  #define USE_MEM_HT32F50241
+#ifdef USE_MEM_HT32F59045
+  #define USE_MEM_HT32F52241
 #endif
 
 #ifdef USE_HT32F59746_SK
@@ -298,6 +318,66 @@
 #endif
 #ifdef USE_MEM_HT32F61041
   #define USE_MEM_HT32F50241
+#endif
+
+#ifdef USE_HT32F61730_SK
+  #define USE_HT32F50030_SK
+#endif
+#ifdef USE_HT32F61730
+  #define USE_HT32F50020_30
+#endif
+#ifdef USE_MEM_HT32F61730
+  #define USE_MEM_HT32F50030
+#endif
+
+#ifdef USE_HT32F61741_SK
+  #define USE_HT32F50241_SK
+#endif
+#ifdef USE_HT32F61741
+  #define USE_HT32F50231_41
+#endif
+#ifdef USE_MEM_HT32F61741
+  #define USE_MEM_HT32F50241
+#endif
+
+#ifdef USE_MXTX52231_SK
+  #define USE_HT32F52241_SK
+#endif
+#ifdef USE_MXTX52231
+  #define USE_HT32F52231_41
+#endif
+#ifdef USE_MEM_MXTX52231
+  #define USE_MEM_HT32F52241
+#endif
+
+#ifdef USE_MXTX52352_SK
+  #define USE_HT32F52352_SK
+#endif
+#ifdef USE_MXTX52352
+  #define USE_HT32F52342_52
+#endif
+#ifdef USE_MEM_MXTX52352
+  #define USE_MEM_HT32F52352
+#endif
+
+#ifdef USE_NW32F61242_SK
+  #define USE_HT32F61245_SK
+#endif
+#ifdef USE_NW32F61242
+  #define USE_HT32F61244_45
+#endif
+#ifdef USE_MEM_NW32F61242
+  #define USE_MEM_HT32F61245
+#endif
+
+#ifdef USE_HT32F61052_SK
+  #define USE_HT32F50452_SK
+#endif
+#ifdef USE_HT32F61052
+  #define USE_HT32F50442_52
+#endif
+#ifdef USE_MEM_HT32F61052
+  #define USE_MEM_HT32F50452
 #endif
 
 #ifdef __cplusplus

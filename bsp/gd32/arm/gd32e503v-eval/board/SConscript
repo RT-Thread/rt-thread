@@ -1,0 +1,17 @@
+import os
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+CPPDEFINES = ['GD32E50X', 'GD32E50X_HD']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

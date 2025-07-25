@@ -1,0 +1,21 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_SCSI']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = ['scsi.c']
+
+if GetDepend(['RT_SCSI_SD']):
+    src += ['scsi_sd.c']
+
+if GetDepend(['RT_SCSI_CDROM']):
+    src += ['scsi_cdrom.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>__MSP432E401Y__, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, rvmdk, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __MSP432E401Y__, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, RT_USING_LIBC, rvmdk</Define>
               <Undefine />
-              <IncludePath>..\..\libcpu\arm\cortex-m4;..\..\components\libc\compilers\common\extension\fcntl\octal;applications;board;libraries\Drivers\CMSIS\Include;..\..\components\libc\compilers\common\include;.;libraries\msp432e4\driverlib\inc;..\..\components\finsh;libraries\msp432e4\driverlib;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\include;libraries\Drivers;libraries\Drivers\config;..\..\components\libc\posix\io\poll;libraries\msp432e4\inc;..\..\components\drivers\include;..\..\components\libc\posix\io\eventfd;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\components\libc\posix\io\eventfd;libraries\msp432e4\driverlib;..\..\components\drivers\phy;..\..\components\drivers\include;libraries\Drivers;..\..\components\libc\compilers\common\extension;..\..\components\libc\posix\io\epoll;..\..\components\libc\compilers\common\include;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;libraries\Drivers\CMSIS\Include;..\..\libcpu\arm\common;..\..\components\drivers\smp_call;board;..\..\components\drivers\include;..\..\components\finsh;..\..\libcpu\arm\cortex-m4;applications;libraries\msp432e4\driverlib\inc;..\..\include;libraries\Drivers\config;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\msp432e4\inc;..\..\components\libc\posix\ipc;.;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -491,9 +491,47 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -624,9 +662,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -643,9 +681,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\components\drivers\serial\dev_serial.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -696,16 +734,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -717,9 +755,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -749,6 +787,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -806,44 +882,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1012,6 +1050,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>libcpu</GroupName>
           <Files>
             <File>
@@ -1046,23 +1122,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>sysctl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\msp432e4\driverlib\uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_msp432e401y.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\msp432e4\startup_system_files\system_msp432e401y.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\msp432e4\driverlib\interrupt.c</FilePath>
+              <FilePath>libraries\msp432e4\driverlib\sysctl.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1074,9 +1136,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>sysctl.c</FileName>
+              <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\msp432e4\driverlib\sysctl.c</FilePath>
+              <FilePath>libraries\msp432e4\driverlib\interrupt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1098,6 +1160,20 @@
               <FileName>fpu.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\msp432e4\driverlib\fpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_msp432e401y.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\msp432e4\startup_system_files\system_msp432e401y.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\msp432e4\driverlib\uart.c</FilePath>
             </File>
           </Files>
         </Group>

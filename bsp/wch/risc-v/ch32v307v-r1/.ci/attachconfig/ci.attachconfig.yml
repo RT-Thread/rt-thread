@@ -1,0 +1,33 @@
+devices.gpio:
+    kconfig: 
+    - CONFIG_BSP_USING_GPIO=y
+devices.adc:
+    kconfig:
+      - CONFIG_BSP_USING_ADC=y
+      - CONFIG_BSP_USING_ADC1=y
+      - CONFIG_BSP_USING_ADC2=n
+devices.dac:
+    kconfig:
+      - CONFIG_BSP_USING_DAC=y
+      - CONFIG_BSP_USING_DAC_CHANNEL1=y
+      - CONFIG_BSP_USING_DAC_CHANNEL2=n
+devices.i2c:
+    kconfig:
+      - CONFIG_BSP_USING_SOFT_I2C=y
+      - CONFIG_BSP_USING_I2C1=y
+      - CONFIG_BSP_USING_I2C2=y
+devices.spi:
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI1=n
+      - CONFIG_BSP_USING_SPI2=n
+      - CONFIG_BSP_USING_SPI3=y
+devices.uart:
+    kconfig:
+      - CONFIG_BSP_USING_UART=y
+devices.watchdog:
+    kconfig:
+      - CONFIG_BSP_USING_IWDT=y
+devices.flash:
+    kconfig:
+      - CONFIG_BSP_USING_ON_CHIP_FLASH=y

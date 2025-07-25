@@ -1,0 +1,24 @@
+menu "SyStem Performance Testcase"
+
+config UTEST_SYS_PERF_TC
+    bool "SyStem Performance test"
+    default n
+
+config UTEST_SYS_PERF_TC_COUNT
+    int "Test the number of cycles"
+    default 1000
+    depends on UTEST_SYS_PERF_TC
+
+config UTEST_HWTIMER_DEV_NAME
+    string "Hardware timer device name"
+    default "timer0"
+    depends on RT_USING_HWTIMER && UTEST_SYS_PERF_TC
+    help
+        Specify the hardware timer device name used for context switch testing (e.g., timer0).
+
+config UTEST_SYS_IRQ_LATENCY
+    bool "SyStem IRQ LATENCY test"
+    default n
+    depends on RT_USING_HWTIMER && UTEST_SYS_PERF_TC
+
+endmenu

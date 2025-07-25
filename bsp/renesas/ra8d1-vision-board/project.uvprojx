@@ -77,7 +77,7 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>cmd /c "start "Renesas" /w cmd /c ""$Slauncher\rasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --gensmartbundle --compiler ARMv6 "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out"""</UserProg1Name>
             <UserProg2Name />
@@ -335,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, BSP_CFG_RTOS = 2</Define>
+              <Define>RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, BSP_CFG_RTOS = 2, __RTTHREAD__, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\libraries\HAL_Drivers;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\cortex-m85;board;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;board\ports;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\compilers\common\extension;..\libraries\HAL_Drivers\config;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;board\ports\wifi;..\..\..\include;..\libraries\HAL_Drivers;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;board\ports;..\..\..\components\drivers\phy;board;.;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\cortex-m85</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -460,9 +460,28 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\completion_up.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -612,9 +631,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pin.c</FileName>
+              <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -631,9 +650,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>serial_v2.c</FileName>
+              <FileName>dev_serial_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\serial\serial_v2.c</FilePath>
+              <FilePath>..\..\..\components\drivers\serial\dev_serial_v2.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -656,13 +675,18 @@
               <FileName>drv_sdram.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\ports\drv_sdram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mnt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\ports\mnt.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -670,6 +694,18 @@
               <FileName>ra8_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\ra8_it.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -677,6 +713,18 @@
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -684,6 +732,18 @@
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -691,11 +751,37 @@
               <FileName>drv_usart_v2.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_usart_v2.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_parse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>shell.c</FileName>
@@ -708,20 +794,6 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -751,6 +823,44 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\cpu_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>defunct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\defunct.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -808,44 +918,6 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_KERNEL_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1010,6 +1082,44 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>klibc</GroupName>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>

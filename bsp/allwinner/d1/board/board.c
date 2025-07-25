@@ -83,7 +83,6 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_SMART
     rt_page_init(init_page_region);
     rt_hw_mmu_map_init(&mmu_info,(void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, (rt_size_t *)MMUTable, 0);
-    rt_hw_mmu_kernel_map_init(&mmu_info, 0x00000000UL, USER_VADDR_START - 1);
     //将低1GB MMIO区域设置为无Cache与Strong Order访存模式
     MMUTable[0] &= ~PTE_CACHE;
     MMUTable[0] &= ~PTE_SHARE;

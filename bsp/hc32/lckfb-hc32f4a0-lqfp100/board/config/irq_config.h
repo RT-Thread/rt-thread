@@ -74,6 +74,12 @@ extern "C" {
 /* DMA1 ch7 */
 #define BSP_DMA1_CH7_IRQ_NUM            INT019_IRQn
 #define BSP_DMA1_CH7_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+/* DMA1 ch8 */
+#define BSP_DMA1_CH8_IRQ_NUM            INT020_IRQn
+#define BSP_DMA1_CH8_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+/* DMA1 ch9 */
+#define BSP_DMA1_CH9_IRQ_NUM            INT021_IRQn
+#define BSP_DMA1_CH9_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
 
 /* DMA2 ch0 */
 #define BSP_DMA2_CH0_IRQ_NUM            INT044_IRQn
@@ -235,6 +241,16 @@ extern "C" {
 #define BSP_SPI4_ERR_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
 #endif
 
+#if defined(BSP_USING_SPI5)
+#define BSP_SPI5_ERR_IRQ_NUM            INT098_IRQn
+#define BSP_SPI5_ERR_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+#endif
+
+#if defined(BSP_USING_SPI6)
+#define BSP_SPI6_ERR_IRQ_NUM            INT099_IRQn
+#define BSP_SPI6_ERR_IRQ_PRIO           DDL_IRQ_PRIO_DEFAULT
+#endif
+
 #if defined(BSP_USING_UART8)
 #define BSP_UART8_RXERR_IRQ_NUM         INT017_IRQn
 #define BSP_UART8_RXERR_IRQ_PRIO        DDL_IRQ_PRIO_DEFAULT
@@ -292,10 +308,15 @@ extern "C" {
 #endif/* RT_USING_ALARM */
 
 
-#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
-#define BSP_USB_GLB_IRQ_NUM             INT003_IRQn
-#define BSP_USB_GLB_IRQ_PRIO            DDL_IRQ_PRIO_DEFAULT
-#endif/* BSP_USING_USBD */
+#if defined(BSP_USING_USBFS)
+#define BSP_USBFS_GLB_IRQ_NUM           INT003_IRQn
+#define BSP_USBFS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
+#endif/* BSP_USING_USBFS */
+
+#if defined(BSP_USING_USBHS)
+#define BSP_USBHS_GLB_IRQ_NUM           INT000_IRQn
+#define BSP_USBHS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
+#endif/* BSP_USING_USBHS */
 
 #if defined (BSP_USING_QSPI)
 #define BSP_QSPI_ERR_IRQ_NUM            INT002_IRQn

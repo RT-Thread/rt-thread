@@ -120,9 +120,6 @@ typedef struct
 {
     USB_CORE_BASIC_CFGS    basic_cfgs;
     LL_USB_TypeDef            regs;
-#ifdef USE_DEVICE_MODE
-    USB_DEV_PARAM          dev;
-#endif
 #ifdef USE_HOST_MODE
     USB_HOST_PARAM         host;
     void                   *pData;

@@ -1,0 +1,69 @@
+menu "Ultrarisc DP1000 Soc Drivers Configuration"
+
+menuconfig BSP_USING_PLIC
+    bool "Using PLIC"
+    default y  
+    if BSP_USING_PLIC
+        config PLIC_BASE_ADDR
+            hex "plic base mmio addr"
+            default 0x9000000
+        config PLIC_NDEV
+            hex "plic supported irqs"
+            default 160
+    endif  
+
+menuconfig BSP_USING_UART0
+    bool "Using UART0"
+    select RT_USING_SERIAL
+    default y
+
+    if BSP_USING_UART0
+        config UART0_IRQ_BASE
+            int "uart0 irq number"
+            default 18
+
+        config UART0_REFERENCE_CLOCK
+            int "uart0 clock"
+            default 62500000
+
+        config UART0_DEFAULT_BAUDRATE
+            int "uart0 baudrate"
+            default 115200
+
+        config UART0_BASE_ADDR
+            hex "uart0 base mmio addr"
+            default 0x20310000
+
+        config UART0_REG_SHIFT
+            int "uart0 reg shift"
+            default 2
+
+    endif
+
+menuconfig BSP_USING_DW_SPI
+    bool "Using Dw apb ssi SPI"
+    select RT_USING_SPI
+    default n
+    if BSP_USING_DW_SPI
+        config DW_SPI_IRQ_BASE
+            int "spi irq number"
+            default 19
+
+        config DW_SPI_BASE_ADDR
+            hex "dw spi base mmio addr"
+            default 0x20320000
+        
+        config DW_SPI_MAX_FREQ
+            int "dw max spi freq"
+            default 62500000
+
+    endif
+
+menuconfig BSP_USING_MMC
+    bool "Using MMC"
+    select BSP_USING_SPI
+    select RT_USING_SPI_MSD
+    select RT_USING_DFS_ELMFAT
+    default n
+
+endmenu

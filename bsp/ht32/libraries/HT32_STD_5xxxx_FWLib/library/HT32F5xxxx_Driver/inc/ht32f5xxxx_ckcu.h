@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f5xxxx_ckcu.h
- * @version $Rev:: 7108         $
- * @date    $Date:: 2023-08-09 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the Clock Control Unit library.
  *************************************************************************************************************
  * @attention
@@ -425,9 +425,9 @@ typedef union
     unsigned long DIV        :1;    // Bit 24
     unsigned long QSPI       :1;    // Bit 25
     unsigned long RF         :1;    // Bit 26
-    unsigned long            :1;    // Bit 27
+    unsigned long PID0       :1;    // Bit 27
     unsigned long            :1;    // Bit 28
-    unsigned long            :1;    // Bit 29
+    unsigned long CORDIC     :1;    // Bit 29
     unsigned long            :1;    // Bit 30
     unsigned long            :1;    // Bit 31
 
@@ -494,8 +494,11 @@ typedef union
     unsigned long LCDC       :1;    // Bit 20
     unsigned long DAC0       :1;    // Bit 21
     unsigned long CMP        :1;    // Bit 22
+#if defined(USE_HT32F66242) || defined(USE_HT32F66246)
+    unsigned long PGA        :1;    // Bit 23
+#else
     unsigned long OPA        :1;    // Bit 23
-
+#endif
     unsigned long ADC0       :1;    // Bit 24
     unsigned long ADC1       :1;    // Bit 25
     unsigned long            :1;    // Bit 26
@@ -564,6 +567,9 @@ typedef enum
   #endif
   #if (LIBCFG_OPA)
   CKCU_PCLK_OPA      = (CKCU_APBPCSR1 | 10),
+  #endif
+  #if (LIBCFG_PGA)
+  CKCU_PCLK_PGA      = (CKCU_APBPCSR1 | 10),
   #endif
   CKCU_PCLK_WDTR     = (CKCU_APBPCSR1 | 12),
   CKCU_PCLK_BKPR     = (CKCU_APBPCSR1 | 14),
@@ -679,6 +685,13 @@ typedef enum
 #define CKCU_PLL_16M_56M        ((1UL << 28) | ( 7UL << 23) | (0UL << 21))
 #endif
 
+#if (LIBCFG_CKCU_SYS_CK_80M)
+#define CKCU_PLL_4M_80M         ((0UL << 28) | (20UL << 23) | (0UL << 21))
+#define CKCU_PLL_8M_80M         ((0UL << 28) | (10UL << 23) | (0UL << 21))
+#define CKCU_PLL_12M_78M        ((1UL << 28) | (13UL << 23) | (0UL << 21))
+#define CKCU_PLL_16M_80M        ((0UL << 28) | ( 5UL << 23) | (0UL << 21))
+#endif
+
 #define IS_PLL_CFG(CFG)         (((CFG & 0xE81FFFFF) == 0x0) && (CFG != 0))
 #endif
 
@@ -699,13 +712,12 @@ typedef enum
 #define IS_USBPLL_CFG(CFG)      (((CFG & 0xFFFFF81F) == 0x0) && (CFG != 0))
 #endif
 
-
-
-
 /* Definitions of MCU debug control                                                                         */
 #define CKCU_DBG_SLEEP          (1UL)
 #define CKCU_DBG_DEEPSLEEP1     (1UL << 1)
+#if (!LIBCFG_PWRCU_NO_PD_MODE)
 #define CKCU_DBG_POWERDOWN      (1UL << 2)
+#endif
 #define CKCU_DBG_WDT_HALT       (1UL << 3)
 
 #if (LIBCFG_MCTM0)
@@ -828,6 +840,14 @@ typedef enum
 #if (LIBCFG_CKCU_HSIRDYCR)
 #define IS_COUNTER_VALUE(VALUE) ((VALUE) < 0x20)
 #endif
+
+/* HSE Gain mode                                                                                            */
+#define CKCU_HSE_LOW_GAIN_MODE          (0UL << 8)
+#define CKCU_HSE_HIGH_GAIN_MODE         (1UL << 8)
+
+#define IS_GAINMODE(GanMode)    ((GanMode == CKCU_HSE_LOW_GAIN_MODE) || \
+                                 (GanMode == CKCU_HSE_HIGH_GAIN_MODE))
+
 /**
   * @}
   */
@@ -904,7 +924,7 @@ void CKCU_IntConfig(u32 CKCU_INT, ControlStatus Cmd);
 FlagStatus CKCU_GetIntStatus(u32 CKCU_INT);
 void CKCU_ClearIntFlag(u32 CKCU_INT);
 
-#if (((LIBCFG_LSE) || (LIBCFG_USBD)) && (!LIBCFG_CKCU_NO_AUTO_TRIM))
+#if (((LIBCFG_LSE) || (LIBCFG_USBD) || (LIBCFG_CKCU_REFCLK_EXT_PIN)) && (!LIBCFG_CKCU_NO_AUTO_TRIM))
 #if (LIBCFG_CKCU_ATM_V01)
 void CKCU_ATCInit(CKCU_ATCInitTypeDef* ATC_InitStruct);
 #endif
@@ -914,8 +934,11 @@ bool CKCU_HSIAutoTrimIsReady(void);
 #endif
 
 #if (LIBCFG_CKCU_HSIRDYCR)
-void CKCU_Set_HSIReadyCounter(u8 value);
+void CKCU_SetHSIReadyCounter(u8 value);
 #endif
+
+void CKCU_SetHSEGainMode(u32 GanMode);
+
 /**
   * @}
   */

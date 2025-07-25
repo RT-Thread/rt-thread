@@ -13,7 +13,7 @@
 
 #include <rtconfig.h>
 
-#ifdef RT_USING_SMART
+#if defined RT_USING_SMART || defined ARCH_ARM
 #include <ioremap.h>
 
 #define DRV_IOREMAP(addr, size) rt_ioremap(addr, size)

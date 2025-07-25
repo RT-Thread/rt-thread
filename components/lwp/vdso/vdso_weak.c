@@ -19,5 +19,5 @@ rt_weak int arch_setup_additional_pages(struct rt_lwp *lwp)
 
 rt_weak void rt_vdso_update_glob_time(void)
 {
-
+    return ;
 }

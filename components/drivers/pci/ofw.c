@@ -461,7 +461,7 @@ static void ofw_msi_pic_init(struct rt_pci_device *pdev)
 {
 #ifdef RT_PCI_MSI
     rt_uint32_t rid;
-    struct rt_pci_bus *bus;
+    struct rt_pci_host_bridge *bridge;
     struct rt_ofw_node *np, *msi_ic_np = RT_NULL;
 
     /*
@@ -473,26 +473,14 @@ static void ofw_msi_pic_init(struct rt_pci_device *pdev)
      */
     rid = rt_pci_dev_id(pdev);
 
-    for (bus = pdev->bus; bus; bus = bus->parent)
+    bridge = rt_pci_find_host_bridge(pdev->bus);
+    RT_ASSERT(bridge != RT_NULL);
+
+    np = bridge->parent.ofw_node;
+
+    if (!(msi_ic_np = rt_ofw_parse_phandle(np, "msi-parent", 0)))
     {
-        if (rt_pci_is_root_bus(bus))
-        {
-            np = bus->host_bridge->parent.ofw_node;
-        }
-        else
-        {
-            np = bus->self->parent.ofw_node;
-        }
-
-        if ((msi_ic_np = rt_ofw_parse_phandle(np, "msi-parent", 0)))
-        {
-            break;
-        }
-
-        if (!rt_ofw_map_id(np, rid, "msi-map", "msi-map-mask", &msi_ic_np, RT_NULL))
-        {
-            break;
-        }
+        rt_ofw_map_id(np, rid, "msi-map", "msi-map-mask", &msi_ic_np, RT_NULL);
     }
 
     if (!msi_ic_np)

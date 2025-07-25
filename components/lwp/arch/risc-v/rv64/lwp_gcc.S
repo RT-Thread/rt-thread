@@ -75,12 +75,20 @@ arch_crt_start_umode:
  * we handle following things here:
  * 1. restoring user mode debug state (not support yet)
  * 2. handling thread's exit request
- * 3. handling POSIX signal
+ * 3. handling POSIX signal (skipped for signal quit path)
  * 4. restoring user context
  * 5. jump to user mode
  */
 .global arch_ret_to_user
 arch_ret_to_user:
+    li s0, 1   // flag=1 (normal path)
+    j arch_ret_to_user_impl
+
+.global arch_signal_quit_ret_to_user
+arch_signal_quit_ret_to_user:
+    li s0, 0   // flag=0 (signal quit path)
+
+arch_ret_to_user_impl:
     // TODO: we don't support kernel gdb server in risc-v yet
     // so we don't check debug state here and handle debugging bussiness
 
@@ -90,6 +98,8 @@ arch_ret_to_user:
     call sys_exit
 
 1:
+    // Skip signal handling if coming from arch_signal_quit
+    beqz s0, ret_to_user_exit
     mv a0, sp
     call lwp_thread_signal_catch
 
@@ -119,7 +129,7 @@ arch_signal_quit:
 
     RESTORE_ALL
     SAVE_ALL
-    j arch_ret_to_user
+    j arch_signal_quit_ret_to_user
 
 /**
  * rt_noreturn
@@ -177,6 +187,9 @@ arch_thread_signal_enter:
 
     /* restore user GP */
     LOAD gp, FRAME_OFF_GP(s3)
+
+    /* restore user TP */
+    LOAD tp, FRAME_OFF_TP(s3)
 
     /**
      * handler(signo, psi, ucontext);

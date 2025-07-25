@@ -14,6 +14,16 @@
 #include <rtdevice.h>
 #include <board.h>
 
+#ifdef BSP_USING_BLE
+void app_main()
+{
+    while(1)
+    {
+
+    }
+}
+#endif /* BSP_USING_BLE */
+
 int main(void)
 {
     rt_kprintf("Hello!RT-THREAD!\r\n");

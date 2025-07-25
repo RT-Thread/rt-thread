@@ -8,34 +8,31 @@
 
 #include "usb_audio.h"
 
-struct usbh_audio_format_type {
-    uint8_t channels;
-    uint8_t format_type;
-    uint8_t bitresolution;
-    uint8_t sampfreq_num;
-    uint32_t sampfreq[3];
+#ifndef CONFIG_USBHOST_AUDIO_MAX_STREAMS
+#define CONFIG_USBHOST_AUDIO_MAX_STREAMS 3
+#endif
+
+struct usbh_audio_ac_msg {
+    struct audio_cs_if_ac_input_terminal_descriptor ac_input;
+    struct audio_cs_if_ac_feature_unit_descriptor ac_feature_unit;
+    struct audio_cs_if_ac_output_terminal_descriptor ac_output;
 };
 
-/**
- * bSourceID in feature_unit = input_terminal_id
- * bSourceID in output_terminal = feature_unit_id
- * terminal_link_id = input_terminal_id or output_terminal_id (if input_terminal_type or output_terminal_type is 0x0101)
- *
- *
-*/
-struct usbh_audio_module {
-    const char *name;
-    uint8_t data_intf;
+struct usbh_audio_as_msg {
+    const char *stream_name;
+    uint8_t stream_intf;
     uint8_t input_terminal_id;
-    uint16_t input_terminal_type;
-    uint16_t input_channel_config;
+    uint8_t feature_terminal_id;
     uint8_t output_terminal_id;
-    uint16_t output_terminal_type;
-    uint8_t feature_unit_id;
-    uint8_t feature_unit_controlsize;
-    uint8_t feature_unit_controls[8];
-    uint8_t terminal_link_id;
-    struct usbh_audio_format_type altsetting[CONFIG_USBHOST_MAX_INTF_ALTSETTINGS];
+    uint8_t ep_attr;
+    uint8_t num_of_altsetting;
+    uint16_t volume_min;
+    uint16_t volume_max;
+    uint16_t volume_res;
+    uint16_t volume_cur;
+    bool mute;
+    struct audio_cs_if_as_general_descriptor as_general;
+    struct audio_cs_if_as_format_type_descriptor as_format[CONFIG_USBHOST_MAX_INTF_ALTSETTINGS];
 };
 
 struct usbh_audio {
@@ -50,9 +47,8 @@ struct usbh_audio {
     bool is_opened;
     uint16_t bcdADC;
     uint8_t bInCollection;
-    uint8_t num_of_intf_altsettings;
-    struct usbh_audio_module module[2];
-    uint8_t module_num;
+    uint8_t stream_intf_num;
+    struct usbh_audio_as_msg as_msg_table[CONFIG_USBHOST_AUDIO_MAX_STREAMS];
 
     void *user_data;
 };
@@ -61,9 +57,9 @@ struct usbh_audio {
 extern "C" {
 #endif
 
-int usbh_audio_open(struct usbh_audio *audio_class, const char *name, uint32_t samp_freq);
+int usbh_audio_open(struct usbh_audio *audio_class, const char *name, uint32_t samp_freq, uint8_t bitresolution);
 int usbh_audio_close(struct usbh_audio *audio_class, const char *name);
-int usbh_audio_set_volume(struct usbh_audio *audio_class, const char *name, uint8_t ch, uint8_t volume);
+int usbh_audio_set_volume(struct usbh_audio *audio_class, const char *name, uint8_t ch, int volume_db);
 int usbh_audio_set_mute(struct usbh_audio *audio_class, const char *name, uint8_t ch, bool mute);
 
 void usbh_audio_run(struct usbh_audio *audio_class);

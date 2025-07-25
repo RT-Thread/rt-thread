@@ -28,10 +28,10 @@ extern "C" {
        .data_align                      = ADC_DATAALIGN_RIGHT,                  \
        .eoc_poll_time_max               = 100,                                  \
        .hard_trig_enable                = RT_FALSE,                             \
-       .hard_trig_src                   = ADC_HARDTRIG_ADTRG_PIN,               \
+       .hard_trig_src                   = ADC_HARDTRIG_EVT0,                    \
        .internal_trig0_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig0_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig0_sel              = EVT_SRC_MAX,                          \
+       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
        .internal_trig1_sel              = EVT_SRC_MAX,                          \
@@ -39,6 +39,26 @@ extern "C" {
        .data_reg_auto_clear             = RT_TRUE,                              \
     }
 #endif /* ADC1_INIT_PARAMS */
+
+#if defined (BSP_ADC1_USING_DMA)
+#ifndef ADC1_EOCA_DMA_CONFIG
+#define ADC1_EOCA_DMA_CONFIG                                                    \
+    {                                                                           \
+        .Instance                       = ADC1_EOCA_DMA_INSTANCE,               \
+        .channel                        = ADC1_EOCA_DMA_CHANNEL,                \
+        .clock                          = ADC1_EOCA_DMA_CLOCK,                  \
+        .trigger_select                 = ADC1_EOCA_DMA_TRIG_SELECT,            \
+        .trigger_event                  = EVT_SRC_ADC1_EOCA,                    \
+        .flag                           = ADC1_EOCA_DMA_TRANS_FLAG,             \
+        .irq_config                     =                                       \
+        {                                                                       \
+            .irq_num                    = ADC1_EOCA_DMA_IRQn,                   \
+            .irq_prio                   = ADC1_EOCA_DMA_INT_PRIO,               \
+            .int_src                    = ADC1_EOCA_DMA_INT_SRC,                \
+        },                                                                      \
+    }
+#endif /* ADC1_EOCA_DMA_CONFIG */
+#endif /* BSP_ADC1_USING_DMA */
 #endif /* BSP_USING_ADC1 */
 
 #ifdef BSP_USING_ADC2
@@ -51,10 +71,10 @@ extern "C" {
        .data_align                      = ADC_DATAALIGN_RIGHT,                  \
        .eoc_poll_time_max               = 100,                                  \
        .hard_trig_enable                = RT_FALSE,                             \
-       .hard_trig_src                   = ADC_HARDTRIG_ADTRG_PIN,               \
+       .hard_trig_src                   = ADC_HARDTRIG_EVT0,                    \
        .internal_trig0_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig0_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig0_sel              = EVT_SRC_MAX,                          \
+       .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
        .internal_trig1_sel              = EVT_SRC_MAX,                          \
@@ -62,6 +82,26 @@ extern "C" {
        .data_reg_auto_clear             = RT_TRUE,                              \
     }
 #endif /* ADC2_INIT_PARAMS */
+
+#if defined (BSP_ADC2_USING_DMA)
+#ifndef ADC2_EOCA_DMA_CONFIG
+#define ADC2_EOCA_DMA_CONFIG                                                    \
+    {                                                                           \
+        .Instance                       = ADC2_EOCA_DMA_INSTANCE,               \
+        .channel                        = ADC2_EOCA_DMA_CHANNEL,                \
+        .clock                          = ADC2_EOCA_DMA_CLOCK,                  \
+        .trigger_select                 = ADC2_EOCA_DMA_TRIG_SELECT,            \
+        .trigger_event                  = EVT_SRC_ADC2_EOCA,                    \
+        .flag                           = ADC2_EOCA_DMA_TRANS_FLAG,             \
+        .irq_config                     =                                       \
+        {                                                                       \
+            .irq_num                    = ADC2_EOCA_DMA_IRQn,                   \
+            .irq_prio                   = ADC2_EOCA_DMA_INT_PRIO,               \
+            .int_src                    = ADC2_EOCA_DMA_INT_SRC,                \
+        },                                                                      \
+    }
+#endif /* ADC2_EOCA_DMA_CONFIG */
+#endif /* BSP_ADC2_USING_DMA */
 #endif /* BSP_USING_ADC2 */
 
 #ifdef __cplusplus

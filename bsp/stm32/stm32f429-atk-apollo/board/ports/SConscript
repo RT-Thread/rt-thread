@@ -1,0 +1,37 @@
+import os
+from building import *
+
+objs = []
+cwd  = GetCurrentDir()
+
+# add general drivers
+src = []
+path =  [cwd]
+
+if GetDepend(['BSP_USING_ETH']):
+    src += Glob('phy_reset.c')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('spi_flash_init.c')
+
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('sdcard_port.c')
+
+if GetDepend(['BSP_USING_AUDIO']):
+    src += Glob('audio/drv_wm8978.c')
+    src += Glob('audio/drv_sound.c')
+    path += [cwd + '/audio']
+
+if GetDepend(['BSP_USING_AUDIO_RECORD']):
+    src += Glob('audio/drv_mic.c')
+    path += [cwd + '/audio']
+    
+CPPDEFINES = ['STM32F429xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

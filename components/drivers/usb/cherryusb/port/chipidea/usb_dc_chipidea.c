@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2021-2024 HPMicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
+/*
+ * Copyright (c) 2024, sakumisu
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include "usbd_core.h"
 #include "usb_chipidea_reg.h"
 
@@ -293,7 +304,7 @@ static void usb_qtd_init(dcd_qtd_t *p_qtd, void *data_ptr, uint16_t total_bytes)
     if (data_ptr != NULL) {
         p_qtd->buffer[0] = (uint32_t)data_ptr;
         for (uint8_t i = 1; i < 5; i++) {
-            p_qtd->buffer[i] |= ((p_qtd->buffer[i - 1]) & 0xFFFFF000UL) + 4096U;
+            p_qtd->buffer[i] = ((p_qtd->buffer[i - 1]) & 0xFFFFF000UL) + 4096U;
         }
     }
 }
@@ -451,6 +462,10 @@ int usb_dc_init(uint8_t busid)
     /* Clear status */
     USB_OTG_DEV->USBSTS = USB_OTG_DEV->USBSTS;
 
+#ifdef CONFIG_USBDEV_SOF_ENABLE
+    int_mask |= USB_USBINTR_SRE_MASK;
+#endif
+
     /* Enable interrupt mask */
     USB_OTG_DEV->USBINTR |= int_mask;
 
@@ -514,10 +529,7 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
 {
     uint8_t ep_idx = USB_EP_GET_IDX(ep->bEndpointAddress);
 
-    /* Must not exceed max endpoint number */
-    if (ep_idx >= CONFIG_USBDEV_EP_NUM) {
-        return -1;
-    }
+    USB_ASSERT_MSG(ep_idx < CONFIG_USBDEV_EP_NUM, "Ep addr %02x overflow", ep->bEndpointAddress);
 
     chipidea_edpt_open(busid, ep->bEndpointAddress, USB_GET_ENDPOINT_TYPE(ep->bmAttributes), ep->wMaxPacketSize);
 
@@ -622,6 +634,12 @@ void USBD_IRQHandler(uint8_t busid)
         USB_LOG_ERR("usbd intr error!\r\n");
     }
 
+#ifdef CONFIG_USBDEV_SOF_ENABLE
+    if (int_status & intr_sof) {
+        usbd_event_sof_handler(busid);
+    }
+#endif
+
     if (int_status & intr_reset) {
         g_chipidea_udc[busid].is_suspend = false;
         memset(g_chipidea_udc[busid].in_ep, 0, sizeof(struct chipidea_ep_state) * CONFIG_USBDEV_EP_NUM);
@@ -655,17 +673,10 @@ void USBD_IRQHandler(uint8_t busid)
 
     if (int_status & intr_usb) {
         uint32_t const edpt_complete = USB_OTG_DEV->ENDPTCOMPLETE;
-        USB_OTG_DEV->ENDPTCOMPLETE = edpt_complete;
         uint32_t edpt_setup_status = USB_OTG_DEV->ENDPTSETUPSTAT;
 
-        if (edpt_setup_status) {
-            /*------------- Set up Received -------------*/
-            USB_OTG_DEV->ENDPTSETUPSTAT = edpt_setup_status;
-            dcd_qhd_t *qhd0 = chipidea_qhd_get(busid, 0);
-            usbd_event_ep0_setup_complete_handler(busid, (uint8_t *)&qhd0->setup_request);
-        }
-
         if (edpt_complete) {
+            USB_OTG_DEV->ENDPTCOMPLETE = edpt_complete;
             for (uint8_t ep_idx = 0; ep_idx < (CONFIG_USBDEV_EP_NUM * 2); ep_idx++) {
                 if (edpt_complete & (1 << ep_idx2bit(ep_idx))) {
                     transfer_len = 0;
@@ -702,6 +713,13 @@ void USBD_IRQHandler(uint8_t busid)
                     }
                 }
             }
+        }
+
+        if (edpt_setup_status) {
+            /*------------- Set up Received -------------*/
+            USB_OTG_DEV->ENDPTSETUPSTAT = edpt_setup_status;
+            dcd_qhd_t *qhd0 = chipidea_qhd_get(busid, 0);
+            usbd_event_ep0_setup_complete_handler(busid, (uint8_t *)&qhd0->setup_request);
         }
     }
 }

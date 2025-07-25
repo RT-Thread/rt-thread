@@ -37,17 +37,21 @@ USB_FS_MODE, USB_HS_MODE, USB_HS_EXTERNAL_PHY defined comment
 
 #if defined(BSP_USING_USBHS)
 #define USB_HS_MODE
-#elif defined(BSP_USING_USBFS)
+#endif
+#if defined(BSP_USING_USBFS)
 #define USB_FS_MODE
-#else
+#endif
+#if !defined(BSP_USING_USBHS) && !defined(BSP_USING_USBFS)
 #define USB_FS_MODE
 #endif
 
 #if defined(BSP_USING_USBD)
 #define USE_DEVICE_MODE
-#elif defined(BSP_USING_USBH)
+#endif
+#if defined(BSP_USING_USBH)
 #define USE_HOST_MODE
-#else
+#endif
+#if !defined(BSP_USING_USBD) && !defined(BSP_USING_USBH)
 #define USE_DEVICE_MODE
 #endif
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f65xxx_66xxx_opa.h
- * @version $Rev:: 6911         $
- * @date    $Date:: 2023-05-10 #$
+ * @version $Rev:: 8260         $
+ * @date    $Date:: 2024-11-05 #$
  * @brief   The header file of the OPA library.
  *************************************************************************************************************
  * @attention
@@ -57,11 +57,6 @@ typedef struct
 {
   u32 OPA_ScalerEnable;
   u32 OPA_ExternalPinEnable;
-  #if (LIBCFG_OPA_PGA)
-  u32 OPA_PGAEnable;
-  u32 OPA_UnitGainEnable;
-  u32 OPA_PGAGain;
-  #endif
 } OPA_InitTypeDef;
 /**
  * @brief Enumeration of OPA PGA Gain.
@@ -115,14 +110,6 @@ typedef enum
 #define OPA_ExternalPin_ENABLE                    ((u32)0x00000008)
 #define OPA_ExternalPin_DISABLE                   ((u32)0x00000000)
 
-/* Definitions of OPA PGA Enable Bit                                                                        */
-#define OPA_PGA_ENABLE                            ((u32)0x00000004)
-#define OPA_PGA_DISABLE                           ((u32)0x00000000)
-
-/* Definitions of OPA UnitGain Enable Bit                                                                   */
-#define OPA_UNITGAIN_ENABLE                       ((u32)0x00000002)
-#define OPA_UNITGAIN_DISABLE                      ((u32)0x00000000)
-
 /* Definitions of OPA Output Status                                                                         */
 #define OPA_OUTPUT_HIGH                           ((u32)0x00000080)
 #define OPA_OUTPUT_LOW                            ((u32)0x00000000)
@@ -139,19 +126,6 @@ typedef enum
 #define IS_OPA_ScalerEnable(x)                    ((x == OPA_SCALER_ENABLE) || (x == OPA_SCALER_DISABLE))
 
 #define IS_OPA_ExtPinEnable(x)                    ((x == OPA_ExternalPin_ENABLE) || (x == OPA_ExternalPin_DISABLE))
-
-#define IS_OPA_PGAEnable(x)                       ((x == OPA_PGA_ENABLE) || (x == OPA_PGA_DISABLE))
-
-#define IS_OPA_UnitGainEnable(x)                  ((x == OPA_UNITGAIN_ENABLE) || (x == OPA_UNITGAIN_DISABLE))
-
-#define IS_OPA_PGA_SEL(SEL)                       ((SEL == PGA_GAIN_5)  || (SEL == PGA_GAIN_6)  || \
-                                                   (SEL == PGA_GAIN_7)  || (SEL == PGA_GAIN_8)  || \
-                                                   (SEL == PGA_GAIN_11) || (SEL == PGA_GAIN_12) || \
-                                                   (SEL == PGA_GAIN_15) || (SEL == PGA_GAIN_16) || \
-                                                   (SEL == PGA_GAIN_23) || (SEL == PGA_GAIN_24) || \
-                                                   (SEL == PGA_GAIN_31) || (SEL == PGA_GAIN_32) || \
-                                                   (SEL == PGA_GAIN_47) || (SEL == PGA_GAIN_48) || \
-                                                   (SEL == PGA_GAIN_63) || (SEL == PGA_GAIN_64))
 
 #define IS_OPA_OFMMODE(MODE)                      ((MODE == OPA_OFFSET_CALIBRATION_MODE) || \
                                                    (MODE == OPA_NORMAL_MODE))
@@ -183,11 +157,6 @@ void OPA_UnprotectConfig(HT_OPA_TypeDef* HT_OPAn);
 void OPA_Init(HT_OPA_TypeDef* HT_OPAn, OPA_InitTypeDef* OPA_InitStruct);
 void OPA_StructInit(OPA_InitTypeDef* OPA_InitStruct);
 void OPA_ExternalInputCmd(HT_OPA_TypeDef* HT_OPAn, ControlStatus NewState);
-#if (LIBCFG_OPA_PGA)
-void OPA_UnitGainCmd(HT_OPA_TypeDef* HT_OPAn, ControlStatus NewState);
-void OPA_PGACmd(HT_OPA_TypeDef* HT_OPAn, ControlStatus NewState);
-void OPA_PGAGain(HT_OPA_TypeDef* HT_OPAn, u8 bGAIN_SEL);
-#endif
 void OPA_ScalerCmd(HT_OPA_TypeDef* HT_OPAn, ControlStatus NewState);
 void OPA_SetScalerValue(HT_OPA_TypeDef* HT_OPAn, u32 Scaler_Value);
 FlagStatus OPA_GetOutputStatus(HT_OPA_TypeDef* HT_OPAn);

@@ -17,9 +17,13 @@
 #include <rtdbg.h>
 
 #include "mmio.h"
+#include "drv_ioremap.h"
 
-#define CVI_RTC_CTRL_BASE       0x05025000U
-#define CVI_RTC_REG_BASE        0x05026000U
+static rt_ubase_t _cvi_rtc_ctrl_base = 0x05025000U;
+static rt_ubase_t _cvi_rtc_reg_base = 0x05026000U;
+
+#define CVI_RTC_CTRL_BASE       _cvi_rtc_ctrl_base
+#define CVI_RTC_REG_BASE        _cvi_rtc_reg_base
 #define RTC_CTRL0_UNLOCKKEY     0x4
 #define RTC_CTRL0               0x8
 #define RTC_APB_BUSY_SEL        0x3C
@@ -48,8 +52,14 @@ static int cvi_restart(void)
 
 void rt_hw_cpu_reset(void)
 {
+    rt_kprintf("Rebooting...\n");
+
+    _cvi_rtc_ctrl_base = (rt_ubase_t)DRV_IOREMAP((void *)_cvi_rtc_ctrl_base, 0x1000);
+    _cvi_rtc_reg_base = (rt_ubase_t)DRV_IOREMAP((void *)_cvi_rtc_reg_base, 0x1000);
+
     cvi_restart();
 
+    rt_kprintf("ERROR: Failed to reboot the system\n");
     while (1);
 }
 

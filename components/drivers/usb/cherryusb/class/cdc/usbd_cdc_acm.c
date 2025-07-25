@@ -42,7 +42,7 @@ static int cdc_acm_class_interface_request_handler(uint8_t busid, struct usb_set
             memcpy(&line_coding, *data, setup->wLength);
             USB_LOG_DBG("Set intf:%d linecoding <%d %d %s %s>\r\n",
                         intf_num,
-                        line_coding.dwDTERate,
+                        (unsigned int)line_coding.dwDTERate,
                         line_coding.bDataBits,
                         parity_name[line_coding.bParityType],
                         stop_name[line_coding.bCharFormat]);
@@ -67,7 +67,7 @@ static int cdc_acm_class_interface_request_handler(uint8_t busid, struct usb_set
             *len = 7;
             USB_LOG_DBG("Get intf:%d linecoding %d %d %d %d\r\n",
                         intf_num,
-                        line_coding.dwDTERate,
+                        (unsigned int)line_coding.dwDTERate,
                         line_coding.bCharFormat,
                         line_coding.bParityType,
                         line_coding.bDataBits);

@@ -59,7 +59,7 @@ void key_handler(void *param)
  ** \retval int32_t Return value, if needed
  **
  ******************************************************************************/
-int32_t main(void)
+int main(void)
 {
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
     rt_pin_attach_irq(KEY_PIN, PIN_IRQ_MODE_FALLING, key_handler, RT_NULL);

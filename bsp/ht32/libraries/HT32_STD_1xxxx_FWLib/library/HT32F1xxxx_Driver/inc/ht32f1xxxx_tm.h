@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_tm.h
- * @version $Rev:: 2971         $
- * @date    $Date:: 2023-10-25 #$
+ * @version $Rev:: 3180         $
+ * @date    $Date:: 2024-10-15 #$
  * @brief   The header file of the TM library.
  *************************************************************************************************************
  * @attention
@@ -341,11 +341,11 @@ typedef struct
  * @brief Used to check parameter of the output compare mode.
  */
 #define IS_TM_OM_CMP(x) (((x) == TM_OM_MATCH_NOCHANGE) || \
-                           ((x) == TM_OM_MATCH_INACTIVE) || \
-                           ((x) == TM_OM_MATCH_ACTIVE) || \
-                           ((x) == TM_OM_MATCH_TOGGLE) || \
-                           ((x) == TM_OM_PWM1) || \
-                           ((x) == TM_OM_PWM2))
+                         ((x) == TM_OM_MATCH_INACTIVE) || \
+                         ((x) == TM_OM_MATCH_ACTIVE)   || \
+                         ((x) == TM_OM_MATCH_TOGGLE)   || \
+                         ((x) == TM_OM_PWM1)           || \
+                         ((x) == TM_OM_PWM2))
 /**
  * @brief Used to check parameter of the output mode.
  */
@@ -377,7 +377,7 @@ typedef struct
 /**
  * @brief Used to check parameter of the counter mode.
  */
-#define IS_TM_CNT_MODE(x)   ((x == TM_CNT_MODE_UP) ||  \
+#define IS_TM_CNT_MODE(x)   ((x == TM_CNT_MODE_UP)  ||  \
                              (x == TM_CNT_MODE_CA1) || \
                              (x == TM_CNT_MODE_CA2) || \
                              (x == TM_CNT_MODE_CA3) || \
@@ -397,23 +397,23 @@ typedef struct
 /**
  * @brief Used to check parameter of the channel input selection.
  */
-#define IS_TM_CHCCS(x)  ((x == TM_CHCCS_DIRECT) || \
-                           (x == TM_CHCCS_INDIRECT) || \
-                           (x == TM_CHCCS_TRCED))
+#define IS_TM_CHCCS(x)  ((x == TM_CHCCS_DIRECT)   || \
+                         (x == TM_CHCCS_INDIRECT) || \
+                         (x == TM_CHCCS_TRCED))
 /**
  * @brief Used to check parameter of the channel capture prescaler.
  */
 #define IS_TM_CHPSC(x)  ((x == TM_CHPSC_OFF) || \
-                           (x == TM_CHPSC_2) || \
-                           (x == TM_CHPSC_4) || \
-                           (x == TM_CHPSC_8))
+                         (x == TM_CHPSC_2)   || \
+                         (x == TM_CHPSC_4)   || \
+                         (x == TM_CHPSC_8))
 /**
  * @brief Used to check parameter of the ETI prescaler.
  */
 #define IS_TM_ETIPSC(x) ((x == TM_ETIPSC_OFF) || \
-                           (x == TM_ETIPSC_2) || \
-                           (x == TM_ETIPSC_4) || \
-                           (x == TM_ETIPSC_8))
+                         (x == TM_ETIPSC_2)   || \
+                         (x == TM_ETIPSC_4)   || \
+                         (x == TM_ETIPSC_8))
 /**
  * @brief Used to check parameter of the TM interrupt.
  */

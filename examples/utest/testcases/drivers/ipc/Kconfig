@@ -4,4 +4,8 @@ config UTEST_COMPLETION_TC
     bool "rt_completion testcase"
     default n
 
+config UTEST_WORKQUEUE_TC
+    bool "rt_workqueue testcase"
+    default n
+
 endmenu

@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
  * @file    ht32f1xxxx_ckcu.c
- * @version $Rev:: 2972         $
- * @date    $Date:: 2023-10-28 #$
+ * @version $Rev:: 3181         $
+ * @date    $Date:: 2024-10-15 #$
  * @brief   This file provides all the Clock Control Unit firmware functions.
  *************************************************************************************************************
  * @attention
@@ -432,9 +432,9 @@ void CKCU_SetCKREFPrescaler(CKCU_CKREFPRE_TypeDef CKREFPRE)
 /********************************************************************************************************//**
  * @brief Configure the CK_USART prescaler.
  * @param URPRE: specify the prescaler value.
- *        This parameter can be:
- *        @arg CKCU_URPRE_DIV1: USART clock divided by 1
- *        @arg CKCU_URPRE_DIV2: USART clock divided by 2
+ *   This parameter can be:
+ *     @arg CKCU_URPRE_DIV1: USART clock divided by 1
+ *     @arg CKCU_URPRE_DIV2: USART clock divided by 2
  * @retval None
  ************************************************************************************************************/
 void CKCU_SetUSARTPrescaler(CKCU_URPRE_TypeDef URPRE)
@@ -574,28 +574,28 @@ u32 CKCU_GetPLLFrequency(void)
 /*********************************************************************************************************//**
  * @brief Configure the APB peripheral prescaler.
  * @param Perip: specify the APB peripheral.
- *        This parameter can be:
- *        @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1,
- *             CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
- *             CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
- *             CKCU_PCLK_MCTM0, CKCU_PCLK_MCTM1,
- *             CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
- *             CKCU_PCLK_USART0, CKCU_PCLK_USART1,
- *             CKCU_PCLK_UART0, CKCU_PCLK_UART1,
- *             CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC, CKCU_PCLK_CMP,
- *             CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
- *             CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
- *             CKCU_PCLK_I2S,
- *             CKCU_PCLK_SCTM0, CKCU_PCLK_SCTM1,
- *             CKCU_PCLK_PWM0
+ *   This parameter can be:
+ *     @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1,
+ *          CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
+ *          CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
+ *          CKCU_PCLK_MCTM0, CKCU_PCLK_MCTM1,
+ *          CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
+ *          CKCU_PCLK_USART0, CKCU_PCLK_USART1,
+ *          CKCU_PCLK_UART0, CKCU_PCLK_UART1,
+ *          CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC, CKCU_PCLK_CMP,
+ *          CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
+ *          CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
+ *          CKCU_PCLK_I2S,
+ *          CKCU_PCLK_SCTM0, CKCU_PCLK_SCTM1,
+ *          CKCU_PCLK_PWM0
  * @param PCLKPrescaler: specify the value of prescaler.
- *        This parameter can be:
- *        @arg CKCU_APBCLKPRE_DIV1:  specific peripheral clock = PCLK / 1  (inapplicable to BKPRCLK)
- *        @arg CKCU_APBCLKPRE_DIV2:  specific peripheral clock = PCLK / 2  (inapplicable to BKPRCLK)
- *        @arg CKCU_APBCLKPRE_DIV4:  specific peripheral clock = PCLK / 4
- *        @arg CKCU_APBCLKPRE_DIV8:  specific peripheral clock = PCLK / 8
- *        @arg CKCU_APBCLKPRE_DIV16: specific peripheral clock = PCLK / 16 (BKPRCLK only)
- *        @arg CKCU_APBCLKPRE_DIV32: specific peripheral clock = PCLK / 32 (BKPRCLK only)
+ *   This parameter can be:
+ *     @arg CKCU_APBCLKPRE_DIV1:  specific peripheral clock = PCLK / 1  (inapplicable to BKPRCLK)
+ *     @arg CKCU_APBCLKPRE_DIV2:  specific peripheral clock = PCLK / 2  (inapplicable to BKPRCLK)
+ *     @arg CKCU_APBCLKPRE_DIV4:  specific peripheral clock = PCLK / 4
+ *     @arg CKCU_APBCLKPRE_DIV8:  specific peripheral clock = PCLK / 8
+ *     @arg CKCU_APBCLKPRE_DIV16: specific peripheral clock = PCLK / 16 (BKPRCLK only)
+ *     @arg CKCU_APBCLKPRE_DIV32: specific peripheral clock = PCLK / 32 (BKPRCLK only)
  * @retval None
  ************************************************************************************************************/
 void CKCU_SetPeripPrescaler(CKCU_PeripPrescaler_TypeDef Perip, CKCU_APBCLKPRE_TypeDef PCLKPrescaler)
@@ -607,28 +607,28 @@ void CKCU_SetPeripPrescaler(CKCU_PeripPrescaler_TypeDef Perip, CKCU_APBCLKPRE_Ty
     Prescaler -= 2;
   }
   Perip &= 0x0000001F;
-  CKCU_BF_WRITE(*PCSR, (3UL << Perip), Perip, Prescaler);
+  CKCU_BF_WRITE(*PCSR, (3UL << Perip), Perip, (Prescaler & 0x3));
 }
 #endif
 
 /*********************************************************************************************************//**
  * @brief Return the operating frequency of the specific APB peripheral.
  * @param Perip: specify the APB peripheral.
- *        This parameter can be:
- *        @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1,
- *             CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
- *             CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
- *             CKCU_PCLK_MCTM0, CKCU_PCLK_MCTM1,
- *             CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
- *             CKCU_PCLK_USART0, CKCU_PCLK_USART1,
- *             CKCU_PCLK_UART0, CKCU_PCLK_UART1,
- *             CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC, CKCU_PCLK_CMP,
- *             CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
- *             CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
- *             CKCU_PCLK_I2S,
- *             CKCU_PCLK_I2S,
- *             CKCU_PCLK_SCTM0, CKCU_PCLK_SCTM1,
- *             CKCU_PCLK_PWM0
+ *   This parameter can be:
+ *     @arg CKCU_PCLK_I2C0, CKCU_PCLK_I2C1,
+ *          CKCU_PCLK_SPI0, CKCU_PCLK_SPI1,
+ *          CKCU_PCLK_BFTM0, CKCU_PCLK_BFTM1,
+ *          CKCU_PCLK_MCTM0, CKCU_PCLK_MCTM1,
+ *          CKCU_PCLK_GPTM0, CKCU_PCLK_GPTM1,
+ *          CKCU_PCLK_USART0, CKCU_PCLK_USART1,
+ *          CKCU_PCLK_UART0, CKCU_PCLK_UART1,
+ *          CKCU_PCLK_AFIO, CKCU_PCLK_EXTI, CKCU_PCLK_ADC, CKCU_PCLK_CMP,
+ *          CKCU_PCLK_WDTR, CKCU_PCLK_BKPR,
+ *          CKCU_PCLK_SCI0, CKCU_PCLK_SCI1,
+ *          CKCU_PCLK_I2S,
+ *          CKCU_PCLK_I2S,
+ *          CKCU_PCLK_SCTM0, CKCU_PCLK_SCTM1,
+ *          CKCU_PCLK_PWM0
  * @retval Frequency in Hz
  ************************************************************************************************************/
 u32 CKCU_GetPeripFrequency(CKCU_PeripPrescaler_TypeDef Perip)
@@ -953,10 +953,10 @@ void CKCU_PeripClockConfig(CKCU_PeripClockConfig_TypeDef Clock, ControlStatus Cm
 /*********************************************************************************************************//**
  * @brief Configure the reference clock of HSI auto-trim function.
  * @param CLKSRC: specify the clock source.
- *        This parameter can be:
- *        @arg CKCU_ATC_LSE: LSE is selected as reference clock
- *        @arg CKCU_ATC_USB: USB is selected as reference clock
- *        @arg CKCU_ATC_CKIN: External pin (CKIN) is selected as reference clock
+ *   This parameter can be:
+ *     @arg CKCU_ATC_LSE: LSE is selected as reference clock
+ *     @arg CKCU_ATC_USB: USB is selected as reference clock
+ *     @arg CKCU_ATC_CKIN: External pin (CKIN) is selected as reference clock
  * @retval None
  ************************************************************************************************************/
 void CKCU_HSIAutoTrimClkConfig(CKCU_ATC_TypeDef CLKSRC)
@@ -983,9 +983,9 @@ void CKCU_ATCInit(CKCU_ATCInitTypeDef* ATC_InitStruct)
 /*********************************************************************************************************//**
  * @brief Automatic Trimming Algorithm Mode Selection.
  * @param Algo: Search Algorithm.
- *        This parameter can be:
- *        @arg CKCU_ATC_BINARY_SEARCH: Auto Trimming Controller is used binary search to approach the target range
- *        @arg CKCU_ATC_LINEAR_SEARCH: Auto Trimming Controller is used linear search to approach the target range
+ *   This parameter can be:
+ *     @arg CKCU_ATC_BINARY_SEARCH: Auto Trimming Controller is used binary search to approach the target range
+ *     @arg CKCU_ATC_LINEAR_SEARCH: Auto Trimming Controller is used linear search to approach the target range
  * @retval None
  ***********************************************************************************************************/
 void CKCU_HSIAutoTrimAlgorithm(u32 Algo)
@@ -996,9 +996,9 @@ void CKCU_HSIAutoTrimAlgorithm(u32 Algo)
 /*********************************************************************************************************//**
  * @brief Lock Target Range Selection.
  * @param Tolerance: Variation Tolerance.
- *        This parameter can be:
- *        @arg CKCU_ATC_DOUBLE_PRECISION: 0.2 % variation
- *        @arg CKCU_ATC_SINGLE_PRECISION: 0.1 % variation
+ *   This parameter can be:
+ *     @arg CKCU_ATC_DOUBLE_PRECISION: 0.2 % variation
+ *     @arg CKCU_ATC_SINGLE_PRECISION: 0.1 % variation
  * @retval None
  ***********************************************************************************************************/
 void CKCU_HSIAutoTrimFreqTolerance(u32 Tolerance)

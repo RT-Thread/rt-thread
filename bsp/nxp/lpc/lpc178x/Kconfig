@@ -14,6 +14,7 @@ config SOC_LPC178
     select ARCH_ARM_CORTEX_M3
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select PKG_USING_NXP_LPC_DRIVER
     default y
 
 source "$(BSP_DIR)/drivers/Kconfig"
