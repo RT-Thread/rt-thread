@@ -9,141 +9,129 @@ menu "On-chip Peripheral Drivers"
         bool "Enable drivers example"
         default n
 
+    if BSP_USING_DRIVERS_EXAMPLE
+        config BSP_USING_DRIVERS_AUTO_TEST
+        bool "Enable drivers example"
+        default n
+    endif
+
     config BSP_USING_IOPAD
         bool "Enable IOPAD"
         default y
 
-    menuconfig BSP_USING_UART
-        bool "Enable UART"
-        default y
+    menuconfig BSP_USING_UART_LAYER
+        bool "Enable Uart Layer"
+        default n
         select USE_SERIAL # sdk serial component
         select RT_USING_SERIAL
-        if BSP_USING_UART
-            config RT_USING_UART0
-                bool "Enable UART0"
-                default n
-            config RT_USING_UART1
-                bool "Enable UART1"
-                default y
-            config RT_USING_UART2
-                bool "Enable UART2"
-                default n
-            config RT_USING_UART3
-                bool "Enable UART3"
-                default n
-        endif
+        if BSP_USING_UART_LAYER
+            choice
+                prompt "Select Uart Mode"
+                config BSP_USING_UART
+                    bool "Standard Uart"
+                    help
+                        Use standard uart communication mode
+                config BSP_USING_UART_MSG
+                    bool "message-based Uart"
+                    help
+                        Use message-based uart communication
+            endchoice
 
-    menuconfig BSP_USING_SPI
-        bool "Enable Spi"
-        default n
-        select RT_USING_SPI
-        if BSP_USING_SPI
-            config RT_USING_SPIM0
-                bool "Enable spim0"
-                default n
-            config RT_USING_SPIM1
-                bool "Enable spim1"
-                default n
-            config RT_USING_SPIM2
-                bool "Enable spim2"
-                default n
-            config RT_USING_SPIM3
-                bool "Enable spim3"
-                default n
-        endif
-
-    menuconfig BSP_USING_CAN
-        bool "Enable CAN"
-        default n
-        select RT_USING_CAN
-        if BSP_USING_CAN
-            config RT_USING_CANFD
-            bool "Enable canfd"
-            select RT_CAN_USING_CANFD
-            default n
-            config RT_USING_FILTER
-            bool "Enable can filter"
-            select RT_CAN_USING_HDR
-            default n
-            config RT_USING_CAN0
-            bool "Enable can0"
-            default n
-            config RT_USING_CAN1
-            bool "Enable can1"
-            default n
-        endif
-
-    menuconfig BSP_USING_GPIO
-        bool "Enable GPIO"
-        default n
-        select RT_USING_PIN
-
-    menuconfig BSP_USING_QSPI
-        bool "Enable QSPI"
-        default n
-        select RT_USING_QSPI
-        select RT_USING_SPI
-        select RT_USING_PIN
-        if BSP_USING_QSPI
-            config RT_USING_QSPI0
-            bool "Enable qspi0"
-            default n
-            if RT_USING_QSPI0
-                config USING_QSPI_CHANNEL0
-                    bool "using qspi channel_0"
+            if BSP_USING_UART
+                config RT_USING_UART0
+                    bool "Enable UART0"
                     default n
-                config USING_QSPI_CHANNEL1
-                    bool "using qspi channel_1"
+                config RT_USING_UART1
+                    bool "Enable UART1"
+                    default y
+                config RT_USING_UART2
+                    bool "Enable UART2"
+                    default n
+                config RT_USING_UART3
+                    bool "Enable UART3"
+                    default n
+            endif
+
+            if BSP_USING_UART_MSG
+                config RT_USING_UART0_MSG
+                    bool "Enable UART0_MSG"
+                    default n
+                config RT_USING_UART1_MSG
+                    bool "Enable UART1_MSG"
+                    default n
+                config RT_USING_UART2_MSG
+                    bool "Enable UART2_MSG"
+                    default y
+            endif
+        endif
+
+    menuconfig BSP_USING_SPI_LAYER
+        menuconfig BSP_USING_SPI_LAYER
+        bool "Enable SPI Layer"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI_LAYER
+            choice
+                prompt "Select SPI Mode"
+                config BSP_USING_SPI
+                    bool "Standard SPI"
+                    help
+                        Use standard SPI communication mode
+                config BSP_USING_SPI_MSG
+                    bool "IOP message-based SPI"
+                    help
+                        Use IOP message-based SPI communication
+            endchoice
+
+            if BSP_USING_SPI
+                config RT_USING_SPIM0
+                    bool "Enable SPIM0"
+                    default n
+                config RT_USING_SPIM1
+                    bool "Enable SPIM1"
+                    default n
+                config RT_USING_SPIM2
+                    bool "Enable SPIM2"
+                    default n
+                config RT_USING_SPIM3
+                    bool "Enable SPIM3"
+                    default n
+            endif
+
+            if BSP_USING_SPI_MSG
+                config RT_USING_SPIM0_MSG
+                    bool "Enable SPIM0_MSG"
+                    default n
+                config RT_USING_SPIM1_MSG
+                    bool "Enable SPIM1_MSG"
+                    default n
+                config RT_USING_SPIM2_MSG
+                    bool "Enable SPIM2_MSG"
+                    default n
+                config RT_USING_SPIM3_MSG
+                    bool "Enable SPIM3_MSG"
                     default n
             endif
         endif
 
-    menuconfig BSP_USING_ETH
-        bool "Enable ETH"
-        default n
-        if BSP_USING_ETH
-            config RT_LWIP_PBUF_POOL_BUFSIZE
-                        int "The size of each pbuf in the pbuf pool"
-                        range 1500 2000
-                        default 1700
-        endif
-
-    menuconfig BSP_USING_PWM
-        bool "Enable PWM"
-        default n
-        select RT_USING_PWM
-        if BSP_USING_PWM
-            config RT_USING_PWM0
-                bool "Enable pwm0"
-                default n
-            config RT_USING_PWM1
-                bool "Enable pwm1"
-                default n
-            config RT_USING_PWM2
-                bool "Enable pwm2"
-                default n
-            config RT_USING_PWM3
-                bool "Enable pwm3"
-                default n
-            config RT_USING_PWM4
-                bool "Enable pwm4"
-                default n
-            config RT_USING_PWM5
-                bool "Enable pwm5"
-                default n
-            config RT_USING_PWM6
-                bool "Enable pwm6"
-                default n
-            config RT_USING_PWM7
-                bool "Enable pwm7"
-                default n
-        endif
-
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C"
+    menuconfig BSP_USING_I2C_LAYER
+        bool "Enable I2C Layer"
         default n
         select RT_USING_I2C
-        if BSP_USING_I2C
+        if BSP_USING_I2C_LAYER
+            choice
+                prompt "Select I2C Mode"
+                config BSP_USING_I2C
+                    bool "Standard I2C"
+                    help
+                        Use standard I2C communication mode
+                config BSP_USING_I2C_MSG
+                    bool "IOP message-based I2C"
+                    help
+                        Use IOP message-based I2C communication
+            endchoice
+
+            if BSP_USING_I2C
             config I2C_USE_MIO
             bool "using i2c mio"
             default n
@@ -219,49 +207,209 @@ menu "On-chip Peripheral Drivers"
                     default n
                 endif
             endif
-       
-    menuconfig BSP_USING_SDIF
-        bool "Enable SDIF"
+
+            if BSP_USING_I2C_MSG
+                config RT_USING_I2C0_MSG
+                    bool "Enable i2c0 msg"
+                    default n
+                config RT_USING_I2C1_MSG
+                    bool "Enable i2c1 msg"
+                    default n
+                config RT_USING_I2C2_MSG
+                    bool "Enable i2c2 msg"
+                    default n
+                config RT_USING_I2C3_MSG
+                    bool "Enable i2c3 msg"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config RT_USING_CANFD
+            bool "Enable canfd"
+            select RT_CAN_USING_CANFD
+            default n
+            config RT_USING_FILTER
+            bool "Enable can filter"
+            select RT_CAN_USING_HDR
+            default n
+            config RT_USING_CAN0
+            bool "Enable can0"
+            default n
+            config RT_USING_CAN1
+            bool "Enable can1"
+            default n
+        endif
+
+    menuconfig BSP_USING_GPIO
+        bool "Enable GPIO"
+        default n
+        select RT_USING_PIN
+
+    menuconfig BSP_USING_QSPI
+        bool "Enable QSPI"
+        default n
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        select RT_USING_PIN
+        if BSP_USING_QSPI
+            config RT_USING_QSPI0
+            bool "Enable qspi0"
+            default n
+            if RT_USING_QSPI0
+                config USING_QSPI_CHANNEL0
+                    bool "using qspi channel_0"
+                    default n
+                config USING_QSPI_CHANNEL1
+                    bool "using qspi channel_1"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_ETH_LAYER
+        bool "Enable ETH Layer"
+        default n
+        if BSP_USING_ETH_LAYER
+            config RT_LWIP_PBUF_POOL_BUFSIZE
+                        int "The size of each pbuf in the pbuf pool"
+                        range 1500 2000
+                        default 1700
+            
+            choice
+                prompt "Select ETH Mode"
+                config BSP_USING_ETH
+                    bool "Standard ETH"
+                    help
+                        Use standard ETH communication mode
+                config BSP_USING_ETH_MSG
+                    bool "IOP message-based ETH"
+                    help
+                        Use IOP message-based ETH communication
+            endchoice
+
+            
+            if BSP_USING_ETH
+                config RT_USING_XMAC0
+                    bool "Enable XMAC0"
+                    default n
+                config RT_USING_XMAC1
+                    bool "Enable XMAC1"
+                    default n
+                config RT_USING_XMAC2
+                    bool "Enable XMAC2"
+                    default n
+                config RT_USING_XMAC3
+                    bool "Enable XMAC3"
+                    default n
+            endif
+
+            if BSP_USING_ETH_MSG
+                config RT_USING_XMAC0_MSG
+                    bool "Enable XMAC0_MSG"
+                    default n
+                config RT_USING_XMAC1_MSG
+                    bool "Enable XMAC1_MSG"
+                    default n
+                config RT_USING_XMAC2_MSG
+                    bool "Enable XMAC2_MSG"
+                    default n
+                config RT_USING_XMAC3_MSG
+                    bool "Enable XMAC3_MSG"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config RT_USING_PWM0
+                bool "Enable pwm0"
+                default n
+            config RT_USING_PWM1
+                bool "Enable pwm1"
+                default n
+            config RT_USING_PWM2
+                bool "Enable pwm2"
+                default n
+            config RT_USING_PWM3
+                bool "Enable pwm3"
+                default n
+            config RT_USING_PWM4
+                bool "Enable pwm4"
+                default n
+            config RT_USING_PWM5
+                bool "Enable pwm5"
+                default n
+            config RT_USING_PWM6
+                bool "Enable pwm6"
+                default n
+            config RT_USING_PWM7
+                bool "Enable pwm7"
+                default n
+        endif
+
+    menuconfig BSP_USING_SDIF_LAYER
+        bool "Enable SDIF Layer"
         default n
         select RT_USING_SDIO
-    
-        if BSP_USING_SDIF
-                config BSP_USING_SDCARD_FATFS
-                    bool "Enable SDCARD (FATFS)"
-                    select RT_USING_DFS_ELMFAT
-                    default n
-    
+
+        if BSP_USING_SDIF_LAYER
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select RT_USING_DFS_ELMFAT
+                default n
+
+            choice
+                prompt "Select SD Mode"
+                default BSP_USING_SDIF
+                config BSP_USING_SDIF
+                    bool "Standard SD"
+                    help
+                        Use standard SD protocol
+                config BSP_USING_SDIF_MSG
+                    bool "Message-based SD"
+                    help
+                        Use message-based SD communication
+            endchoice
+
+            if (BSP_USING_SDIF || BSP_USING_SDIF_MSG)
                 config USING_SDIF0
                     bool "Use SDIF0"
+                    default n
 
                 if USING_SDIF0
                     choice 
-                    prompt "Select SD0 Usage"
-                    default USE_SDIF0_TF
+                        prompt "Select SD0 Usage"
+                        default USE_SDIF0_TF
                         config USE_SDIF0_TF
                             bool "SD0(TF)"
-
                         config USE_SDIF0_EMMC
                             bool "SD0(eMMC)"
-
                     endchoice
                 endif
-
+            endif
+            if (BSP_USING_SDIF)
                 config USING_SDIF1
                     bool "Use SDIF1"
+                    default n
 
                 if USING_SDIF1
                     choice 
-                    prompt "Select SD1 Usage"
-                    default USE_SDIF1_TF
+                        prompt "Select SD1 Usage"
+                        default USE_SDIF1_TF
                         config USE_SDIF1_TF
                             bool "SD1(TF)"
-
                         config USE_SDIF1_EMMC
                             bool "SD1(eMMC)"
                     endchoice
                 endif
-
+            endif
         endif
 
         menuconfig BSP_USING_DC
@@ -281,6 +429,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable I2S"
             default n
             select RT_USING_AUDIO
+            select BSP_USING_DEVICE
         if BSP_USING_I2S
             config RT_I2S_SAMPLERATE
                 int "The samplerate param"
@@ -290,6 +439,18 @@ menu "On-chip Peripheral Drivers"
                 default 16
             config RT_USING_I2S0
                 bool "Enable i2s0"
+                default n
+        endif
+
+        menuconfig BSP_USING_DEVICE
+        bool "Enable Device"
+            default n
+        if BSP_USING_DEVICE
+            config BSP_USING_ES8336
+                bool "Enable ES8336"
+                default n
+            config BSP_USING_ES8388
+                bool "Enable ES8388"
                 default n
         endif
 endmenu

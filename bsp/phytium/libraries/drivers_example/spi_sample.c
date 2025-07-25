@@ -1,24 +1,36 @@
 #include"rtconfig.h"
-#ifdef BSP_USING_SPI
-#include"rtconfig.h"
-#include <rtthread.h>
-#include <rtdevice.h>
-#include "interrupt.h"
-#define LOG_TAG      "spi_drv"
-#include "drv_log.h"
-#include <string.h>
-#include "fparameters.h"
-#include "fcpu_info.h"
-#include "fkernel.h"
-#include "ftypes.h"
+#if defined(BSP_USING_SPI_LAYER)
+    #include"rtconfig.h"
+    #include <rtthread.h>
+    #include <rtdevice.h>
+    #include "auto_test.h"
+    #include "interrupt.h"
+    #if defined(BSP_USING_SPI)
+        #define LOG_TAG      "spi_drv"
+    #elif defined(BSP_USING_SPI_MSG)
+        #define LOG_TAG      "spi_msg_drv"
+    #endif
+    #include "drv_log.h"
+    #include <string.h>
+    #include "fparameters.h"
+    #include "fcpu_info.h"
+    #include "fkernel.h"
+    #include "ftypes.h"
+    #include <dfs_file.h>
 
-#include <dfs_file.h>
-#include "fspim.h"
-#include "fspim_hw.h" /* include low-level header file for internal probe */
-#include "drv_spi.h"
+    #if defined(BSP_USING_SPI)
+        #include "fspim.h"
+        #include "fspim_hw.h" /* include low-level header file for internal probe */
+        #include "drv_spi.h"
+    #elif defined(BSP_USING_SPI_MSG)
+        #include "fspim_msg.h"
+        #include "fspim_msg_hw.h" /* include low-level header file for internal probe */
+        #include "drv_spi_msg.h"
+    #endif
+
 static struct rt_spi_device spi_flash_device;
 /* spi test example */
-static void fspim_test_sample(int argc, char *argv[])
+rt_err_t fspim_test_sample()
 {
     static struct rt_spi_device *spi_device = RT_NULL;
     static struct rt_spi_device *spi_bus = RT_NULL;
@@ -29,7 +41,7 @@ static void fspim_test_sample(int argc, char *argv[])
     rt_spi_bus_attach_device(&spi_flash_device, "flash", "SPI2", spi_bus);
 #endif
 
-#if defined(FIREFLY_DEMO_BOARD)
+#if defined(FIREFLY_DEMO_BOARD)||defined(CUS_DEMO_BOARD)
     spi_bus = (struct rt_spi_device *)rt_device_find("SPI0");
     rt_spi_bus_attach_device(&spi_flash_device, "flash", "SPI0", spi_bus);
 #endif

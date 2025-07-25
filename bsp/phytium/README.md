@@ -33,6 +33,7 @@
 | CAN               |     支持     | CAN/CANFD设备通信 |
 | I2C               |     支持     | I2C设备通信 |
 | SPI               |     支持     | SPI设备通信 |
+| QSPI              |     支持     | QSPI设备通信 |
 | DC                |     支持     | DC显示设备 |
 | USB3(XHCI)        |     支持     | USB3(XHCI)设备支持|
 | USB2(Host/Device) |     支持     | USB2(Host/Device)设备支持|
@@ -42,6 +43,7 @@
 | Phytium PI          |     支持     | 支持SMP |
 | E2000D              |     支持     | 支持SMP |
 | E2000Q              |     支持     | 支持SMP |
+| PD2408              |     支持     | 支持SMP |
 
 ##  3. 如何在 Ubuntu, RT-Thread env, RT-Thread Studio 环境下使用此BSP
 
@@ -66,7 +68,7 @@
 
 ## 4. 如何添加开发板
 
->注:BSP已适配E2000Q_DEMO，E2000D_DEMO，PHYTIUMPI开发板，若需填加系列其他开发板，请按以下步骤进行
+>注:BSP已适配E2000Q_DEMO，E2000D_DEMO，PHYTIUMPI，PD2408_TEST_A，PD2408_TEST_B开发板，若需填加系列其他开发板，请按以下步骤进行
 
 - 请[阅读文档](./doc/how_to_add_cus_board.md)，按照指导添加自定义开发板
 

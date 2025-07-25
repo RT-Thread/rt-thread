@@ -32,13 +32,17 @@
     #define MAX_HANDLERS 160
 #endif
 
-#if defined(TARGET_E2000)
+#if defined(TARGET_PE220X)
     #define MAX_HANDLERS 270
+#endif
+
+#if defined(TARGET_PD2408)
+    #define MAX_HANDLERS 1024
 #endif
 
 #define GIC_IRQ_START 0
 #define GIC_ACK_INTID_MASK 0x000003ff
-
+#define RT_CORE_AFF(x) (CORE##x##_AFF | 0x80000000)
 
 rt_uint64_t get_main_cpu_affval(void);
 
@@ -51,7 +55,7 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 rt_inline uintptr_t platform_get_gic_redist_base(void)
 {
     uintptr_t redis_base, mpidr_aff, gicr_typer_aff;
-    mpidr_aff = (uintptr_t)(GetAffinity() & 0xfff);
+    mpidr_aff = (uintptr_t)(GetAffinity() & CORE_AFF_MASK);
 
     for (redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
     {

@@ -20,13 +20,19 @@
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
  *  1.0   liuzhihong  2023/11/28        first release
+ *  2.0   huangjin    2025/06/11        add support for xmac_msg
  */
 #ifndef LWIP_PORT_H
 #define LWIP_PORT_H
 
+#ifdef BSP_USING_ETH
 #include "drv_xmac.h"
-
 #define LWIP_PORT_INTERFACE_SGMII  FXMAC_OS_INTERFACE_SGMII
 #define LWIP_PORT_INTERFACE_RGMII  FXMAC_OS_INTERFACE_RGMII
+#elif defined(BSP_USING_ETH_MSG)
+#include "drv_xmac_msg.h"
+#define LWIP_PORT_INTERFACE_SGMII  FXMAC_MSG_OS_INTERFACE_SGMII
+#define LWIP_PORT_INTERFACE_RGMII  FXMAC_MSG_OS_INTERFACE_RGMII
+#endif
 
 #endif
