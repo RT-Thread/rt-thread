@@ -81,6 +81,7 @@ static int _get_parent_path(const char *fullpath, char *path)
         }
     }
 
+    rt_free(full_path);
     return len;
 }
 
