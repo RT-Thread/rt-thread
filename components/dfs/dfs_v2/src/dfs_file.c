@@ -50,7 +50,7 @@ static int _get_parent_path(const char *fullpath, char *path)
     int len = 0;
     char *str = 0;
 
-    char *full_path = strdup(fullpath);
+    char *full_path = rt_strdup(fullpath);
     if (full_path == NULL)
     {
         rt_set_errno(ENOMEM);
