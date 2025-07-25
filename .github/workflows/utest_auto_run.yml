@@ -46,6 +46,7 @@ jobs:
 
         config_file:
           - "default.cfg"
+          - "kernel/object.cfg"
 
           # cpp11
           # - "cpp11/cpp11.cfg"
