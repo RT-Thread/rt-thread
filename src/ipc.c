@@ -1575,18 +1575,32 @@ RTM_EXPORT(rt_mutex_trytake);
 
 
 /**
- * @brief    This function will release a mutex. If there is thread suspended on the mutex, the thread will be resumed.
+ * @brief    Release a mutex, optionally forcing the release even if the current thread is not the owner.
+ *           If threads are suspended on the mutex, the highest-priority thread will be resumed.
  *
- * @note     If there are threads suspended on this mutex, the first thread in the list of this mutex object
- *           will be resumed, and a thread scheduling (rt_schedule) will be executed.
- *           If no threads are suspended on this mutex, the count value mutex->value of this mutex will increase by 1.
+ * @note     This function provides two distinct release modes:
+ *           Standard mode enforces normal ownership rules where only the owning thread
+ *           may release the mutex. Force mode bypasses ownership checks and directly
+ *           modifies the hold count to enable release by any thread.
  *
- * @param    mutex is a pointer to a mutex object.
+ *           In both modes, if threads are suspended on the mutex, the highest priority
+ *           waiting thread will be resumed, potentially triggering thread scheduling.
+ *           When no threads are waiting, the mutex owner and hold count are reset.
  *
- * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
- *           If the return value is any other values, it means that the mutex release failed.
+ * @param    mutex     Pointer to the mutex object.
+ * @param    is_force  If RT_TRUE, bypass ownership check and force release.
+ *                     If RT_FALSE, enforce standard owner-only release.
+ *
+ * @return   Operation status:
+ *           RT_EOK: Success.
+ *           -RT_ERROR: Failed (non-force mode and current thread is not owner).
+ *
+ * @warning  Forced release (is_force=RT_TRUE) should only be used when:
+ *           The caller is not the mutex owner and the original owner thread
+ *           is guaranteed to be closed (rt_thread_close) and no longer executing any code,
+ *           or the caller is the current mutex owner.
  */
-rt_err_t rt_mutex_release(rt_mutex_t mutex)
+static rt_err_t _rt_mutex_release(rt_mutex_t mutex, rt_bool_t is_force)
 {
     rt_sched_lock_level_t slvl;
     struct rt_thread *thread;
@@ -1611,9 +1625,21 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
 
-    /* mutex only can be released by owner */
-    if (thread != mutex->owner)
+    if (is_force)
     {
+        /*
+         * Force release mode:
+         * Bypass ownership check and prepare for release by
+         * setting hold count to 1 before decrement
+         */
+        mutex->hold = 1;
+    }
+    else if (thread != mutex->owner)
+    {
+        /*
+         * Standard release mode:
+         * Reject non-owner thread's release attempt
+         */
         thread->error = -RT_ERROR;
         rt_spin_unlock(&(mutex->spinlock));
 
@@ -1713,7 +1739,45 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     return RT_EOK;
 }
+
+
+/**
+ * @brief    Release a mutex owned by current thread.
+ *
+ * @note     Resumes first suspended thread if any (requires scheduling).
+ *           Increases mutex->value if no threads waiting.
+ *           Must be called by mutex owner with spinlock held.
+ *
+ * @param    mutex Pointer to the mutex object.
+ *
+ * @return   RT_EOK on success, -RT_ERROR if not owner.
+ */
+rt_err_t rt_mutex_release(rt_mutex_t mutex)
+{
+    return _rt_mutex_release(mutex, RT_FALSE);
+}
 RTM_EXPORT(rt_mutex_release);
+
+
+/**
+ * @brief    Forcefully release a mutex regardless of ownership or recursive holds.
+ *
+ * @note     This function bypasses all ownership verification and ignores recursive hold counts.
+ *           It will resume the first suspended thread if available, which may trigger scheduling.
+ *           If no threads are waiting, the mutex value will be reset.
+ *
+ * @warning  When releasing a mutex not owned by the caller, the original owner thread
+ *           must have been properly terminated via rt_thread_close and must not be
+ *           executing any code at all.
+ *
+ * @param    mutex Pointer to the mutex object.
+ *
+ * @return   RT_EOK on success.
+ */
+rt_err_t rt_mutex_force_release(rt_mutex_t mutex)
+{
+    return _rt_mutex_release(mutex, RT_TRUE);
+}
 
 
 /**
