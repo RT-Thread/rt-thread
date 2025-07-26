@@ -83,6 +83,15 @@ config RT_CPUS_NR
     help
         Number of CPUs in the system
 
+config RT_SMP_THREAD_DETACH_TIMEOUT
+        int "SMP thread detach timeout (ms)"
+        depends on RT_USING_SMP
+        default 2000
+        range 100 5000
+        help
+            Timeout value for waiting thread to detach from CPU in SMP mode.
+            Adjust based on hardware characteristics and system load.
+
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
     default 8
