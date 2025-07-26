@@ -130,6 +130,8 @@
 #define KERNEL_VADDR_START 0xffffffc000000000
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
+#define ARCH_RISCV_VECTOR
+#define ARCH_VECTOR_VLEN_128
 #define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
 #define ARCH_USING_NEW_CTX_SWITCH
@@ -565,8 +567,9 @@
 #define BSP_USING_SDIO0
 #define BSP_SD_MNT_DEVNAME "sd0p1"
 /* end of Drivers Configuration */
-#define BOARD_fpgac908
+#define BOARD_C908
 #define __STACKSIZE__ 65536
 #define BSP_ROOTFS_TYPE_ELMFAT
+#define BSP_RISCV_FPU_D
 
 #endif

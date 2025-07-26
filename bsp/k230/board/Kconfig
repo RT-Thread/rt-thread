@@ -5,6 +5,22 @@ menu "Drivers Configuration"
         select RT_USING_ADC
         default n
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        select RT_USING_PWM
+        default n
+
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+
+            config BSP_USING_PWM1
+                bool "Enable PWM1"
+                default n
+
+        endif
+
     config BSP_USING_HARDLOCK
         bool "Enable Hard-Lock"
         default y
