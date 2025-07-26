@@ -116,6 +116,7 @@ static void _thread_detach_from_mutex(rt_thread_t thread) {}
 
 static void _thread_exit(void)
 {
+    rt_err_t error;
     struct rt_thread *thread;
     rt_base_t critical_level;
 
@@ -124,12 +125,18 @@ static void _thread_exit(void)
 
     critical_level = rt_enter_critical();
 
-    rt_thread_close(thread);
+    error=rt_thread_close(thread);
 
-    _thread_detach_from_mutex(thread);
+    /* This check prevents other threads from concurrently executing _thread_detach
+     * and duplicating the detach operations. Only proceed if close succeeds.
+     */
+    if(error == RT_EOK)
+    {
+        _thread_detach_from_mutex(thread);
 
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
+        /* insert to defunct thread list */
+        rt_thread_defunct_enqueue(thread);
+    }
 
     rt_exit_critical_safe(critical_level);
 
@@ -423,11 +430,14 @@ RTM_EXPORT(rt_thread_startup);
  */
 rt_err_t rt_thread_close(rt_thread_t thread)
 {
+    rt_err_t error;
     rt_sched_lock_level_t slvl;
     rt_uint8_t thread_status;
 
     /* forbid scheduling on current core if closing current thread */
     RT_ASSERT(thread != rt_thread_self() || rt_critical_level());
+
+    error = RT_EOK;
 
     /* before checking status of scheduler */
     rt_sched_lock(&slvl);
@@ -447,12 +457,56 @@ rt_err_t rt_thread_close(rt_thread_t thread)
 
         /* change stat */
         rt_sched_thread_close(thread);
+
+    #ifdef RT_USING_SMP
+        int cpu_id;
+        rt_tick_t timeout = RT_TICK_PER_SECOND;
+        rt_bool_t need_wait = RT_FALSE;
+
+        cpu_id = RT_SCHED_CTX(thread).oncpu;
+
+        if ((cpu_id != RT_CPU_DETACHED) && (cpu_id != rt_cpu_get_id()))
+        {
+            rt_hw_ipi_send(RT_SCHEDULE_IPI, RT_CPU_MASK ^ (1 << cpu_id));
+            need_wait = RT_TRUE;
+        }
+
+        rt_sched_unlock(slvl);
+
+        while (need_wait && timeout--)
+        {
+            rt_sched_lock(&slvl);
+
+            cpu_id = RT_SCHED_CTX(thread).oncpu;
+
+            rt_sched_unlock(slvl);
+
+            if (cpu_id == RT_CPU_DETACHED)
+            {
+                break;
+            }
+        }
+
+        if (need_wait && timeout == 0)
+        {
+            error = -RT_ETIMEOUT;
+        }
+
+        return error;
+    #endif
+    }
+    else
+    {
+        /* Avoid duplicate closing: If the thread is already closed, return an error.
+         * This prevents race conditions when multiple threads call close/detach/delete concurrently.
+         */
+        error = -RT_ERROR;
     }
 
     /* scheduler works are done */
     rt_sched_unlock(slvl);
 
-    return RT_EOK;
+    return error;
 }
 RTM_EXPORT(rt_thread_close);
 
@@ -491,10 +545,17 @@ static rt_err_t _thread_detach(rt_thread_t thread)
 
     error = rt_thread_close(thread);
 
-    _thread_detach_from_mutex(thread);
+    if (error == RT_EOK)
+    {
+        /* Only proceed if rt_thread_close() succeeded.
+        * This ensures thread resources are safely released before detaching mutexes
+        * and enqueueing to the defunct list.
+        */
+        _thread_detach_from_mutex(thread);
 
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
+        /* insert to defunct thread list */
+        rt_thread_defunct_enqueue(thread);
+    }
 
     rt_exit_critical_safe(critical_level);
     return error;
