@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -672,7 +672,13 @@ static rt_err_t _match_name(struct rt_object *obj, void *data)
 {
     struct _obj_find_param *param = data;
     const char *name = param->match_name;
-    if (rt_strncmp(obj->name, name, RT_NAME_MAX) == 0)
+    char truncated_name[RT_NAME_MAX];
+
+    /* Truncate input name to RT_NAME_MAX - 1 to match object name storage */
+    rt_strncpy(truncated_name, name, RT_NAME_MAX - 1);
+    truncated_name[RT_NAME_MAX - 1] = '\0';
+
+    if (rt_strcmp(obj->name, truncated_name) == 0)
     {
         param->matched_obj = obj;
 
@@ -705,7 +711,8 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     };
 
     /* parameter check */
-    if (name == RT_NULL) return RT_NULL;
+    if (name == RT_NULL || rt_object_get_information(type) == RT_NULL)
+        return RT_NULL;
 
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -731,7 +738,9 @@ rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_uint8_t name_size
     if ((object != RT_NULL) && (name != RT_NULL) && (name_size != 0U))
     {
         const char *obj_name = object->name;
-        (void) rt_strncpy(name, obj_name, (rt_size_t)name_size);
+        rt_strncpy(name, obj_name, (rt_size_t)name_size);
+        /* Ensure null-termination */
+        name[name_size - 1] = '\0';
         result = RT_EOK;
     }
 
@@ -794,3 +803,4 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj)
 #endif
 
 /**@}*/
+

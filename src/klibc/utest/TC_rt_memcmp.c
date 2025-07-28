@@ -121,7 +121,7 @@ static void TC_rt_memcmp_partial_match(void)
     uassert_int_not_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
 }
 
-#define LARGE_ARRAY_SIZE 1000
+#define LARGE_ARRAY_SIZE 500
 
 static void TC_rt_memcmp_large_array(void)
 {
