@@ -126,9 +126,8 @@
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V2
-#define RT_SERIAL_BUF_STRATEGY_OVERWRITE
-#define RT_SERIAL_USING_DMA
+#define RT_USING_SERIAL_V1
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -387,10 +386,7 @@
 
 /* Hardware Drivers Config */
 
-/* SOC Series */
-
 #define SOC_GD32E230C8T6
-/* end of SOC Series */
 
 /* Onboard Peripheral Drivers */
 
@@ -403,11 +399,6 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
-#define BSP_UART0_RX_USING_DMA
-#define BSP_UART0_TX_USING_DMA
-#define BSP_UART0_RX_BUFSIZE 64
-#define BSP_UART0_TX_BUFSIZE 32
-#define BSP_UART0_DMA_PING_BUFSIZE 32
 
 /* I2C Configuration */
 

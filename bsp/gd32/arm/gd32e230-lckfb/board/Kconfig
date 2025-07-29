@@ -2,30 +2,16 @@
 
 menu "Hardware Drivers Config"
 
-menu "SOC Series"
-    choice
-        prompt "Select GD32 SoC Series"
-        default SOC_SERIES_GD32E23x
+config SOC_SERIES_GD32E23x
+    bool
+    default y
 
-    config SOC_SERIES_GD32E23x
-        bool "GD32E23x Series"
-
-    endchoice
-
-    if SOC_SERIES_GD32E23x
-        choice
-            prompt "Select GD32 SoC"
-            default SOC_GD32E230C8T6
-
-        config SOC_GD32E230C8T6
-            bool "GD32E230C8T6"
-            select RT_USING_COMPONENTS_INIT
-            select RT_USING_USER_MAIN
-
-        endchoice
-    endif
-endmenu
-
+config SOC_GD32E230C8T6
+    bool
+    select SOC_SERIES_GD32E23x
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
 
 menu "Onboard Peripheral Drivers"
     menuconfig BSP_USING_LED
