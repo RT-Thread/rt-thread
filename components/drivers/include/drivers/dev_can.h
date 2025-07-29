@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,6 +20,9 @@
 #endif
 #ifndef RT_CANSND_BOX_NUM
 #define RT_CANSND_BOX_NUM   1
+#endif
+#ifndef RT_CANSND_MSG_TIMEOUT
+#define RT_CANSND_MSG_TIMEOUT 100
 #endif
 
 enum CAN_DLC
@@ -541,3 +544,4 @@ void rt_hw_can_isr(struct rt_can_device *can, int event);
 /*! @}*/
 
 #endif /*__DEV_CAN_H*/
+
