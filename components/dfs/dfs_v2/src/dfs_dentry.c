@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,6 +26,14 @@ struct dentry_hash_head
 };
 static struct dentry_hash_head hash_head;
 
+/**
+ * @brief Calculate hash value for a dentry based on mount point and path
+ *
+ * @param[in] mnt Pointer to the mount point structure
+ * @param[in] path Path string to be hashed (can be NULL)
+ *
+ * @return uint32_t Calculated hash value within range [0, DFS_DENTRY_HASH_NR-1]
+ */
 static uint32_t _dentry_hash(struct dfs_mnt *mnt, const char *path)
 {
     uint32_t val = 0;
@@ -40,6 +48,17 @@ static uint32_t _dentry_hash(struct dfs_mnt *mnt, const char *path)
     return (val ^ (unsigned long) mnt) & (DFS_DENTRY_HASH_NR - 1);
 }
 
+/**
+ * @brief Create a new directory entry (dentry) structure
+ *
+ * @param[in] mnt Pointer to the mount point structure
+ * @param[in] path Path string for the dentry (absolute or relative)
+ * @param[in] is_rela_path Flag indicating if path is relative (RT_TRUE) or absolute (RT_FALSE)
+ *
+ * @return struct dfs_dentry* Pointer to newly created dentry, or NULL if creation failed
+ *
+ * @note The created dentry will have its ref_count initialized to 1 and DENTRY_IS_ALLOCED flag set
+ */
 static struct dfs_dentry *_dentry_create(struct dfs_mnt *mnt, char *path, rt_bool_t is_rela_path)
 {
     struct dfs_dentry *dentry = RT_NULL;
@@ -75,16 +94,47 @@ static struct dfs_dentry *_dentry_create(struct dfs_mnt *mnt, char *path, rt_boo
     return dentry;
 }
 
+/**
+ * @brief Create a new directory entry (dentry) with absolute path
+ *
+ * @param[in] mnt Pointer to the mount point structure
+ * @param[in] fullpath Absolute path string for the dentry
+ *
+ * @return struct dfs_dentry* Pointer to newly created dentry, or NULL if creation failed
+ *
+ * @note This is a wrapper for _dentry_create() with is_rela_path set to RT_FALSE
+ * @see _dentry_create()
+ */
 struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath)
 {
     return _dentry_create(mnt, fullpath, RT_FALSE);
 }
 
+/**
+ * @brief Create a new directory entry (dentry) with relative path
+ *
+ * @param[in] mnt Pointer to the mount point structure
+ * @param[in] rela_path Relative path string for the dentry
+ *
+ * @return struct dfs_dentry* Pointer to newly created dentry, or NULL if creation failed
+ *
+ * @note This is a wrapper for _dentry_create() with is_rela_path set to RT_TRUE
+ * @see _dentry_create()
+ */
 struct dfs_dentry *dfs_dentry_create_rela(struct dfs_mnt *mnt, char *rela_path)
 {
     return _dentry_create(mnt, rela_path, RT_TRUE);;
 }
 
+/**
+ * @brief Increase reference count for a directory entry (dentry)
+ *
+ * @param[in,out] dentry Pointer to the directory entry structure to be referenced
+ *
+ * @return struct dfs_dentry* The same dentry pointer that was passed in
+ *
+ * @note This function will also increase reference count for associated vnode if exists
+ */
 struct dfs_dentry * dfs_dentry_ref(struct dfs_dentry *dentry)
 {
     if (dentry)
@@ -104,6 +154,13 @@ struct dfs_dentry * dfs_dentry_ref(struct dfs_dentry *dentry)
     return dentry;
 }
 
+/**
+ * @brief Decrease reference count for a directory entry (dentry) and free if count reaches zero
+ *
+ * @param[in,out] dentry Pointer to the directory entry structure to be unreferenced
+ *
+ * @return struct dfs_dentry* The same dentry pointer if ref_count > 0, NULL if freed
+ */
 struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
 {
     rt_err_t ret = RT_EOK;
@@ -161,6 +218,14 @@ struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
     return dentry;
 }
 
+/**
+ * @brief Look up a directory entry (dentry) in hash table by mount point and path
+ *
+ * @param[in] mnt Pointer to the mount point structure to search for
+ * @param[in] path Path string to search for
+ *
+ * @return struct dfs_dentry* Pointer to found dentry (with increased ref_count), or NULL if not found
+ */
 static struct dfs_dentry *_dentry_hash_lookup(struct dfs_mnt *mnt, const char *path)
 {
     rt_err_t ret = RT_EOK;
@@ -185,6 +250,11 @@ static struct dfs_dentry *_dentry_hash_lookup(struct dfs_mnt *mnt, const char *p
     return RT_NULL;
 }
 
+/**
+ * @brief Insert a directory entry (dentry) into the hash table
+ *
+ * @param[in,out] dentry Pointer to the directory entry to be inserted
+ */
 void dfs_dentry_insert(struct dfs_dentry *dentry)
 {
     dfs_file_lock();
@@ -193,8 +263,20 @@ void dfs_dentry_insert(struct dfs_dentry *dentry)
     dfs_file_unlock();
 }
 
-/*
- * lookup a dentry, return this dentry and increase refcount if exist, otherwise return NULL
+/**
+ * @brief Look up a directory entry (dentry) in the filesystem
+ *
+ * @param[in] mnt Pointer to the mount point structure
+ * @param[in] path Path string to look up
+ * @param[in] flags Additional lookup flags (currently unused)
+ *
+ * @return struct dfs_dentry* Pointer to found/created dentry (with increased ref_count), or NULL if not found
+ *
+ * @note This function first searches for dentry in hash table,
+ *       If not found and filesystem supports lookup operation:
+ *          - Creates new dentry
+ *          - Calls filesystem's lookup operation to get vnode
+ *          - If vnode is successfully obtained, adds dentry to hash table
  */
 struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint32_t flags)
 {
@@ -270,6 +352,16 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
     return dentry;
 }
 
+/**
+ * @brief Get the full path of a directory entry by combining mount point and relative path
+ *
+ * @param[in] dentry Pointer to the directory entry structure
+ *
+ * @return char* Newly allocated string containing full path, or NULL if allocation failed
+ *
+ * @note The caller is responsible for freeing the returned string using rt_free()
+ * @note Handles path concatenation with or without additional '/' separator
+ */
 char* dfs_dentry_full_path(struct dfs_dentry* dentry)
 {
     char *path = NULL;
@@ -298,6 +390,17 @@ char* dfs_dentry_full_path(struct dfs_dentry* dentry)
     return path;
 }
 
+/**
+ * @brief Get the parent directory path of a dentry by combining mount point and path
+ *
+ * @param[in] dentry Pointer to the directory entry structure
+ *
+ * @return char* Newly allocated string containing parent path, or NULL if allocation failed
+ *
+ * @note The caller is responsible for freeing the returned string using rt_free()
+ * @note Handles both absolute and relative paths correctly
+ * @note Returns mount point path if dentry is at root directory
+ */
 char* dfs_dentry_pathname(struct dfs_dentry* dentry)
 {
     char *pathname = RT_NULL;
@@ -332,6 +435,15 @@ char* dfs_dentry_pathname(struct dfs_dentry* dentry)
     return pathname;
 }
 
+/**
+ * @brief Calculate CRC32 checksum for the full path of a directory entry
+ *
+ * @param[in] dentry Pointer to the directory entry structure
+ *
+ * @return uint32_t CRC32 checksum value of the full path
+ *
+ * @note Uses standard CRC32 polynomial 0xEDB88320
+ */
 uint32_t dfs_dentry_full_path_crc32(struct dfs_dentry* dentry)
 {
     uint32_t crc32 = 0xFFFFFFFF;
@@ -354,6 +466,13 @@ uint32_t dfs_dentry_full_path_crc32(struct dfs_dentry* dentry)
     return crc32;
 }
 
+/**
+ * @brief Initialize the dentry hash table
+ *
+ * @return int Always returns 0 indicating success
+ *
+ * @note Initializes all hash buckets in the dentry hash table
+ */
 int dfs_dentry_init(void)
 {
     int i = 0;
@@ -366,6 +485,16 @@ int dfs_dentry_init(void)
     return 0;
 }
 
+/**
+ * @brief Dump all directory entries in the hash table for debugging
+ *
+ * @param[in] argc Number of command line arguments (unused)
+ * @param[in] argv Array of command line arguments (unused)
+ *
+ * @return int Always returns 0 indicating success
+ *
+ * @note Prints each dentry's full path, memory address and reference count
+ */
 int dfs_dentry_dump(int argc, char** argv)
 {
     int index = 0;
