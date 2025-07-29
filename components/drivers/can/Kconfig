@@ -6,7 +6,26 @@ if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
         default n
+        
     config RT_CAN_USING_CANFD
         bool "Enable CANFD support"
         default n
+        
+    config RT_CANMSG_BOX_SZ
+        int "CAN message box size"
+        default 16
+        help
+            Set the size of the CAN message box.
+            
+    config RT_CANSND_BOX_NUM
+        int "Number of CAN send queues"
+        default 1
+        help
+            Set the number of CAN send queues.
+            
+    config RT_CANSND_MSG_TIMEOUT
+        int "CAN send message timeout"
+        default 100
+        help
+            Set the timeout for CAN send messages.
 endif

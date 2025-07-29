@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -165,8 +165,16 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
             goto err_ret;
         }
 
-        can->status.sndchange = 1;
-        rt_completion_wait(&(tx_tosnd->completion), RT_WAITING_FOREVER);
+        can->status.sndchange |= 1<<no;
+        if (rt_completion_wait(&(tx_tosnd->completion), RT_CANSND_MSG_TIMEOUT) != RT_EOK)
+        {
+            level = rt_hw_interrupt_disable();
+            rt_list_insert_before(&tx_fifo->freelist, &tx_tosnd->list);
+            can->status.sndchange &= ~ (1<<no);
+            rt_hw_interrupt_enable(level);
+            rt_sem_release(&(tx_fifo->sem));
+            goto err_ret;
+        }
 
         level = rt_hw_interrupt_disable();
         result = tx_tosnd->result;
@@ -237,8 +245,12 @@ rt_inline int _can_int_tx_priv(struct rt_can_device *can, const struct rt_can_ms
         {
             continue;
         }
-        can->status.sndchange = 1;
-        rt_completion_wait(&(tx_fifo->buffer[no].completion), RT_WAITING_FOREVER);
+        can->status.sndchange |= 1<<no;
+        if (rt_completion_wait(&(tx_fifo->buffer[no].completion), RT_CANSND_MSG_TIMEOUT) != RT_EOK)
+        {
+            can->status.sndchange &= ~ (1<<no);
+            continue;
+        }
 
         result = tx_fifo->buffer[no].result;
         if (result == RT_CAN_SND_RESULT_OK)
@@ -892,16 +904,18 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
         no = event >> 8;
         tx_fifo = (struct rt_can_tx_fifo *) can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
-
-        if ((event & 0xff) == RT_CAN_EVENT_TX_DONE)
+        if (can->status.sndchange&(1<<no))
         {
-            tx_fifo->buffer[no].result = RT_CAN_SND_RESULT_OK;
+            if ((event & 0xff) == RT_CAN_EVENT_TX_DONE)
+            {
+                tx_fifo->buffer[no].result = RT_CAN_SND_RESULT_OK;
+            }
+            else
+            {
+                tx_fifo->buffer[no].result = RT_CAN_SND_RESULT_ERR;
+            }
+            rt_completion_done(&(tx_fifo->buffer[no].completion));
         }
-        else
-        {
-            tx_fifo->buffer[no].result = RT_CAN_SND_RESULT_ERR;
-        }
-        rt_completion_done(&(tx_fifo->buffer[no].completion));
         break;
     }
     }
@@ -972,3 +986,4 @@ int cmd_canstat(int argc, void **argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_canstat, canstat, stat can device status);
 #endif
+
