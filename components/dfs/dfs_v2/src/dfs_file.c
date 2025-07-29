@@ -76,7 +76,8 @@ static int _get_parent_path(const char *fullpath, char *path)
         }
         else if (len == 0) /* parent path is root path. */
         {
-            rt_memcpy(path, "/", 1);
+            path[0] = '/';
+            path[1] = '\0';
             len = 1;
         }
     }
