@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025 RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <board.h> 
+#include <board.h>
 
 
 #define LED_PIN BSP_LED_PIN
@@ -40,13 +40,13 @@ static void uart_send_thread_entry(void *parameter)
     char msg[] = "hello rt-thread\r\n";
 
     console_dev = rt_console_get_device();
-    
+
     if (!console_dev)
     {
         rt_kprintf("Failed to get console device.\n");
         return;
     }
-    
+
     rt_kprintf("UART send thread started. Will send message every 2 seconds.\n");
 
     while (1)
@@ -94,6 +94,7 @@ int main(void)
     {
         rt_kprintf("!!! FAILED to create uart_send thread. Not enough memory?\n");
     }
-    
+
     return 0;
 }
+

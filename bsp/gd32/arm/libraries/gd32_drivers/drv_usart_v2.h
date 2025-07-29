@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -63,3 +63,4 @@ int rt_hw_usart_init(void);
 #endif
 
 #endif /* __DRV_USART_V2_H__ */
+

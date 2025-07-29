@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,7 @@ struct rt_adc_device adc2;
 static const struct gd32_adc adc_obj[] = {
 #ifdef BSP_USING_ADC0
     {
-        #if defined SOC_SERIES_GD32E23x 
+        #if defined SOC_SERIES_GD32E23x
         ADC,
         RCU_ADC,
         {
@@ -274,3 +274,4 @@ static int rt_hw_adc_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_adc_init);
 #endif
+

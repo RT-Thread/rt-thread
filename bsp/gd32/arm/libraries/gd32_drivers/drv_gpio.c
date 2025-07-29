@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -471,6 +471,7 @@ static rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
+
     if (pin_irq_hdr_tab[hdr_index].pin != -1)
     {
         rt_hw_interrupt_enable(level);
@@ -661,10 +662,10 @@ void GD32_GPIO_EXTI_IRQHandler(rt_int8_t exti_line)
 void EXTI0_1_IRQHandler(void)
 {
     rt_interrupt_enter();
-    
+
     GD32_GPIO_EXTI_IRQHandler(0);
     GD32_GPIO_EXTI_IRQHandler(1);
-    
+
     rt_interrupt_leave();
 }
 
@@ -681,7 +682,7 @@ void EXTI2_3_IRQHandler(void)
 void EXTI4_15_IRQHandler(void)
 {
     rt_interrupt_enter();
-    
+
     GD32_GPIO_EXTI_IRQHandler(4);
     GD32_GPIO_EXTI_IRQHandler(5);
     GD32_GPIO_EXTI_IRQHandler(6);
@@ -694,7 +695,7 @@ void EXTI4_15_IRQHandler(void)
     GD32_GPIO_EXTI_IRQHandler(13);
     GD32_GPIO_EXTI_IRQHandler(14);
     GD32_GPIO_EXTI_IRQHandler(15);
-    
+
     rt_interrupt_leave();
 }
 #else
@@ -769,3 +770,4 @@ int rt_hw_pin_init(void)
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 #endif
+

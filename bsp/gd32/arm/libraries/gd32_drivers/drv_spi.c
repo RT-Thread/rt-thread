@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -183,7 +183,7 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
 
-    //Init SPI
+    /* Init SPI */
     gd32_spi_init(spi_device);
 
     /* data_width */
@@ -337,15 +337,15 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
                     data = *send_ptr++;
                 }
 
-                // Todo: replace register read/write by gd32f4 lib
-                //Wait until the transmit buffer is empty
+                /* Todo: replace register read/write by gd32f4 lib */
+                /* Wait until the transmit buffer is empty */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
-                //Wait until a data is received
+                /* Wait until a data is received */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 
                 if(recv_ptr != RT_NULL)
@@ -370,14 +370,14 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
                     data = *send_ptr++;
                 }
 
-                //Wait until the transmit buffer is empty
+                /* Wait until the transmit buffer is empty */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
-                //Wait until a data is received
+                /* Wait until a data is received */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 
                 if(recv_ptr != RT_NULL)
@@ -457,3 +457,4 @@ INIT_BOARD_EXPORT(rt_hw_spi_init);
 
 #endif /* BSP_USING_SPI0 || BSP_USING_SPI1 || BSP_USING_SPI2 || BSP_USING_SPI3 || BSP_USING_SPI4*/
 #endif /* RT_USING_SPI */
+

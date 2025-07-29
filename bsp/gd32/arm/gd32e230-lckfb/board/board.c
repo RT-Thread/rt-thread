@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025 RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -77,3 +77,4 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 }
+

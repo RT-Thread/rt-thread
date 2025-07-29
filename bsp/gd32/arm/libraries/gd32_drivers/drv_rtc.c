@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -52,8 +52,8 @@ static time_t get_rtc_timestamp(void)
 
     rtc_current_time_get(&rtc_current_time);
 
-    tm_new.tm_year = bcd_to_bin(rtc_current_time.rtc_year) + 100; // tm_year: years since 1900
-    tm_new.tm_mon  = bcd_to_bin(rtc_current_time.rtc_month) - 1;  // tm_mon: month (0 = January, 11 = December)
+    tm_new.tm_year = bcd_to_bin(rtc_current_time.rtc_year) + 100; /* tm_year: years since 1900 */
+    tm_new.tm_mon  = bcd_to_bin(rtc_current_time.rtc_month) - 1;  /* tm_mon: month (0 = January, 11 = December) */
     tm_new.tm_mday = bcd_to_bin(rtc_current_time.rtc_date);
     tm_new.tm_hour = bcd_to_bin(rtc_current_time.rtc_hour);
     tm_new.tm_min  = bcd_to_bin(rtc_current_time.rtc_minute);
@@ -78,7 +78,7 @@ static rt_err_t set_rtc_timestamp(time_t time_stamp)
     p_tm = gmtime(&time_stamp);
 
     /* GD32 RTC uses year starting from 2000; thus tm_year must be at least 100 (i.e., 2000 - 1900) */
-    
+
     if (p_tm->tm_year < 100)
     {
         return -RT_ERROR;
@@ -223,3 +223,4 @@ static int rt_hw_rtc_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
 #endif
+

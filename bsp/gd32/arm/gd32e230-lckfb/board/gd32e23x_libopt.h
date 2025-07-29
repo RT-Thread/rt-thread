@@ -56,3 +56,4 @@ OF SUCH DAMAGE.
 #include "gd32e23x_cmp.h"
 
 #endif /* GD32E23X_LIBOPT_H */
+
