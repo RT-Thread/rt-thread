@@ -29,6 +29,17 @@
 
 #define MAX_RW_COUNT 0xfffc0000
 
+/**
+ * @brief Get the length of the first path component
+ *
+ * This function calculates the length of the first path component in a given path string.
+ * For absolute paths (starting with '/'), it returns the length from the first '/' to
+ * the next '/' or end of string. For relative paths, it returns 0.
+ *
+ * @param[in] path The input path string to analyze
+ *
+ * @return int The length of the first path component, or 0 if not found
+ */
 rt_inline int _first_path_len(const char *path)
 {
     int i = 0;
@@ -45,6 +56,17 @@ rt_inline int _first_path_len(const char *path)
     return i;
 }
 
+/**
+ * @brief Get the parent directory path from a given full path
+ *
+ * This function extracts the parent directory path from a given full path string.
+ * It handles paths ending with '/' correctly by skipping the trailing slash.
+ *
+ * @param[in] fullpath The input full path string to analyze
+ * @param[out] path Buffer to store the extracted parent directory path
+ *
+ * @return int Length of the parent directory path, or 0 if no parent found
+ */
 static int _get_parent_path(const char *fullpath, char *path)
 {
     int len = 0;
@@ -86,6 +108,19 @@ static int _get_parent_path(const char *fullpath, char *path)
     return len;
 }
 
+/**
+ * @brief Attempt to read the target of a symbolic link
+ *
+ * This function tries to read the contents of a symbolic link file. It first looks up
+ * the dentry for the given path, checks if it's a symlink, and then calls the filesystem's
+ * readlink operation if available.
+ *
+ * @param[in] path The path of the symbolic link to read
+ * @param[in] mnt The mount point containing the symbolic link
+ * @param[out] link Buffer to store the link target (contents of the symlink)
+ *
+ * @return int Length of the link target on success, -1 on failure
+ */
 static int _try_readlink(const char *path, struct dfs_mnt *mnt, char *link)
 {
     int ret = -1;
@@ -106,6 +141,22 @@ static int _try_readlink(const char *path, struct dfs_mnt *mnt, char *link)
     return ret;
 }
 
+/**
+ * @brief Normalize a path by combining base path and link path
+ *
+ * This function creates a temporary path by combining the base path and link path,
+ * then normalizes it using dfs_normalize_path(). It handles memory allocation and
+ * cleanup internally.
+ *
+ * @param[in] path The base path to combine with the link
+ * @param[in] path_len Length of the base path
+ * @param[in] link_fn The link path to combine with the base path
+ * @param[in] link_len Length of the link path
+ *
+ * @return char* Normalized path string on success, RT_NULL on failure
+ *
+ * @note The caller is responsible for freeing the returned path
+ */
 static char *_dfs_normalize_path(const char *path, int path_len, const char *link_fn, int link_len)
 {
     char *tmp_path, *fp;
@@ -127,6 +178,20 @@ static char *_dfs_normalize_path(const char *path, int path_len, const char *lin
     return fp;
 }
 
+/**
+ * @brief Insert a link path into temporary path buffer
+ *
+ * This function inserts a symbolic link path into a temporary path buffer before
+ * the specified index position. It handles both relative and absolute paths.
+ *
+ * @param[in] link_fn The link path to insert
+ * @param[in] link_len Length of the link path
+ * @param[in,out] tmp_path The temporary path buffer to insert into
+ * @param[in,out] index Pointer to the insertion position index (updated after insertion)
+ *
+ * @return int 0 for relative path, 1 for absolute path, -1 on failure
+ * @note The index is modified to reflect the new insertion position
+ */
 static int _insert_link_path(const char *link_fn, int link_len, char *tmp_path, int *index)
 {
     int ret = -1;
@@ -152,10 +217,23 @@ static int _insert_link_path(const char *link_fn, int link_len, char *tmp_path, 
     return ret;
 }
 
-/*
- * rw_verify_area doesn't like huge counts. We limit
- * them to something that fits in "int" so that others
- * won't have to do range checks all the time.
+/**
+ * @brief Verify read/write area parameters and limit count size
+ *
+ * This function checks the validity of read/write parameters and limits the count
+ * to a maximum value (MAX_RW_COUNT) to prevent overflow. It ensures the position
+ * and count values are within valid ranges.
+ *
+ * @param[in] file Pointer to the file structure (unused in current implementation)
+ * @param[in] ppos Pointer to the position offset (input/output)
+ * @param[in] count Requested read/write count (input)
+ *
+ * @return ssize_t The verified count value (limited to MAX_RW_COUNT) or negative error code:
+ *         -EINVAL for invalid parameters
+ *         -EOVERFLOW if position + count would overflow
+ *
+ * @note rw_verify_area doesn't like huge counts. We limit them to something that fits in "int"
+ *       so that others won't have to do range checks all the time.
  */
 ssize_t rw_verify_area(struct dfs_file *file, off_t *ppos, size_t count)
 {
@@ -174,6 +252,17 @@ ssize_t rw_verify_area(struct dfs_file *file, off_t *ppos, size_t count)
     return count > MAX_RW_COUNT ? MAX_RW_COUNT : count;
 }
 
+/**
+ * @brief Get the current file position
+ *
+ * This function retrieves the current file position (offset) from the file structure.
+ * For regular files, it acquires a mutex lock before accessing the position to ensure
+ * thread safety. For other file types, it directly returns the position without locking.
+ *
+ * @param[in] file Pointer to the file structure containing position information
+ *
+ * @return off_t Current file position, or 0 if file pointer is NULL
+ */
 off_t dfs_file_get_fpos(struct dfs_file *file)
 {
     if (file)
@@ -188,6 +277,17 @@ off_t dfs_file_get_fpos(struct dfs_file *file)
     return 0;
 }
 
+/**
+ * @brief Set the current file position
+ *
+ * This function sets the file position (offset) in the file structure.
+ * It must be used as a pair of dfs_file_get_fpos(). For regular files, pos lock is acquared
+ * in dfs_file_get_fpos(), so it can be released directly after setting the position.
+ * Otherwise, pos lock should be acquired first to avoid releasing it without being acquired.
+ *
+ * @param[in] file Pointer to the file structure to modify
+ * @param[in] fpos The new file position to set
+ */
 void dfs_file_set_fpos(struct dfs_file *file, off_t fpos)
 {
     if (file)
@@ -201,6 +301,14 @@ void dfs_file_set_fpos(struct dfs_file *file, off_t fpos)
     }
 }
 
+/**
+ * @brief Initialize a file structure
+ *
+ * @param[in,out] file Pointer to the file structure to be initialized
+ *
+ * @note This function must be called before using any file operations
+ *       on a newly allocated file structure
+ */
 void dfs_file_init(struct dfs_file *file)
 {
     if (file)
@@ -212,6 +320,11 @@ void dfs_file_init(struct dfs_file *file)
     }
 }
 
+/**
+ * @brief Deinitialize a file structure
+ *
+ * @param[in,out] file Pointer to the file structure to be deinitialized
+ */
 void dfs_file_deinit(struct dfs_file *file)
 {
     if (file)
@@ -220,6 +333,14 @@ void dfs_file_deinit(struct dfs_file *file)
     }
 }
 
+/**
+ * @brief Decrement reference count and release file resources when count reaches zero
+ *
+ * This function safely decrements the reference count of a file structure and releases
+ * associated resources (dentry or vnode) when the reference count drops to zero.
+ *
+ * @param[in,out] file Pointer to the file structure to be unreferenced
+ */
 static void dfs_file_unref(struct dfs_file *file)
 {
     rt_err_t ret = RT_EOK;
@@ -256,14 +377,20 @@ static void dfs_file_unref(struct dfs_file *file)
     }
 }
 
-/*
- * this function is creat a nolink path.
+/**
+ * @brief Resolve the real path by resolving symbolic links and normalizing the path
  *
- * @param mnt
- * @param fullpath
- * @param mode
+ * This function resolves the real path of a given file path by handling symbolic links
+ * and normalizing the path components. It supports two modes of operation:
+ * - DFS_REALPATH_EXCEPT_LAST: Resolve all path components except the last one
+ * - DFS_REALPATH_ONLY_LAST: Resolve only the last path component
+ * - DFS_REALPATH_EXCEPT_NONE: Resolve all path components
  *
- * @return new path.
+ * @param[in,out] mnt Pointer to the mount point structure (updated if path changes)
+ * @param[in] fullpath The input path to resolve
+ * @param[in] mode Resolution mode (DFS_REALPATH_EXCEPT_LAST or DFS_REALPATH_ONLY_LAST)
+ *
+ * @return char* The resolved real path on success, RT_NULL on failure
  */
 char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
 {
@@ -324,10 +451,11 @@ char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
                 break;
             }
 
+            /* Process symbolic links if found */
             link_len = _try_readlink(path, *mnt, link_fn);
             if (link_len > 0)
             {
-                if (link_fn[0] == '/')
+                if (link_fn[0] == '/') /* Handle absolute path symlinks */
                 {
                     int ret = _insert_link_path(link_fn, link_len, tmp_path, &index);
                     if (ret < 0)
@@ -336,7 +464,7 @@ char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
                     }
                     path_len = 0;
                 }
-                else
+                else /* Handle relative path symlinks */
                 {
                     char *fp = _dfs_normalize_path(path, path_len, link_fn, link_len);
                     if (fp)
@@ -398,7 +526,7 @@ char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
             }
             else
             {
-                path_len += len;
+                path_len += len; /* Not a symlink, just advance path length */
             }
         }
 
@@ -413,13 +541,26 @@ _ERR_RET:
 }
 
 /**
- * this function will open a file which specified by path with specified oflags.
+ * @brief Open a file which specified by path with specified oflags.
  *
- * @param fd the file descriptor pointer to return the corresponding result.
- * @param path the specified file path.
- * @param oflags the oflags for open operator.
+ * This function opens or creates a file with given path and flags. It handles:
+ * - Path normalization and resolution (including symbolic links)
+ * - File creation when O_CREAT is specified
+ * - Permission checking
+ * - Directory vs regular file validation
+ * - Symbolic link following (unless O_NOFOLLOW is set)
  *
- * @return 0 on successful, -1 on failed.
+ * @param[in,out] file Pointer to file structure to be initialized
+ * @param[in] path the specified file path.
+ * @param[in] oflags the oflags for open operator. (O_RDONLY, O_WRONLY, O_CREAT, etc)
+ * @param[in] mode File permission mode (used when O_CREAT is specified)
+ *
+ * @return 0 on successful, -1 on failure:
+ *         -ENOENT if file doesn't exist and O_CREAT not set
+ *         -EEXIST if file exists and O_EXCL|O_CREAT set
+ *         -EPERM if permission denied
+ *         -ENOTDIR if path is not a directory when O_DIRECTORY set
+ *         -EISDIR if path is directory when opening as regular file
  */
 int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mode)
 {
@@ -682,6 +823,20 @@ _ERR_RET:
     return ret;
 }
 
+/**
+ * @brief Close a file and release associated resources
+ *
+ * This function closes a file and performs necessary cleanup operations:
+ * - Flushes page cache if enabled (RT_USING_PAGECACHE)
+ * - Calls filesystem-specific close operation if available
+ * - Decrements reference count and releases resources when count reaches zero
+ *
+ * @param[in,out] file Pointer to the file structure to close
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         - Negative error code on failure
+ */
 int dfs_file_close(struct dfs_file *file)
 {
     int ret = -RT_ERROR;
@@ -726,6 +881,20 @@ int dfs_file_close(struct dfs_file *file)
     return ret;
 }
 
+/**
+ * @brief Read data from a file at specified offset
+ *
+ * @param[in] file Pointer to the file structure to read from
+ * @param[out] buf Buffer to store the read data
+ * @param[in] len Number of bytes to read
+ * @param[in] offset Offset in the file to start reading from
+ *
+ * @return ssize_t Number of bytes read on success, or negative error code:
+ *         -EBADF if invalid file descriptor
+ *         -EPERM if read permission denied
+ *         -ENOSYS if read operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ */
 ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offset)
 {
     ssize_t ret = -EBADF;
@@ -774,6 +943,19 @@ ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offse
     return ret;
 }
 
+/**
+ * @brief Read data from a file at current position
+ *
+ * @param[in] file Pointer to the file structure to read from
+ * @param[out] buf Buffer to store the read data
+ * @param[in] len Number of bytes to read
+ *
+ * @return ssize_t Number of bytes read on success, or negative error code:
+ *         -EBADF if invalid file descriptor
+ *         -EPERM if read permission denied
+ *         -ENOSYS if read operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ */
 ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
 {
     ssize_t ret = -EBADF;
@@ -825,6 +1007,22 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
     return ret;
 }
 
+/**
+ * @brief Write data to a file at specified offset
+ *
+ * @param[in] file Pointer to the file structure to write to
+ * @param[in] buf Buffer containing data to write
+ * @param[in] len Number of bytes to write
+ * @param[in] offset Offset in the file to start writing from
+ *
+ * @return ssize_t Number of bytes written on success, or negative error code:
+ *         -EBADF if invalid file descriptor or bad write flags
+ *         -ENOSYS if write operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ *
+ * @note If O_SYNC flag is set, the data will be immediately flushed to storage device
+ *       after write operation.
+ */
 ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_t offset)
 {
     ssize_t ret = -EBADF;
@@ -881,6 +1079,23 @@ ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_
     return ret;
 }
 
+/**
+ * @brief Write data to a file at current position
+ *
+ * This function writes data to a file at the current position or at the end if O_APPEND flag is set.
+ *
+ * @param[in,out] file Pointer to the file structure to write to
+ * @param[in] buf Buffer containing data to write
+ * @param[in] len Number of bytes to write
+ *
+ * @return ssize_t Number of bytes written on success, or negative error code:
+ *         -EBADF if invalid file descriptor or bad write flags
+ *         -ENOSYS if write operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ *
+ * @note If O_SYNC flag is set, the data will be immediately flushed to storage device
+ * @note In append mode (O_APPEND), data is always written at the end of file
+ */
 ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
 {
     ssize_t ret = -EBADF;
@@ -952,6 +1167,21 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
     return ret;
 }
 
+/**
+ * @brief Generic file seek implementation
+ *
+ * This function calculates the new file position based on the specified offset and whence parameter.
+ * It supports three seek modes:
+ * - SEEK_SET: Set position relative to start of file
+ * - SEEK_CUR: Set position relative to current position
+ * - SEEK_END: Set position relative to end of file
+ *
+ * @param[in] file Pointer to the file structure containing current position
+ * @param[in] offset Offset value to seek
+ * @param[in] whence Seek mode (SEEK_SET/SEEK_CUR/SEEK_END)
+ *
+ * @return off_t The calculated new file position, or -EINVAL for invalid whence
+ */
 off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence)
 {
     off_t foffset;
@@ -968,6 +1198,19 @@ off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence)
     return foffset;
 }
 
+/**
+ * @brief Change the file position indicator
+ *
+ * This function sets the file position indicator for the file referenced by the file descriptor
+ * based on the offset and whence parameters.
+ *
+ * @param[in,out] file Pointer to the file structure (position will be modified)
+ * @param[in] offset Number of bytes to offset from position
+ * @param[in] whence Reference position (SEEK_SET/SEEK_CUR/SEEK_END)
+ *
+ * @return off_t New file position on success, or negative error code:
+ *         -EINVAL if invalid parameters or not mounted
+ */
 off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
     off_t retval = -EINVAL;
@@ -991,6 +1234,18 @@ off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece)
     return retval;
 }
 
+/**
+ * @brief Get file status information
+ *
+ * @param[in] path The file path to get status for
+ * @param[out] buf Pointer to stat structure to store the status information
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -ENOENT if file not found
+ *         -ENOMEM if memory allocation failed
+ *         Other negative error codes from filesystem operations
+ */
 int dfs_file_stat(const char *path, struct stat *buf)
 {
     int ret = -ENOENT;
@@ -1045,6 +1300,21 @@ int dfs_file_stat(const char *path, struct stat *buf)
     return ret;
 }
 
+/**
+ * @brief Get file status information without following symbolic links
+ *
+ * @param[in] path The file path to get status for (does not follow symlinks)
+ * @param[out] buf Pointer to stat structure to store the status information
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -ENOENT if file not found
+ *         -ENOMEM if memory allocation failed
+ *         Other negative error codes from filesystem operations
+ *
+ * @note Unlike dfs_file_stat(), this function does not follow symbolic links
+ * @see dfs_file_stat()
+ */
 int dfs_file_lstat(const char *path, struct stat *buf)
 {
     int ret = -ENOENT;
@@ -1101,6 +1371,19 @@ int dfs_file_lstat(const char *path, struct stat *buf)
     return ret;
 }
 
+/**
+ * @brief Get file status information using file descriptor
+ *
+ * @param[in] file Pointer to the open file structure
+ * @param[out] buf Pointer to stat structure to store status information
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -EBADF if invalid file descriptor
+ *         -ENOSYS if operation not supported
+ *
+ * @note Currently unimplemented (returns -ENOSYS)
+ */
 int dfs_file_fstat(struct dfs_file *file, struct stat *buf)
 {
     size_t ret = -EBADF;
@@ -1109,7 +1392,7 @@ int dfs_file_fstat(struct dfs_file *file, struct stat *buf)
     {
         if (file->fops && file->fops->ioctl)
         {
-            // ret = file->fops->fstat(file, buf);
+            /* ret = file->fops->fstat(file, buf); */
         }
         else
         {
@@ -1124,6 +1407,23 @@ int dfs_file_fstat(struct dfs_file *file, struct stat *buf)
     return ret;
 }
 
+/**
+ * @brief Set file attributes for the specified path
+ *
+ * This function sets file attributes (permissions, ownership, timestamps, etc.)
+ * for the file specified by path.
+ *
+ * @param[in] path The file path to set attributes for
+ * @param[in] attr Pointer to attribute structure containing new attributes
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -RT_ERROR if general error occurred
+ *         -ENOENT if file not found
+ *         Other negative error codes from filesystem operations
+ *
+ * @note The actual supported attributes depend on the underlying filesystem
+ */
 int dfs_file_setattr(const char *path, struct dfs_attr *attr)
 {
     int ret = -RT_ERROR;
@@ -1174,6 +1474,24 @@ int dfs_file_setattr(const char *path, struct dfs_attr *attr)
     return ret;
 }
 
+/**
+ * @brief Perform device-specific control operations
+ *
+ * This function performs device-specific control operations on an open file descriptor.
+ * It is typically used for operations that cannot be expressed by regular file operations.
+ *
+ * @param[in] file Pointer to the file structure to perform ioctl on
+ * @param[in] cmd Device-dependent request code
+ * @param[in,out] args Pointer to optional argument buffer (input/output depends on cmd)
+ *
+ * @return int Operation result:
+ *         - 0 or positive value on success (meaning depends on cmd)
+ *         -EBADF if invalid file descriptor
+ *         -ENOSYS if ioctl operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ *
+ * @note The actual supported commands and their semantics depend on the underlying device driver
+ */
 int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     size_t ret = 0;
@@ -1204,6 +1522,34 @@ int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args)
     return ret;
 }
 
+/**
+ * @brief Perform file control operations
+ *
+ * This function performs various control operations on an open file descriptor.
+ * It supports the following operations:
+ * - F_DUPFD: Duplicate file descriptor
+ * - F_GETFD: Get file descriptor flags
+ * - F_SETFD: Set file descriptor flags
+ * - F_GETFL: Get file status flags
+ * - F_SETFL: Set file status flags
+ * - F_GETLK/F_SETLK/F_SETLKW: File locking operations (unimplemented)
+ * - F_DUPFD_CLOEXEC: Duplicate file descriptor with close-on-exec flag (if supported)
+ *
+ * @param[in] fd File descriptor to operate on
+ * @param[in] cmd Control command (F_DUPFD/F_GETFD/F_SETFD/F_GETFL/F_SETFL/etc)
+ * @param[in,out] arg Command-specific argument (input/output depends on cmd)
+ *
+ * @return int Operation result:
+ *         - For F_DUPFD: new file descriptor on success
+ *         - For F_GETFD/F_GETFL: current flags on success
+ *         - 0 on success for other commands
+ *         -EBADF if invalid file descriptor
+ *         -EINVAL if invalid command (F_DUPFD_CLOEXEC when not supported)
+ *         -EPERM for unsupported commands
+ *
+ * @note Not all commands may be supported by all filesystems
+ * @note File locking operations (F_GETLK/F_SETLK/F_SETLKW) are currently unimplemented
+ */
 int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
 {
     int ret = 0;
@@ -1269,6 +1615,24 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
     return ret;
 }
 
+/**
+ * @brief Synchronize file data to storage device
+ *
+ * This function flushes all modified file data and metadata to the underlying storage device.
+ * It ensures data integrity by:
+ * - Flushing page cache if enabled (RT_USING_PAGECACHE)
+ * - Calling filesystem-specific flush operation
+ *
+ * @param[in] file Pointer to the file structure to synchronize
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -EBADF if invalid file descriptor
+ *         -EINVAL if not mounted or invalid parameters
+ *
+ * @note This function provides stronger guarantees than regular writes
+ *       about data persistence on storage media
+ */
 int dfs_file_fsync(struct dfs_file *file)
 {
     int ret = -EBADF;
@@ -1297,6 +1661,24 @@ int dfs_file_fsync(struct dfs_file *file)
     return ret;
 }
 
+/**
+ * @brief Delete a file or directory entry from the filesystem
+ *
+ * This function removes a filesystem entry (file or empty directory) specified by path.
+ *
+ * @param[in] path The filesystem path to be deleted
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -RT_ERROR if general error occurred
+ *         -ENOENT if file not found
+ *         -ENOMEM if memory allocation failed
+ *         -EBUSY if file is in use (mount point or has child mounts)
+ *         Other negative error codes from filesystem operations
+ *
+ * @note This function cannot remove non-empty directories
+ * @note Mount points cannot be removed while mounted
+ */
 int dfs_file_unlink(const char *path)
 {
     int ret = -RT_ERROR;
@@ -1385,6 +1767,23 @@ int dfs_file_unlink(const char *path)
     return ret;
 }
 
+/**
+ * @brief Create a hard link between files
+ *
+ * This function creates a hard link named 'newname' which refers to the same file as 'oldname'.
+ *
+ * @param[in] oldname Path to the existing file to link from
+ * @param[in] newname Path to the new link to be created
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -1 on general error
+ *         -EPERM if oldname is a directory
+ *         Other negative error codes from filesystem operations
+ *
+ * @note Both files must reside on the same filesystem
+ * @note The function will fail if newname already exists
+ */
 int dfs_file_link(const char *oldname, const char *newname)
 {
     int ret = -1;
@@ -1470,7 +1869,23 @@ int dfs_file_link(const char *oldname, const char *newname)
     return ret;
 }
 
-/* symlink creates a symbolic link named `linkpath` which contains the string `target`. */
+/**
+ * @brief Create a symbolic link named 'linkpath' containing the string 'target'
+ *
+ * This function creates a symbolic link which refers to the specified target path.
+ * The linkpath should not exist before calling this function.
+ *
+ * @param[in] target The path string that the symbolic link will point to
+ * @param[in] linkpath The path where the symbolic link will be created
+ *
+ * @return int Operation status:
+ *         - 0 on success
+ *         -ENOSYS if symlink operation not supported by filesystem
+ *         -ENOENT if parent directory doesn't exist
+ *         -EPERM if linkpath already exists
+ *         -EINVAL if invalid parameters
+ *         -RT_ERROR for general errors
+ */
 int dfs_file_symlink(const char *target, const char *linkpath)
 {
     int ret = -RT_ERROR;
@@ -1599,6 +2014,23 @@ int dfs_file_symlink(const char *target, const char *linkpath)
     return ret;
 }
 
+/**
+ * @brief Read the contents of a symbolic link
+ *
+ * This function reads the contents of the symbolic link specified by path into
+ * the buffer provided.
+ *
+ * @param[in] path The path to the symbolic link to be read
+ * @param[out] buf Buffer to store the link contents
+ * @param[in] bufsize Size of the buffer in bytes
+ *
+ * @return int Number of bytes placed in buffer on success, or negative error code:
+ *         -ENOSYS if readlink operation not supported by filesystem
+ *         -ENOENT if symbolic link does not exist
+ *         -ENOMEM if memory allocation failed
+ *         -EINVAL if invalid parameters
+ *         -RT_ERROR for general errors
+ */
 int dfs_file_readlink(const char *path, char *buf, int bufsize)
 {
     int ret = -RT_ERROR;
@@ -1661,6 +2093,23 @@ int dfs_file_readlink(const char *path, char *buf, int bufsize)
     return ret;
 }
 
+/**
+ * @brief Rename a file/directory
+ *
+ * This function renames a filesystem entry from old_file to new_file.
+ *
+ * @param[in] old_file Path to the existing file/directory to be renamed
+ * @param[in] new_file New path for the file/directory
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -1 on general error
+ *         -ENOMEM if memory allocation failed
+ *         -ENOSYS if rename operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ *
+ * @note Page cache will be cleaned if RT_USING_PAGECACHE is enabled
+ */
 int dfs_file_rename(const char *old_file, const char *new_file)
 {
     int ret = -1;
@@ -1740,6 +2189,25 @@ int dfs_file_rename(const char *old_file, const char *new_file)
     return ret;
 }
 
+/**
+ * @brief Truncate or extend a file to the specified length
+ *
+ * This function changes the size of the file referenced by the file descriptor.
+ * If the new size is smaller than current size, the file is truncated.
+ * If larger, the file is extended and the extended area is filled with zeros.
+ *
+ * @param[in] file Pointer to the file structure to truncate
+ * @param[in] length New length of the file in bytes
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -EBADF if invalid file descriptor
+ *         -ENOSYS if truncate operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ *
+ * @note If RT_USING_PAGECACHE is enabled, the page cache will be cleaned
+ *       before truncation to ensure data consistency
+ */
 int dfs_file_ftruncate(struct dfs_file *file, off_t length)
 {
     int ret = 0;
@@ -1776,6 +2244,23 @@ int dfs_file_ftruncate(struct dfs_file *file, off_t length)
     return ret;
 }
 
+/**
+ * @brief Flush file buffers to storage device
+ *
+ * This function forces any buffered data to be written to the underlying storage device.
+ *
+ * @param[in,out] file Pointer to the file structure to flush (both input and output)
+ *
+ * @return int Operation result:
+ *         - 0 on success
+ *         -EBADF if invalid file descriptor
+ *         -ENOSYS if flush operation not supported
+ *         -EINVAL if invalid parameters or not mounted
+ *
+ * @note This function provides stronger guarantees than regular writes
+ *       about data persistence on storage media
+ * @note If RT_USING_PAGECACHE is enabled, the page cache will be flushed first
+ */
 int dfs_file_flush(struct dfs_file *file)
 {
     int ret = 0;
@@ -1812,6 +2297,22 @@ int dfs_file_flush(struct dfs_file *file)
     return ret;
 }
 
+/**
+ * @brief Read directory entries
+ *
+ * This function reads directory entries from the directory file descriptor into
+ * the buffer provided. Each entry is stored as a struct dirent.
+ *
+ * @param[in] file Pointer to the directory file structure
+ * @param[out] dirp Buffer to store directory entries
+ * @param[in] nbytes Size of the buffer in bytes
+ *
+ * @return int Number of bytes read on success, or negative error code:
+ *         -EBADF if invalid file descriptor
+ *         -ENOTDIR if not a directory
+ *         -EINVAL if not mounted or invalid parameters
+ *         -RT_ERROR for general errors
+ */
 int dfs_file_getdents(struct dfs_file *file, struct dirent *dirp, size_t nbytes)
 {
     int ret = -RT_ERROR;
@@ -1844,11 +2345,15 @@ int dfs_file_getdents(struct dfs_file *file, struct dirent *dirp, size_t nbytes)
 }
 
 /**
- * this function will check the path is it a directory.
+ * @brief Check if a path refers to a directory
  *
- * @param path the file path.
+ * This function checks whether the specified path exists and is a directory.
  *
- * @return 0 on is dir, -1 on not dir.
+ * @param[in] path The filesystem path to check
+ *
+ * @return int Operation result:
+ *         - 0 if path exists and is a directory
+ *         -RT_ERROR if path doesn't exist or isn't a directory
  */
 int dfs_file_isdir(const char *path)
 {
@@ -1910,6 +2415,19 @@ int dfs_file_isdir(const char *path)
     return ret;
 }
 
+/**
+ * @brief Check file accessibility with specified mode
+ *
+ * This function checks whether the file specified by path can be accessed
+ * with the given mode.
+ *
+ * @param[in] path The file path to check accessibility
+ * @param[in] mode The access mode to check (read/write/execute permissions)
+ *
+ * @return int Access status:
+ *         - 0 if file is accessible with specified mode
+ *         - -1 if file is not accessible
+ */
 int dfs_file_access(const char *path, mode_t mode)
 {
     int ret;
@@ -1933,6 +2451,24 @@ int dfs_file_access(const char *path, mode_t mode)
 }
 
 #ifdef RT_USING_SMART
+/**
+ * @brief Memory map a file or device into process address space
+ *
+ * This function maps a file or device into the calling process's address space.
+ * It handles both regular files and device files differently:
+ * - For regular files: uses standard mmap operation
+ * - For device files: uses device-specific ioctl with RT_FIOMMAP2 command
+ *
+ * @param[in] file Pointer to the file structure to be mapped
+ * @param[in,out] mmap2 Pointer to mmap arguments structure (both input and output)
+ *
+ * @return int Operation result:
+ *         - RT_EOK on success
+ *         - EINVAL if invalid parameters or operation not supported
+ *         - Other error codes from underlying mmap/ioctl operations
+ *
+ * @note For device files, the actual mapping behavior depends on the device driver
+ */
 int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 {
     int ret = RT_EOK;
@@ -1985,6 +2521,19 @@ int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 #define _COLOR_WHITE    "\033[37m"
 #define _COLOR_NORMAL   "\033[0m"
 
+/**
+ * @brief List directory contents with colored output
+ *
+ * This function lists all entries in the specified directory with colored output
+ * that distinguishes different file types. It handles:
+ * - Directories (blue)
+ * - Symbolic links (cyan with target path)
+ * - Executable files (green)
+ * - Character devices (yellow)
+ * - Regular files (default color)
+ *
+ * @param[in] pathname The directory path to list (NULL for current directory)
+ */
 void ls(const char *pathname)
 {
     struct dirent dirent;
@@ -2151,6 +2700,14 @@ void ls(const char *pathname)
     rt_free(path);
 }
 
+/**
+ * @brief Display file contents to standard output
+ *
+ * This function reads and prints the contents of the specified file to the console.
+ * It handles both text and binary files by reading in chunks and printing the output.
+ *
+ * @param[in] filename Path to the file to be displayed
+ */
 void cat(const char *filename)
 {
     int length = 0;
@@ -2192,6 +2749,15 @@ void cat(const char *filename)
 }
 
 #define BUF_SZ  4096
+/**
+ * @brief Copy file contents from source to destination
+ *
+ * This function copies the contents of a source file to a destination file.
+ * It handles memory allocation, file operations, and error checking.
+ *
+ * @param[in] src Path to the source file to be copied
+ * @param[in] dst Path to the destination file to be created/overwritten
+ */
 static void copyfile(const char *src, const char *dst)
 {
     int ret;
@@ -2255,6 +2821,17 @@ static void copyfile(const char *src, const char *dst)
 }
 
 extern int mkdir(const char *path, mode_t mode);
+
+/**
+ * @brief Recursively copy directory contents from source to destination
+ *
+ * This function recursively copies all files and subdirectories from the source
+ * directory to the destination directory. It handles both files and directories
+ * appropriately.
+ *
+ * @param[in] src Path to the source directory to be copied
+ * @param[in] dst Path to the destination directory to be created
+ */
 static void copydir(const char *src, const char *dst)
 {
     struct dirent dirent;
@@ -2323,6 +2900,19 @@ static void copydir(const char *src, const char *dst)
     dfs_file_deinit(&file);
 }
 
+/**
+ * @brief Extract the last component from a path string
+ *
+ * This function extracts the filename or last directory name from a given path.
+ * It searches for the last '/' character and returns the substring after it.
+ *
+ * @param[in] path The input path string to process
+ *
+ * @return const char* Pointer to:
+ *         - The last path component if '/' is found
+ *         - The original path if no '/' is found
+ *         - NULL if input path is NULL
+ */
 static const char *_get_path_lastname(const char *path)
 {
     char *ptr;
@@ -2333,6 +2923,19 @@ static const char *_get_path_lastname(const char *path)
     return ++ptr;
 }
 
+/**
+ * @brief Copy files or directories from source to destination
+ *
+ * This function handles copying operations between files and directories with
+ * various combinations of source and destination types. It supports:
+ * - File to file copy
+ * - File to directory copy (copies into directory with original filename)
+ * - Directory to directory copy (recursive)
+ * - Directory to new directory creation and copy
+ *
+ * @param[in] src Path to the source file/directory to copy
+ * @param[in] dst Path to the destination file/directory
+ */
 void copy(const char *src, const char *dst)
 {
 #define FLAG_SRC_TYPE      0x03
