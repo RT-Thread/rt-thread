@@ -18,3 +18,8 @@ hw_drv_onchip.spi0:
   kconfig:
     - CONFIG_BSP_USING_SPI=y
     - CONFIG_BSP_USING_SPI0=y
+hw_drv_onchip.i2c0:
+  kconfig:
+    - CONFIG_BSP_USING_I2C0=y
+    - CONFIG_BSP_I2C0_SCL_PIN=22
+    - CONFIG_BSP_I2C0_SDA_PIN=23

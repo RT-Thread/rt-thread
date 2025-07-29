@@ -35,7 +35,7 @@ struct rt_adc_device adc2;
 static const struct gd32_adc adc_obj[] = {
 #ifdef BSP_USING_ADC0
     {
-        #if defined SOC_SERIES_GD32E230x 
+        #if defined SOC_SERIES_GD32E23x 
         ADC,
         RCU_ADC,
         {
