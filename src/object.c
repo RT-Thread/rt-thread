@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,6 +28,10 @@
 #ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
+
+#define DBG_TAG           "kernel.obj"
+#define DBG_LVL           DBG_ERROR
+#include <rtdbg.h>
 
 struct rt_custom_object
 {
@@ -355,7 +359,7 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
-    rt_size_t len;
+    rt_size_t obj_name_len;
 #ifdef RT_DEBUGING_ASSERT
     struct rt_list_node *node = RT_NULL;
 #endif /* RT_DEBUGING_ASSERT */
@@ -393,10 +397,14 @@ void rt_object_init(struct rt_object         *object,
 #if RT_NAME_MAX > 0
     if (name)
     {
-        len = rt_strlen(name);
-        len = len > RT_NAME_MAX - 1 ? RT_NAME_MAX - 1 : len;
-        rt_memcpy(object->name, name, len);
-        object->name[len] = '\0';
+        obj_name_len = rt_strlen(name);
+        if(obj_name_len > RT_NAME_MAX - 1)
+        {
+            LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
+            RT_ASSERT(obj_name_len <= RT_NAME_MAX - 1);
+        }
+        rt_memcpy(object->name, name, obj_name_len);
+        object->name[obj_name_len] = '\0';
     }
     else
     {
@@ -472,7 +480,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
     struct rt_object *object;
     rt_base_t level;
-    rt_size_t len;
+    rt_size_t obj_name_len;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -505,10 +513,14 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 #if RT_NAME_MAX > 0
     if (name)
     {
-        len = rt_strlen(name);
-        len = len > RT_NAME_MAX - 1 ? RT_NAME_MAX - 1 : len;
-        rt_memcpy(object->name, name, len);
-        object->name[len] = '\0';
+        obj_name_len = rt_strlen(name);
+        if(obj_name_len > RT_NAME_MAX - 1)
+        {
+            LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
+            RT_ASSERT(obj_name_len <= RT_NAME_MAX - 1);
+        }
+        rt_memcpy(object->name, name, obj_name_len);
+        object->name[obj_name_len] = '\0';
     }
     else
     {
@@ -672,7 +684,13 @@ static rt_err_t _match_name(struct rt_object *obj, void *data)
 {
     struct _obj_find_param *param = data;
     const char *name = param->match_name;
-    if (rt_strncmp(obj->name, name, RT_NAME_MAX) == 0)
+    char truncated_name[RT_NAME_MAX];
+
+    /* Truncate input name to RT_NAME_MAX - 1 to match object name storage */
+    rt_strncpy(truncated_name, name, RT_NAME_MAX - 1);
+    truncated_name[RT_NAME_MAX - 1] = '\0';
+
+    if (rt_strcmp(obj->name, truncated_name) == 0)
     {
         param->matched_obj = obj;
 
@@ -705,7 +723,8 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     };
 
     /* parameter check */
-    if (name == RT_NULL) return RT_NULL;
+    if (name == RT_NULL || rt_object_get_information(type) == RT_NULL)
+        return RT_NULL;
 
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -731,7 +750,9 @@ rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_uint8_t name_size
     if ((object != RT_NULL) && (name != RT_NULL) && (name_size != 0U))
     {
         const char *obj_name = object->name;
-        (void) rt_strncpy(name, obj_name, (rt_size_t)name_size);
+        rt_strncpy(name, obj_name, (rt_size_t)name_size);
+        /* Ensure null-termination */
+        name[name_size - 1] = '\0';
         result = RT_EOK;
     }
 
@@ -794,3 +815,4 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj)
 #endif
 
 /**@}*/
+
