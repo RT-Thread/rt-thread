@@ -29,6 +29,10 @@
 #include <lwp.h>
 #endif
 
+#define DBG_TAG           "kernel.obj"
+#define DBG_LVL           DBG_ERROR
+#include <rtdbg.h>
+
 struct rt_custom_object
 {
     struct rt_object parent;
@@ -355,7 +359,7 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
-    rt_size_t len;
+    rt_size_t obj_name_len;
 #ifdef RT_DEBUGING_ASSERT
     struct rt_list_node *node = RT_NULL;
 #endif /* RT_DEBUGING_ASSERT */
@@ -393,10 +397,14 @@ void rt_object_init(struct rt_object         *object,
 #if RT_NAME_MAX > 0
     if (name)
     {
-        len = rt_strlen(name);
-        len = len > RT_NAME_MAX - 1 ? RT_NAME_MAX - 1 : len;
-        rt_memcpy(object->name, name, len);
-        object->name[len] = '\0';
+        obj_name_len = rt_strlen(name);
+        if(obj_name_len > RT_NAME_MAX - 1)
+        {
+            LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
+            RT_ASSERT(obj_name_len <= RT_NAME_MAX - 1);
+        }
+        rt_memcpy(object->name, name, obj_name_len);
+        object->name[obj_name_len] = '\0';
     }
     else
     {
@@ -472,7 +480,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
     struct rt_object *object;
     rt_base_t level;
-    rt_size_t len;
+    rt_size_t obj_name_len;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -505,10 +513,14 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 #if RT_NAME_MAX > 0
     if (name)
     {
-        len = rt_strlen(name);
-        len = len > RT_NAME_MAX - 1 ? RT_NAME_MAX - 1 : len;
-        rt_memcpy(object->name, name, len);
-        object->name[len] = '\0';
+        obj_name_len = rt_strlen(name);
+        if(obj_name_len > RT_NAME_MAX - 1)
+        {
+            LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
+            RT_ASSERT(obj_name_len <= RT_NAME_MAX - 1);
+        }
+        rt_memcpy(object->name, name, obj_name_len);
+        object->name[obj_name_len] = '\0';
     }
     else
     {
