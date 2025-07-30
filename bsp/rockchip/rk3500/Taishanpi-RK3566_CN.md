@@ -81,7 +81,7 @@ sudo apt install -y python3 python3-pip u-boot-tools device-tree-compiler
 
 2. 使用`pip`安装工具：
 ```bash
-pip3 install --user tqdm
+pip3 install --user tqdm scons
 ```
 
 
@@ -118,7 +118,13 @@ export PATH="$RTT_EXEC_PATH:$PATH"
 
 进入`rt-thread/bsp/rockchip/rk3566`目录下输入下面的命令:
 
-> 这个用于拉取`zlib`软件包，我们编译的时候需要用到。
+进入 `menuconfig` 后直接 保存退出，生成一个 `.config` 文件：
+
+```bash
+scons --menuconfig
+```
+
+> 拉取`zlib`软件包，我们编译的时候需要用到。
 
 ```bash
 source  ~/.env/tools/scripts/pkgs --update

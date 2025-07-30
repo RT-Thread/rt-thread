@@ -81,7 +81,7 @@ sudo apt install -y python3 python3-pip u-boot-tools device-tree-compiler
 
 2. Install tools using `pip`:
 ```bash
-pip3 install --user tqdm
+pip3 install --user tqdm scons
 ```
 
 
@@ -115,6 +115,12 @@ export PATH="$RTT_EXEC_PATH:$PATH"
 ## 3. 编译
 
 Navigate to the `rt-thread/bsp/rockchip/rk3566` directory and run:
+
+After entering `menuconfig`, simply save and exit to generate a `.config` file:
+
+```bash
+scons --menuconfig
+```
 
 > This command pulls the `zlib` package required for compilation.
 
