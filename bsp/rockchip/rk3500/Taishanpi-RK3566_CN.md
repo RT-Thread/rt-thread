@@ -1,40 +1,40 @@
-# Taishanpi-RK3566 Board Support Package (BSP) Usage Guide
+# Taishanpi-RK3566 板级支持包使用说明
 
-[中文页](./Taishanpi-RK3566_CN.md) | English
+中文页 | [English](./Taishanpi-RK3566_ZH.md)
 
-## 0. Code Source Statement
+## 0. 说明
 
-The commit used in this document: 
+此文档使用的Commit: 
 - `a1c642aa3a2848b47f2a1b52679dc4ee5156f2f4`
 
-Based on the[original documentation](./README.md), this guide supplements and elaborates on the content with additional documentation and detailed step-by-step instructions.
+在[原有文档](./README.md)基础上面进行了文档补充和步骤说明，丰富了一下原有内容。
 
-## 1. Introduction
+## 1. 介绍
 
-This support package usage guide is written based on the[ TaishanPi 1 ](https://wiki.lckfb.com/zh-hans/tspi-rk3566/)development board.
+这份支持包使用说明是根据[泰山派1](https://wiki.lckfb.com/zh-hans/tspi-rk3566/)所写的一份使用指南。
 
-[All schematic diagrams, PCB files, and software resources for TaishanPi 1 are open-source](https://wiki.lckfb.com/zh-hans/tspi-rk3566/open-source-hardware/)
+[泰山派1中原理图、PCB文件和软件资料全部开源](https://wiki.lckfb.com/zh-hans/tspi-rk3566/open-source-hardware/)
 
-This guide provides detailed instructions and relevant precautions.
+在本指南中会尽可能的详细介绍使用步骤和相关注意事项。
 
-### 1.1. Chip Introduction
+### 1.1. 芯片介绍
 
-`Rockchip RK3566` is a mid-to-high-end `AIOT` chip:
+`Rockchip RK3566` 是中高端 `AIOT` 芯片:
 
-- Manufactured using `22nm` process technology
-- Quad-core `Cortex-A55` 64-bit CPU
-- Clock speed up to `1.8GHz`
-- Integrated `ARM Mali-G52 GPU`
-- Integrated `1Tops` AI accelerator `NPU`
-- Supports `4K 60FPS` decoding
-- Supports `1080P 60FPS` encoding
-- Supports `5M ISP` and `HDR`
+- 采用`22nm`制程工艺。
+- `4`核`Cortex-A55`的`64`位CPU。
+- 主频高达`1.8GHz`。
+- 集成`ARM Mali-G52 GPU`
+- 集成`1Tops`算力的`AI`加速器`NPU`；
+- 支持`4K 60FPS`解码。
+- 支持`1080P 60FPS`解码。
+- 支持`5M ISP`和`HDR`。
 
-### 1.2. Host Machine Environment
+### 1.2. 宿主机环境介绍
 
-This guide uses `Ubuntu22.04.5 LTS Desktop` running on`VMware`.
+本次使用的是 `Ubuntu22.04.5 LTS Desktop` 运行在`VMware`中。
 
-System information:
+系统信息如下：
 
 ```bash
 $ cat /etc/os-release
@@ -62,48 +62,50 @@ Release:        22.04
 Codename:       jammy
 ```
 
-`Python`version:
+`Python`版本如下：
 ```bash
 $ python --version
 Python 3.10.12
 ```
 
 
-## 2. Environment Setup
+## 2. 环境搭建
 
-Run the following commands to install required packages:
+运行下面的命令安装相关的软件包：
 
-1. Essential tools:
+1. 必要工具：
 ```bash
 sudo apt update && \
 sudo apt install -y python3 python3-pip u-boot-tools device-tree-compiler
 ```
 
-2. Install tools using `pip`:
+2. 使用`pip`安装工具：
 ```bash
 pip3 install --user tqdm
 ```
 
 
-3. Set `Python version`:
+3. 设定`python`版本：
 ```bash
 sudo rm -rf /usr/bin/python && \
 sudo ln -s /usr/bin/python3 /usr/bin/python
 ```
 
 
-4. Download `RT-Thread Smart` toolchain:
+4. 下载 `RT-Thread Smart` 工具链：
 ```bash
 wget https://download.rt-thread.org/download/rt-smart/toolchains/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
 
 ```
 
-5. Extract the toolchain:
+5. 解压：
 ```bash
 sudo tar -xf aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2  -C /opt
 ```
 
-6. Set environment variables after extraction:
+5. 将工具链下载后，解压至`/opt`目录。并设置环境变量
+
+> 直接复制全部，然后粘贴到命令行回车即可。
 
 ```bash
 export RTT_CC="gcc"
@@ -114,85 +116,87 @@ export PATH="$RTT_EXEC_PATH:$PATH"
 
 ## 3. 编译
 
-Navigate to the `rt-thread/bsp/rockchip/rk3566` directory and run:
+进入`rt-thread/bsp/rockchip/rk3566`目录下输入下面的命令:
 
-> This command pulls the `zlib` package required for compilation.
+> 这个用于拉取`zlib`软件包，我们编译的时候需要用到。
 
 ```bash
 source  ~/.env/tools/scripts/pkgs --update
 ```
 
-Start compilation:
+开始编译：
 
-> Alternatively, use `scons --exec-path="GCC toolchain path"` to specify the toolchain location directly.
+> 或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。
 
 ```bash
 scons -j$(nproc)
 ```
 
-The `rtthread.elf` and `rtthread.bin` files will be generated in the current `rk3566` directory.
+可以看到在当前`rk3566`文件夹中正常生成`rtthread.elf`与`rtthread.bin`文件。
 
-## 3. Running
+## 3. 运行
 
-### 3.1. Flashing the Board
+### 3.1. 为板子烧录镜像
 
-To boot the `rtthread` system using U-Boot commands, flash the following files using the Rockchip development tool.
+因为我需要在 `Uboot` 环境中使用命令进行引导 `rtthread` 系统，所以需要烧录相关的文件。
 
-This guide uses the [ TaishanPi 1 ](https://wiki.lckfb.com/zh-hans/tspi-rk3566/) `Rockchip Linux5.10 SDK`:
+这里我是用的内核是 [泰山派1](https://wiki.lckfb.com/zh-hans/tspi-rk3566/) 的 `Rockchip Linux5.10 SDK`:
 
 - `Github`：https://github.com/TaishanPi
 
-- Tutorial [Host Machine Build Method](https://wiki.lckfb.com/zh-hans/tspi-rk3566/sdk-compilation/openkylin-sdk-compilation.html)
+- 教程看 [宿主机构建方式](https://wiki.lckfb.com/zh-hans/tspi-rk3566/sdk-compilation/openkylin-sdk-compilation.html)
 
-After compilation, required files will be in the `rockdev/` directory.
+编译完成之后会在 `rockdev/` 目录下生成我们所需要的文件
 
-Erase all existing firmware from the board:
+将板子的所有镜像全部擦除：
 
 ![rockchip-clean](./figures/rockchip-clean.jpg)
 
-Flash these 4 files using the Rockchip Development Tool:
+然后使用`瑞芯微开发工具`烧录下面的`4`个文件：
 
-> > Note: The TaishanPi 1 SDK uses a custom partition layout. Other boards may require different files.
+> > 注意: 因为我们的SDK是重新进行分区的，所以使用[泰山派1](https://wiki.lckfb.com/zh-hans/tspi-rk3566/)需要下面的`4`个文件，其他板子没有测试，可以自行尝试。
 
 - `MiniLoaderAll.bin`
 - `parameter.txt`
 - `uboot.img`
 - `boot.img`
 
-### 3.2. Formatting the TF Card
+### 3.2. 格式化TF卡
 
-Prepare a TF card to store files.
+我们需要准备一张 `TF` 卡，用来存放 `rtthread.bin` 文件。
 
-Download `Rufus`：https://rufus.org.cn/
+下载 `Rufus`：https://rufus.org.cn/
 
-Configure with these settings and click "Start":
+设定为下列的模式，然后点击`开始`：
 
 ![rockchip-clean](./figures/rufus.jpg)
 
 
-### 3.3. Creating boot.scr
+### 3.3. 制作boot.scr
 
-> You can use the existing `boot.scr` in this directory, or create your own using the method below.
+> 这里可以直接使用当前目录下的 `boot.scr`，同样也是用下面的方式制作出来的，如果有需求可以根据下面的方法自己制作。
 
-Create `boot.cmd` with the following content:
+前面我们已经安装过 `u-boot-tools` 所以直接使用即可。
+
+创建 `boot.cmd`，并写入下面的内容：
 
 ```bash
 fatload mmc 1:1 0x480000 rtthread.bin;
 fatload mmc 1:1 0x8300000 tspi-rk3566-user-v10-linux.dtb;
 booti 0x480000 - 0x8300000;
 ```
-> The Device Tree Blob (DTB) file is required for system startup. For TaishanPi 1, the DTB file is located at `kernel/arch/arm64/boot/dts/rockchip/tspi-rk3566-user-v10-linux.dtb`. Other boards may use different DTB files. Without the correct DTB, rtthread will fail to boot (see "Common Issues and Solutions").
+> 系统启动需要`设备树文件DTB`，这里我们[泰山派1](https://wiki.lckfb.com/zh-hans/tspi-rk3566/)的`dtb`文件是`kernel/arch/arm64/boot/dts/rockchip/tspi-rk3566-user-v10-linux.dtb`，其他的文件有不同的名字，可以根据不同的开发板选择。不然`rtthread`就会无法启动，详情请看文档最后面的 `常见问题与解决办法`
 
 
-Generate `boot.scr`
+运行生成`boot.scr`
 
 ```bash
 mkimage -C none -A arm -T script -d boot.cmd boot.scr
 ```
 
-### 3.4. Copying Files to TF Card
+### 3.4. 复制文件到TF卡
 
-Copy these three files to the TF card:
+将下面三个文件复制到TF中：
 
 - `boot.scr`
 - `tspi-rk3566-user-v10-linux.dtb`
@@ -200,20 +204,19 @@ Copy these three files to the TF card:
 
 ![tf](./figures/tf.jpg)
 
-### 3.5. Running
+### 3.5. 运行
 
-Connect to the board's serial port using a tool like [MoBaXterm](https://wiki.lckfb.com/zh-hans/tspi-rk3566/tool-use/debug-tools-use.html)： 
+连接[开发板串口->MoBaXterm](https://wiki.lckfb.com/zh-hans/tspi-rk3566/tool-use/debug-tools-use.html)： 
 
-- Select the correct serial port
-- Set baud rate to `1500000`
+打开串口工具，选择对应串口，设置波特率为 `1500000`
 
-With `boot.scr` present, the system will boot automatically:
+因为有 `boot.scr` 会自动引导启动`rtthread`:
 
-> Note 1: If stuck at `[I/rtdm.ofw] Console: uart0 (fiq-debugger)`, see "Common Issues and Solutions".
+> 注意1：如果卡死在了 `[I/rtdm.ofw] Console: uart0 (fiq-debugger)` 那么看`常见问题与解决办法`。
 
-> Note 2: After failed boot attempts, completely power cycle the board to clear memory.
+> 注意2：记得每次`rtthread`启动失败(在`uboot`中引导失败后)，都应该将开发板完全断电然后在上电，清空内存。
 
-> Note 3: If automatic boot fails, manually execute the `boot.cmd` content in U-Boot.
+> 注意3：如果多次自动引导失败可以手动在`uboot`界面运行 `boot.cmd` 的内容，手动引导，如果还不行，那就要考虑其他的因素了，例如TF质量问题，传输到TF卡中的文件有损坏等等等。
 
 ```bash
 Hit key to stop autoboot('CTRL+C'):  0
@@ -309,11 +312,11 @@ msh />
 msh />
 ```
 
-## Common Issues and Solutions
+## 常见问题与解决办法
 
 ### Could not find a valid device tree
 
-This error occurs when booting without loading the `.dtb` device tree file:
+我们没有加载 `.dtb` 设备树文件直接启动就会出现这样的情况：
 
 ```bash
 Hit key to stop autoboot('CTRL+C'):  0
@@ -333,35 +336,34 @@ Could not find a valid device tree
 =>
 ```
 
-Solution:
+> 注意：记得每次`rtthread`启动失败(在`uboot`中引导失败后)，都应该将开发板完全断电然后在上电，清空内存。
 
-1. Power cycle the board completely after failed boot attempts
-2. Copy the compiled `.dtb` file from `kernel/arch/arm64/boot/dts/rockchip/` to the TF card
-3. Load the `DTB` to address `0x8300000` using `fatload`
-4. Execute the boot command again
+然后将 `kernel/arch/arm64/boot/dts/rockchip/` 文件夹中编译之后的`.dtb`文件转移到TF卡中，然后使用 `fatload`从TF卡中加载到`0x8300000`地址然后再次跳转即可。
 
 
-### System Stuck at `[I/rtdm.ofw] Console: uart0 (fiq-debugger)`
+### 卡在 `[I/rtdm.ofw] Console: uart0 (fiq-debugger)` 无法启动
 
-This is typically caused by incorrect device tree configuration. The `chosen` node parameters are critical.
+大概率和你的设备树有关系，在设备树中有一个参数很重要，需要被读取：
 
-Example configuration for TaishanPi 1 (Debug UART: `uart2m0`):
+> 这里我贴出我的参数，我的`Debug`串口硬件是`uart2m0`
+
+> 这个`chosen` 是重要的，如果不清楚，可以参照我这么写。
 
 ```ini
-  chosen: chosen {
-    bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0";
-  };
+	chosen: chosen {
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0";
+	};
 
-  fiq-debugger {
-    compatible = "rockchip,fiq-debugger";
-    rockchip,serial-id = <2>;
-    rockchip,wake-irq = <0>;
-    /* If enable uart uses irq instead of fiq */
-    rockchip,irq-mode-enable = <1>;
-    rockchip,baudrate = <1500000>;  /* Only 115200 and 1500000 */
-    interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_LOW>;
-    pinctrl-names = "default";
-    pinctrl-0 = <&uart2m0_xfer>;
-    status = "okay";
-  };
+	fiq-debugger {
+		compatible = "rockchip,fiq-debugger";
+		rockchip,serial-id = <2>;
+		rockchip,wake-irq = <0>;
+		/* If enable uart uses irq instead of fiq */
+		rockchip,irq-mode-enable = <1>;
+		rockchip,baudrate = <1500000>;  /* Only 115200 and 1500000 */
+		interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_LOW>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&uart2m0_xfer>;
+		status = "okay";
+	};
 ```
