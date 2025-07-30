@@ -68,7 +68,7 @@ struct dfs_vnode *dfs_vnode_create(void)
  *
  * @param[in] vnode Pointer to the vnode to be destroyed
  *
- * @return int Always returns 0 indicating success
+ * @return int Always returns 0. Note that this does not guarantee success, as errors may occur internally.
  */
 int dfs_vnode_destroy(struct dfs_vnode* vnode)
 {
