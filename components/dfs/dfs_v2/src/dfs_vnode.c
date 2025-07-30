@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,6 +18,15 @@
 #define DBG_LVL    DBG_WARNING
 #include <rtdbg.h>
 
+/**
+ * @brief Initialize a virtual node (vnode) structure
+ *
+ * @param[in,out] vnode Pointer to the vnode to be initialized
+ * @param[in] type Type of the vnode
+ * @param[in] fops Pointer to file operations structure
+ *
+ * @return int Always returns 0 indicating success
+ */
 int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops)
 {
     if (vnode)
@@ -33,6 +42,11 @@ int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops 
     return 0;
 }
 
+/**
+ * @brief Create and initialize a new virtual node (vnode)
+ *
+ * @return struct dfs_vnode* Pointer to the newly created vnode, or NULL if creation failed
+ */
 struct dfs_vnode *dfs_vnode_create(void)
 {
     struct dfs_vnode *vnode = rt_calloc(1, sizeof(struct dfs_vnode));
@@ -49,6 +63,13 @@ struct dfs_vnode *dfs_vnode_create(void)
     return vnode;
 }
 
+/**
+ * @brief Destroy a virtual node (vnode) and free its resources
+ *
+ * @param[in] vnode Pointer to the vnode to be destroyed
+ *
+ * @return int Always returns 0. Note that this does not guarantee success, as errors may occur internally.
+ */
 int dfs_vnode_destroy(struct dfs_vnode* vnode)
 {
     rt_err_t ret = RT_EOK;
@@ -91,6 +112,13 @@ int dfs_vnode_destroy(struct dfs_vnode* vnode)
     return 0;
 }
 
+/**
+ * @brief Increase reference count of a virtual node (vnode)
+ *
+ * @param[in,out] vnode Pointer to the vnode to be referenced
+ *
+ * @return struct dfs_vnode* The same vnode pointer that was passed in
+ */
 struct dfs_vnode *dfs_vnode_ref(struct dfs_vnode *vnode)
 {
     if (vnode)
@@ -103,6 +131,11 @@ struct dfs_vnode *dfs_vnode_ref(struct dfs_vnode *vnode)
     return vnode;
 }
 
+/**
+ * @brief Decrease reference count of a virtual node (vnode) and potentially free it
+ *
+ * @param[in,out] vnode Pointer to the vnode to be unreferenced
+ */
 void dfs_vnode_unref(struct dfs_vnode *vnode)
 {
     rt_err_t ret = RT_EOK;
