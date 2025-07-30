@@ -1,6 +1,6 @@
 # RK3566 Board Support Package (BSP) Usage Guide
 
-中文页 | [English](./README.md)
+[中文页](./README_ZH.md) | English
 
 ## Code Source Statement
 
