@@ -23,3 +23,8 @@ hw_drv_onchip.i2c0:
     - CONFIG_BSP_USING_I2C0=y
     - CONFIG_BSP_I2C0_SCL_PIN=22
     - CONFIG_BSP_I2C0_SDA_PIN=23
+hw_drv_onchip.i2c1:
+  kconfig:
+    - CONFIG_BSP_USING_HW_I2C=y
+    - CONFIG_BSP_USING_HW_I2C1=y
+    - CONFIG_BSP_HW_I2C1_CLOCK_SPEED=400000

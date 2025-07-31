@@ -146,13 +146,35 @@ menu "On-chip Peripheral Drivers"
             select RT_USING_I2C
             default n
             if BSP_USING_HW_I2C
-                config BSP_USING_I2C0
+                config BSP_USING_HW_I2C0
                     bool "Enable I2C0"
                     default y
                 
-                config BSP_USING_I2C1
+                config BSP_HW_I2C0_CLOCK_SPEED
+                    int "I2C0 Clock Speed (Hz)"
+                    depends on BSP_USING_HW_I2C0
+                    range 100000 1000000
+                    default 400000
+                    help
+                      Set the I2C0 clock speed in Hz.
+                      Standard mode: 100000 (100KHz)
+                      Fast mode: 400000 (400KHz)
+                      Fast mode plus: 1000000 (1MHz)
+                
+                config BSP_USING_HW_I2C1
                     bool "Enable I2C1"
                     default n
+                
+                config BSP_HW_I2C1_CLOCK_SPEED
+                    int "I2C1 Clock Speed (Hz)"
+                    depends on BSP_USING_HW_I2C1
+                    range 100000 1000000
+                    default 400000
+                    help
+                      Set the I2C1 clock speed in Hz.
+                      Standard mode: 100000 (100KHz)
+                      Fast mode: 400000 (400KHz)
+                      Fast mode plus: 1000000 (1MHz)
             endif
         menuconfig BSP_USING_I2C0
             bool "Enable I2C0 BUS (software simulation)"
