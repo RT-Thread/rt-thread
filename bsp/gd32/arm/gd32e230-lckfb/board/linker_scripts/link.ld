@@ -129,10 +129,6 @@ SECTIONS
 
         /* Discard all debugging and comment sections using the correct wildcard syntax */
         *(.comment)
-        *(.debug*)
-        *(.line)
-        *(.stab)
-        *(.stabstr)
         *(.note.gnu.build-id)
         *(.ARM.attributes)
     }
