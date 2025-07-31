@@ -170,9 +170,9 @@ static int rt_hw_rtc_init(void)
 
     rcu_periph_clock_enable(RCU_PMU);
     pmu_backup_write_enable();
-    #ifndef SOC_SERIES_GD32E23x
+#ifndef SOC_SERIES_GD32E23x
     rcu_periph_clock_enable(RCU_BKPI);
-    #endif
+#endif
 
     rtc_counter = get_rtc_timestamp();
     /* once the rtc clock source has been selected, if can't be changed
