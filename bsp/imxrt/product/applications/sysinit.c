@@ -157,7 +157,7 @@ int eps32_init(void)
     } 
     return rc;
 }
-//INIT_APP_EXPORT(eps32_init);
+INIT_APP_EXPORT(eps32_init);
 #endif // USING_ESP32
 
 

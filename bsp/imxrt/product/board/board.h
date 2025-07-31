@@ -36,12 +36,16 @@ extern int heap_end;
 
 #define HEAP_SIZE           ((uint32_t)HEAP_END - (uint32_t)HEAP_BEGIN)
 
-#define OCRAM_START         (0x20240000)
-#define OCRAM_SIZE          (1 * 1024 * 1024)
+#define DTCAM_START         (0x20000000)
+#define DTCAM_SIZE          (0x00040000)
+#define DTCAM_END           (0x2003FFFF)
 
 /*! @brief The board flash size */
 #define BOARD_FLASH_SIZE (4U * 1024U * 1024U)
 
 void rt_hw_board_init(void);
+
+void *itcam_malloc(uint32_t size);
+
 
 #endif

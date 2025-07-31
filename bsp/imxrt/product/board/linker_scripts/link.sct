@@ -112,6 +112,8 @@ LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start {   ; l
     pbuf.o(+RO)
     memp.o(+RO)
     ethernetif.o(+RO)
+	serial.o(+RO)	
+	ipc.o(+RO)	
   }  
 
    RW_m_dtcam m_dtcam_start m_dtcam_size {

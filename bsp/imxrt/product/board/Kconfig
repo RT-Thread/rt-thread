@@ -84,6 +84,33 @@ menu "On-chip Peripheral Drivers"
                         depends on BSP_LPUART3_TX_USING_DMA
                         int "Set LPUART3 TX DMA channel (0-32)"
                         default 1
+			
+			config BSP_USING_LPUART8
+                bool "Enable LPUART8"
+                default n
+
+                config BSP_LPUART8_RX_USING_DMA
+                    bool "Enable LPUART8 RX DMA"
+                    depends on BSP_USING_LPUART8                   
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART8_RX_DMA_CHANNEL
+                        depends on BSP_LPUART8_RX_USING_DMA
+                        int "Set LPUART8 RX DMA channel (0-32)"
+                        default 6
+
+                config BSP_LPUART8_TX_USING_DMA
+                    bool "Enable LPUART8 TX DMA"
+                    depends on BSP_USING_LPUART8
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART8_TX_DMA_CHANNEL
+                        depends on BSP_LPUART8_TX_USING_DMA
+                        int "Set LPUART8 TX DMA channel (0-32)"
+                        default 7
 						
 			config BSP_USING_LPUART10
                 bool "Enable LPUART10"
@@ -111,6 +138,8 @@ menu "On-chip Peripheral Drivers"
                         depends on BSP_LPUART10_TX_USING_DMA
                         int "Set LPUART10 TX DMA channel (0-32)"
                         default 9
+						
+			
         endif
 	menuconfig BSP_USING_FLEXSPI
 		bool "Enable FlexSPI"

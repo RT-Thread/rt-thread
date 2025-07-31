@@ -56,6 +56,7 @@
 #undef putc
 #endif
 
+
 static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 {
     rt_wqueue_wakeup(&(dev->wait_queue), (void*)POLLIN);
@@ -213,6 +214,8 @@ static const struct dfs_file_ops _serial_fops =
     serial_fops_poll,
 };
 #endif /* RT_USING_POSIX_STDIO */
+
+extern void *itcam_malloc(uint32_t size);
 
 /*
  * Serial poll routines
@@ -659,10 +662,10 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             } else {
                 struct rt_serial_rx_fifo* rx_fifo;
 
-                rx_fifo = (struct rt_serial_rx_fifo*) rt_malloc (sizeof(struct rt_serial_rx_fifo) +
-                    serial->config.bufsz);
+                rx_fifo = (struct rt_serial_rx_fifo*) itcam_malloc (sizeof(struct rt_serial_rx_fifo) +
+                    serial->config.bufsz);                
                 RT_ASSERT(rx_fifo != RT_NULL);
-                rx_fifo->buffer = (rt_uint8_t*) (rx_fifo + 1);
+                rx_fifo->buffer = (rt_uint8_t*) (rx_fifo + 1);                
                 rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
                 rx_fifo->put_index = 0;
                 rx_fifo->get_index = 0;

@@ -29,6 +29,7 @@
 #define BAUD_RATE_2000000               2000000
 #define BAUD_RATE_2500000               2500000
 #define BAUD_RATE_3000000               3000000
+#define BAUD_RATE_4000000               4000000
 
 #define DATA_BITS_5                     5
 #define DATA_BITS_6                     6
@@ -106,7 +107,8 @@ struct serial_configure
     rt_uint32_t invert                  :1;
     rt_uint32_t bufsz                   :16;
     rt_uint32_t flowcontrol             :1;
-    rt_uint32_t reserved                :5;
+    rt_uint32_t is_485                  :1;
+    rt_uint32_t reserved                :4;
 };
 
 /*

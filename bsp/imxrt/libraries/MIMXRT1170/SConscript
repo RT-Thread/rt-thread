@@ -50,6 +50,10 @@ if GetDepend(['BSP_USING_ETH']):
 if GetDepend(['BSP_USING_SPI']):
     src += ['MIMXRT1171/drivers/fsl_lpspi.c']
 
+if GetDepend(['RT_SERIAL_USING_DMA']):
+    src += ['MIMXRT1171/drivers/fsl_edma.c']
+    src += ['MIMXRT1171/drivers/fsl_lpuart_edma.c']
+
 if rtconfig.PLATFORM in ['gcc']:
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
 else:

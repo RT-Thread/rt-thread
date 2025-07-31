@@ -36,7 +36,7 @@
                                                       1 bits for subpriority */
 #define NVIC_PRIORITYGROUP_4         0x00000003U /*!< 4 bits for pre-emption priority
                                                       0 bits for subpriority */
-
+static struct rt_memheap dtcam_heap;
 /* MPU configuration. */
 static void BOARD_ConfigMPU(void)
 {
@@ -248,6 +248,8 @@ void SysTick_Handler(void)
 
 void rt_hw_board_init()
 {
+    edma_config_t userConfig = {0};
+    
     BOARD_ConfigMPU();
     BOARD_InitPins();
     BOARD_BootClockRUN_800M();
@@ -311,13 +313,11 @@ void rt_hw_board_init()
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif /* RT_USING_HEAP */
 
-#if 0//def RT_USING_MEMHEAP_AS_HEAP
-    static struct rt_memheap ocram_heap;
+#ifdef RT_USING_MEMHEAP_AS_HEAP    
     /*initialize ocram as a heap in the system */
-    rt_memheap_init(&ocram_heap,
-                    "ocram",
-                    (void *)OCRAM_START,
-                    OCRAM_SIZE);
+    rt_memheap_init(&dtcam_heap,
+                    "dtcam",
+                    (void *)DTCAM_START,DTCAM_SIZE);                    
 #endif /*RT_USING_MEMHEAP_AS_HEAP*/
 
 #ifdef RT_USING_COMPONENTS_INIT
@@ -334,4 +334,13 @@ void rt_hw_board_init()
     }
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif /* RT_USING_CONSOLE */
+}
+
+void *itcam_malloc(uint32_t size)
+{
+    void *ptr = NULL;
+    
+    ptr = rt_memheap_alloc(&dtcam_heap, size);
+
+    return ptr;    
 }

@@ -19,6 +19,9 @@
 #include "fsl_lpuart.h"
 #include "fsl_lpuart_edma.h"
 #include "fsl_dmamux.h"
+#include "fsl_gpio.h"
+#include "drv_gpio.h"
+
 
 #define LOG_TAG             "drv.usart"
 #include <drv_log.h>
@@ -26,6 +29,12 @@
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
     #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
+
+#define GET_485_RE_GPIO                         GPIO3
+#define GET_485_RE_GPIO_PIN                     (4)
+#define SET_485_TO_RECIVE()                     GPIO_PinWrite(GET_485_RE_GPIO, GET_485_RE_GPIO_PIN, 0) 
+#define SET_485_TO_SEND()                       GPIO_PinWrite(GET_485_RE_GPIO, GET_485_RE_GPIO_PIN, 1)
+
 
 enum
 {
@@ -53,8 +62,13 @@ enum
 #ifdef BSP_USING_LPUART8
     LPUART8_INDEX,
 #endif
+#ifdef BSP_USING_LPUART9
+    LPUART9_INDEX,
+#endif
+#ifdef BSP_USING_LPUART10
+    LPUART10_INDEX,
+#endif
 };
-
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
 struct dma_rx_config
 {
@@ -185,6 +199,32 @@ static struct imxrt_uart uarts[] =
         .dma_flag = 0,
     },
 #endif
+#ifdef BSP_USING_LPUART9
+        {
+            .name = "uart9",
+            .uart_base = LPUART9,
+            .irqn = LPUART9_IRQn,
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+            .dma_rx = RT_NULL,
+            .dma_tx = RT_NULL,
+#endif
+            .dma_flag = 0,
+        },
+#endif
+#ifdef BSP_USING_LPUART10
+        {
+            .name = "uart10",
+            .uart_base = LPUART10,
+            .irqn = LPUART10_IRQn,
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+            .dma_rx = RT_NULL,
+            .dma_tx = RT_NULL,
+#endif
+            .dma_flag = 0,
+        },
+#endif
+
+
 };
 
 static void uart_get_dma_config(void)
@@ -276,6 +316,17 @@ static void uart_get_dma_config(void)
     uarts[LPUART8_INDEX].dma_tx = &uart8_dma_tx;
     uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
+#ifdef BSP_LPUART10_RX_USING_DMA
+        static struct dma_rx_config uart10_dma_rx = {.request = kDmaRequestMuxLPUART10Rx, .channel = BSP_LPUART10_RX_DMA_CHANNEL, .last_index = 0};
+        uarts[LPUART10_INDEX].dma_rx = &uart10_dma_rx;
+        uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART10_TX_USING_DMA
+        static struct dma_tx_config uart10_dma_tx = {.request = kDmaRequestMuxLPUART10Tx, .channel = BSP_LPUART10_TX_DMA_CHANNEL};
+        uarts[LPUART10_INDEX].dma_tx = &uart10_dma_tx;
+        uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
 }
 
 static void uart_isr(struct imxrt_uart *uart);
@@ -390,6 +441,23 @@ void LPUART8_IRQHandler(void)
 
 #endif /* BSP_USING_LPUART8 */
 
+#if defined(BSP_USING_LPUART10)
+struct rt_serial_device serial10;
+
+void LPUART10_IRQHandler(void)
+{
+    rt_interrupt_enter();
+
+    uart_isr(&uarts[LPUART10_INDEX]);
+
+    rt_interrupt_leave();
+}
+
+#endif /* BSP_USING_LPUART10 */
+
+
+
+
 static void uart_isr(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
@@ -407,6 +475,7 @@ static void uart_isr(struct imxrt_uart *uart)
     if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxOverrunFlag)
     {
         /* Clear overrun flag, otherwise the RX does not work. */
+        rt_kprintf("%s overrun\r\n", uart->name);
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_RxOverrunFlag);
     }
 
@@ -504,9 +573,9 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
 
     edma_transfer_config_t xferConfig;
     struct rt_serial_rx_fifo *rx_fifo;
-
-    DMAMUX_SetSource(DMAMUX, uart->dma_rx->channel, uart->dma_rx->request);
-    DMAMUX_EnableChannel(DMAMUX, uart->dma_rx->channel);
+    
+    DMAMUX_SetSource(DMAMUX0, uart->dma_rx->channel, uart->dma_rx->request);
+    DMAMUX_EnableChannel(DMAMUX0, uart->dma_rx->channel);
     EDMA_CreateHandle(&uart->dma_rx->edma, DMA0, uart->dma_rx->channel);
     EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
 
@@ -539,10 +608,11 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
 static void imxrt_dma_tx_config(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
-
-    DMAMUX_SetSource(DMAMUX, uart->dma_tx->channel, uart->dma_tx->request);
-    DMAMUX_EnableChannel(DMAMUX, uart->dma_tx->channel);
+    
+    DMAMUX_SetSource(DMAMUX0, uart->dma_tx->channel, uart->dma_tx->request);
+    DMAMUX_EnableChannel(DMAMUX0, uart->dma_tx->channel);
     EDMA_CreateHandle(&uart->dma_tx->edma, DMA0, uart->dma_tx->channel);
+    
 
     LPUART_TransferCreateHandleEDMA(uart->uart_base,
                                     &uart->dma_tx->uart_edma,
@@ -565,6 +635,36 @@ uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
     {
     case LPUART1_BASE:
         freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
+        break;
+    case LPUART2_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
+        break;
+    case LPUART3_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart3);
+        break;
+    case LPUART4_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart4);
+        break;
+    case LPUART5_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart5);
+        break;
+    case LPUART6_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart6);
+        break;
+    case LPUART7_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart7);
+        break;
+    case LPUART8_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart8);
+        break;
+    case LPUART9_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart9);
+        break;
+    case LPUART10_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart10);
+        break;
+    case LPUART11_BASE:
+        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart11);
         break;
     case LPUART12_BASE:
         freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart12);
@@ -593,6 +693,7 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
 {
     struct imxrt_uart *uart;
     lpuart_config_t config;
+    gpio_pin_config_t gpio;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
@@ -636,10 +737,32 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
         break;
     }
 
+    switch(cfg->flowcontrol)
+    {
+    case RT_SERIAL_FLOWCONTROL_CTSRTS:
+        config.enableRxRTS = true;
+        config.enableTxCTS = true;
+        break;
+    case RT_SERIAL_FLOWCONTROL_NONE:
+    default:
+        config.enableRxRTS = false;
+        config.enableTxCTS = false;
+        break;
+    }
+
     config.enableTx = true;
     config.enableRx = true;
 
     LPUART_Init(uart->uart_base, &config, GetUartSrcFreq(uart->uart_base));
+
+     /* 初始化485引脚 */
+    if(uart->uart_base == LPUART8)
+    {
+        gpio.direction      = kGPIO_DigitalOutput;  /* 输出模式 */
+        gpio.outputLogic    = 0;                    /* 默认高电平 */
+        gpio.interruptMode  = kGPIO_NoIntmode;      /* 不使用中断 */
+        GPIO_PinInit(GET_485_RE_GPIO, GET_485_RE_GPIO_PIN, &gpio);    
+    }
 
     return RT_EOK;
 }
@@ -692,8 +815,19 @@ static int imxrt_putc(struct rt_serial_device *serial, char ch)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct imxrt_uart, serial);
 
-    LPUART_WriteByte(uart->uart_base, ch);
-    while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag));
+    
+    if(LPUART8 == uart->uart_base)
+    {
+        SET_485_TO_SEND();
+        LPUART_WriteByte(uart->uart_base, ch);
+        while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TransmissionCompleteFlag));
+        SET_485_TO_RECIVE();
+    }
+    else
+    {
+        LPUART_WriteByte(uart->uart_base, ch);
+        while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag));
+    }
 
     return 1;
 }
@@ -731,6 +865,10 @@ rt_size_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_
         {
             xfer.data = buf;
             xfer.dataSize = size;
+            if(LPUART8 == uart->uart_base) 
+            {
+                SET_485_TO_SEND();                
+            }            
             if (LPUART_SendEDMA(uart->uart_base, &uart->dma_tx->uart_edma, &xfer) == kStatus_Success)
             {
                 xfer_size = size;
@@ -770,6 +908,16 @@ int rt_hw_uart_init(void)
     {
         uarts[i].serial.ops    = &imxrt_uart_ops;
         uarts[i].serial.config = config;
+        if (LPUART10 == uarts[i].uart_base) 
+        {        
+            uarts[i].serial.config.baud_rate = BAUD_RATE_4000000;
+            uarts[i].serial.config.flowcontrol = RT_SERIAL_FLOWCONTROL_CTSRTS;
+        }
+        if (LPUART8 == uarts[i].uart_base) {
+            uarts[i].serial.config.is_485 = RT_TRUE;
+        } else {
+            uarts[i].serial.config.is_485 = RT_FALSE;
+        }
 
         ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name, flag | uarts[i].dma_flag, NULL);
     }
