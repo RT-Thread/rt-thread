@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,11 +33,13 @@ extern "C" {
 #include "gd32e50x_gpio.h"
 #elif defined SOC_SERIES_GD32F5xx
 #include "gd32f5xx_gpio.h"
+#elif defined SOC_SERIES_GD32E23x
+#include "gd32e23x_gpio.h"
 #endif
 
 #define __GD32_PORT(port)  GPIO##port
 
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32F5xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,      \
                                     GPIO##port, GPIO_PIN_##pin, \
                                     EXTI_SOURCE_GPIO##port,     \

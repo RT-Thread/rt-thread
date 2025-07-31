@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -154,27 +154,31 @@ void UART7_IRQHandler(void)
 static const struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART0
     {
-        USART0,                                // uart peripheral index
-        USART0_IRQn,                           // uart iqrn
-        RCU_USART0,                            // uart periph clock
+        USART0,                                /* uart peripheral index */
+        USART0_IRQn,                           /* uart iqrn */
+        RCU_USART0,                            /* uart periph clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        RCU_GPIOA, RCU_GPIOA,                  // tx gpio clock, rx gpio clock
-        GPIOA, GPIO_AF_7, GPIO_PIN_9,          // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF_7, GPIO_PIN_10,         // rx port, rx alternate, rx pin
+        RCU_GPIOA, RCU_GPIOA,                  /* tx gpio clock, rx gpio clock */
+        GPIOA, GPIO_AF_7, GPIO_PIN_9,          /* tx port, tx alternate, tx pin */
+        GPIOA, GPIO_AF_7, GPIO_PIN_10,         /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32H7xx
-        RCU_GPIOF,                             // periph clock, tx gpio clock
-        RCU_GPIOF,                             // periph clock, rx gpio clock
-        GPIOF, GPIO_AF_4, GPIO_PIN_4,          // tx port, tx alternate, tx pin
-        GPIOF, GPIO_AF_4, GPIO_PIN_5,          // rx port, rx alternate, rx pin
+        RCU_GPIOF,                             /* periph clock, tx gpio clock */
+        RCU_GPIOF,                             /* periph clock, rx gpio clock */
+        GPIOF, GPIO_AF_4, GPIO_PIN_4,          /* tx port, tx alternate, tx pin */
+        GPIOF, GPIO_AF_4, GPIO_PIN_5,          /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
-        RCU_GPIOA, RCU_GPIOA,                  // tx gpio clock, rx gpio clock
-        GPIOA, 0, GPIO_PIN_9,                  // tx port, tx alternate, tx pin
-        GPIOA, 0, GPIO_PIN_10,                 // rx port, rx alternate, rx pin
-        0,                                     // afio remap cfg
+        RCU_GPIOA, RCU_GPIOA,                  /* tx gpio clock, rx gpio clock */
+        GPIOA, 0, GPIO_PIN_9,                  /* tx port, tx alternate, tx pin */
+        GPIOA, 0, GPIO_PIN_10,                 /* rx port, rx alternate, rx pin */
+        0,                                     /* afio remap cfg */
+#elif defined SOC_SERIES_GD32E23x
+        RCU_GPIOA, RCU_GPIOA,
+        GPIOA, GPIO_AF_1, GPIO_PIN_9,
+        GPIOA, GPIO_AF_1, GPIO_PIN_10,
 #else
-        RCU_GPIOA, RCU_GPIOA,                  // tx gpio clock, rx gpio clock
-        GPIOA, GPIO_PIN_9,                     // tx port, tx pin
-        GPIOA, GPIO_PIN_10,                    // rx port, rx pin
+        RCU_GPIOA, RCU_GPIOA,                  /* tx gpio clock, rx gpio clock */
+        GPIOA, GPIO_PIN_9,                     /* tx port, tx pin */
+        GPIOA, GPIO_PIN_10,                    /* rx port, rx pin */
 #endif
         &serial0,
         "uart0",
@@ -183,22 +187,26 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART1
     {
-        USART1,                                 // uart peripheral index
-        USART1_IRQn,                            // uart iqrn
-        RCU_USART1,                             // uart periph clock
+        USART1,                                 /* uart peripheral index */
+        USART1_IRQn,                            /* uart iqrn */
+        RCU_USART1,                             /* uart periph clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32F5xx
-        RCU_GPIOA, RCU_GPIOA,                   // tx gpio clock, rx gpio clock
-        GPIOA, GPIO_AF_7, GPIO_PIN_2,           // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF_7, GPIO_PIN_3,           // rx port, rx alternate, rx pin
+        RCU_GPIOA, RCU_GPIOA,                   /* tx gpio clock, rx gpio clock */
+        GPIOA, GPIO_AF_7, GPIO_PIN_2,           /* tx port, tx alternate, tx pin */
+        GPIOA, GPIO_AF_7, GPIO_PIN_3,           /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
-        RCU_GPIOA, RCU_GPIOA,                   // tx gpio clock, rx gpio clock
-        GPIOA, 0, GPIO_PIN_2,                   // tx port, tx alternate, tx pin
-        GPIOA, 0, GPIO_PIN_3,                   // rx port, rx alternate, rx pin
-        0,                                      // afio remap cfg
+        RCU_GPIOA, RCU_GPIOA,                   /* tx gpio clock, rx gpio clock */
+        GPIOA, 0, GPIO_PIN_2,                   /* tx port, tx alternate, tx pin */
+        GPIOA, 0, GPIO_PIN_3,                   /* rx port, rx alternate, rx pin */
+        0,                                      /* afio remap cfg */
+#elif defined SOC_SERIES_GD32E23x
+        RCU_GPIOA, RCU_GPIOA,
+        GPIOA, GPIO_AF_1, GPIO_PIN_14,
+        GPIOA, GPIO_AF_1, GPIO_PIN_15,
 #else
-        RCU_GPIOA, RCU_GPIOA,                   // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
+        RCU_GPIOA, RCU_GPIOA,                   /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
 #endif
         &serial1,
         "uart1",
@@ -207,22 +215,22 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART2
     {
-        USART2,                                 // uart peripheral index
-        USART2_IRQn,                            // uart iqrn
-        RCU_USART2,                                    // uart periph clock
+        USART2,                                 /* uart peripheral index */
+        USART2_IRQn,                            /* uart iqrn */
+        RCU_USART2,                                    /* uart periph clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32F5xx
-        RCU_GPIOB, RCU_GPIOB,                   // tx gpio clock, rt gpio clock
-        GPIOB, GPIO_AF_7, GPIO_PIN_10,          // tx port, tx alternate, tx pin
-        GPIOB, GPIO_AF_7, GPIO_PIN_11,          // rx port, rx alternate, rx pin
+        RCU_GPIOB, RCU_GPIOB,                   /* tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_AF_7, GPIO_PIN_10,          /* tx port, tx alternate, tx pin */
+        GPIOB, GPIO_AF_7, GPIO_PIN_11,          /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
-        RCU_GPIOB, RCU_GPIOB,                   // tx gpio clock, rx gpio clock
-        GPIOB, 0, GPIO_PIN_10,                  // tx port, tx alternate, tx pin
-        GPIOB, 0, GPIO_PIN_11,                  // rx port, rx alternate, rx pin
-        0,                                      // afio remap cfg
+        RCU_GPIOB, RCU_GPIOB,                   /* tx gpio clock, rx gpio clock */
+        GPIOB, 0, GPIO_PIN_10,                  /* tx port, tx alternate, tx pin */
+        GPIOB, 0, GPIO_PIN_11,                  /* rx port, rx alternate, rx pin */
+        0,                                      /* afio remap cfg */
 #else
-        RCU_GPIOB, RCU_GPIOB,                   // tx gpio clock, rt gpio clock
-        GPIOB, GPIO_PIN_10,                     // tx port, tx pin
-        GPIOB, GPIO_PIN_11,                     // rx port, rx pin
+        RCU_GPIOB, RCU_GPIOB,                   /* tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_10,                     /* tx port, tx pin */
+        GPIOB, GPIO_PIN_11,                     /* rx port, rx pin */
 #endif
         &serial2,
         "uart2",
@@ -231,22 +239,22 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART3
     {
-        UART3,                                 // uart peripheral index
-        UART3_IRQn,                            // uart iqrn
-        RCU_UART3,                             // uart periph clock
+        UART3,                                 /* uart peripheral index */
+        UART3_IRQn,                            /* uart iqrn */
+        RCU_UART3,                             /* uart periph clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        RCU_GPIOC, RCU_GPIOC,                  // tx gpio clock, rt gpio clock
-        GPIOC, GPIO_AF_8, GPIO_PIN_10,         // tx port, tx alternate, tx pin
-        GPIOC, GPIO_AF_8, GPIO_PIN_11,         // rx port, rx alternate, rx pin
+        RCU_GPIOC, RCU_GPIOC,                  /* tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_AF_8, GPIO_PIN_10,         /* tx port, tx alternate, tx pin */
+        GPIOC, GPIO_AF_8, GPIO_PIN_11,         /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
-        RCU_GPIOC, RCU_GPIOC,                   // tx gpio clock, rx gpio clock
-        GPIOC, 0, GPIO_PIN_10,                  // tx port, tx alternate, tx pin
-        GPIOC, 0, GPIO_PIN_11,                  // rx port, rx alternate, rx pin
-        0,                                      // afio remap cfg
+        RCU_GPIOC, RCU_GPIOC,                   /* tx gpio clock, rx gpio clock */
+        GPIOC, 0, GPIO_PIN_10,                  /* tx port, tx alternate, tx pin */
+        GPIOC, 0, GPIO_PIN_11,                  /* rx port, rx alternate, rx pin */
+        0,                                      /* afio remap cfg */
 #else
-        RCU_GPIOC, RCU_GPIOC,                  // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_10,                    // tx port, tx pin
-        GPIOC, GPIO_PIN_11,                    // rx port, rx pin
+        RCU_GPIOC, RCU_GPIOC,                  /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_PIN_10,                    /* tx port, tx pin */
+        GPIOC, GPIO_PIN_11,                    /* rx port, rx pin */
 #endif
         &serial3,
         "uart3",
@@ -255,19 +263,19 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART4
     {
-        UART4,                                 // uart peripheral index
-        UART4_IRQn,                            // uart iqrn
-        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
+        UART4,                                 /* uart peripheral index */
+        UART4_IRQn,                            /* uart iqrn */
+        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOC, GPIO_AF_8, GPIO_PIN_12,         // tx port, tx alternate, tx pin
-        GPIOD, GPIO_AF_8, GPIO_PIN_2,          // rx port, rx alternate, rx pin
+        GPIOC, GPIO_AF_8, GPIO_PIN_12,         /* tx port, tx alternate, tx pin */
+        GPIOD, GPIO_AF_8, GPIO_PIN_2,          /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
-        GPIOC, 0, GPIO_PIN_12,                 // tx port, tx alternate, tx pin
-        GPIOD, 0, GPIO_PIN_2,                  // rx port, rx alternate, rx pin
-        0,                                     // afio remap cfg
+        GPIOC, 0, GPIO_PIN_12,                 /* tx port, tx alternate, tx pin */
+        GPIOD, 0, GPIO_PIN_2,                  /* rx port, rx alternate, rx pin */
+        0,                                     /* afio remap cfg */
 #else
-        GPIOC, GPIO_PIN_12,                    // tx port, tx pin
-        GPIOD, GPIO_PIN_2,                     // rx port, rx pin
+        GPIOC, GPIO_PIN_12,                    /* tx port, tx pin */
+        GPIOD, GPIO_PIN_2,                     /* rx port, rx pin */
 #endif
         &serial4,
         "uart4",
@@ -276,19 +284,19 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART5
     {
-        USART5,                                 // uart peripheral index
-        USART5_IRQn,                            // uart iqrn
-        RCU_USART5, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
+        USART5,                                 /* uart peripheral index */
+        USART5_IRQn,                            /* uart iqrn */
+        RCU_USART5, RCU_GPIOC, RCU_GPIOC,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOC, GPIO_AF_8, GPIO_PIN_6,           // tx port, tx alternate, tx pin
-        GPIOC, GPIO_AF_8, GPIO_PIN_7,           // rx port, rx alternate, rx pin
+        GPIOC, GPIO_AF_8, GPIO_PIN_6,           /* tx port, tx alternate, tx pin */
+        GPIOC, GPIO_AF_8, GPIO_PIN_7,           /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
-        GPIOC, AFIO_PC6_USART5_CFG, GPIO_PIN_6, // tx port, tx alternate, tx pin
-        GPIOC, AFIO_PC7_USART5_CFG, GPIO_PIN_7, // rx port, rx alternate, rx pin
-        0,                                      // afio remap cfg
+        GPIOC, AFIO_PC6_USART5_CFG, GPIO_PIN_6, /* tx port, tx alternate, tx pin */
+        GPIOC, AFIO_PC7_USART5_CFG, GPIO_PIN_7, /* rx port, rx alternate, rx pin */
+        0,                                      /* afio remap cfg */
 #else
-        GPIOC, GPIO_PIN_6,                      // tx port, tx pin
-        GPIOC, GPIO_PIN_7,                      // rx port, rx pin
+        GPIOC, GPIO_PIN_6,                      /* tx port, tx pin */
+        GPIOC, GPIO_PIN_7,                      /* rx port, rx pin */
 #endif
         &serial5,
         "uart5",
@@ -297,15 +305,15 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART6
     {
-        UART6,                                 // uart peripheral index
-        UART6_IRQn,                            // uart iqrn
-        RCU_UART6, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
+        UART6,                                 /* uart peripheral index */
+        UART6_IRQn,                            /* uart iqrn */
+        RCU_UART6, RCU_GPIOE, RCU_GPIOE,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOE, GPIO_AF_8, GPIO_PIN_7,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_8,          // rx port, rx alternate, rx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_7,          /* tx port, tx alternate, tx pin */
+        GPIOE, GPIO_AF_8, GPIO_PIN_8,          /* rx port, rx alternate, rx pin */
 #else
-        GPIOE, GPIO_PIN_7,                     // tx port, tx pin
-        GPIOE, GPIO_PIN_8,                     // rx port, rx pin
+        GPIOE, GPIO_PIN_7,                     /* tx port, tx pin */
+        GPIOE, GPIO_PIN_8,                     /* rx port, rx pin */
 #endif
         &serial6,
         "uart6",
@@ -314,15 +322,15 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART7
     {
-        UART7,                                 // uart peripheral index
-        UART7_IRQn,                            // uart iqrn
-        RCU_UART7, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
+        UART7,                                 /* uart peripheral index */
+        UART7_IRQn,                            /* uart iqrn */
+        RCU_UART7, RCU_GPIOE, RCU_GPIOE,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_0,          /* tx port, tx alternate, tx pin */
+        GPIOE, GPIO_AF_8, GPIO_PIN_1,          /* rx port, rx alternate, rx pin */
 #else
-        GPIOE, GPIO_PIN_0,                     // tx port, tx pin
-        GPIOE, GPIO_PIN_1,                     // rx port, rx pin
+        GPIOE, GPIO_PIN_0,                     /* tx port, tx pin */
+        GPIOE, GPIO_PIN_1,                     /* rx port, rx pin */
 #endif
         &serial7,
         "uart7",
@@ -347,7 +355,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     rcu_periph_clock_enable(uart->rx_gpio_clk);
     rcu_periph_clock_enable(uart->per_clk);
 
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x
     /* connect port to USARTx_Tx */
     gpio_af_set(uart->tx_port, uart->tx_af, uart->tx_pin);
 
@@ -598,3 +606,4 @@ int rt_hw_usart_init(void)
 }
 
 #endif
+

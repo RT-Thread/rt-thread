@@ -1,0 +1,25 @@
+kernel.tick:
+  kconfig:
+    - CONFIG_RT_TICK_PER_SECOND=100
+kernel.console_name:
+  kconfig:
+    - CONFIG_RT_CONSOLE_DEVICE_NAME="uart0"
+component.dev_drv.ipc.sys_workqueue:
+  kconfig:
+    - CONFIG_RT_USING_SYSTEM_WORKQUEUE=y
+hw_drv_onchip.uart0:
+  kconfig:
+    - CONFIG_BSP_USING_UART0=y
+hw_drv_onchip.adc0:
+  kconfig:
+    - CONFIG_BSP_USING_ADC=y
+    - CONFIG_BSP_USING_ADC0=y
+hw_drv_onchip.spi0:
+  kconfig:
+    - CONFIG_BSP_USING_SPI=y
+    - CONFIG_BSP_USING_SPI0=y
+hw_drv_onchip.i2c0:
+  kconfig:
+    - CONFIG_BSP_USING_I2C0=y
+    - CONFIG_BSP_I2C0_SCL_PIN=22
+    - CONFIG_BSP_I2C0_SDA_PIN=23

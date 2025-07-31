@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -53,21 +53,34 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART0
     {
         "uart0",
-        USART0,                                 // uart peripheral index
-        USART0_IRQn,                            // uart iqrn
-        RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
+        USART0,                                 /* uart peripheral index */
+        USART0_IRQn,                            /* uart iqrn */
+        RCU_USART0, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOA, GPIO_AF_7, GPIO_PIN_9,           // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF_7, GPIO_PIN_10,          // rx port, rx alternate, rx pin
+        GPIOA, GPIO_AF_7, GPIO_PIN_9,           /* tx port, tx alternate, tx pin */
+        GPIOA, GPIO_AF_7, GPIO_PIN_10,          /* rx port, rx alternate, rx pin */
+#elif defined SOC_SERIES_GD32E23x
+        GPIOA, GPIO_AF_1, GPIO_PIN_9,
+        GPIOA, GPIO_AF_1, GPIO_PIN_10,
 #else
-        GPIOA, GPIO_PIN_9,           // tx port, tx pin
-        GPIOA, GPIO_PIN_10,          // rx port, rx pin
+        GPIOA, GPIO_PIN_9,           /* tx port, tx pin */
+        GPIOA, GPIO_PIN_10,          /* rx port, rx pin */
 #endif
+
+#if defined SOC_SERIES_GD32E23x
+#ifdef BSP_UART0_RX_USING_DMA
+        .dma.rx = DRV_DMA_CONFIG(2),
+#endif
+#ifdef BSP_UART0_TX_USING_DMA
+        .dma.tx = DRV_DMA_CONFIG(1),
+#endif
+#else
 #ifdef BSP_UART0_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(1, 5, 4),
 #endif
 #ifdef BSP_UART0_TX_USING_DMA
         .dma.tx = DRV_DMA_CONFIG(1, 7, 4),
+#endif
 #endif
     },
     #endif
@@ -75,21 +88,33 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART1
     {
         "uart1",
-        USART1,                                 // uart peripheral index
-        USART1_IRQn,                            // uart iqrn
-        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
+        USART1,                                 /* uart peripheral index */
+        USART1_IRQn,                            /* uart iqrn */
+        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOA, GPIO_AF_7, GPIO_PIN_2,           // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF_7, GPIO_PIN_3,           // rx port, rx alternate, rx pin
+        GPIOA, GPIO_AF_7, GPIO_PIN_2,           /* tx port, tx alternate, tx pin */
+        GPIOA, GPIO_AF_7, GPIO_PIN_3,           /* rx port, rx alternate, rx pin */
+#elif defined SOC_SERIES_GD32E23x
+        GPIOA, GPIO_AF_1, GPIO_PIN_14,
+        GPIOA, GPIO_AF_1, GPIO_PIN_15,
 #else
-        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
 #endif
+#if defined SOC_SERIES_GD32E23x
+#ifdef BSP_UART1_RX_USING_DMA
+        .dma.rx = DRV_DMA_CONFIG(4),
+#endif
+#ifdef BSP_UART1_TX_USING_DMA
+        .dma.tx = DRV_DMA_CONFIG(3),
+#endif
+#else
 #ifdef BSP_UART1_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(0, 5, 4),
 #endif
 #ifdef BSP_UART1_TX_USING_DMA
         .dma.tx = DRV_DMA_CONFIG(0, 6, 4),
+#endif
 #endif
     },
     #endif
@@ -97,15 +122,15 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART2
     {
         "uart2",
-        USART2,                                 // uart peripheral index
-        USART2_IRQn,                            // uart iqrn
-        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
+        USART2,                                 /* uart peripheral index */
+        USART2_IRQn,                            /* uart iqrn */
+        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOB, GPIO_AF_7, GPIO_PIN_10,          // tx port, tx alternate, tx pin
-        GPIOB, GPIO_AF_7, GPIO_PIN_11,          // rx port, rx alternate, rx pin
+        GPIOB, GPIO_AF_7, GPIO_PIN_10,          /* tx port, tx alternate, tx pin */
+        GPIOB, GPIO_AF_7, GPIO_PIN_11,          /* rx port, rx alternate, rx pin */
 #else
-        GPIOB, GPIO_PIN_10,          // tx port, tx pin
-        GPIOB, GPIO_PIN_11,          // rx port, rx pin
+        GPIOB, GPIO_PIN_10,          /* tx port, tx pin */
+        GPIOB, GPIO_PIN_11,          /* rx port, rx pin */
 #endif
 #ifdef BSP_UART2_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(0, 1, 4),
@@ -119,15 +144,15 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART3
     {
         "uart3",
-        UART3,                                 // uart peripheral index
-        UART3_IRQn,                            // uart iqrn
-        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
+        UART3,                                 /* uart peripheral index */
+        UART3_IRQn,                            /* uart iqrn */
+        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOC, GPIO_AF_8, GPIO_PIN_10,         // tx port, tx alternate, tx pin
-        GPIOC, GPIO_AF_8, GPIO_PIN_11,         // rx port, rx alternate, rx pin
+        GPIOC, GPIO_AF_8, GPIO_PIN_10,         /* tx port, tx alternate, tx pin */
+        GPIOC, GPIO_AF_8, GPIO_PIN_11,         /* rx port, rx alternate, rx pin */
 #else
-        GPIOC, GPIO_PIN_10,         // tx port, tx pin
-        GPIOC, GPIO_PIN_11,         // rx port, rx pin
+        GPIOC, GPIO_PIN_10,         /* tx port, tx pin */
+        GPIOC, GPIO_PIN_11,         /* rx port, rx pin */
 #endif
 #ifdef BSP_UART3_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(0, 2, 4),
@@ -141,15 +166,15 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART4
     {
         "uart4",
-        UART4,                                 // uart peripheral index
-        UART4_IRQn,                            // uart iqrn
-        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
+        UART4,                                 /* uart peripheral index */
+        UART4_IRQn,                            /* uart iqrn */
+        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOC, GPIO_AF_8, GPIO_PIN_12,         // tx port, tx alternate, tx pin
-        GPIOD, GPIO_AF_8, GPIO_PIN_2,          // rx port, rx alternate, rx pin
+        GPIOC, GPIO_AF_8, GPIO_PIN_12,         /* tx port, tx alternate, tx pin */
+        GPIOD, GPIO_AF_8, GPIO_PIN_2,          /* rx port, rx alternate, rx pin */
 #else
-        GPIOC, GPIO_PIN_12,         // tx port, tx pin
-        GPIOD, GPIO_PIN_2,          // rx port, rx pin
+        GPIOC, GPIO_PIN_12,         /* tx port, tx pin */
+        GPIOD, GPIO_PIN_2,          /* rx port, rx pin */
 #endif
 #ifdef BSP_UART4_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(0, 0, 4),
@@ -163,15 +188,15 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART5
     {
         "uart5",
-        USART5,                                 // uart peripheral index
-        USART5_IRQn,                            // uart iqrn
-        RCU_USART5, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
+        USART5,                                 /* uart peripheral index */
+        USART5_IRQn,                            /* uart iqrn */
+        RCU_USART5, RCU_GPIOC, RCU_GPIOC,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOC, GPIO_AF_8, GPIO_PIN_6,           // tx port, tx alternate, tx pin
-        GPIOC, GPIO_AF_8, GPIO_PIN_7,           // rx port, rx alternate, rx pin
+        GPIOC, GPIO_AF_8, GPIO_PIN_6,           /* tx port, tx alternate, tx pin */
+        GPIOC, GPIO_AF_8, GPIO_PIN_7,           /* rx port, rx alternate, rx pin */
 #else
-        GPIOC, GPIO_PIN_6,           // tx port, tx pin
-        GPIOC, GPIO_PIN_7,           // rx port, rx pin
+        GPIOC, GPIO_PIN_6,           /* tx port, tx pin */
+        GPIOC, GPIO_PIN_7,           /* rx port, rx pin */
 #endif
 #ifdef BSP_UART5_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(1, 1, 5),
@@ -185,15 +210,15 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART6
     {
         "uart6",
-        UART6,                                 // uart peripheral index
-        UART6_IRQn,                            // uart iqrn
-        RCU_UART6, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
+        UART6,                                 /* uart peripheral index */
+        UART6_IRQn,                            /* uart iqrn */
+        RCU_UART6, RCU_GPIOE, RCU_GPIOE,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOE, GPIO_AF_8, GPIO_PIN_7,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_8,          // rx port, rx alternate, rx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_7,          /* tx port, tx alternate, tx pin */
+        GPIOE, GPIO_AF_8, GPIO_PIN_8,          /* rx port, rx alternate, rx pin */
 #else
-        GPIOE, GPIO_PIN_7,          // tx port, tx pin
-        GPIOE, GPIO_PIN_8,          // rx port, rx pin
+        GPIOE, GPIO_PIN_7,          /* tx port, tx pin */
+        GPIOE, GPIO_PIN_8,          /* rx port, rx pin */
 #endif
 #ifdef BSP_UART6_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(0, 3, 5),
@@ -207,15 +232,15 @@ static struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART7
     {
         "uart7",
-        UART7,                                 // uart peripheral index
-        UART7_IRQn,                            // uart iqrn
-        RCU_UART7, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
+        UART7,                                 /* uart peripheral index */
+        UART7_IRQn,                            /* uart iqrn */
+        RCU_UART7, RCU_GPIOE, RCU_GPIOE,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
-        GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_0,          /* tx port, tx alternate, tx pin */
+        GPIOE, GPIO_AF_8, GPIO_PIN_1,          /* rx port, rx alternate, rx pin */
 #else
-        GPIOE, GPIO_PIN_0,          // tx port, tx pin
-        GPIOE, GPIO_PIN_1,          // rx port, rx pin
+        GPIOE, GPIO_PIN_0,          /* tx port, tx pin */
+        GPIOE, GPIO_PIN_1,          /* rx port, rx pin */
 #endif
 #ifdef BSP_UART7_RX_USING_DMA
         .dma.rx = DRV_DMA_CONFIG(0, 6, 5),
@@ -240,7 +265,11 @@ static void dma_recv_isr (struct rt_serial_device *serial)
 
     recv_len = 0;
     level = rt_hw_interrupt_disable();
+    #if defined SOC_SERIES_GD32E23x
+    counter = dma_transfer_number_get(uart->dma.rx.channel);
+    #else
     counter = dma_transfer_number_get(uart->dma.rx.periph, uart->dma.rx.channel);
+    #endif
     if (counter <= uart->dma.last_index)
     {
         recv_len = uart->dma.last_index - counter;
@@ -377,6 +406,17 @@ static void dma_rx_isr (struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
+    #if defined SOC_SERIES_GD32E23x
+    if ((dma_interrupt_flag_get(uart->dma.rx.channel, DMA_INT_FLAG_HTF) != RESET) ||
+        (dma_interrupt_flag_get(uart->dma.rx.channel, DMA_INT_FLAG_FTF) != RESET))
+    {
+        dma_recv_isr(serial);
+
+        /* clear dma flag */
+        dma_interrupt_flag_clear(uart->dma.rx.channel, DMA_INT_FLAG_HTF);
+        dma_interrupt_flag_clear(uart->dma.rx.channel, DMA_INT_FLAG_FTF);
+    }
+    #else
     if ((dma_interrupt_flag_get(uart->dma.rx.periph, uart->dma.rx.channel, DMA_INT_FLAG_HTF) != RESET) ||
         (dma_interrupt_flag_get(uart->dma.rx.periph, uart->dma.rx.channel, DMA_INT_FLAG_FTF) != RESET))
     {
@@ -386,6 +426,7 @@ static void dma_rx_isr (struct rt_serial_device *serial)
         dma_interrupt_flag_clear(uart->dma.rx.periph, uart->dma.rx.channel, DMA_INT_FLAG_HTF);
         dma_interrupt_flag_clear(uart->dma.rx.periph, uart->dma.rx.channel, DMA_INT_FLAG_FTF);
     }
+    #endif
 }
 
 #endif
@@ -405,6 +446,24 @@ static void dma_tx_isr (struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
+    #if defined SOC_SERIES_GD32E23x
+    {
+        rt_size_t trans_total_index;
+
+        /* clear dma flag */
+        dma_interrupt_flag_clear(uart->dma.tx.channel, DMA_INT_FLAG_FTF);
+
+        /* disable dma tx channel */
+        dma_channel_disable(uart->dma.tx.channel);
+
+        trans_total_index = dma_transfer_number_get(uart->dma.tx.channel);
+
+        if (trans_total_index == 0)
+        {
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
+        }
+    }
+    #else
     if (dma_interrupt_flag_get(uart->dma.tx.periph, uart->dma.tx.channel, DMA_INT_FLAG_FTF) != RESET)
     {
         rt_size_t trans_total_index;
@@ -422,6 +481,7 @@ static void dma_tx_isr (struct rt_serial_device *serial)
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
         }
     }
+    #endif
 }
 #endif
 
@@ -535,7 +595,35 @@ void UART7_IRQHandler (void)
 }
 
 #endif /* BSP_USING_UART7 */
+#if define SOC_SERIES_GD32E23x
+#if define BSP_UART0_RX_USING_DMA || define BSP_UART0_TX_USING_DMA
+void DMA_Channel1_2_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
 
+    if (dma_interrupt_flag_get(DMA_CH1, DMA_INT_FLAG_FTF) != RESET)
+    {
+        dma_interrupt_flag_clear(DMA_CH1, DMA_INT_FLAG_G);
+        dma_tx_isr(&uart_obj[UART0_INDEX].serial);
+    }
+
+    if (dma_interrupt_flag_get(DMA_CH2, DMA_INT_FLAG_HTF) != RESET)
+    {
+        dma_interrupt_flag_clear(DMA_CH2, DMA_INT_FLAG_HTF);
+        dma_recv_isr(&uart_obj[UART0_INDEX].serial);
+    }
+    else if (dma_interrupt_flag_get(DMA_CH2, DMA_INT_FLAG_FTF) != RESET)
+    {
+        dma_interrupt_flag_clear(DMA_CH2, DMA_INT_FLAG_FTF);
+        dma_recv_isr(&uart_obj[UART0_INDEX].serial);
+    }
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+#else
 #ifdef BSP_UART0_RX_USING_DMA
 void DMA1_Channel5_IRQHandler (void)
 {
@@ -549,7 +637,37 @@ void DMA1_Channel7_IRQHandler (void)
     dma_tx_isr(&uart_obj[UART0_INDEX].serial);
 }
 #endif
+#endif
 
+#if defined SOC_SERIES_GD32E23x
+
+#if defined BSP_UART1_RX_USING_DMA || defined BSP_UART1_TX_USING_DMA
+void DMA_Channel3_4_IRQHandler(void)
+{
+    rt_interrupt_enter();
+
+    if (dma_interrupt_flag_get(DMA_CH3, DMA_INT_FLAG_FTF) != RESET)
+    {
+        dma_interrupt_flag_clear(DMA_CH3, DMA_INT_FLAG_G);
+        dma_tx_isr(&uart_obj[UART1_INDEX].serial);
+    }
+
+    if (dma_interrupt_flag_get(DMA_CH4, DMA_INT_FLAG_HTF) != RESET)
+    {
+        dma_interrupt_flag_clear(DMA_CH4, DMA_INT_FLAG_HTF);
+        dma_recv_isr(&uart_obj[UART1_INDEX].serial);
+    }
+
+    if (dma_interrupt_flag_get(DMA_CH4, DMA_INT_FLAG_FTF) != RESET)
+    {
+        dma_interrupt_flag_clear(DMA_CH4, DMA_INT_FLAG_FTF);
+        dma_recv_isr(&uart_obj[UART1_INDEX].serial);
+    }
+
+    rt_interrupt_leave();
+}
+#endif
+#else
 #ifdef BSP_UART1_RX_USING_DMA
 void DMA0_Channel5_IRQHandler (void)
 {
@@ -562,6 +680,7 @@ void DMA0_Channel6_IRQHandler (void)
 {
     dma_tx_isr(&uart_obj[UART1_INDEX].serial);
 }
+#endif
 #endif
 
 #ifdef BSP_UART2_RX_USING_DMA
@@ -664,7 +783,7 @@ void gd32_uart_gpio_init (struct gd32_uart *uart)
     rcu_periph_clock_enable(uart->rx_gpio_clk);
     rcu_periph_clock_enable(uart->per_clk);
 
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x
     /* connect port to USARTx_Tx */
     gpio_af_set(uart->tx_port, uart->tx_af, uart->tx_pin);
 
@@ -756,9 +875,46 @@ static rt_err_t gd32_uart_configure (struct rt_serial_device *serial, struct ser
 #ifdef RT_SERIAL_USING_DMA
 static void _uart_dma_receive (struct gd32_uart *uart, rt_uint8_t *buffer, rt_uint32_t size)
 {
-    dma_single_data_parameter_struct dma_init_struct = { 0 };
-
     /* clear all the interrupt flags */
+
+    #if defined SOC_SERIES_GD32E23x
+    dma_flag_clear(uart->dma.rx.channel, DMA_FLAG_G);
+    dma_flag_clear(uart->dma.rx.channel, DMA_FLAG_FTF);
+    dma_flag_clear(uart->dma.rx.channel, DMA_FLAG_HTF);
+    dma_flag_clear(uart->dma.rx.channel, DMA_FLAG_ERR);
+    dma_channel_disable(uart->dma.rx.channel);
+    dma_deinit(uart->dma.rx.channel);
+
+    /* configure receive DMA */
+    rcu_periph_clock_enable(uart->dma.rx.rcu);
+    dma_deinit(uart->dma.rx.channel);
+
+    dma_parameter_struct dma_init_struct = { 0 };
+    dma_init_struct.periph_addr = (uint32_t)&USART_RDATA(uart->periph);
+    dma_init_struct.periph_inc = DMA_PERIPH_INCREASE_DISABLE;
+    dma_init_struct.memory_addr = (uint32_t)buffer;
+    dma_init_struct.memory_inc = DMA_MEMORY_INCREASE_ENABLE;
+    dma_init_struct.periph_width = DMA_PERIPHERAL_WIDTH_8BIT;
+    dma_init_struct.memory_width = DMA_MEMORY_WIDTH_8BIT;
+    dma_init_struct.direction = DMA_PERIPHERAL_TO_MEMORY;
+    dma_init_struct.number = size;
+    dma_init_struct.priority = DMA_PRIORITY_HIGH;
+    dma_init(uart->dma.rx.channel, &dma_init_struct);
+
+    /* enable transmit complete interrupt */
+    nvic_irq_enable(uart->dma.rx.irq, 2);
+    dma_interrupt_enable(uart->dma.rx.channel, DMA_CHXCTL_HTFIE);
+    dma_interrupt_enable(uart->dma.rx.channel, DMA_CHXCTL_FTFIE);
+
+    /* enable dma channel */
+    dma_channel_enable(uart->dma.rx.channel);
+
+    /* enable usart idle interrupt */
+    usart_interrupt_enable(uart->periph, USART_INT_IDLE);
+
+    /* enable dma receive */
+    usart_dma_receive_config(uart->periph, USART_DENR_ENABLE);
+    #else
     dma_flag_clear(uart->dma.rx.periph, uart->dma.rx.channel, DMA_FLAG_FEE);
     dma_flag_clear(uart->dma.rx.periph, uart->dma.rx.channel, DMA_FLAG_SDE);
     dma_flag_clear(uart->dma.rx.periph, uart->dma.rx.channel, DMA_FLAG_TAE);
@@ -770,6 +926,8 @@ static void _uart_dma_receive (struct gd32_uart *uart, rt_uint8_t *buffer, rt_ui
     /* configure receive DMA */
     rcu_periph_clock_enable(uart->dma.rx.rcu);
     dma_deinit(uart->dma.rx.periph, uart->dma.rx.channel);
+
+    dma_single_data_parameter_struct dma_init_struct = { 0 };
 
     dma_init_struct.number              = size;
     dma_init_struct.memory0_addr        = (uint32_t)buffer;
@@ -796,10 +954,19 @@ static void _uart_dma_receive (struct gd32_uart *uart, rt_uint8_t *buffer, rt_ui
 
     /* enable dma receive */
     usart_dma_receive_config(uart->periph, USART_RECEIVE_DMA_ENABLE);
+    #endif
 }
 
 static void _uart_dma_transmit (struct gd32_uart *uart, rt_uint8_t *buffer, rt_uint32_t size)
 {
+    #if defined SOC_SERIES_GD32E23x
+    DMA_CHMADDR(uart->dma.tx.channel) = (uint32_t)buffer;
+    DMA_CHCNT(uart->dma.tx.channel) = size;
+
+    usart_dma_transmit_config(uart->periph, USART_DENT_ENABLE);
+
+    dma_channel_enable(uart->dma.tx.channel);
+    #else
     /* Set the data length and data pointer */
     DMA_CHM0ADDR(uart->dma.tx.periph, uart->dma.tx.channel) = (uint32_t)buffer;
     DMA_CHCNT(uart->dma.tx.periph, uart->dma.tx.channel) = size;
@@ -809,12 +976,12 @@ static void _uart_dma_transmit (struct gd32_uart *uart, rt_uint8_t *buffer, rt_u
 
     /* enable dma channel */
     dma_channel_enable(uart->dma.tx.periph, uart->dma.tx.channel);
+    #endif
 }
 
 static void gd32_dma_config (struct rt_serial_device *serial, rt_ubase_t flag)
 {
     struct gd32_uart *uart;
-    dma_single_data_parameter_struct dma_init_struct = { 0 };
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct gd32_uart, serial);
@@ -824,6 +991,35 @@ static void gd32_dma_config (struct rt_serial_device *serial, rt_ubase_t flag)
     /* enable rx dma */
     if (flag == RT_DEVICE_FLAG_DMA_TX)
     {
+        #if defined SOC_SERIES_GD32E23x
+        dma_flag_clear(uart->dma.tx.channel, DMA_FLAG_G);
+        dma_flag_clear(uart->dma.tx.channel, DMA_FLAG_FTF);
+        dma_flag_clear(uart->dma.tx.channel, DMA_FLAG_HTF);
+        dma_flag_clear(uart->dma.tx.channel, DMA_FLAG_ERR);
+        dma_channel_disable(uart->dma.tx.channel);
+        dma_deinit(uart->dma.tx.channel);
+        /* configure receive DMA */
+        rcu_periph_clock_enable(uart->dma.tx.rcu);
+        dma_deinit( uart->dma.tx.channel);
+
+
+        dma_parameter_struct dma_init_struct = { 0 };
+        dma_init_struct.periph_addr = (uint32_t)&USART_TDATA(uart->periph);
+        dma_init_struct.periph_inc = DMA_PERIPH_INCREASE_DISABLE;
+        dma_init_struct.memory_inc = DMA_MEMORY_INCREASE_ENABLE;
+        dma_init_struct.periph_width = DMA_PERIPHERAL_WIDTH_8BIT;
+        dma_init_struct.memory_width = DMA_MEMORY_WIDTH_8BIT;
+        dma_init_struct.direction = DMA_MEMORY_TO_PERIPHERAL;
+        dma_init_struct.priority = DMA_PRIORITY_HIGH;
+
+        dma_init(uart->dma.tx.channel, &dma_init_struct);
+
+        /* enable tx dma interrupt */
+        nvic_irq_enable(uart->dma.tx.irq, 2);
+
+        /* enable transmit complete interrupt */
+        dma_interrupt_enable(uart->dma.tx.channel, DMA_INT_FTF);
+        #else
         /* clear all the interrupt flags */
         dma_flag_clear(uart->dma.tx.periph, uart->dma.tx.channel, DMA_FLAG_FEE);
         dma_flag_clear(uart->dma.tx.periph, uart->dma.tx.channel, DMA_FLAG_SDE);
@@ -836,6 +1032,8 @@ static void gd32_dma_config (struct rt_serial_device *serial, rt_ubase_t flag)
         /* configure receive DMA */
         rcu_periph_clock_enable(uart->dma.tx.rcu);
         dma_deinit(uart->dma.tx.periph, uart->dma.tx.channel);
+
+        dma_single_data_parameter_struct dma_init_struct = { 0 };
 
         dma_init_struct.periph_addr         = (uint32_t)&USART_DATA(uart->periph);
         dma_init_struct.periph_memory_width = DMA_PERIPH_WIDTH_8BIT;
@@ -852,6 +1050,7 @@ static void gd32_dma_config (struct rt_serial_device *serial, rt_ubase_t flag)
 
         /* enable transmit complete interrupt */
         dma_interrupt_enable(uart->dma.tx.periph, uart->dma.tx.channel, DMA_CHXCTL_FTFIE);
+        #endif
     }
 
     /* enable rx dma */
@@ -918,13 +1117,21 @@ static rt_err_t gd32_uart_control (struct rt_serial_device *serial, int cmd, voi
         {
             usart_interrupt_disable(uart->periph, USART_INT_RBNE);
             NVIC_DisableIRQ(uart->dma.rx.irq);
+            #if defined SOC_SERIES_GD32E23x
+            dma_deinit(uart->dma.rx.channel);
+            #else
             dma_deinit(uart->dma.rx.periph, uart->dma.rx.channel);
+            #endif
         }
         else if(ctrl_arg == RT_DEVICE_FLAG_DMA_TX)
         {
             usart_interrupt_disable(uart->periph, USART_INT_TBE);
             NVIC_DisableIRQ(uart->dma.tx.irq);
+            #if defined SOC_SERIES_GD32E23x
+            dma_deinit(uart->dma.tx.channel);
+            #else
             dma_deinit(uart->dma.tx.periph, uart->dma.tx.channel);
+            #endif
         }
 #endif
         break;
@@ -1189,3 +1396,4 @@ int rt_hw_usart_init (void)
 }
 
 #endif
+

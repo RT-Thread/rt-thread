@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,7 +34,7 @@ struct gd32_spi
     rcu_periph_enum gpio_clk;
     struct rt_spi_bus *spi_bus;
     uint32_t spi_port;
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32E23x
     uint32_t alt_func_num;
 #endif
     uint16_t sck_pin;
@@ -49,3 +49,4 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 #endif
 
 #endif /* __DRV_SPI_H__ */
+
