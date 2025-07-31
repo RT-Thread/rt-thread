@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,27 +15,36 @@
 
 struct dfs_seq_ops;
 
+/**
+ * Sequence file control structure
+ */
 struct dfs_seq_file
 {
-    char *buf;
-    size_t size;
-    size_t from;
-    size_t count;
-    size_t pad_until;
-    off_t index;
-    off_t read_pos;
-    struct rt_mutex lock;
-    const struct dfs_seq_ops *ops;
-    const struct dfs_file *file;
-    void *data;
+    char *buf;          /* Data buffer pointer */
+    size_t size;        /* Total buffer size in bytes */
+    size_t from;        /* Start offset of valid data in buffer */
+    size_t count;       /* Length of valid data in buffer */
+    size_t pad_until;   /* Padding target position for alignment */
+
+    off_t index;        /* Current item index in sequence */
+    off_t read_pos;     /* Current read position in file */
+
+    struct rt_mutex lock; /* Mutex for thread safety */
+
+    const struct dfs_seq_ops *ops; /* Operation function table */
+    const struct dfs_file *file;  /* Associated file object */
+    void *data;         /* Private data pointer */
 };
 
+/**
+ * Sequence file operations structure
+ */
 struct dfs_seq_ops
 {
-    void *(*start)(struct dfs_seq_file *seq, off_t *index);
-    void (*stop)(struct dfs_seq_file *seq, void *data);
-    void *(*next)(struct dfs_seq_file *seq, void *data, off_t *index);
-    int (*show)(struct dfs_seq_file *seq, void *data);
+    void *(*start)(struct dfs_seq_file *seq, off_t *index);  /* Start sequence traversal */
+    void (*stop)(struct dfs_seq_file *seq, void *data);      /* Stop sequence traversal */
+    void *(*next)(struct dfs_seq_file *seq, void *data, off_t *index); /* Get next item in sequence */
+    int (*show)(struct dfs_seq_file *seq, void *data);  /* Show current item */
 };
 
 /**
