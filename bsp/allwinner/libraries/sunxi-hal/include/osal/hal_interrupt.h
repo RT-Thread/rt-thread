@@ -8,7 +8,7 @@ extern "C"
 
 #include <stdint.h>
 #include <stddef.h>
-#include <interrupt.h>
+#include "../../../libos/include/interrupt.h"
 
 typedef enum hal_irqreturn {
     HAL_IRQ_OK      = (0 << 0),

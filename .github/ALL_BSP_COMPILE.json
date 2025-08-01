@@ -490,6 +490,13 @@
       "SUB_RTT_BSP": [
         "xuantie/virt64/c906"
       ]
+    },
+    {
+      "RTT_BSP": "allwinner-smart",
+      "RTT_TOOL_CHAIN": "sourcery-riscv64-general-toolchain",
+      "SUB_RTT_BSP": [
+        "allwinner/d1s"
+      ]
     }
   ]
 }
