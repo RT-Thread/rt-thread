@@ -170,62 +170,56 @@ class RTEnv:
         
         Args:
             env: SCons Environment
-            package_path: Path to package.json or directory containing it
+            package_path: Path to package.json. If None, looks for package.json in current directory.
             
         Returns:
             List of build objects
         """
-        import json
+        # Import the existing package module
+        import sys
+        import os
         
-        # Find package.json
-        if package_path is None:
-            package_path = 'package.json'
-        elif os.path.isdir(package_path):
-            package_path = os.path.join(package_path, 'package.json')
-            
-        if not os.path.exists(package_path):
-            env.GetContext().logger.error(f"Package file not found: {package_path}")
-            return []
-            
-        # Load package definition
-        with open(package_path, 'r') as f:
-            package = json.load(f)
-            
-        # Process package
-        name = package.get('name', 'unnamed')
-        dependencies = package.get('dependencies', {})
+        # Get the building module path
+        building_path = os.path.dirname(os.path.abspath(__file__))
+        tools_path = os.path.dirname(building_path)
         
-        # Check main dependency
-        if 'RT_USING_' + name.upper() not in dependencies:
-            main_depend = 'RT_USING_' + name.upper().replace('-', '_')
-        else:
-            main_depend = list(dependencies.keys())[0]
-            
-        if not env.GetDepend(main_depend):
-            return []
-            
-        # Collect sources
-        src = []
-        include_paths = []
+        # Add to path if not already there
+        if tools_path not in sys.path:
+            sys.path.insert(0, tools_path)
         
-        sources = package.get('sources', {})
-        for category, config in sources.items():
-            # Check condition
-            condition = config.get('condition')
-            if condition and not eval(condition, {'env': env, 'GetDepend': env.GetDepend}):
-                continue
+        # Import and use the existing BuildPackage
+        try:
+            from package import BuildPackage as build_package_func
+            
+            # BuildPackage uses global functions, so we need to set up the context
+            # Save current directory
+            current_dir = os.getcwd()
+            
+            # Change to the directory where we want to build
+            if package_path is None:
+                work_dir = env.GetCurrentDir()
+            elif os.path.isdir(package_path):
+                work_dir = package_path
+            else:
+                work_dir = os.path.dirname(package_path)
                 
-            # Add source files
-            source_files = config.get('source_files', [])
-            for pattern in source_files:
-                src.extend(env.Glob(pattern))
-                
-            # Add header paths
-            header_path = config.get('header_path', [])
-            include_paths.extend(header_path)
+            os.chdir(work_dir)
             
-        # Create group
-        return env.DefineGroup(name, src, depend=main_depend, CPPPATH=include_paths)
+            try:
+                # Call the original BuildPackage
+                result = build_package_func(package_path)
+            finally:
+                # Restore directory
+                os.chdir(current_dir)
+                
+            return result
+            
+        except ImportError:
+            # Fallback if import fails
+            context = BuildContext.get_current()
+            if context:
+                context.logger.error("Failed to import package module")
+            return []
         
     @staticmethod
     def Glob(env, pattern: str) -> List[str]:

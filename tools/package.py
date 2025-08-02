@@ -41,41 +41,89 @@ def ExtendPackageVar(package, var):
 def BuildPackage(package = None):
     if package is None:
         package = os.path.join(GetCurrentDir(), 'package.json')
-
-    if not os.path.isfile(package):
-        print("%s/package.json not found" % GetCurrentDir())
-        return []
-
-    f = open(package)
-    package_json = f.read()
+    elif os.path.isdir(package):
+        # support directory path
+        package = os.path.join(package, 'package.json')
 
     # get package.json path
-    cwd = os.path.dirname(package)
+    cwd = os.path.dirname(os.path.abspath(package))
 
-    package = json.loads(package_json)
-
-    # check package name
-    if 'name' not in package or 'type' not in package or package['type'] != 'rt-package':
+    if not os.path.isfile(package):
+        # silent return for conditional usage
         return []
 
-    # get depends
-    depend = ExtendPackageVar(package, 'depends')
+    with open(package, 'r') as f:
+        package_json = f.read()
+        package = json.loads(package_json)
 
-    src = []
-    if 'source_files' in package:
-        for src_file in package['source_files']:
-            src_file = os.path.join(cwd, src_file)
-            src += Glob(src_file)
+        # check package name
+        if 'name' not in package or 'type' not in package or package['type'] != 'rt-thread-component':
+            return []
 
-    CPPPATH = []
-    if 'CPPPATH' in package:
-        for path in package['CPPPATH']:
-            if path.startswith('/') and os.path.isdir(path):
-                CPPPATH = CPPPATH + [path]
-            else:
-                CPPPATH = CPPPATH + [os.path.join(cwd, path)]
+        # get depends
+        depend = []
+        if 'dependencies' in package:
+            depend = ExtendPackageVar(package, 'dependencies')
 
-    CPPDEFINES = ExtendPackageVar(package, 'CPPDEFINES')
+        # check dependencies
+        if depend:
+            group_enable = False
+            for item in depend:
+                if GetDepend(item):
+                    group_enable = True
+                    break
+            if not group_enable:
+                return []
+
+        CPPDEFINES = []
+        if 'defines' in package:
+            CPPDEFINES = ExtendPackageVar(package, 'defines')
+
+        src = []
+        CPPPATH = []
+        if 'sources' in package:
+            src_depend = []
+            src_CPPPATH = []
+            for item in package['sources']:
+                if 'includes' in item:
+                    includes = item['includes']
+                    for include in includes:
+                        if include.startswith('/') and os.path.isdir(include):
+                            src_CPPPATH = src_CPPPATH + [include]
+                        else:
+                            path = os.path.abspath(os.path.join(cwd, include))
+                            src_CPPPATH = src_CPPPATH + [path]
+
+                if 'dependencies' in item:
+                    src_depend = src_depend + ExtendPackageVar(item, 'dependencies')
+
+                src_enable = False
+                if src_depend == []:
+                    src_enable = True
+                else:
+                    for d in src_depend:
+                        if GetDepend(d):
+                            src_enable = True
+                            break
+
+                if src_enable:
+                    files = []
+                    src_files = []
+                    if 'files' in item:
+                        files += ExtendPackageVar(item, 'files')
+
+                    for item in files:
+                        # handle glob patterns relative to package.json directory
+                        old_dir = os.getcwd()
+                        os.chdir(cwd)
+                        try:
+                            src_files += Glob(item)
+                        finally:
+                            os.chdir(old_dir)
+
+                    src += src_files
+
+            CPPPATH += src_CPPPATH
 
     objs = DefineGroup(package['name'], src, depend = depend, CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
