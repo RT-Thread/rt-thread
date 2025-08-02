@@ -1,20 +1,31 @@
 {
-    "name": "hello",
-    "version": "1.0.0",
-    "description": "Hello World component for RT-Thread",
-    "author": "RT-Thread Development Team",
-    "license": "Apache-2.0",
-    "type": "rt-package",
-    "source_files": [
-        "hello.c"
-    ],
-    "CPPPATH": [
+  "name": "hello",
+  "description": "Hello World component for RT-Thread",
+  "type": "rt-thread-component",
+  "dependencies": [],
+  "defines": [
+    "DEFINE_HELLO"
+  ],
+  "sources": [
+    {
+      "dependencies": [],
+      "includes": [
         "."
-    ],
-    "CPPDEFINES": [
-        "HELLO"
-    ],
-    "depends": [
-        ""
-    ]
+      ],
+      "files": [
+        "hello.c"
+      ]
+    },
+    {
+      "dependencies": [
+        "HELLO_USING_HELPER"
+      ],
+      "includes": [
+        "src"
+      ],
+      "files": [
+        "src/helper.c"
+      ]
+    }
+  ]
 }
