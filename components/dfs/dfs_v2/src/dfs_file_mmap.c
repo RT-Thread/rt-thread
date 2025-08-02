@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,6 +35,23 @@
 static rt_mem_obj_t dfs_get_mem_obj(struct dfs_file *file);
 static void *dfs_mem_obj_get_file(rt_mem_obj_t mem_obj);
 
+/**
+ * @brief Perform memory mapping operation
+ *
+ * @param[in] lwp Pointer to the lightweight process structure
+ * @param[in] map_vaddr Requested virtual address for mapping (may be NULL)
+ * @param[in] map_size Size of the memory region to map
+ * @param[in] attr Memory attributes for the mapping
+ * @param[in] flags Memory mapping flags
+ * @param[in] pgoffset Offset in pages from the start of the memory object
+ * @param[in] data Pointer to the file descriptor to be mapped
+ * @param[out] code Pointer to store the operation result code
+ *
+ * @return void* The mapped virtual address on success, NULL on failure
+ *
+ * @note This is a low-level mapping function that interacts directly with the address space manager.
+ *       The actual mapping is performed by rt_aspace_map().
+ */
 static void *_do_mmap(struct rt_lwp *lwp, void *map_vaddr, size_t map_size, size_t attr,
                       mm_flag_t flags, off_t pgoffset, void *data, rt_err_t *code)
 {
@@ -59,6 +76,20 @@ static void *_do_mmap(struct rt_lwp *lwp, void *map_vaddr, size_t map_size, size
     return vaddr;
 }
 
+/**
+ * @brief Map data to user space address
+ *
+ * @param[in,out] mmap2 Pointer to memory mapping arguments structure
+ *                      - Input: Contains mapping parameters (addr, length, etc.)
+ *                      - Output: Contains the mapped address in ret field if successful
+ * @param[in] data Pointer to the file descriptor to be mapped
+ * @param[out] code Pointer to store the error code if mapping fails
+ *
+ * @return void* The mapped virtual address on success, NULL on failure
+ *
+ * @note This function performs page alignment on the mapping parameters and
+ *       converts user-space flags/attributes to kernel-space before mapping.
+ */
 static void *_map_data_to_uspace(struct dfs_mmap2_args *mmap2, void *data, rt_err_t *code)
 {
     size_t offset = 0;
@@ -89,6 +120,17 @@ static void hint_free(rt_mm_va_hint_t hint)
 {
 }
 
+/**
+ * @brief Handle page fault for memory mapped file
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ * @param[in,out] msg Pointer to the page fault message structure
+ *                   - Input: Contains fault information (fault_vaddr, etc.)
+ *                   - Output: Contains response status and mapped page address
+ *
+ * @note This function is called when a page fault occurs in a memory mapped file region.
+ *       It attempts to map the faulting page and updates the response accordingly.
+ */
 static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     void *page;
@@ -124,7 +166,15 @@ static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *ms
     }
 }
 
-/* do pre open bushiness like inc a ref */
+/**
+ * @brief Handle virtual memory area opening event
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ *
+ * @note This function is called when a virtual memory area is opened.
+ *       It increments the reference count of the associated file and
+ *       initializes varea->data to NULL.
+ */
 static void on_varea_open(struct rt_varea *varea)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
@@ -132,7 +182,17 @@ static void on_varea_open(struct rt_varea *varea)
     rt_atomic_add(&(file->ref_count), 1);
 }
 
-/* do post close bushiness like def a ref */
+/**
+ * @brief Handle virtual memory area closing event
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ *
+ * @note This function is called when a virtual memory area is closed.
+ *       It performs cleanup operations including:
+ *       - Unmapping the file from memory
+ *       - Decrementing file reference count
+ *       - Closing and destroying file if reference count reaches zero
+ */
 static void on_varea_close(struct rt_varea *varea)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
@@ -167,6 +227,17 @@ static void on_varea_close(struct rt_varea *varea)
     }
 }
 
+/**
+ * @brief Get the name of the memory mapped file
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ *
+ * @return const char* The name of the mapped file if available,
+ *                     otherwise returns "file-mapper" as default name
+ *
+ * @note This function retrieves the file name from the dentry structure
+ *       associated with the memory mapped file.
+ */
 static const char *get_name(rt_varea_t varea)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
@@ -174,6 +245,17 @@ static const char *get_name(rt_varea_t varea)
     return (file && file->dentry) ? file->dentry->pathname : "file-mapper";
 }
 
+/**
+ * @brief Read data from memory mapped file page
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ * @param[in,out] msg Pointer to the I/O message structure
+ *                   - Input: Contains read request information
+ *                   - Output: Contains response status and read data
+ *
+ * @note This function handles page read operations for memory mapped files.
+ *       If the read size is less than page size, it zero-fills the remaining space.
+ */
 void page_read(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
 {
     rt_ubase_t ret;
@@ -201,6 +283,17 @@ void page_read(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
     }
 }
 
+/**
+ * @brief Write data to memory mapped file page
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ * @param[in,out] msg Pointer to the I/O message structure
+ *                   - Input: Contains write request information
+ *                   - Output: Contains response status and write result
+ *
+ * @note This function handles page write operations for memory mapped files.
+ *       If the write size is less than page size, it zero-fills the remaining space.
+ */
 void page_write(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
 {
     rt_ubase_t ret;
@@ -228,6 +321,20 @@ void page_write(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
     }
 }
 
+/**
+ * @brief Unmap pages from virtual memory area
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ * @param[in] rm_start Starting address of the range to unmap (must be page aligned)
+ * @param[in] rm_end Ending address of the range to unmap (must be page aligned)
+ *
+ * @return rt_err_t Error code:
+ *                  - RT_EOK: Success
+ *                  - -RT_ERROR: Failure (varea not associated with a file)
+ *
+ * @note This function performs page-by-page unmapping.
+ *       Both rm_start and rm_end must be page-aligned (checked by RT_ASSERT).
+ */
 static rt_err_t unmap_pages(rt_varea_t varea, void *rm_start, void *rm_end)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
@@ -254,6 +361,20 @@ static rt_err_t unmap_pages(rt_varea_t varea, void *rm_start, void *rm_end)
     return -RT_ERROR;
 }
 
+/**
+ * @brief Handle virtual memory area shrinking operation
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ * @param[in] new_vaddr New starting address after shrinking
+ * @param[in] size New size of the virtual memory area
+ *
+ * @return rt_err_t Error code:
+ *                  - RT_EOK: Success
+ *                  - Other errors from unmap_pages()
+ *
+ * @note This function determines the range of pages to unmap based on whether
+ *       the varea is shrinking from the start or end.
+ */
 rt_err_t on_varea_shrink(struct rt_varea *varea, void *new_vaddr, rt_size_t size)
 {
     char *varea_start = varea->start;
@@ -279,6 +400,17 @@ rt_err_t on_varea_shrink(struct rt_varea *varea, void *new_vaddr, rt_size_t size
     return unmap_pages(varea, rm_start, rm_end);
 }
 
+/**
+ * @brief Handle virtual memory area expansion operation
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ * @param[in] new_vaddr New starting address after expansion
+ * @param[in] size New size of the expanded virtual memory area
+ *
+ * @return rt_err_t returns RT_EOK (success).
+ *
+ * @note This function is currently not implemented.
+ */
 rt_err_t on_varea_expand(struct rt_varea *varea, void *new_vaddr, rt_size_t size)
 {
     LOG_I("%s varea: %p", __func__, varea);
@@ -289,6 +421,23 @@ rt_err_t on_varea_expand(struct rt_varea *varea, void *new_vaddr, rt_size_t size
     return RT_EOK;
 }
 
+/**
+ * @brief Handle virtual memory area splitting operation
+ *
+ * @param[in] existed Pointer to the existing virtual memory area to be split
+ * @param[in] unmap_start Starting address of the range to unmap
+ * @param[in] unmap_len Length of the range to unmap
+ * @param[in,out] subset Pointer to the new subset virtual memory area
+ *                      - Input: Contains new varea parameters
+ *                      - Output: Contains initialized varea after splitting
+ *
+ * @return rt_err_t Error code:
+ *                  - RT_EOK: Success
+ *                  - -RT_ERROR: Failure (varea not associated with a file)
+ *
+ * @note This function splits an existing virtual memory area into two parts.
+ *       It unmaps the specified range and initializes the new subset area.
+ */
 rt_err_t on_varea_split(struct rt_varea *existed, void *unmap_start, rt_size_t unmap_len, struct rt_varea *subset)
 {
     rt_err_t rc;
@@ -324,6 +473,16 @@ rt_err_t on_varea_split(struct rt_varea *existed, void *unmap_start, rt_size_t u
     return -RT_ERROR;
 }
 
+/**
+ * @brief Handle virtual memory area merging operation
+ *
+ * @param[in] merge_to Pointer to the target virtual memory area that will receive the merge
+ * @param[in] merge_from Pointer to the source virtual memory area to be merged
+ *
+ * @return rt_err_t Error code:
+ *                  - RT_EOK: Success
+ *                  - -RT_ERROR: Failure (varea not associated with a file)
+ */
 rt_err_t on_varea_merge(struct rt_varea *merge_to, struct rt_varea *merge_from)
 {
     struct dfs_file *file = dfs_mem_obj_get_file(merge_from->mem_obj);
@@ -352,6 +511,20 @@ rt_err_t on_varea_merge(struct rt_varea *merge_to, struct rt_varea *merge_from)
     return -RT_ERROR;
 }
 
+/**
+ * @brief Handle virtual memory area remapping operation
+ *
+ * @param[in] varea Pointer to the virtual memory area structure
+ * @param[in] new_size New size of the virtual memory area after remapping
+ * @param[in] flags Remapping flags (e.g., MREMAP_MAYMOVE)
+ * @param[in] new_address New starting address after remapping (optional)
+ *
+ * @return void* Pointer to the new virtual memory area after remapping
+ *               - Returns RT_NULL if remapping fails
+ *
+ * @note This function remaps a virtual memory area to a new address or size.
+ *       It currently supports the MREMAP_MAYMOVE flag.
+ */
 void *on_varea_mremap(struct rt_varea *varea, rt_size_t new_size, int flags, void *new_address)
 {
     void *vaddr = RT_NULL;
@@ -384,30 +557,51 @@ void *on_varea_mremap(struct rt_varea *varea, rt_size_t new_size, int flags, voi
     return vaddr;
 }
 
+/**
+ * @brief Memory object operations structure
+ *
+ * Defines function pointers for various virtual memory area (varea) operations,
+ * including memory management, page fault handling, and lifecycle callbacks.
+ */
 static struct rt_mem_obj _mem_obj =
 {
-    .hint_free      = hint_free,
-    .on_page_fault  = on_page_fault,
-    .on_varea_open  = on_varea_open,
-    .on_varea_close = on_varea_close,
-    .get_name       = get_name,
+    .hint_free      = hint_free,       /* Free memory hint function */
+    .on_page_fault  = on_page_fault,   /* Page fault handler */
+    .on_varea_open  = on_varea_open,   /* Varea open callback */
+    .on_varea_close = on_varea_close,  /* Varea close callback */
+    .get_name       = get_name,        /* Get mapped file name */
 
-    .page_read      = page_read,
-    .page_write     = page_write,
+    .page_read      = page_read,       /* Page read operation */
+    .page_write     = page_write,      /* Page write operation */
 
-    .on_varea_shrink    = on_varea_shrink,
-    .on_varea_expand    = on_varea_expand,
-    .on_varea_split     = on_varea_split,
-    .on_varea_merge     = on_varea_merge,
+    .on_varea_shrink    = on_varea_shrink,    /* Varea shrink handler */
+    .on_varea_expand    = on_varea_expand,    /* Varea expand handler */
+    .on_varea_split     = on_varea_split,     /* Varea split handler */
+    .on_varea_merge     = on_varea_merge,     /* Varea merge handler */
 
-    .on_varea_mremap    = on_varea_mremap,
+    .on_varea_mremap    = on_varea_mremap,    /* Varea remap handler */
 };
 
+/**
+ * @brief DFS memory object structure
+ *
+ * Contains a standard memory object and an associated file pointer,
+ * used to maintain the relationship between memory mappings and files.
+ */
 struct dfs_mem_obj {
-    struct rt_mem_obj mem_obj;
-    void *file;
+    struct rt_mem_obj mem_obj;  /* Base memory object */
+    void *file;                 /* Associated file pointer */
 };
 
+/**
+ * @brief Get or create memory mapping object for a file
+ *
+ * @param[in] file Pointer to the file descriptor structure
+ *
+ * @return rt_mem_obj_t Memory mapping object associated with the file
+ *                      - Returns existing object if already created
+ *                      - Creates and initializes new object if not exists
+ */
 static rt_mem_obj_t dfs_get_mem_obj(struct dfs_file *file)
 {
     rt_mem_obj_t mobj = file->mmap_context;
@@ -428,6 +622,16 @@ static rt_mem_obj_t dfs_get_mem_obj(struct dfs_file *file)
     return mobj;
 }
 
+/**
+ * @brief Get the file descriptor from memory mapping object
+ *
+ * @param[in] mem_obj Pointer to the memory mapping object
+ *
+ * @return void* Pointer to the associated file descriptor structure
+ *
+ * @note This function uses rt_container_of macro to get the containing
+ *       dfs_mem_obj structure from its mem_obj member.
+ */
 static void *dfs_mem_obj_get_file(rt_mem_obj_t mem_obj)
 {
     struct dfs_mem_obj *dfs_mobj;
@@ -435,6 +639,21 @@ static void *dfs_mem_obj_get_file(rt_mem_obj_t mem_obj)
     return dfs_mobj->file;
 }
 
+/**
+ * @brief Map a file into memory
+ *
+ * @param[in] file Pointer to the file descriptor structure
+ * @param[in,out] mmap2 Pointer to memory mapping arguments structure
+ *                      - Input: Contains mapping parameters (addr, length, etc.)
+ *                      - Output: Contains the mapped address in ret field if successful
+ *
+ * @return int Error code:
+ *             - EINVAL: Invalid parameters
+ *             - Other errors from underlying mapping operations
+ *
+ * @note This function creates a virtual address area in user space (lwp) for the file mapping.
+ *       The actual mapping is performed by _map_data_to_uspace().
+ */
 int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 {
     rt_err_t ret = -EINVAL;
