@@ -17,17 +17,17 @@
 
 struct spi_dma_message
 {
-	rt_base_t cs_pin;
-	unsigned cs_take;
-	unsigned cs_release;
-	#if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED)
-	bool use_hw_ss;
-	#endif
-	bool ss_active_high;
-	struct rt_completion *cpt;
-	uint32_t flags;
-	NRF_SPIM_Type* spim;
-	
+    rt_base_t cs_pin;
+    unsigned cs_take;
+    unsigned cs_release;
+    #if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED)
+    bool use_hw_ss;
+    #endif
+    bool ss_active_high;
+    struct rt_completion *cpt;
+    uint32_t flags;
+    NRF_SPIM_Type* spim;
+
 };
 
 #endif
@@ -41,7 +41,7 @@ struct spi_dma_message
 */
 rt_err_t rt_hw_spim_device_attach(const char *bus_name, const char *device_name, rt_uint32_t ss_pin);
 
-//SPIM bus config
+/* SPIM bus config */
 #ifdef BSP_USING_SPIM0
 #define NRFX_SPIM0_CONFIG         \
 {                                \
@@ -99,3 +99,4 @@ struct nrfx_drv_spim_pin_config
 #endif /* BSP_USING_SPIM */
 
 #endif /* __DRV_SPIM_H_ */
+

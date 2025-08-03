@@ -38,7 +38,6 @@
 #include <string.h>
 #include "board.h"
 #include "rtconfig.h"
-#include <drivers/spi.h>
 
 #include <nrfx.h>
 #include <hal/nrf_spim.h>
@@ -58,8 +57,8 @@ extern "C" {
 /** @brief Data structure of the Serial Peripheral Interface Master with EasyDMA (SPIM) driver instance. */
 typedef struct
 {
-    NRF_SPIM_Type * p_reg;        ///< Pointer to a structure with SPIM registers.
-    uint8_t         drv_inst_idx; ///< Index of the driver instance. For internal use only.
+    NRF_SPIM_Type * p_reg;        /* /< Pointer to a structure with SPIM registers. */
+    uint8_t         drv_inst_idx; /* /< Index of the driver instance. For internal use only. */
 } nrfx_spim_t;
 
 #ifndef __NRFX_DOXYGEN__
@@ -100,34 +99,34 @@ enum {
 /** @brief Configuration structure of the SPIM driver instance. */
 typedef struct
 {
-    uint8_t               sck_pin;        ///< SCK pin number.
-    uint8_t               mosi_pin;       ///< MOSI pin number (optional).
+    uint8_t               sck_pin;        /* /< SCK pin number. */
+    uint8_t               mosi_pin;       /* /< MOSI pin number (optional). */
                                           /**< Set to @ref NRFX_SPIM_PIN_NOT_USED
                                            *   if this signal is not needed. */
-    uint8_t               miso_pin;       ///< MISO pin number (optional).
+    uint8_t               miso_pin;       /* /< MISO pin number (optional). */
                                           /**< Set to @ref NRFX_SPIM_PIN_NOT_USED
                                            *   if this signal is not needed. */
-    uint8_t               ss_pin;         ///< Slave Select pin number (optional).
+    uint8_t               ss_pin;         /* /< Slave Select pin number (optional). */
                                           /**< Set to @ref NRFX_SPIM_PIN_NOT_USED
                                            *   if this signal is not needed. */
-    bool                  ss_active_high; ///< Polarity of the Slave Select pin during transmission.
-    uint8_t               irq_priority;   ///< Interrupt priority.
-    uint8_t               orc;            ///< Overrun character.
+    bool                  ss_active_high; /* /< Polarity of the Slave Select pin during transmission. */
+    uint8_t               irq_priority;   /* /< Interrupt priority. */
+    uint8_t               orc;            /* /< Overrun character. */
                                           /**< This character is used when all bytes from the TX buffer are sent,
                                                but the transfer continues due to RX. */
-    nrf_spim_frequency_t frequency;       ///< SPIM frequency.
-    nrf_spim_mode_t      mode;            ///< SPIM mode.
-    nrf_spim_bit_order_t bit_order;       ///< SPIM bit order.
-    nrf_gpio_pin_pull_t  miso_pull;       ///< MISO pull up configuration.
+    nrf_spim_frequency_t frequency;       /* /< SPIM frequency. */
+    nrf_spim_mode_t      mode;            /* /< SPIM mode. */
+    nrf_spim_bit_order_t bit_order;       /* /< SPIM bit order. */
+    nrf_gpio_pin_pull_t  miso_pull;       /* /< MISO pull up configuration. */
 #if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED) || defined(__NRFX_DOXYGEN__)
-    uint8_t              dcx_pin;         ///< D/CX pin number (optional).
-    uint8_t              rx_delay;        ///< Sample delay for input serial data on MISO.
+    uint8_t              dcx_pin;         /* /< D/CX pin number (optional). */
+    uint8_t              rx_delay;        /* /< Sample delay for input serial data on MISO. */
                                           /**< The value specifies the delay, in number of 64 MHz clock cycles
                                            *   (15.625 ns), from the the sampling edge of SCK (leading edge for
                                            *   CONFIG.CPHA = 0, trailing edge for CONFIG.CPHA = 1) until
                                            *   the input serial data is sampled. */
-    bool                 use_hw_ss;       ///< Indication to use software or hardware controlled Slave Select pin.
-    uint8_t              ss_duration;     ///< Slave Select duration before and after transmission.
+    bool                 use_hw_ss;       /* /< Indication to use software or hardware controlled Slave Select pin. */
+    uint8_t              ss_duration;     /* /< Slave Select duration before and after transmission. */
                                           /**< Minimum duration between the edge of CSN and the edge of SCK.
                                            *   Also, minimum duration of CSN inactivity between transactions.
                                            *   The value is specified in number of 64 MHz clock cycles (15.625 ns).
@@ -200,10 +199,10 @@ typedef struct
 /** @brief Single transfer descriptor structure. */
 typedef struct
 {
-    uint8_t const * p_tx_buffer; ///< Pointer to TX buffer.
-    size_t          tx_length;   ///< TX buffer length.
-    uint8_t       * p_rx_buffer; ///< Pointer to RX buffer.
-    size_t          rx_length;   ///< RX buffer length.
+    uint8_t const * p_tx_buffer; /* /< Pointer to TX buffer. */
+    size_t          tx_length;   /* /< TX buffer length. */
+    uint8_t       * p_rx_buffer; /* /< Pointer to RX buffer. */
+    size_t          rx_length;   /* /< RX buffer length. */
 } nrfx_spim_xfer_desc_t;
 
 /**
@@ -237,14 +236,14 @@ typedef struct
  */
 typedef enum
 {
-    NRFX_SPIM_EVENT_DONE, ///< Transfer done.
+    NRFX_SPIM_EVENT_DONE, /* /< Transfer done. */
 } nrfx_spim_evt_type_t;
 
 /** @brief SPIM event description with transmission details. */
 typedef struct
 {
-    nrfx_spim_evt_type_t  type;      ///< Event type.
-    nrfx_spim_xfer_desc_t xfer_desc; ///< Transfer details.
+    nrfx_spim_evt_type_t  type;      /* /< Event type. */
+    nrfx_spim_xfer_desc_t xfer_desc; /* /< Transfer details. */
 } nrfx_spim_evt_t;
 
 /** @brief SPIM driver event handler type. */
@@ -335,13 +334,11 @@ nrfx_err_t nrfx_spim_xfer(nrfx_spim_t const *           p_instance,
                           nrfx_spim_xfer_desc_t const * p_xfer_desc,
                           uint32_t                      flags);
 
-/***********************************
-*我添加的
-************************************/
+
 nrfx_err_t rtt_nrfx_spim_xfer(nrfx_spim_t const *         p_instance,
-							nrfx_spim_xfer_desc_t const * p_xfer_desc,
-							uint32_t                      flags,
-							struct rt_spi_message       * message,
+                            nrfx_spim_xfer_desc_t const * p_xfer_desc,
+                            uint32_t                      flags,
+                            struct rt_spi_message       * message,
                             struct rt_spi_device        * dev);
 
 #if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED) || defined(__NRFX_DOXYGEN__)
@@ -423,4 +420,5 @@ void nrfx_spim_3_irq_handler(void);
 }
 #endif
 
-#endif // NRFX_SPIM_H__
+#endif /* NRFX_SPIM_H__ */
+

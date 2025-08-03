@@ -9,7 +9,7 @@
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
-//#define LOG_TAG                "drv.spim"
+/* #define LOG_TAG                "drv.spim" */
 
 #ifdef BSP_USING_SPIM
 
@@ -37,8 +37,8 @@ static struct nrfx_drv_spim_config spim_config[] =
 
 static struct nrfx_drv_spim spim_bus_obj[sizeof(spim_config) / sizeof(spim_config[0])];
 
-//Configure SPIM bus pins using the menuconfig
-static struct nrfx_drv_spim_pin_config bsp_spim_pin[] = 
+/* Configure SPIM bus pins using the menuconfig */
+static struct nrfx_drv_spim_pin_config bsp_spim_pin[] =
 {
 #ifdef BSP_USING_SPIM0
     {
@@ -108,7 +108,7 @@ static void spim1_handler(const nrfx_spim_evt_t *p_event, void *p_context)
 #ifdef BSP_USING_SPIM2
 static void spim2_handler(const nrfx_spim_evt_t *p_event, void *p_context)
 {
-		return;
+        return;
 }
 #endif
 
@@ -121,19 +121,19 @@ static void spim3_handler(const nrfx_spim_evt_t *p_event, void *p_context)
 
 nrfx_spim_evt_handler_t spim_handler[] = {
 #ifdef BSP_USING_SPIM0
-	spim0_handler,
+    spim0_handler,
 #endif
 
 #ifdef BSP_USING_SPIM1
-	spim1_handler,
+    spim1_handler,
 #endif
 
 #ifdef BSP_USING_SPIM2
-	spim2_handler,
+    spim2_handler,
 #endif
-	
+
 #ifdef BSP_USING_SPIM3
-	spim3_handler,
+    spim3_handler,
 #endif
 
 };
@@ -157,13 +157,13 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
 
     nrfx_spim_t spim = spim_bus_obj[index].spim;
     nrfx_spim_config_t config = NRFX_SPIM_DEFAULT_CONFIG(bsp_spim_pin[index].sck_pin,
-														bsp_spim_pin[index].mosi_pin,
-														bsp_spim_pin[index].miso_pin,
-														bsp_spim_pin[index].ss_pin);
-	config.ss_active_high = false;
+                                                        bsp_spim_pin[index].mosi_pin,
+                                                        bsp_spim_pin[index].miso_pin,
+                                                        bsp_spim_pin[index].ss_pin);
+    config.ss_active_high = false;
 
     /* spi config ss pin */
-	
+
     /* spi config bit order */
     if(configuration->mode & RT_SPI_MSB)
     {
@@ -222,46 +222,45 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     case 32000:
         config.frequency = NRF_SPIM_FREQ_32M;
         break;
-    
+
     default:
         LOG_E("spim_configure rate error %d\n",configuration->max_hz);
         break;
     }
-	
+
     rt_memcpy((void*)&spim_bus_obj[index].spim_config, (void*)&config, sizeof(nrfx_spim_config_t));
-	
-	void * context = RT_NULL;
-	nrfx_spim_evt_handler_t handler = RT_NULL;    //spi send callback handler ,default NULL
-	
-	#if USING_SPI_DMA
-		/* 创造、初始化完成量 */
-		struct rt_completion *cpt = (struct rt_completion*)rt_malloc(sizeof(struct rt_completion));
-		rt_completion_init(cpt);
-		
-		/* 创造、初始化spi关于dma的信息体 */
-		struct spi_dma_message *mess = (struct spi_dma_message*)rt_malloc(sizeof(struct spi_dma_message));
-		//step 1
-		mess->cs_pin		 = device->cs_pin;
-		//step 2
-		mess->cs_take		 = 0;
-		mess->cs_release	 = 0;
-		//step 3
-		mess->use_hw_ss		 = config.use_hw_ss;
-		//step 4
-		mess->ss_active_high = config.ss_active_high;
-		//step 6
-		mess->cpt			 = cpt;
-		
-		/* 赋值 */
-		context				 = (void*)mess;
-		handler				 = spim_handler[index];
-	#endif
-	
+
+    void * context = RT_NULL;
+    nrfx_spim_evt_handler_t handler = RT_NULL;    /* spi send callback handler ,default NULL */
+
+    #if USING_SPI_DMA
+        /* create and init completion */
+        struct rt_completion *cpt = (struct rt_completion*)rt_malloc(sizeof(struct rt_completion));
+        rt_completion_init(cpt);
+
+        /* create and init message about spim */
+        struct spi_dma_message *mess = (struct spi_dma_message*)rt_malloc(sizeof(struct spi_dma_message));
+        /* step 1 */
+        mess->cs_pin         = device->cs_pin;
+        /* step 2 */
+        mess->cs_take        = 0;
+        mess->cs_release     = 0;
+        /* step 3 */
+        mess->use_hw_ss      = config.use_hw_ss;
+        /* step 4 */
+        mess->ss_active_high = config.ss_active_high;
+        /* step 6 */
+        mess->cpt            = cpt;
+
+        context              = (void*)mess;
+        handler              = spim_handler[index];
+    #endif
+
     nrfx_err_t nrf_ret = nrfx_spim_init(&spim, &config, handler, context);
     if(NRFX_SUCCESS == nrf_ret)
         return RT_EOK;
-	else
-		LOG_E("spim configure fail. %x", nrf_ret);
+    else
+        LOG_E("spim configure fail. %x", nrf_ret);
 
     return -RT_ERROR;
 }
@@ -278,23 +277,24 @@ static rt_ssize_t spimxfer(struct rt_spi_device *device, struct rt_spi_message *
     RT_ASSERT(index != 0xFF);
 
     nrfx_spim_t * p_instance = &(spim_bus_obj[index].spim);
-	
+
     nrfx_spim_xfer_desc_t p_xfer_desc = NRFX_SPIM_XFER_TRX(message->send_buf, message->length, message->recv_buf, message->length);
-	
+
     if(message->send_buf == RT_NULL)
     {
         p_xfer_desc.tx_length = 0;
     }
+
     if(message->recv_buf == RT_NULL)
     {
         p_xfer_desc.rx_length = 0;
     }
-	
+
     nrf_ret = rtt_nrfx_spim_xfer(p_instance, &p_xfer_desc, 0, message, device);
 
     if( NRFX_SUCCESS != nrf_ret)
     {
-		LOG_E("SPIM data transfer fail. %x", nrf_ret);
+        LOG_E("SPIM data transfer fail. %x", nrf_ret);
         return 0;
     }
     else
@@ -318,7 +318,7 @@ static int rt_hw_spim_bus_init(void)
     for (int i = 0; i < sizeof(spim_config) / sizeof(spim_config[0]); i++)
     {
         spim_bus_obj[i].spim = spim_config[i].spi;
-		spim_bus_obj[i].spim_bus.parent.user_data = &spim_config[i];   //SPI INSTANCE
+        spim_bus_obj[i].spim_bus.parent.user_data = &spim_config[i];   /* SPI INSTANCE */
         result = rt_spi_bus_register(&spim_bus_obj[i].spim_bus, spim_config[i].bus_name, &nrfx_spim_ops);
         RT_ASSERT(result == RT_EOK);
     }
