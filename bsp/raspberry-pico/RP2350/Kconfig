@@ -2,17 +2,18 @@ mainmenu "RT-Thread Configuration"
 
 BSP_DIR := .
 
-RTT_DIR := ../..
+RTT_DIR := ../../..
 
 PKGS_DIR := packages
 
-config SOC_RP2040
+config SOC_RP2350
     bool
-    select ARCH_ARM_CORTEX_M0
+    select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_SECURE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select SOC_SERIES_RP2040_PICO
-    select PKG_USING_RASPBERRYPI_PICO_SDK
+    select SOC_SERIES_RP2350_PICO
+    select PKG_USING_RASPBERRYPI_PICO_RP2350_SDK
     default y
 
 source "$(RTT_DIR)/Kconfig"

@@ -20,7 +20,8 @@
       "RTT_BSP": "RTduino_Arduino Libraries (Raspberry Pico)",
       "RTT_TOOL_CHAIN": "sourcery-arm",
       "SUB_RTT_BSP": [
-        "raspberry-pico"
+        "raspberry-pico/RP2040",
+        "raspberry-pico/RP2350"
       ]
     },
     {
