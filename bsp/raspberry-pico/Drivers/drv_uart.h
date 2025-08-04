@@ -13,7 +13,6 @@
 #define __DRV_UART_H__
 
 #include <rthw.h>
-#include <rtthread.h>
 
 #ifdef RT_USING_SERIAL
 int rt_hw_uart_init(void);

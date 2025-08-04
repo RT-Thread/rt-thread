@@ -5,7 +5,7 @@ import rtconfig
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
@@ -28,7 +28,7 @@ Export('rtconfig')
 objs = PrepareBuilding(env, RTT_ROOT)
 
 ocwd = os.getcwd()
-os.chdir('packages/raspberrypi-pico-sdk-latest')
+os.chdir('packages/raspberrypi-pico-rp2350-sdk-latest')
 print("Enter " + os.getcwd())
 if GetOption('clean'):
     os.system("scons -c")
@@ -36,7 +36,7 @@ else:
     os.system("scons")
 os.chdir(ocwd)
 
-objs.extend(SConscript(os.path.join(os.getcwd(), 'board', 'ports', 'SConscript')))
+objs.extend(SConscript(os.path.join(os.getcwd(), '..', 'Drivers', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
