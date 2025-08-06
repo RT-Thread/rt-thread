@@ -30,6 +30,7 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
  * 2023-03-27     rose_man     Split into scheduler upc and scheduler_mp.c
  * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
+ * 2025-08-04     Pillar       Add rt_scheduler_critical_switch_flag
  */
 
 #define __RT_IPC_SOURCE__
@@ -50,6 +51,11 @@ rt_uint8_t rt_thread_ready_table[32];
 extern volatile rt_atomic_t rt_interrupt_nest;
 static rt_int16_t rt_scheduler_lock_nest;
 rt_uint8_t rt_current_priority;
+
+static rt_int8_t rt_scheduler_critical_switch_flag;
+#define IS_CRITICAL_SWITCH_PEND()  (rt_scheduler_critical_switch_flag == 1)
+#define SET_CRITICAL_SWITCH_FLAG() (rt_scheduler_critical_switch_flag = 1)
+#define CLR_CRITICAL_SWITCH_FLAG() (rt_scheduler_critical_switch_flag = 0)
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
@@ -236,6 +242,9 @@ void rt_system_scheduler_start(void)
 
     rt_cpu_self()->current_thread = to_thread;
 
+    /* flush critical switch flag */
+    CLR_CRITICAL_SWITCH_FLAG();
+
     rt_sched_remove_thread(to_thread);
     RT_SCHED_CTX(to_thread).stat = RT_THREAD_RUNNING;
 
@@ -386,6 +395,10 @@ void rt_schedule(void)
                 RT_SCHED_CTX(curr_thread).stat = RT_THREAD_RUNNING | (RT_SCHED_CTX(curr_thread).stat & ~RT_THREAD_STAT_MASK);
             }
         }
+    }
+    else
+    {
+        SET_CRITICAL_SWITCH_FLAG();
     }
 
     /* enable interrupt */
@@ -604,6 +617,7 @@ void rt_exit_critical_safe(rt_base_t critical_level)
 
 /**
  * @brief Safely exit critical section (non-debug version)
+ *        If the scheduling function is called before exiting, it will be scheduled in this function.
  *
  * @param critical_level The expected critical level (unused in non-debug build)
  *
@@ -657,6 +671,7 @@ RTM_EXPORT(rt_enter_critical);
 
 /**
  * @brief Exit critical section and unlock scheduler
+ *        If the scheduling function is called before exiting, it will be scheduled in this function.
  *
  * @details This function:
  *   - Decrements the scheduler lock nesting count
@@ -685,9 +700,10 @@ void rt_exit_critical(void)
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        if (rt_current_thread)
+        if (IS_CRITICAL_SWITCH_PEND())
         {
-            /* if scheduler is started, do a schedule */
+            CLR_CRITICAL_SWITCH_FLAG();
+            /* if scheduler is started and needs to be scheduled, do a schedule */
             rt_schedule();
         }
     }
