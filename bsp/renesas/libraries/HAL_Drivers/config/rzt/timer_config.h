@@ -19,7 +19,7 @@ extern "C"
 {
 #endif
 
-#define PLCKD_PRESCALER_MAX_SELECT     8
+#define PLCKD_PRESCALER_MAX_SELECT     9
 
 /* RSK-RZN2L: Frequency ratio: PCLKA:PCLKD = 1:N (N = 1/2/4/8/16/32/64) */
 #define PLCKD_PRESCALER_400M           (BSP_PRV_PCLKGPTL_FREQ_400_MHZ)
