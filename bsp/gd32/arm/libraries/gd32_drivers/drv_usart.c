@@ -416,7 +416,6 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
 #endif
 
     NVIC_SetPriority(uart->irqn, 0);
-    NVIC_EnableIRQ(uart->irqn);
 }
 
 /**
