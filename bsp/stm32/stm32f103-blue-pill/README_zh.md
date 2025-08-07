@@ -22,7 +22,7 @@ STM32F103C8T6最小系统，采用SWD调试接口，可以用3个接口就能完
 
 开发板外观如下图所示：
 
-![image-20250807143759734](C:\Users\Dell\AppData\Roaming\Typora\typora-user-images\image-20250807143759734.png)
+![Bluepill_pinout v2](figures\Bluepill_pinout_v2.png)
 
 该开发板常用 **板载资源** 如下：
 
