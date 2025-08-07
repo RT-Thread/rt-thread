@@ -80,12 +80,12 @@ KEY FEATURES
 
 - Peripherals
   
-  - LED：PC13
+  - LED：PB2
   
 - Debug IO interface type: ST-LINK V2 (SWD)
 
 
-![board](figures/Bluepill_pinout.png)
+![board](figures/Bluepill_pinout_v2.png)
 
 
 
