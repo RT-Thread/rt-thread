@@ -90,6 +90,7 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
     if GetDepend(['RT_CHERRYUSB_DEVICE_BL']):
         src += Glob('port/bouffalolab/usb_dc_bl.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_HPM']):
+        path += [cwd + '/port/hpmicro']
         src += Glob('port/hpmicro/usb_dc_hpm.c')
         src += Glob('port/hpmicro/usb_glue_hpm.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_AIC']):
@@ -184,6 +185,7 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('port/ehci/usb_hc_ehci.c')
         src += Glob('port/ehci/usb_glue_bouffalo.c')
     if GetDepend(['RT_CHERRYUSB_HOST_EHCI_HPM']):
+        path += [cwd + '/port/hpmicro']
         src += Glob('port/ehci/usb_hc_ehci.c')
         src += Glob('port/hpmicro/usb_hc_hpm.c')
         src += Glob('port/hpmicro/usb_glue_hpm.c')

@@ -40,6 +40,8 @@ CherryUSB 是一个小而美的、可移植性高的、用于嵌入式系统（�
 - 长度无限制，方便对接硬件 DMA 并且发挥 DMA 的优势
 - 分包过程在中断中执行
 
+性能展示：https://cherryusb.cherry-embedded.org/show/
+
 ## 目录结构
 
 |   目录名       |  描述                          |
@@ -103,7 +105,7 @@ CherryUSB Host 协议栈当前实现以下功能：
 - 支持阻塞式传输和异步传输
 - 支持复合设备
 - 支持多级 HUB，最高可拓展到 7 级(目前测试 1拖 10 没有问题，仅支持 dwc2/ehci/xhci/rp2040)
-- 支持 Communication Device Class (CDC_ACM, CDC_ECM)
+- 支持 Communication Device Class (CDC_ACM, CDC_ECM, CDC_NCM)
 - 支持 Human Interface Device (HID)
 - 支持 Mass Storage Class (MSC)
 - Support USB Video CLASS (UVC1.0、UVC1.5)
@@ -141,7 +143,7 @@ CherryUSB Host 协议栈资源占用说明（GCC 10.2 with -O2，关闭 log）�
 #define CONFIG_USBHOST_MAX_EXTHUBS          1
 #define CONFIG_USBHOST_MAX_EHPORTS          4
 #define CONFIG_USBHOST_MAX_INTERFACES       8
-#define CONFIG_USBHOST_MAX_INTF_ALTSETTINGS 8
+#define CONFIG_USBHOST_MAX_INTF_ALTSETTINGS 2
 #define CONFIG_USBHOST_MAX_ENDPOINTS        4
 ```
 
@@ -187,24 +189,25 @@ TODO
 
 ## 示例仓库
 
-|   Manufacturer       |  CHIP or Series    | USB IP| Repo Url | Support version     | Support status |
+|   Manufacturer       |  CHIP or Series    | USB IP| Repo Url | Support version     | Note |
 |:--------------------:|:------------------:|:-----:|:--------:|:------------------:|:-------------:|
-|Bouffalolab    |  BL702/BL616/BL808 | bouffalolab/ehci|[bouffalo_sdk](https://github.com/CherryUSB/bouffalo_sdk)|<= latest | Long-term |
-|ST             |  STM32F1x/STM32F4/STM32H7 | fsdev/dwc2 |[stm32_repo](https://github.com/CherryUSB/cherryusb_stm32)|<= latest | Long-term |
-|HPMicro        |  HPM6000/HPM5000 | hpm/ehci |[hpm_sdk](https://github.com/CherryUSB/hpm_sdk)|<= latest | Long-term |
-|Essemi         |  ES32F36xx | musb |[es32f369_repo](https://github.com/CherryUSB/cherryusb_es32)|<= latest | Long-term |
-|Phytium        |  e2000 | pusb2/xhci |[phytium_repo](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk)|>=1.4.0  | Long-term |
-|Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Long-term |
-|Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)|<= latest | Long-term |
-|NXP            |  mcx | kinetis/chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Long-term |
-|Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/k230_sdk)|v1.2.0 | Long-term |
-|Actionstech    |  ATS30xx | dwc2 |[action_zephyr_repo](https://github.com/CherryUSB/lv_port_actions_technology/tree/master/action_technology_sdk)|>=1.4.0 | Long-term |
-|Nationstech    |  n32h4x | dwc2 |[nation_repo](https://github.com/CherryUSB/cherryusb_nation)|>=1.5.0 | Long-term |
-|Raspberry pi   |  rp2040/rp2350 | rp2040 |[pico-examples](https://github.com/CherryUSB/pico-examples)|<= latest | Long-term |
-|AllwinnerTech  |  F1C100S/F1C200S | musb |[cherryusb_rtt_f1c100s](https://github.com/CherryUSB/cherryusb_rtt_f1c100s)|<= latest | the same with musb |
-|Bekencorp      |  bk7256/bk7258 | musb |[bk_idk](https://github.com/CherryUSB/bk_idk)| v0.7.0 | the same with musb |
-|Sophgo         |  cv18xx | dwc2 |[cvi_alios_open](https://github.com/CherryUSB/cvi_alios_open)| v0.7.0 | TBD |
-|WCH            |  CH32V307/ch58x | ch32_usbfs/ch32_usbhs/ch58x |[wch_repo](https://github.com/CherryUSB/cherryusb_wch)|<= v0.10.2/>=v1.5.0 | TBD |
+|Bouffalolab    |  BL702/BL616/BL808 | bouffalolab/ehci|[bouffalo_sdk](https://github.com/CherryUSB/bouffalo_sdk)|<= latest | Official |
+|ST             |  STM32F1x/STM32F4/STM32H7 | fsdev/dwc2 |[stm32_repo](https://github.com/CherryUSB/cherryusb_stm32)|<= latest | Community |
+|HPMicro        |  HPM6000/HPM5000 | hpm/ehci |[hpm_sdk](https://github.com/CherryUSB/hpm_sdk)|<= latest | Official |
+|Essemi         |  ES32F36xx | musb |[es32f369_repo](https://github.com/CherryUSB/cherryusb_es32)|<= latest | Official |
+|Phytium        |  e2000 | pusb2/xhci |[phytium_repo](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk)|>=1.4.0  | Official |
+|Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Official |
+|Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)|<= latest | Official ongoing |
+|Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/k230_sdk)|v1.2.0 | Official |
+|Actionstech    |  ATS30xx | dwc2 |[action_zephyr_repo](https://github.com/CherryUSB/lv_port_actions_technology/tree/master/action_technology_sdk)|>=1.4.0 | Official |
+|SiFli          |  SF32LB5x | musb |[SiFli_sdk](https://github.com/OpenSiFli/SiFli-SDK)|>=1.5.0 | Official |
+|NXP            |  mcx | kinetis/chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Community |
+|Nationstech    |  n32h4x | dwc2 |[nation_repo](https://github.com/CherryUSB/cherryusb_nation)|>=1.5.0 | Official ongoing |
+|Raspberry pi   |  rp2040/rp2350 | rp2040 |[pico-sdk](https://github.com/CherryUSB/pico-sdk)|<= latest | Official ongoing |
+|AllwinnerTech  |  F1C100S/F1C200S | musb |[cherryusb_rtt_f1c100s](https://github.com/CherryUSB/cherryusb_rtt_f1c100s)|<= latest | no more update |
+|Bekencorp      |  bk7256/bk7258 | musb |[bk_idk](https://github.com/CherryUSB/bk_idk)| v0.7.0 | Official |
+|Sophgo         |  cv18xx | dwc2 |[cvi_alios_open](https://github.com/CherryUSB/cvi_alios_open)| v0.7.0 | Official |
+|WCH            |  CH32V307/ch58x | ch32_usbfs/ch32_usbhs/ch58x |[wch_repo](https://github.com/CherryUSB/cherryusb_wch)|<= v0.10.2/>=v1.5.0 | no more update |
 
 ## 软件包支持
 
@@ -228,5 +231,4 @@ CherryUSB 微信群：与我联系后邀请加入
 
 感谢以下企业支持（顺序不分先后）：
 
-<img src="docs/assets/bouffalolab.jpg"  width="100" height="80"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="80" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="80" /> <img src="docs/assets/rtthread.jpg"  width="100" height="80" /> <img src="docs/assets/sophgo.jpg"  width="100" height="80" /> <img src="docs/assets/phytium.jpg"  width="100" height="80" /> <img src="docs/assets/thead.jpg"  width="100" height="80" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="80" /> <img src="docs/assets/artinchip.jpg"  width="100" height="80" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="80" /> <img src="docs/assets/nxp.png"  width="100" height="80" /> <img src="docs/assets/espressif.png"  width="100" height="80" /> <img src="docs/assets/canaan.jpg"  width="100" height="80" />
-<img src="docs/assets/actions.jpg"  width="100" height="80" /> <img src="docs/assets/nationstech.jpg"  width="100" height="80" />
+<img src="docs/assets/bouffalolab.jpg"  width="100" height="80"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="80" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="80" /> <img src="docs/assets/rtthread.jpg"  width="100" height="80" /> <img src="docs/assets/sophgo.jpg"  width="100" height="80" /> <img src="docs/assets/phytium.jpg"  width="100" height="80" /> <img src="docs/assets/thead.jpg"  width="100" height="80" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="80" /> <img src="docs/assets/artinchip.jpg"  width="100" height="80" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="80" /> <img src="docs/assets/nxp.png"  width="100" height="80" /> <img src="docs/assets/espressif.png"  width="100" height="80" /> <img src="docs/assets/canaan.jpg"  width="100" height="80" /> <img src="docs/assets/actions.jpg"  width="100" height="80" /> <img src="docs/assets/sifli.jpg"  width="100" height="80" /> <img src="docs/assets/nationstech.jpg"  width="100" height="80" />

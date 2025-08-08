@@ -154,7 +154,7 @@
 #define CONFIG_USBHOST_MAX_EXTHUBS          1
 #define CONFIG_USBHOST_MAX_EHPORTS          4
 #define CONFIG_USBHOST_MAX_INTERFACES       8
-#define CONFIG_USBHOST_MAX_INTF_ALTSETTINGS 8
+#define CONFIG_USBHOST_MAX_INTF_ALTSETTINGS 2
 #define CONFIG_USBHOST_MAX_ENDPOINTS        4
 
 #define CONFIG_USBHOST_MAX_CDC_ACM_CLASS 4
@@ -250,21 +250,10 @@
 /* ================ USB Device Port Configuration ================*/
 
 #ifndef CONFIG_USBDEV_MAX_BUS
-#define CONFIG_USBDEV_MAX_BUS 1 // for now, bus num must be 1 except hpm ip
-#endif
-
-#ifndef CONFIG_USBDEV_EP_NUM
-#define CONFIG_USBDEV_EP_NUM 8
+#define CONFIG_USBDEV_MAX_BUS 1
 #endif
 
 // #define CONFIG_USBDEV_SOF_ENABLE
-
-/* When your chip hardware supports high-speed and wants to initialize it in high-speed mode,
- * the relevant IP will configure the internal or external high-speed PHY according to CONFIG_USB_HS.
- *
- * in xxx32 chips, only pb14/pb15 can support hs mode, pa11/pa12 is not supported(only a few supports, but we ignore them).
-*/
-// #define CONFIG_USB_HS
 
 /* ---------------- FSDEV Configuration ---------------- */
 //#define CONFIG_USBDEV_FSDEV_PMA_ACCESS 2 // maybe 1 or 2, many chips may have a difference
@@ -276,6 +265,7 @@
 // #define CONFIG_USB_DWC2_DMA_ENABLE
 
 /* ---------------- MUSB Configuration ---------------- */
+#define CONFIG_USB_MUSB_EP_NUM 8
 // #define CONFIG_USB_MUSB_SUNXI
 
 /* ================ USB Host Port Configuration ==================*/
@@ -283,15 +273,11 @@
 #define CONFIG_USBHOST_MAX_BUS 1
 #endif
 
-#ifndef CONFIG_USBHOST_PIPE_NUM
-#define CONFIG_USBHOST_PIPE_NUM 10
-#endif
-
 /* ---------------- EHCI Configuration ---------------- */
 
 #define CONFIG_USB_EHCI_HCCR_OFFSET     (0x0)
 #define CONFIG_USB_EHCI_FRAME_LIST_SIZE 1024
-#define CONFIG_USB_EHCI_QH_NUM          CONFIG_USBHOST_PIPE_NUM
+#define CONFIG_USB_EHCI_QH_NUM          10
 #define CONFIG_USB_EHCI_QTD_NUM         (CONFIG_USB_EHCI_QH_NUM * 3)
 #define CONFIG_USB_EHCI_ITD_NUM         4
 // #define CONFIG_USB_EHCI_HCOR_RESERVED_DISABLE
@@ -302,15 +288,26 @@
 
 /* ---------------- OHCI Configuration ---------------- */
 #define CONFIG_USB_OHCI_HCOR_OFFSET (0x0)
-#define CONFIG_USB_OHCI_ED_NUM CONFIG_USBHOST_PIPE_NUM
+#define CONFIG_USB_OHCI_ED_NUM 10
 #define CONFIG_USB_OHCI_TD_NUM 3
 // #define CONFIG_USB_OHCI_DESC_DCACHE_ENABLE
 
 /* ---------------- XHCI Configuration ---------------- */
 #define CONFIG_USB_XHCI_HCCR_OFFSET (0x0)
 
+/* ---------------- DWC2 Configuration ---------------- */
+// nothing to define
+
 /* ---------------- MUSB Configuration ---------------- */
+#define CONFIG_USB_MUSB_PIPE_NUM 8
 // #define CONFIG_USB_MUSB_SUNXI
+
+/* When your chip hardware supports high-speed and wants to initialize it in high-speed mode,
+ * the relevant IP will configure the internal or external high-speed PHY according to CONFIG_USB_HS.
+ *
+ * in xxx32 chips, only pb14/pb15 can support hs mode, pa11/pa12 is not supported(only a few supports, but we ignore them).
+*/
+// #define CONFIG_USB_HS
 
 #ifndef usb_phyaddr2ramaddr
 #define usb_phyaddr2ramaddr(addr) (addr)

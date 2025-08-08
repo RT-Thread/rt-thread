@@ -15,7 +15,7 @@
 #define USB_ERR_RANGE    7
 #define USB_ERR_STALL    8
 #define USB_ERR_BABBLE   9
-#define USB_ERR_NAK      10
+#define USB_ERR_NAK      10 /* only for dwc2 buffer dma mode */
 #define USB_ERR_DT       11
 #define USB_ERR_IO       12
 #define USB_ERR_SHUTDOWN 13

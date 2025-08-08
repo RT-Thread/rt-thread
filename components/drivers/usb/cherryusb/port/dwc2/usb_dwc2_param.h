@@ -14,102 +14,102 @@
 #define dwc2_readl(addr) \
     (*(volatile uint32_t *)(addr))
 
-#define GUID_OFFSET HSOTG_REG(0x003c)
+#define GUID_OFFSET HSOTG_REG(0x003C)
 
 #define GSNPSID_OFFSET  HSOTG_REG(0x0040)
-#define GSNPSID_ID_MASK 0xffff0000
+#define GSNPSID_ID_MASK (0xFFFF0000UL)
 
 #define GHWCFG1_OFFSET HSOTG_REG(0x0044)
 
 #define GHWCFG2_OFFSET                        HSOTG_REG(0x0048)
-#define GHWCFG2_OTG_ENABLE_IC_USB             (1U << 31)
-#define GHWCFG2_DEV_TOKEN_Q_DEPTH_MASK        (0x1f << 26)
-#define GHWCFG2_DEV_TOKEN_Q_DEPTH_SHIFT       26
-#define GHWCFG2_HOST_PERIO_TX_Q_DEPTH_MASK    (0x3 << 24)
-#define GHWCFG2_HOST_PERIO_TX_Q_DEPTH_SHIFT   24
-#define GHWCFG2_NONPERIO_TX_Q_DEPTH_MASK      (0x3 << 22)
-#define GHWCFG2_NONPERIO_TX_Q_DEPTH_SHIFT     22
-#define GHWCFG2_MULTI_PROC_INT                (1 << 20)
-#define GHWCFG2_DYNAMIC_FIFO                  (1 << 19)
-#define GHWCFG2_PERIO_EP_SUPPORTED            (1 << 18)
-#define GHWCFG2_NUM_HOST_CHAN_MASK            (0xf << 14)
-#define GHWCFG2_NUM_HOST_CHAN_SHIFT           14
-#define GHWCFG2_NUM_DEV_EP_MASK               (0xf << 10)
-#define GHWCFG2_NUM_DEV_EP_SHIFT              10
-#define GHWCFG2_FS_PHY_TYPE_MASK              (0x3 << 8)
-#define GHWCFG2_FS_PHY_TYPE_SHIFT             8
-#define GHWCFG2_FS_PHY_TYPE_NOT_SUPPORTED     0
-#define GHWCFG2_FS_PHY_TYPE_DEDICATED         1
-#define GHWCFG2_FS_PHY_TYPE_SHARED_UTMI       2
-#define GHWCFG2_FS_PHY_TYPE_SHARED_ULPI       3
-#define GHWCFG2_HS_PHY_TYPE_MASK              (0x3 << 6)
-#define GHWCFG2_HS_PHY_TYPE_SHIFT             6
-#define GHWCFG2_HS_PHY_TYPE_NOT_SUPPORTED     0
-#define GHWCFG2_HS_PHY_TYPE_UTMI              1
-#define GHWCFG2_HS_PHY_TYPE_ULPI              2
-#define GHWCFG2_HS_PHY_TYPE_UTMI_ULPI         3
-#define GHWCFG2_POINT2POINT                   (1 << 5)
-#define GHWCFG2_ARCHITECTURE_MASK             (0x3 << 3)
-#define GHWCFG2_ARCHITECTURE_SHIFT            3
-#define GHWCFG2_SLAVE_ONLY_ARCH               0
-#define GHWCFG2_EXT_DMA_ARCH                  1
-#define GHWCFG2_INT_DMA_ARCH                  2
-#define GHWCFG2_OP_MODE_MASK                  (0x7 << 0)
-#define GHWCFG2_OP_MODE_SHIFT                 0
-#define GHWCFG2_OP_MODE_HNP_SRP_CAPABLE       0
-#define GHWCFG2_OP_MODE_SRP_ONLY_CAPABLE      1
-#define GHWCFG2_OP_MODE_NO_HNP_SRP_CAPABLE    2
-#define GHWCFG2_OP_MODE_SRP_CAPABLE_DEVICE    3
-#define GHWCFG2_OP_MODE_NO_SRP_CAPABLE_DEVICE 4
-#define GHWCFG2_OP_MODE_SRP_CAPABLE_HOST      5
-#define GHWCFG2_OP_MODE_NO_SRP_CAPABLE_HOST   6
-#define GHWCFG2_OP_MODE_UNDEFINED             7
+#define GHWCFG2_OTG_ENABLE_IC_USB             (0x01UL << 31U)
+#define GHWCFG2_DEV_TOKEN_Q_DEPTH_MASK        (0x1FUL << 26U)
+#define GHWCFG2_DEV_TOKEN_Q_DEPTH_SHIFT       (26U)
+#define GHWCFG2_HOST_PERIO_TX_Q_DEPTH_MASK    (0x03UL << 24U)
+#define GHWCFG2_HOST_PERIO_TX_Q_DEPTH_SHIFT   (24U)
+#define GHWCFG2_NONPERIO_TX_Q_DEPTH_MASK      (0x03UL << 22U)
+#define GHWCFG2_NONPERIO_TX_Q_DEPTH_SHIFT     (22U)
+#define GHWCFG2_MULTI_PROC_INT                (0x01UL << 20U)
+#define GHWCFG2_DYNAMIC_FIFO                  (0x01UL << 19U)
+#define GHWCFG2_PERIO_EP_SUPPORTED            (0x01UL << 18U)
+#define GHWCFG2_NUM_HOST_CHAN_MASK            (0x0FUL << 14U)
+#define GHWCFG2_NUM_HOST_CHAN_SHIFT           (14U)
+#define GHWCFG2_NUM_DEV_EP_MASK               (0x0FUL << 10U)
+#define GHWCFG2_NUM_DEV_EP_SHIFT              (10U)
+#define GHWCFG2_FS_PHY_TYPE_MASK              (0x03UL << 8U)
+#define GHWCFG2_FS_PHY_TYPE_SHIFT             (8U)
+#define GHWCFG2_FS_PHY_TYPE_NOT_SUPPORTED     (0x00UL)
+#define GHWCFG2_FS_PHY_TYPE_DEDICATED         (0x01UL)
+#define GHWCFG2_FS_PHY_TYPE_SHARED_UTMI       (0x02UL)
+#define GHWCFG2_FS_PHY_TYPE_SHARED_ULPI       (0x03UL)
+#define GHWCFG2_HS_PHY_TYPE_MASK              (0x03UL << 6U)
+#define GHWCFG2_HS_PHY_TYPE_SHIFT             (6U)
+#define GHWCFG2_HS_PHY_TYPE_NOT_SUPPORTED     (0x00UL)
+#define GHWCFG2_HS_PHY_TYPE_UTMI              (0x01UL)
+#define GHWCFG2_HS_PHY_TYPE_ULPI              (0x02UL)
+#define GHWCFG2_HS_PHY_TYPE_UTMI_ULPI         (0x03UL)
+#define GHWCFG2_POINT2POINT                   (0x01UL << 5U)
+#define GHWCFG2_ARCHITECTURE_MASK             (0x03UL << 3U)
+#define GHWCFG2_ARCHITECTURE_SHIFT            (3U)
+#define GHWCFG2_SLAVE_ONLY_ARCH               (0x00UL)
+#define GHWCFG2_EXT_DMA_ARCH                  (0x01UL)
+#define GHWCFG2_INT_DMA_ARCH                  (0x02UL)
+#define GHWCFG2_OP_MODE_MASK                  (0x07UL << 0U)
+#define GHWCFG2_OP_MODE_SHIFT                 (0U)
+#define GHWCFG2_OP_MODE_HNP_SRP_CAPABLE       (0x00UL)
+#define GHWCFG2_OP_MODE_SRP_ONLY_CAPABLE      (0x01UL)
+#define GHWCFG2_OP_MODE_NO_HNP_SRP_CAPABLE    (0x02UL)
+#define GHWCFG2_OP_MODE_SRP_CAPABLE_DEVICE    (0x03UL)
+#define GHWCFG2_OP_MODE_NO_SRP_CAPABLE_DEVICE (0x04UL)
+#define GHWCFG2_OP_MODE_SRP_CAPABLE_HOST      (0x05UL)
+#define GHWCFG2_OP_MODE_NO_SRP_CAPABLE_HOST   (0x06UL)
+#define GHWCFG2_OP_MODE_UNDEFINED             (0x07UL)
 
-#define GHWCFG3_OFFSET                       HSOTG_REG(0x004c)
-#define GHWCFG3_DFIFO_DEPTH_MASK             (0xffff << 16)
-#define GHWCFG3_DFIFO_DEPTH_SHIFT            16
-#define GHWCFG3_OTG_LPM_EN                   (1 << 15)
-#define GHWCFG3_BC_SUPPORT                   (1 << 14)
-#define GHWCFG3_OTG_ENABLE_HSIC              (1 << 13)
-#define GHWCFG3_ADP_SUPP                     (1 << 12)
-#define GHWCFG3_SYNCH_RESET_TYPE             (1 << 11)
-#define GHWCFG3_OPTIONAL_FEATURES            (1 << 10)
-#define GHWCFG3_VENDOR_CTRL_IF               (1 << 9)
-#define GHWCFG3_I2C                          (1 << 8)
-#define GHWCFG3_OTG_FUNC                     (1 << 7)
-#define GHWCFG3_PACKET_SIZE_CNTR_WIDTH_MASK  (0x7 << 4)
-#define GHWCFG3_PACKET_SIZE_CNTR_WIDTH_SHIFT 4
-#define GHWCFG3_XFER_SIZE_CNTR_WIDTH_MASK    (0xf << 0)
-#define GHWCFG3_XFER_SIZE_CNTR_WIDTH_SHIFT   0
+#define GHWCFG3_OFFSET                       HSOTG_REG(0x004C)
+#define GHWCFG3_DFIFO_DEPTH_MASK             (0xFFFFUL << 16U)
+#define GHWCFG3_DFIFO_DEPTH_SHIFT            (16U)
+#define GHWCFG3_OTG_LPM_EN                   (0x0001UL << 15U)
+#define GHWCFG3_BC_SUPPORT                   (0x0001UL << 14U)
+#define GHWCFG3_OTG_ENABLE_HSIC              (0x0001UL << 13U)
+#define GHWCFG3_ADP_SUPP                     (0x0001UL << 12U)
+#define GHWCFG3_SYNCH_RESET_TYPE             (0x0001UL << 11U)
+#define GHWCFG3_OPTIONAL_FEATURES            (0x0001UL << 10U)
+#define GHWCFG3_VENDOR_CTRL_IF               (0x0001UL << 9U)
+#define GHWCFG3_I2C                          (0x0001UL << 8U)
+#define GHWCFG3_OTG_FUNC                     (0x0001UL << 7U)
+#define GHWCFG3_PACKET_SIZE_CNTR_WIDTH_MASK  (0x0007UL << 4U)
+#define GHWCFG3_PACKET_SIZE_CNTR_WIDTH_SHIFT (4U)
+#define GHWCFG3_XFER_SIZE_CNTR_WIDTH_MASK    (0x000FUL << 0U)
+#define GHWCFG3_XFER_SIZE_CNTR_WIDTH_SHIFT   (0U)
 
 #define GHWCFG4_OFFSET                      HSOTG_REG(0x0050)
-#define GHWCFG4_DESC_DMA_DYN                (1U << 31)
-#define GHWCFG4_DESC_DMA                    (1 << 30)
-#define GHWCFG4_NUM_IN_EPS_MASK             (0xf << 26)
-#define GHWCFG4_NUM_IN_EPS_SHIFT            26
-#define GHWCFG4_DED_FIFO_EN                 (1 << 25)
-#define GHWCFG4_DED_FIFO_SHIFT              25
-#define GHWCFG4_SESSION_END_FILT_EN         (1 << 24)
-#define GHWCFG4_B_VALID_FILT_EN             (1 << 23)
-#define GHWCFG4_A_VALID_FILT_EN             (1 << 22)
-#define GHWCFG4_VBUS_VALID_FILT_EN          (1 << 21)
-#define GHWCFG4_IDDIG_FILT_EN               (1 << 20)
-#define GHWCFG4_NUM_DEV_MODE_CTRL_EP_MASK   (0xf << 16)
-#define GHWCFG4_NUM_DEV_MODE_CTRL_EP_SHIFT  16
-#define GHWCFG4_UTMI_PHY_DATA_WIDTH_MASK    (0x3 << 14)
-#define GHWCFG4_UTMI_PHY_DATA_WIDTH_SHIFT   14
-#define GHWCFG4_UTMI_PHY_DATA_WIDTH_8       0
-#define GHWCFG4_UTMI_PHY_DATA_WIDTH_16      1
-#define GHWCFG4_UTMI_PHY_DATA_WIDTH_8_OR_16 2
-#define GHWCFG4_ACG_SUPPORTED               (1 << 12)
-#define GHWCFG4_IPG_ISOC_SUPPORTED          (1 << 11)
-#define GHWCFG4_SERVICE_INTERVAL_SUPPORTED  (1 << 10)
-#define GHWCFG4_XHIBER                      (1 << 7)
-#define GHWCFG4_HIBER                       (1 << 6)
-#define GHWCFG4_MIN_AHB_FREQ                (1 << 5)
-#define GHWCFG4_POWER_OPTIMIZ               (1 << 4)
-#define GHWCFG4_NUM_DEV_PERIO_IN_EP_MASK    (0xf << 0)
-#define GHWCFG4_NUM_DEV_PERIO_IN_EP_SHIFT   0
+#define GHWCFG4_DESC_DMA_DYN                (0x1UL << 31U)
+#define GHWCFG4_DESC_DMA                    (0x1UL << 30U)
+#define GHWCFG4_NUM_IN_EPS_MASK             (0xFUL << 26U)
+#define GHWCFG4_NUM_IN_EPS_SHIFT            (26U)
+#define GHWCFG4_DED_FIFO_EN                 (0x1UL << 25U)
+#define GHWCFG4_DED_FIFO_SHIFT              (25U)
+#define GHWCFG4_SESSION_END_FILT_EN         (0x1UL << 24U)
+#define GHWCFG4_B_VALID_FILT_EN             (0x1UL << 23U)
+#define GHWCFG4_A_VALID_FILT_EN             (0x1UL << 22U)
+#define GHWCFG4_VBUS_VALID_FILT_EN          (0x1UL << 21U)
+#define GHWCFG4_IDDIG_FILT_EN               (0x1UL << 20U)
+#define GHWCFG4_NUM_DEV_MODE_CTRL_EP_MASK   (0xFUL << 16U)
+#define GHWCFG4_NUM_DEV_MODE_CTRL_EP_SHIFT  (16U)
+#define GHWCFG4_UTMI_PHY_DATA_WIDTH_MASK    (0x3UL << 14U)
+#define GHWCFG4_UTMI_PHY_DATA_WIDTH_SHIFT   (14U)
+#define GHWCFG4_UTMI_PHY_DATA_WIDTH_8       (0x0UL)
+#define GHWCFG4_UTMI_PHY_DATA_WIDTH_16      (0x1UL)
+#define GHWCFG4_UTMI_PHY_DATA_WIDTH_8_OR_16 (0x2UL)
+#define GHWCFG4_ACG_SUPPORTED               (0x1UL << 12U)
+#define GHWCFG4_IPG_ISOC_SUPPORTED          (0x1UL << 11U)
+#define GHWCFG4_SERVICE_INTERVAL_SUPPORTED  (0x1UL << 10U)
+#define GHWCFG4_XHIBER                      (0x1UL << 7U)
+#define GHWCFG4_HIBER                       (0x1UL << 6U)
+#define GHWCFG4_MIN_AHB_FREQ                (0x1UL << 5U)
+#define GHWCFG4_POWER_OPTIMIZ               (0x1UL << 4U)
+#define GHWCFG4_NUM_DEV_PERIO_IN_EP_MASK    (0xFUL << 0U)
+#define GHWCFG4_NUM_DEV_PERIO_IN_EP_SHIFT   (0U)
 
 /**
  * struct dwc2_hw_params - Autodetected parameters.
