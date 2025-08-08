@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +14,7 @@
 #if defined(RT_USING_FAL)
 #include <fal.h>
 
-//log
+/* log */
 #include <rtdbg.h>
 #define LOG_TAG                "drv.qspiflash"
 
@@ -47,14 +47,14 @@ static void configure_memory()
         .wren      = true
     };
 
-    // Send reset enable
+    /* Send reset enable */
     err_code = nrfx_qspi_cinstr_xfer(&cinstr_cfg, NULL, NULL);
     if (NRFX_SUCCESS != err_code)
     {
         LOG_E("\r\n ERROR: QSPI_STD_CMD_RSTEN:0x%x\n", err_code);
         return ;
     }
-    // Send reset command
+    /* Send reset command */
     cinstr_cfg.opcode = QSPI_STD_CMD_RST;
     err_code = nrfx_qspi_cinstr_xfer(&cinstr_cfg, NULL, NULL);
     if (NRFX_SUCCESS != err_code)
@@ -63,7 +63,7 @@ static void configure_memory()
         return ;
     }
 
-    // Switch to qspi mode
+    /* Switch to qspi mode */
     cinstr_cfg.opcode = QSPI_STD_CMD_WRSR;
     cinstr_cfg.length = NRF_QSPI_CINSTR_LEN_2B;
     err_code = nrfx_qspi_cinstr_xfer(&cinstr_cfg, &temporary, NULL);
@@ -73,6 +73,7 @@ static void configure_memory()
         return;
     }
 }
+
 static int init(void)
 {
     rt_uint32_t err_code;
@@ -151,3 +152,4 @@ struct fal_flash_dev nor_flash0 =
 };
 
 #endif
+

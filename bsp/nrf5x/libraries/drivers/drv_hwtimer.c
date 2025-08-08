@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -27,7 +27,7 @@
 #ifdef RT_USING_HWTIMER
 
 #ifndef TIM_DEV_INFO_CONFIG
-// maxfreq and minfreq unit is HZ
+/* maxfreq and minfreq unit is HZ */
 #define TIM_DEV_INFO_CONFIG                     \
     {                                           \
         .maxfreq = 16000000,                    \
@@ -103,7 +103,7 @@ static void timer_callback(nrf_timer_event_t event_type, void* p_context)
 {
     rt_hwtimer_t       *timer_device = (struct rt_hwtimer_device *)p_context;
 
-    // no matter what event_type is(NRF_TIMER_EVENT_COMPARE0 or others), call same function "rt_device_hwtimer_isr"
+    /* no matter what event_type is(NRF_TIMER_EVENT_COMPARE0 or others), call same function "rt_device_hwtimer_isr" */
     LOG_D("timer_callback event_type = %d, inst_id = %d, cc conunt = %d\r\n",
            event_type, timer_info->timer_inst.instance_id, timer_info->timer_inst.cc_channel_count);
     rt_device_hwtimer_isr(timer_device);
@@ -137,12 +137,12 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
 
     if (opmode == HWTIMER_MODE_ONESHOT)
     {
-        // means TIMER_SHORTS_COMPARE0_STOP_Msk or TIMER_SHORTS_COMPARE1_STOP_Msk ..., according to cc_channel.
+        /* means TIMER_SHORTS_COMPARE0_STOP_Msk or TIMER_SHORTS_COMPARE1_STOP_Msk ..., according to cc_channel. */
         mask = (nrf_timer_short_mask_t)(1 << (timer_info->cc_channel + 8));
     }
     else
     {
-        // means TIMER_SHORTS_COMPARE0_CLEAR_Msk or TIMER_SHORTS_COMPARE1_CLEAR_Msk ..., according to cc_channel.
+        /* means TIMER_SHORTS_COMPARE0_CLEAR_Msk or TIMER_SHORTS_COMPARE1_CLEAR_Msk ..., according to cc_channel. */
         mask = (nrf_timer_short_mask_t)(1 << timer_info->cc_channel);
     }
 
@@ -276,8 +276,8 @@ static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
 
     timer_info = (nrf5x_timer_info_t *)timer->parent.user_data;
 
-    // capture method will copy the current counter register to the specified cc channel (here is NRF_TIMER_CC_CHANNEL5).
-    // the specified cc channel cannot be same with the already used cc channels
+    /* capture method will copy the current counter register to the specified cc channel (here is NRF_TIMER_CC_CHANNEL5). */
+    /* the specified cc channel cannot be same with the already used cc channels */
     count = nrfx_timer_capture(&(timer_info->timer_inst), NRF_TIMER_CC_CHANNEL5);
     return count;
 }
