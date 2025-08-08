@@ -17,6 +17,10 @@
 #define CHIPIDEA_BITSMASK(val, offset) ((uint32_t)(val) << (offset))
 #define QTD_COUNT_EACH_ENDPOINT        (8U)
 
+#ifndef CONFIG_USBDEV_EP_NUM
+#define CONFIG_USBDEV_EP_NUM 8
+#endif
+
 /* ENDPTCTRL */
 enum {
     ENDPTCTRL_STALL = CHIPIDEA_BITSMASK(1, 0),

@@ -228,12 +228,21 @@ static int parse_config_descriptor(struct usbh_hubport *hport, struct usb_config
                     cur_ep_num = intf_desc->bNumEndpoints;
                     cur_ep = 0;
 
-                    USB_ASSERT_MSG(cur_iface < CONFIG_USBHOST_MAX_INTERFACES,
-                                   "Interface num %d overflow", cur_iface);
-                    USB_ASSERT_MSG(cur_alt_setting < CONFIG_USBHOST_MAX_INTF_ALTSETTINGS,
-                                   "Interface altsetting num %d overflow", cur_alt_setting);
-                    USB_ASSERT_MSG(cur_ep_num <= CONFIG_USBHOST_MAX_ENDPOINTS,
-                                   "Endpoint num %d overflow", cur_ep_num);
+                    if (cur_iface >= CONFIG_USBHOST_MAX_INTERFACES) {
+                        USB_LOG_ERR("Interface num %d overflow\r\n", cur_iface);
+                        return -USB_ERR_NOMEM;
+                    }
+
+                    if (cur_ep_num >= CONFIG_USBHOST_MAX_ENDPOINTS) {
+                        USB_LOG_ERR("Endpoint num %d overflow\r\n", cur_ep_num);
+                        return -USB_ERR_NOMEM;
+                    }
+
+                    if (cur_alt_setting >= CONFIG_USBHOST_MAX_INTF_ALTSETTINGS) {
+                        USB_LOG_ERR("Interface altsetting num %d overflow\r\n", cur_alt_setting);
+                        return -USB_ERR_NOMEM;
+                    }
+
 #if 0
                     USB_LOG_DBG("Interface Descriptor:\r\n");
                     USB_LOG_DBG("bLength: 0x%02x            \r\n", intf_desc->bLength);
@@ -389,7 +398,11 @@ int usbh_enumerate(struct usbh_hubport *hport)
         goto errout;
     }
 
-    parse_device_descriptor(hport, (struct usb_device_descriptor *)ep0_request_buffer[hport->bus->busid], 8);
+    ret = parse_device_descriptor(hport, (struct usb_device_descriptor *)ep0_request_buffer[hport->bus->busid], 8);
+    if (ret < 0) {
+        USB_LOG_ERR("Parse device descriptor fail\r\n");
+        goto errout;
+    }
 
     /* Extract the correct max packetsize from the device descriptor */
     dev_desc = (struct usb_device_descriptor *)ep0_request_buffer[hport->bus->busid];
@@ -427,7 +440,7 @@ int usbh_enumerate(struct usbh_hubport *hport)
     }
 
     /* Wait device set address completely */
-    usb_osal_msleep(2);
+    usb_osal_msleep(10);
 
     /*Reconfigure EP0 with the correct address */
     hport->dev_addr = dev_addr;
@@ -469,7 +482,11 @@ int usbh_enumerate(struct usbh_hubport *hport)
         goto errout;
     }
 
-    parse_config_descriptor(hport, (struct usb_configuration_descriptor *)ep0_request_buffer[hport->bus->busid], USB_SIZEOF_CONFIG_DESC);
+    ret = parse_config_descriptor(hport, (struct usb_configuration_descriptor *)ep0_request_buffer[hport->bus->busid], USB_SIZEOF_CONFIG_DESC);
+    if (ret < 0) {
+        USB_LOG_ERR("Parse config descriptor fail\r\n");
+        goto errout;
+    }
 
     /* Read the full size of the configuration data */
     uint16_t wTotalLength = ((struct usb_configuration_descriptor *)ep0_request_buffer[hport->bus->busid])->wTotalLength;
@@ -494,9 +511,10 @@ int usbh_enumerate(struct usbh_hubport *hport)
 
     ret = parse_config_descriptor(hport, (struct usb_configuration_descriptor *)ep0_request_buffer[hport->bus->busid], wTotalLength);
     if (ret < 0) {
-        USB_LOG_ERR("Parse config fail\r\n");
+        USB_LOG_ERR("Parse config descriptor fail\r\n");
         goto errout;
     }
+
     USB_LOG_INFO("The device has %d interfaces\r\n", ((struct usb_configuration_descriptor *)ep0_request_buffer[hport->bus->busid])->bNumInterfaces);
     hport->raw_config_desc = usb_osal_malloc(wTotalLength + 1);
     if (hport->raw_config_desc == NULL) {
@@ -512,35 +530,47 @@ int usbh_enumerate(struct usbh_hubport *hport)
 #ifdef CONFIG_USBHOST_GET_STRING_DESC
     uint8_t string_buffer[128];
 
-    /* Get Manufacturer string */
-    memset(string_buffer, 0, 128);
-    ret = usbh_get_string_desc(hport, USB_STRING_MFC_INDEX, string_buffer);
-    if (ret < 0) {
-        USB_LOG_ERR("Failed to get Manufacturer string,errorcode:%d\r\n", ret);
-        goto errout;
+    if (hport->device_desc.iManufacturer > 0) {
+        /* Get Manufacturer string */
+        memset(string_buffer, 0, 128);
+        ret = usbh_get_string_desc(hport, USB_STRING_MFC_INDEX, string_buffer, 128);
+        if (ret < 0) {
+            USB_LOG_ERR("Failed to get Manufacturer string,errorcode:%d\r\n", ret);
+            goto errout;
+        }
+
+        USB_LOG_INFO("Manufacturer: %s\r\n", string_buffer);
+    } else {
+        USB_LOG_WRN("Do not support Manufacturer string\r\n");
     }
 
-    USB_LOG_INFO("Manufacturer: %s\r\n", string_buffer);
+    if (hport->device_desc.iProduct > 0) {
+        /* Get Product string */
+        memset(string_buffer, 0, 128);
+        ret = usbh_get_string_desc(hport, USB_STRING_PRODUCT_INDEX, string_buffer, 128);
+        if (ret < 0) {
+            USB_LOG_ERR("Failed to get Product string,errorcode:%d\r\n", ret);
+            goto errout;
+        }
 
-    /* Get Product string */
-    memset(string_buffer, 0, 128);
-    ret = usbh_get_string_desc(hport, USB_STRING_PRODUCT_INDEX, string_buffer);
-    if (ret < 0) {
-        USB_LOG_ERR("Failed to get get Product string,errorcode:%d\r\n", ret);
-        goto errout;
+        USB_LOG_INFO("Product: %s\r\n", string_buffer);
+    } else {
+        USB_LOG_WRN("Do not support Product string\r\n");
     }
 
-    USB_LOG_INFO("Product: %s\r\n", string_buffer);
+    if (hport->device_desc.iSerialNumber > 0) {
+        /* Get SerialNumber string */
+        memset(string_buffer, 0, 128);
+        ret = usbh_get_string_desc(hport, USB_STRING_SERIAL_INDEX, string_buffer, 128);
+        if (ret < 0) {
+            USB_LOG_ERR("Failed to get SerialNumber string,errorcode:%d\r\n", ret);
+            goto errout;
+        }
 
-    /* Get SerialNumber string */
-    memset(string_buffer, 0, 128);
-    ret = usbh_get_string_desc(hport, USB_STRING_SERIAL_INDEX, string_buffer);
-    if (ret < 0) {
-        USB_LOG_ERR("Failed to get get SerialNumber string,errorcode:%d\r\n", ret);
-        goto errout;
+        USB_LOG_INFO("SerialNumber: %s\r\n", string_buffer);
+    } else {
+        USB_LOG_WRN("Do not support SerialNumber string\r\n");
     }
-
-    USB_LOG_INFO("SerialNumber: %s\r\n", string_buffer);
 #endif
     /* Select device configuration 1 */
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_STANDARD | USB_REQUEST_RECIPIENT_DEVICE;
@@ -703,7 +733,7 @@ int usbh_control_transfer(struct usbh_hubport *hport, struct usb_setup_packet *s
     return ret;
 }
 
-int usbh_get_string_desc(struct usbh_hubport *hport, uint8_t index, uint8_t *output)
+int usbh_get_string_desc(struct usbh_hubport *hport, uint8_t index, uint8_t *output, uint16_t output_len)
 {
     struct usb_setup_packet *setup = hport->setup;
     int ret;
@@ -728,6 +758,10 @@ int usbh_get_string_desc(struct usbh_hubport *hport, uint8_t index, uint8_t *out
     src = ep0_request_buffer[hport->bus->busid];
     dst = output;
     len = src[0];
+
+    if (((len - 2) / 2) > output_len) {
+        return -USB_ERR_NOMEM;
+    }
 
     while (i < len) {
         dst[j] = src[i];

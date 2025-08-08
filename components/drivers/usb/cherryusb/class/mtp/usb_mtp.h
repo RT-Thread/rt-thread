@@ -644,7 +644,7 @@ struct mtp_object {
     bool in_use;
 };
 
-/*Length of template descriptor: 23 bytes*/
+/*Length of template descriptor: 30 bytes*/
 #define MTP_DESCRIPTOR_LEN (9 + 7 + 7 + 7)
 
 // clang-format off

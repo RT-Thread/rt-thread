@@ -465,12 +465,14 @@ if PKG_USING_CHERRYUSB
 
     choice
         prompt "Version"
-        default PKG_USING_CHERRYUSB_V010500
+        default PKG_USING_CHERRYUSB_V010502
         help
             Select the package version
 
         config PKG_USING_CHERRYUSB_LATEST_VERSION
             bool "latest"
+        config PKG_USING_CHERRYUSB_V010502
+            bool "v1.5.2"
         config PKG_USING_CHERRYUSB_V010501
             bool "v1.5.1"
         config PKG_USING_CHERRYUSB_V010500
@@ -488,6 +490,7 @@ if PKG_USING_CHERRYUSB
     config PKG_CHERRYUSB_VER
        string
        default "latest"    if PKG_USING_CHERRYUSB_LATEST_VERSION
+       default "v1.5.2"   if PKG_USING_CHERRYUSB_V010502
        default "v1.5.1"   if PKG_USING_CHERRYUSB_V010501
        default "v1.5.0"   if PKG_USING_CHERRYUSB_V010500
        default "v1.4.3"   if PKG_USING_CHERRYUSB_V010403

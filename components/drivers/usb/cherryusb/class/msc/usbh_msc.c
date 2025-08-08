@@ -284,6 +284,7 @@ static int usbh_msc_connect(struct usbh_hubport *hport, uint8_t intf)
         if (ret == -USB_ERR_STALL) {
             USB_LOG_WRN("Device does not support multiple LUNs\r\n");
             g_msc_buf[msc_class->sdchar - 'a'][0] = 0;
+            ret = 0;
         } else {
             return ret;
         }

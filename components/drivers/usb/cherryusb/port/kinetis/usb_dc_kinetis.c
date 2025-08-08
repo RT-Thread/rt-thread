@@ -6,6 +6,9 @@
 #include "usbd_core.h"
 #include "usb_kinetis_reg.h"
 
+#undef CONFIG_USBDEV_EP_NUM
+#define CONFIG_USBDEV_EP_NUM 16
+
 #define USB_OTG_DEV ((KINETIS_TypeDef *)g_usbdev_bus[busid].reg_base)
 
 /* Endpoint state */

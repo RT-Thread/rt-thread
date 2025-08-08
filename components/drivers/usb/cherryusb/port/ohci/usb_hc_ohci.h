@@ -17,7 +17,7 @@
 #define OHCI_ADDR2TD(x) ((struct ohci_td_hw *)(uintptr_t)((uint32_t)(x) & ~0x0F))
 
 #ifndef CONFIG_USB_OHCI_ED_NUM
-#define CONFIG_USB_OHCI_ED_NUM CONFIG_USBHOST_PIPE_NUM
+#define CONFIG_USB_OHCI_ED_NUM 10
 #endif
 #ifndef CONFIG_USB_OHCI_TD_NUM
 #define CONFIG_USB_OHCI_TD_NUM 3

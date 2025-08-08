@@ -8,9 +8,7 @@
 #include "hpm_usb_device.h"
 #include "usb_glue_hpm.h"
 
-#ifndef USB_NUM_BIDIR_ENDPOINTS
-#define USB_NUM_BIDIR_ENDPOINTS CONFIG_USBDEV_EP_NUM
-#endif
+#define USB_NUM_BIDIR_ENDPOINTS USB_SOC_DCD_MAX_ENDPOINT_COUNT
 
 /* USBSTS, USBINTR */
 enum {

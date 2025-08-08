@@ -1121,7 +1121,7 @@ static inline int usb_ocp_write(struct usbh_rtl8152 *tp, uint16_t index, uint16_
 
 static uint32_t ocp_read_dword(struct usbh_rtl8152 *tp, uint16_t type, uint16_t index)
 {
-    uint32_t data;
+    uint32_t data = 0;
 
     generic_ocp_read(tp, index, sizeof(data), &data, type);
 
@@ -2050,7 +2050,7 @@ static int usbh_rtl8152_connect(struct usbh_hubport *hport, uint8_t intf)
     }
 
     memset(mac_buffer, 0, 12);
-    ret = usbh_get_string_desc(rtl8152_class->hport, 3, (uint8_t *)mac_buffer);
+    ret = usbh_get_string_desc(rtl8152_class->hport, 3, (uint8_t *)mac_buffer, 12);
     if (ret < 0) {
         return ret;
     }

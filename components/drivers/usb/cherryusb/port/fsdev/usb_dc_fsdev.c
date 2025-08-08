@@ -20,9 +20,8 @@
 #define CONFIG_USB_FSDEV_RAM_SIZE 512
 #endif
 
-#ifndef CONFIG_USBDEV_EP_NUM
+#undef CONFIG_USBDEV_EP_NUM
 #define CONFIG_USBDEV_EP_NUM 8
-#endif
 
 #define USB ((USB_TypeDef *)g_usbdev_bus[0].reg_base)
 
