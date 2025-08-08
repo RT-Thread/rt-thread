@@ -19,8 +19,6 @@
 #include "fi2c.h"
 #include "fi2c_hw.h"
 #include "fio_mux.h"
-#include "fmio_hw.h"
-#include "fmio.h"
 #include "drivers/dev_i2c.h"
 #include "fparameters.h"
 #ifdef RT_USING_SMART
@@ -29,11 +27,12 @@
 
 /*Please define the length of the mem_addr of the device*/
 #ifndef FI2C_DEVICE_MEMADDR_LEN
-    #define FI2C_DEVICE_MEMADDR_LEN 1
+    #define FI2C_DEVICE_MEMADDR_LEN 2
 #endif
 #define FI2C_DEFAULT_ID 0
-#define I2C_USE_MIO
 #if defined(I2C_USE_MIO)
+    #include "fmio_hw.h"
+    #include "fmio.h"
     static FMioCtrl mio_handle;
 #endif
 
@@ -68,7 +67,16 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
     if (ret != FI2C_SUCCESS)
     {
         LOG_E("Init master I2c failed, ret: 0x%x", ret);
-
+        return -RT_ERROR;
+    }
+        ret = FI2cSetAddress(&i2c_bus->i2c_handle, FI2C_MASTER, i2c_bus->i2c_handle.config.slave_addr);
+    if (FI2C_SUCCESS != ret)
+    {
+        return -RT_ERROR;
+    }
+    ret = FI2cSetSpeed(&i2c_bus->i2c_handle, FI2C_SPEED_STANDARD_RATE, TRUE);
+    if (FI2C_SUCCESS != ret)
+    {
         return -RT_ERROR;
     }
 
@@ -80,10 +88,10 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
 static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
 {
     RT_ASSERT(i2c_bus);
-    FI2cConfig input_cfg;
-    const FI2cConfig *config_p = NULL;
-    FI2c *instance_p = &i2c_bus->i2c_handle;
     FError ret = FI2C_SUCCESS;
+    FI2cConfig i2c_config;
+    FI2c *instance_p = &i2c_bus->i2c_handle;
+    FIOPadSetMioMux(instance_p->config.instance_id);
 
     mio_handle.config = *FMioLookupConfig(instance_p->config.instance_id);
 #ifdef RT_USING_SMART
@@ -97,27 +105,35 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
         return -RT_ERROR;
     }
 
-    FIOPadSetMioMux(instance_p->config.instance_id);
+    /* Modify i2c configuration */
+    rt_memset(&i2c_config, 0, sizeof(i2c_config));
+    i2c_config.base_addr = FMioFuncGetAddress(&mio_handle, FMIO_FUNC_SET_I2C);
+    i2c_config.irq_num = FMioFuncGetIrqNum(&mio_handle, FMIO_FUNC_SET_I2C);
+    i2c_config.irq_prority = 0;
+    i2c_config.ref_clk_hz = FMIO_CLK_FREQ_HZ;
+    i2c_config.work_mode = FI2C_MASTER;
+    i2c_config.use_7bit_addr = TRUE;
+    i2c_config.speed_rate = FI2C_SPEED_STANDARD_RATE;
+    i2c_config.auto_calc = TRUE;
 
-    config_p = FI2cLookupConfig(FI2C_DEFAULT_ID);
-    if (NULL == config_p)
-    {
-        LOG_E("Config of mio instance %d non found.", instance_p->config.instance_id);
-        return -RT_ERROR;
-    }
+    ret = FI2cCfgInitialize(instance_p, &i2c_config);
 
-    input_cfg = *config_p;
-    input_cfg.instance_id = instance_p->config.instance_id;
-    input_cfg.base_addr = FMioFuncGetAddress(&mio_handle, FMIO_FUNC_SET_I2C);
-    input_cfg.irq_num = FMioFuncGetIrqNum(&mio_handle, FMIO_FUNC_SET_I2C);
-    input_cfg.ref_clk_hz = FMIO_CLK_FREQ_HZ;
-    input_cfg.speed_rate = FI2C_SPEED_STANDARD_RATE;
-    ret = FI2cCfgInitialize(&i2c_bus->i2c_handle, &input_cfg);
     if (FI2C_SUCCESS != ret)
     {
         LOG_E("Init mio master failed, ret: 0x%x", ret);
         return -RT_ERROR;
     }
+    ret = FI2cSetAddress(instance_p, FI2C_MASTER, instance_p->config.slave_addr);
+    if (FI2C_SUCCESS != ret)
+    {
+        return -RT_ERROR;
+    }
+    ret = FI2cSetSpeed(instance_p, FI2C_SPEED_STANDARD_RATE, TRUE);
+    if (FI2C_SUCCESS != ret)
+    {
+        return -RT_ERROR;
+    }
+
     mio_handle.is_ready = 0;
     rt_memset(&mio_handle, 0, sizeof(mio_handle));
 
@@ -129,9 +145,8 @@ static rt_err_t phytium_i2c_set_speed(struct phytium_i2c_bus *i2c_bus, rt_uint32
 {
     RT_ASSERT(i2c_bus);
     u32 ret;
-    uintptr base_addr = i2c_bus->i2c_handle.config.base_addr;
 
-    ret = FI2cSetSpeed(base_addr, speed, TRUE);
+    ret = FI2cSetSpeed(&i2c_bus->i2c_handle, speed, TRUE);
     if (ret != FI2C_SUCCESS)
     {
         LOG_E("Set i2c speed failed!\n");
@@ -265,6 +280,9 @@ static int i2c_mio_init(struct phytium_i2c_bus *i2c_mio_bus)
 #if defined(RT_USING_I2C2)
     static struct phytium_i2c_bus i2c_controller2_bus;
 #endif
+#if defined(RT_USING_I2C3)
+    static struct phytium_i2c_bus i2c_controller3_bus;
+#endif
 
 #if defined(RT_USING_MIO0)
     static struct phytium_i2c_bus i2c_mio0_bus;
@@ -331,6 +349,11 @@ int rt_hw_i2c_init(void)
     i2c_controller2_bus.name = "I2C2";
     i2c_controller2_bus.i2c_handle.config.instance_id = FI2C2_ID;
     i2c_controller_init(&i2c_controller2_bus);
+#endif
+#if defined(RT_USING_I2C3)
+    i2c_controller3_bus.name = "I2C3";
+    i2c_controller3_bus.i2c_handle.config.instance_id = FI2C3_ID;
+    i2c_controller_init(&i2c_controller3_bus);
 #endif
 
 #if defined(RT_USING_MIO0)

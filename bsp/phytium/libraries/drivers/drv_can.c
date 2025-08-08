@@ -44,7 +44,7 @@ static void CanRxIrqCallback(void *args)
     struct phytium_can *drv_can = (struct phytium_can *)args;
 
     rt_hw_can_isr(&(drv_can->device), RT_CAN_EVENT_RX_IND);
-    rt_kprintf("CAN%d irq recv frame callback.", drv_can->can_handle.config.instance_id);
+    LOG_D("CAN%d irq recv frame callback.", drv_can->can_handle.config.instance_id);
 }
 
 static void CanTxIrqCallback(void *args)
@@ -52,7 +52,7 @@ static void CanTxIrqCallback(void *args)
     struct phytium_can *drv_can = (struct phytium_can *)args;
 
     rt_hw_can_isr(&(drv_can->device), RT_CAN_EVENT_TX_DONE);
-    rt_kprintf("CAN%d irq send frame callback.", drv_can->can_handle.config.instance_id);
+    LOG_D("CAN%d irq send frame callback.", drv_can->can_handle.config.instance_id);
 }
 
 static void CanErrorCallback(void *args)

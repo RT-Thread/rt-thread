@@ -52,7 +52,6 @@ extern FIOPadCtrl iopad_ctrl;
 /* mmu config */
 extern struct mem_desc platform_mem_desc[];
 extern const rt_uint32_t platform_mem_desc_size;
-rt_uint64_t rt_cpu_mpidr_table[RT_CPUS_NR];
 
 void idle_wfi(void)
 {
@@ -164,9 +163,9 @@ void rt_hw_board_aarch64_init(void)
 
     rt_hw_gtimer_init();
 
-    FEarlyUartProbe();
-
     FIOMuxInit();
+
+    FEarlyUartProbe();
 
     /* compoent init */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -190,9 +189,29 @@ void rt_hw_board_aarch64_init(void)
 #endif
 
 }
+
+void rt_hw_console_output(const char *str)
+{
+    rt_size_t i = 0, size = 0;
+    char a = '\r';
+    rt_enter_critical();
+
+    size = rt_strlen(str);
+    for( i = 0; i < size; i++)
+    {
+        if (*(str + i) == '\n')
+        {
+            OutByte(a);
+        }
+        OutByte(*(str + i));
+    }
+
+    rt_exit_critical();
+}
+
 #else
 
-#if defined(TARGET_E2000D)
+#if defined(TARGET_PE2202)
 #define FT_GIC_REDISTRUBUTIOR_OFFSET 2
 #endif
 
@@ -274,4 +293,3 @@ void rt_hw_board_init(void)
     rt_hw_board_aarch32_init();
 #endif
 }
-
