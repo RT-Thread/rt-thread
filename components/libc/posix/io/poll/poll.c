@@ -14,6 +14,7 @@
  *                                  mechanism wakeup algorithm does not correctly distinguish
  *                                  the current wait state.
  * 2024-03-29     TroyMitchelle     Add all function comments and comments to structure members
+ * 2025-08-09     zhuhangjiang      Resolve the issue of system crashes caused by using mutex locks for memory allocation when a thread polls multiple file descriptors.
  */
 
 #include <stdint.h>
@@ -30,6 +31,14 @@ enum rt_poll_status
     RT_POLL_STAT_WAITING   /**< Poll operation waiting status. */
 };
 
+struct rt_poll_node 
+{
+    struct rt_wqueue_node wqn;     /**< Wait queue node for the poll node. */
+    struct rt_poll_table *pt;       /**< Pointer to the parent poll table. */
+    struct rt_poll_node *next;      /**< Pointer to the next poll node. */
+};
+
+#define MAX_POLL_NODES 8 
 
 struct rt_poll_table 
 {
@@ -37,14 +46,8 @@ struct rt_poll_table
     enum rt_poll_status status;     /**< Status of the poll operation. */
     rt_thread_t polling_thread;     /**< Polling thread associated with the table. */
     struct rt_poll_node *nodes;     /**< Linked list of poll nodes. */
-};
-
-
-struct rt_poll_node 
-{
-    struct rt_wqueue_node wqn;     /**< Wait queue node for the poll node. */
-    struct rt_poll_table *pt;       /**< Pointer to the parent poll table. */
-    struct rt_poll_node *next;      /**< Pointer to the next poll node. */
+    struct rt_poll_node node_pool[MAX_POLL_NODES]; /**< poll_node */
+    int node_pool_used;
 };
 
 static RT_DEFINE_SPINLOCK(_spinlock);
@@ -95,12 +98,15 @@ static void _poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
     struct rt_poll_table *pt;
     struct rt_poll_node *node;
 
-    node = (struct rt_poll_node *)rt_malloc(sizeof(struct rt_poll_node));
-    if (node == RT_NULL)
-        return;
-
     pt = rt_container_of(req, struct rt_poll_table, req);
 
+    if (pt->node_pool_used >= MAX_POLL_NODES)
+    {
+        printf("ERR:poll max is 8\n");
+        return;
+    }
+
+    node = &pt->node_pool[pt->node_pool_used++];
     node->wqn.key = req->_key;
     rt_list_init(&(node->wqn.list));
     node->wqn.polling_thread = pt->polling_thread;
@@ -125,6 +131,7 @@ static void poll_table_init(struct rt_poll_table *pt)
     pt->status = RT_POLL_STAT_INIT;
     pt->nodes = RT_NULL;
     pt->polling_thread = rt_thread_self();
+    pt->node_pool_used = 0;
 }
 
 /**
@@ -327,7 +334,7 @@ static void poll_teardown(struct rt_poll_table *pt)
         node = next;
         rt_wqueue_remove(&node->wqn);
         next = node->next;
-        rt_free(node);
+        // rt_free(node);
     }
 }
 
