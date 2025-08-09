@@ -1463,9 +1463,8 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 /* if the next position is read index, discard this 'read char' */
                 if (rx_fifo->put_index == rx_fifo->get_index)
                 {
-                    rx_fifo->get_index += 1;
+                    rx_fifo->get_index = rx_fifo->put_index;
                     rx_fifo->is_full = RT_TRUE;
-                    if (rx_fifo->get_index >= serial->config.bufsz) rx_fifo->get_index = 0;
 
                     _serial_check_buffer_size();
                 }
