@@ -5,9 +5,11 @@ on:
     branches:
       - master
     paths-ignore:
+      - .github/**
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+      - MAINTAINERS
 
 jobs:
   scancode_job:

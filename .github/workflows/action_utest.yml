@@ -10,16 +10,20 @@ on:
     branches:
       - master
     paths-ignore:
+      - .github/**
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+      - MAINTAINERS
   pull_request:
     branches:
       - master
     paths-ignore:
+      - .github/**
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+      - MAINTAINERS
 
 permissions:
   contents: read # to fetch code (actions/checkout)
