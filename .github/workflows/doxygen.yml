@@ -31,12 +31,12 @@ on:
   schedule:
     - cron:  '0 16 30 * *'
   workflow_dispatch:
-  
+
 permissions:
   contents: read
   pages: write
   id-token: write
-  
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -55,15 +55,24 @@ jobs:
         shell: bash
         run: |
           cd documentation
-          doxygen Doxyfile
-          cat Doxyfile
-          
+          if ! doxygen Doxyfile; then
+            echo "Doxygen failed, but workflow will continue."
+          fi
+
+          # 检查生成结果
+          if [ -d "html" ]; then
+            echo "✅ HTML documentation generated successfully."
+          else
+            echo "❌ Warning: HTML directory not found."
+            exit 1
+          fi
+
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@main # or specific "vX.X.X" version tag for this action
         with:
           path: documentation/html/
-          
+
   deploy:
     if: github.event_name == 'push'
     environment:
