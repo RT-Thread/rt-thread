@@ -10,19 +10,23 @@ on:
     branches:
       - master
     paths-ignore:
+      - .github/**
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
       - '**/*.c'
       - '**/*.h'
       - '**/*.cpp'
+      - MAINTAINERS
   pull_request:
     branches:
       - master
     paths-ignore:
+      - .github/**
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+      - MAINTAINERS
       - '**/*.c'
       - '**/*.h'
       - '**/*.cpp'
