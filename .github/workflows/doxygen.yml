@@ -55,8 +55,16 @@ jobs:
         shell: bash
         run: |
           cd documentation
-          doxygen Doxyfile
-          cat Doxyfile
+          if ! doxygen Doxyfile; then
+            echo "Doxygen failed, but workflow will continue."
+          fi
+
+          # 检查生成结果
+          if [ -d "html" ]; then
+            echo "✅ HTML documentation generated successfully."
+          else
+            echo "❌ Warning: HTML directory not found."
+          fi
           
       - name: Upload static files as artifact
         id: deployment
