@@ -57,6 +57,7 @@ enum input_stat
     WAIT_NORMAL,
     WAIT_SPEC_KEY,
     WAIT_FUNC_KEY,
+    WAIT_EXT_KEY,
 };
 struct finsh_shell
 {
@@ -66,7 +67,7 @@ struct finsh_shell
 
     rt_uint8_t echo_mode: 1;
     rt_uint8_t prompt_mode: 1;
-
+    rt_uint8_t overwrite_mode: 1;
 #ifdef FINSH_USING_HISTORY
     rt_uint16_t current_history;
     rt_uint16_t history_count;
