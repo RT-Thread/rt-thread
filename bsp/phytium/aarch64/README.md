@@ -115,20 +115,14 @@ rtthread_a64.map
 ## 2. 如何选择开发板
 
 >注：在 RT-Thread env 环境下使用`menuconfig`指令即可打开配置菜单，在Ubuntu下需要使用`scons --menuconfig`
+- 使用`scons --attach=?`查看当前支持的开发板
+![](./figures/scons_attach.png)
 
-- 以 E2000Q RT-Thread为例，Linux 环境下，运行`make load_e2000d_demo_rtthread`加载默认的 rtconfig, 然后输入下列命令，进入 menuconfig 进一步配置
+- 以`E2000Q_DEMO`开发板为例，进入aarch64目录后，运行`scons --attach=board.e2000q_demo_rtthread`加载默认的`rtconfig.h`, 然后输入下列命令，进入`menuconfig`进一步配置
 
 ```shell
 scons --menuconfig
 ```
-
-开发者通过以下选择进行配置
-
-```
-Standalone Setting > Board Configuration
-```
-
-![board_select](./figures/board_select.png)
 
 ## 3. 如何选择驱动
 
@@ -155,25 +149,13 @@ scons --menuconfig
 
 ## 5. 如何切换至 RT-Thread Smart 工作模式
 
-### Ubuntu环境下可使用以下指令加载RT-Smart默认配置
-
-- 以E2000D_DEMO开发板为例
+- 输入下列命令，进入`menuconfig`进一步配置
 ```shell
-make load_e2000d_demo_rtsmart
+scons --menuconfig
 ```
-### RT-Thread env环境不方便安装make工具，可按照以下步骤加载RT-Smart默认配置
+- 在RT-Thread Kernel菜单中勾选以下选项
 
-1. 查看`makefile`文件，找到`make load_e2000d_demo_rtsmart`
-
-![load_e2000d_rtsmart](./figures/load_e2000d_rtsmart.png)
-
-2. 输入以下指令
-```shell
-cp ./configs/e2000d_demo_rtsmart ./.config -f
-cp ./configs/e2000d_demo_rtsmart.h ./rtconfig.h -f
-scons -c
-```
-
+![](./figures/rtsmart_config.png)
 ## 6. 启动镜像程序
 
 1. 完成配置后，使用以下指令进行clean和重新编译

@@ -34,7 +34,9 @@ static rt_err_t drv_pwm_config(struct phytium_pwm *pwm_dev)
     FPwmConfig config;
     FPwmCtrl *pwm_handle = &pwm_dev->pwm_handle;
     FIOPadSetPwmMux(pwm_handle->config.instance_id, 0);
+#if !defined(PD2408_TEST_A_BOARD) || defined(PD2408_TEST_B_BOARD)
     FIOPadSetPwmMux(pwm_handle->config.instance_id, 1);
+#endif
     config = *FPwmLookupConfig(pwm_handle->config.instance_id);
 #ifdef RT_USING_SMART
     config.lsd_config_addr = (uintptr)rt_ioremap((void *)config.lsd_config_addr, 0x100);

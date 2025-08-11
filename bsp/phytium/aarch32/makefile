@@ -1,3 +1,5 @@
+include .config
+
 .PHONY: debug boot all clean menuconfig
 
 CC = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)gcc
@@ -11,46 +13,23 @@ AR = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)ar rcs
 NM = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)nm
 OD = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)objdump
 
-include .config
-
-ifdef CONFIG_E2000Q_DEMO_BOARD
-RTCONFIG := e2000q_demo
-endif
-
-ifdef CONFIG_E2000D_DEMO_BOARD
-RTCONFIG := e2000d_demo
-endif
-
-ifdef CONFIG_TARGET_PHYTIUMPI
-RTCONFIG := phytium_pi
-endif
-
-ifdef CONFIG_RT_USING_SMART
-RTCONFIG := $(RTCONFIG)_rtsmart
-else
-RTCONFIG := $(RTCONFIG)_rtthread
-endif
-
-ifdef CONFIG_PHYTIUM_RTT_TEST
-RTCONFIG := $(RTCONFIG)_test
-endif
-
-ifdef CONFIG_RT_CHERRYUSB_HOST_PUSB2
-RTCONFIG := $(RTCONFIG)_pusb2_hc
-endif
-
-ifdef CONFIG_RT_CHERRYUSB_DEVICE_PUSB2
-RTCONFIG := $(RTCONFIG)_pusb2_dc
-endif
-
 boot:
 	make all
-	cp rtthread_a32.elf /mnt/d/tftpboot
-	cp rtthread_a32.bin /mnt/d/tftpboot
+	make mv_file
+
+mv_file:
+	mv rtthread_a32.elf rtthread_a32_$(CONFIG_BOARD_NAME).elf 
+	mv rtthread_a32.bin rtthread_a32_$(CONFIG_BOARD_NAME).bin 
+	cp rtthread_a32_$(CONFIG_BOARD_NAME).elf /mnt/d/tftpboot/rtthread_a32.elf
+	cp rtthread_a32_$(CONFIG_BOARD_NAME).bin /mnt/d/tftpboot/rtthread_a32.bin
+
+mv_auto_test_file:
+	mv rtthread_a32.elf rtthread_a32_$(CONFIG_BOARD_NAME).elf
+	mv rtthread_a32_$(CONFIG_BOARD_NAME).elf /home/zhugy/tftpboot/rtthread_elfs/
 
 debug:
-	@$(OD) -D rtthread_a32.elf > rtthread_a32.asm
-	@$(OD) -S rtthread_a32.elf > rtthread_a32.dis
+	@$(OD) -D rtthread_a32_$(CONFIG_BOARD_NAME).elf > rtthread_a32_$(CONFIG_BOARD_NAME).asm
+	@$(OD) -S rtthread_a32_$(CONFIG_BOARD_NAME).elf > rtthread_a32_$(CONFIG_BOARD_NAME).dis
 
 all:
 	@echo "Build started..."
@@ -63,80 +42,3 @@ clean:
 menuconfig:
 	@echo "Running menuconfig..."
 	scons --menuconfig
-
-saveconfig:
-	@echo "Save configs to" ./configs/$(RTCONFIG)
-	@cp ./.config ./configs/$(RTCONFIG) -f
-	@cp ./rtconfig.h ./configs/$(RTCONFIG).h -f
-
-load_e2000q_demo_rtsmart:
-	@echo "Load configs from ./configs/e2000q_demo_rtsmart"
-	@cp ./configs/e2000q_demo_rtsmart ./.config -f
-	@cp ./configs/e2000q_demo_rtsmart.h ./rtconfig.h -f
-	@scons -c
-
-load_e2000q_demo_rtsmart_test:
-	@echo "Load configs from ./configs/e2000q_demo_rtsmart_test"
-	@cp ./configs/e2000q_demo_rtsmart_test ./.config -f
-	@cp ./configs/e2000q_demo_rtsmart_test.h ./rtconfig.h -f
-	@scons -c
-
-load_e2000q_demo_rtthread:
-	@echo "Load configs from ./configs/e2000q_demo_rtthread"
-	@cp ./configs/e2000q_demo_rtthread ./.config -f
-	@cp ./configs/e2000q_demo_rtthread.h ./rtconfig.h -f
-	@scons -c
-
-load_e2000q_demo_rtthread_test:
-	@echo "Load configs from ./configs/e2000q_demo_rtthread_test"
-	@cp ./configs/e2000q_demo_rtthread_test ./.config -f
-	@cp ./configs/e2000q_demo_rtthread_test.h ./rtconfig.h -f
-	@scons -c
-
-load_e2000d_demo_rtsmart:
-	@echo "Load configs from ./configs/e2000d_demo_rtsmart"
-	@cp ./configs/e2000d_demo_rtsmart ./.config -f
-	@cp ./configs/e2000d_demo_rtsmart.h ./rtconfig.h -f
-	@scons -c
-
-load_e2000d_demo_rtsmart_test:
-	@echo "Load configs from ./configs/e2000d_demo_rtsmart_test"
-	@cp ./configs/e2000d_demo_rtsmart_test ./.config -f
-	@cp ./configs/e2000d_demo_rtsmart_test.h ./rtconfig.h -f
-	@scons -c
-
-load_e2000d_demo_rtthread:
-	@echo "Load configs from ./configs/e2000d_demo_rtthread"
-	@cp ./configs/e2000d_demo_rtthread ./.config -f
-	@cp ./configs/e2000d_demo_rtthread.h ./rtconfig.h -f
-	scons -c
-
-load_e2000d_demo_rtthread_pusb2_dc:
-	@echo "Load configs from ./configs/e2000d_demo_rtthread_pusb2_dc"
-	@cp ./configs/e2000d_demo_rtthread_pusb2_dc ./.config -f
-	@cp ./configs/e2000d_demo_rtthread_pusb2_dc.h ./rtconfig.h -f
-	scons -c
-
-load_e2000d_demo_rtthread_test:
-	@echo "Load configs from ./configs/e2000d_demo_rtthread_test"
-	@cp ./configs/e2000d_demo_rtthread_test ./.config -f
-	@cp ./configs/e2000d_demo_rtthread_test.h ./rtconfig.h -f
-	scons -c
-
-load_phytium_pi_rtthread:
-	@echo "Load configs from ./configs/phytium_pi_rtthread"
-	@cp ./configs/phytium_pi_rtthread ./.config -f
-	@cp ./configs/phytium_pi_rtthread.h ./rtconfig.h -f
-	scons -c
-
-load_phytium_pi_rtthread_pusb2_hc:
-	@echo "Load configs from ./configs/phytium_pi_rtthread_pusb2_hc"
-	@cp ./configs/phytium_pi_rtthread_pusb2_hc ./.config -f
-	@cp ./configs/phytium_pi_rtthread_pusb2_hc.h ./rtconfig.h -f
-	scons -c
-
-load_phytium_pi_rtsmart:
-	@echo "Load configs from ./configs/phytium_pi_rtsmart"
-	@cp ./configs/phytium_pi_rtsmart ./.config -f
-	@cp ./configs/phytium_pi_rtsmart.h ./rtconfig.h -f
-	@scons -c

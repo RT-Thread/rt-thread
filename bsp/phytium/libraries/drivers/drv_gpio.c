@@ -22,9 +22,7 @@
     #include "ioremap.h"
 #endif
 
-#if defined(TARGET_E2000)
-    #include "fparameters.h"
-#endif
+#include "fparameters.h"
 #include "fkernel.h"
 #include "fcpu_info.h"
 #include "ftypes.h"

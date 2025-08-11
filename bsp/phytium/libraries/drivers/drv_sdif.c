@@ -14,8 +14,8 @@
 
 /***************************** Include Files *********************************/
 #include "rtconfig.h"
+#if defined(BSP_USING_SDIF_LAYER)
 
-#ifdef BSP_USING_SDIF
 #include <rthw.h>
 #include <rtdef.h>
 #include <rtthread.h>
@@ -240,50 +240,54 @@ static void sdif_convert_command_info(struct rt_mmcsd_host *host, struct rt_mmcs
     FSdifData *out_data = out_req->data_p;
     sdif_info_t *host_info = (sdif_info_t *)host->private_data;
 
-    out_cmd->flag = 0U;
+    uint32_t opcode = in_cmd->cmd_code;
+    out_cmd->rawcmd = FSDIF_CMD_INDX_SET(opcode);
 
     if (in_cmd->cmd_code == GO_IDLE_STATE)
     {
-        out_cmd->flag |= FSDIF_CMD_FLAG_NEED_INIT;
+        out_cmd->rawcmd |= FSDIF_CMD_INIT;
     }
 
     if (in_cmd->cmd_code == GO_INACTIVE_STATE)
     {
-        out_cmd->flag |= FSDIF_CMD_FLAG_NEED_AUTO_STOP | FSDIF_CMD_FLAG_ABORT;
+        out_cmd->rawcmd |= FSDIF_CMD_STOP_ABORT;
+    }
+
+    if (in_cmd->cmd_code == VOLTAGE_SWITCH)
+    {
+        out_cmd->rawcmd |= FSDIF_CMD_VOLT_SWITCH;
     }
 
     if (resp_type(in_cmd) != RESP_NONE)
     {
-        out_cmd->flag |= FSDIF_CMD_FLAG_EXP_RESP;
-
+        out_cmd->rawcmd |= FSDIF_CMD_RESP_EXP;
         if (resp_type(in_cmd) == RESP_R2)
         {
             /* need 136 bits long response */
-            out_cmd->flag |= FSDIF_CMD_FLAG_EXP_LONG_RESP;
+            out_cmd->rawcmd |= FSDIF_CMD_RESP_LONG;
         }
 
         if ((resp_type(in_cmd) != RESP_R3) &&
             (resp_type(in_cmd) != RESP_R4))
         {
             /* most cmds need CRC */
-            out_cmd->flag |= FSDIF_CMD_FLAG_NEED_RESP_CRC;
+            out_cmd->rawcmd |= FSDIF_CMD_RESP_CRC;
         }
     }
 
     if (in_data)
     {
         RT_ASSERT(out_data);
-        out_cmd->flag |= FSDIF_CMD_FLAG_EXP_DATA;
+        out_cmd->rawcmd |= FSDIF_CMD_DAT_EXP;
 
         if (in_data->flags & DATA_DIR_READ)
         {
-            out_cmd->flag |= FSDIF_CMD_FLAG_READ_DATA;
             out_data->buf = (void *)in_data->buf;
             out_data->buf_dma = (uintptr_t)in_data->buf + PV_OFFSET;
         }
         else if (in_data->flags & DATA_DIR_WRITE)
         {
-            out_cmd->flag |= FSDIF_CMD_FLAG_WRITE_DATA;
+            out_cmd->rawcmd |= FSDIF_CMD_DAT_WRITE;
             out_data->buf = (void *)in_data->buf;
             out_data->buf_dma = (uintptr_t)in_data->buf + PV_OFFSET;
         }
@@ -339,10 +343,20 @@ static rt_err_t sdif_do_transfer(struct rt_mmcsd_host *host, FSdifCmdData *req_c
         wait_event = SDIF_EVENT_COMMAND_DONE | SDIF_EVENT_DATA_DONE;
     }
 
+    if (req_cmd->data_p)
+    {
+        ret = FSdifSetupDMADescriptor(&host_info->sdif, req_cmd->data_p);
+        if (ret != FT_SUCCESS)
+        {
+            LOG_E("FSdifSetupDMADescriptor fail.");
+            return -RT_ERROR;
+        }
+    }
+
     ret = FSdifDMATransfer(&host_info->sdif, req_cmd);
     if (ret != FT_SUCCESS)
     {
-        LOG_E("FSdifDMATransfer() fail.");
+        LOG_E("FSdifDMATransfer() fail. ret = 0x%x", ret);
         return -RT_ERROR;
     }
 
@@ -445,14 +459,46 @@ static void sdif_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
 
 static void sdif_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
 {
-    FError ret = FT_SUCCESS;
     sdif_info_t *host_info = (sdif_info_t *)host->private_data;
     FSdif *sdif = &host_info->sdif;
     uintptr base_addr = sdif->config.base_addr;
 
     if (0 != io_cfg->clock)
     {
-        ret = FSdifSetClkFreq(sdif, io_cfg->clock);
+        // boolean is_ddr = FALSE;
+        // if (host->card->type == CARD_TYPE_MMC)
+        // {
+        //     if (io_cfg->timing == MMCSD_TIMING_MMC_HS400 ||
+        //         io_cfg->timing ==  MMCSD_TIMING_MMC_HS400_ENH_DS)
+        //     {
+        //         is_ddr = TRUE;
+        //     }
+        // }
+        // else if (host->card->type == CARD_TYPE_SD)
+        // {
+        //     if (io_cfg->timing == MMCSD_TIMING_UHS_DDR50)
+        //     {
+        //         is_ddr = TRUE;
+        //     }
+        // }
+
+        // if (FSDIF_SUCCESS != FSdifSetClkFreqByCalc(&dev->hc, is_ddr, io_cfg->clock))
+        // {
+        //     LOG_E("FSdifSetClkFreqByCalc fail.")
+        // }
+
+        FSdifTiming timing;
+        FError ret;
+        boolean is_ddr = FALSE;
+        memset(&timing, 0U, sizeof(timing));
+        /* Get the timing setting based on the clock frequency and device removability */
+        ret = FSdifGetTimingSetting(io_cfg->clock, sdif->config.non_removable, &timing);
+        if (ret != FT_SUCCESS)
+        {
+            LOG_E("Failed to find timing for clock-%d", io_cfg->clock);
+        }
+        /* Set the clock frequency using the obtained timing setting */
+        ret = FSdifSetClkFreqByDict(sdif, FALSE, &timing, io_cfg->clock);
         if (ret != FT_SUCCESS)
         {
             LOG_E("FSdifSetClkFreq fail.");
@@ -618,8 +664,6 @@ static rt_err_t sdif_host_init(rt_uint32_t id, rt_uint32_t type)
         sdif_config.non_removable = TRUE; /* eMMC is unremovable on board */
     }
 
-    sdif_config.get_tuning = FSdifGetTimingSetting;
-
     if (FSDIF_SUCCESS != FSdifCfgInitialize(&host_info->sdif, &sdif_config))
     {
         LOG_E("SDIF controller init failed.");
@@ -714,4 +758,4 @@ int rt_hw_sdif_init(void)
     return status;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdif_init);
-#endif // #ifdef BSP_USING_SDIF
+#endif /* BSP_USING_SDIF_LAYER */

@@ -47,9 +47,9 @@ static void gpio_irq_test(s32 vector, void *param)
                 gpio_instance->config.pin);
 }
 /* this function will toggle output pin and test intr of input pin */
-static int gpio_toggle_sample(uint8_t argc, char **argv)
+rt_err_t gpio_toggle_sample()
 {
-    int res = 0;
+    rt_err_t res = RT_EOK;
     static u32 set_level = FGPIO_OPS_LEVEL_LOW;
     u32 get_level;
 
@@ -79,7 +79,7 @@ static int gpio_toggle_sample(uint8_t argc, char **argv)
     if (set_level != get_level)
     {
         rt_kprintf(" input level not equals to output level!!!\r\n");
-        res = -1;
+        res = RT_ERROR;
         goto exit;
     }
     else
@@ -95,7 +95,7 @@ static int gpio_toggle_sample(uint8_t argc, char **argv)
     }
 exit:
     /* print message on example run result */
-    if (res == 0)
+    if (res == RT_EOK)
     {
         rt_kprintf("%s@%d:rtthread gpio test example [success].\r\n", __func__, __LINE__);
     }
