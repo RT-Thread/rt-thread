@@ -59,6 +59,8 @@ RTM_EXPORT(rt_spin_lock)
 /**
  * @brief   This function will unlock the spinlock, will unlock the thread scheduler.
  *
+ * @note    If the scheduling function is called before unlocking, it will be scheduled in this function.
+ *
  * @param   lock is a pointer to the spinlock.
  */
 void rt_spin_unlock(struct rt_spinlock *lock)
@@ -94,6 +96,8 @@ RTM_EXPORT(rt_spin_lock_irqsave)
 
 /**
  * @brief   This function will unlock the spinlock and then restore current cpu interrupt status, will unlock the thread scheduler.
+ *
+ * @note    If the scheduling function is called before unlocking, it will be scheduled in this function.
  *
  * @param   lock is a pointer to the spinlock.
  *
