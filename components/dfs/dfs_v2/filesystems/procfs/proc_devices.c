@@ -99,7 +99,7 @@ static void save_info(struct device_show *dev, char *dev_name)
     }
 }
 
-static rt_err_t list_device_hook_(rt_object_t *object, void *data)
+static rt_err_t list_device_hook_(rt_object_t object, void *data)
 {
     struct device_show *dev = (struct device_show *)data;
     struct rt_device *device = (struct rt_device *)object;
