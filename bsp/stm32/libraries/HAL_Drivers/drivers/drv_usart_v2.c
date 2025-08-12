@@ -13,7 +13,7 @@
 
 #ifdef RT_USING_SERIAL_V2
 
-/* #define DRV_DEBUG */
+// #define DRV_DEBUG
 #define DBG_TAG "drv.usart"
 #ifdef DRV_DEBUG
 #define DBG_LVL DBG_LOG
@@ -1133,8 +1133,8 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, dma_config->dma_rcc);
 #endif
 
-#if defined(DMAMUX1)
-        /* enable DMAMUX clock for L4/WL/G4/WB/G0/H7 */
+#if defined(DMAMUX1) && (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB))
+        /* enable DMAMUX clock for L4+ and G4 */
         __HAL_RCC_DMAMUX1_CLK_ENABLE();
 #elif defined(SOC_SERIES_STM32MP1)
         __HAL_RCC_DMAMUX_CLK_ENABLE();
