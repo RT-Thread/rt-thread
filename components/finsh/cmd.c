@@ -76,12 +76,12 @@ static rt_err_t thread_print_(rt_object_t object, void *data)
 #ifdef RT_USING_SMP
     /* no synchronization applied since it's only for debug */
     if (RT_SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
-        rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX,
+        rt_kprintf("%-*.*s %3d %3d %4d ", RT_NAME_MAX, RT_NAME_MAX,
                    thread->parent.name, RT_SCHED_CTX(thread).oncpu,
                    RT_SCHED_CTX(thread).bind_cpu,
                    RT_SCHED_PRIV(thread).current_priority);
     else
-        rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX,
+        rt_kprintf("%-*.*s N/A %3d %4d ", RT_NAME_MAX, RT_NAME_MAX,
                    thread->parent.name,
                    RT_SCHED_CTX(thread).bind_cpu,
                    RT_SCHED_PRIV(thread).current_priority);
