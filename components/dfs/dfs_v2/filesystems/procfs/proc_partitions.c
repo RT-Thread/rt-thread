@@ -37,6 +37,8 @@ static rt_err_t show_info_hook_(rt_object_t object, void *data)
         dfs_seq_printf(seq, "%4d  %7d %14llu   %s\n", 0, 0,
             geometry.sector_count, device->parent.name);
     }
+
+    return RT_EOK;
 }
 
 static int show_info(struct dfs_seq_file *seq)
