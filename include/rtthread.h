@@ -76,6 +76,13 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj);
 rt_bool_t rt_object_is_systemobject(rt_object_t object);
 rt_uint8_t rt_object_get_type(rt_object_t object);
 rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data);
+
+#ifndef RT_LIST_FIND_OBJ_NR
+#define RT_LIST_FIND_OBJ_NR 8
+#endif
+
+rt_err_t rt_object_for_each_safe(rt_uint8_t type, rt_object_iter_t iter, void *data, rt_list_t **buffer, rt_size_t buffer_num);
+
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
 rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_uint8_t name_size);
 
