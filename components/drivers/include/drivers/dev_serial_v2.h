@@ -337,7 +337,12 @@ struct rt_serial_device
 #ifdef RT_USING_SERIAL_BYPASS
     struct rt_serial_bypass* bypass;
 #endif
+
     struct rt_device_notify rx_notify;
+
+#ifdef RT_USING_POSIX_STDIO
+    rt_bool_t is_posix_mode;
+#endif
 };
 
 /**
