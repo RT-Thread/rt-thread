@@ -79,7 +79,7 @@ static void uart_rec_entry(void *parameter)
 
     rev_len = *(rt_uint16_t *)parameter;
     rt_uint8_t *uart_write_buffer;
-    uart_write_buffer = (rt_uint8_t *)rt_calloc(1, sizeof(rt_uint8_t) * (rev_len + 1));
+    uart_write_buffer = (rt_uint8_t *)rt_calloc(1, rev_len + 1);
     rt_int32_t  cnt, i;
     rt_uint8_t  last_old_data;
     rt_bool_t   fisrt_flag         = RT_TRUE;

@@ -125,8 +125,8 @@ static rt_bool_t uart_api()
     rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
     rt_int32_t  tx_timeout = 10 * 1000;
-    uart_write_buffer      = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 10));
-    for (rt_uint32_t count = 0; count < sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 10); count++)
+    uart_write_buffer      = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_TXBUF_SIZE * 5 + 10);
+    for (rt_uint32_t count = 0; count < (RT_SERIAL_TC_TXBUF_SIZE * 5 + 10); count++)
     {
         uart_write_buffer[count] = count;
     }

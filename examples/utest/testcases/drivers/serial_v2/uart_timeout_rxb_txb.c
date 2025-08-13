@@ -75,7 +75,7 @@ static void uart_rec_entry(void *parameter)
     rt_ssize_t  recv_len;
     rt_uint32_t i;
     rt_int32_t  timeout = 0;
-    uart_write_buffer   = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_RXBUF_SIZE * 10 + 1));
+    uart_write_buffer   = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_RXBUF_SIZE * 10 + 1);
 
     timeout = 100;
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&timeout);
