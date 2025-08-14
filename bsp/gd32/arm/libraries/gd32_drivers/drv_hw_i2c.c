@@ -17,7 +17,7 @@ static const struct gd32_i2c_config i2c_configs[] =
 {
 #ifdef BSP_USING_HW_I2C0
      {
-        .i2c_periph = I2C0, .device_name = "i2c0", .periph_clk = RCU_I2C0,.i2c_clock_hz = BSP_HW_I2C0_CLOCK_SPEED,
+        .i2c_periph = I2C0, .device_name = "i2c0", .periph_clk = RCU_I2C0, .i2c_clock_hz = BSP_HW_I2C0_CLOCK_SPEED,
         .scl_clk = RCU_GPIOB, .scl_port = GPIOB, .scl_pin = GPIO_PIN_6, .scl_af = GPIO_AF_1,
         .sda_clk = RCU_GPIOB, .sda_port = GPIOB, .sda_pin = GPIO_PIN_7, .sda_af = GPIO_AF_1,
         .ev_irq_type = I2C0_EV_IRQn, .er_irq_type = I2C0_ER_IRQn,
@@ -431,11 +431,13 @@ static rt_ssize_t gd32_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_
         {
             LOG_D("[%s] Last message, Waiting STOP.", cfg->device_name);
             rt_uint32_t timeout = 1000;
-            while(I2C_STAT1(cfg->i2c_periph) & I2C_STAT1_I2CBSY && timeout--)
+            while (I2C_STAT1(cfg->i2c_periph) & I2C_STAT1_I2CBSY && timeout--)
             {
                 rt_hw_us_delay(1);
             }
-        } else {
+        }
+        else
+        {
             LOG_D("[%s] Last message has NO_STOP flag, leaving bus active.", cfg->device_name);
         }
     }
