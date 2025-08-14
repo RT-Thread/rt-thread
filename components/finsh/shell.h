@@ -60,7 +60,9 @@ enum input_stat
 };
 struct finsh_shell
 {
+#ifndef RT_USING_SERIAL_V2
     struct rt_semaphore rx_sem;
+#endif
 
     enum input_stat stat;
 
