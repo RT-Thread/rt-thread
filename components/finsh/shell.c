@@ -24,6 +24,7 @@
 
 #ifdef RT_USING_FINSH
 
+#include <rtdevice.h>
 #include "shell.h"
 #include "msh.h"
 
@@ -177,7 +178,8 @@ int finsh_getchar(void)
     {
         return -1; /* EOF */
     }
-
+/* Temporarily retain the distinction */
+#ifndef RT_USING_SERIAL_V2
     while (rt_device_read(device, -1, &ch, 1) != 1)
     {
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
@@ -190,6 +192,19 @@ int finsh_getchar(void)
             }
         }
     }
+#else
+    while (rt_device_read(device, -1, &ch, 1) != 1)
+    {
+        if (shell->device != device)
+        {
+            device = shell->device;
+            if (device == RT_NULL)
+            {
+                return -1;
+            }
+        }
+    }
+#endif
     return ch;
 #endif /* RT_USING_POSIX_STDIO */
 #else
@@ -199,6 +214,7 @@ int finsh_getchar(void)
 }
 
 #if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
+#ifndef RT_USING_SERIAL_V2
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -208,6 +224,7 @@ static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 
     return RT_EOK;
 }
+#endif
 
 /**
  * @ingroup group_finsh
@@ -231,8 +248,13 @@ void finsh_set_device(const char *device_name)
     /* check whether it's a same device */
     if (dev == shell->device) return;
     /* open this device and set the new device in finsh shell */
+#ifndef RT_USING_SERIAL_V2
     if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX | \
                        RT_DEVICE_FLAG_STREAM) == RT_EOK)
+#else
+    if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_BLOCKING | \
+                       RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_STREAM) == RT_EOK)
+#endif
     {
         if (shell->device != RT_NULL)
         {
@@ -246,7 +268,12 @@ void finsh_set_device(const char *device_name)
         shell->line_curpos = shell->line_position = 0;
 
         shell->device = dev;
+#ifndef RT_USING_SERIAL_V2
         rt_device_set_rx_indicate(dev, finsh_rx_ind);
+#else
+        rt_int32_t rx_timeout = RT_WAITING_FOREVER;
+        rt_device_control(dev, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
+#endif
     }
 }
 
@@ -924,7 +951,10 @@ int finsh_system_init(void)
                             FINSH_THREAD_PRIORITY, 10);
 #endif /* RT_USING_HEAP */
 
+#ifndef RT_USING_SERIAL_V2
     rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);
+#endif
+
     finsh_set_prompt_mode(1);
 
     if (tid != NULL && result == RT_EOK)
