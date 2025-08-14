@@ -533,31 +533,6 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
     return len;
 }
 
-static rt_err_t at_client_getchar(at_client_t client, char *ch)
-{
-    rt_err_t   result  = RT_EOK;
-    rt_ssize_t recvLen = 0;
-#if (!defined(RT_USING_SERIAL_V2))
-    recvLen = rt_device_read(client->device, 0, ch, 1);
-    if (recvLen <= 0)
-    {
-        result = -RT_ERROR;
-    }
-#else
-    rt_int32_t rx_timeout = 0;
-    rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
-    recvLen = rt_device_read(client->device, 0, ch, 1);
-    if (recvLen <= 0)
-    {
-        result = -RT_ERROR;
-    }
-    rx_timeout = RT_WAITING_FOREVER;
-    rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
-#endif
-
-    return result;
-}
-
 /**
  * AT client receive fixed-length data.
  *
@@ -583,7 +558,7 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
         return 0;
     }
 
-#if (!defined(RT_USING_SERIAL_V2))
+#ifndef RT_USING_SERIAL_V2
     while (size)
     {
         rt_size_t read_len;
@@ -606,7 +581,7 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
     rt_int32_t rx_timeout = rt_tick_from_millisecond(timeout);
     rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
     read_idx   = rt_device_read(client->device, 0, buf, size);
-    rx_timeout = RT_WAITING_FOREVER;
+    rx_timeout = RT_WAITING_NO;
     rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
 #endif
 
@@ -774,6 +749,28 @@ static const struct at_urc *get_urc_obj(at_client_t client)
     }
 
     return RT_NULL;
+}
+
+static rt_err_t at_client_getchar(at_client_t client, char *ch)
+{
+    rt_err_t   result  = RT_EOK;
+    rt_ssize_t recvLen = 0;
+/* Temporarily retain the distinction */
+#ifndef RT_USING_SERIAL_V2
+    recvLen = rt_device_read(client->device, 0, ch, 1);
+    if (recvLen <= 0)
+    {
+        result = -RT_ERROR;
+    }
+#else
+    recvLen = rt_device_read(client->device, 0, ch, 1);
+    if (recvLen != 1)
+    {
+        result = -RT_ERROR;
+    }
+#endif
+
+    return result;
 }
 
 static int at_recv_readline(at_client_t client)
@@ -1030,7 +1027,7 @@ int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bu
     if (client->device)
     {
         RT_ASSERT(client->device->type == RT_Device_Class_Char);
-#if (!defined(RT_USING_SERIAL_V2))
+#ifndef RT_USING_SERIAL_V2
         /* using DMA mode first */
         open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
         /* using interrupt mode when DMA mode not supported */
@@ -1042,6 +1039,8 @@ int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bu
 #else
         open_result = rt_device_open(client->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
         RT_ASSERT(open_result == RT_EOK);
+        rt_int32_t rx_timeout = RT_WAITING_NO;
+        rt_device_control(client->device, RT_SERIAL_CTRL_SET_RX_TIMEOUT, (void *)&rx_timeout);
 #endif
     }
     else
