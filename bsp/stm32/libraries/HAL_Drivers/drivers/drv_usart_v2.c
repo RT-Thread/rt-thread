@@ -389,12 +389,18 @@ static rt_ssize_t stm32_transmit(struct rt_serial_device *serial,
     if (uart->uart_dma_flag & RT_DEVICE_FLAG_DMA_TX)
     {
         if (HAL_UART_Transmit_DMA(&uart->handle, buf, size) != HAL_OK)
-            return 0;
+        {
+            return -RT_EIO;
+        }
+
         return size;
     }
 
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    stm32_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)tx_flag);
+    if (stm32_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)tx_flag) != RT_EOK)
+    {
+        return -RT_EIO;
+    }
 
     return size;
 }
@@ -441,11 +447,15 @@ static void uart_isr(struct rt_serial_device *serial)
     /* If the Read data register is not empty and the RXNE interrupt is enabled  (RDR) */
     if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE)) && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE)))
     {
+        rt_uint8_t  chr;
+        rt_uint32_t rx_drain_limit = 1024;
+        rt_uint32_t mask           = stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
         do {
-            char chr = UART_GET_RDR(&uart->handle, stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity));
+            chr = UART_GET_RDR(&uart->handle, mask);
             rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, (void *)&chr);
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-        } while (__HAL_UART_GET_FLAG(&uart->handle, UART_FLAG_RXNE));
+            rx_drain_limit--;
+        } while (__HAL_UART_GET_FLAG(&uart->handle, UART_FLAG_RXNE) && rx_drain_limit > 0);
     }
     /* If the Transmit data register is empty and the TXE interrupt enable is enabled  (TDR) */
     if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TXE)) && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_TXE)))
