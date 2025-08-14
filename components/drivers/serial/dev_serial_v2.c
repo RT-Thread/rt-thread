@@ -90,6 +90,8 @@ static int serial_fops_open(struct dfs_file *fd)
 
     if ((fd->flags & O_ACCMODE) != O_WRONLY)
         rt_device_set_rx_indicate(device, serial_fops_rx_ind);
+
+    rt_device_close(device);
     ret = rt_device_open(device, flags | RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING);
     if (ret == RT_EOK)
     {
@@ -933,7 +935,6 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
                                           RT_DEVICE_CTRL_CONFIG,
                                           (void *)RT_SERIAL_TX_NON_BLOCKING);
 
-
 __exit:
     return control_result;
 }
@@ -1186,15 +1187,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
 
-    /* Check that the device has been turned on */
-    if ((dev->open_flag) & (15 << 12))
-    {
-        LOG_D("(%s) serial device has already been opened, it will run in its original configuration", dev->parent.name);
-        return RT_EOK;
-    }
-
-    LOG_D("open serial device: 0x%08x with open flag: 0x%04x",
-          dev, oflag);
+    LOG_D("open serial device: 0x%08x with open flag: 0x%04x", dev, oflag);
 
     /* By default, the receive mode of a serial devide is RT_SERIAL_RX_NON_BLOCKING */
     if ((oflag & RT_SERIAL_RX_BLOCKING) == RT_SERIAL_RX_BLOCKING)
@@ -1458,7 +1451,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         }
         else
         {
-            *(rt_uint16_t *)args = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM;
+            *(rt_uint16_t *)args = RT_DEVICE_FLAG_RDWR | RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING | RT_DEVICE_FLAG_STREAM;
         }
         break;
 
