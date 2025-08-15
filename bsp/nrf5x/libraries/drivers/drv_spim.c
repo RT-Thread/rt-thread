@@ -2,7 +2,6 @@
 #include <string.h>
 #include "board.h"
 #include "drv_spim.h"
-#include "nrfx_spim.h"
 #include "rtconfig.h"
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -233,28 +232,24 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     void * context = RT_NULL;
     nrfx_spim_evt_handler_t handler = RT_NULL;    /* spi send callback handler ,default NULL */
 
-    #if USING_SPI_DMA
-        /* create and init completion */
-        struct rt_completion *cpt = (struct rt_completion*)rt_malloc(sizeof(struct rt_completion));
-        rt_completion_init(cpt);
-
-        /* create and init message about spim */
-        struct spi_dma_message *mess = (struct spi_dma_message*)rt_malloc(sizeof(struct spi_dma_message));
-        /* step 1 */
-        mess->cs_pin         = device->cs_pin;
-        /* step 2 */
-        mess->cs_take        = 0;
-        mess->cs_release     = 0;
-        /* step 3 */
-        mess->use_hw_ss      = config.use_hw_ss;
-        /* step 4 */
-        mess->ss_active_high = config.ss_active_high;
-        /* step 6 */
-        mess->cpt            = cpt;
-
-        context              = (void*)mess;
-        handler              = spim_handler[index];
-    #endif
+    /* create and init completion */
+    struct rt_completion *cpt = (struct rt_completion*)rt_malloc(sizeof(struct rt_completion));
+    rt_completion_init(cpt);
+    /* create and init message about spim */
+    struct spi_dma_message *mess = (struct spi_dma_message*)rt_malloc(sizeof(struct spi_dma_message));
+    /* step 1: cs pin */
+    mess->cs_pin         = device->cs_pin;
+    /* step 2: cs pin behavior */
+    mess->cs_take        = 0;
+    mess->cs_release     = 0;
+    /* step 3 */
+    mess->use_hw_ss      = config.use_hw_ss;
+    /* step 4: cs pin active */
+    mess->ss_active_high = config.ss_active_high;
+    /* step 6 */
+    mess->cpt            = cpt;
+    context              = (void*)mess;
+    handler              = spim_handler[index];
 
     nrfx_err_t nrf_ret = nrfx_spim_init(&spim, &config, handler, context);
     if(NRFX_SUCCESS == nrf_ret)

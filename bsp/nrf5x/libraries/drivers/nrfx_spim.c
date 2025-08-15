@@ -569,47 +569,23 @@ static void spim_int_enable(NRF_SPIM_Type * p_spim, bool enable);
 
 static void finish_transfer(spim_control_block_t * p_cb)
 {
-
-    #if USING_SPI_DMA
-        struct spi_dma_message *mess = (struct spi_dma_message*)(p_cb->p_context);
-        if (mess->cs_pin != PIN_NONE && mess->cs_release)
-        {
-        #if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED)
-            if (!mess->use_hw_ss)
-        #endif
-            {
-                if (mess->ss_active_high)
-                {
-                    nrf_gpio_pin_clear(mess->cs_pin);
-                }
-                else
-                {
-                    nrf_gpio_pin_set(mess->cs_pin);
-                }
-            }
-        }
-
-    #else
-        /* If Slave Select signal is used, this is the time to deactivate it. */
-        if (p_cb->ss_pin != NRFX_SPIM_PIN_NOT_USED)
-        {
-        #if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED)
-            if (!p_cb->use_hw_ss)
-        #endif
-            {
-                if (p_cb->ss_active_high)
-                {
-                    nrf_gpio_pin_clear(p_cb->ss_pin);
-                }
-                else
-                {
-                    nrf_gpio_pin_set(p_cb->ss_pin);
-                }
-            }
-        }
+    struct spi_dma_message *mess = (struct spi_dma_message*)(p_cb->p_context);
+    if (mess->cs_pin != PIN_NONE && mess->cs_release)
+    {
+    #if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED)
+        if (!mess->use_hw_ss)
     #endif
-
-
+        {
+            if (mess->ss_active_high)
+            {
+                nrf_gpio_pin_clear(mess->cs_pin);
+            }
+            else
+            {
+                nrf_gpio_pin_set(mess->cs_pin);
+            }
+        }
+    }
     /* By clearing this flag before calling the handler we allow subsequent */
     /* transfers to be started directly from the handler function. */
     p_cb->transfer_in_progress = false;
@@ -617,10 +593,8 @@ static void finish_transfer(spim_control_block_t * p_cb)
     p_cb->evt.type = NRFX_SPIM_EVENT_DONE;
     p_cb->handler(&p_cb->evt, p_cb->p_context);
 
-    #if USING_SPI_DMA
-        spim_int_enable(mess->spim, ((mess->flags) & NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER));
-        rt_completion_done(mess->cpt);
-    #endif
+    spim_int_enable(mess->spim, ((mess->flags) & NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER));
+    rt_completion_done(mess->cpt);
 }
 
 static void spim_int_enable(NRF_SPIM_Type * p_spim, bool enable)
@@ -813,8 +787,6 @@ static nrfx_err_t rtt_spim_xfer(NRF_SPIM_Type           * p_spim,
                             struct rt_spi_message       * message,
                             struct rt_spi_device        * dev)
 {
-    #define DMA_TRANS_MIN_LEN  (20) /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
-
     nrfx_err_t err_code;
     /* EasyDMA requires that transfer buffers are placed in Data RAM region; */
     /* signal error if they are not. */
@@ -829,13 +801,11 @@ static nrfx_err_t rtt_spim_xfer(NRF_SPIM_Type           * p_spim,
         return err_code;
     }
 
-    #if USING_SPI_DMA
-        struct spi_dma_message *mess = (struct spi_dma_message *)(p_cb->p_context);
-        mess->cs_take = message->cs_take;
-        mess->cs_release = message->cs_release;
-        mess->flags = flags;
-        mess->spim = p_spim;
-    #endif
+    struct spi_dma_message *mess = (struct spi_dma_message *)(p_cb->p_context);
+    mess->cs_take = message->cs_take;
+    mess->cs_release = message->cs_release;
+    mess->flags = flags;
+    mess->spim = p_spim;
 
     nrf_spim_event_clear(p_spim, NRF_SPIM_EVENT_END);
 
@@ -873,9 +843,9 @@ static nrfx_err_t rtt_spim_xfer(NRF_SPIM_Type           * p_spim,
     }
 #endif
 
-    if (p_cb->handler == RT_NULL || (p_xfer_desc->rx_length<= DMA_TRANS_MIN_LEN && p_xfer_desc->tx_length<= DMA_TRANS_MIN_LEN))
+    if (p_cb->handler == RT_NULL || (p_xfer_desc->rx_length<= 20 && p_xfer_desc->tx_length<= 20))
     {
-        /* no cb func or lenth < DMA_TRANS_MIN_LEN, wait for transfer end */
+        /* no cb func or lenth < 20, wait for transfer end */
 /*      spim_int_enable(p_spim, ((mess->flags) & NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER)); */
         if (!(flags & NRFX_SPIM_FLAG_HOLD_XFER))
         {
@@ -909,17 +879,13 @@ static nrfx_err_t rtt_spim_xfer(NRF_SPIM_Type           * p_spim,
     }
     else
     {
-        #if USING_SPI_DMA
-            spim_int_enable(p_spim, !(flags & NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER));
-            p_cb->transfer_in_progress = false;
-            if (rt_completion_wait(mess->cpt, 5000) != RT_EOK)
-                {
-                    rt_kprintf("wait for DMA interrupt overtime!");
-                    return NRFX_ERROR_TIMEOUT;
-                }
-        #else
-            spim_int_enable(p_spim, !(flags & NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER));
-        #endif
+        spim_int_enable(p_spim, !(flags & NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER));
+        p_cb->transfer_in_progress = false;
+        if (rt_completion_wait(mess->cpt, 5000) != RT_EOK)
+            {
+                rt_kprintf("wait for DMA interrupt overtime!");
+                return NRFX_ERROR_TIMEOUT;
+            }
     }
     err_code = NRFX_SUCCESS;
     NRFX_LOG_INFO("Function: %s, error code: %s.", __func__, NRFX_LOG_ERROR_STRING_GET(err_code));

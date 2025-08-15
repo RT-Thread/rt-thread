@@ -160,7 +160,7 @@ typedef struct
  * - SS pin active low
  * - over-run character set to 0xFF
  * - clock frequency: 4 MHz
- * - mode: 0 (SCK active high, sample on leading edge of the clock signa;)
+ * - mode: 0 (SCK active high, sample on leading edge of the clock signal;)
  * - MSB shifted out first
  * - MISO pull-up disabled
  *
@@ -333,7 +333,6 @@ void nrfx_spim_uninit(nrfx_spim_t const * p_instance);
 nrfx_err_t nrfx_spim_xfer(nrfx_spim_t const *           p_instance,
                           nrfx_spim_xfer_desc_t const * p_xfer_desc,
                           uint32_t                      flags);
-
 
 nrfx_err_t rtt_nrfx_spim_xfer(nrfx_spim_t const *         p_instance,
                             nrfx_spim_xfer_desc_t const * p_xfer_desc,

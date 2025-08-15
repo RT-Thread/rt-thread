@@ -351,7 +351,6 @@ menu "On-chip Peripheral Drivers"
                     range 0 47
                     default 31
             endif
-            
 
         config BSP_USING_SPIM3
             bool "Enable SPIM3 bus"

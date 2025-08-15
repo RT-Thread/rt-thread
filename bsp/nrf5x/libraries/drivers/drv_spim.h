@@ -11,10 +11,6 @@
 #include "nrf_spi.h"
 #include "rtconfig.h"
 
-#define USING_SPI_DMA 1
-
-#if USING_SPI_DMA
-
 struct spi_dma_message
 {
     rt_base_t cs_pin;
@@ -29,8 +25,6 @@ struct spi_dma_message
     NRF_SPIM_Type* spim;
 
 };
-
-#endif
 
 /**
  * @brief Attach the spi device to SPIM bus, this function must be used after initialization.
