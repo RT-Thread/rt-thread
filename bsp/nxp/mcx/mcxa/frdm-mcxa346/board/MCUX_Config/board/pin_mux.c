@@ -9,18 +9,6 @@
  * will be overwritten if the respective MCUXpresso Config Tools is used to update this file.
  **********************************************************************************************************************/
 
-/* clang-format off */
-/*
- * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-!!GlobalInfo
-product: Pins v15.0
-processor: MCXA156
-package_id: MCXA156VLL
-mcu_data: ksdk2_0
-processor_version: 0.15.0
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
- */
-/* clang-format on */
 
 #include "rtconfig.h"
 

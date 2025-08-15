@@ -13,7 +13,7 @@ if GetDepend(['BSP_USING_RW007']):
     src += Glob('ports/drv_spi_sample_rw007.c')
 
 CPPPATH = [cwd, cwd + '/MCUX_Config/board']
-CPPDEFINES = ['DEBUG', 'CPU_MCXA346VLL']
+CPPDEFINES = ['DEBUG', 'CPU_MCXA346VLQ']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
