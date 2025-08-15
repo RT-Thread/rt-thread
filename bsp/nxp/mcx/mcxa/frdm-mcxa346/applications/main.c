@@ -20,7 +20,7 @@
 int main(void)
 {
 
-    
+
 #if defined(__CC_ARM)
     rt_kprintf("using armcc, version: %d\n", __ARMCC_VERSION);
 #elif defined(__clang__)
