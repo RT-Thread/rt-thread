@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -173,3 +173,4 @@ int rt_hw_i2c_init(void)
 
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
 #endif /* defined(BSP_USING_I2C0) || defined(BSP_USING_I2C1) */
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -95,8 +95,8 @@ int mcu_flash_write(rt_uint32_t addr, const uint8_t *buf, size_t size)
     if (addr % 4 != 0)
     {
         LOG_E("write addr should be 4-byte alignment");
-        //4byte write
-        //else byts
+        /* 4byte write */
+        /* else byts */
         return -RT_EINVAL;
     }
 
@@ -104,6 +104,7 @@ int mcu_flash_write(rt_uint32_t addr, const uint8_t *buf, size_t size)
     {
         return -RT_ERROR;
     }
+
     if (size % 4 != 0)
     {
         nrfx_nvmc_bytes_write(addr, buf, size);
@@ -186,3 +187,4 @@ const struct fal_flash_dev mcu_onchip_flash =
 };
 #endif
 #endif /* BSP_USING_ON_CHIP_FLASH */
+
