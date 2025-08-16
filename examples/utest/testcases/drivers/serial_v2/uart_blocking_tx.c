@@ -83,7 +83,7 @@ static rt_bool_t block_write(rt_device_t uart_dev)
     for (i = 0; i < index; i++)
     {
         LOG_D("\nBLOCKING_MODE : write %d / %d bytes in %d ticks\n", write_num_array[i], total_write_num[i], tick_array[i]);
-        rt_thread_mdelay(1000);
+        rt_thread_mdelay(10);
     }
 
     return RT_TRUE;

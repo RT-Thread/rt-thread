@@ -61,9 +61,10 @@ static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 /* fops for serial */
 static int serial_fops_open(struct dfs_file *fd)
 {
-    rt_err_t    ret   = 0;
-    rt_uint16_t flags = 0;
-    rt_device_t device;
+    rt_err_t                 ret   = 0;
+    rt_uint16_t              flags = 0;
+    rt_device_t              device;
+    struct rt_serial_device *serial;
 
     device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
@@ -89,8 +90,14 @@ static int serial_fops_open(struct dfs_file *fd)
 
     if ((fd->flags & O_ACCMODE) != O_WRONLY)
         rt_device_set_rx_indicate(device, serial_fops_rx_ind);
+
+    rt_device_close(device);
     ret = rt_device_open(device, flags | RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING);
-    if (ret == RT_EOK) return 0;
+    if (ret == RT_EOK)
+    {
+        serial                = (struct rt_serial_device *)device;
+        serial->is_posix_mode = RT_TRUE;
+    }
 
     return ret;
 }
@@ -124,6 +131,8 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
         flags     &= mask;
         fd->flags &= ~mask;
         fd->flags |= flags;
+        break;
+    default:
         break;
     }
 
@@ -204,13 +213,10 @@ static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t co
 
 static int serial_fops_flush(struct dfs_file *fd)
 {
-    rt_device_t              device;
-    struct rt_serial_device *serial;
-
+    rt_device_t device;
     device = (rt_device_t)fd->vnode->data;
     RT_ASSERT(device != RT_NULL);
 
-    serial = (struct rt_serial_device *)device;
     rt_device_control(device, RT_SERIAL_CTRL_TX_FLUSH, (void *)RT_NULL);
     rt_device_control(device, RT_SERIAL_CTRL_RX_FLUSH, (void *)RT_NULL);
 
@@ -379,8 +385,8 @@ rt_ssize_t _serial_poll_rx(struct rt_device *dev,
     int                      getc_element; /* Gets one byte of data received */
     rt_uint8_t              *getc_buffer;  /* Pointer to the receive data buffer */
 
-    if (size == 0) return 0;
     RT_ASSERT(dev != RT_NULL && buffer != RT_NULL);
+    if (size == 0) return 0;
 
     serial      = (struct rt_serial_device *)dev;
     getc_buffer = (rt_uint8_t *)buffer;
@@ -389,7 +395,7 @@ rt_ssize_t _serial_poll_rx(struct rt_device *dev,
     while (size)
     {
         getc_element = serial->ops->getc(serial);
-        if (getc_element == -1) break;
+        if (getc_element < 0) break;
 
         *getc_buffer = getc_element;
 
@@ -424,6 +430,7 @@ rt_ssize_t _serial_poll_tx(struct rt_device *dev,
     struct rt_serial_device *serial;
     rt_size_t                putc_size;
     rt_uint8_t              *putc_buffer; /* Pointer to the transmit data buffer */
+    int                      putc_result;
 
     if (size == 0) return 0;
     RT_ASSERT(dev != RT_NULL && buffer != RT_NULL);
@@ -441,7 +448,8 @@ rt_ssize_t _serial_poll_tx(struct rt_device *dev,
             if (*putc_buffer == '\n')
                 serial->ops->putc(serial, '\r');
         }
-        serial->ops->putc(serial, *putc_buffer);
+        putc_result = serial->ops->putc(serial, *putc_buffer);
+        if (putc_result < 0) break;
 
         ++putc_buffer;
         --size;
@@ -461,7 +469,7 @@ rt_ssize_t _serial_poll_tx(struct rt_device *dev,
   * @param pos Empty parameter.
   * @param buffer Receive data buffer.
   * @param size Receive data buffer length.
-  * @return Returns the actual length of data received. If a timeout occurs in blocking mode, it returns -RT_ETIMEOUT.
+  * @return Returns the actual length of data received.
   */
 static rt_ssize_t _serial_fifo_rx(struct rt_device *dev,
                                   rt_off_t          pos,
@@ -482,15 +490,15 @@ static rt_ssize_t _serial_fifo_rx(struct rt_device *dev,
     if (dev->open_flag & RT_SERIAL_RX_BLOCKING)
     {
         rt_size_t  data_len;
-        rt_tick_t  now_tick;
+        rt_tick_t  delta_tick;
         rt_size_t  rx_bufsz_third  = serial->config.rx_bufsz / 2;
         rt_int32_t base_rx_timeout = rt_atomic_load(&rx_fifo->rx_timeout);
-        rt_int32_t rx_timeout      = base_rx_timeout;
+        rt_int32_t rx_timeout_left = base_rx_timeout;
         rt_tick_t  begin_tick      = rt_tick_get();
 
         while (1)
         {
-            if (rx_timeout != RT_WAITING_NO)
+            if (rx_timeout_left != RT_WAITING_NO)
             {
                 level    = rt_spin_lock_irqsave(&serial->spinlock);
                 data_len = rt_ringbuffer_data_len(&rx_fifo->rb);
@@ -512,26 +520,24 @@ static rt_ssize_t _serial_fifo_rx(struct rt_device *dev,
             level      = RT_SERIAL_FIFO_LOCK(&serial->spinlock);
             recv_size += rt_ringbuffer_get(&rx_fifo->rb, (rt_uint8_t *)buffer + recv_size, size - recv_size);
             RT_SERIAL_FIFO_UNLOCK(&serial->spinlock, level);
-            if (recv_size == size || rx_timeout == RT_WAITING_NO)
+            if (recv_size == size || rx_timeout_left == RT_WAITING_NO)
             {
                 break;
             }
 
-            rt_completion_wait(&rx_fifo->rx_cpt, rx_timeout);
-            if (rx_timeout != RT_WAITING_FOREVER)
+            rt_completion_wait(&rx_fifo->rx_cpt, rx_timeout_left);
+            if (rx_timeout_left != RT_WAITING_FOREVER)
             {
-                now_tick = rt_tick_get();
-                if (now_tick - begin_tick >= base_rx_timeout)
+                delta_tick = rt_tick_get_delta(begin_tick);
+                if (delta_tick >= base_rx_timeout)
                 {
-                    return -RT_ETIMEOUT;
+                    level      = RT_SERIAL_FIFO_LOCK(&serial->spinlock);
+                    recv_size += rt_ringbuffer_get(&rx_fifo->rb, (rt_uint8_t *)buffer + recv_size, size - recv_size);
+                    RT_SERIAL_FIFO_UNLOCK(&serial->spinlock, level);
+                    return recv_size;
                 }
-                else
-                {
-                    if (now_tick > begin_tick)
-                        rx_timeout = base_rx_timeout - (now_tick - begin_tick);
-                    else
-                        rx_timeout = begin_tick + base_rx_timeout - now_tick + 1;
-                }
+
+                rx_timeout_left = base_rx_timeout - delta_tick;
             }
         }
     }
@@ -554,7 +560,7 @@ static rt_ssize_t _serial_fifo_rx(struct rt_device *dev,
   * @param pos Empty parameter.
   * @param buffer Transmit data buffer.
   * @param size Transmit data buffer length.
-  * @return Returns the actual length of data transmitted. If a timeout occurs, it returns -RT_ETIMEOUT.
+  * @return Returns the actual length of data transmitted.
   */
 static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device *dev,
                                                 rt_off_t          pos,
@@ -594,28 +600,29 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device *dev,
                                       (rt_uint8_t *)buffer,
                                       size,
                                       RT_SERIAL_TX_BLOCKING);
+    if (send_size <= 0)
+    {
+        return 0;
+    }
 
     if (rt_atomic_load(&tx_fifo->tx_timeout) == RT_WAITING_NO)
     {
-        return send_size;
+        /* The implementation of POSIX nonblock mode is to set tx_timeout to RT_WAITING_NO */
+#ifdef RT_USING_POSIX_STDIO
+        if (serial->is_posix_mode)
+            return send_size;
+#endif
+        return 0;
     }
 
     /* Waiting for the transmission to complete */
     ret = rt_completion_wait(&tx_fifo->tx_cpt, rt_atomic_load(&tx_fifo->tx_timeout));
     if (ret != RT_EOK)
     {
-        if (ret == -RT_ETIMEOUT)
-        {
-            return ret;
-        }
-        else
-        {
-            return 0;
-        }
+        /* Cannot get the number of bytes sent under DMA, so returns 0 directly */
+        return 0;
     }
 
-    /* Inactive tx mode flag */
-    rt_atomic_flag_clear(&tx_fifo->activated);
     return send_size;
 }
 
@@ -626,7 +633,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device *dev,
   * @param pos Empty parameter.
   * @param buffer Transmit data buffer.
   * @param size Transmit data buffer length.
-  * @return Returns the final length of data transmitted. If not all data can be sent within the timeout period, returns -RT_ETIMEOUT.
+  * @return Returns the final length of data transmitted.
   */
 static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
                                                rt_off_t          pos,
@@ -657,11 +664,13 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
         return 0;
     }
 
-    rt_tick_t  now_tick;
+    rt_tick_t  delta_tick;
     rt_int32_t base_tx_timeout = rt_atomic_load(&tx_fifo->tx_timeout);
-    rt_int32_t tx_timeout      = base_tx_timeout;
+    rt_int32_t tx_timeout_left = base_tx_timeout;
     rt_tick_t  begin_tick      = rt_tick_get();
     rt_size_t  send_size       = 0;
+    rt_size_t  rb_size;
+    rt_ssize_t transmit_size;
 
     while (send_size != size)
     {
@@ -671,6 +680,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
         tx_fifo->put_size = rt_ringbuffer_put(&tx_fifo->rb,
                                               (rt_uint8_t *)buffer + send_size,
                                               size - send_size);
+        rb_size           = rt_ringbuffer_data_len(&tx_fifo->rb);
         RT_SERIAL_FIFO_UNLOCK(&serial->spinlock, level);
 
         /* clear tx_cpt flag */
@@ -679,39 +689,44 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
         /* Call the transmit interface for transmission again */
         /* Note that in interrupt mode, buffer and tx_fifo->put_size
          * are inactive parameters */
-        serial->ops->transmit(serial,
-                              (rt_uint8_t *)buffer + send_size,
-                              tx_fifo->put_size,
-                              RT_SERIAL_TX_BLOCKING);
-
-        send_size += tx_fifo->put_size;
-
-        if (tx_timeout == RT_WAITING_NO)
+        transmit_size = serial->ops->transmit(serial,
+                                              (rt_uint8_t *)buffer + send_size,
+                                              tx_fifo->put_size,
+                                              RT_SERIAL_TX_BLOCKING);
+        if (transmit_size <= 0)
         {
+            return send_size;
+        }
+
+        if (tx_timeout_left == RT_WAITING_NO)
+        {
+            /* The implementation of POSIX nonblock mode is to set tx_timeout to RT_WAITING_NO */
+#ifdef RT_USING_POSIX_STDIO
+            if (serial->is_posix_mode)
+                send_size += tx_fifo->put_size;
+#endif
             break;
         }
 
         /* Waiting for the transmission to complete */
-        rt_completion_wait(&tx_fifo->tx_cpt, tx_timeout);
-        if (tx_timeout != RT_WAITING_FOREVER)
+        rt_completion_wait(&tx_fifo->tx_cpt, tx_timeout_left);
+        if (tx_timeout_left != RT_WAITING_FOREVER)
         {
-            now_tick = rt_tick_get();
-            if (now_tick - begin_tick >= base_tx_timeout)
+            delta_tick = rt_tick_get_delta(begin_tick);
+            if (delta_tick >= base_tx_timeout)
             {
-                return -RT_ETIMEOUT;
+                level      = RT_SERIAL_FIFO_LOCK(&serial->spinlock);
+                send_size += rb_size - rt_ringbuffer_data_len(&tx_fifo->rb);
+                RT_SERIAL_FIFO_UNLOCK(&serial->spinlock, level);
+                return send_size;
             }
-            else
-            {
-                if (now_tick > begin_tick)
-                    tx_timeout = base_tx_timeout - (now_tick - begin_tick);
-                else
-                    tx_timeout = begin_tick + base_tx_timeout - now_tick + 1;
-            }
+
+            tx_timeout_left = base_tx_timeout - delta_tick;
         }
+
+        send_size += tx_fifo->put_size;
     }
 
-    /* Finally Inactivate the tx->fifo */
-    rt_atomic_flag_clear(&tx_fifo->activated);
 
     return send_size;
 }
@@ -734,7 +749,8 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device *dev,
     struct rt_serial_tx_fifo *tx_fifo;
     rt_uint8_t               *put_ptr;
     rt_base_t                 level;
-    rt_size_t                 send_size = 0;
+    rt_size_t                 send_size;
+    rt_ssize_t                transmit_size;
 
     if (size == 0) return 0;
     RT_ASSERT(dev != RT_NULL && buffer != RT_NULL);
@@ -761,10 +777,14 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device *dev,
         /* Call the transmit interface for transmission again */
         /* Note that in interrupt mode, put_ptr and tx_fifo->put_size
          * are inactive parameters */
-        serial->ops->transmit(serial,
-                              put_ptr,
-                              tx_fifo->put_size,
-                              RT_SERIAL_TX_NON_BLOCKING);
+        transmit_size = serial->ops->transmit(serial,
+                                              put_ptr,
+                                              tx_fifo->put_size,
+                                              RT_SERIAL_TX_NON_BLOCKING);
+        if (transmit_size <= 0)
+        {
+            return 0;
+        }
         /* In tx_nonblocking mode, there is no need to call rt_completion_wait() APIs to wait
          * for the rt_current_thread to resume */
         return send_size;
@@ -794,7 +814,8 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
                                     rt_uint16_t       tx_oflag)
 {
     struct rt_serial_device  *serial;
-    struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
+    struct rt_serial_tx_fifo *tx_fifo        = RT_NULL;
+    rt_err_t                  control_result = RT_EOK;
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
@@ -824,11 +845,16 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
     {
         /* When using RT_SERIAL_TX_BLOCKING, it is necessary to determine
          * whether serial device needs to use buffer */
-        rt_err_t optmode; /* The operating mode used by serial device */
         /* Call the Control() API to get the operating mode */
-        optmode = serial->ops->control(serial,
-                                       RT_DEVICE_CHECK_OPTMODE,
-                                       (void *)RT_DEVICE_FLAG_TX_BLOCKING);
+        control_result = serial->ops->control(serial,
+                                              RT_DEVICE_CHECK_OPTMODE,
+                                              (void *)RT_DEVICE_FLAG_TX_BLOCKING);
+        if (control_result < 0)
+        {
+            return control_result;
+        }
+
+        rt_err_t optmode = control_result;
         if (optmode == RT_SERIAL_TX_BLOCKING_BUFFER)
         {
             /* If use RT_SERIAL_TX_BLOCKING_BUFFER, the ringbuffer is initialized */
@@ -844,7 +870,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
             dev->write = _serial_fifo_tx_blocking_buf;
 #endif
         }
-        else
+        else if (optmode == RT_SERIAL_TX_BLOCKING_NO_BUFFER)
         {
             /* If not use RT_SERIAL_TX_BLOCKING_BUFFER,
              * the control() API is called to configure the serial device */
@@ -860,9 +886,17 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
 #endif
 
             /* Call the control() API to configure the serial device by RT_SERIAL_TX_BLOCKING*/
-            serial->ops->control(serial,
-                                 RT_DEVICE_CTRL_CONFIG,
-                                 (void *)RT_SERIAL_TX_BLOCKING);
+            control_result = serial->ops->control(serial,
+                                                  RT_DEVICE_CTRL_CONFIG,
+                                                  (void *)RT_SERIAL_TX_BLOCKING);
+            if (control_result < 0)
+            {
+                goto __exit;
+            }
+        }
+        else
+        {
+            return -RT_EIO;
         }
         rt_atomic_flag_clear(&tx_fifo->activated);
         tx_fifo->put_size = 0;
@@ -897,11 +931,12 @@ static rt_err_t rt_serial_tx_enable(struct rt_device *dev,
     dev->open_flag |= RT_SERIAL_TX_NON_BLOCKING;
 
     /* Call the control() API to configure the serial device by RT_SERIAL_TX_NON_BLOCKING*/
-    serial->ops->control(serial,
-                         RT_DEVICE_CTRL_CONFIG,
-                         (void *)RT_SERIAL_TX_NON_BLOCKING);
+    control_result = serial->ops->control(serial,
+                                          RT_DEVICE_CTRL_CONFIG,
+                                          (void *)RT_SERIAL_TX_NON_BLOCKING);
 
-    return RT_EOK;
+__exit:
+    return control_result;
 }
 
 
@@ -974,11 +1009,7 @@ static rt_err_t rt_serial_rx_enable(struct rt_device *dev,
     {
         dev->open_flag |= RT_SERIAL_RX_NON_BLOCKING;
         /* Call the control() API to configure the serial device by RT_SERIAL_RX_NON_BLOCKING*/
-        serial->ops->control(serial,
-                             RT_DEVICE_CTRL_CONFIG,
-                             (void *)RT_SERIAL_RX_NON_BLOCKING);
-
-        return RT_EOK;
+        return serial->ops->control(serial, RT_DEVICE_CTRL_CONFIG, (void *)RT_SERIAL_RX_NON_BLOCKING);
     }
 
     /* When using RT_SERIAL_RX_BLOCKING, rt_completion_init() and rx_cpt_index are initialized */
@@ -988,11 +1019,7 @@ static rt_err_t rt_serial_rx_enable(struct rt_device *dev,
     rt_completion_init(&rx_fifo->rx_cpt);
     dev->open_flag |= RT_SERIAL_RX_BLOCKING;
     /* Call the control() API to configure the serial device by RT_SERIAL_RX_BLOCKING*/
-    serial->ops->control(serial,
-                         RT_DEVICE_CTRL_CONFIG,
-                         (void *)RT_SERIAL_RX_BLOCKING);
-
-    return RT_EOK;
+    return serial->ops->control(serial, RT_DEVICE_CTRL_CONFIG, (void *)RT_SERIAL_RX_BLOCKING);
 }
 
 /**
@@ -1016,23 +1043,27 @@ static rt_err_t rt_serial_rx_disable(struct rt_device *dev,
 
     if (serial->serial_rx == RT_NULL) return RT_EOK;
 
+    rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+    RT_ASSERT(rx_fifo != RT_NULL);
+
     if (rx_oflag == RT_SERIAL_RX_NON_BLOCKING)
     {
         dev->open_flag &= ~RT_SERIAL_RX_NON_BLOCKING;
+        /* disable ignore return value */
         serial->ops->control(serial,
                              RT_DEVICE_CTRL_CLR_INT,
                              (void *)RT_SERIAL_RX_NON_BLOCKING);
     }
     else
     {
+        rt_completion_done(&rx_fifo->rx_cpt);
         dev->open_flag &= ~RT_SERIAL_RX_BLOCKING;
+        /* disable ignore return value */
         serial->ops->control(serial,
                              RT_DEVICE_CTRL_CLR_INT,
                              (void *)RT_SERIAL_RX_BLOCKING);
     }
 
-    rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
-    RT_ASSERT(rx_fifo != RT_NULL);
     rt_free(rx_fifo);
     serial->serial_rx = RT_NULL;
 
@@ -1066,7 +1097,7 @@ static rt_err_t rt_serial_tx_disable(struct rt_device *dev,
     if (tx_oflag == RT_SERIAL_TX_NON_BLOCKING)
     {
         dev->open_flag &= ~RT_SERIAL_TX_NON_BLOCKING;
-
+        /* disable ignore return value */
         serial->ops->control(serial,
                              RT_DEVICE_CTRL_CLR_INT,
                              (void *)RT_SERIAL_TX_NON_BLOCKING);
@@ -1075,6 +1106,7 @@ static rt_err_t rt_serial_tx_disable(struct rt_device *dev,
     {
         rt_completion_done(&tx_fifo->tx_cpt);
         dev->open_flag &= ~RT_SERIAL_TX_BLOCKING;
+        /* disable ignore return value */
         serial->ops->control(serial,
                              RT_DEVICE_CTRL_CLR_INT,
                              (void *)RT_SERIAL_TX_BLOCKING);
@@ -1112,6 +1144,36 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
 }
 
 /**
+  * @brief Close the serial device.
+  * @param dev The pointer of device driver structure
+  * @return Return the status of the operation.
+  */
+static rt_err_t rt_serial_close(struct rt_device *dev)
+{
+    struct rt_serial_device *serial;
+
+    RT_ASSERT(dev != RT_NULL);
+    serial = (struct rt_serial_device *)dev;
+
+    /* Disable serial receive mode. */
+    rt_serial_rx_disable(dev, dev->open_flag & (RT_SERIAL_RX_BLOCKING | RT_SERIAL_RX_NON_BLOCKING));
+    /* Disable serial tranmit mode. */
+    rt_serial_tx_disable(dev, dev->open_flag & (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
+
+    /* Clear the callback function */
+    serial->parent.rx_indicate = RT_NULL;
+    serial->parent.tx_complete = RT_NULL;
+
+    rt_memset(&serial->rx_notify, RT_NULL, sizeof(struct rt_device_notify));
+
+    /* Call the control() API to close the serial device. disable ignore return value */
+    serial->ops->control(serial, RT_DEVICE_CTRL_CLOSE, RT_NULL);
+    dev->flag &= ~RT_DEVICE_FLAG_ACTIVATED;
+
+    return RT_EOK;
+}
+
+/**
   * @brief Open the serial device.
   * @param dev The pointer of device driver structure
   * @param oflag The flag of that the serial port opens.
@@ -1120,19 +1182,12 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
 static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 {
     struct rt_serial_device *serial;
+    rt_err_t                 result = RT_EOK;
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
 
-    /* Check that the device has been turned on */
-    if ((dev->open_flag) & (15 << 12))
-    {
-        LOG_D("(%s) serial device has already been opened, it will run in its original configuration", dev->parent.name);
-        return RT_EOK;
-    }
-
-    LOG_D("open serial device: 0x%08x with open flag: 0x%04x",
-          dev, oflag);
+    LOG_D("open serial device: 0x%08x with open flag: 0x%04x", dev, oflag);
 
     /* By default, the receive mode of a serial devide is RT_SERIAL_RX_NON_BLOCKING */
     if ((oflag & RT_SERIAL_RX_BLOCKING) == RT_SERIAL_RX_BLOCKING)
@@ -1152,47 +1207,30 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
     /* initialize the Rx structure according to open flag */
     if (serial->serial_rx == RT_NULL)
-        rt_serial_rx_enable(dev, dev->open_flag & (RT_SERIAL_RX_BLOCKING | RT_SERIAL_RX_NON_BLOCKING));
+    {
+        result = rt_serial_rx_enable(dev, dev->open_flag & (RT_SERIAL_RX_BLOCKING | RT_SERIAL_RX_NON_BLOCKING));
+        if (result != RT_EOK)
+        {
+            rt_serial_close(dev);
+            goto __exit;
+        }
+    }
 
     /* initialize the Tx structure according to open flag */
     if (serial->serial_tx == RT_NULL)
-        rt_serial_tx_enable(dev, dev->open_flag & (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
+    {
+        result = rt_serial_tx_enable(dev, dev->open_flag & (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
+        if (result != RT_EOK)
+        {
+            rt_serial_close(dev);
+            goto __exit;
+        }
+    }
 
-    return RT_EOK;
+__exit:
+    return result;
 }
 
-
-/**
-  * @brief Close the serial device.
-  * @param dev The pointer of device driver structure
-  * @return Return the status of the operation.
-  */
-static rt_err_t rt_serial_close(struct rt_device *dev)
-{
-    struct rt_serial_device *serial;
-
-    RT_ASSERT(dev != RT_NULL);
-    serial = (struct rt_serial_device *)dev;
-
-    /* this device has more reference count */
-    if (dev->ref_count > 1) return -RT_ERROR;
-    /* Disable serial receive mode. */
-    rt_serial_rx_disable(dev, dev->open_flag & (RT_SERIAL_RX_BLOCKING | RT_SERIAL_RX_NON_BLOCKING));
-    /* Disable serial tranmit mode. */
-    rt_serial_tx_disable(dev, dev->open_flag & (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
-
-    /* Clear the callback function */
-    serial->parent.rx_indicate = RT_NULL;
-    serial->parent.tx_complete = RT_NULL;
-
-    rt_memset(&serial->rx_notify, RT_NULL, sizeof(struct rt_device_notify));
-
-    /* Call the control() API to close the serial device */
-    serial->ops->control(serial, RT_DEVICE_CTRL_CLOSE, RT_NULL);
-    dev->flag &= ~RT_DEVICE_FLAG_ACTIVATED;
-
-    return RT_EOK;
-}
 
 static void _serial_rx_flush(struct rt_serial_device *serial)
 {
@@ -1202,8 +1240,10 @@ static void _serial_rx_flush(struct rt_serial_device *serial)
 
     if (serial->config.rx_bufsz == 0)
     {
-        while (serial->ops->getc(serial) != -1)
+        rt_uint32_t rx_flush_limit = 0xFFFFFFF;
+        while (serial->ops->getc(serial) != -1 && rx_flush_limit > 0)
         {
+            rx_flush_limit--;
         }
     }
     else
@@ -1235,7 +1275,6 @@ static void _serial_tx_flush(struct rt_serial_device *serial)
         if (rt_atomic_load(&tx_fifo->activated))
         {
             rt_completion_wait(&tx_fifo->tx_cpt, RT_WAITING_FOREVER);
-            return;
         }
     }
 }
@@ -1252,15 +1291,14 @@ static rt_err_t _serial_get_unread_bytes_count(struct rt_serial_device *serial, 
         *unread_bytes = -1;
         return -RT_EPERM;
     }
-    else
-    {
-        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
 
-        level         = RT_SERIAL_FIFO_LOCK(&serial->spinlock);
-        *unread_bytes = rt_ringbuffer_data_len(&rx_fifo->rb);
-        RT_SERIAL_FIFO_UNLOCK(&serial->spinlock, level);
-    }
+    rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+    RT_ASSERT(rx_fifo != RT_NULL);
+
+    level         = RT_SERIAL_FIFO_LOCK(&serial->spinlock);
+    *unread_bytes = rt_ringbuffer_data_len(&rx_fifo->rb);
+    RT_SERIAL_FIFO_UNLOCK(&serial->spinlock, level);
+
     return RT_EOK;
 }
 
@@ -1384,6 +1422,17 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             serial->ops->configure(serial, (struct serial_configure *)args);
         }
         break;
+    case RT_SERIAL_CTRL_GET_CONFIG:
+        if (args == RT_NULL)
+        {
+            ret = -RT_EINVAL;
+        }
+        else
+        {
+            struct serial_configure *pconfig = (struct serial_configure *)args;
+            *pconfig                         = serial->config;
+        }
+        break;
     case RT_DEVICE_CTRL_NOTIFY_SET:
         if (args == RT_NULL)
         {
@@ -1402,7 +1451,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         }
         else
         {
-            *(rt_uint16_t *)args = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM;
+            *(rt_uint16_t *)args = RT_DEVICE_FLAG_RDWR | RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING | RT_DEVICE_FLAG_STREAM;
         }
         break;
 
@@ -1944,21 +1993,17 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 #ifdef RT_SERIAL_BUF_STRATEGY_DROP
             rt_uint8_t *ptr;
             rt_size_t   size;
-            rt_size_t   space_len;
+            rt_size_t   put_len;
             /* UART_IT_IDLE and dma isr */
             level = rt_spin_lock_irqsave(&serial->spinlock);
             do
             {
-                space_len = rt_ringbuffer_space_len(&rx_fifo->rb);
-                if (space_len == 0)
-                    break;
-
                 rt_serial_update_write_index(&rx_fifo->dma_ping_rb, rx_length);
 
                 size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
 
-                space_len -= rt_ringbuffer_put(&rx_fifo->rb, ptr, size);
-                if (space_len == 0)
+                put_len = rt_ringbuffer_put(&rx_fifo->rb, ptr, size);
+                if (put_len != size)
                     break;
 
                 size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
@@ -1973,9 +2018,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             rt_size_t   size;
             /* UART_IT_IDLE and dma isr */
             level = rt_spin_lock_irqsave(&serial->spinlock);
-            rt_serial_update_write_index(&rx_fifo->dma_ping_rb, rx_length);
             do
             {
+                rt_serial_update_write_index(&rx_fifo->dma_ping_rb, rx_length);
+
                 size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
 
                 rt_ringbuffer_put_force(&rx_fifo->rb, ptr, size);
@@ -2022,8 +2068,9 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
     /* Interrupt transmit event */
     case RT_SERIAL_EVENT_TX_DONE: {
         struct rt_serial_tx_fifo *tx_fifo;
-        rt_size_t                 tx_length = 0;
-        tx_fifo                             = (struct rt_serial_tx_fifo *)serial->serial_tx;
+        rt_size_t                 tx_length;
+        rt_ssize_t                transmit_size;
+        tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
 
         /* Get the length of the data from the ringbuffer */
@@ -2049,22 +2096,28 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
         /* Call the transmit interface for transmission again */
         /* Note that in interrupt mode, tx_fifo->buffer and tx_length
          * are inactive parameters */
-        serial->ops->transmit(serial,
-                              tx_fifo->rb.buffer_ptr,
-                              tx_length,
-                              serial->parent.open_flag & (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
+        transmit_size = serial->ops->transmit(serial,
+                                              tx_fifo->rb.buffer_ptr,
+                                              tx_length,
+                                              serial->parent.open_flag & (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
+        if (transmit_size <= 0)
+        {
+            rt_atomic_flag_clear(&tx_fifo->activated);
+        }
         break;
     }
 
 #ifdef RT_SERIAL_USING_DMA
     case RT_SERIAL_EVENT_TX_DMADONE: {
         struct rt_serial_tx_fifo *tx_fifo;
-        rt_size_t                 tx_length = 0;
-        tx_fifo                             = (struct rt_serial_tx_fifo *)serial->serial_tx;
+        rt_size_t                 tx_length;
+        rt_ssize_t                transmit_size;
+        tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
-        if ((serial->parent.open_flag & RT_SERIAL_TX_BLOCKING) != RT_SERIAL_TX_BLOCKING || rt_ringbuffer_get_size(&tx_fifo->rb) != 0)
+        /* nonblock */
+        if ((serial->parent.open_flag & RT_SERIAL_TX_BLOCKING) != RT_SERIAL_TX_BLOCKING)
         {
-            // 每次进来中断就说明之前的put_size已经被发送完毕了
+            /* Each interruption upon entry indicates that the previous `put_size` has already been sent completely */
             rt_serial_update_read_index(&tx_fifo->rb, tx_fifo->put_size);
 
             /* Get the length of the data from the ringbuffer */
@@ -2076,15 +2129,19 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                  * then call the transmit interface for transmission again */
                 rt_atomic_flag_test_and_set(&tx_fifo->activated);
 
-                rt_uint8_t *put_ptr = RT_NULL;
+                rt_uint8_t *put_ptr;
                 /* Get the linear length buffer from ringbuffer */
                 tx_fifo->put_size = rt_serial_get_linear_buffer(&tx_fifo->rb, &put_ptr);
 
                 /* Call the transmit interface for transmission again */
-                serial->ops->transmit(serial,
-                                      put_ptr,
-                                      tx_fifo->put_size,
-                                      RT_SERIAL_TX_NON_BLOCKING);
+                transmit_size = serial->ops->transmit(serial,
+                                                      put_ptr,
+                                                      tx_fifo->put_size,
+                                                      RT_SERIAL_TX_NON_BLOCKING);
+                if (transmit_size <= 0)
+                {
+                    rt_atomic_flag_clear(&tx_fifo->activated);
+                }
                 break;
             }
         }

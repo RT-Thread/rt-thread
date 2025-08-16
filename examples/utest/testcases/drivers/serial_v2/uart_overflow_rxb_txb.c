@@ -70,7 +70,7 @@ static void uart_rec_entry(void *parameter)
     rt_uint8_t *uart_write_buffer;
     rt_int32_t  cnt, i;
     rev_len           = *(rt_uint32_t *)parameter;
-    uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (rev_len + 1));
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(rev_len + 1);
 
     while (1)
     {

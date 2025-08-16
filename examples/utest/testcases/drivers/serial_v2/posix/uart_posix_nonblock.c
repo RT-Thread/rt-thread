@@ -108,7 +108,7 @@ static rt_err_t uart_api()
         goto __exit;
     }
 
-    uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * 100);
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(100);
 
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)
     {
