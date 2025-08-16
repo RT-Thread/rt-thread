@@ -1,0 +1,24 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../../..
+
+PKGS_DIR := packages
+
+config BOARD_IMX91
+    bool
+    select ARCH_ARM_CORTEX_A55
+    select RT_USING_GIC_V2
+    default y
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+
+source "$(BSP_DIR)/drivers/Kconfig"
+
+config SOC_MIMX91X1D
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
