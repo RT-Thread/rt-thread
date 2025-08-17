@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,7 +33,7 @@
 #define RTC_INSTANCE_ID (2)
 #endif
 
-#define TICK_FREQUENCE_HZ        (RT_TICK_PER_SECOND)     // RTC tick frequence, in HZ
+#define TICK_FREQUENCE_HZ        (RT_TICK_PER_SECOND)     /* RTC tick frequence, in HZ */
 
 static struct rt_rtc_device rtc;
 static time_t init_time;
@@ -62,7 +62,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
     nrf_clock_lf_src_set(NRF_CLOCK, (nrf_clock_lfclk_t)NRFX_CLOCK_CONFIG_LF_SRC);
     nrfx_clock_lfclk_start();
 
-    //Initialize RTC instance
+    /* Initialize RTC instance */
     nrfx_rtc_config_t config = NRFX_RTC_DEFAULT_CONFIG;
     config.prescaler = RTC_PRESCALER;
 
@@ -70,7 +70,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 
     nrfx_rtc_tick_enable(&rtc_instance, true);
 
-    //Power on RTC instance
+    /* Power on RTC instance */
     nrfx_rtc_enable(&rtc_instance);
 
     return RT_EOK;
