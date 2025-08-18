@@ -13,6 +13,7 @@
 
 #include "rtconfig.h"
 #include "mem_layout.h"
+#include "irq_num.h"
 
 /*
  * K230 Memory Map
