@@ -22,12 +22,12 @@ EV_F460_LQ100_V2 是 XHSC 官方推出的开发板，搭载 HC32F460PETB 芯片�
 
 EV_F460_LQ100_V2 开发板常用 **板载资源** 如下：
 
-- MCU: HC32F460PETB，主频200MHz，512KB FLASH，192KB RAM
+- MCU：HC32F460PETB，主频200MHz，512KB FLASH，192KB RAM
 - 常用外设
-  - LED: 4 个，User LED(LED0，LED1，LED2，LED3)。
-  - 按键: 11 个，矩阵键盘(K1~K9), WAKEUP(K10), RESET(K11)
-- 常用接口: USB转串口、SD卡接口、USB FS、3.5mm耳机接口、Line in接口、喇叭接口
-- 调试接口: 板载DAP调试器、标准JTAG/SWD
+  - LED：4 个，User LED(LED0、LED1、LED2、LED3)。
+  - 按键：11 个，矩阵键盘(K1~K9)、WAKEUP(K10)、RESET(K11)
+- 常用接口：SD卡接口、USB FS接口、3.5mm耳机接口、Line in接口、CAN接口。
+- 调试接口：板载DAP调试器（含USB转串口）、标准JTAG/SWD。
 
 开发板更多详细信息请参考小华半导体半导体[EV_F460_LQ100_V2](https://www.xhsc.com.cn)
 
@@ -35,30 +35,43 @@ EV_F460_LQ100_V2 开发板常用 **板载资源** 如下：
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注**   |
-|:-------- |:--------:|:--------:|
-| USB 转串口  | 支持       | 使用 UART4 |
-| LED      | 支持       | LED      |
+| **板载外设**  | **支持情况**  |               **备注**                |
+| :------------ | :-----------: | :-----------------------------------: |
+| USB 转串口    |     支持      |           使用 UART4                  |
 
-| **片上外设** | **支持情况** | **备注**                              |
-|:-------- |:--------:|:-----------------------------------:|
-| ADC      | 支持       | ADC1~2                              |
-| CAN      | 支持       | CAN1                                |
-| GPIO     | 支持       | PA0, PA1... PH2 ---> PIN: 0, 1...82 |
-| I2C      | 支持       | 软件                                  |
-| UART     | 支持       | UART1~4                             |
+| **片上外设**  | **支持情况**  |               **备注**                |
+| :------------ | :-----------: | :-----------------------------------: |
+| ADC           |     支持      |                                       |
+| CAN           |     支持      |                                       |
+| Crypto        |     支持      | CRC，HASH，RNG                        |
+| FLASH         |     支持      |                                       |
+| GPIO          |     支持      | PA0，PA1... PH2 ---> PIN：0，1...82   |
+| HwTimer       |     支持      |                                       |
+| I2C           |     支持      | 软件、硬件 I2C                        |
+| InputCapture  |     支持      |                                       |
+| PM            |     支持      |                                       |
+| PulseEncoder  |     支持      |                                       |
+| PWM           |     支持      |                                       |
+| QSPI          |     支持      |                                       |
+| RTC           |     支持      | 闹钟精度为1分钟                       |
+| SDIO          |     支持      |                                       |
+| SPI           |     支持      |                                       |
+| UART V1 & V2  |     支持      |                                       |
+| USB           |     支持      | USBFS Core， device/host模式          |
+| WDT           |     支持      |                                       |
 
 ## 使用说明
 
 使用说明分为如下两个章节：
 
 - 快速上手
-  
+
     本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
 
 - 进阶使用
-  
+
     本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+
 
 ### 快速上手
 
@@ -83,7 +96,7 @@ USB虚拟COM端口默认连接串口4，在终端工具里打开相应的串口�
 ```
  \ | /
 - RT -     Thread Operating System
- / | \     4.1.1 build May 25 2022 08:55:55
+ / | \     4.1.0 build Apr 24 2022 13:32:39
  2006 - 2022 Copyright by RT-Thread team
 msh >
 ```
@@ -102,11 +115,14 @@ msh >
 
 ## 注意事项
 
-| 板载外设 | 模式   | 注意事项                                                     |
-| -------- | ------ | ------------------------------------------------------------ |
-| USB      | device | 由于RTT抽象层的设计，当配置为CDC设备时，打开USB虚拟串口，需使能流控的DTR信号。（如使用SSCOM串口助手打开USB虚拟串口时，勾选DTR选框） |
-| USB      | host   | 若配置为U盘主机模式，出现部分U盘无法识别或者写入失败时，可以尝试将RTT抽象层中rt_udisk_run()函数的rt_usbh_storage_reset()操作注释掉，测试是否可以获得更好的兼容性。 |
-| USB      | host   | 目前仅实现并测试了对U盘的支持。                              |
+| 板载外设 | 模式   |     协议栈     | 注意事项                                                     |
+| -------- | ------ | :------------: | ------------------------------------------------------------ |
+| USB      | device |      ALL       | 由于协议栈的设计，当配置为CDC设备时，打开USB虚拟串口，需使能流控的DTR信号。（如使用SSCOM串口助手打开USB虚拟串口时，勾选DTR选框） |
+| USB      | host   | RTT legacy USB | 若配置为U盘主机模式，出现部分U盘无法识别或者写入失败时，可以尝试将RTT抽象层中rt_udisk_run()函数的rt_usbh_storage_reset()操作注释掉，测试是否可以获得更好的兼容性。 |
+| USB      | host   | RTT legacy USB | 目前仅实现并测试了对U盘的支持。                              |
+| USB      | ALL    |      ALL       | CherryUSB 与 RTT legacy USB 组件不可同时使用;<br />CherryUSB与 ”On-Chip Peripheral Driver---> []Enable USB“ 不可同时使能及配置。 |
+| USB      | ALL    | RTT legacy USB | 通过“board/config/usb_config/usb_app_conf.h” 进行应用个性化配置（主要为FIFO分配） |
+| USB      | ALL    |   CherryUSB    | 通过“board/ports/usb_config.h”进行应用个性化配置（如FIFO分配、是否使用DMA[Device]等） |
 
 ## 联系人信息
 

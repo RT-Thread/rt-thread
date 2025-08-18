@@ -369,17 +369,11 @@ extern "C" {
 #if defined(BSP_USING_MCAN1)
 #define BSP_MCAN1_INT0_IRQ_NUM          INT124_IRQn
 #define BSP_MCAN1_INT0_IRQ_PRIO         DDL_IRQ_PRIO_DEFAULT
-
-#define BSP_MCAN1_INT1_IRQ_NUM          INT125_IRQn
-#define BSP_MCAN1_INT1_IRQ_PRIO         DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_MCAN1 */
 
 #if defined(BSP_USING_MCAN2)
 #define BSP_MCAN2_INT0_IRQ_NUM          INT126_IRQn
 #define BSP_MCAN2_INT0_IRQ_PRIO         DDL_IRQ_PRIO_DEFAULT
-
-#define BSP_MCAN2_INT1_IRQ_NUM          INT127_IRQn
-#define BSP_MCAN2_INT1_IRQ_PRIO         DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_MCAN2 */
 
 #if defined(BSP_USING_SDIO1)
@@ -398,12 +392,12 @@ extern "C" {
 #endif/* RT_USING_ALARM */
 
 
-#if defined(BSP_USING_USBFS)
+#if defined(BSP_USING_USBFS) || defined(RT_USING_CHERRYUSB)
 #define BSP_USBFS_GLB_IRQ_NUM           INT003_IRQn
 #define BSP_USBFS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_USBFS */
 
-#if defined(BSP_USING_USBHS)
+#if defined(BSP_USING_USBHS) || defined(RT_USING_CHERRYUSB)
 #define BSP_USBHS_GLB_IRQ_NUM           INT000_IRQn
 #define BSP_USBHS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_USBHS */

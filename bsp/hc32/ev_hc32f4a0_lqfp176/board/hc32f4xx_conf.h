@@ -144,44 +144,14 @@ extern "C"
 #define ETH_MAC_ADDR4                               (0x00U)
 #define ETH_MAC_ADDR5                               (0x00U)
 
-/* Common PHY Registers */
-#define PHY_BCR                                     (0x00U)     /*!< Basic Control Register               */
-#define PHY_BSR                                     (0x01U)     /*!< Basic Status Register                */
-
-#define PHY_SOFT_RESET                              (0x8000U)   /*!< PHY Soft Reset                       */
-#define PHY_LOOPBACK                                (0x4000U)   /*!< Select loop-back mode                */
-#define PHY_FULLDUPLEX_100M                         (0x2100U)   /*!< Set the full-duplex mode at 100 Mb/s */
-#define PHY_HALFDUPLEX_100M                         (0x2000U)   /*!< Set the half-duplex mode at 100 Mb/s */
-#define PHY_FULLDUPLEX_10M                          (0x0100U)   /*!< Set the full-duplex mode at 10 Mb/s  */
-#define PHY_HALFDUPLEX_10M                          (0x0000U)   /*!< Set the half-duplex mode at 10 Mb/s  */
-#define PHY_AUTONEGOTIATION                         (0x1000U)   /*!< Enable auto-negotiation function     */
-#define PHY_POWERDOWN                               (0x0800U)   /*!< Select the power down mode           */
-#define PHY_ISOLATE                                 (0x0400U)   /*!< Isolate PHY from MII                 */
-#define PHY_RESTART_AUTONEGOTIATION                 (0x0200U)   /*!< Restart auto-negotiation function    */
-
-#define PHY_100BASE_TX_FD                           (0x4000U)   /*!< 100Base-TX full duplex support       */
-#define PHY_100BASE_TX_HD                           (0x2000U)   /*!< 100Base-TX half duplex support       */
-#define PHY_10BASE_T_FD                             (0x1000U)   /*!< 10Base-T full duplex support         */
-#define PHY_10BASE_T_HD                             (0x0800U)   /*!< 10Base-T half duplex support         */
-#define PHY_AUTONEGO_COMPLETE                       (0x0020U)   /*!< Auto-Negotiation process completed   */
-#define PHY_LINK_STATUS                             (0x0004U)   /*!< Valid link established               */
-#define PHY_JABBER_DETECTION                        (0x0002U)   /*!< Jabber condition detected            */
-
 #if defined (ETH_PHY_USING_RTL8201F)
 /* PHY(RTL8201F) Address*/
-#define ETH_PHY_ADDR                                (0x00U)
-
-/* PHY Configuration delay(ms) */
-#define ETH_PHY_RST_DELAY                           (0x0080UL)
-#define ETH_PHY_CONFIG_DELAY                        (0x0800UL)
-#define ETH_PHY_RD_TIMEOUT                          (0x0005UL)
-#define ETH_PHY_WR_TIMEOUT                          (0x0005UL)
+#define ETH_PHY_ADDR                                (0x01U)
 
 /* PHY Status Register */
-#define PHY_SR                                      (PHY_BCR)   /*!< PHY status register            */
-
-#define PHY_DUPLEX_STATUS                           (PHY_FULLDUPLEX_10M)    /*!< PHY Duplex mask    */
-#define PHY_SPEED_STATUS                            (PHY_HALFDUPLEX_100M)   /*!< PHY Speed mask     */
+#define PHY_SR                                      (0x00U)     /*!< PHY status register */
+#define PHY_DUPLEX_STATUS                           (0x0100U)   /*!< PHY Duplex mask     */
+#define PHY_SPEED_STATUS                            (0x2000U)   /*!< PHY Speed mask      */
 
 #endif
 

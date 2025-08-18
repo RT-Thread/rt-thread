@@ -30,11 +30,6 @@ menu "Onboard Peripheral Drivers"
         bool "Enable SPI FLASH (w25q64 spi1)"
         select BSP_USING_SPI
         select BSP_USING_SPI1
-        select BSP_USING_ON_CHIP_FLASH
-        select RT_USING_SFUD
-        select RT_USING_DFS
-        select RT_USING_FAL
-        select RT_USING_MTD_NOR
         default n
 
 endmenu
@@ -198,11 +193,11 @@ menu "On-chip Peripheral Drivers"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 scl pin number"
                         range 1 68
-                        default 22
+                        default 22      # PB6
                     config BSP_I2C1_SDA_PIN
                         int "I2C1 sda pin number"
                         range 1 68
-                        default 23
+                        default 23      # PB7
                 endif
         endif
 
@@ -262,36 +257,6 @@ menu "On-chip Peripheral Drivers"
                         select BSP_SPI1_TX_USING_DMA
                         default n
                 endif
-
-            menuconfig BSP_USING_SPI2
-                bool "Enable SPI2 BUS"
-                default n
-                if BSP_USING_SPI2
-                    config BSP_SPI2_TX_USING_DMA
-                        bool "Enable SPI2 TX DMA"
-                        select BSP_SPI_USING_DMA
-                        default n
-                    config BSP_SPI2_RX_USING_DMA
-                        bool "Enable SPI2 RX DMA"
-                        select BSP_SPI_USING_DMA
-                        select BSP_SPI2_TX_USING_DMA
-                        default n
-                endif
-
-            menuconfig BSP_USING_SPI3
-                bool "Enable SPI3 BUS"
-                default n
-                if BSP_USING_SPI3
-                    config BSP_SPI3_TX_USING_DMA
-                        bool "Enable SPI3 TX DMA"
-                        select BSP_SPI_USING_DMA
-                        default n
-                    config BSP_SPI3_RX_USING_DMA
-                        bool "Enable SPI3 RX DMA"
-                        select BSP_SPI_USING_DMA
-                        select BSP_SPI3_TX_USING_DMA
-                        default n
-                endif
         endif
 
     menuconfig BSP_USING_ADC
@@ -333,6 +298,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_DAC1
                 bool "using dac1"
                 default n
+            config BSP_USING_DAC2
+                bool "using dac2"
+                default n
         endif
 
     menuconfig BSP_USING_MCAN
@@ -361,7 +329,7 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_SWDT
                     bool "SWDT(3.72hour(max))"
                 config BSP_USING_WDT
-                    bool "WDT(10.7s(max))"
+                    bool "WDT(8.9s(max))"
             endchoice
 
             config BSP_WDT_CONTINUE_COUNT
@@ -383,9 +351,6 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_RTC_USING_LRC
                     bool "RTC Using LRC"
-
-                config BSP_RTC_USING_XTAL_DIV
-                    bool "RTC Using XTAL Division"
             endchoice
         endif
 
@@ -479,16 +444,11 @@ menu "On-chip Peripheral Drivers"
                             config BSP_USING_PWM_TMRA_1_CH2
                                 bool "Enable timerA-1 channel2"
                                 default n
-                        endif
-                    menuconfig BSP_USING_PWM_TMRA_2
-                        bool "Enable timerA-2 output PWM"
-                        default n
-                        if BSP_USING_PWM_TMRA_2
-                            config BSP_USING_PWM_TMRA_2_CH1
-                                bool "Enable timerA-2 channel1"
+                            config BSP_USING_PWM_TMRA_1_CH3
+                                bool "Enable timerA-1 channel3"
                                 default n
-                            config BSP_USING_PWM_TMRA_2_CH2
-                                bool "Enable timerA-2 channel2"
+                            config BSP_USING_PWM_TMRA_1_CH4
+                                bool "Enable timerA-1 channel4"
                                 default n
                         endif
                 endif
@@ -517,6 +477,12 @@ menu "On-chip Peripheral Drivers"
                                 default n
                             config BSP_USING_PWM_TMR4_1_OWL
                                 bool "Enable TMR4_1_OWL channel5"
+                                default n
+                            config BSP_USING_PWM_TMR4_1_OXH
+                                bool "Enable TMR4_1_OXH channel6"
+                                default n
+                            config BSP_USING_PWM_TMR4_1_OXL
+                                bool "Enable TMR4_1_OXL channel7"
                                 default n
                         endif
                 endif
@@ -600,14 +566,6 @@ menu "On-chip Peripheral Drivers"
                         bool "unit 3"
                     config BSP_USING_INPUT_CAPTURE_TMR6_4
                         bool "unit 4"
-                    config BSP_USING_INPUT_CAPTURE_TMR6_5
-                        bool "unit 5"
-                    config BSP_USING_INPUT_CAPTURE_TMR6_6
-                        bool "unit 6"
-                    config BSP_USING_INPUT_CAPTURE_TMR6_7
-                        bool "unit 7"
-                    config BSP_USING_INPUT_CAPTURE_TMR6_8
-                        bool "unit 8"
                 endif
         endif
 endmenu
