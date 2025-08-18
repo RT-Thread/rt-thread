@@ -17,7 +17,7 @@
 #define UART_DEFAULT_BAUDRATE       115200
 #define UART_CLK                    50000000
 #define UART_ADDR UART0_BASE_ADDR
-#define UART_IRQ 0x10
+#define UART_IRQ K230_IRQ_UART0
 
 
 #define UART_RBR (0x00)       /* receive buffer register */
