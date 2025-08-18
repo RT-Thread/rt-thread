@@ -33,6 +33,7 @@
 #define DRV_PDMA_H_
 
 #include <rtdef.h>
+#include "board.h"
 
 /**
  * @brief PDMA channel enumeration
@@ -71,20 +72,17 @@ typedef enum pdma_ch {
 /* Combined interrupt masks */
 #define PDMA_ALL_INTS       (PDMA_PDONE_INT | PDMA_PITEM_INT | PDMA_PPAUSE_INT | PDMA_PTOUT_INT) /**< All PDMA interrupts mask */
 
-#define PDMA_IRQ_OFFSET         16
-
 /**
  * @brief PDMA channel interrupt numbers
- * @note These values equal (manual_specified_IRQ + PDMA_IRQ_OFFSET)
  */
-#define PDMA_CHANNEL0_IRQn     (123 + PDMA_IRQ_OFFSET)  /**< Channel 0 IRQ number */
-#define PDMA_CHANNEL1_IRQn     (180 + PDMA_IRQ_OFFSET)  /**< Channel 1 IRQ number */
-#define PDMA_CHANNEL2_IRQn     (181 + PDMA_IRQ_OFFSET)  /**< Channel 2 IRQ number */
-#define PDMA_CHANNEL3_IRQn     (182 + PDMA_IRQ_OFFSET)  /**< Channel 3 IRQ number */
-#define PDMA_CHANNEL4_IRQn     (183 + PDMA_IRQ_OFFSET)  /**< Channel 4 IRQ number */
-#define PDMA_CHANNEL5_IRQn     (184 + PDMA_IRQ_OFFSET)  /**< Channel 5 IRQ number */
-#define PDMA_CHANNEL6_IRQn     (185 + PDMA_IRQ_OFFSET)  /**< Channel 6 IRQ number */
-#define PDMA_CHANNEL7_IRQn     (186 + PDMA_IRQ_OFFSET)  /**< Channel 7 IRQ number */
+#define PDMA_CHANNEL0_IRQn     K230_IRQ_PDMA           /**< Channel 0 IRQ number */
+#define PDMA_CHANNEL1_IRQn     K230_IRQ_PDMA_CHANNEL1  /**< Channel 1 IRQ number */
+#define PDMA_CHANNEL2_IRQn     K230_IRQ_PDMA_CHANNEL2  /**< Channel 2 IRQ number */
+#define PDMA_CHANNEL3_IRQn     K230_IRQ_PDMA_CHANNEL3  /**< Channel 3 IRQ number */
+#define PDMA_CHANNEL4_IRQn     K230_IRQ_PDMA_CHANNEL4  /**< Channel 4 IRQ number */
+#define PDMA_CHANNEL5_IRQn     K230_IRQ_PDMA_CHANNEL5  /**< Channel 5 IRQ number */
+#define PDMA_CHANNEL6_IRQn     K230_IRQ_PDMA_CHANNEL6  /**< Channel 6 IRQ number */
+#define PDMA_CHANNEL7_IRQn     K230_IRQ_PDMA_CHANNEL7  /**< Channel 7 IRQ number */
 
 /**
  * @brief PDMA channel state enumeration

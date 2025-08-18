@@ -32,7 +32,7 @@
 #include "board.h"
 #include "drv_pdma.h"
 
-#define UART0_IRQ 0x10
+#define UART0_IRQ K230_IRQ_UART0
 
 #define CACHE_LINE_SIZE 64
 
