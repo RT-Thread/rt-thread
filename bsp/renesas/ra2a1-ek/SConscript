@@ -19,7 +19,7 @@ elif rtconfig.PLATFORM in ['gcc', 'armclang']:
 if rtconfig.PLATFORM in ['armclang']:
     CPPPATH = [cwd + '/script/bsp_link/Keil']
 elif rtconfig.PLATFORM in ['gcc']:
-    CPPPATH = [cwd + 'script/bsp_link/GCC']
+    CPPPATH = [cwd + '/script/bsp_link/GCC']
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 for d in list:
     path = os.path.join(cwd, d)

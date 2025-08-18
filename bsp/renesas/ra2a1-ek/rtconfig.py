@@ -4,7 +4,7 @@ import sys
 # toolchains options
 ARCH='arm'
 CPU='cortex-m23'
-CROSS_TOOL='gcc'
+CROSS_TOOL='keil'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
@@ -14,13 +14,13 @@ if os.getenv('RTT_ROOT'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'D:/Renesas/FSP/toolchains/gcc_arm/13.2.rel1/bin'
+    EXEC_PATH   = r'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armclang'
     EXEC_PATH   = r'C:/Keil_v5'
-elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iccarm'
-    EXEC_PATH   = r'C:/Program Files/IAR Systems/Embedded Workbench 8.0'
+
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug' 
 # BUILD = 'release' 

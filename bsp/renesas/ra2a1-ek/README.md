@@ -144,9 +144,11 @@ void hal_entry(void)
 
 1.需要下载 [e² studio](https://www.renesas.cn/zh/software-tool/e-studio) 集成开发环境，使用目录下的GCC工具链`toolchains\gcc_arm\13.2.rel1\bin`
 
-2.修改`rtconfig.py`中的工具链路径
+2.设置env中的工具链路径
 
-![PixPin_2025-08-17_23-43-47](docs/picture/PixPin_2025-08-17_23-43-47.png)
+```bash
+ set RTT_EXEC_PATH=<you_e2stdio_path>\toolchains\gcc_arm\13.2.rel1\bin
+```
 
 3.fsp的使用，打开当前目录下的`configuration.xml`
 
