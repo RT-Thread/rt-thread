@@ -41,7 +41,7 @@ SECTIONS
 
     }> FLASH
     /***** DATA_FLASH memory section allocations ******/
-    .data_flash.startof (READONLY) :
+    .data_flash.startof :
     {
         __ddsc_DATA_FLASH_START = .;
 
@@ -69,7 +69,7 @@ SECTIONS
         __ram_from_data_flash$$Limit = .;
     }> RAM AT > DATA_FLASH
 
-    __data_flash_readonly$$ (READONLY) :
+    __data_flash_readonly$$  :
     {
         __data_flash_readonly$$Base = .;
         /* section.data_flash.readonly */
@@ -85,20 +85,21 @@ SECTIONS
         *(.data_flash_noinit)
         __data_flash_noinit$$Limit = .;
     }> DATA_FLASH
-    .data_flash.endof ALIGN(.,512) (READONLY) :
+
+     .data_flash.endof    :
     {
+        . = ALIGN(512);
         __ddsc_DATA_FLASH_END = .;
 
     }> DATA_FLASH
-
     /***** FLASH memory section allocations ******/
-    .flash.startof (READONLY) :
+    .flash.startof   :
     {
         __ddsc_FLASH_START = .;
 
     }> FLASH_GAP
     /* MCU vector table */
-    __flash_vectors$$ (READONLY) :
+    __flash_vectors$$   :
     {
         __flash_vectors$$Base = .; _VECTORS = .;
         KEEP(*(.fixed_vectors))
@@ -106,7 +107,7 @@ SECTIONS
         __flash_vectors$$Limit = .;
     }> FLASH_GAP
     /* Sections that can be used to fill flash gap */
-    __flash_readonly_gap$$ (READONLY) :
+    __flash_readonly_gap$$   :
     {
         __flash_readonly_gap$$Base = .;
         /* section.flash.readonly_gap */
@@ -173,7 +174,7 @@ SECTIONS
 
     }> RAM
 
-    __flash_readonly$$ (READONLY) :
+    __flash_readonly$$   :
     {
         __flash_readonly$$Base = .;
         /* section.flash.readonly */
@@ -186,7 +187,7 @@ SECTIONS
         KEEP(*(.version))
         __flash_readonly$$Limit = .;
     }> FLASH
-    __flash_ctor$$ (READONLY) :
+    __flash_ctor$$   :
     {
 
         *crtbegin.o(.ctors)
@@ -201,27 +202,27 @@ SECTIONS
         *(.dtors)
 
     }> FLASH
-    __flash_preinit_array$$ (READONLY) :
+    __flash_preinit_array$$   :
     {
         __preinit_array_start = .;
         KEEP(*(.preinit_array))
         __preinit_array_end = .;
     }> FLASH
-    __flash_.got$$ (READONLY) :
+    __flash_.got$$   :
     {
 
         *(.got.plt)
         *(.got)
 
     }> FLASH
-    __flash_init_array$$ (READONLY) :
+    __flash_init_array$$   :
     {
         __init_array_start = .;
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
         __init_array_end = .;
     }> FLASH
-    __flash_fini_array$$ (READONLY) :
+    __flash_fini_array$$   :
     {
         __fini_array_start = .;
         KEEP(*(SORT(.fini_array.*)))
@@ -229,7 +230,7 @@ SECTIONS
         __fini_array_end = .;
     }> FLASH
     /* Discard exception tables */
-    /DISCARD/ (READONLY) :
+    /DISCARD/   :
     {
 
         *(.ARM.extab*)
@@ -239,88 +240,89 @@ SECTIONS
 
     }> FLASH
     /* Dummy section to hold required exidx labels */
-    __flash_arm.exidx$$ (READONLY) :
+    __flash_arm.exidx$$   :
     {
         __exidx_start = .;
         __exidx_end = .;
     }> FLASH
-    .flash.endof ALIGN(.,512) (READONLY) :
+
+    .flash.endof   :
     {
+        . = ALIGN(512);
         __ddsc_FLASH_END = .;
 
     }> FLASH
-
     /***** OPTION_SETTING_OFS0 memory section allocations ******/
-    .option_setting_ofs0.startof (READONLY) :
+    .option_setting_ofs0.startof   :
     {
         __ddsc_OPTION_SETTING_OFS0_START = .;
 
     }> OPTION_SETTING_OFS0
     /* Option Function Select Register 0 */
-    __option_setting_ofs0_reg$$ (READONLY) :
+    __option_setting_ofs0_reg$$   :
     {
         __option_setting_ofs0_reg$$Base = .;
         KEEP(*(.option_setting_ofs0))
         __option_setting_ofs0_reg$$Limit = .;
     }> OPTION_SETTING_OFS0
-    .option_setting_ofs0.endof (READONLY) :
+    .option_setting_ofs0.endof   :
     {
         __ddsc_OPTION_SETTING_OFS0_END = .;
 
     }> OPTION_SETTING_OFS0
 
     /***** OPTION_SETTING_OFS1 memory section allocations ******/
-    .option_setting_ofs1.startof (READONLY) :
+    .option_setting_ofs1.startof   :
     {
         __ddsc_OPTION_SETTING_OFS1_START = .;
 
     }> OPTION_SETTING_OFS1
     /* Option Function Select Register 1 */
-    __option_setting_ofs1_reg$$ (READONLY) :
+    __option_setting_ofs1_reg$$   :
     {
         __option_setting_ofs1_reg$$Base = .;
         KEEP(*(.option_setting_ofs1))
         __option_setting_ofs1_reg$$Limit = .;
     }> OPTION_SETTING_OFS1
-    .option_setting_ofs1.endof (READONLY) :
+    .option_setting_ofs1.endof   :
     {
         __ddsc_OPTION_SETTING_OFS1_END = .;
 
     }> OPTION_SETTING_OFS1
 
     /***** OPTION_SETTING_SECMPU memory section allocations ******/
-    .option_setting_secmpu.startof (READONLY) :
+    .option_setting_secmpu.startof   :
     {
         __ddsc_OPTION_SETTING_SECMPU_START = .;
 
     }> OPTION_SETTING_SECMPU
     /* Security MPU Registers */
-    __option_setting_secmpu_reg$$ (READONLY) :
+    __option_setting_secmpu_reg$$   :
     {
         __option_setting_secmpu_reg$$Base = .;
         KEEP(*(.option_setting_secmpu))
         __option_setting_secmpu_reg$$Limit = .;
     }> OPTION_SETTING_SECMPU
-    .option_setting_secmpu.endof (READONLY) :
+    .option_setting_secmpu.endof   :
     {
         __ddsc_OPTION_SETTING_SECMPU_END = .;
 
     }> OPTION_SETTING_SECMPU
 
     /***** OPTION_SETTING_OSIS memory section allocations ******/
-    .option_setting_osis.startof (READONLY) :
+    .option_setting_osis.startof   :
     {
         __ddsc_OPTION_SETTING_OSIS_START = .;
 
     }> OPTION_SETTING_OSIS
     /* OCD/Serial Programmer ID setting register */
-    __option_setting_osis_reg$$ (READONLY) :
+    __option_setting_osis_reg$$   :
     {
         __option_setting_osis_reg$$Base = .;
         KEEP(*(.option_setting_osis))
         __option_setting_osis_reg$$Limit = .;
     }> OPTION_SETTING_OSIS
-    .option_setting_osis.endof (READONLY) :
+    .option_setting_osis.endof   :
     {
         __ddsc_OPTION_SETTING_OSIS_END = .;
 
