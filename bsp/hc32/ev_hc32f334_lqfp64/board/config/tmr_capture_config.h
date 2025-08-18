@@ -39,7 +39,7 @@ extern "C" {
     .name = IC2_NAME,                                                           \
     .ch = TMR6_CH_A,                                                            \
     .clk_div = TMR6_CLK_DIV32,                                                  \
-    .first_edge = TMR6_CAPT_COND_TRIGB_RISING,                                  \
+    .first_edge = TMR6_CAPT_COND_PWMA_RISING,                                  \
     .irq_num_cap = BSP_INPUT_CAPTURE_TMR6_2_CAP_IRQ_NUM,                        \
     .irq_prio_cap = BSP_INPUT_CAPTURE_TMR6_2_CAP_IRQ_PRIO,                      \
     .irq_num_ovf = BSP_INPUT_CAPTURE_TMR6_2_OVF_IRQ_NUM,                        \
@@ -54,11 +54,26 @@ extern "C" {
     .name = IC3_NAME,                                                           \
     .ch = TMR6_CH_B,                                                            \
     .clk_div = TMR6_CLK_DIV16,                                                  \
-    .first_edge = TMR6_CAPT_COND_TRIGC_FALLING,                                 \
+    .first_edge = TMR6_CAPT_COND_TRIGD_RISING,                                 \
     .irq_num_cap = BSP_INPUT_CAPTURE_TMR6_3_CAP_IRQ_NUM,                        \
     .irq_prio_cap = BSP_INPUT_CAPTURE_TMR6_3_CAP_IRQ_PRIO,                      \
     .irq_num_ovf = BSP_INPUT_CAPTURE_TMR6_3_OVF_IRQ_NUM,                        \
     .irq_prio_ovf = BSP_INPUT_CAPTURE_TMR6_3_OVF_IRQ_PRIO,                      \
+}
+#endif
+
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_4)
+#define IC4_NAME "ic4"
+#define INPUT_CAPTURE_CFG_TMR6_4                                                \
+{                                                                               \
+    .name = IC4_NAME,                                                           \
+    .ch = TMR6_CH_B,                                                            \
+    .clk_div = TMR6_CLK_DIV16,                                                  \
+    .first_edge = TMR6_CAPT_COND_PWMA_RISING,                                 \
+    .irq_num_cap = BSP_INPUT_CAPTURE_TMR6_4_CAP_IRQ_NUM,                        \
+    .irq_prio_cap = BSP_INPUT_CAPTURE_TMR6_4_CAP_IRQ_PRIO,                      \
+    .irq_num_ovf = BSP_INPUT_CAPTURE_TMR6_4_OVF_IRQ_NUM,                        \
+    .irq_prio_ovf = BSP_INPUT_CAPTURE_TMR6_4_OVF_IRQ_PRIO,                      \
 }
 #endif
 

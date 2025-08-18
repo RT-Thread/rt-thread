@@ -41,6 +41,10 @@
     #define ADC1_CH_MAX                 (16U)
     #define ADC2_CH_MAX                 (8U)
     #define ADC3_CH_MAX                 (12U)
+#elif defined (HC32F334)
+    #define ADC1_CH_MAX                 (16U)
+    #define ADC2_CH_MAX                 (12U)
+    #define ADC3_CH_MAX                 (10U)
 #endif
 
 
@@ -55,7 +59,7 @@ rt_err_t adc_dma_trig_config(void)
 {
     stc_tmr0_init_t stcTmr0Init;
 
-#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8)
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || defined (HC32F334)
     FCG_Fcg2PeriphClockCmd(FCG2_PERIPH_TMR0_1, ENABLE);
 #endif
     (void)TMR0_StructInit(&stcTmr0Init);
@@ -101,7 +105,7 @@ static int adc_vol_sample(int argc, char **argv)
             rt_strcpy(adc_device, "adc2");
             adc_max_channel = ADC2_CH_MAX;
         }
-#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8)
+#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
         else if (0 == rt_strcmp(argv[1], "adc3"))
         {
             rt_strcpy(adc_device, "adc3");
