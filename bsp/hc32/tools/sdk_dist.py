@@ -13,8 +13,9 @@ def dist_do_building(BSP_ROOT, dist_dir):
     print("=> copy hc32 bsp library")
     library_dir = os.path.join(dist_dir, 'libraries')
     library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
-    bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE),
-                   os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
+    if rtconfig.BSP_LIBRARY_TYPE is not None:
+        bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE),
+                    os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
 
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'hc32_drivers'), os.path.join(library_dir, 'hc32_drivers'))

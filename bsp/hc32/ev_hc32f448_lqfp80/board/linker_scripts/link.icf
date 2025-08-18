@@ -75,9 +75,9 @@ define symbol __ICFEDIT_region_ERAM3_start__ = 0x0;
 define symbol __ICFEDIT_region_ERAM3_end__   = 0x0;
 
 /*-Sizes-*/
-define symbol __ICFEDIT_size_cstack__ = 0xC00;
+define symbol __ICFEDIT_size_cstack__     = 0x800;
 define symbol __ICFEDIT_size_proc_stack__ = 0x0;
-define symbol __ICFEDIT_size_heap__   = 0x400;
+define symbol __ICFEDIT_size_heap__       = 0x0;
 /**** End of ICF editor section. ###ICF###*/
 
 /*******************************************************************************

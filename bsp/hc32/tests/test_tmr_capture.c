@@ -10,14 +10,13 @@
 
 /*
 * 功能
-*   展示捕获单元 ic1、ic2、ic3 的捕获输入功能
+*   展示捕获单元 icx (x=1~IC_DEV_CNT) 的捕获输入功能
 *   当捕获单元捕获到设定数量（watermark）的数据(电平宽度-单位为us)后，终端将输出这些已捕获的数据
 *
 * 默认配置
 *   input pin：
-*       ic1: INPUT_CAPTURE_TMR6_1_PORT, INPUT_CAPTURE_TMR6_1_PIN
-*       ic2: INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN
-*       ic3: INPUT_CAPTURE_TMR6_3_PORT, INPUT_CAPTURE_TMR6_3_PIN
+*       icx: INPUT_CAPTURE_TMR6_x_PORT, INPUT_CAPTURE_TMR6_x_PIN (x=1~IC_DEV_CNT)
+        注：该引脚配置位于 board_config.h，若测试单元的input pin未配置，需测试人员自行添加
 *   watermark：
 *       默认值为 5
 *
@@ -63,8 +62,13 @@
     #define IC_DEV_CNT                  (8)
 #elif defined (HC32F460)
     #define IC_DEV_CNT                  (3)
+#elif defined (HC32F334)
+    #define IC_DEV_CNT                  (4)
+#elif defined (HC32F448)
+    #define IC_DEV_CNT                  (2)
+#elif defined (HC32F472)
+    #define IC_DEV_CNT                  (10)
 #endif
-#define IC_NAME_LEN                     (3)
 #define DEFAULT_WATER_MARK              (5)
 
 #ifdef BSP_USING_INPUT_CAPTURE
@@ -107,20 +111,22 @@ static void ic_rx_thread(void *parameter)
 {
     rt_size_t  size;
     rt_device_t ic_dev;
-    rt_uint32_t id = *(uint32_t *)parameter;
-    test_ic_t *p_test_ic = &g_arr_test_ic[id];
+    test_ic_t *p_test_ic = parameter;
     ic_dev = p_test_ic->ic_dev;
     struct rt_inputcapture_data *pData = RT_NULL;
     struct rt_inputcapture_data *pItem = RT_NULL;
     int i = 0;
+    char *p_thrd_name = rt_thread_self()->parent.name;
+
     while (1)
     {
         rt_sem_take((p_test_ic->rx_sem), RT_WAITING_FOREVER);
-        pData = (struct rt_inputcapture_data *)rt_malloc(sizeof(struct rt_inputcapture_data) * p_test_ic->ic_data_size);
+        size = p_test_ic->ic_data_size;
+        pData = (struct rt_inputcapture_data *)rt_malloc(sizeof(struct rt_inputcapture_data) * size);
         if (pData)
         {
             rt_mutex_take(p_test_ic->mutex, RT_WAITING_FOREVER);
-            size = rt_device_read(ic_dev, 0, pData, p_test_ic->ic_data_size);
+            size = rt_device_read(ic_dev, 0, pData, size);
             rt_mutex_release(p_test_ic->mutex);
             if (size == 0)
             {
@@ -128,7 +134,7 @@ static void ic_rx_thread(void *parameter)
                 pData = RT_NULL;
                 continue;
             }
-            rt_kprintf("ic%d captured %d data:\n", id + 1, size);
+            rt_kprintf("%s captured %d data:\n", p_thrd_name, size);
             for (i = 0; i < size; i++)
             {
                 pItem = pData + i;
@@ -147,9 +153,13 @@ static rt_int32_t _ic_test_open(rt_int32_t id)
     uint32_t def_wm = DEFAULT_WATER_MARK;
     rt_device_t ic_dev;
 
-
-    char ic_name[IC_NAME_LEN] = "ic";
-    ic_name[IC_NAME_LEN - 1] = 0x30 + id + 1;
+    char ic_name[RT_NAME_MAX] = "ic";
+    uint32_t name_idx = 2;
+    if (id >= 9 && id < 100)
+    {
+        ic_name[name_idx++] = 0x30 + (id + 1) / 10;
+    }
+    ic_name[name_idx++] = 0x30 + (id + 1) % 10;
 
     ic_dev = rt_device_find(ic_name);
     RT_ASSERT(ic_dev != RT_NULL);
@@ -161,13 +171,13 @@ static rt_int32_t _ic_test_open(rt_int32_t id)
     RT_ASSERT(ret == RT_EOK);
     rt_device_set_rx_indicate(ic_dev, ic_rx_all);
 
-    g_arr_test_ic[id].thread = rt_thread_create(ic_name, ic_rx_thread, &id, 2048, 5, 10);
+    g_arr_test_ic[id].thread = rt_thread_create(ic_name, ic_rx_thread, &g_arr_test_ic[id], 2048, 5, 10);
     RT_ASSERT(g_arr_test_ic[id].thread != RT_NULL);
     rt_thread_startup(g_arr_test_ic[id].thread);
 
-    ret = rt_device_open(ic_dev, 0);
-    RT_ASSERT(ret == RT_EOK);
     ret = rt_device_control(ic_dev, INPUTCAPTURE_CMD_SET_WATERMARK, &def_wm);
+    RT_ASSERT(ret == RT_EOK);
+    ret = rt_device_open(ic_dev, 0);
     RT_ASSERT(ret == RT_EOK);
 
     return RT_EOK;

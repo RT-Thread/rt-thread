@@ -662,6 +662,22 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_INPUT_CAPTURE
+        bool "Enable Input Capture"
+        default n
+        select RT_USING_INPUT_CAPTURE
+        if BSP_USING_INPUT_CAPTURE
+            menuconfig BSP_USING_INPUT_CAPTURE_TMR6
+                bool "Use Timer6 As The Input Capture"
+                default n
+                if BSP_USING_INPUT_CAPTURE_TMR6
+                    config BSP_USING_INPUT_CAPTURE_TMR6_1
+                        bool "unit 1"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_2
+                        bool "unit 2"
+                endif
+        endif
+
     menuconfig BSP_USING_SENSOR
         bool "Enable SENSOR"
         default n

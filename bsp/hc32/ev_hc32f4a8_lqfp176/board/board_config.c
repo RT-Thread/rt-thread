@@ -669,6 +669,83 @@ rt_err_t rt_hw_usbhs_board_init(void)
 }
 #endif
 
+#if defined(RT_USING_CHERRYUSB)
+rt_err_t rt_hw_usbfs_board_init(uint8_t devmode)
+{
+    stc_gpio_init_t stcGpioCfg;
+    (void)GPIO_StructInit(&stcGpioCfg);
+
+    stcGpioCfg.u16PinAttr = PIN_ATTR_ANALOG;
+    (void)GPIO_Init(USBF_DM_PORT, USBF_DM_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBF_DP_PORT, USBF_DP_PIN, &stcGpioCfg);
+    if (0U != devmode)
+    {
+        GPIO_SetFunc(USBF_VBUS_PORT, USBF_VBUS_PIN, USBF_VBUS_FUNC); /* VBUS */
+    }
+    else
+    {
+        GPIO_SetFunc(USBF_DRVVBUS_PORT, USBF_DRVVBUS_PIN, USBF_DRVVBUS_FUNC); /* DRV VBUS */
+    }
+    return RT_EOK;
+}
+
+rt_err_t rt_hw_usbhs_board_init(uint8_t devmode)
+{
+    stc_gpio_init_t stcGpioCfg;
+    (void)GPIO_StructInit(&stcGpioCfg);
+
+#if !defined(CONFIG_USB_HS)
+    /* USBHS work in embedded PHY */
+    stcGpioCfg.u16PinAttr = PIN_ATTR_ANALOG;
+    (void)GPIO_Init(USBH_DM_PORT, USBH_DM_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_DP_PORT, USBH_DP_PIN, &stcGpioCfg);
+    if (0U != devmode)
+    {
+        GPIO_SetFunc(USBH_VBUS_PORT, USBH_VBUS_PIN, USBH_VBUS_FUNC);
+    }
+    else
+    {
+        GPIO_OutputCmd(USBH_DRVVBUS_PORT, USBH_DRVVBUS_PIN, ENABLE);
+        GPIO_SetPins(USBH_DRVVBUS_PORT, USBH_DRVVBUS_PIN); /* DRV VBUS with GPIO funciton */
+    }
+#else
+    /* Reset 3300 */
+    TCA9539_WritePin(TCA9539_IO_PORT1, USB_3300_RESET_PIN, TCA9539_PIN_SET);
+    TCA9539_ConfigPin(TCA9539_IO_PORT1, USB_3300_RESET_PIN, TCA9539_DIR_OUT);
+
+    (void)GPIO_StructInit(&stcGpioCfg);
+    /* High drive capability */
+    stcGpioCfg.u16PinDrv = PIN_HIGH_DRV;
+    (void)GPIO_Init(USBH_ULPI_D0_PORT, USBH_ULPI_D0_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_D1_PORT, USBH_ULPI_D1_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_D2_PORT, USBH_ULPI_D2_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_D3_PORT, USBH_ULPI_D3_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_D4_PORT, USBH_ULPI_D4_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_D5_PORT, USBH_ULPI_D5_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_D6_PORT, USBH_ULPI_D6_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_D7_PORT, USBH_ULPI_D7_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBH_ULPI_STP_PORT, USBH_ULPI_STP_PIN, &stcGpioCfg);
+
+    GPIO_SetFunc(USBH_ULPI_CLK_PORT, USBH_ULPI_CLK_PIN, USBH_ULPI_CLK_FUNC);
+    GPIO_SetFunc(USBH_ULPI_DIR_PORT, USBH_ULPI_DIR_PIN, USBH_ULPI_DIR_FUNC);
+    GPIO_SetFunc(USBH_ULPI_NXT_PORT, USBH_ULPI_NXT_PIN, USBH_ULPI_NXT_FUNC);
+    GPIO_SetFunc(USBH_ULPI_STP_PORT, USBH_ULPI_STP_PIN, USBH_ULPI_STP_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D0_PORT,  USBH_ULPI_D0_PIN,  USBH_ULPI_D0_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D1_PORT,  USBH_ULPI_D1_PIN,  USBH_ULPI_D1_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D2_PORT,  USBH_ULPI_D2_PIN,  USBH_ULPI_D2_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D3_PORT,  USBH_ULPI_D3_PIN,  USBH_ULPI_D3_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D4_PORT,  USBH_ULPI_D4_PIN,  USBH_ULPI_D4_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D5_PORT,  USBH_ULPI_D5_PIN,  USBH_ULPI_D5_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D6_PORT,  USBH_ULPI_D6_PIN,  USBH_ULPI_D6_FUNC);
+    GPIO_SetFunc(USBH_ULPI_D7_PORT,  USBH_ULPI_D7_PIN,  USBH_ULPI_D7_FUNC);
+
+    TCA9539_WritePin(TCA9539_IO_PORT1, USB_3300_RESET_PIN, TCA9539_PIN_RESET);
+#endif
+
+    return RT_EOK;
+}
+#endif
+
 #if defined(BSP_USING_QSPI)
 rt_err_t rt_hw_qspi_board_init(void)
 {

@@ -113,6 +113,20 @@
     #define LED_GREEN_PORT                      (GPIO_PORT_C)
     #define LED_GREEN_PIN                       (GPIO_PIN_09)
 
+#elif defined (HC32F334)
+    #define PLL_SRC                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
+    #define BSP_KEY_PORT                        (GPIO_PORT_B)   /* Key5 */
+    #define BSP_KEY_PIN                         (GPIO_PIN_09)
+    #define BSP_KEY_EXTINT                      (EXTINT_CH09)
+    #define BSP_KEY_INT_SRC                     (INT_SRC_PORT_EIRQ9)
+    #define BSP_KEY_IRQn                        (INT001_IRQn)
+    #define BSP_KEY_INTC_STOP_WKUP_EXTINT       (INTC_STOP_WKUP_EXTINT_CH9)
+    #define BSP_KEY_EVT                         (EVT_SRC_PORT_EIRQ9)
+    #define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP       (PWC_PD_WKUP_TRIG_WKUP2)
+    #define BSP_KEY_PWC_PD_WKUP_WKUP            (PWC_PD_WKUP_WKUP21)
+
+    #define LED_GREEN_PORT                      (GPIO_PORT_C)
+    #define LED_GREEN_PIN                       (GPIO_PIN_13)
 #endif
 
 #define KEYCNT_BACKUP_ADDR                      (uint32_t *)(0x200F0010)
@@ -421,7 +435,7 @@ static void _vbat_init(void)
         rt_thread_delay(10);
     }
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SRAMB, ENABLE);
-#elif defined (HC32F448)
+#elif defined (HC32F448) || defined (HC32F334)
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SRAMB, ENABLE);
 #elif defined (HC32F460)
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SRAMRET, ENABLE);

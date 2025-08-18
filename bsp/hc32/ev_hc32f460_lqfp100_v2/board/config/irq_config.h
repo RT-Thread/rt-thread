@@ -204,7 +204,7 @@ extern "C" {
 #define BSP_RTC_ALARM_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
 #endif/* RT_USING_ALARM */
 
-#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
+#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH) || defined(RT_USING_CHERRYUSB)
 #define BSP_USBFS_GLB_IRQ_NUM           INT003_IRQn
 #define BSP_USBFS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_USBD */

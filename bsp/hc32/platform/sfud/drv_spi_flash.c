@@ -38,6 +38,11 @@
     #define SPI_FLASH_DEVICE_NAME       "spi10"
     #define SPI_FLASH_CHIP              "w25q64"
     #define SPI_FLASH_SS_PIN            GET_PIN(B,12)
+#elif defined(HC32F334)
+    #define SPI_BUS_NAME                "spi1"
+    #define SPI_FLASH_DEVICE_NAME       "spi10"
+    #define SPI_FLASH_CHIP              "w25q64"
+    #define SPI_FLASH_SS_PIN            GET_PIN(C,1)
 #endif
 #define SPI_FLASH_CMD_ENABLE_RESET      0x66
 #define SPI_FLASH_CMD_RESET_DEVICE      0x99
