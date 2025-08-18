@@ -142,17 +142,9 @@ void hal_entry(void)
 
 **GCC**
 
-1.需要下载 [e² studio](https://www.renesas.cn/zh/software-tool/e-studio) 集成开发环境，使用目录下的GCC工具链`toolchains\gcc_arm\13.2.rel1\bin`
+1.fsp的使用，打开当前目录下的`configuration.xml`
 
-2.设置env中的工具链路径
-
-```bash
- set RTT_EXEC_PATH=<you_e2stdio_path>\toolchains\gcc_arm\13.2.rel1\bin
-```
-
-3.fsp的使用，打开当前目录下的`configuration.xml`
-
-4.配置完外设之后点击`Generate Project Content`按钮即可生成所需驱动文件。
+2.配置完外设之后点击`Generate Project Content`按钮即可生成所需驱动文件。
 
 **注意：重新生成配置需要把当前路径下的`bsp_linker_info.h`删掉**
 
