@@ -120,7 +120,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART3 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
-                        default 256
+                        default 0
 
                     config BSP_UART3_DMA_PING_BUFSIZE
                         int "Set UART3 RX DMA ping-pong buffer size"
@@ -153,7 +153,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART7 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
-                        default 256
+                        default 0
 
                     config BSP_UART7_DMA_PING_BUFSIZE
                         int "Set UART7 RX DMA ping-pong buffer size"
@@ -186,7 +186,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART8 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
-                        default 256
+                        default 0
 
                     config BSP_UART8_DMA_PING_BUFSIZE
                         int "Set UART8 RX DMA ping-pong buffer size"
@@ -219,7 +219,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART1 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
-                        default 256
+                        default 0
 
                     config BSP_UART1_DMA_PING_BUFSIZE
                         int "Set UART1 RX DMA ping-pong buffer size"
