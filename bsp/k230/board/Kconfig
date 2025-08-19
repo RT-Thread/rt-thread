@@ -4,6 +4,11 @@ menu "Drivers Configuration"
         bool "Enable ADC"
         select RT_USING_ADC
         default n
+    
+    config BSP_USING_TS
+        bool "Enable Temperature Sensor"
+        select RT_USING_TS
+        default n
 
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
