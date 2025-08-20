@@ -144,3 +144,42 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
 
     return err;
 }
+
+rt_err_t rt_pci_msi_cleanup_irqs(struct rt_pci_device *pdev)
+{
+    int type;
+    struct rt_pic *msi_pic;
+    struct rt_pci_msi_desc *desc;
+
+    if (!pdev)
+    {
+        return -RT_EINVAL;
+    }
+
+    msi_pic = pdev->msi_pic;
+
+    if (!msi_pic)
+    {
+        return -RT_EINVAL;
+    }
+
+    desc = rt_pci_msi_first_desc(pdev);
+    type = desc->is_msix ? PCIY_MSIX : PCIY_MSI;
+
+    if (type == PCIY_MSI)
+    {
+        for (int idx = 0; idx < desc->vector_used; ++idx)
+        {
+            msi_pic->ops->irq_free_msi(msi_pic, desc->irq + idx);
+        }
+    }
+    else if (type == PCIY_MSIX)
+    {
+        rt_pci_msi_for_each_desc(pdev, desc)
+        {
+            msi_pic->ops->irq_free_msi(msi_pic, desc->irq);
+        }
+    }
+
+    return RT_EOK;
+}
