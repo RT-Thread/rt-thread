@@ -233,6 +233,8 @@ void rt_pci_msi_free_irqs(struct rt_pci_device *pdev)
         pdev->msix_base = RT_NULL;
     }
 
+    rt_pci_msi_cleanup_irqs(pdev);
+
     rt_pci_msi_for_each_desc(pdev, desc)
     {
         /* To safety */
