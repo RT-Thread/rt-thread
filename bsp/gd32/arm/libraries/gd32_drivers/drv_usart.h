@@ -19,10 +19,35 @@
 extern "C" {
 #endif
 
+#ifndef SOC_SERIES_GD32H7xx
+#undef RT_SERIAL_USING_DMA
+#endif
 #define UART_ENABLE_IRQ(n)            NVIC_EnableIRQ((n))
 #define UART_DISABLE_IRQ(n)           NVIC_DisableIRQ((n))
 
+#ifdef RT_SERIAL_USING_DMA
 
+typedef struct
+{
+    /* dma peripheral */
+    uint32_t dma_periph;
+    /* dma channel */
+    dma_channel_enum dma_ch;
+#ifdef SOC_SERIES_GD32H7xx
+    /* rx dma request */
+    uint32_t dma_mux_req_rx;
+#endif
+    /* dma flag */
+    uint32_t rx_flag;
+    /* dma irq channel */
+    uint8_t rx_irq_ch;
+    /* setting receive len */
+    rt_size_t setting_recv_len;
+    /* last receive index */
+    rt_size_t last_recv_index;
+} gd32_uart_dma;
+
+#endif
 /* GD32 uart driver */
 /* Todo: compress uart info */
 struct gd32_uart
@@ -47,7 +72,14 @@ struct gd32_uart
 #endif
     uint16_t rx_pin;                /* Todo: 4bits */
 #if defined SOC_SERIES_GD32E50x
-    uint32_t uart_remap;            /* remap */
+    uint32_t uart_remap;            //remap
+#endif
+
+#ifdef RT_SERIAL_USING_DMA
+    gd32_uart_dma *uart_dma;
+#ifdef RT_SERIAL_USING_TX_DMA
+    gd32_uart_dma *uart_tx_dma;
+#endif
 #endif
 
     struct rt_serial_device * serial;
