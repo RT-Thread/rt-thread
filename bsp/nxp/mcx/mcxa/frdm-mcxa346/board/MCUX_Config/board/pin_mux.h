@@ -17,6 +17,45 @@
  * @{
  */
 
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITLEDSPINS_LED_RED_GPIO GPIO3                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITLEDSPINS_LED_RED_GPIO_PIN 18U              /*!<@brief GPIO pin number */
+#define BOARD_INITLEDSPINS_LED_RED_GPIO_PIN_MASK (1U << 18U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITLEDSPINS_LED_RED_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITLEDSPINS_LED_RED_PIN 18U                   /*!<@brief PORT pin number */
+#define BOARD_INITLEDSPINS_LED_RED_PIN_MASK (1U << 18U)      /*!<@brief PORT pin mask */
+                                                             /* @} */
+
+/*! @name PORT3_19 (number 85), LED_GREEN
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITLEDSPINS_LED_GREEN_GPIO GPIO3                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITLEDSPINS_LED_GREEN_GPIO_PIN 19U              /*!<@brief GPIO pin number */
+#define BOARD_INITLEDSPINS_LED_GREEN_GPIO_PIN_MASK (1U << 19U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITLEDSPINS_LED_GREEN_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITLEDSPINS_LED_GREEN_PIN 19U                   /*!<@brief PORT pin number */
+#define BOARD_INITLEDSPINS_LED_GREEN_PIN_MASK (1U << 19U)      /*!<@brief PORT pin mask */
+                                                               /* @} */
+
+/*! @name PORT3_21 (number 82), LED_BLUE
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITLEDSPINS_LED_BLUE_GPIO GPIO3                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITLEDSPINS_LED_BLUE_GPIO_PIN 21U              /*!<@brief GPIO pin number */
+#define BOARD_INITLEDSPINS_LED_BLUE_GPIO_PIN_MASK (1U << 21U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITLEDSPINS_LED_BLUE_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITLEDSPINS_LED_BLUE_PIN 21U                   /*!<@brief PORT pin number */
+#define BOARD_INITLEDSPINS_LED_BLUE_PIN_MASK (1U << 21U)      /*!<@brief PORT pin mask */
+                                                              /* @} */
+
 /***********************************************************************************************************************
  * API
  **********************************************************************************************************************/
