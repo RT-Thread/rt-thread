@@ -50,5 +50,11 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
 
+#删除FSP生成的文件
+file_to_remove = "bsp_linker_info.h"
+if os.path.exists(file_to_remove):
+    print(f"Removing {file_to_remove} before build...")
+    os.remove(file_to_remove)
+
 # make a building
 DoBuilding(TARGET, objs)
