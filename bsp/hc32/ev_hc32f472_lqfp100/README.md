@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-EV_F472_LQ100 是 XHSC 官方推出的开发板，搭载 HC32F472PETI 芯片，基于 ARM Cortex-M4 内核，最高主频 200 MHz，具有丰富的板载资源，可以充分发挥 HC32F472PETI 的芯片性能。
+EV_F472_LQ100 是 XHSC 官方推出的开发板，搭载 HC32F472PETI 芯片，基于 ARM Cortex-M4 内核，最高主频 120 MHz，具有丰富的板载资源，可以充分发挥 HC32F472PETI 的芯片性能。
 
 开发板外观如下图所示：
 
@@ -22,7 +22,7 @@ EV_F472_LQ100 是 XHSC 官方推出的开发板，搭载 HC32F472PETI 芯片，�
 
 EV_F472_LQ100 开发板常用 **板载资源** 如下：
 
-- MCU：HC32F472PETI，主频200MHz，256KB FLASH，68KB RAM
+- MCU：HC32F472PETI，主频120MHz，512KB FLASH，68KB RAM
 - 外部RAM：IS62WV51216(SRAM，1MB)
 - 常用外设
   - LED：3 个，User LED(LED0、LED1、LED2)。
