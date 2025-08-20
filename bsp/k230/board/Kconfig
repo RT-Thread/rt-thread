@@ -107,6 +107,45 @@ menu "Drivers Configuration"
 
         endif
 
+    menuconfig BSP_USING_PDMA
+        bool "Enable PDMA"
+        select RT_USING_PDMA
+        default n 
+         
+        if BSP_USING_PDMA
+            config BSP_USING_PDMA_CHANNEL0
+                bool "Enable PDMA Channel 0"
+                default n
+                
+            config BSP_USING_PDMA_CHANNEL1
+                bool "Enable PDMA Channel 1"
+                default n
+                
+            config BSP_USING_PDMA_CHANNEL2
+                bool "Enable PDMA Channel 2"
+                default n
+               
+            config BSP_USING_PDMA_CHANNEL3
+                bool "Enable PDMA Channel 3"
+                default n
+            
+            config BSP_USING_PDMA_CHANNEL4
+                bool "Enable PDMA Channel 4"
+                default n
+                
+            config BSP_USING_PDMA_CHANNEL5
+                bool "Enable PDMA Channel 5"
+                default n
+                
+            config BSP_USING_PDMA_CHANNEL6
+                bool "Enable PDMA Channel 6"
+                default n
+                
+            config BSP_USING_PDMA_CHANNEL7
+                bool "Enable PDMA Channel 7"
+                default n
+        endif
+
     config BSP_UTEST_DRIVERS
         bool "Enable drivers utest"
         select RT_USING_UTEST

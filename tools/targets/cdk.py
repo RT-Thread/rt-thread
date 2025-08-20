@@ -114,6 +114,9 @@ def _CDKProject(tree, target, script):
 
     Define = tree.find('BuildConfigs/BuildConfig/Compiler/Define')
     Define.text = '; '.join(set(CPPDEFINES))
+    
+    Define = tree.find('BuildConfigs/BuildConfig/Asm/Define')
+    Define.text = '; '.join(set(CPPDEFINES))
 
     CC_Misc = tree.find('BuildConfigs/BuildConfig/Compiler/OtherFlags')
     CC_Misc.text = CCFLAGS
@@ -128,7 +131,7 @@ def _CDKProject(tree, target, script):
         LibName.text=';'.join(LIBS)
         
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
     out.close()
 
 def CDKProject(target, script):
