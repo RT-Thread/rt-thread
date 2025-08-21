@@ -105,13 +105,13 @@ void uart_iomux_config(int instance)
             return uart5_iomux_config();
 
         case HW_UART6:
-            return uart5_iomux_config();
+            return uart6_iomux_config();
 
         case HW_UART7:
-            return uart5_iomux_config();
+            return uart7_iomux_config();
 
         case HW_UART8:
-            return uart5_iomux_config();
+            return uart8_iomux_config();
 
         default:
             assert(false);

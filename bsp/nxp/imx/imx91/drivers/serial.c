@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2025-07-12     BruceOu      The first verion
+ * 2025-07-12     BruceOu      The first version
+ * 2025-08-10     Siwei Xu     Fix compile errors
  */
 
 #include <rthw.h>

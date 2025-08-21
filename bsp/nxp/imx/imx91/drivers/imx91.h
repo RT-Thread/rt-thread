@@ -94,4 +94,5 @@ rt_inline void disable_interrupt(uint32_t irq_id, uint32_t cpu_id)
     rt_hw_interrupt_mask(irq_id);
 }
 
-#endif  /* __IMX6UL_H__ */
+#endif  /* __IMX91_H__ */
+
