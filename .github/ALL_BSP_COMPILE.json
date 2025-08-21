@@ -303,6 +303,7 @@
         "gd32/arm/gd32450z-eval",
         "gd32/arm/gd32470z-lckfb",
         "gd32/arm/gd32h759i-start",
+        "gd32/arm/gd32h759i-eval",
         "gd32/arm/gd32e503v-eval",
         "gd32/arm/gd32527I-eval",
         "gd32/arm/gd32e230-lckfb",
