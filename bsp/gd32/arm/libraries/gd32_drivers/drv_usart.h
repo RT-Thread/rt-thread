@@ -72,7 +72,7 @@ struct gd32_uart
 #endif
     uint16_t rx_pin;                /* Todo: 4bits */
 #if defined SOC_SERIES_GD32E50x
-    uint32_t uart_remap;            //remap
+    uint32_t uart_remap;            /* remap */
 #endif
 
 #ifdef RT_SERIAL_USING_DMA
