@@ -59,7 +59,7 @@ sci_uart_instance_ctrl_t     g_uart9_ctrl;
                 .p_transfer_rx       = &RA_NOT_DEFINED,
 #endif
 #undef RA_NOT_DEFINED
-                .rxi_ipl             = (1),
+                .rxi_ipl             = (2),
                 .txi_ipl             = (2),
                 .tei_ipl             = (2),
                 .eri_ipl             = (2),

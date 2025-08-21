@@ -19,8 +19,8 @@ extern "C" {
 #define RA_SRAM_END     (0x20004000 + RA_SRAM_SIZE * 1024)
 
 #ifdef __ARMCC_VERSION
-extern int Image$$RAM_END$$ZI$$Base;
-#define HEAP_BEGIN  ((void *)&Image$$RAM_END$$ZI$$Base)
+extern int Image$$__RAM_end$$ZI$$Base;
+#define HEAP_BEGIN  ((void *)&Image$$__RAM_end$$ZI$$Base)
 #elif __ICCARM__
 #pragma section="CSTACK"
 #define HEAP_BEGIN      (__segment_end("CSTACK"))
