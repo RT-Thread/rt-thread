@@ -321,6 +321,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -416,6 +424,8 @@
 #define BSP_STM32_UART_V1_TX_TIMEOUT 6000
 #define BSP_USING_UART1
 #define BSP_USING_UART4
+#define BSP_UART4_RX_BUFSIZE 256
+#define BSP_UART4_TX_BUFSIZE 0
 #define BSP_USING_CRC
 #define BSP_USING_RNG
 #define BSP_USING_UDID
