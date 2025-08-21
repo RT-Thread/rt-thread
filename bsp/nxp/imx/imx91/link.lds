@@ -1,5 +1,5 @@
-OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
-OUTPUT_ARCH(arm)
+OUTPUT_FORMAT(elf64-littleaarch64)
+OUTPUT_ARCH(aarch64)
 
 SECTIONS
 {

@@ -29,7 +29,7 @@
 
 #include "iomux_config.h"
 
-// Function to configure iomux for i.MX6SL board MCIMX6SLEVK rev. B.
+// Function to configure iomux for i.MX91 board FRDM-i.MX91
 void iomux_config(void)
 {
     uart1_iomux_config();
