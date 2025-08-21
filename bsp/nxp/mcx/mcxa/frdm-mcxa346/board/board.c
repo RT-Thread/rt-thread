@@ -63,16 +63,7 @@ void rt_hw_board_init()
 #endif
 }
 
-/**
- * This function will called when memory fault.
- */
-void MemManage_Handler(void)
-{
-    extern void HardFault_Handler(void);
 
-    rt_kprintf("Memory Fault!\n");
-    HardFault_Handler();
-}
 
 void rt_hw_us_delay(rt_uint32_t us)
 {
@@ -102,4 +93,15 @@ void rt_hw_us_delay(rt_uint32_t us)
             }
         }
     }
+}
+
+/**
+ * This function will called when memory fault.
+ */
+void MemManage_Handler(void)
+{
+    extern void HardFault_Handler(void);
+
+    rt_kprintf("Memory Fault!\n");
+    HardFault_Handler();
 }

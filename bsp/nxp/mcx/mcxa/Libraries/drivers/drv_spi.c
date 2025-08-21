@@ -10,9 +10,13 @@
 #include "rtdevice.h"
 #include "drv_spi.h"
 #include "fsl_lpspi.h"
-#include "fsl_lpspi_edma.h"
 
-#define DMA_MAX_TRANSFER_SIZE (32767)
+
+#ifdef RT_USING_SPI
+
+#define DBG_TAG    "drv.spi"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 enum
 {
@@ -32,14 +36,6 @@ struct lpc_spi
     clock_div_name_t            clock_div_name;
     clock_name_t                clock_name;
 
-    DMA_Type                    *DMAx;
-    uint8_t                     tx_dma_chl;
-    uint8_t                     rx_dma_chl;
-    edma_handle_t               dma_tx_handle;
-    edma_handle_t               dma_rx_handle;
-    dma_request_source_t        tx_dma_request;
-    dma_request_source_t        rx_dma_request;
-    lpspi_master_edma_handle_t  spi_dma_handle;
 
     rt_sem_t                    sem;
     char                        *name;
@@ -50,28 +46,26 @@ static struct lpc_spi lpc_obj[] =
 #ifdef BSP_USING_SPI0
     {
         .LPSPIx = LPSPI0,
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+        kFRO_LF_DIV_to_LPSPI0,
+#else
         .clock_attach_id = kFRO12M_to_LPSPI0,
+#endif
         .clock_div_name = kCLOCK_DivLPSPI0,
         .clock_name = kCLOCK_Fro12M,
-        .tx_dma_request = kDma0RequestLPSPI0Tx,
-        .rx_dma_request = kDma0RequestLPSPI0Rx,
-        .DMAx = DMA0,
-        .tx_dma_chl = 0,
-        .rx_dma_chl = 1,
         .name = "spi0",
     },
 #endif
 #ifdef BSP_USING_SPI1
     {
         .LPSPIx = LPSPI1,
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+        kFRO_LF_DIV_to_LPSPI1,
+#else
         .clock_attach_id = kFRO12M_to_LPSPI1,
+#endif
         .clock_div_name = kCLOCK_DivLPSPI1,
         .clock_name = kCLOCK_Fro12M,
-        .tx_dma_request = kDma0RequestLPSPI1Tx,
-        .rx_dma_request = kDma0RequestLPSPI1Rx,
-        .DMAx = DMA0,
-        .tx_dma_chl = 0,
-        .rx_dma_chl = 1,
         .name = "spi1",
     },
 #endif
@@ -93,17 +87,12 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     return RT_EOK;
 }
 
-static void LPSPI_MasterUserCallback(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, status_t status, void *userData)
-{
-    struct lpc_spi *spi = (struct lpc_spi *)userData;
-    rt_sem_release(spi->sem);
 
-}
 
 static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    int i;
     lpspi_transfer_t transfer = {0};
+    status_t status;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
@@ -119,39 +108,24 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     transfer.dataSize = message->length;
     transfer.rxData   = (uint8_t *)(message->recv_buf);
     transfer.txData   = (uint8_t *)(message->send_buf);
+    transfer.configFlags = kLPSPI_MasterPcs0;
 
-    /*  if(message->length < MAX_DMA_TRANSFER_SIZE)*/
-    uint32_t block, remain;
-    block = message->length / DMA_MAX_TRANSFER_SIZE;
-    remain = message->length % DMA_MAX_TRANSFER_SIZE;
-
-    for (i = 0; i < block; i++)
-    {
-        transfer.dataSize = DMA_MAX_TRANSFER_SIZE;
-        if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i *DMA_MAX_TRANSFER_SIZE);
-        if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i *DMA_MAX_TRANSFER_SIZE);
-
-        LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
-        rt_sem_take(spi->sem, RT_WAITING_FOREVER);
-    }
-
-    if (remain)
-    {
-        transfer.dataSize = remain;
-        if (message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i *DMA_MAX_TRANSFER_SIZE);
-        if (message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i *DMA_MAX_TRANSFER_SIZE);
-
-        LPSPI_MasterTransferEDMA(spi->LPSPIx, &spi->spi_dma_handle, &transfer);
-        rt_sem_take(spi->sem, RT_WAITING_FOREVER);
-    }
+    // Use blocking transfer instead of DMA
+    status = LPSPI_MasterTransferBlocking(spi->LPSPIx, &transfer);
 
     if (message->cs_release)
     {
         rt_pin_write(device->cs_pin, PIN_HIGH);
     }
 
+    if (status != kStatus_Success)
+    {
+        return 0; // Transfer failed
+    }
+
     return message->length;
 }
+
 
 static struct rt_spi_ops lpc_spi_ops =
 {
@@ -173,23 +147,18 @@ int rt_hw_spi_init(void)
 
         lpspi_master_config_t masterConfig;
         LPSPI_MasterGetDefaultConfig(&masterConfig);
-        masterConfig.baudRate = 1 * 1000 * 1000;
+        masterConfig.baudRate = 10 * 1000 * 1000;
         masterConfig.pcsToSckDelayInNanoSec        = 1000000000U / masterConfig.baudRate * 1U;
         masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000U / masterConfig.baudRate * 1U;
         masterConfig.betweenTransferDelayInNanoSec = 1000000000U / masterConfig.baudRate * 1U;
 
         LPSPI_MasterInit(lpc_obj[i].LPSPIx, &masterConfig, CLOCK_GetFreq(lpc_obj[i].clock_name));
 
-        EDMA_CreateHandle(&lpc_obj[i].dma_tx_handle, lpc_obj[i].DMAx, lpc_obj[i].tx_dma_chl);
-        EDMA_CreateHandle(&lpc_obj[i].dma_rx_handle, lpc_obj[i].DMAx, lpc_obj[i].rx_dma_chl);
-
-        EDMA_SetChannelMux(lpc_obj[i].DMAx, lpc_obj[i].tx_dma_chl, lpc_obj[i].tx_dma_request);
-        EDMA_SetChannelMux(lpc_obj[i].DMAx, lpc_obj[i].rx_dma_chl, lpc_obj[i].rx_dma_request);
-
-        LPSPI_MasterTransferCreateHandleEDMA(lpc_obj[i].LPSPIx, &lpc_obj[i].spi_dma_handle, LPSPI_MasterUserCallback, &lpc_obj[i], &lpc_obj[i].dma_rx_handle, &lpc_obj[i].dma_tx_handle);
-
         rt_spi_bus_register(&lpc_obj[i].parent, lpc_obj[i].name, &lpc_spi_ops);
     }
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_spi_init);
+
+#endif /* RT_USING_SPI */
+

@@ -14,8 +14,12 @@ if rtconfig.PLATFORM in ['iccarm']:
     Return('group')
 elif rtconfig.PLATFORM in ['gcc', 'armclang']:
     if GetOption('target') != 'mdk5':
-        CPPPATH = [cwd]
         src = Glob('./src/*.c')
+
+if rtconfig.PLATFORM in ['armclang']:
+    CPPPATH = [cwd + '/script/bsp_link/keil']
+elif rtconfig.PLATFORM in ['gcc']:
+    CPPPATH = [cwd + '/script/bsp_link/gcc']
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 

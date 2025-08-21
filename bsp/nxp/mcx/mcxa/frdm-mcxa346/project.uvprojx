@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
-              <Define>CPU_MCXA346VLQ, __STDC_LIMIT_MACROS, DEBUG, RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__RTTHREAD__, CPU_MCXA346VLQ, RT_USING_ARMLIBC, DEBUG, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine></Undefine>
-              <IncludePath>packages\nxp-mcx-series-latest\MCXA346;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;packages\nxp-mcx-series-latest\MCXA346\periph2;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\libc\compilers\common\extension;applications;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\components\drivers\phy;..\..\..\..\..\components\libc\posix\io\epoll;packages\nxp-mcx-series-latest\MCXA346\drivers;packages\nxp-mcx-cmsis-latest\Core\Include;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\finsh;packages\nxp-mcx-series-latest\MCXA346\components\codec;..\..\..\..\..\components\drivers\include;..\Libraries\drivers;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\spi;..\Libraries\drivers\config;..\..\..\..\..\components\drivers\smp_call;board;..\..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\..\components\drivers\include;applications;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\smp_call;..\Libraries\drivers\config;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\libcpu\arm\common;packages\nxp-mcx-cmsis-latest\Core\Include;packages\nxp-mcx-series-latest\MCXA346\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA346\periph2;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\finsh;packages\nxp-mcx-series-latest\MCXA346;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\libc\posix\io\epoll;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA346\components\codec;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\include;board;..\..\..\..\..\components\drivers\phy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,6 +384,11 @@
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
+            <File>
+              <FileName>drv_spi_sample_rw007.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\drv_spi_sample_rw007.c</FilePath>
+            </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
@@ -1600,14 +1605,14 @@
               <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-            <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
             <File>
               <FileName>msh.c</FileName>
@@ -2465,19 +2470,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
-            </File>
-            <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
             <File>
               <FileName>kstdio.c</FileName>
@@ -2485,9 +2480,19 @@
               <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
             <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
         </Group>
