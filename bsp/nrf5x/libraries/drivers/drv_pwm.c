@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -223,9 +223,9 @@ static rt_err_t mcu_hw_pwm_init(struct mcu_pwm *device)
     nrfx_pwm_config_t config0 =
     {
         .irq_priority = _PRIO_APP_LOWEST,
-        .base_clock   = NRF_PWM_CLK_1MHz,  //default value
+        .base_clock   = NRF_PWM_CLK_1MHz,  /* default value */
         .count_mode   = NRF_PWM_MODE_UP,
-        .top_value    = 5000,              //default vaule
+        .top_value    = 5000,              /* default vaule */
         .load_mode    = NRF_PWM_LOAD_INDIVIDUAL,
         .step_mode    = NRF_PWM_STEP_AUTO
     };
@@ -414,10 +414,12 @@ static int pwm_led_sample(int argc, char *argv[])
         {
             pulse -= 500;
         }
+
         if (pulse >= period)
         {
             dir = 0;
         }
+
         if (0 == pulse)
         {
             dir = 1;
@@ -430,3 +432,4 @@ static int pwm_led_sample(int argc, char *argv[])
 MSH_CMD_EXPORT(pwm_led_sample, pwm sample);
 
 #endif
+

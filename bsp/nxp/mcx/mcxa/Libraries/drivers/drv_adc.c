@@ -14,6 +14,10 @@
 #include "fsl_lpadc.h"
 #include "fsl_spc.h"
 
+#define DBG_TAG    "drv.adc"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #ifdef RT_USING_ADC
 
 #define DEFAULT_HW_AVG          (kLPADC_HardwareAverageCount4)

@@ -17,6 +17,12 @@ if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('BSP_UTEST_DRIVERS'):
 
     if GetDepend('BSP_USING_PWM'):
         src += ['test_pwm.c']
+
+    if GetDepend('BSP_USING_PDMA'):
+        src += ['test_pdma.c']
+
+    if GetDepend('BSP_USING_TS'):
+        src += ['test_ts.c']
         
 group = DefineGroup('utestcases', src, depend = [''])
 

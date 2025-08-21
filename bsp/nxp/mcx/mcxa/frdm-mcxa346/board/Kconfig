@@ -40,11 +40,8 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_I2C
-                config BSP_USING_I2C0
-                    bool "Enable Flexcomm0 I2C"
-                    default y
-                config BSP_USING_I2C1
-                    bool "Enable Flexcomm1 I2C"
+                config BSP_USING_I2C3
+                    bool "Enable Flexcomm3 I2C"
                     default y
             endif
 
@@ -67,26 +64,8 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_ADC
-                config BSP_USING_ADC0_CH0
-                    bool "Enable ADC0 Channel0"
-                    default y
-
-                config BSP_USING_ADC0_CH1
-                    bool "Enable ADC0 Channel1"
-                    default n
-
-                config BSP_USING_ADC0_CH8
-                    bool "Enable ADC0 Channel8"
-                    default n
-
-        
-                config BSP_USING_ADC0_CH13
-                    bool "Enable ADC0 Channel13"
-                    default n
-
-
-                config BSP_USING_ADC0_CH26
-                    bool "Enable ADC0 Channel26"
+                config BSP_USING_ADC0_CH22
+                    bool "Enable ADC0 Channel22"
                     default n
 
             endif
@@ -162,15 +141,15 @@ menu "Board extended module Drivers"
 
         config BOARD_RW007_CS_PIN
             hex "CS pin index"
-            default 0x46
+            default 107
 
         config BOARD_RW007_INT_BUSY_PIN
             hex "INT/BUSY pin index"
-            default 0x71
+            default 109
 
         config BOARD_RW007_RST_PIN
             hex "RESET pin index"
-            default 0x2F
+            default 131
     endif
 
         

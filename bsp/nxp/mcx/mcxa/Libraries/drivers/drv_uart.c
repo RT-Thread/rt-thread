@@ -14,6 +14,10 @@
 
 #ifdef RT_USING_SERIAL
 
+#define DBG_TAG    "drv.uart"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 struct mcx_uart
 {
     struct rt_serial_device     *serial;

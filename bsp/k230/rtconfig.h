@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_USING_SMART
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
