@@ -1,4 +1,4 @@
- /* generated configuration header file - do not edit */
+/* generated configuration header file - do not edit */
 #ifndef R_IOPORT_CFG_H_
 #define R_IOPORT_CFG_H_
 #ifdef __cplusplus
