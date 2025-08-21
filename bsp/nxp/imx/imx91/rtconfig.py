@@ -1,19 +1,32 @@
 import os
 
 # toolchains options
-ARCH='arm'
-CPU='cortex-a'
-CROSS_TOOL=os.getenv('RTT_CC') or 'gcc'
+ARCH = 'aarch64'
+CPU = 'cortex-a'
+CROSS_TOOL = 'gcc'
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.join(os.getcwd(), '..', '..', '..')
+
+if os.getenv('RTT_CC'):
+    CROSS_TOOL = os.getenv('RTT_CC')
 
 # only support GNU GCC compiler.
 PLATFORM  = 'gcc'
-EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
+EXEC_PATH = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
+
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
+print('RTT_EXEC_PATH:', os.getenv('RTT_EXEC_PATH'))
 
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'arm-none-eabi-'
+    PREFIX = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
     CC = PREFIX + 'gcc'
     CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
@@ -24,7 +37,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=armv7-a -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp'
+    DEVICE = ' -march=armv8-a -mtune=cortex-a55' #  -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LINK_SCRIPT = 'link.lds'

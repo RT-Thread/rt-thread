@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2025-07-12     BruceOu      the first verion
+ * 2025-07-12     BruceOu      the first 
+ * 2025-08-10     Siwei Xu     Fix compile errors
  */
 
 #ifndef __UART_H__

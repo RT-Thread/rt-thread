@@ -28,9 +28,9 @@
 */
 
 #include "iomux_config.h"
-#include "registers/regsuart.h"
-#include "iomux_register.h"
-#include "io.h"
+
+#include "../soc/mem_imx91.h"
+
 #include <assert.h>
 
 #define IMX91_PAD_UART1_TX_DATA__UART1_TX1  (IOMUXC_BASE_ADDR+0x084)
@@ -50,10 +50,12 @@
 
 void uart1_iomux_config(void)
 {
-    /* UART1 TXD */
-    IMX91_PAD_UART1_TX_DATA__UART1_TX(0x10b0);
-    /* UART1 RXD */
-    IMX91_PAD_UART1_RX_DATA__UART1_RX(0x10b0);
+    // /* UART1 TXD */
+    // IMX91_PAD_UART1_TX_DATA__UART1_TX(0x10b0);
+    // /* UART1 RXD */
+    // IMX91_PAD_UART1_RX_DATA__UART1_RX(0x10b0);
+
+    IOMUXC1;
 }
 
 void uart2_iomux_config(void)
@@ -105,13 +107,13 @@ void uart_iomux_config(int instance)
             return uart5_iomux_config();
 
         case HW_UART6:
-            return uart5_iomux_config();
+            return uart6_iomux_config();
 
         case HW_UART7:
-            return uart5_iomux_config();
+            return uart7_iomux_config();
 
         case HW_UART8:
-            return uart5_iomux_config();
+            return uart8_iomux_config();
 
         default:
             assert(false);

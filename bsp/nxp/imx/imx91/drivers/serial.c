@@ -5,12 +5,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2025-07-12     BruceOu      The first verion
+ * 2025-07-12     BruceOu      The first version
+ * 2025-08-10     Siwei Xu     Fix compile errors
  */
 
 #include <rthw.h>
-#include <registers/regsuart.h>
-#include <imx_uart.h>
+// #include <registers/regsuart.h>
+// #include <imx_uart.h>
 #include <rtdevice.h>
 #include "serial.h"
 
@@ -24,7 +25,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
 {
     struct rt_serial_device *serial = (struct rt_serial_device *)param;
 
-    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+    // rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 }
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -37,29 +38,29 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
     baudrate = cfg->baud_rate;
-    switch (cfg->data_bits)
-    {
-    case DATA_BITS_8:
-        datasize = EIGHTBITS;
-        break;
-    case DATA_BITS_7:
-        datasize = SEVENBITS;
-        break;
-    }
-    if (cfg->stop_bits == STOP_BITS_1) stopbits = STOPBITS_ONE;
-    else if (cfg->stop_bits == STOP_BITS_2) stopbits = STOPBITS_TWO;
+    // switch (cfg->data_bits)
+    // {
+    // case DATA_BITS_8:
+    //     datasize = EIGHTBITS;
+    //     break;
+    // case DATA_BITS_7:
+    //     datasize = SEVENBITS;
+    //     break;
+    // }
+    // if (cfg->stop_bits == STOP_BITS_1) stopbits = STOPBITS_ONE;
+    // else if (cfg->stop_bits == STOP_BITS_2) stopbits = STOPBITS_TWO;
 
-    parity = PARITY_NONE;
-    flowcontrol = FLOWCTRL_OFF;
+    // parity = PARITY_NONE;
+    // flowcontrol = FLOWCTRL_OFF;
 
-    /* Initialize UART */
-    uart_init(uart->instance, baudrate, parity, stopbits, datasize, flowcontrol);
+    // /* Initialize UART */
+    // uart_init(uart->instance, baudrate, parity, stopbits, datasize, flowcontrol);
 
-    rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, "uart");
-    rt_hw_interrupt_mask(uart->irqno);
+    // rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, "uart");
+    // rt_hw_interrupt_mask(uart->irqno);
 
-    /* Set the IRQ mode for the Rx FIFO */
-    uart_set_FIFO_mode(uart->instance, RX_FIFO, 1, IRQ_MODE);
+    // /* Set the IRQ mode for the Rx FIFO */
+    // uart_set_FIFO_mode(uart->instance, RX_FIFO, 1, IRQ_MODE);
 
     return RT_EOK;
 }
@@ -71,18 +72,18 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    switch (cmd)
-    {
-    case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq */
-        rt_hw_interrupt_mask(uart->irqno);
-        break;
+    // switch (cmd)
+    // {
+    // case RT_DEVICE_CTRL_CLR_INT:
+    //     /* disable rx irq */
+    //     rt_hw_interrupt_mask(uart->irqno);
+    //     break;
 
-    case RT_DEVICE_CTRL_SET_INT:
-        /* enable rx irq */
-        rt_hw_interrupt_umask(uart->irqno);
-        break;
-    }
+    // case RT_DEVICE_CTRL_SET_INT:
+    //     /* enable rx irq */
+    //     rt_hw_interrupt_umask(uart->irqno);
+    //     break;
+    // }
 
     return RT_EOK;
 }
@@ -94,7 +95,7 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    uart_putchar(uart->instance, (uint8_t*)&c);
+    // uart_putchar(uart->instance, (uint8_t*)&c);
 
     return 1;
 }
@@ -107,8 +108,8 @@ static int uart_getc(struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    ch = uart_getchar(uart->instance);
-    if (ch == NONE_CHAR) ch = -1;
+    // ch = uart_getchar(uart->instance);
+    // if (ch == NONE_CHAR) ch = -1;
 
     return ch;
 }
@@ -125,8 +126,8 @@ static const struct rt_uart_ops _uart_ops =
 /* UART1 device driver structure */
 static struct hw_uart_device _uart1_device =
 {
-    HW_UART1,
-    IMX_INT_UART1
+    // HW_UART1,
+    // IMX_INT_UART1
 };
 static struct rt_serial_device _serial1;
 #endif

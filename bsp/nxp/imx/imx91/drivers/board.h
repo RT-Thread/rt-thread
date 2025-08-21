@@ -13,10 +13,9 @@
 
 #include <registers.h>
 #include <irq_numbers.h>
-#include "imx91.h"
 
-#define CONFIG_MX6
-#define CONFIG_MX6UL
+#include "imx91.h"
+#include "rtconfig.h"
 
 #if defined(__CC_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;

@@ -23,24 +23,31 @@
 # define ARM_GIC_MAX_NR 1
 
 /* the maximum number of interrupts */
-#define ARM_GIC_NR_IRQS IMX_INTERRUPT_COUNT
+#define ARM_GIC_NR_IRQS 256 // IMX_INTERRUPT_COUNT
 
 /* the maximum entries of the interrupt table */
-#define MAX_HANDLERS IMX_INTERRUPT_COUNT
+#define MAX_HANDLERS 256 // IMX_INTERRUPT_COUNT
 
 /* the basic constants needed by gic */
 rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 {
-    rt_uint32_t gic_base;
-    asm volatile ("mrc p15, 4, %0, c15, c0, 0" : "=r"(gic_base));
-    return gic_base + kGICDBaseOffset;
+    // rt_uint32_t gic_base;
+    // asm volatile ("mrc p15, 4, %0, c15, c0, 0" : "=r"(gic_base));
+    // return gic_base + kGICDBaseOffset;
+    return 0x48000000;
+}
+
+rt_inline rt_uint32_t platform_get_gic_redist_base(void)
+{
+    return 0x48040000;
 }
 
 rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
 {
-    rt_uint32_t gic_base;
-    asm volatile ("mrc p15, 4, %0, c15, c0, 0" : "=r"(gic_base));
-    return gic_base + kGICCBaseOffset;
+    // rt_uint32_t gic_base;
+    // asm volatile ("mrc p15, 4, %0, c15, c0, 0" : "=r"(gic_base));
+    // return gic_base + kGICCBaseOffset;
+    return 0x48040000;
 }
 
 #define GIC_IRQ_START   0
@@ -94,4 +101,5 @@ rt_inline void disable_interrupt(uint32_t irq_id, uint32_t cpu_id)
     rt_hw_interrupt_mask(irq_id);
 }
 
-#endif  /* __IMX6UL_H__ */
+#endif  /* __IMX91_H__ */
+
