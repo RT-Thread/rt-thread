@@ -453,8 +453,8 @@ static const struct gd32_uart uart_obj[] = {
         GPIOA, GPIO_AF_1, GPIO_PIN_14,
         GPIOA, GPIO_AF_1, GPIO_PIN_15,
 #else
-        RCU_GPIOA, RCU_GPIOA,                   // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
+        RCU_GPIOA, RCU_GPIOA,                   /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
         RCU_GPIOA, RCU_GPIOA,                   /* periph clock, tx gpio clock, rt gpio clock */
         GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
         GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
@@ -555,7 +555,8 @@ static const struct gd32_uart uart_obj[] = {
         GPIOC, GPIO_AF_8, GPIO_PIN_7,           /* rx port, rx alternate, rx pin */
 #elif defined (SOC_SERIES_GD32H7xx)
         GPIOC, GPIO_AF_7, GPIO_PIN_6,           // tx port, tx alternate, tx pin
-        GPIOC, GPIO_AF_7, GPIO_PIN_7,           // rx port, rx alternate, rx pin
+        GPIOC, GPIO_AF_7, GPIO_PIN_6,           /* tx port, tx alternate, tx pin */
+        GPIOC, GPIO_AF_7, GPIO_PIN_7,           /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
         GPIOC, AFIO_PC6_USART5_CFG, GPIO_PIN_6, /* tx port, tx alternate, tx pin */
         GPIOC, AFIO_PC7_USART5_CFG, GPIO_PIN_7, /* rx port, rx alternate, rx pin */
@@ -1152,7 +1153,8 @@ static void GD32_UART_IRQHandler(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_FLAG_RBNE) != RESET))
+    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_FLAG_RBNE) != RESET) &&
+        (usart_flag_get(uart->uart_periph, USART_FLAG_RBNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         /* Clear RXNE interrupt flag */
