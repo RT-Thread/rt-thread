@@ -455,7 +455,9 @@ static const struct gd32_uart uart_obj[] = {
 #else
         RCU_GPIOA, RCU_GPIOA,                   // periph clock, tx gpio clock, rt gpio clock
         GPIOA, GPIO_PIN_2,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
+        RCU_GPIOA, RCU_GPIOA,                   /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
 #endif
 #ifdef RT_SERIAL_USING_DMA
         &uart1_rxdma,
