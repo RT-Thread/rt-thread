@@ -1,10 +1,11 @@
 menu "Hardware Drivers Config"
 
-    config SOC_R7FA6M4AF
+    config SOC_R7FA4E2B9
         bool
-        select SOC_SERIES_R7FA6M4
+        select SOC_SERIES_R7FA4M2
         select RT_USING_COMPONENTS_INIT
         select RT_USING_USER_MAIN
+        select ARCH_ARM_CORTEX_SECURE
         default y
 
     menu "Onboard Peripheral Drivers"
