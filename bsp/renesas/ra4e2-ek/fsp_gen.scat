@@ -164,8 +164,8 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   {
   }
 
-  __RAM_end +0 EMPTY 0 {}
-  SCatterAssert( (LoadBase(__RAM_end) - LoadBase(__RAM_start)) <= RAM_LENGTH )
+  RAM_END +0 EMPTY 0 {}
+  SCatterAssert( (LoadBase(RAM_END) - LoadBase(__RAM_start)) <= RAM_LENGTH )
         } ; create a root region after the RAM init ERs for remainder of ROM ERs
          LOAD_REGION_FLASH_JUMP +0 NOCOMPRESS
          {
