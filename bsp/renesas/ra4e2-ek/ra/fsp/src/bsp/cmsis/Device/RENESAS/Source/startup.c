@@ -50,7 +50,12 @@ void Reset_Handler (void)
     SystemInit();
 
     /* Call user application. */
+#ifdef __ARMCC_VERSION
     main();
+#elif defined(__GNUC__)
+    extern int entry(void);
+    entry();
+#endif
 
     while (1)
     {
