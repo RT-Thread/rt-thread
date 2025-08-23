@@ -121,6 +121,7 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/ra4e2/bsp_peripheral.h" path=""/>
         <file category="source" name="ra/fsp/src/r_ioport/r_ioport.c"/>
         <file category="source" name="ra/fsp/src/r_sci_uart/r_sci_uart.c"/>
+        <file category="other" name="ra/SConscript"/>
       </files>
     </component>
     <component Cclass="Flex Software" Cgroup="Build Configuration">
@@ -136,6 +137,7 @@
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_pin_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_ioport_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_sci_uart_cfg.h" path=""/>
+        <file category="other" name="ra_cfg/SConscript"/>
       </files>
     </component>
     <component Cclass="Flex Software" Cgroup="Generated Data">
@@ -148,6 +150,7 @@
         <file category="header" name="ra_gen/hal_data.h" path=""/>
         <file category="source" name="ra_gen/main.c"/>
         <file category="source" name="ra_gen/pin_data.c"/>
+        <file category="other" name="ra_gen/SConscript"/>
         <file category="source" name="ra_gen/vector_data.c"/>
         <file category="header" name="ra_gen/vector_data.h" path=""/>
       </files>

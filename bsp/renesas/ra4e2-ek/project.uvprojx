@@ -70,7 +70,7 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --generate --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" 2&gt; "%%TEMP%%\rasc_stderr.out" &amp;&amp; echo. &gt; "$Poutput.rasc""</UserProg1Name>
             <UserProg2Name></UserProg2Name>
@@ -80,7 +80,7 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --gensmartbundle --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out""</UserProg1Name>
             <UserProg2Name></UserProg2Name>
