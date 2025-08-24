@@ -11,6 +11,7 @@
  * 2020-05-02     whj4674672   support stm32h7 uart dma
  * 2020-09-09     forest-rain  support stm32wl uart
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2025-08-24     ItsGettingWorse   Fixed bugs under different optimization levels
  */
 
 #include "board.h"
@@ -353,7 +354,10 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 #else
     uart->handle.Instance->DR = c;
 #endif
-    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET && --block_timeout);
+    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET && --block_timeout)
+    {
+        __DSB(); // Data Synchronization Barrier
+    }
     return (block_timeout != 0) ? 1 : -1;
 }
 
