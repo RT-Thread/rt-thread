@@ -262,6 +262,7 @@
         "renesas/rzt2m_rsk",
         "renesas/rzn2l_rsk",
         "renesas/rzn2l_etherkit",
+        "renesas/ra2a1-ek",
         "frdm-k64f",
         "xplorer4330/M4"
       ]

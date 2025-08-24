@@ -7,6 +7,7 @@
 * Date           Author            Notes
 * 2021-07-29     KyleChan          first version
 * 2022-12-7      Vandoul           ADD ra4m2
+* 2025-08-17     CYFS              ADD ra2a1
 */
 
 #ifndef __DRV_CONFIG_H__
@@ -202,6 +203,30 @@ extern "C"
 #include "ra6e2/can_config.h"
 #endif
 #endif /* SOC_SERIES_R7FA6E2 */
+
+#if defined(SOC_SERIES_R7FA2A1)
+#include "ra2a1/uart_config.h"
+
+#ifdef BSP_USING_ADC
+#include "ra2a1/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra2a1/dac_config.h"
+#endif
+
+#ifdef BSP_USING_PWM
+#include "ra2a1/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_TIM
+#include "ra2a1/timer_config.h"
+#endif
+
+#ifdef BSP_USING_CAN
+#include "ra2a1/can_config.h"
+#endif
+#endif /* SOC_SERIES_R7FA2A1 */
 
 #ifdef __cplusplus
 }
