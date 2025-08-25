@@ -2,9 +2,12 @@ import os
 from building import *
 
 objs = []
-src = ["drv_sdram.c"]
+src = []
 cwd  = GetCurrentDir()
 CPPPATH = [cwd]
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ["drv_sdram.c"]
 
 if GetDepend(['BSP_USING_FS']):
     src += ['mnt.c']

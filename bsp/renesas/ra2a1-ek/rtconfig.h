@@ -1,6 +1,8 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define SOC_R7FA2A1AB
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -398,8 +400,6 @@
 #define SOC_SERIES_R7FA2A1
 
 /* Hardware Drivers Config */
-
-#define SOC_R7FA2A1AB
 
 /* Onboard Peripheral Drivers */
 

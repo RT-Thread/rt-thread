@@ -1,6 +1,9 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define CPK_R7FA2L1AB
+#define SOC_R7FA2L1AB
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -315,6 +318,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -398,9 +409,6 @@
 #define SOC_SERIES_R7FA2L1
 
 /* Hardware Drivers Config */
-
-#define CPK_R7FA2L1AB
-#define SOC_R7FA2L1AB
 
 /* Onboard Peripheral Drivers */
 

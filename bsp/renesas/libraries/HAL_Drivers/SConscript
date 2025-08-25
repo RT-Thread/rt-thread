@@ -1,72 +1,18 @@
 Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
+import os
 
 cwd = GetCurrentDir()
+group = []
+src = ['drv_common.c']
+path = [cwd]
 
-# add the general drivers.
-src = Split("""
-    drv_common.c
-""")
+if GetDepend(['RT_USING_NANO']):
+    group = group + SConscript(os.path.join(cwd, 'nano', 'SConscript'))
+else:
+    group = group + SConscript(os.path.join(cwd, 'drivers', 'SConscript'))
 
-if GetDepend(['BSP_USING_UART']):
-    if GetDepend(['RT_USING_SERIAL_V2']):
-        src += ['drv_usart_v2.c']
-    else:
-        print("\nThe current project does not support serial-v1\n")
-        Return('group')
-
-if GetDepend(['BSP_USING_GPIO']):
-    src += ['drv_gpio.c']
-
-if GetDepend(['BSP_USING_WDT']):
-    src += ['drv_wdt.c']
-
-if GetDepend(['BSP_USING_ONCHIP_RTC']):
-    src += ['drv_rtc.c']
-
-if GetDepend(['BSP_USING_HW_I2C']):
-        src += ['drv_i2c.c']
-
-if GetDepend(['BSP_USING_SPI']):
-    src += ['drv_spi.c']
-
-if GetDepend(['BSP_USING_SOFT_SPI']):
-    src += ['drv_soft_spi.c']
-
-if GetDepend(['BSP_USING_SCI']):
-    src += ['drv_sci.c']
-
-if GetDepend(['BSP_USING_ADC']):
-    src += ['drv_adc.c']
-
-if GetDepend(['BSP_USING_DAC']):
-    src += ['drv_dac.c']
-
-if GetDepend(['BSP_USING_ONCHIP_FLASH']):
-    src += ['drv_flash.c']
-
-if GetDepend(['BSP_USING_PWM']):
-    src += ['drv_pwm.c']
-
-if GetDepend(['BSP_USING_TIM']):
-    src += ['drv_hwtimer.c']
-
-if GetDepend(['BSP_USING_ETH']):
-    src += ['drv_eth.c']
-
-if GetDepend(['BSP_USING_CAN']) or GetDepend('BSP_USING_CANFD'):
-    src += ['drv_can.c']
-
-if GetDepend(['BSP_USING_SDHI']):
-    src += ['drv_sdhi.c']
-
-if GetDepend(['BSP_USING_LCD']):
-    src += ['drv_lcd.c']
-
-path =  [cwd]
-path += [cwd + '/config']
-
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+group = group + DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')
