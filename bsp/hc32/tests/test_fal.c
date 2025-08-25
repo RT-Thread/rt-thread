@@ -29,6 +29,7 @@
 #define FAL_PART_NAME                   "app"
 #define TEST_BUF_SIZE                   1024UL
 #define TEST_RW_CNT                     32UL
+
 #define TEST_RW_START_ADDR              HC32_FLASH_END_ADDRESS - (TEST_BUF_SIZE * TEST_RW_CNT)
 
 

@@ -573,6 +573,10 @@ static rt_base_t hc32_pin_get(const char *name)
         hw_pin_num *= 10;
         hw_pin_num += name[i] - '0';
     }
+    if (hw_pin_num > 0xF)
+    {
+        return -RT_EINVAL;
+    }
     pin = PIN_NUM(hw_port_num, hw_pin_num);
 
     return pin;
