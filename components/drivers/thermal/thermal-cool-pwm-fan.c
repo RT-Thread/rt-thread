@@ -255,7 +255,7 @@ _fail:
 
 static rt_err_t pwm_fan_cool_remove(struct rt_platform_device *pdev)
 {
-    struct pwm_fan_cool *pf_cool = pdev->parent.ofw_node;
+    struct pwm_fan_cool *pf_cool = pdev->parent.user_data;
 
     rt_thermal_cooling_device_unregister(&pf_cool->parent);
 

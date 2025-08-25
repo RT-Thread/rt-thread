@@ -223,6 +223,7 @@ _scan_cooling:
         }
     }
 _end:
+    ;
 }
 #else
 rt_inline void thermal_ofw_setup(struct rt_ofw_node *np, struct rt_thermal_zone_device *zdev)
