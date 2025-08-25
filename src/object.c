@@ -674,6 +674,168 @@ rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data)
     return RT_EOK;
 }
 
+typedef struct
+{
+    rt_list_t *list;
+    rt_list_t **array;
+    rt_uint8_t type;
+    int nr; /* input: max nr, can't be 0 */
+    int nr_out; /* out: got nr */
+    struct rt_object_information *info;
+} list_get_next_t;
+
+static void list_find_init(list_get_next_t *p, rt_uint8_t type, rt_list_t **array, int nr)
+{
+    struct rt_object_information *info;
+    rt_list_t *list;
+
+    info = rt_object_get_information((enum rt_object_class_type)type);
+    list = &info->object_list;
+
+    p->info = info;
+    p->list = list;
+    p->type = type;
+    p->array = array;
+    p->nr = nr;
+    p->nr_out = 0;
+}
+
+static rt_list_t *list_get_next(rt_list_t *current, list_get_next_t *arg)
+{
+    int first_flag = 0;
+    rt_base_t level;
+    rt_list_t *node, *list;
+    rt_list_t **array;
+    struct rt_object_information *info;
+    int nr;
+
+    arg->nr_out = 0;
+
+    if (!arg->nr || !arg->type)
+    {
+        return (rt_list_t *)RT_NULL;
+    }
+
+    list = arg->list;
+    info = rt_list_entry(list, struct rt_object_information, object_list);
+
+    if (!current) /* find first */
+    {
+        node = list;
+        first_flag = 1;
+    }
+    else
+    {
+        node = current;
+    }
+
+    level = rt_spin_lock_irqsave(&info->spinlock);
+
+    if (!first_flag)
+    {
+        struct rt_object *obj;
+        /* The node in the list? */
+        obj = rt_list_entry(node, struct rt_object, list);
+        if ((obj->type & ~RT_Object_Class_Static) != arg->type)
+        {
+            rt_spin_unlock_irqrestore(&info->spinlock, level);
+            return (rt_list_t *)RT_NULL;
+        }
+    }
+
+    nr = 0;
+    array = arg->array;
+    while (1)
+    {
+        node = node->next;
+
+        if (node == list)
+        {
+            node = (rt_list_t *)RT_NULL;
+            break;
+        }
+        nr++;
+        *array++ = node;
+        if (nr == arg->nr)
+        {
+            break;
+        }
+    }
+
+    rt_spin_unlock_irqrestore(&info->spinlock, level);
+    arg->nr_out = nr;
+    return node;
+}
+
+static rt_err_t list_handle_result(list_get_next_t *find_arg, rt_object_iter_t iter, void *data)
+{
+    int i;
+    rt_base_t level;
+    rt_err_t result;
+
+    for (i = 0; i < find_arg->nr_out; i++)
+    {
+        struct rt_object *obj;
+
+        obj = rt_list_entry(find_arg->array[i], struct rt_object, list);
+        level = rt_spin_lock_irqsave(&find_arg->info->spinlock);
+        if ((obj->type & ~RT_Object_Class_Static) != find_arg->type)
+        {
+            rt_spin_unlock_irqrestore(&find_arg->info->spinlock, level);
+            continue;
+        }
+
+        rt_spin_unlock_irqrestore(&find_arg->info->spinlock, level);
+
+        result = iter(obj, data);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * @brief This function will iterate through each object from object with a buffer
+ *        container.
+ *
+ * @param type is the type of object
+ * @param iter is the iterator
+ * @param data is the specified data passed to iterator
+ * @param buffer is the buffer to store the object pointers
+ * @param buffer_num is the size of the buffer
+ *
+ * @return RT_EOK on succeed, otherwise the error from `iter`
+ *
+ * @note this function shall not be invoked in interrupt status.
+ */
+rt_err_t rt_object_for_each_safe(rt_uint8_t type, rt_object_iter_t iter, void *data, rt_list_t **buffer, rt_size_t buffer_num)
+{
+    list_get_next_t find_arg;
+    rt_err_t result;
+    rt_list_t *next = (rt_list_t *)RT_NULL;
+
+    /* which is invoke in interrupt status */
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    list_find_init(&find_arg, type, buffer, buffer_num);
+
+    do
+    {
+        next = list_get_next(next, &find_arg);
+        result = list_handle_result(&find_arg, iter, data);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+    }
+    while (next != (rt_list_t *)RT_NULL);
+
+    return RT_EOK;
+}
+
 struct _obj_find_param
 {
     const char *match_name;
