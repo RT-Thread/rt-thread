@@ -272,3 +272,24 @@ From the above flow chart you can get the following:
 - The resources (threads, semaphores, timers, memory, etc.) created in the test case need to be released before the test ends.
 - A test case implementation can only export a test body function (testcase function) using `UTEST_TC_EXPORT`
 - Write a `README.md` document for the your test case to guide the user through configuring the test environment.
+
+# How-to add utest cases into RT-Thread for your module.
+
+The source code of utest cases is recommended to be placed in each module for maintenance, but the entry of Kconfig should all be placed(rsourced) in `Kconfig.utestcases` for unified maintenance. In this way, when executing menuconfig, people can enter and configure from one place, avoiding searching for utest configuration switches scattering in the menuconfig interface.
+    
+For each module, you can maintain unit testcases in a unified manner in the following way:
+
+- Create a subdirectory named 'utest' in the directory where your module is located.
+
+- Store the following files in the 'utest' subdirectory:
+
+  - Unit-testcase program source code files for this module.
+
+  - `Kconfig` file, which defining configuration options for the unit test cases of this module, the recommended option is named `RT_UTEST_TC_USING_XXXX`, XXXX is the global unique module name of this module.
+
+  - `SConscript` file, note that when adding src files, in addition to relying on `RT_UTEST_TC_USING_XXXX`, you must also rely on `RT_UTEST_USING_ALL_CASES`, the two dependencies are in an "or" relationship. The role of `RT_UTEST_USING_ALL_CASES` is that once this option is turned on, all unit-testcases will be enabled to avoid selecting one by one.
+    
+After completing the above steps, rsource the path of the Kconfig file of utest of this module to the file `Kconfig.utestcases`.
+
+You can find a good example in <a href="https://github.com/RT-Thread/rt-thread/blob/master/src/klibc/utest/">"klibc"</a>.
+
