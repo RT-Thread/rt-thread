@@ -308,12 +308,12 @@ extern "C" {
 #endif/* RT_USING_ALARM */
 
 
-#if defined(BSP_USING_USBFS)
+#if defined(BSP_USING_USBFS) || defined(RT_USING_CHERRYUSB)
 #define BSP_USBFS_GLB_IRQ_NUM           INT003_IRQn
 #define BSP_USBFS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_USBFS */
 
-#if defined(BSP_USING_USBHS)
+#if defined(BSP_USING_USBHS) || defined(RT_USING_CHERRYUSB)
 #define BSP_USBHS_GLB_IRQ_NUM           INT000_IRQn
 #define BSP_USBHS_GLB_IRQ_PRIO          DDL_IRQ_PRIO_DEFAULT
 #endif/* BSP_USING_USBHS */

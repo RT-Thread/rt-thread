@@ -150,7 +150,7 @@ static void _timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         TMRA_IntCmd(tmr_device->tmr_handle, TMRA_INT_OVF, ENABLE);
 #if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
         hc32_install_irq_handler(&irq_config, tmr_device->isr.irq_callback, RT_TRUE);
-#elif defined (HC32F448) || defined (HC32F472)
+#elif defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
         hc32_install_irq_handler(&irq_config, NULL, RT_TRUE);
 #endif
     }
@@ -159,7 +159,7 @@ static void _timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         TMRA_DeInit(tmr_device->tmr_handle);
 #if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
         hc32_install_irq_handler(&irq_config, tmr_device->isr.irq_callback, RT_FALSE);
-#elif defined (HC32F448) || defined (HC32F472)
+#elif defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
         hc32_install_irq_handler(&irq_config, NULL, RT_FALSE);
 #endif
         FCG_Fcg2PeriphClockCmd(tmr_device->clock, DISABLE);
@@ -251,7 +251,7 @@ static void TMRA_1_callback(void)
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_1_INDEX].time_device);
 }
 
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_1_Ovf_Udf_Handler(void)
 {
     TMRA_1_callback();
@@ -266,7 +266,7 @@ static void TMRA_2_callback(void)
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_2_INDEX].time_device);
 }
 
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_2_Ovf_Udf_Handler(void)
 {
     TMRA_2_callback();
@@ -281,7 +281,7 @@ static void TMRA_3_callback(void)
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_3_INDEX].time_device);
 }
 
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_3_Ovf_Udf_Handler(void)
 {
     TMRA_3_callback();
@@ -296,7 +296,7 @@ static void TMRA_4_callback(void)
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_4_INDEX].time_device);
 }
 
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_4_Ovf_Udf_Handler(void)
 {
     TMRA_4_callback();
@@ -311,7 +311,7 @@ static void TMRA_5_callback(void)
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_5_INDEX].time_device);
 }
 
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_5_Ovf_Udf_Handler(void)
 {
     TMRA_5_callback();

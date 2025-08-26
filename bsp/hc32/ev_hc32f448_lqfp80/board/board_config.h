@@ -252,6 +252,19 @@
 
 #endif
 
+#if defined(BSP_USING_INPUT_CAPTURE)
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_1)
+        #define INPUT_CAPTURE_TMR6_1_FUNC           (GPIO_FUNC_3)
+        #define INPUT_CAPTURE_TMR6_1_PORT           (GPIO_PORT_A)
+        #define INPUT_CAPTURE_TMR6_1_PIN            (GPIO_PIN_08)
+    #endif
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_2)
+        #define INPUT_CAPTURE_TMR6_2_FUNC           (GPIO_FUNC_3)
+        #define INPUT_CAPTURE_TMR6_2_PORT           (GPIO_PORT_B)
+        #define INPUT_CAPTURE_TMR6_2_PIN            (GPIO_PIN_02)
+    #endif
+#endif
+
 #if defined(BSP_USING_QSPI)
     #ifndef BSP_QSPI_USING_SOFT_CS
         /* QSSN */

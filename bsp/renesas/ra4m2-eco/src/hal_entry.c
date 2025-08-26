@@ -10,8 +10,11 @@
 
 #include <rtthread.h>
 #include "hal_data.h"
+#ifdef RT_USING_NANO
+#include <drv_gpio.h>
+#else
 #include <rtdevice.h>
-
+#endif /* RT_USING_NANO */
 
 void hal_entry(void)
 {

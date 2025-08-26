@@ -80,7 +80,7 @@ void SystemClock_Config(void)
 
 #if defined(BSP_RTC_USING_XTAL32) || defined(RT_USING_PM)
     /* Xtal32 config */
-    GPIO_AnalogCmd(XTAL32_PORT, XTAL32_IN_PIN | XTAL32_OUT_PIN, ENABLE);
+    GPIO_AnalogCmd(XTAL32_PORT, XTAL32_PIN, ENABLE);
     (void)CLK_Xtal32StructInit(&stcXtal32Init);
     stcXtal32Init.u8State  = CLK_XTAL32_ON;
     stcXtal32Init.u8Drv    = CLK_XTAL32_DRV_HIGH;

@@ -20,8 +20,8 @@
  *     输出输入的字符
  *
  * 命令调用格式：
- * uart1 中断，命令调用格式：uart_sample_v1 uart1 int
- * uart1 DMA，命令调用格式：uart_sample_v1 uart1 dma
+ * uart1 中断，命令调用格式：uart_sample_v2 uart1 int
+ * uart1 DMA，命令调用格式：uart_sample_v2 uart1 dma
  *
  * 中断方式，rtconfig.h修改如下
  * #define BSP_USING_GPIO

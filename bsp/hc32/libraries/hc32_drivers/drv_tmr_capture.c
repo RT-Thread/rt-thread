@@ -12,8 +12,9 @@
 
 #if defined(BSP_USING_INPUT_CAPTURE)
 #if defined(BSP_USING_INPUT_CAPTURE_TMR6_1) || defined(BSP_USING_INPUT_CAPTURE_TMR6_2) || defined(BSP_USING_INPUT_CAPTURE_TMR6_3) \
-|| defined(BSP_USING_INPUT_CAPTURE_TMR6_4) || defined(BSP_USING_INPUT_CAPTURE_TMR6_5) || defined(BSP_USING_INPUT_CAPTURE_TMR6_6)  \
-|| defined(BSP_USING_INPUT_CAPTURE_TMR6_7) || defined(BSP_USING_INPUT_CAPTURE_TMR6_8)
+|| defined(BSP_USING_INPUT_CAPTURE_TMR6_4) || defined(BSP_USING_INPUT_CAPTURE_TMR6_5) || defined(BSP_USING_INPUT_CAPTURE_TMR6_6) \
+|| defined(BSP_USING_INPUT_CAPTURE_TMR6_7) || defined(BSP_USING_INPUT_CAPTURE_TMR6_8) || defined(BSP_USING_INPUT_CAPTURE_TMR6_9) \
+|| defined(BSP_USING_INPUT_CAPTURE_TMR6_10)
 
 #include <rtdevice.h>
 #include <drv_config.h>
@@ -66,6 +67,12 @@ enum
 #ifdef BSP_USING_INPUT_CAPTURE_TMR6_8
     TMR_CAPTURE_IDX_TMR6_8,
 #endif
+#ifdef BSP_USING_INPUT_CAPTURE_TMR6_9
+    TMR_CAPTURE_IDX_TMR6_9,
+#endif
+#ifdef BSP_USING_INPUT_CAPTURE_TMR6_10
+    TMR_CAPTURE_IDX_TMR6_10,
+#endif
     TMR_CAPTURE_IDX_MAX,
 };
 
@@ -106,6 +113,14 @@ static rt_err_t _tmr_capture_get_pulsewidth(struct rt_inputcapture_device *input
     static void _tmr6_8_isr_ovf(void);
     static void _tmr6_8_isr_cap(void);
 #endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_9)
+    static void _tmr6_9_isr_ovf(void);
+    static void _tmr6_9_isr_cap(void);
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_10)
+    static void _tmr6_10_isr_ovf(void);
+    static void _tmr6_10_isr_cap(void);
+#endif
 
 /* Private define ---------------------------------------------------------------*/
 #define TMR6_INSTANCE_MIN                                   ((uint32_t)CM_TMR6_1)
@@ -113,6 +128,12 @@ static rt_err_t _tmr_capture_get_pulsewidth(struct rt_inputcapture_device *input
     #define TMR6_INSTANCE_MAX                               ((uint32_t)CM_TMR6_8)
 #elif defined (HC32F460)
     #define TMR6_INSTANCE_MAX                               ((uint32_t)CM_TMR6_3)
+#elif defined (HC32F334)
+    #define TMR6_INSTANCE_MAX                               ((uint32_t)CM_TMR6_4)
+#elif defined (HC32F448)
+    #define TMR6_INSTANCE_MAX                               ((uint32_t)CM_TMR6_2)
+#elif defined (HC32F472)
+    #define TMR6_INSTANCE_MAX                               ((uint32_t)CM_TMR6_10)
 #endif
 #define TMR6_INSTANCE_ADDR_ALIGN                            (0x400UL)
 #define TMR6_PERIOD_VALUE_MAX                               (0xFFFFUL)
@@ -120,24 +141,24 @@ static rt_err_t _tmr_capture_get_pulsewidth(struct rt_inputcapture_device *input
 
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6)
     #define IS_CAPTURE_COND_RASING_EDGE(bit_pos)            ((bit_pos) % 2U == 0U)
-    #if defined (HC32F4A0) || defined (HC32F4A8)
+    #if defined (HC32F4A0) || defined (HC32F4A8) || defined (HC32F334) || defined (HC32F472)
         #define VALID_CAPTURE_COND                          (TMR6_CAPT_COND_ALL & (~(TMR6_CAPT_COND_EVT0 | TMR6_CAPT_COND_EVT1 | TMR6_CAPT_COND_EVT2 | TMR6_CAPT_COND_EVT3)))
-    #elif defined (HC32F460)
+    #elif defined (HC32F460) || defined (HC32F448)
         #define VALID_CAPTURE_COND                          (TMR6_CAPT_COND_ALL & (~(TMR6_CAPT_COND_EVT0 | TMR6_CAPT_COND_EVT1)))
     #endif
 #endif
 
-#define TMR6_ISR_OVF(U)     \
+#define TMR6_ISR_OVF(U,N)     \
 static void _tmr6_##U##_isr_ovf(void)\
 {\
-    g_tmr_capturers[TMR_CAPTURE_IDX_TMR6_##U].ovf_cnt++;\
+    g_tmr_capturers[N].ovf_cnt++;\
     TMR6_ClearStatus(CM_TMR6_##U, TMR6_FLAG_OVF);\
 }
 
-#define TMR6_ISR_CAP(U)     \
+#define TMR6_ISR_CAP(U,N)     \
 static void _tmr6_##U##_isr_cap(void)\
 {\
-  _tmr6_irq_cap_handler(&g_tmr_capturers[TMR_CAPTURE_IDX_TMR6_##U]);\
+  _tmr6_irq_cap_handler(&g_tmr_capturers[N]);\
 }
 
 #define TMR6_CAPTURE_CFG(U)                                                                 \
@@ -172,6 +193,12 @@ static tmr_capture_t g_tmr_capturers[] =
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_8)
     TMR6_CAPTURE_CFG(8),
 #endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_9)
+    TMR6_CAPTURE_CFG(9),
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_10)
+    TMR6_CAPTURE_CFG(10),
+#endif
 };
 
 static struct rt_inputcapture_ops tmr_capture_ops =
@@ -204,36 +231,44 @@ static void _tmr6_irq_cap_handler(tmr_capture_t *p_capture)
 }
 
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_1)
-    TMR6_ISR_OVF(1)
-    TMR6_ISR_CAP(1)
+    TMR6_ISR_OVF(1, TMR_CAPTURE_IDX_TMR6_1)
+    TMR6_ISR_CAP(1, TMR_CAPTURE_IDX_TMR6_1)
 #endif
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_2)
-    TMR6_ISR_OVF(2)
-    TMR6_ISR_CAP(2)
+    TMR6_ISR_OVF(2, TMR_CAPTURE_IDX_TMR6_2)
+    TMR6_ISR_CAP(2, TMR_CAPTURE_IDX_TMR6_2)
 #endif
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_3)
-    TMR6_ISR_OVF(3)
-    TMR6_ISR_CAP(3)
+    TMR6_ISR_OVF(3, TMR_CAPTURE_IDX_TMR6_3)
+    TMR6_ISR_CAP(3, TMR_CAPTURE_IDX_TMR6_3)
 #endif
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_4)
-    TMR6_ISR_OVF(4)
-    TMR6_ISR_CAP(4)
+    TMR6_ISR_OVF(4, TMR_CAPTURE_IDX_TMR6_4)
+    TMR6_ISR_CAP(4, TMR_CAPTURE_IDX_TMR6_4)
 #endif
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_5)
-    TMR6_ISR_OVF(5)
-    TMR6_ISR_CAP(5)
+    TMR6_ISR_OVF(5, TMR_CAPTURE_IDX_TMR6_5)
+    TMR6_ISR_CAP(5, TMR_CAPTURE_IDX_TMR6_5)
 #endif
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_6)
-    TMR6_ISR_OVF(6)
-    TMR6_ISR_CAP(6)
+    TMR6_ISR_OVF(6, TMR_CAPTURE_IDX_TMR6_6)
+    TMR6_ISR_CAP(6, TMR_CAPTURE_IDX_TMR6_6)
 #endif
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_7)
-    TMR6_ISR_OVF(7)
-    TMR6_ISR_CAP(7)
+    TMR6_ISR_OVF(7, TMR_CAPTURE_IDX_TMR6_7)
+    TMR6_ISR_CAP(7, TMR_CAPTURE_IDX_TMR6_7)
 #endif
 #if defined (BSP_USING_INPUT_CAPTURE_TMR6_8)
-    TMR6_ISR_OVF(8)
-    TMR6_ISR_CAP(8)
+    TMR6_ISR_OVF(8, TMR_CAPTURE_IDX_TMR6_8)
+    TMR6_ISR_CAP(8, TMR_CAPTURE_IDX_TMR6_8)
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_9)
+    TMR6_ISR_OVF(9, TMR_CAPTURE_IDX_TMR6_9)
+    TMR6_ISR_CAP(9, TMR_CAPTURE_IDX_TMR6_9)
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_10)
+    TMR6_ISR_OVF(10, TMR_CAPTURE_IDX_TMR6_10)
+    TMR6_ISR_CAP(10, TMR_CAPTURE_IDX_TMR6_10)
 #endif
 
 static void _tmr_irq_init_cap(tmr_capture_t *p_capture)
@@ -323,7 +358,7 @@ static void _tmr_capture_init_tmr6(tmr_capture_t *p_capture, CM_TMR6_TypeDef *in
 
     uint32_t pin;
     uint32_t bit_pos = _get_capture_cond_bit_pos(init_params->first_edge);
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A8) || defined (HC32F334) || defined (HC32F448) || defined (HC32F472)
     if (bit_pos <= TMR6_HCPAR_HCPA3_POS)
     {
         pin = TMR6_IO_PWMA + (bit_pos / 2U);

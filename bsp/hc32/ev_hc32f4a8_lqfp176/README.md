@@ -23,13 +23,13 @@ EV_F4A8_LQ176 是 XHSC 官方推出的开发板，搭载 HC32F4A8SITB 芯片，�
 EV_F4A8_LQ176 开发板常用 **板载资源** 如下：
 
 - MCU：HC32F4A8SITB，主频240MHz，2048KB FLASH，512KB RAM
-- 外部RAM：IS62WV51216(SRAM, 1MB) W9825G6KH(SDRAM, 8MB)
-- 外部FLASH: MT29F2G08AB(Nand, 256MB) W25Q64(SPI NOR, 8MB)
+- 外部RAM：IS62WV51216(SRAM，1MB) W9825G6KH(SDRAM，8MB)
+- 外部FLASH: MT29F2G08AB(Nand，256MB) W25Q64(SPI NOR，8MB)
 - 常用外设
-  - LED：3 个， user LED(LED0,LED1,LED2)。
+  - LED：3 个，User LED(LED0、LED1、LED2)。
   - 按键：6个，矩阵键盘(K1~K4)、WAKEUP(K5)、RESET(K0)。
-- 常用接口：USB转串口、SD卡接口、以太网接口、LCD接口、USB HS、USB FS、USB 3300、DVP接口、3.5mm耳机接口、Line in接口、喇叭接口
-- 调试接口：板载DAP调试器、标准JTAG/SWD。
+- 常用接口：SD卡接口、以太网接口、LCD接口、USB FS/HS接口、DVP接口、3.5mm耳机接口、Line in接口、CAN/MCAN接口、LIN接口、RS485接口。
+- 调试接口：板载DAP调试器（含USB转串口）、标准JTAG/SWD。
 
 开发板更多详细信息请参考小华半导体半导体[EV_F4A8_LQ176](https://www.xhsc.com.cn)
 
@@ -37,20 +37,35 @@ EV_F4A8_LQ176 开发板常用 **板载资源** 如下：
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设**  | **支持情况** |               **备注**                |
+| **板载外设**  | **支持情况**  |               **备注**                |
 | :------------ | :-----------: | :-----------------------------------: |
-| USB 转串口    |      支持     |          使用 UART1                  |
-| LED           |     支持     |           LED                        |
-| SDRAM | 支持 | IS42S16400J |
+| ETH           |     支持      |           RTL8201F                    |
+| Nand          |     支持      |           MT29F2G08AB                 |
+| SDRAM         |     支持      |           W9825G6KH                   |
+| USB 转串口    |     支持      |           使用 UART1                  |
 
-| **片上外设**  | **支持情况** |               **备注**                |
+| **片上外设**  | **支持情况**  |               **备注**                |
 | :------------ | :-----------: | :-----------------------------------: |
-| CAN           |     支持     |                                       |
-| GPIO          |     支持     | PA0, PA1... PI13 ---> PIN: 0, 1...141 |
-| WDT | 支持 |  |
-| SPI           |     支持     |              SPI1~6                   |
-| SDIO | 支持 |  |
-| UART V1 & V2         |     支持     |              UART1~10                 |
+| ADC           |     支持      |                                       |
+| CAN           |     支持      |                                       |
+| Crypto        |     支持      | AES，CRC，HASH，RNG                   |
+| DAC           |     支持      |                                       |
+| FLASH         |     支持      |                                       |
+| GPIO          |     支持      | PA0，PA1...PI13 ---> PIN：0，1...141  |
+| HwTimer       |     支持      |                                       |
+| I2C           |     支持      | 软件、硬件 I2C                        |
+| InputCapture  |     支持      |                                       |
+| MCAN          |     支持      |                                       |
+| PM            |     支持      |                                       |
+| PulseEncoder  |     支持      |                                       |
+| PWM           |     支持      |                                       |
+| QSPI          |     支持      |                                       |
+| RTC           |     支持      | 闹钟精度为1分钟                       |
+| SDIO          |     支持      |                                       |
+| SPI           |     支持      |                                       |
+| UART V1 & V2  |     支持      |                                       |
+| USB           |     支持      | USBFS/HS Core， device/host模式       |
+| WDT           |     支持      |                                       |
 
 ## 使用说明
 
@@ -105,9 +120,24 @@ msh >
 
 4. 输入`scons --target=mdk5/iar` 命令重新生成工程。
 
+## 注意事项
+
+| 板载外设 | 模式   |     协议栈     | 注意事项                                                     |
+| -------- | ------ | :------------: | ------------------------------------------------------------ |
+| USB      | device |      ALL       | 由于协议栈的设计，当配置为CDC设备时，打开USB虚拟串口，需使能流控的DTR信号。（如使用SSCOM串口助手打开USB虚拟串口时，勾选DTR选框） |
+| USB      | device |      ALL       | 由于外部PHY管脚复用的原因，当配置使用USBHS Core并且使用外部PHY时，需先通过J14连接到主机（如PC），再复位MCU运行程序；或者将J24跳帽先短接，再复位MCU运行程序。 |
+| USB      | ALL    |      ALL       | 由于main()函数中的LED闪烁示例，使用的是USBFS主机的供电控制管脚，因而当配置为使用USBFS Core时，需要将main()函数中的LED示例代码手动屏蔽。 |
+| USB      | host   |      ALL       | 为确保USB主机对外供电充足，建议通过J35外接5V电源供电，并短接J32对应跳帽。 |
+| USB      | host   |      ALL       | 由于外部PHY管脚复用的原因，当配置使用USBHS Core并且使用外部PHY时，需通过J14先连接好OTG线，再复位MCU运行程序；或者将J24跳帽先短接，再复位MCU运行程序。 |
+| USB      | host   | RTT legacy USB | 目前仅实现并测试了对U盘的支持。                              |
+| USB      | host   | RTT legacy USB | 若配置为U盘主机模式，出现部分U盘无法识别或者写入失败时，可以尝试将RTT抽象层中rt_udisk_run()函数的rt_usbh_storage_reset()操作注释掉，测试是否可以获得更好的兼容性。 |
+| USB      | ALL    |      ALL       | 由于管脚复用的原因，当配置使用USBHS Core时，无法同时使用板载SPI FLASH。 |
+| USB      | ALL    |      ALL       | CherryUSB 与 RTT legacy USB 组件不可同时使用;<br />CherryUSB与 ”On-Chip Peripheral Driver---> []Enable USB“ 不可同时使能及配置。 |
+| USB      | ALL    | RTT legacy USB | 通过“board/config/usb_config/usb_app_conf.h” 进行应用个性化配置（主要为FIFO分配） |
+| USB      | ALL    |   CherryUSB    | 通过“board/ports/usb_config.h”进行应用个性化配置（如FIFO分配、是否使用DMA[Device]、是否使用高速PHY等） |
 
 ## 联系人信息
 
 维护人:
 
--  [小华半导体MCU](https://www.xhsc.com.cn)，邮箱：<xhsc_ae_cd_ap@xhsc.com.cn>
+- [小华半导体MCU](https://www.xhsc.com.cn)，邮箱：<xhsc_ae_cd_ap@xhsc.com.cn>

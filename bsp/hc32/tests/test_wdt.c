@@ -50,7 +50,7 @@ static void _wdt_cmd_print_usage(void)
 
 static int wdt_sample(int argc, char *argv[])
 {
-    rt_err_t ret = RT_EOK;
+    int ret = RT_EOK;
     rt_uint32_t timeleft;
     rt_uint32_t timeout = atoi(argv[2]);
 
@@ -114,7 +114,7 @@ static int wdt_sample(int argc, char *argv[])
     else
     {
         _wdt_cmd_print_usage();
-        return -RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;

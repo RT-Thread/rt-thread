@@ -37,7 +37,11 @@
 #define W25Q_MAX_ADDR                   (0x800000UL)
 
 #define W25Q_SPI_WR_RD_ADDR             0x4000
-#define W25Q_SPI_DATA_BUF_LEN           0x2000
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8)
+    #define W25Q_SPI_DATA_BUF_LEN       0x2000
+#elif defined (HC32F334)
+    #define W25Q_SPI_DATA_BUF_LEN       0x1000
+#endif
 
 
 #if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8)
@@ -61,6 +65,13 @@
 
     #define W25Q_SPI_BUS_NAME           "spi3"
     #define W25Q_SPI_DEVICE_NAME        "spi30"
+#elif defined(HC32F334)
+    #define SPI_CS_PORT                 SPI1_CS_PORT
+    #define SPI_CS_PIN                  SPI1_CS_PIN
+    #define SPI_CS_PORT_PIN             GET_PIN(C, 1)
+
+    #define W25Q_SPI_BUS_NAME           "spi1"
+    #define W25Q_SPI_DEVICE_NAME        "spi10"
 #endif
 
 
