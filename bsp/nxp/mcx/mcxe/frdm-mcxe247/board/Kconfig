@@ -57,8 +57,16 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_SPI
+                config BSP_USING_SPI0
+                    bool "Enable LPSPI0"
+                    default n
+
                 config BSP_USING_SPI1
                     bool "Enable LPSPI1"
+                    default y
+
+                config BSP_USING_SPI2
+                    bool "Enable LPSPI2"
                     default n
             endif
 
@@ -145,16 +153,16 @@ menu "Board extended module Drivers"
             default "spi1"
 
         config BOARD_RW007_CS_PIN
-            hex "CS pin index"
-            default 107
+            int "CS pin index"
+            default 16
 
         config BOARD_RW007_INT_BUSY_PIN
-            hex "INT/BUSY pin index"
-            default 109
+            int "INT/BUSY pin index"
+            default 143
 
         config BOARD_RW007_RST_PIN
             hex "RESET pin index"
-            default 131
+            default 42
     endif
 
 

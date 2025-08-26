@@ -135,9 +135,9 @@ static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops = {
-        .master_xfer     = lpc_i2c_xfer,
-        .slave_xfer      = RT_NULL,
-        .i2c_bus_control = RT_NULL,
+    .master_xfer     = lpc_i2c_xfer,
+    .slave_xfer      = RT_NULL,
+    .i2c_bus_control = RT_NULL,
 };
 
 int rt_hw_i2c_init(void)
@@ -148,7 +148,8 @@ int rt_hw_i2c_init(void)
     for (i = 0; i < ARRAY_SIZE(i2c_buses); i++)
     {
         struct mcx_i2c_bus *priv = &i2c_buses[i];
-        CLOCK_SetIpSrc(i2c_buses[i].clock_ip_name, priv->clock_ip_src);
+
+        CLOCK_SetIpSrc(priv->clock_ip_name, priv->clock_ip_src);
 
         LPI2C_MasterGetDefaultConfig(&masterConfig);
         masterConfig.baudRate_Hz = priv->baud;

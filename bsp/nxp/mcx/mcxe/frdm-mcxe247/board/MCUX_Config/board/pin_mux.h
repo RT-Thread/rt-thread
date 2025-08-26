@@ -19,6 +19,9 @@ void BOARD_InitUART1Pins(void);
 void BOARD_InitUART2Pins(void);
 void BOARD_InitI2C0Pins(void);
 void BOARD_InitI2C1Pins(void);
+void BOARD_InitSPI0Pins(void);
+void BOARD_InitSPI1Pins(void);
+void BOARD_InitSPI2Pins(void);
 
 #if defined(__cplusplus)
 }
