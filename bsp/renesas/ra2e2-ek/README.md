@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为瑞萨 CPK-RA6M4 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
+本文档为瑞萨 EK-RA2E2 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
 
 主要内容如下：
 
@@ -11,15 +11,15 @@
 
 ## 开发板介绍
 
-基于瑞萨 RA6M4 MCU 开发的 CPK-RA6M4 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA6M4 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
+基于瑞萨 RA2E2 MCU 开发的 EK-RA2E2 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA2E2 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
 
 开发板正面外观如下图：
 
-![image-20211011174017429](docs/picture/cpk-ra6m4.png)
+![EK-RA2E2 Evaluation Board](docs/picture/ek-ra2e2-board-front.png)
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：R7FA6M4AF3CFB，200MHz，Arm Cortex®-M33 内核，1MB 代码闪存, 256kB SRAM
+- MCU：R7FA2E2A72DNK，48MHz，Arm Cortex®-M23 内核，64KB 代码闪存, 8kB SRAM
 - 调试接口：板载 J-Link 接口
 - 扩展接口：两个 PMOD 连接器
 
@@ -31,23 +31,16 @@
 
 | **片上外设** | **支持情况** | **备注** |
 | :----------------- | :----------------- | :------------- |
-| UART               | 支持               | UART7 为默认日志输出端口 |
+| UART               | 支持               | UART9 为默认日志输出端口 |
 | GPIO               | 支持               |                |
 | IIC                | 支持               | 软件           |
 | WDT                | 支持               |                |
 | RTC                | 支持               |                |
 | ADC                | 支持               |                |
-| DAC                | 支持               |                |
 | SPI                | 支持               |                |
 | FLASH              | 支持               |                |
 | PWM                | 支持               |                |
-| CAN                | 支持               |                |
 | 持续更新中...      |                    |                |
-| **外接外设** | **支持情况** | **备注** |
-| WiFi 模块     | 支持        |  [RW007 WiFi 网络模块](https://github.com/RT-Thread-packages/rw007)  |
-| 温湿度传感器   | 支持       |  [HS300x 温湿度模块](https://github.com/Guozhanxin/hs300x) |
-| 室内空气质量传感器 | 支持 | [zmod4410 室内空气质量模块](https://github.com/ShermanShao/zmod4410) |
-| 光线传感器 | 支持 | [isl29035光线传感器模块](https://github.com/ShermanShao/isl29035) |
 
 
 ## 使用说明
@@ -67,23 +60,21 @@
 
 **硬件连接**
 
-使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART7：P613(TXD)、P614(RXD)。
+使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART9：P101(TXD)、P100(RXD)。
+
+![UART9 接线](docs/picture/Snipaste_2025-08-26_19-56-11.png)
 
 **编译下载**
 
 - 编译：双击 project.uvprojx 文件，打开 MDK5 工程，编译程序。
 
-> 注意：此工程需要使用 J-Flash Lite 工具烧录程序。建议使用 V7.50 及以上版本烧录工程。[J-Link 下载链接](https://www.segger.com/downloads/jlink/)
+> 注意：此工程需要使用 J-Flash Lite 工具烧录程序。建议使用 V7.70 及以上版本烧录工程。[J-Link 下载链接](https://www.segger.com/downloads/jlink/)
 
-- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA6M4AF，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/ra6m4.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
+- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA2E2A7，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/rtthread.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
 
-![image-20211011181555421](docs/picture/jflash1.png)
+![jflash1](docs/picture/jflash1.png)
 
-![image-20211011182047981](docs/picture/jflash2.png)
-
-![image-20211011182434519](docs/picture/jflash.png)
-
-![image-20211011182949604](docs/picture/jflash3.png)
+![jflash2](docs/picture/jflash2.png)
 
 **查看运行结果**
 
@@ -94,38 +85,33 @@
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.4 build Oct 11 2021
- 2006 - 2021 Copyright by rt-thread team
+ / | \     5.2.2 build Aug 26 2025 19:23:38
+ 2006 - 2024 Copyright by rt-thread team
 
 Hello RT-Thread!
 msh >
 msh >help
 RT-Thread shell commands:
+pin              - pin [option]
 reboot           - Reboot System
-help             - RT - Thread shell help.
-ps               - List threads in the system.
-free             - Show the memory usage in the system.
-hello            - say hello world
+help             - RT-Thread shell help
+ps               - List threads in the system
+free             - Show the memory usage in the system
 clear            - clear the terminal screen
-version          - show RT - Thread version information
-list_thread      - list thread
-list_sem         - list semaphore in system
-list_event       - list event in system
-list_mutex       - list mutex in system
-list_mailbox     - list mail box in system
-list_msgqueue    - list message queue in system
-list_timer       - list timer in system
-list_device      - list device in system
-list             - list all commands in system
+version          - show RT-Thread version information
+list             - list objects
+backtrace        - print backtrace of a thread
 
 msh > 
 ```
 
 **应用入口函数**
 
-应用层的入口函数在 **bsp\ra6m4-cpk\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
+应用层的入口函数在 **bsp\ra2e2-ek\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
 
 ```c
+#define LED3_PIN    BSP_IO_PORT_00_PIN_15 /* Onboard LED pins */
+
 void hal_entry(void)
 {
     rt_kprintf("\nHello RT-Thread!\n");
@@ -144,28 +130,27 @@ void hal_entry(void)
 
 **资料及文档**
 
-- [开发板官网主页](https://www2.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board)
-- [开发板用户手册](https://www2.renesas.cn/cn/zh/document/mah/1527156?language=zh&r=1527191)
-- [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091)
-- [RA6 MCU 快速设计指南](https://www2.renesas.cn/cn/zh/document/apn/ra6-quick-design-guide)
-- [RA6M4_datasheet](https://www2.renesas.cn/cn/zh/document/dst/ra6m4-group-datasheet)
-- [RA6M4 Group User’s Manual: Hardware](https://www2.renesas.cn/cn/zh/document/man/ra6m4-group-user-s-manual-hardware)
+- [芯片官网主页](https://www.renesas.cn/zh/products/ra2e2)
+- [开发板官网主页](https://www.renesas.cn/zh/design-resources/boards-kits/ek-ra2e2)
+- [开发文档](https://www.renesas.cn/zh/design-resources/boards-kits/ek-ra2e2#documents)
 
 **FSP 配置**
 
-需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
+需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp#overview) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
 
-1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)，请使用 FSP 3.5.0 版本
-2. 下载安装完成后，需要添加 CPK-RA6M4 开发板的官方板级支持包
-> 打开[ CPK-RA6M4 开发板详情页](https://www2.renesas.cn/jp/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board)，在**“下载”**列表中找到 **”CPK-RA6M4板级支持包“**，点击链接即可下载
-3. 如何将 **”CPK-RA6M4板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
-4. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
+1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp#overview)，请使用 FSP 6.0.0 版本
+2. 下载对应操作系统的 FSP RASC
+3. 新建工程
+4. [使用瑞萨 FSP 配置工具](./docs/picture/RASC.png)。如果使用 scons 进行开发，在 IDE Project Type 选择CMAKE；如果使用MDK开发，则选择KEIL MDK。
+
+**注意**
+RASC 生成的`bsp_linker_info.h`，要么直接删掉，要么根据使用的开发环境来选择覆盖到`$(BSP_ROOT)/script/bsp_link/gcc` 或 `$(BSP_ROOT)/script/bsp_link/keil`
 
 **ENV 配置**
 
 - 如何使用 ENV 工具：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 
-此 BSP 默认只开启了 UART7 的功能，如果需使用更多高级功能例如组件、软件包等，需要利用 ENV 工具进行配置。
+此 BSP 默认只开启了 UART9 的功能，如果需使用更多高级功能例如组件、软件包等，需要利用 ENV 工具进行配置。
 
 步骤如下：
 1. 在 bsp 下打开 env 工具。
@@ -173,10 +158,9 @@ void hal_entry(void)
 3. 输入`pkgs --update`命令更新软件包。
 4. 输入`scons --target=mdk5` 命令重新生成工程。
 
-
 ## FAQ
 
-### 使用 MDK 的 DEBUG 时如果遇到提示  “Error: Flash Download failed Cortex-M33” 怎么办？
+### 使用 MDK 的 DEBUG 时如果遇到提示  “Error: Flash Download failed Cortex-M23” 怎么办？
 
 可按照下图操作，修改 Utilities 中的选项：
 
