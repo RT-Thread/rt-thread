@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>6</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls>@via/rasc_armclang.via</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\script\bsp_link\keil;..\..\..\include;..\..\..\include\klibc;..\..\..\libcpu\arm\cortex-m23;.\board\ports;.\board;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config\ra2e2;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\ipc;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\newlib;..\..\..\components\libc\compilers\common\extension;..\ra2e2-ek</IncludePath>
+              <IncludePath>.\script\bsp_link\keil;..\..\..\include;..\..\..\include\klibc;..\..\..\libcpu\arm\cortex-m23;.\board\ports;.\board;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\drivers;..\libraries\HAL_Drivers\drivers\config;..\libraries\HAL_Drivers\drivers\config\ra2e2;..\libraries\HAL_Drivers\nano;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\ipc;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\newlib;..\..\..\components\libc\compilers\common\extension;..\ra2e2-ek</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
