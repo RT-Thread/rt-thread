@@ -424,11 +424,6 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
-#define BSP_USING_I2C
-#define BSP_USING_SOFT_I2C
-#define BSP_USING_I2C0
-#define BSP_I2C0_SCL_PIN 116
-#define BSP_I2C0_SDA_PIN 27
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
