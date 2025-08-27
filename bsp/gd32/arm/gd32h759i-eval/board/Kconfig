@@ -71,6 +71,100 @@ menu "On-chip Peripheral Drivers"
 
     source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_HARD_I2C
+                bool "Enable Hardware I2C"
+                default n
+                select RT_USING_I2C
+                if BSP_USING_HARD_I2C
+                    config BSP_USING_HARD_I2C0
+                        bool "Enable I2C0 Hardware BUS"
+                        default n                    
+                    config BSP_USING_HARD_I2C1
+                        bool "Enable I2C1 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C2
+                        bool "Enable I2C2 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C3
+                        bool "Enable I2C3 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C4
+                        bool "Enable I2C4 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C5
+                        bool "Enable I2C5 Hardware BUS"
+                        default n
+                endif
+
+            menuconfig BSP_USING_SOFT_I2C
+                bool "Enable Software I2C (BitOps)"
+                default n
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select RT_USING_PIN
+                if BSP_USING_SOFT_I2C
+                  menuconfig BSP_USING_I2C0
+                        bool "Enable I2C0 BUS (software simulation)"
+                        default n
+                        if BSP_USING_I2C0
+                            config BSP_I2C0_SCL_PIN
+                                int "I2C0 scl pin number"
+                                range 0 240
+                                default 0
+                            config BSP_I2C0_SDA_PIN
+                                int "I2C0 sda pin number"
+                                range 0 240
+                                default 0
+                        endif
+
+                    menuconfig BSP_USING_I2C1
+                        bool "Enable I2C1 BUS (software simulation)"
+                        default n
+                        if BSP_USING_I2C1
+                            config BSP_I2C1_SCL_PIN
+                                int "I2C1 scl pin number"
+                                range 0 240
+                                default 0
+                            config BSP_I2C1_SDA_PIN
+                                int "I2C1 sda pin number"
+                                range 0 240
+                                default 0
+                        endif
+
+                    menuconfig BSP_USING_I2C2
+                        bool "Enable I2C2 BUS (software simulation)"
+                        default n
+                        if BSP_USING_I2C2
+                            config BSP_I2C2_SCL_PIN
+                                int "I2C2 scl pin number"
+                                range 0 240
+                                default 0
+                            config BSP_I2C2_SDA_PIN
+                                int "I2C2 sda pin number"
+                                range 0 240
+                                default 0
+                        endif
+
+                    menuconfig BSP_USING_I2C3
+                        bool "Enable I2C3 BUS (software simulation)"
+                        default n
+                        if BSP_USING_I2C3
+                            config BSP_I2C3_SCL_PIN
+                                int "I2C3 scl pin number"
+                                range 0 240
+                                default 0
+                            config BSP_I2C3_SDA_PIN
+                                int "I2C3 sda pin number"
+                                range 0 240
+                                default 0
+                        endif
+                endif
+        endif
+
 endmenu
 
 menu "Board extended module Drivers"
