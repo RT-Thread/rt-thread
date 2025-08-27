@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -182,7 +182,7 @@ static rt_err_t gd32_i2c_bus_unlock(const struct gd32_soft_i2c_config *cfg)
   * @param  None
   * @retval RT_EOK indicates successful initialization.
   */
-int rt_hw_i2c_init(void)
+int rt_soft_i2c_init(void)
 {
     rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct gd32_i2c);
     rt_err_t result;
@@ -207,6 +207,6 @@ int rt_hw_i2c_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_hw_i2c_init);
+INIT_BOARD_EXPORT(rt_soft_i2c_init);
 
 #endif /* RT_USING_I2C */

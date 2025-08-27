@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -340,6 +340,8 @@
 /* touch drivers */
 
 /* end of touch drivers */
+#define PKG_USING_AT24CXX
+#define PKG_USING_AT24CXX_LATEST_VERSION
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
@@ -424,6 +426,11 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_USING_I2C
+#define BSP_USING_SOFT_I2C
+#define BSP_USING_I2C0
+#define BSP_I2C0_SCL_PIN 116
+#define BSP_I2C0_SDA_PIN 27
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
