@@ -25,6 +25,37 @@ menu "Drivers Configuration"
                 default n
 
         endif
+    
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_UART
+        default y
+
+        if BSP_USING_UART
+            config BSP_UART_USING_DMA
+                bool "Enable UART with DMA"
+                default y
+
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+            
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+            
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+            
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+        endif
 
     config BSP_USING_HARDLOCK
         bool "Enable Hard-Lock"
