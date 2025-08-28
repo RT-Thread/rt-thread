@@ -69,8 +69,37 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-    source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_HARD_I2C
+                bool "Enable Hardware I2C"
+                default n
+                select RT_USING_I2C
+                if BSP_USING_HARD_I2C
+                    config BSP_USING_HARD_I2C0
+                        bool "Enable I2C0 Hardware BUS"
+                        default n                    
+                    config BSP_USING_HARD_I2C1
+                        bool "Enable I2C1 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C2
+                        bool "Enable I2C2 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C3
+                        bool "Enable I2C3 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C4
+                        bool "Enable I2C4 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C5
+                        bool "Enable I2C5 Hardware BUS"
+                        default n
+                endif
+        endif
 
+    source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"        
 endmenu
 
 menu "Board extended module Drivers"
