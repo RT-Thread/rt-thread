@@ -192,10 +192,12 @@ endif
 config RT_USING_CPU_USAGE_TRACER
     select RT_USING_HOOK
     bool "Enable cpu usage tracing"
-    help
-        Enable cpu usage tracer for application like top.
-    default y if RT_USING_SMART
     default n
+    help
+        Enable thread CPU usage statistics and monitoring.
+        This feature tracks CPU usage for each thread and provides
+        percentage information through the list thread command.
+        It will automatically integrate with the scheduler to track thread execution time.
 
 menu "kservice options"
     config RT_USING_TINY_FFS
