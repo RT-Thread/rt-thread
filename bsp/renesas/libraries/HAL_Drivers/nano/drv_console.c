@@ -14,7 +14,7 @@
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_SEMAPHORE)
 
-static rt_sem_t console_sem = RT_NULL;
+struct rt_semaphore console_sem;
 
 #if defined(RT_NANO_CONSOLE_UART0)
 #define renesas_uart_ctrl       g_uart0_ctrl
@@ -60,8 +60,11 @@ static rt_sem_t console_sem = RT_NULL;
 
 void rt_hw_console_init(void)
 {
-    fsp_err_t err;
-    console_sem = rt_sem_create("console", 0, RT_IPC_FLAG_FIFO);
+    fsp_err_t err = FSP_SUCCESS;
+    rt_err_t res = RT_EOK;
+
+    res = rt_sem_init(&console_sem, "console", 0, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(res == RT_EOK);
 
     /* Initialize UART using FSP */
 #ifdef SOC_SERIES_R7FA8M85
@@ -78,12 +81,12 @@ void rt_hw_console_init(void)
 
 void console_send_byte(uint8_t ch)
 {
+    renesas_uart_ctrl.p_reg->TDR = ch;
 #if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R9A07G0)
     while ((renesas_uart_ctrl.p_reg->CSR_b.TEND) == 0);
 #else
     while ((renesas_uart_ctrl.p_reg->SSR_b.TEND) == 0);
 #endif
-    renesas_uart_ctrl.p_reg->TDR = ch;
 }
 
 void rt_hw_console_output(const char *str)
@@ -111,7 +114,7 @@ void renesas_uart_callback(uart_callback_args_t *p_args)
         /* Received a character or receive completed */
         case UART_EVENT_RX_CHAR:
         case UART_EVENT_RX_COMPLETE:
-            rt_sem_release(console_sem);
+            rt_sem_release(&console_sem);
             break;
 
         default:
@@ -122,7 +125,7 @@ void renesas_uart_callback(uart_callback_args_t *p_args)
 char rt_hw_console_getchar(void)
 {
     int ch = -1;
-    rt_sem_take(console_sem, RT_WAITING_FOREVER);
+    rt_sem_take(&console_sem, RT_WAITING_FOREVER);
 #ifdef SOC_SERIES_R7FA8M85
     fsp_err_t ret = R_SCI_B_UART_Read(&renesas_uart_ctrl, (uint8_t *)&ch, 1);
 #else
