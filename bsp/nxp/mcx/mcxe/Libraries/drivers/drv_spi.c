@@ -34,11 +34,8 @@ struct mcx_spi_bus
     LPSPI_Type       *spi_base;
     clock_ip_name_t   clock_ip_name;
     clock_ip_src_t    clock_ip_src;
-    clock_name_t      clock_name;
-
-
-    rt_sem_t sem;
-    char    *name;
+    rt_sem_t          sem;
+    char             *name;
 };
 
 static struct mcx_spi_bus mcx_spi_buses[] =
@@ -150,7 +147,7 @@ int rt_hw_spi_init(void)
         masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000U / masterConfig.baudRate * 1U;
         masterConfig.betweenTransferDelayInNanoSec = 1000000000U / masterConfig.baudRate * 1U;
 
-        LPSPI_MasterInit(priv->spi_base, &masterConfig, CLOCK_GetFreq(priv->clock_name));
+        LPSPI_MasterInit(priv->spi_base, &masterConfig, CLOCK_GetIpFreq(priv->clock_ip_name));
 
         rt_spi_bus_register(&priv->spi_bus, priv->name, &lpc_spi_ops);
     }

@@ -72,13 +72,17 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_ADC
         config BSP_USING_ADC
-            bool "Enable ADC Channel"
+            bool "Enable ADC"
             select RT_USING_ADC
             default y
 
             if BSP_USING_ADC
-                config BSP_USING_ADC0_CH22
-                    bool "Enable ADC0 Channel22"
+                config BSP_USING_ADC0
+                    bool "Enable ADC0"
+                    default n
+
+                config BSP_USING_ADC1
+                    bool "Enable ADC1"
                     default n
 
             endif
