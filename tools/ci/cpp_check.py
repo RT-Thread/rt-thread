@@ -62,6 +62,9 @@ class CPPCheck:
                     '-DRT_ASSERT(x)=',
                     '-DRTM_EXPORT(x)=',
                     '-Drt_list_for_each_entry(a,b,c)=a=(void*)b;',
+                    '-DCMD_OPTIONS_STATEMENT(x)=',
+                    '-DCMD_OPTIONS_NODE_START(x)=',
+                    '-DCMD_OPTIONS_NODE(x,y,z)=',
                     '-I include',
                     '-I thread/components/finsh',
                     # it's okay because CI will do the real compilation to check this
