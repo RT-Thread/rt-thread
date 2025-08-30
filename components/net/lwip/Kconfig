@@ -13,7 +13,7 @@ if RT_USING_LWIP
             If don't select this option, both local version and upstream
             version can be selected. If select this option, only local version
             can be selected.
-    choice
+    choice RT_USING_LWIP_VERSION
         prompt "lwIP version"
         default RT_USING_LWIP203
         help

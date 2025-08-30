@@ -3,7 +3,7 @@ menuconfig RT_USING_VIRTIO
     default n
 
     if RT_USING_VIRTIO
-        choice
+        choice RT_USING_VIRTIO_VERSION
             prompt "VirtIO Version"
             default RT_USING_VIRTIO10
 

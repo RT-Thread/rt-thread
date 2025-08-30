@@ -10,7 +10,7 @@ if CHERRYUSB
         default n
 
     if CHERRYUSB_DEVICE
-        choice
+        choice CHERRYUSB_DEVICE_SPEED
             prompt "Select usb device speed"
             default CHERRYUSB_DEVICE_SPEED_FS
             config CHERRYUSB_DEVICE_SPEED_FS
@@ -21,7 +21,7 @@ if CHERRYUSB
                 bool "AUTO"
         endchoice
 
-        choice
+        choice CHERRYUSB_DEVICE_IP
             prompt "Select usb device ip, and some ip need config in usb_config.h, please check"
             default CHERRYUSB_DEVICE_CUSTOM
             config CHERRYUSB_DEVICE_CUSTOM
@@ -158,7 +158,7 @@ if CHERRYUSB
             prompt "Enable usb cdc ecm device with lwip for lan"
             default n
 
-        choice
+        choice CHERRYUSB_DEVICE_TEMPLATE
             prompt "Select usb device template, please select class driver first"
             default CHERRYUSB_DEVICE_TEMPLATE_NONE
             config CHERRYUSB_DEVICE_TEMPLATE_NONE
@@ -235,7 +235,7 @@ if CHERRYUSB
         default n
 
     if CHERRYUSB_HOST
-        choice
+        choice CHERRYUSB_HOST_IP
             prompt "Select usb host ip, and some ip need config in usb_config.h, please check"
             default CHERRYUSB_HOST_CUSTOM
             config CHERRYUSB_HOST_CUSTOM
