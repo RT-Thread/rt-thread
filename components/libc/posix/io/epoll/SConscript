@@ -3,12 +3,8 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = []
-CPPPATH = [cwd]
+src     = ['epoll.c']
 
-if GetDepend('RT_USING_POSIX_EPOLL'):
-    src += ['epoll.c']
-
-group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_EPOLL'])
 
 Return('group')
