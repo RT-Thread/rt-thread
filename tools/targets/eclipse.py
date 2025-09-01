@@ -7,6 +7,7 @@
 # Date           Author       Notes
 # 2019-03-21     Bernard      the first version
 # 2019-04-15     armink       fix project update error
+# 2025-09-01     wdfk-prog    Add project-name support for Eclipse target and enhance folder linking
 #
 
 import glob
@@ -355,32 +356,73 @@ def HandleToolOption(tools, env, project, reset):
 
     return
 
-
 def UpdateProjectStructure(env, prj_name):
-    bsp_root = env['BSP_ROOT']
-    rtt_root = env['RTT_ROOT']
+    """
+    Updates the .project file to link any external/specified folders from 
+    PROJECT_SOURCE_FOLDERS in rtconfig.py. This version correctly handles
+    all specified paths, regardless of their physical location.
+    """
+    bsp_root = os.path.abspath(env['BSP_ROOT'])
+    
+    # --- 1. Read the list of folders to be linked from rtconfig.py ---
+    folders_to_link = []
+    try:
+        import rtconfig
+        if hasattr(rtconfig, 'PROJECT_SOURCE_FOLDERS') and rtconfig.PROJECT_SOURCE_FOLDERS:
+            folders_to_link = rtconfig.PROJECT_SOURCE_FOLDERS
+    except ImportError:
+        pass # It's okay if the file or variable doesn't exist.
 
-    project = etree.parse('.project')
-    root = project.getroot()
+    if not os.path.exists('.project'):
+        print("Error: .project file not found. Cannot update.")
+        return
+        
+    project_xml = etree.parse('.project')
+    root = project_xml.getroot()
 
-    if rtt_root.startswith(bsp_root):
-        linkedResources = root.find('linkedResources')
-        if linkedResources == None:
-            linkedResources = SubElement(root, 'linkedResources')
+    # --- 2. Ensure the <linkedResources> node exists ---
+    linkedResources = root.find('linkedResources')
+    if linkedResources is None:
+        linkedResources = SubElement(root, 'linkedResources')
 
-        links = linkedResources.findall('link')
-        # delete all RT-Thread folder links
-        for link in links:
-            if link.find('name').text.startswith('rt-thread'):
-                linkedResources.remove(link)
+    # --- 3. Clean up previously managed links to prevent duplicates ---
+    managed_link_names = [os.path.basename(p) for p in folders_to_link]
+    for link in list(linkedResources.findall('link')): # Use list() to safely remove items while iterating
+        name_element = link.find('name')
+        if name_element is not None and name_element.text in managed_link_names:
+            linkedResources.remove(link)
+            print(f"Removed existing linked resource '{name_element.text}' to regenerate it.")
 
-    if prj_name:
-        name = root.find('name')
-        if name == None:
-            name = SubElement(root, 'name')
-        name.text = prj_name
+    # --- 4. Create new links for each folder specified by the user ---
+    for folder_path in folders_to_link:
+        # The link name in the IDE will be the directory's base name.
+        link_name = os.path.basename(folder_path)
+        
+        # Resolve the absolute path of the folder to be linked.
+        abs_folder_path = os.path.abspath(os.path.join(bsp_root, folder_path))
 
-    out = open('.project', 'w')
+        print(f"Creating linked resource for '{link_name}' pointing to '{abs_folder_path}'...")
+
+        # Calculate the URI relative to the Eclipse ${PROJECT_LOC} variable.
+        # This works for both internal and external folders.
+        relative_link_path = os.path.relpath(abs_folder_path, bsp_root).replace('\\', '/')
+        
+        # Use Eclipse path variables for robustness. PARENT_LOC is more standard for external folders.
+        if relative_link_path.startswith('../'):
+             # Count how many levels up
+            levels_up = relative_link_path.count('../')
+            clean_path = relative_link_path.replace('../', '')
+            location_uri = f'PARENT-{levels_up}-PROJECT_LOC/{clean_path}'
+        else:
+            location_uri = f'PROJECT_LOC/{relative_link_path}'
+            
+        link_element = SubElement(linkedResources, 'link')
+        SubElement(link_element, 'name').text = link_name
+        SubElement(link_element, 'type').text = '2' # Type 2 means a folder link.
+        SubElement(link_element, 'locationURI').text = location_uri
+
+    # --- 5. Write the updated content back to the .project file ---
+    out = open('.project', 'w', encoding='utf-8')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
@@ -492,6 +534,57 @@ def HandleExcludingOption(entry, sourceEntries, excluding):
 
     SubElement(sourceEntries, 'entry', {'excluding': value, 'flags': 'VALUE_WORKSPACE_PATH|RESOLVED', 'kind':'sourcePath', 'name':""})
 
+def UpdateProjectName(prj_name):
+    """
+    Regardless of whether the .project file exists, make sure its name is correct.
+    """
+    if not prj_name:
+        return
+
+    try:
+        if not os.path.exists('.project'):
+            if rt_studio.gen_project_file(os.path.abspath(".project"), prj_name) is False:
+                print('Fail!')
+                return
+            print("Generated .project file with name:", prj_name)
+
+        project_tree = etree.parse('.project')
+        root = project_tree.getroot()
+        name_element = root.find('name')
+        
+        if name_element is not None and name_element.text != prj_name:
+            print(f"Updating project name from '{name_element.text}' to '{prj_name}'...")
+            name_element.text = prj_name
+            
+            project_tree.write('.project', encoding='UTF-8', xml_declaration=True)
+            xml_indent(root) 
+            with open('.project', 'w', encoding='utf-8') as f:
+                 f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+                 f.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
+            
+    except Exception as e:
+        print("Error updating .project file:", e)
+
+def HandleSourceEntries_Global(sourceEntries, excluding):
+    """
+    Configure the project to include the root folder ("") and exclude all 
+    files/folders in the 'excluding' list. This makes all project folders 
+    visible in the IDE.
+    """
+    # To keep the configuration clean, first remove all existing entries
+    for entry in sourceEntries.findall('entry'):
+        sourceEntries.remove(entry)
+
+    # Join the exclusion list into a single string with the '|' separator
+    excluding_str = '|'.join(sorted(excluding))
+
+    # Create a new, single entry for the project root directory
+    SubElement(sourceEntries, 'entry', {
+        'flags': 'VALUE_WORKSPACE_PATH|RESOLVED',
+        'kind': 'sourcePath',
+        'name': "",  # An empty string "" represents the project root
+        'excluding': excluding_str
+    })
 
 def UpdateCproject(env, project, excluding, reset, prj_name):
     excluding = sorted(excluding)
@@ -504,20 +597,27 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
         tools = cconfiguration.findall('storageModule/configuration/folderInfo/toolChain/tool')
         HandleToolOption(tools, env, project, reset)
 
+        if prj_name:
+            config_element = cconfiguration.find('storageModule/configuration')
+            if config_element is not None:
+                config_element.set('artifactName', prj_name)
+
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
-        if sourceEntries != None:
-            entry = sourceEntries.find('entry')
-            HandleExcludingOption(entry, sourceEntries, excluding)
-    # update refreshScope
+        if sourceEntries is not None:
+            # Call the new global handler function for source entries
+            HandleSourceEntries_Global(sourceEntries, excluding)
+            
+    # update refreshScope to ensure the project refreshes correctly
     if prj_name:
-        prj_name = '/' + prj_name
+        prj_name_for_path = '/' + prj_name
         configurations = root.findall('storageModule/configuration')
         for configuration in configurations:
             resource = configuration.find('resource')
-            configuration.remove(resource)
-            SubElement(configuration, 'resource', {'resourceType': "PROJECT", 'workspacePath': prj_name})
+            if resource is not None:
+                configuration.remove(resource)
+            SubElement(configuration, 'resource', {'resourceType': "PROJECT", 'workspacePath': prj_name_for_path})
 
-    # write back to .cproject
+    # write back to .cproject file
     out = open('.cproject', 'w')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
     out.write('<?fileVersion 4.0.0?>')
@@ -525,9 +625,10 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
     out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
     out.close()
 
-
-def TargetEclipse(env, reset=False, prj_name=None):
+def TargetEclipse(env, project, reset=False, prj_name=None):
     global source_pattern
+
+    UpdateProjectName(prj_name)
 
     print('Update eclipse setting...')
 
@@ -561,7 +662,7 @@ def TargetEclipse(env, reset=False, prj_name=None):
     # enable lowwer .s file compiled in eclipse cdt
     if not os.path.exists('.settings/org.eclipse.core.runtime.prefs'):
         if rt_studio.gen_org_eclipse_core_runtime_prefs(
-                os.path.abspath(".settings/org.eclipse.core.runtime.prefs")) is False:
+            os.path.abspath(".settings/org.eclipse.core.runtime.prefs")) is False:
             print('Fail!')
             return
 
@@ -570,8 +671,6 @@ def TargetEclipse(env, reset=False, prj_name=None):
         if rt_studio.gen_makefile_targets(os.path.abspath("makefile.targets")) is False:
             print('Fail!')
             return
-
-    project = ProjectInfo(env)
 
     # update the project file structure info on '.project' file
     UpdateProjectStructure(env, prj_name)
