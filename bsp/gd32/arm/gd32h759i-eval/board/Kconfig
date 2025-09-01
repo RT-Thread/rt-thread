@@ -99,6 +99,31 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS"
+                default n
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n
+        endif
+
     source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"        
 endmenu
 
