@@ -482,12 +482,29 @@ static rt_err_t _thread_detach(rt_thread_t thread)
 {
     rt_err_t error;
     rt_base_t critical_level;
+    rt_base_t stat;
 
     /**
      * forbid scheduling on current core before returning since current thread
      * may be detached from scheduler.
      */
     critical_level = rt_enter_critical();
+
+    /* get thread status and warn about unsafe deletion scenarios */
+    stat = rt_sched_thread_get_stat(thread);
+
+    /* assert thread is not already closed to prevent duplicate deletion */
+    RT_ASSERT(stat != RT_THREAD_CLOSE);
+
+    /* warn if deleting a running or ready thread */
+    if ((stat == RT_THREAD_RUNNING) || (stat == RT_THREAD_READY))
+    {
+        rt_exit_critical_safe(critical_level);
+        LOG_D("deleting thread [%s] in %s may cause problems",
+              thread->parent.name,
+              (stat == RT_THREAD_RUNNING) ? "RUNNING" : "READY");
+        critical_level = rt_enter_critical();
+    }
 
     error = rt_thread_close(thread);
 
