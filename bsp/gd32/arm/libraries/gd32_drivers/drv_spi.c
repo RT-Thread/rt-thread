@@ -219,10 +219,11 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     #endif
 #else
     /* Init SPI SCK MOSI */
-    gpio_init(gd32_spi->spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin | gd32_spi->mosi_pin);
+    gpio_init(gd32_spi->sck_spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin);
+    gpio_init(gd32_spi->mosi_spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->mosi_pin);
 
     /* Init SPI MISO */
-    gpio_init(gd32_spi->spi_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, gd32_spi->miso_pin);
+    gpio_init(gd32_spi->miso_spi_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, gd32_spi->miso_pin);
 #endif
 
 }
