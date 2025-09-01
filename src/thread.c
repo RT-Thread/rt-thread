@@ -947,14 +947,19 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-    RT_ASSERT(thread == rt_thread_self());
 
     LOG_D("thread suspend:  %s", thread->parent.name);
 
     rt_sched_lock(&slvl);
 
     stat = rt_sched_thread_get_stat(thread);
-    if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
+    if (stat == RT_THREAD_SUSPEND)
+    {
+        rt_sched_unlock(slvl);
+        /* Already suspended, just set status to success.  */
+        return RT_EOK;
+    }
+    else if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
         LOG_D("thread suspend: thread disorder, 0x%2x", RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
@@ -1042,7 +1047,30 @@ RTM_EXPORT(rt_thread_suspend_with_flag);
 /**
  * @brief   This function will suspend the specified thread and change it to suspend state.
  *
- * @param   thread Handle of the thread to be suspended.
+ * @note    This function can suspend both the current thread itself and other threads.
+ *          Please use this API with extreme caution when suspending other threads.
+ *
+ *          When suspending the current thread:
+ *              rt_thread_suspend(rt_thread_self());
+ *          This is generally safe as the thread voluntarily suspends itself.
+ *
+ *          When suspending other threads:
+ *          You have no way of knowing what code another thread is executing when you suspend it.
+ *          If you suspend a thread while it is sharing a resource with other threads and occupying
+ *          this resource (such as holding a mutex, semaphore, or other synchronization objects),
+ *          deadlock or resource starvation can occur very easily.
+ *
+ * @warning Suspending other threads arbitrarily can lead to:
+ *          - Deadlock situations
+ *          - Resource starvation
+ *          - System instability
+ *          - Unpredictable behavior
+ *
+ *          Only suspend other threads when you have full control over the system state
+ *          and understand the implications.
+ *
+ * @param   thread Handle of the thread to be suspended. Can be the current thread
+ *                 (rt_thread_self()) or any other thread.
  *
  * @return  Return the operation status. If the return value is `RT_EOK`, the
  *          function is successfully executed.
