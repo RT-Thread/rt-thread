@@ -190,7 +190,7 @@ static int pipe_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 
     pipe = (rt_pipe_t *)fd->vnode->data;
 
-    switch (cmd)
+    switch ((rt_ubase_t)cmd)
     {
     case FIONREAD:
         *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
