@@ -125,7 +125,7 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
     int mask  = O_NONBLOCK | O_APPEND;
 
     device = (rt_device_t)fd->vnode->data;
-    switch ((unsigned int) cmd)
+    switch ((rt_ubase_t)cmd)
     {
     case FIONREAD:
         break;
@@ -1074,7 +1074,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
 
-    switch ((unsigned int) cmd)
+    switch ((rt_ubase_t)cmd)
     {
         case RT_DEVICE_CTRL_SUSPEND:
             /* suspend device */
