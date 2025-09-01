@@ -43,8 +43,6 @@ rt_inline void rt_hw_isb(void)
     __asm__ volatile(OPC_FENCE_I:::"memory");
 }
 
-int rt_hw_cpu_id(void);
-
 #endif
 
 #endif
