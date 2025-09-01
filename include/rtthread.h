@@ -239,6 +239,7 @@ void rt_exit_critical_safe(rt_base_t critical_level);
 rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
+void rt_scheduler_stack_overflow_sethook(rt_err_t (*hook)(struct rt_thread *thread));
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid));
 #endif /* RT_USING_HOOK */
