@@ -1,0 +1,10 @@
+from building import *
+
+src = []
+
+if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('UTEST_SELF_PASS_TC'):
+    src += Glob('TC_*.c')
+
+group = DefineGroup('utc_UTest', src, depend = [''])
+
+Return('group')
