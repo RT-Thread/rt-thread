@@ -268,7 +268,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default
+                default n
 
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
