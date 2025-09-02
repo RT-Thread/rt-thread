@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2006-2025, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <rtthread.h>
 #include "utest.h"
 
@@ -80,4 +86,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_uassert_in_range);
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "utest.uassert", RT_NULL, RT_NULL, 10);
+UTEST_TC_EXPORT(utest_do_tc, "utest", RT_NULL, RT_NULL, 10);
