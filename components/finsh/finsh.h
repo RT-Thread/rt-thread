@@ -88,6 +88,8 @@ typedef long (*syscall_func)(void);
                 };
 
 #endif  /* _MSC_VER */
+#else
+#define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc, opt)
 #endif /* FINSH_USING_SYMTAB */
 
 /**
