@@ -76,8 +76,6 @@ void rt_hw_board_init(void)
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
 
-    plic_init();
-
     rt_hw_interrupt_init();
 
     rt_hw_uart_init();
