@@ -592,13 +592,13 @@ static double apply_scaling(double num, struct scaling_factor normalization)
 
 static double unapply_scaling(double normalized, struct scaling_factor normalization)
 {
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__ARMCC_VERSION) /* GCC */
 // accounting for a static analysis bug in GCC 6.x and earlier
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
   return normalization.multiply ? normalized / normalization.raw_factor : normalized * normalization.raw_factor;
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__ARMCC_VERSION) /* GCC */
 #pragma GCC diagnostic pop
 #endif
 }

@@ -13,6 +13,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <rtdevice.h>
 #include <board.h>
 
 #ifdef __cplusplus
@@ -31,10 +32,14 @@ struct gd32_spi
     uint32_t spi_periph;
     char *bus_name;
     rcu_periph_enum spi_clk;
-    rcu_periph_enum gpio_clk;
+    rcu_periph_enum sck_gpio_clk;
+    rcu_periph_enum miso_gpio_clk;
+    rcu_periph_enum mosi_gpio_clk;
     struct rt_spi_bus *spi_bus;
-    uint32_t spi_port;
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32E23x
+    uint32_t sck_spi_port;
+    uint32_t miso_spi_port;
+    uint32_t mosi_spi_port;
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32E23x || defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32F5xx
     uint32_t alt_func_num;
 #endif
     uint16_t sck_pin;
