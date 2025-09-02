@@ -37,17 +37,18 @@ static int msh_help(int argc, char **argv)
     rt_kprintf("RT-Thread shell commands:\n");
     {
         struct finsh_syscall *index;
-
+#if defined(FINSH_USING_SYMTAB)
         for (index = _syscall_table_begin;
                 index < _syscall_table_end;
                 FINSH_NEXT_SYSCALL(index))
         {
-#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
+#if defined(FINSH_USING_DESCRIPTION)
             rt_kprintf("%-16s - %s\n", index->name, index->desc);
 #else
             rt_kprintf("%s ", index->name);
-#endif
+#endif  /* FINSH_USING_DESCRIPTION */
         }
+#endif  /* FINSH_USING_SYMTAB */
     }
     rt_kprintf("\n");
 
@@ -231,7 +232,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
 {
     struct finsh_syscall *index;
     cmd_function_t cmd_func = RT_NULL;
-
+#if defined(FINSH_USING_SYMTAB)
     for (index = _syscall_table_begin;
             index < _syscall_table_end;
             FINSH_NEXT_SYSCALL(index))
@@ -243,7 +244,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
             break;
         }
     }
-
+#endif /* FINSH_USING_SYMTAB */
     return cmd_func;
 }
 
@@ -814,7 +815,7 @@ void msh_auto_complete(char *prefix)
 #endif /* RT_USING_MODULE */
     }
 #endif /* DFS_USING_POSIX */
-
+#if defined(FINSH_USING_SYMTAB)
     /* checks in internal command */
     {
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
@@ -839,7 +840,7 @@ void msh_auto_complete(char *prefix)
             }
         }
     }
-
+#endif /* FINSH_USING_SYMTAB */
     /* auto complete string */
     if (name_ptr != NULL)
     {
@@ -866,7 +867,7 @@ static msh_cmd_opt_t *msh_get_cmd_opt(char *opt_str)
     {
         len = strlen(opt_str);
     }
-
+#if defined(FINSH_USING_SYMTAB)
     for (index = _syscall_table_begin;
             index < _syscall_table_end;
             FINSH_NEXT_SYSCALL(index))
@@ -877,7 +878,7 @@ static msh_cmd_opt_t *msh_get_cmd_opt(char *opt_str)
             break;
         }
     }
-
+#endif /* FINSH_USING_SYMTAB */
     return opt;
 }
 
