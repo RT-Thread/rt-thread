@@ -602,6 +602,17 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
             if config_element is not None:
                 config_element.set('artifactName', prj_name)
 
+            pre_build_step = getattr(rtconfig, 'PRE_BUILD_STEP', None)
+            post_build_step = getattr(rtconfig, 'POST_BUILD_STEP', None)
+
+            if pre_build_step:
+                config_element.set('prebuildStep', pre_build_step)
+                print("Setting/Overwriting Pre-build step...")
+
+            if post_build_step:
+                config_element.set('postbuildStep', post_build_step)
+                print("Setting/Overwriting Post-build step...")
+
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         if sourceEntries is not None:
             # Call the new global handler function for source entries
