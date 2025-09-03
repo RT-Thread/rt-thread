@@ -57,6 +57,9 @@ if GetDepend(['UTEST_HOOKLIST_TC']):
 if GetDepend(['UTEST_MTSAFE_KPRINT_TC']):
     src += ['mtsafe_kprint_tc.c']
 
+if GetDepend(['UTEST_MEMPOOL_TC']):
+    src += ['mempool_tc.c']
+
 # Stressful testcase for scheduler (MP/UP)
 if GetDepend(['UTEST_SCHEDULER_TC']):
     src += ['sched_timed_sem_tc.c']
@@ -72,3 +75,4 @@ for item in list:
         group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
+
