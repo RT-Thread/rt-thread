@@ -434,76 +434,111 @@ def UpdateProjectStructure(env, prj_name):
 def GenExcluding(env, project):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
     bsp_root = os.path.abspath(env['BSP_ROOT'])
+
+    abs_source_folders = []
+    try:
+        import rtconfig
+        if hasattr(rtconfig, 'PROJECT_SOURCE_FOLDERS'):
+            for folder in rtconfig.PROJECT_SOURCE_FOLDERS:
+                abs_source_folders.append(os.path.abspath(os.path.join(bsp_root, folder)))
+    except ImportError:
+        pass
+
     coll_dirs = CollectPaths(project['DIRS'])
     all_paths_temp = [OSPath(path) for path in coll_dirs]
     all_paths = []
 
     # add used path
     for path in all_paths_temp:
-        if path.startswith(rtt_root) or path.startswith(bsp_root):
+        is_valid_path = False
+        # Check whether the path is within BSP, RTT, or any external source folder.
+        if path.lower().startswith(bsp_root.lower()) or path.lower().startswith(rtt_root.lower()):
+            is_valid_path = True
+        else:
+            for source_folder in abs_source_folders:
+                if path.lower().startswith(source_folder.lower()):
+                    is_valid_path = True
+                    break
+        
+        if is_valid_path:
             all_paths.append(path)
 
-    if bsp_root.startswith(rtt_root):
-        # bsp folder is in the RT-Thread root folder, such as the RT-Thread source code on GitHub
-        exclude_paths = ExcludePaths(rtt_root, all_paths)
-    elif rtt_root.startswith(bsp_root):
-        # RT-Thread root folder is in the bsp folder, such as project folder which generate by 'scons --dist' cmd
-        check_path = []
-        exclude_paths = []
-        # analyze the primary folder which relative to BSP_ROOT and in all_paths
-        for path in all_paths:
-            if path.startswith(bsp_root):
-                folders = RelativeProjectPath(env, path).split('\\')
-                if folders[0] != '.' and '\\' + folders[0] not in check_path:
-                    check_path += ['\\' + folders[0]]
-        # exclue the folder which has managed by scons
-        for path in check_path:
-            exclude_paths += ExcludePaths(bsp_root + path, all_paths)
-    else:
-        exclude_paths = ExcludePaths(rtt_root, all_paths)
-        exclude_paths += ExcludePaths(bsp_root, all_paths)
 
-    paths = exclude_paths
+    # Exclude the entire unused directory to support external folders.
     exclude_paths = []
-    # remove the folder which not has source code by source_pattern
-    for path in paths:
-        # add bsp and libcpu folder and not collect source files (too more files)
+
+    # 1. Exclude unused directories under BSP ROOT
+    exclude_paths += ExcludePaths(bsp_root, all_paths)
+    
+    # 2. Exclude unused directories under RTT ROOT (if it is not within the BSP)
+    if not rtt_root.lower().startswith(bsp_root.lower()):
+        exclude_paths += ExcludePaths(rtt_root, all_paths)
+    
+    # 3. Exclude all unused directories under external folders.
+    for folder in abs_source_folders:
+        # Avoid reprocessing folders that have already been processed as RTT_ROOT.
+        if folder.lower() != rtt_root.lower():
+            exclude_paths += ExcludePaths(folder, all_paths)
+
+    # Filter out the "unused" directories that do not actually have source files.
+    filtered_exclude_paths = []
+    for path in exclude_paths:
         if path.endswith('rt-thread\\bsp') or path.endswith('rt-thread\\libcpu'):
-            exclude_paths += [path]
+            filtered_exclude_paths.append(path)
             continue
+        if len(CollectAllFilesinPath(path, source_pattern)):
+            filtered_exclude_paths.append(path)
 
-        set = CollectAllFilesinPath(path, source_pattern)
-        if len(set):
-            exclude_paths += [path]
+    # Convert the path to a project relative path.
+    exclude_paths_relative = [RelativeProjectPath(env, path).replace('\\', '/') for path in filtered_exclude_paths]
 
-    exclude_paths = [RelativeProjectPath(env, path).replace('\\', '/') for path in exclude_paths]
-
+    # Calculate the individual files that need to be excluded.
     all_files = CollectFiles(all_paths, source_pattern)
     src_files = project['FILES']
 
     exclude_files = ExcludeFiles(all_files, src_files)
-    exclude_files = [RelativeProjectPath(env, file).replace('\\', '/') for file in exclude_files]
+    exclude_files_relative = [RelativeProjectPath(env, file).replace('\\', '/') for file in exclude_files]
 
-    env['ExPaths'] = exclude_paths
-    env['ExFiles'] = exclude_files
+    env['ExPaths'] = exclude_paths_relative
+    env['ExFiles'] = exclude_files_relative
 
-    return exclude_paths + exclude_files
-
-
+    return exclude_paths_relative + exclude_files_relative
 def RelativeProjectPath(env, path):
+
+    clean_path_str = str(path).strip().strip(',').strip('"')
+
+    try:
+        abs_path = os.path.abspath(clean_path_str)
+    except Exception:
+        return clean_path_str
+
     project_root = os.path.abspath(env['BSP_ROOT'])
+
+    # 1. Check if the path is within the project root directory (BSP_ROOT)
+    if abs_path.lower().startswith(project_root.lower()):
+        return _make_path_relative(project_root, abs_path)
+
+    # 2. Check if the path is within the RT-Thread root directory.
     rtt_root = os.path.abspath(env['RTT_ROOT'])
+    if abs_path.lower().startswith(rtt_root.lower()):
+        return 'rt-thread/' + _make_path_relative(rtt_root, abs_path)
 
-    if path.startswith(project_root):
-        return _make_path_relative(project_root, path)
+    # 3. Check the PROJECT_SOURCE_FOLDERS defined in rtconfig.py.
+    if hasattr(rtconfig, 'PROJECT_SOURCE_FOLDERS'):
+        for folder_entry in rtconfig.PROJECT_SOURCE_FOLDERS:
+            # Get the absolute path of the source folder (for example 'E:/.../lib')
+            abs_source_folder = os.path.abspath(os.path.join(project_root, folder_entry))
 
-    if path.startswith(rtt_root):
-        return 'rt-thread/' + _make_path_relative(rtt_root, path)
+            if abs_path.lower().startswith(abs_source_folder.lower()):
+                # The link name in the project is the base name of the folder path (for example, '../lib' -> 'lib')
+                link_name = os.path.basename(os.path.normpath(folder_entry))
 
-    # TODO add others folder
-    print('ERROR: the ' + path + ' not support')
+                relative_part = _make_path_relative(abs_source_folder, abs_path)
 
-    return path
+                return os.path.join(link_name, relative_part).replace('\\', '/')
+
+    print(f'WARNING: The path "{path}" could not be made relative to the project.')
+    return clean_path_str
 
 
 def HandleExcludingOption(entry, sourceEntries, excluding):
