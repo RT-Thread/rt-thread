@@ -747,7 +747,7 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device *dev,
 {
     struct rt_serial_device  *serial;
     struct rt_serial_tx_fifo *tx_fifo;
-    rt_uint8_t               *put_ptr;
+    rt_uint8_t               *put_ptr = RT_NULL;
     rt_base_t                 level;
     rt_size_t                 send_size;
     rt_ssize_t                transmit_size;
