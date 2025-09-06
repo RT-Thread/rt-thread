@@ -175,6 +175,7 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag);
+rt_err_t rt_thread_suspend_force(rt_thread_t thread, int suspend_flag);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 #ifdef RT_USING_SMART
 rt_err_t rt_thread_wakeup(rt_thread_t thread);

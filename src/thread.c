@@ -35,6 +35,7 @@
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix thread_exit/detach/delete
  *                             fix rt_thread_delay
+ * 2025-09-01     Rbb666       add api:rt_thread_suspend_force.
  */
 
 #include <rthw.h>
@@ -916,12 +917,9 @@ static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag
 /**
  * @brief   This function will suspend the specified thread and change it to suspend state.
  *
- * @note    This function ONLY can suspend current thread itself.
- *              rt_thread_suspend(rt_thread_self());
- *
- *          Do not use the rt_thread_suspend to suspend other threads. You have no way of knowing what code a
- *          thread is executing when you suspend it. If you suspend a thread while sharing a resouce with
- *          other threads and occupying this resouce, starvation can occur very easily.
+ * @note    This function can suspend any thread including other threads.
+ *          WARNING: Suspending other threads can be dangerous and may cause deadlocks
+ *          if the target thread holds important resources.
  *
  * @param   thread the thread to be suspended.
  * @param   susp_list the list thread enqueued to. RT_NULL if no list.
@@ -935,19 +933,26 @@ static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag
  *          the first-in-first-out principle, and you clearly understand that all threads involved in
  *          this semaphore will become non-real-time threads.
  * @param   suspend_flag status flag of the thread to be suspended.
+ * @param   force_suspend if RT_TRUE, allows suspending other threads
  *
  * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
  *          If the return value is any other values, it means this operation failed.
  */
-rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int ipc_flags, int suspend_flag)
+static rt_err_t rt_thread_suspend_to_list_ex(rt_thread_t thread, rt_list_t *susp_list, int ipc_flags, int suspend_flag, rt_bool_t force_suspend)
 {
     rt_base_t stat;
     rt_sched_lock_level_t slvl;
+    rt_bool_t allow_suspend = force_suspend;
 
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-    RT_ASSERT(thread == rt_thread_self());
+
+    /* check permission to suspend other threads */
+    if (!allow_suspend)
+    {
+        RT_ASSERT(thread == rt_thread_self());
+    }
 
     LOG_D("thread suspend:  %s", thread->parent.name);
 
@@ -958,13 +963,12 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     {
         LOG_D("thread suspend: thread disorder, 0x%2x", RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
-        return -RT_ERROR;
-    }
 
-    if (stat == RT_THREAD_RUNNING)
-    {
-        /* not suspend running status thread on other core */
-        RT_ASSERT(thread == rt_thread_self());
+        /* return error only if not forcing suspend */
+        if (!allow_suspend)
+        {
+            return -RT_ERROR;
+        }
     }
 
 #ifdef RT_USING_SMART
@@ -1014,6 +1018,30 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
 
     RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
     return RT_EOK;
+}
+RTM_EXPORT(rt_thread_suspend_to_list_ex);
+
+/**
+ * @brief   This function will forcibly suspend any thread including other threads.
+ *
+ * @warning This function can be dangerous! Only use it if you understand the risks.
+ *          Suspending threads that hold mutexes or other resources can cause deadlocks.
+ *
+ * @param   thread the thread to be suspended.
+ * @param   suspend_flag status flag of the thread to be suspended.
+ *
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
+ */
+rt_err_t rt_thread_suspend_force(rt_thread_t thread, int suspend_flag)
+{
+    return rt_thread_suspend_to_list_ex(thread, RT_NULL, 0, suspend_flag, RT_TRUE);
+}
+RTM_EXPORT(rt_thread_suspend_force);
+
+rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int ipc_flags, int suspend_flag)
+{
+    return rt_thread_suspend_to_list_ex(thread, susp_list, ipc_flags, suspend_flag, RT_FALSE);
 }
 RTM_EXPORT(rt_thread_suspend_to_list);
 
