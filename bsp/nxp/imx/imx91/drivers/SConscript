@@ -1,0 +1,10 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('iomux/*.c')
+
+CPPPATH = [cwd, cwd + '/iomux']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
