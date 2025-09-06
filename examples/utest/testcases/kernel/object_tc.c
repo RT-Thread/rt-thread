@@ -310,7 +310,7 @@ static rt_err_t testcase_cleanup(void)
 
 static void test_object_suite(void)
 {
-#ifdef RT_NAME_MAX < 10
+#if RT_NAME_MAX < 10
     rt_kprintf("Error: Please increase \'RT_NAME_MAX\' to be greater than 10.\n");
     return;
 #endif

@@ -83,6 +83,11 @@ config UTEST_SCHEDULER_TC
     bool "scheduler test"
     default n
 
+config UTEST_MEMPOOL_TC
+    bool "mempool test"
+    default n
+    depends on RT_USING_MEMPOOL
+
 if RT_USING_SMP
 rsource "smp/Kconfig"
 endif
