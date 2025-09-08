@@ -85,6 +85,10 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA6M4 */
 
+#ifdef SOC_SERIES_R7FA2E2
+#include "ra2e2/uart_config.h"
+#endif /* SOC_SERIES_R7FA2E2 */
+
 #ifdef SOC_SERIES_R7FA2L1
 #include "ra2l1/uart_config.h"
 
