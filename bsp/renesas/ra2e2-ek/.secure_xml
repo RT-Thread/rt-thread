@@ -31,8 +31,6 @@
   </raClockConfiguration>
   <raPinConfiguration>
     <pincfg active="true" name="" symbol="">
-      <configSetting altId="i3c0.scl0.p400" configurationId="i3c0.scl0" peripheral="I3C0"/>
-      <configSetting altId="i3c0.sda0.p401" configurationId="i3c0.sda0" peripheral="I3C0"/>
       <configSetting altId="jtag_fslash_swd.swclk.p300" configurationId="jtag_fslash_swd.swclk" peripheral="JTAG/SWD"/>
       <configSetting altId="jtag_fslash_swd.swdio.p108" configurationId="jtag_fslash_swd.swdio" peripheral="JTAG/SWD"/>
       <configSetting altId="p015.output.low" configurationId="p015"/>

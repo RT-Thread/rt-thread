@@ -36,6 +36,14 @@
 #define RA_SCI_EVENT_ERROR          BIT(3)
 #define RA_SCI_EVENT_ALL            BITS(0,3)
 
+#ifdef SOC_SERIES_R7FA2E2
+#define R_IIC_MASTER_Open               R_IIC_B_MASTER_Open
+#define R_IIC_MASTER_Write              R_IIC_B_MASTER_Write
+#define R_IIC_MASTER_Read               R_IIC_B_MASTER_Read
+#define R_IIC_MASTER_SlaveAddressSet    R_IIC_B_MASTER_SlaveAddressSet
+#define R_IIC_MASTER_CallbackSet        R_IIC_B_MASTER_CallbackSet
+#endif
+
 struct ra_i2c_handle
 {
     struct rt_i2c_bus_device bus;

@@ -16,5 +16,5 @@
 -Wno-int-conversion
 -Oz
 -D_RENESAS_RA_
--D_RA_CORE=CM23
 -D_RA_ORDINAL=1
+-D_RA_CORE=CM23

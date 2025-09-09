@@ -240,9 +240,9 @@
     <symbolicName propertyId="p401.symbolic_name" value="IIC_SDA0"/>
     <symbolicName propertyId="p914.symbolic_name" value="LED2_GREEN"/>
     <pincfg active="true" name="EK-RA2E2.pincfg" selected="true" symbol="g_bsp_pin_cfg">
-      <configSetting altId="i3c0.mode.enabled.free" configurationId="i3c0.mode"/>
-      <configSetting altId="i3c0.scl0.p400" configurationId="i3c0.scl0"/>
-      <configSetting altId="i3c0.sda0.p401" configurationId="i3c0.sda0"/>
+      <configSetting altId="gpt6.mode.gtiocaorgtiocb.free" configurationId="gpt6.mode"/>
+      <configSetting altId="gpt7.mode.gtiocaorgtiocb.free" configurationId="gpt7.mode"/>
+      <configSetting altId="gpt9.mode.gtiocaorgtiocb.free" configurationId="gpt9.mode"/>
       <configSetting altId="jtag_fslash_swd.mode.swd.free" configurationId="jtag_fslash_swd.mode"/>
       <configSetting altId="jtag_fslash_swd.swclk.p300" configurationId="jtag_fslash_swd.swclk"/>
       <configSetting altId="jtag_fslash_swd.swdio.p108" configurationId="jtag_fslash_swd.swdio"/>
@@ -264,10 +264,6 @@
       <configSetting altId="p205.gpio_mode.gpio_mode_in" configurationId="p205.gpio_mode"/>
       <configSetting altId="p300.jtag_fslash_swd.swclk" configurationId="p300"/>
       <configSetting altId="p300.gpio_mode.gpio_mode_peripheral" configurationId="p300.gpio_mode"/>
-      <configSetting altId="p400.i3c0.scl0" configurationId="p400"/>
-      <configSetting altId="p400.gpio_mode.gpio_mode_peripheral" configurationId="p400.gpio_mode"/>
-      <configSetting altId="p401.i3c0.sda0" configurationId="p401"/>
-      <configSetting altId="p401.gpio_mode.gpio_mode_peripheral" configurationId="p401.gpio_mode"/>
       <configSetting altId="p914.output.low" configurationId="p914"/>
       <configSetting altId="p914.gpio_mode.gpio_mode_out.low" configurationId="p914.gpio_mode"/>
       <configSetting altId="sci9.mode.asynchronousuart.free" configurationId="sci9.mode"/>

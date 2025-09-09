@@ -18,10 +18,6 @@
         <peripheral name="PORT3.CM23" group="PORT">
             <slot name="P300.CM23" secure="false"/>
         </peripheral>
-        <peripheral name="PORT4.CM23" group="PORT">
-            <slot name="P400.CM23" secure="false"/>
-            <slot name="P401.CM23" secure="false"/>
-        </peripheral>
         <peripheral name="PORT9.CM23" group="PORT">
             <slot name="P914.CM23" secure="false"/>
         </peripheral>
