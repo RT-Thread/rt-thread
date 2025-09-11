@@ -1,0 +1,20 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend('RT_UTEST_TC_USING_DFS_API'):
+
+    # Add DFS API test source if enabled
+    src += ['tc_dfs_api.c']
+
+    # Add POSIX API test source if enabled (requires RT_USING_POSIX_FS)
+    if GetDepend('RT_UTEST_TC_USING_POSIX_API'):
+        src += ['tc_posix_api.c']
+
+# Define the test group with proper dependencies
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_DFS'], CPPPATH = CPPPATH)
+
+Return('group')

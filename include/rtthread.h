@@ -181,6 +181,9 @@ rt_err_t rt_thread_wakeup(rt_thread_t thread);
 void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data);
 #endif /* RT_USING_SMART */
 rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_uint8_t name_size);
+#ifdef RT_USING_CPU_USAGE_TRACER
+rt_uint8_t rt_thread_get_usage(rt_thread_t thread);
+#endif /* RT_USING_CPU_USAGE_TRACER */
 #ifdef RT_USING_SIGNALS
 void rt_thread_alloc_sig(rt_thread_t tid);
 void rt_thread_free_sig(rt_thread_t tid);
@@ -205,7 +208,30 @@ RT_OBJECT_HOOKLIST_DECLARE(rt_thread_inited_hookproto_t, rt_thread_inited);
  */
 void rt_thread_idle_init(void);
 #if defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK)
+// FIXME: Have to write doxygen comment here for rt_thread_idle_sethook/rt_thread_idle_delhook
+//        but not in src/idle.c. Because the `rt_align(RT_ALIGN_SIZE)` in src/idle.c
+//        will make wierd output for html document generation, i.e. can not generate
+//        function link to rt_thread_idle_sethook, while function link to rt_thread_idle_delhook is ok.
+/**
+ * @brief This function sets a hook function to idle thread loop. When the system performs
+ *        idle loop, this hook function should be invoked.
+ *
+ * @param hook the specified hook function.
+ *
+ * @return `RT_EOK`: set OK.
+ *         `-RT_EFULL`: hook list is full.
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
 rt_err_t rt_thread_idle_sethook(void (*hook)(void));
+/**
+ * @brief delete the idle hook on hook list.
+ *
+ * @param hook the specified hook function.
+ *
+ * @return `RT_EOK`: delete OK.
+ *         `-RT_ENOSYS`: hook was not found.
+ */
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif /* defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK) */
 rt_thread_t rt_thread_idle_gethandler(void);
@@ -236,6 +262,7 @@ void rt_exit_critical_safe(rt_base_t critical_level);
 rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
+void rt_scheduler_stack_overflow_sethook(rt_err_t (*hook)(struct rt_thread *thread));
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid));
 #endif /* RT_USING_HOOK */

@@ -2,6 +2,7 @@ menuconfig RT_USING_MSH
     bool "MSH: command shell"
     default n if RT_USING_NANO
     default y
+    select RT_USING_SEMAPHORE
 
 if RT_USING_MSH
 

@@ -43,6 +43,8 @@ if GetDepend(['UTEST_MAILBOX_TC']):
 
 if GetDepend(['UTEST_THREAD_TC']):
     src += ['thread_tc.c']
+    src += ['thread_overflow_tc.c']
+    src += ['thread_suspend_tc.c']
 
 if GetDepend(['UTEST_DEVICE_TC']):
     src += ['device_tc.c']
@@ -55,6 +57,9 @@ if GetDepend(['UTEST_HOOKLIST_TC']):
 
 if GetDepend(['UTEST_MTSAFE_KPRINT_TC']):
     src += ['mtsafe_kprint_tc.c']
+
+if GetDepend(['UTEST_MEMPOOL_TC']):
+    src += ['mempool_tc.c']
 
 # Stressful testcase for scheduler (MP/UP)
 if GetDepend(['UTEST_SCHEDULER_TC']):
@@ -71,3 +76,4 @@ for item in list:
         group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
+

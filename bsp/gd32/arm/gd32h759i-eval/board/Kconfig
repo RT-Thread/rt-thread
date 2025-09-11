@@ -69,8 +69,62 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-    source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_HARD_I2C
+                bool "Enable Hardware I2C"
+                default n
+                select RT_USING_I2C
+                if BSP_USING_HARD_I2C
+                    config BSP_USING_HARD_I2C0
+                        bool "Enable I2C0 Hardware BUS"
+                        default n                    
+                    config BSP_USING_HARD_I2C1
+                        bool "Enable I2C1 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C2
+                        bool "Enable I2C2 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C3
+                        bool "Enable I2C3 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C4
+                        bool "Enable I2C4 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C5
+                        bool "Enable I2C5 Hardware BUS"
+                        default n
+                endif
+        endif
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS"
+                default n
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n
+        endif
+
+    source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"        
 endmenu
 
 menu "Board extended module Drivers"

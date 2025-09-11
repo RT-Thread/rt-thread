@@ -15,6 +15,14 @@
 static struct rt_cpu _cpu;
 
 /**
+ * @addtogroup group_thread_comm
+ *
+ * @cond
+ *
+ * @{
+ */
+
+/**
  * @brief   Initialize a static spinlock object.
  *
  * @param   lock is a pointer to the spinlock to initialize.
@@ -110,3 +118,9 @@ struct rt_cpu *rt_cpu_index(int index)
 {
     return index == 0 ? &_cpu : RT_NULL;
 }
+
+/**
+ * @}
+ *
+ * @endcond
+ */

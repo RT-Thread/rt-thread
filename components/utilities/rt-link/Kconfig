@@ -4,7 +4,7 @@ menuconfig RT_USING_RT_LINK
     default n
 
 if RT_USING_RT_LINK
-    choice
+    choice RT_LINK_USING_CRC
         prompt"use hw crc device or not"
         default RT_LINK_USING_SF_CRC
 
