@@ -42,12 +42,6 @@
 | FLASH              | 支持               |                |
 | PWM                | 支持               |                |
 | CAN                | 支持               |                |
-| 持续更新中...      |                    |                |
-| **外接外设** | **支持情况** | **备注** |
-| WiFi 模块     | 支持        |  [RW007 WiFi 网络模块](https://github.com/RT-Thread-packages/rw007)  |
-| 温湿度传感器   | 支持       |  [HS300x 温湿度模块](https://github.com/Guozhanxin/hs300x) |
-| 室内空气质量传感器 | 支持 | [zmod4410 室内空气质量模块](https://github.com/ShermanShao/zmod4410) |
-| 光线传感器 | 支持 | [isl29035光线传感器模块](https://github.com/ShermanShao/isl29035) |
 
 
 ## 使用说明
@@ -135,11 +129,11 @@ void hal_entry(void)
 
 需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp#documents) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
 
-1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp)，请使用 FSP 6.0.0 版本。
+1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp)。
 2. 下载安装完成后，需要添加 EK-RA6E2 开发板的官方板级支持包。
-> 打开[ EK-RA6E2 开发板详情页](https://www.renesas.cn/zh/design-resources/boards-kits/ek-ra6e2p)，在**“下载”**列表中找到 **”EK-RA6E2板级支持包“**，点击链接即可下载。
-3. 如何将 **”EK-RA6E2板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp)。
-4. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
+> 打开[ EK-RA6E2 开发板详情页](https://www.renesas.cn/zh/design-resources/boards-kits/ek-ra6e2p)，在“下载”列表中找到 ”EK-RA6E2板级支持包“，点击链接即可下载。
+3. 如何将 ”EK-RA6E2板级支持包“添加到 FSP 中，请参考文档[如何导入板级支持包](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp)。
+
 
 **ENV 配置**
 

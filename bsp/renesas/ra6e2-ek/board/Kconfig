@@ -1,21 +1,12 @@
 menu "Hardware Drivers Config"
 
-    config SOC_R7FA6E2BB
-        bool
-        select SOC_SERIES_R7FA6E2
-        select ARCH_ARM_CORTEX_SECURE
-        select RT_USING_COMPONENTS_INIT
-        select RT_USING_USER_MAIN
-        default y
-
     menu "Onboard Peripheral Drivers"
 
     endmenu
 
     menu "On-chip Peripheral Drivers"
 
-        rsource "../../libraries/HAL_Drivers/Kconfig"
-
+        rsource "../../libraries/HAL_Drivers/drivers/Kconfig"
         menuconfig BSP_USING_UART
             bool "Enable UART"
             default y
