@@ -11,6 +11,7 @@
 #include <drv_common.h>
 #include <bsp_api.h>
 #include "board.h"
+#include <hal_data.h>
 
 #ifdef RT_USING_PIN
     #include <drv_gpio.h>
@@ -189,6 +190,11 @@ rt_weak void rt_hw_board_init()
     /* Set the shell console output device */
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_NANO)
+    extern void rt_hw_console_init(void);
+    rt_hw_console_init();
 #endif
 
     /* Board underlying hardware initialization */

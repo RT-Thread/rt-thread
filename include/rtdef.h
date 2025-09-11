@@ -848,9 +848,8 @@ struct rt_user_context
 typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
 
 /**
- * Thread structure
+ * @brief Thread Control Block
  */
-
 struct rt_thread
 {
     struct rt_object            parent;

@@ -599,7 +599,7 @@ static void fal(rt_uint8_t argc, char **argv) {
     else
     {
         const char *operator = argv[1];
-        rt_uint32_t addr, size;
+        rt_uint32_t addr = 0, size = 0;
 
         if (!strcmp(operator, "probe"))
         {

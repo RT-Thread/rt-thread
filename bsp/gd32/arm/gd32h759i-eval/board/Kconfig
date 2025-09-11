@@ -1,0 +1,135 @@
+menu "Hardware Drivers Config"
+
+config SOC_SERIES_GD32H7xx
+    bool
+    default y
+
+config SOC_GD32H759I
+    bool
+    select SOC_SERIES_GD32H7xx
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+
+            config BSP_UART0_RX_USING_DMA
+                bool "Enable UART0 RX DMA"
+                depends on BSP_USING_UART0
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3
+                select RT_SERIAL_USING_DMA
+                default n
+
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_HARD_I2C
+                bool "Enable Hardware I2C"
+                default n
+                select RT_USING_I2C
+                if BSP_USING_HARD_I2C
+                    config BSP_USING_HARD_I2C0
+                        bool "Enable I2C0 Hardware BUS"
+                        default n                    
+                    config BSP_USING_HARD_I2C1
+                        bool "Enable I2C1 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C2
+                        bool "Enable I2C2 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C3
+                        bool "Enable I2C3 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C4
+                        bool "Enable I2C4 Hardware BUS"
+                        default n
+                    config BSP_USING_HARD_I2C5
+                        bool "Enable I2C5 Hardware BUS"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS"
+                default n
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n
+        endif
+
+    source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"        
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
+

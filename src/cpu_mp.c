@@ -30,9 +30,19 @@ void *_cpus_lock_pc = 0;
 #endif /* RT_DEBUGING_SPINLOCK */
 
 /**
+ * @addtogroup group_thread_comm
+ *
+ * @cond DOXYGEN_SMP
+ *
+ * @{
+ */
+
+/**
  * @brief   Initialize a static spinlock object.
  *
  * @param   lock is a pointer to the spinlock to initialize.
+ *
+ * @note    This function has UP version and MP version.
  */
 void rt_spin_lock_init(struct rt_spinlock *lock)
 {
@@ -43,10 +53,12 @@ RTM_EXPORT(rt_spin_lock_init)
 /**
  * @brief   This function will lock the spinlock, will lock the thread scheduler.
  *
- * @note    If the spinlock is locked, the current CPU will keep polling the spinlock state
- *          until the spinlock is unlocked.
+ * If the spinlock is locked, the current CPU will keep polling the spinlock state
+ * until the spinlock is unlocked.
  *
  * @param   lock is a pointer to the spinlock.
+ *
+ * @note    This function has UP version and MP version.
  */
 void rt_spin_lock(struct rt_spinlock *lock)
 {
@@ -59,9 +71,11 @@ RTM_EXPORT(rt_spin_lock)
 /**
  * @brief   This function will unlock the spinlock, will unlock the thread scheduler.
  *
- * @note    If the scheduling function is called before unlocking, it will be scheduled in this function.
+ * If the scheduling function is called before unlocking, it will be scheduled in this function.
  *
  * @param   lock is a pointer to the spinlock.
+ *
+ * @note    This function has UP version and MP version.
  */
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
@@ -75,12 +89,14 @@ RTM_EXPORT(rt_spin_unlock)
 /**
  * @brief   This function will disable the local interrupt and then lock the spinlock, will lock the thread scheduler.
  *
- * @note    If the spinlock is locked, the current CPU will keep polling the spinlock state
- *          until the spinlock is unlocked.
+ * If the spinlock is locked, the current CPU will keep polling the spinlock state
+ * until the spinlock is unlocked.
  *
  * @param   lock is a pointer to the spinlock.
  *
  * @return  Return current cpu interrupt status.
+ *
+ * @note    This function has UP version and MP version.
  */
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
@@ -97,11 +113,13 @@ RTM_EXPORT(rt_spin_lock_irqsave)
 /**
  * @brief   This function will unlock the spinlock and then restore current cpu interrupt status, will unlock the thread scheduler.
  *
- * @note    If the scheduling function is called before unlocking, it will be scheduled in this function.
+ * If the scheduling function is called before unlocking, it will be scheduled in this function.
  *
  * @param   lock is a pointer to the spinlock.
  *
  * @param   level is interrupt status returned by rt_spin_lock_irqsave().
+ *
+ * @note    This function has UP version and MP version.
  */
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
@@ -118,6 +136,8 @@ RTM_EXPORT(rt_spin_unlock_irqrestore)
  * @brief   This fucntion will return current cpu object.
  *
  * @return  Return a pointer to the current cpu object.
+ *
+ * @note    This function has UP version and MP version.
  */
 struct rt_cpu *rt_cpu_self(void)
 {
@@ -130,6 +150,8 @@ struct rt_cpu *rt_cpu_self(void)
  * @param   index is the index of target cpu object.
  *
  * @return  Return a pointer to the cpu object corresponding to index.
+ *
+ * @note    This function has UP version and MP version.
  */
 struct rt_cpu *rt_cpu_index(int index)
 {
@@ -140,6 +162,8 @@ struct rt_cpu *rt_cpu_index(int index)
  * @brief   This function will lock all cpus's scheduler and disable local irq.
  *
  * @return  Return current cpu interrupt status.
+ *
+ * @note    This function only has MP version.
  */
 rt_base_t rt_cpus_lock(void)
 {
@@ -176,6 +200,8 @@ RTM_EXPORT(rt_cpus_lock);
  * @brief   This function will restore all cpus's scheduler and restore local irq.
  *
  * @param   level is interrupt status returned by rt_cpus_lock().
+ *
+ * @note    This function only has MP version.
  */
 void rt_cpus_unlock(rt_base_t level)
 {
@@ -211,6 +237,8 @@ RTM_EXPORT(rt_cpus_unlock);
  * If target thread not locked the cpus then unlock the cpus lock.
  *
  * @param   thread is a pointer to the target thread.
+ *
+ * @note    This function only has MP version.
  */
 void rt_cpus_lock_status_restore(struct rt_thread *thread)
 {
@@ -228,6 +256,8 @@ RTM_EXPORT(rt_cpus_lock_status_restore);
  * @brief Get logical CPU ID
  *
  * @return logical CPU ID
+ *
+ * @note    This function only has MP version.
  */
 rt_base_t rt_cpu_get_id(void)
 {
@@ -238,3 +268,9 @@ rt_base_t rt_cpu_get_id(void)
 
     return rt_hw_cpu_id();
 }
+
+/**
+ * @}
+ *
+ * @endcond
+ */

@@ -1,0 +1,15 @@
+﻿Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend('RT_UTEST_TC_USING_LWIP'):
+    # Add lwIP test source if enabled
+    src += ['tc_lwip.c']
+
+# Define the test group with proper dependencies
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_LWIP'], CPPPATH = CPPPATH)
+
+Return('group')

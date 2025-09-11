@@ -19,6 +19,12 @@ config SOC_SERIES_R7FA6M4
     select SOC_FAMILY_RENESAS_RA
     default n
 
+config SOC_SERIES_R7FA2E2
+    bool
+    select ARCH_ARM_CORTEX_M23
+    select SOC_FAMILY_RENESAS_RA
+    default n
+
 config SOC_SERIES_R7FA2L1
     bool
     select ARCH_ARM_CORTEX_M23
@@ -60,3 +66,37 @@ config SOC_SERIES_R7FA6E2
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_RENESAS_RA
     default n
+
+config SOC_SERIES_R7FA2A1
+    bool
+    select ARCH_ARM_CORTEX_M23
+    select SOC_FAMILY_RENESAS_RA
+    default n
+
+if RT_USING_NANO
+choice
+prompt "Choice nano console device(Renesas)"
+default RT_NANO_CONSOLE_UART0
+depends on RT_USING_CONSOLE
+config RT_NANO_CONSOLE_UART0
+    bool "UART0"
+config RT_NANO_CONSOLE_UART1
+    bool "UART1"
+config RT_NANO_CONSOLE_UART2
+    bool "UART2"
+config RT_NANO_CONSOLE_UART3
+    bool "UART3"
+config RT_NANO_CONSOLE_UART4
+    bool "UART4"
+config RT_NANO_CONSOLE_UART5
+    bool "UART5"
+config RT_NANO_CONSOLE_UART6
+    bool "UART6"
+config RT_NANO_CONSOLE_UART7
+    bool "UART7"
+config RT_NANO_CONSOLE_UART8
+    bool "UART8"
+config RT_NANO_CONSOLE_UART9
+    bool "UART9"
+endchoice
+endif

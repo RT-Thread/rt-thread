@@ -247,6 +247,7 @@
         "nxp/mcx/mcxa/frdm-mcxa153",
         "nxp/mcx/mcxa/frdm-mcxa156",
 		"nxp/mcx/mcxa/frdm-mcxa346",
+        "nxp/mcx/mcxe/frdm-mcxe247",
         "renesas/ebf_qi_min_6m5",
         "renesas/ra6m4-cpk",
         "renesas/ra6m4-iot",
@@ -263,6 +264,8 @@
         "renesas/rzt2m_rsk",
         "renesas/rzn2l_rsk",
         "renesas/rzn2l_etherkit",
+        "renesas/ra2a1-ek",
+        "renesas/ra2e2-ek",
         "frdm-k64f",
         "xplorer4330/M4"
       ]
@@ -304,6 +307,7 @@
         "gd32/arm/gd32450z-eval",
         "gd32/arm/gd32470z-lckfb",
         "gd32/arm/gd32h759i-start",
+        "gd32/arm/gd32h759i-eval",
         "gd32/arm/gd32e503v-eval",
         "gd32/arm/gd32527I-eval",
         "gd32/arm/gd32e230-lckfb",
