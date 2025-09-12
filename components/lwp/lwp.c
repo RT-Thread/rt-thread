@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,6 +60,18 @@
 extern char working_directory[];
 #endif
 
+/**
+ * @brief Initializes the LWP (Light-Weight Process) component
+ *
+ * @return int Returns RT_EOK if all initializations succeed, otherwise returns
+ *         the error code from the first failed initialization
+ *
+ * @note This function performs initialization of various LWP subsystems in sequence:
+ *       1. Thread ID (TID) initialization
+ *       2. Process ID (PID) initialization
+ *       3. Channel component initialization
+ *       4. Futex (Fast Userspace Mutex) initialization
+ */
 static int lwp_component_init(void)
 {
     int rc;
@@ -83,6 +95,15 @@ static int lwp_component_init(void)
 }
 INIT_COMPONENT_EXPORT(lwp_component_init);
 
+/**
+ * @brief Sets the current working directory for the calling LWP or system
+ *
+ * @param[in] buf Pointer to the path string to set as working directory
+ *
+ * @note This function handles both LWP-specific and system-wide working directories:
+ * - For LWPs, sets the working_directory in the LWP structure
+ * - For non-LWP threads, sets the global working_directory variable
+ */
 void lwp_setcwd(char *buf)
 {
     struct rt_lwp *lwp = RT_NULL;
@@ -106,6 +127,15 @@ void lwp_setcwd(char *buf)
     return ;
 }
 
+/**
+ * @brief Get the current working directory for the light-weight process
+ *
+ * @return char* Pointer to the current working directory string
+ *
+ * @note The function returns either:
+ *          - LWP's working directory (if valid and absolute path)
+ *          - System default working directory (if no LWP or invalid path)
+ */
 char *lwp_getcwd(void)
 {
     char *dir_buf = RT_NULL;
@@ -135,13 +165,28 @@ char *lwp_getcwd(void)
 }
 
 /**
- * RT-Thread light-weight process
+ * @brief Set the kernel stack pointer for the current thread
+ *
+ * @param[in] sp Pointer to the new kernel stack location
+ *
+ * @note It's typically used during context switching or thread initialization.
  */
 void lwp_set_kernel_sp(uint32_t *sp)
 {
     rt_thread_self()->kernel_sp = (rt_uint32_t *)sp;
 }
 
+/**
+ * @brief Get the kernel stack pointer for the current thread
+ *
+ * @return uint32_t* Pointer to the kernel stack
+ *
+ * @note Architecture-specific behavior:
+ * 1. With MMU: Simply returns the current thread's stack pointer
+ * 2. Without MMU: Checks interrupt context and returns either:
+ *    - Interrupted thread's kernel_sp (if in interrupt)
+ *    - Current thread's kernel_sp (if not in interrupt)
+ */
 uint32_t *lwp_get_kernel_sp(void)
 {
 #ifdef ARCH_MM_MMU
@@ -162,8 +207,15 @@ uint32_t *lwp_get_kernel_sp(void)
 #endif
 }
 
-
-/* lwp-thread clean up routine */
+/**
+ * @brief Clean up resources associated with a light-weight process thread
+ *
+ * @param[in] tid Pointer to the thread control block to be cleaned up
+ *
+ * @note This function performs cleanup operations for a thread associated with a light-weight process (LWP).
+ *       It handles signal detachment and reference count decrement for the LWP structure.
+ *
+ */
 void lwp_cleanup(struct rt_thread *tid)
 {
     struct rt_lwp *lwp;
@@ -191,6 +243,15 @@ void lwp_cleanup(struct rt_thread *tid)
     return;
 }
 
+/**
+ * @brief Set up standard I/O for a light-weight process
+ *
+ * @param[in] lwp Pointer to the light-weight process structure
+ *
+ * @note This function initializes the standard input, output, and error streams
+ *       for a light-weight process by opening the console device and associating
+ *       it with file descriptors 0, 1, and 2.
+ */
 static void lwp_execve_setup_stdio(struct rt_lwp *lwp)
 {
     struct dfs_fdtable *lwp_fdt;
@@ -223,6 +284,14 @@ static void lwp_execve_setup_stdio(struct rt_lwp *lwp)
     return;
 }
 
+/**
+ * @brief Entry point for light-weight process threads
+ *
+ * @param[in] parameter Thread parameter (unused)
+ *
+ * @note This function is the main entry point for threads created within a light-weight process.
+ *       It handles thread initialization, debug mode setup, and transitions to user mode.
+ */
 static void _lwp_thread_entry(void *parameter)
 {
     rt_thread_t tid;
@@ -262,6 +331,15 @@ static void _lwp_thread_entry(void *parameter)
 #endif /* ARCH_MM_MMU */
 }
 
+/**
+ * @brief Get the current light-weight process
+ *
+ * @return Pointer to the current light-weight process structure
+ *         RT_NULL if no process is associated with current thread
+ *
+ * @note This function retrieves the light-weight process associated with the
+ *       currently running thread.
+ */
 struct rt_lwp *lwp_self(void)
 {
     rt_thread_t tid;
@@ -275,6 +353,17 @@ struct rt_lwp *lwp_self(void)
     return RT_NULL;
 }
 
+/**
+ * @brief Register a child process with its parent
+ *
+ * @param[in] parent Pointer to the parent process structure
+ * @param[in] child  Pointer to the child process structure to register
+ *
+ * @return RT_EOK on success
+ *
+ * @note This function adds a child process to its parent's children list and
+ *       increases reference counts for both processes.
+ */
 rt_err_t lwp_children_register(struct rt_lwp *parent, struct rt_lwp *child)
 {
     /* lwp add to children link */
@@ -293,6 +382,17 @@ rt_err_t lwp_children_register(struct rt_lwp *parent, struct rt_lwp *child)
     return 0;
 }
 
+/**
+ * @brief Unregister a child process from its parent
+ *
+ * @param[in] parent Pointer to the parent process structure
+ * @param[in] child  Pointer to the child process structure to unregister
+ *
+ * @return RT_EOK on success
+ *
+ * @note This function removes a child process from its parent's children list and
+ *       decreases reference counts for both processes.
+ */
 rt_err_t lwp_children_unregister(struct rt_lwp *parent, struct rt_lwp *child)
 {
     struct rt_lwp **lwp_node;
@@ -316,6 +416,23 @@ rt_err_t lwp_children_unregister(struct rt_lwp *parent, struct rt_lwp *child)
     return 0;
 }
 
+/**
+ * @brief Copy process arguments and environment variables from kernel space to user space.
+ *
+ * @param[in] lwp  Pointer to the light-weight process structure
+ * @param[in] argc Argument count
+ * @param[in] argv Argument vector
+ * @param[in] envp Environment variables
+ *
+ * @return Pointer to the process auxiliary structure on success
+ *         RT_NULL if memory allocation fails or arguments initialization fails
+ *
+ * @note This function performs the following operations:
+ *       1. Initializes argument information structure
+ *       2. Copies command line arguments to user space
+ *       3. Copies environment variables to user space
+ *       4. Returns the auxiliary structure containing copied data
+ */
 struct process_aux *argscopy(struct rt_lwp *lwp, int argc, char **argv, char **envp)
 {
     struct lwp_args_info ai;
@@ -344,6 +461,30 @@ struct process_aux *argscopy(struct rt_lwp *lwp, int argc, char **argv, char **e
     return ua;
 }
 
+/**
+ * @brief Creates and starts a new LWP by loading and executing the specified executable file.
+ *
+ * @param[in] filename Path to the executable file
+ * @param[in] debug     Debug flag (non-zero to enable debugging)
+ * @param[in] argc      Argument count
+ * @param[in] argv      Argument vector
+ * @param[in] envp      Environment variables
+ *
+ * @return Process ID (PID) of the new LWP on success
+ *         -EINVAL if filename is NULL
+ *         -EACCES if file is not executable
+ *         -ENOMEM if memory allocation fails
+ *         -RT_ERROR on other failures
+ *
+ * @note This function performs the following operations:
+ *       1. Validates input parameters
+ *       2. Creates new LWP structure
+ *       3. Initializes user space (for MMU systems)
+ *       4. Copies arguments and environment
+ *       5. Loads the executable
+ *       6. Sets up standard I/O
+ *       7. Creates and starts the main thread
+ */
 pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 {
     int result;
@@ -499,6 +640,21 @@ extern char **__environ;
 char **__environ = 0;
 #endif
 
+/**
+ * @brief Execute a new program in the current process context
+ *
+ * @param[in] filename Path to the executable file
+ * @param[in] debug Debug flag (non-zero enables debug mode)
+ * @param[in] argc Number of command line arguments
+ * @param[in] argv Array of command line argument strings
+ *
+ * @return Process ID (PID) of the new process on success
+ *         Negative error code on failure
+ *
+ * @note This is a wrapper function for lwp_execve.
+ *
+ * @see lwp_execve()
+ */
 pid_t exec(char *filename, int debug, int argc, char **argv)
 {
     setenv("OS", "RT-Thread", 1);
@@ -506,6 +662,16 @@ pid_t exec(char *filename, int debug, int argc, char **argv)
 }
 
 #ifdef ARCH_MM_MMU
+/**
+ * @brief Saves thread-specific user settings (TID register)
+ *
+ * @param[in,out] thread Pointer to the thread control block
+ *
+ * @note This function stores the architecture-specific TID register
+ *       into the specified thread's control block.This is typically used
+ *       when switching between threads to preserve thread-specific settings
+ */
+
 void lwp_user_setting_save(rt_thread_t thread)
 {
     if (thread)
@@ -514,6 +680,14 @@ void lwp_user_setting_save(rt_thread_t thread)
     }
 }
 
+/**
+ * @brief Restores thread-specific user settings (TID register and debug state)
+ *
+ * @param[in] thread Pointer to the thread control block
+ *
+ * @note This function restores architecture-specific Thread ID Register (TIDR) value
+ *       and debug-related settings for the specified thread.
+ */
 void lwp_user_setting_restore(rt_thread_t thread)
 {
     if (!thread)
@@ -556,6 +730,15 @@ void lwp_user_setting_restore(rt_thread_t thread)
 }
 #endif /* ARCH_MM_MMU */
 
+/**
+ * @brief Saves user thread context pointer
+ *
+ * @param[in] ctx Pointer to user thread context structure to be saved
+ *
+ * @note This function stores a pointer to user thread context in the current thread's
+ *       control block for later restoration. The context pointer is typically used
+ *       during thread context switching.
+ */
 void lwp_uthread_ctx_save(void *ctx)
 {
     rt_thread_t thread;
@@ -563,6 +746,12 @@ void lwp_uthread_ctx_save(void *ctx)
     thread->user_ctx.ctx = ctx;
 }
 
+/**
+ * @brief Restores the user thread context by clearing the context pointer
+ *
+ * @note Typically called during thread context switching to clean up any
+ *       previously saved user context.
+ */
 void lwp_uthread_ctx_restore(void)
 {
     rt_thread_t thread;
@@ -570,6 +759,17 @@ void lwp_uthread_ctx_restore(void)
     thread->user_ctx.ctx = RT_NULL;
 }
 
+/**
+ * @brief Prints a backtrace of the current thread's call stack
+ *
+ * @param[in] uthread The thread to backtrace (must be associated with an LWP)
+ * @param[in] frame Pointer to the initial stack frame
+ *
+ * @return RT_EOK on success, -RT_ERROR on failure
+ *
+ * @note This function prints a backtrace of the call stack for the specified user thread,
+ *       providing addresses that can be used with addr2line to get file and line information.
+ */
 rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *frame)
 {
     rt_err_t rc = -RT_ERROR;
