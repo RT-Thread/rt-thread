@@ -23,6 +23,7 @@ rsource "src/klibc/utest/Kconfig"
 
 rsource "components/drivers/audio/utest/Kconfig"
 rsource "components/dfs/utest/Kconfig"
+rsource "components/net/utest/Kconfig"
 
 endif
 
