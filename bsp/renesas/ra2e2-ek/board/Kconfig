@@ -62,7 +62,7 @@ menu "Hardware Drivers Config"
                     bool "Enable Hardware SPI0 BUS"
                     default n
             endif
-        
+
         menuconfig BSP_USING_PWM
             bool "Enable PWM"
             default n
