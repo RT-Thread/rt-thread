@@ -937,6 +937,8 @@ struct rt_thread
     rt_ubase_t                  system_time;            /**< Ticks on system */
     rt_ubase_t                  total_time_prev;        /**< Previous total ticks snapshot */
     rt_uint8_t                  cpu_usage;              /**< Recent CPU usage in percent */
+    rt_ubase_t                  ctx_last_time;          /**< Last context switch time */
+    rt_ubase_t                  ctx_count;              /**< Context switch count */
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION
