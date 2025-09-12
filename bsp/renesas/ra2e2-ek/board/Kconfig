@@ -43,6 +43,16 @@ menu "Hardware Drivers Config"
                     endif
             endif
 
+        menuconfig BSP_USING_HW_I2C
+            bool "Enable hardware I2C BUS"
+            default n
+            select RT_USING_I2C
+            if BSP_USING_HW_I2C
+                config BSP_USING_HW_I2C0
+                    bool "Enable Hardware I2C0 BUS"
+                    default n
+            endif
+
     endmenu
 
     menu "Board extended module Drivers"
