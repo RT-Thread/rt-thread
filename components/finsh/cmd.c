@@ -221,7 +221,9 @@ long list_thread(void)
     rt_list_t *next = (rt_list_t *)RT_NULL;
     const char *item_title = "thread";
     const size_t tcb_strlen = sizeof(void *) * 2 + 2;
+#ifdef RT_USING_CPU_USAGE_TRACER
     const size_t usage_strlen = sizeof(void *) + 1;
+#endif
     int maxlen;
 
     list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list) / sizeof(obj_list[0]));
@@ -230,22 +232,40 @@ long list_thread(void)
     maxlen = RT_NAME_MAX;
 
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr    ", maxlen, maxlen, item_title);
+#ifdef RT_USING_CPU_USAGE_TRACER
+    rt_kprintf("usage count    last time");
+#endif
+    rt_kprintf("\n");
     object_split(maxlen);
-    rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- -------");
-    rt_kprintf(" ");
+    rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- ------- ");
     object_split(tcb_strlen);
     rt_kprintf(" ");
+#ifdef RT_USING_CPU_USAGE_TRACER
     object_split(usage_strlen);
+    rt_kprintf(" ");
+    object_split(8);
+    rt_kprintf(" ");
+    object_split(10);
+#endif
     rt_kprintf("\n");
 #else
-    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr   ", maxlen, maxlen, item_title);
+#ifdef RT_USING_CPU_USAGE_TRACER
+    rt_kputs("usage count    last time");
+#endif
+    rt_kprintf("\n");
     object_split(maxlen);
-    rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- -------");
-    rt_kprintf(" ");
+    rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- ------- ");
     object_split(tcb_strlen);
     rt_kprintf(" ");
+#ifdef RT_USING_CPU_USAGE_TRACER
     object_split(usage_strlen);
+    rt_kprintf(" ");
+    object_split(8);
+    rt_kprintf(" ");
+    object_split(10);
+#endif
     rt_kprintf("\n");
 #endif /*RT_USING_SMP*/
 
@@ -310,6 +330,10 @@ long list_thread(void)
                                thread->remaining_tick,
                                rt_strerror(thread->error),
                                thread);
+#ifdef RT_USING_CPU_USAGE_TRACER
+                    rt_kprintf(" %3d%%%8d%10d", rt_thread_get_usage(thread), thread->ctx_count, thread->ctx_last_time);
+#endif
+                    rt_kprintf("  \n");
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
@@ -323,9 +347,9 @@ long list_thread(void)
                                thread);
 #endif
 #ifdef RT_USING_CPU_USAGE_TRACER
-                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
+                    rt_kprintf(" %3d%%%8d%10d", rt_thread_get_usage(thread), thread->ctx_count, thread->ctx_last_time);
 #else
-                    rt_kprintf("  N/A\n");
+                    rt_kprintf("\n");
 #endif
                 }
             }
