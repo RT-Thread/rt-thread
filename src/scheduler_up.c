@@ -355,10 +355,12 @@ void rt_schedule(void)
                     extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
                     RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (from_thread));
-
+#ifdef RT_USING_CPU_USAGE_TRACER
+                    to_thread->ctx_count++;
+                    to_thread->ctx_last_time = rt_tick_get();
+#endif
                     rt_hw_context_switch((rt_uintptr_t)&from_thread->sp,
                             (rt_uintptr_t)&to_thread->sp);
-
                     /* enable interrupt */
                     rt_hw_interrupt_enable(level);
 
@@ -386,7 +388,10 @@ void rt_schedule(void)
                 else
                 {
                     LOG_D("switch in interrupt");
-
+#ifdef RT_USING_CPU_USAGE_TRACER
+                    to_thread->ctx_count++;
+                    to_thread->ctx_last_time = rt_tick_get();
+#endif
                     rt_hw_context_switch_interrupt((rt_uintptr_t)&from_thread->sp,
                             (rt_uintptr_t)&to_thread->sp, from_thread, to_thread);
                 }
