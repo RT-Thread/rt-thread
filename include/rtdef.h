@@ -940,6 +940,8 @@ struct rt_thread
 #ifdef RT_USING_CPU_USAGE_TRACER
     rt_ubase_t                  user_time;              /**< Ticks on user */
     rt_ubase_t                  system_time;            /**< Ticks on system */
+    rt_ubase_t                  ctx_last_time;          /**< Last context switch time */
+    rt_ubase_t                  ctx_count;              /**< Context switch count */
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION

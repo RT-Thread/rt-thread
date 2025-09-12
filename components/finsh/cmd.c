@@ -62,7 +62,7 @@ MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 rt_inline void object_split(int len)
 {
-    while (len--) rt_kprintf("-");
+    while (len--) rt_kputs("-");
 }
 
 typedef struct
@@ -165,7 +165,9 @@ long list_thread(void)
     rt_list_t *next = (rt_list_t *)RT_NULL;
     const char *item_title = "thread";
     const size_t tcb_strlen = sizeof(void *) * 2 + 2;
+#ifdef RT_USING_CPU_USAGE_TRACER
     const size_t usage_strlen = sizeof(void *) + 1;
+#endif
     int maxlen;
 
     list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list) / sizeof(obj_list[0]));
@@ -174,23 +176,41 @@ long list_thread(void)
     maxlen = RT_NAME_MAX;
 
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr    ", maxlen, maxlen, item_title);
+#ifdef RT_USING_CPU_USAGE_TRACER
+    rt_kputs("usage count    last time");
+#endif
+    rt_kputs("\n");
     object_split(maxlen);
-    rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- -------");
-    rt_kprintf(" ");
+    rt_kputs(" --- ---- ---  ------- ---------- ----------  ------  ---------- ------- ");
     object_split(tcb_strlen);
-    rt_kprintf(" ");
+    rt_kputs(" ");
+#ifdef RT_USING_CPU_USAGE_TRACER
     object_split(usage_strlen);
-    rt_kprintf("\n");
+    rt_kputs(" ");
+    object_split(8);
+    rt_kputs(" ");
+    object_split(10);
+#endif
+    rt_kputs("\n");
 #else
-    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr   ", maxlen, maxlen, item_title);
+#ifdef RT_USING_CPU_USAGE_TRACER
+    rt_kputs("usage count    last time");
+#endif
+    rt_kputs("\n");
     object_split(maxlen);
-    rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- -------");
-    rt_kprintf(" ");
+    rt_kputs(" ---  ------- ---------- ----------  ------  ---------- ------- ");
     object_split(tcb_strlen);
-    rt_kprintf(" ");
+    rt_kputs(" ");
+#ifdef RT_USING_CPU_USAGE_TRACER
     object_split(usage_strlen);
-    rt_kprintf("\n");
+    rt_kputs(" ");
+    object_split(8);
+    rt_kputs(" ");
+    object_split(10);
+#endif
+    rt_kputs("\n");
 #endif /*RT_USING_SMP*/
 
     do
@@ -256,10 +276,9 @@ long list_thread(void)
                                rt_strerror(thread->error),
                                thread);
 #ifdef RT_USING_CPU_USAGE_TRACER
-                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
-#else
-                    rt_kprintf("  N/A\n");
+                    rt_kprintf(" %3d%%%8d%10d", rt_thread_get_usage(thread), thread->ctx_count, thread->ctx_last_time);
 #endif
+                    rt_kprintf("  \n");
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
@@ -272,10 +291,9 @@ long list_thread(void)
                                rt_strerror(thread->error),
                                thread);
 #ifdef RT_USING_CPU_USAGE_TRACER
-                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
-#else
-                    rt_kprintf("  N/A\n");
+                    rt_kprintf(" %3d%%%8d%10d", rt_thread_get_usage(thread), thread->ctx_count, thread->ctx_last_time);
 #endif
+                    rt_kputs("\n");
 #endif
                 }
             }

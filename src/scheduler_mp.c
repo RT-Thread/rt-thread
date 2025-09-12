@@ -879,7 +879,10 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
                   cpu_id, RT_SCHED_PRIV(to_thread).current_priority,
                   RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
-
+#ifdef RT_USING_CPU_USAGE_TRACER
+            to_thread->ctx_count++;
+            to_thread->ctx_last_time = rt_tick_get();
+#endif
             rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
                                  (rt_ubase_t)&to_thread->sp, to_thread);
         }
@@ -980,7 +983,10 @@ void rt_schedule(void)
                   cpu_id, RT_SCHED_PRIV(to_thread).current_priority,
                   RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
-
+#ifdef RT_USING_CPU_USAGE_TRACER
+            to_thread->ctx_count++;
+            to_thread->ctx_last_time = rt_tick_get();
+#endif
             rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
                                  (rt_ubase_t)&to_thread->sp, to_thread);
         }
@@ -1065,7 +1071,10 @@ void rt_scheduler_do_irq_switch(void *context)
                   cpu_id, RT_SCHED_PRIV(to_thread).current_priority,
                   RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
-
+#ifdef RT_USING_CPU_USAGE_TRACER
+            to_thread->ctx_count++;
+            to_thread->ctx_last_time = rt_tick_get();
+#endif
             rt_hw_context_switch_interrupt(context, (rt_ubase_t)&current_thread->sp,
                                            (rt_ubase_t)&to_thread->sp, to_thread);
         }
