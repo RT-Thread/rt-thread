@@ -1735,9 +1735,10 @@ static void
 dhcp_delete_msg(struct dhcp *dhcp)
 {
   LWIP_ERROR("dhcp_delete_msg: dhcp != NULL", (dhcp != NULL), return;);
-  LWIP_ASSERT("dhcp_delete_msg: dhcp->p_out != NULL", dhcp->p_out != NULL);
-  LWIP_ASSERT("dhcp_delete_msg: dhcp->msg_out != NULL", dhcp->msg_out != NULL);
+  /* LWIP_ASSERT("dhcp_delete_msg: dhcp->p_out != NULL", dhcp->p_out != NULL); */
+  /* LWIP_ASSERT("dhcp_delete_msg: dhcp->msg_out != NULL", dhcp->msg_out != NULL); */
   if (dhcp->p_out != NULL) {
+    LWIP_ASSERT("dhcp_delete_msg: dhcp->msg_out != NULL", dhcp->msg_out != NULL);
     pbuf_free(dhcp->p_out);
   }
   dhcp->p_out = NULL;
