@@ -204,7 +204,7 @@ static rt_err_t _rym_do_handshake(
     enum rym_code code;
     rt_size_t i;
     rt_uint16_t recv_crc, cal_crc;
-    rt_size_t data_sz;
+    rt_size_t data_sz = 0;
     rt_tick_t tick;
 
     ctx->stage = RYM_STAGE_ESTABLISHING;

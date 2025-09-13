@@ -1,0 +1,25 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+""")
+
+# add lcd drivers.
+if GetDepend('BSP_USING_LCD'):
+    src += ['drv_lcd.c']
+
+if GetDepend('BSP_USING_TOUCH'):
+    src += ['drv_touch.c']
+
+if GetDepend('BSP_USING_DRAW_PANEL_EXAMPLE'):
+    src += ['draw_panel.c']
+
+path = [cwd]
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = path)
+
+Return('group')

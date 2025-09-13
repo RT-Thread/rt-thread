@@ -21,7 +21,7 @@ menuconfig RT_USING_ULOG
 
     if RT_USING_ULOG
         if !ULOG_USING_SYSLOG
-            choice
+            choice ULOG_OUTPUT_LOG_LEVEL
                 prompt "The static output log level."
                 default ULOG_OUTPUT_LVL_D
                 help
@@ -42,7 +42,7 @@ menuconfig RT_USING_ULOG
         endif
 
         if ULOG_USING_SYSLOG
-            choice
+            choice ULOG_OUTPUT_LOG_LEVEL
                 prompt "The static output log level."
                 default ULOG_OUTPUT_LVL_DEBUG
                 help

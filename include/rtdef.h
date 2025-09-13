@@ -848,9 +848,8 @@ struct rt_user_context
 typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
 
 /**
- * Thread structure
+ * @brief Thread Control Block
  */
-
 struct rt_thread
 {
     struct rt_object            parent;
@@ -895,10 +894,6 @@ struct rt_thread
     rt_sighandler_t             *sig_vectors;           /**< vectors of signal handler */
     void                        *si_list;               /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
-
-#ifdef RT_USING_CPU_USAGE
-    rt_uint64_t                 duration_tick;          /**< cpu usage tick */
-#endif /* RT_USING_CPU_USAGE */
 
 #ifdef RT_USING_PTHREADS
     void                        *pthread_data;          /**< the handle of pthread data, adapt 32/64bit */

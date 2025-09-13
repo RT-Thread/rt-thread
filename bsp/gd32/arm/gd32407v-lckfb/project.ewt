@@ -2947,9 +2947,6 @@
             <name>$PROJ_DIR$\..\libraries\gd32_drivers\drv_gpio.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\libraries\gd32_drivers\drv_soft_i2c.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\libraries\gd32_drivers\drv_usart.c</name>
         </file>
         <file>
