@@ -207,6 +207,7 @@ int netdev_unregister(struct netdev *netdev)
         sal_netdev_cleanup(netdev);
 #endif
         rt_memset(netdev, 0, sizeof(*netdev));
+        return RT_EOK;
     }
 
     return -RT_ERROR;
