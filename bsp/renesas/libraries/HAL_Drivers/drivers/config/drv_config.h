@@ -87,6 +87,15 @@ extern "C"
 
 #ifdef SOC_SERIES_R7FA2E2
 #include "ra2e2/uart_config.h"
+
+#ifdef BSP_USING_PWM
+#include "ra2e2/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_ADC
+#include "ra2e2/adc_config.h"
+#endif
+
 #endif /* SOC_SERIES_R7FA2E2 */
 
 #ifdef SOC_SERIES_R7FA2L1

@@ -35,7 +35,7 @@
 | GPIO               | 支持               |                |
 | IIC                | 支持               | 软件           |
 | WDT                | 支持               |                |
-| RTC                | 支持               |                |
+| RTC                | 不支持              |                |
 | ADC                | 支持               |                |
 | SPI                | 支持               |                |
 | FLASH              | 支持               |                |
@@ -172,4 +172,4 @@ RASC 生成的`bsp_linker_info.h`，要么直接删掉，要么根据使用的�
 
 ## 贡献代码
 
-如果您对 CPK-RA6M4 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
+如果您对 EK-RA2E2 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。

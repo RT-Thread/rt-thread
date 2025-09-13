@@ -63,7 +63,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -84,6 +84,7 @@
 
 #define RT_USING_SEMAPHORE
 #define RT_USING_MUTEX
+#define RT_USING_EVENT
 /* end of Inter-Thread communication */
 
 /* Memory Management */
