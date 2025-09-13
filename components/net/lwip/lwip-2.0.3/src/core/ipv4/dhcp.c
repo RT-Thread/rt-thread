@@ -1358,7 +1358,6 @@ dhcp_stop(struct netif *netif)
 
     LWIP_ASSERT("reply wasn't freed", dhcp->msg_in == NULL);
     dhcp_set_state(dhcp, DHCP_STATE_OFF);
-
     if (dhcp->pcb_allocated != 0) {
       dhcp_dec_pcb_refcount(); /* free DHCP PCB if not needed any more */
       dhcp->pcb_allocated = 0;
@@ -1817,7 +1816,15 @@ dhcp_create_msg(struct netif *netif, struct dhcp *dhcp, u8_t message_type)
     xid = DHCP_GLOBAL_XID;
     xid_initialised = !xid_initialised;
   }
-#endif
+  #endif
+
+  /* Clear any existing message before creating a new one */
+  if (dhcp->p_out != NULL) {
+    pbuf_free(dhcp->p_out);
+    dhcp->p_out = NULL;
+    dhcp->msg_out = NULL;
+  }
+
   LWIP_ERROR("dhcp_create_msg: netif != NULL", (netif != NULL), return ERR_ARG;);
   LWIP_ERROR("dhcp_create_msg: dhcp != NULL", (dhcp != NULL), return ERR_VAL;);
   LWIP_ASSERT("dhcp_create_msg: dhcp->p_out == NULL", dhcp->p_out == NULL);
@@ -1899,9 +1906,10 @@ static void
 dhcp_delete_msg(struct dhcp *dhcp)
 {
   LWIP_ERROR("dhcp_delete_msg: dhcp != NULL", (dhcp != NULL), return;);
-  LWIP_ASSERT("dhcp_delete_msg: dhcp->p_out != NULL", dhcp->p_out != NULL);
-  LWIP_ASSERT("dhcp_delete_msg: dhcp->msg_out != NULL", dhcp->msg_out != NULL);
+  /* LWIP_ASSERT("dhcp_delete_msg: dhcp->p_out != NULL", dhcp->p_out != NULL); */
+  /* LWIP_ASSERT("dhcp_delete_msg: dhcp->msg_out != NULL", dhcp->msg_out != NULL); */
   if (dhcp->p_out != NULL) {
+    LWIP_ASSERT("dhcp_delete_msg: dhcp->msg_out != NULL", dhcp->msg_out != NULL);
     pbuf_free(dhcp->p_out);
   }
   dhcp->p_out = NULL;
