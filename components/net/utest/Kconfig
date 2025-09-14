@@ -105,3 +105,33 @@ if RT_USING_LWIP
         endif
     endmenu
 endif
+
+if RT_USING_NETDEV
+    menu "Netdev Network Unit Testcase"
+
+    config RT_UTEST_TC_USING_NETDEV
+        bool "netdev api test"
+        help
+            Enable netdev network device framework unit tests.
+            
+            Test coverage includes:
+            * Network connectivity (ping operations)
+            * DHCP functionality (enable/disable/restore)
+            * DNS configuration and hostname resolution
+            * Interface configuration (IP/gateway/netmask)
+            * IP address conversion functions
+            * Device retrieval and management
+            * Status control and callback mechanisms
+
+        if RT_UTEST_TC_USING_NETDEV
+
+            config RT_UTEST_DEFAULT_NETDEV_NAME
+                string "Default netdev name"
+                default "e0"
+                help
+                    Network interface name for tests. Common values:
+                    "e0" (Ethernet), "w0" (Wireless).
+                    Ensure the device exists in your environment.
+        endif
+    endmenu
+endif
