@@ -117,4 +117,4 @@ static rt_err_t utest_tc_cleanup(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(pwm_testcase, "pwm", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(pwm_testcase, "bsp.k230.drivers.pwm", utest_tc_init, utest_tc_cleanup, 10);
