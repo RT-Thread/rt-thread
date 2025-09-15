@@ -341,6 +341,11 @@ static int fal_flash_lp_erase(long offset, size_t size)
     return _flash_lp_erase(_onchip_flash_lp.addr + offset, size);
 }
 
+/*
+ * This callback is intentionally left empty.
+ * No action is required on flash events in this application.
+ * If event handling is needed, implement it here.
+ */
 void flash_callback(flash_callback_args_t * p_args)
 {
 

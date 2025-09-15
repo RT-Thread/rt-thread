@@ -23,11 +23,11 @@
 #include <hal_data.h>
 
 #ifndef BIT
-    #define BIT(idx)        (1ul << (idx))
+#define BIT(idx)        (1ul << (idx))
 #endif
 
 #ifndef BITS
-    #define BITS(b,e)       ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
+#define BITS(b,e)       ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
 #endif
 
 #define RA_SCI_EVENT_ABORTED        BIT(0)
@@ -37,9 +37,9 @@
 #define RA_SCI_EVENT_ALL            BITS(0,3)
 
 #ifdef SOC_SERIES_R7FA2E2
-#define R_IIC_MASTER_Open               R_IIC_B_MASTER_Open
-#define R_IIC_MASTER_Write              R_IIC_B_MASTER_Write
-#define R_IIC_MASTER_Read               R_IIC_B_MASTER_Read
+#define R_IIC_MASTER_Open       R_IIC_B_MASTER_Open
+#define R_IIC_MASTER_Write      R_IIC_B_MASTER_Write
+#define R_IIC_MASTER_Read       R_IIC_B_MASTER_Read
 #define R_IIC_MASTER_SlaveAddressSet    R_IIC_B_MASTER_SlaveAddressSet
 #define R_IIC_MASTER_CallbackSet        R_IIC_B_MASTER_CallbackSet
 #endif
