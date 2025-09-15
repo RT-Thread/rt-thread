@@ -68,8 +68,8 @@ extern "C" {
  */
 struct rt_lwp_objs
 {
-    rt_aspace_t source; /**< The address space associated with this LWP */
-    struct rt_mem_obj mem_obj; /**< The memory object containing memory management information */
+    rt_aspace_t source;                  /**< The address space associated with this LWP */
+    struct rt_mem_obj mem_obj;           /**< The memory object containing memory management information */
 };
 
 /**
@@ -83,8 +83,8 @@ struct rt_lwp_notify
      * @param signo Signal number
      */
     void (*notify)(rt_wqueue_t *signalfd_queue, int signo);
-    rt_wqueue_t *signalfd_queue; /**< Wait queue for signal file descriptors */
-    rt_slist_t list_node; /**< List node for notification */
+    rt_wqueue_t *signalfd_queue;         /**< Wait queue for signal file descriptors */
+    rt_slist_t list_node;                /**< List node for notification */
 };
 
 struct lwp_tty;
@@ -108,12 +108,12 @@ typedef struct rt_processgroup *rt_processgroup_t;
  */
 struct rt_session {
     struct rt_object    object;
-    rt_lwp_t            leader; /**< Session leader process */
-    rt_list_t           processgroup; /**< List head of process groups in this session */
-    pid_t               sid; /**< Session ID */
+    rt_lwp_t            leader;          /**< Session leader process */
+    rt_list_t           processgroup;    /**< List head of process groups in this session */
+    pid_t               sid;             /**< Session ID */
     pid_t               foreground_pgid; /**< Foreground process group ID */
-    struct rt_mutex     mutex; /**< Mutex for session operations synchronization */
-    struct lwp_tty      *ctty; /**< Control terminal */
+    struct rt_mutex     mutex;           /**< Mutex for session operations synchronization */
+    struct lwp_tty      *ctty;           /**< Control terminal */
 };
 
 /**
@@ -121,18 +121,18 @@ struct rt_session {
  */
 struct rt_processgroup {
     struct rt_object    object;
-    rt_lwp_t            leader; /**< Process group leader process */
-    rt_list_t           process; /**< List head of processes in this process group */
+    rt_lwp_t            leader;         /**< Process group leader process */
+    rt_list_t           process;        /**< List head of processes in this process group */
     rt_list_t           pgrp_list_node; /**< List node for process group */
-    pid_t               pgid; /**< Process group ID */
-    pid_t               sid; /**< Session ID */
-    struct rt_session   *session; /**< Session pointer */
-    struct rt_mutex     mutex; /**< Mutex for process group operations synchronization */
+    pid_t               pgid;           /**< Process group ID */
+    pid_t               sid;            /**< Session ID */
+    struct rt_session   *session;       /**< Session pointer */
+    struct rt_mutex     mutex;          /**< Mutex for process group operations synchronization */
 
-    rt_atomic_t         ref; /**< Reference count for process group */
+    rt_atomic_t         ref;            /**< Reference count for process group */
 
     /* flags on process group */
-    unsigned int is_orphaned:1; /**< Whether the process group is orphaned */
+    unsigned int is_orphaned:1;         /**< Whether the process group is orphaned */
 };
 
 /**
@@ -141,85 +141,85 @@ struct rt_processgroup {
 struct rt_lwp
 {
 #ifdef ARCH_MM_MMU
-    size_t end_heap; /**< End address of heap */
-    rt_aspace_t aspace; /**< Address space associated with this LWP */
+    size_t end_heap;                            /**< End address of heap */
+    rt_aspace_t aspace;                         /**< Address space associated with this LWP */
 #else
 #ifdef ARCH_MM_MPU
-    struct rt_mpu_info mpu_info; /**< MPU information for this LWP */
+    struct rt_mpu_info mpu_info;                /**< MPU information for this LWP */
 #endif /* ARCH_MM_MPU */
 #endif /* ARCH_MM_MMU */
 
 #ifdef RT_USING_SMP
-    int bind_cpu; /**< CPU ID to which the LWP is bound */
+    int bind_cpu;                               /**< CPU ID to which the LWP is bound */
 #endif
 
-    uint8_t lwp_type; /**< Type of LWP */
+    uint8_t lwp_type;                           /**< Type of LWP */
     uint8_t reserv[3];
 
     /* flags */
-    unsigned int terminated:1;     /**< Process termination flag */
-    unsigned int background:1;     /**< Background process flag */
-    unsigned int term_ctrlterm:1;  /**< have control terminal? */
-    unsigned int did_exec:1;       /**< Whether exec has been performed */
-    unsigned int jobctl_stopped:1; /**< job control: current proc is stopped */
-    unsigned int wait_reap_stp:1;  /**< job control: has wait event for parent */
-    unsigned int sig_protected:1;  /**< signal: protected proc cannot be killed or stopped */
+    unsigned int terminated:1;                  /**< Process termination flag */
+    unsigned int background:1;                  /**< Background process flag */
+    unsigned int term_ctrlterm:1;               /**< have control terminal? */
+    unsigned int did_exec:1;                    /**< Whether exec has been performed */
+    unsigned int jobctl_stopped:1;              /**< job control: current proc is stopped */
+    unsigned int wait_reap_stp:1;               /**< job control: has wait event for parent */
+    unsigned int sig_protected:1;               /**< signal: protected proc cannot be killed or stopped */
 
-    struct rt_lwp *parent;          /**< parent process */
-    struct rt_lwp *first_child;     /**< first child process */
-    struct rt_lwp *sibling;         /**< sibling(child) process */
+    struct rt_lwp *parent;                      /**< parent process */
+    struct rt_lwp *first_child;                 /**< first child process */
+    struct rt_lwp *sibling;                     /**< sibling(child) process */
 
-    struct rt_wqueue waitpid_waiters; /**< Wait queue for waitpid system call */
-    lwp_status_t lwp_status;         /**< Status of LWP */
+    struct rt_wqueue waitpid_waiters;           /**< Wait queue for waitpid system call */
+    lwp_status_t lwp_status;                    /**< Status of LWP */
 
-    void *text_entry;               /**< Entry point of text segment */
-    uint32_t text_size;             /**< Size of text segment */
-    void *data_entry;               /**< Entry point of data segment */
-    uint32_t data_size;             /**< Size of data segment */
+    void *text_entry;                           /**< Entry point of text segment */
+    uint32_t text_size;                         /**< Size of text segment */
+    void *data_entry;                           /**< Entry point of data segment */
+    uint32_t data_size;                         /**< Size of data segment */
 
-    rt_atomic_t ref;                /**< Reference count for LWP */
-    void *args;                     /**< Arguments passed to LWP */
-    uint32_t args_length;           /**< Length of arguments */
-    pid_t pid;                      /**< Process ID */
-    pid_t sid;                      /**< session ID */
-    pid_t pgid;                     /**< process group ID */
-    struct rt_processgroup *pgrp;
-    rt_list_t pgrp_node;            /**< process group node */
-    rt_list_t t_grp;                /**< thread group */
-    rt_list_t timer;                /**< POSIX timer object binding to a process */
+    rt_atomic_t ref;                            /**< Reference count for LWP */
+    void *args;                                 /**< Arguments passed to LWP */
+    uint32_t args_length;                       /**< Length of arguments */
+    pid_t pid;                                  /**< Process ID */
+    pid_t sid;                                  /**< session ID */
+    pid_t pgid;                                 /**< process group ID */
+    struct rt_processgroup *pgrp;               /**< process group */
+    rt_list_t pgrp_node;                        /**< process group node */
+    rt_list_t t_grp;                            /**< thread group */
+    rt_list_t timer;                            /**< POSIX timer object binding to a process */
 
-    struct dfs_fdtable fdt;         /**< File descriptor table */
-    char cmd[RT_NAME_MAX];           /**< process name */
-    char *exe_file;                 /**< process file path */
+    struct dfs_fdtable fdt;                     /**< File descriptor table */
+    char cmd[RT_NAME_MAX];                      /**< process name */
+    char *exe_file;                             /**< process file path */
 
     /* POSIX signal */
-    struct lwp_signal signal;       /**< Signal handling structure */
+    struct lwp_signal signal;                   /**< Signal handling structure */
 
-    struct lwp_avl_struct *object_root; /**< AVL tree root for objects */
-    struct rt_mutex object_mutex;      /**< Mutex for object operations synchronization */
-    struct rt_user_context user_ctx;    /**< User context for LWP */
+    struct lwp_avl_struct *object_root;         /**< AVL tree root for objects */
+    struct rt_mutex object_mutex;               /**< Mutex for object operations synchronization */
+    struct rt_user_context user_ctx;            /**< User context for LWP */
 
-    struct rt_wqueue wait_queue; /**< wait queue for console */
-    struct tty_struct *tty; /**< Controlling terminal, NULL if no tty */
+    struct rt_wqueue wait_queue;                /**< wait queue for console */
+    struct tty_struct *tty;                     /**< Controlling terminal, NULL if no tty */
 
     struct lwp_avl_struct *address_search_head; /**< for addressed object fast search */
-    char working_directory[DFS_PATH_MAX];  /**< Current working directory */
+    char working_directory[DFS_PATH_MAX];       /**< Current working directory */
 
-    int debug;                    /**< Debug flag */
-    rt_uint32_t bak_first_inst; /**< backup of first instruction */
+    int debug;                                  /**< Debug flag */
+    rt_uint32_t bak_first_inst;                 /**< backup of first instruction */
 
-    struct rt_mutex lwp_lock;      /**< Mutex for LWP operations synchronization */
+    struct rt_mutex lwp_lock;                   /**< Mutex for LWP operations synchronization */
 
-    rt_slist_t signalfd_notify_head; /**< Signal file descriptor notification head */
+    rt_slist_t signalfd_notify_head;            /**< Signal file descriptor notification head */
 
 #ifdef LWP_ENABLE_ASID
-    uint64_t generation;           /**< ASID generation */
-    unsigned int asid;             /**< Address space ID */
+    uint64_t generation;                        /**< ASID generation */
+    unsigned int asid;                          /**< Address space ID */
 #endif
-    struct rusage rt_rusage;       /**< Resource usage information */
+    struct rusage rt_rusage;                    /**< Resource usage information */
 
 #ifdef RT_USING_VDSO
-    void *vdso_vbase;              /**< VDSO base address */
+    void *vdso_vbase;                           /**< VDSO base address */
 #endif
 };
 
@@ -233,9 +233,9 @@ rt_err_t lwp_children_unregister(struct rt_lwp *parent, struct rt_lwp *child);
  */
 enum lwp_exit_request_type
 {
-    LWP_EXIT_REQUEST_NONE = 0, /**< No exit request */
-    LWP_EXIT_REQUEST_TRIGGERED, /**< Exit request triggered */
-    LWP_EXIT_REQUEST_IN_PROCESS, /**< Exit request in process */
+    LWP_EXIT_REQUEST_NONE = 0,                  /**< No exit request */
+    LWP_EXIT_REQUEST_TRIGGERED,                 /**< Exit request triggered */
+    LWP_EXIT_REQUEST_IN_PROCESS,                /**< Exit request in process */
 };
 struct termios *get_old_termios(void);
 void lwp_setcwd(char *buf);
@@ -409,8 +409,8 @@ sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void));
  */
 struct process_aux_item
 {
-    size_t key; /**< Auxiliary vector key */
-    size_t value; /**< Auxiliary vector value */
+    size_t key;                            /**< Auxiliary vector key */
+    size_t value;                          /**< Auxiliary vector value */
 };
 
 /**
@@ -426,15 +426,15 @@ struct process_aux
  */
 struct dbg_ops_t
 {
-    int (*dbg)(int argc, char **argv);    /**< Debug function */
-    uint32_t (*arch_get_ins)(void);      /**< Architecture-specific instruction getter */
-    void (*arch_activate_step)(void);   /**< Architecture-specific step activation */
-    void (*arch_deactivate_step)(void); /**< Architecture-specific step deactivation */
+    int (*dbg)(int argc, char **argv);                                         /**< Debug function */
+    uint32_t (*arch_get_ins)(void);                                            /**< Architecture-specific instruction getter */
+    void (*arch_activate_step)(void);                                          /**< Architecture-specific step activation */
+    void (*arch_deactivate_step)(void);                                        /**< Architecture-specific step deactivation */
     int (*check_debug_event)(struct rt_hw_exp_stack *regs, unsigned long esr); /**< Debug event checker */
-    rt_channel_t (*gdb_get_server_channel)(void); /**< GDB server channel getter */
-    int (*gdb_get_step_type)(void);      /**< GDB step type getter */
-    void (*lwp_check_debug_attach_req)(void *pc); /**< LWP debug attach request checker */
-    int (*lwp_check_debug_suspend)(void); /**< LWP debug suspend checker */
+    rt_channel_t (*gdb_get_server_channel)(void);                              /**< GDB server channel getter */
+    int (*gdb_get_step_type)(void);                                            /**< GDB step type getter */
+    void (*lwp_check_debug_attach_req)(void *pc);                              /**< LWP debug attach request checker */
+    int (*lwp_check_debug_suspend)(void);                                      /**< LWP debug suspend checker */
 };
 extern struct dbg_ops_t *rt_dbg_ops;
 
