@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -59,26 +59,33 @@ char* lwp_pid2name(int32_t pid);
 
 int lwp_getpid(void);
 
+/**
+ * @brief Resource usage statistics structure
+ *
+ * @note The structure tracks various system resource usage statistics for a process,
+ * including CPU time, memory usage, I/O operations, and context switches.
+ * It follows the traditional Unix rusage structure format.
+ */
 struct rusage
 {
-    struct timeval ru_utime;
-    struct timeval ru_stime;
+    struct timeval ru_utime;   /**< User CPU time */
+    struct timeval ru_stime;   /**< System CPU time */
 
-    long ru_maxrss;
-    long ru_ixrss;
-    long ru_idrss;
-    long ru_isrss;
-    long ru_minflt;
-    long ru_majflt;
-    long ru_nswap;
-    long ru_inblock;
-    long ru_oublock;
-    long ru_msgsnd;
-    long ru_msgrcv;
-    long ru_nsignals;
-    long ru_nvcsw;
-    long ru_nivcsw;
-    long reserved[16];
+    long ru_maxrss;            /**< Maximum resident set size */
+    long ru_ixrss;             /**< Integral shared memory size */
+    long ru_idrss;             /**< Integral unshared data size */
+    long ru_isrss;             /**< Integral unshared stack size */
+    long ru_minflt;            /**< Page reclaims (soft page faults) */
+    long ru_majflt;            /**< Page faults (hard page faults) */
+    long ru_nswap;             /**< Swaps */
+    long ru_inblock;           /**< Block input operations */
+    long ru_oublock;           /**< Block output operations */
+    long ru_msgsnd;            /**< IPC messages sent */
+    long ru_msgrcv;            /**< IPC messages received */
+    long ru_nsignals;          /**< Signals received */
+    long ru_nvcsw;             /**< voluntary context switches */
+    long ru_nivcsw;            /**< involuntary context switches */
+    long reserved[16];         /**< Reserved for future use */
 };
 pid_t lwp_waitpid(const pid_t pid, int *status, int options, struct rusage *ru);
 rt_err_t lwp_waitpid_kick(struct rt_lwp *parent, struct rt_lwp *self_lwp);
