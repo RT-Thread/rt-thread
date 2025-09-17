@@ -373,7 +373,7 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_FAMILY_RENESAS_RA
-#define SOC_SERIES_R7FA4M2
+#define SOC_SERIES_R7FA4E2
 
 /* Hardware Drivers Config */
 

@@ -1,8 +1,8 @@
-# 瑞萨 CPK-RA6M4 开发板 BSP 说明
+# 瑞萨 EK-RA4E2 开发板 BSP 说明
 
 ## 简介
 
-本文档为瑞萨 CPK-RA6M4 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
+本文档为瑞萨 EK-RA4E2 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
 
 主要内容如下：
 
@@ -11,7 +11,7 @@
 
 ## 开发板介绍
 
-基于瑞萨 RA6M4 MCU 开发的 CPK-RA6M4 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA6M4 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
+基于瑞萨 RA4E2 MCU 开发的 EK-RA4E2 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA4E2 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
 
 开发板正面外观如下图：
 
@@ -62,7 +62,7 @@
 
 > 注意：此工程需要使用 J-Flash Lite 工具烧录程序。建议使用 V7.50 及以上版本烧录工程。[J-Link 下载链接](https://www.segger.com/downloads/jlink/)
 
-- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA6M4AF，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/ra6m4.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
+- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA6M4AF，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/ra4e2.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
 - 
 ![image-20211011181555421](docs/picture/jflash1.png)
 
@@ -104,7 +104,7 @@ msh >
 
 **应用入口函数**
 
-应用层的入口函数在 **bsp\ra6m4-cpk\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
+应用层的入口函数在 **bsp\ra4e2-ek\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
 
 ```c
 void hal_entry(void)
@@ -126,18 +126,16 @@ void hal_entry(void)
 ```
 
 对应LED原理图：
-![image-20211214102231248](docs/picture/ek-ra2e2-board-led.png) 
+![image-20211214102231248](docs/picture/ek-ra4e2-board-led.png) 
 
 ### 进阶使用
 
 **资料及文档**
 
-- [开发板官网主页](https://www2.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board)
-- [开发板用户手册](https://www2.renesas.cn/cn/zh/document/mah/1527156?language=zh&r=1527191)
+- [开发板官网主页](https://www.renesas.com/en/design-resources/boards-kits/ek-ra4e2)
+- [开发板用户手册](https://www.renesas.com/en/document/mat/ek-ra4e2-v1-users-manual?r=25412496)
 - [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091)
-- [RA6 MCU 快速设计指南](https://www2.renesas.cn/cn/zh/document/apn/ra6-quick-design-guide)
-- [RA6M4_datasheet](https://www2.renesas.cn/cn/zh/document/dst/ra6m4-group-datasheet)
-- [RA6M4 Group User’s Manual: Hardware](https://www2.renesas.cn/cn/zh/document/man/ra6m4-group-user-s-manual-hardware)
+- [RA4E2_datasheet](https://www.renesas.com/en/document/sch/ek-ra4e2-v1-design-package?r=25412496)
 
 **FSP 配置**
 
