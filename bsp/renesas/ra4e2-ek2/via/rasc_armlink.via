@@ -1,6 +1,0 @@
-# generated via file - do not edit
---entry=Reset_Handler
---library_type=microlib
---no_startup
---legacyalign
---diag_suppress=6319,6314,3912
