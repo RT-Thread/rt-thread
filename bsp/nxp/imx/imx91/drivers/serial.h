@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2025-07-12     BruceOu      the first 
  * 2025-08-10     Siwei Xu     Fix compile errors
+ * 2025-09-15     Siwei Xu     Add LPUART driver
  */
 
 #ifndef __UART_H__

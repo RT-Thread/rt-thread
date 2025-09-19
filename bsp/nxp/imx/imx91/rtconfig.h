@@ -113,6 +113,7 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
+#define RT_USING_THREADSAFE_PRINTF
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
@@ -141,6 +142,7 @@
 #define ARCH_ARM_CORTEX_A
 #define RT_NO_USING_GIC
 #define ARCH_ARM_CORTEX_A55
+#define RT_BACKTRACE_FUNCTION_NAME
 #define ARCH_ARMV8
 #define ARCH_USING_ASID
 #define ARCH_USING_HW_THREAD_SELF
@@ -150,7 +152,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 6144
+#define RT_MAIN_THREAD_STACK_SIZE 8192
 #define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_MSH
 #define RT_USING_FINSH
@@ -453,8 +455,12 @@
 /* end of RT-Thread online packages */
 #define BOARD_IMX91
 #define SOC_MIMX91X1D
+
+/* Hardware Drivers Config */
+
+#define BSP_USING_UART1
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
-#define RT_USING_UART1
+/* end of Hardware Drivers Config */
 
 #endif
