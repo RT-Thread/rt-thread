@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -71,6 +71,11 @@ static pid_t current_pid = 0;
 static struct rt_mutex pid_mtx;
 static struct rt_wqueue _pid_emptyq;
 
+/**
+ * @brief Initialize PID management structures
+ *
+ * @return int Always returns 0.
+ */
 int lwp_pid_init(void)
 {
     rt_wqueue_init(&_pid_emptyq);
@@ -78,6 +83,14 @@ int lwp_pid_init(void)
     return 0;
 }
 
+/**
+ * @brief Wait for an empty PID slot to become available
+ *
+ * @param[in] wait_flags Wait mode flags (RT_INTERRUPTIBLE, RT_KILLABLE or RT_UNINTERRUPTIBLE)
+ * @param[in] to Timeout value in ticks (RT_WAITING_FOREVER for no timeout)
+ *
+ * @return int Error code (0 on success, negative on error)
+ */
 int lwp_pid_wait_for_empty(int wait_flags, rt_tick_t to)
 {
     int error;
@@ -93,6 +106,11 @@ int lwp_pid_wait_for_empty(int wait_flags, rt_tick_t to)
     return error;
 }
 
+/**
+ * @brief Acquire the PID management mutex lock
+ *
+ * @note This is a blocking call that will wait indefinitely for the lock
+ */
 void lwp_pid_lock_take(void)
 {
     LWP_DEF_RETURN_CODE(rc);
@@ -103,6 +121,11 @@ void lwp_pid_lock_take(void)
     RT_UNUSED(rc);
 }
 
+/**
+ * @brief Release the PID management mutex lock
+ *
+ * @note This function should be called after lwp_pid_lock_take()
+ */
 void lwp_pid_lock_release(void)
 {
     /* should never failed */
@@ -110,12 +133,32 @@ void lwp_pid_lock_release(void)
         RT_ASSERT(0);
 }
 
+/**
+ * @brief Parameter structure for PID iteration callback
+ *
+ * @note This structure holds the callback function and context data used when
+ *       iterating through process IDs.
+ */
 struct pid_foreach_param
 {
+    /**
+     * @brief Callback function to execute for each PID
+     * @param[in] pid The process ID being processed
+     * @param[in,out] data User-provided context data
+     * @return int Operation status (0 to continue, non-zero to stop)
+     */
     int (*cb)(pid_t pid, void *data);
-    void *data;
+    void *data; /**< User-provided context data */
 };
 
+/**
+ * @brief Callback function for PID iteration
+ *
+ * @param[in] node AVL tree node containing the PID
+ * @param[in] data User-provided parameter structure
+ *
+ * @return int Operation status (0 to continue, non-zero to stop)
+ */
 static int _before_cb(struct lwp_avl_struct *node, void *data)
 {
     struct pid_foreach_param *param = data;
@@ -123,6 +166,14 @@ static int _before_cb(struct lwp_avl_struct *node, void *data)
     return param->cb(pid, param->data);
 }
 
+/**
+ * @brief Iterate over all process IDs
+ *
+ * @param[in] cb Callback function to execute for each PID
+ * @param[in] data User-provided context data
+ *
+ * @return int Error code (0 on success, negative on error)
+ */
 int lwp_pid_for_each(int (*cb)(pid_t pid, void *data), void *data)
 {
     int error;
@@ -139,11 +190,32 @@ int lwp_pid_for_each(int (*cb)(pid_t pid, void *data), void *data)
     return error;
 }
 
+/**
+ * @brief Get the PID array
+ *
+ * @return struct lwp_avl_struct* Pointer to the PID array
+ */
 struct lwp_avl_struct *lwp_get_pid_ary(void)
 {
     return lwp_pid_ary;
 }
 
+/**
+ * @brief Allocates a new PID while holding the PID management lock
+ *
+ * @return pid_t The newly allocated PID, or 0 if allocation failed
+ *
+ * @note This function attempts to allocate a new process ID (PID) from either:
+ *       1. The free list (lwp_pid_free_head) if available
+ *       2. The PID array (lwp_pid_ary) if within maximum limits
+ *
+ *       It then searches for an unused PID in two ranges:
+ *       1. From current_pid+1 to PID_MAX
+ *       2. From 1 to current_pid (if first search fails)
+ *
+ *       The allocated PID is inserted into the PID AVL tree (lwp_pid_root)
+ *       and current_pid is updated to the new PID.
+ */
 static pid_t lwp_pid_get_locked(void)
 {
     struct lwp_avl_struct *p;
@@ -190,6 +262,15 @@ static pid_t lwp_pid_get_locked(void)
     return pid;
 }
 
+/**
+ * @brief Release a PID back to the free list while holding the PID lock
+ *
+ * @param[in] pid The process ID to release (must not be 0)
+ *
+ * @note This function removes the specified PID from the active PID tree and
+ *       adds it to the free list. The operation is performed atomically while
+ *       holding the PID management lock.
+ */
 static void lwp_pid_put_locked(pid_t pid)
 {
     struct lwp_avl_struct *p;
@@ -210,6 +291,11 @@ static void lwp_pid_put_locked(pid_t pid)
 }
 
 #ifdef RT_USING_DFS_PROCFS
+    /**
+     * @brief Free the proc dentry for the given LWP
+     *
+     * @param[in] lwp The LWP whose proc dentry is to be freed
+     */
     rt_inline void _free_proc_dentry(rt_lwp_t lwp)
     {
         char pid_str[64] = {0};
@@ -222,6 +308,11 @@ static void lwp_pid_put_locked(pid_t pid)
     #define _free_proc_dentry(lwp)
 #endif
 
+/**
+ * @brief Release a process ID and clean up associated resources
+ *
+ * @param[in,out] lwp The lightweight process whose PID should be released
+ */
 void lwp_pid_put(struct rt_lwp *lwp)
 {
     _free_proc_dentry(lwp);
@@ -244,6 +335,16 @@ void lwp_pid_put(struct rt_lwp *lwp)
     lwp_ref_dec(lwp);
 }
 
+/**
+ * @brief Set the LWP for a given PID while holding the PID lock
+ *
+ * @param[in] pid The process ID to set the LWP for
+ * @param[in] lwp The LWP to associate with the PID
+ *
+ * @note This function associates the specified LWP with the given PID in the
+ *       PID AVL tree. It increments the LWP's reference count and updates the
+ *       proc filesystem entry if the PID is non-zero.
+ */
 static void lwp_pid_set_lwp_locked(pid_t pid, struct rt_lwp *lwp)
 {
     struct lwp_avl_struct *p;
@@ -263,6 +364,15 @@ static void lwp_pid_set_lwp_locked(pid_t pid, struct rt_lwp *lwp)
     }
 }
 
+/**
+ * @brief Close all open files for the given LWP
+ *
+ * @param[in] lwp The LWP whose files should be closed
+ *
+ * @note This function iterates through all file descriptors in the LWP's file
+ *       descriptor table, closing each open file. It is typically called when
+ *       an LWP is being destroyed or when the LWP is switching to a new thread.
+ */
 static void __exit_files(struct rt_lwp *lwp)
 {
     int fd = lwp->fdt.maxfd - 1;
@@ -281,16 +391,31 @@ static void __exit_files(struct rt_lwp *lwp)
     }
 }
 
+/**
+ * @brief Initialize the user object lock for a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object lock needs initialization
+ */
 void lwp_user_object_lock_init(struct rt_lwp *lwp)
 {
     rt_mutex_init(&lwp->object_mutex, "lwp_obj", RT_IPC_FLAG_PRIO);
 }
 
+/**
+ * @brief Destroy the user object lock for a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object lock needs destruction
+ */
 void lwp_user_object_lock_destroy(struct rt_lwp *lwp)
 {
     rt_mutex_detach(&lwp->object_mutex);
 }
 
+/**
+ * @brief Lock the user object lock for a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object lock needs locking
+ */
 void lwp_user_object_lock(struct rt_lwp *lwp)
 {
     if (lwp)
@@ -303,6 +428,11 @@ void lwp_user_object_lock(struct rt_lwp *lwp)
     }
 }
 
+/**
+ * @brief Unlock the user object lock for a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object lock needs unlocking
+ */
 void lwp_user_object_unlock(struct rt_lwp *lwp)
 {
     if (lwp)
@@ -315,6 +445,14 @@ void lwp_user_object_unlock(struct rt_lwp *lwp)
     }
 }
 
+/**
+ * @brief Add an object to the user object list of a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object list needs updating
+ * @param[in] object The object to be added to the LWP's object list
+ *
+ * @return int Returns 0 on success, or -1 on failure
+ */
 int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object)
 {
     int ret = -1;
@@ -340,6 +478,14 @@ int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object)
     return ret;
 }
 
+/**
+ * @brief Delete a node from the user object list of a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object list needs updating
+ * @param[in] node The node to be deleted from the LWP's object list
+ *
+ * @return rt_err_t Returns 0 on success, or -1 on failure
+ */
 static rt_err_t _object_node_delete(struct rt_lwp *lwp, struct lwp_avl_struct *node)
 {
     rt_err_t ret = -1;
@@ -391,6 +537,14 @@ static rt_err_t _object_node_delete(struct rt_lwp *lwp, struct lwp_avl_struct *n
     return ret;
 }
 
+/**
+ * @brief Delete an object from the user object list of a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object list needs updating
+ * @param[in] object The object to be deleted from the LWP's object list
+ *
+ * @return rt_err_t Returns 0 on success, or -1 on failure
+ */
 rt_err_t lwp_user_object_delete(struct rt_lwp *lwp, rt_object_t object)
 {
     rt_err_t ret = -1;
@@ -407,6 +561,11 @@ rt_err_t lwp_user_object_delete(struct rt_lwp *lwp, rt_object_t object)
     return ret;
 }
 
+/**
+ * @brief Clear all objects from the user object list of a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process structure whose object list needs clearing
+ */
 void lwp_user_object_clear(struct rt_lwp *lwp)
 {
     struct lwp_avl_struct *node;
@@ -419,6 +578,16 @@ void lwp_user_object_clear(struct rt_lwp *lwp)
     lwp_user_object_unlock(lwp);
 }
 
+/**
+ * @brief Callback function for duplicating objects in AVL tree traversal
+ *
+ * @param[in] node The AVL tree node containing the object to duplicate
+ * @param[in,out] arg The destination lightweight process (cast to struct rt_lwp *)
+ * @return int Always returns 0 to continue traversal
+ *
+ * @note This function is used as a callback during AVL tree traversal
+ *       to duplicate objects from one process to another
+ */
 static int _object_dup(struct lwp_avl_struct *node, void *arg)
 {
     rt_object_t object;
@@ -429,6 +598,15 @@ static int _object_dup(struct lwp_avl_struct *node, void *arg)
     return 0;
 }
 
+/**
+ * @brief Duplicate all objects from one lightweight process to another
+ *
+ * @param[in,out] dst_lwp The destination lightweight process structure
+ * @param[in] src_lwp The source lightweight process structure
+ *
+ * @note This function duplicates all objects from the source LWP to the destination LWP
+ *       by traversing the source LWP's object list and adding each object to the destination LWP
+ */
 void lwp_user_object_dup(struct rt_lwp *dst_lwp, struct rt_lwp *src_lwp)
 {
     lwp_user_object_lock(src_lwp);
@@ -436,6 +614,17 @@ void lwp_user_object_dup(struct rt_lwp *dst_lwp, struct rt_lwp *src_lwp)
     lwp_user_object_unlock(src_lwp);
 }
 
+/**
+ * @brief Create a new lightweight process (LWP)
+ *
+ * @param[in] flags Creation flags that control LWP behavior
+ *        - LWP_CREATE_FLAG_NOTRACE_EXEC: Don't trace exec operations
+ *        - LWP_CREATE_FLAG_ALLOC_PID: Allocate a PID for the LWP
+ *        - LWP_CREATE_FLAG_INIT_USPACE: Initialize user space
+ *
+ * @return Pointer to newly created LWP structure on success
+ *        - RT_NULL on failure (pid allocation failed or user space init failed)
+ */
 rt_lwp_t lwp_create(rt_base_t flags)
 {
     pid_t pid;
@@ -500,7 +689,13 @@ rt_lwp_t lwp_create(rt_base_t flags)
     return new_lwp;
 }
 
-/** when reference is 0, a lwp can be released */
+/**
+ * @brief Free all resources associated with a lightweight process (LWP)
+ *
+ * @param[in,out] lwp Lightweight process to be freed
+ *
+ * @note when reference is 0, a lwp can be released
+ */
 void lwp_free(struct rt_lwp* lwp)
 {
     rt_processgroup_t group = RT_NULL;
@@ -585,6 +780,20 @@ void lwp_free(struct rt_lwp* lwp)
     rt_free(lwp);
 }
 
+/**
+ * @brief Handle thread exit cleanup for a lightweight process
+ *
+ * @param[in,out] lwp Lightweight process containing the thread
+ * @param[in,out] thread Thread to be exited
+ *
+ * @note This function performs the following operations:
+ *       - Updates process resource usage statistics (system and user time)
+ *       - Removes thread from process sibling list
+ *       - Handles futex robust list cleanup
+ *       - Releases thread ID (TID)
+ *       - Deletes the thread
+ *       - Enters infinite loop (noreturn function)
+ */
 rt_inline rt_noreturn
 void _thread_exit(rt_lwp_t lwp, rt_thread_t thread)
 {
@@ -609,6 +818,17 @@ void _thread_exit(rt_lwp_t lwp, rt_thread_t thread)
     while (1) ;
 }
 
+/**
+ * @brief Clear child thread ID notification for parent process
+ *
+ * @param[in,out] thread Thread whose child tid needs to be cleared
+ *
+ * @note This function performs the following operations:
+ *       - Checks if clear_child_tid pointer is set
+ *       - Writes 0 to user-space memory location if set
+ *       - Wakes any futex waiters on that location
+ *       - Clears the thread's clear_child_tid pointer
+ */
 rt_inline void _clear_child_tid(rt_thread_t thread)
 {
     if (thread->clear_child_tid)
@@ -622,6 +842,16 @@ rt_inline void _clear_child_tid(rt_thread_t thread)
     }
 }
 
+/**
+ * @brief Terminates a lightweight process and cleans up its resources
+ *
+ * @param[in,out] lwp The lightweight process to terminate
+ * @param[in] status The exit status to set for the process
+ *
+ * @note This function handles both MMU and non-MMU architectures differently.
+ *       For MMU architectures, it clears child TID, sets exit status, and terminates.
+ *       For non-MMU, it terminates the main thread and all subthreads.
+ */
 void lwp_exit(rt_lwp_t lwp, lwp_status_t status)
 {
     rt_thread_t thread;
@@ -671,6 +901,15 @@ void lwp_exit(rt_lwp_t lwp, lwp_status_t status)
     _thread_exit(lwp, thread);
 }
 
+/**
+ * @brief Handles thread exit for a lightweight process
+ *
+ * @param[in,out] thread The thread that is exiting
+ * @param[in] status The exit status to set for the thread
+ *
+ * @note For MMU architectures, this function checks if the exiting thread is the
+ *       header thread (main thread). If so, it treats it as a process exit.
+ */
 void lwp_thread_exit(rt_thread_t thread, int status)
 {
     rt_thread_t header_thr;
@@ -707,7 +946,15 @@ void lwp_thread_exit(rt_thread_t thread, int status)
     _thread_exit(lwp, thread);
 }
 
-/** @note the reference is not for synchronization, but for the release of resource. the synchronization is done through lwp & pid lock */
+/**
+ * @brief Increments the reference count of a lightweight process
+ *
+ * @param[in,out] lwp The lightweight process whose reference count is to be incremented
+ *
+ * @return int The updated reference count after incrementing
+ *
+ * @note the reference is not for synchronization, but for the release of resource. the synchronization is done through lwp & pid lock.
+ */
 int lwp_ref_inc(struct rt_lwp *lwp)
 {
     int ref;
@@ -717,6 +964,19 @@ int lwp_ref_inc(struct rt_lwp *lwp)
     return ref;
 }
 
+/**
+ * @brief Decrements the reference count of a lightweight process (LWP)
+ *
+ * @param[in,out] lwp The lightweight process whose reference count to decrement
+ *
+ * @return int The reference count before decrementing
+ *
+ * @note This function atomically decrements the LWP's reference count.
+ *       When the count reaches 1 (meaning this was the last reference):
+ *       - For debug builds, sends a message to GDB server channel
+ *       - For non-MMU architectures with shared memory support, frees shared memory
+ *       - Calls lwp_free() to release all LWP resources
+ */
 int lwp_ref_dec(struct rt_lwp *lwp)
 {
     int ref;
@@ -750,6 +1010,17 @@ int lwp_ref_dec(struct rt_lwp *lwp)
     return ref;
 }
 
+/**
+ * @brief Retrieves a lightweight process (LWP) by its PID while holding the lock
+ *
+ * @param[in] pid The process ID to look up
+ *
+ * @return struct rt_lwp* Pointer to the LWP structure if found, RT_NULL otherwise
+ *
+ * @note This function performs a raw lookup in the PID AVL tree while assuming
+ *       the caller already holds the necessary locks. It's a lower-level version
+ *       of lwp_from_pid() that doesn't handle locking internally.
+ */
 struct rt_lwp* lwp_from_pid_raw_locked(pid_t pid)
 {
     struct lwp_avl_struct *p;
@@ -764,6 +1035,17 @@ struct rt_lwp* lwp_from_pid_raw_locked(pid_t pid)
     return lwp;
 }
 
+/**
+ * @brief Retrieves a lightweight process (LWP) by PID with lock handling
+ *
+ * @param[in] pid The process ID to look up (0 means current process)
+ *
+ * @return struct rt_lwp* Pointer to the LWP structure if found, current LWP if pid=0
+ *
+ * @note This is a convenience wrapper that:
+ *       - If pid is non-zero, calls lwp_from_pid_raw_locked()
+ *       - If pid is zero, returns the current LWP via lwp_self()
+ */
 struct rt_lwp* lwp_from_pid_locked(pid_t pid)
 {
     struct rt_lwp* lwp;
@@ -771,6 +1053,13 @@ struct rt_lwp* lwp_from_pid_locked(pid_t pid)
     return lwp;
 }
 
+/**
+ * @brief Converts a lightweight process (LWP) to its PID
+ *
+ * @param[in] lwp The LWP structure to convert
+ *
+ * @return pid_t The PID of the LWP, or 0 if lwp is NULL
+ */
 pid_t lwp_to_pid(struct rt_lwp* lwp)
 {
     if (!lwp)
@@ -780,6 +1069,13 @@ pid_t lwp_to_pid(struct rt_lwp* lwp)
     return lwp->pid;
 }
 
+/**
+ * @brief Convert process ID to process name
+ *
+ * @param[in] pid Process ID to look up
+ *
+ * @return char* Pointer to the process name (without path) if found, or RT_NULL if not found
+ */
 char* lwp_pid2name(int32_t pid)
 {
     struct rt_lwp *lwp;
@@ -797,6 +1093,16 @@ char* lwp_pid2name(int32_t pid)
     return process_name;
 }
 
+/**
+ * @brief Convert process name to process ID
+ *
+ * @param[in] name Process name to look up (without path)
+ *
+ * @return pid_t Process ID if found, or 0 if not found
+ *
+ * @note The function only returns PIDs for processes whose main thread
+ *          is not in CLOSED state.
+ */
 pid_t lwp_name2pid(const char *name)
 {
     int idx;
@@ -831,13 +1137,30 @@ pid_t lwp_name2pid(const char *name)
     return pid;
 }
 
+/**
+ * @brief Get the process ID of the current lightweight process (LWP)
+ *
+ * @return pid_t Process ID of the current LWP
+ */
 int lwp_getpid(void)
 {
     rt_lwp_t lwp = lwp_self();
     return lwp ? lwp->pid : 1;
-    // return ((struct rt_lwp *)rt_thread_self()->lwp)->pid;
+    /* return ((struct rt_lwp *)rt_thread_self()->lwp)->pid; */
 }
 
+/**
+ * @brief Update resource usage statistics from child to parent process
+ *
+ * @param[in] child Child process containing resource usage data
+ * @param[in] self_lwp Current lightweight process (parent)
+ * @param[in,out] uru Pointer to user-space rusage structure to update
+ *
+ * @note This function:
+ *       - Copies system and user time from child process
+ *       - Only updates if uru pointer is not NULL
+ *       - Uses lwp_data_put to safely write to user-space memory
+ */
 rt_inline void _update_ru(struct rt_lwp *child, struct rt_lwp *self_lwp, struct rusage *uru)
 {
     struct rusage rt_rusage;
@@ -851,7 +1174,20 @@ rt_inline void _update_ru(struct rt_lwp *child, struct rt_lwp *self_lwp, struct 
     }
 }
 
-/* do statistical summary and reap the child if neccessary */
+/**
+ * @brief Collects statistics and reaps a terminated child process
+ *
+ * @param[in] child The child process to collect statistics from
+ * @param[in] cur_thr The current thread context
+ * @param[in,out] self_lwp The parent process (current LWP)
+ * @param[out] ustatus Pointer to store child's exit status (optional)
+ * @param[in] options Wait options (e.g., WNOWAIT)
+ * @param[in,out] uru Pointer to resource usage structure to update (optional)
+ *
+ * @return rt_err_t Returns RT_EOK on success
+ *
+ * @note Updates resource usage statistics and optionally reaps the child process
+ */
 static rt_err_t _stats_and_reap_child(rt_lwp_t child, rt_thread_t cur_thr,
                                       struct rt_lwp *self_lwp, int *ustatus,
                                       int options, struct rusage *uru)
@@ -877,7 +1213,19 @@ static rt_err_t _stats_and_reap_child(rt_lwp_t child, rt_thread_t cur_thr,
 
 #define HAS_CHILD_BUT_NO_EVT (-1024)
 
-/* check if the process is already terminate */
+/**
+ * @brief Queries process state change events from a child process
+ *
+ * @param[in] child The child process to query
+ * @param[in] cur_thr The current thread context
+ * @param[in] self_lwp The parent process (current LWP)
+ * @param[in] options Wait options (e.g., WSTOPPED)
+ * @param[out] status Pointer to store child's status (optional)
+ *
+ * @return sysret_t Returns child PID if event found, or HAS_CHILD_BUT_NO_EVT
+ *
+ * @note Checks for termination or stopped state changes in child process
+ */
 static sysret_t _query_event_from_lwp(rt_lwp_t child, rt_thread_t cur_thr, rt_lwp_t self_lwp,
                                       int options, int *status)
 {
@@ -903,7 +1251,20 @@ static sysret_t _query_event_from_lwp(rt_lwp_t child, rt_thread_t cur_thr, rt_lw
     return rc;
 }
 
-/* verify if the process is child, and reap it */
+/**
+ * @brief Verifies and reaps a child process if conditions are met
+ *
+ * @param[in] cur_thr Current thread context
+ * @param[in] self_lwp Parent process (current LWP)
+ * @param[in] wait_pid PID of child process to verify
+ * @param[in] options Wait options (e.g., WNOHANG)
+ * @param[out] ustatus Pointer to store child's exit status (optional)
+ * @param[in,out] uru Pointer to resource usage structure (optional)
+ *
+ * @return pid_t Returns child PID if valid and event found, error code otherwise
+ *
+ * @note Verifies child-parent relationship and checks for termination/stopped state
+ */
 static pid_t _verify_child_and_reap(rt_thread_t cur_thr, rt_lwp_t self_lwp,
                                        pid_t wait_pid, int options, int *ustatus,
                                        struct rusage *uru)
@@ -934,7 +1295,20 @@ static pid_t _verify_child_and_reap(rt_thread_t cur_thr, rt_lwp_t self_lwp,
     return rc;
 }
 
-/* try to reap any child */
+/**
+ * @brief Reaps any child process with given pair_pgid that has terminated or stopped
+ *
+ * @param[in] cur_thr Current thread context
+ * @param[in] self_lwp Parent process (current LWP)
+ * @param[in] pair_pgid Process group ID to match (0 for any)
+ * @param[in] options Wait options (e.g., WNOHANG)
+ * @param[out] ustatus Pointer to store child's exit status (optional)
+ * @param[in,out] uru Pointer to resource usage structure (optional)
+ *
+ * @return pid_t Returns child PID if found and event occurred, error code otherwise
+ *
+ * @note Iterates through child processes to find one that matches given pair_pgid
+ */
 static pid_t _reap_any_child_pid(rt_thread_t cur_thr, rt_lwp_t self_lwp, pid_t pair_pgid,
                                  int options, int *ustatus, struct rusage *uru)
 {
@@ -965,6 +1339,16 @@ static pid_t _reap_any_child_pid(rt_thread_t cur_thr, rt_lwp_t self_lwp, pid_t p
     return rc;
 }
 
+/**
+ * @brief Wakes up processes waiting for a child process status change
+ *
+ * @param[in] parent Parent process to notify
+ * @param[in] self_lwp Child process that triggered the wakeup
+ *
+ * @return rt_err_t Returns RT_EOK on success
+ *
+ * @note Uses wait queue to notify parent process about child status changes
+ */
 rt_err_t lwp_waitpid_kick(rt_lwp_t parent, rt_lwp_t self_lwp)
 {
     /* waker provide the message mainly through its lwp_status */
@@ -972,13 +1356,31 @@ rt_err_t lwp_waitpid_kick(rt_lwp_t parent, rt_lwp_t self_lwp)
     return RT_EOK;
 }
 
+/**
+ * @brief Waitpid handle structure for process status change notifications
+ *
+ * @note This structure is used to manage wait queue entries for processes waiting
+ *       for child process status changes.
+ */
 struct waitpid_handle {
-    struct rt_wqueue_node wq_node;
-    int options;
-    rt_lwp_t waker_lwp;
+    struct rt_wqueue_node wq_node; /**< Wait queue node for process status change notifications */
+    int options;                   /**< Wait options (e.g., WNOHANG, WUNTRACED) */
+    rt_lwp_t waker_lwp;            /**< LWP that triggered the wakeup */
 };
 
-/* the IPC message is setup and notify the parent */
+/**
+ * @brief Filter function for wait queue to determine if a process status change event should be accepted
+ *
+ * @param[in] wait_node Wait queue node containing filter criteria
+ * @param[in] key Pointer to the lightweight process (waker_lwp) triggering the event
+ *
+ * @return int 0 if event should be accepted (matches criteria), 1 if event should be discarded
+ *
+ * @note The function handles three cases for process matching:
+ *       - Positive destiny: Exact PID match
+ *       - destiny == -1: Any child process of waiter
+ *       - destiny == 0/-pgid: Process group matching
+ */
 static int _waitq_filter(struct rt_wqueue_node *wait_node, void *key)
 {
     int can_accept_evt = 0;
@@ -1042,7 +1444,19 @@ static int _waitq_filter(struct rt_wqueue_node *wait_node, void *key)
     return !can_accept_evt;
 }
 
-/* the waiter cleanup IPC message and wait for desired event here */
+/**
+ * @brief Wait for a child process status change event
+ *
+ * @param[in] cur_thr Current thread context that will be suspended
+ * @param[in] self_lwp Lightweight process (parent) waiting for the event
+ * @param[in,out] handle Waitpid handle containing filter criteria and wait queue node
+ * @param[in] destiny Process ID or process group to wait for (-1 for any child, -pgid for process group)
+ *
+ * @return rt_err_t RT_EOK on success, negative error code on failure
+ *
+ * @note This function suspends the current thread to wait for a child process status change
+ *       event that matches the specified criteria (process ID or process group).
+ */
 static rt_err_t _wait_for_event(rt_thread_t cur_thr, rt_lwp_t self_lwp,
                                 struct waitpid_handle *handle, pid_t destiny)
 {
@@ -1094,7 +1508,22 @@ static rt_err_t _wait_for_event(rt_thread_t cur_thr, rt_lwp_t self_lwp,
     return ret;
 }
 
-/* wait for IPC event and do the cleanup if neccessary */
+/**
+ * @brief Wait for and reap a child process status change
+ *
+ * @param[in] cur_thr Current thread context
+ * @param[in] self_lwp Lightweight process (parent) waiting for the child
+ * @param[in] pid Process ID to wait for (-1 for any child, -pgid for process group)
+ * @param[in] options Wait options (WNOHANG, WUNTRACED, etc.)
+ * @param[out] ustatus Pointer to store child exit status
+ * @param[in,out] uru Pointer to resource usage structure to update
+ *
+ * @return sysret_t PID of the child process that changed status, or error code
+ *
+ * @note The function:
+ *       - Uses _wait_for_event to wait for status changes
+ *       - Calls _stats_and_reap_child if a matching child is found
+ */
 static sysret_t _wait_and_reap(rt_thread_t cur_thr, rt_lwp_t self_lwp, const pid_t pid,
                                int options, int *ustatus, struct rusage *uru)
 {
@@ -1125,6 +1554,27 @@ static sysret_t _wait_and_reap(rt_thread_t cur_thr, rt_lwp_t self_lwp, const pid
     return rc;
 }
 
+/**
+ * @brief Wait for process termination and return status
+ *
+ * @param[in] pid Process ID to wait for:
+ *                >0 - specific child process
+ *                -1 - any child process
+ *                -pgid - any child in process group
+ *                0 - any child in caller's process group
+ * @param[out] status Pointer to store child exit status (optional)
+ * @param[in] options Wait options (WNOHANG, WUNTRACED, etc.)
+ * @param[in,out] ru Pointer to resource usage structure (optional)
+ *
+ * @return pid_t PID of the child that changed state, or:
+ *         -1 on error
+ *         0 if WNOHANG and no child status available
+ *
+ * @note The function handles three cases:
+ *       - Specific PID wait (pid > 0)
+ *       - Any child wait (pid == -1)
+ *       - Process group wait (pid == 0 or pid < -1)
+ */
 pid_t lwp_waitpid(const pid_t pid, int *status, int options, struct rusage *ru)
 {
     pid_t rc = -1;
@@ -1199,13 +1649,29 @@ pid_t lwp_waitpid(const pid_t pid, int *status, int options, struct rusage *ru)
     return rc;
 }
 
+/**
+ * @brief Waits for a child process to terminate
+ *
+ * @param[in] pid The process ID to wait for
+ * @param[out] status Pointer to store child exit status (optional)
+ * @param[in] options Wait options (e.g., WNOHANG, WUNTRACED)
+ *
+ * @return pid_t The process ID of the child whose state changed,
+ *         -1 on error, or 0 if WNOHANG was specified and no child was available
+ *
+ * @note This is a wrapper function that calls lwp_waitpid with NULL for the resource usage parameter
+ */
 pid_t waitpid(pid_t pid, int *status, int options)
 {
     return lwp_waitpid(pid, status, options, RT_NULL);
 }
 
 #ifdef RT_USING_FINSH
-/* copy from components/finsh/cmd.c */
+/**
+ * @brief Prints a line of dashes for visual separation
+ *
+ * @param[in] len Number of dashes to print
+ */
 static void object_split(int len)
 {
     while (len--)
@@ -1214,6 +1680,19 @@ static void object_split(int len)
     }
 }
 
+/**
+ * @brief Prints detailed information about a thread
+ *
+ * @param[in] thread Pointer to the thread structure to print information about
+ * @param[in] maxlen Maximum length for thread name display
+ *
+ * @note This function prints:
+ *       - CPU core (SMP only) and priority
+ *       - Thread state (ready, suspended, init, close, running)
+ *       - Stack information (usage percentage, size, etc.)
+ *       - Remaining tick count and error code
+ *       - Thread name
+ */
 static void print_thread_info(struct rt_thread* thread, int maxlen)
 {
     rt_uint8_t *ptr;
@@ -1260,6 +1739,21 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
     rt_kprintf("   %-.*s\n",rt_strlen(thread->parent.name), thread->parent.name);
 }
 
+/**
+ * @brief Lists all processes and threads in the system
+ *
+ * @return long Returns 0 on success
+ *
+ * @note This function:
+ *       - Prints a header with process/thread information columns
+ *       - Lists all kernel threads (without LWP association)
+ *       - Lists all user processes (LWPs) with their threads
+ *       - For each thread, displays:
+ *         - PID/TID (process/thread IDs)
+ *         - Priority, status, stack information
+ *         - Remaining tick count and error code
+ *         - Thread name/command
+ */
 long list_process(void)
 {
     int index;
@@ -1340,6 +1834,17 @@ long list_process(void)
 }
 MSH_CMD_EXPORT(list_process, list process);
 
+/**
+ * @brief Command handler for killing processes
+ *
+ * @param[in] argc Argument count
+ * @param[in] argv Argument vector (contains PID and optional signal)
+ *
+ * @note Usage:
+ *       - kill <pid>
+ *       - kill <pid> -s <signal>
+ *       Default signal is SIGKILL (9)
+ */
 static void cmd_kill(int argc, char** argv)
 {
     int pid;
@@ -1365,6 +1870,15 @@ static void cmd_kill(int argc, char** argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_kill, kill, send a signal to a process);
 
+/**
+ * @brief Kills all processes matching the given name
+ *
+ * @param[in] argc Argument count (must be >= 2)
+ * @param[in] argv Argument vector containing process name to kill
+ *
+ * @note Sends SIGKILL signal to all processes with the specified name.
+ *       Requires at least 2 arguments (command name + process name)
+ */
 static void cmd_killall(int argc, char** argv)
 {
     int pid;
@@ -1386,6 +1900,16 @@ MSH_CMD_EXPORT_ALIAS(cmd_killall, killall, kill processes by name);
 
 #endif
 
+/**
+ * @brief Checks if the current thread has received an exit request
+ *
+ * @return int Returns:
+ *             - 0 if no exit request or not an LWP thread
+ *             - 1 if exit request was triggered and set to IN_PROCESS
+ *
+ * @note Verifies if the current lightweight process thread has been requested to exit
+ *       by checking the exit_request atomic flag.
+ */
 int lwp_check_exit_request(void)
 {
     rt_thread_t thread = rt_thread_self();
@@ -1403,6 +1927,14 @@ int lwp_check_exit_request(void)
 static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread);
 static void _resr_cleanup(struct rt_lwp *lwp);
 
+/**
+ * @brief Terminates a lightweight process (LWP)
+ *
+ * @param[in,out] lwp Pointer to the lightweight process structure to terminate
+ *
+ * @note Safely terminates an LWP by marking it as terminated, waiting for sibling threads,
+ *       and cleaning up resources.
+ */
 void lwp_terminate(struct rt_lwp *lwp)
 {
     if (!lwp)
@@ -1430,6 +1962,19 @@ void lwp_terminate(struct rt_lwp *lwp)
     }
 }
 
+/**
+ * @brief Waits for sibling threads to exit during process termination
+ *
+ * @param[in] lwp Pointer to the lightweight process structure
+ * @param[in] curr_thread Current thread context making the termination request
+ *
+ * @note Details for this function:
+ *       - Broadcast Exit Request: Broadcasts exit requests to all sibling threads.
+ *       - Wake Suspended Threads: Wakes up any suspended threads by setting their error status to RT_EINTR.
+ *       - Wait for Termination: it enters a loop waiting for all sibling threads to terminate.
+ *       - Cleanup Terminated Threads: Once threads are in the INIT state, it removes them from the sibling list
+ *         and deletes their thread control blocks.
+ */
 static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread)
 {
     rt_sched_lock_level_t slvl;
@@ -1529,6 +2074,14 @@ static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread)
     }
 }
 
+/**
+ * @brief Notifies parent process about child process termination
+ *
+ * @param[in,out] lwp The child lightweight process structure
+ *
+ * @note This function sends SIGCHLD signal to parent process with termination details.
+ *       It handles both signaled (killed/dumped) and normal exit cases.
+ */
 static void _notify_parent(rt_lwp_t lwp)
 {
     int si_code;
@@ -1562,6 +2115,20 @@ static void _notify_parent(rt_lwp_t lwp)
     lwp_signal_kill(parent, SIGCHLD, si_code, ext);
 }
 
+/**
+ * @brief Clean up resources when a lightweight process (LWP) terminates
+ *
+ * @param[in,out] lwp The lightweight process structure to clean up
+ *
+ * @note This function handles the cleanup of various resources associated with an LWP
+ *       when it terminates, including:
+ *       - Job control cleanup
+ *       - Signal detachment
+ *       - Child process handling
+ *       - Parent notification
+ *       - File descriptor cleanup
+ *       - PID resource release
+ */
 static void _resr_cleanup(struct rt_lwp *lwp)
 {
     int need_cleanup_pid = RT_FALSE;
@@ -1661,6 +2228,17 @@ static void _resr_cleanup(struct rt_lwp *lwp)
     }
 }
 
+/**
+ * @brief Set CPU affinity for a thread
+ *
+ * @param[in] tid The thread ID to set affinity for
+ * @param[in] cpu The target CPU core number
+ *
+ * @return 0 on success, -1 on failure (invalid thread ID)
+ *
+ * @note This function binds a thread to a specific CPU core in SMP systems.
+ *       It handles thread reference counting and returns operation status.
+ */
 static int _lwp_setaffinity(int tid, int cpu)
 {
     rt_thread_t thread;
@@ -1679,6 +2257,16 @@ static int _lwp_setaffinity(int tid, int cpu)
     return ret;
 }
 
+/**
+ * @brief Sets CPU affinity for a thread
+ *
+ * @param[in] tid The thread ID to set affinity for
+ * @param[in] cpu The target CPU core number (0 to RT_CPUS_NR-1)
+ *
+ * @return int 0 on success, -1 on failure
+ *
+ * @note wrapper function for _lwp_setaffinity
+ */
 int lwp_setaffinity(int tid, int cpu)
 {
     int ret;
@@ -1694,6 +2282,14 @@ int lwp_setaffinity(int tid, int cpu)
 }
 
 #ifdef RT_USING_SMP
+/**
+ * @brief Command handler for CPU binding operation
+ *
+ * @param[in] argc Number of command arguments
+ * @param[in] argv Array of command argument strings
+ *
+ * @note Requires exactly 2 arguments: pid (process ID) and cpu (CPU core number)
+ */
 static void cmd_cpu_bind(int argc, char** argv)
 {
     int pid;
