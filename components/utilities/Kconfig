@@ -217,6 +217,12 @@ config RT_USING_UTEST
             help
                 If enable this option, the test cases will be run automatically when board boot up.
 
+        if FINSH_USING_OPTION_COMPLETION
+            config RT_UTEST_MAX_OPTIONS
+                int "Maximum number of utest cases for auto-completion"
+                default 64
+        endif
+
         config RT_UTEST_USING_ALL_CASES
             bool "Enable all selected modules' test cases"
             default n
