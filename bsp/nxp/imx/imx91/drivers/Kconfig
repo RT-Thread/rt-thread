@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-config RT_USING_UART1
+config BSP_USING_UART1
     bool "Enable UART1"
     default y
 

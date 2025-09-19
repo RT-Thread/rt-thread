@@ -7,7 +7,7 @@ cwd  = GetCurrentDir()
 src = Glob('fsl_lpuart.c')
 
 CPPPATH = [cwd]
-objs = DefineGroup('sdk-drivers-lpuart', src, depend = [''], CPPPATH = CPPPATH)
+objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 for item in os.listdir(cwd):
     sconsfile = os.path.join(cwd, item, 'SConscript')

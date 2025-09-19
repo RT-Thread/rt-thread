@@ -11,3 +11,5 @@ The i.MX 91 may be used in applications such as:
 • Industrial Monitoring and HMI
 • Portable or small form-factor Medical and Healthcare devices
 • Audio and Entertainment IoT
+
+

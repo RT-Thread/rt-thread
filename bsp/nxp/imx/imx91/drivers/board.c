@@ -77,6 +77,9 @@ void rt_hw_board_init(void)
     // enable_neon_fpu();
     // disable_strict_align_check();
 
+    extern void uart1_puts(const char *str);
+    uart1_puts("RT-Thread on i.MX91\n");
+
     rt_components_board_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }
