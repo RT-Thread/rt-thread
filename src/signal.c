@@ -369,10 +369,11 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     /* start timeout timer */
     if (timeout != RT_WAITING_FOREVER)
     {
+        rt_tick_t timeout_tick = timeout;
         /* reset the timeout of thread timer and start it */
         rt_timer_control(&(tid->thread_timer),
                          RT_TIMER_CTRL_SET_TIME,
-                         &timeout);
+                         &timeout_tick);
         rt_timer_start(&(tid->thread_timer));
     }
     rt_spin_unlock_irqrestore(&_thread_signal_lock, level);

@@ -67,9 +67,10 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
         rt_list_insert_after(&wg->suspended_threads, &RT_THREAD_LIST_NODE(thread));
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
         rt_hw_interrupt_enable(level);

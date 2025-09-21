@@ -302,7 +302,7 @@ static rt_err_t rt_link_frame_send(rt_slist_t *slist)
     }
     else
     {
-        rt_int32_t timeout = RT_LINK_SENT_FRAME_TIMEOUT;
+        rt_tick_t timeout = RT_LINK_SENT_FRAME_TIMEOUT;
         rt_timer_control(&rt_link_scb->sendtimer, RT_TIMER_CTRL_SET_TIME, &timeout);
         rt_timer_start(&rt_link_scb->sendtimer);
     }
@@ -536,7 +536,7 @@ static void _long_handle_second(struct rt_link_frame *receive_frame)
         }
         else if (rt_link_hw_recv_len(rt_link_scb->rx_buffer) < (receive_frame->data_len % RT_LINK_MAX_DATA_LENGTH))
         {
-            rt_int32_t timeout = RT_LINK_LONG_FRAME_TIMEOUT;
+            rt_tick_t timeout = RT_LINK_LONG_FRAME_TIMEOUT;
             rt_timer_control(&rt_link_scb->longframetimer, RT_TIMER_CTRL_SET_TIME, &timeout);
             rt_timer_start(&rt_link_scb->longframetimer);
         }
@@ -879,7 +879,7 @@ static void rt_link_send_ready(void)
         rt_link_command_frame_send(RT_LINK_SERVICE_RTLINK, seq,
                                    RT_LINK_HANDSHAKE_FRAME, rt_link_scb->rx_record.rx_seq);
 
-        rt_int32_t timeout = 50;
+        rt_tick_t timeout = 50;
         rt_timer_control(&rt_link_scb->sendtimer, RT_TIMER_CTRL_SET_TIME, &timeout);
         rt_timer_start(&rt_link_scb->sendtimer);
     }

@@ -614,12 +614,13 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             /* has waiting time, start thread timer */
             if (timeout > 0)
             {
+                rt_tick_t timeout_tick = timeout;
                 LOG_D("set thread:%s to timer list", thread->parent.name);
 
                 /* reset the timeout of thread timer and start it */
                 rt_timer_control(&(thread->thread_timer),
                                  RT_TIMER_CTRL_SET_TIME,
-                                 &timeout);
+                                 &timeout_tick);
                 rt_timer_start(&(thread->thread_timer));
             }
 
@@ -1433,13 +1434,14 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                 /* has waiting time, start thread timer */
                 if (timeout > 0)
                 {
+                    rt_tick_t timeout_tick = timeout;
                     LOG_D("mutex_take: start the timer of thread:%s",
                           thread->parent.name);
 
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
                                      RT_TIMER_CTRL_SET_TIME,
-                                     &timeout);
+                                     &timeout_tick);
                     rt_timer_start(&(thread->thread_timer));
                 }
 
@@ -2186,10 +2188,11 @@ static rt_err_t _rt_event_recv(rt_event_t   event,
         /* if there is a waiting timeout, active thread timer */
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
 
@@ -2621,6 +2624,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         /* has waiting time, start thread timer */
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             /* get the start tick of timer */
             tick_delta = rt_tick_get();
 
@@ -2630,7 +2634,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
         rt_spin_unlock_irqrestore(&(mb->spinlock), level);
@@ -2901,6 +2905,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
         /* has waiting time, start thread timer */
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             /* get the start tick of timer */
             tick_delta = rt_tick_get();
 
@@ -2910,7 +2915,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
 
@@ -3446,6 +3451,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         /* has waiting time, start thread timer */
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             /* get the start tick of timer */
             tick_delta = rt_tick_get();
 
@@ -3455,7 +3461,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
 
@@ -3825,6 +3831,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         /* has waiting time, start thread timer */
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             /* get the start tick of timer */
             tick_delta = rt_tick_get();
 
@@ -3834,7 +3841,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
 

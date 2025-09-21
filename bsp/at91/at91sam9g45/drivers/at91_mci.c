@@ -430,7 +430,7 @@ static void at91_mci_process_next(struct at91_mci *mci)
  */
 static void at91_mci_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
-    rt_uint32_t timeout = RT_TICK_PER_SECOND;
+    rt_tick_t timeout = RT_TICK_PER_SECOND;
     struct at91_mci *mci = host->private_data;
     mci->req = req;
     mci->current_status = REQ_ST_INIT;
