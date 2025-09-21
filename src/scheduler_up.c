@@ -32,6 +32,7 @@
  * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
  * 2025-08-04     Pillar       Add rt_scheduler_critical_switch_flag
  * 2025-08-20     RyanCW       rt_scheduler_lock_nest use atomic operations
+ * 2025-09-20     wdfk_prog    fix scheduling exception caused by interrupt preemption in rt_schedule
  */
 
 #define __RT_IPC_SOURCE__
@@ -283,11 +284,13 @@ void rt_schedule(void)
     rt_base_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
-    /* using local variable to avoid unecessary function call */
-    struct rt_thread *curr_thread = rt_thread_self();
+    struct rt_thread *curr_thread;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
+
+    /* using local variable to avoid unnecessary function call */
+    curr_thread = rt_thread_self();
 
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0)
