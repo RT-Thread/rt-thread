@@ -319,4 +319,4 @@ static void test_object_suite(void)
     UTEST_UNIT_RUN(test_object_info_enumeration);
     UTEST_UNIT_RUN(test_object_type_handling);
 }
-UTEST_TC_EXPORT(test_object_suite, "testcases.kernel.object_test", testcase_init, testcase_cleanup, 20);
+UTEST_TC_EXPORT(test_object_suite, "core.object", testcase_init, testcase_cleanup, 20);

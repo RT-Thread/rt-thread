@@ -104,4 +104,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(mutex_stress_tc);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.scheduler.mutex", utest_tc_init, utest_tc_cleanup, TEST_SECONDS);
+UTEST_TC_EXPORT(testcase, "core.scheduler_mutex", utest_tc_init, utest_tc_cleanup, TEST_SECONDS);

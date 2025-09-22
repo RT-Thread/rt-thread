@@ -582,4 +582,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(mem_alloc_test);
     UTEST_UNIT_RUN(mem_realloc_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.mem_tc", utest_tc_init, utest_tc_cleanup, 20);
+UTEST_TC_EXPORT(testcase, "core.mem", utest_tc_init, utest_tc_cleanup, 20);

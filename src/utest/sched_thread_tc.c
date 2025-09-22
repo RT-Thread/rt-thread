@@ -118,4 +118,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(scheduler_tc);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.scheduler.thread", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.scheduler_thread", utest_tc_init, utest_tc_cleanup, 10);

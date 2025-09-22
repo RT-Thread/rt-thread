@@ -125,4 +125,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(smp_affinity_pri2_tc);
 }
-UTEST_TC_EXPORT(testcase, "testcases.smp.affinity_pri2_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.smp_affinity_pri2", utest_tc_init, utest_tc_cleanup, 10);

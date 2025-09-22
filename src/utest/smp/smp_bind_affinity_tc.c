@@ -111,4 +111,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(thread_bind_affinity_tc);
 }
-UTEST_TC_EXPORT(testcase, "testcases.smp.bind_affinity_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.smp_bind_affinity", utest_tc_init, utest_tc_cleanup, 10);

@@ -793,6 +793,6 @@ static void testcase(void)
 #endif
     UTEST_UNIT_RUN(test_recurse_lock);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.mutex_tc", utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(testcase, "core.mutex", utest_tc_init, utest_tc_cleanup, 1000);
 
 /********************* end of file ************************/

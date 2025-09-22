@@ -88,4 +88,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(thread_on_idle_core_tc);
 }
-UTEST_TC_EXPORT(testcase, "testcases.smp.assigned_idle_cores_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.smp_assigned_idle_cores", utest_tc_init, utest_tc_cleanup, 10);

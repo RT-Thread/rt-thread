@@ -751,6 +751,6 @@ static void testcase(void)
 }
 
 
-UTEST_TC_EXPORT(testcase, "testcases.kernel.thread_tc", utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(testcase, "core.thread_tc", utest_tc_init, utest_tc_cleanup, 1000);
 
 /********************* end of file ************************/
