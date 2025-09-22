@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 HPMicro
+ * Copyright (c) 2023-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -39,38 +39,38 @@ static void hpm_wdog_isr(rt_watchdog_t *wdt);
 
 #if defined(BSP_USING_EWDG0)
 rt_watchdog_t wdog0;
+SDK_DECLARE_EXT_ISR_M(IRQn_EWDG0, wdog0_isr)
 void wdog0_isr(void)
 {
     hpm_wdog_isr(&wdog0);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG0, wdog0_isr)
 #endif
 
 #if defined(BSP_USING_EWDG1)
 rt_watchdog_t wdog1;
+SDK_DECLARE_EXT_ISR_M(IRQn_EWDG1, wdog1_isr)
 void wdog1_isr(void)
 {
     hpm_wdog_isr(&wdog1);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG1, wdog1_isr)
 #endif
 
 #if defined(BSP_USING_EWDG2)
 rt_watchdog_t wdog2;
+SDK_DECLARE_EXT_ISR_M(IRQn_EWDG2, wdog2_isr)
 void wdog2_isr(void)
 {
     hpm_wdog_isr(&wdog2);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG2, wdog2_isr)
 #endif
 
 #if defined(BSP_USING_EWDG3)
 rt_watchdog_t wdog3;
+SDK_DECLARE_EXT_ISR_M(IRQn_EWDG3, wdog3_isr)
 void wdog3_isr(void)
 {
     hpm_wdog_isr(&wdog3);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG3, wdog3_isr)
 #endif
 
 static hpm_wdog_t wdogs[] = {
@@ -106,7 +106,7 @@ static hpm_wdog_t wdogs[] = {
 
 #ifdef BSP_USING_EWDG3
     {
-        .wdog_name = HPM_EWDG3,
+        .wdog_base = HPM_EWDG3,
         .device_name = "wdt3",
         .clock_name = clock_watchdog3,
         .irq_num = IRQn_EWDG3,
@@ -127,7 +127,7 @@ static rt_err_t hpm_wdog_init(rt_watchdog_t *wdt)
 
     ewdg_config_t config;
 
-    printf("Init Watchdog\n");
+    LOG_I("Init Watchdog\n");
     ewdg_get_default_config(base, &config);
     /* Enable EWDG */
     config.enable_watchdog = true;
@@ -211,7 +211,7 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
         /* Initialize the EWDG */
         hpm_stat_t status = ewdg_init(base, &config);
         if (status != status_success) {
-            printf(" EWDG initialization failed, error_code=%d\n", status);
+            LOG_E(" EWDG initialization failed, error_code=%d\n", status);
         }
         /* delay 1ms to ensure above configure take effective*/
         rt_thread_mdelay(1);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,14 +10,21 @@
 #include "hpm_common.h"
 #include "hpm_soc.h"
 #include <drv_gpio.h>
+#include "board.h"
 
 /* gpio section */
+#define APP_LED0         (0U)
 #define APP_LED0_PIN_NUM GET_PIN(A, 23)
 #define APP_LED_ON (1)
 #define APP_LED_OFF (0)
 
 /* mchtimer section */
 #define BOARD_MCHTMR_FREQ_IN_HZ (24000000UL)
+
+#define BOARD_OS_TIMER HPM_GPTMR0
+#define BOARD_OS_TIMER_CH       1
+#define BOARD_OS_TIMER_IRQ      IRQn_GPTMR0
+#define BOARD_OS_TIMER_CLK_NAME (clock_gptmr0)
 
 /* CAN section */
 #define BOARD_CAN_NAME                        "can0"
@@ -30,6 +37,10 @@
 /* PWM section */
 #define BOARD_PWM_NAME                        "pwm0"
 #define BOARD_PWM_CHANNEL                     (6)
+
+/* ADC section */
+#define BOARD_ADC_NAME                        BOARD_APP_ADC16_NAME
+#define BOARD_ADC_CHANNEL                     BOARD_APP_ADC16_CH_1
 
 #define IRQn_PendSV IRQn_DEBUG0
 

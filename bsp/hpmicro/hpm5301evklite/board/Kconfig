@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_HPM5000
+config SOC_HPM5300
     bool
-    select SOC_SERIES_HPM5300
+    select SOC_HPM5300_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -12,6 +12,12 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN if BSP_USING_GPIO
         default n
+        if BSP_USING_GPIO
+            config BSP_GPIO_IRQ_PRIORITY
+            int "GPIO Interrupt Priority"
+            range 1 7
+            default 1
+        endif
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
@@ -41,6 +47,37 @@ menu "On-chip Peripheral Drivers"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 0
+                    config BSP_UART0_IRQ_PRIORITY
+                        int "UART0 Interrupt Priority"
+                        range 1 7
+                        default 1
+                endif
+            menuconfig BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_USING_DMA
+                        bool "Enable UART1 RX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART1_TX_USING_DMA
+                        bool "Enable UART1 TX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART1_RX_BUFSIZE
+                        int "Set UART1 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 1024
+                    config BSP_UART1_TX_BUFSIZE
+                        int "Set UART1 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                    config BSP_UART1_IRQ_PRIORITY
+                        int "UART1 Interrupt Priority"
+                        range 1 7
+                        default 1
                 endif
             menuconfig BSP_USING_UART2
                 bool "Enable UART2"
@@ -64,29 +101,37 @@ menu "On-chip Peripheral Drivers"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 0
+                    config BSP_UART2_IRQ_PRIORITY
+                        int "UART2 Interrupt Priority"
+                        range 1 7
+                        default 1
                 endif
-            menuconfig BSP_USING_UART6
-                bool "Enable UART6"
+            menuconfig BSP_USING_UART3
+                bool "Enable UART3"
                 default n
-                if BSP_USING_UART6
-                    config BSP_UART6_RX_USING_DMA
-                        bool "Enable UART6 RX DMA"
-                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                if BSP_USING_UART3
+                    config BSP_UART3_RX_USING_DMA
+                        bool "Enable UART3 RX DMA"
+                        depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                         default n
-                    config BSP_UART6_TX_USING_DMA
-                        bool "Enable UART6 TX DMA"
-                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                    config BSP_UART3_TX_USING_DMA
+                        bool "Enable UART3 TX DMA"
+                        depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                         default n
-                    config BSP_UART6_RX_BUFSIZE
-                        int "Set UART6 RX buffer size"
+                    config BSP_UART3_RX_BUFSIZE
+                        int "Set UART3 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
                         default 1024
-                    config BSP_UART6_TX_BUFSIZE
-                        int "Set UART6 TX buffer size"
+                    config BSP_UART3_TX_BUFSIZE
+                        int "Set UART3 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 0
+                    config BSP_UART3_IRQ_PRIORITY
+                        int "UART3 Interrupt Priority"
+                        range 1 7
+                        default 1
                 endif
         endif
 
@@ -95,48 +140,225 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_SPI if BSP_USING_SPI
         if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0"
+                default n
+                if BSP_USING_SPI0
+                    config BSP_SPI0_USING_DMA
+                        bool "Enable SPI0 DMA"
+                        default n
+                    config BSP_SPI0_IRQ_PRIORITY
+                        int "SPI0 Interrupt Priority"
+                        range 1 7
+                        default 1
+                    choice
+                        prompt "Select SPI0 CS TYPE"
+                        default BSP_SPI0_USING_SOFT_CS
+                        config BSP_SPI0_USING_SOFT_CS
+                            bool "Enable SPI0 software cs"
+                        config BSP_SPI0_USING_HARD_CS
+                            bool "Enable SPI0 hardware cs"
+                    endchoice
+                    choice
+                        prompt "Select SPI0 IO mode"
+                        default BSP_SPI0_USING_SINGLE_IO
+                        config BSP_SPI0_USING_SINGLE_IO
+                            bool "Enable SPI0 single IO mode"
+                        config BSP_SPI0_USING_DUAL_IO
+                            bool "Enable SPI0 dual IO mode"
+                        config BSP_SPI0_USING_QUAD_IO
+                            bool "Enable SPI0 quad IO mode"
+                    endchoice
+                endif
             config BSP_USING_SPI1
                 bool "Enable SPI1"
                 default y
+                if BSP_USING_SPI1
+                    config BSP_SPI1_USING_DMA
+                        bool "Enable SPI1 DMA"
+                        default n
+                    config BSP_SPI1_IRQ_PRIORITY
+                        int "SPI1 Interrupt Priority"
+                        range 1 7
+                        default 1
+                    choice
+                        prompt "Select SPI1 CS TYPE"
+                        default BSP_SPI1_USING_SOFT_CS
+                        config BSP_SPI1_USING_SOFT_CS
+                            bool "Enable SPI1 software cs"
+                        config BSP_SPI1_USING_HARD_CS
+                            bool "Enable SPI1 hardware cs"
+                    endchoice
+                    choice
+                        prompt "Select SPI1 IO mode"
+                        default BSP_SPI1_USING_SINGLE_IO
+                        config BSP_SPI1_USING_SINGLE_IO
+                            bool "Enable SPI1 single IO mode"
+                        config BSP_SPI1_USING_DUAL_IO
+                            bool "Enable SPI1 dual IO mode"
+                        config BSP_SPI1_USING_QUAD_IO
+                            bool "Enable SPI1 quad IO mode"
+                    endchoice
+                endif
             config BSP_USING_SPI2
                 bool "Enable SPI2"
                 default n
+                if BSP_USING_SPI2
+                    config BSP_SPI2_USING_DMA
+                        bool "Enable SPI2 DMA"
+                        default n
+                    config BSP_SPI2_IRQ_PRIORITY
+                        int "SPI2 Interrupt Priority"
+                        range 1 7
+                        default 1
+                    choice
+                        prompt "Select SPI2 CS TYPE"
+                        default BSP_SPI2_USING_SOFT_CS
+                        config BSP_SPI2_USING_SOFT_CS
+                            bool "Enable SPI2 software cs"
+                        config BSP_SPI2_USING_HARD_CS
+                            bool "Enable SPI2 hardware cs"
+                    endchoice
+                    choice
+                        prompt "Select SPI2 IO mode"
+                        default BSP_SPI2_USING_SINGLE_IO
+                        config BSP_SPI2_USING_SINGLE_IO
+                            bool "Enable SPI2 single IO mode"
+                        config BSP_SPI2_USING_DUAL_IO
+                            bool "Enable SPI2 dual IO mode"
+                        config BSP_SPI2_USING_QUAD_IO
+                            bool "Enable SPI2 quad IO mode"
+                    endchoice
+                endif
             config BSP_USING_SPI3
                 bool "Enable SPI3"
                 default n
+                if BSP_USING_SPI3
+                    config BSP_SPI3_USING_DMA
+                        bool "Enable SPI3 DMA"
+                        default n
+                    config BSP_SPI3_IRQ_PRIORITY
+                        int "SPI3 Interrupt Priority"
+                        range 1 7
+                        default 1
+                    choice
+                        prompt "Select SPI3 CS TYPE"
+                        default BSP_SPI3_USING_SOFT_CS
+                        config BSP_SPI3_USING_SOFT_CS
+                            bool "Enable SPI3 software cs"
+                        config BSP_SPI3_USING_HARD_CS
+                            bool "Enable SPI3 hardware cs"
+                    endchoice
+                    choice
+                        prompt "Select SPI3 IO mode"
+                        default BSP_SPI3_USING_SINGLE_IO
+                        config BSP_SPI3_USING_SINGLE_IO
+                            bool "Enable SPI3 single IO mode"
+                        config BSP_SPI3_USING_DUAL_IO
+                            bool "Enable SPI3 dual IO mode"
+                        config BSP_SPI3_USING_QUAD_IO
+                            bool "Enable SPI3 quad IO mode"
+                    endchoice
+                endif
         endif
+
 
     menuconfig BSP_USING_GPTMR
         bool "Enable GPTMR"
         default n
         select RT_USING_HWTIMER if BSP_USING_GPTMR
         if BSP_USING_GPTMR
+            config BSP_USING_GPTMR0
+                bool "Enable GPTMR0"
+                default n
+                if BSP_USING_GPTMR0
+                    config BSP_GPTMR0_IRQ_PRIORITY
+                    int "GPTMR0 Interrupt Priority"
+                    range 1 7
+                    default 1
+                endif
             config BSP_USING_GPTMR1
                 bool "Enable GPTMR1"
                 default n
+                if BSP_USING_GPTMR1
+                    config BSP_GPTMR1_IRQ_PRIORITY
+                    int "GPTMR1 Interrupt Priority"
+                    range 1 7
+                    default 1
+                endif
+            config BSP_USING_GPTMR2
+                bool "Enable GPTMR2"
+                default n
+                if BSP_USING_GPTMR2
+                    config BSP_GPTMR2_IRQ_PRIORITY
+                    int "GPTMR2 Interrupt Priority"
+                    range 1 7
+                    default 1
+                endif
+            config BSP_USING_GPTMR3
+                bool "Enable GPTMR3"
+                default n
+                if BSP_USING_GPTMR3
+                    config BSP_GPTMR3_IRQ_PRIORITY
+                    int "GPTMR3 Interrupt Priority"
+                    range 1 7
+                    default 1
+                endif
         endif
 
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
         default n
+        select RT_USING_I2C if BSP_USING_I2C
         if BSP_USING_I2C
             config BSP_USING_I2C0
                 bool "Enable I2C0"
                 default y
-            if BSP_USING_I2C0
-                config BSP_I2C0_USING_DMA
-                    bool "Enable I2C0 DMA"
-                    default n
-            endif
-
+                if BSP_USING_I2C0
+                    config BSP_I2C0_USING_DMA
+                        bool "Enable I2C0 DMA"
+                        default n
+                    config BSP_I2C0_IRQ_PRIORITY
+                        int "I2C0 Interrupt Priority"
+                        range 1 7
+                        default 1
+                endif
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+                if BSP_USING_I2C1
+                    config BSP_I2C1_USING_DMA
+                        bool "Enable I2C1 DMA"
+                        default n
+                    config BSP_I2C1_IRQ_PRIORITY
+                        int "I2C1 Interrupt Priority"
+                        range 1 7
+                        default 1
+                endif
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+                if BSP_USING_I2C2
+                    config BSP_I2C2_USING_DMA
+                        bool "Enable I2C2 DMA"
+                        default n
+                    config BSP_I2C2_IRQ_PRIORITY
+                        int "I2C2 Interrupt Priority"
+                        range 1 7
+                        default 1
+                endif
             config BSP_USING_I2C3
                 bool "Enable I2C3"
                 default n
-            if BSP_USING_I2C3
-                config BSP_I2C3_USING_DMA
-                    bool "Enable I2C3 DMA"
-                    default n
-            endif
+                if BSP_USING_I2C3
+                    config BSP_I2C3_USING_DMA
+                        bool "Enable I2C3 DMA"
+                        default n
+                    config BSP_I2C3_IRQ_PRIORITY
+                        int "I2C3 Interrupt Priority"
+                        range 1 7
+                        default 1
+                endif
         endif
 
     menuconfig BSP_USING_XPI_FLASH
@@ -150,6 +372,7 @@ menu "On-chip Peripheral Drivers"
        if BSP_USING_USB
             config BSP_USING_USB_DEVICE
                 bool "Enable USB Device"
+                select RT_USING_CACHE
                 default n
             config BSP_USING_USB_HOST
                 bool "Enable USB HOST"
