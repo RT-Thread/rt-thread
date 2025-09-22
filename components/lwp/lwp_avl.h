@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,13 +24,16 @@ extern "C" {
 #define avl_maxheight   32
 #define heightof(tree)  ((tree) == AVL_EMPTY ? 0 : (tree)->avl_height)
 
+/**
+ * @brief AVL tree node structure for thread ID (tid) or Process ID (pid) management
+ */
 struct lwp_avl_struct
 {
-    struct lwp_avl_struct *avl_left;
-    struct lwp_avl_struct *avl_right;
-    int    avl_height;
-    avl_key_t avl_key;
-    void *data;
+    struct lwp_avl_struct *avl_left;           /**< Pointer to left child node */
+    struct lwp_avl_struct *avl_right;          /**< Pointer to right child node */
+    int    avl_height;                         /**< Height of the node in the AVL tree */
+    avl_key_t avl_key;                         /**< Key value used for AVL tree node comparison */
+    void *data;                                /**< Pointer to associated data */
 };
 
 void lwp_avl_remove(struct lwp_avl_struct * node_to_delete, struct lwp_avl_struct ** ptree);
