@@ -320,4 +320,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(slab_alloc_test);
     UTEST_UNIT_RUN(slab_realloc_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.slab_tc", utest_tc_init, utest_tc_cleanup, 20);
+UTEST_TC_EXPORT(testcase, "core.slab", utest_tc_init, utest_tc_cleanup, 20);

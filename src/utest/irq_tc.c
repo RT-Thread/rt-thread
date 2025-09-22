@@ -75,4 +75,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(irq_test);
     UTEST_UNIT_RUN(interrupt_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.irq_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.irq", utest_tc_init, utest_tc_cleanup, 10);

@@ -202,6 +202,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(rt_signal_wait_test2);
 #endif /* RT_USING_HEAP */
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.signal_tc", utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(testcase, "core.signal", utest_tc_init, utest_tc_cleanup, 1000);
 
 /*********************** end of file ****************************/

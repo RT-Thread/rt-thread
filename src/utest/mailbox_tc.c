@@ -371,4 +371,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_static_mailbox_send_recv);
     UTEST_UNIT_RUN(test_dynamic_mailbox_send_recv);
 }
-UTEST_TC_EXPORT(testcase, "src.ipc.mailbox_tc", utest_tc_init, utest_tc_cleanup, 60);
+UTEST_TC_EXPORT(testcase, "core.ipc_mailbox", utest_tc_init, utest_tc_cleanup, 60);

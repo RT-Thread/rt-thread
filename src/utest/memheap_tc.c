@@ -94,4 +94,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(memheap_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.memheap_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.memheap", utest_tc_init, utest_tc_cleanup, 10);

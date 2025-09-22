@@ -348,6 +348,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_mutex_pi_timeout);
     UTEST_UNIT_RUN(test_mutex_pi_wakeup_mutex_waiter);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.mutex_pi_tc", utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(testcase, "core.mutex_pi", utest_tc_init, utest_tc_cleanup, 1000);
 
 /********************* end of file ************************/

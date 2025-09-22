@@ -229,4 +229,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(timed_mtx_tc);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.scheduler.timed_mtx", utest_tc_init, utest_tc_cleanup, TEST_SECONDS * 2);
+UTEST_TC_EXPORT(testcase, "core.scheduler_timed_mtx", utest_tc_init, utest_tc_cleanup, TEST_SECONDS * 2);

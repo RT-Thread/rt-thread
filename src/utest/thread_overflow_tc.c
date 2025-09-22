@@ -267,4 +267,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(stack_overflow_hook_test);
     UTEST_UNIT_RUN(fake_thread_stack_overflow_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.thread_overflow_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.thread_overflow", utest_tc_init, utest_tc_cleanup, 10);

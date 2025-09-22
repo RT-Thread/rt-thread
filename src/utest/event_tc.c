@@ -343,4 +343,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_dynamic_event_send_recv);
 #endif
 }
-UTEST_TC_EXPORT(testcase, "src.ipc.event_tc", utest_tc_init, utest_tc_cleanup, 60);
+UTEST_TC_EXPORT(testcase, "core.ipc_event", utest_tc_init, utest_tc_cleanup, 60);

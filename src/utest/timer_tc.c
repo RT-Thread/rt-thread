@@ -742,6 +742,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_timer_stress);
     PRINT_PROGRESS(__LINE__);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.timer_tc", utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(testcase, "core.timer", utest_tc_init, utest_tc_cleanup, 1000);
 
 /*********************** end of file ****************************/

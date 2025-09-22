@@ -95,4 +95,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(hooklist_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.hooklist_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.hooklist", utest_tc_init, utest_tc_cleanup, 10);

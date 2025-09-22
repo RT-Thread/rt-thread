@@ -170,4 +170,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_atomic_api);
     UTEST_UNIT_RUN(test_atomic_add);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.atomic_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.atomic", utest_tc_init, utest_tc_cleanup, 10);
