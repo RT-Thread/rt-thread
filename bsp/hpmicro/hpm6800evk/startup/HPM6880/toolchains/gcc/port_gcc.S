@@ -5,7 +5,8 @@
  *
  */
 #include "cpuport.h"
-
+    .section .text.entry, "ax"
+    .align  2
     .globl rt_hw_do_after_save_above
     .type rt_hw_do_after_save_above,@function
 rt_hw_do_after_save_above:

@@ -85,6 +85,12 @@ static pwm_counter_t pwmv2_counter_tbl[PWMV2_CNT_NUM * 2] = {
 };
 #endif
 
+#if defined(HPMSOC_HAS_HPMSDK_PWMV2)
+extern uint32_t rtt_board_init_pwm_clock(PWMV2_Type *ptr);
+#else
+extern uint32_t rtt_board_init_pwm_clock(PWM_Type *ptr);
+#endif
+
 rt_err_t hpm_generate_central_aligned_waveform(uint8_t pwm_index, uint8_t channel, uint32_t period, uint32_t pulse)
 {
 #if defined(HPMSOC_HAS_HPMSDK_PWMV2)
@@ -101,7 +107,7 @@ rt_err_t hpm_generate_central_aligned_waveform(uint8_t pwm_index, uint8_t channe
     pwm_base = pwm_base_tbl[pwm_index];
 
     init_pwm_pins(pwm_base);
-    freq = board_init_pwm_clock(pwm_base);
+    freq = rtt_board_init_pwm_clock(pwm_base);
     if(period != 0) {
         reload = (uint64_t)freq * period / 1000000000;
     } else {
@@ -193,7 +199,7 @@ rt_err_t hpm_set_central_aligned_waveform(uint8_t pwm_index, uint8_t channel, ui
     uint32_t freq;
 
     pwm_base = pwm_base_tbl[pwm_index];
-    freq = board_init_pwm_clock(pwm_base);
+    freq = rtt_board_init_pwm_clock(pwm_base);
     if(period != 0) {
         reload = (uint64_t)freq * period / 1000000000;
     } else {

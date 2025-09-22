@@ -1,4 +1,47 @@
-config SOC_HPM6000_SERIES
-    bool 
+config SOC_HPM6700_SERIES
+    bool
     select ARCH_RISCV32
     select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
+
+config SOC_HPM6300_SERIES
+    bool
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
+
+config SOC_HPM6200_SERIES
+    bool
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
+
+config SOC_HPM5300_SERIES
+    bool
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
+
+config SOC_HPM6800_SERIES
+    bool
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
+
+config SOC_HPM6E00_SERIES
+    bool
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
+
+config SOC_HPM6P00_SERIES
+    bool
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
+
+config SOC_HPM5E00_SERIES
+    bool
+    select ARCH_RISCV32
+    select ARCH_RISCV_DPU
+    select PKG_USING_HPM_SDK
