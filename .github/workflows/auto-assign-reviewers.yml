@@ -87,13 +87,13 @@ jobs:
             
           # Check if response is valid JSON
           if jq -e . >/dev/null 2>&1 <<<"$existing_comment"; then
-            existing_comment=$(jq -r '.[] | select(.user.login == "github-actions[bot]") | {body: .body} | @base64' <<< "$existing_comment")
+            existing_comment=$(jq -r '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- Auto Review Assistant Comment -->"))) | {body: .body} | @base64' <<< "$existing_comment")
           else
             existing_comment=""
             echo "Warning: Invalid JSON response from GitHub API for comments"
             echo "Response: $existing_comment"
           fi
- 
+
           comment_body=""
           if [[ ! -z "$existing_comment" ]]; then
             comment_body=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .body | sed -nE 's/.*Last Updated: ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} CST).*/\1/p')
@@ -341,6 +341,7 @@ jobs:
           fi
           current_time=$(TZ='Asia/Shanghai' date +"%Y-%m-%d %H:%M CST")
           {
+            echo "<!-- Auto Review Assistant Comment -->"
             echo "## 📌 Code Review Assignment"
             echo ""
             for tag in $unique_tags; do
@@ -399,7 +400,7 @@ jobs:
           existing_comment=$(curl -s \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.extract-pr.outputs.PR_NUMBER }}/comments" | \
-            jq -r '.[] | select(.user.login == "github-actions[bot]") | {id: .id, body: .body} | @base64')
+            jq -r '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- Auto Review Assistant Comment -->"))) | {id: .id, body: .body} | @base64')
           
           if [[ -n "$existing_comment" ]]; then
             # 更新现有评论
@@ -428,7 +429,7 @@ jobs:
             
           # Check if response is valid JSON
           if jq -e . >/dev/null 2>&1 <<<"$existing_comment"; then
-            existing_comment=$(jq -r '.[] | select(.user.login == "github-actions[bot]") | {body: .body} | @base64' <<< "$existing_comment")
+            existing_comment=$(jq -r '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- Auto Review Assistant Comment -->"))) | {body: .body} | @base64' <<< "$existing_comment")
           else
             existing_comment=""
             echo "Warning: Invalid JSON response from GitHub API"
