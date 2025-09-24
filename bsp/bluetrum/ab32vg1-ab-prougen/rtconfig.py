@@ -29,7 +29,7 @@ BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = 'riscv64-unknown-elf-'
+    PREFIX  = 'riscv-none-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32 -msave-restore -ffunction-sections'
     CFLAGS = DEVICE + ' -D_USE_LONG_TIME_T'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--no-warn-rwx-segments -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
     CPATH   = ''
     LPATH   = ''
 

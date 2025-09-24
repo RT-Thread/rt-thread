@@ -49,31 +49,31 @@ Codename:       jammy
     - name: Install RISC-V ToolChains
       if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST != 'rtsmart/riscv64' && success() }}
       run: |
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
-        sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
-        /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
-        echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+        wget -q https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v12.3.0-2/xpack-riscv-none-elf-gcc-12.3.0-2-linux-x64.tar.gz
+        sudo tar zxvf xpack-riscv-none-elf-gcc-12.3.0-2-linux-x64.tar.gz -C /opt
+        /opt/xpack-riscv-none-elf-gcc-12.3.0-2/bin/riscv-none-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-elf-gcc-12.3.0-2/bin" >> $GITHUB_ENV
 
     - name: Install RISC-V Musl ToolChains
       if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST == 'rtsmart/riscv64' && success() }}
       shell: bash
       run: |
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
+        wget -q https://download.rt-thread.org/download/rt-smart/toolchains/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
         sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
-        /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
+        /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-linux-musleabi-gcc --version
         echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
-        echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
+        echo "RTT_CC_PREFIX=riscv64-linux-musleabi-" >> $GITHUB_ENV
 ```
 
-其中 `riscv64-unknown-elf-gcc` 用于构建 RT-Thread 标准版，`riscv64-unknown-linux-musl-gcc` 用于构建 RT-Thread Smart 版。根据上面所示链接分别下载到本地后解压缩。
+其中 `riscv-none-elf-gcc` 用于构建 RT-Thread 标准版，`riscv64-linux-musleabi-用于构建 RT-Thread Smart 版。根据上面所示链接分别下载到本地后解压缩。
 
 ## 2.2. 设置 RT-Thread 工具链环境变量
 
 和 RT-Thread 工具链相关的环境变量有三个
 
 - `RTT_CC` 为工具链名称, 这里统一为 `"gcc"`
-- `RTT_CC_PREFIX`: 为工具链前缀, 这里对于标准版是 `"riscv64-unknown-elf-"`，对于 Smart 版是 `"riscv64-unknown-linux-musl-"`。
-- `RTT_EXEC_PATH`: 工具链的 bin 文件夹所在路径, 如 `"$HOME/tools/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin"`, 这个根据个人下载解压后的实际路径进行设置，注意 RT-Thread 标准版和 Smart 版本的工具链是两套不同的版本，而且设置 `RTT_EXEC_PATH` 的路径名时要一直到 `bin`。
+- `RTT_CC_PREFIX`: 为工具链前缀, 这里对于标准版是 `"riscv-none-elf-"`，对于 Smart 版是 `"riscv64-linux-musleabi-
+- `RTT_EXEC_PATH`: 工具链的 bin 文件夹所在路径, 如 `"$HOME/tools/xpack-riscv-none-elf-gcc-12.3.0-2/bin"`, 这个根据个人下载解压后的实际路径进行设置，注意 RT-Thread 标准版和 Smart 版本的工具链是两套不同的版本，而且设置 `RTT_EXEC_PATH` 的路径名时要一直到 `bin`。
 
 如果一直使用的话，建议将这三个环境变量在 `.bashrc` 文件中 export。
 
@@ -382,8 +382,8 @@ etc         mnt         run         tc          var
   ```bash
   Memory region         Used Size  Region Size  %age Used
               SRAM:      225856 B        16 MB      1.35%
-  riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
-  riscv64-unknown-elf-size rtthread.elf
+  riscv-none-elf-objcopy -O binary rtthread.elf rtthread.bin
+  riscv-none-elf-size rtthread.elf
      text    data     bss     dec     hex filename
    150907    3664   71268  225839   3722f rtthread.elf
   ```
@@ -393,8 +393,8 @@ etc         mnt         run         tc          var
   ```bash
   Memory region         Used Size  Region Size  %age Used
               SRAM:      209376 B        16 MB      1.25%
-  riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
-  riscv64-unknown-elf-size rtthread.elf
+  riscv-none-elf-objcopy -O binary rtthread.elf rtthread.bin
+  riscv-none-elf-size rtthread.elf
      text    data     bss     dec     hex filename
    138739    1356   69276  209371   331db rtthread.elf
   ```

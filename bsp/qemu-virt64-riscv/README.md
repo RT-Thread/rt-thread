@@ -49,31 +49,31 @@ The specific toolchain used is consistent with the official RT-Thread. For the s
     - name: Install RISC-V ToolChains
       if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST != 'rtsmart/riscv64' && success() }}
       run: |
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
-        sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
-        /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
-        echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+        wget -q https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v12.3.0-2/xpack-riscv-none-elf-gcc-12.3.0-2-linux-x64.tar.gz
+        sudo tar zxvf xpack-riscv-none-elf-gcc-12.3.0-2-linux-x64.tar.gz -C /opt
+        /opt/xpack-riscv-none-elf-gcc-12.3.0-2/bin/riscv-none-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-elf-gcc-12.3.0-2/bin" >> $GITHUB_ENV
 
     - name: Install RISC-V Musl ToolChains
       if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST == 'rtsmart/riscv64' && success() }}
       shell: bash
       run: |
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
+        wget -q https://download.rt-thread.org/download/rt-smart/toolchains/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
         sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
-        /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
+        /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-linux-musleabi-gcc --version
         echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
-        echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
+        echo "RTT_CC_PREFIX=riscv64-linux-musleabi-" >> $GITHUB_ENV
 ```
 
-Among them, `riscv64-unknown-elf-gcc` is used to build the RT-Thread Standard version, and `riscv64-unknown-linux-musl-gcc` is used to build the RT-Thread Smart version. Download them to your local computer according to the links shown above and decompress them.
+Among them, `riscv-none-elf-gcc` is used to build the RT-Thread Standard version, and `riscv64-linux-musleabi-gcc` is used to build the RT-Thread Smart version. Download them to your local computer according to the links shown above and decompress them.
 
 ## 2.2. Setting RT-Thread toolchain environment variables
 
 There are three environment variables related to the RT-Thread toolchain
 
 - `RTT_CC` is the toolchain name, which is `"gcc"` here
-- `RTT_CC_PREFIX`: is the toolchain prefix, which is `"riscv64-unknown-elf-"` for the Standard version and `"riscv64-unknown-linux-musl-"` for the Smart version.
-- `RTT_EXEC_PATH`: the path where the bin folder of the toolchain is located, such as `"$HOME/tools/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin"`. This is set according to the actual path after personal download and decompression. Note that the toolchains of the RT-Thread standard version and the Smart version are two different versions, and the path name of `RTT_EXEC_PATH` must be set to `bin`.
+- `RTT_CC_PREFIX`: is the toolchain prefix, which is `"riscv-none-elf-"` for the Standard version and `"riscv64-linux-musleabi-"` for the Smart version.
+- `RTT_EXEC_PATH`: the path where the bin folder of the toolchain is located, such as `"$HOME/tools/xpack-riscv-none-elf-gcc-12.3.0-2/bin"`. This is set according to the actual path after personal download and decompression. Note that the toolchains of the RT-Thread standard version and the Smart version are two different versions, and the path name of `RTT_EXEC_PATH` must be set to `bin`.
 
 If you use them all the time, it is recommended to export these three environment variables in the `.bashrc` file.
 
@@ -381,8 +381,8 @@ etc         mnt         run         tc          var
   ```bash
   Memory region         Used Size  Region Size  %age Used
               SRAM:      225856 B        16 MB      1.35%
-  riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
-  riscv64-unknown-elf-size rtthread.elf
+  riscv-none-elf-objcopy -O binary rtthread.elf rtthread.bin
+  riscv-none-elf-size rtthread.elf
      text    data     bss     dec     hex filename
    150907    3664   71268  225839   3722f rtthread.elf
   ```
@@ -392,8 +392,8 @@ etc         mnt         run         tc          var
   ```bash
   Memory region         Used Size  Region Size  %age Used
               SRAM:      209376 B        16 MB      1.25%
-  riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
-  riscv64-unknown-elf-size rtthread.elf
+  riscv-none-elf-objcopy -O binary rtthread.elf rtthread.bin
+  riscv-none-elf-size rtthread.elf
      text    data     bss     dec     hex filename
    138739    1356   69276  209371   331db rtthread.elf
   ```
