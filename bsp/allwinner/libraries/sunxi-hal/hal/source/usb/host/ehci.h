@@ -119,7 +119,7 @@ struct ehci_hcd {           /* one per controller */
     /* timing support */
     enum ehci_hrtimer_event next_hrtimer_event;
     unsigned                enabled_hrtimer_events;
-    unsigned long           hr_timeouts[EHCI_HRTIMER_NUM_EVENTS];
+    rt_tick_t               hr_timeouts[EHCI_HRTIMER_NUM_EVENTS];
     osal_timer_t            hrtimer;
 
     int         PSS_poll_count;

@@ -128,6 +128,7 @@ OS_Status OS_TimerStart(OS_Timer_t *timer)
 OS_Status OS_TimerChangePeriod(OS_Timer_t *timer, OS_Time_t periodMS)
 {
     rt_err_t ret;
+    rt_tick_t period_tick = rt_tick_from_millisecond(periodMS);
 
     OS_DBG("%s(), handle %p\n", __func__, timer->handle);
     OS_HANDLE_ASSERT(OS_TimerIsValid(timer), timer->handle);
@@ -139,7 +140,7 @@ OS_Status OS_TimerChangePeriod(OS_Timer_t *timer, OS_Time_t periodMS)
             return OS_FAIL;
         }
     }
-    ret = rt_timer_control(timer->handle, RT_TIMER_CTRL_SET_TIME, &periodMS);
+    ret = rt_timer_control(timer->handle, RT_TIMER_CTRL_SET_TIME, &period_tick);
     if (ret != RT_EOK) {
         OS_ERR("err %"OS_BASETYPE_F"\n", ret);
         return OS_FAIL;

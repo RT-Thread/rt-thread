@@ -233,8 +233,8 @@ static void timer_control(void *param)
 static void test_static_timer_control(void)
 {
     rt_err_t result;
-    int set_data;
-    int get_data;
+    rt_tick_t set_data;
+    rt_tick_t get_data;
 
     timer.callbacks = 0;
     timer.is_static = RT_TRUE;
@@ -473,8 +473,8 @@ static void test_dynamic_timer(void)
 static void test_dynamic_timer_control(void)
 {
     rt_err_t result;
-    int set_data;
-    int get_data;
+    rt_tick_t set_data;
+    rt_tick_t get_data;
 
     timer.callbacks = 0;
     timer.is_static = RT_FALSE;

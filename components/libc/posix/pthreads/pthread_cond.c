@@ -418,10 +418,11 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
                 /* has waiting time, start thread timer */
                 if (time > 0)
                 {
+                    rt_tick_t time_tick = time;
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
                                      RT_TIMER_CTRL_SET_TIME,
-                                     &time);
+                                     &time_tick);
                     rt_timer_start(&(thread->thread_timer));
                 }
 
