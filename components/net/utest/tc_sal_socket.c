@@ -236,7 +236,7 @@ static void server_thread_entry(void *parameter)
     int elapsed = 0;
     int check_interval = 50;
     int accepted_sock = -1;
-    while (elapsed < ACCEPT_POLL_TIMEOUT_MS) 
+    while (elapsed < ACCEPT_POLL_TIMEOUT_MS)
     {
         accepted_sock = sal_accept(server_sock, RT_NULL, RT_NULL);
         if (accepted_sock >= 0)
