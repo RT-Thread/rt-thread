@@ -50,7 +50,6 @@ void rt_clock_time_source_init(void)
         rt_uint8_t caps = RT_CLOCK_TIME_CAP_SOURCE;
 
         _aarch64_clock_dev.ops = &_aarch64_clock_ops;
-        _aarch64_clock_dev.res_scale = RT_CLOCK_TIME_RESMUL;
         _aarch64_clock_dev.caps = caps;
         rt_clock_time_device_register(&_aarch64_clock_dev, "clock_time_gtimer", caps);
         rt_clock_time_set_default_source(&_aarch64_clock_dev);

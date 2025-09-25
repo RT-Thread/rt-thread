@@ -14,8 +14,6 @@
 
 #include <drivers/clock_time.h>
 
-#define CLOCK_TIME_NSEC_PER_SEC (1000000000ULL)
-
 static rt_uint64_t _clock_time_tick_get_freq(struct rt_clock_time_device *dev)
 {
     RT_UNUSED(dev);
@@ -45,7 +43,6 @@ static const struct rt_clock_time_ops _clock_time_tick_ops =
 static struct rt_clock_time_device _clock_time_tick_dev =
 {
     .ops = &_clock_time_tick_ops,
-    .res_scale = RT_CLOCK_TIME_RESMUL,
     .caps = RT_CLOCK_TIME_CAP_SOURCE,
 };
 
@@ -57,27 +54,6 @@ rt_weak void rt_clock_time_source_init(void)
     return;
 }
 
-static rt_uint64_t _clock_time_get_res_scaled(struct rt_clock_time_device *dev)
-{
-    rt_uint64_t freq;
-    rt_uint64_t scale;
-
-    if (dev == RT_NULL || dev->ops == RT_NULL || dev->ops->get_freq == RT_NULL)
-    {
-        return 0;
-    }
-
-    freq = dev->ops->get_freq(dev);
-    if (freq == 0)
-    {
-        return 0;
-    }
-
-    scale = dev->res_scale ? dev->res_scale : RT_CLOCK_TIME_RESMUL;
-
-    return (CLOCK_TIME_NSEC_PER_SEC * scale) / freq;
-}
-
 rt_err_t rt_clock_time_device_register(struct rt_clock_time_device *dev, const char *name, rt_uint8_t caps)
 {
     rt_err_t result = RT_EOK;
@@ -86,10 +62,6 @@ rt_err_t rt_clock_time_device_register(struct rt_clock_time_device *dev, const c
     RT_ASSERT(dev->ops != RT_NULL);
 
     dev->caps = caps;
-    if (dev->res_scale == 0)
-    {
-        dev->res_scale = RT_CLOCK_TIME_RESMUL;
-    }
 
     if (name != RT_NULL)
     {
@@ -161,11 +133,6 @@ rt_uint64_t rt_clock_time_get_counter(void)
     return src->ops->get_counter(src);
 }
 
-rt_uint64_t rt_clock_time_get_res_scaled(void)
-{
-    return _clock_time_get_res_scaled(rt_clock_time_get_default_source());
-}
-
 rt_uint64_t rt_clock_time_get_event_freq(void)
 {
     struct rt_clock_time_device *event = rt_clock_time_get_default_event();
@@ -183,40 +150,28 @@ rt_uint64_t rt_clock_time_get_event_freq(void)
     return event->ops->get_freq(event);
 }
 
-rt_uint64_t rt_clock_time_get_event_res_scaled(void)
-{
-    struct rt_clock_time_device *event = rt_clock_time_get_default_event();
-
-    if (event == RT_NULL)
-    {
-        return rt_clock_time_get_res_scaled();
-    }
-
-    return _clock_time_get_res_scaled(event);
-}
-
 rt_uint64_t rt_clock_time_counter_to_ns(rt_uint64_t cnt)
 {
-    rt_uint64_t res = rt_clock_time_get_res_scaled();
+    rt_uint64_t freq = rt_clock_time_get_freq();
 
-    if (res == 0)
+    if (freq == 0)
     {
         return 0;
     }
 
-    return (cnt * res) / RT_CLOCK_TIME_RESMUL;
+    return rt_muldiv_u64(cnt, NANOSECOND_PER_SECOND, freq, NULL);
 }
 
 rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns)
 {
-    rt_uint64_t res = rt_clock_time_get_res_scaled();
+    rt_uint64_t freq = rt_clock_time_get_freq();
 
-    if (res == 0)
+    if (freq == 0)
     {
         return 0;
     }
 
-    return (ns * RT_CLOCK_TIME_RESMUL) / res;
+    return rt_muldiv_u64(ns, freq, NANOSECOND_PER_SECOND, NULL);
 }
 
 rt_err_t rt_clock_time_set_timeout(rt_uint64_t delta)

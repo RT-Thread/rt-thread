@@ -45,12 +45,10 @@ struct rt_clock_time_device
 {
     struct rt_device parent;
     const struct rt_clock_time_ops *ops;
-    rt_uint64_t res_scale;
     rt_uint8_t caps; /* RT_CLOCK_TIME_CAP_SOURCE / RT_CLOCK_TIME_CAP_EVENT */
 };
 ```
 
-- res_scale 用于提高换算精度，0 表示使用 RT_CLOCK_TIME_RESMUL 默认值。
 - caps 用于标识设备能力：时钟源或时钟事件。
 
 ## 注册与默认选择
@@ -69,7 +67,7 @@ struct rt_clock_time_device *rt_clock_time_get_default_event(void);
 
 - 作用：注册 clock_time 设备及其能力。
 - 参数：
-  - `dev`：设备对象，需初始化 ops 与 res_scale。
+  - `dev`：设备对象，需初始化 ops。
   - `name`：设备名；为 NULL 时仅注册能力，不进入设备框架。
   - `caps`：RT_CLOCK_TIME_CAP_SOURCE / RT_CLOCK_TIME_CAP_EVENT。
 - 行为：
@@ -100,7 +98,6 @@ struct rt_clock_time_device *rt_clock_time_get_default_event(void);
 rt_uint64_t rt_clock_time_get_freq(void);
 rt_uint64_t rt_clock_time_get_counter(void);
 rt_uint64_t rt_clock_time_get_event_freq(void);
-rt_uint64_t rt_clock_time_get_event_res_scaled(void);
 ```
 
 ## rt_clock_time_get_freq
@@ -118,41 +115,24 @@ rt_uint64_t rt_clock_time_get_event_res_scaled(void);
 - 作用：获取事件设备频率（Hz）。
 - 行为：若无事件设备则回退使用默认时钟源。
 
-## rt_clock_time_get_event_res_scaled
-
-- 作用：获取事件设备的缩放分辨率。
-- 行为：若无事件设备则回退使用默认时钟源。
-
 # 换算接口
 
 ```c
-rt_uint64_t rt_clock_time_get_res_scaled(void);
 rt_uint64_t rt_clock_time_counter_to_ns(rt_uint64_t cnt);
 rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns);
 ```
 
-## rt_clock_time_get_res_scaled
-
-- 作用：获取默认时钟源的缩放分辨率。
-- 返回值：无有效时钟源时返回 0。
-
 ## rt_clock_time_counter_to_ns
 
 - 作用：将计数值换算为纳秒。
-- 说明：当分辨率不可用时返回 0。
+- 说明：当频率不可用时返回 0。
 
 ## rt_clock_time_ns_to_counter
 
 - 作用：将纳秒换算为计数值。
-- 说明：当分辨率不可用时返回 0。
+- 说明：当频率不可用时返回 0。
 
-核心使用定点缩放换算：
-
-```
-res_scaled = (1e9 * res_scale) / freq
-```
-
-然后用 RT_CLOCK_TIME_RESMUL 进行定点缩放，以避免浮点运算带来的精度损失。
+换算直接使用时钟源频率，并通过 `rt_muldiv_u64()` 避免浮点运算带来的精度损失。
 
 # 事件接口
 
@@ -203,7 +183,6 @@ static const struct rt_clock_time_ops demo_src_ops =
 static struct rt_clock_time_device demo_src_dev =
 {
     .ops = &demo_src_ops,
-    .res_scale = RT_CLOCK_TIME_RESMUL,
 };
 
 void rt_clock_time_source_init(void)
@@ -233,7 +212,6 @@ static const struct rt_clock_time_ops demo_evt_ops =
 static struct rt_clock_time_device demo_evt_dev =
 {
     .ops = &demo_evt_ops,
-    .res_scale = RT_CLOCK_TIME_RESMUL,
 };
 
 static void demo_timer_isr(void)

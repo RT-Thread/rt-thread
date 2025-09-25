@@ -19,8 +19,6 @@
 extern "C" {
 #endif
 
-#define RT_CLOCK_TIME_RESMUL (1000000ULL)
-
 #define RT_CLOCK_TIME_CAP_SOURCE (1U << 0)
 #define RT_CLOCK_TIME_CAP_EVENT  (1U << 1)
 
@@ -37,7 +35,6 @@ struct rt_clock_time_device
 {
     struct rt_device parent;
     const struct rt_clock_time_ops *ops;
-    rt_uint64_t res_scale;
     rt_uint8_t caps;
 };
 
@@ -112,8 +109,8 @@ struct rt_clock_hrtimer
     char                 name[RT_NAME_MAX];
     rt_list_t            node;
     void                *parameter;
-    unsigned long        delay_cnt;
-    unsigned long        timeout_cnt;
+    rt_tick_t            delay_cnt;
+    rt_tick_t            timeout_cnt;
     rt_err_t             error;
     struct rt_completion completion;
     void (*timeout_func)(void *parameter);
@@ -131,9 +128,7 @@ void rt_clock_time_source_init(void);
 
 rt_uint64_t rt_clock_time_get_freq(void);
 rt_uint64_t rt_clock_time_get_counter(void);
-rt_uint64_t rt_clock_time_get_res_scaled(void);
 rt_uint64_t rt_clock_time_get_event_freq(void);
-rt_uint64_t rt_clock_time_get_event_res_scaled(void);
 
 rt_uint64_t rt_clock_time_counter_to_ns(rt_uint64_t cnt);
 rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns);
@@ -145,9 +140,8 @@ rt_err_t rt_clock_boottime_get_us(struct timeval *tv);
 rt_err_t rt_clock_boottime_get_s(time_t *t);
 rt_err_t rt_clock_boottime_get_ns(struct timespec *ts);
 
-rt_uint64_t rt_clock_hrtimer_getres(void);
-unsigned long rt_clock_hrtimer_getfrq(void);
-rt_err_t rt_clock_hrtimer_settimeout(unsigned long cnt);
+rt_uint64_t rt_clock_hrtimer_getfrq(void);
+rt_err_t rt_clock_hrtimer_settimeout(rt_uint64_t cnt);
 void     rt_clock_hrtimer_process(void);
 
 void     rt_clock_hrtimer_init(rt_clock_hrtimer_t timer,
@@ -155,7 +149,7 @@ void     rt_clock_hrtimer_init(rt_clock_hrtimer_t timer,
                                     rt_uint8_t         flag,
                                     void (*timeout)(void *parameter),
                                     void *parameter);
-rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, unsigned long cnt);
+rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, rt_tick_t cnt);
 rt_err_t rt_clock_hrtimer_stop(rt_clock_hrtimer_t timer);
 rt_err_t rt_clock_hrtimer_control(rt_clock_hrtimer_t timer, int cmd, void *arg);
 rt_err_t rt_clock_hrtimer_detach(rt_clock_hrtimer_t timer);
@@ -172,10 +166,10 @@ void rt_clock_hrtimer_delay_init(struct rt_clock_hrtimer *timer);
 void rt_clock_hrtimer_delay_detach(struct rt_clock_hrtimer *timer);
 void rt_clock_hrtimer_process(void);
 
-rt_err_t rt_clock_hrtimer_sleep(struct rt_clock_hrtimer *timer, unsigned long cnt);
-rt_err_t rt_clock_hrtimer_ndelay(struct rt_clock_hrtimer *timer, unsigned long ns);
-rt_err_t rt_clock_hrtimer_udelay(struct rt_clock_hrtimer *timer, unsigned long us);
-rt_err_t rt_clock_hrtimer_mdelay(struct rt_clock_hrtimer *timer, unsigned long ms);
+rt_err_t rt_clock_hrtimer_sleep(struct rt_clock_hrtimer *timer, rt_tick_t cnt);
+rt_err_t rt_clock_hrtimer_ndelay(struct rt_clock_hrtimer *timer, rt_uint64_t ns);
+rt_err_t rt_clock_hrtimer_udelay(struct rt_clock_hrtimer *timer, rt_uint64_t us);
+rt_err_t rt_clock_hrtimer_mdelay(struct rt_clock_hrtimer *timer, rt_uint64_t ms);
 
 #ifdef __cplusplus
 }
