@@ -19,12 +19,6 @@
 
 #include "ktime.h"
 
-#ifdef ARCH_CPU_64BIT
-#define _HRTIMER_MAX_CNT UINT64_MAX
-#else
-#define _HRTIMER_MAX_CNT UINT32_MAX
-#endif
-
 static rt_list_t          _timer_list   = RT_LIST_OBJECT_INIT(_timer_list);
 static RT_DEFINE_SPINLOCK(_spinlock);
 
@@ -33,17 +27,12 @@ rt_inline rt_ktime_hrtimer_t _first_hrtimer(void)
     return rt_list_isempty(&_timer_list) ? RT_NULL : rt_list_first_entry(&_timer_list, struct rt_ktime_hrtimer, node);
 }
 
-rt_weak rt_uint64_t rt_ktime_hrtimer_getres(void)
-{
-    return ((1000ULL * 1000 * 1000) * RT_KTIME_RESMUL) / RT_TICK_PER_SECOND;
-}
-
-rt_weak unsigned long rt_ktime_hrtimer_getfrq(void)
+rt_weak rt_uint64_t rt_ktime_hrtimer_getfrq(void)
 {
     return RT_TICK_PER_SECOND;
 }
 
-rt_weak rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt)
+rt_weak rt_err_t rt_ktime_hrtimer_settimeout(rt_uint64_t cnt)
 {
     static rt_timer_t timer = RT_NULL;
     static struct rt_timer _sh_rtimer;
@@ -53,11 +42,11 @@ rt_weak rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt)
     if (timer == RT_NULL)
     {
         timer = &_sh_rtimer;
-        rt_timer_init(timer, "shrtimer", (void (*)(void *))rt_ktime_hrtimer_process, RT_NULL, cnt, RT_TIMER_FLAG_ONE_SHOT);
+        rt_timer_init(timer, "shrtimer", (void (*)(void *))rt_ktime_hrtimer_process, RT_NULL, (rt_tick_t)cnt, RT_TIMER_FLAG_ONE_SHOT);
     }
     else
     {
-        rt_tick_t tick = cnt;
+        rt_tick_t tick = (rt_tick_t)cnt;
         rt_timer_control(timer, RT_TIMER_CTRL_SET_TIME, &tick);
         rt_timer_control(timer, RT_TIMER_CTRL_SET_PARM, RT_NULL);
     }
@@ -75,16 +64,16 @@ rt_weak rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt)
  * @brief convert cnt from cputimer cnt to hrtimer cnt
  *
  * @param cnt
- * @return unsigned long
+ * @return rt_uint64_t
  */
-static unsigned long _cnt_convert(unsigned long cnt)
+static rt_uint64_t _cnt_convert(rt_tick_t cnt)
 {
-    unsigned long rtn   = 0;
-    unsigned long count = cnt - rt_ktime_cputimer_getcnt();
-    if (count > (_HRTIMER_MAX_CNT / 2))
+    rt_uint64_t rtn = 0;
+    rt_tick_t count = cnt - rt_ktime_cputimer_getcnt();
+    if (count > (RT_TICK_MAX / 2))
         return 0;
 
-    rtn = (count * rt_ktime_cputimer_getres()) / rt_ktime_hrtimer_getres();
+    rtn = rt_muldiv_u64(count, rt_ktime_hrtimer_getfrq(), rt_ktime_cputimer_getfrq(), NULL);
     return rtn == 0 ? 1 : rtn; /* at least 1 */
 }
 
@@ -140,7 +129,7 @@ static void _hrtimer_process_locked(void)
 static void _set_next_timeout_locked(void)
 {
     rt_ktime_hrtimer_t timer;
-    rt_ubase_t next_timeout_hrtimer_cnt;
+    rt_uint64_t next_timeout_hrtimer_cnt;
     rt_bool_t find_next;
 
     do
@@ -193,13 +182,13 @@ void rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
     rt_completion_init(&timer->completion);
 }
 
-rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, unsigned long delay_cnt)
+rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, rt_tick_t delay_cnt)
 {
     rt_base_t  level;
 
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
-    RT_ASSERT(delay_cnt < (_HRTIMER_MAX_CNT / 2));
+    RT_ASSERT(delay_cnt < (RT_TICK_MAX / 2));
 
     timer->delay_cnt    = delay_cnt;
     timer->timeout_cnt  = timer->delay_cnt + rt_ktime_cputimer_getcnt();
@@ -255,13 +244,13 @@ rt_err_t rt_ktime_hrtimer_control(rt_ktime_hrtimer_t timer, int cmd, void *arg)
     {
 
     case RT_TIMER_CTRL_GET_TIME:
-        *(unsigned long *)arg = timer->delay_cnt;
+        *(rt_tick_t *)arg = timer->delay_cnt;
         break;
 
     case RT_TIMER_CTRL_SET_TIME:
-        RT_ASSERT((*(unsigned long *)arg) < (_HRTIMER_MAX_CNT / 2));
-        timer->delay_cnt    = *(unsigned long *)arg;
-        timer->timeout_cnt  = *(unsigned long *)arg + rt_ktime_cputimer_getcnt();
+        RT_ASSERT((*(rt_tick_t *)arg) < (RT_TICK_MAX / 2));
+        timer->delay_cnt = *(rt_tick_t *)arg;
+        timer->timeout_cnt = *(rt_tick_t *)arg + rt_ktime_cputimer_getcnt();
         break;
 
     case RT_TIMER_CTRL_SET_ONESHOT:
@@ -286,7 +275,7 @@ rt_err_t rt_ktime_hrtimer_control(rt_ktime_hrtimer_t timer, int cmd, void *arg)
         break;
 
     case RT_TIMER_CTRL_GET_REMAIN_TIME:
-        *(unsigned long *)arg = timer->timeout_cnt;
+        *(rt_tick_t *)arg = timer->timeout_cnt;
         break;
     case RT_TIMER_CTRL_GET_FUNC:
         arg = (void *)timer->timeout_func;
@@ -351,7 +340,7 @@ void rt_ktime_hrtimer_delay_detach(struct rt_ktime_hrtimer *timer)
     rt_ktime_hrtimer_detach(timer);
 }
 
-rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cnt)
+rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, rt_tick_t cnt)
 {
     rt_err_t err;
 
@@ -369,18 +358,18 @@ rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cn
     return err;
 }
 
-rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, unsigned long ns)
+rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, rt_uint64_t ns)
 {
-    rt_uint64_t res = rt_ktime_cputimer_getres();
-    return rt_ktime_hrtimer_sleep(timer, (ns * RT_KTIME_RESMUL) / res);
+    rt_tick_t cputimer_tick = (rt_tick_t)rt_muldiv_u64(ns, rt_ktime_cputimer_getfrq(), NANOSECOND_PER_SECOND, NULL);
+    return rt_ktime_hrtimer_sleep(timer, cputimer_tick);
 }
 
-rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, unsigned long us)
+rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, rt_uint64_t us)
 {
     return rt_ktime_hrtimer_ndelay(timer, us * 1000);
 }
 
-rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, unsigned long ms)
+rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, rt_uint64_t ms)
 {
     return rt_ktime_hrtimer_ndelay(timer, ms * 1000000);
 }
