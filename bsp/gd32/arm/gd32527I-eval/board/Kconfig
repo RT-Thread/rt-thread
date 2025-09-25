@@ -371,6 +371,49 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDRAM"
         select RT_USING_SDRAM
         default n
+    
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN BUS"
+        default n
+        select RT_USING_CAN
+        select RT_USING_DEVICE_IPC
+        select BSP_USING_GD_DBG
+        if BSP_USING_CAN
+            config BSP_USING_CAN0
+                bool "Enable CAN0"
+                default n
+
+            if BSP_USING_CAN0
+                choice
+                    prompt "Select CAN0 TX source"
+                    default BSP_CAN0_TX_PH13
+
+                    config BSP_CAN0_TX_PA12
+                        bool "GPIOA pin 12"
+                    config BSP_CAN0_TX_PB9
+                        bool "GPIOB pin 9"
+                    config BSP_CAN0_TX_PD1
+                        bool "GPIOD pin 1"
+                    config BSP_CAN0_TX_PH13
+                        bool "GPIOH pin 13"
+                endchoice
+
+                choice
+                    prompt "Select CAN0 RX source"
+                    default BSP_CAN0_RX_PI9
+
+                    config BSP_CAN0_RX_PA11
+                        bool "GPIOA pin 11"
+                    config BSP_CAN0_RX_PB8
+                        bool "GPIOB pin 8"
+                    config BSP_CAN0_RX_PD0
+                        bool "GPIOD pin 0"
+                    config BSP_CAN0_RX_PI9
+                        bool "GPIOI pin 9"
+                endchoice
+            endif
+
+        endif
 
     source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
