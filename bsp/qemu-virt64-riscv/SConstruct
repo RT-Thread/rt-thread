@@ -11,6 +11,7 @@ TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
+    COMPILATIONDB_USE_ABSPATH = True,
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
     CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
@@ -18,6 +19,9 @@ env = Environment(tools = ['mingw'],
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env['ASCOM'] = env['ASPPCOM']
+env.Tool('compilation_db')
+cdb = env.CompilationDatabase('compile_commands.json')
+Alias('cdb', cdb)
 
 Export('RTT_ROOT')
 Export('rtconfig')
