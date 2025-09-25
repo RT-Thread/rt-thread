@@ -5,7 +5,7 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('UTEST_CPP11_THREAD_TC'):
+if GetDepend('UTEST_CPP11_THREAD_TC'):
     src += Glob('tc_*.cpp')
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_CPLUSPLUS'], CPPPATH = CPPPATH)
