@@ -2,7 +2,7 @@ from building import *
 
 src = []
 
-if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('BSP_UTEST_DRIVERS'):
+if GetDepend('BSP_UTEST_DRIVERS'):
     src += ['test_gpio.c']
     src += ['test_gpio_irq.c']
 
