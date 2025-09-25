@@ -257,7 +257,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
         level = rt_spin_lock_irqsave(&_spinlock);
         ts->tv_sec = 0;
 #ifdef RT_USING_CLOCK_TIME
-        ts->tv_nsec = (rt_clock_time_get_res_scaled() / RT_CLOCK_TIME_RESMUL);
+        ts->tv_nsec = (rt_uint32_t)(NANOSECOND_PER_SECOND / rt_clock_time_get_freq());
 #else
         ts->tv_nsec = (1000UL * 1000 * 1000) / RT_TICK_PER_SECOND;
 #endif

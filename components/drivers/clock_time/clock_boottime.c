@@ -9,26 +9,24 @@
  */
 
 #include <drivers/clock_time.h>
+#include <sys/time.h>
 
 rt_err_t rt_clock_boottime_get_us(struct timeval *tv)
 {
     rt_uint64_t cnt;
-    rt_uint64_t res;
-    rt_uint64_t ns;
+    rt_uint64_t freq;
 
     RT_ASSERT(tv != RT_NULL);
 
     cnt = rt_clock_time_get_counter();
-    res = rt_clock_time_get_res_scaled();
-    if (res == 0)
+    freq = rt_clock_time_get_freq();
+    if (freq == 0)
     {
         return -RT_ERROR;
     }
 
-    ns = (cnt * res) / RT_CLOCK_TIME_RESMUL;
-
-    tv->tv_sec  = ns / (1000ULL * 1000 * 1000);
-    tv->tv_usec = (ns % (1000ULL * 1000 * 1000)) / 1000;
+    tv->tv_sec = (time_t)(cnt / freq);
+    tv->tv_usec = rt_muldiv_u64(cnt % freq, MICROSECOND_PER_SECOND, freq, NULL);
 
     return RT_EOK;
 }
@@ -36,20 +34,18 @@ rt_err_t rt_clock_boottime_get_us(struct timeval *tv)
 rt_err_t rt_clock_boottime_get_s(time_t *t)
 {
     rt_uint64_t cnt;
-    rt_uint64_t res;
-    rt_uint64_t ns;
+    rt_uint64_t freq;
 
     RT_ASSERT(t != RT_NULL);
 
     cnt = rt_clock_time_get_counter();
-    res = rt_clock_time_get_res_scaled();
-    if (res == 0)
+    freq = rt_clock_time_get_freq();
+    if (freq == 0)
     {
         return -RT_ERROR;
     }
 
-    ns = (cnt * res) / RT_CLOCK_TIME_RESMUL;
-    *t = ns / (1000ULL * 1000 * 1000);
+    *t = (time_t)(cnt / freq);
 
     return RT_EOK;
 }
@@ -57,22 +53,19 @@ rt_err_t rt_clock_boottime_get_s(time_t *t)
 rt_err_t rt_clock_boottime_get_ns(struct timespec *ts)
 {
     rt_uint64_t cnt;
-    rt_uint64_t res;
-    rt_uint64_t ns;
+    rt_uint64_t freq;
 
     RT_ASSERT(ts != RT_NULL);
 
     cnt = rt_clock_time_get_counter();
-    res = rt_clock_time_get_res_scaled();
-    if (res == 0)
+    freq = rt_clock_time_get_freq();
+    if (freq == 0)
     {
         return -RT_ERROR;
     }
 
-    ns = (cnt * res) / RT_CLOCK_TIME_RESMUL;
-
-    ts->tv_sec  = ns / (1000ULL * 1000 * 1000);
-    ts->tv_nsec = ns % (1000ULL * 1000 * 1000);
+    ts->tv_sec = (time_t)(cnt / freq);
+    ts->tv_nsec = rt_muldiv_u64(cnt % freq, NANOSECOND_PER_SECOND, freq, NULL);
 
     return RT_EOK;
 }
