@@ -339,9 +339,10 @@ rt_err_t rt_vbus_post(rt_uint8_t id,
         rt_list_insert_after(&_chn_suspended_threads[id], &RT_THREAD_LIST_NODE(thread));
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
         /* rt_exit_critical will do schedule on need. */

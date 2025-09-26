@@ -123,12 +123,45 @@ rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
     return -RT_ERROR;
 }
 
+rt_err_t rt_spi_bus_detach_device_cspin(struct rt_spi_device *device)
+{
+    rt_err_t result;
+
+    RT_ASSERT(device != RT_NULL);
+
+    result = rt_device_unregister(&device->parent);
+    if (result != RT_EOK)
+    {
+        LOG_E("Failed to unregister spi device, result: %d", result);
+        return result;
+    }
+
+    if (device->bus != RT_NULL && device->bus->owner == device)
+    {
+        device->bus->owner = RT_NULL;
+    }
+
+    if (device->cs_pin != PIN_NONE)
+    {
+        rt_pin_mode(device->cs_pin, PIN_MODE_INPUT);
+    }
+
+    device->bus = RT_NULL;
+
+    return RT_EOK;
+}
+
 rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
                                   const char           *name,
                                   const char           *bus_name,
                                   void                 *user_data)
 {
     return rt_spi_bus_attach_device_cspin(device, name, bus_name, PIN_NONE, user_data);
+}
+
+rt_err_t rt_spi_bus_detach_device(struct rt_spi_device *device)
+{
+    return rt_spi_bus_detach_device_cspin(device);
 }
 
 rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)

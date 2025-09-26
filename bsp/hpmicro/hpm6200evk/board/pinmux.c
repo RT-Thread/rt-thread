@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 hpmicro
+ * Copyright (c) 2023-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -115,11 +115,12 @@ void init_spi_pins(SPI_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PB05].FUNC_CTL = IOC_PB05_FUNC_CTL_SPI1_MOSI;
         HPM_IOC->PAD[IOC_PAD_PB03].FUNC_CTL = IOC_PB03_FUNC_CTL_SPI1_MISO;
         HPM_IOC->PAD[IOC_PAD_PB04].FUNC_CTL = IOC_PB04_FUNC_CTL_SPI1_SCLK | IOC_PAD_FUNC_CTL_LOOP_BACK_SET(1);
-    } else if (ptr == HPM_SPI2) {
-        HPM_IOC->PAD[IOC_PAD_PC22].FUNC_CTL = IOC_PC22_FUNC_CTL_SPI2_CSN;
-        HPM_IOC->PAD[IOC_PAD_PC24].FUNC_CTL = IOC_PC24_FUNC_CTL_SPI2_MISO;
-        HPM_IOC->PAD[IOC_PAD_PC23].FUNC_CTL = IOC_PC23_FUNC_CTL_SPI2_MOSI;
-        HPM_IOC->PAD[IOC_PAD_PC25].FUNC_CTL = IOC_PC25_FUNC_CTL_SPI2_SCLK | IOC_PAD_FUNC_CTL_LOOP_BACK_SET(1);
+
+        /* set max frequency slew rate(200M) */
+        HPM_IOC->PAD[IOC_PAD_PB02].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1) | IOC_PAD_PAD_CTL_PRS_SET(1);
+        HPM_IOC->PAD[IOC_PAD_PB05].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3);
+        HPM_IOC->PAD[IOC_PAD_PB03].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3);
+        HPM_IOC->PAD[IOC_PAD_PB04].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3);
     }
 }
 
@@ -130,11 +131,12 @@ void init_spi_pins_with_gpio_as_cs(SPI_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PB05].FUNC_CTL = IOC_PB05_FUNC_CTL_SPI1_MOSI;
         HPM_IOC->PAD[IOC_PAD_PB03].FUNC_CTL = IOC_PB03_FUNC_CTL_SPI1_MISO;
         HPM_IOC->PAD[IOC_PAD_PB04].FUNC_CTL = IOC_PB04_FUNC_CTL_SPI1_SCLK | IOC_PAD_FUNC_CTL_LOOP_BACK_SET(1);
-    } else if (ptr == HPM_SPI2) {
-        HPM_IOC->PAD[IOC_PAD_PC22].FUNC_CTL = IOC_PC22_FUNC_CTL_GPIO_C_22;
-        HPM_IOC->PAD[IOC_PAD_PC24].FUNC_CTL = IOC_PC24_FUNC_CTL_SPI2_MISO;
-        HPM_IOC->PAD[IOC_PAD_PC23].FUNC_CTL = IOC_PC23_FUNC_CTL_SPI2_MOSI;
-        HPM_IOC->PAD[IOC_PAD_PC25].FUNC_CTL = IOC_PC25_FUNC_CTL_SPI2_SCLK | IOC_PAD_FUNC_CTL_LOOP_BACK_SET(1);;
+
+        /* set max frequency slew rate(200M) */
+        HPM_IOC->PAD[IOC_PAD_PB02].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1) | IOC_PAD_PAD_CTL_PRS_SET(1);
+        HPM_IOC->PAD[IOC_PAD_PB05].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3);
+        HPM_IOC->PAD[IOC_PAD_PB03].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3);
+        HPM_IOC->PAD[IOC_PAD_PB04].PAD_CTL = IOC_PAD_PAD_CTL_SR_MASK | IOC_PAD_PAD_CTL_SPD_SET(3);
     }
 }
 
@@ -149,8 +151,18 @@ void init_gptmr_pins(GPTMR_Type *ptr)
 {
     if (ptr == HPM_GPTMR1) {
         HPM_IOC->PAD[IOC_PAD_PA23].FUNC_CTL = IOC_PA23_FUNC_CTL_GPTMR1_CAPT_0;
+        /* TMR1 compare 0 */
         HPM_IOC->PAD[IOC_PAD_PA25].FUNC_CTL = IOC_PA25_FUNC_CTL_GPTMR1_COMP_0;
+        /* TMR1 compare 1 */
         HPM_IOC->PAD[IOC_PAD_PA26].FUNC_CTL = IOC_PA26_FUNC_CTL_GPTMR1_COMP_1;
+        /* TMR1 compare 2 */
+        HPM_IOC->PAD[IOC_PAD_PA20].FUNC_CTL = IOC_PA20_FUNC_CTL_TRGM1_P_00;
+        trgm_output_t trgm1_io_config0 = {0};
+        trgm1_io_config0.invert = 0;
+        trgm1_io_config0.type = trgm_output_same_as_input;
+        trgm1_io_config0.input = HPM_TRGM1_INPUT_SRC_GPTMR1_OUT2;
+        trgm_output_config(HPM_TRGM1, HPM_TRGM1_OUTPUT_SRC_TRGM1_P0, &trgm1_io_config0);
+        trgm_enable_io_output(HPM_TRGM1, 1 << 0);
     }
 }
 
@@ -214,10 +226,13 @@ void init_adc_bldc_pins(void)
    HPM_IOC->PAD[IOC_PAD_PC17].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
 }
 
-void init_usb_pins(void)
+void init_usb_pins(USB_Type *ptr)
 {
-    HPM_IOC->PAD[IOC_PAD_PC23].FUNC_CTL = IOC_PC23_FUNC_CTL_GPIO_C_23;
-    HPM_IOC->PAD[IOC_PAD_PC23].PAD_CTL = IOC_PAD_PAD_CTL_PS_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1);
+    if (ptr == HPM_USB0) {
+        HPM_IOC->PAD[IOC_PAD_PC00].FUNC_CTL = IOC_PC00_FUNC_CTL_USB0_ID;
+        HPM_IOC->PAD[IOC_PAD_PC01].FUNC_CTL = IOC_PC01_FUNC_CTL_USB0_PWR;
+        HPM_IOC->PAD[IOC_PAD_PC02].FUNC_CTL = IOC_PC02_FUNC_CTL_USB0_OC;
+    }
 }
 
 void  init_can_pins(MCAN_Type *ptr)
@@ -323,4 +338,47 @@ void init_tamper_pins(void)
 
     HPM_BIOC->PAD[IOC_PAD_PZ04].PAD_CTL &= ~IOC_PAD_PAD_CTL_OD_MASK;
     HPM_BIOC->PAD[IOC_PAD_PZ05].PAD_CTL &= ~IOC_PAD_PAD_CTL_OD_MASK;
+}
+
+/* for uart_rx_line_status case, need to a gpio pin to sent break signal */
+void init_uart_break_signal_pin(void)
+{
+    HPM_IOC->PAD[IOC_PAD_PB02].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+    HPM_IOC->PAD[IOC_PAD_PB02].FUNC_CTL = IOC_PB02_FUNC_CTL_GPIO_B_02;
+}
+
+void init_gptmr_channel_pin(GPTMR_Type *ptr, uint32_t channel, bool as_comp)
+{
+    if (ptr == HPM_GPTMR1) {
+        if (as_comp) {
+            switch (channel) {
+            case 0:
+                HPM_IOC->PAD[IOC_PAD_PA25].FUNC_CTL = IOC_PA25_FUNC_CTL_GPTMR1_COMP_0;
+                break;
+            case 1:
+                HPM_IOC->PAD[IOC_PAD_PA26].FUNC_CTL = IOC_PA26_FUNC_CTL_GPTMR1_COMP_1;
+                break;
+            case 2:
+                HPM_IOC->PAD[IOC_PAD_PA20].FUNC_CTL = IOC_PA20_FUNC_CTL_TRGM1_P_00;
+                trgm_output_t trgm1_io_config0 = {0};
+                trgm1_io_config0.invert = 0;
+                trgm1_io_config0.type = trgm_output_same_as_input;
+                trgm1_io_config0.input = HPM_TRGM1_INPUT_SRC_GPTMR1_OUT2;
+                trgm_output_config(HPM_TRGM1, HPM_TRGM1_OUTPUT_SRC_TRGM1_P0, &trgm1_io_config0);
+                trgm_enable_io_output(HPM_TRGM1, 1 << 0);
+                break;
+            default:
+                break;
+            }
+        } else {
+            if (channel == 0) {
+                HPM_IOC->PAD[IOC_PAD_PA23].FUNC_CTL = IOC_PA23_FUNC_CTL_GPTMR1_CAPT_0;
+            }
+        }
+    }
+}
+
+void init_clk_ref_pins(void)
+{
+    HPM_IOC->PAD[IOC_PAD_PA14].FUNC_CTL = IOC_PA14_FUNC_CTL_SOC_REF0;
 }

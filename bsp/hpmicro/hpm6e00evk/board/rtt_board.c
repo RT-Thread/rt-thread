@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 HPMicro
+ * Copyright (c) 2021-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
@@ -8,6 +8,7 @@
 #include "rtt_board.h"
 #include "hpm_uart_drv.h"
 #include "hpm_gpio_drv.h"
+#include "hpm_mchtmr_drv.h"
 #include "hpm_pmp_drv.h"
 #include "assert.h"
 #include "hpm_clock_drv.h"
@@ -60,6 +61,7 @@ void rtt_board_init(void)
 
 void app_init_led_pins(void)
 {
+    board_init_led_pins();
     gpio_set_pin_output(APP_LED0_GPIO_CTRL, APP_LED0_GPIO_INDEX, APP_LED0_GPIO_PIN);
     gpio_set_pin_output(APP_LED1_GPIO_CTRL, APP_LED1_GPIO_INDEX, APP_LED1_GPIO_PIN);
     gpio_set_pin_output(APP_LED2_GPIO_CTRL, APP_LED2_GPIO_INDEX, APP_LED2_GPIO_PIN);
@@ -98,7 +100,7 @@ void rt_hw_console_output(const char *str)
 
 void app_init_usb_pins(void)
 {
-    board_init_usb_pins();
+    board_init_usb(HPM_USB0);
 }
 
 ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
@@ -110,7 +112,7 @@ ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
 
 void rt_hw_cpu_reset(void)
 {
-    HPM_PPOR->RESET_ENABLE = (1UL << 31);
+    HPM_PPOR->RESET_ENABLE |= (1UL << 31);
     HPM_PPOR->SOFTWARE_RESET = 1000U;
     while(1) {
 
@@ -128,4 +130,84 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
         l1c_dc_invalidate((uint32_t)addr, size);
     }
 }
+#endif
+
+uint32_t rtt_board_init_adc16_clock(void *ptr, bool clk_src_ahb)  /* motor system should be use clk_adc_src_ahb0 */
+{
+    uint32_t freq = 0;
+
+    if (ptr == (void *)HPM_ADC0) {
+        clock_add_to_group(clock_adc0, 0);
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc0, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from ANA (@200MHz by default)*/
+            clock_set_adc_source(clock_adc0, clk_adc_src_ana0);
+            clock_set_source_divider(clock_ana0, clk_src_pll1_clk0, 4U);
+        }
+        clock_add_to_group(clock_adc0, 0);
+        freq = clock_get_frequency(clock_adc0);
+    } else if (ptr == (void *)HPM_ADC1) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc1, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from ANA (@200MHz by default)*/
+            clock_set_adc_source(clock_adc1, clk_adc_src_ana1);
+            clock_set_source_divider(clock_ana0, clk_src_pll1_clk0, 4U);
+        }
+        clock_add_to_group(clock_adc1, 0);
+        freq = clock_get_frequency(clock_adc1);
+    } else if (ptr == (void *)HPM_ADC2) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc2, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from ANA (@200MHz by default)*/
+            clock_set_adc_source(clock_adc2, clk_adc_src_ana2);
+            clock_set_source_divider(clock_ana0, clk_src_pll1_clk0, 4U);
+        }
+        clock_add_to_group(clock_adc2, 0);
+        freq = clock_get_frequency(clock_adc2);
+    } else if (ptr == (void *)HPM_ADC3) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc3, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from ANA (@200MHz by default)*/
+            clock_set_adc_source(clock_adc3, clk_adc_src_ana3);
+            clock_set_source_divider(clock_ana0, clk_src_pll1_clk0, 4U);
+        }
+        clock_add_to_group(clock_adc3, 0);
+        freq = clock_get_frequency(clock_adc3);
+    }
+
+    return freq;
+}
+
+uint32_t rtt_board_init_pwm_clock(PWMV2_Type *ptr)
+{
+    uint32_t freq = 0;
+    if (ptr == HPM_PWM0) {
+        clock_add_to_group(clock_pwm0, 0);
+        freq = clock_get_frequency(clock_pwm0);
+    } else if (ptr == HPM_PWM1) {
+        clock_add_to_group(clock_pwm1, 0);
+        freq = clock_get_frequency(clock_pwm1);
+    } else if (ptr == HPM_PWM2) {
+        clock_add_to_group(clock_pwm2, 0);
+        freq = clock_get_frequency(clock_pwm2);
+    } else if (ptr == HPM_PWM3) {
+        clock_add_to_group(clock_pwm3, 0);
+        freq = clock_get_frequency(clock_pwm3);
+    } else {
+
+    }
+    return freq;
+}
+
+#ifdef CONFIG_CHERRYUSB_CUSTOM_IRQ_HANDLER
+extern void hpm_isr_usb0(void);
+RTT_DECLARE_EXT_ISR_M(IRQn_USB0, hpm_isr_usb0)
 #endif

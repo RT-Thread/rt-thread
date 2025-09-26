@@ -198,7 +198,7 @@ void rt_wqueue_wakeup_all(rt_wqueue_t *queue, void *key)
  */
 static int _rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec, int suspend_flag)
 {
-    int tick;
+    rt_tick_t tick;
     rt_thread_t tid = rt_thread_self();
     rt_timer_t  tmr = &(tid->thread_timer);
     struct rt_wqueue_node __wait;
@@ -241,7 +241,7 @@ static int _rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec, int susp
     rt_list_insert_before(&(queue->waiting_list), &(__wait.list));
 
     /* start timer */
-    if (tick != RT_WAITING_FOREVER)
+    if (tick != (rt_tick_t)RT_WAITING_FOREVER)
     {
         rt_timer_control(tmr,
                          RT_TIMER_CTRL_SET_TIME,
