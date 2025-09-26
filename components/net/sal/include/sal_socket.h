@@ -14,6 +14,11 @@
 #include <stddef.h>
 #include <arpa/inet.h>
 
+#include "sal_low_lvl.h"
+#include "sal_msg.h"
+#include "sal_netdb.h"
+#include "sal_tls.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -111,6 +116,21 @@ typedef uint16_t in_port_t;
 #define IPPROTO_ICMPV6  58
 #define IPPROTO_UDPLITE 136
 #define IPPROTO_RAW     255
+
+#define VALID_PROTOCOL(protocol) ((protocol) >= 0 && (protocol) <= IPPROTO_RAW)
+#define VALID_COMBO(domain, type, protocol) \
+    ( \
+        (((domain) == AF_INET || (domain) == AF_INET6) && \
+         ( \
+             ((type) == SOCK_STREAM && ((protocol) == 0 || (protocol) == IPPROTO_TCP)) || \
+             ((type) == SOCK_DGRAM && ((protocol) == 0 || (protocol) == IPPROTO_UDP)) || \
+             ((type) == SOCK_RAW && ((protocol) == IPPROTO_RAW)) || \
+             ((type) == SOCK_STREAM && ((protocol) == PROTOCOL_TLS || (protocol) == PROTOCOL_DTLS)) /* TLS support */ \
+         )) || \
+        ((domain) == AF_UNIX && (type) == SOCK_STREAM && (protocol) == 0) || \
+        ((domain) == AF_NETLINK && (type) == SOCK_RAW && (protocol) == 0) \
+        /* Add more combos for AF_CAN, AF_AT, AF_WIZ if needed */ \
+    )
 
 /* Flags we can use with send and recv */
 #define MSG_PEEK        0x01    /* Peeks at an incoming message */

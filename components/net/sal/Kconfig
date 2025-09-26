@@ -12,6 +12,10 @@ if RT_USING_SAL
         help
             The ability that check internet status is provided by RT-Thread.
 
+    config SOCKET_TABLE_STEP_LEN
+        int "Configure socket table step length"
+        default 4
+
     menu "Docking with protocol stacks"
         config SAL_USING_LWIP
             bool "Docking with lwIP stack"
