@@ -29,6 +29,7 @@ if PLATFORM == 'gcc':
     PREFIX = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
     CC = PREFIX + 'gcc'
     CXX = PREFIX + 'g++'
+    CPP = PREFIX + 'cpp'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -37,8 +38,9 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=armv8-a -mtune=cortex-a55' #  -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp
-    CFLAGS = DEVICE + ' -Wall'
+    DEVICE = ' -march=armv8-a -mtune=cortex-a55 -fno-omit-frame-pointer'
+    CPPFLAGS = ' -E -P -x assembler-with-cpp'
+    CFLAGS = DEVICE + ' -Wall -Wno-cpp -D_POSIX_SOURCE'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LINK_SCRIPT = 'link.lds'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
@@ -47,14 +49,13 @@ if PLATFORM == 'gcc':
     CPATH = ''
     LPATH = ''
 
-    # generate debug info in all cases
-    AFLAGS += ' -gdwarf-2'
-    CFLAGS += ' -g -gdwarf-2'
-
     if BUILD == 'debug':
         CFLAGS += ' -O0'
+        CPPFLAGS += ' -O0 -ggdb -gdwarf-2'
     else:
         CFLAGS += ' -O2'
+        CPPFLAGS += ' -O2 -ggdb'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
                   SIZE + ' $TARGET \n'
+    DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > disasm.txt\n'

@@ -8,6 +8,10 @@
 
 #include "fsl_lpuart.h"
 
+#include <rtthread.h>
+
+#define memset rt_memset
+
 /*
  * $Coverage Justification Reference$
  *
@@ -656,6 +660,7 @@ void LPUART_GetDefaultConfig(lpuart_config_t *config)
 {
     assert(NULL != config);
 
+    rt_hw_console_output("LPUART_GetDefaultConfig start!\n");
     /* Initializes the configure structure to zero. */
     (void)memset(config, 0, sizeof(*config));
 
@@ -683,6 +688,7 @@ void LPUART_GetDefaultConfig(lpuart_config_t *config)
 #if defined(FSL_FEATURE_LPUART_HAS_CTRL_SWAP) && FSL_FEATURE_LPUART_HAS_CTRL_SWAP
     config->swapTxdRxd   = false;
 #endif
+    rt_hw_console_output("LPUART_GetDefaultConfig done!\n");
 }
 
 /*!
