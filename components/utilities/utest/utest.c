@@ -82,7 +82,7 @@ static void utest_build_options(void)
 
     if (tc_num >= RT_UTEST_MAX_OPTIONS - 1)
     {
-        LOG_W("Too many test cases (%d), only first %d will have completion", tc_num, RT_UTEST_MAX_OPTIONS - 1);
+        LOG_W("The current number of test cases is (%d). Please expand RT_UTEST_MAX_OPTIONS's size to at least (%d).", tc_num, tc_num + 1);
     }
 
     rt_memset(utest_testcase_run_msh_options, 0, sizeof(utest_testcase_run_msh_options));
