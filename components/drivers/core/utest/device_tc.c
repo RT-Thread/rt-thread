@@ -56,4 +56,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(test_rt_device_find);
 }
-UTEST_TC_EXPORT(testcase, "core.device_find", utest_tc_init, utest_tc_cleanup, 5);
+UTEST_TC_EXPORT(testcase, "components.drivers.core.device_find", utest_tc_init, utest_tc_cleanup, 5);
