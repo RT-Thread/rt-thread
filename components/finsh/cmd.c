@@ -201,7 +201,7 @@ long list_thread(void)
             for (i = 0; i < find_arg.nr_out; i++)
             {
                 struct rt_object *obj;
-                struct rt_thread thread_info, *thread;
+                struct rt_thread *thread;
 
                 obj = rt_list_entry(obj_list[i], struct rt_object, list);
                 level = rt_spin_lock_irqsave(&info->spinlock);
@@ -212,7 +212,6 @@ long list_thread(void)
                     continue;
                 }
                 /* copy info */
-                rt_memcpy(&thread_info, obj, sizeof thread_info);
                 rt_spin_unlock_irqrestore(&info->spinlock, level);
 
                 thread = (struct rt_thread *)obj;

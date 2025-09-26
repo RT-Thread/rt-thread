@@ -61,6 +61,9 @@ jobs:
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "lwip/lwip.cfg"
 
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "netdev/netdev.cfg"
+
     env:
       TEST_QEMU_ARCH: ${{ matrix.platform.QEMU_ARCH }}
       TEST_QEMU_MACHINE: ${{ matrix.platform.QEMU_MACHINE }}
