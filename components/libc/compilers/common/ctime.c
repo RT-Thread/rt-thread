@@ -700,7 +700,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     if (err != RT_EOK)
         return err;
 
-    int64_t ns = rqtp->tv_nsec - ts.tv_nsec + (rqtp->tv_sec - ts.tv_sec) * NANOSECOND_PER_SECOND;
+    rt_int64_t ns = rqtp->tv_nsec - ts.tv_nsec + (rt_int64_t)(rqtp->tv_sec - ts.tv_sec) * NANOSECOND_PER_SECOND;
     if (ns <= 0)
         return 0;
 
@@ -1222,7 +1222,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     if (err != RT_EOK)
         return err;
 
-    int64_t ns = value->it_value.tv_nsec - ts.tv_nsec + (value->it_value.tv_sec - ts.tv_sec) * NANOSECOND_PER_SECOND;
+    rt_int64_t ns = value->it_value.tv_nsec - ts.tv_nsec + (rt_int64_t)(value->it_value.tv_sec - ts.tv_sec) * NANOSECOND_PER_SECOND;
 
     if (ns <= 0)
         return 0;
