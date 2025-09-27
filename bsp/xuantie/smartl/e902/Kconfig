@@ -1,10 +1,27 @@
 mainmenu "RT-Thread Configuration"
 
-BSP_DIR := .
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
 
-RTT_DIR := ../../../..
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "rt-thread"
 
-PKGS_DIR := packages
+# you can change the RTT_ROOT default "rt-thread"
+# example : default "F:/git_repositories/rt-thread"
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+config ENV_DIR
+    string
+    option env="ENV_ROOT"
+    default "/"
 
 config XUANTIAN_SMARTL_E902
     bool
@@ -13,6 +30,6 @@ config XUANTIAN_SMARTL_E902
     select RT_USING_USER_MAIN
     default y
 
-source "$(RTT_DIR)/Kconfig"
-osource "$PKGS_DIR/Kconfig"
-rsource "board/Kconfig"
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "$BSP_DIR/board/Kconfig"
