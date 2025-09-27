@@ -6,13 +6,13 @@ set RTT_ENV_ROOT=%cd%
 popd
 
 :: Download from:
-:: https://download.rt-thread.org/download/rt-smart/toolchains/riscv64-linux-musleabi_for_i686-w64-mingw32_latest.zip
+:: https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v12.3.0-2/xpack-riscv-none-elf-gcc-12.3.0-2-win32-x64.zip
 :: Extract as:
-:: C:\env-windows\tools\gnu_gcc\riscv64-linux-musleabi_for_i686-w64-mingw32
+:: C:\env-windows\tools\gnu_gcc\xpack-riscv-none-elf-gcc-12.3.0-2
 
 @set RTT_CC=gcc
-@set RTT_EXEC_PATH=%RTT_ENV_ROOT%\tools\gnu_gcc\riscv64-linux-musleabi_for_i686-w64-mingw32\bin
-@set RTT_CC_PREFIX=riscv64-linux-musleabi-
+@set RTT_EXEC_PATH=%RTT_ENV_ROOT%\tools\gnu_gcc\xpack-riscv-none-elf-gcc-12.3.0-2\bin
+@set RTT_CC_PREFIX=riscv-none-elf-
 
 @set PATH=%RTT_EXEC_PATH%;%RTT_ENV_ROOT%\.venv\Scripts;%_OLD_VIRTUAL_PATH%
 
