@@ -139,7 +139,7 @@ static rt_err_t wm_rtc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = wm_get_timestamp();
+        *(time_t *)args = wm_get_timestamp();
         break;
     case RT_DEVICE_CTRL_RTC_SET_TIME:
         wm_set_timestamp(*(time_t *)args);

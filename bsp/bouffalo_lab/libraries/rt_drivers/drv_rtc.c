@@ -47,11 +47,11 @@ static rt_err_t _rtc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = rtc_time + BFLB_RTC_TIME2SEC(bflb_rtc_get_time(bflb_rtc));
+        *(time_t *)args = rtc_time + BFLB_RTC_TIME2SEC(bflb_rtc_get_time(bflb_rtc));
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
-        rtc_time = *(rt_uint32_t *)args;
+        rtc_time = *(time_t *)args;
         bflb_rtc_set_time(bflb_rtc, 0);
         break;
     }
