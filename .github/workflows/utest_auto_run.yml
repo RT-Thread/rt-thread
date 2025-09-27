@@ -31,37 +31,84 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-          - { UTEST: "A9-rtsmart",    RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
-          - { UTEST: "A9-smp",        RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"smp" }
+          - &a9_platform
+            UTEST: "A9"
+            RTT_BSP: "bsp/qemu-vexpress-a9"
+            QEMU_ARCH: "arm"
+            QEMU_MACHINE: "vexpress-a9"
+            SD_FILE: "sd.bin"
+            KERNEL: "standard"
+            SMP_RUN: ""
 
-          - { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
-          - { UTEST: "RISCV-rtsmart", RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "rtsmart",  "SMP_RUN":"" }
-          # - { UTEST: "RISCV-smp",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"smp" }
-          - { UTEST: "XUANTIE-rtsmart",       RTT_BSP: "bsp/xuantie/virt64/c906",   QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+          - UTEST: "A9-rtsmart"
+            RTT_BSP: "bsp/qemu-vexpress-a9"
+            QEMU_ARCH: "arm"
+            QEMU_MACHINE: "vexpress-a9"
+            SD_FILE: "sd.bin"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
 
-          - { UTEST: "AARCH64",       RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"" }
-          - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
-          # - { UTEST: "AARCH64-smp",       RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"smp" }
+          - UTEST: "A9-smp"
+            RTT_BSP: "bsp/qemu-vexpress-a9"
+            QEMU_ARCH: "arm"
+            QEMU_MACHINE: "vexpress-a9"
+            SD_FILE: "sd.bin"
+            KERNEL: "standard"
+            SMP_RUN: "smp"
+
+          - UTEST: "RISCV"
+            RTT_BSP: "bsp/qemu-virt64-riscv"
+            QEMU_ARCH: "riscv64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "None"
+            KERNEL: "standard"
+            SMP_RUN: ""
+
+          - UTEST: "RISCV-rtsmart"
+            RTT_BSP: "bsp/qemu-virt64-riscv"
+            QEMU_ARCH: "riscv64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "None"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
+
+          - UTEST: "XUANTIE-rtsmart"
+            RTT_BSP: "bsp/xuantie/virt64/c906"
+            QEMU_ARCH: "riscv64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "sd.bin"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
+
+          - UTEST: "AARCH64"
+            RTT_BSP: "bsp/qemu-virt64-aarch64"
+            QEMU_ARCH: "aarch64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "sd.bin"
+            KERNEL: "standard"
+            SMP_RUN: ""
+
+          - UTEST: "AARCH64-rtsmart"
+            RTT_BSP: "bsp/qemu-virt64-aarch64"
+            QEMU_ARCH: "aarch64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "sd.bin"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
 
         config_file:
           - "default.cfg"
-
         include:
           # only run on qemu-vexpress-a9
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+          - platform: *a9_platform
             config_file: "kernel/object.cfg"
-
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+          - platform: *a9_platform
             config_file: "dfs/dfs.cfg"
-
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+          - platform: *a9_platform
             config_file: "cpp11/cpp11.cfg"
-
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+          - platform: *a9_platform
             config_file: "lwip/lwip.cfg"
-
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+          - platform: *a9_platform
             config_file: "netdev/netdev.cfg"
 
     env:
