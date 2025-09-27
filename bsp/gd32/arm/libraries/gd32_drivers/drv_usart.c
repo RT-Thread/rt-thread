@@ -554,7 +554,6 @@ static const struct gd32_uart uart_obj[] = {
         GPIOC, GPIO_AF_8, GPIO_PIN_6,           /* tx port, tx alternate, tx pin */
         GPIOC, GPIO_AF_8, GPIO_PIN_7,           /* rx port, rx alternate, rx pin */
 #elif defined (SOC_SERIES_GD32H7xx)
-        GPIOC, GPIO_AF_7, GPIO_PIN_6,           // tx port, tx alternate, tx pin
         GPIOC, GPIO_AF_7, GPIO_PIN_6,           /* tx port, tx alternate, tx pin */
         GPIOC, GPIO_AF_7, GPIO_PIN_7,           /* rx port, rx alternate, rx pin */
 #elif defined SOC_SERIES_GD32E50x
@@ -602,8 +601,8 @@ static const struct gd32_uart uart_obj[] = {
         UART7_IRQn,                            /* uart iqrn */
         RCU_UART7, RCU_GPIOE, RCU_GPIOE,       /* periph clock, tx gpio clock, rt gpio clock */
 #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32H7xx
-        GPIOE, GPIO_AF_8, GPIO_PIN_0,          /* tx port, tx alternate, tx pin */
-        GPIOE, GPIO_AF_8, GPIO_PIN_1,          /* rx port, rx alternate, rx pin */
+        GPIOE, GPIO_AF_8, GPIO_PIN_1,          /* tx port, tx alternate, tx pin */
+        GPIOE, GPIO_AF_8, GPIO_PIN_0,          /* rx port, rx alternate, rx pin */
 #else
         GPIOE, GPIO_PIN_0,                     /* tx port, tx pin */
         GPIOE, GPIO_PIN_1,                     /* rx port, rx pin */
