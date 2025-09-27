@@ -137,11 +137,11 @@ static rt_err_t rt_gd32_rtc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = get_rtc_timestamp();
+        *(time_t *)args = get_rtc_timestamp();
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if (set_rtc_timestamp(*(rt_uint32_t *)args))
+        if (set_rtc_timestamp(*(time_t *)args))
         {
             result = -RT_ERROR;
         }

@@ -85,13 +85,13 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = rtc_time + RTC_CounterGet();
+        *(time_t *)args = rtc_time + RTC_CounterGet();
         rtc_debug("RTC: get rtc_time %x + %x\n", rtc_time, RTC_CounterGet());
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-        rtc_time = *(rt_uint32_t *)args;
+        rtc_time = *(time_t *)args;
         rtc_debug("RTC: set rtc_time %x\n", rtc_time);
 
         /* Reset counter */
