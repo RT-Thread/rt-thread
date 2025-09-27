@@ -10,16 +10,15 @@
 
 #include "ktime.h"
 
-#define __KTIME_MUL ((1000ULL * 1000 * 1000) / RT_TICK_PER_SECOND)
-
 rt_weak rt_err_t rt_ktime_boottime_get_us(struct timeval *tv)
 {
     RT_ASSERT(tv != RT_NULL);
 
-    rt_uint64_t ns = (rt_ktime_cputimer_getcnt() * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
+    rt_tick_t cnt = rt_ktime_cputimer_getcnt();
+    rt_uint32_t freq = rt_ktime_cputimer_getfrq();
 
-    tv->tv_sec  = ns / (1000ULL * 1000 * 1000);
-    tv->tv_usec = (ns % (1000ULL * 1000 * 1000)) / 1000;
+    tv->tv_sec = (time_t)(cnt / freq);
+    tv->tv_usec = rt_muldiv_u32((rt_uint32_t)(cnt % freq), MICROSECOND_PER_SECOND, freq, NULL);
 
     return RT_EOK;
 }
@@ -28,9 +27,10 @@ rt_weak rt_err_t rt_ktime_boottime_get_s(time_t *t)
 {
     RT_ASSERT(t != RT_NULL);
 
-    rt_uint64_t ns = (rt_ktime_cputimer_getcnt() * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
+    rt_tick_t cnt = rt_ktime_cputimer_getcnt();
+    rt_uint32_t freq = rt_ktime_cputimer_getfrq();
 
-    *t = ns / (1000ULL * 1000 * 1000);
+    *t = (time_t)(cnt / freq);
 
     return RT_EOK;
 }
@@ -39,10 +39,11 @@ rt_weak rt_err_t rt_ktime_boottime_get_ns(struct timespec *ts)
 {
     RT_ASSERT(ts != RT_NULL);
 
-    rt_uint64_t ns = (rt_ktime_cputimer_getcnt() * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
+    rt_tick_t cnt = rt_ktime_cputimer_getcnt();
+    rt_uint32_t freq = rt_ktime_cputimer_getfrq();
 
-    ts->tv_sec  = ns / (1000ULL * 1000 * 1000);
-    ts->tv_nsec = ns % (1000ULL * 1000 * 1000);
+    ts->tv_sec = (time_t)(cnt / freq);
+    ts->tv_nsec = rt_muldiv_u32((rt_uint32_t)(cnt % freq), NANOSECOND_PER_SECOND, freq, NULL);
 
     return RT_EOK;
 }
