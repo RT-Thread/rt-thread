@@ -32,7 +32,6 @@ void Error_Handler(void)
 void SystemClock_Config(void)
 {
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-    NVIC_SetPriority(SysTick_IRQn, 0);
 }
 
 /**
@@ -64,6 +63,12 @@ void rt_hw_board_init()
     /* Set the Vector Table base location at 0x08000000 */
     SCB->VTOR  = (0x08000000 & NVIC_VTOR_MASK);
 #endif
+
+    /* Enable IChace */
+    rt_hw_cpu_icache_enable();
+
+    /* Enable DChace */
+    rt_hw_cpu_dcache_enable();
 
     SystemClock_Config();
 
