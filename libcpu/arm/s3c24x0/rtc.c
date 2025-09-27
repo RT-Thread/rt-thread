@@ -31,7 +31,7 @@ void rt_hw_rtc_get(struct tm *ti)
     rt_uint8_t sec, min, hour, mday, wday, mon, year;
 
     /* enable access to RTC registers */
-    RTCCON |= RTC_ENABLE;
+    RTC_ENABLE;
 
     /* read RTC registers */
     do
