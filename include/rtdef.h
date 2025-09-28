@@ -267,9 +267,8 @@ typedef int (*init_fn_t)(void);
 
 /**
  * @addtogroup group_object_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * kernel object macros
@@ -512,7 +511,7 @@ struct rt_object_information
 #define RT_OBJECT_HOOKLIST_CALL(name, argv)
 #endif /* RT_USING_HOOKLIST */
 
-/**@}*/
+/** @} group_object_management */
 
 /**
  * @addtogroup group_clock_management

@@ -49,11 +49,6 @@ extern "C" {
 int entry(void);
 #endif
 
-/**
- * @addtogroup group_object_management
- * @{
- */
-
 /*
  * kernel object interface
  */
@@ -86,8 +81,6 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object *object));
 void rt_object_take_sethook(void (*hook)(struct rt_object *object));
 void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 #endif /* RT_USING_HOOK */
-
-/**@}*/
 
 /**
  * @addtogroup group_clock_management
