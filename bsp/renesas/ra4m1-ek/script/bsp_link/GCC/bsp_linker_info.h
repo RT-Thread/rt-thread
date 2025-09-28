@@ -70,7 +70,7 @@ extern bsp_init_info_t const g_init_info;
 /***********************************************************************************************************************
  * Exported global functions (to be accessed by other files)
  **********************************************************************************************************************/
-#endif   // BSP_LINKER_H
+#endif   /* BSP_LINKER_H*/
 #ifdef BSP_LINKER_C
 /***********************************************************************************************************************
  * Objects allocated by bsp_linker.c
@@ -105,6 +105,6 @@ const bsp_init_info_t g_init_info =
     .p_copy_list = copy_list
 };
 
-#endif   // BSP_LINKER_C
+#endif   /* BSP_LINKER_C*/
 
 /* UNCRUSTIFY-ON */

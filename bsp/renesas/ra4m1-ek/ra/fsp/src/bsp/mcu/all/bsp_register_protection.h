@@ -52,7 +52,7 @@ typedef enum e_bsp_reg_protect
  **********************************************************************************************************************/
 
 /* Public functions defined in bsp.h */
-void bsp_register_protect_open(void);  // Used internally by BSP
+void bsp_register_protect_open(void);  /* Used internally by BSP*/
 
 /** Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */
 FSP_FOOTER

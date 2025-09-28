@@ -1556,7 +1556,7 @@ typedef struct
 {
   __IM  uint32_t DCADCRR;               /*!< Offset: 0x000 (R/W)  Direct Cache Access Data Cache Read Register */
   __IM  uint32_t DCAICRR;               /*!< Offset: 0x004 (R/W)  Direct Cache Access Instruction Cache Read Register */
-        uint32_t RESERVED1[2];          
+        uint32_t RESERVED1[2];
   __IOM uint32_t DCADCLR;               /*!< Offset: 0x010 (R/W)  Direct Cache Access Data Cache Location Registers */
   __IOM uint32_t DCAICLR;               /*!< Offset: 0x014 (R/W)  Direct Cache Access Instruction Cache Location Registers */
 } DCAR_Type;
@@ -1737,7 +1737,7 @@ typedef struct
   __IOM uint32_t DEBR1;                  /*!< Offset: 0x014 (R/W)  Data Cache Error Bank Register 1 */
         uint32_t RESERVED1[2U];
   __IOM uint32_t TEBR0;                  /*!< Offset: 0x020 (R/W)  TCM Error Bank Register 0 */
-  __IM  uint32_t TEBRDATA0;              /*!< Offset: 0x024 (RO)   Storage for corrected data that is associated with an error.*/        
+  __IM  uint32_t TEBRDATA0;              /*!< Offset: 0x024 (RO)   Storage for corrected data that is associated with an error.*/
   __IOM uint32_t TEBR1;                  /*!< Offset: 0x028 (R/W)  TCM Error Bank Register 1 */
   __IM  uint32_t TEBRDATA1;              /*!< Offset: 0x02c (RO)   Storage for corrected data that is associated with an error.*/
 } ErrBnk_Type;
@@ -1900,7 +1900,7 @@ typedef struct
   __IOM uint32_t STLIDMPUSR;             /*!< Offset: 0x010 ( /W)  MPU Sample Register */
   __IM  uint32_t STLIMPUOR;              /*!< Offset: 0x014 (R/ )  MPU Region Hit Register */
   __IM  uint32_t STLDMPUOR;              /*!< Offset: 0x018 (R/ )  MPU Memory Attributes Register */
- 
+
 } STL_Type;
 
 /** \brief STL NVIC Pending Priority Tree Register Definitions */
@@ -1942,17 +1942,17 @@ typedef struct
 /** \brief STL MPU Region Hit Register Definitions */
 #define STL_STLIMPUOR_HITREGION_Pos         9U                                         /*!< STL STLIMPUOR: HITREGION Position */
 #define STL_STLIMPUOR_HITREGION_Msk        (0xFFUL << STL_STLIMPUOR_HITREGION_Pos)     /*!< STL STLIMPUOR: HITREGION Mask */
- 
+
 #define STL_STLIMPUOR_ATTR_Pos              0U                                         /*!< STL STLIMPUOR: ATTR Position */
 #define STL_STLIMPUOR_ATTR_Msk             (0x1FFUL /*<< STL_STLIMPUOR_ATTR_Pos*/)     /*!< STL STLIMPUOR: ATTR Mask */
- 
+
 /** \brief STL MPU Memory Attributes Register Definitions */
 #define STL_STLDMPUOR_HITREGION_Pos        9U                                         /*!< STL STLDMPUOR: HITREGION Position */
 #define STL_STLDMPUOR_HITREGION_Msk       (0xFFUL << STL_STLDMPUOR_HITREGION_Pos)     /*!< STL STLDMPUOR: HITREGION Mask */
- 
+
 #define STL_STLDMPUOR_ATTR_Pos             0U                                         /*!< STL STLDMPUOR: ATTR Position */
 #define STL_STLDMPUOR_ATTR_Msk            (0x1FFUL /*<< STL_STLDMPUOR_ATTR_Pos*/)     /*!< STL STLDMPUOR: ATTR Mask */
- 
+
 /*@}*/ /* end of group STL_Type */
 
 
@@ -3667,7 +3667,7 @@ typedef struct
 #define SCB_AIRCR_ENDIANESS_Pos            SCB_AIRCR_ENDIANNESS_Pos
 #define SCB_AIRCR_ENDIANESS_Msk            SCB_AIRCR_ENDIANNESS_Msk
 
-#endif // CMSIS_DISABLE_DEPRECATED
+#endif /* CMSIS_DISABLE_DEPRECATED*/
 
 /*@} */
 

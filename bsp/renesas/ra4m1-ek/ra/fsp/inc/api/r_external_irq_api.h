@@ -43,7 +43,7 @@ typedef struct st_external_irq_callback_args
 {
     /** Placeholder for user data. Set in @ref external_irq_api_t::open function in @ref external_irq_cfg_t. */
     void   * p_context;
-    uint32_t channel;                  ///< The physical hardware channel that caused the interrupt.
+    uint32_t channel;                  /*/< The physical hardware channel that caused the interrupt.*/
 } external_irq_callback_args_t;
 
 #ifndef BSP_OVERRIDE_EXTERNAL_IRQ_TRIGGER_T
@@ -51,11 +51,11 @@ typedef struct st_external_irq_callback_args
 /** Condition that will trigger an interrupt when detected. */
 typedef enum e_external_irq_trigger
 {
-    EXTERNAL_IRQ_TRIG_FALLING    = 0,  ///< Falling edge trigger
-    EXTERNAL_IRQ_TRIG_RISING     = 1,  ///< Rising edge trigger
-    EXTERNAL_IRQ_TRIG_BOTH_EDGE  = 2,  ///< Both edges trigger
-    EXTERNAL_IRQ_TRIG_LEVEL_LOW  = 3,  ///< Low level trigger
-    EXTERNAL_IRQ_TRIG_LEVEL_HIGH = 4   ///< High level trigger
+    EXTERNAL_IRQ_TRIG_FALLING    = 0,  /*/< Falling edge trigger*/
+    EXTERNAL_IRQ_TRIG_RISING     = 1,  /*/< Rising edge trigger*/
+    EXTERNAL_IRQ_TRIG_BOTH_EDGE  = 2,  /*/< Both edges trigger*/
+    EXTERNAL_IRQ_TRIG_LEVEL_LOW  = 3,  /*/< Low level trigger*/
+    EXTERNAL_IRQ_TRIG_LEVEL_HIGH = 4   /*/< High level trigger*/
 } external_irq_trigger_t;
 #endif
 
@@ -66,29 +66,29 @@ typedef enum e_external_irq_trigger
  */
 typedef enum e_external_irq_clock_source_div
 {
-    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_1  = 0, ///< Filter using clock source divided by 1
-    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_8  = 1, ///< Filter using clock source divided by 8
-    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_32 = 2, ///< Filter using clock source divided by 32
-    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_64 = 3, ///< Filter using clock source divided by 64
+    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_1  = 0, /*/< Filter using clock source divided by 1*/
+    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_8  = 1, /*/< Filter using clock source divided by 8*/
+    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_32 = 2, /*/< Filter using clock source divided by 32*/
+    EXTERNAL_IRQ_CLOCK_SOURCE_DIV_64 = 3, /*/< Filter using clock source divided by 64*/
 } external_irq_clock_source_div_t;
 #endif
 
 /** User configuration structure, used in open function */
 typedef struct st_external_irq_cfg
 {
-    uint8_t                         channel;          ///< Hardware channel used.
-    uint8_t                         ipl;              ///< Interrupt priority
-    IRQn_Type                       irq;              ///< Interrupt number assigned to this instance
-    external_irq_trigger_t          trigger;          ///< Trigger setting.
-    external_irq_clock_source_div_t clock_source_div; ///< Digital filter clock divisor setting.
-    bool filter_enable;                               ///< Digital filter enable/disable selection.
+    uint8_t                         channel;          /*/< Hardware channel used.*/
+    uint8_t                         ipl;              /*/< Interrupt priority*/
+    IRQn_Type                       irq;              /*/< Interrupt number assigned to this instance*/
+    external_irq_trigger_t          trigger;          /*/< Trigger setting.*/
+    external_irq_clock_source_div_t clock_source_div; /*/< Digital filter clock divisor setting.*/
+    bool filter_enable;                               /*/< Digital filter enable/disable selection.*/
 
     /** Callback provided external input trigger occurs. */
     void (* p_callback)(external_irq_callback_args_t * p_args);
 
     /** Placeholder for user data.  Passed to the user callback in @ref external_irq_callback_args_t. */
     void       * p_context;
-    void const * p_extend;             ///< External IRQ hardware dependent configuration.
+    void const * p_extend;             /*/< External IRQ hardware dependent configuration.*/
 } external_irq_cfg_t;
 
 /** External IRQ control block.  Allocate an instance specific control block to pass into the external IRQ API calls.
@@ -139,9 +139,9 @@ typedef struct st_external_irq_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_external_irq_instance
 {
-    external_irq_ctrl_t      * p_ctrl; ///< Pointer to the control structure for this instance
-    external_irq_cfg_t const * p_cfg;  ///< Pointer to the configuration structure for this instance
-    external_irq_api_t const * p_api;  ///< Pointer to the API structure for this instance
+    external_irq_ctrl_t      * p_ctrl; /*/< Pointer to the control structure for this instance*/
+    external_irq_cfg_t const * p_cfg;  /*/< Pointer to the configuration structure for this instance*/
+    external_irq_api_t const * p_api;  /*/< Pointer to the API structure for this instance*/
 } external_irq_instance_t;
 
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */

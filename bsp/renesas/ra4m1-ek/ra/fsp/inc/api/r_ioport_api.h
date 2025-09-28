@@ -40,22 +40,22 @@ FSP_HEADER
 #ifndef BSP_OVERRIDE_IOPORT_SIZE_T
 
 /** IO port type used with ports */
-typedef uint16_t ioport_size_t;        ///< IO port size
+typedef uint16_t ioport_size_t;        /*/< IO port size*/
 #endif
 
 /** Pin identifier and pin configuration value */
 typedef struct st_ioport_pin_cfg
 {
-    uint32_t          pin_cfg;         ///< Pin configuration - Use ioport_cfg_options_t parameters to configure
-    bsp_io_port_pin_t pin;             ///< Pin identifier
+    uint32_t          pin_cfg;         /*/< Pin configuration - Use ioport_cfg_options_t parameters to configure*/
+    bsp_io_port_pin_t pin;             /*/< Pin identifier*/
 } ioport_pin_cfg_t;
 
 /** Multiple pin configuration data for loading into registers by R_IOPORT_Open() */
 typedef struct st_ioport_cfg
 {
-    uint16_t                 number_of_pins; ///< Number of pins for which there is configuration data
-    ioport_pin_cfg_t const * p_pin_cfg_data; ///< Pin configuration data
-    const void             * p_extend;       ///< Pointer to hardware extend configuration
+    uint16_t                 number_of_pins; /*/< Number of pins for which there is configuration data*/
+    ioport_pin_cfg_t const * p_pin_cfg_data; /*/< Pin configuration data*/
+    const void             * p_extend;       /*/< Pointer to hardware extend configuration*/
 } ioport_cfg_t;
 
 /** IOPORT control block.  Allocate an instance specific control block to pass into the IOPORT API calls.
@@ -177,9 +177,9 @@ typedef struct st_ioport_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_ioport_instance
 {
-    ioport_ctrl_t      * p_ctrl;       ///< Pointer to the control structure for this instance
-    ioport_cfg_t const * p_cfg;        ///< Pointer to the configuration structure for this instance
-    ioport_api_t const * p_api;        ///< Pointer to the API structure for this instance
+    ioport_ctrl_t      * p_ctrl;       /*/< Pointer to the control structure for this instance*/
+    ioport_cfg_t const * p_cfg;        /*/< Pointer to the configuration structure for this instance*/
+    ioport_api_t const * p_api;        /*/< Pointer to the API structure for this instance*/
 } ioport_instance_t;
 
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */

@@ -31,7 +31,7 @@ FSP_HEADER
 /** Semaphore handle for IPC semaphores. */
 typedef struct st_bsp_ipc_semaphore_handle
 {
-    uint8_t semaphore_num;             ///< Semaphore number, controls which IPCSEMn register is used.
+    uint8_t semaphore_num;             /*/< Semaphore number, controls which IPCSEMn register is used.*/
 } bsp_ipc_semaphore_handle_t;
 
 /** IPC NMI callback type. */

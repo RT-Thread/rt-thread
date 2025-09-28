@@ -97,7 +97,7 @@ FSP_HEADER
  #define FSP_ASSERT(a)    {assert(a);}
 #else
  #define FSP_ASSERT(a)    FSP_ERROR_RETURN((a), FSP_ERR_ASSERTION)
-#endif                                 // ifndef FSP_ASSERT
+#endif                                 /* ifndef FSP_ASSERT*/
 
 /** All FSP error codes are returned using this macro. Calls ::FSP_ERROR_LOG function if condition "a" is false. Used
  * to identify runtime errors in FSP functions. */
@@ -118,7 +118,8 @@ FSP_HEADER
 /* Function-like macro used to wait for a condition to be met, most often used to wait for hardware register updates.
  * This macro can be redefined to add a timeout if necessary. */
 #ifndef FSP_HARDWARE_REGISTER_WAIT
- #define FSP_HARDWARE_REGISTER_WAIT(reg, required_value)    while (reg != required_value) { /* Wait. */}
+ #define FSP_HARDWARE_REGISTER_WAIT(reg, required_value)    while (reg != required_value)
+ { /* Wait. */}
 #endif
 
 #ifndef FSP_REGISTER_READ
@@ -289,9 +290,9 @@ __STATIC_INLINE uint32_t R_BSP_S_STYPE3_RegU32Read (uint32_t volatile const * p_
 /** Different warm start entry locations in the BSP. */
 typedef enum e_bsp_warm_start_event
 {
-    BSP_WARM_START_RESET = 0,          ///< Called almost immediately after reset. No C runtime environment, clocks, or IRQs.
-    BSP_WARM_START_POST_CLOCK,         ///< Called after clock initialization. No C runtime environment or IRQs.
-    BSP_WARM_START_POST_C              ///< Called after clocks and C runtime environment have been set up
+    BSP_WARM_START_RESET = 0,          /*/< Called almost immediately after reset. No C runtime environment, clocks, or IRQs.*/
+    BSP_WARM_START_POST_CLOCK,         /*/< Called after clock initialization. No C runtime environment or IRQs.*/
+    BSP_WARM_START_POST_C              /*/< Called after clocks and C runtime environment have been set up*/
 } bsp_warm_start_event_t;
 
 /* Private enum used in R_FSP_SystemClockHzGet.  Maps clock name to base bit in SCKDIVCR. */
@@ -306,25 +307,25 @@ typedef enum e_fsp_priv_clock
     FSP_PRIV_CLOCK_ICLK   = 24,
     FSP_PRIV_CLOCK_FCLK   = 28,
     FSP_PRIV_CLOCK_CPUCLK = 32,
-    FSP_PRIV_CLOCK_UNUSED = 255,       ///< Sentinel value for unused clock
+    FSP_PRIV_CLOCK_UNUSED = 255,       /*/< Sentinel value for unused clock*/
 } fsp_priv_clock_t;
 
 /* Private enum used in R_FSP_SciSpiClockHzGe.  Maps clock name to base bit in SCISPICKCR. */
 typedef enum e_fsp_priv_source_clock
 {
-    FSP_PRIV_CLOCK_HOCO     = 0,       ///< The high speed on chip oscillator
-    FSP_PRIV_CLOCK_MOCO     = 1,       ///< The middle speed on chip oscillator
-    FSP_PRIV_CLOCK_LOCO     = 2,       ///< The low speed on chip oscillator
-    FSP_PRIV_CLOCK_MAIN_OSC = 3,       ///< The main oscillator
-    FSP_PRIV_CLOCK_SUBCLOCK = 4,       ///< The subclock oscillator
-    FSP_PRIV_CLOCK_PLL      = 5,       ///< The PLL output
-    FSP_PRIV_CLOCK_PLL1P    = 5,       ///< The PLL1P output
-    FSP_PRIV_CLOCK_PLL2     = 6,       ///< The PLL2 output
-    FSP_PRIV_CLOCK_PLL2P    = 6,       ///< The PLL2P output
-    FSP_PRIV_CLOCK_PLL1Q    = 7,       ///< The PLL1Q output
-    FSP_PRIV_CLOCK_PLL1R    = 8,       ///< The PLL1R output
-    FSP_PRIV_CLOCK_PLL2Q    = 9,       ///< The PLL2Q output
-    FSP_PRIV_CLOCK_PLL2R    = 10,      ///< The PLL2R output
+    FSP_PRIV_CLOCK_HOCO     = 0,       /*/< The high speed on chip oscillator*/
+    FSP_PRIV_CLOCK_MOCO     = 1,       /*/< The middle speed on chip oscillator*/
+    FSP_PRIV_CLOCK_LOCO     = 2,       /*/< The low speed on chip oscillator*/
+    FSP_PRIV_CLOCK_MAIN_OSC = 3,       /*/< The main oscillator*/
+    FSP_PRIV_CLOCK_SUBCLOCK = 4,       /*/< The subclock oscillator*/
+    FSP_PRIV_CLOCK_PLL      = 5,       /*/< The PLL output*/
+    FSP_PRIV_CLOCK_PLL1P    = 5,       /*/< The PLL1P output*/
+    FSP_PRIV_CLOCK_PLL2     = 6,       /*/< The PLL2 output*/
+    FSP_PRIV_CLOCK_PLL2P    = 6,       /*/< The PLL2P output*/
+    FSP_PRIV_CLOCK_PLL1Q    = 7,       /*/< The PLL1Q output*/
+    FSP_PRIV_CLOCK_PLL1R    = 8,       /*/< The PLL1R output*/
+    FSP_PRIV_CLOCK_PLL2Q    = 9,       /*/< The PLL2Q output*/
+    FSP_PRIV_CLOCK_PLL2R    = 10,      /*/< The PLL2R output*/
 } fsp_priv_source_clock_t;
 
 typedef struct st_bsp_unique_id

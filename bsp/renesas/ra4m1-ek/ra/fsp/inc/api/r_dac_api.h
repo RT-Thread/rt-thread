@@ -41,21 +41,21 @@ FSP_HEADER
 /** DAC Open API data format settings. */
 typedef enum e_dac_data_format
 {
-    DAC_DATA_FORMAT_FLUSH_RIGHT = 0,   ///< LSB of data is flush to the right leaving the top 4 bits unused.
-    DAC_DATA_FORMAT_FLUSH_LEFT  = 1    ///< MSB of data is flush to the left leaving the bottom 4 bits unused.
+    DAC_DATA_FORMAT_FLUSH_RIGHT = 0,   /*/< LSB of data is flush to the right leaving the top 4 bits unused.*/
+    DAC_DATA_FORMAT_FLUSH_LEFT  = 1    /*/< MSB of data is flush to the left leaving the bottom 4 bits unused.*/
 } dac_data_format_t;
 
 /** DAC information structure to store various information for a DAC */
 typedef struct dac_info
 {
-    uint8_t bit_width;                 ///< Resolution of the DAC.
+    uint8_t bit_width;                 /*/< Resolution of the DAC.*/
 } dac_info_t;
 
 /** DAC Open API configuration parameter */
 typedef struct st_dac_cfg
 {
-    uint8_t      channel;              ///< ID associated with this DAC channel
-    bool         ad_da_synchronized;   ///< AD/DA synchronization
+    uint8_t      channel;              /*/< ID associated with this DAC channel*/
+    bool         ad_da_synchronized;   /*/< AD/DA synchronization*/
     void const * p_extend;
 } dac_cfg_t;
 
@@ -102,9 +102,9 @@ typedef struct st_dac_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_dac_instance
 {
-    dac_ctrl_t      * p_ctrl;          ///< Pointer to the control structure for this instance
-    dac_cfg_t const * p_cfg;           ///< Pointer to the configuration structure for this instance
-    dac_api_t const * p_api;           ///< Pointer to the API structure for this instance
+    dac_ctrl_t      * p_ctrl;          /*/< Pointer to the control structure for this instance*/
+    dac_cfg_t const * p_cfg;           /*/< Pointer to the configuration structure for this instance*/
+    dac_api_t const * p_api;           /*/< Pointer to the API structure for this instance*/
 } dac_instance_t;
 
 /*******************************************************************************************************************//**

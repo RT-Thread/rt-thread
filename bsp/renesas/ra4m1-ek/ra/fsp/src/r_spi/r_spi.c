@@ -34,31 +34,31 @@
                                          (TRANSFER_IRQ_END << TRANSFER_SETTINGS_IRQ_BITS) |                    \
                                          (TRANSFER_ADDR_MODE_FIXED << TRANSFER_SETTINGS_DEST_ADDR_BITS))
 
-#define SPI_CLK_N_DIV_MULTIPLIER        (512U)                              ///< Maximum divider for N=0
-#define SPI_CLK_MAX_DIV                 (4096U)                             ///< Maximum SPI CLK divider
-#define SPI_CLK_MIN_DIV                 (2U)                                ///< Minimum SPI CLK divider
+#define SPI_CLK_N_DIV_MULTIPLIER        (512U)                              /*/< Maximum divider for N=0*/
+#define SPI_CLK_MAX_DIV                 (4096U)                             /*/< Maximum SPI CLK divider*/
+#define SPI_CLK_MIN_DIV                 (2U)                                /*/< Minimum SPI CLK divider*/
 
 /* SPCMD0 Bit Field Definitions */
-#define R_SPI0_SPCMD0_CPHA_Pos          (0U)                                ///< Clock Phase setting offset
-#define R_SPI0_SPCMD0_CPHA_Msk          (1U << R_SPI0_SPCMD0_CPHA_Pos)      ///< Clock Phase setting mask
-#define R_SPI0_SPCMD0_CPOL_Pos          (1U)                                ///< Clock Polarity setting offset
-#define R_SPI0_SPCMD0_CPOL_Msk          (1U << R_SPI0_SPCMD0_CPOL_Pos)      ///< Clock Polarity setting mask
-#define R_SPI0_SPCMD0_BRDV_Pos          (2U)                                ///< Bitrate division setting offset
-#define R_SPI0_SPCMD0_BRDV_Msk          (0x0003U << R_SPI0_SPCMD0_BRDV_Pos) ///< Bitrate division setting mask
-#define R_SPI0_SPCMD0_SSLA_Pos          (4U)                                ///< SSL Signal selection setting offset
-#define R_SPI0_SPCMD0_SSLA_Msk          (0x0007U << R_SPI0_SPCMD0_SSLA_Pos) ///< SSL Signal selection setting mask
-#define R_SPI0_SPCMD0_SSLKP_Pos         (7U)                                ///< SSL Level Keep setting offset
-#define R_SPI0_SPCMD0_SSLKP_Msk         (1U << R_SPI0_SPCMD0_SSLKP_Pos)     ///< SSL Level Keep setting mask
-#define R_SPI0_SPCMD0_SPB_Pos           (8U)                                ///< Bit Width setting offset
-#define R_SPI0_SPCMD0_SPB_Msk           (0x000FU << R_SPI0_SPCMD0_SPB_Pos)  ///< Bit Width setting mask
-#define R_SPI0_SPCMD0_LSBF_Pos          (12U)                               ///< LSB/MSB setting offset
-#define R_SPI0_SPCMD0_LSBF_Msk          (1U << R_SPI0_SPCMD0_LSBF_Pos)      ///< LSB/MSB setting mask
-#define R_SPI0_SPCMD0_SPNDEN_Pos        (13)                                ///< SPI Next-Access Delay Enable setting offset
-#define R_SPI0_SPCMD0_SPNDEN_Msk        (1U << R_SPI0_SPCMD0_SPNDEN_Pos)    ///< SPI Next-Access Delay Enable setting mask
-#define R_SPI0_SPCMD0_SLNDEN_Pos        (14)                                ///< SSL Negation Delay Setting Enable setting offset
-#define R_SPI0_SPCMD0_SLNDEN_Msk        (1U << R_SPI0_SPCMD0_SLNDEN_Pos)    ///< SSL Negation Delay Setting Enable setting mask
-#define R_SPI0_SPCMD0_SCKDEN_Pos        (15)                                ///< RSPCK Delay Setting Enable setting offset
-#define R_SPI0_SPCMD0_SCKDEN_Msk        (1U << R_SPI0_SPCMD0_SCKDEN_Pos)    ///< RSPCK Delay Setting Enable setting mask
+#define R_SPI0_SPCMD0_CPHA_Pos          (0U)                                /*/< Clock Phase setting offset*/
+#define R_SPI0_SPCMD0_CPHA_Msk          (1U << R_SPI0_SPCMD0_CPHA_Pos)      /*/< Clock Phase setting mask*/
+#define R_SPI0_SPCMD0_CPOL_Pos          (1U)                                /*/< Clock Polarity setting offset*/
+#define R_SPI0_SPCMD0_CPOL_Msk          (1U << R_SPI0_SPCMD0_CPOL_Pos)      /*/< Clock Polarity setting mask*/
+#define R_SPI0_SPCMD0_BRDV_Pos          (2U)                                /*/< Bitrate division setting offset*/
+#define R_SPI0_SPCMD0_BRDV_Msk          (0x0003U << R_SPI0_SPCMD0_BRDV_Pos) /*/< Bitrate division setting mask*/
+#define R_SPI0_SPCMD0_SSLA_Pos          (4U)                                /*/< SSL Signal selection setting offset*/
+#define R_SPI0_SPCMD0_SSLA_Msk          (0x0007U << R_SPI0_SPCMD0_SSLA_Pos) /*/< SSL Signal selection setting mask*/
+#define R_SPI0_SPCMD0_SSLKP_Pos         (7U)                                /*/< SSL Level Keep setting offset*/
+#define R_SPI0_SPCMD0_SSLKP_Msk         (1U << R_SPI0_SPCMD0_SSLKP_Pos)     /*/< SSL Level Keep setting mask*/
+#define R_SPI0_SPCMD0_SPB_Pos           (8U)                                /*/< Bit Width setting offset*/
+#define R_SPI0_SPCMD0_SPB_Msk           (0x000FU << R_SPI0_SPCMD0_SPB_Pos)  /*/< Bit Width setting mask*/
+#define R_SPI0_SPCMD0_LSBF_Pos          (12U)                               /*/< LSB/MSB setting offset*/
+#define R_SPI0_SPCMD0_LSBF_Msk          (1U << R_SPI0_SPCMD0_LSBF_Pos)      /*/< LSB/MSB setting mask*/
+#define R_SPI0_SPCMD0_SPNDEN_Pos        (13)                                /*/< SPI Next-Access Delay Enable setting offset*/
+#define R_SPI0_SPCMD0_SPNDEN_Msk        (1U << R_SPI0_SPCMD0_SPNDEN_Pos)    /*/< SPI Next-Access Delay Enable setting mask*/
+#define R_SPI0_SPCMD0_SLNDEN_Pos        (14)                                /*/< SSL Negation Delay Setting Enable setting offset*/
+#define R_SPI0_SPCMD0_SLNDEN_Msk        (1U << R_SPI0_SPCMD0_SLNDEN_Pos)    /*/< SSL Negation Delay Setting Enable setting mask*/
+#define R_SPI0_SPCMD0_SCKDEN_Pos        (15)                                /*/< RSPCK Delay Setting Enable setting offset*/
+#define R_SPI0_SPCMD0_SCKDEN_Msk        (1U << R_SPI0_SPCMD0_SCKDEN_Pos)    /*/< RSPCK Delay Setting Enable setting mask*/
 
 /***********************************************************************************************************************
  * Typedef definitions
@@ -767,10 +767,10 @@ static void r_spi_start_transfer (spi_instance_ctrl_t * p_ctrl)
         p_ctrl->p_regs->SPCR_b.SPE = 1;
 
         /* Must call transmit to kick off transfer when transmitting from rxi ISR. */
-        r_spi_transmit(p_ctrl);        ///< First data immediately copied into the SPI shift register.
+        r_spi_transmit(p_ctrl);        /*/< First data immediately copied into the SPI shift register.*/
 
         /* Second transmit significantly improves slave mode performance. */
-        r_spi_transmit(p_ctrl);        ///< Second data copied into the SPI transmit buffer.
+        r_spi_transmit(p_ctrl);        /*/< Second data copied into the SPI transmit buffer.*/
 
         /* Must clear the txi IRQ status (The interrupt was handled here). */
         R_BSP_IrqEnable(p_ctrl->p_cfg->txi_irq);

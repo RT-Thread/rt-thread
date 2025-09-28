@@ -458,9 +458,9 @@ __IAR_FT uint32_t __get_SP_usr(void)
   uint32_t result;
   __ASM volatile(
     "MRS     %0, cpsr   \n"
-    "CPS     #0x1F      \n" // no effect in USR mode
+    "CPS     #0x1F      \n" /* no effect in USR mode*/
     "MOV     %1, sp     \n"
-    "MSR     cpsr_c, %2 \n" // no effect in USR mode
+    "MSR     cpsr_c, %2 \n" /* no effect in USR mode*/
     "ISB" :  "=r"(cpsr), "=r"(result) : "r"(cpsr) : "memory"
    );
   return result;
@@ -471,9 +471,9 @@ __IAR_FT void __set_SP_usr(uint32_t topOfProcStack)
   uint32_t cpsr;
   __ASM volatile(
     "MRS     %0, cpsr   \n"
-    "CPS     #0x1F      \n" // no effect in USR mode
+    "CPS     #0x1F      \n" /* no effect in USR mode*/
     "MOV     sp, %1     \n"
-    "MSR     cpsr_c, %2 \n" // no effect in USR mode
+    "MSR     cpsr_c, %2 \n" /* no effect in USR mode*/
     "ISB" : "=r"(cpsr) : "r" (topOfProcStack), "r"(cpsr) : "memory"
    );
 }
@@ -484,23 +484,23 @@ __STATIC_INLINE
 void __FPU_Enable(void)
 {
   __ASM volatile(
-    //Permit access to VFP/NEON, registers by modifying CPACR
+    /*Permit access to VFP/NEON, registers by modifying CPACR*/
     "        MRC     p15,0,R1,c1,c0,2  \n"
     "        ORR     R1,R1,#0x00F00000 \n"
     "        MCR     p15,0,R1,c1,c0,2  \n"
 
-    //Ensure that subsequent instructions occur in the context of VFP/NEON access permitted
+    /*Ensure that subsequent instructions occur in the context of VFP/NEON access permitted*/
     "        ISB                       \n"
 
-    //Enable VFP/NEON
+    /*Enable VFP/NEON*/
     "        VMRS    R1,FPEXC          \n"
     "        ORR     R1,R1,#0x40000000 \n"
     "        VMSR    FPEXC,R1          \n"
 
-    //Initialise VFP/NEON registers to 0
+    /*Initialise VFP/NEON registers to 0*/
     "        MOV     R2,#0             \n"
 
-    //Initialise D16 registers to 0
+    /*Initialise D16 registers to 0*/
     "        VMOV    D0, R2,R2         \n"
     "        VMOV    D1, R2,R2         \n"
     "        VMOV    D2, R2,R2         \n"
@@ -519,7 +519,7 @@ void __FPU_Enable(void)
     "        VMOV    D15,R2,R2         \n"
 
 #ifdef __ARM_ADVANCED_SIMD__
-    //Initialise D32 registers to 0
+    /*Initialise D32 registers to 0*/
     "        VMOV    D16,R2,R2         \n"
     "        VMOV    D17,R2,R2         \n"
     "        VMOV    D18,R2,R2         \n"
@@ -538,9 +538,9 @@ void __FPU_Enable(void)
     "        VMOV    D31,R2,R2         \n"
 #endif
 
-    //Initialise FPSCR to a known state
+    /*Initialise FPSCR to a known state*/
     "        VMRS    R1,FPSCR          \n"
-    "        MOV32   R2,#0x00086060    \n" //Mask off all bits that do not have to be preserved. Non-preserved bits can/should be zero.
+    "        MOV32   R2,#0x00086060    \n" /*Mask off all bits that do not have to be preserved. Non-preserved bits can/should be zero.*/
     "        AND     R1,R1,R2          \n"
     "        VMSR    FPSCR,R1          \n"
     : : : "cc", "r1", "r2"

@@ -60,10 +60,10 @@ typedef union st_fsp_pack_version
      */
     struct version_id_b_s
     {
-        uint8_t build;                 ///< Build version of FSP Pack
-        uint8_t patch;                 ///< Patch version of FSP Pack
-        uint8_t minor;                 ///< Minor version of FSP Pack
-        uint8_t major;                 ///< Major version of FSP Pack
+        uint8_t build;                 /*/< Build version of FSP Pack*/
+        uint8_t patch;                 /*/< Patch version of FSP Pack*/
+        uint8_t minor;                 /*/< Minor version of FSP Pack*/
+        uint8_t major;                 /*/< Major version of FSP Pack*/
     } version_id_b;
 } fsp_pack_version_t;
 

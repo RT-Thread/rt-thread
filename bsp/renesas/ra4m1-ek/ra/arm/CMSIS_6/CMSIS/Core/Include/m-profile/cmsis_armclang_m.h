@@ -70,7 +70,8 @@
 #endif
 
 
-__STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
+__STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop)
+{
   *((uint64_t *)stackTop) = __TZ_STACK_SEAL_VALUE;
   }
 #endif

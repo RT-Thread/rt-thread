@@ -132,7 +132,7 @@ void R_BSP_SoftwareDelay (uint32_t delay, bsp_delay_units_t units)
 
         /* We want to get the time in total nanoseconds but need to be conscious of overflowing 32 bits. We also do not want to do 64 bit */
         /* division as that pulls in a division library. */
-        ns_64bits = (uint64_t) total_us * (uint64_t) BSP_DELAY_NS_PER_US; // Convert to ns.
+        ns_64bits = (uint64_t) total_us * (uint64_t) BSP_DELAY_NS_PER_US; /* Convert to ns.*/
 
         /* Have we overflowed 32 bits? */
         if (ns_64bits <= UINT32_MAX)
@@ -145,7 +145,7 @@ void R_BSP_SoftwareDelay (uint32_t delay, bsp_delay_units_t units)
         {
             /* We did overflow. Try dividing down first. */
             total_us  = (total_us / (ns_per_cycle * BSP_DELAY_LOOP_CYCLES));
-            ns_64bits = (uint64_t) total_us * (uint64_t) BSP_DELAY_NS_PER_US; // Convert to ns.
+            ns_64bits = (uint64_t) total_us * (uint64_t) BSP_DELAY_NS_PER_US; /* Convert to ns.*/
 
             /* Have we overflowed 32 bits? */
             if (ns_64bits <= UINT32_MAX)
@@ -188,18 +188,18 @@ BSP_ATTRIBUTE_STACKLESS void bsp_prv_software_delay_loop (__attribute__(
 #endif
         "sw_delay_loop:         \n"
 #if defined(__ICCARM__) || defined(__ARMCC_VERSION) || (defined(__llvm__) && !defined(__CLANG_TIDY__))
-        "   subs r0, #1         \n"    ///< 1 cycle
+        "   subs r0, #1         \n"    /*/< 1 cycle*/
 #elif defined(__GNUC__)
-        "   sub r0, r0, #1      \n"    ///< 1 cycle
+        "   sub r0, r0, #1      \n"    /*/< 1 cycle*/
 #endif
 
-        "   cmp r0, #0          \n"    ///< 1 cycle
+        "   cmp r0, #0          \n"    /*/< 1 cycle*/
 
 /* CM0 and CM23 have a different instruction set */
 #if defined(__CORE_CM0PLUS_H_GENERIC) || defined(__CORE_CM23_H_GENERIC)
-        "   bne sw_delay_loop   \n"    ///< 2 cycles
+        "   bne sw_delay_loop   \n"    /*/< 2 cycles*/
 #else
-        "   bne.n sw_delay_loop \n"    ///< 2 cycles
+        "   bne.n sw_delay_loop \n"    /*/< 2 cycles*/
 #endif
-        "   bx lr               \n");  ///< 2 cycles
+        "   bx lr               \n");  /*/< 2 cycles*/
 }

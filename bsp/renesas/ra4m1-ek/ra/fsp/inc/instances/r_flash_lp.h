@@ -60,22 +60,22 @@ typedef enum e_flash_bgo_operation
 /** Flash instance control block. DO NOT INITIALIZE. Initialization occurs when R_FLASH_LP_Open() is called. */
 typedef struct st_flash_lp_instance_ctrl
 {
-    uint32_t              opened;                   // To check whether api has been opened or not.
-    flash_cfg_t const   * p_cfg;                    // Pointer to the flash configuration block.
-    uint32_t              system_clock_frequency;   // System clock frequency
-    uint32_t              flash_clock_frequency;    // FlashIF clock frequency
-    uint32_t              timeout_write_cf;         // Timeout for writing code flash data
-    uint32_t              timeout_write_df;         // Timeout for writing data flash data
-    uint32_t              timeout_blank_check;      // Timeout for blank check operations
-    uint32_t              timeout_erase_cf_block;   // Timeout for erasing a code flash block
-    uint32_t              timeout_erase_df_block;   // Timeout for erasing a data flash block
-    uint32_t              timeout_write_extra_area; // Timeout for writing to the configuration area
-    uint32_t              source_start_address;     // Source/Start address of in progress operation
-    uint32_t              dest_end_address;         // Destination/End address of in progress operation
-    uint32_t              operations_remaining;     // Number of operations remaining
-    uint32_t              flash_status_mask;        // Mask used for checking flash status
-    uint32_t              timeout;                  // Timeout of current operation
-    flash_bgo_operation_t current_operation;        // Type of BGO operation in progress.
+    uint32_t              opened;                   /* To check whether api has been opened or not.*/
+    flash_cfg_t const   * p_cfg;                    /* Pointer to the flash configuration block.*/
+    uint32_t              system_clock_frequency;   /* System clock frequency*/
+    uint32_t              flash_clock_frequency;    /* FlashIF clock frequency*/
+    uint32_t              timeout_write_cf;         /* Timeout for writing code flash data*/
+    uint32_t              timeout_write_df;         /* Timeout for writing data flash data*/
+    uint32_t              timeout_blank_check;      /* Timeout for blank check operations*/
+    uint32_t              timeout_erase_cf_block;   /* Timeout for erasing a code flash block*/
+    uint32_t              timeout_erase_df_block;   /* Timeout for erasing a data flash block*/
+    uint32_t              timeout_write_extra_area; /* Timeout for writing to the configuration area*/
+    uint32_t              source_start_address;     /* Source/Start address of in progress operation*/
+    uint32_t              dest_end_address;         /* Destination/End address of in progress operation*/
+    uint32_t              operations_remaining;     /* Number of operations remaining*/
+    uint32_t              flash_status_mask;        /* Mask used for checking flash status*/
+    uint32_t              timeout;                  /* Timeout of current operation*/
+    flash_bgo_operation_t current_operation;        /* Type of BGO operation in progress.*/
 } flash_lp_instance_ctrl_t;
 
 /**********************************************************************************************************************

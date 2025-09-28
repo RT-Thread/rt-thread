@@ -22,7 +22,7 @@
 /** "OPEN" in ASCII, used to avoid multiple open. */
 #define FLASH_HP_OPEN                                 (0x4f50454eULL)
 
-#define FLASH_HP_MINIMUM_SUPPORTED_FCLK_FREQ          (4000000U) /// Minimum FCLK for Flash Operations in Hz
+#define FLASH_HP_MINIMUM_SUPPORTED_FCLK_FREQ          (4000000U) /*/ Minimum FCLK for Flash Operations in Hz*/
 
 /* The number of CPU cycles per each timeout loop. */
 #ifndef FLASH_LP_CYCLES_MINIMUM_PER_TIMEOUT_LOOP
@@ -78,9 +78,9 @@
 /* Wait Process definition */
 #define FLASH_LP_WAIT_TDIS                            (3U)
 #if (BSP_FEATURE_FLASH_LP_VERSION == 4)
- #define FLASH_LP_WAIT_TMS_HIGH                       (16U) // "Flash memory mode transition wait time 2" in the "Code Flash Memory Characteristics" subsection of the hardware manual
+ #define FLASH_LP_WAIT_TMS_HIGH                       (16U) /* "Flash memory mode transition wait time 2" in the "Code Flash Memory Characteristics" subsection of the hardware manual*/
 #else
- #define FLASH_LP_WAIT_TMS_HIGH                       (6U)  // tMS wait time on flash version 3
+ #define FLASH_LP_WAIT_TMS_HIGH                       (6U)  /* tMS wait time on flash version 3*/
 #endif
 #define FLASH_LP_WAIT_TMS_MID                         (4U)
 #define FLASH_LP_WAIT_TDSTOP                          (6U)
@@ -771,7 +771,7 @@ fsp_err_t R_FLASH_LP_AccessWindowSet (flash_ctrl_t * const p_api_ctrl,
     FSP_PARAMETER_NOT_USED(end_addr);
 
     /* If not code flash return error. */
-    err = FSP_ERR_UNSUPPORTED;         // For consistency with _LP API we return error if Code Flash not enabled
+    err = FSP_ERR_UNSUPPORTED;         /* For consistency with _LP API we return error if Code Flash not enabled*/
 #endif
 
     return err;
@@ -856,7 +856,7 @@ fsp_err_t R_FLASH_LP_IdCodeSet (flash_ctrl_t * const  p_api_ctrl,
     FSP_PARAMETER_NOT_USED(p_id_code);
     FSP_PARAMETER_NOT_USED(mode);
 
-    err = FSP_ERR_UNSUPPORTED;         // For consistency with _LP API we return error if Code Flash not enabled
+    err = FSP_ERR_UNSUPPORTED;         /* For consistency with _LP API we return error if Code Flash not enabled*/
 #endif
 
     /* Return status. */
@@ -938,7 +938,7 @@ fsp_err_t R_FLASH_LP_StartUpAreaSelect (flash_ctrl_t * const      p_api_ctrl,
     FSP_PARAMETER_NOT_USED(swap_type);
     FSP_PARAMETER_NOT_USED(is_temporary);
 
-    err = FSP_ERR_UNSUPPORTED;         // For consistency with _LP API we return error if Code Flash not enabled
+    err = FSP_ERR_UNSUPPORTED;         /* For consistency with _LP API we return error if Code Flash not enabled*/
 #endif
 
     return err;
@@ -1607,7 +1607,7 @@ static void r_flash_lp_df_write_operation (flash_lp_instance_ctrl_t * const p_ct
     R_FACI_LP->FSARL = (uint16_t) (dest_addr_idx);
 
     /* Write data address setting */
-    R_FACI_LP->FWBL0 = *data8_ptr;     // For data flash there are only 8 bits used of the 16 in the reg
+    R_FACI_LP->FWBL0 = *data8_ptr;     /* For data flash there are only 8 bits used of the 16 in the reg*/
 
     /* Execute Write command */
     R_FACI_LP->FCR = FLASH_LP_FCR_WRITE;
@@ -1708,7 +1708,7 @@ static fsp_err_t r_flash_lp_df_blankcheck (flash_lp_instance_ctrl_t * const p_ct
     FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
 
     /* Check the result of the blank check. */
-    if (0U != R_FACI_LP->FSTATR00_b.BCERR0) // Tested Flash Area is not blank
+    if (0U != R_FACI_LP->FSTATR00_b.BCERR0) /* Tested Flash Area is not blank*/
     {
         *result = FLASH_RESULT_NOT_BLANK;
     }
@@ -1777,7 +1777,7 @@ static fsp_err_t r_flash_lp_cf_blankcheck (flash_lp_instance_ctrl_t * const p_ct
         r_flash_lp_wait_for_ready(p_ctrl, wait_count, FLASH_LP_FSTATR2_ILLEGAL_ERROR_BITS, FSP_ERR_BLANK_CHECK_FAILED);
     FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
 
-    if (0U != R_FACI_LP->FSTATR00_b.BCERR0) // Tested Flash Area is not blank
+    if (0U != R_FACI_LP->FSTATR00_b.BCERR0) /* Tested Flash Area is not blank*/
     {
         /* If the result is already NOT Blank there is no reason to continue with any subsequent checks, simply return */
         *result = FLASH_RESULT_NOT_BLANK;
@@ -2026,7 +2026,7 @@ static void r_flash_lp_delay_us (uint32_t us, uint32_t mhz)
 {
     uint32_t loop_cnt;
 
-    // @12 MHz, one loop is 332 ns. A delay of 5 us would require 15 loops. 15 * 332 = 4980 ns or ~ 5us
+    /* @12 MHz, one loop is 332 ns. A delay of 5 us would require 15 loops. 15 * 332 = 4980 ns or ~ 5us*/
 
     /* Calculation of a loop count */
     loop_cnt = ((us * mhz) / FLASH_LP_DELAY_LOOP_CYCLES);
@@ -2035,21 +2035,21 @@ static void r_flash_lp_delay_us (uint32_t us, uint32_t mhz)
     {
         __asm volatile ("delay_loop:\n"
 #if defined(__ICCARM__) || defined(__ARMCC_VERSION) || (defined(__llvm__) && !defined(__CLANG_TIDY__))
-                        "   subs %[loops_remaining], #1         \n"                 ///< 1 cycle
+                        "   subs %[loops_remaining], #1         \n"                 /*/< 1 cycle*/
 #elif defined(__GNUC__)
-                        "   sub %[loops_remaining], %[loops_remaining], #1      \n" ///< 1 cycle
+                        "   sub %[loops_remaining], %[loops_remaining], #1      \n" /*/< 1 cycle*/
 #endif
-                        "cmp %[loops_remaining], #0\n"                              // 1 cycle
+                        "cmp %[loops_remaining], #0\n"                              /* 1 cycle*/
 
 /* CM0 and CM23 have different instruction sets */
 #if defined(__CORE_CM0PLUS_H_GENERIC) || defined(__CORE_CM23_H_GENERIC)
-                        "   bne delay_loop   \n"                                    ///< 2 cycles
+                        "   bne delay_loop   \n"                                    /*/< 2 cycles*/
 #else
-                        "   bne.n delay_loop \n"                                    ///< 2 cycles
+                        "   bne.n delay_loop \n"                                    /*/< 2 cycles*/
 #endif
-                        :                                                           // No outputs
+                        :                                                           /* No outputs*/
                         :[loops_remaining] "r" (loop_cnt)
-                        :                                                           // No clobbers
+                        :                                                           /* No clobbers*/
                         );
     }
 }
@@ -2284,9 +2284,9 @@ static fsp_err_t r_flash_lp_set_startup_area_boot (flash_lp_instance_ctrl_t * co
     {
         /* Sets the BTFLG flag where 1 selects block 0 and 0 selects block 1. */
  #if BSP_FEATURE_FLASH_LP_VERSION == 3
-        uint32_t startup_area_mask = ((uint32_t) (~swap_type & 0x1) << 8);  // move selection to bit 8
+        uint32_t startup_area_mask = ((uint32_t) (~swap_type & 0x1) << 8);  /* move selection to bit 8*/
  #elif BSP_FEATURE_FLASH_LP_VERSION == 4
-        uint32_t startup_area_mask = ((uint32_t) (~swap_type & 0x1) << 15); // move selection to bit 15
+        uint32_t startup_area_mask = ((uint32_t) (~swap_type & 0x1) << 15); /* move selection to bit 15*/
  #endif
 
         /* Select Extra Area */
@@ -2498,7 +2498,7 @@ void r_flash_lp_cf_enter_pe_mode (flash_lp_instance_ctrl_t * const p_ctrl, bool 
     {
         if (FSP_INVALID_VECTOR != p_ctrl->p_cfg->irq)
         {
-            R_BSP_IrqDisable(p_ctrl->p_cfg->irq); // We are not supporting Flash Rdy interrupts for Code Flash operations
+            R_BSP_IrqDisable(p_ctrl->p_cfg->irq); /* We are not supporting Flash Rdy interrupts for Code Flash operations*/
         }
     }
 

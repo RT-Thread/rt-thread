@@ -76,8 +76,8 @@ typedef void elc_ctrl_t;
 /** Main configuration structure for the Event Link Controller */
 typedef struct st_elc_cfg
 {
-    elc_event_t const link[ELC_PERIPHERAL_NUM]; ///< Event link register settings
-    void const      * p_extend;                 ///< Extension parameter for hardware specific settings
+    elc_event_t const link[ELC_PERIPHERAL_NUM]; /*/< Event link register settings*/
+    void const      * p_extend;                 /*/< Extension parameter for hardware specific settings*/
 } elc_cfg_t;
 
 #ifndef BSP_OVERRIDE_ELC_SOFTWARE_EVENT_T
@@ -85,8 +85,8 @@ typedef struct st_elc_cfg
 /** Software event number */
 typedef enum e_elc_software_event
 {
-    ELC_SOFTWARE_EVENT_0,              ///< Software event 0
-    ELC_SOFTWARE_EVENT_1,              ///< Software event 1
+    ELC_SOFTWARE_EVENT_0,              /*/< Software event 0*/
+    ELC_SOFTWARE_EVENT_1,              /*/< Software event 1*/
 } elc_software_event_t;
 
 #endif
@@ -145,9 +145,9 @@ typedef struct st_elc_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_elc_instance
 {
-    elc_ctrl_t      * p_ctrl;          ///< Pointer to the control structure for this instance
-    elc_cfg_t const * p_cfg;           ///< Pointer to the configuration structure for this instance
-    elc_api_t const * p_api;           ///< Pointer to the API structure for this instance
+    elc_ctrl_t      * p_ctrl;          /*/< Pointer to the control structure for this instance*/
+    elc_cfg_t const * p_cfg;           /*/< Pointer to the configuration structure for this instance*/
+    elc_api_t const * p_api;           /*/< Pointer to the API structure for this instance*/
 } elc_instance_t;
 
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */

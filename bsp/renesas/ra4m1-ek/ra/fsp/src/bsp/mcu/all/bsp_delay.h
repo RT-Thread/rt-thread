@@ -55,9 +55,9 @@ FSP_HEADER
 /** Available delay units for R_BSP_SoftwareDelay(). These are ultimately used to calculate a total # of microseconds */
 typedef enum
 {
-    BSP_DELAY_UNITS_SECONDS      = 1000000, ///< Requested delay amount is in seconds
-    BSP_DELAY_UNITS_MILLISECONDS = 1000,    ///< Requested delay amount is in milliseconds
-    BSP_DELAY_UNITS_MICROSECONDS = 1        ///< Requested delay amount is in microseconds
+    BSP_DELAY_UNITS_SECONDS      = 1000000, /*/< Requested delay amount is in seconds*/
+    BSP_DELAY_UNITS_MILLISECONDS = 1000,    /*/< Requested delay amount is in milliseconds*/
+    BSP_DELAY_UNITS_MICROSECONDS = 1        /*/< Requested delay amount is in microseconds*/
 } bsp_delay_units_t;
 
 /** @} (end addtogroup BSP_MCU) */

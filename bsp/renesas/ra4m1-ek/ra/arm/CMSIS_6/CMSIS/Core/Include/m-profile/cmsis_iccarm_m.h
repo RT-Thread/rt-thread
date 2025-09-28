@@ -287,7 +287,8 @@ __packed struct  __iar_u32 { uint32_t v; };
 #define __TZ_STACK_SEAL_VALUE     0xFEF5EDA5FEF5EDA5ULL
 #endif
 
-__STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
+__STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop)
+{
   *((uint64_t *)stackTop) = __TZ_STACK_SEAL_VALUE;
 }
 #endif
@@ -353,7 +354,7 @@ __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
   #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
        !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
        (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-    // without main extensions, the non-secure MSPLIM is RAZ/WI
+    /* without main extensions, the non-secure MSPLIM is RAZ/WI*/
     #define __get_MSPLIM()            (0U)
   #else
     #define __get_MSPLIM()            (__arm_rsr("MSPLIM"))
@@ -364,7 +365,7 @@ __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
   #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
        !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
        (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-    // without main extensions, the non-secure PSPLIM is RAZ/WI
+    /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
     #define __get_PSPLIM()            (0U)
   #else
     #define __get_PSPLIM()            (__arm_rsr("PSPLIM"))
@@ -387,7 +388,7 @@ __STATIC_FORCEINLINE void __set_CONTROL(uint32_t control)
   #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
        !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
        (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-    // without main extensions, the non-secure MSPLIM is RAZ/WI
+    /* without main extensions, the non-secure MSPLIM is RAZ/WI*/
     #define __set_MSPLIM(VALUE)       ((void)(VALUE))
   #else
     #define __set_MSPLIM(VALUE)       (__arm_wsr("MSPLIM", (VALUE)))
@@ -397,7 +398,7 @@ __STATIC_FORCEINLINE void __set_CONTROL(uint32_t control)
   #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
        !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
        (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-    // without main extensions, the non-secure PSPLIM is RAZ/WI
+    /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
     #define __set_PSPLIM(VALUE)       ((void)(VALUE))
   #else
     #define __set_PSPLIM(VALUE)       (__arm_wsr("PSPLIM", (VALUE)))
@@ -427,7 +428,7 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
   #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
        !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
        (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-    // without main extensions, the non-secure PSPLIM is RAZ/WI
+    /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
     #define __TZ_get_PSPLIM_NS()      (0U)
     #define __TZ_set_PSPLIM_NS(VALUE) ((void)(VALUE))
   #else
@@ -585,7 +586,8 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
 
     __STATIC_INLINE uint8_t __CLZ(uint32_t data)
     {
-      if (data == 0U) { return 32U; }
+      if (data == 0U)
+      { return 32U; }
 
       uint32_t count = 0U;
       uint32_t mask = 0x80000000U;
@@ -693,7 +695,7 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
     #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
          !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
          (!defined (__ARM_FEATURE_CMSE  ) || (__ARM_FEATURE_CMSE   < 3)))
-      // without main extension and secure, there is no stack limit check.
+      /* without main extension and secure, there is no stack limit check.*/
       res = 0U;
     #else
       __asm volatile("MRS      %0,MSPLIM" : "=r" (res));
@@ -706,7 +708,7 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
     #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
          !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
          (!defined (__ARM_FEATURE_CMSE  ) || (__ARM_FEATURE_CMSE   < 3)))
-      // without main extensions and secure, there is no stack limit check.
+      /* without main extensions and secure, there is no stack limit check.*/
       (void)value;
     #else
       __asm volatile("MSR      MSPLIM,%0" :: "r" (value));
@@ -719,7 +721,7 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
     #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
          !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
          (!defined (__ARM_FEATURE_CMSE  ) || (__ARM_FEATURE_CMSE   < 3)))
-      // without main extensions and secure, there is no stack limit check.
+      /* without main extensions and secure, there is no stack limit check.*/
       res = 0U;
     #else
       __asm volatile("MRS      %0,PSPLIM" : "=r" (res));
@@ -732,7 +734,7 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
     #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
          !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
          (!defined (__ARM_FEATURE_CMSE  ) || (__ARM_FEATURE_CMSE   < 3)))
-      // without main extensions and secure, there is no stack limit check.
+      /* without main extensions and secure, there is no stack limit check.*/
       (void)value;
     #else
       __asm volatile("MSR      PSPLIM,%0" :: "r" (value));
@@ -829,7 +831,7 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
     #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
          !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
          (!defined (__ARM_FEATURE_CMSE  ) || (__ARM_FEATURE_CMSE   < 3)))
-      // without main extensions, the non-secure PSPLIM is RAZ/WI
+      /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
       res = 0U;
     #else
       __asm volatile("MRS      %0,PSPLIM_NS" : "=r" (res));
@@ -842,7 +844,7 @@ __STATIC_FORCEINLINE void __TZ_set_CONTROL_NS(uint32_t control)
     #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
          !(defined (__ARM_ARCH_8_1M_MAIN__ ) && (__ARM_ARCH_8_1M_MAIN__ == 1)) && \
          (!defined (__ARM_FEATURE_CMSE  ) || (__ARM_FEATURE_CMSE   < 3)))
-      // without main extensions, the non-secure PSPLIM is RAZ/WI
+      /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
       (void)value;
     #else
       __asm volatile("MSR      PSPLIM_NS,%0" :: "r" (value));

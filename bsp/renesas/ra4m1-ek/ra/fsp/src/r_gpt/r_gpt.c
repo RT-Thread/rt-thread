@@ -35,9 +35,9 @@
 #define GPT_PRV_ADC_DIRECT_START_SUPPORTED               (BSP_FEATURE_GPT_AD_DIRECT_START_SUPPORTED)
 #define GPT_PRV_ADC_DIRECT_START_CHANNEL_MASK            (BSP_FEATURE_GPT_AD_DIRECT_START_CHANNEL_MASK)
 #define GPT_PRV_ADC_ELC_START_SUPPORTED                  (GPT_PRV_GPTE_OR_GPTEH_SUPPORTED && \
-                                                          !GPT_PRV_ADC_DIRECT_START_SUPPORTED)      // ELC-start is 'default' and exists if direct-start is not present
+                                                          !GPT_PRV_ADC_DIRECT_START_SUPPORTED)      /* ELC-start is 'default' and exists if direct-start is not present*/
 #define GPT_PRV_ADC_ELC_START_CHANNEL_MASK               (GPT_PRV_ADC_DIRECT_START_SUPPORTED ? \
-                                                          0x0 : GPT_PRV_GPTE_OR_GPTEH_CHANNEL_MASK) // No ELC-start present if direct start is supported.
+                                                          0x0 : GPT_PRV_GPTE_OR_GPTEH_CHANNEL_MASK) /* No ELC-start present if direct start is supported.*/
 
 #define GPT_PRV_ODC_SUPPORTED                            (BSP_FEATURE_GPT_GPTEH_SUPPORTED)
 #define GPT_PRV_ODC_CHANNEL_MASK                         (BSP_FEATURE_GPT_GPTEH_CHANNEL_MASK)
@@ -79,9 +79,9 @@
 /* Duty cycle mode. */
 typedef enum e_gpt_duty_cycle_mode
 {
-    GPT_DUTY_CYCLE_MODE_REGISTER    = 0, // Duty cycle depends on compare match
-    GPT_DUTY_CYCLE_MODE_0_PERCENT   = 2, // Output low
-    GPT_DUTY_CYCLE_MODE_100_PERCENT = 3, // Output high
+    GPT_DUTY_CYCLE_MODE_REGISTER    = 0, /* Duty cycle depends on compare match*/
+    GPT_DUTY_CYCLE_MODE_0_PERCENT   = 2, /* Output low*/
+    GPT_DUTY_CYCLE_MODE_100_PERCENT = 3, /* Output high*/
 } gpt_duty_cycle_mode_t;
 
 /* Count direction */
@@ -954,7 +954,7 @@ fsp_err_t R_GPT_PwmOutputDelaySet (timer_ctrl_t * const           p_ctrl,
             (uint16_t *) ((uint32_t) &R_GPT_ODC->GTDLYR[0].A + channel_offset + pin_offset + edge_offset);
 
  #if BSP_FEATURE_GPT_ODC_128_RESOLUTION_SUPPORTED
-        delay_setting *= 4;            // Delay count is out of 32, per the API. Convert provided 32-count resolution into 128-count register setting.
+        delay_setting *= 4;            /* Delay count is out of 32, per the API. Convert provided 32-count resolution into 128-count register setting.*/
  #endif
 
         /* Unprotect the delay setting register. */

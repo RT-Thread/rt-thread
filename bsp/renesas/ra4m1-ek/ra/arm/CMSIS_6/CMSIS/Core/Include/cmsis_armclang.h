@@ -693,7 +693,7 @@ __STATIC_FORCEINLINE void __set_FPSCR(uint32_t fpscr)
 
 /** @} end of CMSIS_Core_RegAccFunctions */
 
-// Include the profile specific settings:
+/* Include the profile specific settings:*/
 #if __ARM_ARCH_PROFILE == 'A'
   #include "./a-profile/cmsis_armclang_a.h"
 #elif __ARM_ARCH_PROFILE == 'R'

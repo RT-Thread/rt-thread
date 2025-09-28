@@ -31,12 +31,12 @@ FSP_HEADER
 /** WDT private control block. DO NOT MODIFY. Initialization occurs when R_WDT_Open() is called. */
 typedef struct st_wdt_instance_ctrl
 {
-    uint32_t wdt_open;                                 // Indicates whether the open() API has been successfully
-                                                       // called.
-    void * p_context;                                  // Placeholder for user data.  Passed to the user callback in
-    // wdt_callback_args_t.
-    void (* p_callback)(wdt_callback_args_t * p_args); // Callback provided when a WDT NMI ISR occurs.
-    wdt_callback_args_t * p_callback_memory;           // Pointer to non-secure memory that can be used to pass arguments to a callback in non-secure memory.
+    uint32_t wdt_open;                                 /* Indicates whether the open() API has been successfully*/
+                                                       /* called.*/
+    void * p_context;                                  /* Placeholder for user data.  Passed to the user callback in*/
+    /* wdt_callback_args_t.*/
+    void (* p_callback)(wdt_callback_args_t * p_args); /* Callback provided when a WDT NMI ISR occurs.*/
+    wdt_callback_args_t * p_callback_memory;           /* Pointer to non-secure memory that can be used to pass arguments to a callback in non-secure memory.*/
 } wdt_instance_ctrl_t;
 
 /**********************************************************************************************************************
@@ -72,7 +72,7 @@ fsp_err_t R_WDT_CallbackSet(wdt_ctrl_t * const          p_ctrl,
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */
 FSP_FOOTER
 
-#endif                                 // R_WDT_H
+#endif                                 /* R_WDT_H*/
 
 /*******************************************************************************************************************//**
  * @} (end addtogroup WDT)

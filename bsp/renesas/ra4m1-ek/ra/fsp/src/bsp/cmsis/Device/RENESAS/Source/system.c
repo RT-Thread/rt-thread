@@ -373,11 +373,11 @@ void SystemInit (void)
 
 #if !BSP_CFG_PFS_PROTECT && defined(R_PMISC) && !BSP_CFG_SKIP_INIT
  #if BSP_TZ_SECURE_BUILD || (BSP_FEATURE_TZ_VERSION == 2 && FSP_PRIV_TZ_USE_SECURE_REGS)
-    R_PMISC->PWPRS = 0;                              ///< Clear BOWI bit - writing to PFSWE bit enabled
-    R_PMISC->PWPRS = 1U << BSP_IO_PWPR_PFSWE_OFFSET; ///< Set PFSWE bit - writing to PFS register enabled
+    R_PMISC->PWPRS = 0;                              /*/< Clear BOWI bit - writing to PFSWE bit enabled*/
+    R_PMISC->PWPRS = 1U << BSP_IO_PWPR_PFSWE_OFFSET; /*/< Set PFSWE bit - writing to PFS register enabled*/
  #else
-    R_PMISC->PWPR = 0;                               ///< Clear BOWI bit - writing to PFSWE bit enabled
-    R_PMISC->PWPR = 1U << BSP_IO_PWPR_PFSWE_OFFSET;  ///< Set PFSWE bit - writing to PFS register enabled
+    R_PMISC->PWPR = 0;                               /*/< Clear BOWI bit - writing to PFSWE bit enabled*/
+    R_PMISC->PWPR = 1U << BSP_IO_PWPR_PFSWE_OFFSET;  /*/< Set PFSWE bit - writing to PFS register enabled*/
  #endif
 #endif
 
@@ -544,7 +544,7 @@ void R_BSP_WarmStart (bsp_warm_start_event_t event)
 static void bsp_reset_trng_circuit (void)
 {
     volatile uint8_t read_port = 0U;
-    FSP_PARAMETER_NOT_USED(read_port); /// Prevent compiler 'unused' warning
+    FSP_PARAMETER_NOT_USED(read_port); /*/ Prevent compiler 'unused' warning*/
 
     /* Release register protection for low power modes (per RA2A1 User's Manual (R01UH0888EJ0100) Figure 11.13 "Example
      * of initial setting flow for an unused circuit") */
@@ -552,9 +552,9 @@ static void bsp_reset_trng_circuit (void)
 
     /* Enable TRNG function (disable stop function) */
  #if BSP_FEATURE_BSP_HAS_SCE_ON_RA2
-    R_BSP_MODULE_START(FSP_IP_TRNG, 0); ///< TRNG Module Stop needs to be started/stopped for RA2 series.
+    R_BSP_MODULE_START(FSP_IP_TRNG, 0); /*/< TRNG Module Stop needs to be started/stopped for RA2 series.*/
  #elif BSP_FEATURE_BSP_HAS_SCE5
-    R_BSP_MODULE_START(FSP_IP_SCE, 0);  ///< TRNG Module Stop needs to be started/stopped for RA4 series.
+    R_BSP_MODULE_START(FSP_IP_SCE, 0);  /*/< TRNG Module Stop needs to be started/stopped for RA4 series.*/
  #else
   #error "BSP_FEATURE_BSP_RESET_TRNG is defined but not handled."
  #endif
@@ -566,9 +566,9 @@ static void bsp_reset_trng_circuit (void)
 
     /* Disable TRNG function */
  #if BSP_FEATURE_BSP_HAS_SCE_ON_RA2
-    R_BSP_MODULE_STOP(FSP_IP_TRNG, 0); ///< TRNG Module Stop needs to be started/stopped for RA2 series.
+    R_BSP_MODULE_STOP(FSP_IP_TRNG, 0); /*/< TRNG Module Stop needs to be started/stopped for RA2 series.*/
  #elif BSP_FEATURE_BSP_HAS_SCE5
-    R_BSP_MODULE_STOP(FSP_IP_SCE, 0);  ///< TRNG Module Stop needs to be started/stopped for RA4 series.
+    R_BSP_MODULE_STOP(FSP_IP_SCE, 0);  /*/< TRNG Module Stop needs to be started/stopped for RA4 series.*/
  #else
   #error "BSP_FEATURE_BSP_RESET_TRNG is defined but not handled."
  #endif

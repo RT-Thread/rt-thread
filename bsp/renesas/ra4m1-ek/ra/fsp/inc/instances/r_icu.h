@@ -32,27 +32,27 @@ FSP_HEADER
 /** External IRQ input pin digital filtering clock selection. */
 typedef enum e_external_irq_digital_filter
 {
-    EXTERNAL_IRQ_DIGITAL_FILTER_PCLK_DIV = 0, ///< Digital filter using clock PCLK dividers.
-    EXTERNAL_IRQ_DIGITAL_FILTER_LOCO     = 1, ///< Digital filter using clock LOCO.
+    EXTERNAL_IRQ_DIGITAL_FILTER_PCLK_DIV = 0, /*/< Digital filter using clock PCLK dividers.*/
+    EXTERNAL_IRQ_DIGITAL_FILTER_LOCO     = 1, /*/< Digital filter using clock LOCO.*/
 } e_external_irq_digital_filter_t;
 
 /** Extended ICU interface configuration */
 typedef struct st_icu_extended_cfg
 {
-    e_external_irq_digital_filter_t filter_src; ///< Select digital filter clock source when digital filter is enabled.
+    e_external_irq_digital_filter_t filter_src; /*/< Select digital filter clock source when digital filter is enabled.*/
 } icu_extended_cfg_t;
 
 /** ICU private control block. DO NOT MODIFY.  Initialization occurs when R_ICU_ExternalIrqOpen is called. */
 typedef struct st_icu_instance_ctrl
 {
-    uint32_t  open;                                             ///< Used to determine if channel control block is in use
-    IRQn_Type irq;                                              ///< NVIC interrupt number
-    uint8_t   channel;                                          ///< Channel
+    uint32_t  open;                                             /*/< Used to determine if channel control block is in use*/
+    IRQn_Type irq;                                              /*/< NVIC interrupt number*/
+    uint8_t   channel;                                          /*/< Channel*/
 
 #if BSP_TZ_SECURE_BUILD
-    external_irq_callback_args_t * p_callback_memory;           // Pointer to non-secure memory that can be used to pass arguments to a callback in non-secure memory.
+    external_irq_callback_args_t * p_callback_memory;           /* Pointer to non-secure memory that can be used to pass arguments to a callback in non-secure memory.*/
 #endif
-    void (* p_callback)(external_irq_callback_args_t * p_args); // Pointer to callback that is called when an edge is detected on the external irq pin.
+    void (* p_callback)(external_irq_callback_args_t * p_args); /* Pointer to callback that is called when an edge is detected on the external irq pin.*/
 
     /** Placeholder for user data.  Passed to the user callback in ::external_irq_callback_args_t. */
     void * p_context;
@@ -91,4 +91,4 @@ fsp_err_t R_ICU_ExternalIrqClose(external_irq_ctrl_t * const p_api_ctrl);
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */
 FSP_FOOTER
 
-#endif                                 // R_ICU_H
+#endif                                 /* R_ICU_H*/

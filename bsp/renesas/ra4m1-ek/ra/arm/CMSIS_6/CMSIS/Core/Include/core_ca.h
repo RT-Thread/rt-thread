@@ -178,7 +178,7 @@
 #define     __IM     volatile const      /*!< \brief Defines 'read only' structure member permissions */
 #define     __OM     volatile            /*!< \brief Defines 'write only' structure member permissions */
 #define     __IOM    volatile            /*!< \brief Defines 'read / write' structure member permissions */
-#define RESERVED(N, T) T RESERVED##N;    // placeholder struct members used for "reserved" areas
+#define RESERVED(N, T) T RESERVED##N;    /* placeholder struct members used for "reserved" areas*/
 
  /*******************************************************************************
   *                 Register Abstraction
@@ -1089,17 +1089,17 @@ typedef struct
 */
 typedef struct
 {
-  __IOM uint32_t LOAD;            //!< \brief  Offset: 0x000 (R/W) Private Timer Load Register
-  __IOM uint32_t COUNTER;         //!< \brief  Offset: 0x004 (R/W) Private Timer Counter Register
-  __IOM uint32_t CONTROL;         //!< \brief  Offset: 0x008 (R/W) Private Timer Control Register
-  __IOM uint32_t ISR;             //!< \brief  Offset: 0x00C (R/W) Private Timer Interrupt Status Register
+  __IOM uint32_t LOAD;            /*!< \brief  Offset: 0x000 (R/W) Private Timer Load Register*/
+  __IOM uint32_t COUNTER;         /*!< \brief  Offset: 0x004 (R/W) Private Timer Counter Register*/
+  __IOM uint32_t CONTROL;         /*!< \brief  Offset: 0x008 (R/W) Private Timer Control Register*/
+  __IOM uint32_t ISR;             /*!< \brief  Offset: 0x00C (R/W) Private Timer Interrupt Status Register*/
         RESERVED(0[4], uint32_t)
-  __IOM uint32_t WLOAD;           //!< \brief  Offset: 0x020 (R/W) Watchdog Load Register
-  __IOM uint32_t WCOUNTER;        //!< \brief  Offset: 0x024 (R/W) Watchdog Counter Register
-  __IOM uint32_t WCONTROL;        //!< \brief  Offset: 0x028 (R/W) Watchdog Control Register
-  __IOM uint32_t WISR;            //!< \brief  Offset: 0x02C (R/W) Watchdog Interrupt Status Register
-  __IOM uint32_t WRESET;          //!< \brief  Offset: 0x030 (R/W) Watchdog Reset Status Register
-  __OM  uint32_t WDISABLE;        //!< \brief  Offset: 0x034 ( /W) Watchdog Disable Register
+  __IOM uint32_t WLOAD;           /*!< \brief  Offset: 0x020 (R/W) Watchdog Load Register*/
+  __IOM uint32_t WCOUNTER;        /*!< \brief  Offset: 0x024 (R/W) Watchdog Counter Register*/
+  __IOM uint32_t WCONTROL;        /*!< \brief  Offset: 0x028 (R/W) Watchdog Control Register*/
+  __IOM uint32_t WISR;            /*!< \brief  Offset: 0x02C (R/W) Watchdog Interrupt Status Register*/
+  __IOM uint32_t WRESET;          /*!< \brief  Offset: 0x030 (R/W) Watchdog Reset Status Register*/
+  __OM  uint32_t WDISABLE;        /*!< \brief  Offset: 0x034 ( /W) Watchdog Disable Register*/
 } Timer_Type;
 #define PTIM ((Timer_Type *) TIMER_BASE )   /*!< \brief Timer register struct */
 
@@ -1168,79 +1168,89 @@ typedef struct
 
 /** \brief Enable Caches by setting I and C bits in SCTLR register.
 */
-__STATIC_FORCEINLINE void L1C_EnableCaches(void) {
+__STATIC_FORCEINLINE void L1C_EnableCaches(void)
+{
   __set_SCTLR( __get_SCTLR() | SCTLR_I_Msk | SCTLR_C_Msk);
   __ISB();
 }
 
 /** \brief Disable Caches by clearing I and C bits in SCTLR register.
 */
-__STATIC_FORCEINLINE void L1C_DisableCaches(void) {
+__STATIC_FORCEINLINE void L1C_DisableCaches(void)
+{
   __set_SCTLR( __get_SCTLR() & (~SCTLR_I_Msk) & (~SCTLR_C_Msk));
   __ISB();
 }
 
 /** \brief  Enable Branch Prediction by setting Z bit in SCTLR register.
 */
-__STATIC_FORCEINLINE void L1C_EnableBTAC(void) {
+__STATIC_FORCEINLINE void L1C_EnableBTAC(void)
+{
   __set_SCTLR( __get_SCTLR() | SCTLR_Z_Msk);
   __ISB();
 }
 
 /** \brief  Disable Branch Prediction by clearing Z bit in SCTLR register.
 */
-__STATIC_FORCEINLINE void L1C_DisableBTAC(void) {
+__STATIC_FORCEINLINE void L1C_DisableBTAC(void)
+{
   __set_SCTLR( __get_SCTLR() & (~SCTLR_Z_Msk));
   __ISB();
 }
 
 /** \brief  Invalidate entire branch predictor array
 */
-__STATIC_FORCEINLINE void L1C_InvalidateBTAC(void) {
+__STATIC_FORCEINLINE void L1C_InvalidateBTAC(void)
+{
   __set_BPIALL(0);
-  __DSB();     //ensure completion of the invalidation
-  __ISB();     //ensure instruction fetch path sees new state
+  __DSB();     /*ensure completion of the invalidation*/
+  __ISB();     /*ensure instruction fetch path sees new state*/
 }
 
 /** \brief  Clean instruction cache line by address.
 * \param [in] va Pointer to instructions to clear the cache for.
 */
-__STATIC_FORCEINLINE void L1C_InvalidateICacheMVA(void *va) {
+__STATIC_FORCEINLINE void L1C_InvalidateICacheMVA(void *va)
+{
   __set_ICIMVAC((uint32_t)va);
-  __DSB();     //ensure completion of the invalidation
-  __ISB();     //ensure instruction fetch path sees new I cache state
+  __DSB();     /*ensure completion of the invalidation*/
+  __ISB();     /*ensure instruction fetch path sees new I cache state*/
 }
 
 /** \brief  Invalidate the whole instruction cache
 */
-__STATIC_FORCEINLINE void L1C_InvalidateICacheAll(void) {
+__STATIC_FORCEINLINE void L1C_InvalidateICacheAll(void)
+{
   __set_ICIALLU(0);
-  __DSB();     //ensure completion of the invalidation
-  __ISB();     //ensure instruction fetch path sees new I cache state
+  __DSB();     /*ensure completion of the invalidation*/
+  __ISB();     /*ensure instruction fetch path sees new I cache state*/
 }
 
 /** \brief  Clean data cache line by address.
 * \param [in] va Pointer to data to clear the cache for.
 */
-__STATIC_FORCEINLINE void L1C_CleanDCacheMVA(void *va) {
+__STATIC_FORCEINLINE void L1C_CleanDCacheMVA(void *va)
+{
   __set_DCCMVAC((uint32_t)va);
-  __DMB();     //ensure the ordering of data cache maintenance operations and their effects
+  __DMB();     /*ensure the ordering of data cache maintenance operations and their effects*/
 }
 
 /** \brief  Invalidate data cache line by address.
 * \param [in] va Pointer to data to invalidate the cache for.
 */
-__STATIC_FORCEINLINE void L1C_InvalidateDCacheMVA(void *va) {
+__STATIC_FORCEINLINE void L1C_InvalidateDCacheMVA(void *va)
+{
   __set_DCIMVAC((uint32_t)va);
-  __DMB();     //ensure the ordering of data cache maintenance operations and their effects
+  __DMB();     /*ensure the ordering of data cache maintenance operations and their effects*/
 }
 
 /** \brief  Clean and Invalidate data cache by address.
 * \param [in] va Pointer to data to invalidate the cache for.
 */
-__STATIC_FORCEINLINE void L1C_CleanInvalidateDCacheMVA(void *va) {
+__STATIC_FORCEINLINE void L1C_CleanInvalidateDCacheMVA(void *va)
+{
   __set_DCCIMVAC((uint32_t)va);
-  __DMB();     //ensure the ordering of data cache maintenance operations and their effects
+  __DMB();     /*ensure the ordering of data cache maintenance operations and their effects*/
 }
 
 /** \brief Calculate log2 rounded up
@@ -1259,7 +1269,8 @@ __STATIC_FORCEINLINE void L1C_CleanInvalidateDCacheMVA(void *va) {
 */
 __STATIC_FORCEINLINE uint8_t __log2_up(uint32_t n)
 {
-  if (n < 2U) {
+  if (n < 2U)
+  {
     return 0U;
   }
   uint8_t log = 0U;
@@ -1269,7 +1280,8 @@ __STATIC_FORCEINLINE uint8_t __log2_up(uint32_t n)
     log++;
     t >>= 1U;
   }
-  if (n & 1U) { log++; }
+  if (n & 1U)
+  { log++; }
   return log;
 }
 
@@ -1296,8 +1308,9 @@ __STATIC_FORCEINLINE void __L1C_MaintainDCacheSetWay(uint32_t level, uint32_t ma
   num_ways = ((ccsidr & 0x00001FF8U) >> 3U) + 1U;
   log2_linesize = (ccsidr & 0x00000007U) + 2U + 2U;
   log2_num_ways = __log2_up(num_ways);
-  if (log2_num_ways > 32U) {
-    return; // FATAL ERROR
+  if (log2_num_ways > 32U)
+  {
+    return; /* FATAL ERROR*/
   }
   shift_way = 32U - log2_num_ways;
   for(int32_t way = num_ways-1; way >= 0; way--)
@@ -1319,7 +1332,8 @@ __STATIC_FORCEINLINE void __L1C_MaintainDCacheSetWay(uint32_t level, uint32_t ma
 /** \brief  Clean and Invalidate the entire data or unified cache
 * \param [in] op 0 - invalidate, 1 - clean, otherwise - invalidate and clean
 */
-__STATIC_FORCEINLINE void L1C_CleanInvalidateCache(uint32_t op) {
+__STATIC_FORCEINLINE void L1C_CleanInvalidateCache(uint32_t op)
+{
   uint32_t clidr;
   uint32_t cache_type;
   clidr =  __get_CLIDR();
@@ -1335,19 +1349,22 @@ __STATIC_FORCEINLINE void L1C_CleanInvalidateCache(uint32_t op) {
 
 /** \brief  Invalidate the whole data cache.
 */
-__STATIC_FORCEINLINE void L1C_InvalidateDCacheAll(void) {
+__STATIC_FORCEINLINE void L1C_InvalidateDCacheAll(void)
+{
   L1C_CleanInvalidateCache(0);
 }
 
 /** \brief  Clean the whole data cache.
  */
-__STATIC_FORCEINLINE void L1C_CleanDCacheAll(void) {
+__STATIC_FORCEINLINE void L1C_CleanDCacheAll(void)
+{
   L1C_CleanInvalidateCache(1);
 }
 
 /** \brief  Clean and invalidate the whole data cache.
  */
-__STATIC_FORCEINLINE void L1C_CleanInvalidateDCacheAll(void) {
+__STATIC_FORCEINLINE void L1C_CleanInvalidateDCacheAll(void)
+{
   L1C_CleanInvalidateCache(2);
 }
 
@@ -1383,14 +1400,15 @@ __STATIC_INLINE void L2C_InvAllByWay (void)
 {
   unsigned int assoc;
 
-  if (L2C_310->AUX_CNT & (1U << 16U)) {
+  if (L2C_310->AUX_CNT & (1U << 16U))
+  {
     assoc = 16U;
   } else {
     assoc =  8U;
   }
 
   L2C_310->INV_WAY = (1U << assoc) - 1U;
-  while(L2C_310->INV_WAY & ((1U << assoc) - 1U)); //poll invalidate
+  while(L2C_310->INV_WAY & ((1U << assoc) - 1U)); /*poll invalidate*/
 
   L2C_Sync();
 }
@@ -1401,14 +1419,15 @@ __STATIC_INLINE void L2C_CleanInvAllByWay (void)
 {
   unsigned int assoc;
 
-  if (L2C_310->AUX_CNT & (1U << 16U)) {
+  if (L2C_310->AUX_CNT & (1U << 16U))
+  {
     assoc = 16U;
   } else {
     assoc =  8U;
   }
 
   L2C_310->CLEAN_INV_WAY = (1U << assoc) - 1U;
-  while(L2C_310->CLEAN_INV_WAY & ((1U << assoc) - 1U)); //poll invalidate
+  while(L2C_310->CLEAN_INV_WAY & ((1U << assoc) - 1U)); /*poll invalidate*/
 
   L2C_Sync();
 }
@@ -1519,14 +1538,14 @@ __STATIC_INLINE uint32_t GIC_GetTarget(IRQn_Type IRQn)
 */
 __STATIC_INLINE void GIC_EnableInterface(void)
 {
-  GICInterface->CTLR |= 1U; //enable interface
+  GICInterface->CTLR |= 1U; /*enable interface*/
 }
 
 /** \brief Disable the CPU's interrupt interface.
 */
 __STATIC_INLINE void GIC_DisableInterface(void)
 {
-  GICInterface->CTLR &=~1U; //disable distributor
+  GICInterface->CTLR &=~1U; /*disable distributor*/
 }
 
 /** \brief Read the CPU's IAR register.
@@ -1578,13 +1597,15 @@ __STATIC_INLINE uint32_t GIC_GetPendingIRQ(IRQn_Type IRQn)
 {
   uint32_t pend;
 
-  if (IRQn >= 16U) {
+  if (IRQn >= 16U)
+  {
     pend = (GICDistributor->ISPENDR[IRQn / 32U] >> (IRQn % 32U)) & 1UL;
   } else {
-    // INTID 0-15 Software Generated Interrupt
+    /* INTID 0-15 Software Generated Interrupt*/
     pend = (GICDistributor->SPENDSGIR[IRQn / 4U] >> ((IRQn % 4U) * 8U)) & 0xFFUL;
-    // No CPU identification offered
-    if (pend != 0U) {
+    /* No CPU identification offered*/
+    if (pend != 0U)
+    {
       pend = 1U;
     } else {
       pend = 0U;
@@ -1599,11 +1620,12 @@ __STATIC_INLINE uint32_t GIC_GetPendingIRQ(IRQn_Type IRQn)
 */
 __STATIC_INLINE void GIC_SetPendingIRQ(IRQn_Type IRQn)
 {
-  if (IRQn >= 16U) {
+  if (IRQn >= 16U)
+  {
     GICDistributor->ISPENDR[IRQn / 32U] = 1U << (IRQn % 32U);
   } else {
-    // INTID 0-15 Software Generated Interrupt
-    // Forward the interrupt to the CPU interface that requested it
+    /* INTID 0-15 Software Generated Interrupt*/
+    /* Forward the interrupt to the CPU interface that requested it*/
     GICDistributor->SGIR = (IRQn | 0x02000000U);
   }
 }
@@ -1613,10 +1635,11 @@ __STATIC_INLINE void GIC_SetPendingIRQ(IRQn_Type IRQn)
 */
 __STATIC_INLINE void GIC_ClearPendingIRQ(IRQn_Type IRQn)
 {
-  if (IRQn >= 16U) {
+  if (IRQn >= 16U)
+  {
     GICDistributor->ICPENDR[IRQn / 32U] = 1U << (IRQn % 32U);
   } else {
-    // INTID 0-15 Software Generated Interrupt
+    /* INTID 0-15 Software Generated Interrupt*/
     GICDistributor->CPENDSGIR[IRQn / 4U] = 1U << ((IRQn % 4U) * 8U);
   }
 }
@@ -1671,7 +1694,7 @@ __STATIC_INLINE uint32_t GIC_GetPriority(IRQn_Type IRQn)
 */
 __STATIC_INLINE void GIC_SetInterfacePriorityMask(uint32_t priority)
 {
-  GICInterface->PMR = priority & 0xFFUL; //set priority mask
+  GICInterface->PMR = priority & 0xFFUL; /*set priority mask*/
 }
 
 /** \brief Read the current interrupt priority mask from CPU's PMR register.
@@ -1687,7 +1710,7 @@ __STATIC_INLINE uint32_t GIC_GetInterfacePriorityMask(void)
 */
 __STATIC_INLINE void GIC_SetBinaryPoint(uint32_t binary_point)
 {
-  GICInterface->BPR = binary_point & 7U; //set binary point
+  GICInterface->BPR = binary_point & 7U; /*set binary point*/
 }
 
 /** \brief Read the current group priority and subpriority split point from CPU's BPR register.
@@ -1772,12 +1795,12 @@ __STATIC_INLINE void GIC_DistInit(void)
   uint32_t num_irq = 0U;
   uint32_t priority_field;
 
-  //A reset sets all bits in the IGROUPRs corresponding to the SPIs to 0,
-  //configuring all of the interrupts as Secure.
+  /*A reset sets all bits in the IGROUPRs corresponding to the SPIs to 0,*/
+  /*configuring all of the interrupts as Secure.*/
 
-  //Disable interrupt forwarding
+  /*Disable interrupt forwarding*/
   GIC_DisableDistributor();
-  //Get the maximum number of interrupts that the GIC supports
+  /*Get the maximum number of interrupts that the GIC supports*/
   num_irq = 32U * ((GIC_DistributorInfo() & 0x1FU) + 1U);
 
   /* Priority level is implementation defined.
@@ -1788,16 +1811,16 @@ __STATIC_INLINE void GIC_DistInit(void)
 
   for (i = 32U; i < num_irq; i++)
   {
-      //Disable the SPI interrupt
+      /*Disable the SPI interrupt*/
       GIC_DisableIRQ((IRQn_Type)i);
-      //Set level-sensitive (and N-N model)
+      /*Set level-sensitive (and N-N model)*/
       GIC_SetConfiguration((IRQn_Type)i, 0U);
-      //Set priority
+      /*Set priority*/
       GIC_SetPriority((IRQn_Type)i, priority_field/2U);
-      //Set target list to CPU0
+      /*Set target list to CPU0*/
       GIC_SetTarget((IRQn_Type)i, 1U);
   }
-  //Enable distributor
+  /*Enable distributor*/
   GIC_EnableDistributor();
 }
 
@@ -1808,10 +1831,10 @@ __STATIC_INLINE void GIC_CPUInterfaceInit(void)
   uint32_t i;
   uint32_t priority_field;
 
-  //A reset sets all bits in the IGROUPRs corresponding to the SPIs to 0,
-  //configuring all of the interrupts as Secure.
+  /*A reset sets all bits in the IGROUPRs corresponding to the SPIs to 0,*/
+  /*configuring all of the interrupts as Secure.*/
 
-  //Disable interrupt forwarding
+  /*Disable interrupt forwarding*/
   GIC_DisableInterface();
 
   /* Priority level is implementation defined.
@@ -1820,23 +1843,24 @@ __STATIC_INLINE void GIC_CPUInterfaceInit(void)
   GIC_SetPriority((IRQn_Type)0U, 0xFFU);
   priority_field = GIC_GetPriority((IRQn_Type)0U);
 
-  //SGI and PPI
+  /*SGI and PPI*/
   for (i = 0U; i < 32U; i++)
   {
-    if(i > 15U) {
-      //Set level-sensitive (and N-N model) for PPI
+    if(i > 15U)
+    {
+      /*Set level-sensitive (and N-N model) for PPI*/
       GIC_SetConfiguration((IRQn_Type)i, 0U);
     }
-    //Disable SGI and PPI interrupts
+    /*Disable SGI and PPI interrupts*/
     GIC_DisableIRQ((IRQn_Type)i);
-    //Set priority
+    /*Set priority*/
     GIC_SetPriority((IRQn_Type)i, priority_field/2U);
   }
-  //Enable interface
+  /*Enable interface*/
   GIC_EnableInterface();
-  //Set binary point to 0
+  /*Set binary point to 0*/
   GIC_SetBinaryPoint(0U);
-  //Set priority mask
+  /*Set priority mask*/
   GIC_SetInterfacePriorityMask(0xFFU);
 }
 
@@ -1845,7 +1869,7 @@ __STATIC_INLINE void GIC_CPUInterfaceInit(void)
 __STATIC_INLINE void GIC_Enable(void)
 {
   GIC_DistInit();
-  GIC_CPUInterfaceInit(); //per CPU
+  GIC_CPUInterfaceInit(); /*per CPU*/
 }
 #endif
 
@@ -2248,8 +2272,8 @@ typedef struct RegionStruct {
 
 } mmu_region_attributes_Type;
 
-//Following macros define the descriptors and attributes
-//Sect_Normal. Outer & inner wb/wa, non-shareable, executable, rw, domain 0
+/*Following macros define the descriptors and attributes*/
+/*Sect_Normal. Outer & inner wb/wa, non-shareable, executable, rw, domain 0*/
 #define section_normal(descriptor_l1, region)     region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2264,7 +2288,7 @@ typedef struct RegionStruct {
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
 
-//Sect_Normal_NC. Outer & inner non-cacheable, non-shareable, executable, rw, domain 0
+/*Sect_Normal_NC. Outer & inner non-cacheable, non-shareable, executable, rw, domain 0*/
 #define section_normal_nc(descriptor_l1, region)     region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2279,7 +2303,7 @@ typedef struct RegionStruct {
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
 
-//Sect_Normal_Cod. Outer & inner wb/wa, non-shareable, executable, ro, domain 0
+/*Sect_Normal_Cod. Outer & inner wb/wa, non-shareable, executable, ro, domain 0*/
 #define section_normal_cod(descriptor_l1, region) region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2294,7 +2318,7 @@ typedef struct RegionStruct {
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
 
-//Sect_Normal_RO. Sect_Normal_Cod, but not executable
+/*Sect_Normal_RO. Sect_Normal_Cod, but not executable*/
 #define section_normal_ro(descriptor_l1, region)  region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2309,7 +2333,7 @@ typedef struct RegionStruct {
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
 
-//Sect_Normal_RW. Sect_Normal_Cod, but writeable and not executable
+/*Sect_Normal_RW. Sect_Normal_Cod, but writeable and not executable*/
 #define section_normal_rw(descriptor_l1, region) region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2323,7 +2347,7 @@ typedef struct RegionStruct {
                                    region.user_t = RW; \
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
-//Sect_SO. Strongly-ordered (therefore shareable), not executable, rw, domain 0, base addr 0
+/*Sect_SO. Strongly-ordered (therefore shareable), not executable, rw, domain 0, base addr 0*/
 #define section_so(descriptor_l1, region) region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2338,7 +2362,7 @@ typedef struct RegionStruct {
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
 
-//Sect_Device_RO. Device, non-shareable, non-executable, ro, domain 0, base addr 0
+/*Sect_Device_RO. Device, non-shareable, non-executable, ro, domain 0, base addr 0*/
 #define section_device_ro(descriptor_l1, region) region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2353,7 +2377,7 @@ typedef struct RegionStruct {
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
 
-//Sect_Device_RW. Sect_Device_RO, but writeable
+/*Sect_Device_RW. Sect_Device_RO, but writeable*/
 #define section_device_rw(descriptor_l1, region) region.rg_t = SECTION; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2367,7 +2391,7 @@ typedef struct RegionStruct {
                                    region.user_t = RW; \
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetSectionDescriptor(&descriptor_l1, region);
-//Page_4k_Device_RW.  Shared device, not executable, rw, domain 0
+/*Page_4k_Device_RW.  Shared device, not executable, rw, domain 0*/
 #define page4k_device_rw(descriptor_l1, descriptor_l2, region) region.rg_t = PAGE_4k; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2382,7 +2406,7 @@ typedef struct RegionStruct {
                                    region.sh_t = NON_SHARED; \
                                    MMU_GetPageDescriptor(&descriptor_l1, &descriptor_l2, region);
 
-//Page_64k_Device_RW.  Shared device, not executable, rw, domain 0
+/*Page_64k_Device_RW.  Shared device, not executable, rw, domain 0*/
 #define page64k_device_rw(descriptor_l1, descriptor_l2, region)  region.rg_t = PAGE_64k; \
                                    region.domain = 0x0; \
                                    region.e_t = ECC_DISABLED; \
@@ -2452,20 +2476,31 @@ __STATIC_INLINE int MMU_APSection(uint32_t *descriptor_l1, mmu_access_Type user,
 {
   uint32_t ap = 0;
 
-  if (afe == 0) { //full access
-    if ((priv == NO_ACCESS) && (user == NO_ACCESS)) { ap = 0x0; }
-    else if ((priv == RW) && (user == NO_ACCESS))   { ap = 0x1; }
-    else if ((priv == RW) && (user == READ))        { ap = 0x2; }
-    else if ((priv == RW) && (user == RW))          { ap = 0x3; }
-    else if ((priv == READ) && (user == NO_ACCESS)) { ap = 0x5; }
-    else if ((priv == READ) && (user == READ))      { ap = 0x7; }
+  if (afe == 0)
+  { /*full access*/
+    if ((priv == NO_ACCESS) && (user == NO_ACCESS))
+    { ap = 0x0; }
+    else if ((priv == RW) && (user == NO_ACCESS))
+    { ap = 0x1; }
+    else if ((priv == RW) && (user == READ))
+    { ap = 0x2; }
+    else if ((priv == RW) && (user == RW))
+    { ap = 0x3; }
+    else if ((priv == READ) && (user == NO_ACCESS))
+    { ap = 0x5; }
+    else if ((priv == READ) && (user == READ))
+    { ap = 0x7; }
   }
 
-  else { //Simplified access
-    if ((priv == RW) && (user == NO_ACCESS))        { ap = 0x1; }
-    else if ((priv == RW) && (user == RW))          { ap = 0x3; }
-    else if ((priv == READ) && (user == NO_ACCESS)) { ap = 0x5; }
-    else if ((priv == READ) && (user == READ))      { ap = 0x7; }
+  else { /*Simplified access*/
+    if ((priv == RW) && (user == NO_ACCESS))
+    { ap = 0x1; }
+    else if ((priv == RW) && (user == RW))
+    { ap = 0x3; }
+    else if ((priv == READ) && (user == NO_ACCESS))
+    { ap = 0x5; }
+    else if ((priv == READ) && (user == READ))
+    { ap = 0x7; }
   }
 
   *descriptor_l1 &= SECTION_AP_MASK;
@@ -2582,20 +2617,31 @@ __STATIC_INLINE int MMU_APPage(uint32_t *descriptor_l2, mmu_access_Type user, mm
 {
   uint32_t ap = 0;
 
-  if (afe == 0) { //full access
-    if ((priv == NO_ACCESS) && (user == NO_ACCESS)) { ap = 0x0; }
-    else if ((priv == RW) && (user == NO_ACCESS))   { ap = 0x1; }
-    else if ((priv == RW) && (user == READ))        { ap = 0x2; }
-    else if ((priv == RW) && (user == RW))          { ap = 0x3; }
-    else if ((priv == READ) && (user == NO_ACCESS)) { ap = 0x5; }
-    else if ((priv == READ) && (user == READ))      { ap = 0x6; }
+  if (afe == 0)
+  { /*full access*/
+    if ((priv == NO_ACCESS) && (user == NO_ACCESS))
+    { ap = 0x0; }
+    else if ((priv == RW) && (user == NO_ACCESS))
+    { ap = 0x1; }
+    else if ((priv == RW) && (user == READ))
+    { ap = 0x2; }
+    else if ((priv == RW) && (user == RW))
+    { ap = 0x3; }
+    else if ((priv == READ) && (user == NO_ACCESS))
+    { ap = 0x5; }
+    else if ((priv == READ) && (user == READ))
+    { ap = 0x6; }
   }
 
-  else { //Simplified access
-    if ((priv == RW) && (user == NO_ACCESS))        { ap = 0x1; }
-    else if ((priv == RW) && (user == RW))          { ap = 0x3; }
-    else if ((priv == READ) && (user == NO_ACCESS)) { ap = 0x5; }
-    else if ((priv == READ) && (user == READ))      { ap = 0x7; }
+  else { /*Simplified access*/
+    if ((priv == RW) && (user == NO_ACCESS))
+    { ap = 0x1; }
+    else if ((priv == RW) && (user == RW))
+    { ap = 0x3; }
+    else if ((priv == READ) && (user == NO_ACCESS))
+    { ap = 0x5; }
+    else if ((priv == READ) && (user == READ))
+    { ap = 0x7; }
   }
 
   *descriptor_l2 &= PAGE_AP_MASK;
@@ -2723,7 +2769,7 @@ __STATIC_INLINE int MMU_MemoryPage(uint32_t *descriptor_l2, mmu_memory_Type mem,
 
   if (page == PAGE_64k)
   {
-    //same as section
+    /*same as section*/
     MMU_MemorySection(descriptor_l2, mem, outer, inner);
   }
   else
@@ -2849,7 +2895,7 @@ __STATIC_INLINE int MMU_GetPageDescriptor(uint32_t *descriptor, uint32_t *descri
       break;
 
     case SECTION:
-      //error
+      /*error*/
       break;
   }
 
@@ -2873,12 +2919,12 @@ __STATIC_INLINE void MMU_TTSection(uint32_t *ttb, uint32_t base_address, uint32_
   offset = base_address >> 20;
   entry  = (base_address & 0xFFF00000) | descriptor_l1;
 
-  //4 bytes aligned
+  /*4 bytes aligned*/
   ttb = ttb + offset;
 
   for (i = 0; i < count; i++ )
   {
-    //4 bytes aligned
+    /*4 bytes aligned*/
     *ttb++ = entry;
     entry += OFFSET_1M;
   }
@@ -2904,9 +2950,9 @@ __STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t base_address, uint32_t
   offset = base_address >> 20;
   entry  = ((int)ttb_l2 & 0xFFFFFC00) | descriptor_l1;
 
-  //4 bytes aligned
+  /*4 bytes aligned*/
   ttb += offset;
-  //create l1_entry
+  /*create l1_entry*/
   *ttb = entry;
 
   offset2 = (base_address & 0xff000) >> 12;
@@ -2914,7 +2960,7 @@ __STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t base_address, uint32_t
   entry2 = (base_address & 0xFFFFF000) | descriptor_l2;
   for (i = 0; i < count; i++ )
   {
-    //4 bytes aligned
+    /*4 bytes aligned*/
     *ttb_l2++ = entry2;
     entry2 += OFFSET_4K;
   }
@@ -2940,9 +2986,9 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t base_address, uint32_
   offset = base_address >> 20;
   entry  = ((int)ttb_l2 & 0xFFFFFC00) | descriptor_l1;
 
-  //4 bytes aligned
+  /*4 bytes aligned*/
   ttb += offset;
-  //create l1_entry
+  /*create l1_entry*/
   *ttb = entry;
 
   offset2 = (base_address & 0xff000) >> 12;
@@ -2950,10 +2996,10 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t base_address, uint32_
   entry2 = (base_address & 0xFFFF0000) | descriptor_l2;
   for (i = 0; i < count; i++ )
   {
-    //create 16 entries
+    /*create 16 entries*/
     for (j = 0; j < 16; j++)
     {
-      //4 bytes aligned
+      /*4 bytes aligned*/
       *ttb_l2++ = entry2;
     }
     entry2 += OFFSET_64K;
@@ -2964,9 +3010,9 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t base_address, uint32_
 */
 __STATIC_INLINE void MMU_Enable(void)
 {
-  // Set M bit 0 to enable the MMU
-  // Set AFE bit to enable simplified access permissions model
-  // Clear TRE bit to disable TEX remap and A bit to disable strict alignment fault checking
+  /* Set M bit 0 to enable the MMU*/
+  /* Set AFE bit to enable simplified access permissions model*/
+  /* Clear TRE bit to disable TEX remap and A bit to disable strict alignment fault checking*/
   __set_SCTLR( (__get_SCTLR() & ~(1 << 28) & ~(1 << 1)) | 1 | (1 << 29));
   __ISB();
 }
@@ -2975,7 +3021,7 @@ __STATIC_INLINE void MMU_Enable(void)
 */
 __STATIC_INLINE void MMU_Disable(void)
 {
-  // Clear M bit 0 to disable the MMU
+  /* Clear M bit 0 to disable the MMU*/
   __set_SCTLR( __get_SCTLR() & ~1);
   __ISB();
 }
@@ -2986,8 +3032,8 @@ __STATIC_INLINE void MMU_Disable(void)
 __STATIC_INLINE void MMU_InvalidateTLB(void)
 {
   __set_TLBIALL(0);
-  __DSB();     //ensure completion of the invalidation
-  __ISB();     //ensure instruction fetch path sees new state
+  __DSB();     /*ensure completion of the invalidation*/
+  __ISB();     /*ensure instruction fetch path sees new state*/
 }
 
 

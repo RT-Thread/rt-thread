@@ -125,12 +125,12 @@ void R_BSP_MaclMatMulQ31 (const arm_matrix_instance_q31 * p_src_a,
  **********************************************************************************************************************/
 void R_BSP_MaclMatVecMulQ31 (const arm_matrix_instance_q31 * p_src_mat, const q31_t * p_vec, q31_t * p_dst)
 {
-    uint16_t      num_rows     = p_src_mat->numRows; // Number of rows of input matrix
-    uint16_t      num_cols     = p_src_mat->numCols; // Number of columns of input matrix
-    const q31_t * p_src        = p_src_mat->pData;   // Input data matrix
-    const q31_t * p_in_vec     = p_vec;              // Input data vector
-    q31_t       * p_out        = p_dst;              // Output data vector
-    uint16_t      row          = num_rows;           // Loop counters
+    uint16_t      num_rows     = p_src_mat->numRows; /* Number of rows of input matrix*/
+    uint16_t      num_cols     = p_src_mat->numCols; /* Number of columns of input matrix*/
+    const q31_t * p_src        = p_src_mat->pData;   /* Input data matrix*/
+    const q31_t * p_in_vec     = p_vec;              /* Input data vector*/
+    q31_t       * p_out        = p_dst;              /* Output data vector*/
+    uint16_t      row          = num_rows;           /* Loop counters*/
     uint16_t      num_cols_vec = 1;
 
     /* Disable Fixed point mode. */
@@ -180,19 +180,19 @@ void R_BSP_MaclBiquadCsdDf1Q31 (const arm_biquad_casd_df1_inst_q31 * p_biquad_cs
                                 q31_t                              * p_dst,
                                 uint32_t                             block_size)
 {
-    const q31_t       * p_coeffs    = p_biquad_csd_df1_inst->pCoeffs;                         // Coefficient pointer
-    q31_t             * p_state     = p_biquad_csd_df1_inst->pState;                          // State pointer
-    const q31_t       * p_src_local = p_src;                                                  // Local pointer for p_src
-    q31_t             * p_dst_local = p_dst;                                                  // Local pointer for p_dst
-    uint32_t            stage       = p_biquad_csd_df1_inst->numStages;                       // Loop counter
-    uint32_t            sample;                                                               // Loop counter
-    uint32_t            state_update_element;                                                 // Update state buffer
-    uint32_t            src_ctrl;                                                             // Control the value of source
-    uint32_t            sample_ctrl;                                                          // Control the value of sample
-    uint32_t            coeffs_ctrl;                                                          // Control the value of coefficient
-    uint32_t            shift           = ((uint32_t) p_biquad_csd_df1_inst->postShift + 1U); // Shift to be applied to the output
-    uint32_t            r_shift         = BSP_MACL_32_BIT - shift;                            // Shift to be applied to the output
-    volatile uint64_t * p_result_in_q62 = (uint64_t *) &(R_MACL->MULR0.MULRL);                // Assign to address of MULR0
+    const q31_t       * p_coeffs    = p_biquad_csd_df1_inst->pCoeffs;                         /* Coefficient pointer*/
+    q31_t             * p_state     = p_biquad_csd_df1_inst->pState;                          /* State pointer*/
+    const q31_t       * p_src_local = p_src;                                                  /* Local pointer for p_src*/
+    q31_t             * p_dst_local = p_dst;                                                  /* Local pointer for p_dst*/
+    uint32_t            stage       = p_biquad_csd_df1_inst->numStages;                       /* Loop counter*/
+    uint32_t            sample;                                                               /* Loop counter*/
+    uint32_t            state_update_element;                                                 /* Update state buffer*/
+    uint32_t            src_ctrl;                                                             /* Control the value of source*/
+    uint32_t            sample_ctrl;                                                          /* Control the value of sample*/
+    uint32_t            coeffs_ctrl;                                                          /* Control the value of coefficient*/
+    uint32_t            shift           = ((uint32_t) p_biquad_csd_df1_inst->postShift + 1U); /* Shift to be applied to the output*/
+    uint32_t            r_shift         = BSP_MACL_32_BIT - shift;                            /* Shift to be applied to the output*/
+    volatile uint64_t * p_result_in_q62 = (uint64_t *) &(R_MACL->MULR0.MULRL);                /* Assign to address of MULR0*/
 
     state_update_element = 0U;
     coeffs_ctrl          = 0U;
@@ -248,15 +248,15 @@ void R_BSP_MaclBiquadCsdDf1Q31 (const arm_biquad_casd_df1_inst_q31 * p_biquad_cs
             }
 
             /* Update state buffer */
-            p_state[state_update_element + 1U] = p_state[state_update_element]; // x[n - 2] = x[n - 1]
-            p_state[state_update_element]      = p_src_local[src_ctrl];         // x[n - 1] = x[n]
+            p_state[state_update_element + 1U] = p_state[state_update_element]; /* x[n - 2] = x[n - 1]*/
+            p_state[state_update_element]      = p_src_local[src_ctrl];         /* x[n - 1] = x[n]*/
 
             /* Shift and write result to buffer */
             *p_dst_local = (q31_t) (*p_result_in_q62 >> r_shift);
 
             /* Update state buffer */
-            p_state[state_update_element + 3U] = p_state[state_update_element + 2U]; // y[n - 2] = y[n - 1]
-            p_state[state_update_element + 2U] = *p_dst_local;                       // Update value of y[n-1]
+            p_state[state_update_element + 3U] = p_state[state_update_element + 2U]; /* y[n - 2] = y[n - 1]*/
+            p_state[state_update_element + 2U] = *p_dst_local;                       /* Update value of y[n-1]*/
 
             sample--;
             src_ctrl++;
@@ -292,14 +292,14 @@ void R_BSP_MaclConvQ31 (const q31_t * p_src_a,
                         uint32_t      src_b_len,
                         q31_t       * p_dst)
 {
-    uint8_t       src_a_ctrl;          // Control the value of source A
-    uint8_t       src_b_ctrl;          // Control the value of source B
-    uint8_t       element_ctrl;        // Control the value of element
-    uint32_t      src_a_len_local;     // Local length of source A
-    uint32_t      src_b_len_local;     // Local length of source B
-    const q31_t * p_data_a;            // Input source A pointer
-    const q31_t * p_data_b;            // Input source B pointer
-    q31_t       * p_dst_local = p_dst; // Output pointer
+    uint8_t       src_a_ctrl;          /* Control the value of source A*/
+    uint8_t       src_b_ctrl;          /* Control the value of source B*/
+    uint8_t       element_ctrl;        /* Control the value of element*/
+    uint32_t      src_a_len_local;     /* Local length of source A*/
+    uint32_t      src_b_len_local;     /* Local length of source B*/
+    const q31_t * p_data_a;            /* Input source A pointer*/
+    const q31_t * p_data_b;            /* Input source B pointer*/
+    q31_t       * p_dst_local = p_dst; /* Output pointer*/
 
     src_a_ctrl   = 1U;
     src_b_ctrl   = 1U;
@@ -467,15 +467,15 @@ void R_BSP_MaclFirDecimateQ31 (const arm_fir_decimate_instance_q31 * p_fir_decim
                                q31_t                               * p_dst,
                                uint32_t                              block_size)
 {
-    q31_t       * p_state  = p_fir_decimate_ins_q31->pState;  // State pointer
-    const q31_t * p_coeffs = p_fir_decimate_ins_q31->pCoeffs; // Coefficient pointer
-    q31_t       * p_state_cur;                                // Points to the current sample of the state
-    q31_t       * p_state_buffer;                             // Temporary pointer for state buffer
-    const q31_t * p_coeff_buffer;                             // Temporary pointer for coefficient buffer
-    uint32_t      num_taps = p_fir_decimate_ins_q31->numTaps; // Number of filter coefficients in the filter
-    uint32_t      num_of_decimate_factor;                     // Number of decimation factor
-    uint32_t      tap_cnt;                                    // Loop counters
-    uint32_t      blk_cnt;                                    // Loop counters
+    q31_t       * p_state  = p_fir_decimate_ins_q31->pState;  /* State pointer*/
+    const q31_t * p_coeffs = p_fir_decimate_ins_q31->pCoeffs; /* Coefficient pointer*/
+    q31_t       * p_state_cur;                                /* Points to the current sample of the state*/
+    q31_t       * p_state_buffer;                             /* Temporary pointer for state buffer*/
+    const q31_t * p_coeff_buffer;                             /* Temporary pointer for coefficient buffer*/
+    uint32_t      num_taps = p_fir_decimate_ins_q31->numTaps; /* Number of filter coefficients in the filter*/
+    uint32_t      num_of_decimate_factor;                     /* Number of decimation factor*/
+    uint32_t      tap_cnt;                                    /* Loop counters*/
+    uint32_t      blk_cnt;                                    /* Loop counters*/
 
     /* Enable Fixed point mode. */
     R_MACL->MULC = BSP_MACL_FIXED_POINT_MODE_ENABLE;
@@ -574,17 +574,17 @@ void R_BSP_MaclFirInterpolateQ31 (const arm_fir_interpolate_instance_q31 * p_fir
     /* Disable Fixed point mode. */
     R_MACL->MULC = BSP_MACL_FIXED_POINT_MODE_DISABLE;
 
-    q31_t             * p_state  = p_fir_interpolate_ins_q31->pState;         // State pointer
-    const q31_t       * p_coeffs = p_fir_interpolate_ins_q31->pCoeffs;        // Coefficient pointer
-    q31_t             * p_state_cur;                                          // Points to the current sample of the state
-    q31_t             * p_state_tmp;                                          // Temporary pointer for state buffer
-    const q31_t       * p_coef_tmp;                                           // Temporary pointer for coefficient buffer
-    uint32_t            coef_idx;                                             // Index of coefficient
-    uint32_t            factor_cnt;                                           // Loop counters
-    uint32_t            blk_cnt;                                              // Loop counters
-    uint32_t            tap_cnt;                                              // Loop counters
-    uint32_t            phase_len   = p_fir_interpolate_ins_q31->phaseLength; // Length of each polyphase filter component
-    volatile uint64_t * p_result_r0 = (uint64_t *) &(R_MACL->MULR0.MULRL);    // Assign to address of MULR0
+    q31_t             * p_state  = p_fir_interpolate_ins_q31->pState;         /* State pointer*/
+    const q31_t       * p_coeffs = p_fir_interpolate_ins_q31->pCoeffs;        /* Coefficient pointer*/
+    q31_t             * p_state_cur;                                          /* Points to the current sample of the state*/
+    q31_t             * p_state_tmp;                                          /* Temporary pointer for state buffer*/
+    const q31_t       * p_coef_tmp;                                           /* Temporary pointer for coefficient buffer*/
+    uint32_t            coef_idx;                                             /* Index of coefficient*/
+    uint32_t            factor_cnt;                                           /* Loop counters*/
+    uint32_t            blk_cnt;                                              /* Loop counters*/
+    uint32_t            tap_cnt;                                              /* Loop counters*/
+    uint32_t            phase_len   = p_fir_interpolate_ins_q31->phaseLength; /* Length of each polyphase filter component*/
+    volatile uint64_t * p_result_r0 = (uint64_t *) &(R_MACL->MULR0.MULRL);    /* Assign to address of MULR0*/
 
     /* p_state_cur points to the location where the new input data should be written */
     p_state_cur = p_fir_interpolate_ins_q31->pState + (phase_len - 1U);
@@ -679,19 +679,19 @@ void R_BSP_MaclCorrelateQ31 (const q31_t * p_src_a,
                              uint32_t      src_b_len,
                              q31_t       * p_dst)
 {
-    const q31_t * p_in1;               // InputA pointer
-    const q31_t * p_in2;               // InputB pointer
-    q31_t       * p_out = p_dst;       // Output pointer
-    const q31_t * p_in_a_buf;          // Intermediate inputA pointer
-    const q31_t * p_in_b_buf;          // Intermediate inputB pointer
-    const q31_t * p_src1;              // Intermediate pointers
-    uint32_t      block_size1;         // Loop counters
-    uint32_t      block_size2;         // Loop counters
-    uint32_t      block_size3;         // Loop counters
-    uint32_t      len_diff_cnt;        // Number of output samples
-    uint32_t      cal_cnt;             // Loop counters
-    uint32_t      count;               // Loop counters
-    int32_t       inc = 1;             // Destination address modifier
+    const q31_t * p_in1;               /* InputA pointer*/
+    const q31_t * p_in2;               /* InputB pointer*/
+    q31_t       * p_out = p_dst;       /* Output pointer*/
+    const q31_t * p_in_a_buf;          /* Intermediate inputA pointer*/
+    const q31_t * p_in_b_buf;          /* Intermediate inputB pointer*/
+    const q31_t * p_src1;              /* Intermediate pointers*/
+    uint32_t      block_size1;         /* Loop counters*/
+    uint32_t      block_size2;         /* Loop counters*/
+    uint32_t      block_size3;         /* Loop counters*/
+    uint32_t      len_diff_cnt;        /* Number of output samples*/
+    uint32_t      cal_cnt;             /* Loop counters*/
+    uint32_t      count;               /* Loop counters*/
+    int32_t       inc = 1;             /* Destination address modifier*/
 
     /* Enable Fixed point mode. */
     R_MACL->MULC = BSP_MACL_FIXED_POINT_MODE_ENABLE;
@@ -1164,34 +1164,34 @@ void R_BSP_MaclLmsNormQ31 (arm_lms_norm_instance_q31 * p_lms_norm_ins_q31,
                            q31_t                     * p_err,
                            uint32_t                    block_size)
 {
-    q31_t             * p_state  = p_lms_norm_ins_q31->pState;             // State pointer
-    q31_t             * p_coeffs = p_lms_norm_ins_q31->pCoeffs;            // Coefficient pointer
-    q31_t             * p_state_curnt;                                     // Points to the current sample of the state
-    q31_t             * p_state_buf;                                       // Temporary pointers for state
-    q31_t             * p_coeffs_buf;                                      // Coefficient buffers
-    q31_t               mu       = p_lms_norm_ins_q31->mu;                 // Adaptive factor
-    uint32_t            num_taps = p_lms_norm_ins_q31->numTaps;            // Number of filter coefficients in the filter
-    uint32_t            tap_cnt;                                           // Loop counters
-    uint32_t            blk_cnt;                                           // Loop counters
-    q31_t               acc;                                               // Accumulator
-    q63_t               energy;                                            // Energy of the input
-    q31_t               err_data;                                          // Error data sample
-    q31_t               weight_factor;                                     // Weight factor and state
+    q31_t             * p_state  = p_lms_norm_ins_q31->pState;             /* State pointer*/
+    q31_t             * p_coeffs = p_lms_norm_ins_q31->pCoeffs;            /* Coefficient pointer*/
+    q31_t             * p_state_curnt;                                     /* Points to the current sample of the state*/
+    q31_t             * p_state_buf;                                       /* Temporary pointers for state*/
+    q31_t             * p_coeffs_buf;                                      /* Coefficient buffers*/
+    q31_t               mu       = p_lms_norm_ins_q31->mu;                 /* Adaptive factor*/
+    uint32_t            num_taps = p_lms_norm_ins_q31->numTaps;            /* Number of filter coefficients in the filter*/
+    uint32_t            tap_cnt;                                           /* Loop counters*/
+    uint32_t            blk_cnt;                                           /* Loop counters*/
+    q31_t               acc;                                               /* Accumulator*/
+    q63_t               energy;                                            /* Energy of the input*/
+    q31_t               err_data;                                          /* Error data sample*/
+    q31_t               weight_factor;                                     /* Weight factor and state*/
     q31_t               data_in;
-    q31_t               x0;                                                // Temporary variable to hold input sample
-    q31_t               error_x_mu;                                        // Temporary variable to store error
-    q31_t               one_by_energy;                                     // Temporary variables to store mu product and reciprocal of energy
-    q31_t               post_shift;                                        // Post shift to be applied to weight after reciprocal calculation
-    q31_t               acc_l;                                             // Low accumulator
-    q31_t               acc_h;                                             // High accumulator
+    q31_t               x0;                                                /* Temporary variable to hold input sample*/
+    q31_t               error_x_mu;                                        /* Temporary variable to store error*/
+    q31_t               one_by_energy;                                     /* Temporary variables to store mu product and reciprocal of energy*/
+    q31_t               post_shift;                                        /* Post shift to be applied to weight after reciprocal calculation*/
+    q31_t               acc_l;                                             /* Low accumulator*/
+    q31_t               acc_h;                                             /* High accumulator*/
     uint32_t            u_shift = ((uint32_t) p_lms_norm_ins_q31->postShift + 1U);
-    uint32_t            l_shift = BSP_MACL_32_BIT - u_shift;               // Shift to be applied to the output
-    q63_t               result_temp;                                       // Temporary variable to read result register
-    volatile uint64_t * p_result_r4 = (uint64_t *) &(R_MACL->MULR4.MULRL); // Assign to address of MULR4
-    uint32_t            tmp_check;                                         // Check overflow/underflow value
+    uint32_t            l_shift = BSP_MACL_32_BIT - u_shift;               /* Shift to be applied to the output*/
+    q63_t               result_temp;                                       /* Temporary variable to read result register*/
+    volatile uint64_t * p_result_r4 = (uint64_t *) &(R_MACL->MULR4.MULRL); /* Assign to address of MULR4*/
+    uint32_t            tmp_check;                                         /* Check overflow/underflow value*/
     q63_t               mul_tmp = 0;
-    energy = p_lms_norm_ins_q31->energy;                                   // Frame energy
-    x0     = p_lms_norm_ins_q31->x0;                                       // Input sample
+    energy = p_lms_norm_ins_q31->energy;                                   /* Frame energy*/
+    x0     = p_lms_norm_ins_q31->x0;                                       /* Input sample*/
 
     /* p_lms_norm_ins_q31->pState points to buffer which contains previous frame (num_taps - 1) samples */
     /* p_state_curnt points to the location where the new input data should be written */
@@ -1388,23 +1388,23 @@ void R_BSP_MaclLmsQ31 (const arm_lms_instance_q31 * p_lms_ins_q31,
                        q31_t                      * p_err,
                        uint32_t                     block_size)
 {
-    q31_t  * p_state  = p_lms_ins_q31->pState;    // State pointer
-    q31_t  * p_coeffs = p_lms_ins_q31->pCoeffs;   // Coefficient pointer
-    q31_t  * p_state_curnt;                       // Points to the current sample of the state
-    q31_t  * p_state_buf;                         // Temporary pointers for state
-    q31_t  * p_coeffs_buf;                        // Coefficient buffers
-    q31_t    mu       = p_lms_ins_q31->mu;        // Adaptive factor
-    uint32_t num_taps = p_lms_ins_q31->numTaps;   // Number of filter coefficients in the filter
-    uint32_t tap_cnt;                             // Loop counters
-    uint32_t blk_cnt;                             // Loop counters
-    q63_t    acc;                                 // Accumulator
-    q31_t    err_data = 0;                        // Error data sample
-    q31_t    alpha;                               // Intermediate constant for taps update
-    q31_t    acc_l;                               // Low accumulator
-    q31_t    acc_h;                               // High accumulator
+    q31_t  * p_state  = p_lms_ins_q31->pState;    /* State pointer*/
+    q31_t  * p_coeffs = p_lms_ins_q31->pCoeffs;   /* Coefficient pointer*/
+    q31_t  * p_state_curnt;                       /* Points to the current sample of the state*/
+    q31_t  * p_state_buf;                         /* Temporary pointers for state*/
+    q31_t  * p_coeffs_buf;                        /* Coefficient buffers*/
+    q31_t    mu       = p_lms_ins_q31->mu;        /* Adaptive factor*/
+    uint32_t num_taps = p_lms_ins_q31->numTaps;   /* Number of filter coefficients in the filter*/
+    uint32_t tap_cnt;                             /* Loop counters*/
+    uint32_t blk_cnt;                             /* Loop counters*/
+    q63_t    acc;                                 /* Accumulator*/
+    q31_t    err_data = 0;                        /* Error data sample*/
+    q31_t    alpha;                               /* Intermediate constant for taps update*/
+    q31_t    acc_l;                               /* Low accumulator*/
+    q31_t    acc_h;                               /* High accumulator*/
     uint32_t u_shift = (p_lms_ins_q31->postShift + 1);
-    uint32_t l_shift = BSP_MACL_32_BIT - u_shift; // Shift to be applied to the output
-    uint32_t tmp_check;                           // Check overflow/underflow value
+    uint32_t l_shift = BSP_MACL_32_BIT - u_shift; /* Shift to be applied to the output*/
+    uint32_t tmp_check;                           /* Check overflow/underflow value*/
 
     /* Disable fixed point mode. */
     R_MACL->MULC = BSP_MACL_FIXED_POINT_MODE_DISABLE;
@@ -1560,14 +1560,14 @@ void R_BSP_MaclLmsQ31 (const arm_lms_instance_q31 * p_lms_ins_q31,
  **********************************************************************************************************************/
 void R_BSP_MaclFirQ31 (const arm_fir_instance_q31 * p_fir_inst, const q31_t * p_src, q31_t * p_dst, uint32_t block_size)
 {
-    q31_t       * p_state;             // Pointer to state buffer which will be used to hold calculated sample
-    q31_t       * p_state_curnt;       // Intermediate pointer used to write sample into state buffer
-    q31_t       * p_state_tmp;         // Intermediate pointer to write sample value into register MAC32S
-    const q31_t * p_coeff_tmp;         // Intermediate pointer to write coefficient into register MULB0
-    const q31_t * p_coeffs;            // Local pointer for p_Coeff of instance p_fir_inst
-    uint16_t      num_taps;            // Numbers of coefficient
-    uint32_t      tap_cnt;             // Loop count
-    uint32_t      blk_cnt;             // Loop count
+    q31_t       * p_state;             /* Pointer to state buffer which will be used to hold calculated sample*/
+    q31_t       * p_state_curnt;       /* Intermediate pointer used to write sample into state buffer*/
+    q31_t       * p_state_tmp;         /* Intermediate pointer to write sample value into register MAC32S*/
+    const q31_t * p_coeff_tmp;         /* Intermediate pointer to write coefficient into register MULB0*/
+    const q31_t * p_coeffs;            /* Local pointer for p_Coeff of instance p_fir_inst*/
+    uint16_t      num_taps;            /* Numbers of coefficient*/
+    uint32_t      tap_cnt;             /* Loop count*/
+    uint32_t      blk_cnt;             /* Loop count*/
 
     p_state  = p_fir_inst->pState;
     p_coeffs = p_fir_inst->pCoeffs;
@@ -1796,14 +1796,14 @@ static void r_macl_mat_mul_q31 (const arm_matrix_instance_q31 * p_src_a,
                                 const arm_matrix_instance_q31 * p_src_b,
                                 arm_matrix_instance_q31       * p_dst)
 {
-    const q31_t * p_in_a = p_src_a->pData;       // Input data matrix pointer A
-    const q31_t * p_in_b;                        // Input data matrix pointer B
-    q31_t       * p_out      = p_dst->pData;     // Output data matrix pointer
-    uint16_t      num_rows_a = p_src_a->numRows; // Number of rows of input matrix A
-    uint16_t      num_cols_b = p_src_b->numCols; // Number of columns of input matrix B
-    uint16_t      num_cols_a = p_src_a->numCols; // Number of columns of input matrix A
-    uint16_t      col;                           // Column loop counters
-    uint16_t      row = num_rows_a;              // Row loop counters
+    const q31_t * p_in_a = p_src_a->pData;       /* Input data matrix pointer A*/
+    const q31_t * p_in_b;                        /* Input data matrix pointer B*/
+    q31_t       * p_out      = p_dst->pData;     /* Output data matrix pointer*/
+    uint16_t      num_rows_a = p_src_a->numRows; /* Number of rows of input matrix A*/
+    uint16_t      num_cols_b = p_src_b->numCols; /* Number of columns of input matrix B*/
+    uint16_t      num_cols_a = p_src_a->numCols; /* Number of columns of input matrix A*/
+    uint16_t      col;                           /* Column loop counters*/
+    uint16_t      row = num_rows_a;              /* Row loop counters*/
 
     /* Row loop */
     do
@@ -1884,11 +1884,11 @@ static void r_macl_mat_scale_q31 (const arm_matrix_instance_q31 * p_src,
                                   int32_t                         shift,
                                   arm_matrix_instance_q31       * p_dst)
 {
-    q31_t             * p_in  = p_src->pData; // Input data matrix pointer
-    q31_t             * p_out = p_dst->pData; // Output data matrix pointer
-    uint32_t            block_size;           // Loop counter
-    q31_t               out;                  // Temporary output data
-    int32_t             scale_shift;          // Shift to apply after scaling
+    q31_t             * p_in  = p_src->pData; /* Input data matrix pointer*/
+    q31_t             * p_out = p_dst->pData; /* Output data matrix pointer*/
+    uint32_t            block_size;           /* Loop counter*/
+    q31_t               out;                  /* Temporary output data*/
+    int32_t             scale_shift;          /* Shift to apply after scaling*/
     volatile uint32_t * p_result = &(R_MACL->MULR0.MULRH);
 
     scale_shift = shift + 1;

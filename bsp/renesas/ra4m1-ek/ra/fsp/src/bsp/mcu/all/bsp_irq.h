@@ -228,7 +228,7 @@ void R_BSP_IrqCfgEnable(IRQn_Type const irq, uint32_t priority, void * p_context
  **********************************************************************************************************************/
 
 /* Public functions defined in bsp.h */
-void bsp_irq_cfg(void);                // Used internally by BSP
+void bsp_irq_cfg(void);                /* Used internally by BSP*/
 
 /** @} (end addtogroup BSP_MCU_PRV) */
 

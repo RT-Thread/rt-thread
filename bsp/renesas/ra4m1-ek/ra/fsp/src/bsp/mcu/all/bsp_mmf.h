@@ -24,7 +24,7 @@ FSP_HEADER
  * Macro definitions
  **********************************************************************************************************************/
 #define MEMORY_MIRROR_REG_KEY      (0xDBU)
-#define MEMORY_MIRROR_BOUNDARY     (0x80U) // 128 bytes
+#define MEMORY_MIRROR_BOUNDARY     (0x80U) /* 128 bytes*/
 #define MEMORY_MIRROR_ADDR_MASK    (0x007FFFFFU)
 
 /* The highest address which MMF able to support is the last address of code flash area which aligns with 128. */
@@ -44,8 +44,8 @@ typedef enum e_mmf_state
 /** Status instance of Memory Mirror Function. */
 typedef struct st_mmf_status
 {
-    mmf_state_t mmf_state;             // Current state of Memory Mirror Region.
-    uint32_t    mmf_cur_addr;          // Current address in register MMSFR.
+    mmf_state_t mmf_state;             /* Current state of Memory Mirror Region.*/
+    uint32_t    mmf_cur_addr;          /* Current address in register MMSFR.*/
 } mmf_status_t;
 
 /***********************************************************************************************************************
