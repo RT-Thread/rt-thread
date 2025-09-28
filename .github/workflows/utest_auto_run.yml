@@ -65,13 +65,6 @@ jobs:
             config_file: "cpp11/cpp11.cfg"
 
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "net/lwip.cfg"
-
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "net/netdev.cfg"
-
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "net/sal_lwip.cfg"
             config_file: "components/lwip.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/netdev.cfg"
