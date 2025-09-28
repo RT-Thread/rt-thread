@@ -1503,7 +1503,7 @@ typedef struct
 
 #define CoreDebug           ((CoreDebug_Type *)     DCB_BASE)
 
-#endif /* CMSIS_DISABLE_DEPRECATED*/
+#endif // CMSIS_DISABLE_DEPRECATED
 
 /*@} */
 

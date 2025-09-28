@@ -42,80 +42,80 @@ FSP_HEADER
 /** Result type for certain operations */
 typedef enum e_flash_result
 {
-    FLASH_RESULT_BLANK,                /*/< Return status for Blank Check Function*/
-    FLASH_RESULT_NOT_BLANK,            /*/< Return status for Blank Check Function*/
-    FLASH_RESULT_BGO_ACTIVE            /*/< Flash is configured for BGO mode. Result is returned in callback.*/
+    FLASH_RESULT_BLANK,                ///< Return status for Blank Check Function
+    FLASH_RESULT_NOT_BLANK,            ///< Return status for Blank Check Function
+    FLASH_RESULT_BGO_ACTIVE            ///< Flash is configured for BGO mode. Result is returned in callback.
 } flash_result_t;
 
 /** Parameter for specifying the startup area swap being requested by startupAreaSelect() */
 typedef enum e_flash_startup_area_swap
 {
-    FLASH_STARTUP_AREA_BTFLG  = 0,     /*/< Startup area will be set based on the value of the BTFLG*/
-    FLASH_STARTUP_AREA_BLOCK0 = 0x2,   /*/< Startup area will be set to Block 0*/
-    FLASH_STARTUP_AREA_BLOCK1 = 0x3,   /*/< Startup area will be set to Block 1*/
+    FLASH_STARTUP_AREA_BTFLG  = 0,     ///< Startup area will be set based on the value of the BTFLG
+    FLASH_STARTUP_AREA_BLOCK0 = 0x2,   ///< Startup area will be set to Block 0
+    FLASH_STARTUP_AREA_BLOCK1 = 0x3,   ///< Startup area will be set to Block 1
 } flash_startup_area_swap_t;
 
 /** Event types returned by the ISR callback when used in Data Flash BGO mode */
 typedef enum e_flash_event
 {
-    FLASH_EVENT_ERASE_COMPLETE,        /*/< Erase operation successfully completed*/
-    FLASH_EVENT_WRITE_COMPLETE,        /*/< Write operation successfully completed*/
-    FLASH_EVENT_BLANK,                 /*/< Blank check operation successfully completed. Specified area is blank*/
-    FLASH_EVENT_NOT_BLANK,             /*/< Blank check operation successfully completed. Specified area is NOT blank*/
-    FLASH_EVENT_ERR_DF_ACCESS,         /*/< Data Flash operation failed. Can occur when writing an unerased section.*/
-    FLASH_EVENT_ERR_CF_ACCESS,         /*/< Code Flash operation failed. Can occur when writing an unerased section.*/
-    FLASH_EVENT_ERR_CMD_LOCKED,        /*/< Operation failed, FCU is in Locked state (often result of an illegal command)*/
-    FLASH_EVENT_ERR_FAILURE,           /*/< Erase or Program Operation failed*/
-    FLASH_EVENT_ERR_ONE_BIT            /*/< A 1-bit error has been corrected when reading the flash memory area by the sequencer.*/
+    FLASH_EVENT_ERASE_COMPLETE,        ///< Erase operation successfully completed
+    FLASH_EVENT_WRITE_COMPLETE,        ///< Write operation successfully completed
+    FLASH_EVENT_BLANK,                 ///< Blank check operation successfully completed. Specified area is blank
+    FLASH_EVENT_NOT_BLANK,             ///< Blank check operation successfully completed. Specified area is NOT blank
+    FLASH_EVENT_ERR_DF_ACCESS,         ///< Data Flash operation failed. Can occur when writing an unerased section.
+    FLASH_EVENT_ERR_CF_ACCESS,         ///< Code Flash operation failed. Can occur when writing an unerased section.
+    FLASH_EVENT_ERR_CMD_LOCKED,        ///< Operation failed, FCU is in Locked state (often result of an illegal command)
+    FLASH_EVENT_ERR_FAILURE,           ///< Erase or Program Operation failed
+    FLASH_EVENT_ERR_ONE_BIT            ///< A 1-bit error has been corrected when reading the flash memory area by the sequencer.
 } flash_event_t;
 
 /** ID Code Modes for writing to ID code registers */
 typedef enum e_flash_id_code_mode
 {
-    FLASH_ID_CODE_MODE_UNLOCKED = 0,                            /*/< ID code is ignored*/
-    FLASH_ID_CODE_MODE_LOCKED_WITH_ALL_ERASE_SUPPORT = 0xC000U, /*/< ID code is checked. All erase is available.*/
-    FLASH_ID_CODE_MODE_LOCKED = 0x8000U                         /*/< ID code is checked.*/
+    FLASH_ID_CODE_MODE_UNLOCKED = 0,                            ///< ID code is ignored
+    FLASH_ID_CODE_MODE_LOCKED_WITH_ALL_ERASE_SUPPORT = 0xC000U, ///< ID code is checked. All erase is available.
+    FLASH_ID_CODE_MODE_LOCKED = 0x8000U                         ///< ID code is checked.
 } flash_id_code_mode_t;
 
 /** Flash status */
 typedef enum e_flash_status
 {
-    FLASH_STATUS_IDLE,                 /*/< The flash is idle.*/
-    FLASH_STATUS_BUSY                  /*/< The flash is currently processing a command.*/
+    FLASH_STATUS_IDLE,                 ///< The flash is idle.
+    FLASH_STATUS_BUSY                  ///< The flash is currently processing a command.
 } flash_status_t;
 
 /** Anti-rollback counter selection.  */
 typedef enum e_flash_arc
 {
-    FLASH_ARC_SEC    = 0,              /*/< Anti-Rollback Counter for the secure application*/
-    FLASH_ARC_OEMBL  = 1,              /*/< Anti-Rollback Counter for the OEM bootloader*/
-    FLASH_ARC_NSEC_0 = 2,              /*/< Anti-Rollback Counter for non-secure application 0 (use when a single non-secure counter is available or when multiple non-secure counters are available)*/
-    FLASH_ARC_NSEC_1 = 3,              /*/< Anti-Rollback Counter for non-secure application 1 (use when multiple non-secure counters are available)*/
-    FLASH_ARC_NSEC_2 = 4,              /*/< Anti-Rollback Counter for non-secure application 2 (use when multiple non-secure counters are available)*/
-    FLASH_ARC_NSEC_3 = 5,              /*/< Anti-Rollback Counter for non-secure application 3 (use when multiple non-secure counters are available)*/
+    FLASH_ARC_SEC    = 0,              ///< Anti-Rollback Counter for the secure application
+    FLASH_ARC_OEMBL  = 1,              ///< Anti-Rollback Counter for the OEM bootloader
+    FLASH_ARC_NSEC_0 = 2,              ///< Anti-Rollback Counter for non-secure application 0 (use when a single non-secure counter is available or when multiple non-secure counters are available)
+    FLASH_ARC_NSEC_1 = 3,              ///< Anti-Rollback Counter for non-secure application 1 (use when multiple non-secure counters are available)
+    FLASH_ARC_NSEC_2 = 4,              ///< Anti-Rollback Counter for non-secure application 2 (use when multiple non-secure counters are available)
+    FLASH_ARC_NSEC_3 = 5,              ///< Anti-Rollback Counter for non-secure application 3 (use when multiple non-secure counters are available)
 } flash_arc_t;
 
 /** Flash block details stored in factory flash. */
 typedef struct st_flash_block_info
 {
-    uint32_t block_section_st_addr;    /*/< Starting address for this block section (blocks of this size)*/
-    uint32_t block_section_end_addr;   /*/< Ending address for this block section (blocks of this size)*/
-    uint32_t block_size;               /*/< Flash erase block size*/
-    uint32_t block_size_write;         /*/< Flash write block size*/
+    uint32_t block_section_st_addr;    ///< Starting address for this block section (blocks of this size)
+    uint32_t block_section_end_addr;   ///< Ending address for this block section (blocks of this size)
+    uint32_t block_size;               ///< Flash erase block size
+    uint32_t block_size_write;         ///< Flash write block size
 } flash_block_info_t;
 
 /** Flash block details */
 typedef struct st_flash_regions
 {
-    uint32_t num_regions;                     /*/< Length of block info array*/
-    flash_block_info_t const * p_block_array; /*/< Block info array base address*/
+    uint32_t num_regions;                     ///< Length of block info array
+    flash_block_info_t const * p_block_array; ///< Block info array base address
 } flash_regions_t;
 
 /** Information about the flash blocks */
 typedef struct st_flash_info
 {
-    flash_regions_t code_flash;        /*/< Information about the code flash regions*/
-    flash_regions_t data_flash;        /*/< Information about the code flash regions*/
+    flash_regions_t code_flash;        ///< Information about the code flash regions
+    flash_regions_t data_flash;        ///< Information about the code flash regions
 } flash_info_t;
 
 /** Flash control block.  Allocate an instance specific control block to pass into the flash API calls.
@@ -125,25 +125,25 @@ typedef void flash_ctrl_t;
 /** Callback function parameter data */
 typedef struct st_flash_user_cb_data
 {
-    flash_event_t event;               /*/< Event can be used to identify what caused the callback (flash ready or error).*/
-    void        * p_context;           /*/< Placeholder for user data.  Set in @ref flash_api_t::open function in::flash_cfg_t.*/
+    flash_event_t event;               ///< Event can be used to identify what caused the callback (flash ready or error).
+    void        * p_context;           ///< Placeholder for user data.  Set in @ref flash_api_t::open function in::flash_cfg_t.
 } flash_callback_args_t;
 
 /** FLASH Configuration */
 typedef struct st_flash_cfg
 {
-    bool data_flash_bgo;                                 /*/< True if BGO (Background Operation) is enabled for Data Flash.*/
+    bool data_flash_bgo;                                 ///< True if BGO (Background Operation) is enabled for Data Flash.
 
     /* Configuration for FLASH Event processing */
-    void (* p_callback)(flash_callback_args_t * p_args); /*/< Callback provided when a Flash interrupt ISR occurs.*/
+    void (* p_callback)(flash_callback_args_t * p_args); ///< Callback provided when a Flash interrupt ISR occurs.
 
     /* Pointer to FLASH peripheral specific configuration */
-    void const * p_extend;                               /*/< FLASH hardware dependent configuration*/
-    void       * p_context;                              /*/< Placeholder for user data.  Passed to user callback in @ref flash_callback_args_t.*/
-    uint8_t      ipl;                                    /*/< Flash ready interrupt priority*/
-    IRQn_Type    irq;                                    /*/< Flash ready interrupt number*/
-    uint8_t      err_ipl;                                /*/< Flash error interrupt priority (unused in r_flash_lp)*/
-    IRQn_Type    err_irq;                                /*/< Flash error interrupt number (unused in r_flash_lp)*/
+    void const * p_extend;                               ///< FLASH hardware dependent configuration
+    void       * p_context;                              ///< Placeholder for user data.  Passed to user callback in @ref flash_callback_args_t.
+    uint8_t      ipl;                                    ///< Flash ready interrupt priority
+    IRQn_Type    irq;                                    ///< Flash ready interrupt number
+    uint8_t      err_ipl;                                ///< Flash error interrupt priority (unused in r_flash_lp)
+    IRQn_Type    err_irq;                                ///< Flash error interrupt number (unused in r_flash_lp)
 } flash_cfg_t;
 
 /** Shared Interface definition for FLASH */
@@ -338,9 +338,9 @@ typedef struct st_flash_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_flash_instance
 {
-    flash_ctrl_t      * p_ctrl;        /*/< Pointer to the control structure for this instance*/
-    flash_cfg_t const * p_cfg;         /*/< Pointer to the configuration structure for this instance*/
-    flash_api_t const * p_api;         /*/< Pointer to the API structure for this instance*/
+    flash_ctrl_t      * p_ctrl;        ///< Pointer to the control structure for this instance
+    flash_cfg_t const * p_cfg;         ///< Pointer to the configuration structure for this instance
+    flash_api_t const * p_api;         ///< Pointer to the API structure for this instance
 } flash_instance_t;
 
 /******************************************************************************************************************//**

@@ -36,7 +36,7 @@
 /** Array of LED IOPORT pins. */
 static const uint16_t g_bsp_prv_leds[] =
 {
-    (uint16_t) BSP_IO_PORT_01_PIN_06,  /*/< LED1 - Red*/
+    (uint16_t) BSP_IO_PORT_01_PIN_06,  ///< LED1 - Red
 };
 
 /***********************************************************************************************************************

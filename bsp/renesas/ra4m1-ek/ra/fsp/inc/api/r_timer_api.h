@@ -46,39 +46,39 @@ FSP_HEADER
 /** Events that can trigger a callback function */
 typedef enum e_timer_event
 {
-    TIMER_EVENT_CYCLE_END,                     /*/< Requested timer delay has expired or timer has wrapped around*/
-    TIMER_EVENT_CREST = TIMER_EVENT_CYCLE_END, /*/< Timer crest event (counter is at a maximum, triangle-wave PWM only)*/
-    TIMER_EVENT_CAPTURE_A,                     /*/< A capture has occurred on signal A*/
-    TIMER_EVENT_CAPTURE_B,                     /*/< A capture has occurred on signal B*/
-    TIMER_EVENT_TROUGH,                        /*/< Timer trough event (counter is 0, triangle-wave PWM only*/
-    TIMER_EVENT_COMPARE_A,                     /*/< A compare has occurred on signal A*/
-    TIMER_EVENT_COMPARE_B,                     /*/< A compare has occurred on signal B*/
-    TIMER_EVENT_COMPARE_C,                     /*/< A compare has occurred on signal C*/
-    TIMER_EVENT_COMPARE_D,                     /*/< A compare has occurred on signal D*/
-    TIMER_EVENT_COMPARE_E,                     /*/< A compare has occurred on signal E*/
-    TIMER_EVENT_COMPARE_F,                     /*/< A compare has occurred on signal F*/
-    TIMER_EVENT_DEAD_TIME                      /*/< Dead time event*/
+    TIMER_EVENT_CYCLE_END,                     ///< Requested timer delay has expired or timer has wrapped around
+    TIMER_EVENT_CREST = TIMER_EVENT_CYCLE_END, ///< Timer crest event (counter is at a maximum, triangle-wave PWM only)
+    TIMER_EVENT_CAPTURE_A,                     ///< A capture has occurred on signal A
+    TIMER_EVENT_CAPTURE_B,                     ///< A capture has occurred on signal B
+    TIMER_EVENT_TROUGH,                        ///< Timer trough event (counter is 0, triangle-wave PWM only
+    TIMER_EVENT_COMPARE_A,                     ///< A compare has occurred on signal A
+    TIMER_EVENT_COMPARE_B,                     ///< A compare has occurred on signal B
+    TIMER_EVENT_COMPARE_C,                     ///< A compare has occurred on signal C
+    TIMER_EVENT_COMPARE_D,                     ///< A compare has occurred on signal D
+    TIMER_EVENT_COMPARE_E,                     ///< A compare has occurred on signal E
+    TIMER_EVENT_COMPARE_F,                     ///< A compare has occurred on signal F
+    TIMER_EVENT_DEAD_TIME                      ///< Dead time event
 } timer_event_t;
 #endif
 
 /** Timer variant types. */
 typedef enum e_timer_variant
 {
-    TIMER_VARIANT_32_BIT,              /*/< 32-bit timer*/
-    TIMER_VARIANT_16_BIT               /*/< 16-bit timer*/
+    TIMER_VARIANT_32_BIT,              ///< 32-bit timer
+    TIMER_VARIANT_16_BIT               ///< 16-bit timer
 } timer_variant_t;
 
 /** Options for storing compare match value */
 typedef enum e_timer_compare_match
 {
-    TIMER_COMPARE_MATCH_A = 0U,        /*/< Compare match A value*/
-    TIMER_COMPARE_MATCH_B = 1U,        /*/< Compare match B value*/
-    TIMER_COMPARE_MATCH_C = 2U,        /*/< Compare match C value*/
-    TIMER_COMPARE_MATCH_D = 3U,        /*/< Compare match D value*/
-    TIMER_COMPARE_MATCH_E = 4U,        /*/< Compare match E value*/
-    TIMER_COMPARE_MATCH_F = 5U,        /*/< Compare match F value*/
-    TIMER_COMPARE_MATCH_G = 6U,        /*/< Compare match G value*/
-    TIMER_COMPARE_MATCH_H = 7U,        /*/< Compare match H value*/
+    TIMER_COMPARE_MATCH_A = 0U,        ///< Compare match A value
+    TIMER_COMPARE_MATCH_B = 1U,        ///< Compare match B value
+    TIMER_COMPARE_MATCH_C = 2U,        ///< Compare match C value
+    TIMER_COMPARE_MATCH_D = 3U,        ///< Compare match D value
+    TIMER_COMPARE_MATCH_E = 4U,        ///< Compare match E value
+    TIMER_COMPARE_MATCH_F = 5U,        ///< Compare match F value
+    TIMER_COMPARE_MATCH_G = 6U,        ///< Compare match G value
+    TIMER_COMPARE_MATCH_H = 7U,        ///< Compare match H value
 } timer_compare_match_t;
 
 /** Callback function parameter data */
@@ -86,7 +86,7 @@ typedef struct st_timer_callback_args
 {
     /** Placeholder for user data.  Set in @ref timer_api_t::open function in @ref timer_cfg_t. */
     void        * p_context;
-    timer_event_t event;               /*/< The event can be used to identify what caused the callback.*/
+    timer_event_t event;               ///< The event can be used to identify what caused the callback.
 
     /** Most recent capture, only valid if event is TIMER_EVENT_CAPTURE_A or TIMER_EVENT_CAPTURE_B. */
     uint32_t capture;
@@ -99,21 +99,21 @@ typedef void timer_ctrl_t;
 /** Possible status values returned by @ref timer_api_t::statusGet. */
 typedef enum e_timer_state
 {
-    TIMER_STATE_STOPPED  = 0,          /*/< Timer is stopped*/
-    TIMER_STATE_COUNTING = 1,          /*/< Timer is running*/
-    TIMER_STATE_UNKNOWN  = 2           /*/< Timer state could not be defined*/
+    TIMER_STATE_STOPPED  = 0,          ///< Timer is stopped
+    TIMER_STATE_COUNTING = 1,          ///< Timer is running
+    TIMER_STATE_UNKNOWN  = 2           ///< Timer state could not be defined
 } timer_state_t;
 #ifndef BSP_OVERRIDE_TIMER_MODE_T
 
 /** Timer operational modes */
 typedef enum e_timer_mode
 {
-    TIMER_MODE_PERIODIC,                          /*/< Timer restarts after period elapses.*/
-    TIMER_MODE_ONE_SHOT,                          /*/< Timer stops after period elapses.*/
-    TIMER_MODE_PWM,                               /*/< Timer generates saw-wave PWM output.*/
-    TIMER_MODE_ONE_SHOT_PULSE,                    /*/< Saw-wave one-shot pulse mode (fixed buffer operation).*/
-    TIMER_MODE_TRIANGLE_WAVE_SYMMETRIC_PWM  = 4U, /*/< Timer generates symmetric triangle-wave PWM output.*/
-    TIMER_MODE_TRIANGLE_WAVE_ASYMMETRIC_PWM = 5U, /*/< Timer generates asymmetric triangle-wave PWM output.*/
+    TIMER_MODE_PERIODIC,                          ///< Timer restarts after period elapses.
+    TIMER_MODE_ONE_SHOT,                          ///< Timer stops after period elapses.
+    TIMER_MODE_PWM,                               ///< Timer generates saw-wave PWM output.
+    TIMER_MODE_ONE_SHOT_PULSE,                    ///< Saw-wave one-shot pulse mode (fixed buffer operation).
+    TIMER_MODE_TRIANGLE_WAVE_SYMMETRIC_PWM  = 4U, ///< Timer generates symmetric triangle-wave PWM output.
+    TIMER_MODE_TRIANGLE_WAVE_ASYMMETRIC_PWM = 5U, ///< Timer generates asymmetric triangle-wave PWM output.
 
     /**
      * Timer generates Asymmetric Triangle-wave PWM output. In PWM mode 3, the duty cycle does
@@ -128,8 +128,8 @@ typedef enum e_timer_mode
 /** Direction of timer count */
 typedef enum e_timer_direction
 {
-    TIMER_DIRECTION_DOWN = 0,          /*/< Timer count goes up*/
-    TIMER_DIRECTION_UP   = 1           /*/< Timer count goes down*/
+    TIMER_DIRECTION_DOWN = 0,          ///< Timer count goes up
+    TIMER_DIRECTION_UP   = 1           ///< Timer count goes down
 } timer_direction_t;
 
 #ifndef BSP_OVERRIDE_TIMER_SOURCE_DIV_T
@@ -137,26 +137,26 @@ typedef enum e_timer_direction
 /** Clock source divisors */
 typedef enum e_timer_source_div
 {
-    TIMER_SOURCE_DIV_1    = 0,         /*/< Timer clock source divided by 1*/
-    TIMER_SOURCE_DIV_2    = 1,         /*/< Timer clock source divided by 2*/
-    TIMER_SOURCE_DIV_4    = 2,         /*/< Timer clock source divided by 4*/
-    TIMER_SOURCE_DIV_8    = 3,         /*/< Timer clock source divided by 8*/
-    TIMER_SOURCE_DIV_16   = 4,         /*/< Timer clock source divided by 16*/
-    TIMER_SOURCE_DIV_32   = 5,         /*/< Timer clock source divided by 32*/
-    TIMER_SOURCE_DIV_64   = 6,         /*/< Timer clock source divided by 64*/
-    TIMER_SOURCE_DIV_128  = 7,         /*/< Timer clock source divided by 128*/
-    TIMER_SOURCE_DIV_256  = 8,         /*/< Timer clock source divided by 256*/
-    TIMER_SOURCE_DIV_512  = 9,         /*/< Timer clock source divided by 512*/
-    TIMER_SOURCE_DIV_1024 = 10,        /*/< Timer clock source divided by 1024*/
-    TIMER_SOURCE_DIV_8192 = 13,        /*/< Timer clock source divided by 8192*/
+    TIMER_SOURCE_DIV_1    = 0,         ///< Timer clock source divided by 1
+    TIMER_SOURCE_DIV_2    = 1,         ///< Timer clock source divided by 2
+    TIMER_SOURCE_DIV_4    = 2,         ///< Timer clock source divided by 4
+    TIMER_SOURCE_DIV_8    = 3,         ///< Timer clock source divided by 8
+    TIMER_SOURCE_DIV_16   = 4,         ///< Timer clock source divided by 16
+    TIMER_SOURCE_DIV_32   = 5,         ///< Timer clock source divided by 32
+    TIMER_SOURCE_DIV_64   = 6,         ///< Timer clock source divided by 64
+    TIMER_SOURCE_DIV_128  = 7,         ///< Timer clock source divided by 128
+    TIMER_SOURCE_DIV_256  = 8,         ///< Timer clock source divided by 256
+    TIMER_SOURCE_DIV_512  = 9,         ///< Timer clock source divided by 512
+    TIMER_SOURCE_DIV_1024 = 10,        ///< Timer clock source divided by 1024
+    TIMER_SOURCE_DIV_8192 = 13,        ///< Timer clock source divided by 8192
 } timer_source_div_t;
 #endif
 
 /** Timer information structure to store various information for a timer resource */
 typedef struct st_timer_info
 {
-    timer_direction_t count_direction; /*/< Clock counting direction of the timer.*/
-    uint32_t          clock_frequency; /*/< Clock frequency of the timer counter.*/
+    timer_direction_t count_direction; ///< Clock counting direction of the timer.
+    uint32_t          clock_frequency; ///< Clock frequency of the timer counter.
 
     /** Period in raw timer counts.
      * @note For triangle wave PWM modes, the full period is double this value.
@@ -167,33 +167,33 @@ typedef struct st_timer_info
 /** Current timer status. */
 typedef struct st_timer_status
 {
-    uint32_t      counter;             /*/< Current counter value*/
-    timer_state_t state;               /*/< Current timer state (running or stopped)*/
+    uint32_t      counter;             ///< Current counter value
+    timer_state_t state;               ///< Current timer state (running or stopped)
 } timer_status_t;
 
 /** User configuration structure, used in open function */
 typedef struct st_timer_cfg
 {
-    timer_mode_t mode;                    /*/< Select enumerated value from @ref timer_mode_t*/
+    timer_mode_t mode;                    ///< Select enumerated value from @ref timer_mode_t
 
     /* Period in raw timer counts.
      * @note For triangle wave PWM modes, enter the period of half the triangle wave, or half the desired period.
      */
-    uint32_t           period_counts;     /*/< Period in raw timer counts*/
-    timer_source_div_t source_div;        /*/< Source clock divider*/
-    uint32_t           duty_cycle_counts; /*/< Duty cycle in counts*/
+    uint32_t           period_counts;     ///< Period in raw timer counts
+    timer_source_div_t source_div;        ///< Source clock divider
+    uint32_t           duty_cycle_counts; ///< Duty cycle in counts
 
     /** Select a channel corresponding to the channel number of the hardware. */
     uint8_t   channel;
-    uint8_t   cycle_end_ipl;              /*/< Cycle end interrupt priority*/
-    IRQn_Type cycle_end_irq;              /*/< Cycle end interrupt*/
+    uint8_t   cycle_end_ipl;              ///< Cycle end interrupt priority
+    IRQn_Type cycle_end_irq;              ///< Cycle end interrupt
 
     /** Callback provided when a timer ISR occurs.  Set to NULL for no CPU interrupt. */
     void (* p_callback)(timer_callback_args_t * p_args);
 
     /** Placeholder for user data.  Passed to the user callback in @ref timer_callback_args_t. */
     void       * p_context;
-    void const * p_extend;             /*/< Extension parameter for hardware specific settings.*/
+    void const * p_extend;             ///< Extension parameter for hardware specific settings.
 } timer_cfg_t;
 
 /** Timer API structure. General timer functions implemented at the HAL layer follow this API. */
@@ -301,9 +301,9 @@ typedef struct st_timer_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_timer_instance
 {
-    timer_ctrl_t      * p_ctrl;        /*/< Pointer to the control structure for this instance*/
-    timer_cfg_t const * p_cfg;         /*/< Pointer to the configuration structure for this instance*/
-    timer_api_t const * p_api;         /*/< Pointer to the API structure for this instance*/
+    timer_ctrl_t      * p_ctrl;        ///< Pointer to the control structure for this instance
+    timer_cfg_t const * p_cfg;         ///< Pointer to the configuration structure for this instance
+    timer_api_t const * p_api;         ///< Pointer to the API structure for this instance
 } timer_instance_t;
 
 /*******************************************************************************************************************//**

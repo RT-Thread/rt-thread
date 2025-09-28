@@ -30,17 +30,17 @@
 #define CAN_BAUD_RATE_PRESCALER_MIN         (1U)
 #define CAN_BAUD_RATE_PRESCALER_MAX         (1024U)
 
-#define CAN_SID_MASK                        (0x000007FFU) /* Maximum Standard ID*/
-#define CAN_XID_MASK                        (0x1FFFFFFFU) /* Maximum Extended ID*/
-#define CAN_INVALID_MASK                    (0xFFFFFFFFU) /* Mask used to determine invalid masks in MKRk*/
+#define CAN_SID_MASK                        (0x000007FFU) // Maximum Standard ID
+#define CAN_XID_MASK                        (0x1FFFFFFFU) // Maximum Extended ID
+#define CAN_INVALID_MASK                    (0xFFFFFFFFU) // Mask used to determine invalid masks in MKRk
 #define CAN_GROUP_MASK                      (0x0000000FU)
 #define CAN_MAILBOX_GROUP_SIZE              (4U)
 #define CAN_DEFAULT_MASK                    (0x1FFFFFFFU)
 #define CAN_MAILBOX_RX                      (0x40U)
 #define CAN_MAILBOX_RX_MASK_MSGLOST         (0x44U)
 #define CAN_MAILBOX_TX                      (0x80U)
-#define CAN_ERROR_MASK                      (0x7FU) /* Ignore Error Display Mode Select Bit*/
-#define CAN_ACCUMULATED_ERROR_CODE          (0x80U) /* Set Error Display Mode to Accumulated Error Code*/
+#define CAN_ERROR_MASK                      (0x7FU) // Ignore Error Display Mode Select Bit
+#define CAN_ACCUMULATED_ERROR_CODE          (0x80U) // Set Error Display Mode to Accumulated Error Code
 #define CAN_ERROR_SEARCH                    (2U)
 #define CAN_RECEIVE_SEARCH                  (0U)
 #define CAN_TRANSMIT_SEARCH                 (1U)
@@ -55,7 +55,7 @@
 #define CAN_MKIVLR_FIFO_MASK                (0x00FFFFFFU)
 
 #define CAN_CANM_SETTING_MASK               (0x03U)
-#define CAN_PCLKB_RATIO                     (2U) /* The ratio between PCLKA or ICLK and PCLKB*/
+#define CAN_PCLKB_RATIO                     (2U) // The ratio between PCLKA or ICLK and PCLKB
 
 #define CAN_TRANSMIT_CLEAR                  (0U)
 #define CAN_TX_RX_INTERRUPTS_ENABLE         (0xFFFFFFFFU)
@@ -635,10 +635,10 @@ fsp_err_t R_CAN_InfoGet (can_ctrl_t * const p_api_ctrl, can_info_t * const p_inf
 
     R_CAN0_Type * p_reg = p_ctrl->p_reg;
 
-    p_info->status               = (can_status_t) p_reg->STR;                  /* Status register value*/
-    p_info->error_count_receive  = p_reg->RECR;                                /* Report receive error count*/
-    p_info->error_count_transmit = p_reg->TECR;                                /* Report transmit error count*/
-    p_info->error_code           = (can_error_t) p_reg->ECSR & CAN_ERROR_MASK; /* Report error code*/
+    p_info->status               = (can_status_t) p_reg->STR;                  // Status register value
+    p_info->error_count_receive  = p_reg->RECR;                                // Report receive error count
+    p_info->error_count_transmit = p_reg->TECR;                                // Report transmit error count
+    p_info->error_code           = (can_error_t) p_reg->ECSR & CAN_ERROR_MASK; // Report error code
 
     /* Since the error flags were read, we clear them to ensure that we won't read them again
      * Because register is volatile, we clear only the flags that we already read. Preserve the value
@@ -788,7 +788,7 @@ static inline void r_can_mailbox_read (can_instance_ctrl_t * p_ctrl, uint32_t ma
     /* Be sure to check data_length_code in calling function */
     for (uint32_t i = 0U; i < p_frame->data_length_code; i++)
     {
-        p_frame->data[i] = p_reg->MB[mailbox].D[i]; /* Copy receive data to buffer*/
+        p_frame->data[i] = p_reg->MB[mailbox].D[i]; // Copy receive data to buffer
     }
 
 #if CAN_CFG_FIFO_SUPPORT
@@ -890,9 +890,9 @@ void can_error_isr (void)
     R_CAN0_Type * p_reg = p_ctrl->p_reg;
 
     /* Get source of error interrupt. */
-    args.event = (can_event_t) p_reg->EIFR; /* Read Error Interrupt Factor Judge register*/
+    args.event = (can_event_t) p_reg->EIFR; // Read Error Interrupt Factor Judge register
 
-    p_reg->EIFR = 0x00U;                    /* Clear Error Interrupt Factor Judge register*/
+    p_reg->EIFR = 0x00U;                    // Clear Error Interrupt Factor Judge register
 
     /* Although NMLST detects both Overwrite and Overrun conditions,
      * in such a scenario this interrupt is fired only when the peripheral is in the overrun mode
@@ -902,11 +902,11 @@ void can_error_isr (void)
     if (p_reg->STR_b.NMLST)
     {
         args.event |= CAN_EVENT_MAILBOX_MESSAGE_LOST;
-        uint8_t saved_msmr = p_reg->MSMR;       /* Save the current MSMR value*/
-        p_reg->MSMR = CAN_ERROR_SEARCH;         /* search for lowest numbered mailbox with message lost*/
-        mailbox     = p_reg->MSSR_b.MBNST;      /* get mailbox number*/
-        p_reg->MSMR = saved_msmr;               /* Restore the previous MSMR value*/
-        p_reg->MCTL_RX_b[mailbox].MSGLOST = 0U; /* Clear the error so that NMLST is not set again for an already handled error.*/
+        uint8_t saved_msmr = p_reg->MSMR;       // Save the current MSMR value
+        p_reg->MSMR = CAN_ERROR_SEARCH;         // search for lowest numbered mailbox with message lost
+        mailbox     = p_reg->MSSR_b.MBNST;      // get mailbox number
+        p_reg->MSMR = saved_msmr;               // Restore the previous MSMR value
+        p_reg->MCTL_RX_b[mailbox].MSGLOST = 0U; // Clear the error so that NMLST is not set again for an already handled error.
     }
 
     args.channel   = p_ctrl->p_cfg->channel;
@@ -975,10 +975,10 @@ void can_rx_isr (void)
     else
 #endif
     {
-        uint8_t saved_msmr = p_reg->MSMR;  /* Save the current MSMR value*/
-        p_reg->MSMR = CAN_RECEIVE_SEARCH;  /* search for lowest numbered &mailbox with message received*/
-        mailbox     = p_reg->MSSR_b.MBNST; /* get mailbox number*/
-        p_reg->MSMR = saved_msmr;          /* Restore the previous MSMR value*/
+        uint8_t saved_msmr = p_reg->MSMR;  // Save the current MSMR value
+        p_reg->MSMR = CAN_RECEIVE_SEARCH;  // search for lowest numbered &mailbox with message received
+        mailbox     = p_reg->MSSR_b.MBNST; // get mailbox number
+        p_reg->MSMR = saved_msmr;          // Restore the previous MSMR value
     }
 
     /* Read frame to args */
@@ -1053,10 +1053,10 @@ void can_tx_isr (void)
     else
 #endif
     {
-        uint8_t saved_msmr = p_reg->MSMR;             /* Save the current MSMR value*/
-        p_reg->MSMR = CAN_TRANSMIT_SEARCH;            /* search for lowest numbered &mailbox with message transmitted*/
-        uint32_t mailbox = p_reg->MSSR_b.MBNST;       /* get mailbox number*/
-        p_reg->MSMR = saved_msmr;                     /* Restore the previous MSMR value*/
+        uint8_t saved_msmr = p_reg->MSMR;             // Save the current MSMR value
+        p_reg->MSMR = CAN_TRANSMIT_SEARCH;            // search for lowest numbered &mailbox with message transmitted
+        uint32_t mailbox = p_reg->MSSR_b.MBNST;       // get mailbox number
+        p_reg->MSMR = saved_msmr;                     // Restore the previous MSMR value
 
         /* Clear SENTDATA.
          * Do a byte-write to avoid read-modify-write with HW writing another bit in between.
@@ -1066,7 +1066,7 @@ void can_tx_isr (void)
          * under "SENTDATA flag (Transmission Complete Flag)" of RA6M3 HW manual R01UH0886EJ0100.
          */
         p_reg->MCTL_TX[mailbox] = CAN_TRANSMIT_CLEAR;
-        p_reg->MCTL_TX[mailbox] = CAN_TRANSMIT_CLEAR; /* Clear SENTDATA and TRMREQ.*/
+        p_reg->MCTL_TX[mailbox] = CAN_TRANSMIT_CLEAR; // Clear SENTDATA and TRMREQ.
 
         /* Save the transmit mailbox number. */
         args.mailbox = mailbox;

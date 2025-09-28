@@ -934,7 +934,7 @@ __STATIC_FORCEINLINE void __set_FPSCR(uint32_t fpscr)
   #define     __SEL                   __sel
   #define     __QADD                  __qadd
   #define     __QSUB                  __qsub
-
+  
   #define __PKHBT(ARG1,ARG2,ARG3) \
   __extension__ \
   ({                          \
@@ -942,7 +942,7 @@ __STATIC_FORCEINLINE void __set_FPSCR(uint32_t fpscr)
     __ASM ("pkhbt %0, %1, %2, lsl %3" : "=r" (__RES) :  "r" (__ARG1), "r" (__ARG2), "I" (ARG3)  ); \
     __RES; \
    })
-
+  
   #define __PKHTB(ARG1,ARG2,ARG3) \
   __extension__ \
   ({                          \
@@ -953,7 +953,7 @@ __STATIC_FORCEINLINE void __set_FPSCR(uint32_t fpscr)
       __ASM ("pkhtb %0, %1, %2, asr %3" : "=r" (__RES) :  "r" (__ARG1), "r" (__ARG2), "I" (ARG3)  ); \
     __RES; \
    })
-
+  
   __STATIC_FORCEINLINE uint32_t __SXTB16_RORn(uint32_t op1, uint32_t rotate)
   {
       uint32_t result;
@@ -967,7 +967,7 @@ __STATIC_FORCEINLINE void __set_FPSCR(uint32_t fpscr)
       }
       return result;
   }
-
+  
   __STATIC_FORCEINLINE uint32_t __SXTAB16_RORn(uint32_t op1, uint32_t op2, uint32_t rotate)
   {
       uint32_t result;
@@ -981,18 +981,18 @@ __STATIC_FORCEINLINE void __set_FPSCR(uint32_t fpscr)
       }
       return result;
   }
-
+  
   __STATIC_FORCEINLINE int32_t __SMMLA (int32_t op1, int32_t op2, int32_t op3)
   {
     int32_t result;
-
+  
     __ASM volatile ("smmla %0, %1, %2, %3" : "=r" (result): "r"  (op1), "r" (op2), "r" (op3) );
     return (result);
   }
 #endif /* (__ARM_FEATURE_DSP == 1) */
 /** @} end of group CMSIS_SIMD_intrinsics */
 
-/* Include the profile specific settings:*/
+// Include the profile specific settings:
 #if __ARM_ARCH_PROFILE == 'A'
   #include "a-profile/cmsis_gcc_a.h"
 #elif __ARM_ARCH_PROFILE == 'R'

@@ -57,11 +57,11 @@
 #define SCI_UART_SPMR_CTSE_OFFSET               (1U)
 
 /* SCI SCR register bit masks */
-#define SCI_SCR_TEIE_MASK                       (0x04U) /*/< Transmit End Interrupt Enable*/
-#define SCI_SCR_RE_MASK                         (0x10U) /*/< Receive Enable*/
-#define SCI_SCR_TE_MASK                         (0x20U) /*/< Transmit Enable*/
-#define SCI_SCR_RIE_MASK                        (0x40U) /*/< Receive Interrupt Enable*/
-#define SCI_SCR_TIE_MASK                        (0x80U) /*/< Transmit Interrupt Enable*/
+#define SCI_SCR_TEIE_MASK                       (0x04U) ///< Transmit End Interrupt Enable
+#define SCI_SCR_RE_MASK                         (0x10U) ///< Receive Enable
+#define SCI_SCR_TE_MASK                         (0x20U) ///< Transmit Enable
+#define SCI_SCR_RIE_MASK                        (0x40U) ///< Receive Interrupt Enable
+#define SCI_SCR_TIE_MASK                        (0x80U) ///< Transmit Interrupt Enable
 
 /* SCI SEMR register bit offsets */
 #define SCI_UART_SEMR_BRME_OFFSET               (2U)
@@ -73,13 +73,13 @@
                                                  (1U << SCI_UART_SEMR_ABCS_OFFSET) | (1U << SCI_UART_SEMR_BGDM_OFFSET))
 
 /* SCI SMR register bit masks */
-#define SCI_SMR_CKS_VALUE_MASK                  (0x03U) /*/< CKS: 2 bits*/
+#define SCI_SMR_CKS_VALUE_MASK                  (0x03U) ///< CKS: 2 bits
 
 /* SCI SSR register receiver error bit masks */
-#define SCI_SSR_ORER_MASK                       (0x20U) /*/< overflow error*/
-#define SCI_SSR_FER_MASK                        (0x10U) /*/< framing error*/
-#define SCI_SSR_PER_MASK                        (0x08U) /*/< parity err*/
-#define SCI_SSR_FIFO_RESERVED_MASK              (0x02U) /*/< Reserved bit mask for SSR_FIFO register*/
+#define SCI_SSR_ORER_MASK                       (0x20U) ///< overflow error
+#define SCI_SSR_FER_MASK                        (0x10U) ///< framing error
+#define SCI_SSR_PER_MASK                        (0x08U) ///< parity err
+#define SCI_SSR_FIFO_RESERVED_MASK              (0x02U) ///< Reserved bit mask for SSR_FIFO register
 #define SCI_RCVR_ERR_MASK                       (SCI_SSR_ORER_MASK | SCI_SSR_FER_MASK | SCI_SSR_PER_MASK)
 
 #define SCI_REG_SIZE                            (R_SCI1_BASE - R_SCI0_BASE)

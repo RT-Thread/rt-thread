@@ -260,9 +260,8 @@ __STATIC_INLINE void ARM_MPU_SetMemAttrEx(MPU_Type* mpu, uint8_t idx, uint8_t at
   const uint32_t pos = ((idx % 4U) * 8U);
   const uint32_t mask = 0xFFU << pos;
 
-  if (reg >= (sizeof(mpu->MAIR) / sizeof(mpu->MAIR[0])))
-  {
-    return; /* invalid index*/
+  if (reg >= (sizeof(mpu->MAIR) / sizeof(mpu->MAIR[0]))) {
+    return; // invalid index
   }
 
   mpu->MAIR[reg] = ((mpu->MAIR[reg] & ~mask) | ((attr << pos) & mask));
@@ -374,8 +373,7 @@ __STATIC_INLINE void ARM_MPU_OrderedMemcpy(volatile uint32_t* dst, const uint32_
 __STATIC_INLINE void ARM_MPU_LoadEx(MPU_Type* mpu, uint32_t rnr, ARM_MPU_Region_t const* table, uint32_t cnt)
 {
   const uint32_t rowWordSize = sizeof(ARM_MPU_Region_t)/4U;
-  if (cnt == 1U)
-  {
+  if (cnt == 1U) {
     mpu->RNR = rnr;
     ARM_MPU_OrderedMemcpy(&(mpu->RBAR), &(table->RBAR), rowWordSize);
   } else {
@@ -383,8 +381,7 @@ __STATIC_INLINE void ARM_MPU_LoadEx(MPU_Type* mpu, uint32_t rnr, ARM_MPU_Region_
     uint32_t rnrOffset = rnr % MPU_TYPE_RALIASES;
 
     mpu->RNR = rnrBase;
-    while ((rnrOffset + cnt) > MPU_TYPE_RALIASES)
-    {
+    while ((rnrOffset + cnt) > MPU_TYPE_RALIASES) {
       uint32_t c = MPU_TYPE_RALIASES - rnrOffset;
       ARM_MPU_OrderedMemcpy(&(mpu->RBAR)+(rnrOffset*2U), &(table->RBAR), c*rowWordSize);
       table += c;

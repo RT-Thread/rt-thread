@@ -1101,8 +1101,8 @@ static void r_adc_open_sub (adc_instance_ctrl_t * const p_instance_ctrl, adc_cfg
      */
     uint32_t adcsr = (uint32_t) (p_cfg->mode << R_ADC0_ADCSR_ADCS_Pos);
     adcsr |= (uint32_t) (R_ADC0_ADCSR_GBADIE_Msk | R_ADC0_ADCSR_TRGE_Msk);
-    adcsr |= ((uint32_t) (ADC_START_SOURCE_ASYNC_EXTERNAL == p_cfg_extend->trigger) << R_ADC0_ADCSR_EXTRG_Pos); /* Only check GroupA. GroupB is never external.*/
-    adcsr |= ((uint32_t) (ADC_START_SOURCE_DISABLED != p_cfg_extend->trigger) << R_ADC0_ADCSR_TRGE_Pos);        /* Only check GroupA. GroupB is never external.*/
+    adcsr |= ((uint32_t) (ADC_START_SOURCE_ASYNC_EXTERNAL == p_cfg_extend->trigger) << R_ADC0_ADCSR_EXTRG_Pos); // Only check GroupA. GroupB is never external.
+    adcsr |= ((uint32_t) (ADC_START_SOURCE_DISABLED != p_cfg_extend->trigger) << R_ADC0_ADCSR_TRGE_Pos);        // Only check GroupA. GroupB is never external.
 
 #if BSP_FEATURE_ADC_HAS_ADHVREFCNT
     if (ADC_PRV_ADHVREFCNT_VREF_INTERNAL_BIT_1 & p_cfg_extend->adc_vref_control)

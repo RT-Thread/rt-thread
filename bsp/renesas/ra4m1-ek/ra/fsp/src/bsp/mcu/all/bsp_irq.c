@@ -18,8 +18,8 @@
 #define BSP_PRV_BITS_PER_WORD    (32)
 
 #if (BSP_CFG_CPU_CORE == 1)
- #define BSP_EVENT_NUM_TO_INTSELR(x)         (x >> 5)        /* Convert event number to INTSELR register number*/
- #define BSP_EVENT_NUM_TO_INTSELR_MASK(x)    (1 << (x % 32)) /* Convert event number to INTSELR bit mask*/
+ #define BSP_EVENT_NUM_TO_INTSELR(x)         (x >> 5)        // Convert event number to INTSELR register number
+ #define BSP_EVENT_NUM_TO_INTSELR_MASK(x)    (1 << (x % 32)) // Convert event number to INTSELR bit mask
 #endif
 
 /***********************************************************************************************************************
@@ -193,7 +193,7 @@ void R_BSP_IrqCfgEnable (IRQn_Type const irq, uint32_t priority, void * p_contex
     R_BSP_IrqEnable(irq);
 }
 
-#endif                                 /* 0 == BSP_CFG_INLINE_IRQ_FUNCTIONS*/
+#endif                                 // 0 == BSP_CFG_INLINE_IRQ_FUNCTIONS
 
 /** @} (end addtogroup BSP_MCU) */
 

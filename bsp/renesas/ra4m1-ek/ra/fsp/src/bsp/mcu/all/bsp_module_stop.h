@@ -32,8 +32,7 @@ FSP_HEADER
  * @param      channel  The channel. Use channel 0 for modules without channels.
  **********************************************************************************************************************/
 #if BSP_CFG_MSTP_CHANGE_DELAY_ENABLE
- #define R_BSP_MODULE_START(ip, channel)
- {FSP_CRITICAL_SECTION_DEFINE;                                   \
+ #define R_BSP_MODULE_START(ip, channel)    {FSP_CRITICAL_SECTION_DEFINE;                                   \
                                              FSP_CRITICAL_SECTION_ENTER;                                    \
                                              BSP_MSTP_REG_ ## ip(channel) &= ~BSP_MSTP_BIT_ ## ip(channel); \
                                              FSP_REGISTER_READ(BSP_MSTP_REG_ ## ip(channel));               \
@@ -41,8 +40,7 @@ FSP_HEADER
                                                                  BSP_DELAY_UNITS_MICROSECONDS);             \
                                              FSP_CRITICAL_SECTION_EXIT;}
 #else
- #define R_BSP_MODULE_START(ip, channel)
- {FSP_CRITICAL_SECTION_DEFINE;                                           \
+ #define R_BSP_MODULE_START(ip, channel)    {FSP_CRITICAL_SECTION_DEFINE;                                           \
                                              FSP_CRITICAL_SECTION_ENTER;                                            \
                                              BSP_MSTP_REG_ ## ip(channel) &=                                        \
                                                  (BSP_MSTP_REG_TYPE_ ## ip(channel)) ~BSP_MSTP_BIT_ ## ip(channel); \
@@ -57,8 +55,7 @@ FSP_HEADER
  * @param      channel  The channel. Use channel 0 for modules without channels.
  **********************************************************************************************************************/
 #if BSP_CFG_MSTP_CHANGE_DELAY_ENABLE
- #define R_BSP_MODULE_STOP(ip, channel)
- {FSP_CRITICAL_SECTION_DEFINE;                                  \
+ #define R_BSP_MODULE_STOP(ip, channel)     {FSP_CRITICAL_SECTION_DEFINE;                                  \
                                              FSP_CRITICAL_SECTION_ENTER;                                   \
                                              BSP_MSTP_REG_ ## ip(channel) |= BSP_MSTP_BIT_ ## ip(channel); \
                                              FSP_REGISTER_READ(BSP_MSTP_REG_ ## ip(channel));              \
@@ -66,8 +63,7 @@ FSP_HEADER
                                                                  BSP_DELAY_UNITS_MICROSECONDS);            \
                                              FSP_CRITICAL_SECTION_EXIT;}
 #else
- #define R_BSP_MODULE_STOP(ip, channel)
- {FSP_CRITICAL_SECTION_DEFINE;                                  \
+ #define R_BSP_MODULE_STOP(ip, channel)     {FSP_CRITICAL_SECTION_DEFINE;                                  \
                                              FSP_CRITICAL_SECTION_ENTER;                                   \
                                              BSP_MSTP_REG_ ## ip(channel) |= BSP_MSTP_BIT_ ## ip(channel); \
                                              FSP_REGISTER_READ(BSP_MSTP_REG_ ## ip(channel));              \
@@ -138,7 +134,7 @@ FSP_HEADER
   #elif BSP_MCU_GROUP_RA8_GEN2
    #define BSP_MSTP_REG_FSP_IP_GPT(channel)             R_MSTP->MSTPCRE
    #define BSP_MSTP_BIT_FSP_IP_GPT(channel)             (1U << \
-                                                         (31 - ((channel >= 4U && channel <= 9U) ? 4U : channel))) /* GPT Channels 4-9 share stop bits on this MCU*/
+                                                         (31 - ((channel >= 4U && channel <= 9U) ? 4U : channel))) // GPT Channels 4-9 share stop bits on this MCU
    #define BSP_MSTP_REG_TYPE_FSP_IP_GPT(channel)        uint32_t
    #define BSP_MSTP_REG_FSP_IP_GPT_PDG(channel)         R_MSTP->MSTPCRD
    #define BSP_MSTP_BIT_FSP_IP_GPT_PDG(channel)         (1U << (6U));

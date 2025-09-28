@@ -50,12 +50,7 @@ void Reset_Handler (void)
     SystemInit();
 
     /* Call user application. */
-#ifdef __ARMCC_VERSION
     main();
-#elif defined(__GNUC__)
-    extern int entry(void);
-    entry();
-#endif
 
     while (1)
     {
@@ -101,7 +96,7 @@ BSP_DONT_REMOVE uint8_t g_heap[BSP_CFG_HEAP_BYTES] BSP_ALIGN_VARIABLE(BSP_STACK_
  #define WEAK_REF_ATTRIBUTE    __attribute__((weak, alias("Default_Handler")))
 #endif
 
-void NMI_Handler(void);                /* NMI has many sources and is handled by BSP*/
+void NMI_Handler(void);                // NMI has many sources and is handled by BSP
 void HardFault_Handler(void) WEAK_REF_ATTRIBUTE;
 void MemManage_Handler(void) WEAK_REF_ATTRIBUTE;
 void BusFault_Handler(void) WEAK_REF_ATTRIBUTE;

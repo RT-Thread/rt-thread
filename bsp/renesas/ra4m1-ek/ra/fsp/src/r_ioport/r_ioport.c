@@ -38,7 +38,7 @@
 #define IOPORT_PRV_PCNTR_OFFSET           0x00000020U
 
 #define IOPORT_PRV_PERIPHERAL_FUNCTION    (1U << 16)
-#define IOPORT_PRV_CLEAR_BITS_MASK        (0x1F01FCD5U) /*/< Zero bits in mask must be written as zero to PFS register*/
+#define IOPORT_PRV_CLEAR_BITS_MASK        (0x1F01FCD5U) ///< Zero bits in mask must be written as zero to PFS register
 
 #define IOPORT_PRV_8BIT_MASK              (0xFFU)
 #define IOPORT_PRV_16BIT_MASK             (0xFFFFU)
@@ -64,7 +64,7 @@ static void r_ioport_hw_pin_event_output_data_write(bsp_io_port_t port, ioport_s
 static void r_ioport_pfs_write(bsp_io_port_pin_t pin, uint32_t value);
 
 #if BSP_FEATURE_SYSC_HAS_VBTICTLR || BSP_FEATURE_RTC_HAS_TCEN
-static void bsp_vbatt_init(ioport_cfg_t const * const p_pin_cfg); /* Used internally by BSP*/
+static void bsp_vbatt_init(ioport_cfg_t const * const p_pin_cfg); // Used internally by BSP
 
 #endif
 
@@ -97,9 +97,9 @@ const ioport_api_t g_ioport_on_ioport =
 #if BSP_FEATURE_SYSC_HAS_VBTICTLR || BSP_FEATURE_RTC_HAS_TCEN
 static const bsp_io_port_pin_t g_vbatt_pins_input[] =
 {
-    BSP_IO_PORT_04_PIN_02,             /*/< Associated with VBTICTLR->VCH0INEN*/
-    BSP_IO_PORT_04_PIN_03,             /*/< Associated with VBTICTLR->VCH1INEN*/
-    BSP_IO_PORT_04_PIN_04              /*/< Associated with VBTICTLR->VCH2INEN*/
+    BSP_IO_PORT_04_PIN_02,             ///< Associated with VBTICTLR->VCH0INEN
+    BSP_IO_PORT_04_PIN_03,             ///< Associated with VBTICTLR->VCH1INEN
+    BSP_IO_PORT_04_PIN_04              ///< Associated with VBTICTLR->VCH2INEN
 };
 #endif
 
@@ -712,7 +712,7 @@ void r_ioport_pins_config (const ioport_cfg_t * p_cfg)
 
     p_pin_data = (ioport_cfg_t *) p_cfg;
 
-    R_BSP_PinAccessEnable();           /* Protect PWPR from re-entrancy*/
+    R_BSP_PinAccessEnable();           // Protect PWPR from re-entrancy
 
     for (pin_count = 0U; pin_count < p_pin_data->number_of_pins; pin_count++)
     {

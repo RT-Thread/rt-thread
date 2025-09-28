@@ -229,7 +229,7 @@
     #define __STATIC_FORCEINLINE                   __STATIC_INLINE
   #endif
   #ifndef   __NO_RETURN
-    /* NO RETURN is automatically detected hence no warning here*/
+    // NO RETURN is automatically detected hence no warning here
     #define __NO_RETURN
   #endif
   #ifndef   __USED

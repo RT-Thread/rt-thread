@@ -2233,7 +2233,7 @@ typedef struct
 #define CoreDebug_NS        ((CoreDebug_Type *)     DCB_BASE_NS)
 #endif
 
-#endif /* CMSIS_DISABLE_DEPRECATED*/
+#endif // CMSIS_DISABLE_DEPRECATED
 
 /*@} */
 

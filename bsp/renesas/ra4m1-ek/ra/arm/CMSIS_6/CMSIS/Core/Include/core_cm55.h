@@ -3609,7 +3609,7 @@ typedef struct
   \brief      Alias definitions present for backwards compatibility for deprecated symbols.
   @{
  */
-
+ 
 #ifndef CMSIS_DISABLE_DEPRECATED
 
 #define SCB_AIRCR_ENDIANESS_Pos            SCB_AIRCR_ENDIANNESS_Pos
@@ -3780,7 +3780,7 @@ typedef struct
 #define CoreDebug_NS        ((CoreDebug_Type *)     DCB_BASE_NS)
 #endif
 
-#endif /* CMSIS_DISABLE_DEPRECATED*/
+#endif // CMSIS_DISABLE_DEPRECATED
 
 /*@} */
 

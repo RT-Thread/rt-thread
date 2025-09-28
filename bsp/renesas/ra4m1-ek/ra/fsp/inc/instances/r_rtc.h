@@ -36,21 +36,21 @@ FSP_HEADER
 /** RTC extend configuration */
 typedef struct st_rtc_extended_cfg
 {
-    uint8_t   alarm1_ipl;              /*/< Alarm 1 interrupt priority*/
-    IRQn_Type alarm1_irq;              /*/< Alarm 1 interrupt vector*/
+    uint8_t   alarm1_ipl;              ///< Alarm 1 interrupt priority
+    IRQn_Type alarm1_irq;              ///< Alarm 1 interrupt vector
 } rtc_extended_cfg_t;
 
 /** Channel control block. DO NOT INITIALIZE.  Initialization occurs when @ref rtc_api_t::open is called */
 typedef struct st_rtc_ctrl
 {
-    uint32_t          open;                     /*/< Whether or not driver is open*/
-    const rtc_cfg_t * p_cfg;                    /*/< Pointer to initial configurations*/
-    volatile bool     carry_isr_triggered;      /*/< Was the carry isr triggered*/
+    uint32_t          open;                     ///< Whether or not driver is open
+    const rtc_cfg_t * p_cfg;                    ///< Pointer to initial configurations
+    volatile bool     carry_isr_triggered;      ///< Was the carry isr triggered
 
-    void (* p_callback)(rtc_callback_args_t *); /* Pointer to callback that is called when a rtc_event_t occurs.*/
-    rtc_callback_args_t * p_callback_memory;    /* Pointer to non-secure memory that can be used to pass arguments to a callback in non-secure memory.*/
+    void (* p_callback)(rtc_callback_args_t *); // Pointer to callback that is called when a rtc_event_t occurs.
+    rtc_callback_args_t * p_callback_memory;    // Pointer to non-secure memory that can be used to pass arguments to a callback in non-secure memory.
 
-    void * p_context;                           /* Pointer to context to be passed into callback function*/
+    void * p_context;                           // Pointer to context to be passed into callback function
 } rtc_instance_ctrl_t;
 
 /**********************************************************************************************************************
@@ -86,7 +86,7 @@ fsp_err_t R_RTC_TimeCaptureGet(rtc_ctrl_t * const p_ctrl, rtc_time_capture_t * c
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */
 FSP_FOOTER
 
-#endif                                 /* R_RTC_H*/
+#endif                                 // R_RTC_H
 
 /*******************************************************************************************************************//**
  * @} (end addtogroup RTC)

@@ -77,9 +77,9 @@
 #else
  #if BSP_CLOCK_CFG_MAIN_OSC_POPULATED
   #if BSP_CLOCK_CFG_MAIN_OSC_CLOCK_SOURCE
-   #define BSP_PRV_MOSEL                        (3U << R_SYSTEM_CMC_MOSEL_Pos) /* External clock input mode*/
+   #define BSP_PRV_MOSEL                        (3U << R_SYSTEM_CMC_MOSEL_Pos) // External clock input mode
   #else
-   #define BSP_PRV_MOSEL                        (1U << R_SYSTEM_CMC_MOSEL_Pos) /* Oscillation mode*/
+   #define BSP_PRV_MOSEL                        (1U << R_SYSTEM_CMC_MOSEL_Pos) // Oscillation mode
   #endif
   #define BSP_PRV_CMC_MOSC                      (BSP_PRV_MODRV | BSP_PRV_MOSEL)
  #endif
@@ -87,9 +87,9 @@
 /* Calculate value to write to CMC (SODRV controls sub-clock oscillator drive capability and SOSEL determines the source of the
  * sub-clock oscillator). */
  #if (0 == BSP_CLOCK_CFG_SUBCLOCK_DRIVE)
-  #define BSP_PRV_SODRV                         (1U << R_SYSTEM_CMC_SODRV_Pos) /* Sub-Clock Oscillator Drive Capability Normal mode*/
+  #define BSP_PRV_SODRV                         (1U << R_SYSTEM_CMC_SODRV_Pos) // Sub-Clock Oscillator Drive Capability Normal mode
  #elif (1 == BSP_CLOCK_CFG_SUBCLOCK_DRIVE)
-  #define BSP_PRV_SODRV                         (0U << R_SYSTEM_CMC_SODRV_Pos) /* Sub-Clock Oscillator Drive Capability Low Power Mode 1*/
+  #define BSP_PRV_SODRV                         (0U << R_SYSTEM_CMC_SODRV_Pos) // Sub-Clock Oscillator Drive Capability Low Power Mode 1
  #else
   #define BSP_PRV_SODRV                         (BSP_CLOCK_CFG_SUBCLOCK_DRIVE << R_SYSTEM_CMC_SODRV_Pos)
  #endif
@@ -98,9 +98,9 @@
                                                  (BSP_CLOCK_CFG_SUBCLOCK_POPULATED << R_SYSTEM_CMC_XTSEL_Pos))
 
  #if (BSP_CLOCKS_SOURCE_CLOCK_SUBCLOCK == BSP_CFG_FSXP_SOURCE)
-  #define BSP_PRV_OSMC                          (0U << R_SYSTEM_OSMC_WUTMMCK0_Pos) /* Use Sub-clock oscillator (SOSC) as Subsystem Clock (FSXP) source.*/
+  #define BSP_PRV_OSMC                          (0U << R_SYSTEM_OSMC_WUTMMCK0_Pos) // Use Sub-clock oscillator (SOSC) as Subsystem Clock (FSXP) source.
  #elif (BSP_CLOCKS_SOURCE_CLOCK_LOCO == BSP_CFG_FSXP_SOURCE)
-  #define BSP_PRV_OSMC                          (1U << R_SYSTEM_OSMC_WUTMMCK0_Pos) /* Use Low-speed on-chip oscillator clock (LOCO) as Subsystem Clock (FSXP) source.*/
+  #define BSP_PRV_OSMC                          (1U << R_SYSTEM_OSMC_WUTMMCK0_Pos) // Use Low-speed on-chip oscillator clock (LOCO) as Subsystem Clock (FSXP) source.
  #endif
 
  #if (BSP_CFG_CLKOUT_SOURCE != BSP_CLOCKS_CLOCK_DISABLED) && (BSP_CFG_CLKOUT_SOURCE != BSP_CFG_CLOCK_SOURCE)
@@ -284,9 +284,9 @@
   #else
    #define BSP_PRV_PLL_USED                         (0)
   #endif
-  #define BSP_PRV_PLLCCR_PLLMUL_MASK                (0x3F) /* PLLMUL in PLLCCR is 6 bits wide*/
-  #define BSP_PRV_PLLCCR_PLLMUL_BIT                 (8)    /* PLLMUL in PLLCCR starts at bit 8*/
-  #define BSP_PRV_PLLCCR_PLSRCSEL_BIT               (4)    /* PLSRCSEL in PLLCCR starts at bit 4*/
+  #define BSP_PRV_PLLCCR_PLLMUL_MASK                (0x3F) // PLLMUL in PLLCCR is 6 bits wide
+  #define BSP_PRV_PLLCCR_PLLMUL_BIT                 (8)    // PLLMUL in PLLCCR starts at bit 8
+  #define BSP_PRV_PLLCCR_PLSRCSEL_BIT               (4)    // PLSRCSEL in PLLCCR starts at bit 4
   #define BSP_PRV_PLLCCR                            ((((BSP_CFG_PLL_MUL & BSP_PRV_PLLCCR_PLLMUL_MASK) <<   \
                                                        BSP_PRV_PLLCCR_PLLMUL_BIT) |                        \
                                                       (BSP_PRV_PLSRCSEL << BSP_PRV_PLLCCR_PLSRCSEL_BIT)) | \
@@ -299,8 +299,8 @@
   #else
    #define BSP_PRV_PLL_USED                         (0)
   #endif
-  #define BSP_PRV_PLLCCR2_PLLMUL_MASK               (0x1F) /* PLLMUL in PLLCCR2 is 5 bits wide*/
-  #define BSP_PRV_PLLCCR2_PLODIV_BIT                (6)    /* PLODIV in PLLCCR2 starts at bit 6*/
+  #define BSP_PRV_PLLCCR2_PLLMUL_MASK               (0x1F) // PLLMUL in PLLCCR2 is 5 bits wide
+  #define BSP_PRV_PLLCCR2_PLODIV_BIT                (6)    // PLODIV in PLLCCR2 starts at bit 6
 
   #define BSP_PRV_PLLCCR2_PLLMUL                    (BSP_CFG_PLL_MUL >> 1)
   #define BSP_PRV_PLLCCR                            ((BSP_PRV_PLLCCR2_PLLMUL & BSP_PRV_PLLCCR2_PLLMUL_MASK) | \
@@ -323,15 +323,15 @@
    #define BSP_PRV_PLL_MUL_CFG_MACRO_PLLMUL_MASK    (0x7FFU)
   #endif
 
-  #define BSP_PRV_PLLCCR_PLLMULNF_BIT               (6) /* PLLMULNF in PLLCCR starts at bit 6*/
-  #define BSP_PRV_PLLCCR_PLSRCSEL_BIT               (4) /* PLSRCSEL in PLLCCR starts at bit 4*/
+  #define BSP_PRV_PLLCCR_PLLMULNF_BIT               (6) // PLLMULNF in PLLCCR starts at bit 6
+  #define BSP_PRV_PLLCCR_PLSRCSEL_BIT               (4) // PLSRCSEL in PLLCCR starts at bit 4
   #define BSP_PRV_PLLCCR                            ((((BSP_CFG_PLL_MUL & BSP_PRV_PLL_MUL_CFG_MACRO_PLLMUL_MASK) << \
                                                        BSP_PRV_PLLCCR_PLLMULNF_BIT) |                               \
                                                       (BSP_PRV_PLSRCSEL << BSP_PRV_PLLCCR_PLSRCSEL_BIT)) |          \
                                                      BSP_CFG_PLL_DIV)
-  #define BSP_PRV_PLLCCR2_PLL_DIV_MASK              (0x0F) /* PLL DIV in PLLCCR2/PLL2CCR2 is 4 bits wide*/
-  #define BSP_PRV_PLLCCR2_PLL_DIV_Q_BIT             (4)    /* PLL DIV Q in PLLCCR2/PLL2CCR2 starts at bit 4*/
-  #define BSP_PRV_PLLCCR2_PLL_DIV_R_BIT             (8)    /* PLL DIV R in PLLCCR2/PLL2CCR2 starts at bit 8*/
+  #define BSP_PRV_PLLCCR2_PLL_DIV_MASK              (0x0F) // PLL DIV in PLLCCR2/PLL2CCR2 is 4 bits wide
+  #define BSP_PRV_PLLCCR2_PLL_DIV_Q_BIT             (4)    // PLL DIV Q in PLLCCR2/PLL2CCR2 starts at bit 4
+  #define BSP_PRV_PLLCCR2_PLL_DIV_R_BIT             (8)    // PLL DIV R in PLLCCR2/PLL2CCR2 starts at bit 8
   #define BSP_PRV_PLLCCR2                           (((BSP_CFG_PLODIVR & BSP_PRV_PLLCCR2_PLL_DIV_MASK) << \
                                                       BSP_PRV_PLLCCR2_PLL_DIV_R_BIT) |                    \
                                                      ((BSP_CFG_PLODIVQ & BSP_PRV_PLLCCR2_PLL_DIV_MASK) << \
@@ -345,9 +345,9 @@
    #define BSP_PRV_PLL_USED                         (0)
   #endif
 
-  #define BSP_PRV_PLLCCR_PLLMUL_MASK                (0xFFU)   /* PLLMUL is 8 bits wide*/
-  #define BSP_PRV_PLLCCR_PLLMUL_BIT                 (8)       /* PLLMUL starts at bit 8*/
-  #define BSP_PRV_PLLCCR_RESET                      (0x0004U) /* Bit 2 must be written as 1*/
+  #define BSP_PRV_PLLCCR_PLLMUL_MASK                (0xFFU)   // PLLMUL is 8 bits wide
+  #define BSP_PRV_PLLCCR_PLLMUL_BIT                 (8)       // PLLMUL starts at bit 8
+  #define BSP_PRV_PLLCCR_RESET                      (0x0004U) // Bit 2 must be written as 1
   #define BSP_PRV_PLLCCR                            (((BSP_CFG_PLL_MUL & BSP_PRV_PLLCCR_PLLMUL_MASK) << \
                                                       BSP_PRV_PLLCCR_PLLMUL_BIT) |                      \
                                                      BSP_PRV_PLLCCR_RESET)
@@ -363,9 +363,9 @@
   #else
    #define BSP_PRV_PLL_USED                         (0)
   #endif
-  #define BSP_PRV_PLLCCR_PLLMUL_MASK                (0x1F) /* PLLMUL in PLLCCR is 5 bits wide*/
-  #define BSP_PRV_PLLCCR_PLLMUL_BIT                 (8)    /* PLLMUL in PLLCCR starts at bit 8*/
-  #define BSP_PRV_PLLCCR_PLSRCSEL_BIT               (4)    /* PLSRCSEL in PLLCCR starts at bit 4*/
+  #define BSP_PRV_PLLCCR_PLLMUL_MASK                (0x1F) // PLLMUL in PLLCCR is 5 bits wide
+  #define BSP_PRV_PLLCCR_PLLMUL_BIT                 (8)    // PLLMUL in PLLCCR starts at bit 8
+  #define BSP_PRV_PLLCCR_PLSRCSEL_BIT               (4)    // PLSRCSEL in PLLCCR starts at bit 4
   #if (BSP_CFG_PLL_DIV == BSP_CLOCKS_PLL_DIV_1)
    #define BSP_PRV_PLLCCR                           ((((BSP_CFG_PLL_MUL & BSP_PRV_PLLCCR_PLLMUL_MASK) <<   \
                                                        BSP_PRV_PLLCCR_PLLMUL_BIT) |                        \
@@ -405,15 +405,15 @@
   #endif
 
   #define BSP_PRV_PLL2_MUL_CFG_MACRO_PLLMULNF_MASK    (0x003U)
-  #define BSP_PRV_PLL2CCR_PLLMULNF_BIT                (6) /* PLLMULNF in PLLCCR starts at bit 6*/
-  #define BSP_PRV_PLL2CCR_PLSRCSEL_BIT                (4) /* PLSRCSEL in PLLCCR starts at bit 4*/
+  #define BSP_PRV_PLL2CCR_PLLMULNF_BIT                (6) // PLLMULNF in PLLCCR starts at bit 6
+  #define BSP_PRV_PLL2CCR_PLSRCSEL_BIT                (4) // PLSRCSEL in PLLCCR starts at bit 4
   #define BSP_PRV_PLL2CCR                             ((((BSP_CFG_PLL2_MUL & BSP_PRV_PLL2_MUL_CFG_MACRO_PLLMUL_MASK) << \
                                                          BSP_PRV_PLL2CCR_PLLMULNF_BIT) |                                \
                                                         (BSP_PRV_PL2SRCSEL << BSP_PRV_PLL2CCR_PLSRCSEL_BIT)) |          \
                                                        BSP_CFG_PLL2_DIV)
-  #define BSP_PRV_PLL2CCR2_PLL_DIV_MASK               (0x0F) /* PLL DIV in PLL2CCR2 is 4 bits wide*/
-  #define BSP_PRV_PLL2CCR2_PLL_DIV_Q_BIT              (4)    /* PLL DIV Q in PLL2CCR2 starts at bit 4*/
-  #define BSP_PRV_PLL2CCR2_PLL_DIV_R_BIT              (8)    /* PLL DIV R in PLL2CCR2 starts at bit 8*/
+  #define BSP_PRV_PLL2CCR2_PLL_DIV_MASK               (0x0F) // PLL DIV in PLL2CCR2 is 4 bits wide
+  #define BSP_PRV_PLL2CCR2_PLL_DIV_Q_BIT              (4)    // PLL DIV Q in PLL2CCR2 starts at bit 4
+  #define BSP_PRV_PLL2CCR2_PLL_DIV_R_BIT              (8)    // PLL DIV R in PLL2CCR2 starts at bit 8
   #define BSP_PRV_PLL2CCR2                            (((BSP_CFG_PL2ODIVR & BSP_PRV_PLL2CCR2_PLL_DIV_MASK) << \
                                                         BSP_PRV_PLL2CCR2_PLL_DIV_R_BIT) |                     \
                                                        ((BSP_CFG_PL2ODIVQ & BSP_PRV_PLL2CCR2_PLL_DIV_MASK) << \
@@ -3278,7 +3278,7 @@ void R_BSP_Init_RTC (void)
      */
 
  #if BSP_FEATURE_RTC_IS_IRTC
-    if (0U == R_SYSTEM->VRTSR_b.VRTVLD) /* Return if VRTC-domain is invalid*/
+    if (0U == R_SYSTEM->VRTSR_b.VRTVLD) // Return if VRTC-domain is invalid
     {
         return;
     }

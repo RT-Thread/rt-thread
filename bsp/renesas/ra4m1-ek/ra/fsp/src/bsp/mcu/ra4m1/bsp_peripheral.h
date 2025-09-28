@@ -17,7 +17,7 @@
  * Macro definitions
  **********************************************************************************************************************/
 
-/* *UNCRUSTIFY-OFF*/
+// *UNCRUSTIFY-OFF*
 
 #define BSP_PERIPHERAL_ACMP_PRESENT              (1)
 #define BSP_PERIPHERAL_ACMPHS_PRESENT            (0)
@@ -211,6 +211,6 @@
 #define BSP_PERIPHERAL_WDT_PRESENT               (1)
 #define BSP_PERIPHERAL_WDT_CHANNEL_MASK          (0x1U)
 
-/* *UNCRUSTIFY-ON*/
+// *UNCRUSTIFY-ON*
 
 #endif

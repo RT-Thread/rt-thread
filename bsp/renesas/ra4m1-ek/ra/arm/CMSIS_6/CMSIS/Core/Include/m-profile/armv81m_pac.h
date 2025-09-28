@@ -44,8 +44,7 @@
   \details Reads the PAC key stored in the PAC_KEY_P registers.
   \param [out]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __get_PAC_KEY_P (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __get_PAC_KEY_P (uint32_t* pPacKey) {
   __ASM volatile (
   "mrs   r1, pac_key_p_0\n"
   "str   r1,[%0,#0]\n"
@@ -64,8 +63,7 @@ __STATIC_FORCEINLINE void __get_PAC_KEY_P (uint32_t* pPacKey)
   \details writes the given PAC key to the PAC_KEY_P registers.
   \param [in]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __set_PAC_KEY_P (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __set_PAC_KEY_P (uint32_t* pPacKey) {
   __ASM volatile (
   "ldr   r1,[%0,#0]\n"
   "msr   pac_key_p_0, r1\n"
@@ -84,8 +82,7 @@ __STATIC_FORCEINLINE void __set_PAC_KEY_P (uint32_t* pPacKey)
   \details Reads the PAC key stored in the PAC_KEY_U registers.
   \param [out]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __get_PAC_KEY_U (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __get_PAC_KEY_U (uint32_t* pPacKey) {
   __ASM volatile (
   "mrs   r1, pac_key_u_0\n"
   "str   r1,[%0,#0]\n"
@@ -104,8 +101,7 @@ __STATIC_FORCEINLINE void __get_PAC_KEY_U (uint32_t* pPacKey)
   \details writes the given PAC key to the PAC_KEY_U registers.
   \param [in]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __set_PAC_KEY_U (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __set_PAC_KEY_U (uint32_t* pPacKey) {
   __ASM volatile (
   "ldr   r1,[%0,#0]\n"
   "msr   pac_key_u_0, r1\n"
@@ -126,8 +122,7 @@ __STATIC_FORCEINLINE void __set_PAC_KEY_U (uint32_t* pPacKey)
   \details Reads the PAC key stored in the non-secure PAC_KEY_P registers when in secure mode.
   \param [out]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __TZ_get_PAC_KEY_P_NS (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __TZ_get_PAC_KEY_P_NS (uint32_t* pPacKey) {
   __ASM volatile (
   "mrs   r1, pac_key_p_0_ns\n"
   "str   r1,[%0,#0]\n"
@@ -146,8 +141,7 @@ __STATIC_FORCEINLINE void __TZ_get_PAC_KEY_P_NS (uint32_t* pPacKey)
   \details writes the given PAC key to the non-secure PAC_KEY_P registers when in secure mode.
   \param [in]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __TZ_set_PAC_KEY_P_NS (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __TZ_set_PAC_KEY_P_NS (uint32_t* pPacKey) {
   __ASM volatile (
   "ldr   r1,[%0,#0]\n"
   "msr   pac_key_p_0_ns, r1\n"
@@ -166,8 +160,7 @@ __STATIC_FORCEINLINE void __TZ_set_PAC_KEY_P_NS (uint32_t* pPacKey)
   \details Reads the PAC key stored in the non-secure PAC_KEY_U registers when in secure mode.
   \param [out]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __TZ_get_PAC_KEY_U_NS (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __TZ_get_PAC_KEY_U_NS (uint32_t* pPacKey) {
   __ASM volatile (
   "mrs   r1, pac_key_u_0_ns\n"
   "str   r1,[%0,#0]\n"
@@ -186,8 +179,7 @@ __STATIC_FORCEINLINE void __TZ_get_PAC_KEY_U_NS (uint32_t* pPacKey)
   \details writes the given PAC key to the non-secure PAC_KEY_U registers when in secure mode.
   \param [in]    pPacKey  128bit PAC key
  */
-__STATIC_FORCEINLINE void __TZ_set_PAC_KEY_U_NS (uint32_t* pPacKey)
-{
+__STATIC_FORCEINLINE void __TZ_set_PAC_KEY_U_NS (uint32_t* pPacKey) {
   __ASM volatile (
   "ldr   r1,[%0,#0]\n"
   "msr   pac_key_u_0_ns, r1\n"

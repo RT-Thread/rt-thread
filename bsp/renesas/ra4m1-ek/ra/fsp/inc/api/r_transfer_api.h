@@ -89,10 +89,10 @@ typedef enum e_transfer_mode
  */
 typedef enum e_transfer_size
 {
-    TRANSFER_SIZE_1_BYTE = 0,          /*/< Each transfer transfers a 8-bit value*/
-    TRANSFER_SIZE_2_BYTE = 1,          /*/< Each transfer transfers a 16-bit value*/
-    TRANSFER_SIZE_4_BYTE = 2,          /*/< Each transfer transfers a 32-bit value*/
-    TRANSFER_SIZE_8_BYTE = 3           /*/< Each transfer transfers a 64-bit value*/
+    TRANSFER_SIZE_1_BYTE = 0,          ///< Each transfer transfers a 8-bit value
+    TRANSFER_SIZE_2_BYTE = 1,          ///< Each transfer transfers a 16-bit value
+    TRANSFER_SIZE_4_BYTE = 2,          ///< Each transfer transfers a 32-bit value
+    TRANSFER_SIZE_8_BYTE = 3           ///< Each transfer transfers a 64-bit value
 } transfer_size_t;
 
 #endif
@@ -174,7 +174,7 @@ typedef enum e_transfer_irq
 /** Callback function parameter data. */
 typedef struct st_transfer_callback_args_t
 {
-    void * p_context;                  /*/< Placeholder for user data.  Set in @ref transfer_api_t::open function in ::transfer_cfg_t.*/
+    void * p_context;                  ///< Placeholder for user data.  Set in @ref transfer_api_t::open function in ::transfer_cfg_t.
 } transfer_callback_args_t;
 
 #endif
@@ -182,10 +182,10 @@ typedef struct st_transfer_callback_args_t
 /** Driver specific information. */
 typedef struct st_transfer_properties
 {
-    uint32_t block_count_max;           /*/< Maximum number of blocks*/
-    uint32_t block_count_remaining;     /*/< Number of blocks remaining*/
-    uint32_t transfer_length_max;       /*/< Maximum number of transfers*/
-    uint32_t transfer_length_remaining; /*/< Number of transfers remaining*/
+    uint32_t block_count_max;           ///< Maximum number of blocks
+    uint32_t block_count_remaining;     ///< Number of blocks remaining
+    uint32_t transfer_length_max;       ///< Maximum number of transfers
+    uint32_t transfer_length_remaining; ///< Number of transfers remaining
 } transfer_properties_t;
 
 #ifndef BSP_OVERRIDE_TRANSFER_INFO_T
@@ -235,8 +235,8 @@ typedef struct st_transfer_info
         uint32_t transfer_settings_word;
     };
 
-    void const * volatile p_src;       /*/< Source pointer*/
-    void * volatile       p_dest;      /*/< Destination pointer*/
+    void const * volatile p_src;       ///< Source pointer
+    void * volatile       p_dest;      ///< Destination pointer
 
     /** Number of blocks to transfer when using @ref TRANSFER_MODE_BLOCK (both DTC an DMAC) or
      * @ref TRANSFER_MODE_REPEAT (DMAC only) or
@@ -259,14 +259,14 @@ typedef struct st_transfer_cfg
      *  an array of chained transfers that will be completed in order. */
     transfer_info_t * p_info;
 
-    void const * p_extend;             /*/< Extension parameter for hardware specific settings.*/
+    void const * p_extend;             ///< Extension parameter for hardware specific settings.
 } transfer_cfg_t;
 
 /** Select whether to start single or repeated transfer with software start. */
 typedef enum e_transfer_start_mode
 {
-    TRANSFER_START_MODE_SINGLE = 0,    /*/< Software start triggers single transfer.*/
-    TRANSFER_START_MODE_REPEAT = 1     /*/< Software start transfer continues until transfer is complete.*/
+    TRANSFER_START_MODE_SINGLE = 0,    ///< Software start triggers single transfer.
+    TRANSFER_START_MODE_REPEAT = 1     ///< Software start transfer continues until transfer is complete.
 } transfer_start_mode_t;
 
 /** Transfer functions implemented at the HAL layer will follow this API. */
@@ -374,9 +374,9 @@ typedef struct st_transfer_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_transfer_instance
 {
-    transfer_ctrl_t      * p_ctrl;     /*/< Pointer to the control structure for this instance*/
-    transfer_cfg_t const * p_cfg;      /*/< Pointer to the configuration structure for this instance*/
-    transfer_api_t const * p_api;      /*/< Pointer to the API structure for this instance*/
+    transfer_ctrl_t      * p_ctrl;     ///< Pointer to the control structure for this instance
+    transfer_cfg_t const * p_cfg;      ///< Pointer to the configuration structure for this instance
+    transfer_api_t const * p_api;      ///< Pointer to the API structure for this instance
 } transfer_instance_t;
 
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */

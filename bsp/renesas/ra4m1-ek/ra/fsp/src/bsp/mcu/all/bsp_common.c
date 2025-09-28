@@ -41,7 +41,7 @@
 
 void bsp_init(void * p_args) WEAK_INIT_ATTRIBUTE;
 
-void bsp_init_internal(void * p_args); /*/ Default initialization function*/
+void bsp_init_internal(void * p_args); /// Default initialization function
 
 #if (1 == BSP_CFG_ASSERT)
 
@@ -50,7 +50,7 @@ void bsp_init_internal(void * p_args); /*/ Default initialization function*/
 
 void fsp_error_log(fsp_err_t err, const char * file, int32_t line) WEAK_ERROR_ATTRIBUTE;
 
-void fsp_error_log_internal(fsp_err_t err, const char * file, int32_t line); /*/ Default error logger function*/
+void fsp_error_log_internal(fsp_err_t err, const char * file, int32_t line); /// Default error logger function
 
 #endif
 #if BSP_FEATURE_TZ_VERSION == 2 && BSP_TZ_SECURE_BUILD == 1

@@ -18,7 +18,7 @@
 #define WDT_OPEN                         (0X00574454ULL)
 
 /* On multi core MCU, core0 uses WDT0 settings on OFS0, and core1 uses WDT1 settings on OFS3*/
-#if 1 == BSP_CFG_CPU_CORE              /* Core1*/
+#if 1 == BSP_CFG_CPU_CORE              // Core1
  #ifdef BSP_CFG_OPTION_SETTING_OFS3_SEC
   #define BSP_CFG_OPTION_SETTING_OFSX    BSP_CFG_OPTION_SETTING_OFS3_SEC
  #else
@@ -50,14 +50,14 @@
 #define WDT_PRV_OFSX_RESET_CONTROL_BIT       (28)
 #define WDT_PRV_OFSX_STOP_CONTROL_BIT        (30)
 
-#define WDT_PRV_OFSX_AUTO_START_MASK         (0x1U) /* Bit 17*/
-#define WDT_PRV_OFSX_TIMEOUT_MASK            (0x3U) /* Bits 18-19*/
-#define WDT_PRV_OFSX_CLOCK_DIVISION_MASK     (0xFU) /* Bits 20-23*/
-#define WDT_PRV_OFSX_WINDOW_END_MASK         (0x3U) /* Bits 24-25*/
-#define WDT_PRV_OFSX_WINDOW_START_MASK       (0x3U) /* Bits 26-27*/
-#define WDT_PRV_OFSX_NMI_REQUEST_MASK        (0x1U) /* Bit 28*/
-#define WDT_PRV_OFSX_RESET_CONTROL_MASK      (0x1U) /* Bit 28*/
-#define WDT_PRV_OFSX_STOP_CONTROL_MASK       (0x1U) /* Bit 30*/
+#define WDT_PRV_OFSX_AUTO_START_MASK         (0x1U) // Bit 17
+#define WDT_PRV_OFSX_TIMEOUT_MASK            (0x3U) // Bits 18-19
+#define WDT_PRV_OFSX_CLOCK_DIVISION_MASK     (0xFU) // Bits 20-23
+#define WDT_PRV_OFSX_WINDOW_END_MASK         (0x3U) // Bits 24-25
+#define WDT_PRV_OFSX_WINDOW_START_MASK       (0x3U) // Bits 26-27
+#define WDT_PRV_OFSX_NMI_REQUEST_MASK        (0x1U) // Bit 28
+#define WDT_PRV_OFSX_RESET_CONTROL_MASK      (0x1U) // Bit 28
+#define WDT_PRV_OFSX_STOP_CONTROL_MASK       (0x1U) // Bit 30
 #define WDT_PRV_NMI_EN_MASK                  (0x2)
 
 /* WDT register settings. */
@@ -72,10 +72,10 @@
 #define WDT_PRV_WDTRCR_RESET_CONTROL_BIT     (7)
 #define WDT_PRV_WDTCSTPR_STOP_CONTROL_BIT    (7)
 
-#define WDT_PRV_WDTCR_TIMEOUT_MASK           (0x3U) /* Bits 0-1*/
-#define WDT_PRV_WDTCR_CLOCK_DIVISION_MASK    (0xFU) /* Bits 4-7*/
-#define WDT_PRV_WDTCR_WINDOW_END_MASK        (0x3U) /* Bits 8-9*/
-#define WDT_PRV_WDTCR_WINDOW_START_MASK      (0x3U) /* Bits 12-13*/
+#define WDT_PRV_WDTCR_TIMEOUT_MASK           (0x3U) // Bits 0-1
+#define WDT_PRV_WDTCR_CLOCK_DIVISION_MASK    (0xFU) // Bits 4-7
+#define WDT_PRV_WDTCR_WINDOW_END_MASK        (0x3U) // Bits 8-9
+#define WDT_PRV_WDTCR_WINDOW_START_MASK      (0x3U) // Bits 12-13
 
 /* Macros for start mode and NMI support. */
 #if (BSP_CFG_OPTION_SETTING_OFSX >> WDT_PRV_OFSX_AUTO_START_BIT) & WDT_PRV_OFSX_AUTO_START_MASK
@@ -126,13 +126,13 @@ static void r_wdt_nmi_initialize(wdt_instance_ctrl_t * const p_instance_ctrl, wd
 
 static const uint8_t g_wdtcr_timeout[] =
 {
-    0xFFU,                             /* WDTCR value for WDT_TIMEOUT_128 (not supported by WDT).*/
-    0xFFU,                             /* WDTCR value for WDT_TIMEOUT_512 (not supported by WDT).*/
-    0x00U,                             /* WDTCR value for WDT_TIMEOUT_1024.*/
-    0xFFU,                             /* WDTCR value for WDT_TIMEOUT_2048 (not supported by WDT).*/
-    0x01U,                             /* WDTCR value for WDT_TIMEOUT_4096.*/
-    0x02U,                             /* WDTCR value for WDT_TIMEOUT_8192.*/
-    0x03U,                             /* WDTCR value for WDT_TIMEOUT_16384.*/
+    0xFFU,                             // WDTCR value for WDT_TIMEOUT_128 (not supported by WDT).
+    0xFFU,                             // WDTCR value for WDT_TIMEOUT_512 (not supported by WDT).
+    0x00U,                             // WDTCR value for WDT_TIMEOUT_1024.
+    0xFFU,                             // WDTCR value for WDT_TIMEOUT_2048 (not supported by WDT).
+    0x01U,                             // WDTCR value for WDT_TIMEOUT_4096.
+    0x02U,                             // WDTCR value for WDT_TIMEOUT_8192.
+    0x03U,                             // WDTCR value for WDT_TIMEOUT_16384.
 };
 
 /* Convert WDT/IWDT timeout value to an integer */
@@ -150,15 +150,15 @@ static const uint32_t g_wdt_timeout[] =
 /* Converts WDT division enum to log base 2 of the division value, used to shift the PCLKB frequency. */
 static const uint8_t g_wdt_division_lookup[] =
 {
-    0U,                                /* log base 2(1)    = 0*/
-    2U,                                /* log base 2(4)    = 2*/
-    4U,                                /* log base 2(16)   = 4*/
-    5U,                                /* log base 2(32)   = 5*/
-    6U,                                /* log base 2(64)   = 6*/
-    8U,                                /* log base 2(256)  = 8*/
-    9U,                                /* log base 2(512)  = 9*/
-    11U,                               /* log base 2(2048) = 11*/
-    13U,                               /* log base 2(8192) = 13*/
+    0U,                                // log base 2(1)    = 0
+    2U,                                // log base 2(4)    = 2
+    4U,                                // log base 2(16)   = 4
+    5U,                                // log base 2(32)   = 5
+    6U,                                // log base 2(64)   = 6
+    8U,                                // log base 2(256)  = 8
+    9U,                                // log base 2(512)  = 9
+    11U,                               // log base 2(2048) = 11
+    13U,                               // log base 2(8192) = 13
 };
 
 /** Global pointer to control structure for use by the NMI callback.  */

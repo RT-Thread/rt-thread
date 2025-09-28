@@ -158,20 +158,20 @@ __STATIC_FORCEINLINE void __set_FPEXC(uint32_t fpexc)
  */
 __STATIC_INLINE void __FPU_Enable(void)
 {
-  /* Permit access to VFP/NEON, registers by modifying CPACR*/
+  // Permit access to VFP/NEON, registers by modifying CPACR
   const uint32_t cpacr = __get_CPACR();
   __set_CPACR(cpacr | 0x00F00000ul);
   __ISB();
 
-  /* Enable VFP/NEON*/
+  // Enable VFP/NEON
   const uint32_t fpexc = __get_FPEXC();
   __set_FPEXC(fpexc | 0x40000000ul);
 
   __ASM volatile(
-    /* Initialise VFP/NEON registers to 0*/
+    // Initialise VFP/NEON registers to 0
     "        MOV     R2,#0             \n"
 
-    /* Initialise D16 registers to 0*/
+    // Initialise D16 registers to 0
     "        VMOV    D0, R2,R2         \n"
     "        VMOV    D1, R2,R2         \n"
     "        VMOV    D2, R2,R2         \n"
@@ -190,7 +190,7 @@ __STATIC_INLINE void __FPU_Enable(void)
     "        VMOV    D15,R2,R2         \n"
 
 #if (defined(__ARM_NEON) && (__ARM_NEON == 1))
-    /* Initialise D32 registers to 0*/
+    // Initialise D32 registers to 0
     "        VMOV    D16,R2,R2         \n"
     "        VMOV    D17,R2,R2         \n"
     "        VMOV    D18,R2,R2         \n"
@@ -211,7 +211,7 @@ __STATIC_INLINE void __FPU_Enable(void)
     : : : "cc", "r2"
   );
 
-  /* Initialise FPSCR to a known state*/
+  // Initialise FPSCR to a known state
   const uint32_t fpscr = __get_FPSCR();
   __set_FPSCR(fpscr & 0x00086060ul);
 }

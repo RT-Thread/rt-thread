@@ -52,19 +52,19 @@ FSP_HEADER
 /** CAN event codes */
 typedef enum e_can_event
 {
-    CAN_EVENT_ERR_WARNING          = 0x0002, /*/< Error Warning event.*/
-    CAN_EVENT_ERR_PASSIVE          = 0x0004, /*/< Error Passive event.*/
-    CAN_EVENT_ERR_BUS_OFF          = 0x0008, /*/< Bus Off event.*/
-    CAN_EVENT_BUS_RECOVERY         = 0x0010, /*/< Bus Off Recovery event.*/
-    CAN_EVENT_MAILBOX_MESSAGE_LOST = 0x0020, /*/< Mailbox has been overrun.*/
-    CAN_EVENT_ERR_BUS_LOCK         = 0x0080, /*/< Bus lock detected (32 consecutive dominant bits).*/
-    CAN_EVENT_ERR_CHANNEL          = 0x0100, /*/< Channel error has occurred.*/
-    CAN_EVENT_TX_ABORTED           = 0x0200, /*/< Transmit abort event.*/
-    CAN_EVENT_RX_COMPLETE          = 0x0400, /*/< Receive complete event.*/
-    CAN_EVENT_TX_COMPLETE          = 0x0800, /*/< Transmit complete event.*/
-    CAN_EVENT_ERR_GLOBAL           = 0x1000, /*/< Global error has occurred.*/
-    CAN_EVENT_TX_FIFO_EMPTY        = 0x2000, /*/< Transmit FIFO is empty.*/
-    CAN_EVENT_FIFO_MESSAGE_LOST    = 0x4000, /*/< Receive FIFO overrun.*/
+    CAN_EVENT_ERR_WARNING          = 0x0002, ///< Error Warning event.
+    CAN_EVENT_ERR_PASSIVE          = 0x0004, ///< Error Passive event.
+    CAN_EVENT_ERR_BUS_OFF          = 0x0008, ///< Bus Off event.
+    CAN_EVENT_BUS_RECOVERY         = 0x0010, ///< Bus Off Recovery event.
+    CAN_EVENT_MAILBOX_MESSAGE_LOST = 0x0020, ///< Mailbox has been overrun.
+    CAN_EVENT_ERR_BUS_LOCK         = 0x0080, ///< Bus lock detected (32 consecutive dominant bits).
+    CAN_EVENT_ERR_CHANNEL          = 0x0100, ///< Channel error has occurred.
+    CAN_EVENT_TX_ABORTED           = 0x0200, ///< Transmit abort event.
+    CAN_EVENT_RX_COMPLETE          = 0x0400, ///< Receive complete event.
+    CAN_EVENT_TX_COMPLETE          = 0x0800, ///< Transmit complete event.
+    CAN_EVENT_ERR_GLOBAL           = 0x1000, ///< Global error has occurred.
+    CAN_EVENT_TX_FIFO_EMPTY        = 0x2000, ///< Transmit FIFO is empty.
+    CAN_EVENT_FIFO_MESSAGE_LOST    = 0x4000, ///< Receive FIFO overrun.
 } can_event_t;
 
 #endif
@@ -72,24 +72,24 @@ typedef enum e_can_event
 /** CAN Operation modes */
 typedef enum e_can_operation_mode
 {
-    CAN_OPERATION_MODE_NORMAL = 0,              /*/< CAN Normal Operation Mode*/
-    CAN_OPERATION_MODE_RESET,                   /*/< CAN Reset Operation Mode*/
-    CAN_OPERATION_MODE_HALT,                    /*/< CAN Halt Operation Mode*/
-    CAN_OPERATION_MODE_SLEEP            = 5,    /*/< CAN Sleep Operation Mode*/
-    CAN_OPERATION_MODE_GLOBAL_OPERATION = 0x80, /* CANFD Global Operation Mode*/
-    CAN_OPERATION_MODE_GLOBAL_RESET,            /* CANFD Global Reset Mode*/
-    CAN_OPERATION_MODE_GLOBAL_HALT,             /* CANFD Global Halt Mode*/
-    CAN_OPERATION_MODE_GLOBAL_SLEEP = 0x85      /* CANFD Global Sleep Mode*/
+    CAN_OPERATION_MODE_NORMAL = 0,              ///< CAN Normal Operation Mode
+    CAN_OPERATION_MODE_RESET,                   ///< CAN Reset Operation Mode
+    CAN_OPERATION_MODE_HALT,                    ///< CAN Halt Operation Mode
+    CAN_OPERATION_MODE_SLEEP            = 5,    ///< CAN Sleep Operation Mode
+    CAN_OPERATION_MODE_GLOBAL_OPERATION = 0x80, // CANFD Global Operation Mode
+    CAN_OPERATION_MODE_GLOBAL_RESET,            // CANFD Global Reset Mode
+    CAN_OPERATION_MODE_GLOBAL_HALT,             // CANFD Global Halt Mode
+    CAN_OPERATION_MODE_GLOBAL_SLEEP = 0x85      // CANFD Global Sleep Mode
 } can_operation_mode_t;
 
 /** CAN Test modes */
 typedef enum e_can_test_mode
 {
-    CAN_TEST_MODE_DISABLED          = 0,   /*/< CAN Test Mode Disabled.*/
-    CAN_TEST_MODE_LISTEN            = 3,   /*/< CAN Test Listen Mode.*/
-    CAN_TEST_MODE_LOOPBACK_EXTERNAL = 5,   /*/< CAN Test External Loopback Mode.*/
-    CAN_TEST_MODE_LOOPBACK_INTERNAL = 7,   /*/< CAN Test Internal Loopback Mode.*/
-    CAN_TEST_MODE_INTERNAL_BUS      = 0x80 /*/< CANFD Internal CAN Bus Communication Test Mode.*/
+    CAN_TEST_MODE_DISABLED          = 0,   ///< CAN Test Mode Disabled.
+    CAN_TEST_MODE_LISTEN            = 3,   ///< CAN Test Listen Mode.
+    CAN_TEST_MODE_LOOPBACK_EXTERNAL = 5,   ///< CAN Test External Loopback Mode.
+    CAN_TEST_MODE_LOOPBACK_INTERNAL = 7,   ///< CAN Test Internal Loopback Mode.
+    CAN_TEST_MODE_INTERNAL_BUS      = 0x80 ///< CANFD Internal CAN Bus Communication Test Mode.
 } can_test_mode_t;
 
 #ifndef BSP_OVERRIDE_CAN_INFO_T
@@ -97,12 +97,12 @@ typedef enum e_can_test_mode
 /** CAN status info */
 typedef struct st_can_info
 {
-    uint32_t status;                   /*/< Useful information from the CAN status register.*/
-    uint32_t rx_mb_status;             /*/< RX Message Buffer New Data flags.*/
-    uint32_t rx_fifo_status;           /*/< RX FIFO Empty flags.*/
-    uint8_t  error_count_transmit;     /*/< Transmit error count.*/
-    uint8_t  error_count_receive;      /*/< Receive error count.*/
-    uint32_t error_code;               /*/< Error code, cleared after reading.*/
+    uint32_t status;                   ///< Useful information from the CAN status register.
+    uint32_t rx_mb_status;             ///< RX Message Buffer New Data flags.
+    uint32_t rx_fifo_status;           ///< RX FIFO Empty flags.
+    uint8_t  error_count_transmit;     ///< Transmit error count.
+    uint8_t  error_count_receive;      ///< Receive error count.
+    uint32_t error_code;               ///< Error code, cleared after reading.
 } can_info_t;
 
 #endif
@@ -112,8 +112,8 @@ typedef struct st_can_info
 /** CAN ID modes */
 typedef enum e_can_id_mode
 {
-    CAN_ID_MODE_STANDARD,              /*/< Standard IDs of 11 bits used.*/
-    CAN_ID_MODE_EXTENDED,              /*/< Extended IDs of 29 bits used.*/
+    CAN_ID_MODE_STANDARD,              ///< Standard IDs of 11 bits used.
+    CAN_ID_MODE_EXTENDED,              ///< Extended IDs of 29 bits used.
 } can_id_mode_t;
 
 #endif
@@ -123,8 +123,8 @@ typedef enum e_can_id_mode
 /** CAN frame types */
 typedef enum e_can_frame_type
 {
-    CAN_FRAME_TYPE_DATA,               /*/< Data frame.*/
-    CAN_FRAME_TYPE_REMOTE,             /*/< Remote frame.*/
+    CAN_FRAME_TYPE_DATA,               ///< Data frame.
+    CAN_FRAME_TYPE_REMOTE,             ///< Remote frame.
 } can_frame_type_t;
 
 #endif
@@ -132,10 +132,10 @@ typedef enum e_can_frame_type
 /** CAN bit rate configuration. */
 typedef struct st_can_bit_timing_cfg
 {
-    uint32_t baud_rate_prescaler;        /*/< Baud rate prescaler. Valid values: 1 - 1024.*/
-    uint32_t time_segment_1;             /*/< Time segment 1 control.*/
-    uint32_t time_segment_2;             /*/< Time segment 2 control.*/
-    uint32_t synchronization_jump_width; /*/< Synchronization jump width.*/
+    uint32_t baud_rate_prescaler;        ///< Baud rate prescaler. Valid values: 1 - 1024.
+    uint32_t time_segment_1;             ///< Time segment 1 control.
+    uint32_t time_segment_2;             ///< Time segment 2 control.
+    uint32_t synchronization_jump_width; ///< Synchronization jump width.
 } can_bit_timing_cfg_t;
 
 #ifndef BSP_OVERRIDE_CAN_FRAME_T
@@ -143,12 +143,12 @@ typedef struct st_can_bit_timing_cfg
 /** CAN data Frame */
 typedef struct st_can_frame
 {
-    uint32_t         id;                           /*/< CAN ID.*/
-    can_id_mode_t    id_mode;                      /*/< Standard or Extended ID (IDE).*/
-    can_frame_type_t type;                         /*/< Frame type (RTR).*/
-    uint8_t          data_length_code;             /*/< CAN Data Length Code (DLC).*/
-    uint32_t         options;                      /*/< Implementation-specific options.*/
-    uint8_t          data[CAN_DATA_BUFFER_LENGTH]; /*/< CAN data.*/
+    uint32_t         id;                           ///< CAN ID.
+    can_id_mode_t    id_mode;                      ///< Standard or Extended ID (IDE).
+    can_frame_type_t type;                         ///< Frame type (RTR).
+    uint8_t          data_length_code;             ///< CAN Data Length Code (DLC).
+    uint32_t         options;                      ///< Implementation-specific options.
+    uint8_t          data[CAN_DATA_BUFFER_LENGTH]; ///< CAN data.
 } can_frame_t;
 
 #endif
@@ -158,16 +158,16 @@ typedef struct st_can_frame
 /** CAN callback parameter definition */
 typedef struct st_can_callback_args
 {
-    uint32_t    channel;               /*/< Device channel number.*/
-    can_event_t event;                 /*/< Event code.*/
-    uint32_t    error;                 /*/< Error code.*/
+    uint32_t    channel;               ///< Device channel number.
+    can_event_t event;                 ///< Event code.
+    uint32_t    error;                 ///< Error code.
     union
     {
-        uint32_t mailbox;              /*/< Mailbox number of interrupt source.*/
-        uint32_t buffer;               /*/< Buffer number of interrupt source.*/
+        uint32_t mailbox;              ///< Mailbox number of interrupt source.
+        uint32_t buffer;               ///< Buffer number of interrupt source.
     };
-    void      * p_context;             /*/< Context provided to user during callback.*/
-    can_frame_t frame;                 /*/< Received frame data.*/
+    void      * p_context;             ///< Context provided to user during callback.
+    can_frame_t frame;                 ///< Received frame data.
 } can_callback_args_t;
 
 #endif
@@ -176,19 +176,19 @@ typedef struct st_can_callback_args
 typedef struct st_can_cfg
 {
     /* CAN generic configuration */
-    uint32_t               channel;                    /*/< CAN channel.*/
-    can_bit_timing_cfg_t * p_bit_timing;               /*/< CAN bit timing.*/
+    uint32_t               channel;                    ///< CAN channel.
+    can_bit_timing_cfg_t * p_bit_timing;               ///< CAN bit timing.
 
     /* Configuration for CAN Event processing */
-    void (* p_callback)(can_callback_args_t * p_args); /*/< Pointer to callback function*/
-    void * p_context;                                  /*/< User defined callback context.*/
+    void (* p_callback)(can_callback_args_t * p_args); ///< Pointer to callback function
+    void * p_context;                                  ///< User defined callback context.
 
     /* Pointer to CAN peripheral specific configuration */
-    void const * p_extend;                             /*/< CAN hardware dependent configuration*/
-    uint8_t      ipl;                                  /*/< Error/Transmit/Receive interrupt priority*/
-    IRQn_Type    error_irq;                            /*/< Error IRQ number*/
-    IRQn_Type    rx_irq;                               /*/< Receive IRQ number*/
-    IRQn_Type    tx_irq;                               /*/< Transmit IRQ number*/
+    void const * p_extend;                             ///< CAN hardware dependent configuration
+    uint8_t      ipl;                                  ///< Error/Transmit/Receive interrupt priority
+    IRQn_Type    error_irq;                            ///< Error IRQ number
+    IRQn_Type    rx_irq;                               ///< Receive IRQ number
+    IRQn_Type    tx_irq;                               ///< Transmit IRQ number
 } can_cfg_t;
 
 /** CAN control block.  Allocate an instance specific control block to pass into the CAN API calls.
@@ -255,9 +255,9 @@ typedef struct st_can_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_can_instance
 {
-    can_ctrl_t      * p_ctrl;          /*/< Pointer to the control structure for this instance*/
-    can_cfg_t const * p_cfg;           /*/< Pointer to the configuration structure for this instance*/
-    can_api_t const * p_api;           /*/< Pointer to the API structure for this instance*/
+    can_ctrl_t      * p_ctrl;          ///< Pointer to the control structure for this instance
+    can_cfg_t const * p_cfg;           ///< Pointer to the configuration structure for this instance
+    can_api_t const * p_api;           ///< Pointer to the API structure for this instance
 } can_instance_t;
 
 /*******************************************************************************************************************//**

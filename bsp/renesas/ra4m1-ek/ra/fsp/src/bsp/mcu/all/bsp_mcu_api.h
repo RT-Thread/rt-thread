@@ -33,30 +33,30 @@ typedef struct st_bsp_event_info
 
 typedef enum e_bsp_clocks_octaclk_div
 {
-    BSP_CLOCKS_OCTACLK_DIV_1 = 0,      /*/< Divide OCTA source clock by 1*/
-    BSP_CLOCKS_OCTACLK_DIV_2,          /*/< Divide OCTA source clock by 2*/
-    BSP_CLOCKS_OCTACLK_DIV_4,          /*/< Divide OCTA source clock by 4*/
-    BSP_CLOCKS_OCTACLK_DIV_6,          /*/< Divide OCTA source clock by 6*/
-    BSP_CLOCKS_OCTACLK_DIV_8,          /*/< Divide OCTA source clock by 8*/
-    BSP_CLOCKS_OCTACLK_DIV_3,          /*/< Divide OCTA source clock by 3*/
-    BSP_CLOCKS_OCTACLK_DIV_5           /*/< Divide OCTA source clock by 5*/
+    BSP_CLOCKS_OCTACLK_DIV_1 = 0,      ///< Divide OCTA source clock by 1
+    BSP_CLOCKS_OCTACLK_DIV_2,          ///< Divide OCTA source clock by 2
+    BSP_CLOCKS_OCTACLK_DIV_4,          ///< Divide OCTA source clock by 4
+    BSP_CLOCKS_OCTACLK_DIV_6,          ///< Divide OCTA source clock by 6
+    BSP_CLOCKS_OCTACLK_DIV_8,          ///< Divide OCTA source clock by 8
+    BSP_CLOCKS_OCTACLK_DIV_3,          ///< Divide OCTA source clock by 3
+    BSP_CLOCKS_OCTACLK_DIV_5           ///< Divide OCTA source clock by 5
 } bsp_clocks_octaclk_div_t;
 
 typedef enum e_bsp_clocks_source
 {
-    BSP_CLOCKS_CLOCK_HOCO = 0,         /*/< The high speed on chip oscillator.*/
-    BSP_CLOCKS_CLOCK_MOCO,             /*/< The middle speed on chip oscillator.*/
-    BSP_CLOCKS_CLOCK_LOCO,             /*/< The low speed on chip oscillator.*/
-    BSP_CLOCKS_CLOCK_MAIN_OSC,         /*/< The main oscillator.*/
-    BSP_CLOCKS_CLOCK_SUBCLOCK,         /*/< The subclock oscillator.*/
-    BSP_CLOCKS_CLOCK_PLL,              /*/< The PLL oscillator.*/
-    BSP_CLOCKS_CLOCK_PLL2,             /*/< The PLL2 oscillator.*/
+    BSP_CLOCKS_CLOCK_HOCO = 0,         ///< The high speed on chip oscillator.
+    BSP_CLOCKS_CLOCK_MOCO,             ///< The middle speed on chip oscillator.
+    BSP_CLOCKS_CLOCK_LOCO,             ///< The low speed on chip oscillator.
+    BSP_CLOCKS_CLOCK_MAIN_OSC,         ///< The main oscillator.
+    BSP_CLOCKS_CLOCK_SUBCLOCK,         ///< The subclock oscillator.
+    BSP_CLOCKS_CLOCK_PLL,              ///< The PLL oscillator.
+    BSP_CLOCKS_CLOCK_PLL2,             ///< The PLL2 oscillator.
 } bsp_clocks_source_t;
 
 typedef struct st_bsp_octaclk_settings
 {
-    bsp_clocks_source_t      source_clock; /*/< OCTACLK source clock*/
-    bsp_clocks_octaclk_div_t divider;      /*/< OCTACLK divider*/
+    bsp_clocks_source_t      source_clock; ///< OCTACLK source clock
+    bsp_clocks_octaclk_div_t divider;      ///< OCTACLK divider
 } bsp_octaclk_settings_t;
 
 /***********************************************************************************************************************

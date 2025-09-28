@@ -48,14 +48,14 @@ FSP_HEADER
 #ifndef BSP_OVERRIDE_UART_EVENT_T
 typedef enum e_sf_event
 {
-    UART_EVENT_RX_COMPLETE   = (1UL << 0), /*/< Receive complete event*/
-    UART_EVENT_TX_COMPLETE   = (1UL << 1), /*/< Transmit complete event*/
-    UART_EVENT_RX_CHAR       = (1UL << 2), /*/< Character received*/
-    UART_EVENT_ERR_PARITY    = (1UL << 3), /*/< Parity error event*/
-    UART_EVENT_ERR_FRAMING   = (1UL << 4), /*/< Mode fault error event*/
-    UART_EVENT_ERR_OVERFLOW  = (1UL << 5), /*/< FIFO Overflow error event*/
-    UART_EVENT_BREAK_DETECT  = (1UL << 6), /*/< Break detect error event*/
-    UART_EVENT_TX_DATA_EMPTY = (1UL << 7), /*/< Last byte is transmitting, ready for more data*/
+    UART_EVENT_RX_COMPLETE   = (1UL << 0), ///< Receive complete event
+    UART_EVENT_TX_COMPLETE   = (1UL << 1), ///< Transmit complete event
+    UART_EVENT_RX_CHAR       = (1UL << 2), ///< Character received
+    UART_EVENT_ERR_PARITY    = (1UL << 3), ///< Parity error event
+    UART_EVENT_ERR_FRAMING   = (1UL << 4), ///< Mode fault error event
+    UART_EVENT_ERR_OVERFLOW  = (1UL << 5), ///< FIFO Overflow error event
+    UART_EVENT_BREAK_DETECT  = (1UL << 6), ///< Break detect error event
+    UART_EVENT_TX_DATA_EMPTY = (1UL << 7), ///< Last byte is transmitting, ready for more data
 } uart_event_t;
 #endif
 #ifndef BSP_OVERRIDE_UART_DATA_BITS_T
@@ -63,9 +63,9 @@ typedef enum e_sf_event
 /** UART Data bit length definition */
 typedef enum e_uart_data_bits
 {
-    UART_DATA_BITS_9 = 0U,             /*/< Data bits 9-bit*/
-    UART_DATA_BITS_8 = 2U,             /*/< Data bits 8-bit*/
-    UART_DATA_BITS_7 = 3U,             /*/< Data bits 7-bit*/
+    UART_DATA_BITS_9 = 0U,             ///< Data bits 9-bit
+    UART_DATA_BITS_8 = 2U,             ///< Data bits 8-bit
+    UART_DATA_BITS_7 = 3U,             ///< Data bits 7-bit
 } uart_data_bits_t;
 #endif
 #ifndef BSP_OVERRIDE_UART_PARITY_T
@@ -73,26 +73,26 @@ typedef enum e_uart_data_bits
 /** UART Parity definition */
 typedef enum e_uart_parity
 {
-    UART_PARITY_OFF  = 0U,             /*/< No parity*/
-    UART_PARITY_ZERO = 1U,             /*/< Zero parity*/
-    UART_PARITY_EVEN = 2U,             /*/< Even parity*/
-    UART_PARITY_ODD  = 3U,             /*/< Odd parity*/
+    UART_PARITY_OFF  = 0U,             ///< No parity
+    UART_PARITY_ZERO = 1U,             ///< Zero parity
+    UART_PARITY_EVEN = 2U,             ///< Even parity
+    UART_PARITY_ODD  = 3U,             ///< Odd parity
 } uart_parity_t;
 #endif
 
 /** UART Stop bits definition */
 typedef enum e_uart_stop_bits
 {
-    UART_STOP_BITS_1 = 0U,             /*/< Stop bit 1-bit*/
-    UART_STOP_BITS_2 = 1U,             /*/< Stop bits 2-bit*/
+    UART_STOP_BITS_1 = 0U,             ///< Stop bit 1-bit
+    UART_STOP_BITS_2 = 1U,             ///< Stop bits 2-bit
 } uart_stop_bits_t;
 
 /** UART transaction definition */
 typedef enum e_uart_dir
 {
-    UART_DIR_RX_TX = 3U,               /*/< Both RX and TX*/
-    UART_DIR_RX    = 1U,               /*/< Only RX*/
-    UART_DIR_TX    = 2U,               /*/< Only TX*/
+    UART_DIR_RX_TX = 3U,               ///< Both RX and TX
+    UART_DIR_RX    = 1U,               ///< Only RX
+    UART_DIR_TX    = 2U,               ///< Only TX
 } uart_dir_t;
 
 /** UART driver specific information */
@@ -108,31 +108,31 @@ typedef struct st_uart_info
 /** UART Callback parameter definition */
 typedef struct st_uart_callback_arg
 {
-    uint32_t     channel;              /*/< Device channel number*/
-    uart_event_t event;                /*/< Event code*/
+    uint32_t     channel;              ///< Device channel number
+    uart_event_t event;                ///< Event code
 
     /** Contains the next character received for the events UART_EVENT_RX_CHAR, UART_EVENT_ERR_PARITY,
      * UART_EVENT_ERR_FRAMING, or UART_EVENT_ERR_OVERFLOW.  Otherwise unused. */
     uint32_t data;
-    void   * p_context;                /*/< Context provided to user during callback*/
+    void   * p_context;                ///< Context provided to user during callback
 } uart_callback_args_t;
 
 /** UART Configuration */
 typedef struct st_uart_cfg
 {
     /* UART generic configuration */
-    uint8_t          channel;          /*/< Select a channel corresponding to the channel number of the hardware.*/
-    uart_data_bits_t data_bits;        /*/< Data bit length (8 or 7 or 9)*/
-    uart_parity_t    parity;           /*/< Parity type (none or odd or even)*/
-    uart_stop_bits_t stop_bits;        /*/< Stop bit length (1 or 2)*/
-    uint8_t          rxi_ipl;          /*/< Receive interrupt priority*/
-    IRQn_Type        rxi_irq;          /*/< Receive interrupt IRQ number*/
-    uint8_t          txi_ipl;          /*/< Transmit interrupt priority*/
-    IRQn_Type        txi_irq;          /*/< Transmit interrupt IRQ number*/
-    uint8_t          tei_ipl;          /*/< Transmit end interrupt priority*/
-    IRQn_Type        tei_irq;          /*/< Transmit end interrupt IRQ number*/
-    uint8_t          eri_ipl;          /*/< Error interrupt priority*/
-    IRQn_Type        eri_irq;          /*/< Error interrupt IRQ number*/
+    uint8_t          channel;          ///< Select a channel corresponding to the channel number of the hardware.
+    uart_data_bits_t data_bits;        ///< Data bit length (8 or 7 or 9)
+    uart_parity_t    parity;           ///< Parity type (none or odd or even)
+    uart_stop_bits_t stop_bits;        ///< Stop bit length (1 or 2)
+    uint8_t          rxi_ipl;          ///< Receive interrupt priority
+    IRQn_Type        rxi_irq;          ///< Receive interrupt IRQ number
+    uint8_t          txi_ipl;          ///< Transmit interrupt priority
+    IRQn_Type        txi_irq;          ///< Transmit interrupt IRQ number
+    uint8_t          tei_ipl;          ///< Transmit end interrupt priority
+    IRQn_Type        tei_irq;          ///< Transmit end interrupt IRQ number
+    uint8_t          eri_ipl;          ///< Error interrupt priority
+    IRQn_Type        eri_irq;          ///< Error interrupt IRQ number
 
     /** Optional transfer instance used to receive multiple bytes without interrupts.  Set to NULL if unused.
      * If NULL, the number of bytes allowed in the read API is limited to one byte at a time. */
@@ -143,11 +143,11 @@ typedef struct st_uart_cfg
     transfer_instance_t const * p_transfer_tx;
 
     /* Configuration for UART Event processing */
-    void (* p_callback)(uart_callback_args_t * p_args); /*/< Pointer to callback function*/
-    void * p_context;                                   /*/< User defined context passed into callback function*/
+    void (* p_callback)(uart_callback_args_t * p_args); ///< Pointer to callback function
+    void * p_context;                                   ///< User defined context passed into callback function
 
     /* Pointer to UART peripheral specific configuration */
-    void const * p_extend;                              /*/< UART hardware dependent configuration*/
+    void const * p_extend;                              ///< UART hardware dependent configuration
 } uart_cfg_t;
 
 /** UART control block.  Allocate an instance specific control block to pass into the UART API calls.
@@ -254,9 +254,9 @@ typedef struct st_uart_api
 /** This structure encompasses everything that is needed to use an instance of this interface. */
 typedef struct st_uart_instance
 {
-    uart_ctrl_t      * p_ctrl;         /*/< Pointer to the control structure for this instance*/
-    uart_cfg_t const * p_cfg;          /*/< Pointer to the configuration structure for this instance*/
-    uart_api_t const * p_api;          /*/< Pointer to the API structure for this instance*/
+    uart_ctrl_t      * p_ctrl;         ///< Pointer to the control structure for this instance
+    uart_cfg_t const * p_cfg;          ///< Pointer to the configuration structure for this instance
+    uart_api_t const * p_api;          ///< Pointer to the API structure for this instance
 } uart_instance_t;
 
 /** @} (end defgroup UART_API) */

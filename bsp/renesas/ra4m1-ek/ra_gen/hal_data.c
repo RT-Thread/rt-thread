@@ -563,7 +563,7 @@ const adc_cfg_t g_adc0_cfg =
     .mode                = ADC_MODE_CONTINUOUS_SCAN,
     .resolution          = ADC_RESOLUTION_14_BIT,
     .alignment           = (adc_alignment_t) ADC_ALIGNMENT_RIGHT,
-    .trigger             = (adc_trigger_t)0xF, /* Not used*/
+    .trigger             = (adc_trigger_t)0xF, // Not used
     .p_callback          = NULL,
     /** If NULL then do not add & */
 #if defined(NULL)
@@ -964,7 +964,6 @@ const uart_instance_t g_uart0 =
     .p_cfg         = &g_uart0_cfg,
     .p_api         = &g_uart_on_sci
 };
-void g_hal_init(void)
-{
+void g_hal_init(void) {
 g_common_init();
 }

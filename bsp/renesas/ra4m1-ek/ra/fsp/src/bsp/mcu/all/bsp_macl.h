@@ -73,11 +73,11 @@ FSP_HEADER
 
   #define BSP_MACL_32_BIT                      (32U)
 
-  #define BSP_MACL_Q31_MAX_VALUE               (0x7FFFFFFF) /* Max value is 0.999999999534*/
-  #define BSP_MACL_Q31_MIN_VALUE               (0x80000000) /* Min value is -1.0*/
+  #define BSP_MACL_Q31_MAX_VALUE               (0x7FFFFFFF) // Max value is 0.999999999534
+  #define BSP_MACL_Q31_MIN_VALUE               (0x80000000) // Min value is -1.0
 
-  #define BSP_MACL_OVERFLOW_VALUE              (0x1)        /* 0b01*/
-  #define BSP_MACL_UNDERFLOW_VALUE             (0x2)        /* 0b10*/
+  #define BSP_MACL_OVERFLOW_VALUE              (0x1)        // 0b01
+  #define BSP_MACL_UNDERFLOW_VALUE             (0x2)        // 0b10
 
   #define BSP_MACL_CLEAR_MULR_REG              (0x0U)
 
