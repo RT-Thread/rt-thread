@@ -1,0 +1,15 @@
+menu "Hardware Drivers Config"
+
+config BSP_USING_UART1
+    bool "Enable UART1"
+    default y
+
+config BSP_USING_GIC
+    bool "Enalbe GIC"
+    default y
+
+config BSP_USING_GICV3
+    bool "Enable GICv3"
+    default y
+
+endmenu
