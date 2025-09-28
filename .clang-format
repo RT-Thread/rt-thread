@@ -72,7 +72,7 @@ BraceWrapping:
   AfterNamespace: true
   AfterObjCDeclaration: true
   AfterStruct: true
-  AfterUnion: false
+  AfterUnion: true
   BeforeCatch: true
   BeforeElse: true
   BeforeLambdaBody: false
@@ -84,7 +84,7 @@ BraceWrapping:
 BreakAfterAttributes: Never
 BreakAfterJavaFieldAnnotations: false
 BreakArrays: false
-BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBinaryOperators: None
 BreakBeforeConceptDeclarations: Always
 BreakBeforeInlineASMColon: OnlyMultiline
 BreakBeforeTernaryOperators: true
@@ -96,7 +96,7 @@ CommentPragmas: "^ IWYU pragma:"
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
-Cpp11BracedListStyle: true
+Cpp11BracedListStyle: false
 DerivePointerAlignment: false
 DisableFormat: false
 EmptyLineAfterAccessModifier: Never

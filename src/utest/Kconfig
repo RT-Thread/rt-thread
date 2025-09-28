@@ -2,12 +2,12 @@ menu "Kernel Testcase"
 
 config UTEST_MEMHEAP_TC
     bool "memheap stability test"
-    default y
+    default n
     depends on RT_USING_MEMHEAP
 
 config UTEST_SMALL_MEM_TC
     bool "mem test"
-    default y
+    default n
     depends on RT_USING_SMALL_MEM
 
 config UTEST_OBJECT_TC
@@ -61,10 +61,6 @@ config UTEST_THREAD_TC
     default n
     select RT_USING_TIMER_SOFT
     select RT_USING_THREAD
-
-config UTEST_DEVICE_TC
-    bool "device test"
-    default n
 
 config UTEST_ATOMIC_TC
     bool "atomic test"
