@@ -276,19 +276,19 @@ struct rt_can_filter_item
 #endif /*RT_CAN_USING_HDR*/
 };
 
+#ifdef RT_CAN_USING_HDR
 /**
  * @def RT_CAN_FILTER_ITEM_INIT
  * @brief A helper macro to initialize a `rt_can_filter_item` structure for Mask Mode.
  *
- * @param[in] _id   The CAN ID for the filter.
- * @param[in] _ide  Identifier type (0 for Standard, 1 for Extended).
- * @param[in] _rtr  Frame type (0 for Data, 1 for Remote).
- * @param[in] _mode Filter mode (0 for Mask, 1 for List).
- * @param[in] _mask The mask to be applied.
- * @param[in] _ind  Optional callback function (can be RT_NULL).
- * @param[in] _args Optional arguments for the callback (can be RT_NULL).
+ * @param[in] id   The CAN ID for the filter.
+ * @param[in] ide  Identifier type (0 for Standard, 1 for Extended).
+ * @param[in] rtr  Frame type (0 for Data, 1 for Remote).
+ * @param[in] mode Filter mode (0 for Mask, 1 for List).
+ * @param[in] mask The mask to be applied.
+ * @param[in] ind  Optional callback function (can be RT_NULL).
+ * @param[in] args Optional arguments for the callback (can be RT_NULL).
  */
-#ifdef RT_CAN_USING_HDR
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask,ind,args) \
       {(id), (ide), (rtr), (mode),(mask), -1, CAN_RX_FIFO0,(ind), (args)}
 #define RT_CAN_FILTER_STD_INIT(id,ind,args) \
@@ -304,6 +304,16 @@ struct rt_can_filter_item
 #define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id,ind,args) \
      RT_CAN_FILTER_ITEM_INIT(id,1,0,1,0xFFFFFFFF,ind,args)
 #else
+/**
+ * @def RT_CAN_FILTER_ITEM_INIT
+ * @brief A helper macro to initialize a `rt_can_filter_item` structure for Mask Mode.
+ *
+ * @param[in] id   The CAN ID for the filter.
+ * @param[in] ide  Identifier type (0 for Standard, 1 for Extended).
+ * @param[in] rtr  Frame type (0 for Data, 1 for Remote).
+ * @param[in] mode Filter mode (0 for Mask, 1 for List).
+ * @param[in] mask The mask to be applied.
+ */
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask) \
       {(id), (ide), (rtr), (mode), (mask), -1, CAN_RX_FIFO0 }
 #define RT_CAN_FILTER_STD_INIT(id) \
