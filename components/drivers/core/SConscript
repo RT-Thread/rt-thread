@@ -18,4 +18,9 @@ if GetDepend(['RT_USING_OFW']):
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_DEVICE'], CPPPATH = CPPPATH)
 
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
 Return('group')
