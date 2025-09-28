@@ -227,7 +227,11 @@ rt_ssize_t ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t 
 #if defined(BSP_USING_CANFD)
     msg_ra = &can->callback_args->frame;
 #else
-    msg_ra = can->callback_args->p_frame;
+    #if defined(SOC_SERIES_R7FA4M1)
+        msg_ra = &can->callback_args->frame;
+    #else
+        msg_ra = can->callback_args->p_frame;
+    #endif
 #endif
 
     msg_rt->id = msg_ra->id;
