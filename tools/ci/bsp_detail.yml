@@ -407,7 +407,7 @@ beaglebone:
 bluetrum/ab32vg1-ab-prougen:
   .config: true
   README.md: true
-  gcc: riscv64-unknown-elf-gcc
+  gcc: riscv-none-elf-gcc
   menuconfig: true
   rtconfig.h: true
 bm3803:
@@ -1484,7 +1484,7 @@ qemu-virt64-riscv:
   .config: true
   README.md: true
   README_ZH.md: true
-  gcc: riscv64-unknown-elf-gcc
+  gcc: riscv-none-elf-gcc
   menuconfig: true
   rtconfig.h: true
 raspberry-pi/raspi2:

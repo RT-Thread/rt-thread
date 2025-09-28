@@ -105,8 +105,8 @@ jobs:
       - name: Install Riscv64-unknown-elf ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-riscv64-unknown-elf' && success() }}
         run: |
-          source tools/ci/toolchain.sh riscv64-unknown-elf-gcc
-          echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-gcc/bin" >> $GITHUB_ENV
+          source tools/ci/toolchain.sh riscv-none-elf-gcc
+          echo "RTT_EXEC_PATH=/opt/riscv-none-elf-gcc/bin" >> $GITHUB_ENV
 
       - name: Install Riscv-none-embed ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-riscv-none-embed' && success() }}

@@ -29,7 +29,7 @@ CHIP_TYPE = 'ultrarisc'
 if PLATFORM == 'gcc':
     # toolchains
     #PREFIX  = 'riscv64-unknown-elf-'
-    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-elf-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv-none-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -41,10 +41,21 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     # + ' -Wl,--no-warn-rwx-segments'
-    DEVICE  = ' -mcmodel=medany -march=rv64gc -mabi=lp64'
+    DEVICE  = ' -mcmodel=medany -march=rv64gc '
+    USE_SMART = PREFIX.find('-musleabi-') > 0
+    if USE_SMART:
+        DEVICE += ' -mabi=lp64 '
+    else:
+        DEVICE += ' -mabi=lp64d '
     CFLAGS  = DEVICE + ' -Wno-cpp  -ffreestanding -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields -D_POSIX_SOURCE '
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds' + ' -lsupc++ -lgcc -static' 
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--no-warn-rwx-segments -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start '
+    if USE_SMART:
+        # smart link options
+        LFLAGS += ' -T link_smart.lds -lsupc++ -lgcc -static '
+    else:
+        # normal link options
+        LFLAGS += ' -T link.lds --specs=nosys.specs -static '
     CPATH   = ''
     LPATH   = ''
 

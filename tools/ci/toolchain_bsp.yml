@@ -359,6 +359,13 @@ powerpc-eabi-gcc:
   bsp:
   - taihu
   count: 1
+riscv-none-elf-gcc:
+  bsp:
+  - bluetrum/ab32vg1-ab-prougen
+  - qemu-virt64-riscv
+  - ultrarisc/ur_dp1000_evb
+  count: 3
+  download_url: https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v12.3.0-2/xpack-riscv-none-elf-gcc-12.3.0-2-linux-x64.tar.gz
 riscv-none-embed-gcc:
   bsp:
   - gd32/risc-v/gd32vf103r-start
@@ -399,7 +406,6 @@ riscv32-unknown-elf-gcc:
   download_url: https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
 riscv64-unknown-elf-gcc:
   bsp:
-  - bluetrum/ab32vg1-ab-prougen
   - bouffalo_lab/bl60x
   - bouffalo_lab/bl61x
   - bouffalo_lab/bl70x
@@ -407,10 +413,9 @@ riscv64-unknown-elf-gcc:
   - bouffalo_lab/bl808/m0
   - cvitek/c906_little
   - cvitek/cv18xx_risc-v
-  - qemu-virt64-riscv
   - sparkfun-redv
   - thead-smart
-  count: 11
+  count: 9
   download_url: https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
 riscv64-unknown-linux-musl-gcc:
   bsp:
