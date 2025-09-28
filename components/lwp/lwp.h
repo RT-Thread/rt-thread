@@ -84,6 +84,12 @@ struct lwp_tty;
 #define LWP_CREATE_STAT_SIGNALED(signo, coredump) (((signo) & 0x7f) | (coredump ? LWP_COREDUMP_FLAG : 0))
 #define LWP_CREATE_STAT_STOPPED(signo)            (LWP_CREATE_STAT_EXIT(signo) | 0x7f)
 #define LWP_CREATE_STAT_CONTINUED                 (0xffff)
+#elif defined(RT_USING_MLIBC)
+#define LWP_COREDUMP_FLAG                         0x80
+#define LWP_CREATE_STAT_EXIT(exit_code)           (((exit_code)&0xff) << 8)
+#define LWP_CREATE_STAT_SIGNALED(signo, coredump) (((signo) & 0x7f) | (coredump ? LWP_COREDUMP_FLAG : 0))
+#define LWP_CREATE_STAT_STOPPED(signo)            (LWP_CREATE_STAT_EXIT(signo) | 0x7f)
+#define LWP_CREATE_STAT_CONTINUED                 (0xffff)
 #else
 #error "No compatible lwp set status provided for this libc"
 #endif
