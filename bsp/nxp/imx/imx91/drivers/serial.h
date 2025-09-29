@@ -17,9 +17,10 @@
 
 int rt_hw_uart_init(void);
 
-void imx_uart1_putc(char c);
-void imx_uart1_puts(const char *str);
-void imx_uart1_print_hex(const char *str, rt_base_t hex);
+void rt_hw_earlycon_ioremap(void);
+void rt_hw_earlycon_putc(char c);
+void rt_hw_earlycon_puts(const char *str);
+void rt_hw_earlycon_print_hex(const char *str, rt_base_t hex);
 
 void rt_hw_console_putc(char c);
 void rt_hw_console_output(const char *str);

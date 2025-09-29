@@ -26,6 +26,7 @@ struct hw_uart_device
     const char *device_name; /* serial device name */
 
     LPUART_Type* uart_base;
+    LPUART_Type* uart_instance;
     int irqn;
 
     clock_root_t clock_root; /* clock root */
@@ -38,7 +39,8 @@ struct hw_uart_device
 static struct hw_uart_device _uart1_device =
 {
     .device_name = "uart1",
-    .uart_base = LPUART1,
+    .uart_base = RT_NULL,
+    .uart_instance = LPUART1,
     .irqn = LPUART1_IRQn,
     .clock_root = kCLOCK_Root_Lpuart1,
     .clock_mux = kCLOCK_LPUART1_ClockRoot_MuxOsc24M,
@@ -238,13 +240,22 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-void imx_uart1_putc(char c)
+volatile LPUART_Type *earlycon_base = LPUART1;
+const size_t earlycon_size = 4096; // sizeof(LPUART_Type);
+
+void rt_hw_earlycon_ioremap(void)
 {
-    LPUART_WriteByte(LPUART1, c);
-    while (!(LPUART_GetStatusFlags(LPUART1) & kLPUART_TxDataRegEmptyFlag));
+    earlycon_base = rt_ioremap_early((void *)earlycon_base, earlycon_size);
+    rt_hw_earlycon_print_hex("earlycon_base: ", (rt_base_t)earlycon_base);
 }
 
-void imx_uart1_puts(const char *str)
+void rt_hw_earlycon_putc(char c)
+{
+    LPUART_WriteByte(earlycon_base, c);
+    while (!(LPUART_GetStatusFlags(earlycon_base) & kLPUART_TxDataRegEmptyFlag));
+}
+
+void rt_hw_earlycon_puts(const char *str)
 {
     int has_cr = 0;
     while (*str) {
@@ -252,24 +263,24 @@ void imx_uart1_puts(const char *str)
             has_cr = 1;
         } else if (*str == '\n') {
             if (!has_cr) {
-                imx_uart1_putc('\r');
+                rt_hw_earlycon_putc('\r');
             }
         }
-        imx_uart1_putc(*str++);
+        rt_hw_earlycon_putc(*str++);
     }
 }
 
-void imx_uart1_print_hex(const char *str, rt_base_t hex)
+void rt_hw_earlycon_print_hex(const char *str, rt_base_t hex)
 {
-    imx_uart1_puts(str);
-    imx_uart1_putc('0');
-    imx_uart1_putc('x');
+    rt_hw_earlycon_puts(str);
+    rt_hw_earlycon_putc('0');
+    rt_hw_earlycon_putc('x');
     for (int i = 60; i >= 0; i -= 4) {
         rt_base_t h = (hex >> i) & 0xF;
-        imx_uart1_putc(h < 10 ? '0' + h : 'A' + h - 10);
+        rt_hw_earlycon_putc(h < 10 ? '0' + h : 'A' + h - 10);
     }
-    imx_uart1_putc('\r');
-    imx_uart1_putc('\n');
+    rt_hw_earlycon_putc('\r');
+    rt_hw_earlycon_putc('\n');
 }
 
 void rt_hw_console_putc(char c)
@@ -340,7 +351,8 @@ int rt_hw_uart_init(void)
         {
             hw_uart_devices[i]->serial.ops = &_uart_ops;
             hw_uart_devices[i]->serial.config = config;
-            // hw_uart_devices[i]->uart_base = rt_ioremap((void *)hw_uart_devices[i]->uart_base, sizeof(LPUART_Type));
+            rt_hw_earlycon_print_hex("ioremap uart_instance: ", (rt_base_t)hw_uart_devices[i]->uart_instance);
+            hw_uart_devices[i]->uart_base = rt_ioremap((void *)hw_uart_devices[i]->uart_instance, 0x1000);
 
             rt_hw_serial_register(&hw_uart_devices[i]->serial, hw_uart_devices[i]->device_name,
                                   RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, hw_uart_devices[i]);

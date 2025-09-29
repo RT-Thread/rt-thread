@@ -38,7 +38,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=armv8-a -mtune=cortex-a55 -fno-omit-frame-pointer'
+    DEVICE = ' -march=armv8-a -mtune=cortex-a55'
     CPPFLAGS = ' -E -P -x assembler-with-cpp'
     CFLAGS = DEVICE + ' -Wall -Wno-cpp -D_POSIX_SOURCE'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
@@ -50,10 +50,10 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0'
-        CPPFLAGS += ' -O0 -ggdb -gdwarf-2'
+        CFLAGS += ' -O0 -ggdb'
+        CPPFLAGS += ' -O0 -ggdb'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -O2 -ggdb'
         CPPFLAGS += ' -O2 -ggdb'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\

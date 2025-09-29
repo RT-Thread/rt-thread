@@ -25,14 +25,7 @@ extern int __bss_end;
 #define HEAP_BEGIN      ((void*)&__bss_end)
 #endif
 
-// #define KERNEL_VADDR_START 0x0
-#ifndef KERNEL_VADDR_START
-#define KERNEL_VADDR_START (ARCH_RAM_OFFSET + ARCH_TEXT_OFFSET)
-#endif
-
-#define HEAP_END        (KERNEL_VADDR_START + 32 * 1024 * 1024)
-
-// #define HEAP_END        (void*)(HEAP_BEGIN + 32 * 1024 * 1024)
+#define HEAP_END        (void*)(HEAP_BEGIN + 32 * 1024 * 1024)
 #define PAGE_START      HEAP_END
 #define PAGE_END        ((size_t)PAGE_START + 128 * 1024 * 1024)
 

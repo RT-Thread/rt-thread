@@ -14,15 +14,18 @@
 #include <gtimer.h>
 #include <mm_aspace.h>
 #include <mm_page.h>
+
+#include <rtconfig.h>
 #include <rtdevice.h>
 
 #include <mmu.h>
 
-#define BOARD_DRAM_SIZE (256 * 1024 * 1024)
+#include <limits.h>
+
 
 struct mem_desc platform_mem_desc[] = {
-    {0x00200000, 0x00200000 + BOARD_DRAM_SIZE - 1, 0x80000000, NORMAL_MEM}, // 256MB DRAM
-    {0xD0000000, 0xFFFFFFFF, 0x38000000, DEVICE_MEM},
+    {0x80100000, 0x8FFFFFFF, 0x80000000, NORMAL_MEM},
+    {0xD4000000, 0xDFFFFFFF, 0x44380000, DEVICE_MEM},
 };
 
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
@@ -81,28 +84,36 @@ void rt_hw_board_init(void)
 {
     // enable_neon_fpu();
     // disable_strict_align_check();
+    rt_hw_earlycon_ioremap();
 
-    imx_uart1_puts("rt_hw_board_init!\n");
-    // rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x080000000000, 0x10000000, MMUTable, 0);
+    rt_hw_earlycon_puts("rt_hw_board_init!\n");
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x080000000000, 0x10000000, MMUTable, 0);
+    rt_hw_earlycon_puts("[rt_hw_board_init] rt_hw_mmu_map_init done!\n");
 
-    // imx_uart1_puts("rt_page_init!\n");
-    // imx_uart1_print_hex("PAGE_START: ", (rt_base_t) PAGE_START);
-    // imx_uart1_print_hex("PAGE_END:   ", (rt_base_t) PAGE_END);
-    // rt_page_init(init_page_region);
+    rt_hw_earlycon_print_hex("[rt_hw_board_init] rt_kernel_space.start: ", (rt_base_t) rt_kernel_space.start);
+    rt_hw_earlycon_print_hex("[rt_hw_board_init] rt_kernel_space.size:  ", (rt_base_t) rt_kernel_space.size);
 
-    // imx_uart1_puts("rt_hw_mmu_setup!\n");
-    // rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
+    rt_hw_earlycon_print_hex("[rt_hw_board_init] PAGE_START: ", (rt_base_t) PAGE_START);
+    rt_hw_earlycon_print_hex("[rt_hw_board_init] PAGE_END:   ", (rt_base_t) PAGE_END);
+    rt_page_init(init_page_region);
+
+    rt_hw_earlycon_puts("[rt_hw_board_init] rt_hw_mmu_setup!\n");
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
 #ifdef RT_USING_HEAP
     /* initialize system heap */
+    rt_hw_earlycon_puts("[rt_hw_board_init] rt_system_heap_init!\n");
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
     /* initialize hardware interrupt */
+    rt_hw_earlycon_puts("[rt_hw_board_init] rt_hw_interrupt_init!\n");
     rt_hw_interrupt_init();
 
+    /* initialize uart */
+    rt_hw_earlycon_puts("[rt_hw_board_init] rt_hw_uart_init!\n");
     rt_hw_uart_init();
-    rt_hw_console_output("rt_hw_uart_init done!\n");
+    rt_hw_console_output("[rt_hw_board_init] rt_hw_uart_init done!\n");
 
     /* initialize timer for os tick */
     rt_hw_gtimer_init();
@@ -110,9 +121,9 @@ void rt_hw_board_init(void)
     rt_components_board_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
-    rt_hw_console_output("rt_hw_board_init done!\n");
-    rt_kprintf("rt_kprintf works!\n");
-    rt_hw_console_output("rt_hw_board_init done!!\n");
+    rt_hw_console_output("[rt_hw_board_init] rt_hw_board_init done!\n");
+    rt_kprintf("[rt_hw_board_init] rt_kprintf works!\n");
+    rt_hw_console_output("[rt_hw_board_init] rt_hw_board_init done!!\n");
 }
 
 /*@}*/
