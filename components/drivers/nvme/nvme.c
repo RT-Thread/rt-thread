@@ -970,9 +970,9 @@ static rt_err_t nvme_setup_io_queues(struct rt_nvme_controller *nvme)
     {
         queue = nvme_alloc_queue(nvme, q_idx, nvme->queue_depth);
 
-        if (!queue)
+        if (rt_is_err(queue))
         {
-            return -RT_ENOMEM;
+            return rt_ptr_err(queue);
         }
 
         if ((err = nvme_attach_queue_cq(queue)) ||

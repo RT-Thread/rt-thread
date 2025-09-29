@@ -32,9 +32,11 @@
 #ifndef DRV_GPIO_H__
 #define DRV_GPIO_H__
 
+#include "board.h"
+
 #define GPIO_IRQ_MAX_NUM            (64)
 #define GPIO_MAX_NUM                (64+8)
-#define IRQN_GPIO0_INTERRUPT        32
+#define IRQN_GPIO0_INTERRUPT        K230_IRQ_GPIO0_0
 
 /* k230 gpio register table */
 #define DATA_OUTPUT         0x0

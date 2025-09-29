@@ -36,6 +36,16 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
     rt_uint32_t old_tick;
     rt_tick_t   tick_diff;
     rt_tick_t   expect_time = send_size * 0.0868;
+    rt_uint8_t  readBuf[16] = {0};
+    rt_uint32_t readSize    = 0;
+    if (send_size >= sizeof(readBuf))
+    {
+        readSize = sizeof(readBuf);
+    }
+    else
+    {
+        readSize = send_size;
+    }
 
     /* In interrupt mode, ticks may be inaccurate; compensation should be applied */
     if (send_size > 384)
@@ -43,11 +53,18 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
         expect_time -= send_size / 384;
     }
 
-    old_tick         = rt_tick_get();
-    rt_uint32_t size = rt_device_write(&serial->parent, 0, uart_write_buffer, send_size);
+    old_tick        = rt_tick_get();
+    rt_ssize_t size = rt_device_write(&serial->parent, 0, uart_write_buffer, send_size);
+    if (size != send_size)
+    {
+        LOG_E("size [%4d], send_size [%4d]", size, send_size);
+        return -RT_ERROR;
+    }
+
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
     tick_diff = rt_tick_get() - old_tick;
-    if (tick_diff < expect_time)
+
+    if (tick_diff < expect_time || tick_diff > (expect_time + 10))
     {
         LOG_E("send_size [%4d], time required for TXNB mode transmission to complete [%3d], expect_time [%3d]", send_size, tick_diff, expect_time);
         return -RT_ERROR;
@@ -55,6 +72,23 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
     else
     {
         LOG_I("send_size [%4d], time required for TXNB mode transmission to complete [%3d], expect_time [%3d]", send_size, tick_diff, expect_time);
+    }
+
+    /* Resend the data and check for any discrepancies upon reception */
+    if (readSize > 0)
+    {
+        rt_device_control(&serial->parent, RT_SERIAL_CTRL_RX_FLUSH, RT_NULL);
+        rt_device_write(&serial->parent, 0, uart_write_buffer, readSize);
+        rt_device_read(&serial->parent, 0, readBuf, readSize);
+
+        for (rt_uint32_t i = 0; i < readSize; i++)
+        {
+            if (readBuf[i] != uart_write_buffer[i])
+            {
+                LOG_E("index: %d, Read Different data -> former data: %x, current data: %x.", i, uart_write_buffer[i], readBuf[i]);
+                return -RT_ERROR;
+            }
+        }
     }
 
     return RT_EOK;
@@ -80,7 +114,7 @@ static rt_bool_t uart_api()
 #endif
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_CONFIG, &config);
 
-    result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING);
+    result = rt_device_open(&serial->parent, RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING);
     if (result != RT_EOK)
     {
         LOG_E("Open uart device failed.");
@@ -90,7 +124,11 @@ static rt_bool_t uart_api()
     rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
     rt_int32_t  tx_timeout = 1;
-    uart_write_buffer      = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_RXBUF_SIZE * 5 + 10));
+    uart_write_buffer      = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_RXBUF_SIZE * 5 + 10);
+    for (rt_uint32_t count = 0; count < (RT_SERIAL_TC_TXBUF_SIZE * 5 + 10); count++)
+    {
+        uart_write_buffer[count] = count;
+    }
 
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_SET_TX_TIMEOUT, (void *)&tx_timeout);
 

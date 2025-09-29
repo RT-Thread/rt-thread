@@ -31,10 +31,26 @@ static rt_err_t uart_find(void)
     return RT_EOK;
 }
 
-static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t size)
+static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
 {
-    rt_device_write(&serial->parent, 0, uart_write_buffer, size);
-    rt_thread_mdelay(size * 0.0868 + 5);
+    rt_uint8_t  readBuf[16] = {0};
+    rt_uint32_t readSize    = 0;
+    if (send_size >= sizeof(readBuf))
+    {
+        readSize = sizeof(readBuf);
+    }
+    else
+    {
+        readSize = send_size;
+    }
+
+    rt_ssize_t size = rt_device_write(&serial->parent, 0, uart_write_buffer, send_size);
+    if (size != send_size)
+    {
+        LOG_E("size [%4d], send_size [%4d]", size, send_size);
+        return -RT_ERROR;
+    }
+    rt_thread_mdelay(send_size * 0.0868 + 5);
     if (1 != rt_device_read(&serial->parent, 0, uart_write_buffer, 1))
     {
         LOG_E("read failed.");
@@ -47,6 +63,25 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t size)
         LOG_E("read failed.");
         return -RT_ERROR;
     }
+
+    /* Resend the data and check for any discrepancies upon reception */
+    if (readSize > 0)
+    {
+        rt_device_write(&serial->parent, 0, uart_write_buffer, readSize);
+        rt_thread_mdelay(readSize * 0.0868 + 5);
+        rt_device_read(&serial->parent, 0, readBuf, readSize);
+
+        for (rt_uint32_t i = 0; i < readSize; i++)
+        {
+            if (readBuf[i] != uart_write_buffer[i])
+            {
+                LOG_E("index: %d, Read Different data -> former data: %x, current data: %x.", i, uart_write_buffer[i], readBuf[i]);
+                return -RT_ERROR;
+            }
+        }
+    }
+
+    LOG_I("flush rx send_size [%4d]", send_size);
 
     return RT_EOK;
 }
@@ -80,7 +115,11 @@ static rt_bool_t uart_api()
 
     rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
-    uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_RXBUF_SIZE * 5 + 1);
+    for (rt_uint32_t count = 0; count < (RT_SERIAL_TC_RXBUF_SIZE * 5 + 1); count++)
+    {
+        uart_write_buffer[count] = count;
+    }
 
     srand(rt_tick_get());
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)

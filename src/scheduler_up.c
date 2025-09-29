@@ -31,6 +31,8 @@
  * 2023-03-27     rose_man     Split into scheduler upc and scheduler_mp.c
  * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
  * 2025-08-04     Pillar       Add rt_scheduler_critical_switch_flag
+ * 2025-08-20     RyanCW       rt_scheduler_lock_nest use atomic operations
+ * 2025-09-20     wdfk_prog    fix scheduling exception caused by interrupt preemption in rt_schedule
  */
 
 #define __RT_IPC_SOURCE__
@@ -49,7 +51,7 @@ rt_uint8_t rt_thread_ready_table[32];
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
 extern volatile rt_atomic_t rt_interrupt_nest;
-static rt_int16_t rt_scheduler_lock_nest;
+static rt_atomic_t rt_scheduler_lock_nest;
 rt_uint8_t rt_current_priority;
 
 static rt_int8_t rt_scheduler_critical_switch_flag;
@@ -91,6 +93,14 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 
 /**@}*/
 #endif /* RT_USING_HOOK */
+
+/**
+ * @addtogroup group_thread_management
+ *
+ * @cond
+ *
+ * @{
+ */
 
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
@@ -256,13 +266,6 @@ void rt_system_scheduler_start(void)
 }
 
 /**
- * @addtogroup group_thread_management
- * @cond
- */
-
-/**@{*/
-
-/**
  * @brief Perform thread scheduling once. Select the highest priority thread and switch to it.
  *
  * @details This function:
@@ -281,11 +284,13 @@ void rt_schedule(void)
     rt_base_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
-    /* using local variable to avoid unecessary function call */
-    struct rt_thread *curr_thread = rt_thread_self();
+    struct rt_thread *curr_thread;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
+
+    /* using local variable to avoid unnecessary function call */
+    curr_thread = rt_thread_self();
 
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0)
@@ -649,22 +654,9 @@ RTM_EXPORT(rt_exit_critical_safe);
  */
 rt_base_t rt_enter_critical(void)
 {
-    rt_base_t level;
     rt_base_t critical_level;
 
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
-
-    /*
-     * the maximal number of nest is RT_UINT16_MAX, which is big
-     * enough and does not check here
-     */
-    rt_scheduler_lock_nest ++;
-    critical_level = rt_scheduler_lock_nest;
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
+    critical_level = rt_atomic_add(&rt_scheduler_lock_nest, 1) + 1;
     return critical_level;
 }
 RTM_EXPORT(rt_enter_critical);
@@ -722,7 +714,7 @@ RTM_EXPORT(rt_exit_critical);
  */
 rt_uint16_t rt_critical_level(void)
 {
-    return rt_scheduler_lock_nest;
+    return (rt_uint16_t)rt_atomic_load(&rt_scheduler_lock_nest);
 }
 RTM_EXPORT(rt_critical_level);
 
@@ -731,5 +723,8 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
     return -RT_EINVAL;
 }
 
-/**@}*/
-/**@endcond*/
+/**
+ * @}
+ *
+ * @endcond
+ */

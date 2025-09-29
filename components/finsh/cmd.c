@@ -165,6 +165,7 @@ long list_thread(void)
     rt_list_t *next = (rt_list_t *)RT_NULL;
     const char *item_title = "thread";
     const size_t tcb_strlen = sizeof(void *) * 2 + 2;
+    const size_t usage_strlen = sizeof(void *) + 1;
     int maxlen;
 
     list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list) / sizeof(obj_list[0]));
@@ -173,18 +174,22 @@ long list_thread(void)
     maxlen = RT_NAME_MAX;
 
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- -------");
     rt_kprintf(" ");
     object_split(tcb_strlen);
+    rt_kprintf(" ");
+    object_split(usage_strlen);
     rt_kprintf("\n");
 #else
-    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- -------");
     rt_kprintf(" ");
     object_split(tcb_strlen);
+    rt_kprintf(" ");
+    object_split(usage_strlen);
     rt_kprintf("\n");
 #endif /*RT_USING_SMP*/
 
@@ -196,7 +201,7 @@ long list_thread(void)
             for (i = 0; i < find_arg.nr_out; i++)
             {
                 struct rt_object *obj;
-                struct rt_thread thread_info, *thread;
+                struct rt_thread *thread;
 
                 obj = rt_list_entry(obj_list[i], struct rt_object, list);
                 level = rt_spin_lock_irqsave(&info->spinlock);
@@ -207,7 +212,6 @@ long list_thread(void)
                     continue;
                 }
                 /* copy info */
-                rt_memcpy(&thread_info, obj, sizeof thread_info);
                 rt_spin_unlock_irqrestore(&info->spinlock, level);
 
                 thread = (struct rt_thread *)obj;
@@ -243,17 +247,22 @@ long list_thread(void)
                     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
                     while (*ptr == '#')ptr --;
 
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p\n",
+                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p",
                                ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
                                thread->stack_size,
                                ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
                                thread->remaining_tick,
                                rt_strerror(thread->error),
                                thread);
+#ifdef RT_USING_CPU_USAGE_TRACER
+                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
+#else
+                    rt_kprintf("  N/A\n");
+#endif
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p\n",
+                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p",
                                thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
                                thread->stack_size,
                                (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
@@ -261,6 +270,11 @@ long list_thread(void)
                                RT_SCHED_PRIV(thread).remaining_tick,
                                rt_strerror(thread->error),
                                thread);
+#ifdef RT_USING_CPU_USAGE_TRACER
+                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
+#else
+                    rt_kprintf("  N/A\n");
+#endif
 #endif
                 }
             }

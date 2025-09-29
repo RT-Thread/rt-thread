@@ -83,7 +83,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
 #define RT_VERSION_MINOR                2               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                1               /**< Patch version number (x.x.X) */
+#define RT_VERSION_PATCH                2               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000U) + (minor * 100U) + revise)
@@ -848,9 +848,8 @@ struct rt_user_context
 typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
 
 /**
- * Thread structure
+ * @brief Thread Control Block
  */
-
 struct rt_thread
 {
     struct rt_object            parent;
@@ -895,10 +894,6 @@ struct rt_thread
     rt_sighandler_t             *sig_vectors;           /**< vectors of signal handler */
     void                        *si_list;               /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
-
-#ifdef RT_USING_CPU_USAGE
-    rt_uint64_t                 duration_tick;          /**< cpu usage tick */
-#endif /* RT_USING_CPU_USAGE */
 
 #ifdef RT_USING_PTHREADS
     void                        *pthread_data;          /**< the handle of pthread data, adapt 32/64bit */

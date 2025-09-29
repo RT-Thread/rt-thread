@@ -1,0 +1,31 @@
+menu "RT-Thread Utestcases"
+
+config RT_USING_UTESTCASES
+    bool "RT-Thread Utestcases"
+    default n
+    select RT_USING_UTEST
+
+if RT_USING_UTESTCASES
+
+rsource "components/utilities/utest/utest/Kconfig"
+rsource "src/utest/Kconfig"
+rsource "examples/utest/testcases/cpp11/Kconfig"
+rsource "examples/utest/testcases/drivers/serial_v2/Kconfig"
+rsource "examples/utest/testcases/drivers/serial_bypass/Kconfig"
+rsource "examples/utest/testcases/drivers/ipc/Kconfig"
+rsource "examples/utest/testcases/posix/Kconfig"
+rsource "examples/utest/testcases/mm/Kconfig"
+rsource "examples/utest/testcases/tmpfs/Kconfig"
+rsource "examples/utest/testcases/smp_call/Kconfig"
+rsource "examples/utest/testcases/perf/Kconfig"
+
+rsource "src/klibc/utest/Kconfig"
+
+rsource "components/drivers/core/utest/Kconfig"
+rsource "components/drivers/audio/utest/Kconfig"
+rsource "components/dfs/utest/Kconfig"
+rsource "components/net/utest/Kconfig"
+
+endif
+
+endmenu

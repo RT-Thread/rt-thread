@@ -125,7 +125,7 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
     int mask  = O_NONBLOCK | O_APPEND;
 
     device = (rt_device_t)fd->vnode->data;
-    switch (cmd)
+    switch ((rt_ubase_t)cmd)
     {
     case FIONREAD:
         break;
@@ -1074,7 +1074,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
 
-    switch (cmd)
+    switch ((rt_ubase_t)cmd)
     {
         case RT_DEVICE_CTRL_SUSPEND:
             /* suspend device */
@@ -1463,9 +1463,8 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 /* if the next position is read index, discard this 'read char' */
                 if (rx_fifo->put_index == rx_fifo->get_index)
                 {
-                    rx_fifo->get_index += 1;
+                    rx_fifo->get_index = rx_fifo->put_index;
                     rx_fifo->is_full = RT_TRUE;
-                    if (rx_fifo->get_index >= serial->config.bufsz) rx_fifo->get_index = 0;
 
                     _serial_check_buffer_size();
                 }

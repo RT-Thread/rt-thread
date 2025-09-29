@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -349,6 +349,19 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
                                   const char           *bus_name,
                                   void                 *user_data);
 
+/**
+ * @brief Detach a device from the SPI bus.
+ *
+ * This function serves as the high-level API to detach a SPI device from its bus.
+ * It unregisters the device from the device framework and ensures all associated
+ * resources, such as the chip select pin, are properly released by calling
+ * the underlying implementation.
+ *
+ * @param device The SPI device to be detached.
+ *
+ * @return rt_err_t The result of the operation. RT_EOK on success, otherwise an error code.
+ */
+rt_err_t rt_spi_bus_detach_device(struct rt_spi_device *device);
 
 /**
  * @brief attach a device on SPI bus with CS pin
@@ -366,6 +379,21 @@ rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
                                         const char           *bus_name,
                                         rt_base_t             cs_pin,
                                         void                 *user_data);
+
+/**
+ * @brief Detach a device from the SPI bus and release its CS pin.
+ *
+ * This function provides the low-level implementation for detaching a device
+ * from the SPI bus. It specifically handles the operations for the chip select (CS)
+ * pin, resetting it to input mode to release it. This function is typically
+ * called by the higher-level rt_spi_bus_detach_device() and should not be
+ * called directly by the user application.
+ *
+ * @param device The SPI device to be detached.
+ *
+ * @return rt_err_t The result of the operation. RT_EOK on success, otherwise an error code.
+ */
+rt_err_t rt_spi_bus_detach_device_cspin(struct rt_spi_device *device);
 
 /**
  * @brief  Reconfigure the SPI bus for the specified device.

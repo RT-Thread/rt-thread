@@ -92,7 +92,7 @@ static rt_bool_t uart_api()
 
     rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
-    uart_write_buffer = (rt_uint8_t *)rt_malloc(sizeof(rt_uint8_t) * (RT_SERIAL_TC_TXBUF_SIZE * 5 + 1));
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_TXBUF_SIZE * 5 + 1);
 
     srand(rt_tick_get());
     for (i = 0; i < RT_SERIAL_TC_SEND_ITERATIONS; i++)

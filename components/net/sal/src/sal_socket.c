@@ -669,15 +669,12 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 {
     struct sal_socket *sock;
     struct sal_proto_family *pf;
-    struct sockaddr_un *addr_un = RT_NULL;
     ip_addr_t input_ipaddr;
 
     RT_ASSERT(name);
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
-
-    addr_un = (struct sockaddr_un *)name;
 
 #define IS_INET_ADDR_FAMILY(_af) ((_af) == AF_INET) || ((_af) == AF_INET6)
     if (IS_INET_ADDR_FAMILY(name->sa_family))

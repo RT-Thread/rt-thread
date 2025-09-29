@@ -342,6 +342,36 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
 #endif
 
+#if defined (BSP_USING_INPUT_CAPTURE)
+rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance)
+{
+    rt_err_t result = RT_EOK;
+
+    switch ((rt_uint32_t)tmr_instance)
+    {
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_1)
+    case (rt_uint32_t)CM_TMR6_1:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_1_PORT, INPUT_CAPTURE_TMR6_1_PIN, INPUT_CAPTURE_TMR6_1_FUNC);
+        break;
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_2)
+    case (rt_uint32_t)CM_TMR6_2:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN, INPUT_CAPTURE_TMR6_2_FUNC);
+        break;
+#endif
+#if defined (BSP_USING_INPUT_CAPTURE_TMR6_10)
+    case (rt_uint32_t)CM_TMR6_10:
+        GPIO_SetFunc(INPUT_CAPTURE_TMR6_10_PORT, INPUT_CAPTURE_TMR6_10_PIN, INPUT_CAPTURE_TMR6_10_FUNC);
+        break;
+#endif
+    default:
+        result = -RT_ERROR;
+        break;
+    }
+    return result;
+}
+#endif
+
 #ifdef RT_USING_PM
 #define PLL_SRC                                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
 
@@ -423,4 +453,27 @@ rt_err_t rt_hw_usbfs_board_init(void)
 #endif
     return RT_EOK;
 }
+#endif
+
+#if defined(RT_USING_CHERRYUSB)
+rt_err_t rt_hw_usbfs_board_init(uint8_t devmode)
+{
+    stc_gpio_init_t stcGpioCfg;
+    (void)GPIO_StructInit(&stcGpioCfg);
+
+    stcGpioCfg.u16PinAttr = PIN_ATTR_ANALOG;
+    (void)GPIO_Init(USBF_DM_PORT, USBF_DM_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBF_DP_PORT, USBF_DP_PIN, &stcGpioCfg);
+    if (0U != devmode)
+    {
+        /* reserved */
+    }
+    else
+    {
+        GPIO_OutputCmd(USBF_DRVVBUS_PORT, USBF_DRVVBUS_PIN, ENABLE);
+        GPIO_SetPins(USBF_DRVVBUS_PORT, USBF_DRVVBUS_PIN); /* DRV VBUS with GPIO funciton */
+    }
+    return RT_EOK;
+}
+
 #endif

@@ -8,6 +8,7 @@
  * Change Logs:
  * Date           Author               Notes
  * 2025-18-03     Dmitriy Chernov      first implementation
+ * 2025-09-24     CYFS                 add support for GD32F5xx
  */
 
 #ifndef __DRV_CAN_H__
@@ -34,7 +35,7 @@ struct gd32_can
     rcu_periph_enum can_clk;
     rcu_periph_enum tx_clk;
     rcu_periph_enum rx_clk;
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
     uint32_t alt_func_num;
 #endif
     rt_base_t tx_pin;

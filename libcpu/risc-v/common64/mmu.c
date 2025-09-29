@@ -525,17 +525,17 @@ void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr)
     return (void *)paddr;
 }
 
-static int _noncache(rt_base_t *pte)
+static int _noncache(rt_ubase_t *pte)
 {
     return 0;
 }
 
-static int _cache(rt_base_t *pte)
+static int _cache(rt_ubase_t *pte)
 {
     return 0;
 }
 
-static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_base_t *pte)=
+static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_ubase_t *pte)=
 {
     [MMU_CNTL_CACHE] = _cache,
     [MMU_CNTL_NONCACHE] = _noncache,
@@ -565,14 +565,14 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
     int err = -RT_EINVAL;
     void *vend = vaddr + size;
 
-    int (*handler)(rt_base_t *pte);
+    int (*handler)(rt_ubase_t *pte);
     if (cmd >= 0 && cmd < MMU_CNTL_DUMMY_END)
     {
         handler = control_handler[cmd];
 
         while (vaddr < vend)
         {
-            rt_base_t *pte = _query(aspace, vaddr, &level);
+            rt_ubase_t *pte = _query(aspace, vaddr, &level);
             void *range_end = vaddr + _get_level_size(level);
             RT_ASSERT(range_end <= vend);
 

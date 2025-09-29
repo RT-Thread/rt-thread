@@ -20,6 +20,7 @@
 #include "fddma.h"
 #include "fddma_hw.h"
 #include "fddma_bdl.h"
+#include "fdevice.h"
 #include "fes8336.h"
 
 #define DBG_TAG              "drv.i2s"
@@ -31,9 +32,16 @@
 
 static struct phytium_i2s_device i2s_dev0;
 extern FI2c master_device;
-extern FMioCtrl es8336;
-#define ES8336_MIO FMIO14_ID
-#define ES8336_ADDR 0x10
+
+static FEs8336Controller fes8336 =
+{
+    .fes8336_device.name = "es8336",
+    .dev_type = DEV_TYPE_MIO,
+    .controller_id = FMIO14_ID,
+};
+static const u32 ddma_ctrl_id = FDDMA2_I2S_ID;
+static const u32 i2s_ctrl_id = FI2S0_ID;
+
 
 struct phytium_i2s_device
 {
@@ -46,8 +54,6 @@ struct phytium_i2s_device
     FI2sConfig i2s_config;
     FDdma ddmac;
     FDdmaConfig ddmac_config;
-    rt_uint8_t ddma_ctrl_id;
-    rt_uint8_t i2s_ctrl_id;
 
     rt_uint8_t *rx_fifo;
     FDdmaChanConfig rx_config;
@@ -75,84 +81,48 @@ static void FDdmaSetupInterrupt(FDdma *const instance)
     return;
 }
 
-FError RtEs8336Init(void)
-{
-    FError ret = FES8336_SUCCESS;
-    FMioCtrl *pctrl = &es8336;
-    FMioConfig *mioconfig_p ;
-    FI2c *instance_p = &master_device;
-    FI2cConfig i2cconfig;
-
-    mioconfig_p = FMioLookupConfig(ES8336_MIO);
-    if (NULL == mioconfig_p)
-    {
-        printf("Mio error inval parameters.\r\n");
-        return FMIO_ERR_INVAL_PARM;
-    }
-    pctrl->config = *mioconfig_p;
-    ret = FMioFuncInit(pctrl, FMIO_FUNC_SET_I2C);
-    if (ret != FES8336_SUCCESS)
-    {
-        printf("ES8336_MIO MioInit error.\r\n");
-        return ret;
-    }
-    /* get standard config of i2c */
-    i2cconfig = *FI2cLookupConfig(FI2C0_ID);
-    /* Modify configuration */
-    i2cconfig.base_addr = FMioFuncGetAddress(pctrl, FMIO_FUNC_SET_I2C);
-    i2cconfig.irq_num = FMioFuncGetIrqNum(pctrl, FMIO_FUNC_SET_I2C);
-    FI2cDeInitialize(instance_p);
-    /* Initialization */
-    ret = FI2cCfgInitialize(instance_p, &i2cconfig);
-    if (ret != FES8336_SUCCESS)
-    {
-        return ret;
-    }
-    /*set the i2c parameters */
-    ret = FI2cSetAddress(instance_p, FI2C_MASTER, ES8336_ADDR);
-    if (FI2C_SUCCESS != ret)
-    {
-        printf("set mio slave parameters failed, ret: 0x%x\r\n", ret);
-        return ret;
-    }
-
-    ret = FI2cSetSpeed(instance_p, FI2C_SPEED_STANDARD_RATE, TRUE);
-    if (FI2C_SUCCESS != ret)
-    {
-        printf("set mio slave parameters failed, ret: 0x%x\r\n", ret);
-        return ret;
-    }
-    /*  callback function for FI2C_MASTER_INTR_EVT interrupt  */
-    instance_p->master_evt_handlers[FI2C_EVT_MASTER_TRANS_ABORTED] = NULL;
-    instance_p->master_evt_handlers[FI2C_EVT_MASTER_READ_DONE] = NULL;
-    instance_p->master_evt_handlers[FI2C_EVT_MASTER_WRITE_DONE] = NULL;
-
-    return ret;
-}
-
 static FError FI2sEs8336Init(u32 word_length)
 {
     FError ret = FT_SUCCESS;
+    u32 volumel = 0x1;
 
+    FIOMuxInit();
     FIOPadSetI2sMux();
-    ret = RtEs8336Init(); /* es8336初始化，i2s slave设置 */
+
+    ret = FEs8336DevRegister(&fes8336.fes8336_device);
     if (FT_SUCCESS != ret)
     {
-        printf("Es8336 init failed.\r\n");
+        printf("ES8336 dev register failed.\r\n");
         return ret;
     }
 
-    FEs8336RegsProbe(); /* 寄存器默认值 */
-
-    FEs8336Startup();
-
-    ret = FEs8336SetFormat(word_length); /* 设置ES8336工作模式 */
+    ret = FDeviceInit(&fes8336.fes8336_device);
     if (FT_SUCCESS != ret)
     {
-        printf("Set the es8336 word length failed.\r\n");
+        printf("ES8336 dev init failed.\r\n");
         return ret;
     }
-    FEs8336SetVolumel(0x1);
+
+    ret = FDeviceOpen(&fes8336.fes8336_device, FDEVICE_FLAG_RDWR);
+    if (FT_SUCCESS != ret)
+    {
+        printf("ES8336 dev open failed.\r\n");
+        return ret;
+    }
+
+    ret = FDeviceControl(&fes8336.fes8336_device, FES8336_SET_FORMAT, &word_length); /* 设置ES8336工作模式 */
+    if (FT_SUCCESS != ret)
+    {
+        printf("Set the ES8336 word length failed.\r\n");
+        return ret;
+    }
+
+    ret = FDeviceControl(&fes8336.fes8336_device, FES8336_SET_VOLUMEL, &volumel); /* 设置ES8336工作模式 */
+    if (FT_SUCCESS != ret)
+    {
+        printf("Set the ES8336 volumel failed.\r\n");
+        return ret;
+    }
 
     return ret;
 }
@@ -160,12 +130,11 @@ static FError FI2sEs8336Init(u32 word_length)
 static FError FI2sRxInit(struct phytium_i2s_device *i2s_dev, u32 word_length)
 {
     FError ret = FI2S_SUCCESS;
-    u32 i2s_id = i2s_dev->i2s_ctrl_id;
 
     memset(&i2s_dev->i2s_ctrl, 0, sizeof(FI2s));
     memset(&i2s_dev->i2s_ctrl, 0, sizeof(FI2sConfig));
     i2s_dev->i2s_ctrl.data_config.word_length = word_length;
-    i2s_dev->i2s_config = *FI2sLookupConfig(i2s_id);
+    i2s_dev->i2s_config = *FI2sLookupConfig(i2s_ctrl_id);
 
     ret = FI2sCfgInitialize(&i2s_dev->i2s_ctrl, &i2s_dev->i2s_config);
     if (FI2S_SUCCESS != ret)
@@ -182,7 +151,7 @@ static FError FI2sRxInit(struct phytium_i2s_device *i2s_dev, u32 word_length)
 static FError FI2sRxDdmaInit(struct phytium_i2s_device *i2s_dev)
 {
     FError ret = FI2S_SUCCESS;
-    i2s_dev->ddmac_config = *FDdmaLookupConfig(i2s_dev->ddma_ctrl_id);
+    i2s_dev->ddmac_config = *FDdmaLookupConfig(ddma_ctrl_id);
 
     ret = FDdmaCfgInitialize(&i2s_dev->ddmac, &i2s_dev->ddmac_config);
     if (FI2S_SUCCESS != ret)
@@ -481,8 +450,6 @@ int rt_hw_i2s_init(void)
 #if defined(RT_USING_I2S0)
     i2s_dev0.name = "I2S0";
     i2s_dev0.i2s_ctrl.config.instance_id = FI2S0_ID;
-    i2s_dev0.i2s_ctrl_id = FI2S0_ID;
-    i2s_dev0.ddma_ctrl_id = FDDMA2_I2S_ID;
     i2s_dev0.config.channels = 1;
     i2s_dev0.config.samplerate = RT_I2S_SAMPLERATE;
     i2s_dev0.config.samplebits = RT_I2S_SAMPLEBITS;

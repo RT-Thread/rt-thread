@@ -1,9 +1,50 @@
 menu "Drivers Configuration"
 
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
     config BSP_USING_ADC
         bool "Enable ADC"
         select RT_USING_ADC
         default n
+
+    config BSP_USING_TS
+        bool "Enable Temperature Sensor"
+        select RT_USING_TS
+        default n
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_UART
+        default y
+
+        if BSP_USING_UART
+            config BSP_UART_USING_DMA
+                bool "Enable UART with DMA"
+                default y
+
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+        endif
 
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
@@ -105,6 +146,45 @@ menu "Drivers Configuration"
                 bool "Enable WDT1"
                 default n
 
+        endif
+
+    menuconfig BSP_USING_PDMA
+        bool "Enable PDMA"
+        select RT_USING_PDMA
+        default n
+
+        if BSP_USING_PDMA
+            config BSP_USING_PDMA_CHANNEL0
+                bool "Enable PDMA Channel 0"
+                default n
+
+            config BSP_USING_PDMA_CHANNEL1
+                bool "Enable PDMA Channel 1"
+                default n
+
+            config BSP_USING_PDMA_CHANNEL2
+                bool "Enable PDMA Channel 2"
+                default n
+
+            config BSP_USING_PDMA_CHANNEL3
+                bool "Enable PDMA Channel 3"
+                default n
+
+            config BSP_USING_PDMA_CHANNEL4
+                bool "Enable PDMA Channel 4"
+                default n
+
+            config BSP_USING_PDMA_CHANNEL5
+                bool "Enable PDMA Channel 5"
+                default n
+
+            config BSP_USING_PDMA_CHANNEL6
+                bool "Enable PDMA Channel 6"
+                default n
+
+            config BSP_USING_PDMA_CHANNEL7
+                bool "Enable PDMA Channel 7"
+                default n
         endif
 
     config BSP_UTEST_DRIVERS

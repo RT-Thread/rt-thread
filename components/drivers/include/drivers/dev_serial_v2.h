@@ -210,6 +210,7 @@
 #define RT_SERIAL_CTRL_RX_FLUSH                 0x45    /* clear rx buffer. Discard all data */
 #define RT_SERIAL_CTRL_TX_FLUSH                 0x46    /* clear tx buffer. Blocking and wait for the send buffer data to be sent. not supported in poll mode */
 #define RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT   0x47    /* get unread bytes count. not supported in poll mode */
+#define RT_SERIAL_CTRL_GET_CONFIG               0x48    /* get serial config */
 
 #define RT_SERIAL_ERR_OVERRUN           0x01
 #define RT_SERIAL_ERR_FRAMING           0x02
@@ -336,7 +337,12 @@ struct rt_serial_device
 #ifdef RT_USING_SERIAL_BYPASS
     struct rt_serial_bypass* bypass;
 #endif
+
     struct rt_device_notify rx_notify;
+
+#ifdef RT_USING_POSIX_STDIO
+    rt_bool_t is_posix_mode;
+#endif
 };
 
 /**

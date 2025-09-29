@@ -987,7 +987,6 @@ static struct rt_mmcsd_host *_sdio_host_create(struct hc32_sdio_config *config,
     host->ops = &_mmcsd_host_ops;
     host->freq_min = 400 * 1000;
     host->freq_max = SDIO_MAX_FREQ;
-    host->valid_ocr = VDD_26_27 | VDD_27_28 | VDD_28_29 | VDD_29_30 | VDD_30_31 | VDD_31_32 | VDD_32_33 | VDD_33_34;/* The voltage range supported is 2.6v-3.4v */
     host->valid_ocr = VDD_32_33 | VDD_33_34;
 #ifndef SDIO_USING_1_BIT
     host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ;

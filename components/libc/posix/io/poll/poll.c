@@ -24,7 +24,7 @@
 #include "poll.h"
 
 
-enum rt_poll_status 
+enum rt_poll_status
 {
     RT_POLL_STAT_INIT,     /**< Poll operation initialization status. */
     RT_POLL_STAT_TRIG,     /**< Poll operation triggered status. */
@@ -40,7 +40,7 @@ struct rt_poll_node
 
 #define MAX_POLL_NODES 8 
 
-struct rt_poll_table 
+struct rt_poll_table
 {
     rt_pollreq_t req;               /**< Poll request. */
     enum rt_poll_status status;     /**< Status of the poll operation. */
@@ -165,9 +165,10 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
         {
             if (timeout > 0)
             {
+                rt_tick_t timeout_tick = timeout;
                 rt_timer_control(&(thread->thread_timer),
                         RT_TIMER_CTRL_SET_TIME,
-                        &timeout);
+                        &timeout_tick);
                 rt_timer_start(&(thread->thread_timer));
                 rt_set_errno(RT_ETIMEOUT);
             }

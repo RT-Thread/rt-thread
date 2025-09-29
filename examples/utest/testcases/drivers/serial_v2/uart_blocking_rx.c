@@ -51,7 +51,6 @@ static rt_bool_t block_read(rt_device_t uart_dev)
 
     rt_sprintf(log_buffer, "\nblock : %d bytes read , total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
-    rt_thread_mdelay(1000);
 
     rt_sprintf(log_buffer, "BLOCKING READ END");
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));

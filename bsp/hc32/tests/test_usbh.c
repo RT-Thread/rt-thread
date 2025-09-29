@@ -22,9 +22,10 @@
                                                                 (/) Udisk mount dir
   2.  RT-Thread Components ---> DFS: device virtual files system --->
                                 ......
-                                [*] Enable elm0chan fatfs
+                                [*] Enable elm-chan fatfs
                                 ......
   3.如果命令执行不成功，需参考对应Board目录下的README.md文件(注意事项中的USB Host部分)
+  4.命令成功创建文件后，可以通过ls命令查看、通过cat命令查看文件内容、通过rm命令删除文件等操作
  */
 
 /*

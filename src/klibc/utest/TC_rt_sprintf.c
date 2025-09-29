@@ -1062,4 +1062,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(misc));
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "klibc.rt_sprintf", RT_NULL, RT_NULL, 1000);
+UTEST_TC_EXPORT(utest_do_tc, "core.klibc.rt_sprintf", RT_NULL, RT_NULL, 1000);

@@ -21,7 +21,7 @@ menuconfig RT_USING_ULOG
 
     if RT_USING_ULOG
         if !ULOG_USING_SYSLOG
-            choice
+            choice ULOG_OUTPUT_LOG_LEVEL
                 prompt "The static output log level."
                 default ULOG_OUTPUT_LVL_D
                 help
@@ -42,7 +42,7 @@ menuconfig RT_USING_ULOG
         endif
 
         if ULOG_USING_SYSLOG
-            choice
+            choice ULOG_OUTPUT_LOG_LEVEL
                 prompt "The static output log level."
                 default ULOG_OUTPUT_LVL_DEBUG
                 help
@@ -216,13 +216,6 @@ config RT_USING_UTEST
             default n
             help
                 If enable this option, the test cases will be run automatically when board boot up.
-
-        config RT_UTEST_USING_ALL_CASES
-            bool "Enable all selected modules' test cases"
-            default n
-            help
-                If enable this option, all selected modules' test cases will be run.
-                Otherwise, only the test cases that are explicitly enabled will be run.
     endif
 
 config RT_USING_VAR_EXPORT

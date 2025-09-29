@@ -115,4 +115,4 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(test_read);
 }
-UTEST_TC_EXPORT(testcase, "adc", utest_tc_init, utest_tc_cleanup, 100);
+UTEST_TC_EXPORT(testcase, "bsp.k230.drivers.adc", utest_tc_init, utest_tc_cleanup, 100);

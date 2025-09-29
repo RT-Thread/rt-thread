@@ -68,6 +68,10 @@ if GetDepend('BSP_USING_MCAN'):
 if GetDepend(['BSP_USING_RTT_LCD_DRIVER']):
     src += ['drv_lcd.c']
 
+if GetDepend('BSP_USING_TSW'):
+    src += ['drv_tsw.c']
+    src += ['drv_tsw_phy.c']
+    
 path = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

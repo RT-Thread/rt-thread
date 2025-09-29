@@ -237,14 +237,28 @@ HardFault_Handler:
     MRS     r0, psp                 ; get fault context from thread.
 _get_sp_done
 
-    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
-    ;STMFD   r0!, {lr}               ; push exec_return register
 #if defined ( __ARMVFP__ )
-    SUB     r0, r0, #0x04           ; push dummy for flag
-    STR     lr, [r0]
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    BNE     skip_push_fpu_hd
+    VSTMDB  r0!, {d8 - d15}         ; push FPU register s16~s31
+skip_push_fpu_hd
 #endif
+
+    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
+
+#if defined ( __ARMVFP__ )
+    MOV     r4, #0x00               ; flag = 0
+
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    BNE     push_flag_hd
+    MOV     r4, #0x01               ; flag = 1
+push_flag_hd
     SUB     r0, r0, #0x04
-    STR     lr, [r0]
+    STR     r4, [r0]                ; push flag
+#endif
+
+    SUB     r0, r0, #0x04
+    STR     lr, [r0]                ; push exec_return register
 
     TST     lr, #0x04               ; if(!EXC_RETURN[2])
     BEQ     _update_msp

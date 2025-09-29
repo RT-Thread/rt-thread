@@ -247,4 +247,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_rt_sscanf_issue_9853);
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "klibc.rt_sscanf", RT_NULL, RT_NULL, 1000);
+UTEST_TC_EXPORT(utest_do_tc, "core.klibc.rt_sscanf", RT_NULL, RT_NULL, 1000);

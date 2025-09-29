@@ -5,7 +5,7 @@ menuconfig RT_USING_SERIAL
     default y
 
     if RT_USING_SERIAL
-        choice
+        choice RT_USING_SERIAL_VERSION
             prompt "Choice Serial version"
             default RT_USING_SERIAL_V1
             config RT_USING_SERIAL_V1
@@ -14,7 +14,7 @@ menuconfig RT_USING_SERIAL
                 bool "RT_USING_SERIAL_V2"
         endchoice
 
-        choice
+        choice RT_USING_SERIAL_MODE
             prompt "Choice Serial version"
             depends on RT_USING_SERIAL_V2
             default RT_SERIAL_BUF_STRATEGY_OVERWRITE

@@ -55,7 +55,7 @@ config RT_USING_AMP
     bool "Enable AMP (Asymmetric Multi-Processing)"
     default n
     if RT_USING_AMP
-        choice
+        choice RT_USING_AMP_ROLE
             prompt "Select the AMP role"
             default RT_AMP_SLAVE
 
@@ -89,7 +89,7 @@ config RT_ALIGN_SIZE
     help
         Alignment size for CPU architecture data access
 
-choice
+choice RT_THREAD_PRIORITY_VAL_MAX
     prompt "The maximal level value of priority of thread"
     default RT_THREAD_PRIORITY_32
 
@@ -192,10 +192,12 @@ endif
 config RT_USING_CPU_USAGE_TRACER
     select RT_USING_HOOK
     bool "Enable cpu usage tracing"
-    help
-        Enable cpu usage tracer for application like top.
-    default y if RT_USING_SMART
     default n
+    help
+        Enable thread CPU usage statistics and monitoring.
+        This feature tracks CPU usage for each thread and provides
+        percentage information through the list thread command.
+        It will automatically integrate with the scheduler to track thread execution time.
 
 menu "kservice options"
     config RT_USING_TINY_FFS
@@ -240,7 +242,6 @@ config RT_USING_CI_ACTION
     bool "Enable CI Action build mode"
     select RT_USING_UTEST
     select RT_UTEST_USING_AUTO_RUN
-    select RT_UTEST_USING_ALL_CASES
     default n
     help
         Identify that the environment is CI Action.
@@ -312,7 +313,7 @@ menu "Memory Management"
         default n
 
         if RT_USING_MEMHEAP
-            choice
+            choice RT_MEMHEAP_MODE
                 prompt "Memheap memory allocation mode"
                 default RT_MEMHEAP_FAST_MODE
 
@@ -330,7 +331,7 @@ menu "Memory Management"
             endchoice
         endif
 
-    choice
+    choice RT_USING_HEAP_TYPE
         prompt "System Heap Memory Management"
         default RT_USING_SMALL_MEM_AS_HEAP
 

@@ -52,7 +52,7 @@ void rtt_board_init(void)
     os_tick_config();
 
     /* Configure the USB pins*/
-    board_init_usb_pins();
+    board_init_usb(HPM_USB0);
 
     /* Initialize the UART driver first, because later driver initialization may require the rt_kprintf */
     rt_hw_uart_init();
@@ -63,6 +63,7 @@ void rtt_board_init(void)
 
 void app_init_led_pins(void)
 {
+    board_init_led_pins();
     gpio_set_pin_output(BOARD_LED_GPIO_CTRL, BOARD_LED_GPIO_INDEX, BOARD_LED_GPIO_PIN);
     gpio_write_pin(BOARD_LED_GPIO_CTRL, BOARD_LED_GPIO_INDEX, BOARD_LED_GPIO_PIN, BOARD_LED_OFF_LEVEL);
 }
@@ -96,7 +97,7 @@ void rt_hw_console_output(const char *str)
 
 void app_init_usb_pins(void)
 {
-    board_init_usb_pins();
+    board_init_usb(HPM_USB0);
 }
 
 ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
@@ -108,7 +109,7 @@ ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
 
 void rt_hw_cpu_reset(void)
 {
-    HPM_PPOR->RESET_ENABLE = (1UL << 31);
+    HPM_PPOR->RESET_ENABLE |= (1UL << 31);
 
     HPM_PPOR->SOFTWARE_RESET = 1000U;
     while(1) {
@@ -117,3 +118,39 @@ void rt_hw_cpu_reset(void)
 }
 
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reset, reset the board);
+
+#ifdef RT_USING_CACHE
+void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
+{
+    if (ops == RT_HW_CACHE_FLUSH) {
+        l1c_dc_flush((uint32_t)addr, size);
+    } else {
+        l1c_dc_invalidate((uint32_t)addr, size);
+    }
+}
+#endif
+
+uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb)
+{
+    uint32_t freq = 0;
+
+    if (ptr == HPM_ADC0) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc0, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll0_clk0 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc0, clk_adc_src_ana0);
+            clock_set_source_divider(clock_ana0, clk_src_pll0_clk2, 2U);
+        }
+        clock_add_to_group(clock_adc0, 0);
+        freq = clock_get_frequency(clock_adc0);
+    }
+
+    return freq;
+}
+
+#ifdef CONFIG_CHERRYUSB_CUSTOM_IRQ_HANDLER
+extern void hpm_isr_usb0(void);
+RTT_DECLARE_EXT_ISR_M(IRQn_USB0, hpm_isr_usb0)
+#endif

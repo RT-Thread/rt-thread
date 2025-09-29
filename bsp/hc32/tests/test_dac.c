@@ -32,6 +32,7 @@ static int dac_vol_sample(int argc, char *argv[])
 {
     char dac_device_name[] = "dac1";
     rt_uint8_t channel = 1;
+    rt_uint8_t max_channel = 2;
     rt_dac_device_t dac_dev;
     rt_uint32_t value = 1365; /* 默认1.1V */
     rt_uint32_t convertBits;
@@ -44,21 +45,29 @@ static int dac_vol_sample(int argc, char *argv[])
         if (0 == rt_strcmp(argv[1], "dac1"))
         {
             rt_strcpy(dac_device_name, "dac1");
+            max_channel = 2;
         }
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
         else if (0 == rt_strcmp(argv[1], "dac2"))
         {
             rt_strcpy(dac_device_name, "dac2");
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
+            max_channel = 2;
+#elif defined (HC32F334)
+            max_channel = 1;
+#endif
         }
 #endif
 #if defined (HC32F472)
         else if (0 == rt_strcmp(argv[1], "dac3"))
         {
             rt_strcpy(dac_device_name, "dac3");
+            max_channel = 2;
         }
         else if (0 == rt_strcmp(argv[1], "dac4"))
         {
             rt_strcpy(dac_device_name, "dac4");
+            max_channel = 2;
         }
 #endif
         else
@@ -84,7 +93,7 @@ static int dac_vol_sample(int argc, char *argv[])
         return -RT_ERROR;
     }
     convertBits = (1 << (rt_uint8_t)convertBits);
-    for (channel = 1; channel < 3; channel++)
+    for (channel = 1; channel <= max_channel; channel++)
     {
         /* 打开通道 */
         ret = rt_dac_enable(dac_dev, channel);

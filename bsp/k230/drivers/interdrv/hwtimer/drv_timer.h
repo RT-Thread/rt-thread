@@ -34,6 +34,7 @@
 #include <stdint.h>
 #include <drivers/hwtimer.h>
 #include "sysctl_clk.h"
+#include "board.h"
 
 #define MHz         1000000
 /* TIMER Control Register */
@@ -44,12 +45,12 @@
 #define TIMER_CR_INTERRUPT_MASK     0x00000004
 #define TIMER_CR_PWM_ENABLE         0x00000008
 
-#define IRQN_TIMER_0_INTERRUPT   16+85
-#define IRQN_TIMER_1_INTERRUPT   16+86
-#define IRQN_TIMER_2_INTERRUPT   16+87
-#define IRQN_TIMER_3_INTERRUPT   16+88
-#define IRQN_TIMER_4_INTERRUPT   16+89
-#define IRQN_TIMER_5_INTERRUPT   16+90
+#define IRQN_TIMER_0_INTERRUPT   K230_IRQ_TIMER0
+#define IRQN_TIMER_1_INTERRUPT   K230_IRQ_TIMER1
+#define IRQN_TIMER_2_INTERRUPT   K230_IRQ_TIMER2
+#define IRQN_TIMER_3_INTERRUPT   K230_IRQ_TIMER3
+#define IRQN_TIMER_4_INTERRUPT   K230_IRQ_TIMER4
+#define IRQN_TIMER_5_INTERRUPT   K230_IRQ_TIMER5
 
 typedef struct _timer_regs_channel
 {
