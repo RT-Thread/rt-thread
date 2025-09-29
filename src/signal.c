@@ -579,6 +579,8 @@ void rt_thread_free_sig(rt_thread_t tid)
 }
 
 /**
+ * @ingroup group_thread_management
+ *
  * @brief    This function can be used to send any signal to any thread.
  *
  * @param    tid is a pointer to the thread that receives the signal.
