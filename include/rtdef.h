@@ -591,9 +591,8 @@ typedef void (*rt_sighandler_t)(int signo);
 
 /**
  * @addtogroup group_thread_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * Thread
@@ -955,7 +954,7 @@ typedef struct rt_thread *rt_thread_t;
 #define LWP_IS_USER_MODE(t) (0)
 #endif /* RT_USING_SMART */
 
-/**@}*/
+/** @} group_thread_management */
 
 /**
  * @addtogroup group_thread_comm
