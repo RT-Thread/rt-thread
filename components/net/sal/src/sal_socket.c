@@ -43,7 +43,17 @@
 #define DBG_LVL                        DBG_INFO
 #include <rtdbg.h>
 
-#define SOCKET_TABLE_STEP_LEN          4
+#define VALID_PROTOCOL(protocol) ((protocol) >= 0 && (protocol) <= IPPROTO_RAW)
+#define VALID_COMBO(domain, type, protocol)                                                                                         \
+    (                                                                                                                               \
+        (((domain) == AF_INET || (domain) == AF_INET6) &&                                                                           \
+         (((type) == SOCK_STREAM && ((protocol) == 0 || (protocol) == IPPROTO_TCP)) ||                                              \
+          ((type) == SOCK_DGRAM && ((protocol) == 0 || (protocol) == IPPROTO_UDP)) ||                                               \
+          ((type) == SOCK_RAW && ((protocol) == IPPROTO_RAW))                                                                       \
+          )) ||                                                                                                                     \
+        ((domain) == AF_UNIX && (type) == SOCK_STREAM && (protocol) == 0) ||                                                        \
+        ((domain) == AF_NETLINK && (type) == SOCK_RAW && (protocol) == 0)                                                           \
+    )
 
 /* the socket table used to dynamic allocate sockets */
 struct sal_socket_table
@@ -434,24 +444,35 @@ int sal_netdev_cleanup(struct netdev *netdev)
  *         -1 : input the wrong family
  *         -2 : input the wrong socket type
  *         -3 : get network interface failed
+ *         -4 : invalid protocol or combo
  */
 static int socket_init(int family, int type, int protocol, struct sal_socket **res)
 {
-
     struct sal_socket *sock;
     struct sal_proto_family *pf;
     struct netdev *netdv_def = netdev_default;
     struct netdev *netdev = RT_NULL;
     rt_bool_t flag = RT_FALSE;
 
+    /* Existing range checks for family and type */
     if (family < 0 || family > AF_MAX)
     {
+        LOG_E("Invalid family: %d (must be 0 ~ %d)", family, AF_MAX);
         return -1;
     }
 
     if (type < 0 || type > SOCK_MAX)
     {
+        LOG_E("Invalid type: %d (must be 0 ~ %d)", type, SOCK_MAX);
         return -2;
+    }
+
+    /* Range check for protocol */
+    if (!VALID_PROTOCOL(protocol))
+    {
+        LOG_E("Invalid protocol: %d (must be 0 ~ %d)", protocol, IPPROTO_RAW);
+        rt_set_errno(EINVAL);
+        return -4;
     }
 
     sock = *res;
@@ -459,6 +480,15 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     sock->type = type;
     sock->protocol = protocol;
 
+    /* Combo compatibility check */
+    if (!VALID_COMBO(family, type, protocol))
+    {
+        LOG_E("Invalid combo: domain=%d, type=%d, protocol=%d", family, type, protocol);
+        rt_set_errno(EINVAL);
+        return -4;
+    }
+
+    /* Existing netdev selection logic */
     if (netdv_def && netdev_is_up(netdv_def))
     {
         /* check default network interface device protocol family */
@@ -483,6 +513,8 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
         sock->netdev = netdev;
     }
 
+    LOG_D("Socket init success: domain=%d, type=%d, protocol=%d, netdev=%s",
+          family, type, protocol, sock->netdev ? sock->netdev->name : "default");
     return 0;
 }
 
@@ -1051,7 +1083,7 @@ int sal_socket(int domain, int type, int protocol)
     {
         LOG_E("SAL socket protocol family input failed, return error %d.", retval);
         socket_delete(socket);
-        return -1;
+        return retval;
     }
 
     /* valid the network interface socket opreation */
