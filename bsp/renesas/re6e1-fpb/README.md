@@ -15,7 +15,7 @@
 
 开发板正面外观如下图：
 
-
+![image-20250930115014947](G:\testRTT\rt-thread\bsp\renesas\re6e1-fpb\docs\picture\image-20250930115014947.png)
 
 该开发板常用 **板载资源** 如下：
 
