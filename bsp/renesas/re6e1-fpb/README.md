@@ -1,8 +1,8 @@
-# 瑞萨 FPB-RA6E2 开发板 BSP 说明
+# 瑞萨 FPB-RA6E1 开发板 BSP 说明
 
 ## 简介
 
-本文档为瑞萨 FPB-RA6E2 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
+本文档为瑞萨 FPB-RA6E1 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
 
 主要内容如下：
 
@@ -11,15 +11,15 @@
 
 ## 开发板介绍
 
-基于瑞萨 RA6E2 MCU 开发的 FPB-RA6E2 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA6E2 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
+基于瑞萨 RA6E1 MCU 开发的 FPB-RA6E1 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA6E1 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
 
 开发板正面外观如下图：
 
-![image-20211011174017429](docs/picture/fpb-ra6e2.png)
+
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：R7FA6E2BB3CFM，200MHz，Arm Cortex®-M33 内核，256kB 代码闪存, 40kB SRAM
+- MCU：R7FA6E10F2CFM，200MHz，Arm Cortex®-M33 内核，512kB 代码闪存, 2560kB SRAM
 - 调试接口：板载 J-Link 接口
 - 扩展接口：两个 PMOD 连接器
 
