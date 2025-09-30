@@ -202,7 +202,7 @@ struct rt_lwp
     struct rt_wqueue wait_queue;                /**< wait queue for console */
     struct tty_struct *tty;                     /**< Controlling terminal, NULL if no tty */
 
-    struct lwp_avl_struct *address_search_head; /**< for addressed object fast search */
+    struct lwp_avl_struct *address_search_head; /**< for saving private futexes with a user-space address key */
     char working_directory[DFS_PATH_MAX];       /**< Current working directory */
 
     int debug;                                  /**< Debug flag */
