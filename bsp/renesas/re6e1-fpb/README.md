@@ -19,7 +19,7 @@
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：R7FA6E10F2CFM，200MHz，Arm Cortex®-M33 内核，512kB 代码闪存, 2560kB SRAM
+- MCU：R7FA6E10F2CFM，200MHz，Arm Cortex®-M33 内核，1-MB 代码闪存, 256kB SRAM
 - 调试接口：板载 J-Link 接口
 - 扩展接口：两个 PMOD 连接器
 
@@ -67,23 +67,27 @@
 
 **硬件连接**
 
-使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART0：P411(TXD)、P410(RXD)。
+使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART0：P101(TXD)、P100(RXD)。
+
+
 
 **编译下载**
 
 - 编译：双击 project.uvprojx 文件，打开 MDK5 工程，编译程序。
 
-> 注意：此工程需要使用 J-Flash Lite 工具烧录程序。建议使用 V8.10 及以上版本烧录工程。[J-Link 下载链接](https://www.segger.com/downloads/jlink/)
+  ![image-20250930112238070](G:\testRTT\rt-thread\bsp\renesas\re6e1-fpb\docs\picture\image-20250930112238070.png)
 
-- 下载：打开 J-Flash lite 工具，选择芯片型号 R7FA6E2BB，点击 OK 进入工具。选择 BSP 目录下 MDK 编译出的 /object/rtthread.hex 文件，点击 Program Device 按钮开始烧录。具体操作过程可参考下图步骤：
 
-![image-20211011181555421](docs/picture/jflash1.png)
 
-![image-20211011182047981](docs/picture/jflash2.png)
+- 下载：具体操作过程可参考下图步骤：
 
-![image-20211011182434519](docs/picture/jflash.png)
+![image-20250930112518592](G:\testRTT\rt-thread\bsp\renesas\re6e1-fpb\docs\picture\image-20250930112518592.png)
 
-![image-20211011182949604](docs/picture/jflash3.png)
+![image-20250930112622622](G:\testRTT\rt-thread\bsp\renesas\re6e1-fpb\docs\picture\image-20250930112622622.png)
+
+![image-20250930112711356](G:\testRTT\rt-thread\bsp\renesas\re6e1-fpb\docs\picture\image-20250930112711356.png)
+
+![image-20250930113003433](G:\testRTT\rt-thread\bsp\renesas\re6e1-fpb\docs\picture\image-20250930113003433.png)
 
 **查看运行结果**
 
@@ -91,46 +95,30 @@
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息。输入 help 命令可查看系统中支持的命令。
 
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     5.2.0 build Oct 28 2024 02:29:19
- 2006 - 2024 Copyright by rt-thread team
+![image-20250930114454018](G:\testRTT\rt-thread\bsp\renesas\re6e1-fpb\docs\picture\image-20250930114454018.png)
 
-Hello RT-Thread!
-msh >
-msh >help
-RT-Thread shell commands:
-pin              - pin [option]
-reboot           - Reboot System
-help             - RT-Thread shell help
-ps               - List threads in the system
-free             - Show the memory usage in the system
-clear            - clear the terminal screen
-version          - show RT-Thread version information
-list             - list objects
-backtrace        - print backtrace of a thread
 
-msh > 
-```
 
 **应用入口函数**
 
-应用层的入口函数在 **bsp\ra6e2-fpb\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
+应用层的入口函数在 **bsp\ra6e1-fpb\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
 
 ```c
-void hal_entry(void)
-{
-    rt_kprintf("\nHello RT-Thread!\n");
+#define LED1_PIN    BSP_IO_PORT_04_PIN_07 /* Onboard LED1 pins */
+#define LED2_PIN    BSP_IO_PORT_04_PIN_08 /* Onboard LED2 pins */
 
-    while (1)
+void hal_entry ( void )
+{
+    rt_kprintf ( "\nHello RT-Thread!\n" );
+
+    while ( 1 )
     {
-        rt_pin_write(LED1_PIN, PIN_HIGH);
-        rt_pin_write(LED2_PIN, PIN_HIGH);
-        rt_thread_mdelay(500);
-        rt_pin_write(LED1_PIN, PIN_LOW);
-        rt_pin_write(LED2_PIN, PIN_LOW);
-        rt_thread_mdelay(500);
+        rt_pin_write ( LED1_PIN, PIN_HIGH );
+        rt_pin_write ( LED2_PIN, PIN_LOW );
+        rt_thread_mdelay ( 1000 );
+        rt_pin_write ( LED1_PIN, PIN_LOW );
+        rt_pin_write ( LED2_PIN, PIN_HIGH );
+        rt_thread_mdelay ( 1000 );
     }
 }
 ```
@@ -139,21 +127,21 @@ void hal_entry(void)
 
 **资料及文档**
 
-- [开发板官网主页](https://www.renesas.cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/fpb-ra6e2-fast-prototyping-board-ra6e2-mcu-group)
-- [开发板用户手册](https://www.renesas.cn/zh/document/mat/fpb-ra6e2-v1-users-manual?r=25433341)
+- [开发板官网主页](https://www.renesas.cn/zh/design-resources/boards-kits/fpb-ra6e1)
+- [开发板用户手册](https://www.renesas.cn/zh/document/mat/fpb-ra6e1-users-manual?r=1529471)
 - [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091)
 - [RA6 MCU 快速设计指南](https://www2.renesas.cn/cn/zh/document/apn/ra6-quick-design-guide)
-- [RA6E2_datasheet](https://www.renesas.cn/zh/document/dst/ra6e2-group-datasheet?language=en)
-- [RA6E2 Group User’s Manual: Hardware](https://www.renesas.cn/zh/document/mah/ra6e2-group-users-manual-hardware?language=en)
+- [RA6E1_datasheet](https://www.renesas.cn/zh/document/dst/1532701?language=en)
+- [RA6E1 Group User’s Manual: Hardware](https://www.renesas.cn/zh/document/mah/1532711?language=en)
 
 **FSP 配置**
 
 需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp#documents) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
 
 1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp)，请使用 FSP 5.5.0 版本
-2. 下载安装完成后，需要添加 FPB-RA6E2 开发板的官方板级支持包
-> 打开[ FPB-RA6E2 开发板详情页](https://www.renesas.cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/fpb-ra6e2-fast-prototyping-board-ra6e2-mcu-group)，在**“下载”**列表中找到 **”FPB-RA6E2板级支持包“**，点击链接即可下载
-3. 如何将 **”FPB-RA6E2板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp)
+2. 下载安装完成后，需要添加 FPB-RA6E1 开发板的官方板级支持包
+> 打开[ FPB-RA6E1 开发板详情页](https://www.renesas.cn/zh/design-resources/boards-kits/fpb-ra6e1)，在**“下载”**列表中找到 **”FPB-RA6E1板级支持包“**，点击链接即可下载
+3. 如何将 **”FPB-RA6E1板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www.renesas.cn/zh/software-tool/flexible-software-package-fsp)
 4. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
 
 **ENV 配置**
@@ -169,13 +157,6 @@ void hal_entry(void)
 4. 输入`scons --target=mdk5` 命令重新生成工程。
 
 
-## FAQ
-
-### 使用 MDK 的 DEBUG 时如果遇到提示  “Error: Flash Download failed Cortex-M33” 怎么办？
-
-可按照下图操作，修改 Utilities 中的选项：
-
-![image-20211214102231248](docs/picture/readme_faq1.png)
 
 ## 联系人信息
 
