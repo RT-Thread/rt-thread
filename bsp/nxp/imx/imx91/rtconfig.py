@@ -39,12 +39,13 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -march=armv8-a -mtune=cortex-a55'
+    DEVICE += ' -fno-omit-frame-pointer -ffunction-sections -fdata-sections'
     CPPFLAGS = ' -E -P -x assembler-with-cpp'
-    CFLAGS = DEVICE + ' -Wall -Wno-cpp -D_POSIX_SOURCE'
+    CFLAGS = DEVICE + ' -Wall -Wno-cpp'
+    CFLAGS += ' -mstrict-align' # disable unaligned access
+    CFLAGS += ' -Dmemcmp=rt_memcmp -Dstrcmp=rt_strcmp -Dstrcpy=rt_strcpy -Dstrlen=rt_strlen' # use rtthread string operations
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LINK_SCRIPT = 'link.lds'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
-                      ' -T %s' % LINK_SCRIPT
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
 
     CPATH = ''
     LPATH = ''

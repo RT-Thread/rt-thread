@@ -64,49 +64,16 @@ static void rt_hw_uart_isr(int irqn, void *param)
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    // struct hw_uart_device *uart;
-    // uint32_t baudrate;
-    // uint8_t parity, stopbits, datasize, flowcontrol;
-
-    // RT_ASSERT(serial != RT_NULL);
-    // uart = (struct hw_uart_device *)serial->parent.user_data;
-
-    // baudrate = cfg->baud_rate;
-    // switch (cfg->data_bits)
-    // {
-    // case DATA_BITS_8:
-    //     datasize = EIGHTBITS;
-    //     break;
-    // case DATA_BITS_7:
-    //     datasize = SEVENBITS;
-    //     break;
-    // }
-    // if (cfg->stop_bits == STOP_BITS_1) stopbits = STOPBITS_ONE;
-    // else if (cfg->stop_bits == STOP_BITS_2) stopbits = STOPBITS_TWO;
-
-    // parity = PARITY_NONE;
-    // flowcontrol = FLOWCTRL_OFF;
-
-    // /* Initialize UART */
-    // uart_init(uart->uart_base, baudrate, parity, stopbits, datasize, flowcontrol);
-
-    // rt_hw_interrupt_install(uart->irqn, rt_hw_uart_isr, serial, "uart");
-    // rt_hw_interrupt_mask(uart->irqn);
-
-    // /* Set the IRQ mode for the Rx FIFO */
-    // uart_set_FIFO_mode(uart->uart_base, RX_FIFO, 1, IRQ_MODE);
-
     struct hw_uart_device *uart = RT_NULL;
     static lpuart_config_t config;
 
-    rt_hw_console_output("uart_configure start ...\n");
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    rt_hw_console_output("uart_configure LPUART_GetDefaultConfig ...\n");
+    rt_hw_console_output("uart_configure start ...\n");
     LPUART_GetDefaultConfig(&config);
-    rt_hw_console_output("uart_configure LPUART_GetDefaultConfig done!\n");
 
+    // baud rate
     config.baudRate_Bps = cfg->baud_rate;
 
     // data bits
@@ -240,8 +207,9 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-volatile LPUART_Type *earlycon_base = LPUART1;
-const size_t earlycon_size = 4096; // sizeof(LPUART_Type);
+#if USING_EARLY_CONSOLE
+LPUART_Type *earlycon_base = LPUART1;
+const size_t earlycon_size = 4096;
 
 void rt_hw_earlycon_ioremap(void)
 {
@@ -282,6 +250,7 @@ void rt_hw_earlycon_print_hex(const char *str, rt_base_t hex)
     rt_hw_earlycon_putc('\r');
     rt_hw_earlycon_putc('\n');
 }
+#endif
 
 void rt_hw_console_putc(char c)
 {
@@ -352,7 +321,8 @@ int rt_hw_uart_init(void)
             hw_uart_devices[i]->serial.ops = &_uart_ops;
             hw_uart_devices[i]->serial.config = config;
             rt_hw_earlycon_print_hex("ioremap uart_instance: ", (rt_base_t)hw_uart_devices[i]->uart_instance);
-            hw_uart_devices[i]->uart_base = rt_ioremap((void *)hw_uart_devices[i]->uart_instance, 0x1000);
+            // hw_uart_devices[i]->uart_base = rt_ioremap((void *)hw_uart_devices[i]->uart_instance, 0x1000);
+            hw_uart_devices[i]->uart_base = rt_ioremap_early((void *)hw_uart_devices[i]->uart_instance, 0x1000);
 
             rt_hw_serial_register(&hw_uart_devices[i]->serial, hw_uart_devices[i]->device_name,
                                   RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, hw_uart_devices[i]);
@@ -361,4 +331,3 @@ int rt_hw_uart_init(void)
 
     return 0;
 }
-// INIT_BOARD_EXPORT(rt_hw_uart_init);
