@@ -277,10 +277,6 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->system_time = 0;
 #endif
 
-#ifdef RT_USING_CPU_USAGE
-    thread->duration_tick = 0;
-#endif /* RT_USING_CPU_USAGE */
-
 #ifdef RT_USING_PTHREADS
     thread->pthread_data = RT_NULL;
 #endif /* RT_USING_PTHREADS */
@@ -298,9 +294,8 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
 /**
  * @addtogroup group_thread_management
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief   This function will initialize a thread. It's used to initialize a
@@ -1213,4 +1208,4 @@ rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_uint8_t name_size
 }
 RTM_EXPORT(rt_thread_get_name);
 
-/**@}*/
+/** @} group_thread_management */

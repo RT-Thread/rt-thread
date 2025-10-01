@@ -79,6 +79,19 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
     return ret;
 }
 
+/**
+ * @addtogroup group_thread_management
+ * @{
+ */
+
+/**
+ * @brief delete the idle hook on hook list.
+ *
+ * @param hook the specified hook function.
+ *
+ * @return `RT_EOK`: delete OK.
+ *         `-RT_ENOSYS`: hook was not found.
+ */
 rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
     rt_size_t i;
@@ -198,3 +211,5 @@ rt_thread_t rt_thread_idle_gethandler(void)
 
     return (rt_thread_t)(&idle_thread[id]);
 }
+
+/** @} group_thread_management */

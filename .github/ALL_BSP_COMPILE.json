@@ -424,7 +424,9 @@
         "hpmicro/hpm5300evk",
         "hpmicro/hpm5301evklite",
         "hpmicro/hpm6800evk",
-        "hpmicro/hpm6e00evk"
+        "hpmicro/hpm6e00evk",
+        "hpmicro/hpm6p00evk",
+        "hpmicro/hpm5e00evk"
       ]
     },
     {

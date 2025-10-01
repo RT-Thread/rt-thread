@@ -306,4 +306,4 @@ static rt_err_t utest_tc_cleanup(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(testcase, "audio.tc_audio_main", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.drivers.audio.tc_audio_main", utest_tc_init, utest_tc_cleanup, 10);

@@ -8,7 +8,7 @@ config RT_USING_UTESTCASES
 if RT_USING_UTESTCASES
 
 rsource "components/utilities/utest/utest/Kconfig"
-rsource "examples/utest/testcases/kernel/Kconfig"
+rsource "src/utest/Kconfig"
 rsource "examples/utest/testcases/cpp11/Kconfig"
 rsource "examples/utest/testcases/drivers/serial_v2/Kconfig"
 rsource "examples/utest/testcases/drivers/serial_bypass/Kconfig"
@@ -21,6 +21,7 @@ rsource "examples/utest/testcases/perf/Kconfig"
 
 rsource "src/klibc/utest/Kconfig"
 
+rsource "components/drivers/core/utest/Kconfig"
 rsource "components/drivers/audio/utest/Kconfig"
 rsource "components/dfs/utest/Kconfig"
 rsource "components/net/utest/Kconfig"

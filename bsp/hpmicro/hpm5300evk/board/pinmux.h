@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 HPMicro
+ * Copyright (c) 2022-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,7 +11,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-void init_xtal_pins(void);
 void init_py_pins_as_pgpio(void);
 void init_uart_pins(UART_Type *ptr);
 void init_uart_pin_as_gpio(UART_Type *ptr);
@@ -28,12 +27,13 @@ void init_pwm_pins(PWM_Type *ptr);
 void init_adc_pins(void);
 void init_adc_bldc_pins(void);
 void init_adc_qeiv2_pins(void);
-void init_usb_pins(void);
+void init_usb_pins(USB_Type *ptr);
 void init_can_pins(MCAN_Type *ptr);
 void init_dac_pins(DAC_Type *ptr);
 void init_led_pins_as_gpio(void);
 void init_led_pins_as_pwm(void);
-void init_plb_pins(void);
+void init_plb_pulse_pins(void);
+void init_plb_filter_pins(void);
 void init_qeo_pins(QEO_Type *ptr);
 void init_sei_pins(SEI_Type *ptr, uint8_t sei_ctrl_idx);
 void init_rdc_pin(void);
@@ -42,6 +42,10 @@ void init_qeiv2_ab_pins(QEIV2_Type *ptr);
 void init_qeiv2_abz_pins(QEIV2_Type *ptr);
 void init_opamp_pins(void);
 void init_lin_transceiver_ctrl_pin(void);
+void init_uart_break_signal_pin(void);
+void init_gptmr_channel_pin(GPTMR_Type *ptr, uint32_t channel, bool as_comp);
+void init_clk_ref_pin(void);
+
 #ifdef __cplusplus
 }
 #endif

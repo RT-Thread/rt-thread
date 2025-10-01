@@ -1,8 +1,41 @@
-# Copyright 2021-2024 HPMicro
+# Copyright 2021-2025 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 import os
 import sys
+import rtconfig
+
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+try:
+    from building import *
+except:
+    print('Cannot found RT-Thread root directory, please check RTT_ROOT')
+    print(RTT_ROOT)
+    exit(-1)
+
+def bsp_pkg_check():
+    import subprocess
+    
+    need_update = True
+    for p in os.listdir("packages"):
+        if p.startswith("hpm_sdk-"):
+            need_update = False
+            break
+    if need_update:
+        print("\n===============================================================================")
+        print("Dependency packages missing, please running 'pkgs --update'...")
+        print("If no packages are fetched, run 'pkgs --upgrade' first, then 'pkgs --update'...")
+        print("===============================================================================")
+        exit(1)
+
+RegisterPreBuildingAction(bsp_pkg_check)
+
 
 # toolchains options
 ARCH='risc-v'
@@ -80,27 +113,27 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -gdwarf-2'
         CFLAGS += ' -O0'
         LFLAGS += ' -O0'
-        LINKER_FILE = 'board/linker_scripts/ram_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/ram_rtt.ld'
     elif BUILD == 'ram_release':
         CFLAGS += ' -O2'
         LFLAGS += ' -O2'
-        LINKER_FILE = 'board/linker_scripts/ram_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/ram_rtt.ld'
     elif BUILD == 'flash_debug':
         CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
         CFLAGS += ' -O0'
         LFLAGS += ' -O0'
         CFLAGS += ' -DFLASH_XIP=1'
-        LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/flash_rtt.ld'
     elif BUILD == 'flash_release':
         CFLAGS += ' -O2'
         LFLAGS += ' -O2'
         CFLAGS += ' -DFLASH_XIP=1'
-        LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/flash_rtt.ld'
     else:
         CFLAGS += ' -O2'
         LFLAGS += ' -O2'
-        LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/flash_rtt.ld'
     LFLAGS += ' -T ' + LINKER_FILE
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'

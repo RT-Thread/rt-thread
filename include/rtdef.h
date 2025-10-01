@@ -267,9 +267,8 @@ typedef int (*init_fn_t)(void);
 
 /**
  * @addtogroup group_object_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * kernel object macros
@@ -512,7 +511,7 @@ struct rt_object_information
 #define RT_OBJECT_HOOKLIST_CALL(name, argv)
 #endif /* RT_USING_HOOKLIST */
 
-/**@}*/
+/** @} group_object_management */
 
 /**
  * @addtogroup group_clock_management
@@ -592,9 +591,8 @@ typedef void (*rt_sighandler_t)(int signo);
 
 /**
  * @addtogroup group_thread_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * Thread
@@ -895,10 +893,6 @@ struct rt_thread
     void                        *si_list;               /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-#ifdef RT_USING_CPU_USAGE
-    rt_uint64_t                 duration_tick;          /**< cpu usage tick */
-#endif /* RT_USING_CPU_USAGE */
-
 #ifdef RT_USING_PTHREADS
     void                        *pthread_data;          /**< the handle of pthread data, adapt 32/64bit */
 #endif /* RT_USING_PTHREADS */
@@ -960,7 +954,7 @@ typedef struct rt_thread *rt_thread_t;
 #define LWP_IS_USER_MODE(t) (0)
 #endif /* RT_USING_SMART */
 
-/**@}*/
+/** @} group_thread_management */
 
 /**
  * @addtogroup group_thread_comm

@@ -228,7 +228,11 @@ bool calculate_block_num(int no, size_t addr, size_t size, void *erase_addr, voi
     level = rt_hw_interrupt_disable();
     R_FLASH_Reset(&g_flash_ctrl);
 
+#if BSP_FEATURE_FLASH_HP_VERSION
     fal_block_iter(&_onchip_flash_hp0, &calculate_block_num, (void *)addr, (void *)size, &block_num);
+#else
+    fal_block_iter(&_onchip_flash_lp, &calculate_block_num, (void *)addr, (void *)size, &block_num);
+#endif
 
     /* Erase Block */
 #if BSP_FEATURE_FLASH_HP_VERSION
@@ -335,6 +339,16 @@ static int fal_flash_lp_write(long offset, const rt_uint8_t *buf, size_t size)
 static int fal_flash_lp_erase(long offset, size_t size)
 {
     return _flash_lp_erase(_onchip_flash_lp.addr + offset, size);
+}
+
+/*
+ * This callback is intentionally left empty.
+ * No action is required on flash events in this application.
+ * If event handling is needed, implement it here.
+ */
+void flash_callback(flash_callback_args_t * p_args)
+{
+
 }
 
 #endif

@@ -4,11 +4,24 @@
 
 dir_path:
   - hpm6200evk/startup
+  - hpm6200evk/board
   - hpm6300evk/startup
+  - hpm6300evk/board
   - hpm6750evk/startup
+  - hpm6750evk/board
   - hpm6750evk2/startup
+  - hpm6750evk2/board
   - hpm6750evkmini/startup
+  - hpm6750evkmini/board
   - hpm5300evk/startup
+  - hpm5300evk/board
   - hpm5301evklite/startup
+  - hpm5301evklite/board
   - hpm6800evk/startup
-  - libraries/hpm_sdk
+  - hpm6800evk/board
+  - hpm6e00evk/startup
+  - hpm6e00evk/board
+  - hpm6p00evk/startup
+  - hpm6p00evk/board
+  - hpm5e00evk/startup
+  - hpm5e00evk/board

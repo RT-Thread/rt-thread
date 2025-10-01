@@ -207,6 +207,7 @@ int netdev_unregister(struct netdev *netdev)
         sal_netdev_cleanup(netdev);
 #endif
         rt_memset(netdev, 0, sizeof(*netdev));
+        return RT_EOK;
     }
 
     return -RT_ERROR;
@@ -1414,20 +1415,8 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
     /* print ping statistics */
     loss = (uint32_t)((1 - ((float)received) / index) * 100);
     avg_time = (uint32_t)(avg_time / received);
-#if NETDEV_IPV4 && NETDEV_IPV6
-    if (IP_IS_V4_VAL(&ping_resp.ip_addr))
-    {
-        rt_kprintf("\n--- %s ping statistics ---\n", inet_ntoa(*ip_2_ip4(&ping_resp.ip_addr)));
-    }
-    else
-    {
-        rt_kprintf("\n--- %s ping statistics ---\n", inet6_ntoa(*ip_2_ip6(&ping_resp.ip_addr)));
-    }
-#elif NETDEV_IPV4
+
     rt_kprintf("\n--- %s ping statistics ---\n", inet_ntoa(ping_resp.ip_addr));
-#elif NETDEV_IPV6
-    rt_kprintf("\n--- %s ping statistics ---\n", inet6_ntoa(ping_resp.ip_addr));
-#endif
     rt_kprintf("%d packets transmitted, %d received, %d%% packet loss\n", index, received, loss);
     if (received > 0)
     {
