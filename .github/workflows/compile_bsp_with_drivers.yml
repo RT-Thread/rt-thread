@@ -15,6 +15,10 @@ name: BSP compilation with more drivers
 on:
   workflow_dispatch: #disable
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read # to fetch code (actions/checkout)
 

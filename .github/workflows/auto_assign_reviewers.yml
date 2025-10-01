@@ -20,6 +20,10 @@ on:
     branches: [ master ]
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   assign-reviewers:
     runs-on: ubuntu-22.04

@@ -19,6 +19,10 @@ on:
       - '**/README.md'
       - '**/README_zh.md'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   scancode_job:
     runs-on: ubuntu-22.04
