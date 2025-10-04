@@ -46,21 +46,15 @@ static enum rym_code _rym_recv_begin(
     rt_size_t len)
 {
     struct custom_ctx *cctx = (struct custom_ctx *)ctx;
-    char insert_0 = '\0';
-    char *ret;
     rt_err_t err;
-    ret = strchr(cctx->fpath,insert_0);
-    if(ret)
-    {
-        *ret = '/';
-    }
-    else
-    {
-        rt_kprintf("No end character\n");
-        return RYM_ERR_ACK;
-    }
-    rt_strncpy(ret + 1, (const char *)buf, len - 1);
-    cctx->fd = open(cctx->fpath, O_CREAT | O_WRONLY | O_TRUNC, 0);
+    
+    /*
+    support recv multiple files in one session
+    */
+    char user_path[DFS_PATH_MAX]={0};
+    rt_snprintf(user_path, DFS_PATH_MAX, "%s%s", cctx->fpath, buf);
+    cctx->fd = open(user_path, O_CREAT | O_WRONLY | O_TRUNC, 0);
+
     if (cctx->fd < 0)
     {
         err = rt_get_errno();
