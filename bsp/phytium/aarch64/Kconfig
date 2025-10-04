@@ -64,3 +64,6 @@ menu "Standalone Setting"
 
 endmenu
 
+config KERNEL_ASPACE_START
+    hex
+    default 0x1000
