@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,25 +25,38 @@
 #include <lwp_user_mm.h>
 #endif /* ARCH_MM_MMU */
 
+/**
+ * @brief Shared futex key structure
+ *
+ * @note This structure represents a key used to identify shared futexes
+ *       in the system.
+ */
 struct shared_futex_key
 {
-    rt_mem_obj_t mobj;
-    rt_base_t offset;
+    rt_mem_obj_t mobj; /**< Memory object associated with the futex */
+    rt_base_t offset;  /**< Offset within the memory object */
 };
 DEFINE_RT_UTHASH_TYPE(shared_futex_entry, struct shared_futex_key, key);
 
+/**
+ * @brief Futex structure for thread synchronization
+ *
+ * @note This structure represents a futex used for thread synchronization.
+ *       It can be either private (process-local) or shared between processes.
+ */
 struct rt_futex
 {
-    union {
+    union
+    {
         /* for private futex */
-        struct lwp_avl_struct node;
+        struct lwp_avl_struct node;       /**< AVL tree node for private futex */
         /* for shared futex */
-        struct shared_futex_entry entry;
+        struct shared_futex_entry entry;  /**< Entry for shared futex */
     };
 
-    rt_list_t waiting_thread;
-    struct rt_object *custom_obj;
-    rt_mutex_t mutex;
+    rt_list_t waiting_thread;             /**< List of threads waiting on the futex */
+    struct rt_object *custom_obj;         /**< Custom object associated with the futex */
+    rt_mutex_t mutex;                     /**< kernel mutex object for futex */
 };
 typedef struct rt_futex *rt_futex_t;
 
