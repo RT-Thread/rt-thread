@@ -1,22 +1,16 @@
 mainmenu "RT-Thread Project Configuration"
-
 RTT_DIR := ../../..
-
 SDK_DIR:= .././libraries/phytium_standalone_sdk
-
 PKGS_DIR := packages
-
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
 source "$(BSP_DIR)/../libraries/drivers/Kconfig"
-
 config BSP_USING_GIC
     bool
     default y
     config BSP_USING_GICV3
         bool
         default y
-
 config PHYTIUM_ARCH_AARCH64
     bool
     select ARCH_ARMV8
@@ -30,37 +24,33 @@ config PHYTIUM_ARCH_AARCH64
     select RT_USING_HW_ATOMIC
     default y
     
-
 if TARGET_E2000Q
     config ARM_SPI_BIND_CPU_ID
         int 
         default 2
 endif
-
 if TARGET_E2000D
     config ARM_SPI_BIND_CPU_ID
         int 
         default 0
 endif
-
 if TARGET_PHYTIUMPI
     config ARM_SPI_BIND_CPU_ID
         int 
         default 2
 endif
-
 if RT_USING_SMP
-
 endif
-
 menu "Standalone Setting"
     config TARGET_ARMV8_AARCH64
         bool "Armv8 Aarch64"
         default y
-
     source "$(SDK_DIR)/soc/soc.kconfig"
     source "$(BSP_DIR)/../board/board.kconfig"
     source "$(SDK_DIR)/common/common.kconfig"
 
 endmenu
 
+config KERNEL_ASPACE_START
+    hex
+    default 0x1000
