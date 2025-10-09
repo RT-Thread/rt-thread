@@ -62,33 +62,6 @@ menu "Hardware Drivers Config"
                             depends on RT_USING_SERIAL_V2
                             default 0
                     endif
-
-                menuconfig BSP_USING_UART1
-                    bool "Enable UART1"
-                    default n
-                    if BSP_USING_UART1
-                        config BSP_UART1_RX_USING_DMA
-                            bool "Enable UART1 RX DMA"
-                            depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                            default n
-
-                        config BSP_UART1_TX_USING_DMA
-                            bool "Enable UART1 TX DMA"
-                            depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                            default n
-
-                        config BSP_UART1_RX_BUFSIZE
-                            int "Set UART1 RX buffer size"
-                            range 64 65535
-                            depends on RT_USING_SERIAL_V2
-                            default 256
-
-                        config BSP_UART1_TX_BUFSIZE
-                            int "Set UART1 TX buffer size"
-                            range 0 65535
-                            depends on RT_USING_SERIAL_V2
-                            default 0
-                    endif
             endif
 
         menuconfig BSP_USING_SPI

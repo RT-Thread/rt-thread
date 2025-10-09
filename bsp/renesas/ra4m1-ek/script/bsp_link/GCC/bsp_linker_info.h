@@ -1,6 +1,6 @@
-/* UNCRUSTIFY-OFF */
+  /* UNCRUSTIFY-OFF */
 #ifndef BSP_LINKER_H
-#define BSP_LINKER_H
+ #define BSP_LINKER_H
 
 /***********************************************************************************************************************
  * Macro definitions
@@ -32,33 +32,33 @@ typedef enum e_bsp_init_mem
 
 typedef struct st_bsp_init_type
 {
-    uint32_t copy_64 :8; /* if 1, must use 64 bit copy operation (to keep ecc happy) */
-    uint32_t external :8; /* =1 if either source or destination is external, else 0  */
-    uint32_t source_type :8;
-    uint32_t destination_type :8;
+    uint32_t copy_64              : 8; /* if 1, must use 64 bit copy operation (to keep ecc happy) */
+    uint32_t external             : 8; /* =1 if either source or destination is external, else 0  */
+    uint32_t source_type          : 8;
+    uint32_t destination_type     : 8;
 } bsp_init_type_t;
 
 typedef struct st_bsp_init_zero_info
 {
-    uint32_t *const p_base;
-    uint32_t *const p_limit;
-    bsp_init_type_t type;
+    uint32_t * const p_base;
+    uint32_t * const p_limit;
+    bsp_init_type_t  type;
 } bsp_init_zero_info_t;
 
 typedef struct st_bsp_init_copy_info
 {
-    uint32_t *const p_base;
-    uint32_t *const p_limit;
-    uint32_t *const p_load;
-    bsp_init_type_t type;
+    uint32_t * const p_base;
+    uint32_t * const p_limit;
+    uint32_t * const p_load;
+    bsp_init_type_t  type;
 } bsp_init_copy_info_t;
 
 typedef struct st_bsp_init_info
 {
     uint32_t zero_count;
-    bsp_init_zero_info_t const *const p_zero_list;
+    bsp_init_zero_info_t const * const p_zero_list;
     uint32_t copy_count;
-    bsp_init_copy_info_t const *const p_copy_list;
+    bsp_init_copy_info_t const * const p_copy_list;
 } bsp_init_info_t;
 
 /***********************************************************************************************************************
@@ -70,7 +70,7 @@ extern bsp_init_info_t const g_init_info;
 /***********************************************************************************************************************
  * Exported global functions (to be accessed by other files)
  **********************************************************************************************************************/
-#endif   /* BSP_LINKER_H*/
+#endif   // BSP_LINKER_H
 #ifdef BSP_LINKER_C
 /***********************************************************************************************************************
  * Objects allocated by bsp_linker.c
@@ -105,6 +105,6 @@ const bsp_init_info_t g_init_info =
     .p_copy_list = copy_list
 };
 
-#endif   /* BSP_LINKER_C*/
+#endif   // BSP_LINKER_C
 
 /* UNCRUSTIFY-ON */
