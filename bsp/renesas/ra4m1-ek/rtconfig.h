@@ -1,6 +1,8 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define SOC_R7FA4M1AB
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -137,9 +139,6 @@
 /* DFS: device virtual file system */
 
 /* end of DFS: device virtual file system */
-#define RT_USING_FAL
-#define FAL_USING_DEBUG
-#define FAL_PART_HAS_TABLE_CFG
 
 /* Device Drivers */
 
@@ -159,6 +158,11 @@
 #define RT_USING_DAC
 #define RT_USING_PWM
 #define RT_USING_RTC
+#define RT_USING_ALARM
+#define RT_ALARM_STACK_SIZE 2048
+#define RT_ALARM_TIMESLICE 5
+#define RT_ALARM_PRIORITY 10
+#define RT_ALARM_USING_LOCAL_TIME
 #define RT_USING_SPI
 #define RT_USING_WDT
 #define RT_USING_PIN
@@ -187,6 +191,7 @@
 
 /* end of Interprocess Communication (IPC) */
 /* end of POSIX (Portable Operating System Interface) layer */
+#define RT_USING_CPLUSPLUS
 /* end of C/C++ and POSIX layer */
 
 /* Network */
@@ -391,8 +396,6 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_R7FA4M1AB
-
 /* Onboard Peripheral Drivers */
 
 /* end of Onboard Peripheral Drivers */
@@ -400,28 +403,10 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
-#define BSP_USING_ONCHIP_FLASH
-#define BSP_USING_WDT
-#define BSP_USING_ONCHIP_RTC
 #define BSP_USING_UART
 #define BSP_USING_UART0
 #define BSP_UART0_RX_BUFSIZE 256
 #define BSP_UART0_TX_BUFSIZE 0
-#define BSP_USING_UART1
-#define BSP_UART1_RX_BUFSIZE 256
-#define BSP_UART1_TX_BUFSIZE 0
-#define BSP_USING_SPI
-#define BSP_USING_SPI0
-#define BSP_USING_HW_I2C
-#define BSP_USING_HW_I2C0
-#define BSP_USING_ADC
-#define BSP_USING_ADC0
-#define BSP_USING_DAC
-#define BSP_USING_DAC0
-#define BSP_USING_PWM
-#define BSP_USING_PWM0
-#define BSP_USING_CAN
-#define BSP_USING_CAN0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

@@ -48,8 +48,6 @@
       <configSetting altId="adc0.an04.p004" configurationId="adc0.an04" isUsedByDriver="true" peripheral="ADC0"/>
       <configSetting altId="adc0.an05.p010" configurationId="adc0.an05" isUsedByDriver="true" peripheral="ADC0"/>
       <configSetting altId="adc0.an06.p011" configurationId="adc0.an06" isUsedByDriver="true" peripheral="ADC0"/>
-      <configSetting altId="can0.crx.p402" configurationId="can0.crx" isUsedByDriver="true" peripheral="CAN0"/>
-      <configSetting altId="can0.ctx.p103" configurationId="can0.ctx" isUsedByDriver="true" peripheral="CAN0"/>
       <configSetting altId="ctsu0.ts35.p115" configurationId="ctsu0.ts35" peripheral="CTSU0"/>
       <configSetting altId="ctsu0.tscap.p205" configurationId="ctsu0.tscap" peripheral="CTSU0"/>
       <configSetting altId="dac0.da.p014" configurationId="dac0.da" isUsedByDriver="true" peripheral="DAC120"/>
@@ -57,20 +55,19 @@
       <configSetting altId="debug0.tdi.p110" configurationId="debug0.tdi" isUsedByDriver="true" peripheral="DEBUG0"/>
       <configSetting altId="debug0.tdo.p109" configurationId="debug0.tdo" isUsedByDriver="true" peripheral="DEBUG0"/>
       <configSetting altId="debug0.tms.p108" configurationId="debug0.tms" isUsedByDriver="true" peripheral="DEBUG0"/>
-      <configSetting altId="gpt0.gtioca.p415" configurationId="gpt0.gtioca" isUsedByDriver="true" peripheral="GPT0"/>
-      <configSetting altId="gpt0.gtiocb.p414" configurationId="gpt0.gtiocb" isUsedByDriver="true" peripheral="GPT0"/>
+      <configSetting altId="gpt0.gtiocb.p106" configurationId="gpt0.gtiocb" isUsedByDriver="true" peripheral="GPT0"/>
+      <configSetting altId="gpt1.gtioca.p105" configurationId="gpt1.gtioca" peripheral="GPT1"/>
       <configSetting altId="iic0.scl.p400" configurationId="iic0.scl" isUsedByDriver="true" peripheral="IIC0"/>
       <configSetting altId="iic0.sda.p401" configurationId="iic0.sda" isUsedByDriver="true" peripheral="IIC0"/>
-      <configSetting altId="irq0.irq00.p105" configurationId="irq0.irq00" isUsedByDriver="true" peripheral="IRQ0"/>
-      <configSetting altId="p106.output.low" configurationId="p106"/>
+      <configSetting altId="p104.input" configurationId="p104"/>
       <configSetting altId="p403.output.low" configurationId="p403"/>
       <configSetting altId="sci0.rxd.p410" configurationId="sci0.rxd" isUsedByDriver="true" peripheral="SCI0"/>
       <configSetting altId="sci0.txd.p411" configurationId="sci0.txd" isUsedByDriver="true" peripheral="SCI0"/>
-      <configSetting altId="sci1.rxd.p502" configurationId="sci1.rxd" isUsedByDriver="true" peripheral="SCI1"/>
-      <configSetting altId="sci1.txd.p501" configurationId="sci1.txd" isUsedByDriver="true" peripheral="SCI1"/>
-      <configSetting altId="spi0.miso.p100" configurationId="spi0.miso" isUsedByDriver="true" peripheral="SPI0"/>
-      <configSetting altId="spi0.mosi.p101" configurationId="spi0.mosi" isUsedByDriver="true" peripheral="SPI0"/>
-      <configSetting altId="spi0.rspck.p102" configurationId="spi0.rspck" isUsedByDriver="true" peripheral="SPI0"/>
+      <configSetting altId="sci1.rxd.p502" configurationId="sci1.rxd" peripheral="SCI1"/>
+      <configSetting altId="sci1.txd.p501" configurationId="sci1.txd" peripheral="SCI1"/>
+      <configSetting altId="spi0.miso.p100" configurationId="spi0.miso" peripheral="SPI0"/>
+      <configSetting altId="spi0.mosi.p101" configurationId="spi0.mosi" peripheral="SPI0"/>
+      <configSetting altId="spi0.rspck.p102" configurationId="spi0.rspck" peripheral="SPI0"/>
       <configSetting altId="usbfs0.usbdm.p915" configurationId="usbfs0.usbdm" peripheral="USBFS0"/>
       <configSetting altId="usbfs0.usbdp.p914" configurationId="usbfs0.usbdp" peripheral="USBFS0"/>
       <configSetting altId="usbfs0.vbus.p407" configurationId="usbfs0.vbus" peripheral="USBFS0"/>

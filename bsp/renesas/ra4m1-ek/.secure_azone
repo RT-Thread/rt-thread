@@ -12,7 +12,7 @@
             <slot name="P100.CM4" secure="false"/>
             <slot name="P101.CM4" secure="false"/>
             <slot name="P102.CM4" secure="false"/>
-            <slot name="P103.CM4" secure="false"/>
+            <slot name="P104.CM4" secure="false"/>
             <slot name="P105.CM4" secure="false"/>
             <slot name="P106.CM4" secure="false"/>
             <slot name="P108.CM4" secure="false"/>
@@ -29,13 +29,10 @@
         <peripheral name="PORT4.CM4" group="PORT">
             <slot name="P400.CM4" secure="false"/>
             <slot name="P401.CM4" secure="false"/>
-            <slot name="P402.CM4" secure="false"/>
             <slot name="P403.CM4" secure="false"/>
             <slot name="P407.CM4" secure="false"/>
             <slot name="P410.CM4" secure="false"/>
             <slot name="P411.CM4" secure="false"/>
-            <slot name="P414.CM4" secure="false"/>
-            <slot name="P415.CM4" secure="false"/>
         </peripheral>
         <peripheral name="PORT5.CM4" group="PORT">
             <slot name="P501.CM4" secure="false"/>
@@ -49,15 +46,12 @@
         <peripheral name="ICU_EXT_IRQ.CM4">
             <slot name="ICU_EXT_IRQ0.CM4" secure="false"/>
         </peripheral>
-        <peripheral name="SCI1.CM4" group="SCI" security=""/>
         <peripheral name="IIC0.CM4" group="IIC" security=""/>
-        <peripheral name="SPI0.CM4" group="SPI" security=""/>
         <peripheral name="ADC0.CM4" group="ADC" security=""/>
-        <peripheral name="DAC0.CM4" group="DAC" security=""/>
-        <peripheral name="DAC120.CM4" group="DAC12" security=""/>
         <peripheral name="RTC.CM4" security=""/>
         <peripheral name="GPT0.CM4" group="GPT" security=""/>
-        <peripheral name="CAN0.CM4" group="CAN" security=""/>
+        <peripheral name="DAC0.CM4" group="DAC" security=""/>
+        <peripheral name="DAC120.CM4" group="DAC12" security=""/>
         <peripheral name="ICU.CM4">
             <slot name="IRQ0.CM4" secure="false"/>
             <slot name="IRQ1.CM4" secure="false"/>
@@ -69,19 +63,6 @@
             <slot name="IRQ7.CM4" secure="false"/>
             <slot name="IRQ8.CM4" secure="false"/>
             <slot name="IRQ9.CM4" secure="false"/>
-            <slot name="IRQ10.CM4" secure="false"/>
-            <slot name="IRQ11.CM4" secure="false"/>
-            <slot name="IRQ12.CM4" secure="false"/>
-            <slot name="IRQ13.CM4" secure="false"/>
-            <slot name="IRQ14.CM4" secure="false"/>
-            <slot name="IRQ15.CM4" secure="false"/>
-            <slot name="IRQ16.CM4" secure="false"/>
-            <slot name="IRQ17.CM4" secure="false"/>
-            <slot name="IRQ18.CM4" secure="false"/>
-            <slot name="IRQ19.CM4" secure="false"/>
-            <slot name="IRQ20.CM4" secure="false"/>
-            <slot name="IRQ21.CM4" secure="false"/>
-            <slot name="IRQ22.CM4" secure="false"/>
         </peripheral>
     </partition>
 </azone>
