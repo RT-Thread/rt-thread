@@ -59,8 +59,8 @@ jobs:
         shell: bash
         run: |
           cd documentation
-          doxygen Doxyfile
-          cat Doxyfile
+          doxygen Doxyfile.1.9.1
+          cat Doxyfile.1.9.1
           
       - name: Upload static files as artifact
         id: deployment
