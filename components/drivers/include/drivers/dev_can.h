@@ -709,8 +709,6 @@ rt_err_t rt_hw_can_register(struct rt_can_device    *can,
  *
  * @param[in] can    A pointer to the CAN device structure.
  * @param[in] event  The interrupt event mask, indicating the cause of the interrupt.
- *
- * @return void
  */
 void rt_hw_can_isr(struct rt_can_device *can, int event);
 
