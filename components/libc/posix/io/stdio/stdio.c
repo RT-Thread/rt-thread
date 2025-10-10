@@ -20,7 +20,7 @@
 #include <sys/errno.h>
 #include "posix/stdio.h"
 
-#define STDIO_DEVICE_NAME_MAX   32
+#define STDIO_DEVICE_NAME_MAX 32
 
 int sys_dup2(int oldfd, int new);
 
@@ -49,8 +49,8 @@ INIT_ENV_EXPORT(rt_posix_stdio_init);
 
 #define NEWLIB_VERSION_NUM (__NEWLIB__ * 10000U + __NEWLIB_MINOR__ * 100U + __NEWLIB_PATCHLEVEL__)
 
-static FILE* std_console = NULL;
-int rt_posix_stdio_set_console(const char* device_name, int mode)
+static FILE *std_console = NULL;
+int rt_posix_stdio_set_console(const char *device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -86,11 +86,11 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
 
         if (mode == O_RDWR)
         {
-            _GLOBAL_REENT->_stdin  = std_console;
+            _GLOBAL_REENT->_stdin = std_console;
         }
         else
         {
-            _GLOBAL_REENT->_stdin  = NULL;
+            _GLOBAL_REENT->_stdin = NULL;
         }
 
         if (mode == O_RDONLY)
@@ -107,9 +107,8 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
 #if defined(_REENT_SMALL) || !defined(__sdidinit)
     // newlib 新版本没有 __sdidinit
 #else
-    _GLOBAL_REENT->__sdidinit = 1;
+        _GLOBAL_REENT->__sdidinit = 1;
 #endif
-
     }
 
     if (std_console)
@@ -128,9 +127,9 @@ int rt_posix_stdio_get_console(void)
 
 #elif defined(RT_USING_MUSLLIBC)
 
-static FILE* std_console = NULL;
+static FILE *std_console = NULL;
 
-int rt_posix_stdio_set_console(const char* device_name, int mode)
+int rt_posix_stdio_set_console(const char *device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -139,9 +138,12 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
     rt_snprintf(name, sizeof(name) - 1, "/dev/%s", device_name);
     name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
 
-    if (mode == O_RDWR) file_mode = "r+";
-    else if (mode == O_WRONLY) file_mode = "wb";
-    else file_mode = "rb";
+    if (mode == O_RDWR)
+        file_mode = "r+";
+    else if (mode == O_WRONLY)
+        file_mode = "wb";
+    else
+        file_mode = "rb";
 
     fp = fopen(name, file_mode);
     if (fp)
@@ -180,7 +182,7 @@ int rt_posix_stdio_get_console(void)
 #else
 
 static int std_fd = -1;
-int rt_posix_stdio_set_console(const char* device_name, int mode)
+int rt_posix_stdio_set_console(const char *device_name, int mode)
 {
     int fd;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -201,7 +203,8 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
     return std_fd;
 }
 
-int rt_posix_stdio_get_console(void) {
+int rt_posix_stdio_get_console(void)
+{
     return std_fd;
 }
 #endif /* defined(RT_USING_NEWLIBC) */
