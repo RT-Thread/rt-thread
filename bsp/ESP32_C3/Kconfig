@@ -9,3 +9,53 @@ PKGS_DIR := packages
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
 rsource "drivers/Kconfig"
+# In bsp/ESP32_C3/Kconfig
+
+# Look for the section related to board peripherals or drivers
+
+menu "Board Level Drivers"
+
+    # 1. Define the option that allows the user to input the pin number
+    config RT_BSP_LED_PIN
+        int "Onboard LED Pin (GPIO Number)"
+        default 21  # Set a common default (e.g., GPIO 21 is often used on ESP32 boards)
+        range 0 40  # Set a valid range for ESP32 GPIO pins (0-40)
+        help
+          This sets the GPIO number for the on-board LED. 
+          Check your ESP32-C3 board schematic for the correct pin.
+
+endmenu # Board Level Drivers
+
+menu "ESP32-C3 On-Chip Drivers"
+
+    # BLE Dependency
+    config BSP_USING_BLE
+        bool "Enable Bluetooth Low Energy (BLE) Support"
+        default y
+        select ESP32C3_BLE_DRV # Link to the underlying chip driver config (name may vary)
+        help
+          Enable this to include the necessary BLE drivers and compile 
+          the BLE-related code blocks in main.c (via #ifdef BSP_USING_BLE).
+
+    # WiFi Dependency
+    config RT_USING_WIFI
+        bool "Enable Wi-Fi Support"
+        default y
+        select RT_USING_WIFI_DRIVER_ESP32C3 # Link to the underlying driver config (name may vary)
+        help
+          Enable this to include the Wi-Fi framework and driver support 
+          for network functionality.
+
+endmenu # ESP32-C3 On-Chip Drivers
+
+# --------------------------------------------------------------------------
+# Optional: Ensure core features are enabled when necessary
+# --------------------------------------------------------------------------
+
+# If your custom feature requires msh, you can select it like this:
+config BSP_USING_APP_COMMANDS
+    bool "Enable Custom Application Commands (app_data_cmd)"
+    default y
+    select FINSH_USING_MSH # This ensures the FinSH msh mode is enabled if this is selected
+    help
+      This enables the app_data_cmd function in main.c, which relies on the FinSH shell.

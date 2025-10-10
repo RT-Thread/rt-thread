@@ -1,6 +1,13 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+// Inside bsp/ESP32_C3/board.h
+
+// ... other existing definitions ...
+
+// Define the GPIO pin number for the on-board LED
+// *** You must replace 'X' with the correct physical GPIO number (e.g., 2, 8, 15, etc.) ***
+#define RT_BSP_LED_PIN    X
 /* RT-Thread Kernel */
 
 /* klibc options */
