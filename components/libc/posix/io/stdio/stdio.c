@@ -104,9 +104,12 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
             _GLOBAL_REENT->_stderr = std_console;
         }
 
-#if (NEWLIB_VERSION_NUM < 30400U) || (NEWLIB_VERSION_NUM >= 40000U && NEWLIB_VERSION_NUM < 40300U)
-        _GLOBAL_REENT->__sdidinit = 1; /* __sdidinit is obselete */
+#if defined(_REENT_SMALL) || !defined(__sdidinit)
+    // newlib 新版本没有 __sdidinit
+#else
+    _GLOBAL_REENT->__sdidinit = 1;
 #endif
+
     }
 
     if (std_console)
