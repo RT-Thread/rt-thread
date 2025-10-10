@@ -1,7 +1,12 @@
-menu "Utest Serial Testcase"
+menu "Serial Unit Testcases"
+
+    config UTEST_SERIAL_BYPASS
+        bool "Serial Bypass testcases"
+        default n
+        depends on RT_USING_SERIAL_BYPASS
 
     config UTEST_SERIAL_TC
-        bool "Serial testcase"
+        bool "Serial V2 testcases"
         default n
         depends on RT_USING_SERIAL_V2
 
@@ -37,8 +42,8 @@ menu "Utest Serial Testcase"
         if UTEST_SERIAL_POSIX_TC
 
             config RT_SERIAL_POSIX_TC_DEVICE_NAME
-            string "the device name for serial posix test"
-            default "dev/uart2"
+                string "the device name for serial posix test"
+                default "dev/uart2"
 
             config RT_SERIAL_POSIX_TC_SEND_ITERATIONS
                 int "the number of iterations for the posix test routine."
