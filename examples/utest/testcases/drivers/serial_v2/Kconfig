@@ -3,6 +3,7 @@ menu "Utest Serial Testcase"
     config UTEST_SERIAL_TC
         bool "Serial testcase"
         default n
+        depends on RT_USING_SERIAL_V2
 
     if UTEST_SERIAL_TC
 
