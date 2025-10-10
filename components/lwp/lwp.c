@@ -1,504 +1,265 @@
 /*
  * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
- * Change Logs:
- * Date           Author       Notes
- * 2006-03-12     Bernard      first version
- * 2018-11-02     heyuanjie    fix complie error in iar
- * 2021-02-03     lizhirui     add 64-bit arch support and riscv64 arch support
- * 2021-08-26     linzhenxing  add lwp_setcwd\lwp_getcwd
- * 2023-02-20     wangxiaoyao  inv icache before new app startup
- * 2023-02-20     wangxiaoyao  fix bug on foreground app switch
- * 2023-10-16     Shell        Support a new backtrace framework
- * 2023-11-17     xqyjlj       add process group and session support
- * 2023-11-30     Shell        add lwp_startup()
- */
-
-#define DBG_TAG "lwp"
-#define DBG_LVL DBG_INFO
-#include <rtdbg.h>
-
-#include <rthw.h>
-#include <rtthread.h>
-
-#include <dfs_file.h>
-#include <unistd.h>
-#include <stdio.h> /* rename() */
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/statfs.h> /* statfs() */
-
-#include <lwp_elf.h>
-
-#ifndef RT_USING_DFS
-#error "lwp need file system(RT_USING_DFS)"
-#endif
-
-#include "lwp_internal.h"
-#include "lwp_arch.h"
-#include "lwp_arch_comm.h"
-#include "lwp_signal.h"
-#include "lwp_dbg.h"
-#include <terminal/terminal.h>
-
-#ifdef ARCH_MM_MMU
-#include <lwp_user_mm.h>
-#endif /* end of ARCH_MM_MMU */
-
-
-#ifndef O_DIRECTORY
-#define O_DIRECTORY 0x200000
-#endif
-
-#ifndef O_BINARY
-#define O_BINARY 0x10000
-#endif
-
-#ifdef DFS_USING_WORKDIR
+@@ -60,6 +60,18 @@
 extern char working_directory[];
 #endif
 
+/**
+ * @brief Initializes the LWP (Light-Weight Process) component
+ *
+ * @return int Returns RT_EOK if all initializations succeed, otherwise returns
+ *         the error code from the first failed initialization
+ *
+ * @note This function performs initialization of various LWP subsystems in sequence:
+ *       1. Thread ID (TID) initialization
+ *       2. Process ID (PID) initialization
+ *       3. Channel component initialization
+ *       4. Futex (Fast Userspace Mutex) initialization
+ */
 static int lwp_component_init(void)
 {
     int rc;
-    if ((rc = lwp_tid_init()) != RT_EOK)
-    {
-        LOG_E("%s: lwp_component_init() failed", __func__);
-    }
-    else if ((rc = lwp_pid_init()) != RT_EOK)
-    {
-        LOG_E("%s: lwp_pid_init() failed", __func__);
-    }
-    else if ((rc = rt_channel_component_init()) != RT_EOK)
-    {
-        LOG_E("%s: rt_channel_component_init failed", __func__);
-    }
-    else if ((rc = lwp_futex_init()) != RT_EOK)
-    {
-        LOG_E("%s: lwp_futex_init() failed", __func__);
-    }
-    return rc;
+@@ -83,6 +95,15 @@ static int lwp_component_init(void)
 }
 INIT_COMPONENT_EXPORT(lwp_component_init);
 
+/**
+ * @brief Sets the current working directory for the calling LWP or system
+ *
+ * @param[in] buf Pointer to the path string to set as working directory
+ *
+ * @note This function handles both LWP-specific and system-wide working directories:
+ * - For LWPs, sets the working_directory in the LWP structure
+ * - For non-LWP threads, sets the global working_directory variable
+ */
 void lwp_setcwd(char *buf)
 {
     struct rt_lwp *lwp = RT_NULL;
-
-    if(strlen(buf) >= DFS_PATH_MAX)
-    {
-        rt_kprintf("buf too long!\n");
-        return ;
-    }
-
-    lwp = (struct rt_lwp *)rt_thread_self()->lwp;
-    if (lwp)
-    {
-        rt_strncpy(lwp->working_directory, buf, DFS_PATH_MAX - 1);
-    }
-    else
-    {
-        rt_strncpy(working_directory, buf, DFS_PATH_MAX - 1);
-    }
-
+@@ -106,6 +127,15 @@ void lwp_setcwd(char *buf)
     return ;
 }
 
+/**
+ * @brief Get the current working directory for the light-weight process
+ *
+ * @return char* Pointer to the current working directory string
+ *
+ * @note The function returns either:
+ *          - LWP's working directory (if valid and absolute path)
+ *          - System default working directory (if no LWP or invalid path)
+ */
 char *lwp_getcwd(void)
 {
     char *dir_buf = RT_NULL;
-    struct rt_lwp *lwp = RT_NULL;
-    rt_thread_t thread = rt_thread_self();
-
-    if (thread)
-    {
-        lwp = (struct rt_lwp *)thread->lwp;
-    }
-
-    if (lwp)
-    {
-        if(lwp->working_directory[0] != '/')
-        {
-            dir_buf = &working_directory[0];
-        }
-        else
-        {
-            dir_buf = &lwp->working_directory[0];
-        }
-    }
-    else
-        dir_buf = &working_directory[0];
-
-    return dir_buf;
+@@ -135,13 +165,28 @@ char *lwp_getcwd(void)
 }
 
 /**
  * RT-Thread light-weight process
+ * @brief Set the kernel stack pointer for the current thread
+ *
+ * @param[in] sp Pointer to the new kernel stack location
+ *
+ * @note It's typically used during context switching or thread initialization.
  */
 void lwp_set_kernel_sp(uint32_t *sp)
 {
     rt_thread_self()->kernel_sp = (rt_uint32_t *)sp;
 }
 
+/**
+ * @brief Get the kernel stack pointer for the current thread
+ *
+ * @return uint32_t* Pointer to the kernel stack
+ *
+ * @note Architecture-specific behavior:
+ * 1. With MMU: Simply returns the current thread's stack pointer
+ * 2. Without MMU: Checks interrupt context and returns either:
+ *    - Interrupted thread's kernel_sp (if in interrupt)
+ *    - Current thread's kernel_sp (if not in interrupt)
+ */
 uint32_t *lwp_get_kernel_sp(void)
 {
 #ifdef ARCH_MM_MMU
-    return (uint32_t *)rt_thread_self()->sp;
-#else
-    uint32_t* kernel_sp;
-    extern rt_uint32_t rt_interrupt_from_thread;
-    extern rt_uint32_t rt_thread_switch_interrupt_flag;
-    if (rt_thread_switch_interrupt_flag)
-    {
-        kernel_sp = (uint32_t *)((rt_thread_t)rt_container_of(rt_interrupt_from_thread, struct rt_thread, sp))->kernel_sp;
-    }
-    else
-    {
-        kernel_sp = (uint32_t *)rt_thread_self()->kernel_sp;
-    }
-    return kernel_sp;
+@@ -162,8 +207,15 @@ uint32_t *lwp_get_kernel_sp(void)
 #endif
 }
 
 
 /* lwp-thread clean up routine */
+/**
+ * @brief Clean up resources associated with a light-weight process thread
+ *
+ * @param[in] tid Pointer to the thread control block to be cleaned up
+ *
+ * @note This function performs cleanup operations for a thread associated with a light-weight process (LWP).
+ *       It handles signal detachment and reference count decrement for the LWP structure.
+ *
+ */
 void lwp_cleanup(struct rt_thread *tid)
 {
     struct rt_lwp *lwp;
-
-    if (tid == NULL)
-    {
-        LOG_I("%s: invalid parameter tid == NULL", __func__);
-        return;
-    }
-    else
-        LOG_D("cleanup thread: %s, stack_addr: 0x%x", tid->parent.name, tid->stack_addr);
-
-    /**
-     * Brief: lwp thread cleanup
-     *
-     * Note: Critical Section
-     * - thread control block (RW. It's ensured that no one else can access tcb
-     *   other than itself)
-     */
-    lwp = (struct rt_lwp *)tid->lwp;
-    lwp_thread_signal_detach(&tid->signal);
-
-    /* tty will be release in lwp_ref_dec() if ref is cleared */
-    lwp_ref_dec(lwp);
+@@ -191,6 +243,15 @@ void lwp_cleanup(struct rt_thread *tid)
     return;
 }
 
+/**
+ * @brief Set up standard I/O for a light-weight process
+ *
+ * @param[in] lwp Pointer to the light-weight process structure
+ *
+ * @note This function initializes the standard input, output, and error streams
+ *       for a light-weight process by opening the console device and associating
+ *       it with file descriptors 0, 1, and 2.
+ */
 static void lwp_execve_setup_stdio(struct rt_lwp *lwp)
 {
     struct dfs_fdtable *lwp_fdt;
-    struct dfs_file *cons_file;
-    int cons_fd;
-
-    lwp_fdt = &lwp->fdt;
-
-    /* open console */
-    cons_fd = open("/dev/console", O_RDWR);
-    if (cons_fd < 0)
-    {
-        LOG_E("%s: Cannot open console tty", __func__);
-        return ;
-    }
-    LOG_D("%s: open console as fd %d", __func__, cons_fd);
-
-    /* init 4 fds */
-    lwp_fdt->fds = rt_calloc(4, sizeof(void *));
-    if (lwp_fdt->fds)
-    {
-        cons_file = fd_get(cons_fd);
-        lwp_fdt->maxfd = 4;
-        fdt_fd_associate_file(lwp_fdt, 0, cons_file);
-        fdt_fd_associate_file(lwp_fdt, 1, cons_file);
-        fdt_fd_associate_file(lwp_fdt, 2, cons_file);
-    }
-
-    close(cons_fd);
+@@ -223,6 +284,14 @@ static void lwp_execve_setup_stdio(struct rt_lwp *lwp)
     return;
 }
 
+/**
+ * @brief Entry point for light-weight process threads
+ *
+ * @param[in] parameter Thread parameter (unused)
+ *
+ * @note This function is the main entry point for threads created within a light-weight process.
+ *       It handles thread initialization, debug mode setup, and transitions to user mode.
+ */
 static void _lwp_thread_entry(void *parameter)
 {
     rt_thread_t tid;
-    struct rt_lwp *lwp;
-
-    tid = rt_thread_self();
-    lwp = (struct rt_lwp *)tid->lwp;
-    tid->cleanup = lwp_cleanup;
-    tid->user_stack = RT_NULL;
-
-    if (lwp->debug)
-    {
-        lwp->bak_first_inst = *(uint32_t *)lwp->text_entry;
-        *(uint32_t *)lwp->text_entry = dbg_get_ins();
-        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, lwp->text_entry, sizeof(uint32_t));
-        icache_invalid_all();
-    }
-
-    /**
-     * without ASID support, it will be a special case when trying to run application
-     * and exit multiple times and a same page frame allocated to it bound to
-     * different text segment. Then we are in a situation where icache contains
-     * out-of-dated data and must be handle by the running core itself.
-     * with ASID support, this should be a rare case that ASID & page frame both
-     * identical to previous running application.
-     *
-     * For a new application loaded into memory, icache are seen as empty. And there
-     * should be nothing in the icache entry to match. So this icache invalidation
-     * operation should have barely influence.
-     */
-    rt_hw_icache_invalidate_all();
-
-#ifdef ARCH_MM_MMU
-    arch_start_umode(lwp->args, lwp->text_entry, (void *)USER_STACK_VEND, (char *)tid->stack_addr + tid->stack_size);
-#else
-    arch_start_umode(lwp->args, lwp->text_entry, lwp->data_entry, (void *)((uint32_t)lwp->data_entry + lwp->data_size));
+@@ -262,6 +331,15 @@ static void _lwp_thread_entry(void *parameter)
 #endif /* ARCH_MM_MMU */
 }
 
+/**
+ * @brief Get the current light-weight process
+ *
+ * @return Pointer to the current light-weight process structure
+ *         RT_NULL if no process is associated with current thread
+ *
+ * @note This function retrieves the light-weight process associated with the
+ *       currently running thread.
+ */
 struct rt_lwp *lwp_self(void)
 {
     rt_thread_t tid;
-
-    tid = rt_thread_self();
-    if (tid)
-    {
-        return (struct rt_lwp *)tid->lwp;
-    }
-
+@@ -275,6 +353,17 @@ struct rt_lwp *lwp_self(void)
     return RT_NULL;
 }
 
+/**
+ * @brief Register a child process with its parent
+ *
+ * @param[in] parent Pointer to the parent process structure
+ * @param[in] child  Pointer to the child process structure to register
+ *
+ * @return RT_EOK on success
+ *
+ * @note This function adds a child process to its parent's children list and
+ *       increases reference counts for both processes.
+ */
 rt_err_t lwp_children_register(struct rt_lwp *parent, struct rt_lwp *child)
 {
     /* lwp add to children link */
-    LWP_LOCK(parent);
-    child->sibling = parent->first_child;
-    parent->first_child = child;
-    child->parent = parent;
-    LWP_UNLOCK(parent);
-
-    LOG_D("%s(parent=%p, child=%p)", __func__, parent, child);
-    /* parent holds reference to child */
-    lwp_ref_inc(parent);
-    /* child holds reference to parent */
-    lwp_ref_inc(child);
-
+@@ -293,6 +382,17 @@ rt_err_t lwp_children_register(struct rt_lwp *parent, struct rt_lwp *child)
     return 0;
 }
 
+/**
+ * @brief Unregister a child process from its parent
+ *
+ * @param[in] parent Pointer to the parent process structure
+ * @param[in] child  Pointer to the child process structure to unregister
+ *
+ * @return RT_EOK on success
+ *
+ * @note This function removes a child process from its parent's children list and
+ *       decreases reference counts for both processes.
+ */
 rt_err_t lwp_children_unregister(struct rt_lwp *parent, struct rt_lwp *child)
 {
     struct rt_lwp **lwp_node;
-
-    LWP_LOCK(parent);
-    /* detach from children link */
-    lwp_node = &parent->first_child;
-    while (*lwp_node != child)
-    {
-        RT_ASSERT(*lwp_node != RT_NULL);
-        lwp_node = &(*lwp_node)->sibling;
-    }
-    (*lwp_node) = child->sibling;
-    child->parent = RT_NULL;
-    LWP_UNLOCK(parent);
-
-    LOG_D("%s(parent=%p, child=%p)", __func__, parent, child);
-    lwp_ref_dec(child);
-    lwp_ref_dec(parent);
-
+@@ -316,6 +416,23 @@ rt_err_t lwp_children_unregister(struct rt_lwp *parent, struct rt_lwp *child)
     return 0;
 }
 
+/**
+ * @brief Copy process arguments and environment variables from kernel space to user space.
+ *
+ * @param[in] lwp  Pointer to the light-weight process structure
+ * @param[in] argc Argument count
+ * @param[in] argv Argument vector
+ * @param[in] envp Environment variables
+ *
+ * @return Pointer to the process auxiliary structure on success
+ *         RT_NULL if memory allocation fails or arguments initialization fails
+ *
+ * @note This function performs the following operations:
+ *       1. Initializes argument information structure
+ *       2. Copies command line arguments to user space
+ *       3. Copies environment variables to user space
+ *       4. Returns the auxiliary structure containing copied data
+ */
 struct process_aux *argscopy(struct rt_lwp *lwp, int argc, char **argv, char **envp)
 {
     struct lwp_args_info ai;
-    rt_err_t error;
-    struct process_aux *ua;
-    const char **tail_argv[2] = {0};
-
-    error = lwp_args_init(&ai);
-    if (error)
-    {
-        return RT_NULL;
-    }
-
-    if (argc > 0)
-    {
-        tail_argv[0] = (void *)argv[argc - 1];
-        argv[argc - 1] = NULL;
-        lwp_args_put(&ai, (void *)argv, LWP_ARGS_TYPE_KARG);
-        lwp_args_put(&ai, (void *)tail_argv, LWP_ARGS_TYPE_KARG);
-    }
-    lwp_args_put(&ai, (void *)envp, LWP_ARGS_TYPE_KENVP);
-
-    ua = lwp_argscopy(lwp, &ai);
-    lwp_args_detach(&ai);
-
+@@ -344,6 +461,30 @@ struct process_aux *argscopy(struct rt_lwp *lwp, int argc, char **argv, char **e
     return ua;
 }
 
+/**
+ * @brief Creates and starts a new LWP by loading and executing the specified executable file.
+ *
+ * @param[in] filename Path to the executable file
+ * @param[in] debug     Debug flag (non-zero to enable debugging)
+ * @param[in] argc      Argument count
+ * @param[in] argv      Argument vector
+ * @param[in] envp      Environment variables
+ *
+ * @return Process ID (PID) of the new LWP on success
+ *         -EINVAL if filename is NULL
+ *         -EACCES if file is not executable
+ *         -ENOMEM if memory allocation fails
+ *         -RT_ERROR on other failures
+ *
+ * @note This function performs the following operations:
+ *       1. Validates input parameters
+ *       2. Creates new LWP structure
+ *       3. Initializes user space (for MMU systems)
+ *       4. Copies arguments and environment
+ *       5. Loads the executable
+ *       6. Sets up standard I/O
+ *       7. Creates and starts the main thread
+ */
 pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 {
     int result;
-    struct rt_lwp *lwp;
-    char *thread_name;
-    struct process_aux *aux;
-    int tid = 0;
-
-    if (filename == RT_NULL)
-    {
-        return -EINVAL;
-    }
-
-    if (access(filename, X_OK) != 0)
-    {
-        return -EACCES;
-    }
-
-    lwp = lwp_create(LWP_CREATE_FLAG_ALLOC_PID | LWP_CREATE_FLAG_NOTRACE_EXEC);
-
-    if (lwp == RT_NULL)
-    {
-        LOG_E("lwp struct out of memory!\n");
-        return -ENOMEM;
-    }
-    LOG_D("lwp malloc : %p, size: %d!", lwp, sizeof(struct rt_lwp));
-
-    if ((tid = lwp_tid_get()) == 0)
-    {
-        lwp_ref_dec(lwp);
-        return -ENOMEM;
-    }
-#ifdef ARCH_MM_MMU
-    if (lwp_user_space_init(lwp, 0) != 0)
-    {
-        lwp_tid_put(tid);
-        lwp_ref_dec(lwp);
-        return -ENOMEM;
-    }
-#endif
-
-    if ((aux = argscopy(lwp, argc, argv, envp)) == RT_NULL)
-    {
-        lwp_tid_put(tid);
-        lwp_ref_dec(lwp);
-        return -ENOMEM;
-    }
-
-    result = lwp_load(filename, lwp, RT_NULL, 0, aux);
-    if (result == RT_EOK)
-    {
-        rt_thread_t thread = RT_NULL;
-        rt_uint32_t priority = 25, tick = 200;
-
-        lwp_execve_setup_stdio(lwp);
-
-        /* obtain the base name */
-        thread_name = strrchr(filename, '/');
-        thread_name = thread_name ? thread_name + 1 : filename;
-#ifndef ARCH_MM_MMU
-        struct lwp_app_head *app_head = lwp->text_entry;
-        if (app_head->priority)
-        {
-            priority = app_head->priority;
-        }
-        if (app_head->tick)
-        {
-            tick = app_head->tick;
-        }
-#endif /* not defined ARCH_MM_MMU */
-        thread = rt_thread_create(thread_name, _lwp_thread_entry, RT_NULL,
-                LWP_TASK_STACK_SIZE, priority, tick);
-        if (thread != RT_NULL)
-        {
-            struct rt_lwp *self_lwp;
-            rt_session_t session;
-            rt_processgroup_t group;
-
-            thread->tid = tid;
-            lwp_tid_set_thread(tid, thread);
-            LOG_D("lwp kernel => (0x%08x, 0x%08x)\n", (rt_size_t)thread->stack_addr,
-                    (rt_size_t)thread->stack_addr + thread->stack_size);
-            self_lwp = lwp_self();
-
-            /* when create init, self_lwp == null */
-            if (self_lwp == RT_NULL && lwp_to_pid(lwp) != 1)
-            {
-                self_lwp = lwp_from_pid_and_lock(1);
-            }
-
-            if (self_lwp)
-            {
-                /* lwp add to children link */
-                lwp_children_register(self_lwp, lwp);
-            }
-
-            session = RT_NULL;
-            group = RT_NULL;
-
-            group = lwp_pgrp_create(lwp);
-            if (group)
-            {
-                lwp_pgrp_insert(group, lwp);
-                if (self_lwp == RT_NULL)
-                {
-                    session = lwp_session_create(lwp);
-                    lwp_session_insert(session, group);
-                }
-                else
-                {
-                    session = lwp_session_find(lwp_sid_get_byprocess(self_lwp));
-                    lwp_session_insert(session, group);
-                }
-            }
-
-            thread->lwp = lwp;
-#ifndef ARCH_MM_MMU
-            struct lwp_app_head *app_head = (struct lwp_app_head*)lwp->text_entry;
-            thread->user_stack = app_head->stack_offset ?
-                              (void *)(app_head->stack_offset -
-                                       app_head->data_offset +
-                                       (uint32_t)lwp->data_entry) : RT_NULL;
-            thread->user_stack_size = app_head->stack_size;
-            /* init data area */
-            rt_memset(lwp->data_entry, 0, lwp->data_size);
-            /* init user stack */
-            rt_memset(thread->user_stack, '#', thread->user_stack_size);
-#endif /* not defined ARCH_MM_MMU */
-            rt_list_insert_after(&lwp->t_grp, &thread->sibling);
-
-            lwp->did_exec = RT_TRUE;
-
-            if (debug && rt_dbg_ops)
-            {
-                lwp->debug = debug;
-                rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)0);
-            }
-
-            rt_thread_startup(thread);
-            return lwp_to_pid(lwp);
-        }
-    }
-
-    lwp_tid_put(tid);
-    lwp_ref_dec(lwp);
-
-    return -RT_ERROR;
-}
-
-#ifdef RT_USING_MUSLLIBC
-extern char **__environ;
-#else
+@@ -499,13 +640,38 @@ extern char **__environ;
 char **__environ = 0;
 #endif
 
+/**
+ * @brief Execute a new program in the current process context
+ *
+ * @param[in] filename Path to the executable file
+ * @param[in] debug Debug flag (non-zero enables debug mode)
+ * @param[in] argc Number of command line arguments
+ * @param[in] argv Array of command line argument strings
+ *
+ * @return Process ID (PID) of the new process on success
+ *         Negative error code on failure
+ *
+ * @note This is a wrapper function for lwp_execve.
+ *
+ * @see lwp_execve()
+ */
 pid_t exec(char *filename, int debug, int argc, char **argv)
 {
     setenv("OS", "RT-Thread", 1);
@@ -506,56 +267,47 @@ pid_t exec(char *filename, int debug, int argc, char **argv)
 }
 
 #ifdef ARCH_MM_MMU
+/**
+ * @brief Saves thread-specific user settings (TID register)
+ *
+ * @param[in,out] thread Pointer to the thread control block
+ *
+ * @note This function stores the architecture-specific TID register
+ *       into the specified thread's control block.This is typically used
+ *       when switching between threads to preserve thread-specific settings
+ */
+
 void lwp_user_setting_save(rt_thread_t thread)
 {
     if (thread)
-    {
-        thread->thread_idr = arch_get_tidr();
+@@ -514,6 +680,14 @@ void lwp_user_setting_save(rt_thread_t thread)
     }
 }
 
+/**
+ * @brief Restores thread-specific user settings (TID register and debug state)
+ *
+ * @param[in] thread Pointer to the thread control block
+ *
+ * @note This function restores architecture-specific Thread ID Register (TIDR) value
+ *       and debug-related settings for the specified thread.
+ */
 void lwp_user_setting_restore(rt_thread_t thread)
 {
     if (!thread)
-    {
-        return;
-    }
-#if !defined(ARCH_RISCV64)
-    /* tidr will be set in RESTORE_ALL in risc-v */
-    arch_set_tidr(thread->thread_idr);
-#endif
-
-    if (rt_dbg_ops)
-    {
-        struct rt_lwp *l = (struct rt_lwp *)thread->lwp;
-
-        if (l != 0)
-        {
-            rt_hw_set_process_id((size_t)l->pid);
-        }
-        else
-        {
-            rt_hw_set_process_id(0);
-        }
-        if (l && l->debug)
-        {
-            uint32_t step_type = 0;
-
-            step_type = dbg_step_type();
-
-            if ((step_type == 2) || (thread->step_exec && (step_type == 1)))
-            {
-                dbg_activate_step();
-            }
-            else
-            {
-                dbg_deactivate_step();
-            }
-        }
-    }
+@@ -556,20 +730,46 @@ void lwp_user_setting_restore(rt_thread_t thread)
 }
 #endif /* ARCH_MM_MMU */
 
+/**
+ * @brief Saves user thread context pointer
+ *
+ * @param[in] ctx Pointer to user thread context structure to be saved
+ *
+ * @note This function stores a pointer to user thread context in the current thread's
+ *       control block for later restoration. The context pointer is typically used
+ *       during thread context switching.
+ */
 void lwp_uthread_ctx_save(void *ctx)
 {
     rt_thread_t thread;
@@ -563,6 +315,12 @@ void lwp_uthread_ctx_save(void *ctx)
     thread->user_ctx.ctx = ctx;
 }
 
+/**
+ * @brief Restores the user thread context by clearing the context pointer
+ *
+ * @note Typically called during thread context switching to clean up any
+ *       previously saved user context.
+ */
 void lwp_uthread_ctx_restore(void)
 {
     rt_thread_t thread;
@@ -570,38 +328,322 @@ void lwp_uthread_ctx_restore(void)
     thread->user_ctx.ctx = RT_NULL;
 }
 
+/**
+ * @brief Prints a backtrace of the current thread's call stack
+ *
+ * @param[in] uthread The thread to backtrace (must be associated with an LWP)
+ * @param[in] frame Pointer to the initial stack frame
+ *
+ * @return RT_EOK on success, -RT_ERROR on failure
+ *
+ * @note This function prints a backtrace of the call stack for the specified user thread,
+ *       providing addresses that can be used with addr2line to get file and line information.
+ */
 rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *frame)
 {
     rt_err_t rc = -RT_ERROR;
-    long nesting = 0;
-    char **argv;
-    rt_lwp_t lwp;
+   212 changes: 122 additions & 90 deletions212  
+components/lwp/lwp.h
+Viewed
+Original file line number	Diff line number	Diff line change
+@@ -1,5 +1,5 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+@@ -63,17 +63,28 @@ extern "C" {
 
-    if (uthread && uthread->lwp && rt_scheduler_is_available())
-    {
-        lwp = uthread->lwp;
-        argv = lwp_get_command_line_args(lwp);
-        if (argv)
-        {
-            rt_kprintf("please use: addr2line -e %s -a -f\n", argv[0]);
-            lwp_free_command_line_args(argv);
-        }
-        else
-        {
-            rt_kprintf("please use: addr2line -e %s -a -f\n", lwp->cmd);
-        }
+#define LWP_ARG_MAX         8
 
-        while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
-        {
-            rt_kprintf(" 0x%lx", frame->pc);
-            if (rt_hw_backtrace_frame_unwind(uthread, frame))
-            {
-                break;
-            }
-            nesting++;
-        }
-        rt_kprintf("\n");
-        rc = RT_EOK;
-    }
-    return rc;
-}
+/**
+ * @brief Light-weight process memory objects structure
+ */
+struct rt_lwp_objs
+{
+    rt_aspace_t source;
+    struct rt_mem_obj mem_obj;
+    rt_aspace_t source;                  /**< The address space associated with this LWP */
+    struct rt_mem_obj mem_obj;           /**< The memory object containing memory management information */
+};
+
+/**
+ * @brief Light-weight process notification structure
+ */
+struct rt_lwp_notify
+{
+    /**
+     * @brief Callback function pointer for signal notification
+     * @param signalfd_queue Wait queue for signal file descriptors
+     * @param signo Signal number
+     */
+    void (*notify)(rt_wqueue_t *signalfd_queue, int signo);
+    rt_wqueue_t *signalfd_queue;
+    rt_slist_t list_node;
+    rt_wqueue_t *signalfd_queue;         /**< Wait queue for signal file descriptors */
+    rt_slist_t list_node;                /**< List node for notification */
+};
+
+struct lwp_tty;
+@@ -92,114 +103,123 @@ typedef struct rt_lwp *rt_lwp_t;
+typedef struct rt_session *rt_session_t;
+typedef struct rt_processgroup *rt_processgroup_t;
+
+/**
+ * @brief Session control structure for process groups
+ */
+struct rt_session {
+    struct rt_object    object;
+    rt_lwp_t            leader;
+    rt_list_t           processgroup;
+    pid_t               sid;
+    pid_t               foreground_pgid;
+    struct rt_mutex     mutex;
+    struct lwp_tty      *ctty;
+    rt_lwp_t            leader;          /**< Session leader process */
+    rt_list_t           processgroup;    /**< List head of process groups in this session */
+    pid_t               sid;             /**< Session ID */
+    pid_t               foreground_pgid; /**< Foreground process group ID */
+    struct rt_mutex     mutex;           /**< Mutex for session operations synchronization */
+    struct lwp_tty      *ctty;           /**< Control terminal */
+};
+
+/**
+ * @brief Process group control structure
+ */
+struct rt_processgroup {
+    struct rt_object    object;
+    rt_lwp_t            leader;
+    rt_list_t           process;
+    rt_list_t           pgrp_list_node;
+    pid_t               pgid;
+    pid_t               sid;
+    struct rt_session   *session;
+    struct rt_mutex     mutex;
+    rt_lwp_t            leader;         /**< Process group leader process */
+    rt_list_t           process;        /**< List head of processes in this process group */
+    rt_list_t           pgrp_list_node; /**< List node for process group */
+    pid_t               pgid;           /**< Process group ID */
+    pid_t               sid;            /**< Session ID */
+    struct rt_session   *session;       /**< Session pointer */
+    struct rt_mutex     mutex;          /**< Mutex for process group operations synchronization */
+
+    rt_atomic_t         ref;
+    rt_atomic_t         ref;            /**< Reference count for process group */
+
+    /* flags on process group */
+    unsigned int is_orphaned:1;
+    unsigned int is_orphaned:1;         /**< Whether the process group is orphaned */
+};
+
+/**
+ * @brief Light-weight process structure
+ */
+struct rt_lwp
+{
+#ifdef ARCH_MM_MMU
+    size_t end_heap;
+    rt_aspace_t aspace;
+    size_t end_heap;                            /**< End address of heap */
+    rt_aspace_t aspace;                         /**< Address space associated with this LWP */
+#else
+#ifdef ARCH_MM_MPU
+    struct rt_mpu_info mpu_info;
+    struct rt_mpu_info mpu_info;                /**< MPU information for this LWP */
+#endif /* ARCH_MM_MPU */
+#endif /* ARCH_MM_MMU */
+
+#ifdef RT_USING_SMP
+    int bind_cpu;
+    int bind_cpu;                               /**< CPU ID to which the LWP is bound */
+#endif
+
+    uint8_t lwp_type;
+    uint8_t lwp_type;                           /**< Type of LWP */
+    uint8_t reserv[3];
+
+    /* flags */
+    unsigned int terminated:1;
+    unsigned int background:1;
+    unsigned int term_ctrlterm:1;  /* have control terminal? */
+    unsigned int did_exec:1;       /* Whether exec has been performed */
+    unsigned int jobctl_stopped:1; /* job control: current proc is stopped */
+    unsigned int wait_reap_stp:1;  /* job control: has wait event for parent */
+    unsigned int sig_protected:1;  /* signal: protected proc cannot be killed or stopped */
+
+    struct rt_lwp *parent;          /* parent process */
+    struct rt_lwp *first_child;     /* first child process */
+    struct rt_lwp *sibling;         /* sibling(child) process */
+
+    struct rt_wqueue waitpid_waiters;
+    lwp_status_t lwp_status;
+
+    void *text_entry;
+    uint32_t text_size;
+    void *data_entry;
+    uint32_t data_size;
+
+    rt_atomic_t ref;
+    void *args;
+    uint32_t args_length;
+    pid_t pid;
+    pid_t sid;                      /* session ID */
+    pid_t pgid;                     /* process group ID */
+    struct rt_processgroup *pgrp;
+    rt_list_t pgrp_node;            /* process group node */
+    rt_list_t t_grp;                /* thread group */
+    rt_list_t timer;                /* POSIX timer object binding to a process */
+
+    struct dfs_fdtable fdt;
+    char cmd[RT_NAME_MAX];
+    char *exe_file;                 /* process file path */
+    unsigned int terminated:1;                  /**< Process termination flag */
+    unsigned int background:1;                  /**< Background process flag */
+    unsigned int term_ctrlterm:1;               /**< have control terminal? */
+    unsigned int did_exec:1;                    /**< Whether exec has been performed */
+    unsigned int jobctl_stopped:1;              /**< job control: current proc is stopped */
+    unsigned int wait_reap_stp:1;               /**< job control: has wait event for parent */
+    unsigned int sig_protected:1;               /**< signal: protected proc cannot be killed or stopped */
+
+    struct rt_lwp *parent;                      /**< parent process */
+    struct rt_lwp *first_child;                 /**< first child process */
+    struct rt_lwp *sibling;                     /**< sibling(child) process */
+
+    struct rt_wqueue waitpid_waiters;           /**< Wait queue for waitpid system call */
+    lwp_status_t lwp_status;                    /**< Status of LWP */
+
+    void *text_entry;                           /**< Entry point of text segment */
+    uint32_t text_size;                         /**< Size of text segment */
+    void *data_entry;                           /**< Entry point of data segment */
+    uint32_t data_size;                         /**< Size of data segment */
+
+    rt_atomic_t ref;                            /**< Reference count for LWP */
+    void *args;                                 /**< Arguments passed to LWP */
+    uint32_t args_length;                       /**< Length of arguments */
+    pid_t pid;                                  /**< Process ID */
+    pid_t sid;                                  /**< session ID */
+    pid_t pgid;                                 /**< process group ID */
+    struct rt_processgroup *pgrp;               /**< process group */
+    rt_list_t pgrp_node;                        /**< process group node */
+    rt_list_t t_grp;                            /**< thread group */
+    rt_list_t timer;                            /**< POSIX timer object binding to a process */
+
+    struct dfs_fdtable fdt;                     /**< File descriptor table */
+    char cmd[RT_NAME_MAX];                      /**< process name */
+    char *exe_file;                             /**< process file path */
+
+    /* POSIX signal */
+    struct lwp_signal signal;
+    struct lwp_signal signal;                   /**< Signal handling structure */
+
+    struct lwp_avl_struct *object_root;
+    struct rt_mutex object_mutex;
+    struct rt_user_context user_ctx;
+    struct lwp_avl_struct *object_root;         /**< AVL tree root for objects */
+    struct rt_mutex object_mutex;               /**< Mutex for object operations synchronization */
+    struct rt_user_context user_ctx;            /**< User context for LWP */
+
+    struct rt_wqueue wait_queue; /* for console */
+    struct tty_struct *tty; /* NULL if no tty */
+    struct rt_wqueue wait_queue;                /**< wait queue for console */
+    struct tty_struct *tty;                     /**< Controlling terminal, NULL if no tty */
+
+    struct lwp_avl_struct *address_search_head; /* for addressed object fast search */
+    char working_directory[DFS_PATH_MAX];
+    struct lwp_avl_struct *address_search_head; /**< for saving private futexes with a user-space address key */
+    char working_directory[DFS_PATH_MAX];       /**< Current working directory */
+
+    int debug;
+    rt_uint32_t bak_first_inst; /* backup of first instruction */
+    int debug;                                  /**< Debug flag */
+    rt_uint32_t bak_first_inst;                 /**< backup of first instruction */
+
+    struct rt_mutex lwp_lock;
+    struct rt_mutex lwp_lock;                   /**< Mutex for LWP operations synchronization */
+
+    rt_slist_t signalfd_notify_head;
+    rt_slist_t signalfd_notify_head;            /**< Signal file descriptor notification head */
+
+#ifdef LWP_ENABLE_ASID
+    uint64_t generation;
+    unsigned int asid;
+    uint64_t generation;                        /**< ASID generation */
+    unsigned int asid;                          /**< Address space ID */
+#endif
+    struct rusage rt_rusage;
+    struct rusage rt_rusage;                    /**< Resource usage information */
+
+#ifdef RT_USING_VDSO
+    void *vdso_vbase;
+    void *vdso_vbase;                           /**< VDSO base address */
+#endif
+};
+
+@@ -208,11 +228,14 @@ struct rt_lwp *lwp_self(void);
+rt_err_t lwp_children_register(struct rt_lwp *parent, struct rt_lwp *child);
+rt_err_t lwp_children_unregister(struct rt_lwp *parent, struct rt_lwp *child);
+
+/**
+ * @brief LWP exit request type
+ */
+enum lwp_exit_request_type
+{
+    LWP_EXIT_REQUEST_NONE = 0,
+    LWP_EXIT_REQUEST_TRIGGERED,
+    LWP_EXIT_REQUEST_IN_PROCESS,
+    LWP_EXIT_REQUEST_NONE = 0,                  /**< No exit request */
+    LWP_EXIT_REQUEST_TRIGGERED,                 /**< Exit request triggered */
+    LWP_EXIT_REQUEST_IN_PROCESS,                /**< Exit request in process */
+};
+struct termios *get_old_termios(void);
+void lwp_setcwd(char *buf);
+@@ -381,28 +404,37 @@ sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void));
+#define AT_EXECFN 31
+#define AT_SYSINFO_EHDR 33
+
+/**
+ * @brief Process auxiliary vector item
+ */
+struct process_aux_item
+{
+    size_t key;
+    size_t value;
+    size_t key;                            /**< Auxiliary vector key */
+    size_t value;                          /**< Auxiliary vector value */
+};
+
+/**
+ * @brief Process auxiliary vector
+ */
+struct process_aux
+{
+    struct process_aux_item item[AUX_ARRAY_ITEMS_NR];
+    struct process_aux_item item[AUX_ARRAY_ITEMS_NR]; /**< Auxiliary vector items */
+};
+
+/**
+ * @brief Debug operations structure
+ */
+struct dbg_ops_t
+{
+    int (*dbg)(int argc, char **argv);
+    uint32_t (*arch_get_ins)(void);
+    void (*arch_activate_step)(void);
+    void (*arch_deactivate_step)(void);
+    int (*check_debug_event)(struct rt_hw_exp_stack *regs, unsigned long esr);
+    rt_channel_t (*gdb_get_server_channel)(void);
+    int (*gdb_get_step_type)(void);
+    void (*lwp_check_debug_attach_req)(void *pc);
+    int (*lwp_check_debug_suspend)(void);
+    int (*dbg)(int argc, char **argv);                                         /**< Debug function */
+    uint32_t (*arch_get_ins)(void);                                            /**< Architecture-specific instruction getter */
+    void (*arch_activate_step)(void);                                          /**< Architecture-specific step activation */
+    void (*arch_deactivate_step)(void);                                        /**< Architecture-specific step deactivation */
+    int (*check_debug_event)(struct rt_hw_exp_stack *regs, unsigned long esr); /**< Debug event checker */
+    rt_channel_t (*gdb_get_server_channel)(void);                              /**< GDB server channel getter */
+    int (*gdb_get_step_type)(void);                                            /**< GDB step type getter */
+    void (*lwp_check_debug_attach_req)(void *pc);                              /**< LWP debug attach request checker */
+    int (*lwp_check_debug_suspend)(void);                                      /**< LWP debug suspend checker */
+};
+extern struct dbg_ops_t *rt_dbg_op
