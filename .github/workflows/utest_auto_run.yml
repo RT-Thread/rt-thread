@@ -1,8 +1,6 @@
 # Automation utest run script for the QEMU platform
-# Generate the corresponding config configuration for CI based on the configuration file under examples/utest/configs.
-
+# Generate the corresponding config configuration for CI based on the configuration file under .github/utest.
 name: utest_auto_run
-
 on:
   push:
     branches:
@@ -18,14 +16,8 @@ on:
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 permissions:
   contents: read
-
 jobs:
   test:
     runs-on: ubuntu-22.04
@@ -47,6 +39,70 @@ jobs:
           - { UTEST: "AARCH64",       RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"" }
           - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
           # - { UTEST: "AARCH64-smp",       RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"smp" }
+          - &a9_platform
+            UTEST: "A9"
+            RTT_BSP: "bsp/qemu-vexpress-a9"
+            QEMU_ARCH: "arm"
+            QEMU_MACHINE: "vexpress-a9"
+            SD_FILE: "sd.bin"
+            KERNEL: "standard"
+            SMP_RUN: ""
+
+          - UTEST: "A9-rtsmart"
+            RTT_BSP: "bsp/qemu-vexpress-a9"
+            QEMU_ARCH: "arm"
+            QEMU_MACHINE: "vexpress-a9"
+            SD_FILE: "sd.bin"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
+
+          - UTEST: "A9-smp"
+            RTT_BSP: "bsp/qemu-vexpress-a9"
+            QEMU_ARCH: "arm"
+            QEMU_MACHINE: "vexpress-a9"
+            SD_FILE: "sd.bin"
+            KERNEL: "standard"
+            SMP_RUN: "smp"
+
+          - UTEST: "RISCV"
+            RTT_BSP: "bsp/qemu-virt64-riscv"
+            QEMU_ARCH: "riscv64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "None"
+            KERNEL: "standard"
+            SMP_RUN: ""
+
+          - UTEST: "RISCV-rtsmart"
+            RTT_BSP: "bsp/qemu-virt64-riscv"
+            QEMU_ARCH: "riscv64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "None"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
+
+          - UTEST: "XUANTIE-rtsmart"
+            RTT_BSP: "bsp/xuantie/virt64/c906"
+            QEMU_ARCH: "riscv64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "sd.bin"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
+
+          - UTEST: "AARCH64"
+            RTT_BSP: "bsp/qemu-virt64-aarch64"
+            QEMU_ARCH: "aarch64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "sd.bin"
+            KERNEL: "standard"
+            SMP_RUN: ""
+
+          - UTEST: "AARCH64-rtsmart"
+            RTT_BSP: "bsp/qemu-virt64-aarch64"
+            QEMU_ARCH: "aarch64"
+            QEMU_MACHINE: "virt"
+            SD_FILE: "sd.bin"
+            KERNEL: "rtsmart"
+            SMP_RUN: ""
 
         config_file:
           - "default.cfg"
@@ -54,26 +110,24 @@ jobs:
         include:
           # only run on qemu-vexpress-a9
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "kernel/kernel_basic.cfg"
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "kernel/ipc.cfg"
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "kernel/mem.cfg"
+          - platform: *a9_platform
+            config_file: "kernel/object.cfg"
 
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "kernel/atomic_c11.cfg"
-          - platform: { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "kernel/atomic_c11.cfg"
+          - platform: *a9_platform
+            config_file: "dfs/dfs.cfg"
 
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+          - platform: *a9_platform
             config_file: "cpp11/cpp11.cfg"
 
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "components/lwip.cfg"
+          - platform: *a9_platform
+            config_file: "lwip/lwip.cfg"
+
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "components/netdev.cfg"
-          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "components/dfs.cfg"
+          - platform: *a9_platform
+            config_file: "netdev/netdev.cfg"
 
     env:
       TEST_QEMU_ARCH: ${{ matrix.platform.QEMU_ARCH }}
@@ -83,19 +137,16 @@ jobs:
       TEST_SD_FILE: ${{ matrix.platform.SD_FILE }}
     steps:
       - uses: actions/checkout@main
-
       - name: Install Tools
         shell: bash
         run: |
           sudo apt-get update
           sudo apt-get -yqq install scons qemu-system git
           pip3 install kconfiglib
-
       - name: Install ToolChains
         shell: bash
         run: |
           TOOLCHAIN_INSTALLED=""
-
           # Install Arm ToolChains
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "arm" && "${{ matrix.platform.KERNEL }}" == "standard" ]]; then
             echo "Starting install Arm ToolChains"
@@ -106,7 +157,6 @@ jobs:
             echo "RTT_CC_PREFIX=arm-none-eabi-" >> $GITHUB_ENV
             echo "TOOLCHAIN_INSTALLED=arm" >> $GITHUB_ENV
           fi
-
           # Install Arm Musl ToolChains
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "arm" && "${{ matrix.platform.KERNEL }}" == "rtsmart" ]]; then
             echo "Starting install Arm Musl ToolChains"
@@ -117,7 +167,6 @@ jobs:
             echo "RTT_CC_PREFIX=arm-linux-musleabi-" >> $GITHUB_ENV
             echo "TOOLCHAIN_INSTALLED=arm-musl" >> $GITHUB_ENV
           fi
-
           # Install RISC-V ToolChains
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "riscv64" && "${{ matrix.platform.KERNEL }}" == "standard" ]]; then
             echo "Starting install RISC-V ToolChains"
@@ -127,7 +176,6 @@ jobs:
             echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
             echo "TOOLCHAIN_INSTALLED=riscv" >> $GITHUB_ENV
           fi
-
           # Install RISC-V Musl ToolChains
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "riscv64" && "${{ matrix.platform.KERNEL }}" == "rtsmart" ]]; then
             echo "Starting install RISC-V Musl ToolChains"
@@ -138,7 +186,6 @@ jobs:
             echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
             echo "TOOLCHAIN_INSTALLED=riscv-musl" >> $GITHUB_ENV
           fi
-
           # Install RISC-V XUANTIE Musl ToolChains
           if [[ "${{ matrix.platform.UTEST }}" == "XUANTIE-rtsmart" && "${{ matrix.platform.QEMU_ARCH }}" == "riscv64" && "${{ matrix.platform.KERNEL }}" == "rtsmart" ]]; then
             echo "Starting install RISC-V XUANTIE Musl ToolChains"
@@ -149,7 +196,6 @@ jobs:
             echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
             echo "TOOLCHAIN_INSTALLED=riscv-musl" >> $GITHUB_ENV
           fi
-
           # Install AARCH64 ToolChains
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "aarch64" && "${{ matrix.platform.KERNEL }}" == "standard" ]]; then
             echo "Starting install AARCH64 ToolChains"
@@ -160,7 +206,6 @@ jobs:
             echo "RTT_CC_PREFIX=aarch64-none-elf-" >> $GITHUB_ENV
             echo "TOOLCHAIN_INSTALLED=aarch64" >> $GITHUB_ENV
           fi
-
           # Install AARCH64 Musl ToolChains
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "aarch64" && "${{ matrix.platform.KERNEL }}" == "rtsmart" ]]; then
             echo "Starting install AARCH64 Musl ToolChains"
@@ -171,7 +216,6 @@ jobs:
             echo "RTT_CC_PREFIX=aarch64-linux-musleabi-" >> $GITHUB_ENV
             echo "TOOLCHAIN_INSTALLED=aarch64-musl" >> $GITHUB_ENV
           fi
-
           # Install CPP11 Preprocessing Toolchain
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "arm" && "${{ matrix.config_file }}" == "cpp11/cpp11.cfg" && "${{ matrix.platform.KERNEL }}" == "standard" ]]; then
             sudo rm -f /opt/gcc-arm-none-eabi-10-2020-q4-major/arm-none-eabi/include/c++/10.2.1/thread
@@ -182,29 +226,24 @@ jobs:
             sudo cat /dev/null > /opt/gcc-arm-none-eabi-10-2020-q4-major/arm-none-eabi/include/sys/_pthreadtypes.h
             sed -i 's/-fno-exceptions/ /g' $TEST_BSP_ROOT/rtconfig.py
           fi
-
           if [ "$TOOLCHAIN_INSTALLED" == "None" ]; then
             echo "No valid toolchain installed, stopping the workflow."
           fi
-
       - name: Build BSP
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
         run: |
           # Whether plan to run SMP?
           if [[ "${{ matrix.platform.SMP_RUN }}"  == "smp" ]]; then
-            cat examples/utest/configs/smp/smp.cfg >> $TEST_BSP_ROOT/.config
+            cat .github/utest/smp/smp.cfg >> $TEST_BSP_ROOT/.config
           fi
-
           # Is the kernel rtsmart?
           if [[ "${{ matrix.platform.KERNEL }}"  == "rtsmart" ]]; then
-            cat examples/utest/configs/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
+            cat .github/utest/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
           fi
-
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
-          cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+          cat .github/utest/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
           scons --pyconfig-silent -C $TEST_BSP_ROOT
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
-
       - name: QEMU Run Test
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
         run: |
@@ -212,7 +251,6 @@ jobs:
             dd if=/dev/zero of=$TEST_BSP_ROOT/sd.bin bs=1024 count=65536
             mkfs.fat $TEST_BSP_ROOT/sd.bin
           fi
-
           if [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then 
             qemu-system-$TEST_QEMU_ARCH -M virt,gic-version=2 -cpu cortex-a53 -smp 4 -kernel $TEST_BSP_ROOT/rtthread.bin  -nographic \
             -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
@@ -225,22 +263,17 @@ jobs:
             dos2unix ./install/qemu_post_install_small.sh
             sudo chmod +x ./install/qemu_post_install_small.sh
             sudo ./install/qemu_post_install_small.sh
-
             QEMU_BIN="./install/bin/qemu-system-$TEST_QEMU_ARCH"
             [ ! -f "$QEMU_BIN" ] && echo "ERROR: $QEMU_BIN not found." && exit 1
-
             tmp_output=$(mktemp)
             ldd "$QEMU_BIN" > "$tmp_output" 2>&1
             missing_libs=$(grep "not found" "$tmp_output" | awk '{print $1}')
-
             for lib in $missing_libs; do
               base_lib=$(echo "$lib" | sed -E 's/\.so.*/\.so/')
-
               echo "🔍 修复基础库：$base_lib ..."
               sudo ln -s /usr/lib/x86_64-linux-gnu/$base_lib  /usr/lib/x86_64-linux-gnu/$lib
             done
             echo "✅ 所有缺失库已处理。"
-
             $QEMU_BIN -cpu c906fd -M $TEST_QEMU_MACHINE -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
             -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
             > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
@@ -258,7 +291,6 @@ jobs:
                 -kernel $TEST_BSP_ROOT/rtthread.bin  \
                 > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
           fi 
-
           QEMU_PID=$!
           disown $QEMU_PID
       
