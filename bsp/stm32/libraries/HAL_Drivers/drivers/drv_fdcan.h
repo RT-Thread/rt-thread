@@ -23,19 +23,19 @@ extern "C" {
 
 typedef struct
 {
-	const char *name;
-	FDCAN_HandleTypeDef fdcanHandle;
-	FDCAN_RxHeaderTypeDef RxHeader;
-	FDCAN_TxHeaderTypeDef TxHeader;
-	uint8_t u8RxDataBuffer[8];
-	uint8_t u8TxDataBuufer[8];
-	FDCAN_FilterTypeDef FilterConfig; /*FDCAN filter*/
-	struct rt_can_device device;      /* inherit from can device */
+    const char *name;
+    FDCAN_HandleTypeDef fdcanHandle;
+    FDCAN_RxHeaderTypeDef RxHeader;
+    FDCAN_TxHeaderTypeDef TxHeader;
+    uint8_t u8RxDataBuffer[8];
+    uint8_t u8TxDataBuufer[8];
+    FDCAN_FilterTypeDef FilterConfig; /*FDCAN filter*/
+    struct rt_can_device device;      /* inherit from can device */
 } stm32_fdcan_t;
 
 typedef struct {
-	uint32_t u32Baudrate;
-	struct rt_can_bit_timing cam_bit_timing;
+    uint32_t u32Baudrate;
+    struct rt_can_bit_timing cam_bit_timing;
 }stm32_fdcan_timing_t;
 
 #ifdef __cplusplus
