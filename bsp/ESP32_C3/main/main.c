@@ -1,3 +1,45 @@
+#include <rtthread.h>
+#include <stdlib.h> // For atoi()
+#include <finsh.h>  // For MSH_CMD_EXPORT
+
+// The global variable you want to expose to FinSH
+// NOTE: It must be a global or static global variable.
+int app_data_value = 100;
+
+// Function to handle reading and setting the variable
+// All FinSH commands in msh mode must have this signature: (int argc, char **argv)
+void app_data_cmd(int argc, char **argv)
+{
+    // Check if the FinSH C-style interpreter is disabled
+    #ifndef FINSH_USING_MSH
+    rt_kprintf("Error: This command requires msh mode enabled.\n");
+    return;
+    #endif
+
+    if (argc == 1)
+    {
+        // Case 1: No arguments (e.g., 'app_data_cmd') -> Read the current value
+        rt_kprintf("app_data_value (current): %d\n", app_data_value);
+    }
+    else if (argc == 2)
+    {
+        // Case 2: One argument (e.g., 'app_data_cmd 250') -> Set a new value
+        int new_value = atoi(argv[1]);
+        app_data_value = new_value;
+        rt_kprintf("app_data_value set to: %d\n", app_data_value);
+    }
+    else
+    {
+        // Case 3: Invalid number of arguments
+        rt_kprintf("Usage:\n");
+        rt_kprintf("  Read: app_data_cmd\n");
+        rt_kprintf("  Write: app_data_cmd <value>\n");
+    }
+}
+
+// Export the function as a FinSH command. 
+// Format: MSH_CMD_EXPORT(function_name, description)
+MSH_CMD_EXPORT(app_data_cmd, Get or set the application data value);
 /*
  * Copyright (c) 2021-2022, RT-Thread Development Team
  *
@@ -9,7 +51,7 @@
  * 2022-06-02     supperthomas  fix version
  * 2023-10-20     WCX1024979076 add wifi application
  */
-
+#define RT_BSP_LED_PIN    2
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
