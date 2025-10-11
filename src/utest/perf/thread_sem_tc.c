@@ -36,7 +36,7 @@ static void perf_thread_sem1(void *parameter)
             return;
         }
 
-        if (perf->count >= UTEST_SYS_PERF_TC_COUNT)
+        if (perf->count >= RT_UTEST_SYS_PERF_TC_COUNT)
         {
             rt_event_delete(perf_thread_event);
             rt_sem_delete(perf_thread_sem);
@@ -53,7 +53,7 @@ static void perf_thread_sem2(void *parameter)
     rt_uint32_t recv = 0;
     while (1)
     {
-        if (perf->count >= UTEST_SYS_PERF_TC_COUNT)
+        if (perf->count >= RT_UTEST_SYS_PERF_TC_COUNT)
         {
             rt_sem_release(complete_sem);
             return;

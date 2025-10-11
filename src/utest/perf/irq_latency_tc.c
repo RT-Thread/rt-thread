@@ -28,7 +28,7 @@ static void modify_time(rt_perf_t *perf)
 static rt_err_t timer_callback(rt_device_t dev, rt_size_t size)
 {
     rt_perf_stop(perf_local);
-    if (perf_local->count >= UTEST_SYS_PERF_TC_COUNT)
+    if (perf_local->count >= RT_UTEST_SYS_PERF_TC_COUNT)
     {
         rt_sem_release(complete_sem);
         return RT_EOK;
@@ -48,11 +48,11 @@ rt_err_t rt_perf_irq_latency(rt_perf_t *perf)
     rt_hwtimer_mode_t mode = HWTIMER_MODE_PERIOD;
 
     perf_local = perf;
-    hw_dev = rt_device_find(UTEST_HWTIMER_DEV_NAME);
+    hw_dev = rt_device_find(RT_UTEST_HWTIMER_DEV_NAME);
     if (hw_dev == RT_NULL)
     {
         ret = RT_ERROR;
-        LOG_E("hwtimer sample run failed! can't find %s device!", UTEST_HWTIMER_DEV_NAME);
+        LOG_E("hwtimer sample run failed! can't find %s device!", RT_UTEST_HWTIMER_DEV_NAME);
         return ret;
     }
 

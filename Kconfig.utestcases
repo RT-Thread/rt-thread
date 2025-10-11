@@ -14,7 +14,6 @@ rsource "examples/utest/testcases/drivers/ipc/Kconfig"
 rsource "examples/utest/testcases/posix/Kconfig"
 rsource "examples/utest/testcases/mm/Kconfig"
 rsource "examples/utest/testcases/tmpfs/Kconfig"
-rsource "examples/utest/testcases/perf/Kconfig"
 
 rsource "src/klibc/utest/Kconfig"
 

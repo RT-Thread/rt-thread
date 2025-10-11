@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2025-07-03     rcitach      test case for messagequeue
+ * 2025-07-03     rcitach      test case for mbox
  */
 
 #include <rtthread.h>
@@ -17,26 +17,27 @@
 
 static rt_sem_t sem1 = RT_NULL;
 static rt_sem_t complete_sem = RT_NULL;
-static rt_mq_t perf_thread_mq = RT_NULL;
+static rt_mailbox_t perf_thread_mbox = RT_NULL;
 
-static void perf_thread_mq1(void *parameter)
+static void perf_thread_mbox1(void *parameter)
 {
-    char recv = 0;
+    rt_ubase_t recv = 0;
+    rt_err_t ret = RT_EOK;
     rt_perf_t *perf = (rt_perf_t *)parameter;
     while (1)
     {
-        rt_mq_recv(perf_thread_mq, &recv, 1, RT_WAITING_FOREVER);
+        ret = rt_mb_recv(perf_thread_mbox, &recv, RT_WAITING_FOREVER);
         rt_perf_stop(perf);
-        if (recv != 'A')
+        if (ret != RT_EOK)
         {
-            LOG_E("mq recv value error!");
-            rt_mq_delete(perf_thread_mq);
+            LOG_E("mbox recv value error!\n");
+            rt_mb_delete(perf_thread_mbox);
             return;
         }
 
-        if (perf->count >= UTEST_SYS_PERF_TC_COUNT)
+        if (perf->count >= RT_UTEST_SYS_PERF_TC_COUNT)
         {
-            rt_mq_delete(perf_thread_mq);
+            rt_mb_delete(perf_thread_mbox);
             rt_sem_delete(sem1);
             return;
         }
@@ -44,24 +45,24 @@ static void perf_thread_mq1(void *parameter)
     }
 }
 
-static void perf_thread_mq2(void *parameter)
+static void perf_thread_mbox2(void *parameter)
 {
     rt_perf_t *perf = (rt_perf_t *)parameter;
-    char send = 'A';
+    rt_err_t ret = RT_EOK;
     while (1)
     {
-        if (perf->count >= UTEST_SYS_PERF_TC_COUNT)
+        if (perf->count >= RT_UTEST_SYS_PERF_TC_COUNT)
         {
             rt_sem_release(complete_sem);
             return;
         }
         rt_sem_take(sem1, RT_WAITING_FOREVER);
         rt_perf_start(perf);
-        rt_mq_send(perf_thread_mq, &send, 1);
+        rt_mb_send(perf_thread_mbox, 1);
     }
 }
 
-rt_err_t rt_perf_thread_mq(rt_perf_t *perf)
+rt_err_t rt_perf_thread_mbox(rt_perf_t *perf)
 {
     rt_thread_t thread1 = RT_NULL;
     rt_thread_t thread2 = RT_NULL;
@@ -69,32 +70,32 @@ rt_err_t rt_perf_thread_mq(rt_perf_t *perf)
 # if __STDC_VERSION__ >= 199901L
     rt_strcpy(perf->name,__func__);
 #else
-    rt_strcpy(perf->name,"rt_perf_thread_mq");
+    rt_strcpy(perf->name,"rt_perf_thread_mbox");
 #endif
 
-    perf_thread_mq = rt_mq_create("perf_thread_mq", 1, 1, RT_IPC_FLAG_PRIO);
-    if (perf_thread_mq == RT_NULL)
+    perf_thread_mbox = rt_mb_create("perf_thread_mbox", 1, RT_IPC_FLAG_PRIO);
+    if (perf_thread_mbox == RT_NULL)
     {
-        LOG_E("perf_thread_mq create failed.");
+        LOG_E("perf thread mbox create failed.");
         return -RT_ERROR;
     }
 
     sem1 = rt_sem_create("sem1", 1, RT_IPC_FLAG_FIFO);
     complete_sem = rt_sem_create("complete", 0, RT_IPC_FLAG_FIFO);
 
-    thread1 = rt_thread_create("perf_thread_mq1", perf_thread_mq1, perf,
+    thread1 = rt_thread_create("perf_thread_mbox1", perf_thread_mbox1, perf,
                                 THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (thread1 == RT_NULL)
     {
-        LOG_E("perf_thread_mq1 create failed.");
+        LOG_E("perf_thread_mbox1 create failed.");
         return -RT_ERROR;
     }
 
-    thread2 = rt_thread_create("perf_thread_mq2", perf_thread_mq2, perf,
+    thread2 = rt_thread_create("perf_thread_mbox2", perf_thread_mbox2, perf,
                                 THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
     if (thread2 == RT_NULL)
     {
-        LOG_E("perf_thread_mq2 create failed.");
+        LOG_E("perf_thread_mbox2 create failed.");
         return -RT_ERROR;
     }
 

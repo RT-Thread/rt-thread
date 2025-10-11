@@ -167,17 +167,17 @@ static rt_err_t utest_tc_init(void)
 {
     int ret = RT_EOK;
 
-    hw_dev = rt_device_find(UTEST_HWTIMER_DEV_NAME);
+    hw_dev = rt_device_find(RT_UTEST_HWTIMER_DEV_NAME);
     if (hw_dev == RT_NULL)
     {
         ret = RT_ERROR;
-        LOG_E("hwtimer sample run failed! can't find %s device!", UTEST_HWTIMER_DEV_NAME);
+        LOG_E("hwtimer sample run failed! can't find %s device!", RT_UTEST_HWTIMER_DEV_NAME);
         return ret;
     }
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
     if (ret != RT_EOK)
     {
-        LOG_E("open %s device failed!", UTEST_HWTIMER_DEV_NAME);
+        LOG_E("open %s device failed!", RT_UTEST_HWTIMER_DEV_NAME);
         return ret;
     }
 
@@ -198,5 +198,5 @@ static void testcase(void)
     UTEST_UNIT_RUN(rt_perf_all_test);
 }
 
-UTEST_TC_EXPORT(testcase, "testcase.pref.all", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.pref_test", utest_tc_init, utest_tc_cleanup, 10);
 
