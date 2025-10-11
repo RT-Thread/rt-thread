@@ -860,7 +860,6 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
     enetif = (struct eth_device*)dev->netif->state;
     rt_device_t device = (rt_device_t)(&(enetif->parent));
 
-
     level = rt_spin_lock_irqsave(&(dev->spinlock));
     dev->link_changed = 0x01;
     if (up == RT_TRUE)
@@ -896,6 +895,10 @@ err:
 /* NOTE: please not use it in interrupt when no RxThread exist */
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 {
+    struct eth_device* enetif;
+    enetif = (struct eth_device*)dev->netif->state;
+    rt_device_t device = (rt_device_t)(&(enetif->parent));
+
     if (up == RT_TRUE)
     {
         /* @note Check whether the eth device was successfully initialized, otherwise re-initialize */
