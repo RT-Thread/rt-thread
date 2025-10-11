@@ -105,8 +105,10 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
         }
 
 #if defined(_REENT_SMALL) || !defined(__sdidinit)
-    // newlib 新版本没有 __sdidinit
+    // Newlib >= 3.4.0 or small reent version: no __sdidinit field
+    // Do nothing
 #else
+    // Older newlib versions (typically < 3.4.0) still define __sdidinit
     _GLOBAL_REENT->__sdidinit = 1;
 #endif
 
