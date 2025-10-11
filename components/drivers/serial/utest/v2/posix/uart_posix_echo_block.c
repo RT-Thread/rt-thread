@@ -276,6 +276,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(tc_uart_api);
 }
 
-UTEST_TC_EXPORT(testcase, "testcases.drivers.uart_posix_echo_block", utest_tc_init, utest_tc_cleanup, 30);
+UTEST_TC_EXPORT(testcase, "components.drivers.serial.v2.uart_posix_echo_block", utest_tc_init, utest_tc_cleanup, 30);
 
 #endif /* TC_UART_USING_TC */

@@ -114,6 +114,6 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(uart_test_blocking_tx);
 }
-UTEST_TC_EXPORT(testcase, "uart_blocking_tx", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.drivers.serial.v2.uart_blocking_tx", utest_tc_init, utest_tc_cleanup, 10);
 
 #endif

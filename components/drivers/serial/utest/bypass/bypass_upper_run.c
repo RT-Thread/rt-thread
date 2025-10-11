@@ -126,4 +126,4 @@ static void _testcase(void)
     UTEST_UNIT_RUN(bypass_upper_002);
 }
 
-UTEST_TC_EXPORT(_testcase, "testcase.bypass.upper.001", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(_testcase, "components.drivers.serial.bypass_upper", utest_tc_init, utest_tc_cleanup, 10);

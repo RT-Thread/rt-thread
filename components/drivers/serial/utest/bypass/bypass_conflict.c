@@ -182,4 +182,4 @@ static void _testcase(void)
     UTEST_UNIT_RUN(bypass_rx_stress_003);
 }
 
-UTEST_TC_EXPORT(_testcase, "testcase.bypass.conflict.001", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(_testcase, "components.drivers.serial.bypass_rx_stress", utest_tc_init, utest_tc_cleanup, 10);
