@@ -615,10 +615,11 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
         {
             tmp_u32Errcount = st_DrvCan1.fdcanHandle.Instance->ECR;
             tmp_u32status = st_DrvCan1.fdcanHandle.Instance->PSR;
-
             st_DrvCan1.device.status.rcverrcnt = (tmp_u32Errcount>>8)&0x000000ff;
             st_DrvCan1.device.status.snderrcnt = (tmp_u32Errcount)&0x000000ff;
             st_DrvCan1.device.status.lasterrtype = tmp_u32status&0x000000007;
+            rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_TX_FAIL);
+
         }
 #endif /*BSP_USING_FDCAN1*/
     }
@@ -640,6 +641,7 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
             st_DrvCan2.device.status.rcverrcnt = (tmp_u32Errcount>>8)&0x000000ff;
             st_DrvCan2.device.status.snderrcnt = (tmp_u32Errcount)&0x000000ff;
             st_DrvCan2.device.status.lasterrtype = tmp_u32status&0x000000007;
+            rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_TX_FAIL);
         }
 #endif /*BSP_USING_FDCAN2*/
     }
