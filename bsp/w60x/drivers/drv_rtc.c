@@ -55,7 +55,7 @@ static int wm_set_timestamp(time_t timestamp)
     gmtime_r(&timestamp, &tblock);
 
     ctrl2  = tls_reg_read32(HR_PMU_RTC_CTRL2);  /* disable */
-    ctrl2 &= ~(1 << 16);
+    ctrl2 &= ~(BIT(16));
     tls_reg_write32(HR_PMU_RTC_CTRL2, ctrl2);
 
     ctrl1 |= tblock.tm_sec;
@@ -70,7 +70,7 @@ static int wm_set_timestamp(time_t timestamp)
     tls_reg_write32(HR_PMU_RTC_CTRL2, ctrl2);
 
     ctrl2  = tls_reg_read32(HR_PMU_RTC_CTRL2);/* enable */
-    ctrl2 |= (1 << 16);
+    ctrl2 |= BIT(16);
     tls_reg_write32(HR_PMU_RTC_CTRL2, ctrl2);
 
     return RT_EOK;
