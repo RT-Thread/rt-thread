@@ -20,7 +20,7 @@
 #include "gd32f5xx_dbg.h"
 #include "gd32f5xx_dci.h"
 #include "gd32f5xx_dma.h"
-//#include "gd32f5xx_enet.h"
+#include "gd32f5xx_enet.h"
 #include "gd32f5xx_exmc.h"
 #include "gd32f5xx_exti.h"
 #include "gd32f5xx_fmc.h"

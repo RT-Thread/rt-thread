@@ -377,7 +377,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDRAM"
         select RT_USING_SDRAM
         default n
-    
+
     menuconfig BSP_USING_CAN
         bool "Enable CAN BUS"
         default n
@@ -420,6 +420,11 @@ menu "On-chip Peripheral Drivers"
             endif
 
         endif
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
 
     source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
