@@ -111,7 +111,6 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
     // Older newlib versions (typically < 3.4.0) still define __sdidinit
     _GLOBAL_REENT->__sdidinit = 1;
 #endif
-
     }
 
     if (std_console)
