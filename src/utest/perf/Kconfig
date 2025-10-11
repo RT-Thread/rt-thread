@@ -1,0 +1,15 @@
+config RT_UTEST_SYS_PERF
+    bool "Performance Test"
+    default n
+
+config RT_UTEST_SYS_PERF_TC_COUNT
+    int "PerfTest: Number of cycles"
+    default 1000
+    depends on RT_UTEST_SYS_PERF
+
+config RT_UTEST_HWTIMER_DEV_NAME
+    string "PerfTest: Hardware timer device name"
+    default "timer0"
+    depends on RT_USING_HWTIMER && RT_UTEST_SYS_PERF
+    help
+        Specify the hardware timer device name used for context switch testing (e.g., timer0).

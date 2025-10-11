@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2025-07-03     rcitach      test case for context_switch
+ * 2025-07-03     rcitach      test case for event
  */
 
 #include <rtthread.h>
@@ -15,50 +15,56 @@
 #include <utest_assert.h>
 #include <perf_tc.h>
 
-static rt_sem_t sem1, sem2;
+#define EVENT_FLAG          (1 << 0)
+static rt_event_t perf_thread_event = RT_NULL;
+static rt_sem_t sem1 = RT_NULL;
 static rt_sem_t complete_sem = RT_NULL;
-
-static void local_modify_time(rt_perf_t *perf)
-{
-    if(perf)
-        perf->real_time = perf->real_time - perf->tmp_time;
-}
 
 static void perf_thread_event1(void *parameter)
 {
+    rt_err_t ret = RT_EOK;
+    rt_uint32_t recv = 0;
+    rt_perf_t *perf = (rt_perf_t *)parameter;
     while (1)
     {
-        rt_sem_take(sem1, RT_WAITING_FOREVER);
-        rt_sem_release(sem2);
+        ret = rt_event_recv(perf_thread_event, EVENT_FLAG,
+                           (RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR),
+                           RT_WAITING_FOREVER, &recv);
+        rt_perf_stop(perf);
+        if (ret != RT_EOK)
+        {
+            LOG_E("event recv error!");
+            rt_event_delete(perf_thread_event);
+            return;
+        }
+
+        if (perf->count >= RT_UTEST_SYS_PERF_TC_COUNT)
+        {
+            rt_event_delete(perf_thread_event);
+            rt_sem_delete(sem1);
+            return;
+        }
+        rt_sem_release(sem1);
     }
 }
 
 static void perf_thread_event2(void *parameter)
 {
     rt_perf_t *perf = (rt_perf_t *)parameter;
-
-    for (rt_uint32_t i = 0; i < UTEST_SYS_PERF_TC_COUNT; i++)
+    while (1)
     {
-        perf->tmp_time = 0;
+        if (perf->count >= RT_UTEST_SYS_PERF_TC_COUNT)
+        {
+            rt_sem_release(complete_sem);
+            return;
+        }
+        rt_sem_take(sem1, RT_WAITING_FOREVER);
         rt_perf_start(perf);
-        rt_sem_take(sem2, RT_WAITING_FOREVER);
-        rt_sem_release(sem2);
-        rt_perf_stop(perf);
-
-        rt_mutex_take(perf->lock,RT_WAITING_FOREVER);
-        perf->count -= 1;
-        perf->tmp_time = perf->real_time;
-        rt_mutex_release(perf->lock);
-
-        rt_perf_start(perf);
-        rt_sem_take(sem2, RT_WAITING_FOREVER);
-        rt_sem_release(sem1);
-        rt_perf_stop(perf);
+        rt_event_send(perf_thread_event, EVENT_FLAG);
     }
-    rt_sem_release(complete_sem);
 }
 
-rt_err_t context_switch_test(rt_perf_t *perf)
+rt_err_t rt_perf_thread_event(rt_perf_t *perf)
 {
     rt_thread_t thread1 = RT_NULL;
     rt_thread_t thread2 = RT_NULL;
@@ -66,13 +72,18 @@ rt_err_t context_switch_test(rt_perf_t *perf)
 # if __STDC_VERSION__ >= 199901L
     rt_strcpy(perf->name,__func__);
 #else
-    rt_strcpy(perf->name,"context_switch_test");
+    rt_strcpy(perf->name,"rt_perf_thread_event");
 #endif
 
-    perf->local_modify = local_modify_time;
+    perf_thread_event = rt_event_create("perf_thread_event", RT_IPC_FLAG_PRIO);
+    if (perf_thread_event == RT_NULL)
+    {
+        LOG_E("perf_thread_event create failed.");
+        return -RT_ERROR;
+    }
+
     sem1 = rt_sem_create("sem1", 1, RT_IPC_FLAG_FIFO);
-    sem2 = rt_sem_create("sem2", 0, RT_IPC_FLAG_FIFO);
-    complete_sem = rt_sem_create("complete_sem", 0, RT_IPC_FLAG_FIFO);
+    complete_sem = rt_sem_create("complete", 0, RT_IPC_FLAG_FIFO);
 
     thread1 = rt_thread_create("perf_thread_event1", perf_thread_event1, perf,
                                 THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
@@ -94,13 +105,8 @@ rt_err_t context_switch_test(rt_perf_t *perf)
     rt_thread_startup(thread2);
 
     rt_sem_take(complete_sem, RT_WAITING_FOREVER);
-
     rt_perf_dump(perf);
-    rt_thread_delete(thread1);
     rt_sem_delete(complete_sem);
-    rt_sem_delete(sem1);
-    rt_sem_delete(sem2);
-
     return RT_EOK;
 }
 

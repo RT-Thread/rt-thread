@@ -84,6 +84,8 @@ config UTEST_MEMPOOL_TC
     default n
     depends on RT_USING_MEMPOOL
 
+rsource "perf/Kconfig"
+
 if RT_USING_SMP
 rsource "smp/Kconfig"
 endif
