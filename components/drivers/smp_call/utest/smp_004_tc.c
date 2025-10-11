@@ -207,4 +207,4 @@ static void _testcase(void)
     UTEST_UNIT_RUN(_test_reentr_isr_main);
 }
 
-UTEST_TC_EXPORT(_testcase, "testcase.smp.smoke.004", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(_testcase, "components.drivers.smp_call.smoke_004", utest_tc_init, utest_tc_cleanup, 10);

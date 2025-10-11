@@ -14,7 +14,6 @@ rsource "examples/utest/testcases/drivers/ipc/Kconfig"
 rsource "examples/utest/testcases/posix/Kconfig"
 rsource "examples/utest/testcases/mm/Kconfig"
 rsource "examples/utest/testcases/tmpfs/Kconfig"
-rsource "examples/utest/testcases/smp_call/Kconfig"
 rsource "examples/utest/testcases/perf/Kconfig"
 
 rsource "src/klibc/utest/Kconfig"
@@ -22,7 +21,7 @@ rsource "src/klibc/utest/Kconfig"
 rsource "components/drivers/core/utest/Kconfig"
 rsource "components/drivers/audio/utest/Kconfig"
 rsource "components/drivers/serial/utest/Kconfig"
-
+rsource "components/drivers/smp_call/utest/Kconfig"
 rsource "components/dfs/utest/Kconfig"
 rsource "components/net/utest/Kconfig"
 
