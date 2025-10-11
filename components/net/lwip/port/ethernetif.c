@@ -496,11 +496,14 @@ static err_t eth_netif_device_init(struct netif *netif)
         device = (rt_device_t) ethif;
         if (rt_device_init(device) != RT_EOK)
         {
-            return ERR_IF;
+            rt_kprintf("eth device initialization failed!\n");
         }
-        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+        else
         {
-            return ERR_IF;
+            if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+            {
+                rt_kprintf("eth device open failed!\n");
+            }
         }
 
         /* copy device flags to netif flags */
@@ -684,11 +687,14 @@ static err_t af_unix_eth_netif_device_init(struct netif *netif)
         device = (rt_device_t) ethif;
         if (rt_device_init(device) != RT_EOK)
         {
-            return ERR_IF;
+            rt_kprintf("eth device initialization failed!\n");
         }
-        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+        else
         {
-            return ERR_IF;
+            if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+            {
+                rt_kprintf("eth device open failed!\n");
+            }
         }
 
         /* copy device flags to netif flags */
@@ -850,23 +856,64 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 
     RT_ASSERT(dev != RT_NULL);
 
+    struct eth_device* enetif;
+    enetif = (struct eth_device*)dev->netif->state;
+    rt_device_t device = (rt_device_t)(&(enetif->parent));
+
+
     level = rt_spin_lock_irqsave(&(dev->spinlock));
     dev->link_changed = 0x01;
     if (up == RT_TRUE)
+    {
+        /* @note Check whether the eth device was successfully initialized, otherwise re-initialize */
+        if (!(device->flag & RT_DEVICE_FLAG_ACTIVATED))
+        {
+            if (rt_device_init(device) != RT_EOK)
+            {
+                rt_kprintf("eth device initialization failed!\n");
+                goto err;
+            }
+            if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+            {
+                rt_kprintf("eth device open failed!\n");
+                goto err;
+            }
+        }
         dev->link_status = 0x01;
+    }
     else
         dev->link_status = 0x00;
     rt_spin_unlock_irqrestore(&(dev->spinlock), level);
 
     /* post message to ethernet thread */
     return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
+
+err:
+    rt_spin_unlock_irqrestore(&(dev->spinlock), level);
+    return -RT_ERROR;
 }
 #else
 /* NOTE: please not use it in interrupt when no RxThread exist */
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 {
     if (up == RT_TRUE)
+    {
+        /* @note Check whether the eth device was successfully initialized, otherwise re-initialize */
+        if (!(device->flag & RT_DEVICE_FLAG_ACTIVATED))
+        {
+            if (rt_device_init(device) != RT_EOK)
+            {
+                rt_kprintf("eth device initialization failed!\n");
+                return -RT_ERROR;
+            }
+            if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+            {
+                rt_kprintf("eth device open failed!\n");
+                return -RT_ERROR;
+            }
+        }
         netifapi_netif_set_link_up(dev->netif);
+    }
     else
         netifapi_netif_set_link_down(dev->netif);
 
