@@ -50,6 +50,7 @@
         <peripheral name="PORT4" group="PORT">
             <slot name="P400" secure="true"/>
             <slot name="P401" secure="true"/>
+            <slot name="P402" secure="true"/>
             <slot name="P405" secure="true"/>
             <slot name="P406" secure="true"/>
             <slot name="P407" secure="true"/>
@@ -141,11 +142,13 @@
             <slot name="PB06" secure="true"/>
             <slot name="PB07" secure="true"/>
         </peripheral>
+        <peripheral name="RTC" security=""/>
         <peripheral name="ICU">
             <slot name="IRQ0" secure="true"/>
             <slot name="IRQ1" secure="true"/>
             <slot name="IRQ2" secure="true"/>
             <slot name="IRQ3" secure="true"/>
+            <slot name="IRQ4" secure="true"/>
         </peripheral>
     </partition>
 </azone>

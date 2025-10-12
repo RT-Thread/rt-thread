@@ -15,6 +15,9 @@
 #include "hal_data.h"
 
 #ifdef BSP_USING_ONCHIP_RTC
+#ifdef BSP_USING_ONCHIP_RTC0
+
+
 
 #define DBG_TAG              "drv.rtc"
 #ifdef DRV_DEBUG
@@ -28,10 +31,11 @@ static rt_err_t ra_rtc_init(void)
 {
     rt_err_t result = RT_EOK;
 
-    if (R_RTC_Open(&g_rtc_ctrl, &g_rtc_cfg) != RT_EOK)
+    if (R_RTC_Open(&g_rtc0_ctrl, &g_rtc0_cfg) != RT_EOK)
     {
         LOG_E("rtc init failed.");
         result = -RT_ERROR;
+
     }
 
 #if defined(SOC_SERIES_R9A07G0)
@@ -46,7 +50,7 @@ static rt_err_t ra_rtc_init(void)
         .tm_year = 1900,
     };
 
-    R_RTC_CalendarTimeSet(&g_rtc_ctrl, &default_set_time);
+    R_RTC_CalendarTimeSet(&g_rtc0_ctrl, &default_set_time);
 #endif
     return result;
 }
@@ -56,7 +60,7 @@ static time_t get_rtc_timestamp(void)
     struct tm tm_new = {0};
     rtc_time_t g_current_time = {0};
 
-    R_RTC_CalendarTimeGet(&g_rtc_ctrl, &g_current_time);
+    R_RTC_CalendarTimeGet(&g_rtc0_ctrl, &g_current_time);
 
     tm_new.tm_year  = g_current_time.tm_year;
     tm_new.tm_mon   = g_current_time.tm_mon;
@@ -100,7 +104,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     g_current_time.tm_wday   = now.tm_wday;
     g_current_time.tm_yday   = now.tm_yday;
 
-    if (R_RTC_CalendarTimeSet(&g_rtc_ctrl, &g_current_time) != FSP_SUCCESS)
+    if (R_RTC_CalendarTimeSet(&g_rtc0_ctrl, &g_current_time) != FSP_SUCCESS)
     {
         LOG_E("set rtc time failed.");
         return -RT_ERROR;
@@ -139,7 +143,7 @@ static rt_err_t ra_get_alarm(struct rt_rtc_wkalarm *alarm)
         .dayofweek_match  =  RT_FALSE,
     };
 
-    if (RT_EOK == R_RTC_CalendarAlarmGet(&g_rtc_ctrl, &alarm_time_get))
+    if (RT_EOK == R_RTC_CalendarAlarmGet(&g_rtc0_ctrl, &alarm_time_get))
     {
         wkalarm->tm_hour = alarm_time_get.time.tm_hour;
         wkalarm->tm_min  = alarm_time_get.time.tm_min;
@@ -173,7 +177,7 @@ static rt_err_t ra_set_alarm(struct rt_rtc_wkalarm *alarm)
     alarm_time_set.time.tm_sec  = wkalarm->tm_sec;
     if (1 == wkalarm->enable)
     {
-        if (RT_EOK != R_RTC_CalendarAlarmSet(&g_rtc_ctrl, &alarm_time_set))
+        if (RT_EOK != R_RTC_CalendarAlarmSet(&g_rtc0_ctrl, &alarm_time_set))
         {
             LOG_E("Calendar alarm Set failed.");
             result = -RT_ERROR;
@@ -184,7 +188,7 @@ static rt_err_t ra_set_alarm(struct rt_rtc_wkalarm *alarm)
         alarm_time_set.sec_match        =  RT_FALSE;
         alarm_time_set.min_match        =  RT_FALSE;
         alarm_time_set.hour_match       =  RT_FALSE;
-        if (RT_EOK != R_RTC_CalendarAlarmSet(&g_rtc_ctrl, &alarm_time_set))
+        if (RT_EOK != R_RTC_CalendarAlarmSet(&g_rtc0_ctrl, &alarm_time_set))
         {
             LOG_E("Calendar alarm Stop failed.");
             result = -RT_ERROR;
@@ -235,4 +239,5 @@ static int rt_hw_rtc_init(void)
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
+#endif
 #endif

@@ -13,8 +13,13 @@ config BSP_USING_WDT
     default n
 
 menuconfig BSP_USING_ONCHIP_RTC
-    bool "Enable RTC"
-    select RT_USING_RTC
-    default n
-    if BSP_USING_ONCHIP_RTC
-    endif
+    bool "Enable RTC"  
+    select RT_USING_RTC                          
+    default n                                    
+    if BSP_USING_ONCHIP_RTC                      
+        menu "RTC Instance Configuration"        
+            config BSP_USING_ONCHIP_RTC0
+                bool "Enable RTC0 Instance"      
+                default n                       
+        endmenu
+    endif 

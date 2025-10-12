@@ -152,6 +152,7 @@
       <configSetting altId="p600.output.low" configurationId="p600"/>
       <configSetting altId="p809.output.low" configurationId="p809"/>
       <configSetting altId="pa13.output.high" configurationId="pa13"/>
+      <configSetting altId="rtc.rtcic0.p402" configurationId="rtc.rtcic0" isUsedByDriver="true"/>
       <configSetting altId="sci2.rxd2.pa02" configurationId="sci2.rxd2"/>
       <configSetting altId="sci2.txd2.pa03" configurationId="sci2.txd2"/>
       <configSetting altId="sci3.rxd3.p408" configurationId="sci3.rxd3"/>

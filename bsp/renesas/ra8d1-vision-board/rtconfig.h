@@ -151,6 +151,7 @@
 #define RT_USING_SERIAL_V2
 #define RT_SERIAL_BUF_STRATEGY_OVERWRITE
 #define RT_SERIAL_USING_DMA
+#define RT_USING_RTC
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -412,6 +413,12 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+#define BSP_USING_ONCHIP_RTC
+
+/* RTC Instance Configuration */
+
+#define BSP_USING_ONCHIP_RTC0
+/* end of RTC Instance Configuration */
 #define BSP_USING_UART
 #define BSP_USING_UART9
 #define BSP_UART9_RX_BUFSIZE 256

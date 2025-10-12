@@ -1,4 +1,5 @@
-#Fri Dec 29 16:24:19 CST 2023
+#Sun Oct 12 14:14:53 CST 2025
+com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_rtc\#\#\#\#5.1.0/libraries=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#BSP\#\#Board\#\#ra8d1_ek\#\#\#\#5.1.0/all=3509892698,ra/board/ra8d1_ek/board_leds.h|3819758545,ra/board/ra8d1_ek/board_sdram.c|2603656871,ra/board/ra8d1_ek/board_leds.c|3640013112,ra/board/ra8d1_ek/board_sdram.h|105041966,ra/board/ra8d1_ek/board_init.h|95488157,ra/board/ra8d1_ek/board.h|1628416776,ra/board/ra8d1_ek/board_ethernet_phy.h|777474786,ra/board/ra8d1_ek/board_init.c
 com.renesas.cdt.ddsc.content/com.renesas.cdt.ddsc.content.defaultlinkerscript=script/fsp.scat
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_ioport\#\#\#\#5.1.0/all=3058606325,ra/fsp/inc/instances/r_ioport.h|1896254027,ra/fsp/inc/api/r_ioport_api.h|3002446768,ra/fsp/src/r_ioport/r_ioport.c
@@ -6,7 +7,7 @@ com.renesas.cdt.ddsc.contentgen.options/options/suppresswarningspaths=ra/arm
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#BSP\#\#ra8d1\#\#device\#\#R7FA8D1BHECBD\#\#5.1.0/all=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_ioport\#\#\#\#5.1.0/libraries=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#BSP\#\#ra8d1\#\#device\#\#\#\#5.1.0/libraries=
-com.renesas.cdt.ddsc.settingseditor/com.renesas.cdt.ddsc.settingseditor.active_page=DeviceAndToolSelection
+com.renesas.cdt.ddsc.settingseditor/com.renesas.cdt.ddsc.settingseditor.active_page=SWPConfigurator
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#BSP\#\#ra8d1\#\#device\#\#\#\#5.1.0/all=3387474234,ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/R7FA8D1BH.h
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#BSP\#\#ra8d1\#\#fsp\#\#\#\#5.1.0/libraries=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_sci_b_uart\#\#\#\#5.1.0/libraries=
@@ -15,6 +16,7 @@ com.renesas.cdt.ddsc.packs.componentfiles/Arm\#\#CMSIS\#\#CMSIS5\#\#CoreM\#\#\#\
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_sci_b_uart\#\#\#\#5.1.0/all=419014891,ra/fsp/inc/instances/r_sci_b_uart.h|3115705082,ra/fsp/inc/api/r_transfer_api.h|1476071459,ra/fsp/inc/api/r_uart_api.h|3063216256,ra/fsp/src/r_sci_b_uart/r_sci_b_uart.c
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#Common\#\#all\#\#fsp_common\#\#\#\#5.1.0/libraries=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#BSP\#\#ra8d1\#\#device\#\#R7FA8D1BHECBD\#\#5.1.0/libraries=
+com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_rtc\#\#\#\#5.1.0/all=509675779,ra/fsp/inc/instances/r_rtc.h|2730393667,ra/fsp/inc/api/r_rtc_api.h|236871148,ra/fsp/inc/api/r_cgc_api.h|965146510,ra/fsp/src/r_rtc/r_rtc.c
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#Common\#\#all\#\#fsp_common\#\#\#\#5.1.0/all=3217525171,ra/fsp/inc/fsp_version.h|1896254027,ra/fsp/inc/api/r_ioport_api.h|2560512765,ra/fsp/inc/api/bsp_api.h|1037141086,ra/fsp/inc/api/fsp_common_api.h|4290340792,ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/system.h|3088407548,ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/renesas.h
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#BSP\#\#Board\#\#ra8d1_ek\#\#\#\#5.1.0/libraries=
 com.renesas.cdt.ddsc.threads.configurator/collapse/module.driver.uart_on_sci_b_uart.1514241209=false
