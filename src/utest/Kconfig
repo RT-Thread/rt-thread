@@ -1,6 +1,6 @@
 menu "Kernel Testcase"
 
-config UTEST_MEMHEAP_TC
+config RT_UTEST_MEMHEAP
     bool "memheap stability test"
     default n
     depends on RT_USING_MEMHEAP
