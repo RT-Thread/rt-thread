@@ -14,7 +14,7 @@ if GetDepend(['RT_UTEST_SMP_ASSIGNED_IDLE_CORE']):
 if GetDepend(['RT_UTEST_SMP_INTERRUPT_PRI']):
     src += ['smp_interrupt_pri_tc.c']
 
-if GetDepend(['UTEST_SMP_THREAD_PREEMPTION_TC']):
+if GetDepend(['RT_UTEST_SMP_THREAD_PREEMPTION']):
     src += ['smp_thread_preemption_tc.c']
 
 if GetDepend(['RT_UTEST_SMP_AFFFINITY']):

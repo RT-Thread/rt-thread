@@ -16,7 +16,7 @@ config RT_UTEST_SMP_SPINLOCK
     bool "smp spinlock test"
     default n
 
-config UTEST_SMP_THREAD_PREEMPTION_TC
+config RT_UTEST_SMP_THREAD_PREEMPTION
     bool "smp threads preemption test"
     default n
 
