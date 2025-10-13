@@ -35,11 +35,11 @@ static rt_uint8_t init_ok = 0;
  */
 int fal_flash_init(void)
 {
-    rt_size_t i, j, offset;
+                rt_size_t i, j, offset;
 
-    if (init_ok)
+    if (init_ok)   
     {
-        return 0;
+                    return 0;
     }
 
     for (i = 0; i < device_table_len; i++)
@@ -53,25 +53,25 @@ int fal_flash_init(void)
             device_table[i]->ops.init();
         }
         LOG_D("Flash device | %*.*s | addr: 0x%08lx | len: 0x%08x | blk_size: 0x%08x |initialized finish.",
-                FAL_DEV_NAME_MAX, FAL_DEV_NAME_MAX, device_table[i]->name, device_table[i]->addr, device_table[i]->len,
-                device_table[i]->blk_size);
+              FAL_DEV_NAME_MAX, FAL_DEV_NAME_MAX, device_table[i]->name, device_table[i]->addr, device_table[i]->len,
+              device_table[i]->blk_size);
         offset = 0;
-        for (j = 0; j < FAL_DEV_BLK_MAX; j ++)
+        for (j = 0; j < FAL_DEV_BLK_MAX; j++)
         {
             const struct flash_blk *blk = &device_table[i]->blocks[j];
             rt_size_t blk_len = blk->count * blk->size;
             if (blk->count == 0 || blk->size == 0)
                 break;
 
-            if(offset > device_table[i]->len)
+            if (offset > device_table[i]->len)
             {
                 LOG_I("Flash device %*.*s: add block failed, offset %d > len %d.",
-                FAL_DEV_NAME_MAX, FAL_DEV_NAME_MAX, device_table[i]->name, device_table[i]->addr, offset, device_table[i]->len);
+                      FAL_DEV_NAME_MAX, FAL_DEV_NAME_MAX, device_table[i]->name, device_table[i]->addr, offset, device_table[i]->len);
                 break;
             }
 
             LOG_D("                  blk%2d | addr: 0x%08lx | len: 0x%08x | blk_size: 0x%08x |initialized finish.",
-                    j, device_table[i]->addr + offset, blk_len, blk->size);
+                  j, device_table[i]->addr + offset, blk_len, blk->size);
             offset += blk_len;
         }
     }
@@ -97,7 +97,8 @@ const struct fal_flash_dev *fal_flash_device_find(const char *name)
 
     for (i = 0; i < device_table_len; i++)
     {
-        if (!strncmp(name, device_table[i]->name, FAL_DEV_NAME_MAX)) {
+        if (!strncmp(name, device_table[i]->name, FAL_DEV_NAME_MAX))
+        {
             return device_table[i];
         }
     }
