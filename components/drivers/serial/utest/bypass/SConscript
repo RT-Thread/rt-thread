@@ -6,6 +6,6 @@ src     = Glob('bypass*.c')
 
 CPPPATH = [cwd]
 
-group = DefineGroup('utestcases', src, depend = ['UTEST_SERIAL_BYPASS'], CPPPATH = CPPPATH)
+group = DefineGroup('utestcases', src, depend = ['RT_UTEST_SERIAL_BYPASS'], CPPPATH = CPPPATH)
 
 Return('group')
