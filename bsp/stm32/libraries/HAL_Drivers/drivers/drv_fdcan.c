@@ -501,7 +501,7 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 
         #ifdef RT_CAN_USING_CANFD
         pmsg->fd_frame =  (pdrv_can->RxHeader.FDFormat >> 16) && 0x20;
-        pmsg->brs = (pdrv_can->RxHeader.BitRateSwitch >> 16) && 0x10;;
+        pmsg->brs = (pdrv_can->RxHeader.BitRateSwitch >> 16) && 0x10;
         #endif
 
         return sizeof(struct rt_can_msg);
