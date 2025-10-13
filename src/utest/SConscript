@@ -41,7 +41,7 @@ if GetDepend(['RT_UTEST_MUTEX']):
 if GetDepend(['RT_UTEST_MAILBOX']):
     src += ['mailbox_tc.c']
 
-if GetDepend(['UTEST_THREAD_TC']):
+if GetDepend(['RT_UTEST_THREAD']):
     src += ['thread_tc.c']
     src += ['thread_overflow_tc.c']
     src += ['thread_suspend_tc.c']
