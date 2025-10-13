@@ -1,6 +1,6 @@
 menu "Memory Management Subsytem Testcase"
 
-    config UTEST_MM_API_TC
+    config RT_UTEST_MM_API
     bool "Enable Utest for MM API"
     default n
     help
