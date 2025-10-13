@@ -5,7 +5,7 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-if GetDepend(['UTEST_OBJECT_TC']):
+if GetDepend(['RT_UTEST_OBJECT']):
     src += ['object_tc.c']
 
 if GetDepend(['RT_UTEST_MEMHEAP']):
