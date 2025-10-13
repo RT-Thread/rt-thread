@@ -385,7 +385,7 @@
 /* Kernel Testcase */
 
 #define RT_UTEST_MEMHEAP
-#define UTEST_SMALL_MEM_TC
+#define RT_UTEST_SMALL_MEM
 /* end of Kernel Testcase */
 
 /* CPP11 Testcase */
