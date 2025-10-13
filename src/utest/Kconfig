@@ -43,7 +43,7 @@ config RT_UTEST_MESSAGEQUEUE
     bool "message queue test"
     default n
 
-config UTEST_SIGNAL_TC
+config RT_UTEST_SIGNAL
     bool "signal test"
     select RT_USING_SIGNALS
     default n
