@@ -6,7 +6,7 @@
 #define UART_TEST_NUMBER 6
 
 
-#ifdef UTEST_SERIAL_TC
+#ifdef RT_UTEST_SERIAL_V2
 #define echo_test_buffer_size (1024)
 
 static rt_device_t u1serial;

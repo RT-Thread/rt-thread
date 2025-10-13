@@ -5,12 +5,12 @@ menu "Serial Unit Testcases"
         default n
         depends on RT_USING_SERIAL_BYPASS
 
-    config UTEST_SERIAL_TC
+    config RT_UTEST_SERIAL_V2
         bool "Serial V2 testcases"
         default n
         depends on RT_USING_SERIAL_V2
 
-    if UTEST_SERIAL_TC
+    if RT_UTEST_SERIAL_V2
 
         config RT_SERIAL_TC_DEVICE_NAME
             string "the device name for serial test"
