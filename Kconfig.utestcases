@@ -10,7 +10,6 @@ if RT_USING_UTESTCASES
 rsource "components/utilities/utest/utest/Kconfig"
 rsource "src/utest/Kconfig"
 rsource "examples/utest/testcases/cpp11/Kconfig"
-rsource "examples/utest/testcases/posix/Kconfig"
 rsource "examples/utest/testcases/mm/Kconfig"
 rsource "examples/utest/testcases/tmpfs/Kconfig"
 
