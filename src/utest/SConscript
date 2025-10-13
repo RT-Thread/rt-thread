@@ -38,7 +38,7 @@ if GetDepend(['RT_UTEST_SIGNAL']):
 if GetDepend(['RT_UTEST_MUTEX']):
     src += ['mutex_tc.c', 'mutex_pi_tc.c']
 
-if GetDepend(['UTEST_MAILBOX_TC']):
+if GetDepend(['RT_UTEST_MAILBOX']):
     src += ['mailbox_tc.c']
 
 if GetDepend(['UTEST_THREAD_TC']):
