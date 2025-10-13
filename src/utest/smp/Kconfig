@@ -1,6 +1,6 @@
 menu "Kernel SMP Testcase"
 
-config UTEST_SMP_AFFFINITY_TC
+config RT_UTEST_SMP_AFFFINITY
     bool "smp affinity and thread priority test1"
     default n
 
