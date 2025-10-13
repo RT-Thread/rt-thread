@@ -35,7 +35,7 @@ config RT_UTEST_EVENT
     default n
     depends on RT_USING_EVENT
 
-config UTEST_TIMER_TC
+config RT_UTEST_TIMER
     bool "timer test"
     default n
 
