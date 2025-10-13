@@ -384,7 +384,7 @@
 
 /* Kernel Testcase */
 
-#define UTEST_MEMHEAP_TC
+#define RT_UTEST_MEMHEAP
 #define UTEST_SMALL_MEM_TC
 /* end of Kernel Testcase */
 

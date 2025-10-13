@@ -8,7 +8,7 @@ CPPPATH = [cwd]
 if GetDepend(['UTEST_OBJECT_TC']):
     src += ['object_tc.c']
 
-if GetDepend(['UTEST_MEMHEAP_TC']):
+if GetDepend(['RT_UTEST_MEMHEAP']):
     src += ['memheap_tc.c']
 
 if GetDepend(['UTEST_SMALL_MEM_TC']):
