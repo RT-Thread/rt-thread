@@ -26,7 +26,7 @@ if GetDepend(['RT_UTEST_SEMAPHORE']):
 if GetDepend(['RT_UTEST_EVENT']):
     src += ['event_tc.c']
 
-if GetDepend(['UTEST_TIMER_TC']):
+if GetDepend(['RT_UTEST_TIMER']):
     src += ['timer_tc.c']
 
 if GetDepend(['UTEST_MESSAGEQUEUE_TC']):
