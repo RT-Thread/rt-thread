@@ -417,7 +417,7 @@
 
 /* Kernel Testcase */
 
-#define UTEST_SCHEDULER_TC
+#define RT_UTEST_SCHEDULER
 
 /* Kernel SMP Testcase */
 

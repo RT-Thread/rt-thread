@@ -59,7 +59,7 @@ if GetDepend(['UTEST_MEMPOOL_TC']):
     src += ['mempool_tc.c']
 
 # Stressful testcase for scheduler (MP/UP)
-if GetDepend(['UTEST_SCHEDULER_TC']):
+if GetDepend(['RT_UTEST_SCHEDULER']):
     src += ['sched_timed_sem_tc.c']
     src += ['sched_timed_mtx_tc.c']
     src += ['sched_mtx_tc.c']
