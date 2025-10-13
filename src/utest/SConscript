@@ -17,7 +17,7 @@ if GetDepend(['RT_UTEST_SMALL_MEM']):
 if GetDepend(['RT_UTEST_SLAB']):
     src += ['slab_tc.c']
 
-if GetDepend(['UTEST_IRQ_TC']):
+if GetDepend(['RT_UTEST_IRQ']):
     src += ['irq_tc.c']
 
 if GetDepend(['UTEST_SEMAPHORE_TC']):
