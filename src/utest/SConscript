@@ -46,7 +46,7 @@ if GetDepend(['RT_UTEST_THREAD']):
     src += ['thread_overflow_tc.c']
     src += ['thread_suspend_tc.c']
 
-if GetDepend(['UTEST_ATOMIC_TC']):
+if GetDepend(['RT_UTEST_ATOMIC']):
     src += ['atomic_tc.c']
 
 if GetDepend(['UTEST_HOOKLIST_TC']):
