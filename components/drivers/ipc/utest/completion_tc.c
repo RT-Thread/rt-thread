@@ -16,19 +16,13 @@
  * availability using rt_completion synchronization primitives.
  *
  * Test Criteria:
- * - The producer produces data correctly and notifies the consumer thread.
- * - The consumer receives data correctly and acknowledges receipt to the
- *   producer.
- * - The producer and consumer threads synchronize their operations effectively.
- * - Verify the correctness of data production and consumption between producer
- *   and consumer threads.
- * - The asynchronous woken of consumer thread was handled properly so the
- *   consumer don't lose woken from producer.
- *
- * Test APIs:
- * - rt_completion_init()
- * - rt_completion_wakeup()
- * - rt_completion_wait_flags()
+ * - The producer should correctly increment the test data and signal
+ *   completion.
+ * - The consumer should correctly wait for data update, consume it, and signal
+ *   completion.
+ * - Data integrity should be maintained between producer and consumer.
+ * - Synchronization is properly done so both can see consistent data.
+ * - Random latency is introduced to simulate racing scenarios.
  */
 
 #define TEST_LATENCY_TICK (1)
@@ -43,18 +37,9 @@
 
 static struct rt_completion _prod_completion;
 static struct rt_completion _cons_completion;
-static int _test_data;
-static int _async_intr_count;
+static int _test_data = 0;
 static rt_atomic_t _progress_counter;
 static struct rt_semaphore _thr_exit_sem;
-
-static void _test_thread_exit_failure(char *string)
-{
-    LOG_E("\t[TEST failed] %s", string);
-
-    rt_sem_release(&_thr_exit_sem);
-    rt_thread_delete(rt_thread_self());
-}
 
 static void done_safely(struct rt_completion *completion)
 {
@@ -70,43 +55,28 @@ static void done_safely(struct rt_completion *completion)
     }
     else if (error)
     {
-        uassert_true(error == RT_EOK);
-        _test_thread_exit_failure("unexpected error");
+        uassert_false(0);
+        rt_thread_delete(rt_thread_self());
     }
 }
 
 static void wait_safely(struct rt_completion *completion)
 {
-    int try_times = 3;
     rt_err_t error;
     do
     {
-        /* wait for one tick, to add more random */
-        error = rt_completion_wait_flags(completion, 1, RT_INTERRUPTIBLE);
+        error = rt_completion_wait_flags(completion, RT_WAITING_FOREVER,
+                                         RT_INTERRUPTIBLE);
         if (error)
         {
-            if (error == -RT_ETIMEOUT || error == -RT_EINTR)
-            {
-                _async_intr_count++;
-            }
-            else
-            {
-                LOG_I("Async event %d\n", error);
-                uassert_true(0);
-            }
+            uassert_true(error == -RT_EINTR);
             rt_thread_yield();
         }
         else
         {
             break;
         }
-    } while (try_times--);
-
-    if (error != RT_EOK)
-    {
-        uassert_true(error == RT_EOK);
-        _test_thread_exit_failure("wait failed");
-    }
+    } while (1);
 }
 
 static void producer_thread_entry(void *parameter)
@@ -116,17 +86,38 @@ static void producer_thread_entry(void *parameter)
         /* Produce data */
         _test_data++;
 
-        /* Delay before producing next data */
-        rt_thread_delay(TEST_LATENCY_TICK);
-
         /* notify consumer */
         done_safely(&_prod_completion);
+
+        /* Delay before producing next data */
+        rt_thread_delay(TEST_LATENCY_TICK);
 
         /* sync with consumer */
         wait_safely(&_cons_completion);
     }
 
     rt_sem_release(&_thr_exit_sem);
+}
+
+static void _wait_until_edge(void)
+{
+    rt_tick_t entry_level, current;
+    rt_base_t random_latency;
+
+    entry_level = rt_tick_get();
+    do
+    {
+        current = rt_tick_get();
+    } while (current == entry_level);
+
+    /* give a random latency for test */
+    random_latency = rand();
+    entry_level = current;
+    for (size_t i = 0; i < random_latency; i++)
+    {
+        current = rt_tick_get();
+        if (current != entry_level) break;
+    }
 }
 
 static void consumer_thread_entry(void *parameter)
@@ -137,6 +128,9 @@ static void consumer_thread_entry(void *parameter)
 
     for (size_t i = 0; i < TEST_LOOP_TIMES; i++)
     {
+        /* add more random case for test */
+        _wait_until_edge();
+
         /* Wait for data update */
         wait_safely(&_prod_completion);
 
@@ -159,9 +153,6 @@ static void consumer_thread_entry(void *parameter)
     rt_sem_release(&_thr_exit_sem);
 }
 
-rt_thread_t _watching_thread1;
-rt_thread_t _watching_thread2;
-
 static void testcase(void)
 {
     /* Initialize completion object */
@@ -177,8 +168,10 @@ static void testcase(void)
                          UTEST_THR_STACK_SIZE, UTEST_THR_PRIORITY, 100);
     uassert_true(producer_thread != RT_NULL);
     uassert_true(consumer_thread != RT_NULL);
-    _watching_thread1 = consumer_thread;
-    _watching_thread2 = producer_thread;
+
+    LOG_I("Summary:\n"
+          "\tTest times: %ds(%d)",
+          TEST_LOOP_TIMES / RT_TICK_PER_SECOND, TEST_LOOP_TIMES);
 
     rt_thread_startup(consumer_thread);
 
@@ -186,19 +179,12 @@ static void testcase(void)
     {
         rt_sem_take(&_thr_exit_sem, RT_WAITING_FOREVER);
     }
-
-    LOG_I("Summary:\n"
-          "\tTest times: %ds(%d times)\n"
-          "\tAsync interruption count: %d\n",
-          TEST_LOOP_TIMES / RT_TICK_PER_SECOND, TEST_LOOP_TIMES,
-          _async_intr_count);
 }
 
 static rt_err_t utest_tc_init(void)
 {
     _test_data = 0;
     _progress_counter = 0;
-    _async_intr_count = 0;
     rt_sem_init(&_thr_exit_sem, "test", 0, RT_IPC_FLAG_PRIO);
     return RT_EOK;
 }
@@ -209,5 +195,5 @@ static rt_err_t utest_tc_cleanup(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(testcase, "testcases.drivers.ipc.rt_completion.timeout",
-                utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(testcase, "components.drivers.ipc.rt_completion_basic",
+                utest_tc_init, utest_tc_cleanup, 10);

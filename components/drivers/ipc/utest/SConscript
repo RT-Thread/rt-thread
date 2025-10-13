@@ -5,10 +5,10 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-if GetDepend(['UTEST_COMPLETION_TC']):
+if GetDepend(['RT_UTEST_COMPLETION']):
     src += ['completion_tc.c', 'completion_timeout_tc.c']
 
-if GetDepend(['UTEST_WORKQUEUE_TC']):
+if GetDepend(['RT_UTEST_WORKQUEUE']):
     src += ['workqueue_tc.c']
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
