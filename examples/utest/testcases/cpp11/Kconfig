@@ -1,6 +1,6 @@
 menu "CPP11 Testcase"
 
-config UTEST_CPP11_THREAD_TC
+config RT_UTEST_CPP11_THREAD
     bool "Cpp11 thread test"
     select RT_USING_CPLUSPLUS
     select RT_USING_CPLUSPLUS11
