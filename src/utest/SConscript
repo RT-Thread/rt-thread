@@ -23,7 +23,7 @@ if GetDepend(['RT_UTEST_IRQ']):
 if GetDepend(['RT_UTEST_SEMAPHORE']):
     src += ['semaphore_tc.c']
 
-if GetDepend(['UTEST_EVENT_TC']):
+if GetDepend(['RT_UTEST_EVENT']):
     src += ['event_tc.c']
 
 if GetDepend(['UTEST_TIMER_TC']):

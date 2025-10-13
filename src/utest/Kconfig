@@ -30,7 +30,7 @@ config RT_UTEST_SEMAPHORE
     default n
     depends on RT_USING_SEMAPHORE
 
-config UTEST_EVENT_TC
+config RT_UTEST_EVENT
     bool "event test"
     default n
     depends on RT_USING_EVENT
