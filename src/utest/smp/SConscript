@@ -17,7 +17,7 @@ if GetDepend(['UTEST_SMP_INTERRUPT_PRI_TC']):
 if GetDepend(['UTEST_SMP_THREAD_PREEMPTION_TC']):
     src += ['smp_thread_preemption_tc.c']
 
-if GetDepend(['UTEST_SMP_AFFFINITY_TC']):
+if GetDepend(['RT_UTEST_SMP_AFFFINITY']):
     src += ['smp_bind_affinity_tc.c']
     src += ['smp_affinity_pri1_tc.c']
     src += ['smp_affinity_pri2_tc.c']    
