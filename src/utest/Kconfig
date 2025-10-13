@@ -66,7 +66,7 @@ config RT_UTEST_ATOMIC
     bool "atomic test"
     default n
 
-config UTEST_HOOKLIST_TC
+config RT_UTEST_HOOKLIST
     bool "hook list test"
     select RT_USING_HOOKLIST
     default n
