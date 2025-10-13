@@ -49,7 +49,7 @@ if GetDepend(['RT_UTEST_THREAD']):
 if GetDepend(['RT_UTEST_ATOMIC']):
     src += ['atomic_tc.c']
 
-if GetDepend(['UTEST_HOOKLIST_TC']):
+if GetDepend(['RT_UTEST_HOOKLIST']):
     src += ['hooklist_tc.c']
 
 if GetDepend(['UTEST_MTSAFE_KPRINT_TC']):
