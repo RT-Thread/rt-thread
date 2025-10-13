@@ -223,7 +223,7 @@
 
 /* Utest Self Testcase */
 
-#define UTEST_SELF_PASS_TC
+#define RT_UTEST_SELF_PASS
 /* end of Utest Self Testcase */
 
 /* Kernel Testcase */

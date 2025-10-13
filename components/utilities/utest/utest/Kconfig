@@ -1,6 +1,6 @@
 menu "Utest Self Testcase"
 
-config UTEST_SELF_PASS_TC
+config RT_UTEST_SELF_PASS
     bool "UTEST Self-test"
     select RT_USING_UTEST
     default n
