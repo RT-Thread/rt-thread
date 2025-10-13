@@ -17,7 +17,7 @@ if GetDepend(['RT_UTEST_MM_API', 'RT_USING_SMART']):
 if GetDepend(['RT_UTEST_MM_API', 'RT_USING_MEMBLOCK']):
         src += ['mm_memblock_tc.c']
 
-if GetDepend(['UTEST_MM_LWP_TC', 'RT_USING_SMART']):
+if GetDepend(['RT_UTEST_MM_LWP', 'RT_USING_SMART']):
     src += ['mm_lwp_tc.c']
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
