@@ -25,7 +25,7 @@ config RT_UTEST_IRQ
     bool "IRQ test"
     default n
 
-config UTEST_SEMAPHORE_TC
+config RT_UTEST_SEMAPHORE
     bool "semaphore test"
     default n
     depends on RT_USING_SEMAPHORE
