@@ -52,7 +52,7 @@ config RT_UTEST_MUTEX
     bool "mutex test"
     default n
 
-config UTEST_MAILBOX_TC
+config RT_UTEST_MAILBOX
     bool "mailbox test"
     default n
 
