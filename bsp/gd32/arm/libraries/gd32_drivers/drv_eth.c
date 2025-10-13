@@ -272,7 +272,7 @@ rt_err_t rt_gd32_eth_tx(rt_device_t dev, struct pbuf *p)
 
     uint8_t *buffer = (uint8_t *)(dma_txdesc->buffer1_addr);
 
-    /* copy frame from pbufs to driver buffers */
+        /* copy frame from pbufs to driver buffers */
     for (q = p; q != NULL; q = q->next)
     {
         /* Is this buffer available? If not, goto error */
@@ -282,37 +282,8 @@ rt_err_t rt_gd32_eth_tx(rt_device_t dev, struct pbuf *p)
             goto _error;
         }
 
-        /* Get bytes in current lwIP buffer */
-        byteslefttocopy = q->len;
-        payloadoffset = 0;
-
-        /* Check if the length of data to copy is bigger than Tx buffer size */
-        while ((byteslefttocopy + bufferoffset) > ENET_TXBUF_SIZE)
-        {
-            /* Copy data to Tx buffer*/
-            SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), (ENET_TXBUF_SIZE - bufferoffset));
-
-            /* Point to next descriptor */
-            dma_txdesc = (enet_descriptors_struct *)(dma_txdesc->buffer2_next_desc_addr);
-
-            /* Check if the buffer is available */
-            if ((dma_txdesc->status & ENET_TDES0_DAV) != (uint32_t)RESET)
-            {
-                ret = RT_EOK;
-                goto _error;
-            }
-
-            buffer = (uint8_t *)(dma_txdesc->buffer1_addr);
-
-            byteslefttocopy = byteslefttocopy - (ENET_TXBUF_SIZE - bufferoffset);
-            payloadoffset = payloadoffset + (ENET_TXBUF_SIZE - bufferoffset);
-            framelength = framelength + (ENET_TXBUF_SIZE - bufferoffset);
-            bufferoffset = 0;
-        }
-
-        /* Copy the remaining bytes */
-        SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), byteslefttocopy);
-        framelength = framelength + byteslefttocopy;
+        rt_memcpy((uint8_t *)&buffer[framelength], q->payload, q->len);
+        framelength = framelength + q->len;
     }
 
     /* transmit descriptors to give to DMA */
