@@ -14,7 +14,7 @@ if GetDepend(['RT_UTEST_MEMHEAP']):
 if GetDepend(['RT_UTEST_SMALL_MEM']):
     src += ['mem_tc.c']
 
-if GetDepend(['UTEST_SLAB_TC']):
+if GetDepend(['RT_UTEST_SLAB']):
     src += ['slab_tc.c']
 
 if GetDepend(['UTEST_IRQ_TC']):

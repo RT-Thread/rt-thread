@@ -16,7 +16,7 @@ config RT_UTEST_OBJECT
     bool "object test"
     default n
 
-config UTEST_SLAB_TC
+config RT_UTEST_SLAB
     bool "slab test"
     default n
     depends on RT_USING_SLAB
