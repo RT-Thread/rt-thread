@@ -28,7 +28,7 @@ typedef struct
     FDCAN_RxHeaderTypeDef RxHeader;
     FDCAN_TxHeaderTypeDef TxHeader;
     uint8_t u8RxDataBuffer[8];
-    uint8_t u8TxDataBuufer[8];
+    uint8_t u8TxDataBuffer[8];
     FDCAN_FilterTypeDef FilterConfig; /*FDCAN filter*/
     struct rt_can_device device;      /* inherit from can device */
 } stm32_fdcan_t;
