@@ -9,7 +9,7 @@ path = [cwd]
 if GetDepend(['UTEST_SERIAL_POSIX_TC']):
     src += Glob('posix/*.c')
 
-if GetDepend(['UTEST_SERIAL_QEMU_TC']):
+if GetDepend(['RT_UTEST_SERIAL_QEMU']):
     src += Glob('qemu/*.c')
 
 group = DefineGroup('utestcases', src, depend = ['RT_UTEST_SERIAL_V2'], CPPPATH = path)
