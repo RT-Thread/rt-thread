@@ -39,7 +39,7 @@ config RT_UTEST_TIMER
     bool "timer test"
     default n
 
-config UTEST_MESSAGEQUEUE_TC
+config RT_UTEST_MESSAGEQUEUE
     bool "message queue test"
     default n
 
