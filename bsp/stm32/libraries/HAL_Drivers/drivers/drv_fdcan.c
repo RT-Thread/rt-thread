@@ -704,7 +704,7 @@ static int rt_hw_can_init(void)
     st_DrvCan2.FilterConfig = sFilterConfig;
     st_DrvCan2.device.config = config;
 
-    /* register FDCAN1 device */
+    /* register FDCAN2 device */
     rt_hw_can_register(&st_DrvCan2.device, st_DrvCan2.name, &_can_ops, &st_DrvCan2);
 #endif /* BSP_USING_FDCAN2 */
 
