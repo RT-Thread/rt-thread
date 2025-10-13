@@ -32,7 +32,7 @@ if GetDepend(['RT_UTEST_TIMER']):
 if GetDepend(['RT_UTEST_MESSAGEQUEUE']):
     src += ['messagequeue_tc.c']
 
-if GetDepend(['UTEST_SIGNAL_TC']):
+if GetDepend(['RT_UTEST_SIGNAL']):
     src += ['signal_tc.c']
 
 if GetDepend(['UTEST_MUTEX_TC']):
