@@ -48,7 +48,7 @@ config RT_UTEST_SIGNAL
     select RT_USING_SIGNALS
     default n
 
-config UTEST_MUTEX_TC
+config RT_UTEST_MUTEX
     bool "mutex test"
     default n
 
