@@ -561,21 +561,6 @@ void HAL_FDCAN_TxBufferCompleteCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t Bu
 }
 
 
-void HAL_FDCAN_TxBufferCompleteCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t BufferIndexes)
-{
-    if(hfdcan->Instance == FDCAN1)
-    {
-#ifdef BSP_USING_FDCAN1
-        rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_TX_DONE | ((BufferIndexes-1) << 8));
-#endif
-    }
-    else
-    {
-#ifdef BSP_USING_FDCAN2
-        rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_TX_DONE | ((BufferIndexes-1) << 8));
-#endif
-    }
-}
 
 
 void HAL_FDCAN_TxFifoEmptyCallback(FDCAN_HandleTypeDef *hfdcan)
