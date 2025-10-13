@@ -5,7 +5,7 @@ config RT_UTEST_MEMHEAP
     default n
     depends on RT_USING_MEMHEAP
 
-config UTEST_SMALL_MEM_TC
+config RT_UTEST_SMALL_MEM
     bool "mem test"
     default n
     depends on RT_USING_SMALL_MEM
