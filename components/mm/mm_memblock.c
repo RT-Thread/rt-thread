@@ -397,7 +397,7 @@ void rt_memblock_setup_memory_environment(void)
     LOG_I("%ld MB memory installed to system page", mem/1000000);
 }
 
-#ifdef UTEST_MM_API_TC
+#ifdef RT_UTEST_MM_API
 /* functions below are only used for utest */
 void rt_memblock_merge(void)
 {
@@ -423,4 +423,4 @@ rt_bool_t rt_memblock_is_last_free(void)
     return mem == rt_slist_entry(&(mmblk_memory.reg_list), struct rt_mmblk_reg, node);
 }
 
-#endif /* UTEST_MM_API_TC */
+#endif /* RT_UTEST_MM_API */
