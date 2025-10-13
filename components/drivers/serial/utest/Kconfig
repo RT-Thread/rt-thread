@@ -1,6 +1,6 @@
 menu "Serial Unit Testcases"
 
-    config UTEST_SERIAL_BYPASS
+    config RT_UTEST_SERIAL_BYPASS
         bool "Serial Bypass testcases"
         default n
         depends on RT_USING_SERIAL_BYPASS
