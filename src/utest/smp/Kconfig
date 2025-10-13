@@ -12,7 +12,7 @@ config RT_UTEST_SMP_INTERRUPT_PRI
     bool "smp interrupt priority test"
     default n
 
-config UTEST_SMP_SPINLOCK_TC
+config RT_UTEST_SMP_SPINLOCK
     bool "smp spinlock test"
     default n
 

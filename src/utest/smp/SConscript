@@ -5,7 +5,7 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-if GetDepend(['UTEST_SMP_SPINLOCK_TC']):
+if GetDepend(['RT_UTEST_SMP_SPINLOCK']):
     src += ['smp_spinlock_tc.c']
     
 if GetDepend(['RT_UTEST_SMP_ASSIGNED_IDLE_CORE']):
