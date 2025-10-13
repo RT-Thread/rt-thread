@@ -8,7 +8,7 @@ config RT_UTEST_SMP_ASSIGNED_IDLE_CORE
     bool "smp threads auto assign to idle cores for test"
     default n
 
-config UTEST_SMP_INTERRUPT_PRI_TC
+config RT_UTEST_SMP_INTERRUPT_PRI
     bool "smp interrupt priority test"
     default n
 

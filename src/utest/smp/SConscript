@@ -11,7 +11,7 @@ if GetDepend(['UTEST_SMP_SPINLOCK_TC']):
 if GetDepend(['RT_UTEST_SMP_ASSIGNED_IDLE_CORE']):
     src += ['smp_assigned_idle_cores_tc.c']
 
-if GetDepend(['UTEST_SMP_INTERRUPT_PRI_TC']):
+if GetDepend(['RT_UTEST_SMP_INTERRUPT_PRI']):
     src += ['smp_interrupt_pri_tc.c']
 
 if GetDepend(['UTEST_SMP_THREAD_PREEMPTION_TC']):
