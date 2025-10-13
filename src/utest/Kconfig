@@ -75,7 +75,7 @@ config RT_UTEST_MTSAFE_KPRINT
     bool "mtsafe kprint test"
     default n
 
-config UTEST_SCHEDULER_TC
+config RT_UTEST_SCHEDULER
     bool "scheduler test"
     default n
 
