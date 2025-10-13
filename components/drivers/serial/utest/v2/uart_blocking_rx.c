@@ -2,7 +2,7 @@
 #include <rtdevice.h>
 #include "utest.h"
 
-#ifdef UTEST_SERIAL_TC
+#ifdef RT_UTEST_SERIAL_V2
 
 static rt_bool_t block_read(rt_device_t uart_dev)
 {

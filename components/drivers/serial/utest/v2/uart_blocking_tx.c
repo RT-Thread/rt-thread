@@ -6,7 +6,7 @@
 #define UART_TEST_NUMBER 6
 
 
-#ifdef UTEST_SERIAL_TC
+#ifdef RT_UTEST_SERIAL_V2
 
 static rt_bool_t block_write(rt_device_t uart_dev)
 {

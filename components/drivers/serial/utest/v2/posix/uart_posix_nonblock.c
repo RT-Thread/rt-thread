@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 
-#ifdef UTEST_SERIAL_TC
+#ifdef RT_UTEST_SERIAL_V2
 
 static int32_t serial_fd;
 
