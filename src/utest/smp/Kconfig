@@ -4,7 +4,7 @@ config RT_UTEST_SMP_AFFFINITY
     bool "smp affinity and thread priority test1"
     default n
 
-config UTEST_SMP_ASSIGNED_IDLE_CORE_TC
+config RT_UTEST_SMP_ASSIGNED_IDLE_CORE
     bool "smp threads auto assign to idle cores for test"
     default n
 
