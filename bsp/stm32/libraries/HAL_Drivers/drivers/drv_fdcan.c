@@ -462,8 +462,6 @@ static int _inline_can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
 
 static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
-    //测试
-    // fifo = 0;
     struct rt_can_msg *pmsg;
     stm32_fdcan_t *pdrv_can;
 
