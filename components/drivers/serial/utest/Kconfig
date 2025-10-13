@@ -28,7 +28,7 @@ menu "Serial Unit Testcases"
             int "the number of iterations for the test routine."
             default 100
 
-        config UTEST_SERIAL_QEMU_TC
+        config RT_UTEST_SERIAL_QEMU
             bool "qemu dedicated tests"
             default n
 
