@@ -632,14 +632,14 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
 
 #ifdef BSP_USING_FDCAN1
 
-void FDCAN1_IT0_IRQHandler(void)             /* FDCAN2 interrupt line 0      */
+void FDCAN1_IT0_IRQHandler(void)             /* FDCAN1 interrupt line 0      */
 {
     rt_interrupt_enter();
     HAL_FDCAN_IRQHandler(&st_DrvCan1.fdcanHandle);
     rt_interrupt_leave();
 }
 
-void FDCAN1_IT1_IRQHandler(void)             /* FDCAN2 interrupt line 1      */
+void FDCAN1_IT1_IRQHandler(void)             /* FDCAN1 interrupt line 1      */
 {
     rt_interrupt_enter();
     HAL_FDCAN_IRQHandler(&st_DrvCan1.fdcanHandle);
