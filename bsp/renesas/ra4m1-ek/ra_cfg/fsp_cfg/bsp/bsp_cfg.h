@@ -21,7 +21,7 @@
              #endif
             #endif
             #ifndef BSP_CFG_RTC_USED
-             #define BSP_CFG_RTC_USED (1)
+             #define BSP_CFG_RTC_USED (RA_NOT_DEFINED)
             #endif
             #undef RA_NOT_DEFINED
             #if defined(_RA_BOOT_IMAGE)

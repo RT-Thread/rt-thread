@@ -15,6 +15,6 @@
 -Wno-implicit-function-declaration
 -Wno-deprecated-non-prototype
 -Wno-int-conversion
--D_RENESAS_RA_
--D_RA_CORE=CM4
 -D_RA_ORDINAL=1
+-D_RA_CORE=CM4
+-D_RENESAS_RA_

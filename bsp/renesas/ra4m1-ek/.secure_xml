@@ -45,20 +45,20 @@
   </raClockConfiguration>
   <raPinConfiguration>
     <pincfg active="true" name="" symbol="">
-      <configSetting altId="adc0.an04.p004" configurationId="adc0.an04" isUsedByDriver="true" peripheral="ADC0"/>
-      <configSetting altId="adc0.an05.p010" configurationId="adc0.an05" isUsedByDriver="true" peripheral="ADC0"/>
-      <configSetting altId="adc0.an06.p011" configurationId="adc0.an06" isUsedByDriver="true" peripheral="ADC0"/>
+      <configSetting altId="adc0.an04.p004" configurationId="adc0.an04" peripheral="ADC0"/>
+      <configSetting altId="adc0.an05.p010" configurationId="adc0.an05" peripheral="ADC0"/>
+      <configSetting altId="adc0.an06.p011" configurationId="adc0.an06" peripheral="ADC0"/>
       <configSetting altId="ctsu0.ts35.p115" configurationId="ctsu0.ts35" peripheral="CTSU0"/>
       <configSetting altId="ctsu0.tscap.p205" configurationId="ctsu0.tscap" peripheral="CTSU0"/>
-      <configSetting altId="dac0.da.p014" configurationId="dac0.da" isUsedByDriver="true" peripheral="DAC120"/>
+      <configSetting altId="dac0.da.p014" configurationId="dac0.da" peripheral="DAC120"/>
       <configSetting altId="debug0.tck.p300" configurationId="debug0.tck" isUsedByDriver="true" peripheral="DEBUG0"/>
       <configSetting altId="debug0.tdi.p110" configurationId="debug0.tdi" isUsedByDriver="true" peripheral="DEBUG0"/>
       <configSetting altId="debug0.tdo.p109" configurationId="debug0.tdo" isUsedByDriver="true" peripheral="DEBUG0"/>
       <configSetting altId="debug0.tms.p108" configurationId="debug0.tms" isUsedByDriver="true" peripheral="DEBUG0"/>
-      <configSetting altId="gpt0.gtiocb.p106" configurationId="gpt0.gtiocb" isUsedByDriver="true" peripheral="GPT0"/>
+      <configSetting altId="gpt0.gtiocb.p106" configurationId="gpt0.gtiocb" peripheral="GPT0"/>
       <configSetting altId="gpt1.gtioca.p105" configurationId="gpt1.gtioca" peripheral="GPT1"/>
-      <configSetting altId="iic0.scl.p400" configurationId="iic0.scl" isUsedByDriver="true" peripheral="IIC0"/>
-      <configSetting altId="iic0.sda.p401" configurationId="iic0.sda" isUsedByDriver="true" peripheral="IIC0"/>
+      <configSetting altId="iic0.scl.p400" configurationId="iic0.scl" peripheral="IIC0"/>
+      <configSetting altId="iic0.sda.p401" configurationId="iic0.sda" peripheral="IIC0"/>
       <configSetting altId="p104.input" configurationId="p104"/>
       <configSetting altId="p403.output.low" configurationId="p403"/>
       <configSetting altId="sci0.rxd.p410" configurationId="sci0.rxd" isUsedByDriver="true" peripheral="SCI0"/>
