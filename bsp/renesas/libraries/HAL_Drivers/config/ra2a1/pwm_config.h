@@ -50,6 +50,15 @@ enum
 #ifdef BSP_USING_PWM9
     BSP_PWM9_INDEX,
 #endif
+#ifdef BSP_USING_PWM10
+    BSP_PWM10_INDEX,
+#endif
+#ifdef BSP_USING_PWM11
+    BSP_PWM11_INDEX,
+#endif
+#ifdef BSP_USING_PWM12
+    BSP_PWM12_INDEX,
+#endif
     BSP_PWMS_NUM
 };
 
