@@ -382,6 +382,7 @@ static rt_err_t _inline_can_control(struct rt_can_device *can, int cmd, void *ar
         }
         break;
         case RT_CAN_CMD_SET_BAUD_FD: {
+            argval = (rt_uint32_t) arg;
             /* 查找仲裁相位波特率是否存在 */
             uint32_t data_idx = _inline_get_DataBaudIndex(argval);
             if (data_idx == (uint32_t) -1) {
