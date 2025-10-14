@@ -312,9 +312,9 @@ For each module, you can maintain unit testcases in a unified manner in the foll
 
   - Unit-testcase program source code files for this module.
 
-  - `Kconfig` file, which defining configuration options for the unit test cases of this module, the recommended option is named `RT_UTEST_TC_USING_XXXX`, XXXX is the global unique module name of this module.
+  - `Kconfig` file, which defining configuration options for the unit test cases of this module, the recommended option is named `RT_UTEST_XXXX`, XXXX is the global unique module name of this module.
 
-  - `SConscript` file, when adding src files, you need to rely on `RT_UTEST_TC_USING_XXXX`.
+  - `SConscript` file, when adding src files, you need to rely on `RT_UTEST_XXXX`.
     
 After completing the above steps, rsource the path of the Kconfig file of utest of this module to the file `Kconfig.utestcases`.
 
