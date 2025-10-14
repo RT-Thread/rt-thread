@@ -28,11 +28,6 @@ unsigned long rt_ktime_cputimer_getcnt(void)
     return rt_hw_get_cntpct_val() - _init_cnt;
 }
 
-unsigned long rt_ktime_cputimer_getstep(void)
-{
-    return rt_ktime_cputimer_getfrq() / RT_TICK_PER_SECOND;
-}
-
 void rt_ktime_cputimer_init(void)
 {
     _init_cnt = rt_hw_get_cntpct_val();
