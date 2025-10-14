@@ -186,7 +186,7 @@ owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
 tag: components_driver_serial_v2
 path: components/drivers/serial/dev_serial_v2.c
 path: components/drivers/include/drivers/dev_serial_v2.h
-path: examples/utest/testcases/drivers/serial_v2
+path: components/drivers/serial/utest/v2
 owners: Chen Beidou(Ryan-CW-Code)<1831931681@qq.com>
 
 tag: components_driver_spi
