@@ -52,4 +52,4 @@ static void testcase(void)
     /* Test shared_ptr basic operations */
     UTEST_UNIT_RUN(test_shared_ptr);
 }
-UTEST_TC_EXPORT(testcase, "testcases.cpp11.smartptr_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.libc.cpp.smartptr_tc", utest_tc_init, utest_tc_cleanup, 10);

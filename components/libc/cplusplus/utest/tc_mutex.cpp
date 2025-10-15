@@ -117,4 +117,4 @@ static void testcase(void)
     /* Test locking multiple mutexes with std::lock */
     UTEST_UNIT_RUN(test_lock_multiple);
 }
-UTEST_TC_EXPORT(testcase, "testcases.cpp11.mutex_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.libc.cpp.mutex_tc", utest_tc_init, utest_tc_cleanup, 10);
