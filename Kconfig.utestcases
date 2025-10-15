@@ -9,7 +9,6 @@ if RT_USING_UTESTCASES
 
 rsource "components/utilities/utest/utest/Kconfig"
 rsource "src/utest/Kconfig"
-rsource "examples/utest/testcases/cpp11/Kconfig"
 rsource "examples/utest/testcases/mm/Kconfig"
 rsource "examples/utest/testcases/tmpfs/Kconfig"
 
@@ -22,6 +21,7 @@ rsource "components/drivers/serial/utest/Kconfig"
 rsource "components/drivers/smp_call/utest/Kconfig"
 rsource "components/dfs/utest/Kconfig"
 rsource "components/net/utest/Kconfig"
+rsource "components/libc/cplusplus/utest/Kconfig"
 
 endif
 

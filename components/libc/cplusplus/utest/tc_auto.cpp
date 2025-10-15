@@ -61,4 +61,4 @@ static void testcase(void)
     /* Test range-based for loop */
     UTEST_UNIT_RUN(test_range_for);
 }
-UTEST_TC_EXPORT(testcase, "testcases.cpp11.auto_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.libc.cpp.auto_tc", utest_tc_init, utest_tc_cleanup, 10);

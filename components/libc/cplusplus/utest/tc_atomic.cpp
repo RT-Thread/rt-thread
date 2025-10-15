@@ -268,4 +268,4 @@ static void testcase(void)
     /* Test compare_exchange_weak operation */
     UTEST_UNIT_RUN(test_compare_exchange_weak);
 }
-UTEST_TC_EXPORT(testcase, "testcases.cpp11.atomic_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.libc.cpp.atomic_tc", utest_tc_init, utest_tc_cleanup, 10);

@@ -55,4 +55,4 @@ static void testcase(void)
     /* Test lambda with capture */
     UTEST_UNIT_RUN(test_lambda_capture);
 }
-UTEST_TC_EXPORT(testcase, "testcases.cpp11.lambda_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.libc.cpp.lambda_tc", utest_tc_init, utest_tc_cleanup, 10);
