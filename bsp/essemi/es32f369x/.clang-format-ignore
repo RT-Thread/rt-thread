@@ -1,0 +1,5 @@
+# clang-format ignore file 
+libraries 
+**/build/** 
+**/obj/** 
+**/*.S 
