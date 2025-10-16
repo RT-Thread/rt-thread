@@ -79,7 +79,7 @@ menu "Kernel Core"
         bool "Scheduler Test"
         default n
 
-    config UTEST_MEMPOOL_TC
+    config RT_UTEST_MEMPOOL
         bool "Memory Pool Test"
         default n
         depends on RT_USING_MEMPOOL
