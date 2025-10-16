@@ -1,12 +1,12 @@
-menu "IPC Unit Testcases"
+menu "IPC Test"
     depends on RT_USING_DEVICE_IPC
 
 config RT_UTEST_COMPLETION
-    bool "rt_completion testcase"
+    bool "IPC Completion Test"
     default n
 
 config RT_UTEST_WORKQUEUE
-    bool "rt_workqueue testcase"
+    bool "IPC Workqueue Test"
     default n
 
 endmenu
