@@ -7,6 +7,13 @@ Drivers.I2C:
     kconfig:
       - CONFIG_BSP_USING_I2C=y
       - CONFIG_BSP_USING_HW_I2C1=y
+      - CONFIG_BSP_USING_HW_I2C2=y
+Drivers.SPI:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI5=y
+      - CONFIG_BSP_USING_SPI0=y
 # ------ Peripheral CI ------
 Peripheral.tfcard:
     kconfig:
@@ -14,3 +21,12 @@ Peripheral.tfcard:
 Peripheral.qmi8658:
     kconfig:
       - CONFIG_BSP_USING_QMI8658=y
+Peripheral.rw007:
+    kconfig:
+      - CONFIG_BSP_USING_RW007=y
+      - CONFIG_RW007_NOT_USE_EXAMPLE_DRIVERS=y
+Peripheral.arduino:
+    kconfig:
+      - CONFIG_BSP_USING_ARDUINO=y
+      - CONFIG_BSP_USING_ARDUINO_RTDUINO_SENSORFUSION_SHIELD=y
+      

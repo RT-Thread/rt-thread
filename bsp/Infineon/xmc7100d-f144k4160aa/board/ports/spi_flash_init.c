@@ -16,7 +16,11 @@
 #ifdef BSP_USING_SPI_FLASH
 static int rt_spi_flash_init(void)
 {
+#if !defined(BSP_USING_RW007)
     rt_hw_spi_device_attach("spi5", "spi30", GET_PIN(7, 3));
+#else
+    rt_hw_spi_device_attach(IFX_RW007_SPI_BUS_NAME, "spi30", GET_PIN(20, 3));
+#endif
     if (RT_NULL == msd_init("sd0", "spi30"))
     {
         return -RT_ERROR;
