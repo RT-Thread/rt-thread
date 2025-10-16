@@ -35,7 +35,7 @@ class CheckOut:
             dir_name = os.path.dirname(ignore_path)
             ignore_path = dir_name
             # judge the ignore file exists in the current directory.
-            ignore_file_path = os.path.join(dir_name, ".clang-format-ignore")
+            ignore_file_path = os.path.join(dir_name, ".ignore_format.yml")
             if not os.path.exists(ignore_file_path):
                 continue
             try:
