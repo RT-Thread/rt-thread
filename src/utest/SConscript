@@ -55,7 +55,7 @@ if GetDepend(['RT_UTEST_HOOKLIST']):
 if GetDepend(['RT_UTEST_MTSAFE_KPRINT']):
     src += ['mtsafe_kprint_tc.c']
 
-if GetDepend(['UTEST_MEMPOOL_TC']):
+if GetDepend(['RT_UTEST_MEMPOOL']):
     src += ['mempool_tc.c']
 
 # Stressful testcase for scheduler (MP/UP)
