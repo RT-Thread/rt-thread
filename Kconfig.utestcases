@@ -9,7 +9,7 @@ menu "RT-Thread Utestcases"
 
         rsource "src/utest/Kconfig"
 
-        menu "Components"
+        menu "Kernel Components"
 
             menu "Drivers"
                 rsource "components/drivers/core/utest/Kconfig"

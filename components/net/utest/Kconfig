@@ -1,8 +1,8 @@
 if RT_USING_LWIP
-    menu "LwIP Network Unit Testcase"
+    menu "LwIP"
 
     config RT_UTEST_TC_USING_LWIP
-        bool "lwIP API test"
+        bool "lwIP API Test"
         help
             Enable lwIP network stack unit tests including DNS resolution,
             TCP/UDP socket operations, and network interface tests
@@ -10,7 +10,7 @@ if RT_USING_LWIP
         if RT_UTEST_TC_USING_LWIP
 
             config RT_UTEST_LWIP_DNS_TEST
-                bool "DNS resolution test"
+                bool "DNS Resolution Test"
                 default y
                 help
                     Enable DNS resolution unit tests including gethostbyname()
@@ -20,7 +20,7 @@ if RT_USING_LWIP
                     without hardcoded IP comparisons.
 
             config RT_UTEST_LWIP_TCP_TEST
-                bool "TCP socket test"
+                bool "TCP Socket Test"
                 default y
                 help
                     Enable TCP socket unit tests including client-server communication
@@ -30,7 +30,7 @@ if RT_USING_LWIP
                     and connection management (shutdown, close).
 
             config RT_UTEST_LWIP_UDP_TEST
-                bool "UDP socket test"
+                bool "UDP Socket Test"
                 default y
                 help
                     Enable UDP socket unit tests including datagram transmission
@@ -39,7 +39,7 @@ if RT_USING_LWIP
                     functions, and timeout handling for receive operations.
 
             config RT_UTEST_LWIP_ICMP_TEST
-                bool "ICMP ping test"
+                bool "ICMP Ping Test"
                 default y
                 help
                     Enable ICMP ping unit tests using raw sockets to send
@@ -47,7 +47,7 @@ if RT_USING_LWIP
                     basic ICMP functionality with loopback address (127.0.0.1).
 
             config RT_UTEST_LWIP_SOCKET_OPT_TEST
-                bool "Socket options test"
+                bool "Socket Options Test"
                 default y
                 help
                     Enable socket options unit tests including setsockopt()
@@ -55,7 +55,7 @@ if RT_USING_LWIP
                     retrieving socket options such as SO_REUSEADDR.
 
             config RT_UTEST_LWIP_ADDR_CONV_TEST
-                bool "Address conversion test"
+                bool "Address Conversion Test"
                 default y
                 help
                     Enable address conversion unit tests including inet_addr()
@@ -64,7 +64,7 @@ if RT_USING_LWIP
                     Tests verify proper conversion functionality.
 
             config RT_UTEST_LWIP_NETIF_TEST
-                bool "Network interface management test"
+                bool "Network Interface Management Test"
                 default y
                 help
                     Enable network interface management unit tests including
@@ -73,7 +73,7 @@ if RT_USING_LWIP
                     default interface configuration.
 
             config RT_UTEST_LWIP_TCP_PORT
-                int "TCP test port"
+                int "TCP Test Port"
                 default 1234
                 range 1024 65535
                 help
@@ -81,7 +81,7 @@ if RT_USING_LWIP
                     Must be in the range 1024-65535 to avoid system ports
 
             config RT_UTEST_LWIP_UDP_PORT
-                int "UDP test port"
+                int "UDP Test Port"
                 default 1235
                 range 1024 65535
                 help
@@ -89,14 +89,14 @@ if RT_USING_LWIP
                     Must be in the range 1024-65535 to avoid system ports
 
             config RT_UTEST_LWIP_TEST_URL
-                string "Test domain name"
+                string "Test Domain Name"
                 default "www.rt-thread.org"
                 help
                     Configure the domain name for DNS resolution tests.
                     This domain will be resolved to verify DNS functionality
 
             config RT_UTEST_LWIP_TEST_ADDR
-                string "Expected IP address"
+                string "Expected IP Address"
                 default "180.163.146.111"
                 help
                     Configure the expected IP address for DNS resolution verification.
@@ -107,10 +107,10 @@ if RT_USING_LWIP
 endif
 
 if RT_USING_NETDEV
-    menu "Netdev Network Unit Testcase"
+    menu "Netdev"
 
     config RT_UTEST_TC_USING_NETDEV
-        bool "netdev api test"
+        bool "Netdev API Test"
         help
             Enable netdev network device framework unit tests.
             
@@ -126,7 +126,7 @@ if RT_USING_NETDEV
         if RT_UTEST_TC_USING_NETDEV
 
             config RT_UTEST_DEFAULT_NETDEV_NAME
-                string "Default netdev name"
+                string "Default Netdev Name"
                 default "e0"
                 help
                     Network interface name for tests. Common values:
