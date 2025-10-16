@@ -1,0 +1,4 @@
+# clang-format ignore file 
+core-v-mcu.c 
+crt0.S 
+vectors.S 
