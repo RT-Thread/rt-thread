@@ -105,7 +105,7 @@ static void gd32_adc_gpio_init(rcu_periph_enum adc_clk, rt_base_t pin)
     gpio_mode_set(PIN_GDPORT(pin), GPIO_MODE_ANALOG, GPIO_PUPD_NONE, PIN_GDPIN(pin));
 #else
     /* configure adc pin */
-    gpio_init(PIN_GDPORT(pin), GPIO_MODE_AIN, GPIO_OSPEED_50MHZ, PIN_GDPIN(pin));
+    gpio_init(PIN_GDPORT(pin), GPIO_MODE_ANALOG, GPIO_OSPEED_50MHZ, PIN_GDPIN(pin));
 
 #endif
 }
@@ -148,9 +148,9 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel
         adc_external_trigger_source_config(ADC_REGULAR_CHANNEL, ADC_EXTTRIG_REGULAR_NONE);
         adc_external_trigger_config(ADC_REGULAR_CHANNEL, ENABLE);
         #else
-        adc_channel_length_config(adc_periph, ADC_REGULAR_CHANNEL, 1);
-        adc_external_trigger_source_config(adc_periph, ADC_REGULAR_CHANNEL, ADC0_1_2_EXTTRIG_REGULAR_NONE);
-        adc_external_trigger_config(adc_periph, ADC_REGULAR_CHANNEL, ENABLE);
+        adc_channel_length_config(adc_periph, ADC_ROUTINE_CHANNEL, 1);
+        adc_external_trigger_source_config(adc_periph, ADC_ROUTINE_CHANNEL,ADC_EXTTRIG_ROUTINE_EXTI_11);
+        adc_external_trigger_config(adc_periph, ADC_ROUTINE_CHANNEL, ENABLE);
         #endif
 
         #if defined SOC_SERIES_GD32E23x
@@ -209,8 +209,8 @@ static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_int8_t channel
     adc_regular_channel_config(0, channel, ADC_SAMPLETIME_13POINT5);
     adc_software_trigger_enable(ADC_REGULAR_CHANNEL);
 #else
-    adc_regular_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_13POINT5);
-    adc_software_trigger_enable(adc_periph, ADC_REGULAR_CHANNEL);
+    adc_regular_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_480);
+    adc_software_trigger_enable(adc_periph, ADC_ROUTINE_CHANNEL);
 #endif
 
     #if defined SOC_SERIES_GD32E23x
