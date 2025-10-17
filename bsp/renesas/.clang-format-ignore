@@ -9,3 +9,5 @@
 **/ra/
 **/ra_cfg/
 **/ra_gen/
+
+/libraries/bsp-template/
