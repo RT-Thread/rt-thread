@@ -183,7 +183,7 @@ int dfs_filesystem_get_partition(struct dfs_partition *part,
     part->offset = *(dpt + 8) | *(dpt + 9) << 8 | *(dpt + 10) << 16 | *(dpt + 11) << 24;
     part->size = *(dpt + 12) | *(dpt + 13) << 8 | *(dpt + 14) << 16 | *(dpt + 15) << 24;
 
-    rt_kprintf("found part[%d], begin: %d, size: ",
+    rt_kprintf("found part[%ld], begin: %ld, size: ",
                pindex, part->offset * 512);
     if ((part->size >> 11) == 0)
         rt_kprintf("%d%s", part->size >> 1, "KB\n"); /* KB */
@@ -636,7 +636,7 @@ int df(const char *path)
         if (rt_get_errno() == -ENOSYS)
             rt_kprintf("The function is not implemented.\n");
         else
-            rt_kprintf("statfs failed: errno=%d.\n", rt_get_errno());
+            rt_kprintf("statfs failed: errno=%ld.\n", rt_get_errno());
         return -1;
     }
 
@@ -649,7 +649,7 @@ int df(const char *path)
         cap = cap / 1024;
     }
 
-    rt_kprintf("disk free: %d.%d %s [ %d block, %d bytes per block ]\n",
+    rt_kprintf("disk free: %ld.%d %s [ %d block, %d bytes per block ]\n",
                (unsigned long)cap, minor, unit_str[unit_index], buffer.f_bfree, buffer.f_bsize);
     return 0;
 }
