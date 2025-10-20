@@ -101,7 +101,7 @@ static rt_err_t ifx_rtc_get_timeval(struct timeval *tv)
     return RT_EOK;
 }
 #ifdef RT_USING_ALARM
-    void rtc_alarm_callback(void *callback_arg, cyhal_rtc_event_t event);
+void rtc_alarm_callback(void *callback_arg, cyhal_rtc_event_t event);
 #endif
 static rt_err_t _rtc_init(void)
 {
