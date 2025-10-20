@@ -559,7 +559,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
         return -1;
     }
 
-    rt_aspace_init(aspace, (void *)KERNEL_VADDR_START, 0 - KERNEL_VADDR_START,
+    rt_aspace_init(aspace, (void *)KERNEL_VADDR_START, 0 - (rt_size_t) KERNEL_VADDR_START,
                    vtable);
 
     _init_region(v_address, size);
