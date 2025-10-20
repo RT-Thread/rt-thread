@@ -100,7 +100,7 @@ static void gd32_adc_gpio_init(rcu_periph_enum adc_clk, rt_base_t pin)
     /* enable ADC clock */
     rcu_periph_clock_enable(adc_clk);
 
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32E23x
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32E23x || defined SOC_SERIES_GD32F5xx
     /* configure adc pin */
     gpio_mode_set(PIN_GDPORT(pin), GPIO_MODE_ANALOG, GPIO_PUPD_NONE, PIN_GDPIN(pin));
 #else
@@ -139,7 +139,7 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel
         adc_data_alignment_config(adc_periph, ADC_DATAALIGN_RIGHT);
         #endif
 
-        #if defined SOC_SERIES_GD32F4xx
+        #if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
         adc_channel_length_config(adc_periph, ADC_ROUTINE_CHANNEL, 1);
         adc_external_trigger_source_config(adc_periph, ADC_ROUTINE_CHANNEL, ADC_EXTTRIG_ROUTINE_EXTI_11);
         adc_external_trigger_config(adc_periph, ADC_ROUTINE_CHANNEL, ENABLE);
@@ -202,7 +202,7 @@ static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_int8_t channel
     #else
     adc_flag_clear(adc_periph, ADC_FLAG_EOC | ADC_FLAG_STRC);
     #endif
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
     adc_routine_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_480);
     adc_software_trigger_enable(adc_periph, ADC_ROUTINE_CHANNEL);
 #elif defined SOC_SERIES_GD32E23x
