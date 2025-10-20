@@ -223,12 +223,6 @@ config RT_USING_UTEST
                 default 64
         endif
 
-        config RT_UTEST_USING_ALL_CASES
-            bool "Enable all selected modules' test cases"
-            default n
-            help
-                If enable this option, all selected modules' test cases will be run.
-                Otherwise, only the test cases that are explicitly enabled will be run.
     endif
 
 config RT_USING_VAR_EXPORT
