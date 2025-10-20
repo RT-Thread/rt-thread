@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,14 @@
 
 static struct shared_futex_entry *_futex_hash_head;
 
+/**
+ * @brief Add a futex to the global hash table
+ *
+ * @param[in] key Pointer to the shared futex key structure
+ * @param[in] futex The futex to be added to the table
+ *
+ * @return rt_err_t Returns RT_EOK on success, error code on failure
+ */
 rt_err_t futex_global_table_add(struct shared_futex_key *key, rt_futex_t futex)
 {
     rt_err_t rc = 0;
@@ -23,6 +31,14 @@ rt_err_t futex_global_table_add(struct shared_futex_key *key, rt_futex_t futex)
     return rc;
 }
 
+/**
+ * @brief Find a futex in the global hash table
+ *
+ * @param[in] key Pointer to the shared futex key structure
+ * @param[out] futex Pointer to store the found futex
+ *
+ * @return rt_err_t Returns RT_EOK if found, -RT_ENOENT if not found
+ */
 rt_err_t futex_global_table_find(struct shared_futex_key *key, rt_futex_t *futex)
 {
     rt_err_t rc;
@@ -45,6 +61,13 @@ rt_err_t futex_global_table_find(struct shared_futex_key *key, rt_futex_t *futex
     return rc;
 }
 
+/**
+ * @brief Delete a futex from the global hash table
+ *
+ * @param[in] key Pointer to the shared futex key structure
+ *
+ * @return rt_err_t Returns RT_EOK if deleted successfully, -RT_ENOENT if not found
+ */
 rt_err_t futex_global_table_delete(struct shared_futex_key *key)
 {
     rt_err_t rc;

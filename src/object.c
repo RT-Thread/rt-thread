@@ -157,9 +157,8 @@ void (*rt_object_put_hook)(struct rt_object *object);
 
 /**
  * @addtogroup group_hook
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will set a hook function, which will be invoked when object
@@ -231,14 +230,13 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
     rt_object_put_hook = hook;
 }
 
-/**@}*/
+/** @} group_hook */
 #endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup group_object_management
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will return the specified type of object information.
@@ -814,5 +812,5 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj)
 }
 #endif
 
-/**@}*/
+/** @} group_object_management */
 

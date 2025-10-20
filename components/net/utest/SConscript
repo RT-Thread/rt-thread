@@ -17,6 +17,6 @@ if GetDepend('RT_UTEST_TC_USING_SAL'):
     src += ['tc_sal_socket.c']
 
 # Define the test group with proper dependencies
-group = DefineGroup('utestcases', src, depend = ['RT_UTEST_TC_USING_NETWORK'], CPPPATH = CPPPATH)
+group = DefineGroup('utestcases', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

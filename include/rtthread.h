@@ -49,11 +49,6 @@ extern "C" {
 int entry(void);
 #endif
 
-/**
- * @addtogroup group_object_management
- * @{
- */
-
 /*
  * kernel object interface
  */
@@ -86,8 +81,6 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object *object));
 void rt_object_take_sethook(void (*hook)(struct rt_object *object));
 void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 #endif /* RT_USING_HOOK */
-
-/**@}*/
 
 /**
  * @addtogroup group_clock_management
@@ -137,11 +130,6 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 #endif /* RT_USING_HOOK */
 
 /**@}*/
-
-/**
- * @addtogroup group_thread_management
- * @{
- */
 
 /*
  * thread interface
@@ -194,6 +182,8 @@ void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread));
 void rt_thread_resume_sethook (void (*hook)(rt_thread_t thread));
 
 /**
+ * @ingroup group_thread_management
+ *
  * @brief Sets a hook function when a thread is initialized.
  *
  * @param thread is the target thread that initializing
@@ -208,11 +198,12 @@ RT_OBJECT_HOOKLIST_DECLARE(rt_thread_inited_hookproto_t, rt_thread_inited);
  */
 void rt_thread_idle_init(void);
 #if defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK)
-// FIXME: Have to write doxygen comment here for rt_thread_idle_sethook/rt_thread_idle_delhook
+// FIXME: Have to write doxygen comment here for rt_thread_idle_sethook
 //        but not in src/idle.c. Because the `rt_align(RT_ALIGN_SIZE)` in src/idle.c
-//        will make wierd output for html document generation, i.e. can not generate
-//        function link to rt_thread_idle_sethook, while function link to rt_thread_idle_delhook is ok.
+//        will make doxygen building failed.
 /**
+ * @ingroup group_thread_management
+ *
  * @brief This function sets a hook function to idle thread loop. When the system performs
  *        idle loop, this hook function should be invoked.
  *
@@ -224,14 +215,6 @@ void rt_thread_idle_init(void);
  * @note the hook function must be simple and never be blocked or suspend.
  */
 rt_err_t rt_thread_idle_sethook(void (*hook)(void));
-/**
- * @brief delete the idle hook on hook list.
- *
- * @param hook the specified hook function.
- *
- * @return `RT_EOK`: delete OK.
- *         `-RT_ENOSYS`: hook was not found.
- */
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif /* defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK) */
 rt_thread_t rt_thread_idle_gethandler(void);
@@ -271,8 +254,6 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid));
 void rt_secondary_cpu_entry(void);
 void rt_scheduler_ipi_handler(int vector, void *param);
 #endif /* RT_USING_SMP */
-
-/**@}*/
 
 /**
  * @addtogroup group_signal

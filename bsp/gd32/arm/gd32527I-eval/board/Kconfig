@@ -324,16 +324,22 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
-                prompt "Select clock source"
-                default BSP_RTC_USING_LSE
+            config BSP_USING_ALARM
+                bool "Enable RTC alarm"
+                select RT_USING_ALARM
+                default n
+            if BSP_USING_ALARM
+                choice
+                    prompt "Select rtc alarm device"
+                    default BSP_USING_ALARM0
 
-                config BSP_RTC_USING_LSE
-                    bool "RTC USING LSE"
+                    config BSP_USING_ALARM0
+                        bool "Enable RTC Alarm0"
 
-                config BSP_RTC_USING_LSI
-                    bool "RTC USING LSI"
-            endchoice
+                    config BSP_USING_ALARM1
+                        bool "Enable RTC Alarm1"
+                endchoice
+            endif
         endif
 
     config BSP_USING_WDT

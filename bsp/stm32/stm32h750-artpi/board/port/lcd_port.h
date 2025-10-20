@@ -13,19 +13,6 @@
 
 /* atk 4.3 inch screen, 800 * 480 */
 
-struct drv_lcd_device
-{
-    struct rt_device parent;
-
-    struct rt_device_graphic_info lcd_info;
-
-    struct rt_semaphore lcd_lock;
-
-    /* 0:front_buf is being used 1: back_buf is being used*/
-    rt_uint8_t cur_buf;
-    rt_uint8_t *front_buf;
-    rt_uint8_t *back_buf;
-};
 
 #define LCD_WIDTH           800
 #define LCD_HEIGHT          480

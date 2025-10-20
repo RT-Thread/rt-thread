@@ -1,23 +1,23 @@
-menu "Kernel SMP Testcase"
+menu "SMP Test"
 
-config UTEST_SMP_AFFFINITY_TC
-    bool "smp affinity and thread priority test1"
+config RT_UTEST_SMP_AFFFINITY
+    bool "SMP Affinity and Thread Priority Test"
     default n
 
-config UTEST_SMP_ASSIGNED_IDLE_CORE_TC
-    bool "smp threads auto assign to idle cores for test"
+config RT_UTEST_SMP_ASSIGNED_IDLE_CORE
+    bool "SMP Threads Auto Assign to Idle Cores Test"
     default n
 
-config UTEST_SMP_INTERRUPT_PRI_TC
-    bool "smp interrupt priority test"
+config RT_UTEST_SMP_INTERRUPT_PRI
+    bool "SMP Interrupt Priority Test"
     default n
 
-config UTEST_SMP_SPINLOCK_TC
-    bool "smp spinlock test"
+config RT_UTEST_SMP_SPINLOCK
+    bool "SMP Spinlock Test"
     default n
 
-config UTEST_SMP_THREAD_PREEMPTION_TC
-    bool "smp threads preemption test"
+config RT_UTEST_SMP_THREAD_PREEMPTION
+    bool "SMP Threads Preemption Test"
     default n
 
 endmenu
