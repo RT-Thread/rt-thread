@@ -4,8 +4,6 @@
 # If you need to exclude a file, add the path to the file in file_path.
 
 # 从 .ignore_format.yml 迁移的规则
-/v85xx/Libraries/CMSIS/
-/v85xx/Libraries/VangoV85xx_standard_peripheral/
 
-/v85xxp/Libraries/CMSIS/
-/v85xxp/Libraries/VangoV85xxP_standard_peripheral/
+/v85xx*/Libraries/CMSIS/
+/v85xx*/Libraries/VangoV85xx*_standard_peripheral/

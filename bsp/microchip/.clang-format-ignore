@@ -3,9 +3,4 @@
 # If you need to exclude a file, add the path to the file in file_path.
 
 # 从 .ignore_format.yml 迁移的规则
-/samc21/bsp/
-/samd51-seeed-wio-terminal/bsp/
-/samd51-adafruit-metro-m4/bsp/
-/samc54/bsp/
-/samc70/bsp/
-/samc10/bsp/
+/sam*/bsp/

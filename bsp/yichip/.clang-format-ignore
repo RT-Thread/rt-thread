@@ -4,9 +4,4 @@
 # If you need to exclude a file, add the path to the file in file_path.
 
 # 从 .ignore_format.yml 迁移的规则
-/yc3121-pos/Libraries/
-
-/yc3122-pos/Libraries/CMSIS/
-/yc3122-pos/Libraries/core/
-/yc3122-pos/Libraries/sdk/
-/yc3122-pos/Libraries/startup/
+/yc312*-pos/Libraries/
