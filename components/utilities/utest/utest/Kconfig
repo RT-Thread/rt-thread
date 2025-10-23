@@ -1,7 +1,7 @@
-menu "Utest Self Testcase"
+menu "Utest Framework"
 
-config UTEST_SELF_PASS_TC
-    bool "UTEST Self-test"
+config RT_UTEST_SELF_PASS
+    bool "UTEST Framework Test"
     select RT_USING_UTEST
     default n
 

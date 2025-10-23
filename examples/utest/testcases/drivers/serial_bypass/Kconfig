@@ -1,7 +1,0 @@
-menu "Serial-Bypass Testcase"
-
-config UTEST_SERIAL_BYPASS
-    bool "Serial testcase"
-    default n
-
-endmenu

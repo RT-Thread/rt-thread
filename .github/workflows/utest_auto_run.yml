@@ -1,5 +1,5 @@
 # Automation utest run script for the QEMU platform
-# Generate the corresponding config configuration for CI based on the configuration file under .github/utest.
+# Generate the corresponding config configuration for CI based on the configuration file under examples/utest/configs.
 
 name: utest_auto_run
 
@@ -18,6 +18,10 @@ on:
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -50,19 +54,28 @@ jobs:
         include:
           # only run on qemu-vexpress-a9
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "kernel/object.cfg"
+            config_file: "kernel/kernel_basic.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/ipc.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/mem.cfg"
 
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "dfs/dfs.cfg"
+            config_file: "kernel/atomic_c11.cfg"
+          - platform: { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/atomic_c11.cfg"
 
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "cpp11/cpp11.cfg"
 
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "lwip/lwip.cfg"
-
+            config_file: "components/lwip.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
-            config_file: "netdev/netdev.cfg"
+            config_file: "components/netdev.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/sal.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/dfs.cfg"
 
     env:
       TEST_QEMU_ARCH: ${{ matrix.platform.QEMU_ARCH }}
@@ -181,16 +194,16 @@ jobs:
         run: |
           # Whether plan to run SMP?
           if [[ "${{ matrix.platform.SMP_RUN }}"  == "smp" ]]; then
-            cat .github/utest/smp/smp.cfg >> $TEST_BSP_ROOT/.config
+            cat examples/utest/configs/smp/smp.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           # Is the kernel rtsmart?
           if [[ "${{ matrix.platform.KERNEL }}"  == "rtsmart" ]]; then
-            cat .github/utest/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
+            cat examples/utest/configs/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
-          cat .github/utest/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+          cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
           scons --pyconfig-silent -C $TEST_BSP_ROOT
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 

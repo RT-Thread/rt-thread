@@ -33,10 +33,12 @@
  *
  * To documenting for functions, a comment block before the function
  * declaraion/definition is recommended to describe the general information
- * of the function. In the comment block, a `@brief` is required, a `@return`
- * is also required no matter if the function return values or not. `@param` is
- * required if any, and if it is provided, direction [in]/[out]/[in,out] should
- * be provide together. Other commands (such as `@note`) are optional.
+ * of the function. In the comment block, a `@brief` is required. A `@return`
+ * is also required if the function is intended to return a value, otherwise
+ * if the function is implemented with a void return type, `@return` is not
+ * required. `@param` is required if any, and if it is provided,
+ * direction [in]/[out]/[in,out] should be provide together. Other commands
+ * (such as `@note`) are optional.
  *
  * If you feel that the description of `@brief` is not enough, you
  * can add a detailed description part, which is also optional.
@@ -71,8 +73,6 @@
  * @param[in] a Description of param a
  *
  * @param[in] b Description of param b
- *
- * @return void
  *
  * @note This is a note for this structure, blah blah blah...
  */
