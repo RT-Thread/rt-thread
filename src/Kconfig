@@ -5,7 +5,7 @@ rsource "klibc/Kconfig"
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
     range 2 64
-    default 8
+    default 12
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
