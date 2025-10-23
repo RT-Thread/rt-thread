@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, AT32F455ZET7</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, AT32F455ZET7, RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>.;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;applications;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\phy;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\ipc;board;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\epoll;..\libraries\usbotg_library\inc;..\libraries\rt_drivers;board\inc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\finsh;..\libraries\rt_drivers\config;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\rt_drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension;.;..\..\..\components\libc\compilers\common\include;board\inc;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\epoll;applications;board;..\libraries\rt_drivers;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\libraries\usbotg_library\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -718,13 +718,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
@@ -735,6 +728,13 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1063,6 +1063,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
@@ -1073,13 +1080,6 @@
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>

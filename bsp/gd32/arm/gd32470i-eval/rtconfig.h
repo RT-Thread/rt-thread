@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -414,6 +414,7 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_USING_GD_DBG
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -422,4 +423,3 @@
 /* end of Hardware Drivers Config */
 
 #endif
-

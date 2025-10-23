@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wunused -Wuninitialized -Wall  -Wmissing-declarations  -Wpointer-arith  -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>RT_USING_ARMLIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_LIBC</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\..\components\libc\posix\io\poll;board;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\ports;..\libraries\HAL_Drivers\config;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;board\ports;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\components\drivers\smp_call;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\drivers;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\phy;..\..\..\components\finsh;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\poll;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -670,35 +670,28 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_usart_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_usart_v2.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_usart_v2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>msh.c</FileName>
@@ -718,6 +711,13 @@
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -994,6 +994,13 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
@@ -1018,13 +1025,6 @@
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>

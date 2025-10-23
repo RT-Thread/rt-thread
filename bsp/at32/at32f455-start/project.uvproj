@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __STDC_LIMIT_MACROS, AT32F455ZET7, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>AT32F455ZET7, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;..\libraries\rt_drivers;..\..\..\components\libc\posix\io\epoll;.;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\ipc;..\libraries\usbotg_library\inc;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\inc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\rt_drivers\config;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\phy;board</IncludePath>
+              <IncludePath>board;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\phy;..\..\..\components\finsh;..\libraries\rt_drivers;..\libraries\usbotg_library\inc;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\smp_call;..\libraries\rt_drivers\config;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;.;..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\inc;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\epoll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -741,9 +741,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -755,16 +762,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1079,9 +1079,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1093,9 +1093,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1103,13 +1110,6 @@
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
         </Group>
