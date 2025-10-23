@@ -704,15 +704,19 @@ __STATIC_INLINE uint8_t __get_PMPxCFG(unsigned long idx)
 {
     unsigned long pmpcfgx = 0;
 
-    if (idx < 4) {
+    if (idx < 4)
+    {
         pmpcfgx = __get_PMPCFG0();
-    } else if (idx >= 4 && idx < 8) {
+    } else if (idx >= 4 && idx < 8)
+    {
         idx -= 4;
         pmpcfgx = __get_PMPCFG1();
-    } else if (idx >= 8 && idx < 12) {
+    } else if (idx >= 8 && idx < 12)
+    {
         idx -= 8;
         pmpcfgx = __get_PMPCFG2();
-    } else if (idx >= 12 && idx < 16) {
+    } else if (idx >= 12 && idx < 16)
+    {
         idx -= 12;
         pmpcfgx = __get_PMPCFG3();
     } else {
@@ -757,21 +761,25 @@ __STATIC_INLINE void __set_PMPxCFG(unsigned long idx, uint8_t pmpxcfg)
 {
     unsigned long pmpcfgx = 0;
 
-    if (idx < 4) {
+    if (idx < 4)
+    {
         pmpcfgx = __get_PMPCFG0();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
         __set_PMPCFG0(pmpcfgx);
-    } else if (idx >= 4 && idx < 8) {
+    } else if (idx >= 4 && idx < 8)
+    {
         idx -= 4;
         pmpcfgx = __get_PMPCFG1();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
         __set_PMPCFG1(pmpcfgx);
-    } else if (idx >= 8 && idx < 12) {
+    } else if (idx >= 8 && idx < 12)
+    {
         idx -= 8;
         pmpcfgx = __get_PMPCFG2();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
         __set_PMPCFG2(pmpcfgx);
-    } else if (idx >= 12 && idx < 16) {
+    } else if (idx >= 12 && idx < 16)
+    {
         idx -= 12;
         pmpcfgx = __get_PMPCFG3();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
@@ -922,7 +930,8 @@ __ALWAYS_STATIC_INLINE unsigned long __get_PMPADDR15(void)
  */
 __STATIC_INLINE unsigned long __get_PMPADDRx(unsigned long idx)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 0:
             return __get_PMPADDR0();
 
@@ -1069,7 +1078,8 @@ __ALWAYS_STATIC_INLINE void __set_PMPADDR15(unsigned long pmpaddr)
  */
 __STATIC_INLINE void __set_PMPADDRx(unsigned long idx, unsigned long pmpaddr)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 0:
             __set_PMPADDR0(pmpaddr);
             break;
@@ -1627,7 +1637,8 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 
     result = value;                      /* r will be reversed bits of v; first get LSB of v */
 
-    for (value >>= 1U; value; value >>= 1U) {
+    for (value >>= 1U; value; value >>= 1U)
+    {
         result <<= 1U;
         result |= value & 1U;
         s--;
@@ -1659,26 +1670,30 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
 
     posMax = 1;
 
-    for (i = 0; i < (y - 1); i++) {
+    for (i = 0; i < (y - 1); i++)
+    {
         posMax = posMax * 2;
     }
 
-    if (x > 0) {
+    if (x > 0)
+    {
         posMax = (posMax - 1);
 
-        if (x > posMax) {
+        if (x > posMax)
+        {
             x = posMax;
         }
 
-//    x &= (posMax * 2 + 1);
+/*    x &= (posMax * 2 + 1); */
     } else {
         negMin = -posMax;
 
-        if (x < negMin) {
+        if (x < negMin)
+        {
             x = negMin;
         }
 
-//    x &= (posMax * 2 - 1);
+/*    x &= (posMax * 2 - 1); */
     }
 
     return (x);
@@ -1695,7 +1710,8 @@ __ALWAYS_STATIC_INLINE uint32_t __USAT(uint32_t value, uint32_t sat)
 {
     uint32_t result;
 
-    if ((((0xFFFFFFFF >> sat) << sat) & value) != 0) {
+    if ((((0xFFFFFFFF >> sat) << sat) & value) != 0)
+    {
         result = 0xFFFFFFFF >> (32 - sat);
     } else {
         result = value;
@@ -1715,9 +1731,11 @@ __ALWAYS_STATIC_INLINE uint32_t __IUSAT(uint32_t value, uint32_t sat)
 {
     uint32_t result;
 
-    if (value & 0x80000000) { /* only overflow set bit-31 */
+    if (value & 0x80000000)
+    { /* only overflow set bit-31 */
         result = 0;
-    } else if ((((0xFFFFFFFF >> sat) << sat) & value) != 0) {
+    } else if ((((0xFFFFFFFF >> sat) << sat) & value) != 0)
+    {
         result = 0xFFFFFFFF >> (32 - sat);
     } else {
         result = value;
@@ -2943,14 +2961,17 @@ __ALWAYS_STATIC_INLINE int32_t __QADD(int32_t x, int32_t y)
 {
     int32_t result;
 
-    if (y >= 0) {
-        if ((int32_t)((uint32_t)x + (uint32_t)y) >= x) {
+    if (y >= 0)
+    {
+        if ((int32_t)((uint32_t)x + (uint32_t)y) >= x)
+        {
             result = x + y;
         } else {
             result = 0x7FFFFFFF;
         }
     } else {
-        if ((int32_t)((uint32_t)x + (uint32_t)y) < x) {
+        if ((int32_t)((uint32_t)x + (uint32_t)y) < x)
+        {
             result = x + y;
         } else {
             result = 0x80000000;
@@ -2976,9 +2997,11 @@ __ALWAYS_STATIC_INLINE int32_t __QSUB(int32_t x, int32_t y)
 
     tmp = (long)x - (long)y;
 
-    if (tmp > 0x7fffffff) {
+    if (tmp > 0x7fffffff)
+    {
         tmp = 0x7fffffff;
-    } else if (tmp < (-2147483647 - 1)) {
+    } else if (tmp < (-2147483647 - 1))
+    {
         tmp = -2147483647 - 1;
     }
 
@@ -3284,3 +3307,4 @@ __ALWAYS_STATIC_INLINE uint32_t __UXTB16(uint32_t x)
 #endif
 
 #endif /* _CSI_RV32_GCC_H_ */
+

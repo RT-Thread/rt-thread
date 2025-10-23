@@ -295,7 +295,13 @@ typedef struct {
 #define CACHE_MHCR_IE_Pos                      0U                                            /*!< CACHE MHCR: IE Position */
 #define CACHE_MHCR_IE_Msk                      (0x1UL << CACHE_MHCR_IE_Pos)                  /*!< CACHE MHCR: IE Mask */
 
+#if CONFIG_CPU_XUANTIE_E902 || CONFIG_CPU_XUANTIE_E902M || CONFIG_CPU_XUANTIE_E902T || CONFIG_CPU_XUANTIE_E902MT \
+    || CONFIG_CPU_XUANTIE_E901PLUS_CP || CONFIG_CPU_XUANTIE_E901PLUS_B_CP || CONFIG_CPU_XUANTIE_E901PLUS_M_CP || CONFIG_CPU_XUANTIE_E901PLUS_BM_CP \
+    || CONFIG_CPU_XUANTIE_E901_CP || CONFIG_CPU_XUANTIE_E901_B_CP || CONFIG_CPU_XUANTIE_E901_ZM_CP || CONFIG_CPU_XUANTIE_E901_BZM_CP
+#define CACHE_INV_ADDR_Pos                     4U
+#else
 #define CACHE_INV_ADDR_Pos                     5U
+#endif
 #define CACHE_INV_ADDR_Msk                     (0xFFFFFFFFUL << CACHE_INV_ADDR_Pos)
 
 /*@} end of group CSI_CACHE */
@@ -433,8 +439,12 @@ typedef struct {
  */
 
 /* Memory mapping of THEAD CPU */
-#define CORET_BASE          (0xE0004000UL)                            /*!< CORET Base Address */
-#define CLIC_BASE           (0xE0800000UL)                            /*!< CLIC Base Address */
+#ifndef CONFIG_TCIP_BASE
+#define CONFIG_TCIP_BASE 0xE0000000UL
+#endif
+#define CORET_BASE          (CONFIG_TCIP_BASE + 0x4000UL)                            /*!< CORET Base Address */
+#define CLIC_BASE           (CONFIG_TCIP_BASE + 0x800000UL)                            /*!< CLIC Base Address */
+
 #define SYSMAP_BASE         (0xEFFFF000UL)                            /*!< SYSMAP Base Address */
 
 #define CORET               ((CORET_Type   *)     CORET_BASE  )       /*!< SysTick configuration struct */
@@ -471,11 +481,12 @@ __STATIC_INLINE int csi_get_cpu_id(void)
  */
 __STATIC_INLINE int csi_get_cache_line_size(void)
 {
-#if CONFIG_CPU_XUANTIE_E906 || CONFIG_CPU_XUANTIE_E906F || CONFIG_CPU_XUANTIE_E906FD || CONFIG_CPU_XUANTIE_E906P || CONFIG_CPU_XUANTIE_E906FP || CONFIG_CPU_XUANTIE_E906FDP \
-    || CONFIG_CPU_XUANTIE_E907 || CONFIG_CPU_XUANTIE_E907F || CONFIG_CPU_XUANTIE_E907FD || CONFIG_CPU_XUANTIE_E907P || CONFIG_CPU_XUANTIE_E907FP || CONFIG_CPU_XUANTIE_E907FDP
-    return 8;
+#if CONFIG_CPU_XUANTIE_E902 || CONFIG_CPU_XUANTIE_E902M || CONFIG_CPU_XUANTIE_E902T || CONFIG_CPU_XUANTIE_E902MT \
+    || CONFIG_CPU_XUANTIE_E901PLUS_CP || CONFIG_CPU_XUANTIE_E901PLUS_B_CP || CONFIG_CPU_XUANTIE_E901PLUS_M_CP || CONFIG_CPU_XUANTIE_E901PLUS_BM_CP \
+    || CONFIG_CPU_XUANTIE_E901_CP || CONFIG_CPU_XUANTIE_E901_B_CP || CONFIG_CPU_XUANTIE_E901_ZM_CP || CONFIG_CPU_XUANTIE_E901_BZM_CP
+    return 16;
 #else
-    return 4;
+    return 32;
 #endif
 }
 
@@ -546,6 +557,7 @@ __STATIC_INLINE uint32_t csi_vic_get_pending_irq(int32_t IRQn)
 __STATIC_INLINE void csi_vic_set_pending_irq(int32_t IRQn)
 {
     CLIC->CLICINT[IRQn].IP |= CLIC_INTIP_IP_Msk;
+    __DSB();
 }
 
 /**
@@ -556,6 +568,7 @@ __STATIC_INLINE void csi_vic_set_pending_irq(int32_t IRQn)
 __STATIC_INLINE void csi_vic_clear_pending_irq(int32_t IRQn)
 {
     CLIC->CLICINT[IRQn].IP &= ~CLIC_INTIP_IP_Msk;
+    __DSB();
 }
 
 /**
@@ -568,7 +581,10 @@ __STATIC_INLINE void csi_vic_clear_pending_irq(int32_t IRQn)
 __STATIC_INLINE void csi_vic_set_prio(int32_t IRQn, uint32_t priority)
 {
     uint8_t nlbits = (CLIC->CLICINFO & CLIC_INFO_CLICINTCTLBITS_Msk) >> CLIC_INFO_CLICINTCTLBITS_Pos;
-    CLIC->CLICINT[IRQn].CTL = (CLIC->CLICINT[IRQn].CTL & (~CLIC_INTCFG_PRIO_Msk)) | (priority << (8 - nlbits));
+    uint8_t ctl = CLIC->CLICINT[IRQn].CTL;
+    ctl <<= nlbits;
+    ctl >>= nlbits;
+    CLIC->CLICINT[IRQn].CTL = ctl | (priority << (8 - nlbits));
     __DSB();
 }
 
@@ -614,6 +630,7 @@ __STATIC_INLINE uint32_t csi_vic_set_thresh(uint32_t thresh)
         CLIC->MINTTHRESH = 0xff << 24;
 
     CLIC->MINTTHRESH = thresh << 24;
+    __DSB();
     return temp;
 }
 
@@ -642,18 +659,22 @@ __STATIC_INLINE void csi_mpu_config_region(uint32_t idx, uint32_t base_addr, reg
     uint8_t  pmpxcfg = 0;
     uint32_t addr = 0;
 
-    if (idx > 15) {
+    if (idx > 15)
+    {
         return;
     }
 
-    if (!enable) {
+    if (!enable)
+    {
         attr.a = (address_matching_e)0;
     }
 
-    if (attr.a == ADDRESS_MATCHING_TOR) {
+    if (attr.a == ADDRESS_MATCHING_TOR)
+    {
         addr = base_addr >> 2;
     } else {
-        if (size == REGION_SIZE_4B) {
+        if (size == REGION_SIZE_4B)
+        {
             addr = base_addr >> 2;
             attr.a = (address_matching_e)2;
         } else {
@@ -693,7 +714,8 @@ __STATIC_INLINE void csi_mpu_disable_region(uint32_t idx)
 __STATIC_INLINE uint32_t _csi_coret_config(unsigned long coret_base, uint32_t ticks, int32_t IRQn)
 {
     CORET_Type *coret = (CORET_Type *)coret_base;
-    if ((coret->MTIMECMP != 0) && (coret->MTIMECMP != 0xffffffffffffffff)) {
+    if ((coret->MTIMECMP != 0) && (coret->MTIMECMP != 0xFFFFFFFFFFFFFFFFULL))
+    {
         coret->MTIMECMP = coret->MTIMECMP + ticks;
     } else {
         coret->MTIMECMP = coret->MTIME + ticks;
@@ -814,7 +836,8 @@ __ALWAYS_STATIC_INLINE void csi_coret_irq_disable(void)
  */
 __STATIC_INLINE uint8_t __get_SYSMAPCFGx(uint32_t idx)
 {
-    switch (idx) {
+    switch (idx)
+    {
     case 0:
         return SYSMAP->SYSMAPCFG0;
     case 1:
@@ -844,7 +867,8 @@ __STATIC_INLINE uint8_t __get_SYSMAPCFGx(uint32_t idx)
  */
 __STATIC_INLINE void __set_SYSMAPCFGx(uint32_t idx, uint32_t sysmapxcfg)
 {
-    switch (idx) {
+    switch (idx)
+    {
     case 0:
         SYSMAP->SYSMAPCFG0 = sysmapxcfg;
         break;
@@ -882,7 +906,8 @@ __STATIC_INLINE void __set_SYSMAPCFGx(uint32_t idx, uint32_t sysmapxcfg)
  */
 __STATIC_INLINE uint32_t __get_SYSMAPADDRx(uint32_t idx)
 {
-    switch(idx) {
+    switch(idx)
+    {
     case 0:
         return SYSMAP->SYSMAPADDR0;
     case 1:
@@ -912,7 +937,8 @@ __STATIC_INLINE uint32_t __get_SYSMAPADDRx(uint32_t idx)
  */
 __STATIC_INLINE void __set_SYSMAPADDRx(uint32_t idx, uint32_t sysmapxaddr)
 {
-    switch (idx) {
+    switch (idx)
+    {
     case 0:
         SYSMAP->SYSMAPADDR0 = sysmapxaddr;
         break;
@@ -953,7 +979,8 @@ __STATIC_INLINE void csi_sysmap_config_region(uint32_t idx, uint32_t base_addr, 
 {
     uint32_t addr = 0;
 
-    if (idx > 7) {
+    if (idx > 7)
+    {
         return;
     }
 
@@ -990,16 +1017,15 @@ __STATIC_INLINE int csi_icache_is_enable()
 __STATIC_INLINE void csi_icache_enable (void)
 {
 #if (__ICACHE_PRESENT == 1U)
-    if (!csi_icache_is_enable()) {
+    if (!csi_icache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         __ICACHE_IALL();
         cache = __get_MHCR();
         cache |= CACHE_MHCR_IE_Msk;
         __set_MHCR(cache);
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1012,16 +1038,15 @@ __STATIC_INLINE void csi_icache_enable (void)
 __STATIC_INLINE void csi_icache_disable (void)
 {
 #if (__ICACHE_PRESENT == 1U)
-    if (csi_icache_is_enable()) {
+    if (csi_icache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         cache = __get_MHCR();
         cache &= ~CACHE_MHCR_IE_Msk;            /* disable icache */
         __set_MHCR(cache);
         __ICACHE_IALL();                        /* invalidate all icache */
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1035,10 +1060,8 @@ __STATIC_INLINE void csi_icache_invalid (void)
 {
 #if (__ICACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __ICACHE_IALL();                        /* invalidate all icache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1058,17 +1081,16 @@ __STATIC_INLINE int csi_dcache_is_enable()
 __STATIC_INLINE void csi_dcache_enable (void)
 {
 #if (__DCACHE_PRESENT == 1U)
-    if (!csi_dcache_is_enable()) {
+    if (!csi_dcache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         __DCACHE_IALL();                        /* invalidate all dcache */
         cache = __get_MHCR();
         cache |= CACHE_MHCR_DE_Msk;             /* enable dcache */
         __set_MHCR(cache);
 
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1081,16 +1103,15 @@ __STATIC_INLINE void csi_dcache_enable (void)
 __STATIC_INLINE void csi_dcache_disable (void)
 {
 #if (__DCACHE_PRESENT == 1U)
-    if (csi_dcache_is_enable()) {
+    if (csi_dcache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         cache = __get_MHCR();
         cache &= ~(uint32_t)CACHE_MHCR_DE_Msk; /* disable all Cache */
         __set_MHCR(cache);
         __DCACHE_IALL();                             /* invalidate all Cache */
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1104,10 +1125,8 @@ __STATIC_INLINE void csi_dcache_invalid (void)
 {
 #if (__DCACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __DCACHE_IALL();                            /* invalidate all Cache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1120,10 +1139,8 @@ __STATIC_INLINE void csi_dcache_clean (void)
 {
 #if (__DCACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __DCACHE_CALL();                                     /* clean all Cache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1136,10 +1153,8 @@ __STATIC_INLINE void csi_dcache_clean_invalid (void)
 {
 #if (__DCACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __DCACHE_CIALL();                                   /* clean and inv all Cache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1155,11 +1170,12 @@ __STATIC_INLINE void csi_dcache_invalid_range (unsigned long *addr, size_t dsize
 #if (__DCACHE_PRESENT == 1U)
     int linesize = csi_get_cache_line_size();
     long op_size = dsize + (unsigned long)addr % linesize;
-    unsigned long op_addr = (unsigned long)addr;
+    unsigned long op_addr = (unsigned long)addr & CACHE_INV_ADDR_Msk;
 
     __DSB();
 
-    while (op_size > 0) {
+    while (op_size > 0)
+    {
         __DCACHE_IPA(op_addr);
         op_addr += linesize;
         op_size -= linesize;
@@ -1186,7 +1202,8 @@ __STATIC_INLINE void csi_dcache_clean_range (unsigned long *addr, size_t dsize)
 
     __DSB();
 
-    while (op_size > 0) {
+    while (op_size > 0)
+    {
         __DCACHE_CPA(op_addr);
         op_addr += linesize;
         op_size -= linesize;
@@ -1209,11 +1226,12 @@ __STATIC_INLINE void csi_dcache_clean_invalid_range (unsigned long *addr, size_t
 #if (__DCACHE_PRESENT == 1U)
     int linesize = csi_get_cache_line_size();
     long op_size = dsize + (unsigned long)addr % linesize;
-    unsigned long op_addr = (unsigned long) addr;
+    unsigned long op_addr = (unsigned long) addr & CACHE_INV_ADDR_Msk;
 
     __DSB();
 
-    while (op_size > 0) {
+    while (op_size > 0)
+    {
         __DCACHE_CIPA(op_addr);
         op_addr += linesize;
         op_size -= linesize;
@@ -1449,3 +1467,4 @@ __STATIC_INLINE void csi_irq_restore(uint32_t irq_state)
 #endif /* __CORE_RV32_H_DEPENDANT */
 
 #endif /* __CSI_GENERIC */
+

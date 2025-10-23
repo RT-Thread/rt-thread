@@ -123,7 +123,67 @@
     })
 #endif
 
+#define CSR_MCOR        0x7c2
+#define CSR_MHCR        0x7c1
+#define CSR_MCCR2       0x7c3
+#define CSR_MHINT       0x7c5
+#define CSR_MHINT2      0x7cc
+#define CSR_MHINT3      0x7cd
+#define CSR_MHINT4      0x7ce
+#define CSR_MXSTATUS    0x7c0
+#define CSR_PLIC_BASE   0xfc1
+#define CSR_MRMR        0x7c6
+#define CSR_MRVBR       0x7c7
+#define CSR_MCOUNTERWEN 0x7c9
+#define CSR_MSMPR       0x7f3
 
+#define CSR_MARCHID     0xf12
+#define CSR_MIMPID      0xf13
+#define CSR_MHARTID     0xf14
+#define CSR_MCPUID      0xfc0
+
+#define CSR_MSTATUS     0x300
+#define CSR_MISA        0x301
+#define CSR_MEDELEG     0x302
+#define CSR_MIDELEG     0x303
+#define CSR_MIE         0x304
+#define CSR_MTVEC       0x305
+#define CSR_MCOUNTEREN  0x306
+#define CSR_MENVCFG     0x30a
+#define CSR_MSTATUSH    0x310
+#define CSR_MSCRATCH    0x340
+#define CSR_MEPC        0x341
+#define CSR_MCAUSE      0x342
+#define CSR_MTVAL       0x343
+#define CSR_MIP         0x344
+#define CSR_MTINST      0x34a
+#define CSR_MTVAL2      0x34b
+
+ /* Machine Memory Protection */
+#define CSR_PMPCFG0     0x3a0
+#define CSR_PMPCFG1     0x3a1
+#define CSR_PMPCFG2     0x3a2
+#define CSR_PMPCFG3     0x3a3
+#define CSR_PMPCFG4     0x3a4
+#define CSR_PMPCFG5     0x3a5
+#define CSR_PMPCFG6     0x3a6
+#define CSR_PMPCFG7     0x3a7
+#define CSR_PMPCFG8     0x3a8
+#define CSR_PMPCFG9     0x3a9
+#define CSR_PMPCFG10    0x3aa
+#define CSR_PMPCFG11    0x3ab
+#define CSR_PMPCFG12    0x3ac
+#define CSR_PMPCFG13    0x3ad
+#define CSR_PMPCFG14    0x3ae
+#define CSR_PMPCFG15    0x3af
+#define CSR_PMPADDR0    0x3b0
+#define CSR_PMPADDR1    0x3b1
+#define CSR_PMPADDR2    0x3b2
+#define CSR_PMPADDR3    0x3b3
+#define CSR_PMPADDR4    0x3b4
+#define CSR_PMPADDR5    0x3b5
+#define CSR_PMPADDR6    0x3b6
+#define CSR_PMPADDR7    0x3b7
 
 #endif /* __CSI_RV_COMMON_H__ */
 

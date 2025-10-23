@@ -32,10 +32,14 @@
 #if CONFIG_CPU_XUANTIE_C907 || CONFIG_CPU_XUANTIE_C907FD || CONFIG_CPU_XUANTIE_C907FDV || CONFIG_CPU_XUANTIE_C907FDVM \
     || CONFIG_CPU_XUANTIE_C907_RV32 || CONFIG_CPU_XUANTIE_C907FD_RV32 || CONFIG_CPU_XUANTIE_C907FDV_RV32 || CONFIG_CPU_XUANTIE_C907FDVM_RV32 \
     || CONFIG_CPU_XUANTIE_C908 || CONFIG_CPU_XUANTIE_C908V || CONFIG_CPU_XUANTIE_C908I \
-    || CONFIG_CPU_XUANTIE_C910V2 || CONFIG_CPU_XUANTIE_C910V3 || CONFIG_CPU_XUANTIE_C910V3_CP \
-    || CONFIG_CPU_XUANTIE_C920V2 || CONFIG_CPU_XUANTIE_C920V3 || CONFIG_CPU_XUANTIE_C920V3_CP \
+    || CONFIG_CPU_XUANTIE_C908X || CONFIG_CPU_XUANTIE_C908X_CP || CONFIG_CPU_XUANTIE_C908X_CP_XT \
+    || CONFIG_CPU_XUANTIE_C910V2 || CONFIG_CPU_XUANTIE_C920V2 \
+    || CONFIG_CPU_XUANTIE_C910V3 || CONFIG_CPU_XUANTIE_C920V3 \
+    || CONFIG_CPU_XUANTIE_C910V3_CP || CONFIG_CPU_XUANTIE_C920V3_CP \
+    || CONFIG_CPU_XUANTIE_C910V3_CP_XT || CONFIG_CPU_XUANTIE_C920V3_CP_XT \
     || CONFIG_CPU_XUANTIE_R908 || CONFIG_CPU_XUANTIE_R908FD || CONFIG_CPU_XUANTIE_R908FDV \
-    || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP
+    || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP \
+    || CONFIG_CPU_XUANTIE_R908_CP_XT || CONFIG_CPU_XUANTIE_R908FD_CP_XT || CONFIG_CPU_XUANTIE_R908FDV_CP_XT
 #define CBO_INSN_SUPPORT 1
 #endif
 
@@ -494,7 +498,19 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MTIME(void)
     unsigned long result;
 
     __ASM volatile("rdtime %0" : "=r"(result));
-    //__ASM volatile("csrr %0, 0xc01" : "=r"(result));
+    /* __ASM volatile("csrr %0, 0xc01" : "=r"(result)); */
+    return (result);
+}
+
+/**
+  \brief   Get MTIMEH
+  \details Returns the content of the MTIME Register.
+  \return               MTIME Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MTIMEH(void)
+{
+    unsigned long result;
+    __ASM volatile("rdtimeh %0" : "=r"(result));
     return (result);
 }
 
@@ -838,24 +854,30 @@ __STATIC_INLINE uint8_t __get_PMPxCFG(unsigned long idx)
     unsigned long pmpcfgx = 0;
 
 #if __riscv_xlen == 32
-    if (idx < 4) {
+    if (idx < 4)
+    {
         pmpcfgx = __get_PMPCFG0();
-    } else if (idx >= 4 && idx < 8) {
+    } else if (idx >= 4 && idx < 8)
+    {
         idx -= 4;
         pmpcfgx = __get_PMPCFG1();
-    } else if (idx >= 8 && idx < 12) {
+    } else if (idx >= 8 && idx < 12)
+    {
         idx -= 8;
         pmpcfgx = __get_PMPCFG2();
-    } else if (idx >= 12 && idx < 16) {
+    } else if (idx >= 12 && idx < 16)
+    {
         idx -= 12;
         pmpcfgx = __get_PMPCFG3();
     } else {
         return 0;
     }
 #else
-    if (idx < 8) {
+    if (idx < 8)
+    {
         pmpcfgx = __get_PMPCFG0();
-    } else if (idx >= 8 && idx < 16) {
+    } else if (idx >= 8 && idx < 16)
+    {
         idx -= 8;
         pmpcfgx = __get_PMPCFG2();
     } else {
@@ -906,21 +928,25 @@ __STATIC_INLINE void __set_PMPxCFG(unsigned long idx, uint8_t pmpxcfg)
     unsigned long pmpcfgx = 0;
 
 #if __riscv_xlen == 32
-    if (idx < 4) {
+    if (idx < 4)
+    {
         pmpcfgx = __get_PMPCFG0();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
         __set_PMPCFG0(pmpcfgx);
-    } else if (idx >= 4 && idx < 8) {
+    } else if (idx >= 4 && idx < 8)
+    {
         idx -= 4;
         pmpcfgx = __get_PMPCFG1();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
         __set_PMPCFG1(pmpcfgx);
-    } else if (idx >= 8 && idx < 12) {
+    } else if (idx >= 8 && idx < 12)
+    {
         idx -= 8;
         pmpcfgx = __get_PMPCFG2();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
         __set_PMPCFG2(pmpcfgx);
-    } else if (idx >= 12 && idx < 16) {
+    } else if (idx >= 12 && idx < 16)
+    {
         idx -= 12;
         pmpcfgx = __get_PMPCFG3();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
@@ -929,11 +955,13 @@ __STATIC_INLINE void __set_PMPxCFG(unsigned long idx, uint8_t pmpxcfg)
         return;
     }
 #else
-    if (idx < 8) {
+    if (idx < 8)
+    {
         pmpcfgx = __get_PMPCFG0();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
         __set_PMPCFG0(pmpcfgx);
-    } else if (idx >= 8 && idx < 16) {
+    } else if (idx >= 8 && idx < 16)
+    {
         idx -= 8;
         pmpcfgx = __get_PMPCFG2();
         pmpcfgx = (pmpcfgx & ~(0xFF << (idx << 3))) | ((unsigned long)(pmpxcfg) << (idx << 3));
@@ -1085,7 +1113,8 @@ __ALWAYS_STATIC_INLINE unsigned long __get_PMPADDR15(void)
  */
 __STATIC_INLINE unsigned long __get_PMPADDRx(unsigned long idx)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 0:
             return __get_PMPADDR0();
 
@@ -1232,7 +1261,8 @@ __ALWAYS_STATIC_INLINE void __set_PMPADDR15(unsigned long pmpaddr)
  */
 __STATIC_INLINE void __set_PMPADDRx(unsigned long idx, unsigned long pmpaddr)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 0:
             __set_PMPADDR0(pmpaddr);
             break;
@@ -1588,7 +1618,9 @@ __ALWAYS_STATIC_INLINE void __ISB(void)
 __ALWAYS_STATIC_INLINE void __DSB(void)
 {
     __ASM volatile("fence iorw, iorw");
+#if __riscv_xtheadsync
     __ASM volatile("sync");
+#endif
 }
 
 /**
@@ -1608,7 +1640,9 @@ __ALWAYS_STATIC_INLINE void __DMB(void)
  */
 __ALWAYS_STATIC_INLINE void __SYNC_IS(void)
 {
+#if __riscv_xtheadsync
     __ASM volatile("sync.is");
+#endif
 }
 
 /**
@@ -1617,7 +1651,9 @@ __ALWAYS_STATIC_INLINE void __SYNC_IS(void)
  */
 __ALWAYS_STATIC_INLINE void __ICACHE_IALL(void)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("icache.iall");
+#endif
 }
 
 /**
@@ -1626,7 +1662,9 @@ __ALWAYS_STATIC_INLINE void __ICACHE_IALL(void)
  */
 __ALWAYS_STATIC_INLINE void __ICACHE_IALLS(void)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("icache.ialls");
+#endif
 }
 
 /**
@@ -1636,7 +1674,9 @@ __ALWAYS_STATIC_INLINE void __ICACHE_IALLS(void)
  */
 __ALWAYS_STATIC_INLINE void __ICACHE_IPA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("icache.ipa %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1646,7 +1686,9 @@ __ALWAYS_STATIC_INLINE void __ICACHE_IPA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __ICACHE_IVA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("icache.iva %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1655,7 +1697,9 @@ __ALWAYS_STATIC_INLINE void __ICACHE_IVA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_IALL(void)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.iall");
+#endif
 }
 
 /**
@@ -1664,7 +1708,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_IALL(void)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CALL(void)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.call");
+#endif
 }
 
 /**
@@ -1673,7 +1719,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CALL(void)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CIALL(void)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.ciall");
+#endif
 }
 
 /**
@@ -1683,7 +1731,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CIALL(void)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CISW(unsigned long wayset)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.cisw %0" : : "r"(wayset));
+#endif
 }
 
 #if CBO_INSN_SUPPORT
@@ -1734,7 +1784,9 @@ __ALWAYS_STATIC_INLINE void __CBO_ZERO(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CPA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.cpa %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1744,7 +1796,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CPA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CVA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.cva %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1754,7 +1808,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CVA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CIPA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.cipa %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1764,7 +1820,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CIPA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CIVA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.civa %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1774,7 +1832,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CIVA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_IPA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.ipa %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1784,7 +1844,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_IPA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_IVA(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.iva %0" : : "r"(addr));
+#endif
 }
 
 #endif
@@ -1796,7 +1858,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_IVA(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CPAL1(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.cpal1 %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1806,7 +1870,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CPAL1(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_CVAL1(unsigned long addr)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.cval1 %0" : : "r"(addr));
+#endif
 }
 
 /**
@@ -1816,7 +1882,9 @@ __ALWAYS_STATIC_INLINE void __DCACHE_CVAL1(unsigned long addr)
  */
 __ALWAYS_STATIC_INLINE void __DCACHE_ISW(unsigned long wayset)
 {
+#if __riscv_xtheadcmo
     __ASM volatile("dcache.isw %0" : : "r"(wayset));
+#endif
 }
 
 #if (__L2CACHE_PRESENT == 1U)
@@ -1948,7 +2016,7 @@ __ALWAYS_STATIC_INLINE void __set_MCER2H(unsigned long mcer2h)
 __ALWAYS_STATIC_INLINE unsigned long __get_SSBEPA2(void)
 {
     register unsigned long result;
-    //__ASM volatile("csrr %0, ssbepa2" : "=r"(result));
+    /* __ASM volatile("csrr %0, ssbepa2" : "=r"(result)); */
     __ASM volatile("csrr %0, 0x5d2" : "=r"(result));
     return (result);
 }
@@ -1960,7 +2028,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_SSBEPA2(void)
   */
 __ALWAYS_STATIC_INLINE void __set_SSBEPA2(unsigned long ssbepa2)
 {
-    //__ASM volatile("csrw ssbepa2, %0" : : "r"(ssbepa2));
+    /* __ASM volatile("csrw ssbepa2, %0" : : "r"(ssbepa2)); */
     __ASM volatile("csrw 0x5d2, %0" : : "r"(ssbepa2));
 }
 
@@ -1972,7 +2040,7 @@ __ALWAYS_STATIC_INLINE void __set_SSBEPA2(unsigned long ssbepa2)
 __ALWAYS_STATIC_INLINE unsigned long __get_MSBEPA2(void)
 {
     register unsigned long result;
-    //__ASM volatile("csrr %0, msbepa2" : "=r"(result));
+    /* __ASM volatile("csrr %0, msbepa2" : "=r"(result)); */
     __ASM volatile("csrr %0, 0x7fc" : "=r"(result));
     return (result);
 }
@@ -1984,7 +2052,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MSBEPA2(void)
   */
 __ALWAYS_STATIC_INLINE void __set_MSBEPA2(unsigned long msbepa2)
 {
-    //__ASM volatile("csrw msbepa2, %0" : : "r"(msbepa2));
+    /* __ASM volatile("csrw msbepa2, %0" : : "r"(msbepa2)); */
     __ASM volatile("csrw 0x7fc, %0" : : "r"(msbepa2));
 }
 
@@ -2064,7 +2132,7 @@ __ALWAYS_STATIC_INLINE void __set_MCERH(unsigned long mcerh)
 __ALWAYS_STATIC_INLINE unsigned long __get_SSBEPA(void)
 {
     register unsigned long result;
-    //__ASM volatile("csrr %0, ssbepa" : "=r"(result));
+    /* __ASM volatile("csrr %0, ssbepa" : "=r"(result)); */
     __ASM volatile("csrr %0, 0x5d1" : "=r"(result));
     return (result);
 }
@@ -2076,7 +2144,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_SSBEPA(void)
   */
 __ALWAYS_STATIC_INLINE void __set_SSBEPA(unsigned long ssbepa)
 {
-    //__ASM volatile("csrw ssbepa, %0" : : "r"(ssbepa));
+    /* __ASM volatile("csrw ssbepa, %0" : : "r"(ssbepa)); */
     __ASM volatile("csrw 0x5d1, %0" : : "r"(ssbepa));
 }
 
@@ -2088,7 +2156,7 @@ __ALWAYS_STATIC_INLINE void __set_SSBEPA(unsigned long ssbepa)
 __ALWAYS_STATIC_INLINE unsigned long __get_MSBEPA(void)
 {
     register unsigned long result;
-    //__ASM volatile("csrr %0, msbepa" : "=r"(result));
+    /* __ASM volatile("csrr %0, msbepa" : "=r"(result)); */
     __ASM volatile("csrr %0, 0x7fb" : "=r"(result));
     return (result);
 }
@@ -2100,7 +2168,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MSBEPA(void)
   */
 __ALWAYS_STATIC_INLINE void __set_MSBEPA(unsigned long msbepa)
 {
-    //__ASM volatile("csrw msbepa, %0" : : "r"(msbepa));
+    /* __ASM volatile("csrw msbepa, %0" : : "r"(msbepa)); */
     __ASM volatile("csrw 0x7fb, %0" : : "r"(msbepa));
 }
 
@@ -2259,7 +2327,8 @@ __ALWAYS_STATIC_INLINE unsigned int __get_MCOUNTINHIBIT(void)
   */
 __ALWAYS_STATIC_INLINE void __set_MHPMEVENT(unsigned long idx, unsigned long value)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 0: rv_csr_write(0x7E0, value); break;
         case 2: rv_csr_write(0x7E1, value); break;
         case 3: rv_csr_write(0x323, value); break;
@@ -2303,7 +2372,8 @@ __ALWAYS_STATIC_INLINE void __set_MHPMEVENT(unsigned long idx, unsigned long val
   */
 __ALWAYS_STATIC_INLINE unsigned long __get_MHPMEVENT(unsigned long idx)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 0: return rv_csr_read(0x7E0);
         case 2: return rv_csr_read(0x7E1);
         case 3: return rv_csr_read(0x323);
@@ -2347,7 +2417,8 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MHPMEVENT(unsigned long idx)
   */
 __ALWAYS_STATIC_INLINE void __set_MHPMEVENTH(unsigned long idx, unsigned long value)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 3: rv_csr_write(0x723, value); break;
         case 4: rv_csr_write(0x724, value); break;
         case 5: rv_csr_write(0x725, value); break;
@@ -2389,7 +2460,8 @@ __ALWAYS_STATIC_INLINE void __set_MHPMEVENTH(unsigned long idx, unsigned long va
   */
 __ALWAYS_STATIC_INLINE unsigned long __get_MHPMEVENTH(unsigned long idx)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 3: return rv_csr_read(0x723);
         case 4: return rv_csr_read(0x724);
         case 5: return rv_csr_read(0x725);
@@ -2431,7 +2503,8 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MHPMEVENTH(unsigned long idx)
   */
 __ALWAYS_STATIC_INLINE void __set_MHPMCOUNTER(unsigned long idx, unsigned long value)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 3: rv_csr_write(0xB03, (value)); break;
         case 4: rv_csr_write(0xB04, (value)); break;
         case 5: rv_csr_write(0xB05, (value)); break;
@@ -2473,7 +2546,8 @@ __ALWAYS_STATIC_INLINE void __set_MHPMCOUNTER(unsigned long idx, unsigned long v
   */
 __ALWAYS_STATIC_INLINE unsigned long __get_MHPMCOUNTER(unsigned long idx)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 3: return rv_csr_read(0xB03);
         case 4: return rv_csr_read(0xB04);
         case 5: return rv_csr_read(0xB05);
@@ -2515,7 +2589,8 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MHPMCOUNTER(unsigned long idx)
   */
 __ALWAYS_STATIC_INLINE void __set_MHPMCOUNTERH(unsigned long idx, unsigned long value)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 3: rv_csr_write(0xB83, (value)); break;
         case 4: rv_csr_write(0xB84, (value)); break;
         case 5: rv_csr_write(0xB85, (value)); break;
@@ -2557,7 +2632,8 @@ __ALWAYS_STATIC_INLINE void __set_MHPMCOUNTERH(unsigned long idx, unsigned long 
   */
 __ALWAYS_STATIC_INLINE unsigned long __get_MHPMCOUNTERH(unsigned long idx)
 {
-    switch (idx) {
+    switch (idx)
+    {
         case 3: return rv_csr_read(0xB83);
         case 4: return rv_csr_read(0xB84);
         case 5: return rv_csr_read(0xB85);
@@ -2670,7 +2746,8 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 
     result = value;                      /* r will be reversed bits of v; first get LSB of v */
 
-    for (value >>= 1U; value; value >>= 1U) {
+    for (value >>= 1U; value; value >>= 1U)
+    {
         result <<= 1U;
         result |= value & 1U;
         s--;
@@ -2702,26 +2779,30 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
 
     posMax = 1;
 
-    for (i = 0; i < (y - 1); i++) {
+    for (i = 0; i < (y - 1); i++)
+    {
         posMax = posMax * 2;
     }
 
-    if (x > 0) {
+    if (x > 0)
+    {
         posMax = (posMax - 1);
 
-        if (x > posMax) {
+        if (x > posMax)
+        {
             x = posMax;
         }
 
-//    x &= (posMax * 2 + 1);
+/*    x &= (posMax * 2 + 1); */
     } else {
         negMin = -posMax;
 
-        if (x < negMin) {
+        if (x < negMin)
+        {
             x = negMin;
         }
 
-//    x &= (posMax * 2 - 1);
+/*    x &= (posMax * 2 - 1); */
     }
 
     return (x);
@@ -2738,7 +2819,8 @@ __ALWAYS_STATIC_INLINE uint32_t __USAT(uint32_t value, uint32_t sat)
 {
     uint32_t result;
 
-    if ((((0xFFFFFFFF >> sat) << sat) & value) != 0) {
+    if ((((0xFFFFFFFF >> sat) << sat) & value) != 0)
+    {
         result = 0xFFFFFFFF >> (32 - sat);
     } else {
         result = value;
@@ -2758,9 +2840,11 @@ __ALWAYS_STATIC_INLINE uint32_t __IUSAT(uint32_t value, uint32_t sat)
 {
     uint32_t result;
 
-    if (value & 0x80000000) { /* only overflow set bit-31 */
+    if (value & 0x80000000)
+    { /* only overflow set bit-31 */
         result = 0;
-    } else if ((((0xFFFFFFFF >> sat) << sat) & value) != 0) {
+    } else if ((((0xFFFFFFFF >> sat) << sat) & value) != 0)
+    {
         result = 0xFFFFFFFF >> (32 - sat);
     } else {
         result = value;
@@ -3986,14 +4070,17 @@ __ALWAYS_STATIC_INLINE int32_t __QADD(int32_t x, int32_t y)
 {
     int32_t result;
 
-    if (y >= 0) {
-        if ((int32_t)((uint32_t)x + (uint32_t)y) >= x) {
+    if (y >= 0)
+    {
+        if ((int32_t)((uint32_t)x + (uint32_t)y) >= x)
+        {
             result = x + y;
         } else {
             result = 0x7FFFFFFF;
         }
     } else {
-        if ((int32_t)((uint32_t)x + (uint32_t)y) < x) {
+        if ((int32_t)((uint32_t)x + (uint32_t)y) < x)
+        {
             result = x + y;
         } else {
             result = 0x80000000;
@@ -4019,9 +4106,11 @@ __ALWAYS_STATIC_INLINE int32_t __QSUB(int32_t x, int32_t y)
 
     tmp = (long)x - (long)y;
 
-    if (tmp > 0x7fffffff) {
+    if (tmp > 0x7fffffff)
+    {
         tmp = 0x7fffffff;
-    } else if (tmp < (-2147483647 - 1)) {
+    } else if (tmp < (-2147483647 - 1))
+    {
         tmp = -2147483647 - 1;
     }
 
@@ -4327,3 +4416,4 @@ __ALWAYS_STATIC_INLINE uint32_t __UXTB16(uint32_t x)
 #endif
 
 #endif /* _CSI_RV32_GCC_H_ */
+
