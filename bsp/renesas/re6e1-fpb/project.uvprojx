@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\io\eventfd;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\cortex-m33;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\drivers;..\..\..\components\finsh;.;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;board\ports;board;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\include</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\HAL_Drivers\drivers;board\ports;..\..\..\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\finsh;..\..\..\components\drivers\phy;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\poll;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\epoll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1280,6 +1280,11 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+            <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
@@ -1293,11 +1298,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2094,6 +2094,11 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+            <File>
               <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
@@ -2107,11 +2112,6 @@
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
             <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>

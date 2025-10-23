@@ -33,21 +33,6 @@
 | :----------------- | :----------------- | :------------- |
 | UART               | 支持               | UART0 为默认日志输出端口 |
 | GPIO               | 支持               |                |
-| IIC                | 支持               | 软件           |
-| WDT                | 支持               |                |
-| RTC                | 支持               |                |
-| ADC                | 支持               |                |
-| DAC                | 支持               |                |
-| SPI                | 支持               |                |
-| FLASH              | 支持               |                |
-| PWM                | 支持               |                |
-| CAN                | 支持               |                |
-| 持续更新中...      |                    |                |
-| **外接外设** | **支持情况** | **备注** |
-| WiFi 模块     | 支持        |  [RW007 WiFi 网络模块](https://github.com/RT-Thread-packages/rw007)  |
-| 温湿度传感器   | 支持       |  [HS300x 温湿度模块](https://github.com/Guozhanxin/hs300x) |
-| 室内空气质量传感器 | 支持 | [zmod4410 室内空气质量模块](https://github.com/ShermanShao/zmod4410) |
-| 光线传感器 | 支持 | [isl29035光线传感器模块](https://github.com/ShermanShao/isl29035) |
 
 
 ## 使用说明
