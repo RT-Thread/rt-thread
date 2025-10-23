@@ -217,12 +217,12 @@
 
 /* Utest Self Testcase */
 
-#define UTEST_SELF_PASS_TC
+#define RT_UTEST_SELF_PASS
 /* end of Utest Self Testcase */
 
 /* Kernel Testcase */
 
-#define UTEST_SMALL_MEM_TC
+#define RT_UTEST_SMALL_MEM
 /* end of Kernel Testcase */
 
 /* CPP11 Testcase */

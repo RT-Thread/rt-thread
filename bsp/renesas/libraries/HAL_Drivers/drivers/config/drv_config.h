@@ -138,6 +138,26 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA4E2 */
 
+#ifdef SOC_SERIES_R7FA4M1
+#include "ra4m1/uart_config.h"
+
+#ifdef BSP_USING_ADC
+#include "ra4m1/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra4m1/dac_config.h"
+#endif
+
+#ifdef BSP_USING_PWM
+#include "ra4m1/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_CAN
+#include "ra4m1/can_config.h"
+#endif
+#endif /* SOC_SERIES_R7FA4M1 */
+
 #ifdef SOC_SERIES_R7FA4M2
 #include "ra4m2/uart_config.h"
 

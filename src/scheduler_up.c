@@ -724,7 +724,7 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
 }
 
 /**
- * @}
+ * @} group_thread_management
  *
  * @endcond
  */

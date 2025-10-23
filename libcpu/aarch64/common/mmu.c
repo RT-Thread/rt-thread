@@ -54,8 +54,13 @@
 
 /* restrict virtual address on usage of RT_NULL */
 #ifndef KERNEL_VADDR_START
+#ifdef  KERNEL_ASPACE_START
+#define KERNEL_VADDR_START KERNEL_ASPACE_START
+#else
 #define KERNEL_VADDR_START (ARCH_RAM_OFFSET + ARCH_TEXT_OFFSET)
 #endif
+#endif /* KERNEL_VADDR_START */
+
 
 volatile unsigned long MMUTable[512] __attribute__((aligned(4 * 1024)));
 
@@ -554,7 +559,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
         return -1;
     }
 
-    rt_aspace_init(aspace, (void *)KERNEL_VADDR_START, 0 - KERNEL_VADDR_START,
+    rt_aspace_init(aspace, (void *)KERNEL_VADDR_START, 0 - (rt_size_t) KERNEL_VADDR_START,
                    vtable);
 
     _init_region(v_address, size);

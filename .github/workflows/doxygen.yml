@@ -31,6 +31,10 @@ on:
   schedule:
     - cron:  '0 16 30 * *'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
   
 permissions:
   contents: read
@@ -55,8 +59,8 @@ jobs:
         shell: bash
         run: |
           cd documentation
-          doxygen Doxyfile
-          cat Doxyfile
+          doxygen Doxyfile.1.9.1
+          cat Doxyfile.1.9.1
           
       - name: Upload static files as artifact
         id: deployment

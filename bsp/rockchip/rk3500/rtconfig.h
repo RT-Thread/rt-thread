@@ -448,7 +448,7 @@
 
 /* SMP-Call Testcase */
 
-#define UTEST_SMP_CALL_FUNC
+#define RT_UTEST_SMP_CALL_FUNC
 /* end of SMP-Call Testcase */
 /* end of RT-Thread Utestcases */
 

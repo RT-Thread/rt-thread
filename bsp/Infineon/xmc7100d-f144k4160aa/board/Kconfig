@@ -33,6 +33,97 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C
         select PKG_USING_QMI8658
         default n
+
+    menuconfig BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        default n
+        select PKG_USING_RTDUINO
+        select BSP_USING_UART2
+        select BSP_USING_GPIO
+        select BSP_USING_I2C
+        select BSP_USING_HW_I2C2
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_SPI
+        if BSP_USING_ARDUINO
+            menuconfig BSP_USING_ARDUINO_RTDUINO_SENSORFUSION_SHIELD
+                bool "Enable ARDUINO RTDUINO SENSORFUSION SHIELD"
+                default n
+                select PKG_USING_ARDUINO_RTDUINO_SENSORFUSION_SHIELD
+                select PKG_ARDUINO_RTDUINO_SENSORFUSION_SHIELD_DEMO
+                if BSP_USING_ARDUINO_RTDUINO_SENSORFUSION_SHIELD
+                    config BSP_USING_RTDUINO_SENSORFUSION_SHIELD_BMP280_DEMO
+                        bool "Enable RTDUINO SENSORFUSION SHIELD BMP280 DEMO"
+                        select PKG_RTDUINO_SENSORFUSION_SHIELD_BMP280_DEMO
+                        default n
+                    config BSP_USING_RTDUINO_SENSORFUSION_SHIELD_SHT31_DEMO
+                        bool "Enable RTDUINO SENSORFUSION SHIELD SHT31 DEMO"
+                        select PKG_RTDUINO_SENSORFUSION_SHIELD_SHT31_DEMO
+                        default n
+                    config BSP_USING_RTDUINO_SENSORFUSION_SHIELD_QMC5883L_DEMO
+                        bool "Enable RTDUINO SENSORFUSION SHIELD QMC5883L DEMO"
+                        select PKG_RTDUINO_SENSORFUSION_SHIELD_QMC5883L_DEMO
+                        default n
+                    config BSP_USING_RTDUINO_SENSORFUSION_SHIELD_SC7A20_DEMO
+                        bool "Enable RTDUINO SENSORFUSION SHIELD SC7A20 DEMO"
+                        select PKG_RTDUINO_SENSORFUSION_SHIELD_SC7A20_DEMO
+                        default n
+                    config BSP_USING_RTDUINO_SENSORFUSION_SHIELD_SSD1306_DEMO
+                        bool "Enable RTDUINO SENSORFUSION SHIELD SSD1306 DEMO"
+                        select PKG_RTDUINO_SENSORFUSION_SHIELD_SSD1306_DEMO
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_RW007
+        bool "Enable RW007"
+        default n
+        select PKG_USING_RW007
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        select RW007_NOT_USE_EXAMPLE_DRIVERS
+
+    if BSP_USING_RW007
+        comment "Notice: P5_7 --> 47; P5_6 -->46; P0_5 --> 5; P0_4 --> 4"
+        config IFX_RW007_SPI_BUS_NAME
+            string "RW007 BUS NAME"
+            default "spi0"
+
+        config IFX_RW007_WIFI_SSID
+            string "Wi-Fi SSID"
+            default "realthread_VIP"
+
+        config IFX_RW007_WIFI_PASSWORD
+            string "Wi-Fi Password"
+            default "your wifi password"
+
+        config IFX_RW007_CS_PIN
+            int "(INT)CS pin index"
+            range 1 113
+            default 3
+
+        config IFX_RW007_BOOT0_PIN
+            int "(INT)BOOT0 pin index (same as spi clk pin)"
+            range 1 113
+            default 2
+
+        config IFX_RW007_BOOT1_PIN
+            int "(INT)BOOT1 pin index (same as spi cs pin)"
+            range 1 113
+            default 3
+
+        config IFX_RW007_INT_BUSY_PIN
+            int "(INT)INT/BUSY pin index"
+            range 1 190
+            default 160
+
+        config IFX_RW007_RST_PIN
+            int "(INT)RESET pin index"
+            range 1 190
+            default 180
+    endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -76,6 +167,19 @@ menu "On-chip Peripheral Drivers"
                         range 0 999
                         default 145
                 endif
+            menuconfig BSP_USING_HW_I2C2
+                bool "Enable BSP_USING_HW_I2C2"
+                default y
+                if BSP_USING_HW_I2C2
+                    config BSP_I2C2_SCL_PIN
+                        int "BSP_I2C2_SCL_PIN number(0,1)"
+                        range 0 999
+                        default 1
+                    config BSP_I2C2_SDA_PIN
+                        int "BSP_I2C2_SDA_PIN number(0,0)"
+                        range 0 999
+                        default 0
+                endif
         endif
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
@@ -84,6 +188,9 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SPI
             config BSP_USING_SPI5
                 bool "Enable BSP_USING_SPI5"
+                default y
+            config BSP_USING_SPI0
+                bool "Enable BSP_USING_SPI0"
                 default y
         endif
 endmenu
