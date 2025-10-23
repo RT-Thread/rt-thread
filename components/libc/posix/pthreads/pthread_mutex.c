@@ -541,6 +541,68 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex)
 }
 RTM_EXPORT(pthread_mutex_trylock);
 
+
+/**
+ * @brief Attempts to lock a mutex with a timeout.
+ *
+ * This function attempts to lock the mutex object pointed to by `mutex`. If the mutex
+ * is already locked by another thread, the function will block until the mutex becomes
+ * available or the specified timeout occurs.
+ *
+ * @param[in,out] mutex Pointer to the mutex to be locked.
+ * @param[in] abstime Pointer to a `struct timespec` structure specifying the absolute time
+ *                    when the function should return if the mutex is not available.
+ *
+ * @return
+ * - 0 on success.
+ * - Non-zero error code on failure, including:
+ *   - `EINVAL`: The mutex is invalid or uninitialized.
+ *   - `EDEADLK`: A deadlock condition was detected (e.g., the current thread
+ *     already holds the mutex in a recursive locking scenario).
+ *
+ * @note
+ * This function is useful for implementing timed mutex acquisition. If the mutex
+ * was initialized with the `PTHREAD_MUTEX_RECURSIVE` attribute, the calling thread can
+ * lock it multiple times, but must unlock it the same number of times.
+ *
+ * @warning
+ * Attempting to timedlock an uninitialized or destroyed mutex results in undefined behavior.
+ *
+ * @see pthread_mutex_lock, pthread_mutex_unlock, pthread_mutex_trylock, pthread_mutex_init
+ */
+int pthread_mutex_timedlock(pthread_mutex_t *mutex, const struct timespec *abstime)
+{
+    int      mtype;
+    rt_err_t result;
+
+    if (!mutex)
+        return EINVAL;
+
+    if (mutex->attr == -1)
+    {
+        /* init mutex */
+        pthread_mutex_init(mutex, RT_NULL);
+    }
+
+    mtype = mutex->attr & MUTEXATTR_TYPE_MASK;
+    rt_enter_critical();
+    if (mutex->lock.owner == rt_thread_self() && mtype != PTHREAD_MUTEX_RECURSIVE)
+    {
+        rt_exit_critical();
+        return EDEADLK;
+    }
+    rt_exit_critical();
+
+    rt_int32_t timeout = rt_timespec_to_tick(abstime);
+
+    result = rt_mutex_take(&(mutex->lock), timeout);
+    if (result == RT_EOK)
+        return 0;
+
+    return EINVAL;
+}
+RTM_EXPORT(pthread_mutex_timedlock);
+
 int pthread_mutexattr_getprioceiling(const pthread_mutexattr_t *attr, int *prioceiling)
 {
     return EINVAL;
