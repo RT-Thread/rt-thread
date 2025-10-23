@@ -16,6 +16,10 @@ menu "Serial Test"
             string "Device Name for Serial Test"
             default "uart2"
 
+        config RT_SERIAL_TC_DEVICE_USING_TX_DMA
+            bool "Selected serial device is using TX DMA"
+            default n
+
         config RT_SERIAL_TC_RXBUF_SIZE
             int "RX Buffer Size for Serial Test"
             default 128

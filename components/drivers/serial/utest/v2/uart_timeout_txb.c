@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 #ifdef RT_UTEST_SERIAL_V2
-#ifndef BSP_UART2_TX_USING_DMA
+#ifndef RT_SERIAL_TC_DEVICE_USING_TX_DMA
 
 static struct rt_serial_device *serial;
 

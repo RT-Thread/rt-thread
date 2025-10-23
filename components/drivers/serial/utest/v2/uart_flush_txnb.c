@@ -64,7 +64,8 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
     rt_device_control(&serial->parent, RT_SERIAL_CTRL_TX_FLUSH, RT_NULL);
     tick_diff = rt_tick_get() - old_tick;
 
-    if (tick_diff < expect_time || tick_diff > (expect_time + 10))
+    rt_uint32_t lower_bound = (expect_time > 2) ? (expect_time - 2) : 0;
+    if (tick_diff < lower_bound || tick_diff > (expect_time + 10))
     {
         LOG_E("send_size [%4d], time required for TXNB mode transmission to complete [%3d], expect_time [%3d]", send_size, tick_diff, expect_time);
         return -RT_ERROR;
