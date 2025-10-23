@@ -34,11 +34,11 @@ static rt_err_t uart_find(void)
 static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
 {
     rt_uint32_t old_tick;
-    rt_tick_t   tick_diff;
-    rt_tick_t   expect_time = send_size * 0.0868;
+    rt_tick_t tick_diff;
+    rt_tick_t expect_time = send_size * 0.0868;
 
-    rt_uint8_t  readBuf[16] = {0};
-    rt_uint32_t readSize    = 0;
+    rt_uint8_t readBuf[16] = { 0 };
+    rt_uint32_t readSize = 0;
     if (send_size >= sizeof(readBuf))
     {
         readSize = sizeof(readBuf);
@@ -54,7 +54,7 @@ static rt_err_t test_item(rt_uint8_t *uart_write_buffer, rt_uint32_t send_size)
         expect_time -= send_size / 384;
     }
 
-    old_tick        = rt_tick_get();
+    old_tick = rt_tick_get();
     rt_ssize_t size = rt_device_write(&serial->parent, 0, uart_write_buffer, send_size);
     if (size != send_size)
     {
@@ -108,9 +108,9 @@ static rt_bool_t uart_api()
 
     /* Reinitialize */
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    config.baud_rate               = BAUD_RATE_115200;
-    config.rx_bufsz                = RT_SERIAL_TC_RXBUF_SIZE;
-    config.tx_bufsz                = RT_SERIAL_TC_TXBUF_SIZE * 5 + 10;
+    config.baud_rate = BAUD_RATE_115200;
+    config.rx_bufsz = RT_SERIAL_TC_RXBUF_SIZE;
+    config.tx_bufsz = RT_SERIAL_TC_TXBUF_SIZE * 5 + 10;
 #ifdef RT_SERIAL_USING_DMA
     config.dma_ping_bufsz = RT_SERIAL_TC_RXBUF_SIZE / 2;
 #endif
@@ -125,8 +125,8 @@ static rt_bool_t uart_api()
 
     rt_uint8_t *uart_write_buffer;
     rt_uint32_t i;
-    rt_int32_t  tx_timeout = 10 * 1000;
-    uart_write_buffer      = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_TXBUF_SIZE * 5 + 10);
+    rt_int32_t tx_timeout = 10 * 1000;
+    uart_write_buffer = (rt_uint8_t *)rt_malloc(RT_SERIAL_TC_TXBUF_SIZE * 5 + 10);
     for (rt_uint32_t count = 0; count < (RT_SERIAL_TC_TXBUF_SIZE * 5 + 10); count++)
     {
         uart_write_buffer[count] = count;
@@ -175,7 +175,8 @@ static rt_err_t utest_tc_init(void)
 static rt_err_t utest_tc_cleanup(void)
 {
     rt_device_t uart_dev = rt_device_find(RT_SERIAL_TC_DEVICE_NAME);
-    while (rt_device_close(uart_dev) != -RT_ERROR);
+    while (rt_device_close(uart_dev) != -RT_ERROR)
+        ;
     return RT_EOK;
 }
 
