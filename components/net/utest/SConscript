@@ -14,6 +14,7 @@ if GetDepend('RT_UTEST_TC_USING_NETDEV'):
     src += ['tc_netdev.c']
 
 if GetDepend('RT_UTEST_TC_USING_SAL'):
+    # Add sal test source if enabled
     src += ['tc_sal_socket.c']
 
 # Define the test group with proper dependencies
