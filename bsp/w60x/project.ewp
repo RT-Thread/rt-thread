@@ -216,12 +216,12 @@
           <name>CCDefines</name>
           <state>__inline=inline</state>
           <state>__inline__=inline</state>
+          <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -349,41 +349,41 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\oneshot</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\impl</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket\sys_socket</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\include\dfs_net</state>
+          <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket\sys_socket</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\include\dfs_net</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
-          <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\oneshot</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\impl</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1274,12 +1274,12 @@
           <name>CCDefines</name>
           <state>__inline=inline</state>
           <state>__inline__=inline</state>
+          <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -1407,41 +1407,41 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\oneshot</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\impl</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket\sys_socket</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\include\dfs_net</state>
+          <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket\sys_socket</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\include\dfs_net</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
-          <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\sal\include\socket</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\oneshot</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\sal\impl</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2287,16 +2287,16 @@
       <name>$PROJ_DIR$\drivers\drv_wifi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\pin_map.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\drivers\drv_pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_pin.c</name>
+      <name>$PROJ_DIR$\drivers\pin_map.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
   </group>
   <group>
@@ -2323,16 +2323,16 @@
       <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_parse.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\msh_file.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\msh_parse.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
   </group>
   <group>
@@ -2389,9 +2389,6 @@
       <name>$PROJ_DIR$\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\klibc\kstdio.c</name>
     </file>
     <file>
@@ -2399,6 +2396,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
   </group>
   <group>
@@ -2571,6 +2571,9 @@
     <file>
       <name>$PROJ_DIR$\..\..\components\net\sal\src\sal_socket.c</name>
     </file>
+  </group>
+  <group>
+    <name>utc_UTest</name>
   </group>
   <group>
     <name>utestcases</name>

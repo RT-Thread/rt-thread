@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -310,12 +310,6 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-#define PKG_USING_HPM_SDK
-#define PKG_USING_HPM_SDK_LATEST_VERSION
-/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

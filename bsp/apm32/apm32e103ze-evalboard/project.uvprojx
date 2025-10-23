@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, APM32E10X_HD, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
+              <Define>RT_USING_ARMLIBC, RT_USING_LIBC, APM32E10X_HD, __RTTHREAD__, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\phy;board;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\APM32E10x_Library\Device\Geehy\APM32E10x\Include;applications;..\..\..\include;..\..\..\components\finsh;..\libraries\APM32E10x_Library\CMSIS\Include;..\libraries\Drivers\config;..\..\..\components\drivers\include;..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\inc;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;.;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\smp_call;board\ports;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\Drivers</IncludePath>
+              <IncludePath>..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m3;..\libraries\Drivers\config;applications;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\libraries\APM32E10x_Library\CMSIS\Include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;board;..\libraries\Drivers;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\include;..\libraries\APM32E10x_Library\Device\Geehy\APM32E10x\Include;board\ports;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;.;..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\inc;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -733,16 +733,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1052,16 +1052,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1121,9 +1121,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>apm32e10x_dma.c</FileName>
+              <FileName>apm32e10x_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\src\apm32e10x_dma.c</FilePath>
+              <FilePath>..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\src\apm32e10x_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1142,16 +1142,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>apm32e10x_gpio.c</FileName>
+              <FileName>apm32e10x_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\src\apm32e10x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>apm32e10x_eint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\src\apm32e10x_eint.c</FilePath>
+              <FilePath>..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\src\apm32e10x_dma.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1159,6 +1152,13 @@
               <FileName>apm32e10x_rcm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\src\apm32e10x_rcm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>apm32e10x_eint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\APM32E10x_Library\APM32E10x_StdPeriphDriver\src\apm32e10x_eint.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, AT32M412CBT7, __RTTHREAD__</Define>
+              <Define>__STDC_LIMIT_MACROS, AT32M412CBT7, RT_USING_ARMLIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\poll;.;..\..\..\components\drivers\include;board\inc;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;board;..\libraries\rt_drivers\config;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\libraries\rt_drivers;applications</IncludePath>
+              <IncludePath>..\libraries\rt_drivers\config;..\..\..\components\drivers\include;.;applications;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;board\inc;board;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\extension;..\libraries\rt_drivers;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -718,16 +718,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1056,16 +1056,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>

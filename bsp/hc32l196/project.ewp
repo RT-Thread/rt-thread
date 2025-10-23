@@ -180,11 +180,11 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -316,27 +316,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1172,11 +1172,11 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -1308,27 +1308,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2095,43 +2095,43 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\msh_parse.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
+    </file>
   </group>
   <group>
     <name>HC32_StdPeriph</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Source\interrupts_hc32l19x.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_sysctrl.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Source\IAR\startup_hc32l19x.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_gpio.c</name>
+      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_ddl.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Source\system_hc32l19x.c</name>
+      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_ddl.c</name>
+      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Source\interrupts_hc32l19x.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Source\IAR\startup_hc32l19x.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_sysctrl.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\Device\HDSC\HC32L196\Source\system_hc32l19x.c</name>
     </file>
   </group>
   <group>
@@ -2185,10 +2185,10 @@
   <group>
     <name>klibc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\src\klibc\kstring.c</name>
+      <name>$PROJ_DIR$\..\..\src\klibc\kstdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\klibc\kstdio.c</name>
+      <name>$PROJ_DIR$\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\klibc\kerrno.c</name>
@@ -2217,6 +2217,9 @@
   </group>
   <group>
     <name>POSIX</name>
+  </group>
+  <group>
+    <name>utc_UTest</name>
   </group>
   <group>
     <name>utestcases</name>
