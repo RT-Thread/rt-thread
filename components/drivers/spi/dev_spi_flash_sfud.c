@@ -569,9 +569,9 @@ static void sf(uint8_t argc, char **argv) {
 
                 sfud_dev = (sfud_flash_t)rtt_dev->user_data;
                 if (sfud_dev->chip.capacity < 1024 * 1024) {
-                    rt_kprintf("%d KB %s is current selected device.\n", sfud_dev->chip.capacity / 1024, sfud_dev->name);
+                    rt_kprintf("%ld KB %s is current selected device.\n", sfud_dev->chip.capacity / 1024, sfud_dev->name);
                 } else {
-                    rt_kprintf("%d MB %s is current selected device.\n", sfud_dev->chip.capacity / 1024 / 1024,
+                    rt_kprintf("%ld MB %s is current selected device.\n", sfud_dev->chip.capacity / 1024 / 1024,
                             sfud_dev->name);
                 }
             }
@@ -591,12 +591,12 @@ static void sf(uint8_t argc, char **argv) {
                     if (data) {
                         result = sfud_read(sfud_dev, addr, size, data);
                         if (result == SFUD_SUCCESS) {
-                            rt_kprintf("Read the %s flash data success. Start from 0x%08X, size is %ld. The data is:\n",
+                            rt_kprintf("Read the %s flash data success. Start from 0x%08lX, size is %ld. The data is:\n",
                                     sfud_dev->name, addr, size);
                             rt_kprintf("Offset (h) 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\n");
                             for (i = 0; i < size; i += HEXDUMP_WIDTH)
                             {
-                                rt_kprintf("[%08X] ", addr + i);
+                                rt_kprintf("[%08lX] ", addr + i);
                                 /* dump hex */
                                 for (j = 0; j < HEXDUMP_WIDTH; j++) {
                                     if (i + j < size) {
@@ -634,7 +634,7 @@ static void sf(uint8_t argc, char **argv) {
                         }
                         result = sfud_write(sfud_dev, addr, size, data);
                         if (result == SFUD_SUCCESS) {
-                            rt_kprintf("Write the %s flash data success. Start from 0x%08X, size is %ld.\n",
+                            rt_kprintf("Write the %s flash data success. Start from 0x%08lX, size is %ld.\n",
                                     sfud_dev->name, addr, size);
                             rt_kprintf("Write data: ");
                             for (i = 0; i < size; i++) {
@@ -656,7 +656,7 @@ static void sf(uint8_t argc, char **argv) {
                     size = strtol(argv[3], NULL, 0);
                     result = sfud_erase(sfud_dev, addr, size);
                     if (result == SFUD_SUCCESS) {
-                        rt_kprintf("Erase the %s flash data success. Start from 0x%08X, size is %ld.\n", sfud_dev->name,
+                        rt_kprintf("Erase the %s flash data success. Start from 0x%08lX, size is %ld.\n", sfud_dev->name,
                                 addr, size);
                     }
                 }
@@ -700,7 +700,7 @@ static void sf(uint8_t argc, char **argv) {
                     result = sfud_erase(sfud_dev, addr, size);
                     if (result == SFUD_SUCCESS) {
                         time_cast = rt_tick_get() - start_time;
-                        rt_kprintf("Erase benchmark success, total time: %d.%03dS.\n", time_cast / RT_TICK_PER_SECOND,
+                        rt_kprintf("Erase benchmark success, total time: %ld.%03ldS.\n", time_cast / RT_TICK_PER_SECOND,
                                 time_cast % RT_TICK_PER_SECOND / ((RT_TICK_PER_SECOND * 1 + 999) / 1000));
                     } else {
                         rt_kprintf("Erase benchmark has an error. Error code: %d.\n", result);
@@ -716,13 +716,13 @@ static void sf(uint8_t argc, char **argv) {
                         }
                         result = sfud_write(sfud_dev, addr + i, cur_op_size, write_data);
                         if (result != SFUD_SUCCESS) {
-                            rt_kprintf("Writing %s failed, already wr for %lu bytes, write %d each time\n", sfud_dev->name, i, write_size);
+                            rt_kprintf("Writing %s failed, already wr for %u bytes, write %d each time\n", sfud_dev->name, i, write_size);
                             break;
                         }
                     }
                     if (result == SFUD_SUCCESS) {
                         time_cast = rt_tick_get() - start_time;
-                        rt_kprintf("Write benchmark success, total time: %d.%03dS.\n", time_cast / RT_TICK_PER_SECOND,
+                        rt_kprintf("Write benchmark success, total time: %ld.%03ldS.\n", time_cast / RT_TICK_PER_SECOND,
                                 time_cast % RT_TICK_PER_SECOND / ((RT_TICK_PER_SECOND * 1 + 999) / 1000));
                     } else {
                         rt_kprintf("Write benchmark has an error. Error code: %d.\n", result);
@@ -745,13 +745,13 @@ static void sf(uint8_t argc, char **argv) {
                         }
 
                         if (result != SFUD_SUCCESS) {
-                            rt_kprintf("Read %s failed, already rd for %lu bytes, read %d each time\n", sfud_dev->name, i, read_size);
+                            rt_kprintf("Read %s failed, already rd for %u bytes, read %d each time\n", sfud_dev->name, i, read_size);
                             break;
                         }
                     }
                     if (result == SFUD_SUCCESS) {
                         time_cast = rt_tick_get() - start_time;
-                        rt_kprintf("Read benchmark success, total time: %d.%03dS.\n", time_cast / RT_TICK_PER_SECOND,
+                        rt_kprintf("Read benchmark success, total time: %ld.%03ldS.\n", time_cast / RT_TICK_PER_SECOND,
                                 time_cast % RT_TICK_PER_SECOND / ((RT_TICK_PER_SECOND * 1 + 999) / 1000));
                     } else {
                         rt_kprintf("Read benchmark has an error. Error code: %d.\n", result);

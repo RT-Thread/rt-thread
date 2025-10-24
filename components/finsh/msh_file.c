@@ -796,7 +796,7 @@ static int cmd_tail(int argc, char **argv)
         }
     }
 
-    rt_kprintf("\nTotal Number of lines:%d\n", total_lines);
+    rt_kprintf("\nTotal Number of lines:%ld\n", total_lines);
 
     if (start_line != 0)
     {
@@ -818,7 +818,7 @@ static int cmd_tail(int argc, char **argv)
         close(fd);
         return -1;
     }
-    rt_kprintf("Required Number of lines:%d\n", required_lines);
+    rt_kprintf("Required Number of lines:%ld\n", required_lines);
 
     target_line = total_lines - required_lines;
     lseek(fd, 0, SEEK_SET); /* back to head */
