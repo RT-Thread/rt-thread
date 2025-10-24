@@ -1303,16 +1303,5 @@ void rt_vbus_chm_wm_dump(void)
 }
 #endif
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_rb_dump,   vbrb, dump vbus ringbuffer status);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_chn_dump,  vbchn, dump vbus channel status);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_sess_dump, vbses, dump vbus session status);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_que_dump,  vbque, dump vbus out queue status);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_total_data_sz,  vbtsz, total in data);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_data_pkt_dump,  vbdq, dump the data queue);
-#ifdef RT_VBUS_USING_FLOW_CONTROL
-FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_chm_wm_dump, vbwm, dump vbus water mark status);
-#endif
-#endif
+
 

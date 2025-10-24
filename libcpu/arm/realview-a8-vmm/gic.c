@@ -182,10 +182,7 @@ void arm_gic_dump(rt_uint32_t index)
     }
     rt_kprintf("\n");
 }
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT_ALIAS(arm_gic_dump, gic, show gic status);
-#endif
+
 
 int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
 {

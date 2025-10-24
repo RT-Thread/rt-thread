@@ -978,9 +978,7 @@ int chdir(const char *path)
 }
 RTM_EXPORT(chdir);
 
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
-#endif
+
 #endif
 
 /**

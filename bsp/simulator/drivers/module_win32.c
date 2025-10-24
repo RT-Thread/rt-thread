@@ -347,10 +347,7 @@ rt_module_t rt_module_open(const char *path)
     /* FreeLibrary(hinstlib); */
 }
 
-#if defined(RT_USING_FINSH)
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from a file);
-#endif
+
 
 #endif
 
