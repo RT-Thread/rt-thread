@@ -328,9 +328,10 @@ def gen_cproject_file(output_file_path):
             return False
 
 
-def gen_project_file(output_file_path):
+def gen_project_file(output_file_path, project_name):
     try:
-        w_str = project_temp
+        w_str = project_temp.replace('__project_name_flag__', project_name)
+
         dir_name = os.path.dirname(output_file_path)
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
@@ -338,6 +339,7 @@ def gen_project_file(output_file_path):
             f.write(w_str)
             return True
     except Exception as e:
+        print(e)
         return False
 
 
