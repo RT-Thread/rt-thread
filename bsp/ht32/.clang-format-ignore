@@ -1,0 +1,4 @@
+# clang-format ignore file  
+/libraries/HT32_STD_1xxxx_FWLib/ 
+/libraries/HT32_STD_5xxxx_FWLib/ 
+/libraries/usbd_library/ 
