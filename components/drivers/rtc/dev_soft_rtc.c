@@ -153,7 +153,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     {
         struct timespec *ts = (struct timespec *)args;
         ts->tv_sec  = 0;
-        ts->tv_nsec = (rt_ktime_cputimer_getres() / RT_KTIME_RESMUL);
+        ts->tv_nsec = (rt_uint32_t)(NANOSECOND_PER_SECOND / rt_ktime_cputimer_getfrq());
         break;
     }
 #else
