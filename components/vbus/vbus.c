@@ -1303,5 +1303,3 @@ void rt_vbus_chm_wm_dump(void)
 }
 #endif
 
-
-

@@ -1241,7 +1241,6 @@ int chdir(const char *path)
 }
 RTM_EXPORT(chdir);
 
-
 #endif
 
 /**

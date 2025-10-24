@@ -183,7 +183,6 @@ void arm_gic_dump(rt_uint32_t index)
     rt_kprintf("\n");
 }
 
-
 int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
 {
     unsigned int gic_type, i;

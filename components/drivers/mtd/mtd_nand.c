@@ -411,8 +411,6 @@ help:
 MSH_CMD_EXPORT(mtd_nand, MTD nand device test function);
 #endif /* RT_USING_FINSH */
 
-
-
 #endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH) */
 
 #endif /* RT_USING_MTD_NAND */

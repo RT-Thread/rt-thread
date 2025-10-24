@@ -347,8 +347,6 @@ rt_module_t rt_module_open(const char *path)
     /* FreeLibrary(hinstlib); */
 }
 
-
-
 #endif
 
 #define RT_MODULE_ARG_MAX    8
