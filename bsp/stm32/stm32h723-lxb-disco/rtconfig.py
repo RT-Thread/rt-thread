@@ -8,8 +8,8 @@ CROSS_TOOL='keil'
 # bsp lib config
 BSP_LIBRARY_TYPE = None
 
-# if os.getenv('RTT_CC'):
-#     CROSS_TOOL = os.getenv('RTT_CC')
+if os.getenv('RTT_CC'):
+    CROSS_TOOL = os.getenv('RTT_CC')
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 
@@ -25,8 +25,8 @@ elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iccarm'
     EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
 
-# if os.getenv('RTT_EXEC_PATH'):
-#     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 

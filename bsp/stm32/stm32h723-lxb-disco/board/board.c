@@ -14,10 +14,6 @@
   * @brief System Clock Configuration
   * @retval None
   */
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
