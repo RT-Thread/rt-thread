@@ -524,14 +524,14 @@ static void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bo
         {
             continue;
         }
-#if !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG)
-        backend->output(backend, level, tag, is_raw, log, len);
-#else
         if (backend->filter && backend->filter(backend, level, tag, is_raw, log, len) == RT_FALSE)
         {
             /* backend's filter is not match, so skip output */
             continue;
         }
+#if !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG)
+        backend->output(backend, level, tag, is_raw, log, len);
+#else
         if (backend->support_color || is_raw)
         {
             backend->output(backend, level, tag, is_raw, log, len);
