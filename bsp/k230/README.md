@@ -79,6 +79,8 @@ $ sudo apt install -y scons python3-pip u-boot-tools patch
 $ pip3 install git+https://github.com/sysprog21/Kconfiglib
 ```
 
+注意:如果下载速度较慢,可以使用 git 代理或设置 pip 镜像源来加速安装。
+
 另外还需要一些软件包用于 rttpkgtool 打包。
 
 ```shell

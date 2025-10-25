@@ -53,6 +53,9 @@ export RTT_CC_PREFIX=riscv64-unknown-linux-musl-
 sudo apt install scons  python3-pip
 pip install git+https://github.com/sysprog21/Kconfiglib
 ```
+
+注意:如果下载速度较慢,可以使用 git 代理或设置 pip 镜像源来加速安装。
+
 ### 4.2.3. 编译
 
 ```shell
