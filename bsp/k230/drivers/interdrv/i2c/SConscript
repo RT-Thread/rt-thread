@@ -1,0 +1,11 @@
+# RT-Thread building script for I2C component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('I2C', src, depend = ['BSP_USING_I2C'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,21 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+devices.i2c:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_I2C=y
+      - CONFIG_BSP_USING_I2C=y
+      - CONFIG_BSP_USING_I2C0=y
+devices.i2c.master:
+    <<: *scons
+    depends:
+      - devices.i2c
+    kconfig:
+      - CONFIG_BSP_USING_I2C0_MASTER=y
+devices.i2c.slave:
+    <<: *scons
+    depends:
+      - devices.i2c
+    kconfig:
+      - CONFIG_BSP_USING_I2C0_SLAVE=y

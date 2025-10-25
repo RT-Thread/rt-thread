@@ -1,4 +1,110 @@
 menu "Drivers Configuration"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+
+                if BSP_USING_I2C0
+                    choice BSP_I2C0_DEV_MODE
+                        prompt "Select I2C0 device mode"
+                        default BSP_USING_I2C0_MASTER
+                        help
+                            Select the I2C0 device mode to be used.
+
+                        config BSP_USING_I2C0_MASTER
+                            bool "Enable I2C0 Master Mode"
+
+                        config BSP_USING_I2C0_SLAVE
+                            bool "Enable I2C0 Slave Mode"
+
+                    endchoice
+                endif
+
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+                if BSP_USING_I2C1
+                    choice BSP_I2C1_DEV_MODE
+                        prompt "Select I2C1 device mode"
+                        default BSP_USING_I2C1_MASTER
+                        help
+                            Select the I2C1 device mode to be used.
+
+                        config BSP_USING_I2C1_MASTER
+                            bool "Enable I2C1 Master Mode"
+
+                        config BSP_USING_I2C1_SLAVE
+                            bool "Enable I2C1 Slave Mode"
+
+                    endchoice
+                endif
+
+            menuconfig BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+
+                if BSP_USING_I2C2
+                    choice BSP_I2C2_DEV_MODE
+                        prompt "Select I2C2 device mode"
+                        default BSP_USING_I2C2_MASTER
+                        help
+                            Select the I2C2 device mode to be used.
+
+                        config BSP_USING_I2C2_MASTER
+                            bool "Enable I2C2 Master Mode"
+
+                        config BSP_USING_I2C2_SLAVE
+                            bool "Enable I2C2 Slave Mode"
+
+                    endchoice
+                endif
+
+            menuconfig BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+
+                if BSP_USING_I2C3
+                    choice BSP_I2C3_DEV_MODE
+                        prompt "Select I2C3 device mode"
+                        default BSP_USING_I2C3_MASTER
+                        help
+                            Select the I2C3 device mode to be used.
+
+                        config BSP_USING_I2C3_MASTER
+                            bool "Enable I2C3 Master Mode"
+
+                        config BSP_USING_I2C3_SLAVE
+                            bool "Enable I2C3 Slave Mode"
+
+                    endchoice
+                endif
+
+            menuconfig BSP_USING_I2C4
+                bool "Enable I2C4"
+                default n
+
+                if BSP_USING_I2C4
+                    choice BSP_I2C4_DEV_MODE
+                        prompt "Select I2C4 device mode"
+                        default BSP_USING_I2C4_MASTER
+                        help
+                            Select the I2C4 device mode to be used.
+
+                        config BSP_USING_I2C4_MASTER
+                            bool "Enable I2C4 Master Mode"
+
+                        config BSP_USING_I2C4_SLAVE
+                            bool "Enable I2C4 Slave Mode"
+
+                    endchoice
+                endif
+        endif
 
     config BSP_USING_RTC
         bool "Enable RTC"
