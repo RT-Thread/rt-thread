@@ -73,10 +73,10 @@ $ sudo apt install -y scons python3-pip u-boot-tools patch
 
 ### 3.2.2. 一些 python 软件包
 
-因为本 BSP 只在 RT-Thread v5.1.0 以上才支持，所以需要确保本地已经安装过 kconfiglib。采用清华源是为了加快安装速度。
+因为本 BSP 只在 RT-Thread v5.1.0 以上才支持，所以需要确保本地已经安装过 kconfiglib。
 
 ```shell
-$ pip3 install kconfiglib -i https://pypi.tuna.tsinghua.edu.cn/simple
+$ pip3 install git+https://github.com/sysprog21/Kconfiglib
 ```
 
 另外还需要一些软件包用于 rttpkgtool 打包。
