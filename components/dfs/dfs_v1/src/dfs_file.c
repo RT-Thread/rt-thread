@@ -830,11 +830,11 @@ void ls(const char *pathname)
                     rt_kprintf("%-20s", dirent.d_name);
                     if (S_ISDIR(stat.st_mode))
                     {
-                        rt_kprintf("%-25s\n", "<DIR>");
+                        rt_kprintf(" %-25s\n", "<DIR>");
                     }
                     else
                     {
-                        rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
+                        rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
                     }
                 }
                 else
