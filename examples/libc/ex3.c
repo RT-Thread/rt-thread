@@ -54,7 +54,6 @@ int libc_ex3()
   /* Exit the program */
   return 0;
 }
-#include <finsh.h>
 
 /* This is the cleanup function that is called
    when the threads are cancelled */

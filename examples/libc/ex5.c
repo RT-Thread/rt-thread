@@ -108,5 +108,4 @@ int libc_ex5(void)
   pthread_join(th_b, &retval);
   return 0;
 }
-#include <finsh.h>
 

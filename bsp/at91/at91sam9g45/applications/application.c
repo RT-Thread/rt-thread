@@ -152,7 +152,6 @@ void nfs_start(void)
         rt_kprintf("NFSv3 File System initialzation failed!\n");
 }
 
-#include "finsh.h"
 #endif
 
 /*@}*/

@@ -11,7 +11,6 @@
  * Net Test Utilities for RT-Thread
  */
 #include <rtthread.h>
-#include <finsh.h>
 #include <lwip/api.h>
 #include <lwip/sockets.h>
 #include <lwip/init.h>

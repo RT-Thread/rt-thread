@@ -95,5 +95,4 @@ void lcd_fill(uint8_t * start, uint8_t * end, uint8_t pixel)
     }
 }
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 #endif

@@ -493,7 +493,6 @@ int rt_hw_emac_init(void)
 INIT_DEVICE_EXPORT(rt_hw_emac_init);
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void emac_dump()
 {
     rt_kprintf("Command  : %08x\n", LPC_EMAC->Command);

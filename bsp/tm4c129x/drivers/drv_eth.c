@@ -1488,7 +1488,6 @@ INIT_COMPONENT_EXPORT(rt_hw_tiva_eth_init);
 
 #if 0
 #ifdef RT_USING_FINSH
-#include "finsh.h"
 void PHY_Read(uint8_t addr)
 {
     uint16_t data = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, addr);

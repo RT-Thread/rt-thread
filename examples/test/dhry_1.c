@@ -345,4 +345,3 @@ register int    l;
 }
 #endif
 
-#include <finsh.h>

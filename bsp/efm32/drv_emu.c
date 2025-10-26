@@ -232,7 +232,6 @@ void efm32_emu_init(void)
  *  Export to FINSH
  ******************************************************************************/
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void list_emu(void)
 {

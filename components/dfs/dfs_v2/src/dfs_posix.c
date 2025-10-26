@@ -848,7 +848,6 @@ int mkdir(const char *path, mode_t mode)
 RTM_EXPORT(mkdir);
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 #endif
 
 /**

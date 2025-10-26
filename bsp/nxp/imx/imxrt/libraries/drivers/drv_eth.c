@@ -16,7 +16,6 @@
 #include <rtdevice.h>
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 #endif
 
 #include "fsl_enet.h"
@@ -1094,7 +1093,6 @@ INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
 #endif
 
 #if defined(RT_USING_FINSH) && defined(RT_USING_PHY)
-#include <finsh.h>
 
 void phy_read(rt_uint32_t phy_reg)
 {

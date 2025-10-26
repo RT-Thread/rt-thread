@@ -41,4 +41,3 @@ int libc_ex6(void) {
     }
     return 0;
 }
-#include <finsh.h>

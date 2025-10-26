@@ -105,4 +105,3 @@ int libc_ex7(void) {
 
     return 0;
 }
-#include <finsh.h>

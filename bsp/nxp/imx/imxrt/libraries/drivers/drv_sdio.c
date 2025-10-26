@@ -17,7 +17,6 @@
 #include <fsl_gpio.h>
 #include <fsl_iomuxc.h>
 
-#include <finsh.h>
 
 #define RT_USING_SDIO1
 #define RT_USING_SDIO2

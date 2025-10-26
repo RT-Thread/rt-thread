@@ -668,5 +668,4 @@ void dm9000a(void)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 #endif

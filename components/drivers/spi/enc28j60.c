@@ -842,7 +842,6 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 /*
  * Debug routine to dump useful register contents
  */

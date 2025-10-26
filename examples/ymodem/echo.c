@@ -42,7 +42,6 @@ rt_err_t rym_cat_to_dev(rt_device_t idev, rt_device_t odev)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void rym_cat_vcom(void)
 {
     extern rt_err_t rym_cat_to_dev(rt_device_t idev, rt_device_t odev);

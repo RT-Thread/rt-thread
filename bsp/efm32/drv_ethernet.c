@@ -1016,7 +1016,6 @@ rt_err_t efm_hw_eth_init(void)
  ******************************************************************************/
 #if defined(EFM32_USING_ETH_UTILS)
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void list_eth(void)
 {

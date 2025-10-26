@@ -125,4 +125,3 @@ int libc_mq()
     printf("PASSED\n");
     return 0;
 }
-#include <finsh.h>

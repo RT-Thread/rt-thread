@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
 
 int libc_rand(void)
 {

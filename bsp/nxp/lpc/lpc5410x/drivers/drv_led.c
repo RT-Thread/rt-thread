@@ -195,7 +195,6 @@ void Led_Control(rt_uint32_t Set_led, rt_uint32_t value)
 INIT_DEVICE_EXPORT(rt_led_hw_init);
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void led_test(rt_uint32_t led_num, rt_uint32_t value)
 {
     rt_uint8_t led_value = value;

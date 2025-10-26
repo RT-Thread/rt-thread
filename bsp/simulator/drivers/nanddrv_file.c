@@ -393,7 +393,6 @@ void rt_hw_mtd_nand_init(void)
 }
 
 #if defined(RT_USING_FINSH)
-#include <finsh.h>
 void nand_eraseall()
 {
     int index;

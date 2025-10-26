@@ -197,7 +197,6 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 int sd_erase(void)
 {
     rt_uint32_t index;

@@ -168,7 +168,6 @@ void rt_hw_rtc_init(void)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void list_date()
 {
     time_t time;

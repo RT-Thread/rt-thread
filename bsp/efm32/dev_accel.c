@@ -824,7 +824,6 @@ rt_err_t efm_accel_init(void)
  *  Export to FINSH
  ******************************************************************************/
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void accel_cal(rt_uint8_t mode, rt_uint32_t second)
 {

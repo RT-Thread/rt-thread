@@ -235,7 +235,6 @@ void chargen_init(void)
     if (chargen != RT_NULL) rt_thread_startup(chargen);
 }
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void chargen()
 {
     chargen_init();

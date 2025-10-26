@@ -510,6 +510,5 @@ int device_test(const char * device_name)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 #endif
 

@@ -780,7 +780,6 @@ int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2)
 #endif
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void ls(const char *pathname)
 {

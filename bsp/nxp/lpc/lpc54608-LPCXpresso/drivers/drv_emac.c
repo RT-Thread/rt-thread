@@ -725,5 +725,4 @@ void emac_bd_dump(void)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 #endif

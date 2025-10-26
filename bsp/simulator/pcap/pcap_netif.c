@@ -276,7 +276,6 @@ void pcap_netif_hw_init(void)
     eth_device_init(&(pcap_netif_device.parent), "e0");
 }
 
-#include <finsh.h>
 void list_pcap(void)
 {
     int i=0;

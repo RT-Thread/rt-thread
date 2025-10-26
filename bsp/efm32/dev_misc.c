@@ -172,7 +172,6 @@ rt_int32_t efm32_misc_getCelsius(rt_uint32_t adcResult)
  *  Export to FINSH
  ******************************************************************************/
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void list_temp(void)
 {

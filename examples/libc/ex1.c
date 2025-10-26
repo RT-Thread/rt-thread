@@ -41,4 +41,3 @@ int libc_ex1(void)
     printf("join b %s %d\n", sucfail(pret), pret);
     return ret;
 }
-#include <finsh.h>

@@ -815,7 +815,6 @@ int32_t rw009_rssi(void)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 static rt_err_t rw009_scan(void)
 {

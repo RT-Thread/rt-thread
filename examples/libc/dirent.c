@@ -9,7 +9,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
 
 #include <dirent.h>
 int libc_dirent()

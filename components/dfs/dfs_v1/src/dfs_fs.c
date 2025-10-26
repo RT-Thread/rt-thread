@@ -613,7 +613,6 @@ err1:
 #endif
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void mkfs(const char *fs_name, const char *device_name)
 {
     dfs_mkfs(fs_name, device_name);

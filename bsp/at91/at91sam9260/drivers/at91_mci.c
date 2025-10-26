@@ -891,7 +891,6 @@ err:
 
 INIT_DEVICE_EXPORT(at91_mci_init);
 
-#include "finsh.h"
 
 void mci_dump(void)
 {

@@ -292,5 +292,4 @@ void fs_test(rt_uint32_t arg)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 #endif

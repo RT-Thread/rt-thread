@@ -201,6 +201,5 @@ void list_irq(void)
     }
 }
 
-#include <finsh.h>
 
 #endif

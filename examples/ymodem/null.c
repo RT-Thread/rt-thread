@@ -18,7 +18,6 @@ static enum rym_code _rym_dummy_write(
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 rt_err_t rym_null(char *devname)
 {
     struct rym_ctx rctx;

@@ -611,7 +611,6 @@ int rt_hw_mtd_nand_init(void)
 INIT_DEVICE_EXPORT(rt_hw_mtd_nand_init);
 
 #if defined(RT_USING_FINSH)
-#include <finsh.h>
 void nand_eraseall()
 {
     int tmp=0;
