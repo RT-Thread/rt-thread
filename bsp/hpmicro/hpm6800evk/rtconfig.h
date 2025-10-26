@@ -315,6 +315,12 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+#define PKG_USING_HPM_SDK
+#define PKG_USING_HPM_SDK_V110
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

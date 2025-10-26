@@ -310,6 +310,12 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+#define PKG_USING_HPM_SDK
+#define PKG_USING_HPM_SDK_V110
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -401,6 +407,7 @@
 #define BSP_USING_UART0
 #define BSP_UART0_RX_BUFSIZE 128
 #define BSP_UART0_TX_BUFSIZE 0
+#define BSP_USING_FEMC
 #define INIT_EXT_RAM_FOR_DATA
 /* end of On-chip Peripheral Drivers */
 /* end of Hardware Drivers Config */
