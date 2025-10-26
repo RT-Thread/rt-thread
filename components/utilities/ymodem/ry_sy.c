@@ -58,7 +58,7 @@ static enum rym_code _rym_recv_begin(
     if (cctx->fd < 0)
     {
         err = rt_get_errno();
-        rt_kprintf("error creating file: %d\n", err);
+        rt_kprintf("error creating file: %ld\n", err);
         return RYM_CODE_CAN;
     }
     cctx->flen = atoi(1 + (const char *)buf + rt_strnlen((const char *)buf, len - 1));
@@ -118,7 +118,7 @@ static enum rym_code _rym_send_begin(
     if (cctx->fd < 0)
     {
         err = rt_get_errno();
-        rt_kprintf("error open file: %d\n", err);
+        rt_kprintf("error open file: %ld\n", err);
         return RYM_ERR_FILE;
     }
     rt_memset(buf, 0, len);
@@ -139,7 +139,7 @@ static enum rym_code _rym_send_begin(
         }
     }
 
-    rt_sprintf((char *)buf, "%s%c%d", fdst, insert_0, file_buf.st_size);
+    rt_sprintf((char *)buf, "%s%c%ld", fdst, insert_0, file_buf.st_size);
 
     return RYM_CODE_SOH;
 }
@@ -235,7 +235,6 @@ static rt_err_t ry(uint8_t argc, char **argv)
 {
     rt_err_t res;
     rt_device_t dev;
-    /* temporarily support 1 file*/
     const char *file_path;
     if (argc < 2)
     {
