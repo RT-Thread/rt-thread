@@ -42,4 +42,3 @@ int libc_ex6(void) {
     return 0;
 }
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(libc_ex6, example 6 for libc);

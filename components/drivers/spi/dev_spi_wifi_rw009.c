@@ -845,8 +845,5 @@ static rt_err_t rw009_scan(void)
 
     return result;
 }
-FINSH_FUNCTION_EXPORT(rw009_scan, SACN and list AP.);
-FINSH_FUNCTION_EXPORT(rw009_join, RW009 join to AP.);
-FINSH_FUNCTION_EXPORT(rw009_rssi, get RW009 current AP rssi.);
 
 #endif // RT_USING_FINSH

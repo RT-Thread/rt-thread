@@ -511,6 +511,5 @@ int device_test(const char * device_name)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(device_test, e.g: device_test("sd0"));
 #endif
 

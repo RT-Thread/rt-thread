@@ -310,4 +310,3 @@ void list_pcap(void)
 
     return ;
 }
-FINSH_FUNCTION_EXPORT(list_pcap, show host netif adapter);

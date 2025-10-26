@@ -419,7 +419,6 @@ long k64_dump_tx_bd(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(k64_dump_tx_bd, dump all receive buffer descriptor);
 MSH_CMD_EXPORT(k64_dump_tx_bd, dump all receive buffer descriptor);
 
 long k64_dump_rx_bd(void)
@@ -441,7 +440,6 @@ long k64_dump_rx_bd(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(k64_dump_rx_bd, dump all receive buffer descriptor);
 MSH_CMD_EXPORT(k64_dump_rx_bd, dump all receive buffer descriptor);
 #endif
 

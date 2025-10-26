@@ -153,7 +153,6 @@ void nfs_start(void)
 }
 
 #include "finsh.h"
-FINSH_FUNCTION_EXPORT(nfs_start, start net filesystem);
 #endif
 
 /*@}*/

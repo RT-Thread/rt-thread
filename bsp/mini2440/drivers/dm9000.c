@@ -669,5 +669,4 @@ void dm9000a(void)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(dm9000a, dm9000a register dump);
 #endif

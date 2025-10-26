@@ -106,4 +106,3 @@ int libc_ex7(void) {
     return 0;
 }
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(libc_ex7, example 7 for libc);

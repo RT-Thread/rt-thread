@@ -110,17 +110,6 @@ typedef long (*syscall_func)(void);
 #define _MSH_FUNCTION_EXPORT_CMD3_OPT(a0, a1, a2, a3)   \
         MSH_FUNCTION_EXPORT_CMD(a0, a1, a2, a0##_msh_options)
 
-
-/**
- * @ingroup group_finsh
- *
- * @brief This macro exports a system function to finsh shell.
- *
- * @param[in] name Name of function.
- * @param[in] desc Description of function, which will show in help.
- */
-#define FINSH_FUNCTION_EXPORT(name, desc)
-
 /**
  * @ingroup group_finsh
  *

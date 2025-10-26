@@ -346,4 +346,3 @@ register int    l;
 #endif
 
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(dhry_test, dhry test);

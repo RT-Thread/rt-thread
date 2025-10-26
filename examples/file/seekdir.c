@@ -48,6 +48,5 @@ void seekdir_test(void)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(seekdir_test, perform directory seek test);
 MSH_CMD_EXPORT(seekdir_test, perform directory seek test);
 #endif /* RT_USING_FINSH */

@@ -177,7 +177,6 @@ void libc_printf()
 
     printf_test();
 }
-FINSH_FUNCTION_EXPORT(libc_printf, printf test in libc);
 
 
 void libc_dprintf()
@@ -191,7 +190,6 @@ void libc_dprintf()
         close(fd);
     }
 }
-FINSH_FUNCTION_EXPORT(libc_dprintf, dprintf test);
 
 
 void libc_fdopen()
@@ -207,4 +205,3 @@ void libc_fdopen()
         fclose(fp);
     }
 }
-FINSH_FUNCTION_EXPORT(libc_fdopen, fdopen test);

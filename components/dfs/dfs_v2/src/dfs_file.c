@@ -3027,6 +3027,5 @@ void copy(const char *src, const char *dst)
         }
     }
 }
-FINSH_FUNCTION_EXPORT(copy, copy file or dir)
 
 #endif

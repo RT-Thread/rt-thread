@@ -19,4 +19,3 @@ int libc_env()
     printf("foo=%s\n", getenv("foo"));
     return 0;
 }
-FINSH_FUNCTION_EXPORT(libc_env, get/set_env test);

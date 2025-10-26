@@ -726,8 +726,4 @@ void emac_bd_dump(void)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(emac_stat, dump emac stat data);
-FINSH_FUNCTION_EXPORT(phy_dump, dump phy registers);
-FINSH_FUNCTION_EXPORT(emac_dump, dump emac registers);
-FINSH_FUNCTION_EXPORT(emac_bd_dump, dump emac tx and rx descriptor);
 #endif

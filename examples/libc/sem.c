@@ -71,4 +71,3 @@ void libc_sem()
         rt_thread_startup(tid);
     }
 }
-FINSH_FUNCTION_EXPORT(libc_sem, posix semaphore test);

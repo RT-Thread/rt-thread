@@ -122,5 +122,4 @@ rt_err_t ry(char *dname)
 
     return res;
 }
-FINSH_FUNCTION_EXPORT(ry, receive files by ymodem protocol);
 #endif

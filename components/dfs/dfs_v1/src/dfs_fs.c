@@ -618,7 +618,6 @@ void mkfs(const char *fs_name, const char *device_name)
 {
     dfs_mkfs(fs_name, device_name);
 }
-FINSH_FUNCTION_EXPORT(mkfs, make a file system);
 
 int df(const char *path)
 {
@@ -653,7 +652,6 @@ int df(const char *path)
                (unsigned long)cap, minor, unit_str[unit_index], buffer.f_bfree, buffer.f_bsize);
     return 0;
 }
-FINSH_FUNCTION_EXPORT(df, get disk free);
 #endif
 
 /**@}*/

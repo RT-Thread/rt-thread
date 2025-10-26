@@ -63,6 +63,5 @@ void rym_cat_vcom(void)
 
     rym_cat_to_dev(idev, odev);
 }
-FINSH_FUNCTION_EXPORT(rym_cat_vcom, test the YModem);
 #endif
 

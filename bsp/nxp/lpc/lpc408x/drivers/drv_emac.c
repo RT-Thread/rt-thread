@@ -503,6 +503,5 @@ void emac_dump()
     rt_kprintf("IntEnable: %08x\n", LPC_EMAC->IntEnable);
     rt_kprintf("IntStatus: %08x\n", LPC_EMAC->IntStatus);
 }
-FINSH_FUNCTION_EXPORT(emac_dump, dump emac register);
 #endif
 

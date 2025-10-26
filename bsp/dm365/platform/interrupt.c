@@ -278,7 +278,6 @@ void list_irq(void)
 }
 
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(list_irq, list system irq);
 
 #ifdef FINSH_USING_MSH
 int cmd_list_irq(int argc, char** argv)

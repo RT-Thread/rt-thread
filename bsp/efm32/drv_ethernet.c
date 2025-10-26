@@ -1075,7 +1075,6 @@ void list_eth(void)
         rt_kprintf(" TX is idle\n");
     }
 }
-FINSH_FUNCTION_EXPORT(list_eth, list the Ethernet device status.)
 
 #include "lwip\api.h"
 
@@ -1184,7 +1183,6 @@ void list_myip(void)
 
     rt_kprintf("Current IP: [%s]\n", ip);
 }
-FINSH_FUNCTION_EXPORT(list_myip, list the current IP address.)
 
 #if !defined(hostName) || !defined(userPwdB64)
 #error "The 'hostName' and 'userPwdB64' must be defined to use update_ip() function"
@@ -1309,7 +1307,6 @@ void update_myip(char *ip)
 
     rt_kprintf("succeeded.\n", ip);
 }
-FINSH_FUNCTION_EXPORT(update_myip, update DDNS with specified IP address.)
 
 #endif /* RT_USING_FINSH */
 #endif /* defined(EFM32_USING_ETH_UTILS) */

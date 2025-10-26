@@ -240,5 +240,4 @@ void chargen()
 {
     chargen_init();
 }
-FINSH_FUNCTION_EXPORT(chargen, start chargen server);
 #endif

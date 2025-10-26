@@ -895,5 +895,4 @@ static void enc28j60(void)
 
     enc28j60_unlock(&enc28j60_dev);
 }
-FINSH_FUNCTION_EXPORT(enc28j60, dump enc28j60 registers);
 #endif

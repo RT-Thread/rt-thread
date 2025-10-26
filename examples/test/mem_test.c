@@ -110,5 +110,4 @@ void mem_test(uint32_t address, uint32_t size )
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(mem_test, mem_test(0xA0000000, 0x00100000)  );
 #endif

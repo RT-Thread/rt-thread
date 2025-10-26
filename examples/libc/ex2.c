@@ -119,4 +119,3 @@ int libc_ex2(void)
   return 0;
 }
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(libc_ex2, example 2 for libc);

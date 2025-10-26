@@ -56,4 +56,3 @@ int libc_dirent()
     closedir(dirp);
     return result;
 }
-FINSH_FUNCTION_EXPORT(libc_dirent, dirent test for libc);

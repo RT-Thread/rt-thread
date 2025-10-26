@@ -57,4 +57,3 @@ int libc_mem(void)
 
     return errors != 0;
 }
-FINSH_FUNCTION_EXPORT(libc_mem, memory test for libc);

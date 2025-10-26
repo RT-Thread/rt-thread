@@ -182,6 +182,5 @@ void list_date()
         rt_kprintf("%d, %s\n", time, ctime(&time));
     }
 }
-FINSH_FUNCTION_EXPORT(list_date, list date);
 #endif
 #endif

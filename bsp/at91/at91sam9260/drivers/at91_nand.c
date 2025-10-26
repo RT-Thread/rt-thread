@@ -628,7 +628,6 @@ void nand_eraseall()
         at9260_nand_erase_block(RT_NULL, index);
     }
 }
-FINSH_FUNCTION_EXPORT(nand_eraseall, erase all of block in the nand flash);
 
 #endif //RT_USING_FINSH
 

@@ -342,4 +342,3 @@ void net_test(void)
         rt_thread_startup(tcpecho_socket_tid);
     }
 }
-FINSH_FUNCTION_EXPORT(net_test, network test);

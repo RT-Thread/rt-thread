@@ -219,5 +219,4 @@ int sd_erase(void)
     rt_free(buffer);
     return 0;
 }
-FINSH_FUNCTION_EXPORT(sd_erase, erase all block in SPI flash);
 #endif

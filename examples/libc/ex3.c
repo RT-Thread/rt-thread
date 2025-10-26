@@ -55,7 +55,6 @@ int libc_ex3()
   return 0;
 }
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(libc_ex3, example 5 for libc);
 
 /* This is the cleanup function that is called
    when the threads are cancelled */

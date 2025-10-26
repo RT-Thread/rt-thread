@@ -66,7 +66,6 @@ static void tftp_server(uint8_t argc, char **argv)
         rt_kprintf("TFTP server start failed.\n");
     }
 }
-FINSH_FUNCTION_EXPORT(tftp_server, start tftp server.);
 
 MSH_CMD_EXPORT(tftp_server, start tftp server.);
 

@@ -69,7 +69,6 @@ void list_dir(const char* path)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(list_dir, list directory);
 
 static void cmd_list_dir(int argc, char *argv[])
 {

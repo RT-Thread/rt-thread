@@ -395,7 +395,6 @@ void list_sflash(void)
     rt_kprintf(" Memory type:\t\t%x\n", buf[1]);
     rt_kprintf(" Memory capacity:\t%x\n", buf[2]);
 }
-FINSH_FUNCTION_EXPORT(list_sflash, list the SPI Flash.)
 #endif
 
 #endif /* defined(EFM32_USING_SFLASH) */

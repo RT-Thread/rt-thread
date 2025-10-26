@@ -836,7 +836,6 @@ void accel_cal(rt_uint8_t mode, rt_uint32_t second)
 
     rt_kprintf("Calibration done.\n");
 }
-FINSH_FUNCTION_EXPORT(accel_cal, auto-zero calibration.)
 
 void list_accel(void)
 {
@@ -845,7 +844,6 @@ void list_accel(void)
     efm_accel_get_data(&data, false);
     rt_kprintf("X: %d, Y: %d, Z: %d\n", data.x, data.y, data.z);
 }
-FINSH_FUNCTION_EXPORT(list_accel, list accelerometer info.)
 
 void test_accel(rt_uint8_t mode)
 {
@@ -880,7 +878,6 @@ void test_accel(rt_uint8_t mode)
         }
     }
 }
-FINSH_FUNCTION_EXPORT(test_accel, list accelerometer info.)
 #endif
 
 #endif

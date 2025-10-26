@@ -1741,7 +1741,6 @@ void dump_emac_stats(void)
     rt_kprintf("\n");
 }
 
-FINSH_FUNCTION_EXPORT(dump_emac_stats, dump emac statistics);
 
 #ifdef FINSH_USING_MSH
 int cmd_dump_emac_stats(int argc, char** argv)

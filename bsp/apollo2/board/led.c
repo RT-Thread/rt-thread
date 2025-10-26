@@ -140,7 +140,6 @@ void led(rt_uint32_t led, rt_uint32_t state)
         break;
     }
 }
-FINSH_FUNCTION_EXPORT(led, turn led (0 - 3) on (1) or off (0).)
 #endif
 
 /*@}*/

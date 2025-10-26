@@ -247,7 +247,6 @@ void nor_erase(void)
         sst25vfxx_erase_block(mtd, index * mtd->block_size, BLOCK_SIZE);
     }
 }
-FINSH_FUNCTION_EXPORT(nor_erase, erase all block in SPI flash);
 #endif
 
 #endif

@@ -1075,7 +1075,6 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(set_if, set network interface address);
 
 #if LWIP_DNS
 #include <lwip/dns.h>
@@ -1088,7 +1087,6 @@ void set_dns(uint8_t dns_num, char* dns_server)
         dns_setserver(dns_num, &addr);
     }
 }
-FINSH_FUNCTION_EXPORT(set_dns, set DNS server address);
 #endif
 
 void list_if(void)
@@ -1174,7 +1172,6 @@ void list_if(void)
 
     rt_exit_critical();
 }
-FINSH_FUNCTION_EXPORT(list_if, list network interface information);
 
 #if LWIP_TCP
 #include <lwip/tcp.h>
@@ -1240,7 +1237,6 @@ void list_tcps(void)
     }
     rt_exit_critical();
 }
-FINSH_FUNCTION_EXPORT(list_tcps, list all of tcp connections);
 #endif /* LWIP_TCP */
 
 #if LWIP_UDP
@@ -1270,7 +1266,6 @@ void list_udps(void)
     }
     rt_exit_critical();
 }
-FINSH_FUNCTION_EXPORT(list_udps, list all of udp connections);
 #endif /* LWIP_UDP */
 
 #endif

@@ -44,4 +44,3 @@ int libc_rand(void)
         return 1;
     }
 }
-FINSH_FUNCTION_EXPORT(libc_rand, rand test for libc);
