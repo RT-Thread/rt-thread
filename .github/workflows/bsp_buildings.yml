@@ -289,3 +289,16 @@ jobs:
         with:
           name: 00_all_bsp_output_${{ github.sha }}  
           path: output/
+
+  # Post CI status to PR comment
+  post-ci-status:
+    needs: build
+    if: always() && github.event_name == 'pull_request' && github.repository_owner == 'RT-Thread'
+    uses: ./.github/workflows/post_ci_status.yml
+    with:
+      workflow_name: "RT-Thread BSP Static Build Check"
+      workflow_status: ${{ needs.build.result }}
+      pr_number: ${{ github.event.pull_request.number }}
+    permissions:
+      pull-requests: write
+      issues: write

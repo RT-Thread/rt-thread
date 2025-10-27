@@ -2,9 +2,39 @@
 
 ## Overview / 概述
 
-This workflow automatically posts CI test results as comments on Pull Requests, making it easier for contributors and reviewers to see the status of all CI checks at a glance.
+This feature automatically posts CI test results as comments on Pull Requests, making it easier for contributors and reviewers to see the status of all CI checks at a glance.
 
-此工作流自动将 CI 测试结果作为评论发布到 Pull Request 中，使贡献者和审阅者更容易一目了然地看到所有 CI 检查的状态。
+此功能自动将 CI 测试结果作为评论发布到 Pull Request 中，使贡献者和审阅者更容易一目了然地看到所有 CI 检查的状态。
+
+## Implementation / 实现方式
+
+The feature uses **two complementary approaches** to ensure CI results are always visible:
+该功能使用**两种互补方法**来确保 CI 结果始终可见：
+
+### 1. Direct Workflow Integration (Immediate) / 直接工作流集成（立即生效）
+
+Each main CI workflow includes a `post-ci-status` job that:
+每个主要 CI 工作流都包含一个 `post-ci-status` 作业，它：
+
+- ✅ Works immediately on PR branches (no merge required) / 立即在 PR 分支上生效（无需合并）
+- 📝 Updates a single comment with workflow status / 使用工作流状态更新单个评论
+- 🔄 Runs after each workflow completes / 在每个工作流完成后运行
+
+**Modified Workflows:**
+- `bsp_buildings.yml`
+- `static_code_analysis.yml`
+- `format_check.yml`
+- `utest_auto_run.yml`
+
+### 2. Workflow Run Trigger (After Merge) / 工作流运行触发器（合并后）
+
+The `ci_results_comment.yml` workflow:
+`ci_results_comment.yml` 工作流：
+
+- ⏰ Triggers when CI workflows complete / 在 CI 工作流完成时触发
+- 📊 Provides comprehensive summary of all workflows / 提供所有工作流的全面摘要
+- 🔍 Shows detailed job-level information / 显示详细的作业级信息
+- ⚠️ **Only works after merged to master** / **仅在合并到 master 后才有效**
 
 ## Features / 功能特性
 

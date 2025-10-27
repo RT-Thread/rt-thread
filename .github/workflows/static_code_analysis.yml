@@ -55,3 +55,16 @@ jobs:
           cppcheck --version
           cd ..
           python tools/ci/cpp_check.py check
+
+  # Post CI status to PR comment
+  post-ci-status:
+    needs: scancode_job
+    if: always() && github.event_name == 'pull_request' && github.repository_owner == 'RT-Thread'
+    uses: ./.github/workflows/post_ci_status.yml
+    with:
+      workflow_name: "Static code analysis"
+      workflow_status: ${{ needs.scancode_job.result }}
+      pr_number: ${{ github.event.pull_request.number }}
+    permissions:
+      pull-requests: write
+      issues: write
