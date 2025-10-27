@@ -16,6 +16,8 @@ on:
       - "Static code analysis"
       - "Check File Format and License"
       - "utest_auto_run"
+      - "ToolsCI"
+      - "pkgs_test"
     types:
       - completed
 
