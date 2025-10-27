@@ -4,6 +4,7 @@ menu "RT-Thread Utestcases"
         bool "RT-Thread Utestcases"
         default n
         select RT_USING_UTEST
+        select RT_USING_DEBUG if !RT_USING_ULOG
 
     if RT_USING_UTESTCASES
 
