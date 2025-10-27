@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2020-02-24     heyuan       the first version
  * 2020-08-17     malongwei    Fix something
+ * 2025-10-27     pandafeng    Fix some bugs
  */
 
 #include "drv_fdcan.h"
@@ -101,7 +102,11 @@ static uint32_t _inline_get_ArbBaudIndex(uint32_t baud_rate)
 }
 
 /**
- * @brief  获取 FDCAN 数据段波特率配置索引
+ * @brief  Get the index of the FDCAN data segment bitrate configuration.
+ *
+ * @param  baud_rate  The desired data phase baud rate (in bps).
+ * @retval uint32_t   Index of the matching data segment configuration.
+ *                     Returns -1 if no matching configuration is found.
  */
 static uint32_t _inline_get_DataBaudIndex(uint32_t baud_rate)
 {
@@ -156,7 +161,7 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
         LOG_E("not support %d baudrate", cfg->baud_rate);
         return -RT_ERROR;
     }
-    /* 仲裁段 */
+    /* FDCAN arbitration segment */
     pdrv_can->fdcanHandle.Init.NominalPrescaler      = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.prescaler;
     pdrv_can->fdcanHandle.Init.NominalSyncJumpWidth  = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_sjw;
     pdrv_can->fdcanHandle.Init.NominalTimeSeg1       = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_seg1;
@@ -345,10 +350,9 @@ static rt_err_t _inline_can_control(struct rt_can_device *can, int cmd, void *ar
             break;
         case RT_CAN_CMD_SET_BAUD:
             argval = (rt_uint32_t) arg;
-            /* 查找仲裁相位波特率是否存在 */
             uint32_t arb_idx = _inline_get_ArbBaudIndex(argval);
             if (arb_idx == (uint32_t) -1) {
-                return -RT_ERROR; // 未找到匹配波特率
+                return -RT_ERROR; 
             }
             if (argval != pdrv_can->device.config.baud_rate) {
                 pdrv_can->device.config.baud_rate = argval;
@@ -383,10 +387,9 @@ static rt_err_t _inline_can_control(struct rt_can_device *can, int cmd, void *ar
         break;
         case RT_CAN_CMD_SET_BAUD_FD: {
             argval = (rt_uint32_t) arg;
-            /* 查找仲裁相位波特率是否存在 */
             uint32_t data_idx = _inline_get_DataBaudIndex(argval);
             if (data_idx == (uint32_t) -1) {
-                return -RT_ERROR; // 未找到匹配波特率
+                return -RT_ERROR;
             }
             if (argval != pdrv_can->device.config.baud_rate_fd) {
                 pdrv_can->device.config.baud_rate_fd = argval;
