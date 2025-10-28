@@ -104,17 +104,53 @@ rt_bool_t rt_hw_interrupt_is_disabled(void)
 
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *_lock)
 {
-    
+    // union rt_hw_spinlock_t *lock = (void *)_lock;
+    // _lock->slock = 0;
 }
 
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
 {
-    
+    // /* Use ticket lock implemented on top of the 32/64-bit atomic AMO ops.
+    //  * The combined word layout (slock) maps two uint16_t fields:
+    //  *   low 16 bits: owner
+    //  *   high 16 bits: next (ticket allocator)
+    //  * We atomically increment the "next" field by (1 << 16) and use the
+    //  * returned old value to compute our ticket. Then wait until owner == ticket.
+    //  */
+    // rt_atomic_t prev;
+    // rt_atomic_t ticket;
+    // rt_atomic_t owner;
+
+    // /* Allocate a ticket by adding (1 << 16) to slock, prev holds previous value */
+    // prev = rt_hw_atomic_add((volatile rt_atomic_t *)&lock->slock, (rt_atomic_t)(1UL << 16));
+    // ticket = (prev >> 16) & 0xffffUL;
+
+    // /* Wait until owner equals our ticket */
+    // for (;;)
+    // {
+    //     owner = rt_hw_atomic_load((volatile rt_atomic_t *)&lock->slock) & 0xffffUL;
+    //     if (owner == ticket)
+    //         break;
+    //     /* TODO: low-power wait for interrupt while spinning */
+    //     // __asm__ volatile("wfi" ::: "memory");
+    // }
+
+    // /* Ensure all following memory accesses are ordered after acquiring the lock */
+    // __asm__ volatile("fence rw, rw" ::: "memory");
 }
 
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 {
-    
+    // /* Ensure memory operations before unlock are visible before owner increment */
+    // __asm__ volatile("fence rw, rw" ::: "memory");
+
+    // /* Increment owner (low 16 bits) to hand over lock to next ticket */
+    // rt_hw_atomic_add((volatile rt_atomic_t *)&lock->slock, (rt_atomic_t)1);
+
+    // // TODO: IPI interrupt to wake up other harts waiting for the lock
+
+    // /* Make the increment visible to other harts */
+    // __asm__ volatile("fence rw, rw" ::: "memory");
 }
 
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
