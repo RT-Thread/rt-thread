@@ -4721,7 +4721,24 @@ FRESULT f_readdir (
 	LEAVE_FF(fs, res);
 }
 
+FRESULT f_seekdir(
+    DIR *dj,        /* Pointer to the open directory object */
+    int offset      /* the seek offset */
+)
+{
+    int i = 0;
 
+    if (dir_sdi(dj, 0) != FR_OK || offset < 0)
+        return FR_INT_ERR;
+
+    while(i < offset)
+    {
+        if(dir_read(dj, 0) != FR_OK || dir_next(dj, 0) != FR_OK)
+            return FR_INT_ERR;
+        i++;
+    }
+    return FR_OK;
+}
 
 #if FF_USE_FIND
 /*-----------------------------------------------------------------------*/
@@ -4797,7 +4814,7 @@ FRESULT f_stat (
 		res = follow_path(&dj, path);	/* Follow the file path */
 		if (res == FR_OK) {				/* Follow completed */
 			if (dj.fn[NSFLAG] & NS_NONAME) {	/* It is origin directory */
-				res = FR_INVALID_NAME;
+				fno->fattrib = AM_DIR;
 			} else {							/* Found an object */
 				if (fno) get_fileinfo(&dj, fno);
 			}
@@ -7087,4 +7104,20 @@ FRESULT f_setcp (
 	return FR_OK;
 }
 #endif	/* FF_CODE_PAGE == 0 */
+
+#include <rtthread.h>
+#if FF_VOLUMES > 1
+int elm_get_vol(FATFS *fat)
+{
+    int vol;
+
+    for (vol = 0; vol < FF_VOLUMES; vol ++)
+    {
+        if (FatFs[vol] == fat) return vol;
+    }
+
+    return -1;
+}
+#endif
+
 
