@@ -188,7 +188,12 @@ void secondary_cpu_entry(void)
     /* The PLIC peripheral interrupts are currently handled by the boot_hart. */
     /* Enable the Supervisor-Timer bit in SIE */
     rt_hw_tick_init();
-  
+    
+#ifdef RT_USING_SMP
+    /* ipi init */
+    rt_hw_ipi_init();
+#endif /* RT_USING_SMP */
+
     rt_hw_spin_lock(&_cpus_lock);
     /* invoke system scheduler start for secondary CPU */
     rt_system_scheduler_start();

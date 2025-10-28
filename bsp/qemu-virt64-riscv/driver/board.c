@@ -88,6 +88,11 @@ void rt_hw_board_init(void)
 #endif /* RT_USING_CONSOLE */
 
     rt_hw_tick_init();
+    
+#ifdef RT_USING_SMP
+    /* ipi init */
+    rt_hw_ipi_init();
+#endif /* RT_USING_SMP */
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();

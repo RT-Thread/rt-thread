@@ -322,6 +322,15 @@ void handle_trap(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
         tick_isr();
         rt_interrupt_leave();
     }
+#ifdef RT_USING_SMP
+    else if ((SCAUSE_INTERRUPT | SCAUSE_S_SOFTWARE_INTR) == scause)
+    {
+        /* supervisor software interrupt for ipi */
+        rt_interrupt_enter();
+        rt_hw_ipi_handler();
+        rt_interrupt_leave();
+    }
+#endif /* RT_USING_SMP */
     else
     {
         if (SCAUSE_INTERRUPT & scause)
