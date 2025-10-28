@@ -32,9 +32,19 @@ _start:
 1:
     /* save hartid */
     la t0, boot_hartid                /* global varible rt_boot_hartid */
+#ifdef RT_USING_SMP
+    lw   t2, (t0)
+    li   t3, 0xdeadbeef
+    li   t4, 0xffffffff
+    and  t2, t2, t4                   /* Extract the lower 32 bits. */
+    bne  t2, t3, system_init          /* If the current value is 0xdeadbeef, skip the boot_hartid assignment operation. */
+#endif
     mv t1, a0                         /* get hartid in S-mode frome a0 register */
     sw t1, (t0)                       /* store t1 register low 4 bits in memory address which is stored in t0 */
 
+#ifdef RT_USING_SMP
+system_init:
+#endif
     /* clear Interrupt Registers */
     csrw sie, 0
     csrw sip, 0
@@ -51,7 +61,10 @@ _start:
     li x7, 0
     li x8, 0
     li x9, 0
+#ifndef RT_USING_SMP
+    /* In the SMP architecture, a0 will be used again later */
     li x10,0
+#endif
     li x11,0
     li x12,0
     li x13,0
@@ -85,10 +98,29 @@ _start:
     la gp, __global_pointer$
 .option pop
 
+#ifndef RT_USING_SMP
     /* removed SMP support here */
     la   sp, __stack_start__
     li   t0, __STACKSIZE__
     add  sp, sp, t0
+#else
+    csrw   satp, a0        /* Currently, the hartid is stored in the satp register. */
+    /* Initialize the sp pointer according to different hartids. */
+    mv   t0, a0
+    /* calculate stack offset: hartid * __STACKSIZE__ */
+    li   t1, __STACKSIZE__
+    mul  t0, t0, t1        /* t0 = hartid * __STACKSIZE__ */
+
+    /* set stack pointer */
+    la   sp, __stack_start__
+    add  sp, sp, t0        /* sp = __stack_start__ + hartid * __STACKSIZE__ */
+    add  sp, sp, t1        /* sp += __STACKSIZE__ (point to stack top) */
+
+    mv   t0, a0
+    lw   t1, boot_hartid
+    bne  t0, t1, secondary_cpu_entry
+    li x10,0               /* Clear the a0 register. */
+#endif /* RT_USING_SMP */
 
     /**
      * sscratch is always zero on kernel mode

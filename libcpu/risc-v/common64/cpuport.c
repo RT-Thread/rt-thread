@@ -64,7 +64,14 @@ void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
 
 int rt_hw_cpu_id(void)
 {
+#ifndef RT_USING_SMP
     return 0;
+#else
+    /* Currently, the hartid is stored in the satp register. */
+    uint32_t hart_id;
+    asm volatile ("csrr %0, satp" : "=r"(hart_id));
+    return hart_id;
+#endif /* RT_USING_SMP */
 }
 
 /**
@@ -151,13 +158,39 @@ void rt_hw_set_process_id(int pid)
 }
 
 #ifdef RT_USING_SMP
+extern void _start(void);
+extern int boot_hartid;
+/* Boot secondary harts using the SBI HSM hart_start call. */
 void rt_hw_secondary_cpu_up(void)
 {
-    
+    rt_uint64_t entry_pa;
+    int hart, ret;
+
+    /* translate kernel virtual _start to physical address */
+    entry_pa = (rt_uint64_t)&_start;//(rt_uint64_t)rt_kmem_v2p((void *)&_start);
+
+    for (hart = 0; hart < RT_CPUS_NR; hart++)
+    {
+        if (hart == boot_hartid) continue;
+
+        ret = sbi_hsm_hart_start((unsigned long)hart,
+                                 (unsigned long)entry_pa,
+                                 0UL);
+        if (ret)
+        {
+            rt_kprintf("sbi_hsm_hart_start failed for hart %d: %d\n", hart, ret);
+        }
+    }
 }
 
 void secondary_cpu_entry(void)
 {
-
+    /* The PLIC peripheral interrupts are currently handled by the boot_hart. */
+    /* Enable the Supervisor-Timer bit in SIE */
+    rt_hw_tick_init();
+  
+    rt_hw_spin_lock(&_cpus_lock);
+    /* invoke system scheduler start for secondary CPU */
+    rt_system_scheduler_start();
 }
 #endif /* RT_USING_SMP */
