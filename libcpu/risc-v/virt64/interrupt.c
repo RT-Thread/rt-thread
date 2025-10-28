@@ -94,6 +94,14 @@ void rt_hw_interrupt_init()
 }
 
 #ifdef RT_USING_SMP
+rt_bool_t rt_hw_interrupt_is_disabled(void)
+{
+    /* Determine the interrupt enable state */
+    rt_ubase_t sstatus;
+    __asm__ volatile("csrr %0, sstatus" : "=r"(sstatus));
+    return (sstatus & SSTATUS_SIE) == 0;
+}
+
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *_lock)
 {
     

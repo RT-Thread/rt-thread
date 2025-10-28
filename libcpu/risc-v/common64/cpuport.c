@@ -117,6 +117,18 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
 
     return;
 }
+#else
+void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread)
+{   
+    /* Perform architecture-specific context switch. This call will
+     * restore the target thread context and should not return when a
+     * switch is performed. The caller (scheduler) invoked this function
+     * in a context where local IRQs are disabled. */
+    rt_uint32_t level;
+    level = rt_hw_local_irq_disable();
+    rt_hw_context_switch((rt_ubase_t)from, (rt_ubase_t)to, to_thread);
+    rt_hw_local_irq_enable(level);
+}
 #endif /* end of RT_USING_SMP */
 
 /** shutdown CPU */
