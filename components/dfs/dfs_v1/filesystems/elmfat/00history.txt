@@ -357,3 +357,13 @@ R0.14b (April 17, 2021)
   Fixed some compiler warnings.
 
 
+
+R0.15 (November 6, 2022)
+  Changed user provided synchronization functions in order to completely eliminate the platform dependency from FatFs code.
+  FF_SYNC_t is removed from the configuration options.
+  Fixed a potential error in f_mount when FF_FS_REENTRANT.
+  Fixed file lock control FF_FS_LOCK is not mutal excluded when FF_FS_REENTRANT && FF_VOLUMES > 1 is true.
+  Fixed f_mkfs() creates broken exFAT volume when the size of volume is >= 2^32 sectors.
+  Fixed string functions cannot write the unicode characters not in BMP when FF_LFN_UNICODE == 2 (UTF-8).
+  Fixed a compatibility issue in identification of GPT header.
+
