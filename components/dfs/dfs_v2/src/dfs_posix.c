@@ -847,9 +847,6 @@ int mkdir(const char *path, mode_t mode)
 }
 RTM_EXPORT(mkdir);
 
-#ifdef RT_USING_FINSH
-#endif
-
 /**
  * this function is a POSIX compliant version, which will remove a directory.
  *

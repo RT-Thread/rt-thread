@@ -15,9 +15,6 @@
 #include "board.h"
 #include <rtdevice.h>
 
-#ifdef RT_USING_FINSH
-#endif
-
 #include "fsl_enet.h"
 #include "fsl_gpio.h"
 #include "fsl_cache.h"

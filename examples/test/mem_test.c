@@ -108,5 +108,3 @@ void mem_test(uint32_t address, uint32_t size )
     }
 }
 
-#ifdef RT_USING_FINSH
-#endif

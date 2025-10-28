@@ -667,5 +667,3 @@ void dm9000a(void)
 	rt_kprintf("\n");
 }
 
-#ifdef RT_USING_FINSH
-#endif

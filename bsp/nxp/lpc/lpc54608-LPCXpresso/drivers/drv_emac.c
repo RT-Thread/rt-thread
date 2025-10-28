@@ -724,5 +724,3 @@ void emac_bd_dump(void)
     }
 }
 
-#ifdef RT_USING_FINSH
-#endif
