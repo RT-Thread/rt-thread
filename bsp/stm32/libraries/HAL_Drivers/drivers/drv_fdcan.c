@@ -558,11 +558,7 @@ void HAL_FDCAN_TxBufferCompleteCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t Bu
         rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_TX_DONE | ((BufferIndexes-1) << 8));
 #endif
     }
-
 }
-
-
-
 
 void HAL_FDCAN_TxFifoEmptyCallback(FDCAN_HandleTypeDef *hfdcan)
 {
@@ -589,8 +585,7 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
     if(hfdcan->Instance == FDCAN1)
     {
 #ifdef BSP_USING_FDCAN1
-        //can1
-        if(    (ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
+        if((ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
             (hfdcan->Instance->CCCR & FDCAN_CCCR_INIT_Msk))
         {
             //hfdcan->Instance->CCCR |= FDCAN_CCCR_CCE_Msk;
@@ -634,7 +629,6 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
 }
 
 #ifdef BSP_USING_FDCAN1
-
 void FDCAN1_IT0_IRQHandler(void)             /* FDCAN1 interrupt line 0      */
 {
     rt_interrupt_enter();
@@ -648,9 +642,7 @@ void FDCAN1_IT1_IRQHandler(void)             /* FDCAN1 interrupt line 1      */
     HAL_FDCAN_IRQHandler(&st_DrvCan1.fdcanHandle);
     rt_interrupt_leave();
 }
-
 #endif /*BSP_USING_FDCAN1*/
-
 #ifdef BSP_USING_FDCAN2
 void FDCAN2_IT0_IRQHandler(void)             /* FDCAN2 interrupt line 0      */
 {
@@ -666,7 +658,6 @@ void FDCAN2_IT1_IRQHandler(void)             /* FDCAN2 interrupt line 1      */
     rt_interrupt_leave();
 }
 #endif/*BSP_USING_FDCAN2*/
-
 
 static int rt_hw_can_init(void)
 {
@@ -684,7 +675,6 @@ static int rt_hw_can_init(void)
     config.baud_rate_fd = CAN1MBaud * 8;
     config.enable_canfd = 1;
 #endif
-
     /* config default filter */
     FDCAN_FilterTypeDef sFilterConfig;
     sFilterConfig.IdType = FDCAN_STANDARD_ID;
@@ -693,24 +683,18 @@ static int rt_hw_can_init(void)
     sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
     sFilterConfig.FilterID1 = 0;
     sFilterConfig.FilterID2 = 0x7FF;
-
 #ifdef BSP_USING_FDCAN1
-
     st_DrvCan1.FilterConfig = sFilterConfig;
     st_DrvCan1.device.config = config;
-
     /* register FDCAN1 device */
     rt_hw_can_register(&st_DrvCan1.device, st_DrvCan1.name, &_can_ops, &st_DrvCan1);
 #endif /* BSP_USING_FDCAN1 */
-
 #ifdef BSP_USING_FDCAN2
     st_DrvCan2.FilterConfig = sFilterConfig;
     st_DrvCan2.device.config = config;
-
     /* register FDCAN2 device */
     rt_hw_can_register(&st_DrvCan2.device, st_DrvCan2.name, &_can_ops, &st_DrvCan2);
 #endif /* BSP_USING_FDCAN2 */
-
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_can_init);
