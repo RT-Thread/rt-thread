@@ -9,6 +9,7 @@
  */
 
 INCLUDE "link_stacksize.lds"
+INCLUDE "link_cpus.lds"
 
 OUTPUT_ARCH( "riscv" )
 
@@ -121,12 +122,9 @@ SECTIONS
     {
         . = ALIGN(64);
         __stack_start__ = .;
-
-        . += __STACKSIZE__;
-        __stack_cpu0 = .;
-
-        . += __STACKSIZE__;
-        __stack_cpu1 = .;
+        /* Dynamically allocate stack areas according to RT_CPUS_NR */
+        . += (__STACKSIZE__ * RT_CPUS_NR);
+        __stack_end__ = .;
     } > SRAM
 
     .sbss :
