@@ -137,3 +137,15 @@ void rt_hw_set_process_id(int pid)
 {
     // TODO
 }
+
+#ifdef RT_USING_SMP
+void rt_hw_secondary_cpu_up(void)
+{
+    
+}
+
+void secondary_cpu_entry(void)
+{
+
+}
+#endif /* RT_USING_SMP */

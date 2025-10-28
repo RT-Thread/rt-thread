@@ -88,6 +88,7 @@ _resume_kernel:
     csrw    sscratch, zero
     sret
 
+#ifndef RT_USING_SMP
 .global rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
     csrs sstatus, a0    /* restore to old csr */
@@ -97,3 +98,18 @@ rt_hw_interrupt_enable:
 rt_hw_interrupt_disable:
     csrrci a0, sstatus, 2   /* clear SIE */
     jr ra
+#else
+.global rt_hw_local_irq_disable
+rt_hw_local_irq_disable:
+    csrrci a0, sstatus, 2
+    jr ra
+
+.global rt_hw_local_irq_enable
+rt_hw_local_irq_enable:
+    csrs sstatus, a0
+    jr ra
+
+.global rt_hw_secondary_cpu_idle_exec
+rt_hw_secondary_cpu_idle_exec:
+    jr ra
+#endif  /* RT_USING_SMP */

@@ -92,3 +92,25 @@ void rt_hw_interrupt_init()
 
     plic_set_threshold(0);
 }
+
+#ifdef RT_USING_SMP
+void rt_hw_spin_lock_init(rt_hw_spinlock_t *_lock)
+{
+    
+}
+
+void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
+{
+    
+}
+
+void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
+{
+    
+}
+
+void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
+{
+    
+}
+#endif /* RT_USING_SMP */
