@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------/
-/  FatFs - Generic FAT Filesystem Module  R0.15 w/patch1                      /
+/  FatFs - Generic FAT Filesystem Module  R0.15 w/patch3                      /
 /-----------------------------------------------------------------------------/
 /
 / Copyright (C) 2022, ChaN, all right reserved.
@@ -468,10 +468,11 @@ static WORD Fsid;					/* Filesystem mount ID */
 static BYTE CurrVol;				/* Current drive set by f_chdrive() */
 #endif
 
-#if FF_FS_LOCK != 0
+#if FF_FS_LOCK
 static FILESEM Files[FF_FS_LOCK];	/* Open object lock semaphores */
 #if FF_FS_REENTRANT
-static BYTE SysLock;				/* System lock flag (0:no mutex, 1:unlocked, 2:locked) */
+static volatile BYTE SysLock;		/* System lock flag to protect Files[] (0:no mutex, 1:unlocked, 2:locked) */
+static volatile BYTE SysLockVolume;	/* Volume id who is locking Files[] */
 #endif
 #endif
 
@@ -905,6 +906,7 @@ static int lock_volume (	/* 1:Ok, 0:timeout */
 	if (rv && syslock) {			/* System lock reqiered? */
 		rv = ff_mutex_take(FF_VOLUMES);	/* Lock the system */
 		if (rv) {
+			SysLockVolume = fs->ldrv;
 			SysLock = 2;				/* System lock succeeded */
 		} else {
 			ff_mutex_give(fs->ldrv);	/* Failed system lock */
@@ -924,7 +926,7 @@ static void unlock_volume (
 {
 	if (fs && res != FR_NOT_ENABLED && res != FR_INVALID_DRIVE && res != FR_TIMEOUT) {
 #if FF_FS_LOCK
-		if (SysLock == 2) {	/* Is the system locked? */
+		if (SysLock == 2 && SysLockVolume == fs->ldrv) {	/* Unlock system if it has been locked by this task */
 			SysLock = 1;
 			ff_mutex_give(FF_VOLUMES);
 		}
@@ -4719,24 +4721,7 @@ FRESULT f_readdir (
 	LEAVE_FF(fs, res);
 }
 
-FRESULT f_seekdir(
-    DIR *dj,        /* Pointer to the open directory object */
-    int offset      /* the seek offset */
-)
-{
-    int i = 0;
 
-    if (dir_sdi(dj, 0) != FR_OK || offset < 0)
-        return FR_INT_ERR;
-
-    while(i < offset)
-    {
-        if(dir_read(dj, 0) != FR_OK || dir_next(dj, 0) != FR_OK)
-            return FR_INT_ERR;
-        i++;
-    }
-    return FR_OK;
-}
 
 #if FF_USE_FIND
 /*-----------------------------------------------------------------------*/
@@ -4812,7 +4797,7 @@ FRESULT f_stat (
 		res = follow_path(&dj, path);	/* Follow the file path */
 		if (res == FR_OK) {				/* Follow completed */
 			if (dj.fn[NSFLAG] & NS_NONAME) {	/* It is origin directory */
-				fno->fattrib = AM_DIR;
+				res = FR_INVALID_NAME;
 			} else {							/* Found an object */
 				if (fno) get_fileinfo(&dj, fno);
 			}
@@ -5477,6 +5462,10 @@ FRESULT f_setlabel (
 	/* Get logical drive */
 	res = mount_volume(&label, &fs, FA_WRITE);
 	if (res != FR_OK) LEAVE_FF(fs, res);
+#if FF_STR_VOLUME_ID == 2
+	for ( ; *label == '/'; label++) ;	/* Snip the separators off */
+#endif
+
 
 #if FF_FS_EXFAT
 	if (fs->fs_type == FS_EXFAT) {	/* On the exFAT volume */
@@ -7098,19 +7087,4 @@ FRESULT f_setcp (
 	return FR_OK;
 }
 #endif	/* FF_CODE_PAGE == 0 */
-
-#include <rtthread.h>
-#if FF_VOLUMES > 1
-int elm_get_vol(FATFS *fat)
-{
-    int vol;
-
-    for (vol = 0; vol < FF_VOLUMES; vol ++)
-    {
-        if (FatFs[vol] == fat) return vol;
-    }
-
-    return -1;
-}
-#endif
 
