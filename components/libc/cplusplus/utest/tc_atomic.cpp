@@ -112,7 +112,7 @@ static void test_atomic_basic_int32(void)
     val.fetch_and(14);
     uassert_int_equal(val.load(), 10);
 
-    val.fetch_or(11); //1010
+    val.fetch_or(11); /* 1010 */
     uassert_int_equal(val.load(), 11);
 
     val.fetch_xor(4);
@@ -159,7 +159,7 @@ static void test_atomic_basic_int64(void)
     val.fetch_and(14);
     uassert_int_equal(val.load(), 10);
 
-    val.fetch_or(11); //1010
+    val.fetch_or(11); /* 1010 */
     uassert_int_equal(val.load(), 11);
 
     val.fetch_xor(4);
@@ -217,7 +217,7 @@ static void test_memory_order(void)
 {
     std::atomic<int> x(0);
     std::atomic<int> y(0);
-    // Simple test for memory order
+    /* Simple test for memory order */
     x.store(1, std::memory_order_release);
     y.store(2, std::memory_order_release);
     uassert_int_equal(x.load(std::memory_order_acquire), 1);
@@ -234,22 +234,32 @@ static void test_compare_exchange_weak(void)
     int desired = 2;
     while (!val.compare_exchange_weak(expected, desired))
     {
-        expected = 1; // reset
+        /* Reset */
+        expected = 1; 
     }
     uassert_int_equal(val.load(), 2);
 }
-// Test case initialization function.
+/**
+ * @brief Test case initialization function.
+ * @return RT_EOK on success.
+ */
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
 
-// Test case cleanup function.
+/**
+ * @brief Test case cleanup function.
+ * @return RT_EOK on success.
+ */
 static rt_err_t utest_tc_cleanup(void)
 {
     return RT_EOK;
 }
 
+/**
+ * @brief Main test case function that runs the test.
+ */
 static void testcase(void)
 {
     /* Test load and store operations for int32_t atomic variables in multi-threaded environment */
@@ -269,4 +279,6 @@ static void testcase(void)
     /* Test compare_exchange_weak operation */
     UTEST_UNIT_RUN(test_compare_exchange_weak);
 }
+
+/* Export the test case with initialization and cleanup functions and a timeout of 10 ticks. */
 UTEST_TC_EXPORT(testcase, "components.libc.cpp.atomic_tc", utest_tc_init, utest_tc_cleanup, 10);

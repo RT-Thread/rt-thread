@@ -101,7 +101,7 @@ void Thread::sleep(int32_t millisec)
 }
 
 /** 
- * @brief function to run the thread's entry function.
+ * @brief Function to run the thread's entry function.
  */
 void Thread::func(Thread *pThis)
 {
@@ -136,9 +136,9 @@ rt_err_t Thread::wait(int32_t millisec)
 }
 
 /** 
- * @brief the thread with a timeout.
+ * @brief Join the thread with a timeout.
  * @param millisec Timeout in milliseconds.
- * @return Status code indicating the execution status.
+ * @return RT_EOK if the thread completed within the timeout, error code otherwise.
  */
 rt_err_t Thread::join(int32_t millisec)
 {

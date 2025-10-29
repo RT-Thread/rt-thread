@@ -18,51 +18,52 @@
  */
 static void test_thread(void)
 {
-    int count = 0; 
+    int count = 0;
 
-    /* Lambda function to increment the count.*/
+    /* Lambda function to increment the count. */
     auto func = [&]() mutable {
         for (int i = 0; i < 100; ++i)
         {
-            ++count; 
+            ++count;
         }
     };
 
     /* Create and run a thread executing the lambda function. */
     std::thread t1(func);
-    /* Wait for the thread to finish execution.*/
-    t1.join();  
+    /* Wait for the thread to finish execution. */
+    t1.join();
 
-    /* Verify if the count is as expected after the first thread execution.*/
+    /* Verify if the count is as expected after the first thread execution. */
     if (count != 100)
     {
-        uassert_false(1);  
+        uassert_false(1);
     }
 
     /* Create and run another thread executing the same lambda function. */
     std::thread t2(func);
-    t2.join();  
+    t2.join();
 
     if (count != 200)
     {
-        uassert_false(1);  
+        uassert_false(1);
     }
 
-    /* If both assertions passed, the test is successful.*/
+    /* If both assertions passed, the test is successful. */
     uassert_true(1);
 }
 
 
 /**
  * @brief Test case initialization function.
+ * @return RT_EOK on success.
  */
-
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
 /**
  * @brief Test case cleanup function.
+ * @return RT_EOK on success.
  */
 static rt_err_t utest_tc_cleanup(void)
 {

@@ -12,7 +12,7 @@
 using namespace rtthread;
 
 /** 
- * @brief Semaphore class implementation.
+ * @brief Semaphore class constructor.
  * @param name Semaphore name
  * @param count Initial semaphore count
  */
