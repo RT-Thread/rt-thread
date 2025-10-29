@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_DDL_DRIVER, RT_USING_ARMLIBC, RT_USING_LIBC, HC32F472, __RTTHREAD__, __STDC_LIMIT_MACROS, __DEBUG, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__, HC32F472, __DEBUG, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\libraries\hc32_drivers;.;..\..\..\components\drivers\include;packages\hc32-f4-series-latest\hc32f472\inc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;packages\hc32-f4-cmsis-latest\Device\HDSC\hc32f472\Include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;applications;..\..\..\include;..\platform\tca9539;board;..\..\..\components\drivers\smp_call;..\tests;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;board\ports;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;board\config\usb_config;..\..\..\components\libc\compilers\common\include;packages\hc32-f4-cmsis-latest\Include;..\..\..\libcpu\arm\cortex-m4;board\config;..\..\..\components\drivers\phy</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\tests;..\platform\tca9539;..\..\..\components\libc\posix\io\epoll;board\ports;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\libraries\hc32_drivers;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;board;..\..\..\include;board\config\usb_config;applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;board\config;..\..\..\components\finsh;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\cortex-m4</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,16 +381,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>xtal32_fcm.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\xtal32_fcm.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>xtal32_fcm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\xtal32_fcm.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -811,13 +811,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
@@ -830,119 +823,11 @@
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>HC32F472-LL</GroupName>
           <Files>
             <File>
-              <FileName>hc32_ll_clk.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_clk.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_fcg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_fcg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_interrupts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_interrupts.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_tmr0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_tmr0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_rmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_rmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_aos.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_aos.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_efm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_efm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_icg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_icg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_utility.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_utility.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_fcm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_fcm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hc32_ll_pwc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-series-latest\hc32f472\src\hc32_ll_pwc.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1238,13 +1123,6 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
@@ -1262,6 +1140,13 @@
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1311,23 +1196,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>system_hc32f472.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\hc32-f4-cmsis-latest\Device\HDSC\hc32f472\Source\system_hc32f472.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_hc32f472.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>packages\hc32-f4-cmsis-latest\Device\HDSC\hc32f472\Source\ARM\startup_hc32f472.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Platform</GroupName>
           <Files>
             <File>
@@ -1339,6 +1207,13 @@
         </Group>
         <Group>
           <GroupName>Tests</GroupName>
+          <Files>
+            <File>
+              <FileName>test_soft_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\tests\test_soft_i2c.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>test_uart_v1.c</FileName>
@@ -1358,13 +1233,6 @@
               <FileName>test_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\tests\test_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>test_soft_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\tests\test_soft_i2c.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <stdlib.h>
 
-#ifdef UTEST_SERIAL_TC
+#ifdef RT_UTEST_SERIAL_V2
 #ifndef BSP_UART2_TX_USING_DMA
 
 static struct rt_serial_device *serial;

@@ -63,7 +63,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -204,6 +204,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 /* end of Utilities */
 
 /* Using USB legacy version */
@@ -215,35 +216,38 @@
 
 #define RT_USING_UTESTCASES
 
-/* Utest Self Testcase */
+/* Kernel Core */
 
-#define UTEST_SELF_PASS_TC
-/* end of Utest Self Testcase */
+#define RT_UTEST_SMALL_MEM
+/* end of Kernel Core */
 
-/* Kernel Testcase */
+/* Kernel Components */
 
-#define UTEST_SMALL_MEM_TC
-/* end of Kernel Testcase */
+/* Drivers */
 
-/* CPP11 Testcase */
 
-/* end of CPP11 Testcase */
+/* IPC Test */
 
-/* Utest Serial Testcase */
+/* end of IPC Test */
 
-/* end of Utest Serial Testcase */
+/* Serial Test */
 
-/* Serial-Bypass Testcase */
+/* end of Serial Test */
 
-/* end of Serial-Bypass Testcase */
+/* SMP-Call Test */
 
-/* Utest IPC Testcase */
+/* end of SMP-Call Test */
+/* end of Drivers */
 
-/* end of Utest IPC Testcase */
+/* CPP11 */
 
-/* RTT Posix Testcase */
+/* end of CPP11 */
 
-/* end of RTT Posix Testcase */
+/* Utest Framework */
+
+#define RT_UTEST_SELF_PASS
+/* end of Utest Framework */
+/* end of Kernel Components */
 
 /* Memory Management Subsytem Testcase */
 
@@ -252,10 +256,6 @@
 /* Tmpfs Testcase */
 
 /* end of Tmpfs Testcase */
-
-/* SMP-Call Testcase */
-
-/* end of SMP-Call Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */

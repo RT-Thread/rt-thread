@@ -341,9 +341,9 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\compilers\common\extension;drivers;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;libraries\Device\FUJISTU\MB9BF50x\Include;libraries\CMSIS\Include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\phy;..\..\..\..\components\finsh;applications;.;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\ipc;applications;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\compilers\common\include;.;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\libc\posix\io\poll;libraries\Device\FUJISTU\MB9BF50x\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;libraries\CMSIS\Include;..\..\..\..\components\libc\compilers\common\extension;drivers;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\drivers\phy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,16 +384,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -401,16 +401,16 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_mb9bf50x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\Device\FUJISTU\MB9BF50x\Source\system_mb9bf50x.c</FilePath>
+              <FileName>startup_mb9bf50x.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\Device\FUJISTU\MB9BF50x\Source\ARM\startup_mb9bf50x.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_mb9bf50x.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\Device\FUJISTU\MB9BF50x\Source\ARM\startup_mb9bf50x.S</FilePath>
+              <FileName>system_mb9bf50x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\Device\FUJISTU\MB9BF50x\Source\system_mb9bf50x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -708,16 +708,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>led.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\led.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nand.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\nand.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -729,9 +722,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>nand.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\nand.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -894,13 +894,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
@@ -915,9 +908,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -925,6 +918,13 @@
               <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\msh_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1239,23 +1239,23 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1267,9 +1267,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>

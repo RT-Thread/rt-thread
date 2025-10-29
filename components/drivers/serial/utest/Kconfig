@@ -1,52 +1,52 @@
-menu "Serial Unit Testcases"
+menu "Serial Test"
 
-    config UTEST_SERIAL_BYPASS
-        bool "Serial Bypass testcases"
+    config RT_UTEST_SERIAL_BYPASS
+        bool "Serial Bypass Test"
         default n
         depends on RT_USING_SERIAL_BYPASS
 
-    config UTEST_SERIAL_TC
-        bool "Serial V2 testcases"
+    config RT_UTEST_SERIAL_V2
+        bool "Serial V2 Test"
         default n
         depends on RT_USING_SERIAL_V2
 
-    if UTEST_SERIAL_TC
+    if RT_UTEST_SERIAL_V2
 
         config RT_SERIAL_TC_DEVICE_NAME
-            string "the device name for serial test"
+            string "Device Name for Serial Test"
             default "uart2"
 
         config RT_SERIAL_TC_RXBUF_SIZE
-            int "the rx buffer size for serial test"
+            int "RX Buffer Size for Serial Test"
             default 128
 
         config RT_SERIAL_TC_TXBUF_SIZE
-            int "the tx buffer size for serial test"
+            int "TX Buffer Size for Serial Test"
             default 128
 
         config RT_SERIAL_TC_SEND_ITERATIONS
-            int "the number of iterations for the test routine."
+            int "Number of Iterations for Test Routines"
             default 100
 
-        config UTEST_SERIAL_QEMU_TC
-            bool "qemu dedicated tests"
+        config RT_UTEST_SERIAL_QEMU
+            bool "QEMU Dedicated Test"
             default n
 
-        config UTEST_SERIAL_POSIX_TC
-            bool "Serial posix testcase"
+        config RT_UTEST_SERIAL_POSIX
+            bool "Serial POSIX Test"
             default n
             select RT_USING_DFS
             select RT_USING_POSIX_FS
             select RT_USING_POSIX_TERMIOS
 
-        if UTEST_SERIAL_POSIX_TC
+        if RT_UTEST_SERIAL_POSIX
 
             config RT_SERIAL_POSIX_TC_DEVICE_NAME
-                string "the device name for serial posix test"
+                string "Device Name for Serial POSIX Test"
                 default "dev/uart2"
 
             config RT_SERIAL_POSIX_TC_SEND_ITERATIONS
-                int "the number of iterations for the posix test routine."
+                int "Number of Iterations for POSIX Test Routines"
                 default 100
 
         endif

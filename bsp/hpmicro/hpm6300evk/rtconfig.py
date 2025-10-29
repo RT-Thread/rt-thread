@@ -78,6 +78,8 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     if os.getenv('RTT_RISCV_TOOLCHAIN'):
         EXEC_PATH = os.getenv('RTT_RISCV_TOOLCHAIN')
+    elif RTT_EXEC_PATH:
+        EXEC_PATH = RTT_EXEC_PATH
     else:
         EXEC_PATH   = r'/opt/riscv-gnu-gcc/bin'
 else:

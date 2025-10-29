@@ -1,4 +1,31 @@
 menu "Drivers Configuration"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+
+            config BSP_USING_I2C4
+                bool "Enable I2C4"
+                default n
+
+        endif
 
     menuconfig BSP_USING_QSPI
         bool "Enable QSPI"

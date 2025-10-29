@@ -39,12 +39,21 @@
 static struct ifx_spi_handle spi_bus_obj[] =
 {
 #if defined(BSP_USING_SPI0)
+#if defined(SOC_XMC7100D_F144K4160AA)
+    {
+        .bus_name = "spi0",
+        .sck_pin = GET_PIN(0, 2),
+        .miso_pin = GET_PIN(1, 0),
+        .mosi_pin = GET_PIN(1, 1),
+    },
+#else
     {
         .bus_name = "spi0",
         .sck_pin = GET_PIN(0, 4),
         .miso_pin = GET_PIN(0, 3),
         .mosi_pin = GET_PIN(0, 2),
     },
+#endif
 #endif
 #if defined(BSP_USING_SPI3)
     {

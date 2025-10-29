@@ -290,7 +290,13 @@ As shown in the figure above, the log of the test case run is divided into four 
 From the above flow chart you can get the following:
 
 * The utest framework is a sequential execution of all **test units** in the *testcase* function
-* Assert of the previous UTEST_UNIT_RUN macro has occurred, and all subsequent UTEST_UNIT_RUN will skip execution.
+* Assert of the previous UTEST_UNIT_RUN macro has occurred, and all subsequent UTEST_UNIT_RUN will skip executio
+
+## utest_run auto-completion Function
+
+The utest_run tool now supports dynamic auto-completion for test case names. After entering the utest_run command in the terminal, users can press the TAB key to activate the auto-completion feature. The system will then dynamically match and suggest available test case names in real time.
+
+![utest_run_auto_option](.\figures\utest_run_auto_option.png)
 
 # NOTE
 
@@ -312,9 +318,9 @@ For each module, you can maintain unit testcases in a unified manner in the foll
 
   - Unit-testcase program source code files for this module.
 
-  - `Kconfig` file, which defining configuration options for the unit test cases of this module, the recommended option is named `RT_UTEST_TC_USING_XXXX`, XXXX is the global unique module name of this module.
+  - `Kconfig` file, which defining configuration options for the unit test cases of this module, the recommended option is named `RT_UTEST_XXXX`, XXXX is the global unique module name of this module.
 
-  - `SConscript` file, when adding src files, you need to rely on `RT_UTEST_TC_USING_XXXX`.
+  - `SConscript` file, when adding src files, you need to rely on `RT_UTEST_XXXX`.
     
 After completing the above steps, rsource the path of the Kconfig file of utest of this module to the file `Kconfig.utestcases`.
 

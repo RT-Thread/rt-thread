@@ -15,7 +15,7 @@
 
 /* */
 
-#ifdef UTEST_SERIAL_TC
+#ifdef RT_UTEST_SERIAL_V2
 
 static struct rt_serial_device *serial;
 static rt_uint8_t               uart_over_flag = RT_FALSE;

@@ -21,8 +21,8 @@
 |  USB 转串口  |     支持     |  UART4   |
 |     GPIO     |     支持     |    —     |
 |     UART     |     支持     | UART2,UART4  |
-|     I2C     |     支持     | I2C1  |
-
+|     I2C     |     支持     | I2C1,I2C2  |
+|     SPI     |     支持     | SPI0,SPI5  |
 ## 快速上手
 
 本 BSP 是以 `GCC` 和 `Jlink` 为开发环境（编译器：GCC），接下来介绍如何将系统运行起来。
@@ -59,7 +59,6 @@ Vscode下载拓展Cortex-Debug，然后在.vscode下新建launch.json文件,并�
             "interface": "swd",
             "serialNumber": "",
             "preLaunchCommands": [
-                // Program via the hex file to get complete coverage
                 "exec-file rt-thread.hex"
             ],
             "overrideRestartCommands": [
@@ -68,34 +67,7 @@ Vscode下载拓展Cortex-Debug，然后在.vscode下新建launch.json文件,并�
             // svdFile is optional, it can be very large.
             "svdFile": "${workspaceRoot}/libs/cat1c4m.svd",
             "breakAfterReset": true,
-            "runToEntryPoint": "main",    // Specifies application entry point name where program will halt
-            "showDevDebugOutput": "none",
-            "presentation": {
-                "hidden": false,
-                "group": "CM7"
-            },
-            "serverpath": "C:/Program Files/SEGGER/JLink_V820/JLinkGDBServerCL.exe"
-        },
-        // When using 'attach', make sure your program is running on the board and that your
-        // executable matches the image in the chip exactly, or else strange things can happen
-        // with breakpoints, variables, etc.
-        {
-            "name": "Attach XMC7100D CM7 (JLink)",
-            "type": "cortex-debug",
-            "request": "attach",
-            "cwd": "${workspaceFolder}",
-            "executable": "${workspaceRoot}/rt-thread.elf",
-            "servertype": "jlink",
-            "device": "XMC7100-4160_CM7_0_tm",
-            "interface": "swd",
-            "serialNumber": "",
-            "overrideRestartCommands": [
-                "starti"
-            ],
-            // svdFile is optional, it can be very large.
-            "svdFile": "${workspaceRoot}/libs/cat1c4m.svd",
-            "breakAfterReset": true,
-            "runToEntryPoint": "main",    // Specifies application entry point name for restart/reset
+            "runToEntryPoint": "main",
             "showDevDebugOutput": "none",
             "presentation": {
                 "hidden": false,
@@ -112,7 +84,7 @@ Vscode下载拓展Cortex-Debug，然后在.vscode下新建launch.json文件,并�
 
 ## 运行结果
 
-下载程序成功之后，点击全速运行。然后打开终端工具串口助手，选择波特率为 115200。复位设备后，LED 将会闪烁，而且在终端上可以看到 `RT-Thread` 的输出信息：
+下载程序成功之后，点击全速运行。可通过 Type-C 接口 将开发板连接至电脑。随后，打开任意串口调试软件，在串口列表中选择设备名为 USB-HiSpeed-SERIAL-B 的端口，并将波特率设置为 115200。完成配置后，按下开发板上的 复位按键，即可在串口终端中实时看到 RT-Thread 系统的启动与运行日志信息。
 
 注：推荐使用串口调试助手如：`MobaXterm`
 
