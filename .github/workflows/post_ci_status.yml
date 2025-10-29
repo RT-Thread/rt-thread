@@ -1,0 +1,108 @@
+#
+# Copyright (c) 2025, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2025-10-27     GitHub Copilot  Reusable workflow to post CI status
+
+name: Post CI Status Comment
+
+on:
+  workflow_call:
+    inputs:
+      workflow_name:
+        description: 'Name of the workflow'
+        required: true
+        type: string
+      workflow_status:
+        description: 'Status of the workflow (success/failure)'
+        required: true
+        type: string
+      pr_number:
+        description: 'Pull request number'
+        required: true
+        type: number
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  post-comment:
+    runs-on: ubuntu-22.04
+    if: github.repository_owner == 'RT-Thread'
+    steps:
+      - name: Post or update CI status comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ inputs.pr_number }};
+            const workflowName = '${{ inputs.workflow_name }}';
+            const workflowStatus = '${{ inputs.workflow_status }}';
+            
+            // Status emoji mapping
+            const statusEmoji = workflowStatus === 'success' ? '✅' : '❌';
+            const timestamp = new Date().toISOString();
+            
+            // Try to find existing comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+            
+            const botComment = comments.data.find(comment => 
+              comment.user.login === 'github-actions[bot]' && 
+              comment.body.includes('<!-- CI Status Comment -->')
+            );
+            
+            // Get all workflow runs for this PR to build comprehensive status
+            let allStatuses = {};
+            
+            if (botComment) {
+              // Parse existing statuses from comment
+              const statusRegex = /- (✅|❌|🟡) \*\*(.+?)\*\*/g;
+              let match;
+              while ((match = statusRegex.exec(botComment.body)) !== null) {
+                allStatuses[match[2]] = match[1];
+              }
+            }
+            
+            // Update current workflow status
+            allStatuses[workflowName] = statusEmoji;
+            
+            // Build comment body
+            let commentBody = '<!-- CI Status Comment -->\n';
+            commentBody += '## 🤖 CI Test Results\n\n';
+            commentBody += `**Last Updated:** ${timestamp}\n\n`;
+            commentBody += '### Workflow Status:\n\n';
+            
+            for (const [name, emoji] of Object.entries(allStatuses)) {
+              commentBody += `- ${emoji} **${name}**\n`;
+            }
+            
+            commentBody += '\n---\n';
+            commentBody += '✅ Success | ❌ Failure | 🟡 In Progress\n\n';
+            commentBody += '*This comment is automatically updated as CI workflows complete.*\n';
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+              console.log(`Updated comment ${botComment.id} on PR #${prNumber}`);
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+              console.log(`Created new comment on PR #${prNumber}`);
+            }

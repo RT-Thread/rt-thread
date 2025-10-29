@@ -1,0 +1,303 @@
+#
+# Copyright (c) 2025, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2025-10-27     GitHub Copilot  Post CI results to PR comments
+
+name: CI Results Comment
+
+on:
+  workflow_run:
+    workflows:
+      - "RT-Thread BSP Static Build Check"
+      - "Static code analysis"
+      - "Check File Format and License"
+      - "utest_auto_run"
+      - "ToolsCI"
+      - "pkgs_test"
+    types:
+      - completed
+
+permissions:
+  pull-requests: write
+  issues: write
+  actions: read
+  checks: read
+
+jobs:
+  comment-ci-results:
+    runs-on: ubuntu-22.04
+    if: github.event.workflow_run.event == 'pull_request' && github.repository_owner == 'RT-Thread'
+    steps:
+      - name: Get PR number
+        id: get-pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Get PR number from workflow_run
+            const prNumber = context.payload.workflow_run.pull_requests[0]?.number;
+            if (!prNumber) {
+              console.log('No PR found in workflow_run');
+              // Fallback: search for PR by branch
+              const pulls = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                head: `${context.repo.owner}:${context.payload.workflow_run.head_branch}`
+              });
+              
+              if (pulls.data.length === 0) {
+                console.log('No open PR found for this branch');
+                return null;
+              }
+              
+              const pr = pulls.data[0];
+              console.log(`Found PR #${pr.number}`);
+              return pr.number;
+            }
+            
+            console.log(`Found PR #${prNumber}`);
+            return prNumber;
+
+      - name: Get workflow run details
+        if: steps.get-pr.outputs.result != 'null'
+        id: workflow-details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ steps.get-pr.outputs.result }};
+            if (!prNumber) {
+              return { success: false, message: 'No PR found' };
+            }
+
+            // Get all workflow runs for this PR
+            const workflowRuns = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event: 'pull_request',
+              per_page: 100
+            });
+
+            // Filter runs for this specific PR
+            const prRuns = workflowRuns.data.workflow_runs.filter(run => {
+              return run.pull_requests.some(pr => pr.number === prNumber);
+            });
+
+            // Get the latest run for each workflow
+            const workflowMap = new Map();
+            for (const run of prRuns) {
+              const existing = workflowMap.get(run.name);
+              if (!existing || new Date(run.created_at) > new Date(existing.created_at)) {
+                workflowMap.set(run.name, run);
+              }
+            }
+
+            // Prepare results summary
+            const results = [];
+            for (const [name, run] of workflowMap) {
+              let status = '🟡';
+              let statusText = 'In Progress';
+              
+              if (run.status === 'completed') {
+                if (run.conclusion === 'success') {
+                  status = '✅';
+                  statusText = 'Success';
+                } else if (run.conclusion === 'failure') {
+                  status = '❌';
+                  statusText = 'Failure';
+                } else if (run.conclusion === 'cancelled') {
+                  status = '⏭️';
+                  statusText = 'Cancelled';
+                } else if (run.conclusion === 'skipped') {
+                  status = '⏭️';
+                  statusText = 'Skipped';
+                }
+              } else if (run.status === 'queued') {
+                status = '🟠';
+                statusText = 'Queued';
+              }
+              
+              results.push({
+                name: name,
+                status: status,
+                statusText: statusText,
+                url: run.html_url,
+                conclusion: run.conclusion,
+                runId: run.id
+              });
+            }
+
+            return { 
+              success: true, 
+              results: results,
+              prNumber: prNumber
+            };
+
+      - name: Get job details
+        if: steps.get-pr.outputs.result != 'null'
+        id: job-details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const workflowDetails = ${{ steps.workflow-details.outputs.result }};
+            if (!workflowDetails || !workflowDetails.success) {
+              return { jobs: [] };
+            }
+
+            const allJobs = [];
+            
+            for (const result of workflowDetails.results) {
+              try {
+                const jobs = await github.rest.actions.listJobsForWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: result.runId,
+                  per_page: 100
+                });
+
+                for (const job of jobs.data.jobs) {
+                  let jobStatus = '⌛';
+                  if (job.status === 'completed') {
+                    if (job.conclusion === 'success') {
+                      jobStatus = '✅';
+                    } else if (job.conclusion === 'failure') {
+                      jobStatus = '❌';
+                    } else if (job.conclusion === 'skipped') {
+                      jobStatus = '⏭️';
+                    }
+                  } else if (job.status === 'in_progress') {
+                    jobStatus = '🔄';
+                  } else if (job.status === 'queued') {
+                    jobStatus = '🟠';
+                  }
+
+                  allJobs.push({
+                    workflow: result.name,
+                    name: job.name,
+                    status: jobStatus,
+                    conclusion: job.conclusion || job.status,
+                    url: job.html_url
+                  });
+                }
+              } catch (error) {
+                console.log(`Error getting jobs for workflow ${result.name}: ${error.message}`);
+              }
+            }
+
+            return { jobs: allJobs };
+
+      - name: Post or update comment
+        if: steps.get-pr.outputs.result != 'null'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ steps.get-pr.outputs.result }};
+            const workflowDetails = ${{ steps.workflow-details.outputs.result }};
+            const jobDetails = ${{ steps.job-details.outputs.result }};
+            
+            if (!workflowDetails || !workflowDetails.success) {
+              console.log('No workflow details available');
+              return;
+            }
+
+            // Prepare comment body
+            const now = new Date();
+            const timestamp = now.toISOString();
+            const results = workflowDetails.results;
+            const jobs = jobDetails.jobs || [];
+
+            let commentBody = '<!-- CI Results Comment -->\n';
+            commentBody += '## 🤖 CI Test Results\n\n';
+            commentBody += `**Last Updated:** ${timestamp}\n\n`;
+            commentBody += '### Test Spec & Results:\n\n';
+            commentBody += '✅ Success | ❌ Failure | 🟠 Queued | 🟡 Progress | ⏭️ Skipped | ⚠️ Quarantine\n\n';
+            
+            // Group jobs by workflow
+            const jobsByWorkflow = new Map();
+            for (const job of jobs) {
+              if (!jobsByWorkflow.has(job.workflow)) {
+                jobsByWorkflow.set(job.workflow, []);
+              }
+              jobsByWorkflow.get(job.workflow).push(job);
+            }
+
+            // Calculate overall statistics
+            let totalSuccess = 0;
+            let totalFailure = 0;
+            let totalQueued = 0;
+            let totalProgress = 0;
+            let totalSkipped = 0;
+
+            for (const result of results) {
+              if (result.conclusion === 'success') totalSuccess++;
+              else if (result.conclusion === 'failure') totalFailure++;
+              else if (result.statusText === 'Queued') totalQueued++;
+              else if (result.statusText === 'In Progress') totalProgress++;
+              else if (result.conclusion === 'skipped' || result.conclusion === 'cancelled') totalSkipped++;
+            }
+
+            // Summary line
+            commentBody += '#### Overall Summary\n\n';
+            commentBody += `- ✅ **Success:** ${totalSuccess}\n`;
+            commentBody += `- ❌ **Failure:** ${totalFailure}\n`;
+            commentBody += `- 🟠 **Queued:** ${totalQueued}\n`;
+            commentBody += `- 🟡 **In Progress:** ${totalProgress}\n`;
+            commentBody += `- ⏭️ **Skipped:** ${totalSkipped}\n\n`;
+
+            commentBody += '---\n\n';
+            commentBody += '### Detailed Results\n\n';
+
+            // Build detailed results
+            for (const result of results) {
+              commentBody += `<details>\n`;
+              commentBody += `<summary>${result.status} <strong>${result.name}</strong> - ${result.statusText}</summary>\n\n`;
+              commentBody += `**Workflow:** [${result.name}](${result.url})\n\n`;
+              
+              // Show jobs for this workflow
+              const workflowJobs = jobsByWorkflow.get(result.name) || [];
+              if (workflowJobs.length > 0) {
+                commentBody += '**Jobs:**\n\n';
+                for (const job of workflowJobs) {
+                  commentBody += `- ${job.status} [${job.name}](${job.url})\n`;
+                }
+              }
+              commentBody += '\n</details>\n\n';
+            }
+
+            commentBody += '\n---\n';
+            commentBody += '*🤖 This comment is automatically generated and updated by the CI system.*\n';
+
+            // Check if comment already exists
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+
+            const existingComment = comments.data.find(comment => 
+              comment.user.login === 'github-actions[bot]' && 
+              comment.body.includes('<!-- CI Results Comment -->')
+            );
+
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: commentBody
+              });
+              console.log(`Updated comment ${existingComment.id} on PR #${prNumber}`);
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+              console.log(`Created new comment on PR #${prNumber}`);
+            }
