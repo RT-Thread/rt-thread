@@ -1589,7 +1589,8 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 
     result = value;                      /* r will be reversed bits of v; first get LSB of v */
 
-    for (value >>= 1U; value; value >>= 1U) {
+    for (value >>= 1U; value; value >>= 1U)
+    {
         result <<= 1U;
         result |= value & 1U;
         s--;
@@ -1621,26 +1622,30 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
 
     posMax = 1;
 
-    for (i = 0; i < (y - 1); i++) {
+    for (i = 0; i < (y - 1); i++)
+    {
         posMax = posMax * 2;
     }
 
-    if (x > 0) {
+    if (x > 0)
+    {
         posMax = (posMax - 1);
 
-        if (x > posMax) {
+        if (x > posMax)
+        {
             x = posMax;
         }
 
-//    x &= (posMax * 2 + 1);
+/*    x &= (posMax * 2 + 1); */
     } else {
         negMin = -posMax;
 
-        if (x < negMin) {
+        if (x < negMin)
+        {
             x = negMin;
         }
 
-//    x &= (posMax * 2 - 1);
+/*    x &= (posMax * 2 - 1); */
     }
 
     return (x);
@@ -1657,7 +1662,8 @@ __ALWAYS_STATIC_INLINE uint32_t __USAT(uint32_t value, uint32_t sat)
 {
     uint32_t result;
 
-    if ((((0xFFFFFFFF >> sat) << sat) & value) != 0) {
+    if ((((0xFFFFFFFF >> sat) << sat) & value) != 0)
+    {
         result = 0xFFFFFFFF >> (32 - sat);
     } else {
         result = value;
@@ -1677,9 +1683,11 @@ __ALWAYS_STATIC_INLINE uint32_t __IUSAT(uint32_t value, uint32_t sat)
 {
     uint32_t result;
 
-    if (value & 0x80000000) { /* only overflow set bit-31 */
+    if (value & 0x80000000)
+    { /* only overflow set bit-31 */
         result = 0;
-    } else if ((((0xFFFFFFFF >> sat) << sat) & value) != 0) {
+    } else if ((((0xFFFFFFFF >> sat) << sat) & value) != 0)
+    {
         result = 0xFFFFFFFF >> (32 - sat);
     } else {
         result = value;
@@ -1729,7 +1737,7 @@ __ALWAYS_STATIC_INLINE uint32_t __RRX(uint32_t op1)
 __ALWAYS_STATIC_INLINE uint8_t __LDRBT(volatile uint8_t *addr)
 {
     uint32_t result;
-//#warning "__LDRBT"
+/* #warning "__LDRBT" */
     __ASM volatile("ldb %0, (%1, 0)" : "=r"(result) : "r"(addr));
     return ((uint8_t) result);    /* Add explicit type cast here */
 }
@@ -1745,7 +1753,7 @@ __ALWAYS_STATIC_INLINE uint16_t __LDRHT(volatile uint16_t *addr)
 {
     uint32_t result;
 
-//#warning "__LDRHT"
+/* #warning "__LDRHT" */
     __ASM volatile("ldh %0, (%1, 0)" : "=r"(result) : "r"(addr));
     return ((uint16_t) result);    /* Add explicit type cast here */
 }
@@ -1761,7 +1769,7 @@ __ALWAYS_STATIC_INLINE uint32_t __LDRT(volatile uint32_t *addr)
 {
     uint32_t result;
 
-//#warning "__LDRT"
+/* #warning "__LDRT" */
     __ASM volatile("ldw %0, (%1, 0)" : "=r"(result) : "r"(addr));
     return (result);
 }
@@ -1775,7 +1783,7 @@ __ALWAYS_STATIC_INLINE uint32_t __LDRT(volatile uint32_t *addr)
  */
 __ALWAYS_STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *addr)
 {
-//#warning "__STRBT"
+/* #warning "__STRBT" */
     __ASM volatile("stb %1, (%0, 0)" :: "r"(addr), "r"((uint32_t)value) : "memory");
 }
 
@@ -1788,7 +1796,7 @@ __ALWAYS_STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *addr)
  */
 __ALWAYS_STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *addr)
 {
-//#warning "__STRHT"
+/* #warning "__STRHT" */
     __ASM volatile("sth %1, (%0, 0)" :: "r"(addr), "r"((uint32_t)value) : "memory");
 }
 
@@ -1801,7 +1809,7 @@ __ALWAYS_STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *addr)
  */
 __ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
 {
-//#warning "__STRT"
+/* #warning "__STRT" */
     __ASM volatile("stw %1, (%0, 0)" :: "r"(addr), "r"(value) : "memory");
 }
 
@@ -1826,7 +1834,7 @@ __ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
  */
 __ALWAYS_STATIC_INLINE uint32_t __get_FPUType(void)
 {
-//FIXME:
+/* FIXME: */
     return 0;
 }
 
@@ -2951,14 +2959,17 @@ __ALWAYS_STATIC_INLINE int32_t __QADD(int32_t x, int32_t y)
 {
     int32_t result;
 
-    if (y >= 0) {
-        if (x + y >= x) {
+    if (y >= 0)
+    {
+        if (x + y >= x)
+        {
             result = x + y;
         } else {
             result = 0x7FFFFFFF;
         }
     } else {
-        if (x + y < x) {
+        if (x + y < x)
+        {
             result = x + y;
         } else {
             result = 0x80000000;
@@ -2984,9 +2995,11 @@ __ALWAYS_STATIC_INLINE int32_t __QSUB(int32_t x, int32_t y)
 
     tmp = (int64_t)x - (int64_t)y;
 
-    if (tmp > 0x7fffffff) {
+    if (tmp > 0x7fffffff)
+    {
         tmp = 0x7fffffff;
-    } else if (tmp < (-2147483647 - 1)) {
+    } else if (tmp < (-2147483647 - 1))
+    {
         tmp = -2147483647 - 1;
     }
 
@@ -3291,3 +3304,4 @@ __ALWAYS_STATIC_INLINE uint32_t __UXTB16(uint32_t x)
 }
 
 #endif /* _CSI_GCC_H_ */
+
