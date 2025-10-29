@@ -213,11 +213,9 @@
 #define RT_USING_CPUTIME
 #define RT_USING_CPUTIME_RISCV
 #define CPUTIME_TIMER_FREQ 25000000
-#define RT_USING_ADC
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 8192
@@ -674,8 +672,6 @@
 #define BSP_USING_SDIO
 #define BSP_USING_SDIO0
 #define BSP_SD_MNT_DEVNAME "sd0p1"
-#define BSP_USING_WDT
-#define BSP_USING_WDT0
 #define BSP_UTEST_DRIVERS
 /* end of Drivers Configuration */
 #define BOARD_C908
