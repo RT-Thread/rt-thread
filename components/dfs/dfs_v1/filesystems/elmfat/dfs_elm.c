@@ -999,45 +999,6 @@ DWORD get_fattime(void)
 }
 
 #if FF_FS_REENTRANT
-/* Old FatFs API (R0.14b and earlier) */
-int ff_cre_syncobj(BYTE drv, FF_SYNC_t *m)
-{
-    char name[8];
-    rt_mutex_t mutex;
-
-    rt_snprintf(name, sizeof(name), "fat%d", drv);
-    mutex = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
-    if (mutex != RT_NULL)
-    {
-        *m = mutex;
-        return RT_TRUE;
-    }
-
-    return RT_FALSE;
-}
-
-int ff_del_syncobj(FF_SYNC_t m)
-{
-    if (m != RT_NULL)
-        rt_mutex_delete(m);
-
-    return RT_TRUE;
-}
-
-int ff_req_grant(FF_SYNC_t m)
-{
-    if (rt_mutex_take(m, FF_FS_TIMEOUT) == RT_EOK)
-        return RT_TRUE;
-
-    return RT_FALSE;
-}
-
-void ff_rel_grant(FF_SYNC_t m)
-{
-    rt_mutex_release(m);
-}
-
-/* New FatFs API (R0.15 and later) */
 static rt_mutex_t Mutex[FF_VOLUMES + 1];
 
 int ff_mutex_create (int vol)
