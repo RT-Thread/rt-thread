@@ -29,7 +29,9 @@ if GetDepend('BSP_UTEST_DRIVERS'):
 
     if GetDepend('BSP_USING_RTC'):
         src += ['test_rtc.c']
-        
+    
+    if GetDepend('BSP_USING_QSPI'):
+        src += ['test_qspi.c']
 group = DefineGroup('utestcases', src, depend = [''])
 
 Return('group')

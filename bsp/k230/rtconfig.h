@@ -213,9 +213,11 @@
 #define RT_USING_CPUTIME
 #define RT_USING_CPUTIME_RISCV
 #define CPUTIME_TIMER_FREQ 25000000
+#define RT_USING_ADC
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 8192
@@ -223,6 +225,9 @@
 #define RT_MMCSD_STACK_SIZE 8192
 #define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
+#define RT_USING_QSPI
+#define RT_USING_WDT
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -276,6 +281,7 @@
 
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
@@ -341,6 +347,23 @@
 
 /* Utilities */
 
+#define RT_USING_ULOG
+#define ULOG_OUTPUT_LVL_D
+#define ULOG_OUTPUT_LVL 7
+#define ULOG_ASSERT_ENABLE
+#define ULOG_LINE_BUF_SIZE 128
+
+/* log format */
+
+#define ULOG_USING_COLOR
+#define ULOG_OUTPUT_TIME
+#define ULOG_OUTPUT_LEVEL
+#define ULOG_OUTPUT_TAG
+/* end of log format */
+#define ULOG_BACKEND_USING_CONSOLE
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 4096
+#define UTEST_THR_PRIORITY 20
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -379,6 +402,56 @@
 
 /* RT-Thread Utestcases */
 
+#define RT_USING_UTESTCASES
+
+/* Utest Self Testcase */
+
+/* end of Utest Self Testcase */
+
+/* Kernel Testcase */
+
+/* end of Kernel Testcase */
+
+/* CPP11 Testcase */
+
+/* end of CPP11 Testcase */
+
+/* RTT Posix Testcase */
+
+/* end of RTT Posix Testcase */
+
+/* Memory Management Subsytem Testcase */
+
+/* end of Memory Management Subsytem Testcase */
+
+/* Tmpfs Testcase */
+
+/* end of Tmpfs Testcase */
+#define RT_UTEST_DRIVERS_CORE
+
+/* IPC Unit Testcases */
+
+/* end of IPC Unit Testcases */
+
+/* Serial Unit Testcases */
+
+/* end of Serial Unit Testcases */
+
+/* SMP-Call Unit Testcases */
+
+/* end of SMP-Call Unit Testcases */
+
+/* File System Unit Testcase */
+
+/* end of File System Unit Testcase */
+
+/* LwIP Network Unit Testcase */
+
+/* end of LwIP Network Unit Testcase */
+
+/* Netdev Network Unit Testcase */
+
+/* end of Netdev Network Unit Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */
@@ -502,6 +575,10 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -586,6 +663,10 @@
 
 /* Drivers Configuration */
 
+#define BSP_USING_QSPI
+#define RT_USING_OSPI
+#define RT_USING_QSPI_XFER_LIMIT
+#define RT_QSPI_MAX_XFER_SIZE 4095
 #define BSP_USING_UART
 #define BSP_UART_USING_DMA
 #define BSP_USING_UART0
@@ -593,6 +674,9 @@
 #define BSP_USING_SDIO
 #define BSP_USING_SDIO0
 #define BSP_SD_MNT_DEVNAME "sd0p1"
+#define BSP_USING_WDT
+#define BSP_USING_WDT0
+#define BSP_UTEST_DRIVERS
 /* end of Drivers Configuration */
 #define BOARD_C908
 #define __STACKSIZE__ 65536

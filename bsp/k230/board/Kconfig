@@ -1,5 +1,42 @@
 menu "Drivers Configuration"
 
+    menuconfig BSP_USING_QSPI
+        bool "Enable QSPI"
+        select RT_USING_QSPI
+        default n
+
+        if BSP_USING_QSPI
+            config RT_USING_OSPI
+                bool "Enable OSPI"
+                default n
+
+            config RT_USING_QSPI0
+                bool "Enable QSPI0"
+                default n
+
+            config RT_USING_QSPI1
+                bool "Enable QSPI1"
+                default n
+
+            config RT_USING_QSPI_XFER_LIMIT
+                bool "Enable maximum transfer length limit"
+                default y
+                help
+                Enable a safety limit on the maximum data length per QSPI transfer
+                to prevent infinite loops or excessive resource usage.
+
+            if RT_USING_QSPI_XFER_LIMIT
+                config RT_QSPI_MAX_XFER_SIZE
+                    int "Maximum QSPI transfer size (in bytes)"
+                    default 4095
+                    range 1 65535
+                    help
+                    The upper limit (in bytes) for a standard SPI transfer.
+                    Transfers larger than this will be truncated or return error.
+                    Default: 4095 bytes (0xFFF)
+            endif
+        endif
+    
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
