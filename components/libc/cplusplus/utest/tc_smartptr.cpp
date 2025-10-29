@@ -35,10 +35,16 @@ static void test_shared_ptr(void)
     uassert_int_equal(p1.use_count(), 2);
 }
 
+/**
+ * @brief Test case initialization function.
+ */
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
+/**
+ * @brief Test case cleanup function.
+ */
 
 static rt_err_t utest_tc_cleanup(void)
 {

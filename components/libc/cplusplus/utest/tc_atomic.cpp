@@ -238,12 +238,13 @@ static void test_compare_exchange_weak(void)
     }
     uassert_int_equal(val.load(), 2);
 }
-
+// Test case initialization function.
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
 
+// Test case cleanup function.
 static rt_err_t utest_tc_cleanup(void)
 {
     return RT_EOK;
